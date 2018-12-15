@@ -14,7 +14,7 @@ from collections import namedtuple
 from pathlib import Path
 from random import SystemRandom
 from string import ascii_letters, digits
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequence, Dict
 
 import aiohttp
 import discord
@@ -26,6 +26,7 @@ from redbot.core import (
     VersionInfo,
     checks,
     commands,
+    errors,
     i18n,
 )
 from .utils.predicates import MessagePredicate
@@ -60,7 +61,9 @@ class CoreLogic:
         self.bot.register_rpc_handler(self._version_info)
         self.bot.register_rpc_handler(self._invite_url)
 
-    async def _load(self, cog_names: list):
+    async def _load(
+        self, cog_names: Iterable[str]
+    ) -> Tuple[List[str], List[str], List[str], List[str]]:
         """
         Loads cogs by name.
         Parameters
@@ -70,11 +73,13 @@ class CoreLogic:
         Returns
         -------
         tuple
-            3 element tuple of loaded, failed, and not found cogs.
+            4-tuple of loaded, failed, not found and already loaded cogs.
         """
         failed_packages = []
         loaded_packages = []
         notfound_packages = []
+        alreadyloaded_packages = []
+        failed_with_reason_packages = []
 
         bot = self.bot
 
@@ -99,6 +104,10 @@ class CoreLogic:
             try:
                 self._cleanup_and_refresh_modules(spec.name)
                 await bot.load_extension(spec)
+            except errors.PackageAlreadyLoaded:
+                alreadyloaded_packages.append(name)
+            except errors.CogLoadError as e:
+                failed_with_reason_packages.append((name, str(e)))
             except Exception as e:
                 log.exception("Package loading failed", exc_info=e)
 
@@ -110,9 +119,16 @@ class CoreLogic:
                 await bot.add_loaded_package(name)
                 loaded_packages.append(name)
 
-        return loaded_packages, failed_packages, notfound_packages
+        return (
+            loaded_packages,
+            failed_packages,
+            notfound_packages,
+            alreadyloaded_packages,
+            failed_with_reason_packages,
+        )
 
-    def _cleanup_and_refresh_modules(self, module_name: str):
+    @staticmethod
+    def _cleanup_and_refresh_modules(module_name: str) -> None:
         """Interally reloads modules so that changes are detected"""
         splitted = module_name.split(".")
 
@@ -124,6 +140,7 @@ class CoreLogic:
             else:
                 importlib._bootstrap._exec(lib.__spec__, lib)
 
+        # noinspection PyTypeChecker
         modules = itertools.accumulate(splitted, "{}.{}".format)
         for m in modules:
             maybe_reload(m)
@@ -132,7 +149,10 @@ class CoreLogic:
         for child_name, lib in children.items():
             importlib._bootstrap._exec(lib.__spec__, lib)
 
-    def _get_package_strings(self, packages: list, fmt: str, other: tuple = None):
+    @staticmethod
+    def _get_package_strings(
+        packages: List[str], fmt: str, other: Optional[Tuple[str, ...]] = None
+    ) -> str:
         """
         Gets the strings needed for the load, unload and reload commands
         """
@@ -148,7 +168,7 @@ class CoreLogic:
         final_string = fmt.format(**form)
         return final_string
 
-    async def _unload(self, cog_names: list):
+    async def _unload(self, cog_names: Iterable[str]) -> Tuple[List[str], List[str]]:
         """
         Unloads cogs with the given names.
 
@@ -176,14 +196,18 @@ class CoreLogic:
 
         return unloaded_packages, failed_packages
 
-    async def _reload(self, cog_names):
+    async def _reload(
+        self, cog_names: Sequence[str]
+    ) -> Tuple[List[str], List[str], List[str], List[str], List[Tuple[str, str]]]:
         await self._unload(cog_names)
 
-        loaded, load_failed, not_found = await self._load(cog_names)
+        loaded, load_failed, not_found, already_loaded, load_failed_with_reason = await self._load(
+            cog_names
+        )
 
-        return loaded, load_failed, not_found
+        return loaded, load_failed, not_found, already_loaded, load_failed_with_reason
 
-    async def _name(self, name: str = None):
+    async def _name(self, name: Optional[str] = None) -> str:
         """
         Gets or sets the bot's username.
 
@@ -202,7 +226,7 @@ class CoreLogic:
 
         return self.bot.user.name
 
-    async def _prefixes(self, prefixes: list = None):
+    async def _prefixes(self, prefixes: Optional[Sequence[str]] = None) -> List[str]:
         """
         Gets or sets the bot's global prefixes.
 
@@ -221,7 +245,8 @@ class CoreLogic:
             await self.bot.db.prefix.set(prefixes)
         return await self.bot.db.prefix()
 
-    async def _version_info(self):
+    @classmethod
+    async def _version_info(cls) -> Dict[str, str]:
         """
         Version information for Red and discord.py
 
@@ -232,7 +257,7 @@ class CoreLogic:
         """
         return {"redbot": __version__, "discordpy": discord.__version__}
 
-    async def _invite_url(self):
+    async def _invite_url(self) -> str:
         """
         Generates the invite URL for the bot.
 
@@ -258,11 +283,8 @@ class CoreLogic:
 class Core(commands.Cog, CoreLogic):
     """Commands related to core functions"""
 
-    def __init__(self, bot):
-        super().__init__(bot)
-
     @commands.command(hidden=True)
-    async def ping(self, ctx):
+    async def ping(self, ctx: commands.Context):
         """Pong."""
         await ctx.send("Pong.")
 
@@ -323,7 +345,7 @@ class Core(commands.Cog, CoreLogic):
         passed = self.get_bot_uptime()
         await ctx.send("Been up for: **{}** (since {} UTC)".format(passed, since))
 
-    def get_bot_uptime(self, *, brief=False):
+    def get_bot_uptime(self, *, brief: bool = False):
         # Courtesy of Danny
         now = datetime.datetime.utcnow()
         delta = now - self.bot.uptime
@@ -426,7 +448,7 @@ class Core(commands.Cog, CoreLogic):
 
     @commands.command()
     @checks.is_owner()
-    async def traceback(self, ctx, public: bool = False):
+    async def traceback(self, ctx: commands.Context, public: bool = False):
         """Sends to the owner the last command exception that has occurred
 
         If public (yes is specified), it will be sent to the chat instead"""
@@ -528,7 +550,7 @@ class Core(commands.Cog, CoreLogic):
     @commands.command()
     @commands.guild_only()
     @checks.is_owner()
-    async def leave(self, ctx):
+    async def leave(self, ctx: commands.Context):
         """Leaves server"""
         await ctx.send("Are you sure you want me to leave this server? (y/n)")
 
@@ -548,7 +570,7 @@ class Core(commands.Cog, CoreLogic):
 
     @commands.command()
     @checks.is_owner()
-    async def servers(self, ctx):
+    async def servers(self, ctx: commands.Context):
         """Lists and allows to leave servers"""
         guilds = sorted(list(self.bot.guilds), key=lambda s: s.name.lower())
         msg = ""
@@ -590,16 +612,19 @@ class Core(commands.Cog, CoreLogic):
 
     @commands.command()
     @checks.is_owner()
-    async def load(self, ctx, *, cog_name: str):
+    async def load(self, ctx: commands.Context, *cogs: str):
         """Loads packages"""
-
-        cog_names = [c.strip() for c in cog_name.split(" ")]
         async with ctx.typing():
-            loaded, failed, not_found = await self._load(cog_names)
+            loaded, failed, not_found, already_loaded, failed_with_reason = await self._load(cogs)
 
         if loaded:
             fmt = "Loaded {packs}."
             formed = self._get_package_strings(loaded, fmt)
+            await ctx.send(formed)
+
+        if already_loaded:
+            fmt = "The package{plural} {packs} {other} already loaded."
+            formed = self._get_package_strings(already_loaded, fmt, ("is", "are"))
             await ctx.send(formed)
 
         if failed:
@@ -615,14 +640,21 @@ class Core(commands.Cog, CoreLogic):
             formed = self._get_package_strings(not_found, fmt, ("was", "were"))
             await ctx.send(formed)
 
+        if failed_with_reason:
+            fmt = (
+                "{other} package{plural} could not be loaded for the following reason{plural}:\n\n"
+            )
+            reasons = "\n".join([f"`{x}`: {y}" for x, y in failed_with_reason])
+            formed = self._get_package_strings(
+                [x for x, y in failed_with_reason], fmt, ("This", "These")
+            )
+            await ctx.send(formed + reasons)
+
     @commands.command()
     @checks.is_owner()
-    async def unload(self, ctx, *, cog_name: str):
+    async def unload(self, ctx: commands.Context, *cogs: str):
         """Unloads packages"""
-
-        cog_names = [c.strip() for c in cog_name.split(" ")]
-
-        unloaded, failed = await self._unload(cog_names)
+        unloaded, failed = await self._unload(cogs)
 
         if unloaded:
             fmt = "Package{plural} {packs} {other} unloaded."
@@ -636,10 +668,12 @@ class Core(commands.Cog, CoreLogic):
 
     @commands.command(name="reload")
     @checks.is_owner()
-    async def reload(self, ctx, *cogs: str):
+    async def reload(self, ctx: commands.Context, *cogs: str):
         """Reloads packages"""
         async with ctx.typing():
-            loaded, failed, not_found = await self._reload(cogs)
+            loaded, failed, not_found, already_loaded, failed_with_reason = await self._reload(
+                cogs
+            )
 
         if loaded:
             fmt = "Package{plural} {packs} {other} reloaded."
@@ -656,36 +690,40 @@ class Core(commands.Cog, CoreLogic):
             formed = self._get_package_strings(not_found, fmt, ("was", "were"))
             await ctx.send(formed)
 
+        if failed_with_reason:
+            fmt = "{other} package{plural} could not be reloaded for the following reason{plural}:\n\n"
+            reasons = "\n".join([f"`{x}`: {y}" for x, y in failed_with_reason])
+            formed = self._get_package_strings(
+                [x for x, y in failed_with_reason], fmt, ("This", "These")
+            )
+            await ctx.send(formed + reasons)
+
     @commands.command(name="shutdown")
     @checks.is_owner()
-    async def _shutdown(self, ctx, silently: bool = False):
+    async def _shutdown(self, ctx: commands.Context, silently: bool = False):
         """Shuts down the bot"""
         wave = "\N{WAVING HAND SIGN}"
         skin = "\N{EMOJI MODIFIER FITZPATRICK TYPE-3}"
-        try:  # We don't want missing perms to stop our shutdown
+        with contextlib.suppress(discord.HTTPException):
             if not silently:
                 await ctx.send(_("Shutting down... ") + wave + skin)
-        except:
-            pass
         await ctx.bot.shutdown()
 
     @commands.command(name="restart")
     @checks.is_owner()
-    async def _restart(self, ctx, silently: bool = False):
+    async def _restart(self, ctx: commands.Context, silently: bool = False):
         """Attempts to restart Red
 
         Makes Red quit with exit code 26
         The restart is not guaranteed: it must be dealt
         with by the process manager in use"""
-        try:
+        with contextlib.suppress(discord.HTTPException):
             if not silently:
                 await ctx.send(_("Restarting..."))
-        except:
-            pass
         await ctx.bot.shutdown(restart=True)
 
     @commands.group(name="set")
-    async def _set(self, ctx):
+    async def _set(self, ctx: commands.Context):
         """Changes Red's settings"""
         if ctx.invoked_subcommand is None:
             if ctx.guild:
@@ -717,7 +755,7 @@ class Core(commands.Cog, CoreLogic):
     @_set.command()
     @checks.guildowner()
     @commands.guild_only()
-    async def adminrole(self, ctx, *, role: discord.Role):
+    async def adminrole(self, ctx: commands.Context, *, role: discord.Role):
         """Sets the admin role for this server"""
         await ctx.bot.db.guild(ctx.guild).admin_role.set(role.id)
         await ctx.send(_("The admin role for this guild has been set."))
@@ -725,7 +763,7 @@ class Core(commands.Cog, CoreLogic):
     @_set.command()
     @checks.guildowner()
     @commands.guild_only()
-    async def modrole(self, ctx, *, role: discord.Role):
+    async def modrole(self, ctx: commands.Context, *, role: discord.Role):
         """Sets the mod role for this server"""
         await ctx.bot.db.guild(ctx.guild).mod_role.set(role.id)
         await ctx.send(_("The mod role for this guild has been set."))
@@ -733,7 +771,7 @@ class Core(commands.Cog, CoreLogic):
     @_set.command(aliases=["usebotcolor"])
     @checks.guildowner()
     @commands.guild_only()
-    async def usebotcolour(self, ctx):
+    async def usebotcolour(self, ctx: commands.Context):
         """
         Toggle whether to use the bot owner-configured colour for embeds.
 
@@ -751,7 +789,7 @@ class Core(commands.Cog, CoreLogic):
     @_set.command()
     @checks.guildowner()
     @commands.guild_only()
-    async def serverfuzzy(self, ctx):
+    async def serverfuzzy(self, ctx: commands.Context):
         """
         Toggle whether to enable fuzzy command search for the server.
 
@@ -767,7 +805,7 @@ class Core(commands.Cog, CoreLogic):
 
     @_set.command()
     @checks.is_owner()
-    async def fuzzy(self, ctx):
+    async def fuzzy(self, ctx: commands.Context):
         """
         Toggle whether to enable fuzzy command search in DMs.
 
@@ -783,7 +821,7 @@ class Core(commands.Cog, CoreLogic):
 
     @_set.command(aliases=["color"])
     @checks.is_owner()
-    async def colour(self, ctx, *, colour: discord.Colour = None):
+    async def colour(self, ctx: commands.Context, *, colour: discord.Colour = None):
         """
         Sets a default colour to be used for the bot's embeds.
 
@@ -801,7 +839,7 @@ class Core(commands.Cog, CoreLogic):
 
     @_set.command()
     @checks.is_owner()
-    async def avatar(self, ctx, url: str):
+    async def avatar(self, ctx: commands.Context, url: str):
         """Sets Red's avatar"""
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as r:
@@ -825,7 +863,7 @@ class Core(commands.Cog, CoreLogic):
     @_set.command(name="game")
     @checks.bot_in_a_guild()
     @checks.is_owner()
-    async def _game(self, ctx, *, game: str = None):
+    async def _game(self, ctx: commands.Context, *, game: str = None):
         """Sets Red's playing status"""
 
         if game:
@@ -839,7 +877,7 @@ class Core(commands.Cog, CoreLogic):
     @_set.command(name="listening")
     @checks.bot_in_a_guild()
     @checks.is_owner()
-    async def _listening(self, ctx, *, listening: str = None):
+    async def _listening(self, ctx: commands.Context, *, listening: str = None):
         """Sets Red's listening status"""
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
@@ -853,7 +891,7 @@ class Core(commands.Cog, CoreLogic):
     @_set.command(name="watching")
     @checks.bot_in_a_guild()
     @checks.is_owner()
-    async def _watching(self, ctx, *, watching: str = None):
+    async def _watching(self, ctx: commands.Context, *, watching: str = None):
         """Sets Red's watching status"""
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
@@ -867,7 +905,7 @@ class Core(commands.Cog, CoreLogic):
     @_set.command()
     @checks.bot_in_a_guild()
     @checks.is_owner()
-    async def status(self, ctx, *, status: str):
+    async def status(self, ctx: commands.Context, *, status: str):
         """Sets Red's status
 
         Available statuses:
@@ -896,7 +934,7 @@ class Core(commands.Cog, CoreLogic):
     @_set.command()
     @checks.bot_in_a_guild()
     @checks.is_owner()
-    async def stream(self, ctx, streamer=None, *, stream_title=None):
+    async def stream(self, ctx: commands.Context, streamer=None, *, stream_title=None):
         """Sets Red's streaming status
         Leaving both streamer and stream_title empty will clear it."""
 
@@ -917,7 +955,7 @@ class Core(commands.Cog, CoreLogic):
 
     @_set.command(name="username", aliases=["name"])
     @checks.is_owner()
-    async def _username(self, ctx, *, username: str):
+    async def _username(self, ctx: commands.Context, *, username: str):
         """Sets Red's username"""
         try:
             await self._name(name=username)
@@ -936,7 +974,7 @@ class Core(commands.Cog, CoreLogic):
     @_set.command(name="nickname")
     @checks.admin()
     @commands.guild_only()
-    async def _nickname(self, ctx, *, nickname: str = None):
+    async def _nickname(self, ctx: commands.Context, *, nickname: str = None):
         """Sets Red's nickname"""
         try:
             await ctx.guild.me.edit(nick=nickname)
@@ -947,7 +985,7 @@ class Core(commands.Cog, CoreLogic):
 
     @_set.command(aliases=["prefixes"])
     @checks.is_owner()
-    async def prefix(self, ctx, *prefixes):
+    async def prefix(self, ctx: commands.Context, *prefixes: str):
         """Sets Red's global prefix(es)"""
         if not prefixes:
             await ctx.send_help()
@@ -958,7 +996,7 @@ class Core(commands.Cog, CoreLogic):
     @_set.command(aliases=["serverprefixes"])
     @checks.admin()
     @commands.guild_only()
-    async def serverprefix(self, ctx, *prefixes):
+    async def serverprefix(self, ctx: commands.Context, *prefixes: str):
         """Sets Red's server prefix(es)"""
         if not prefixes:
             await ctx.bot.db.guild(ctx.guild).prefix.set([])
@@ -970,7 +1008,7 @@ class Core(commands.Cog, CoreLogic):
 
     @_set.command()
     @commands.cooldown(1, 60 * 10, commands.BucketType.default)
-    async def owner(self, ctx):
+    async def owner(self, ctx: commands.Context):
         """Sets Red's main owner"""
         # According to the Python docs this is suitable for cryptographic use
         random = SystemRandom()
@@ -1014,7 +1052,7 @@ class Core(commands.Cog, CoreLogic):
 
     @_set.command()
     @checks.is_owner()
-    async def token(self, ctx, token: str):
+    async def token(self, ctx: commands.Context, token: str):
         """Change bot token."""
 
         if not isinstance(ctx.channel, discord.DMChannel):
@@ -1159,7 +1197,7 @@ class Core(commands.Cog, CoreLogic):
 
     @commands.command()
     @checks.is_owner()
-    async def backup(self, ctx, backup_path: str = None):
+    async def backup(self, ctx: commands.Context, backup_path: str = None):
         """Creates a backup of all data for the instance."""
         from redbot.core.data_manager import basic_config, instance_name
         from redbot.core.drivers.red_json import JSON
@@ -1168,21 +1206,20 @@ class Core(commands.Cog, CoreLogic):
         if basic_config["STORAGE_TYPE"] == "MongoDB":
             from redbot.core.drivers.red_mongo import Mongo
 
-            m = Mongo("Core", **basic_config["STORAGE_DETAILS"])
+            m = Mongo("Core", "0", **basic_config["STORAGE_DETAILS"])
             db = m.db
-            collection_names = await db.collection_names(include_system_collections=False)
+            collection_names = await db.list_collection_names()
             for c_name in collection_names:
                 if c_name == "Core":
                     c_data_path = data_dir / basic_config["CORE_PATH_APPEND"]
                 else:
-                    c_data_path = data_dir / basic_config["COG_PATH_APPEND"]
-                output = {}
+                    c_data_path = data_dir / basic_config["COG_PATH_APPEND"] / c_name
                 docs = await db[c_name].find().to_list(None)
                 for item in docs:
                     item_id = str(item.pop("_id"))
-                    output[item_id] = item
-                target = JSON(c_name, data_path_override=c_data_path)
-                await target.jsonIO._threadsafe_save_json(output)
+                    output = item
+                    target = JSON(c_name, item_id, data_path_override=c_data_path)
+                    await target.jsonIO._threadsafe_save_json(output)
         backup_filename = "redv3-{}-{}.tar.gz".format(
             instance_name, ctx.message.created_at.strftime("%Y-%m-%d %H-%M-%S")
         )
@@ -1222,7 +1259,7 @@ class Core(commands.Cog, CoreLogic):
                     tar.add(str(f), recursive=False)
             print(str(backup_file))
             await ctx.send(
-                _("A backup has been made of this instance. It is at {}.").format((backup_file))
+                _("A backup has been made of this instance. It is at {}.").format(backup_file)
             )
             await ctx.send(_("Would you like to receive a copy via DM? (y/n)"))
 
@@ -1245,7 +1282,7 @@ class Core(commands.Cog, CoreLogic):
 
     @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)
-    async def contact(self, ctx, *, message: str):
+    async def contact(self, ctx: commands.Context, *, message: str):
         """Sends a message to the owner"""
         guild = ctx.message.guild
         owner = discord.utils.get(ctx.bot.get_all_members(), id=ctx.bot.owner_id)
@@ -1288,7 +1325,7 @@ class Core(commands.Cog, CoreLogic):
                 await ctx.send(
                     _("I cannot send your message, I'm unable to find my owner... *sigh*")
                 )
-            except:
+            except discord.HTTPException:
                 await ctx.send(_("I'm unable to deliver your message. Sorry."))
             else:
                 await ctx.send(_("Your message has been sent."))
@@ -1300,14 +1337,14 @@ class Core(commands.Cog, CoreLogic):
                 await ctx.send(
                     _("I cannot send your message, I'm unable to find my owner... *sigh*")
                 )
-            except:
+            except discord.HTTPException:
                 await ctx.send(_("I'm unable to deliver your message. Sorry."))
             else:
                 await ctx.send(_("Your message has been sent."))
 
     @commands.command()
     @checks.is_owner()
-    async def dm(self, ctx, user_id: int, *, message: str):
+    async def dm(self, ctx: commands.Context, user_id: int, *, message: str):
         """Sends a DM to a user
 
         This command needs a user id to work.
@@ -1341,7 +1378,7 @@ class Core(commands.Cog, CoreLogic):
 
             try:
                 await destination.send(embed=e)
-            except:
+            except discord.HTTPException:
                 await ctx.send(
                     _("Sorry, I couldn't deliver your message to {}").format(destination)
                 )
@@ -1351,7 +1388,7 @@ class Core(commands.Cog, CoreLogic):
             response = "{}\nMessage:\n\n{}".format(description, message)
             try:
                 await destination.send("{}\n{}".format(box(response), content))
-            except:
+            except discord.HTTPException:
                 await ctx.send(
                     _("Sorry, I couldn't deliver your message to {}").format(destination)
                 )
@@ -1360,7 +1397,7 @@ class Core(commands.Cog, CoreLogic):
 
     @commands.group()
     @checks.is_owner()
-    async def whitelist(self, ctx):
+    async def whitelist(self, ctx: commands.Context):
         """
         Whitelist management commands.
         """
@@ -1378,7 +1415,7 @@ class Core(commands.Cog, CoreLogic):
         await ctx.send(_("User added to whitelist."))
 
     @whitelist.command(name="list")
-    async def whitelist_list(self, ctx):
+    async def whitelist_list(self, ctx: commands.Context):
         """
         Lists whitelisted users.
         """
@@ -1392,7 +1429,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(box(page))
 
     @whitelist.command(name="remove")
-    async def whitelist_remove(self, ctx, user: discord.User):
+    async def whitelist_remove(self, ctx: commands.Context, user: discord.User):
         """
         Removes user from whitelist.
         """
@@ -1409,7 +1446,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("User was not in the whitelist."))
 
     @whitelist.command(name="clear")
-    async def whitelist_clear(self, ctx):
+    async def whitelist_clear(self, ctx: commands.Context):
         """
         Clears the whitelist.
         """
@@ -1418,19 +1455,19 @@ class Core(commands.Cog, CoreLogic):
 
     @commands.group()
     @checks.is_owner()
-    async def blacklist(self, ctx):
+    async def blacklist(self, ctx: commands.Context):
         """
         blacklist management commands.
         """
         pass
 
     @blacklist.command(name="add")
-    async def blacklist_add(self, ctx, user: discord.User):
+    async def blacklist_add(self, ctx: commands.Context, user: discord.User):
         """
         Adds a user to the blacklist.
         """
         if await ctx.bot.is_owner(user):
-            ctx.send(_("You cannot blacklist an owner!"))
+            await ctx.send(_("You cannot blacklist an owner!"))
             return
 
         async with ctx.bot.db.blacklist() as curr_list:
@@ -1440,7 +1477,7 @@ class Core(commands.Cog, CoreLogic):
         await ctx.send(_("User added to blacklist."))
 
     @blacklist.command(name="list")
-    async def blacklist_list(self, ctx):
+    async def blacklist_list(self, ctx: commands.Context):
         """
         Lists blacklisted users.
         """
@@ -1454,7 +1491,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(box(page))
 
     @blacklist.command(name="remove")
-    async def blacklist_remove(self, ctx, user: discord.User):
+    async def blacklist_remove(self, ctx: commands.Context, user: discord.User):
         """
         Removes user from blacklist.
         """
@@ -1471,7 +1508,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("User was not in the blacklist."))
 
     @blacklist.command(name="clear")
-    async def blacklist_clear(self, ctx):
+    async def blacklist_clear(self, ctx: commands.Context):
         """
         Clears the blacklist.
         """
@@ -1481,14 +1518,14 @@ class Core(commands.Cog, CoreLogic):
     @commands.group()
     @commands.guild_only()
     @checks.admin_or_permissions(administrator=True)
-    async def localwhitelist(self, ctx):
+    async def localwhitelist(self, ctx: commands.Context):
         """
         Whitelist management commands.
         """
         pass
 
     @localwhitelist.command(name="add")
-    async def localwhitelist_add(self, ctx, *, user_or_role: str):
+    async def localwhitelist_add(self, ctx: commands.Context, *, user_or_role: str):
         """
         Adds a user or role to the whitelist.
         """
@@ -1509,7 +1546,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("Role added to whitelist."))
 
     @localwhitelist.command(name="list")
-    async def localwhitelist_list(self, ctx):
+    async def localwhitelist_list(self, ctx: commands.Context):
         """
         Lists whitelisted users and roles.
         """
@@ -1523,7 +1560,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(box(page))
 
     @localwhitelist.command(name="remove")
-    async def localwhitelist_remove(self, ctx, *, user_or_role: str):
+    async def localwhitelist_remove(self, ctx: commands.Context, *, user_or_role: str):
         """
         Removes user or role from whitelist.
         """
@@ -1553,7 +1590,7 @@ class Core(commands.Cog, CoreLogic):
                 await ctx.send(_("Role was not in the whitelist."))
 
     @localwhitelist.command(name="clear")
-    async def localwhitelist_clear(self, ctx):
+    async def localwhitelist_clear(self, ctx: commands.Context):
         """
         Clears the whitelist.
         """
@@ -1563,14 +1600,14 @@ class Core(commands.Cog, CoreLogic):
     @commands.group()
     @commands.guild_only()
     @checks.admin_or_permissions(administrator=True)
-    async def localblacklist(self, ctx):
+    async def localblacklist(self, ctx: commands.Context):
         """
         blacklist management commands.
         """
         pass
 
     @localblacklist.command(name="add")
-    async def localblacklist_add(self, ctx, *, user_or_role: str):
+    async def localblacklist_add(self, ctx: commands.Context, *, user_or_role: str):
         """
         Adds a user or role to the blacklist.
         """
@@ -1583,7 +1620,7 @@ class Core(commands.Cog, CoreLogic):
             user = True
 
         if user and await ctx.bot.is_owner(obj):
-            ctx.send(_("You cannot blacklist an owner!"))
+            await ctx.send(_("You cannot blacklist an owner!"))
             return
 
         async with ctx.bot.db.guild(ctx.guild).blacklist() as curr_list:
@@ -1596,7 +1633,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("Role added to blacklist."))
 
     @localblacklist.command(name="list")
-    async def localblacklist_list(self, ctx):
+    async def localblacklist_list(self, ctx: commands.Context):
         """
         Lists blacklisted users and roles.
         """
@@ -1610,7 +1647,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(box(page))
 
     @localblacklist.command(name="remove")
-    async def localblacklist_remove(self, ctx, *, user_or_role: str):
+    async def localblacklist_remove(self, ctx: commands.Context, *, user_or_role: str):
         """
         Removes user or role from blacklist.
         """
@@ -1640,7 +1677,7 @@ class Core(commands.Cog, CoreLogic):
                 await ctx.send(_("Role was not in the blacklist."))
 
     @localblacklist.command(name="clear")
-    async def localblacklist_clear(self, ctx):
+    async def localblacklist_clear(self, ctx: commands.Context):
         """
         Clears the blacklist.
         """
@@ -1791,8 +1828,8 @@ class Core(commands.Cog, CoreLogic):
     @autoimmune_group.command(name="list")
     async def autoimmune_list(self, ctx: commands.Context):
         """
-        Get's the current members and roles 
-        
+        Get's the current members and roles
+
         configured for automatic moderation action immunity
         """
         ai_ids = await ctx.bot.db.guild(ctx.guild).autoimmune_ids()

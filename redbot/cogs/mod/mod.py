@@ -193,7 +193,7 @@ class Mod(commands.Cog):
                 yes_or_no=_("Yes") if respect_hierarchy else _("No")
             )
             msg += _("Delete delay: {num_seconds}\n").format(
-                num_seconds=_("{num} seconds").format(delete_delay)
+                num_seconds=_("{num} seconds").format(num=delete_delay)
                 if delete_delay != -1
                 else _("None")
             )
@@ -825,7 +825,7 @@ class Mod(commands.Cog):
     @admin_or_voice_permissions(mute_members=True, deafen_members=True)
     @bot_has_voice_permissions(mute_members=True, deafen_members=True)
     async def voiceunban(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
-        """Unban a the user from speaking and listening in the server's voice channels."""
+        """Unban a user from speaking and listening in the server's voice channels."""
         user_voice_state = user.voice
         if user_voice_state is None:
             await ctx.send(_("No voice state for that user!"))
@@ -893,34 +893,33 @@ class Mod(commands.Cog):
         author = ctx.author
         if user_voice_state:
             channel = user_voice_state.channel
-            if channel and channel.permissions_for(user).speak:
-                overwrites = channel.overwrites_for(user)
-                overwrites.speak = False
-                audit_reason = get_audit_reason(ctx.author, reason)
-                await channel.set_permissions(user, overwrite=overwrites, reason=audit_reason)
-                await ctx.send(
-                    _("Muted {user} in channel {channel.name}").format(user, channel=channel)
-                )
-                try:
-                    await modlog.create_case(
-                        self.bot,
-                        guild,
-                        ctx.message.created_at,
-                        "boicemute",
-                        user,
-                        author,
-                        reason,
-                        until=None,
-                        channel=channel,
+            if channel:
+                audit_reason = get_audit_reason(author, reason)
+
+                success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
+
+                if success:
+                    await ctx.send(
+                        _("Muted {user} in channel {channel.name}").format(
+                            user=user, channel=channel
+                        )
                     )
-                except RuntimeError as e:
-                    await ctx.send(e)
-                return
-            elif channel.permissions_for(user).speak is False:
-                await ctx.send(
-                    _("That user is already muted in {channel}!").format(channel=channel.name)
-                )
-                return
+                    try:
+                        await modlog.create_case(
+                            self.bot,
+                            guild,
+                            ctx.message.created_at,
+                            "vmute",
+                            user,
+                            author,
+                            reason,
+                            until=None,
+                            channel=channel,
+                        )
+                    except RuntimeError as e:
+                        await ctx.send(e)
+                else:
+                    await channel.send(issue)
             else:
                 await ctx.send(_("That user is not in a voice channel right now!"))
         else:
@@ -938,13 +937,7 @@ class Mod(commands.Cog):
         author = ctx.message.author
         channel = ctx.message.channel
         guild = ctx.guild
-
-        if reason is None:
-            audit_reason = "Channel mute requested by {a} (ID {a.id})".format(a=author)
-        else:
-            audit_reason = "Channel mute requested by {a} (ID {a.id}). Reason: {r}".format(
-                a=author, r=reason
-            )
+        audit_reason = get_audit_reason(author, reason)
 
         success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
 
@@ -975,26 +968,12 @@ class Mod(commands.Cog):
         """Mutes user in the server"""
         author = ctx.message.author
         guild = ctx.guild
-        if reason is None:
-            audit_reason = "server mute requested by {author} (ID {author.id})".format(
-                author=author
-            )
-        else:
-            audit_reason = (
-                "server mute requested by {author} (ID {author.id}). Reason: {reason}"
-            ).format(author=author, reason=reason)
+        audit_reason = get_audit_reason(author, reason)
 
         mute_success = []
         for channel in guild.channels:
-            if not isinstance(channel, discord.TextChannel):
-                if channel.permissions_for(user).speak:
-                    overwrites = channel.overwrites_for(user)
-                    overwrites.speak = False
-                    audit_reason = get_audit_reason(ctx.author, reason)
-                    await channel.set_permissions(user, overwrite=overwrites, reason=audit_reason)
-            else:
-                success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
-                mute_success.append((success, issue))
+            success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
+            mute_success.append((success, issue))
             await asyncio.sleep(0.1)
         await ctx.send(_("User has been muted in this server."))
         try:
@@ -1015,7 +994,7 @@ class Mod(commands.Cog):
     async def mute_user(
         self,
         guild: discord.Guild,
-        channel: discord.TextChannel,
+        channel: discord.abc.GuildChannel,
         author: discord.Member,
         user: discord.Member,
         reason: str,
@@ -1023,25 +1002,32 @@ class Mod(commands.Cog):
         """Mutes the specified user in the specified channel"""
         overwrites = channel.overwrites_for(user)
         permissions = channel.permissions_for(user)
-        perms_cache = await self.settings.member(user).perms_cache()
 
-        if overwrites.send_messages is False or permissions.send_messages is False:
+        if permissions.administrator:
+            return False, T_(mute_unmute_issues["is_admin"])
+
+        new_overs = {}
+        if not isinstance(channel, discord.TextChannel):
+            new_overs.update(speak=False)
+        if not isinstance(channel, discord.VoiceChannel):
+            new_overs.update(send_messages=False, add_reactions=False)
+
+        if all(getattr(permissions, p) is False for p in new_overs.keys()):
             return False, T_(mute_unmute_issues["already_muted"])
 
         elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
             return False, T_(mute_unmute_issues["hierarchy_problem"])
 
-        perms_cache[str(channel.id)] = {
-            "send_messages": overwrites.send_messages,
-            "add_reactions": overwrites.add_reactions,
-        }
-        overwrites.update(send_messages=False, add_reactions=False)
+        old_overs = {k: getattr(overwrites, k) for k in new_overs}
+        overwrites.update(**new_overs)
         try:
             await channel.set_permissions(user, overwrite=overwrites, reason=reason)
         except discord.Forbidden:
             return False, T_(mute_unmute_issues["permissions_issue"])
         else:
-            await self.settings.member(user).perms_cache.set(perms_cache)
+            await self.settings.member(user).set_raw(
+                "perms_cache", str(channel.id), value=old_overs
+            )
             return True, None
 
     @commands.group()
@@ -1061,37 +1047,39 @@ class Mod(commands.Cog):
     ):
         """Unmute a user in their current voice channel."""
         user_voice_state = user.voice
+        guild = ctx.guild
+        author = ctx.author
         if user_voice_state:
             channel = user_voice_state.channel
-            if channel and channel.permissions_for(user).speak is False:
-                overwrites = channel.overwrites_for(user)
-                overwrites.speak = None
-                audit_reason = get_audit_reason(ctx.author, reason)
-                await channel.set_permissions(user, overwrite=overwrites, reason=audit_reason)
-                author = ctx.author
-                guild = ctx.guild
-                await ctx.send(
-                    _("Unmuted {}#{} in channel {}").format(
-                        user.name, user.discriminator, channel.name
-                    )
+            if channel:
+                audit_reason = get_audit_reason(author, reason)
+
+                success, message = await self.unmute_user(
+                    guild, channel, author, user, audit_reason
                 )
-                try:
-                    await modlog.create_case(
-                        self.bot,
-                        guild,
-                        ctx.message.created_at,
-                        "voiceunmute",
-                        user,
-                        author,
-                        reason,
-                        until=None,
-                        channel=channel,
+
+                if success:
+                    await ctx.send(
+                        _("Unmuted {user} in channel {channel.name}").format(
+                            user=user, channel=channel
+                        )
                     )
-                except RuntimeError as e:
-                    await ctx.send(e)
-            elif channel.permissions_for(user).speak:
-                await ctx.send(_("That user is already unmuted in {}!").format(channel.name))
-                return
+                    try:
+                        await modlog.create_case(
+                            self.bot,
+                            guild,
+                            ctx.message.created_at,
+                            "vunmute",
+                            user,
+                            author,
+                            reason,
+                            until=None,
+                            channel=channel,
+                        )
+                    except RuntimeError as e:
+                        await ctx.send(e)
+                else:
+                    await ctx.send(_("Unmute failed. Reason: {}").format(message))
             else:
                 await ctx.send(_("That user is not in a voice channel right now!"))
         else:
@@ -1109,8 +1097,9 @@ class Mod(commands.Cog):
         channel = ctx.channel
         author = ctx.author
         guild = ctx.guild
+        audit_reason = get_audit_reason(author, reason)
 
-        success, message = await self.unmute_user(guild, channel, author, user)
+        success, message = await self.unmute_user(guild, channel, author, user, audit_reason)
 
         if success:
             await ctx.send(_("User unmuted in this channel."))
@@ -1141,16 +1130,11 @@ class Mod(commands.Cog):
         """Unmute a user in this server."""
         guild = ctx.guild
         author = ctx.author
+        audit_reason = get_audit_reason(author, reason)
 
         unmute_success = []
         for channel in guild.channels:
-            if not isinstance(channel, discord.TextChannel):
-                if channel.permissions_for(user).speak is False:
-                    overwrites = channel.overwrites_for(user)
-                    overwrites.speak = None
-                    audit_reason = get_audit_reason(author, reason)
-                    await channel.set_permissions(user, overwrite=overwrites, reason=audit_reason)
-            success, message = await self.unmute_user(guild, channel, author, user)
+            success, message = await self.unmute_user(guild, channel, author, user, audit_reason)
             unmute_success.append((success, message))
             await asyncio.sleep(0.1)
         await ctx.send(_("User has been unmuted in this server."))
@@ -1171,45 +1155,37 @@ class Mod(commands.Cog):
     async def unmute_user(
         self,
         guild: discord.Guild,
-        channel: discord.TextChannel,
+        channel: discord.abc.GuildChannel,
         author: discord.Member,
         user: discord.Member,
+        reason: str,
     ) -> (bool, str):
         overwrites = channel.overwrites_for(user)
-        permissions = channel.permissions_for(user)
         perms_cache = await self.settings.member(user).perms_cache()
 
-        if overwrites.send_messages or permissions.send_messages:
+        if channel.id in perms_cache:
+            old_values = perms_cache[channel.id]
+        else:
+            old_values = {"send_messages": None, "add_reactions": None, "speak": None}
+
+        if all(getattr(overwrites, k) == v for k, v in old_values.items()):
             return False, T_(mute_unmute_issues["already_unmuted"])
 
         elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
             return False, T_(mute_unmute_issues["hierarchy_problem"])
 
-        if channel.id in perms_cache:
-            old_values = perms_cache[channel.id]
-        else:
-            old_values = {"send_messages": None, "add_reactions": None}
-        overwrites.update(
-            send_messages=old_values["send_messages"], add_reactions=old_values["add_reactions"]
-        )
-        is_empty = self.are_overwrites_empty(overwrites)
-
+        overwrites.update(**old_values)
         try:
-            if not is_empty:
-                await channel.set_permissions(user, overwrite=overwrites)
-            else:
+            if overwrites.is_empty():
                 await channel.set_permissions(
-                    user, overwrite=cast(discord.PermissionOverwrite, None)
+                    user, overwrite=cast(discord.PermissionOverwrite, None), reason=reason
                 )
+            else:
+                await channel.set_permissions(user, overwrite=overwrites, reason=reason)
         except discord.Forbidden:
             return False, T_(mute_unmute_issues["permissions_issue"])
         else:
-            try:
-                del perms_cache[channel.id]
-            except KeyError:
-                pass
-            else:
-                await self.settings.member(user).perms_cache.set(perms_cache)
+            await self.settings.member(user).clear_raw("perms_cache", str(channel.id))
             return True, None
 
     @commands.group()
@@ -1390,8 +1366,7 @@ class Mod(commands.Cog):
         name = filter_invites(name)
 
         if user.avatar:
-            avatar = user.avatar_url
-            avatar = avatar.replace("webp", "png")
+            avatar = user.avatar_url_as(static_format="png")
             data.set_author(name=name, url=avatar)
             data.set_thumbnail(url=avatar)
         else:
@@ -1695,20 +1670,15 @@ class Mod(commands.Cog):
                 while len(nick_list) > 20:
                     nick_list.pop(0)
 
-    @staticmethod
-    def are_overwrites_empty(overwrites):
-        """There is currently no cleaner way to check if a
-        PermissionOverwrite object is empty"""
-        return [p for p in iter(overwrites)] == [p for p in iter(discord.PermissionOverwrite())]
-
 
 _ = lambda s: s
 mute_unmute_issues = {
     "already_muted": _("That user can't send messages in this channel."),
-    "already_unmuted": _("That user isn't muted in this channel!"),
+    "already_unmuted": _("That user isn't muted in this channel."),
     "hierarchy_problem": _(
-        "I cannot let you do that. You are not higher than " "the user in the role hierarchy."
+        "I cannot let you do that. You are not higher than the user in the role hierarchy."
     ),
+    "is_admin": _("That user cannot be muted, as they have the Administrator permission."),
     "permissions_issue": _(
         "Failed to mute user. I need the manage roles "
         "permission and the user I'm muting must be "

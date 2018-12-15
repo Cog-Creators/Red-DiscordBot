@@ -374,6 +374,21 @@ API Reference
     inside the bot itself! Simply take a peek inside of the :code:`tests/core/test_config.py` file for examples of using
     Config in all kinds of ways.
 
+.. important::
+
+    When getting, setting or clearing values in Config, all keys are casted to `str` for you. This
+    includes keys within a `dict` when one is being set, as well as keys in  nested dictionaries
+    within that `dict`. For example::
+
+        >>> conf = Config.get_conf(self, identifier=999)
+        >>> conf.register_global(foo={})
+        >>> await conf.foo.set_raw(123, value=True)
+        >>> await conf.foo()
+        {'123': True}
+        >>> await conf.foo.set({123: True, 456: {789: False}}
+        >>> await conf.foo()
+        {'123': True, '456': {'789': False}}
+
 .. automodule:: redbot.core.config
 
 Config

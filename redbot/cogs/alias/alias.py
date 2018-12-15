@@ -288,7 +288,10 @@ class Alias(commands.Cog):
         """Try to execute help for the base command of the alias."""
         is_alias, alias = await self.is_alias(ctx.guild, alias_name=alias_name)
         if is_alias:
-            base_cmd = alias.command[0]
+            if self.is_command(alias.command):
+                base_cmd = alias.command
+            else:
+                base_cmd = alias.command.rsplit(" ", 1)[0]
 
             new_msg = copy(ctx.message)
             new_msg.content = _("{prefix}help {command}").format(

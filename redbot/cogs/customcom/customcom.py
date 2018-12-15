@@ -3,13 +3,14 @@ import random
 from datetime import datetime, timedelta
 from inspect import Parameter
 from collections import OrderedDict
-from typing import Mapping, Tuple, Dict
+from typing import Mapping, Tuple, Dict, Set
 
 import discord
 
 from redbot.core import Config, checks, commands
-from redbot.core.utils.chat_formatting import box, pagify
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils import menus
+from redbot.core.utils.chat_formatting import box, pagify, escape
 from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("CustomCommands", __file__)
@@ -43,11 +44,8 @@ class CommandObj:
 
     @staticmethod
     async def get_commands(config) -> dict:
-        commands = await config.commands()
-        customcommands = {k: v for k, v in commands.items() if commands[k]}
-        if len(customcommands) == 0:
-            return None
-        return customcommands
+        _commands = await config.commands()
+        return {k: v for k, v in _commands.items() if _commands[k]}
 
     async def get_responses(self, ctx):
         intro = _(
@@ -79,7 +77,8 @@ class CommandObj:
                 responses.append(msg.content)
         return responses
 
-    def get_now(self) -> str:
+    @staticmethod
+    def get_now() -> str:
         # Get current time as a string, for 'created_at' and 'edited_at' fields
         # in the ccinfo dict
         return "{:%d/%m/%Y %H:%M:%S}".format(datetime.utcnow())
@@ -91,6 +90,13 @@ class CommandObj:
         else:
             return ccinfo["response"], ccinfo.get("cooldowns", {})
 
+    async def get_full(self, message: discord.Message, command: str) -> Dict:
+        ccinfo = await self.db(message.guild).commands.get_raw(command, default=None)
+        if ccinfo:
+            return ccinfo
+        else:
+            raise NotFound()
+
     async def create(self, ctx: commands.Context, command: str, *, response):
         """Create a custom command"""
         # Check if this command is already registered as a customcommand
@@ -100,7 +106,7 @@ class CommandObj:
         ctx.cog.prepare_args(response if isinstance(response, str) else response[0])
         author = ctx.message.author
         ccinfo = {
-            "author": {"id": author.id, "name": author.name},
+            "author": {"id": author.id, "name": str(author)},
             "command": command,
             "cooldowns": {},
             "created_at": self.get_now(),
@@ -116,7 +122,7 @@ class CommandObj:
         *,
         response=None,
         cooldowns: Mapping[str, int] = None,
-        ask_for: bool = True
+        ask_for: bool = True,
     ):
         """Edit an already existing custom command"""
         ccinfo = await self.db(ctx.guild).commands.get_raw(command, default=None)
@@ -293,8 +299,8 @@ class CustomCommands(commands.Cog):
     @customcom.command(name="delete")
     @checks.mod_or_permissions(administrator=True)
     async def cc_delete(self, ctx, command: str.lower):
-        """Delete a custom command
-.
+        """Delete a custom command.
+
         Example:
         - `[p]customcom delete yourcommand`
         """
@@ -312,8 +318,6 @@ class CustomCommands(commands.Cog):
         Example:
         - `[p]customcom edit yourcommand Text you want`
         """
-        command = command.lower()
-
         try:
             await self.commandobj.edit(ctx=ctx, command=command, response=text)
             await ctx.send(_("Custom command successfully edited."))
@@ -327,12 +331,16 @@ class CustomCommands(commands.Cog):
             await ctx.send(e.args[0])
 
     @customcom.command(name="list")
-    async def cc_list(self, ctx):
-        """List all available custom commands."""
+    @checks.bot_has_permissions(add_reactions=True)
+    async def cc_list(self, ctx: commands.Context):
+        """List all available custom commands.
 
-        response = await CommandObj.get_commands(self.config.guild(ctx.guild))
+        The list displays a preview of each command's response, with
+        markdown escaped and newlines replaced with spaces.
+        """
+        cc_dict = await CommandObj.get_commands(self.config.guild(ctx.guild))
 
-        if not response:
+        if not cc_dict:
             await ctx.send(
                 _(
                     "There are no custom commands in this server."
@@ -342,8 +350,7 @@ class CustomCommands(commands.Cog):
             return
 
         results = []
-
-        for command, body in response.items():
+        for command, body in sorted(cc_dict.items(), key=lambda t: t[0]):
             responses = body["response"]
             if isinstance(responses, list):
                 result = ", ".join(responses)
@@ -351,15 +358,79 @@ class CustomCommands(commands.Cog):
                 result = responses
             else:
                 continue
-            results.append("{command:<15} : {result}".format(command=command, result=result))
+            # Replace newlines with spaces
+            # Cut preview to 52 characters max
+            if len(result) > 52:
+                result = result[:49] + "..."
+            # Replace newlines with spaces
+            result = result.replace("\n", " ")
+            # Escape markdown and mass mentions
+            result = escape(result, formatting=True, mass_mentions=True)
+            results.append((f"{ctx.clean_prefix}{command}", result))
 
-        commands = "\n".join(results)
-
-        if len(commands) < 1500:
-            await ctx.send(box(commands))
+        if await ctx.embed_requested():
+            content = "\n".join(map("**{0[0]}** {0[1]}".format, results))
+            pages = list(pagify(content, page_length=1024))
+            embed_pages = []
+            for idx, page in enumerate(pages, start=1):
+                embed = discord.Embed(
+                    title=_("Custom Command List"),
+                    description=page,
+                    colour=await ctx.embed_colour(),
+                )
+                embed.set_footer(text=_("Page {num}/{total}").format(num=idx, total=len(pages)))
+                embed_pages.append(embed)
+            await menus.menu(ctx, embed_pages, menus.DEFAULT_CONTROLS)
         else:
-            for page in pagify(commands, delims=[" ", "\n"]):
-                await ctx.author.send(box(page))
+            content = "\n".join(map("{0[0]:<12} : {0[1]}".format, results))
+            pages = list(map(box, pagify(content, page_length=2000, shorten_by=10)))
+            await menus.menu(ctx, pages, menus.DEFAULT_CONTROLS)
+
+    @customcom.command(name="show")
+    async def cc_show(self, ctx, command_name: str):
+        """Shows a custom command's reponses and its settings."""
+
+        try:
+            cmd = await self.commandobj.get_full(ctx.message, command_name)
+        except NotFound:
+            ctx.send(_("I could not not find that custom command."))
+            return
+
+        responses = cmd["response"]
+
+        if isinstance(responses, str):
+            responses = [responses]
+
+        author = ctx.guild.get_member(cmd["author"]["id"])
+        # If the author is still in the server, show their current name
+        if author:
+            author = "{} ({})".format(author, cmd["author"]["id"])
+        else:
+            author = "{} ({})".format(cmd["author"]["name"], cmd["author"]["id"])
+
+        _type = _("Random") if len(responses) > 1 else _("Normal")
+
+        text = _(
+            "Command: {}\n"
+            "Author: {}\n"
+            "Created: {}\n"
+            "Type: {}\n".format(command_name, author, cmd["created_at"], _type)
+        )
+
+        cooldowns = cmd["cooldowns"]
+
+        if cooldowns:
+            cooldown_text = _("Cooldowns:\n")
+            for rate, per in cooldowns.items():
+                cooldown_text += _("{} seconds per {}\n".format(per, rate))
+            text += cooldown_text
+
+        text += _("Responses:\n")
+        responses = ["- " + r for r in responses]
+        text += "\n".join(responses)
+
+        for p in pagify(text):
+            await ctx.send(box(p, lang="yaml"))
 
     async def on_message(self, message):
         is_private = isinstance(message.channel, discord.abc.PrivateChannel)
@@ -411,11 +482,11 @@ class CustomCommands(commands.Cog):
 
     async def cc_command(self, ctx, *cc_args, raw_response, **cc_kwargs) -> None:
         cc_args = (*cc_args, *cc_kwargs.values())
-        results = re.findall(r"\{([^}]+)\}", raw_response)
+        results = re.findall(r"{([^}]+)\}", raw_response)
         for result in results:
             param = self.transform_parameter(result, ctx.message)
             raw_response = raw_response.replace("{" + result + "}", param)
-        results = re.findall(r"\{((\d+)[^\.}]*(\.[^:}]+)?[^}]*)\}", raw_response)
+        results = re.findall(r"{((\d+)[^.}]*(\.[^:}]+)?[^}]*)\}", raw_response)
         if results:
             low = min(int(result[1]) for result in results)
             for result in results:
@@ -424,9 +495,10 @@ class CustomCommands(commands.Cog):
                 raw_response = raw_response.replace("{" + result[0] + "}", arg)
         await ctx.send(raw_response)
 
-    def prepare_args(self, raw_response) -> Mapping[str, Parameter]:
-        args = re.findall(r"\{(\d+)[^:}]*(:[^\.}]*)?[^}]*\}", raw_response)
-        default = [["ctx", Parameter("ctx", Parameter.POSITIONAL_OR_KEYWORD)]]
+    @staticmethod
+    def prepare_args(raw_response) -> Mapping[str, Parameter]:
+        args = re.findall(r"{(\d+)[^:}]*(:[^.}]*)?[^}]*\}", raw_response)
+        default = [("ctx", Parameter("ctx", Parameter.POSITIONAL_OR_KEYWORD))]
         if not args:
             return OrderedDict(default)
         allowed_builtins = {
@@ -466,7 +538,7 @@ class CustomCommands(commands.Cog):
             try:
                 anno = getattr(discord, anno)
                 # force an AttributeError if there's no discord.py converter
-                getattr(commands.converter, anno.__name__ + "Converter")
+                getattr(commands, anno.__name__ + "Converter")
             except AttributeError:
                 anno = allowed_builtins.get(anno.lower(), Parameter.empty)
             if (
@@ -520,7 +592,8 @@ class CustomCommands(commands.Cog):
         # only update cooldowns if the command isn't on cooldown
         self.cooldowns.update(new_cooldowns)
 
-    def transform_arg(self, result, attr, obj) -> str:
+    @staticmethod
+    def transform_arg(result, attr, obj) -> str:
         attr = attr[1:]  # strip initial dot
         if not attr:
             return str(obj)
@@ -530,7 +603,8 @@ class CustomCommands(commands.Cog):
             return raw_result
         return str(getattr(obj, attr, raw_result))
 
-    def transform_parameter(self, result, message) -> str:
+    @staticmethod
+    def transform_parameter(result, message) -> str:
         """
         For security reasons only specific objects are allowed
         Internals are ignored
@@ -554,3 +628,14 @@ class CustomCommands(commands.Cog):
         else:
             return raw_result
         return str(getattr(first, second, raw_result))
+
+    async def get_command_names(self, guild: discord.Guild) -> Set[str]:
+        """Get all custom command names in a guild.
+
+        Returns
+        --------
+        Set[str]
+            A set of all custom command names.
+
+        """
+        return set(await CommandObj.get_commands(self.config.guild(guild)))
