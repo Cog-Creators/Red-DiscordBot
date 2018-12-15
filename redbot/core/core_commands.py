@@ -479,7 +479,7 @@ class Core(commands.Cog, CoreLogic):
     @inviteset.command()
     async def public(self, ctx, confirm: bool = False):
         """
-        Define if the command should be accessible
+        Define if the command should be accessible\
         for the average users.
         """
         if not self.bot.user.bot:
@@ -514,14 +514,14 @@ class Core(commands.Cog, CoreLogic):
         """
         Make the bot create its own role with permissions on join.
 
-        The bot will create its own role with the desired permissions
-        when he join a new server. This is a special role that can't be
+        The bot will create its own role with the desired permissions\
+        when he join a new server. This is a special role that can't be\
         deleted or removed from the bot.
 
         For that, you need to give a valid permissions level.
         You can generate one [here](https://discordapi.com/permissions.html).
 
-        Please note that you might need the two factor authentification for
+        Please note that you might need the two factor authentification for\
         some permissions.
         """
         await self.bot.db.invite_perm.set(level)
@@ -532,7 +532,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Make the invite link redirect to a website.
 
-        If the bot was successfully added, discord will redirect
+        If the bot was successfully added, discord will redirect\
         the user to the desired website.
 
         Give nothing to disable.
