@@ -1570,8 +1570,9 @@ class Mod(commands.Cog):
         """
         An event for modlog case creation
         """
-        mod_channel = await modlog.get_modlog_channel(case.guild)
-        if mod_channel is None:
+        try:
+            mod_channel = await modlog.get_modlog_channel(case.guild)
+        except RuntimeError:
             return
         use_embeds = await case.bot.embed_requested(mod_channel, case.guild.me)
         case_content = await case.message_content(use_embeds)
