@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 from .utils.dataIO import dataIO
 from .utils import checks
-from __main__ import send_cmd_help, settings
 from datetime import datetime
 from collections import deque, defaultdict, OrderedDict
 from cogs.utils.chat_formatting import escape_mass_mentions, box, pagify
@@ -113,8 +112,8 @@ class Mod:
         """Manages server administration settings."""
         if ctx.invoked_subcommand is None:
             server = ctx.message.server
-            await send_cmd_help(ctx)
-            roles = settings.get_server(server).copy()
+            await self.bot.send_cmd_help(ctx)
+            roles = self.bot.settings.get_server(server).copy()
             _settings = {**self.settings[server.id], **roles}
             if "respect_hierarchy" not in _settings:
                 _settings["respect_hierarchy"] = default_settings["respect_hierarchy"]
@@ -155,7 +154,7 @@ class Mod:
                                "".format(channel.mention))
         else:
             if self.settings[server.id]["mod-log"] is None:
-                await send_cmd_help(ctx)
+                await self.bot.send_cmd_help(ctx)
                 return
             self.settings[server.id]["mod-log"] = None
             await self.bot.say("Mod log deactivated.")
@@ -177,7 +176,7 @@ class Mod:
                                "".format(max_mentions))
         else:
             if self.settings[server.id]["ban_mention_spam"] is False:
-                await send_cmd_help(ctx)
+                await self.bot.send_cmd_help(ctx)
                 return
             self.settings[server.id]["ban_mention_spam"] = False
             await self.bot.say("Autoban for mention spam disabled.")
@@ -690,7 +689,7 @@ class Mod:
     async def cleanup(self, ctx):
         """Deletes messages."""
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
 
     @cleanup.command(pass_context=True, no_pm=True)
     async def text(self, ctx, text: str, number: int):
@@ -1014,7 +1013,7 @@ class Mod:
         try:
             case = int(case)
             if not reason:
-                await send_cmd_help(ctx)
+                await self.bot.send_cmd_help(ctx)
                 return
         except:
             if reason:
@@ -1023,7 +1022,7 @@ class Mod:
                 reason = case
             case = self.last_case[server.id].get(author.id)
             if case is None:
-                await send_cmd_help(ctx)
+                await self.bot.send_cmd_help(ctx)
                 return
         try:
             await self.update_case(server, case=case, mod=author,
@@ -1047,7 +1046,7 @@ class Mod:
     async def ignore(self, ctx):
         """Adds servers/channels to ignorelist"""
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
             await self.bot.say(self.count_ignored())
 
     @ignore.command(name="channel", pass_context=True)
@@ -1087,7 +1086,7 @@ class Mod:
     async def unignore(self, ctx):
         """Removes servers/channels from ignorelist"""
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
             await self.bot.say(self.count_ignored())
 
     @unignore.command(name="channel", pass_context=True)
@@ -1137,7 +1136,7 @@ class Mod:
         Using this command with no subcommands will send
         the list of the server's filtered words."""
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
             server = ctx.message.server
             author = ctx.message.author
             if server.id in self.filter:
@@ -1159,7 +1158,7 @@ class Mod:
         filter add word1 word2 word3
         filter add \"This is a sentence\""""
         if words == ():
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
             return
         server = ctx.message.server
         added = 0
@@ -1184,7 +1183,7 @@ class Mod:
         filter remove word1 word2 word3
         filter remove \"This is a sentence\""""
         if words == ():
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
             return
         server = ctx.message.server
         removed = 0
@@ -1206,7 +1205,7 @@ class Mod:
     async def editrole(self, ctx):
         """Edits roles settings"""
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
 
     @editrole.command(aliases=["color"], pass_context=True)
     async def colour(self, ctx, role: discord.Role, value: discord.Colour):
@@ -1308,12 +1307,12 @@ class Mod:
             raise TypeError('Only messages, members or roles may be passed')
 
         server = obj.server
-        admin_role = settings.get_server_admin(server)
+        admin_role = self.bot.settings.get_server_admin(server)
 
         if isinstance(obj, discord.Role):
             return obj.name == admin_role
 
-        if user.id == settings.owner:
+        if user.id == self.bot.settings.owner:
             return True
         elif discord.utils.get(user.roles, name=admin_role):
             return True
@@ -1331,13 +1330,13 @@ class Mod:
             raise TypeError('Only messages, members or roles may be passed')
 
         server = obj.server
-        admin_role = settings.get_server_admin(server)
-        mod_role = settings.get_server_mod(server)
+        admin_role = self.bot.settings.get_server_admin(server)
+        mod_role = self.bot.settings.get_server_mod(server)
 
         if isinstance(obj, discord.Role):
             return obj.name in [admin_role, mod_role]
 
-        if user.id == settings.owner:
+        if user.id == self.bot.settings.owner:
             return True
         elif discord.utils.get(user.roles, name=admin_role):
             return True

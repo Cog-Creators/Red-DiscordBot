@@ -2,7 +2,6 @@ from discord.ext import commands
 from cogs.utils.dataIO import dataIO
 from cogs.utils import checks
 from cogs.utils.chat_formatting import pagify, box
-from __main__ import send_cmd_help, set_cog
 import os
 from subprocess import run as sp_run, PIPE
 import shutil
@@ -63,14 +62,14 @@ class Downloader:
     async def cog(self, ctx):
         """Additional cogs management"""
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
 
     @cog.group(pass_context=True)
     async def repo(self, ctx):
         """Repo management commands"""
         if ctx.invoked_subcommand is None or \
                 isinstance(ctx.invoked_subcommand, commands.Group):
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
             return
 
     @repo.command(name="add", pass_context=True)
@@ -375,7 +374,7 @@ class Downloader:
         if cog not in self.repos[repo_name]:
             await self.bot.say("That cog isn't available from that repo.")
             return
-        set_cog("cogs." + cog, False)
+        self.bot.set_cog("cogs." + cog, False)
         self.repos[repo_name][cog]['INSTALLED'] = False
         self.save_repos()
         os.remove(os.path.join("cogs", cog + ".py"))
@@ -412,7 +411,7 @@ class Downloader:
                 await self.bot.say("Ok then, you can load it with"
                                    " `{}load {}`".format(ctx.prefix, cog))
             elif answer.content.lower().strip() == "yes":
-                set_cog("cogs." + cog, True)
+                self.bot.set_cog("cogs." + cog, True)
                 owner = self.bot.get_cog('Owner')
                 await owner.load.callback(owner, cog_name=cog)
             else:

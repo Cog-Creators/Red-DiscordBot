@@ -7,7 +7,6 @@ from copy import deepcopy
 from .utils import checks
 from cogs.utils.chat_formatting import pagify, box
 from enum import Enum
-from __main__ import send_cmd_help
 import os
 import time
 import logging
@@ -302,7 +301,7 @@ class Economy:
     async def _bank(self, ctx):
         """Bank operations"""
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
 
     @_bank.command(pass_context=True, no_pm=True)
     async def register(self, ctx):
@@ -626,7 +625,7 @@ class Economy:
             for k, v in settings.items():
                 msg += "{}: {}\n".format(k, v)
             msg += "```"
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
             await self.bot.say(msg)
 
     @economyset.command(pass_context=True)

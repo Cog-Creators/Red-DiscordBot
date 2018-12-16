@@ -7,7 +7,6 @@ from cogs.utils.dataIO import dataIO
 from cogs.utils import checks
 from cogs.utils.chat_formatting import pagify, escape
 from urllib.parse import urlparse
-from __main__ import send_cmd_help, settings
 from json import JSONDecodeError
 import re
 import logging
@@ -208,11 +207,11 @@ class Playlist:
         if self.main_class._playlist_exists_global(self.name):
             return False
 
-        admin_role = settings.get_server_admin(self.server)
-        mod_role = settings.get_server_mod(self.server)
+        admin_role = self.bot.settings.get_server_admin(self.server)
+        mod_role = self.bot.settings.get_server_mod(self.server)
 
         is_playlist_author = self.is_author(user)
-        is_bot_owner = user.id == settings.owner
+        is_bot_owner = user.id == self.bot.settings.owner
         is_server_owner = self.server.owner.id == self.author
         is_admin = discord.utils.get(user.roles, name=admin_role) is not None
         is_mod = discord.utils.get(user.roles, name=mod_role) is not None
@@ -1146,7 +1145,7 @@ class Audio:
     async def audioset(self, ctx):
         """Audio settings."""
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
             return
 
     @audioset.command(name="cachemax")
@@ -1323,7 +1322,7 @@ class Audio:
     async def audiostat(self, ctx):
         """General stats on audio stuff."""
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
             return
 
     @audiostat.command(name="servers")
@@ -1339,7 +1338,7 @@ class Audio:
     async def cache(self, ctx):
         """Cache management tools."""
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
             return
 
     @cache.command(name="dump")
@@ -1396,7 +1395,7 @@ class Audio:
     async def local(self, ctx):
         """Local playlists commands"""
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
 
     @local.command(name="start", pass_context=True, no_pm=True)
     async def play_local(self, ctx, *, name):
@@ -1592,7 +1591,7 @@ class Audio:
     async def playlist(self, ctx):
         """Playlist management/control."""
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
 
     @playlist.command(pass_context=True, no_pm=True, name="create")
     async def playlist_create(self, ctx, name):
@@ -2048,10 +2047,10 @@ class Audio:
         if not self.get_server_settings(server)["VOTE_ENABLED"]:
             return True
 
-        admin_role = settings.get_server_admin(server)
-        mod_role = settings.get_server_mod(server)
+        admin_role = self.bot.settings.get_server_admin(server)
+        mod_role = self.bot.settings.get_server_mod(server)
 
-        is_owner = member.id == settings.owner
+        is_owner = member.id == self.bot.settings.owner
         is_server_owner = member == server.owner
         is_admin = discord.utils.get(member.roles, name=admin_role) is not None
         is_mod = discord.utils.get(member.roles, name=mod_role) is not None
