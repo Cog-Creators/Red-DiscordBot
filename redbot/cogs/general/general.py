@@ -247,6 +247,7 @@ class General(commands.Cog):
         except discord.Forbidden:
             await ctx.send(_("I need the `Embed links` permission to send this."))
 
+    @commands.is_nsfw()
     @commands.command()
     async def urban(self, ctx, *, word):
         """Search the Urban Dictionary.
