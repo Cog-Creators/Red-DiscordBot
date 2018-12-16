@@ -866,27 +866,42 @@ class Mod(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(manage_nicknames=True)
     @checks.admin_or_permissions(manage_nicknames=True)
-    async def rename(self, ctx: commands.Context, user: discord.Member, *, nickname=""):
+    async def rename(self, ctx: commands.Context, user: discord.Member, *, nickname: str = ""):
         """Change a user's nickname.
 
         Leaving the nickname empty will remove it.
         """
         nickname = nickname.strip()
-        if nickname == "":
+        me = cast(discord.Member, ctx.me)
+        if not nickname:
             nickname = None
-        if len(nickname) > 32:
-            await ctx.send("The nickname you have provided is too long.")
+        elif not 2 <= len(nickname) <= 32:
+            await ctx.send(_("Nicknames must be between 2 and 32 characters long."))
+            return
+        if not (
+            (me.guild_permissions.manage_nicknames or me.guild_permissions.administrator)
+            and me.top_role > user.top_role
+            and user != ctx.guild.owner
+        ):
+            await ctx.send(
+                _(
+                    "I do not have permission to rename that member. They may be higher than or "
+                    "equal to me in the role hierarchy."
+                )
+            )
         else:
             try:
                 await user.edit(reason=get_audit_reason(ctx.author, None), nick=nickname)
             except discord.Forbidden:
-                return await ctx.send(
-                    "I do not have permission to rename that member.\n"
-                    "The member is probably higher than me in the server hierarchy."
-                )
-            except discord.HTTPException:
-                return await ctx.send("An unexpected error has occured.")
-            await ctx.send("Done.")
+                # Just in case we missed something in the permissions check above
+                await ctx.send(_("I do not have permission to rename that member."))
+            except discord.HTTPException as exc:
+                if exc.status == 400:  # BAD REQUEST
+                    await ctx.send(_("That nickname is invalid."))
+                else:
+                    await ctx.send(_("An unexpected error has occured."))
+            else:
+                await ctx.send(_("Done."))
 
     @commands.group()
     @commands.guild_only()
@@ -1319,8 +1334,8 @@ class Mod(commands.Cog):
             user = author
 
         #  A special case for a special someone :^)
-        special_date = datetime(2016, 1, 10, 6, 8, 4, 443000)
-        is_special = user.id == 96130341705637888 and guild.id == 133049272517001216
+        special_date = datetime(2016, 1, 10, 6, 8, 4, 443_000)
+        is_special = user.id == 96_130_341_705_637_888 and guild.id == 133_049_272_517_001_216
 
         roles = sorted(user.roles)[1:]
         names, nicks = await self.get_names_and_nicks(user)
