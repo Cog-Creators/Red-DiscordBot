@@ -452,7 +452,20 @@ class Requires:
             should_invoke = await self._verify_user(ctx)
         elif isinstance(next_state, dict):
             # NORMAL to PASSIVE_ALLOW; should we proceed as normal or transition?
-            next_state = next_state[await self._verify_user(ctx)]
+            # We must check what would happen normally, if no explicit rules were set.
+            default_rule = PermState.NORMAL
+            if ctx.guild is not None:
+                default_rule = self.get_default_guild_rule(guild_id=ctx.guild.id)
+            if default_rule is PermState.NORMAL:
+                default_rule = self.default_global_rule
+
+            if default_rule == PermState.ACTIVE_DENY:
+                would_invoke = False
+            elif default_rule == PermState.ACTIVE_ALLOW:
+                would_invoke = True
+            else:
+                would_invoke = await self._verify_user(ctx)
+            next_state = next_state[would_invoke]
 
         ctx.permission_state = next_state
         return should_invoke
