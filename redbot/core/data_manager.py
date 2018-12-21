@@ -154,7 +154,7 @@ def core_data_path() -> Path:
 
 
 # noinspection PyUnusedLocal
-@deprecated("This function is now obselete.")
+@deprecated("bundled_data_path() without calling this function")
 def load_bundled_data(cog_instance, init_location: str):
     pass
 
@@ -187,8 +187,7 @@ def bundled_data_path(cog_instance: commands.Cog) -> Path:
         If no bundled data folder exists.
 
     """
-
-    bundled_path = Path(inspect.getfile(cog_instance)).parent / "data"
+    bundled_path = Path(inspect.getfile(cog_instance.__class__)).parent / "data"
 
     if not bundled_path.is_dir():
         raise FileNotFoundError("No such directory {}".format(bundled_path))
