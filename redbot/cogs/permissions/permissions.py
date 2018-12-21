@@ -148,23 +148,20 @@ class Permissions(commands.Cog):
         if not command:
             return await ctx.send_help()
 
-        message = copy(ctx.message)
-        message.author = user
-        message.content = "{}{}".format(ctx.prefix, command)
+        fake_message = copy(ctx.message)
+        fake_message.author = user
+        fake_message.content = "{}{}".format(ctx.prefix, command)
 
         com = ctx.bot.get_command(command)
         if com is None:
             out = _("No such command")
         else:
+            fake_context = await ctx.bot.get_context(fake_message)
             try:
-                testcontext = await ctx.bot.get_context(message, cls=commands.Context)
-                to_check = [*reversed(com.parents)] + [com]
-                can = False
-                for cmd in to_check:
-                    can = await cmd.can_run(testcontext)
-                    if can is False:
-                        break
-            except commands.CheckFailure:
+                can = await com.can_run(
+                    fake_context, check_all_parents=True, change_permission_state=False
+                )
+            except commands.CommandError:
                 can = False
 
             out = (
