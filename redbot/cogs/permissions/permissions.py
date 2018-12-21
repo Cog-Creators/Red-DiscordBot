@@ -151,12 +151,12 @@ class Permissions(commands.Cog):
         fake_message = copy(ctx.message)
         fake_message.author = user
         fake_message.content = "{}{}".format(ctx.prefix, command)
-        fake_context = await ctx.bot.get_context(fake_message)
 
         com = ctx.bot.get_command(command)
         if com is None:
             out = _("No such command")
         else:
+            fake_context = await ctx.bot.get_context(fake_message)
             try:
                 can = await com.can_run(
                     fake_context, check_all_parents=True, change_permission_state=False
