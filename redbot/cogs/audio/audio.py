@@ -1285,6 +1285,9 @@ class Audio(commands.Cog):
                     url_check = self._url_check(track["info"]["uri"])
                     if not url_check:
                         continue
+                if track["info"]["uri"].startswith("localtracks/"):
+                    if not os.path.isfile(track["info"]["uri"]):
+                        continue
                 player.add(author_obj, lavalink.rest_api.Track(data=track))
                 track_count = track_count + 1
             embed = discord.Embed(
@@ -2005,6 +2008,7 @@ class Audio(commands.Cog):
     async def seek(self, ctx, seconds: int = 30):
         """Seek ahead or behind on a track by seconds."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
         player = lavalink.get_player(ctx.guild.id)
@@ -2017,6 +2021,13 @@ class Audio(commands.Cog):
                 ctx, ctx.author
             ):
                 return await self._embed_msg(ctx, _("You need the DJ role to use seek."))
+        if vote_enabled:
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
+                ctx, ctx.author
+            ):
+                return await self._embed_msg(
+                    ctx, _("There are other people listening - vote to skip instead.")
+                )
         if player.current:
             if player.current.is_stream:
                 return await self._embed_msg(ctx, _("Can't seek on a stream."))

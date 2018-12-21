@@ -311,13 +311,15 @@ class Mod(commands.Cog):
         if not cur_setting:
             await self.settings.guild(guild).reinvite_on_unban.set(True)
             await ctx.send(
-                _("Users unbanned with {command} will be reinvited.").format(f"{ctx.prefix}unban")
+                _("Users unbanned with {command} will be reinvited.").format(
+                    command=f"{ctx.prefix}unban"
+                )
             )
         else:
             await self.settings.guild(guild).reinvite_on_unban.set(False)
             await ctx.send(
                 _("Users unbanned with {command} will not be reinvited.").format(
-                    f"{ctx.prefix}unban"
+                    command=f"{ctx.prefix}unban"
                 )
             )
 
@@ -864,20 +866,46 @@ class Mod(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(manage_nicknames=True)
     @checks.admin_or_permissions(manage_nicknames=True)
-    async def rename(self, ctx: commands.Context, user: discord.Member, *, nickname=""):
+    async def rename(self, ctx: commands.Context, user: discord.Member, *, nickname: str = ""):
         """Change a user's nickname.
 
         Leaving the nickname empty will remove it.
         """
         nickname = nickname.strip()
-        if nickname == "":
+        me = cast(discord.Member, ctx.me)
+        if not nickname:
             nickname = None
-        await user.edit(reason=get_audit_reason(ctx.author, None), nick=nickname)
-        await ctx.send("Done.")
+        elif not 2 <= len(nickname) <= 32:
+            await ctx.send(_("Nicknames must be between 2 and 32 characters long."))
+            return
+        if not (
+            (me.guild_permissions.manage_nicknames or me.guild_permissions.administrator)
+            and me.top_role > user.top_role
+            and user != ctx.guild.owner
+        ):
+            await ctx.send(
+                _(
+                    "I do not have permission to rename that member. They may be higher than or "
+                    "equal to me in the role hierarchy."
+                )
+            )
+        else:
+            try:
+                await user.edit(reason=get_audit_reason(ctx.author, None), nick=nickname)
+            except discord.Forbidden:
+                # Just in case we missed something in the permissions check above
+                await ctx.send(_("I do not have permission to rename that member."))
+            except discord.HTTPException as exc:
+                if exc.status == 400:  # BAD REQUEST
+                    await ctx.send(_("That nickname is invalid."))
+                else:
+                    await ctx.send(_("An unexpected error has occured."))
+            else:
+                await ctx.send(_("Done."))
 
     @commands.group()
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_channel=True)
+    @checks.mod_or_permissions(manage_channels=True)
     async def mute(self, ctx: commands.Context):
         """Mute users."""
         pass
@@ -1033,7 +1061,7 @@ class Mod(commands.Cog):
     @commands.group()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_roles=True)
-    @checks.mod_or_permissions(manage_channel=True)
+    @checks.mod_or_permissions(manage_channels=True)
     async def unmute(self, ctx: commands.Context):
         """Unmute users."""
         pass
@@ -1306,8 +1334,8 @@ class Mod(commands.Cog):
             user = author
 
         #  A special case for a special someone :^)
-        special_date = datetime(2016, 1, 10, 6, 8, 4, 443000)
-        is_special = user.id == 96130341705637888 and guild.id == 133049272517001216
+        special_date = datetime(2016, 1, 10, 6, 8, 4, 443_000)
+        is_special = user.id == 96_130_341_705_637_888 and guild.id == 133_049_272_517_001_216
 
         roles = sorted(user.roles)[1:]
         names, nicks = await self.get_names_and_nicks(user)
@@ -1567,8 +1595,9 @@ class Mod(commands.Cog):
         """
         An event for modlog case creation
         """
-        mod_channel = await modlog.get_modlog_channel(case.guild)
-        if mod_channel is None:
+        try:
+            mod_channel = await modlog.get_modlog_channel(case.guild)
+        except RuntimeError:
             return
         use_embeds = await case.bot.embed_requested(mod_channel, case.guild.me)
         case_content = await case.message_content(use_embeds)
