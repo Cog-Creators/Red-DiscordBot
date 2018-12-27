@@ -1138,7 +1138,7 @@ class Mod:
         Bot owners, Server owners/admins are automatically
         immune to filters"""
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
             server = ctx.message.server
             author = ctx.message.author
             if server.id in self.filter:
