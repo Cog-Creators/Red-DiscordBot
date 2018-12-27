@@ -1182,7 +1182,6 @@ class Mod:
         else:
             await self.bot.say("Words already in the filter.")
 
-
     @_filter.command(name="remove", pass_context=True)
     async def filter_remove(self, ctx, *words: str):
         """Remove words from the filter
