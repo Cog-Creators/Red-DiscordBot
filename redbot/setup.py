@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-
+#!/usr/bin/env python3
 import argparse
 import asyncio
 import json
@@ -177,26 +176,21 @@ def basic_setup():
 async def json_to_mongo(current_data_dir: Path, storage_details: dict):
     from redbot.core.drivers.red_mongo import Mongo
 
-    core_data_file = list(current_data_dir.glob("core/settings.json"))[0]
-    m = Mongo("Core", "0", **storage_details)
+    core_data_file = current_data_dir / "core" / "settings.json"
+    driver = Mongo(cog_name="Core", identifier="0", **storage_details)
     with core_data_file.open(mode="r") as f:
         core_data = json.loads(f.read())
-    collection = m.get_collection()
-    await collection.update_one(
-        {"_id": m.unique_cog_identifier}, update={"$set": core_data["0"]}, upsert=True
-    )
+    data = core_data.get("0", {})
+    for key, value in data.items():
+        await driver.set(key, value=value)
     for p in current_data_dir.glob("cogs/**/settings.json"):
+        cog_name = p.parent.stem
         with p.open(mode="r") as f:
-            cog_data = json.loads(f.read())
-        cog_i = None
-        for ident in list(cog_data.keys()):
-            cog_i = str(hash(ident))
-        cog_m = Mongo(p.parent.stem, cog_i, **storage_details)
-        cog_c = cog_m.get_collection()
-        for ident in list(cog_data.keys()):
-            await cog_c.update_one(
-                {"_id": cog_m.unique_cog_identifier}, update={"$set": cog_data[cog_i]}, upsert=True
-            )
+            cog_data = json.load(f)
+        for identifier, data in cog_data.items():
+            driver = Mongo(cog_name, identifier, **storage_details)
+            for key, value in data.items():
+                await driver.set(key, value=value)
 
 
 async def mongo_to_json(current_data_dir: Path, storage_details: dict):
