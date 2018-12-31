@@ -2,7 +2,7 @@ import asyncio
 import contextlib
 from datetime import datetime, timedelta
 from collections import deque, defaultdict, namedtuple
-from typing import cast
+from typing import cast, Optional
 
 import discord
 
@@ -782,17 +782,21 @@ class Mod(commands.Cog):
 
     @staticmethod
     async def _voice_perm_check(
-        ctx: commands.Context, user_voice_state: discord.VoiceState, **perms: bool
+        ctx: commands.Context, user_voice_state: Optional[discord.VoiceState], **perms: bool
     ) -> bool:
         """Check if the bot and user have sufficient permissions for voicebans.
+
+        This also verifies that the user's voice state and connected
+        channel are not ``None``.
 
         Returns
         -------
         bool
-            ``True`` if the permissions are sufficient.
+            ``True`` if the permissions are sufficient and the user has
+            a valid voice state.
 
         """
-        if user_voice_state is None:
+        if user_voice_state is None or user_voice_state.channel is None:
             await ctx.send(_("That user is not in a voice channel."))
             return False
         voice_channel: discord.VoiceChannel = user_voice_state.channel
@@ -966,40 +970,33 @@ class Mod(commands.Cog):
             return
         guild = ctx.guild
         author = ctx.author
-        if user_voice_state:
-            channel = user_voice_state.channel
-            if channel:
-                audit_reason = get_audit_reason(author, reason)
+        channel = user_voice_state.channel
+        audit_reason = get_audit_reason(author, reason)
 
-                success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
+        success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
 
-                if success:
-                    await ctx.send(
-                        _("Muted {user} in channel {channel.name}").format(
-                            user=user, channel=channel
-                        )
-                    )
-                    try:
-                        await modlog.create_case(
-                            self.bot,
-                            guild,
-                            ctx.message.created_at,
-                            "vmute",
-                            user,
-                            author,
-                            reason,
-                            until=None,
-                            channel=channel,
-                        )
-                    except RuntimeError as e:
-                        await ctx.send(e)
-                else:
-                    await channel.send(issue)
-            else:
-                await ctx.send(_("That user is not in a voice channel right now!"))
+        if success:
+            await ctx.send(
+                _("Muted {user} in channel {channel.name}").format(
+                    user=user, channel=channel
+                )
+            )
+            try:
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    ctx.message.created_at,
+                    "vmute",
+                    user,
+                    author,
+                    reason,
+                    until=None,
+                    channel=channel,
+                )
+            except RuntimeError as e:
+                await ctx.send(e)
         else:
-            await ctx.send(_("No voice state for the target!"))
-            return
+            await ctx.send(issue)
 
     @mute.command(name="channel")
     @commands.guild_only()
@@ -1129,42 +1126,35 @@ class Mod(commands.Cog):
             return
         guild = ctx.guild
         author = ctx.author
-        if user_voice_state:
-            channel = user_voice_state.channel
-            if channel:
-                audit_reason = get_audit_reason(author, reason)
+        channel = user_voice_state.channel
+        audit_reason = get_audit_reason(author, reason)
 
-                success, message = await self.unmute_user(
-                    guild, channel, author, user, audit_reason
+        success, message = await self.unmute_user(
+            guild, channel, author, user, audit_reason
+        )
+
+        if success:
+            await ctx.send(
+                _("Unmuted {user} in channel {channel.name}").format(
+                    user=user, channel=channel
                 )
-
-                if success:
-                    await ctx.send(
-                        _("Unmuted {user} in channel {channel.name}").format(
-                            user=user, channel=channel
-                        )
-                    )
-                    try:
-                        await modlog.create_case(
-                            self.bot,
-                            guild,
-                            ctx.message.created_at,
-                            "vunmute",
-                            user,
-                            author,
-                            reason,
-                            until=None,
-                            channel=channel,
-                        )
-                    except RuntimeError as e:
-                        await ctx.send(e)
-                else:
-                    await ctx.send(_("Unmute failed. Reason: {}").format(message))
-            else:
-                await ctx.send(_("That user is not in a voice channel right now!"))
+            )
+            try:
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    ctx.message.created_at,
+                    "vunmute",
+                    user,
+                    author,
+                    reason,
+                    until=None,
+                    channel=channel,
+                )
+            except RuntimeError as e:
+                await ctx.send(e)
         else:
-            await ctx.send(_("No voice state for the target!"))
-            return
+            await ctx.send(_("Unmute failed. Reason: {}").format(message))
 
     @checks.mod_or_permissions(administrator=True)
     @unmute.command(name="channel")
