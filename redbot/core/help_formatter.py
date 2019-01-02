@@ -348,7 +348,7 @@ async def help(ctx: commands.Context, *, command_name: str = ""):
                 else:
                     await destination.send(page)
         else:
-            await menus.menu(ctx, pages, menus.DEFAULT_CONTROLS)
+            await menus.menu(ctx, pages, menus.DEFAULT_CONTROLS, timeout=60.0)
 
     except discord.Forbidden:
         await ctx.channel.send(
