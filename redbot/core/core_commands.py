@@ -468,7 +468,7 @@ class Core(commands.Cog, CoreLogic):
 
         pred = MessagePredicate.yes_or_no(ctx)
         try:
-            await self.bot.wait_for("message", check=MessagePredicate.yes_or_no(ctx))
+            await self.bot.wait_for("message", check=pred)
         except asyncio.TimeoutError:
             await ctx.send("Response timed out.")
             return
@@ -1725,7 +1725,7 @@ class Core(commands.Cog, CoreLogic):
         await ctx.tick()
 
     @commands.guild_only()
-    @checks.guildowner_or_permissions(manage_server=True)
+    @checks.guildowner_or_permissions(manage_guild=True)
     @commands.group(name="autoimmune")
     async def autoimmune_group(self, ctx: commands.Context):
         """

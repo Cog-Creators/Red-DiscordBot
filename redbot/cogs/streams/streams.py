@@ -28,7 +28,7 @@ from . import streamtypes as _streamtypes
 from collections import defaultdict
 import asyncio
 import re
-from typing import Optional, List
+from typing import Optional, List, Tuple
 
 CHECK_DELAY = 60
 
@@ -320,6 +320,7 @@ class Streams(commands.Cog):
     @commands.group()
     @checks.mod()
     async def streamset(self, ctx: commands.Context):
+        """Set tokens for accessing streams."""
         pass
 
     @streamset.command()
@@ -396,9 +397,6 @@ class Streams(commands.Cog):
     async def role(self, ctx: commands.Context, *, role: discord.Role):
         """Toggle a role mention."""
         current_setting = await self.db.role(role).mention()
-        if not role.mentionable:
-            await ctx.send("That role is not mentionable!")
-            return
         if current_setting:
             await self.db.role(role).mention.set(False)
             await ctx.send(
@@ -408,11 +406,17 @@ class Streams(commands.Cog):
             )
         else:
             await self.db.role(role).mention.set(True)
-            await ctx.send(
-                _(
-                    "When a stream or community is live, `@\u200b{role.name}` will be mentioned."
-                ).format(role=role)
-            )
+            msg = _(
+                "When a stream or community is live, `@\u200b{role.name}` will be mentioned."
+            ).format(role=role)
+            if not role.mentionable:
+                msg += " " + _(
+                    "Since the role is not mentionable, it will be momentarily made mentionable "
+                    "when announcing a streamalert. Please make sure I have the correct "
+                    "permissions to manage this role, or else members of this role won't receive "
+                    "a notification."
+                )
+            await ctx.send(msg)
 
     @streamset.command()
     @commands.guild_only()
@@ -535,30 +539,46 @@ class Streams(commands.Cog):
                         continue
                     for channel_id in stream.channels:
                         channel = self.bot.get_channel(channel_id)
-                        mention_str = await self._get_mention_str(channel.guild)
+                        mention_str, edited_roles = await self._get_mention_str(channel.guild)
 
                         if mention_str:
                             content = _("{mention}, {stream.name} is live!").format(
                                 mention=mention_str, stream=stream
                             )
                         else:
-                            content = _("{stream.name} is live!").format(stream=stream.name)
+                            content = _("{stream.name} is live!").format(stream=stream)
 
                         m = await channel.send(content, embed=embed)
                         stream._messages_cache.append(m)
+                        if edited_roles:
+                            for role in edited_roles:
+                                await role.edit(mentionable=False)
                         await self.save_streams()
 
-    async def _get_mention_str(self, guild: discord.Guild):
+    async def _get_mention_str(self, guild: discord.Guild) -> Tuple[str, List[discord.Role]]:
+        """Returns a 2-tuple with the string containing the mentions, and a list of
+        all roles which need to have their `mentionable` property set back to False.
+        """
         settings = self.db.guild(guild)
         mentions = []
+        edited_roles = []
         if await settings.mention_everyone():
             mentions.append("@everyone")
         if await settings.mention_here():
             mentions.append("@here")
+        can_manage_roles = guild.me.guild_permissions.manage_roles
         for role in guild.roles:
             if await self.db.role(role).mention():
+                if can_manage_roles and not role.mentionable:
+                    try:
+                        await role.edit(mentionable=True)
+                    except discord.Forbidden:
+                        # Might still be unable to edit role based on hierarchy
+                        pass
+                    else:
+                        edited_roles.append(role)
                 mentions.append(role.mention)
-        return " ".join(mentions)
+        return " ".join(mentions), edited_roles
 
     async def check_communities(self):
         for community in self.communities:
@@ -589,12 +609,15 @@ class Streams(commands.Cog):
                         emb = await community.make_embed(streams)
                         chn_msg = [m for m in community._messages_cache if m.channel == chn]
                         if not chn_msg:
-                            mentions = await self._get_mention_str(chn.guild)
+                            mentions, roles = await self._get_mention_str(chn.guild)
                             if mentions:
                                 msg = await chn.send(mentions, embed=emb)
                             else:
                                 msg = await chn.send(embed=emb)
                             community._messages_cache.append(msg)
+                            if roles:
+                                for role in roles:
+                                    await role.edit(mentionable=False)
                             await self.save_communities()
                         else:
                             chn_msg = sorted(chn_msg, key=lambda x: x.created_at, reverse=True)[0]

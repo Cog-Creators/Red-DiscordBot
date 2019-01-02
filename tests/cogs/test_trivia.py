@@ -10,7 +10,7 @@ def test_trivia_lists():
     for l in list_names:
         with l.open() as f:
             try:
-                dict_ = yaml.load(f)
+                dict_ = yaml.safe_load(f)
             except yaml.error.YAMLError as e:
                 problem_lists.append((l.stem, "YAML error:\n{!s}".format(e)))
             else:
