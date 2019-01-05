@@ -1134,7 +1134,9 @@ class Mod:
 
         Use double quotes to add/remove sentences
         Using this command with no subcommands will send
-        the list of the server's filtered words."""
+        the list of the server's filtered words.
+        Bot owners, server owners and mods / admins are immune
+        to the filter"""
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
             server = ctx.message.server
@@ -1161,6 +1163,9 @@ class Mod:
             await self.bot.send_cmd_help(ctx)
             return
         server = ctx.message.server
+        explanation = ("Please note: the filter will only work in channels "
+                       "where the bot has the `manage_messages` "
+                       "permission."
         added = 0
         if server.id not in self.filter.keys():
             self.filter[server.id] = []
@@ -1170,7 +1175,8 @@ class Mod:
                 added += 1
         if added:
             dataIO.save_json("data/mod/filter.json", self.filter)
-            await self.bot.say("Words added to filter.")
+            await self.bot.say("Words added to filter.\n" +
+                               explanation)
         else:
             await self.bot.say("Words already in the filter.")
 
@@ -1357,7 +1363,7 @@ class Mod:
 
     async def new_case(self, server, *, action, mod=None, user, reason=None, until=None, channel=None, force_create=False):
         action_type = action.lower() + "_cases"
-        
+
         enabled_case = self.settings.get(server.id, {}).get(action_type, default_settings.get(action_type))
         if not force_create and not enabled_case:
             return False
@@ -1468,7 +1474,7 @@ class Mod:
                                "discordapp.com/" in tmp["user"].lower()))
         if contains_invite:
             tmp["user"] = tmp["user"].replace(".", "\u200b.")
-        
+
         case_msg = (
             "**Case #{case}** | {action}\n"
             "**User:** {user} ({user_id})\n"
