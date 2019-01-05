@@ -1135,9 +1135,8 @@ class Mod:
         Use double quotes to add/remove sentences
         Using this command with no subcommands will send
         the list of the server's filtered words.
-
-        Bot owners, Server owners and admins are automatically
-        immune to filters"""
+        Bot owners, server owners and mods / admins are immune
+        to the filter"""
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
             server = ctx.message.server
@@ -1164,7 +1163,9 @@ class Mod:
             await self.bot.send_cmd_help(ctx)
             return
         server = ctx.message.server
-        message = "Please note: Filter will only work in channels where the bot has the `manage_messages` permission."
+        explanation = ("Please note: the filter will only work in channels "
+                       "where the bot has the `manage_messages` "
+                       "permission."
         added = 0
         if server.id not in self.filter.keys():
             self.filter[server.id] = []
@@ -1175,7 +1176,7 @@ class Mod:
         if added:
             dataIO.save_json("data/mod/filter.json", self.filter)
             await self.bot.say("Words added to filter.\n" + 
-			message)
+                               explanation)
         else:
             await self.bot.say("Words already in the filter.")
 
