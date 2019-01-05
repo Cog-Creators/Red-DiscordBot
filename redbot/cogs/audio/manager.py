@@ -71,13 +71,19 @@ async def get_java_version(loop) -> _JavaVersion:
     #     ... version "MAJOR.MINOR.PATCH[_BUILD]" ...
     #     ...
     # We only care about the major and minor parts though.
-    version_line_re = re.compile(r'version "(?P<major>\d+).(?P<minor>\d+).\d+(?:_\d+)?"')
+    version_line_re = re.compile(
+        r'version "(?P<major>\d+).(?P<minor>\d+).\d+(?:_\d+)?(?:-[A-Za-z0-9]+)?"'
+    )
+    short_version_re = re.compile(r'version "(?P<major>\d+)"')
 
     lines = version_info.splitlines()
     for line in lines:
         match = version_line_re.search(line)
+        short_match = short_version_re.search(line)
         if match:
             return int(match["major"]), int(match["minor"])
+        elif short_match:
+            return int(short_match["major"]), 0
 
     raise RuntimeError(
         "The output of `java -version` was unexpected. Please report this issue on Red's "

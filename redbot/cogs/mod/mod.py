@@ -2,14 +2,16 @@ import asyncio
 import contextlib
 from datetime import datetime, timedelta
 from collections import deque, defaultdict, namedtuple
-from typing import cast, Union
+from typing import Optional, Union, cast
 
 import discord
 
+from discord.ext.commands.converter import Converter, Greedy
+from discord.ext.commands.errors import BadArgument
 from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box, escape
+from redbot.core.utils.chat_formatting import box, escape, pagify
 from .checks import mod_or_voice_permissions, admin_or_voice_permissions, bot_has_voice_permissions
 from redbot.core.utils.mod import is_mod_or_superior, is_allowed_by_hierarchy, get_audit_reason
 from .log import log
@@ -17,6 +19,18 @@ from .log import log
 from redbot.core.utils.common_filters import filter_invites, filter_various_mentions
 
 _ = T_ = Translator("Mod", __file__)
+
+
+class RawUserIds(Converter):
+    async def convert(self, ctx, argument):
+        # This is for the hackban command, where we receive IDs that
+        # are most likely not in the guild.
+        # As long as it's numeric and long enough, it makes a good candidate
+        # to attempt a ban on
+        if argument.isnumeric() and len(argument) >= 17:
+            return int(argument)
+
+        raise BadArgument("{} doesn't look like a valid user ID.".format(argument))
 
 
 @cog_i18n(_)
@@ -311,13 +325,15 @@ class Mod(commands.Cog):
         if not cur_setting:
             await self.settings.guild(guild).reinvite_on_unban.set(True)
             await ctx.send(
-                _("Users unbanned with {command} will be reinvited.").format(f"{ctx.prefix}unban")
+                _("Users unbanned with {command} will be reinvited.").format(
+                    command=f"{ctx.prefix}unban"
+                )
             )
         else:
             await self.settings.guild(guild).reinvite_on_unban.set(False)
             await ctx.send(
                 _("Users unbanned with {command} will not be reinvited.").format(
-                    f"{ctx.prefix}unban"
+                    command=f"{ctx.prefix}unban"
                 )
             )
 
@@ -384,145 +400,144 @@ class Mod(commands.Cog):
     @commands.bot_has_permissions(ban_members=True)
     @checks.admin_or_permissions(ban_members=True)
     async def ban(
-        self, ctx: commands.Context, user: discord.Member, days: str = None, *, reason: str = None
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        days: Optional[int] = 0,
+        *,
+        reason: str = None,
     ):
         """Ban a user from this server.
 
-        Deletes `<days>` worth of messages.
+        If days is not a number, it's treated as the first word of the reason.
+        Minimum 0 days, maximum 7. Defaults to 0."""
+        result = await self.ban_user(
+            user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
+        )
 
-        If `<days>` is not a number, it's treated as the first word of
-        the reason.  Minimum 0 days, maximum 7. Defaults to 0.
-        """
-        author = ctx.author
-        guild = ctx.guild
-
-        if author == user:
-            await ctx.send(
-                _("I cannot let you do that. Self-harm is bad {}").format("\N{PENSIVE FACE}")
-            )
-            return
-        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
-            await ctx.send(
-                _(
-                    "I cannot let you do that. You are "
-                    "not higher than the user in the role "
-                    "hierarchy."
-                )
-            )
-            return
-        elif ctx.guild.me.top_role <= user.top_role or user == ctx.guild.owner:
-            await ctx.send(_("I cannot do that due to discord hierarchy rules"))
-            return
-
-        if days:
-            if days.isdigit():
-                days = int(days)
-            else:
-                if reason:
-                    reason = "{} {}".format(days, reason)
-                else:
-                    reason = days
-                days = 0
-        else:
-            days = 0
-
-        audit_reason = get_audit_reason(author, reason)
-
-        if days < 0 or days > 7:
-            await ctx.send(_("Invalid days. Must be between 0 and 7."))
-            return
-        queue_entry = (guild.id, user.id)
-        self.ban_queue.append(queue_entry)
-        try:
-            await guild.ban(user, reason=audit_reason, delete_message_days=days)
-            log.info(
-                "{}({}) banned {}({}), deleting {} days worth of messages".format(
-                    author.name, author.id, user.name, user.id, str(days)
-                )
-            )
-        except discord.Forbidden:
-            self.ban_queue.remove(queue_entry)
-            await ctx.send(_("I'm not allowed to do that."))
-        except Exception as e:
-            self.ban_queue.remove(queue_entry)
-            print(e)
-        else:
+        if result is True:
             await ctx.send(_("Done. It was about time."))
-
-        try:
-            await modlog.create_case(
-                self.bot,
-                guild,
-                ctx.message.created_at,
-                "ban",
-                user,
-                author,
-                reason,
-                until=None,
-                channel=None,
-            )
-        except RuntimeError as e:
-            await ctx.send(e)
+        elif isinstance(result, str):
+            await ctx.send(result)
 
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
     @checks.admin_or_permissions(ban_members=True)
-    async def hackban(self, ctx: commands.Context, user_id: int, *, reason: str = None):
-        """Pre-emptively ban a user from this server.
+    async def hackban(
+        self,
+        ctx: commands.Context,
+        user_ids: Greedy[RawUserIds],
+        days: Optional[int] = 0,
+        *,
+        reason: str = None,
+    ):
+        """Preemptively bans user(s) from the server
 
-        A user ID needs to be provided in order to ban
-        using this command.
-        """
+        User IDs need to be provided in order to ban
+        using this command"""
+
+        banned = []
+        errors = {}
+
+        async def show_results():
+            text = _("Banned {} users from the server.".format(len(banned)))
+            if errors:
+                text += _("\nErrors:\n")
+                text += "\n".join(errors.values())
+
+            for p in pagify(text):
+                await ctx.send(p)
+
+        def remove_processed(ids):
+            return [_id for _id in ids if _id not in banned and _id not in errors]
+
+        user_ids = list(set(user_ids))  # No dupes
+
         author = ctx.author
         guild = ctx.guild
-        is_banned = False
-        ban_list = await guild.bans()
-        for entry in ban_list:
-            if entry.user.id == user_id:
-                is_banned = True
-                break
 
-        if is_banned:
-            await ctx.send(_("User is already banned."))
+        if not user_ids:
+            await ctx.send_help()
             return
 
-        user = guild.get_member(user_id)
-        if user is not None:
-            # Instead of replicating all that handling... gets attr from decorator
-            return await ctx.invoke(self.ban, user, None, reason=reason)
-        user = discord.Object(id=user_id)  # User not in the guild, but
+        if not (days >= 0 and days <= 7):
+            await ctx.send(_("Invalid days. Must be between 0 and 7."))
+            return
 
-        audit_reason = get_audit_reason(author, reason)
-        queue_entry = (guild.id, user_id)
-        self.ban_queue.append(queue_entry)
-        try:
-            await guild.ban(user, reason=audit_reason)
-            log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
-        except discord.NotFound:
-            self.ban_queue.remove(queue_entry)
-            await ctx.send(_("User not found. Have you provided the correct user ID?"))
-        except discord.Forbidden:
-            self.ban_queue.remove(queue_entry)
-            await ctx.send(_("I lack the permissions to do this."))
-        else:
-            await ctx.send(_("Done. The user will not be able to join this server."))
+        if not guild.me.guild_permissions.ban_members:
+            return await ctx.send(_("I lack the permissions to do this."))
 
-        user_info = await self.bot.get_user_info(user_id)
-        try:
-            await modlog.create_case(
-                self.bot,
-                guild,
-                ctx.message.created_at,
-                "hackban",
-                user_info,
-                author,
-                reason,
-                until=None,
-                channel=None,
-            )
-        except RuntimeError as e:
-            await ctx.send(e)
+        ban_list = await guild.bans()
+        for entry in ban_list:
+            for user_id in user_ids:
+                if entry.user.id == user_id:
+                    errors[user_id] = _("User {} is already banned.".format(user_id))
+
+        user_ids = remove_processed(user_ids)
+
+        if not user_ids:
+            await show_results()
+            return
+
+        for user_id in user_ids:
+            user = guild.get_member(user_id)
+            if user is not None:
+                # Instead of replicating all that handling... gets attr from decorator
+                try:
+                    result = await self.ban_user(
+                        user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
+                    )
+                    if result is True:
+                        banned.append(user_id)
+                    else:
+                        errors[user_id] = _("Failed to ban user {}: {}".format(user_id, result))
+                except Exception as e:
+                    errors[user_id] = _("Failed to ban user {}: {}".format(user_id, e))
+
+        user_ids = remove_processed(user_ids)
+
+        if not user_ids:
+            await show_results()
+            return
+
+        for user_id in user_ids:
+            user = discord.Object(id=user_id)
+            audit_reason = get_audit_reason(author, reason)
+            queue_entry = (guild.id, user_id)
+            self.ban_queue.append(queue_entry)
+            try:
+                await guild.ban(user, reason=audit_reason, delete_message_days=days)
+                log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
+            except discord.NotFound:
+                self.ban_queue.remove(queue_entry)
+                errors[user_id] = _("User {} does not exist.".format(user_id))
+                continue
+            except discord.Forbidden:
+                self.ban_queue.remove(queue_entry)
+                errors[user_id] = _("Could not ban {}: missing permissions.".format(user_id))
+                continue
+            else:
+                banned.append(user_id)
+
+            user_info = await self.bot.get_user_info(user_id)
+
+            try:
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    ctx.message.created_at,
+                    "hackban",
+                    user_info,
+                    author,
+                    reason,
+                    until=None,
+                    channel=None,
+                )
+            except RuntimeError as e:
+                errors["0"] = _("Failed to create modlog case: {}".format(e))
+
+        await show_results()
 
     @commands.command()
     @commands.guild_only()
@@ -864,20 +879,46 @@ class Mod(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(manage_nicknames=True)
     @checks.admin_or_permissions(manage_nicknames=True)
-    async def rename(self, ctx: commands.Context, user: discord.Member, *, nickname=""):
+    async def rename(self, ctx: commands.Context, user: discord.Member, *, nickname: str = ""):
         """Change a user's nickname.
 
         Leaving the nickname empty will remove it.
         """
         nickname = nickname.strip()
-        if nickname == "":
+        me = cast(discord.Member, ctx.me)
+        if not nickname:
             nickname = None
-        await user.edit(reason=get_audit_reason(ctx.author, None), nick=nickname)
-        await ctx.send("Done.")
+        elif not 2 <= len(nickname) <= 32:
+            await ctx.send(_("Nicknames must be between 2 and 32 characters long."))
+            return
+        if not (
+            (me.guild_permissions.manage_nicknames or me.guild_permissions.administrator)
+            and me.top_role > user.top_role
+            and user != ctx.guild.owner
+        ):
+            await ctx.send(
+                _(
+                    "I do not have permission to rename that member. They may be higher than or "
+                    "equal to me in the role hierarchy."
+                )
+            )
+        else:
+            try:
+                await user.edit(reason=get_audit_reason(ctx.author, None), nick=nickname)
+            except discord.Forbidden:
+                # Just in case we missed something in the permissions check above
+                await ctx.send(_("I do not have permission to rename that member."))
+            except discord.HTTPException as exc:
+                if exc.status == 400:  # BAD REQUEST
+                    await ctx.send(_("That nickname is invalid."))
+                else:
+                    await ctx.send(_("An unexpected error has occured."))
+            else:
+                await ctx.send(_("Done."))
 
     @commands.group()
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_channel=True)
+    @checks.mod_or_permissions(manage_channels=True)
     async def mute(self, ctx: commands.Context):
         """Mute users."""
         pass
@@ -1033,7 +1074,7 @@ class Mod(commands.Cog):
     @commands.group()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_roles=True)
-    @checks.mod_or_permissions(manage_channel=True)
+    @checks.mod_or_permissions(manage_channels=True)
     async def unmute(self, ctx: commands.Context):
         """Unmute users."""
         pass
@@ -1318,8 +1359,8 @@ class Mod(commands.Cog):
             is_member = True
 
         #  A special case for a special someone :^)
-        special_date = datetime(2016, 1, 10, 6, 8, 4, 443000)
-        is_special = user.id == 96130341705637888 and guild.id == 133049272517001216
+        special_date = datetime(2016, 1, 10, 6, 8, 4, 443_000)
+        is_special = user.id == 96_130_341_705_637_888 and guild.id == 133_049_272_517_001_216
 
         since_created = (ctx.message.created_at - user.created_at).days
         user_created = user.created_at.strftime("%d %b %Y %H:%M")
@@ -1388,8 +1429,7 @@ class Mod(commands.Cog):
         name = filter_invites(name)
 
         if user.avatar:
-            avatar = user.avatar_url
-            avatar = avatar.replace("webp", "png")
+            avatar = user.avatar_url_as(static_format="png")
             data.set_author(name=name, url=avatar)
             data.set_thumbnail(url=avatar)
         else:
@@ -1417,6 +1457,69 @@ class Mod(commands.Cog):
             await ctx.send(msg)
         else:
             await ctx.send(_("That user doesn't have any recorded name or nickname change."))
+
+    async def ban_user(
+        self,
+        user: discord.Member,
+        ctx: commands.Context,
+        days: Optional[int] = 0,
+        reason: str = None,
+        create_modlog_case=False,
+    ) -> Union[str, bool]:
+        author = ctx.author
+        guild = ctx.guild
+
+        if author == user:
+            return _("I cannot let you do that. Self-harm is bad {}").format("\N{PENSIVE FACE}")
+        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
+            return _(
+                "I cannot let you do that. You are "
+                "not higher than the user in the role "
+                "hierarchy."
+            )
+        elif guild.me.top_role <= user.top_role or user == guild.owner:
+            return _("I cannot do that due to discord hierarchy rules")
+        elif not (days >= 0 and days <= 7):
+            return _("Invalid days. Must be between 0 and 7.")
+
+        audit_reason = get_audit_reason(author, reason)
+
+        queue_entry = (guild.id, user.id)
+        self.ban_queue.append(queue_entry)
+        try:
+            await guild.ban(user, reason=audit_reason, delete_message_days=days)
+            log.info(
+                "{}({}) banned {}({}), deleting {} days worth of messages".format(
+                    author.name, author.id, user.name, user.id, str(days)
+                )
+            )
+        except discord.Forbidden:
+            self.ban_queue.remove(queue_entry)
+            return _("I'm not allowed to do that.")
+        except Exception as e:
+            self.ban_queue.remove(queue_entry)
+            return e
+
+        if create_modlog_case:
+            try:
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    ctx.message.created_at,
+                    "ban",
+                    user,
+                    author,
+                    reason,
+                    until=None,
+                    channel=None,
+                )
+            except RuntimeError as e:
+                return _(
+                    "The user was banned but an error occurred when trying to "
+                    "create the modlog entry: {}".format(e)
+                )
+
+        return True
 
     async def get_names_and_nicks(self, user):
         names = await self.settings.user(user).past_names()
@@ -1590,8 +1693,9 @@ class Mod(commands.Cog):
         """
         An event for modlog case creation
         """
-        mod_channel = await modlog.get_modlog_channel(case.guild)
-        if mod_channel is None:
+        try:
+            mod_channel = await modlog.get_modlog_channel(case.guild)
+        except RuntimeError:
             return
         use_embeds = await case.bot.embed_requested(mod_channel, case.guild.me)
         case_content = await case.message_content(use_embeds)

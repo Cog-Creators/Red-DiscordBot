@@ -37,7 +37,7 @@ CentOS 7
 
     yum -y groupinstall development
     yum -y install https://centos7.iuscommunity.org/ius-release.rpm
-    yum -y install yum-utils wget which python36u python36u-pip python36u-devel openssl-devel libffi-devel git java-1.8.0-openjdk
+    yum -y install yum-utils wget which python36u python36u-pip python36u-devel openssl-devel libffi-devel git2u java-1.8.0-openjdk
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Debian and Raspbian Stretch

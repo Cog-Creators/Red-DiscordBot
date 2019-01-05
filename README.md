@@ -111,14 +111,14 @@ plugins directly from Discord! A few examples are:
 - Anilist
 - And much, much more!
 
-Feel free to take a [peek](https://github.com/Cog-Creators/Red-DiscordBot/issues/1398) at a list of
+Feel free to take a [peek](https://cogboard.red/t/approved-repositories/210) at a list of
 available 3rd party cogs!
 
 # Join the community!
 
 **Red** is in continuous development, and it’s supported by an active community which produces new
 content (cogs/plugins) for everyone to enjoy. New features are constantly added. If you can’t
-[find](https://github.com/Cog-Creators/Red-DiscordBot/issues/1398) the cog you’re looking for,
+[find](https://cogboard.red/t/approved-repositories/210) the cog you’re looking for,
 consult our [guide](https://red-discordbot.readthedocs.io/en/v3-develop/guide_cog_creation.html) on
 building your own cogs!
 
