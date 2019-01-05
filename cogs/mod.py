@@ -1165,7 +1165,7 @@ class Mod:
         server = ctx.message.server
         explanation = ("Please note: the filter will only work in channels "
                        "where the bot has the `manage_messages` "
-                       "permission."
+                       "permission.")
         added = 0
         if server.id not in self.filter.keys():
             self.filter[server.id] = []
