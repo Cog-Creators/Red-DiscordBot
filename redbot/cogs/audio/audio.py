@@ -40,7 +40,7 @@ class Audio(commands.Cog):
     def __init__(self, bot):
         super().__init__()
         self.bot = bot
-        self.config = Config.get_conf(self, 2_711_759_130, force_registration=True)
+        self.config = Config.get_conf(self, 2711759130, force_registration=True)
 
         default_global = {
             "host": "localhost",
