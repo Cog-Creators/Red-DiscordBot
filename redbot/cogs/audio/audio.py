@@ -40,7 +40,7 @@ class Audio(commands.Cog):
     def __init__(self, bot):
         super().__init__()
         self.bot = bot
-        self.config = Config.get_conf(self, 2711759130, force_registration=True)
+        self.config = Config.get_conf(self, 2_711_759_130, force_registration=True)
 
         default_global = {
             "host": "localhost",
@@ -596,11 +596,13 @@ class Audio(commands.Cog):
             return
         allowed_files = (".mp3", ".flac", ".ogg")
         current_folder = os.getcwd() + "/localtracks/{}/".format(folder)
-        folder_list = [
-            f
-            for f in os.listdir(current_folder)
-            if (f.lower().endswith(allowed_files)) and (os.path.isfile(current_folder + f))
-        ]
+        folder_list = sorted(
+            [
+                f
+                for f in os.listdir(current_folder)
+                if (f.lower().endswith(allowed_files)) and (os.path.isfile(current_folder + f))
+            ]
+        )
         track_listing = []
         for localtrack_location in folder_list:
             track_listing.append(localtrack_location)
@@ -619,12 +621,14 @@ class Audio(commands.Cog):
         if not await self._localtracks_check(ctx):
             return
         allowed_files = (".mp3", ".flac", ".ogg")
-        folder_list = [
-            os.getcwd() + "/localtracks/{}/{}".format(folder, f)
-            for f in os.listdir(os.getcwd() + "/localtracks/{}/".format(folder))
-            if (f.lower().endswith(allowed_files))
-            and (os.path.isfile(os.getcwd() + "/localtracks/{}/{}".format(folder, f)))
-        ]
+        folder_list = sorted(
+            [
+                os.getcwd() + "/localtracks/{}/{}".format(folder, f)
+                for f in os.listdir(os.getcwd() + "/localtracks/{}/".format(folder))
+                if (f.lower().endswith(allowed_files))
+                and (os.path.isfile(os.getcwd() + "/localtracks/{}/{}".format(folder, f)))
+            ]
+        )
         track_listing = []
         if ctx.invoked_with == "search":
             for localtrack_location in folder_list:
@@ -2507,11 +2511,13 @@ class Audio(commands.Cog):
     async def _localtracks_folders(self, ctx):
         if not await self._localtracks_check(ctx):
             return
-        localtracks_folders = [
-            f
-            for f in os.listdir(os.getcwd() + "/localtracks/")
-            if not os.path.isfile(os.getcwd() + "/localtracks/" + f)
-        ]
+        localtracks_folders = sorted(
+            [
+                f
+                for f in os.listdir(os.getcwd() + "/localtracks/")
+                if not os.path.isfile(os.getcwd() + "/localtracks/" + f)
+            ]
+        )
         return localtracks_folders
 
     @staticmethod
