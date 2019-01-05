@@ -56,7 +56,7 @@ class Mod(commands.Cog):
     def __init__(self, bot: Red):
         super().__init__()
         self.bot = bot
-        self.settings = Config.get_conf(self, 4961522000, force_registration=True)
+        self.settings = Config.get_conf(self, 4_961_522_000, force_registration=True)
 
         self.settings.register_guild(**self.default_guild_settings)
         self.settings.register_channel(**self.default_channel_settings)
@@ -1333,10 +1333,10 @@ class Mod(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     async def userinfo(self, ctx, *, user: Union[discord.Member, int] = None):
         """Show information about a user.
-        
+
         This includes fields for status, discord join date, server
         join date, voice state and previous names/nicknames.
-        
+
         If the user has no roles, previous names or previous nicknames,
         these fields will be omitted.
         """
@@ -1349,9 +1349,12 @@ class Mod(commands.Cog):
             user_id = user
             user = self.bot.get_user(user_id)
             if not user:
-                try:
-                    user = await self.bot.get_user_info(user_id)
-                except (discord.errors.Forbidden, discord.errors.NotFound):
+                if self.bot.is_owner(ctx.author):
+                    try:
+                        user = await self.bot.get_user_info(user_id)
+                    except (discord.errors.Forbidden, discord.errors.NotFound):
+                        pass
+                if not user:
                     await ctx.send(_("User {id} not found.").format(id=user_id))
                     return
             is_member = False
