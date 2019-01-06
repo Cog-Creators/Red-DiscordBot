@@ -977,9 +977,7 @@ class Mod(commands.Cog):
 
         if success:
             await ctx.send(
-                _("Muted {user} in channel {channel.name}").format(
-                    user=user, channel=channel
-                )
+                _("Muted {user} in channel {channel.name}").format(user=user, channel=channel)
             )
             try:
                 await modlog.create_case(
@@ -1129,15 +1127,11 @@ class Mod(commands.Cog):
         channel = user_voice_state.channel
         audit_reason = get_audit_reason(author, reason)
 
-        success, message = await self.unmute_user(
-            guild, channel, author, user, audit_reason
-        )
+        success, message = await self.unmute_user(guild, channel, author, user, audit_reason)
 
         if success:
             await ctx.send(
-                _("Unmuted {user} in channel {channel.name}").format(
-                    user=user, channel=channel
-                )
+                _("Unmuted {user} in channel {channel.name}").format(user=user, channel=channel)
             )
             try:
                 await modlog.create_case(
