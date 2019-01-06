@@ -111,7 +111,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
         self.main_dir = bot_dir
 
-        self.cog_mgr = CogManager(paths=(str(self.main_dir / "cogs"),))
+        self.cog_mgr = CogManager()
 
         super().__init__(*args, formatter=Help(), **kwargs)
 
