@@ -26,6 +26,13 @@ Welcome to Red - Discord Bot's documentation!
 
 .. toctree::
     :maxdepth: 2
+    :caption: Third Party Developers:
+    
+    tpd_applications
+    tpd_requirements
+
+.. toctree::
+    :maxdepth: 2
     :caption: Red Development Framework Reference:
 
     guide_migration
