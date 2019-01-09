@@ -18,7 +18,7 @@ We have standardized what a repository's structure should look like to better as
 The main repository should contain at a minimum:
  
  - A readme file (can be either .MD or .rst)
- - A info.json file (`examples <https://red-discordbot.readthedocs.io/en/v3-develop/tpd_requirements.html#info-jsons>`_)
+ - A info.json file (`examples <tpd_requirements.html#info-jsons>`_)
  - One folder for each cog package in the repository
  - A license (Not required, but recommended)
 
@@ -68,7 +68,7 @@ There are two info.json files. One that goes into each cog folder and one at the
  - min_python_version
  - permissions (Senior Only)
 
-You may include as many optional keys as you wish. For more information these keys and their meaning, `read about it here <https://red-discordbot.readthedocs.io/en/v3-develop/framework_downloader.html#info-json>`_.
+You may include as many optional keys as you wish. For more information these keys and their meaning, `read about it here <framework_downloader.html#info-json>`_
 
 .. note::
 
@@ -104,7 +104,7 @@ These are general requirements that everyone should follow:
 - Your code is async compatible (not blocking).
 - Does not break the Discord TOS.
 - Does not conflict with core cogs. (E.G., it does not cause a core cog to fail to load).
-- Contains at least three cogs. (See `quality vs. quantity <https://red-discordbot.readthedocs.io/en/v3-develop/tpd_requirements.html#quality-vs-quantity>`_)
+- Contains at least three cogs. (See `ctx.send_filtered <tpd_requirements.html#quality-vs-quantity>`__)
 - Does not over-saturate the current list of cogs.
 - Unusable commands are hidden.
 - Credited other authors when applicable.
@@ -115,7 +115,7 @@ Coding Requirements
 
 - Class names must be CamelCase.
 - The main cog class and every command must have a doc-string.
-- Sanitize outputs when sending a user specified text. We recommend using `ctx.send_filtered <https://red-discordbot.readthedocs.io/en/v3-develop/framework_bot.html#redbot.core.bot.RedBase.send_filtered>`_.
+- Sanitize outputs when sending a user specified text. We recommend using `ctx.send_filtered <framework_bot.html#redbot.core.bot.RedBase.send_filtered>`__
 - Respect the role hierarchy. Don't let a lower role have a way to grant a higher role.
 - Don't write your own path to your included data. Use bundled data_path when possible.
 - Your main class should inherit from commands.Cog.
@@ -143,7 +143,6 @@ Senior cog creators will have the following additional requirements:
 - Displays leadership qualities
 - Repository adds something unique to the community
 
-.. _quality-v-quantity:
 
 *********************
 Quality vs. Quantity
