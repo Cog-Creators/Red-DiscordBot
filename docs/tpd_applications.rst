@@ -46,7 +46,7 @@ The recipient of this role is then granted the following amenities:
 ****************
 Approval
 ****************
-Submissions for the Cog Creator program will be placed on the `Cog Board <https://cogboard.red/apps>`_. Each application has it's own set of requirements. In an effort to show transparency, your application and comments will be visible to the public. For a full list of our requirements, `read here <https://red-discordbot.readthedocs.io/en/v3-develop/tpd_third_party_requirements.html>`_.
+Submissions for the Cog Creator program will be placed on the `Cog Board <https://cogboard.red/apps>`_. Each application has it's own set of requirements. In an effort to show transparency, your application and comments will be visible to the public. For a full list of our requirements, `read here <https://red-discordbot.readthedocs.io/en/v3-develop/tpd_requirements.html>`_.
 
 You will submit an application on the Cog Board in the Applications category. Please include your discord name, a link to the repository, and a brief description of what your repository is about. Feel free to include any other additional information that may aid in the review of your work.
 
