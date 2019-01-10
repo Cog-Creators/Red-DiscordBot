@@ -1166,7 +1166,7 @@ class Core(commands.Cog, CoreLogic):
                             _("I don't seem to be able to DM you. Do you have closed DMs?")
                         )
                     except discord.HTTPException:
-                        await ctx.send(_("Sending the backup file failed. It may be too large."))
+                        await ctx.send(_("I could not send the backup file."))
                 else:
                     await ctx.send(_("OK then."))
         else:
