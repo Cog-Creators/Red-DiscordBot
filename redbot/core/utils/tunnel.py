@@ -151,7 +151,7 @@ class Tunnel(metaclass=TunnelMeta):
         """
         files = []
         max_size = 8 * 1000 * 1000
-        if sum(a.size for a in m.attachments) <= max_size:
+        if m.attachments and sum(a.size for a in m.attachments) <= max_size:
             for a in m.attachments:
                 _fp = io.BytesIO()
                 await a.save(_fp)
