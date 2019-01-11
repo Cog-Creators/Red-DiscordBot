@@ -145,7 +145,7 @@ class Command(CogCommandMixin, commands.Command):
 
     @property
     def parents(self) -> List["Group"]:
-        """List[Group] : Returns all parent commands of this command.
+        """List[commands.Group] : Returns all parent commands of this command.
 
         This is sorted by the length of :attr:`.qualified_name` from highest to lowest.
         If the command has no parents, this will be an empty list.
