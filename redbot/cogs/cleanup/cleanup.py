@@ -230,7 +230,6 @@ class Cleanup(commands.Cog):
         to_delete = await self.get_messages_for_deletion(
             channel=channel, number=None, after=after, delete_pinned=delete_pinned
         )
-        to_delete.append(ctx.message)
 
         reason = "{}({}) deleted {} messages in channel {}.".format(
             author.name, author.id, len(to_delete), channel.name

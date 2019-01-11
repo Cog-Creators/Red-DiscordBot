@@ -34,6 +34,7 @@ jobs:
       python: 3.6.6
       env:
         - DEPLOYING=true
+        - TOXENV=py36
       deploy:
         - provider: pypi
           user: Red-DiscordBot
@@ -49,12 +50,13 @@ jobs:
       python: 3.6.6
       env:
         - DEPLOYING=true
+        - TOXENV=py36
       before_deploy:
       - curl https://artifacts.crowdin.com/repo/GPG-KEY-crowdin | sudo apt-key add -
       - echo "deb https://artifacts.crowdin.com/repo/deb/ /" | sudo tee -a /etc/apt/sources.list
       - sudo apt-get update -qq
       - sudo apt-get install -y crowdin
-      - pip install redgettext==2.1
+      - pip install redgettext==2.2
       deploy:
       - provider: script
         script: make gettext

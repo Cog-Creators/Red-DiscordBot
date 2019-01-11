@@ -15,7 +15,7 @@ from pkg_resources import DistributionNotFound
 
 from . import __version__ as red_version, version_info as red_version_info, VersionInfo, commands
 from .data_manager import storage_type
-from .utils.chat_formatting import inline, bordered, humanize_list
+from .utils.chat_formatting import inline, bordered, format_perms_list
 from .utils import fuzzy_command_search, format_fuzzy_results
 
 log = logging.getLogger("red")
@@ -234,18 +234,13 @@ def init_events(bot, cli_flags):
             else:
                 await ctx.send(await format_fuzzy_results(ctx, fuzzy_commands, embed=False))
         elif isinstance(error, commands.BotMissingPermissions):
-            missing_perms: List[str] = []
-            for perm, value in error.missing:
-                if value is True:
-                    perm_name = '"' + perm.replace("_", " ").title() + '"'
-                    missing_perms.append(perm_name)
-            if len(missing_perms) == 1:
+            if bin(error.missing.value).count("1") == 1:  # Only one perm missing
                 plural = ""
             else:
                 plural = "s"
             await ctx.send(
                 "I require the {perms} permission{plural} to execute that command.".format(
-                    perms=humanize_list(missing_perms), plural=plural
+                    perms=format_perms_list(error.missing), plural=plural
                 )
             )
         elif isinstance(error, commands.CheckFailure):

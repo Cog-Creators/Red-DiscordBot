@@ -11,12 +11,11 @@ from discord.ext.commands.errors import BadArgument
 from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box, escape, pagify
-from .checks import mod_or_voice_permissions, admin_or_voice_permissions, bot_has_voice_permissions
+from redbot.core.utils.chat_formatting import box, escape, pagify, format_perms_list
+from redbot.core.utils.common_filters import filter_invites, filter_various_mentions
 from redbot.core.utils.mod import is_mod_or_superior, is_allowed_by_hierarchy, get_audit_reason
 from .log import log
 
-from redbot.core.utils.common_filters import filter_invites, filter_various_mentions
 
 _ = T_ = Translator("Mod", __file__)
 
@@ -794,15 +793,60 @@ class Mod(commands.Cog):
             except discord.HTTPException:
                 return
 
+    @staticmethod
+    async def _voice_perm_check(
+        ctx: commands.Context, user_voice_state: Optional[discord.VoiceState], **perms: bool
+    ) -> bool:
+        """Check if the bot and user have sufficient permissions for voicebans.
+
+        This also verifies that the user's voice state and connected
+        channel are not ``None``.
+
+        Returns
+        -------
+        bool
+            ``True`` if the permissions are sufficient and the user has
+            a valid voice state.
+
+        """
+        if user_voice_state is None or user_voice_state.channel is None:
+            await ctx.send(_("That user is not in a voice channel."))
+            return False
+        voice_channel: discord.VoiceChannel = user_voice_state.channel
+        required_perms = discord.Permissions()
+        required_perms.update(**perms)
+        if not voice_channel.permissions_for(ctx.me) >= required_perms:
+            await ctx.send(
+                _("I require the {perms} permission(s) in that user's channel to do that.").format(
+                    perms=format_perms_list(required_perms)
+                )
+            )
+            return False
+        if (
+            ctx.permission_state is commands.PermState.NORMAL
+            and not voice_channel.permissions_for(ctx.author) >= required_perms
+        ):
+            await ctx.send(
+                _(
+                    "You must have the {perms} permission(s) in that user's channel to use this "
+                    "command."
+                ).format(perms=format_perms_list(required_perms))
+            )
+            return False
+        return True
+
     @commands.command()
     @commands.guild_only()
-    @admin_or_voice_permissions(mute_members=True, deafen_members=True)
-    @bot_has_voice_permissions(mute_members=True, deafen_members=True)
+    @checks.admin_or_permissions(mute_members=True, deafen_members=True)
     async def voiceban(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
         """Ban a user from speaking and listening in the server's voice channels."""
-        user_voice_state = user.voice
-        if user_voice_state is None:
-            await ctx.send(_("No voice state for that user!"))
+        user_voice_state: discord.VoiceState = user.voice
+        if (
+            await self._voice_perm_check(
+                ctx, user_voice_state, deafen_members=True, mute_members=True
+            )
+            is False
+        ):
             return
         needs_mute = True if user_voice_state.mute is False else False
         needs_deafen = True if user_voice_state.deaf is False else False
@@ -837,13 +881,15 @@ class Mod(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    @admin_or_voice_permissions(mute_members=True, deafen_members=True)
-    @bot_has_voice_permissions(mute_members=True, deafen_members=True)
     async def voiceunban(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
         """Unban a user from speaking and listening in the server's voice channels."""
         user_voice_state = user.voice
-        if user_voice_state is None:
-            await ctx.send(_("No voice state for that user!"))
+        if (
+            await self._voice_perm_check(
+                ctx, user_voice_state, deafen_members=True, mute_members=True
+            )
+            is False
+        ):
             return
         needs_unmute = True if user_voice_state.mute else False
         needs_undeafen = True if user_voice_state.deaf else False
@@ -925,47 +971,43 @@ class Mod(commands.Cog):
 
     @mute.command(name="voice")
     @commands.guild_only()
-    @mod_or_voice_permissions(mute_members=True)
-    @bot_has_voice_permissions(mute_members=True)
     async def voice_mute(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
         """Mute a user in their current voice channel."""
         user_voice_state = user.voice
+        if (
+            await self._voice_perm_check(
+                ctx, user_voice_state, mute_members=True, manage_channels=True
+            )
+            is False
+        ):
+            return
         guild = ctx.guild
         author = ctx.author
-        if user_voice_state:
-            channel = user_voice_state.channel
-            if channel:
-                audit_reason = get_audit_reason(author, reason)
+        channel = user_voice_state.channel
+        audit_reason = get_audit_reason(author, reason)
 
-                success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
+        success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
 
-                if success:
-                    await ctx.send(
-                        _("Muted {user} in channel {channel.name}").format(
-                            user=user, channel=channel
-                        )
-                    )
-                    try:
-                        await modlog.create_case(
-                            self.bot,
-                            guild,
-                            ctx.message.created_at,
-                            "vmute",
-                            user,
-                            author,
-                            reason,
-                            until=None,
-                            channel=channel,
-                        )
-                    except RuntimeError as e:
-                        await ctx.send(e)
-                else:
-                    await channel.send(issue)
-            else:
-                await ctx.send(_("That user is not in a voice channel right now!"))
+        if success:
+            await ctx.send(
+                _("Muted {user} in channel {channel.name}").format(user=user, channel=channel)
+            )
+            try:
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    ctx.message.created_at,
+                    "vmute",
+                    user,
+                    author,
+                    reason,
+                    until=None,
+                    channel=channel,
+                )
+            except RuntimeError as e:
+                await ctx.send(e)
         else:
-            await ctx.send(_("No voice state for the target!"))
-            return
+            await ctx.send(issue)
 
     @mute.command(name="channel")
     @commands.guild_only()
@@ -1081,51 +1123,45 @@ class Mod(commands.Cog):
 
     @unmute.command(name="voice")
     @commands.guild_only()
-    @mod_or_voice_permissions(mute_members=True)
-    @bot_has_voice_permissions(mute_members=True)
     async def unmute_voice(
         self, ctx: commands.Context, user: discord.Member, *, reason: str = None
     ):
         """Unmute a user in their current voice channel."""
         user_voice_state = user.voice
+        if (
+            await self._voice_perm_check(
+                ctx, user_voice_state, mute_members=True, manage_channels=True
+            )
+            is False
+        ):
+            return
         guild = ctx.guild
         author = ctx.author
-        if user_voice_state:
-            channel = user_voice_state.channel
-            if channel:
-                audit_reason = get_audit_reason(author, reason)
+        channel = user_voice_state.channel
+        audit_reason = get_audit_reason(author, reason)
 
-                success, message = await self.unmute_user(
-                    guild, channel, author, user, audit_reason
+        success, message = await self.unmute_user(guild, channel, author, user, audit_reason)
+
+        if success:
+            await ctx.send(
+                _("Unmuted {user} in channel {channel.name}").format(user=user, channel=channel)
+            )
+            try:
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    ctx.message.created_at,
+                    "vunmute",
+                    user,
+                    author,
+                    reason,
+                    until=None,
+                    channel=channel,
                 )
-
-                if success:
-                    await ctx.send(
-                        _("Unmuted {user} in channel {channel.name}").format(
-                            user=user, channel=channel
-                        )
-                    )
-                    try:
-                        await modlog.create_case(
-                            self.bot,
-                            guild,
-                            ctx.message.created_at,
-                            "vunmute",
-                            user,
-                            author,
-                            reason,
-                            until=None,
-                            channel=channel,
-                        )
-                    except RuntimeError as e:
-                        await ctx.send(e)
-                else:
-                    await ctx.send(_("Unmute failed. Reason: {}").format(message))
-            else:
-                await ctx.send(_("That user is not in a voice channel right now!"))
+            except RuntimeError as e:
+                await ctx.send(e)
         else:
-            await ctx.send(_("No voice state for the target!"))
-            return
+            await ctx.send(_("Unmute failed. Reason: {}").format(message))
 
     @checks.mod_or_permissions(administrator=True)
     @unmute.command(name="channel")
@@ -1347,8 +1383,8 @@ class Mod(commands.Cog):
             user = author
 
         #  A special case for a special someone :^)
-        special_date = datetime(2016, 1, 10, 6, 8, 4, 443_000)
-        is_special = user.id == 96_130_341_705_637_888 and guild.id == 133_049_272_517_001_216
+        special_date = datetime(2016, 1, 10, 6, 8, 4, 443000)
+        is_special = user.id == 96130341705637888 and guild.id == 133049272517001216
 
         roles = sorted(user.roles)[1:]
         names, nicks = await self.get_names_and_nicks(user)
