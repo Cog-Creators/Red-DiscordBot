@@ -10,7 +10,12 @@ Needed Software
 
 The following software dependencies can all be installed quickly and easily through powershell, 
 using a trusted package manager for windows called `Chocolatey <https://chocolatey.org>`_
-You can manually install all of it instead if you want.
+
+We also provide instructions for manually installing all of the dependencies.
+
+******************************************
+Installing using powershell and chocolatey
+******************************************
 
 To install via powershell, search "powershell" in the windows start menu, 
 right-click on it and then click "Run as administrator"
@@ -25,7 +30,9 @@ Then run each of the following commands:
     choco install jre8 python -y; exit
 
 
-To install without use of powershell and chocolately:
+********************************
+Manually installing dependencies
+********************************
 
 * `Python <https://www.python.org/downloads/>`_ - Red needs Python 3.6.6 or greater on Windows
 
