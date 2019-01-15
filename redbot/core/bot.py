@@ -500,7 +500,12 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             if result is not None:
                 hook_results.append(result)
         if hook_results:
-            return all(hook_results)
+            if all(hook_results):
+                ctx.permission_state = commands.PermState.ALLOWED_BY_HOOK
+                return True
+            else:
+                ctx.permission_state = commands.PermState.DENIED_BY_HOOK
+                return False
 
 
 class Red(RedBase, discord.AutoShardedClient):
