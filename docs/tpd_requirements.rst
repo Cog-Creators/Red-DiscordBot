@@ -107,6 +107,7 @@ These are general requirements that everyone should follow:
 - Contains at least three cogs. (See `ctx.send_filtered <tpd_requirements.html#quality-vs-quantity>`__)
 - Does not over-saturate the current list of cogs.
 - Unusable commands are hidden.
+- Default locale must be English.
 - Credited other authors when applicable.
 
 *******************
