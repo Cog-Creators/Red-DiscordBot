@@ -93,6 +93,10 @@ DM_PERMS.update(
 class PrivilegeLevel(enum.IntEnum):
     """Enumeration for special privileges."""
 
+    # Maintainer Note: do NOT re-order these.
+    # Each privelege level also implies access to the ones before it.
+    # Inserting new privelege levels at a later point is fine if that is considered.
+
     NONE = enum.auto()
     """No special privilege level."""
 
