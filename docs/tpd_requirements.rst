@@ -104,7 +104,7 @@ These are general requirements that everyone should follow:
 - Your code is async compatible (not blocking).
 - Does not break the Discord TOS.
 - Does not conflict with core cogs. (E.G., it does not cause a core cog to fail to load).
-- Contains at least three cogs. (See `ctx.send_filtered <tpd_requirements.html#quality-vs-quantity>`__)
+- Contains at least three cogs. (We reserve the right to make exceptions for  `quality over quantity <tpd_requirements.html#quality-vs-quantity>`__)
 - Does not over-saturate the current list of cogs.
 - Unusable commands are hidden.
 - Default locale must be English.
