@@ -168,6 +168,17 @@ class PermState(enum.Enum):
     chain.
     """
 
+    # The below are valid states, but should not be transitioned to
+    # They should be set if they apply.
+
+    ALLOWED_BY_HOOK = enum.auto()
+    """This command has been actively allowed by a permission hook.
+    check validation doesn't need this, but is useful to developers"""
+
+    DENIED_BY_HOOK = enum.auto()
+    """This command has been actively denied by a permission hook
+    check validation doesn't need this, but is useful to developers"""
+
     def transition_to(
         self, next_state: "PermState"
     ) -> Tuple[Optional[bool], Union["PermState", Dict[bool, "PermState"]]]:
