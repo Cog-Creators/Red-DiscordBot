@@ -114,7 +114,7 @@ def get_storage_type():
         print()
         print("Please choose your storage backend (if you're unsure, choose 1).")
         print("1. JSON (file storage, requires no database).")
-        print("2. MongoDB")
+        print("2. MongoDB (not recommended, currently unstable)")
         storage = input("> ")
         try:
             storage = int(storage)
@@ -198,22 +198,23 @@ async def mongo_to_json(current_data_dir: Path, storage_details: dict):
 
     m = Mongo("Core", "0", **storage_details)
     db = m.db
-    collection_names = await db.collection_names(include_system_collections=False)
-    for c_name in collection_names:
-        if c_name == "Core":
+    collection_names = await db.list_collection_names()
+    for collection_name in collection_names:
+        if collection_name == "Core":
             c_data_path = current_data_dir / "core"
         else:
-            c_data_path = current_data_dir / "cogs/{}".format(c_name)
-        output = {}
-        docs = await db[c_name].find().to_list(None)
-        c_id = None
-        for item in docs:
-            item_id = item.pop("_id")
-            if not c_id:
-                c_id = str(hash(item_id))
-            output[item_id] = item
-        target = JSON(c_name, c_id, data_path_override=c_data_path)
-        await target.jsonIO._threadsafe_save_json(output)
+            c_data_path = current_data_dir / "cogs" / collection_name
+        c_data_path.mkdir(parents=True, exist_ok=True)
+        # Every cog name has its own collection
+        collection = db[collection_name]
+        async for document in collection.find():
+            # Every cog has its own document.
+            # This means if two cogs have the same name but different identifiers, they will
+            # be two separate documents in the same collection
+            cog_id = document.pop("_id")
+            driver = JSON(collection_name, cog_id, data_path_override=c_data_path)
+            for key, value in document.items():
+                await driver.set(key, value=value)
 
 
 async def edit_instance():
