@@ -218,12 +218,25 @@ class General(commands.Cog):
     @commands.guild_only()
     async def serverinfo(self, ctx):
         """Show server information."""
+        guild = ctx.guild
+
+        def check_feature(feature):
+            return "\N{WHITE HEAVY CHECK MARK}" if feature in guild.features else "\N{CROSS MARK}"
+
+        format_kwargs = {
+            "vip": check_feature("VIP_REGIONS"),
+            "van": check_feature("VANITY_URL"),
+            "splash": check_feature("INVITE_SPLASH"),
+            "m_emojis": check_feature("MORE_EMOJI"),
+            "verify": check_feature("VERIFIED"),
+        }
+
         verif = {
             0: _("0 - None"),
             1: _("1 - Low"),
             2: _("2 - Medium"),
             3: _("3 - Hard"),
-            4: _("4 - Extreme")
+            4: _("4 - Extreme"),
         }
         region = {
             "vip-us-east": _("__VIP__ US East :flag_us:"),
@@ -244,9 +257,8 @@ class General(commands.Cog):
             "hongkong": _("Hong Kong :flag_hk:"),
             "russia": _("Russia :flag_ru:"),
             "japan": _("Japan :flag_jp:"),
-            "southafrica": _("South Africa :flag_za:")
+            "southafrica": _("South Africa :flag_za:"),
         }
-        guild = ctx.guild
         online = len([m.status for m in guild.members if m.status == discord.Status.online])
         idle = len([m.status for m in guild.members if m.status == discord.Status.idle])
         dnd = len([m.status for m in guild.members if m.status == discord.Status.dnd])
@@ -263,35 +275,89 @@ class General(commands.Cog):
         joined_at = guild.me.joined_at
         since_joined = (ctx.message.created_at - joined_at).days
         bot_joined = joined_at.strftime("%d %b %Y %H:%M:%S")
-        joined_on = (_(f"{ctx.bot.user.name} joined this server on {bot_joined}. That's over {since_joined} days ago !"))
+        joined_on = _(
+            "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago !"
+        ).format(bot_name=ctx.bot.user.name, bot_join=bot_joined, since_join=since_joined)
         data = discord.Embed(description=created_at, colour=(await ctx.embed_colour()))
         if total_users > 8000:
-            data.add_field(name=_("Members :"),
-            value=_(f"Total users : **{total_users}**\nHumans : **{humans}** • Bots : **{bots}**\n📗 `{online}` 📙 `{idle}`\n📕 `{dnd}` 📓 `{offline}`"))
+            data.add_field(
+                name=_("Members :"),
+                value=_(
+                    "Total users : **{total}**\nHumans : **{hum}** • Bots : **{bots}**\n📗 `{online}` 📙 `{idle}`\n📕 `{dnd}` 📓 `{off}`"
+                ).format(
+                    total=total_users,
+                    hum=humans,
+                    bots=bots,
+                    online=online,
+                    idle=idle,
+                    dnd=dnd,
+                    off=offline,
+                ),
+            )
         else:
-            data.add_field(name=_("Members :"),
-            value=_(f"Total users : **{total_users}**\nHumans : **{humans}** • Bots : **{bots}**\n📗 `{online}` 📙 `{idle}` 📕 `{dnd}` 📓 `{offline}`"))
-        data.add_field(name=_("Channels :"), value=_(f"💬 Text : **{text_channels}**\n🔊 Voice : **{voice_channels}**"))
-        data.Empty
-        data.add_field(name=_("Utility :"), value=_(f"Owner : **{guild.owner}**\nRegion : **{region[str(guild.region)]}**\nVerif. level : **{verif[int(guild.verification_level)]}**\nServer ID : **{guild.id}**"))
-        data.add_field(name=_("Misc :"), value=_(f"AFK channel : **{guild.afk_channel}**\nAFK Timeout : **{guild.afk_timeout}sec**\nCustom emojis : **{len(guild.emojis)}**\nRoles : **{len(guild.roles)}**"))
-        if guild.features != []:
+            data.add_field(
+                name=_("Members :"),
+                value=_(
+                    "Total users : **{total}**\nHumans : **{hum}** • Bots : **{bots}**\n📗 `{online}` 📙 `{idle}` 📕 `{dnd}` 📓 `{off}`"
+                ).format(
+                    total=total_users,
+                    hum=humans,
+                    bots=bots,
+                    online=online,
+                    idle=idle,
+                    dnd=dnd,
+                    off=offline,
+                ),
+            )
+        data.add_field(
+            name=_("Channels :"),
+            value=_("💬 Text : **{text}**\n🔊 Voice : **{voice}**").format(
+                text=text_channels, voice=voice_channels
+            ),
+        )
+        data.add_field(
+            name=_("Utility :"),
+            value=_(
+                "Owner : **{owner}**\nRegion : **{region}**\nVerif. level : **{verif}**\nServer ID : **{id}**"
+            ).format(
+                owner=guild.owner,
+                region=region[str(guild.region)],
+                verif=verif[int(guild.verification_level)],
+                id=guild.id,
+            ),
+        )
+        data.add_field(
+            name=_("Misc :"),
+            value=_(
+                "AFK channel : **{afk_chan}**\nAFK Timeout : **{afk_timeout}sec**\nCustom emojis : **{emojis}**\nRoles : **{roles}**"
+            ).format(
+                afk_chan=guild.afk_channel,
+                afk_timeout=guild.afk_timeout,
+                emojis=len(guild.emojis),
+                roles=len(guild.roles),
+            ),
+        )
+        if guild.features:
             data.add_field(
                 name=_("Special features :"),
-                value=_("{vip} VIP Regions\n{van} Vanity URL\n{splash} Splash Invite\n{m_emojis} More Emojis\n{verify} Verified").format(
-                    vip=await self.check("VIP_REGIONS" in guild.features), van=await self.check("VANITY_URL" in guild.features),
-                    splash=await self.check("INVITE_SPLASH" in guild.features), m_emojis=await self.check("MORE_EMOJI" in guild.features),
-                    verify=await self.check("VERIFIED" in guild.features)))
-        data.set_footer(text=f"{joined_on}")
+                value=_(
+                    "{vip} VIP Regions\n{van} Vanity URL\n{splash} Splash Invite\n{m_emojis} More Emojis\n{verify} Verified"
+                ).format(**format_kwargs),
+            )
+        if "VERIFIED" in guild.features:
+            data.set_author(
+                name=guild.name,
+                icon_url="https://cdn.discordapp.com/emojis/457879292152381443.png",
+            )
         if guild.icon_url:
             data.set_author(name=guild.name)
             data.set_thumbnail(url=guild.icon_url)
         else:
             data.set_author(name=guild.name)
-            data.set_thumbnail(url="https://cdn.discordapp.com/attachments/494975386334134273/529843761635786754/Discord-Logo-Black.png")
-
-        if "VERIFIED" in guild.features:
-            data.set_author(name=guild.name, icon_url="https://cdn.discordapp.com/emojis/457879292152381443.png")
+            data.set_thumbnail(
+                url="https://cdn.discordapp.com/attachments/494975386334134273/529843761635786754/Discord-Logo-Black.png"
+            )
+        data.set_footer(text=f"{joined_on}")
 
         try:
             await ctx.send(embed=data)
