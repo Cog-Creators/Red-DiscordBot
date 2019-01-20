@@ -140,7 +140,9 @@ class Downloader(commands.Cog):
         failed = []
 
         for repo in repos:
-            if not await repo.install_libraries(target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH):
+            if not await repo.install_libraries(
+                target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH
+            ):
                 failed.extend(repo.available_libraries)
 
         # noinspection PyTypeChecker

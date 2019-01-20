@@ -414,9 +414,11 @@ class Repo(RepoJSONMixin):
         if len(libraries) > 0:
             ret = True
             for lib in libraries:
-                ret = (ret and
-                       await self.install_requirements(cog=lib, target_dir=req_target_dir) and
-                       await lib.copy_to(target_dir=target_dir))
+                ret = (
+                    ret
+                    and await self.install_requirements(cog=lib, target_dir=req_target_dir)
+                    and await lib.copy_to(target_dir=target_dir)
+                )
             return ret
         return True
 
