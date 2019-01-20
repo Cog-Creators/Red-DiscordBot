@@ -364,13 +364,6 @@ class General(commands.Cog):
         except discord.Forbidden:
             await ctx.send(_("I need the `Embed links` permission to send this."))
 
-    async def check(self, true):
-        if true:
-            true = "\N{WHITE HEAVY CHECK MARK}"
-        else:
-            true = "\N{CROSS MARK}"
-        return true
-
     @commands.command()
     async def urban(self, ctx, *, word):
         """Search the Urban Dictionary.
