@@ -14,6 +14,7 @@ from redbot.core.cli import interactive_config, confirm, parse_cli_flags, ask_se
 from redbot.core.core_commands import Core
 from redbot.core.dev_commands import Dev
 from redbot.core import __version__
+from signal import SIGTERM
 import asyncio
 import logging.handlers
 import logging
@@ -110,6 +111,11 @@ def list_instances():
         sys.exit(0)
 
 
+async def sigterm_handler(red, log):
+    log.info("SIGTERM received. Quitting...")
+    await red.shutdown(restart=False)
+
+
 def main():
     description = "Red - Version {}".format(__version__)
     cli_flags = parse_cli_flags(sys.argv[1:])
@@ -139,6 +145,8 @@ def main():
     if cli_flags.dev:
         red.add_cog(Dev())
     loop = asyncio.get_event_loop()
+    if os.name == "posix":
+        loop.add_signal_handler(SIGTERM, lambda: asyncio.ensure_future(sigterm_handler(red, log)))
     tmp_data = {}
     loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
     token = os.environ.get("RED_TOKEN", tmp_data["token"])
