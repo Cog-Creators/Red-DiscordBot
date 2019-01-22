@@ -145,7 +145,8 @@ def main():
     if cli_flags.dev:
         red.add_cog(Dev())
     loop = asyncio.get_event_loop()
-    loop.add_signal_handler(SIGTERM, lambda: asyncio.ensure_future(sigterm_handler(red, log)))
+    if os.name == "posix":
+        loop.add_signal_handler(SIGTERM, lambda: asyncio.ensure_future(sigterm_handler(red, log)))
     tmp_data = {}
     loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
     token = os.environ.get("RED_TOKEN", tmp_data["token"])
