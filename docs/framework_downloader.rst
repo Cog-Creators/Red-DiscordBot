@@ -40,8 +40,7 @@ Keys specific to the cog info.json (case sensitive)
   Downloader will not deal with this functionality but it may be useful for other cogs.
 
 - ``requirements`` (list of strings) - list of required libraries that are
-  passed to pip on cog install. ``SHARED_LIBRARIES`` do NOT go in this
-  list.
+  passed to pip on cog install.
 
 - ``tags`` (list of strings) - A list of strings that are related to the
   functionality of the cog. Used to aid in searching.
