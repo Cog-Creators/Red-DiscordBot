@@ -23,8 +23,8 @@ exit /B %ERRORLEVEL%
 
 :update_vendor
 pip install --upgrade --no-deps -t . https://github.com/Rapptz/discord.py/archive/rewrite.tar.gz#egg=discord.py
-del discord.py*.egg-info\*
-rmdir discord.py*.egg_info
+del /S /Q "discord.py*.egg-info"
+for /F %%i in ('dir /S /B discord.py*.egg-info') do rmdir /S /Q %%i
 goto reformat
 
 :help
