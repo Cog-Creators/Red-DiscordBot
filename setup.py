@@ -13,7 +13,6 @@ install_requires = [
     "attrs==18.2.0",
     "chardet==3.0.4",
     "colorama==0.4.1",
-    "discord.py>=1.0.0a0",
     "distro==1.3.0; sys_platform == 'linux'",
     "fuzzywuzzy==0.17.0",
     "idna-ssl==1.1.0",
@@ -70,11 +69,6 @@ if os.name == "nt":
     python_requires = ">=3.6.6,<3.8"
 
 
-def get_dependency_links():
-    with open("dependency_links.txt") as file:
-        return file.read().splitlines()
-
-
 def check_compiler_available():
     m = ccompiler.new_compiler()
 
@@ -102,15 +96,11 @@ if __name__ == "__main__":
             next(r for r in install_requires if r.lower().startswith("python-levenshtein"))
         )
 
-    if "READTHEDOCS" in os.environ:
-        install_requires.remove(
-            next(r for r in install_requires if r.lower().startswith("discord.py"))
-        )
-
     setup(
         name="Red-DiscordBot",
         version=get_version(),
-        packages=find_packages(include=["redbot", "redbot.*"]),
+        packages=find_packages(include=("redbot", "redbot.*"))
+        + ["discord", "discord.ext.commands"],
         package_data={"": ["locales/*.po", "data/*", "data/**/*"]},
         url="https://github.com/Cog-Creators/Red-DiscordBot",
         license="GPLv3",
@@ -139,6 +129,5 @@ if __name__ == "__main__":
         },
         python_requires=python_requires,
         install_requires=install_requires,
-        dependency_links=get_dependency_links(),
         extras_require=extras_require,
     )

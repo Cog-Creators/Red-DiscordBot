@@ -21,6 +21,12 @@ exit /B %ERRORLEVEL%
 black -l 99 -N --check !PYFILES!
 exit /B %ERRORLEVEL%
 
+:update_vendor
+pip install --upgrade --no-deps -t . https://github.com/Rapptz/discord.py/archive/rewrite.tar.gz#egg=discord.py
+del discord.py*.egg-info\*
+rmdir discord.py*.egg_info
+goto reformat
+
 :help
 echo Usage:
 echo   make ^<command^>
