@@ -148,19 +148,19 @@ To install without audio support:
 
 .. code-block:: none
 
-    pip3 install -U --process-dependency-links --no-cache-dir Red-DiscordBot
+    pip3 install -U Red-DiscordBot
 
 Or, to install with audio support:
 
 .. code-block:: none
 
-    pip3 install -U --process-dependency-links --no-cache-dir Red-DiscordBot[voice]
+    pip3 install -U Red-DiscordBot[voice]
 
 Or, install with audio and MongoDB support:
 
 .. code-block:: none
 
-    pip3 install -U --process-dependency-links --no-cache-dir Red-DiscordBot[voice,mongo]
+    pip3 install -U Red-DiscordBot[voice,mongo]
 
 .. note::
 

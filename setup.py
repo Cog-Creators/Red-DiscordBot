@@ -99,8 +99,9 @@ if __name__ == "__main__":
     setup(
         name="Red-DiscordBot",
         version=get_version(),
-        packages=find_packages(include=("redbot", "redbot.*"))
-        + ["discord", "discord.ext.commands"],
+        packages=(
+            find_packages(include=("redbot", "redbot.*")) + ["discord", "discord.ext.commands"]
+        ),
         package_data={"": ["locales/*.po", "data/*", "data/**/*"]},
         url="https://github.com/Cog-Creators/Red-DiscordBot",
         license="GPLv3",
