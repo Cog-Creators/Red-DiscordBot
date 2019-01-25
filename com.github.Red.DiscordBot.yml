@@ -26,7 +26,6 @@ modules:
       - type: script
         dest-filename: redbot-install
         commands:
-          - pip3 install --upgrade pip
           - pip3 install --user -U --process-dependency-links --no-cache-dir Red-DiscordBot[voice,mongo] python-Levenshtein
           - echo "Installer finished"
       - type: script
@@ -36,4 +35,6 @@ modules:
           - export PATH=$PATH:/app/jre/bin
           - '[ -f $XDG_DATA_HOME/bin/redbot-launcher ] || . /app/bin/redbot-install'
           - echo "Launching launcher"
-          - $XDG_DATA_HOME/bin/redbot-launcher
+          - cd ".var/app/com.github.Red.DiscordBot/data/bin/"
+          - chmod +x redbot-launcher
+          - python3 redbot-launcher
