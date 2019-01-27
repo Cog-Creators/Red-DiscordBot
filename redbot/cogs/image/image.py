@@ -19,8 +19,6 @@ class Image(commands.Cog):
     def __init__(self, bot):
         super().__init__()
         self.bot = bot
-        self.settings = Config.get_conf(self, identifier=2652104208, force_registration=True)
-        self.settings.register_global(**self.default_global)
         self.session = aiohttp.ClientSession()
         self.imgur_base_url = "https://api.imgur.com/3/"
 
@@ -43,7 +41,7 @@ class Image(commands.Cog):
         """
         url = self.imgur_base_url + "gallery/search/time/all/0"
         params = {"q": term}
-        imgur_client_id = await self.settings.imgur_client_id()
+        imgur_client_id = await ctx.bot.db.api_tokens.get_raw("imgur", default=None)
         if not imgur_client_id:
             await ctx.send(
                 _(
@@ -51,7 +49,7 @@ class Image(commands.Cog):
                 ).format(prefix=ctx.prefix)
             )
             return
-        headers = {"Authorization": "Client-ID {}".format(imgur_client_id)}
+        headers = {"Authorization": "Client-ID {}".format(imgur_client_id["client_id"])}
         async with self.session.get(url, headers=headers, params=params) as search_get:
             data = await search_get.json()
 
@@ -96,7 +94,7 @@ class Image(commands.Cog):
             await ctx.send_help()
             return
 
-        imgur_client_id = await self.settings.imgur_client_id()
+        imgur_client_id = await ctx.bot.db.api_tokens.get_raw("imgur", default=None)
         if not imgur_client_id:
             await ctx.send(
                 _(
@@ -106,7 +104,7 @@ class Image(commands.Cog):
             return
 
         links = []
-        headers = {"Authorization": "Client-ID {}".format(imgur_client_id)}
+        headers = {"Authorization": "Client-ID {}".format(imgur_client_id["client_id"])}
         url = self.imgur_base_url + "gallery/r/{}/{}/{}/0".format(subreddit, sort, window)
 
         async with self.session.get(url, headers=headers) as sub_get:
@@ -130,7 +128,7 @@ class Image(commands.Cog):
 
     @checks.is_owner()
     @commands.command()
-    async def imgurcreds(self, ctx, imgur_client_id: str):
+    async def imgurcreds(self, ctx):
         """Set the Imgur Client ID.
 
         To get an Imgur Client ID:
@@ -143,9 +141,9 @@ class Image(commands.Cog):
         7. Enter a valid email address and a description
         8. Check the captcha box and click next
         9. Your Client ID will be on the next page.
+        10. do `[p]set api imgur client_id,your_client_id`
         """
-        await self.settings.imgur_client_id.set(imgur_client_id)
-        await ctx.send(_("The Imgur Client ID has been set!"))
+        await ctx.send_help()
 
     @commands.guild_only()
     @commands.command()
