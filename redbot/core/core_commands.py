@@ -1022,9 +1022,7 @@ class Core(commands.Cog, CoreLogic):
 
     @_set.command()
     @checks.is_owner()
-    async def api(
-        self, ctx: commands.Context, service:str, *tokens:commands.converter.APIToken
-    ):
+    async def api(self, ctx: commands.Context, service: str, *tokens: commands.converter.APIToken):
         """Set various external API tokens.
         
         This setting will be asked for by some 3rd party cogs and some core cogs.
@@ -1038,7 +1036,7 @@ class Core(commands.Cog, CoreLogic):
         if ctx.channel.permissions_for(ctx.me).manage_messages:
             await ctx.message.delete()
         entry = {}
-        entry[service] = {k:v for t in tokens for k, v in t.items()}
+        entry[service] = {k: v for t in tokens for k, v in t.items()}
         await ctx.bot.db.api_tokens.set(entry)
         await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
 

@@ -40,6 +40,7 @@ class GuildConverter(discord.Guild):
 
         return ret
 
+
 class APIToken(discord.ext.commands.Converter):
     """Converts to a `dict` object.
 
@@ -51,6 +52,7 @@ class APIToken(discord.ext.commands.Converter):
     this leaves the owness on the cog creator to clearly define how to setup the correct
     credential names for their cogs.
     """
+
     async def convert(self, ctx, argument) -> dict:
         bot = ctx.bot
         result = {}

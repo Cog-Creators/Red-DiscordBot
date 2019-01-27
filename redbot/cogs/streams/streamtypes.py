@@ -39,8 +39,10 @@ class TwitchCommunity:
         self.type = self.__class__.__name__
 
     async def get_community_id(self):
-        headers = {"Accept": "application/vnd.twitchtv.v5+json", 
-                   "Client-ID": str(self._token["client_id"])}
+        headers = {
+            "Accept": "application/vnd.twitchtv.v5+json",
+            "Client-ID": str(self._token["client_id"]),
+        }
         params = {"name": self.name}
         async with aiohttp.ClientSession() as session:
             async with session.get(
@@ -62,8 +64,10 @@ class TwitchCommunity:
                 self.id = await self.get_community_id()
             except CommunityNotFound:
                 raise
-        headers = {"Accept": "application/vnd.twitchtv.v5+json", 
-                   "Client-ID": str(self._token["client_id"])}
+        headers = {
+            "Accept": "application/vnd.twitchtv.v5+json",
+            "Client-ID": str(self._token["client_id"]),
+        }
         params = {"community_id": self.id, "limit": 100}
         url = TWITCH_BASE_URL + "/kraken/streams"
         async with aiohttp.ClientSession() as session:
@@ -82,8 +86,10 @@ class TwitchCommunity:
             raise APIError()
 
     async def make_embed(self, streams: list) -> discord.Embed:
-        headers = {"Accept": "application/vnd.twitchtv.v5+json", 
-                   "Client-ID": str(self._token["client_id"])}
+        headers = {
+            "Accept": "application/vnd.twitchtv.v5+json",
+            "Client-ID": str(self._token["client_id"]),
+        }
         async with aiohttp.ClientSession() as session:
             async with session.get(
                 "{}/{}".format(TWITCH_COMMUNITIES_ENDPOINT, self.id), headers=headers
@@ -245,8 +251,10 @@ class TwitchStream(Stream):
             self.id = await self.fetch_id()
 
         url = TWITCH_STREAMS_ENDPOINT + self.id
-        header = {"Client-ID": str(self._token["client_id"]), 
-                  "Accept": "application/vnd.twitchtv.v5+json"}
+        header = {
+            "Client-ID": str(self._token["client_id"]),
+            "Accept": "application/vnd.twitchtv.v5+json",
+        }
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=header) as r:
@@ -267,8 +275,10 @@ class TwitchStream(Stream):
             raise APIError()
 
     async def fetch_id(self):
-        header = {"Client-ID": str(self._token["client_id"]), 
-                  "Accept": "application/vnd.twitchtv.v5+json"}
+        header = {
+            "Client-ID": str(self._token["client_id"]),
+            "Accept": "application/vnd.twitchtv.v5+json",
+        }
         url = TWITCH_ID_ENDPOINT + self.name
 
         async with aiohttp.ClientSession() as session:
