@@ -39,7 +39,8 @@ class TwitchCommunity:
         self.type = self.__class__.__name__
 
     async def get_community_id(self):
-        headers = {"Accept": "application/vnd.twitchtv.v5+json", "Client-ID": str(self._token)}
+        headers = {"Accept": "application/vnd.twitchtv.v5+json", 
+                   "Client-ID": str(self._token["client_id"])}
         params = {"name": self.name}
         async with aiohttp.ClientSession() as session:
             async with session.get(
@@ -61,7 +62,8 @@ class TwitchCommunity:
                 self.id = await self.get_community_id()
             except CommunityNotFound:
                 raise
-        headers = {"Accept": "application/vnd.twitchtv.v5+json", "Client-ID": str(self._token)}
+        headers = {"Accept": "application/vnd.twitchtv.v5+json", 
+                   "Client-ID": str(self._token["client_id"])}
         params = {"community_id": self.id, "limit": 100}
         url = TWITCH_BASE_URL + "/kraken/streams"
         async with aiohttp.ClientSession() as session:
@@ -80,7 +82,8 @@ class TwitchCommunity:
             raise APIError()
 
     async def make_embed(self, streams: list) -> discord.Embed:
-        headers = {"Accept": "application/vnd.twitchtv.v5+json", "Client-ID": str(self._token)}
+        headers = {"Accept": "application/vnd.twitchtv.v5+json", 
+                   "Client-ID": str(self._token["client_id"])}
         async with aiohttp.ClientSession() as session:
             async with session.get(
                 "{}/{}".format(TWITCH_COMMUNITIES_ENDPOINT, self.id), headers=headers
@@ -124,6 +127,7 @@ class Stream:
         # self.already_online = kwargs.pop("already_online", False)
         self._messages_cache = kwargs.pop("_messages_cache", [])
         self.type = self.__class__.__name__
+        self.token_name = None
 
     async def is_online(self):
         raise NotImplementedError()
@@ -149,6 +153,7 @@ class YoutubeStream(Stream):
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
         self._token = kwargs.pop("token", None)
+        self.token_name = "youtube"
         super().__init__(**kwargs)
 
     async def is_online(self):
@@ -162,7 +167,7 @@ class YoutubeStream(Stream):
 
         url = YOUTUBE_SEARCH_ENDPOINT
         params = {
-            "key": self._token,
+            "key": self._token["api_key"],
             "part": "snippet",
             "channelId": self.id,
             "type": "video",
@@ -175,7 +180,7 @@ class YoutubeStream(Stream):
             raise OfflineStream()
         elif "items" in data:
             vid_id = data["items"][0]["id"]["videoId"]
-            params = {"key": self._token, "id": vid_id, "part": "snippet"}
+            params = {"key": self._token["api_key"], "id": vid_id, "part": "snippet"}
             async with aiohttp.ClientSession() as session:
                 async with session.get(YOUTUBE_VIDEOS_ENDPOINT, params=params) as r:
                     data = await r.json()
@@ -202,7 +207,7 @@ class YoutubeStream(Stream):
 
     async def _fetch_channel_resource(self, resource: str):
 
-        params = {"key": self._token, "part": resource}
+        params = {"key": self._token["api_key"], "part": resource}
         if resource == "id":
             params["forUsername"] = self.name
         else:
@@ -232,6 +237,7 @@ class TwitchStream(Stream):
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
         self._token = kwargs.pop("token", None)
+        self.token_ame = "twitch"
         super().__init__(**kwargs)
 
     async def is_online(self):
@@ -239,7 +245,8 @@ class TwitchStream(Stream):
             self.id = await self.fetch_id()
 
         url = TWITCH_STREAMS_ENDPOINT + self.id
-        header = {"Client-ID": str(self._token), "Accept": "application/vnd.twitchtv.v5+json"}
+        header = {"Client-ID": str(self._token["client_id"]), 
+                  "Accept": "application/vnd.twitchtv.v5+json"}
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=header) as r:
@@ -260,7 +267,8 @@ class TwitchStream(Stream):
             raise APIError()
 
     async def fetch_id(self):
-        header = {"Client-ID": str(self._token), "Accept": "application/vnd.twitchtv.v5+json"}
+        header = {"Client-ID": str(self._token["client_id"]), 
+                  "Accept": "application/vnd.twitchtv.v5+json"}
         url = TWITCH_ID_ENDPOINT + self.name
 
         async with aiohttp.ClientSession() as session:

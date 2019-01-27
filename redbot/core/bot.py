@@ -57,6 +57,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             help__tagline="",
             disabled_commands=[],
             disabled_command_msg="That command is disabled.",
+            api_tokens={}
         )
 
         self.db.register_guild(
