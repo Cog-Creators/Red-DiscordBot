@@ -569,7 +569,7 @@ class PermissionOverwrite:
                 raise ValueError("no permission called {0}.".format(key))
 
             setattr(self, key, value)
-    
+
     def __eq__(self, other):
         return self._values == other._values
 
