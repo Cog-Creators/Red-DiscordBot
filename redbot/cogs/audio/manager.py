@@ -96,9 +96,12 @@ async def start_lavalink_server(loop):
     if not java_available:
         raise RuntimeError("You must install Java 1.8+ for Lavalink to run.")
 
-    extra_flags = ""
     if java_version == (1, 8):
         extra_flags = "-Dsun.zip.disableMemoryMapping=true"
+    elif java_version >= (11, 0):
+        extra_flags = "-Djdk.tls.client.protocols=TLSv1.2"
+    else:
+        extra_flags = ""
 
     from . import LAVALINK_DOWNLOAD_DIR, LAVALINK_JAR_FILE
 
