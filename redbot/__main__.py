@@ -117,7 +117,7 @@ async def sigterm_handler(red, log):
 
 
 def main():
-    description = "Red - Version {}".format(__version__)
+    description = "Red V3"
     cli_flags = parse_cli_flags(sys.argv[1:])
     if cli_flags.list_instances:
         list_instances()

@@ -93,6 +93,10 @@ DM_PERMS.update(
 class PrivilegeLevel(enum.IntEnum):
     """Enumeration for special privileges."""
 
+    # Maintainer Note: do NOT re-order these.
+    # Each privelege level also implies access to the ones before it.
+    # Inserting new privelege levels at a later point is fine if that is considered.
+
     NONE = enum.auto()
     """No special privilege level."""
 
@@ -167,6 +171,17 @@ class PermState(enum.Enum):
     """This command has been actively denied, terminate the command
     chain.
     """
+
+    # The below are valid states, but should not be transitioned to
+    # They should be set if they apply.
+
+    ALLOWED_BY_HOOK = enum.auto()
+    """This command has been actively allowed by a permission hook.
+    check validation doesn't need this, but is useful to developers"""
+
+    DENIED_BY_HOOK = enum.auto()
+    """This command has been actively denied by a permission hook
+    check validation doesn't need this, but is useful to developers"""
 
     def transition_to(
         self, next_state: "PermState"

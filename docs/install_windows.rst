@@ -66,19 +66,19 @@ Installing Red
 
     .. code-block:: none
 
-        python -m pip install -U --process-dependency-links --no-cache-dir Red-DiscordBot
+        python -m pip install -U Red-DiscordBot
 
   * With audio:
 
     .. code-block:: none
 
-        python -m pip install -U --process-dependency-links --no-cache-dir Red-DiscordBot[voice]
+        python -m pip install -U Red-DiscordBot[voice]
 
   * With audio and MongoDB support:
 
     .. code-block:: none
 
-        python -m pip install -U --process-dependency-links --no-cache-dir Red-DiscordBot[voice,mongo]
+        python -m pip install -U Red-DiscordBot[voice,mongo]
 
   .. note::
 

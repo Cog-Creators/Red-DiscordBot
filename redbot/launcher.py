@@ -115,18 +115,7 @@ def update_red(dev=False, voice=False, mongo=False, docs=False, test=False):
         package = "Red-DiscordBot"
         if egg_l:
             package += "[{}]".format(", ".join(egg_l))
-    arguments = [
-        interpreter,
-        "-m",
-        "pip",
-        "install",
-        "-U",
-        "-I",
-        "--no-cache-dir",
-        "--force-reinstall",
-        "--process-dependency-links",
-        package,
-    ]
+    arguments = [interpreter, "-m", "pip", "install", "-U", package]
     if not is_venv():
         arguments.append("--user")
     code = subprocess.call(arguments)
