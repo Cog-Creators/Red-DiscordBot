@@ -67,7 +67,8 @@ Debian/Raspbian Stretch. This guide will tell you how. First, run the following 
 
     sudo apt install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
     libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
-    xz-utils tk-dev libffi-dev liblzma-dev python-openssl git unzip default-jre
+    xz-utils tk-dev libffi-dev liblzma-dev python-openssl python3-openssl git unzip \
+    default-jre
 
 Complete the rest of the installation by `installing Python 3.7 with pyenv <install-python-pyenv>`.
 
