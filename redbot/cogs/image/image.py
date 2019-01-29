@@ -19,11 +19,19 @@ class Image(commands.Cog):
     def __init__(self, bot):
         super().__init__()
         self.bot = bot
+        self.settings = Config.get_conf(self, identifier=2652104208, force_registration=True)
+        self.settings.register_global(**self.default_global)
         self.session = aiohttp.ClientSession()
         self.imgur_base_url = "https://api.imgur.com/3/"
 
     def __unload(self):
         self.session.detach()
+
+    async def initialize(self) -> None:
+        """Move the API keys from cog stored config to core bot config if they exist."""
+        imgur_token = await self.settings.imgur_client_id()
+        if imgur_token is not None and "imgur" not in await self.bot.db.api_tokens():
+            await self.bot.db.api_tokens.set_raw("imgur", value={"client_id": imgur_token})
 
     @commands.group(name="imgur")
     async def _imgur(self, ctx):
@@ -129,21 +137,23 @@ class Image(commands.Cog):
     @checks.is_owner()
     @commands.command()
     async def imgurcreds(self, ctx):
-        """Set the Imgur Client ID.
+        """Explain how to set imgur API tokens"""
 
-        To get an Imgur Client ID:
-        1. Login to an Imgur account.
-        2. Visit [this](https://api.imgur.com/oauth2/addclient) page
-        3. Enter a name for your application
-        4. Select *Anonymous usage without user authorization* for the auth type
-        5. Set the authorization callback URL to `https://localhost`
-        6. Leave the app website blank
-        7. Enter a valid email address and a description
-        8. Check the captcha box and click next
-        9. Your Client ID will be on the next page.
-        10. do `[p]set api imgur client_id,your_client_id`
-        """
-        await ctx.send_help()
+        message = _(
+            "To get an Imgur Client ID:\n"
+            "1. Login to an Imgur account.\n"
+            "2. Visit [this](https://api.imgur.com/oauth2/addclient) page\n"
+            "3. Enter a name for your application\n"
+            "4. Select *Anonymous usage without user authorization* for the auth type\n"
+            "5. Set the authorization callback URL to `https://localhost`\n"
+            "6. Leave the app website blank\n"
+            "7. Enter a valid email address and a description\n"
+            "8. Check the captcha box and click next\n"
+            "9. Your Client ID will be on the next page.\n"
+            "10. do `{prefix}set api imgur client_id,your_client_id`\n"
+        ).format(prefix=ctx.prefix)
+
+        await ctx.maybe_send_embed(message)
 
     @commands.guild_only()
     @commands.command()

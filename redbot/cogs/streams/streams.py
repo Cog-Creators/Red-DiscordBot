@@ -71,10 +71,24 @@ class Streams(commands.Cog):
 
     async def initialize(self) -> None:
         """Should be called straight after cog instantiation."""
+        await self.move_api_keys()
         self.streams = await self.load_streams()
         self.communities = await self.load_communities()
 
         self.task = self.bot.loop.create_task(self._stream_alerts())
+
+    async def move_api_keys(self):
+        """Move the API keys from cog stored config to core bot config if they exist."""
+        tokens = await self.db.tokens()
+        existing_keys = await self.bot.db.api_tokens()
+        for token_type, token in tokens.items():
+            if token_type == "YoutubeStream":
+                if "youtube" not in existing_keys:
+                    await self.bot.db.api_tokens.set_raw("youtube", value={"api_key": token})
+            if token_type == "TwitchStream":
+                # Don't need to check Community since they're set the same
+                if "twitch" not in existing_keys:
+                    await self.bot.db.api_tokens.set_raw("twitch", value={"client_id": token})
 
     @commands.command()
     async def twitch(self, ctx: commands.Context, channel_name: str):
@@ -326,36 +340,41 @@ class Streams(commands.Cog):
     @streamset.command()
     @checks.is_owner()
     async def twitchtoken(self, ctx: commands.Context):
-        """Set the Client ID for Twitch.
+        """Explain how to set the twitch token"""
 
-        To do this, follow these steps:
-        1. Go to this page: https://dev.twitch.tv/dashboard/apps.
-        2. Click *Register Your Application*
-        3. Enter a name, set the OAuth Redirect URI to `http://localhost`, and
-           select an Application Category of your choosing.
-        4. Click *Register*, and on the following page, copy the Client ID.
-        5. do `[p]set api TwitchStream client_id;token`
-        Note: These tokens are sensitive and should only be used in a private channel
-        or in DM with the bot.
-        """
-        await ctx.send_help()
+        message = _(
+            "To set the twitch API tokens, follow these steps:\n"
+            "1. Go to this page: https://dev.twitch.tv/dashboard/apps.\n"
+            "2. Click *Register Your Application*\n"
+            "3. Enter a name, set the OAuth Redirect URI to `http://localhost`, and \n"
+            "select an Application Category of your choosing."
+            "4. Click *Register*, and on the following page, copy the Client ID.\n"
+            "5. do `{prefix}set api twitch client_id,your_client_id`\n\n"
+            "Note: These tokens are sensitive and should only be used in a private channel\n"
+            "or in DM with the bot.)\n"
+        ).format(prefix=ctx.prefix)
+
+        await ctx.maybe_send_embed(message)
 
     @streamset.command()
     @checks.is_owner()
     async def youtubekey(self, ctx: commands.Context):
-        """Set the API key for YouTube.
+        """Explain how to set the YouTube token"""
 
-        To get one, do the following:
-        1. Create a project (see https://support.google.com/googleapi/answer/6251787 for details)
-        2. Enable the YouTube Data API v3 (see https://support.google.com/googleapi/answer/6158841
-        for instructions)
-        3. Set up your API key (see https://support.google.com/googleapi/answer/6158862 for
-        instructions)
-        4. Copy your API key and do `[p]set api youtube api_key;key`
-        Note: These tokens are sensitive and should only be used in a private channel
-        or in DM with the bot.
-        """
-        await ctx.send_help()
+        message = _(
+            "To get one, do the following:\n"
+            "1. Create a project\n"
+            "(see https://support.google.com/googleapi/answer/6251787 for details)\n"
+            "2. Enable the YouTube Data API v3 \n"
+            "(see https://support.google.com/googleapi/answer/6158841for instructions)\n"
+            "3. Set up your API key \n"
+            "(see https://support.google.com/googleapi/answer/6158862 for instructions)\n"
+            "4. Copy your API key and do `{prefix}set api youtube api_key,your_api_key`\n\n"
+            "Note: These tokens are sensitive and should only be used in a private channel\n"
+            "or in DM with the bot.\n"
+        ).format(prefix=ctx.prefix)
+
+        await ctx.maybe_send_embed(message)
 
     @streamset.group()
     @commands.guild_only()

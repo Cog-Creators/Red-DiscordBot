@@ -36,6 +36,7 @@ class TwitchCommunity:
         self.channels = kwargs.pop("channels", [])
         self._messages_cache = kwargs.pop("_messages_cache", [])
         self._token = kwargs.pop("token", None)
+        self.token_name = "twitch"
         self.type = self.__class__.__name__
 
     async def get_community_id(self):
@@ -243,7 +244,7 @@ class TwitchStream(Stream):
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
         self._token = kwargs.pop("token", None)
-        self.token_ame = "twitch"
+        self.token_name = "twitch"
         super().__init__(**kwargs)
 
     async def is_online(self):
