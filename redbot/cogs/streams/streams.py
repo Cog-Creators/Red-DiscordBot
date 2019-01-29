@@ -89,6 +89,7 @@ class Streams(commands.Cog):
                 # Don't need to check Community since they're set the same
                 if "twitch" not in existing_keys:
                     await self.bot.db.api_tokens.set_raw("twitch", value={"client_id": token})
+        await self.db.tokens.set({})
 
     @commands.command()
     async def twitch(self, ctx: commands.Context, channel_name: str):
