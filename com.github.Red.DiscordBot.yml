@@ -9,7 +9,6 @@ sdk-extensions: [org.freedesktop.Sdk.Extension.openjdk11]
 command: redbot-launcher
     
 finish-args:
-  - --socket=pulseaudio
   - --share=network
   - --allow=multiarch
 
@@ -26,7 +25,7 @@ modules:
       - type: script
         dest-filename: redbot-install
         commands:
-          - pip3 install --user -U --process-dependency-links --no-cache-dir Red-DiscordBot[voice,mongo] python-Levenshtein
+          - pip3 install --user -U --no-cache-dir Red-DiscordBot[mongo] python-Levenshtein
           - echo "Installer finished"
       - type: script
         dest-filename: redbot-launcher
