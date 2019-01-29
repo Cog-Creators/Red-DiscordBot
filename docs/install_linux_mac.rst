@@ -95,7 +95,9 @@ one-by-one:
     brew tap caskroom/versions
     brew cask install java8
 
+.. _install-ubuntu:
 .. _install-ubuntu-bionic:
+.. _install-ubuntu-cosmic:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Ubuntu 18.04 Bionic Beaver and 18.10 Cosmic Cuttlefish
@@ -105,6 +107,8 @@ Ubuntu 18.04 Bionic Beaver and 18.10 Cosmic Cuttlefish
 
     sudo apt install python3.7 python3.7-dev python3.7-venv python3-pip build-essential \
     libssl-dev libffi-dev git unzip default-jre -y
+
+.. _install-ubuntu-xenial:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 Ubuntu 16.04 Xenial Xerus
@@ -127,6 +131,8 @@ Now, install python, pip, git and java with the following commands:
     wget https://bootstrap.pypa.io/get-pip.py
     sudo python3.7 get-pip.py
 
+.. _install-python-pyenv:
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Installing Python with pyenv
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -146,7 +152,7 @@ Then run the following command:
 
 .. code-block:: none
 
-    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.7.1 -v
+    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.7.2 -v
 
 This may take a long time to complete.
 
@@ -154,7 +160,7 @@ After that is finished, run:
 
 .. code-block:: none
 
-    pyenv global 3.7.1
+    pyenv global 3.7.2
 
 Pyenv is now installed and your system should be configured to run Python 3.7.
 
