@@ -225,6 +225,15 @@ async def test_set_dynamic_attr(config):
 
 
 @pytest.mark.asyncio
+async def test_clear_dynamic_attr(config):
+    await config.foo.set(True)
+    await config.clear_raw("foo")
+
+    with pytest.raises(KeyError):
+        await config.get_raw("foo")
+
+
+@pytest.mark.asyncio
 async def test_get_dynamic_attr(config):
     assert await config.get_raw("foobaz", default=True) is True
 
@@ -466,3 +475,18 @@ async def test_get_raw_mixes_defaults(config):
 
     subgroup = await config.get_raw("subgroup")
     assert subgroup == {"foo": True, "bar": False}
+
+
+@pytest.mark.asyncio
+async def test_cast_str_raw(config):
+    await config.set_raw(123, 456, value=True)
+    assert await config.get_raw(123, 456) is True
+    assert await config.get_raw("123", "456") is True
+    await config.clear_raw("123", 456)
+
+
+@pytest.mark.asyncio
+async def test_cast_str_nested(config):
+    config.register_global(foo={})
+    await config.foo.set({123: True, 456: {789: False}})
+    assert await config.foo() == {"123": True, "456": {"789": False}}

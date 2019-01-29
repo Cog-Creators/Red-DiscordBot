@@ -3,7 +3,7 @@ import pkgutil
 from importlib import import_module, invalidate_caches
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Tuple, Union, List, Optional
+from typing import Union, List, Optional
 
 import redbot.cogs
 from redbot.core.utils import deduplicate_iterables
@@ -25,8 +25,6 @@ class NoSuchCog(ImportError):
     Different from ImportError because some ImportErrors can happen inside cogs.
     """
 
-    pass
-
 
 class CogManager:
     """Directory manager for Red's cogs.
@@ -39,30 +37,27 @@ class CogManager:
 
     CORE_PATH = Path(redbot.cogs.__path__[0])
 
-    def __init__(self, paths: Tuple[str] = ()):
+    def __init__(self):
         self.conf = Config.get_conf(self, 2938473984732, True)
         tmp_cog_install_path = cog_data_path(self) / "cogs"
         tmp_cog_install_path.mkdir(parents=True, exist_ok=True)
         self.conf.register_global(paths=[], install_path=str(tmp_cog_install_path))
-        self._paths = [Path(p) for p in paths]
 
-    async def paths(self) -> Tuple[Path, ...]:
-        """Get all currently valid path directories.
+    async def paths(self) -> List[Path]:
+        """Get all currently valid path directories, in order of priority
 
         Returns
         -------
-        `tuple` of `pathlib.Path`
-            All valid cog paths.
+        List[pathlib.Path]
+            A list of paths where cog packages can be found. The
+            install path is highest priority, followed by the
+            user-defined paths, and the core path has the lowest
+            priority.
 
         """
-        conf_paths = [Path(p) for p in await self.conf.paths()]
-        other_paths = self._paths
-
-        all_paths = deduplicate_iterables(conf_paths, other_paths, [self.CORE_PATH])
-
-        if self.install_path not in all_paths:
-            all_paths.insert(0, await self.install_path())
-        return tuple(p.resolve() for p in all_paths if p.is_dir())
+        return deduplicate_iterables(
+            [await self.install_path()], await self.user_defined_paths(), [self.CORE_PATH]
+        )
 
     async def install_path(self) -> Path:
         """Get the install path for 3rd party cogs.
@@ -73,8 +68,20 @@ class CogManager:
             The path to the directory where 3rd party cogs are stored.
 
         """
-        p = Path(await self.conf.install_path())
-        return p.resolve()
+        return Path(await self.conf.install_path()).resolve()
+
+    async def user_defined_paths(self) -> List[Path]:
+        """Get a list of user-defined cog paths.
+
+        All paths will be absolute and unique, in order of priority.
+
+        Returns
+        -------
+        List[pathlib.Path]
+            A list of user-defined paths.
+
+        """
+        return list(map(Path, deduplicate_iterables(await self.conf.paths())))
 
     async def set_install_path(self, path: Path) -> Path:
         """Set the install path for 3rd party cogs.
@@ -125,11 +132,10 @@ class CogManager:
             path = Path(path)
         return path
 
-    async def add_path(self, path: Union[Path, str]):
+    async def add_path(self, path: Union[Path, str]) -> None:
         """Add a cog path to current list.
 
-        This will ignore duplicates. Does have a side effect of removing all
-        invalid paths from the saved path list.
+        This will ignore duplicates.
 
         Parameters
         ----------
@@ -156,11 +162,12 @@ class CogManager:
         if path == self.CORE_PATH:
             raise ValueError("Cannot add the core path as an additional path.")
 
-        async with self.conf.paths() as paths:
-            if not any(Path(p) == path for p in paths):
-                paths.append(str(path))
+        current_paths = await self.user_defined_paths()
+        if path not in current_paths:
+            current_paths.append(path)
+            await self.set_paths(current_paths)
 
-    async def remove_path(self, path: Union[Path, str]) -> Tuple[Path, ...]:
+    async def remove_path(self, path: Union[Path, str]) -> None:
         """Remove a path from the current paths list.
 
         Parameters
@@ -168,20 +175,12 @@ class CogManager:
         path : `pathlib.Path` or `str`
             Path to remove.
 
-        Returns
-        -------
-        `tuple` of `pathlib.Path`
-            Tuple of new valid paths.
-
         """
         path = self._ensure_path_obj(path).resolve()
+        paths = await self.user_defined_paths()
 
-        paths = [Path(p) for p in await self.conf.paths()]
-        if path in paths:
-            paths.remove(path)
-            await self.set_paths(paths)
-
-        return tuple(paths)
+        paths.remove(path)
+        await self.set_paths(paths)
 
     async def set_paths(self, paths_: List[Path]):
         """Set the current paths list.
@@ -192,7 +191,7 @@ class CogManager:
             List of paths to set.
 
         """
-        str_paths = [str(p) for p in paths_]
+        str_paths = list(map(str, paths_))
         await self.conf.paths.set(str_paths)
 
     async def _find_ext_cog(self, name: str) -> ModuleSpec:
@@ -213,9 +212,9 @@ class CogManager:
         ------
         NoSuchCog
             When no cog with the requested name was found.
+
         """
-        resolved_paths = await self.paths()
-        real_paths = [str(p) for p in resolved_paths if p != self.CORE_PATH]
+        real_paths = list(map(str, [await self.install_path()] + await self.user_defined_paths()))
 
         for finder, module_name, _ in pkgutil.iter_modules(real_paths):
             if name == module_name:
@@ -287,10 +286,8 @@ class CogManager:
             return await self._find_core_cog(name)
 
     async def available_modules(self) -> List[str]:
-        """Finds the names of all available modules to load.
-        """
-        paths = (await self.install_path(),) + await self.paths()
-        paths = [str(p) for p in paths]
+        """Finds the names of all available modules to load."""
+        paths = list(map(str, await self.paths()))
 
         ret = []
         for finder, module_name, _ in pkgutil.iter_modules(paths):
@@ -311,15 +308,8 @@ _ = Translator("CogManagerUI", __file__)
 
 
 @cog_i18n(_)
-class CogManagerUI:
+class CogManagerUI(commands.Cog):
     """Commands to interface with Red's cog manager."""
-
-    @staticmethod
-    async def visible_paths(ctx):
-        install_path = await ctx.bot.cog_mgr.install_path()
-        cog_paths = await ctx.bot.cog_mgr.paths()
-        cog_paths = [p for p in cog_paths if p != install_path]
-        return cog_paths
 
     @commands.command()
     @checks.is_owner()
@@ -330,8 +320,7 @@ class CogManagerUI:
         cog_mgr = ctx.bot.cog_mgr
         install_path = await cog_mgr.install_path()
         core_path = cog_mgr.CORE_PATH
-        cog_paths = await cog_mgr.paths()
-        cog_paths = [p for p in cog_paths if p not in (install_path, core_path)]
+        cog_paths = await cog_mgr.user_defined_paths()
 
         msg = _("Install Path: {install_path}\nCore Path: {core_path}\n\n").format(
             install_path=install_path, core_path=core_path
@@ -369,7 +358,11 @@ class CogManagerUI:
             from !paths
         """
         path_number -= 1
-        cog_paths = await self.visible_paths(ctx)
+        if path_number < 0:
+            await ctx.send(_("Path numbers must be positive."))
+            return
+
+        cog_paths = await ctx.bot.cog_mgr.user_defined_paths()
         try:
             to_remove = cog_paths.pop(path_number)
         except IndexError:
@@ -388,8 +381,11 @@ class CogManagerUI:
         # Doing this because in the paths command they're 1 indexed
         from_ -= 1
         to -= 1
+        if from_ < 0 or to < 0:
+            await ctx.send(_("Path numbers must be positive."))
+            return
 
-        all_paths = await self.visible_paths(ctx)
+        all_paths = await ctx.bot.cog_mgr.user_defined_paths()
         try:
             to_move = all_paths.pop(from_)
         except IndexError:

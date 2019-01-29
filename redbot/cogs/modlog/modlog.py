@@ -1,3 +1,5 @@
+from typing import Optional
+
 import discord
 
 from redbot.core import checks, modlog, commands
@@ -9,32 +11,38 @@ _ = Translator("ModLog", __file__)
 
 
 @cog_i18n(_)
-class ModLog:
-    """Log for mod actions"""
+class ModLog(commands.Cog):
+    """Manage log channels for moderation actions."""
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
 
     @commands.group()
     @checks.guildowner_or_permissions(administrator=True)
     async def modlogset(self, ctx: commands.Context):
-        """Settings for the mod log"""
+        """Manage modlog settings."""
         pass
 
     @modlogset.command()
     @commands.guild_only()
     async def modlog(self, ctx: commands.Context, channel: discord.TextChannel = None):
-        """Sets a channel as mod log
+        """Set a channel as the modlog.
 
-        Leaving the channel parameter empty will deactivate it"""
+        Omit `<channel>` to disable the modlog.
+        """
         guild = ctx.guild
         if channel:
             if channel.permissions_for(guild.me).send_messages:
                 await modlog.set_modlog_channel(guild, channel)
-                await ctx.send(_("Mod events will be sent to {}").format(channel.mention))
+                await ctx.send(
+                    _("Mod events will be sent to {channel}").format(channel=channel.mention)
+                )
             else:
                 await ctx.send(
-                    _("I do not have permissions to send messages in {}!").format(channel.mention)
+                    _("I do not have permissions to send messages in {channel}!").format(
+                        channel=channel.mention
+                    )
                 )
         else:
             try:
@@ -48,39 +56,36 @@ class ModLog:
     @modlogset.command(name="cases")
     @commands.guild_only()
     async def set_cases(self, ctx: commands.Context, action: str = None):
-        """Enables or disables case creation for each type of mod action"""
+        """Enable or disable case creation for a mod action."""
         guild = ctx.guild
 
         if action is None:  # No args given
             casetypes = await modlog.get_all_casetypes(guild)
             await ctx.send_help()
-            title = _("Current settings:")
-            msg = ""
+            lines = []
             for ct in casetypes:
-                enabled = await ct.is_enabled()
-                value = "enabled" if enabled else "disabled"
-                msg += "%s : %s\n" % (ct.name, value)
+                enabled = "enabled" if await ct.is_enabled() else "disabled"
+                lines.append(f"{ct.name} : {enabled}")
 
-            msg = title + "\n" + box(msg)
-            await ctx.send(msg)
+            await ctx.send(_("Current settings:\n") + box("\n".join(lines)))
             return
+
         casetype = await modlog.get_casetype(action, guild)
         if not casetype:
             await ctx.send(_("That action is not registered"))
         else:
-
             enabled = await casetype.is_enabled()
-            await casetype.set_enabled(True if not enabled else False)
-
-            msg = _("Case creation for {} actions is now {}.").format(
-                action, "enabled" if not enabled else "disabled"
+            await casetype.set_enabled(not enabled)
+            await ctx.send(
+                _("Case creation for {action_name} actions is now {enabled}.").format(
+                    action_name=action, enabled="enabled" if not enabled else "disabled"
+                )
             )
-            await ctx.send(msg)
 
     @modlogset.command()
     @commands.guild_only()
     async def resetcases(self, ctx: commands.Context):
-        """Resets modlog's cases"""
+        """Reset all modlog cases in this server."""
         guild = ctx.guild
         await modlog.reset_cases(guild)
         await ctx.send(_("Cases have been reset."))
@@ -88,7 +93,7 @@ class ModLog:
     @commands.command()
     @commands.guild_only()
     async def case(self, ctx: commands.Context, number: int):
-        """Shows the specified case"""
+        """Show the specified case."""
         try:
             case = await modlog.get_case(number, ctx.guild, self.bot)
         except RuntimeError:
@@ -100,24 +105,21 @@ class ModLog:
             else:
                 await ctx.send(await case.message_content(embed=False))
 
-    @commands.command(usage="[case] <reason>")
+    @commands.command()
     @commands.guild_only()
-    async def reason(self, ctx: commands.Context, *, reason: str):
-        """Lets you specify a reason for mod-log's cases
-        
+    async def reason(self, ctx: commands.Context, case: Optional[int], *, reason: str):
+        """Specify a reason for a modlog case.
+
         Please note that you can only edit cases you are
-        the owner of unless you are a mod/admin or the server owner.
-        
-        If no number is specified, the latest case will be used."""
+        the owner of unless you are a mod, admin or server owner.
+
+        If no case number is specified, the latest case will be used.
+        """
         author = ctx.author
         guild = ctx.guild
-        potential_case = reason.split()[0]
-        if potential_case.isdigit():
-            case = int(potential_case)
-            reason = reason.replace(potential_case, "")
-        else:
-            case = str(int(await modlog.get_next_case_number(guild)) - 1)
-            # latest case
+        if case is None:
+            # get the latest case
+            case = int(await modlog.get_next_case_number(guild)) - 1
         try:
             case_before = await modlog.get_case(case, guild, self.bot)
         except RuntimeError:

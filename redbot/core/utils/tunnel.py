@@ -2,9 +2,8 @@ import discord
 from datetime import datetime
 from redbot.core.utils.chat_formatting import pagify
 import io
-import sys
 import weakref
-from typing import List
+from typing import List, Optional
 from .common_filters import filter_mass_mentions
 
 _instances = weakref.WeakValueDictionary({})
@@ -86,7 +85,11 @@ class Tunnel(metaclass=TunnelMeta):
 
     @staticmethod
     async def message_forwarder(
-        *, destination: discord.abc.Messageable, content: str = None, embed=None, files=[]
+        *,
+        destination: discord.abc.Messageable,
+        content: str = None,
+        embed=None,
+        files: Optional[List[discord.File]] = None
     ) -> List[discord.Message]:
         """
         This does the actual sending, use this instead of a full tunnel
@@ -95,19 +98,19 @@ class Tunnel(metaclass=TunnelMeta):
 
         Parameters
         ----------
-        destination: `discord.abc.Messageable`
+        destination: discord.abc.Messageable
             Where to send
-        content: `str`
+        content: str
             The message content
-        embed: `discord.Embed`
+        embed: discord.Embed
             The embed to send
-        files: `list` of `discord.File`
+        files: Optional[List[discord.File]]
             A list of files to send.
 
         Returns
         -------
-        list of `discord.Message`
-            The `discord.Message`\ (s) sent as a result
+        List[discord.Message]
+            The messages sent as a result.
 
         Raises
         ------
@@ -117,7 +120,6 @@ class Tunnel(metaclass=TunnelMeta):
             see `discord.abc.Messageable.send`
         """
         rets = []
-        files = files if files else None
         if content:
             for page in pagify(content):
                 rets.append(await destination.send(page, files=files, embed=embed))
@@ -148,15 +150,12 @@ class Tunnel(metaclass=TunnelMeta):
 
         """
         files = []
-        size = 0
-        max_size = 8 * 1024 * 1024
-        for a in m.attachments:
-            _fp = io.BytesIO()
-            await a.save(_fp)
-            size += sys.getsizeof(_fp)
-            if size > max_size:
-                return []
-            files.append(discord.File(_fp, filename=a.filename))
+        max_size = 8 * 1000 * 1000
+        if m.attachments and sum(a.size for a in m.attachments) <= max_size:
+            for a in m.attachments:
+                _fp = io.BytesIO()
+                await a.save(_fp)
+                files.append(discord.File(_fp, filename=a.filename))
         return files
 
     async def communicate(

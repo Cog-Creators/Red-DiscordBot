@@ -666,29 +666,30 @@ async def register_casetypes(new_types: List[dict]) -> List[CaseType]:
         return type_list
 
 
-async def get_modlog_channel(guild: discord.Guild) -> Union[discord.TextChannel, None]:
+async def get_modlog_channel(guild: discord.Guild) -> discord.TextChannel:
     """
-    Get the current modlog channel
+    Get the current modlog channel.
 
     Parameters
     ----------
     guild: `discord.Guild`
-        The guild to get the modlog channel for
+        The guild to get the modlog channel for.
 
     Returns
     -------
-    `discord.TextChannel` or `None`
-        The channel object representing the modlog channel
+    `discord.TextChannel`
+        The channel object representing the modlog channel.
 
     Raises
     ------
     RuntimeError
-        If the modlog channel is not found
+        If the modlog channel is not found.
 
     """
     if hasattr(guild, "get_channel"):
         channel = guild.get_channel(await _conf.guild(guild).mod_log())
     else:
+        # For unit tests only
         channel = await _conf.guild(guild).mod_log()
     if channel is None:
         raise RuntimeError("Failed to get the mod log channel!")

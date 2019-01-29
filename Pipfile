@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-"discord.py" = { git = 'git://github.com/Rapptz/discord.py', ref = 'rewrite', editable = true }
 "e1839a8" = { path = ".", editable = true, extras = ['mongo', 'voice'] }
 
 [dev-packages]

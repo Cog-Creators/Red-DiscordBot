@@ -23,6 +23,7 @@ discord.py 1.0.0a
 
 This help formatter contains work by Rapptz (Danny) and SirThane#1780.
 """
+import contextlib
 from collections import namedtuple
 from typing import List, Optional, Union
 
@@ -224,8 +225,8 @@ class Help(dpy_formatter.HelpFormatter):
 
         return ret
 
-    async def format_help_for(self, ctx, command_or_bot, reason: str = None):
-        """Formats the help page and handles the actual heavy lifting of how  ### WTF HAPPENED?
+    async def format_help_for(self, ctx, command_or_bot, reason: str = ""):
+        """Formats the help page and handles the actual heavy lifting of how
         the help command looks like. To change the behaviour, override the
         :meth:`~.HelpFormatter.format` method.
 
@@ -244,10 +245,24 @@ class Help(dpy_formatter.HelpFormatter):
         """
         self.context = ctx
         self.command = command_or_bot
+
+        # We want the permission state to be set as if the author had run the command he is
+        # requesting help for. This is so the subcommands shown in the help menu correctly reflect
+        # any permission rules set.
+        if isinstance(self.command, commands.Command):
+            with contextlib.suppress(commands.CommandError):
+                await self.command.can_run(
+                    self.context, check_all_parents=True, change_permission_state=True
+                )
+        elif isinstance(self.command, commands.Cog):
+            with contextlib.suppress(commands.CommandError):
+                # Cog's don't have a `can_run` method, so we use the `Requires` object directly.
+                await self.command.requires.verify(self.context)
+
         emb = await self.format()
 
         if reason:
-            emb["embed"]["title"] = "{0}".format(reason)
+            emb["embed"]["title"] = reason
 
         ret = []
 
@@ -313,7 +328,10 @@ async def help(ctx: commands.Context, *, command_name: str = ""):
         # help by itself just lists our own commands.
         pages = await formatter.format_help_for(ctx, bot)
     else:
-        command: commands.Command = bot.get_command(command_name)
+        # First check if it's a cog
+        command = bot.get_cog(command_name)
+        if command is None:
+            command = bot.get_command(command_name)
         if command is None:
             if hasattr(formatter, "format_command_not_found"):
                 msg = await formatter.format_command_not_found(ctx, command_name)

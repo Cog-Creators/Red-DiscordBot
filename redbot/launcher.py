@@ -8,18 +8,14 @@ import asyncio
 import aiohttp
 
 import pkg_resources
-from pathlib import Path
-from distutils.version import StrictVersion
 from redbot.setup import (
     basic_setup,
     load_existing_config,
     remove_instance,
     remove_instance_interaction,
     create_backup,
-    save_config,
 )
-from redbot.core import __version__
-from redbot.core.utils import safe_delete
+from redbot.core import __version__, version_info as red_version_info, VersionInfo
 from redbot.core.cli import confirm
 
 if sys.platform == "linux":
@@ -119,18 +115,7 @@ def update_red(dev=False, voice=False, mongo=False, docs=False, test=False):
         package = "Red-DiscordBot"
         if egg_l:
             package += "[{}]".format(", ".join(egg_l))
-    arguments = [
-        interpreter,
-        "-m",
-        "pip",
-        "install",
-        "-U",
-        "-I",
-        "--no-cache-dir",
-        "--force-reinstall",
-        "--process-dependency-links",
-        package,
-    ]
+    arguments = [interpreter, "-m", "pip", "install", "-U", package]
     if not is_venv():
         arguments.append("--user")
     code = subprocess.call(arguments)
@@ -390,7 +375,7 @@ async def is_outdated():
         async with session.get("{}/json".format(red_pypi)) as r:
             data = await r.json()
             new_version = data["info"]["version"]
-    return StrictVersion(new_version) > StrictVersion(__version__), new_version
+    return VersionInfo.from_str(new_version) > red_version_info, new_version
 
 
 def main_menu():

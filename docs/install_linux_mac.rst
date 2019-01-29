@@ -37,7 +37,7 @@ CentOS 7
 
     yum -y groupinstall development
     yum -y install https://centos7.iuscommunity.org/ius-release.rpm
-    yum -y install yum-utils wget which python36u python36u-pip python36u-devel openssl-devel libffi-devel git java-1.8.0-openjdk
+    yum -y install yum-utils wget which python36u python36u-pip python36u-devel openssl-devel libffi-devel git2u java-1.8.0-openjdk
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Debian and Raspbian Stretch
@@ -148,19 +148,19 @@ To install without audio support:
 
 .. code-block:: none
 
-    pip3 install -U --process-dependency-links --no-cache-dir Red-DiscordBot
+    pip3 install -U Red-DiscordBot
 
 Or, to install with audio support:
 
 .. code-block:: none
 
-    pip3 install -U --process-dependency-links --no-cache-dir Red-DiscordBot[voice]
+    pip3 install -U Red-DiscordBot[voice]
 
 Or, install with audio and MongoDB support:
 
 .. code-block:: none
 
-    pip3 install -U --process-dependency-links --no-cache-dir Red-DiscordBot[voice,mongo]
+    pip3 install -U Red-DiscordBot[voice,mongo]
 
 .. note::
 

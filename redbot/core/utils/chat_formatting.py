@@ -1,5 +1,11 @@
 import itertools
-from typing import Sequence, Iterator
+from typing import Sequence, Iterator, List
+
+import discord
+
+from redbot.core.i18n import Translator
+
+_ = Translator("UtilsChatFormatting", __file__)
 
 
 def error(text: str) -> str:
@@ -64,6 +70,7 @@ def bold(text: str) -> str:
         The marked up text.
 
     """
+    text = escape(text, formatting=True)
     return "**{}**".format(text)
 
 
@@ -101,7 +108,10 @@ def inline(text: str) -> str:
         The marked up text.
 
     """
-    return "`{}`".format(text)
+    if "`" in text:
+        return "``{}``".format(text)
+    else:
+        return "`{}`".format(text)
 
 
 def italics(text: str) -> str:
@@ -118,6 +128,7 @@ def italics(text: str) -> str:
         The marked up text.
 
     """
+    text = escape(text, formatting=True)
     return "*{}*".format(text)
 
 
@@ -273,6 +284,7 @@ def strikethrough(text: str) -> str:
         The marked up text.
 
     """
+    text = escape(text, formatting=True)
     return "~~{}~~".format(text)
 
 
@@ -290,6 +302,7 @@ def underline(text: str) -> str:
         The marked up text.
 
     """
+    text = escape(text, formatting=True)
     return "__{}__".format(text)
 
 
@@ -317,3 +330,59 @@ def escape(text: str, *, mass_mentions: bool = False, formatting: bool = False) 
     if formatting:
         text = text.replace("`", "\\`").replace("*", "\\*").replace("_", "\\_").replace("~", "\\~")
     return text
+
+
+def humanize_list(items: Sequence[str]) -> str:
+    """Get comma-separted list, with the last element joined with *and*.
+
+    This uses an Oxford comma, because without one, items containing
+    the word *and* would make the output difficult to interpret.
+
+    Parameters
+    ----------
+    items : Sequence[str]
+        The items of the list to join together.
+
+    Examples
+    --------
+    .. testsetup::
+
+        from redbot.core.utils.chat_formatting import humanize_list
+
+    .. doctest::
+
+        >>> humanize_list(['One', 'Two', 'Three'])
+        'One, Two, and Three'
+        >>> humanize_list(['One'])
+        'One'
+
+    """
+    if len(items) == 1:
+        return items[0]
+    return ", ".join(items[:-1]) + _(", and ") + items[-1]
+
+
+def format_perms_list(perms: discord.Permissions) -> str:
+    """Format a list of permission names.
+
+    This will return a humanized list of the names of all enabled
+    permissions in the provided `discord.Permissions` object.
+
+    Parameters
+    ----------
+    perms : discord.Permissions
+        The permissions object with the requested permissions to list
+        enabled.
+
+    Returns
+    -------
+    str
+        The humanized list.
+
+    """
+    perm_names: List[str] = []
+    for perm, value in perms:
+        if value is True:
+            perm_name = '"' + perm.replace("_", " ").title() + '"'
+            perm_names.append(perm_name)
+    return humanize_list(perm_names).replace("Guild", "Server")

@@ -54,10 +54,11 @@ def check_global_setting_admin():
 
 
 @cog_i18n(_)
-class Bank:
+class Bank(commands.Cog):
     """Bank"""
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
 
     # SECTION commands
@@ -66,7 +67,7 @@ class Bank:
     @checks.guildowner_or_permissions(administrator=True)
     @commands.group(autohelp=True)
     async def bankset(self, ctx: commands.Context):
-        """Base command for bank settings"""
+        """Base command for bank settings."""
         if ctx.invoked_subcommand is None:
             if await bank.is_global():
                 bank_name = await bank._conf.bank_name()
@@ -80,42 +81,47 @@ class Bank:
                 default_balance = await bank._conf.guild(ctx.guild).default_balance()
 
             settings = _(
-                "Bank settings:\n\nBank name: {}\nCurrency: {}\nDefault balance: {}"
-            ).format(bank_name, currency_name, default_balance)
+                "Bank settings:\n\nBank name: {bank_name}\nCurrency: {currency_name}\n"
+                "Default balance: {default_balance}"
+            ).format(
+                bank_name=bank_name, currency_name=currency_name, default_balance=default_balance
+            )
             await ctx.send(box(settings))
 
     @bankset.command(name="toggleglobal")
     @checks.is_owner()
     async def bankset_toggleglobal(self, ctx: commands.Context, confirm: bool = False):
-        """Toggles whether the bank is global or not
-        If the bank is global, it will become per-server
-        If the bank is per-server, it will become global"""
+        """Toggle whether the bank is global or not.
+
+        If the bank is global, it will become per-server.
+        If the bank is per-server, it will become global.
+        """
         cur_setting = await bank.is_global()
 
         word = _("per-server") if cur_setting else _("global")
         if confirm is False:
             await ctx.send(
                 _(
-                    "This will toggle the bank to be {}, deleting all accounts "
-                    "in the process! If you're sure, type `{}`"
-                ).format(word, "{}bankset toggleglobal yes".format(ctx.prefix))
+                    "This will toggle the bank to be {banktype}, deleting all accounts "
+                    "in the process! If you're sure, type `{command}`"
+                ).format(banktype=word, command="{}bankset toggleglobal yes".format(ctx.prefix))
             )
         else:
             await bank.set_global(not cur_setting)
-            await ctx.send(_("The bank is now {}.").format(word))
+            await ctx.send(_("The bank is now {banktype}.").format(banktype=word))
 
     @bankset.command(name="bankname")
     @check_global_setting_guildowner()
     async def bankset_bankname(self, ctx: commands.Context, *, name: str):
-        """Set the bank's name"""
+        """Set the bank's name."""
         await bank.set_bank_name(name, ctx.guild)
-        await ctx.send(_("Bank's name has been set to {}").format(name))
+        await ctx.send(_("Bank name has been set to: {name}").format(name=name))
 
     @bankset.command(name="creditsname")
     @check_global_setting_guildowner()
     async def bankset_creditsname(self, ctx: commands.Context, *, name: str):
-        """Set the name for the bank's currency"""
+        """Set the name for the bank's currency."""
         await bank.set_currency_name(name, ctx.guild)
-        await ctx.send(_("Currency name has been set to {}").format(name))
+        await ctx.send(_("Currency name has been set to: {name}").format(name=name))
 
     # ENDSECTION

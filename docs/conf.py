@@ -39,6 +39,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
+    "sphinx.ext.doctest",
     "sphinxcontrib.asyncio",
 ]
 
@@ -194,12 +195,19 @@ texinfo_documents = [
 
 # A list of regular expressions that match URIs that should not be
 # checked when doing a linkcheck build.
-linkcheck_ignore = [r"https://java.com*"]
+linkcheck_ignore = [r"https://java.com*", r"https://chocolatey.org*"]
 
 
-# Example configuration for intersphinx: refer to the Python standard library.
+# -- Options for extensions -----------------------------------------------
+
+# Intersphinx
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3.6", None),
     "dpy": ("https://discordpy.readthedocs.io/en/rewrite/", None),
     "motor": ("https://motor.readthedocs.io/en/stable/", None),
 }
+
+# Doctest
+# If this string is non-empty, all blocks with ``>>>`` in them will be
+# tested, not just the ones explicitly marked with ``.. doctest::``
+doctest_test_doctest_blocks = ""

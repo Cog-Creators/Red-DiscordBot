@@ -18,7 +18,7 @@ Getting started
 ---------------
 
 To start off, be sure that you have installed Python 3.6.2 or higher (3.6.6 or higher on Windows).
-Open a terminal or command prompt and type :code:`pip install --process-dependency-links -U git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=redbot[test]`
+Open a terminal or command prompt and type :code:`pip install -U git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=redbot[test]`
 (note that if you get an error with this, try again but put :code:`python -m` in front of the command
 This will install the latest version of V3.
 
@@ -46,7 +46,7 @@ In that file, place the following code:
 
     from redbot.core import commands
 
-    class Mycog:
+    class Mycog(commands.Cog):
         """My custom cog"""
 
         @commands.command()
