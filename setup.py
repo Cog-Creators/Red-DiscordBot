@@ -1,8 +1,5 @@
-import distutils.ccompiler as ccompiler
 import os
 import re
-import tempfile
-from distutils.errors import CCompilerError, DistutilsPlatformError
 from setuptools import setup, find_packages
 
 install_requires = [
@@ -18,7 +15,7 @@ install_requires = [
     "idna-ssl==1.1.0",
     "idna==2.8",
     "multidict==4.5.2",
-    "python-levenshtein==0.12.0",
+    "python-levenshtein-wheels==0.13.1",
     "pyyaml==3.13",
     "raven==6.10.0",
     "raven-aiohttp==0.7.0",
@@ -70,19 +67,6 @@ if os.name == "nt":
     python_requires = ">=3.6.6,<3.8"
 
 
-def check_compiler_available():
-    m = ccompiler.new_compiler()
-
-    with tempfile.TemporaryDirectory() as tdir:
-        with open(os.path.join(tdir, "dummy.c"), "w") as tfile:
-            tfile.write("int main(int argc, char** argv) {return 0;}")
-        try:
-            m.compile([tfile.name], output_dir=tdir)
-        except (CCompilerError, DistutilsPlatformError):
-            return False
-    return True
-
-
 def get_version():
     with open("redbot/core/__init__.py") as f:
         version = re.search(
@@ -92,11 +76,6 @@ def get_version():
 
 
 if __name__ == "__main__":
-    if not check_compiler_available():
-        install_requires.remove(
-            next(r for r in install_requires if r.lower().startswith("python-levenshtein"))
-        )
-
     setup(
         name="Red-DiscordBot",
         version=get_version(),
