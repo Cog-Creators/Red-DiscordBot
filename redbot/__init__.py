@@ -4,7 +4,7 @@ import discord
 import colorama
 import yaml
 
-from .safety import warn_unsafe
+from redbot.core.utils.safety import warn_unsafe
 
 # Let's do all the dumb version checking in one place.
 if sys.platform == "win32":
