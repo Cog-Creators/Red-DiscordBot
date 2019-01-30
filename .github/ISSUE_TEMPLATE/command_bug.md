@@ -1,3 +1,9 @@
+---
+name: Bug reports for commands
+about: For bugs that involve commands found within Red
+
+---
+
 # Command bugs
 
 <!-- 
