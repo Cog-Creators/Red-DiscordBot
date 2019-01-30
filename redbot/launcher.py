@@ -8,6 +8,7 @@ import asyncio
 import aiohttp
 
 import pkg_resources
+from redbot import MIN_PYTHON_VERSION
 from redbot.setup import (
     basic_setup,
     load_existing_config,
@@ -27,12 +28,6 @@ INTRO = "==========================\nRed Discord Bot - Launcher\n===============
 
 IS_WINDOWS = os.name == "nt"
 IS_MAC = sys.platform == "darwin"
-
-if IS_WINDOWS:
-    # Due to issues with ProactorEventLoop prior to 3.6.6 (bpo-26819)
-    MIN_PYTHON_VERSION = (3, 6, 6)
-else:
-    MIN_PYTHON_VERSION = (3, 6, 2)
 
 PYTHON_OK = sys.version_info >= MIN_PYTHON_VERSION
 

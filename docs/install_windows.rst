@@ -8,7 +8,7 @@ Installing Red on Windows
 Needed Software
 ---------------
 
-The following software dependencies can all be installed quickly and easily through powershell, 
+The following software dependencies can all be installed quickly and easily through powershell,
 using a trusted package manager for windows called `Chocolatey <https://chocolatey.org>`_
 
 We also provide instructions for manually installing all of the dependencies.
@@ -17,7 +17,7 @@ We also provide instructions for manually installing all of the dependencies.
 Installing using powershell and chocolatey
 ******************************************
 
-To install via powershell, search "powershell" in the windows start menu, 
+To install via powershell, search "powershell" in the windows start menu,
 right-click on it and then click "Run as administrator"
 
 Then run each of the following commands:
@@ -34,7 +34,7 @@ Then run each of the following commands:
 Manually installing dependencies
 ********************************
 
-* `Python <https://www.python.org/downloads/>`_ - Red needs Python 3.6.6 or greater on Windows
+* `Python <https://www.python.org/downloads/>`_ - Red needs Python 3.7.0 or greater
 
 .. note:: Please make sure that the box to add Python to PATH is CHECKED, otherwise
           you may run into issues when trying to run Red

@@ -3,12 +3,7 @@ import warnings
 import discord
 import colorama
 
-# Let's do all the dumb version checking in one place.
-if sys.platform == "win32":
-    # Due to issues with ProactorEventLoop prior to 3.6.6 (bpo-26819)
-    MIN_PYTHON_VERSION = (3, 6, 6)
-else:
-    MIN_PYTHON_VERSION = (3, 6, 2)
+MIN_PYTHON_VERSION = (3, 7, 0)
 
 if sys.version_info < MIN_PYTHON_VERSION:
     print(

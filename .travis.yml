@@ -3,16 +3,16 @@ language: python
 cache: pip
 notifications:
   email: false
-sudo: true
 
 python:
-- 3.6.6
-- 3.7
+- 3.7.2
 env:
   global:
-    PIPENV_IGNORE_VIRTUALENVS=1
+    - PIPENV_IGNORE_VIRTUALENVS=1
   matrix:
-    TOXENV=py
+    - TOXENV=py
+    - TOXENV=docs
+    - TOXENV=style
 
 install:
 - pip install --upgrade pip tox
@@ -22,16 +22,10 @@ script:
 
 jobs:
   include:
-
-    - python: 3.6.6
-      env: TOXENV=docs
-    - python: 3.6.6
-      env: TOXENV=style
-
     # These jobs only occur on tag creation if the prior ones succeed
     - stage: PyPi Deployment
       if: tag IS present
-      python: 3.6.6
+      python: 3.7.2
       env:
         - DEPLOYING=true
         - TOXENV=py36
@@ -43,11 +37,10 @@ jobs:
           skip_cleanup: true
           on:
             repo: Cog-Creators/Red-DiscordBot
-            python: 3.6.6
             tags: true
     - stage: Crowdin Deployment
       if: tag IS present
-      python: 3.6.6
+      python: 3.7.2
       env:
         - DEPLOYING=true
         - TOXENV=py36
@@ -63,5 +56,4 @@ jobs:
         skip_cleanup: true
         on:
           repo: Cog-Creators/Red-DiscordBot
-          python: 3.6.6
           tags: true
