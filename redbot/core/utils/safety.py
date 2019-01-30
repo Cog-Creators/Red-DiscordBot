@@ -31,9 +31,9 @@ def warn_unsafe(f, message=None):
     
     Warning: There is no check that a function has already been modified.
     This form should only be used in init, if you want to mark an internal function
-    as unsafe, use the dcorator form above.
+    as unsafe, use the decorator form above.
 
-    The warning can be supressed in safe contexts with warnings.catch_warnings
+    The warning can be suppressed in safe contexts with warnings.catch_warnings
     This should be used sparingly at most.
     """
 
