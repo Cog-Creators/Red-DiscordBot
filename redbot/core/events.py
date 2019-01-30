@@ -176,12 +176,6 @@ def init_events(bot, cli_flags):
             print("\nInvite URL: {}\n".format(invite_url))
 
         bot.color = discord.Colour(await bot.db.color())
-        try:
-            import Levenshtein
-        except ImportError:
-            log.info(
-                "python-Levenshtein is not installed, fuzzy string matching will be a bit slower."
-            )
 
     @bot.event
     async def on_error(event_method, *args, **kwargs):
