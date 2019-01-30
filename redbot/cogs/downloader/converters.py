@@ -3,7 +3,7 @@ from redbot.core import commands
 from redbot.core.i18n import Translator
 from .installable import Installable
 
-_ = Translator( __file__)
+_ = Translator(__file__)
 
 
 class InstalledCog(Installable):
