@@ -1,14 +1,12 @@
 import contextlib
+import contextvars
 import os
 import re
 import weakref
-import sys
 from pathlib import Path
 from typing import Callable, Union, Set, Optional, TextIO
 
 __all__ = ["get_locale", "set_locale", "Translator"]
-
-PY_36 = sys.version_info < (3, 7, 0)
 
 
 WAITING_FOR_MSGID = 1
@@ -22,43 +20,26 @@ MSGSTR = 'msgstr "'
 
 _translators: Set["Translator"] = weakref.WeakSet()
 
-
-if PY_36:
-    _current_locale = "en-US"
-
-    def get_locale():
-        return _current_locale
-
-    def set_locale(locale):
-        global _current_locale
-        _current_locale = locale
-        _reload_locales()
-
-    def _reload_locales():
-        for translator in _translators:
-            translator.load_translations()
+_current_locales: Set[str] = set()
+_locale_var: contextvars.ContextVar[str] = contextvars.ContextVar(
+    "Locale", default="en-US"
+)
 
 
-else:
-    import contextvars
+def get_locale() -> str:
+    return _locale_var.get()
 
-    _current_locales: Set[str] = set()
-    _locale_var: contextvars.ContextVar[str] = contextvars.ContextVar(
-        "Locale", default="en-US"
-    )
 
-    def get_locale() -> str:
-        return _locale_var.get()
+def set_locale(locale: str) -> None:
+    if locale not in _current_locales:
+        _load_locale(locale)
+    _locale_var.set(locale)
 
-    def set_locale(locale: str) -> None:
-        if locale not in _current_locales:
-            _load_locale(locale)
-        _locale_var.set(locale)
 
-    def _load_locale(locale: str) -> None:
-        _current_locales.add(locale)
-        for translator in _translators:
-            translator.load_translations(locale)
+def _load_locale(locale: str) -> None:
+    _current_locales.add(locale)
+    for translator in _translators:
+        translator.load_translations(locale)
 
 
 def _parse(translation_file):
@@ -136,7 +117,7 @@ def _normalize(string, remove_newline=False):
     """
 
     def normalize_whitespace(s):
-        """Normalizes the whitespace in a string; \s+ becomes one space."""
+        """Normalizes the whitespace in a string; \\s+ becomes one space."""
         if not s:
             return str(s)  # not the same reference
         starts_with_space = s[0] in " \n\t\r"
@@ -206,16 +187,13 @@ class Translator(Callable[[str], str]):
         """
         Loads the current translations.
         """
-        if locale is not None or PY_36:
+        if locale is not None:
             self._load_locale(locale)
         else:
             for _locale in _current_locales:
                 self._load_locale(_locale)
 
     def _load_locale(self, locale: str) -> None:
-        if PY_36:
-            # There can only be one locale at a time on 3.6
-            self.translations = {}
         self.translations[locale] = {}
         path = self.get_catalog_path(locale)
         with contextlib.suppress(FileNotFoundError), path.open(encoding="utf-8") as file:

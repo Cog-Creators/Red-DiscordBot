@@ -19,8 +19,6 @@ from .rpc import RPCMixin
 from .sentry import SentryManager
 from .utils import common_filters
 
-PY_36 = sys.version_info < (3, 7, 0)
-
 
 def _is_submodule(parent, child):
     return parent == child or child.startswith(parent + ".")
@@ -60,8 +58,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             disabled_commands=[],
             disabled_command_msg="That command is disabled.",
         )
-        if not PY_36:
-            self.db.register_custom("LOCALE")
+        self.db.register_custom("LOCALE")
 
         self.db.register_guild(
             prefix=[],
