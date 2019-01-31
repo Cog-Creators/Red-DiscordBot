@@ -601,7 +601,8 @@ class Audio(commands.Cog):
                 f
                 for f in os.listdir(current_folder)
                 if (f.lower().endswith(allowed_files)) and (os.path.isfile(current_folder + f))
-            )
+            ),
+            key=lambda s: s.casefold(),
         )
         track_listing = []
         for localtrack_location in folder_list:
@@ -627,7 +628,8 @@ class Audio(commands.Cog):
                 for f in os.listdir(os.getcwd() + "/localtracks/{}/".format(folder))
                 if (f.lower().endswith(allowed_files))
                 and (os.path.isfile(os.getcwd() + "/localtracks/{}/{}".format(folder, f)))
-            )
+            ),
+            key=lambda s: s.casefold(),
         )
         track_listing = []
         if ctx.invoked_with == "search":
@@ -2516,7 +2518,8 @@ class Audio(commands.Cog):
                 f
                 for f in os.listdir(os.getcwd() + "/localtracks/")
                 if not os.path.isfile(os.getcwd() + "/localtracks/" + f)
-            )
+            ),
+            key=lambda s: s.casefold(),
         )
         return localtracks_folders
 
