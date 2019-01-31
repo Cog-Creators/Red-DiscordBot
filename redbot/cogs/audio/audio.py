@@ -597,11 +597,11 @@ class Audio(commands.Cog):
         allowed_files = (".mp3", ".flac", ".ogg")
         current_folder = os.getcwd() + "/localtracks/{}/".format(folder)
         folder_list = sorted(
-            [
+            (
                 f
                 for f in os.listdir(current_folder)
                 if (f.lower().endswith(allowed_files)) and (os.path.isfile(current_folder + f))
-            ]
+            )
         )
         track_listing = []
         for localtrack_location in folder_list:
@@ -622,12 +622,12 @@ class Audio(commands.Cog):
             return
         allowed_files = (".mp3", ".flac", ".ogg")
         folder_list = sorted(
-            [
+            (
                 os.getcwd() + "/localtracks/{}/{}".format(folder, f)
                 for f in os.listdir(os.getcwd() + "/localtracks/{}/".format(folder))
                 if (f.lower().endswith(allowed_files))
                 and (os.path.isfile(os.getcwd() + "/localtracks/{}/{}".format(folder, f)))
-            ]
+            )
         )
         track_listing = []
         if ctx.invoked_with == "search":
@@ -2512,11 +2512,11 @@ class Audio(commands.Cog):
         if not await self._localtracks_check(ctx):
             return
         localtracks_folders = sorted(
-            [
+            (
                 f
                 for f in os.listdir(os.getcwd() + "/localtracks/")
                 if not os.path.isfile(os.getcwd() + "/localtracks/" + f)
-            ]
+            )
         )
         return localtracks_folders
 
