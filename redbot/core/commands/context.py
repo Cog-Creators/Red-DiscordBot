@@ -45,7 +45,7 @@ class Context(commands.Context):
             This must take a single `str` as an argument, and return
             the sanitized `str`.
             There are other available filters such as 
-            :func"`~redbot.core.utils.common_filters.filter_mass_mentions`.
+            :func:`~redbot.core.utils.common_filters.filter_mass_mentions`.
             available for use without needing to define your own.
         \*\*kwargs
             See `discord.ext.commands.Context.send`.
