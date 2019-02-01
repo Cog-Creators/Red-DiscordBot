@@ -500,10 +500,7 @@ class Core(commands.Cog, CoreLogic):
         try:
             await self.bot.wait_for("message", check=pred, timeout=15)
         except asyncio.TimeoutError:
-            try:
-                await query.delete()
-            except discord.errors.NotFound:
-                pass
+            await query.delete()
         else:
             await self.leave_confirmation(guilds[pred.result], ctx)
 
