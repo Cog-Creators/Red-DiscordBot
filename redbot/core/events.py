@@ -318,6 +318,21 @@ def init_events(bot, cli_flags):
             if command_obj is not None:
                 command_obj.enable_in(guild)
 
+    @bot.before_invoke
+    async def handle_joined_at_is_none(ctx: commands.Context):
+        # This ensures anything relying on discord.Member.joined_at
+        # being a datetime object doesn't break
+        # see discord.py#1638
+        guilds = [
+            g
+            for g in ctx.bot.guilds
+            if not g.unavailable
+            and g.large
+            and (not g.chunked or any(m.joined_at is None for m in g.members))
+        ]
+        if guilds:
+            await ctx.bot.request_offline_members(*guilds)
+
 
 def _get_startup_screen_specs():
     """Get specs for displaying the startup screen on stdout.
