@@ -1,6 +1,6 @@
 import os
 import re
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 
 install_requires = [
     "aiohttp-json-rpc==0.11.2",
@@ -76,8 +76,8 @@ if __name__ == "__main__":
     setup(
         name="Red-DiscordBot",
         version=get_version(),
-        packages=(
-            find_packages(include=("redbot", "redbot.*")) + ["discord", "discord.ext.commands"]
+        packages=find_namespace_packages(
+            include=["redbot", "redbot.*", "discord", "discord.ext.commands"]
         ),
         package_data={"": ["locales/*.po", "data/*", "data/**/*"]},
         url="https://github.com/Cog-Creators/Red-DiscordBot",
