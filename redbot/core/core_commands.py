@@ -68,7 +68,6 @@ class CoreLogic:
         Parameters
         ----------
         cog_names : list of str
-
         Returns
         -------
         tuple
@@ -170,11 +169,9 @@ class CoreLogic:
     async def _unload(self, cog_names: Iterable[str]) -> Tuple[List[str], List[str]]:
         """
         Unloads cogs with the given names.
-
         Parameters
         ----------
         cog_names : list of str
-
         Returns
         -------
         tuple
@@ -209,12 +206,10 @@ class CoreLogic:
     async def _name(self, name: Optional[str] = None) -> str:
         """
         Gets or sets the bot's username.
-
         Parameters
         ----------
         name : str
             If passed, the bot will change it's username.
-
         Returns
         -------
         str
@@ -228,12 +223,10 @@ class CoreLogic:
     async def _prefixes(self, prefixes: Optional[Sequence[str]] = None) -> List[str]:
         """
         Gets or sets the bot's global prefixes.
-
         Parameters
         ----------
         prefixes : list of str
             If passed, the bot will set it's global prefixes.
-
         Returns
         -------
         list of str
@@ -248,7 +241,6 @@ class CoreLogic:
     async def _version_info(cls) -> Dict[str, str]:
         """
         Version information for Red and discord.py
-
         Returns
         -------
         dict
@@ -259,7 +251,6 @@ class CoreLogic:
     async def _invite_url(self) -> str:
         """
         Generates the invite URL for the bot.
-
         Returns
         -------
         str
@@ -359,7 +350,6 @@ class Core(commands.Cog, CoreLogic):
     async def embedset(self, ctx: commands.Context):
         """
         Commands for toggling embeds on or off.
-
         This setting determines whether or not to
         use embeds as a response to a command (for
         commands that support it). The default is to
@@ -381,7 +371,6 @@ class Core(commands.Cog, CoreLogic):
     async def embedset_global(self, ctx: commands.Context):
         """
         Toggle the global embed setting.
-
         This is used as a fallback if the user
         or guild hasn't set a preference. The
         default is to use embeds.
@@ -398,10 +387,8 @@ class Core(commands.Cog, CoreLogic):
     async def embedset_guild(self, ctx: commands.Context, enabled: bool = None):
         """
         Toggle the guild's embed setting.
-
         If enabled is None, the setting will be unset and
         the global default will be used instead.
-
         If set, this is used instead of the global default
         to determine whether or not to use embeds. This is
         used for all commands done in a guild channel except
@@ -419,10 +406,8 @@ class Core(commands.Cog, CoreLogic):
     async def embedset_user(self, ctx: commands.Context, enabled: bool = None):
         """
         Toggle the user's embed setting.
-
         If enabled is None, the setting will be unset and
         the global default will be used instead.
-
         If set, this is used instead of the global default
         to determine whether or not to use embeds. This is
         used for all commands done in a DM with the bot, as
@@ -440,7 +425,6 @@ class Core(commands.Cog, CoreLogic):
     @checks.is_owner()
     async def traceback(self, ctx: commands.Context, public: bool = False):
         """Sends to the owner the last command exception that has occurred
-
         If public (yes is specified), it will be sent to the chat instead"""
         if not public:
             destination = ctx.author
@@ -500,10 +484,7 @@ class Core(commands.Cog, CoreLogic):
         try:
             await self.bot.wait_for("message", check=pred, timeout=15)
         except asyncio.TimeoutError:
-            try:
-                await query.delete()
-            except discord.errors.NotFound:
-                pass
+            await query.delete()
         else:
             await self.leave_confirmation(guilds[pred.result], ctx)
 
@@ -628,7 +609,6 @@ class Core(commands.Cog, CoreLogic):
     @checks.is_owner()
     async def _restart(self, ctx: commands.Context, silently: bool = False):
         """Attempts to restart Red
-
         Makes Red quit with exit code 26
         The restart is not guaranteed: it must be dealt
         with by the process manager in use"""
@@ -689,7 +669,6 @@ class Core(commands.Cog, CoreLogic):
     async def usebotcolour(self, ctx: commands.Context):
         """
         Toggle whether to use the bot owner-configured colour for embeds.
-
         Default is to not use the bot's configured colour, in which case the
         colour used will be the colour of the bot's top role.
         """
@@ -707,7 +686,6 @@ class Core(commands.Cog, CoreLogic):
     async def serverfuzzy(self, ctx: commands.Context):
         """
         Toggle whether to enable fuzzy command search for the server.
-
         Default is for fuzzy command search to be disabled.
         """
         current_setting = await ctx.bot.db.guild(ctx.guild).fuzzy()
@@ -723,7 +701,6 @@ class Core(commands.Cog, CoreLogic):
     async def fuzzy(self, ctx: commands.Context):
         """
         Toggle whether to enable fuzzy command search in DMs.
-
         Default is for fuzzy command search to be disabled.
         """
         current_setting = await ctx.bot.db.fuzzy()
@@ -739,9 +716,7 @@ class Core(commands.Cog, CoreLogic):
     async def colour(self, ctx: commands.Context, *, colour: discord.Colour = None):
         """
         Sets a default colour to be used for the bot's embeds.
-
         Acceptable values for the colour parameter can be found at:
-
         http://discordpy.readthedocs.io/en/rewrite/ext/commands/api.html#discord.ext.commands.ColourConverter
         """
         if colour is None:
@@ -822,7 +797,6 @@ class Core(commands.Cog, CoreLogic):
     @checks.is_owner()
     async def status(self, ctx: commands.Context, *, status: str):
         """Sets Red's status
-
         Available statuses:
             online
             idle
@@ -995,9 +969,7 @@ class Core(commands.Cog, CoreLogic):
     async def locale(self, ctx: commands.Context, locale_name: str):
         """
         Changes bot locale.
-
         Use [p]listlocales to get a list of available locales.
-
         To reset to English, use "en-US".
         """
         i18n.set_locale(locale_name)
@@ -1010,7 +982,6 @@ class Core(commands.Cog, CoreLogic):
     @checks.is_owner()
     async def sentry(self, ctx: commands.Context, on_or_off: bool):
         """Enable or disable Sentry logging.
-
         Sentry is the service Red uses to manage error reporting. This should
         be disabled if you have made your own modifications to the redbot
         package.
@@ -1032,13 +1003,10 @@ class Core(commands.Cog, CoreLogic):
     @helpset.command(name="pagecharlimit")
     async def helpset_pagecharlimt(self, ctx: commands.Context, limit: int):
         """Set the character limit for each page in the help message.
-
         This setting only applies to embedded help.
-
         Please note that setting a relitavely small character limit may
         mean some pages will exceed this limit. This is because categories
         are never spread across multiple pages in the help message.
-
         The default value is 1000 characters.
         """
         if limit <= 0:
@@ -1051,13 +1019,10 @@ class Core(commands.Cog, CoreLogic):
     @helpset.command(name="maxpages")
     async def helpset_maxpages(self, ctx: commands.Context, pages: int):
         """Set the maximum number of help pages sent in a server channel.
-
         This setting only applies to embedded help.
-
         If a help message contains more pages than this value, the help message will
         be sent to the command author via DM. This is to help reduce spam in server
         text channels.
-
         The default value is 2 pages.
         """
         if pages < 0:
@@ -1071,7 +1036,6 @@ class Core(commands.Cog, CoreLogic):
     async def helpset_tagline(self, ctx: commands.Context, *, tagline: str = None):
         """
         Set the tagline to be used.
-
         This setting only applies to embedded help. If no tagline is
         specified, the default will be used instead.
         """
@@ -1096,7 +1060,6 @@ class Core(commands.Cog, CoreLogic):
     async def listlocales(self, ctx: commands.Context):
         """
         Lists all available locales
-
         Use `[p]set locale` to set a locale
         """
         async with ctx.channel.typing():
@@ -1272,7 +1235,6 @@ class Core(commands.Cog, CoreLogic):
     @checks.is_owner()
     async def dm(self, ctx: commands.Context, user_id: int, *, message: str):
         """Sends a DM to a user
-
         This command needs a user id to work.
         To get a user id enable 'developer mode' in Discord's
         settings, 'appearance' tab. Then right click a user
@@ -1619,7 +1581,6 @@ class Core(commands.Cog, CoreLogic):
     @command_manager.group(name="disable", invoke_without_command=True)
     async def command_disable(self, ctx: commands.Context, *, command: str):
         """Disable a command.
-
         If you're the bot owner, this will disable commands
         globally by default.
         """
@@ -1676,7 +1637,6 @@ class Core(commands.Cog, CoreLogic):
     @command_manager.group(name="enable", invoke_without_command=True)
     async def command_enable(self, ctx: commands.Context, *, command: str):
         """Enable a command.
-
         If you're a bot owner, this will try to enable a globally
         disabled command by default.
         """
@@ -1733,9 +1693,7 @@ class Core(commands.Cog, CoreLogic):
     @command_manager.command(name="disabledmsg")
     async def command_disabledmsg(self, ctx: commands.Context, *, message: str = ""):
         """Set the bot's response to disabled commands.
-
         Leave blank to send nothing.
-
         To include the command name in the message, include the
         `{command}` placeholder.
         """
@@ -1755,7 +1713,6 @@ class Core(commands.Cog, CoreLogic):
     async def autoimmune_list(self, ctx: commands.Context):
         """
         Get's the current members and roles
-
         configured for automatic moderation action immunity
         """
         ai_ids = await ctx.bot.db.guild(ctx.guild).autoimmune_ids()
