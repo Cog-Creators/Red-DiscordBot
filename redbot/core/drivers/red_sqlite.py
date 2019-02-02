@@ -8,7 +8,7 @@ import json
 import asyncio
 
 
-SQL_CREATE_GENERIC_TABLE = ( # Good for all categories but members
+SQL_CREATE_GENERIC_TABLE = (  # Good for all categories but members
     "CREATE TABLE IF NOT EXISTS {tab_name} ("
     "id text NOT NULL, "
     "data text NOT NULL, "
@@ -25,17 +25,17 @@ SQL_CREATE_MEMBER_TABLE = (
     ")  WITHOUT ROWID;"
 )
 
-SQL_GENERIC_TABLE_SELECT     = "SELECT data FROM {tab_name} WHERE id = ?;"
+SQL_GENERIC_TABLE_SELECT = "SELECT data FROM {tab_name} WHERE id = ?;"
 SQL_GENERIC_TABLE_SELECT_ALL = "SELECT id, data FROM {tab_name};"
-SQL_GENERIC_TABLE_INSERT     = "INSERT INTO {tab_name} VALUES (?, ?);"
-SQL_GENERIC_TABLE_UPDATE     = "UPDATE {tab_name} SET data = ? WHERE id = ?;"
-SQL_GENERIC_TABLE_DELETE     = "DELETE FROM {tab_name} WHERE id = ?;"
+SQL_GENERIC_TABLE_INSERT = "INSERT INTO {tab_name} VALUES (?, ?);"
+SQL_GENERIC_TABLE_UPDATE = "UPDATE {tab_name} SET data = ? WHERE id = ?;"
+SQL_GENERIC_TABLE_DELETE = "DELETE FROM {tab_name} WHERE id = ?;"
 
-SQL_MEMBER_TABLE_SELECT      = "SELECT data FROM {tab_name} WHERE id = ? AND guild_id = ?;"
-SQL_MEMBER_TABLE_SELECT_ALL  = "SELECT id, guild_id, data FROM {tab_name};"
-SQL_MEMBER_TABLE_INSERT      = "INSERT INTO {tab_name} VALUES (?, ?, ?);"
-SQL_MEMBER_TABLE_UPDATE      = "UPDATE {tab_name} SET data = ? WHERE id = ? AND guild_id = ?;"
-SQL_MEMBER_TABLE_DELETE      = "DELETE FROM {tab_name} WHERE id = ? AND guild_id = ?;"
+SQL_MEMBER_TABLE_SELECT = "SELECT data FROM {tab_name} WHERE id = ? AND guild_id = ?;"
+SQL_MEMBER_TABLE_SELECT_ALL = "SELECT id, guild_id, data FROM {tab_name};"
+SQL_MEMBER_TABLE_INSERT = "INSERT INTO {tab_name} VALUES (?, ?, ?);"
+SQL_MEMBER_TABLE_UPDATE = "UPDATE {tab_name} SET data = ? WHERE id = ? AND guild_id = ?;"
+SQL_MEMBER_TABLE_DELETE = "DELETE FROM {tab_name} WHERE id = ? AND guild_id = ?;"
 
 SQL_LIST_TABLES = "SELECT name FROM sqlite_master;"
 SQL_DROP_TABLE = "DROP TABLE {tab_name};"
@@ -50,6 +50,7 @@ log = logging.getLogger("redbot.sqlite_driver")
 
 class DataCategories(Enum):
     """Config categories"""
+
     _global = "GLOBAL"
     guild = "GUILD"
     channel = "TEXTCHANNEL"
@@ -153,7 +154,7 @@ class Sqlite(BaseDriver):
 
         return data
 
-    async def _get_all(self, category, tab_name)->Dict:
+    async def _get_all(self, category, tab_name) -> Dict:
         is_member_tab = category == DataCategories.member.value
 
         if is_member_tab:
@@ -213,11 +214,9 @@ class Sqlite(BaseDriver):
         cur = Sqlite._conn.cursor()
 
         async with Sqlite._lock:
-            result = cur.execute(update.format(tab_name=tab_name),
-                                 (data, *ident))
+            result = cur.execute(update.format(tab_name=tab_name), (data, *ident))
             if result.rowcount == 0:
-                cur.execute(insert.format(tab_name=tab_name),
-                            (*ident, data))
+                cur.execute(insert.format(tab_name=tab_name), (*ident, data))
             Sqlite._conn.commit()
 
     async def _update_data(self, identifiers, value):
@@ -309,17 +308,17 @@ class Sqlite(BaseDriver):
             offset = 2
 
         ident = identifiers[:offset]
-        data = await self.get(*ident) # Let's get the data first
+        data = await self.get(*ident)  # Let's get the data first
 
         original_data = data
 
         for k in identifiers[offset:-1]:
             data = data[k]
 
-        del data[identifiers[-1]] # The value in original_data goes poof
+        del data[identifiers[-1]]  # The value in original_data goes poof
 
         ident = identifiers[:offset]
-        await self.set(*ident, value=original_data) # And now let's write it back
+        await self.set(*ident, value=original_data)  # And now let's write it back
 
     async def _clear_row(self, tab_name, identifiers, is_member_cat):
         cur = Sqlite._conn.cursor()
@@ -353,7 +352,5 @@ class Sqlite(BaseDriver):
 
     def _get_table_name(self, category):
         return "{}_{}_{}".format(
-            self.cog_name.lower(),
-            self.unique_cog_identifier,
-            category.lower()
-            )
+            self.cog_name.lower(), self.unique_cog_identifier, category.lower()
+        )
