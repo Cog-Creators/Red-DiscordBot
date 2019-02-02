@@ -1109,7 +1109,7 @@ class Core(commands.Cog, CoreLogic):
 
     @commands.command()
     @checks.is_owner()
-    async def backup(self, ctx: commands.Context, backup_path: str = None):
+    async def backup(self, ctx: commands.Context, *, backup_path: str = None):
         """Creates a backup of all data for the instance."""
         from redbot.core.data_manager import basic_config, instance_name
         from redbot.core.drivers.red_json import JSON
@@ -1352,7 +1352,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(box(page))
 
     @whitelist.command(name="remove")
-    async def whitelist_remove(self, ctx: commands.Context, user: discord.User):
+    async def whitelist_remove(self, ctx: commands.Context, *, user: discord.User):
         """
         Removes user from whitelist.
         """
@@ -1385,7 +1385,7 @@ class Core(commands.Cog, CoreLogic):
         pass
 
     @blacklist.command(name="add")
-    async def blacklist_add(self, ctx: commands.Context, user: discord.User):
+    async def blacklist_add(self, ctx: commands.Context, *, user: discord.User):
         """
         Adds a user to the blacklist.
         """
@@ -1414,7 +1414,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(box(page))
 
     @blacklist.command(name="remove")
-    async def blacklist_remove(self, ctx: commands.Context, user: discord.User):
+    async def blacklist_remove(self, ctx: commands.Context, *, user: discord.User):
         """
         Removes user from blacklist.
         """
@@ -1448,17 +1448,13 @@ class Core(commands.Cog, CoreLogic):
         pass
 
     @localwhitelist.command(name="add")
-    async def localwhitelist_add(self, ctx: commands.Context, *, user_or_role: str):
+    async def localwhitelist_add(
+        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
+    ):
         """
         Adds a user or role to the whitelist.
         """
-        try:
-            obj = await commands.MemberConverter().convert(ctx, user_or_role)
-        except commands.BadArgument:
-            obj = await commands.RoleConverter().convert(ctx, user_or_role)
-            user = False
-        else:
-            user = True
+        user = isinstance(user_or_role, discord.Member)
         async with ctx.bot.db.guild(ctx.guild).whitelist() as curr_list:
             if obj.id not in curr_list:
                 curr_list.append(obj.id)
@@ -1483,17 +1479,13 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(box(page))
 
     @localwhitelist.command(name="remove")
-    async def localwhitelist_remove(self, ctx: commands.Context, *, user_or_role: str):
+    async def localwhitelist_remove(
+        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
+    ):
         """
         Removes user or role from whitelist.
         """
-        try:
-            obj = await commands.MemberConverter().convert(ctx, user_or_role)
-        except commands.BadArgument:
-            obj = await commands.RoleConverter().convert(ctx, user_or_role)
-            user = False
-        else:
-            user = True
+        user = isinstance(user_or_role, discord.Member)
 
         removed = False
         async with ctx.bot.db.guild(ctx.guild).whitelist() as curr_list:
@@ -1530,17 +1522,13 @@ class Core(commands.Cog, CoreLogic):
         pass
 
     @localblacklist.command(name="add")
-    async def localblacklist_add(self, ctx: commands.Context, *, user_or_role: str):
+    async def localblacklist_add(
+        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
+    ):
         """
         Adds a user or role to the blacklist.
         """
-        try:
-            obj = await commands.MemberConverter().convert(ctx, user_or_role)
-        except commands.BadArgument:
-            obj = await commands.RoleConverter().convert(ctx, user_or_role)
-            user = False
-        else:
-            user = True
+        user = isinstance(user_or_role, discord.Member)
 
         if user and await ctx.bot.is_owner(obj):
             await ctx.send(_("You cannot blacklist an owner!"))
@@ -1570,18 +1558,14 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(box(page))
 
     @localblacklist.command(name="remove")
-    async def localblacklist_remove(self, ctx: commands.Context, *, user_or_role: str):
+    async def localblacklist_remove(
+        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
+    ):
         """
         Removes user or role from blacklist.
         """
         removed = False
-        try:
-            obj = await commands.MemberConverter().convert(ctx, user_or_role)
-        except commands.BadArgument:
-            obj = await commands.RoleConverter().convert(ctx, user_or_role)
-            user = False
-        else:
-            user = True
+        user = isinstance(user_or_role, discord.Member)
 
         async with ctx.bot.db.guild(ctx.guild).blacklist() as curr_list:
             if obj.id in curr_list:
@@ -1778,7 +1762,7 @@ class Core(commands.Cog, CoreLogic):
 
     @autoimmune_group.command(name="add")
     async def autoimmune_add(
-        self, ctx: commands.Context, user_or_role: Union[discord.Member, discord.Role]
+        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
     ):
         """
         Makes a user or roles immune from automated moderation actions
@@ -1791,7 +1775,7 @@ class Core(commands.Cog, CoreLogic):
 
     @autoimmune_group.command(name="remove")
     async def autoimmune_remove(
-        self, ctx: commands.Context, user_or_role: Union[discord.Member, discord.Role]
+        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
     ):
         """
         Makes a user or roles immune from automated moderation actions
@@ -1804,7 +1788,7 @@ class Core(commands.Cog, CoreLogic):
 
     @autoimmune_group.command(name="isimmune")
     async def autoimmune_checkimmune(
-        self, ctx: commands.Context, user_or_role: Union[discord.Member, discord.Role]
+        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
     ):
         """
         Checks if a user or role would be considered immune from automated actions
