@@ -1395,7 +1395,10 @@ class Mod(commands.Cog):
         user_joined = joined_at.strftime("%d %b %Y %H:%M")
         user_created = user.created_at.strftime("%d %b %Y %H:%M")
         voice_state = user.voice
-        member_number = sorted(guild.members, key=lambda m: m.joined_at).index(user) + 1
+        member_number = (
+            sorted(guild.members, key=lambda m: m.joined_at or ctx.message.created_at).index(user)
+            + 1
+        )
 
         created_on = _("{}\n({} days ago)").format(user_created, since_created)
         joined_on = _("{}\n({} days ago)").format(user_joined, since_joined)
