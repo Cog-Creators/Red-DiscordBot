@@ -16,7 +16,7 @@ services:
     build:
       context: ../..
       dockerfile: docker/red-json/Dockerfile
-    restart: always
+    restart: on-failure
     command: "--token ${BOT_TOKEN} --prefix ${BOT_PREFIX}"
     environment:
       - LAVALINK_DEFAULT_HOST=lavalink
