@@ -16,7 +16,7 @@
     <img src="https://img.shields.io/badge/Support-Red!-yellow.svg" alt="Support Red on Patreon!">
   </a>
   <a href="https://www.python.org/downloads/">
-    <img src="https://img.shields.io/badge/Made%20With-Python%203-blue.svg?style=for-the-badge" alt="Made with Python 3">
+    <img src="https://img.shields.io/badge/Made%20With-Python%203.7-blue.svg?style=for-the-badge" alt="Made with Python 3.7">
   </a>
   <a href="https://crowdin.com/project/red-discordbot">
     <img src="https://d322cqt584bo4o.cloudfront.net/red-discordbot/localized.svg" alt="Localized with Crowdin">
@@ -26,8 +26,8 @@
   </a>
 </p>
 <p align="center">
-  <a href="https://travis-ci.org/Cog-Creators/Red-DiscordBot">
-    <img src="https://api.travis-ci.org/Cog-Creators/Red-DiscordBot.svg?branch=V3/develop" alt="Travis CI">
+  <a href="https://travis-ci.com/Cog-Creators/Red-DiscordBot">
+    <img src="https://api.travis-ci.com/Cog-Creators/Red-DiscordBot.svg?branch=V3/develop" alt="Travis CI">
   </a>
   <a href="http://red-discordbot.readthedocs.io/en/v3-develop/?badge=v3-develop">
     <img src="https://readthedocs.org/projects/red-discordbot/badge/?version=v3-develop" alt="Red on readthedocs.org">
@@ -127,6 +127,11 @@ Join us on our [Official Discord Server](https://discord.gg/red)!
 # License
 
 Released under the [GNU GPL v3](https://www.gnu.org/licenses/gpl-3.0.en.html) license.
+
+This project vendors the
+[discord.py library by Rapptz](https://github.com/Rapptz/discord.py/tree/rewrite), which is
+licensed under the [MIT License](https://opensource.org/licenses/MIT). This amounts to everything
+within the *discord* folder of this repository.
 
 Red is named after the main character of "Transistor", a video game by
 [Super Giant Games](https://www.supergiantgames.com/games/transistor/).

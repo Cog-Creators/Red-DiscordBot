@@ -111,7 +111,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
         self.main_dir = bot_dir
 
-        self.cog_mgr = CogManager(paths=(str(self.main_dir / "cogs"),))
+        self.cog_mgr = CogManager()
 
         super().__init__(*args, formatter=Help(), **kwargs)
 
@@ -500,7 +500,12 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             if result is not None:
                 hook_results.append(result)
         if hook_results:
-            return all(hook_results)
+            if all(hook_results):
+                ctx.permission_state = commands.PermState.ALLOWED_BY_HOOK
+                return True
+            else:
+                ctx.permission_state = commands.PermState.DENIED_BY_HOOK
+                return False
 
 
 class Red(RedBase, discord.AutoShardedClient):

@@ -2,7 +2,6 @@ import discord
 from datetime import datetime
 from redbot.core.utils.chat_formatting import pagify
 import io
-import sys
 import weakref
 from typing import List, Optional
 from .common_filters import filter_mass_mentions
@@ -151,15 +150,12 @@ class Tunnel(metaclass=TunnelMeta):
 
         """
         files = []
-        size = 0
-        max_size = 8 * 1024 * 1024
-        for a in m.attachments:
-            _fp = io.BytesIO()
-            await a.save(_fp)
-            size += sys.getsizeof(_fp)
-            if size > max_size:
-                return []
-            files.append(discord.File(_fp, filename=a.filename))
+        max_size = 8 * 1000 * 1000
+        if m.attachments and sum(a.size for a in m.attachments) <= max_size:
+            for a in m.attachments:
+                _fp = io.BytesIO()
+                await a.save(_fp)
+                files.append(discord.File(_fp, filename=a.filename))
         return files
 
     async def communicate(

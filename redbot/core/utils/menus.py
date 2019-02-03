@@ -73,10 +73,13 @@ async def menu(
         # noinspection PyAsyncCall
         start_adding_reactions(message, controls.keys(), ctx.bot.loop)
     else:
-        if isinstance(current_page, discord.Embed):
-            await message.edit(embed=current_page)
-        else:
-            await message.edit(content=current_page)
+        try:
+            if isinstance(current_page, discord.Embed):
+                await message.edit(embed=current_page)
+            else:
+                await message.edit(content=current_page)
+        except discord.NotFound:
+            return
 
     try:
         react, user = await ctx.bot.wait_for(
@@ -90,9 +93,12 @@ async def menu(
         except discord.Forbidden:  # cannot remove all reactions
             for key in controls.keys():
                 await message.remove_reaction(key, ctx.bot.user)
-        return None
-
-    return await controls[react.emoji](ctx, pages, controls, message, page, timeout, react.emoji)
+        except discord.NotFound:
+            return
+    else:
+        return await controls[react.emoji](
+            ctx, pages, controls, message, page, timeout, react.emoji
+        )
 
 
 async def next_page(
@@ -106,10 +112,8 @@ async def next_page(
 ):
     perms = message.channel.permissions_for(ctx.me)
     if perms.manage_messages:  # Can manage messages, so remove react
-        try:
+        with contextlib.suppress(discord.NotFound):
             await message.remove_reaction(emoji, ctx.author)
-        except discord.NotFound:
-            pass
     if page == len(pages) - 1:
         page = 0  # Loop around to the first item
     else:
@@ -128,10 +132,8 @@ async def prev_page(
 ):
     perms = message.channel.permissions_for(ctx.me)
     if perms.manage_messages:  # Can manage messages, so remove react
-        try:
+        with contextlib.suppress(discord.NotFound):
             await message.remove_reaction(emoji, ctx.author)
-        except discord.NotFound:
-            pass
     if page == 0:
         page = len(pages) - 1  # Loop around to the last item
     else:
@@ -148,9 +150,8 @@ async def close_menu(
     timeout: float,
     emoji: str,
 ):
-    if message:
+    with contextlib.suppress(discord.NotFound):
         await message.delete()
-    return None
 
 
 def start_adding_reactions(
@@ -161,7 +162,7 @@ def start_adding_reactions(
     """Start adding reactions to a message.
 
     This is a non-blocking operation - calling this will schedule the
-    reactions being added, but will the calling code will continue to
+    reactions being added, but the calling code will continue to
     execute asynchronously. There is no need to await this function.
 
     This is particularly useful if you wish to start waiting for a
@@ -169,7 +170,7 @@ def start_adding_reactions(
     this is exactly what `menu` uses to do that.
 
     This spawns a `asyncio.Task` object and schedules it on ``loop``.
-    If ``loop`` omitted, the loop will be retreived with
+    If ``loop`` omitted, the loop will be retrieved with
     `asyncio.get_event_loop`.
 
     Parameters
