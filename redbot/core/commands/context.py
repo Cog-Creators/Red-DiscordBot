@@ -41,12 +41,9 @@ class Context(commands.Context):
         filter : Callable[`str`] -> `str`
             A function which is used to sanitize the ``content`` before
             it is sent. Defaults to
-            :func:`~redbot.core.utils.common_filters.escape_spoilers_and_mass_mentions`.
+            :func:`~redbot.core.utils.common_filters.filter_mass_mentions`.
             This must take a single `str` as an argument, and return
             the sanitized `str`.
-            There are other available filters such as 
-            :func:`~redbot.core.utils.common_filters.filter_mass_mentions`.
-            available for use without needing to define your own.
         \*\*kwargs
             See `discord.ext.commands.Context.send`.
 
@@ -57,7 +54,7 @@ class Context(commands.Context):
 
         """
 
-        _filter = kwargs.pop("filter", common_filters.escape_spoilers_and_mass_mentions)
+        _filter = kwargs.pop("filter", common_filters.filter_mass_mentions)
 
         if _filter and content:
             content = _filter(str(content))
