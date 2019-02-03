@@ -31,7 +31,9 @@ SMART_QUOTE_REPLACEMENT_DICT = {
 
 SMART_QUOTE_REPLACE_RE = re.compile("|".join(SMART_QUOTE_REPLACEMENT_DICT.keys()))
 
-SPOILER_CONTENT_RE = re.compile(r"(?s)\|{2}(.*?)\|{2}")
+SPOILER_CONTENT_RE = re.compile(
+    r"(?s)(?<!\\)(?P<OPEN>\|{2})(?P<SPOILERED>.*?)(?<!\\)(?P<CLOSE>\|{2})"
+)
 
 
 # convenience wrappers
@@ -153,8 +155,7 @@ def escape_spoilers(content: str) -> str:
     str
         The escaped string.
     """
-    # First capture group is the spoilered content.
-    return SPOILER_CONTENT_RE.sub("|\u200b|\\1|\u200b|", content)
+    return SPOILER_CONTENT_RE.sub(r"\\\g<OPEN>\g<SPOILERED>\\\g<CLOSE>", content)
 
 
 def escape_spoilers_and_mass_mentions(content: str) -> str:
