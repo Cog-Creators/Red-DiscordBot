@@ -5,7 +5,7 @@ Installing Red on Windows
 =========================
 
 ---------------
-Needed Software
+Required Software
 ---------------
 
 The following software dependencies can all be installed quickly and easily through powershell,
