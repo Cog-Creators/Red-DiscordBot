@@ -295,6 +295,7 @@ class Core(commands.Cog, CoreLogic):
         red_version = "[{}]({})".format(__version__, red_pypi)
         app_info = await self.bot.application_info()
         owner = app_info.owner
+        custom_text = await self.bot.db.custom_text()
 
         async with aiohttp.ClientSession() as session:
             async with session.get("{}/json".format(red_pypi)) as r:
@@ -318,6 +319,8 @@ class Core(commands.Cog, CoreLogic):
             embed.add_field(
                 name="Outdated", value="Yes, {} is available".format(data["info"]["version"])
             )
+        if custom_text:
+            embed.add_field(name="About this instance", value=custom_text, inline=False)
         embed.add_field(name="About Red", value=about, inline=False)
 
         embed.set_footer(
@@ -1019,6 +1022,27 @@ class Core(commands.Cog, CoreLogic):
         else:
             ctx.bot.disable_sentry()
             await ctx.send(_("Done. Sentry logging is now disabled."))
+
+    @_set.command()
+    @checks.is_owner()
+    async def custominfo(self, ctx: commands.Context, *, text: str=None):
+        """Customizes a section of [p]info
+
+        The maximum amount of allowed characters is 1024.
+        Supports markdown, links and "mentions".
+        Link example:
+        `[My link](https://example.com)`
+        """
+        if not text:
+            await ctx.bot.db.custom_text.clear()
+            await ctx.send(_("The custom text has been cleared."))
+            return
+        if len(text) <= 1024:
+            await ctx.bot.db.custom_text.set(text)
+            await ctx.send(_("The custom text has been set."))
+            await ctx.invoke(self.info)
+        else:
+            await ctx.bot.send(_("Characters must be fewer than 1024."))
 
     @commands.group()
     @checks.is_owner()
