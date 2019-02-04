@@ -2667,3 +2667,21 @@ class Audio(commands.Cog):
             self._cleaned_up = True
 
     __del__ = __unload
+
+    async def on_guild_remove(self, guild: discord.Guild):
+        """
+        This is to clean up players when
+        the bot either leaves or is removed from a guild
+        """
+        channels = {
+            x  # x is a voice_channel
+            for y in {g.voice_channels for g in self.bot.guilds}
+            for x in y  # y is a list of voice channels
+        }  # Yes, this is ugly. It's also the most performant and commented.
+
+        zombie_players = {p for p in lavalink.player_manager.players if p.channel not in channels}
+        # Do not unroll to combine with next line.
+        # Can result in iterator changing size during context switching.
+        for zombie in zombie_players:
+            await zombie.disconnect()
+            lavalink.player_manager.players.remove(zombie)
