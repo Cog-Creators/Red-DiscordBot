@@ -207,9 +207,8 @@ def init_events(bot, cli_flags):
                     exc_info=error.original,
                 )
 
-            message = (
-                "Error in command '{}'. Check your console or logs for details."
-                "".format(ctx.command.qualified_name)
+            message = "Error in command '{}'. Check your console or logs for details.".format(
+                ctx.command.qualified_name
             )
             exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
             exception_log += "".join(
