@@ -144,7 +144,7 @@ def init_events(bot, cli_flags):
 
         sentry = await bot.db.enable_sentry()
         mongo_enabled = storage_type() != "JSON"
-        reqs_installed = {"voice": None, "docs": None, "test": None}
+        reqs_installed = {"docs": None, "test": None}
         for key in reqs_installed.keys():
             reqs = [x.name for x in red_pkg._dep_map[key]]
             try:
@@ -157,7 +157,7 @@ def init_events(bot, cli_flags):
         options = (
             ("Error Reporting", sentry),
             ("MongoDB", mongo_enabled),
-            ("Voice", reqs_installed["voice"]),
+            ("Voice", True),
             ("Docs", reqs_installed["docs"]),
             ("Tests", reqs_installed["test"]),
         )
@@ -198,18 +198,17 @@ def init_events(bot, cli_flags):
                 await ctx.send(disabled_message.replace("{command}", ctx.invoked_with))
         elif isinstance(error, commands.CommandInvokeError):
             log.exception(
-                "Exception in command '{}'" "".format(ctx.command.qualified_name),
+                "Exception in command '{}'".format(ctx.command.qualified_name),
                 exc_info=error.original,
             )
             if should_log_sentry(error):
                 sentry_log.exception(
-                    "Exception in command '{}'" "".format(ctx.command.qualified_name),
+                    "Exception in command '{}'".format(ctx.command.qualified_name),
                     exc_info=error.original,
                 )
 
             message = (
-                "Error in command '{}'. Check your console or "
-                "logs for details."
+                "Error in command '{}'. Check your console or logs for details."
                 "".format(ctx.command.qualified_name)
             )
             exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
@@ -267,9 +266,9 @@ def init_events(bot, cli_flags):
             system_now = datetime.datetime.utcnow()
             diff = abs((discord_now - system_now).total_seconds())
             if diff > 60:
-                log.warn(
-                    "Detected significant difference (%d seconds) in system clock to discord's clock."
-                    " Any time sensitive code may fail.",
+                log.warning(
+                    "Detected significant difference (%d seconds) in system clock to discord's "
+                    "clock. Any time sensitive code may fail.",
                     diff,
                 )
             bot.checked_time_accuracy = discord_now
