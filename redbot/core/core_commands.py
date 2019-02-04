@@ -1025,7 +1025,7 @@ class Core(commands.Cog, CoreLogic):
 
     @_set.command()
     @checks.is_owner()
-    async def custominfo(self, ctx: commands.Context, *, text: str=None):
+    async def custominfo(self, ctx: commands.Context, *, text: str = None):
         """Customizes a section of [p]info
 
         The maximum amount of allowed characters is 1024.
