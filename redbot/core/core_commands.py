@@ -529,6 +529,8 @@ class Core(commands.Cog, CoreLogic):
     @checks.is_owner()
     async def load(self, ctx: commands.Context, *cogs: str):
         """Loads packages"""
+        if not cogs:
+            return await ctx.send_help()
         async with ctx.typing():
             loaded, failed, not_found, already_loaded, failed_with_reason = await self._load(cogs)
 
@@ -569,6 +571,8 @@ class Core(commands.Cog, CoreLogic):
     @checks.is_owner()
     async def unload(self, ctx: commands.Context, *cogs: str):
         """Unloads packages"""
+        if not cogs:
+            return await ctx.send_help()
         unloaded, failed = await self._unload(cogs)
 
         if unloaded:
@@ -585,6 +589,8 @@ class Core(commands.Cog, CoreLogic):
     @checks.is_owner()
     async def reload(self, ctx: commands.Context, *cogs: str):
         """Reloads packages"""
+        if not cogs:
+            return await ctx.send_help()
         async with ctx.typing():
             loaded, failed, not_found, already_loaded, failed_with_reason = await self._reload(
                 cogs
