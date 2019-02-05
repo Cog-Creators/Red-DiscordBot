@@ -2,13 +2,14 @@ import asyncio
 import functools
 import os
 import pkgutil
+import shlex
 import shutil
 import re
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from subprocess import run as sp_run, PIPE
 from sys import executable
-from typing import Tuple, MutableMapping, Union, Optional
+from typing import List, Tuple, MutableMapping, Union, Optional
 
 from redbot.core import data_manager, commands
 from redbot.core.utils import safe_delete
@@ -33,7 +34,7 @@ class Repo(RepoJSONMixin):
     GIT_LOG = "git -C {path} log --relative-date --reverse {old_hash}.. {relative_file_path}"
     GIT_DISCOVER_REMOTE_URL = "git -C {path} config --get remote.origin.url"
 
-    PIP_INSTALL = "{python} -m pip install -U -t {target_dir} {reqs}"
+    PIP_INSTALL = "{python} -m pip install -U -t {target_dir} {noquote_reqs}"
 
     def __init__(
         self,
@@ -79,6 +80,18 @@ class Repo(RepoJSONMixin):
             )
         return poss_repo
 
+    @staticmethod
+    def _shlex(cmd: str, **kwargs: str) -> List[str]:
+        cmd = shlex.split(cmd)
+        final_cmd = []
+        for arg in cmd:
+            f_arg = arg.format(**kwargs)
+            if "{noquote_" in arg:
+                final_cmd.extend(shlex.split(f_arg))
+            else:
+                final_cmd.append(f_arg)
+        return final_cmd
+
     def _existing_git_repo(self) -> (bool, Path):
         git_path = self.folder_path / ".git"
         return git_path.exists(), git_path
@@ -94,8 +107,11 @@ class Repo(RepoJSONMixin):
         :return: Mapping of filename -> status_letter
         """
         p = await self._run(
-            self.GIT_DIFF_FILE_STATUS.format(
-                path=self.folder_path, old_hash=old_hash, new_hash=new_hash
+            self._shlex(
+                self.GIT_DIFF_FILE_STATUS,
+                path=self.folder_path,
+                old_hash=old_hash,
+                new_hash=new_hash,
             )
         )
 
@@ -124,7 +140,8 @@ class Repo(RepoJSONMixin):
         :return: Git commit note log
         """
         p = await self._run(
-            self.GIT_LOG.format(
+            self._shlex(
+                self.GIT_LOG,
                 path=self.folder_path,
                 old_hash=old_commit_hash,
                 relative_file_path=relative_file_path,
@@ -190,13 +207,13 @@ class Repo(RepoJSONMixin):
 
         if self.branch is not None:
             p = await self._run(
-                self.GIT_CLONE.format(
-                    branch=self.branch, url=self.url, folder=self.folder_path
-                ).split()
+                self._shlex(
+                    self.GIT_CLONE, branch=self.branch, url=self.url, folder=self.folder_path
+                )
             )
         else:
             p = await self._run(
-                self.GIT_CLONE_NO_BRANCH.format(url=self.url, folder=self.folder_path).split()
+                self._shlex(self.GIT_CLONE_NO_BRANCH, url=self.url, folder=self.folder_path)
             )
 
         if p.returncode:
@@ -226,7 +243,7 @@ class Repo(RepoJSONMixin):
                 "A git repo does not exist at path: {}".format(self.folder_path)
             )
 
-        p = await self._run(self.GIT_CURRENT_BRANCH.format(path=self.folder_path).split())
+        p = await self._run(self._shlex(self.GIT_CURRENT_BRANCH, path=self.folder_path))
 
         if p.returncode != 0:
             raise errors.GitException(
@@ -259,7 +276,7 @@ class Repo(RepoJSONMixin):
             )
 
         p = await self._run(
-            self.GIT_LATEST_COMMIT.format(path=self.folder_path, branch=branch).split()
+            self._shlex(self.GIT_LATEST_COMMIT, path=self.folder_path, branch=branch)
         )
 
         if p.returncode != 0:
@@ -290,7 +307,7 @@ class Repo(RepoJSONMixin):
         if folder is None:
             folder = self.folder_path
 
-        p = await self._run(Repo.GIT_DISCOVER_REMOTE_URL.format(path=folder).split())
+        p = await self._run(self._shlex(Repo.GIT_DISCOVER_REMOTE_URL, path=folder))
 
         if p.returncode != 0:
             raise errors.NoRemoteURL("Unable to discover a repo URL.")
@@ -315,9 +332,7 @@ class Repo(RepoJSONMixin):
                 "A git repo does not exist at path: {}".format(self.folder_path)
             )
 
-        p = await self._run(
-            self.GIT_HARD_RESET.format(path=self.folder_path, branch=branch).split()
-        )
+        p = await self._run(self._shlex(self.GIT_HARD_RESET, path=self.folder_path, branch=branch))
 
         if p.returncode != 0:
             raise errors.HardResetError(
@@ -340,7 +355,7 @@ class Repo(RepoJSONMixin):
 
         await self.hard_reset(branch=curr_branch)
 
-        p = await self._run(self.GIT_PULL.format(path=self.folder_path).split())
+        p = await self._run(self._shlex(self.GIT_PULL, path=self.folder_path))
 
         if p.returncode != 0:
             raise errors.UpdateError(
@@ -463,9 +478,12 @@ class Repo(RepoJSONMixin):
         # TODO: Check and see if any of these modules are already available
 
         p = await self._run(
-            self.PIP_INSTALL.format(
-                python=executable, target_dir=target_dir, reqs=" ".join(requirements)
-            ).split()
+            self._shlex(
+                self.PIP_INSTALL,
+                python=executable,
+                target_dir=target_dir,
+                noquote_reqs=" ".join(requirements),
+            )
         )
 
         if p.returncode != 0:
@@ -509,7 +527,7 @@ class Repo(RepoJSONMixin):
 
 class RepoManager:
 
-    GITHUB_OR_GITLAB_RE = re.compile("https?://git(?:hub)|(?:lab)\.com/")
+    GITHUB_OR_GITLAB_RE = re.compile(r"https?://git(?:hub)|(?:lab)\.com/")
     TREE_URL_RE = re.compile(r"(?P<tree>/tree)/(?P<branch>\S+)$")
 
     def __init__(self):
