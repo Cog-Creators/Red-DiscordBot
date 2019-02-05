@@ -132,7 +132,7 @@ class Help(dpy_formatter.HelpFormatter):
             description = (
                 inspect.cleandoc(translator(self.command.__doc__))
                 if self.command.__doc__
-                else EMPTY_STRING
+                else None  # delay setting this to `EMPTY_STRING` until after formatting
             )
         else:
             description = self.command.description
