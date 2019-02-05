@@ -137,12 +137,12 @@ class Help(dpy_formatter.HelpFormatter):
         else:
             description = self.command.description
 
-        if not description == "" and description is not None:
-            description = "*{0}*".format(description)
-
         if description:
             # <description> portion
+            description = "*{0}*".format(description)
             emb["embed"]["description"] = description[:2046]
+        else:
+            description = EMPTY_STRING  # Visually empty, not actually.
 
         tagline = await self.context.bot.db.help.tagline()
         if tagline:
