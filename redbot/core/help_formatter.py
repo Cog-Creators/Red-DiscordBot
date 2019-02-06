@@ -215,10 +215,7 @@ class Help(dpy_formatter.HelpFormatter):
         curr_group = []
         ret = []
         for f in fields:
-            if (
-                sum(len(f2.value) for f2 in curr_group) + len(f.value) > max_chars
-                and curr_group != []
-            ):
+            if sum(len(f2.value) for f2 in curr_group) + len(f.value) > max_chars and curr_group:
                 ret.append(curr_group)
                 curr_group = []
             curr_group.append(f)
