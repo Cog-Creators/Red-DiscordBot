@@ -52,7 +52,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             embeds=True,
             color=15158332,
             fuzzy=False,
-            custom_text=None,
+            custom_info=None,
             help__page_char_limit=1000,
             help__max_pages_in_guild=2,
             help__tagline="",

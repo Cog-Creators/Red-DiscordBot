@@ -295,7 +295,7 @@ class Core(commands.Cog, CoreLogic):
         red_version = "[{}]({})".format(__version__, red_pypi)
         app_info = await self.bot.application_info()
         owner = app_info.owner
-        custom_text = await self.bot.db.custom_text()
+        custom_info = await self.bot.db.custom_info()
 
         async with aiohttp.ClientSession() as session:
             async with session.get("{}/json".format(red_pypi)) as r:
@@ -319,8 +319,8 @@ class Core(commands.Cog, CoreLogic):
             embed.add_field(
                 name="Outdated", value="Yes, {} is available".format(data["info"]["version"])
             )
-        if custom_text:
-            embed.add_field(name="About this instance", value=custom_text, inline=False)
+        if custom_info:
+            embed.add_field(name="About this instance", value=custom_info, inline=False)
         embed.add_field(name="About Red", value=about, inline=False)
 
         embed.set_footer(
@@ -1034,11 +1034,11 @@ class Core(commands.Cog, CoreLogic):
         `[My link](https://example.com)`
         """
         if not text:
-            await ctx.bot.db.custom_text.clear()
+            await ctx.bot.db.custom_info.clear()
             await ctx.send(_("The custom text has been cleared."))
             return
         if len(text) <= 1024:
-            await ctx.bot.db.custom_text.set(text)
+            await ctx.bot.db.custom_info.set(text)
             await ctx.send(_("The custom text has been set."))
             await ctx.invoke(self.info)
         else:
