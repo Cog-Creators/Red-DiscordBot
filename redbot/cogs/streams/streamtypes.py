@@ -9,6 +9,7 @@ from .errors import (
 )
 from random import choice, sample
 from string import ascii_letters
+from typing import ClassVar
 import discord
 import aiohttp
 import json
@@ -30,13 +31,15 @@ def rnd(url):
 
 
 class TwitchCommunity:
+
+    token_name = "twitch"
+
     def __init__(self, **kwargs):
         self.name = kwargs.pop("name")
         self.id = kwargs.pop("id", None)
         self.channels = kwargs.pop("channels", [])
         self._messages_cache = kwargs.pop("_messages_cache", [])
         self._token = kwargs.pop("token", None)
-        self.token_name = "twitch"
         self.type = self.__class__.__name__
 
     async def get_community_id(self):
@@ -128,13 +131,15 @@ class TwitchCommunity:
 
 
 class Stream:
+
+    token_name: ClassVar[str]
+
     def __init__(self, **kwargs):
         self.name = kwargs.pop("name", None)
         self.channels = kwargs.pop("channels", [])
         # self.already_online = kwargs.pop("already_online", False)
         self._messages_cache = kwargs.pop("_messages_cache", [])
         self.type = self.__class__.__name__
-        self.token_name = None
 
     async def is_online(self):
         raise NotImplementedError()
@@ -157,10 +162,12 @@ class Stream:
 
 
 class YoutubeStream(Stream):
+
+    token_name = "youtube"
+
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
         self._token = kwargs.pop("token", None)
-        self.token_name = "youtube"
         super().__init__(**kwargs)
 
     async def is_online(self):
@@ -241,10 +248,12 @@ class YoutubeStream(Stream):
 
 
 class TwitchStream(Stream):
+
+    token_name = "twitch"
+
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
         self._token = kwargs.pop("token", None)
-        self.token_name = "twitch"
         super().__init__(**kwargs)
 
     async def is_online(self):

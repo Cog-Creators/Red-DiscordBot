@@ -80,16 +80,17 @@ class Streams(commands.Cog):
     async def move_api_keys(self):
         """Move the API keys from cog stored config to core bot config if they exist."""
         tokens = await self.db.tokens()
-        existing_keys = await self.bot.db.api_tokens()
+        youtube = await self.bot.db.api_tokens.get_raw("youtube", default={})
+        twitch = await self.bot.db.api_tokens.get_raw("twitch", default={})
         for token_type, token in tokens.items():
             if token_type == "YoutubeStream":
-                if "youtube" not in existing_keys:
+                if "api_key" not in youtube:
                     await self.bot.db.api_tokens.set_raw("youtube", value={"api_key": token})
             if token_type == "TwitchStream":
                 # Don't need to check Community since they're set the same
-                if "twitch" not in existing_keys:
+                if "client_id" not in twitch:
                     await self.bot.db.api_tokens.set_raw("twitch", value={"client_id": token})
-        await self.db.tokens.set({})
+        await self.db.tokens.clear()
 
     @commands.command()
     async def twitch(self, ctx: commands.Context, channel_name: str):
