@@ -93,6 +93,10 @@ DM_PERMS.update(
 class PrivilegeLevel(enum.IntEnum):
     """Enumeration for special privileges."""
 
+    # Maintainer Note: do NOT re-order these.
+    # Each privelege level also implies access to the ones before it.
+    # Inserting new privelege levels at a later point is fine if that is considered.
+
     NONE = enum.auto()
     """No special privilege level."""
 
@@ -167,6 +171,17 @@ class PermState(enum.Enum):
     """This command has been actively denied, terminate the command
     chain.
     """
+
+    # The below are valid states, but should not be transitioned to
+    # They should be set if they apply.
+
+    ALLOWED_BY_HOOK = enum.auto()
+    """This command has been actively allowed by a permission hook.
+    check validation doesn't need this, but is useful to developers"""
+
+    DENIED_BY_HOOK = enum.auto()
+    """This command has been actively denied by a permission hook
+    check validation doesn't need this, but is useful to developers"""
 
     def transition_to(
         self, next_state: "PermState"
@@ -281,12 +296,14 @@ class Requires:
 
         if isinstance(user_perms, dict):
             self.user_perms: Optional[discord.Permissions] = discord.Permissions.none()
+            _validate_perms_dict(user_perms)
             self.user_perms.update(**user_perms)
         else:
             self.user_perms = user_perms
 
         if isinstance(bot_perms, dict):
             self.bot_perms: discord.Permissions = discord.Permissions.none()
+            _validate_perms_dict(bot_perms)
             self.bot_perms.update(**bot_perms)
         else:
             self.bot_perms = bot_perms
@@ -311,6 +328,7 @@ class Requires:
                 if user_perms is None:
                     func.requires.user_perms = None
                 else:
+                    _validate_perms_dict(user_perms)
                     func.requires.user_perms.update(**user_perms)
             return func
 
@@ -417,9 +435,13 @@ class Requires:
 
         """
         await self._verify_bot(ctx)
-        # Owner-only commands are non-overrideable
+
+        # Owner should never be locked out of commands for user permissions.
+        if await ctx.bot.is_owner(ctx.author):
+            return True
+        # Owner-only commands are non-overrideable, and we already checked for owner.
         if self.privilege_level is PrivilegeLevel.BOT_OWNER:
-            return await ctx.bot.is_owner(ctx.author)
+            return False
 
         hook_result = await ctx.bot.verify_permissions_hooks(ctx)
         if hook_result is not None:
@@ -445,7 +467,20 @@ class Requires:
             should_invoke = await self._verify_user(ctx)
         elif isinstance(next_state, dict):
             # NORMAL to PASSIVE_ALLOW; should we proceed as normal or transition?
-            next_state = next_state[await self._verify_user(ctx)]
+            # We must check what would happen normally, if no explicit rules were set.
+            default_rule = PermState.NORMAL
+            if ctx.guild is not None:
+                default_rule = self.get_default_guild_rule(guild_id=ctx.guild.id)
+            if default_rule is PermState.NORMAL:
+                default_rule = self.default_global_rule
+
+            if default_rule == PermState.ACTIVE_DENY:
+                would_invoke = False
+            elif default_rule == PermState.ACTIVE_ALLOW:
+                would_invoke = True
+            else:
+                would_invoke = await self._verify_user(ctx)
+            next_state = next_state[would_invoke]
 
         ctx.permission_state = next_state
         return should_invoke
@@ -584,6 +619,7 @@ def bot_has_permissions(**perms: bool):
         if asyncio.iscoroutinefunction(func):
             func.__requires_bot_perms__ = perms
         else:
+            _validate_perms_dict(perms)
             func.requires.bot_perms.update(**perms)
         return func
 
@@ -595,6 +631,8 @@ def has_permissions(**perms: bool):
 
     This check can be overridden by rules.
     """
+    if perms is None:
+        raise TypeError("Must provide at least one keyword argument to has_permissions")
     return Requires.get_decorator(None, perms)
 
 
@@ -666,3 +704,20 @@ class _IntKeyDict(Dict[int, _T]):
         if not isinstance(key, int):
             raise TypeError("Keys must be of type `int`")
         return super().__setitem__(key, value)
+
+
+def _validate_perms_dict(perms: Dict[str, bool]) -> None:
+    for perm, value in perms.items():
+        try:
+            attr = getattr(discord.Permissions, perm)
+        except AttributeError:
+            attr = None
+
+        if attr is None or not isinstance(attr, property):
+            # We reject invalid permissions
+            raise TypeError(f"Unknown permission name '{perm}'")
+
+        if value is not True:
+            # We reject any permission not specified as 'True', since this is the only value which
+            # makes practical sense.
+            raise TypeError(f"Permission {perm} may only be specified as 'True', not {value}")

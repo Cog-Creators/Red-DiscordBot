@@ -30,7 +30,7 @@ redbot/core/utils/common_filters.py      @mikeshardmind
 # Cogs
 redbot/cogs/admin/*                 @tekulvw
 redbot/cogs/alias/*                 @tekulvw
-redbot/cogs/audio/*                 @aikaterna @atiwiex
+redbot/cogs/audio/*                 @aikaterna
 redbot/cogs/bank/*                  @tekulvw
 redbot/cogs/cleanup/*               @palmtree5
 redbot/cogs/customcom/*             @palmtree5

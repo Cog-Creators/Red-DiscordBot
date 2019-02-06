@@ -744,7 +744,7 @@ class MessagePredicate(Callable[[discord.Message], bool]):
             if not same_context(m):
                 return False
             try:
-                self.result = collection.index(m.content)
+                self.result = collection.index(m.content.lower())
             except ValueError:
                 return False
             else:
