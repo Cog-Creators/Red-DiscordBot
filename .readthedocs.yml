@@ -4,10 +4,8 @@ formats:
 build:
   image: latest
 
-requirements_file: dependency_links.txt
-
 python:
-  version: 3.6
+  version: 3.7
   pip_install: true
   extra_requirements:
     - docs

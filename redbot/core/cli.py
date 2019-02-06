@@ -30,7 +30,7 @@ def interactive_config(red, token_set, prefix_set):
             "\nPick a prefix. A prefix is what you type before a "
             "command. Example:\n"
             "!help\n^ The exclamation mark is the prefix in this case.\n"
-            "Can be multiple characters. You will be able to change it "
+            "The prefix can be multiple characters. You will be able to change it "
             "later and add more of them.\nChoose your prefix:\n"
         )
         while not prefix:
@@ -51,7 +51,7 @@ def ask_sentry(red: Red):
     loop = asyncio.get_event_loop()
     print(
         "\nThank you for installing Red V3! Red is constantly undergoing\n"
-        " improvements, and we would like ask if you are comfortable with\n"
+        " improvements, and we would like to ask if you are comfortable with\n"
         " the bot automatically submitting fatal error logs to the development\n"
         ' team. If you wish to opt into the process please type "yes":\n'
     )

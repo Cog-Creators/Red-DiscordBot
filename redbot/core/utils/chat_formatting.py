@@ -1,5 +1,8 @@
 import itertools
 from typing import Sequence, Iterator, List
+
+import discord
+
 from redbot.core.i18n import Translator
 
 _ = Translator("UtilsChatFormatting", __file__)
@@ -329,7 +332,7 @@ def escape(text: str, *, mass_mentions: bool = False, formatting: bool = False) 
     return text
 
 
-def humanize_list(items: Sequence[str]):
+def humanize_list(items: Sequence[str]) -> str:
     """Get comma-separted list, with the last element joined with *and*.
 
     This uses an Oxford comma, because without one, items containing
@@ -357,3 +360,29 @@ def humanize_list(items: Sequence[str]):
     if len(items) == 1:
         return items[0]
     return ", ".join(items[:-1]) + _(", and ") + items[-1]
+
+
+def format_perms_list(perms: discord.Permissions) -> str:
+    """Format a list of permission names.
+
+    This will return a humanized list of the names of all enabled
+    permissions in the provided `discord.Permissions` object.
+
+    Parameters
+    ----------
+    perms : discord.Permissions
+        The permissions object with the requested permissions to list
+        enabled.
+
+    Returns
+    -------
+    str
+        The humanized list.
+
+    """
+    perm_names: List[str] = []
+    for perm, value in perms:
+        if value is True:
+            perm_name = '"' + perm.replace("_", " ").title() + '"'
+            perm_names.append(perm_name)
+    return humanize_list(perm_names).replace("Guild", "Server")

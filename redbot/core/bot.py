@@ -111,7 +111,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
         self.main_dir = bot_dir
 
-        self.cog_mgr = CogManager(paths=(str(self.main_dir / "cogs"),))
+        self.cog_mgr = CogManager()
 
         super().__init__(*args, formatter=Help(), **kwargs)
 
@@ -186,13 +186,23 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
     async def is_admin(self, member: discord.Member):
         """Checks if a member is an admin of their guild."""
         admin_role = await self.db.guild(member.guild).admin_role()
-        return any(role.id == admin_role for role in member.roles)
+        try:
+            if any(role.id == admin_role for role in member.roles):
+                return True
+        except AttributeError:  # someone passed a webhook to this
+            pass
+        return False
 
     async def is_mod(self, member: discord.Member):
         """Checks if a member is a mod or admin of their guild."""
         mod_role = await self.db.guild(member.guild).mod_role()
         admin_role = await self.db.guild(member.guild).admin_role()
-        return any(role.id in (mod_role, admin_role) for role in member.roles)
+        try:
+            if any(role.id in (mod_role, admin_role) for role in member.roles):
+                return True
+        except AttributeError:  # someone passed a webhook to this
+            pass
+        return False
 
     async def get_context(self, message, *, cls=commands.Context):
         return await super().get_context(message, cls=cls)
@@ -334,8 +344,14 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             ids_to_check = [to_check.id]
         else:
             author = getattr(to_check, "author", to_check)
-            ids_to_check = [r.id for r in author.roles]
-            ids_to_check.append(author.id)
+            try:
+                ids_to_check = [r.id for r in author.roles]
+            except AttributeError:
+                # webhook messages are a user not member,
+                # cheaper than isinstance
+                return True  # webhooks require significant permissions to enable.
+            else:
+                ids_to_check.append(author.id)
 
         immune_ids = await self.db.guild(guild).autoimmune_ids()
 
@@ -484,7 +500,12 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             if result is not None:
                 hook_results.append(result)
         if hook_results:
-            return all(hook_results)
+            if all(hook_results):
+                ctx.permission_state = commands.PermState.ALLOWED_BY_HOOK
+                return True
+            else:
+                ctx.permission_state = commands.PermState.DENIED_BY_HOOK
+                return False
 
 
 class Red(RedBase, discord.AutoShardedClient):

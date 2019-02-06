@@ -145,7 +145,7 @@ class Command(CogCommandMixin, commands.Command):
 
     @property
     def parents(self) -> List["Group"]:
-        """List[Group] : Returns all parent commands of this command.
+        """List[commands.Group] : Returns all parent commands of this command.
 
         This is sorted by the length of :attr:`.qualified_name` from highest to lowest.
         If the command has no parents, this will be an empty list.
@@ -157,12 +157,31 @@ class Command(CogCommandMixin, commands.Command):
             cmd = cmd.parent
         return sorted(entries, key=lambda x: len(x.qualified_name), reverse=True)
 
-    async def can_run(self, ctx: "Context") -> bool:
+    # noinspection PyMethodOverriding
+    async def can_run(
+        self,
+        ctx: "Context",
+        *,
+        check_all_parents: bool = False,
+        change_permission_state: bool = False,
+    ) -> bool:
         """Check if this command can be run in the given context.
 
         This function first checks if the command can be run using
         discord.py's method `discord.ext.commands.Command.can_run`,
         then will return the result of `Requires.verify`.
+
+        Keyword Arguments
+        -----------------
+        check_all_parents : bool
+            If ``True``, this will check permissions for all of this
+            command's parents and its cog as well as the command
+            itself. Defaults to ``False``.
+        change_permission_state : bool
+            Whether or not the permission state should be changed as
+            a result of this call. For most cases this should be
+            ``False``. Defaults to ``False``.
+
         """
         ret = await super().can_run(ctx)
         if ret is False:
@@ -171,7 +190,20 @@ class Command(CogCommandMixin, commands.Command):
         # This is so contexts invoking other commands can be checked with
         # this command as well
         original_command = ctx.command
+        original_state = ctx.permission_state
         ctx.command = self
+
+        if check_all_parents is True:
+            # Since we're starting from the beginning, we should reset the state to normal
+            ctx.permission_state = PermState.NORMAL
+            for parent in reversed(self.parents):
+                try:
+                    result = await parent.can_run(ctx, change_permission_state=True)
+                except commands.CommandError:
+                    result = False
+
+                if result is False:
+                    return False
 
         if self.parent is None and self.instance is not None:
             # For top-level commands, we need to check the cog's requires too
@@ -183,6 +215,17 @@ class Command(CogCommandMixin, commands.Command):
             return await self.requires.verify(ctx)
         finally:
             ctx.command = original_command
+            if not change_permission_state:
+                ctx.permission_state = original_state
+
+    async def _verify_checks(self, ctx):
+        if not self.enabled:
+            raise commands.DisabledCommand(f"{self.name} command is disabled")
+
+        if not (await self.can_run(ctx, change_permission_state=True)):
+            raise commands.CheckFailure(
+                f"The check functions for command {self.qualified_name} failed."
+            )
 
     async def do_conversion(
         self, ctx: "Context", converter, argument: str, param: inspect.Parameter
@@ -238,7 +281,9 @@ class Command(CogCommandMixin, commands.Command):
             if cmd.hidden:
                 return False
             try:
-                can_run = await self.can_run(ctx)
+                can_run = await self.can_run(
+                    ctx, check_all_parents=True, change_permission_state=False
+                )
             except commands.CheckFailure:
                 return False
             else:

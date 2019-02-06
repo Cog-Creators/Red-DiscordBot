@@ -15,7 +15,7 @@ from pkg_resources import DistributionNotFound
 
 from . import __version__ as red_version, version_info as red_version_info, VersionInfo, commands
 from .data_manager import storage_type
-from .utils.chat_formatting import inline, bordered, humanize_list
+from .utils.chat_formatting import inline, bordered, format_perms_list
 from .utils import fuzzy_command_search, format_fuzzy_results
 
 log = logging.getLogger("red")
@@ -144,7 +144,7 @@ def init_events(bot, cli_flags):
 
         sentry = await bot.db.enable_sentry()
         mongo_enabled = storage_type() != "JSON"
-        reqs_installed = {"voice": None, "docs": None, "test": None}
+        reqs_installed = {"docs": None, "test": None}
         for key in reqs_installed.keys():
             reqs = [x.name for x in red_pkg._dep_map[key]]
             try:
@@ -157,7 +157,7 @@ def init_events(bot, cli_flags):
         options = (
             ("Error Reporting", sentry),
             ("MongoDB", mongo_enabled),
-            ("Voice", reqs_installed["voice"]),
+            ("Voice", True),
             ("Docs", reqs_installed["docs"]),
             ("Tests", reqs_installed["test"]),
         )
@@ -176,12 +176,6 @@ def init_events(bot, cli_flags):
             print("\nInvite URL: {}\n".format(invite_url))
 
         bot.color = discord.Colour(await bot.db.color())
-        try:
-            import Levenshtein
-        except ImportError:
-            log.info(
-                "python-Levenshtein is not installed, fuzzy string matching will be a bit slower."
-            )
 
     @bot.event
     async def on_error(event_method, *args, **kwargs):
@@ -204,19 +198,17 @@ def init_events(bot, cli_flags):
                 await ctx.send(disabled_message.replace("{command}", ctx.invoked_with))
         elif isinstance(error, commands.CommandInvokeError):
             log.exception(
-                "Exception in command '{}'" "".format(ctx.command.qualified_name),
+                "Exception in command '{}'".format(ctx.command.qualified_name),
                 exc_info=error.original,
             )
             if should_log_sentry(error):
                 sentry_log.exception(
-                    "Exception in command '{}'" "".format(ctx.command.qualified_name),
+                    "Exception in command '{}'".format(ctx.command.qualified_name),
                     exc_info=error.original,
                 )
 
-            message = (
-                "Error in command '{}'. Check your console or "
-                "logs for details."
-                "".format(ctx.command.qualified_name)
+            message = "Error in command '{}'. Check your console or logs for details.".format(
+                ctx.command.qualified_name
             )
             exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
             exception_log += "".join(
@@ -234,18 +226,13 @@ def init_events(bot, cli_flags):
             else:
                 await ctx.send(await format_fuzzy_results(ctx, fuzzy_commands, embed=False))
         elif isinstance(error, commands.BotMissingPermissions):
-            missing_perms: List[str] = []
-            for perm, value in error.missing:
-                if value is True:
-                    perm_name = '"' + perm.replace("_", " ").title() + '"'
-                    missing_perms.append(perm_name)
-            if len(missing_perms) == 1:
+            if bin(error.missing.value).count("1") == 1:  # Only one perm missing
                 plural = ""
             else:
                 plural = "s"
             await ctx.send(
                 "I require the {perms} permission{plural} to execute that command.".format(
-                    perms=humanize_list(missing_perms), plural=plural
+                    perms=format_perms_list(error.missing), plural=plural
                 )
             )
         elif isinstance(error, commands.CheckFailure):
@@ -278,9 +265,9 @@ def init_events(bot, cli_flags):
             system_now = datetime.datetime.utcnow()
             diff = abs((discord_now - system_now).total_seconds())
             if diff > 60:
-                log.warn(
-                    "Detected significant difference (%d seconds) in system clock to discord's clock."
-                    " Any time sensitive code may fail.",
+                log.warning(
+                    "Detected significant difference (%d seconds) in system clock to discord's "
+                    "clock. Any time sensitive code may fail.",
                     diff,
                 )
             bot.checked_time_accuracy = discord_now
