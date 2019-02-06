@@ -308,7 +308,7 @@ class General(commands.Cog):
                 value=_(
                     "Total users : **{total}**\nHumans : **{hum}** • Bots : **{bots}**\n"
                     "📗 `{online}` 📙 `{idle}`\n📕 `{dnd}` 📓 `{off}`\n"
-                    "🎥 `{streaming}` 📱 `{mobile}`\n"                    
+                    "🎥 `{streaming}` 📱 `{mobile}`\n"
                 ).format(
                     total=total_users,
                     lurkers=lurkers,
