@@ -263,9 +263,12 @@ class General(commands.Cog):
         idle = len([m.status for m in guild.members if m.status == discord.Status.idle])
         dnd = len([m.status for m in guild.members if m.status == discord.Status.dnd])
         offline = len([m.status for m in guild.members if m.status == discord.Status.offline])
+        streaming = len([m for m in guild.members if isinstance(m.activity, discord.Streaming)])
+        mobile = len([m for m in guild.members if m.is_on_mobile()])
+        lurkers = len([m for m in guild.members if m.joined_at is None])
         total_users = len(guild.members)
-        bots = len([a for a in ctx.guild.members if a.bot])
         humans = len([a for a in ctx.guild.members if a.bot == False])
+        bots = len([a for a in ctx.guild.members if a.bot])
         text_channels = len(guild.text_channels)
         voice_channels = len(guild.voice_channels)
         passed = (ctx.message.created_at - guild.created_at).days
@@ -279,34 +282,44 @@ class General(commands.Cog):
             "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago !"
         ).format(bot_name=ctx.bot.user.name, bot_join=bot_joined, since_join=since_joined)
         data = discord.Embed(description=created_at, colour=(await ctx.embed_colour()))
-        if total_users > 8000:
+        if lurkers:
             data.add_field(
                 name=_("Members :"),
                 value=_(
-                    "Total users : **{total}**\nHumans : **{hum}** • Bots : **{bots}**\n📗 `{online}` 📙 `{idle}`\n📕 `{dnd}` 📓 `{off}`"
+                    "Total users : **{total}**\nLurkers : **{lurkers}**\nHumans : **{hum}** • Bots : **{bots}**\n"
+                    "📗 `{online}` 📙 `{idle}`\n📕 `{dnd}` 📓 `{off}`\n"
+                    "🎥 `{streaming}` 📱 `{mobile}`\n"
                 ).format(
                     total=total_users,
+                    lurkers=lurkers,
                     hum=humans,
                     bots=bots,
                     online=online,
                     idle=idle,
                     dnd=dnd,
                     off=offline,
+                    streaming=streaming,
+                    mobile=mobile,
                 ),
             )
         else:
             data.add_field(
                 name=_("Members :"),
                 value=_(
-                    "Total users : **{total}**\nHumans : **{hum}** • Bots : **{bots}**\n📗 `{online}` 📙 `{idle}` 📕 `{dnd}` 📓 `{off}`"
+                    "Total users : **{total}**\nHumans : **{hum}** • Bots : **{bots}**\n"
+                    "📗 `{online}` 📙 `{idle}`\n📕 `{dnd}` 📓 `{off}`\n"
+                    "🎥 `{streaming}` 📱 `{mobile}`\n"                    
                 ).format(
                     total=total_users,
+                    lurkers=lurkers,
                     hum=humans,
                     bots=bots,
                     online=online,
                     idle=idle,
                     dnd=dnd,
                     off=offline,
+                    streaming=streaming,
+                    mobile=mobile,
                 ),
             )
         data.add_field(
@@ -344,16 +357,15 @@ class General(commands.Cog):
                     "{vip} VIP Regions\n{van} Vanity URL\n{splash} Splash Invite\n{m_emojis} More Emojis\n{verify} Verified"
                 ).format(**format_kwargs),
             )
+        data.set_author(name=guild.name)
         if "VERIFIED" in guild.features:
             data.set_author(
                 name=guild.name,
                 icon_url="https://cdn.discordapp.com/emojis/457879292152381443.png",
             )
         if guild.icon_url:
-            data.set_author(name=guild.name)
             data.set_thumbnail(url=guild.icon_url)
         else:
-            data.set_author(name=guild.name)
             data.set_thumbnail(
                 url="https://cdn.discordapp.com/attachments/494975386334134273/529843761635786754/Discord-Logo-Black.png"
             )
