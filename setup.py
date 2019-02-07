@@ -17,8 +17,6 @@ install_requires = [
     "multidict==4.5.2",
     "python-levenshtein-wheels==0.13.1",
     "pyyaml==3.13",
-    "raven==6.10.0",
-    "raven-aiohttp==0.7.0",
     "red-lavalink==0.2.0",
     "schema==0.6.8",
     "websockets==6.0",
