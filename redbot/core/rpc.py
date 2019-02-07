@@ -69,13 +69,13 @@ class RPC:
 
         self.server = None
 
-    async def initialize(self):
+    async def initialize(self, port: int):
         """
         Finalizes the initialization of the RPC server and allows it to begin
         accepting queries.
         """
-        self.server = await self.app.loop.create_server(self.app_handler, "127.0.0.1", 6133)
-        log.debug("Created RPC server listener.")
+        self.server = await self.app.loop.create_server(self.app_handler, "127.0.0.1", port)
+        log.debug(f"Created RPC server listener on port {port}.")
 
     def close(self):
         """
