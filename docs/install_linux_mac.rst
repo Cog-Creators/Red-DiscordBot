@@ -152,7 +152,11 @@ Then run the following command:
 
     CONFIGURE_OPTS=--enable-optimizations pyenv install 3.7.2 -v
 
-This may take a long time to complete.
+This may take a long time to complete, depending on your hardware. For some machines (such as
+Raspberry Pis and micro-tier VPSes), it may take over an hour; in this case, you may wish to remove
+the ``CONFIGURE_OPTS=--enable-optimizations`` part from the front of the command, which will
+drastically reduce the install time. However, be aware that this will make Python run about 10%
+slower.
 
 After that is finished, run:
 
