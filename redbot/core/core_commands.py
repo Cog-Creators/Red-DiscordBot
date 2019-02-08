@@ -519,7 +519,7 @@ class Core(commands.Cog, CoreLogic):
         deleted or removed from the bot.
 
         For that, you need to give a valid permissions level.
-        You can generate one [here](https://discordapi.com/permissions.html).
+        You can generate one here: https://discordapi.com/permissions.html
 
         Please note that you might need the two factor authentification for\
         some permissions.
