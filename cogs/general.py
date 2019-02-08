@@ -188,11 +188,16 @@ class General:
 
         joined_at = self.fetch_joined_at(user, server)
         since_created = (ctx.message.timestamp - user.created_at).days
-        since_joined = (ctx.message.timestamp - joined_at).days
-        user_joined = joined_at.strftime("%d %b %Y %H:%M")
+        if joined_at is not None:
+            since_joined = (ctx.message.timestamp - joined_at).days
+            user_joined = joined_at.strftime("%d %b %Y %H:%M")
+        else:
+            since_joined = "?"
+            user_joined = "Unknown"
         user_created = user.created_at.strftime("%d %b %Y %H:%M")
-        member_number = sorted(server.members,
-                               key=lambda m: m.joined_at).index(user) + 1
+        member_number = (sorted(server.members,
+                         key=lambda m: m.joined_at or ctx.message.timestamp)
+                         .index(user) + 1)
 
         created_on = "{}\n({} days ago)".format(user_created, since_created)
         joined_on = "{}\n({} days ago)".format(user_joined, since_joined)
