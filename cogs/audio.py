@@ -2251,6 +2251,7 @@ class Audio:
         channel = author.voice_channel
 
         if channel:
+            in_channel = bool(server.me in channel.voice_members)
             is_admin = channel.permissions_for(server.me).administrator
             if channel.user_limit == 0:
                 is_full = False
@@ -2259,11 +2260,11 @@ class Audio:
 
         if channel is None:
             raise AuthorNotConnected
-        elif channel.permissions_for(server.me).connect is False:
+        elif channel.permissions_for(server.me).connect is False and not in_channel:
             raise UnauthorizedConnect
         elif channel.permissions_for(server.me).speak is False:
             raise UnauthorizedSpeak
-        elif is_full and not is_admin:
+        elif is_full and not is_admin and not in_channel:
             raise ChannelUserLimit
         else:
             return True
