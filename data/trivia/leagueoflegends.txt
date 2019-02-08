@@ -588,7 +588,7 @@ Who is the smallest champion in the game itself?`Teemo
 Who is rumored to be Teemo's girlfriend?`Tristana
 Who stopped Veigar during his evil plan in Bandle City?`Teemo
 What type of poison does Teemo use in his blowgun?`Arjunta
-Who has a Badger skin?`
+Who has a Badger skin?`Teemo
 Who was the original member of the Omega Squad?`Teemo
 Who has a skill called "The Box"?`Thresh
 Who has a skill that says "You have opened the box. Your prize: death." in the Death Recap?`Thresh
@@ -730,7 +730,7 @@ Who does Zilean have an antagonistic relationship with?`Volibear
 Name a champion from the Void destroyed city of Icathia?`Jax or Zilean`Jax`Zilean
 Who joined the league to find a cure for chrono-displasia?`Zilean
 Who has a Groovy skin?`Zilean
-How long does Zilean's ultimate ability's resurrection stasis last?`3 seconds 
+How long does Zilean's ultimate ability's resurrection stasis last?`3 seconds
 Name a champion with a non-ultimate ability that cannot be taken at level 1?`Azir or Zilean`Azir`Zilean
 Who woke up Skarner?`Zilean
 Which character's walk cycles can be toggled in game?`Zoe

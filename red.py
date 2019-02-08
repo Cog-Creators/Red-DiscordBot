@@ -63,6 +63,12 @@ class Bot(commands.Bot):
         self.logger = set_logger(self)
         self._last_exception = None
         self.oauth_url = ""
+
+        try:
+            self._cog_registry = dataIO.load_json("data/red/cogs.json")
+        except Exception:
+            self._cog_registry = {}
+
         if 'self_bot' in kwargs:
             self.settings.self_bot = kwargs['self_bot']
         else:
@@ -218,6 +224,18 @@ class Bot(commands.Bot):
         response = self.loop.run_in_executor(None, install)
         return await asyncio.wait_for(response, timeout=timeout)
 
+    def set_cog(self, cog, value, save=True):
+        self._cog_registry[cog] = value
+
+        if save:
+            self.save_cogs()
+
+    def save_cogs(self):
+        dataIO.save_json("data/red/cogs.json", self._cog_registry)
+
+    @property
+    def first_run(self):
+        return self.settings.bot_settings == self.settings.default_settings
 
 class Formatter(commands.HelpFormatter):
     def __init__(self, *args, **kwargs):
@@ -244,6 +262,7 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
     __main__.send_cmd_help = bot.send_cmd_help  # Backwards
     __main__.user_allowed = bot.user_allowed    # compatibility
     __main__.settings = bot.settings            # sucks
+    __main__.set_cog = bot.set_cog              # greatly
 
     async def get_oauth_url():
         try:
@@ -526,20 +545,9 @@ def get_answer():
         return False
 
 
-def set_cog(cog, value):  # TODO: move this out of red.py
-    data = dataIO.load_json("data/red/cogs.json")
-    data[cog] = value
-    dataIO.save_json("data/red/cogs.json", data)
-
-
 def load_cogs(bot):
     defaults = ("alias", "audio", "customcom", "downloader", "economy",
                 "general", "image", "mod", "streams", "trivia")
-
-    try:
-        registry = dataIO.load_json("data/red/cogs.json")
-    except:
-        registry = {}
 
     bot.load_extension('cogs.owner')
     owner_cog = bot.get_cog('Owner')
@@ -550,21 +558,21 @@ def load_cogs(bot):
 
     if bot.settings._no_cogs:
         bot.logger.debug("Skipping initial cogs loading (--no-cogs)")
-        if not os.path.isfile("data/red/cogs.json"):
-            dataIO.save_json("data/red/cogs.json", {})
+        bot._cog_registry.clear()
+        bot.save_cogs()
         return
 
     failed = []
     extensions = owner_cog._list_cogs()
 
-    if not registry:  # All default cogs enabled by default
+    if not bot._cog_registry:  # All default cogs enabled by default
         for ext in defaults:
-            registry["cogs." + ext] = True
+            bot._cog_registry["cogs." + ext] = True
 
     for extension in extensions:
         if extension.lower() == "cogs.owner":
             continue
-        to_load = registry.get(extension, False)
+        to_load = bot._cog_registry.get(extension, False)
         if to_load:
             try:
                 owner_cog._load_cog(extension)
@@ -572,9 +580,9 @@ def load_cogs(bot):
                 print("{}: {}".format(e.__class__.__name__, str(e)))
                 bot.logger.exception(e)
                 failed.append(extension)
-                registry[extension] = False
+                bot._cog_registry[extension] = False
 
-    dataIO.save_json("data/red/cogs.json", registry)
+    bot.save_cogs()
 
     if failed:
         print("\nFailed to load: {}\n".format(" ".join(failed)))
