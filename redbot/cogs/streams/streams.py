@@ -157,8 +157,13 @@ class Streams(commands.Cog):
             await ctx.send_help()
 
     @_twitch.command(name="channel")
-    async def twitch_alert_channel(self, ctx: commands.Context, channel_name: str):
-        """Toggle alerts in this channel for a Twitch stream."""
+    async def twitch_alert_channel(
+        self, ctx: commands.Context, channel_name: str, games: Optional[str]
+    ):
+        """Toggle alerts in this channel for a Twitch stream.
+        
+        Optionally, games may be specified via a comma-separated list, in which case alerts 
+        will only be triggered for the channel if their game is set to one of those games."""
         if re.fullmatch(r"<#\d+>", channel_name):
             await ctx.send("Please supply the name of a *Twitch* channel, not a Discord channel.")
             return
