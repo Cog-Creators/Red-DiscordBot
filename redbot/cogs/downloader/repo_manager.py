@@ -8,8 +8,9 @@ import re
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from subprocess import run as sp_run, PIPE
+from string import Formatter
 from sys import executable
-from typing import List, Tuple, MutableMapping, Union, Optional
+from typing import List, Tuple, Iterable, MutableMapping, Union, Optional
 
 from redbot.core import data_manager, commands
 from redbot.core.utils import safe_delete
@@ -23,6 +24,17 @@ from .log import log
 _ = Translator("RepoManager", __file__)
 
 
+class ProcessFormatter(Formatter):
+    def vformat(self, format_string, args, kwargs):
+        return shlex.split(super().vformat(format_string, args, kwargs))
+
+    def get_value(self, key, args, kwargs):
+        obj = super().get_value(key, args, kwargs)
+        if isinstance(obj, str) or not isinstance(obj, Iterable):
+            return shlex.quote(str(obj))
+        return " ".join(shlex.quote(str(o)) for o in obj)
+
+
 class Repo(RepoJSONMixin):
     GIT_CLONE = "git clone --recurse-submodules -b {branch} {url} {folder}"
     GIT_CLONE_NO_BRANCH = "git clone --recurse-submodules {url} {folder}"
@@ -34,7 +46,7 @@ class Repo(RepoJSONMixin):
     GIT_LOG = "git -C {path} log --relative-date --reverse {old_hash}.. {relative_file_path}"
     GIT_DISCOVER_REMOTE_URL = "git -C {path} config --get remote.origin.url"
 
-    PIP_INSTALL = "{python} -m pip install -U -t {target_dir} {noquote_reqs}"
+    PIP_INSTALL = "{python} -m pip install -U -t {target_dir} {reqs}"
 
     def __init__(
         self,
@@ -80,18 +92,6 @@ class Repo(RepoJSONMixin):
             )
         return poss_repo
 
-    @staticmethod
-    def _shlex(cmd: str, **kwargs: str) -> List[str]:
-        cmd = shlex.split(cmd)
-        final_cmd = []
-        for arg in cmd:
-            f_arg = arg.format(**kwargs)
-            if "{noquote_" in arg:
-                final_cmd.extend(shlex.split(f_arg))
-            else:
-                final_cmd.append(f_arg)
-        return final_cmd
-
     def _existing_git_repo(self) -> (bool, Path):
         git_path = self.folder_path / ".git"
         return git_path.exists(), git_path
@@ -107,7 +107,7 @@ class Repo(RepoJSONMixin):
         :return: Mapping of filename -> status_letter
         """
         p = await self._run(
-            self._shlex(
+            ProcessFormatter().format(
                 self.GIT_DIFF_FILE_STATUS,
                 path=self.folder_path,
                 old_hash=old_hash,
@@ -140,7 +140,7 @@ class Repo(RepoJSONMixin):
         :return: Git commit note log
         """
         p = await self._run(
-            self._shlex(
+            ProcessFormatter().format(
                 self.GIT_LOG,
                 path=self.folder_path,
                 old_hash=old_commit_hash,
@@ -207,13 +207,15 @@ class Repo(RepoJSONMixin):
 
         if self.branch is not None:
             p = await self._run(
-                self._shlex(
+                ProcessFormatter().format(
                     self.GIT_CLONE, branch=self.branch, url=self.url, folder=self.folder_path
                 )
             )
         else:
             p = await self._run(
-                self._shlex(self.GIT_CLONE_NO_BRANCH, url=self.url, folder=self.folder_path)
+                ProcessFormatter().format(
+                    self.GIT_CLONE_NO_BRANCH, url=self.url, folder=self.folder_path
+                )
             )
 
         if p.returncode:
@@ -243,7 +245,9 @@ class Repo(RepoJSONMixin):
                 "A git repo does not exist at path: {}".format(self.folder_path)
             )
 
-        p = await self._run(self._shlex(self.GIT_CURRENT_BRANCH, path=self.folder_path))
+        p = await self._run(
+            ProcessFormatter().format(self.GIT_CURRENT_BRANCH, path=self.folder_path)
+        )
 
         if p.returncode != 0:
             raise errors.GitException(
@@ -276,7 +280,7 @@ class Repo(RepoJSONMixin):
             )
 
         p = await self._run(
-            self._shlex(self.GIT_LATEST_COMMIT, path=self.folder_path, branch=branch)
+            ProcessFormatter().format(self.GIT_LATEST_COMMIT, path=self.folder_path, branch=branch)
         )
 
         if p.returncode != 0:
@@ -307,7 +311,7 @@ class Repo(RepoJSONMixin):
         if folder is None:
             folder = self.folder_path
 
-        p = await self._run(self._shlex(Repo.GIT_DISCOVER_REMOTE_URL, path=folder))
+        p = await self._run(ProcessFormatter().format(Repo.GIT_DISCOVER_REMOTE_URL, path=folder))
 
         if p.returncode != 0:
             raise errors.NoRemoteURL("Unable to discover a repo URL.")
@@ -332,7 +336,9 @@ class Repo(RepoJSONMixin):
                 "A git repo does not exist at path: {}".format(self.folder_path)
             )
 
-        p = await self._run(self._shlex(self.GIT_HARD_RESET, path=self.folder_path, branch=branch))
+        p = await self._run(
+            ProcessFormatter().format(self.GIT_HARD_RESET, path=self.folder_path, branch=branch)
+        )
 
         if p.returncode != 0:
             raise errors.HardResetError(
@@ -355,7 +361,7 @@ class Repo(RepoJSONMixin):
 
         await self.hard_reset(branch=curr_branch)
 
-        p = await self._run(self._shlex(self.GIT_PULL, path=self.folder_path))
+        p = await self._run(ProcessFormatter().format(self.GIT_PULL, path=self.folder_path))
 
         if p.returncode != 0:
             raise errors.UpdateError(
@@ -478,11 +484,8 @@ class Repo(RepoJSONMixin):
         # TODO: Check and see if any of these modules are already available
 
         p = await self._run(
-            self._shlex(
-                self.PIP_INSTALL,
-                python=executable,
-                target_dir=target_dir,
-                noquote_reqs=" ".join(requirements),
+            ProcessFormatter().format(
+                self.PIP_INSTALL, python=executable, target_dir=target_dir, reqs=requirements
             )
         )
 
