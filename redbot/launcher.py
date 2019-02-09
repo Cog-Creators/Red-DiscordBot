@@ -447,6 +447,7 @@ def main_menu():
 
 
 def main():
+    args, flags_to_pass = parse_cli_args()
     if not PYTHON_OK:
         print(
             f"Python {'.'.join(map(str, MIN_PYTHON_VERSION))} is required to run Red, but you "
@@ -472,8 +473,6 @@ def main():
         print("Starting Red...")
         run_red(args.instancename, autorestart=args.auto_restart, cliflags=flags_to_pass)
 
-
-args, flags_to_pass = parse_cli_args()
 
 if __name__ == "__main__":
     try:
