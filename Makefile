@@ -9,5 +9,5 @@ gettext:
 REF?=rewrite
 update_vendor:
 	pip install --upgrade --no-deps -t . https://github.com/Rapptz/discord.py/archive/$(REF).tar.gz#egg=discord.py
-	rm -r discord.py*.egg-info
+	rm -r discord.py*-info
 	$(MAKE) reformat
