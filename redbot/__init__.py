@@ -118,9 +118,7 @@ class VersionInfo:
             "dev_release": self.dev_release,
         }
 
-    def __lt__(self, other: _Any) -> bool:
-        if not isinstance(other, VersionInfo):
-            return NotImplemented
+    def __lt__(self, other: "VersionInfo") -> bool:
         tups: _List[_Tuple[int, int, int, int, int, int, int]] = []
         for obj in (self, other):
             tups.append(
