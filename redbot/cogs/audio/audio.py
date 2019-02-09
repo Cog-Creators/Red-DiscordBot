@@ -2675,7 +2675,7 @@ class Audio(commands.Cog):
         """
         channels = {
             x  # x is a voice_channel
-            for y in {g.voice_channels for g in self.bot.guilds}
+            for y in [g.voice_channels for g in self.bot.guilds]
             for x in y  # y is a list of voice channels
         }  # Yes, this is ugly. It's also the most performant and commented.
 
