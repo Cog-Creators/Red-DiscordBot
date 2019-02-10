@@ -32,7 +32,7 @@ class Image(commands.Cog):
         imgur_token = await self.settings.imgur_client_id()
         if imgur_token is not None and "imgur" not in await self.bot.db.api_tokens():
             await self.bot.db.api_tokens.set_raw("imgur", value={"client_id": imgur_token})
-            await self.config.settings.imgur_client_id.clear()
+            await self.settings.imgur_client_id.clear()
 
     @commands.group(name="imgur")
     async def _imgur(self, ctx):
