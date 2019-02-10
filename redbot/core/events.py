@@ -5,7 +5,6 @@ import datetime
 import logging
 import traceback
 from datetime import timedelta
-from typing import List
 
 import aiohttp
 import discord
@@ -13,7 +12,8 @@ import pkg_resources
 from colorama import Fore, Style, init
 from pkg_resources import DistributionNotFound
 
-from . import __version__ as red_version, version_info as red_version_info, VersionInfo, commands
+from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
+from . import commands
 from .data_manager import storage_type
 from .utils.chat_formatting import inline, bordered, format_perms_list
 from .utils import fuzzy_command_search, format_fuzzy_results
