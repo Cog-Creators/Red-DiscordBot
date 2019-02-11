@@ -9,7 +9,7 @@ from .errors import (
 )
 from random import choice, sample
 from string import ascii_letters
-from typing import ClassVar
+from typing import ClassVar, Optional
 import discord
 import aiohttp
 import json
@@ -132,7 +132,7 @@ class TwitchCommunity:
 
 class Stream:
 
-    token_name: ClassVar[str]
+    token_name: ClassVar[Optional[str]] = None
 
     def __init__(self, **kwargs):
         self.name = kwargs.pop("name", None)
@@ -332,7 +332,7 @@ class TwitchStream(Stream):
 
 class HitboxStream(Stream):
 
-    token_name = None # This streaming services don't currently require an API key
+    token_name = None  # This streaming services don't currently require an API key
 
     async def is_online(self):
         url = "https://api.hitbox.tv/media/live/" + self.name
@@ -372,7 +372,7 @@ class HitboxStream(Stream):
 
 class MixerStream(Stream):
 
-    token_name = None # This streaming services don't currently require an API key
+    token_name = None  # This streaming services don't currently require an API key
 
     async def is_online(self):
         url = "https://mixer.com/api/v1/channels/" + self.name
@@ -416,7 +416,7 @@ class MixerStream(Stream):
 
 class PicartoStream(Stream):
 
-    token_name = None # This streaming services don't currently require an API key
+    token_name = None  # This streaming services don't currently require an API key
 
     async def is_online(self):
         url = "https://api.picarto.tv/v1/channel/name/" + self.name

@@ -83,13 +83,11 @@ class Streams(commands.Cog):
         youtube = await self.bot.db.api_tokens.get_raw("youtube", default={})
         twitch = await self.bot.db.api_tokens.get_raw("twitch", default={})
         for token_type, token in tokens.items():
-            if token_type == "YoutubeStream":
-                if "api_key" not in youtube:
-                    await self.bot.db.api_tokens.set_raw("youtube", value={"api_key": token})
-            if token_type == "TwitchStream":
+            if token_type == "YoutubeStream" and "api_key" not in youtube:
+                await self.bot.db.api_tokens.set_raw("youtube", value={"api_key": token})
+            if token_type == "TwitchStream" and "client_id" not in twitch:
                 # Don't need to check Community since they're set the same
-                if "client_id" not in twitch:
-                    await self.bot.db.api_tokens.set_raw("twitch", value={"client_id": token})
+                await self.bot.db.api_tokens.set_raw("twitch", value={"client_id": token})
         await self.db.tokens.clear()
 
     @commands.command()
