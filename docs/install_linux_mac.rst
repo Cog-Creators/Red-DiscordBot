@@ -94,6 +94,8 @@ one-by-one:
     brew tap caskroom/versions
     brew cask install java8
 
+It's possible you will have network issues. If so, go in your Applications folder, inside it, go in the Python 3.7 folder then double click ``Install certificates.command``
+
 .. _install-ubuntu:
 .. _install-ubuntu-bionic:
 .. _install-ubuntu-cosmic:
