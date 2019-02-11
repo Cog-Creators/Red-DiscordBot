@@ -384,11 +384,20 @@ class Filter(commands.Cog):
                         if logenabled and isinstance(logchannel, discord.TextChannel):
                             embed = discord.Embed(color=discord.Color.red())
                             embed.set_author(name=_("Message get filtered"))
-                            embed.add_field(name=_("Member"), value="{0.name}#{0.discriminator}\n({0.id})".format(author))
+                            embed.add_field(
+                                name=_("Member"),
+                                value="{0.name}#{0.discriminator}\n({0.id})".format(author),
+                            )
                             embed.add_field(name=_("Channel"), value=message.channel.mention)
                             if message.content:
-                                embed.add_field(name=_("Message"), value=message.clean_content, inline=False)
-                            embed.set_footer(text=_("Message ID: {0} | {1}").format(message.id, datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")))
+                                embed.add_field(
+                                    name=_("Message"), value=message.clean_content, inline=False
+                                )
+                            embed.set_footer(
+                                text=_("Message ID: {0} | {1}").format(
+                                    message.id, datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+                                )
+                            )
                             await logchannel.send(embed=embed)
                     except discord.HTTPException:
                         pass
