@@ -5,6 +5,7 @@ from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import pagify
+from datetime import datetime
 
 _ = Translator("Filter", __file__)
 
@@ -22,6 +23,8 @@ class Filter(commands.Cog):
             "filterban_count": 0,
             "filterban_time": 0,
             "filter_names": False,
+            "filter_log": False,
+            "filter_logchannel": None,
             "filter_default_name": "John Doe",
         }
         default_member_settings = {"filter_count": 0, "next_reset_time": 0}
@@ -49,6 +52,41 @@ class Filter(commands.Cog):
     async def filterset(self, ctx: commands.Context):
         """Manage filter settings."""
         pass
+
+    @filterset.command(name="logenabled")
+    async def filter_loggging(self, ctx: commands.Context):
+        """Enable or disable the logging of filtered messages.
+
+        Note that this has no effect if logchannel is not set.
+        (to set logchannel, run `[p]filterset logchannel channel`).
+
+        For deafult it is disabled.
+        """
+        guild = ctx.guild
+        logging = await self.settings.guild(guild).filter_log()
+        await self.settings.guild(guild).filter_log.set(not logging)
+        if logging:
+            await self.settings.guild(guild).filter_log.set(not logging)
+            await ctx.send(_("Logging is now disabled."))
+        else:
+            await self.settings.guild(guild).filter_log.set(not logging)
+            await ctx.send(_("Logging is now enabled. Please check the logchanel settings."))
+
+
+    @filterset.command(name="logchannel")
+    async def filter_set_logchanel(self, ctx: commands.Context, channel: discord.TextChannel):
+        """Set the chanel to log deleted messages.
+
+        You can activate logging by using `[p]filterset logenabled`
+
+        For default no channel is set.
+        """
+        guild = ctx.guild
+        if isinstance(channel, discord.TextChannel):
+            await self.settings.guild(guild).filter_logchannel.set(channel.id)
+            await ctx.send("Channel <#{0}> is now set for logging messages.".format(channel.id))
+        else:
+            await ctx.send("{0} is not a text channel.".format(channel))
 
     @filterset.command(name="defaultname")
     async def filter_default_name(self, ctx: commands.Context, name: str):
@@ -341,6 +379,18 @@ class Filter(commands.Cog):
                 if w in message.content.lower():
                     try:
                         await message.delete()
+                        logchannelid = await self.settings.guild(server).filter_logchannel()
+                        logchannel = server.get_channel(logchannelid)
+                        logenabled = await self.settings.guild(server).filter_log()
+                        if logenabled and isinstance(logchannel, discord.TextChannel):
+                            embed = discord.Embed(color=discord.Color.red())
+                            embed.set_author(name=_('Message get filtered'))
+                            embed.add_field(name=_('Member'), value='{0.name}#{0.discriminator}\n({0.id})'.format(author))
+                            embed.add_field(name=_('Channel'), value=message.channel.mention)
+                            if message.content:
+                                embed.add_field(name=_('Message'), value=message.clean_content, inline=False)
+                            embed.set_footer(text=_('Message ID: {0} | {1}').format(message.id, datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')))
+                            await logchannel.send(embed=embed)
                     except discord.HTTPException:
                         pass
                     else:
