@@ -1017,23 +1017,6 @@ class Core(commands.Cog, CoreLogic):
 
     @_set.command()
     @checks.is_owner()
-    async def sentry(self, ctx: commands.Context, on_or_off: bool):
-        """Enable or disable Sentry logging.
-
-        Sentry is the service Red uses to manage error reporting. This should
-        be disabled if you have made your own modifications to the redbot
-        package.
-        """
-        await ctx.bot.db.enable_sentry.set(on_or_off)
-        if on_or_off:
-            ctx.bot.enable_sentry()
-            await ctx.send(_("Done. Sentry logging is now enabled."))
-        else:
-            ctx.bot.disable_sentry()
-            await ctx.send(_("Done. Sentry logging is now disabled."))
-
-    @_set.command()
-    @checks.is_owner()
     async def custominfo(self, ctx: commands.Context, *, text: str = None):
         """Customizes a section of [p]info
 
