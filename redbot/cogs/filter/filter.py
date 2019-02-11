@@ -72,7 +72,6 @@ class Filter(commands.Cog):
             await self.settings.guild(guild).filter_log.set(not logging)
             await ctx.send(_("Logging is now enabled. Please check the logchanel settings."))
 
-
     @filterset.command(name="logchannel")
     async def filter_set_logchanel(self, ctx: commands.Context, channel: discord.TextChannel):
         """Set the chanel to log deleted messages.
