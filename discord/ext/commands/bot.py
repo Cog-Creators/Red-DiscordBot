@@ -3,7 +3,7 @@
 """
 The MIT License (MIT)
 
-Copyright (c) 2015-2017 Rapptz
+Copyright (c) 2015-2019 Rapptz
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -443,9 +443,9 @@ class BotBase(GroupMixin):
         Parameters
         -----------
         func : :ref:`coroutine <coroutine>`
-            The extra event to listen to.
+            The function to call.
         name : Optional[str]
-            The name of the command to use. Defaults to ``func.__name__``.
+            The name of the event to listen for. Defaults to ``func.__name__``.
 
         Example
         --------

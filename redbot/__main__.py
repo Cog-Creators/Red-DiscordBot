@@ -183,7 +183,7 @@ def main():
         gathered = asyncio.gather(*pending, loop=red.loop, return_exceptions=True)
         gathered.cancel()
         try:
-            red.rpc.server.close()
+            loop.run_until_complete(red.rpc.close())
         except AttributeError:
             pass
 
