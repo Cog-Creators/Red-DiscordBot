@@ -13,7 +13,6 @@ from redbot.core.events import init_events
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags
 from redbot.core.core_commands import Core
 from redbot.core.dev_commands import Dev
-from redbot.core import __version__
 from signal import SIGTERM
 import asyncio
 import logging.handlers
@@ -125,21 +124,23 @@ def main():
     if cli_flags.no_instance:
         print(
             "\033[1m"
-            "Warning: The data will be placed in a temporary folder and removed on next system reboot."
+            "Warning: The data will be placed in a temporary folder and removed on next system "
+            "reboot."
             "\033[0m"
         )
         cli_flags.instance_name = "temporary_red"
         create_temp_config()
     load_basic_configuration(cli_flags.instance_name)
     log = init_loggers(cli_flags)
+    loop = asyncio.get_event_loop()
     red = Red(cli_flags=cli_flags, description=description, pm_help=None)
     init_global_checks(red)
     init_events(red, cli_flags)
+    loop.run_until_complete(red.cog_mgr.initialize())
     red.add_cog(Core(red))
     red.add_cog(CogManagerUI())
     if cli_flags.dev:
         red.add_cog(Dev())
-    loop = asyncio.get_event_loop()
     if os.name == "posix":
         loop.add_signal_handler(SIGTERM, lambda: asyncio.ensure_future(sigterm_handler(red, log)))
     tmp_data = {}

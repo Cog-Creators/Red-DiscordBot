@@ -1,6 +1,3 @@
-import importlib.machinery
-from typing import Optional
-
 import discord
 
 from .i18n import Translator
@@ -15,19 +12,30 @@ class RedError(Exception):
 class PackageAlreadyLoaded(RedError):
     """Raised when trying to load an already-loaded package."""
 
-    def __init__(self, spec: importlib.machinery.ModuleSpec, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.spec: importlib.machinery.ModuleSpec = spec
+    def __init__(self, module_name: str, *args):
+        super().__init__(*args)
+        self.module_name = module_name
 
     def __str__(self) -> str:
-        return f"There is already a package named {self.spec.name.split('.')[-1]} loaded"
+        return f"There is already a package named {self.module_name} loaded"
 
 
 class CogLoadError(RedError):
     """Raised by a cog when it cannot load itself.
-    The message will be send to the user."""
 
-    pass
+    The message will be sent to the user.
+    """
+
+
+class NoSuchCog(RedError, ModuleNotFoundError):
+    """Thrown when a cog is missing.
+
+    Different from ImportError because some ImportErrors can happen inside cogs.
+    """
+
+    def __init__(self, *args, name: str) -> None:
+        self.name = name
+        super().__init__(*args)
 
 
 class BankError(RedError):

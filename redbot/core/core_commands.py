@@ -9,6 +9,7 @@ import os
 import sys
 import tarfile
 import traceback
+import types
 from collections import namedtuple
 from pathlib import Path
 from random import SystemRandom
@@ -32,7 +33,7 @@ from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import pagify, box, inline
 
 if TYPE_CHECKING:
-    from redbot.core.bot import Red
+    from .bot import Red
 
 __all__ = ["Core"]
 
@@ -51,7 +52,7 @@ _ = i18n.Translator("Core", __file__)
 
 class CoreLogic:
     def __init__(self, bot: "Red"):
-        self.bot = bot
+        self.bot: "Red" = bot
         self.bot.register_rpc_handler(self._load)
         self.bot.register_rpc_handler(self._unload)
         self.bot.register_rpc_handler(self._reload)
@@ -74,23 +75,21 @@ class CoreLogic:
         tuple
             4-tuple of loaded, failed, not found and already loaded cogs.
         """
-        failed_packages = []
-        loaded_packages = []
-        notfound_packages = []
-        alreadyloaded_packages = []
-        failed_with_reason_packages = []
+        failed_packages: List[str] = []
+        loaded_packages: List[str] = []
+        notfound_packages: List[str] = []
+        alreadyloaded_packages: List[str] = []
+        failed_with_reason_packages: List[Tuple[str, str]] = []
 
         bot = self.bot
 
-        cogspecs = []
+        cog_modules: List[Tuple[str, types.ModuleType]] = []
 
         for name in cog_names:
             try:
-                spec = await bot.cog_mgr.find_cog(name)
-                if spec:
-                    cogspecs.append((spec, name))
-                else:
-                    notfound_packages.append(name)
+                module = await bot.cog_mgr.load_cog_module(name)
+            except errors.NoSuchCog:
+                notfound_packages.append(name)
             except Exception as e:
                 log.exception("Package import failed", exc_info=e)
 
@@ -98,11 +97,13 @@ class CoreLogic:
                 exception_log += "".join(traceback.format_exception(type(e), e, e.__traceback__))
                 bot._last_exception = exception_log
                 failed_packages.append(name)
+            else:
+                cog_modules.append((name, module))
 
-        for spec, name in cogspecs:
+        for name, module in cog_modules:
             try:
-                self._cleanup_and_refresh_modules(spec.name)
-                await bot.load_extension(spec)
+                self._cleanup_and_refresh_modules(module)
+                await bot.load_extension(module)
             except errors.PackageAlreadyLoaded:
                 alreadyloaded_packages.append(name)
             except errors.CogLoadError as e:
@@ -127,26 +128,14 @@ class CoreLogic:
         )
 
     @staticmethod
-    def _cleanup_and_refresh_modules(module_name: str) -> None:
+    def _cleanup_and_refresh_modules(module: types.ModuleType) -> None:
         """Interally reloads modules so that changes are detected"""
-        splitted = module_name.split(".")
-
-        def maybe_reload(new_name):
-            try:
-                lib = sys.modules[new_name]
-            except KeyError:
-                pass
-            else:
-                importlib._bootstrap._exec(lib.__spec__, lib)
-
-        # noinspection PyTypeChecker
-        modules = itertools.accumulate(splitted, "{}.{}".format)
-        for m in modules:
-            maybe_reload(m)
-
-        children = {name: lib for name, lib in sys.modules.items() if name.startswith(module_name)}
-        for child_name, lib in children.items():
-            importlib._bootstrap._exec(lib.__spec__, lib)
+        children = {
+            name: lib for name, lib in sys.modules.items() if name.startswith(module.__name__)
+        }
+        for _ in range(2):  # Do it twice to overwrite old relative imports
+            for child_name, lib in sorted(children.items(), key=lambda m: m[0], reverse=True):
+                importlib.reload(lib)
 
     @staticmethod
     def _get_package_strings(
@@ -199,12 +188,7 @@ class CoreLogic:
         self, cog_names: Sequence[str]
     ) -> Tuple[List[str], List[str], List[str], List[str], List[Tuple[str, str]]]:
         await self._unload(cog_names)
-
-        loaded, load_failed, not_found, already_loaded, load_failed_with_reason = await self._load(
-            cog_names
-        )
-
-        return loaded, load_failed, not_found, already_loaded, load_failed_with_reason
+        return await self._load(cog_names)
 
     async def _name(self, name: Optional[str] = None) -> str:
         """
@@ -1834,14 +1818,9 @@ class Core(commands.Cog, CoreLogic):
     # RPC handlers
     async def rpc_load(self, request):
         cog_name = request.params[0]
-
-        spec = await self.bot.cog_mgr.find_cog(cog_name)
-        if spec is None:
-            raise LookupError("No such cog found.")
-
-        self._cleanup_and_refresh_modules(spec.name)
-
-        await self.bot.load_extension(spec)
+        module = await self.bot.cog_mgr.load_cog_module(cog_name)
+        self._cleanup_and_refresh_modules(module)
+        await self.bot.load_extension(module)
 
     async def rpc_unload(self, request):
         cog_name = request.params[0]

@@ -1,15 +1,15 @@
 import asyncio
+import contextlib
 import inspect
 import os
 import logging
+import types
 from collections import Counter
 from enum import Enum
-from importlib.machinery import ModuleSpec
 from pathlib import Path
 from typing import Optional, Union, List
 
 import discord
-import sys
 from discord.ext.commands import when_mentioned_or
 
 from . import Config, i18n, commands, errors
@@ -209,22 +209,26 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             while pkg_name in curr_pkgs:
                 curr_pkgs.remove(pkg_name)
 
-    async def load_extension(self, spec: ModuleSpec):
-        name = spec.name.split(".")[-1]
+    async def load_extension(self, module: Union[str, types.ModuleType]) -> None:
+        if isinstance(module, str):
+            module: types.ModuleType = self.cog_mgr.load_cog_module(module)
+        name = module.__name__
+        if name.startswith("redbot.cogs."):
+            name = name[len("redbot.cogs.") :]
+
         if name in self.extensions:
-            raise errors.PackageAlreadyLoaded(spec)
+            raise errors.PackageAlreadyLoaded(name)
 
-        lib = spec.loader.load_module()
-        if not hasattr(lib, "setup"):
-            del lib
-            raise discord.ClientException(f"extension {name} does not have a setup function")
+        if hasattr(module, "setup"):
+            if asyncio.iscoroutinefunction(module.setup):
+                await module.setup(self)
+            else:
+                module.setup(self)
 
-        if asyncio.iscoroutinefunction(lib.setup):
-            await lib.setup(self)
+            self.extensions[name] = module
         else:
-            lib.setup(self)
-
-        self.extensions[name] = lib
+            del module
+            raise discord.ClientException(f"extension {name} does not have a setup function")
 
     def remove_cog(self, cogname: str):
         cog = self.get_cog(cogname)
@@ -279,26 +283,15 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
                 del event_list[index]
 
         try:
-            func = getattr(lib, "teardown")
+            teardown = getattr(lib, "teardown")
         except AttributeError:
             pass
         else:
-            try:
-                func(self)
-            except:
-                pass
+            with contextlib.suppress(Exception):
+                teardown(self)
         finally:
-            # finally remove the import..
-            pkg_name = lib.__package__
-            del lib
+            # finally remove the extension
             del self.extensions[name]
-
-            for module in list(sys.modules):
-                if _is_submodule(lib_name, module):
-                    del sys.modules[module]
-
-            if pkg_name.startswith("redbot.cogs."):
-                del sys.modules["redbot.cogs"].__dict__[name]
 
     async def is_automod_immune(
         self, to_check: Union[discord.Message, commands.Context, discord.abc.User, discord.Role]
