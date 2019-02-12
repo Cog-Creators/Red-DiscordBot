@@ -63,7 +63,9 @@ class CogManager:
         default_cog_install_path.mkdir(parents=True, exist_ok=True)
         self.conf.register_global(paths=[], install_path=str(default_cog_install_path))
         self._loop = loop or asyncio.get_event_loop()
-        self._executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+        self._executor = concurrent.futures.ThreadPoolExecutor(
+            max_workers=1, initializer=asyncio.set_event_loop, initargs=(self._loop,)
+        )
 
     async def initialize(self):
         redbot.cogs.__path__ = list(map(str, await self.paths()))
@@ -256,6 +258,23 @@ class CogManager:
             raise
 
         return module
+
+    async def reload(self, module: types.ModuleType) -> types.ModuleType:
+        """Do a deep reload of a module or package."""
+        return await self._loop.run_in_executor(self._executor, self._reload, module)
+
+    @staticmethod
+    def _reload(module: types.ModuleType) -> types.ModuleType:
+        children = {
+            name: lib for name, lib in sys.modules.items() if name.startswith(module.__name__)
+        }
+        ret = module
+        for _ in range(2):  # Do it twice to overwrite old relative imports
+            for child_name, lib in sorted(children.items(), key=lambda m: m[0], reverse=True):
+                importlib.reload(lib)
+                if lib.__name__ == module.__name__:
+                    ret = lib
+        return ret
 
     @staticmethod
     async def available_modules() -> Set[str]:

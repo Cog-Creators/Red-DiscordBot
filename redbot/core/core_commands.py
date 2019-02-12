@@ -1,8 +1,6 @@
 import asyncio
 import contextlib
 import datetime
-import importlib
-import itertools
 import json
 import logging
 import os
@@ -102,7 +100,7 @@ class CoreLogic:
 
         for name, module in cog_modules:
             try:
-                self._cleanup_and_refresh_modules(module)
+                module = await bot.cog_mgr.reload(module)
                 await bot.load_extension(module)
             except errors.PackageAlreadyLoaded:
                 alreadyloaded_packages.append(name)
@@ -126,16 +124,6 @@ class CoreLogic:
             alreadyloaded_packages,
             failed_with_reason_packages,
         )
-
-    @staticmethod
-    def _cleanup_and_refresh_modules(module: types.ModuleType) -> None:
-        """Interally reloads modules so that changes are detected"""
-        children = {
-            name: lib for name, lib in sys.modules.items() if name.startswith(module.__name__)
-        }
-        for _ in range(2):  # Do it twice to overwrite old relative imports
-            for child_name, lib in sorted(children.items(), key=lambda m: m[0], reverse=True):
-                importlib.reload(lib)
 
     @staticmethod
     def _get_package_strings(
@@ -1819,7 +1807,7 @@ class Core(commands.Cog, CoreLogic):
     async def rpc_load(self, request):
         cog_name = request.params[0]
         module = await self.bot.cog_mgr.load_cog_module(cog_name)
-        self._cleanup_and_refresh_modules(module)
+        module = await self.bot.cog_mgr.reload(module)
         await self.bot.load_extension(module)
 
     async def rpc_unload(self, request):
