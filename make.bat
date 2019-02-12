@@ -28,7 +28,7 @@ if [%REF%] == [] (
     set REF2=%REF%
 )
 pip install --upgrade --no-deps -t . https://github.com/Rapptz/discord.py/archive/!REF2!.tar.gz#egg=discord.py
-del /S /Q "discord.py*.egg-info"
+del /S /Q "discord.py*-info"
 for /F %%i in ('dir /S /B discord.py*.egg-info') do rmdir /S /Q %%i
 goto reformat
 
