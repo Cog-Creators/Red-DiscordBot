@@ -26,6 +26,7 @@ import asyncio
 import concurrent.futures
 import functools
 import importlib.machinery
+import logging
 import pkgutil
 import sys
 import types
@@ -43,7 +44,9 @@ from .data_manager import cog_data_path
 
 from .utils.chat_formatting import box, pagify
 
-__all__ = ["CogManager"]
+__all__ = ["CogManager", "CogManagerUI"]
+
+log = logging.getLogger("red.cog_manager")
 
 
 class CogManager:
@@ -63,9 +66,7 @@ class CogManager:
         default_cog_install_path.mkdir(parents=True, exist_ok=True)
         self.conf.register_global(paths=[], install_path=str(default_cog_install_path))
         self._loop = loop or asyncio.get_event_loop()
-        self._executor = concurrent.futures.ThreadPoolExecutor(
-            max_workers=1, initializer=asyncio.set_event_loop, initargs=(self._loop,)
-        )
+        self._executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
 
     async def initialize(self):
         redbot.cogs.__path__ = list(map(str, await self.paths()))
@@ -247,8 +248,18 @@ class CogManager:
                 # Will be quick to import
                 module = partial()
             else:
-                # Might take a while - make it non-blocking
-                module = await self._loop.run_in_executor(self._executor, partial)
+                # Might take a while - try to make it non-blocking
+                try:
+                    module = await self._loop.run_in_executor(self._executor, partial)
+                except RuntimeError as exc:
+                    log.exception(
+                        "Loading module `%s` failed with the following exception when trying in "
+                        "a secondary thread:",
+                        name,
+                        exc_info=exc,
+                    )
+                    log.info("Retrying in main thread...")
+                    module = partial()
         except ModuleNotFoundError as e:
             if e.name == "redbot.cogs." + name:
                 raise errors.NoSuchCog(
@@ -261,7 +272,17 @@ class CogManager:
 
     async def reload(self, module: types.ModuleType) -> types.ModuleType:
         """Do a deep reload of a module or package."""
-        return await self._loop.run_in_executor(self._executor, self._reload, module)
+        try:
+            return await self._loop.run_in_executor(self._executor, self._reload, module)
+        except RuntimeError as exc:
+            log.exception(
+                "Reloading module `%s` failed with the following exception when trying in a "
+                "secondary thread:",
+                module.__name__,
+                exc_info=exc,
+            )
+            log.info("Retrying in main thread...")
+            return self._reload(module)
 
     @staticmethod
     def _reload(module: types.ModuleType) -> types.ModuleType:
