@@ -19,6 +19,7 @@ async def test_modlog_register_casetype(mod):
 @pytest.mark.asyncio
 async def test_modlog_case_create(mod, ctx, member_factory):
     from datetime import datetime as dt
+
     # Run casetype register test to register casetype in this test too
     await test_modlog_register_casetype(mod)
 
