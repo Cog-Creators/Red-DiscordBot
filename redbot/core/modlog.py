@@ -1,4 +1,3 @@
-import os
 from datetime import datetime
 from typing import List, Union
 
@@ -29,15 +28,14 @@ _DEFAULT_GLOBAL = {"casetypes": {}}
 
 _DEFAULT_GUILD = {"mod_log": None, "cases": {}, "casetypes": {}}
 
+_conf: Config = None
 
-def _register_defaults():
+
+def _init():
+    global _conf
+    _conf = Config.get_conf(None, 1354799444, cog_name="ModLog")
     _conf.register_global(**_DEFAULT_GLOBAL)
     _conf.register_guild(**_DEFAULT_GUILD)
-
-
-if not os.environ.get("BUILDING_DOCS"):
-    _conf = Config.get_conf(None, 1354799444, cog_name="ModLog")
-    _register_defaults()
 
 
 class Case:
