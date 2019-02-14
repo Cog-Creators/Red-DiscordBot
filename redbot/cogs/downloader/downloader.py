@@ -502,7 +502,7 @@ class Downloader(commands.Cog):
         if isinstance(cog_installable, Installable):
             made_by = ", ".join(cog_installable.author) or _("Missing from info.json")
             repo = self._repo_manager.get_repo(cog_installable.repo_name)
-            repo_url = repo.url
+            repo_url = _("Missing from installed repos") if repo is None else repo.url
             cog_name = cog_installable.name
         else:
             made_by = "26 & co."

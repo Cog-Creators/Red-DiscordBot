@@ -10,10 +10,11 @@ from redbot.core.data_manager import create_temp_config, load_basic_configuratio
 from redbot.core.json_io import JsonIO
 from redbot.core.global_checks import init_global_checks
 from redbot.core.events import init_events
-from redbot.core.cli import interactive_config, confirm, parse_cli_flags, ask_sentry
+from redbot.core.cli import interactive_config, confirm, parse_cli_flags
 from redbot.core.core_commands import Core
 from redbot.core.dev_commands import Dev
 from redbot.core import __version__
+from signal import SIGTERM
 import asyncio
 import logging.handlers
 import logging
@@ -76,11 +77,7 @@ def init_loggers(cli_flags):
     logger.addHandler(fhandler)
     logger.addHandler(stdout_handler)
 
-    # Sentry stuff
-    sentry_logger = logging.getLogger("red.sentry")
-    sentry_logger.setLevel(logging.WARNING)
-
-    return logger, sentry_logger
+    return logger
 
 
 async def _get_prefix_and_token(red, indict):
@@ -91,7 +88,6 @@ async def _get_prefix_and_token(red, indict):
     """
     indict["token"] = await red.db.token()
     indict["prefix"] = await red.db.prefix()
-    indict["enable_sentry"] = await red.db.enable_sentry()
 
 
 def list_instances():
@@ -110,8 +106,13 @@ def list_instances():
         sys.exit(0)
 
 
+async def sigterm_handler(red, log):
+    log.info("SIGTERM received. Quitting...")
+    await red.shutdown(restart=False)
+
+
 def main():
-    description = "Red - Version {}".format(__version__)
+    description = "Red V3"
     cli_flags = parse_cli_flags(sys.argv[1:])
     if cli_flags.list_instances:
         list_instances()
@@ -130,7 +131,7 @@ def main():
         cli_flags.instance_name = "temporary_red"
         create_temp_config()
     load_basic_configuration(cli_flags.instance_name)
-    log, sentry_log = init_loggers(cli_flags)
+    log = init_loggers(cli_flags)
     red = Red(cli_flags=cli_flags, description=description, pm_help=None)
     init_global_checks(red)
     init_events(red, cli_flags)
@@ -139,6 +140,8 @@ def main():
     if cli_flags.dev:
         red.add_cog(Dev())
     loop = asyncio.get_event_loop()
+    if os.name == "posix":
+        loop.add_signal_handler(SIGTERM, lambda: asyncio.ensure_future(sigterm_handler(red, log)))
     tmp_data = {}
     loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
     token = os.environ.get("RED_TOKEN", tmp_data["token"])
@@ -158,8 +161,6 @@ def main():
     if cli_flags.dry_run:
         loop.run_until_complete(red.http.close())
         sys.exit(0)
-    if tmp_data["enable_sentry"]:
-        red.enable_sentry()
     try:
         loop.run_until_complete(red.start(token, bot=True))
     except discord.LoginFailure:
@@ -176,14 +177,13 @@ def main():
         red._shutdown_mode = ExitCodes.SHUTDOWN
     except Exception as e:
         log.critical("Fatal exception", exc_info=e)
-        sentry_log.critical("Fatal Exception", exc_info=e)
         loop.run_until_complete(red.logout())
     finally:
         pending = asyncio.Task.all_tasks(loop=red.loop)
         gathered = asyncio.gather(*pending, loop=red.loop, return_exceptions=True)
         gathered.cancel()
         try:
-            red.rpc.server.close()
+            loop.run_until_complete(red.rpc.close())
         except AttributeError:
             pass
 

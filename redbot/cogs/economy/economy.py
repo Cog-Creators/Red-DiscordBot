@@ -388,7 +388,7 @@ class Economy(commands.Cog):
     @guild_only_check()
     async def payouts(self, ctx: commands.Context):
         """Show the payouts for the slot machine."""
-        await ctx.author.send(SLOT_PAYOUTS_MSG())
+        await ctx.author.send(SLOT_PAYOUTS_MSG)
 
     @commands.command()
     @guild_only_check()
