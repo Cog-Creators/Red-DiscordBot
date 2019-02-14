@@ -37,10 +37,6 @@ __author__ = ["aikaterna"]
 log = logging.getLogger("red.audio")
 
 
-class YouTubeAPIError(Exception):
-    pass
-
-
 @cog_i18n(_)
 class Audio(commands.Cog):
     """Play audio through voice channels."""
@@ -58,9 +54,6 @@ class Audio(commands.Cog):
             "status": False,
             "current_version": redbot.core.VersionInfo.from_str("3.0.0a0").to_json(),
             "use_external_lavalink": False,
-            "spotify_client_id": None,
-            "spotify_client_secret": None,
-            "youtube_api": None,
         }
 
         default_guild = {
@@ -386,35 +379,20 @@ class Audio(commands.Cog):
 
     @audioset.command()
     @checks.is_owner()
-    async def spotifyid(self, ctx, id_key=None):
-        """Set the Spotify API client ID.
-
-           Use this command with no key to reset the saved value."""
-        if not id_key:
-            await self.config.spotify_client_id.set(None)
-            return await self._embed_msg(ctx, _("Spotify API ID has been cleared."))
-        await self.config.spotify_client_id.set(str(id_key))
-        try:
-            await ctx.message.delete()
-        except discord.Forbidden:
-            pass
-        await self._embed_msg(ctx, _("Spotify API client ID set."))
-
-    @audioset.command()
-    @checks.is_owner()
-    async def spotifysecret(self, ctx, secret_key=None):
-        """Set the Spotify API client secret.
-
-           Use this command with no key to reset the saved value."""
-        if not secret_key:
-            await self.config.spotify_client_secret.set(None)
-            return await self._embed_msg(ctx, _("Spotify API secret has been cleared."))
-        await self.config.spotify_client_secret.set(str(secret_key))
-        try:
-            await ctx.message.delete()
-        except discord.Forbidden:
-            pass
-        await self._embed_msg(ctx, _("Spotify API client secret set."))
+    async def spotifyapi(self, ctx):
+        """Instructions to set the Spotify API tokens."""
+        message = _(
+            f"1. Go to Spotify developers and log in with your Spotify account\n"
+            "(https://developer.spotify.com/dashboard/applications)\n"
+            '2. Click "Create An App"\n'
+            "3. Fill out the form provided with your app name, etc.\n"
+            '4. When asked if you\'re developing commercial integration select "No"\n'
+            "5. Accept the terms and conditions.\n"
+            "6. Copy your client ID and your client secret into\n"
+            "`{prefix}set api spotify client_id,your_client_id "
+            "client_secret,your_client_secret`".format(prefix=ctx.prefix)
+        )
+        await ctx.maybe_send_embed(message)
 
     @checks.is_owner()
     @commands.guild_only()
@@ -463,19 +441,23 @@ class Audio(commands.Cog):
 
     @audioset.command()
     @checks.is_owner()
-    async def youtubeapi(self, ctx, yt_key=None):
-        """Set the YouTube API key.
-
-           Use this command with no key to reset the saved value."""
-        if not yt_key:
-            await self.config.youtube_api.set(None)
-            return await self._embed_msg(ctx, _("YouTube API key has been cleared."))
-        await self.config.youtube_api.set(str(yt_key))
-        try:
-            await ctx.message.delete()
-        except discord.Forbidden:
-            pass
-        await self._embed_msg(ctx, _("YouTube API key set."))
+    async def youtubeapi(self, ctx):
+        """Instructions to set the YouTube API key."""
+        message = _(
+            f"1. Go to Google Developers Console and log in with your Google account.\n"
+            "(https://console.developers.google.com/)\n"
+            "2. You should be prompted to create a new project (name does not matter).\n"
+            "3. Click on Enable APIs and Services at the top.\n"
+            "4. In the list of APIs choose or search for YouTube Data API v3 and click on it. Choose Enable.\n"
+            "5. Click on Credentials on the left navigation bar.\n"
+            "6. Click on Create Credential at the top.\n"
+            '7. At the top click the link for "API key".\n'
+            "8. No application restrictions are needed. Click Create at the bottom.\n"
+            "9. You now have a key to add to `{prefix}set api youtube api_key,your_api_key`".format(
+                prefix=ctx.prefix
+            )
+        )
+        await ctx.maybe_send_embed(message)
 
     @commands.command()
     @commands.guild_only()
@@ -939,7 +921,7 @@ class Audio(commands.Cog):
         """Play a URL or search for a track."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         jukebox_price = await self.config.guild(ctx.guild).jukebox_price()
-        global_data = await self.config.all()
+        api_data = await self._check_api_tokens()
         if not self._player_check(ctx):
             try:
                 if not ctx.author.voice.channel.permissions_for(ctx.me).connect or self._userlimit(
@@ -980,15 +962,18 @@ class Audio(commands.Cog):
         if query.startswith("spotify:"):
             parts = query.split(":")
             if (
-                not global_data["spotify_client_id"]
-                or not global_data["spotify_client_secret"]
-                or not global_data["youtube_api"]
+                not api_data["spotify_client_id"]
+                or not api_data["spotify_client_secret"]
+                or not api_data["youtube_api"]
             ):
                 return await self._embed_msg(
                     ctx,
                     _(
-                        "The owner needs to set the Spotify client ID, Spotify client secret, and YouTube API key before Spotify URLs or codes can be used."
-                    ),
+                        "The owner needs to set the Spotify client ID, Spotify client secret, "
+                        "and YouTube API key before Spotify URLs or codes can be used. "
+                        "\nSee `{prefix}audioset youtubeapi` and `{prefix}audioset spotifyapi "
+                        "for instructions."
+                    ).format(prefix=ctx.prefix),
                 )
 
             try:
@@ -1003,14 +988,24 @@ class Audio(commands.Cog):
                 res = await self._make_spotify_req(
                     "https://api.spotify.com/v1/tracks/{0}".format(parts[-1])
                 )
-                query = "{} {}".format(res["artists"][0]["name"], res["name"])
+                try:
+                    query = "{} {}".format(res["artists"][0]["name"], res["name"])
+                except KeyError:
+                    return await self._embed_msg(
+                        ctx,
+                        _(
+                            "The Spotify API key or client secret has not been set properly. "
+                            "\nUse `{prefix}audioset spotifyapi` for instructions."
+                        ).format(prefix=ctx.prefix),
+                    )
             elif "album" in parts:
                 query = parts[-1]
                 self._play_lock(ctx, True)
                 track_list = await self._spotify_playlist(
-                    ctx, "album", global_data["youtube_api"], query
+                    ctx, "album", api_data["youtube_api"], query
                 )
                 if not track_list:
+                    self._play_lock(ctx, False)
                     return
                 return await self._enqueue_tracks(ctx, track_list)
             elif "playlist" in parts:
@@ -1018,13 +1013,14 @@ class Audio(commands.Cog):
                 self._play_lock(ctx, True)
                 if "user" in parts:
                     track_list = await self._spotify_playlist(
-                        ctx, "user_playlist", global_data["youtube_api"], query
+                        ctx, "user_playlist", api_data["youtube_api"], query
                     )
                 else:
                     track_list = await self._spotify_playlist(
-                        ctx, "playlist", global_data["youtube_api"], query
+                        ctx, "playlist", api_data["youtube_api"], query
                     )
                 if not track_list:
+                    self._play_lock(ctx, False)
                     return
                 return await self._enqueue_tracks(ctx, track_list)
 
@@ -1079,7 +1075,9 @@ class Audio(commands.Cog):
                 single_track = tracks[0]
                 player.add(ctx.author, single_track)
             except IndexError:
-                return await ctx.send("Nothing found. Check your Lavalink logs for details.")
+                return await self._embed_msg(
+                    ctx, _("Nothing found. Check your Lavalink logs for details.")
+                )
 
             if "localtracks" in single_track.uri:
                 if not single_track.title == "Unknown title":
@@ -1118,7 +1116,17 @@ class Audio(commands.Cog):
             r = await self._make_spotify_req(
                 "https://api.spotify.com/v1/playlists/{0}/tracks".format(query)
             )
-
+        try:
+            if r["error"]["status"] == 401:
+                return await self._embed_msg(
+                    ctx,
+                    _(
+                        "The Spotify API key or client secret has not been set properly. "
+                        "\nUse `{prefix}audioset spotifyapi` for instructions."
+                    ).format(prefix=ctx.prefix),
+                )
+        except KeyError:
+            pass
         while True:
             try:
                 spotify_info.extend(r["tracks"]["items"])
@@ -1152,8 +1160,17 @@ class Audio(commands.Cog):
                 song_info = "{} {}".format(i["track"]["name"], i["track"]["artists"][0]["name"])
             try:
                 track_url = await self._youtube_api_search(yt_key, song_info)
-            except YouTubeAPIError as e:
-                log.debug(_("YouTube search encountered an error: {0}".format(e)))
+            except:
+                error_embed = discord.Embed(
+                    colour=await ctx.embed_colour(),
+                    title=_(
+                        "The YouTube API key has not been set properly.\n"
+                        "Use `{prefix}audioset youtubeapi` for instructions."
+                    ).format(prefix=ctx.prefix),
+                )
+                await playlist_msg.edit(embed=error_embed)
+                return None
+                # let's complain about errors
                 pass
             yt_track = await player.get_tracks(track_url)
             try:
@@ -1189,13 +1206,20 @@ class Audio(commands.Cog):
             embed3 = discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_(
-                    "Nothing found. You may be rate limited on YouTube's search service. Wait an hour and try again."
+                    "Nothing found.\nThe YouTube API key may be invalid "
+                    "or you may be rate limited on YouTube's search service.\n"
+                    "Check the YouTube API key again and follow the instructions "
+                    "at `{prefix}audioset youtubeapi`.".format(prefix=ctx.prefix)
                 ),
             )
             try:
                 return await playlist_msg.edit(embed=embed3)
             except discord.errors.NotFound:
                 pass
+        try:
+            await playlist_msg.delete()
+        except discord.errors.NotFound:
+            pass
         return track_list
 
     @commands.group()
@@ -2605,6 +2629,17 @@ class Audio(commands.Cog):
         else:
             await self._embed_msg(ctx, _("Websocket port set to {port}.").format(port=ws_port))
 
+    async def _check_api_tokens(self):
+        spotify = await self.bot.db.api_tokens.get_raw(
+            "spotify", default={"client_id": "", "client_secret": ""}
+        )
+        youtube = await self.bot.db.api_tokens.get_raw("youtube", default={"api_key": ""})
+        return {
+            "spotify_client_id": spotify["client_id"],
+            "spotify_client_secret": spotify["client_secret"],
+            "youtube_api": youtube["api_key"],
+        }
+
     async def _check_external(self):
         external = await self.config.use_external_lavalink()
         if not external:
@@ -2838,7 +2873,7 @@ class Audio(commands.Cog):
         yt_url = "https://www.googleapis.com/youtube/v3/search"
         async with self.session.request("GET", yt_url, params=params) as r:
             if r.status == 400:
-                raise YouTubeAPIError
+                return None
             else:
                 search_response = await r.json()
         for search_result in search_response.get("items", []):
@@ -2857,7 +2892,10 @@ class Audio(commands.Cog):
         token = await self._request_token()
         if token is None:
             log.debug("Requested a token from Spotify, did not end up getting one.")
-        token["expires_at"] = int(time.time()) + token["expires_in"]
+        try:
+            token["expires_at"] = int(time.time()) + token["expires_in"]
+        except KeyError:
+            return
         self.spotify_token = token
         log.debug("Created a new access token for Spotify: {0}".format(token))
         return self.spotify_token["access_token"]
@@ -2891,10 +2929,14 @@ class Audio(commands.Cog):
         return {"Authorization": "Basic %s" % auth_header.decode("ascii")}
 
     async def _request_token(self):
-        self.client_id = await self.config.spotify_client_id()
-        self.client_secret = await self.config.spotify_client_secret()
+        self.client_id = await self.bot.db.api_tokens.get_raw("spotify", default={"client_id": ""})
+        self.client_secret = await self.bot.db.api_tokens.get_raw(
+            "spotify", default={"client_secret": ""}
+        )
         payload = {"grant_type": "client_credentials"}
-        headers = self._make_token_auth(self.client_id, self.client_secret)
+        headers = self._make_token_auth(
+            self.client_id["client_id"], self.client_secret["client_secret"]
+        )
         r = await self._make_post(
             "https://accounts.spotify.com/api/token", payload=payload, headers=headers
         )
