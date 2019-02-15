@@ -13,7 +13,7 @@ _JavaVersion = Tuple[int, int]
 log = logging.getLogger("red.audio.manager")
 
 proc = None
-SHUTDOWN = asyncio.Event()
+shutdown = False
 
 
 def has_java_error(pid):
@@ -24,13 +24,16 @@ def has_java_error(pid):
 
 
 async def monitor_lavalink_server(loop):
-    while not SHUTDOWN.is_set():
+    global shutdown
+    while shutdown is False:
         if proc.poll() is not None:
             break
         await asyncio.sleep(0.5)
 
-    if not SHUTDOWN.is_set():
+    if shutdown is False:
+        # Lavalink was shut down by something else
         log.info("Lavalink jar shutdown.")
+        shutdown = True
         if not has_java_error(proc.pid):
             log.info("Restarting Lavalink jar.")
             await start_lavalink_server(loop)
@@ -116,13 +119,16 @@ async def start_lavalink_server(loop):
     )
 
     log.info("Lavalink jar started. PID: {}".format(proc.pid))
+    global shutdown
+    shutdown = False
 
     loop.create_task(monitor_lavalink_server(loop))
 
 
 def shutdown_lavalink_server():
     log.info("Shutting down lavalink server.")
-    SHUTDOWN.set()
+    global shutdown
+    shutdown = True
     global proc
     if proc is not None:
         proc.terminate()

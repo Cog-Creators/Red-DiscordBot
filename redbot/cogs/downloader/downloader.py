@@ -194,6 +194,8 @@ class Downloader(commands.Cog):
     @checks.is_owner()
     async def pipinstall(self, ctx, *deps: str):
         """Install a group of dependencies using pip."""
+        if not deps:
+            return await ctx.send_help()
         repo = Repo("", "", "", Path.cwd(), loop=ctx.bot.loop)
         success = await repo.install_raw_requirements(deps, self.LIB_PATH)
 

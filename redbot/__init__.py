@@ -1,5 +1,6 @@
 import re as _re
 import sys as _sys
+import warnings as _warnings
 from math import inf as _inf
 from typing import (
     Any as _Any,
@@ -157,3 +158,6 @@ class VersionInfo:
 
 __version__ = "3.0.0"
 version_info = VersionInfo.from_str(__version__)
+
+# Filter fuzzywuzzy slow sequence matcher warning
+_warnings.filterwarnings("ignore", module=r"fuzzywuzzy.*")

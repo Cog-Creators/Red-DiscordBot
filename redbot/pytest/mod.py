@@ -1,4 +1,5 @@
 import pytest
+from redbot.core import modlog
 
 __all__ = ["mod"]
 
@@ -9,7 +10,6 @@ def mod(config, monkeypatch):
 
     with monkeypatch.context() as m:
         m.setattr(Config, "get_conf", lambda *args, **kwargs: config)
-        from redbot.core import modlog
 
-        modlog._register_defaults()
+        modlog._init()
         return modlog
