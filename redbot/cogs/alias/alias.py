@@ -171,11 +171,16 @@ class Alias(commands.Cog):
         :return: 
         """
         known_content_length = len(prefix) + len(alias.name)
-        extra = message.content[known_content_length:].strip()
+        extra = message.content[known_content_length:]
         view = StringView(extra)
+        view.skip_ws()
         extra = []
         while not view.eof:
-            extra.append(quoted_word(view))
+            prev = view.index
+            word = quoted_word(view)
+            if len(word) < view.index - prev:
+                word = "".join((view.buffer[prev], word, view.buffer[view.index - 1]))
+            extra.append(word)
             view.skip_ws()
         return extra
 
@@ -201,7 +206,10 @@ class Alias(commands.Cog):
 
     async def call_alias(self, message: discord.Message, prefix: str, alias: AliasEntry):
         new_message = copy(message)
-        args = self.get_extra_args_from_alias(message, prefix, alias)
+        try:
+            args = self.get_extra_args_from_alias(message, prefix, alias)
+        except commands.BadArgument as bae:
+            return self.bot.dispatch("on_command_error", await self.bot.get_context(message), bae)
 
         trackform = _TrackingFormatter()
         command = trackform.format(alias.command, *args)
