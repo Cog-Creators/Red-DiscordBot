@@ -161,6 +161,13 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_command_error(ctx, error):
+
+        if hasattr(ctx.command, "on_error"):
+            return
+
+        if ctx.cog and hasattr(ctx.cog, f"_{ctx.cog.__class__.__name__}__error"):
+            return
+
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help()
         elif isinstance(error, commands.ConversionFailure):

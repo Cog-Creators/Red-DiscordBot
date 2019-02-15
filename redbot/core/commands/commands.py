@@ -398,6 +398,29 @@ class Command(CogCommandMixin, commands.Command):
         return old_rule, new_rule
 
 
+Command.error.__doc__ = """
+A decorator that registers a coroutine as a local error handler.
+
+A local error handler is an :func:`.on_command_error` event limited to
+a single command.
+
+The on_command_error event is still dispatched 
+for commands with a dedicated error handler.
+
+Red's global error handler will ignore commands with a registered error handler.
+
+Parameters
+-----------
+coro : :ref:`coroutine <coroutine>`
+    The coroutine to register as the local error handler.
+
+Raises
+-------
+discord.ClientException
+    The coroutine is not actually a coroutine.
+"""
+
+
 class GroupMixin(discord.ext.commands.GroupMixin):
     """Mixin for `Group` and `Red` classes.
 
