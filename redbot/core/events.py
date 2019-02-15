@@ -256,7 +256,7 @@ def init_events(bot, cli_flags):
                     return
 
             await ctx.send(
-                "This command is on cooldown. Try again in {}".format(
+                "This command is on cooldown. Try again in {}.".format(
                     humanize_timedelta(seconds=error.retry_after)
                 )
             )
