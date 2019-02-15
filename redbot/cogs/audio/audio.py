@@ -532,13 +532,22 @@ class Audio(commands.Cog):
     async def local(self, ctx):
         """Local playback commands."""
         pass
-
-    @local.command(name="folder")
-    async def local_folder(self, ctx):
+    @local.command(name="folder", aliases=["start"])
+    async def local_folder(self, ctx, folder=None):
         """Play all songs in a localtracks folder."""
         if not await self._localtracks_check(ctx):
             return
-        await ctx.invoke(self.local_play)
+        if not folder:
+            await ctx.invoke(self.local_play)
+        else:
+            try:
+                folder_path = os.getcwd() + "/localtracks/{}/".format(folder)
+                os.listdir(folder_path)
+            except OSError:
+                return await self._embed_msg(
+                    ctx, _("No localtracks folder named {name}.").format(name=folder)
+                )
+            await self._local_play_all(ctx, folder)
 
     @local.command(name="play")
     async def local_play(self, ctx):
