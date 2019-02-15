@@ -99,18 +99,23 @@ class Alias(commands.Cog):
     async def add_alias(
         self, ctx: commands.Context, alias_name: str, command: str, global_: bool = False
     ) -> AliasEntry:
-        indices = findall(r"{(\d+)}", command)
-        indices = [int(a[0]) for a in indices]
-        low = min(indices)
-        indices = [a - low for a in indices]
-        high = max(indices)
-        gaps = set(indices).symmetric_difference(range(high + 1))
-        if gaps:
-            raise ArgParseError(
-                _("Arguments must be sequential. Missing arguments: ")
-                + ", ".join(str(i + low) for i in gaps)
-            )
-        command = command.format(*(f"{{{i}}}" for i in range(-low, high + low)))
+        indices = findall(r"{(\d*)}", command)
+        if indices:
+            try:
+                indices = [int(a[0]) for a in indices]
+            except IndexError:
+                raise ArgParseError(_("Arguments must be specified with a number."))
+            low = min(indices)
+            indices = [a - low for a in indices]
+            high = max(indices)
+            gaps = set(indices).symmetric_difference(range(high + 1))
+            if gaps:
+                raise ArgParseError(
+                    _("Arguments must be sequential. Missing arguments: ")
+                    + ", ".join(str(i + low) for i in gaps)
+                )
+            command = command.format(*(f"{{{i}}}" for i in range(-low, high + low + 1)))
+
         alias = AliasEntry(alias_name, command, ctx.author, global_=global_)
 
         if global_:
