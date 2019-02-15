@@ -532,6 +532,7 @@ class Audio(commands.Cog):
     async def local(self, ctx):
         """Local playback commands."""
         pass
+
     @local.command(name="folder", aliases=["start"])
     async def local_folder(self, ctx, folder=None):
         """Play all songs in a localtracks folder."""
