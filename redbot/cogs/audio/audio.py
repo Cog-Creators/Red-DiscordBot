@@ -1438,13 +1438,13 @@ class Audio(commands.Cog):
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
-            except AttributeError:
-                await self._embed_msg(ctx, _("Connect to a voice channel first."))
-                return False
             except IndexError:
                 await self._embed_msg(
                     ctx, _("Connection to Lavalink has not yet been established.")
                 )
+                return False
+            except AttributeError:
+                await self._embed_msg(ctx, _("Connect to a voice channel first."))
                 return False
 
         player = lavalink.get_player(ctx.guild.id)
