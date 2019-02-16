@@ -16,7 +16,6 @@ from . import Config, i18n, commands, errors
 from .cog_manager import CogManager
 from .help_formatter import Help, help as help_
 from .rpc import RPCMixin
-from .sentry import SentryManager
 from .utils import common_filters
 
 
@@ -47,11 +46,11 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             owner=None,
             whitelist=[],
             blacklist=[],
-            enable_sentry=None,
             locale="en",
             embeds=True,
             color=15158332,
             fuzzy=False,
+            custom_info=None,
             help__page_char_limit=1000,
             help__max_pages_in_guild=2,
             help__tagline="",
@@ -119,22 +118,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
         self.add_command(help_)
 
-        self._sentry_mgr = None
         self._permissions_hooks: List[commands.CheckPredicate] = []
-
-    def enable_sentry(self):
-        """Enable Sentry logging for Red."""
-        if self._sentry_mgr is None:
-            sentry_log = logging.getLogger("red.sentry")
-            sentry_log.setLevel(logging.WARNING)
-            self._sentry_mgr = SentryManager(sentry_log)
-        self._sentry_mgr.enable()
-
-    def disable_sentry(self):
-        """Disable Sentry logging for Red."""
-        if self._sentry_mgr is None:
-            return
-        self._sentry_mgr.disable()
 
     async def _dict_abuse(self, indict):
         """
@@ -515,8 +499,6 @@ class Red(RedBase, discord.AutoShardedClient):
 
     async def logout(self):
         """Logs out of Discord and closes all connections."""
-        if self._sentry_mgr:
-            await self._sentry_mgr.close()
 
         await super().logout()
 
