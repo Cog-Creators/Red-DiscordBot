@@ -10,10 +10,13 @@ from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, escape, format_perms_list
-from redbot.core.utils.common_filters import filter_invites, filter_various_mentions
+from redbot.core.utils.common_filters import (
+    filter_invites,
+    filter_various_mentions,
+    escape_spoilers,
+)
 from redbot.core.utils.mod import is_mod_or_superior, is_allowed_by_hierarchy, get_audit_reason
 from .log import log
-
 
 _ = T_ = Translator("Mod", __file__)
 
@@ -1471,9 +1474,9 @@ class Mod(commands.Cog):
         names = await self.settings.user(user).past_names()
         nicks = await self.settings.member(user).past_nicks()
         if names:
-            names = [escape(name, mass_mentions=True) for name in names if name]
+            names = [escape_spoilers(escape(name, mass_mentions=True)) for name in names if name]
         if nicks:
-            nicks = [escape(nick, mass_mentions=True) for nick in nicks if nick]
+            nicks = [escape_spoilers(escape(nick, mass_mentions=True)) for nick in nicks if nick]
         return names, nicks
 
     async def check_tempban_expirations(self):
