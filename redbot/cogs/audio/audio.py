@@ -25,7 +25,7 @@ from redbot.core.utils.menus import (
 )
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from urllib.parse import urlparse
-from .manager import shutdown_lavalink_server
+from .manager import shutdown_lavalink_server, start_lavalink_server, maybe_download_lavalink
 
 _ = Translator("Audio", __file__)
 
@@ -73,26 +73,47 @@ class Audio(commands.Cog):
         self.config.register_global(**default_global)
         self.skip_votes = {}
         self.session = aiohttp.ClientSession()
+        self._connect_task = None
         self._disconnect_task = None
         self._cleaned_up = False
 
     async def initialize(self):
-        host = await self.config.host()
-        password = await self.config.password()
-        rest_port = await self.config.rest_port()
-        ws_port = await self.config.ws_port()
-
-        await lavalink.initialize(
-            bot=self.bot,
-            host=host,
-            password=password,
-            rest_port=rest_port,
-            ws_port=ws_port,
-            timeout=60,
-        )
+        self._restart_connect()
+        self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
         lavalink.register_event_listener(self.event_handler)
 
-        self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
+    def _restart_connect(self):
+        if self._connect_task:
+            self._connect_task.cancel()
+
+        self._connect_task = self.bot.loop.create_task(self.attempt_connect())
+
+    async def attempt_connect(self, timeout: int = 30):
+        while True:  # run until success
+            external = await self.config.use_external_lavalink()
+            if not external:
+                shutdown_lavalink_server()
+                await maybe_download_lavalink(self.bot.loop, self)
+                await start_lavalink_server(self.bot.loop)
+            try:
+                host = await self.config.host()
+                password = await self.config.password()
+                rest_port = await self.config.rest_port()
+                ws_port = await self.config.ws_port()
+
+                await lavalink.initialize(
+                    bot=self.bot,
+                    host=host,
+                    password=password,
+                    rest_port=rest_port,
+                    ws_port=ws_port,
+                    timeout=timeout,
+                )
+                return  # break infinite loop
+            except Exception:
+                if not external:
+                    shutdown_lavalink_server()
+                await asyncio.sleep(1)  # prevent busylooping
 
     async def event_handler(self, player, event_type, extra):
         notify = await self.config.guild(player.channel.guild).notify()
@@ -883,6 +904,10 @@ class Audio(commands.Cog):
                 player.store("connect", datetime.datetime.utcnow())
             except AttributeError:
                 return await self._embed_msg(ctx, _("Connect to a voice channel first."))
+            except IndexError:
+                return await self._embed_msg(
+                    ctx, _("Connection to Lavalink has not yet been established.")
+                )
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(ctx, _("You need the DJ role to queue tracks."))
@@ -1388,9 +1413,15 @@ class Audio(commands.Cog):
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
+            except IndexError:
+                await self._embed_msg(
+                    ctx, _("Connection to Lavalink has not yet been established.")
+                )
+                return False
             except AttributeError:
                 await self._embed_msg(ctx, _("Connect to a voice channel first."))
                 return False
+
         player = lavalink.get_player(ctx.guild.id)
         player.store("channel", ctx.channel.id)
         player.store("guild", ctx.guild.id)
@@ -1768,6 +1799,10 @@ class Audio(commands.Cog):
                 player.store("connect", datetime.datetime.utcnow())
             except AttributeError:
                 return await self._embed_msg(ctx, _("Connect to a voice channel first."))
+            except IndexError:
+                return await self._embed_msg(
+                    ctx, _("Connection to Lavalink has not yet been established.")
+                )
         player = lavalink.get_player(ctx.guild.id)
         shuffle = await self.config.guild(ctx.guild).shuffle()
         player.store("channel", ctx.channel.id)
@@ -1852,6 +1887,10 @@ class Audio(commands.Cog):
                 player.store("connect", datetime.datetime.utcnow())
             except AttributeError:
                 return await self._embed_msg(ctx, _("Connect to a voice channel first."))
+            except IndexError:
+                return await self._embed_msg(
+                    ctx, _("Connection to Lavalink has not yet been established.")
+                )
         player = lavalink.get_player(ctx.guild.id)
         jukebox_price = await self.config.guild(ctx.guild).jukebox_price()
         shuffle = await self.config.guild(ctx.guild).shuffle()
@@ -1872,7 +1911,6 @@ class Audio(commands.Cog):
         except IndexError:
             search_choice = tracks[-1]
         try:
-            search_check = search_choice.uri
             if "localtracks" in search_choice.uri:
                 if search_choice.title == "Unknown title":
                     description = "**{} - {}**\n{}".format(
@@ -2308,6 +2346,7 @@ class Audio(commands.Cog):
         """Toggle using external lavalink servers."""
         external = await self.config.use_external_lavalink()
         await self.config.use_external_lavalink.set(not external)
+
         if external:
             await self.config.host.set("localhost")
             await self.config.password.set("youshallnotpass")
@@ -2320,12 +2359,14 @@ class Audio(commands.Cog):
                 ),
             )
             embed.set_footer(text=_("Defaults reset."))
-            return await ctx.send(embed=embed)
+            await ctx.send(embed=embed)
         else:
             await self._embed_msg(
                 ctx,
                 _("External lavalink server: {true_or_false}.").format(true_or_false=not external),
             )
+
+        self._restart_connect()
 
     @llsetup.command()
     async def host(self, ctx, host):
@@ -2339,6 +2380,8 @@ class Audio(commands.Cog):
             await ctx.send(embed=embed)
         else:
             await self._embed_msg(ctx, _("Host set to {host}.").format(host=host))
+
+        self._restart_connect()
 
     @llsetup.command()
     async def password(self, ctx, password):
@@ -2356,6 +2399,8 @@ class Audio(commands.Cog):
                 ctx, _("Server password set to {password}.").format(password=password)
             )
 
+        self._restart_connect()
+
     @llsetup.command()
     async def restport(self, ctx, rest_port: int):
         """Set the lavalink REST server port."""
@@ -2370,6 +2415,8 @@ class Audio(commands.Cog):
         else:
             await self._embed_msg(ctx, _("REST port set to {port}.").format(port=rest_port))
 
+        self._restart_connect()
+
     @llsetup.command()
     async def wsport(self, ctx, ws_port: int):
         """Set the lavalink websocket server port."""
@@ -2383,6 +2430,8 @@ class Audio(commands.Cog):
             await ctx.send(embed=embed)
         else:
             await self._embed_msg(ctx, _("Websocket port set to {port}.").format(port=ws_port))
+
+        self._restart_connect()
 
     async def _check_external(self):
         external = await self.config.use_external_lavalink()
@@ -2530,7 +2579,7 @@ class Audio(commands.Cog):
         try:
             query_url = urlparse(url)
             return all([query_url.scheme, query_url.netloc, query_url.path])
-        except:
+        except Exception:
             return False
 
     @staticmethod
@@ -2616,8 +2665,13 @@ class Audio(commands.Cog):
     def __unload(self):
         if not self._cleaned_up:
             self.session.detach()
+
             if self._disconnect_task:
                 self._disconnect_task.cancel()
+
+            if self._connect_task:
+                self._connect_task.cancel()
+
             lavalink.unregister_event_listener(self.event_handler)
             self.bot.loop.create_task(lavalink.close())
             shutdown_lavalink_server()
