@@ -148,5 +148,5 @@ class VersionInfo:
         )
 
 
-__version__ = "3.0.0"
+__version__ = "3.0.1"
 version_info = VersionInfo.from_str(__version__)
