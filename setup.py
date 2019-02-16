@@ -19,7 +19,7 @@ install_requires = [
     "pyyaml==3.13",
     "raven==6.10.0",
     "raven-aiohttp==0.7.0",
-    "red-lavalink==0.2.1",
+    "red-lavalink==0.2.2",
     "schema==0.6.8",
     "websockets==7.0",
     "yarl==1.3.0",
