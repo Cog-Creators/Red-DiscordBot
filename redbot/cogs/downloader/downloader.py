@@ -194,6 +194,8 @@ class Downloader(commands.Cog):
     @checks.is_owner()
     async def pipinstall(self, ctx, *deps: str):
         """Install a group of dependencies using pip."""
+        if not deps:
+            return await ctx.send_help()
         repo = Repo("", "", "", Path.cwd(), loop=ctx.bot.loop)
         success = await repo.install_raw_requirements(deps, self.LIB_PATH)
 
@@ -502,7 +504,7 @@ class Downloader(commands.Cog):
         if isinstance(cog_installable, Installable):
             made_by = ", ".join(cog_installable.author) or _("Missing from info.json")
             repo = self._repo_manager.get_repo(cog_installable.repo_name)
-            repo_url = repo.url
+            repo_url = _("Missing from installed repos") if repo is None else repo.url
             cog_name = cog_installable.name
         else:
             made_by = "26 & co."

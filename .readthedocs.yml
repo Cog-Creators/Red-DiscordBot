@@ -1,14 +1,17 @@
+version: 2
+
 formats:
   - pdf
 
 build:
   image: latest
 
-requirements_file: dependency_links.txt
-
 python:
-  version: 3.6
-  pip_install: true
-  extra_requirements:
-    - docs
-    - mongo
+  version: 3.7
+  install:
+    - requirements: docs/requirements.txt
+    - method: pip
+      path: .
+      extra_requirements:
+        - docs
+        - mongo

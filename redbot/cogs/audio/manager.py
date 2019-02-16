@@ -17,7 +17,7 @@ _JavaVersion = Tuple[int, int]
 log = logging.getLogger("red.audio.manager")
 
 proc = None
-SHUTDOWN = asyncio.Event()
+shutdown = False
 
 
 def has_java_error(pid):
@@ -28,13 +28,16 @@ def has_java_error(pid):
 
 
 async def monitor_lavalink_server(loop):
-    while not SHUTDOWN.is_set():
+    global shutdown
+    while shutdown is False:
         if proc.poll() is not None:
             break
         await asyncio.sleep(0.5)
 
-    if not SHUTDOWN.is_set():
+    if shutdown is False:
+        # Lavalink was shut down by something else
         log.info("Lavalink jar shutdown.")
+        shutdown = True
         if not has_java_error(proc.pid):
             log.info("Restarting Lavalink jar.")
             await start_lavalink_server(loop)
@@ -75,13 +78,19 @@ async def get_java_version(loop) -> _JavaVersion:
     #     ... version "MAJOR.MINOR.PATCH[_BUILD]" ...
     #     ...
     # We only care about the major and minor parts though.
-    version_line_re = re.compile(r'version "(?P<major>\d+).(?P<minor>\d+).\d+(?:_\d+)?"')
+    version_line_re = re.compile(
+        r'version "(?P<major>\d+).(?P<minor>\d+).\d+(?:_\d+)?(?:-[A-Za-z0-9]+)?"'
+    )
+    short_version_re = re.compile(r'version "(?P<major>\d+)"')
 
     lines = version_info.splitlines()
     for line in lines:
         match = version_line_re.search(line)
+        short_match = short_version_re.search(line)
         if match:
             return int(match["major"]), int(match["minor"])
+        elif short_match:
+            return int(short_match["major"]), 0
 
     raise RuntimeError(
         "The output of `java -version` was unexpected. Please report this issue on Red's "
@@ -94,9 +103,12 @@ async def start_lavalink_server(loop):
     if not java_available:
         raise RuntimeError("You must install Java 1.8+ for Lavalink to run.")
 
-    extra_flags = ""
     if java_version == (1, 8):
         extra_flags = "-Dsun.zip.disableMemoryMapping=true"
+    elif java_version >= (11, 0):
+        extra_flags = "-Djdk.tls.client.protocols=TLSv1.2"
+    else:
+        extra_flags = ""
 
     from . import LAVALINK_DOWNLOAD_DIR, LAVALINK_JAR_FILE
 
@@ -115,12 +127,15 @@ async def start_lavalink_server(loop):
     )
 
     log.info("Lavalink jar started. PID: {}".format(proc.pid))
+    global shutdown
+    shutdown = False
 
     loop.create_task(monitor_lavalink_server(loop))
 
 
 def shutdown_lavalink_server():
-    SHUTDOWN.set()
+    global shutdown
+    shutdown = True
     global proc
     if proc is not None:
         log.info("Shutting down lavalink server.")
@@ -145,7 +160,7 @@ async def maybe_download_lavalink(loop, cog):
     from . import LAVALINK_DOWNLOAD_DIR, LAVALINK_JAR_FILE, BUNDLED_APP_YML_FILE, APP_YML_FILE
 
     jar_exists = LAVALINK_JAR_FILE.exists()
-    current_build = redbot.core.VersionInfo.from_json(await cog.config.current_version())
+    current_build = redbot.VersionInfo.from_json(await cog.config.current_version())
 
     if not jar_exists or current_build < redbot.core.version_info:
         log.info("Downloading Lavalink.jar")

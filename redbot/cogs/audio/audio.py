@@ -1310,6 +1310,9 @@ class Audio(commands.Cog):
                     url_check = self._url_check(track["info"]["uri"])
                     if not url_check:
                         continue
+                if track["info"]["uri"].startswith("localtracks/"):
+                    if not os.path.isfile(track["info"]["uri"]):
+                        continue
                 player.add(author_obj, lavalink.rest_api.Track(data=track))
                 track_count = track_count + 1
             embed = discord.Embed(
@@ -2041,6 +2044,7 @@ class Audio(commands.Cog):
     async def seek(self, ctx, seconds: int = 30):
         """Seek ahead or behind on a track by seconds."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
         player = lavalink.get_player(ctx.guild.id)
@@ -2053,6 +2057,13 @@ class Audio(commands.Cog):
                 ctx, ctx.author
             ):
                 return await self._embed_msg(ctx, _("You need the DJ role to use seek."))
+        if vote_enabled:
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
+                ctx, ctx.author
+            ):
+                return await self._embed_msg(
+                    ctx, _("There are other people listening - vote to skip instead.")
+                )
         if player.current:
             if player.current.is_stream:
                 return await self._embed_msg(ctx, _("Can't seek on a stream."))
@@ -2708,3 +2719,20 @@ class Audio(commands.Cog):
             self._cleaned_up = True
 
     __del__ = __unload
+
+    async def on_guild_remove(self, guild: discord.Guild):
+        """
+        This is to clean up players when
+        the bot either leaves or is removed from a guild
+        """
+        channels = {
+            x  # x is a voice_channel
+            for y in [g.voice_channels for g in self.bot.guilds]
+            for x in y  # y is a list of voice channels
+        }  # Yes, this is ugly. It's also the most performant and commented.
+
+        zombie_players = {p for p in lavalink.player_manager.players if p.channel not in channels}
+        # Do not unroll to combine with next line.
+        # Can result in iterator changing size during context switching.
+        for zombie in zombie_players:
+            await zombie.destroy()

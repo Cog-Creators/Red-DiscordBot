@@ -1,4 +1,5 @@
 from collections import namedtuple
+from typing import Union, Optional
 
 import discord
 import asyncio
@@ -306,26 +307,31 @@ class Warnings(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    async def warnings(self, ctx: commands.Context, userid: int = None):
+    async def warnings(
+        self, ctx: commands.Context, user: Optional[Union[discord.Member, int]] = None
+    ):
         """List the warnings for the specified user.
 
-        Emit `<userid>` to see your own warnings.
+        Omit `<user>` to see your own warnings.
 
         Note that showing warnings for users other than yourself requires
         appropriate permissions.
         """
-        if userid is None:
+        if user is None:
             user = ctx.author
         else:
             if not await is_admin_or_superior(self.bot, ctx.author):
-                await ctx.send(
+                return await ctx.send(
                     warning(_("You are not allowed to check warnings for other users!"))
                 )
-                return
-            else:
+
+            try:
+                userid: int = user.id
+            except AttributeError:
+                userid: int = user
                 user = ctx.guild.get_member(userid)
-                if user is None:  # user not in guild
-                    user = namedtuple("Member", "id guild")(userid, ctx.guild)
+                user = user or namedtuple("Member", "id guild")(userid, ctx.guild)
+
         msg = ""
         member_settings = self.config.member(user)
         async with member_settings.warnings() as user_warnings:
@@ -356,23 +362,28 @@ class Warnings(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
-    async def unwarn(self, ctx: commands.Context, user_id: int, warn_id: str):
+    async def unwarn(self, ctx: commands.Context, user: Union[discord.Member, int], warn_id: str):
         """Remove a warning from a user."""
-        if user_id == ctx.author.id:
-            await ctx.send(_("You cannot remove warnings from yourself."))
-            return
-        guild = ctx.guild
-        member = guild.get_member(user_id)
-        if member is None:  # no longer in guild, but need a "member" object
-            member = namedtuple("Member", "guild id")(guild, user_id)
-        member_settings = self.config.member(member)
 
+        guild = ctx.guild
+
+        try:
+            user_id = user.id
+            member = user
+        except AttributeError:
+            user_id = user
+            member = guild.get_member(user_id)
+            member = member or namedtuple("Member", "guild id")(guild, user_id)
+
+        if user_id == ctx.author.id:
+            return await ctx.send(_("You cannot remove warnings from yourself."))
+
+        member_settings = self.config.member(member)
         current_point_count = await member_settings.total_points()
         await warning_points_remove_check(self.config, ctx, member, current_point_count)
         async with member_settings.warnings() as user_warnings:
             if warn_id not in user_warnings.keys():
-                await ctx.send(_("That warning doesn't exist!"))
-                return
+                return await ctx.send(_("That warning doesn't exist!"))
             else:
                 current_point_count -= user_warnings[warn_id]["points"]
                 await member_settings.total_points.set(current_point_count)
