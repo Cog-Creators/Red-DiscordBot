@@ -12,13 +12,12 @@ from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, escape, pagify, format_perms_list
-from redbot.core.utils.common_filters import filter_invites, filter_various_mentions
-from redbot.core.utils.mod import is_mod_or_superior, is_allowed_by_hierarchy, get_audit_reason
 from redbot.core.utils.common_filters import (
     filter_invites,
     filter_various_mentions,
     escape_spoilers,
 )
+from redbot.core.utils.mod import is_mod_or_superior, is_allowed_by_hierarchy, get_audit_reason
 from .log import log
 
 _ = T_ = Translator("Mod", __file__)
