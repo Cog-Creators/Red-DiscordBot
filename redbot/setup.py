@@ -371,6 +371,7 @@ async def remove_instance_interaction():
 
 
 def main():
+    args, _ = parse_cli_args()
     if args.delete:
         loop = asyncio.get_event_loop()
         loop.run_until_complete(remove_instance_interaction())
@@ -380,8 +381,6 @@ def main():
     else:
         basic_setup()
 
-
-args, _ = parse_cli_args()
 
 if __name__ == "__main__":
     try:

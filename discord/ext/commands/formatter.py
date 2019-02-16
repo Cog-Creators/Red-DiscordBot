@@ -3,7 +3,7 @@
 """
 The MIT License (MIT)
 
-Copyright (c) 2015-2017 Rapptz
+Copyright (c) 2015-2019 Rapptz
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 import itertools
 import inspect
+import discord.utils
 
 from .core import GroupMixin, Command
 from .errors import CommandError
@@ -183,7 +184,9 @@ class HelpFormatter:
             if commands:
                 return max(
                     map(
-                        lambda c: len(c.name) if self.show_hidden or not c.hidden else 0,
+                        lambda c: discord.utils._string_width(c.name)
+                        if self.show_hidden or not c.hidden
+                        else 0,
                         commands.values(),
                     )
                 )
@@ -272,8 +275,10 @@ class HelpFormatter:
             if name in command.aliases:
                 # skip aliases
                 continue
-
-            entry = "  {0:<{width}} {1}".format(name, command.short_doc, width=max_width)
+            width_gap = discord.utils._string_width(name) - len(name)
+            entry = "  {0:<{width}} {1}".format(
+                name, command.short_doc, width=max_width - width_gap
+            )
             shortened = self.shorten(entry)
             self._paginator.add_line(shortened)
 

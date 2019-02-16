@@ -1373,10 +1373,10 @@ class Mod(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     async def userinfo(self, ctx, *, user: discord.Member = None):
         """Show information about a user.
-        
+
         This includes fields for status, discord join date, server
         join date, voice state and previous names/nicknames.
-        
+
         If the user has no roles, previous names or previous nicknames,
         these fields will be omitted.
         """
@@ -1395,8 +1395,12 @@ class Mod(commands.Cog):
 
         joined_at = user.joined_at if not is_special else special_date
         since_created = (ctx.message.created_at - user.created_at).days
-        since_joined = (ctx.message.created_at - joined_at).days
-        user_joined = joined_at.strftime("%d %b %Y %H:%M")
+        if joined_at is not None:
+            since_joined = (ctx.message.created_at - joined_at).days
+            user_joined = joined_at.strftime("%d %b %Y %H:%M")
+        else:
+            since_joined = "?"
+            user_joined = "Unknown"
         user_created = user.created_at.strftime("%d %b %Y %H:%M")
         voice_state = user.voice
         member_number = (
