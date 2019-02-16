@@ -2683,5 +2683,4 @@ class Audio(commands.Cog):
         # Do not unroll to combine with next line.
         # Can result in iterator changing size during context switching.
         for zombie in zombie_players:
-            await zombie.disconnect()
-            lavalink.player_manager.players.remove(zombie)
+            await zombie.destroy()
