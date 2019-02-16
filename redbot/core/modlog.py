@@ -6,7 +6,12 @@ import discord
 from redbot.core import Config
 from redbot.core.bot import Red
 
-from .utils.common_filters import filter_invites, filter_mass_mentions, filter_urls
+from .utils.common_filters import (
+    filter_invites,
+    filter_mass_mentions,
+    filter_urls,
+    escape_spoilers,
+)
 
 __all__ = [
     "Case",
@@ -113,8 +118,10 @@ class Case:
             reason = "**Reason:** Use `[p]reason {} <reason>` to add it".format(self.case_number)
 
         if self.moderator is not None:
-            moderator = "{}#{} ({})\n".format(
-                self.moderator.name, self.moderator.discriminator, self.moderator.id
+            moderator = escape_spoilers(
+                "{}#{} ({})\n".format(
+                    self.moderator.name, self.moderator.discriminator, self.moderator.id
+                )
             )
         else:
             moderator = "Unknown"
@@ -131,8 +138,10 @@ class Case:
 
         amended_by = None
         if self.amended_by:
-            amended_by = "{}#{} ({})".format(
-                self.amended_by.name, self.amended_by.discriminator, self.amended_by.id
+            amended_by = escape_spoilers(
+                "{}#{} ({})".format(
+                    self.amended_by.name, self.amended_by.discriminator, self.amended_by.id
+                )
             )
 
         last_modified = None
@@ -141,9 +150,11 @@ class Case:
                 datetime.fromtimestamp(self.modified_at).strftime("%Y-%m-%d %H:%M:%S")
             )
 
-        user = filter_invites(
-            "{}#{} ({})\n".format(self.user.name, self.user.discriminator, self.user.id)
-        )  # Invites get rendered even in embeds.
+        user = escape_spoilers(
+            filter_invites(
+                "{}#{} ({})\n".format(self.user.name, self.user.discriminator, self.user.id)
+            )
+        )  # Invites and spoilers get rendered even in embeds.
         if embed:
             emb = discord.Embed(title=title, description=reason)
 
