@@ -391,9 +391,9 @@ class Audio(commands.Cog):
         jukebox_price = data["jukebox_price"]
         thumbnail = data["thumbnail"]
         jarbuild = redbot.core.__version__
-
+        maxlength = data["maxlength"]
         vote_percent = data["vote_percent"]
-        msg = "----" + _("Server Settings") + "----\n"
+        msg = "----" + _("Server Settings") + "----        \n"
         if emptydc_enabled:
             msg += _("Disconnect timer: [{num_seconds}]\n").format(
                 num_seconds=self._dynamic_time(emptydc_timer)
@@ -403,6 +403,8 @@ class Audio(commands.Cog):
         if jukebox:
             msg += _("Jukebox:          [{jukebox_name}]\n").format(jukebox_name=jukebox)
             msg += _("Command price:    [{jukebox_price}]\n").format(jukebox_price=jukebox_price)
+        if maxlength > 0:
+            msg += _("Max track length: [{tracklength}]\n").format(tracklength=self._dynamic_time(maxlength))
         msg += _(
             "Repeat:           [{repeat}]\n"
             "Shuffle:          [{shuffle}]\n"
@@ -416,7 +418,7 @@ class Audio(commands.Cog):
                 "Vote skip:        [{vote_enabled}]\nSkip percentage:  [{vote_percent}%]\n"
             ).format(**data)
         msg += _(
-            "---Lavalink Settings---\n"
+            "---Lavalink Settings---        \n"
             "Cog version:      [{version}]\n"
             "Jar build:        [{jarbuild}]\n"
             "External server:  [{use_external_lavalink}]"
