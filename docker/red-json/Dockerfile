@@ -1,20 +1,20 @@
-FROM python:3.7-alpine
+FROM python:3.7-slim-stretch
 
 WORKDIR /app
 ENV LD_LIBRARY_PATH /usr/local/lib:/usr/lib
 
-RUN echo "http://dl-8.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
-
-RUN \
-    apk --no-cache add -q git openssl openssl-dev openssh alpine-sdk build-base gnupg linux-headers xz && \
-    pip install -U pip Cython pytest -q --retries 30
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git ca-certificates xz-utils libssl-dev build-essential && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    pip install -U pip Cython pytest -q --retries 30 && \
+    rm -rf /root/.cache/pip/*
 
 COPY . /red_src/
 
 RUN \
     pip install -U /red_src && \
     rm -rf /root/.cache/pip/* && \
-    rm -rf /var/cache/apk/* && \
     rm -rf /red_src/ && \
     find /usr/local -depth \
         \( \
