@@ -404,7 +404,9 @@ class Audio(commands.Cog):
             msg += _("Jukebox:          [{jukebox_name}]\n").format(jukebox_name=jukebox)
             msg += _("Command price:    [{jukebox_price}]\n").format(jukebox_price=jukebox_price)
         if maxlength > 0:
-            msg += _("Max track length: [{tracklength}]\n").format(tracklength=self._dynamic_time(maxlength))
+            msg += _("Max track length: [{tracklength}]\n").format(
+                tracklength=self._dynamic_time(maxlength)
+            )
         msg += _(
             "Repeat:           [{repeat}]\n"
             "Shuffle:          [{shuffle}]\n"
