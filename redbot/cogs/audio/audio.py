@@ -793,10 +793,10 @@ class Audio(commands.Cog):
             await self._clear_react(message)
             await ctx.invoke(self.skip)
 
-    @commands.command(aliases=["resume"])
+    @commands.command()
     @commands.guild_only()
     async def pause(self, ctx):
-        """Pause and resume."""
+        """Pause or resume a playing track."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
@@ -805,41 +805,40 @@ class Audio(commands.Cog):
             not ctx.author.voice or ctx.author.voice.channel != player.channel
         ) and not await self._can_instaskip(ctx, ctx.author):
             return await self._embed_msg(
-                ctx, _("You must be in the voice channel to pause the music.")
+                ctx, _("You must be in the voice channel pause or resume.")
             )
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
                 ctx, ctx.author
             ):
-                return await self._embed_msg(ctx, _("You need the DJ role to pause tracks."))
+                return await self._embed_msg(
+                    ctx, _("You need the DJ role to pause or resume tracks.")
+                )
 
-        command = ctx.invoked_with
         if not player.current:
             return await self._embed_msg(ctx, _("Nothing playing."))
         if "localtracks/" in player.current.uri:
-            description = "**{}**\n{}".format(
-                player.current.title, player.current.uri.replace("localtracks/", "")
-            )
+            if player.current.title == "Unknown title":
+                description = player.current.uri
+            else:
+                song = bold("{} - {}").format(player.current.author, player.current.title)
+                description = "{}\n{}".format(song, player.current.uri.replace("localtracks/", ""))
         else:
-            description = "**[{}]({})**".format(player.current.title, player.current.uri)
-        if player.current and not player.paused and command != "resume":
+            description = bold("[{}]({})").format(player.current.title, player.current.uri)
+
+        if player.current and not player.paused:
             await player.pause()
             embed = discord.Embed(
                 colour=await ctx.embed_colour(), title=_("Track Paused"), description=description
             )
             return await ctx.send(embed=embed)
-
-        if player.paused and command != "pause":
+        if player.current and player.paused:
             await player.pause(False)
             embed = discord.Embed(
                 colour=await ctx.embed_colour(), title=_("Track Resumed"), description=description
             )
             return await ctx.send(embed=embed)
 
-        if player.paused and command == "pause":
-            return await self._embed_msg(ctx, _("Track is paused."))
-        if player.current and command == "resume":
-            return await self._embed_msg(ctx, _("Track is playing."))
         await self._embed_msg(ctx, _("Nothing playing."))
 
     @commands.command()
@@ -2305,7 +2304,7 @@ class Audio(commands.Cog):
         if dj_enabled and not vote_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(ctx, _("You need the DJ role to stop the music."))
-        if player.is_playing:
+        if (player.is_playing) or (not player.is_playing and player.paused):
             await self._embed_msg(ctx, _("Stopping..."))
             await player.stop()
             player.store("prev_requester", None)
