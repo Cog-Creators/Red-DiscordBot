@@ -195,8 +195,7 @@ def init_events(bot, cli_flags):
                 traceback.format_exception(type(error), error, error.__traceback__)
             )
             bot._last_exception = exception_log
-            if not hasattr(ctx.cog, "_{0.command.cog_name}__error".format(ctx)):
-                await ctx.send(inline(message))
+            await ctx.send(inline(message))
         elif isinstance(error, commands.CommandNotFound):
             fuzzy_commands = await fuzzy_command_search(ctx)
             if not fuzzy_commands:
