@@ -160,13 +160,14 @@ def init_events(bot, cli_flags):
         bot.color = discord.Colour(await bot.db.color())
 
     @bot.event
-    async def on_command_error(ctx, error):
+    async def on_command_error(ctx, error, manually_reinvoked=False):
 
-        if hasattr(ctx.command, "on_error"):
-            return
+        if not manually_reinvoked:
+            if hasattr(ctx.command, "on_error"):
+                return
 
-        if ctx.cog and hasattr(ctx.cog, f"_{ctx.cog.__class__.__name__}__error"):
-            return
+            if ctx.cog and hasattr(ctx.cog, f"_{ctx.cog.__class__.__name__}__error"):
+                return
 
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help()

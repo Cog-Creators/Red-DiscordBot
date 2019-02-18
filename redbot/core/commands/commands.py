@@ -409,6 +409,21 @@ for commands with a dedicated error handler.
 
 Red's global error handler will ignore commands with a registered error handler.
 
+To have red handle specific errors with the default behavior, 
+call ctx.bot.on_command_error with `manually_recalled` set to True
+
+For example:
+
+    .. code-block:: python
+
+        @a_command.error
+        async def a_command_error_handler(self, ctx, error):
+
+            if isisntance(error, MyErrrorType):
+                self.log_exception(error)
+            else:
+                await ctx.bot.on_command_error(ctx, error, manually_recalled=False)
+
 Parameters
 -----------
 coro : :ref:`coroutine <coroutine>`
