@@ -531,7 +531,7 @@ class Audio(commands.Cog):
             ctx, _("Moved {track} to the top of the queue.").format(track=removed_title)
         )
 
-    @commands.command(aliases=["dc"])
+    @commands.command()
     @commands.guild_only()
     async def disconnect(self, ctx):
         """Disconnect from the voice channel."""
@@ -704,7 +704,7 @@ class Audio(commands.Cog):
         else:
             return True
 
-    @commands.command(aliases=["np", "n", "song", "track"])
+    @commands.command()
     @commands.guild_only()
     async def now(self, ctx):
         """Now playing."""
@@ -1528,7 +1528,7 @@ class Audio(commands.Cog):
             )
             await ctx.send(embed=embed)
 
-    @commands.command(aliases=["q"])
+    @commands.command()
     @commands.guild_only()
     async def queue(self, ctx, *, page="1"):
         """List the queue.
@@ -2126,7 +2126,7 @@ class Audio(commands.Cog):
         url = f"https://www.youtube.com/watch?v={random.choice(ids)}"
         await ctx.invoke(self.play, query=url)
 
-    @commands.command(aliases=["forceskip", "fs"])
+    @commands.command()
     @commands.guild_only()
     async def skip(self, ctx):
         """Skip to the next track."""
@@ -2280,7 +2280,7 @@ class Audio(commands.Cog):
         await ctx.send(embed=embed)
         await player.skip()
 
-    @commands.command(aliases=["s"])
+    @commands.command()
     @commands.guild_only()
     async def stop(self, ctx):
         """Stop playback and clear the queue."""
