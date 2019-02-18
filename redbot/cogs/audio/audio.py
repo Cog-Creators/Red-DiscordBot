@@ -1077,6 +1077,82 @@ class Audio(commands.Cog):
             ),
         )
 
+    @checks.is_owner()
+    @playlist.command(name="copy")
+    async def _playlist_copy(self, ctx, playlist_name, from_server_id: int, to_server_id: int):
+        """Copy a playlist from one server to another."""
+        from_guild = self.bot.get_guild(from_server_id)
+        to_guild = self.bot.get_guild(to_server_id)
+        if not from_guild:
+            return await self._embed_msg(ctx, _("Invalid server ID for source server."))
+        if not to_guild:
+            return await self._embed_msg(ctx, _("Invalid server ID for target server."))
+        async with self.config.guild(from_guild).playlists() as from_playlists:
+            if playlist_name not in from_playlists:
+                return await self._embed_msg(
+                    ctx,
+                    _("No playlist with that name in {from_guild_name}.").format(
+                        from_guild_name=from_guild.name
+                    ),
+                )
+            async with self.config.guild(to_guild).playlists() as to_playlists:
+                try:
+                    target_playlists = to_playlists[playlist_name]
+                except KeyError:
+                    to_playlists[playlist_name] = from_playlists[playlist_name]
+                    return await self._embed_msg(
+                        ctx,
+                        _(
+                            "Playlist {name} copied from {from_guild_name} to {to_guild_name}."
+                        ).format(
+                            name=playlist_name,
+                            from_guild_name=from_guild.name,
+                            to_guild_name=to_guild.name,
+                        ),
+                    )
+
+                if target_playlists:
+                    await self._embed_msg(
+                        ctx,
+                        _(
+                            "A playlist with that name already exists in {to_guild_name}.\nPlease enter a new name for this playlist."
+                        ).format(to_guild_name=to_guild.name),
+                    )
+                    try:
+                        playlist_name_msg = await ctx.bot.wait_for(
+                            "message",
+                            timeout=15.0,
+                            check=MessagePredicate.regex(fr"^(?!{ctx.prefix})", ctx),
+                        )
+                        new_playlist_name = playlist_name_msg.content.split(" ")[0].strip('"')
+                        if len(new_playlist_name) > 20:
+                            return await self._embed_msg(
+                                ctx, _("Try the playlist copy command again with a shorter name.")
+                            )
+                        if new_playlist_name in to_playlists:
+                            return await self._embed_msg(
+                                ctx,
+                                _(
+                                    "Playlist name already exists in {to_guild_name}, try the playlist copy command again with a different name."
+                                ).format(to_guild_name=to_guild.name),
+                            )
+                    except asyncio.TimeoutError:
+                        return await self._embed_msg(
+                            ctx, _("No playlist name entered, try again later.")
+                        )
+                    to_playlists[new_playlist_name] = from_playlists[playlist_name]
+                    return await self._embed_msg(
+                        ctx,
+                        _(
+                            "Playlist {name} copied from {from_guild_name} to {to_guild_name}.\nNew playlist name on {to_guild_name}: {new_name}"
+                        ).format(
+                            name=playlist_name,
+                            from_guild_name=from_guild.name,
+                            to_guild_name=to_guild.name,
+                            new_name=new_playlist_name,
+                        ),
+                    )
+
     @playlist.command(name="create")
     async def _playlist_create(self, ctx, playlist_name):
         """Create an empty playlist."""
