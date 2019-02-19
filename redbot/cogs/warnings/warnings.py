@@ -272,7 +272,7 @@ class Warnings(commands.Cog):
                         "Do `{prefix}warningset allowcustomreasons true` to enable custom "
                         "reasons."
                     ).format(prefix=ctx.prefix)
-                    raise BadArgument(msg)
+                    return await ctx.send(msg)
             else:
                 reason_type = registered_reasons[reason.lower()]
         if reason_type is None:
