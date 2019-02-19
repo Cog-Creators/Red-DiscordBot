@@ -103,7 +103,7 @@ class Permissions(commands.Cog):
         self.config.register_custom(COG)
         self.config.register_custom(COMMAND)
 
-    @commands.group(aliases=["p"])
+    @commands.group()
     async def permissions(self, ctx: commands.Context):
         """Command permission management tools."""
         pass

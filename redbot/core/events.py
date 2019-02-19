@@ -4,8 +4,8 @@ import codecs
 import datetime
 import logging
 import traceback
+import asyncio
 from datetime import timedelta
-from typing import List
 
 import aiohttp
 import discord
@@ -13,38 +13,23 @@ import pkg_resources
 from colorama import Fore, Style, init
 from pkg_resources import DistributionNotFound
 
-from . import __version__ as red_version, version_info as red_version_info, VersionInfo, commands
+from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
+from . import commands
 from .data_manager import storage_type
-from .utils.chat_formatting import inline, bordered, format_perms_list
+from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
 from .utils import fuzzy_command_search, format_fuzzy_results
 
 log = logging.getLogger("red")
-sentry_log = logging.getLogger("red.sentry")
 init()
 
 INTRO = """
-______         _           ______ _                       _  ______       _   
-| ___ \       | |          |  _  (_)                     | | | ___ \     | |  
-| |_/ /___  __| |  ______  | | | |_ ___  ___ ___  _ __ __| | | |_/ / ___ | |_ 
+______         _           ______ _                       _  ______       _
+| ___ \       | |          |  _  (_)                     | | | ___ \     | |
+| |_/ /___  __| |  ______  | | | |_ ___  ___ ___  _ __ __| | | |_/ / ___ | |_
 |    // _ \/ _` | |______| | | | | / __|/ __/ _ \| '__/ _` | | ___ \/ _ \| __|
-| |\ \  __/ (_| |          | |/ /| \__ \ (_| (_) | | | (_| | | |_/ / (_) | |_ 
+| |\ \  __/ (_| |          | |/ /| \__ \ (_| (_) | | | (_| | | |_/ / (_) | |_
 \_| \_\___|\__,_|          |___/ |_|___/\___\___/|_|  \__,_| \____/ \___/ \__|
 """
-
-
-def should_log_sentry(exception) -> bool:
-    e = exception
-    while e.__cause__ is not None:
-        e = e.__cause__
-
-    tb = e.__traceback__
-    tb_frame = None
-    while tb is not None:
-        tb_frame = tb.tb_frame
-        tb = tb.tb_next
-
-    module = tb_frame.f_globals.get("__name__")
-    return module is not None and module.startswith("redbot")
 
 
 def init_events(bot, cli_flags):
@@ -142,7 +127,6 @@ def init_events(bot, cli_flags):
                 )
         INFO2 = []
 
-        sentry = await bot.db.enable_sentry()
         mongo_enabled = storage_type() != "JSON"
         reqs_installed = {"docs": None, "test": None}
         for key in reqs_installed.keys():
@@ -155,7 +139,6 @@ def init_events(bot, cli_flags):
                 reqs_installed[key] = True
 
         options = (
-            ("Error Reporting", sentry),
             ("MongoDB", mongo_enabled),
             ("Voice", True),
             ("Docs", reqs_installed["docs"]),
@@ -178,10 +161,6 @@ def init_events(bot, cli_flags):
         bot.color = discord.Colour(await bot.db.color())
 
     @bot.event
-    async def on_error(event_method, *args, **kwargs):
-        sentry_log.exception("Exception in {}".format(event_method))
-
-    @bot.event
     async def on_command_error(ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help()
@@ -201,11 +180,6 @@ def init_events(bot, cli_flags):
                 "Exception in command '{}'".format(ctx.command.qualified_name),
                 exc_info=error.original,
             )
-            if should_log_sentry(error):
-                sentry_log.exception(
-                    "Exception in command '{}'".format(ctx.command.qualified_name),
-                    exc_info=error.original,
-                )
 
             message = "Error in command '{}'. Check your console or logs for details.".format(
                 ctx.command.qualified_name
@@ -240,18 +214,25 @@ def init_events(bot, cli_flags):
         elif isinstance(error, commands.NoPrivateMessage):
             await ctx.send("That command is not available in DMs.")
         elif isinstance(error, commands.CommandOnCooldown):
+            if error.retry_after < 1:
+                async with ctx.typing():
+                    # the sleep here is so that commands using this for ratelimit purposes
+                    # are not made more lenient than intended, while still being
+                    # more convienient for the user than redoing it less than a second later.
+                    await asyncio.sleep(error.retry_after)
+                    await ctx.bot.invoke(ctx)
+                    # done this way so checks still occur if there are other
+                    # failures possible than just cooldown.
+                    # do not change to ctx.reinvoke()
+                    return
+
             await ctx.send(
-                "This command is on cooldown. Try again in {:.2f}s".format(error.retry_after)
+                "This command is on cooldown. Try again in {}.".format(
+                    humanize_timedelta(seconds=error.retry_after)
+                )
             )
         else:
             log.exception(type(error).__name__, exc_info=error)
-            try:
-                sentry_error = error.original
-            except AttributeError:
-                sentry_error = error
-
-            if should_log_sentry(sentry_error):
-                sentry_log.exception("Unhandled command error.", exc_info=sentry_error)
 
     @bot.event
     async def on_message(message):

@@ -3,7 +3,7 @@
 """
 The MIT License (MIT)
 
-Copyright (c) 2015-2017 Rapptz
+Copyright (c) 2015-2019 Rapptz
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -152,7 +152,7 @@ class HTTPClient:
             # wait until the global lock is complete
             await self._global_over.wait()
 
-        await lock
+        await lock.acquire()
         with MaybeUnlock(lock) as maybe_lock:
             for tries in range(5):
                 async with self._session.request(method, url, **kwargs) as r:
@@ -596,23 +596,21 @@ class HTTPClient:
         r = Route("PATCH", "/guilds/{guild_id}/channels", guild_id=guild_id)
         return self.request(r, json=data, reason=reason)
 
-    def create_channel(
-        self,
-        guild_id,
-        name,
-        channel_type,
-        parent_id=None,
-        permission_overwrites=None,
-        *,
-        reason=None
-    ):
-        payload = {"name": name, "type": channel_type}
+    def create_channel(self, guild_id, channel_type, *, reason=None, **options):
+        payload = {"type": channel_type}
 
-        if permission_overwrites is not None:
-            payload["permission_overwrites"] = permission_overwrites
-
-        if parent_id is not None:
-            payload["parent_id"] = parent_id
+        valid_keys = (
+            "name",
+            "parent_id",
+            "topic",
+            "bitrate",
+            "nsfw",
+            "user_limit",
+            "position",
+            "permission_overwrites",
+            "rate_limit_per_user",
+        )
+        payload.update({k: v for k, v in options.items() if k in valid_keys and v is not None})
 
         return self.request(
             Route("POST", "/guilds/{guild_id}/channels", guild_id=guild_id),
