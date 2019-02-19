@@ -54,6 +54,7 @@ class Audio(commands.Cog):
         }
 
         default_guild = {
+            "disconnect": False,
             "dj_enabled": False,
             "dj_role": None,
             "emptydc_enabled": False,
@@ -117,6 +118,7 @@ class Audio(commands.Cog):
                 await asyncio.sleep(1)  # prevent busylooping
 
     async def event_handler(self, player, event_type, extra):
+        disconnect = await self.config.guild(player.channel.guild).disconnect()
         notify = await self.config.guild(player.channel.guild).notify()
         status = await self.config.status()
         try:
@@ -213,6 +215,11 @@ class Audio(commands.Cog):
                 )
                 await notify_channel.send(embed=embed)
 
+        if event_type == lavalink.LavalinkEvents.QUEUE_END and disconnect:
+            if playing_servers == 0:
+                await self.bot.change_presence(activity=None)
+            await player.disconnect()
+
         if event_type == lavalink.LavalinkEvents.QUEUE_END and status:
             if playing_servers == 0:
                 await self.bot.change_presence(activity=None)
@@ -252,6 +259,22 @@ class Audio(commands.Cog):
     async def audioset(self, ctx):
         """Music configuration options."""
         pass
+
+    @audioset.command()
+    @checks.mod_or_permissions(manage_messages=True)
+    async def dc(self, ctx):
+        """Toggle the bot auto-disconnecting when done playing.
+
+        This setting takes precedence over [p]audioset emptydisconnect.
+        """
+        disconnect = await self.config.guild(ctx.guild).disconnect()
+        await self.config.guild(ctx.guild).disconnect.set(not disconnect)
+        await self._embed_msg(
+            ctx,
+            _("Auto-disconnection at queue end: {true_or_false}.").format(
+                true_or_false=not disconnect
+            ),
+        )
 
     @audioset.command()
     @checks.admin_or_permissions(manage_roles=True)
@@ -366,10 +389,13 @@ class Audio(commands.Cog):
         jukebox = data["jukebox"]
         jukebox_price = data["jukebox_price"]
         thumbnail = data["thumbnail"]
+        dc = data["disconnect"]
         jarbuild = redbot.core.__version__
 
         vote_percent = data["vote_percent"]
         msg = "----" + _("Server Settings") + "----\n"
+        if dc:
+            msg += _("Auto-disconnect:  [{dc}]\n").format(dc=dc)
         if emptydc_enabled:
             msg += _("Disconnect timer: [{num_seconds}]\n").format(
                 num_seconds=self._dynamic_time(emptydc_timer)
