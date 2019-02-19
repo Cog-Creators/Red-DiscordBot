@@ -410,7 +410,7 @@ for commands with a dedicated error handler.
 Red's global error handler will ignore commands with a registered error handler.
 
 To have red handle specific errors with the default behavior, 
-call ctx.bot.on_command_error with `manually_recalled` set to True
+call ctx.bot.on_command_error with `unhandled_by_cog` set to True
 
 For example:
 
@@ -422,7 +422,7 @@ For example:
             if isisntance(error, MyErrrorType):
                 self.log_exception(error)
             else:
-                await ctx.bot.on_command_error(ctx, error, manually_recalled=False)
+                await ctx.bot.on_command_error(ctx, error, unhandled_by_cog=True)
 
 Parameters
 -----------
