@@ -1800,25 +1800,35 @@ class Audio(commands.Cog):
         return embed
 
     @queue.command(name="clear")
-    @checks.mod_or_permissions(administrator=True)
     @commands.guild_only()
     async def _queue_clear(self, ctx):
         """Clears the queue."""
         player = lavalink.get_player(ctx.guild.id)
+        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         if not self._player_check(ctx) or not player.queue:
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
         player = lavalink.get_player(ctx.guild.id)
+        if dj_enabled:
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
+                ctx, ctx.author
+            ):
+                return await self._embed_msg(ctx, _("You need the DJ role to clear the queue."))
         player.queue.clear()
         await self._embed_msg(ctx, _("The queue has been cleared."))
 
     @queue.command(name="clean")
-    @checks.mod_or_permissions(administrator=True)
     @commands.guild_only()
     async def _queue_clean(self, ctx):
         """Removes songs from the queue if the requester is not in the voice channel."""
         player = lavalink.get_player(ctx.guild.id)
+        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         if not self._player_check(ctx) or not player.queue:
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
+        if dj_enabled:
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
+                ctx, ctx.author
+            ):
+                return await self._embed_msg(ctx, _("You need the DJ role to clean the queue."))
         clean_tracks = []
         removed_tracks = 0
         listeners = player.channel.members
