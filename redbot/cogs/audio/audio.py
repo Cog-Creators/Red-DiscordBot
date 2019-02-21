@@ -2620,7 +2620,9 @@ class Audio(commands.Cog):
                         try:
                             await lavalink.get_player(sid).disconnect()
                         except Exception as e:
-                            log.debug("Exception raised in Audio's disconnect_timer: {}".format(e))
+                            log.error(
+                                "Exception raised in Audio's disconnect_timer.", exc_info=True
+                            )
                             pass
 
             await asyncio.sleep(5)
