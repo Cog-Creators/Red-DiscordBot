@@ -24,7 +24,7 @@ to keep it in a location which is easy to type out the path to. From now, we'll 
 ~~~~~~~~~~~~~~~~~~~~~~~~
 Create your virtual environment with the following command::
 
-    python3 -m venv path/to/venv/
+    python3.7 -m venv path/to/venv/
 
 And activate it with the following command::
 

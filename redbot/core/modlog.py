@@ -1,4 +1,3 @@
-import os
 from datetime import datetime
 from typing import List, Union
 
@@ -7,7 +6,12 @@ import discord
 from redbot.core import Config
 from redbot.core.bot import Red
 
-from .utils.common_filters import filter_invites, filter_mass_mentions, filter_urls
+from .utils.common_filters import (
+    filter_invites,
+    filter_mass_mentions,
+    filter_urls,
+    escape_spoilers,
+)
 
 __all__ = [
     "Case",
@@ -29,15 +33,14 @@ _DEFAULT_GLOBAL = {"casetypes": {}}
 
 _DEFAULT_GUILD = {"mod_log": None, "cases": {}, "casetypes": {}}
 
+_conf: Config = None
 
-def _register_defaults():
+
+def _init():
+    global _conf
+    _conf = Config.get_conf(None, 1354799444, cog_name="ModLog")
     _conf.register_global(**_DEFAULT_GLOBAL)
     _conf.register_guild(**_DEFAULT_GUILD)
-
-
-if not os.environ.get("BUILDING_DOCS"):
-    _conf = Config.get_conf(None, 1354799444, cog_name="ModLog")
-    _register_defaults()
 
 
 class Case:
@@ -115,8 +118,10 @@ class Case:
             reason = "**Reason:** Use `[p]reason {} <reason>` to add it".format(self.case_number)
 
         if self.moderator is not None:
-            moderator = "{}#{} ({})\n".format(
-                self.moderator.name, self.moderator.discriminator, self.moderator.id
+            moderator = escape_spoilers(
+                "{}#{} ({})\n".format(
+                    self.moderator.name, self.moderator.discriminator, self.moderator.id
+                )
             )
         else:
             moderator = "Unknown"
@@ -133,8 +138,10 @@ class Case:
 
         amended_by = None
         if self.amended_by:
-            amended_by = "{}#{} ({})".format(
-                self.amended_by.name, self.amended_by.discriminator, self.amended_by.id
+            amended_by = escape_spoilers(
+                "{}#{} ({})".format(
+                    self.amended_by.name, self.amended_by.discriminator, self.amended_by.id
+                )
             )
 
         last_modified = None
@@ -143,9 +150,11 @@ class Case:
                 datetime.fromtimestamp(self.modified_at).strftime("%Y-%m-%d %H:%M:%S")
             )
 
-        user = filter_invites(
-            "{}#{} ({})\n".format(self.user.name, self.user.discriminator, self.user.id)
-        )  # Invites get rendered even in embeds.
+        user = escape_spoilers(
+            filter_invites(
+                "{}#{} ({})\n".format(self.user.name, self.user.discriminator, self.user.id)
+            )
+        )  # Invites and spoilers get rendered even in embeds.
         if embed:
             emb = discord.Embed(title=title, description=reason)
 

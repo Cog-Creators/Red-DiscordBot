@@ -7,6 +7,7 @@ from .errors import (
 )
 from random import choice, sample
 from string import ascii_letters
+from typing import ClassVar, Optional
 import discord
 import aiohttp
 import json
@@ -28,6 +29,9 @@ def rnd(url):
 
 
 class Stream:
+
+    token_name: ClassVar[Optional[str]] = None
+
     def __init__(self, **kwargs):
         self.name = kwargs.pop("name", None)
         self.channels = kwargs.pop("channels", [])
@@ -56,6 +60,9 @@ class Stream:
 
 
 class YoutubeStream(Stream):
+
+    token_name = "youtube"
+
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
         self._token = kwargs.pop("token", None)
@@ -72,7 +79,7 @@ class YoutubeStream(Stream):
 
         url = YOUTUBE_SEARCH_ENDPOINT
         params = {
-            "key": self._token,
+            "key": self._token["api_key"],
             "part": "snippet",
             "channelId": self.id,
             "type": "video",
@@ -85,7 +92,7 @@ class YoutubeStream(Stream):
             raise OfflineStream()
         elif "items" in data:
             vid_id = data["items"][0]["id"]["videoId"]
-            params = {"key": self._token, "id": vid_id, "part": "snippet"}
+            params = {"key": self._token["api_key"], "id": vid_id, "part": "snippet"}
             async with aiohttp.ClientSession() as session:
                 async with session.get(YOUTUBE_VIDEOS_ENDPOINT, params=params) as r:
                     data = await r.json()
@@ -112,7 +119,7 @@ class YoutubeStream(Stream):
 
     async def _fetch_channel_resource(self, resource: str):
 
-        params = {"key": self._token, "part": resource}
+        params = {"key": self._token["api_key"], "part": resource}
         if resource == "id":
             params["forUsername"] = self.name
         else:
@@ -139,6 +146,9 @@ class YoutubeStream(Stream):
 
 
 class TwitchStream(Stream):
+
+    token_name = "twitch"
+
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
         self._token = kwargs.pop("token", None)
@@ -149,7 +159,10 @@ class TwitchStream(Stream):
             self.id = await self.fetch_id()
 
         url = TWITCH_STREAMS_ENDPOINT + self.id
-        header = {"Client-ID": str(self._token), "Accept": "application/vnd.twitchtv.v5+json"}
+        header = {
+            "Client-ID": str(self._token["client_id"]),
+            "Accept": "application/vnd.twitchtv.v5+json",
+        }
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=header) as r:
@@ -170,7 +183,10 @@ class TwitchStream(Stream):
             raise APIError()
 
     async def fetch_id(self):
-        header = {"Client-ID": str(self._token), "Accept": "application/vnd.twitchtv.v5+json"}
+        header = {
+            "Client-ID": str(self._token["client_id"]),
+            "Accept": "application/vnd.twitchtv.v5+json",
+        }
         url = TWITCH_ID_ENDPOINT + self.name
 
         async with aiohttp.ClientSession() as session:
@@ -213,6 +229,9 @@ class TwitchStream(Stream):
 
 
 class HitboxStream(Stream):
+
+    token_name = None  # This streaming services don't currently require an API key
+
     async def is_online(self):
         url = "https://api.hitbox.tv/media/live/" + self.name
 
@@ -250,6 +269,9 @@ class HitboxStream(Stream):
 
 
 class MixerStream(Stream):
+
+    token_name = None  # This streaming services don't currently require an API key
+
     async def is_online(self):
         url = "https://mixer.com/api/v1/channels/" + self.name
 
@@ -291,6 +313,9 @@ class MixerStream(Stream):
 
 
 class PicartoStream(Stream):
+
+    token_name = None  # This streaming services don't currently require an API key
+
     async def is_online(self):
         url = "https://api.picarto.tv/v1/channel/name/" + self.name
 

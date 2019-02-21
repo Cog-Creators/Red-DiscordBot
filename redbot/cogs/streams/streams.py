@@ -67,21 +67,35 @@ class Streams(commands.Cog):
 
     async def initialize(self) -> None:
         """Should be called straight after cog instantiation."""
+        await self.move_api_keys()
         self.streams = await self.load_streams()
 
         self.task = self.bot.loop.create_task(self._stream_alerts())
 
+    async def move_api_keys(self):
+        """Move the API keys from cog stored config to core bot config if they exist."""
+        tokens = await self.db.tokens()
+        youtube = await self.bot.db.api_tokens.get_raw("youtube", default={})
+        twitch = await self.bot.db.api_tokens.get_raw("twitch", default={})
+        for token_type, token in tokens.items():
+            if token_type == "YoutubeStream" and "api_key" not in youtube:
+                await self.bot.db.api_tokens.set_raw("youtube", value={"api_key": token})
+            if token_type == "TwitchStream" and "client_id" not in twitch:
+                # Don't need to check Community since they're set the same
+                await self.bot.db.api_tokens.set_raw("twitch", value={"client_id": token})
+        await self.db.tokens.clear()
+
     @commands.command()
     async def twitch(self, ctx: commands.Context, channel_name: str):
         """Check if a Twitch channel is live."""
-        token = await self.db.tokens.get_raw(TwitchStream.__name__, default=None)
+        token = await self.bot.db.api_tokens.get_raw("twitch", default={"client_id": None})
         stream = TwitchStream(name=channel_name, token=token)
         await self.check_online(ctx, stream)
 
     @commands.command()
     async def youtube(self, ctx: commands.Context, channel_id_or_name: str):
         """Check if a YouTube channel is live."""
-        apikey = await self.db.tokens.get_raw(YoutubeStream.__name__, default=None)
+        apikey = await self.bot.db.api_tokens.get_raw("youtube", default={"api_key": None})
         is_name = self.check_name_or_id(channel_id_or_name)
         if is_name:
             stream = YoutubeStream(name=channel_id_or_name, token=apikey)
@@ -243,7 +257,7 @@ class Streams(commands.Cog):
     async def stream_alert(self, ctx: commands.Context, _class, channel_name):
         stream = self.get_stream(_class, channel_name)
         if not stream:
-            token = await self.db.tokens.get_raw(_class.__name__, default=None)
+            token = await self.bot.db.api_tokens.get_raw(_class.token_name, default=None)
             is_yt = _class.__name__ == "YoutubeStream"
             if is_yt and not self.check_name_or_id(channel_name):
                 stream = _class(id=channel_name, token=token)
@@ -287,35 +301,42 @@ class Streams(commands.Cog):
 
     @streamset.command()
     @checks.is_owner()
-    async def twitchtoken(self, ctx: commands.Context, token: str):
-        """Set the Client ID for Twitch.
+    async def twitchtoken(self, ctx: commands.Context):
+        """Explain how to set the twitch token"""
 
-        To do this, follow these steps:
-        1. Go to this page: https://dev.twitch.tv/dashboard/apps.
-        2. Click *Register Your Application*
-        3. Enter a name, set the OAuth Redirect URI to `http://localhost`, and
-           select an Application Category of your choosing.
-        4. Click *Register*, and on the following page, copy the Client ID.
-        5. Paste the Client ID into this command. Done!
-        """
-        await self.db.tokens.set_raw("TwitchStream", value=token)
-        await ctx.send(_("Twitch token set."))
+        message = _(
+            "To set the twitch API tokens, follow these steps:\n"
+            "1. Go to this page: https://dev.twitch.tv/dashboard/apps.\n"
+            "2. Click *Register Your Application*\n"
+            "3. Enter a name, set the OAuth Redirect URI to `http://localhost`, and \n"
+            "select an Application Category of your choosing."
+            "4. Click *Register*, and on the following page, copy the Client ID.\n"
+            "5. do `{prefix}set api twitch client_id,your_client_id`\n\n"
+            "Note: These tokens are sensitive and should only be used in a private channel\n"
+            "or in DM with the bot.)\n"
+        ).format(prefix=ctx.prefix)
+
+        await ctx.maybe_send_embed(message)
 
     @streamset.command()
     @checks.is_owner()
-    async def youtubekey(self, ctx: commands.Context, key: str):
-        """Set the API key for YouTube.
+    async def youtubekey(self, ctx: commands.Context):
+        """Explain how to set the YouTube token"""
 
-        To get one, do the following:
-        1. Create a project (see https://support.google.com/googleapi/answer/6251787 for details)
-        2. Enable the YouTube Data API v3 (see https://support.google.com/googleapi/answer/6158841
-        for instructions)
-        3. Set up your API key (see https://support.google.com/googleapi/answer/6158862 for
-        instructions)
-        4. Copy your API key and paste it into this command. Done!
-        """
-        await self.db.tokens.set_raw("YoutubeStream", value=key)
-        await ctx.send(_("YouTube key set."))
+        message = _(
+            "To get one, do the following:\n"
+            "1. Create a project\n"
+            "(see https://support.google.com/googleapi/answer/6251787 for details)\n"
+            "2. Enable the YouTube Data API v3 \n"
+            "(see https://support.google.com/googleapi/answer/6158841for instructions)\n"
+            "3. Set up your API key \n"
+            "(see https://support.google.com/googleapi/answer/6158862 for instructions)\n"
+            "4. Copy your API key and do `{prefix}set api youtube api_key,your_api_key`\n\n"
+            "Note: These tokens are sensitive and should only be used in a private channel\n"
+            "or in DM with the bot.\n"
+        ).format(prefix=ctx.prefix)
+
+        await ctx.maybe_send_embed(message)
 
     @streamset.group()
     @commands.guild_only()
@@ -535,7 +556,7 @@ class Streams(commands.Cog):
                         pass
                     else:
                         raw_stream["_messages_cache"].append(msg)
-            token = await self.db.tokens.get_raw(_class.__name__, default=None)
+            token = await self.bot.db.api_tokens.get_raw(_class.token_name, default=None)
             if token is not None:
                 raw_stream["token"] = token
             streams.append(_class(**raw_stream))

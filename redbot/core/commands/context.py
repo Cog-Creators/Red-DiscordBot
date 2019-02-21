@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 from typing import Iterable, List
 import discord
 from discord.ext import commands
@@ -167,7 +168,8 @@ class Context(commands.Context):
                         timeout=timeout,
                     )
                 except asyncio.TimeoutError:
-                    await query.delete()
+                    with contextlib.suppress(discord.HTTPException):
+                        await query.delete()
                     break
                 else:
                     try:
@@ -176,7 +178,8 @@ class Context(commands.Context):
                         # In case the bot can't delete other users' messages,
                         # or is not a bot account
                         # or channel is a DM
-                        await query.delete()
+                        with contextlib.suppress(discord.HTTPException):
+                            await query.delete()
         return ret
 
     async def embed_colour(self):

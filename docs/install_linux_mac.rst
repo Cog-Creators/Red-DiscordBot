@@ -67,8 +67,7 @@ Debian/Raspbian Stretch. This guide will tell you how. First, run the following 
 
     sudo apt install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
     libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
-    xz-utils tk-dev libffi-dev liblzma-dev python-openssl python3-openssl git unzip \
-    default-jre
+    xz-utils tk-dev libffi-dev liblzma-dev python3-openssl git unzip default-jre
 
 Complete the rest of the installation by `installing Python 3.7 with pyenv <install-python-pyenv>`.
 
@@ -127,9 +126,8 @@ Now, install python, pip, git and java with the following commands:
 .. code-block:: none
 
     sudo apt install python3.7 python3.7-dev build-essential libssl-dev libffi-dev git \
-    unzip default-jre wget -y
-    wget https://bootstrap.pypa.io/get-pip.py
-    sudo python3.7 get-pip.py
+    unzip default-jre curl -y
+    curl https://bootstrap.pypa.io/get-pip.py | sudo python3.7
 
 .. _install-python-pyenv:
 
@@ -154,7 +152,11 @@ Then run the following command:
 
     CONFIGURE_OPTS=--enable-optimizations pyenv install 3.7.2 -v
 
-This may take a long time to complete.
+This may take a long time to complete, depending on your hardware. For some machines (such as
+Raspberry Pis and micro-tier VPSes), it may take over an hour; in this case, you may wish to remove
+the ``CONFIGURE_OPTS=--enable-optimizations`` part from the front of the command, which will
+drastically reduce the install time. However, be aware that this will make Python run about 10%
+slower.
 
 After that is finished, run:
 
@@ -232,6 +234,9 @@ Once done setting up the instance, run the following command to run Red:
     redbot <your instance name>
 
 It will walk through the initial setup, asking for your token and a prefix.
+You can find out how to obtain a token with
+`this guide <https://discordpy.readthedocs.io/en/rewrite/discord.html#creating-a-bot-account>`_,
+section "Creating a Bot Account".
 
 You may also run Red via the launcher, which allows you to restart the bot
 from discord, and enable auto-restart. You may also update the bot from the
