@@ -2619,7 +2619,7 @@ class Audio(commands.Cog):
                         stop_times[sid] = None
                         try:
                             await lavalink.get_player(sid).disconnect()
-                        except Exception as e:
+                        except Exception:
                             log.error(
                                 "Exception raised in Audio's disconnect_timer.", exc_info=True
                             )
