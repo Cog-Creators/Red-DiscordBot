@@ -397,7 +397,7 @@ class Command(CogCommandMixin, commands.Command):
                     break
         return old_rule, new_rule
 
-    async def error(self, coro):
+    def error(self, coro):
         """
         A decorator that registers a coroutine as a local error handler.
 
@@ -434,7 +434,7 @@ class Command(CogCommandMixin, commands.Command):
         discord.ClientException
             The coroutine is not actually a coroutine.
         """
-        return await super().error(coro)
+        return super().error(coro)
 
 
 class GroupMixin(discord.ext.commands.GroupMixin):
