@@ -410,7 +410,7 @@ class Command(CogCommandMixin, commands.Command):
         Red's global error handler will ignore commands with a registered error handler.
 
         To have red handle specific errors with the default behavior,
-        call ctx.bot.on_command_error with `unhandled_by_cog` set to True
+        call ctx.bot.on_command_error with unhandled_by_cog set to True
 
         For example:
 
