@@ -1839,9 +1839,7 @@ class Audio(commands.Cog):
                 removed_tracks += 1
         player.queue = clean_tracks
         if removed_tracks == 0:
-            await self._embed_msg(
-                ctx, _("Removed 0 tracks.").format(removed_tracks=removed_tracks)
-            )
+            await self._embed_msg(ctx, _("Removed 0 tracks."))
         else:
             await self._embed_msg(
                 ctx,
