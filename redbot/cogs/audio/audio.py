@@ -5,6 +5,7 @@ import discord
 from fuzzywuzzy import process
 import heapq
 import lavalink
+import logging
 import math
 import os
 import random
@@ -31,6 +32,8 @@ _ = Translator("Audio", __file__)
 
 __version__ = "0.0.8"
 __author__ = ["aikaterna", "billy/bollo/ati"]
+
+log = logging.getLogger("red.audio")
 
 
 @cog_i18n(_)
@@ -119,22 +122,46 @@ class Audio(commands.Cog):
     async def event_handler(self, player, event_type, extra):
         notify = await self.config.guild(player.channel.guild).notify()
         status = await self.config.status()
-        try:
-            get_players = [p for p in lavalink.players if p.current is not None]
-            get_single_title = get_players[0].current.title
-            if get_single_title == "Unknown title":
-                get_single_title = get_players[0].current.uri
-                if not get_single_title.startswith("http"):
-                    get_single_title = get_single_title.rsplit("/", 1)[-1]
-            elif "localtracks/" in get_players[0].current.uri:
-                get_single_title = "{} - {}".format(
-                    get_players[0].current.author, get_players[0].current.title
-                )
-            else:
+
+        async def _players_check():
+            try:
+                get_players = [
+                    p for p in lavalink.players if p.current is not None and p.is_playing
+                ]
                 get_single_title = get_players[0].current.title
-            playing_servers = len(get_players)
-        except IndexError:
-            playing_servers = 0
+                if get_single_title == "Unknown title":
+                    get_single_title = get_players[0].current.uri
+                    if not get_single_title.startswith("http"):
+                        get_single_title = get_single_title.rsplit("/", 1)[-1]
+                elif "localtracks/" in get_players[0].current.uri:
+                    get_single_title = "{} - {}".format(
+                        get_players[0].current.author, get_players[0].current.title
+                    )
+                else:
+                    get_single_title = get_players[0].current.title
+                playing_servers = len(get_players)
+            except IndexError:
+                get_single_title = None
+                playing_servers = 0
+            return get_single_title, playing_servers
+
+        async def _status_check(playing_servers):
+            if playing_servers == 0:
+                await self.bot.change_presence(activity=None)
+            if playing_servers == 1:
+                single_title = await _players_check()
+                await self.bot.change_presence(
+                    activity=discord.Activity(
+                        name=single_title[0], type=discord.ActivityType.listening
+                    )
+                )
+            if playing_servers > 1:
+                await self.bot.change_presence(
+                    activity=discord.Activity(
+                        name=_("music in {} servers").format(playing_servers),
+                        type=discord.ActivityType.playing,
+                    )
+                )
 
         if event_type == lavalink.LavalinkEvents.TRACK_START:
             playing_song = player.fetch("playing_song")
@@ -188,21 +215,14 @@ class Audio(commands.Cog):
                 player.store("notify_message", notify_message)
 
         if event_type == lavalink.LavalinkEvents.TRACK_START and status:
-            if playing_servers == 0:
-                await self.bot.change_presence(activity=None)
-            if playing_servers == 1:
-                await self.bot.change_presence(
-                    activity=discord.Activity(
-                        name=get_single_title, type=discord.ActivityType.listening
-                    )
-                )
-            if playing_servers > 1:
-                await self.bot.change_presence(
-                    activity=discord.Activity(
-                        name=_("music in {} servers").format(playing_servers),
-                        type=discord.ActivityType.playing,
-                    )
-                )
+            player_check = await _players_check()
+            await _status_check(player_check[1])
+
+        if event_type == lavalink.LavalinkEvents.TRACK_END and status:
+            await asyncio.sleep(1)
+            if not player.is_playing:
+                player_check = await _players_check()
+                await _status_check(player_check[1])
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END and notify:
             notify_channel = player.fetch("channel")
@@ -214,21 +234,8 @@ class Audio(commands.Cog):
                 await notify_channel.send(embed=embed)
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END and status:
-            if playing_servers == 0:
-                await self.bot.change_presence(activity=None)
-            if playing_servers == 1:
-                await self.bot.change_presence(
-                    activity=discord.Activity(
-                        name=get_single_title, type=discord.ActivityType.listening
-                    )
-                )
-            if playing_servers > 1:
-                await self.bot.change_presence(
-                    activity=discord.Activity(
-                        name=_("music in {} servers").format(playing_servers),
-                        type=discord.ActivityType.playing,
-                    )
-                )
+            player_check = await _players_check()
+            await _status_check(player_check[1])
 
         if event_type == lavalink.LavalinkEvents.TRACK_EXCEPTION:
             if "localtracks/" in player.current.uri:
@@ -546,7 +553,7 @@ class Audio(commands.Cog):
                 return await self._embed_msg(ctx, _("There are other people listening to music."))
             else:
                 await lavalink.get_player(ctx.guild.id).stop()
-                return await lavalink.get_player(ctx.guild.id).disconnect()
+                await lavalink.get_player(ctx.guild.id).disconnect()
 
     @commands.group()
     @commands.guild_only()
@@ -2603,16 +2610,20 @@ class Audio(commands.Cog):
                         stop_times[server.id] = int(time.time())
 
             for sid in stop_times:
+                if stop_times[sid] is None:
+                    continue
                 server_obj = self.bot.get_guild(sid)
-                emptydc_enabled = await self.config.guild(server_obj).emptydc_enabled()
-                if emptydc_enabled:
-                    if stop_times[sid] is not None and [self.bot.user] == p.channel.members:
-                        emptydc_timer = await self.config.guild(server_obj).emptydc_timer()
-                        if stop_times[sid] and (
-                            int(time.time()) - stop_times[sid] > emptydc_timer
-                        ):
-                            stop_times[sid] = None
+                if await self.config.guild(server_obj).emptydc_enabled():
+                    emptydc_timer = await self.config.guild(server_obj).emptydc_timer()
+                    if (int(time.time()) - stop_times[sid]) >= emptydc_timer:
+                        stop_times[sid] = None
+                        try:
                             await lavalink.get_player(sid).disconnect()
+                        except Exception:
+                            log.error(
+                                "Exception raised in Audio's disconnect_timer.", exc_info=True
+                            )
+                            pass
 
             await asyncio.sleep(5)
 
