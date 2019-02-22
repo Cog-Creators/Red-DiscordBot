@@ -397,6 +397,45 @@ class Command(CogCommandMixin, commands.Command):
                     break
         return old_rule, new_rule
 
+    async def error(self, coro):
+        """
+        A decorator that registers a coroutine as a local error handler.
+
+        A local error handler is an :func:`.on_command_error` event limited to
+        a single command.
+
+        The on_command_error event is still dispatched
+        for commands with a dedicated error handler.
+
+        Red's global error handler will ignore commands with a registered error handler.
+
+        To have red handle specific errors with the default behavior,
+        call ``Red.on_command_error`` with ``unhandled_by_cog`` set to True.
+
+        For example:
+
+            .. code-block:: python
+
+                @a_command.error
+                async def a_command_error_handler(self, ctx, error):
+
+                    if isisntance(error, MyErrrorType):
+                        self.log_exception(error)
+                    else:
+                        await ctx.bot.on_command_error(ctx, error, unhandled_by_cog=True)
+
+        Parameters
+        -----------
+        coro : :term:`coroutine function`
+            The coroutine to register as the local error handler.
+
+        Raises
+        -------
+        discord.ClientException
+            The coroutine is not actually a coroutine.
+        """
+        return await super().error(coro)
+
 
 class GroupMixin(discord.ext.commands.GroupMixin):
     """Mixin for `Group` and `Red` classes.
