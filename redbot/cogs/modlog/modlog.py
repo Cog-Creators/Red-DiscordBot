@@ -109,10 +109,8 @@ class ModLog(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    async def casesfor(self, ctx: commands.Context, member: Union[discord.Member, int]):
-        """
-        Displays the cases for the specified member
-        """
+    async def casesfor(self, ctx: commands.Context, *, member: Union[discord.Member, int]):
+        """Display cases for the specified member."""
         try:
             if isinstance(member, int):
                 cases = await modlog.get_cases_for_member(
