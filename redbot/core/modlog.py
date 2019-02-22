@@ -237,9 +237,21 @@ class Case:
         Case
             The case object for the requested case
 
+        Raises
+        ------
+        `discord.NotFound`
+            The user the case is for no longer exists
+        `discord.Forbidden`
+            Cannot read message history to fetch the original message.
+        `discord.HTTPException`
+            A generic API issue
         """
         guild = mod_channel.guild
-        message = await mod_channel.get_message(data["message"])
+        if data["message"]:
+            try:
+                message = await mod_channel.get_message(data["message"])
+            except discord.NotFound:
+                message = None
         user = await bot.get_user_info(data["user"])
         moderator = guild.get_member(data["moderator"])
         channel = guild.get_channel(data["channel"])
