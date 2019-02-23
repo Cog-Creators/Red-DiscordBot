@@ -308,7 +308,7 @@ class Audio(commands.Cog):
     async def maxlength(self, ctx, seconds):
         """Max length of a track to queue in seconds. 0 to disable.
 
-        Accepts seconds or a value formatted like 00:00:00 (h:m:s) or 00:00 (m:s).
+        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).
         Invalid input will turn the max length setting off."""
         if not isinstance(seconds, int):
             seconds = int(await self._time_convert(seconds) / 1000)
@@ -2752,7 +2752,7 @@ class Audio(commands.Cog):
             length = round(track.length / 1000)
         except AttributeError:
             length = round(track / 1000)
-        if length > 259200:
+        if length > 900000000000000:  # livestreams return 9223372036854775807ms
             return True
         elif length >= maxlength:
             return False
@@ -2760,7 +2760,7 @@ class Audio(commands.Cog):
             return True
 
     async def _time_convert(self, length):
-        match = re.compile(r"(?:(\d+):)?([0-5][0-9]):([0-5][0-9])").match(length)
+        match = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])").match(length)
         if match is not None:
             hr = int(match.group(1)) if match.group(1) else 0
             mn = int(match.group(2)) if match.group(2) else 0
