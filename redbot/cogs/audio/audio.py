@@ -125,9 +125,7 @@ class Audio(commands.Cog):
 
         async def _players_check():
             try:
-                get_players = [
-                    p for p in lavalink.players if p.current is not None and p.is_playing
-                ]
+                get_players = [p for p in lavalink.players if p.current is not None]
                 get_single_title = get_players[0].current.title
                 if get_single_title == "Unknown title":
                     get_single_title = get_players[0].current.uri
