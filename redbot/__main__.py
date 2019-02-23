@@ -13,7 +13,7 @@ from redbot.core.events import init_events
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags
 from redbot.core.core_commands import Core
 from redbot.core.dev_commands import Dev
-from redbot.core import __version__
+from redbot.core import modlog, bank
 from signal import SIGTERM
 import asyncio
 import logging.handlers
@@ -139,6 +139,10 @@ def main():
     red.add_cog(CogManagerUI())
     if cli_flags.dev:
         red.add_cog(Dev())
+    # noinspection PyProtectedMember
+    modlog._init()
+    # noinspection PyProtectedMember
+    bank._init()
     loop = asyncio.get_event_loop()
     if os.name == "posix":
         loop.add_signal_handler(SIGTERM, lambda: asyncio.ensure_future(sigterm_handler(red, log)))
