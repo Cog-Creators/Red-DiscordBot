@@ -363,8 +363,8 @@ class Filter(commands.Cog):
 
         if hits:
             try:
-                self.bot.dispatch("filter_message_delete", message)
                 await message.delete()
+                self.bot.dispatch("filter_message_delete", message)
             except discord.HTTPException:
                 pass
             else:
