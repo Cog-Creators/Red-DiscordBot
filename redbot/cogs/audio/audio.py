@@ -1232,6 +1232,7 @@ class Audio(commands.Cog):
         to_write.write(playlist_data)
         to_write.seek(0)
         await ctx.send(file=discord.File(to_write, filename=f"{playlist_name}.txt"))
+        to_write.close()
 
     @playlist.command(name="info")
     async def _playlist_info(self, ctx, playlist_name):
