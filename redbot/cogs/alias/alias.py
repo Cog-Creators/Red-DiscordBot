@@ -214,7 +214,7 @@ class Alias(commands.Cog):
         try:
             args = self.get_extra_args_from_alias(message, prefix, alias)
         except commands.BadArgument as bae:
-            return self.bot.dispatch("on_command_error", await self.bot.get_context(message), bae)
+            return
 
         trackform = _TrackingFormatter()
         command = trackform.format(alias.command, *args)
