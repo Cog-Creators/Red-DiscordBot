@@ -439,7 +439,7 @@ class Permissions(commands.Cog):
         """
         self._load_rules_for(
             cog_or_command=cog,
-            rule_dict=await self.config.custom(COMMAND, cog.__class__.__name__).all(),
+            rule_dict=await self.config.custom(COG, cog.__class__.__name__).all(),
         )
 
     async def command_added(self, command: commands.Command) -> None:
