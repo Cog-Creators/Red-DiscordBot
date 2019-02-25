@@ -38,6 +38,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
         self.db = Config.get_core_conf(force_registration=True)
         self._co_owners = cli_flags.co_owner
         self.rpc_enabled = cli_flags.rpc
+        self.instance_name = cli_flags.instance_name
         self._last_exception = None
         self.db.register_global(
             token=None,
