@@ -1,4 +1,5 @@
 import pytest
+from redbot.core import bank as bank_module
 
 __all__ = ["bank"]
 
@@ -9,7 +10,6 @@ def bank(config, monkeypatch):
 
     with monkeypatch.context() as m:
         m.setattr(Config, "get_conf", lambda *args, **kwargs: config)
-        from redbot.core import bank
-
-        bank._register_defaults()
-        return bank
+        # noinspection PyProtectedMember
+        bank_module._init()
+        return bank_module

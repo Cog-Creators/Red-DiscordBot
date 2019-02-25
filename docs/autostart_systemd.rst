@@ -28,6 +28,7 @@ Paste the following and replace all instances of :code:`username` with the usern
     Restart=always
     RestartSec=15
     RestartPreventExitStatus=0
+    TimeoutStopSec=10
 
     [Install]
     WantedBy=multi-user.target
@@ -47,6 +48,14 @@ To start the bot, run the service and add the instance name after the **@**:
 To set the bot to start on boot, you must enable the service, again adding the instance name after the **@**:
 
 :code:`sudo systemctl enable red@instancename`
+
+If you need to shutdown the bot, you can use the ``[p]shutdown`` command or
+type the following command in the terminal, still by adding the instance name after the **@**:
+
+:code:`sudo systemctl stop red@instancename`
+
+.. warning:: If the service doesn't stop in the next 10 seconds, the process is killed.
+    Check your logs to know the cause of the error that prevents the shutdown.
 
 To view Red’s log, you can acccess through journalctl:
 

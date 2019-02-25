@@ -1,6 +1,7 @@
 # Bugfix request
 
 <!--
+THIS TEMPLATE IS CURRENTLY UNUSED DUE TO GITHUB LIMITATIONS!
 To be used for pull requests that fix a bug
 -->
 

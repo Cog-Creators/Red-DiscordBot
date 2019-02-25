@@ -23,6 +23,7 @@ discord.py 1.0.0a
 
 This help formatter contains work by Rapptz (Danny) and SirThane#1780.
 """
+import contextlib
 from collections import namedtuple
 from typing import List, Optional, Union
 
@@ -114,7 +115,7 @@ class Help(dpy_formatter.HelpFormatter):
     def get_ending_note(self):
         # command_name = self.context.invoked_with
         return (
-            "Type {0}help <command> for more info on a command.\n"
+            "Type {0}help <command> for more info on a command. "
             "You can also type {0}help <category> for more info on a category.".format(
                 self.context.clean_prefix
             )
@@ -214,18 +215,18 @@ class Help(dpy_formatter.HelpFormatter):
         curr_group = []
         ret = []
         for f in fields:
-            curr_group.append(f)
-            if sum(len(f.value) for f in curr_group) > max_chars:
+            if sum(len(f2.value) for f2 in curr_group) + len(f.value) > max_chars and curr_group:
                 ret.append(curr_group)
                 curr_group = []
+            curr_group.append(f)
 
         if len(curr_group) > 0:
             ret.append(curr_group)
 
         return ret
 
-    async def format_help_for(self, ctx, command_or_bot, reason: str = None):
-        """Formats the help page and handles the actual heavy lifting of how  ### WTF HAPPENED?
+    async def format_help_for(self, ctx, command_or_bot, reason: str = ""):
+        """Formats the help page and handles the actual heavy lifting of how
         the help command looks like. To change the behaviour, override the
         :meth:`~.HelpFormatter.format` method.
 
@@ -244,10 +245,24 @@ class Help(dpy_formatter.HelpFormatter):
         """
         self.context = ctx
         self.command = command_or_bot
+
+        # We want the permission state to be set as if the author had run the command he is
+        # requesting help for. This is so the subcommands shown in the help menu correctly reflect
+        # any permission rules set.
+        if isinstance(self.command, commands.Command):
+            with contextlib.suppress(commands.CommandError):
+                await self.command.can_run(
+                    self.context, check_all_parents=True, change_permission_state=True
+                )
+        elif isinstance(self.command, commands.Cog):
+            with contextlib.suppress(commands.CommandError):
+                # Cog's don't have a `can_run` method, so we use the `Requires` object directly.
+                await self.command.requires.verify(self.context)
+
         emb = await self.format()
 
         if reason:
-            emb["embed"]["title"] = "{0}".format(reason)
+            emb["embed"]["title"] = reason
 
         ret = []
 

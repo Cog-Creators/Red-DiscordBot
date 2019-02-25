@@ -4,7 +4,6 @@ from pathlib import Path
 
 import pytest
 from unittest.mock import MagicMock
-from raven.versioning import fetch_git_sha
 
 from redbot.pytest.downloader import *
 
@@ -58,18 +57,6 @@ async def test_current_branch(bot_repo):
     # So this does work, just not sure how to fully automate the test
 
     assert branch not in ("WRONG", "")
-
-
-@pytest.mark.asyncio
-async def test_current_hash(bot_repo):
-    branch = await bot_repo.current_branch()
-    bot_repo.branch = branch
-
-    commit = await bot_repo.current_commit()
-
-    sentry_sha = fetch_git_sha(str(bot_repo.folder_path))
-
-    assert sentry_sha == commit
 
 
 @pytest.mark.asyncio

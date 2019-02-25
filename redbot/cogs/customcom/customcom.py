@@ -358,7 +358,6 @@ class CustomCommands(commands.Cog):
                 result = responses
             else:
                 continue
-            # Replace newlines with spaces
             # Cut preview to 52 characters max
             if len(result) > 52:
                 result = result[:49] + "..."
@@ -369,7 +368,8 @@ class CustomCommands(commands.Cog):
             results.append((f"{ctx.clean_prefix}{command}", result))
 
         if await ctx.embed_requested():
-            content = "\n".join(map("**{0[0]}** {0[1]}".format, results))
+            # We need a space before the newline incase the CC preview ends in link (GH-2295)
+            content = " \n".join(map("**{0[0]}** {0[1]}".format, results))
             pages = list(pagify(content, page_length=1024))
             embed_pages = []
             for idx, page in enumerate(pages, start=1):

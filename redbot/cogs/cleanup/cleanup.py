@@ -133,8 +133,6 @@ class Cleanup(commands.Cog):
         def check(m):
             if text in m.content:
                 return True
-            elif m == ctx.message:
-                return True
             else:
                 return False
 
@@ -145,6 +143,7 @@ class Cleanup(commands.Cog):
             before=ctx.message,
             delete_pinned=delete_pinned,
         )
+        to_delete.append(ctx.message)
 
         reason = "{}({}) deleted {} messages containing '{}' in channel {}.".format(
             author.name, author.id, len(to_delete), text, channel.id
@@ -188,8 +187,6 @@ class Cleanup(commands.Cog):
         def check(m):
             if m.author.id == _id:
                 return True
-            elif m == ctx.message:
-                return True
             else:
                 return False
 
@@ -200,6 +197,8 @@ class Cleanup(commands.Cog):
             before=ctx.message,
             delete_pinned=delete_pinned,
         )
+        to_delete.append(ctx.message)
+
         reason = (
             "{}({}) deleted {} messages "
             " made by {}({}) in channel {}."
@@ -263,6 +262,7 @@ class Cleanup(commands.Cog):
         to_delete = await self.get_messages_for_deletion(
             channel=channel, number=number, before=before, delete_pinned=delete_pinned
         )
+        to_delete.append(ctx.message)
 
         reason = "{}({}) deleted {} messages in channel {}.".format(
             author.name, author.id, len(to_delete), channel.name
