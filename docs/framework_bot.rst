@@ -16,6 +16,8 @@ RedBase
     .. automethod:: register_rpc_handler
     .. automethod:: unregister_rpc_handler
 
+    .. autoinstanceattribute:: instance_name
+
 Red
 ^^^
 
