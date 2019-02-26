@@ -43,10 +43,10 @@
         },
         "aiohttp-json-rpc": {
             "hashes": [
-                "sha256:1d040b7b10ff414f9174398ff6e9c647eb0434a00939450b33aa539177c51dcf",
-                "sha256:5f5fb141c6263d2ea52a4173babe9449eef4029620dc49936dca45cdc17ac9dd"
+                "sha256:14656d360211bcdb686be0c099f7a99d8c2ae8e2762b113e6df408a8f275323f",
+                "sha256:9aa8a897fbe32b343ce7b14121491cc200395161316ca1296c6fab28449886bf"
             ],
-            "version": "==0.12"
+            "version": "==0.12.1"
         },
         "appdirs": {
             "hashes": [
@@ -346,10 +346,10 @@
         },
         "aiohttp-json-rpc": {
             "hashes": [
-                "sha256:1d040b7b10ff414f9174398ff6e9c647eb0434a00939450b33aa539177c51dcf",
-                "sha256:5f5fb141c6263d2ea52a4173babe9449eef4029620dc49936dca45cdc17ac9dd"
+                "sha256:14656d360211bcdb686be0c099f7a99d8c2ae8e2762b113e6df408a8f275323f",
+                "sha256:9aa8a897fbe32b343ce7b14121491cc200395161316ca1296c6fab28449886bf"
             ],
-            "version": "==0.12"
+            "version": "==0.12.1"
         },
         "alabaster": {
             "hashes": [
@@ -762,10 +762,10 @@
         },
         "virtualenv": {
             "hashes": [
-                "sha256:8b9abfc51c38b70f61634bf265e5beacf6fae11fc25d355d1871f49b8e45f0db",
-                "sha256:cceab52aa7d4df1e1871a70236eb2b89fcfe29b6b43510d9738689787c513261"
+                "sha256:5a3ecdfbde67a4a3b3111301c4d64a5b71cf862c8c42958d30cf3253df1f29dd",
+                "sha256:dffd40d19ab0168c02cf936de59590a3c0f2c8c4a36f363fcf3dae18728dc94e"
             ],
-            "version": "==16.4.0"
+            "version": "==16.4.1"
         },
         "websockets": {
             "hashes": [
