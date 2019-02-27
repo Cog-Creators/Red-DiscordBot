@@ -676,11 +676,14 @@ class Audio(commands.Cog):
             return
         allowed_files = (".mp3", ".flac", ".ogg")
         current_folder = os.getcwd() + "/localtracks/{}/".format(folder)
-        folder_list = [
-            f
-            for f in os.listdir(current_folder)
-            if (f.lower().endswith(allowed_files)) and (os.path.isfile(current_folder + f))
-        ]
+        folder_list = sorted(
+            (
+                f
+                for f in os.listdir(current_folder)
+                if (f.lower().endswith(allowed_files)) and (os.path.isfile(current_folder + f))
+            ),
+            key=lambda s: s.casefold(),
+        )
         track_listing = []
         for localtrack_location in folder_list:
             track_listing.append(localtrack_location)
@@ -699,12 +702,15 @@ class Audio(commands.Cog):
         if not await self._localtracks_check(ctx):
             return
         allowed_files = (".mp3", ".flac", ".ogg")
-        folder_list = [
-            os.getcwd() + "/localtracks/{}/{}".format(folder, f)
-            for f in os.listdir(os.getcwd() + "/localtracks/{}/".format(folder))
-            if (f.lower().endswith(allowed_files))
-            and (os.path.isfile(os.getcwd() + "/localtracks/{}/{}".format(folder, f)))
-        ]
+        folder_list = sorted(
+            (
+                os.getcwd() + "/localtracks/{}/{}".format(folder, f)
+                for f in os.listdir(os.getcwd() + "/localtracks/{}/".format(folder))
+                if (f.lower().endswith(allowed_files))
+                and (os.path.isfile(os.getcwd() + "/localtracks/{}/{}".format(folder, f)))
+            ),
+            key=lambda s: s.casefold(),
+        )
         track_listing = []
         if ctx.invoked_with == "search":
             for localtrack_location in folder_list:
@@ -2763,11 +2769,14 @@ class Audio(commands.Cog):
     async def _localtracks_folders(self, ctx):
         if not await self._localtracks_check(ctx):
             return
-        localtracks_folders = [
-            f
-            for f in os.listdir(os.getcwd() + "/localtracks/")
-            if not os.path.isfile(os.getcwd() + "/localtracks/" + f)
-        ]
+        localtracks_folders = sorted(
+            (
+                f
+                for f in os.listdir(os.getcwd() + "/localtracks/")
+                if not os.path.isfile(os.getcwd() + "/localtracks/" + f)
+            ),
+            key=lambda s: s.casefold(),
+        )
         return localtracks_folders
 
     @staticmethod
