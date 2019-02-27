@@ -14,6 +14,7 @@ import os
 import random
 import re
 import time
+from typing import Optional
 import redbot.core
 from redbot.core import Config, commands, checks, bank
 from redbot.core.data_manager import cog_data_path
@@ -29,7 +30,7 @@ from redbot.core.utils.menus import (
 )
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from urllib.parse import urlparse
-from .manager import shutdown_lavalink_server, start_lavalink_server, maybe_download_lavalink
+from .manager import ServerManager
 
 _ = Translator("Audio", __file__)
 
@@ -43,41 +44,45 @@ log = logging.getLogger("red.audio")
 class Audio(commands.Cog):
     """Play audio through voice channels."""
 
+    _default_lavalink_settings = {
+        "host": "localhost",
+        "rest_port": 2333,
+        "ws_port": 2332,
+        "password": "youshallnotpass",
+    }
+
     def __init__(self, bot):
         super().__init__()
         self.bot = bot
         self.config = Config.get_conf(self, 2711759130, force_registration=True)
 
-        default_global = {
-            "host": "localhost",
-            "rest_port": "2333",
-            "ws_port": "2332",
-            "password": "youshallnotpass",
-            "status": False,
-            "current_version": redbot.core.VersionInfo.from_str("3.0.0a0").to_json(),
-            "use_external_lavalink": False,
-            "restrict": True,
-            "localpath": str(cog_data_path(raw_name="Audio")),
-        }
+        default_global = dict(
+            status=False,
+            use_external_lavalink=False,
+            restrict=True,
+            current_version=redbot.core.VersionInfo.from_str("3.0.0a0").to_json(),
+            localpath=str(cog_data_path(raw_name="Audio")),
+            **self._default_lavalink_settings,
+        )
 
-        default_guild = {
-            "disconnect": False,
-            "dj_enabled": False,
-            "dj_role": None,
-            "emptydc_enabled": False,
-            "emptydc_timer": 0,
-            "jukebox": False,
-            "jukebox_price": 0,
-            "maxlength": 0,
-            "playlists": {},
-            "notify": False,
-            "repeat": False,
-            "shuffle": False,
-            "thumbnail": False,
-            "volume": 100,
-            "vote_enabled": False,
-            "vote_percent": 0,
-        }
+        default_guild = dict(
+            disconnect=False,
+            dj_enabled=False,
+            dj_role=None,
+            emptydc_enabled=False,
+            emptydc_timer=0,
+            jukebox=False,
+            jukebox_price=0,
+            maxlength=0,
+            playlists={},
+            notify=False,
+            repeat=False,
+            shuffle=False,
+            thumbnail=False,
+            volume=100,
+            vote_enabled=False,
+            vote_percent=0,
+        )
 
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)
@@ -86,8 +91,11 @@ class Audio(commands.Cog):
         self._connect_task = None
         self._disconnect_task = None
         self._cleaned_up = False
+
         self.spotify_token = None
         self.play_lock = {}
+
+        self._manager: Optional[ServerManager] = None
 
     async def initialize(self):
         self._restart_connect()
@@ -103,16 +111,30 @@ class Audio(commands.Cog):
     async def attempt_connect(self, timeout: int = 30):
         while True:  # run until success
             external = await self.config.use_external_lavalink()
-            if not external:
-                shutdown_lavalink_server()
-                await maybe_download_lavalink(self.bot.loop, self)
-                await start_lavalink_server(self.bot.loop)
-            try:
+            if external is False:
+                settings = self._default_lavalink_settings
+                host = settings["host"]
+                password = settings["password"]
+                rest_port = settings["rest_port"]
+                ws_port = settings["ws_port"]
+                if self._manager is not None:
+                    await self._manager.shutdown()
+                self._manager = ServerManager()
+                try:
+                    await self._manager.start()
+                except RuntimeError as exc:
+                    log.exception(
+                        "Exception whilst starting internal Lavalink server, retrying...",
+                        exc_info=exc,
+                    )
+                    await asyncio.sleep(1)
+                    continue
+            else:
                 host = await self.config.host()
                 password = await self.config.password()
                 rest_port = await self.config.rest_port()
                 ws_port = await self.config.ws_port()
-
+            try:
                 await lavalink.initialize(
                     bot=self.bot,
                     host=host,
@@ -122,9 +144,10 @@ class Audio(commands.Cog):
                     timeout=timeout,
                 )
                 return  # break infinite loop
-            except Exception:
-                if not external:
-                    shutdown_lavalink_server()
+            except asyncio.TimeoutError:
+                log.error("Connecting to Lavalink server timed out, retrying...")
+                if external is False and self._manager is not None:
+                    await self._manager.shutdown()
                 await asyncio.sleep(1)  # prevent busylooping
 
     async def event_handler(self, player, event_type, extra):
@@ -3104,19 +3127,16 @@ class Audio(commands.Cog):
         await self.config.use_external_lavalink.set(not external)
 
         if external:
-            await self.config.host.set("localhost")
-            await self.config.password.set("youshallnotpass")
-            await self.config.rest_port.set(2333)
-            await self.config.ws_port.set(2332)
             embed = discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("External lavalink server: {true_or_false}.").format(
                     true_or_false=not external
                 ),
             )
-            embed.set_footer(text=_("Defaults reset."))
             await ctx.send(embed=embed)
         else:
+            if self._manager is not None:
+                await self._manager.shutdown()
             await self._embed_msg(
                 ctx,
                 _("External lavalink server: {true_or_false}.").format(true_or_false=not external),
@@ -3229,6 +3249,8 @@ class Audio(commands.Cog):
     async def _check_external(self):
         external = await self.config.use_external_lavalink()
         if not external:
+            if self._manager is not None:
+                await self._manager.shutdown()
             await self.config.use_external_lavalink.set(True)
             return True
         else:
@@ -3597,7 +3619,8 @@ class Audio(commands.Cog):
 
             lavalink.unregister_event_listener(self.event_handler)
             self.bot.loop.create_task(lavalink.close())
-            shutdown_lavalink_server()
+            if self._manager is not None:
+                self.bot.loop.create_task(self._manager.shutdown())
             self._cleaned_up = True
 
     __del__ = cog_unload
