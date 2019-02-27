@@ -1,12 +1,10 @@
 import itertools
 import pathlib
-import shlex
 import shutil
 import asyncio
 import asyncio.subprocess
 import logging
 import re
-import sys
 import tempfile
 from typing import Optional, Tuple, ClassVar, List
 
@@ -89,13 +87,7 @@ class ServerManager:
         else:
             extra_flags = []
 
-        if sys.platform == "win32":
-            # Windows doesn't like shlex.quote. Might have something to do with ProactorEventLoop?
-            # However, omitting the quotes doesn't seem to cause issues with spaces in the path.
-            path = str(LAVALINK_JAR_FILE)
-        else:
-            path = shlex.quote(str(LAVALINK_JAR_FILE))
-        return ["java", *extra_flags, "-jar", path]
+        return ["java", *extra_flags, "-jar", str(LAVALINK_JAR_FILE)]
 
     @classmethod
     async def _has_java(cls) -> Tuple[bool, Optional[Tuple[int, int]]]:
