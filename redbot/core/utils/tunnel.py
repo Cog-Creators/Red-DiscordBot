@@ -132,7 +132,7 @@ class Tunnel(metaclass=TunnelMeta):
         return rets
 
     @staticmethod
-    async def files_from_attatch(m: discord.Message) -> List[discord.File]:
+    async def files_from_attach(m: discord.Message) -> List[discord.File]:
         """
         makes a list of file objects from a message
         returns an empty list if none, or if the sum of file sizes
@@ -201,10 +201,10 @@ class Tunnel(metaclass=TunnelMeta):
             content = topic
 
         if message.attachments:
-            attach = await self.files_from_attatch(message)
+            attach = await self.files_from_attach(message)
             if not attach:
                 await message.channel.send(
-                    "Could not forward attatchments. "
+                    "Could not forward attachments. "
                     "Total size of attachments in a single "
                     "message must be less than 8MB."
                 )

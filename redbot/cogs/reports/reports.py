@@ -165,7 +165,7 @@ class Reports(commands.Cog):
         if channel is None:
             return None
 
-        files: List[discord.File] = await Tunnel.files_from_attatch(msg)
+        files: List[discord.File] = await Tunnel.files_from_attach(msg)
 
         ticket_number = await self.config.guild(guild).next_ticket()
         await self.config.guild(guild).next_ticket.set(ticket_number + 1)
