@@ -1,3 +1,4 @@
+import itertools
 import pathlib
 import shlex
 import shutil
@@ -5,6 +6,7 @@ import asyncio
 import asyncio.subprocess
 import logging
 import re
+import sys
 import tempfile
 from typing import Optional, Tuple, ClassVar, List
 
@@ -62,7 +64,7 @@ class ServerManager:
             *args,
             cwd=str(LAVALINK_DOWNLOAD_DIR),
             stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.STDOUT,
         )
 
         log.info("Internal Lavalink server started. PID: %s", self._proc.pid)
@@ -87,7 +89,13 @@ class ServerManager:
         else:
             extra_flags = []
 
-        return ["java", *extra_flags, "-jar", shlex.quote(str(LAVALINK_JAR_FILE))]
+        if sys.platform == "win32":
+            # Windows doesn't like shlex.quote. Might have something to do with ProactorEventLoop?
+            # However, omitting the quotes doesn't seem to cause issues with spaces in the path.
+            path = str(LAVALINK_JAR_FILE)
+        else:
+            path = shlex.quote(str(LAVALINK_JAR_FILE))
+        return ["java", *extra_flags, "-jar", path]
 
     @classmethod
     async def _has_java(cls) -> Tuple[bool, Optional[Tuple[int, int]]]:
@@ -142,13 +150,16 @@ class ServerManager:
 
     async def _wait_for_launcher(self) -> None:
         log.debug("Waiting for Lavalink server to be ready")
-        while True:
+        for i in itertools.cycle(range(50)):
             line = await self._proc.stdout.readline()
             if READY_LINE_RE.search(line):
                 self.ready.set()
                 break
             if self._proc.returncode is not None:
                 log.critical("Internal lavalink server exited early")
+            if i == 49:
+                # Sleep after 50 lines to prevent busylooping
+                await asyncio.sleep(0.1)
 
     async def _monitor(self) -> None:
         while self._proc.returncode is None:
