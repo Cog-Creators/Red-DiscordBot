@@ -5,6 +5,7 @@ import discord
 from fuzzywuzzy import process
 import heapq
 import lavalink
+import logging
 import math
 import os
 import random
@@ -31,6 +32,8 @@ _ = Translator("Audio", __file__)
 
 __version__ = "0.0.8"
 __author__ = ["aikaterna", "billy/bollo/ati"]
+
+log = logging.getLogger("red.audio")
 
 
 @cog_i18n(_)
@@ -61,6 +64,7 @@ class Audio(commands.Cog):
             "emptydc_timer": 0,
             "jukebox": False,
             "jukebox_price": 0,
+            "maxlength": 0,
             "playlists": {},
             "notify": False,
             "repeat": False,
@@ -121,22 +125,46 @@ class Audio(commands.Cog):
         disconnect = await self.config.guild(player.channel.guild).disconnect()
         notify = await self.config.guild(player.channel.guild).notify()
         status = await self.config.status()
-        try:
-            get_players = [p for p in lavalink.players if p.current is not None]
-            get_single_title = get_players[0].current.title
-            if get_single_title == "Unknown title":
-                get_single_title = get_players[0].current.uri
-                if not get_single_title.startswith("http"):
-                    get_single_title = get_single_title.rsplit("/", 1)[-1]
-            elif "localtracks/" in get_players[0].current.uri:
-                get_single_title = "{} - {}".format(
-                    get_players[0].current.author, get_players[0].current.title
-                )
-            else:
+
+        async def _players_check():
+            try:
+                get_players = [
+                    p for p in lavalink.players if p.current is not None and p.is_playing
+                ]
                 get_single_title = get_players[0].current.title
-            playing_servers = len(get_players)
-        except IndexError:
-            playing_servers = 0
+                if get_single_title == "Unknown title":
+                    get_single_title = get_players[0].current.uri
+                    if not get_single_title.startswith("http"):
+                        get_single_title = get_single_title.rsplit("/", 1)[-1]
+                elif "localtracks/" in get_players[0].current.uri:
+                    get_single_title = "{} - {}".format(
+                        get_players[0].current.author, get_players[0].current.title
+                    )
+                else:
+                    get_single_title = get_players[0].current.title
+                playing_servers = len(get_players)
+            except IndexError:
+                get_single_title = None
+                playing_servers = 0
+            return get_single_title, playing_servers
+
+        async def _status_check(playing_servers):
+            if playing_servers == 0:
+                await self.bot.change_presence(activity=None)
+            if playing_servers == 1:
+                single_title = await _players_check()
+                await self.bot.change_presence(
+                    activity=discord.Activity(
+                        name=single_title[0], type=discord.ActivityType.listening
+                    )
+                )
+            if playing_servers > 1:
+                await self.bot.change_presence(
+                    activity=discord.Activity(
+                        name=_("music in {} servers").format(playing_servers),
+                        type=discord.ActivityType.playing,
+                    )
+                )
 
         if event_type == lavalink.LavalinkEvents.TRACK_START:
             playing_song = player.fetch("playing_song")
@@ -190,21 +218,14 @@ class Audio(commands.Cog):
                 player.store("notify_message", notify_message)
 
         if event_type == lavalink.LavalinkEvents.TRACK_START and status:
-            if playing_servers == 0:
-                await self.bot.change_presence(activity=None)
-            if playing_servers == 1:
-                await self.bot.change_presence(
-                    activity=discord.Activity(
-                        name=get_single_title, type=discord.ActivityType.listening
-                    )
-                )
-            if playing_servers > 1:
-                await self.bot.change_presence(
-                    activity=discord.Activity(
-                        name=_("music in {} servers").format(playing_servers),
-                        type=discord.ActivityType.playing,
-                    )
-                )
+            player_check = await _players_check()
+            await _status_check(player_check[1])
+
+        if event_type == lavalink.LavalinkEvents.TRACK_END and status:
+            await asyncio.sleep(1)
+            if not player.is_playing:
+                player_check = await _players_check()
+                await _status_check(player_check[1])
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END and notify:
             notify_channel = player.fetch("channel")
@@ -221,21 +242,8 @@ class Audio(commands.Cog):
             await player.disconnect()
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END and status:
-            if playing_servers == 0:
-                await self.bot.change_presence(activity=None)
-            if playing_servers == 1:
-                await self.bot.change_presence(
-                    activity=discord.Activity(
-                        name=get_single_title, type=discord.ActivityType.listening
-                    )
-                )
-            if playing_servers > 1:
-                await self.bot.change_presence(
-                    activity=discord.Activity(
-                        name=_("music in {} servers").format(playing_servers),
-                        type=discord.ActivityType.playing,
-                    )
-                )
+            player_check = await _players_check()
+            await _status_check(player_check[1])
 
         if event_type == lavalink.LavalinkEvents.TRACK_EXCEPTION:
             if "localtracks/" in player.current.uri:
@@ -326,6 +334,29 @@ class Audio(commands.Cog):
         await self.config.guild(ctx.guild).emptydc_enabled.set(enabled)
 
     @audioset.command()
+    @checks.mod_or_permissions(administrator=True)
+    async def maxlength(self, ctx, seconds):
+        """Max length of a track to queue in seconds. 0 to disable.
+
+        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).
+        Invalid input will turn the max length setting off."""
+        if not isinstance(seconds, int):
+            seconds = int(await self._time_convert(seconds) / 1000)
+        if seconds < 0:
+            return await self._embed_msg(ctx, _("Can't be less than zero."))
+        if seconds == 0:
+            await self._embed_msg(ctx, _("Track max length disabled."))
+        else:
+            await self._embed_msg(
+                ctx,
+                _("Track max length set to {seconds}.").format(
+                    seconds=self._dynamic_time(seconds)
+                ),
+            )
+
+        await self.config.guild(ctx.guild).maxlength.set(seconds)
+
+    @audioset.command()
     @checks.admin_or_permissions(manage_roles=True)
     async def role(self, ctx, role_name: discord.Role):
         """Set the role to use for DJ mode."""
@@ -391,11 +422,12 @@ class Audio(commands.Cog):
         thumbnail = data["thumbnail"]
         dc = data["disconnect"]
         jarbuild = redbot.core.__version__
-
+        maxlength = data["maxlength"]
         vote_percent = data["vote_percent"]
-        msg = "----" + _("Server Settings") + "----\n"
+        msg = "----" + _("Server Settings") + "----        \n"
         if dc:
             msg += _("Auto-disconnect:  [{dc}]\n").format(dc=dc)
+
         if emptydc_enabled:
             msg += _("Disconnect timer: [{num_seconds}]\n").format(
                 num_seconds=self._dynamic_time(emptydc_timer)
@@ -405,6 +437,10 @@ class Audio(commands.Cog):
         if jukebox:
             msg += _("Jukebox:          [{jukebox_name}]\n").format(jukebox_name=jukebox)
             msg += _("Command price:    [{jukebox_price}]\n").format(jukebox_price=jukebox_price)
+        if maxlength > 0:
+            msg += _("Max track length: [{tracklength}]\n").format(
+                tracklength=self._dynamic_time(maxlength)
+            )
         msg += _(
             "Repeat:           [{repeat}]\n"
             "Shuffle:          [{shuffle}]\n"
@@ -418,7 +454,7 @@ class Audio(commands.Cog):
                 "Vote skip:        [{vote_enabled}]\nSkip percentage:  [{vote_percent}%]\n"
             ).format(**data)
         msg += _(
-            "---Lavalink Settings---\n"
+            "---Lavalink Settings---        \n"
             "Cog version:      [{version}]\n"
             "Jar build:        [{jarbuild}]\n"
             "External server:  [{use_external_lavalink}]"
@@ -572,7 +608,7 @@ class Audio(commands.Cog):
                 return await self._embed_msg(ctx, _("There are other people listening to music."))
             else:
                 await lavalink.get_player(ctx.guild.id).stop()
-                return await lavalink.get_player(ctx.guild.id).disconnect()
+                await lavalink.get_player(ctx.guild.id).disconnect()
 
     @commands.group()
     @commands.guild_only()
@@ -937,9 +973,7 @@ class Audio(commands.Cog):
     @commands.guild_only()
     async def play(self, ctx, *, query):
         """Play a URL or search for a track."""
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
-        jukebox_price = await self.config.guild(ctx.guild).jukebox_price()
-        shuffle = await self.config.guild(ctx.guild).shuffle()
+        guild_data = await self.config.guild(ctx.guild).all()
         restrict = await self.config.restrict()
         if restrict:
             if self._match_url(query):
@@ -963,7 +997,7 @@ class Audio(commands.Cog):
                 return await self._embed_msg(
                     ctx, _("Connection to Lavalink has not yet been established.")
                 )
-        if dj_enabled:
+        if guild_data["dj_enabled"]:
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(ctx, _("You need the DJ role to queue tracks."))
         player = lavalink.get_player(ctx.guild.id)
@@ -976,7 +1010,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx, _("You must be in the voice channel to use the play command.")
             )
-        if not await self._currency_check(ctx, jukebox_price):
+        if not await self._currency_check(ctx, guild_data["jukebox_price"]):
             return
 
         if not query:
@@ -1001,14 +1035,30 @@ class Audio(commands.Cog):
         before_queue_length = len(player.queue)
 
         if ("ytsearch:" or "localtrack") not in query and len(tracks) > 1:
+            track_len = 0
             for track in tracks:
-                player.add(ctx.author, track)
+                if guild_data["maxlength"] > 0:
+                    if self._track_limit(ctx, track, guild_data["maxlength"]):
+                        track_len += 1
+                        player.add(ctx.author, track)
+                else:
+                    track_len += 1
+                    player.add(ctx.author, track)
+
+            if len(tracks) > track_len:
+                maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
+                    bad_tracks=(len(tracks) - track_len)
+                )
+            else:
+                maxlength_msg = ""
             embed = discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("Playlist Enqueued"),
-                description=_("Added {num} tracks to the queue.").format(num=len(tracks)),
+                description=_("Added {num} tracks to the queue.{maxlength_msg}").format(
+                    num=track_len, maxlength_msg=maxlength_msg
+                ),
             )
-            if not shuffle and queue_duration > 0:
+            if not guild_data["shuffle"] and queue_duration > 0:
                 embed.set_footer(
                     text=_(
                         "{time} until start of playlist playback: starts at #{position} in queue"
@@ -1018,7 +1068,13 @@ class Audio(commands.Cog):
                 await player.play()
         else:
             single_track = tracks[0]
-            player.add(ctx.author, single_track)
+            if guild_data["maxlength"] > 0:
+                if self._track_limit(ctx, single_track, guild_data["maxlength"]):
+                    player.add(ctx.author, single_track)
+                else:
+                    return await self._embed_msg(ctx, _("Track exceeds maximum length."))
+            else:
+                player.add(ctx.author, single_track)
 
             if "localtracks" in single_track.uri:
                 if not single_track.title == "Unknown title":
@@ -1034,7 +1090,7 @@ class Audio(commands.Cog):
             embed = discord.Embed(
                 colour=await ctx.embed_colour(), title=_("Track Enqueued"), description=description
             )
-            if not shuffle and queue_duration > 0:
+            if not guild_data["shuffle"] and queue_duration > 0:
                 embed.set_footer(
                     text=_("{time} until track playback: #{position} in queue").format(
                         time=queue_total_duration, position=before_queue_length + 1
@@ -1408,28 +1464,35 @@ class Audio(commands.Cog):
     @playlist.command(name="start")
     async def _playlist_start(self, ctx, playlist_name=None):
         """Load a playlist into the queue."""
-        restrict = await self.config.restrict()
         if not await self._playlist_check(ctx):
             return
+        maxlength = await self.config.guild(ctx.guild).maxlength()
         playlists = await self.config.guild(ctx.guild).playlists.get_raw()
         author_obj = self.bot.get_user(ctx.author.id)
-        track_count = 0
+        track_len = 0
         try:
             player = lavalink.get_player(ctx.guild.id)
             for track in playlists[playlist_name]["tracks"]:
-                if restrict:
-                    url_check = self._url_check(track["info"]["uri"])
-                    if not url_check:
-                        continue
                 if track["info"]["uri"].startswith("localtracks/"):
                     if not os.path.isfile(track["info"]["uri"]):
                         continue
+                if maxlength > 0:
+                    if not self._track_limit(ctx, track["info"]["length"], maxlength):
+                        continue
                 player.add(author_obj, lavalink.rest_api.Track(data=track))
-                track_count = track_count + 1
+                track_len += 1
+            if len(playlists[playlist_name]["tracks"]) > track_len:
+                maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
+                    bad_tracks=(len(playlists[playlist_name]["tracks"]) - track_len)
+                )
+            else:
+                maxlength_msg = ""
             embed = discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("Playlist Enqueued"),
-                description=_("Added {num} tracks to the queue.").format(num=track_count),
+                description=_("Added {num} tracks to the queue.{maxlength_msg}").format(
+                    num=track_len, maxlength_msg=maxlength_msg
+                ),
             )
             await ctx.send(embed=embed)
             if not player.current:
@@ -1940,7 +2003,7 @@ class Audio(commands.Cog):
                     ctx, _("Connection to Lavalink has not yet been established.")
                 )
         player = lavalink.get_player(ctx.guild.id)
-        shuffle = await self.config.guild(ctx.guild).shuffle()
+        guild_data = await self.config.guild(ctx.guild).all()
         player.store("channel", ctx.channel.id)
         player.store("guild", ctx.guild.id)
         if (
@@ -1962,22 +2025,39 @@ class Audio(commands.Cog):
                     tracks = await self._folder_tracks(ctx, player, query)
                 if not tracks:
                     return await self._embed_msg(ctx, _("Nothing found."))
-                songembed = discord.Embed(
-                    colour=await ctx.embed_colour(),
-                    title=_("Queued {num} track(s).").format(num=len(tracks)),
-                )
+
                 queue_duration = await self._queue_duration(ctx)
                 queue_total_duration = lavalink.utils.format_time(queue_duration)
-                if not shuffle and queue_duration > 0:
+
+                track_len = 0
+                for track in tracks:
+                    if guild_data["maxlength"] > 0:
+                        if self._track_limit(ctx, track, guild_data["maxlength"]):
+                            track_len += 1
+                            player.add(ctx.author, track)
+                    else:
+                        track_len += 1
+                        player.add(ctx.author, track)
+                    if not player.current:
+                        await player.play()
+                if len(tracks) > track_len:
+                    maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
+                        bad_tracks=(len(tracks) - track_len)
+                    )
+                else:
+                    maxlength_msg = ""
+                songembed = discord.Embed(
+                    colour=await ctx.embed_colour(),
+                    title=_("Queued {num} track(s).{maxlength_msg}").format(
+                        num=track_len, maxlength_msg=maxlength_msg
+                    ),
+                )
+                if not guild_data["shuffle"] and queue_duration > 0:
                     songembed.set_footer(
                         text=_(
                             "{time} until start of search playback: starts at #{position} in queue"
                         ).format(time=queue_total_duration, position=len(player.queue) + 1)
                     )
-                for track in tracks:
-                    player.add(ctx.author, track)
-                    if not player.current:
-                        await player.play()
                 return await ctx.send(embed=songembed)
             elif query.startswith("sc "):
                 query = "scsearch:{}".format(query.replace("sc ", ""))
@@ -2028,10 +2108,9 @@ class Audio(commands.Cog):
                     ctx, _("Connection to Lavalink has not yet been established.")
                 )
         player = lavalink.get_player(ctx.guild.id)
-        jukebox_price = await self.config.guild(ctx.guild).jukebox_price()
-        shuffle = await self.config.guild(ctx.guild).shuffle()
+        guild_data = await self.config.guild(ctx.guild).all()
         command = ctx.invoked_with
-        if not await self._currency_check(ctx, jukebox_price):
+        if not await self._currency_check(ctx, guild_data["jukebox_price"]):
             return
         try:
             if emoji == "1⃣":
@@ -2075,7 +2154,7 @@ class Audio(commands.Cog):
         )
         queue_duration = await self._queue_duration(ctx)
         queue_total_duration = lavalink.utils.format_time(queue_duration)
-        if not shuffle and queue_duration > 0:
+        if not guild_data["shuffle"] and queue_duration > 0:
             embed.set_footer(
                 text=_("{time} until track playback: #{position} in queue").format(
                     time=queue_total_duration, position=len(player.queue) + 1
@@ -2084,7 +2163,11 @@ class Audio(commands.Cog):
         elif queue_duration > 0:
             embed.set_footer(text=_("#{position} in queue").format(position=len(player.queue) + 1))
 
-        player.add(ctx.author, search_choice)
+        if guild_data["maxlength"] > 0:
+            if self._track_limit(ctx, search_choice.length, guild_data["maxlength"]):
+                player.add(ctx.author, search_choice)
+            else:
+                return await self._embed_msg(ctx, _("Track exceeds maximum length."))
         if not player.current:
             await player.play()
         await ctx.send(embed=embed)
@@ -2629,16 +2712,20 @@ class Audio(commands.Cog):
                         stop_times[server.id] = int(time.time())
 
             for sid in stop_times:
+                if stop_times[sid] is None:
+                    continue
                 server_obj = self.bot.get_guild(sid)
-                emptydc_enabled = await self.config.guild(server_obj).emptydc_enabled()
-                if emptydc_enabled:
-                    if stop_times[sid] is not None and [self.bot.user] == p.channel.members:
-                        emptydc_timer = await self.config.guild(server_obj).emptydc_timer()
-                        if stop_times[sid] and (
-                            int(time.time()) - stop_times[sid] > emptydc_timer
-                        ):
-                            stop_times[sid] = None
+                if await self.config.guild(server_obj).emptydc_enabled():
+                    emptydc_timer = await self.config.guild(server_obj).emptydc_timer()
+                    if (int(time.time()) - stop_times[sid]) >= emptydc_timer:
+                        stop_times[sid] = None
+                        try:
                             await lavalink.get_player(sid).disconnect()
+                        except Exception:
+                            log.error(
+                                "Exception raised in Audio's disconnect_timer.", exc_info=True
+                            )
+                            pass
 
             await asyncio.sleep(5)
 
@@ -2781,6 +2868,33 @@ class Audio(commands.Cog):
         for key, value in zip(keys, values):
             track_obj[key] = value
         return track_obj
+
+    @staticmethod
+    def _track_limit(ctx, track, maxlength):
+        try:
+            length = round(track.length / 1000)
+        except AttributeError:
+            length = round(track / 1000)
+        if length > 900000000000000:  # livestreams return 9223372036854775807ms
+            return True
+        elif length >= maxlength:
+            return False
+        else:
+            return True
+
+    async def _time_convert(self, length):
+        match = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])").match(length)
+        if match is not None:
+            hr = int(match.group(1)) if match.group(1) else 0
+            mn = int(match.group(2)) if match.group(2) else 0
+            sec = int(match.group(3)) if match.group(3) else 0
+            pos = sec + (mn * 60) + (hr * 3600)
+            return pos * 1000
+        else:
+            try:
+                return int(length) * 1000
+            except ValueError:
+                return 0
 
     @staticmethod
     def _url_check(url):
