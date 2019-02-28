@@ -145,7 +145,7 @@ class Admin(commands.Cog):
             # noinspection PyTypeChecker
             await self._addrole(ctx, user, rolename)
         else:
-            await self.complain(ctx, T_(USER_HIERARCHY_ISSUE), member=ctx.author, role=rolename)
+            await self.complain(ctx, T_(USER_HIERARCHY_ISSUE), member=user, role=rolename)
 
     @commands.command()
     @commands.guild_only()
