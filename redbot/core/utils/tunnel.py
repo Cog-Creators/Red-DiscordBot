@@ -158,6 +158,8 @@ class Tunnel(metaclass=TunnelMeta):
                 files.append(discord.File(_fp, filename=a.filename))
         return files
 
+    files_from_attatch = files_from_attach
+
     async def communicate(
         self, *, message: discord.Message, topic: str = None, skip_message_content: bool = False
     ):
