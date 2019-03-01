@@ -1,5 +1,5 @@
 from redbot.core.bot import Red
-from .modcore import Mod
+from .mod import Mod
 
 
 def setup(bot: Red):
