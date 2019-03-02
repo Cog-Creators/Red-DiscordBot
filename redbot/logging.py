@@ -51,7 +51,7 @@ def init_logging(debug: bool) -> None:
         encoding="utf-8",
         mode="a",
         maxBytes=500_000,  # About 500KB per logfile
-        backupCount=9,     # Maximum 10 parts to each log
+        backupCount=9,  # Maximum 10 parts to each log
     )
     fhandler.namer = _namer
     fhandler.setFormatter(formatter)
