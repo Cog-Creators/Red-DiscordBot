@@ -216,8 +216,12 @@ class General(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    async def serverinfo(self, ctx):
-        """Show server information."""
+    async def serverinfo(self, ctx, details: bool = False):
+        """
+            Show server information.
+        
+            `details` will show more information about this server if set to True. Defaults to False.
+        """
         guild = ctx.guild
 
         def check_feature(feature):
@@ -259,13 +263,14 @@ class General(commands.Cog):
             "japan": _("Japan :flag_jp:"),
             "southafrica": _("South Africa :flag_za:"),
         }
+
         online = len([m.status for m in guild.members if m.status == discord.Status.online])
         idle = len([m.status for m in guild.members if m.status == discord.Status.idle])
         dnd = len([m.status for m in guild.members if m.status == discord.Status.dnd])
         offline = len([m.status for m in guild.members if m.status == discord.Status.offline])
         streaming = len([m for m in guild.members if isinstance(m.activity, discord.Streaming)])
         mobile = len([m for m in guild.members if m.is_on_mobile()])
-        lurkers = len([m for m in guild.members if m.joined_at is None])
+        # lurkers = len([m for m in guild.members if m.joined_at is None])
         total_users = len(guild.members)
         humans = len([a for a in ctx.guild.members if a.bot == False])
         bots = len([a for a in ctx.guild.members if a.bot])
@@ -282,28 +287,49 @@ class General(commands.Cog):
             "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago !"
         ).format(bot_name=ctx.bot.user.name, bot_join=bot_joined, since_join=since_joined)
         data = discord.Embed(description=created_at, colour=(await ctx.embed_colour()))
-        if lurkers:
-            data.add_field(
-                name=_("Members :"),
-                value=_(
-                    "Total users : **{total}**\nLurkers : **{lurkers}**\nHumans : **{hum}** • Bots : **{bots}**\n"
-                    "📗 `{online}` 📙 `{idle}`\n📕 `{dnd}` 📓 `{off}`\n"
-                    "🎥 `{streaming}` 📱 `{mobile}`\n"
-                ).format(
-                    total=total_users,
-                    lurkers=lurkers,
-                    hum=humans,
-                    bots=bots,
-                    online=online,
-                    idle=idle,
-                    dnd=dnd,
-                    off=offline,
-                    streaming=streaming,
-                    mobile=mobile,
-                ),
-            )
-        else:
-            data.add_field(
+        if (
+            details
+        ):  # Lurkers detection disabled until this bug https://github.com/discordapp/discord-api-docs/issues/855 is not fixed.
+            """if lurkers:
+                data.add_field(
+                    name=_("Members :"),
+                    value=_(
+                        "Total users : **{total}**\nLurkers : **{lurkers}**\nHumans : **{hum}** • Bots : **{bots}**\n"
+                        "📗 `{online}` 📙 `{idle}`\n📕 `{dnd}` 📓 `{off}`\n"
+                        "🎥 `{streaming}` 📱 `{mobile}`\n"
+                    ).format(
+                        total=total_users,
+                        lurkers=lurkers,
+                        hum=humans,
+                        bots=bots,
+                        online=online,
+                        idle=idle,
+                        dnd=dnd,
+                        off=offline,
+                        streaming=streaming,
+                        mobile=mobile,
+                    ),
+                )
+            else:
+                data.add_field(
+                    name=_("Members :"),
+                    value=_(
+                        "Total users : **{total}**\nHumans : **{hum}** • Bots : **{bots}**\n"
+                        "📗 `{online}` 📙 `{idle}`\n📕 `{dnd}` 📓 `{off}`\n"
+                        "🎥 `{streaming}` 📱 `{mobile}`\n"
+                    ).format(
+                        total=total_users,
+                        hum=humans,
+                        bots=bots,
+                        online=online,
+                        idle=idle,
+                        dnd=dnd,
+                        off=offline,
+                        streaming=streaming,
+                        mobile=mobile,
+                    ),
+                )"""
+            data.add_field(  # Delete this field when lurkers will be fixed cause it's just a copy-paste of the field above.
                 name=_("Members :"),
                 value=_(
                     "Total users : **{total}**\nHumans : **{hum}** • Bots : **{bots}**\n"
@@ -311,7 +337,6 @@ class General(commands.Cog):
                     "🎥 `{streaming}` 📱 `{mobile}`\n"
                 ).format(
                     total=total_users,
-                    lurkers=lurkers,
                     hum=humans,
                     bots=bots,
                     online=online,
@@ -322,54 +347,70 @@ class General(commands.Cog):
                     mobile=mobile,
                 ),
             )
-        data.add_field(
-            name=_("Channels :"),
-            value=_("💬 Text : **{text}**\n🔊 Voice : **{voice}**").format(
-                text=text_channels, voice=voice_channels
-            ),
-        )
-        data.add_field(
-            name=_("Utility :"),
-            value=_(
-                "Owner : **{owner}**\nRegion : **{region}**\nVerif. level : **{verif}**\nServer ID : **{id}**"
-            ).format(
-                owner=guild.owner,
-                region=region[str(guild.region)],
-                verif=verif[int(guild.verification_level)],
-                id=guild.id,
-            ),
-        )
-        data.add_field(
-            name=_("Misc :"),
-            value=_(
-                "AFK channel : **{afk_chan}**\nAFK Timeout : **{afk_timeout}sec**\nCustom emojis : **{emojis}**\nRoles : **{roles}**"
-            ).format(
-                afk_chan=guild.afk_channel,
-                afk_timeout=guild.afk_timeout,
-                emojis=len(guild.emojis),
-                roles=len(guild.roles),
-            ),
-        )
-        if guild.features:
             data.add_field(
-                name=_("Special features :"),
+                name=_("Channels :"),
+                value=_("💬 Text : **{text}**\n🔊 Voice : **{voice}**").format(
+                    text=text_channels, voice=voice_channels
+                ),
+            )
+            data.add_field(
+                name=_("Utility :"),
                 value=_(
-                    "{vip} VIP Regions\n{van} Vanity URL\n{splash} Splash Invite\n{m_emojis} More Emojis\n{verify} Verified"
-                ).format(**format_kwargs),
+                    "Owner : **{owner}**\nRegion : **{region}**\nVerif. level : **{verif}**\nServer ID : **{id}**"
+                ).format(
+                    owner=guild.owner,
+                    region=region[str(guild.region)],
+                    verif=verif[int(guild.verification_level)],
+                    id=guild.id,
+                ),
             )
-        data.set_author(name=guild.name)
-        if "VERIFIED" in guild.features:
-            data.set_author(
-                name=guild.name,
-                icon_url="https://cdn.discordapp.com/emojis/457879292152381443.png",
+            data.add_field(
+                name=_("Misc :"),
+                value=_(
+                    "AFK channel : **{afk_chan}**\nAFK Timeout : **{afk_timeout}sec**\nCustom emojis : **{emojis}**\nRoles : **{roles}**"
+                ).format(
+                    afk_chan=guild.afk_channel,
+                    afk_timeout=guild.afk_timeout,
+                    emojis=len(guild.emojis),
+                    roles=len(guild.roles),
+                ),
             )
-        if guild.icon_url:
-            data.set_thumbnail(url=guild.icon_url)
+            if guild.features:
+                data.add_field(
+                    name=_("Special features :"),
+                    value=_(
+                        "{vip} VIP Regions\n{van} Vanity URL\n{splash} Splash Invite\n{m_emojis} More Emojis\n{verify} Verified"
+                    ).format(**format_kwargs),
+                )
+            data.set_author(name=guild.name)
+            if "VERIFIED" in guild.features:
+                data.set_author(
+                    name=guild.name,
+                    icon_url="https://cdn.discordapp.com/emojis/457879292152381443.png",
+                )
+            if guild.icon_url:
+                data.set_thumbnail(url=guild.icon_url)
+            else:
+                data.set_thumbnail(
+                    url="https://cdn.discordapp.com/attachments/494975386334134273/529843761635786754/Discord-Logo-Black.png"
+                )
+            data.set_footer(text=f"{joined_on}")
+
         else:
-            data.set_thumbnail(
-                url="https://cdn.discordapp.com/attachments/494975386334134273/529843761635786754/Discord-Logo-Black.png"
-            )
-        data.set_footer(text=f"{joined_on}")
+            data = discord.Embed(description=created_at, colour=(await ctx.embed_colour()))
+            data.add_field(name=_("Region"), value=region[str(guild.region)])
+            data.add_field(name=_("Users"), value=f"{online}/{total_users}")
+            data.add_field(name=_("Text Channels"), value=str(text_channels))
+            data.add_field(name=_("Voice Channels"), value=str(voice_channels))
+            data.add_field(name=_("Roles"), value=str(len(guild.roles)))
+            data.add_field(name=_("Owner"), value=str(guild.owner))
+            data.set_footer(text=_("Server ID: ") + str(guild.id))
+
+            if guild.icon_url:
+                data.set_author(name=guild.name, url=guild.icon_url)
+                data.set_thumbnail(url=guild.icon_url)
+            else:
+                data.set_author(name=guild.name)
 
         try:
             await ctx.send(embed=data)
