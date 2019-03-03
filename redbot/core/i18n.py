@@ -87,7 +87,7 @@ def _unescape(string):
     string = string.replace(r"\t", "\t")
     string = string.replace(r"\r", "\r")
     string = string.replace(r"\n", "\n")
-    string = string.replace(r'\"', '"')
+    string = string.replace(r"\"", '"')
     return string
 
 
