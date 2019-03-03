@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-04-15 16:43-0400\n"
+"POT-Creation-Date: 2019-01-11 02:18+0000\n"
+"PO-Revision-Date: 2019-02-25 03:08\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: ENCODING\n"
-"Generated-By: pygettext.py 1.5\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 2.2\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
@@ -16,51 +16,172 @@ msgstr ""
 "X-Crowdin-File: /cogs/filter/locales/messages.pot\n"
 "Language: zh_CN\n"
 
-#: ../filter.py:62
-msgid "Filtered in this server:"
+#: redbot/cogs/filter/filter.py:14
+#, docstring
+msgid "Filter unwanted words and phrases from text channels."
 msgstr ""
 
-#: ../filter.py:67
-msgid "I can't send direct messages to you."
+#: redbot/cogs/filter/filter.py:50
+#, docstring
+msgid "Manage filter settings."
 msgstr ""
 
-#: ../filter.py:96
-msgid "Words added to filter."
+#: redbot/cogs/filter/filter.py:55
+#, docstring
+msgid "Set the nickname for users with a filtered name.\n\n"
+"        Note that this has no effect if filtering names is disabled\n"
+"        (to toggle, run `[p]filter names`).\n\n"
+"        The default name used is *John Doe*.\n"
+"        "
 msgstr ""
 
-#: ../filter.py:98
-msgid "Words already in the filter."
+#: redbot/cogs/filter/filter.py:64
+msgid "The name to use on filtered names has been set."
 msgstr ""
 
-#: ../filter.py:127
-msgid "Words removed from filter."
+#: redbot/cogs/filter/filter.py:68
+#, docstring
+msgid "Set the filter's autoban conditions.\n\n"
+"        Users will be banned if they send `<count>` filtered words in\n"
+"        `<timeframe>` seconds.\n\n"
+"        Set both to zero to disable autoban.\n"
+"        "
 msgstr ""
 
-#: ../filter.py:129
-msgid "Those words weren't in the filter."
-msgstr ""
-
-#: ../filter.py:142
-msgid "Names and nicknames will no longer be checked against the filter"
-msgstr ""
-
-#: ../filter.py:147
-msgid "Names and nicknames will now be checked against the filter"
-msgstr ""
-
-#: ../filter.py:160
-msgid "The name to use on filtered names has been set"
-msgstr ""
-
-#: ../filter.py:171
+#: redbot/cogs/filter/filter.py:77
 msgid "Count and timeframe either both need to be 0 or both need to be greater than 0!"
 msgstr ""
 
-#: ../filter.py:179
+#: redbot/cogs/filter/filter.py:86
 msgid "Autoban disabled."
 msgstr ""
 
-#: ../filter.py:183
+#: redbot/cogs/filter/filter.py:90
 msgid "Count and time have been set."
+msgstr ""
+
+#: redbot/cogs/filter/filter.py:96
+#, docstring
+msgid "Add or remove words from server filter.\n\n"
+"        Use double quotes to add or remove sentences.\n\n"
+"        Using this command with no subcommands will send the list of\n"
+"        the server's filtered words.\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/filter/filter.py:109
+msgid "Filtered in this server:"
+msgstr ""
+
+#: redbot/cogs/filter/filter.py:114 redbot/cogs/filter/filter.py:136
+msgid "I can't send direct messages to you."
+msgstr ""
+
+#: redbot/cogs/filter/filter.py:118
+#, docstring
+msgid "Add or remove words from channel filter.\n\n"
+"        Use double quotes to add or remove sentences.\n\n"
+"        Using this command with no subcommands will send the list of\n"
+"        the channel's filtered words.\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/filter/filter.py:131
+msgid "Filtered in this channel:"
+msgstr ""
+
+#: redbot/cogs/filter/filter.py:140
+#, docstring
+msgid "Add words to the filter.\n\n"
+"        Use double quotes to add sentences.\n\n"
+"        Examples:\n"
+"        - `[p]filter channel add word1 word2 word3`\n"
+"        - `[p]filter channel add \"This is a sentence\"`\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/filter/filter.py:166
+msgid "Words added to filter."
+msgstr ""
+
+#: redbot/cogs/filter/filter.py:168
+msgid "Words already in the filter."
+msgstr ""
+
+#: redbot/cogs/filter/filter.py:172
+#, docstring
+msgid "Remove words from the filter.\n\n"
+"        Use double quotes to remove sentences.\n\n"
+"        Examples:\n"
+"        - `[p]filter channel remove word1 word2 word3`\n"
+"        - `[p]filter channel remove \"This is a sentence\"`\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/filter/filter.py:198
+msgid "Words removed from filter."
+msgstr ""
+
+#: redbot/cogs/filter/filter.py:200 redbot/cogs/filter/filter.py:264
+msgid "Those words weren't in the filter."
+msgstr ""
+
+#: redbot/cogs/filter/filter.py:204
+#, docstring
+msgid "Add words to the filter.\n\n"
+"        Use double quotes to add sentences.\n\n"
+"        Examples:\n"
+"        - `[p]filter add word1 word2 word3`\n"
+"        - `[p]filter add \"This is a sentence\"`\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/filter/filter.py:230
+msgid "Words successfully added to filter."
+msgstr ""
+
+#: redbot/cogs/filter/filter.py:232
+msgid "Those words were already in the filter."
+msgstr ""
+
+#: redbot/cogs/filter/filter.py:236
+#, docstring
+msgid "Remove words from the filter.\n\n"
+"        Use double quotes to remove sentences.\n\n"
+"        Examples:\n"
+"        - `[p]filter remove word1 word2 word3`\n"
+"        - `[p]filter remove \"This is a sentence\"`\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/filter/filter.py:262
+msgid "Words successfully removed from filter."
+msgstr ""
+
+#: redbot/cogs/filter/filter.py:268
+#, docstring
+msgid "Toggle name and nickname filtering.\n\n"
+"        This is disabled by default.\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/filter/filter.py:276
+msgid "Names and nicknames will no longer be filtered."
+msgstr ""
+
+#: redbot/cogs/filter/filter.py:278
+msgid "Names and nicknames will now be filtered."
+msgstr ""
+
+#: redbot/cogs/filter/filter.py:354
+msgid "Autoban (too many filtered messages.)"
+msgstr ""
+
+#: redbot/cogs/filter/filter.py:409
+msgid "Filtered nickname"
+msgstr ""
+
+#: redbot/cogs/filter/filter.py:409
+msgid "Filtered name"
 msgstr ""
 

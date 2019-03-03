@@ -286,7 +286,7 @@ class Audio(commands.Cog):
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         await self.config.guild(ctx.guild).dj_enabled.set(not dj_enabled)
         await self._embed_msg(
-            ctx, _("DJ role enabled: {true_or_false}.".format(true_or_false=not dj_enabled))
+            ctx, _("DJ role enabled: {true_or_false}.").format(true_or_false=not dj_enabled)
         )
 
     @audioset.command()
