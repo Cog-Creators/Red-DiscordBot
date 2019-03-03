@@ -237,7 +237,8 @@ class Audio(commands.Cog):
                 await notify_channel.send(embed=embed)
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END and disconnect:
-            if status and playing_servers == 0:
+            playing_servers = await _players_check()
+            if status and playing_servers[1] == 0:
                 await self.bot.change_presence(activity=None)
             await player.disconnect()
 
