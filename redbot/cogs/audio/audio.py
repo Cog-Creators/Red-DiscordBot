@@ -336,7 +336,6 @@ class Audio(commands.Cog):
         await self.config.guild(ctx.guild).jukebox_price.set(price)
         await self.config.guild(ctx.guild).jukebox.set(jukebox)
 
-
     @audioset.command()
     @checks.mod_or_permissions(administrator=True)
     async def maxlength(self, ctx, seconds):
@@ -997,7 +996,6 @@ class Audio(commands.Cog):
     async def play(self, ctx, *, query):
         """Play a URL or search for a track."""
 
-        api_data = await self._check_api_tokens()
         guild_data = await self.config.guild(ctx.guild).all()
         restrict = await self.config.restrict()
         if restrict:
@@ -1047,7 +1045,32 @@ class Audio(commands.Cog):
                 re.sub("(http[s]?:\/\/)?(open.spotify.com)\/", "", query).replace("/", ":")
             )
         if query.startswith("spotify:"):
-            parts = query.split(":")
+            return await self._get_spotify_tracks(ctx, query)
+
+        if query.startswith("localtrack:"):
+            await self._localtracks_check(ctx)
+            query = query.replace("localtrack:", "").replace(
+                (str(cog_data_path(raw_name="Audio")) + "/"), ""
+            )
+        allowed_files = (".mp3", ".flac", ".ogg")
+        if not self._match_url(query) and not (query.lower().endswith(allowed_files)):
+            query = "ytsearch:{}".format(query)
+
+        await self._enqueue_tracks(ctx, query)
+
+    async def _get_spotify_tracks(self, ctx, query):
+        if ctx.invoked_with == "play":
+            enqueue_tracks = True
+        else:
+            enqueue_tracks = False
+        player = lavalink.get_player(ctx.guild.id)
+        api_data = await self._check_api_tokens()
+        guild_data = await self.config.guild(ctx.guild).all()
+        if "open.spotify.com" in query:
+            query = "spotify:{}".format(
+                re.sub("(http[s]?:\/\/)?(open.spotify.com)\/", "", query).replace("/", ":")
+            )
+        if query.startswith("spotify:"):
             if (
                 not api_data["spotify_client_id"]
                 or not api_data["spotify_client_secret"]
@@ -1062,7 +1085,6 @@ class Audio(commands.Cog):
                         "for instructions."
                     ).format(prefix=ctx.prefix),
                 )
-
             try:
                 if self.play_lock[ctx.message.guild.id]:
                     return await self._embed_msg(
@@ -1071,12 +1093,23 @@ class Audio(commands.Cog):
             except KeyError:
                 pass
 
+            parts = query.split(":")
             if "track" in parts:
                 res = await self._make_spotify_req(
                     "https://api.spotify.com/v1/tracks/{0}".format(parts[-1])
                 )
                 try:
                     query = "{} {}".format(res["artists"][0]["name"], res["name"])
+                    if enqueue_tracks:
+                        return await self._enqueue_tracks(ctx, query)
+                    else:
+                        tracks = await player.get_tracks(f"ytsearch:{query}")
+                        if not tracks:
+                            return await self._embed_msg(ctx, _("Nothing found."))
+                        single_track = []
+                        single_track.append(tracks[0])
+                        return single_track
+
                 except KeyError:
                     return await self._embed_msg(
                         ctx,
@@ -1094,7 +1127,10 @@ class Audio(commands.Cog):
                 if not track_list:
                     self._play_lock(ctx, False)
                     return
-                return await self._enqueue_tracks(ctx, track_list)
+                if enqueue_tracks:
+                    return await self._enqueue_tracks(ctx, track_list)
+                else:
+                    return track_list
             elif "playlist" in parts:
                 query = parts[-1]
                 self._play_lock(ctx, True)
@@ -1109,28 +1145,22 @@ class Audio(commands.Cog):
                 if not track_list:
                     self._play_lock(ctx, False)
                     return
-                return await self._enqueue_tracks(ctx, track_list)
+                if enqueue_tracks:
+                    return await self._enqueue_tracks(ctx, track_list)
+                else:
+                    return track_list
 
             else:
                 return await self._embed_msg(
                     ctx, _("This doesn't seem to be a valid Spotify URL or code.")
                 )
 
-        if query.startswith("localtrack:"):
-            await self._localtracks_check(ctx)
-            query = query.replace("localtrack:", "").replace(
-                (str(cog_data_path(raw_name="Audio")) + "/"), ""
-            )
-        allowed_files = (".mp3", ".flac", ".ogg")
-        if not self._match_url(query) and not (query.lower().endswith(allowed_files)):
-            query = "ytsearch:{}".format(query)
-
-        await self._enqueue_tracks(ctx, query)
-
     async def _enqueue_tracks(self, ctx, query):
         player = lavalink.get_player(ctx.guild.id)
         guild_data = await self.config.guild(ctx.guild).all()
         if type(query) is not list:
+            if not query.startswith("http"):
+                query = f"ytsearch:{query}"
             tracks = await player.get_tracks(query)
             if not tracks:
                 return await self._embed_msg(ctx, _("Nothing found."))
@@ -1181,7 +1211,7 @@ class Audio(commands.Cog):
                         player.add(ctx.author, single_track)
                     else:
                         return await self._embed_msg(ctx, _("Track exceeds maximum length."))
-                
+
                 else:
                     player.add(ctx.author, single_track)
             except IndexError:
@@ -1239,9 +1269,14 @@ class Audio(commands.Cog):
             pass
         while True:
             try:
-                spotify_info.extend(r["tracks"]["items"])
+                try:
+                    spotify_info.extend(r["tracks"]["items"])
+                except KeyError:
+                    spotify_info.extend(r["items"])
             except KeyError:
-                spotify_info.extend(r["items"])
+                return await self._embed_msg(
+                    ctx, _("This doesn't seem to be a valid Spotify URL or code.")
+                )
 
             try:
                 if r["next"] is not None:
@@ -1906,21 +1941,42 @@ class Audio(commands.Cog):
 
     async def _playlist_tracks(self, ctx, player, query):
         search = False
+        tracklist = []
         if type(query) is tuple:
             query = " ".join(query)
-        if not query.startswith("http"):
-            query = " ".join(query)
-            query = "ytsearch:{}".format(query)
-            search = True
-        tracks = await player.get_tracks(query)
-        if not tracks:
-            return await self._embed_msg(ctx, _("Nothing found."))
-        tracklist = []
-        if not search:
+        if "open.spotify.com" in query:
+            query = "spotify:{}".format(
+                re.sub("(http[s]?:\/\/)?(open.spotify.com)\/", "", query).replace("/", ":")
+            )
+        if query.startswith("spotify:"):
+            try:
+                if self.play_lock[ctx.message.guild.id]:
+                    return await self._embed_msg(
+                        ctx, _("Wait until the playlist has finished loading.")
+                    )
+            except KeyError:
+                pass
+            tracks = await self._get_spotify_tracks(ctx, query)
+            if not tracks:
+                return await self._embed_msg(ctx, _("Nothing found."))
             for track in tracks:
                 track_obj = self._track_creator(player, other_track=track)
                 tracklist.append(track_obj)
+            self._play_lock(ctx, False)
+        elif not query.startswith("http"):
+            query = " ".join(query)
+            query = "ytsearch:{}".format(query)
+            search = True
+            tracks = await player.get_tracks(query)
+            if not tracks:
+                return await self._embed_msg(ctx, _("Nothing found."))
         else:
+            tracks = await player.get_tracks(query)
+        if not search and len(tracklist) == 0:
+            for track in tracks:
+                track_obj = self._track_creator(player, other_track=track)
+                tracklist.append(track_obj)
+        elif len(tracklist) == 0:
             track_obj = self._track_creator(player, other_track=tracks[0])
             tracklist.append(track_obj)
         return tracklist
