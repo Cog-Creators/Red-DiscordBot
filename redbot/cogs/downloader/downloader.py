@@ -285,42 +285,43 @@ class Downloader(commands.Cog):
         """Cog installation management commands."""
         pass
 
-    @cog.command(name="install", usage="<repo_name> <cog_name>")
-    async def _cog_install(self, ctx, repo: Repo, cog_name: str):
+    @cog.command(name="install", usage="<repo_name> <cogs>")
+    async def _cog_install(self, ctx, repo: Repo, cogs: list):
         """Install a cog from the given repo."""
-        cog: Installable = discord.utils.get(repo.available_cogs, name=cog_name)
-        if cog is None:
-            await ctx.send(
-                _(
-                    "Error: there is no cog by the name of `{cog_name}` in the `{repo.name}` repo."
-                ).format(cog_name=cog_name, repo=repo)
-            )
-            return
-        elif cog.min_python_version > sys.version_info:
-            await ctx.send(
-                _("This cog requires at least python version {version}, aborting install.").format(
-                    version=".".join([str(n) for n in cog.min_python_version])
+        for cog_name in cogs:
+            cog: Installable = discord.utils.get(repo.available_cogs, name=cog_name)
+            if cog is None:
+                await ctx.send(
+                    _(
+                        "Error: there is no cog by the name of `{cog_name}` in the `{repo.name}` repo."
+                    ).format(cog_name=cog_name, repo=repo)
                 )
-            )
-            return
+                continue
+            elif cog.min_python_version > sys.version_info:
+                await ctx.send(
+                    _("The cog {cog_name} requires at least python version {version}, not installing this cog.").format(
+                        cog_name=cog_name, version=".".join([str(n) for n in cog.min_python_version])
+                    )
+                )
+                continue
 
-        if not await repo.install_requirements(cog, self.LIB_PATH):
-            await ctx.send(
-                _(
-                    "Failed to install the required libraries for `{cog_name}`: `{libraries}`"
-                ).format(cog_name=cog.name, libraries=cog.requirements)
-            )
-            return
+            if not await repo.install_requirements(cog, self.LIB_PATH):
+                await ctx.send(
+                    _(
+                        "Failed to install the required libraries for `{cog_name}`: `{libraries}`"
+                    ).format(cog_name=cog.name, libraries=cog.requirements)
+                )
+                continue
 
-        await repo.install_cog(cog, await self.cog_install_path())
+            await repo.install_cog(cog, await self.cog_install_path())
 
-        await self._add_to_installed(cog)
+            await self._add_to_installed(cog)
 
-        await repo.install_libraries(target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH)
+            await repo.install_libraries(target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH)
 
-        await ctx.send(_("Cog `{cog_name}` successfully installed.").format(cog_name=cog_name))
-        if cog.install_msg is not None:
-            await ctx.send(cog.install_msg.replace("[p]", ctx.prefix))
+            await ctx.send(_("Cog `{cog_name}` successfully installed.").format(cog_name=cog_name))
+            if cog.install_msg is not None:
+                await ctx.send(cog.install_msg.replace("[p]", ctx.prefix))
 
     @cog.command(name="uninstall", usage="<cog_name>")
     async def _cog_uninstall(self, ctx, cog: InstalledCog):
