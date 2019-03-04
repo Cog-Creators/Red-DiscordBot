@@ -513,12 +513,12 @@ class Core(commands.Cog, CoreLogic):
         embeds = []
         for i, server in enumerate(guilds, 1):
             embed = discord.Embed()
-            embed.title = "Servers list"
+            embed.title = _("Servers list")
             embed.description = server.name
             embed.set_thumbnail(url=server.icon_url)
-            embed.add_field(name="Total users", value=len(server.members))
+            embed.add_field(name=_("Total users"), value=len(server.members))
             embed.add_field(
-                name="Amount of bots", value=len([user for user in server.members if user.bot])
+                name=_("Amount of bots"), value=len([user for user in server.members if user.bot])
             )
             embeds.append(embed)
 
@@ -532,21 +532,21 @@ class Core(commands.Cog, CoreLogic):
 
     async def leave_confirmation(self, guild, ctx):
         if guild.owner.id == ctx.bot.user.id:
-            await ctx.send("I cannot leave a guild I am the owner of.")
+            await ctx.send(_(("I cannot leave a guild I am the owner of.")))
             return
 
-        await ctx.send("Are you sure you want me to leave {}? (yes/no)".format(guild.name))
+        await ctx.send(_(("Are you sure you want me to leave {}? (yes/no)".format(guild.name))))
         pred = MessagePredicate.yes_or_no(ctx)
         try:
             await self.bot.wait_for("message", check=pred, timeout=15)
             if pred.result is True:
                 await guild.leave()
                 if guild != ctx.guild:
-                    await ctx.send("Done.")
+                    await ctx.send(_(("Done.")))
             else:
-                await ctx.send("Alright then.")
+                await ctx.send(_(("Alright then.")))
         except asyncio.TimeoutError:
-            await ctx.send("Response timed out.")
+            await ctx.send(_(("Response timed out.")))
 
     @commands.command()
     @checks.is_owner()
