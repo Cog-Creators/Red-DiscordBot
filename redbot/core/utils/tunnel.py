@@ -158,6 +158,7 @@ class Tunnel(metaclass=TunnelMeta):
                 files.append(discord.File(_fp, filename=a.filename))
         return files
 
+    # Backwards-compatible typo fix (GH-2496)
     files_from_attatch = files_from_attach
 
     async def communicate(
