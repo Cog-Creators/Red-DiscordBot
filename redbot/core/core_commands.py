@@ -490,7 +490,15 @@ class Core(commands.Cog, CoreLogic):
         """Lists and allows to leave servers"""
         guilds = sorted(list(self.bot.guilds), key=lambda s: s.name.lower())
 
-        async def select_server(ctx: commands.Context, pages: list, controls: dict, message: discord.Message, page: int, timeout: float, emoji: str):
+        async def select_server(
+            ctx: commands.Context,
+            pages: list,
+            controls: dict,
+            message: discord.Message,
+            page: int,
+            timeout: float,
+            emoji: str,
+        ):
             with contextlib.suppress(discord.NotFound):
                 await message.delete()
             await self.selected_server(ctx, guilds, page)
@@ -499,7 +507,7 @@ class Core(commands.Cog, CoreLogic):
         SELECT_SERVER = {"\N{NO ENTRY SIGN}": select_server}
         SELECT_CONTROLS = {}
         SELECT_CONTROLS.update(DEFAULT_CONTROLS)
-        SELECT_CONTROLS.pop('❌', None)
+        SELECT_CONTROLS.pop("❌", None)
         SELECT_CONTROLS.update(SELECT_SERVER)
 
         embeds = []
@@ -509,7 +517,9 @@ class Core(commands.Cog, CoreLogic):
             embed.description = server.name
             embed.set_thumbnail(url=server.icon_url)
             embed.add_field(name="Total users", value=len(server.members))
-            embed.add_field(name="Amount of bots", value=len([user for user in server.members if user.bot]))
+            embed.add_field(
+                name="Amount of bots", value=len([user for user in server.members if user.bot])
+            )
             embeds.append(embed)
 
         await menu(ctx, pages=embeds, controls=SELECT_CONTROLS, message=None, page=0, timeout=60)
