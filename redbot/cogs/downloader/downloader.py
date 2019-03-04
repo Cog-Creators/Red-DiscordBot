@@ -299,8 +299,11 @@ class Downloader(commands.Cog):
                 continue
             elif cog.min_python_version > sys.version_info:
                 await ctx.send(
-                    _("The cog {cog_name} requires at least python version {version}, not installing this cog.").format(
-                        cog_name=cog_name, version=".".join([str(n) for n in cog.min_python_version])
+                    _(
+                        "The cog {cog_name} requires at least python version {version}, not installing this cog."
+                    ).format(
+                        cog_name=cog_name,
+                        version=".".join([str(n) for n in cog.min_python_version]),
                     )
                 )
                 continue
@@ -317,7 +320,9 @@ class Downloader(commands.Cog):
 
             await self._add_to_installed(cog)
 
-            await repo.install_libraries(target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH)
+            await repo.install_libraries(
+                target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH
+            )
 
             await ctx.send(_("Cog `{cog_name}` successfully installed.").format(cog_name=cog_name))
             if cog.install_msg is not None:
