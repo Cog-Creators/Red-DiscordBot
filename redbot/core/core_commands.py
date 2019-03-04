@@ -29,6 +29,7 @@ from redbot.core import (
     i18n,
 )
 from .utils.predicates import MessagePredicate
+from .utils.menus import menu, DEFAULT_CONTROLS
 from .utils.chat_formatting import pagify, box, inline
 
 if TYPE_CHECKING:
@@ -488,27 +489,36 @@ class Core(commands.Cog, CoreLogic):
     async def servers(self, ctx: commands.Context):
         """Lists and allows to leave servers"""
         guilds = sorted(list(self.bot.guilds), key=lambda s: s.name.lower())
-        msg = ""
-        responses = []
+
+        async def select_server(ctx: commands.Context, pages: list, controls: dict, message: discord.Message, page: int, timeout: float, emoji: str):
+            with contextlib.suppress(discord.NotFound):
+                await message.delete()
+            await self.selected_server(ctx, guilds, page)
+            return None
+
+        SELECT_SERVER = {"\N{NO ENTRY SIGN}": select_server}
+        SELECT_CONTROLS = {}
+        SELECT_CONTROLS.update(DEFAULT_CONTROLS)
+        SELECT_CONTROLS.pop('❌', None)
+        SELECT_CONTROLS.update(SELECT_SERVER)
+
+        embeds = []
         for i, server in enumerate(guilds, 1):
-            msg += "{}: {}\n".format(i, server.name)
-            responses.append(str(i))
+            embed = discord.Embed()
+            embed.title = "Servers list"
+            embed.description = server.name
+            embed.set_thumbnail(url=server.icon_url)
+            embed.add_field(name="Total users", value=len(server.members))
+            embed.add_field(name="Amount of bots", value=len([user for user in server.members if user.bot]))
+            embeds.append(embed)
 
-        for page in pagify(msg, ["\n"]):
-            await ctx.send(page)
+        await menu(ctx, pages=embeds, controls=SELECT_CONTROLS, message=None, page=0, timeout=60)
 
-        query = await ctx.send("To leave a server, just type its number.")
+    async def selected_server(self, ctx, guilds, page):
 
-        pred = MessagePredicate.contained_in(responses, ctx)
-        try:
-            await self.bot.wait_for("message", check=pred, timeout=15)
-        except asyncio.TimeoutError:
-            try:
-                await query.delete()
-            except discord.errors.NotFound:
-                pass
-        else:
-            await self.leave_confirmation(guilds[pred.result], ctx)
+        selected_domain = page
+
+        await self.leave_confirmation(guilds[page], ctx)
 
     async def leave_confirmation(self, guild, ctx):
         if guild.owner.id == ctx.bot.user.id:
