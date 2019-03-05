@@ -892,6 +892,7 @@ class Mod(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @checks.admin_or_permissions(mute_members=True, deafen_members=True)
     async def voiceunban(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
         """Unban a user from speaking and listening in the server's voice channels."""
         user_voice_state = user.voice
