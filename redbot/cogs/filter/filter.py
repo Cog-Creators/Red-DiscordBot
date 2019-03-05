@@ -7,7 +7,6 @@ from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import pagify
 
-RE_WORD_SPLIT = re.compile(r"[^\w]")
 _ = Translator("Filter", __file__)
 
 
@@ -332,14 +331,8 @@ class Filter(commands.Cog):
         else:
             raise TypeError("%r should be Guild or TextChannel" % server_or_channel)
 
-        content = text.lower()
-        msg_words = set(RE_WORD_SPLIT.split(content))
-
-        filtered_phrases = {x for x in word_list if len(RE_WORD_SPLIT.split(x)) > 1}
-        filtered_words = word_list - filtered_phrases
-
-        hits = {p for p in filtered_phrases if p in content}
-        hits |= filtered_words & msg_words
+        pattern = "|".join(rf"\b{re.escape(w)}\b" for w in word_list)
+        hits = set(re.findall(pattern, text, flags=re.I))
         return hits
 
     async def check_filter(self, message: discord.Message):
