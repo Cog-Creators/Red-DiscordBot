@@ -94,6 +94,8 @@ one-by-one:
     brew tap caskroom/versions
     brew cask install java8
 
+It's possible you will have network issues. If so, go in your Applications folder, inside it, go in the Python 3.7 folder then double click ``Install certificates.command``
+
 .. _install-ubuntu:
 .. _install-ubuntu-bionic:
 .. _install-ubuntu-cosmic:
@@ -234,6 +236,9 @@ Once done setting up the instance, run the following command to run Red:
     redbot <your instance name>
 
 It will walk through the initial setup, asking for your token and a prefix.
+You can find out how to obtain a token with
+`this guide <https://discordpy.readthedocs.io/en/rewrite/discord.html#creating-a-bot-account>`_,
+section "Creating a Bot Account".
 
 You may also run Red via the launcher, which allows you to restart the bot
 from discord, and enable auto-restart. You may also update the bot from the

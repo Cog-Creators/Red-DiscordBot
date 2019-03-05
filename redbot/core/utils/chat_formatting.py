@@ -1,5 +1,6 @@
 import itertools
-from typing import Sequence, Iterator, List
+import datetime
+from typing import Sequence, Iterator, List, Optional
 
 import discord
 
@@ -204,7 +205,7 @@ def pagify(
     priority: bool = False,
     escape_mass_mentions: bool = True,
     shorten_by: int = 8,
-    page_length: int = 2000
+    page_length: int = 2000,
 ) -> Iterator[str]:
     """Generate multiple pages from the given text.
 
@@ -386,3 +387,37 @@ def format_perms_list(perms: discord.Permissions) -> str:
             perm_name = '"' + perm.replace("_", " ").title() + '"'
             perm_names.append(perm_name)
     return humanize_list(perm_names).replace("Guild", "Server")
+
+
+def humanize_timedelta(
+    *, timedelta: Optional[datetime.timedelta] = None, seconds: Optional[int] = None
+) -> str:
+    """
+    Get a human timedelta representation
+    """
+
+    try:
+        obj = seconds or timedelta.total_seconds()
+    except AttributeError:
+        raise ValueError("You must provide either a timedelta or a number of seconds")
+
+    seconds = int(obj)
+    periods = [
+        (_("year"), _("years"), 60 * 60 * 24 * 365),
+        (_("month"), _("months"), 60 * 60 * 24 * 30),
+        (_("day"), _("days"), 60 * 60 * 24),
+        (_("hour"), _("hours"), 60 * 60),
+        (_("minute"), _("minutes"), 60),
+        (_("second"), _("seconds"), 1),
+    ]
+
+    strings = []
+    for period_name, plural_period_name, period_seconds in periods:
+        if seconds >= period_seconds:
+            period_value, seconds = divmod(seconds, period_seconds)
+            if period_value == 0:
+                continue
+            unit = plural_period_name if period_value > 1 else period_name
+            strings.append(f"{period_value} {unit}")
+
+    return ", ".join(strings)

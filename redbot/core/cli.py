@@ -1,8 +1,6 @@
 import argparse
 import asyncio
 
-from redbot.core.bot import Red
-
 
 def confirm(m=""):
     return input(m).lower().strip() in ("y", "yes")
@@ -42,24 +40,7 @@ def interactive_config(red, token_set, prefix_set):
             if prefix:
                 loop.run_until_complete(red.db.prefix.set([prefix]))
 
-    ask_sentry(red)
-
     return token
-
-
-def ask_sentry(red: Red):
-    loop = asyncio.get_event_loop()
-    print(
-        "\nThank you for installing Red V3! Red is constantly undergoing\n"
-        " improvements, and we would like to ask if you are comfortable with\n"
-        " the bot automatically submitting fatal error logs to the development\n"
-        ' team. If you wish to opt into the process please type "yes":\n'
-    )
-    if not confirm("> "):
-        loop.run_until_complete(red.db.enable_sentry.set(False))
-    else:
-        loop.run_until_complete(red.db.enable_sentry.set(True))
-        print("\nThank you for helping us with the development process!")
 
 
 def parse_cli_flags(args):

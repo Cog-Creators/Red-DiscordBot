@@ -5,7 +5,7 @@ replace those from the `discord.ext.commands` module.
 """
 import inspect
 import weakref
-from typing import Awaitable, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING
+from typing import Awaitable, Callable, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 
 import discord
 from discord.ext import commands
@@ -50,20 +50,54 @@ class CogCommandMixin:
             checks=getattr(decorated, "__requires_checks__", []),
         )
 
-    def allow_for(self, model_id: int, guild_id: int) -> None:
-        """Actively allow this command for the given model."""
+    def allow_for(self, model_id: Union[int, str], guild_id: int) -> None:
+        """Actively allow this command for the given model.
+
+        Parameters
+        ----------
+        model_id : Union[int, str]
+            Must be an `int` if supplying an ID. `str` is only valid
+            for "default".
+        guild_id : int
+            The guild ID to allow this cog or command in. For global
+            rules, use ``0``.
+
+        """
         self.requires.set_rule(model_id, PermState.ACTIVE_ALLOW, guild_id=guild_id)
 
-    def deny_to(self, model_id: int, guild_id: int) -> None:
-        """Actively deny this command to the given model."""
+    def deny_to(self, model_id: Union[int, str], guild_id: int) -> None:
+        """Actively deny this command to the given model.
+
+        Parameters
+        ----------
+        model_id : Union[int, str]
+            Must be an `int` if supplying an ID. `str` is only valid
+            for "default".
+        guild_id : int
+            The guild ID to deny this cog or command in. For global
+            rules, use ``0``.
+
+        """
         cur_rule = self.requires.get_rule(model_id, guild_id=guild_id)
         if cur_rule is PermState.PASSIVE_ALLOW:
             self.requires.set_rule(model_id, PermState.CAUTIOUS_ALLOW, guild_id=guild_id)
         else:
             self.requires.set_rule(model_id, PermState.ACTIVE_DENY, guild_id=guild_id)
 
-    def clear_rule_for(self, model_id: int, guild_id: int) -> Tuple[PermState, PermState]:
-        """Clear the rule which is currently set for this model."""
+    def clear_rule_for(
+        self, model_id: Union[int, str], guild_id: int
+    ) -> Tuple[PermState, PermState]:
+        """Clear the rule which is currently set for this model.
+
+        Parameters
+        ----------
+        model_id : Union[int, str]
+            Must be an `int` if supplying an ID. `str` is only valid
+            for "default".
+        guild_id : int
+            The guild ID. For global rules, use ``0``.
+
+        """
         cur_rule = self.requires.get_rule(model_id, guild_id=guild_id)
         if cur_rule is PermState.ACTIVE_ALLOW:
             new_rule = PermState.NORMAL
@@ -84,15 +118,17 @@ class CogCommandMixin:
         rule : Optional[bool]
             The rule to set as default. If ``True`` for allow,
             ``False`` for deny and ``None`` for normal.
-        guild_id : Optional[int]
-            Specify to set the default rule for a specific guild.
-            When ``None``, this will set the global default rule.
+        guild_id : int
+            The guild to set the default rule in. When ``0``, this will
+            set the global default rule.
 
         """
-        if guild_id:
-            self.requires.set_default_guild_rule(guild_id, PermState.from_bool(rule))
-        else:
-            self.requires.default_global_rule = PermState.from_bool(rule)
+        if rule is None:
+            self.clear_rule_for(Requires.DEFAULT, guild_id=guild_id)
+        elif rule is True:
+            self.allow_for(Requires.DEFAULT, guild_id=guild_id)
+        elif rule is False:
+            self.deny_to(Requires.DEFAULT, guild_id=guild_id)
 
 
 class Command(CogCommandMixin, commands.Command):
@@ -335,7 +371,7 @@ class Command(CogCommandMixin, commands.Command):
         else:
             return True
 
-    def allow_for(self, model_id: int, guild_id: int) -> None:
+    def allow_for(self, model_id: Union[int, str], guild_id: int) -> None:
         super().allow_for(model_id, guild_id=guild_id)
         parents = self.parents
         if self.instance is not None:
@@ -347,7 +383,9 @@ class Command(CogCommandMixin, commands.Command):
             elif cur_rule is PermState.ACTIVE_DENY:
                 parent.requires.set_rule(model_id, PermState.CAUTIOUS_ALLOW, guild_id=guild_id)
 
-    def clear_rule_for(self, model_id: int, guild_id: int) -> Tuple[PermState, PermState]:
+    def clear_rule_for(
+        self, model_id: Union[int, str], guild_id: int
+    ) -> Tuple[PermState, PermState]:
         old_rule, new_rule = super().clear_rule_for(model_id, guild_id=guild_id)
         if old_rule is PermState.ACTIVE_ALLOW:
             parents = self.parents
@@ -358,6 +396,45 @@ class Command(CogCommandMixin, commands.Command):
                 if not should_continue:
                     break
         return old_rule, new_rule
+
+    def error(self, coro):
+        """
+        A decorator that registers a coroutine as a local error handler.
+
+        A local error handler is an :func:`.on_command_error` event limited to
+        a single command.
+
+        The on_command_error event is still dispatched
+        for commands with a dedicated error handler.
+
+        Red's global error handler will ignore commands with a registered error handler.
+
+        To have red handle specific errors with the default behavior,
+        call ``Red.on_command_error`` with ``unhandled_by_cog`` set to True.
+
+        For example:
+
+            .. code-block:: python
+
+                @a_command.error
+                async def a_command_error_handler(self, ctx, error):
+
+                    if isisntance(error, MyErrrorType):
+                        self.log_exception(error)
+                    else:
+                        await ctx.bot.on_command_error(ctx, error, unhandled_by_cog=True)
+
+        Parameters
+        -----------
+        coro : :term:`coroutine function`
+            The coroutine to register as the local error handler.
+
+        Raises
+        -------
+        discord.ClientException
+            The coroutine is not actually a coroutine.
+        """
+        return super().error(coro)
 
 
 class GroupMixin(discord.ext.commands.GroupMixin):
@@ -396,8 +473,28 @@ class CogGroupMixin:
     all_commands: Dict[str, Command]
 
     def reevaluate_rules_for(
-        self, model_id: int, guild_id: Optional[int]
+        self, model_id: Union[str, int], guild_id: Optional[int]
     ) -> Tuple[PermState, bool]:
+        """Re-evaluate a rule by checking subcommand rules.
+
+        This is called when a subcommand is no longer actively allowed.
+
+        Parameters
+        ----------
+        model_id : Union[int, str]
+            Must be an `int` if supplying an ID. `str` is only valid
+            for "default".
+        guild_id : int
+            The guild ID. For global rules, use ``0``.
+
+        Returns
+        -------
+        Tuple[PermState, bool]
+            A 2-tuple containing the new rule and a bool indicating
+            whether or not the rule was changed as a result of this
+            call.
+
+        """
         cur_rule = self.requires.get_rule(model_id, guild_id=guild_id)
         if cur_rule in (PermState.NORMAL, PermState.ACTIVE_ALLOW, PermState.ACTIVE_DENY):
             # These three states are unaffected by subcommand rules

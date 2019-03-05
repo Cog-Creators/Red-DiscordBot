@@ -1,4 +1,5 @@
 import asyncio
+from typing import Optional
 
 from aiohttp import web
 from aiohttp_json_rpc import JsonRpc
@@ -63,25 +64,26 @@ class RPC:
     def __init__(self):
         self.app = web.Application()
         self._rpc = RedRpc()
-        self.app.router.add_route("*", "/", self._rpc)
+        self.app.router.add_route("*", "/", self._rpc.handle_request)
 
-        self.app_handler = self.app.make_handler()
-
-        self.server = None
+        self._runner = web.AppRunner(self.app)
+        self._site: Optional[web.TCPSite] = None
 
     async def initialize(self, port: int):
         """
         Finalizes the initialization of the RPC server and allows it to begin
         accepting queries.
         """
-        self.server = await self.app.loop.create_server(self.app_handler, "127.0.0.1", port)
-        log.debug(f"Created RPC server listener on port {port}.")
+        await self._runner.setup()
+        self._site = web.TCPSite(self._runner, host="127.0.0.1", port=port)
+        await self._site.start()
+        log.debug("Created RPC server listener on port %s", port)
 
-    def close(self):
+    async def close(self):
         """
         Closes the RPC server.
         """
-        self.server.close()
+        await self._runner.cleanup()
 
     def add_method(self, method, prefix: str = None):
         if prefix is None:
@@ -117,7 +119,8 @@ class RPCMixin:
         """
         Registers a method to act as an RPC handler if the internal RPC server is active.
 
-        When calling this method through the RPC server, use the naming scheme "cogname__methodname".
+        When calling this method through the RPC server, use the naming scheme
+        "cogname__methodname".
 
         .. important::
 

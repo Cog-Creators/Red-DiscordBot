@@ -411,10 +411,12 @@ class CustomCommands(commands.Cog):
         _type = _("Random") if len(responses) > 1 else _("Normal")
 
         text = _(
-            "Command: {}\n"
-            "Author: {}\n"
-            "Created: {}\n"
-            "Type: {}\n".format(command_name, author, cmd["created_at"], _type)
+            "Command: {command_name}\n"
+            "Author: {author}\n"
+            "Created: {created_at}\n"
+            "Type: {type}\n"
+        ).format(
+            command_name=command_name, author=author, created_at=cmd["created_at"], type=_type
         )
 
         cooldowns = cmd["cooldowns"]
@@ -422,7 +424,7 @@ class CustomCommands(commands.Cog):
         if cooldowns:
             cooldown_text = _("Cooldowns:\n")
             for rate, per in cooldowns.items():
-                cooldown_text += _("{} seconds per {}\n".format(per, rate))
+                cooldown_text += _("{num} seconds per {period}\n").format(num=per, period=rate)
             text += cooldown_text
 
         text += _("Responses:\n")

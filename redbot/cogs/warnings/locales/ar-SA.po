@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-02-25 17:26+AKST\n"
-"PO-Revision-Date: 2018-04-15 16:41-0400\n"
+"POT-Creation-Date: 2019-02-17 02:24+0000\n"
+"PO-Revision-Date: 2019-02-25 03:06\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Arabic\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: ENCODING\n"
-"Generated-By: pygettext.py 1.5\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 2.2\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
@@ -16,97 +16,270 @@ msgstr ""
 "X-Crowdin-File: /cogs/warnings/locales/messages.pot\n"
 "Language: ar_SA\n"
 
-#: ../helpers.py:62
+#: redbot/cogs/warnings/helpers.py:70
 msgid "I could not find a command from that input!"
 msgstr ""
 
-#: ../helpers.py:67
+#: redbot/cogs/warnings/helpers.py:77
 msgid "That command requires bot owner. I can't allow you to use that for an action"
 msgstr ""
 
-#: ../helpers.py:76
-msgid "Enter the command to be run when the user exceeds the points for this action to occur.\n"
-"Enter it exactly as you would if you were actually trying to run the command, except don't put a prefix and use {user} in place of any user/member arguments\n\n"
+#: redbot/cogs/warnings/helpers.py:86
+msgid "Enter the command to be run when the user **exceeds the points for this action to occur.**\n"
+"**If you do not wish to have a command run, enter** `none`.\n\n"
+"Enter it exactly as you would if you were actually trying to run the command, except don't put a prefix and use `{user}` in place of any user/member arguments\n\n"
 "WARNING: The command entered will be run without regard to checks or cooldowns. Commands requiring bot owner are not allowed for security reasons.\n\n"
 "Please wait 15 seconds before entering your response."
 msgstr ""
 
-#: ../helpers.py:86 ../helpers.py:126
+#: redbot/cogs/warnings/helpers.py:99 redbot/cogs/warnings/helpers.py:143
 msgid "You may enter your response now."
 msgstr ""
 
-#: ../helpers.py:94 ../helpers.py:134
-msgid "Ok then."
-msgstr ""
-
-#: ../helpers.py:114
-msgid "Enter the command to be run when the user returns to a value below the points for this action to occur. Please note that this is intended to be used for reversal of the action taken when the user exceeded the action's point value\n"
-"Enter it exactly as you would if you were actually trying to run the command, except don't put a prefix and use {user} in place of any user/member arguments\n\n"
+#: redbot/cogs/warnings/helpers.py:128
+msgid "Enter the command to be run when the user **returns to a value below the points for this action to occur.** Please note that this is intended to be used for reversal of the action taken when the user exceeded the action's point value.\n"
+"**If you do not wish to have a command run on dropping points, enter** `none`.\n\n"
+"Enter it exactly as you would if you were actually trying to run the command, except don't put a prefix and use `{user}` in place of any user/member arguments\n\n"
 "WARNING: The command entered will be run without regard to checks or cooldowns. Commands requiring bot owner are not allowed for security reasons.\n\n"
 "Please wait 15 seconds before entering your response."
 msgstr ""
 
-#: ../warnings.py:66
-msgid "Custom reasons have been {}"
+#: redbot/cogs/warnings/warnings.py:26
+#, docstring
+msgid "Warn misbehaving users and take automated actions."
 msgstr ""
 
-#: ../warnings.py:66
-msgid "disabled"
+#: redbot/cogs/warnings/warnings.py:51
+#, docstring
+msgid "Manage settings for Warnings."
 msgstr ""
 
-#: ../warnings.py:66
-msgid "enabled"
+#: redbot/cogs/warnings/warnings.py:57
+#, docstring
+msgid "Enable or disable custom reasons for a warning."
 msgstr ""
 
-#: ../warnings.py:92 ../warnings.py:351 ../warnings.py:368
-msgid "Ok then"
+#: redbot/cogs/warnings/warnings.py:61
+msgid "Custom reasons have been enabled."
 msgstr ""
 
-#: ../warnings.py:117
+#: redbot/cogs/warnings/warnings.py:63
+msgid "Custom reasons have been disabled."
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:69
+#, docstring
+msgid "Manage automated actions for Warnings.\n\n"
+"        Actions are essentially command macros. Any command can be run\n"
+"        when the action is initially triggered, and/or when the action\n"
+"        is lifted.\n\n"
+"        Actions must be given a name and a points threshold. When a\n"
+"        user is warned enough so that their points go over this\n"
+"        threshold, the action will be executed.\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:84
+#, docstring
+msgid "Create an automated action.\n\n"
+"        Duplicate action names are not allowed.\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:105
 msgid "Duplicate action name found!"
 msgstr ""
 
-#: ../warnings.py:171
-msgid "That reason has been registered"
+#: redbot/cogs/warnings/warnings.py:112
+msgid "Action {name} has been added."
 msgstr ""
 
-#: ../warnings.py:181
-msgid "Removed reason {}"
+#: redbot/cogs/warnings/warnings.py:117
+#, docstring
+msgid "Delete the action with the specified name."
 msgstr ""
 
-#: ../warnings.py:183
-msgid "That is not a registered reason name"
+#: redbot/cogs/warnings/warnings.py:130
+msgid "No action named {name} exists!"
 msgstr ""
 
-#: ../warnings.py:230
-msgid "Custom reasons are not allowed! Please see {} for a complete list of valid reasons"
+#: redbot/cogs/warnings/warnings.py:136
+#, docstring
+msgid "Manage warning reasons.\n\n"
+"        Reasons must be given a name, description and points value. The\n"
+"        name of the reason must be given when a user is warned.\n"
+"        "
 msgstr ""
 
-#: ../warnings.py:243
+#: redbot/cogs/warnings/warnings.py:148
+#, docstring
+msgid "Create a warning reason."
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:152
+msgid "*Custom* cannot be used as a reason name!"
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:162
+msgid "The new reason has been registered."
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:167
+#, docstring
+msgid "Delete a warning reason."
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:174
+msgid "That is not a registered reason name."
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:180
+#, docstring
+msgid "List all configured reasons for Warnings."
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:188
+msgid "Reason: {name}"
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:190 redbot/cogs/warnings/warnings.py:215
+#: redbot/cogs/warnings/warnings.py:297
+msgid "Points"
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:194
+msgid "Name: {reason_name}\n"
+"Points: {points}\n"
+"Description: {description}"
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:201
+msgid "There are no reasons configured!"
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:207
+#, docstring
+msgid "List all configured automated actions for Warnings."
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:214
+msgid "Action: {name}"
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:216
+msgid "Exceed command"
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:217
+msgid "Drop command"
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:221
+msgid "Name: {action_name}\n"
+"Points: {points}\n"
+"Exceed command: {exceed_command}\n"
+"Drop command: {drop_command}"
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:229
+msgid "There are no actions configured!"
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:235
+#, docstring
+msgid "Warn the user for the specified reason.\n\n"
+"        `<reason>` must be a registered reason name, or *custom* if\n"
+"        custom reasons are enabled.\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:241
+msgid "You cannot warn yourself."
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:247
+msgid "Custom reasons are not allowed! Please see `{prefix}reasonlist` for a complete list of valid reasons."
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:258
 msgid "That is not a registered reason!"
 msgstr ""
 
-#: ../warnings.py:277
+#: redbot/cogs/warnings/warnings.py:260
+msgid "Do `{prefix}warn {user} custom` to specify a custom reason."
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:268
+msgid "Do `{prefix}warningset allowcustomreasons true` to enable custom reasons."
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:294
+msgid "Warning from {user}"
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:299
+msgid "You have received a warning in {guild_name}."
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:306
+msgid "User {user} has been warned."
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:313
+#, docstring
+msgid "List the warnings for the specified user.\n\n"
+"        Omit `<user>` to see your own warnings.\n\n"
+"        Note that showing warnings for users other than yourself requires\n"
+"        appropriate permissions.\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:325
 msgid "You are not allowed to check warnings for other users!"
 msgstr ""
 
-#: ../warnings.py:290
+#: redbot/cogs/warnings/warnings.py:339
 msgid "That user has no warnings!"
 msgstr ""
 
-#: ../warnings.py:347
+#: redbot/cogs/warnings/warnings.py:349
+msgid "{num_points} point warning {reason_name} issued by {user} for {description}\n"
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:359
+msgid "Warnings for {user}"
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:366
+#, docstring
+msgid "Remove a warning from a user."
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:379
+msgid "You cannot remove warnings from yourself."
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:386
+msgid "That warning doesn't exist!"
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:398
 msgid "How many points should be given for this reason?"
 msgstr ""
 
-#: ../warnings.py:356
+#: redbot/cogs/warnings/warnings.py:404 redbot/cogs/warnings/warnings.py:423
+msgid "Ok then."
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:409
 msgid "That isn't a number!"
 msgstr ""
 
-#: ../warnings.py:360
+#: redbot/cogs/warnings/warnings.py:413
 msgid "The point value needs to be greater than 0!"
 msgstr ""
 
-#: ../warnings.py:364
-msgid "Enter a description for this reason"
+#: redbot/cogs/warnings/warnings.py:417
+msgid "Enter a description for this reason."
 msgstr ""
 
