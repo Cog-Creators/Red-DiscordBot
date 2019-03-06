@@ -185,22 +185,21 @@ class KickBanMixin(MixinMeta):
         except Exception as e:
             print(e)
         else:
+            try:
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    ctx.message.created_at,
+                    "kick",
+                    user,
+                    author,
+                    reason,
+                    until=None,
+                    channel=None,
+                )
+            except RuntimeError as e:
+                await ctx.send(e)
             await ctx.send(_("Done. That felt good."))
-
-        try:
-            await modlog.create_case(
-                self.bot,
-                guild,
-                ctx.message.created_at,
-                "kick",
-                user,
-                author,
-                reason,
-                until=None,
-                channel=None,
-            )
-        except RuntimeError as e:
-            await ctx.send(e)
 
     @commands.command()
     @commands.guild_only()
@@ -385,21 +384,20 @@ class KickBanMixin(MixinMeta):
         except discord.HTTPException:
             await ctx.send(_("Something went wrong while banning"))
         else:
+            try:
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    ctx.message.created_at,
+                    "tempban",
+                    user,
+                    author,
+                    reason,
+                    unban_time,
+                )
+            except RuntimeError as e:
+                await ctx.send(e)
             await ctx.send(_("Done. Enough chaos for now"))
-
-        try:
-            await modlog.create_case(
-                self.bot,
-                guild,
-                ctx.message.created_at,
-                "tempban",
-                user,
-                author,
-                reason,
-                unban_time,
-            )
-        except RuntimeError as e:
-            await ctx.send(e)
 
     @commands.command()
     @commands.guild_only()
@@ -465,7 +463,6 @@ class KickBanMixin(MixinMeta):
             print(e)
             return
         else:
-            await ctx.send(_("Done. Enough chaos."))
             log.info(
                 "{}({}) softbanned {}({}), deleting 1 day worth "
                 "of messages".format(author.name, author.id, user.name, user.id)
@@ -484,6 +481,7 @@ class KickBanMixin(MixinMeta):
                 )
             except RuntimeError as e:
                 await ctx.send(e)
+            await ctx.send(_("Done. Enough chaos."))
 
     @commands.command()
     @commands.guild_only()
@@ -517,22 +515,21 @@ class KickBanMixin(MixinMeta):
             await ctx.send(_("Something went wrong while attempting to unban that user"))
             return
         else:
+            try:
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    ctx.message.created_at,
+                    "unban",
+                    user,
+                    author,
+                    reason,
+                    until=None,
+                    channel=None,
+                )
+            except RuntimeError as e:
+                await ctx.send(e)
             await ctx.send(_("Unbanned that user from this server"))
-
-        try:
-            await modlog.create_case(
-                self.bot,
-                guild,
-                ctx.message.created_at,
-                "unban",
-                user,
-                author,
-                reason,
-                until=None,
-                channel=None,
-            )
-        except RuntimeError as e:
-            await ctx.send(e)
 
         if await self.settings.guild(guild).reinvite_on_unban():
             invite = await self.get_invite_for_reinvite(ctx)
