@@ -31,6 +31,7 @@ class Filter(commands.Cog):
         self.settings.register_member(**default_member_settings)
         self.settings.register_channel(**default_channel_settings)
         self.register_task = self.bot.loop.create_task(self.register_filterban())
+        self.pattern_cache = {}
 
     def __unload(self):
         self.register_task.cancel()
@@ -164,6 +165,7 @@ class Filter(commands.Cog):
                     tmp += word + " "
         added = await self.add_to_filter(channel, word_list)
         if added:
+            self.invalidate_cache(ctx.guild, ctx.channel)
             await ctx.send(_("Words added to filter."))
         else:
             await ctx.send(_("Words already in the filter."))
@@ -197,6 +199,7 @@ class Filter(commands.Cog):
         removed = await self.remove_from_filter(channel, word_list)
         if removed:
             await ctx.send(_("Words removed from filter."))
+            self.invalidate_cache(ctx.guild, ctx.channel)
         else:
             await ctx.send(_("Those words weren't in the filter."))
 
@@ -228,6 +231,7 @@ class Filter(commands.Cog):
                     tmp += word + " "
         added = await self.add_to_filter(server, word_list)
         if added:
+            self.invalidate_cache(ctx.guild)
             await ctx.send(_("Words successfully added to filter."))
         else:
             await ctx.send(_("Those words were already in the filter."))
@@ -260,6 +264,7 @@ class Filter(commands.Cog):
                     tmp += word + " "
         removed = await self.remove_from_filter(server, word_list)
         if removed:
+            self.invalidate_cache(ctx.guild)
             await ctx.send(_("Words successfully removed from filter."))
         else:
             await ctx.send(_("Those words weren't in the filter."))
@@ -277,6 +282,10 @@ class Filter(commands.Cog):
             await ctx.send(_("Names and nicknames will no longer be filtered."))
         else:
             await ctx.send(_("Names and nicknames will now be filtered."))
+
+    def invalidate_cache(self, guild: discord.Guild, channel: discord.TextChannel = None):
+        """ Invalidate a cached pattern"""
+        self.pattern_cache.pop((guild, None), None)
 
     async def add_to_filter(
         self, server_or_channel: Union[discord.Guild, discord.TextChannel], words: list
@@ -321,18 +330,26 @@ class Filter(commands.Cog):
     async def filter_hits(
         self, text: str, server_or_channel: Union[discord.Guild, discord.TextChannel]
     ) -> Set[str]:
-        if isinstance(server_or_channel, discord.Guild):
-            word_list = set(await self.settings.guild(server_or_channel).filter())
-        elif isinstance(server_or_channel, discord.TextChannel):
-            word_list = set(
-                await self.settings.guild(server_or_channel.guild).filter()
-                + await self.settings.channel(server_or_channel).filter()
-            )
-        else:
-            raise TypeError("%r should be Guild or TextChannel" % server_or_channel)
 
-        pattern = "|".join(rf"\b{re.escape(w)}\b" for w in word_list)
-        hits = set(re.findall(pattern, text, flags=re.I))
+        try:
+            guild = server_or_channel.guild
+            channel = server_or_channel
+        except AttributeError:
+            guild = server_or_channel
+            channel = None
+
+        try:
+            pattern = self.pattern_cache[(guild, channel)]
+        except KeyError:
+            word_list = set(await self.settings.guild(guild).filter())
+            if channel:
+                word_list |= set(await self.settings.guild(channel).filter())
+
+            pattern = re.compile("|".join(rf"\b{re.escape(w)}\b" for w in word_list), flags=re.I)
+
+            self.pattern_cache[(guild, channel)] = pattern
+
+        hits = set(pattern.findall(text))
         return hits
 
     async def check_filter(self, message: discord.Message):
