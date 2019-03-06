@@ -346,7 +346,7 @@ class Filter(commands.Cog):
                 word_list |= set(await self.settings.guild(channel).filter())
 
             if not word_list:
-                return set()
+                return word_list
 
             pattern = re.compile("|".join(rf"\b{re.escape(w)}\b" for w in word_list), flags=re.I)
 
