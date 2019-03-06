@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-03-12 04:35+EDT\n"
-"PO-Revision-Date: 2018-04-15 16:42-0400\n"
+"POT-Creation-Date: 2019-01-11 02:18+0000\n"
+"PO-Revision-Date: 2019-02-25 03:07\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: ENCODING\n"
-"Generated-By: pygettext.py 1.5\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 2.2\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
@@ -16,28 +16,45 @@ msgstr ""
 "X-Crowdin-File: /cogs/dataconverter/locales/messages.pot\n"
 "Language: nl_NL\n"
 
-#: ../dataconverter.py:38
+#: redbot/cogs/dataconverter/dataconverter.py:16
+#, docstring
+msgid "Import Red V2 data to your V3 instance."
+msgstr "Importeer de data van V2 naar je V3 instantie."
+
+#: redbot/cogs/dataconverter/dataconverter.py:25
+#, docstring
+msgid "Interactive prompt for importing data from Red V2.\n\n"
+"        Takes the path where the V2 install is, and overwrites\n"
+"        values which have entries in both V2 and v3; use with caution.\n"
+"        "
+msgstr "Interactieve prompt voor het importeren van gegevens van Red V2.\n\n"
+"        Neemt het pad waar de V2-installatie zich bevindt en overschrijft\n"
+"        waarden met vermeldingen in zowel V2 als v3; voorzichtig gebruiken.\n"
+"        "
+
+#: redbot/cogs/dataconverter/dataconverter.py:34
 msgid "There don't seem to be any data files I know how to handle here. Are you sure you gave me the base installation path?"
-msgstr ""
+msgstr "Er lijken geen gegevensbestanden te zijn die ik hier weet aan te wijzen. Weet je zeker dat je me het basisinstallatiepad hebt gegeven?"
 
-#: ../dataconverter.py:43
+#: redbot/cogs/dataconverter/dataconverter.py:41
 msgid "Please select a set of data to import by number, or 'exit' to exit"
-msgstr ""
+msgstr "Selecteer een set gegevens om te importeren op nummer of typ 'exit' om af te sluiten"
 
-#: ../dataconverter.py:59
-msgid "Try this again when you are more ready"
-msgstr ""
+#: redbot/cogs/dataconverter/dataconverter.py:52
+msgid "Try this again when you are ready."
+msgstr "Probeer dit opnieuw als je klaar bent."
 
-#: ../dataconverter.py:70
+#: redbot/cogs/dataconverter/dataconverter.py:60
 msgid "That wasn't a valid choice."
-msgstr ""
+msgstr "Dat was geen geldige keuze."
 
-#: ../dataconverter.py:76
+#: redbot/cogs/dataconverter/dataconverter.py:65
 msgid "{} converted."
-msgstr ""
+msgstr "{} geconverteerd."
 
-#: ../dataconverter.py:80
+#: redbot/cogs/dataconverter/dataconverter.py:69
 msgid "There isn't anything else I know how to convert here.\n"
 "There might be more things I can convert in the future."
-msgstr ""
+msgstr "Er is niets anders dat ik hier weet te converteren.\n"
+"Er kunnen in de toekomst meer dingen zijn die ik kan omzetten."
 

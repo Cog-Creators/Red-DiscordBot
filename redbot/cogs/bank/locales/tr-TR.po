@@ -1,0 +1,83 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2019-01-11 02:18+0000\n"
+"PO-Revision-Date: 2019-02-25 03:08\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Turkish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 2.2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: tr\n"
+"X-Crowdin-File: /cogs/bank/locales/messages.pot\n"
+"Language: tr_TR\n"
+
+#: redbot/cogs/bank/bank.py:58
+#, docstring
+msgid "Bank"
+msgstr "Banka"
+
+#: redbot/cogs/bank/bank.py:70
+#, docstring
+msgid "Base command for bank settings."
+msgstr "Banka ayarları için temel komut."
+
+#: redbot/cogs/bank/bank.py:83
+msgid "Bank settings:\n\n"
+"Bank name: {bank_name}\n"
+"Currency: {currency_name}\n"
+"Default balance: {default_balance}"
+msgstr "Banka ayarları:\n\n"
+"Banka adı: {bank_name}\n"
+"Para Birimi: {currency_name}\n"
+"Varsayılan bakiye: {default_balance}"
+
+#: redbot/cogs/bank/bank.py:94
+#, docstring
+msgid "Toggle whether the bank is global or not.\n\n"
+"        If the bank is global, it will become per-server.\n"
+"        If the bank is per-server, it will become global.\n"
+"        "
+msgstr "Bankanın genel olup olmadığına bakılmaksızın geçiş.\n\n"
+"        banka genel ise, bu sunucu başına olacak.\n"
+"        banka sunucu başına ise, küresel olacak.\n"
+"        "
+
+#: redbot/cogs/bank/bank.py:101
+msgid "per-server"
+msgstr "sunucu başına"
+
+#: redbot/cogs/bank/bank.py:101
+msgid "global"
+msgstr "genel"
+
+#: redbot/cogs/bank/bank.py:104
+msgid "This will toggle the bank to be {banktype}, deleting all accounts in the process! If you're sure, type `{command}`"
+msgstr "Bu bankanın işleminin tüm hesapları silme {banktype}, geçiş yapılır! Emin misin, '{command} ' yazın"
+
+#: redbot/cogs/bank/bank.py:111
+msgid "The bank is now {banktype}."
+msgstr "Banka şimdi {banktype}."
+
+#: redbot/cogs/bank/bank.py:116
+#, docstring
+msgid "Set the bank's name."
+msgstr "Bankanın adını ayarlayın."
+
+#: redbot/cogs/bank/bank.py:118
+msgid "Bank name has been set to: {name}"
+msgstr "Banka adı ayarlandı {name}"
+
+#: redbot/cogs/bank/bank.py:123
+#, docstring
+msgid "Set the name for the bank's currency."
+msgstr "Bankası'nın para birimi için ayarlayın."
+
+#: redbot/cogs/bank/bank.py:125
+msgid "Currency name has been set to: {name}"
+msgstr "Para birimi adı ayarla: {name}"
+
