@@ -623,6 +623,7 @@ class Audio(commands.Cog):
             ):
                 return await self._embed_msg(ctx, _("There are other people listening to music."))
             else:
+                self._play_lock(ctx, False)
                 await lavalink.get_player(ctx.guild.id).stop()
                 await lavalink.get_player(ctx.guild.id).disconnect()
 
@@ -1317,7 +1318,10 @@ class Audio(commands.Cog):
                 return None
                 # let's complain about errors
                 pass
-            yt_track = await player.get_tracks(track_url)
+            try:
+                yt_track = await player.get_tracks(track_url)
+            except (RuntimeError, aiohttp.client_exceptions.ServerDisconnectedError):
+                return
             try:
                 track_list.append(yt_track[0])
             except IndexError:
