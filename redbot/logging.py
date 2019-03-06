@@ -2,20 +2,106 @@ import logging.handlers
 import pathlib
 import re
 import sys
+from typing import List, Tuple, Optional
 
-from redbot.core import data_manager
-
-MAX_OLD_LOGS = 9
+MAX_OLD_LOGS = 8
 
 
-def init_logging(debug: bool) -> None:
+class RotatingFileHandler(logging.handlers.RotatingFileHandler):
+    """Custom rotating file handler.
+
+    This file handler rotates a bit differently to the one in stdlib.
+
+    For a start, this works off of a "stem" and a "directory". The stem
+    is the base name of the log file, without the extension. The
+    directory is where all log files (including backups) will be placed.
+
+    Secondly, this logger rotates files downwards, and new logs are
+    *started* with the backup number incremented. The stdlib handler
+    rotates files upwards, and this leaves the logs in reverse order.
+
+    Thirdly, naming conventions are not customisable with this class.
+    Logs will initially be named in the format "{stem}.log", and after
+    rotating, the first log file will be renamed "{stem}-part1.log",
+    and a new file "{stem}-part2.log" will be created for logging to
+    continue.
+
+    A few things can't be modified in this handler: it must use append
+    mode, it doesn't support use of the `delay` arg, and it will ignore
+    custom namers and rotators.
+
+    When this handler is instantiated, it will search through the
+    directory for logs from previous runtimes, and will open the file
+    with the highest backup number to append to.
+    """
+
+    def __init__(
+        self,
+        stem: str,
+        directory: pathlib.Path,
+        maxBytes: int = 0,
+        backupCount: int = 0,
+        encoding: Optional[str] = None,
+    ) -> None:
+        self.baseStem = stem
+        self.directory = directory.resolve()
+        # Scan for existing files in directory, append to last part of existing log
+        log_part_re = re.compile(rf"{stem}-part(?P<partnum>\d+).log")
+        highest_part = 0
+        for path in directory.iterdir():
+            match = log_part_re.match(path.name)
+            if match and int(match["partnum"]) > highest_part:
+                highest_part = int(match["partnum"])
+        if highest_part:
+            filename = directory / f"{stem}-part{highest_part}.log"
+        else:
+            filename = directory / f"{stem}.log"
+        super().__init__(
+            filename,
+            mode="a",
+            maxBytes=maxBytes,
+            backupCount=backupCount,
+            encoding=encoding,
+            delay=False,
+        )
+
+    def doRollover(self):
+        if self.stream:
+            self.stream.close()
+            self.stream = None
+        initial_path = self.directory / f"{self.baseStem}.log"
+        if self.backupCount > 0 and initial_path.exists():
+            initial_path.replace(self.directory / f"{self.baseStem}-part1.log")
+
+        match = re.match(
+            rf"{self.baseStem}(?:-part(?P<part>\d+)?)?.log", pathlib.Path(self.baseFilename).name
+        )
+        latest_part_num = int(match.groupdict(default="1").get("part", "1"))
+        if self.backupCount < 1:
+            # No backups, just delete the existing log and start again
+            pathlib.Path(self.baseFilename).unlink()
+        elif latest_part_num > self.backupCount:
+            # Rotate files down one
+            # red-part2.log becomes red-part1.log etc, a new log is added at the end.
+            for i in range(1, self.backupCount):
+                next_log = self.directory / f"{self.baseStem}-part{i + 1}.log"
+                if next_log.exists():
+                    prev_log = self.directory / f"{self.baseStem}-part{i}.log"
+                    next_log.replace(prev_log)
+        else:
+            # Simply start a new file
+            self.baseFilename = str(
+                self.directory / f"{self.baseStem}-part{latest_part_num + 1}.log"
+            )
+
+        self.stream = self._open()
+
+
+def init_logging(level: int, location: pathlib.Path) -> None:
     dpy_logger = logging.getLogger("discord")
     dpy_logger.setLevel(logging.WARNING)
     base_logger = logging.getLogger("red")
-    if debug is True:
-        base_logger.setLevel(logging.DEBUG)
-    else:
-        base_logger.setLevel(logging.INFO)
+    base_logger.setLevel(level)
 
     formatter = logging.Formatter(
         "[{asctime}] [{levelname}] {name}: {message}", datefmt="%Y-%m-%d %H:%M:%S", style="{"
@@ -26,44 +112,40 @@ def init_logging(debug: bool) -> None:
     base_logger.addHandler(stdout_handler)
     dpy_logger.addHandler(stdout_handler)
 
-    logs_dir = data_manager.core_data_path() / "logs"
-    if not logs_dir.exists():
-        logs_dir.mkdir(parents=True, exist_ok=True)
-    # Rotate old logs
-    paths = []
-    for path in logs_dir.iterdir():
-        match = re.match(r"red\.(?P<log_num>\d+)\.part(?P<part>\d+)\.log", path.name)
+    if not location.exists():
+        location.mkdir(parents=True, exist_ok=True)
+    # Rotate latest logs to previous logs
+    previous_logs: List[pathlib.Path] = []
+    latest_logs: List[Tuple[pathlib.Path, str]] = []
+    for path in location.iterdir():
+        match = re.match(r"latest(?P<part>-part\d+)?\.log", path.name)
         if match:
-            log_num = int(match["log_num"])
-            if log_num < MAX_OLD_LOGS:
-                paths.append((log_num, match["part"], path))
-            else:
-                path.unlink()
-            continue
-        match = re.match(r"latest\.part(?P<part>\d+)\.log", path.name)
+            part = match.groupdict(default="")["part"]
+            latest_logs.append((path, part))
+        match = re.match(r"previous(?:-part\d+)?.log", path.name)
         if match:
-            paths.append((0, match["part"], path))
-    for log_num, part, path in sorted(paths, reverse=True):
-        path.replace(path.parent / f"red.{log_num + 1}.part{part}.log")
+            previous_logs.append(path)
+    # Delete all previous.log files
+    for path in previous_logs:
+        path.unlink()
+    # Rename latest.log files to previous.log
+    for path, part in latest_logs:
+        path.replace(location / f"previous{part}.log")
 
-    fhandler = logging.handlers.RotatingFileHandler(
-        filename=logs_dir / "latest.part0.log",
+    latest_fhandler = RotatingFileHandler(
+        stem="latest",
+        directory=location,
+        maxBytes=1_000_000,  # About 1MB per logfile
+        backupCount=MAX_OLD_LOGS,
         encoding="utf-8",
-        mode="a",
-        maxBytes=500_000,  # About 500KB per logfile
-        backupCount=9,  # Maximum 10 parts to each log
     )
-    fhandler.namer = _namer
-    fhandler.setFormatter(formatter)
-
-    base_logger.addHandler(fhandler)
-
-
-def _namer(defaultname: str) -> str:
-    # This renames `latest.part0.log` to `latest.part1.log` and so on, when the original gets too
-    # large. `defaultname` is in the format `latest.part0.log.X`, where X is the index of the next
-    # part.
-    # See the `doRollover` method of `logging.handlers.RotatingFileHandler`.
-    path = pathlib.Path(defaultname)
-    part_num = path.suffix[1:]
-    return path.parent / f"latest.part{part_num}.log"
+    all_fhandler = RotatingFileHandler(
+        stem="red",
+        directory=location,
+        maxBytes=1_000_000,
+        backupCount=MAX_OLD_LOGS,
+        encoding="utf-8",
+    )
+    for fhandler in (latest_fhandler, all_fhandler):
+        fhandler.setFormatter(formatter)
+        base_logger.addHandler(fhandler)

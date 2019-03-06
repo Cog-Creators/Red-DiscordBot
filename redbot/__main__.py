@@ -95,7 +95,9 @@ def main():
         cli_flags.instance_name = "temporary_red"
         data_manager.create_temp_config()
     data_manager.load_basic_configuration(cli_flags.instance_name)
-    redbot.logging.init_logging(cli_flags.debug)
+    redbot.logging.init_logging(
+        level=cli_flags.logging_level, location=data_manager.core_data_path() / "logs"
+    )
 
     log.debug("====Basic Config====")
     log.debug("Data Path: %s", data_manager._base_data_path())
