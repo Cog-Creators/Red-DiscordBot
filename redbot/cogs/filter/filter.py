@@ -285,7 +285,7 @@ class Filter(commands.Cog):
 
     def invalidate_cache(self, guild: discord.Guild, channel: discord.TextChannel = None):
         """ Invalidate a cached pattern"""
-        self.pattern_cache.pop((guild, None), None)
+        self.pattern_cache.pop((guild, channel), None)
 
     async def add_to_filter(
         self, server_or_channel: Union[discord.Guild, discord.TextChannel], words: list
