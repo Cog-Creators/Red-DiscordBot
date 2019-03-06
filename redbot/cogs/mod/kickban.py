@@ -115,8 +115,8 @@ class KickBanMixin(MixinMeta):
             except RuntimeError as e:
                 return _(
                     "The user was banned but an error occurred when trying to "
-                    "create the modlog entry: {}".format(e)
-                )
+                    "create the modlog entry: {reason}"
+                ).format(reason=e)
 
         return True
 
@@ -243,7 +243,7 @@ class KickBanMixin(MixinMeta):
         errors = {}
 
         async def show_results():
-            text = _("Banned {} users from the server.".format(len(banned)))
+            text = _("Banned {num} users from the server.".format(num=len(banned)))
             if errors:
                 text += _("\nErrors:\n")
                 text += "\n".join(errors.values())
@@ -274,7 +274,9 @@ class KickBanMixin(MixinMeta):
         for entry in ban_list:
             for user_id in user_ids:
                 if entry.user.id == user_id:
-                    errors[user_id] = _("User {} is already banned.".format(user_id))
+                    errors[user_id] = _("User {user_id} is already banned.").format(
+                        user_id=user_id
+                    )
 
         user_ids = remove_processed(user_ids)
 
@@ -293,9 +295,13 @@ class KickBanMixin(MixinMeta):
                     if result is True:
                         banned.append(user_id)
                     else:
-                        errors[user_id] = _("Failed to ban user {}: {}".format(user_id, result))
+                        errors[user_id] = _("Failed to ban user {user_id}: {reason}").format(
+                            user_id=user_id, reason=result
+                        )
                 except Exception as e:
-                    errors[user_id] = _("Failed to ban user {}: {}".format(user_id, e))
+                    errors[user_id] = _("Failed to ban user {user_id}: {reason}").format(
+                        user_id=user_id, reason=e
+                    )
 
         user_ids = remove_processed(user_ids)
 
@@ -313,11 +319,13 @@ class KickBanMixin(MixinMeta):
                 log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
             except discord.NotFound:
                 self.ban_queue.remove(queue_entry)
-                errors[user_id] = _("User {} does not exist.".format(user_id))
+                errors[user_id] = _("User {user_id} does not exist.").format(user_id=user_id)
                 continue
             except discord.Forbidden:
                 self.ban_queue.remove(queue_entry)
-                errors[user_id] = _("Could not ban {}: missing permissions.".format(user_id))
+                errors[user_id] = _("Could not ban {user_id}: missing permissions.").format(
+                    user_id=user_id
+                )
                 continue
             else:
                 banned.append(user_id)
@@ -337,8 +345,7 @@ class KickBanMixin(MixinMeta):
                     channel=None,
                 )
             except RuntimeError as e:
-                errors["0"] = _("Failed to create modlog case: {}".format(e))
-
+                errors["0"] = _("Failed to create modlog case: {reason}").format(reason=e)
         await show_results()
 
     @commands.command()
