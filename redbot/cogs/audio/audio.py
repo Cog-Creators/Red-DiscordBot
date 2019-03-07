@@ -2212,7 +2212,8 @@ class Audio(commands.Cog):
                 player.add(ctx.author, search_choice)
             else:
                 return await self._embed_msg(ctx, _("Track exceeds maximum length."))
-        player.add(ctx.author, search_choice)
+        else:
+            player.add(ctx.author, search_choice)
         if not player.current:
             await player.play()
         await ctx.send(embed=embed)
