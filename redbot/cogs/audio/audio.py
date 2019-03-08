@@ -2129,7 +2129,9 @@ class Audio(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def seek(self, ctx, seconds):
-        """Seek ahead or behind on a track by seconds or a to a specific time."""
+        """Seek ahead or behind on a track by seconds or a to a specific time.
+
+        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`)."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
         if not self._player_check(ctx):
