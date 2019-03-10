@@ -246,7 +246,14 @@ class Warnings(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
-    async def warn(self, ctx: commands.Context, user: discord.Member, *, reason: str):
+    async def warn(
+        self, 
+        ctx: commands.Context, 
+        user: discord.Member, 
+        points:Optional[int]=1, 
+        *, 
+        reason: str
+    ):
         """Warn the user for the specified reason.
 
         `<reason>` can be a registered reason if it exists or a custom one
@@ -262,7 +269,7 @@ class Warnings(commands.Cog):
             if reason.lower() not in registered_reasons:
                 msg = _("That is not a registered reason!")
                 if custom_allowed:
-                    reason_type = await self.custom_warning_reason(ctx)
+                    reason_type = {"description":reason, "points":points}
                 elif (
                     ctx.guild.owner == ctx.author
                     or ctx.channel.permissions_for(ctx.author).administrator
@@ -310,7 +317,10 @@ class Warnings(commands.Cog):
             reason_msg = _(
                 "{reason}\n\nUse `{prefix}unwarn {user} {message}` to remove this warning."
             ).format(
-                reason=reason_type["description"],
+                reason=_("{description}\nPoints: {points}").format(
+                    description=reason_type["description"], 
+                    points=reason_type["points"]
+                ),
                 prefix=ctx.prefix,
                 user=user.id,
                 message=ctx.message.id,
@@ -429,33 +439,3 @@ class Warnings(commands.Cog):
             pass
 
         await ctx.tick()
-
-    @staticmethod
-    async def custom_warning_reason(ctx: commands.Context):
-        """Handles getting description and points for custom reasons"""
-        to_add = {"points": 0, "description": ""}
-
-        send_msg = await ctx.send(_("How many points should be given for this reason?"))
-        try:
-            msg = await ctx.bot.wait_for(
-                "message", check=MessagePredicate.valid_int(ctx), timeout=30
-            )
-        except asyncio.TimeoutError:
-            await ctx.send(_("Ok then."))
-            return
-        else:
-            if int(msg.content) <= 0:
-                await ctx.send(_("The point value needs to be greater than 0!"))
-                return
-            to_add["points"] = int(msg.content)
-
-        await ctx.send(_("Enter a description for this reason."))
-        try:
-            msg = await ctx.bot.wait_for(
-                "message", check=MessagePredicate.same_context(ctx), timeout=30
-            )
-        except asyncio.TimeoutError:
-            await ctx.send(_("Ok then."))
-            return
-        to_add["description"] = msg.content
-        return to_add
