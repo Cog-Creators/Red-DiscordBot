@@ -247,11 +247,11 @@ class Warnings(commands.Cog):
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
     async def warn(
-        self, 
-        ctx: commands.Context, 
-        user: discord.Member, 
-        points:Optional[int]=1, 
-        *, 
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        points: Optional[int] = 1,
+        *,
         reason: str
     ):
         """Warn the user for the specified reason.
@@ -269,7 +269,7 @@ class Warnings(commands.Cog):
             if reason.lower() not in registered_reasons:
                 msg = _("That is not a registered reason!")
                 if custom_allowed:
-                    reason_type = {"description":reason, "points":points}
+                    reason_type = {"description": reason, "points": points}
                 elif (
                     ctx.guild.owner == ctx.author
                     or ctx.channel.permissions_for(ctx.author).administrator
@@ -318,8 +318,7 @@ class Warnings(commands.Cog):
                 "{reason}\n\nUse `{prefix}unwarn {user} {message}` to remove this warning."
             ).format(
                 reason=_("{description}\nPoints: {points}").format(
-                    description=reason_type["description"], 
-                    points=reason_type["points"]
+                    description=reason_type["description"], points=reason_type["points"]
                 ),
                 prefix=ctx.prefix,
                 user=user.id,
