@@ -3254,6 +3254,7 @@ class Audio(commands.Cog):
             "vimeo.com",
             "mixer.com",
             "twitch.tv",
+            "spotify.com",
             "localtracks",
         ]
         query_url = urlparse(url)
