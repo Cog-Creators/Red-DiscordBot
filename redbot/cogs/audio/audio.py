@@ -2281,8 +2281,10 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    async def seek(self, ctx, seconds: int = 30):
-        """Seek ahead or behind on a track by seconds."""
+    async def seek(self, ctx, seconds):
+        """Seek ahead or behind on a track by seconds or a to a specific time.
+
+        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`)."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
         if not self._player_check(ctx):
@@ -2308,20 +2310,37 @@ class Audio(commands.Cog):
             if player.current.is_stream:
                 return await self._embed_msg(ctx, _("Can't seek on a stream."))
             else:
-                time_sec = seconds * 1000
-                seek = player.position + time_sec
-                if seek <= 0:
-                    await self._embed_msg(
-                        ctx, _("Moved {num_seconds}s to 00:00:00").format(num_seconds=seconds)
-                    )
+                try:
+                    int(seconds)
+                    abs_position = False
+                except ValueError:
+                    abs_position = True
+                    seconds = int(await self._time_convert(seconds) / 1000)
+                if seconds == 0:
+                    return await self._embed_msg(ctx, _("Invalid input for the time to seek."))
+                if not abs_position:
+                    time_sec = int(seconds) * 1000
+                    seek = player.position + time_sec
+                    if seek <= 0:
+                        await self._embed_msg(
+                            ctx, _("Moved {num_seconds}s to 00:00:00").format(num_seconds=seconds)
+                        )
+                    else:
+                        await self._embed_msg(
+                            ctx,
+                            _("Moved {num_seconds}s to {time}").format(
+                                num_seconds=seconds, time=lavalink.utils.format_time(seek)
+                            ),
+                        )
+                    await player.seek(seek)
                 else:
                     await self._embed_msg(
                         ctx,
-                        _("Moved {num_seconds}s to {time}").format(
-                            num_seconds=seconds, time=lavalink.utils.format_time(seek)
+                        _("Moved to {time}").format(
+                            time=lavalink.utils.format_time(seconds * 1000)
                         ),
                     )
-                return await player.seek(seek)
+                    await player.seek(seconds * 1000)
         else:
             await self._embed_msg(ctx, _("Nothing playing."))
 
