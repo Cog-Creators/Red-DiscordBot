@@ -1082,7 +1082,7 @@ class Audio(commands.Cog):
                     _(
                         "The owner needs to set the Spotify client ID, Spotify client secret, "
                         "and YouTube API key before Spotify URLs or codes can be used. "
-                        "\nSee `{prefix}audioset youtubeapi` and `{prefix}audioset spotifyapi "
+                        "\nSee `{prefix}audioset youtubeapi` and `{prefix}audioset spotifyapi` "
                         "for instructions."
                     ).format(prefix=ctx.prefix),
                 )
