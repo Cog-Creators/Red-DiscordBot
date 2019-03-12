@@ -241,7 +241,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
                 self.remove_permissions_hook(hook)
 
         super().remove_cog(cogname)
-        self.dispatch("cog_remove", cog)
+        self.dispatch("red_cog_remove", cog)
 
         for meth in self.rpc_handlers.pop(cogname.upper(), ()):
             self.unregister_rpc_handler(meth)
@@ -409,7 +409,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
                     "http://red-discordbot.readthedocs.io/en/v3-develop/framework_commands.html"
                 )
         super().add_cog(cog)
-        self.dispatch("cog_add", cog)
+        self.dispatch("red_cog_add", cog)
 
     def add_command(self, command: commands.Command):
         if not isinstance(command, commands.Command):
