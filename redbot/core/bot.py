@@ -241,6 +241,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
                 self.remove_permissions_hook(hook)
 
         super().remove_cog(cogname)
+        self.dispatch("cog_remove", cog)
 
         for meth in self.rpc_handlers.pop(cogname.upper(), ()):
             self.unregister_rpc_handler(meth)
