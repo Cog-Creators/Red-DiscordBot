@@ -19,6 +19,7 @@ __all__ = [
     "get_next_case_number",
     "get_case",
     "get_all_cases",
+    "get_cases_for_member",
     "create_case",
     "get_casetype",
     "get_all_casetypes",
@@ -236,9 +237,21 @@ class Case:
         Case
             The case object for the requested case
 
+        Raises
+        ------
+        `discord.NotFound`
+            The user the case is for no longer exists
+        `discord.Forbidden`
+            Cannot read message history to fetch the original message.
+        `discord.HTTPException`
+            A generic API issue
         """
         guild = mod_channel.guild
-        message = await mod_channel.get_message(data["message"])
+        if data["message"]:
+            try:
+                message = await mod_channel.get_message(data["message"])
+            except discord.NotFound:
+                message = None
         user = await bot.get_user_info(data["user"])
         moderator = guild.get_member(data["moderator"])
         channel = guild.get_channel(data["channel"])
@@ -429,6 +442,92 @@ async def get_all_cases(guild: discord.Guild, bot: Red) -> List[Case]:
     for case in case_numbers:
         case_list.append(await get_case(case, guild, bot))
     return case_list
+
+
+async def get_cases_for_member(
+    guild: discord.Guild, bot: Red, *, member: discord.Member = None, member_id: int = None
+) -> List[Case]:
+    """
+    Gets all cases for the specified member or member id in a guild.
+
+    Parameters
+    ----------
+    guild: `discord.Guild`
+        The guild to get the cases from
+    bot: Red
+        The bot's instance
+    member: `discord.Member`
+        The member to get cases about
+    member_id: int
+        The id of the member to get cases about
+
+    Returns
+    -------
+    list
+        A list of all matching cases.
+
+    Raises
+    ------
+    ValueError
+        If at least one of member or member_id is not provided
+    `discord.NotFound`
+        A user with this ID does not exist.
+    `discord.Forbidden`
+        The bot does not have permission to fetch the modlog message which was sent.
+    `discord.HTTPException`
+        Fetching the user failed.
+    """
+
+    cases = await _conf.guild(guild).get_raw("cases")
+
+    if not (member_id or member):
+        raise ValueError("Expected a member or a member id to be provided.") from None
+
+    if not member_id:
+        member_id = member.id
+
+    if not member:
+        member = guild.get_member(member_id)
+        if not member:
+            member = await bot.get_user_info(member_id)
+
+    try:
+        mod_channel = await get_modlog_channel(guild)
+    except RuntimeError:
+        mod_channel = None
+
+    async def make_case(data: dict) -> Case:
+
+        message = None
+        if data["message"] and mod_channel:
+            try:
+                message = await mod_channel.get_message(data["message"])
+            except discord.NotFound:
+                pass
+
+        return Case(
+            bot=bot,
+            guild=bot.get_guild(data["guild"]),
+            created_at=data["created_at"],
+            action_type=data["action_type"],
+            user=member,
+            moderator=guild.get_member(data["moderator"]),
+            case_number=data["case_number"],
+            reason=data["reason"],
+            until=data["until"],
+            channel=guild.get_channel(data["channel"]),
+            amended_by=guild.get_member(data["amended_by"]),
+            modified_at=data["modified_at"],
+            message=message,
+        )
+
+    cases = [
+        await make_case(case_data)
+        for case_data in cases.values()
+        if case_data["user"] == member_id
+    ]
+
+    return cases
 
 
 async def create_case(

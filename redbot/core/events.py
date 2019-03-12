@@ -161,7 +161,15 @@ def init_events(bot, cli_flags):
         bot.color = discord.Colour(await bot.db.color())
 
     @bot.event
-    async def on_command_error(ctx, error):
+    async def on_command_error(ctx, error, unhandled_by_cog=False):
+
+        if not unhandled_by_cog:
+            if hasattr(ctx.command, "on_error"):
+                return
+
+            if ctx.cog and hasattr(ctx.cog, f"_{ctx.cog.__class__.__name__}__error"):
+                return
+
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help()
         elif isinstance(error, commands.ConversionFailure):
@@ -189,8 +197,7 @@ def init_events(bot, cli_flags):
                 traceback.format_exception(type(error), error, error.__traceback__)
             )
             bot._last_exception = exception_log
-            if not hasattr(ctx.cog, "_{0.command.cog_name}__error".format(ctx)):
-                await ctx.send(inline(message))
+            await ctx.send(inline(message))
         elif isinstance(error, commands.CommandNotFound):
             fuzzy_commands = await fuzzy_command_search(ctx)
             if not fuzzy_commands:

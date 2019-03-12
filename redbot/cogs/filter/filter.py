@@ -367,6 +367,7 @@ class Filter(commands.Cog):
             except discord.HTTPException:
                 pass
             else:
+                self.bot.dispatch("filter_message_delete", message, hits)
                 if filter_count > 0 and filter_time > 0:
                     user_count += 1
                     await self.settings.member(author).filter_count.set(user_count)

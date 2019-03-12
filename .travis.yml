@@ -53,7 +53,7 @@ jobs:
       - pip install redgettext==2.2
       deploy:
       - provider: script
-        script: make gettext
+        script: make upload_translations
         skip_cleanup: true
         on:
           repo: Cog-Creators/Red-DiscordBot
