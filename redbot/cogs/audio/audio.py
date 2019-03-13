@@ -454,8 +454,8 @@ class Audio(commands.Cog):
             "5. Accept the terms and conditions.\n"
             "6. Copy your client ID and your client secret into\n"
             "`{prefix}set api spotify client_id,your_client_id "
-            "client_secret,your_client_secret`".format(prefix=ctx.prefix)
-        )
+            "client_secret,your_client_secret`"
+        ).format(prefix=ctx.prefix)
         await ctx.maybe_send_embed(message)
 
     @checks.is_owner()
@@ -514,10 +514,8 @@ class Audio(commands.Cog):
             "6. Click on Create Credential at the top.\n"
             '7. At the top click the link for "API key".\n'
             "8. No application restrictions are needed. Click Create at the bottom.\n"
-            "9. You now have a key to add to `{prefix}set api youtube api_key,your_api_key`".format(
-                prefix=ctx.prefix
-            )
-        )
+            "9. You now have a key to add to `{prefix}set api youtube api_key,your_api_key`"
+        ).format(prefix=ctx.prefix)
         await ctx.maybe_send_embed(message)
 
     @commands.command()
@@ -1358,8 +1356,8 @@ class Audio(commands.Cog):
                     "Nothing found.\nThe YouTube API key may be invalid "
                     "or you may be rate limited on YouTube's search service.\n"
                     "Check the YouTube API key again and follow the instructions "
-                    "at `{prefix}audioset youtubeapi`.".format(prefix=ctx.prefix)
-                ),
+                    "at `{prefix}audioset youtubeapi`."
+                ).format(prefix=ctx.prefix),
             )
             try:
                 return await playlist_msg.edit(embed=embed3)
