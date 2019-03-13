@@ -2,7 +2,7 @@ import asyncio
 import contextlib
 import inspect
 import os
-import logging
+import re
 import types
 from collections import Counter
 from enum import Enum
@@ -210,12 +210,13 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             while pkg_name in curr_pkgs:
                 curr_pkgs.remove(pkg_name)
 
+    # Pattern to match parent package name of cog module (redbot.cogs. or redbot.ext_cogs.)
+    _COG_PACKAGE_RE = re.compile(r"^redbot\.(?:ext_)?cogs\.")
+
     async def load_extension(self, module: Union[str, types.ModuleType]) -> None:
         if isinstance(module, str):
             module: types.ModuleType = await self.cog_mgr.load_cog_module(module)
-        name = module.__name__
-        if name.startswith("redbot.cogs."):
-            name = name[len("redbot.cogs.") :]
+        name = self._COG_PACKAGE_RE.sub("", module.__name__)
 
         if name in self.extensions:
             raise errors.PackageAlreadyLoaded(name)

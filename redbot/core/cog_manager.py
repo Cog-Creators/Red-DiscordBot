@@ -10,13 +10,13 @@ arbitrary paths can be added by the user - these user-defined paths are
 particularly useful for cog development.
 
 Internally, this modifies use of the `__path__` attribute of the
-``redbot.cogs`` package. When extra paths are added to a package's
+``redbot.ext_cogs`` package. When extra paths are added to a package's
 `__path__` attribute, they are used to locate sub-packages.
 
 The precedence of paths goes:
 1. Install path
 2. User-defined paths
-3. Core path
+3. Core path (redbot.cogs)
 
 This is so users who wish to modify core cogs can do so by copying or
 installing cogs into a user-defined/core path, and this modified one
@@ -34,6 +34,7 @@ from pathlib import Path
 from typing import Union, List, Optional, Set
 
 import redbot.cogs
+import redbot.ext_cogs
 from redbot.core.utils import deduplicate_iterables
 import discord
 
@@ -69,7 +70,7 @@ class CogManager:
         self._executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
 
     async def initialize(self):
-        redbot.cogs.__path__ = list(map(str, await self.paths()))
+        redbot.ext_cogs.__path__ = [str(p) for p in (await self.paths())[:-1]]
 
     async def paths(self) -> List[Path]:
         """Get all currently valid path directories, in order of priority
@@ -139,7 +140,7 @@ class CogManager:
             raise ValueError("The install path must be an existing directory.")
         resolved = path.resolve()
         await self.conf.install_path.set(str(resolved))
-        redbot.cogs.__path__[0] = str(resolved)
+        redbot.ext_cogs.__path__[0] = str(resolved)
         return resolved
 
     @staticmethod
@@ -195,7 +196,7 @@ class CogManager:
         if path not in current_paths:
             current_paths.append(path)
             await self.set_paths(current_paths)
-            redbot.cogs.__path__.insert(-1, str(path))
+            redbot.ext_cogs.__path__.append(str(path))
 
     async def remove_path(self, path: Union[Path, str]) -> None:
         """Remove a path from the current paths list.
@@ -211,7 +212,7 @@ class CogManager:
 
         paths.remove(path)
         await self.set_paths(paths)
-        redbot.cogs.__path__.remove(str(path))
+        redbot.ext_cogs.__path__.remove(str(path))
 
     async def reorder_path(self, path: Union[Path, str], new_index: int) -> None:
         """Reorder a path in the user-defined paths list.
@@ -226,7 +227,7 @@ class CogManager:
         paths.insert(new_index, path)
         await self.set_paths(paths)
 
-        redbot.cogs.__path__[1:-1] = list(map(str, paths))
+        redbot.ext_cogs.__path__[1:] = list(map(str, paths))
 
     async def set_paths(self, paths_: List[Path]):
         """Set the current paths list.
@@ -242,33 +243,40 @@ class CogManager:
 
     async def load_cog_module(self, name: str) -> types.ModuleType:
         """Load a cog module or package."""
-        partial = functools.partial(importlib.import_module, f".{name}", package="redbot.cogs")
-        try:
-            if f"redbot.cogs.{name}" in sys.modules:
-                # Will be quick to import
-                module = partial()
-            else:
-                # Might take a while - try to make it non-blocking
-                try:
-                    module = await self._loop.run_in_executor(self._executor, partial)
-                except RuntimeError as exc:
-                    log.exception(
-                        "Loading module `%s` failed with the following exception when trying in "
-                        "a secondary thread:",
-                        name,
-                        exc_info=exc,
-                    )
-                    log.info("Retrying in main thread...")
+        for parent_package in ("redbot.ext_cogs", "redbot.cogs"):
+            partial = functools.partial(
+                importlib.import_module, f".{name}", package=parent_package
+            )
+            module_name = ".".join((parent_package, name))
+            try:
+                if module_name in sys.modules:
+                    # Will be quick to import
                     module = partial()
-        except ModuleNotFoundError as e:
-            if e.name == "redbot.cogs." + name:
-                raise errors.NoSuchCog(
-                    "No core cog by the name of '{}' could be found.".format(name), name=e.name
-                ) from e
+                else:
+                    # Might take a while - try to make it non-blocking
+                    try:
+                        module = await self._loop.run_in_executor(self._executor, partial)
+                    except RuntimeError as exc:
+                        log.exception(
+                            "Loading module `%s` failed with the following exception when trying "
+                            "in a secondary thread:",
+                            name,
+                            exc_info=exc,
+                        )
+                        log.info("Retrying in main thread...")
+                        module = partial()
+            except ModuleNotFoundError as e:
+                if e.name == module_name:
+                    pass
+                else:
+                    raise
+            else:
+                return module
 
-            raise
-
-        return module
+        # If we get here, we failed to find the module
+        raise errors.NoSuchCog(
+            "No core cog by the name of '{}' could be found.".format(name), name=name
+        )
 
     async def reload(self, module: types.ModuleType) -> types.ModuleType:
         """Do a deep reload of a module or package."""
@@ -292,7 +300,15 @@ class CogManager:
         ret = module
         for _ in range(2):  # Do it twice to overwrite old relative imports
             for child_name, lib in sorted(children.items(), key=lambda m: m[0], reverse=True):
-                importlib.reload(lib)
+                try:
+                    importlib.reload(lib)
+                except ModuleNotFoundError as exc:
+                    if exc.name == lib.__name__:
+                        # If the structure of the package changed, we might try to reload a module
+                        # which no longer exists.
+                        pass
+                    else:
+                        raise
                 if lib.__name__ == module.__name__:
                     ret = lib
         return ret
@@ -301,8 +317,9 @@ class CogManager:
     async def available_modules() -> Set[str]:
         """Finds the names of all available modules to load."""
         ret = set()
-        for finder, module_name, ispkg in pkgutil.iter_modules(redbot.cogs.__path__):
-            ret.add(module_name)
+        for package in (redbot.cogs, redbot.ext_cogs):
+            for finder, module_name, ispkg in pkgutil.iter_modules(package.__path__):
+                ret.add(module_name)
         return ret
 
 
