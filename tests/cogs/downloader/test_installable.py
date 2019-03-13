@@ -15,6 +15,17 @@ def test_process_info_file(installable):
             assert getattr(installable, k) == v
 
 
+def test_process_lib_info_file(library_installable):
+    for k, v in LIBRARY_INFO_JSON.items():
+        if k == "type":
+            assert library_installable.type == InstallableType.SHARED_LIBRARY
+        elif k == "hidden":
+            # libraries are always hidden, even if False
+            assert library_installable.hidden is True
+        else:
+            assert getattr(library_installable, k) == v
+
+
 # noinspection PyProtectedMember
 def test_location_is_dir(installable):
     assert installable._location.exists()

@@ -12,10 +12,13 @@ from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, escape, pagify, format_perms_list
-from redbot.core.utils.common_filters import filter_invites, filter_various_mentions
+from redbot.core.utils.common_filters import (
+    filter_invites,
+    filter_various_mentions,
+    escape_spoilers,
+)
 from redbot.core.utils.mod import is_mod_or_superior, is_allowed_by_hierarchy, get_audit_reason
 from .log import log
-
 
 _ = T_ = Translator("Mod", __file__)
 
@@ -440,7 +443,7 @@ class Mod(commands.Cog):
         errors = {}
 
         async def show_results():
-            text = _("Banned {} users from the server.".format(len(banned)))
+            text = _("Banned {num} users from the server.").format(num=len(banned))
             if errors:
                 text += _("\nErrors:\n")
                 text += "\n".join(errors.values())
@@ -471,7 +474,9 @@ class Mod(commands.Cog):
         for entry in ban_list:
             for user_id in user_ids:
                 if entry.user.id == user_id:
-                    errors[user_id] = _("User {} is already banned.".format(user_id))
+                    errors[user_id] = _("User {user_id} is already banned.").format(
+                        user_id=user_id
+                    )
 
         user_ids = remove_processed(user_ids)
 
@@ -490,9 +495,13 @@ class Mod(commands.Cog):
                     if result is True:
                         banned.append(user_id)
                     else:
-                        errors[user_id] = _("Failed to ban user {}: {}".format(user_id, result))
+                        errors[user_id] = _("Failed to ban user {user_id}: {reason}").format(
+                            user_id=user_id, reason=result
+                        )
                 except Exception as e:
-                    errors[user_id] = _("Failed to ban user {}: {}".format(user_id, e))
+                    errors[user_id] = _("Failed to ban user {user_id}: {reason}").format(
+                        user_id=user_id, reason=e
+                    )
 
         user_ids = remove_processed(user_ids)
 
@@ -510,11 +519,13 @@ class Mod(commands.Cog):
                 log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
             except discord.NotFound:
                 self.ban_queue.remove(queue_entry)
-                errors[user_id] = _("User {} does not exist.".format(user_id))
+                errors[user_id] = _("User {user_id} does not exist.").format(user_id=user_id)
                 continue
             except discord.Forbidden:
                 self.ban_queue.remove(queue_entry)
-                errors[user_id] = _("Could not ban {}: missing permissions.".format(user_id))
+                errors[user_id] = _("Could not ban {user_id}: missing permissions.").format(
+                    user_id=user_id
+                )
                 continue
             else:
                 banned.append(user_id)
@@ -534,7 +545,7 @@ class Mod(commands.Cog):
                     channel=None,
                 )
             except RuntimeError as e:
-                errors["0"] = _("Failed to create modlog case: {}".format(e))
+                errors["0"] = _("Failed to create modlog case: {reason}").format(reason=e)
 
         await show_results()
 
@@ -1537,8 +1548,8 @@ class Mod(commands.Cog):
             except RuntimeError as e:
                 return _(
                     "The user was banned but an error occurred when trying to "
-                    "create the modlog entry: {}".format(e)
-                )
+                    "create the modlog entry: {reason}"
+                ).format(reason=e)
 
         return True
 
@@ -1546,9 +1557,9 @@ class Mod(commands.Cog):
         names = await self.settings.user(user).past_names()
         nicks = await self.settings.member(user).past_nicks()
         if names:
-            names = [escape(name, mass_mentions=True) for name in names if name]
+            names = [escape_spoilers(escape(name, mass_mentions=True)) for name in names if name]
         if nicks:
-            nicks = [escape(nick, mass_mentions=True) for nick in nicks if nick]
+            nicks = [escape_spoilers(escape(nick, mass_mentions=True)) for nick in nicks if nick]
         return names, nicks
 
     async def check_tempban_expirations(self):

@@ -1,102 +1,237 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
-"PO-Revision-Date: 2018-04-15 16:43-0400\n"
+"POT-Creation-Date: 2019-02-17 02:24+0000\n"
+"PO-Revision-Date: 2019-02-25 03:07\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: ENCODING\n"
-"Generated-By: pygettext.py 1.5\n"
-"Plural-Forms: nplurals=4; plural=((n == 1) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || n%10 == 1 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 12 && n%100 <= 14)) ? 2 : 3));\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 2.2\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: pl\n"
 "X-Crowdin-File: /cogs/downloader/locales/messages.pot\n"
 "Language: pl_PL\n"
 
-#: ../downloader.py:200
-msgid "Libraries installed."
+#: redbot/cogs/downloader/checks.py:12
+msgid "You're about to add a 3rd party repository. The creator of Red and its community have no responsibility for any potential damage that the content of 3rd party repositories might cause.\n\n"
+"By typing '**I agree**' you declare that you have read and fully understand the above message. This message won't be shown again until the next reboot.\n\n"
+"You have **30** seconds to reply to this message."
 msgstr ""
 
-#: ../downloader.py:202
+#: redbot/cogs/downloader/checks.py:36
+msgid "Your response has timed out, please try again."
+msgstr ""
+
+#: redbot/cogs/downloader/converters.py:14
+#: redbot/cogs/downloader/repo_manager.py:84
+msgid "No Downloader cog found."
+msgstr ""
+
+#: redbot/cogs/downloader/converters.py:18
+msgid "That cog is not installed"
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:196
+#, docstring
+msgid "Install a group of dependencies using pip."
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:203
+msgid "Libraries installed."
+msgstr "Biblioteki zainstalowane."
+
+#: redbot/cogs/downloader/downloader.py:206
 msgid "Some libraries failed to install. Please check your logs for a complete list."
 msgstr ""
 
-#: ../downloader.py:231
+#: redbot/cogs/downloader/downloader.py:215
+#, docstring
+msgid "Repo management commands."
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:220
+#, docstring
+msgid "Add a new repo.\n\n"
+"        The name can only contain characters A-z, numbers and underscores.\n"
+"        The branch will be the default branch if not specified.\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:232
 msgid "That git repo has already been added under another name."
 msgstr "To repozytorium git dodano już pod inną nazwą."
 
-#: ../downloader.py:233 ../downloader.py:234
+#: redbot/cogs/downloader/downloader.py:234
 msgid "Something went wrong during the cloning process."
 msgstr "Coś poszło nie tak podczas procesu klonowania."
 
-#: ../downloader.py:236
-msgid "Repo `{}` successfully added."
-msgstr "Repozytorium `{}` zostało dodane pomyślnie."
+#: redbot/cogs/downloader/downloader.py:242
+msgid "Repo `{name}` successfully added."
+msgstr ""
 
-#: ../downloader.py:247
-msgid "The repo `{}` has been deleted successfully."
-msgstr "Repozytorium `{}` zostało pomyślnie usunięte."
+#: redbot/cogs/downloader/downloader.py:248
+#, docstring
+msgid "Remove a repo and its files."
+msgstr ""
 
-#: ../downloader.py:256
-msgid "Installed Repos:\n"
-msgstr "Zainstalowane repozytoria:\n"
+#: redbot/cogs/downloader/downloader.py:252
+msgid "The repo `{repo.name}` has been deleted successfully."
+msgstr ""
 
-#: ../downloader.py:277
-msgid "Error, there is no cog by the name of `{}` in the `{}` repo."
-msgstr "Błąd, nie istnieje żadne rozszerzenie o nazwie `{}` w repozytorium `{}`."
+#: redbot/cogs/downloader/downloader.py:257
+#, docstring
+msgid "List all installed repos."
+msgstr ""
 
-#: ../downloader.py:289
-msgid "Failed to install the required libraries for `{}`: `{}`"
-msgstr "Nie można zainstalować wymaganych bibliotek dla `{}`: `{}`"
+#: redbot/cogs/downloader/downloader.py:260
+msgid "Installed Repos:\n\n"
+msgstr ""
 
-#: ../downloader.py:299
-msgid "`{}` cog successfully installed."
-msgstr "Rozszerzenie `{}` zostało zainstalowane pomyślnie."
+#: redbot/cogs/downloader/downloader.py:270
+#, docstring
+msgid "Show information about a repo."
+msgstr ""
 
-#: ../downloader.py:317
-msgid "`{}` was successfully removed."
-msgstr "Rozszerzenie `{}` zostało usunięte pomyślnie."
+#: redbot/cogs/downloader/downloader.py:272
+msgid "Repo `{repo.name}` not found."
+msgstr ""
 
-#: ../downloader.py:319
-msgid "That cog was installed but can no longer be located. You may need to remove it's files manually if it is still usable."
-msgstr "To rozszerzenie było zainstalowane, ale nie można go już znaleźć. Musisz usunąć jego pliki ręcznie, jeśli wciąż jest używalne."
+#: redbot/cogs/downloader/downloader.py:275
+msgid "Information on {repo.name}:\n"
+"{description}"
+msgstr ""
 
-#: ../downloader.py:351
+#: redbot/cogs/downloader/downloader.py:283
+#, docstring
+msgid "Cog installation management commands."
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:288
+#, docstring
+msgid "Install a cog from the given repo."
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:292
+msgid "Error: there is no cog by the name of `{cog_name}` in the `{repo.name}` repo."
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:299
+msgid "This cog requires at least python version {version}, aborting install."
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:307
+msgid "Failed to install the required libraries for `{cog_name}`: `{libraries}`"
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:319
+msgid "Cog `{cog_name}` successfully installed."
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:325
+#, docstring
+msgid "Uninstall a cog.\n\n"
+"        You may only uninstall cogs which were previously installed\n"
+"        by Downloader.\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:338
+msgid "Cog `{cog_name}` was successfully uninstalled."
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:342
+msgid "That cog was installed but can no longer be located. You may need to remove it's files manually if it is still usable. Also make sure you've unloaded the cog with `{prefix}unload {cog_name}`."
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:353
+#, docstring
+msgid "Update all cogs, or one of your choosing."
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:374
 msgid "Cog update completed successfully."
 msgstr "Aktualizacja rozszerzenia przebiegła pomyślnie."
 
-#: ../downloader.py:359
+#: redbot/cogs/downloader/downloader.py:377
+msgid "\n"
+"Updated: "
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:379
+msgid "All installed cogs are already up to date."
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:386
+msgid "None of the updated cogs were previously loaded. Update complete."
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:388
+msgid "Would you like to reload the updated cogs?"
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:416
+msgid "OK then."
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:420
+#, docstring
+msgid "List all available cogs from a single repo."
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:424
+msgid "Installed Cogs:\n"
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:432
 msgid "Available Cogs:\n"
 msgstr "Dostępne rozszerzenia:\n"
 
-#: ../downloader.py:371
-msgid "There is no cog `{}` in the repo `{}`"
-msgstr "Nie istnieje żadne rozszerzenie o nazwie `{}` w repozytorium `{}`"
+#: redbot/cogs/downloader/downloader.py:445
+#, docstring
+msgid "List information about a single cog."
+msgstr ""
 
-#: ../downloader.py:376
-msgid "Information on {}:\n"
-"{}"
-msgstr "Informacje dla {}:\n"
-"{}"
+#: redbot/cogs/downloader/downloader.py:449
+msgid "There is no cog `{cog_name}` in the repo `{repo.name}`"
+msgstr ""
 
-#: ../downloader.py:417
+#: redbot/cogs/downloader/downloader.py:455
+msgid "Information on {cog_name}:\n"
+"{description}\n\n"
+"Requirements: {requirements}"
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:505
 msgid "Missing from info.json"
 msgstr "Brakujący z info.json"
 
-#: ../downloader.py:426
-msgid "Command: {}\n"
-"Made by: {}\n"
-"Repo: {}\n"
-"Cog name: {}"
-msgstr "Komenda: {}\n"
-"Wykonane przez: {}\n"
-"Repozytorium: {}\n"
-"Rozszerzenie o nazwie: {}"
+#: redbot/cogs/downloader/downloader.py:507
+msgid "Missing from installed repos"
+msgstr ""
 
-#: ../downloader.py:458
+#: redbot/cogs/downloader/downloader.py:514
+msgid "Command: {command}\n"
+"Made by: {author}\n"
+"Repo: {repo}\n"
+"Cog name: {cog}"
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:539
+#, docstring
+msgid "Find which cog a command comes from.\n\n"
+"        This will only work with loaded cogs.\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:546
 msgid "That command doesn't seem to exist."
 msgstr "Ta komenda nie istnieje."
+
+#: redbot/cogs/downloader/repo_manager.py:91
+msgid "Repo by the name \"{repo_name}\" does not exist."
+msgstr ""
 

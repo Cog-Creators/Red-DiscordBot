@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
-"PO-Revision-Date: 2018-04-15 16:42-0400\n"
+"POT-Creation-Date: 2019-01-11 02:18+0000\n"
+"PO-Revision-Date: 2019-02-25 03:07\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: ENCODING\n"
-"Generated-By: pygettext.py 1.5\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 2.2\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
@@ -16,35 +16,35 @@ msgstr ""
 "X-Crowdin-File: /cogs/economy/locales/messages.pot\n"
 "Language: ja_JP\n"
 
-#: ../economy.py:40
+#: redbot/cogs/economy/economy.py:42
 msgid "JACKPOT! 226! Your bid has been multiplied * 2500!"
 msgstr "ジャックポット！２２６！入札は２５００倍されました！"
 
-#: ../economy.py:44
+#: redbot/cogs/economy/economy.py:46
 msgid "4LC! +1000!"
 msgstr "四つ葉のクローバー！＋１０００！"
 
-#: ../economy.py:48
+#: redbot/cogs/economy/economy.py:50
 msgid "Three cherries! +800!"
 msgstr "３つのチェリー！＋８００！"
 
-#: ../economy.py:52
+#: redbot/cogs/economy/economy.py:54
 msgid "2 6! Your bid has been multiplied * 4!"
 msgstr "２６！入札は４倍されました！"
 
-#: ../economy.py:56
+#: redbot/cogs/economy/economy.py:58
 msgid "Two cherries! Your bid has been multiplied * 3!"
 msgstr "２つのチェリー！入札は３倍されました！"
 
-#: ../economy.py:60
+#: redbot/cogs/economy/economy.py:60
 msgid "Three symbols! +500!"
 msgstr "３つのシンボル！＋５００！"
 
-#: ../economy.py:64
+#: redbot/cogs/economy/economy.py:63
 msgid "Two consecutive symbols! Your bid has been multiplied * 2!"
 msgstr "２つの連続したシンボル！入札は２倍されました！"
 
-#: ../economy.py:68
+#: redbot/cogs/economy/economy.py:67
 msgid "Slot machine payouts:\n"
 "{two.value} {two.value} {six.value} Bet * 2500\n"
 "{flc.value} {flc.value} {flc.value} +1000\n"
@@ -62,158 +62,266 @@ msgstr "スロットマシンペイアウト：\n"
 "３つのシンボル：＋５００\n"
 "２つのシンボル：ベット＊２"
 
-#: ../economy.py:157
-msgid "{}'s balance is {} {}"
-msgstr "{}の預金残高は{}{}"
-
-#: ../economy.py:171
-msgid "{} transferred {} {} to {}"
-msgstr "{}は{}に{}{}送金しました"
-
-#: ../economy.py:191
-msgid "{} added {} {} to {}'s account."
-msgstr "{}は{}の口座に{}{}を追加しました。"
-
-#: ../economy.py:196
-msgid "{} removed {} {} from {}'s account."
-msgstr "{}は{}の口座から{}{}を削除しました。"
-
-#: ../economy.py:201
-msgid "{} set {}'s account to {} {}."
-msgstr "{}は{}の口座を{}{}に設定しました。"
-
-#: ../economy.py:212
-msgid "This will delete all bank accounts for {}.\n"
-"If you're sure, type `{}bank reset yes`"
+#: redbot/cogs/economy/economy.py:112
+#, docstring
+msgid "Get rich and have fun with imaginary currency!"
 msgstr ""
 
-#: ../economy.py:220
-msgid "All bank accounts of this guild have been deleted."
-msgstr "このギルドの銀行口座がすべて削除されました。"
-
-#: ../economy.py:240
-msgid "{0.mention} Here, take some {1}. Enjoy! (+{2}\n\n"
-"You currently have {3} {1}.\n\n"
-"You are currently #{4} on the leaderboard!"
+#: redbot/cogs/economy/economy.py:146
+#, docstring
+msgid "Manage the bank."
 msgstr ""
 
-#: ../economy.py:252 ../economy.py:273
-msgid "{} Too soon. For your next payday you have to wait {}."
-msgstr "{}早過ぎる。次の給料日までにまだに{}ほど待たなければなりません。"
-
-#: ../economy.py:262
-msgid "{0.mention} Here, take some {1}. Enjoy! (+{2})\n\n"
-"You currently have {3} {1}.\n\n"
-"You are currently #{4} on the leaderboard!"
+#: redbot/cogs/economy/economy.py:151
+#, docstring
+msgid "Show the user's account balance.\n\n"
+"        Defaults to yours."
 msgstr ""
 
-#: ../economy.py:307
+#: redbot/cogs/economy/economy.py:161
+msgid "{user}'s balance is {num} {currency}"
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:168
+#, docstring
+msgid "Transfer currency to other users."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:178
+msgid "{user} transferred {num} {currency} to {other_user}"
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:186
+#, docstring
+msgid "Set the balance of user's bank account.\n\n"
+"        Passing positive and negative values will add/remove currency instead.\n\n"
+"        Examples:\n"
+"        - `[p]bank set @Twentysix 26` - Sets balance to 26\n"
+"        - `[p]bank set @Twentysix +2` - Increases balance by 2\n"
+"        - `[p]bank set @Twentysix -6` - Decreases balance by 6\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:201
+msgid "{author} added {num} {currency} to {user}'s account."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:209
+msgid "{author} removed {num} {currency} from {user}'s account."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:217
+msgid "{author} set {user}'s account balance to {num} {currency}."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:231
+#, docstring
+msgid "Delete all bank accounts."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:234
+msgid "This will delete all bank accounts for {scope}.\n"
+"If you're sure, type `{prefix}bank reset yes`"
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:238 redbot/cogs/economy/economy.py:246
+msgid "this server"
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:245
+msgid "All bank accounts for {scope} have been deleted."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:253
+#, docstring
+msgid "Get some free currency."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:267
+msgid "You've reached the maximum amount of {currency}! (**{balance:,}**) Please spend some more 😬\n\n"
+"You currently have {new_balance} {currency}."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:279 redbot/cogs/economy/economy.py:326
+msgid "{author.mention} Here, take some {currency}. Enjoy! (+{amount} {currency}!)\n\n"
+"You currently have {new_balance} {currency}.\n\n"
+"You are currently #{pos} on the global leaderboard!"
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:296 redbot/cogs/economy/economy.py:342
+msgid "{author.mention} Too soon. For your next payday you have to wait {time}."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:315
+msgid "You've reached the maximum amount of {currency}! Please spend some more 😬\n\n"
+"You currently have {new_balance} {currency}."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:350
+#, docstring
+msgid "Print the leaderboard.\n\n"
+"        Defaults to top 10.\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:364
+msgid "Name"
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:364
+msgid "Score"
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:385
 msgid "There are no accounts in the bank."
 msgstr "銀行には口座がありません。"
 
-#: ../economy.py:333
+#: redbot/cogs/economy/economy.py:390
+#, docstring
+msgid "Show the payouts for the slot machine."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:396
+#, docstring
+msgid "Use the slot machine."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:415
 msgid "You're on cooldown, try again in a bit."
 msgstr "クールダウン中です。後でもう一度やり直してください。"
 
-#: ../economy.py:336
+#: redbot/cogs/economy/economy.py:418
 msgid "That's an invalid bid amount, sorry :/"
 msgstr "無効な入札額です。ごめんね　(｡•́︿•̀｡)"
 
-#: ../economy.py:339
+#: redbot/cogs/economy/economy.py:421
 msgid "You ain't got enough money, friend."
 msgstr "十分なお金がないよ。"
 
-#: ../economy.py:385
-msgid "{}\n"
-"{} {}\n\n"
-"Your bid: {}\n"
-"{} → {}!"
-msgstr "{}\n"
-"{}{}\n\n"
-"あなたの入札： {}\n"
-"{} → {}!"
+#: redbot/cogs/economy/economy.py:473
+msgid "You've reached the maximum amount of {currency}! Please spend some more 😬\n"
+"{old_balance} -> {new_balance}!"
+msgstr ""
 
-#: ../economy.py:392
-msgid "{}\n"
-"{} Nothing!\n"
-"Your bid: {}\n"
-"{} → {}!"
-msgstr "{}\n"
-"{} 何もない！\n"
-"あなたの入札： {}\n"
-"{} → {}!"
+#: redbot/cogs/economy/economy.py:488
+msgid "Nothing!"
+msgstr ""
 
-#: ../economy.py:417
-msgid "Minimum slot bid: {}\n"
-"Maximum slot bid: {}\n"
-"Slot cooldown: {}\n"
-"Payday amount: {}\n"
-"Payday cooldown: {}\n"
-"Amount given at account registration: {}"
-msgstr "最小入札額：{}\n"
-"最大入札額：{}\n"
-"スロットのクールダウン：{}\n"
-"給料日額：{}\n"
-"給料日クールダウン：{}\n"
-"口座登録時の金額：{}"
+#: redbot/cogs/economy/economy.py:492
+msgid "Your bid: {amount}"
+msgstr ""
 
-#: ../economy.py:427
-msgid "Current Economy settings:"
-msgstr "現在のエコノミー設定："
+#: redbot/cogs/economy/economy.py:508
+#, docstring
+msgid "Manage Economy settings."
+msgstr ""
 
-#: ../economy.py:435
+#: redbot/cogs/economy/economy.py:517
+msgid "----Economy Settings---\n"
+"Minimum slot bid: {slot_min}\n"
+"Maximum slot bid: {slot_max}\n"
+"Slot cooldown: {slot_time}\n"
+"Payday amount: {payday_amount}\n"
+"Payday cooldown: {payday_time}\n"
+"Amount given at account registration: {register_amount}"
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:538
+#, docstring
+msgid "Set the minimum slot machine bid."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:540
 msgid "Invalid min bid amount."
 msgstr "最低入札額が無効です。"
 
-#: ../economy.py:443
-msgid "Minimum bid is now {} {}."
-msgstr "今の最低入札額は{}{}となっています。"
+#: redbot/cogs/economy/economy.py:549
+msgid "Minimum bid is now {bid} {currency}."
+msgstr ""
 
-#: ../economy.py:450
-msgid "Invalid slotmax bid amount. Must be greater than slotmin."
-msgstr "スロットの最大入札額が無効です。スロットの最小入札額より大きい必要があります。"
+#: redbot/cogs/economy/economy.py:554
+#, docstring
+msgid "Set the maximum slot machine bid."
+msgstr ""
 
-#: ../economy.py:459
-msgid "Maximum bid is now {} {}."
-msgstr "今の最大入札額は{}{}となっています。"
+#: redbot/cogs/economy/economy.py:558
+msgid "Invalid maximum bid amount. Must be greater than the minimum amount."
+msgstr ""
 
-#: ../economy.py:469
-msgid "Cooldown is now {} seconds."
-msgstr "クールダウンは{}秒となっています。"
+#: redbot/cogs/economy/economy.py:568
+msgid "Maximum bid is now {bid} {currency}."
+msgstr ""
 
-#: ../economy.py:479
-msgid "Value modified. At least {} seconds must pass between each payday."
-msgstr "値が変更されました。それぞれの給料日の間に｛｝秒かから無くちゃいけません。"
+#: redbot/cogs/economy/economy.py:573
+#, docstring
+msgid "Set the cooldown for the slot machine."
+msgstr ""
 
-#: ../economy.py:488
+#: redbot/cogs/economy/economy.py:579
+msgid "Cooldown is now {num} seconds."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:583
+#, docstring
+msgid "Set the cooldown for payday."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:590
+msgid "Value modified. At least {num} seconds must pass between each payday."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:597
+#, docstring
+msgid "Set the amount earned each payday."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:600 redbot/cogs/economy/economy.py:618
 msgid "Har har so funny."
 msgstr "まぁ。おもしろいね…"
 
-#: ../economy.py:494
-msgid "Every payday will now give {} {}."
-msgstr "それぞれの給料日に{}{}を与えられます。"
+#: redbot/cogs/economy/economy.py:608
+msgid "Every payday will now give {num} {currency}."
+msgstr ""
 
-#: ../economy.py:505
-msgid "Registering an account will now give {} {}."
-msgstr "口座を登録すると{}{}が得られます。"
+#: redbot/cogs/economy/economy.py:615
+#, docstring
+msgid "Set the amount earned each payday for a role."
+msgstr ""
 
-#: ../economy.py:511
+#: redbot/cogs/economy/economy.py:622
+msgid "The bank must be per-server for per-role paydays to work."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:626
+msgid "Every payday will now give {num} {currency} to people with the role {role_name}."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:634
+#, docstring
+msgid "Set the initial balance for new bank accounts."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:641
+msgid "Registering an account will now give {num} {currency}."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:650
 msgid "weeks"
 msgstr "週間"
 
-#: ../economy.py:512
+#: redbot/cogs/economy/economy.py:651
 msgid "days"
 msgstr "日間"
 
-#: ../economy.py:513
+#: redbot/cogs/economy/economy.py:652
 msgid "hours"
 msgstr "時間"
 
-#: ../economy.py:514
+#: redbot/cogs/economy/economy.py:653
 msgid "minutes"
 msgstr "分間"
 
-#: ../economy.py:515
+#: redbot/cogs/economy/economy.py:654
 msgid "seconds"
 msgstr "秒間"
 

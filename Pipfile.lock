@@ -43,10 +43,10 @@
         },
         "aiohttp-json-rpc": {
             "hashes": [
-                "sha256:1d040b7b10ff414f9174398ff6e9c647eb0434a00939450b33aa539177c51dcf",
-                "sha256:5f5fb141c6263d2ea52a4173babe9449eef4029620dc49936dca45cdc17ac9dd"
+                "sha256:14656d360211bcdb686be0c099f7a99d8c2ae8e2762b113e6df408a8f275323f",
+                "sha256:9aa8a897fbe32b343ce7b14121491cc200395161316ca1296c6fab28449886bf"
             ],
-            "version": "==0.12"
+            "version": "==0.12.1"
         },
         "appdirs": {
             "hashes": [
@@ -82,6 +82,13 @@
                 "sha256:f8ac84de7840f5b9c4e3347b3c1eaa50f7e49c2b07596221daec5edaabbd7c48"
             ],
             "version": "==0.4.1"
+        },
+        "distro": {
+            "hashes": [
+                "sha256:362dde65d846d23baee4b5c058c8586f219b5a54be1cf5fc6ff55c4578392f57",
+                "sha256:eedf82a470ebe7d010f1872c17237c79ab04097948800029994fa458e52fb4b4"
+            ],
+            "version": "==1.4.0"
         },
         "dnspython": {
             "hashes": [
@@ -254,10 +261,10 @@
         },
         "red-lavalink": {
             "hashes": [
-                "sha256:10a07b2b5736f52a0f5c3eeab3fbc3bf6a242ca6ee284a29ad79d6d1673ddfc3",
-                "sha256:9df0ddaa92d0d7294a4e236c4069765a0b8e5f258c18075dedf28f4b64a1aab5"
+                "sha256:13e1a3f91b990be9582cba039d9a32ec4cef760da1e7e6952143116ec83d4302",
+                "sha256:3dd0d73b4a908bbe9cfb703d2563dad1d1a58f8eea5896a0dacdf37d54a39d9c"
             ],
-            "version": "==0.2.1"
+            "version": "==0.2.3"
         },
         "schema": {
             "hashes": [
@@ -339,10 +346,10 @@
         },
         "aiohttp-json-rpc": {
             "hashes": [
-                "sha256:1d040b7b10ff414f9174398ff6e9c647eb0434a00939450b33aa539177c51dcf",
-                "sha256:5f5fb141c6263d2ea52a4173babe9449eef4029620dc49936dca45cdc17ac9dd"
+                "sha256:14656d360211bcdb686be0c099f7a99d8c2ae8e2762b113e6df408a8f275323f",
+                "sha256:9aa8a897fbe32b343ce7b14121491cc200395161316ca1296c6fab28449886bf"
             ],
-            "version": "==0.12"
+            "version": "==0.12.1"
         },
         "alabaster": {
             "hashes": [
@@ -420,6 +427,13 @@
                 "sha256:f8ac84de7840f5b9c4e3347b3c1eaa50f7e49c2b07596221daec5edaabbd7c48"
             ],
             "version": "==0.4.1"
+        },
+        "distro": {
+            "hashes": [
+                "sha256:362dde65d846d23baee4b5c058c8586f219b5a54be1cf5fc6ff55c4578392f57",
+                "sha256:eedf82a470ebe7d010f1872c17237c79ab04097948800029994fa458e52fb4b4"
+            ],
+            "version": "==1.4.0"
         },
         "docutils": {
             "hashes": [
@@ -664,10 +678,10 @@
         },
         "red-lavalink": {
             "hashes": [
-                "sha256:10a07b2b5736f52a0f5c3eeab3fbc3bf6a242ca6ee284a29ad79d6d1673ddfc3",
-                "sha256:9df0ddaa92d0d7294a4e236c4069765a0b8e5f258c18075dedf28f4b64a1aab5"
+                "sha256:13e1a3f91b990be9582cba039d9a32ec4cef760da1e7e6952143116ec83d4302",
+                "sha256:3dd0d73b4a908bbe9cfb703d2563dad1d1a58f8eea5896a0dacdf37d54a39d9c"
             ],
-            "version": "==0.2.1"
+            "version": "==0.2.3"
         },
         "requests": {
             "hashes": [
@@ -748,10 +762,10 @@
         },
         "virtualenv": {
             "hashes": [
-                "sha256:8b9abfc51c38b70f61634bf265e5beacf6fae11fc25d355d1871f49b8e45f0db",
-                "sha256:cceab52aa7d4df1e1871a70236eb2b89fcfe29b6b43510d9738689787c513261"
+                "sha256:5a3ecdfbde67a4a3b3111301c4d64a5b71cf862c8c42958d30cf3253df1f29dd",
+                "sha256:dffd40d19ab0168c02cf936de59590a3c0f2c8c4a36f363fcf3dae18728dc94e"
             ],
-            "version": "==16.4.0"
+            "version": "==16.4.1"
         },
         "websockets": {
             "hashes": [

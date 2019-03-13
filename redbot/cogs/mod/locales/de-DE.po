@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
-"PO-Revision-Date: 2018-04-15 16:42-0400\n"
+"POT-Creation-Date: 2019-02-17 02:24+0000\n"
+"PO-Revision-Date: 2019-02-25 03:07\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: ENCODING\n"
-"Generated-By: pygettext.py 1.5\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 2.2\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
@@ -16,273 +16,627 @@ msgstr ""
 "X-Crowdin-File: /cogs/mod/locales/messages.pot\n"
 "Language: de_DE\n"
 
-#: ../mod.py:209
+#: redbot/cogs/mod/mod.py:26
+#, docstring
+msgid "Moderation tools."
+msgstr "Moderationstools."
+
+#: redbot/cogs/mod/mod.py:176
+#, docstring
+msgid "Manage server administration settings."
+msgstr ""
+
+#: redbot/cogs/mod/mod.py:186
+msgid "Delete repeats: {yes_or_no}\n"
+msgstr "Wiederholungen löschen: {yes_or_no}\n"
+
+#: redbot/cogs/mod/mod.py:187 redbot/cogs/mod/mod.py:195
+#: redbot/cogs/mod/mod.py:203
+msgid "Yes"
+msgstr "Ja"
+
+#: redbot/cogs/mod/mod.py:187 redbot/cogs/mod/mod.py:192
+#: redbot/cogs/mod/mod.py:195 redbot/cogs/mod/mod.py:203
+msgid "No"
+msgstr "Nein"
+
+#: redbot/cogs/mod/mod.py:189
+msgid "Ban mention spam: {num_mentions}\n"
+msgstr "Spam von Erwähnungen bannen: {num_mentions}\n"
+
+#: redbot/cogs/mod/mod.py:190
+msgid "{num} mentions"
+msgstr "{num} Erwähnungen"
+
+#: redbot/cogs/mod/mod.py:194
+msgid "Respects hierarchy: {yes_or_no}\n"
+msgstr ""
+
+#: redbot/cogs/mod/mod.py:197
+msgid "Delete delay: {num_seconds}\n"
+msgstr "Verzögerung zwischen dem Löschen: {num_seconds}\n"
+
+#: redbot/cogs/mod/mod.py:198
+msgid "{num} seconds"
+msgstr "{num} Sekunden"
+
+#: redbot/cogs/mod/mod.py:200
+msgid "None"
+msgstr "Keine"
+
+#: redbot/cogs/mod/mod.py:202
+msgid "Reinvite on unban: {yes_or_no}\n"
+msgstr "Lädt Mitglieder nach Entbannung neu ein: {yes_or_no}\n"
+
+#: redbot/cogs/mod/mod.py:210
+#, docstring
+msgid "Toggle role hierarchy check for mods and admins.\n\n"
+"        **WARNING**: Disabling this setting will allow mods to take\n"
+"        actions on users above them in the role hierarchy!\n\n"
+"        This is enabled by default.\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/mod/mod.py:222
 msgid "Role hierarchy will be checked when moderation commands are issued."
 msgstr "Die Rollenhierarchie wird überprüft, wenn Moderationsbefehle ausgegeben werden."
 
-#: ../mod.py:213
+#: redbot/cogs/mod/mod.py:227
 msgid "Role hierarchy will be ignored when moderation commands are issued."
 msgstr "Die Rollenhierarchie wird ignoriert, wenn Moderationsbefehle ausgegeben werden."
 
-#: ../mod.py:228
-msgid "Autoban for mention spam enabled. Anyone mentioning {} or more different people in a single message will be autobanned."
-msgstr "Autoban für Erwähnung Spam aktiviert. Jeder, der {} oder mehrere verschiedene Personen in einer einzelnen Nachricht erwähnt, wird autobanned."
+#: redbot/cogs/mod/mod.py:233
+#, docstring
+msgid "Set the autoban conditions for mention spam.\n\n"
+"        Users will be banned if they send any message which contains more than\n"
+"        `<max_mentions>` mentions.\n\n"
+"        `<max_mentions>` must be at least 5. Set to 0 to disable.\n"
+"        "
+msgstr ""
 
-#: ../mod.py:239
+#: redbot/cogs/mod/mod.py:246
+msgid "Autoban for mention spam enabled. Anyone mentioning {max_mentions} or more different people in a single message will be autobanned."
+msgstr "Autoban fürs Spammen von Erwähnungen aktiviert. Jeder, der {max_mentions} oder mehrere verschiedene Personen erwähnt in einer Nachricht, wird autobanned."
+
+#: redbot/cogs/mod/mod.py:258
 msgid "Autoban for mention spam disabled."
-msgstr "Autoban für erwähnen Spam deaktiviert."
+msgstr "Autoban für Spam von Erwähnungen deaktiviert."
 
-#: ../mod.py:249
+#: redbot/cogs/mod/mod.py:263
+#, docstring
+msgid "Enable auto-deletion of repeated messages."
+msgstr "Das automatische Löschen von wiederholten Nachrichten aktivieren."
+
+#: redbot/cogs/mod/mod.py:268
 msgid "Messages repeated up to 3 times will be deleted."
 msgstr "Nachrichten, die bis zu dreimal wiederholt wurden, werden gelöscht."
 
-#: ../mod.py:253
+#: redbot/cogs/mod/mod.py:271
 msgid "Repeated messages will be ignored."
 msgstr "Wiederholte Nachrichten werden ignoriert."
 
-#: ../mod.py:267
+#: redbot/cogs/mod/mod.py:276
+#, docstring
+msgid "Set the delay until the bot removes the command message.\n\n"
+"        Must be between -1 and 60.\n\n"
+"        Set to -1 to disable this feature.\n"
+"        "
+msgstr "Stelle die Verzögerung ein, bis der Bot die Befehlsnachrichten entfernt.\n\n"
+"        Muss zwischen -1 und 60 liegen.\n\n"
+"        Setze den Wert auf -1, um diese Funktion zu deaktivieren.\n"
+"        "
+
+#: redbot/cogs/mod/mod.py:287
 msgid "Command deleting disabled."
-msgstr "Befehl löschen deaktiviert."
+msgstr "Löschen von Befehlen deaktiviert."
 
-#: ../mod.py:270
-msgid "Delete delay set to {} seconds."
-msgstr "Löschverzögerung auf {} Sekunden eingestellt."
+#: redbot/cogs/mod/mod.py:289
+msgid "Delete delay set to {num} seconds."
+msgstr "Verzögerung zum Löschen auf {num} Sekunden gesetzt."
 
-#: ../mod.py:275
-msgid "Bot will delete command messages after {} seconds. Set this value to -1 to stop deleting messages"
-msgstr "Bot löscht Befehlsnachrichten nach {} Sekunden. Setzen Sie diesen Wert auf -1, um das Löschen von Nachrichten zu stoppen"
+#: redbot/cogs/mod/mod.py:294
+msgid "Bot will delete command messages after {num} seconds. Set this value to -1 to stop deleting messages"
+msgstr "Der Bot wird Befehlsnachrichten nach {num} Sekunden löschen. Setze diesen Wert auf -1, um das Löschen von Nachrichten zu stoppen"
 
-#: ../mod.py:279
+#: redbot/cogs/mod/mod.py:301
 msgid "I will not delete command messages."
 msgstr "Ich werde keine Befehlsnachrichten löschen."
 
-#: ../mod.py:292
-msgid "Users unbanned with {} will be reinvited."
-msgstr "Benutzer, die mit {} unbanned sind, werden erneut eingeladen."
+#: redbot/cogs/mod/mod.py:306
+#, docstring
+msgid "Toggle whether an invite will be sent to a user when unbanned.\n\n"
+"        If this is True, the bot will attempt to create and send a single-use invite\n"
+"        to the newly-unbanned user.\n"
+"        "
+msgstr ""
 
-#: ../mod.py:295
-msgid "Users unbanned with {} will not be reinvited."
-msgstr "Benutzer, die nicht mit {} verknüpft sind, werden nicht erneut eingeladen."
+#: redbot/cogs/mod/mod.py:316
+msgid "Users unbanned with {command} will be reinvited."
+msgstr "Benutzer, die mit {command} entbannt werden, werden wieder eingeladen."
 
-#: ../mod.py:309 ../mod.py:349 ../mod.py:510
-msgid "I cannot let you do that. Self-harm is bad {}"
-msgstr "Ich kann dich das nicht tun lassen. Selbstverletzung ist schlecht {}"
+#: redbot/cogs/mod/mod.py:323
+msgid "Users unbanned with {command} will not be reinvited."
+msgstr "Benutzer, die mit {command} entbannt werden, werden nicht wieder eingeladen."
 
-#: ../mod.py:313 ../mod.py:353 ../mod.py:514
+#: redbot/cogs/mod/mod.py:333
+#, docstring
+msgid "Kick a user.\n\n"
+"        If a reason is specified, it will be the reason that shows up\n"
+"        in the audit log.\n"
+"        "
+msgstr "Kicke einen Benutzer.\n\n"
+"        Wenn ein Grund angegeben ist, wird der Grund im Audit Log angezeigt.\n"
+"        "
+
+#: redbot/cogs/mod/mod.py:343 redbot/cogs/mod/mod.py:601
+msgid "I cannot let you do that. Self-harm is bad {emoji}"
+msgstr "Ich kann dich das nicht tun lassen. Tu dir das selbst nicht an {emoji}"
+
+#: redbot/cogs/mod/mod.py:350 redbot/cogs/mod/mod.py:410
+#: redbot/cogs/mod/mod.py:608 redbot/cogs/mod/mod.py:1754
 msgid "I cannot let you do that. You are not higher than the user in the role hierarchy."
-msgstr "Ich kann dich das nicht tun lassen. Sie sind nicht höher als der Benutzer in der Rollenhierarchie."
+msgstr "Ich kann dich das nicht tun lassen. Du bist nicht höher in der Rollenhierarchie als der Benutzer."
 
-#: ../mod.py:323 ../mod.py:383 ../mod.py:575
+#: redbot/cogs/mod/mod.py:358 redbot/cogs/mod/mod.py:418
+msgid "I cannot do that due to discord hierarchy rules"
+msgstr "Ich kann das aufgrund von Discord Hierarchie-Regeln nicht tun"
+
+#: redbot/cogs/mod/mod.py:365 redbot/cogs/mod/mod.py:449
 msgid "I'm not allowed to do that."
-msgstr "Ich darf das nicht."
+msgstr "Ich bin nicht autorisiert dies zu tun."
 
-#: ../mod.py:327
+#: redbot/cogs/mod/mod.py:369
 msgid "Done. That felt good."
 msgstr "Erledigt. Das fühlte sich gut an."
 
-#: ../mod.py:373
+#: redbot/cogs/mod/mod.py:393
+#, docstring
+msgid "Ban a user from this server.\n\n"
+"        Deletes `<days>` worth of messages.\n\n"
+"        If `<days>` is not a number, it's treated as the first word of\n"
+"        the reason.  Minimum 0 days, maximum 7. Defaults to 0.\n"
+"        "
+msgstr "Banne einen Benutzer von diesem Server.\n\n"
+"        Löscht Nachrichten der Letzten `<days>` Tage.\n\n"
+"        Wenn `<days>` keine Zahl ist, wird es als erstes Wort vom\n"
+"        Grund anerkannt. Mindestens 0 Tage, maximal 7. Standard ist 0.\n"
+"        "
+
+#: redbot/cogs/mod/mod.py:405
+msgid "I cannot let you do that. Self-harm is bad {}"
+msgstr "Das kann ich dir leider nicht erlauben. Tu dir das selbst nicht an {}"
+
+#: redbot/cogs/mod/mod.py:436
 msgid "Invalid days. Must be between 0 and 7."
-msgstr "Ungültige Tage Muss zwischen 0 und 7 liegen."
+msgstr "Ungültige Anzahl an Tagen. Es muss eine Zahl zwischen 0 und 7 sein."
 
-#: ../mod.py:388
+#: redbot/cogs/mod/mod.py:454
 msgid "Done. It was about time."
-msgstr "Erledigt. Es wurde Zeit."
+msgstr "Erledigt. Einstein hat eine Theorie über Zeit entwickelt und es war verdammt noch einmal Zeit dafür."
 
-#: ../mod.py:417
+#: redbot/cogs/mod/mod.py:476
+#, docstring
+msgid "Pre-emptively ban a user from this server.\n\n"
+"        A user ID needs to be provided in order to ban\n"
+"        using this command.\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/mod/mod.py:491
 msgid "User is already banned."
-msgstr "Benutzer ist bereits gesperrt."
+msgstr "Der Benutzer ist bereits gebannt."
 
-#: ../mod.py:433
+#: redbot/cogs/mod/mod.py:508
 msgid "User not found. Have you provided the correct user ID?"
-msgstr "Benutzer nicht gefunden. Haben Sie die richtige Benutzerkennung angegeben?"
+msgstr "Benutzer nicht gefunden. Hast du die richtige Benutzer-ID angegeben?"
 
-#: ../mod.py:437
+#: redbot/cogs/mod/mod.py:511
 msgid "I lack the permissions to do this."
-msgstr "Mir fehlen die Berechtigungen, dies zu tun."
+msgstr "Mir fehlen die Berechtigungen dies zu tun."
 
-#: ../mod.py:439
-msgid "Done. The user will not be able to join this guild."
-msgstr "Erledigt. Der Nutzer kann dieser Gilde nicht beitreten."
+#: redbot/cogs/mod/mod.py:513
+msgid "Done. The user will not be able to join this server."
+msgstr "Erledigt. Der Nutzer wird dem Server nicht mehr beitreten können. "
 
-#: ../mod.py:476
-msgid "You have been temporarily banned from {} until {}. Here is an invite for when your ban expires: {}"
-msgstr "Sie wurden vorübergehend von {} bis {} gesperrt. Hier ist eine Einladung zum Ablauf Ihres Verbots: {}"
+#: redbot/cogs/mod/mod.py:538
+#, docstring
+msgid "Temporarily ban a user from this server."
+msgstr "Bannt einen Benutzer vorübergehend vom Server."
 
-#: ../mod.py:485
+#: redbot/cogs/mod/mod.py:557
+msgid "You have been temporarily banned from {server_name} until {date}. Here is an invite for when your ban expires: {invite_link}"
+msgstr "Du wurdest vorübergehend von {server_name} gebannt. Der Bann geht bis {date}. Mit diesem Link kannst du den Server danach wieder betreten: {invite_link}"
+
+#: redbot/cogs/mod/mod.py:570
 msgid "I can't do that for some reason."
 msgstr "Ich kann das aus irgendeinem Grund nicht tun."
 
-#: ../mod.py:487
+#: redbot/cogs/mod/mod.py:572
 msgid "Something went wrong while banning"
-msgstr "Beim Verbot ist etwas schiefgelaufen"
+msgstr "Das ist etwas beim Bannen schief gelaufen"
 
-#: ../mod.py:489
+#: redbot/cogs/mod/mod.py:574
 msgid "Done. Enough chaos for now"
-msgstr "Erledigt. Genug Chaos für jetzt"
+msgstr "Erledigt. Das war genug Stress, jetzt erst einmal ein Cookie zum entspannen"
 
-#: ../mod.py:529
+#: redbot/cogs/mod/mod.py:595
+#, docstring
+msgid "Kick a user and delete 1 day's worth of their messages."
+msgstr ""
+
+#: redbot/cogs/mod/mod.py:625
 msgid "You have been banned and then unbanned as a quick way to delete your messages.\n"
-"You can now join the guild again. {}"
-msgstr "Du wurdest gesperrt und dann entbannt, um deine Nachrichten schnell zu löschen.\n"
-"Du kannst jetzt wieder der Gilde beitreten. {}"
+"You can now join the server again. {invite_link}"
+msgstr "Du wurdest gebannt und wieder entbannt, um Nachrichten von dir zu löschen, da du gegen die Regeln verstoßen hast.\n"
+"Du kannst dem Server wieder beitreten. {invite_link}"
 
-#: ../mod.py:541
+#: redbot/cogs/mod/mod.py:638
 msgid "My role is not high enough to softban that user."
-msgstr "Meine Rolle ist nicht hoch genug, um diesen Benutzer zu softben."
+msgstr "Meine Rolle ist nicht hoch genug, um diesen Benutzer zu softbannen."
 
-#: ../mod.py:557
+#: redbot/cogs/mod/mod.py:654
 msgid "Done. Enough chaos."
-msgstr "Erledigt. Genug Chaos."
+msgstr "Erledigt. Das war genug Stress."
 
-#: ../mod.py:592
+#: redbot/cogs/mod/mod.py:679
+#, docstring
+msgid "Unban a user from this server.\n\n"
+"        Requires specifying the target user's ID. To find this, you may either:\n"
+"         1. Copy it from the mod log case (if one was created), or\n"
+"         2. enable developer mode, go to Bans in this server's settings, right-\n"
+"        click the user and select 'Copy ID'."
+msgstr "Entbanne einen Benutzer von diesem Server.\n\n"
+"        Erfordert die ID des Nutzers. Um dies herauszufinden, kannst du entweder:\n"
+"         1. die ID aus dem Mod-Log Fall (falls einer erstellt wurde) entnehmen, oder\n"
+"         2. den Entwicklermodus aktivieren, zu der Kategorie Bans in den Servereinstellungen navigieren und dort mit einem Rechtsklick auf den Benutzer die ID kopieren."
+
+#: redbot/cogs/mod/mod.py:689
 msgid "Couldn't find a user with that ID!"
 msgstr "Es wurde kein Benutzer mit dieser ID gefunden!"
 
-#: ../mod.py:598
+#: redbot/cogs/mod/mod.py:695
 msgid "It seems that user isn't banned!"
-msgstr "Es scheint, dass Benutzer nicht verboten ist!"
+msgstr "Es scheint so, dass dieser Benutzer nicht gebannt ist!"
 
-#: ../mod.py:606
+#: redbot/cogs/mod/mod.py:703
 msgid "Something went wrong while attempting to unban that user"
-msgstr "Beim Versuch, diesen Benutzer zu entsperren, ist ein Fehler aufgetreten"
+msgstr "Beim Versuch, diesen Benutzer zu unbannen, ist ein Fehler aufgetreten"
 
-#: ../mod.py:609
-msgid "Unbanned that user from this guild"
-msgstr "Der Benutzer dieser Gilde wurde entbannt"
+#: redbot/cogs/mod/mod.py:706
+msgid "Unbanned that user from this server"
+msgstr "Der Nutzer wurde vom Server entbannt."
 
-#: ../mod.py:624
-msgid "You've been unbanned from {}.\n"
-"Here is an invite for that guild: {}"
-msgstr "Du wurdest von {} entbannt.\n"
-"Hier ist eine Einladung für diese Gilde: {}"
+#: redbot/cogs/mod/mod.py:728
+msgid "You've been unbanned from {server}.\n"
+"Here is an invite for that server: {invite_link}"
+msgstr "Du wurdest von {server} entbannt.\n"
+"Hier ist eine Einladung für diesen Server: {invite_link}"
 
-#: ../mod.py:628
+#: redbot/cogs/mod/mod.py:735
 msgid "I failed to send an invite to that user. Perhaps you may be able to send it for me?\n"
-"Here's the invite link: {}"
-msgstr "Ich habe keine Einladung an diesen Nutzer gesendet. Vielleicht kannst du es mir schicken?\n"
-"Hier ist der Einladungslink: {}"
+"Here's the invite link: {invite_link}"
+msgstr "Ich konnte keine Einladung an den Benutzer senden. Kannst du das für mich machen?\n"
+"Hier ist der Einladungslink: {invite_link}"
 
-#: ../mod.py:634
-msgid "Something went wrong when attempting to send that useran invite. Here's the link so you can try: {}"
-msgstr "Beim Versuch, die Useran-Einladung zu senden, ist ein Fehler aufgetreten. Hier ist der Link, damit Sie versuchen können: {}"
+#: redbot/cogs/mod/mod.py:743
+msgid "Something went wrong when attempting to send that useran invite. Here's the link so you can try: {invite_link}"
+msgstr "Beim Versuch, dem Benutzer eine Einladung zu senden, ist etwas schief gelaufen. Hier ist der Link, damit du es auch versuchen kannst: {invite_link}"
 
-#: ../mod.py:678 ../mod.py:715
-msgid "No voice state for that user!"
-msgstr "Kein Sprachstatus für diesen Benutzer!"
+#: redbot/cogs/mod/mod.py:803
+msgid "That user is not in a voice channel."
+msgstr "Dieser Benutzer ist nicht in einem Sprachkanal."
 
-#: ../mod.py:692
-msgid "That user is already muted and deafened guild-wide!"
-msgstr "Dieser Nutzer ist bereits gruppenweit gedämpft und taub!"
+#: redbot/cogs/mod/mod.py:810
+msgid "I require the {perms} permission(s) in that user's channel to do that."
+msgstr "Ich benötige die {perms} Berechtigung(en) im Kanal des Benutzers, um dies zu tun."
 
-#: ../mod.py:695
+#: redbot/cogs/mod/mod.py:820
+msgid "You must have the {perms} permission(s) in that user's channel to use this command."
+msgstr "Du musst die {perms} Berechtigung(en) im Kanal des Benutzers haben, um diesen Befehl nutzen zu können."
+
+#: redbot/cogs/mod/mod.py:832
+#, docstring
+msgid "Ban a user from speaking and listening in the server's voice channels."
+msgstr "Banne einen Benutzer, sodass dieser nicht mehr in den Sprachkanälen des Servers Sprechen und Hören kann."
+
+#: redbot/cogs/mod/mod.py:853
+msgid "That user is already muted and deafened server-wide!"
+msgstr "Dieser Nutzer ist bereits serverweit stumm- und taubgeschaltet!"
+
+#: redbot/cogs/mod/mod.py:855
 msgid "User has been banned from speaking or listening in voice channels"
 msgstr "Es wurde dem Benutzer untersagt, in Sprachkanälen zu sprechen oder zu hören"
 
-#: ../mod.py:727
-msgid "That user isn't muted or deafened by the guild!"
-msgstr "Dieser Benutzer wird von der Gilde nicht gedämpft oder taub gemacht!"
+#: redbot/cogs/mod/mod.py:875
+#, docstring
+msgid "Unban a user from speaking and listening in the server's voice channels."
+msgstr "Entbanne einen Benutzer, sodass dieser in den Sprachkanälen des Servers Sprechen und Hören kann."
 
-#: ../mod.py:730
+#: redbot/cogs/mod/mod.py:894
+msgid "That user isn't muted or deafened by the server!"
+msgstr "Dieser Benutzer ist weder stummgeschaltet noch wurde sein Lautsprecher deaktiviert!"
+
+#: redbot/cogs/mod/mod.py:896
 msgid "User is now allowed to speak and listen in voice channels"
 msgstr "Der Benutzer darf nun in Sprachkanälen sprechen und hören"
 
-#: ../mod.py:759
-msgid "I cannot do that, I lack the '{}' permission."
-msgstr "Ich kann das nicht, mir fehlt die '{}' Erlaubnis."
+#: redbot/cogs/mod/mod.py:919
+#, docstring
+msgid "Change a user's nickname.\n\n"
+"        Leaving the nickname empty will remove it.\n"
+"        "
+msgstr "Ändere den Nicknamen des Benutzers.\n\n"
+"        Wenn der Nickname leer ist wird dieser entfernt.\n"
+"        "
 
-#: ../mod.py:788
-msgid "Muted {}#{} in channel {}"
-msgstr "Stummgeschaltet {} # {} im Kanal {}"
+#: redbot/cogs/mod/mod.py:928
+msgid "Nicknames must be between 2 and 32 characters long."
+msgstr "Nicknamen müssen zwischen 2 und 32 Zeichen lang sein."
 
-#: ../mod.py:802
-msgid "That user is already muted in {}!"
-msgstr "Dieser Benutzer ist bereits in {}! Stummgeschaltet!"
+#: redbot/cogs/mod/mod.py:936
+msgid "I do not have permission to rename that member. They may be higher than or equal to me in the role hierarchy."
+msgstr "Ich habe keine Berechtigung den Namen von diesem Benutzer zu ändern. Die Rolle ist höher oder gleichgestellt in der Rollenhierarchie."
 
-#: ../mod.py:805 ../mod.py:937
-msgid "That user is not in a voice channel right now!"
-msgstr "Dieser Benutzer ist gerade nicht in einem Sprachkanal!"
+#: redbot/cogs/mod/mod.py:946
+msgid "I do not have permission to rename that member."
+msgstr "Ich habe keine Berechtigung den Namen von diesem Benutzer zu ändern."
 
-#: ../mod.py:807 ../mod.py:939
-msgid "No voice state for the target!"
-msgstr "Kein Sprachzustand für das Ziel!"
+#: redbot/cogs/mod/mod.py:949
+msgid "That nickname is invalid."
+msgstr "Der Nickname ist ungültig."
 
-#: ../mod.py:827
+#: redbot/cogs/mod/mod.py:951
+msgid "An unexpected error has occured."
+msgstr "Ein unerwarteter Fehler ist aufgetreten."
+
+#: redbot/cogs/mod/mod.py:953
+msgid "Done."
+msgstr "Erledigt."
+
+#: redbot/cogs/mod/mod.py:959
+#, docstring
+msgid "Mute users."
+msgstr "Schalte Benutzer stumm."
+
+#: redbot/cogs/mod/mod.py:965
+#, docstring
+msgid "Mute a user in their current voice channel."
+msgstr "Schalte einen Benutzer in seinem aktuellen Sprachkanal stumm."
+
+#: redbot/cogs/mod/mod.py:983
+msgid "Muted {user} in channel {channel.name}"
+msgstr "Schalte {user} im Kanal {channel.name} stumm"
+
+#: redbot/cogs/mod/mod.py:1009
+#, docstring
+msgid "Mute a user in the current text channel."
+msgstr "Schalte einen Benutzer in seinem aktuellen Text-Kanal stumm."
+
+#: redbot/cogs/mod/mod.py:1018
 msgid "User has been muted in this channel."
 msgstr "Der Benutzer wurde in diesem Kanal stummgeschaltet."
 
-#: ../mod.py:863
-msgid "User has been muted in this guild."
-msgstr "Der Nutzer wurde in dieser Gilde stummgeschaltet."
+#: redbot/cogs/mod/mod.py:1041
+#, docstring
+msgid "Mutes user in the server"
+msgstr "Schaltet Benutzer auf dem Server stumm"
 
-#: ../mod.py:924
-msgid "Unmuted {}#{} in channel {}"
-msgstr "Unmuted {} # {} im Channel {}"
+#: redbot/cogs/mod/mod.py:1051
+msgid "User has been muted in this server."
+msgstr "Der Benutzer wurde auf dem Server stummgeschaltet."
 
-#: ../mod.py:934
-msgid "That user is already unmuted in {}!"
-msgstr "Dieser Benutzer ist bereits in {}!"
+#: redbot/cogs/mod/mod.py:1111
+#, docstring
+msgid "Unmute users."
+msgstr "Entstumme Benutzer."
 
-#: ../mod.py:954
-msgid "User unmuted in this channel."
-msgstr "Der Benutzer ist in diesem Kanal nicht stumm geschaltet."
+#: redbot/cogs/mod/mod.py:1119
+#, docstring
+msgid "Unmute a user in their current voice channel."
+msgstr "Entstumme einen Benutzer in seinem aktuellen Sprachkanal."
 
-#: ../mod.py:963
+#: redbot/cogs/mod/mod.py:1137
+msgid "Unmuted {user} in channel {channel.name}"
+msgstr "{user} wurde im Kanal {channel.name} entstummt"
+
+#: redbot/cogs/mod/mod.py:1154 redbot/cogs/mod/mod.py:1188
 msgid "Unmute failed. Reason: {}"
-msgstr "Unmute ist fehlgeschlagen. Grund: {}"
+msgstr "Das Aufheben der Stummschaltung ist fehlgeschlagen. Grund: {}"
 
-#: ../mod.py:986
-msgid "User has been unmuted in this guild."
-msgstr "Der Nutzer wurde in dieser Gilde nicht angezeigt."
+#: redbot/cogs/mod/mod.py:1163
+#, docstring
+msgid "Unmute a user in this channel."
+msgstr "Entstumme einen Benutzer in diesem Kanal."
 
-#: ../mod.py:1050
+#: redbot/cogs/mod/mod.py:1172
+msgid "User unmuted in this channel."
+msgstr "Die Stummschaltung des Benutzers wurde in diesem Kanal aufgehoben."
+
+#: redbot/cogs/mod/mod.py:1197
+#, docstring
+msgid "Unmute a user in this server."
+msgstr "Entstumme einen Benutzer auf diesem Server."
+
+#: redbot/cogs/mod/mod.py:1207
+msgid "User has been unmuted in this server."
+msgstr "Die Stummschaltung des Benutzers wurde aufgehoben."
+
+#: redbot/cogs/mod/mod.py:1262
+#, docstring
+msgid "Add servers or channels to the ignore list."
+msgstr "Füge Server oder Kanäle zur Ignorierliste hinzu."
+
+#: redbot/cogs/mod/mod.py:1268
+#, docstring
+msgid "Ignore commands in the channel.\n\n"
+"        Defaults to the current channel.\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/mod/mod.py:1276
 msgid "Channel added to ignore list."
-msgstr "Kanal hinzugefügt, um Liste zu ignorieren."
+msgstr "Kanal zur Ignorierliste hinzugefügt."
 
-#: ../mod.py:1052
+#: redbot/cogs/mod/mod.py:1278
 msgid "Channel already in ignore list."
 msgstr "Kanal ist bereits in der Ignorierliste."
 
-#: ../mod.py:1060
-msgid "This guild has been added to the ignore list."
-msgstr "Diese Gilde wurde zur Ignorierliste hinzugefügt."
+#: redbot/cogs/mod/mod.py:1283
+#, docstring
+msgid "Ignore commands in this server."
+msgstr "Befehle auf diesem Server ignorieren."
 
-#: ../mod.py:1062
-msgid "This guild is already being ignored."
-msgstr "Diese Gilde wird bereits ignoriert."
+#: redbot/cogs/mod/mod.py:1287
+msgid "This server has been added to the ignore list."
+msgstr "Dieser Server wird nun ignoriert."
 
-#: ../mod.py:1083
+#: redbot/cogs/mod/mod.py:1289
+msgid "This server is already being ignored."
+msgstr "Dieser Server wird bereits ignoriert."
+
+#: redbot/cogs/mod/mod.py:1295
+#, docstring
+msgid "Remove servers or channels from the ignore list."
+msgstr "Entferne Server oder Kanäle von der Ignorierliste."
+
+#: redbot/cogs/mod/mod.py:1301
+#, docstring
+msgid "Remove a channel from ignore the list.\n\n"
+"        Defaults to the current channel.\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/mod/mod.py:1310
 msgid "Channel removed from ignore list."
 msgstr "Kanal aus der Ignorierliste entfernt."
 
-#: ../mod.py:1085
+#: redbot/cogs/mod/mod.py:1312
 msgid "That channel is not in the ignore list."
 msgstr "Dieser Kanal ist nicht in der Ignorierliste enthalten."
 
-#: ../mod.py:1093
-msgid "This guild has been removed from the ignore list."
-msgstr "Diese Gilde wurde aus der Ignorierliste entfernt."
+#: redbot/cogs/mod/mod.py:1317
+#, docstring
+msgid "Remove this server from the ignore list."
+msgstr "Entferne diesen Server von der Ignorierliste."
 
-#: ../mod.py:1095
-msgid "This guild is not in the ignore list."
-msgstr "Diese Gilde ist nicht in der Ignorierliste enthalten."
+#: redbot/cogs/mod/mod.py:1321
+msgid "This server has been removed from the ignore list."
+msgstr "Dieser Server wird jetzt nicht mehr ignoriert."
 
-#: ../mod.py:1107
+#: redbot/cogs/mod/mod.py:1323
+msgid "This server is not in the ignore list."
+msgstr "Der Server steht nicht auf der Ignorieren-Liste."
+
+#: redbot/cogs/mod/mod.py:1335
 msgid "Currently ignoring:\n"
 "{} channels\n"
 "{} guilds\n"
 msgstr "Derzeit ignorierend:\n"
 "{} Kanäle\n"
-"{} Gilden\n"
+"{} Server\n"
 
-#: ../mod.py:1138
+#: redbot/cogs/mod/mod.py:1361
+#, docstring
+msgid "Show information about a user.\n\n"
+"        This includes fields for status, discord join date, server\n"
+"        join date, voice state and previous names/nicknames.\n\n"
+"        If the user has no roles, previous names or previous nicknames,\n"
+"        these fields will be omitted.\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/mod/mod.py:1397 redbot/cogs/mod/mod.py:1398
+msgid "{}\n"
+"({} days ago)"
+msgstr "{}\n"
+"(vor {} Tagen)"
+
+#: redbot/cogs/mod/mod.py:1400
+msgid "Chilling in {} status"
+msgstr "Entspannt in {} status"
+
+#: redbot/cogs/mod/mod.py:1404
+msgid "Playing {}"
+msgstr "Spielt {}"
+
+#: redbot/cogs/mod/mod.py:1406
+msgid "Streaming [{}]({})"
+msgstr "Streamt [{}]({})"
+
+#: redbot/cogs/mod/mod.py:1408
+msgid "Listening to {}"
+msgstr "Hört {}"
+
+#: redbot/cogs/mod/mod.py:1410
+msgid "Watching {}"
+msgstr "Schaut {}"
+
+#: redbot/cogs/mod/mod.py:1418
+msgid "Joined Discord on"
+msgstr "Ist Discord beigetreten am"
+
+#: redbot/cogs/mod/mod.py:1419
+msgid "Joined this server on"
+msgstr "Dem Server beigetreten am"
+
+#: redbot/cogs/mod/mod.py:1421
+msgid "Roles"
+msgstr "Rollen"
+
+#: redbot/cogs/mod/mod.py:1425
+msgid "Previous Names"
+msgstr "Vorherige Namen"
+
+#: redbot/cogs/mod/mod.py:1429
+msgid "Previous Nicknames"
+msgstr "Vorherige Nicknamen"
+
+#: redbot/cogs/mod/mod.py:1432
+msgid "Current voice channel"
+msgstr "Aktueller Sprachkanal"
+
+#: redbot/cogs/mod/mod.py:1436
+msgid "Member #{} | User ID: {}"
+msgstr "Benutzer #{} | User ID: {}"
+
+#: redbot/cogs/mod/mod.py:1454
+#, docstring
+msgid "Show previous names and nicknames of a user."
+msgstr "Zeige vorherige Namen und Nicknamen von einem Benutzer."
+
+#: redbot/cogs/mod/mod.py:1458
 msgid "**Past 20 names**:"
-msgstr "** Vorige 20 Namen **:"
+msgstr "**Vorherige 20 Namen:**"
 
-#: ../mod.py:1145
+#: redbot/cogs/mod/mod.py:1464
 msgid "**Past 20 nicknames**:"
-msgstr "** Die letzten 20 Spitznamen **:"
+msgstr "**Die letzten 20 Nicknamen:**"
 
-#: ../mod.py:1151
+#: redbot/cogs/mod/mod.py:1471
 msgid "That user doesn't have any recorded name or nickname change."
-msgstr "Dieser Nutzer hat keinen registrierten Namen oder eine geänderte Nickname."
+msgstr "Über diesen Benutzer sind keine Namens- oder Nicknamenänderungen bekannt."
+
+#: redbot/cogs/mod/mod.py:1497
+msgid "Tempban finished"
+msgstr "Tempban abgesessen"
+
+#: redbot/cogs/mod/mod.py:1532 redbot/cogs/mod/mod.py:1546
+msgid "Mention spam (Autoban)"
+msgstr "Spam von Erwähnungen (Autoban)"
+
+#: redbot/cogs/mod/mod.py:1752
+msgid "That user can't send messages in this channel."
+msgstr "Dieser Benutzer kann keine Nachrichten in diesem Kanal senden."
+
+#: redbot/cogs/mod/mod.py:1753
+msgid "That user isn't muted in this channel."
+msgstr "Der Benutzer ist in diesem Kanal nicht stumm geschaltet."
+
+#: redbot/cogs/mod/mod.py:1757
+msgid "That user cannot be muted, as they have the Administrator permission."
+msgstr "Der Benutzer kann nicht stumm geschaltet werden, da dieser die Administrator Berechtigung hat."
+
+#: redbot/cogs/mod/mod.py:1758
+msgid "Failed to mute user. I need the manage roles permission and the user I'm muting must be lower than myself in the role hierarchy."
+msgstr "Konnte den Benutzer nicht stummschalten. Ich benötige die 'Rollen verwalten' Berechtigung und der stummzuschaltende Benutzer muss unter mir in der Rollenhierarchie sein."
 

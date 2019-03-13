@@ -140,7 +140,9 @@ class Downloader(commands.Cog):
         failed = []
 
         for repo in repos:
-            if not await repo.install_libraries(target_dir=self.SHAREDLIB_PATH):
+            if not await repo.install_libraries(
+                target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH
+            ):
                 failed.extend(repo.available_libraries)
 
         # noinspection PyTypeChecker
@@ -314,7 +316,7 @@ class Downloader(commands.Cog):
 
         await self._add_to_installed(cog)
 
-        await repo.install_libraries(self.SHAREDLIB_PATH)
+        await repo.install_libraries(target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH)
 
         await ctx.send(_("Cog `{cog_name}` successfully installed.").format(cog_name=cog_name))
         if cog.install_msg is not None:

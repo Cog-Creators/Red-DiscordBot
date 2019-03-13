@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-04-15 16:42-0400\n"
+"POT-Creation-Date: 2019-01-11 02:18+0000\n"
+"PO-Revision-Date: 2019-02-25 03:07\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: ENCODING\n"
-"Generated-By: pygettext.py 1.5\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 2.2\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
@@ -16,47 +16,88 @@ msgstr ""
 "X-Crowdin-File: /cogs/modlog/locales/messages.pot\n"
 "Language: nl_NL\n"
 
-#: ../modlog.py:36
-msgid "Mod events will be sent to {}"
+#: redbot/cogs/modlog/modlog.py:15
+#, docstring
+msgid "Manage log channels for moderation actions."
 msgstr ""
 
-#: ../modlog.py:42
-msgid "I do not have permissions to send messages in {}!"
+#: redbot/cogs/modlog/modlog.py:24
+#, docstring
+msgid "Manage modlog settings."
 msgstr ""
 
-#: ../modlog.py:52
+#: redbot/cogs/modlog/modlog.py:30
+#, docstring
+msgid "Set a channel as the modlog.\n\n"
+"        Omit `<channel>` to disable the modlog.\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/modlog/modlog.py:39
+msgid "Mod events will be sent to {channel}"
+msgstr ""
+
+#: redbot/cogs/modlog/modlog.py:43
+msgid "I do not have permissions to send messages in {channel}!"
+msgstr ""
+
+#: redbot/cogs/modlog/modlog.py:54
 msgid "Mod log deactivated."
 msgstr ""
 
-#: ../modlog.py:63
-msgid "Current settings:"
+#: redbot/cogs/modlog/modlog.py:59
+#, docstring
+msgid "Enable or disable case creation for a mod action."
 msgstr ""
 
-#: ../modlog.py:75
+#: redbot/cogs/modlog/modlog.py:70
+msgid "Current settings:\n"
+msgstr ""
+
+#: redbot/cogs/modlog/modlog.py:75
 msgid "That action is not registered"
 msgstr ""
 
-#: ../modlog.py:82
-msgid "Case creation for {} actions is now {}."
+#: redbot/cogs/modlog/modlog.py:80
+msgid "Case creation for {action_name} actions is now {enabled}."
 msgstr ""
 
-#: ../modlog.py:94
+#: redbot/cogs/modlog/modlog.py:88
+#, docstring
+msgid "Reset all modlog cases in this server."
+msgstr ""
+
+#: redbot/cogs/modlog/modlog.py:91
 msgid "Cases have been reset."
 msgstr ""
 
-#: ../modlog.py:103
-msgid "That case does not exist for that guild"
+#: redbot/cogs/modlog/modlog.py:96
+#, docstring
+msgid "Show the specified case."
 msgstr ""
 
-#: ../modlog.py:122
+#: redbot/cogs/modlog/modlog.py:100
+msgid "That case does not exist for that server"
+msgstr ""
+
+#: redbot/cogs/modlog/modlog.py:111
+#, docstring
+msgid "Specify a reason for a modlog case.\n\n"
+"        Please note that you can only edit cases you are\n"
+"        the owner of unless you are a mod, admin or server owner.\n\n"
+"        If no case number is specified, the latest case will be used.\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/modlog/modlog.py:126
 msgid "That case does not exist!"
 msgstr ""
 
-#: ../modlog.py:146
+#: redbot/cogs/modlog/modlog.py:152
 msgid "You are not authorized to modify that case!"
 msgstr ""
 
-#: ../modlog.py:155
+#: redbot/cogs/modlog/modlog.py:159
 msgid "Reason has been updated."
 msgstr ""
 
