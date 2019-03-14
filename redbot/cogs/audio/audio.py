@@ -2767,21 +2767,17 @@ class Audio(commands.Cog):
             for p in lavalink.players:
                 server = p.channel.guild
 
-                if server.id not in stop_times:
-                    stop_times[server.id] = None
-
                 if [self.bot.user] == p.channel.members:
-                    if stop_times[server.id] is None:
-                        stop_times[server.id] = int(time.time())
+                    stop_times.setdefault(server.id, int(time.time()))
+                else:
+                    stop_times.pop(server.id, None)
 
             for sid in stop_times:
-                if stop_times[sid] is None:
-                    continue
                 server_obj = self.bot.get_guild(sid)
                 if await self.config.guild(server_obj).emptydc_enabled():
                     emptydc_timer = await self.config.guild(server_obj).emptydc_timer()
                     if (int(time.time()) - stop_times[sid]) >= emptydc_timer:
-                        stop_times[sid] = None
+                        stop_times.pop(sid)
                         try:
                             await lavalink.get_player(sid).disconnect()
                         except Exception:
