@@ -286,7 +286,7 @@ class Downloader(commands.Cog):
         pass
 
     @cog.command(name="install", usage="<repo_name> <cogs>")
-    async def _cog_install(self, ctx, repo: Repo, cogs: list):
+    async def _cog_install(self, ctx, repo: Repo, *cogs):
         """Install a cog from the given repo."""
         for cog_name in cogs:
             cog: Installable = discord.utils.get(repo.available_cogs, name=cog_name)
