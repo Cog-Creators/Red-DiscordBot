@@ -2456,6 +2456,7 @@ class Audio(commands.Cog):
         )
         is_mod = discord.utils.get(ctx.guild.get_member(member.id).roles, id=mod_role) is not None
         is_bot = member.bot is True
+        is_other_channel = await self._channel_check(ctx)
 
         return (
             is_active_dj
@@ -2465,6 +2466,7 @@ class Audio(commands.Cog):
             or is_admin
             or is_mod
             or is_bot
+            or is_other_channel
         )
 
     async def _is_alone(self, ctx, member):
@@ -2714,6 +2716,32 @@ class Audio(commands.Cog):
             await self._embed_msg(ctx, _("Websocket port set to {port}.").format(port=ws_port))
 
         self._restart_connect()
+
+    async def _channel_check(self, ctx):
+        player = lavalink.get_player(ctx.guild.id)
+        try:
+            in_channel = sum(
+                not m.bot for m in ctx.guild.get_member(self.bot.user.id).voice.channel.members
+            )
+        except AttributeError:
+            return False
+
+        if not ctx.author.voice:
+            user_channel = None
+        else:
+            user_channel = ctx.author.voice.channel
+
+        if in_channel == 0 and user_channel:
+            if (
+                (player.channel != user_channel)
+                and not player.current
+                and player.position == 0
+                and len(player.queue) == 0
+            ):
+                await lavalink.connect(user_channel)
+                return True
+        else:
+            return False
 
     async def _check_external(self):
         external = await self.config.use_external_lavalink()
