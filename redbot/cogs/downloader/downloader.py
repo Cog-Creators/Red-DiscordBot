@@ -320,7 +320,7 @@ class Downloader(commands.Cog):
 
         await ctx.send(
             _(
-                "Cog `{cog_name}` successfully installed. You can load it with {prefix}load {cog_name}"
+                "Cog `{cog_name}` successfully installed. You can load it with `{prefix}load {cog_name}`"
             ).format(cog_name=cog_name, prefix=ctx.prefix)
         )
         if cog.install_msg is not None:
