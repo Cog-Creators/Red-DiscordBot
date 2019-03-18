@@ -556,7 +556,9 @@ class Cog(CogCommandMixin, CogGroupMixin):
 
     @property
     def all_commands(self) -> Dict[str, Command]:
-        return {cmd.name: cmd for cmd in self.__class__.__dict__.values() if isinstance(cmd, Command)}
+        return {
+            cmd.name: cmd for cmd in self.__class__.__dict__.values() if isinstance(cmd, Command)
+        }
 
 
 def command(name=None, cls=Command, **attrs):
