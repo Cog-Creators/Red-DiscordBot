@@ -215,7 +215,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
     async def load_extension(self, module: Union[str, types.ModuleType]) -> None:
         if isinstance(module, str):
-            module: types.ModuleType = await self.cog_mgr.load_cog_module(module)
+            module: types.ModuleType = self.cog_mgr.load_cog_module(module)
         name = self._COG_PACKAGE_RE.sub("", module.__name__)
 
         if name in self.extensions:
@@ -229,7 +229,6 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
             self.extensions[name] = module
         else:
-            del module
             raise discord.ClientException(f"extension {name} does not have a setup function")
 
     def remove_cog(self, cogname: str):

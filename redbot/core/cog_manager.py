@@ -23,8 +23,6 @@ installing cogs into a user-defined/core path, and this modified one
 will be loaded instead.
 """
 import asyncio
-import concurrent.futures
-import functools
 import importlib.machinery
 import logging
 import pkgutil
@@ -67,7 +65,6 @@ class CogManager:
         default_cog_install_path.mkdir(parents=True, exist_ok=True)
         self.conf.register_global(paths=[], install_path=str(default_cog_install_path))
         self._loop = loop or asyncio.get_event_loop()
-        self._executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
 
     async def initialize(self):
         redbot.ext_cogs.__path__ = [str(p) for p in (await self.paths())[:-1]]
@@ -241,30 +238,13 @@ class CogManager:
         str_paths = list(map(str, paths_))
         await self.conf.paths.set(str_paths)
 
-    async def load_cog_module(self, name: str) -> types.ModuleType:
+    @staticmethod
+    def load_cog_module(name: str) -> types.ModuleType:
         """Load a cog module or package."""
         for parent_package in ("redbot.ext_cogs", "redbot.cogs"):
-            partial = functools.partial(
-                importlib.import_module, f".{name}", package=parent_package
-            )
             module_name = ".".join((parent_package, name))
             try:
-                if module_name in sys.modules:
-                    # Will be quick to import
-                    module = partial()
-                else:
-                    # Might take a while - try to make it non-blocking
-                    try:
-                        module = await self._loop.run_in_executor(self._executor, partial)
-                    except RuntimeError as exc:
-                        log.exception(
-                            "Loading module `%s` failed with the following exception when trying "
-                            "in a secondary thread:",
-                            name,
-                            exc_info=exc,
-                        )
-                        log.info("Retrying in main thread...")
-                        module = partial()
+                module = importlib.import_module(f".{name}", package=parent_package)
             except ModuleNotFoundError as e:
                 if e.name == module_name:
                     pass
@@ -278,22 +258,9 @@ class CogManager:
             "No core cog by the name of '{}' could be found.".format(name), name=name
         )
 
-    async def reload(self, module: types.ModuleType) -> types.ModuleType:
-        """Do a deep reload of a module or package."""
-        try:
-            return await self._loop.run_in_executor(self._executor, self._reload, module)
-        except RuntimeError as exc:
-            log.exception(
-                "Reloading module `%s` failed with the following exception when trying in a "
-                "secondary thread:",
-                module.__name__,
-                exc_info=exc,
-            )
-            log.info("Retrying in main thread...")
-            return self._reload(module)
-
     @staticmethod
-    def _reload(module: types.ModuleType) -> types.ModuleType:
+    def reload(module: types.ModuleType) -> types.ModuleType:
+        """Do a deep reload of a module or package."""
         children = {
             name: lib for name, lib in sys.modules.items() if name.startswith(module.__name__)
         }

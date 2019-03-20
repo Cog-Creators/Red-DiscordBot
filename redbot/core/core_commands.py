@@ -85,7 +85,7 @@ class CoreLogic:
 
         for name in cog_names:
             try:
-                module = await bot.cog_mgr.load_cog_module(name)
+                module = bot.cog_mgr.load_cog_module(name)
             except errors.NoSuchCog:
                 notfound_packages.append(name)
             except Exception as e:
@@ -100,7 +100,7 @@ class CoreLogic:
 
         for name, module in cog_modules:
             try:
-                module = await bot.cog_mgr.reload(module)
+                module = bot.cog_mgr.reload(module)
                 await bot.load_extension(module)
             except errors.PackageAlreadyLoaded:
                 alreadyloaded_packages.append(name)
@@ -1809,8 +1809,8 @@ class Core(commands.Cog, CoreLogic):
     # RPC handlers
     async def rpc_load(self, request):
         cog_name = request.params[0]
-        module = await self.bot.cog_mgr.load_cog_module(cog_name)
-        module = await self.bot.cog_mgr.reload(module)
+        module = self.bot.cog_mgr.load_cog_module(cog_name)
+        module = self.bot.cog_mgr.reload(module)
         await self.bot.load_extension(module)
 
     async def rpc_unload(self, request):
