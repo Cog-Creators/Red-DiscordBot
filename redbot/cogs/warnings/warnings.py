@@ -2,7 +2,6 @@ from collections import namedtuple
 from typing import Union, Optional
 
 import discord
-import asyncio
 
 from redbot.cogs.warnings.helpers import (
     warning_points_add_check,
@@ -16,7 +15,7 @@ from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.mod import is_admin_or_superior
 from redbot.core.utils.chat_formatting import warning, pagify
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-from redbot.core.utils.predicates import MessagePredicate
+
 
 _ = Translator("Warnings", __file__)
 
@@ -56,7 +55,7 @@ class Warnings(commands.Cog):
         ]
         try:
             await modlog.register_casetypes(casetypes_to_register)
-        except RuntimeError as e:
+        except RuntimeError:
             pass
 
     @commands.group()
@@ -256,6 +255,8 @@ class Warnings(commands.Cog):
     ):
         """Warn the user for the specified reason.
 
+        `<points>` number of points the warning should be for. If no number is supplied
+        1 point will be given. Pre-set warnings disregard this.
         `<reason>` can be a registered reason if it exists or a custom one
         is created by default.
         """
@@ -335,7 +336,7 @@ class Warnings(commands.Cog):
                 until=None,
                 channel=None,
             )
-        except RuntimeError as e:
+        except RuntimeError:
             pass
         await ctx.send(_("User {user} has been warned.").format(user=user))
 
