@@ -6,7 +6,7 @@ import shutil
 import sys
 from pathlib import Path
 from sys import path as syspath
-from typing import Tuple, Union, Iterable
+from typing import Tuple, Union, Iterable, Optional
 
 import discord
 from redbot.core import checks, commands, Config, version_info as red_version_info
@@ -19,8 +19,7 @@ from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from . import errors
 from .checks import do_install_agreement
-from .converters import InstalledCog
-from .installable import Installable
+from .installable import Installable, InstalledCog
 from .log import log
 from .repo_manager import RepoManager, Repo
 
@@ -64,25 +63,25 @@ class Downloader(commands.Cog):
         """
         return await self.bot._cog_mgr.install_path()
 
-    async def installed_cogs(self) -> Tuple[Installable]:
+    async def installed_cogs(self) -> Tuple[InstalledCog]:
         """Get info on installed cogs.
 
         Returns
         -------
-        `tuple` of `Installable`
+        `tuple` of `InstalledCog`
             All installed cogs / shared lib directories.
 
         """
         installed = await self.conf.installed()
         # noinspection PyTypeChecker
-        return tuple(Installable.from_json(v, self._repo_manager) for v in installed)
+        return tuple(InstalledCog.from_json(v, self._repo_manager) for v in installed)
 
-    async def _add_to_installed(self, cog: Installable):
+    async def _add_to_installed(self, cog: InstalledCog):
         """Mark a cog as installed.
 
         Parameters
         ----------
-        cog : Installable
+        cog : InstalledCog
             The cog to check off.
 
         """
@@ -93,12 +92,12 @@ class Downloader(commands.Cog):
             installed.append(cog_json)
             await self.conf.installed.set(installed)
 
-    async def _remove_from_installed(self, cog: Installable):
+    async def _remove_from_installed(self, cog: InstalledCog):
         """Remove a cog from the saved list of installed cogs.
 
         Parameters
         ----------
-        cog : Installable
+        cog : InstalledCog
             The cog to remove.
 
         """
@@ -109,7 +108,7 @@ class Downloader(commands.Cog):
             installed.remove(cog_json)
             await self.conf.installed.set(installed)
 
-    async def _reinstall_cogs(self, cogs: Iterable[Installable]) -> Tuple[Installable]:
+    async def _reinstall_cogs(self, cogs: Iterable[InstalledCog]) -> Tuple[InstalledCog]:
         """
         Installs a list of cogs, used when updating.
         :param cogs:
@@ -123,7 +122,7 @@ class Downloader(commands.Cog):
         # noinspection PyTypeChecker
         return tuple(failed)
 
-    async def _reinstall_libraries(self, cogs: Iterable[Installable]) -> Tuple[Installable]:
+    async def _reinstall_libraries(self, cogs: Iterable[InstalledCog]) -> Tuple[Installable]:
         """
         Reinstalls any shared libraries from the repos of cogs that
             were updated.
@@ -145,7 +144,7 @@ class Downloader(commands.Cog):
         # noinspection PyTypeChecker
         return tuple(failed)
 
-    async def _reinstall_requirements(self, cogs: Iterable[Installable]) -> bool:
+    async def _reinstall_requirements(self, cogs: Iterable[InstalledCog]) -> bool:
         """
         Reinstalls requirements for given cogs that have been updated.
             Returns a bool that indicates if all requirement installations
@@ -195,7 +194,7 @@ class Downloader(commands.Cog):
         """Install a group of dependencies using pip."""
         if not deps:
             return await ctx.send_help()
-        repo = Repo("", "", "", Path.cwd(), loop=ctx.bot.loop)
+        repo = Repo("", "", "", "", Path.cwd(), loop=ctx.bot.loop)
         async with ctx.typing():
             success = await repo.install_raw_requirements(deps, self.LIB_PATH)
 
@@ -294,59 +293,76 @@ class Downloader(commands.Cog):
         """Cog installation management commands."""
         pass
 
-    @cog.command(name="install", usage="<repo_name> <cog_name>")
-    async def _cog_install(self, ctx, repo: Repo, cog_name: str):
+    @cog.command(name="install", usage="<repo_name> <cog_name> [revision]")
+    async def _cog_install(self, ctx, repo: Repo, cog_name: str, rev: Optional[str] = None):
         """Install a cog from the given repo."""
-        cog: Installable = discord.utils.get(repo.available_cogs, name=cog_name)
-        if cog is None:
-            await ctx.send(
-                _(
-                    "Error: there is no cog by the name of `{cog_name}` in the `{repo.name}` repo."
-                ).format(cog_name=cog_name, repo=repo)
-            )
-            return
-        elif cog.min_python_version > sys.version_info:
-            await ctx.send(
-                _("This cog requires at least python version {version}, aborting install.").format(
-                    version=".".join([str(n) for n in cog.min_python_version])
+        commit = None
+        if rev is not None:
+            try:
+                commit = await repo._get_full_sha1(rev)
+            except errors.UnknownRevision:
+                await ctx.send(
+                    _("Error: there is no revision `{rev}` in repo `{repo.name}`").format(
+                        rev=rev, repo=repo
+                    )
                 )
-            )
-            return
-        ignore_max = cog.min_bot_version > cog.max_bot_version
-        if (
-            cog.min_bot_version > red_version_info
-            or not ignore_max
-            and cog.max_bot_version < red_version_info
-        ):
-            await ctx.send(
-                _("This cog requires at least Red version {min_version}").format(
-                    min_version=cog.min_bot_version
-                )
-                + (
-                    ""
-                    if ignore_max
-                    else _(" and at most {max_version}").format(max_version=cog.max_bot_version)
-                )
-                + _(", but you have {current_version}, aborting install.").format(
-                    current_version=red_version_info
-                )
-            )
-            return
 
-        if not await repo.install_requirements(cog, self.LIB_PATH):
-            libraries = humanize_list(tuple(map(inline, cog.requirements)))
-            await ctx.send(
-                _("Failed to install the required libraries for `{cog_name}`: {libraries}").format(
-                    cog_name=cog.name, libraries=libraries
+        async with repo.checkout(commit):
+            cog: Installable = discord.utils.get(repo.available_cogs, name=cog_name)
+            if cog is None:
+                await ctx.send(
+                    _(
+                        "Error: there is no cog by the name of "
+                        "`{cog_name}` in the `{repo.name}` repo."
+                    ).format(cog_name=cog_name, repo=repo)
                 )
+                return
+            if cog.min_python_version > sys.version_info:
+                await ctx.send(
+                    _(
+                        "This cog requires at least python version {version}, aborting install."
+                    ).format(version=".".join([str(n) for n in cog.min_python_version]))
+                )
+                return
+            ignore_max = cog.min_bot_version > cog.max_bot_version
+            if (
+                cog.min_bot_version > red_version_info
+                or not ignore_max
+                and cog.max_bot_version < red_version_info
+            ):
+                await ctx.send(
+                    _("This cog requires at least Red version {min_version}").format(
+                        min_version=cog.min_bot_version
+                    )
+                    + (
+                        ""
+                        if ignore_max
+                        else _(" and at most {max_version}").format(
+                            max_version=cog.max_bot_version
+                        )
+                    )
+                    + _(", but you have {current_version}, aborting install.").format(
+                        current_version=red_version_info
+                    )
+                )
+                return
+
+            if not await repo.install_requirements(cog, self.LIB_PATH):
+                libraries = humanize_list(tuple(map(inline, cog.requirements)))
+                await ctx.send(
+                    _(
+                        "Failed to install the required libraries for `{cog_name}`: `{libraries}`"
+                    ).format(cog_name=cog.name, libraries=libraries)
+                )
+                return
+
+            installed_cog = await repo.install_cog(cog, await self.cog_install_path())
+
+            await self._add_to_installed(installed_cog)
+
+            await repo.install_libraries(
+                target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH
             )
-            return
-
-        await repo.install_cog(cog, await self.cog_install_path())
-
-        await self._add_to_installed(cog)
-
-        await repo.install_libraries(target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH)
 
         await ctx.send(
             _(

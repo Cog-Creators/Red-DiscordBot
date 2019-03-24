@@ -19,6 +19,7 @@ def test_existing_git_repo(tmpdir):
         url="https://github.com/tekulvw/Squid-Plugins",
         name="squid",
         branch="rewrite_cogs",
+        commit="6acb5decbb717932e5dc0cda7fca0eff452c47dd",
         folder_path=repo_folder.parent,
     )
 
@@ -30,6 +31,9 @@ def test_existing_git_repo(tmpdir):
 @pytest.mark.asyncio
 async def test_add_repo(monkeypatch, repo_manager):
     monkeypatch.setattr("redbot.cogs.downloader.repo_manager.Repo._run", fake_run_noprint)
+    monkeypatch.setattr(
+        "redbot.cogs.downloader.repo_manager.Repo.latest_commit", fake_latest_commit
+    )
 
     squid = await repo_manager.add_repo(
         url="https://github.com/tekulvw/Squid-Plugins", name="squid", branch="rewrite_cogs"
@@ -57,6 +61,9 @@ async def test_lib_install_requirements(monkeypatch, library_installable, repo, 
 @pytest.mark.asyncio
 async def test_remove_repo(monkeypatch, repo_manager):
     monkeypatch.setattr("redbot.cogs.downloader.repo_manager.Repo._run", fake_run_noprint)
+    monkeypatch.setattr(
+        "redbot.cogs.downloader.repo_manager.Repo.latest_commit", fake_latest_commit
+    )
 
     await repo_manager.add_repo(
         url="https://github.com/tekulvw/Squid-Plugins", name="squid", branch="rewrite_cogs"

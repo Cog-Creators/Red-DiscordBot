@@ -10,18 +10,46 @@ from pathlib import Path
 from subprocess import run as sp_run, PIPE
 from string import Formatter
 from sys import executable
-from typing import List, Tuple, Iterable, MutableMapping, Union, Optional
+from typing import (
+    Tuple,
+    Iterable,
+    MutableMapping,
+    Union,
+    Optional,
+    Awaitable,
+    AsyncContextManager,
+    TypeVar,
+)
 
 from redbot.core import data_manager, commands
 from redbot.core.utils import safe_delete
 from redbot.core.i18n import Translator
 
 from . import errors
-from .installable import Installable, InstallableType
+from .installable import Installable, InstallableType, InstalledCog
 from .json_mixins import RepoJSONMixin
 from .log import log
 
+_T = TypeVar("_T")
+
 _ = Translator("RepoManager", __file__)
+
+
+class _RepoCheckoutCtxManager(Awaitable[_T], AsyncContextManager[_T]):
+    def __init__(self, repo, rev):
+        self.repo = repo
+        self.rev = rev
+        self.coro = repo._checkout(self.rev)
+
+    def __await__(self):
+        return self.coro.__await__()
+
+    async def __aenter__(self):
+        await self
+
+    async def __aexit__(self, exc_type, exc, tb):
+        if self.rev is not None:
+            await self.repo._checkout(self.repo.branch)
 
 
 class ProcessFormatter(Formatter):
@@ -39,12 +67,15 @@ class Repo(RepoJSONMixin):
     GIT_CLONE = "git clone --recurse-submodules -b {branch} {url} {folder}"
     GIT_CLONE_NO_BRANCH = "git clone --recurse-submodules {url} {folder}"
     GIT_CURRENT_BRANCH = "git -C {path} rev-parse --abbrev-ref HEAD"
+    GIT_CURRENT_COMMIT = "git -C {path} rev-parse HEAD"
     GIT_LATEST_COMMIT = "git -C {path} rev-parse {branch}"
     GIT_HARD_RESET = "git -C {path} reset --hard origin/{branch} -q"
     GIT_PULL = "git -C {path} pull --recurse-submodules -q --ff-only"
     GIT_DIFF_FILE_STATUS = "git -C {path} diff --no-commit-id --name-status {old_hash} {new_hash}"
     GIT_LOG = "git -C {path} log --relative-date --reverse {old_hash}.. {relative_file_path}"
     GIT_DISCOVER_REMOTE_URL = "git -C {path} config --get remote.origin.url"
+    GIT_CHECKOUT = "git -C {path} checkout {rev}"
+    GIT_GET_FULL_SHA1 = "git -C {path} rev-parse --verify {rev}"
 
     PIP_INSTALL = "{python} -m pip install -U -t {target_dir} {reqs}"
 
@@ -53,12 +84,14 @@ class Repo(RepoJSONMixin):
         name: str,
         url: str,
         branch: str,
+        commit: str,
         folder_path: Path,
         available_modules: Tuple[Installable] = (),
         loop: asyncio.AbstractEventLoop = None,
     ):
         self.url = url
         self.branch = branch
+        self.commit = commit
 
         self.name = name
 
@@ -156,6 +189,38 @@ class Repo(RepoJSONMixin):
 
         return p.stdout.decode().strip()
 
+    async def _get_full_sha1(self, rev: Optional[str] = None) -> str:
+        """
+        Gets full sha1 object name.
+
+        Parameters
+        ----------
+        rev : str, optional
+            Revision to checkout to. When not provided, defaults to current branch
+
+        Raises
+        ------
+        .UnknownRevision
+            When git cannot find provided revision.
+
+        Returns
+        -------
+        `str`
+            Full sha1 object name for provided revision.
+
+        """
+        if rev is None:
+            rev = self.branch
+
+        p = await self._run(
+            ProcessFormatter().format(self.GIT_GET_FULL_SHA1, path=self.folder_path, rev=rev)
+        )
+
+        if p.returncode != 0:
+            raise errors.UnknownRevision("Revision {} cannot be found".format(rev))
+
+        return p.stdout.decode().strip()
+
     def _update_available_modules(self) -> Tuple[str]:
         """
         Updates the available modules attribute for this repo.
@@ -175,7 +240,9 @@ class Repo(RepoJSONMixin):
         """
         for file_finder, name, is_pkg in pkgutil.iter_modules(path=[str(self.folder_path)]):
             if is_pkg:
-                curr_modules.append(Installable(location=self.folder_path / name))
+                curr_modules.append(
+                    Installable(location=self.folder_path / name, commit=self.commit)
+                )
         self.available_modules = curr_modules
 
         # noinspection PyTypeChecker
@@ -189,6 +256,50 @@ class Repo(RepoJSONMixin):
             return await self._loop.run_in_executor(
                 self._executor, functools.partial(sp_run, *args, stdout=PIPE, **kwargs)
             )
+
+    async def _checkout(self, rev: None):
+        if rev is None:
+            return
+        exists, _ = self._existing_git_repo()
+        if not exists:
+            raise errors.MissingGitRepo(
+                "A git repo does not exist at path: {}".format(self.folder_path)
+            )
+
+        p = await self._run(
+            ProcessFormatter().format(self.GIT_CHECKOUT, path=self.folder_path, rev=rev)
+        )
+
+        if p.returncode != 0:
+            raise errors.UnknownRevision(
+                "Could not checkout to {}. This revision may not exist".format(rev)
+            )
+
+        self.commit = await self.current_commit()
+        self._update_available_modules()
+        self._read_info_file()
+
+    def checkout(self, rev: Optional[str] = None):
+        """
+        Checks out repository to provided revision.
+
+        The return value of this method can also be used as an asynchronous
+        context manager, i.e. with :code:`async with` syntax. This will
+        checkout repository to current branch on exit of the context manager.
+
+        Parameters
+        ----------
+        rev : str, optional
+            Revision to checkout to, when not provided, method won't do anything
+
+        Raises
+        ------
+        .UnknownRevision
+            When git cannot checkout to provided revision.
+
+        """
+
+        return _RepoCheckoutCtxManager(self, rev)
 
     async def clone(self) -> Tuple[str]:
         """Clone a new repo.
@@ -224,6 +335,7 @@ class Repo(RepoJSONMixin):
         if self.branch is None:
             self.branch = await self.current_branch()
 
+        self.commit = await self.latest_commit()
         self._read_info_file()
 
         return self._update_available_modules()
@@ -254,8 +366,32 @@ class Repo(RepoJSONMixin):
 
         return p.stdout.decode().strip()
 
-    async def current_commit(self, branch: str = None) -> str:
+    async def current_commit(self) -> str:
         """Determine the current commit hash of the repo.
+
+        Returns
+        -------
+        str
+            The requested commit hash.
+
+        """
+        exists, _ = self._existing_git_repo()
+        if not exists:
+            raise errors.MissingGitRepo(
+                "A git repo does not exist at path: {}".format(self.folder_path)
+            )
+
+        p = await self._run(
+            ProcessFormatter().format(self.GIT_CURRENT_COMMIT, path=self.folder_path)
+        )
+
+        if p.returncode != 0:
+            raise errors.CurrentHashError("Unable to determine commit hash.")
+
+        return p.stdout.decode().strip()
+
+    async def latest_commit(self, branch: str = None) -> str:
+        """Determine the latest commit hash of the repo.
 
         Parameters
         ----------
@@ -355,7 +491,7 @@ class Repo(RepoJSONMixin):
 
         """
         curr_branch = await self.current_branch()
-        old_commit = await self.current_commit(branch=curr_branch)
+        old_commit = await self.latest_commit(branch=curr_branch)
 
         await self.hard_reset(branch=curr_branch)
 
@@ -367,8 +503,9 @@ class Repo(RepoJSONMixin):
                 " for the repo located at path: {}".format(self.folder_path)
             )
 
-        new_commit = await self.current_commit(branch=curr_branch)
+        new_commit = await self.latest_commit(branch=curr_branch)
 
+        self.commit = new_commit
         self._update_available_modules()
         self._read_info_file()
 
@@ -399,7 +536,9 @@ class Repo(RepoJSONMixin):
         if not target_dir.exists():
             raise ValueError("That target directory does not exist.")
 
-        return await cog.copy_to(target_dir=target_dir)
+        await cog.copy_to(target_dir=target_dir)
+
+        return InstalledCog.from_installable(cog)
 
     async def install_libraries(
         self, target_dir: Path, req_target_dir: Path, libraries: Tuple[Installable] = ()
@@ -424,6 +563,7 @@ class Repo(RepoJSONMixin):
             The success of the installation.
 
         """
+
         if len(libraries) > 0:
             if not all([i in self.available_libraries for i in libraries]):
                 raise ValueError("Some given libraries are not available in this repo.")
@@ -525,9 +665,10 @@ class Repo(RepoJSONMixin):
 
     @classmethod
     async def from_folder(cls, folder: Path):
-        repo = cls(name=folder.stem, branch="", url="", folder_path=folder)
+        repo = cls(name=folder.stem, branch="", commit="", url="", folder_path=folder)
         repo.branch = await repo.current_branch()
         repo.url = await repo.current_url()
+        await repo.checkout(repo.branch)
         repo._update_available_modules()
         return repo
 
@@ -583,7 +724,9 @@ class RepoManager:
         url, branch = self._parse_url(url, branch)
 
         # noinspection PyTypeChecker
-        r = Repo(url=url, name=name, branch=branch, folder_path=self.repos_folder / name)
+        r = Repo(
+            url=url, name=name, branch=branch, commit="", folder_path=self.repos_folder / name
+        )
         await r.clone()
 
         self._repos[name] = r

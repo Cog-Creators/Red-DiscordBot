@@ -5,7 +5,7 @@ import json
 import pytest
 
 from redbot.cogs.downloader.repo_manager import RepoManager, Repo
-from redbot.cogs.downloader.installable import Installable
+from redbot.cogs.downloader.installable import Installable, InstalledCog
 
 __all__ = [
     "patch_relative_to",
@@ -16,8 +16,10 @@ __all__ = [
     "INFO_JSON",
     "LIBRARY_INFO_JSON",
     "installable",
+    "installed_cog",
     "library_installable",
     "fake_run_noprint",
+    "fake_latest_commit",
 ]
 
 
@@ -32,6 +34,10 @@ async def fake_run_noprint(*args, **kwargs):
     fake_result_tuple = namedtuple("fake_result", "returncode result")
     res = fake_result_tuple(0, (args, kwargs))
     return res
+
+
+async def fake_latest_commit(*args, **kwargs):
+    return "fake_result"
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -58,6 +64,7 @@ def repo(tmpdir):
         url="https://github.com/tekulvw/Squid-Plugins",
         name="squid",
         branch="rewrite_cogs",
+        commit="6acb5decbb717932e5dc0cda7fca0eff452c47dd",
         folder_path=repo_folder,
     )
 
@@ -74,6 +81,7 @@ def bot_repo(event_loop):
     return Repo(
         name="Red-DiscordBot",
         branch="WRONG",
+        commit="",
         url="https://empty.com/something.git",
         folder_path=cwd,
         loop=event_loop,
@@ -117,6 +125,16 @@ def installable(tmpdir):
     info_path.write_text(json.dumps(INFO_JSON), "utf-8")
 
     cog_info = Installable(Path(str(cog_path)))
+    return cog_info
+
+
+@pytest.fixture
+def installed_cog(tmpdir):
+    cog_path = tmpdir.mkdir("test_repo").mkdir("test_installed_cog")
+    info_path = cog_path.join("info.json")
+    info_path.write_text(json.dumps(INFO_JSON), "utf-8")
+
+    cog_info = InstalledCog(Path(str(cog_path)))
     return cog_info
 
 

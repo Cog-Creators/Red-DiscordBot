@@ -105,6 +105,14 @@ class NoRemoteURL(GitException):
     pass
 
 
+class UnknownRevision(GitException):
+    """
+    Thrown when specified revision cannot be found.
+    """
+
+    pass
+
+
 class PipError(DownloaderException):
     """
     Thrown when pip returns a non-zero return code.

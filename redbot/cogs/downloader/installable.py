@@ -3,7 +3,11 @@ import distutils.dir_util
 import shutil
 from enum import Enum
 from pathlib import Path
-from typing import MutableMapping, Any, TYPE_CHECKING
+from typing import MutableMapping, Any, TYPE_CHECKING, Optional
+
+import discord
+from redbot.core import commands
+from redbot.core.i18n import Translator
 
 from .log import log
 from .json_mixins import RepoJSONMixin
@@ -12,6 +16,8 @@ from redbot.core import __version__, version_info as red_version_info, VersionIn
 
 if TYPE_CHECKING:
     from .repo_manager import RepoManager
+
+_ = Translator("Koala", __file__)
 
 
 class InstallableType(Enum):
@@ -34,6 +40,8 @@ class Installable(RepoJSONMixin):
     ----------
     repo_name : `str`
         Name of the repository which this package belongs to.
+    commit : `str`, optional
+        Installable's current commit.
     author : `tuple` of `str`, optional
         Name(s) of the author(s).
     bot_version : `tuple` of `int`
@@ -58,13 +66,15 @@ class Installable(RepoJSONMixin):
 
     """
 
-    def __init__(self, location: Path):
+    def __init__(self, location: Path, commit: str = ""):
         """Base installable initializer.
 
         Parameters
         ----------
         location : pathlib.Path
             Location (file or folder) to the installable.
+        commit : str
+            Installable's current commit
 
         """
         super().__init__(location)
@@ -72,6 +82,7 @@ class Installable(RepoJSONMixin):
         self._location = location
 
         self.repo_name = self._location.parent.stem
+        self.commit = commit
 
         self.author = ()
         self.min_bot_version = red_version_info
@@ -212,13 +223,38 @@ class Installable(RepoJSONMixin):
 
         return info
 
+
+class InstalledCog(Installable):
+    def __init__(self, location: Path, commit: str = "", pinned: bool = False):
+        super().__init__(location, commit)
+        self.pinned = pinned
+
+    @classmethod
+    async def convert(cls, ctx: commands.Context, arg: str):
+        downloader = ctx.bot.get_cog("Downloader")
+        if downloader is None:
+            raise commands.CommandError(_("No Downloader cog found."))
+
+        cog = discord.utils.get(await downloader.installed_cogs(), name=arg)
+        if cog is None:
+            raise commands.BadArgument(_("That cog is not installed"))
+
+        return cog
+
     def to_json(self):
-        return {"repo_name": self.repo_name, "cog_name": self.name}
+        return {
+            "repo_name": self.repo_name,
+            "cog_name": self.name,
+            "commit": self.commit,
+            "pinned": self.pinned,
+        }
 
     @classmethod
     def from_json(cls, data: dict, repo_mgr: "RepoManager"):
         repo_name = data["repo_name"]
         cog_name = data["cog_name"]
+        commit = data.get("commit", None)
+        pinned = data.get("pinned", False)
 
         repo = repo_mgr.get_repo(repo_name)
         if repo is not None:
@@ -228,4 +264,8 @@ class Installable(RepoJSONMixin):
 
         location = repo_folder / cog_name
 
-        return cls(location=location)
+        return cls(location=location, commit=commit, pinned=pinned)
+
+    @classmethod
+    def from_installable(cls, cog: Installable, pinned: bool = False):
+        return cls(location=cog._location, commit=cog.commit, pinned=pinned)
