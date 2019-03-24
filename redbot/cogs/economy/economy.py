@@ -346,7 +346,7 @@ class Economy(commands.Cog):
 
     @commands.command()
     @guild_only_check()
-    async def leaderboard(self, ctx: commands.Context, top: int = 10, show_global: bool = False):
+    async def leaderboard(self, ctx: commands.Context, top: int = 10000, show_global: bool = False):
         """Print the leaderboard.
 
         Defaults to top 10.
