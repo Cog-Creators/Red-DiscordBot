@@ -4,6 +4,8 @@ import datetime
 import discord
 from fuzzywuzzy import process
 import heapq
+from io import StringIO
+import json
 import lavalink
 import logging
 import math
@@ -57,6 +59,7 @@ class Audio(commands.Cog):
         }
 
         default_guild = {
+            "disconnect": False,
             "dj_enabled": False,
             "dj_role": None,
             "emptydc_enabled": False,
@@ -121,14 +124,13 @@ class Audio(commands.Cog):
                 await asyncio.sleep(1)  # prevent busylooping
 
     async def event_handler(self, player, event_type, extra):
+        disconnect = await self.config.guild(player.channel.guild).disconnect()
         notify = await self.config.guild(player.channel.guild).notify()
         status = await self.config.status()
 
         async def _players_check():
             try:
-                get_players = [
-                    p for p in lavalink.players if p.current is not None and p.is_playing
-                ]
+                get_players = [p for p in lavalink.players if p.current is not None]
                 get_single_title = get_players[0].current.title
                 if get_single_title == "Unknown title":
                     get_single_title = get_players[0].current.uri
@@ -234,6 +236,9 @@ class Audio(commands.Cog):
                 )
                 await notify_channel.send(embed=embed)
 
+        if event_type == lavalink.LavalinkEvents.QUEUE_END and disconnect:
+            await player.disconnect()
+
         if event_type == lavalink.LavalinkEvents.QUEUE_END and status:
             player_check = await _players_check()
             await _status_check(player_check[1])
@@ -262,6 +267,22 @@ class Audio(commands.Cog):
         pass
 
     @audioset.command()
+    @checks.mod_or_permissions(manage_messages=True)
+    async def dc(self, ctx):
+        """Toggle the bot auto-disconnecting when done playing.
+
+        This setting takes precedence over [p]audioset emptydisconnect.
+        """
+        disconnect = await self.config.guild(ctx.guild).disconnect()
+        await self.config.guild(ctx.guild).disconnect.set(not disconnect)
+        await self._embed_msg(
+            ctx,
+            _("Auto-disconnection at queue end: {true_or_false}.").format(
+                true_or_false=not disconnect
+            ),
+        )
+
+    @audioset.command()
     @checks.admin_or_permissions(manage_roles=True)
     async def dj(self, ctx):
         """Toggle DJ mode.
@@ -284,7 +305,7 @@ class Audio(commands.Cog):
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         await self.config.guild(ctx.guild).dj_enabled.set(not dj_enabled)
         await self._embed_msg(
-            ctx, _("DJ role enabled: {true_or_false}.".format(true_or_false=not dj_enabled))
+            ctx, _("DJ role enabled: {true_or_false}.").format(true_or_false=not dj_enabled)
         )
 
     @audioset.command()
@@ -397,10 +418,14 @@ class Audio(commands.Cog):
         jukebox = data["jukebox"]
         jukebox_price = data["jukebox_price"]
         thumbnail = data["thumbnail"]
+        dc = data["disconnect"]
         jarbuild = redbot.core.__version__
         maxlength = data["maxlength"]
         vote_percent = data["vote_percent"]
         msg = "----" + _("Server Settings") + "----        \n"
+        if dc:
+            msg += _("Auto-disconnect:  [{dc}]\n").format(dc=dc)
+
         if emptydc_enabled:
             msg += _("Disconnect timer: [{num_seconds}]\n").format(
                 num_seconds=self._dynamic_time(emptydc_timer)
@@ -676,11 +701,14 @@ class Audio(commands.Cog):
             return
         allowed_files = (".mp3", ".flac", ".ogg")
         current_folder = os.getcwd() + "/localtracks/{}/".format(folder)
-        folder_list = [
-            f
-            for f in os.listdir(current_folder)
-            if (f.lower().endswith(allowed_files)) and (os.path.isfile(current_folder + f))
-        ]
+        folder_list = sorted(
+            (
+                f
+                for f in os.listdir(current_folder)
+                if (f.lower().endswith(allowed_files)) and (os.path.isfile(current_folder + f))
+            ),
+            key=lambda s: s.casefold(),
+        )
         track_listing = []
         for localtrack_location in folder_list:
             track_listing.append(localtrack_location)
@@ -699,12 +727,15 @@ class Audio(commands.Cog):
         if not await self._localtracks_check(ctx):
             return
         allowed_files = (".mp3", ".flac", ".ogg")
-        folder_list = [
-            os.getcwd() + "/localtracks/{}/{}".format(folder, f)
-            for f in os.listdir(os.getcwd() + "/localtracks/{}/".format(folder))
-            if (f.lower().endswith(allowed_files))
-            and (os.path.isfile(os.getcwd() + "/localtracks/{}/{}".format(folder, f)))
-        ]
+        folder_list = sorted(
+            (
+                os.getcwd() + "/localtracks/{}/{}".format(folder, f)
+                for f in os.listdir(os.getcwd() + "/localtracks/{}/".format(folder))
+                if (f.lower().endswith(allowed_files))
+                and (os.path.isfile(os.getcwd() + "/localtracks/{}/{}".format(folder, f)))
+            ),
+            key=lambda s: s.casefold(),
+        )
         track_listing = []
         if ctx.invoked_with == "search":
             for localtrack_location in folder_list:
@@ -1241,6 +1272,44 @@ class Audio(commands.Cog):
             except KeyError:
                 return await self._embed_msg(ctx, _("No playlist with that name."))
         await self._embed_msg(ctx, _("{name} playlist deleted.").format(name=playlist_name))
+
+    @checks.is_owner()
+    @playlist.command(name="download")
+    async def _playlist_download(self, ctx, playlist_name, v2=False):
+        """Download a copy of a playlist.
+
+        These files can be used with the [p]playlist upload command.
+        Red v2-compatible playlists can be generated by passing True
+        for the v2 variable."""
+        if not await self._playlist_check(ctx):
+            return
+        playlists = await self.config.guild(ctx.guild).playlists.get_raw()
+        v2_valid_urls = ["https://www.youtube.com/watch?v=", "https://soundcloud.com/"]
+        song_list = []
+        playlist_url = None
+
+        try:
+            if playlists[playlist_name]["playlist_url"]:
+                playlist_url = playlists[playlist_name]["playlist_url"]
+            for track in playlists[playlist_name]["tracks"]:
+                if v2:
+                    if track["info"]["uri"].startswith(tuple(v2_valid_urls)):
+                        song_list.append(track["info"]["uri"])
+                else:
+                    song_list.append(track["info"]["uri"])
+        except TypeError:
+            return await self._embed_msg(ctx, _("That playlist has no tracks."))
+        except KeyError:
+            return await self._embed_msg(ctx, _("That playlist doesn't exist."))
+
+        playlist_data = json.dumps(
+            {"author": ctx.author.id, "link": playlist_url, "playlist": song_list}
+        )
+        to_write = StringIO()
+        to_write.write(playlist_data)
+        to_write.seek(0)
+        await ctx.send(file=discord.File(to_write, filename=f"{playlist_name}.txt"))
+        to_write.close()
 
     @playlist.command(name="info")
     async def _playlist_info(self, ctx, playlist_name):
@@ -2141,6 +2210,8 @@ class Audio(commands.Cog):
                 player.add(ctx.author, search_choice)
             else:
                 return await self._embed_msg(ctx, _("Track exceeds maximum length."))
+        else:
+            player.add(ctx.author, search_choice)
         if not player.current:
             await player.play()
         await ctx.send(embed=embed)
@@ -2210,8 +2281,10 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    async def seek(self, ctx, seconds: int = 30):
-        """Seek ahead or behind on a track by seconds."""
+    async def seek(self, ctx, seconds):
+        """Seek ahead or behind on a track by seconds or a to a specific time.
+
+        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`)."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
         if not self._player_check(ctx):
@@ -2237,20 +2310,37 @@ class Audio(commands.Cog):
             if player.current.is_stream:
                 return await self._embed_msg(ctx, _("Can't seek on a stream."))
             else:
-                time_sec = seconds * 1000
-                seek = player.position + time_sec
-                if seek <= 0:
-                    await self._embed_msg(
-                        ctx, _("Moved {num_seconds}s to 00:00:00").format(num_seconds=seconds)
-                    )
+                try:
+                    int(seconds)
+                    abs_position = False
+                except ValueError:
+                    abs_position = True
+                    seconds = int(await self._time_convert(seconds) / 1000)
+                if seconds == 0:
+                    return await self._embed_msg(ctx, _("Invalid input for the time to seek."))
+                if not abs_position:
+                    time_sec = int(seconds) * 1000
+                    seek = player.position + time_sec
+                    if seek <= 0:
+                        await self._embed_msg(
+                            ctx, _("Moved {num_seconds}s to 00:00:00").format(num_seconds=seconds)
+                        )
+                    else:
+                        await self._embed_msg(
+                            ctx,
+                            _("Moved {num_seconds}s to {time}").format(
+                                num_seconds=seconds, time=lavalink.utils.format_time(seek)
+                            ),
+                        )
+                    await player.seek(seek)
                 else:
                     await self._embed_msg(
                         ctx,
-                        _("Moved {num_seconds}s to {time}").format(
-                            num_seconds=seconds, time=lavalink.utils.format_time(seek)
+                        _("Moved to {time}").format(
+                            time=lavalink.utils.format_time(seconds * 1000)
                         ),
                     )
-                return await player.seek(seek)
+                    await player.seek(seconds * 1000)
         else:
             await self._embed_msg(ctx, _("Nothing playing."))
 
@@ -2763,11 +2853,14 @@ class Audio(commands.Cog):
     async def _localtracks_folders(self, ctx):
         if not await self._localtracks_check(ctx):
             return
-        localtracks_folders = [
-            f
-            for f in os.listdir(os.getcwd() + "/localtracks/")
-            if not os.path.isfile(os.getcwd() + "/localtracks/" + f)
-        ]
+        localtracks_folders = sorted(
+            (
+                f
+                for f in os.listdir(os.getcwd() + "/localtracks/")
+                if not os.path.isfile(os.getcwd() + "/localtracks/" + f)
+            ),
+            key=lambda s: s.casefold(),
+        )
         return localtracks_folders
 
     @staticmethod

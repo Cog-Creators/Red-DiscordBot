@@ -404,7 +404,7 @@ class Repo(RepoJSONMixin):
         return await cog.copy_to(target_dir=target_dir)
 
     async def install_libraries(
-        self, target_dir: Path, libraries: Tuple[Installable] = ()
+        self, target_dir: Path, req_target_dir: Path, libraries: Tuple[Installable] = ()
     ) -> bool:
         """Install shared libraries to the target directory.
 
@@ -415,6 +415,8 @@ class Repo(RepoJSONMixin):
         ----------
         target_dir : pathlib.Path
             Directory to install shared libraries to.
+        req_target_dir : pathlib.Path
+            Directory to install shared library requirements to.
         libraries : `tuple` of `Installable`
             A subset of available libraries.
 
@@ -433,7 +435,11 @@ class Repo(RepoJSONMixin):
         if len(libraries) > 0:
             ret = True
             for lib in libraries:
-                ret = ret and await lib.copy_to(target_dir=target_dir)
+                ret = (
+                    ret
+                    and await self.install_requirements(cog=lib, target_dir=req_target_dir)
+                    and await lib.copy_to(target_dir=target_dir)
+                )
             return ret
         return True
 

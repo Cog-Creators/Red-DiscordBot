@@ -1415,7 +1415,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.is_owner()
     async def blacklist(self, ctx: commands.Context):
         """
-        blacklist management commands.
+        Blacklist management commands.
         """
         pass
 
