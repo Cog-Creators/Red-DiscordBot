@@ -8,6 +8,7 @@ import re
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from subprocess import run as sp_run, PIPE
+from subprocess import check_output
 from string import Formatter
 from sys import executable
 from typing import List, Tuple, Iterable, MutableMapping, Union, Optional
@@ -484,10 +485,17 @@ class Repo(RepoJSONMixin):
             Success of the installation
 
         """
+
+        pip_packages = check_output([executable, "-m", "pip", "freeze"])
+        installed_packages = [r.decode().split("==")[0] for r in pip_packages.split()]
+        to_remove = []
+        for requirement in requirements:
+            if requirement in installed_packages:
+                to_remove.append(requirement)
+        requirements = [x for x in requirements if x not in to_remove]
+
         if len(requirements) == 0:
             return True
-
-        # TODO: Check and see if any of these modules are already available
 
         p = await self._run(
             ProcessFormatter().format(
