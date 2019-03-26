@@ -8,6 +8,7 @@ import re
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from subprocess import run as sp_run, PIPE
+from subprocess import check_output
 from string import Formatter
 from sys import executable
 from typing import List, Tuple, Iterable, MutableMapping, Union, Optional
@@ -484,11 +485,36 @@ class Repo(RepoJSONMixin):
             Success of the installation
 
         """
+
+        pip_packages = check_output([executable, "-m", "pip", "freeze"]).split()
+        installed_packages = [r.decode().lower() for r in pip_packages]
+        installed_packages_without_version = [
+            r.decode().split("==")[0].lower() for r in pip_packages
+        ]
+        to_remove = []
+        for requirement in requirements:
+            if "==" in requirement and requirement in installed_packages:
+                # the cog requires a specific version, so we also check the pip version
+                to_remove.append(requirement)
+                log.info(
+                    f"Skipping installation of {requirement} because "
+                    "the required version is already installed."
+                )
+            elif requirement in installed_packages_without_version:
+                # the cog didn't specify a version, so we don't need to check pip version
+                to_remove.append(requirement)
+                log.info(
+                    f"Skipping installation of {requirement} because it is already installed."
+                )
+        requirements = [x for x in requirements if x not in to_remove]
+
         if len(requirements) == 0:
             return True
 
-        # TODO: Check and see if any of these modules are already available
-
+        log.info(
+            f"Installing the following pip packages at {str(target_dir)}\n"
+            + ", ".join(requirements)
+        )
         p = await self._run(
             ProcessFormatter().format(
                 self.PIP_INSTALL, python=executable, target_dir=target_dir, reqs=requirements
@@ -496,11 +522,7 @@ class Repo(RepoJSONMixin):
         )
 
         if p.returncode != 0:
-            log.error(
-                "Something went wrong when installing"
-                " the following requirements:"
-                " {}".format(", ".join(requirements))
-            )
+            log.error("Something went wrong when installing the requirements.")
             return False
         return True
 
