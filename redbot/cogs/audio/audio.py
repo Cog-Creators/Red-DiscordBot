@@ -508,8 +508,9 @@ class Audio(commands.Cog):
     async def audiostats(self, ctx):
         """Audio stats."""
         server_num = len([p for p in lavalink.players if p.current is not None])
-        server_list = []
+        total_num = len([p for p in lavalink.players])
 
+        msg = ""
         for p in lavalink.players:
             connect_start = p.fetch("connect")
             connect_dur = self._dynamic_time(
@@ -519,40 +520,39 @@ class Audio(commands.Cog):
                 if "localtracks/" in p.current.uri:
                     if p.current.title == "Unknown title":
                         current_title = p.current.uri.replace("localtracks/", "")
-                        server_list.append(
-                            "{} [`{}`]: **{}**".format(
-                                p.channel.guild.name, connect_dur, current_title
-                            )
+                        msg += "{} [`{}`]: **{}**\n".format(
+                            p.channel.guild.name, connect_dur, current_title
                         )
                     else:
                         current_title = p.current.title
-                        server_list.append(
-                            "{} [`{}`]: **{} - {}**".format(
-                                p.channel.guild.name, connect_dur, p.current.author, current_title
-                            )
+                        msg += "{} [`{}`]: **{} - {}**\n".format(
+                            p.channel.guild.name, connect_dur, p.current.author, current_title
                         )
                 else:
-                    server_list.append(
-                        "{} [`{}`]: **[{}]({})**".format(
-                            p.channel.guild.name, connect_dur, p.current.title, p.current.uri
-                        )
+                    msg += "{} [`{}`]: **[{}]({})**\n".format(
+                        p.channel.guild.name, connect_dur, p.current.title, p.current.uri
                     )
             except AttributeError:
-                server_list.append(
-                    "{} [`{}`]: **{}**".format(
-                        p.channel.guild.name, connect_dur, _("Nothing playing.")
-                    )
+                msg += "{} [`{}`]: **{}**\n".format(
+                    p.channel.guild.name, connect_dur, _("Nothing playing.")
                 )
-        if server_num == 0:
-            servers = _("Not connected anywhere.")
-        else:
-            servers = "\n".join(server_list)
-        embed = discord.Embed(
-            colour=await ctx.embed_colour(),
-            title=_("Connected in {num} servers:").format(num=server_num),
-            description=servers,
-        )
-        await ctx.send(embed=embed)
+        if total_num == 0:
+            return await self._embed_msg(ctx, _("Not connected anywhere."))
+        servers_embed = []
+        pages = 1
+        for page in pagify(msg, delims=["\n"], page_length=1500):
+            em = discord.Embed(
+                colour=await ctx.embed_colour(),
+                title=_("Playing in {num}/{total} servers:").format(
+                    num=server_num, total=total_num
+                ),
+                description=page,
+            )
+            em.set_footer(text="Page {}/{}".format(pages, round((len(msg) / 1500) + 1)))
+            pages += 1
+            servers_embed.append(em)
+
+        await menu(ctx, servers_embed, DEFAULT_CONTROLS)
 
     @commands.command()
     @commands.guild_only()
