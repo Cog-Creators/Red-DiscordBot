@@ -338,21 +338,24 @@ class Filter(commands.Cog):
             guild = server_or_channel
             channel = None
 
+        hits: Set[str] = set()
+
         try:
             pattern = self.pattern_cache[(guild, channel)]
         except KeyError:
             word_list = set(await self.settings.guild(guild).filter())
             if channel:
-                word_list |= set(await self.settings.guild(channel).filter())
+                word_list |= set(await self.settings.channel(channel).filter())
 
-            if not word_list:
-                return word_list
-
-            pattern = re.compile("|".join(rf"\b{re.escape(w)}\b" for w in word_list), flags=re.I)
+            if word_list:
+                pattern = re.compile("|".join(rf"\b{re.escape(w)}\b" for w in word_list), flags=re.I)
+            else:
+                pattern = None
 
             self.pattern_cache[(guild, channel)] = pattern
 
-        hits = set(pattern.findall(text))
+        if pattern:
+            hits |= set(pattern.findall(text))
         return hits
 
     async def check_filter(self, message: discord.Message):
