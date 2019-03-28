@@ -452,7 +452,7 @@ class Audio(commands.Cog):
             "3. Fill out the form provided with your app name, etc.\n"
             '4. When asked if you\'re developing commercial integration select "No"\n'
             "5. Accept the terms and conditions.\n"
-            "6. Copy your client ID and your client secret into\n"
+            "6. Copy your client ID and your client secret into:\n"
             "`{prefix}set api spotify client_id,your_client_id "
             "client_secret,your_client_secret`"
         ).format(prefix=ctx.prefix)
