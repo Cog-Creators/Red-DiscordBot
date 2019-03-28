@@ -775,8 +775,11 @@ class Audio(commands.Cog):
             f for f in os.listdir(os.getcwd()) if not os.path.isfile(f) if f == "localtracks"
         )
         if not localtracks_folder:
-            await self._embed_msg(ctx, _("No localtracks folder."))
-            return False
+            if ctx.invoked_with == "start":
+                return False
+            else:
+                await self._embed_msg(ctx, _("No localtracks folder."))
+                return False
         else:
             return True
 
@@ -1516,6 +1519,8 @@ class Audio(commands.Cog):
             player = lavalink.get_player(ctx.guild.id)
             for track in playlists[playlist_name]["tracks"]:
                 if track["info"]["uri"].startswith("localtracks/"):
+                    if not await self._localtracks_check(ctx):
+                        pass
                     if not os.path.isfile(track["info"]["uri"]):
                         continue
                 if maxlength > 0:
