@@ -229,7 +229,8 @@ class Downloader(commands.Cog):
             return
         try:
             # noinspection PyTypeChecker
-            repo = await self._repo_manager.add_repo(name=name, url=repo_url, branch=branch)
+            async with ctx.typing():
+                repo = await self._repo_manager.add_repo(name=name, url=repo_url, branch=branch)
         except errors.ExistingGitRepo:
             await ctx.send(_("That git repo has already been added under another name."))
         except errors.CloningError as err:
@@ -304,19 +305,19 @@ class Downloader(commands.Cog):
             )
             return
 
-        if not await repo.install_requirements(cog, self.LIB_PATH):
-            await ctx.send(
-                _(
-                    "Failed to install the required libraries for `{cog_name}`: `{libraries}`"
-                ).format(cog_name=cog.name, libraries=cog.requirements)
+        async with ctx.typing():
+            if not await repo.install_requirements(cog, self.LIB_PATH):
+                await ctx.send(
+                    _(
+                        "Failed to install the required libraries for `{cog_name}`: `{libraries}`"
+                    ).format(cog_name=cog.name, libraries=cog.requirements)
+                )
+                return
+            await repo.install_cog(cog, await self.cog_install_path())
+            await self._add_to_installed(cog)
+            await repo.install_libraries(
+                target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH
             )
-            return
-
-        await repo.install_cog(cog, await self.cog_install_path())
-
-        await self._add_to_installed(cog)
-
-        await repo.install_libraries(target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH)
 
         await ctx.send(_("Cog `{cog_name}` successfully installed.").format(cog_name=cog_name))
         if cog.install_msg is not None:
