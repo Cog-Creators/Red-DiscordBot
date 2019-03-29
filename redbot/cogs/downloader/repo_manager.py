@@ -21,7 +21,7 @@ from typing import (
     TypeVar,
 )
 
-from redbot.core import data_manager, commands
+from redbot.core import data_manager, commands, Config
 from redbot.core.utils import safe_delete
 from redbot.core.i18n import Translator
 
@@ -66,7 +66,7 @@ class ProcessFormatter(Formatter):
 class Repo(RepoJSONMixin):
     GIT_CLONE = "git clone --recurse-submodules -b {branch} {url} {folder}"
     GIT_CLONE_NO_BRANCH = "git clone --recurse-submodules {url} {folder}"
-    GIT_CURRENT_BRANCH = "git -C {path} rev-parse --abbrev-ref HEAD"
+    GIT_CURRENT_BRANCH = "git -C {path} symbolic-ref --short HEAD"
     GIT_CURRENT_COMMIT = "git -C {path} rev-parse HEAD"
     GIT_LATEST_COMMIT = "git -C {path} rev-parse {branch}"
     GIT_HARD_RESET = "git -C {path} reset --hard origin/{branch} -q"
@@ -257,7 +257,7 @@ class Repo(RepoJSONMixin):
                 self._executor, functools.partial(sp_run, *args, stdout=PIPE, **kwargs)
             )
 
-    async def _checkout(self, rev: None):
+    async def _checkout(self, rev: Optional[str] = None):
         if rev is None:
             return
         exists, _ = self._existing_git_repo()
@@ -464,6 +464,7 @@ class Repo(RepoJSONMixin):
         if branch is None:
             branch = self.branch
 
+        await self.checkout(branch)
         exists, _ = self._existing_git_repo()
         if not exists:
             raise errors.MissingGitRepo(
@@ -490,10 +491,9 @@ class Repo(RepoJSONMixin):
             :py:code`(old commit hash, new commit hash)`
 
         """
-        curr_branch = await self.current_branch()
-        old_commit = await self.latest_commit(branch=curr_branch)
+        old_commit = await self.latest_commit()
 
-        await self.hard_reset(branch=curr_branch)
+        await self.hard_reset()
 
         p = await self._run(ProcessFormatter().format(self.GIT_PULL, path=self.folder_path))
 
@@ -503,7 +503,7 @@ class Repo(RepoJSONMixin):
                 " for the repo located at path: {}".format(self.folder_path)
             )
 
-        new_commit = await self.latest_commit(branch=curr_branch)
+        new_commit = await self.latest_commit()
 
         self.commit = new_commit
         self._update_available_modules()
@@ -664,11 +664,13 @@ class Repo(RepoJSONMixin):
         )
 
     @classmethod
-    async def from_folder(cls, folder: Path):
-        repo = cls(name=folder.stem, branch="", commit="", url="", folder_path=folder)
-        repo.branch = await repo.current_branch()
+    async def from_folder(cls, folder: Path, branch: str = ""):
+        repo = cls(name=folder.stem, branch=branch, commit="", url="", folder_path=folder)
         repo.url = await repo.current_url()
-        await repo.checkout(repo.branch)
+        if branch == "":
+            repo.branch = await repo.current_branch()
+        else:
+            await repo.checkout(repo.branch)
         repo._update_available_modules()
         return repo
 
@@ -680,6 +682,8 @@ class RepoManager:
 
     def __init__(self):
         self._repos = {}
+        self.conf = Config.get_conf(self, identifier=170708480, force_registration=True)
+        self.conf.register_global(repos={})
 
     async def initialize(self):
         await self._load_repos(set=True)
@@ -728,6 +732,7 @@ class RepoManager:
             url=url, name=name, branch=branch, commit="", folder_path=self.repos_folder / name
         )
         await r.clone()
+        await self.conf.repos.set_raw(name, value=r.branch)
 
         self._repos[name] = r
 
@@ -780,6 +785,7 @@ class RepoManager:
 
         safe_delete(repo.folder_path)
 
+        await self.conf.repos.clear_raw(repo.name)
         try:
             del self._repos[name]
         except KeyError:
@@ -814,7 +820,10 @@ class RepoManager:
             if not folder.is_dir():
                 continue
             try:
-                ret[folder.stem] = await Repo.from_folder(folder)
+                branch = await self.conf.repos.get_raw(folder.stem, default="")
+                ret[folder.stem] = await Repo.from_folder(folder, branch)
+                if branch == "":
+                    await self.conf.repos.set_raw(folder.stem, value=ret[folder.stem].branch)
             except errors.NoRemoteURL:
                 log.warning("A remote URL does not exist for repo %s", folder.stem)
             except errors.DownloaderException as err:
