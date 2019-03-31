@@ -117,10 +117,7 @@ class Mongo(BaseDriver):
         if dot_identifiers != "":
             proj[dot_identifiers] = True
 
-            partial = await mongo_collection.find_one(
-                filter=pkey_filter,
-                projection=proj,
-            )
+            partial = await mongo_collection.find_one(filter=pkey_filter, projection=proj)
         else:
             # The case here is for partial primary keys like all_members()
             cursor = mongo_collection.find(filter=pkey_filter, projection=proj)
