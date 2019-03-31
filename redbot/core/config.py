@@ -381,7 +381,7 @@ class Group(Value):
                 default = poss_default
 
         try:
-            raw = await self.driver.get(*self.identifiers, *path)
+            raw = await self.driver.get(self.identifier_data)
         except KeyError:
             if default is not ...:
                 return default
@@ -459,7 +459,7 @@ class Group(Value):
         path = [str(p) for p in nested_path]
         if isinstance(value, dict):
             value = _str_key_dict(value)
-        await self.driver.set(*self.identifiers, *path, value=value)
+        await self.driver.set(self.identifier_data, value=value)
 
 
 class Config:

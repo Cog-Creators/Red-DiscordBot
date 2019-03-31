@@ -134,6 +134,7 @@ class Mongo(BaseDriver):
         mongo_collection = self.get_collection()
         pkey_filter = self.generate_primary_key_filter(identifier_data)
         if len(identifier_data.identifiers) == 0:
+            # This covers cases 2-4
             await mongo_collection.delete_many(pkey_filter)
         else:
             dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
@@ -141,7 +142,6 @@ class Mongo(BaseDriver):
                 pkey_filter,
                 update={"$unset": {dot_identifiers: 1}}
             )
-        raise NotImplementedError
 
     @staticmethod
     def _escape_key(key: str) -> str:
