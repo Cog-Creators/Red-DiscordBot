@@ -262,8 +262,14 @@ class Group(Value):
             Multiple arguments that mirror the arguments passed in for nested
             dict access. These are casted to `str` for you.
         """
-        path = [str(p) for p in nested_path]
-        await self.driver.clear(*self.identifiers, *path)
+        path = tuple(str(p) for p in nested_path)
+        identifier_data = IdentifierData(
+            self.identifier_data.uuid,
+            self.identifier_data.category,
+            self.identifier_data.primary_key,
+            path
+        )
+        await self.driver.clear(identifier_data)
 
     def is_group(self, item: Any) -> bool:
         """A helper method for `__getattr__`. Most developers will have no need
@@ -456,10 +462,16 @@ class Group(Value):
         value
             The value to store.
         """
-        path = [str(p) for p in nested_path]
+        path = tuple(str(p) for p in nested_path)
+        identifier_data = IdentifierData(
+            self.identifier_data.uuid,
+            self.identifier_data.category,
+            self.identifier_data.primary_key,
+            path
+        )
         if isinstance(value, dict):
             value = _str_key_dict(value)
-        await self.driver.set(self.identifier_data, value=value)
+        await self.driver.set(identifier_data, value=value)
 
 
 class Config:
@@ -1031,7 +1043,7 @@ class Config:
         if guild is None:
             group = self._get_base_group(self.MEMBER)
             try:
-                dict_ = await self.driver.get(*group.identifiers)
+                dict_ = await self.driver.get(group.identifier_data)
             except KeyError:
                 pass
             else:
@@ -1040,7 +1052,7 @@ class Config:
         else:
             group = self._get_base_group(self.MEMBER, str(guild.id))
             try:
-                guild_data = await self.driver.get(*group.identifiers)
+                guild_data = await self.driver.get(group.identifier_data)
             except KeyError:
                 pass
             else:
