@@ -37,16 +37,13 @@ class IdentifierData:
             raise ValueError("Identifiers must be strings.")
 
         return IdentifierData(
-            self.uuid,
-            self.category,
-            self.primary_key,
-            self.identifiers + (identifier,)
+            self.uuid, self.category, self.primary_key, self.identifiers + (identifier,)
         )
 
     def to_tuple(self):
         return tuple(
-            item for item in
-            (self.uuid, self.category, *self.primary_key, *self.identifiers)
+            item
+            for item in (self.uuid, self.category, *self.primary_key, *self.identifiers)
             if len(item) > 0
         )
 

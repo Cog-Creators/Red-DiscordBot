@@ -90,7 +90,7 @@ class Mongo(BaseDriver):
 
         partial = await mongo_collection.find_one(
             filter={"RED_uuid": uuid, "RED_primary_key": primary_key},
-            projection={dot_identifiers: True}
+            projection={dot_identifiers: True},
         )
 
         if partial is None:
@@ -138,10 +138,7 @@ class Mongo(BaseDriver):
             await mongo_collection.delete_many(pkey_filter)
         else:
             dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
-            await mongo_collection.update_one(
-                pkey_filter,
-                update={"$unset": {dot_identifiers: 1}}
-            )
+            await mongo_collection.update_one(pkey_filter, update={"$unset": {dot_identifiers: 1}})
 
     @staticmethod
     def _escape_key(key: str) -> str:

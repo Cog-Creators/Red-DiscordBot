@@ -178,7 +178,11 @@ class Group(Value):
     """
 
     def __init__(
-        self, identifier_data: IdentifierData, defaults: dict, driver, force_registration: bool = False
+        self,
+        identifier_data: IdentifierData,
+        defaults: dict,
+        driver,
+        force_registration: bool = False,
     ):
         self._defaults = defaults
         self.force_registration = force_registration
@@ -235,7 +239,9 @@ class Group(Value):
             )
         elif is_value:
             return Value(
-                identifier_data=new_identifiers, default_value=self._defaults[item], driver=self.driver
+                identifier_data=new_identifiers,
+                default_value=self._defaults[item],
+                driver=self.driver,
             )
         elif self.force_registration:
             raise AttributeError("'{}' is not a valid registered Group or value.".format(item))
@@ -267,7 +273,7 @@ class Group(Value):
             self.identifier_data.uuid,
             self.identifier_data.category,
             self.identifier_data.primary_key,
-            path
+            path,
         )
         await self.driver.clear(identifier_data)
 
@@ -390,7 +396,7 @@ class Group(Value):
             self.identifier_data.uuid,
             self.identifier_data.category,
             self.identifier_data.primary_key,
-            self.identifier_data.identifiers + path
+            self.identifier_data.identifiers + path,
         )
         try:
             raw = await self.driver.get(identifier_data)
@@ -473,7 +479,7 @@ class Group(Value):
             self.identifier_data.uuid,
             self.identifier_data.category,
             self.identifier_data.primary_key,
-            self.identifier_data.identifiers + path
+            self.identifier_data.identifiers + path,
         )
         if isinstance(value, dict):
             value = _str_key_dict(value)
@@ -1085,12 +1091,7 @@ class Config:
         """
         if not scopes:
             # noinspection PyTypeChecker
-            identifier_data = IdentifierData(
-                self.unique_identifier,
-                "",
-                (),
-                ()
-            )
+            identifier_data = IdentifierData(self.unique_identifier, "", (), ())
             group = Group(identifier_data, defaults={}, driver=self.driver)
         else:
             group = self._get_base_group(*scopes)
