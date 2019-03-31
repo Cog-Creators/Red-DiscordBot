@@ -1,11 +1,11 @@
 import re
-from typing import Match, Pattern
+from typing import Match, Pattern, Tuple
 from urllib.parse import quote_plus
 
 import motor.core
 import motor.motor_asyncio
 
-from .red_base import BaseDriver
+from .red_base import BaseDriver, IdentifierData
 
 __all__ = ["Mongo"]
 
@@ -77,44 +77,46 @@ class Mongo(BaseDriver):
         """
         return self.db[self.cog_name]
 
-    @staticmethod
-    def _parse_identifiers(identifiers):
-        uuid, identifiers = identifiers[0], identifiers[1:]
-        return uuid, identifiers
+    def get_primary_key(self, identifier_data: IdentifierData) -> Tuple[str]:
+        # noinspection PyTypeChecker
+        return (identifier_data.uuid, identifier_data.category, *identifier_data.primary_key)
 
-    async def get(self, *identifiers: str):
+    async def get(self, identifier_data: IdentifierData):
         mongo_collection = self.get_collection()
 
-        identifiers = (*map(self._escape_key, identifiers),)
-        dot_identifiers = ".".join(identifiers)
+        primary_key = list(map(self._escape_key, self.get_primary_key(identifier_data)))
+        dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
 
         partial = await mongo_collection.find_one(
-            filter={"_id": self.unique_cog_identifier}, projection={dot_identifiers: True}
+            filter={"RED_primary_key": primary_key},
+            projection={dot_identifiers: True}
         )
 
         if partial is None:
             raise KeyError("No matching document was found and Config expects a KeyError.")
 
-        for i in identifiers:
+        for i in identifier_data.identifiers:
             partial = partial[i]
         if isinstance(partial, dict):
             return self._unescape_dict_keys(partial)
         return partial
 
-    async def set(self, *identifiers: str, value=None):
-        dot_identifiers = ".".join(map(self._escape_key, identifiers))
+    async def set(self, identifier_data: IdentifierData, value=None):
+        primary_key = list(map(self._escape_key, self.get_primary_key(identifier_data)))
+        dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
         if isinstance(value, dict):
             value = self._escape_dict_keys(value)
 
         mongo_collection = self.get_collection()
 
         await mongo_collection.update_one(
-            {"_id": self.unique_cog_identifier},
+            {"RED_primary_key": primary_key},
             update={"$set": {dot_identifiers: value}},
             upsert=True,
         )
 
-    async def clear(self, *identifiers: str):
+    async def clear(self, identifier_data: IdentifierData):
+        """
         dot_identifiers = ".".join(map(self._escape_key, identifiers))
         mongo_collection = self.get_collection()
 
@@ -124,6 +126,8 @@ class Mongo(BaseDriver):
             )
         else:
             await mongo_collection.delete_one({"_id": self.unique_cog_identifier})
+        """
+        raise NotImplementedError
 
     @staticmethod
     def _escape_key(key: str) -> str:
