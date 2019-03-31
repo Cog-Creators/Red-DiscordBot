@@ -473,7 +473,7 @@ class Group(Value):
             self.identifier_data.uuid,
             self.identifier_data.category,
             self.identifier_data.primary_key,
-            path
+            self.identifier_data.identifiers + path
         )
         if isinstance(value, dict):
             value = _str_key_dict(value)
@@ -1085,7 +1085,13 @@ class Config:
         """
         if not scopes:
             # noinspection PyTypeChecker
-            group = Group(identifiers=(), defaults={}, driver=self.driver)
+            identifier_data = IdentifierData(
+                self.unique_identifier,
+                "",
+                (),
+                ()
+            )
+            group = Group(identifier_data, defaults={}, driver=self.driver)
         else:
             group = self._get_base_group(*scopes)
         await group.clear()

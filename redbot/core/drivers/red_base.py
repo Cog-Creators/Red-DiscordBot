@@ -44,8 +44,10 @@ class IdentifierData:
         )
 
     def to_tuple(self):
-        return (
-            self.uuid, self.category, *self.primary_key, *self.identifiers
+        return tuple(
+            item for item in
+            (self.uuid, self.category, *self.primary_key, *self.identifiers)
+            if len(item) > 0
         )
 
 
