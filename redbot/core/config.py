@@ -374,7 +374,7 @@ class Group(Value):
             If the value does not exist yet in Config's internal storage.
 
         """
-        path = [str(p) for p in nested_path]
+        path = tuple(str(p) for p in nested_path)
 
         if default is ...:
             poss_default = self.defaults
@@ -386,8 +386,14 @@ class Group(Value):
             else:
                 default = poss_default
 
+        identifier_data = IdentifierData(
+            self.identifier_data.uuid,
+            self.identifier_data.category,
+            self.identifier_data.primary_key,
+            self.identifier_data.identifiers + path
+        )
         try:
-            raw = await self.driver.get(self.identifier_data)
+            raw = await self.driver.get(identifier_data)
         except KeyError:
             if default is not ...:
                 return default
