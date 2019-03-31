@@ -149,9 +149,7 @@ class Mongo(BaseDriver):
             update_stmt = {"$set": value}
 
         await mongo_collection.update_one(
-            {"RED_uuid": uuid, "RED_primary_key": primary_key},
-            update=update_stmt,
-            upsert=True,
+            {"RED_uuid": uuid, "RED_primary_key": primary_key}, update=update_stmt, upsert=True
         )
 
     def generate_primary_key_filter(self, identifier_data: IdentifierData):
