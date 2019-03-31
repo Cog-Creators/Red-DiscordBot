@@ -137,13 +137,20 @@ class Mongo(BaseDriver):
         primary_key = list(map(self._escape_key, self.get_primary_key(identifier_data)))
         dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
         if isinstance(value, dict):
+            if len(value) == 0:
+                await self.clear(identifier_data)
+                return
             value = self._escape_dict_keys(value)
 
         mongo_collection = self.get_collection()
+        if len(dot_identifiers) > 0:
+            update_stmt = {"$set": {dot_identifiers: value}}
+        else:
+            update_stmt = {"$set": value}
 
         await mongo_collection.update_one(
             {"RED_uuid": uuid, "RED_primary_key": primary_key},
-            update={"$set": {dot_identifiers: value}},
+            update=update_stmt,
             upsert=True,
         )
 
