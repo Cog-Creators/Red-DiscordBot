@@ -32,12 +32,12 @@ class IdentifierData:
             f" identifiers={self.identifiers}>"
         )
 
-    def add_identifier(self, identifier: str) -> "IdentifierData":
-        if not isinstance(identifier, str):
+    def add_identifier(self, *identifier: str) -> "IdentifierData":
+        if not all(isinstance(i, str) for i in identifier):
             raise ValueError("Identifiers must be strings.")
 
         return IdentifierData(
-            self.uuid, self.category, self.primary_key, self.identifiers + (identifier,)
+            self.uuid, self.category, self.primary_key, self.identifiers + identifier
         )
 
     def to_tuple(self):

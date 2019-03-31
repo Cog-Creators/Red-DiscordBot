@@ -269,12 +269,7 @@ class Group(Value):
             dict access. These are casted to `str` for you.
         """
         path = tuple(str(p) for p in nested_path)
-        identifier_data = IdentifierData(
-            self.identifier_data.uuid,
-            self.identifier_data.category,
-            self.identifier_data.primary_key,
-            path,
-        )
+        identifier_data = self.identifier_data.add_identifier(*path)
         await self.driver.clear(identifier_data)
 
     def is_group(self, item: Any) -> bool:
@@ -392,12 +387,7 @@ class Group(Value):
             else:
                 default = poss_default
 
-        identifier_data = IdentifierData(
-            self.identifier_data.uuid,
-            self.identifier_data.category,
-            self.identifier_data.primary_key,
-            self.identifier_data.identifiers + path,
-        )
+        identifier_data = self.identifier_data.add_identifier(*path)
         try:
             raw = await self.driver.get(identifier_data)
         except KeyError:
@@ -475,12 +465,7 @@ class Group(Value):
             The value to store.
         """
         path = tuple(str(p) for p in nested_path)
-        identifier_data = IdentifierData(
-            self.identifier_data.uuid,
-            self.identifier_data.category,
-            self.identifier_data.primary_key,
-            self.identifier_data.identifiers + path,
-        )
+        identifier_data = self.identifier_data.add_identifier(*path)
         if isinstance(value, dict):
             value = _str_key_dict(value)
         await self.driver.set(identifier_data, value=value)
