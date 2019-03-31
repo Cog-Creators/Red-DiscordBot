@@ -4,6 +4,7 @@ from urllib.parse import quote_plus
 
 import motor.core
 import motor.motor_asyncio
+from motor.motor_asyncio import AsyncIOMotorCursor
 
 from .red_base import BaseDriver, IdentifierData
 
@@ -81,17 +82,49 @@ class Mongo(BaseDriver):
         # noinspection PyTypeChecker
         return (identifier_data.category, *identifier_data.primary_key)
 
+    async def rebuild_dataset(self, identifier_data: IdentifierData, cursor: AsyncIOMotorCursor):
+        ret = {}
+        async for doc in cursor:
+            del doc["RED_uuid"]
+            pkeys = doc["RED_primary_key"]
+            del doc["RED_primary_key"]
+            if len(pkeys) == 1:
+                # Global data
+                ret.update(**doc)
+            elif len(pkeys) > 1:
+                # All other data
+                partial = ret
+                for key in pkeys[1:-1]:
+                    if key in identifier_data.primary_key:
+                        continue
+                    if key not in partial:
+                        partial[key] = {}
+                    partial = partial[key]
+                if pkeys[-1] in identifier_data.primary_key:
+                    partial.update(**doc)
+                else:
+                    partial[pkeys[-1]] = doc
+            else:
+                raise RuntimeError("This should not happen.")
+        return ret
+
     async def get(self, identifier_data: IdentifierData):
         mongo_collection = self.get_collection()
 
-        uuid = self._escape_key(identifier_data.uuid)
-        primary_key = list(map(self._escape_key, self.get_primary_key(identifier_data)))
+        pkey_filter = self.generate_primary_key_filter(identifier_data)
         dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
+        proj = {"_id": 0}
+        if dot_identifiers != "":
+            proj[dot_identifiers] = True
 
-        partial = await mongo_collection.find_one(
-            filter={"RED_uuid": uuid, "RED_primary_key": primary_key},
-            projection={dot_identifiers: True},
-        )
+            partial = await mongo_collection.find_one(
+                filter=pkey_filter,
+                projection=proj,
+            )
+        else:
+            # The case here is for partial primary keys like all_members()
+            cursor = mongo_collection.find(filter=pkey_filter, projection=proj)
+            partial = await self.rebuild_dataset(identifier_data, cursor)
 
         if partial is None:
             raise KeyError("No matching document was found and Config expects a KeyError.")
