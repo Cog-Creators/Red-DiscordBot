@@ -5,10 +5,26 @@ __all__ = ["BaseDriver", "IdentifierData"]
 
 class IdentifierData:
     def __init__(self, uuid: str, category: str, primary_key: Tuple[str], identifiers: Tuple[str]):
-        self.uuid = uuid
-        self.category = category
-        self.primary_key = primary_key
-        self.identifiers = identifiers
+        self._uuid = uuid
+        self._category = category
+        self._primary_key = primary_key
+        self._identifiers = identifiers
+
+    @property
+    def uuid(self):
+        return self._uuid
+
+    @property
+    def category(self):
+        return self._category
+
+    @property
+    def primary_key(self):
+        return self._primary_key
+
+    @property
+    def identifiers(self):
+        return self._identifiers
 
     def __repr__(self):
         return (
