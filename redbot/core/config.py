@@ -6,7 +6,7 @@ from typing import Any, Union, Tuple, Dict, Awaitable, AsyncContextManager, Type
 import discord
 
 from .data_manager import cog_data_path, core_data_path
-from .drivers import get_driver
+from .drivers import get_driver, IdentifierData
 
 if TYPE_CHECKING:
     from .drivers.red_base import BaseDriver
@@ -72,14 +72,14 @@ class Value:
 
     """
 
-    def __init__(self, identifiers: Tuple[str], default_value, driver):
-        self.identifiers = identifiers
+    def __init__(self, identifier_data: IdentifierData, default_value, driver):
+        self.identifier_data = identifier_data
         self.default = default_value
         self.driver = driver
 
     async def _get(self, default=...):
         try:
-            ret = await self.driver.get(*self.identifiers)
+            ret = await self.driver.get(self.identifier_data)
         except KeyError:
             return default if default is not ... else self.default
         return ret
@@ -150,13 +150,13 @@ class Value:
         """
         if isinstance(value, dict):
             value = _str_key_dict(value)
-        await self.driver.set(*self.identifiers, value=value)
+        await self.driver.set(self.identifier_data, value=value)
 
     async def clear(self):
         """
         Clears the value from record for the data element pointed to by `identifiers`.
         """
-        await self.driver.clear(*self.identifiers)
+        await self.driver.clear(self.identifier_data)
 
 
 class Group(Value):
@@ -178,13 +178,13 @@ class Group(Value):
     """
 
     def __init__(
-        self, identifiers: Tuple[str], defaults: dict, driver, force_registration: bool = False
+        self, identifier_data: IdentifierData, defaults: dict, driver, force_registration: bool = False
     ):
         self._defaults = defaults
         self.force_registration = force_registration
         self.driver = driver
 
-        super().__init__(identifiers, {}, self.driver)
+        super().__init__(identifier_data, {}, self.driver)
 
     @property
     def defaults(self):
@@ -225,22 +225,22 @@ class Group(Value):
         """
         is_group = self.is_group(item)
         is_value = not is_group and self.is_value(item)
-        new_identifiers = self.identifiers + (item,)
+        new_identifiers = self.identifier_data.add_identifier(item)
         if is_group:
             return Group(
-                identifiers=new_identifiers,
+                identifier_data=new_identifiers,
                 defaults=self._defaults[item],
                 driver=self.driver,
                 force_registration=self.force_registration,
             )
         elif is_value:
             return Value(
-                identifiers=new_identifiers, default_value=self._defaults[item], driver=self.driver
+                identifier_data=new_identifiers, default_value=self._defaults[item], driver=self.driver
             )
         elif self.force_registration:
             raise AttributeError("'{}' is not a valid registered Group or value.".format(item))
         else:
-            return Value(identifiers=new_identifiers, default_value=None, driver=self.driver)
+            return Value(identifier_data=new_identifiers, default_value=None, driver=self.driver)
 
     async def clear_raw(self, *nested_path: Any):
         """
@@ -783,11 +783,17 @@ class Config:
         """
         self._register_default(group_identifier, **kwargs)
 
-    def _get_base_group(self, key: str, *identifiers: str) -> Group:
+    def _get_base_group(self, category: str, *primary_keys: str) -> Group:
         # noinspection PyTypeChecker
+        identifier_data = IdentifierData(
+            uuid=self.unique_identifier,
+            category=category,
+            primary_key=primary_keys,
+            identifiers=(),
+        )
         return Group(
-            identifiers=(key, *identifiers),
-            defaults=self.defaults.get(key, {}),
+            identifier_data=identifier_data,
+            defaults=self.defaults.get(category, {}),
             driver=self.driver,
             force_registration=self.force_registration,
         )
@@ -908,7 +914,7 @@ class Config:
         ret = {}
 
         try:
-            dict_ = await self.driver.get(*group.identifiers)
+            dict_ = await self.driver.get(group.identifier_data)
         except KeyError:
             pass
         else:
