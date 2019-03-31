@@ -79,16 +79,17 @@ class Mongo(BaseDriver):
 
     def get_primary_key(self, identifier_data: IdentifierData) -> Tuple[str]:
         # noinspection PyTypeChecker
-        return (identifier_data.uuid, identifier_data.category, *identifier_data.primary_key)
+        return (identifier_data.category, *identifier_data.primary_key)
 
     async def get(self, identifier_data: IdentifierData):
         mongo_collection = self.get_collection()
 
+        uuid = self._escape_key(identifier_data.uuid)
         primary_key = list(map(self._escape_key, self.get_primary_key(identifier_data)))
         dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
 
         partial = await mongo_collection.find_one(
-            filter={"RED_primary_key": primary_key},
+            filter={"RED_uuid": uuid, "RED_primary_key": primary_key},
             projection={dot_identifiers: True}
         )
 
@@ -102,6 +103,7 @@ class Mongo(BaseDriver):
         return partial
 
     async def set(self, identifier_data: IdentifierData, value=None):
+        uuid = self._escape_key(identifier_data.uuid)
         primary_key = list(map(self._escape_key, self.get_primary_key(identifier_data)))
         dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
         if isinstance(value, dict):
@@ -110,23 +112,35 @@ class Mongo(BaseDriver):
         mongo_collection = self.get_collection()
 
         await mongo_collection.update_one(
-            {"RED_primary_key": primary_key},
+            {"RED_uuid": uuid, "RED_primary_key": primary_key},
             update={"$set": {dot_identifiers: value}},
             upsert=True,
         )
 
-    async def clear(self, identifier_data: IdentifierData):
-        """
-        dot_identifiers = ".".join(map(self._escape_key, identifiers))
-        mongo_collection = self.get_collection()
+    def generate_primary_key_filter(self, identifier_data: IdentifierData):
+        uuid = self._escape_key(identifier_data.uuid)
+        primary_key = list(map(self._escape_key, self.get_primary_key(identifier_data)))
+        internal = [{"RED_uuid": uuid}]
+        for key in primary_key:
+            internal.append({"RED_primary_key": {"$in": [key]}})
+        return {"$and": internal}
 
-        if len(identifiers) > 0:
-            await mongo_collection.update_one(
-                {"_id": self.unique_cog_identifier}, update={"$unset": {dot_identifiers: 1}}
-            )
+    async def clear(self, identifier_data: IdentifierData):
+        # There are three cases here:
+        # 1) We're clearing out a subset of identifiers (aka identifiers is NOT empty)
+        # 2) We're clearing out full primary key and no identifiers
+        # 3) We're clearing out partial primary key and no identifiers
+        # 4) Primary key is empty, should wipe all documents in the collection
+        mongo_collection = self.get_collection()
+        pkey_filter = self.generate_primary_key_filter(identifier_data)
+        if len(identifier_data.identifiers) == 0:
+            await mongo_collection.delete_many(pkey_filter)
         else:
-            await mongo_collection.delete_one({"_id": self.unique_cog_identifier})
-        """
+            dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
+            await mongo_collection.update_one(
+                pkey_filter,
+                update={"$unset": {dot_identifiers: 1}}
+            )
         raise NotImplementedError
 
     @staticmethod
