@@ -65,29 +65,28 @@ class Mongo(BaseDriver):
         """
         return _conn.get_database()
 
-    def get_collection(self) -> motor.core.Collection:
+    def get_collection(self, category: str) -> motor.core.Collection:
         """
         Gets a specified collection within the PyMongo database for this cog.
 
-        Unless you are doing custom stuff ``collection_name`` should be one of the class
+        Unless you are doing custom stuff ``category`` should be one of the class
         attributes of :py:class:`core.config.Config`.
 
-        :param str collection_name:
+        :param str category:
         :return:
             PyMongo collection object.
         """
-        return self.db[self.cog_name]
+        return self.db[self.cog_name][category]
 
     def get_primary_key(self, identifier_data: IdentifierData) -> Tuple[str]:
         # noinspection PyTypeChecker
-        return (identifier_data.category, *identifier_data.primary_key)
+        return identifier_data.primary_key
 
     async def rebuild_dataset(self, identifier_data: IdentifierData, cursor: AsyncIOMotorCursor):
         ret = {}
         async for doc in cursor:
-            del doc["RED_uuid"]
-            pkeys = doc["RED_primary_key"]
-            del doc["RED_primary_key"]
+            pkeys = doc["_id"]["RED_primary_key"]
+            del doc["_id"]
             if len(pkeys) == 1:
                 # Global data
                 ret.update(**doc)
@@ -109,18 +108,17 @@ class Mongo(BaseDriver):
         return ret
 
     async def get(self, identifier_data: IdentifierData):
-        mongo_collection = self.get_collection()
+        mongo_collection = self.get_collection(identifier_data.category)
 
         pkey_filter = self.generate_primary_key_filter(identifier_data)
-        dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
-        proj = {"_id": 0}
-        if dot_identifiers != "":
-            proj[dot_identifiers] = True
+        if len(identifier_data.identifiers) > 0:
+            dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
+            proj = {"_id": False, dot_identifiers: True}
 
             partial = await mongo_collection.find_one(filter=pkey_filter, projection=proj)
         else:
             # The case here is for partial primary keys like all_members()
-            cursor = mongo_collection.find(filter=pkey_filter, projection=proj)
+            cursor = mongo_collection.find(filter=pkey_filter)
             partial = await self.rebuild_dataset(identifier_data, cursor)
 
         if partial is None:
@@ -142,23 +140,29 @@ class Mongo(BaseDriver):
                 return
             value = self._escape_dict_keys(value)
 
-        mongo_collection = self.get_collection()
+        mongo_collection = self.get_collection(identifier_data.category)
         if len(dot_identifiers) > 0:
             update_stmt = {"$set": {dot_identifiers: value}}
         else:
             update_stmt = {"$set": value}
 
         await mongo_collection.update_one(
-            {"RED_uuid": uuid, "RED_primary_key": primary_key}, update=update_stmt, upsert=True
+            {"_id": {"RED_uuid": uuid, "RED_primary_key": primary_key}},
+            update=update_stmt,
+            upsert=True,
         )
 
     def generate_primary_key_filter(self, identifier_data: IdentifierData):
         uuid = self._escape_key(identifier_data.uuid)
         primary_key = list(map(self._escape_key, self.get_primary_key(identifier_data)))
-        internal = [{"RED_uuid": uuid}]
-        for key in primary_key:
-            internal.append({"RED_primary_key": {"$in": [key]}})
-        return {"$and": internal}
+        ret = {"_id": {"RED_uuid": uuid}}
+        if len(identifier_data.identifiers) > 0:
+            ret["_id"]["RED_primary_key"] = primary_key
+        else:
+            for i, key in enumerate(primary_key):
+                keyname = f"RED_primary_key.{i}"
+                ret["_id"][keyname] = key
+        return ret
 
     async def clear(self, identifier_data: IdentifierData):
         # There are three cases here:
@@ -166,7 +170,7 @@ class Mongo(BaseDriver):
         # 2) We're clearing out full primary key and no identifiers
         # 3) We're clearing out partial primary key and no identifiers
         # 4) Primary key is empty, should wipe all documents in the collection
-        mongo_collection = self.get_collection()
+        mongo_collection = self.get_collection(identifier_data.category)
         pkey_filter = self.generate_primary_key_filter(identifier_data)
         if len(identifier_data.identifiers) == 0:
             # This covers cases 2-4
