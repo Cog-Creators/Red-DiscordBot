@@ -100,7 +100,9 @@ class Permissions(commands.Cog):
         # Note that GLOBAL rules are denoted by an ID of 0.
         self.config = config.Config.get_conf(self, identifier=78631113035100160)
         self.config.register_global(version="")
+        self.config.init_custom(COG, 1)
         self.config.register_custom(COG)
+        self.config.init_custom(COMMAND, 1)
         self.config.register_custom(COMMAND)
 
     @commands.group()

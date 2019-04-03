@@ -94,6 +94,8 @@ class JSON(BaseDriver):
             self.jsonIO._save_json(self.data)
 
     async def get(self, identifier_data: IdentifierData):
+        if identifier_data.is_custom:
+            await self.update_custom_groups(identifier_data)
         partial = self.data
         full_identifiers = identifier_data.to_tuple()
         for i in full_identifiers:
@@ -101,6 +103,8 @@ class JSON(BaseDriver):
         return copy.deepcopy(partial)
 
     async def set(self, identifier_data: IdentifierData, value=None):
+        if identifier_data.is_custom:
+            await self.update_custom_groups(identifier_data)
         partial = self.data
         full_identifiers = identifier_data.to_tuple()
         for i in full_identifiers[:-1]:
@@ -112,6 +116,8 @@ class JSON(BaseDriver):
         await self.jsonIO._threadsafe_save_json(self.data)
 
     async def clear(self, identifier_data: IdentifierData):
+        if identifier_data.is_custom:
+            await self.update_custom_groups(identifier_data)
         partial = self.data
         full_identifiers = identifier_data.to_tuple()
         try:
