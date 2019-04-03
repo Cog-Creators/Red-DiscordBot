@@ -71,7 +71,7 @@ class Tunnel(metaclass=TunnelMeta):
         self.last_interaction = datetime.utcnow()
 
     async def react_close(self, *, uid: int, message: str = ""):
-        send_to = self.origin if uid == self.sender.id else self.sender
+        send_to = self.recipient if uid == self.sender.id else self.origin
         closer = next(filter(lambda x: x.id == uid, (self.sender, self.recipient)), None)
         await send_to.send(filter_mass_mentions(message.format(closer=closer)))
 
