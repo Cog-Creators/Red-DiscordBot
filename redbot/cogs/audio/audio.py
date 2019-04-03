@@ -2738,7 +2738,7 @@ class Audio(commands.Cog):
                 and player.position == 0
                 and len(player.queue) == 0
             ):
-                await lavalink.connect(user_channel)
+                await player.move_to(user_channel)
                 return True
         else:
             return False
