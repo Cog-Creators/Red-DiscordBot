@@ -4,8 +4,15 @@ __all__ = ["BaseDriver", "IdentifierData"]
 
 
 class IdentifierData:
-    def __init__(self, uuid: str, category: str, primary_key: Tuple[str], identifiers: Tuple[str],
-                 custom_group_data: dict, is_custom: bool = False):
+    def __init__(
+        self,
+        uuid: str,
+        category: str,
+        primary_key: Tuple[str],
+        identifiers: Tuple[str],
+        custom_group_data: dict,
+        is_custom: bool = False,
+    ):
         self._uuid = uuid
         self._category = category
         self._primary_key = primary_key
@@ -44,7 +51,11 @@ class IdentifierData:
             raise ValueError("Identifiers must be strings.")
 
         return IdentifierData(
-            self.uuid, self.category, self.primary_key, self.identifiers + identifier, self.custom_group_data,
+            self.uuid,
+            self.category,
+            self.primary_key,
+            self.identifiers + identifier,
+            self.custom_group_data,
             is_custom=self.is_custom,
         )
 
@@ -96,7 +107,7 @@ class BaseDriver:
             "RED_INTERNAL",
             ("CUSTOM_GROUP_LEN",),
             (identifier_data.category,),
-            identifier_data.custom_group_data
+            identifier_data.custom_group_data,
         )
         custom_pkey_len = identifier_data.custom_group_data[identifier_data.category]
         self._seen_custom_groups.add(identifier_data.category)

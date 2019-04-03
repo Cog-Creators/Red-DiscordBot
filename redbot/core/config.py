@@ -801,7 +801,12 @@ class Config:
 
     def _get_base_group(self, category: str, *primary_keys: str) -> Group:
         is_custom = category not in (
-            self.GLOBAL, self.GUILD, self.USER, self.MEMBER, self.ROLE, self.CHANNEL
+            self.GLOBAL,
+            self.GUILD,
+            self.USER,
+            self.MEMBER,
+            self.ROLE,
+            self.CHANNEL,
         )
         # noinspection PyTypeChecker
         identifier_data = IdentifierData(
@@ -1090,7 +1095,9 @@ class Config:
         """
         if not scopes:
             # noinspection PyTypeChecker
-            identifier_data = IdentifierData(self.unique_identifier, "", (), (), self.custom_groups)
+            identifier_data = IdentifierData(
+                self.unique_identifier, "", (), (), self.custom_groups
+            )
             group = Group(identifier_data, defaults={}, driver=self.driver)
         else:
             group = self._get_base_group(*scopes)
