@@ -18,7 +18,7 @@ import redbot.core
 from redbot.core import Config, commands, checks, bank
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import bold, box
+from redbot.core.utils.chat_formatting import bold, box, pagify
 from redbot.core.utils.menus import (
     menu,
     DEFAULT_CONTROLS,
@@ -1605,25 +1605,46 @@ class Audio(commands.Cog):
             author_id = playlists[playlist_name]["author"]
         except KeyError:
             return await self._embed_msg(ctx, _("No playlist with that name."))
-        author_obj = self.bot.get_user(author_id)
-        playlist_url = playlists[playlist_name]["playlist_url"]
+
         try:
             track_len = len(playlists[playlist_name]["tracks"])
         except TypeError:
             track_len = 0
-        if playlist_url is None:
-            playlist_url = _("**Custom playlist.**")
+
+        msg = ""
+        track_idx = 0
+        if track_len > 0:
+            for track in playlists[playlist_name]["tracks"]:
+                track_idx = track_idx + 1
+                spaces = abs(len(str(track_idx)) - 5)
+                msg += "`{}.` **[{}]({})**\n".format(
+                    track_idx, track["info"]["title"], track["info"]["uri"]
+                )
         else:
-            playlist_url = _("URL: <{url}>").format(url=playlist_url)
-        embed = discord.Embed(
-            colour=await ctx.embed_colour(),
-            title=_("Playlist info for {playlist_name}:").format(playlist_name=playlist_name),
-            description=_("Author: **{author_name}**\n{url}").format(
-                author_name=author_obj, url=playlist_url
-            ),
-        )
-        embed.set_footer(text=_("{num} track(s)").format(num=track_len))
-        await ctx.send(embed=embed)
+            msg = "No tracks."
+        playlist_url = playlists[playlist_name]["playlist_url"]
+        if not playlist_url:
+            embed_title = _("Playlist info for {playlist_name}:\n").format(
+                playlist_name=playlist_name
+            )
+        else:
+            embed_title = _("Playlist info for {playlist_name}:\nURL: {url}").format(
+                playlist_name=playlist_name, url=playlist_url
+            )
+
+        page_list = []
+        for page in pagify(msg, delims=["\n"], page_length=1000):
+            embed = discord.Embed(
+                colour=await ctx.embed_colour(), title=embed_title, description=page
+            )
+            author_obj = self.bot.get_user(author_id)
+            embed.set_footer(
+                text=_("Author: {author_name} | {num} track(s)").format(
+                    author_name=author_obj, num=track_len
+                )
+            )
+            page_list.append(embed)
+        await menu(ctx, page_list, DEFAULT_CONTROLS)
 
     @playlist.command(name="list")
     async def _playlist_list(self, ctx):
@@ -2051,7 +2072,7 @@ class Audio(commands.Cog):
             )
             await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.group(invoke_without_command=True)
     @commands.guild_only()
     async def queue(self, ctx, *, page="1"):
         """List the queue.
@@ -2236,6 +2257,55 @@ class Audio(commands.Cog):
             )
         )
         return embed
+
+    @queue.command(name="clear")
+    @commands.guild_only()
+    async def _queue_clear(self, ctx):
+        """Clears the queue."""
+        player = lavalink.get_player(ctx.guild.id)
+        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        if not self._player_check(ctx) or not player.queue:
+            return await self._embed_msg(ctx, _("There's nothing in the queue."))
+        player = lavalink.get_player(ctx.guild.id)
+        if dj_enabled:
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
+                ctx, ctx.author
+            ):
+                return await self._embed_msg(ctx, _("You need the DJ role to clear the queue."))
+        player.queue.clear()
+        await self._embed_msg(ctx, _("The queue has been cleared."))
+
+    @queue.command(name="clean")
+    @commands.guild_only()
+    async def _queue_clean(self, ctx):
+        """Removes songs from the queue if the requester is not in the voice channel."""
+        player = lavalink.get_player(ctx.guild.id)
+        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        if not self._player_check(ctx) or not player.queue:
+            return await self._embed_msg(ctx, _("There's nothing in the queue."))
+        if dj_enabled:
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
+                ctx, ctx.author
+            ):
+                return await self._embed_msg(ctx, _("You need the DJ role to clean the queue."))
+        clean_tracks = []
+        removed_tracks = 0
+        listeners = player.channel.members
+        for track in player.queue:
+            if track.requester in listeners:
+                clean_tracks.append(track)
+            else:
+                removed_tracks += 1
+        player.queue = clean_tracks
+        if removed_tracks == 0:
+            await self._embed_msg(ctx, _("Removed 0 tracks."))
+        else:
+            await self._embed_msg(
+                ctx,
+                _(
+                    "Removed {removed_tracks} tracks queued by members outside of the voice channel."
+                ).format(removed_tracks=removed_tracks),
+            )
 
     @commands.command()
     @commands.guild_only()
@@ -2763,6 +2833,7 @@ class Audio(commands.Cog):
         )
         is_mod = discord.utils.get(ctx.guild.get_member(member.id).roles, id=mod_role) is not None
         is_bot = member.bot is True
+        is_other_channel = await self._channel_check(ctx)
 
         return (
             is_active_dj
@@ -2772,6 +2843,7 @@ class Audio(commands.Cog):
             or is_admin
             or is_mod
             or is_bot
+            or is_other_channel
         )
 
     async def _is_alone(self, ctx, member):
@@ -3021,6 +3093,32 @@ class Audio(commands.Cog):
             await self._embed_msg(ctx, _("Websocket port set to {port}.").format(port=ws_port))
 
         self._restart_connect()
+
+    async def _channel_check(self, ctx):
+        player = lavalink.get_player(ctx.guild.id)
+        try:
+            in_channel = sum(
+                not m.bot for m in ctx.guild.get_member(self.bot.user.id).voice.channel.members
+            )
+        except AttributeError:
+            return False
+
+        if not ctx.author.voice:
+            user_channel = None
+        else:
+            user_channel = ctx.author.voice.channel
+
+        if in_channel == 0 and user_channel:
+            if (
+                (player.channel != user_channel)
+                and not player.current
+                and player.position == 0
+                and len(player.queue) == 0
+            ):
+                await player.move_to(user_channel)
+                return True
+        else:
+            return False
 
     async def _check_api_tokens(self):
         spotify = await self.bot.db.api_tokens.get_raw(

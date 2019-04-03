@@ -569,12 +569,8 @@ class Config:
         # We have to import this here otherwise we have a circular dependency
         from .data_manager import basic_config
 
-        log.debug("Basic config: \n\n{}".format(basic_config))
-
         driver_name = basic_config.get("STORAGE_TYPE", "JSON")
         driver_details = basic_config.get("STORAGE_DETAILS", {})
-
-        log.debug("Using driver: '{}'".format(driver_name))
 
         driver = get_driver(
             driver_name, cog_name, uuid, data_path_override=cog_path_override, **driver_details

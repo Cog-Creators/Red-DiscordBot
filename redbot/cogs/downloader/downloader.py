@@ -324,6 +324,7 @@ class Downloader(commands.Cog):
                 target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH
             )
 
+<<<<<<< HEAD
             await ctx.send(
                 _(
                     "Cog `{cog_name}` successfully installed. You can load it with `{prefix}load {cog_name}`"
@@ -331,6 +332,15 @@ class Downloader(commands.Cog):
             )
             if cog.install_msg is not None:
                 await ctx.send(cog.install_msg.replace("[p]", ctx.prefix))
+=======
+        await ctx.send(
+            _(
+                "Cog `{cog_name}` successfully installed. You can load it with `{prefix}load {cog_name}`"
+            ).format(cog_name=cog_name, prefix=ctx.prefix)
+        )
+        if cog.install_msg is not None:
+            await ctx.send(cog.install_msg.replace("[p]", ctx.prefix))
+>>>>>>> develop
 
     @cog.command(name="uninstall", usage="<cog_name>")
     async def _cog_uninstall(self, ctx, cog: InstalledCog):
