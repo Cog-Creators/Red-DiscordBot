@@ -1,4 +1,6 @@
-__all__ = ["get_driver"]
+from .red_base import IdentifierData
+
+__all__ = ["get_driver", "IdentifierData"]
 
 
 def get_driver(type, *args, **kwargs):
