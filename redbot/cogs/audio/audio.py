@@ -33,7 +33,7 @@ from .manager import shutdown_lavalink_server, start_lavalink_server, maybe_down
 
 _ = Translator("Audio", __file__)
 
-__version__ = "0.0.8b"
+__version__ = "0.0.9"
 __author__ = ["aikaterna"]
 
 log = logging.getLogger("red.audio")
@@ -133,19 +133,19 @@ class Audio(commands.Cog):
 
         async def _players_check():
             try:
-                get_players = [p for p in lavalink.players if p.current is not None]
-                get_single_title = get_players[0].current.title
+                get_single_title = lavalink.active_players()[0].current.title
                 if get_single_title == "Unknown title":
-                    get_single_title = get_players[0].current.uri
+                    get_single_title = lavalink.active_players()[0].current.uri
                     if not get_single_title.startswith("http"):
                         get_single_title = get_single_title.rsplit("/", 1)[-1]
-                elif "localtracks/" in get_players[0].current.uri:
+                elif "localtracks/" in lavalink.active_players()[0].current.uri:
                     get_single_title = "{} - {}".format(
-                        get_players[0].current.author, get_players[0].current.title
+                        lavalink.active_players()[0].current.author,
+                        lavalink.active_players()[0].current.title,
                     )
                 else:
-                    get_single_title = get_players[0].current.title
-                playing_servers = len(get_players)
+                    get_single_title = lavalink.active_players()[0].current.title
+                playing_servers = len(lavalink.active_players())
             except IndexError:
                 get_single_title = None
                 playing_servers = 0
@@ -545,11 +545,11 @@ class Audio(commands.Cog):
     @commands.guild_only()
     async def audiostats(self, ctx):
         """Audio stats."""
-        server_num = len([p for p in lavalink.players if p.current is not None])
-        total_num = len([p for p in lavalink.players])
+        server_num = len(lavalink.active_players())
+        total_num = len(lavalink.all_players())
         server_list = []
 
-        for p in lavalink.players:
+        for p in lavalink.all_players():
             connect_start = p.fetch("connect")
             connect_dur = self._dynamic_time(
                 int((datetime.datetime.utcnow() - connect_start).total_seconds())
@@ -582,7 +582,7 @@ class Audio(commands.Cog):
                         p.channel.guild.name, connect_dur, _("Nothing playing.")
                     )
                 )
-        if server_num == 0:
+        if total_num == 0:
             servers = _("Not connected anywhere.")
         else:
             servers = "\n".join(server_list)
@@ -3180,7 +3180,7 @@ class Audio(commands.Cog):
         stop_times = {}
 
         while True:
-            for p in lavalink.players:
+            for p in lavalink.all_players():
                 server = p.channel.guild
 
                 if server.id not in stop_times:
@@ -3258,13 +3258,6 @@ class Audio(commands.Cog):
             return channel.guild.me.color
         else:
             return self.bot.color
-
-    async def _get_playing(self, ctx):
-        if self._player_check(ctx):
-            player = lavalink.get_player(ctx.guild.id)
-            return len([player for p in lavalink.players if p.is_playing])
-        else:
-            return 0
 
     async def _localtracks_folders(self, ctx):
         if not await self._localtracks_check(ctx):
@@ -3509,20 +3502,3 @@ class Audio(commands.Cog):
             self._cleaned_up = True
 
     __del__ = __unload
-
-    async def on_guild_remove(self, guild: discord.Guild):
-        """
-        This is to clean up players when
-        the bot either leaves or is removed from a guild
-        """
-        channels = {
-            x  # x is a voice_channel
-            for y in [g.voice_channels for g in self.bot.guilds]
-            for x in y  # y is a list of voice channels
-        }  # Yes, this is ugly. It's also the most performant and commented.
-
-        zombie_players = {p for p in lavalink.player_manager.players if p.channel not in channels}
-        # Do not unroll to combine with next line.
-        # Can result in iterator changing size during context switching.
-        for zombie in zombie_players:
-            await zombie.destroy()
