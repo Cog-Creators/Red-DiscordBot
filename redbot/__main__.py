@@ -53,6 +53,13 @@ async def _get_prefix_and_token(red, indict):
     indict["prefix"] = await red.db.prefix()
 
 
+async def load_initial_cogs(red: Red, cli_flags):
+    await red.add_cog(Core(red))
+    await red.add_cog(CogManagerUI())
+    if cli_flags.dev:
+        await red.add_cog(Dev())
+
+
 def list_instances():
     if not data_manager.config_file.exists():
         print(
@@ -106,15 +113,12 @@ def main():
     red = Red(cli_flags=cli_flags, description=description, pm_help=None)
     init_global_checks(red)
     init_events(red, cli_flags)
-    red.add_cog(Core(red))
-    red.add_cog(CogManagerUI())
-    if cli_flags.dev:
-        red.add_cog(Dev())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(load_initial_cogs(red, cli_flags))
     # noinspection PyProtectedMember
     modlog._init()
     # noinspection PyProtectedMember
     bank._init()
-    loop = asyncio.get_event_loop()
     if os.name == "posix":
         loop.add_signal_handler(SIGTERM, lambda: asyncio.ensure_future(sigterm_handler(red, log)))
     tmp_data = {}

@@ -10,4 +10,4 @@ async def setup(bot):
     # order, so we want to circumvent that.
     bot.add_listener(cog.cog_added, "on_cog_add")
     bot.add_listener(cog.command_added, "on_command_add")
-    bot.add_cog(cog)
+    await bot.add_cog(cog)

@@ -28,4 +28,4 @@ async def setup(bot: commands.Bot):
 
     await cog.initialize()
 
-    bot.add_cog(cog)
+    await bot.add_cog(cog)
