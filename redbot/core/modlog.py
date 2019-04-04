@@ -746,7 +746,6 @@ async def register_casetypes(new_types: List[dict]) -> List[CaseType]:
 
     Raises
     ------
-    RuntimeError
     KeyError
     ValueError
     AttributeError
