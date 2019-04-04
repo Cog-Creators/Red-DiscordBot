@@ -22,7 +22,7 @@ import datetime
 from enum import Enum
 
 __author__ = "tekulvw"
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 
 log = logging.getLogger("red.audio")
 
@@ -2067,15 +2067,15 @@ class Audio:
                "41tIUr_ex3g", "f9O2Rjn1azc")
         url = "https://www.youtube.com/watch?v={}".format(choice(ids))
         await ctx.invoke(self.play, url_or_search_terms=url)
-	
-    @commands.command(pass_context=True,aliases=["alexaplaydespacito"], no_pm=True)
+
+    @commands.command(pass_context=True, aliases=["alexaplaycito"], no_pm=True)
     async def despacito(self, ctx):
         """This is so sad Alexa play despacito \n\nWARNING: you might get earraped in this command"""
-        ids = ("FXovf5dsRTw", "W3GrSMYbkBE", "Gl6ekgobG2k", "X3XnZxMB0sA", "zYsLq_tcktk", "Q6KJjE30hE4", "FkkPhbwgDI0", "jqtJLyQRqIc")
+        ids = ("FXovf5dsRTw", "W3GrSMYbkBE", "Gl6ekgobG2k", "X3XnZxMB0sA", "zYsLq_tcktk", "Q6KJjE30hE4", "FkkPhbwgDI0")
         url = "https://www.youtube.com/watch?v={}".format(choice(ids))
         await ctx.invoke(self.play, url_or_search_terms=url)
 
-    @commands.command(pass_context=True, aliases=["np"], no_pm=True)
+    @commands.command(pass_context=True, aliases=["np", "nowplaying"], no_pm=True)
     async def song(self, ctx):
         """Info about the current song."""
         server = ctx.message.server
