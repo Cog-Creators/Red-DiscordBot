@@ -15,6 +15,7 @@ from pkg_resources import DistributionNotFound
 
 from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
 from . import commands
+from .config import get_by_cogname
 from .data_manager import storage_type
 from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
 from .utils import fuzzy_command_search, format_fuzzy_results
@@ -304,6 +305,16 @@ def init_events(bot, cli_flags):
             command_obj = bot.get_command(command_name)
             if command_obj is not None:
                 command_obj.enable_in(guild)
+
+    @bot.event
+    async def on_cog_add(cog: commands.Cog):
+        cogname = cog.__class__.__name__
+        confs = get_by_cogname(cogname)
+        for c in confs:
+            uuid = c.unique_identifier
+            # group_data = c.custom_groups
+            group_data = {}
+            await bot.db.custom("CUSTOM_GROUPS", cogname, uuid).set(group_data)
 
 
 def _get_startup_screen_specs():

@@ -12,11 +12,37 @@ from .drivers import get_driver, IdentifierData
 if TYPE_CHECKING:
     from .drivers.red_base import BaseDriver
 
+__all__ = ["Config", "get_by_cogname"]
+
 log = logging.getLogger("red.config")
 
 _T = TypeVar("_T")
 
 _config_cache = weakref.WeakValueDictionary()
+_config_lookup_dict = weakref.WeakValueDictionary()
+
+
+def _register_config_object(conf: "Config"):
+    key = (conf.cog_name, conf.unique_identifier)
+    if key not in _config_lookup_dict:
+        _config_lookup_dict[key] = conf
+
+
+def get_by_cogname(cogname: str) -> Tuple["Config"]:
+    keys = _config_lookup_dict.keys()
+    valid_keys = []
+    for stored_cogname, uuid in keys:
+        if stored_cogname == cogname:
+            valid_keys.append((stored_cogname, uuid))
+
+    ret = []
+    for key in valid_keys:
+        try:
+            ret.append(_config_lookup_dict[key])
+        except KeyError:
+            pass
+    # noinspection PyTypeChecker
+    return tuple(ret)
 
 
 class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):
@@ -608,6 +634,7 @@ class Config:
             force_registration=force_registration,
             driver=driver,
         )
+        _register_config_object(conf)
         return conf
 
     @classmethod
@@ -640,6 +667,7 @@ class Config:
             unique_identifier="0",
             force_registration=force_registration,
         )
+        _register_config_object(conf)
         return conf
 
     def __getattr__(self, item: str) -> Union[Group, Value]:
