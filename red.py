@@ -37,7 +37,7 @@ from io import TextIOWrapper
 #                 https://github.com/Rapptz/RoboDanny/
 #
 
-description = "Red - A multifunction Discord bot by Twentysix"
+description = "Red - A multifunction Discord bot by Twentysix \n\n | Modified By AngerKingz |"
 
 
 class Bot(commands.Bot):
@@ -321,19 +321,19 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
         owner = await set_bot_owner()
 
         print("-----------------")
-        print("Red - Discord Bot")
+        print("Red - Discord Bot | Modified By AngerKingz")
         print("-----------------")
         print(str(bot.user))
         print("\nConnected to:")
-        print("{} servers".format(servers))
-        print("{} channels".format(channels))
-        print("{} users\n".format(users))
+        print("█{} servers".format(servers))
+        print("█{} channels".format(channels))
+        print("█{} users\n".format(users))
         prefix_label = 'Prefix'
         if len(bot.settings.prefixes) > 1:
             prefix_label += 'es'
-        print("{}: {}".format(prefix_label, " ".join(bot.settings.prefixes)))
-        print("Owner: " + str(owner))
-        print("{}/{} active cogs with {} commands".format(
+        print("█{}: {}".format(prefix_label, " ".join(bot.settings.prefixes)))
+        print("█Owner: " + str(owner))
+        print("█{}/{} active cogs with {} commands".format(
             len(bot.cogs), total_cogs, len(bot.commands)))
         print("-----------------")
 
@@ -343,7 +343,7 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
             bot.oauth_url = url
             print(url)
 
-        print("\nOfficial server: https://discord.gg/red")
+        print("\nRed's Official server: https://discord.gg/red | [H/O] Official server: https://discord.gg/yzHEae5")
 
         print("Make sure to keep your bot updated. Select the 'Update' "
               "option from the launcher.")
