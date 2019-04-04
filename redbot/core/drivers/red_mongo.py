@@ -108,9 +108,6 @@ class Mongo(BaseDriver):
         return ret
 
     async def get(self, identifier_data: IdentifierData):
-        if identifier_data.is_custom:
-            await self.update_custom_groups(identifier_data)
-
         mongo_collection = self.get_collection(identifier_data.category)
 
         pkey_filter = self.generate_primary_key_filter(identifier_data)
@@ -134,9 +131,6 @@ class Mongo(BaseDriver):
         return partial
 
     async def set(self, identifier_data: IdentifierData, value=None):
-        if identifier_data.is_custom:
-            await self.update_custom_groups(identifier_data)
-
         uuid = self._escape_key(identifier_data.uuid)
         primary_key = list(map(self._escape_key, self.get_primary_key(identifier_data)))
         dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
@@ -171,8 +165,6 @@ class Mongo(BaseDriver):
         return ret
 
     async def clear(self, identifier_data: IdentifierData):
-        if identifier_data.is_custom:
-            await self.update_custom_groups(identifier_data)
         # There are three cases here:
         # 1) We're clearing out a subset of identifiers (aka identifiers is NOT empty)
         # 2) We're clearing out full primary key and no identifiers

@@ -99,20 +99,6 @@ class BaseDriver:
         """
         raise NotImplementedError
 
-    async def update_custom_groups(self, identifier_data: IdentifierData):
-        if identifier_data.category in self._seen_custom_groups:
-            return
-        new_ident_data = IdentifierData(
-            identifier_data.uuid,
-            "RED_INTERNAL",
-            ("CUSTOM_GROUP_LEN",),
-            (identifier_data.category,),
-            identifier_data.custom_group_data,
-        )
-        custom_pkey_len = identifier_data.custom_group_data[identifier_data.category]
-        self._seen_custom_groups.add(identifier_data.category)
-        await self.set(new_ident_data, custom_pkey_len)
-
     async def set(self, identifier_data: IdentifierData, value=None):
         """
         Sets the value of the key indicated by the given identifiers.
