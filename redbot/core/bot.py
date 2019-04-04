@@ -18,6 +18,8 @@ from .help_formatter import Help, help as help_
 from .rpc import RPCMixin
 from .utils import common_filters
 
+log = logging.getLogger("red.bot")
+
 
 def _is_submodule(parent, child):
     return parent == child or child.startswith(parent + ".")
@@ -220,10 +222,10 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             del lib
             raise discord.ClientException(f"extension {name} does not have a setup function")
 
-        if asyncio.iscoroutinefunction(lib.setup):
+        try:
             await lib.setup(self)
-        else:
-            lib.setup(self)
+        except TypeError:
+            log.exception(f"Setup functions are now required to be coroutines: {name}")
 
         self.extensions[name] = lib
 
@@ -376,7 +378,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
         await destination.send(content=content, **kwargs)
 
-    def add_cog(self, cog: commands.Cog):
+    async def add_cog(self, cog: commands.Cog):
         if not isinstance(cog, commands.Cog):
             raise RuntimeError(
                 f"The {cog.__class__.__name__} cog in the {cog.__module__} package does "
@@ -407,8 +409,12 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
                     "this requirement, see this page: "
                     "http://red-discordbot.readthedocs.io/en/v3-develop/framework_commands.html"
                 )
+        await self._register_custom_groups(cog)
         super().add_cog(cog)
         self.dispatch("cog_add", cog)
+
+    async def _register_custom_groups(self, cog):
+        pass
 
     def add_command(self, command: commands.Command):
         if not isinstance(command, commands.Command):
