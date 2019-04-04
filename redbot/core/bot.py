@@ -19,6 +19,7 @@ from .rpc import RPCMixin
 from .utils import common_filters
 
 log = logging.getLogger("red.bot")
+CUSTOM_GROUPS = "CUSTOM_GROUPS"
 
 
 def _is_submodule(parent, child):
@@ -75,6 +76,10 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
         )
 
         self.db.register_user(embeds=None)
+
+        log.warning("The following line must be uncommented once #2545 is merged.")
+        # self.db.init_custom(CUSTOM_GROUPS, 2)
+        self.db.register_custom(CUSTOM_GROUPS)
 
         async def prefix_manager(bot, message):
             if not cli_flags.prefix:
@@ -414,7 +419,18 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
         self.dispatch("cog_add", cog)
 
     async def _register_custom_groups(self, cog):
-        pass
+        async def add_group_info(conf: Config):
+            cogname = conf.cog_name
+            uuid = conf.unique_identifier
+            log.warning("The following lines must be uncommented once #2545 is merged.")
+            # group_info = conf.custom_groups
+            # await self.db.custom(CUSTOM_GROUPS, cogname, uuid).set(group_info)
+
+        for attr in dir(cog):
+            _attr = getattr(cog, attr)
+            if not isinstance(_attr, Config):
+                continue
+            await add_group_info(_attr)
 
     def add_command(self, command: commands.Command):
         if not isinstance(command, commands.Command):
