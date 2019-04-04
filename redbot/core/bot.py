@@ -230,7 +230,8 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
         try:
             await lib.setup(self)
         except TypeError:
-            log.exception(f"Setup functions are now required to be coroutines: {name}")
+            del lib
+            raise discord.ClientException(f"Setup functions are now required to be coroutines: {name}")
 
         self.extensions[name] = lib
 
