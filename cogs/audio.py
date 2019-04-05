@@ -2068,7 +2068,7 @@ class Audio:
         url = "https://www.youtube.com/watch?v={}".format(choice(ids))
         await ctx.invoke(self.play, url_or_search_terms=url)
 
-    @commands.command(pass_context=True, aliases=["alexaplaycito"], no_pm=True)
+    @commands.command(pass_context=True, aliases=["alexaplaydespacito"], no_pm=True)
     async def despacito(self, ctx):
         """This is so sad Alexa play despacito \n\nWARNING: you might get earraped in this command"""
         ids = ("FXovf5dsRTw", "W3GrSMYbkBE", "Gl6ekgobG2k", "X3XnZxMB0sA", "zYsLq_tcktk", "Q6KJjE30hE4", "FkkPhbwgDI0")
