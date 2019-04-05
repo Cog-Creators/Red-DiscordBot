@@ -76,7 +76,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
         self.db.register_user(embeds=None)
 
-        # self.db.init_custom(CUSTOM_GROUPS, 2)
+        self.db.init_custom(CUSTOM_GROUPS, 2)
         self.db.register_custom(CUSTOM_GROUPS)
 
         async def prefix_manager(bot, message):

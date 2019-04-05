@@ -312,8 +312,7 @@ def init_events(bot, cli_flags):
         confs = get_by_cogname(cogname)
         for c in confs:
             uuid = c.unique_identifier
-            # group_data = c.custom_groups
-            group_data = {}
+            group_data = c.custom_groups
             await bot.db.custom("CUSTOM_GROUPS", cogname, uuid).set(group_data)
 
 
