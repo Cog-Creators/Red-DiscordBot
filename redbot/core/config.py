@@ -2,6 +2,7 @@ import logging
 import collections
 from copy import deepcopy
 from typing import Any, Union, Tuple, Dict, Awaitable, AsyncContextManager, TypeVar, TYPE_CHECKING
+import weakref
 
 import discord
 
@@ -14,6 +15,8 @@ if TYPE_CHECKING:
 log = logging.getLogger("red.config")
 
 _T = TypeVar("_T")
+
+_config_cache = weakref.WeakValueDictionary()
 
 
 class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):
@@ -513,6 +516,20 @@ class Config:
     ROLE = "ROLE"
     USER = "USER"
     MEMBER = "MEMBER"
+
+    def __new__(cls, cog_instance, unique_identifier, *args, cog_name=None, **kwargs):
+        instance_name = cog_instance.__class__.__name__ if cog_instance else None
+        key = (instance_name or cog_name, unique_identifier)
+
+        if key[0] is None:
+            raise ValueError("You must provide either the cog instance or a cog name.")
+
+        if key in _config_cache:
+            conf = _config_cache[key]
+        else:
+            conf = object.__new__(cls)
+            _config_cache[key] = conf
+        return conf
 
     def __init__(
         self,
