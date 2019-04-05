@@ -462,10 +462,10 @@ def interactive_setup(settings):
     if first_run:
         print("\nInput the admin role's name. Anyone with this role in Discord"
               " will be able to use the bot's admin commands")
-        print("Leave blank for default name (Transistor)")
+        print("Leave blank for default name (Administrator)")
         settings.default_admin = input("\nAdmin role> ")
         if settings.default_admin == "":
-            settings.default_admin = "Transistor"
+            settings.default_admin = "Administrator"
         settings.save_settings()
 
         print("\nInput the moderator role's name. Anyone with this role in"

@@ -282,7 +282,7 @@ def update_menu():
         print("Status: " + status + "\n")
         print("Update:\n")
         print("Red:")
-        print("1. Update Red + requirements (recommended)")
+        print("1. Update Red + requirements (recommended for audio)")
         print("2. Update Red")
         print("3. Update requirements")
         print("\nOthers:")
@@ -325,7 +325,7 @@ def maintenance_menu():
         print("2. Wipe 'data' folder (all settings, cogs' data...)")
         print("3. Wipe 'lib' folder (all local requirements / local installed"
               " python packages)")
-        print("4. Factory reset")
+        print("4. Factory reset (Delete the whole database)")
         print("\n0. Go back")
         choice = user_choice()
         if choice == "1":
@@ -347,7 +347,7 @@ def maintenance_menu():
         elif choice == "4":
             print("Are you sure? This will wipe ALL your Red's installation "
                   "data.\nYou'll lose all your settings, cogs and any "
-                  "modification you have made.\nThere is no going back.")
+                  "modification you have made.\nThere is no going back..\n\n Sorry :(")
             if user_pick_yes_no():
                 reset_red(reqs=True, data=True, cogs=True, git_reset=True)
                 wait()
@@ -364,7 +364,7 @@ def run_red(autorestart):
 
     if verify_requirements() is None:
         print("You don't have the requirements to start Red. "
-              "Install them from the launcher.")
+              "Please install them from the launcher.")
         if not INTERACTIVE_MODE:
             exit(1)
 
