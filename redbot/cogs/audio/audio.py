@@ -2064,7 +2064,7 @@ class Audio(commands.Cog):
                     player.current.title, player.current.uri.replace("localtracks/", "")
                 )
             else:
-                description = f"**[{player.current.title}]({player.current.title})**"
+                description = f"**[{player.current.title}]({player.current.uri})**"
             embed = discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("Replaying Track"),
