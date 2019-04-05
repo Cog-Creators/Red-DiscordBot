@@ -1009,11 +1009,26 @@ class Core(commands.Cog, CoreLogic):
 
         To reset to English, use "en-US".
         """
-        i18n.set_locale(locale_name)
+        red_dist = pkg_resources.get_distribution("red-discordbot")
+        red_path = Path(red_dist.location) / "redbot"
+        locale_list = [loc.stem for loc in list(red_path.glob("**/*.po"))]
 
-        await ctx.bot.db.locale.set(locale_name)
+        if locale_name in locale_list or locale_name == "en-US":
 
-        await ctx.send(_("Locale has been set."))
+            i18n.set_locale(locale_name)
+
+            await ctx.bot.db.locale.set(locale_name)
+
+            await ctx.send(_("Locale has been set."))
+
+        else:
+
+            await ctx.send(
+                _(
+                    "Invalid locale. Use `{prefix}listlocales` to get "
+                    "a list of available locales."
+                ).format(prefix=ctx.prefix)
+            )
 
     @_set.command()
     @checks.is_owner()
