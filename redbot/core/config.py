@@ -517,9 +517,8 @@ class Config:
     USER = "USER"
     MEMBER = "MEMBER"
 
-    def __new__(cls, cog_instance, unique_identifier, *args, cog_name=None, **kwargs):
-        instance_name = cog_instance.__class__.__name__ if cog_instance else None
-        key = (instance_name or cog_name, unique_identifier)
+    def __new__(cls, cog_name, unique_identifier, *args, **kwargs):
+        key = (cog_name, unique_identifier)
 
         if key[0] is None:
             raise ValueError("You must provide either the cog instance or a cog name.")
