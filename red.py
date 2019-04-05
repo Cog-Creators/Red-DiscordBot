@@ -327,7 +327,7 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
         print("\nConnected to:")
         print("█{} servers".format(servers))
         print("█{} channels".format(channels))
-        print("█{} users\n".format(users))
+        print("█{} users\n█".format(users))
         prefix_label = 'Prefix'
         if len(bot.settings.prefixes) > 1:
             prefix_label += 'es'
