@@ -6,7 +6,7 @@ import logging
 
 from ..json_io import JsonIO
 
-from .red_base import BaseDriver
+from .red_base import BaseDriver, IdentifierData
 
 __all__ = ["JSON"]
 
@@ -93,16 +93,16 @@ class JSON(BaseDriver):
             self.data = {}
             self.jsonIO._save_json(self.data)
 
-    async def get(self, *identifiers: Tuple[str]):
+    async def get(self, identifier_data: IdentifierData):
         partial = self.data
-        full_identifiers = (self.unique_cog_identifier, *identifiers)
+        full_identifiers = identifier_data.to_tuple()
         for i in full_identifiers:
             partial = partial[i]
         return copy.deepcopy(partial)
 
-    async def set(self, *identifiers: str, value=None):
+    async def set(self, identifier_data: IdentifierData, value=None):
         partial = self.data
-        full_identifiers = (self.unique_cog_identifier, *identifiers)
+        full_identifiers = identifier_data.to_tuple()
         for i in full_identifiers[:-1]:
             if i not in partial:
                 partial[i] = {}
@@ -111,9 +111,9 @@ class JSON(BaseDriver):
         partial[full_identifiers[-1]] = copy.deepcopy(value)
         await self.jsonIO._threadsafe_save_json(self.data)
 
-    async def clear(self, *identifiers: str):
+    async def clear(self, identifier_data: IdentifierData):
         partial = self.data
-        full_identifiers = (self.unique_cog_identifier, *identifiers)
+        full_identifiers = identifier_data.to_tuple()
         try:
             for i in full_identifiers[:-1]:
                 partial = partial[i]

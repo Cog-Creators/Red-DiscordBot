@@ -269,8 +269,9 @@ async def edit_instance():
             default_dirs["STORAGE_DETAILS"] = storage_details
 
             if instance_data["STORAGE_TYPE"] == "JSON":
-                if confirm("Would you like to import your data? (y/n) "):
-                    await json_to_mongo(current_data_dir, storage_details)
+                raise NotImplementedError("We cannot convert from JSON to MongoDB at this time.")
+                # if confirm("Would you like to import your data? (y/n) "):
+                #    await json_to_mongo(current_data_dir, storage_details)
         else:
             storage_details = instance_data["STORAGE_DETAILS"]
             default_dirs["STORAGE_DETAILS"] = {}

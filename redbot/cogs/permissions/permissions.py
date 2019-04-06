@@ -100,7 +100,9 @@ class Permissions(commands.Cog):
         # Note that GLOBAL rules are denoted by an ID of 0.
         self.config = config.Config.get_conf(self, identifier=78631113035100160)
         self.config.register_global(version="")
+        self.config.init_custom(COG, 1)
         self.config.register_custom(COG)
+        self.config.init_custom(COMMAND, 1)
         self.config.register_custom(COMMAND)
 
     @commands.group()
@@ -278,7 +280,7 @@ class Permissions(commands.Cog):
         ctx: commands.Context,
         allow_or_deny: RuleType,
         cog_or_command: CogOrCommand,
-        who_or_what: GlobalUniqueObjectFinder,
+        who_or_what: commands.Greedy[GlobalUniqueObjectFinder],
     ):
         """Add a global rule to a command.
 
@@ -287,15 +289,15 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to add the rule to.
         This is case sensitive.
 
-        `<who_or_what>` is the user, channel, role or server the rule
-        is for.
+        `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
-        await self._add_rule(
-            rule=cast(bool, allow_or_deny),
-            cog_or_cmd=cog_or_command,
-            model_id=who_or_what.id,
-            guild_id=0,
-        )
+        for w in who_or_what:
+            await self._add_rule(
+                rule=cast(bool, allow_or_deny),
+                cog_or_cmd=cog_or_command,
+                model_id=w.id,
+                guild_id=0,
+            )
         await ctx.send(_("Rule added."))
 
     @commands.guild_only()
@@ -306,7 +308,7 @@ class Permissions(commands.Cog):
         ctx: commands.Context,
         allow_or_deny: RuleType,
         cog_or_command: CogOrCommand,
-        who_or_what: GuildUniqueObjectFinder,
+        who_or_what: commands.Greedy[GuildUniqueObjectFinder],
     ):
         """Add a rule to a command in this server.
 
@@ -315,14 +317,15 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to add the rule to.
         This is case sensitive.
 
-        `<who_or_what>` is the user, channel or role the rule is for.
+        `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
-        await self._add_rule(
-            rule=cast(bool, allow_or_deny),
-            cog_or_cmd=cog_or_command,
-            model_id=who_or_what.id,
-            guild_id=ctx.guild.id,
-        )
+        for w in who_or_what:
+            await self._add_rule(
+                rule=cast(bool, allow_or_deny),
+                cog_or_cmd=cog_or_command,
+                model_id=w.id,
+                guild_id=ctx.guild.id,
+            )
         await ctx.send(_("Rule added."))
 
     @checks.is_owner()
@@ -331,19 +334,17 @@ class Permissions(commands.Cog):
         self,
         ctx: commands.Context,
         cog_or_command: CogOrCommand,
-        who_or_what: GlobalUniqueObjectFinder,
+        who_or_what: commands.Greedy[GlobalUniqueObjectFinder],
     ):
         """Remove a global rule from a command.
 
         `<cog_or_command>` is the cog or command to remove the rule
         from. This is case sensitive.
 
-        `<who_or_what>` is the user, channel, role or server the rule
-        is for.
+       `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
-        await self._remove_rule(
-            cog_or_cmd=cog_or_command, model_id=who_or_what.id, guild_id=GLOBAL
-        )
+        for w in who_or_what:
+            await self._remove_rule(cog_or_cmd=cog_or_command, model_id=w.id, guild_id=GLOBAL)
         await ctx.send(_("Rule removed."))
 
     @commands.guild_only()
@@ -353,19 +354,19 @@ class Permissions(commands.Cog):
         self,
         ctx: commands.Context,
         cog_or_command: CogOrCommand,
-        *,
-        who_or_what: GuildUniqueObjectFinder,
+        who_or_what: commands.Greedy[GlobalUniqueObjectFinder],
     ):
         """Remove a server rule from a command.
 
         `<cog_or_command>` is the cog or command to remove the rule
         from. This is case sensitive.
 
-        `<who_or_what>` is the user, channel or role the rule is for.
+        `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
-        await self._remove_rule(
-            cog_or_cmd=cog_or_command, model_id=who_or_what.id, guild_id=ctx.guild.id
-        )
+        for w in who_or_what:
+            await self._remove_rule(
+                cog_or_cmd=cog_or_command, model_id=w.id, guild_id=ctx.guild.id
+            )
         await ctx.send(_("Rule removed."))
 
     @commands.guild_only()
