@@ -150,7 +150,7 @@ class Mod:
         server = ctx.message.server
         if channel:
             self.settings[server.id]["mod-log"] = channel.id
-            await self.bot.say("Mod events will be sent to {}"
+            await self.bot.say("Mod events will now be sent to {}"
                                "".format(channel.mention))
         else:
             if self.settings[server.id]["mod-log"] is None:
