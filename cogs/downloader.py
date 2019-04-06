@@ -236,9 +236,10 @@ class Downloader:
             task = self.bot.loop.run_in_executor(self.executor, task)
             tasks.append(task)
 
-        base_msg = "Downloading updated cogs, please wait... "
-        status = ' %d/%d repos updated' % (tasknum, num_repos)
-        msg = await self.bot.say(base_msg + status)
+        base_msg = "Updating all the downloaded cogs, please wait..."
+        status = '%d/%d Repos updated' % (tasknum, num_repos)
+        embed = discord.Embed(title=base_msg, description=status, colour=discord.Colour.red())
+        msg = await self.bot.say(embed=embed)
 
         updated_cogs = []
         new_cogs = []
