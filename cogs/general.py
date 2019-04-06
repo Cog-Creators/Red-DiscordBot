@@ -262,13 +262,13 @@ class General:
         data = discord.Embed(
             description=created_at,
             colour=discord.Colour(value=colour))
-        data.add_field(name="Region", value=str(server.region))
-        data.add_field(name="Users", value="{}/{}".format(online, total_users))
-        data.add_field(name="Text Channels", value=text_channels)
-        data.add_field(name="Voice Channels", value=voice_channels)
-        data.add_field(name="Roles", value=len(server.roles))
-        data.add_field(name="Owner", value=str(server.owner))
-        data.set_footer(text="Server ID: " + server.id)
+        data.add_field(name="❯ Region", value=str(server.region))
+        data.add_field(name="❯ Users", value="{}/{}".format(online, total_users))
+        data.add_field(name="❯ Text Channels", value=text_channels)
+        data.add_field(name="❯ Voice Channels", value=voice_channels)
+        data.add_field(name="❯ Roles", value=len(server.roles))
+        data.add_field(name="❯ Owner", value=str(server.owner))
+        data.set_footer(text="❯ Server ID: " + server.id)
 
         if server.icon_url:
             data.set_author(name=server.name, url=server.icon_url)
