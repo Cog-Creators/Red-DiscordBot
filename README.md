@@ -36,6 +36,9 @@ The installation process is straightforward; all major platforms are supported:
 * [Linux](https://twentysix26.github.io/Red-Docs/red_install_linux/)
 * [macOS](https://twentysix26.github.io/Red-Docs/red_install_mac/)
 
+NOTE:
+ Do not run it on Python 3.7 it will not work
+
 Read the [getting started](https://twentysix26.github.io/Red-Docs/red_getting_started/) guide to quickly learn how to use Red.  
 
 If you have any other questions, feel free to explore the [Docs](https://twentysix26.github.io/Red-Docs/) for guidance.
