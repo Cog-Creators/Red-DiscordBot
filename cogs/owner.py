@@ -639,7 +639,7 @@ class Owner:
 
     @commands.command()
     @checks.is_owner()
-    async def restart(self, silently : bool=False):
+    async def reboot(self, silently : bool=False):
         """Attempts to restart Red
 
         Makes Red quit with exit code 26
@@ -833,10 +833,11 @@ class Owner:
         else:
             await self.bot.say("Your message has been sent.")
 
-    @commands.command()
+    @commands.command(aliases=['about'])
     async def info(self):
         """Shows info about Red"""
         author_repo = "https://github.com/Twentysix26"
+        modified_repo = "https://github.com/AngerKingz"
         red_repo = author_repo + "/Red-DiscordBot"
         server_url = "https://discord.gg/red"
         dpy_repo = "https://github.com/Rapptz/discord.py"
@@ -861,11 +862,12 @@ class Owner:
 
         about = (
             "This is an instance of [Red, an open source Discord bot]({}) "
-            "created by [Twentysix]({}) and improved by many.\n\n"
+            "created by [Twentysix]({}) But its also Modified by [AngerKingz]({}) "
+            "and improved by many.\n\n"
             "Red is backed by a passionate community who contributes and "
             "creates content for everyone to enjoy. [Join us today]({}) "
             "and help us improve!\n\n"
-            "".format(red_repo, author_repo, server_url))
+            "".format(red_repo, author_repo, modified_repo, server_url))
 
         embed = discord.Embed(colour=discord.Colour.red())
         embed.add_field(name="Instance owned by", value=str(owner))
