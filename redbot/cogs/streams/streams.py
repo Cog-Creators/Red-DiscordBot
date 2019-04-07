@@ -56,6 +56,7 @@ class Streams(commands.Cog):
 
         self.streams: List[Stream] = []
         self.task: Optional[asyncio.Task] = None
+        self.twitch_access_token = None
 
         self.yt_cid_pattern = re.compile("^UC[-_A-Za-z0-9]{21}[AQgw]$")
 
@@ -68,6 +69,7 @@ class Streams(commands.Cog):
     async def initialize(self) -> None:
         """Should be called straight after cog instantiation."""
         await self.move_api_keys()
+        await self.get_twitch_access_token()
         self.streams = await self.load_streams()
 
         self.task = self.bot.loop.create_task(self._stream_alerts())
@@ -315,8 +317,8 @@ class Streams(commands.Cog):
             "2. Click *Register Your Application*\n"
             "3. Enter a name, set the OAuth Redirect URI to `http://localhost`, and \n"
             "select an Application Category of your choosing."
-            "4. Click *Register*, and on the following page, copy the Client ID.\n"
-            "5. do `{prefix}set api twitch client_id,your_client_id`\n\n"
+            "4. Click *Register*, and on the following page, click *New Secret* under Client Secret.\n"
+            "5. do `{prefix}set api twitch client_id,your_client_id client_secret,your_client_secret`\n\n"
             "Note: These tokens are sensitive and should only be used in a private channel\n"
             "or in DM with the bot.)\n"
         ).format(prefix=ctx.prefix)
@@ -505,6 +507,40 @@ class Streams(commands.Cog):
                             for role in edited_roles:
                                 await role.edit(mentionable=False)
                         await self.save_streams()
+
+    async def get_twitch_access_token(self):
+        token = await self.bot.db.api_token.get_raw("twitch")
+        if "access_token" in token and token["access_token"]:
+            self.twitch_access_token = token["access_token"]
+        data = {
+            "client_id": token["client_id"],
+            "client_secret": token["client_secret"],
+            "grant_type": "client_credentials",
+        }
+        async with aiohttp.ClientSession() as session:
+            async with session.post("https://id.twitch.tv/oauth2/token", params=params) as r:
+                if r.status == 200:
+                    resp = await r.json()
+                    self.twitch_access_token = resp["access_token"]
+                    await self.bot.db.api_tokens.set_raw(
+                        "twitch", "access_token", value=resp["access_token"]
+                    )
+                elif r.status == 400:
+                    resp = await r.json()
+                    raise InvalidTwitchCredentials(resp["message"])
+
+    async def validate_twitch_access_token(self):
+        while not self.bot.is_closed():
+            if self.twitch_access_token:
+                headers = {"Authorization": f"OAuth {self.twitch_access_token}"}
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(
+                        "https://id.twitch.tv/oauth2/validate", headers=headers
+                    ) as r:
+                        if r.status == 401:  # Invalid access token
+                            await self.get_twitch_access_token()
+                        else:
+                            await asyncio.sleep(3600)
 
     async def _get_mention_str(self, guild: discord.Guild) -> Tuple[str, List[discord.Role]]:
         """Returns a 2-tuple with the string containing the mentions, and a list of
