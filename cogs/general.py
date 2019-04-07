@@ -47,7 +47,16 @@ class General:
     @commands.command(hidden=True)
     async def ping(self):
         """Pong."""
-        await self.bot.say("Pong.")
+        #Credit from bursting-cogs by Repulser
+        t1 = time.perf_counter()
+        await self.bot.send_typing(ctx.message.channel)
+        t2 = time.perf_counter()
+        thedata = ("**Pong.**\nTime: " + str(round((t2-t1)*1000)) + "ms")
+        color = ''.join([choice('0123456789ABCDEF') for x in range(6)])
+        color = int(color, 16)
+        data = discord.Embed(description=thedata, colour=discord.Colour(value=color))
+        
+        await self.bot.say(embed=data)
 
     @commands.command()
     async def choose(self, *choices):
