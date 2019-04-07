@@ -268,7 +268,8 @@ class Downloader:
             edit, touch_t, touch_n = regulate(touch_t, touch_n)
             if edit:
                 status = ' %d/%d repos updated' % (tasknum, num_repos)
-                msg = await self._robust_edit(msg, base_msg + status)
+                uembed = discord.Embed(title=base_msg, description=status, colour=discord.Colour.red())
+                msg = await self._robust_edit(msg, embed=uembed)
         status = 'done. '
 
         for t in updated_cogs:
