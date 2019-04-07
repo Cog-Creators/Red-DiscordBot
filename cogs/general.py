@@ -219,9 +219,9 @@ class General:
             roles = "None"
 
         data = discord.Embed(description=game, colour=user.colour)
-        data.add_field(name="Joined Discord on", value=created_on)
-        data.add_field(name="Joined this server on", value=joined_on)
-        data.add_field(name="Roles", value=roles, inline=False)
+        data.add_field(name="❯ Joined Discord on", value=created_on)
+        data.add_field(name="❯ Joined this server on", value=joined_on)
+        data.add_field(name="❯ Roles", value=roles, inline=False)
         data.set_footer(text="Member #{} | User ID:{}"
                              "".format(member_number, user.id))
 
