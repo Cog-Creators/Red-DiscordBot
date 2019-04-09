@@ -24,7 +24,7 @@ _retrieved = weakref.WeakSet()
 
 def get_latest_confs() -> Tuple["Config"]:
     global _retrieved
-    ret = set(_config_cache.values()) - _retrieved
+    ret = set(_config_cache.values()) - set(_retrieved)
     _retrieved |= ret
     # noinspection PyTypeChecker
     return tuple(ret)
