@@ -308,12 +308,11 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_cog_add(cog: commands.Cog):
-        cogname = cog.__class__.__name__
         confs = get_latest_confs()
         for c in confs:
             uuid = c.unique_identifier
             group_data = c.custom_groups
-            await bot.db.custom("CUSTOM_GROUPS", cogname, uuid).set(group_data)
+            await bot.db.custom("CUSTOM_GROUPS", c.cog_name, uuid).set(group_data)
 
 
 def _get_startup_screen_specs():
