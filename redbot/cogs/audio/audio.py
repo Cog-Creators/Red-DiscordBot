@@ -909,7 +909,7 @@ class Audio(commands.Cog):
             await self._clear_react(message)
             await ctx.invoke(self.skip)
 
-    @commands.command(aliases=["resume", "play"])
+    @commands.command()
     @commands.guild_only()
     async def rp(self, ctx):
         """Pause or resume a playing track."""
