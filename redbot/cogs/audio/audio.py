@@ -904,14 +904,14 @@ class Audio(commands.Cog):
             await ctx.invoke(self.stop)
         elif react == "pause":
             await self._clear_react(message)
-            await ctx.invoke(self.pause)
+            await ctx.invoke(self.rp)
         elif react == "next":
             await self._clear_react(message)
             await ctx.invoke(self.skip)
 
-    @commands.command()
+    @commands.command(aliases=["resume", "play"])
     @commands.guild_only()
-    async def pause(self, ctx):
+    async def rp(self, ctx):
         """Pause or resume a playing track."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         if not self._player_check(ctx):
