@@ -477,6 +477,13 @@ class Downloader(commands.Cog):
     async def _cog_install(self, ctx, repo: Repo, cog_name: str, rev: Optional[str] = None):
         """Install a cog from the given repo."""
         commit = None
+        if (
+            discord.utils.get(await self.installed_cogs(), repo_name=repo.name, name=cog_name)
+            is not None
+        ):
+            return await ctx.send(
+                _("Cog `{cog_name}` is already installed.").format(cog_name=cog_name)
+            )
         if rev is not None:
             try:
                 commit = await repo._get_full_sha1(rev)
@@ -610,7 +617,7 @@ class Downloader(commands.Cog):
             )
         cog.pinned = True
         await self._add_to_installed([cog])
-        await ctx.send(_("Cog `{cog_name}` has been pinned."))
+        await ctx.send(_("Cog `{cog_name}` has been pinned.").format(cog_name=cog.name))
 
     @cog.command(name="unpin", usage="<cog_name>")
     async def _cog_unpin(self, ctx, cog: InstalledCog):
@@ -619,7 +626,7 @@ class Downloader(commands.Cog):
             return await ctx.send(_("Cog `{cog_name}` isn't pinned.").format(cog_name=cog.name))
         cog.pinned = False
         await self._add_to_installed([cog])
-        await ctx.send(_("Cog `{cog_name}` has been unpinned."))
+        await ctx.send(_("Cog `{cog_name}` has been unpinned.").format(cog_name=cog.name))
 
     @cog.command(name="update")
     async def _cog_update(self, ctx, cogs: commands.Greedy[InstalledCog] = []):
@@ -656,8 +663,10 @@ class Downloader(commands.Cog):
                 message += _("Cog update completed successfully.")
 
                 if installed_cogs:
-                    cognames = {c.name for c in installed_cogs}
-                    message += _("\nUpdated: ") + humanize_list(tuple(map(inline, cognames)))
+                    updated_cognames = {c.name for c in installed_cogs}
+                    message += _("\nUpdated: ") + humanize_list(
+                        tuple(map(inline, updated_cognames))
+                    )
                 if failed_cogs:
                     cognames = {c.name for c in failed_cogs}
                     message += _("\nFailed to update cogs: ") + humanize_list(
@@ -671,17 +680,21 @@ class Downloader(commands.Cog):
                         tuple(map(inline, libnames))
                     )
             else:
-                message += _("All installed cogs are already up to date.")
+                if cogs:
+                    message += _("Provided cogs are already up to date.")
+                else:
+                    message += _("All installed cogs are already up to date.")
             if pinned_cogs:
+                cognames = {c.name for c in pinned_cogs}
                 message += _(
                     "\nThese cogs are pinned and therefore weren't checked: "
-                ) + humanize_list(tuple(map(inline, pinned_cogs)))
+                ) + humanize_list(tuple(map(inline, cognames)))
         await ctx.send(message)
         if not updates_available:
             return
 
-        cognames &= set(ctx.bot.extensions.keys())  # only reload loaded cogs
-        if not cognames:
+        updated_cognames &= set(ctx.bot.extensions.keys())  # only reload loaded cogs
+        if not updated_cognames:
             return await ctx.send(
                 _("None of the updated cogs were previously loaded. Update complete.")
             )

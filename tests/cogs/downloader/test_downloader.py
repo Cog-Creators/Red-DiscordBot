@@ -8,7 +8,7 @@ from unittest.mock import MagicMock
 from redbot.pytest.downloader import *
 
 from redbot.cogs.downloader.repo_manager import RepoManager, Repo
-from redbot.cogs.downloader.errors import ExistingGitRepo
+from redbot.cogs.downloader.errors import ExistingGitRepo, GitException
 
 
 def test_existing_git_repo(tmpdir):
@@ -78,11 +78,9 @@ async def test_remove_repo(monkeypatch, repo_manager):
 
 @pytest.mark.asyncio
 async def test_current_branch(bot_repo):
-    branch = await bot_repo.current_branch()
-
     # So this does work, just not sure how to fully automate the test
-
-    assert branch not in ("WRONG", "")
+    with pytest.raises(GitException):
+        await bot_repo.current_branch()
 
 
 @pytest.mark.asyncio

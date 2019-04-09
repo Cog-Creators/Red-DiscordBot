@@ -864,7 +864,7 @@ class RepoManager:
     async def update_repo(self, repo_name: str) -> MutableMapping[Repo, Tuple[str, str]]:
         repo = self._repos[repo_name]
         old, new = await repo.update()
-        return {repo: (old, new)}
+        return (repo, (old, new))
 
     async def update_all_repos(self) -> MutableMapping[Repo, Tuple[str, str]]:
         """Call `Repo.update` on all repositories.
@@ -878,7 +878,7 @@ class RepoManager:
         """
         ret = {}
         for repo_name, __ in self._repos.items():
-            repo, (old, new) = (await self.update_repo(repo_name)).popitem()
+            repo, (old, new) = await self.update_repo(repo_name)
             if old != new:
                 ret[repo] = (old, new)
         return ret
