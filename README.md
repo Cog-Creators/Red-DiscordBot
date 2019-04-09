@@ -91,8 +91,6 @@ community of cog repositories.**
 - [Arch Linux](https://red-discordbot.readthedocs.io/en/v3-develop/install_linux_mac.html)
 - [Raspbian Stretch](https://red-discordbot.readthedocs.io/en/v3-develop/install_linux_mac.html)
 
-Already using **Red** V2? Take a look at the [Data Converter](https://red-discordbot.readthedocs.io/en/v3-develop/cog_dataconverter.html)
-to import your data to V3.
 
 If after reading the guide you are still experiencing issues, feel free to join the
 [Official Discord Server](https://discord.gg/red) and ask in the **#support** channel for help.

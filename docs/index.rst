@@ -13,7 +13,6 @@ Welcome to Red - Discord Bot's documentation!
     install_windows
     install_linux_mac
     venv_guide
-    cog_dataconverter
     autostart_systemd
 
 .. toctree::
@@ -30,7 +29,6 @@ Welcome to Red - Discord Bot's documentation!
 
     guide_migration
     guide_cog_creation
-    guide_data_conversion
     framework_bank
     framework_bot
     framework_checks
