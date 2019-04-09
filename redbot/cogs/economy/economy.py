@@ -324,7 +324,7 @@ class Economy(commands.Cog):
                 pos = await bank.get_leaderboard_position(author)
                 await ctx.send(
                     _(
-                        "{author.mention} Here, take some {currency}!"
+                        "{author.mention} Here, take some {currency}. "
                         "Enjoy! (+{amount} {currency}!)\n\n"
                         "You currently have {new_balance} {currency}.\n\n"
                         "You are currently #{pos} on the global leaderboard!"
