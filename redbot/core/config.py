@@ -12,28 +12,20 @@ from .drivers import get_driver, IdentifierData
 if TYPE_CHECKING:
     from .drivers.red_base import BaseDriver
 
-__all__ = ["Config", "get_by_cogname"]
+__all__ = ["Config", "get_latest_confs"]
 
 log = logging.getLogger("red.config")
 
 _T = TypeVar("_T")
 
 _config_cache = weakref.WeakValueDictionary()
+_retrieved = weakref.WeakSet()
 
 
-def get_by_cogname(cogname: str) -> Tuple["Config"]:
-    keys = _config_cache.keys()
-    valid_keys = []
-    for stored_cogname, uuid in keys:
-        if stored_cogname == cogname:
-            valid_keys.append((stored_cogname, uuid))
-
-    ret = []
-    for key in valid_keys:
-        try:
-            ret.append(_config_cache[key])
-        except KeyError:
-            pass
+def get_latest_confs() -> Tuple["Config"]:
+    global _retrieved
+    ret = set(_config_cache.values()) - _retrieved
+    _retrieved |= ret
     # noinspection PyTypeChecker
     return tuple(ret)
 

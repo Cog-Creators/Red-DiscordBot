@@ -15,7 +15,7 @@ from pkg_resources import DistributionNotFound
 
 from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
 from . import commands
-from .config import get_by_cogname
+from .config import get_latest_confs
 from .data_manager import storage_type
 from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
 from .utils import fuzzy_command_search, format_fuzzy_results
@@ -309,7 +309,7 @@ def init_events(bot, cli_flags):
     @bot.event
     async def on_cog_add(cog: commands.Cog):
         cogname = cog.__class__.__name__
-        confs = get_by_cogname(cogname)
+        confs = get_latest_confs()
         for c in confs:
             uuid = c.unique_identifier
             group_data = c.custom_groups
