@@ -265,7 +265,7 @@ class Economy(commands.Cog):
                     await bank.set_balance(author, exc.max_balance)
                     await ctx.send(
                         _(
-                            "You've reached the maximum amount of {currency}! (**{new_balance:,}**) "
+                            "You've reached the maximum amount of {currency}!"
                             "Please spend some more \N{GRIMACING FACE}\n\n"
                             "You currently have {new_balance} {currency}."
                         ).format(currency=credits_name, new_balance=exc.max_balance)
@@ -324,7 +324,7 @@ class Economy(commands.Cog):
                 pos = await bank.get_leaderboard_position(author)
                 await ctx.send(
                     _(
-                        "{author.mention} Here, take some {currency}. "
+                        "{author.mention} Here, take some {currency}!"
                         "Enjoy! (+{amount} {currency}!)\n\n"
                         "You currently have {new_balance} {currency}.\n\n"
                         "You are currently #{pos} on the global leaderboard!"
