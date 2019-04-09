@@ -26,7 +26,7 @@ from redbot.core.utils import safe_delete
 from redbot.core.i18n import Translator
 
 from . import errors
-from .installable import Installable, InstallableType, InstalledCog
+from .installable import Installable, InstallableType, InstalledModule
 from .json_mixins import RepoJSONMixin
 from .log import log
 
@@ -36,9 +36,13 @@ _ = Translator("RepoManager", __file__)
 
 
 class _RepoCheckoutCtxManager(Awaitable[_T], AsyncContextManager[_T]):
-    def __init__(self, repo, rev):
+    def __init__(self, repo, rev, exit_to_rev):
         self.repo = repo
         self.rev = rev
+        if exit_to_rev is None:
+            self.exit_to_rev = self.repo.branch
+        else:
+            self.exit_to_rev = exit_to_rev
         self.coro = repo._checkout(self.rev)
 
     def __await__(self):
@@ -49,7 +53,7 @@ class _RepoCheckoutCtxManager(Awaitable[_T], AsyncContextManager[_T]):
 
     async def __aexit__(self, exc_type, exc, tb):
         if self.rev is not None:
-            await self.repo._checkout(self.repo.branch)
+            await self.repo._checkout(self.exit_to_rev)
 
 
 class ProcessFormatter(Formatter):
@@ -71,7 +75,7 @@ class Repo(RepoJSONMixin):
     GIT_LATEST_COMMIT = "git -C {path} rev-parse {branch}"
     GIT_HARD_RESET = "git -C {path} reset --hard origin/{branch} -q"
     GIT_PULL = "git -C {path} pull --recurse-submodules -q --ff-only"
-    GIT_DIFF_FILE_STATUS = "git -C {path} diff --no-commit-id --name-status {old_hash} {new_hash}"
+    GIT_DIFF_FILE_STATUS = "git -C {path} diff-tree --no-commit-id --name-status -r -z --line-prefix='\t' {old_hash} {new_hash}"
     GIT_LOG = "git -C {path} log --relative-date --reverse {old_hash}.. {relative_file_path}"
     GIT_DISCOVER_REMOTE_URL = "git -C {path} config --get remote.origin.url"
     GIT_CHECKOUT = "git -C {path} checkout {rev}"
@@ -130,15 +134,26 @@ class Repo(RepoJSONMixin):
         return git_path.exists(), git_path
 
     async def _get_file_update_statuses(
-        self, old_hash: str, new_hash: str
+        self, old_hash: str, new_hash: Optional[str] = None
     ) -> MutableMapping[str, str]:
         """
-        Gets the file update status letters for each changed file between
-            the two hashes.
-        :param old_hash: Pre-update
-        :param new_hash: Post-update
-        :return: Mapping of filename -> status_letter
+        Gets the file update status letters for each changed file between the two hashes.
+
+        Parameters
+        ----------
+        old_hash : `str`
+            Pre-update hash
+        new_hash : `str`, optional
+            Post-update hash, defaults to repo's branch if not given
+
+        Returns
+        -------
+        dict
+            Mapping of filename -> status_letter
+
         """
+        if new_hash is None:
+            new_hash = self.branch
         p = await self._run(
             ProcessFormatter().format(
                 self.GIT_DIFF_FILE_STATUS,
@@ -153,16 +168,46 @@ class Repo(RepoJSONMixin):
                 "Git diff failed for repo at path: {}".format(self.folder_path)
             )
 
-        stdout = p.stdout.strip().decode().split("\n")
-
+        stdout = p.stdout.strip(b"\t\n\x00 ").decode().split("\x00\t")
         ret = {}
 
         for filename in stdout:
-            # TODO: filter these filenames by ones in self.available_modules
-            status, _, filepath = filename.partition("\t")
+            status, __, filepath = filename.partition("\x00")  # NUL character
             ret[filepath] = status
 
         return ret
+
+    async def get_modified_modules(
+        self, old_hash: str, new_hash: Optional[str] = None
+    ) -> Tuple[Installable]:
+        """
+        Gets modified modules between the two hashes.
+
+        Parameters
+        ----------
+        old_hash : `str`
+            Pre-update hash
+        new_hash : `str`, optional
+            Post-update hash, defaults to repo's branch if not given
+
+        Returns
+        -------
+        `tuple` of `Installable`
+            List of changed modules between the two hashes.
+
+        """
+        if new_hash is None:
+            new_hash = self.branch
+        statuses = await self._get_file_update_statuses(old_hash, new_hash)
+
+        await self.checkout(old_hash)
+        modules = set(self.available_modules)
+        await self.checkout(new_hash)
+        modules &= set(self.available_modules)
+        if new_hash != self.branch:
+            await self.checkout(self.branch)
+
+        return tuple(m for m in modules if any(file.startswith(m.name + "/") for file in statuses))
 
     async def _get_commit_notes(self, old_commit_hash: str, relative_file_path: str) -> str:
         """
@@ -260,7 +305,7 @@ class Repo(RepoJSONMixin):
     async def _checkout(self, rev: Optional[str] = None):
         if rev is None:
             return
-        exists, _ = self._existing_git_repo()
+        exists, __ = self._existing_git_repo()
         if not exists:
             raise errors.MissingGitRepo(
                 "A git repo does not exist at path: {}".format(self.folder_path)
@@ -279,7 +324,7 @@ class Repo(RepoJSONMixin):
         self._update_available_modules()
         self._read_info_file()
 
-    def checkout(self, rev: Optional[str] = None):
+    def checkout(self, rev: Optional[str] = None, exit_to_rev: Optional[str] = None):
         """
         Checks out repository to provided revision.
 
@@ -291,6 +336,10 @@ class Repo(RepoJSONMixin):
         ----------
         rev : str, optional
             Revision to checkout to, when not provided, method won't do anything
+        exit_to_rev : str, optional
+            Revision to checkout to after exiting context manager,
+            when not provided, defaults to current branch
+            This will be ignored, when used with :code:`await` or when :code:`rev` is `None`.
 
         Raises
         ------
@@ -299,7 +348,7 @@ class Repo(RepoJSONMixin):
 
         """
 
-        return _RepoCheckoutCtxManager(self, rev)
+        return _RepoCheckoutCtxManager(self, rev, exit_to_rev)
 
     async def clone(self) -> Tuple[str]:
         """Clone a new repo.
@@ -349,7 +398,7 @@ class Repo(RepoJSONMixin):
             The current branch name.
 
         """
-        exists, _ = self._existing_git_repo()
+        exists, __ = self._existing_git_repo()
         if not exists:
             raise errors.MissingGitRepo(
                 "A git repo does not exist at path: {}".format(self.folder_path)
@@ -375,7 +424,7 @@ class Repo(RepoJSONMixin):
             The requested commit hash.
 
         """
-        exists, _ = self._existing_git_repo()
+        exists, __ = self._existing_git_repo()
         if not exists:
             raise errors.MissingGitRepo(
                 "A git repo does not exist at path: {}".format(self.folder_path)
@@ -407,7 +456,7 @@ class Repo(RepoJSONMixin):
         if branch is None:
             branch = self.branch
 
-        exists, _ = self._existing_git_repo()
+        exists, __ = self._existing_git_repo()
         if not exists:
             raise errors.MissingGitRepo(
                 "A git repo does not exist at path: {}".format(self.folder_path)
@@ -465,7 +514,7 @@ class Repo(RepoJSONMixin):
             branch = self.branch
 
         await self.checkout(branch)
-        exists, _ = self._existing_git_repo()
+        exists, __ = self._existing_git_repo()
         if not exists:
             raise errors.MissingGitRepo(
                 "A git repo does not exist at path: {}".format(self.folder_path)
@@ -511,7 +560,7 @@ class Repo(RepoJSONMixin):
 
         return old_commit, new_commit
 
-    async def install_cog(self, cog: Installable, target_dir: Path) -> bool:
+    async def install_cog(self, cog: Installable, target_dir: Path) -> InstalledModule:
         """Install a cog to the target directory.
 
         Parameters
@@ -523,8 +572,8 @@ class Repo(RepoJSONMixin):
 
         Returns
         -------
-        bool
-            The success of the installation.
+        `InstalledModule`
+            Cog instance.
 
         """
         if cog not in self.available_cogs:
@@ -536,13 +585,14 @@ class Repo(RepoJSONMixin):
         if not target_dir.exists():
             raise ValueError("That target directory does not exist.")
 
-        await cog.copy_to(target_dir=target_dir)
+        if not await cog.copy_to(target_dir=target_dir):
+            raise errors.CopyingError("There was an issue during copying of cog's files")
 
-        return InstalledCog.from_installable(cog)
+        return InstalledModule.from_installable(cog)
 
     async def install_libraries(
         self, target_dir: Path, req_target_dir: Path, libraries: Tuple[Installable] = ()
-    ) -> bool:
+    ) -> Tuple[Tuple[InstalledModule], Tuple[Installable]]:
         """Install shared libraries to the target directory.
 
         If :code:`libraries` is not specified, all shared libraries in the repo
@@ -559,8 +609,8 @@ class Repo(RepoJSONMixin):
 
         Returns
         -------
-        bool
-            The success of the installation.
+        tuple
+            2-tuple of installed and failed libraries.
 
         """
 
@@ -571,15 +621,18 @@ class Repo(RepoJSONMixin):
             libraries = self.available_libraries
 
         if len(libraries) > 0:
-            ret = True
+            installed = []
+            failed = []
             for lib in libraries:
-                ret = (
-                    ret
-                    and await self.install_requirements(cog=lib, target_dir=req_target_dir)
+                if not (
+                    await self.install_requirements(cog=lib, target_dir=req_target_dir)
                     and await lib.copy_to(target_dir=target_dir)
-                )
-            return ret
-        return True
+                ):
+                    failed.append(lib)
+                else:
+                    installed.append(InstalledModule.from_installable(lib))
+            return (tuple(installed), tuple(failed))
+        return ((), ())
 
     async def install_requirements(self, cog: Installable, target_dir: Path) -> bool:
         """Install a cog's requirements.
@@ -754,6 +807,10 @@ class RepoManager:
         """
         return self._repos.get(name, None)
 
+    @property
+    def repos(self) -> Tuple[Repo]:
+        return tuple(self._repos.values())
+
     def get_all_repo_names(self) -> Tuple[str]:
         """Get all repo names.
 
@@ -764,6 +821,19 @@ class RepoManager:
         """
         # noinspection PyTypeChecker
         return tuple(self._repos.keys())
+
+    def get_all_cogs(self) -> Tuple[Installable]:
+        """Get all cogs.
+
+        Returns
+        -------
+        `tuple` of `Installable`
+
+        """
+        all_cogs = []
+        for repo in self._repos.values():
+            all_cogs += repo.available_cogs
+        return tuple(all_cogs)
 
     async def delete_repo(self, name: str):
         """Delete a repository and its folders.
@@ -807,7 +877,7 @@ class RepoManager:
 
         """
         ret = {}
-        for repo_name, _ in self._repos.items():
+        for repo_name, __ in self._repos.items():
             repo, (old, new) = (await self.update_repo(repo_name)).popitem()
             if old != new:
                 ret[repo] = (old, new)

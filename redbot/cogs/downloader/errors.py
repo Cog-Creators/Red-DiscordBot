@@ -37,6 +37,15 @@ class InvalidRepoName(DownloaderException):
     pass
 
 
+class CopyingError(DownloaderException):
+    """
+    Throw when there was an issue
+    during copying of module's files.
+    """
+
+    pass
+
+
 class ExistingGitRepo(DownloaderException):
     """
     Thrown when trying to clone into a folder where a

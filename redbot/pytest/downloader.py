@@ -5,7 +5,7 @@ import json
 import pytest
 
 from redbot.cogs.downloader.repo_manager import RepoManager, Repo
-from redbot.cogs.downloader.installable import Installable, InstalledCog
+from redbot.cogs.downloader.installable import Installable, InstalledModule
 
 __all__ = [
     "patch_relative_to",
@@ -134,7 +134,7 @@ def installed_cog(tmpdir):
     info_path = cog_path.join("info.json")
     info_path.write_text(json.dumps(INFO_JSON), "utf-8")
 
-    cog_info = InstalledCog(Path(str(cog_path)))
+    cog_info = InstalledModule(Path(str(cog_path)))
     return cog_info
 
 

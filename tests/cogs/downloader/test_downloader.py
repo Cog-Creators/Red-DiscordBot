@@ -53,9 +53,12 @@ async def test_lib_install_requirements(monkeypatch, library_installable, repo, 
     sharedlib_path = lib_path / "cog_shared"
     sharedlib_path.mkdir(parents=True, exist_ok=True)
 
-    result = await repo.install_libraries(target_dir=sharedlib_path, req_target_dir=lib_path)
+    installed, failed = await repo.install_libraries(
+        target_dir=sharedlib_path, req_target_dir=lib_path
+    )
 
-    assert result is True
+    assert len(installed) == 1
+    assert len(failed) == 0
 
 
 @pytest.mark.asyncio

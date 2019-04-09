@@ -68,10 +68,10 @@ Installable
 .. autoclass:: Installable
     :members:
 
-InstalledCog
-^^^^^^^^^^^^
+InstalledModule
+^^^^^^^^^^^^^^^
 
-.. autoclass:: InstalledCog
+.. autoclass:: InstalledModule
     :members:
 
 .. automodule:: redbot.cogs.downloader.repo_manager

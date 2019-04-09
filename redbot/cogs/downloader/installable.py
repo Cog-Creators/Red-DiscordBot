@@ -5,10 +5,6 @@ from enum import Enum
 from pathlib import Path
 from typing import MutableMapping, Any, TYPE_CHECKING, Optional
 
-import discord
-from redbot.core import commands
-from redbot.core.i18n import Translator
-
 from .log import log
 from .json_mixins import RepoJSONMixin
 
@@ -16,8 +12,6 @@ from redbot.core import __version__, version_info as red_version_info, VersionIn
 
 if TYPE_CHECKING:
     from .repo_manager import RepoManager
-
-_ = Translator("Koala", __file__)
 
 
 class InstallableType(Enum):
@@ -224,36 +218,27 @@ class Installable(RepoJSONMixin):
         return info
 
 
-class InstalledCog(Installable):
+class InstalledModule(Installable):
     def __init__(self, location: Path, commit: str = "", pinned: bool = False):
         super().__init__(location, commit)
-        self.pinned = pinned
-
-    @classmethod
-    async def convert(cls, ctx: commands.Context, arg: str):
-        downloader = ctx.bot.get_cog("Downloader")
-        if downloader is None:
-            raise commands.CommandError(_("No Downloader cog found."))
-
-        cog = discord.utils.get(await downloader.installed_cogs(), name=arg)
-        if cog is None:
-            raise commands.BadArgument(_("That cog is not installed"))
-
-        return cog
+        if self.type == InstallableType.COG:
+            self.pinned = pinned
 
     def to_json(self):
-        return {
+        module_json = {
             "repo_name": self.repo_name,
-            "cog_name": self.name,
+            "module_name": self.name,
             "commit": self.commit,
-            "pinned": self.pinned,
         }
+        if self.type == InstallableType.COG:
+            module_json["pinned"] = self.pinned
+        return module_json
 
     @classmethod
     def from_json(cls, data: dict, repo_mgr: "RepoManager"):
         repo_name = data["repo_name"]
-        cog_name = data["cog_name"]
-        commit = data.get("commit", None)
+        cog_name = data["module_name"]
+        commit = data.get("commit", "")
         pinned = data.get("pinned", False)
 
         repo = repo_mgr.get_repo(repo_name)
@@ -267,5 +252,7 @@ class InstalledCog(Installable):
         return cls(location=location, commit=commit, pinned=pinned)
 
     @classmethod
-    def from_installable(cls, cog: Installable, pinned: bool = False):
-        return cls(location=cog._location, commit=cog.commit, pinned=pinned)
+    def from_installable(cls, cog: Installable, *, commit: str = "", pinned: bool = False):
+        if not commit:
+            commit = cog.commit
+        return cls(location=cog._location, commit=commit, pinned=pinned)
