@@ -28,7 +28,7 @@ def get_driver(type, *args, **kwargs):
         from .red_json import JSON
 
         return JSON(*args, **kwargs)
-    elif type == "MongoDB":
+    elif type == "MongoDBV2":
         from .red_mongo import Mongo
 
         return Mongo(*args, **kwargs)
