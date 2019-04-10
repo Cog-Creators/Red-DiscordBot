@@ -12,11 +12,22 @@ from .drivers import get_driver, IdentifierData
 if TYPE_CHECKING:
     from .drivers.red_base import BaseDriver
 
+__all__ = ["Config", "get_latest_confs"]
+
 log = logging.getLogger("red.config")
 
 _T = TypeVar("_T")
 
 _config_cache = weakref.WeakValueDictionary()
+_retrieved = weakref.WeakSet()
+
+
+def get_latest_confs() -> Tuple["Config"]:
+    global _retrieved
+    ret = set(_config_cache.values()) - set(_retrieved)
+    _retrieved |= ret
+    # noinspection PyTypeChecker
+    return tuple(ret)
 
 
 class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):
