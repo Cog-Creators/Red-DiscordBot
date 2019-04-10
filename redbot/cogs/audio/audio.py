@@ -548,7 +548,7 @@ class Audio(commands.Cog):
                 ),
                 description=page,
             )
-            em.set_footer(text="Page {}/{}".format(pages, round((len(msg) / 1500) + 1)))
+            em.set_footer(text="Page {}/{}".format(pages, (math.ceil(len(msg) / 1500))))
             pages += 1
             servers_embed.append(em)
 
