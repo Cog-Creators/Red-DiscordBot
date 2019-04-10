@@ -132,8 +132,8 @@ class Downloader(commands.Cog):
         """
         return await self.installed_cogs() + await self.installed_libraries()
 
-    async def _add_to_installed(self, modules: Iterable[InstalledModule]):
-        """Mark modules as installed.
+    async def _save_to_installed(self, modules: Iterable[InstalledModule]):
+        """Mark modules as installed or updates their json in Config.
 
         Parameters
         ----------
@@ -554,7 +554,7 @@ class Downloader(commands.Cog):
         installed_libs, failed_libs = await repo.install_libraries(
             target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH
         )
-        await self._add_to_installed([installed_cog] + list(installed_libs))
+        await self._save_to_installed([installed_cog] + list(installed_libs))
         message = ""
         if failed_libs:
             libnames = {l.name for l in failed_libs}
@@ -616,7 +616,7 @@ class Downloader(commands.Cog):
                 _("Cog `{cog_name}` is already pinned.").format(cog_name=cog.name)
             )
         cog.pinned = True
-        await self._add_to_installed([cog])
+        await self._save_to_installed([cog])
         await ctx.send(_("Cog `{cog_name}` has been pinned.").format(cog_name=cog.name))
 
     @cog.command(name="unpin", usage="<cog_name>")
@@ -625,7 +625,7 @@ class Downloader(commands.Cog):
         if not cog.pinned:
             return await ctx.send(_("Cog `{cog_name}` isn't pinned.").format(cog_name=cog.name))
         cog.pinned = False
-        await self._add_to_installed([cog])
+        await self._save_to_installed([cog])
         await ctx.send(_("Cog `{cog_name}` has been unpinned.").format(cog_name=cog.name))
 
     @cog.command(name="update")
@@ -659,7 +659,7 @@ class Downloader(commands.Cog):
                 await self._reinstall_requirements(cogs_to_update)
                 installed_cogs, failed_cogs = await self._reinstall_cogs(cogs_to_update)
                 installed_libs, failed_libs = await self._reinstall_libraries(libs_to_update)
-                await self._add_to_installed(installed_cogs + installed_libs)
+                await self._save_to_installed(installed_cogs + installed_libs)
                 message += _("Cog update completed successfully.")
 
                 if installed_cogs:
