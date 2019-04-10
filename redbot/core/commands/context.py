@@ -71,7 +71,23 @@ class Context(commands.Context):
             A list of help messages which were sent to the user.
 
         """
-        command = self.invoked_subcommand or self.command
+
+        # Need to manually parse the command here, a subcommand which fails to
+        # parse results in an incorrect command here.
+        # generally that can happen with nested groups.
+
+        # Don't modify context's view, make a new one.
+        view = commands.view.StringView(self.message.content[len(self.prefix) :])
+        command = self.bot
+        while isinstance(command, commands.GroupMixin):  # mixin to catch the bot too.
+            view.skip_ws()
+            word = view.get_word()
+            maybe_command = command.all_commands.get(word, None)
+            if maybe_command:
+                command = maybe_command
+            else:
+                break
+
         embed_wanted = await self.bot.embed_requested(
             self.channel, self.author, command=self.bot.get_command("help")
         )
