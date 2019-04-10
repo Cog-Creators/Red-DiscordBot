@@ -26,6 +26,34 @@ class Context(commands.Context):
         super().__init__(**attrs)
         self.permission_state: PermState = PermState.NORMAL
 
+    async def command_from_message(self, message: discord.Message):
+        """Get the command from a message without arguments.
+        
+        Parameters
+        ----------
+        message: discord.Message
+            The message to get the command from.
+        
+        Returns
+        ----------
+        Optional[commands.Command]
+            The command invoked or None if no command was invoked.
+        """
+        message_context = await self.bot.get_context(message)
+        if not message_context.valid:
+            return None
+
+        maybe_command = message_context.command
+        command = maybe_command
+        while isinstance(maybe_command, commands.Group):
+            message_context.view.skip_ws()
+            possible = message_context.view.get_word()
+            maybe_command = maybe_command.all_commands.get(possible, None)
+            if maybe_command:
+                command = maybe_command
+
+        return command
+
     async def send(self, content=None, **kwargs):
         """Sends a message to the destination with the content given.
 
@@ -71,7 +99,7 @@ class Context(commands.Context):
             A list of help messages which were sent to the user.
 
         """
-        command = self.invoked_subcommand or self.command
+        command = await self.command_from_message(self.message)
         embed_wanted = await self.bot.embed_requested(
             self.channel, self.author, command=self.bot.get_command("help")
         )
