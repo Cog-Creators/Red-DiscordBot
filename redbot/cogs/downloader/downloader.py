@@ -230,16 +230,24 @@ class Downloader(commands.Cog):
         # Reduces diff requests to a single dict with no repeats
         hashes: Dict[Tuple[Repo, str], Set[InstalledModule]] = defaultdict(set)
         for module in modules:
-            hashes[(repos[module.repo_name], module.commit)].add(module)
+            repo = repos[module.repo_name]
+            if repo.commit != module.commit:
+                hashes[(repo, module.commit)].add(module)
 
+        update_commits = []
         for (repo, old_hash), modules_to_check in hashes.items():
-            for module in await repo.get_modified_modules(old_hash):
-                if module not in modules_to_check:
+            modified = await repo.get_modified_modules(old_hash)
+            for module in modules_to_check:
+                if module not in modified:
+                    module.commit = repo.commit
+                    update_commits.append(module)
                     continue
                 if module.type == InstallableType.COG:
                     cogs_to_update.add(module)
                 elif module.type == InstallableType.SHARED_LIBRARY:
                     libraries_to_update.add(module)
+
+        await self._save_to_installed(update_commits)
 
         return (tuple(cogs_to_update), tuple(libraries_to_update))
 
