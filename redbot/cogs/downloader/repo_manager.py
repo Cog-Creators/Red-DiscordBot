@@ -201,9 +201,9 @@ class Repo(RepoJSONMixin):
         statuses = await self._get_file_update_statuses(old_hash, new_hash)
 
         await self.checkout(old_hash)
-        modules = set(self.available_modules)
+        old_modules = self.available_modules
         await self.checkout(new_hash)
-        modules &= set(self.available_modules)
+        modules = [module for module in self.available_modules if module in old_modules]
         if new_hash != self.branch:
             await self.checkout(self.branch)
 
@@ -266,7 +266,7 @@ class Repo(RepoJSONMixin):
 
         return p.stdout.decode().strip()
 
-    def _update_available_modules(self) -> Tuple[str]:
+    def _update_available_modules(self) -> Tuple[Installable]:
         """
         Updates the available modules attribute for this repo.
         :return: List of available modules.
@@ -591,7 +591,7 @@ class Repo(RepoJSONMixin):
         return InstalledModule.from_installable(cog)
 
     async def install_libraries(
-        self, target_dir: Path, req_target_dir: Path, libraries: Tuple[Installable] = ()
+        self, target_dir: Path, req_target_dir: Path, libraries: Iterable[Installable] = ()
     ) -> Tuple[Tuple[InstalledModule], Tuple[Installable]]:
         """Install shared libraries to the target directory.
 

@@ -200,7 +200,7 @@ class Downloader(commands.Cog):
             2-tuple of cogs and libraries which can be updated.
 
         """
-        repo_names = set(module.repo_name for module in cogs)
+        repo_names = {module.repo_name for module in cogs}
         repos = {r: self._repo_manager.get_repo(r) for r in repo_names}
         installed_libraries = await self.installed_libraries()
 
@@ -212,7 +212,7 @@ class Downloader(commands.Cog):
                 try:
                     index = installed_libraries.index(lib)
                 except ValueError:
-                    libraries_to_update.append(lib)
+                    libraries_to_update.add(lib)
                 else:
                     modules.add(installed_libraries[index])
         for cog in cogs:
@@ -282,11 +282,11 @@ class Downloader(commands.Cog):
         tuple
             2-tuple of installed and failed libraries.
         """
-        repo_names = set(lib.repo_name for lib in libraries)
+        repo_names = {lib.repo_name for lib in libraries}
         repos = {r: (self._repo_manager.get_repo(r), set()) for r in repo_names}
 
         for lib in libraries:
-            repos[lib.repo_name].add(lib)
+            repos[lib.repo_name][1].add(lib)
 
         all_installed = []
         all_failed = []
@@ -310,7 +310,7 @@ class Downloader(commands.Cog):
         """
 
         # Reduces requirements to a single list with no repeats
-        requirements = set(r for c in cogs for r in c.requirements)
+        requirements = {r for c in cogs for r in c.requirements}
         repo_names = self._repo_manager.get_all_repo_names()
         repos = [(self._repo_manager.get_repo(rn), []) for rn in repo_names]
 
@@ -555,7 +555,7 @@ class Downloader(commands.Cog):
             await self._save_to_installed([installed_cog] + list(installed_libs))
             message = ""
             if failed_libs:
-                libnames = {l.name for l in failed_libs}
+                libnames = [l.name for l in failed_libs]
                 message += _(
                     "Failed to install shared libraries for `{cog_name}`: "
                 ) + humanize_list(tuple(map(inline, libnames)))
@@ -630,12 +630,12 @@ class Downloader(commands.Cog):
     async def _cog_update(self, ctx, cogs: commands.Greedy[InstalledCog] = []):
         """Update all cogs, or ones of your choosing."""
         pinned_cogs = None
-        installed_cogs = set(await self.installed_cogs())
+        installed_cogs = await self.installed_cogs()
 
         async with ctx.typing():
             if not cogs:
                 await self._repo_manager.update_all_repos()
-                cogs_to_check = set(self._repo_manager.get_all_cogs())
+                cogs_to_check = self._repo_manager.get_all_cogs()
             else:
                 cogs = set(cogs)
                 repos = {cog.repo_name for cog in cogs}
@@ -644,9 +644,9 @@ class Downloader(commands.Cog):
                     with contextlib.suppress(KeyError):  # Thrown if the repo no longer exists
                         repo, __ = await self._repo_manager.update_repo(repo_name)
                         available_cogs += repo.available_cogs
-                cogs_to_check = set(available_cogs) & cogs
+                cogs_to_check = cogs.intersection(available_cogs)
 
-            cogs_to_check &= installed_cogs
+            cogs_to_check = {cog for cog in installed_cogs if cog in cogs_to_check}
             pinned_cogs = {cog for cog in cogs_to_check if cog.pinned}
             cogs_to_check -= pinned_cogs
             cogs_to_update, libs_to_update = await self._available_updates(cogs_to_check)
@@ -660,20 +660,26 @@ class Downloader(commands.Cog):
                 await self._save_to_installed(installed_cogs + installed_libs)
                 message += _("Cog update completed successfully.")
 
+                updated_cognames = set()
                 if installed_cogs:
                     updated_cognames = {c.name for c in installed_cogs}
                     message += _("\nUpdated: ") + humanize_list(
                         tuple(map(inline, updated_cognames))
                     )
                 if failed_cogs:
-                    cognames = {c.name for c in failed_cogs}
+                    cognames = [c.name for c in failed_cogs]
                     message += _("\nFailed to update cogs: ") + humanize_list(
                         tuple(map(inline, cognames))
                     )
                 if not cogs_to_update:
                     message += _("\nNo cogs were updated, but some shared libraries were.")
+                if installed_libs:
+                    message += _(
+                        "\nSome shared libraries were updated, you should restart the bot "
+                        "to bring the changes into effect"
+                    )
                 if failed_libs:
-                    libnames = {l.name for l in failed_libs}
+                    libnames = [l.name for l in failed_libs]
                     message += _("Failed to install shared libraries: ") + humanize_list(
                         tuple(map(inline, libnames))
                     )
@@ -683,7 +689,7 @@ class Downloader(commands.Cog):
                 else:
                     message += _("All installed cogs are already up to date.")
             if pinned_cogs:
-                cognames = {c.name for c in pinned_cogs}
+                cognames = [c.name for c in pinned_cogs]
                 message += _(
                     "\nThese cogs are pinned and therefore weren't checked: "
                 ) + humanize_list(tuple(map(inline, cognames)))
@@ -691,7 +697,7 @@ class Downloader(commands.Cog):
         if not updates_available:
             return
 
-        updated_cognames &= set(ctx.bot.extensions.keys())  # only reload loaded cogs
+        updated_cognames &= ctx.bot.extensions.keys()  # only reload loaded cogs
         if not updated_cognames:
             return await ctx.send(
                 _("None of the updated cogs were previously loaded. Update complete.")
@@ -728,7 +734,7 @@ class Downloader(commands.Cog):
                     with contextlib.suppress(discord.Forbidden):
                         await query.clear_reactions()
 
-        await ctx.invoke(ctx.bot.get_cog("Core").reload, *cognames)
+        await ctx.invoke(ctx.bot.get_cog("Core").reload, *updated_cognames)
 
     @cog.command(name="list", usage="<repo_name>")
     async def _cog_list(self, ctx, repo: Repo):
