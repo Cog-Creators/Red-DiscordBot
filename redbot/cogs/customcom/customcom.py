@@ -205,7 +205,7 @@ class CustomCommands(commands.Cog):
 
     @customcom.command(name="search")
     @commands.guild_only()
-    async def cc_serach(self, ctx: commands.Context, *, search):
+    async def cc_search(self, ctx: commands.Context, *, search):
         """Searches through custom commands, according to the query.
 
         Fuzzy string matching must be enabled for this to work."""
