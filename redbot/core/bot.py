@@ -18,6 +18,8 @@ from .help_formatter import Help, help as help_
 from .rpc import RPCMixin
 from .utils import common_filters
 
+CUSTOM_GROUPS = "CUSTOM_GROUPS"
+
 
 def _is_submodule(parent, child):
     return parent == child or child.startswith(parent + ".")
@@ -73,6 +75,9 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
         )
 
         self.db.register_user(embeds=None)
+
+        self.db.init_custom(CUSTOM_GROUPS, 2)
+        self.db.register_custom(CUSTOM_GROUPS)
 
         async def prefix_manager(bot, message):
             if not cli_flags.prefix:

@@ -1027,8 +1027,10 @@ class Audio(commands.Cog):
                     return await self._embed_msg(ctx, _("That URL is not allowed."))
         if not self._player_check(ctx):
             try:
-                if not ctx.author.voice.channel.permissions_for(ctx.me).connect or self._userlimit(
-                    ctx.author.voice.channel
+                if (
+                    not ctx.author.voice.channel.permissions_for(ctx.me).connect
+                    or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
+                    and self._userlimit(ctx.author.voice.channel)
                 ):
                     return await self._embed_msg(
                         ctx, _("I don't have permission to connect to your channel.")
@@ -1181,7 +1183,7 @@ class Audio(commands.Cog):
         player = lavalink.get_player(ctx.guild.id)
         guild_data = await self.config.guild(ctx.guild).all()
         if type(query) is not list:
-            if not query.startswith("http"):
+            if not (query.startswith("http") or query.startswith("localtracks")):
                 query = f"ytsearch:{query}"
             tracks = await player.get_tracks(query)
             if not tracks:
@@ -1952,8 +1954,10 @@ class Audio(commands.Cog):
                 return False
         if not self._player_check(ctx):
             try:
-                if not ctx.author.voice.channel.permissions_for(ctx.me).connect or self._userlimit(
-                    ctx.author.voice.channel
+                if (
+                    not ctx.author.voice.channel.permissions_for(ctx.me).connect
+                    or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
+                    and self._userlimit(ctx.author.voice.channel)
                 ):
                     return await self._embed_msg(
                         ctx, _("I don't have permission to connect to your channel.")
@@ -2064,7 +2068,7 @@ class Audio(commands.Cog):
                     player.current.title, player.current.uri.replace("localtracks/", "")
                 )
             else:
-                description = f"**[{player.current.title}]({player.current.title})**"
+                description = f"**[{player.current.title}]({player.current.uri})**"
             embed = discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("Replaying Track"),
@@ -2406,8 +2410,10 @@ class Audio(commands.Cog):
 
         if not self._player_check(ctx):
             try:
-                if not ctx.author.voice.channel.permissions_for(ctx.me).connect or self._userlimit(
-                    ctx.author.voice.channel
+                if (
+                    not ctx.author.voice.channel.permissions_for(ctx.me).connect
+                    or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
+                    and self._userlimit(ctx.author.voice.channel)
                 ):
                     return await self._embed_msg(
                         ctx, _("I don't have permission to connect to your channel.")

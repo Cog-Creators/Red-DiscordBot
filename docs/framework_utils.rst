@@ -40,12 +40,6 @@ Mod Helpers
 .. automodule:: redbot.core.utils.mod
     :members:
 
-V2 Data Conversion
-==================
-
-.. automodule:: redbot.core.utils.data_converter
-    :members: DataConverter
-
 Tunnel
 ======
 

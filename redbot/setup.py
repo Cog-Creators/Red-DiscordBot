@@ -114,7 +114,7 @@ def get_storage_type():
         print()
         print("Please choose your storage backend (if you're unsure, choose 1).")
         print("1. JSON (file storage, requires no database).")
-        print("2. MongoDB (not recommended, currently unstable)")
+        print("2. MongoDB")
         storage = input("> ")
         try:
             storage = int(storage)
@@ -260,9 +260,9 @@ async def edit_instance():
     if confirm("Would you like to change the storage type? (y/n):"):
         storage = get_storage_type()
 
-        storage_dict = {1: "JSON", 2: "MongoDB"}
+        storage_dict = {1: "JSON", 2: "MongoDBV2"}
         default_dirs["STORAGE_TYPE"] = storage_dict[storage]
-        if storage_dict.get(storage, 1) == "MongoDB":
+        if storage_dict.get(storage, 1) == "MongoDBV2":
             from redbot.core.drivers.red_mongo import get_config_details
 
             storage_details = get_config_details()
@@ -272,12 +272,16 @@ async def edit_instance():
                 raise NotImplementedError("We cannot convert from JSON to MongoDB at this time.")
                 # if confirm("Would you like to import your data? (y/n) "):
                 #    await json_to_mongo(current_data_dir, storage_details)
-        else:
+        elif storage_dict.get(storage, 1) == "JSON":
             storage_details = instance_data["STORAGE_DETAILS"]
             default_dirs["STORAGE_DETAILS"] = {}
             if instance_data["STORAGE_TYPE"] == "MongoDB":
                 if confirm("Would you like to import your data? (y/n) "):
                     await mongo_to_json(current_data_dir, storage_details)
+            elif instance_data["STORAGE_TYPE"] == "MongoDBV2":
+                raise NotImplementedError(
+                    "We cannot convert from this version of MongoDB to JSON at this time."
+                )
 
     if name != selected:
         save_config(selected, {}, remove=True)
