@@ -36,7 +36,7 @@ _ = Translator("Streams", __file__)
 @cog_i18n(_)
 class Streams(commands.Cog):
 
-    global_defaults = {"tokens": {}, "streams": []}
+    global_defaults = {"tokens": {}, "streams": [], "games": {},}
 
     guild_defaults = {"autodelete": False, "mention_everyone": False, "mention_here": False}
 
@@ -91,7 +91,7 @@ class Streams(commands.Cog):
     async def twitch(self, ctx: commands.Context, channel_name: str):
         """Check if a Twitch channel is live."""
         token = await self.bot.db.api_tokens.get_raw("twitch", default={"client_id": None})
-        stream = TwitchStream(name=channel_name, token=token)
+        stream = TwitchStream(name=channel_name, token=token, bot=self.bot)
         await self.check_online(ctx, stream)
 
     @commands.command()
@@ -100,27 +100,27 @@ class Streams(commands.Cog):
         apikey = await self.bot.db.api_tokens.get_raw("youtube", default={"api_key": None})
         is_name = self.check_name_or_id(channel_id_or_name)
         if is_name:
-            stream = YoutubeStream(name=channel_id_or_name, token=apikey)
+            stream = YoutubeStream(name=channel_id_or_name, token=apikey, bot=self.bot)
         else:
-            stream = YoutubeStream(id=channel_id_or_name, token=apikey)
+            stream = YoutubeStream(id=channel_id_or_name, token=apikey, bot=self.bot)
         await self.check_online(ctx, stream)
 
     @commands.command()
     async def hitbox(self, ctx: commands.Context, channel_name: str):
         """Check if a Hitbox channel is live."""
-        stream = HitboxStream(name=channel_name)
+        stream = HitboxStream(name=channel_name, bot=self.bot)
         await self.check_online(ctx, stream)
 
     @commands.command()
     async def mixer(self, ctx: commands.Context, channel_name: str):
         """Check if a Mixer channel is live."""
-        stream = MixerStream(name=channel_name)
+        stream = MixerStream(name=channel_name, bot=self.bot)
         await self.check_online(ctx, stream)
 
     @commands.command()
     async def picarto(self, ctx: commands.Context, channel_name: str):
         """Check if a Picarto channel is live."""
-        stream = PicartoStream(name=channel_name)
+        stream = PicartoStream(name=channel_name, bot=self.bot)
         await self.check_online(ctx, stream)
 
     @staticmethod
@@ -267,9 +267,9 @@ class Streams(commands.Cog):
             token = await self.bot.db.api_tokens.get_raw(_class.token_name, default=None)
             is_yt = _class.__name__ == "YoutubeStream"
             if is_yt and not self.check_name_or_id(channel_name):
-                stream = _class(id=channel_name, token=token)
+                stream = _class(id=channel_name, token=token, bot=self.bot)
             else:
-                stream = _class(name=channel_name, token=token)
+                stream = _class(name=channel_name, token=token, bot=self.bot)
             try:
                 exists = await self.check_exists(stream)
             except InvalidTwitchCredentials:
@@ -488,8 +488,6 @@ class Streams(commands.Cog):
                     stream._messages_cache.clear()
                     await self.save_streams()
                 else:
-                    if stream._messages_cache:
-                        continue
                     for channel_id in stream.channels:
                         channel = self.bot.get_channel(channel_id)
                         mention_str, edited_roles = await self._get_mention_str(channel.guild)
@@ -500,9 +498,12 @@ class Streams(commands.Cog):
                             )
                         else:
                             content = _("{stream.name} is live!").format(stream=stream)
-
-                        m = await channel.send(content, embed=embed)
-                        stream._messages_cache.append(m)
+                        if stream._messages_cache:
+                            for m in stream._messages_cache:
+                                await m.edit(content, embed=embed)
+                        else:
+                            m = await channel.send(content, embed=embed)
+                            stream._messages_cache.append(m)
                         if edited_roles:
                             for role in edited_roles:
                                 await role.edit(mentionable=False)
@@ -567,18 +568,6 @@ class Streams(commands.Cog):
                 mentions.append(role.mention)
         return " ".join(mentions), edited_roles
 
-    async def filter_streams(self, streams: list, channel: discord.TextChannel) -> list:
-        filtered = []
-        for stream in streams:
-            tw_id = str(stream["channel"]["_id"])
-            for alert in self.streams:
-                if isinstance(alert, TwitchStream) and alert.id == tw_id:
-                    if channel.id in alert.channels:
-                        break
-            else:
-                filtered.append(stream)
-        return filtered
-
     async def load_streams(self):
         streams = []
 
@@ -588,6 +577,7 @@ class Streams(commands.Cog):
                 continue
             raw_msg_cache = raw_stream["messages"]
             raw_stream["_messages_cache"] = []
+            raw_stream["bot"] = self.bot
             for raw_msg in raw_msg_cache:
                 chn = self.bot.get_channel(raw_msg["channel"])
                 if chn is not None:

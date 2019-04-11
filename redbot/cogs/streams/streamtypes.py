@@ -13,9 +13,9 @@ import aiohttp
 import json
 
 TWITCH_BASE_URL = "https://api.twitch.tv"
-TWITCH_ID_ENDPOINT = TWITCH_BASE_URL + "/kraken/users?login="
-TWITCH_STREAMS_ENDPOINT = TWITCH_BASE_URL + "/kraken/streams/"
-TWITCH_COMMUNITIES_ENDPOINT = TWITCH_BASE_URL + "/kraken/communities"
+TWITCH_STREAMS_ENDPOINT = TWITCH_BASE_URL + "/helix/streams"
+TWITCH_USERS_ENDPOINT = TWITCH_BASE_URL + "/helix/users"
+TWITCH_GAMES_ENDPOINT = TWITCH_BASE_URL + "/helix/games"
 
 YOUTUBE_BASE_URL = "https://www.googleapis.com/youtube/v3"
 YOUTUBE_CHANNELS_ENDPOINT = YOUTUBE_BASE_URL + "/channels"
@@ -38,6 +38,7 @@ class Stream:
         # self.already_online = kwargs.pop("already_online", False)
         self._messages_cache = kwargs.pop("_messages_cache", [])
         self.type = self.__class__.__name__
+        self.bot = kwargs.pop("bot", None)
 
     async def is_online(self):
         raise NotImplementedError()
@@ -51,6 +52,7 @@ class Stream:
             if not k.startswith("_"):
                 data[k] = v
         data["messages"] = []
+        del data["bot"]
         for m in self._messages_cache:
             data["messages"].append({"channel": m.channel.id, "message": m.id})
         return data
@@ -155,71 +157,90 @@ class TwitchStream(Stream):
         super().__init__(**kwargs)
 
     async def is_online(self):
-        if not self.id:
-            self.id = await self.fetch_id()
-
-        url = TWITCH_STREAMS_ENDPOINT + self.id
-        header = {
-            "Client-ID": str(self._token["client_id"]),
-            "Accept": "application/vnd.twitchtv.v5+json",
-        }
+        url = TWITCH_STREAMS_ENDPOINT
+        params = []
+        if self.id:
+            params.append(("user_id", self.id))
+        else:
+            params.append(("user_login", self.name))
+        if self._token["access_token"]:
+            header = {"Authorization": "Bearer " + self._token["access_token"]}
+        else:
+            header = {"Client-ID": str(self._token["client_id"])}
 
         async with aiohttp.ClientSession() as session:
-            async with session.get(url, headers=header) as r:
+            async with session.get(url, headers=header, params=params) as r:
                 data = await r.json(encoding="utf-8")
         if r.status == 200:
-            if data["stream"] is None:
+            if not data["data"]:
                 # self.already_online = False
                 raise OfflineStream()
             # self.already_online = True
             #  In case of rename
-            self.name = data["stream"]["channel"]["name"]
-            return self.make_embed(data)
-        elif r.status == 400:
+            stream = data["data"][0]
+            self.name = stream["user_name"]
+            d = {"stream": stream}
+            if not self.id:
+                self.id = stream["user_id"]
+            async with aiohttp.ClientSession() as session:
+                async with session.get(
+                    TWITCH_USERS_ENDPOINT, headers=header, params={"id": self.id}
+                ) as s:
+                    data2 = await s.json(encoding="utf-8")
+
+            if s.status == 200:
+                d["user"] = data2["data"][0]
+            if stream["game_id"] > 0:  # 0 is used for the game id when no game is set
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(
+                        TWITCH_GAMES_ENDPOINT, headers=headers, params={"id": stream["game_id"]}
+                    ) as game_data:
+                        gd = await game_data.json(encoding="utf-8")
+                if game_data.status == 200:
+                    game = gd["data"][0]
+                    streams_cog = self.bot.get_cog("Streams")
+                    if streams_cog:
+                        try:
+                            game_list = await streams_cog.db.games.get_raw("twitch")
+                        except KeyError:
+                            game_list = []
+                            game_list.append({"name": game["name"], "id": game["id"]})
+                            await streams_cog.db.games.set_raw("twitch", value=game_list)
+                        else:
+                            for item in game_list:
+                                if item["id"] == game["id"]:
+                                    break
+                            else:
+                                game_list.append({"name": game["name"], "id": game["id"]})
+                                await streams_cog.db.games.set_raw("twitch", value=game_list)
+                    d["game"] = {"name": game["name"], "id": game["id"]}
+                else:
+                    d["game"] = {"name": "an unspecified game", "id": "0"}
+            return self.make_embed(d)
+        elif r.status == 401:
             raise InvalidTwitchCredentials()
         elif r.status == 404:
             raise StreamNotFound()
         else:
             raise APIError()
 
-    async def fetch_id(self):
-        header = {
-            "Client-ID": str(self._token["client_id"]),
-            "Accept": "application/vnd.twitchtv.v5+json",
-        }
-        url = TWITCH_ID_ENDPOINT + self.name
-
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url, headers=header) as r:
-                data = await r.json()
-
-        if r.status == 200:
-            if not data["users"]:
-                raise StreamNotFound()
-            return data["users"][0]["_id"]
-        elif r.status == 400:
-            raise InvalidTwitchCredentials()
-        else:
-            raise APIError()
-
     def make_embed(self, data):
-        channel = data["stream"]["channel"]
-        url = channel["url"]
-        logo = channel["logo"]
-        if logo is None:
+        channel = data["user"]
+        stream = data["stream"]
+        url = f"https://twitch.tv/{channel['login']}"
+        logo = channel["profile_image_url"]
+        if not logo:
             logo = "https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_70x70.png"
-        status = channel["status"]
+        status = stream["title"]
         if not status:
             status = "Untitled broadcast"
         embed = discord.Embed(title=status, url=url)
         embed.set_author(name=channel["display_name"])
-        embed.add_field(name="Followers", value=channel["followers"])
-        embed.add_field(name="Total views", value=channel["views"])
+        embed.add_field(name="Current viewers", value=channel["viewer_count"])
+        embed.add_field(name="Total views", value=channel["view_count"])
         embed.set_thumbnail(url=logo)
-        if data["stream"]["preview"]["medium"]:
-            embed.set_image(url=rnd(data["stream"]["preview"]["medium"]))
-        if channel["game"]:
-            embed.set_footer(text="Playing: " + channel["game"])
+        embed.set_image(url=rnd(stream["thumbnail_url"].format(width=320, height=180)))
+        embed.set_footer(text="Playing: " + data["game"]["name"])
         embed.color = 0x6441A4
 
         return embed
