@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import logging
 
 
 def confirm(m=""):
@@ -97,7 +98,14 @@ def parse_cli_flags(args):
         "login. This is useful for testing the boot "
         "process.",
     )
-    parser.add_argument("--debug", action="store_true", help="Sets the loggers level as debug")
+    parser.add_argument(
+        "--debug",
+        action="store_const",
+        dest="logging_level",
+        const=logging.DEBUG,
+        default=logging.INFO,
+        help="Sets the loggers level as debug",
+    )
     parser.add_argument("--dev", action="store_true", help="Enables developer mode")
     parser.add_argument(
         "--mentionable",

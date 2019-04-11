@@ -2,29 +2,31 @@
 
 # Discord Version check
 
+import asyncio
+import logging
+import os
 import sys
+
 import discord
+
+import redbot.logging
 from redbot.core.bot import Red, ExitCodes
 from redbot.core.cog_manager import CogManagerUI
-from redbot.core.data_manager import create_temp_config, load_basic_configuration, config_file
 from redbot.core.json_io import JsonIO
 from redbot.core.global_checks import init_global_checks
 from redbot.core.events import init_events
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags
 from redbot.core.core_commands import Core
 from redbot.core.dev_commands import Dev
-from redbot.core import modlog, bank
+from redbot.core import __version__, modlog, bank, data_manager
 from signal import SIGTERM
-import asyncio
-import logging.handlers
-import logging
-import os
 
 # Let's not force this dependency, uvloop is much faster on cpython
 if sys.implementation.name == "cpython":
     try:
         import uvloop
     except ImportError:
+        uvloop = None
         pass
     else:
         asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
@@ -32,52 +34,13 @@ if sys.implementation.name == "cpython":
 if sys.platform == "win32":
     asyncio.set_event_loop(asyncio.ProactorEventLoop())
 
+log = logging.getLogger("red.main")
 
 #
 #               Red - Discord Bot v3
 #
 #         Made by Twentysix, improved by many
 #
-
-
-def init_loggers(cli_flags):
-    # d.py stuff
-    dpy_logger = logging.getLogger("discord")
-    dpy_logger.setLevel(logging.WARNING)
-    console = logging.StreamHandler()
-    console.setLevel(logging.WARNING)
-    dpy_logger.addHandler(console)
-
-    # Red stuff
-
-    logger = logging.getLogger("red")
-
-    red_format = logging.Formatter(
-        "%(asctime)s %(levelname)s %(module)s %(funcName)s %(lineno)d: %(message)s",
-        datefmt="[%d/%m/%Y %H:%M]",
-    )
-
-    stdout_handler = logging.StreamHandler(sys.stdout)
-    stdout_handler.setFormatter(red_format)
-
-    if cli_flags.debug:
-        os.environ["PYTHONASYNCIODEBUG"] = "1"
-        logger.setLevel(logging.DEBUG)
-    else:
-        logger.setLevel(logging.INFO)
-
-    from redbot.core.data_manager import core_data_path
-
-    logfile_path = core_data_path() / "red.log"
-    fhandler = logging.handlers.RotatingFileHandler(
-        filename=str(logfile_path), encoding="utf-8", mode="a", maxBytes=10 ** 7, backupCount=5
-    )
-    fhandler.setFormatter(red_format)
-
-    logger.addHandler(fhandler)
-    logger.addHandler(stdout_handler)
-
-    return logger
 
 
 async def _get_prefix_and_token(red, indict):
@@ -91,14 +54,14 @@ async def _get_prefix_and_token(red, indict):
 
 
 def list_instances():
-    if not config_file.exists():
+    if not data_manager.config_file.exists():
         print(
             "No instances have been configured! Configure one "
             "using `redbot-setup` before trying to run the bot!"
         )
         sys.exit(1)
     else:
-        data = JsonIO(config_file)._load_json()
+        data = JsonIO(data_manager.config_file)._load_json()
         text = "Configured Instances:\n\n"
         for instance_name in sorted(data.keys()):
             text += "{}\n".format(instance_name)
@@ -118,6 +81,7 @@ def main():
         list_instances()
     elif cli_flags.version:
         print(description)
+        print("Current Version: {}".format(__version__))
         sys.exit(0)
     elif not cli_flags.instance_name and not cli_flags.no_instance:
         print("Error: No instance name was provided!")
@@ -125,13 +89,21 @@ def main():
     if cli_flags.no_instance:
         print(
             "\033[1m"
-            "Warning: The data will be placed in a temporary folder and removed on next system reboot."
+            "Warning: The data will be placed in a temporary folder and removed on next system "
+            "reboot."
             "\033[0m"
         )
         cli_flags.instance_name = "temporary_red"
-        create_temp_config()
-    load_basic_configuration(cli_flags.instance_name)
-    log = init_loggers(cli_flags)
+        data_manager.create_temp_config()
+    data_manager.load_basic_configuration(cli_flags.instance_name)
+    redbot.logging.init_logging(
+        level=cli_flags.logging_level, location=data_manager.core_data_path() / "logs"
+    )
+
+    log.debug("====Basic Config====")
+    log.debug("Data Path: %s", data_manager._base_data_path())
+    log.debug("Storage Type: %s", data_manager.storage_type())
+
     red = Red(cli_flags=cli_flags, description=description, pm_help=None)
     init_global_checks(red)
     init_events(red, cli_flags)

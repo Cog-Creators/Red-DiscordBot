@@ -1491,8 +1491,8 @@ class Core(commands.Cog, CoreLogic):
         """
         user = isinstance(user_or_role, discord.Member)
         async with ctx.bot.db.guild(ctx.guild).whitelist() as curr_list:
-            if obj.id not in curr_list:
-                curr_list.append(obj.id)
+            if user_or_role.id not in curr_list:
+                curr_list.append(user_or_role.id)
 
         if user:
             await ctx.send(_("User added to whitelist."))
@@ -1524,9 +1524,9 @@ class Core(commands.Cog, CoreLogic):
 
         removed = False
         async with ctx.bot.db.guild(ctx.guild).whitelist() as curr_list:
-            if obj.id in curr_list:
+            if user_or_role.id in curr_list:
                 removed = True
-                curr_list.remove(obj.id)
+                curr_list.remove(user_or_role.id)
 
         if removed:
             if user:
@@ -1570,8 +1570,8 @@ class Core(commands.Cog, CoreLogic):
             return
 
         async with ctx.bot.db.guild(ctx.guild).blacklist() as curr_list:
-            if obj.id not in curr_list:
-                curr_list.append(obj.id)
+            if user_or_role.id not in curr_list:
+                curr_list.append(user_or_role.id)
 
         if user:
             await ctx.send(_("User added to blacklist."))
@@ -1603,9 +1603,9 @@ class Core(commands.Cog, CoreLogic):
         user = isinstance(user_or_role, discord.Member)
 
         async with ctx.bot.db.guild(ctx.guild).blacklist() as curr_list:
-            if obj.id in curr_list:
+            if user_or_role.id in curr_list:
                 removed = True
-                curr_list.remove(obj.id)
+                curr_list.remove(user_or_role.id)
 
         if removed:
             if user:
