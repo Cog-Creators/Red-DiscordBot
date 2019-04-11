@@ -267,11 +267,11 @@ async def reset_red():
     if confirm("\nDo you want to create a backup for an instance? (y/n) "):
         for index, instance in instances.items():
             print("\nRemoving {}...".format(index))
-            await create_backup(index, instance)
-            await remove_instance(index, instance)
+            await create_backup(index)
+            await remove_instance(index)
     else:
         for index, instance in instances.items():
-            await remove_instance(index, instance)
+            await remove_instance(index)
     print("All instances have been removed.")
 
 

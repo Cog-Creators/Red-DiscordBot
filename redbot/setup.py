@@ -10,6 +10,8 @@ from datetime import datetime as dt
 from pathlib import Path
 
 import appdirs
+import click
+
 from redbot.core.cli import confirm
 from redbot.core.data_manager import (
     basic_config_default,
@@ -36,20 +38,18 @@ except PermissionError:
 config_file = config_dir / "config.json"
 
 
-def parse_cli_args():
-    parser = argparse.ArgumentParser(description="Red - Discord Bot's instance manager (V3)")
-    parser.add_argument(
-        "--delete", "-d", help="Interactively delete an instance", action="store_true"
-    )
-    parser.add_argument("--edit", "-e", help="Interactively edit an instance", action="store_true")
-    return parser.parse_known_args()
-
-
 def load_existing_config():
     if not config_file.exists():
         return {}
 
     return JsonIO(config_file)._load_json()
+
+
+instance_data = load_existing_config()
+if instance_data is None:
+    instance_list = []
+else:
+    instance_list = list(instance_data.keys())
 
 
 def save_config(name, data, remove=False):
@@ -290,16 +290,17 @@ async def edit_instance():
     print("Your basic configuration has been edited")
 
 
-async def create_backup(selected, instance_data):
+async def create_backup(instance):
+    instance_vals = instance_data[instance]
     if confirm("Would you like to make a backup of the data for this instance? (y/n)"):
-        load_basic_configuration(selected)
-        if instance_data["STORAGE_TYPE"] == "MongoDB":
-            await mongo_to_json(instance_data["DATA_PATH"], instance_data["STORAGE_DETAILS"])
+        load_basic_configuration(instance)
+        if instance_vals["STORAGE_TYPE"] == "MongoDB":
+            await mongo_to_json(instance_vals["DATA_PATH"], instance_vals["STORAGE_DETAILS"])
         print("Backing up the instance's data...")
         backup_filename = "redv3-{}-{}.tar.gz".format(
-            selected, dt.utcnow().strftime("%Y-%m-%d %H-%M-%S")
+            instance, dt.utcnow().strftime("%Y-%m-%d %H-%M-%S")
         )
-        pth = Path(instance_data["DATA_PATH"])
+        pth = Path(instance_vals["DATA_PATH"])
         if pth.exists():
             backup_pth = pth.home()
             backup_file = backup_pth / backup_filename
@@ -321,24 +322,27 @@ async def create_backup(selected, instance_data):
             repo_filename = pth / "cogs" / "RepoManager" / "repos.json"
             with open(str(repo_filename), "w") as f:
                 f.write(json.dumps(repo_output, indent=4))
-            instance_data = {instance_name: basic_config}
+            instance_vals = {instance_name: basic_config}
             instance_file = pth / "instance.json"
             with open(str(instance_file), "w") as instance_out:
-                instance_out.write(json.dumps(instance_data, indent=4))
+                instance_out.write(json.dumps(instance_vals, indent=4))
             for f in pth.glob("**/*"):
                 if not any(ex in str(f) for ex in exclusions):
                     to_backup.append(f)
             with tarfile.open(str(backup_file), "w:gz") as tar:
                 for f in to_backup:
                     tar.add(str(f), recursive=False)
-            print("A backup of {} has been made. It is at {}".format(selected, backup_file))
+            print("A backup of {} has been made. It is at {}".format(instance, backup_file))
 
 
-async def remove_instance(selected, instance_data):
-    if instance_data["STORAGE_TYPE"] == "MongoDB":
+async def remove_instance(instance):
+    await create_backup(instance)
+
+    instance_vals = instance_data[instance]
+    if instance_vals["STORAGE_TYPE"] == "MongoDB":
         from redbot.core.drivers.red_mongo import Mongo
 
-        m = Mongo("Core", **instance_data["STORAGE_DETAILS"])
+        m = Mongo("Core", **instance_vals["STORAGE_DETAILS"])
         db = m.db
         collections = await db.collection_names(include_system_collections=False)
         for name in collections:
@@ -347,12 +351,11 @@ async def remove_instance(selected, instance_data):
     else:
         pth = Path(instance_data["DATA_PATH"])
         safe_delete(pth)
-    save_config(selected, {}, remove=True)
-    print("The instance {} has been removed\n".format(selected))
+    save_config(instance, {}, remove=True)
+    print("The instance {} has been removed\n".format(instance))
 
 
 async def remove_instance_interaction():
-    instance_list = load_existing_config()
     if not instance_list:
         print("No instances have been set up!")
         return
@@ -361,35 +364,42 @@ async def remove_instance_interaction():
         "You have chosen to remove an instance. The following "
         "is a list of instances that currently exist:\n"
     )
-    for instance in instance_list.keys():
+    for instance in instance_data.keys():
         print("{}\n".format(instance))
     print("Please select one of the above by entering its name")
     selected = input("> ")
 
-    if selected not in instance_list.keys():
+    if selected not in instance_data.keys():
         print("That isn't a valid instance!")
         return
-    instance_data = instance_list[selected]
 
-    await create_backup(selected, instance_data)
-    await remove_instance(selected, instance_data)
+    await create_backup(selected)
+    await remove_instance(selected)
 
 
-def main():
-    args, _ = parse_cli_args()
-    if args.delete:
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(remove_instance_interaction())
-    elif args.edit:
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(edit_instance())
-    else:
+@click.group(invoke_without_command=True)
+@click.pass_context
+def cli(ctx):
+    if ctx.invoked_subcommand is None:
         basic_setup()
+
+
+@cli.command()
+@click.argument("instance", type=click.Choice(instance_list))
+def delete(instance):
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(remove_instance(instance))
+
+
+@cli.command()
+@click.argument("instance", type=click.Choice(instance_list))
+def convert(instance):
+    click.echo(instance)
 
 
 if __name__ == "__main__":
     try:
-        main()
+        cli()
     except KeyboardInterrupt:
         print("Exiting...")
     else:
