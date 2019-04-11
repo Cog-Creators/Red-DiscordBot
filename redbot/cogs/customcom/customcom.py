@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from inspect import Parameter
 from collections import OrderedDict
 from typing import Mapping, Tuple, Dict, Set
+from fuzzywuzzy import process
 
 import discord
 
@@ -201,6 +202,30 @@ class CustomCommands(commands.Cog):
     async def customcom(self, ctx: commands.Context):
         """Custom commands management."""
         pass
+
+    @customcom.command(name="search")
+    @commands.guild_only()
+    async def cc_serach(self, ctx: commands.Context, *, search):
+        """Searches through custom commands, according to the query.
+
+        Fuzzy string matching must be enabled for this to work."""
+        enabled = await ctx.bot.db.guild(ctx.guild).fuzzy()
+        if not enabled:
+            return await ctx.send(_("Fuzzy string matching is not enabled in this server."))
+        cc_commands = await self.config.guild(ctx.guild).commands()
+        extracted = process.extract(search, list(cc_commands.keys()))
+        accepted = []
+        for entry in extracted:
+            if entry[1] > 60:
+                # Match was decently strong
+                accepted.append(f"{ctx.prefix}{entry[0]}")
+            else:
+                # Match wasn't strong enough
+                pass
+        if len(accepted) == 0:
+            return await ctx.send(_("No close matches were found."))
+        sending = "\n".join(accepted)
+        await ctx.send(_(f"The following matches have been found: ```{sending}```"))
 
     @customcom.group(name="create", aliases=["add"])
     @checks.mod_or_permissions(administrator=True)
