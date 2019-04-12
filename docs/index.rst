@@ -44,10 +44,11 @@ Welcome to Red - Discord Bot's documentation!
     cog_guides/alias
     cog_guides/audio
     cog_guides/bank
+    cog_guides/cog_manager_ui
+    cog_guides/core
     cog_guides/economy
     cog_guides/downloader
     cog_guides/permissions
-    cog_guides/core
 
 .. toctree::
     :maxdepth: 2
