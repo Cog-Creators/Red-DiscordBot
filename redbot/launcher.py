@@ -14,7 +14,7 @@ from redbot.setup import (
     load_existing_config,
     remove_instance,
     remove_instance_interaction,
-    create_backup,
+    create_backup
 )
 from redbot.core import __version__, version_info as red_version_info, VersionInfo
 from redbot.core.cli import confirm
