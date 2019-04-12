@@ -305,7 +305,7 @@ class Downloader(commands.Cog):
             return
 
         if not await repo.install_requirements(cog, self.LIB_PATH):
-            libraries = '`, `'.join(cog.requirements)
+            libraries = "`, `".join(cog.requirements)
             await ctx.send(
                 _(
                     "Failed to install the required libraries for `{cog_name}`: `{libraries}`"
