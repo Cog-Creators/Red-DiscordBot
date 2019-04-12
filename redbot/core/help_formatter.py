@@ -159,11 +159,11 @@ class Help(dpy_formatter.HelpFormatter):
             # <long doc> section
             if self.command.help:
                 splitted = self.command.help.split("\n\n")
-                name = "__{0}__".format(splitted[0])
+                name = "__{0}".format(splitted[0])
                 value = "\n\n".join(splitted[1:]).replace("[p]", self.context.clean_prefix)
                 if value == "":
                     value = EMPTY_STRING
-                field = EmbedField(name[:252], value[:1024], False)
+                field = EmbedField(name[:250] + "__", value[:1024], False)
                 emb["fields"].append(field)
 
             # end it here if it's just a regular command
