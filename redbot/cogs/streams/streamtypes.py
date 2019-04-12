@@ -190,32 +190,45 @@ class TwitchStream(Stream):
 
             if s.status == 200:
                 d["user"] = data2["data"][0]
+            game = None
             if stream["game_id"] > 0:  # 0 is used for the game id when no game is set
-                async with aiohttp.ClientSession() as session:
-                    async with session.get(
-                        TWITCH_GAMES_ENDPOINT, headers=headers, params={"id": stream["game_id"]}
-                    ) as game_data:
-                        gd = await game_data.json(encoding="utf-8")
-                if game_data.status == 200:
-                    game = gd["data"][0]
-                    streams_cog = self.bot.get_cog("Streams")
-                    if streams_cog:
-                        try:
-                            game_list = await streams_cog.db.games.get_raw("twitch")
-                        except KeyError:
-                            game_list = []
+                streams_cog = self.bot.get_cog("Streams")
+                if streams_cog:
+                    try:
+                        game_list = await streams_cog.db.games.get_raw("twitch")
+                    except KeyError:
+                        game_list = []
+                        async with aiohttp.ClientSession() as session:
+                            async with session.get(
+                                TWITCH_GAMES_ENDPOINT,
+                                headers=headers,
+                                params={"id": stream["game_id"]},
+                            ) as game_data:
+                                gd = await game_data.json(encoding="utf-8")
+                        if game_data.status == 200:
+                            game = gd["data"][0]
                             game_list.append({"name": game["name"], "id": game["id"]})
                             await streams_cog.db.games.set_raw("twitch", value=game_list)
+                    else:
+                        for item in game_list:
+                            if item["id"] == stream["game_id"]:
+                                game = item
+                                break
                         else:
-                            for item in game_list:
-                                if item["id"] == game["id"]:
-                                    break
-                            else:
-                                game_list.append({"name": game["name"], "id": game["id"]})
-                                await streams_cog.db.games.set_raw("twitch", value=game_list)
+                            async with aiohttp.ClientSession() as session:
+                                async with session.get(
+                                    TWITCH_GAMES_ENDPOINT,
+                                    headers=headers,
+                                    params={"id": stream["game_id"]},
+                                ) as game_data:
+                                    gd = await game_data.json(encoding="utf-8")
+                            if game_data.status == 200:
+                                game = gd["data"][0]
+                            game_list.append({"name": game["name"], "id": game["id"]})
+                            await streams_cog.db.games.set_raw("twitch", value=game_list)
                     d["game"] = {"name": game["name"], "id": game["id"]}
-                else:
-                    d["game"] = {"name": "an unspecified game", "id": "0"}
+            else:
+                d["game"] = {"name": "an unspecified game", "id": "0"}
             return self.make_embed(d)
         elif r.status == 401:
             raise InvalidTwitchCredentials()
