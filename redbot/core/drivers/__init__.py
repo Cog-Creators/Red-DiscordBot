@@ -1,6 +1,14 @@
+import enum
+
 from .red_base import IdentifierData
 
-__all__ = ["get_driver", "IdentifierData"]
+__all__ = ["get_driver", "IdentifierData", "BackendType"]
+
+
+class BackendType(enum.Enum):
+    JSON = "JSON"
+    MONGO = "MongoV2"
+    MONGOV1 = "Mongo"
 
 
 def get_driver(type, *args, **kwargs):

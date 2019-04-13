@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import argparse
 import asyncio
 import json
 import os
@@ -21,6 +20,8 @@ from redbot.core.data_manager import (
 )
 from redbot.core.json_io import JsonIO
 from redbot.core.utils import safe_delete
+from redbot.core import Config
+from redbot.core.drivers import IdentifierData, BackendType
 from redbot.core.drivers.red_json import JSON
 
 config_dir = None
@@ -173,6 +174,17 @@ def basic_setup():
     )
 
 
+def get_current_backend(instance) -> BackendType:
+    return BackendType(instance_data[instance]["STORAGE_TYPE"])
+
+
+def get_target_backend(backend) -> BackendType:
+    if backend == "json":
+        return BackendType.JSON
+    elif backend == "mongo":
+        return BackendType.MONGO
+
+
 async def json_to_mongo(current_data_dir: Path, storage_details: dict):
     from redbot.core.drivers.red_mongo import Mongo
 
@@ -191,6 +203,40 @@ async def json_to_mongo(current_data_dir: Path, storage_details: dict):
             driver = Mongo(cog_name, identifier, **storage_details)
             for key, value in data.items():
                 await driver.set(key, value=value)
+
+
+async def json_to_mongov2(instance):
+    instance_vals = instance_data[instance]
+    current_data_dir = Path(instance_vals["DATA_PATH"])
+
+    load_basic_configuration(instance)
+
+    from redbot.core.drivers import red_mongo
+
+    storage_details = red_mongo.get_config_details()
+
+    core_conf = Config.get_core_conf()
+    new_driver = red_mongo.Mongo(cog_name="Core", identifier="0", **storage_details)
+
+    core_conf.init_custom("CUSTOM_GROUPS", 2)
+    custom_group_data = await core_conf.custom("CUSTOM_GROUPS").all()
+
+    curr_custom_data = custom_group_data.get("Core", {}).get("0", {})
+    exported_data = await core_conf.driver.export_data(curr_custom_data)
+    await new_driver.import_data(exported_data, curr_custom_data)
+
+    for p in current_data_dir.glob("cogs/**/settings.json"):
+        cog_name = p.parent.stem
+        with p.open(mode="r") as f:
+            cog_data = json.load(f)
+        for identifier, all_data in cog_data.items():
+            conf = Config.get_conf(None, identifier, cog_name=cog_name)
+            new_driver = red_mongo.Mongo(cog_name=cog_name, identifier=identifier, **storage_details)
+
+            curr_custom_data = custom_group_data.get(cog_name, {}).get(identifier, {})
+
+            exported_data = await conf.driver.export_data(curr_custom_data)
+            await new_driver.import_data(exported_data, curr_custom_data)
 
 
 async def mongo_to_json(current_data_dir: Path, storage_details: dict):
@@ -393,8 +439,18 @@ def delete(instance):
 
 @cli.command()
 @click.argument("instance", type=click.Choice(instance_list))
-def convert(instance):
-    click.echo(instance)
+@click.argument("backend", type=click.Choice(["json", "mongo"]))
+def convert(instance, backend):
+    current_backend = get_current_backend(instance)
+    target = get_target_backend(backend)
+
+    loop = asyncio.get_event_loop()
+
+    if current_backend == BackendType.MONGOV1 and target == BackendType.MONGO:
+        raise RuntimeError("Please see conversion docs for updating to the latest mongo version.")
+    elif current_backend == BackendType.JSON:
+        if target == BackendType.MONGO:
+            loop.run_until_complete(json_to_mongov2(instance))
 
 
 if __name__ == "__main__":
