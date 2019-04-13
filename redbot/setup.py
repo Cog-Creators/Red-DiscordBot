@@ -237,8 +237,6 @@ async def json_to_mongov2(instance):
 
 
 async def mongov2_to_json(instance):
-    instance_vals = instance_data[instance]
-
     load_basic_configuration(instance)
 
     core_path = core_data_path()
