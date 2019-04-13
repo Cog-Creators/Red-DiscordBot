@@ -233,7 +233,6 @@ async def json_to_mongov2(instance):
 
     for p in current_data_dir.glob("cogs/**/settings.json"):
         cog_name = p.parent.stem
-        print(cog_name)
         with p.open(mode="r") as f:
             cog_data = json.load(f)
         for identifier, all_data in cog_data.items():
@@ -244,6 +243,8 @@ async def json_to_mongov2(instance):
 
             exported_data = await conf.driver.export_data(curr_custom_data)
             conversion_log.info(f"Converting {cog_name} with identifier {identifier}...")
+            if cog_name == "Lockdown":
+                conversion_log.info(f"Lockdown: {exported_data}")
             await new_driver.import_data(exported_data, curr_custom_data)
 
     conversion_log.info("Cog conversion complete.")
