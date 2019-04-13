@@ -19,6 +19,8 @@ from redbot.core.data_manager import (
     load_basic_configuration,
     instance_name,
     basic_config,
+    cog_data_path,
+    core_data_path,
 )
 from redbot.core.json_io import JsonIO
 from redbot.core.utils import safe_delete
@@ -239,10 +241,12 @@ async def mongov2_to_json(instance):
 
     load_basic_configuration(instance)
 
+    core_path = core_data_path()
+
     from redbot.core.drivers import red_json
 
     core_conf = Config.get_core_conf()
-    new_driver = red_json.JSON(cog_name="Core", identifier="0")
+    new_driver = red_json.JSON(cog_name="Core", identifier="0", data_path_override=core_path)
 
     core_conf.init_custom("CUSTOM_GROUPS", 2)
     custom_group_data = await core_conf.custom("CUSTOM_GROUPS").all()
@@ -259,12 +263,30 @@ async def mongov2_to_json(instance):
         [n.split('.') for n in collection_names]
     ))
 
-    cogname_idents = []
+    ident_map = {}  # Cogname: idents list
+    for cog_name, category in splitted_names:
+        if cog_name not in ident_map:
+            ident_map[cog_name] = set()
 
+        idents = await core_conf.driver.db[cog_name][category].distinct("_id.RED_uuid")
+        ident_map[cog_name].update(set(idents))
+
+    for cog_name, idents in ident_map.items():
+        for identifier in idents:
+            curr_custom_data = custom_group_data.get(cog_name, {}).get(identifier, {})
+            conf = Config.get_conf(None, int(identifier), cog_name=cog_name)
+            exported_data = await conf.driver.export_data(curr_custom_data)
+
+            new_path = cog_data_path(raw_name=cog_name)
+            new_driver = red_json.JSON(cog_name, identifier, data_path_override=new_path)
+            conversion_log.info(f"Converting {cog_name} with identifier {identifier}...")
+            await new_driver.import_data(exported_data, curr_custom_data)
+
+    # cog_data_path(raw_name=cog_name)
 
     conversion_log.info("Cog conversion complete.")
 
-    return storage_details
+    return {}
 
 
 async def mongo_to_json(current_data_dir: Path, storage_details: dict):
@@ -461,13 +483,16 @@ def convert(instance, backend):
     elif current_backend == BackendType.JSON:
         if target == BackendType.MONGO:
             storage_details = loop.run_until_complete(json_to_mongov2(instance))
-            default_dirs["STORAGE_TYPE"] = "MongoDBV2"
+            default_dirs["STORAGE_TYPE"] = BackendType.MONGO.value
             default_dirs["STORAGE_DETAILS"] = storage_details
 
             save_config(instance, default_dirs)
     elif current_backend == BackendType.MONGO:
         if target == BackendType.JSON:
             storage_details = loop.run_until_complete(mongov2_to_json(instance))
+            default_dirs["STORAGE_TYPE"] = BackendType.JSON.value
+            default_dirs["STORAGE_DETAILS"] = storage_details
+            save_config(instance, default_dirs)
 
 
 if __name__ == "__main__":
