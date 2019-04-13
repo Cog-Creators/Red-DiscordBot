@@ -7,6 +7,7 @@ import tarfile
 from copy import deepcopy
 from datetime import datetime as dt
 from pathlib import Path
+import logging
 
 import appdirs
 import click
@@ -21,8 +22,10 @@ from redbot.core.data_manager import (
 from redbot.core.json_io import JsonIO
 from redbot.core.utils import safe_delete
 from redbot.core import Config
-from redbot.core.drivers import IdentifierData, BackendType
+from redbot.core.drivers import BackendType
 from redbot.core.drivers.red_json import JSON
+
+conversion_log = logging.getLogger("red.converter")
 
 config_dir = None
 appdir = appdirs.AppDirs("Red-DiscordBot")
@@ -223,7 +226,9 @@ async def json_to_mongov2(instance):
 
     curr_custom_data = custom_group_data.get("Core", {}).get("0", {})
     exported_data = await core_conf.driver.export_data(curr_custom_data)
+    conversion_log.info("Starting Core conversion...")
     await new_driver.import_data(exported_data, curr_custom_data)
+    conversion_log.info("Core conversion complete.")
 
     for p in current_data_dir.glob("cogs/**/settings.json"):
         cog_name = p.parent.stem
@@ -236,7 +241,12 @@ async def json_to_mongov2(instance):
             curr_custom_data = custom_group_data.get(cog_name, {}).get(identifier, {})
 
             exported_data = await conf.driver.export_data(curr_custom_data)
+            conversion_log.info(f"Converting {cog_name} with identifier {identifier}...")
             await new_driver.import_data(exported_data, curr_custom_data)
+
+    conversion_log.info("Cog conversion complete.")
+
+    return storage_details
 
 
 async def mongo_to_json(current_data_dir: Path, storage_details: dict):
@@ -444,13 +454,20 @@ def convert(instance, backend):
     current_backend = get_current_backend(instance)
     target = get_target_backend(backend)
 
+    default_dirs = deepcopy(basic_config_default)
+    default_dirs["DATA_PATH"] = str(Path(instance_data[instance]["DATA_PATH"]))
+
     loop = asyncio.get_event_loop()
 
     if current_backend == BackendType.MONGOV1 and target == BackendType.MONGO:
         raise RuntimeError("Please see conversion docs for updating to the latest mongo version.")
     elif current_backend == BackendType.JSON:
         if target == BackendType.MONGO:
-            loop.run_until_complete(json_to_mongov2(instance))
+            storage_details = loop.run_until_complete(json_to_mongov2(instance))
+            default_dirs["STORAGE_TYPE"] = "MongoDBV2"
+            default_dirs["STORAGE_DETAILS"] = storage_details
+
+            save_config(instance, default_dirs)
 
 
 if __name__ == "__main__":
