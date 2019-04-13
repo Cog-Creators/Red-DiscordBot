@@ -439,7 +439,7 @@ async def remove_instance_interaction():
 @click.option("--debug", type=bool)
 @click.pass_context
 def cli(ctx, debug):
-    level = debug if debug else None
+    level = logging.DEBUG if debug else logging.INFO
     redbot.logging.init_logging(
         level=level, location=Path.cwd() / "red_setup_logs"
     )
