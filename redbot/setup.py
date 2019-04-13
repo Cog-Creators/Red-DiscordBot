@@ -236,15 +236,17 @@ async def json_to_mongov2(instance):
         with p.open(mode="r") as f:
             cog_data = json.load(f)
         for identifier, all_data in cog_data.items():
-            conf = Config.get_conf(None, identifier, cog_name=cog_name)
-            new_driver = red_mongo.Mongo(cog_name=cog_name, identifier=identifier, **storage_details)
+            conf = Config.get_conf(None, int(identifier), cog_name=cog_name)
+            new_driver = red_mongo.Mongo(
+                cog_name=cog_name,
+                identifier=conf.driver.unique_cog_identifier,
+                **storage_details
+            )
 
             curr_custom_data = custom_group_data.get(cog_name, {}).get(identifier, {})
 
             exported_data = await conf.driver.export_data(curr_custom_data)
             conversion_log.info(f"Converting {cog_name} with identifier {identifier}...")
-            if cog_name == "Lockdown":
-                conversion_log.info(f"Lockdown: {exported_data}")
             await new_driver.import_data(exported_data, curr_custom_data)
 
     conversion_log.info("Cog conversion complete.")
