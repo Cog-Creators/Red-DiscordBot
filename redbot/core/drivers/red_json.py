@@ -128,8 +128,7 @@ class JSON(BaseDriver):
 
     async def import_data(self, cog_data, custom_group_data):
         def update_write_data(identifier_data: IdentifierData, data):
-            original = self.data
-            partial = original
+            partial = self.data
             idents = identifier_data.to_tuple()
             for ident in idents[:-1]:
                 if ident not in partial:
