@@ -69,6 +69,9 @@ class JSON(BaseDriver):
 
         self._load_data()
 
+    async def has_valid_connection(self) -> bool:
+        return True
+
     @property
     def data(self):
         return _shared_datastore.get(self.cog_name)

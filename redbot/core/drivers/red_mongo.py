@@ -49,6 +49,10 @@ class Mongo(BaseDriver):
         if _conn is None:
             _initialize(**kwargs)
 
+    async def has_valid_connection(self) -> bool:
+        # Maybe fix this?
+        return True
+
     @property
     def db(self) -> motor.core.Database:
         """

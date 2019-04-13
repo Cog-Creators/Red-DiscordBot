@@ -82,7 +82,7 @@ class BaseDriver:
         self.cog_name = cog_name
         self.unique_cog_identifier = identifier
 
-    async def has_valid_connection(self):
+    async def has_valid_connection(self) -> bool:
         raise NotImplementedError
 
     async def get(self, identifier_data: IdentifierData):
@@ -135,7 +135,7 @@ class BaseDriver:
         """
         raise NotImplementedError
 
-    def __get_levels(self, category, custom_group_data):
+    def _get_levels(self, category, custom_group_data):
         if category == ConfigCategory.GLOBAL.value:
             return 0
         elif category in (
@@ -152,8 +152,8 @@ class BaseDriver:
         else:
             raise RuntimeError(f"Cannot convert due to group: {category}")
 
-    def __split_primary_key(self, category, custom_group_data, data):
-        levels = self.__get_levels(category, custom_group_data)
+    def _split_primary_key(self, category, custom_group_data, data):
+        levels = self._get_levels(category, custom_group_data)
         if levels == 0:
             return (((), data),)
 
@@ -195,7 +195,7 @@ class BaseDriver:
 
     async def import_data(self, cog_data, custom_group_data):
         for category, all_data in cog_data:
-            splitted_pkey = self.__split_primary_key(category, custom_group_data, all_data)
+            splitted_pkey = self._split_primary_key(category, custom_group_data, all_data)
             for pkey, data in splitted_pkey:
                 ident_data = IdentifierData(
                     self.unique_cog_identifier,
