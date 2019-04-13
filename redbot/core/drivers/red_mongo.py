@@ -87,10 +87,10 @@ class Mongo(BaseDriver):
         async for doc in cursor:
             pkeys = doc["_id"]["RED_primary_key"]
             del doc["_id"]
-            if len(pkeys) == 1:
+            if len(pkeys) == 0:
                 # Global data
                 ret.update(**doc)
-            elif len(pkeys) > 1:
+            elif len(pkeys) > 0:
                 # All other data
                 partial = ret
                 for key in pkeys[:-1]:
@@ -103,8 +103,6 @@ class Mongo(BaseDriver):
                     partial.update(**doc)
                 else:
                     partial[pkeys[-1]] = doc
-            else:
-                raise RuntimeError("This should not happen.")
         return ret
 
     async def get(self, identifier_data: IdentifierData):
