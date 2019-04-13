@@ -7,7 +7,7 @@ __all__ = ["get_driver", "IdentifierData", "BackendType"]
 
 class BackendType(enum.Enum):
     JSON = "JSON"
-    MONGO = "MongoV2"
+    MONGO = "MongoDBV2"
     MONGOV1 = "Mongo"
 
 
