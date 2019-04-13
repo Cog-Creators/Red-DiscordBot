@@ -93,7 +93,7 @@ class Mongo(BaseDriver):
             elif len(pkeys) > 1:
                 # All other data
                 partial = ret
-                for key in pkeys[1:-1]:
+                for key in pkeys[:-1]:
                     if key in identifier_data.primary_key:
                         continue
                     if key not in partial:
@@ -155,13 +155,15 @@ class Mongo(BaseDriver):
     def generate_primary_key_filter(self, identifier_data: IdentifierData):
         uuid = self._escape_key(identifier_data.uuid)
         primary_key = list(map(self._escape_key, self.get_primary_key(identifier_data)))
-        ret = {"_id": {"RED_uuid": uuid}}
+        ret = {"_id.RED_uuid": uuid}
         if len(identifier_data.identifiers) > 0:
-            ret["_id"]["RED_primary_key"] = primary_key
-        else:
+            ret["_id.RED_primary_key"] = primary_key
+        elif len(identifier_data.primary_key) > 0:
             for i, key in enumerate(primary_key):
-                keyname = f"RED_primary_key.{i}"
-                ret["_id"][keyname] = key
+                keyname = f"_id.RED_primary_key.{i}"
+                ret[keyname] = key
+        else:
+            ret["_id.RED_primary_key"] = {"$exists": True}
         return ret
 
     async def clear(self, identifier_data: IdentifierData):
