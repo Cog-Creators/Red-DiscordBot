@@ -145,7 +145,7 @@ class BaseDriver:
                 ConfigCategory.ROLE.value
         ):
             return 1
-        elif category == ConfigCategory.MEMBER:
+        elif category == ConfigCategory.MEMBER.value:
             return 2
         elif category in custom_group_data:
             return custom_group_data[category]
