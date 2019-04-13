@@ -75,7 +75,10 @@ class Repo(RepoJSONMixin):
     GIT_LATEST_COMMIT = "git -C {path} rev-parse {branch}"
     GIT_HARD_RESET = "git -C {path} reset --hard origin/{branch} -q"
     GIT_PULL = "git -C {path} pull --recurse-submodules -q --ff-only"
-    GIT_DIFF_FILE_STATUS = "git -C {path} diff-tree --no-commit-id --name-status -r -z --line-prefix='\t' {old_hash} {new_hash}"
+    GIT_DIFF_FILE_STATUS = (
+        "git -C {path} diff-tree --no-commit-id --name-status"
+        " -r -z --line-prefix='\t' {old_hash} {new_hash}"
+    )
     GIT_LOG = "git -C {path} log --relative-date --reverse {old_hash}.. {relative_file_path}"
     GIT_DISCOVER_REMOTE_URL = "git -C {path} config --get remote.origin.url"
     GIT_CHECKOUT = "git -C {path} checkout {rev}"
@@ -234,7 +237,7 @@ class Repo(RepoJSONMixin):
 
         return p.stdout.decode().strip()
 
-    async def _get_full_sha1(self, rev: Optional[str] = None) -> str:
+    async def get_full_sha1(self, rev: Optional[str] = None) -> str:
         """
         Gets full sha1 object name.
 
@@ -614,13 +617,13 @@ class Repo(RepoJSONMixin):
 
         """
 
-        if len(libraries) > 0:
+        if libraries:
             if not all([i in self.available_libraries for i in libraries]):
                 raise ValueError("Some given libraries are not available in this repo.")
         else:
             libraries = self.available_libraries
 
-        if len(libraries) > 0:
+        if libraries:
             installed = []
             failed = []
             for lib in libraries:
@@ -675,7 +678,7 @@ class Repo(RepoJSONMixin):
             Success of the installation
 
         """
-        if len(requirements) == 0:
+        if not requirements:
             return True
 
         # TODO: Check and see if any of these modules are already available

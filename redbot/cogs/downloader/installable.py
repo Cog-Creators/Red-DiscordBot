@@ -126,7 +126,7 @@ class Installable(RepoJSONMixin):
         # noinspection PyBroadException
         try:
             copy_func(src=str(self._location), dst=str(target_dir / self._location.stem))
-        except:
+        except:  # noqa: E722
             log.exception("Error occurred when copying path: {}".format(self._location))
             return False
         return True
