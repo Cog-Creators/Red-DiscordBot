@@ -12,6 +12,7 @@ import logging
 import appdirs
 import click
 
+import redbot.logging
 from redbot.core.cli import confirm
 from redbot.core.data_manager import (
     basic_config_default,
@@ -434,8 +435,13 @@ async def remove_instance_interaction():
 
 
 @click.group(invoke_without_command=True)
+@click.option("--debug", type=bool)
 @click.pass_context
-def cli(ctx):
+def cli(ctx, debug):
+    level = debug if debug else None
+    redbot.logging.init_logging(
+        level=level, location=Path.cwd() / "red_setup_logs"
+    )
     if ctx.invoked_subcommand is None:
         basic_setup()
 
