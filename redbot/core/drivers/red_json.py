@@ -128,16 +128,16 @@ class JSON(BaseDriver):
 
     async def import_data(self, cog_data, custom_group_data):
         def update_write_data(identifier_data: IdentifierData, data):
-            original = {}
+            original = self.data
             partial = original
             idents = identifier_data.to_tuple()
             for ident in idents[:-1]:
-                partial[ident] = {}
+                if ident not in partial:
+                    partial[ident] = {}
                 partial = partial[ident]
-            partial[idents[1]] = data
-            self.data.update(**original)
+            partial[idents[-1]] = data
 
-        for category, all_data in cog_data.items():
+        for category, all_data in cog_data:
             splitted_pkey = self._split_primary_key(category, custom_group_data, all_data)
             for pkey, data in splitted_pkey:
                 ident_data = IdentifierData(
