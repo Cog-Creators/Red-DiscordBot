@@ -233,6 +233,7 @@ async def json_to_mongov2(instance):
 
     for p in current_data_dir.glob("cogs/**/settings.json"):
         cog_name = p.parent.stem
+        print(cog_name)
         with p.open(mode="r") as f:
             cog_data = json.load(f)
         for identifier, all_data in cog_data.items():
