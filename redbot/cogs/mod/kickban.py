@@ -131,7 +131,7 @@ class KickBanMixin(MixinMeta):
                         )
                         now = datetime.utcnow()
                         if now > unban_time:  # Time to unban the user
-                            user = await self.bot.get_user_info(uid)
+                            user = await self.bot.fetch_user(uid)
                             queue_entry = (guild.id, user.id)
                             self.unban_queue.append(queue_entry)
                             try:
@@ -330,7 +330,7 @@ class KickBanMixin(MixinMeta):
             else:
                 banned.append(user_id)
 
-            user_info = await self.bot.get_user_info(user_id)
+            user_info = await self.bot.fetch_user(user_id)
 
             try:
                 await modlog.create_case(
@@ -503,7 +503,7 @@ class KickBanMixin(MixinMeta):
         click the user and select 'Copy ID'."""
         guild = ctx.guild
         author = ctx.author
-        user = await self.bot.get_user_info(user_id)
+        user = await self.bot.fetch_user(user_id)
         if not user:
             await ctx.send(_("Couldn't find a user with that ID!"))
             return

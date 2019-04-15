@@ -90,7 +90,7 @@ class Cleanup(commands.Cog):
 
         collected = []
         async for message in channel.history(
-            limit=None, before=before, after=after, reverse=False
+            limit=None, before=before, after=after, oldest_first=False
         ):
             if message.created_at < two_weeks_ago:
                 break
@@ -223,7 +223,7 @@ class Cleanup(commands.Cog):
         author = ctx.author
 
         try:
-            after = await channel.get_message(message_id)
+            after = await channel.fetch_message(message_id)
         except discord.NotFound:
             return await ctx.send(_("Message not found."))
 

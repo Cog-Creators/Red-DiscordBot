@@ -54,7 +54,7 @@ class AliasEntry:
         if bot:
             ret.has_real_data = True
             ret.creator = bot.get_user(int(data["creator"]))
-            guild = bot.get_guild(int(data["guild"]))
+            guild = bot.fetch_guild(int(data["guild"]))
             ret.guild = guild
         else:
             ret.guild = data["guild"]

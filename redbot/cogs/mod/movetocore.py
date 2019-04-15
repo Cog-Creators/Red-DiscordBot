@@ -16,10 +16,12 @@ class MoveToCore(MixinMeta):
     Mixin for things which should really not be in mod, but have not been moved out yet.
     """
 
+    @commands.Cog.listener()
     async def on_command_completion(self, ctx: commands.Context):
         await self._delete_delay(ctx)
 
     # noinspection PyUnusedLocal
+    @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, error):
         await self._delete_delay(ctx)
 

@@ -3492,6 +3492,7 @@ class Audio(commands.Cog):
         )
         return r
 
+    @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
         if after.channel != before.channel:
             try:
@@ -3499,7 +3500,7 @@ class Audio(commands.Cog):
             except (ValueError, KeyError, AttributeError):
                 pass
 
-    def __unload(self):
+    def cog_unload(self):
         if not self._cleaned_up:
             self.session.detach()
 
@@ -3514,8 +3515,9 @@ class Audio(commands.Cog):
             shutdown_lavalink_server()
             self._cleaned_up = True
 
-    __del__ = __unload
+    __del__ = cog_unload
 
+    @commands.Cog.listener()
     async def on_guild_remove(self, guild: discord.Guild):
         """
         This is to clean up players when

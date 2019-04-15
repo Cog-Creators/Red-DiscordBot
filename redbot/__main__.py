@@ -103,7 +103,7 @@ def main():
     log.debug("Data Path: %s", data_manager._base_data_path())
     log.debug("Storage Type: %s", data_manager.storage_type())
 
-    red = Red(cli_flags=cli_flags, description=description, pm_help=None)
+    red = Red(cli_flags=cli_flags, description=description, dm_help=None)
     init_global_checks(red)
     init_events(red, cli_flags)
     red.add_cog(Core(red))

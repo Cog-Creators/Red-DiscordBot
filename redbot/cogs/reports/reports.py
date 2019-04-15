@@ -289,6 +289,7 @@ class Reports(commands.Cog):
                 except discord.NotFound:
                     pass
 
+    @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         """
         oh dear....
@@ -308,6 +309,7 @@ class Reports(commands.Cog):
             )
             self.tunnel_store.pop(t[0], None)
 
+    @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         for k, v in self.tunnel_store.items():
             topic = _("Re: ticket# {1} in {0.name}").format(*k)

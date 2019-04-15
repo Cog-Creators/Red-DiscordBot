@@ -553,12 +553,12 @@ class Downloader(commands.Cog):
             return
 
         # Check if in installed cogs
-        cog_name = self.cog_name_from_instance(command.instance)
+        cog_name = self.cog_name_from_instance(command.cog)
         installed, cog_installable = await self.is_installed(cog_name)
         if installed:
             msg = self.format_findcog_info(command_name, cog_installable)
         else:
             # Assume it's in a base cog
-            msg = self.format_findcog_info(command_name, command.instance)
+            msg = self.format_findcog_info(command_name, command.cog)
 
         await ctx.send(box(msg))

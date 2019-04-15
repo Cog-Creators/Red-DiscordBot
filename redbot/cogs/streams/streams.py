@@ -551,7 +551,7 @@ class Streams(commands.Cog):
                 chn = self.bot.get_channel(raw_msg["channel"])
                 if chn is not None:
                     try:
-                        msg = await chn.get_message(raw_msg["message"])
+                        msg = await chn.fetch_message(raw_msg["message"])
                     except discord.HTTPException:
                         pass
                     else:
@@ -570,8 +570,8 @@ class Streams(commands.Cog):
 
         await self.db.streams.set(raw_streams)
 
-    def __unload(self):
+    def cog_unload(self):
         if self.task:
             self.task.cancel()
 
-    __del__ = __unload
+    __del__ = cog_unload
