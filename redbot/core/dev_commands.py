@@ -127,7 +127,7 @@ class Dev(commands.Cog):
         self._last_result = result
 
         api_keys = await ctx.bot.db.api_tokens()
-        result = self.sanitize_output(ctx, api_keys, str(result))))
+        result = self.sanitize_output(ctx, api_keys, str(result))
 
         await ctx.send_interactive(self.get_pages(result), box_lang="py")
 
