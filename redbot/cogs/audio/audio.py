@@ -2788,7 +2788,7 @@ class Audio(commands.Cog):
             if not await self._can_instaskip(ctx, ctx.author):
                 if skiptotrack is not None:
                     return await self._embed_msg(
-                        ctx, _("Can't skip to a specific track in vote mode without DJ.")
+                        ctx, _("Can't skip to a specific track in vote mode without the DJ role.")
                     )
                 if ctx.author.id in self.skip_votes[ctx.message.guild]:
                     self.skip_votes[ctx.message.guild].remove(ctx.author.id)
@@ -2912,15 +2912,15 @@ class Audio(commands.Cog):
         if skiptotrack is not None:
             if skiptotrack < 1:
                 return await self._embed_msg(
-                    ctx, _("Track number must be equal to or greater than 1!")
+                    ctx, _("Track number must be equal to or greater than 1.")
                 )
             elif skiptotrack > len(player.queue):
                 return await self._embed_msg(
-                    ctx, _("There are only {} songs currently queued!".format(len(player.queue)))
+                    ctx, _("There are only {} songs currently queued.".format(len(player.queue)))
                 )
             elif player.shuffle:
                 return await self._embed_msg(
-                    ctx, _("Can't skip to a track while shuffle is enabled!")
+                    ctx, _("Can't skip to a track while shuffle is enabled.")
                 )
             nexttrack = player.queue[min(skiptotrack - 1, len(player.queue) - 1)]
             embed = discord.Embed(
