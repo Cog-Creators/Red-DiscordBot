@@ -1716,6 +1716,8 @@ class Audio(commands.Cog):
             if not self._player_check(ctx):
                 return await self._embed_msg(ctx, _("Nothing playing."))
         player = lavalink.get_player(ctx.guild.id)
+        if not player.current:
+            return await self._embed_msg(ctx, _("There's nothing in the queue."))
         tracklist = []
         np_song = self._track_creator(player, "np")
         tracklist.append(np_song)
