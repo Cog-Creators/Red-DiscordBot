@@ -83,6 +83,9 @@ class Repo(RepoJSONMixin):
     GIT_DISCOVER_REMOTE_URL = "git -C {path} config --get remote.origin.url"
     GIT_CHECKOUT = "git -C {path} checkout {rev}"
     GIT_GET_FULL_SHA1 = "git -C {path} rev-parse --verify {rev}"
+    GIT_IS_ANCESTOR = (
+        "git -C {path} merge-base --is-ancestor {maybe_ancestor_hash} {descendant_hash}"
+    )
 
     PIP_INSTALL = "{python} -m pip install -U -t {target_dir} {reqs}"
 
@@ -135,6 +138,52 @@ class Repo(RepoJSONMixin):
     def _existing_git_repo(self) -> (bool, Path):
         git_path = self.folder_path / ".git"
         return git_path.exists(), git_path
+
+    async def is_ancestor(self, maybe_ancestor_hash: str, descendant_hash: str) -> bool:
+        """
+        Check if the first is an ancestor of the second.
+
+        Parameters
+        ----------
+        maybe_ancestor_hash : `str`
+            Hash to check if it is ancestor of `descendant_hash`
+        descendant_hash : `str`
+            Descendant hash
+
+        Returns
+        -------
+        bool
+            `True` if `maybe_ancestor_hash` is ancestor of `descendant_hash`
+            or `False` otherwise
+
+        """
+        p = await self._run(
+            ProcessFormatter().format(
+                self.GIT_IS_ANCESTOR,
+                path=self.folder_path,
+                maybe_ancestor_hash=maybe_ancestor_hash,
+                descendant_hash=descendant_hash,
+            )
+        )
+
+        if p.returncode in (0, 1):
+            return not bool(p.returncode)
+        raise errors.GitException(
+            f"Git failed to determine if commit {maybe_ancestor_hash}"
+            f" is ancestor of {descendant_hash} for repo at path: {self.folder_path}"
+        )
+
+    async def is_on_branch(self) -> bool:
+        """
+        Check if repo is currently on branch.
+
+        Returns
+        -------
+        bool
+            `True` if repo is on branch or `False` otherwise
+
+        """
+        return await self.latest_commit() == self.commit
 
     async def _get_file_update_statuses(
         self, old_hash: str, new_hash: Optional[str] = None
@@ -189,7 +238,7 @@ class Repo(RepoJSONMixin):
         Parameters
         ----------
         old_hash : `str`
-            Pre-update hash
+            Pre-update hash, ancestor of `new_hash`
         new_hash : `str`, optional
             Post-update hash, defaults to repo's branch if not given
 
@@ -203,12 +252,12 @@ class Repo(RepoJSONMixin):
             new_hash = self.branch
         statuses = await self._get_file_update_statuses(old_hash, new_hash)
 
+        go_back_to_rev = self.commit
         await self.checkout(old_hash)
         old_modules = self.available_modules
         await self.checkout(new_hash)
         modules = [module for module in self.available_modules if module in old_modules]
-        if new_hash != self.branch:
-            await self.checkout(self.branch)
+        await self.checkout(go_back_to_rev)
 
         return tuple(m for m in modules if any(file.startswith(m.name + "/") for file in statuses))
 

@@ -231,21 +231,24 @@ class Downloader(commands.Cog):
         hashes: Dict[Tuple[Repo, str], Set[InstalledModule]] = defaultdict(set)
         for module in modules:
             repo = repos[module.repo_name]
-            if repo.commit != module.commit:
+            if repo.commit != module.commit and await repo.is_ancestor(module.commit, repo.commit):
                 hashes[(repo, module.commit)].add(module)
 
         update_commits = []
         for (repo, old_hash), modules_to_check in hashes.items():
-            modified = await repo.get_modified_modules(old_hash)
+            modified = await repo.get_modified_modules(old_hash, repo.commit)
             for module in modules_to_check:
-                if module not in modified:
+                try:
+                    index = modified.index(module)
+                except ValueError:
                     module.commit = repo.commit
                     update_commits.append(module)
-                    continue
-                if module.type == InstallableType.COG:
-                    cogs_to_update.add(module)
-                elif module.type == InstallableType.SHARED_LIBRARY:
-                    libraries_to_update.add(module)
+                else:
+                    modified_module = modified[index]
+                    if modified_module.type == InstallableType.COG:
+                        cogs_to_update.add(modified_module)
+                    elif modified_module.type == InstallableType.SHARED_LIBRARY:
+                        libraries_to_update.add(modified_module)
 
         await self._save_to_installed(update_commits)
 
@@ -490,14 +493,14 @@ class Downloader(commands.Cog):
     @cog.command(name="install", usage="<repo_name> <cogs>")
     async def _cog_install(self, ctx, repo: Repo, *cog_names: str):
         """Install a cog from the given repo."""
-        await self._cog_installrev(ctx, repo, None, *cog_names)
+        await self._cog_installrev(ctx, repo, None, cog_names)
 
     @cog.command(name="installversion", usage="<repo_name> <revision> <cogs>")
     async def _cog_installversion(self, ctx, repo: Repo, rev: str, *cog_names: str):
         """Install a cog from the specified revision of given repo."""
-        await self._cog_installrev(ctx, repo, rev, *cog_names)
+        await self._cog_installrev(ctx, repo, rev, cog_names)
 
-    async def _cog_installrev(self, ctx, repo: Repo, rev: Optional[str], *cog_names: str):
+    async def _cog_installrev(self, ctx, repo: Repo, rev: Optional[str], cog_names: List[str]):
         commit = None
         async with ctx.typing():
             if rev is not None:
@@ -645,8 +648,46 @@ class Downloader(commands.Cog):
     @cog.command(name="update")
     async def _cog_update(self, ctx, cogs: commands.Greedy[InstalledCog] = None):
         """Update all cogs, or ones of your choosing."""
+        await self._cog_update_logic(ctx, cogs=cogs)
+
+    @cog.command(name="updateallfromrepos")
+    async def _cog_updateallfromrepos(self, ctx, repos: commands.Greedy[Repo]):
+        """Update all cogs from repos of your choosing."""
+        if not repos:
+            return await ctx.send_help()
+        await self._cog_update_logic(ctx, repos=repos)
+
+    @cog.command(name="updatetoversion")
+    async def _cog_updatetoversion(
+        self, ctx, repo: Repo, rev: str, cogs: commands.Greedy[InstalledCog] = None
+    ):
+        """Update all cogs, or ones of your choosing from chosen revision of one repo."""
+        await self._cog_update_logic(ctx, repo=repo, rev=rev, cogs=cogs)
+
+    async def _cog_update_logic(
+        self,
+        ctx,
+        *,
+        repo: Optional[Repo] = None,
+        repos: Optional[List[Repo]] = None,
+        rev: Optional[str] = None,
+        cogs: Optional[List[InstalledCog]] = None,
+    ):
         async with ctx.typing():
-            cogs_to_check = await self._get_cogs_to_check(cogs)
+            if repo is not None:
+                await repo.update()
+                try:
+                    commit = await repo.get_full_sha1(rev)
+                except errors.UnknownRevision:
+                    return await ctx.send(
+                        _("Error: there is no revision `{rev}` in repo `{repo.name}`").format(
+                            rev=rev, repo=repo
+                        )
+                    )
+                await repo.checkout(commit)
+                cogs_to_check = await self._get_cogs_to_check(repos=[repo], cogs=cogs)
+            else:
+                cogs_to_check = await self._get_cogs_to_check(repos=repos, cogs=cogs)
 
             pinned_cogs = {cog for cog in cogs_to_check if cog.pinned}
             cogs_to_check -= pinned_cogs
@@ -655,45 +696,26 @@ class Downloader(commands.Cog):
             updates_available = cogs_to_update or libs_to_update
             message = ""
             if updates_available:
-                failed_reqs = await self._install_requirements(cogs_to_update)
-                if failed_reqs:
-                    return await ctx.send(
-                        _("Failed to install requirements: ")
-                        + humanize_list(tuple(map(inline, failed_reqs)))
-                    )
-                installed_cogs, failed_cogs = await self._install_cogs(cogs_to_update)
-                installed_libs, failed_libs = await self._reinstall_libraries(libs_to_update)
-                await self._save_to_installed(installed_cogs + installed_libs)
-                message += _("Cog update completed successfully.")
-
-                updated_cognames = set()
-                if installed_cogs:
-                    updated_cognames = {c.name for c in installed_cogs}
-                    message += _("\nUpdated: ") + humanize_list(
-                        tuple(map(inline, updated_cognames))
-                    )
-                if failed_cogs:
-                    cognames = [c.name for c in failed_cogs]
-                    message += _("\nFailed to update cogs: ") + humanize_list(
-                        tuple(map(inline, cognames))
-                    )
-                if not cogs_to_update:
-                    message += _("\nNo cogs were updated, but some shared libraries were.")
-                if installed_libs:
-                    message += _(
-                        "\nSome shared libraries were updated, you should restart the bot "
-                        "to bring the changes into effect"
-                    )
-                if failed_libs:
-                    libnames = [l.name for l in failed_libs]
-                    message += _("Failed to install shared libraries: ") + humanize_list(
-                        tuple(map(inline, libnames))
-                    )
+                updated_cognames, message = await self._update_cogs_and_libs(
+                    cogs_to_update, libs_to_update
+                )
             else:
-                if cogs:
-                    message += _("Provided cogs are already up to date.")
+                if repos:
+                    message += _("Cogs from provided repos are already up to date.")
+                elif repo:
+                    if cogs:
+                        message += _("Provided cogs are already up to date with this revision.")
+                    else:
+                        message += _(
+                            "Cogs from provided repo are already up to date with this revision."
+                        )
                 else:
-                    message += _("All installed cogs are already up to date.")
+                    if cogs:
+                        message += _("Provided cogs are already up to date.")
+                    else:
+                        message += _("All installed cogs are already up to date.")
+            if repo is not None:
+                await repo.checkout(repo.branch)
             if pinned_cogs:
                 cognames = [c.name for c in pinned_cogs]
                 message += _(
@@ -702,45 +724,7 @@ class Downloader(commands.Cog):
         await ctx.send(message)
         if not updates_available:
             return
-
-        updated_cognames &= ctx.bot.extensions.keys()  # only reload loaded cogs
-        if not updated_cognames:
-            return await ctx.send(
-                _("None of the updated cogs were previously loaded. Update complete.")
-            )
-
-        if not ctx.assume_yes:
-            message = _("Would you like to reload the updated cogs?")
-            can_react = ctx.channel.permissions_for(ctx.me).add_reactions
-            if not can_react:
-                message += " (y/n)"
-            query: discord.Message = await ctx.send(message)
-            if can_react:
-                # noinspection PyAsyncCall
-                start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS, ctx.bot.loop)
-                pred = ReactionPredicate.yes_or_no(query, ctx.author)
-                event = "reaction_add"
-            else:
-                pred = MessagePredicate.yes_or_no(ctx)
-                event = "message"
-            try:
-                await ctx.bot.wait_for(event, check=pred, timeout=30)
-            except asyncio.TimeoutError:
-                await query.delete()
-                return
-
-            if not pred.result:
-                if can_react:
-                    await query.delete()
-                else:
-                    await ctx.send(_("OK then."))
-                return
-            else:
-                if can_react:
-                    with contextlib.suppress(discord.Forbidden):
-                        await query.clear_reactions()
-
-        await ctx.invoke(ctx.bot.get_cog("Core").reload, *updated_cognames)
+        await self._ask_for_cog_reload(ctx, updated_cognames)
 
     @cog.command(name="list", usage="<repo_name>")
     async def _cog_list(self, ctx, repo: Repo):
@@ -890,24 +874,115 @@ class Downloader(commands.Cog):
 
         return (tuple(cogs), message)
 
-    async def _get_cogs_to_check(self, cogs: Optional[Iterable] = None) -> Set[InstalledModule]:
+    async def _get_cogs_to_check(
+        self,
+        *,
+        repos: Optional[Iterable[Repo]] = None,
+        cogs: Optional[Iterable[Installable]] = None,
+    ) -> Set[InstalledModule]:
         installed_cogs = await self.installed_cogs()
-        if not cogs:
+
+        if not (cogs or repos):
             await self._repo_manager.update_all_repos()
             cogs_to_check = self._repo_manager.get_all_cogs()
         else:
-            cogs = set(cogs)
-            repos = {cog.repo_name for cog in cogs}
-            available_cogs = []
-            for repo_name in repos:
-                with contextlib.suppress(KeyError):  # Thrown if the repo no longer exists
-                    repo, __ = await self._repo_manager.update_repo(repo_name)
-                    available_cogs += repo.available_cogs
-            cogs_to_check = cogs.intersection(available_cogs)
+            if not repos:
+                repos = set()
+                for cog in cogs:
+                    repo = self._repo_manager.get_repo(cog.repo_name)
+                    if repo is not None:
+                        repos.add(repo)
+
+            cogs_to_check = []
+            for repo in repos:
+                if await repo.is_on_branch():
+                    commit = None
+                else:
+                    commit = repo.commit
+                await repo.update()
+                cogs_to_check += repo.available_cogs
+                await repo.checkout(commit)
+            if cogs:
+                cogs = set(cogs)
+                cogs_to_check = cogs.intersection(cogs_to_check)
 
         cogs_to_check = {cog for cog in installed_cogs if cog in cogs_to_check}
 
         return cogs_to_check
+
+    async def _update_cogs_and_libs(
+        self, cogs_to_update: Iterable[Installable], libs_to_update: Iterable[Installable]
+    ) -> Tuple[Set[str], str]:
+        failed_reqs = await self._install_requirements(cogs_to_update)
+        if failed_reqs:
+            return _("Failed to install requirements: ") + humanize_list(
+                tuple(map(inline, failed_reqs))
+            )
+        installed_cogs, failed_cogs = await self._install_cogs(cogs_to_update)
+        installed_libs, failed_libs = await self._reinstall_libraries(libs_to_update)
+        await self._save_to_installed(installed_cogs + installed_libs)
+        message = _("Cog update completed successfully.")
+
+        updated_cognames = set()
+        if installed_cogs:
+            updated_cognames = {c.name for c in installed_cogs}
+            message += _("\nUpdated: ") + humanize_list(tuple(map(inline, updated_cognames)))
+        if failed_cogs:
+            cognames = [c.name for c in failed_cogs]
+            message += _("\nFailed to update cogs: ") + humanize_list(tuple(map(inline, cognames)))
+        if not cogs_to_update:
+            message += _("\nNo cogs were updated, but some shared libraries were.")
+        if installed_libs:
+            message += _(
+                "\nSome shared libraries were updated, you should restart the bot "
+                "to bring the changes into effect"
+            )
+        if failed_libs:
+            libnames = [l.name for l in failed_libs]
+            message += _("Failed to install shared libraries: ") + humanize_list(
+                tuple(map(inline, libnames))
+            )
+        return (updated_cognames, message)
+
+    async def _ask_for_cog_reload(self, ctx, updated_cognames: Set[str]):
+        updated_cognames &= ctx.bot.extensions.keys()  # only reload loaded cogs
+        if not updated_cognames:
+            return await ctx.send(
+                _("None of the updated cogs were previously loaded. Update complete.")
+            )
+
+        if not ctx.assume_yes:
+            message = _("Would you like to reload the updated cogs?")
+            can_react = ctx.channel.permissions_for(ctx.me).add_reactions
+            if not can_react:
+                message += " (y/n)"
+            query: discord.Message = await ctx.send(message)
+            if can_react:
+                # noinspection PyAsyncCall
+                start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS, ctx.bot.loop)
+                pred = ReactionPredicate.yes_or_no(query, ctx.author)
+                event = "reaction_add"
+            else:
+                pred = MessagePredicate.yes_or_no(ctx)
+                event = "message"
+            try:
+                await ctx.bot.wait_for(event, check=pred, timeout=30)
+            except asyncio.TimeoutError:
+                await query.delete()
+                return
+
+            if not pred.result:
+                if can_react:
+                    await query.delete()
+                else:
+                    await ctx.send(_("OK then."))
+                return
+            else:
+                if can_react:
+                    with contextlib.suppress(discord.Forbidden):
+                        await query.clear_reactions()
+
+        await ctx.invoke(ctx.bot.get_cog("Core").reload, *updated_cognames)
 
     def format_findcog_info(
         self, command_name: str, cog_installable: Union[Installable, object] = None
