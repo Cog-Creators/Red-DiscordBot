@@ -318,7 +318,11 @@ class Downloader(commands.Cog):
 
         await repo.install_libraries(target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH)
 
-        await ctx.send(_("Cog `{cog_name}` successfully installed.").format(cog_name=cog_name))
+        await ctx.send(
+            _(
+                "Cog `{cog_name}` successfully installed. You can load it with `{prefix}load {cog_name}`"
+            ).format(cog_name=cog_name, prefix=ctx.prefix)
+        )
         if cog.install_msg is not None:
             await ctx.send(cog.install_msg.replace("[p]", ctx.prefix))
 
