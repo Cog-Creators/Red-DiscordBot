@@ -139,10 +139,10 @@ class BaseDriver:
         if category == ConfigCategory.GLOBAL.value:
             return 0
         elif category in (
-                ConfigCategory.USER.value,
-                ConfigCategory.GUILD.value,
-                ConfigCategory.CHANNEL.value,
-                ConfigCategory.ROLE.value
+            ConfigCategory.USER.value,
+            ConfigCategory.GUILD.value,
+            ConfigCategory.CHANNEL.value,
+            ConfigCategory.ROLE.value,
         ):
             return 1
         elif category == ConfigCategory.MEMBER.value:
@@ -184,7 +184,7 @@ class BaseDriver:
                 (),
                 (),
                 custom_group_data.get(c, {}),
-                is_custom=c in custom_group_data
+                is_custom=c in custom_group_data,
             )
             try:
                 data = await self.get(ident_data)

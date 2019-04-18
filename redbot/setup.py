@@ -221,9 +221,7 @@ async def json_to_mongov2(instance):
         for identifier, all_data in cog_data.items():
             conf = Config.get_conf(None, int(identifier), cog_name=cog_name)
             new_driver = red_mongo.Mongo(
-                cog_name=cog_name,
-                identifier=conf.driver.unique_cog_identifier,
-                **storage_details
+                cog_name=cog_name, identifier=conf.driver.unique_cog_identifier, **storage_details
             )
 
             curr_custom_data = custom_group_data.get(cog_name, {}).get(identifier, {})
@@ -257,10 +255,12 @@ async def mongov2_to_json(instance):
     conversion_log.info("Core conversion complete.")
 
     collection_names = await core_conf.driver.db.list_collection_names()
-    splitted_names = list(filter(
-        lambda elem: elem[1] != '' and elem[0] != "Core",
-        [n.split('.') for n in collection_names]
-    ))
+    splitted_names = list(
+        filter(
+            lambda elem: elem[1] != "" and elem[0] != "Core",
+            [n.split(".") for n in collection_names],
+        )
+    )
 
     ident_map = {}  # Cogname: idents list
     for cog_name, category in splitted_names:
@@ -311,13 +311,7 @@ async def mongo_to_json(instance):
             cog_id = document.pop("_id")
             driver = JSON(collection_name, cog_id, data_path_override=c_data_path)
             for category, value in document.items():
-                ident_data = IdentifierData(
-                    str(cog_id),
-                    category,
-                    (),
-                    (),
-                    {},
-                )
+                ident_data = IdentifierData(str(cog_id), category, (), (), {})
                 await driver.set(ident_data, value=value)
     return {}
 
@@ -461,9 +455,7 @@ async def remove_instance_interaction():
 @click.pass_context
 def cli(ctx, debug):
     level = logging.DEBUG if debug else logging.INFO
-    redbot.logging.init_logging(
-        level=level, location=Path.cwd() / "red_setup_logs"
-    )
+    redbot.logging.init_logging(level=level, location=Path.cwd() / "red_setup_logs")
     if ctx.invoked_subcommand is None:
         basic_setup()
 
@@ -489,7 +481,9 @@ def convert(instance, backend):
 
     if current_backend == BackendType.MONGOV1:
         if target == BackendType.MONGO:
-            raise RuntimeError("Please see conversion docs for updating to the latest mongo version.")
+            raise RuntimeError(
+                "Please see conversion docs for updating to the latest mongo version."
+            )
         elif target == BackendType.JSON:
             storage_details = loop.run_until_complete(mongo_to_json(instance))
             default_dirs["STORAGE_TYPE"] = BackendType.JSON.value
