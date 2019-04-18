@@ -21,6 +21,7 @@ from redbot.core.data_manager import (
     basic_config,
     cog_data_path,
     core_data_path,
+    storage_details,
 )
 from redbot.core.json_io import JsonIO
 from redbot.core.utils import safe_delete
@@ -287,17 +288,19 @@ async def mongov2_to_json(instance):
     return {}
 
 
-async def mongo_to_json(current_data_dir: Path, storage_details: dict):
+async def mongo_to_json(instance):
+    load_basic_configuration(instance)
+
     from redbot.core.drivers.red_mongo import Mongo
 
-    m = Mongo("Core", "0", **storage_details)
+    m = Mongo("Core", "0", **storage_details())
     db = m.db
     collection_names = await db.list_collection_names()
     for collection_name in collection_names:
         if collection_name == "Core":
-            c_data_path = current_data_dir / "core"
+            c_data_path = core_data_path()
         else:
-            c_data_path = current_data_dir / "cogs" / collection_name
+            c_data_path = cog_data_path(raw_name=collection_name)
         c_data_path.mkdir(parents=True, exist_ok=True)
         # Every cog name has its own collection
         collection = db[collection_name]
@@ -363,7 +366,7 @@ async def create_backup(instance):
     if confirm("Would you like to make a backup of the data for this instance? (y/n)"):
         load_basic_configuration(instance)
         if instance_vals["STORAGE_TYPE"] == "MongoDB":
-            await mongo_to_json(instance_vals["DATA_PATH"], instance_vals["STORAGE_DETAILS"])
+            await mongo_to_json(instance)
         print("Backing up the instance's data...")
         backup_filename = "redv3-{}-{}.tar.gz".format(
             instance, dt.utcnow().strftime("%Y-%m-%d %H-%M-%S")
@@ -476,14 +479,19 @@ def convert(instance, backend):
 
     loop = asyncio.get_event_loop()
 
-    if current_backend == BackendType.MONGOV1 and target == BackendType.MONGO:
-        raise RuntimeError("Please see conversion docs for updating to the latest mongo version.")
+    if current_backend == BackendType.MONGOV1:
+        if target == BackendType.MONGO:
+            raise RuntimeError("Please see conversion docs for updating to the latest mongo version.")
+        elif target == BackendType.JSON:
+            storage_details = loop.run_until_complete(mongo_to_json(instance))
+            default_dirs["STORAGE_TYPE"] = BackendType.JSON.value
+            default_dirs["STORAGE_DETAILS"] = storage_details
+            save_config(instance, default_dirs)
     elif current_backend == BackendType.JSON:
         if target == BackendType.MONGO:
             storage_details = loop.run_until_complete(json_to_mongov2(instance))
             default_dirs["STORAGE_TYPE"] = BackendType.MONGO.value
             default_dirs["STORAGE_DETAILS"] = storage_details
-
             save_config(instance, default_dirs)
     elif current_backend == BackendType.MONGO:
         if target == BackendType.JSON:
