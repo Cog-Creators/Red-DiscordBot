@@ -8,7 +8,7 @@ __all__ = ["get_driver", "IdentifierData", "BackendType"]
 class BackendType(enum.Enum):
     JSON = "JSON"
     MONGO = "MongoDBV2"
-    MONGOV1 = "Mongo"
+    MONGOV1 = "MongoDB"
 
 
 def get_driver(type, *args, **kwargs):

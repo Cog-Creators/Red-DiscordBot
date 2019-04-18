@@ -26,7 +26,7 @@ from redbot.core.data_manager import (
 from redbot.core.json_io import JsonIO
 from redbot.core.utils import safe_delete
 from redbot.core import Config
-from redbot.core.drivers import BackendType
+from redbot.core.drivers import BackendType, IdentifierData
 from redbot.core.drivers.red_json import JSON
 
 conversion_log = logging.getLogger("red.converter")
@@ -310,8 +310,15 @@ async def mongo_to_json(instance):
             # be two separate documents in the same collection
             cog_id = document.pop("_id")
             driver = JSON(collection_name, cog_id, data_path_override=c_data_path)
-            for key, value in document.items():
-                await driver.set(key, value=value)
+            for category, value in document.items():
+                ident_data = IdentifierData(
+                    str(cog_id),
+                    category,
+                    (),
+                    (),
+                    {},
+                )
+                await driver.set(ident_data, value=value)
 
 
 async def edit_instance():
