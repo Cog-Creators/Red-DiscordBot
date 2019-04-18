@@ -746,7 +746,6 @@ async def register_casetypes(new_types: List[dict]) -> List[CaseType]:
 
     Raises
     ------
-    RuntimeError
     KeyError
     ValueError
     AttributeError
@@ -761,13 +760,9 @@ async def register_casetypes(new_types: List[dict]) -> List[CaseType]:
         try:
             ct = await register_casetype(**new_type)
         except RuntimeError:
-            raise
-        except ValueError:
-            raise
-        except AttributeError:
-            raise
-        except TypeError:
-            raise
+            # We pass here because RuntimeError signifies the case was
+            # already registered.
+            pass
         else:
             type_list.append(ct)
     else:

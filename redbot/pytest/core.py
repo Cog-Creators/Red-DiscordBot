@@ -1,11 +1,13 @@
 import random
 from collections import namedtuple
 from pathlib import Path
+import weakref
 
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
 from redbot.core import Config
 from redbot.core.bot import Red
+from redbot.core import config as config_module
 
 from redbot.core.drivers import red_json
 
@@ -65,11 +67,11 @@ def json_driver(tmpdir_factory):
 
 @pytest.fixture()
 def config(json_driver):
+    config_module._config_cache = weakref.WeakValueDictionary()
     conf = Config(
         cog_name="PyTest", unique_identifier=json_driver.unique_cog_identifier, driver=json_driver
     )
     yield conf
-    conf._defaults = {}
 
 
 @pytest.fixture()
@@ -77,6 +79,7 @@ def config_fr(json_driver):
     """
     Mocked config object with force_register enabled.
     """
+    config_module._config_cache = weakref.WeakValueDictionary()
     conf = Config(
         cog_name="PyTest",
         unique_identifier=json_driver.unique_cog_identifier,
@@ -84,7 +87,6 @@ def config_fr(json_driver):
         force_registration=True,
     )
     yield conf
-    conf._defaults = {}
 
 
 # region Dpy Mocks

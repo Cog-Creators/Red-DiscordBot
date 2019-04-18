@@ -4,11 +4,21 @@ __all__ = ["BaseDriver", "IdentifierData"]
 
 
 class IdentifierData:
-    def __init__(self, uuid: str, category: str, primary_key: Tuple[str], identifiers: Tuple[str]):
+    def __init__(
+        self,
+        uuid: str,
+        category: str,
+        primary_key: Tuple[str],
+        identifiers: Tuple[str],
+        custom_group_data: dict,
+        is_custom: bool = False,
+    ):
         self._uuid = uuid
         self._category = category
         self._primary_key = primary_key
         self._identifiers = identifiers
+        self.custom_group_data = custom_group_data
+        self._is_custom = is_custom
 
     @property
     def uuid(self):
@@ -26,6 +36,10 @@ class IdentifierData:
     def identifiers(self):
         return self._identifiers
 
+    @property
+    def is_custom(self):
+        return self._is_custom
+
     def __repr__(self):
         return (
             f"<IdentifierData uuid={self.uuid} category={self.category} primary_key={self.primary_key}"
@@ -37,7 +51,12 @@ class IdentifierData:
             raise ValueError("Identifiers must be strings.")
 
         return IdentifierData(
-            self.uuid, self.category, self.primary_key, self.identifiers + identifier
+            self.uuid,
+            self.category,
+            self.primary_key,
+            self.identifiers + identifier,
+            self.custom_group_data,
+            is_custom=self.is_custom,
         )
 
     def to_tuple(self):
