@@ -319,6 +319,7 @@ async def mongo_to_json(instance):
                     {},
                 )
                 await driver.set(ident_data, value=value)
+    return {}
 
 
 async def edit_instance():
