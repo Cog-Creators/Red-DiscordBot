@@ -2262,11 +2262,13 @@ class Audio(commands.Cog):
     @commands.guild_only()
     async def _queue_clear(self, ctx):
         """Clears the queue."""
-        player = lavalink.get_player(ctx.guild.id)
+        try:
+            player = lavalink.get_player(ctx.guild.id)
+        except KeyError:
+            return await self._embed_msg(ctx, _("There's nothing in the queue."))
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         if not self._player_check(ctx) or not player.queue:
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
-        player = lavalink.get_player(ctx.guild.id)
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
                 ctx, ctx.author
@@ -2279,7 +2281,10 @@ class Audio(commands.Cog):
     @commands.guild_only()
     async def _queue_clean(self, ctx):
         """Removes songs from the queue if the requester is not in the voice channel."""
-        player = lavalink.get_player(ctx.guild.id)
+        try:
+            player = lavalink.get_player(ctx.guild.id)
+        except KeyError:
+            return await self._embed_msg(ctx, _("There's nothing in the queue."))
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         if not self._player_check(ctx) or not player.queue:
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
@@ -3095,7 +3100,10 @@ class Audio(commands.Cog):
         self._restart_connect()
 
     async def _channel_check(self, ctx):
-        player = lavalink.get_player(ctx.guild.id)
+        try:
+            player = lavalink.get_player(ctx.guild.id)
+        except KeyError:
+            return False
         try:
             in_channel = sum(
                 not m.bot for m in ctx.guild.get_member(self.bot.user.id).voice.channel.members
@@ -3301,6 +3309,8 @@ class Audio(commands.Cog):
         try:
             lavalink.get_player(ctx.guild.id)
             return True
+        except IndexError:
+            return False
         except KeyError:
             return False
 
