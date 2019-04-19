@@ -223,6 +223,16 @@ class Installable(RepoJSONMixin):
 
 
 class InstalledModule(Installable):
+    """Base class for installed modules,
+    this is basically instance of installed `Installable`
+    used by Downloader.
+
+    Attributes
+    ----------
+    pinned : `bool`
+        Whether or not this cog is pinned.
+    """
+
     def __init__(
         self, location: Path, repo: Optional["Repo"] = None, commit: str = "", pinned: bool = False
     ):
