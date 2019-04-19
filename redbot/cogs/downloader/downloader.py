@@ -200,14 +200,13 @@ class Downloader(commands.Cog):
             2-tuple of cogs and libraries which can be updated.
 
         """
-        repo_names = {module.repo_name for module in cogs}
-        repos = {r: self._repo_manager.get_repo(r) for r in repo_names}
+        repos = {cog.repo for cog in cogs}
         installed_libraries = await self.installed_libraries()
 
         modules = set()
         cogs_to_update = set()
         libraries_to_update = set()
-        for repo in repos.values():
+        for repo in repos:
             for lib in repo.available_libraries:
                 try:
                     index = installed_libraries.index(lib)
@@ -216,13 +215,12 @@ class Downloader(commands.Cog):
                 else:
                     modules.add(installed_libraries[index])
         for cog in cogs:
-            repo = repos[cog.repo_name]
-            if repo is None:
+            if cog.repo is None:
                 continue
             if cog.commit:
                 modules.add(cog)
                 continue
-            available_cogs = repo.available_cogs
+            available_cogs = cog.repo.available_cogs
             with contextlib.suppress(ValueError):
                 index = available_cogs.index(cog)
                 cogs_to_update.add(available_cogs[index])
@@ -230,9 +228,10 @@ class Downloader(commands.Cog):
         # Reduces diff requests to a single dict with no repeats
         hashes: Dict[Tuple[Repo, str], Set[InstalledModule]] = defaultdict(set)
         for module in modules:
-            repo = repos[module.repo_name]
-            if repo.commit != module.commit and await repo.is_ancestor(module.commit, repo.commit):
-                hashes[(repo, module.commit)].add(module)
+            if module.repo.commit != module.commit and await module.repo.is_ancestor(
+                module.commit, module.repo.commit
+            ):
+                hashes[(module.repo, module.commit)].add(module)
 
         update_commits = []
         for (repo, old_hash), modules_to_check in hashes.items():
@@ -268,13 +267,24 @@ class Downloader(commands.Cog):
         tuple
             2-tuple of installed and failed cogs.
         """
+        repos = {}
+        for cog in cogs:
+            cogs_by_commit = repos.get(cog.repo_name, None)
+            if cogs_by_commit is None:
+                cogs_by_commit = repos[cog.repo_name] = (cog.repo, defaultdict(list))
+            cogs_by_commit[1][cog.commit].append(cog)
         installed = []
         failed = []
-        for cog in cogs:
-            if await cog.copy_to(await self.cog_install_path()):
-                installed.append(InstalledModule.from_installable(cog))
-            else:
-                failed.append(cog)
+        for repo, cogs_by_commit in repos.values():
+            exit_to_commit = repo.commit
+            for commit, cogs_to_install in cogs_by_commit.items():
+                await repo.checkout(commit)
+                for cog in cogs_to_install:
+                    if await cog.copy_to(await self.cog_install_path()):
+                        installed.append(InstalledModule.from_installable(cog))
+                    else:
+                        failed.append(cog)
+            await repo.checkout(exit_to_commit)
 
         # noinspection PyTypeChecker
         return (tuple(installed), tuple(failed))
@@ -293,20 +303,25 @@ class Downloader(commands.Cog):
         tuple
             2-tuple of installed and failed libraries.
         """
-        repo_names = {lib.repo_name for lib in libraries}
-        repos = {r: (self._repo_manager.get_repo(r), set()) for r in repo_names}
-
+        repos = {}
         for lib in libraries:
-            repos[lib.repo_name][1].add(lib)
+            libs_by_commit = repos.get(lib.repo_name, None)
+            if libs_by_commit is None:
+                libs_by_commit = repos[lib.repo_name] = (lib.repo, defaultdict(set))
+            libs_by_commit[1][lib.commit].add(lib)
 
         all_installed = []
         all_failed = []
-        for repo, libs in repos.values():
-            installed, failed = await repo.install_libraries(
-                target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH, libraries=libs
-            )
-            all_installed += installed
-            all_failed += failed
+        for repo, libs_by_commit in repos.values():
+            exit_to_commit = repo.commit
+            for commit, libs in libs_by_commit.items():
+                await repo.checkout(commit)
+                installed, failed = await repo.install_libraries(
+                    target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH, libraries=libs
+                )
+                all_installed += installed
+                all_failed += failed
+            await repo.checkout(exit_to_commit)
 
         # noinspection PyTypeChecker
         return (tuple(all_installed), tuple(all_failed))
@@ -327,8 +342,7 @@ class Downloader(commands.Cog):
 
         # Reduces requirements to a single list with no repeats
         requirements = {r for c in cogs for r in c.requirements}
-        repo_names = self._repo_manager.get_all_repo_names()
-        repos = [(self._repo_manager.get_repo(rn), []) for rn in repo_names]
+        repos = [(repo, []) for repo in self._repo_manager.repos]
 
         # This for loop distributes the requirements across all repos
         # which will allow us to concurrently install requirements
@@ -438,11 +452,10 @@ class Downloader(commands.Cog):
     @repo.command(name="list")
     async def _repo_list(self, ctx):
         """List all installed repos."""
-        repos = self._repo_manager.get_all_repo_names()
-        repos = sorted(repos, key=str.lower)
+        repos = self._repo_manager.repos
+        repos = sorted(repos, key=lambda r: str.lower(r.name))
         joined = _("Installed Repos:\n\n")
-        for repo_name in repos:
-            repo = self._repo_manager.get_repo(repo_name)
+        for repo in repos:
             joined += "+ {}: {}\n".format(repo.name, repo.short or "")
 
         for page in pagify(joined, ["\n"], shorten_by=16):
@@ -514,7 +527,7 @@ class Downloader(commands.Cog):
                     )
             cog_names = set(cog_names)
 
-            async with repo.checkout(commit):
+            async with repo.checkout(commit, repo.branch):
                 cogs, message = await self._filter_incorrect_cogs(repo, cog_names)
                 if not cogs:
                     return await ctx.send(message)
@@ -671,7 +684,7 @@ class Downloader(commands.Cog):
         repo: Optional[Repo] = None,
         repos: Optional[List[Repo]] = None,
         rev: Optional[str] = None,
-        cogs: Optional[List[InstalledCog]] = None,
+        cogs: Optional[List[InstalledModule]] = None,
     ):
         async with ctx.typing():
             if repo is not None:
@@ -878,35 +891,26 @@ class Downloader(commands.Cog):
         self,
         *,
         repos: Optional[Iterable[Repo]] = None,
-        cogs: Optional[Iterable[Installable]] = None,
+        cogs: Optional[Iterable[InstalledModule]] = None,
     ) -> Set[InstalledModule]:
-        installed_cogs = await self.installed_cogs()
-
         if not (cogs or repos):
             await self._repo_manager.update_all_repos()
-            cogs_to_check = self._repo_manager.get_all_cogs()
+            cogs_to_check = {cog for cog in await self.installed_cogs() if cog.repo is not None}
         else:
             if not repos:
-                repos = set()
-                for cog in cogs:
-                    repo = self._repo_manager.get_repo(cog.repo_name)
-                    if repo is not None:
-                        repos.add(repo)
+                repos = {cog.repo for cog in cogs if cog.repo is not None}
 
-            cogs_to_check = []
             for repo in repos:
                 if await repo.is_on_branch():
-                    commit = None
+                    exit_to_commit = None
                 else:
-                    commit = repo.commit
+                    exit_to_commit = repo.commit
                 await repo.update()
-                cogs_to_check += repo.available_cogs
-                await repo.checkout(commit)
+                await repo.checkout(exit_to_commit)
             if cogs:
-                cogs = set(cogs)
-                cogs_to_check = cogs.intersection(cogs_to_check)
-
-        cogs_to_check = {cog for cog in installed_cogs if cog in cogs_to_check}
+                cogs_to_check = {cog for cog in cogs if cog.repo in repos}
+            else:
+                cogs_to_check = {cog for cog in await self.installed_cogs() if cog.repo in repos}
 
         return cogs_to_check
 
@@ -1004,17 +1008,20 @@ class Downloader(commands.Cog):
         """
         if isinstance(cog_installable, Installable):
             made_by = ", ".join(cog_installable.author) or _("Missing from info.json")
-            repo = self._repo_manager.get_repo(cog_installable.repo_name)
-            repo_url = _("Missing from installed repos") if repo is None else repo.url
+            repo_url = (
+                _("Missing from installed repos")
+                if cog_installable.repo is None
+                else cog_installable.repo.url
+            )
             cog_name = cog_installable.name
         else:
             made_by = "26 & co."
             repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
             cog_name = cog_installable.__class__.__name__
 
-        msg = _("Command: {command}\nMade by: {author}\nRepo: {repo}\nCog name: {cog}")
+        msg = _("Command: {command}\nMade by: {author}\nRepo: {repo_url}\nCog name: {cog}")
 
-        return msg.format(command=command_name, author=made_by, repo=repo_url, cog=cog_name)
+        return msg.format(command=command_name, author=made_by, repo_url=repo_url, cog=cog_name)
 
     def cog_name_from_instance(self, instance: object) -> str:
         """Determines the cog name that Downloader knows from the cog instance.

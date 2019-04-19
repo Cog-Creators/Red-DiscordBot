@@ -11,7 +11,7 @@ from .json_mixins import RepoJSONMixin
 from redbot.core import __version__, version_info as red_version_info, VersionInfo
 
 if TYPE_CHECKING:
-    from .repo_manager import RepoManager
+    from .repo_manager import RepoManager, Repo
 
 
 class InstallableType(Enum):
@@ -60,13 +60,16 @@ class Installable(RepoJSONMixin):
 
     """
 
-    def __init__(self, location: Path, commit: str = ""):
+    def __init__(self, location: Path, repo: Optional["Repo"] = None, commit: str = ""):
         """Base installable initializer.
 
         Parameters
         ----------
         location : pathlib.Path
             Location (file or folder) to the installable.
+        repo : Repo, optional
+            Repo object of the Installable,
+            if repo is missing, this will be `None`
         commit : str
             Installable's current commit
 
@@ -75,6 +78,7 @@ class Installable(RepoJSONMixin):
 
         self._location = location
 
+        self.repo = repo
         self.repo_name = self._location.parent.stem
         self.commit = commit
 
@@ -219,8 +223,10 @@ class Installable(RepoJSONMixin):
 
 
 class InstalledModule(Installable):
-    def __init__(self, location: Path, commit: str = "", pinned: bool = False):
-        super().__init__(location, commit)
+    def __init__(
+        self, location: Path, repo: Optional["Repo"] = None, commit: str = "", pinned: bool = False
+    ):
+        super().__init__(location=location, repo=repo, commit=commit)
         if self.type == InstallableType.COG:
             self.pinned = pinned
 
@@ -249,10 +255,10 @@ class InstalledModule(Installable):
 
         location = repo_folder / cog_name
 
-        return cls(location=location, commit=commit, pinned=pinned)
+        return cls(location=location, repo=repo, commit=commit, pinned=pinned)
 
     @classmethod
-    def from_installable(cls, cog: Installable, *, commit: str = "", pinned: bool = False):
-        if not commit:
-            commit = cog.commit
-        return cls(location=cog._location, commit=commit, pinned=pinned)
+    def from_installable(cls, module: Installable, *, pinned: bool = False):
+        return cls(
+            location=module._location, repo=module.repo, commit=module.commit, pinned=pinned
+        )

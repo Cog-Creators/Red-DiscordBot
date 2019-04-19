@@ -21,6 +21,7 @@ from typing import (
     TypeVar,
 )
 
+import discord
 from redbot.core import data_manager, commands, Config
 from redbot.core.utils import safe_delete
 from redbot.core.i18n import Translator
@@ -36,11 +37,11 @@ _ = Translator("RepoManager", __file__)
 
 
 class _RepoCheckoutCtxManager(Awaitable[_T], AsyncContextManager[_T]):
-    def __init__(self, repo, rev, exit_to_rev):
+    def __init__(self, repo, rev, exit_to_rev=None):
         self.repo = repo
         self.rev = rev
         if exit_to_rev is None:
-            self.exit_to_rev = self.repo.branch
+            self.exit_to_rev = self.repo.commit
         else:
             self.exit_to_rev = exit_to_rev
         self.coro = repo._checkout(self.rev)
@@ -77,17 +78,24 @@ class Repo(RepoJSONMixin):
     GIT_PULL = "git -C {path} pull --recurse-submodules -q --ff-only"
     GIT_DIFF_FILE_STATUS = (
         "git -C {path} diff-tree --no-commit-id --name-status"
-        " -r -z --line-prefix='\t' {old_hash} {new_hash}"
+        " -r -z --line-prefix='\t' {old_rev} {new_rev}"
     )
-    GIT_LOG = "git -C {path} log --relative-date --reverse {old_hash}.. {relative_file_path}"
+    GIT_LOG = "git -C {path} log --relative-date --reverse {old_rev}.. {relative_file_path}"
     GIT_DISCOVER_REMOTE_URL = "git -C {path} config --get remote.origin.url"
     GIT_CHECKOUT = "git -C {path} checkout {rev}"
     GIT_GET_FULL_SHA1 = "git -C {path} rev-parse --verify {rev}"
     GIT_IS_ANCESTOR = (
-        "git -C {path} merge-base --is-ancestor {maybe_ancestor_hash} {descendant_hash}"
+        "git -C {path} merge-base --is-ancestor {maybe_ancestor_rev} {descendant_rev}"
+    )
+    GIT_CHECK_IF_MODULE_EXISTS = "git -C {path} cat-file -e {rev}:{module_name}/__init__.py"
+    GIT_GET_LAST_MODULE_OCCURENCE_COMMIT = (
+        "git -C {path} log --diff-filter=D --pretty=format:%H -n 1 {descendant_rev}"
+        " -- {module_name}/__init__.py"
     )
 
     PIP_INSTALL = "{python} -m pip install -U -t {target_dir} {reqs}"
+
+    MODULE_FOLDER_REGEX = re.compile(r"(\w+)\/")
 
     def __init__(
         self,
@@ -139,38 +147,38 @@ class Repo(RepoJSONMixin):
         git_path = self.folder_path / ".git"
         return git_path.exists(), git_path
 
-    async def is_ancestor(self, maybe_ancestor_hash: str, descendant_hash: str) -> bool:
+    async def is_ancestor(self, maybe_ancestor_rev: str, descendant_rev: str) -> bool:
         """
         Check if the first is an ancestor of the second.
 
         Parameters
         ----------
-        maybe_ancestor_hash : `str`
-            Hash to check if it is ancestor of `descendant_hash`
-        descendant_hash : `str`
-            Descendant hash
+        maybe_ancestor_rev : `str`
+            Revision to check if it is ancestor of :code:`descendant_rev`
+        descendant_rev : `str`
+            Descendant revision
 
         Returns
         -------
         bool
-            `True` if `maybe_ancestor_hash` is ancestor of `descendant_hash`
-            or `False` otherwise
+            `True` if :code:`maybe_ancestor_rev` is
+            ancestor of :code:`descendant_rev` or `False` otherwise
 
         """
         p = await self._run(
             ProcessFormatter().format(
                 self.GIT_IS_ANCESTOR,
                 path=self.folder_path,
-                maybe_ancestor_hash=maybe_ancestor_hash,
-                descendant_hash=descendant_hash,
+                maybe_ancestor_rev=maybe_ancestor_rev,
+                descendant_rev=descendant_rev,
             )
         )
 
         if p.returncode in (0, 1):
             return not bool(p.returncode)
         raise errors.GitException(
-            f"Git failed to determine if commit {maybe_ancestor_hash}"
-            f" is ancestor of {descendant_hash} for repo at path: {self.folder_path}"
+            f"Git failed to determine if commit {maybe_ancestor_rev}"
+            f" is ancestor of {descendant_rev} for repo at path: {self.folder_path}"
         )
 
     async def is_on_branch(self) -> bool:
@@ -186,17 +194,17 @@ class Repo(RepoJSONMixin):
         return await self.latest_commit() == self.commit
 
     async def _get_file_update_statuses(
-        self, old_hash: str, new_hash: Optional[str] = None
+        self, old_rev: str, new_rev: Optional[str] = None
     ) -> MutableMapping[str, str]:
         """
-        Gets the file update status letters for each changed file between the two hashes.
+        Gets the file update status letters for each changed file between the two revisions.
 
         Parameters
         ----------
-        old_hash : `str`
-            Pre-update hash
-        new_hash : `str`, optional
-            Post-update hash, defaults to repo's branch if not given
+        old_rev : `str`
+            Pre-update revision
+        new_rev : `str`, optional
+            Post-update revision, defaults to repo's branch if not given
 
         Returns
         -------
@@ -204,14 +212,11 @@ class Repo(RepoJSONMixin):
             Mapping of filename -> status_letter
 
         """
-        if new_hash is None:
-            new_hash = self.branch
+        if new_rev is None:
+            new_rev = self.branch
         p = await self._run(
             ProcessFormatter().format(
-                self.GIT_DIFF_FILE_STATUS,
-                path=self.folder_path,
-                old_hash=old_hash,
-                new_hash=new_hash,
+                self.GIT_DIFF_FILE_STATUS, path=self.folder_path, old_rev=old_rev, new_rev=new_rev
             )
         )
 
@@ -229,42 +234,144 @@ class Repo(RepoJSONMixin):
 
         return ret
 
-    async def get_modified_modules(
-        self, old_hash: str, new_hash: Optional[str] = None
-    ) -> Tuple[Installable]:
+    async def get_last_module_occurence(
+        self, module: Installable, descendant_rev: Optional[str] = None
+    ) -> Tuple[Optional[str], Optional[Installable]]:
         """
-        Gets modified modules between the two hashes.
+        Gets module's `Installable` from last commit in which it still occurs.
 
         Parameters
         ----------
-        old_hash : `str`
-            Pre-update hash, ancestor of `new_hash`
-        new_hash : `str`, optional
-            Post-update hash, defaults to repo's branch if not given
+        module : `Installable`
+            Module to get.
+        descendant_rev : `str`, optional
+            Revision from which the module's commit must be
+            reachable (i.e. descendant commit),
+            defaults to repo's branch if not given.
+
+        Returns
+        -------
+        `Installable`
+            Module from last commit in which it still occurs
+            or `None` if it couldn't be found.
+
+        """
+        if descendant_rev is None:
+            descendant_rev = self.branch
+        p = await self._run(
+            ProcessFormatter().format(
+                self.GIT_CHECK_IF_MODULE_EXISTS,
+                path=self.folder_path,
+                rev=descendant_rev,
+                module_name=module.name,
+            )
+        )
+        if p.returncode == 0:
+            async with self.checkout(descendant_rev):
+                module = discord.utils.get(self.available_modules, name=module.name)
+                return module
+
+        p = await self._run(
+            ProcessFormatter().format(
+                self.GIT_GET_LAST_MODULE_OCCURENCE_COMMIT,
+                path=self.folder_path,
+                descendant_rev=descendant_rev,
+                module_name=module.name,
+            )
+        )
+
+        if p.returncode != 0:
+            raise errors.GitException(
+                "Git log failed for repo at path: {}".format(self.folder_path)
+            )
+
+        commit = p.stdout.decode().strip()
+        if commit:
+            async with self.checkout(f"{commit}~"):
+                module = discord.utils.get(self.available_modules, name=module.name)
+                return module
+        return None
+
+    async def _is_module_modified(self, module: Installable, other_hash: str):
+        """
+        Checks if given module was different in :code:`other_hash`.
+
+        Parameters
+        ----------
+        module : `Installable`
+            Module to check.
+        other_hash : `str`
+            Hash to compare module to.
+
+        Returns
+        -------
+        bool
+            `True` if module was different, `False` otherwise.
+
+        """
+        if module.commit == other_hash:
+            return False
+
+        for status in await self._get_file_update_statuses(other_hash, module.commit):
+            match = self.MODULE_FOLDER_REGEX.match(status)
+            if match is not None and match.group(1) == module.name:
+                return True
+
+        return False
+
+    async def get_modified_modules(
+        self, old_rev: str, new_rev: Optional[str] = None
+    ) -> Tuple[Installable]:
+        """
+        Gets modified modules between the two revisions.
+        For every module that doesn't exist in :code:`new_rev`,
+        it will try to find last commit, where it still existed
+
+        Parameters
+        ----------
+        old_rev : `str`
+            Pre-update revision, ancestor of :code:`new_rev`
+        new_rev : `str`, optional
+            Post-update revision, defaults to repo's branch if not given
 
         Returns
         -------
         `tuple` of `Installable`
-            List of changed modules between the two hashes.
+            List of changed modules between the two revisions.
 
         """
-        if new_hash is None:
-            new_hash = self.branch
-        statuses = await self._get_file_update_statuses(old_hash, new_hash)
+        if new_rev is None:
+            new_rev = self.branch
+        modified_modules = set()
+        for status in await self._get_file_update_statuses(old_rev, new_rev):
+            match = self.MODULE_FOLDER_REGEX.match(status)
+            if match is not None:
+                modified_modules.add(match.group(1))
 
-        go_back_to_rev = self.commit
-        await self.checkout(old_hash)
-        old_modules = self.available_modules
-        await self.checkout(new_hash)
-        modules = [module for module in self.available_modules if module in old_modules]
-        await self.checkout(go_back_to_rev)
+        async with self.checkout(old_rev):
+            old_hash = self.commit
+            old_modules = self.available_modules
+            await self.checkout(new_rev)
+            modules = []
+            new_modules = self.available_modules
+            for module in old_modules:
+                if module.name not in modified_modules:
+                    continue
+                try:
+                    index = new_modules.index(module)
+                except ValueError:
+                    module = await self.get_last_module_occurence(module, new_rev)
+                    if await self._is_module_modified(module, old_hash):
+                        modules.append(module)
+                else:
+                    modules.append(new_modules[index])
 
-        return tuple(m for m in modules if any(file.startswith(m.name + "/") for file in statuses))
+        return tuple(modules)
 
-    async def _get_commit_notes(self, old_commit_hash: str, relative_file_path: str) -> str:
+    async def _get_commit_notes(self, old_rev: str, relative_file_path: str) -> str:
         """
         Gets the commit notes from git log.
-        :param old_commit_hash: Point in time to start getting messages
+        :param old_rev: Point in time to start getting messages
         :param relative_file_path: Path relative to the repo folder of the file
             to get messages for.
         :return: Git commit note log
@@ -273,7 +380,7 @@ class Repo(RepoJSONMixin):
             ProcessFormatter().format(
                 self.GIT_LOG,
                 path=self.folder_path,
-                old_hash=old_commit_hash,
+                old_rev=old_rev,
                 relative_file_path=relative_file_path,
             )
         )
@@ -286,14 +393,14 @@ class Repo(RepoJSONMixin):
 
         return p.stdout.decode().strip()
 
-    async def get_full_sha1(self, rev: Optional[str] = None) -> str:
+    async def get_full_sha1(self, rev: str) -> str:
         """
         Gets full sha1 object name.
 
         Parameters
         ----------
-        rev : str, optional
-            Revision to checkout to. When not provided, defaults to current branch
+        rev : str
+            Revision to search for full sha1 object name.
 
         Raises
         ------
@@ -306,9 +413,6 @@ class Repo(RepoJSONMixin):
             Full sha1 object name for provided revision.
 
         """
-        if rev is None:
-            rev = self.branch
-
         p = await self._run(
             ProcessFormatter().format(self.GIT_GET_FULL_SHA1, path=self.folder_path, rev=rev)
         )
@@ -338,7 +442,7 @@ class Repo(RepoJSONMixin):
         for file_finder, name, is_pkg in pkgutil.iter_modules(path=[str(self.folder_path)]):
             if is_pkg:
                 curr_modules.append(
-                    Installable(location=self.folder_path / name, commit=self.commit)
+                    Installable(location=self.folder_path / name, repo=self, commit=self.commit)
                 )
         self.available_modules = curr_modules
 
@@ -382,7 +486,7 @@ class Repo(RepoJSONMixin):
 
         The return value of this method can also be used as an asynchronous
         context manager, i.e. with :code:`async with` syntax. This will
-        checkout repository to current branch on exit of the context manager.
+        checkout repository to :code:`exit_to_rev` on exit of the context manager.
 
         Parameters
         ----------
@@ -390,7 +494,7 @@ class Repo(RepoJSONMixin):
             Revision to checkout to, when not provided, method won't do anything
         exit_to_rev : str, optional
             Revision to checkout to after exiting context manager,
-            when not provided, defaults to current branch
+            when not provided, defaults to current commit
             This will be ignored, when used with :code:`await` or when :code:`rev` is `None`.
 
         Raises
@@ -519,7 +623,7 @@ class Repo(RepoJSONMixin):
         )
 
         if p.returncode != 0:
-            raise errors.CurrentHashError("Unable to determine old commit hash.")
+            raise errors.CurrentHashError("Unable to determine latest commit hash.")
 
         return p.stdout.decode().strip()
 
