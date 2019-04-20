@@ -297,7 +297,10 @@ async def mongo_to_json(instance):
     db = m.db
     collection_names = await db.list_collection_names()
     for collection_name in collection_names:
-        if collection_name == "Core":
+        if "." in collection_name:
+            # Fix for one of Zeph's problems
+            continue
+        elif collection_name == "Core":
             c_data_path = core_data_path()
         else:
             c_data_path = cog_data_path(raw_name=collection_name)
@@ -309,6 +312,11 @@ async def mongo_to_json(instance):
             # This means if two cogs have the same name but different identifiers, they will
             # be two separate documents in the same collection
             cog_id = document.pop("_id")
+            if not isinstance(cog_id, str):
+                # Another garbage data check
+                continue
+            elif not str(cog_id).isdigit():
+                continue
             driver = JSON(collection_name, cog_id, data_path_override=c_data_path)
             for category, value in document.items():
                 ident_data = IdentifierData(str(cog_id), category, (), (), {})
