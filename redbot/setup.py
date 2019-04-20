@@ -493,28 +493,29 @@ def convert(instance, backend):
 
     loop = asyncio.get_event_loop()
 
+    new_storage_details = None
+
     if current_backend == BackendType.MONGOV1:
         if target == BackendType.MONGO:
             raise RuntimeError(
                 "Please see conversion docs for updating to the latest mongo version."
             )
         elif target == BackendType.JSON:
-            storage_details = loop.run_until_complete(mongo_to_json(instance))
-            default_dirs["STORAGE_TYPE"] = BackendType.JSON.value
-            default_dirs["STORAGE_DETAILS"] = storage_details
-            save_config(instance, default_dirs)
+            new_storage_details = loop.run_until_complete(mongo_to_json(instance))
     elif current_backend == BackendType.JSON:
         if target == BackendType.MONGO:
-            storage_details = loop.run_until_complete(json_to_mongov2(instance))
-            default_dirs["STORAGE_TYPE"] = BackendType.MONGO.value
-            default_dirs["STORAGE_DETAILS"] = storage_details
-            save_config(instance, default_dirs)
+            new_storage_details = loop.run_until_complete(json_to_mongov2(instance))
     elif current_backend == BackendType.MONGO:
         if target == BackendType.JSON:
-            storage_details = loop.run_until_complete(mongov2_to_json(instance))
-            default_dirs["STORAGE_TYPE"] = BackendType.JSON.value
-            default_dirs["STORAGE_DETAILS"] = storage_details
-            save_config(instance, default_dirs)
+            new_storage_details = loop.run_until_complete(mongov2_to_json(instance))
+
+    if new_storage_details is not None:
+        default_dirs["STORAGE_TYPE"] = target.value
+        default_dirs["STORAGE_DETAILS"] = new_storage_details
+        save_config(instance, default_dirs)
+        conversion_log.info(f"Conversion to {target} complete.")
+    else:
+        conversion_log.info(f"Cannot convert {current_backend} to {target} at this time.")
 
 
 if __name__ == "__main__":
