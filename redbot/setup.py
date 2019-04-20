@@ -219,7 +219,10 @@ async def json_to_mongov2(instance):
         with p.open(mode="r") as f:
             cog_data = json.load(f)
         for identifier, all_data in cog_data.items():
-            conf = Config.get_conf(None, int(identifier), cog_name=cog_name)
+            try:
+                conf = Config.get_conf(None, int(identifier), cog_name=cog_name)
+            except ValueError:
+                continue
             new_driver = red_mongo.Mongo(
                 cog_name=cog_name, identifier=conf.driver.unique_cog_identifier, **storage_details
             )
@@ -273,7 +276,10 @@ async def mongov2_to_json(instance):
     for cog_name, idents in ident_map.items():
         for identifier in idents:
             curr_custom_data = custom_group_data.get(cog_name, {}).get(identifier, {})
-            conf = Config.get_conf(None, int(identifier), cog_name=cog_name)
+            try:
+                conf = Config.get_conf(None, int(identifier), cog_name=cog_name)
+            except ValueError:
+                continue
             exported_data = await conf.driver.export_data(curr_custom_data)
 
             new_path = cog_data_path(raw_name=cog_name)
