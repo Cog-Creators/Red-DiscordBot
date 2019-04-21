@@ -769,6 +769,11 @@ class Repo(RepoJSONMixin):
         `InstalledModule`
             Cog instance.
 
+        Raises
+        ------
+        .CopyingError
+            When cog couldn't be copied.
+
         """
         if cog not in self.available_cogs:
             raise errors.DownloaderException("That cog does not exist in this repo")
@@ -1055,7 +1060,7 @@ class RepoManager:
         except KeyError:
             pass
 
-    async def update_repo(self, repo_name: str) -> MutableMapping[Repo, Tuple[str, str]]:
+    async def update_repo(self, repo_name: str) -> Tuple[Repo, Tuple[str, str]]:
         repo = self._repos[repo_name]
         old, new = await repo.update()
         return (repo, (old, new))

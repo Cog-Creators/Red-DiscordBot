@@ -340,7 +340,7 @@ class Downloader(commands.Cog):
         """
 
         # Reduces requirements to a single list with no repeats
-        requirements = {r for c in cogs for r in c.requirements}
+        requirements = {repo for cog in cogs for repo in cog.requirements}
         repos = [(repo, []) for repo in self._repo_manager.repos]
 
         # This for loop distributes the requirements across all repos
@@ -547,7 +547,7 @@ class Downloader(commands.Cog):
                     cog.pinned = True
             await self._save_to_installed(installed_cogs + installed_libs)
             if failed_libs:
-                libnames = [inline(l.name) for l in failed_libs]
+                libnames = [inline(lib.name) for lib in failed_libs]
                 message = (
                     _("\nFailed to install shared libraries for `{repo.name}` repo: ").format(
                         repo=repo
@@ -556,10 +556,10 @@ class Downloader(commands.Cog):
                     + message
                 )
             if failed_cogs:
-                cognames = [inline(c.name) for c in failed_cogs]
+                cognames = [inline(cog.name) for cog in failed_cogs]
                 message = _("\nFailed to install cogs: ") + humanize_list(cognames) + message
             if installed_cogs:
-                cognames = [inline(c.name) for c in installed_cogs]
+                cognames = [inline(cog.name) for cog in installed_cogs]
                 message = (
                     _("Successfully installed cogs: ")
                     + humanize_list(cognames)
@@ -678,12 +678,12 @@ class Downloader(commands.Cog):
             cogs_to_update, libs_to_update = await self._available_updates(cogs_to_check)
             message = ""
             if cogs_to_update:
-                cognames = [c.name for c in cogs_to_update]
+                cognames = [cog.name for cog in cogs_to_update]
                 message += _("These cogs can be updated: ") + humanize_list(
                     tuple(map(inline, cognames))
                 )
             if libs_to_update:
-                libnames = [c.name for c in libs_to_update]
+                libnames = [cog.name for cog in libs_to_update]
                 message += _("\nThese shared libraries can be updated: ") + humanize_list(
                     tuple(map(inline, libnames))
                 )
@@ -704,7 +704,7 @@ class Downloader(commands.Cog):
             return await ctx.send_help()
         await self._cog_update_logic(ctx, repos=repos)
 
-    @cog.command(name="updatetoversion")
+    @cog.command(name="updatetoversion", usage="<repo_name> <revision> [cogs]")
     async def _cog_updatetoversion(
         self, ctx, repo: Repo, rev: str, cogs: commands.Greedy[InstalledCog] = None
     ):
@@ -764,14 +764,13 @@ class Downloader(commands.Cog):
             if repo is not None:
                 await repo.checkout(repo.branch)
             if pinned_cogs:
-                cognames = [c.name for c in pinned_cogs]
+                cognames = [cog.name for cog in pinned_cogs]
                 message += _(
                     "\nThese cogs are pinned and therefore weren't checked: "
                 ) + humanize_list(tuple(map(inline, cognames)))
         await ctx.send(message)
-        if not updates_available:
-            return
-        await self._ask_for_cog_reload(ctx, updated_cognames)
+        if updates_available:
+            await self._ask_for_cog_reload(ctx, updated_cognames)
 
     @cog.command(name="list", usage="<repo_name>")
     async def _cog_list(self, ctx, repo: Repo):
@@ -789,9 +788,9 @@ class Downloader(commands.Cog):
         cogs = repo.available_cogs
         cogs = _("Available Cogs:\n") + "\n".join(
             [
-                "+ {}: {}".format(c.name, c.short or "")
-                for c in cogs
-                if not (c.hidden or c in installed)
+                "+ {}: {}".format(cog.name, cog.short or "")
+                for cog in cogs
+                if not (cog.hidden or cog in installed)
             ]
         )
         cogs = cogs + "\n\n" + installed_str
@@ -963,10 +962,10 @@ class Downloader(commands.Cog):
 
         updated_cognames = set()
         if installed_cogs:
-            updated_cognames = {c.name for c in installed_cogs}
+            updated_cognames = {cog.name for cog in installed_cogs}
             message += _("\nUpdated: ") + humanize_list(tuple(map(inline, updated_cognames)))
         if failed_cogs:
-            cognames = [c.name for c in failed_cogs]
+            cognames = [cog.name for cog in failed_cogs]
             message += _("\nFailed to update cogs: ") + humanize_list(tuple(map(inline, cognames)))
         if not cogs_to_update:
             message += _("\nNo cogs were updated, but some shared libraries were.")
@@ -976,7 +975,7 @@ class Downloader(commands.Cog):
                 "to bring the changes into effect"
             )
         if failed_libs:
-            libnames = [l.name for l in failed_libs]
+            libnames = [lib.name for lib in failed_libs]
             message += _("Failed to install shared libraries: ") + humanize_list(
                 tuple(map(inline, libnames))
             )
