@@ -621,25 +621,49 @@ class Downloader(commands.Cog):
                 )
         await ctx.send(message)
 
-    @cog.command(name="pin", usage="<cog_name>")
-    async def _cog_pin(self, ctx, cog: InstalledCog):
-        """Pin a cog - this will lock cog on its current version."""
-        if cog.pinned:
-            return await ctx.send(
-                _("Cog `{cog_name}` is already pinned.").format(cog_name=cog.name)
-            )
-        cog.pinned = True
-        await self._save_to_installed([cog])
-        await ctx.send(_("Cog `{cog_name}` has been pinned.").format(cog_name=cog.name))
+    @cog.command(name="pin", usage="<cogs>")
+    async def _cog_pin(self, ctx, cogs: commands.Greedy[InstalledCog]):
+        """Pin cogs - this will lock cogs on their current version."""
+        if not cogs:
+            return await ctx.send_help()
+        already_pinned = []
+        pinned = []
+        for cog in set(cogs):
+            if cog.pinned:
+                already_pinned.append(inline(cog.name))
+                continue
+            cog.pinned = True
+            pinned.append(cog)
+        message = ""
+        if pinned:
+            await self._save_to_installed(pinned)
+            cognames = [inline(cog.name) for cog in pinned]
+            message += _("Pinned cogs: ") + humanize_list(cognames)
+        if already_pinned:
+            message += _("\nThese cogs were already pinned: ") + humanize_list(already_pinned)
+        await ctx.send(message)
 
-    @cog.command(name="unpin", usage="<cog_name>")
-    async def _cog_unpin(self, ctx, cog: InstalledCog):
-        """Unpin a cog - this will remove update lock from cog."""
-        if not cog.pinned:
-            return await ctx.send(_("Cog `{cog_name}` isn't pinned.").format(cog_name=cog.name))
-        cog.pinned = False
-        await self._save_to_installed([cog])
-        await ctx.send(_("Cog `{cog_name}` has been unpinned.").format(cog_name=cog.name))
+    @cog.command(name="unpin", usage="<cogs>")
+    async def _cog_unpin(self, ctx, cogs: commands.Greedy[InstalledCog]):
+        """Unpin cogs - this will remove update lock from cogs."""
+        if not cogs:
+            return await ctx.send_help()
+        not_pinned = []
+        unpinned = []
+        for cog in set(cogs):
+            if not cog.pinned:
+                not_pinned.append(inline(cog.name))
+                continue
+            cog.pinned = False
+            unpinned.append(cog)
+        message = ""
+        if unpinned:
+            await self._save_to_installed(unpinned)
+            cognames = [inline(cog.name) for cog in unpinned]
+            message += _("Unpinned cogs: ") + humanize_list(cognames)
+        if not_pinned:
+            message += _("\nThese cogs weren't pinned: ") + humanize_list(not_pinned)
+        await ctx.send(message)
 
     @cog.command(name="checkforupdates")
     async def _cog_checkforupdates(self, ctx):
