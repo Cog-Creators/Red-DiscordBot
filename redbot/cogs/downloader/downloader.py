@@ -526,7 +526,7 @@ class Downloader(commands.Cog):
                     )
             cog_names = set(cog_names)
 
-            async with repo.checkout(commit, repo.branch):
+            async with repo.checkout(commit, exit_to_rev=repo.branch):
                 cogs, message = await self._filter_incorrect_cogs(repo, cog_names)
                 if not cogs:
                     return await ctx.send(message)

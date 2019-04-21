@@ -37,14 +37,15 @@ _ = Translator("RepoManager", __file__)
 
 
 class _RepoCheckoutCtxManager(Awaitable[_T], AsyncContextManager[_T]):
-    def __init__(self, repo, rev, exit_to_rev=None):
+    def __init__(self, repo, rev, exit_to_rev=None, force_checkout=False):
         self.repo = repo
         self.rev = rev
         if exit_to_rev is None:
             self.exit_to_rev = self.repo.commit
         else:
             self.exit_to_rev = exit_to_rev
-        self.coro = repo._checkout(self.rev)
+        self.force_checkout = force_checkout
+        self.coro = repo._checkout(self.rev, force_checkout=self.force_checkout)
 
     def __await__(self):
         return self.coro.__await__()
@@ -54,7 +55,7 @@ class _RepoCheckoutCtxManager(Awaitable[_T], AsyncContextManager[_T]):
 
     async def __aexit__(self, exc_type, exc, tb):
         if self.rev is not None:
-            await self.repo._checkout(self.exit_to_rev)
+            await self.repo._checkout(self.exit_to_rev, force_checkout=self.force_checkout)
 
 
 class ProcessFormatter(Formatter):
@@ -458,8 +459,10 @@ class Repo(RepoJSONMixin):
                 self._executor, functools.partial(sp_run, *args, stdout=PIPE, **kwargs)
             )
 
-    async def _checkout(self, rev: Optional[str] = None):
+    async def _checkout(self, rev: Optional[str] = None, force_checkout: bool = False):
         if rev is None:
+            return
+        if not force_checkout and self.commit == rev:
             return
         exists, __ = self._existing_git_repo()
         if not exists:
@@ -480,7 +483,13 @@ class Repo(RepoJSONMixin):
         self._update_available_modules()
         self._read_info_file()
 
-    def checkout(self, rev: Optional[str] = None, exit_to_rev: Optional[str] = None):
+    def checkout(
+        self,
+        rev: Optional[str] = None,
+        *,
+        exit_to_rev: Optional[str] = None,
+        force_checkout: bool = False,
+    ):
         """
         Checks out repository to provided revision.
 
@@ -496,6 +505,13 @@ class Repo(RepoJSONMixin):
             Revision to checkout to after exiting context manager,
             when not provided, defaults to current commit
             This will be ignored, when used with :code:`await` or when :code:`rev` is `None`.
+        force_checkout : bool
+            When `True` checkout will be done even
+            if :code:`self.commit` is the same as target hash
+            (applies to exiting context manager as well)
+            If provided revision isn't full sha1 hash,
+            checkout will be done no matter to this parameter.
+            Defaults to `False`.
 
         Raises
         ------
@@ -504,7 +520,7 @@ class Repo(RepoJSONMixin):
 
         """
 
-        return _RepoCheckoutCtxManager(self, rev, exit_to_rev)
+        return _RepoCheckoutCtxManager(self, rev, exit_to_rev, force_checkout)
 
     async def clone(self) -> Tuple[str]:
         """Clone a new repo.
@@ -879,7 +895,7 @@ class Repo(RepoJSONMixin):
         if branch == "":
             repo.branch = await repo.current_branch()
         else:
-            await repo.checkout(repo.branch)
+            await repo.checkout(repo.branch, force_checkout=True)
         repo._update_available_modules()
         return repo
 
