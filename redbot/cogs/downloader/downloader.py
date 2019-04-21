@@ -542,6 +542,9 @@ class Downloader(commands.Cog):
             installed_libs, failed_libs = await repo.install_libraries(
                 target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH
             )
+            if rev is not None:
+                for cog in installed_cogs:
+                    cog.pinned = True
             await self._save_to_installed(installed_cogs + installed_libs)
             if failed_libs:
                 libnames = [inline(l.name) for l in failed_libs]
@@ -560,7 +563,15 @@ class Downloader(commands.Cog):
                 message = (
                     _("Successfully installed cogs: ")
                     + humanize_list(cognames)
-                    + _("\nYou can load them using `{prefix}load <cog_names>`").format(
+                    + (
+                        _(
+                            "\nThese cogs are now pinned and won't get updated automatically."
+                            " To change this, use `{prefix}cog unpin <cog>`"
+                        ).format(prefix=ctx.prefix)
+                        if rev is not None
+                        else ""
+                    )
+                    + _("\nYou can load them using `{prefix}load <cogs>`").format(
                         prefix=ctx.prefix
                     )
                     + message
