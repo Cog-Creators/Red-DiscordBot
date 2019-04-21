@@ -25,8 +25,10 @@ class ModSettings(MixinMeta):
             delete_delay = await self.settings.guild(guild).delete_delay()
             reinvite_on_unban = await self.settings.guild(guild).reinvite_on_unban()
             msg = ""
-            msg += _("Delete repeats: {yes_or_no}\n").format(
-                yes_or_no=_("Yes") if delete_repeats else _("No")
+            msg += _("Delete repeats: {num_repeats}\n").format(
+                num_repeats=_("after {num} repeats").format(num=delete_repeats)
+                if delete_repeats != -1
+                else _("No")
             )
             msg += _("Ban mention spam: {num_mentions}\n").format(
                 num_mentions=_("{num} mentions").format(num=ban_mention_spam)
@@ -101,16 +103,37 @@ class ModSettings(MixinMeta):
 
     @modset.command()
     @commands.guild_only()
-    async def deleterepeats(self, ctx: commands.Context):
-        """Enable auto-deletion of repeated messages."""
+    async def deleterepeats(self, ctx: commands.Context, repeats: int = None):
+        """Enable auto-deletion of repeated messages.
+
+        Must be between 2 and 20.
+
+        Set to -1 to disable this feature.
+        """
         guild = ctx.guild
-        cur_setting = await self.settings.guild(guild).delete_repeats()
-        if not cur_setting:
-            await self.settings.guild(guild).delete_repeats.set(True)
-            await ctx.send(_("Messages repeated up to 3 times will be deleted."))
+        if repeats is not None:
+            self.cache.pop(guild.id, None)  # remove cache with old repeat limits
+            if repeats == -1:
+                await self.settings.guild(guild).delete_repeats.set(repeats)
+                await ctx.send(_("Repeated messages will be ignored."))
+            else:
+                repeats = min(max(repeats, 2), 20)  # Enforces the repeat limits
+                await self.settings.guild(guild).delete_repeats.set(repeats)
+                await ctx.send(
+                    _("Messages repeated up to {num} times will be deleted.").format(num=repeats)
+                )
         else:
-            await self.settings.guild(guild).delete_repeats.set(False)
-            await ctx.send(_("Repeated messages will be ignored."))
+            repeats = await self.settings.guild(guild).delete_repeats()
+            if repeats != -1:
+                await ctx.send(
+                    _(
+                        "Bot will delete repeated messages after"
+                        " {num} repeats. Set this value to -1 to"
+                        " ignore repeated messages"
+                    ).format(num=repeats)
+                )
+            else:
+                await ctx.send(_("Repeated messages will be ignored."))
 
     @modset.command()
     @commands.guild_only()

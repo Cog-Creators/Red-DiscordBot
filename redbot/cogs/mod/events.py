@@ -1,4 +1,5 @@
 from datetime import datetime
+from collections import defaultdict, deque
 
 import discord
 from redbot.core import i18n, modlog
@@ -18,13 +19,17 @@ class Events(MixinMeta):
     async def check_duplicates(self, message):
         guild = message.guild
         author = message.author
+        repeats = await self.settings.guild(guild).delete_repeats()
 
-        if await self.settings.guild(guild).delete_repeats():
+        if repeats != -1:
             if not message.content:
                 return False
-            self.cache[author].append(message)
-            msgs = self.cache[author]
-            if len(msgs) == 3 and msgs[0].content == msgs[1].content == msgs[2].content:
+            if guild.id not in self.cache:
+                self.cache[guild.id] = defaultdict(lambda: deque(maxlen=repeats))
+
+            self.cache[guild.id][author].append(message.content)
+            msgs = self.cache[guild.id][author]
+            if len(msgs) == repeats and len(set(msgs)) == 1:
                 try:
                     await message.delete()
                     return True
