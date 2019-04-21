@@ -89,7 +89,7 @@ class Repo(RepoJSONMixin):
         "git -C {path} merge-base --is-ancestor {maybe_ancestor_rev} {descendant_rev}"
     )
     GIT_CHECK_IF_MODULE_EXISTS = "git -C {path} cat-file -e {rev}:{module_name}/__init__.py"
-    GIT_GET_LAST_MODULE_OCCURENCE_COMMIT = (
+    GIT_GET_LAST_MODULE_OCCURRENCE_COMMIT = (
         "git -C {path} log --diff-filter=D --pretty=format:%H -n 1 {descendant_rev}"
         " -- {module_name}/__init__.py"
     )
@@ -237,16 +237,16 @@ class Repo(RepoJSONMixin):
 
         return ret
 
-    async def get_last_module_occurence(
-        self, module: Installable, descendant_rev: Optional[str] = None
+    async def get_last_module_occurrence(
+        self, module_name: str, descendant_rev: Optional[str] = None
     ) -> Tuple[Optional[str], Optional[Installable]]:
         """
         Gets module's `Installable` from last commit in which it still occurs.
 
         Parameters
         ----------
-        module : `Installable`
-            Module to get.
+        module_name : str
+            Name of module to get.
         descendant_rev : `str`, optional
             Revision from which the module's commit must be
             reachable (i.e. descendant commit),
@@ -266,21 +266,20 @@ class Repo(RepoJSONMixin):
                 self.GIT_CHECK_IF_MODULE_EXISTS,
                 path=self.folder_path,
                 rev=descendant_rev,
-                module_name=module.name,
+                module_name=module_name,
             ),
             debug_only=True,
         )
         if p.returncode == 0:
             async with self.checkout(descendant_rev):
-                module = discord.utils.get(self.available_modules, name=module.name)
-                return module
+                return discord.utils.get(self.available_modules, name=module_name)
 
         p = await self._run(
             ProcessFormatter().format(
-                self.GIT_GET_LAST_MODULE_OCCURENCE_COMMIT,
+                self.GIT_GET_LAST_MODULE_OCCURRENCE_COMMIT,
                 path=self.folder_path,
                 descendant_rev=descendant_rev,
-                module_name=module.name,
+                module_name=module_name,
             )
         )
 
@@ -292,8 +291,7 @@ class Repo(RepoJSONMixin):
         commit = p.stdout.decode().strip()
         if commit:
             async with self.checkout(f"{commit}~"):
-                module = discord.utils.get(self.available_modules, name=module.name)
-                return module
+                return discord.utils.get(self.available_modules, name=module_name)
         return None
 
     async def _is_module_modified(self, module: Installable, other_hash: str):
@@ -364,7 +362,7 @@ class Repo(RepoJSONMixin):
                 try:
                     index = new_modules.index(module)
                 except ValueError:
-                    module = await self.get_last_module_occurence(module, new_rev)
+                    module = await self.get_last_module_occurrence(module.name, new_rev)
                     if await self._is_module_modified(module, old_hash):
                         modules.append(module)
                 else:

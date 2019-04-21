@@ -220,7 +220,7 @@ class Downloader(commands.Cog):
             if cog.commit:
                 modules.add(cog)
                 continue
-            cog = await cog.repo.get_last_module_occurence(cog)
+            cog = await cog.repo.get_last_module_occurrence(cog.name)
             if cog is not None:
                 cogs_to_update.add(cog)
 
