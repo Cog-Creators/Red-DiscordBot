@@ -166,16 +166,18 @@ class Repo(RepoJSONMixin):
             ancestor of :code:`descendant_rev` or `False` otherwise
 
         """
+        valid_exit_codes = (0, 1)
         p = await self._run(
             ProcessFormatter().format(
                 self.GIT_IS_ANCESTOR,
                 path=self.folder_path,
                 maybe_ancestor_rev=maybe_ancestor_rev,
                 descendant_rev=descendant_rev,
-            )
+            ),
+            valid_exit_codes=valid_exit_codes,
         )
 
-        if p.returncode in (0, 1):
+        if p.returncode in valid_exit_codes:
             return not bool(p.returncode)
         raise errors.GitException(
             f"Git failed to determine if commit {maybe_ancestor_rev}"
@@ -265,7 +267,8 @@ class Repo(RepoJSONMixin):
                 path=self.folder_path,
                 rev=descendant_rev,
                 module_name=module.name,
-            )
+            ),
+            debug_only=True,
         )
         if p.returncode == 0:
             async with self.checkout(descendant_rev):
@@ -451,13 +454,34 @@ class Repo(RepoJSONMixin):
         return tuple(self.available_modules)
 
     async def _run(self, *args, **kwargs):
+        """
+        Parameters
+        ----------
+        valid_exit_codes : tuple
+            Specifies valid exit codes, used to determine
+            if stderr should be sent as debug or error level in logging.
+            When not provided, defaults to :code:`(0,)`
+        debug_only : bool
+            Specifies if stderr can be sent only as debug level in logging.
+            When not provided, defaults to `False`
+        """
         env = os.environ.copy()
         env["GIT_TERMINAL_PROMPT"] = "0"
         kwargs["env"] = env
+        valid_exit_codes = kwargs.pop("valid_exit_codes", (0,))
+        debug_only = kwargs.pop("debug_only", False)
         async with self._repo_lock:
-            return await self._loop.run_in_executor(
-                self._executor, functools.partial(sp_run, *args, stdout=PIPE, **kwargs)
+            p = await self._loop.run_in_executor(
+                self._executor,
+                functools.partial(sp_run, *args, stdout=PIPE, stderr=PIPE, **kwargs),
             )
+            stderr = p.stderr.decode().strip()
+            if stderr:
+                if debug_only or p.returncode in valid_exit_codes:
+                    log.debug(stderr)
+                else:
+                    log.error(stderr)
+            return p
 
     async def _checkout(self, rev: Optional[str] = None, force_checkout: bool = False):
         if rev is None:
