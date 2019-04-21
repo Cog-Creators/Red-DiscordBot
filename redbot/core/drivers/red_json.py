@@ -69,6 +69,9 @@ class JSON(BaseDriver):
 
         self._load_data()
 
+    async def has_valid_connection(self) -> bool:
+        return True
+
     @property
     def data(self):
         return _shared_datastore.get(self.cog_name)
@@ -122,6 +125,30 @@ class JSON(BaseDriver):
             pass
         else:
             await self.jsonIO._threadsafe_save_json(self.data)
+
+    async def import_data(self, cog_data, custom_group_data):
+        def update_write_data(identifier_data: IdentifierData, data):
+            partial = self.data
+            idents = identifier_data.to_tuple()
+            for ident in idents[:-1]:
+                if ident not in partial:
+                    partial[ident] = {}
+                partial = partial[ident]
+            partial[idents[-1]] = data
+
+        for category, all_data in cog_data:
+            splitted_pkey = self._split_primary_key(category, custom_group_data, all_data)
+            for pkey, data in splitted_pkey:
+                ident_data = IdentifierData(
+                    self.unique_cog_identifier,
+                    category,
+                    pkey,
+                    (),
+                    custom_group_data.get(category, {}),
+                    is_custom=category in custom_group_data,
+                )
+                update_write_data(ident_data, data)
+        await self.jsonIO._threadsafe_save_json(self.data)
 
     def get_config_details(self):
         return
