@@ -935,7 +935,7 @@ class RepoManager:
         self.conf.register_global(repos={})
 
     async def initialize(self):
-        await self._load_repos(set=True)
+        await self._load_repos(set_repos=True)
 
     @property
     def repos_folder(self) -> Path:
@@ -1079,7 +1079,7 @@ class RepoManager:
                 ret[repo] = (old, new)
         return ret
 
-    async def _load_repos(self, set=False) -> MutableMapping[str, Repo]:
+    async def _load_repos(self, set_repos=False) -> MutableMapping[str, Repo]:
         ret = {}
         self.repos_folder.mkdir(parents=True, exist_ok=True)
         for folder in self.repos_folder.iterdir():
@@ -1101,7 +1101,7 @@ class RepoManager:
                     ),
                 )
 
-        if set:
+        if set_repos:
             self._repos = ret
         return ret
 
