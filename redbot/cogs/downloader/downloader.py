@@ -335,28 +335,34 @@ class Downloader(commands.Cog):
         """
         if not cogs:
             return await ctx.send_help()
+        async with ctx.typing():
+            uninstalled_cogs = []
+            failed_cogs = []
+            for cog in set(cogs):
+                real_name = cog.name
 
-        for cog in set(cogs):
-            real_name = cog.name
+                poss_installed_path = (await self.cog_install_path()) / real_name
+                if poss_installed_path.exists():
+                    ctx.bot.unload_extension(real_name)
+                    await self._delete_cog(poss_installed_path)
+                    await self._remove_from_installed(cog)
+                    uninstalled_cogs.append(inline(real_name))
+                else:
+                    failed_cogs.append(real_name)
 
-            poss_installed_path = (await self.cog_install_path()) / real_name
-            if poss_installed_path.exists():
-                ctx.bot.unload_extension(real_name)
-                await self._delete_cog(poss_installed_path)
-                await self._remove_from_installed(cog)
-                await ctx.send(
-                    _("Cog `{cog_name}` was successfully uninstalled.").format(cog_name=real_name)
+            message = ""
+            if uninstalled_cogs:
+                message += _("Successfully uninstalled cogs: ") + humanize_list(uninstalled_cogs)
+            if failed_cogs:
+                message += (
+                    _("\nThese cog were installed but can no longer be located: ")
+                    + humanize_list(tuple(map(inline, failed_cogs)))
+                    + _(
+                        "\nYou may need to remove their files manually if they are still usable."
+                        " Also make sure you've unloaded those cogs with `{prefix}unload {cogs}`."
+                    ).format(prefix=ctx.prefix, cogs=" ".join(failed_cogs))
                 )
-            else:
-                await ctx.send(
-                    _(
-                        "That cog was installed but can no longer"
-                        " be located. You may need to remove it's"
-                        " files manually if it is still usable."
-                        " Also make sure you've unloaded the cog"
-                        " with `{prefix}unload {cog_name}`."
-                    ).format(prefix=ctx.prefix, cog_name=real_name)
-                )
+        await ctx.send(message)
 
     @cog.command(name="update")
     async def _cog_update(self, ctx, cog_name: InstalledCog = None):
