@@ -220,10 +220,9 @@ class Downloader(commands.Cog):
             if cog.commit:
                 modules.add(cog)
                 continue
-            available_cogs = cog.repo.available_cogs
-            with contextlib.suppress(ValueError):
-                index = available_cogs.index(cog)
-                cogs_to_update.add(available_cogs[index])
+            cog = await cog.repo.get_last_module_occurence(cog)
+            if cog is not None:
+                cogs_to_update.add(cog)
 
         # Reduces diff requests to a single dict with no repeats
         hashes: Dict[Tuple[Repo, str], Set[InstalledModule]] = defaultdict(set)
