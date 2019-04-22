@@ -116,11 +116,17 @@ class ModSettings(MixinMeta):
             if repeats == -1:
                 await self.settings.guild(guild).delete_repeats.set(repeats)
                 await ctx.send(_("Repeated messages will be ignored."))
-            else:
-                repeats = min(max(repeats, 2), 20)  # Enforces the repeat limits
+            elif 2 <= repeats <= 20:
                 await self.settings.guild(guild).delete_repeats.set(repeats)
                 await ctx.send(
                     _("Messages repeated up to {num} times will be deleted.").format(num=repeats)
+                )
+            else:
+                await ctx.send(
+                    _(
+                        "Number of repeats must be between 2 and 20"
+                        " or equal to -1 if you want to disable this feature!"
+                    )
                 )
         else:
             repeats = await self.settings.guild(guild).delete_repeats()
