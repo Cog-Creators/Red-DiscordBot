@@ -162,10 +162,10 @@ def basic_setup():
     storage = get_storage_type()
 
     storage_dict = {1: BackendType.JSON, 2: BackendType.MONGO}
-    storage_type = storage_dict.get(storage, BackendType.JSON)
+    storage_type: BackendType = storage_dict.get(storage, BackendType.JSON)
     default_dirs["STORAGE_TYPE"] = storage_type.value
 
-    if storage_dict.get(storage, BackendType.JSON) == BackendType.MONGO.value:
+    if storage_type == BackendType.MONGO:
         from redbot.core.drivers.red_mongo import get_config_details
 
         default_dirs["STORAGE_DETAILS"] = get_config_details()
