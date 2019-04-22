@@ -1329,17 +1329,15 @@ class Audio(commands.Cog):
                 song_info = "{} {}".format(i["track"]["name"], i["track"]["artists"][0]["name"])
             try:
                 track_url = await self._youtube_api_search(yt_key, song_info)
-            except:
+            except (RuntimeError, aiohttp.client_exceptions.ServerDisconnectedError):
                 error_embed = discord.Embed(
                     colour=await ctx.embed_colour(),
-                    title=_(
-                        "The YouTube API key has not been set properly.\n"
-                        "Use `{prefix}audioset youtubeapi` for instructions."
-                    ).format(prefix=ctx.prefix),
+                    title=_("The connection was reset while loading the playlist.").format(
+                        prefix=ctx.prefix
+                    ),
                 )
                 await playlist_msg.edit(embed=error_embed)
                 return None
-                # let's complain about errors
                 pass
             try:
                 yt_track = await player.get_tracks(track_url)
@@ -1908,7 +1906,10 @@ class Audio(commands.Cog):
             )
             playlist_msg = await ctx.send(embed=embed1)
             for song_url in v2_playlist["playlist"]:
-                track = await player.get_tracks(song_url)
+                try:
+                    track = await player.get_tracks(song_url)
+                except RuntimeError:
+                    pass
                 try:
                     track_obj = self._track_creator(player, other_track=track[0])
                     track_list.append(track_obj)
@@ -3424,11 +3425,14 @@ class Audio(commands.Cog):
     async def _youtube_api_search(self, yt_key, query):
         params = {"q": query, "part": "id", "key": yt_key, "maxResults": 1, "type": "video"}
         yt_url = "https://www.googleapis.com/youtube/v3/search"
-        async with self.session.request("GET", yt_url, params=params) as r:
-            if r.status == 400:
-                return None
-            else:
-                search_response = await r.json()
+        try:
+            async with self.session.request("GET", yt_url, params=params) as r:
+                if r.status == 400:
+                    return None
+                else:
+                    search_response = await r.json()
+        except RuntimeError:
+            return None
         for search_result in search_response.get("items", []):
             if search_result["id"]["kind"] == "youtube#video":
                 return "https://www.youtube.com/watch?v={}".format(search_result["id"]["videoId"])
@@ -3504,7 +3508,7 @@ class Audio(commands.Cog):
 
     def __unload(self):
         if not self._cleaned_up:
-            self.session.detach()
+            self.bot.loop.create_task(self.session.close())
 
             if self._disconnect_task:
                 self._disconnect_task.cancel()
