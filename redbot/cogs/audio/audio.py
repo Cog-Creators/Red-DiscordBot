@@ -2772,7 +2772,7 @@ class Audio(commands.Cog):
                 else:
                     stop_times.pop(server.id, None)
 
-            for sid in stop_times:
+            for sid in stop_times.copy():
                 server_obj = self.bot.get_guild(sid)
                 if await self.config.guild(server_obj).emptydc_enabled():
                     emptydc_timer = await self.config.guild(server_obj).emptydc_timer()
