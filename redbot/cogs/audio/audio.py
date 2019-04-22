@@ -1332,9 +1332,7 @@ class Audio(commands.Cog):
             except (RuntimeError, aiohttp.client_exceptions.ServerDisconnectedError):
                 error_embed = discord.Embed(
                     colour=await ctx.embed_colour(),
-                    title=_("The connection was reset while loading the playlist.").format(
-                        prefix=ctx.prefix
-                    ),
+                    title=_("The connection was reset while loading the playlist."),
                 )
                 await playlist_msg.edit(embed=error_embed)
                 return None
