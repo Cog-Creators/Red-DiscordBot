@@ -19,22 +19,25 @@ class Events(MixinMeta):
     async def check_duplicates(self, message):
         guild = message.guild
         author = message.author
-        repeats = await self.settings.guild(guild).delete_repeats()
 
-        if repeats != -1:
-            if not message.content:
+        guild_cache = self.cache.get(guild.id, None)
+        if guild_cache is None:
+            repeats = await self.settings.guild(guild).delete_repeats()
+            if repeats == -1:
                 return False
-            if guild.id not in self.cache:
-                self.cache[guild.id] = defaultdict(lambda: deque(maxlen=repeats))
+            guild_cache = self.cache[guild.id] = defaultdict(lambda: deque(maxlen=repeats))
 
-            self.cache[guild.id][author].append(message.content)
-            msgs = self.cache[guild.id][author]
-            if len(msgs) == repeats and len(set(msgs)) == 1:
-                try:
-                    await message.delete()
-                    return True
-                except discord.HTTPException:
-                    pass
+        if not message.content:
+            return False
+
+        guild_cache[author].append(message.content)
+        msgs = guild_cache[author]
+        if len(msgs) == msgs.maxlen and len(set(msgs)) == 1:
+            try:
+                await message.delete()
+                return True
+            except discord.HTTPException:
+                pass
         return False
 
     async def check_mention_spam(self, message):
