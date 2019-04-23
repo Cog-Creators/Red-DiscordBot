@@ -3,7 +3,6 @@ import collections
 from copy import deepcopy
 from typing import Any, Union, Tuple, Dict, Awaitable, AsyncContextManager, TypeVar, TYPE_CHECKING
 import weakref
-import hashlib
 
 import discord
 
@@ -565,9 +564,7 @@ class Config:
 
     @staticmethod
     def _create_uuid(identifier: int):
-        hash_ = hashlib.sha256()
-        hash_.update(bytes(str(identifier), "utf8"))
-        return hash_.hexdigest()[-16:]
+        return str(identifier)
 
     @classmethod
     def get_conf(cls, cog_instance, identifier: int, force_registration=False, cog_name=None):
