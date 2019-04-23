@@ -293,7 +293,7 @@ class Audio(commands.Cog):
         DJ mode allows users with the DJ role to use audio commands.
         """
         dj_role_id = await self.config.guild(ctx.guild).dj_role()
-        if dj_role_id is None and ctx.guild.get_role(dj_role_id):
+        if dj_role_id is None:
             await self._embed_msg(
                 ctx, _("Please set a role to use with DJ mode. Enter the role name or ID now.")
             )
