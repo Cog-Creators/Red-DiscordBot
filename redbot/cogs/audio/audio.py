@@ -2916,7 +2916,12 @@ class Audio(commands.Cog):
                 )
             elif skiptotrack > len(player.queue):
                 return await self._embed_msg(
-                    ctx, _("There are only {} songs currently queued.".format(len(player.queue)))
+                    ctx,
+                    _(
+                        "There are only {queuelen} songs currently queued.".format(
+                            queuelen=len(player.queue)
+                        )
+                    ),
                 )
             elif player.shuffle:
                 return await self._embed_msg(
@@ -2924,7 +2929,8 @@ class Audio(commands.Cog):
                 )
             nexttrack = player.queue[min(skiptotrack - 1, len(player.queue) - 1)]
             embed = discord.Embed(
-                colour=await ctx.embed_colour(), title=_("{} Tracks Skipped".format(skiptotrack))
+                colour=await ctx.embed_colour(),
+                title=_("{skiptotrack} Tracks Skipped".format(skiptotrack=skiptotrack)),
             )
             await ctx.send(embed=embed)
             if player.repeat:
