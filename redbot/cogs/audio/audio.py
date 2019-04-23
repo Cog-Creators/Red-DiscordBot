@@ -434,7 +434,7 @@ class Audio(commands.Cog):
                 num_seconds=self._dynamic_time(emptydc_timer)
             )
         if dj_enabled:
-            msg += _("DJ Role:          [{role.name}]\n").format(role=dj_role_obj)
+            msg += _("DJ Role:          [{role.name}]\n").format(role=dj_role_obj if dj_rold_obj else "Not set")
         if jukebox:
             msg += _("Jukebox:          [{jukebox_name}]\n").format(jukebox_name=jukebox)
             msg += _("Command price:    [{jukebox_price}]\n").format(jukebox_price=jukebox_price)
