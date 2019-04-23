@@ -329,9 +329,7 @@ class MuteMixin(MixinMeta):
             await ctx.send(e)
 
         await ctx.send(
-            _(
-                "{user} has been muted in {success} / {total} channels in this server."
-            ).format(
+            _("{user} has been muted in {success} / {total} channels in this server.").format(
                 user=user,
                 success=sum(1 for v in mute_success.values() if v[0]),
                 total=len(mute_success),
@@ -397,7 +395,11 @@ class MuteMixin(MixinMeta):
                 )
             except RuntimeError as e:
                 await ctx.send(e)
-            await ctx.send(_("{user} has been unmuted in channel {channel}.").format(user=user, channel=channel))
+            await ctx.send(
+                _("{user} has been unmuted in channel {channel}.").format(
+                    user=user, channel=channel
+                )
+            )
         else:
             await ctx.send(issue)
 
@@ -406,7 +408,12 @@ class MuteMixin(MixinMeta):
     @commands.bot_has_permissions(manage_roles=True)
     @commands.guild_only()
     async def category_unmute(
-        self, ctx: commands.Context, user: discord.Member, category: Optional[discord.CategoryChannel] = None, *, reason: str = None
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        category: Optional[discord.CategoryChannel] = None,
+        *,
+        reason: str = None,
     ):
         """Unmute a user in this server."""
         guild = ctx.guild
@@ -421,7 +428,9 @@ class MuteMixin(MixinMeta):
 
         unmute_success = {}
         for channel in channels:
-            unmute_success[channel] = await self.unmute_user(guild, channel, author, user, audit_reason)
+            unmute_success[channel] = await self.unmute_user(
+                guild, channel, author, user, audit_reason
+            )
             await asyncio.sleep(0.1)
 
         to_log = "\n".join(
@@ -440,7 +449,7 @@ class MuteMixin(MixinMeta):
                 author,
                 reason,
                 until=None,
-                channel=None
+                channel=None,
             )
         except RuntimeError as e:
             await ctx.send(e)
@@ -474,7 +483,9 @@ class MuteMixin(MixinMeta):
 
         unmute_success = {}
         for channel in guild.channels:
-            unmute_success[channel] = await self.unmute_user(guild, channel, author, user, audit_reason)
+            unmute_success[channel] = await self.unmute_user(
+                guild, channel, author, user, audit_reason
+            )
             await asyncio.sleep(0.1)
 
         to_log = "\n".join(
@@ -493,15 +504,13 @@ class MuteMixin(MixinMeta):
                 author,
                 reason,
                 until=None,
-                channel=None
+                channel=None,
             )
         except RuntimeError as e:
             await ctx.send(e)
 
         await ctx.send(
-            _(
-                "{user} has been muted in {success} / {total} channels in this server."
-            ).format(
+            _("{user} has been muted in {success} / {total} channels in this server.").format(
                 user=user,
                 success=sum(1 for v in unmute_success.values() if v[0]),
                 total=len(unmute_success),
