@@ -1,4 +1,5 @@
 from datetime import datetime
+from collections import defaultdict, deque
 
 import discord
 from redbot.core import i18n, modlog
@@ -19,17 +20,24 @@ class Events(MixinMeta):
         guild = message.guild
         author = message.author
 
-        if await self.settings.guild(guild).delete_repeats():
-            if not message.content:
+        guild_cache = self.cache.get(guild.id, None)
+        if guild_cache is None:
+            repeats = await self.settings.guild(guild).delete_repeats()
+            if repeats == -1:
                 return False
-            self.cache[author].append(message)
-            msgs = self.cache[author]
-            if len(msgs) == 3 and msgs[0].content == msgs[1].content == msgs[2].content:
-                try:
-                    await message.delete()
-                    return True
-                except discord.HTTPException:
-                    pass
+            guild_cache = self.cache[guild.id] = defaultdict(lambda: deque(maxlen=repeats))
+
+        if not message.content:
+            return False
+
+        guild_cache[author].append(message.content)
+        msgs = guild_cache[author]
+        if len(msgs) == msgs.maxlen and len(set(msgs)) == 1:
+            try:
+                await message.delete()
+                return True
+            except discord.HTTPException:
+                pass
         return False
 
     async def check_mention_spam(self, message):
