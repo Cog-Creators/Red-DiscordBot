@@ -38,7 +38,13 @@ class Streams(commands.Cog):
 
     global_defaults = {"tokens": {}, "streams": []}
 
-    guild_defaults = {"autodelete": False, "mention_everyone": False, "mention_here": False}
+    guild_defaults = {
+        "autodelete": False,
+        "mention_everyone": False,
+        "mention_here": False,
+        "live_message_mention": False,
+        "live_message_nomention": False,
+    }
 
     role_defaults = {"mention": False}
 
@@ -340,6 +346,55 @@ class Streams(commands.Cog):
 
     @streamset.group()
     @commands.guild_only()
+    async def message(self, ctx: commands.Context):
+        """Manage custom message for stream alerts."""
+        pass
+
+    @message.command(name="mention")
+    @commands.guild_only()
+    async def with_mention(self, ctx: commands.Context, message: str = None):
+        """Set stream alert message when mentions are enabled.
+
+        Use `{mention}` in the message to insert the selected mentions.
+
+        Use `{stream.name}` in the message to insert the channel or user name.
+
+        For example: `[p]streamset message mention "{mention}, {stream.name} is live!"`
+        """
+        if message is not None:
+            guild = ctx.guild
+            await self.db.guild(guild).live_message_mention.set(message)
+            await ctx.send(_("stream alert message set!"))
+        else:
+            await ctx.send_help()
+
+    @message.command(name="nomention")
+    @commands.guild_only()
+    async def without_mention(self, ctx: commands.Context, message: str = None):
+        """Set stream alert message when mentions are disabled.
+
+        Use `{stream.name}` in the message to insert the channel or user name.
+
+        For example: `[p]streamset message nomention "{stream.name} is live!"`
+        """
+        if message is not None:
+            guild = ctx.guild
+            await self.db.guild(guild).live_message_nomention.set(message)
+            await ctx.send(_("stream alert message set!"))
+        else:
+            await ctx.send_help()
+
+    @message.command(name="clear")
+    @commands.guild_only()
+    async def clear_message(self, ctx: commands.Context):
+        """Reset the stream alert messages in this server."""
+        guild = ctx.guild
+        await self.db.guild(guild).live_message_mention.set(False)
+        await self.db.guild(guild).live_message_nomention.set(False)
+        await ctx.send(_("Stream alerts in this server will now use the default alert message."))
+
+    @streamset.group()
+    @commands.guild_only()
     async def mention(self, ctx: commands.Context):
         """Manage mention settings for stream alerts."""
         pass
@@ -488,11 +543,19 @@ class Streams(commands.Cog):
                         mention_str, edited_roles = await self._get_mention_str(channel.guild)
 
                         if mention_str:
-                            content = _("{mention}, {stream.name} is live!").format(
-                                mention=mention_str, stream=stream
-                            )
+                            alert_msg = await self.db.guild(channel.guild).live_message_mention()
+                            if alert_msg:
+                                content = alert_msg.format(mention=mention_str, stream=stream)
+                            else:
+                                content = _("{mention}, {stream.name} is live!").format(
+                                    mention=mention_str, stream=stream
+                                )
                         else:
-                            content = _("{stream.name} is live!").format(stream=stream)
+                            alert_msg = await self.db.guild(channel.guild).live_message_nomention()
+                            if alert_msg:
+                                content = alert_msg.format(stream=stream)
+                            else:
+                                content = _("{stream.name} is live!").format(stream=stream)
 
                         m = await channel.send(content, embed=embed)
                         stream._messages_cache.append(m)
