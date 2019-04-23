@@ -360,7 +360,10 @@ def humanize_list(items: Sequence[str]) -> str:
     """
     if len(items) == 1:
         return items[0]
-    return ", ".join(items[:-1]) + _(", and ") + items[-1]
+    try:
+        return ", ".join(items[:-1]) + _(", and ") + items[-1]
+    except IndexError:
+        raise IndexError("Cannot humanize empty list") from None
 
 
 def format_perms_list(perms: discord.Permissions) -> str:
