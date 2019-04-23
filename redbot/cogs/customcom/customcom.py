@@ -97,7 +97,7 @@ class CommandObj:
         else:
             raise NotFound()
 
-    async def create(self, ctx: commands.Context, command: str, *, response, mod : bool = False):
+    async def create(self, ctx: commands.Context, command: str, *, response, mod: bool = False):
         """Create a custom command"""
         # Check if this command is already registered as a customcommand
         if await self.db(ctx.guild).commands.get_raw(command, default=None):
@@ -112,7 +112,7 @@ class CommandObj:
             "created_at": self.get_now(),
             "editors": [],
             "response": response,
-            "mod" : mod
+            "mod": mod,
         }
         await self.db(ctx.guild).commands.set_raw(command, value=ccinfo)
 
@@ -507,7 +507,9 @@ class CustomCommands(commands.Cog):
         # fake command to take advantage of discord.py's parsing and events
         pass
 
-    async def cc_command(self, ctx, *cc_args, raw_response, mod: bool = False, **cc_kwargs) -> None:
+    async def cc_command(
+        self, ctx, *cc_args, raw_response, mod: bool = False, **cc_kwargs
+    ) -> None:
         cc_args = (*cc_args, *cc_kwargs.values())
         results = re.findall(r"{([^}]+)\}", raw_response)
         for result in results:
@@ -521,10 +523,16 @@ class CustomCommands(commands.Cog):
                 arg = self.transform_arg(result[0], result[2], cc_args[index])
                 raw_response = raw_response.replace("{" + result[0] + "}", arg)
         if mod:
-            if ctx.bot.is_mod(ctx.author) or ctx.bot.is_admin(ctx.author) or ctx.bot.is_owner(ctx.author): #we only allow mods to use those cc create mod ccs
-                await ctx.send(raw_response, filter=None) ## so we have a cc create mod here, we allow here and everyone
+            if (
+                ctx.bot.is_mod(ctx.author)
+                or ctx.bot.is_admin(ctx.author)
+                or ctx.bot.is_owner(ctx.author)
+            ):  # we only allow mods to use those cc create mod ccs
+                await ctx.send(
+                    raw_response, filter=None
+                )  ## so we have a cc create mod here, we allow here and everyone
             else:
-                pass #if someone try to use the mod cc, why should the bot respond anything ?
+                pass  # if someone try to use the mod cc, why should the bot respond anything ?
         else:
             await ctx.send(raw_response)
 
