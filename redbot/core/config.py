@@ -566,7 +566,7 @@ class Config:
     @staticmethod
     def _create_uuid(identifier: int):
         hash_ = hashlib.sha256()
-        hash_.update(bytes(str(identifier), 'utf8'))
+        hash_.update(bytes(str(identifier), "utf8"))
         return hash_.hexdigest()[-16:]
 
     @classmethod
@@ -619,11 +619,7 @@ class Config:
         driver_details = basic_config.get("STORAGE_DETAILS", {})
 
         driver = get_driver(
-            driver_name,
-            cog_name,
-            uuid,
-            data_path_override=cog_path_override,
-            **driver_details
+            driver_name, cog_name, uuid, data_path_override=cog_path_override, **driver_details
         )
         if driver_name == BackendType.JSON.value:
             driver.migrate_identifier(identifier)
