@@ -3,11 +3,12 @@ import collections
 from copy import deepcopy
 from typing import Any, Union, Tuple, Dict, Awaitable, AsyncContextManager, TypeVar, TYPE_CHECKING
 import weakref
+import hashlib
 
 import discord
 
-from .data_manager import cog_data_path, core_data_path
-from .drivers import get_driver, IdentifierData
+from .data_manager import cog_data_path, core_data_path, storage_type
+from .drivers import get_driver, IdentifierData, BackendType
 
 if TYPE_CHECKING:
     from .drivers.red_base import BaseDriver
@@ -562,6 +563,12 @@ class Config:
     def defaults(self):
         return deepcopy(self._defaults)
 
+    @staticmethod
+    def _create_uuid(identifier: int):
+        hash_ = hashlib.sha256()
+        hash_.update(bytes(str(identifier), 'utf8'))
+        return hash_.hexdigest()[-16:]
+
     @classmethod
     def get_conf(cls, cog_instance, identifier: int, force_registration=False, cog_name=None):
         """Get a Config instance for your cog.
@@ -602,7 +609,8 @@ class Config:
             cog_path_override = cog_data_path(cog_instance=cog_instance)
 
         cog_name = cog_path_override.stem
-        uuid = str(hash(identifier))
+        # uuid = str(hash(identifier))
+        uuid = cls._create_uuid(identifier)
 
         # We have to import this here otherwise we have a circular dependency
         from .data_manager import basic_config
@@ -611,8 +619,15 @@ class Config:
         driver_details = basic_config.get("STORAGE_DETAILS", {})
 
         driver = get_driver(
-            driver_name, cog_name, uuid, data_path_override=cog_path_override, **driver_details
+            driver_name,
+            cog_name,
+            uuid,
+            data_path_override=cog_path_override,
+            **driver_details
         )
+        if storage_type() == BackendType.JSON.value:
+            driver.migrate_identifier(identifier)
+
         conf = cls(
             cog_name=cog_name,
             unique_identifier=uuid,

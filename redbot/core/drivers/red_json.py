@@ -96,6 +96,18 @@ class JSON(BaseDriver):
             self.data = {}
             self.jsonIO._save_json(self.data)
 
+    def migrate_identifier(self, raw_identifier: int):
+        if self.unique_cog_identifier in self.data:
+            # Data has already been migrated
+            return
+        poss_identifiers = [str(raw_identifier), str(hash(raw_identifier))]
+        for ident in poss_identifiers:
+            if ident in self.data:
+                self.data[self.unique_cog_identifier] = self.data[ident]
+                del self.data[ident]
+                self.jsonIO._save_json(self.data)
+                break
+
     async def get(self, identifier_data: IdentifierData):
         partial = self.data
         full_identifiers = identifier_data.to_tuple()
