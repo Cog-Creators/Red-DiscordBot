@@ -2908,7 +2908,7 @@ class Audio(commands.Cog):
                     )
                 )
             return await ctx.send(embed=embed)
-        temp = []
+        queue_to_append = []
         if skiptotrack is not None:
             if skiptotrack < 1:
                 return await self._embed_msg(
@@ -2928,7 +2928,7 @@ class Audio(commands.Cog):
             )
             await ctx.send(embed=embed)
             if player.repeat:
-                temp = player.queue[0 : min(skiptotrack - 1, len(player.queue) - 1)]
+                queue_to_append = player.queue[0 : min(skiptotrack - 1, len(player.queue) - 1)]
             player.queue = player.queue[
                 min(skiptotrack - 1, len(player.queue) - 1) : len(player.queue)
             ]
@@ -2941,12 +2941,12 @@ class Audio(commands.Cog):
             await ctx.send(embed=embed)
 
         await player.play()
-        player.queue += temp
+        player.queue += queue_to_append
 
     async def _get_description(self, track):
         if "localtracks" in track.uri:
             if not track.title == "Unknown title":
-                description = "**{} - {}**\n{}".format(
+                return "**{} - {}**\n{}".format(
                     track.author, track.title, track.uri.replace("localtracks/", "")
                 )
             else:
