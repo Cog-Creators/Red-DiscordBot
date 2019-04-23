@@ -83,7 +83,8 @@ def bot_repo(event_loop):
 # Installable
 INFO_JSON = {
     "author": ("tekulvw",),
-    "bot_version": (3, 0, 0),
+    "min_bot_version": "3.0.0",
+    "max_bot_version": "3.0.2",
     "description": "A long description",
     "hidden": False,
     "install_msg": "A post-installation message",
@@ -96,7 +97,8 @@ INFO_JSON = {
 
 LIBRARY_INFO_JSON = {
     "author": ("seputaes",),
-    "bot_version": (3, 0, 0),
+    "min_bot_version": "3.0.0",
+    "max_bot_version": "3.0.2",
     "description": "A long library description",
     "hidden": False,  # libraries are always hidden, this tests it will be flipped
     "install_msg": "A library install message",
