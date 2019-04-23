@@ -346,10 +346,10 @@ class Downloader(commands.Cog):
                 if poss_installed_path.exists():
                     ctx.bot.unload_extension(real_name)
                     await self._delete_cog(poss_installed_path)
-                    await self._remove_from_installed(cog)
                     uninstalled_cogs.append(inline(real_name))
                 else:
                     failed_cogs.append(real_name)
+                await self._remove_from_installed(cog)
 
             message = ""
             if uninstalled_cogs:
