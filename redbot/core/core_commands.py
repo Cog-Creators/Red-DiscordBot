@@ -1012,17 +1012,11 @@ class Core(commands.Cog, CoreLogic):
         red_dist = pkg_resources.get_distribution("red-discordbot")
         red_path = Path(red_dist.location) / "redbot"
         locale_list = [loc.stem.lower() for loc in list(red_path.glob("**/*.po"))]
-
         if locale_name.lower() in locale_list or locale_name.lower() == "en-us":
-
             i18n.set_locale(locale_name)
-
             await ctx.bot.db.locale.set(locale_name)
-
             await ctx.send(_("Locale has been set."))
-
         else:
-
             await ctx.send(
                 _(
                     "Invalid locale. Use `{prefix}listlocales` to get "
