@@ -7,7 +7,7 @@ import hashlib
 
 import discord
 
-from .data_manager import cog_data_path, core_data_path, storage_type
+from .data_manager import cog_data_path, core_data_path
 from .drivers import get_driver, IdentifierData, BackendType
 
 if TYPE_CHECKING:
@@ -625,7 +625,7 @@ class Config:
             data_path_override=cog_path_override,
             **driver_details
         )
-        if storage_type() == BackendType.JSON.value:
+        if driver_name == BackendType.JSON.value:
             driver.migrate_identifier(identifier)
 
         conf = cls(
