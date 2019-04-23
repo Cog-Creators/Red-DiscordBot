@@ -206,9 +206,14 @@ class KickBanMixin(MixinMeta):
     @commands.bot_has_permissions(ban_members=True)
     @checks.admin_or_permissions(ban_members=True)
     async def ban(
-        self, ctx: commands.Context, user: discord.Member, days: int = 0, *, reason: str = None
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        days: Optional[int] = 0,
+        *,
+        reason: str = None,
     ):
-        """Ban a user from this server.
+        """Ban a user from this server and optionally delete days of messages.
 
         If days is not a number, it's treated as the first word of the reason.
         Minimum 0 days, maximum 7. Defaults to 0."""
