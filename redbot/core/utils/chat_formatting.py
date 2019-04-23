@@ -344,6 +344,11 @@ def humanize_list(items: Sequence[str]) -> str:
     items : Sequence[str]
         The items of the list to join together.
 
+    Raises
+    ------
+    IndexError
+        An empty sequence was passed
+
     Examples
     --------
     .. testsetup::
