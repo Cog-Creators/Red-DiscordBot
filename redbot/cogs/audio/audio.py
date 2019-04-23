@@ -2909,7 +2909,7 @@ class Audio(commands.Cog):
                 )
             return await ctx.send(embed=embed)
         queue_to_append = []
-        if skiptotrack is not None:
+        if skiptotrack is not None and skiptotrack is not 1:
             if skiptotrack < 1:
                 return await self._embed_msg(
                     ctx, _("Track number must be equal to or greater than 1.")
