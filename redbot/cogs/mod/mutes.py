@@ -296,12 +296,8 @@ class MuteMixin(MixinMeta):
         guild = ctx.guild
         audit_reason = get_audit_reason(author, reason)
 
-        # try categories first, to reduce API calls for synced channels
-        channels = guild.categories
-        channels += [c for c in guild.channels if c not in guild.categories]
-
         mute_success = {}
-        for channel in guild.categories + guild.channels:
+        for channel in guild.channels:
             mute_success[channel] = await self.mute_user(
                 guild, channel, author, user, audit_reason
             )
@@ -476,10 +472,6 @@ class MuteMixin(MixinMeta):
         guild = ctx.guild
         author = ctx.author
         audit_reason = get_audit_reason(author, reason)
-
-        # try categories first, to reduce API calls for synced channels
-        channels = guild.categories
-        channels += [c for c in guild.channels if c not in guild.categories]
 
         unmute_success = {}
         for channel in guild.channels:
