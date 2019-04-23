@@ -1,3 +1,5 @@
+from collections import defaultdict, deque
+
 from redbot.core import commands, i18n, checks
 from redbot.core.utils.chat_formatting import box
 
@@ -112,12 +114,14 @@ class ModSettings(MixinMeta):
         """
         guild = ctx.guild
         if repeats is not None:
-            self.cache.pop(guild.id, None)  # remove cache with old repeat limits
             if repeats == -1:
                 await self.settings.guild(guild).delete_repeats.set(repeats)
+                self.cache.pop(guild.id, None)  # remove cache with old repeat limits
                 await ctx.send(_("Repeated messages will be ignored."))
             elif 2 <= repeats <= 20:
                 await self.settings.guild(guild).delete_repeats.set(repeats)
+                # purge and update cache to new repeat limits
+                self.cache[guild.id] = defaultdict(lambda: deque(maxlen=repeats))
                 await ctx.send(
                     _("Messages repeated up to {num} times will be deleted.").format(num=repeats)
                 )
