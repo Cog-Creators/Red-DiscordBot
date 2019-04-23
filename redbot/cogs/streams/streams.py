@@ -86,14 +86,14 @@ class Streams(commands.Cog):
         await self.db.tokens.clear()
 
     @commands.command()
-    async def twitch(self, ctx: commands.Context, channel_name: str):
+    async def twitchstream(self, ctx: commands.Context, channel_name: str):
         """Check if a Twitch channel is live."""
         token = await self.bot.db.api_tokens.get_raw("twitch", default={"client_id": None})
         stream = TwitchStream(name=channel_name, token=token)
         await self.check_online(ctx, stream)
 
     @commands.command()
-    async def youtube(self, ctx: commands.Context, channel_id_or_name: str):
+    async def youtubestream(self, ctx: commands.Context, channel_id_or_name: str):
         """Check if a YouTube channel is live."""
         apikey = await self.bot.db.api_tokens.get_raw("youtube", default={"api_key": None})
         is_name = self.check_name_or_id(channel_id_or_name)
