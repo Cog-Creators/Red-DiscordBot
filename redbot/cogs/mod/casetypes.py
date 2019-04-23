@@ -56,17 +56,17 @@ CASETYPES = [
         "audit_type": "member_update",
     },
     {
-        "name": "vmute",
-        "default_setting": False,
-        "image": "\N{SPEAKER WITH CANCELLATION STROKE}",
-        "case_str": "Voice Mute",
-        "audit_type": "overwrite_update",
-    },
-    {
         "name": "cmute",
         "default_setting": False,
         "image": "\N{SPEAKER WITH CANCELLATION STROKE}",
         "case_str": "Channel Mute",
+        "audit_type": "overwrite_update",
+    },
+    {
+        "name": "catmute",
+        "default_setting": False,
+        "image": "\N{SPEAKER WITH CANCELLATION STROKE}",
+        "case_str": "Category Mute",
         "audit_type": "overwrite_update",
     },
     {
@@ -77,17 +77,17 @@ CASETYPES = [
         "audit_type": "overwrite_update",
     },
     {
-        "name": "vunmute",
-        "default_setting": False,
-        "image": "\N{SPEAKER}",
-        "case_str": "Voice Unmute",
-        "audit_type": "overwrite_update",
-    },
-    {
         "name": "cunmute",
         "default_setting": False,
         "image": "\N{SPEAKER}",
         "case_str": "Channel Unmute",
+        "audit_type": "overwrite_update",
+    },
+    {
+        "name": "catunmute",
+        "default_setting": False,
+        "image": "\N{SPEAKER}",
+        "case_str": "Category Unmute",
         "audit_type": "overwrite_update",
     },
     {

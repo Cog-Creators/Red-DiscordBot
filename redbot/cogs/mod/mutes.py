@@ -1,11 +1,14 @@
 import asyncio
-from typing import cast, Optional
+import logging
+from typing import cast, Optional, Union
 
 import discord
 from redbot.core import commands, checks, i18n, modlog
 from redbot.core.utils.chat_formatting import format_perms_list
 from redbot.core.utils.mod import get_audit_reason, is_allowed_by_hierarchy
 from .abc import MixinMeta
+
+log = logging.getLogger("red.mod.mutes")
 
 T_ = i18n.Translator("Mod", __file__)
 
@@ -164,60 +167,37 @@ class MuteMixin(MixinMeta):
     @commands.group()
     @commands.guild_only()
     @checks.mod_or_permissions(manage_channels=True)
-    async def mute(self, ctx: commands.Context):
+    async def mute(
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        channel: Optional[Union[discord.TextChannel, discord.CategoryChannel]] = None,
+        *,
+        reason: str = None,
+    ):
         """Mute users."""
-        pass
-
-    @mute.command(name="voice")
-    @commands.guild_only()
-    async def voice_mute(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
-        """Mute a user in their current voice channel."""
-        user_voice_state = user.voice
-        if (
-            await self._voice_perm_check(
-                ctx, user_voice_state, mute_members=True, manage_channels=True
-            )
-            is False
-        ):
-            return
-        guild = ctx.guild
-        author = ctx.author
-        channel = user_voice_state.channel
-        audit_reason = get_audit_reason(author, reason)
-
-        success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
-
-        if success:
-            try:
-                await modlog.create_case(
-                    self.bot,
-                    guild,
-                    ctx.message.created_at,
-                    "vmute",
-                    user,
-                    author,
-                    reason,
-                    until=None,
-                    channel=channel,
-                )
-            except RuntimeError as e:
-                await ctx.send(e)
-            await ctx.send(
-                _("Muted {user} in channel {channel.name}").format(user=user, channel=channel)
-            )
-        else:
-            await ctx.send(issue)
+        if not ctx.invoked_subcommand:
+            if isinstance(channel, discord.CategoryChannel):
+                command = self.category_mute
+            else:
+                command = self.channel_mute
+            await ctx.invoke(command, user=user, channel=channel, reason=reason)
 
     @mute.command(name="channel")
     @commands.guild_only()
     @commands.bot_has_permissions(manage_roles=True)
     @checks.mod_or_permissions(administrator=True)
     async def channel_mute(
-        self, ctx: commands.Context, user: discord.Member, *, reason: str = None
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        channel: Optional[discord.TextChannel] = None,
+        *,
+        reason: str = None,
     ):
         """Mute a user in the current text channel."""
         author = ctx.message.author
-        channel = ctx.message.channel
+        channel = channel or ctx.message.channel
         guild = ctx.guild
         audit_reason = get_audit_reason(author, reason)
 
@@ -238,9 +218,73 @@ class MuteMixin(MixinMeta):
                 )
             except RuntimeError as e:
                 await ctx.send(e)
-            await channel.send(_("User has been muted in this channel."))
+            await channel.send(
+                _("{user} has been muted in channel {channel}").format(user=user, channel=channel)
+            )
         else:
             await channel.send(issue)
+
+    @mute.command(name="category")
+    @commands.guild_only()
+    @commands.bot_has_permissions(manage_roles=True)
+    @checks.mod_or_permissions(administrator=True)
+    async def category_mute(
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        category: Optional[discord.CategoryChannel] = None,
+        *,
+        reason: str = None,
+    ):
+        """Mutes user in the server"""
+        author = ctx.message.author
+        category = category or ctx.message.category
+        guild = ctx.guild
+        audit_reason = get_audit_reason(author, reason)
+
+        if not category:
+            channels = (c for c in guild.channels if not c.category and c not in guild.categories)
+        else:
+            channels = category.channels
+
+        mute_success = {}
+        for channel in channels:
+            mute_success[channel] = await self.mute_user(
+                guild, channel, author, user, audit_reason
+            )
+            await asyncio.sleep(0.1)
+
+        to_log = "\n".join(
+            f"{k.name} ({k.id}): {v[1]}" for k, v in mute_success.items() if not v[0]
+        )
+        if to_log:
+            log.info(to_log)
+
+        try:
+            await modlog.create_case(
+                self.bot,
+                guild,
+                ctx.message.created_at,
+                "catmute",
+                user,
+                author,
+                reason,
+                until=None,
+                channel=category,
+            )
+        except RuntimeError as e:
+            await ctx.send(e)
+
+        await ctx.send(
+            _(
+                "{user} has been muted in {success} / {total} channels in category {category}."
+            ).format(
+                user=user,
+                success=sum(1 for v in mute_success.values() if v[0]),
+                total=len(mute_success),
+                category=category,
+            )
+        )
 
     @mute.command(name="server", aliases=["guild"])
     @commands.guild_only()
@@ -252,11 +296,23 @@ class MuteMixin(MixinMeta):
         guild = ctx.guild
         audit_reason = get_audit_reason(author, reason)
 
-        mute_success = []
-        for channel in guild.channels:
-            success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
-            mute_success.append((success, issue))
+        # try categories first, to reduce API calls for synced channels
+        channels = guild.categories
+        channels += [c for c in guild.channels if c not in guild.categories]
+
+        mute_success = {}
+        for channel in guild.categories + guild.channels:
+            mute_success[channel] = await self.mute_user(
+                guild, channel, author, user, audit_reason
+            )
             await asyncio.sleep(0.1)
+
+        to_log = "\n".join(
+            f"{k.name} ({k.id}): {v[1]}" for k, v in mute_success.items() if not v[0]
+        )
+        if to_log:
+            log.info(to_log)
+
         try:
             await modlog.create_case(
                 self.bot,
@@ -271,72 +327,60 @@ class MuteMixin(MixinMeta):
             )
         except RuntimeError as e:
             await ctx.send(e)
-        await ctx.send(_("User has been muted in this server."))
+
+        await ctx.send(
+            _(
+                "{user} has been muted in {success} / {total} channels in this server."
+            ).format(
+                user=user,
+                success=sum(1 for v in mute_success.values() if v[0]),
+                total=len(mute_success),
+            )
+        )
 
     @commands.group()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_roles=True)
-    @checks.mod_or_permissions(manage_channels=True)
-    async def unmute(self, ctx: commands.Context):
-        """Unmute users."""
-        pass
-
-    @unmute.command(name="voice")
-    @commands.guild_only()
-    async def unmute_voice(
-        self, ctx: commands.Context, user: discord.Member, *, reason: str = None
+    @checks.mod_or_permissions(administrator=True)
+    async def unmute(
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        channel: Union[discord.TextChannel, discord.CategoryChannel, None] = None,
+        *,
+        reason: str = None,
     ):
-        """Unmute a user in their current voice channel."""
-        user_voice_state = user.voice
-        if (
-            await self._voice_perm_check(
-                ctx, user_voice_state, mute_members=True, manage_channels=True
-            )
-            is False
-        ):
-            return
-        guild = ctx.guild
-        author = ctx.author
-        channel = user_voice_state.channel
-        audit_reason = get_audit_reason(author, reason)
+        """
+        Unmutes user in the channel/server
 
-        success, message = await self.unmute_user(guild, channel, author, user, audit_reason)
-
-        if success:
-            try:
-                await modlog.create_case(
-                    self.bot,
-                    guild,
-                    ctx.message.created_at,
-                    "vunmute",
-                    user,
-                    author,
-                    reason,
-                    until=None,
-                    channel=channel,
-                )
-            except RuntimeError as e:
-                await ctx.send(e)
-            await ctx.send(
-                _("Unmuted {user} in channel {channel.name}").format(user=user, channel=channel)
-            )
-        else:
-            await ctx.send(_("Unmute failed. Reason: {}").format(message))
+        Defaults to channel
+        """
+        if not ctx.invoked_subcommand:
+            if isinstance(channel, discord.CategoryChannel):
+                command = self.category_unmute
+            else:
+                command = self.channel_unmute
+            await ctx.invoke(command, user=user, channel=channel, reason=reason)
 
     @checks.mod_or_permissions(administrator=True)
     @unmute.command(name="channel")
     @commands.bot_has_permissions(manage_roles=True)
     @commands.guild_only()
-    async def unmute_channel(
-        self, ctx: commands.Context, user: discord.Member, *, reason: str = None
+    async def channel_unmute(
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        channel: Optional[discord.TextChannel] = None,
+        *,
+        reason: str = None,
     ):
         """Unmute a user in this channel."""
-        channel = ctx.channel
+        channel = channel or ctx.channel
         author = ctx.author
         guild = ctx.guild
         audit_reason = get_audit_reason(author, reason)
 
-        success, message = await self.unmute_user(guild, channel, author, user, audit_reason)
+        success, issue = await self.unmute_user(guild, channel, author, user, audit_reason)
 
         if success:
             try:
@@ -353,27 +397,39 @@ class MuteMixin(MixinMeta):
                 )
             except RuntimeError as e:
                 await ctx.send(e)
-            await ctx.send(_("User unmuted in this channel."))
+            await ctx.send(_("{user} has been unmuted in channel {channel}.").format(user=user, channel=channel))
         else:
-            await ctx.send(_("Unmute failed. Reason: {}").format(message))
+            await ctx.send(issue)
 
     @checks.mod_or_permissions(administrator=True)
-    @unmute.command(name="server", aliases=["guild"])
+    @unmute.command(name="category")
     @commands.bot_has_permissions(manage_roles=True)
     @commands.guild_only()
-    async def unmute_guild(
-        self, ctx: commands.Context, user: discord.Member, *, reason: str = None
+    async def category_unmute(
+        self, ctx: commands.Context, user: discord.Member, category: Optional[discord.CategoryChannel] = None, *, reason: str = None
     ):
         """Unmute a user in this server."""
         guild = ctx.guild
+        category = category or ctx.message.category
         author = ctx.author
         audit_reason = get_audit_reason(author, reason)
 
-        unmute_success = []
-        for channel in guild.channels:
-            success, message = await self.unmute_user(guild, channel, author, user, audit_reason)
-            unmute_success.append((success, message))
+        if not category:
+            channels = (c for c in guild.channels if not c.category and c not in guild.categories)
+        else:
+            channels = category.channels
+
+        unmute_success = {}
+        for channel in channels:
+            unmute_success[channel] = await self.unmute_user(guild, channel, author, user, audit_reason)
             await asyncio.sleep(0.1)
+
+        to_log = "\n".join(
+            f"{k.name} ({k.id}): {v[1]}" for k, v in unmute_success.items() if not v[0]
+        )
+        if to_log:
+            log.info(to_log)
+
         try:
             await modlog.create_case(
                 self.bot,
@@ -384,10 +440,73 @@ class MuteMixin(MixinMeta):
                 author,
                 reason,
                 until=None,
+                channel=None
             )
         except RuntimeError as e:
             await ctx.send(e)
-        await ctx.send(_("User has been unmuted in this server."))
+
+        await ctx.send(
+            _(
+                "{user} has been muted in {success} / {total} channels in category {category}."
+            ).format(
+                user=user,
+                success=sum(1 for v in unmute_success.values() if v[0]),
+                total=len(unmute_success),
+                category=category,
+            )
+        )
+
+    @checks.mod_or_permissions(administrator=True)
+    @unmute.command(name="server", aliases=["guild"])
+    @commands.bot_has_permissions(manage_roles=True)
+    @commands.guild_only()
+    async def guild_unmute(
+        self, ctx: commands.Context, user: discord.Member, *, reason: str = None
+    ):
+        """Unmute a user in this server."""
+        guild = ctx.guild
+        author = ctx.author
+        audit_reason = get_audit_reason(author, reason)
+
+        # try categories first, to reduce API calls for synced channels
+        channels = guild.categories
+        channels += [c for c in guild.channels if c not in guild.categories]
+
+        unmute_success = {}
+        for channel in guild.channels:
+            unmute_success[channel] = await self.unmute_user(guild, channel, author, user, audit_reason)
+            await asyncio.sleep(0.1)
+
+        to_log = "\n".join(
+            f"{k.name} ({k.id}): {v[1]}" for k, v in unmute_success.items() if not v[0]
+        )
+        if to_log:
+            log.info(to_log)
+
+        try:
+            await modlog.create_case(
+                self.bot,
+                guild,
+                ctx.message.created_at,
+                "sunmute",
+                user,
+                author,
+                reason,
+                until=None,
+                channel=None
+            )
+        except RuntimeError as e:
+            await ctx.send(e)
+
+        await ctx.send(
+            _(
+                "{user} has been muted in {success} / {total} channels in this server."
+            ).format(
+                user=user,
+                success=sum(1 for v in unmute_success.values() if v[0]),
+                total=len(unmute_success),
+            )
+        )
 
     async def mute_user(
         self,
