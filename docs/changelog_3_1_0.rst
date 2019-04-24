@@ -40,9 +40,11 @@ Utility Functions
 -----------------
 
  * ``Tunnel`` - Spelling correction of method name - changed ``files_from_attatch`` to ``files_from_attach`` (old name is left for backwards compatibility) (`#2496`_)
+ * ``Tunnel`` - fixed behavior of ``react_close()``, now when tunnel closes message will be sent to other end (`#2507`_)
 
 .. _#2437: https://github.com/Cog-Creators/Red-DiscordBot/pull/2437
 .. _#2496: https://github.com/Cog-Creators/Red-DiscordBot/pull/2496
+.. _#2507: https://github.com/Cog-Creators/Red-DiscordBot/pull/2507
 .. _#2536: https://github.com/Cog-Creators/Red-DiscordBot/pull/2536
 .. _#2545: https://github.com/Cog-Creators/Red-DiscordBot/pull/2545
 .. _#2550: https://github.com/Cog-Creators/Red-DiscordBot/pull/2550
