@@ -543,9 +543,14 @@ class CustomCommands(commands.Cog):
                 raw_response = raw_response.replace("{" + result[0] + "}", arg)
         if mod:
             if (
-                ctx.bot.is_mod(ctx.author)
-                or ctx.bot.is_admin(ctx.author)
-                or ctx.bot.is_owner(ctx.author)
+                (
+                    ctx.bot.is_mod(ctx.author)
+                    or ctx.bot.is_admin(ctx.author)
+                    or ctx.bot.is_owner(ctx.author)
+                )
+                and await self.settings.guild(
+                    ctx.guild
+                ).mod_enabled()  # in case guild owner turn off the toggle, we may block the existing ccs from being used ?
             ):  # we only allow mods to use those cc create mod ccs
                 await ctx.send(
                     raw_response, filter=None
