@@ -35,7 +35,14 @@ Setup Scripts
  * ``redbot-setup convert`` now used to convert between libraries (`#2579`_)
  * Backup support for Mongo is currently broken (`#2579`_)
 
+-----------------
+Utility Functions
+-----------------
+
+ * ``Tunnel`` - Spelling correction of method name - changed ``files_from_attatch`` to ``files_from_attach`` (old name is left for backwards compatibility) (`#2496`_)
+
 .. _#2437: https://github.com/Cog-Creators/Red-DiscordBot/pull/2437
+.. _#2496: https://github.com/Cog-Creators/Red-DiscordBot/pull/2496
 .. _#2536: https://github.com/Cog-Creators/Red-DiscordBot/pull/2536
 .. _#2545: https://github.com/Cog-Creators/Red-DiscordBot/pull/2545
 .. _#2550: https://github.com/Cog-Creators/Red-DiscordBot/pull/2550
