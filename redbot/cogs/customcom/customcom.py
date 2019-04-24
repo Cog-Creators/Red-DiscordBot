@@ -183,6 +183,7 @@ class CommandObj:
             raise NotFound()
         await self.db(ctx.guild).commands.set_raw(command, value=None)
 
+
 @cog_i18n(_)
 class CustomCommands(commands.Cog):
     """Creates commands used to display text."""
@@ -256,8 +257,8 @@ class CustomCommands(commands.Cog):
     def mod_enabled():
         async def predicate(ctx):
             return await ctx.cog.config.guild(ctx.guild).mod_enabled()
-        return commands.check(predicate)
 
+        return commands.check(predicate)
 
     @cc_create.command(name="mod")
     @checks.mod_or_permissions(administrator=True)
@@ -292,7 +293,9 @@ class CustomCommands(commands.Cog):
         cur = await self.config.guild(ctx.guild).mod_enabled()
         new_status = True if not cur else False
         await self.config.guild(ctx.guild).mod_enabled.set(new_status)
-        await ctx.send(_("Mod ccs are now {status}.").format(status=("enabled" if new_status else "disabled")))
+        await ctx.send(
+            _("Mod ccs are now {status}.").format(status=("enabled" if new_status else "disabled"))
+        )
 
     @customcom.command(name="cooldown")
     @checks.mod_or_permissions(administrator=True)
