@@ -2768,7 +2768,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    async def skip(self, ctx, skiptotrack: int = None):
+    async def skip(self, ctx, skip_to_track: int = None):
         """Skip to the next track, or to a given track number."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
@@ -2786,7 +2786,7 @@ class Audio(commands.Cog):
                 return await self._embed_msg(ctx, _("You need the DJ role to skip tracks."))
         if vote_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
-                if skiptotrack is not None:
+                if skip_to_track is not None:
                     return await self._embed_msg(
                         ctx, _("Can't skip to a specific track in vote mode without the DJ role.")
                     )
@@ -2822,9 +2822,9 @@ class Audio(commands.Cog):
                     )
                     return await self._embed_msg(ctx, reply)
             else:
-                return await self._skip_action(ctx, skiptotrack)
+                return await self._skip_action(ctx, skip_to_track)
         else:
-            return await self._skip_action(ctx, skiptotrack)
+            return await self._skip_action(ctx, skip_to_track)
 
     async def _can_instaskip(self, ctx, member):
         mod_role = await ctx.bot.db.guild(ctx.guild).mod_role()
@@ -2883,7 +2883,7 @@ class Audio(commands.Cog):
         else:
             return False
 
-    async def _skip_action(self, ctx, skiptotrack: int = None):
+    async def _skip_action(self, ctx, skip_to_track: int = None):
         player = lavalink.get_player(ctx.guild.id)
         if not player.queue:
             try:
@@ -2909,12 +2909,12 @@ class Audio(commands.Cog):
                 )
             return await ctx.send(embed=embed)
         queue_to_append = []
-        if skiptotrack is not None and skiptotrack is not 1:
-            if skiptotrack < 1:
+        if skip_to_track is not None and skip_to_track != 1:
+            if skip_to_track < 1:
                 return await self._embed_msg(
                     ctx, _("Track number must be equal to or greater than 1.")
                 )
-            elif skiptotrack > len(player.queue):
+            elif skip_to_track > len(player.queue):
                 return await self._embed_msg(
                     ctx,
                     _(
@@ -2927,16 +2927,16 @@ class Audio(commands.Cog):
                 return await self._embed_msg(
                     ctx, _("Can't skip to a track while shuffle is enabled.")
                 )
-            nexttrack = player.queue[min(skiptotrack - 1, len(player.queue) - 1)]
+            nexttrack = player.queue[min(skip_to_track - 1, len(player.queue) - 1)]
             embed = discord.Embed(
                 colour=await ctx.embed_colour(),
-                title=_("{skiptotrack} Tracks Skipped".format(skiptotrack=skiptotrack)),
+                title=_("{skip_to_track} Tracks Skipped".format(skip_to_track=skip_to_track)),
             )
             await ctx.send(embed=embed)
             if player.repeat:
-                queue_to_append = player.queue[0 : min(skiptotrack - 1, len(player.queue) - 1)]
+                queue_to_append = player.queue[0 : min(skip_to_track - 1, len(player.queue) - 1)]
             player.queue = player.queue[
-                min(skiptotrack - 1, len(player.queue) - 1) : len(player.queue)
+                min(skip_to_track - 1, len(player.queue) - 1) : len(player.queue)
             ]
         else:
             embed = discord.Embed(
