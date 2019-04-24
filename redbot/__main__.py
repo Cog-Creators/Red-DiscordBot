@@ -18,7 +18,7 @@ from redbot.core.events import init_events
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags
 from redbot.core.core_commands import Core
 from redbot.core.dev_commands import Dev
-from redbot.core import modlog, bank, data_manager
+from redbot.core import __version__, modlog, bank, data_manager
 from signal import SIGTERM
 
 # Let's not force this dependency, uvloop is much faster on cpython
@@ -81,6 +81,7 @@ def main():
         list_instances()
     elif cli_flags.version:
         print(description)
+        print("Current Version: {}".format(__version__))
         sys.exit(0)
     elif not cli_flags.instance_name and not cli_flags.no_instance:
         print("Error: No instance name was provided!")

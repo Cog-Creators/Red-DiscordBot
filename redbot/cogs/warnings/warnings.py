@@ -2,7 +2,6 @@ from collections import namedtuple
 from typing import Union, Optional
 
 import discord
-import asyncio
 
 from redbot.cogs.warnings.helpers import (
     warning_points_add_check,
@@ -10,13 +9,13 @@ from redbot.cogs.warnings.helpers import (
     get_command_for_dropping_points,
     warning_points_remove_check,
 )
-from redbot.core import Config, checks, commands
+from redbot.core import Config, checks, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.mod import is_admin_or_superior
 from redbot.core.utils.chat_formatting import warning, pagify
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-from redbot.core.utils.predicates import MessagePredicate
+
 
 _ = Translator("Warnings", __file__)
 
@@ -35,14 +34,29 @@ class Warnings(commands.Cog):
         self.config.register_guild(**self.default_guild)
         self.config.register_member(**self.default_member)
         self.bot = bot
+        self.registration_task = self.bot.loop.create_task(self.register_warningtype())
 
     # We're not utilising modlog yet - no need to register a casetype
-    # @staticmethod
-    # async def register_warningtype():
-    #     try:
-    #         await modlog.register_casetype("warning", True, "\N{WARNING SIGN}", "Warning", None)
-    #     except RuntimeError:
-    #         pass
+    @staticmethod
+    async def register_warningtype():
+        casetypes_to_register = [
+            {
+                "name": "warning",
+                "default_setting": True,
+                "image": "\N{WARNING SIGN}",
+                "case_str": "Warning",
+            },
+            {
+                "name": "unwarned",
+                "default_setting": True,
+                "image": "\N{WARNING SIGN}",
+                "case_str": "Unwarned",
+            },
+        ]
+        try:
+            await modlog.register_casetypes(casetypes_to_register)
+        except RuntimeError:
+            pass
 
     @commands.group()
     @commands.guild_only()
@@ -183,7 +197,7 @@ class Warnings(commands.Cog):
         msg_list = []
         async with guild_settings.reasons() as registered_reasons:
             for r, v in registered_reasons.items():
-                if ctx.embed_requested():
+                if await ctx.embed_requested():
                     em = discord.Embed(
                         title=_("Reason: {name}").format(name=r), description=v["description"]
                     )
@@ -231,49 +245,46 @@ class Warnings(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
-    async def warn(self, ctx: commands.Context, user: discord.Member, reason: str):
+    async def warn(
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        points: Optional[int] = 1,
+        *,
+        reason: str
+    ):
         """Warn the user for the specified reason.
 
-        `<reason>` must be a registered reason name, or *custom* if
-        custom reasons are enabled.
+        `<points>` number of points the warning should be for. If no number is supplied
+        1 point will be given. Pre-set warnings disregard this.
+        `<reason>` can be a registered reason if it exists or a custom one
+        is created by default.
         """
         if user == ctx.author:
             await ctx.send(_("You cannot warn yourself."))
             return
         custom_allowed = await self.config.guild(ctx.guild).allow_custom_reasons()
-        if reason.lower() == "custom":
-            if not custom_allowed:
-                await ctx.send(
-                    _(
-                        "Custom reasons are not allowed! Please see `{prefix}reasonlist` for "
-                        "a complete list of valid reasons."
+        guild_settings = self.config.guild(ctx.guild)
+        reason_type = None
+        async with guild_settings.reasons() as registered_reasons:
+            if reason.lower() not in registered_reasons:
+                msg = _("That is not a registered reason!")
+                if custom_allowed:
+                    reason_type = {"description": reason, "points": points}
+                elif (
+                    ctx.guild.owner == ctx.author
+                    or ctx.channel.permissions_for(ctx.author).administrator
+                    or await ctx.bot.is_owner(ctx.author)
+                ):
+                    msg += " " + _(
+                        "Do `{prefix}warningset allowcustomreasons true` to enable custom "
+                        "reasons."
                     ).format(prefix=ctx.prefix)
-                )
-                return
-            reason_type = await self.custom_warning_reason(ctx)
-        else:
-            guild_settings = self.config.guild(ctx.guild)
-            async with guild_settings.reasons() as registered_reasons:
-                if reason.lower() not in registered_reasons:
-                    msg = _("That is not a registered reason!")
-                    if custom_allowed:
-                        msg += " " + _(
-                            "Do `{prefix}warn {user} custom` to specify a custom reason."
-                        ).format(prefix=ctx.prefix, user=ctx.author)
-                    elif (
-                        ctx.guild.owner == ctx.author
-                        or ctx.channel.permissions_for(ctx.author).administrator
-                        or await ctx.bot.is_owner(ctx.author)
-                    ):
-                        msg += " " + _(
-                            "Do `{prefix}warningset allowcustomreasons true` to enable custom "
-                            "reasons."
-                        ).format(prefix=ctx.prefix)
-                    await ctx.send(msg)
-                    return
-                else:
-                    reason_type = registered_reasons[reason.lower()]
-
+                    return await ctx.send(msg)
+            else:
+                reason_type = registered_reasons[reason.lower()]
+        if reason_type is None:
+            return
         member_settings = self.config.member(user)
         current_point_count = await member_settings.total_points()
         warning_to_add = {
@@ -302,6 +313,30 @@ class Warnings(commands.Cog):
                 embed=em,
             )
         except discord.HTTPException:
+            pass
+        try:
+            reason_msg = _(
+                "{reason}\n\nUse `{prefix}unwarn {user} {message}` to remove this warning."
+            ).format(
+                reason=_("{description}\nPoints: {points}").format(
+                    description=reason_type["description"], points=reason_type["points"]
+                ),
+                prefix=ctx.prefix,
+                user=user.id,
+                message=ctx.message.id,
+            )
+            await modlog.create_case(
+                self.bot,
+                ctx.guild,
+                ctx.message.created_at,
+                "warning",
+                user,
+                ctx.message.author,
+                reason_msg,
+                until=None,
+                channel=None,
+            )
+        except RuntimeError:
             pass
         await ctx.send(_("User {user} has been warned.").format(user=user))
 
@@ -388,39 +423,19 @@ class Warnings(commands.Cog):
                 current_point_count -= user_warnings[warn_id]["points"]
                 await member_settings.total_points.set(current_point_count)
                 user_warnings.pop(warn_id)
+        try:
+            await modlog.create_case(
+                self.bot,
+                ctx.guild,
+                ctx.message.created_at,
+                "unwarned",
+                member,
+                ctx.message.author,
+                None,
+                until=None,
+                channel=None,
+            )
+        except RuntimeError:
+            pass
+
         await ctx.tick()
-
-    @staticmethod
-    async def custom_warning_reason(ctx: commands.Context):
-        """Handles getting description and points for custom reasons"""
-        to_add = {"points": 0, "description": ""}
-
-        await ctx.send(_("How many points should be given for this reason?"))
-        try:
-            msg = await ctx.bot.wait_for(
-                "message", check=MessagePredicate.same_context(ctx), timeout=30
-            )
-        except asyncio.TimeoutError:
-            await ctx.send(_("Ok then."))
-            return
-        try:
-            int(msg.content)
-        except ValueError:
-            await ctx.send(_("That isn't a number!"))
-            return
-        else:
-            if int(msg.content) <= 0:
-                await ctx.send(_("The point value needs to be greater than 0!"))
-                return
-            to_add["points"] = int(msg.content)
-
-        await ctx.send(_("Enter a description for this reason."))
-        try:
-            msg = await ctx.bot.wait_for(
-                "message", check=MessagePredicate.same_context(ctx), timeout=30
-            )
-        except asyncio.TimeoutError:
-            await ctx.send(_("Ok then."))
-            return
-        to_add["description"] = msg.content
-        return to_add

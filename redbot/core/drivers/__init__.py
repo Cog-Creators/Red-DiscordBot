@@ -1,6 +1,14 @@
+import enum
+
 from .red_base import IdentifierData
 
-__all__ = ["get_driver", "IdentifierData"]
+__all__ = ["get_driver", "IdentifierData", "BackendType"]
+
+
+class BackendType(enum.Enum):
+    JSON = "JSON"
+    MONGO = "MongoDBV2"
+    MONGOV1 = "MongoDB"
 
 
 def get_driver(type, *args, **kwargs):
@@ -28,8 +36,13 @@ def get_driver(type, *args, **kwargs):
         from .red_json import JSON
 
         return JSON(*args, **kwargs)
-    elif type == "MongoDB":
+    elif type == "MongoDBV2":
         from .red_mongo import Mongo
 
         return Mongo(*args, **kwargs)
+    elif type == "Mongo":
+        raise RuntimeError(
+            "Please convert to JSON first to continue using the bot."
+            " This is a required conversion prior to using the new Mongo driver."
+        )
     raise RuntimeError("Invalid driver type: '{}'".format(type))
