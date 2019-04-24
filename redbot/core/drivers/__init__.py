@@ -40,9 +40,11 @@ def get_driver(type, *args, **kwargs):
         from .red_mongo import Mongo
 
         return Mongo(*args, **kwargs)
-    elif type == "Mongo":
+    elif type == "MongoDB":
         raise RuntimeError(
             "Please convert to JSON first to continue using the bot."
             " This is a required conversion prior to using the new Mongo driver."
+            " This message will be updated with a link to the update docs once those"
+            " docs have been created."
         )
     raise RuntimeError("Invalid driver type: '{}'".format(type))
