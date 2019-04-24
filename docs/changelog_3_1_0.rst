@@ -43,6 +43,12 @@ Setup Scripts
  * ``redbot-setup convert`` now used to convert between libraries (`#2579`_)
  * Backup support for Mongo is currently broken (`#2579`_)
 
+------
+Trivia
+------
+
+ * Fix of dead image link for Sao Tome and Principe in ``worldflags`` trivia (`#2540`_)
+
 -----------------
 Utility Functions
 -----------------
@@ -56,6 +62,7 @@ Utility Functions
 .. _#2523: https://github.com/Cog-Creators/Red-DiscordBot/pull/2523
 .. _#2525: https://github.com/Cog-Creators/Red-DiscordBot/pull/2525
 .. _#2536: https://github.com/Cog-Creators/Red-DiscordBot/pull/2536
+.. _#2540: https://github.com/Cog-Creators/Red-DiscordBot/pull/2540
 .. _#2545: https://github.com/Cog-Creators/Red-DiscordBot/pull/2545
 .. _#2550: https://github.com/Cog-Creators/Red-DiscordBot/pull/2550
 .. _#2579: https://github.com/Cog-Creators/Red-DiscordBot/pull/2579
