@@ -21,6 +21,12 @@ Config
 discord.py
 ----------
 
+----------
+Downloader
+----------
+
+ * ``[p]cog install`` will now tell user that cog has to be loaded (`#2523`_)
+
 ---
 Mod
 ---
@@ -45,6 +51,7 @@ Utility Functions
 .. _#2437: https://github.com/Cog-Creators/Red-DiscordBot/pull/2437
 .. _#2496: https://github.com/Cog-Creators/Red-DiscordBot/pull/2496
 .. _#2507: https://github.com/Cog-Creators/Red-DiscordBot/pull/2507
+.. _#2523: https://github.com/Cog-Creators/Red-DiscordBot/pull/2523
 .. _#2536: https://github.com/Cog-Creators/Red-DiscordBot/pull/2536
 .. _#2545: https://github.com/Cog-Creators/Red-DiscordBot/pull/2545
 .. _#2550: https://github.com/Cog-Creators/Red-DiscordBot/pull/2550
