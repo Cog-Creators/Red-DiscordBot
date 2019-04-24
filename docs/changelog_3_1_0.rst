@@ -29,8 +29,8 @@ Setup Scripts
  * ``redbot-setup convert`` now used to convert between libraries (`#2579`_)
  * Backup support for Mongo is currently broken (`#2579`_)
 
-.. _#2536 link: https://github.com/Cog-Creators/Red-DiscordBot/pull/2536
-.. _#2545 link: https://github.com/Cog-Creators/Red-DiscordBot/pull/2545
-.. _#2550 link: https://github.com/Cog-Creators/Red-DiscordBot/pull/2550
-.. _#2579 link: https://github.com/Cog-Creators/Red-DiscordBot/pull/2579
-.. _#2604 link: https://github.com/Cog-Creators/Red-DiscordBot/pull/2604
+.. _#2536: https://github.com/Cog-Creators/Red-DiscordBot/pull/2536
+.. _#2545: https://github.com/Cog-Creators/Red-DiscordBot/pull/2545
+.. _#2550: https://github.com/Cog-Creators/Red-DiscordBot/pull/2550
+.. _#2579: https://github.com/Cog-Creators/Red-DiscordBot/pull/2579
+.. _#2604: https://github.com/Cog-Creators/Red-DiscordBot/pull/2604
