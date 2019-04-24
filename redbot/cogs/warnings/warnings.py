@@ -380,7 +380,7 @@ class Warnings(commands.Cog):
                             self.bot.get_all_members(), id=user_warnings[key]["mod"]
                         )
                         if mod is None:
-                            mod = await self.bot.get_user_info(user_warnings[key]["mod"])
+                            mod = await self.bot.fetch_user(user_warnings[key]["mod"])
                     msg += _(
                         "{num_points} point warning {reason_name} issued by {user} for "
                         "{description}\n"

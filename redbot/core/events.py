@@ -119,7 +119,7 @@ def init_events(bot, cli_flags):
                     "Outdated version! {} is available "
                     "but you're using {}".format(data["info"]["version"], red_version)
                 )
-                owner = await bot.get_user_info(bot.owner_id)
+                owner = await bot.fetch_user(bot.owner_id)
                 await owner.send(
                     "Your Red instance is out of date! {} is the current "
                     "version, however you are using {}!".format(
@@ -168,8 +168,9 @@ def init_events(bot, cli_flags):
             if hasattr(ctx.command, "on_error"):
                 return
 
-            if ctx.cog and hasattr(ctx.cog, f"_{ctx.cog.__class__.__name__}__error"):
-                return
+            if ctx.cog:
+                if commands.Cog._get_overridden_method(ctx.cog.cog_command_error) is not None:
+                    return
 
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help()

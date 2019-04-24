@@ -1,5 +1,6 @@
 from collections import defaultdict
 from typing import List, Tuple
+from abc import ABC
 
 import discord
 from redbot.core import Config, modlog, commands
@@ -18,8 +19,26 @@ _ = T_ = Translator("Mod", __file__)
 __version__ = "1.0.0"
 
 
+class CompositeMetaClass(type(commands.Cog), type(ABC)):
+    """
+    This allows the metaclass used for proper type detection to
+    coexist with discord.py's metaclass
+    """
+
+    pass
+
+
 @cog_i18n(_)
-class Mod(ModSettings, Events, KickBanMixin, MoveToCore, MuteMixin, ModInfo, commands.Cog):
+class Mod(
+    ModSettings,
+    Events,
+    KickBanMixin,
+    MoveToCore,
+    MuteMixin,
+    ModInfo,
+    commands.Cog,
+    metaclass=CompositeMetaClass,
+):
     """Moderation tools."""
 
     default_global_settings = {"version": ""}
@@ -60,7 +79,7 @@ class Mod(ModSettings, Events, KickBanMixin, MoveToCore, MuteMixin, ModInfo, com
     async def initialize(self):
         await self._maybe_update_config()
 
-    def __unload(self):
+    def cog_unload(self):
         self.registration_task.cancel()
         self.tban_expiry_task.cancel()
 
@@ -87,7 +106,7 @@ class Mod(ModSettings, Events, KickBanMixin, MoveToCore, MuteMixin, ModInfo, com
 
     # TODO: Move this to core.
     # This would be in .movetocore , but the double-under name here makes that more trouble
-    async def __global_check(self, ctx):
+    async def bot_check(self, ctx):
         """Global check to see if a channel or server is ignored.
 
         Any users who have permission to use the `ignore` or `unignore` commands

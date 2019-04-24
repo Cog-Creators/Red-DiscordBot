@@ -66,7 +66,7 @@ class Admin(commands.Cog):
 
         self.__current_announcer = None
 
-    def __unload(self):
+    def cog_unload(self):
         try:
             self.__current_announcer.cancel()
         except AttributeError:

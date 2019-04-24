@@ -33,7 +33,7 @@ class Filter(commands.Cog):
         self.register_task = self.bot.loop.create_task(self.register_filterban())
         self.pattern_cache = {}
 
-    def __unload(self):
+    def cog_unload(self):
         self.register_task.cancel()
 
     @staticmethod
@@ -409,6 +409,7 @@ class Filter(commands.Cog):
                                 reason,
                             )
 
+    @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         if isinstance(message.channel, discord.abc.PrivateChannel):
             return
@@ -422,15 +423,18 @@ class Filter(commands.Cog):
 
         await self.check_filter(message)
 
+    @commands.Cog.listener()
     async def on_message_edit(self, _prior, message):
         # message content has to change for non-bot's currently.
         # if this changes, we should compare before passing it.
         await self.on_message(message)
 
+    @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
         if before.display_name != after.display_name:
             await self.maybe_filter_name(after)
 
+    @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
         await self.maybe_filter_name(member)
 

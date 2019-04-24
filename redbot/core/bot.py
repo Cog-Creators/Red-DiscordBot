@@ -14,7 +14,7 @@ from discord.ext.commands import when_mentioned_or
 
 from . import Config, i18n, commands, errors
 from .cog_manager import CogManager
-from .help_formatter import Help, help as help_
+
 from .rpc import RPCMixin
 from .utils import common_filters
 
@@ -29,10 +29,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
     """Mixin for the main bot class.
 
     This exists because `Red` inherits from `discord.AutoShardedClient`, which
-    is something other bot classes (namely selfbots) may not want to have as
-    a parent class.
-
-    Selfbots should inherit from this mixin along with `discord.Client`.
+    is something other bot classes may not want to have as a parent class.
     """
 
     def __init__(self, *args, cli_flags=None, bot_dir: Path = Path.cwd(), **kwargs):
@@ -118,11 +115,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
         self.cog_mgr = CogManager()
 
-        super().__init__(*args, formatter=Help(), **kwargs)
-
-        self.remove_command("help")
-
-        self.add_command(help_)
+        super().__init__(*args, help_command=commands.DefaultHelpCommand(), **kwargs)
 
         self._permissions_hooks: List[commands.CheckPredicate] = []
 
@@ -216,6 +209,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
                 curr_pkgs.remove(pkg_name)
 
     async def load_extension(self, spec: ModuleSpec):
+        # NB: this completely bypasses `discord.ext.commands.Bot._load_from_module_spec`
         name = spec.name.split(".")[-1]
         if name in self.extensions:
             raise errors.PackageAlreadyLoaded(spec)
@@ -225,12 +219,17 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             del lib
             raise discord.ClientException(f"extension {name} does not have a setup function")
 
-        if asyncio.iscoroutinefunction(lib.setup):
-            await lib.setup(self)
+        try:
+            if asyncio.iscoroutinefunction(lib.setup):
+                await lib.setup(self)
+            else:
+                lib.setup(self)
+        except Exception as e:
+            self._remove_module_references(lib.__name__)
+            self._call_module_finalizers(lib, key)
+            raise errors.ExtensionFailed(key, e) from e
         else:
-            lib.setup(self)
-
-        self.extensions[name] = lib
+            self._BotBase__extensions[name] = lib
 
     def remove_cog(self, cogname: str):
         cog = self.get_cog(cogname)
@@ -249,62 +248,6 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
         for meth in self.rpc_handlers.pop(cogname.upper(), ()):
             self.unregister_rpc_handler(meth)
-
-    def unload_extension(self, name):
-        lib = self.extensions.get(name)
-
-        if lib is None:
-            return
-
-        lib_name = lib.__name__  # Thank you
-
-        # find all references to the module
-
-        # remove the cogs registered from the module
-        for cogname, cog in self.cogs.copy().items():
-            if cog.__module__ and _is_submodule(lib_name, cog.__module__):
-                self.remove_cog(cogname)
-
-        # first remove all the commands from the module
-        for cmd in self.all_commands.copy().values():
-            if cmd.module and _is_submodule(lib_name, cmd.module):
-                if isinstance(cmd, discord.ext.commands.GroupMixin):
-                    cmd.recursively_remove_all_commands()
-
-                self.remove_command(cmd.name)
-
-        # then remove all the listeners from the module
-        for event_list in self.extra_events.copy().values():
-            remove = []
-
-            for index, event in enumerate(event_list):
-                if event.__module__ and _is_submodule(lib_name, event.__module__):
-                    remove.append(index)
-
-            for index in reversed(remove):
-                del event_list[index]
-
-        try:
-            func = getattr(lib, "teardown")
-        except AttributeError:
-            pass
-        else:
-            try:
-                func(self)
-            except:
-                pass
-        finally:
-            # finally remove the import..
-            pkg_name = lib.__package__
-            del lib
-            del self.extensions[name]
-
-            for module in list(sys.modules):
-                if _is_submodule(lib_name, module):
-                    del sys.modules[module]
-
-            if pkg_name.startswith("redbot.cogs."):
-                del sys.modules["redbot.cogs"].__dict__[name]
 
     async def is_automod_immune(
         self, to_check: Union[discord.Message, commands.Context, discord.abc.User, discord.Role]
@@ -399,11 +342,9 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             else:
                 self.add_permissions_hook(hook)
 
-        for attr in dir(cog):
-            _attr = getattr(cog, attr)
-            if isinstance(_attr, discord.ext.commands.Command) and not isinstance(
-                _attr, commands.Command
-            ):
+        for command in cog.__cog_commands__:
+
+            if not isinstance(command, commands.Command):
                 raise RuntimeError(
                     f"The {cog.__class__.__name__} cog in the {cog.__module__} package,"
                     " is not using Red's command module, and cannot be added. "
@@ -414,13 +355,8 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
                 )
         super().add_cog(cog)
         self.dispatch("cog_add", cog)
-
-    def add_command(self, command: commands.Command):
-        if not isinstance(command, commands.Command):
-            raise TypeError("Command objects must derive from redbot.core.commands.Command")
-
-        super().add_command(command)
-        self.dispatch("command_add", command)
+        for command in cog.__cog_commands__:
+            self.dispatch("command_add", command)
 
     def clear_permission_rules(self, guild_id: Optional[int]) -> None:
         """Clear all permission overrides in a scope.

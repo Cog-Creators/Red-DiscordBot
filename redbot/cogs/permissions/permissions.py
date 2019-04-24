@@ -433,20 +433,26 @@ class Permissions(commands.Cog):
             await self._clear_rules(guild_id=ctx.guild.id)
             await ctx.tick()
 
-    async def cog_added(self, cog: commands.Cog) -> None:
+    async def red_cog_added(self, cog: commands.Cog) -> None:
         """Event listener for `cog_add`.
 
         This loads rules whenever a new cog is added.
+
+        Do not convert to using Cog.listener decorator !!
+        This *must* be added manually prior to cog load, and removed at unload
         """
         self._load_rules_for(
             cog_or_command=cog,
             rule_dict=await self.config.custom(COG, cog.__class__.__name__).all(),
         )
 
-    async def command_added(self, command: commands.Command) -> None:
+    async def red_command_added(self, command: commands.Command) -> None:
         """Event listener for `command_add`.
 
         This loads rules whenever a new command is added.
+
+        Do not convert to using Cog.listener decorator !!
+        This *must* be added manually prior to cog load, and removed at unload
         """
         self._load_rules_for(
             cog_or_command=command,
@@ -701,9 +707,9 @@ class Permissions(commands.Cog):
                 elif rule is False:
                     cog_or_command.deny_to(model_id, guild_id=guild_id)
 
-    def __unload(self) -> None:
-        self.bot.remove_listener(self.cog_added, "on_cog_add")
-        self.bot.remove_listener(self.command_added, "on_command_add")
+    def cog_unload(self) -> None:
+        self.bot.remove_listener(self.red_cog_added, "on_cog_add")
+        self.bot.remove_listener(self.red_command_added, "on_command_add")
         self.bot.loop.create_task(self._unload_all_rules())
 
     async def _unload_all_rules(self) -> None:
