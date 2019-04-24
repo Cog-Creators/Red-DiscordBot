@@ -34,6 +34,7 @@ Downloader
 ----------
 
  * ``[p]cog install`` will now tell user that cog has to be loaded (`#2523`_)
+ * Fixed bug, that caused Downloader to include submodules on cog list (`#2590`_)
 
 ---
 Mod
@@ -80,4 +81,5 @@ Utility Functions
 .. _#2565: https://github.com/Cog-Creators/Red-DiscordBot/pull/2565
 .. _#2567: https://github.com/Cog-Creators/Red-DiscordBot/pull/2567
 .. _#2579: https://github.com/Cog-Creators/Red-DiscordBot/pull/2579
+.. _#2590: https://github.com/Cog-Creators/Red-DiscordBot/pull/2590
 .. _#2604: https://github.com/Cog-Creators/Red-DiscordBot/pull/2604
