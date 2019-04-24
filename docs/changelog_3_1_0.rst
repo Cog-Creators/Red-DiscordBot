@@ -43,6 +43,12 @@ Setup Scripts
  * ``redbot-setup convert`` now used to convert between libraries (`#2579`_)
  * Backup support for Mongo is currently broken (`#2579`_)
 
+-----
+Tests
+-----
+
+ * Test for ``trivia`` cog uses explicitly utf-8 encoding for checking yaml files (`#2565`_)
+
 ------
 Trivia
 ------
@@ -65,5 +71,6 @@ Utility Functions
 .. _#2540: https://github.com/Cog-Creators/Red-DiscordBot/pull/2540
 .. _#2545: https://github.com/Cog-Creators/Red-DiscordBot/pull/2545
 .. _#2550: https://github.com/Cog-Creators/Red-DiscordBot/pull/2550
+.. _#2565: https://github.com/Cog-Creators/Red-DiscordBot/pull/2565
 .. _#2579: https://github.com/Cog-Creators/Red-DiscordBot/pull/2579
 .. _#2604: https://github.com/Cog-Creators/Red-DiscordBot/pull/2604
