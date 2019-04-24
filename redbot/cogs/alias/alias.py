@@ -182,7 +182,7 @@ class Alias(commands.Cog):
         extra = []
         while not view.eof:
             prev = view.index
-            word = view.get_quoted_word(view)
+            word = view.get_quoted_word()
             if len(word) < view.index - prev:
                 word = "".join((view.buffer[prev], word, view.buffer[view.index - 1]))
             extra.append(word)
