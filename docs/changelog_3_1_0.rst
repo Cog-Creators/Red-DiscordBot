@@ -8,6 +8,8 @@ v3.1.0 Changelog
 Audio
 -----
 
+ * Bot will no longer complain about permissions when trying to connect to user-limited channel, if it has "Move Members" permission (`#2525`_)
+
 ------
 Config
 ------
@@ -52,6 +54,7 @@ Utility Functions
 .. _#2496: https://github.com/Cog-Creators/Red-DiscordBot/pull/2496
 .. _#2507: https://github.com/Cog-Creators/Red-DiscordBot/pull/2507
 .. _#2523: https://github.com/Cog-Creators/Red-DiscordBot/pull/2523
+.. _#2525: https://github.com/Cog-Creators/Red-DiscordBot/pull/2525
 .. _#2536: https://github.com/Cog-Creators/Red-DiscordBot/pull/2536
 .. _#2545: https://github.com/Cog-Creators/Red-DiscordBot/pull/2545
 .. _#2550: https://github.com/Cog-Creators/Red-DiscordBot/pull/2550
