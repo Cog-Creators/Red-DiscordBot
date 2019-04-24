@@ -21,6 +21,12 @@ Config
 discord.py
 ----------
 
+---
+Mod
+---
+
+ * Admins can now decide how many times message has to be repeated before ``deleterepeats`` removes it (`#2437`_)
+
 -------------
 Setup Scripts
 -------------
@@ -29,6 +35,7 @@ Setup Scripts
  * ``redbot-setup convert`` now used to convert between libraries (`#2579`_)
  * Backup support for Mongo is currently broken (`#2579`_)
 
+.. _#2437: https://github.com/Cog-Creators/Red-DiscordBot/pull/2437
 .. _#2536: https://github.com/Cog-Creators/Red-DiscordBot/pull/2536
 .. _#2545: https://github.com/Cog-Creators/Red-DiscordBot/pull/2545
 .. _#2550: https://github.com/Cog-Creators/Red-DiscordBot/pull/2550
