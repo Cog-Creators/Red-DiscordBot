@@ -63,7 +63,9 @@ class Account:
 
     This class should ONLY be instantiated by the bank itself."""
 
-    def __init__(self, name: str, balance: int, created_at: datetime.datetime, last_command_cost = {}):
+    def __init__(
+        self, name: str, balance: int, created_at: datetime.datetime, last_command_cost={}
+    ):
         self.name = name
         self.balance = balance
         self.created_at = created_at
