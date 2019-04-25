@@ -124,13 +124,4 @@ class Bank(commands.Cog):
         await bank.set_currency_name(name, ctx.guild)
         await ctx.send(_("Currency name has been set to: {name}").format(name=name))
 
-    async def on_command_error(self, ctx, exception):
-        author = ctx.author
-        command = ctx.command.qualified_name
-        data = await bank._conf.member(author).last_command_cost()
-        if data["command"] != command:
-            return
-        else:
-            await bank.deposit_credits(author, data["cost"])
-
     # ENDSECTION
