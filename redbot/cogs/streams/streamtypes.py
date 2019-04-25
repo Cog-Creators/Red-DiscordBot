@@ -174,7 +174,8 @@ class TwitchStream(Stream):
             # self.already_online = True
             #  In case of rename
             self.name = data["stream"]["channel"]["name"]
-            return self.make_embed(data)
+            is_rerun = True if data["stream"]["stream_type"] == "rerun" else False
+            return self.make_embed(data), is_rerun
         elif r.status == 400:
             raise InvalidTwitchCredentials()
         elif r.status == 404:
@@ -204,6 +205,7 @@ class TwitchStream(Stream):
 
     def make_embed(self, data):
         channel = data["stream"]["channel"]
+        is_rerun = data["stream"]["stream_type"] == "rerun"
         url = channel["url"]
         logo = channel["logo"]
         if logo is None:
@@ -211,6 +213,8 @@ class TwitchStream(Stream):
         status = channel["status"]
         if not status:
             status = "Untitled broadcast"
+        if is_rerun:
+            status += " - Rerun"
         embed = discord.Embed(title=status, url=url)
         embed.set_author(name=channel["display_name"])
         embed.add_field(name="Followers", value=channel["followers"])
