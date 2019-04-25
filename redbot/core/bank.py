@@ -3,7 +3,7 @@ from typing import Union, List, Optional
 
 import discord
 
-from . import Config, errors
+from . import Config, errors, commands
 
 __all__ = [
     "MAX_BALANCE",
@@ -37,7 +37,7 @@ _DEFAULT_GLOBAL = {
 
 _DEFAULT_GUILD = {"bank_name": "Twentysix bank", "currency": "credits", "default_balance": 100}
 
-_DEFAULT_MEMBER = {"name": "", "balance": 0, "created_at": 0}
+_DEFAULT_MEMBER = {"name": "", "balance": 0, "created_at": 0, "last_command_cost": {"command": None, "cost": 0}}
 
 _DEFAULT_USER = _DEFAULT_MEMBER
 
@@ -58,10 +58,11 @@ class Account:
 
     This class should ONLY be instantiated by the bank itself."""
 
-    def __init__(self, name: str, balance: int, created_at: datetime.datetime):
+    def __init__(self, name: str, balance: int, created_at: datetime.datetime, last_command_cost):
         self.name = name
         self.balance = balance
         self.created_at = created_at
+        self.last_command_cost = last_command_cost
 
 
 def _encoded_current_time() -> int:
@@ -669,3 +670,18 @@ async def set_default_balance(amount: int, guild: discord.Guild = None) -> int:
         raise RuntimeError("Guild is missing and required.")
 
     return amount
+
+def cost(amount : int = 0) -> bool:
+    async def predicate(ctx):
+        try:
+            if await get_balance(ctx.author) >= amount:
+                await withdraw_credits(ctx.author, amount)
+                last_data = {"command": str(ctx.command.qualified_name), "cost": amount}
+                await _conf.member(ctx.author).last_command_cost.set(last_data)
+                return True
+            else:
+                await ctx.send("You don't have enough money to use that command !")
+                return False
+        except:
+            return True
+    return commands.check(predicate)
