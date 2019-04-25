@@ -40,7 +40,13 @@ class Streams(commands.Cog):
 
     global_defaults = {"tokens": {}, "streams": [], "games": {}}
 
-    guild_defaults = {"autodelete": False, "mention_everyone": False, "mention_here": False}
+    guild_defaults = {
+        "autodelete": False,
+        "mention_everyone": False,
+        "mention_here": False,
+        "live_message_mention": False,
+        "live_message_nomention": False,
+    }
 
     role_defaults = {"mention": False}
 
@@ -90,7 +96,7 @@ class Streams(commands.Cog):
         await self.db.tokens.clear()
 
     @commands.command()
-    async def twitch(self, ctx: commands.Context, channel_name: str):
+    async def twitchstream(self, ctx: commands.Context, channel_name: str):
         """Check if a Twitch channel is live."""
         token = await self.bot.db.api_tokens.get_raw("twitch", default=None)
         if not token:
@@ -105,7 +111,7 @@ class Streams(commands.Cog):
         await self.check_online(ctx, stream)
 
     @commands.command()
-    async def youtube(self, ctx: commands.Context, channel_id_or_name: str):
+    async def youtubestream(self, ctx: commands.Context, channel_id_or_name: str):
         """Check if a YouTube channel is live."""
         apikey = await self.bot.db.api_tokens.get_raw("youtube", default={"api_key": None})
         is_name = self.check_name_or_id(channel_id_or_name)
@@ -357,6 +363,55 @@ class Streams(commands.Cog):
 
     @streamset.group()
     @commands.guild_only()
+    async def message(self, ctx: commands.Context):
+        """Manage custom message for stream alerts."""
+        pass
+
+    @message.command(name="mention")
+    @commands.guild_only()
+    async def with_mention(self, ctx: commands.Context, message: str = None):
+        """Set stream alert message when mentions are enabled.
+
+        Use `{mention}` in the message to insert the selected mentions.
+
+        Use `{stream.name}` in the message to insert the channel or user name.
+
+        For example: `[p]streamset message mention "{mention}, {stream.name} is live!"`
+        """
+        if message is not None:
+            guild = ctx.guild
+            await self.db.guild(guild).live_message_mention.set(message)
+            await ctx.send(_("stream alert message set!"))
+        else:
+            await ctx.send_help()
+
+    @message.command(name="nomention")
+    @commands.guild_only()
+    async def without_mention(self, ctx: commands.Context, message: str = None):
+        """Set stream alert message when mentions are disabled.
+
+        Use `{stream.name}` in the message to insert the channel or user name.
+
+        For example: `[p]streamset message nomention "{stream.name} is live!"`
+        """
+        if message is not None:
+            guild = ctx.guild
+            await self.db.guild(guild).live_message_nomention.set(message)
+            await ctx.send(_("stream alert message set!"))
+        else:
+            await ctx.send_help()
+
+    @message.command(name="clear")
+    @commands.guild_only()
+    async def clear_message(self, ctx: commands.Context):
+        """Reset the stream alert messages in this server."""
+        guild = ctx.guild
+        await self.db.guild(guild).live_message_mention.set(False)
+        await self.db.guild(guild).live_message_nomention.set(False)
+        await ctx.send(_("Stream alerts in this server will now use the default alert message."))
+
+    @streamset.group()
+    @commands.guild_only()
     async def mention(self, ctx: commands.Context):
         """Manage mention settings for stream alerts."""
         pass
@@ -503,11 +558,19 @@ class Streams(commands.Cog):
                         mention_str, edited_roles = await self._get_mention_str(channel.guild)
 
                         if mention_str:
-                            content = _("{mention}, {stream.name} is live!").format(
-                                mention=mention_str, stream=stream
-                            )
+                            alert_msg = await self.db.guild(channel.guild).live_message_mention()
+                            if alert_msg:
+                                content = alert_msg.format(mention=mention_str, stream=stream)
+                            else:
+                                content = _("{mention}, {stream.name} is live!").format(
+                                    mention=mention_str, stream=stream
+                                )
                         else:
-                            content = _("{stream.name} is live!").format(stream=stream)
+                            alert_msg = await self.db.guild(channel.guild).live_message_nomention()
+                            if alert_msg:
+                                content = alert_msg.format(stream=stream)
+                            else:
+                                content = _("{stream.name} is live!").format(stream=stream)
                         if stream._messages_cache:
                             for m in stream._messages_cache:
                                 await m.edit(content, embed=embed)
@@ -598,7 +661,7 @@ class Streams(commands.Cog):
                 chn = self.bot.get_channel(raw_msg["channel"])
                 if chn is not None:
                     try:
-                        msg = await chn.get_message(raw_msg["message"])
+                        msg = await chn.fetch_message(raw_msg["message"])
                     except discord.HTTPException:
                         pass
                     else:
@@ -617,8 +680,8 @@ class Streams(commands.Cog):
 
         await self.db.streams.set(raw_streams)
 
-    def __unload(self):
+    def cog_unload(self):
         if self.task:
             self.task.cancel()
 
-    __del__ = __unload
+    __del__ = cog_unload

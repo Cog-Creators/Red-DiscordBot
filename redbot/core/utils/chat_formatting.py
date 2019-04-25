@@ -344,6 +344,11 @@ def humanize_list(items: Sequence[str]) -> str:
     items : Sequence[str]
         The items of the list to join together.
 
+    Raises
+    ------
+    IndexError
+        An empty sequence was passed
+
     Examples
     --------
     .. testsetup::
@@ -360,7 +365,10 @@ def humanize_list(items: Sequence[str]) -> str:
     """
     if len(items) == 1:
         return items[0]
-    return ", ".join(items[:-1]) + _(", and ") + items[-1]
+    try:
+        return ", ".join(items[:-1]) + _(", and ") + items[-1]
+    except IndexError:
+        raise IndexError("Cannot humanize empty sequence") from None
 
 
 def format_perms_list(perms: discord.Permissions) -> str:

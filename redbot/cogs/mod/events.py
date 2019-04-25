@@ -1,7 +1,8 @@
 from datetime import datetime
+from collections import defaultdict, deque
 
 import discord
-from redbot.core import i18n, modlog
+from redbot.core import i18n, modlog, commands
 from redbot.core.utils.mod import is_mod_or_superior
 from . import log
 from .abc import MixinMeta
@@ -19,17 +20,24 @@ class Events(MixinMeta):
         guild = message.guild
         author = message.author
 
-        if await self.settings.guild(guild).delete_repeats():
-            if not message.content:
+        guild_cache = self.cache.get(guild.id, None)
+        if guild_cache is None:
+            repeats = await self.settings.guild(guild).delete_repeats()
+            if repeats == -1:
                 return False
-            self.cache[author].append(message)
-            msgs = self.cache[author]
-            if len(msgs) == 3 and msgs[0].content == msgs[1].content == msgs[2].content:
-                try:
-                    await message.delete()
-                    return True
-                except discord.HTTPException:
-                    pass
+            guild_cache = self.cache[guild.id] = defaultdict(lambda: deque(maxlen=repeats))
+
+        if not message.content:
+            return False
+
+        guild_cache[author].append(message.content)
+        msgs = guild_cache[author]
+        if len(msgs) == msgs.maxlen and len(set(msgs)) == 1:
+            try:
+                await message.delete()
+                return True
+            except discord.HTTPException:
+                pass
         return False
 
     async def check_mention_spam(self, message):
@@ -65,6 +73,7 @@ class Events(MixinMeta):
                     return True
         return False
 
+    @commands.Cog.listener()
     async def on_message(self, message):
         author = message.author
         if message.guild is None or self.bot.user == author:
@@ -84,6 +93,7 @@ class Events(MixinMeta):
         if not deleted:
             await self.check_mention_spam(message)
 
+    @commands.Cog.listener()
     async def on_member_ban(self, guild: discord.Guild, member: discord.Member):
         if (guild.id, member.id) in self.ban_queue:
             self.ban_queue.remove((guild.id, member.id))
@@ -104,6 +114,7 @@ class Events(MixinMeta):
         except RuntimeError as e:
             print(e)
 
+    @commands.Cog.listener()
     async def on_member_unban(self, guild: discord.Guild, user: discord.User):
         if (guild.id, user.id) in self.unban_queue:
             self.unban_queue.remove((guild.id, user.id))
@@ -122,8 +133,8 @@ class Events(MixinMeta):
         except RuntimeError as e:
             print(e)
 
-    @staticmethod
-    async def on_modlog_case_create(case: modlog.Case):
+    @commands.Cog.listener()
+    async def on_modlog_case_create(self, case: modlog.Case):
         """
         An event for modlog case creation
         """
@@ -139,8 +150,8 @@ class Events(MixinMeta):
             msg = await mod_channel.send(case_content)
         await case.edit({"message": msg})
 
-    @staticmethod
-    async def on_modlog_case_edit(case: modlog.Case):
+    @commands.Cog.listener()
+    async def on_modlog_case_edit(self, case: modlog.Case):
         """
         Event for modlog case edits
         """
@@ -153,6 +164,7 @@ class Events(MixinMeta):
         else:
             await case.message.edit(content=case_content)
 
+    @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
         if before.name != after.name:
             async with self.settings.user(before).past_names() as name_list:

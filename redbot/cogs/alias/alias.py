@@ -4,7 +4,7 @@ from string import Formatter
 from typing import Generator, Tuple, Iterable, Optional
 
 import discord
-from discord.ext.commands.view import StringView, quoted_word
+from discord.ext.commands.view import StringView
 from redbot.core import Config, commands, checks
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
@@ -182,7 +182,7 @@ class Alias(commands.Cog):
         extra = []
         while not view.eof:
             prev = view.index
-            word = quoted_word(view)
+            word = view.get_quoted_word()
             if len(word) < view.index - prev:
                 word = "".join((view.buffer[prev], word, view.buffer[view.index - 1]))
             extra.append(word)
@@ -434,6 +434,7 @@ class Alias(commands.Cog):
         else:
             await ctx.send(box("\n".join(names), "diff"))
 
+    @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         aliases = list(await self.unloaded_global_aliases())
         if message.guild is not None:

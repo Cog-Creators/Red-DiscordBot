@@ -434,6 +434,7 @@ class CustomCommands(commands.Cog):
         for p in pagify(text):
             await ctx.send(box(p, lang="yaml"))
 
+    @commands.Cog.listener()
     async def on_message(self, message):
         is_private = isinstance(message.channel, discord.abc.PrivateChannel)
 

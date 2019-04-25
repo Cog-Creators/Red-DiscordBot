@@ -1009,11 +1009,20 @@ class Core(commands.Cog, CoreLogic):
 
         To reset to English, use "en-US".
         """
-        i18n.set_locale(locale_name)
-
-        await ctx.bot.db.locale.set(locale_name)
-
-        await ctx.send(_("Locale has been set."))
+        red_dist = pkg_resources.get_distribution("red-discordbot")
+        red_path = Path(red_dist.location) / "redbot"
+        locale_list = [loc.stem.lower() for loc in list(red_path.glob("**/*.po"))]
+        if locale_name.lower() in locale_list or locale_name.lower() == "en-us":
+            i18n.set_locale(locale_name)
+            await ctx.bot.db.locale.set(locale_name)
+            await ctx.send(_("Locale has been set."))
+        else:
+            await ctx.send(
+                _(
+                    "Invalid locale. Use `{prefix}listlocales` to get "
+                    "a list of available locales."
+                ).format(prefix=ctx.prefix)
+            )
 
     @_set.command()
     @checks.is_owner()
@@ -1134,7 +1143,9 @@ class Core(commands.Cog, CoreLogic):
         async with ctx.channel.typing():
             red_dist = pkg_resources.get_distribution("red-discordbot")
             red_path = Path(red_dist.location) / "redbot"
-            locale_list = sorted(set([loc.stem for loc in list(red_path.glob("**/*.po"))]))
+            locale_list = [loc.stem for loc in list(red_path.glob("**/*.po"))]
+            locale_list.append("en-US")
+            locale_list = sorted(set(locale_list))
             if not locale_list:
                 await ctx.send("No languages found.")
                 return
