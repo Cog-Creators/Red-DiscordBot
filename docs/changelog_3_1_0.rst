@@ -78,6 +78,7 @@ Streams
 -------
 
  * Add support for custom stream alert messages per guild (`#2600`_)
+ * Add ability to exclude rerun Twitch streams, and note rerun streams in embed status (`#2620`_)
 
 -----
 Tests
@@ -136,3 +137,4 @@ Utility Functions
 .. _#2602: https://github.com/Cog-Creators/Red-DiscordBot/pull/2602
 .. _#2604: https://github.com/Cog-Creators/Red-DiscordBot/pull/2604
 .. _#2606: https://github.com/Cog-Creators/Red-DiscordBot/pull/2606
+.. _#2620: https://github.com/Cog-Creators/Red-DiscordBot/pull/2620
