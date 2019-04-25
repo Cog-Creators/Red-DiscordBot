@@ -37,7 +37,12 @@ _DEFAULT_GLOBAL = {
 
 _DEFAULT_GUILD = {"bank_name": "Twentysix bank", "currency": "credits", "default_balance": 100}
 
-_DEFAULT_MEMBER = {"name": "", "balance": 0, "created_at": 0, "last_command_cost": {"command": None, "cost": 0}}
+_DEFAULT_MEMBER = {
+    "name": "",
+    "balance": 0,
+    "created_at": 0,
+    "last_command_cost": {"command": None, "cost": 0},
+}
 
 _DEFAULT_USER = _DEFAULT_MEMBER
 
@@ -671,7 +676,8 @@ async def set_default_balance(amount: int, guild: discord.Guild = None) -> int:
 
     return amount
 
-def cost(amount : int = 0) -> bool:
+
+def cost(amount: int = 0) -> bool:
     async def predicate(ctx):
         try:
             if await get_balance(ctx.author) >= amount:
@@ -684,4 +690,5 @@ def cost(amount : int = 0) -> bool:
                 return False
         except:
             return True
+
     return commands.check(predicate)
