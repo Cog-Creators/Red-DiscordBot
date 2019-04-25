@@ -466,7 +466,7 @@ class CustomCommands(commands.Cog):
             return
 
         # wrap the command here so it won't register with the bot
-        fake_cc = commands.Command(ctx.invoked_with, self.cc_callback)
+        fake_cc = commands.command(name=ctx.invoked_with)(self.cc_callback)
         fake_cc.params = self.prepare_args(raw_response)
         ctx.command = fake_cc
 
