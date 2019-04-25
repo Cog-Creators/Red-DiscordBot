@@ -1,4 +1,5 @@
 import contextlib
+import logging
 
 import discord
 from redbot.core import Config, checks, commands
@@ -29,6 +30,7 @@ from typing import Optional, List, Tuple
 
 CHECK_DELAY = 60
 
+log = logging.getLogger("red.streams")
 
 _ = Translator("Streams", __file__)
 
@@ -90,7 +92,15 @@ class Streams(commands.Cog):
     @commands.command()
     async def twitch(self, ctx: commands.Context, channel_name: str):
         """Check if a Twitch channel is live."""
-        token = await self.bot.db.api_tokens.get_raw("twitch", default={"client_id": None})
+        token = await self.bot.db.api_tokens.get_raw("twitch", default=None)
+        if not token:
+            await ctx.send(
+                _(
+                    "No credentials have been configured. "
+                    "See `{0.prefix}streamset twitchtoken` for more info"
+                ).format(ctx)
+            )
+            return
         stream = TwitchStream(name=channel_name, token=token, bot=self.bot)
         await self.check_online(ctx, stream)
 
@@ -510,7 +520,13 @@ class Streams(commands.Cog):
                         await self.save_streams()
 
     async def get_twitch_access_token(self):
-        token = await self.bot.db.api_token.get_raw("twitch")
+        try:
+            token = await self.bot.db.api_tokens.get_raw("twitch")
+        except KeyError:
+            log.warning(
+                "No credentials found. Twitch features will not work without proper credentials"
+            )
+            return
         if "access_token" in token and token["access_token"]:
             self.twitch_access_token = token["access_token"]
         data = {
