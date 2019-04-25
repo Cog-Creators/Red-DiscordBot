@@ -63,6 +63,7 @@ Mod
 ---
 
  * Admins can now decide how many times message has to be repeated before ``deleterepeats`` removes it (`#2437`_)
+ * Fix: make ``[p]ban [days]`` optional as per the doc (`#2602`_)
 
 -------------
 Setup Scripts
@@ -71,6 +72,12 @@ Setup Scripts
  * ``redbot-setup`` now uses the click CLI library (`#2579`_)
  * ``redbot-setup convert`` now used to convert between libraries (`#2579`_)
  * Backup support for Mongo is currently broken (`#2579`_)
+
+-------
+Streams
+-------
+
+ * Add support for custom stream alert messages per guild (`#2600`_)
 
 -----
 Tests
@@ -125,5 +132,7 @@ Utility Functions
 .. _#2591: https://github.com/Cog-Creators/Red-DiscordBot/pull/2591
 .. _#2592: https://github.com/Cog-Creators/Red-DiscordBot/pull/2592
 .. _#2595: https://github.com/Cog-Creators/Red-DiscordBot/pull/2595
+.. _#2600: https://github.com/Cog-Creators/Red-DiscordBot/pull/2600
+.. _#2602: https://github.com/Cog-Creators/Red-DiscordBot/pull/2602
 .. _#2604: https://github.com/Cog-Creators/Red-DiscordBot/pull/2604
 .. _#2606: https://github.com/Cog-Creators/Red-DiscordBot/pull/2606
