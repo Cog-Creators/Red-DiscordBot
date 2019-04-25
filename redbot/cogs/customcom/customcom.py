@@ -202,6 +202,18 @@ class CustomCommands(commands.Cog):
         """Custom commands management."""
         pass
 
+    @customcom.command(name="raw")
+    async def cc_raw(self, ctx: commands.Context, command: str.lower):
+        """Get the raw response of a custom command, to get the proper markdown.
+        
+        This is helpful for copy and pasting."""
+        commands = await self.config.guild(ctx.guild).commands()
+        if not command in commands:
+            return await ctx.send("That command doesn't exist.")
+        command = commands[command]
+        raw = discord.utils.escape_markdown(command["response"])
+        await ctx.send(raw)
+
     @customcom.group(name="create", aliases=["add"])
     @checks.mod_or_permissions(administrator=True)
     async def cc_create(self, ctx: commands.Context):
