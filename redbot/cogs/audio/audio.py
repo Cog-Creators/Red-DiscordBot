@@ -293,7 +293,7 @@ class Audio(commands.Cog):
         DJ mode allows users with the DJ role to use audio commands.
         """
         dj_role_id = await self.config.guild(ctx.guild).dj_role()
-        if dj_role_id is None and ctx.guild.get_role(dj_role_id):
+        if dj_role_id is None:
             await self._embed_msg(
                 ctx, _("Please set a role to use with DJ mode. Enter the role name or ID now.")
             )
@@ -547,8 +547,8 @@ class Audio(commands.Cog):
         """Audio stats."""
         server_num = len([p for p in lavalink.players if p.current is not None])
         total_num = len([p for p in lavalink.players])
-        server_list = []
 
+        msg = ""
         for p in lavalink.players:
             connect_start = p.fetch("connect")
             connect_dur = self._dynamic_time(
@@ -558,40 +558,40 @@ class Audio(commands.Cog):
                 if "localtracks/" in p.current.uri:
                     if p.current.title == "Unknown title":
                         current_title = p.current.uri.replace("localtracks/", "")
-                        server_list.append(
-                            "{} [`{}`]: **{}**".format(
-                                p.channel.guild.name, connect_dur, current_title
-                            )
+                        msg += "{} [`{}`]: **{}**\n".format(
+                            p.channel.guild.name, connect_dur, current_title
                         )
                     else:
                         current_title = p.current.title
-                        server_list.append(
-                            "{} [`{}`]: **{} - {}**".format(
-                                p.channel.guild.name, connect_dur, p.current.author, current_title
-                            )
+                        msg += "{} [`{}`]: **{} - {}**\n".format(
+                            p.channel.guild.name, connect_dur, p.current.author, current_title
                         )
                 else:
-                    server_list.append(
-                        "{} [`{}`]: **[{}]({})**".format(
-                            p.channel.guild.name, connect_dur, p.current.title, p.current.uri
-                        )
+                    msg += "{} [`{}`]: **[{}]({})**\n".format(
+                        p.channel.guild.name, connect_dur, p.current.title, p.current.uri
                     )
             except AttributeError:
-                server_list.append(
-                    "{} [`{}`]: **{}**".format(
-                        p.channel.guild.name, connect_dur, _("Nothing playing.")
-                    )
+                msg += "{} [`{}`]: **{}**\n".format(
+                    p.channel.guild.name, connect_dur, _("Nothing playing.")
                 )
-        if server_num == 0:
-            servers = _("Not connected anywhere.")
-        else:
-            servers = "\n".join(server_list)
-        embed = discord.Embed(
-            colour=await ctx.embed_colour(),
-            title=_("Playing in {num}/{total} servers:").format(num=server_num, total=total_num),
-            description=servers,
-        )
-        await ctx.send(embed=embed)
+
+        if total_num == 0:
+            return await self._embed_msg(ctx, _("Not connected anywhere."))
+        servers_embed = []
+        pages = 1
+        for page in pagify(msg, delims=["\n"], page_length=1500):
+            em = discord.Embed(
+                colour=await ctx.embed_colour(),
+                title=_("Playing in {num}/{total} servers:").format(
+                    num=server_num, total=total_num
+                ),
+                description=page,
+            )
+            em.set_footer(text="Page {}/{}".format(pages, (math.ceil(len(msg) / 1500))))
+            pages += 1
+            servers_embed.append(em)
+
+        await menu(ctx, servers_embed, DEFAULT_CONTROLS)
 
     @commands.command()
     @commands.guild_only()
@@ -1183,7 +1183,11 @@ class Audio(commands.Cog):
         player = lavalink.get_player(ctx.guild.id)
         guild_data = await self.config.guild(ctx.guild).all()
         if type(query) is not list:
-            if not (query.startswith("http") or query.startswith("localtracks")):
+            if not (
+                query.startswith("http")
+                or query.startswith("localtracks")
+                or query.startswith("ytsearch:")
+            ):
                 query = f"ytsearch:{query}"
             tracks = await player.get_tracks(query)
             if not tracks:
@@ -1401,7 +1405,7 @@ class Audio(commands.Cog):
         pass
 
     @playlist.command(name="append")
-    async def _playlist_append(self, ctx, playlist_name, *url):
+    async def _playlist_append(self, ctx, playlist_name, *, url):
         """Add a track URL, playlist link, or quick search to a playlist.
 
         The track(s) will be appended to the end of the playlist.
@@ -1716,6 +1720,8 @@ class Audio(commands.Cog):
             if not self._player_check(ctx):
                 return await self._embed_msg(ctx, _("Nothing playing."))
         player = lavalink.get_player(ctx.guild.id)
+        if not player.current:
+            return await self._embed_msg(ctx, _("There's nothing in the queue."))
         tracklist = []
         np_song = self._track_creator(player, "np")
         tracklist.append(np_song)
@@ -2014,7 +2020,6 @@ class Audio(commands.Cog):
                 tracklist.append(track_obj)
             self._play_lock(ctx, False)
         elif not query.startswith("http"):
-            query = " ".join(query)
             query = "ytsearch:{}".format(query)
             search = True
             tracks = await player.get_tracks(query)
@@ -3189,21 +3194,17 @@ class Audio(commands.Cog):
             for p in lavalink.players:
                 server = p.channel.guild
 
-                if server.id not in stop_times:
-                    stop_times[server.id] = None
-
                 if [self.bot.user] == p.channel.members:
-                    if stop_times[server.id] is None:
-                        stop_times[server.id] = int(time.time())
+                    stop_times.setdefault(server.id, int(time.time()))
+                else:
+                    stop_times.pop(server.id, None)
 
-            for sid in stop_times:
-                if stop_times[sid] is None:
-                    continue
+            for sid in stop_times.copy():
                 server_obj = self.bot.get_guild(sid)
                 if await self.config.guild(server_obj).emptydc_enabled():
                     emptydc_timer = await self.config.guild(server_obj).emptydc_timer()
                     if (int(time.time()) - stop_times[sid]) >= emptydc_timer:
-                        stop_times[sid] = None
+                        stop_times.pop(sid)
                         try:
                             await lavalink.get_player(sid).disconnect()
                         except Exception:
@@ -3492,6 +3493,7 @@ class Audio(commands.Cog):
         )
         return r
 
+    @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
         if after.channel != before.channel:
             try:
@@ -3499,7 +3501,7 @@ class Audio(commands.Cog):
             except (ValueError, KeyError, AttributeError):
                 pass
 
-    def __unload(self):
+    def cog_unload(self):
         if not self._cleaned_up:
             self.session.detach()
 
@@ -3514,8 +3516,9 @@ class Audio(commands.Cog):
             shutdown_lavalink_server()
             self._cleaned_up = True
 
-    __del__ = __unload
+    __del__ = cog_unload
 
+    @commands.Cog.listener()
     async def on_guild_remove(self, guild: discord.Guild):
         """
         This is to clean up players when

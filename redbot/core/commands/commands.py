@@ -20,6 +20,7 @@ if TYPE_CHECKING:
 
 __all__ = [
     "Cog",
+    "CogMixin",
     "CogCommandMixin",
     "CogGroupMixin",
     "Command",
@@ -241,9 +242,9 @@ class Command(CogCommandMixin, commands.Command):
                 if result is False:
                     return False
 
-        if self.parent is None and self.instance is not None:
+        if self.parent is None and self.cog is not None:
             # For top-level commands, we need to check the cog's requires too
-            ret = await self.instance.requires.verify(ctx)
+            ret = await self.cog.requires.verify(ctx)
             if ret is False:
                 return False
 
@@ -374,8 +375,8 @@ class Command(CogCommandMixin, commands.Command):
     def allow_for(self, model_id: Union[int, str], guild_id: int) -> None:
         super().allow_for(model_id, guild_id=guild_id)
         parents = self.parents
-        if self.instance is not None:
-            parents.append(self.instance)
+        if self.cog is not None:
+            parents.append(self.cog)
         for parent in parents:
             cur_rule = parent.requires.get_rule(model_id, guild_id=guild_id)
             if cur_rule is PermState.NORMAL:
@@ -389,8 +390,8 @@ class Command(CogCommandMixin, commands.Command):
         old_rule, new_rule = super().clear_rule_for(model_id, guild_id=guild_id)
         if old_rule is PermState.ACTIVE_ALLOW:
             parents = self.parents
-            if self.instance is not None:
-                parents.append(self.instance)
+            if self.cog is not None:
+                parents.append(self.cog)
             for parent in parents:
                 should_continue = parent.reevaluate_rules_for(model_id, guild_id=guild_id)[1]
                 if not should_continue:
@@ -445,10 +446,11 @@ class GroupMixin(discord.ext.commands.GroupMixin):
 
     def command(self, *args, **kwargs):
         """A shortcut decorator that invokes :func:`.command` and adds it to
-        the internal command list.
+        the internal command list via :meth:`~.GroupMixin.add_command`.
         """
 
         def decorator(func):
+            kwargs.setdefault("parent", self)
             result = command(*args, **kwargs)(func)
             self.add_command(result)
             return result
@@ -457,10 +459,11 @@ class GroupMixin(discord.ext.commands.GroupMixin):
 
     def group(self, *args, **kwargs):
         """A shortcut decorator that invokes :func:`.group` and adds it to
-        the internal command list.
+        the internal command list via :meth:`~.GroupMixin.add_command`.
         """
 
         def decorator(func):
+            kwargs.setdefault("parent", self)
             result = group(*args, **kwargs)(func)
             self.add_command(result)
             return result
@@ -551,12 +554,24 @@ class Group(GroupMixin, Command, CogGroupMixin, commands.Group):
         await super().invoke(ctx)
 
 
-class Cog(CogCommandMixin, CogGroupMixin):
-    """Base class for a cog."""
+class CogMixin(CogGroupMixin, CogCommandMixin):
+    """Mixin class for a cog, intended for use with discord.py's cog class"""
 
     @property
     def all_commands(self) -> Dict[str, Command]:
-        return {cmd.name: cmd for cmd in self.__dict__.values() if isinstance(cmd, Command)}
+        return {cmd.name: cmd for cmd in self.__cog_commands__}
+
+
+class Cog(CogMixin, commands.Cog):
+    """
+    Red's Cog base class
+
+    This includes a metaclass from discord.py
+    """
+
+    # NB: Do not move the inheritcance of this. Keeping the mix of that metaclass
+    # seperate gives us more freedoms in several places.
+    pass
 
 
 def command(name=None, cls=Command, **attrs):

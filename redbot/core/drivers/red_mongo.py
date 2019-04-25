@@ -1,4 +1,5 @@
 import re
+from getpass import getpass
 from typing import Match, Pattern, Tuple
 from urllib.parse import quote_plus
 
@@ -48,6 +49,10 @@ class Mongo(BaseDriver):
 
         if _conn is None:
             _initialize(**kwargs)
+
+    async def has_valid_connection(self) -> bool:
+        # Maybe fix this?
+        return True
 
     @property
     def db(self) -> motor.core.Database:
@@ -255,7 +260,7 @@ def get_config_details():
         port = 0
 
     admin_uname = input("Enter login username: ")
-    admin_password = input("Enter login password: ")
+    admin_password = getpass("Enter login password: ")
 
     db_name = input("Enter mongodb database name: ")
 

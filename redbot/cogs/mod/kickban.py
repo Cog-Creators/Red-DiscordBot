@@ -131,7 +131,7 @@ class KickBanMixin(MixinMeta):
                         )
                         now = datetime.utcnow()
                         if now > unban_time:  # Time to unban the user
-                            user = await self.bot.get_user_info(uid)
+                            user = await self.bot.fetch_user(uid)
                             queue_entry = (guild.id, user.id)
                             self.unban_queue.append(queue_entry)
                             try:
@@ -206,9 +206,14 @@ class KickBanMixin(MixinMeta):
     @commands.bot_has_permissions(ban_members=True)
     @checks.admin_or_permissions(ban_members=True)
     async def ban(
-        self, ctx: commands.Context, user: discord.Member, days: int = 0, *, reason: str = None
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        days: Optional[int] = 0,
+        *,
+        reason: str = None,
     ):
-        """Ban a user from this server.
+        """Ban a user from this server and optionally delete days of messages.
 
         If days is not a number, it's treated as the first word of the reason.
         Minimum 0 days, maximum 7. Defaults to 0."""
@@ -330,7 +335,7 @@ class KickBanMixin(MixinMeta):
             else:
                 banned.append(user_id)
 
-            user_info = await self.bot.get_user_info(user_id)
+            user_info = await self.bot.fetch_user(user_id)
 
             try:
                 await modlog.create_case(
@@ -503,7 +508,7 @@ class KickBanMixin(MixinMeta):
         click the user and select 'Copy ID'."""
         guild = ctx.guild
         author = ctx.author
-        user = await self.bot.get_user_info(user_id)
+        user = await self.bot.fetch_user(user_id)
         if not user:
             await ctx.send(_("Couldn't find a user with that ID!"))
             return
