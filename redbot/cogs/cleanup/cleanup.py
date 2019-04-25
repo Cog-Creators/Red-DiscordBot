@@ -274,6 +274,40 @@ class Cleanup(commands.Cog):
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
+    async def between(
+        self, ctx: commands.Context, one: int, two: int, delete_pinned: bool = False
+    ):
+        """Delete the messages between Messsage One and Message Two, providing the messages IDs.
+
+        The first message ID should be the older message, and the second one the newer.
+
+        Example:
+            `[p]cleanup between 123456789123456789 987654321987654321`
+        """
+        channel = ctx.channel
+        author = ctx.author
+        try:
+            mone = await channel.fetch_message(one)
+        except discord.errors.Notfound:
+            return await ctx.send(f"Could not find a message with the ID of {one}.")
+        try:
+            mtwo = await channel.fetch_message(two)
+        except discord.errors.Notfound:
+            return await ctx.send(f"Could not find a message with the ID of {two}.")
+        to_delete = await self.get_messages_for_deletion(
+            channel=channel, before=mtwo, after=mone, delete_pinned=delete_pinned
+        )
+        to_delete.append(ctx.message)
+        reason = "{}({}) deleted {} messages in channel {}.".format(
+            author.name, author.id, len(to_delete), channel.name
+        )
+        log.info(reason)
+
+        await mass_purge(to_delete, channel)
+
+    @cleanup.command()
+    @commands.guild_only()
+    @commands.bot_has_permissions(manage_messages=True)
     async def messages(self, ctx: commands.Context, number: int, delete_pinned: bool = False):
         """Delete the last X messages.
 
