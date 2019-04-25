@@ -44,6 +44,7 @@ class Streams(commands.Cog):
         "mention_here": False,
         "live_message_mention": False,
         "live_message_nomention": False,
+        "ignore_reruns": False,
     }
 
     role_defaults = {"mention": False}
@@ -461,6 +462,19 @@ class Streams(commands.Cog):
         else:
             await ctx.send(_("Notifications will no longer be deleted."))
 
+    @streamset.command(name="ignorereruns")
+    @commands.guild_only()
+    async def ignore_reruns(self, ctx: commands.Context):
+        """Toggle excluding rerun streams from alerts."""
+        guild = ctx.guild
+        current_setting = await self.db.guild(guild).ignore_reruns()
+        if current_setting:
+            await self.db.guild(guild).ignore_reruns.set(False)
+            await ctx.send(_("Streams of type 'rerun' will be included in alerts."))
+        else:
+            await self.db.guild(guild).ignore_reruns.set(True)
+            await ctx.send(_("Streams of type 'rerun' will no longer send an alert."))
+
     async def add_or_remove(self, ctx: commands.Context, stream):
         if ctx.channel.id not in stream.channels:
             stream.channels.append(ctx.channel.id)
@@ -524,7 +538,7 @@ class Streams(commands.Cog):
         for stream in self.streams:
             with contextlib.suppress(Exception):
                 try:
-                    embed = await stream.is_online()
+                    embed, is_rerun = await stream.is_online()
                 except OfflineStream:
                     if not stream._messages_cache:
                         continue
@@ -540,6 +554,9 @@ class Streams(commands.Cog):
                         continue
                     for channel_id in stream.channels:
                         channel = self.bot.get_channel(channel_id)
+                        ignore_reruns = await self.db.guild(channel.guild).ignore_reruns()
+                        if ignore_reruns and is_rerun:
+                            continue
                         mention_str, edited_roles = await self._get_mention_str(channel.guild)
 
                         if mention_str:
