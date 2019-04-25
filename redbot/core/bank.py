@@ -37,12 +37,7 @@ _DEFAULT_GLOBAL = {
 
 _DEFAULT_GUILD = {"bank_name": "Twentysix bank", "currency": "credits", "default_balance": 100}
 
-_DEFAULT_MEMBER = {
-    "name": "",
-    "balance": 0,
-    "created_at": 0,
-    "last_command_cost": {"command": None, "cost": 0},
-}
+_DEFAULT_MEMBER = {"name": "", "balance": 0, "created_at": 0, "last_command_cost": {"command": None, "cost": 0}}
 
 _DEFAULT_USER = _DEFAULT_MEMBER
 
@@ -676,19 +671,22 @@ async def set_default_balance(amount: int, guild: discord.Guild = None) -> int:
 
     return amount
 
-
-def cost(amount: int = 0) -> bool:
+def cost(amount : int = 0) -> bool:
+    print("we're into cost")
     async def predicate(ctx):
-        try:
-            if await get_balance(ctx.author) >= amount:
-                await withdraw_credits(ctx.author, amount)
-                last_data = {"command": str(ctx.command.qualified_name), "cost": amount}
-                await _conf.member(ctx.author).last_command_cost.set(last_data)
-                return True
-            else:
-                await ctx.send("You don't have enough money to use that command !")
-                return False
-        except:
+        print("predicate started")
+#        try:
+        if await get_balance(ctx.author) >= amount:
+            await withdraw_credits(ctx.author, amount)
+            last_data = {"command": str(ctx.command.qualified_name), "cost": amount}
+            await _conf.member(ctx.author).last_command_cost.set(last_data)
+            print("True")
             return True
-
+        else:
+            await ctx.send("You don't have enough money to use that command !")
+            print("False")
+            return False
+#        except:
+#            print("Fuck you")
+#            return True
     return commands.check(predicate)
