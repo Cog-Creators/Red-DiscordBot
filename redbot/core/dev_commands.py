@@ -276,7 +276,8 @@ class Dev(commands.Cog):
                 elif value:
                     msg = "{}".format(value)
 
-            msg = self.sanitize_output(ctx, msg)
+            api_keys = await ctx.bot.db.api_tokens()
+            msg = self.sanitize_output(ctx, api_keys, msg)
 
             try:
                 await ctx.send_interactive(self.get_pages(msg), box_lang="py")
