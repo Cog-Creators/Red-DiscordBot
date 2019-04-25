@@ -211,8 +211,14 @@ class CustomCommands(commands.Cog):
         if not command in commands:
             return await ctx.send("That command doesn't exist.")
         command = commands[command]
-        raw = discord.utils.escape_markdown(command["response"])
-        await ctx.send(raw)
+        if type(command["response"]) == str:
+            raw = discord.utils.escape_markdown(command["response"])
+            await ctx.send(raw)
+        else:
+            await ctx.send(_("The following are responses recorded:"))
+            for number, response in enumerate(command["response"], start=1):
+                raw = discord.utils.escape_markdown(response)
+                await ctx.send(f"{str(number)} - {raw}")
 
     @customcom.group(name="create", aliases=["add"])
     @checks.mod_or_permissions(administrator=True)
