@@ -22,6 +22,7 @@ Audio
  * Add songs when search-queuing (`#2513`_)
  * Match v2 behavior for channel change (`#2521`_)
  * Bot will no longer complain about permissions when trying to connect to user-limited channel, if it has "Move Members" permission (`#2525`_)
+ * Fix issue on audiostats command when more than 20 servers to display (`#2533`_)
  * Fix for prev command display (`#2556`_)
  * Fix for localtrack playing (`#2557`_)
  * Fix for playlist queue when not playing (`#2586`_)
@@ -32,6 +33,7 @@ Audio
 Core
 ----
 
+ * Delete cooldown messages when expired (`#2469`_)
  * ``redbot --version`` will now give you current version of Red (`#2567`_)
 
 ------
@@ -95,6 +97,7 @@ Utility Functions
 .. _#2461: https://github.com/Cog-Creators/Red-DiscordBot/pull/2461
 .. _#2462: https://github.com/Cog-Creators/Red-DiscordBot/pull/2462
 .. _#2465: https://github.com/Cog-Creators/Red-DiscordBot/pull/2465
+.. _#2469: https://github.com/Cog-Creators/Red-DiscordBot/pull/2469
 .. _#2470: https://github.com/Cog-Creators/Red-DiscordBot/pull/2470
 .. _#2472: https://github.com/Cog-Creators/Red-DiscordBot/pull/2472
 .. _#2473: https://github.com/Cog-Creators/Red-DiscordBot/pull/2473
@@ -107,6 +110,7 @@ Utility Functions
 .. _#2521: https://github.com/Cog-Creators/Red-DiscordBot/pull/2521
 .. _#2523: https://github.com/Cog-Creators/Red-DiscordBot/pull/2523
 .. _#2525: https://github.com/Cog-Creators/Red-DiscordBot/pull/2525
+.. _#2533: https://github.com/Cog-Creators/Red-DiscordBot/pull/2533
 .. _#2536: https://github.com/Cog-Creators/Red-DiscordBot/pull/2536
 .. _#2540: https://github.com/Cog-Creators/Red-DiscordBot/pull/2540
 .. _#2545: https://github.com/Cog-Creators/Red-DiscordBot/pull/2545
