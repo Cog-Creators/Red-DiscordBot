@@ -88,7 +88,7 @@ class CommandObj:
         if not ccinfo:
             raise NotFound()
         else:
-            return ccinfo["response"], ccinfo.get("cooldowns", {}), ccinfo["mod"]
+            return ccinfo["response"], ccinfo.get("cooldowns", {})
 
     async def get_full(self, message: discord.Message, command: str) -> Dict:
         ccinfo = await self.db(message.guild).commands.get_raw(command, default=None)
@@ -97,7 +97,7 @@ class CommandObj:
         else:
             raise NotFound()
 
-    async def create(self, ctx: commands.Context, command: str, *, response, mod: bool = False):
+    async def create(self, ctx: commands.Context, command: str, *, response):
         """Create a custom command"""
         # Check if this command is already registered as a customcommand
         if await self.db(ctx.guild).commands.get_raw(command, default=None):
@@ -112,7 +112,6 @@ class CommandObj:
             "created_at": self.get_now(),
             "editors": [],
             "response": response,
-            "mod": mod,
         }
         await self.db(ctx.guild).commands.set_raw(command, value=ccinfo)
 
@@ -193,7 +192,7 @@ class CustomCommands(commands.Cog):
         self.bot = bot
         self.key = 414589031223512
         self.config = Config.get_conf(self, self.key)
-        self.config.register_guild(commands={}, mod_enabled=False)
+        self.config.register_guild(commands={})
         self.commandobj = CommandObj(config=self.config, bot=self.bot)
         self.cooldowns = {}
 
@@ -253,49 +252,6 @@ class CustomCommands(commands.Cog):
             )
         except ArgParseError as e:
             await ctx.send(e.args[0])
-
-    def mod_enabled():
-        async def predicate(ctx):
-            return await ctx.cog.config.guild(ctx.guild).mod_enabled()
-
-        return commands.check(predicate)
-
-    @cc_create.command(name="mod")
-    @checks.mod_or_permissions(administrator=True)
-    @mod_enabled()
-    async def cc_create_mod(self, ctx, command: str.lower, *, text: str):
-        """Add a simple custom command, but locked to moderators only,
-        that will be able to use @here and @everyone.
-
-        Example:
-        - `[p]customcom create mod wakeup @everyone wake up`
-        """
-        if command in self.bot.all_commands:
-            await ctx.send(_("There already exists a bot command with the same name."))
-            return
-        try:
-            await self.commandobj.create(ctx=ctx, command=command, response=text, mod=True)
-            await ctx.send(_("Custom command successfully added."))
-        except AlreadyExists:
-            await ctx.send(
-                _("This command already exists. Use `{command}` to edit it.").format(
-                    command="{}customcom edit".format(ctx.prefix)
-                )
-            )
-        except ArgParseError as e:
-            await ctx.send(e.args[0])
-
-    @customcom.command(name="togglemod")
-    @checks.guildowner()
-    async def cc_toggle_mod(self, ctx):
-        """Toggle whether mod ccs should be enabled or disabled.
-        Defaults to disabled."""
-        cur = await self.config.guild(ctx.guild).mod_enabled()
-        new_status = True if not cur else False
-        await self.config.guild(ctx.guild).mod_enabled.set(new_status)
-        await ctx.send(
-            _("Mod ccs are now {status}.").format(status=("enabled" if new_status else "disabled"))
-        )
 
     @customcom.command(name="cooldown")
     @checks.mod_or_permissions(administrator=True)
@@ -478,6 +434,7 @@ class CustomCommands(commands.Cog):
         for p in pagify(text):
             await ctx.send(box(p, lang="yaml"))
 
+    @commands.Cog.listener()
     async def on_message(self, message):
         is_private = isinstance(message.channel, discord.abc.PrivateChannel)
 
@@ -494,7 +451,7 @@ class CustomCommands(commands.Cog):
             return
 
         try:
-            raw_response, cooldowns, mod = await self.commandobj.get(
+            raw_response, cooldowns = await self.commandobj.get(
                 message=message, command=ctx.invoked_with
             )
             if isinstance(raw_response, list):
@@ -509,13 +466,13 @@ class CustomCommands(commands.Cog):
             return
 
         # wrap the command here so it won't register with the bot
-        fake_cc = commands.Command(ctx.invoked_with, self.cc_callback)
+        fake_cc = commands.command(name=ctx.invoked_with)(self.cc_callback)
         fake_cc.params = self.prepare_args(raw_response)
         ctx.command = fake_cc
 
         await self.bot.invoke(ctx)
         if not ctx.command_failed:
-            await self.cc_command(*ctx.args, **ctx.kwargs, raw_response=raw_response, mod=mod)
+            await self.cc_command(*ctx.args, **ctx.kwargs, raw_response=raw_response)
 
     async def cc_callback(self, *args, **kwargs) -> None:
         """
@@ -526,9 +483,7 @@ class CustomCommands(commands.Cog):
         # fake command to take advantage of discord.py's parsing and events
         pass
 
-    async def cc_command(
-        self, ctx, *cc_args, raw_response, mod: bool = False, **cc_kwargs
-    ) -> None:
+    async def cc_command(self, ctx, *cc_args, raw_response, **cc_kwargs) -> None:
         cc_args = (*cc_args, *cc_kwargs.values())
         results = re.findall(r"{([^}]+)\}", raw_response)
         for result in results:
@@ -541,24 +496,7 @@ class CustomCommands(commands.Cog):
                 index = int(result[1]) - low
                 arg = self.transform_arg(result[0], result[2], cc_args[index])
                 raw_response = raw_response.replace("{" + result[0] + "}", arg)
-        if mod:
-            if (
-                (
-                    ctx.bot.is_mod(ctx.author)
-                    or ctx.bot.is_admin(ctx.author)
-                    or ctx.bot.is_owner(ctx.author)
-                )
-                and await self.settings.guild(
-                    ctx.guild
-                ).mod_enabled()  # in case guild owner turn off the toggle, we may block the existing ccs from being used ?
-            ):  # we only allow mods to use those cc create mod ccs
-                await ctx.send(
-                    raw_response, filter=None
-                )  ## so we have a cc create mod here, we allow here and everyone
-            else:
-                pass  # if someone try to use the mod cc, why should the bot respond anything ?
-        else:
-            await ctx.send(raw_response)
+        await ctx.send(raw_response)
 
     @staticmethod
     def prepare_args(raw_response) -> Mapping[str, Parameter]:
