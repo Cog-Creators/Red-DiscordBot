@@ -508,8 +508,9 @@ class KickBanMixin(MixinMeta):
         click the user and select 'Copy ID'."""
         guild = ctx.guild
         author = ctx.author
-        user = await self.bot.fetch_user(user_id)
-        if not user:
+        try:
+            user = await self.bot.fetch_user(user_id)
+        except discord.errors.NotFound:
             await ctx.send(_("Couldn't find a user with that ID!"))
             return
         audit_reason = get_audit_reason(ctx.author, reason)
