@@ -1157,6 +1157,11 @@ class Core(commands.Cog, CoreLogic):
     @checks.is_owner()
     async def backup(self, ctx: commands.Context, *, backup_path: str = None):
         """Creates a backup of all data for the instance."""
+        if backup_path:
+            if not os.path.exists(backup_path):
+                return await ctx.send(
+                    _("That path doesn't seem to exist.  Please provide a valid path.")
+                )
         from redbot.core.data_manager import basic_config, instance_name
         from redbot.core.drivers.red_json import JSON
 
