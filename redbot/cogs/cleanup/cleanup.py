@@ -212,7 +212,9 @@ class Cleanup(commands.Cog):
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def after(self, ctx: commands.Context, message_id: RawMessageIds, delete_pinned: bool = False):
+    async def after(
+        self, ctx: commands.Context, message_id: RawMessageIds, delete_pinned: bool = False
+    ):
         """Delete all messages after a specified message.
 
         To get a message id, enable developer mode in Discord's
@@ -243,7 +245,11 @@ class Cleanup(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
     async def before(
-        self, ctx: commands.Context, message_id: RawMessageIds, number: int, delete_pinned: bool = False
+        self,
+        ctx: commands.Context,
+        message_id: RawMessageIds,
+        number: int,
+        delete_pinned: bool = False,
     ):
         """Deletes X messages before specified message.
 
@@ -276,7 +282,11 @@ class Cleanup(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
     async def between(
-        self, ctx: commands.Context, one: RawMessageIds, two: RawMessageIds, delete_pinned: bool = False
+        self,
+        ctx: commands.Context,
+        one: RawMessageIds,
+        two: RawMessageIds,
+        delete_pinned: bool = False,
     ):
         """Delete the messages between Messsage One and Message Two, providing the messages IDs.
 
@@ -290,11 +300,15 @@ class Cleanup(commands.Cog):
         try:
             mone = await channel.fetch_message(one)
         except discord.errors.Notfound:
-            return await ctx.send(_("Could not find a message with the ID of {id}.".format(id=one)))
+            return await ctx.send(
+                _("Could not find a message with the ID of {id}.".format(id=one))
+            )
         try:
             mtwo = await channel.fetch_message(two)
         except discord.errors.Notfound:
-            return await ctx.send(_("Could not find a message with the ID of {id}.".format(id=two)))
+            return await ctx.send(
+                _("Could not find a message with the ID of {id}.".format(id=two))
+            )
         to_delete = await self.get_messages_for_deletion(
             channel=channel, before=mtwo, after=mone, delete_pinned=delete_pinned
         )
