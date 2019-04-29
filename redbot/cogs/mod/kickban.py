@@ -248,7 +248,7 @@ class KickBanMixin(MixinMeta):
         errors = {}
 
         async def show_results():
-            text = _("Banned {num} users from the server.".format(num=len(banned)))
+            text = _("Banned {num} users from the server.").format(num=len(banned))
             if errors:
                 text += _("\nErrors:\n")
                 text += "\n".join(errors.values())
