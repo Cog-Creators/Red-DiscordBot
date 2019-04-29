@@ -320,7 +320,7 @@ class Admin(commands.Cog):
         # Just in case
         elif isinstance(color, int):
             color = discord.Colour(color)
-            
+
         role = None
         for guild in self.bot.guilds:
             for iter_role in guild.roles:
@@ -481,11 +481,15 @@ class Admin(commands.Cog):
 
         if success:
             await ctx.send(
-                _("The announcement channel has been set to {channel.mention}").format(channel=channel)
+                _("The announcement channel has been set to {channel.mention}").format(
+                    channel=channel
+                )
             )
         else:
             await ctx.send(
-                _("Failed to set {channel.mention} as the announcement channel.  Are you sure I can read and send messages there?").format(channel=channel)
+                _(
+                    "Failed to set {channel.mention} as the announcement channel.  Are you sure I can read and send messages there?"
+                ).format(channel=channel)
             )
 
     @announce.command(name="ignore")
