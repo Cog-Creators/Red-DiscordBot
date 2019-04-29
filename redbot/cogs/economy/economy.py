@@ -116,7 +116,7 @@ class Economy(commands.Cog):
         "PAYDAY_CREDITS": 120,
         "SLOT_MIN": 5,
         "SLOT_MAX": 100,
-        "SLOT_TIME": 0,
+        "SLOT_TIME": 5,
         "REGISTER_CREDITS": 0,
     }
 
@@ -265,7 +265,7 @@ class Economy(commands.Cog):
                     await bank.set_balance(author, exc.max_balance)
                     await ctx.send(
                         _(
-                            "You've reached the maximum amount of {currency}! (**{balance:,}**) "
+                            "You've reached the maximum amount of {currency}!"
                             "Please spend some more \N{GRIMACING FACE}\n\n"
                             "You currently have {new_balance} {currency}."
                         ).format(currency=credits_name, new_balance=exc.max_balance)

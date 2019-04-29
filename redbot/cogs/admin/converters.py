@@ -20,7 +20,7 @@ class MemberDefaultAuthor(commands.Converter):
 
 class SelfRole(commands.Converter):
     async def convert(self, ctx: commands.Context, arg: str) -> discord.Role:
-        admin = ctx.command.instance
+        admin = ctx.command.cog
         if admin is None:
             raise commands.BadArgument(_("The Admin cog is not loaded."))
 

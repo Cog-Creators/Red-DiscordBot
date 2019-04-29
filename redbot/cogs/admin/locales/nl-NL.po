@@ -1,18 +1,221 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-04-15 16:42-0400\n"
+"POT-Creation-Date: 2019-01-11 02:18+0000\n"
+"PO-Revision-Date: 2019-02-25 03:07\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: ENCODING\n"
-"Generated-By: pygettext.py 1.5\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 2.2\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: nl\n"
 "X-Crowdin-File: /cogs/admin/locales/messages.pot\n"
 "Language: nl_NL\n"
+
+#: redbot/cogs/admin/admin.py:17
+msgid "I attempted to do something that Discord denied me permissions for. Your command failed to successfully complete."
+msgstr "Ik probeerde iets te doen, maar Discord weigerde mij toestemming te geven. Je command is geslaagd te mislukken."
+
+#: redbot/cogs/admin/admin.py:22
+msgid "I tried to add {role.name} to {member.display_name} but that role is higher than my highest role in the Discord hierarchy so I was unable to successfully add it. Please give me a higher role and try again."
+msgstr "Ik probeerder {role.name} toe te voegen aan {member.display_name}, maar die rol is waarschijnlijk een hogere rol dan die van mij. Ik kan de rol daarom niet toevoegen. Geef mij een hogere rol en probeer het nog eens."
+
+#: redbot/cogs/admin/admin.py:29
+msgid "I tried to add {role.name} to {member.display_name} but that role is higher than your highest role in the Discord hierarchy so I was unable to successfully add it. Please get a higher role and try again."
+msgstr "Ik probeerder {role.name} toe te voegen aan {member.display_name}, maar die rol is waarschijnlijk een hogere rol dan die van jou. Ik kan de rol daarom niet toevoegen. Krijg een hogere rol en probeer het nog eens."
+
+#: redbot/cogs/admin/admin.py:36
+msgid "I am already announcing something. If you would like to make a different announcement please use `{prefix}announce cancel` first."
+msgstr "Ik ben al iets aan het aankondigen. Als je iets anders wilt aankondigen, voer dan eerst deze command uit: '{prefix}announce cancel'."
+
+#: redbot/cogs/admin/admin.py:46
+#, docstring
+msgid "A collection of server administration utilities."
+msgstr "Een collectie van de server administratie voorzieningen."
+
+#: redbot/cogs/admin/admin.py:112
+msgid "I successfully added {role.name} to {member.display_name}"
+msgstr "Ik heb succesvol {role.name} toegevoegd aan {member.display_name}"
+
+#: redbot/cogs/admin/admin.py:127
+msgid "I successfully removed {role.name} from {member.display_name}"
+msgstr "Ik heb succesvol {role.name} verwijderd van {member.display_name}"
+
+#: redbot/cogs/admin/admin.py:138
+#, docstring
+msgid "Add a role to a user.\n\n"
+"        If user is left blank it defaults to the author of the command.\n"
+"        "
+msgstr "Een rol toevoegen aan een lid.\n\n"
+"        Als je geen lid invult, dan is het automatisch de auteur van de command."
+
+#: redbot/cogs/admin/admin.py:156
+#, docstring
+msgid "Remove a role from a user.\n\n"
+"        If user is left blank it defaults to the author of the command.\n"
+"        "
+msgstr "Een rol verwijderen van een lid.\n\n"
+"        Als je geen lid invult, dan is het automatisch de auteur van de command."
+
+#: redbot/cogs/admin/admin.py:172
+#, docstring
+msgid "Edit role settings."
+msgstr "Rol instellingen bewerken."
+
+#: redbot/cogs/admin/admin.py:179
+#, docstring
+msgid "Edit a role's colour.\n\n"
+"        Use double quotes if the role contains spaces.\n"
+"        Colour must be in hexadecimal format.\n"
+"        [Online colour picker](http://www.w3schools.com/colors/colors_picker.asp)\n\n"
+"        Examples:\n"
+"            `[p]editrole colour \"The Transistor\" #ff0000`\n"
+"            `[p]editrole colour Test #ff9900`\n"
+"        "
+msgstr "Een rolkleur bewerken.\n\n"
+"        Gebruik dubbele aanhalingstekens als de rol een spatie bevat.\n"
+"        Een kleur moet van heximaal formaat zijn.\n"
+"        [Online colour picker](http://www.w3schools.com/colors/colors_picker.asp)\n\n"
+"        Voorbeelden:\n"
+"            `[p]editrole colour \"DP Bots\" #ff0000`\n"
+"            `[p]editrole colour Teamlid #ff9900`\n"
+"        "
+
+#: redbot/cogs/admin/admin.py:202 redbot/cogs/admin/admin.py:230
+msgid "Done."
+msgstr "Klaar."
+
+#: redbot/cogs/admin/admin.py:207
+#, docstring
+msgid "Edit a role's name.\n\n"
+"        Use double quotes if the role or the name contain spaces.\n\n"
+"        Examples:\n"
+"            `[p]editrole name \"The Transistor\" Test`\n"
+"        "
+msgstr "Een rolnamen bewerken.\n\n"
+"        Gebruik dubbele aanhalingstekens als de rol een spatie bevat.\n\n"
+"        Voorbeeld: \n"
+"            `[p]editrole name \"DP Bots\" Bots`\n"
+"        "
+
+#: redbot/cogs/admin/admin.py:235
+#, docstring
+msgid "Announce a message to all servers the bot is in."
+msgstr "Kondig een bericht aan in alle servers."
+
+#: redbot/cogs/admin/admin.py:242
+msgid "The announcement has begun."
+msgstr "De aankondiging is begonnen."
+
+#: redbot/cogs/admin/admin.py:250
+#, docstring
+msgid "Cancel a running announce."
+msgstr "Annuleer een huidige aankondiging."
+
+#: redbot/cogs/admin/admin.py:256
+msgid "The current announcement has been cancelled."
+msgstr "De huidige aankondiging is geannuleerd."
+
+#: redbot/cogs/admin/admin.py:262
+#, docstring
+msgid "Change the channel to which the bot makes announcements."
+msgstr "Bewerk het kanaal waar de bot aankondigingen maakt."
+
+#: redbot/cogs/admin/admin.py:268
+msgid "The announcement channel has been set to {channel.mention}"
+msgstr "Het aankondigingskanaal is aangepast naar {channel.mention}"
+
+#: redbot/cogs/admin/admin.py:275
+#, docstring
+msgid "Toggle announcements being enabled this server."
+msgstr "Aankondigingen zijn geactiveerd in deze server."
+
+#: redbot/cogs/admin/admin.py:281
+msgid "The server {guild.name} will receive announcements."
+msgstr "De server {guild.name} ontvangt aankondigingen."
+
+#: redbot/cogs/admin/admin.py:285
+msgid "The server {guild.name} will not receive announcements."
+msgstr "De server {guild.name} ontvangt geen aankondigingen."
+
+#: redbot/cogs/admin/admin.py:311
+#, docstring
+msgid "Add a role to yourself.\n\n"
+"        Server admins must have configured the role as user settable.\n\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr "Voeg een rol aan jezelf toe. \n\n"
+"        Server teamleden moeten de rol als een user settable.\n\n"
+"        LET OP: De rolnaam is hoofdlettergevoelig. "
+
+#: redbot/cogs/admin/admin.py:322
+#, docstring
+msgid "Remove a selfrole from yourself.\n\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr "Verwijder een rol van jezelf.\n\n"
+"        LET OP: De rolnaam is hoofdlettergevoelig. "
+
+#: redbot/cogs/admin/admin.py:332
+#, docstring
+msgid "Add a role to the list of available selfroles.\n\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr "Voeg een rol toe aan de lijst met beschikbare selfroles. \n\n"
+"        OPMERKING: De rol is hoofdlettergevoelig!"
+
+#: redbot/cogs/admin/admin.py:340 redbot/cogs/admin/admin.py:352
+msgid "The selfroles list has been successfully modified."
+msgstr "De selfroles lijst is succesvol aangepast."
+
+#: redbot/cogs/admin/admin.py:345
+#, docstring
+msgid "Remove a role from the list of available selfroles.\n\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr "Verwijder een rol uit de lijst met beschikbare selfroles. \n\n"
+"        OPMERKING: De rol is hoofdlettergevoelig!"
+
+#: redbot/cogs/admin/admin.py:356
+#, docstring
+msgid "\n"
+"        Lists all available selfroles.\n"
+"        "
+msgstr "\n"
+"Laat alle beschikbare selfroles zien."
+
+#: redbot/cogs/admin/admin.py:362
+msgid "Available Selfroles:\n"
+"{selfroles}"
+msgstr "Beschikbare Selfroles:\n"
+"{selfroles}"
+
+#: redbot/cogs/admin/admin.py:379
+#, docstring
+msgid "Lock a bot to its current servers only."
+msgstr "Vergrendel de bot voor alleen deze server."
+
+#: redbot/cogs/admin/admin.py:384
+msgid "The bot is no longer serverlocked."
+msgstr "De bot is niet langer vergrendeld."
+
+#: redbot/cogs/admin/admin.py:386
+msgid "The bot is now serverlocked."
+msgstr "De bot is vergrendeld."
+
+#: redbot/cogs/admin/announcer.py:70
+msgid "I could not announce to server: {server.id}"
+msgstr "Ik kan geen bericht aankondigen in: {server.id}"
+
+#: redbot/cogs/admin/converters.py:25
+msgid "The Admin cog is not loaded."
+msgstr "De admin cog is niet geladen."
+
+#: redbot/cogs/admin/converters.py:34
+msgid "The provided role is not a valid selfrole."
+msgstr "De ingevulde rol is geen beschikbare selfrole."
 

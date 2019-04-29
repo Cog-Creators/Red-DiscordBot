@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
-"PO-Revision-Date: 2018-04-15 16:43-0400\n"
+"POT-Creation-Date: 2019-01-11 02:18+0000\n"
+"PO-Revision-Date: 2019-02-25 03:08\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: ENCODING\n"
-"Generated-By: pygettext.py 1.5\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 2.2\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
@@ -16,34 +16,62 @@ msgstr ""
 "X-Crowdin-File: /cogs/bank/locales/messages.pot\n"
 "Language: sv_SE\n"
 
-#: ../bank.py:76
-msgid "Bank settings:\n\n"
-"Bank name: {}\n"
-"Currency: {}\n"
-"Default balance: {}"
+#: redbot/cogs/bank/bank.py:58
+#, docstring
+msgid "Bank"
 msgstr ""
 
-#: ../bank.py:94
+#: redbot/cogs/bank/bank.py:70
+#, docstring
+msgid "Base command for bank settings."
+msgstr ""
+
+#: redbot/cogs/bank/bank.py:83
+msgid "Bank settings:\n\n"
+"Bank name: {bank_name}\n"
+"Currency: {currency_name}\n"
+"Default balance: {default_balance}"
+msgstr ""
+
+#: redbot/cogs/bank/bank.py:94
+#, docstring
+msgid "Toggle whether the bank is global or not.\n\n"
+"        If the bank is global, it will become per-server.\n"
+"        If the bank is per-server, it will become global.\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/bank/bank.py:101
+msgid "per-server"
+msgstr "per-server"
+
+#: redbot/cogs/bank/bank.py:101
 msgid "global"
 msgstr "global"
 
-#: ../bank.py:94
-msgid "per-guild"
-msgstr "per-guild"
-
-#: ../bank.py:97
-msgid "This will toggle the bank to be {}, deleting all accounts in the process! If you're sure, type `{}`"
+#: redbot/cogs/bank/bank.py:104
+msgid "This will toggle the bank to be {banktype}, deleting all accounts in the process! If you're sure, type `{command}`"
 msgstr ""
 
-#: ../bank.py:104
-msgid "The bank is now {}."
-msgstr "Banken är nu {}."
+#: redbot/cogs/bank/bank.py:111
+msgid "The bank is now {banktype}."
+msgstr ""
 
-#: ../bank.py:111
-msgid "Bank's name has been set to {}"
-msgstr "Bankens namn har ändrats till {}"
+#: redbot/cogs/bank/bank.py:116
+#, docstring
+msgid "Set the bank's name."
+msgstr ""
 
-#: ../bank.py:118
-msgid "Currency name has been set to {}"
-msgstr "Valutans namn har ändrats till {}"
+#: redbot/cogs/bank/bank.py:118
+msgid "Bank name has been set to: {name}"
+msgstr ""
+
+#: redbot/cogs/bank/bank.py:123
+#, docstring
+msgid "Set the name for the bank's currency."
+msgstr ""
+
+#: redbot/cogs/bank/bank.py:125
+msgid "Currency name has been set to: {name}"
+msgstr ""
 

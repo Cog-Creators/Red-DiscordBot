@@ -24,7 +24,7 @@ class Image(commands.Cog):
         self.session = aiohttp.ClientSession()
         self.imgur_base_url = "https://api.imgur.com/3/"
 
-    def __unload(self):
+    def cog_unload(self):
         self.session.detach()
 
     async def initialize(self) -> None:

@@ -61,11 +61,11 @@ def parse_cli_args():
     parser.add_argument(
         "--update-dev", help="Updates Red from the Github repo", action="store_true"
     )
-    parser.add_argument(
-        "--voice", help="Installs extra 'voice' when updating", action="store_true"
-    )
     parser.add_argument("--docs", help="Installs extra 'docs' when updating", action="store_true")
     parser.add_argument("--test", help="Installs extra 'test' when updating", action="store_true")
+    parser.add_argument(
+        "--style", help="Installs extra 'style' when updating", action="store_true"
+    )
     parser.add_argument(
         "--mongo", help="Installs extra 'mongo' when updating", action="store_true"
     )
@@ -77,7 +77,7 @@ def parse_cli_args():
     return parser.parse_known_args()
 
 
-def update_red(dev=False, voice=False, mongo=False, docs=False, test=False):
+def update_red(dev=False, style=False, mongo=False, docs=False, test=False):
     interpreter = sys.executable
     print("Updating Red...")
     # If the user ran redbot-launcher.exe, updating with pip will fail
@@ -94,8 +94,8 @@ def update_red(dev=False, voice=False, mongo=False, docs=False, test=False):
             os.remove(new_name)
         os.rename(old_name, new_name)
     egg_l = []
-    if voice:
-        egg_l.append("voice")
+    if style:
+        egg_l.append("style")
     if mongo:
         egg_l.append("mongo")
     if docs:
@@ -267,11 +267,11 @@ async def reset_red():
     if confirm("\nDo you want to create a backup for an instance? (y/n) "):
         for index, instance in instances.items():
             print("\nRemoving {}...".format(index))
-            await create_backup(index, instance)
-            await remove_instance(index, instance)
+            await create_backup(index)
+            await remove_instance(index)
     else:
         for index, instance in instances.items():
-            await remove_instance(index, instance)
+            await remove_instance(index)
     print("All instances have been removed.")
 
 
@@ -293,7 +293,7 @@ def user_choice():
 
 def extras_selector():
     print("Enter any extra requirements you want installed\n")
-    print("Options are: voice, docs, test, mongo\n")
+    print("Options are: style, docs, test, mongo\n")
     selected = user_choice()
     selected = selected.split()
     return selected
@@ -315,7 +315,7 @@ def development_choice(can_go_back=True):
             selected = extras_selector()
             update_red(
                 dev=False,
-                voice=True if "voice" in selected else False,
+                style=True if "style" in selected else False,
                 docs=True if "docs" in selected else False,
                 test=True if "test" in selected else False,
                 mongo=True if "mongo" in selected else False,
@@ -325,7 +325,7 @@ def development_choice(can_go_back=True):
             selected = extras_selector()
             update_red(
                 dev=True,
-                voice=True if "voice" in selected else False,
+                style=True if "style" in selected else False,
                 docs=True if "docs" in selected else False,
                 test=True if "test" in selected else False,
                 mongo=True if "mongo" in selected else False,
@@ -463,9 +463,9 @@ def main():
             "Please try again using only one of --update or --update-dev"
         )
     if args.update:
-        update_red(voice=args.voice, docs=args.docs, test=args.test, mongo=args.mongo)
+        update_red(style=args.style, docs=args.docs, test=args.test, mongo=args.mongo)
     elif args.update_dev:
-        update_red(dev=True, voice=args.voice, docs=args.docs, test=args.test, mongo=args.mongo)
+        update_red(dev=True, style=args.style, docs=args.docs, test=args.test, mongo=args.mongo)
 
     if INTERACTIVE_MODE:
         main_menu()

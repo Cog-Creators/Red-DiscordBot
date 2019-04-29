@@ -531,7 +531,10 @@ class Requires:
         if category is not None:
             channels.append(category)
 
-        model_chain = [author, *channels, *author.roles, guild]
+        # We want author roles sorted highest to lowest, and exclude the @everyone role
+        author_roles = reversed(author.roles[1:])
+
+        model_chain = [author, *channels, *author_roles, guild]
 
         for rules in rules_chain:
             for model in model_chain:

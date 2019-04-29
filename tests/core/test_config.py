@@ -490,3 +490,19 @@ async def test_cast_str_nested(config):
     config.register_global(foo={})
     await config.foo.set({123: True, 456: {789: False}})
     assert await config.foo() == {"123": True, "456": {"789": False}}
+
+
+def test_config_custom_noinit(config):
+    with pytest.raises(ValueError):
+        config.custom("TEST", 1, 2, 3)
+
+
+def test_config_custom_init(config):
+    config.init_custom("TEST", 3)
+    config.custom("TEST", 1, 2, 3)
+
+
+def test_config_custom_doubleinit(config):
+    config.init_custom("TEST", 3)
+    with pytest.raises(ValueError):
+        config.init_custom("TEST", 2)
