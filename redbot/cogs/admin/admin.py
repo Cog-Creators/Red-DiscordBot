@@ -73,6 +73,9 @@ class Admin(commands.Cog):
         self.bot.register_rpc_handler(self._serverlock)
         self.bot.register_rpc_handler(self._announce_ignore)
         self.bot.register_rpc_handler(self._announce_channel)
+        self.bot.register_rpc_handler(self._addrole_rpc)
+        self.bot.register_rpc_handler(self._removerole_rpc)
+        self.bot.register_rpc_handler(self._editrole)
 
     def cog_unload(self):
         try:
@@ -220,6 +223,126 @@ class Admin(commands.Cog):
         serverlocked = await self.conf.serverlocked()
         await self.conf.serverlocked.set(not serverlocked)
         return not serverlocked
+
+    async def _addrole_rpc(self, role_id: int, user_id: int) -> bool:
+        """Adds a role to a user, using the role ID to find the guild.
+        Paramaters
+        ----------
+        role_id: int
+            ID of the role to be added
+        user_id: int
+            ID of the user for the role to be added to
+
+        Returns
+        ----------
+        Optional[bool]
+            Indicates success.  True if the role was successfully added, False if it failed (most likely permissions), None of it couldn't find the role or the user in the guild of the role.
+        """
+        role = None
+        for guild in self.bot.guilds:
+            for iter_role in guild.roles:
+                if iter_role.id == role_id:
+                    role = iter_role
+                    break
+            if role:
+                break
+        if not role:
+            return None
+        guild = role.guild
+        member = guild.get_member(user_id)
+        if not member:
+            return None
+        if not member.top_role > role:
+            return False
+        try:
+            await member.add_roles(role)
+        except discord.HTTPException:
+            return False
+        return True
+
+    async def _removerole_rpc(self, role_id: int, user_id: int) -> bool:
+        """Removes a role from a user, using the role ID to find the guild.
+        Paramaters
+        ----------
+        role_id: int
+            ID of the role to be removed
+        user_id: int
+            ID of the user for the role to be added to
+
+        Returns
+        ----------
+        Optional[bool]
+            Indicates success.  True if the role was successfully removed, False if it failed (most likely permissions), None of it couldn't find the role or the user in the guild of the role.
+        """
+        role = None
+        for guild in self.bot.guilds:
+            for iter_role in guild.roles:
+                if iter_role.id == role_id:
+                    role = iter_role
+                    break
+            if role:
+                break
+        if not role:
+            return None
+        guild = role.guild
+        member = guild.get_member(user_id)
+        if not member:
+            return None
+        if not member.top_role > role:
+            return False
+        try:
+            await member.remove_roles(role)
+        except discord.HTTPException:
+            return False
+        return True
+
+    async def _editrole(self, role_id: int, color: discord.Colour = None, name: str = None):
+        """Edits either the name or the color of a role.
+        Paramaters
+        ----------
+        role_id: int
+            The ID of the role you wish to edit.
+        color: discord.Colour
+            The new color of the role.  Don't specify if you wish to leave it as it is.
+        name: str
+            The new name of the role.  Don't specify if you wish to leave it as it is.
+
+        Returns
+        ----------
+        Optional[bool]:
+            Indicates success.  True if editing the role was successful, False if it wasn't (most likely permissions), None if it couldn't find the role or invalid arguments.
+        """
+        # It's probably a string
+        if isinstance(color, str):
+            color = color.replace("#", "0x")
+            color = int(color, 0)
+            color = discord.Colour(color)
+        # Just in case
+        elif isinstance(color, int):
+            color = discord.Colour(color)
+            
+        role = None
+        for guild in self.bot.guilds:
+            for iter_role in guild.roles:
+                if iter_role.id == role_id:
+                    role = iter_role
+                    break
+            if role:
+                break
+        if not role:
+            return None
+        try:
+            if color and name:
+                await role.edit(name=name, color=color, reason="Requested through RPC.")
+            elif color and not name:
+                await role.edit(color=color, reason="Requested through RPC.")
+            elif name and not color:
+                await role.edit(name=name, reason="Requested through RPC.")
+            else:
+                return None
+        except discord.HTTPException:
+            return False
+        return True
 
     @commands.command()
     @commands.guild_only()
