@@ -47,7 +47,7 @@ class Audio(commands.Cog):
     _default_lavalink_settings = {
         "host": "localhost",
         "rest_port": 2333,
-        "ws_port": 2332,
+        "ws_port": 2333,
         "password": "youshallnotpass",
     }
 
