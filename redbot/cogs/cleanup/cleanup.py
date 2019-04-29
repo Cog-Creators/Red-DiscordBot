@@ -290,7 +290,7 @@ class Cleanup(commands.Cog):
     ):
         """Delete the messages between Messsage One and Message Two, providing the messages IDs.
 
-        The first message ID should be the older message, and the second one the newer.
+        The first message ID should be the older message and the second one the newer.
 
         Example:
             `[p]cleanup between 123456789123456789 987654321987654321`
