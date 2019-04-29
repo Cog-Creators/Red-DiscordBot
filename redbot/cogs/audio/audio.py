@@ -57,6 +57,7 @@ class Audio(commands.Cog):
             "current_version": redbot.core.VersionInfo.from_str("3.0.0a0").to_json(),
             "use_external_lavalink": False,
             "restrict": True,
+            "localpath": str(cog_data_path(raw_name="Audio")),
         }
 
         default_guild = {
@@ -356,6 +357,87 @@ class Audio(commands.Cog):
         await self.config.guild(ctx.guild).jukebox.set(jukebox)
 
     @audioset.command()
+    @checks.is_owner()
+    async def localpath(self, ctx, local_path=None):
+        """Set the localtracks path if the Lavalink.jar is not run from the Audio data folder.
+
+        Leave the path blank to reset the path to the default, the Audio data directory.
+        """
+
+        if not local_path:
+            await self.config.localpath.set(str(cog_data_path(raw_name="Audio")))
+            return await self._embed_msg(
+                ctx, _("The localtracks path location has been reset to the default location.")
+            )
+
+        info_msg = _(
+            "This setting is only for bot owners to set a localtracks folder location "
+            "if the Lavalink.jar is being ran from outside of the Audio data directory.\n"
+            "In the example below, the full path for 'ParentDirectory' must be passed to this command.\n"
+            "The path must not contain spaces.\n"
+            "```\n"
+            "ParentDirectory\n"
+            "  |__ localtracks  (folder)\n"
+            "  |     |__ Awesome Album Name  (folder)\n"
+            "  |           |__01 Cool Song.mp3\n"
+            "  |           |__02 Groovy Song.mp3\n"
+            "  |\n"
+            "  |__ Lavalink.jar\n"
+            "  |__ application.yml\n"
+            "```\n"
+            "The folder path given to this command must contain the Lavalink.jar, the application.yml, and the localtracks folder.\n"
+            "Use this command with no path given to reset it to the default, the Audio data directory for this bot.\n"
+            "Do you want to continue to set the provided path for local tracks?"
+        )
+        info = await ctx.maybe_send_embed(info_msg)
+
+        start_adding_reactions(info, ReactionPredicate.YES_OR_NO_EMOJIS)
+        pred = ReactionPredicate.yes_or_no(info, ctx.author)
+        await ctx.bot.wait_for("reaction_add", check=pred)
+
+        if not pred.result:
+            try:
+                await info.delete()
+            except discord.errors.Forbidden:
+                pass
+            return
+
+        try:
+            if os.getcwd() != local_path:
+                os.chdir(local_path)
+            os.listdir(local_path)
+        except OSError:
+            return await self._embed_msg(
+                ctx,
+                _("{local_path} does not seem like a valid path.").format(local_path=local_path),
+            )
+
+        jar_check = os.path.isfile(local_path + "/Lavalink.jar")
+        yml_check = os.path.isfile(local_path + "/application.yml")
+
+        if not jar_check and not yml_check:
+            filelist = "a Lavalink.jar and an application.yml"
+        elif jar_check and not yml_check:
+            filelist = "an application.yml"
+        elif not jar_check and yml_check:
+            filelist = "a Lavalink.jar"
+        else:
+            filelist = None
+        if filelist is not None:
+            warn_msg = _(
+                "The path that was entered does not have {filelist} file in "
+                "that location. The path will still be saved, but please check the path and "
+                "the file location before attempting to play local tracks or start your "
+                "Lavalink.jar."
+            ).format(filelist=filelist)
+            await self._embed_msg(ctx, warn_msg)
+
+        await self.config.localpath.set(local_path)
+        await self._embed_msg(
+            ctx, _("Localtracks path set to: {local_path}.").format(local_path=local_path)
+        )
+
+    @audioset.command()
     @checks.mod_or_permissions(administrator=True)
     async def maxlength(self, ctx, seconds):
         """Max length of a track to queue in seconds. 0 to disable.
@@ -412,6 +494,7 @@ class Audio(commands.Cog):
     @audioset.command()
     async def settings(self, ctx):
         """Show the current settings."""
+        is_owner = ctx.author.id == self.bot.owner_id
         data = await self.config.guild(ctx.guild).all()
         global_data = await self.config.all()
         dj_role_obj = ctx.guild.get_role(data["dj_role"])
@@ -458,8 +541,10 @@ class Audio(commands.Cog):
             "---Lavalink Settings---        \n"
             "Cog version:      [{version}]\n"
             "Jar build:        [{jarbuild}]\n"
-            "External server:  [{use_external_lavalink}]"
+            "External server:  [{use_external_lavalink}]\n"
         ).format(version=__version__, jarbuild=jarbuild, **global_data)
+        if is_owner:
+            msg += _("Localtracks path: [{localpath}]\n").format(**global_data)
 
         embed = discord.Embed(colour=await ctx.embed_colour(), description=box(msg, lang="ini"))
         return await ctx.send(embed=embed)
@@ -778,11 +863,10 @@ class Audio(commands.Cog):
         )
         track_listing = []
         if ctx.invoked_with == "search":
+            local_path = await self.config.localpath()
             for localtrack_location in folder_list:
                 track_listing.append(
-                    localtrack_location.replace(
-                        "{}/localtracks/".format(cog_data_path(raw_name="Audio")), ""
-                    )
+                    localtrack_location.replace("{}/localtracks/".format(local_path), "")
                 )
         else:
             for localtrack_location in folder_list:
@@ -808,7 +892,7 @@ class Audio(commands.Cog):
         await ctx.invoke(self.search, query=("folder:" + folder))
 
     async def _localtracks_check(self, ctx):
-        audio_data = cog_data_path(raw_name="Audio")
+        audio_data = await self.config.localpath()
         if os.getcwd() != audio_data:
             os.chdir(audio_data)
         localtracks_folder = any(
@@ -1075,10 +1159,9 @@ class Audio(commands.Cog):
             return await self._get_spotify_tracks(ctx, query)
 
         if query.startswith("localtrack:"):
+            local_path = await self.config.localpath()
             await self._localtracks_check(ctx)
-            query = query.replace("localtrack:", "").replace(
-                (str(cog_data_path(raw_name="Audio")) + "/"), ""
-            )
+            query = query.replace("localtrack:", "").replace(((local_path) + "/"), "")
         allowed_files = (".mp3", ".flac", ".ogg")
         if not self._match_url(query) and not (query.lower().endswith(allowed_files)):
             query = "ytsearch:{}".format(query)
@@ -2256,9 +2339,8 @@ class Audio(commands.Cog):
         ):
             track_idx = i + 1
             if command == "search":
-                track_location = track.replace(
-                    "localtrack:{}/localtracks/".format(cog_data_path(raw_name="Audio")), ""
-                )
+                local_path = await self.config.localpath()
+                track_location = track.replace("localtrack:{}/localtracks/".format(local_path), "")
                 track_match += "`{}.` **{}**\n".format(track_idx, track_location)
             else:
                 track_match += "`{}.` **{}**\n".format(track[0], track[1])
@@ -2577,7 +2659,8 @@ class Audio(commands.Cog):
             if command == "search":
                 return await ctx.invoke(self.play, query=("localtracks/{}".format(search_choice)))
             search_choice = search_choice.replace("localtrack:", "")
-            if not search_choice.startswith(str(cog_data_path(raw_name="Audio"))):
+            local_path = await self.config.localpath()
+            if not search_choice.startswith(local_path):
                 return await ctx.invoke(
                     self.search, query=("localfolder:{}".format(search_choice))
                 )
@@ -2638,14 +2721,10 @@ class Audio(commands.Cog):
                     search_list += "`{}.` **{}**\n".format(search_track_num, track)
                     folder = False
                 else:
+                    local_path = await self.config.localpath()
                     search_list += "`{}.` **{}**\n".format(
                         search_track_num,
-                        track.replace(
-                            "localtrack:{}/localtracks/".format(
-                                str(cog_data_path(raw_name="Audio"))
-                            ),
-                            "",
-                        ),
+                        track.replace("localtrack:{}/localtracks/".format(local_path), ""),
                     )
                     folder = False
         try:
