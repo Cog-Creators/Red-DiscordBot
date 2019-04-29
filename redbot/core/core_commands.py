@@ -6,6 +6,7 @@ import itertools
 import json
 import logging
 import os
+import pathlib
 import sys
 import tarfile
 import traceback
@@ -1158,7 +1159,8 @@ class Core(commands.Cog, CoreLogic):
     async def backup(self, ctx: commands.Context, *, backup_path: str = None):
         """Creates a backup of all data for the instance."""
         if backup_path:
-            if not os.path.exists(backup_path):
+            path = pathlib.Path(backup_path)
+            if not (path.exists() and path.is_dir()):
                 return await ctx.send(
                     _("That path doesn't seem to exist.  Please provide a valid path.")
                 )
