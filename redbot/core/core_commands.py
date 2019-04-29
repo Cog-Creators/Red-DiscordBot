@@ -38,13 +38,6 @@ __all__ = ["Core"]
 
 log = logging.getLogger("red")
 
-OWNER_DISCLAIMER = _(
-    "⚠ **Only** the person who is hosting Red should be "
-    "owner. **This has SERIOUS security implications. The "
-    "owner can access any data that is present on the host "
-    "system.** ⚠"
-)
-
 
 _ = i18n.Translator("Core", __file__)
 
@@ -276,7 +269,7 @@ class Core(commands.Cog, CoreLogic):
     @commands.command(hidden=True)
     async def ping(self, ctx: commands.Context):
         """Pong."""
-        await ctx.send(_("Pong."))
+        await ctx.send("Pong.")
 
     @commands.command()
     async def info(self, ctx: commands.Context):
@@ -956,7 +949,13 @@ class Core(commands.Cog, CoreLogic):
         print(_("\nVerification token:"))
         print(token)
 
-        await ctx.send(_("Remember:\n") + OWNER_DISCLAIMER)
+        owner_disclaimer = _(
+            "⚠ **Only** the person who is hosting Red should be "
+            "owner. **This has SERIOUS security implications. The "
+            "owner can access any data that is present on the host "
+            "system.** ⚠"
+        )
+        await ctx.send(_("Remember:\n") + owner_disclaimer)
         await asyncio.sleep(5)
 
         await ctx.send(
