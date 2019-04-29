@@ -101,7 +101,7 @@ class ModInfo(MixinMeta):
             user_joined = joined_at.strftime("%d %b %Y %H:%M")
         else:
             since_joined = "?"
-            user_joined = "Unknown"
+            user_joined = _("Unknown")
         user_created = user.created_at.strftime("%d %b %Y %H:%M")
         voice_state = user.voice
         member_number = (
