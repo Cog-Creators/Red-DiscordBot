@@ -6,8 +6,8 @@ import discord
 from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
-from .announcer import Announcer
 from .rpchelpers import FakeContextAnnouncer
+from .announcer import Announcer
 from .converters import MemberDefaultAuthor, SelfRole
 
 log = logging.getLogger("red.admin")
@@ -71,6 +71,8 @@ class Admin(commands.Cog):
         self.bot = bot
         self.bot.register_rpc_handler(self._announce)
         self.bot.register_rpc_handler(self._serverlock)
+        self.bot.register_rpc_handler(self._announce_ignore)
+        self.bot.register_rpc_handler(self._announce_channel)
 
     def cog_unload(self):
         try:
@@ -152,6 +154,7 @@ class Admin(commands.Cog):
         Paramaters
         ----------
         message: str
+            The message to announce
 
         Returns
         ----------
@@ -166,7 +169,47 @@ class Admin(commands.Cog):
         else:
             return False
 
-    async def _serverlock(self):
+    async def _announce_ignore(self, guild_id: int) -> bool:
+        """Toggles the ignore setting for the guild for whether to ignore announcements or to receive them.
+        Paramaters
+        ----------
+        guild_id: int
+            The id of the guild to change the ignore settings for
+        
+        Returns
+        ----------
+        Optional[bool]
+            Indicating whether the guild is now ignoring announcements.  True if ignoring, False if not, None if it couldn't find the guild with the specified ID.
+        """
+        guild = self.bot.get_guild(guild_id)
+        if not guild:
+            return None
+        ignored = await self.conf.guild(guild).announce_ignore()
+        await self.conf.guild(guild).announce_ignore.set(not ignored)
+        return not ignored
+
+    async def _announce_channel(self, channel_id: int) -> bool:
+        """Sets the channel to receive announcements in for a guild.
+        Paramaters
+        ----------
+        channel_id: int
+            The id of the channel to set for announcements
+
+        Returns
+        ----------
+        Optional[bool]
+            Indicating success or not.  True if success, False if failed, None if it couldn't find the channel with the specified ID.
+        """
+        channel = self.bot.get_channel(channel_id)
+        if not channel:
+            return None
+        perms = channel.permissions_for(channel.guild.me)
+        if (not perms.read_messages) or (not perms.send_messages):
+            return False
+        await self.conf.guild(channel.guild).announce_channel.set(channel.id)
+        return True
+
+    async def _serverlock(self) -> bool:
         """Serverlocks the bot, preventing the bot from joining new guilds.
 
         Returns
@@ -311,21 +354,25 @@ class Admin(commands.Cog):
         """Change the channel to which the bot makes announcements."""
         if channel is None:
             channel = ctx.channel
-        await self.conf.guild(ctx.guild).announce_channel.set(channel.id)
+        success = await self._announce_channel(channel.id)
 
-        await ctx.send(
-            _("The announcement channel has been set to {channel.mention}").format(channel=channel)
-        )
+        if success:
+            await ctx.send(
+                _("The announcement channel has been set to {channel.mention}").format(channel=channel)
+            )
+        else:
+            await ctx.send(
+                _("Failed to set {channel.mention} as the announcement channel.  Are you sure I can read and send messages there?").format(channel=channel)
+            )
 
     @announce.command(name="ignore")
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     async def announce_ignore(self, ctx):
         """Toggle announcements being enabled this server."""
-        ignored = await self.conf.guild(ctx.guild).announce_ignore()
-        await self.conf.guild(ctx.guild).announce_ignore.set(not ignored)
+        ignored = await self._announce_ignore(ctx.guild)
 
-        if ignored:  # Keeping original logic....
+        if not ignored:  # Keeping original logic....
             await ctx.send(
                 _("The server {guild.name} will receive announcements.").format(guild=ctx.guild)
             )
