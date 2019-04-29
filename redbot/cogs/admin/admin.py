@@ -7,6 +7,7 @@ from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
 from .announcer import Announcer
+from .rpchelpers import FakeContextAnnouncer
 from .converters import MemberDefaultAuthor, SelfRole
 
 log = logging.getLogger("red.admin")
@@ -52,7 +53,7 @@ _ = T_
 class Admin(commands.Cog):
     """A collection of server administration utilities."""
 
-    def __init__(self, config=Config):
+    def __init__(self, bot, config=Config):
         super().__init__()
         self.conf = config.get_conf(self, 8237492837454039, force_registration=True)
 
@@ -65,6 +66,11 @@ class Admin(commands.Cog):
         )
 
         self.__current_announcer = None
+
+        # Bot and RPC initialization
+        self.bot = bot
+        self.bot.register_rpc_handler(self._announce)
+        self.bot.register_rpc_handler(self._serverlock)
 
     def cog_unload(self):
         try:
@@ -139,6 +145,38 @@ class Admin(commands.Cog):
                     role=role, member=member
                 )
             )
+
+    # RPC Functions
+    async def _announce(self, message) -> bool:
+        """Starts an announcement through the bot.
+        Paramaters
+        ----------
+        message: str
+
+        Returns
+        ----------
+        bool
+            Indicating whether or not starting the announcement worked.  True if succeeded, False otherwise.
+        """
+        if not self.is_announcing():
+            announcer = Announcer(FakeContextAnnouncer(self.bot), message, config=self.conf)
+            announcer.start()
+            self.__current_announcer = announcer
+            return True
+        else:
+            return False
+
+    async def _serverlock(self):
+        """Serverlocks the bot, preventing the bot from joining new guilds.
+
+        Returns
+        ----------
+        bool
+            Indicating whether or not the bot is serverlocked now.  True if the bot is now serverlocked, False if now it is not.
+        """
+        serverlocked = await self.conf.serverlocked()
+        await self.conf.serverlocked.set(not serverlocked)
+        return not serverlocked
 
     @commands.command()
     @commands.guild_only()
@@ -248,12 +286,8 @@ class Admin(commands.Cog):
     @checks.is_owner()
     async def announce(self, ctx: commands.Context, *, message: str):
         """Announce a message to all servers the bot is in."""
-        if not self.is_announcing():
-            announcer = Announcer(ctx, message, config=self.conf)
-            announcer.start()
-
-            self.__current_announcer = announcer
-
+        success = await self._announce(message)
+        if success:
             await ctx.send(_("The announcement has begun."))
         else:
             prefix = ctx.prefix
@@ -392,13 +426,11 @@ class Admin(commands.Cog):
     @checks.is_owner()
     async def serverlock(self, ctx: commands.Context):
         """Lock a bot to its current servers only."""
-        serverlocked = await self.conf.serverlocked()
-        await self.conf.serverlocked.set(not serverlocked)
-
+        serverlocked = await self._serverlock()
         if serverlocked:
-            await ctx.send(_("The bot is no longer serverlocked."))
-        else:
             await ctx.send(_("The bot is now serverlocked."))
+        else:
+            await ctx.send(_("The bot is no longer serverlocked."))
 
     # region Event Handlers
     async def on_guild_join(self, guild: discord.Guild):
