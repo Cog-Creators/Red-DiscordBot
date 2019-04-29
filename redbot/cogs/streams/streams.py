@@ -176,7 +176,9 @@ class Streams(commands.Cog):
     async def twitch_alert_channel(self, ctx: commands.Context, channel_name: str):
         """Toggle alerts in this channel for a Twitch stream."""
         if re.fullmatch(r"<#\d+>", channel_name):
-            await ctx.send("Please supply the name of a *Twitch* channel, not a Discord channel.")
+            await ctx.send(
+                _("Please supply the name of a *Twitch* channel, not a Discord channel.")
+            )
             return
         await self.stream_alert(ctx, TwitchStream, channel_name.lower())
 
@@ -365,7 +367,7 @@ class Streams(commands.Cog):
         if message is not None:
             guild = ctx.guild
             await self.db.guild(guild).live_message_mention.set(message)
-            await ctx.send(_("stream alert message set!"))
+            await ctx.send(_("Stream alert message set!"))
         else:
             await ctx.send_help()
 
@@ -381,7 +383,7 @@ class Streams(commands.Cog):
         if message is not None:
             guild = ctx.guild
             await self.db.guild(guild).live_message_nomention.set(message)
-            await ctx.send(_("stream alert message set!"))
+            await ctx.send(_("Stream alert message set!"))
         else:
             await ctx.send_help()
 
