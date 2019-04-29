@@ -5,12 +5,15 @@ import pytest
 
 from redbot.pytest.downloader import *
 from redbot.cogs.downloader.installable import Installable, InstallableType
+from redbot.core import VersionInfo
 
 
 def test_process_info_file(installable):
     for k, v in INFO_JSON.items():
         if k == "type":
             assert installable.type == InstallableType.COG
+        elif k in ("min_bot_version", "max_bot_version"):
+            assert getattr(installable, k) == VersionInfo.from_str(v)
         else:
             assert getattr(installable, k) == v
 
@@ -19,6 +22,8 @@ def test_process_lib_info_file(library_installable):
     for k, v in LIBRARY_INFO_JSON.items():
         if k == "type":
             assert library_installable.type == InstallableType.SHARED_LIBRARY
+        elif k in ("min_bot_version", "max_bot_version"):
+            assert getattr(library_installable, k) == VersionInfo.from_str(v)
         elif k == "hidden":
             # libraries are always hidden, even if False
             assert library_installable.hidden is True

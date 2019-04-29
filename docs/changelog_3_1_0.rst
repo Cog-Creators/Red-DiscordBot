@@ -60,6 +60,8 @@ Downloader
  * Fixed bug, that caused Downloader to include submodules on cog list (`#2590`_)
  * ``[p]cog uninstall`` allows to uninstall multiple cogs now (`#2592`_)
  * ``[p]cog uninstall`` will now remove cog from installed cogs even if it can't find the cog in install path anymore (`#2595`_)
+ * ``[p]cog install`` will not allow to install cogs which aren't suitable for installed version of Red anymore (`#2605`_)
+ * Cog Developers now have to use ``min_bot_version`` in form of version string instead of ``bot_version`` in info.json and they can also use ``max_bot_version`` to specify maximum version of Red, more in :doc:`framework_downloader`. (`#2605`_)
 
 ---
 Mod
@@ -141,5 +143,6 @@ Utility Functions
 .. _#2600: https://github.com/Cog-Creators/Red-DiscordBot/pull/2600
 .. _#2602: https://github.com/Cog-Creators/Red-DiscordBot/pull/2602
 .. _#2604: https://github.com/Cog-Creators/Red-DiscordBot/pull/2604
+.. _#2605: https://github.com/Cog-Creators/Red-DiscordBot/pull/2605
 .. _#2606: https://github.com/Cog-Creators/Red-DiscordBot/pull/2606
 .. _#2620: https://github.com/Cog-Creators/Red-DiscordBot/pull/2620
