@@ -166,6 +166,64 @@ class Value:
             value = _str_key_dict(value)
         await self.driver.set(self.identifier_data, value=value)
 
+    async def incr(self, value, default=...) -> Union[int, float]:
+        """Increment and return the value of the data element pointed to by `identifiers`.
+
+        Example
+        -------
+        ::
+            # Increments and returns a global value "foo" by 3.
+            new = await conf.foo.inc(3)
+            # You can also decrement a value using by negative numbers
+            new = await conf.foo.inc(-3)
+            # Floats are also supported
+            new = await conf.foo.inc(3.834)
+
+        Parameters
+        ----------
+        value : int or float
+            Integer that will be used to increment a value.
+
+        Returns
+        -------
+        int or float
+            The stored value plus the value given as a integer or float.
+        """
+        real_default = ...
+        if isinstance(default, int) or isinstance(default, float):
+            real_default = default
+        elif isinstance(self.default, int) or isinstance(self.default, float):
+            real_default = self.default
+
+        if real_default is ...:
+            raise ValueError(
+                "You must register defaults or provide a default with this method"
+                " call to be able to use this method."
+            )
+        return await self.driver.incr(self.identifier_data, value, default=real_default)
+
+    async def toggle(self, default=...) -> bool:
+        """Toggles a Boolean value between True and False.
+
+        Example
+        -------
+        ::
+            # Assume the global value "foo" is currently True.
+            # The following will change it to False, and return the result.
+            new = await conf.foo.toggle()
+
+        Returns
+        -------
+        bool
+            The opposite of the originally stored value.
+        """
+        real_default = None
+        if isinstance(default, bool):
+            real_default = default
+        elif isinstance(self.default, bool):
+            real_default = self.default
+        return await self.driver.toggle(self.identifier_data, default=real_default)
+
     async def clear(self):
         """
         Clears the value from record for the data element pointed to by `identifiers`.

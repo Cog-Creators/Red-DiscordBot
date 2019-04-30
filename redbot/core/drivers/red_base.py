@@ -1,5 +1,5 @@
 import enum
-from typing import Tuple
+from typing import Tuple, Union
 
 __all__ = ["BaseDriver", "IdentifierData"]
 
@@ -132,6 +132,35 @@ class BaseDriver:
         Parameters
         ----------
         identifier_data
+        """
+        raise NotImplementedError
+
+    async def incr(self, identifier_data: IdentifierData, value: Union[int, float], default):
+        """
+        Increments the value specified by the given identifiers.
+
+        Config should make the guarantee that the value to write to is a number, if it's not,
+        this method should throw an error.
+
+        Parameters
+        ----------
+        identifier_data
+        value
+        default
+        """
+        raise NotImplementedError
+
+    async def toggle(self, identifier_data: IdentifierData, default) -> bool:
+        """
+        Toggles the value specified by the given identifiers.
+
+        Config should make the guarantee that the value to write to is a boolean, if it's not,
+        this method should throw an error.
+
+        Parameters
+        ----------
+        identifier_data
+        default
         """
         raise NotImplementedError
 

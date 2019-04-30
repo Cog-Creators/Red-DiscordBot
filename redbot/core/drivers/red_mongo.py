@@ -1,6 +1,6 @@
 import re
 from getpass import getpass
-from typing import Match, Pattern, Tuple
+from typing import Match, Pattern, Tuple, Union
 from urllib.parse import quote_plus
 
 import motor.core
@@ -183,6 +183,46 @@ class Mongo(BaseDriver):
         else:
             dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
             await mongo_collection.update_one(pkey_filter, update={"$unset": {dot_identifiers: 1}})
+
+    async def incr(self, identifier_data: IdentifierData, value: Union[int, float], default):
+        if len(identifier_data.identifiers) == 0:
+            raise ValueError("Cannot call incr on a group!")
+
+        if default != 0:
+            try:
+                curr_value = await self.get(identifier_data)
+            except KeyError:
+                curr_value = default
+            await self.set(identifier_data, curr_value + value)
+            return curr_value + value
+
+        # If default is 0 we can do an atomic incr
+        uuid = self._escape_key(identifier_data.uuid)
+        primary_key = list(map(self._escape_key, self.get_primary_key(identifier_data)))
+        dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
+        if isinstance(value, dict):
+            if len(value) == 0:
+                await self.clear(identifier_data)
+                return
+            value = self._escape_dict_keys(value)
+
+        mongo_collection = self.get_collection(identifier_data.category)
+        update_stmt = {"$inc": {dot_identifiers: value}}
+        await mongo_collection.update_one(
+            {"_id": {"RED_uuid": uuid, "RED_primary_key": primary_key}},
+            update=update_stmt,
+            upsert=True,
+        )
+        return await self.get(identifier_data)
+
+    async def toggle(self, identifier_data: IdentifierData, default) -> bool:
+        try:
+            curr_val = await self.get(identifier_data)
+        except KeyError:
+            curr_val = default
+
+        await self.set(identifier_data, not curr_val)
+        return not curr_val
 
     @staticmethod
     def _escape_key(key: str) -> str:

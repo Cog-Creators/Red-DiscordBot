@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Union
 import copy
 import weakref
 import logging
@@ -137,6 +137,34 @@ class JSON(BaseDriver):
             pass
         else:
             await self.jsonIO._threadsafe_save_json(self.data)
+
+    async def incr(self, identifier_data: IdentifierData, value: Union[int, float], default):
+        partial = self.data
+        full_identifiers = identifier_data.to_tuple()
+        for i in full_identifiers[:-1]:
+            if i not in partial:
+                partial[i] = {}
+            partial = partial[i]
+
+        curr_val = partial.get(full_identifiers[-1], default)
+        partial[full_identifiers[-1]] = curr_val + value
+        await self.jsonIO._threadsafe_save_json(self.data)
+
+        return partial[full_identifiers[-1]]
+
+    async def toggle(self, identifier_data: IdentifierData, default):
+        partial = self.data
+        full_identifiers = identifier_data.to_tuple()
+        for i in full_identifiers[:-1]:
+            if i not in partial:
+                partial[i] = {}
+            partial = partial[i]
+
+        curr_val = partial.get(full_identifiers[-1], default)
+        partial[full_identifiers[-1]] = not curr_val
+        await self.jsonIO._threadsafe_save_json(self.data)
+
+        return partial[full_identifiers[-1]]
 
     async def import_data(self, cog_data, custom_group_data):
         def update_write_data(identifier_data: IdentifierData, data):
