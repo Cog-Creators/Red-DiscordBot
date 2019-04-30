@@ -1,5 +1,6 @@
 import itertools
 import pathlib
+import platform
 import shutil
 import asyncio
 import asyncio.subprocess
@@ -36,6 +37,8 @@ class ServerManager:
     _java_version: ClassVar[Optional[Tuple[int, int]]] = None
     _up_to_date: ClassVar[Optional[bool]] = None
 
+    _blacklisted_archs = ["armv6l", "aarch32", "aarch64"]
+
     def __init__(self) -> None:
         self.ready = asyncio.Event()
 
@@ -44,6 +47,12 @@ class ServerManager:
         self._shutdown: bool = False
 
     async def start(self) -> None:
+        arch_name = platform.machine()
+        if arch_name in self._blacklisted_archs:
+            raise asyncio.CancelledError(
+                "You are attempting to run Lavalink audio on an unsupported machine architecture."
+            )
+
         if self._proc is not None:
             if self._proc.returncode is None:
                 raise RuntimeError("Internal Lavalink server is already running")

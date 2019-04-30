@@ -97,6 +97,16 @@ class Audio(commands.Cog):
 
         self._manager: Optional[ServerManager] = None
 
+    async def cog_before_invoke(self, ctx):
+        if self.llsetup in [ctx.command, ctx.command.root_parent]:
+            pass
+        elif self._connect_task.cancelled:
+            await ctx.send(
+                "You have attempted to run Audio's Lavalink server on an unsupported"
+                " architecture. Only settings related commands will be available."
+            )
+            raise RuntimeError("Not running audio command due to invalid machine architecture for Lavalink.")
+
     async def initialize(self):
         self._restart_connect()
         self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
@@ -129,6 +139,9 @@ class Audio(commands.Cog):
                     )
                     await asyncio.sleep(1)
                     continue
+                except asyncio.CancelledError:
+                    log.exception("Invalid machine architecture, cannot run Lavalink.")
+                    break
             else:
                 host = await self.config.host()
                 password = await self.config.password()
