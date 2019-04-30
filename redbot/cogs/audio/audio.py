@@ -105,7 +105,9 @@ class Audio(commands.Cog):
                 "You have attempted to run Audio's Lavalink server on an unsupported"
                 " architecture. Only settings related commands will be available."
             )
-            raise RuntimeError("Not running audio command due to invalid machine architecture for Lavalink.")
+            raise RuntimeError(
+                "Not running audio command due to invalid machine architecture for Lavalink."
+            )
 
     async def initialize(self):
         self._restart_connect()
