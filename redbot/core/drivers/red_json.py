@@ -138,7 +138,7 @@ class JSON(BaseDriver):
         else:
             await self.jsonIO._threadsafe_save_json(self.data)
 
-    async def incr(self, identifier_data: IdentifierData, value: Union[int, float], default):
+    async def inc(self, identifier_data: IdentifierData, value: Union[int, float], default):
         partial = self.data
         full_identifiers = identifier_data.to_tuple()
         for i in full_identifiers[:-1]:

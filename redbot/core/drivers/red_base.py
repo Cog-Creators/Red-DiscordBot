@@ -135,7 +135,7 @@ class BaseDriver:
         """
         raise NotImplementedError
 
-    async def incr(self, identifier_data: IdentifierData, value: Union[int, float], default):
+    async def inc(self, identifier_data: IdentifierData, value: Union[int, float], default):
         """
         Increments the value specified by the given identifiers.
 

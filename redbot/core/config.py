@@ -166,7 +166,7 @@ class Value:
             value = _str_key_dict(value)
         await self.driver.set(self.identifier_data, value=value)
 
-    async def incr(self, value, default=...) -> Union[int, float]:
+    async def inc(self, value, default=...) -> Union[int, float]:
         """Increment and return the value of the data element pointed to by `identifiers`.
 
         Example
@@ -200,7 +200,7 @@ class Value:
                 "You must register defaults or provide a default with this method"
                 " call to be able to use this method."
             )
-        return await self.driver.incr(self.identifier_data, value, default=real_default)
+        return await self.driver.inc(self.identifier_data, value, default=real_default)
 
     async def toggle(self, default=...) -> bool:
         """Toggles a Boolean value between True and False.

@@ -184,7 +184,7 @@ class Mongo(BaseDriver):
             dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
             await mongo_collection.update_one(pkey_filter, update={"$unset": {dot_identifiers: 1}})
 
-    async def incr(self, identifier_data: IdentifierData, value: Union[int, float], default):
+    async def inc(self, identifier_data: IdentifierData, value: Union[int, float], default):
         if len(identifier_data.identifiers) == 0:
             raise ValueError("Cannot call incr on a group!")
 
