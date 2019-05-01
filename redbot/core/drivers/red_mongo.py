@@ -202,11 +202,6 @@ class Mongo(BaseDriver):
         uuid = self._escape_key(identifier_data.uuid)
         primary_key = list(map(self._escape_key, self.get_primary_key(identifier_data)))
         dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
-        if isinstance(value, dict):
-            if len(value) == 0:
-                await self.clear(identifier_data)
-                return
-            value = self._escape_dict_keys(value)
 
         mongo_collection = self.get_collection(identifier_data.category)
         update_stmt = {"$inc": {dot_identifiers: value}}
