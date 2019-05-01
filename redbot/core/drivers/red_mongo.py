@@ -190,11 +190,13 @@ class Mongo(BaseDriver):
 
         if default != 0:
             try:
-                curr_value = await self.get(identifier_data)
+                # If this does not error the data is already in the DB and we can safely
+                # make an $inc call.
+                await self.get(identifier_data)
             except KeyError:
                 curr_value = default
-            await self.set(identifier_data, curr_value + value)
-            return curr_value + value
+                await self.set(identifier_data, curr_value + value)
+                return curr_value + value
 
         # If default is 0 we can do an atomic incr
         uuid = self._escape_key(identifier_data.uuid)
