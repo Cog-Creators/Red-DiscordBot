@@ -1,5 +1,7 @@
 import re
 from getpass import getpass
+
+from pymongo import ReturnDocument
 from typing import Match, Pattern, Tuple, Union
 from urllib.parse import quote_plus
 
@@ -127,7 +129,7 @@ class Mongo(BaseDriver):
         if partial is None:
             raise KeyError("No matching document was found and Config expects a KeyError.")
 
-        for i in identifier_data.identifiers:
+        for i in map(self._escape_key, identifier_data.identifiers):
             partial = partial[i]
         if isinstance(partial, dict):
             return self._unescape_dict_keys(partial)
@@ -188,29 +190,37 @@ class Mongo(BaseDriver):
         if len(identifier_data.identifiers) == 0:
             raise ValueError("Cannot call incr on a group!")
 
+        uuid = self._escape_key(identifier_data.uuid)
+        primary_key = list(map(self._escape_key, self.get_primary_key(identifier_data)))
+        dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
+        mongo_collection = self.get_collection(identifier_data.category)
+        mongo_filter = {"_id": {"RED_uuid": uuid, "RED_primary_key": primary_key}}
+
         if default != 0:
-            try:
-                # If this does not error the data is already in the DB and we can safely
-                # make an $inc call.
-                await self.get(identifier_data)
-            except KeyError:
+            exists = await mongo_collection.find_one(
+                mongo_filter,
+                projection={"_id": False, dot_identifiers: True},
+            )
+            if not exists:
                 curr_value = default
                 await self.set(identifier_data, curr_value + value)
                 return curr_value + value
 
-        # If default is 0 we can do an atomic incr
-        uuid = self._escape_key(identifier_data.uuid)
-        primary_key = list(map(self._escape_key, self.get_primary_key(identifier_data)))
-        dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
-
-        mongo_collection = self.get_collection(identifier_data.category)
+        # If default is 0 we can do an atomic inc
         update_stmt = {"$inc": {dot_identifiers: value}}
-        await mongo_collection.update_one(
-            {"_id": {"RED_uuid": uuid, "RED_primary_key": primary_key}},
+        result = await mongo_collection.find_one_and_update(
+            mongo_filter,
             update=update_stmt,
             upsert=True,
+            projection={dot_identifiers: True},
+            return_document=ReturnDocument.AFTER,
         )
-        return await self.get(identifier_data)
+
+        partial = result
+        for ident in map(self._escape_key, identifier_data.identifiers):
+            partial = partial[ident]
+
+        return partial
 
     async def toggle(self, identifier_data: IdentifierData, default) -> bool:
         try:
