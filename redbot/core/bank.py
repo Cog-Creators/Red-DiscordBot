@@ -66,7 +66,7 @@ class Account:
 
 def _encoded_current_time() -> int:
     """Get the current UTC time as a timestamp.
-    
+
     Returns
     -------
     int
@@ -79,12 +79,12 @@ def _encoded_current_time() -> int:
 
 def _encode_time(time: datetime.datetime) -> int:
     """Convert a datetime object to a serializable int.
-    
+
     Parameters
     ----------
     time : datetime.datetime
         The datetime to convert.
-        
+
     Returns
     -------
     int
@@ -97,12 +97,12 @@ def _encode_time(time: datetime.datetime) -> int:
 
 def _decode_time(time: int) -> datetime.datetime:
     """Convert a timestamp to a datetime object.
-    
+
     Parameters
     ----------
     time : int
         The timestamp to decode.
-        
+
     Returns
     -------
     datetime.datetime
@@ -196,8 +196,8 @@ async def set_balance(member: discord.Member, amount: int) -> int:
     if await group.created_at() == 0:
         time = _encoded_current_time()
         await group.created_at.set(time)
-
-    if await group.name() == "":
+    name = await group.name()
+    if name == "" or name != member.display_name:
         await group.name.set(member.display_name)
 
     return amount
