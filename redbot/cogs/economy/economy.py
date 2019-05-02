@@ -355,26 +355,39 @@ class Economy(commands.Cog):
         author = ctx.author
         if top < 1:
             top = 10
-        if (
-            await bank.is_global() and show_global
-        ):  # show_global is only applicable if bank is global
-            guild = None
-        bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
-        header = "{pound:4}{name:36}{score:2}\n".format(
-            pound="#", name=_("Name"), score=_("Score")
+        if await bank.is_global() and show_global:
+            # show_global is only applicable if bank is global
+            bank_sorted = await bank.get_leaderboard(positions=top, guild=None)
+        else:
+            bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
+        bal_len = len(str(bank_sorted[0][1]["balance"]))  # first user is the largest we'll see
+        header = "{pound:4}{score:{bal_len}}{name:2}\n".format(
+            pound="#", name=_("Name"), score=_("Score"), bal_len=bal_len + 6
         )
-        highscores = [
-            (
-                f"{f'{pos}.': <{3 if pos < 10 else 2}} {acc[1]['name']: <{35}s} "
-                f"{acc[1]['balance']: >{2 if pos < 10 else 1}}\n"
-            )
-            if acc[0] != author.id
-            else (
-                f"{f'{pos}.': <{3 if pos < 10 else 2}} <<{acc[1]['name'] + '>>': <{33}s} "
-                f"{acc[1]['balance']: >{2 if pos < 10 else 1}}\n"
-            )
-            for pos, acc in enumerate(bank_sorted, 1)
-        ]
+        highscores = []
+        pos = 1
+        for acc in bank_sorted:
+            try:
+                name = guild.get_member(acc[0]).display_name
+            except AttributeError:
+                name = f"{acc[1]['name']} ({str(acc[0])})"
+            balance = acc[1]['balance']
+
+            if acc[0] != author.id:
+                highscores.append(
+                    f"{f'{pos}.': <{3 if pos < 10 else 2}} "
+                    f"{balance: <{bal_len + 5}} "
+                    f"{name}\n"
+                )
+
+            else:
+                highscores.append(
+                    f"{f'{pos}.': <{3 if pos < 10 else 2}} "
+                    f"{balance: <{bal_len + 5}} "
+                    f"<<{author.display_name}>>\n"
+                )
+            pos += 1
+
         if highscores:
             pages = [
                 f"```md\n{header}{''.join(''.join(highscores[x:x + 10]))}```"
