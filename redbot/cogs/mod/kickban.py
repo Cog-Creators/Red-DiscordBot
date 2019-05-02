@@ -497,6 +497,57 @@ class KickBanMixin(MixinMeta):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(move_members=True)
+    @commands.mod_or_permissions(move_members=True)
+    async def voicekick(
+        self, ctx: commands.Context, member: discord.Member, *, reason: str = None
+    ):
+        """Kick a member from a voice channel."""
+        author = ctx.author
+        guild = ctx.guild
+
+        if member.voice is None:
+            await ctx.send(_("{} is not in a voice channel.").format(member.name))
+            return
+        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, member):
+            await ctx.send(
+                _(
+                    "I cannot let you do that. You are "
+                    "not higher than the user in the role "
+                    "hierarchy."
+                )
+            )
+            return
+        case_channel = member.voice.channel
+        # Store this channel for the case channel.
+
+        try:
+            await member.move_to(discord.Object(id=None))
+            # Work around till we get D.py 1.1.0, whereby we can directly do None.
+        except discord.HTTPException:
+            await ctx.send(_("Something went wrong while attempting to kick that member"))
+            return
+        except discord.Forbidden:  # Very unlikely that this will ever occur
+            await ctx.send(_("I am unable to kick this member from the voice channel."))
+            return
+        else:
+            try:
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    ctx.message.created_at,
+                    "vkick",
+                    member,
+                    author,
+                    reason,
+                    until=None,
+                    channel=case_channel,
+                )
+            except RuntimeError as e:
+                await ctx.send(e)
+
+    @commands.command()
+    @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
     @checks.admin_or_permissions(ban_members=True)
     async def unban(self, ctx: commands.Context, user_id: int, *, reason: str = None):
