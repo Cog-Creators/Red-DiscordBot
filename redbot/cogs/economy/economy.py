@@ -370,8 +370,11 @@ class Economy(commands.Cog):
             try:
                 name = guild.get_member(acc[0]).display_name
             except AttributeError:
-                name = f"{acc[1]['name']} ({str(acc[0])})"
-            balance = acc[1]['balance']
+                user_id = ""
+                if await ctx.bot.is_owner(ctx.author):
+                    user_id = f"({str(acc[0])})"
+                name = f"{acc[1]['name']} {user_id}"
+            balance = acc[1]["balance"]
 
             if acc[0] != author.id:
                 highscores.append(
