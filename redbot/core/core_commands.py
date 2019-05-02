@@ -656,7 +656,7 @@ class Core(commands.Cog, CoreLogic):
                     guild.get_role(await ctx.bot.db.guild(ctx.guild).mod_role()) or "Not set"
                 )
                 prefixes = await ctx.bot.db.guild(ctx.guild).prefix()
-                guild_settings = _("Admin role: {admin_role}\nMod role: {mod_role}\n").format(
+                guild_settings = _("Admin role: {admin}\nMod role: {mod}\n").format(
                     admin=admin_role, mod=mod_role
                 )
             else:
