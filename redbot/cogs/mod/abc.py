@@ -19,6 +19,7 @@ class MixinMeta(ABC):
         self.cache: dict
         self.ban_queue: List[Tuple[int, int]]
         self.unban_queue: List[Tuple[int, int]]
+        self._voice_perm_check
 
     @classmethod
     @abstractmethod

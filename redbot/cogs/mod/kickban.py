@@ -497,7 +497,6 @@ class KickBanMixin(MixinMeta):
 
     @commands.command()
     @commands.guild_only()
-    @commands.bot_has_permissions(move_members=True)
     @commands.mod_or_permissions(move_members=True)
     async def voicekick(
         self, ctx: commands.Context, member: discord.Member, *, reason: str = None
@@ -505,9 +504,14 @@ class KickBanMixin(MixinMeta):
         """Kick a member from a voice channel."""
         author = ctx.author
         guild = ctx.guild
+        user_voice_state: discord.VoiceState = member.voice
 
-        if member.voice is None:
-            await ctx.send(_("{} is not in a voice channel.").format(member.name))
+        if (
+            await self._voice_perm_check(
+                ctx, user_voice_state, move_members=True
+            )
+            is False
+        ):
             return
         elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, member):
             await ctx.send(
