@@ -190,6 +190,21 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
     async def get_context(self, message, *, cls=commands.Context):
         return await super().get_context(message, cls=cls)
 
+    async def process_commands(self, message: discord.Message):
+        """
+        modification from the base to do the same thing in the command case
+        
+        but dispatch an additional event for cogs which want to handle normal messages
+        differently to command messages, 
+        without the overhead of additional get_context calls per cog
+        """
+        if not message.author.bot:
+            ctx = await self.get_context(message)
+            if ctx.valid:
+                return await self.invoke(ctx)
+
+        self.dispatch("message_without_command", message)
+
     @staticmethod
     def list_packages():
         """Lists packages present in the cogs the folder"""
