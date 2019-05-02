@@ -19,7 +19,13 @@ class MixinMeta(ABC):
         self.cache: dict
         self.ban_queue: List[Tuple[int, int]]
         self.unban_queue: List[Tuple[int, int]]
-        self._voice_perm_check
+
+    @staticmethod
+    @abstractmethod
+    async def _voice_perm_check(
+        ctx: commands.Context, user_voice_state: Optional[discord.VoiceState], **perms: bool
+    ) -> bool:
+        raise NotImplementedError()
 
     @classmethod
     @abstractmethod
