@@ -210,7 +210,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             if ctx.valid:
                 return await self.invoke(ctx)
 
-        await self.dispatch("on_message_without_command", message)
+        self.dispatch("on_message_without_command", message)
 
     @staticmethod
     def list_packages():
