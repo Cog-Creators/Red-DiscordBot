@@ -45,7 +45,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             owner=None,
             whitelist=[],
             blacklist=[],
-            locale="en",
+            locale="en-US",
             embeds=True,
             color=15158332,
             fuzzy=False,
