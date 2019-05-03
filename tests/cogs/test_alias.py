@@ -18,11 +18,11 @@ async def test_empty_global_aliases(alias):
 
 
 async def create_test_guild_alias(alias, ctx):
-    await alias.add_alias(ctx, "test", "ping", global_=False)
+    await alias.add_alias(ctx.guild, "test", "ping", global_=False)
 
 
 async def create_test_global_alias(alias, ctx):
-    await alias.add_alias(ctx, "test", "ping", global_=True)
+    await alias.add_alias(ctx.guild, "test", "ping", global_=True)
 
 
 @pytest.mark.asyncio
