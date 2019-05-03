@@ -40,7 +40,7 @@ async def test_delete_guild_alias(alias, ctx):
     is_alias, _ = await alias.is_alias(ctx.guild, "test")
     assert is_alias is True
 
-    await alias.delete_alias(ctx, "test")
+    await alias.delete_alias("test", guild=ctx.guild)
 
     is_alias, _ = await alias.is_alias(ctx.guild, "test")
     assert is_alias is False
