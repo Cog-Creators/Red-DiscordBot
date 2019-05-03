@@ -56,9 +56,10 @@ class Alias(commands.Cog):
         self._aliases.register_guild(**self.default_guild_settings)
 
         # RPC
-        self.bot.register_rpc_handler(self._add_alias_rpc)
-        self.bot.register_rpc_handler(self._delete_alias_rpc)
-        self.bot.register_rpc_handler(self._get_aliases_rpc)
+        if bot:
+            self.bot.register_rpc_handler(self._add_alias_rpc)
+            self.bot.register_rpc_handler(self._delete_alias_rpc)
+            self.bot.register_rpc_handler(self._get_aliases_rpc)
 
     async def unloaded_aliases(self, guild: discord.Guild) -> Generator[AliasEntry, None, None]:
         return (AliasEntry.from_json(d) for d in (await self._aliases.guild(guild).entries()))
