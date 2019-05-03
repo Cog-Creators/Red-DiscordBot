@@ -35,8 +35,9 @@ Core
 
  * Delete cooldown messages when expired (`#2469`_)
  * ``[p]set locale`` now only accepts actual locales (`#2553`_)
- * ``[p]listlocales`` now displays en-US (`#2553`_)
+ * ``[p]listlocales`` now displays ``en-US`` (`#2553`_)
  * ``redbot --version`` will now give you current version of Red (`#2567`_)
+ * Default locale changed from ``en`` to ``en-US`` (`#2642`_)
 
 ------
 Config
@@ -146,3 +147,4 @@ Utility Functions
 .. _#2605: https://github.com/Cog-Creators/Red-DiscordBot/pull/2605
 .. _#2606: https://github.com/Cog-Creators/Red-DiscordBot/pull/2606
 .. _#2620: https://github.com/Cog-Creators/Red-DiscordBot/pull/2620
+.. _#2642: https://github.com/Cog-Creators/Red-DiscordBot/pull/2642
