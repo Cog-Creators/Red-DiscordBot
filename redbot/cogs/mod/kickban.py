@@ -506,12 +506,7 @@ class KickBanMixin(MixinMeta):
         guild = ctx.guild
         user_voice_state: discord.VoiceState = member.voice
 
-        if (
-            await self._voice_perm_check(
-                ctx, user_voice_state, move_members=True
-            )
-            is False
-        ):
+        if await self._voice_perm_check(ctx, user_voice_state, move_members=True) is False:
             return
         elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, member):
             await ctx.send(
