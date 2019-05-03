@@ -97,4 +97,10 @@ CASETYPES = [
         "case_str": "Server Unmute",
         "audit_type": "overwrite_update",
     },
+    {
+        "name": "vkick",
+        "default_setting": False,
+        "image": "\N{SPEAKER WITH CANCELLATION STROKE}",
+        "case_str": "Voice Kick",
+    },
 ]

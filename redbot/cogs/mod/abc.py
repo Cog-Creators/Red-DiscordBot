@@ -20,6 +20,13 @@ class MixinMeta(ABC):
         self.ban_queue: List[Tuple[int, int]]
         self.unban_queue: List[Tuple[int, int]]
 
+    @staticmethod
+    @abstractmethod
+    async def _voice_perm_check(
+        ctx: commands.Context, user_voice_state: Optional[discord.VoiceState], **perms: bool
+    ) -> bool:
+        raise NotImplementedError()
+
     @classmethod
     @abstractmethod
     async def get_audit_entry_info(
