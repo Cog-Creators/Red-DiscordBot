@@ -70,6 +70,7 @@ Mod
 
  * Admins can now decide how many times message has to be repeated before ``deleterepeats`` removes it (`#2437`_)
  * Fix: make ``[p]ban [days]`` optional as per the doc (`#2602`_)
+ * Added the command ``voicekick`` to kick members from a voice channel with optional mod case. (`#2639`_)
 
 -------------
 Setup Scripts
@@ -147,4 +148,5 @@ Utility Functions
 .. _#2605: https://github.com/Cog-Creators/Red-DiscordBot/pull/2605
 .. _#2606: https://github.com/Cog-Creators/Red-DiscordBot/pull/2606
 .. _#2620: https://github.com/Cog-Creators/Red-DiscordBot/pull/2620
+.. _#2639: https://github.com/Cog-Creators/Red-DiscordBot/pull/2639
 .. _#2642: https://github.com/Cog-Creators/Red-DiscordBot/pull/2642
