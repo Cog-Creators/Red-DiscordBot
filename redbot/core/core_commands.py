@@ -1236,7 +1236,7 @@ class Core(commands.Cog, CoreLogic):
                 _("A backup has been made of this instance. It is at {}.").format(backup_file)
             )
             if backup_file.stat().st_size > 8_000_000:
-                await ctx.send(_("This backup is to large to send via DM."))
+                await ctx.send(_("This backup is too large to send via DM."))
                 return
             await ctx.send(_("Would you like to receive a copy via DM? (y/n)"))
 
