@@ -47,9 +47,9 @@ class APIToken(discord.ext.commands.Converter):
     This will parse the input argument separating the key value pairs into a 
     format to be used for the core bots API token storage.
     
-    This will split the argument by eiher `;` or `,` and return a dict
+    This will split the argument by either `;` or `,` and return a dict
     to be stored. Since all API's are different and have different naming convention,
-    this leaves the owness on the cog creator to clearly define how to setup the correct
+    this leaves the onus on the cog creator to clearly define how to setup the correct
     credential names for their cogs.
     """
 
