@@ -164,7 +164,7 @@ class Image(commands.Cog):
             await ctx.send_help()
             return
 
-        giphy_api_key = await ctx.bot.db.api_tokens.get_raw("giphy", default=None)
+        giphy_api_key = await ctx.bot.db.api_tokens.get_raw("GIPHY", default=None)
         if not giphy_api_key:
             await ctx.send(
                 _("A API key has not been set! Please set one with `{prefix}giphycreds`.").format(
@@ -197,7 +197,7 @@ class Image(commands.Cog):
             await ctx.send_help()
             return
 
-        giphy_api_key = await ctx.bot.db.api_tokens.get_raw("giphy", default=None)
+        giphy_api_key = await ctx.bot.db.api_tokens.get_raw("GIPHY", default=None)
         if not giphy_api_key:
             await ctx.send(
                 _("A API key has not been set! Please set one with `{prefix}giphycreds`.").format(
@@ -233,7 +233,7 @@ class Image(commands.Cog):
             "4. Write a app name, example: `Red Bot`\n"
             "5. Write a app description, example: `Used for Red Bot`\n"
             "6. Copy the API key shown.\n"
-            "7. Do `{prefix}set api giphy api_key,your_api_key`\n"
+            "7. Do `{prefix}set api GIPHY api_key,your_api_key`\n"
         ).format(prefix=ctx.prefix)
 
         await ctx.maybe_send_embed(message)
