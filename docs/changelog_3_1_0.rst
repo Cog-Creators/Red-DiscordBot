@@ -38,6 +38,7 @@ Core
  * ``[p]listlocales`` now displays ``en-US`` (`#2553`_)
  * ``redbot --version`` will now give you current version of Red (`#2567`_)
  * Default locale changed from ``en`` to ``en-US`` (`#2642`_)
+ * New command ``[p]datapath`` that prints the bot's datapath (`#2652`_)
 
 ------
 Config
@@ -150,3 +151,4 @@ Utility Functions
 .. _#2620: https://github.com/Cog-Creators/Red-DiscordBot/pull/2620
 .. _#2639: https://github.com/Cog-Creators/Red-DiscordBot/pull/2639
 .. _#2642: https://github.com/Cog-Creators/Red-DiscordBot/pull/2642
+.. _#2652: https://github.com/Cog-Creators/Red-DiscordBot/pull/2652
