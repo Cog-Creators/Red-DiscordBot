@@ -1,7 +1,18 @@
+import asyncio
 import logging
 import collections
 from copy import deepcopy
-from typing import Any, Union, Tuple, Dict, Awaitable, AsyncContextManager, TypeVar, TYPE_CHECKING
+from typing import (
+    Any,
+    Union,
+    Tuple,
+    Dict,
+    Awaitable,
+    AsyncContextManager,
+    TypeVar,
+    TYPE_CHECKING,
+    MutableMapping,
+)
 import weakref
 
 import discord
@@ -40,18 +51,23 @@ class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):
     i.e. `dict`s or `list`s. This is because this class's ``raw_value``
     attribute must contain a reference to the object being modified within the
     context manager.
+
+    It should also be noted that the use of this context manager implies
+    the acquisition of the value's lock manager.
     """
 
-    def __init__(self, value_obj, coro):
+    def __init__(self, value_obj: "Value", coro):
         self.value_obj = value_obj
         self.coro = coro
         self.raw_value = None
         self.__original_value = None
+        self.__lock = self.value_obj.get_lock()
 
     def __await__(self):
         return self.coro.__await__()
 
     async def __aenter__(self):
+        await self.__lock.acquire()
         self.raw_value = await self
         if not isinstance(self.raw_value, (list, dict)):
             raise TypeError(
@@ -63,12 +79,15 @@ class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):
         return self.raw_value
 
     async def __aexit__(self, exc_type, exc, tb):
-        if isinstance(self.raw_value, dict):
-            raw_value = _str_key_dict(self.raw_value)
-        else:
-            raw_value = self.raw_value
-        if raw_value != self.__original_value:
-            await self.value_obj.set(self.raw_value)
+        try:
+            if isinstance(self.raw_value, dict):
+                raw_value = _str_key_dict(self.raw_value)
+            else:
+                raw_value = self.raw_value
+            if raw_value != self.__original_value:
+                await self.value_obj.set(self.raw_value)
+        finally:
+            self.__lock.release()
 
 
 class Value:
@@ -76,9 +95,8 @@ class Value:
 
     Attributes
     ----------
-    identifiers : Tuple[str]
-        This attribute provides all the keys necessary to get a specific data
-        element from a json document.
+    identifier_data : IdentifierData
+        Information on identifiers for this value.
     default
         The default value for the data element that `identifiers` points at.
     driver : `redbot.core.drivers.red_base.BaseDriver`
@@ -86,10 +104,49 @@ class Value:
 
     """
 
-    def __init__(self, identifier_data: IdentifierData, default_value, driver):
+    def __init__(self, identifier_data: IdentifierData, default_value, driver, config: "Config"):
         self.identifier_data = identifier_data
         self.default = default_value
         self.driver = driver
+        self._config = config
+
+    def get_lock(self) -> asyncio.Lock:
+        """Get a lock to enforce atomicity with operations on this value.
+
+        When using this lock, make sure you either use it with the
+        ``async with`` syntax, or if that's not feasible, ensure you
+        keep a reference to it from the acquisition to the release of
+        the lock. That is, if you can't use ``async with`` syntax, use
+        the lock like this::
+
+            lock = config.foo.get_lock()
+            await lock.acquire()
+            # Do stuff...
+            lock.release()
+
+        Do not use it like this::
+
+            await config.foo.get_lock().acquire()
+            # Do stuff...
+            config.foo.get_lock().release()
+
+        Doing it the latter way will likely cause an error, as the
+        acquired lock will be cleaned up by the garbage collector before
+        it is released, meaning the second call to ``get_lock()`` will
+        return a different lock to the first call.
+
+        Returns
+        -------
+        asyncio.Lock
+            A lock which is weakly cached for this value object.
+
+        """
+        try:
+            return self._config._lock_cache[self.identifier_data]
+        except KeyError:
+            ret = asyncio.Lock()
+            self._config._lock_cache[self.identifier_data] = ret
+            return ret
 
     async def _get(self, default=...):
         try:
@@ -108,7 +165,9 @@ class Value:
         The return value of this method can also be used as an asynchronous
         context manager, i.e. with :code:`async with` syntax. This can only be
         used on values which are mutable (namely lists and dicts), and will
-        set the value with its changes on exit of the context manager.
+        set the value with its changes on exit of the context manager. It will
+        also acquire this value's lock to ensure atomicity of operations on
+        this value.
 
         Example
         -------
@@ -196,13 +255,14 @@ class Group(Value):
         identifier_data: IdentifierData,
         defaults: dict,
         driver,
+        config: "Config",
         force_registration: bool = False,
     ):
         self._defaults = defaults
         self.force_registration = force_registration
         self.driver = driver
 
-        super().__init__(identifier_data, {}, self.driver)
+        super().__init__(identifier_data, {}, self.driver, config)
 
     @property
     def defaults(self):
@@ -250,17 +310,24 @@ class Group(Value):
                 defaults=self._defaults[item],
                 driver=self.driver,
                 force_registration=self.force_registration,
+                config=self._config,
             )
         elif is_value:
             return Value(
                 identifier_data=new_identifiers,
                 default_value=self._defaults[item],
                 driver=self.driver,
+                config=self._config,
             )
         elif self.force_registration:
             raise AttributeError("'{}' is not a valid registered Group or value.".format(item))
         else:
-            return Value(identifier_data=new_identifiers, default_value=None, driver=self.driver)
+            return Value(
+                identifier_data=new_identifiers,
+                default_value=None,
+                driver=self.driver,
+                config=self._config,
+            )
 
     async def clear_raw(self, *nested_path: Any):
         """
@@ -557,6 +624,9 @@ class Config:
         self._defaults = defaults or {}
 
         self.custom_groups = {}
+        self._lock_cache: MutableMapping[
+            IdentifierData, asyncio.Lock
+        ] = weakref.WeakValueDictionary()
 
     @property
     def defaults(self):
@@ -857,6 +927,7 @@ class Config:
             defaults=self.defaults.get(category, {}),
             driver=self.driver,
             force_registration=self.force_registration,
+            config=self,
         )
 
     def guild(self, guild: discord.Guild) -> Group:
@@ -1133,7 +1204,7 @@ class Config:
             identifier_data = IdentifierData(
                 self.unique_identifier, "", (), (), self.custom_groups
             )
-            group = Group(identifier_data, defaults={}, driver=self.driver)
+            group = Group(identifier_data, defaults={}, driver=self.driver, config=self)
         else:
             group = self._get_base_group(*scopes)
         await group.clear()
