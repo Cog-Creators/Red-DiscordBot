@@ -167,14 +167,14 @@ class Image(commands.Cog):
         giphy_api_key = await ctx.bot.db.api_tokens.get_raw("giphy", default=None)
         if not giphy_api_key:
             await ctx.send(
-                _(
-                    "A API key has not been set! Please set one with `{prefix}giphycreds`."
-                ).format(prefix=ctx.prefix)
+                _("A API key has not been set! Please set one with `{prefix}giphycreds`.").format(
+                    prefix=ctx.prefix
+                )
             )
             return
 
         url = "http://api.giphy.com/v1/gifs/search?&api_key={}&q={}".format(
-            giphy_api_key['api_key'], keywords
+            giphy_api_key["api_key"], keywords
         )
 
         async with self.session.get(url) as r:
@@ -200,14 +200,14 @@ class Image(commands.Cog):
         giphy_api_key = await ctx.bot.db.api_tokens.get_raw("giphy", default=None)
         if not giphy_api_key:
             await ctx.send(
-                _(
-                    "A API key has not been set! Please set one with `{prefix}giphycreds`."
-                ).format(prefix=ctx.prefix)
+                _("A API key has not been set! Please set one with `{prefix}giphycreds`.").format(
+                    prefix=ctx.prefix
+                )
             )
             return
 
         url = "http://api.giphy.com/v1/gifs/random?&api_key={}&tag={}".format(
-            giphy_api_key['api_key'], keywords
+            giphy_api_key["api_key"], keywords
         )
 
         async with self.session.get(url) as r:
