@@ -2899,8 +2899,8 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    async def skip(self, ctx):
-        """Skip to the next track."""
+    async def skip(self, ctx, skip_to_track: int = None):
+        """Skip to the next track, or to a given track number."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
         player = lavalink.get_player(ctx.guild.id)
@@ -2917,6 +2917,10 @@ class Audio(commands.Cog):
                 return await self._embed_msg(ctx, _("You need the DJ role to skip tracks."))
         if vote_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
+                if skip_to_track is not None:
+                    return await self._embed_msg(
+                        ctx, _("Can't skip to a specific track in vote mode without the DJ role.")
+                    )
                 if ctx.author.id in self.skip_votes[ctx.message.guild]:
                     self.skip_votes[ctx.message.guild].remove(ctx.author.id)
                     reply = _("I removed your vote to skip.")
@@ -2949,9 +2953,9 @@ class Audio(commands.Cog):
                     )
                     return await self._embed_msg(ctx, reply)
             else:
-                return await self._skip_action(ctx)
+                return await self._skip_action(ctx, skip_to_track)
         else:
-            return await self._skip_action(ctx)
+            return await self._skip_action(ctx, skip_to_track)
 
     async def _can_instaskip(self, ctx, member):
         mod_role = await ctx.bot.db.guild(ctx.guild).mod_role()
@@ -3010,7 +3014,7 @@ class Audio(commands.Cog):
         else:
             return False
 
-    async def _skip_action(self, ctx):
+    async def _skip_action(self, ctx, skip_to_track: int = None):
         player = lavalink.get_player(ctx.guild.id)
         if not player.queue:
             try:
@@ -3035,23 +3039,57 @@ class Audio(commands.Cog):
                     )
                 )
             return await ctx.send(embed=embed)
+        queue_to_append = []
+        if skip_to_track is not None and skip_to_track != 1:
+            if skip_to_track < 1:
+                return await self._embed_msg(
+                    ctx, _("Track number must be equal to or greater than 1.")
+                )
+            elif skip_to_track > len(player.queue):
+                return await self._embed_msg(
+                    ctx,
+                    _(
+                        "There are only {queuelen} songs currently queued.".format(
+                            queuelen=len(player.queue)
+                        )
+                    ),
+                )
+            elif player.shuffle:
+                return await self._embed_msg(
+                    ctx, _("Can't skip to a track while shuffle is enabled.")
+                )
+            nexttrack = player.queue[min(skip_to_track - 1, len(player.queue) - 1)]
+            embed = discord.Embed(
+                colour=await ctx.embed_colour(),
+                title=_("{skip_to_track} Tracks Skipped".format(skip_to_track=skip_to_track)),
+            )
+            await ctx.send(embed=embed)
+            if player.repeat:
+                queue_to_append = player.queue[0 : min(skip_to_track - 1, len(player.queue) - 1)]
+            player.queue = player.queue[
+                min(skip_to_track - 1, len(player.queue) - 1) : len(player.queue)
+            ]
+        else:
+            embed = discord.Embed(
+                colour=await ctx.embed_colour(),
+                title=_("Track Skipped"),
+                description=await self._get_description(player.current),
+            )
+            await ctx.send(embed=embed)
 
-        if "localtracks" in player.current.uri:
-            if not player.current.title == "Unknown title":
-                description = "**{} - {}**\n{}".format(
-                    player.current.author,
-                    player.current.title,
-                    player.current.uri.replace("localtracks/", ""),
+        await player.play()
+        player.queue += queue_to_append
+
+    async def _get_description(self, track):
+        if "localtracks" in track.uri:
+            if not track.title == "Unknown title":
+                return "**{} - {}**\n{}".format(
+                    track.author, track.title, track.uri.replace("localtracks/", "")
                 )
             else:
-                description = "{}".format(player.current.uri.replace("localtracks/", ""))
+                return "{}".format(track.uri.replace("localtracks/", ""))
         else:
-            description = "**[{}]({})**".format(player.current.title, player.current.uri)
-        embed = discord.Embed(
-            colour=await ctx.embed_colour(), title=_("Track Skipped"), description=description
-        )
-        await ctx.send(embed=embed)
-        await player.skip()
+            return "**[{}]({})**".format(track.title, track.uri)
 
     @commands.command()
     @commands.guild_only()
