@@ -54,7 +54,7 @@ class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):
     context manager.
 
     It should also be noted that the use of this context manager implies
-    the acquisition of the value's lock manager.
+    the acquisition of the value's lock.
     """
 
     def __init__(self, value_obj: "Value", coro):
