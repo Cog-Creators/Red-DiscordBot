@@ -116,7 +116,7 @@ class Economy(commands.Cog):
         "PAYDAY_CREDITS": 120,
         "SLOT_MIN": 5,
         "SLOT_MAX": 100,
-        "SLOT_TIME": 0,
+        "SLOT_TIME": 5,
         "REGISTER_CREDITS": 0,
     }
 

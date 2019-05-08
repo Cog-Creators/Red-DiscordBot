@@ -434,6 +434,7 @@ class CustomCommands(commands.Cog):
         for p in pagify(text):
             await ctx.send(box(p, lang="yaml"))
 
+    @commands.Cog.listener()
     async def on_message(self, message):
         is_private = isinstance(message.channel, discord.abc.PrivateChannel)
 
@@ -465,7 +466,7 @@ class CustomCommands(commands.Cog):
             return
 
         # wrap the command here so it won't register with the bot
-        fake_cc = commands.Command(ctx.invoked_with, self.cc_callback)
+        fake_cc = commands.command(name=ctx.invoked_with)(self.cc_callback)
         fake_cc.params = self.prepare_args(raw_response)
         ctx.command = fake_cc
 

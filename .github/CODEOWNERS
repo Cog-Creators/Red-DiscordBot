@@ -9,6 +9,7 @@ redbot/core/config.py                    @tekulvw
 redbot/core/cog_manager.py               @tekulvw
 redbot/core/core_commands.py             @tekulvw
 redbot/core/context.py                   @Tobotimus
+redbot/core/commands/*                   @mikeshardmind
 redbot/core/data_manager.py              @tekulvw
 redbot/core/dev_commands.py              @tekulvw
 redbot/core/drivers/*                    @tekulvw
@@ -42,7 +43,6 @@ redbot/cogs/mod/*                   @palmtree5
 redbot/cogs/modlog/*                @palmtree5
 redbot/cogs/streams/*               @Twentysix26 @palmtree5
 redbot/cogs/trivia/*                @Tobotimus
-redbot/cogs/dataconverter/*         @mikeshardmind
 redbot/cogs/reports/*               @mikeshardmind
 redbot/cogs/permissions/*           @mikeshardmind
 redbot/cogs/warnings/*              @palmtree5

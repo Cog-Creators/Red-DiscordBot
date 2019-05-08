@@ -8,7 +8,7 @@ from sys import path as syspath
 from typing import Tuple, Union, Iterable
 
 import discord
-from redbot.core import checks, commands, Config
+from redbot.core import checks, commands, Config, version_info as red_version_info
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
@@ -303,12 +303,33 @@ class Downloader(commands.Cog):
                 )
             )
             return
+        ignore_max = cog.min_bot_version > cog.max_bot_version
+        if (
+            cog.min_bot_version > red_version_info
+            or not ignore_max
+            and cog.max_bot_version < red_version_info
+        ):
+            await ctx.send(
+                _("This cog requires at least Red version {min_version}").format(
+                    min_version=cog.min_bot_version
+                )
+                + (
+                    ""
+                    if ignore_max
+                    else _(" and at most {max_version}").format(max_version=cog.max_bot_version)
+                )
+                + _(", but you have {current_version}, aborting install.").format(
+                    current_version=red_version_info
+                )
+            )
+            return
 
         if not await repo.install_requirements(cog, self.LIB_PATH):
+            libraries = humanize_list(tuple(map(inline, cog.requirements)))
             await ctx.send(
-                _(
-                    "Failed to install the required libraries for `{cog_name}`: `{libraries}`"
-                ).format(cog_name=cog.name, libraries=cog.requirements)
+                _("Failed to install the required libraries for `{cog_name}`: {libraries}").format(
+                    cog_name=cog.name, libraries=libraries
+                )
             )
             return
 
@@ -326,33 +347,44 @@ class Downloader(commands.Cog):
         if cog.install_msg is not None:
             await ctx.send(cog.install_msg.replace("[p]", ctx.prefix))
 
-    @cog.command(name="uninstall", usage="<cog_name>")
-    async def _cog_uninstall(self, ctx, cog: InstalledCog):
-        """Uninstall a cog.
+    @cog.command(name="uninstall", usage="<cogs>")
+    async def _cog_uninstall(self, ctx, cogs: commands.Greedy[InstalledCog]):
+        """Uninstall cogs.
 
         You may only uninstall cogs which were previously installed
         by Downloader.
         """
-        real_name = cog.name
+        if not cogs:
+            return await ctx.send_help()
+        async with ctx.typing():
+            uninstalled_cogs = []
+            failed_cogs = []
+            for cog in set(cogs):
+                real_name = cog.name
 
-        poss_installed_path = (await self.cog_install_path()) / real_name
-        if poss_installed_path.exists():
-            ctx.bot.unload_extension(real_name)
-            await self._delete_cog(poss_installed_path)
-            await self._remove_from_installed(cog)
-            await ctx.send(
-                _("Cog `{cog_name}` was successfully uninstalled.").format(cog_name=real_name)
-            )
-        else:
-            await ctx.send(
-                _(
-                    "That cog was installed but can no longer"
-                    " be located. You may need to remove it's"
-                    " files manually if it is still usable."
-                    " Also make sure you've unloaded the cog"
-                    " with `{prefix}unload {cog_name}`."
-                ).format(prefix=ctx.prefix, cog_name=real_name)
-            )
+                poss_installed_path = (await self.cog_install_path()) / real_name
+                if poss_installed_path.exists():
+                    with contextlib.suppress(commands.ExtensionNotLoaded):
+                        ctx.bot.unload_extension(real_name)
+                    await self._delete_cog(poss_installed_path)
+                    uninstalled_cogs.append(inline(real_name))
+                else:
+                    failed_cogs.append(real_name)
+                await self._remove_from_installed(cog)
+
+            message = ""
+            if uninstalled_cogs:
+                message += _("Successfully uninstalled cogs: ") + humanize_list(uninstalled_cogs)
+            if failed_cogs:
+                message += (
+                    _("\nThese cog were installed but can no longer be located: ")
+                    + humanize_list(tuple(map(inline, failed_cogs)))
+                    + _(
+                        "\nYou may need to remove their files manually if they are still usable."
+                        " Also make sure you've unloaded those cogs with `{prefix}unload {cogs}`."
+                    ).format(prefix=ctx.prefix, cogs=" ".join(failed_cogs))
+                )
+        await ctx.send(message)
 
     @cog.command(name="update")
     async def _cog_update(self, ctx, cog_name: InstalledCog = None):
@@ -553,12 +585,12 @@ class Downloader(commands.Cog):
             return
 
         # Check if in installed cogs
-        cog_name = self.cog_name_from_instance(command.instance)
+        cog_name = self.cog_name_from_instance(command.cog)
         installed, cog_installable = await self.is_installed(cog_name)
         if installed:
             msg = self.format_findcog_info(command_name, cog_installable)
         else:
             # Assume it's in a base cog
-            msg = self.format_findcog_info(command_name, command.instance)
+            msg = self.format_findcog_info(command_name, command.cog)
 
         await ctx.send(box(msg))

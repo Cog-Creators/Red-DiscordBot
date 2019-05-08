@@ -249,10 +249,10 @@ class Case:
         guild = mod_channel.guild
         if data["message"]:
             try:
-                message = await mod_channel.get_message(data["message"])
+                message = await mod_channel.fetch_message(data["message"])
             except discord.NotFound:
                 message = None
-        user = await bot.get_user_info(data["user"])
+        user = await bot.fetch_user(data["user"])
         moderator = guild.get_member(data["moderator"])
         channel = guild.get_channel(data["channel"])
         amended_by = guild.get_member(data["amended_by"])
@@ -489,7 +489,7 @@ async def get_cases_for_member(
     if not member:
         member = guild.get_member(member_id)
         if not member:
-            member = await bot.get_user_info(member_id)
+            member = await bot.fetch_user(member_id)
 
     try:
         mod_channel = await get_modlog_channel(guild)
@@ -501,7 +501,7 @@ async def get_cases_for_member(
         message = None
         if data["message"] and mod_channel:
             try:
-                message = await mod_channel.get_message(data["message"])
+                message = await mod_channel.fetch_message(data["message"])
             except discord.NotFound:
                 pass
 

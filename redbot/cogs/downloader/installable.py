@@ -8,6 +8,8 @@ from typing import MutableMapping, Any, TYPE_CHECKING
 from .log import log
 from .json_mixins import RepoJSONMixin
 
+from redbot.core import __version__, version_info as red_version_info, VersionInfo
+
 if TYPE_CHECKING:
     from .repo_manager import RepoManager
 
@@ -72,7 +74,8 @@ class Installable(RepoJSONMixin):
         self.repo_name = self._location.parent.stem
 
         self.author = ()
-        self.bot_version = (3, 0, 0)
+        self.min_bot_version = red_version_info
+        self.max_bot_version = red_version_info
         self.min_python_version = (3, 5, 1)
         self.hidden = False
         self.disabled = False
@@ -157,10 +160,16 @@ class Installable(RepoJSONMixin):
         self.author = author
 
         try:
-            bot_version = tuple(info.get("bot_version", [3, 0, 0]))
+            min_bot_version = VersionInfo.from_str(str(info.get("min_bot_version", __version__)))
         except ValueError:
-            bot_version = self.bot_version
-        self.bot_version = bot_version
+            min_bot_version = self.min_bot_version
+        self.min_bot_version = min_bot_version
+
+        try:
+            max_bot_version = VersionInfo.from_str(str(info.get("max_bot_version", __version__)))
+        except ValueError:
+            max_bot_version = self.max_bot_version
+        self.max_bot_version = max_bot_version
 
         try:
             min_python_version = tuple(info.get("min_python_version", [3, 5, 1]))
