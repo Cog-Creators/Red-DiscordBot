@@ -12,6 +12,7 @@ from typing import (
     TypeVar,
     TYPE_CHECKING,
     MutableMapping,
+    Optional,
 )
 import weakref
 
@@ -141,12 +142,7 @@ class Value:
             A lock which is weakly cached for this value object.
 
         """
-        try:
-            return self._config._lock_cache[self.identifier_data]
-        except KeyError:
-            ret = asyncio.Lock()
-            self._config._lock_cache[self.identifier_data] = ret
-            return ret
+        return self._config._lock_cache.setdefault(self.identifier_data, asyncio.Lock())
 
     async def _get(self, default=...):
         try:
@@ -1285,6 +1281,80 @@ class Config:
             `str` for you.
         """
         await self._clear_scope(str(group_identifier))
+
+    def get_guilds_lock(self) -> asyncio.Lock:
+        """Get a lock for all guild data.
+
+        Returns
+        -------
+        asyncio.Lock
+        """
+        return self.get_custom_lock(self.GUILD)
+
+    def get_channels_lock(self) -> asyncio.Lock:
+        """Get a lock for all channel data.
+
+        Returns
+        -------
+        asyncio.Lock
+        """
+        return self.get_custom_lock(self.CHANNEL)
+
+    def get_roles_lock(self) -> asyncio.Lock:
+        """Get a lock for all role data.
+
+        Returns
+        -------
+        asyncio.Lock
+        """
+        return self.get_custom_lock(self.ROLE)
+
+    def get_users_lock(self) -> asyncio.Lock:
+        """Get a lock for all user data.
+
+        Returns
+        -------
+        asyncio.Lock
+        """
+        return self.get_custom_lock(self.USER)
+
+    def get_members_lock(self, guild: Optional[discord.Guild] = None) -> asyncio.Lock:
+        """Get a lock for all member data.
+
+        Parameters
+        ----------
+        guild : Optional[discord.Guild]
+            The guild containing the members whose data you want to
+            lock. Omit to lock all data for all members in all guilds.
+
+        Returns
+        -------
+        asyncio.Lock
+        """
+        if guild is None:
+            return self.get_custom_lock(self.GUILD)
+        else:
+            id_data = IdentifierData(
+                self.uuid, self.MEMBER, (str(guild.id),), Tuple[str](), self.custom_groups
+            )
+            return self._lock_cache.setdefault(id_data, asyncio.Lock())
+
+    def get_custom_lock(self, group_identifier: str) -> asyncio.Lock:
+        """Get a lock for all data in a custom scope.
+
+        Parameters
+        ----------
+        group_identifier : str
+            The group identifier for the custom scope you want to lock.
+
+        Returns
+        -------
+        asyncio.Lock
+        """
+        id_data = IdentifierData(
+            self.uuid, group_identifier, Tuple[str](), Tuple[str](), self.custom_groups
+        )
+        return self._lock_cache.setdefault(id_data, asyncio.Lock())
 
 
 def _str_key_dict(value: Dict[Any, _T]) -> Dict[str, _T]:
