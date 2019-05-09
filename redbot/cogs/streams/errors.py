@@ -6,6 +6,10 @@ class StreamNotFound(StreamsError):
     pass
 
 
+class GameNotInStreamTargetGameList(StreamsError):
+    pass
+
+
 class APIError(StreamsError):
     pass
 

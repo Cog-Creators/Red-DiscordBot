@@ -4,6 +4,7 @@ from .errors import (
     OfflineStream,
     InvalidYoutubeCredentials,
     InvalidTwitchCredentials,
+    GameNotInStreamTargetGameList,
 )
 from random import choice, sample
 from string import ascii_letters
@@ -154,6 +155,7 @@ class TwitchStream(Stream):
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
         self._token = kwargs.pop("token", None)
+        self.games = kwargs.pop("games", None)
         super().__init__(**kwargs)
 
     async def is_online(self):
@@ -191,6 +193,8 @@ class TwitchStream(Stream):
             if s.status == 200:
                 d["user"] = data2["data"][0]
             game = None
+            if self.games and stream["game_id"] not in self.games:
+                raise GameNotInStreamTargetGameList()
             if stream["game_id"] > 0:  # 0 is used for the game id when no game is set
                 streams_cog = self.bot.get_cog("Streams")
                 if streams_cog:

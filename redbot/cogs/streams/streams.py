@@ -21,6 +21,7 @@ from .errors import (
     InvalidYoutubeCredentials,
     StreamsError,
     InvalidTwitchCredentials,
+    GameNotInStreamTargetGameList,
 )
 from . import streamtypes as _streamtypes
 from collections import defaultdict
@@ -161,6 +162,8 @@ class Streams(commands.Cog):
                     "`{prefix}streamset youtubekey`."
                 ).format(prefix=ctx.prefix)
             )
+        except GameNotInStreamTargetGameList:
+            pass
         except APIError:
             await ctx.send(
                 _("Something went wrong whilst trying to contact the stream service's API.")
@@ -185,16 +188,19 @@ class Streams(commands.Cog):
 
     @_twitch.command(name="channel")
     async def twitch_alert_channel(
-        self, ctx: commands.Context, channel_name: str, games: Optional[str]
+        self, ctx: commands.Context, channel_name: str, games: Optional[str]=None
     ):
         """Toggle alerts in this channel for a Twitch stream.
         
-        Optionally, games may be specified via a comma-separated list, in which case alerts 
-        will only be triggered for the channel if their game is set to one of those games."""
+        Optionally, games may be specified via a pipe-separated list (|), in which case alerts 
+        will only be triggered for the channel if their game is set to one of those games.
+        These names should be exactly how they appear on the game's page on Twitch."""
+        if games:
+            games = games.split("|")
         if re.fullmatch(r"<#\d+>", channel_name):
             await ctx.send("Please supply the name of a *Twitch* channel, not a Discord channel.")
             return
-        await self.stream_alert(ctx, TwitchStream, channel_name.lower())
+        await self.stream_alert(ctx, TwitchStream, channel_name.lower(), games=games)
 
     @streamalert.command(name="youtube")
     async def youtube_alert(self, ctx: commands.Context, channel_name_or_id: str):
@@ -277,13 +283,28 @@ class Streams(commands.Cog):
         for page in pagify(msg):
             await ctx.send(page)
 
-    async def stream_alert(self, ctx: commands.Context, _class, channel_name):
+    async def stream_alert(self, ctx: commands.Context, _class, channel_name, games: list=None):
         stream = self.get_stream(_class, channel_name)
         if not stream:
             token = await self.bot.db.api_tokens.get_raw(_class.token_name, default=None)
             is_yt = _class.__name__ == "YoutubeStream"
+            is_twitch = _class.__name__ == "TwitchStream"
             if is_yt and not self.check_name_or_id(channel_name):
                 stream = _class(id=channel_name, token=token, bot=self.bot)
+            elif is_twitch and games is not None:
+                game_id_list = []
+                if token["access_token"]:
+                    header = {"Authorization": "Bearer " + token["access_token"]}
+                else:
+                    header = {"Client-ID": str(token["client_id"])}
+                for game in games:
+                    async with aiohttp.ClientSession as session:
+                        async with session.get("https://api.twitch.tv/helix/games", headers=header, params={"name": game}) as r:
+                            data = await r.json()
+                    if r.status == 200:
+                        if "data" in data and data["data"]:
+                            game_id_list.append(data["data"][0]["id"])
+                stream = _class(name=channel_name, token=token, bot=self.bot, games=game_id_list)
             else:
                 stream = _class(name=channel_name, token=token, bot=self.bot)
             try:
@@ -542,7 +563,7 @@ class Streams(commands.Cog):
             with contextlib.suppress(Exception):
                 try:
                     embed = await stream.is_online()
-                except OfflineStream:
+                except OfflineStream, GameNotInStreamTargetGameList:
                     if not stream._messages_cache:
                         continue
                     for message in stream._messages_cache:
