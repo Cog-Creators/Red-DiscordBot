@@ -198,8 +198,7 @@ class Mongo(BaseDriver):
 
         if default != 0:
             exists = await mongo_collection.find_one(
-                mongo_filter,
-                projection={"_id": False, dot_identifiers: True},
+                mongo_filter, projection={"_id": False, dot_identifiers: True}
             )
             if not exists:
                 curr_value = default
