@@ -126,11 +126,6 @@ Join us on our [Official Discord Server](https://discord.gg/red)!
 
 Released under the [GNU GPL v3](https://www.gnu.org/licenses/gpl-3.0.en.html) license.
 
-This project vendors the
-[discord.py library by Rapptz](https://github.com/Rapptz/discord.py/tree/rewrite), which is
-licensed under the [MIT License](https://opensource.org/licenses/MIT). This amounts to everything
-within the *discord* folder of this repository.
-
 Red is named after the main character of "Transistor", a video game by
 [Super Giant Games](https://www.supergiantgames.com/games/transistor/).
 
