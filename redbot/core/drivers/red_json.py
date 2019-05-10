@@ -108,24 +108,27 @@ class JSON(BaseDriver):
                 self.jsonIO._save_json(self.data)
                 break
 
-    async def get(self, identifier_data: IdentifierData):
+    async def get(self, identifier_data: IdentifierData, atomic: bool = False):
         partial = self.data
         full_identifiers = identifier_data.to_tuple()
 
-        await self.lock_mgr.acquire(identifier_data)
+        if not atomic:
+            await self.lock_mgr.acquire(identifier_data)
 
         try:
             for i in full_identifiers:
                 partial = partial[i]
             return copy.deepcopy(partial)
         finally:
-            self.lock_mgr.release(identifier_data)
+            if not atomic:
+                self.lock_mgr.release(identifier_data)
 
-    async def set(self, identifier_data: IdentifierData, value=None):
+    async def set(self, identifier_data: IdentifierData, value=None, atomic: bool = False):
         partial = self.data
         full_identifiers = identifier_data.to_tuple()
 
-        await self.lock_mgr.acquire(identifier_data)
+        if not atomic:
+            await self.lock_mgr.acquire(identifier_data)
 
         for i in full_identifiers[:-1]:
             if i not in partial:
@@ -135,13 +138,15 @@ class JSON(BaseDriver):
         partial[full_identifiers[-1]] = copy.deepcopy(value)
         await self.jsonIO._threadsafe_save_json(self.data)
 
-        self.lock_mgr.release(identifier_data)
+        if not atomic:
+            self.lock_mgr.release(identifier_data)
 
-    async def clear(self, identifier_data: IdentifierData):
+    async def clear(self, identifier_data: IdentifierData, atomic = False):
         partial = self.data
         full_identifiers = identifier_data.to_tuple()
 
-        await self.lock_mgr.acquire(identifier_data)
+        if not atomic:
+            await self.lock_mgr.acquire(identifier_data)
 
         try:
             for i in full_identifiers[:-1]:
@@ -152,7 +157,8 @@ class JSON(BaseDriver):
         else:
             await self.jsonIO._threadsafe_save_json(self.data)
 
-        self.lock_mgr.release(identifier_data)
+        if not atomic:
+            self.lock_mgr.release(identifier_data)
 
     async def import_data(self, cog_data, custom_group_data):
         def update_write_data(identifier_data: IdentifierData, data):

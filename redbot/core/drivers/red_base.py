@@ -88,11 +88,11 @@ class LockManager:
 
     def _update_waiters(self):
         for fut, gen in self._waiting_conds:
-            if gen() is True and not fut.done():
+            if not fut.done() and next(gen) is True:
                 fut.set_result(True)
 
     def _is_locked(self, key) -> bool:
-        for k, lock in self._locks:
+        for k, lock in self._locks.items():
             if (k.issubset(key) or key.issubset(k)) and lock.locked():
                 return True
         return False
@@ -102,7 +102,7 @@ class LockManager:
             return True
 
         def pred_gen():
-            if self._is_locked(key):
+            if not self._is_locked(key):
                 yield True
             yield False
 
@@ -133,7 +133,7 @@ class LockManager:
         self._update_waiters()
 
     def _has_accesses(self, key):
-        for k, count in self._access_counts:
+        for k, count in self._access_counts.items():
             if (k.issubset(key) or key.issubset(k)) and count > 0:
                 return True
         return False
@@ -166,7 +166,7 @@ class LockManager:
 
         await self._zero_counters(key)
 
-    async def release_atomic(self, ident_data: IdentifierData):
+    def release_atomic(self, ident_data: IdentifierData):
         key = frozenset(ident_data.to_tuple())
         self._locks[key].release()
 

@@ -71,6 +71,33 @@ class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):
             await self.value_obj.set(self.raw_value)
 
 
+class _ValueAtomicManager:
+    def __init__(self, value_obj: "Value"):
+        self.value_obj = value_obj
+
+    async def __aenter__(self):
+        await self.value_obj.driver.lock_mgr.acquire_atomic(self.value_obj.identifier_data)
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        self.value_obj.driver.lock_mgr.release_atomic(self.value_obj.identifier_data)
+
+    async def _get(self, default=...):
+        try:
+            ret = await self.value_obj.driver.get(self.value_obj.identifier_data, atomic=True)
+        except KeyError:
+            return default if default is not ... else self.value_obj.default
+        return ret
+
+    def __call__(self, default=...):
+        return self._get(default=default)
+
+    async def set(self, value):
+        if isinstance(value, dict):
+            value = _str_key_dict(value)
+        await self.value_obj.driver.set(self.value_obj.identifier_data, value=value, atomic=True)
+
+
 class Value:
     """A singular "value" of data.
 
@@ -142,6 +169,9 @@ class Value:
 
         """
         return _ValueCtxManager(self, self._get(default))
+
+    def atomic(self):
+        return _ValueAtomicManager(self)
 
     async def set(self, value):
         """Set the value of the data elements pointed to by `identifiers`.
