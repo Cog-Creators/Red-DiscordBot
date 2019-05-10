@@ -569,13 +569,12 @@ class Group(GroupMixin, Command, CogGroupMixin, commands.Group):
 class CogMixin(CogGroupMixin, CogCommandMixin):
     """Mixin class for a cog, intended for use with discord.py's cog class"""
 
-    __translator__ = lambda s: s
-
     @property
     def help(self):
         doc = self.__doc__
+        translator = getattr(self, "__translator__", lambda s: s)
         if doc:
-            return inspect.cleandoc(self.__translator__(doc))
+            return inspect.cleandoc(translator(doc))
 
     async def can_run(self, ctx: "Context", **kwargs) -> bool:
         """

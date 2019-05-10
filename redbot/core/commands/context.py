@@ -67,7 +67,7 @@ class Context(commands.Context):
         # This allows people to manually use this similarly
         # to the upstream d.py version, while retaining our use.
         command = command or self.command
-        await self.bot.send_help_for(ctx, command)
+        await self.bot.send_help_for(self, command)
 
     async def tick(self) -> bool:
         """Add a tick reaction to the command message.
