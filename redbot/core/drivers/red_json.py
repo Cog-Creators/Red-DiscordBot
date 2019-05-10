@@ -111,13 +111,22 @@ class JSON(BaseDriver):
     async def get(self, identifier_data: IdentifierData):
         partial = self.data
         full_identifiers = identifier_data.to_tuple()
-        for i in full_identifiers:
-            partial = partial[i]
-        return copy.deepcopy(partial)
+
+        await self.lock_mgr.acquire(identifier_data)
+
+        try:
+            for i in full_identifiers:
+                partial = partial[i]
+            return copy.deepcopy(partial)
+        finally:
+            self.lock_mgr.release(identifier_data)
 
     async def set(self, identifier_data: IdentifierData, value=None):
         partial = self.data
         full_identifiers = identifier_data.to_tuple()
+
+        await self.lock_mgr.acquire(identifier_data)
+
         for i in full_identifiers[:-1]:
             if i not in partial:
                 partial[i] = {}
@@ -126,9 +135,14 @@ class JSON(BaseDriver):
         partial[full_identifiers[-1]] = copy.deepcopy(value)
         await self.jsonIO._threadsafe_save_json(self.data)
 
+        self.lock_mgr.release(identifier_data)
+
     async def clear(self, identifier_data: IdentifierData):
         partial = self.data
         full_identifiers = identifier_data.to_tuple()
+
+        await self.lock_mgr.acquire(identifier_data)
+
         try:
             for i in full_identifiers[:-1]:
                 partial = partial[i]
@@ -137,6 +151,8 @@ class JSON(BaseDriver):
             pass
         else:
             await self.jsonIO._threadsafe_save_json(self.data)
+
+        self.lock_mgr.release(identifier_data)
 
     async def import_data(self, cog_data, custom_group_data):
         def update_write_data(identifier_data: IdentifierData, data):
