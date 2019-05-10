@@ -537,6 +537,10 @@ class Group(GroupMixin, Command, CogGroupMixin, commands.Group):
         super().__init__(*args, **kwargs)
 
     async def invoke(self, ctx: "Context"):
+        # we skip prepare in some cases to avoid some things
+        # We still always want this part of the behavior though
+        ctx.command = self
+        # Our re-ordered behavior below.
         view = ctx.view
         previous = view.index
         view.skip_ws()
@@ -557,6 +561,7 @@ class Group(GroupMixin, Command, CogGroupMixin, commands.Group):
             # how our permissions system works, we don't want it to skip the checks
             # as well.
             await self._verify_checks(ctx)
+            # this is actually why we don't prepare earlier.
 
         await super().invoke(ctx)
 
@@ -564,9 +569,62 @@ class Group(GroupMixin, Command, CogGroupMixin, commands.Group):
 class CogMixin(CogGroupMixin, CogCommandMixin):
     """Mixin class for a cog, intended for use with discord.py's cog class"""
 
+    __translator__ = lambda s: s
+
     @property
-    def all_commands(self) -> Dict[str, Command]:
-        return {cmd.name: cmd for cmd in self.__cog_commands__}
+    def help(self):
+        doc = self.__doc__
+        if doc:
+            return inspect.cleandoc(self.__translator__(doc))
+
+    async def can_run(self, ctx: "Context", **kwargs) -> bool:
+        """
+        This really just exists to allow easy use with other methods using can_run
+        on commands and groups such as help formatters.
+        
+        kwargs used in that won't apply here as they don't make sense to,
+        but will be swallowed silently for a compatible signature for ease of use.
+
+        Parameters
+        ----------
+        ctx : `Context`
+            The invocation context to check with.
+
+        Returns
+        -------
+        bool
+            ``True`` if this cog is usable in the given context.
+        """
+
+        try:
+            can_run = await self.requires.verify(ctx)
+        except commands.CommandError:
+            return False
+
+        return can_run
+
+    async def can_see(self, ctx: "Context") -> bool:
+        """Check if this cog is visible in the given context.
+
+        In short, this will verify whether
+        the user is allowed to access the cog by permissions.
+
+        This has an identical signature to the one used by commands, and groups,
+        but needs a different underlying mechanism.
+
+        Parameters
+        ----------
+        ctx : `Context`
+            The invocation context to check with.
+
+        Returns
+        -------
+        bool
+            ``True`` if this cog is visible in the given context.
+
+        """
+
+        return await self.can_run(ctx)
 
 
 class Cog(CogMixin, commands.Cog):
