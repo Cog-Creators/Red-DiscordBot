@@ -3,6 +3,8 @@
     You can adapt this file completely to your liking, but it should at least
     contain the root `toctree` directive.
 
+.. _main:
+
 Welcome to Red - Discord Bot's documentation!
 =============================================
 
@@ -22,6 +24,12 @@ Welcome to Red - Discord Bot's documentation!
     cog_customcom
     cog_downloader
     cog_permissions
+
+.. toctree::
+    :maxdepth: 2
+    :caption: User guides:
+
+    getting_started
 
 .. toctree::
     :maxdepth: 2
@@ -49,6 +57,12 @@ Welcome to Red - Discord Bot's documentation!
     :caption: Changelogs:
 
     changelog_3_1_0
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Others
+
+    host-list
 
 
 Indices and tables
