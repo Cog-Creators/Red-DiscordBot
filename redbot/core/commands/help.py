@@ -139,10 +139,13 @@ class RedHelpFormatter:
 
         send = self.CONFIRM_UNAVAILABLE_COMMAND_EXISTENCES
         if not send:
-            async for _ in self.help_filter_func(ctx, (obj,)):
+            async for _ in self.help_filter_func(ctx, (obj,), bypass_hidden=True):
                 # This is a really lazy option for not
                 # creating a separate single case version.
                 # It is efficient though
+                #
+                # We do still want to bypass the hidden requirement on
+                # a specific command explicitly invoked here.
                 send = True
 
         if not send:
@@ -387,21 +390,21 @@ class RedHelpFormatter:
             await self.send_pages(ctx, pages, embed=False)
 
     async def help_filter_func(
-        self, ctx, objects: Iterable[SupportsCanSee]
+        self, ctx, objects: Iterable[SupportsCanSee], bypass_hidden=False
     ) -> AsyncIterator[SupportsCanSee]:
         """
         This does most of actual filtering.
         """
         # TODO: Settings for this in core bot db
         for obj in objects:
-            if self.VERIFY_CHECKS and not self.SHOW_HIDDEN:
+            if self.VERIFY_CHECKS and not (self.SHOW_HIDDEN or bypass_hidden):
                 # Default Red behavior, can_see includes a can_run check.
                 if await obj.can_see(ctx):
                     yield obj
             elif self.VERIFY_CHECKS:
                 if await obj.can_run(ctx):
                     yield obj
-            elif not self.SHOW_HIDDEN:
+            elif not (self.SHOW_HIDDEN or bypass_hidden):
                 if getattr(obj, "hidden", False):  # Cog compatibility
                     yield obj
             else:
