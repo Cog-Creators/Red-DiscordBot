@@ -176,7 +176,11 @@ async def async_enumerate(
 
 
 async def fuzzy_command_search(
-    ctx: commands.Context, term: Optional[str] = None, *, commands: Optional[list] = None, min_score: int = 80
+    ctx: commands.Context,
+    term: Optional[str] = None,
+    *,
+    commands: Optional[list] = None,
+    min_score: int = 80,
 ) -> Optional[List[commands.Command]]:
     """Search for commands which are similar in name to the one invoked.
 
@@ -230,7 +234,9 @@ async def fuzzy_command_search(
             return
 
     # Do the scoring. `extracted` is a list of tuples in the form `(command, score)`
-    extracted = process.extract(term, (commands or ctx.bot.walk_commands()), limit=5, scorer=fuzz.QRatio)
+    extracted = process.extract(
+        term, (commands or ctx.bot.walk_commands()), limit=5, scorer=fuzz.QRatio
+    )
     if not extracted:
         return
 
