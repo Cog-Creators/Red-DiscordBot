@@ -36,7 +36,7 @@ from discord.ext import commands as dpy_commands
 from . import commands
 from .context import Context
 from ..i18n import Translator
-from ..utils import menus
+from ..utils import menus, fuzzy_command_search, format_fuzzy_results
 from ..utils.chat_formatting import box, pagify
 
 __all__ = ["red_help", "RedHelpFormatter"]
@@ -152,7 +152,7 @@ class RedHelpFormatter:
 
         description = command.description or ""
         tagline = (await ctx.bot.db.help.tagline()) or self.get_default_tagline(ctx)
-        signature = f"`Syntax: {ctx.clean_prefix}{command.qualified_name}{command.signature}`"
+        signature = f"`Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
         subcommands = None
 
         if hasattr(command, "all_commands"):
@@ -411,15 +411,37 @@ class RedHelpFormatter:
         """
         Sends an error, fuzzy help, or stays quiet based on settings
         """
-        pass
+        coms = [c async for c in self.help_filter_func(ctx, ctx.bot.walk_commands())]
+        fuzzy_commands = await fuzzy_command_search(ctx, help_for, commands=coms, min_score=75)
+        use_embeds = await ctx.embed_requested()
+        if fuzzy_commands:
+            ret = await format_fuzzy_results(ctx, fuzzy_commands, embed=use_embeds)
+            if use_embeds:
+                ret.set_author()
+                tagline = (await ctx.bot.db.help.tagline()) or self.get_default_tagline(ctx)
+                ret.set_footer(text=tagline)
+                await ctx.send(embed=ret)
+            else:
+                await ctx.send(ret)
+        elif self.CONFIRM_UNAVAILABLE_COMMAND_EXISTENCES:
+            ret = T_("Command *{command_name}* not found.").format(command_name=command_name)
+            if use_embeds:
+                emb = discord.Embed(color=(await ctx.embed_color()), description=ret)
+                emb.set_author(name=f"{ctx.me.display_name} Help Menu", icon_url=ctx.me.avatar_url)
+                tagline = (await ctx.bot.db.help.tagline()) or self.get_default_tagline(ctx)
+                ret.set_footer(text=tagline)
+                await ctx.send(embed=ret)
+            else:
+                await ctx.send(ret)
 
     async def subcommand_not_found(self, ctx, command, not_found):
         """
-        Sends an error, fuzzy help, or stays quiet based on settings
+        Sends an error
         """
-        # This needs to be separate to properly block enumerating
-        # commands which exist but are disabled or not usable by the invoker
-        pass
+        ret = T_("Command *{command_name}* has no subcommands.").format(
+            command_name=command.qualified_name
+        )
+        await ctx.send(ret)
 
     @staticmethod
     def parse_command(ctx, help_for: str):
