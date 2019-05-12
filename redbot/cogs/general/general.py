@@ -220,7 +220,9 @@ class General(commands.Cog):
         """
             Show server information.
         
-            `details` will show more information about this server if set to True. Defaults to False.
+            `details`: Toggle it to `True` to show more
+            information about this server.
+            Defaults to False.
         """
         guild = ctx.guild
 
@@ -271,7 +273,7 @@ class General(commands.Cog):
         offline = len([m.status for m in guild.members if m.status == discord.Status.offline])
         streaming = len([m for m in guild.members if isinstance(m.activity, discord.Streaming)])
         mobile = len([m for m in guild.members if m.is_on_mobile()])
-        # lurkers = len([m for m in guild.members if m.joined_at is None])
+        lurkers = len([m for m in guild.members if m.joined_at is None])
         total_users = len(guild.members)
         humans = len([a for a in ctx.guild.members if a.bot == False])
         bots = len([a for a in ctx.guild.members if a.bot])
@@ -288,56 +290,16 @@ class General(commands.Cog):
             "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago !"
         ).format(bot_name=ctx.bot.user.name, bot_join=bot_joined, since_join=since_joined)
         data = discord.Embed(description=created_at, colour=(await ctx.embed_colour()))
-        if (
-            details
-        ):  # Lurkers detection disabled until this bug https://github.com/discordapp/discord-api-docs/issues/855 is not fixed.
-            """if lurkers:
-                data.add_field(
-                    name=_("Members :"),
-                    value=_(
-                        "Total users : **{total}**\nLurkers : **{lurkers}**\nHumans : **{hum}** • Bots : **{bots}**\n"
-                        "📗 `{online}` 📙 `{idle}`\n📕 `{dnd}` 📓 `{off}`\n"
-                        "🎥 `{streaming}` 📱 `{mobile}`\n"
-                    ).format(
-                        total=total_users,
-                        lurkers=lurkers,
-                        hum=humans,
-                        bots=bots,
-                        online=online,
-                        idle=idle,
-                        dnd=dnd,
-                        off=offline,
-                        streaming=streaming,
-                        mobile=mobile,
-                    ),
-                )
-            else:
-                data.add_field(
-                    name=_("Members :"),
-                    value=_(
-                        "Total users : **{total}**\nHumans : **{hum}** • Bots : **{bots}**\n"
-                        "📗 `{online}` 📙 `{idle}`\n📕 `{dnd}` 📓 `{off}`\n"
-                        "🎥 `{streaming}` 📱 `{mobile}`\n"
-                    ).format(
-                        total=total_users,
-                        hum=humans,
-                        bots=bots,
-                        online=online,
-                        idle=idle,
-                        dnd=dnd,
-                        off=offline,
-                        streaming=streaming,
-                        mobile=mobile,
-                    ),
-                )"""
-            data.add_field(  # Delete this field when lurkers will be fixed cause it's just a copy-paste of the field above.
-                name=_("Members :"),
+        if details:
+            data.add_field(
+                name=_("Members:"),
                 value=_(
-                    "Total users : **{total}**\nHumans : **{hum}** • Bots : **{bots}**\n"
+                    "Total users: **{total}**\n{lurkers}Humans: **{hum}** • Bots: **{bots}**\n"
                     "📗 `{online}` 📙 `{idle}`\n📕 `{dnd}` 📓 `{off}`\n"
                     "🎥 `{streaming}` 📱 `{mobile}`\n"
                 ).format(
                     total=total_users,
+                    lurkers=_("Lurkers: **{}**\n").format(lurkers) if lurkers else "",
                     hum=humans,
                     bots=bots,
                     online=online,
@@ -349,15 +311,15 @@ class General(commands.Cog):
                 ),
             )
             data.add_field(
-                name=_("Channels :"),
-                value=_("💬 Text : **{text}**\n🔊 Voice : **{voice}**").format(
+                name=_("Channels:"),
+                value=_("💬 Text: **{text}**\n🔊 Voice: **{voice}**").format(
                     text=text_channels, voice=voice_channels
                 ),
             )
             data.add_field(
-                name=_("Utility :"),
+                name=_("Utility:"),
                 value=_(
-                    "Owner : **{owner}**\nRegion : **{region}**\nVerif. level : **{verif}**\nServer ID : **{id}**"
+                    "Owner: **{owner}**\nRegion: **{region}**\nVerif. level: **{verif}**\nServer ID: **{id}**"
                 ).format(
                     owner=guild.owner,
                     region=region[str(guild.region)],
@@ -366,9 +328,9 @@ class General(commands.Cog):
                 ),
             )
             data.add_field(
-                name=_("Misc :"),
+                name=_("Misc:"),
                 value=_(
-                    "AFK channel : **{afk_chan}**\nAFK Timeout : **{afk_timeout}sec**\nCustom emojis : **{emojis}**\nRoles : **{roles}**"
+                    "AFK channel: **{afk_chan}**\nAFK Timeout: **{afk_timeout}sec**\nCustom emojis: **{emojis}**\nRoles: **{roles}**"
                 ).format(
                     afk_chan=guild.afk_channel,
                     afk_timeout=guild.afk_timeout,
@@ -378,7 +340,7 @@ class General(commands.Cog):
             )
             if guild.features:
                 data.add_field(
-                    name=_("Special features :"),
+                    name=_("Special features:"),
                     value=_(
                         "{vip} VIP Regions\n{van} Vanity URL\n{splash} Splash Invite\n{m_emojis} More Emojis\n{verify} Verified"
                     ).format(**format_kwargs),
@@ -395,7 +357,7 @@ class General(commands.Cog):
                 data.set_thumbnail(
                     url="https://cdn.discordapp.com/attachments/494975386334134273/529843761635786754/Discord-Logo-Black.png"
                 )
-            data.set_footer(text=f"{joined_on}")
+            data.set_footer(text=joined_on)
 
         else:
             data = discord.Embed(description=created_at, colour=(await ctx.embed_colour()))
