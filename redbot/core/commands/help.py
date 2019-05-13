@@ -26,7 +26,6 @@
 # Additionally, this gives our users a bit more customization options including by
 # 3rd party cogs down the road.
 
-import itertools
 from collections import namedtuple
 from typing import Union, List, AsyncIterator, Iterable, cast
 
@@ -123,10 +122,12 @@ class RedHelpFormatter:
         }
 
     async def get_bot_help_mapping(self, ctx):
-        return {
-            (com.cog_name, com.name): com
-            async for com in self.help_filter_func(ctx, ctx.bot.all_commands.values())
-        }
+        sorted_iterable = []
+        for cogname, cog in (*sorted(ctx.bot.cogs.items()), (None, None)):
+            cm = await self.get_cog_help_mapping(ctx, cog)
+            if cm:
+                sorted_iterable.append((cogname, cm))
+        return sorted_iterable
 
     @staticmethod
     def get_default_tagline(ctx: Context):
@@ -327,7 +328,7 @@ class RedHelpFormatter:
 
     async def format_bot_help(self, ctx: Context):
 
-        commands = await self.get_group_help_mapping(ctx, ctx.bot)
+        commands = await self.get_bot_help_mapping(ctx)
         if not commands:
             return
 
@@ -336,52 +337,57 @@ class RedHelpFormatter:
 
         if await ctx.embed_requested():
 
-            def category(tup):
-                cog = tup[1].cog_name
-                return f"**__{cog}:__**" if cog is not None else "**__\u200bNo Category:__**"
-
             emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
 
             emb["footer"]["text"] = tagline
             if description:
                 emb["embed"]["title"] = f"*{description[:2044]}*"
 
-            for cog_name, cog_coms in itertools.groupby(sorted(commands.items()), key=category):
+            for cog_name, data in commands:
+
+                if cog_name:
+                    title = f"**__{cog_name}:__**"
+                else:
+                    title = f"**__No Category:__**"
 
                 cog_text = "\n".join(
-                    f"**{name}** {command.short_doc}" for name, command in cog_coms
+                    f"**{name}** {command.short_doc}" for name, command in sorted(data.items())
                 )
 
                 for i, page in enumerate(pagify(cog_text, page_length=1000, shorten_by=0)):
-                    title = cog_name if i < 1 else f"{cog_name} (continued)"
+                    title = title if i < 1 else f"{title} (continued)"
                     field = EmbedField(title, page, False)
                     emb["fields"].append(field)
 
             await self.make_and_send_embeds(ctx, emb)
 
         else:
+            if description:
+                to_join = [f"{description}\n"]
 
-            to_join = [f"{description}\n"]
-            max_width = max(discord.utils._string_width(name) for name in commands.keys())
+            names = []
+            for k, v in commands:
+                names.extend(list(v.name for v in v.values()))
 
-            def category(tup):
-                cog = tup[1].cog_name
-                return f"{cog}:" if cog is not None else "\u200bNo Category:"
+            max_width = max(
+                discord.utils._string_width((name or "No Category:")) for name in names
+            )
 
             def width_maker(cmds):
                 doc_max_width = 80 - max_width
-                for nm, com in sorted(cmds):
+                for nm, com in cmds:
                     width_gap = discord.utils._string_width(nm) - len(nm)
                     doc = com.short_doc
                     if len(doc) > doc_max_width:
                         doc = doc[: doc_max_width - 3] + "..."
                     yield nm, doc, max_width - width_gap
 
-            for cog_name, cog_coms in itertools.groupby(sorted(commands.items()), key=category):
+            for cog_name, data in commands:
 
-                to_join.append(cog_name)
+                title = f"{cog_name}:" if cog_name else "No Category:"
+                to_join.append(title)
 
-                for name, doc, width in width_maker(cog_coms):
+                for name, doc, width in width_maker(sorted(data.items())):
                     to_join.append(f"  {name:<{width}} {doc}")
 
             to_join.append(f"\n{tagline}")
