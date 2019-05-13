@@ -262,7 +262,7 @@ class Cleanup(commands.Cog):
         author = ctx.author
 
         try:
-            before = await channel.get_message(message_id)
+            before = await channel.fetch_message(message_id)
         except discord.NotFound:
             return await ctx.send(_("Message not found."))
 
