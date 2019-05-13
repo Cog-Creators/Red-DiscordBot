@@ -8,7 +8,7 @@ from sys import path as syspath
 from typing import Tuple, Union, Iterable
 
 import discord
-from redbot.core import checks, commands, Config
+from redbot.core import checks, commands, Config, version_info as red_version_info
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
@@ -303,6 +303,26 @@ class Downloader(commands.Cog):
                 )
             )
             return
+        ignore_max = cog.min_bot_version > cog.max_bot_version
+        if (
+            cog.min_bot_version > red_version_info
+            or not ignore_max
+            and cog.max_bot_version < red_version_info
+        ):
+            await ctx.send(
+                _("This cog requires at least Red version {min_version}").format(
+                    min_version=cog.min_bot_version
+                )
+                + (
+                    ""
+                    if ignore_max
+                    else _(" and at most {max_version}").format(max_version=cog.max_bot_version)
+                )
+                + _(", but you have {current_version}, aborting install.").format(
+                    current_version=red_version_info
+                )
+            )
+            return
 
         if not await repo.install_requirements(cog, self.LIB_PATH):
             libraries = humanize_list(tuple(map(inline, cog.requirements)))
@@ -344,7 +364,8 @@ class Downloader(commands.Cog):
 
                 poss_installed_path = (await self.cog_install_path()) / real_name
                 if poss_installed_path.exists():
-                    ctx.bot.unload_extension(real_name)
+                    with contextlib.suppress(commands.ExtensionNotLoaded):
+                        ctx.bot.unload_extension(real_name)
                     await self._delete_cog(poss_installed_path)
                     uninstalled_cogs.append(inline(real_name))
                 else:

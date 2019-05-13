@@ -34,7 +34,10 @@ Core
 ----
 
  * Delete cooldown messages when expired (`#2469`_)
+ * ``[p]set locale`` now only accepts actual locales (`#2553`_)
+ * ``[p]listlocales`` now displays ``en-US`` (`#2553`_)
  * ``redbot --version`` will now give you current version of Red (`#2567`_)
+ * Default locale changed from ``en`` to ``en-US`` (`#2642`_)
 
 ------
 Config
@@ -54,9 +57,12 @@ Downloader
 ----------
 
  * ``[p]cog install`` will now tell user that cog has to be loaded (`#2523`_)
+ * The message when libraries fail to install is now formatted (`#2576`_)
  * Fixed bug, that caused Downloader to include submodules on cog list (`#2590`_)
  * ``[p]cog uninstall`` allows to uninstall multiple cogs now (`#2592`_)
  * ``[p]cog uninstall`` will now remove cog from installed cogs even if it can't find the cog in install path anymore (`#2595`_)
+ * ``[p]cog install`` will not allow to install cogs which aren't suitable for installed version of Red anymore (`#2605`_)
+ * Cog Developers now have to use ``min_bot_version`` in form of version string instead of ``bot_version`` in info.json and they can also use ``max_bot_version`` to specify maximum version of Red, more in :doc:`framework_downloader`. (`#2605`_)
 
 ---
 Mod
@@ -64,6 +70,7 @@ Mod
 
  * Admins can now decide how many times message has to be repeated before ``deleterepeats`` removes it (`#2437`_)
  * Fix: make ``[p]ban [days]`` optional as per the doc (`#2602`_)
+ * Added the command ``voicekick`` to kick members from a voice channel with optional mod case. (`#2639`_)
 
 -------------
 Setup Scripts
@@ -123,10 +130,12 @@ Utility Functions
 .. _#2540: https://github.com/Cog-Creators/Red-DiscordBot/pull/2540
 .. _#2545: https://github.com/Cog-Creators/Red-DiscordBot/pull/2545
 .. _#2550: https://github.com/Cog-Creators/Red-DiscordBot/pull/2550
+.. _#2553: https://github.com/Cog-Creators/Red-DiscordBot/pull/2553
 .. _#2556: https://github.com/Cog-Creators/Red-DiscordBot/pull/2556
 .. _#2557: https://github.com/Cog-Creators/Red-DiscordBot/pull/2557
 .. _#2565: https://github.com/Cog-Creators/Red-DiscordBot/pull/2565
 .. _#2567: https://github.com/Cog-Creators/Red-DiscordBot/pull/2567
+.. _#2576: https://github.com/Cog-Creators/Red-DiscordBot/pull/2576
 .. _#2579: https://github.com/Cog-Creators/Red-DiscordBot/pull/2579
 .. _#2586: https://github.com/Cog-Creators/Red-DiscordBot/pull/2586
 .. _#2590: https://github.com/Cog-Creators/Red-DiscordBot/pull/2590
@@ -136,5 +145,8 @@ Utility Functions
 .. _#2600: https://github.com/Cog-Creators/Red-DiscordBot/pull/2600
 .. _#2602: https://github.com/Cog-Creators/Red-DiscordBot/pull/2602
 .. _#2604: https://github.com/Cog-Creators/Red-DiscordBot/pull/2604
+.. _#2605: https://github.com/Cog-Creators/Red-DiscordBot/pull/2605
 .. _#2606: https://github.com/Cog-Creators/Red-DiscordBot/pull/2606
 .. _#2620: https://github.com/Cog-Creators/Red-DiscordBot/pull/2620
+.. _#2639: https://github.com/Cog-Creators/Red-DiscordBot/pull/2639
+.. _#2642: https://github.com/Cog-Creators/Red-DiscordBot/pull/2642

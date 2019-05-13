@@ -10,6 +10,7 @@ from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.mod import slow_deletion, mass_purge
 from redbot.cogs.mod.log import log
 from redbot.core.utils.predicates import MessagePredicate
+from .converters import RawMessageIds
 
 _ = Translator("Cleanup", __file__)
 
@@ -211,7 +212,9 @@ class Cleanup(commands.Cog):
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def after(self, ctx: commands.Context, message_id: int, delete_pinned: bool = False):
+    async def after(
+        self, ctx: commands.Context, message_id: RawMessageIds, delete_pinned: bool = False
+    ):
         """Delete all messages after a specified message.
 
         To get a message id, enable developer mode in Discord's
@@ -242,7 +245,11 @@ class Cleanup(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
     async def before(
-        self, ctx: commands.Context, message_id: int, number: int, delete_pinned: bool = False
+        self,
+        ctx: commands.Context,
+        message_id: RawMessageIds,
+        number: int,
+        delete_pinned: bool = False,
     ):
         """Deletes X messages before specified message.
 
@@ -264,6 +271,48 @@ class Cleanup(commands.Cog):
         )
         to_delete.append(ctx.message)
 
+        reason = "{}({}) deleted {} messages in channel {}.".format(
+            author.name, author.id, len(to_delete), channel.name
+        )
+        log.info(reason)
+
+        await mass_purge(to_delete, channel)
+
+    @cleanup.command()
+    @commands.guild_only()
+    @commands.bot_has_permissions(manage_messages=True)
+    async def between(
+        self,
+        ctx: commands.Context,
+        one: RawMessageIds,
+        two: RawMessageIds,
+        delete_pinned: bool = False,
+    ):
+        """Delete the messages between Messsage One and Message Two, providing the messages IDs.
+
+        The first message ID should be the older message and the second one the newer.
+
+        Example:
+            `[p]cleanup between 123456789123456789 987654321987654321`
+        """
+        channel = ctx.channel
+        author = ctx.author
+        try:
+            mone = await channel.fetch_message(one)
+        except discord.errors.Notfound:
+            return await ctx.send(
+                _("Could not find a message with the ID of {id}.".format(id=one))
+            )
+        try:
+            mtwo = await channel.fetch_message(two)
+        except discord.errors.Notfound:
+            return await ctx.send(
+                _("Could not find a message with the ID of {id}.".format(id=two))
+            )
+        to_delete = await self.get_messages_for_deletion(
+            channel=channel, before=mtwo, after=mone, delete_pinned=delete_pinned
+        )
+        to_delete.append(ctx.message)
         reason = "{}({}) deleted {} messages in channel {}.".format(
             author.name, author.id, len(to_delete), channel.name
         )
