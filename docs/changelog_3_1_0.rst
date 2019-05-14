@@ -37,6 +37,7 @@ Core
  * ``[p]set locale`` now only accepts actual locales (`#2553`_)
  * ``[p]listlocales`` now displays ``en-US`` (`#2553`_)
  * ``redbot --version`` will now give you current version of Red (`#2567`_)
+ * Redesign help and related formatter (`#2628`_)
  * Default locale changed from ``en`` to ``en-US`` (`#2642`_)
 
 ------
@@ -148,5 +149,6 @@ Utility Functions
 .. _#2605: https://github.com/Cog-Creators/Red-DiscordBot/pull/2605
 .. _#2606: https://github.com/Cog-Creators/Red-DiscordBot/pull/2606
 .. _#2620: https://github.com/Cog-Creators/Red-DiscordBot/pull/2620
+.. _#2628: https://github.com/Cog-Creators/Red-DiscordBot/pull/2628
 .. _#2639: https://github.com/Cog-Creators/Red-DiscordBot/pull/2639
 .. _#2642: https://github.com/Cog-Creators/Red-DiscordBot/pull/2642
