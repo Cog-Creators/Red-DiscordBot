@@ -92,7 +92,7 @@ one-by-one:
     brew install python --with-brewed-openssl
     brew install git
     brew tap caskroom/versions
-    brew cask install java8
+    brew cask install homebrew/cask-versions/adoptopenjdk8
 
 It's possible you will have network issues. If so, go in your Applications folder, inside it, go in the Python 3.7 folder then double click ``Install certificates.command``
 
