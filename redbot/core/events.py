@@ -119,17 +119,27 @@ def init_events(bot, cli_flags):
                     "Outdated version! {} is available "
                     "but you're using {}".format(data["info"]["version"], red_version)
                 )
+
                 owners = []
-                owners.append(await bot.fetch_user(bot.owner_id))
+                owner = bot.get_user(bot.owner_id)
+                if owner is not None:
+                    owners.append(owner)
+
                 for co_owner in bot._co_owners:
-                    owners.append(await bot.fetch_user(co_owner))
+                    co_owner = await bot.get_user(co_owner)
+                    if co_owner is not None:
+                        owners.append(co_owner)
+
                 for owner in owners:
-                    await owner.send(
-                        "Your Red instance is out of date! {} is the current "
-                        "version, however you are using {}!".format(
-                            data["info"]["version"], red_version
+                    try:
+                        await owner.send(
+                            "Your Red instance is out of date! {} is the current "
+                            "version, however you are using {}!".format(
+                                data["info"]["version"], red_version
+                            )
                         )
-                    )
+                    except (discord.HTTPException, discord.Forbidden):
+                        pass
         INFO2 = []
 
         mongo_enabled = storage_type() != "JSON"
