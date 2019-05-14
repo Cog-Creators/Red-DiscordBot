@@ -1380,6 +1380,16 @@ class Core(commands.Cog, CoreLogic):
             else:
                 await ctx.send(_("Message delivered to {}").format(destination))
 
+    @commands.command(hidden=True)
+    @checks.is_owner()
+    async def datapath(self, ctx: commands.Context):
+        """Prints the bot's data path."""
+        from redbot.core.data_manager import basic_config
+
+        data_dir = Path(basic_config["DATA_PATH"])
+        msg = _("Data path: {path}").format(path=data_dir)
+        await ctx.send(box(msg))
+
     @commands.group()
     @checks.is_owner()
     async def whitelist(self, ctx: commands.Context):
