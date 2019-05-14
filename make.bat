@@ -1,6 +1,6 @@
 @echo off
 
-if "%1"=="" goto help
+if [%1] == [] goto help
 
 REM This allows us to expand variables at execution
 setlocal ENABLEDELAYEDEXPANSION
@@ -14,11 +14,11 @@ for /F "tokens=* USEBACKQ" %%A in (`git ls-files "*.py"`) do (
 goto %1
 
 :reformat
-black -l 99 -N !PYFILES!
+black -l 99 !PYFILES!
 exit /B %ERRORLEVEL%
 
 :stylecheck
-black -l 99 -N --check !PYFILES!
+black -l 99 --check !PYFILES!
 exit /B %ERRORLEVEL%
 
 :help

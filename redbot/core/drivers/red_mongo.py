@@ -1,11 +1,13 @@
 import re
-from typing import Match, Pattern
+from getpass import getpass
+from typing import Match, Pattern, Tuple
 from urllib.parse import quote_plus
 
 import motor.core
 import motor.motor_asyncio
+from motor.motor_asyncio import AsyncIOMotorCursor
 
-from .red_base import BaseDriver
+from .red_base import BaseDriver, IdentifierData
 
 __all__ = ["Mongo"]
 
@@ -48,6 +50,10 @@ class Mongo(BaseDriver):
         if _conn is None:
             _initialize(**kwargs)
 
+    async def has_valid_connection(self) -> bool:
+        # Maybe fix this?
+        return True
+
     @property
     def db(self) -> motor.core.Database:
         """
@@ -64,66 +70,119 @@ class Mongo(BaseDriver):
         """
         return _conn.get_database()
 
-    def get_collection(self) -> motor.core.Collection:
+    def get_collection(self, category: str) -> motor.core.Collection:
         """
         Gets a specified collection within the PyMongo database for this cog.
 
-        Unless you are doing custom stuff ``collection_name`` should be one of the class
+        Unless you are doing custom stuff ``category`` should be one of the class
         attributes of :py:class:`core.config.Config`.
 
-        :param str collection_name:
+        :param str category:
         :return:
             PyMongo collection object.
         """
-        return self.db[self.cog_name]
+        return self.db[self.cog_name][category]
 
-    @staticmethod
-    def _parse_identifiers(identifiers):
-        uuid, identifiers = identifiers[0], identifiers[1:]
-        return uuid, identifiers
+    def get_primary_key(self, identifier_data: IdentifierData) -> Tuple[str]:
+        # noinspection PyTypeChecker
+        return identifier_data.primary_key
 
-    async def get(self, *identifiers: str):
-        mongo_collection = self.get_collection()
+    async def rebuild_dataset(self, identifier_data: IdentifierData, cursor: AsyncIOMotorCursor):
+        ret = {}
+        async for doc in cursor:
+            pkeys = doc["_id"]["RED_primary_key"]
+            del doc["_id"]
+            if len(pkeys) == 0:
+                # Global data
+                ret.update(**doc)
+            elif len(pkeys) > 0:
+                # All other data
+                partial = ret
+                for key in pkeys[:-1]:
+                    if key in identifier_data.primary_key:
+                        continue
+                    if key not in partial:
+                        partial[key] = {}
+                    partial = partial[key]
+                if pkeys[-1] in identifier_data.primary_key:
+                    partial.update(**doc)
+                else:
+                    partial[pkeys[-1]] = doc
+        return ret
 
-        identifiers = (*map(self._escape_key, identifiers),)
-        dot_identifiers = ".".join(identifiers)
+    async def get(self, identifier_data: IdentifierData):
+        mongo_collection = self.get_collection(identifier_data.category)
 
-        partial = await mongo_collection.find_one(
-            filter={"_id": self.unique_cog_identifier}, projection={dot_identifiers: True}
-        )
+        pkey_filter = self.generate_primary_key_filter(identifier_data)
+        if len(identifier_data.identifiers) > 0:
+            dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
+            proj = {"_id": False, dot_identifiers: True}
+
+            partial = await mongo_collection.find_one(filter=pkey_filter, projection=proj)
+        else:
+            # The case here is for partial primary keys like all_members()
+            cursor = mongo_collection.find(filter=pkey_filter)
+            partial = await self.rebuild_dataset(identifier_data, cursor)
 
         if partial is None:
             raise KeyError("No matching document was found and Config expects a KeyError.")
 
-        for i in identifiers:
+        for i in identifier_data.identifiers:
             partial = partial[i]
         if isinstance(partial, dict):
             return self._unescape_dict_keys(partial)
         return partial
 
-    async def set(self, *identifiers: str, value=None):
-        dot_identifiers = ".".join(map(self._escape_key, identifiers))
+    async def set(self, identifier_data: IdentifierData, value=None):
+        uuid = self._escape_key(identifier_data.uuid)
+        primary_key = list(map(self._escape_key, self.get_primary_key(identifier_data)))
+        dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
         if isinstance(value, dict):
+            if len(value) == 0:
+                await self.clear(identifier_data)
+                return
             value = self._escape_dict_keys(value)
 
-        mongo_collection = self.get_collection()
+        mongo_collection = self.get_collection(identifier_data.category)
+        if len(dot_identifiers) > 0:
+            update_stmt = {"$set": {dot_identifiers: value}}
+        else:
+            update_stmt = {"$set": value}
 
         await mongo_collection.update_one(
-            {"_id": self.unique_cog_identifier},
-            update={"$set": {dot_identifiers: value}},
+            {"_id": {"RED_uuid": uuid, "RED_primary_key": primary_key}},
+            update=update_stmt,
             upsert=True,
         )
 
-    async def clear(self, *identifiers: str):
-        dot_identifiers = ".".join(map(self._escape_key, identifiers))
-        mongo_collection = self.get_collection()
-
-        if len(identifiers) > 0:
-            await mongo_collection.update_one(
-                {"_id": self.unique_cog_identifier}, update={"$unset": {dot_identifiers: 1}}
-            )
+    def generate_primary_key_filter(self, identifier_data: IdentifierData):
+        uuid = self._escape_key(identifier_data.uuid)
+        primary_key = list(map(self._escape_key, self.get_primary_key(identifier_data)))
+        ret = {"_id.RED_uuid": uuid}
+        if len(identifier_data.identifiers) > 0:
+            ret["_id.RED_primary_key"] = primary_key
+        elif len(identifier_data.primary_key) > 0:
+            for i, key in enumerate(primary_key):
+                keyname = f"_id.RED_primary_key.{i}"
+                ret[keyname] = key
         else:
-            await mongo_collection.delete_one({"_id": self.unique_cog_identifier})
+            ret["_id.RED_primary_key"] = {"$exists": True}
+        return ret
+
+    async def clear(self, identifier_data: IdentifierData):
+        # There are three cases here:
+        # 1) We're clearing out a subset of identifiers (aka identifiers is NOT empty)
+        # 2) We're clearing out full primary key and no identifiers
+        # 3) We're clearing out partial primary key and no identifiers
+        # 4) Primary key is empty, should wipe all documents in the collection
+        mongo_collection = self.get_collection(identifier_data.category)
+        pkey_filter = self.generate_primary_key_filter(identifier_data)
+        if len(identifier_data.identifiers) == 0:
+            # This covers cases 2-4
+            await mongo_collection.delete_many(pkey_filter)
+        else:
+            dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
+            await mongo_collection.update_one(pkey_filter, update={"$unset": {dot_identifiers: 1}})
 
     @staticmethod
     def _escape_key(key: str) -> str:
@@ -201,7 +260,7 @@ def get_config_details():
         port = 0
 
     admin_uname = input("Enter login username: ")
-    admin_password = input("Enter login password: ")
+    admin_password = getpass("Enter login password: ")
 
     db_name = input("Enter mongodb database name: ")
 

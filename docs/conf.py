@@ -195,15 +195,15 @@ texinfo_documents = [
 
 # A list of regular expressions that match URIs that should not be
 # checked when doing a linkcheck build.
-linkcheck_ignore = [r"https://java.com*"]
+linkcheck_ignore = [r"https://java.com*", r"https://chocolatey.org*"]
 
 
 # -- Options for extensions -----------------------------------------------
 
 # Intersphinx
 intersphinx_mapping = {
-    "python": ("https://docs.python.org/3.6", None),
-    "dpy": ("https://discordpy.readthedocs.io/en/rewrite/", None),
+    "python": ("https://docs.python.org/3", None),
+    "dpy": ("https://discordpy.readthedocs.io/en/v1.0.1/", None),
     "motor": ("https://motor.readthedocs.io/en/stable/", None),
 }
 

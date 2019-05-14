@@ -14,7 +14,13 @@ from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import ReactionPredicate, MessagePredicate
 
-from .converters import CogOrCommand, RuleType, ClearableRuleType
+from .converters import (
+    CogOrCommand,
+    RuleType,
+    ClearableRuleType,
+    GuildUniqueObjectFinder,
+    GlobalUniqueObjectFinder,
+)
 
 _ = Translator("Permissions", __file__)
 
@@ -94,10 +100,12 @@ class Permissions(commands.Cog):
         # Note that GLOBAL rules are denoted by an ID of 0.
         self.config = config.Config.get_conf(self, identifier=78631113035100160)
         self.config.register_global(version="")
+        self.config.init_custom(COG, 1)
         self.config.register_custom(COG)
+        self.config.init_custom(COMMAND, 1)
         self.config.register_custom(COMMAND)
 
-    @commands.group(aliases=["p"])
+    @commands.group()
     async def permissions(self, ctx: commands.Context):
         """Command permission management tools."""
         pass
@@ -142,23 +150,20 @@ class Permissions(commands.Cog):
         if not command:
             return await ctx.send_help()
 
-        message = copy(ctx.message)
-        message.author = user
-        message.content = "{}{}".format(ctx.prefix, command)
+        fake_message = copy(ctx.message)
+        fake_message.author = user
+        fake_message.content = "{}{}".format(ctx.prefix, command)
 
         com = ctx.bot.get_command(command)
         if com is None:
             out = _("No such command")
         else:
+            fake_context = await ctx.bot.get_context(fake_message)
             try:
-                testcontext = await ctx.bot.get_context(message, cls=commands.Context)
-                to_check = [*reversed(com.parents)] + [com]
-                can = False
-                for cmd in to_check:
-                    can = await cmd.can_run(testcontext)
-                    if can is False:
-                        break
-            except commands.CheckFailure:
+                can = await com.can_run(
+                    fake_context, check_all_parents=True, change_permission_state=False
+                )
+            except commands.CommandError:
                 can = False
 
             out = (
@@ -275,7 +280,7 @@ class Permissions(commands.Cog):
         ctx: commands.Context,
         allow_or_deny: RuleType,
         cog_or_command: CogOrCommand,
-        who_or_what: commands.GlobalPermissionModel,
+        who_or_what: commands.Greedy[GlobalUniqueObjectFinder],
     ):
         """Add a global rule to a command.
 
@@ -284,15 +289,15 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to add the rule to.
         This is case sensitive.
 
-        `<who_or_what>` is the user, channel, role or server the rule
-        is for.
+        `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
-        await self._add_rule(
-            rule=cast(bool, allow_or_deny),
-            cog_or_cmd=cog_or_command,
-            model_id=who_or_what.id,
-            guild_id=0,
-        )
+        for w in who_or_what:
+            await self._add_rule(
+                rule=cast(bool, allow_or_deny),
+                cog_or_cmd=cog_or_command,
+                model_id=w.id,
+                guild_id=0,
+            )
         await ctx.send(_("Rule added."))
 
     @commands.guild_only()
@@ -303,7 +308,7 @@ class Permissions(commands.Cog):
         ctx: commands.Context,
         allow_or_deny: RuleType,
         cog_or_command: CogOrCommand,
-        who_or_what: commands.GuildPermissionModel,
+        who_or_what: commands.Greedy[GuildUniqueObjectFinder],
     ):
         """Add a rule to a command in this server.
 
@@ -312,14 +317,15 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to add the rule to.
         This is case sensitive.
 
-        `<who_or_what>` is the user, channel or role the rule is for.
+        `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
-        await self._add_rule(
-            rule=cast(bool, allow_or_deny),
-            cog_or_cmd=cog_or_command,
-            model_id=who_or_what.id,
-            guild_id=ctx.guild.id,
-        )
+        for w in who_or_what:
+            await self._add_rule(
+                rule=cast(bool, allow_or_deny),
+                cog_or_cmd=cog_or_command,
+                model_id=w.id,
+                guild_id=ctx.guild.id,
+            )
         await ctx.send(_("Rule added."))
 
     @checks.is_owner()
@@ -328,19 +334,17 @@ class Permissions(commands.Cog):
         self,
         ctx: commands.Context,
         cog_or_command: CogOrCommand,
-        who_or_what: commands.GlobalPermissionModel,
+        who_or_what: commands.Greedy[GlobalUniqueObjectFinder],
     ):
         """Remove a global rule from a command.
 
         `<cog_or_command>` is the cog or command to remove the rule
         from. This is case sensitive.
 
-        `<who_or_what>` is the user, channel, role or server the rule
-        is for.
+       `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
-        await self._remove_rule(
-            cog_or_cmd=cog_or_command, model_id=who_or_what.id, guild_id=GLOBAL
-        )
+        for w in who_or_what:
+            await self._remove_rule(cog_or_cmd=cog_or_command, model_id=w.id, guild_id=GLOBAL)
         await ctx.send(_("Rule removed."))
 
     @commands.guild_only()
@@ -350,19 +354,19 @@ class Permissions(commands.Cog):
         self,
         ctx: commands.Context,
         cog_or_command: CogOrCommand,
-        *,
-        who_or_what: commands.GuildPermissionModel,
+        who_or_what: commands.Greedy[GlobalUniqueObjectFinder],
     ):
         """Remove a server rule from a command.
 
         `<cog_or_command>` is the cog or command to remove the rule
         from. This is case sensitive.
 
-        `<who_or_what>` is the user, channel or role the rule is for.
+        `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
-        await self._remove_rule(
-            cog_or_cmd=cog_or_command, model_id=who_or_what.id, guild_id=ctx.guild.id
-        )
+        for w in who_or_what:
+            await self._remove_rule(
+                cog_or_cmd=cog_or_command, model_id=w.id, guild_id=ctx.guild.id
+            )
         await ctx.send(_("Rule removed."))
 
     @commands.guild_only()
@@ -429,20 +433,26 @@ class Permissions(commands.Cog):
             await self._clear_rules(guild_id=ctx.guild.id)
             await ctx.tick()
 
-    async def cog_added(self, cog: commands.Cog) -> None:
+    async def red_cog_added(self, cog: commands.Cog) -> None:
         """Event listener for `cog_add`.
 
         This loads rules whenever a new cog is added.
+
+        Do not convert to using Cog.listener decorator !!
+        This *must* be added manually prior to cog load, and removed at unload
         """
         self._load_rules_for(
             cog_or_command=cog,
-            rule_dict=await self.config.custom(COMMAND, cog.__class__.__name__).all(),
+            rule_dict=await self.config.custom(COG, cog.__class__.__name__).all(),
         )
 
-    async def command_added(self, command: commands.Command) -> None:
+    async def red_command_added(self, command: commands.Command) -> None:
         """Event listener for `command_add`.
 
         This loads rules whenever a new command is added.
+
+        Do not convert to using Cog.listener decorator !!
+        This *must* be added manually prior to cog load, and removed at unload
         """
         self._load_rules_for(
             cog_or_command=command,
@@ -697,9 +707,9 @@ class Permissions(commands.Cog):
                 elif rule is False:
                     cog_or_command.deny_to(model_id, guild_id=guild_id)
 
-    def __unload(self) -> None:
-        self.bot.remove_listener(self.cog_added, "on_cog_add")
-        self.bot.remove_listener(self.command_added, "on_command_add")
+    def cog_unload(self) -> None:
+        self.bot.remove_listener(self.red_cog_added, "on_cog_add")
+        self.bot.remove_listener(self.red_command_added, "on_command_add")
         self.bot.loop.create_task(self._unload_all_rules())
 
     async def _unload_all_rules(self) -> None:

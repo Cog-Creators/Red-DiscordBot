@@ -16,7 +16,7 @@
     <img src="https://img.shields.io/badge/Support-Red!-yellow.svg" alt="Support Red on Patreon!">
   </a>
   <a href="https://www.python.org/downloads/">
-    <img src="https://img.shields.io/badge/Made%20With-Python%203-blue.svg?style=for-the-badge" alt="Made with Python 3">
+    <img src="https://img.shields.io/badge/Made%20With-Python%203.7-blue.svg?style=for-the-badge" alt="Made with Python 3.7">
   </a>
   <a href="https://crowdin.com/project/red-discordbot">
     <img src="https://d322cqt584bo4o.cloudfront.net/red-discordbot/localized.svg" alt="Localized with Crowdin">
@@ -26,8 +26,8 @@
   </a>
 </p>
 <p align="center">
-  <a href="https://travis-ci.org/Cog-Creators/Red-DiscordBot">
-    <img src="https://api.travis-ci.org/Cog-Creators/Red-DiscordBot.svg?branch=V3/develop" alt="Travis CI">
+  <a href="https://travis-ci.com/Cog-Creators/Red-DiscordBot">
+    <img src="https://api.travis-ci.com/Cog-Creators/Red-DiscordBot.svg?branch=V3/develop" alt="Travis CI">
   </a>
   <a href="http://red-discordbot.readthedocs.io/en/v3-develop/?badge=v3-develop">
     <img src="https://readthedocs.org/projects/red-discordbot/badge/?version=v3-develop" alt="Red on readthedocs.org">
@@ -91,11 +91,9 @@ community of cog repositories.**
 - [Arch Linux](https://red-discordbot.readthedocs.io/en/v3-develop/install_linux_mac.html)
 - [Raspbian Stretch](https://red-discordbot.readthedocs.io/en/v3-develop/install_linux_mac.html)
 
-Already using **Red** V2? Take a look at the [Data Converter](https://red-discordbot.readthedocs.io/en/v3-develop/cog_dataconverter.html)
-to import your data to V3.
 
 If after reading the guide you are still experiencing issues, feel free to join the
-[Official Discord Server](https://discord.gg/red) and ask in the **#v3-support** channel for help.
+[Official Discord Server](https://discord.gg/red) and ask in the **#support** channel for help.
 
 # Plugins
 
@@ -111,14 +109,14 @@ plugins directly from Discord! A few examples are:
 - Anilist
 - And much, much more!
 
-Feel free to take a [peek](https://github.com/Cog-Creators/Red-DiscordBot/issues/1398) at a list of
+Feel free to take a [peek](https://cogboard.red/t/approved-repositories/210) at a list of
 available 3rd party cogs!
 
 # Join the community!
 
 **Red** is in continuous development, and it’s supported by an active community which produces new
 content (cogs/plugins) for everyone to enjoy. New features are constantly added. If you can’t
-[find](https://github.com/Cog-Creators/Red-DiscordBot/issues/1398) the cog you’re looking for,
+[find](https://cogboard.red/t/approved-repositories/210) the cog you’re looking for,
 consult our [guide](https://red-discordbot.readthedocs.io/en/v3-develop/guide_cog_creation.html) on
 building your own cogs!
 

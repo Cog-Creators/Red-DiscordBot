@@ -3,6 +3,7 @@ import json
 import os
 import asyncio
 import logging
+from copy import deepcopy
 from uuid import uuid4
 
 # This is basically our old DataIO and just a base for much more elaborate classes
@@ -46,7 +47,6 @@ class JsonIO:
         And:
             https://www.mjmwired.net/kernel/Documentation/filesystems/ext4.txt#310
         """
-        log.debug("Saving file {}".format(self.path))
         filename = self.path.stem
         tmp_file = "{}-{}.tmp".format(filename, uuid4().fields[0])
         tmp_path = self.path.parent / tmp_file
@@ -69,13 +69,16 @@ class JsonIO:
 
     async def _threadsafe_save_json(self, data, settings=PRETTY):
         loop = asyncio.get_event_loop()
-        func = functools.partial(self._save_json, data, settings)
+        # the deepcopy is needed here. otherwise,
+        # the dict can change during serialization
+        # and this will break the encoder.
+        data_copy = deepcopy(data)
+        func = functools.partial(self._save_json, data_copy, settings)
         async with self._lock:
             await loop.run_in_executor(None, func)
 
     # noinspection PyUnresolvedReferences
     def _load_json(self):
-        log.debug("Reading file {}".format(self.path))
         with self.path.open(encoding="utf-8", mode="r") as f:
             data = json.load(f)
         return data

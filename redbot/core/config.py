@@ -2,18 +2,32 @@ import logging
 import collections
 from copy import deepcopy
 from typing import Any, Union, Tuple, Dict, Awaitable, AsyncContextManager, TypeVar, TYPE_CHECKING
+import weakref
 
 import discord
 
 from .data_manager import cog_data_path, core_data_path
-from .drivers import get_driver
+from .drivers import get_driver, IdentifierData, BackendType
 
 if TYPE_CHECKING:
     from .drivers.red_base import BaseDriver
 
+__all__ = ["Config", "get_latest_confs"]
+
 log = logging.getLogger("red.config")
 
 _T = TypeVar("_T")
+
+_config_cache = weakref.WeakValueDictionary()
+_retrieved = weakref.WeakSet()
+
+
+def get_latest_confs() -> Tuple["Config"]:
+    global _retrieved
+    ret = set(_config_cache.values()) - set(_retrieved)
+    _retrieved |= ret
+    # noinspection PyTypeChecker
+    return tuple(ret)
 
 
 class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):
@@ -72,14 +86,14 @@ class Value:
 
     """
 
-    def __init__(self, identifiers: Tuple[str], default_value, driver):
-        self.identifiers = identifiers
+    def __init__(self, identifier_data: IdentifierData, default_value, driver):
+        self.identifier_data = identifier_data
         self.default = default_value
         self.driver = driver
 
     async def _get(self, default=...):
         try:
-            ret = await self.driver.get(*self.identifiers)
+            ret = await self.driver.get(self.identifier_data)
         except KeyError:
             return default if default is not ... else self.default
         return ret
@@ -150,13 +164,13 @@ class Value:
         """
         if isinstance(value, dict):
             value = _str_key_dict(value)
-        await self.driver.set(*self.identifiers, value=value)
+        await self.driver.set(self.identifier_data, value=value)
 
     async def clear(self):
         """
         Clears the value from record for the data element pointed to by `identifiers`.
         """
-        await self.driver.clear(*self.identifiers)
+        await self.driver.clear(self.identifier_data)
 
 
 class Group(Value):
@@ -178,13 +192,17 @@ class Group(Value):
     """
 
     def __init__(
-        self, identifiers: Tuple[str], defaults: dict, driver, force_registration: bool = False
+        self,
+        identifier_data: IdentifierData,
+        defaults: dict,
+        driver,
+        force_registration: bool = False,
     ):
         self._defaults = defaults
         self.force_registration = force_registration
         self.driver = driver
 
-        super().__init__(identifiers, {}, self.driver)
+        super().__init__(identifier_data, {}, self.driver)
 
     @property
     def defaults(self):
@@ -225,22 +243,24 @@ class Group(Value):
         """
         is_group = self.is_group(item)
         is_value = not is_group and self.is_value(item)
-        new_identifiers = self.identifiers + (item,)
+        new_identifiers = self.identifier_data.add_identifier(item)
         if is_group:
             return Group(
-                identifiers=new_identifiers,
+                identifier_data=new_identifiers,
                 defaults=self._defaults[item],
                 driver=self.driver,
                 force_registration=self.force_registration,
             )
         elif is_value:
             return Value(
-                identifiers=new_identifiers, default_value=self._defaults[item], driver=self.driver
+                identifier_data=new_identifiers,
+                default_value=self._defaults[item],
+                driver=self.driver,
             )
         elif self.force_registration:
             raise AttributeError("'{}' is not a valid registered Group or value.".format(item))
         else:
-            return Value(identifiers=new_identifiers, default_value=None, driver=self.driver)
+            return Value(identifier_data=new_identifiers, default_value=None, driver=self.driver)
 
     async def clear_raw(self, *nested_path: Any):
         """
@@ -262,8 +282,9 @@ class Group(Value):
             Multiple arguments that mirror the arguments passed in for nested
             dict access. These are casted to `str` for you.
         """
-        path = [str(p) for p in nested_path]
-        await self.driver.clear(*self.identifiers, *path)
+        path = tuple(str(p) for p in nested_path)
+        identifier_data = self.identifier_data.add_identifier(*path)
+        await self.driver.clear(identifier_data)
 
     def is_group(self, item: Any) -> bool:
         """A helper method for `__getattr__`. Most developers will have no need
@@ -368,7 +389,7 @@ class Group(Value):
             If the value does not exist yet in Config's internal storage.
 
         """
-        path = [str(p) for p in nested_path]
+        path = tuple(str(p) for p in nested_path)
 
         if default is ...:
             poss_default = self.defaults
@@ -380,8 +401,9 @@ class Group(Value):
             else:
                 default = poss_default
 
+        identifier_data = self.identifier_data.add_identifier(*path)
         try:
-            raw = await self.driver.get(*self.identifiers, *path)
+            raw = await self.driver.get(identifier_data)
         except KeyError:
             if default is not ...:
                 return default
@@ -456,16 +478,17 @@ class Group(Value):
         value
             The value to store.
         """
-        path = [str(p) for p in nested_path]
+        path = tuple(str(p) for p in nested_path)
+        identifier_data = self.identifier_data.add_identifier(*path)
         if isinstance(value, dict):
             value = _str_key_dict(value)
-        await self.driver.set(*self.identifiers, *path, value=value)
+        await self.driver.set(identifier_data, value=value)
 
 
 class Config:
     """Configuration manager for cogs and Red.
 
-    You should always use `get_conf` or to instantiate a Config object. Use
+    You should always use `get_conf` to instantiate a Config object. Use
     `get_core_conf` for Config used in the core package.
 
     .. important::
@@ -505,6 +528,19 @@ class Config:
     USER = "USER"
     MEMBER = "MEMBER"
 
+    def __new__(cls, cog_name, unique_identifier, *args, **kwargs):
+        key = (cog_name, unique_identifier)
+
+        if key[0] is None:
+            raise ValueError("You must provide either the cog instance or a cog name.")
+
+        if key in _config_cache:
+            conf = _config_cache[key]
+        else:
+            conf = object.__new__(cls)
+            _config_cache[key] = conf
+        return conf
+
     def __init__(
         self,
         cog_name: str,
@@ -520,9 +556,15 @@ class Config:
         self.force_registration = force_registration
         self._defaults = defaults or {}
 
+        self.custom_groups = {}
+
     @property
     def defaults(self):
         return deepcopy(self._defaults)
+
+    @staticmethod
+    def _create_uuid(identifier: int):
+        return str(identifier)
 
     @classmethod
     def get_conf(cls, cog_instance, identifier: int, force_registration=False, cog_name=None):
@@ -564,21 +606,21 @@ class Config:
             cog_path_override = cog_data_path(cog_instance=cog_instance)
 
         cog_name = cog_path_override.stem
-        uuid = str(hash(identifier))
+        # uuid = str(hash(identifier))
+        uuid = cls._create_uuid(identifier)
 
         # We have to import this here otherwise we have a circular dependency
         from .data_manager import basic_config
 
-        log.debug("Basic config: \n\n{}".format(basic_config))
-
         driver_name = basic_config.get("STORAGE_TYPE", "JSON")
         driver_details = basic_config.get("STORAGE_DETAILS", {})
-
-        log.debug("Using driver: '{}'".format(driver_name))
 
         driver = get_driver(
             driver_name, cog_name, uuid, data_path_override=cog_path_override, **driver_details
         )
+        if driver_name == BackendType.JSON.value:
+            driver.migrate_identifier(identifier)
+
         conf = cls(
             cog_name=cog_name,
             unique_identifier=uuid,
@@ -783,11 +825,36 @@ class Config:
         """
         self._register_default(group_identifier, **kwargs)
 
-    def _get_base_group(self, key: str, *identifiers: str) -> Group:
+    def init_custom(self, group_identifier: str, identifier_count: int):
+        """
+        Initializes a custom group for usage. This method must be called first!
+        """
+        if group_identifier in self.custom_groups:
+            raise ValueError(f"Group identifier already registered: {group_identifier}")
+
+        self.custom_groups[group_identifier] = identifier_count
+
+    def _get_base_group(self, category: str, *primary_keys: str) -> Group:
+        is_custom = category not in (
+            self.GLOBAL,
+            self.GUILD,
+            self.USER,
+            self.MEMBER,
+            self.ROLE,
+            self.CHANNEL,
+        )
         # noinspection PyTypeChecker
+        identifier_data = IdentifierData(
+            uuid=self.unique_identifier,
+            category=category,
+            primary_key=primary_keys,
+            identifiers=(),
+            custom_group_data=self.custom_groups,
+            is_custom=is_custom,
+        )
         return Group(
-            identifiers=(key, *identifiers),
-            defaults=self.defaults.get(key, {}),
+            identifier_data=identifier_data,
+            defaults=self.defaults.get(category, {}),
             driver=self.driver,
             force_registration=self.force_registration,
         )
@@ -891,6 +958,8 @@ class Config:
             The custom group's Group object.
 
         """
+        if group_identifier not in self.custom_groups:
+            raise ValueError(f"Group identifier not initialized: {group_identifier}")
         return self._get_base_group(str(group_identifier), *map(str, identifiers))
 
     async def _all_from_scope(self, scope: str) -> Dict[int, Dict[Any, Any]]:
@@ -908,7 +977,7 @@ class Config:
         ret = {}
 
         try:
-            dict_ = await self.driver.get(*group.identifiers)
+            dict_ = await self.driver.get(group.identifier_data)
         except KeyError:
             pass
         else:
@@ -1025,7 +1094,7 @@ class Config:
         if guild is None:
             group = self._get_base_group(self.MEMBER)
             try:
-                dict_ = await self.driver.get(*group.identifiers)
+                dict_ = await self.driver.get(group.identifier_data)
             except KeyError:
                 pass
             else:
@@ -1034,7 +1103,7 @@ class Config:
         else:
             group = self._get_base_group(self.MEMBER, str(guild.id))
             try:
-                guild_data = await self.driver.get(*group.identifiers)
+                guild_data = await self.driver.get(group.identifier_data)
             except KeyError:
                 pass
             else:
@@ -1061,7 +1130,10 @@ class Config:
         """
         if not scopes:
             # noinspection PyTypeChecker
-            group = Group(identifiers=(), defaults={}, driver=self.driver)
+            identifier_data = IdentifierData(
+                self.unique_identifier, "", (), (), self.custom_groups
+            )
+            group = Group(identifier_data, defaults={}, driver=self.driver)
         else:
             group = self._get_base_group(*scopes)
         await group.clear()

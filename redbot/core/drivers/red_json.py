@@ -6,7 +6,7 @@ import logging
 
 from ..json_io import JsonIO
 
-from .red_base import BaseDriver
+from .red_base import BaseDriver, IdentifierData
 
 __all__ = ["JSON"]
 
@@ -69,6 +69,9 @@ class JSON(BaseDriver):
 
         self._load_data()
 
+    async def has_valid_connection(self) -> bool:
+        return True
+
     @property
     def data(self):
         return _shared_datastore.get(self.cog_name)
@@ -93,16 +96,28 @@ class JSON(BaseDriver):
             self.data = {}
             self.jsonIO._save_json(self.data)
 
-    async def get(self, *identifiers: Tuple[str]):
+    def migrate_identifier(self, raw_identifier: int):
+        if self.unique_cog_identifier in self.data:
+            # Data has already been migrated
+            return
+        poss_identifiers = [str(raw_identifier), str(hash(raw_identifier))]
+        for ident in poss_identifiers:
+            if ident in self.data:
+                self.data[self.unique_cog_identifier] = self.data[ident]
+                del self.data[ident]
+                self.jsonIO._save_json(self.data)
+                break
+
+    async def get(self, identifier_data: IdentifierData):
         partial = self.data
-        full_identifiers = (self.unique_cog_identifier, *identifiers)
+        full_identifiers = identifier_data.to_tuple()
         for i in full_identifiers:
             partial = partial[i]
         return copy.deepcopy(partial)
 
-    async def set(self, *identifiers: str, value=None):
+    async def set(self, identifier_data: IdentifierData, value=None):
         partial = self.data
-        full_identifiers = (self.unique_cog_identifier, *identifiers)
+        full_identifiers = identifier_data.to_tuple()
         for i in full_identifiers[:-1]:
             if i not in partial:
                 partial[i] = {}
@@ -111,9 +126,9 @@ class JSON(BaseDriver):
         partial[full_identifiers[-1]] = copy.deepcopy(value)
         await self.jsonIO._threadsafe_save_json(self.data)
 
-    async def clear(self, *identifiers: str):
+    async def clear(self, identifier_data: IdentifierData):
         partial = self.data
-        full_identifiers = (self.unique_cog_identifier, *identifiers)
+        full_identifiers = identifier_data.to_tuple()
         try:
             for i in full_identifiers[:-1]:
                 partial = partial[i]
@@ -122,6 +137,30 @@ class JSON(BaseDriver):
             pass
         else:
             await self.jsonIO._threadsafe_save_json(self.data)
+
+    async def import_data(self, cog_data, custom_group_data):
+        def update_write_data(identifier_data: IdentifierData, data):
+            partial = self.data
+            idents = identifier_data.to_tuple()
+            for ident in idents[:-1]:
+                if ident not in partial:
+                    partial[ident] = {}
+                partial = partial[ident]
+            partial[idents[-1]] = data
+
+        for category, all_data in cog_data:
+            splitted_pkey = self._split_primary_key(category, custom_group_data, all_data)
+            for pkey, data in splitted_pkey:
+                ident_data = IdentifierData(
+                    self.unique_cog_identifier,
+                    category,
+                    pkey,
+                    (),
+                    custom_group_data.get(category, {}),
+                    is_custom=category in custom_group_data,
+                )
+                update_write_data(ident_data, data)
+        await self.jsonIO._threadsafe_save_json(self.data)
 
     def get_config_details(self):
         return

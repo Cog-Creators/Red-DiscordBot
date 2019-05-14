@@ -1,5 +1,4 @@
 import datetime
-import os
 from typing import Union, List, Optional
 
 import discord
@@ -42,6 +41,17 @@ _DEFAULT_MEMBER = {"name": "", "balance": 0, "created_at": 0}
 
 _DEFAULT_USER = _DEFAULT_MEMBER
 
+_conf: Config = None
+
+
+def _init():
+    global _conf
+    _conf = Config.get_conf(None, 384734293238749, cog_name="Bank", force_registration=True)
+    _conf.register_global(**_DEFAULT_GLOBAL)
+    _conf.register_guild(**_DEFAULT_GUILD)
+    _conf.register_member(**_DEFAULT_MEMBER)
+    _conf.register_user(**_DEFAULT_USER)
+
 
 class Account:
     """A single account.
@@ -52,18 +62,6 @@ class Account:
         self.name = name
         self.balance = balance
         self.created_at = created_at
-
-
-def _register_defaults():
-    _conf.register_global(**_DEFAULT_GLOBAL)
-    _conf.register_guild(**_DEFAULT_GUILD)
-    _conf.register_member(**_DEFAULT_MEMBER)
-    _conf.register_user(**_DEFAULT_USER)
-
-
-if not os.environ.get("BUILDING_DOCS"):
-    _conf = Config.get_conf(None, 384734293238749, cog_name="Bank", force_registration=True)
-    _register_defaults()
 
 
 def _encoded_current_time() -> int:

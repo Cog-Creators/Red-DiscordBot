@@ -111,16 +111,14 @@ class Trivia(commands.Cog):
         await settings.allow_override.set(enabled)
         if enabled:
             await ctx.send(
-                _(
-                    "Done. Trivia lists can now override the trivia settings for this server."
-                ).format(now=enabled)
+                _("Done. Trivia lists can now override the trivia settings for this server.")
             )
         else:
             await ctx.send(
                 _(
                     "Done. Trivia lists can no longer override the trivia settings for this "
                     "server."
-                ).format(now=enabled)
+                )
             )
 
     @triviaset.command(name="botplays", usage="<true_or_false>")
@@ -446,6 +444,7 @@ class Trivia(commands.Cog):
                 break
         return "\n".join(lines)
 
+    @commands.Cog.listener()
     async def on_trivia_end(self, session: TriviaSession):
         """Event for a trivia session ending.
 
@@ -506,7 +505,7 @@ class Trivia(commands.Cog):
 
         with path.open(encoding="utf-8") as file:
             try:
-                dict_ = yaml.load(file)
+                dict_ = yaml.safe_load(file)
             except yaml.error.YAMLError as exc:
                 raise InvalidListError("YAML parsing failed.") from exc
             else:
@@ -522,7 +521,7 @@ class Trivia(commands.Cog):
 
         return personal_lists + get_core_lists()
 
-    def __unload(self):
+    def cog_unload(self):
         for session in self.trivia_sessions:
             session.force_stop()
 

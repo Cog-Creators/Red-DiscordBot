@@ -8,7 +8,33 @@ Installing Red on Windows
 Needed Software
 ---------------
 
-* `Python <https://www.python.org/downloads/>`_ - Red needs Python 3.6.6 or greater on Windows
+The following software dependencies can all be installed quickly and easily through powershell,
+using a trusted package manager for windows called `Chocolatey <https://chocolatey.org>`_
+
+We also provide instructions for manually installing all of the dependencies.
+
+******************************************
+Installing using powershell and chocolatey
+******************************************
+
+To install via powershell, search "powershell" in the windows start menu,
+right-click on it and then click "Run as administrator"
+
+Then run each of the following commands:
+
+.. code-block:: none
+
+    Set-ExecutionPolicy Bypass -Scope Process -Force
+    iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    choco install git --params "/GitOnlyOnPath /WindowsTerminal" -y
+    choco install jre8 python -y; exit
+
+
+********************************
+Manually installing dependencies
+********************************
+
+* `Python <https://www.python.org/downloads/>`_ - Red needs Python 3.7.0 or greater
 
 .. note:: Please make sure that the box to add Python to PATH is CHECKED, otherwise
           you may run into issues when trying to run Red
@@ -40,19 +66,19 @@ Installing Red
 
     .. code-block:: none
 
-        python -m pip install -U --process-dependency-links --no-cache-dir Red-DiscordBot
+        python -m pip install -U Red-DiscordBot
 
   * With audio:
 
     .. code-block:: none
 
-        python -m pip install -U --process-dependency-links --no-cache-dir Red-DiscordBot[voice]
+        python -m pip install -U Red-DiscordBot[voice]
 
   * With audio and MongoDB support:
 
     .. code-block:: none
 
-        python -m pip install -U --process-dependency-links --no-cache-dir Red-DiscordBot[voice,mongo]
+        python -m pip install -U Red-DiscordBot[voice,mongo]
 
   .. note::
 
@@ -84,6 +110,9 @@ Once done setting up the instance, run the following command to run Red:
     redbot <your instance name>
 
 It will walk through the initial setup, asking for your token and a prefix.
+You can find out how to obtain a token with
+`this guide <https://discordpy.readthedocs.io/en/v1.0.1/discord.html#creating-a-bot-account>`_,
+section "Creating a Bot Account".
 
 You may also run Red via the launcher, which allows you to restart the bot
 from discord, and enable auto-restart. You may also update the bot from the
