@@ -28,7 +28,7 @@ def unsafe(f, message=None):
 def warn_unsafe(f, message=None):
     """
     Function to mark function from dependencies as unsafe for use.
-    
+
     Warning: There is no check that a function has already been modified.
     This form should only be used in init, if you want to mark an internal function
     as unsafe, use the decorator form above.

@@ -13,10 +13,6 @@ from typing import (
     Union as _Union,
 )
 
-import yaml
-import discord
-
-from redbot.core.utils.safety import warn_unsafe
 
 MIN_PYTHON_VERSION = (3, 7, 0)
 
@@ -183,6 +179,3 @@ version_info = VersionInfo.from_str(__version__)
 
 # Filter fuzzywuzzy slow sequence matcher warning
 _warnings.filterwarnings("ignore", module=r"fuzzywuzzy.*")
-
-# Warn on known unsafe usage of dependencies
-yaml.load = warn_unsafe(yaml.load, "Use yaml.safe_load instead. See CVE-2017-18342")
