@@ -131,15 +131,13 @@ def init_events(bot, cli_flags):
                         owners.append(co_owner)
 
                 for owner in owners:
-                    try:
+                    with contextlib.suppress(discord.HTTPException):
                         await owner.send(
                             "Your Red instance is out of date! {} is the current "
                             "version, however you are using {}!".format(
                                 data["info"]["version"], red_version
                             )
                         )
-                    except (discord.HTTPException, discord.Forbidden):
-                        pass
         INFO2 = []
 
         mongo_enabled = storage_type() != "JSON"
