@@ -182,7 +182,7 @@ __version__ = "3.0.2"
 version_info = VersionInfo.from_str(__version__)
 
 # Filter fuzzywuzzy slow sequence matcher warning
-warnings.filterwarnings("ignore", module=r"fuzzywuzzy.*")
+_warnings.filterwarnings("ignore", module=r"fuzzywuzzy.*")
 
 # Warn on known unsafe usage of dependencies
 yaml.load = warn_unsafe(yaml.load, "Use yaml.safe_load instead. See CVE-2017-18342")
