@@ -33,6 +33,7 @@ Audio
 Core
 ----
 
+ * Warn on usage of ``yaml.load`` (`#2326`_)
  * Delete cooldown messages when expired (`#2469`_)
  * ``[p]set locale`` now only accepts actual locales (`#2553`_)
  * ``[p]listlocales`` now displays ``en-US`` (`#2553`_)
@@ -107,6 +108,7 @@ Utility Functions
  * ``Tunnel`` - Spelling correction of method name - changed ``files_from_attatch`` to ``files_from_attach`` (old name is left for backwards compatibility) (`#2496`_)
  * ``Tunnel`` - fixed behavior of ``react_close()``, now when tunnel closes message will be sent to other end (`#2507`_)
 
+.. _#2326: https://github.com/Cog-Creators/Red-DiscordBot/pull/2326
 .. _#2328: https://github.com/Cog-Creators/Red-DiscordBot/pull/2328
 .. _#2437: https://github.com/Cog-Creators/Red-DiscordBot/pull/2437
 .. _#2457: https://github.com/Cog-Creators/Red-DiscordBot/pull/2457
