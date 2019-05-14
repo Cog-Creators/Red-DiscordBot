@@ -119,13 +119,17 @@ def init_events(bot, cli_flags):
                     "Outdated version! {} is available "
                     "but you're using {}".format(data["info"]["version"], red_version)
                 )
-                owner = await bot.fetch_user(bot.owner_id)
-                await owner.send(
-                    "Your Red instance is out of date! {} is the current "
-                    "version, however you are using {}!".format(
-                        data["info"]["version"], red_version
+                owners = []
+                owners.append(await bot.fetch_user(bot.owner_id))
+                for co_owner in bot._co_owners:
+                    owners.append(await bot.fetch_user(co_owner))
+                for owner in owners:
+                    await owner.send(
+                        "Your Red instance is out of date! {} is the current "
+                        "version, however you are using {}!".format(
+                            data["info"]["version"], red_version
+                        )
                     )
-                )
         INFO2 = []
 
         mongo_enabled = storage_type() != "JSON"
