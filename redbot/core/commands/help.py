@@ -316,8 +316,7 @@ class RedHelpFormatter:
                         yield nm, doc, max_width - width_gap
 
                 subtext = "\n".join(
-                    f"  {name:<{width}} {doc}"
-                    for name, doc, width in width_maker(coms.items())
+                    f"  {name:<{width}} {doc}" for name, doc, width in width_maker(coms.items())
                 )
 
             to_page = "\n\n".join(filter(None, (description, subtext_header, subtext)))
