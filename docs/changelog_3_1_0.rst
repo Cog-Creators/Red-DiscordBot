@@ -66,6 +66,7 @@ Audio
 Core
 ----
 
+ * Warn on usage of ``yaml.load`` (`#2326`_)
  * New Event dispatch: ``on_message_without_command`` (`#2338`_)
  * Improve output format of cooldown messages (`#2412`_)
  * Delete cooldown messages when expired (`#2469`_)
@@ -173,6 +174,7 @@ Utility Functions
  * ``Tunnel`` - fixed behavior of ``react_close()``, now when tunnel closes message will be sent to other end (`#2507`_)
  * ``chat_formatting.humanize_list`` - Improved error handling of empty lists (`#2597`_)
 
+.. _#2326: https://github.com/Cog-Creators/Red-DiscordBot/pull/2326
 .. _#2328: https://github.com/Cog-Creators/Red-DiscordBot/pull/2328
 .. _#2338: https://github.com/Cog-Creators/Red-DiscordBot/pull/2338
 .. _#2412: https://github.com/Cog-Creators/Red-DiscordBot/pull/2412
