@@ -116,6 +116,12 @@ Filter
 
  * Filter performs significantly better on large servers. (`#2509`_)
 
+--------
+Launcher
+--------
+
+* Fixed extras in the launcher (`#2588`_)
+
 ---
 Mod
 ---
@@ -205,6 +211,7 @@ Utility Functions
 .. _#2579: https://github.com/Cog-Creators/Red-DiscordBot/pull/2579
 .. _#2586: https://github.com/Cog-Creators/Red-DiscordBot/pull/2586
 .. _#2587: https://github.com/Cog-Creators/Red-DiscordBot/pull/2587
+.. _#2588: https://github.com/Cog-Creators/Red-DiscordBot/pull/2588
 .. _#2590: https://github.com/Cog-Creators/Red-DiscordBot/pull/2590
 .. _#2591: https://github.com/Cog-Creators/Red-DiscordBot/pull/2591
 .. _#2592: https://github.com/Cog-Creators/Red-DiscordBot/pull/2592
