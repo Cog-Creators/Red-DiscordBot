@@ -131,7 +131,7 @@ class Streams(commands.Cog):
     @staticmethod
     async def check_online(ctx: commands.Context, stream):
         try:
-            embed = await stream.is_online()
+            info = await stream.is_online()
         except OfflineStream:
             await ctx.send(_("That user is offline."))
         except StreamNotFound:
@@ -155,6 +155,14 @@ class Streams(commands.Cog):
                 _("Something went wrong whilst trying to contact the stream service's API.")
             )
         else:
+            if isinstance(info, tuple):
+                embed, is_rerun = info
+                ignore_reruns = await self.db.guild(channel.guild).ignore_reruns()
+                if ignore_reruns and is_rerun:
+                    await ctx.send(_("That user is offline."))
+                    return
+            else:
+                embed = info
             await ctx.send(embed=embed)
 
     @commands.group()
