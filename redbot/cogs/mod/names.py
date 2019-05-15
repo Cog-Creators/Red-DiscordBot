@@ -164,7 +164,7 @@ class ModInfo(MixinMeta):
         await ctx.send(embed=data)
 
     @commands.command()
-    async def names(self, ctx: commands.Context, user: discord.Member):
+    async def names(self, ctx: commands.Context, *, user: discord.Member):
         """Show previous names and nicknames of a user."""
         names, nicks = await self.get_names_and_nicks(user)
         msg = ""
