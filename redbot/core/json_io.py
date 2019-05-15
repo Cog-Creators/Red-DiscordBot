@@ -19,7 +19,7 @@ MINIFIED = {"sort_keys": False, "separators": (",", ":")}
 class JsonIO:
     """Basic functions for atomic saving / loading of json files"""
 
-    def __init__(self, path: Path = Path.cwd()):
+    def __init__(self, path: Path):
         """
         :param path: Full path to file.
         """
@@ -77,14 +77,7 @@ class JsonIO:
         async with self._lock:
             await loop.run_in_executor(None, func)
 
-    # noinspection PyUnresolvedReferences
     def _load_json(self):
         with self.path.open(encoding="utf-8", mode="r") as f:
             data = json.load(f)
         return data
-
-    async def _threadsafe_load_json(self, path):
-        loop = asyncio.get_event_loop()
-        func = functools.partial(self._load_json, path)
-        async with self._lock:
-            return await loop.run_in_executor(None, func)

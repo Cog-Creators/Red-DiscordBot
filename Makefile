@@ -1,8 +1,8 @@
 # Python Code Style
 reformat:
-	black -l 99 `git ls-files "*.py"`
+	black -l 99 `git ls-files "*.py"` --target-version py37
 stylecheck:
-	black --check -l 99 `git ls-files "*.py"`
+	black --check -l 99 `git ls-files "*.py"` --target-version py37
 
 # Translations
 gettext:

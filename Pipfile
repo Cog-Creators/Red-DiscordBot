@@ -4,8 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-red-discordbot = {path = ".",editable = true,extras = ['mongo']}
+red-discordbot = {path = ".",editable = true,extras = ['mongo', 'postgres']}
 
 [dev-packages]
 tox = "*"
-red-discordbot = {path = ".",editable = true,extras = ['docs', 'test', 'style', 'mongo']}
+red-discordbot = {path = ".",editable = true,extras = ['docs', 'test', 'style']}
