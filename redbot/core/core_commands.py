@@ -1126,18 +1126,15 @@ class Core(commands.Cog, CoreLogic):
             verify = not await ctx.bot.db.help.verify_checks()
         await ctx.bot.db.help.verify_checks.set(verify)
         if verify:
-            await ctx.send(
-                _("Help will only show for commands which can be run.")
-            )
+            await ctx.send(_("Help will only show for commands which can be run."))
         else:
-            await ctx.send(
-                _("Help will show up without checking if the commands can be run.")
-            )
+            await ctx.send(_("Help will show up without checking if the commands can be run."))
 
     @helpset.command(name="verifyexists")
     async def helpset_verifyexists(self, ctx: commands.Context, verify: bool = None):
         """
-        This allows the bot to respond when a help topic is not found.
+        This allows the bot to respond indicating the existence of a specific
+        help topic even if the user can't use it.
 
         Note: This setting on it's own does not fully prevent command enumeration.
 
@@ -1148,14 +1145,12 @@ class Core(commands.Cog, CoreLogic):
             verify = not await ctx.bot.db.help.verify_exists()
         await ctx.bot.db.help.verify_exists.set(verify)
         if verify:
-            await ctx.send(
-                _("Help will give information about non-existant help topics")
-            )
+            await ctx.send(_("Help will verify the existence of help topics"))
         else:
             await ctx.send(
                 _(
-                    "Help will only give information about non-existant "
-                    "help topics through fuzzy search (if enabled)."
+                    "Help will only verify the existence of "
+                    "help topics via fuzzy help (if enabled)."
                 )
             )
 
