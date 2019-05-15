@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 import discord
-from redbot.core import Config
+from redbot.core import Config, commands
 from redbot.core.bot import Red
 
 
@@ -19,6 +19,13 @@ class MixinMeta(ABC):
         self.cache: dict
         self.ban_queue: List[Tuple[int, int]]
         self.unban_queue: List[Tuple[int, int]]
+
+    @staticmethod
+    @abstractmethod
+    async def _voice_perm_check(
+        ctx: commands.Context, user_voice_state: Optional[discord.VoiceState], **perms: bool
+    ) -> bool:
+        raise NotImplementedError()
 
     @classmethod
     @abstractmethod

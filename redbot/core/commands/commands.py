@@ -156,6 +156,13 @@ class Command(CogCommandMixin, commands.Command):
         self._help_override = kwargs.pop("help_override", None)
         self.translator = kwargs.pop("i18n", None)
 
+    def _ensure_assignment_on_copy(self, other):
+        super()._ensure_assignment_on_copy(other)
+
+        # Red specific
+        other.requires = self.requires
+        return other
+
     @property
     def help(self):
         """Help string for this command.
