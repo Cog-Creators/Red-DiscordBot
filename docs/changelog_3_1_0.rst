@@ -1,8 +1,41 @@
 .. v3.1.0 Changelog
 
-================
+####################
+v3.1.0 Release Notes
+####################
+
+----------------------
+Mongo Driver Migration
+----------------------
+
+Due to the required changes of the Mongo driver for Config, all existing Mongo users will need to
+complete the below instructions to continue to use Mongo after updating to 3.1.
+This includes **all** users, regardless of any prior migration attempt to a development version of
+3.1.
+
+ #. Upgrade to 3.1
+ #. Convert all existing Mongo instances to JSON using the new converters
+ #. Start each bot instance while using JSON and load any and all cogs you have in order to successfully preserve data.
+ #. Turn each instance off and convert back to Mongo.
+    **NOTE:** No data is wiped from your Mongo database when converting to JSON.
+    You may want to use a *new* database name when converting back to Mongo in order to not have duplicate data.
+
+-------------
+Setup Utility
+-------------
+
+New commands were introduced to simplify the conversion/editing/removal process both on our end and the users end.
+Please use ``redbot-setup --help`` to learn how to use the new features.
+
+.. HINT::
+
+    Converting to JSON: ``redbot-setup convert <instance_name> json``
+
+    Converting to Mongo: ``redbot-setup convert <instance_name> mongo``
+
+################
 v3.1.0 Changelog
-================
+################
 
 -----
 Audio
