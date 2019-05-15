@@ -497,6 +497,56 @@ class KickBanMixin(MixinMeta):
 
     @commands.command()
     @commands.guild_only()
+    @commands.mod_or_permissions(move_members=True)
+    async def voicekick(
+        self, ctx: commands.Context, member: discord.Member, *, reason: str = None
+    ):
+        """Kick a member from a voice channel."""
+        author = ctx.author
+        guild = ctx.guild
+        user_voice_state: discord.VoiceState = member.voice
+
+        if await self._voice_perm_check(ctx, user_voice_state, move_members=True) is False:
+            return
+        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, member):
+            await ctx.send(
+                _(
+                    "I cannot let you do that. You are "
+                    "not higher than the user in the role "
+                    "hierarchy."
+                )
+            )
+            return
+        case_channel = member.voice.channel
+        # Store this channel for the case channel.
+
+        try:
+            await member.move_to(discord.Object(id=None))
+            # Work around till we get D.py 1.1.0, whereby we can directly do None.
+        except discord.Forbidden:  # Very unlikely that this will ever occur
+            await ctx.send(_("I am unable to kick this member from the voice channel."))
+            return
+        except discord.HTTPException:
+            await ctx.send(_("Something went wrong while attempting to kick that member"))
+            return
+        else:
+            try:
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    ctx.message.created_at,
+                    "vkick",
+                    member,
+                    author,
+                    reason,
+                    until=None,
+                    channel=case_channel,
+                )
+            except RuntimeError as e:
+                await ctx.send(e)
+
+    @commands.command()
+    @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
     @checks.admin_or_permissions(ban_members=True)
     async def unban(self, ctx: commands.Context, user_id: int, *, reason: str = None):
@@ -508,8 +558,9 @@ class KickBanMixin(MixinMeta):
         click the user and select 'Copy ID'."""
         guild = ctx.guild
         author = ctx.author
-        user = await self.bot.fetch_user(user_id)
-        if not user:
+        try:
+            user = await self.bot.fetch_user(user_id)
+        except discord.errors.NotFound:
             await ctx.send(_("Couldn't find a user with that ID!"))
             return
         audit_reason = get_audit_reason(ctx.author, reason)

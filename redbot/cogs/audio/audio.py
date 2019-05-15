@@ -14,6 +14,7 @@ import os
 import random
 import re
 import time
+from typing import Optional
 import redbot.core
 from redbot.core import Config, commands, checks, bank
 from redbot.core.data_manager import cog_data_path
@@ -29,11 +30,11 @@ from redbot.core.utils.menus import (
 )
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from urllib.parse import urlparse
-from .manager import shutdown_lavalink_server, start_lavalink_server, maybe_download_lavalink
+from .manager import ServerManager
 
 _ = Translator("Audio", __file__)
 
-__version__ = "0.0.8b"
+__version__ = "0.0.9"
 __author__ = ["aikaterna"]
 
 log = logging.getLogger("red.audio")
@@ -43,40 +44,45 @@ log = logging.getLogger("red.audio")
 class Audio(commands.Cog):
     """Play audio through voice channels."""
 
+    _default_lavalink_settings = {
+        "host": "localhost",
+        "rest_port": 2333,
+        "ws_port": 2333,
+        "password": "youshallnotpass",
+    }
+
     def __init__(self, bot):
         super().__init__()
         self.bot = bot
         self.config = Config.get_conf(self, 2711759130, force_registration=True)
 
-        default_global = {
-            "host": "localhost",
-            "rest_port": "2333",
-            "ws_port": "2332",
-            "password": "youshallnotpass",
-            "status": False,
-            "current_version": redbot.core.VersionInfo.from_str("3.0.0a0").to_json(),
-            "use_external_lavalink": False,
-            "restrict": True,
-        }
+        default_global = dict(
+            status=False,
+            use_external_lavalink=False,
+            restrict=True,
+            current_version=redbot.core.VersionInfo.from_str("3.0.0a0").to_json(),
+            localpath=str(cog_data_path(raw_name="Audio")),
+            **self._default_lavalink_settings,
+        )
 
-        default_guild = {
-            "disconnect": False,
-            "dj_enabled": False,
-            "dj_role": None,
-            "emptydc_enabled": False,
-            "emptydc_timer": 0,
-            "jukebox": False,
-            "jukebox_price": 0,
-            "maxlength": 0,
-            "playlists": {},
-            "notify": False,
-            "repeat": False,
-            "shuffle": False,
-            "thumbnail": False,
-            "volume": 100,
-            "vote_enabled": False,
-            "vote_percent": 0,
-        }
+        default_guild = dict(
+            disconnect=False,
+            dj_enabled=False,
+            dj_role=None,
+            emptydc_enabled=False,
+            emptydc_timer=0,
+            jukebox=False,
+            jukebox_price=0,
+            maxlength=0,
+            playlists={},
+            notify=False,
+            repeat=False,
+            shuffle=False,
+            thumbnail=False,
+            volume=100,
+            vote_enabled=False,
+            vote_percent=0,
+        )
 
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)
@@ -85,8 +91,23 @@ class Audio(commands.Cog):
         self._connect_task = None
         self._disconnect_task = None
         self._cleaned_up = False
+
         self.spotify_token = None
         self.play_lock = {}
+
+        self._manager: Optional[ServerManager] = None
+
+    async def cog_before_invoke(self, ctx):
+        if self.llsetup in [ctx.command, ctx.command.root_parent]:
+            pass
+        elif self._connect_task.cancelled():
+            await ctx.send(
+                "You have attempted to run Audio's Lavalink server on an unsupported"
+                " architecture. Only settings related commands will be available."
+            )
+            raise RuntimeError(
+                "Not running audio command due to invalid machine architecture for Lavalink."
+            )
 
     async def initialize(self):
         self._restart_connect()
@@ -102,16 +123,33 @@ class Audio(commands.Cog):
     async def attempt_connect(self, timeout: int = 30):
         while True:  # run until success
             external = await self.config.use_external_lavalink()
-            if not external:
-                shutdown_lavalink_server()
-                await maybe_download_lavalink(self.bot.loop, self)
-                await start_lavalink_server(self.bot.loop)
-            try:
+            if external is False:
+                settings = self._default_lavalink_settings
+                host = settings["host"]
+                password = settings["password"]
+                rest_port = settings["rest_port"]
+                ws_port = settings["ws_port"]
+                if self._manager is not None:
+                    await self._manager.shutdown()
+                self._manager = ServerManager()
+                try:
+                    await self._manager.start()
+                except RuntimeError as exc:
+                    log.exception(
+                        "Exception whilst starting internal Lavalink server, retrying...",
+                        exc_info=exc,
+                    )
+                    await asyncio.sleep(1)
+                    continue
+                except asyncio.CancelledError:
+                    log.exception("Invalid machine architecture, cannot run Lavalink.")
+                    raise
+            else:
                 host = await self.config.host()
                 password = await self.config.password()
                 rest_port = await self.config.rest_port()
                 ws_port = await self.config.ws_port()
-
+            try:
                 await lavalink.initialize(
                     bot=self.bot,
                     host=host,
@@ -121,9 +159,10 @@ class Audio(commands.Cog):
                     timeout=timeout,
                 )
                 return  # break infinite loop
-            except Exception:
-                if not external:
-                    shutdown_lavalink_server()
+            except asyncio.TimeoutError:
+                log.error("Connecting to Lavalink server timed out, retrying...")
+                if external is False and self._manager is not None:
+                    await self._manager.shutdown()
                 await asyncio.sleep(1)  # prevent busylooping
 
     async def event_handler(self, player, event_type, extra):
@@ -133,19 +172,19 @@ class Audio(commands.Cog):
 
         async def _players_check():
             try:
-                get_players = [p for p in lavalink.players if p.current is not None]
-                get_single_title = get_players[0].current.title
+                get_single_title = lavalink.active_players()[0].current.title
                 if get_single_title == "Unknown title":
-                    get_single_title = get_players[0].current.uri
+                    get_single_title = lavalink.active_players()[0].current.uri
                     if not get_single_title.startswith("http"):
                         get_single_title = get_single_title.rsplit("/", 1)[-1]
-                elif "localtracks/" in get_players[0].current.uri:
+                elif "localtracks/" in lavalink.active_players()[0].current.uri:
                     get_single_title = "{} - {}".format(
-                        get_players[0].current.author, get_players[0].current.title
+                        lavalink.active_players()[0].current.author,
+                        lavalink.active_players()[0].current.title,
                     )
                 else:
-                    get_single_title = get_players[0].current.title
-                playing_servers = len(get_players)
+                    get_single_title = lavalink.active_players()[0].current.title
+                playing_servers = len(lavalink.active_players())
             except IndexError:
                 get_single_title = None
                 playing_servers = 0
@@ -356,6 +395,87 @@ class Audio(commands.Cog):
         await self.config.guild(ctx.guild).jukebox.set(jukebox)
 
     @audioset.command()
+    @checks.is_owner()
+    async def localpath(self, ctx, local_path=None):
+        """Set the localtracks path if the Lavalink.jar is not run from the Audio data folder.
+
+        Leave the path blank to reset the path to the default, the Audio data directory.
+        """
+
+        if not local_path:
+            await self.config.localpath.set(str(cog_data_path(raw_name="Audio")))
+            return await self._embed_msg(
+                ctx, _("The localtracks path location has been reset to the default location.")
+            )
+
+        info_msg = _(
+            "This setting is only for bot owners to set a localtracks folder location "
+            "if the Lavalink.jar is being ran from outside of the Audio data directory.\n"
+            "In the example below, the full path for 'ParentDirectory' must be passed to this command.\n"
+            "The path must not contain spaces.\n"
+            "```\n"
+            "ParentDirectory\n"
+            "  |__ localtracks  (folder)\n"
+            "  |     |__ Awesome Album Name  (folder)\n"
+            "  |           |__01 Cool Song.mp3\n"
+            "  |           |__02 Groovy Song.mp3\n"
+            "  |\n"
+            "  |__ Lavalink.jar\n"
+            "  |__ application.yml\n"
+            "```\n"
+            "The folder path given to this command must contain the Lavalink.jar, the application.yml, and the localtracks folder.\n"
+            "Use this command with no path given to reset it to the default, the Audio data directory for this bot.\n"
+            "Do you want to continue to set the provided path for local tracks?"
+        )
+        info = await ctx.maybe_send_embed(info_msg)
+
+        start_adding_reactions(info, ReactionPredicate.YES_OR_NO_EMOJIS)
+        pred = ReactionPredicate.yes_or_no(info, ctx.author)
+        await ctx.bot.wait_for("reaction_add", check=pred)
+
+        if not pred.result:
+            try:
+                await info.delete()
+            except discord.errors.Forbidden:
+                pass
+            return
+
+        try:
+            if os.getcwd() != local_path:
+                os.chdir(local_path)
+            os.listdir(local_path)
+        except OSError:
+            return await self._embed_msg(
+                ctx,
+                _("{local_path} does not seem like a valid path.").format(local_path=local_path),
+            )
+
+        jar_check = os.path.isfile(local_path + "/Lavalink.jar")
+        yml_check = os.path.isfile(local_path + "/application.yml")
+
+        if not jar_check and not yml_check:
+            filelist = "a Lavalink.jar and an application.yml"
+        elif jar_check and not yml_check:
+            filelist = "an application.yml"
+        elif not jar_check and yml_check:
+            filelist = "a Lavalink.jar"
+        else:
+            filelist = None
+        if filelist is not None:
+            warn_msg = _(
+                "The path that was entered does not have {filelist} file in "
+                "that location. The path will still be saved, but please check the path and "
+                "the file location before attempting to play local tracks or start your "
+                "Lavalink.jar."
+            ).format(filelist=filelist)
+            await self._embed_msg(ctx, warn_msg)
+
+        await self.config.localpath.set(local_path)
+        await self._embed_msg(
+            ctx, _("Localtracks path set to: {local_path}.").format(local_path=local_path)
+        )
+
+    @audioset.command()
     @checks.mod_or_permissions(administrator=True)
     async def maxlength(self, ctx, seconds):
         """Max length of a track to queue in seconds. 0 to disable.
@@ -412,6 +532,7 @@ class Audio(commands.Cog):
     @audioset.command()
     async def settings(self, ctx):
         """Show the current settings."""
+        is_owner = ctx.author.id == self.bot.owner_id
         data = await self.config.guild(ctx.guild).all()
         global_data = await self.config.all()
         dj_role_obj = ctx.guild.get_role(data["dj_role"])
@@ -458,8 +579,10 @@ class Audio(commands.Cog):
             "---Lavalink Settings---        \n"
             "Cog version:      [{version}]\n"
             "Jar build:        [{jarbuild}]\n"
-            "External server:  [{use_external_lavalink}]"
+            "External server:  [{use_external_lavalink}]\n"
         ).format(version=__version__, jarbuild=jarbuild, **global_data)
+        if is_owner:
+            msg += _("Localtracks path: [{localpath}]\n").format(**global_data)
 
         embed = discord.Embed(colour=await ctx.embed_colour(), description=box(msg, lang="ini"))
         return await ctx.send(embed=embed)
@@ -545,11 +668,11 @@ class Audio(commands.Cog):
     @commands.guild_only()
     async def audiostats(self, ctx):
         """Audio stats."""
-        server_num = len([p for p in lavalink.players if p.current is not None])
-        total_num = len([p for p in lavalink.players])
+        server_num = len(lavalink.active_players())
+        total_num = len(lavalink.all_players())
 
         msg = ""
-        for p in lavalink.players:
+        for p in lavalink.all_players():
             connect_start = p.fetch("connect")
             connect_dur = self._dynamic_time(
                 int((datetime.datetime.utcnow() - connect_start).total_seconds())
@@ -778,11 +901,10 @@ class Audio(commands.Cog):
         )
         track_listing = []
         if ctx.invoked_with == "search":
+            local_path = await self.config.localpath()
             for localtrack_location in folder_list:
                 track_listing.append(
-                    localtrack_location.replace(
-                        "{}/localtracks/".format(cog_data_path(raw_name="Audio")), ""
-                    )
+                    localtrack_location.replace("{}/localtracks/".format(local_path), "")
                 )
         else:
             for localtrack_location in folder_list:
@@ -808,15 +930,18 @@ class Audio(commands.Cog):
         await ctx.invoke(self.search, query=("folder:" + folder))
 
     async def _localtracks_check(self, ctx):
-        audio_data = cog_data_path(raw_name="Audio")
+        audio_data = await self.config.localpath()
         if os.getcwd() != audio_data:
             os.chdir(audio_data)
         localtracks_folder = any(
             f for f in os.listdir(os.getcwd()) if not os.path.isfile(f) if f == "localtracks"
         )
         if not localtracks_folder:
-            await self._embed_msg(ctx, _("No localtracks folder."))
-            return False
+            if ctx.invoked_with == "start":
+                return False
+            else:
+                await self._embed_msg(ctx, _("No localtracks folder."))
+                return False
         else:
             return True
 
@@ -1072,10 +1197,9 @@ class Audio(commands.Cog):
             return await self._get_spotify_tracks(ctx, query)
 
         if query.startswith("localtrack:"):
+            local_path = await self.config.localpath()
             await self._localtracks_check(ctx)
-            query = query.replace("localtrack:", "").replace(
-                (str(cog_data_path(raw_name="Audio")) + "/"), ""
-            )
+            query = query.replace("localtrack:", "").replace(((local_path) + "/"), "")
         allowed_files = (".mp3", ".flac", ".ogg")
         if not self._match_url(query) and not (query.lower().endswith(allowed_files)):
             query = "ytsearch:{}".format(query)
@@ -1333,17 +1457,13 @@ class Audio(commands.Cog):
                 song_info = "{} {}".format(i["track"]["name"], i["track"]["artists"][0]["name"])
             try:
                 track_url = await self._youtube_api_search(yt_key, song_info)
-            except:
+            except (RuntimeError, aiohttp.client_exceptions.ServerDisconnectedError):
                 error_embed = discord.Embed(
                     colour=await ctx.embed_colour(),
-                    title=_(
-                        "The YouTube API key has not been set properly.\n"
-                        "Use `{prefix}audioset youtubeapi` for instructions."
-                    ).format(prefix=ctx.prefix),
+                    title=_("The connection was reset while loading the playlist."),
                 )
                 await playlist_msg.edit(embed=error_embed)
                 return None
-                # let's complain about errors
                 pass
             try:
                 yt_track = await player.get_tracks(track_url)
@@ -1831,6 +1951,8 @@ class Audio(commands.Cog):
             player = lavalink.get_player(ctx.guild.id)
             for track in playlists[playlist_name]["tracks"]:
                 if track["info"]["uri"].startswith("localtracks/"):
+                    if not await self._localtracks_check(ctx):
+                        pass
                     if not os.path.isfile(track["info"]["uri"]):
                         continue
                 if maxlength > 0:
@@ -1914,7 +2036,10 @@ class Audio(commands.Cog):
             )
             playlist_msg = await ctx.send(embed=embed1)
             for song_url in v2_playlist["playlist"]:
-                track = await player.get_tracks(song_url)
+                try:
+                    track = await player.get_tracks(song_url)
+                except RuntimeError:
+                    pass
                 try:
                     track_obj = self._track_creator(player, other_track=track[0])
                     track_list.append(track_obj)
@@ -2251,9 +2376,8 @@ class Audio(commands.Cog):
         ):
             track_idx = i + 1
             if command == "search":
-                track_location = track.replace(
-                    "localtrack:{}/localtracks/".format(cog_data_path(raw_name="Audio")), ""
-                )
+                local_path = await self.config.localpath()
+                track_location = track.replace("localtrack:{}/localtracks/".format(local_path), "")
                 track_match += "`{}.` **{}**\n".format(track_idx, track_location)
             else:
                 track_match += "`{}.` **{}**\n".format(track[0], track[1])
@@ -2271,11 +2395,13 @@ class Audio(commands.Cog):
     @commands.guild_only()
     async def _queue_clear(self, ctx):
         """Clears the queue."""
-        player = lavalink.get_player(ctx.guild.id)
+        try:
+            player = lavalink.get_player(ctx.guild.id)
+        except KeyError:
+            return await self._embed_msg(ctx, _("There's nothing in the queue."))
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         if not self._player_check(ctx) or not player.queue:
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
-        player = lavalink.get_player(ctx.guild.id)
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
                 ctx, ctx.author
@@ -2288,7 +2414,10 @@ class Audio(commands.Cog):
     @commands.guild_only()
     async def _queue_clean(self, ctx):
         """Removes songs from the queue if the requester is not in the voice channel."""
-        player = lavalink.get_player(ctx.guild.id)
+        try:
+            player = lavalink.get_player(ctx.guild.id)
+        except KeyError:
+            return await self._embed_msg(ctx, _("There's nothing in the queue."))
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         if not self._player_check(ctx) or not player.queue:
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
@@ -2572,7 +2701,8 @@ class Audio(commands.Cog):
             if command == "search":
                 return await ctx.invoke(self.play, query=("localtracks/{}".format(search_choice)))
             search_choice = search_choice.replace("localtrack:", "")
-            if not search_choice.startswith(str(cog_data_path(raw_name="Audio"))):
+            local_path = await self.config.localpath()
+            if not search_choice.startswith(local_path):
                 return await ctx.invoke(
                     self.search, query=("localfolder:{}".format(search_choice))
                 )
@@ -2633,14 +2763,10 @@ class Audio(commands.Cog):
                     search_list += "`{}.` **{}**\n".format(search_track_num, track)
                     folder = False
                 else:
+                    local_path = await self.config.localpath()
                     search_list += "`{}.` **{}**\n".format(
                         search_track_num,
-                        track.replace(
-                            "localtrack:{}/localtracks/".format(
-                                str(cog_data_path(raw_name="Audio"))
-                            ),
-                            "",
-                        ),
+                        track.replace("localtrack:{}/localtracks/".format(local_path), ""),
                     )
                     folder = False
         try:
@@ -2773,8 +2899,8 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    async def skip(self, ctx):
-        """Skip to the next track."""
+    async def skip(self, ctx, skip_to_track: int = None):
+        """Skip to the next track, or to a given track number."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
         player = lavalink.get_player(ctx.guild.id)
@@ -2791,6 +2917,10 @@ class Audio(commands.Cog):
                 return await self._embed_msg(ctx, _("You need the DJ role to skip tracks."))
         if vote_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
+                if skip_to_track is not None:
+                    return await self._embed_msg(
+                        ctx, _("Can't skip to a specific track in vote mode without the DJ role.")
+                    )
                 if ctx.author.id in self.skip_votes[ctx.message.guild]:
                     self.skip_votes[ctx.message.guild].remove(ctx.author.id)
                     reply = _("I removed your vote to skip.")
@@ -2823,9 +2953,9 @@ class Audio(commands.Cog):
                     )
                     return await self._embed_msg(ctx, reply)
             else:
-                return await self._skip_action(ctx)
+                return await self._skip_action(ctx, skip_to_track)
         else:
-            return await self._skip_action(ctx)
+            return await self._skip_action(ctx, skip_to_track)
 
     async def _can_instaskip(self, ctx, member):
         mod_role = await ctx.bot.db.guild(ctx.guild).mod_role()
@@ -2884,7 +3014,7 @@ class Audio(commands.Cog):
         else:
             return False
 
-    async def _skip_action(self, ctx):
+    async def _skip_action(self, ctx, skip_to_track: int = None):
         player = lavalink.get_player(ctx.guild.id)
         if not player.queue:
             try:
@@ -2909,23 +3039,57 @@ class Audio(commands.Cog):
                     )
                 )
             return await ctx.send(embed=embed)
+        queue_to_append = []
+        if skip_to_track is not None and skip_to_track != 1:
+            if skip_to_track < 1:
+                return await self._embed_msg(
+                    ctx, _("Track number must be equal to or greater than 1.")
+                )
+            elif skip_to_track > len(player.queue):
+                return await self._embed_msg(
+                    ctx,
+                    _(
+                        "There are only {queuelen} songs currently queued.".format(
+                            queuelen=len(player.queue)
+                        )
+                    ),
+                )
+            elif player.shuffle:
+                return await self._embed_msg(
+                    ctx, _("Can't skip to a track while shuffle is enabled.")
+                )
+            nexttrack = player.queue[min(skip_to_track - 1, len(player.queue) - 1)]
+            embed = discord.Embed(
+                colour=await ctx.embed_colour(),
+                title=_("{skip_to_track} Tracks Skipped".format(skip_to_track=skip_to_track)),
+            )
+            await ctx.send(embed=embed)
+            if player.repeat:
+                queue_to_append = player.queue[0 : min(skip_to_track - 1, len(player.queue) - 1)]
+            player.queue = player.queue[
+                min(skip_to_track - 1, len(player.queue) - 1) : len(player.queue)
+            ]
+        else:
+            embed = discord.Embed(
+                colour=await ctx.embed_colour(),
+                title=_("Track Skipped"),
+                description=await self._get_description(player.current),
+            )
+            await ctx.send(embed=embed)
 
-        if "localtracks" in player.current.uri:
-            if not player.current.title == "Unknown title":
-                description = "**{} - {}**\n{}".format(
-                    player.current.author,
-                    player.current.title,
-                    player.current.uri.replace("localtracks/", ""),
+        await player.play()
+        player.queue += queue_to_append
+
+    async def _get_description(self, track):
+        if "localtracks" in track.uri:
+            if not track.title == "Unknown title":
+                return "**{} - {}**\n{}".format(
+                    track.author, track.title, track.uri.replace("localtracks/", "")
                 )
             else:
-                description = "{}".format(player.current.uri.replace("localtracks/", ""))
+                return "{}".format(track.uri.replace("localtracks/", ""))
         else:
-            description = "**[{}]({})**".format(player.current.title, player.current.uri)
-        embed = discord.Embed(
-            colour=await ctx.embed_colour(), title=_("Track Skipped"), description=description
-        )
-        await ctx.send(embed=embed)
-        await player.skip()
+            return "**[{}]({})**".format(track.title, track.uri)
 
     @commands.command()
     @commands.guild_only()
@@ -3020,19 +3184,16 @@ class Audio(commands.Cog):
         await self.config.use_external_lavalink.set(not external)
 
         if external:
-            await self.config.host.set("localhost")
-            await self.config.password.set("youshallnotpass")
-            await self.config.rest_port.set(2333)
-            await self.config.ws_port.set(2332)
             embed = discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("External lavalink server: {true_or_false}.").format(
                     true_or_false=not external
                 ),
             )
-            embed.set_footer(text=_("Defaults reset."))
             await ctx.send(embed=embed)
         else:
+            if self._manager is not None:
+                await self._manager.shutdown()
             await self._embed_msg(
                 ctx,
                 _("External lavalink server: {true_or_false}.").format(true_or_false=not external),
@@ -3106,7 +3267,10 @@ class Audio(commands.Cog):
         self._restart_connect()
 
     async def _channel_check(self, ctx):
-        player = lavalink.get_player(ctx.guild.id)
+        try:
+            player = lavalink.get_player(ctx.guild.id)
+        except KeyError:
+            return False
         try:
             in_channel = sum(
                 not m.bot for m in ctx.guild.get_member(self.bot.user.id).voice.channel.members
@@ -3145,6 +3309,8 @@ class Audio(commands.Cog):
     async def _check_external(self):
         external = await self.config.use_external_lavalink()
         if not external:
+            if self._manager is not None:
+                await self._manager.shutdown()
             await self.config.use_external_lavalink.set(True)
             return True
         else:
@@ -3191,7 +3357,7 @@ class Audio(commands.Cog):
         stop_times = {}
 
         while True:
-            for p in lavalink.players:
+            for p in lavalink.all_players():
                 server = p.channel.guild
 
                 if [self.bot.user] == p.channel.members:
@@ -3266,13 +3432,6 @@ class Audio(commands.Cog):
         else:
             return self.bot.color
 
-    async def _get_playing(self, ctx):
-        if self._player_check(ctx):
-            player = lavalink.get_player(ctx.guild.id)
-            return len([player for p in lavalink.players if p.is_playing])
-        else:
-            return 0
-
     async def _localtracks_folders(self, ctx):
         if not await self._localtracks_check(ctx):
             return
@@ -3315,6 +3474,8 @@ class Audio(commands.Cog):
         try:
             lavalink.get_player(ctx.guild.id)
             return True
+        except IndexError:
+            return False
         except KeyError:
             return False
 
@@ -3422,11 +3583,14 @@ class Audio(commands.Cog):
     async def _youtube_api_search(self, yt_key, query):
         params = {"q": query, "part": "id", "key": yt_key, "maxResults": 1, "type": "video"}
         yt_url = "https://www.googleapis.com/youtube/v3/search"
-        async with self.session.request("GET", yt_url, params=params) as r:
-            if r.status == 400:
-                return None
-            else:
-                search_response = await r.json()
+        try:
+            async with self.session.request("GET", yt_url, params=params) as r:
+                if r.status == 400:
+                    return None
+                else:
+                    search_response = await r.json()
+        except RuntimeError:
+            return None
         for search_result in search_response.get("items", []):
             if search_result["id"]["kind"] == "youtube#video":
                 return "https://www.youtube.com/watch?v={}".format(search_result["id"]["videoId"])
@@ -3503,7 +3667,7 @@ class Audio(commands.Cog):
 
     def cog_unload(self):
         if not self._cleaned_up:
-            self.session.detach()
+            self.bot.loop.create_task(self.session.close())
 
             if self._disconnect_task:
                 self._disconnect_task.cancel()
@@ -3513,25 +3677,8 @@ class Audio(commands.Cog):
 
             lavalink.unregister_event_listener(self.event_handler)
             self.bot.loop.create_task(lavalink.close())
-            shutdown_lavalink_server()
+            if self._manager is not None:
+                self.bot.loop.create_task(self._manager.shutdown())
             self._cleaned_up = True
 
     __del__ = cog_unload
-
-    @commands.Cog.listener()
-    async def on_guild_remove(self, guild: discord.Guild):
-        """
-        This is to clean up players when
-        the bot either leaves or is removed from a guild
-        """
-        channels = {
-            x  # x is a voice_channel
-            for y in [g.voice_channels for g in self.bot.guilds]
-            for x in y  # y is a list of voice channels
-        }  # Yes, this is ugly. It's also the most performant and commented.
-
-        zombie_players = {p for p in lavalink.player_manager.players if p.channel not in channels}
-        # Do not unroll to combine with next line.
-        # Can result in iterator changing size during context switching.
-        for zombie in zombie_players:
-            await zombie.destroy()

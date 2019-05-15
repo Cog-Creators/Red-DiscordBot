@@ -323,6 +323,8 @@ class TwitchStream(Stream):
         status = stream["title"]
         if not status:
             status = "Untitled broadcast"
+        if is_rerun:
+            status += " - Rerun"
         embed = discord.Embed(title=status, url=url)
         embed.set_author(name=channel["display_name"])
         embed.add_field(name="Current viewers", value=channel["viewer_count"])
