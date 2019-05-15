@@ -92,6 +92,7 @@ class Mongo(BaseDriver):
         async for doc in cursor:
             pkeys = doc["_id"]["RED_primary_key"]
             del doc["_id"]
+            doc = self._unescape_dict_keys(doc)
             if len(pkeys) == 0:
                 # Global data
                 ret.update(**doc)
