@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "4d02f36769cc4ab85cd266fc54d1c176298d124789deb3c46435cd0ec90e8f89"
+            "sha256": "d71d118bb7fd8ed744bd9f98d3b9f22ccb589d1c45cd92ea2cbd721446fe6002"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -268,8 +268,7 @@
         "red-discordbot": {
             "editable": true,
             "extras": [
-                "mongo",
-                "voice"
+                "mongo"
             ],
             "path": "."
         },
@@ -745,8 +744,7 @@
         "red-discordbot": {
             "editable": true,
             "extras": [
-                "mongo",
-                "voice"
+                "mongo"
             ],
             "path": "."
         },
