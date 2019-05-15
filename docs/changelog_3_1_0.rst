@@ -13,7 +13,7 @@ complete the below instructions to continue to use Mongo after updating to 3.1.
 This includes **all** users, regardless of any prior migration attempt to a development version of
 3.1.
 
- #. Upgrade to 3.1 (duh)
+ #. Upgrade to 3.1
  #. Convert all existing Mongo instances to JSON using the new converters
  #. Start each bot instance while using JSON and load any and all cogs you have in order to successfully preserve data.
  #. Turn each instance off and convert back to Mongo.
