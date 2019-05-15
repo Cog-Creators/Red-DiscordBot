@@ -24,3 +24,7 @@ class InvalidYoutubeCredentials(StreamsError):
 
 class OfflineStream(StreamsError):
     pass
+
+
+class OfflineGame(StreamsError):
+    pass

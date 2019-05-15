@@ -5,6 +5,7 @@ from .errors import (
     InvalidYoutubeCredentials,
     InvalidTwitchCredentials,
     GameNotInStreamTargetGameList,
+    OfflineGame,
 )
 from random import choice, sample
 from string import ascii_letters
@@ -28,6 +29,77 @@ def rnd(url):
     """Appends a random parameter to the url to avoid Discord's caching"""
     return url + "?rnd=" + "".join([choice(ascii_letters) for i in range(6)])
 
+
+class Game:
+
+    token_name: ClassVar[Optional[str]] = None
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.pop("name", None)
+        self.id = kwargs.pop("id", None)
+        self._messages_cache = kwargs.pop("_messages_cache", [])
+        self.type = self.__class__.__name__
+        self.bot = kwargs.pop("bot", None)
+        self.sort = kwargs.pop("sort", None)
+        self.count = kwargs.pop("count", None)
+
+    async def has_online_channels(self):
+        raise NotImplementedError()
+
+    def make_embed(self):
+        raise NotImplementedError()
+
+    def export(self):
+        data = {}
+        for k, v in self.__dict__.items():
+            if not k.startswith("_"):
+                data[k] = v
+        data["messages"] = []
+        del data["bot"]
+        for m in self._messages_cache:
+            data["messages"].append({"channel": m.channel.id, "message": m.id})
+        return data
+
+    def __repr__(self):
+        return "<{0.__class__.__name__}: {0.name}>".format(self)
+
+
+class TwitchGame(Game):
+
+    token_name = "twitch"
+
+    def __init__(self, **kwargs):
+        self._token = kwargs.pop("token", None)
+        self.box_art = kwargs.pop("box_art_url", None)
+        super().__init__(**kwargs)
+
+    async def has_online_channels(self):
+        if self._token["access_token"]:
+            header = {"Authorization": "Bearer " + self._token["access_token"]}
+        else:
+            header = {"Client-ID": str(self._token["client_id"])}
+        params = {"game_id": self.id}
+        async with aiohttp.ClientSession() as session:
+            async with session.get(TWITCH_STREAMS_ENDPOINT, headers=header, params=params) as r:
+                data = await r.json()
+        if r.status == 200:
+            if not data["data"]:
+                raise OfflineGame()
+            if self.sort == "random":
+                choices = random.sample(data["data"], self.count)
+            else:
+                choices = sorted(data["data"], key=lambda x: x["viewer_count"], reverse=True)[
+                    : self.count
+                ]
+            return self.make_embed(data)
+
+    def make_embed(self, data: list):
+        embed = discord.Embed(title=f"Currently live channels playing {self.name}")
+        if self.box_art:
+            embed.set_image(url=self.box_art)
+        for chn in data:
+            embed.add_field(name=data["user_name"], value=f"[{data['viewer_count']}](https://twitch.tv/{data["user_name"]}) viewers", inline=False)
+        return embed
 
 class Stream:
 
@@ -211,7 +283,7 @@ class TwitchStream(Stream):
                                 gd = await game_data.json(encoding="utf-8")
                         if game_data.status == 200:
                             game = gd["data"][0]
-                            game_list.append({"name": game["name"], "id": game["id"]})
+                            game_list.append(game)
                             await streams_cog.db.games.set_raw("twitch", value=game_list)
                     else:
                         for item in game_list:

@@ -13,6 +13,8 @@ from .streamtypes import (
     MixerStream,
     PicartoStream,
     YoutubeStream,
+    Game,
+    TwitchGame
 )
 from .errors import (
     OfflineStream,
@@ -201,6 +203,49 @@ class Streams(commands.Cog):
             await ctx.send("Please supply the name of a *Twitch* channel, not a Discord channel.")
             return
         await self.stream_alert(ctx, TwitchStream, channel_name.lower(), games=games)
+    
+    @_twitch.command(name="game")
+    async def twitch_alert_game(
+        self, ctx: commands.Context, sort: str, count: int, game: str
+    ):
+        """Toggle alerts in this channel for a Twitch game.
+        
+        `sort` must be one of: 'random', 'top'
+        `count` should be a number between 1 and 25
+        `game` must be an exact match to the game name on its Twitch page"""
+        game_data = {}
+        try:
+            game_list = await self.db.games.get_raw("twitch")
+        except KeyError:
+            game_list = []
+        for g in game_list:
+            if g["name"].lower() == game.lower():
+                game_data = g
+                break
+        else:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(
+                    TWITCH_GAMES_ENDPOINT,
+                    headers=headers,
+                    params={"name": game},
+                ) as game_data:
+                    gd = await game_data.json(encoding="utf-8")
+            if game_data.status == 200:
+                if "data" in data and data["data"]:
+                    game = gd["data"][0]
+                    game_data = game
+                    game_list.append(game)
+                    await self.db.games.set_raw("twitch", value=game_list)
+                else:
+                    await ctx.send(
+                        _("I was unable to find a game by that name! "
+                          "Please confirm you have entered the name correctly."
+                        )
+                    )
+                    return
+        
+         await self.game_alert(ctx, TwitchGame, sort, count, game_data)   
+        
 
     @streamalert.command(name="youtube")
     async def youtube_alert(self, ctx: commands.Context, channel_name_or_id: str):
@@ -282,6 +327,9 @@ class Streams(commands.Cog):
 
         for page in pagify(msg):
             await ctx.send(page)
+    
+    async def game_alert(self, ctx: commands.Context, _class, sort: str, count: int, game: dict):
+        pass
 
     async def stream_alert(self, ctx: commands.Context, _class, channel_name, games: list=None):
         stream = self.get_stream(_class, channel_name)
