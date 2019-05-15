@@ -8,4 +8,4 @@ red-discordbot = {path = ".",editable = true,extras = ['mongo', 'voice']}
 
 [dev-packages]
 tox = "*"
-red-discordbot = {path = ".",editable = true,extras = ['docs', 'test', 'style']}
+red-discordbot = {path = ".",editable = true,extras = ['docs', 'test', 'style', 'mongo', 'voice']}
