@@ -115,9 +115,21 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
         self.cog_mgr = CogManager()
 
-        super().__init__(*args, help_command=commands.DefaultHelpCommand(), **kwargs)
+        super().__init__(*args, help_command=None, **kwargs)
+        # Do not manually use the help formatter attribute here, see `send_help_for`,
+        # for a documented API. The internals of this object are still subject to change.
+        self._help_formatter = commands.help.RedHelpFormatter()
+        self.add_command(commands.help.red_help)
 
         self._permissions_hooks: List[commands.CheckPredicate] = []
+
+    async def send_help_for(
+        self, ctx: commands.Context, help_for: Union[commands.Command, commands.GroupMixin, str]
+    ):
+        """
+        Invokes Red's helpformatter for a given context and object.
+        """
+        return await self._help_formatter.send_help(ctx, help_for)
 
     async def _dict_abuse(self, indict):
         """

@@ -66,6 +66,7 @@ Audio
 Core
 ----
 
+ * Warn on usage of ``yaml.load`` (`#2326`_)
  * New Event dispatch: ``on_message_without_command`` (`#2338`_)
  * Improve output format of cooldown messages (`#2412`_)
  * Delete cooldown messages when expired (`#2469`_)
@@ -73,6 +74,7 @@ Core
  * ``[p]set locale`` now only accepts actual locales (`#2553`_)
  * ``[p]listlocales`` now displays ``en-US`` (`#2553`_)
  * ``redbot --version`` will now give you current version of Red (`#2567`_)
+ * Redesign help and related formatter (`#2628`_)
  * Default locale changed from ``en`` to ``en-US`` (`#2642`_)
  * New command ``[p]datapath`` that prints the bot's datapath (`#2652`_)
 
@@ -115,6 +117,12 @@ Filter
 ------
 
  * Filter performs significantly better on large servers. (`#2509`_)
+
+--------
+Launcher
+--------
+
+* Fixed extras in the launcher (`#2588`_)
 
 ---
 Mod
@@ -166,6 +174,7 @@ Utility Functions
  * ``Tunnel`` - fixed behavior of ``react_close()``, now when tunnel closes message will be sent to other end (`#2507`_)
  * ``chat_formatting.humanize_list`` - Improved error handling of empty lists (`#2597`_)
 
+.. _#2326: https://github.com/Cog-Creators/Red-DiscordBot/pull/2326
 .. _#2328: https://github.com/Cog-Creators/Red-DiscordBot/pull/2328
 .. _#2338: https://github.com/Cog-Creators/Red-DiscordBot/pull/2338
 .. _#2412: https://github.com/Cog-Creators/Red-DiscordBot/pull/2412
@@ -205,6 +214,7 @@ Utility Functions
 .. _#2579: https://github.com/Cog-Creators/Red-DiscordBot/pull/2579
 .. _#2586: https://github.com/Cog-Creators/Red-DiscordBot/pull/2586
 .. _#2587: https://github.com/Cog-Creators/Red-DiscordBot/pull/2587
+.. _#2588: https://github.com/Cog-Creators/Red-DiscordBot/pull/2588
 .. _#2590: https://github.com/Cog-Creators/Red-DiscordBot/pull/2590
 .. _#2591: https://github.com/Cog-Creators/Red-DiscordBot/pull/2591
 .. _#2592: https://github.com/Cog-Creators/Red-DiscordBot/pull/2592
@@ -216,6 +226,7 @@ Utility Functions
 .. _#2605: https://github.com/Cog-Creators/Red-DiscordBot/pull/2605
 .. _#2606: https://github.com/Cog-Creators/Red-DiscordBot/pull/2606
 .. _#2620: https://github.com/Cog-Creators/Red-DiscordBot/pull/2620
+.. _#2628: https://github.com/Cog-Creators/Red-DiscordBot/pull/2628
 .. _#2639: https://github.com/Cog-Creators/Red-DiscordBot/pull/2639
 .. _#2642: https://github.com/Cog-Creators/Red-DiscordBot/pull/2642
 .. _#2652: https://github.com/Cog-Creators/Red-DiscordBot/pull/2652
