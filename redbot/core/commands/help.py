@@ -77,9 +77,6 @@ class RedHelpFormatter:
     should not need or want a shared state.
     """
 
-    # Class vars for things which should be configurable at a later date but aren't now
-    # Technically, someone can just use a cog to switch these in real time for now.
-
     async def send_help(self, ctx: Context, help_for: HelpTarget = None):
         """ 
         This delegates to other functions. 
