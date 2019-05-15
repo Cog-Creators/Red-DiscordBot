@@ -1145,7 +1145,7 @@ class Core(commands.Cog, CoreLogic):
             verify = not await ctx.bot.db.help.verify_exists()
         await ctx.bot.db.help.verify_exists.set(verify)
         if verify:
-            await ctx.send(_("Help will verify the existence of help topics"))
+            await ctx.send(_("Help will verify the existence of help topics."))
         else:
             await ctx.send(
                 _(
