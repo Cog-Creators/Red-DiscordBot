@@ -63,6 +63,7 @@ discord.py
 ----------
 
  * No longer vendoring discord.py (`#2587`_)
+ * Upgraded discord.py dependency to version 1.0.1 (`#2587`_)
 
 ----------
 Downloader
