@@ -80,11 +80,6 @@ class RedHelpFormatter:
     # Class vars for things which should be configurable at a later date but aren't now
     # Technically, someone can just use a cog to switch these in real time for now.
 
-    USE_MENU = False
-    CONFIRM_UNAVAILABLE_COMMAND_EXISTENCES = False
-    SHOW_HIDDEN = False
-    VERIFY_CHECKS = True
-
     async def send_help(self, ctx: Context, help_for: HelpTarget = None):
         """ 
         This delegates to other functions. 
@@ -102,7 +97,7 @@ class RedHelpFormatter:
                 await self.command_not_found(ctx, help_for)
                 return
             except NoSubCommand as exc:
-                if self.CONFIRM_UNAVAILABLE_COMMAND_EXISTENCES:
+                if await ctx.bot.db.help.verify_exists():
                     await self.subcommand_not_found(ctx, exc.last, exc.not_found)
                     return
                 help_for = exc.last
@@ -138,7 +133,7 @@ class RedHelpFormatter:
 
     async def format_command_help(self, ctx: Context, obj: commands.Command):
 
-        send = self.CONFIRM_UNAVAILABLE_COMMAND_EXISTENCES
+        send = await ctx.bot.db.help.verify_exists()
         if not send:
             async for _ in self.help_filter_func(ctx, (obj,), bypass_hidden=True):
                 # This is a really lazy option for not
@@ -272,7 +267,7 @@ class RedHelpFormatter:
     async def format_cog_help(self, ctx: Context, obj: commands.Cog):
 
         coms = await self.get_cog_help_mapping(ctx, obj)
-        if not (coms or self.CONFIRM_UNAVAILABLE_COMMAND_EXISTENCES):
+        if not (coms or await ctx.bot.db.help.verify_exists()):
             return
 
         description = obj.help
@@ -399,17 +394,25 @@ class RedHelpFormatter:
         """
         This does most of actual filtering.
         """
+
+        show_hidden = bypass_hidden or await ctx.bot.db.help.show_hidden()
+        verify_checks = await ctx.bot.db.help.verify_checks()
+
         # TODO: Settings for this in core bot db
         for obj in objects:
-            if self.VERIFY_CHECKS and not (self.SHOW_HIDDEN or bypass_hidden):
+            if verify_checks and not show_hidden:
                 # Default Red behavior, can_see includes a can_run check.
                 if await obj.can_see(ctx):
                     yield obj
-            elif self.VERIFY_CHECKS:
-                if await obj.can_run(ctx):
+            elif verify_checks:
+                try:
+                    can_run = await obj.can_run(ctx)
+                except discord.DiscordException:
+                    can_run = False
+                if can_run:
                     yield obj
-            elif not (self.SHOW_HIDDEN or bypass_hidden):
-                if getattr(obj, "hidden", False):  # Cog compatibility
+            elif not show_hidden:
+                if not getattr(obj, "hidden", False):  # Cog compatibility
                     yield obj
             else:
                 yield obj
@@ -430,8 +433,8 @@ class RedHelpFormatter:
                 await ctx.send(embed=ret)
             else:
                 await ctx.send(ret)
-        elif self.CONFIRM_UNAVAILABLE_COMMAND_EXISTENCES:
-            ret = T_("Command *{command_name}* not found.").format(command_name=help_for)
+        elif await ctx.bot.db.help.verify_exists():
+            ret = T_("Help topic for *{command_name}* not found.").format(command_name=help_for)
             if use_embeds:
                 ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
                 ret.set_author(name=f"{ctx.me.display_name} Help Menu", icon_url=ctx.me.avatar_url)
@@ -445,10 +448,17 @@ class RedHelpFormatter:
         """
         Sends an error
         """
-        ret = T_("Command *{command_name}* has no subcommands.").format(
-            command_name=command.qualified_name
+        ret = T_("Command *{command_name}* has no subcommand named *{not_found}*.").format(
+            command_name=command.qualified_name, not_found=not_found[0]
         )
-        await ctx.send(ret)
+        if await ctx.embed_requested():
+            ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
+            ret.set_author(name=f"{ctx.me.display_name} Help Menu", icon_url=ctx.me.avatar_url)
+            tagline = (await ctx.bot.db.help.tagline()) or self.get_default_tagline(ctx)
+            ret.set_footer(text=tagline)
+            await ctx.send(embed=ret)
+        else:
+            await ctx.send(ret)
 
     @staticmethod
     def parse_command(ctx, help_for: str):
@@ -487,7 +497,7 @@ class RedHelpFormatter:
         Sends pages based on settings.
         """
 
-        if not self.USE_MENU:
+        if not await ctx.bot.db.help.use_menus():
 
             max_pages_in_guild = await ctx.bot.db.help.max_pages_in_guild()
             destination = ctx.author if len(pages) > max_pages_in_guild else ctx
@@ -499,7 +509,10 @@ class RedHelpFormatter:
                 for page in pages:
                     await destination.send(page)
         else:
-            await menus.menu(ctx, pages, menus.DEFAULT_CONTROLS)
+            if len(pages) > 1:
+                await menus.menu(ctx, pages, menus.DEFAULT_CONTROLS)
+            else:
+                await menus.menu(ctx, pages, {"\N{CROSS MARK}": menus.close_menu})
 
 
 @commands.command(name="help", hidden=True, i18n=T_)

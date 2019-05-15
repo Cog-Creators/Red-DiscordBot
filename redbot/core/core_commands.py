@@ -1080,6 +1080,85 @@ class Core(commands.Cog, CoreLogic):
         """Manage settings for the help command."""
         pass
 
+    @helpset.command(name="usemenus")
+    async def helpset_usemenus(self, ctx: commands.Context, use_menus: bool = None):
+        """
+        Allows the help command to be sent as a paginated menu instead of seperate
+        messages.
+
+        This defaults to False. 
+        Using this without a setting will toggle.
+        """
+        if use_menus is None:
+            use_menus = not await ctx.bot.db.help.use_menus()
+        await ctx.bot.db.help.use_menus.set(use_menus)
+        if use_menus:
+            await ctx.send(_("Help will use menus."))
+        else:
+            await ctx.send(_("Help will not use menus."))
+
+    @helpset.command(name="showhidden")
+    async def helpset_showhidden(self, ctx: commands.Context, show_hidden: bool = None):
+        """
+        This allows the help command to show hidden commands
+
+        This defaults to False.
+        Using this without a setting will toggle.
+        """
+        if show_hidden is None:
+            show_hidden = not await ctx.bot.db.help.show_hidden()
+        await ctx.bot.db.help.show_hidden.set(show_hidden)
+        if show_hidden:
+            await ctx.send(_("Help will not filter hidden commands"))
+        else:
+            await ctx.send(_("Help will filter hidden commands."))
+
+    @helpset.command(name="verifychecks")
+    async def helpset_permfilter(self, ctx: commands.Context, verify: bool = None):
+        """
+        Sets if commands which can't be run in the current context should be
+        filtered from help
+
+        Defaults to True.
+        Using this without a setting will toggle.
+        """
+        if verify is None:
+            verify = not await ctx.bot.db.help.verify_checks()
+        await ctx.bot.db.help.verify_checks.set(verify)
+        if verify:
+            await ctx.send(
+                _("Help will only show for commands which can be run.")
+            )
+        else:
+            await ctx.send(
+                _("Help will show up without checking if the commands can be run.")
+            )
+
+    @helpset.command(name="verifyexists")
+    async def helpset_verifyexists(self, ctx: commands.Context, verify: bool = None):
+        """
+        This allows the bot to respond when a help topic is not found.
+
+        Note: This setting on it's own does not fully prevent command enumeration.
+
+        Defaults to False.
+        Using this without a setting will toggle.
+        """
+        if verify is None:
+            verify = not await ctx.bot.db.help.verify_exists()
+        await ctx.bot.db.help.verify_exists.set(verify)
+        if verify:
+            await ctx.send(
+                _("Help will give information about non-existant help topics")
+            )
+        else:
+            await ctx.send(
+                _(
+                    "Help will only give information about non-existant "
+                    "help topics through fuzzy search (if enabled)."
+                )
+            )
+
     @helpset.command(name="pagecharlimit")
     async def helpset_pagecharlimt(self, ctx: commands.Context, limit: int):
         """Set the character limit for each page in the help message.
@@ -1602,7 +1681,7 @@ class Core(commands.Cog, CoreLogic):
         """
         user = isinstance(user_or_role, discord.Member)
 
-        if user and await ctx.bot.is_owner(obj):
+        if user and await ctx.bot.is_owner(user_or_role):
             await ctx.send(_("You cannot blacklist an owner!"))
             return
 
