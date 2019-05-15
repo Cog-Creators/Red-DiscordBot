@@ -126,7 +126,7 @@ def init_events(bot, cli_flags):
                     owners.append(owner)
 
                 for co_owner in bot._co_owners:
-                    co_owner = await bot.get_user(co_owner)
+                    co_owner = bot.get_user(co_owner)
                     if co_owner is not None:
                         owners.append(co_owner)
 
