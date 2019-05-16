@@ -42,6 +42,8 @@ log = logging.getLogger("red")
 
 _ = i18n.Translator("Core", __file__)
 
+TokenConverter = commands.get_validated_dict_converter(split_commas=True)
+
 
 class CoreLogic:
     def __init__(self, bot: "Red"):
@@ -1057,7 +1059,7 @@ class Core(commands.Cog, CoreLogic):
 
     @_set.command()
     @checks.is_owner()
-    async def api(self, ctx: commands.Context, service: str, *tokens: commands.converter.APIToken):
+    async def api(self, ctx: commands.Context, service: str, *, tokens: TokenConverter):
         """Set various external API tokens.
         
         This setting will be asked for by some 3rd party cogs and some core cogs.
@@ -1070,8 +1072,7 @@ class Core(commands.Cog, CoreLogic):
         """
         if ctx.channel.permissions_for(ctx.me).manage_messages:
             await ctx.message.delete()
-        entry = {k: v for t in tokens for k, v in t.items()}
-        await ctx.bot.db.api_tokens.set_raw(service, value=entry)
+        await ctx.bot.db.api_tokens.set_raw(service, value=tokens)
         await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
 
     @commands.group()
