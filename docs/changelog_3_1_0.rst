@@ -169,7 +169,7 @@ Trivia
 Utility Functions
 -----------------
 
- * New: ``chat_formatting.humaize_timedelta`` (`#2412`_)
+ * New: ``chat_formatting.humanize_timedelta`` (`#2412`_)
  * ``Tunnel`` - Spelling correction of method name - changed ``files_from_attatch`` to ``files_from_attach`` (old name is left for backwards compatibility) (`#2496`_)
  * ``Tunnel`` - fixed behavior of ``react_close()``, now when tunnel closes message will be sent to other end (`#2507`_)
  * ``chat_formatting.humanize_list`` - Improved error handling of empty lists (`#2597`_)
