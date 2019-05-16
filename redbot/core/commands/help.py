@@ -208,7 +208,7 @@ class RedHelpFormatter:
                     doc_max_width = 80 - max_width
                     for nm, com in sorted(cmds):
                         width_gap = discord.utils._string_width(nm) - len(nm)
-                        doc = command.short_doc
+                        doc = com.short_doc
                         if len(doc) > doc_max_width:
                             doc = doc[: doc_max_width - 3] + "..."
                         yield nm, doc, max_width - width_gap
