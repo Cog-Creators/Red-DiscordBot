@@ -145,7 +145,7 @@ class ModInfo(MixinMeta):
         if voice_state and voice_state.channel:
             data.add_field(
                 name=_("Current voice channel"),
-                value="{0.name} (ID {0.id})".format(voice_state.channel),
+                value="{0.mention} ID: {0.id}".format(voice_state.channel),
                 inline=False,
             )
         data.set_footer(text=_("Member #{} | User ID: {}").format(member_number, user.id))
