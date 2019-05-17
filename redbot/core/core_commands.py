@@ -529,6 +529,7 @@ class Core(commands.Cog, CoreLogic):
         """Loads packages"""
         if not cogs:
             return await ctx.send_help()
+        cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
             loaded, failed, not_found, already_loaded, failed_with_reason = await self._load(cogs)
 
@@ -571,6 +572,7 @@ class Core(commands.Cog, CoreLogic):
         """Unloads packages"""
         if not cogs:
             return await ctx.send_help()
+        cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         unloaded, failed = await self._unload(cogs)
 
         if unloaded:
@@ -589,6 +591,7 @@ class Core(commands.Cog, CoreLogic):
         """Reloads packages"""
         if not cogs:
             return await ctx.send_help()
+        cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
             loaded, failed, not_found, already_loaded, failed_with_reason = await self._reload(
                 cogs
