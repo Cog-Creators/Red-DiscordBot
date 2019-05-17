@@ -11,7 +11,7 @@ from ..i18n import Translator
 if TYPE_CHECKING:
     from .context import Context
 
-__all__ = ["GuildConverter", "APIToken", "DictConverter", "get_validated_dict_converter"]
+__all__ = ["GuildConverter", "APIToken", "DictConverter", "get_dict_converter"]
 
 _ = Translator("commands.converter", __file__)
 
@@ -78,15 +78,15 @@ class DictConverter(dpy_commands.Converter):
     Converts pairs of space seperated values to a dict
     """
 
-    def __init__(self, *expected_keys: str, split_commas=False):
+    def __init__(self, *expected_keys: str, delims: Optional[List[str]] = None):
         self.expected_keys = expected_keys
-        self.split_commas = split_commas
+        self.delims = delims or [" "]
+        self.pattern = re.compile(r"|".join(re.escape(d) for d in self.delims))
 
     async def convert(self, ctx: "Context", argument: str) -> Dict[str, str]:
 
         ret: Dict[str, str] = {}
-        pattern = r";|,| " if self.split_commas else " "
-        args = re.split(pattern, argument)
+        args = self.pattern.split(argument)
 
         if len(args) % 2 != 0:
             raise BadArgument()
@@ -102,14 +102,14 @@ class DictConverter(dpy_commands.Converter):
         return ret
 
 
-def get_validated_dict_converter(*expected_keys: str, split_commas=False) -> type:
+def get_dict_converter(*expected_keys: str, delims: Optional[List[str]] = None) -> type:
     """
     Returns a typechecking safe `DictConverter` suitable for use with discord.py
     """
 
     class PartialMeta(type(DictConverter)):
         __call__ = functools.partialmethod(
-            type(DictConverter).__call__, *expected_keys, split_commas=split_commas
+            type(DictConverter).__call__, *expected_keys, delims=delims
         )
 
     class ValidatedConverter(DictConverter, metaclass=PartialMeta):

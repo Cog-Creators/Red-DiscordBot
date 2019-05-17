@@ -42,7 +42,7 @@ log = logging.getLogger("red")
 
 _ = i18n.Translator("Core", __file__)
 
-TokenConverter = commands.get_validated_dict_converter(split_commas=True)
+TokenConverter = commands.get_dict_converter(delims=[" ", ",", ";"])
 
 
 class CoreLogic:
