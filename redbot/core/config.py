@@ -1,7 +1,16 @@
 import logging
 import collections
 from copy import deepcopy
-from typing import Any, Union, Tuple, Dict, Awaitable, AsyncContextManager, TypeVar, TYPE_CHECKING
+from typing import (
+    Any,
+    Union,
+    Tuple,
+    Dict,
+    Awaitable,
+    AsyncContextManager,
+    TypeVar,
+    TYPE_CHECKING,
+)
 import weakref
 
 import discord
@@ -258,9 +267,13 @@ class Group(Value):
                 driver=self.driver,
             )
         elif self.force_registration:
-            raise AttributeError("'{}' is not a valid registered Group or value.".format(item))
+            raise AttributeError(
+                "'{}' is not a valid registered Group or value.".format(item)
+            )
         else:
-            return Value(identifier_data=new_identifiers, default_value=None, driver=self.driver)
+            return Value(
+                identifier_data=new_identifiers, default_value=None, driver=self.driver
+            )
 
     async def clear_raw(self, *nested_path: Any):
         """
@@ -523,7 +536,11 @@ class Config:
 
     GLOBAL = "GLOBAL"
     GUILD = "GUILD"
+    # Do not change below to be "correct" without a migration and breaking change notice
     CHANNEL = "TEXTCHANNEL"
+    TEXT_CHANNEL = "TEXT_CHANNEL"
+    VOICE_CHANNEL = "VOICE_CHANNEL"
+    CATEGORY_CHANNEL = "CATEGORY_CHANNEL"
     ROLE = "ROLE"
     USER = "USER"
     MEMBER = "MEMBER"
@@ -567,7 +584,9 @@ class Config:
         return str(identifier)
 
     @classmethod
-    def get_conf(cls, cog_instance, identifier: int, force_registration=False, cog_name=None):
+    def get_conf(
+        cls, cog_instance, identifier: int, force_registration=False, cog_name=None
+    ):
         """Get a Config instance for your cog.
 
         .. warning::
@@ -616,7 +635,11 @@ class Config:
         driver_details = basic_config.get("STORAGE_DETAILS", {})
 
         driver = get_driver(
-            driver_name, cog_name, uuid, data_path_override=cog_path_override, **driver_details
+            driver_name,
+            cog_name,
+            uuid,
+            data_path_override=cog_path_override,
+            **driver_details,
         )
         if driver_name == BackendType.JSON.value:
             driver.migrate_identifier(identifier)
@@ -717,7 +740,9 @@ class Config:
                 existing_is_dict = isinstance(_partial[k], dict)
                 if val_is_dict != existing_is_dict:
                     # != is XOR
-                    raise KeyError("You cannot register a Group and a Value under the same name.")
+                    raise KeyError(
+                        "You cannot register a Group and a Value under the same name."
+                    )
                 if val_is_dict:
                     Config._update_defaults(v, _partial=_partial[k])
                 else:
@@ -790,8 +815,28 @@ class Config:
 
         See `register_global` for more details.
         """
-        # We may need to add a voice channel category later
         self._register_default(self.CHANNEL, **kwargs)
+
+    def register_text_channel(self, **kwargs):
+        """Register default values on a per-channel level.
+
+        See `register_global` for more details.
+        """
+        self._register_default(self.TEXT_CHANNEL, **kwargs)
+
+    def register_voice_channel(self, **kwargs):
+        """Register default values on a per-channel level.
+
+        See `register_global` for more details.
+        """
+        self._register_default(self.VOICE_CHANNEL, **kwargs)
+
+    def register_category_channel(self, **kwargs):
+        """Register default values on a per-channel level.
+
+        See `register_global` for more details.
+        """
+        self._register_default(self.CATEGORY_CHANNEL, **kwargs)
 
     def register_role(self, **kwargs):
         """Registers default values on a per-role level.
@@ -842,6 +887,9 @@ class Config:
             self.MEMBER,
             self.ROLE,
             self.CHANNEL,
+            self.TEXT_CHANNEL,
+            self.VOICE_CHANNEL,
+            self.CATEGORY_CHANNEL,
         )
         # noinspection PyTypeChecker
         identifier_data = IdentifierData(
@@ -875,7 +923,7 @@ class Config:
         """
         return self._get_base_group(self.GUILD, str(guild.id))
 
-    def channel(self, channel: discord.TextChannel) -> Group:
+    def channel(self, channel: discord.abc.GuildChannel) -> Group:
         """Returns a `Group` for the given channel.
 
         This does not discriminate between text and voice channels.
@@ -892,6 +940,54 @@ class Config:
 
         """
         return self._get_base_group(self.CHANNEL, str(channel.id))
+
+    def text_channel(self, channel: discord.TextChannel) -> Group:
+        """Returns a `Group` for the given channel.
+
+        Parameters
+        ----------
+        channel : `discord.TextChannel`
+            A channel object.
+
+        Returns
+        -------
+        `Group <redbot.core.config.Group>`
+            The channel's Group object.
+
+        """
+        return self._get_base_group(self.TEXT_CHANNEL, str(channel.id))
+
+    def voice_channel(self, channel: discord.VoiceChannel) -> Group:
+        """Returns a `Group` for the given channel.
+
+        Parameters
+        ----------
+        channel : `discord.VoiceChannel`
+            A channel object.
+
+        Returns
+        -------
+        `Group <redbot.core.config.Group>`
+            The channel's Group object.
+
+        """
+        return self._get_base_group(self.VOICE_CHANNEL, str(channel.id))
+
+    def category_channel(self, channel: discord.CategoryChannel) -> Group:
+        """Returns a `Group` for the given channel.
+
+        Parameters
+        ----------
+        channel : `discord.TextChannel`
+            A channel object.
+
+        Returns
+        -------
+        `Group <redbot.core.config.Group>`
+            The channel's Group object.
+
+        """
+        return self._get_base_group(self.CATEGORY_CHANNEL, str(channel.id))
 
     def role(self, role: discord.Role) -> Group:
         """Returns a `Group` for the given role.
@@ -1021,6 +1117,57 @@ class Config:
 
         """
         return await self._all_from_scope(self.CHANNEL)
+
+    async def all_text_channels(self) -> dict:
+        """Get all text channel data as a dict.
+
+        Note
+        ----
+        The return value of this method will include registered defaults for
+        values which have not yet been set.
+
+        Returns
+        -------
+        dict
+            A dictionary in the form {`int`: `dict`} mapping
+            :code:`CHANNEL_ID -> data`.
+
+        """
+        return await self._all_from_scope(self.VOICE_CHANNEL)
+
+    async def all_voice_channels(self) -> dict:
+        """Get all voice channel data as a dict.
+
+        Note
+        ----
+        The return value of this method will include registered defaults for
+        values which have not yet been set.
+
+        Returns
+        -------
+        dict
+            A dictionary in the form {`int`: `dict`} mapping
+            :code:`CHANNEL_ID -> data`.
+
+        """
+        return await self._all_from_scope(self.VOICE_CHANNEL)
+
+    async def all_category_channels(self) -> dict:
+        """Get all category channel data as a dict.
+
+        Note
+        ----
+        The return value of this method will include registered defaults for
+        values which have not yet been set.
+
+        Returns
+        -------
+        dict
+            A dictionary in the form {`int`: `dict`} mapping
+            :code:`CHANNEL_ID -> data`.
+
+        """
+        return await self._all_from_scope(self.CATEGORY_CHANNEL)
 
     async def all_roles(self) -> dict:
         """Get all role data as a dict.
@@ -1170,6 +1317,27 @@ class Config:
         This resets all channel data to its registered defaults.
         """
         await self._clear_scope(self.CHANNEL)
+
+    async def clear_all_text_channels(self):
+        """Clear all text channel data.
+
+        This resets all channel data to its registered defaults.
+        """
+        await self._clear_scope(self.TEXT_CHANNEL)
+
+    async def clear_all_voice_channels(self):
+        """Clear all voice channel data.
+
+        This resets all channel data to its registered defaults.
+        """
+        await self._clear_scope(self.VOICE_CHANNEL)
+
+    async def clear_all_category_channels(self):
+        """Clear all category channel data.
+
+        This resets all channel data to its registered defaults.
+        """
+        await self._clear_scope(self.CATEGORY_CHANNEL)
 
     async def clear_all_roles(self):
         """Clear all role data.
