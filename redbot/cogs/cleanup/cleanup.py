@@ -302,13 +302,13 @@ class Cleanup(commands.Cog):
         author = ctx.author
         try:
             mone = await channel.fetch_message(one)
-        except discord.errors.Notfound:
+        except discord.errors.NotFound:
             return await ctx.send(
                 _("Could not find a message with the ID of {id}.".format(id=one))
             )
         try:
             mtwo = await channel.fetch_message(two)
-        except discord.errors.Notfound:
+        except discord.errors.NotFound:
             return await ctx.send(
                 _("Could not find a message with the ID of {id}.".format(id=two))
             )
