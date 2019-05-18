@@ -87,7 +87,10 @@ class TwitchGame(Game):
             if not data["data"]:
                 raise OfflineGame()
             if self.sort == "random":
-                choices = random.sample(data["data"], self.count)
+                if len(data[data]) < self.count:
+                    choices = data["data"]
+                else:
+                    choices = random.sample(data["data"], self.count)
             else:
                 choices = sorted(data["data"], key=lambda x: x["viewer_count"], reverse=True)[
                     : self.count
