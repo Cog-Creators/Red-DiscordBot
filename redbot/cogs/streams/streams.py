@@ -128,8 +128,7 @@ class Streams(commands.Cog):
         stream = PicartoStream(name=channel_name)
         await self.check_online(ctx, stream)
 
-    @staticmethod
-    async def check_online(ctx: commands.Context, stream):
+    async def check_online(self, ctx: commands.Context, stream):
         try:
             info = await stream.is_online()
         except OfflineStream:
@@ -157,7 +156,7 @@ class Streams(commands.Cog):
         else:
             if isinstance(info, tuple):
                 embed, is_rerun = info
-                ignore_reruns = await self.db.guild(channel.guild).ignore_reruns()
+                ignore_reruns = await self.db.guild(ctx.channel.guild).ignore_reruns()
                 if ignore_reruns and is_rerun:
                     await ctx.send(_("That user is offline."))
                     return
