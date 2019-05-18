@@ -1,18 +1,21 @@
-from .errors import (
-    StreamNotFound,
-    APIError,
-    OfflineStream,
-    InvalidYoutubeCredentials,
-    InvalidTwitchCredentials,
-    GameNotInStreamTargetGameList,
-    OfflineGame,
-)
+import json
 from random import choice, sample
 from string import ascii_letters
 from typing import ClassVar, Optional
-import discord
+from urllib.parse import quote
+
 import aiohttp
-import json
+import discord
+
+from .errors import (
+    APIError,
+    GameNotInStreamTargetGameList,
+    InvalidTwitchCredentials,
+    InvalidYoutubeCredentials,
+    OfflineGame,
+    OfflineStream,
+    StreamNotFound,
+)
 
 TWITCH_BASE_URL = "https://api.twitch.tv"
 TWITCH_STREAMS_ENDPOINT = TWITCH_BASE_URL + "/helix/streams"
@@ -79,32 +82,54 @@ class TwitchGame(Game):
             header = {"Authorization": "Bearer " + self._token["access_token"]}
         else:
             header = {"Client-ID": str(self._token["client_id"])}
-        params = {"game_id": self.id}
+        params = {"game_id": self.id, "first": 100}
+        stream_list = []
+
         async with aiohttp.ClientSession() as session:
             async with session.get(TWITCH_STREAMS_ENDPOINT, headers=header, params=params) as r:
                 data = await r.json()
         if r.status == 200:
             if not data["data"]:
                 raise OfflineGame()
+            stream_list.extend(data["data"])
+            cursor = data["pagination"]
+            while True:
+                if "cursor" in cursor:
+                    params["after"] = cursor["cursor"]
+                    async with aiohttp.ClientSession() as session:
+                        async with session.get(
+                            TWITCH_STREAMS_ENDPOINT, headers=header, params=params
+                        ) as r:
+                            data = await r.json()
+                            if not data["data"]:
+                                break
+                            else:
+                                stream_list.extend(data["data"])
+                                cursor = data["pagination"]
+                else:
+                    break
             if self.sort == "random":
-                if len(data[data]) < self.count:
+                if len(data["data"]) < self.count:
                     choices = data["data"]
                 else:
-                    choices = random.sample(data["data"], self.count)
+                    choices = sample(data["data"], self.count)
             else:
                 choices = sorted(data["data"], key=lambda x: x["viewer_count"], reverse=True)[
                     : self.count
                 ]
-            return self.make_embed(data)
+            return self.make_embed(choices)
 
     def make_embed(self, data: list):
-        embed = discord.Embed(title=f"Currently live channels playing {self.name}")
+        embed = discord.Embed(
+            title=f"Currently live channels playing {self.name}",
+            url=f"https://twitch.tv/directory/game/{quote(self.name)}",
+        )
         if self.box_art:
-            embed.set_image(url=self.box_art)
+            embed.set_thumbnail(url=self.box_art.format(width=150, height=200))
         for chn in data:
             embed.add_field(
-                name=data["user_name"],
-                value=f"[{data['viewer_count']}](https://twitch.tv/{data['user_name']}) viewers",
+                name=chn["user_name"],
+                value=f"[{chn['viewer_count']}](https://twitch.tv/{chn['user_name']}) viewers",
                 inline=False,
             )
         return embed
@@ -276,24 +301,24 @@ class TwitchStream(Stream):
             game = None
             if self.games and stream["game_id"] not in self.games:
                 raise GameNotInStreamTargetGameList()
-            if stream["game_id"] > 0:  # 0 is used for the game id when no game is set
+            if int(stream["game_id"]) > 0:  # 0 is used for the game id when no game is set
                 streams_cog = self.bot.get_cog("Streams")
                 if streams_cog:
                     try:
-                        game_list = await streams_cog.db.games.get_raw("twitch")
+                        game_list = await streams_cog.db.known_games.get_raw("twitch")
                     except KeyError:
                         game_list = []
                         async with aiohttp.ClientSession() as session:
                             async with session.get(
                                 TWITCH_GAMES_ENDPOINT,
-                                headers=headers,
+                                headers=header,
                                 params={"id": stream["game_id"]},
                             ) as game_data:
                                 gd = await game_data.json(encoding="utf-8")
                         if game_data.status == 200:
                             game = gd["data"][0]
                             game_list.append(game)
-                            await streams_cog.db.games.set_raw("twitch", value=game_list)
+                            await streams_cog.db.known_games.set_raw("twitch", value=game_list)
                     else:
                         for item in game_list:
                             if item["id"] == stream["game_id"]:
@@ -332,11 +357,9 @@ class TwitchStream(Stream):
         status = stream["title"]
         if not status:
             status = "Untitled broadcast"
-        if is_rerun:
-            status += " - Rerun"
         embed = discord.Embed(title=status, url=url)
         embed.set_author(name=channel["display_name"])
-        embed.add_field(name="Current viewers", value=channel["viewer_count"])
+        embed.add_field(name="Current viewers", value=stream["viewer_count"])
         embed.add_field(name="Total views", value=channel["view_count"])
         embed.set_thumbnail(url=logo)
         embed.set_image(url=rnd(stream["thumbnail_url"].format(width=320, height=180)))

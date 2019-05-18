@@ -15,6 +15,7 @@ from .streamtypes import (
     YoutubeStream,
     Game,
     TwitchGame,
+    TWITCH_GAMES_ENDPOINT,
 )
 from .errors import (
     OfflineStream,
@@ -43,7 +44,7 @@ _ = Translator("Streams", __file__)
 @cog_i18n(_)
 class Streams(commands.Cog):
 
-    global_defaults = {"tokens": {}, "streams": [], "games": []}
+    global_defaults = {"tokens": {}, "streams": [], "games": [], "known_games": {}}
 
     guild_defaults = {
         "autodelete": False,
@@ -70,7 +71,8 @@ class Streams(commands.Cog):
         self.bot: Red = bot
 
         self.streams: List[Stream] = []
-        self.task: Optional[asyncio.Task] = None
+        self.streams_task: Optional[asyncio.Task] = None
+        self.games_task: Optional[asyncio.Task] = None
         self.twitch_access_token = None
 
         self.yt_cid_pattern = re.compile("^UC[-_A-Za-z0-9]{21}[AQgw]$")
@@ -88,7 +90,8 @@ class Streams(commands.Cog):
         self.streams = await self.load_streams()
         self.games = await self.load_games()
 
-        self.task = self.bot.loop.create_task(self._stream_alerts())
+        self.streams_task = self.bot.loop.create_task(self._stream_alerts())
+        self.games_task = self.bot.loop.create_task(self._game_alerts())
 
     async def move_api_keys(self):
         """Move the API keys from cog stored config to core bot config if they exist."""
@@ -149,7 +152,7 @@ class Streams(commands.Cog):
 
     async def check_online(self, ctx: commands.Context, stream):
         try:
-            info = await stream.is_online()
+            embed = await stream.is_online()
         except OfflineStream:
             await ctx.send(_("That user is offline."))
         except StreamNotFound:
@@ -175,14 +178,6 @@ class Streams(commands.Cog):
                 _("Something went wrong whilst trying to contact the stream service's API.")
             )
         else:
-            if isinstance(info, tuple):
-                embed, is_rerun = info
-                ignore_reruns = await self.db.guild(ctx.channel.guild).ignore_reruns()
-                if ignore_reruns and is_rerun:
-                    await ctx.send(_("That user is offline."))
-                    return
-            else:
-                embed = info
             await ctx.send(embed=embed)
 
     @commands.group()
@@ -217,15 +212,18 @@ class Streams(commands.Cog):
         await self.stream_alert(ctx, TwitchStream, channel_name.lower(), games=games)
 
     @_twitch.command(name="game")
-    async def twitch_alert_game(self, ctx: commands.Context, sort: str, count: int, game: str):
+    async def twitch_alert_game(self, ctx: commands.Context, sort: str, count: int, *, game: str):
         """Toggle alerts in this channel for a Twitch game.
         
         `sort` must be one of: 'random', 'top'
         `count` should be a number between 1 and 25
         `game` must be an exact match to the game name on its Twitch page"""
         game_data = {}
+        if count < 1 or count > 25:
+            await ctx.send(_("Count must be between 1 and 25!"))
+            return
         try:
-            game_list = await self.db.games.get_raw("twitch")
+            game_list = await self.db.known_games.get_raw("twitch")
         except KeyError:
             game_list = []
         for g in game_list:
@@ -233,17 +231,27 @@ class Streams(commands.Cog):
                 game_data = g
                 break
         else:
+            token = await self.bot.db.api_tokens.get_raw("twitch", default=None)
+            if token:
+                if token["access_token"]:
+                    header = {"Authorization": "Bearer " + token["access_token"]}
+                else:
+                    header = {"Client-ID": str(token["client_id"])}
+            else:
+                await ctx.send(
+                    _("No credentials available! Please see `[p]streamset twitchtoken` for help.")
+                )
             async with aiohttp.ClientSession() as session:
                 async with session.get(
-                    TWITCH_GAMES_ENDPOINT, headers=headers, params={"name": game}
+                    TWITCH_GAMES_ENDPOINT, headers=header, params={"name": game}
                 ) as game_data:
                     gd = await game_data.json(encoding="utf-8")
             if game_data.status == 200:
-                if "data" in data and data["data"]:
+                if "data" in gd and gd["data"]:
                     game = gd["data"][0]
                     game_data = game
                     game_list.append(game)
-                    await self.db.games.set_raw("twitch", value=game_list)
+                    await self.db.known_games.set_raw("twitch", value=game_list)
                 else:
                     await ctx.send(
                         _(
@@ -286,6 +294,8 @@ class Streams(commands.Cog):
         this server.
         """
         streams = self.streams.copy()
+        games = self.games.copy()
+
         local_channel_ids = [c.id for c in ctx.guild.channels]
         to_remove = []
 
@@ -303,8 +313,24 @@ class Streams(commands.Cog):
         for stream in to_remove:
             streams.remove(stream)
 
+        to_remove = []
+        for game in games:
+            for channel_id in game.channels:
+                if channel_id == ctx.channel.id:
+                    game.channels.remove(channel_id)
+                elif _all and ctx.channel.id in local_channel_ids:
+                    if channel_id in game.channels:
+                        gamestream.channels.remove(channel_id)
+            if not game.channels:
+                to_remove.append(game)
+
+        for game in to_remove:
+            games.remove(game)
+
         self.streams = streams
+        self.games = games
         await self.save_streams()
+        await self.save_games()
 
         if _all:
             msg = _("All the stream alerts in this server have been disabled.")
@@ -357,7 +383,6 @@ class Streams(commands.Cog):
                 game = _class(
                     name=game_data["name"],
                     id=game_data["id"],
-                    box_art_url=game_data["box_art_url"],
                     bot=self.bot,
                     sort=sort,
                     count=count,
@@ -838,7 +863,7 @@ class Streams(commands.Cog):
             "grant_type": "client_credentials",
         }
         async with aiohttp.ClientSession() as session:
-            async with session.post("https://id.twitch.tv/oauth2/token", params=params) as r:
+            async with session.post("https://id.twitch.tv/oauth2/token", json=data) as r:
                 if r.status == 200:
                     resp = await r.json()
                     self.twitch_access_token = resp["access_token"]
@@ -951,7 +976,9 @@ class Streams(commands.Cog):
         await self.db.games.set(raw_games)
 
     def cog_unload(self):
-        if self.task:
-            self.task.cancel()
+        if self.streams_task:
+            self.streams_task.cancel()
+        if self.games_task:
+            self.games_task.cancel()
 
     __del__ = cog_unload
