@@ -92,6 +92,9 @@ ignored-classes=redbot.cogs.mod.movetocore.MoveToCore,
     redbot.cogs.mod.settings.ModSettings,
     redbot.cogs.mod.events.Events
 
+ignored-modules=distutils  # https://github.com/PyCQA/pylint/issues/73
+
+
 [VARIABLES]
 
 # Tells whether we should check for unused import in __init__ files.
