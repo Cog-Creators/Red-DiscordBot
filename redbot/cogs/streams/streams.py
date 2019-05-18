@@ -14,7 +14,7 @@ from .streamtypes import (
     PicartoStream,
     YoutubeStream,
     Game,
-    TwitchGame
+    TwitchGame,
 )
 from .errors import (
     OfflineStream,
@@ -201,7 +201,7 @@ class Streams(commands.Cog):
 
     @_twitch.command(name="channel")
     async def twitch_alert_channel(
-        self, ctx: commands.Context, channel_name: str, games: Optional[str]=None
+        self, ctx: commands.Context, channel_name: str, games: Optional[str] = None
     ):
         """Toggle alerts in this channel for a Twitch stream.
         
@@ -214,11 +214,9 @@ class Streams(commands.Cog):
             await ctx.send("Please supply the name of a *Twitch* channel, not a Discord channel.")
             return
         await self.stream_alert(ctx, TwitchStream, channel_name.lower(), games=games)
-    
+
     @_twitch.command(name="game")
-    async def twitch_alert_game(
-        self, ctx: commands.Context, sort: str, count: int, game: str
-    ):
+    async def twitch_alert_game(self, ctx: commands.Context, sort: str, count: int, game: str):
         """Toggle alerts in this channel for a Twitch game.
         
         `sort` must be one of: 'random', 'top'
@@ -236,9 +234,7 @@ class Streams(commands.Cog):
         else:
             async with aiohttp.ClientSession() as session:
                 async with session.get(
-                    TWITCH_GAMES_ENDPOINT,
-                    headers=headers,
-                    params={"name": game},
+                    TWITCH_GAMES_ENDPOINT, headers=headers, params={"name": game}
                 ) as game_data:
                     gd = await game_data.json(encoding="utf-8")
             if game_data.status == 200:
@@ -249,14 +245,14 @@ class Streams(commands.Cog):
                     await self.db.games.set_raw("twitch", value=game_list)
                 else:
                     await ctx.send(
-                        _("I was unable to find a game by that name! "
-                          "Please confirm you have entered the name correctly."
+                        _(
+                            "I was unable to find a game by that name! "
+                            "Please confirm you have entered the name correctly."
                         )
                     )
                     return
-        
-        await self.game_alert(ctx, TwitchGame, sort, count, game_data)   
-        
+
+        await self.game_alert(ctx, TwitchGame, sort, count, game_data)
 
     @streamalert.command(name="youtube")
     async def youtube_alert(self, ctx: commands.Context, channel_name_or_id: str):
@@ -338,19 +334,36 @@ class Streams(commands.Cog):
 
         for page in pagify(msg):
             await ctx.send(page)
-    
-    async def game_alert(self, ctx: commands.Context, _class, sort: str, count: int, game_data: dict):
+
+    async def game_alert(
+        self, ctx: commands.Context, _class, sort: str, count: int, game_data: dict
+    ):
         game = self.get_game(_class, game_data)
         if not game:
             token = await self.bot.db.api_tokens.get_raw(_class.token_name, default=None)
             is_twitch = _class.__name__ == "TwitchGame"
             if is_twitch:
-                game = _class(name=game_data["name"], id=game_data["id"], box_art_url=game_data["box_art_url"], token=token, bot=self.bot, sort=sort, count=count)
+                game = _class(
+                    name=game_data["name"],
+                    id=game_data["id"],
+                    box_art_url=game_data["box_art_url"],
+                    token=token,
+                    bot=self.bot,
+                    sort=sort,
+                    count=count,
+                )
             else:
-                game = _class(name=game_data["name"], id=game_data["id"], box_art_url=game_data["box_art_url"], bot=self.bot, sort=sort, count=count)
+                game = _class(
+                    name=game_data["name"],
+                    id=game_data["id"],
+                    box_art_url=game_data["box_art_url"],
+                    bot=self.bot,
+                    sort=sort,
+                    count=count,
+                )
         await self.add_or_remove_game(ctx, game)
 
-    async def stream_alert(self, ctx: commands.Context, _class, channel_name, games: list=None):
+    async def stream_alert(self, ctx: commands.Context, _class, channel_name, games: list = None):
         stream = self.get_stream(_class, channel_name)
         if not stream:
             token = await self.bot.db.api_tokens.get_raw(_class.token_name, default=None)
@@ -366,7 +379,11 @@ class Streams(commands.Cog):
                     header = {"Client-ID": str(token["client_id"])}
                 for game in games:
                     async with aiohttp.ClientSession as session:
-                        async with session.get("https://api.twitch.tv/helix/games", headers=header, params={"name": game}) as r:
+                        async with session.get(
+                            "https://api.twitch.tv/helix/games",
+                            headers=header,
+                            params={"name": game},
+                        ) as r:
                             data = await r.json()
                     if r.status == 200:
                         if "data" in data and data["data"]:
@@ -454,16 +471,16 @@ class Streams(commands.Cog):
     async def message(self, ctx: commands.Context):
         """Manage custom message for stream alerts."""
         pass
-    
+
     @message.group(name="game")
     @commands.guild_only()
     async def msg_game(self, ctx: commands.Context):
         """Manage custom message for game alerts."""
         pass
-    
+
     @msg_game.command(name="mention")
     @commands.guild_only()
-    async def game_with_mention(self, ctx: commands.Context, message: str=None):
+    async def game_with_mention(self, ctx: commands.Context, message: str = None):
         """Set game alert message when mentions are enabled.
 
         Use `{mention}` in the message to insert the selected mentions.
@@ -478,10 +495,10 @@ class Streams(commands.Cog):
             await ctx.send(_("game alert message set!"))
         else:
             await ctx.send_help()
-    
+
     @msg_game.command(name="nomention")
     @commands.guild_only()
-    async def game_no_mention(self, ctx: commands.Context, message: str=None):
+    async def game_no_mention(self, ctx: commands.Context, message: str = None):
         """Set game alert message when mentions are disabled.
 
         Use `{game.name}` in the message to insert the game name.
@@ -494,7 +511,7 @@ class Streams(commands.Cog):
             await ctx.send(_("game alert message set!"))
         else:
             await ctx.send_help()
-    
+
     @msg_game.command(name="clear")
     @commands.guild_only()
     async def game_clear_message(self, ctx: commands.Context):
@@ -636,7 +653,7 @@ class Streams(commands.Cog):
             )
 
         await self.save_streams()
-    
+
     async def add_or_remove_game(self, ctx: commands.Context, game):
         if ctx.channel.id not in game.channels:
             game.channels.append(ctx.channel.id)
@@ -652,11 +669,11 @@ class Streams(commands.Cog):
             if not game.channels:
                 self.games.remove(game)
             await ctx.send(
-                _(
-                    "I won't send notifications about {game.name} in this channel anymore."
-                ).format(game=game)
+                _("I won't send notifications about {game.name} in this channel anymore.").format(
+                    game=game
+                )
             )
-        
+
         await self.save_games()
 
     def get_stream(self, _class, name):
@@ -675,7 +692,7 @@ class Streams(commands.Cog):
                     return stream
             elif stream.type == _class.__name__ and stream.name.lower() == name.lower():
                 return stream
-    
+
     def get_game(self, _class, game_data):
         for game in self.games:
             if game.type == _class.__name__ and game.name.lower() == game_data["name"].lower():
@@ -700,7 +717,7 @@ class Streams(commands.Cog):
             except asyncio.CancelledError:
                 pass
             await asyncio.sleep(CHECK_DELAY)
-    
+
     async def _game_alerts(self):
         while True:
             try:
@@ -714,7 +731,7 @@ class Streams(commands.Cog):
             with contextlib.suppress(Exception):
                 try:
                     embed = await stream.is_online()
-                except OfflineStream, GameNotInStreamTargetGameList:
+                except (OfflineStream, GameNotInStreamTargetGameList):
                     if not stream._messages_cache:
                         continue
                     for message in stream._messages_cache:
@@ -753,7 +770,7 @@ class Streams(commands.Cog):
                             for role in edited_roles:
                                 await role.edit(mentionable=False)
                         await self.save_streams()
-    
+
     async def check_games(self):
         for game in self.games:
             with contextlib.suppress(Exception):
@@ -774,19 +791,25 @@ class Streams(commands.Cog):
                         channel = self.bot.get_channel(channel_id)
                         mention_str, edited_roles = await self._get_mention_str(channel.guild)
                         if mention_str:
-                            alert_msg = await self.db.guild(channel.guild).game_live_message_mention()
+                            alert_msg = await self.db.guild(
+                                channel.guild
+                            ).game_live_message_mention()
                             if alert_msg:
                                 content = alert_msg.format(mention=mention_str, game=game)
                             else:
-                                content = _("{mention}, there are channels currently playing {game.name}!").format(
-                                    mention=mention_str, game=game
-                                )
+                                content = _(
+                                    "{mention}, there are channels currently playing {game.name}!"
+                                ).format(mention=mention_str, game=game)
                         else:
-                            alert_msg = await self.db.guild(channel.guild).game_live_message_nomention()
+                            alert_msg = await self.db.guild(
+                                channel.guild
+                            ).game_live_message_nomention()
                             if alert_msg:
                                 content = alert_msg.format(stream=stream)
                             else:
-                                content = _("There are channels currently playing {game.name}!").format(game=game)
+                                content = _(
+                                    "There are channels currently playing {game.name}!"
+                                ).format(game=game)
                         if game._messages_cache:
                             for m in game._messages_cache:
                                 await m.edit(content, embed=embed)
@@ -895,7 +918,7 @@ class Streams(commands.Cog):
             raw_streams.append(stream.export())
 
         await self.db.streams.set(raw_streams)
-    
+
     async def load_games(self):
         games = []
         for raw_game in await self.db.games():
@@ -923,7 +946,7 @@ class Streams(commands.Cog):
         raw_games = []
         for game in self.games:
             raw_games.append(game.export())
-        
+
         await self.db.games.set(raw_games)
 
     def cog_unload(self):
