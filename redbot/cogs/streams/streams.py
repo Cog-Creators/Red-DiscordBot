@@ -31,6 +31,7 @@ from collections import defaultdict
 import asyncio
 import re
 from typing import Optional, List, Tuple
+import aiohttp
 
 CHECK_DELAY = 60
 
