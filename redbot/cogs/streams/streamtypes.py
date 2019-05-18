@@ -37,6 +37,7 @@ class Game:
     def __init__(self, **kwargs):
         self.name = kwargs.pop("name", None)
         self.id = kwargs.pop("id", None)
+        self.channels = kwargs.pop("channels", [])
         self._messages_cache = kwargs.pop("_messages_cache", [])
         self.type = self.__class__.__name__
         self.bot = kwargs.pop("bot", None)

@@ -24,6 +24,7 @@ from .errors import (
     StreamsError,
     InvalidTwitchCredentials,
     GameNotInStreamTargetGameList,
+    OfflineGame,
 )
 from . import streamtypes as _streamtypes
 from collections import defaultdict
@@ -41,7 +42,7 @@ _ = Translator("Streams", __file__)
 @cog_i18n(_)
 class Streams(commands.Cog):
 
-    global_defaults = {"tokens": {}, "streams": [], "games": {}}
+    global_defaults = {"tokens": {}, "streams": [], "games": []}
 
     guild_defaults = {
         "autodelete": False,
@@ -49,6 +50,8 @@ class Streams(commands.Cog):
         "mention_here": False,
         "live_message_mention": False,
         "live_message_nomention": False,
+        "game_live_message_mention": False,
+        "game_live_message_nomention": False,
     }
 
     role_defaults = {"mention": False}
@@ -82,6 +85,7 @@ class Streams(commands.Cog):
         await self.move_api_keys()
         await self.get_twitch_access_token()
         self.streams = await self.load_streams()
+        self.games = await self.load_games()
 
         self.task = self.bot.loop.create_task(self._stream_alerts())
 
@@ -335,8 +339,16 @@ class Streams(commands.Cog):
         for page in pagify(msg):
             await ctx.send(page)
     
-    async def game_alert(self, ctx: commands.Context, _class, sort: str, count: int, game: dict):
-        pass
+    async def game_alert(self, ctx: commands.Context, _class, sort: str, count: int, game_data: dict):
+        game = self.get_game(_class, game_data)
+        if not game:
+            token = await self.bot.db.api_tokens.get_raw(_class.token_name, default=None)
+            is_twitch = _class.__name__ == "TwitchGame"
+            if is_twitch:
+                game = _class(name=game_data["name"], id=game_data["id"], box_art_url=game_data["box_art_url"], token=token, bot=self.bot, sort=sort, count=count)
+            else:
+                game = _class(name=game_data["name"], id=game_data["id"], box_art_url=game_data["box_art_url"], bot=self.bot, sort=sort, count=count)
+        await self.add_or_remove_game(ctx, game)
 
     async def stream_alert(self, ctx: commands.Context, _class, channel_name, games: list=None):
         stream = self.get_stream(_class, channel_name)
@@ -442,6 +454,55 @@ class Streams(commands.Cog):
     async def message(self, ctx: commands.Context):
         """Manage custom message for stream alerts."""
         pass
+    
+    @message.group(name="game")
+    @commands.guild_only()
+    async def msg_game(self, ctx: commands.Context):
+        """Manage custom message for game alerts."""
+        pass
+    
+    @msg_game.command(name="mention")
+    @commands.guild_only()
+    async def game_with_mention(self, ctx: commands.Context, message: str=None):
+        """Set game alert message when mentions are enabled.
+
+        Use `{mention}` in the message to insert the selected mentions.
+
+        Use `{game.name}` in the message to insert the game name.
+
+        For example: `[p]streamset message game mention "{mention}, there are channels currently playing {game.name}!"`
+        """
+        if message is not None:
+            guild = ctx.guild
+            await self.db.guild(guild).game_live_message_mention.set(message)
+            await ctx.send(_("game alert message set!"))
+        else:
+            await ctx.send_help()
+    
+    @msg_game.command(name="nomention")
+    @commands.guild_only()
+    async def game_no_mention(self, ctx: commands.Context, message: str=None):
+        """Set game alert message when mentions are disabled.
+
+        Use `{game.name}` in the message to insert the game name.
+
+        For example: `[p]streamset message game nomention "There are channels currently playing {game.name}!"`
+        """
+        if message is not None:
+            guild = ctx.guild
+            await self.db.guild(guild).game_live_message_nomention.set(message)
+            await ctx.send(_("game alert message set!"))
+        else:
+            await ctx.send_help()
+    
+    @msg_game.command(name="clear")
+    @commands.guild_only()
+    async def game_clear_message(self, ctx: commands.Context):
+        """Reset the game alert messages in this server."""
+        guild = ctx.guild
+        await self.db.guild(guild).game_live_message_mention.set(False)
+        await self.db.guild(guild).game_live_message_nomention.set(False)
+        await ctx.send(_("Game alerts in this server will now use the default alert message."))
 
     @message.command(name="mention")
     @commands.guild_only()
@@ -575,6 +636,28 @@ class Streams(commands.Cog):
             )
 
         await self.save_streams()
+    
+    async def add_or_remove_game(self, ctx: commands.Context, game):
+        if ctx.channel.id not in game.channels:
+            game.channels.append(ctx.channel.id)
+            if game not in self.games:
+                self.games.append(game)
+            await ctx.send(
+                _(
+                    "I'll now send a notification in this channel when {game.name} has live channels."
+                ).format(game=game)
+            )
+        else:
+            game.channels.remove(ctx.channel.id)
+            if not game.channels:
+                self.games.remove(game)
+            await ctx.send(
+                _(
+                    "I won't send notifications about {game.name} in this channel anymore."
+                ).format(game=game)
+            )
+        
+        await self.save_games()
 
     def get_stream(self, _class, name):
         for stream in self.streams:
@@ -592,6 +675,11 @@ class Streams(commands.Cog):
                     return stream
             elif stream.type == _class.__name__ and stream.name.lower() == name.lower():
                 return stream
+    
+    def get_game(self, _class, game_data):
+        for game in self.games:
+            if game.type == _class.__name__ and game.name.lower() == game_data["name"].lower():
+                return game
 
     @staticmethod
     async def check_exists(stream):
@@ -609,6 +697,14 @@ class Streams(commands.Cog):
         while True:
             try:
                 await self.check_streams()
+            except asyncio.CancelledError:
+                pass
+            await asyncio.sleep(CHECK_DELAY)
+    
+    async def _game_alerts(self):
+        while True:
+            try:
+                await self.check_games()
             except asyncio.CancelledError:
                 pass
             await asyncio.sleep(CHECK_DELAY)
@@ -657,6 +753,50 @@ class Streams(commands.Cog):
                             for role in edited_roles:
                                 await role.edit(mentionable=False)
                         await self.save_streams()
+    
+    async def check_games(self):
+        for game in self.games:
+            with contextlib.suppress(Exception):
+                try:
+                    embed = await game.has_online_channels()
+                except OfflineGame:
+                    if not game._messages_cache:
+                        continue
+                    for message in game._messages_cache:
+                        with contextlib.suppress(Exception):
+                            autodelete = await self.db.guild(message.guild).autodelete()
+                            if autodelete:
+                                await message.delete()
+                    game._messages_cache.clear()
+                    await self.save_games()
+                else:
+                    for channel_id in game.channels:
+                        channel = self.bot.get_channel(channel_id)
+                        mention_str, edited_roles = await self._get_mention_str(channel.guild)
+                        if mention_str:
+                            alert_msg = await self.db.guild(channel.guild).game_live_message_mention()
+                            if alert_msg:
+                                content = alert_msg.format(mention=mention_str, game=game)
+                            else:
+                                content = _("{mention}, there are channels currently playing {game.name}!").format(
+                                    mention=mention_str, game=game
+                                )
+                        else:
+                            alert_msg = await self.db.guild(channel.guild).game_live_message_nomention()
+                            if alert_msg:
+                                content = alert_msg.format(stream=stream)
+                            else:
+                                content = _("There are channels currently playing {game.name}!").format(game=game)
+                        if game._messages_cache:
+                            for m in game._messages_cache:
+                                await m.edit(content, embed=embed)
+                        else:
+                            m = await channel.send(content, embed=embed)
+                            game._messages_cache.append(m)
+                        if edited_roles:
+                            for role in edited_roles:
+                                await role.edit(mentionable=False)
+                        await self.save_games()
 
     async def get_twitch_access_token(self):
         try:
@@ -755,6 +895,36 @@ class Streams(commands.Cog):
             raw_streams.append(stream.export())
 
         await self.db.streams.set(raw_streams)
+    
+    async def load_games(self):
+        games = []
+        for raw_game in await self.db.games():
+            _class = getattr(_streamtypes, raw_game["type"], None)
+            if not _class:
+                continue
+            raw_msg_cache = raw_game["messages"]
+            raw_game["_messages_cache"] = []
+            for raw_msg in raw_msg_cache:
+                chn = self.bot.get_channel(raw_msg["channel"])
+                if chn is not None:
+                    try:
+                        msg = await chn.fetch_message(raw_msg["message"])
+                    except discord.HTTPException:
+                        pass
+                    else:
+                        raw_game["_messages_cache"].append(msg)
+            token = await self.bot.db.api_tokens.get_raw(_class.token_name, default=None)
+            if token is not None:
+                raw_game["token"] = token
+            games.append(_class(**raw_game))
+        return games
+
+    async def save_games(self):
+        raw_games = []
+        for game in self.games:
+            raw_games.append(game.export())
+        
+        await self.db.games.set(raw_games)
 
     def cog_unload(self):
         if self.task:
