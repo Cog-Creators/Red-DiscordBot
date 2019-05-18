@@ -57,7 +57,7 @@ class JsonIO:
 
         tmp_path.replace(self.path)
 
-        # pylint: disable=E1101
+        # pylint: disable=no-member
         try:
             fd = os.open(self.path.parent, os.O_DIRECTORY)
             os.fsync(fd)

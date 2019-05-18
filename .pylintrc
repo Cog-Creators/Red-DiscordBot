@@ -1,0 +1,145 @@
+[MASTER]
+
+# Specify a configuration file.
+#rcfile=
+
+# Add files or directories to the blacklist. They should be base names, not
+# paths.
+ignore=pytest
+
+# Pickle collected data for later comparisons.
+persistent=no
+
+# List of plugins (as comma separated values of python modules names) to load,
+# usually to register additional checkers.
+load-plugins=
+
+# DO NOT CHANGE THIS VALUE # Use multiple processes to speed up Pylint.
+jobs=1
+
+# Allow loading of arbitrary C extensions. Extensions are imported into the
+# active Python interpreter and may run arbitrary code.
+unsafe-load-any-extension=no
+
+# A comma-separated list of package or module names from where C extensions may
+# be loaded. Extensions are loading into the active Python interpreter and may
+# run arbitrary code
+extension-pkg-whitelist=
+
+# Allow optimization of some AST trees. This will activate a peephole AST
+# optimizer, which will apply various small optimizations. For instance, it can
+# be used to obtain the result of joining multiple strings with the addition
+# operator. Joining a lot of strings can lead to a maximum recursion error in
+# Pylint and this flag can prevent that. It has one side effect, the resulting
+# AST will be different than the one from reality.
+optimize-ast=no
+
+
+[MESSAGES CONTROL]
+
+# Only show warnings with the listed confidence levels. Leave empty to show
+# all. Valid levels: HIGH, INFERENCE, INFERENCE_FAILURE, UNDEFINED
+confidence=
+
+# Enable the message, report, category or checker with the given id(s). You can
+# either give multiple identifier separated by comma (,) or put this option
+# multiple time. See also the "--disable" option for examples.
+
+
+enable=all
+
+disable=C, # black is enforcing this for us already, incompatibly
+    W, # unbroaden this to the below specifics later on.
+    W0107, # uneccessary pass is stylisitc in most places
+    W0212, # Should likely refactor around protected access warnings later
+    W1203, # fstrings are too fast to care about enforcing this.
+    W0612, # unused vars can sometimes indicate an issue, but ...
+    W1401, # Should probably fix the reason this is disabled (start up screen)
+    W0511, # Nope, todos are fine for future people to see things to do.
+    W0613, # Too many places where we need to take unused args do to d.py ... also menus
+    W0221, # Overriden converters.
+    W0223, # abstractmethod not defined in mixins is expected
+    I, # ...
+    R # While some of these have merit, It's too large a burden to enable this right now.
+
+
+[REPORTS]
+
+output-format=parseable
+files-output=no
+reports=no
+
+
+[LOGGING]
+
+# Logging modules to check that the string format arguments are in logging
+# function parameter format
+logging-modules=logging
+
+
+[TYPECHECK]
+
+# Tells whether missing members accessed in mixin class should be ignored. A
+# mixin class is detected if its name ends with "mixin" (case insensitive).
+ignore-mixin-members=yes
+
+# TODO: Write a plyint plugin to allow this with these mixin classes
+# To use the abstractmethod we know will be defined in the final class.
+ignored-classes=redbot.cogs.mod.movetocore.MoveToCore,
+    redbot.cogs.mod.kickban.KickBanMixin,
+    redbot.cogs.mod.mutes.MuteMixin,
+    redbot.cogs.mod.names.ModInfo,
+    redbot.cogs.mod.settings.ModSettings,
+    redbot.cogs.mod.events.Events
+
+[VARIABLES]
+
+# Tells whether we should check for unused import in __init__ files.
+init-import=no
+
+# A regular expression matching the name of dummy variables (i.e. expectedly
+# not used).
+dummy-variables-rgx=_$|dummy
+
+
+[SIMILARITIES]
+
+# Minimum lines number of a similarity.
+min-similarity-lines=4
+
+# Ignore comments when computing similarities.
+ignore-comments=yes
+
+# Ignore docstrings when computing similarities.
+ignore-docstrings=yes
+
+# Ignore imports when computing similarities.
+ignore-imports=no
+
+
+[MISCELLANEOUS]
+
+# List of note tags to take in consideration, separated by a comma.
+notes=FIXME,XXX,TODO
+
+
+[CLASSES]
+
+# List of method names used to declare (i.e. assign) instance attributes.
+defining-attr-methods=__init__,__new__,__call__
+
+# List of valid names for the first argument in a class method.
+valid-classmethod-first-arg=cls
+
+# List of valid names for the first argument in a metaclass class method.
+valid-metaclass-classmethod-first-arg=mcs
+
+# List of member names, which should be excluded from the protected access
+# warning.
+exclude-protected=
+
+[EXCEPTIONS]
+
+# Exceptions that will emit a warning when being caught. Defaults to
+# "Exception"
+overgeneral-exceptions=Exception,discord.DiscordException

@@ -69,7 +69,8 @@ def safe_delete(pth: Path):
         shutil.rmtree(str(pth), ignore_errors=True)
 
 
-class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):
+# https://github.com/PyCQA/pylint/issues/2717
+class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=duplicate-bases
     """Class returned by `async_filter`. See that function for details.
 
     We don't recommend instantiating this class directly.
@@ -111,6 +112,9 @@ class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):
 
     async def __flatten(self) -> List[_T]:
         return [item async for item in self]
+
+    def __aiter__(self):
+        return self
 
     def __await__(self):
         # Simply return the generator filled into a list

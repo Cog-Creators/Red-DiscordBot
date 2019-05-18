@@ -224,7 +224,7 @@ class TwitchStream(Stream):
             embed.set_image(url=rnd(data["stream"]["preview"]["medium"]))
         if channel["game"]:
             embed.set_footer(text="Playing: " + channel["game"])
-        embed.color = 0x6441A4
+        embed.color = 0x6441A4  # pylint: disable=assigning-non-slot
 
         return embed
 
@@ -267,7 +267,7 @@ class HitboxStream(Stream):
         if livestream["media_thumbnail"]:
             embed.set_image(url=rnd(base_url + livestream["media_thumbnail"]))
         embed.set_footer(text="Playing: " + livestream["category_name"])
-        embed.color = 0x98CB00
+        embed.color = 0x98CB00  # pylint: disable=assigning-non-slot
 
         return embed
 
@@ -310,7 +310,7 @@ class MixerStream(Stream):
             embed.set_thumbnail(url=default_avatar)
         if data["thumbnail"]:
             embed.set_image(url=rnd(data["thumbnail"]["url"]))
-        embed.color = 0x4C90F3
+        embed.color = 0x4C90F3  # pylint: disable=assigning-non-slot
         if data["type"] is not None:
             embed.set_footer(text="Playing: " + data["type"]["name"])
         return embed
@@ -351,7 +351,7 @@ class PicartoStream(Stream):
         embed.add_field(name="Followers", value=data["followers"])
         embed.add_field(name="Total views", value=data["viewers_total"])
         embed.set_thumbnail(url=avatar)
-        embed.color = 0x132332
+        embed.color = 0x132332  # pylint: disable=assigning-non-slot
         data["tags"] = ", ".join(data["tags"])
 
         if not data["tags"]:
@@ -362,6 +362,6 @@ class PicartoStream(Stream):
         else:
             data["adult"] = ""
 
-        embed.color = 0x4C90F3
+        embed.color = 0x4C90F3  # pylint: disable=assigning-non-slot
         embed.set_footer(text="{adult}Category: {category} | Tags: {tags}".format(**data))
         return embed
