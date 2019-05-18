@@ -1,3 +1,4 @@
+import logging
 import re
 from datetime import datetime, timedelta
 from typing import Union, List, Callable, Set
@@ -8,11 +9,12 @@ from redbot.core import checks, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.mod import slow_deletion, mass_purge
-from redbot.cogs.mod.log import log
 from redbot.core.utils.predicates import MessagePredicate
 from .converters import RawMessageIds
 
 _ = Translator("Cleanup", __file__)
+
+log = logging.getLogger("red.cleanup")
 
 
 @cog_i18n(_)
