@@ -1,3 +1,4 @@
+import contextlib
 import re
 import random
 from datetime import datetime, timedelta
@@ -85,10 +86,10 @@ class CommandObj:
 
     async def get(self, message: discord.Message, command: str) -> Tuple[str, Dict]:
         ccinfo = await self.db(message.guild).commands.get_raw(command, default=None)
-        if not ccinfo:
-            raise NotFound()
-        else:
-            return ccinfo["response"], ccinfo.get("cooldowns", {})
+        if ccinfo:
+            with contextlib.suppress(KeyError):
+                return ccinfo["response"], ccinfo.get("cooldowns", {})
+        raise NotFound()
 
     async def get_full(self, message: discord.Message, command: str) -> Dict:
         ccinfo = await self.db(message.guild).commands.get_raw(command, default=None)
