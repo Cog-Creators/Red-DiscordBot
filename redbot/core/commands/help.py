@@ -174,8 +174,14 @@ class RedHelpFormatter:
                 emb["fields"].append(field)
 
             if subcommands:
+
+                def shorten_line(a_line: str) -> str:
+                    if len(a_line) < 70:  # embed max width needs to be lower
+                        return a_line
+                    return a_line[:67] + "..."
+
                 subtext = "\n".join(
-                    f"**{name}** {command.short_doc}"
+                    shorten_line(f"**{name}** {command.short_doc}")
                     for name, command in sorted(subcommands.items())
                 )
                 for i, page in enumerate(pagify(subtext, page_length=1000, shorten_by=0)):
@@ -278,8 +284,15 @@ class RedHelpFormatter:
                 emb["embed"]["title"] = f"*{description[:2044]}*"
 
             if coms:
+
+                def shorten_line(a_line: str) -> str:
+                    if len(a_line) < 70:  # embed max width needs to be lower
+                        return a_line
+                    return a_line[:67] + "..."
+
                 command_text = "\n".join(
-                    f"**{name}** {command.short_doc}" for name, command in sorted(coms.items())
+                    shorten_line(f"**{name}** {command.short_doc}")
+                    for name, command in sorted(coms.items())
                 )
                 for i, page in enumerate(pagify(command_text, page_length=1000, shorten_by=0)):
                     if i == 0:
@@ -339,8 +352,14 @@ class RedHelpFormatter:
                 else:
                     title = f"**__No Category:__**"
 
+                def shorten_line(a_line: str) -> str:
+                    if len(a_line) < 70:  # embed max width needs to be lower
+                        return a_line
+                    return a_line[:67] + "..."
+
                 cog_text = "\n".join(
-                    f"**{name}** {command.short_doc}" for name, command in sorted(data.items())
+                    shorten_line(f"**{name}** {command.short_doc}")
+                    for name, command in sorted(data.items())
                 )
 
                 for i, page in enumerate(pagify(cog_text, page_length=1000, shorten_by=0)):
