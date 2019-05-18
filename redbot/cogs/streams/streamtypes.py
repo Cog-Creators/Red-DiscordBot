@@ -99,8 +99,13 @@ class TwitchGame(Game):
         if self.box_art:
             embed.set_image(url=self.box_art)
         for chn in data:
-            embed.add_field(name=data["user_name"], value=f"[{data['viewer_count']}](https://twitch.tv/{data["user_name"]}) viewers", inline=False)
+            embed.add_field(
+                name=data["user_name"],
+                value=f"[{data['viewer_count']}](https://twitch.tv/{data['user_name']}) viewers",
+                inline=False,
+            )
         return embed
+
 
 class Stream:
 
