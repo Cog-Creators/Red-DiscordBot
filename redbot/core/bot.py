@@ -27,7 +27,8 @@ def _is_submodule(parent, child):
     return parent == child or child.startswith(parent + ".")
 
 
-class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
+# barely spurious warning caused by our intentional shadowing
+class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: disable=no-member
     """Mixin for the main bot class.
 
     This exists because `Red` inherits from `discord.AutoShardedClient`, which
