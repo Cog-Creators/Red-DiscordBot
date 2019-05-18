@@ -255,7 +255,7 @@ class Streams(commands.Cog):
                     )
                     return
         
-         await self.game_alert(ctx, TwitchGame, sort, count, game_data)   
+        await self.game_alert(ctx, TwitchGame, sort, count, game_data)   
         
 
     @streamalert.command(name="youtube")
