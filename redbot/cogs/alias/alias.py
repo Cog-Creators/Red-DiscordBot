@@ -169,25 +169,29 @@ class Alias(commands.Cog):
         """
         When an alias is executed by a user in chat this function tries
             to get any extra arguments passed in with the call.
-            Whitespace will be trimmed from both ends.
         :param message: 
         :param prefix: 
         :param alias: 
         :return: 
         """
-        known_content_length = len(prefix) + len(alias.name)
-        extra = message.content[known_content_length:]
-        view = StringView(extra)
-        view.skip_ws()
-        extra = []
+        content = message.content
+        view = StringView(message.content)
+        view.skip_string(prefix)
+        view.skip_string(alias.name)
+        seperators = []
+        args = []
+
         while not view.eof:
+            if view.skip_ws():
+                seperators.append(view.buffer[view.previous : view.index])
             prev = view.index
             word = view.get_quoted_word()
             if len(word) < view.index - prev:
-                word = "".join((view.buffer[prev], word, view.buffer[view.index - 1]))
-            extra.append(word)
-            view.skip_ws()
-        return extra
+                args.append(f"{view.buffer[prev]}{word}{view.buffer[view.index -1]}")
+            else:
+                args.append(word)
+
+        return seperators, args
 
     async def maybe_call_alias(
         self, message: discord.Message, aliases: Iterable[AliasEntry] = None
@@ -212,17 +216,17 @@ class Alias(commands.Cog):
     async def call_alias(self, message: discord.Message, prefix: str, alias: AliasEntry):
         new_message = copy(message)
         try:
-            args = self.get_extra_args_from_alias(message, prefix, alias)
+            whitespaces, args = self.get_extra_args_from_alias(message, prefix, alias)
         except commands.BadArgument as bae:
             return
 
         trackform = _TrackingFormatter()
         command = trackform.format(alias.command, *args)
+        index = trackform.max + 1
+        formatted_args = "".join("".join(args) for args in zip(whitespaces[index:], args[index:]))
 
         # noinspection PyDunderSlots
-        new_message.content = "{}{} {}".format(
-            prefix, command, " ".join(args[trackform.max + 1 :])
-        )
+        new_message.content = f"{prefix}{command}{formatted_args}"
         await self.bot.process_commands(new_message)
 
     @commands.group()
