@@ -93,21 +93,18 @@ class TwitchGame(Game):
                 raise OfflineGame()
             stream_list.extend(data["data"])
             cursor = data["pagination"]
-            while True:
-                if "cursor" in cursor:
-                    params["after"] = cursor["cursor"]
-                    async with aiohttp.ClientSession() as session:
-                        async with session.get(
-                            TWITCH_STREAMS_ENDPOINT, headers=header, params=params
-                        ) as r:
-                            data = await r.json()
-                            if not data["data"]:
-                                break
-                            else:
-                                stream_list.extend(data["data"])
-                                cursor = data["pagination"]
-                else:
-                    break
+            while "cursor" in cursor:
+                params2 = {"game_id": self.id, "first": 100, "after": cursor["cursor"]}
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(
+                        TWITCH_STREAMS_ENDPOINT, headers=header, params=params2
+                    ) as r:
+                        data2 = await r.json()
+                        if not data2["data"]:
+                            break
+                        else:
+                            stream_list.extend(data2["data"])
+                            cursor = data2["pagination"]
             if self.sort == "random":
                 if len(data["data"]) < self.count:
                     choices = data["data"]
