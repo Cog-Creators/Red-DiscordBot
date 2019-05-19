@@ -191,7 +191,7 @@ def init_events(bot, cli_flags):
                 await ctx.send(error.args[0])
             else:
                 await ctx.send_help()
-        elif isinstance(error, commands.BadArgument):
+        elif isinstance(error, (commands.BadArgument, commands.BadUnionArgument)):
             await ctx.send_help()
         elif isinstance(error, commands.DisabledCommand):
             disabled_message = await bot.db.disabled_command_msg()
