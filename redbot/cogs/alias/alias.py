@@ -5,6 +5,7 @@ from typing import Generator, Tuple, Iterable, Optional
 
 import discord
 from discord.ext.commands.view import StringView
+from discord.ext.commands.errors import ArgumentParsingError
 from redbot.core import Config, commands, checks
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
@@ -174,7 +175,6 @@ class Alias(commands.Cog):
         :param alias: 
         :return: 
         """
-        content = message.content
         view = StringView(message.content)
         view.skip_string(prefix)
         view.skip_string(alias.name)
@@ -217,16 +217,16 @@ class Alias(commands.Cog):
         new_message = copy(message)
         try:
             whitespaces, args = self.get_extra_args_from_alias(message, prefix, alias)
-        except commands.BadArgument as bae:
+        except ArgumentParsingError:
             return
 
         trackform = _TrackingFormatter()
-        command = trackform.format(alias.command, *args)
+        formatted_command = trackform.format(alias.command, *args)
         index = trackform.max + 1
-        formatted_args = "".join("".join(args) for args in zip(whitespaces[index:], args[index:]))
+        initial_sep = whitespaces[index] if index > 0 else ""
+        extra_args = "".join("".join(args) for args in zip(whitespaces[index:], args[index:]))
 
-        # noinspection PyDunderSlots
-        new_message.content = f"{prefix}{command}{formatted_args}"
+        new_message.content = f"{prefix}{formatted_command}{initial_sep}{extra_args}"
         await self.bot.process_commands(new_message)
 
     @commands.group()
