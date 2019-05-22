@@ -4,6 +4,7 @@
 # Ported to Red V3 by Palm\_\_ (https://github.com/palmtree5)
 import asyncio
 import contextlib
+import functools
 from typing import Union, Iterable, Optional
 import discord
 
@@ -60,7 +61,10 @@ async def menu(
     ):
         raise RuntimeError("All pages must be of the same type")
     for key, value in controls.items():
-        if not asyncio.iscoroutinefunction(value):
+        maybe_coro = value
+        if isinstance(value, functools.partial):
+            maybe_coro = value.func
+        if not asyncio.iscoroutinefunction(maybe_coro):
             raise RuntimeError("Function must be a coroutine")
     current_page = pages[page]
 
