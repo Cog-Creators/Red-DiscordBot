@@ -54,21 +54,24 @@ class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):
     context manager.
 
     It should also be noted that the use of this context manager implies
-    the acquisition of the value's lock.
+    the acquisition of the value's lock when the ``acquire_lock`` kwarg
+    to ``__init__`` is set to ``True``.
     """
 
-    def __init__(self, value_obj: "Value", coro):
+    def __init__(self, value_obj: "Value", coro: Awaitable[Any], *, acquire_lock: bool):
         self.value_obj = value_obj
         self.coro = coro
         self.raw_value = None
         self.__original_value = None
+        self.__acquire_lock = acquire_lock
         self.__lock = self.value_obj.get_lock()
 
     def __await__(self):
         return self.coro.__await__()
 
     async def __aenter__(self):
-        await self.__lock.acquire()
+        if self.__acquire_lock is True:
+            await self.__lock.acquire()
         self.raw_value = await self
         if not isinstance(self.raw_value, (list, dict)):
             raise TypeError(
@@ -88,7 +91,8 @@ class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):
             if raw_value != self.__original_value:
                 await self.value_obj.set(self.raw_value)
         finally:
-            self.__lock.release()
+            if self.__acquire_lock is True:
+                self.__lock.release()
 
 
 class Value:
@@ -112,7 +116,7 @@ class Value:
         self._config = config
 
     def get_lock(self) -> asyncio.Lock:
-        """Get a lock to enforce atomicity with operations on this value.
+        """Get a lock to create a critical region where this value is accessed.
 
         When using this lock, make sure you either use it with the
         ``async with`` syntax, or if that's not feasible, ensure you
@@ -151,7 +155,7 @@ class Value:
             return default if default is not ... else self.default
         return ret
 
-    def __call__(self, default=...) -> _ValueCtxManager[Any]:
+    def __call__(self, default=..., *, acquire_lock: bool = True) -> _ValueCtxManager[Any]:
         """Get the literal value of this data element.
 
         Each `Value` object is created by the `Group.__getattr__` method. The
@@ -162,8 +166,9 @@ class Value:
         context manager, i.e. with :code:`async with` syntax. This can only be
         used on values which are mutable (namely lists and dicts), and will
         set the value with its changes on exit of the context manager. It will
-        also acquire this value's lock to ensure atomicity of operations on
-        this value.
+        also acquire this value's lock to protect the critical region inside
+        this context manager's body, unless the ``acquire_lock`` keyword
+        argument is set to ``False``.
 
         Example
         -------
@@ -186,7 +191,14 @@ class Value:
         default : `object`, optional
             This argument acts as an override for the registered default
             provided by `default`. This argument is ignored if its
-            value is :code:`None`.
+            value is :code:`...`.
+
+        Other Parameters
+        ----------------
+        acquire_lock : bool
+            Set to ``False`` to disable the acquisition of the value's
+            lock over the context manager body. Defaults to ``True``.
+            Has no effect when not used as a context manager.
 
         Returns
         -------
@@ -196,7 +208,7 @@ class Value:
             with` syntax, on gets the value on entrance, and sets it on exit.
 
         """
-        return _ValueCtxManager(self, self._get(default))
+        return _ValueCtxManager(self, self._get(default), acquire_lock=acquire_lock)
 
     async def set(self, value):
         """Set the value of the data elements pointed to by `identifiers`.
@@ -476,7 +488,7 @@ class Group(Value):
                 return self.nested_update(raw, default)
             return raw
 
-    def all(self) -> _ValueCtxManager[Dict[str, Any]]:
+    def all(self, *, acquire_lock: bool = True) -> _ValueCtxManager[Dict[str, Any]]:
         """Get a dictionary representation of this group's data.
 
         The return value of this method can also be used as an asynchronous
@@ -487,13 +499,19 @@ class Group(Value):
         The return value of this method will include registered defaults for
         values which have not yet been set.
 
+        Other Parameters
+        ----------------
+        acquire_lock : bool
+            Same as the ``acquire_lock`` keyword parameter in
+            `Value.__call__`.
+
         Returns
         -------
         dict
             All of this Group's attributes, resolved as raw data values.
 
         """
-        return self()
+        return self(acquire_lock=acquire_lock)
 
     def nested_update(
         self, current: collections.Mapping, defaults: Dict[str, Any] = ...
