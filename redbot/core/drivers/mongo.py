@@ -120,9 +120,8 @@ class MongoDriver(BaseDriver):
         # noinspection PyTypeChecker
         return identifier_data.primary_key
 
-    @staticmethod
     async def rebuild_dataset(
-        identifier_data: IdentifierData, cursor: "motor.motor_asyncio.AsyncIOMotorCursor"
+        self, identifier_data: IdentifierData, cursor: "motor.motor_asyncio.AsyncIOMotorCursor"
     ):
         ret = {}
         async for doc in cursor:
