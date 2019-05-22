@@ -56,7 +56,7 @@ class JsonDriver(BaseDriver):
         identifier: str,
         *,
         data_path_override: Optional[Path] = None,
-        file_name_override: str = "settings.json"
+        file_name_override: str = "settings.json",
     ):
         super().__init__(cog_name, identifier)
         self.file_name = file_name_override
@@ -190,7 +190,7 @@ class JsonDriver(BaseDriver):
                     category,
                     pkey,
                     (),
-                    *ConfigCategory.get_pkey_info(category, custom_group_data)
+                    *ConfigCategory.get_pkey_info(category, custom_group_data),
                 )
                 update_write_data(ident_data, data)
         await self.jsonIO._threadsafe_save_json(self.data)
