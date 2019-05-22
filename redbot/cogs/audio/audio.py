@@ -34,7 +34,7 @@ from .manager import ServerManager
 
 _ = Translator("Audio", __file__)
 
-__version__ = "0.0.8b"
+__version__ = "0.0.9"
 __author__ = ["aikaterna"]
 
 log = logging.getLogger("red.audio")
@@ -172,19 +172,19 @@ class Audio(commands.Cog):
 
         async def _players_check():
             try:
-                get_players = [p for p in lavalink.players if p.current is not None]
-                get_single_title = get_players[0].current.title
+                get_single_title = lavalink.active_players()[0].current.title
                 if get_single_title == "Unknown title":
-                    get_single_title = get_players[0].current.uri
+                    get_single_title = lavalink.active_players()[0].current.uri
                     if not get_single_title.startswith("http"):
                         get_single_title = get_single_title.rsplit("/", 1)[-1]
-                elif "localtracks/" in get_players[0].current.uri:
+                elif "localtracks/" in lavalink.active_players()[0].current.uri:
                     get_single_title = "{} - {}".format(
-                        get_players[0].current.author, get_players[0].current.title
+                        lavalink.active_players()[0].current.author,
+                        lavalink.active_players()[0].current.title,
                     )
                 else:
-                    get_single_title = get_players[0].current.title
-                playing_servers = len(get_players)
+                    get_single_title = lavalink.active_players()[0].current.title
+                playing_servers = len(lavalink.active_players())
             except IndexError:
                 get_single_title = None
                 playing_servers = 0
@@ -668,11 +668,11 @@ class Audio(commands.Cog):
     @commands.guild_only()
     async def audiostats(self, ctx):
         """Audio stats."""
-        server_num = len([p for p in lavalink.players if p.current is not None])
-        total_num = len([p for p in lavalink.players])
+        server_num = len(lavalink.active_players())
+        total_num = len(lavalink.all_players())
 
         msg = ""
-        for p in lavalink.players:
+        for p in lavalink.all_players():
             connect_start = p.fetch("connect")
             connect_dur = self._dynamic_time(
                 int((datetime.datetime.utcnow() - connect_start).total_seconds())
@@ -1457,17 +1457,13 @@ class Audio(commands.Cog):
                 song_info = "{} {}".format(i["track"]["name"], i["track"]["artists"][0]["name"])
             try:
                 track_url = await self._youtube_api_search(yt_key, song_info)
-            except:
+            except (RuntimeError, aiohttp.client_exceptions.ServerDisconnectedError):
                 error_embed = discord.Embed(
                     colour=await ctx.embed_colour(),
-                    title=_(
-                        "The YouTube API key has not been set properly.\n"
-                        "Use `{prefix}audioset youtubeapi` for instructions."
-                    ).format(prefix=ctx.prefix),
+                    title=_("The connection was reset while loading the playlist."),
                 )
                 await playlist_msg.edit(embed=error_embed)
                 return None
-                # let's complain about errors
                 pass
             try:
                 yt_track = await player.get_tracks(track_url)
@@ -2040,7 +2036,10 @@ class Audio(commands.Cog):
             )
             playlist_msg = await ctx.send(embed=embed1)
             for song_url in v2_playlist["playlist"]:
-                track = await player.get_tracks(song_url)
+                try:
+                    track = await player.get_tracks(song_url)
+                except RuntimeError:
+                    pass
                 try:
                     track_obj = self._track_creator(player, other_track=track[0])
                     track_list.append(track_obj)
@@ -2396,11 +2395,13 @@ class Audio(commands.Cog):
     @commands.guild_only()
     async def _queue_clear(self, ctx):
         """Clears the queue."""
-        player = lavalink.get_player(ctx.guild.id)
+        try:
+            player = lavalink.get_player(ctx.guild.id)
+        except KeyError:
+            return await self._embed_msg(ctx, _("There's nothing in the queue."))
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         if not self._player_check(ctx) or not player.queue:
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
-        player = lavalink.get_player(ctx.guild.id)
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
                 ctx, ctx.author
@@ -2413,7 +2414,10 @@ class Audio(commands.Cog):
     @commands.guild_only()
     async def _queue_clean(self, ctx):
         """Removes songs from the queue if the requester is not in the voice channel."""
-        player = lavalink.get_player(ctx.guild.id)
+        try:
+            player = lavalink.get_player(ctx.guild.id)
+        except KeyError:
+            return await self._embed_msg(ctx, _("There's nothing in the queue."))
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         if not self._player_check(ctx) or not player.queue:
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
@@ -2895,8 +2899,8 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    async def skip(self, ctx):
-        """Skip to the next track."""
+    async def skip(self, ctx, skip_to_track: int = None):
+        """Skip to the next track, or to a given track number."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
         player = lavalink.get_player(ctx.guild.id)
@@ -2913,6 +2917,10 @@ class Audio(commands.Cog):
                 return await self._embed_msg(ctx, _("You need the DJ role to skip tracks."))
         if vote_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
+                if skip_to_track is not None:
+                    return await self._embed_msg(
+                        ctx, _("Can't skip to a specific track in vote mode without the DJ role.")
+                    )
                 if ctx.author.id in self.skip_votes[ctx.message.guild]:
                     self.skip_votes[ctx.message.guild].remove(ctx.author.id)
                     reply = _("I removed your vote to skip.")
@@ -2945,9 +2953,9 @@ class Audio(commands.Cog):
                     )
                     return await self._embed_msg(ctx, reply)
             else:
-                return await self._skip_action(ctx)
+                return await self._skip_action(ctx, skip_to_track)
         else:
-            return await self._skip_action(ctx)
+            return await self._skip_action(ctx, skip_to_track)
 
     async def _can_instaskip(self, ctx, member):
         mod_role = await ctx.bot.db.guild(ctx.guild).mod_role()
@@ -3006,7 +3014,7 @@ class Audio(commands.Cog):
         else:
             return False
 
-    async def _skip_action(self, ctx):
+    async def _skip_action(self, ctx, skip_to_track: int = None):
         player = lavalink.get_player(ctx.guild.id)
         if not player.queue:
             try:
@@ -3031,23 +3039,57 @@ class Audio(commands.Cog):
                     )
                 )
             return await ctx.send(embed=embed)
+        queue_to_append = []
+        if skip_to_track is not None and skip_to_track != 1:
+            if skip_to_track < 1:
+                return await self._embed_msg(
+                    ctx, _("Track number must be equal to or greater than 1.")
+                )
+            elif skip_to_track > len(player.queue):
+                return await self._embed_msg(
+                    ctx,
+                    _(
+                        "There are only {queuelen} songs currently queued.".format(
+                            queuelen=len(player.queue)
+                        )
+                    ),
+                )
+            elif player.shuffle:
+                return await self._embed_msg(
+                    ctx, _("Can't skip to a track while shuffle is enabled.")
+                )
+            nexttrack = player.queue[min(skip_to_track - 1, len(player.queue) - 1)]
+            embed = discord.Embed(
+                colour=await ctx.embed_colour(),
+                title=_("{skip_to_track} Tracks Skipped".format(skip_to_track=skip_to_track)),
+            )
+            await ctx.send(embed=embed)
+            if player.repeat:
+                queue_to_append = player.queue[0 : min(skip_to_track - 1, len(player.queue) - 1)]
+            player.queue = player.queue[
+                min(skip_to_track - 1, len(player.queue) - 1) : len(player.queue)
+            ]
+        else:
+            embed = discord.Embed(
+                colour=await ctx.embed_colour(),
+                title=_("Track Skipped"),
+                description=await self._get_description(player.current),
+            )
+            await ctx.send(embed=embed)
 
-        if "localtracks" in player.current.uri:
-            if not player.current.title == "Unknown title":
-                description = "**{} - {}**\n{}".format(
-                    player.current.author,
-                    player.current.title,
-                    player.current.uri.replace("localtracks/", ""),
+        await player.play()
+        player.queue += queue_to_append
+
+    async def _get_description(self, track):
+        if "localtracks" in track.uri:
+            if not track.title == "Unknown title":
+                return "**{} - {}**\n{}".format(
+                    track.author, track.title, track.uri.replace("localtracks/", "")
                 )
             else:
-                description = "{}".format(player.current.uri.replace("localtracks/", ""))
+                return "{}".format(track.uri.replace("localtracks/", ""))
         else:
-            description = "**[{}]({})**".format(player.current.title, player.current.uri)
-        embed = discord.Embed(
-            colour=await ctx.embed_colour(), title=_("Track Skipped"), description=description
-        )
-        await ctx.send(embed=embed)
-        await player.skip()
+            return "**[{}]({})**".format(track.title, track.uri)
 
     @commands.command()
     @commands.guild_only()
@@ -3225,7 +3267,10 @@ class Audio(commands.Cog):
         self._restart_connect()
 
     async def _channel_check(self, ctx):
-        player = lavalink.get_player(ctx.guild.id)
+        try:
+            player = lavalink.get_player(ctx.guild.id)
+        except KeyError:
+            return False
         try:
             in_channel = sum(
                 not m.bot for m in ctx.guild.get_member(self.bot.user.id).voice.channel.members
@@ -3312,7 +3357,7 @@ class Audio(commands.Cog):
         stop_times = {}
 
         while True:
-            for p in lavalink.players:
+            for p in lavalink.all_players():
                 server = p.channel.guild
 
                 if [self.bot.user] == p.channel.members:
@@ -3387,13 +3432,6 @@ class Audio(commands.Cog):
         else:
             return self.bot.color
 
-    async def _get_playing(self, ctx):
-        if self._player_check(ctx):
-            player = lavalink.get_player(ctx.guild.id)
-            return len([player for p in lavalink.players if p.is_playing])
-        else:
-            return 0
-
     async def _localtracks_folders(self, ctx):
         if not await self._localtracks_check(ctx):
             return
@@ -3436,6 +3474,8 @@ class Audio(commands.Cog):
         try:
             lavalink.get_player(ctx.guild.id)
             return True
+        except IndexError:
+            return False
         except KeyError:
             return False
 
@@ -3543,11 +3583,14 @@ class Audio(commands.Cog):
     async def _youtube_api_search(self, yt_key, query):
         params = {"q": query, "part": "id", "key": yt_key, "maxResults": 1, "type": "video"}
         yt_url = "https://www.googleapis.com/youtube/v3/search"
-        async with self.session.request("GET", yt_url, params=params) as r:
-            if r.status == 400:
-                return None
-            else:
-                search_response = await r.json()
+        try:
+            async with self.session.request("GET", yt_url, params=params) as r:
+                if r.status == 400:
+                    return None
+                else:
+                    search_response = await r.json()
+        except RuntimeError:
+            return None
         for search_result in search_response.get("items", []):
             if search_result["id"]["kind"] == "youtube#video":
                 return "https://www.youtube.com/watch?v={}".format(search_result["id"]["videoId"])
@@ -3624,7 +3667,7 @@ class Audio(commands.Cog):
 
     def cog_unload(self):
         if not self._cleaned_up:
-            self.session.detach()
+            self.bot.loop.create_task(self.session.close())
 
             if self._disconnect_task:
                 self._disconnect_task.cancel()
@@ -3639,21 +3682,3 @@ class Audio(commands.Cog):
             self._cleaned_up = True
 
     __del__ = cog_unload
-
-    @commands.Cog.listener()
-    async def on_guild_remove(self, guild: discord.Guild):
-        """
-        This is to clean up players when
-        the bot either leaves or is removed from a guild
-        """
-        channels = {
-            x  # x is a voice_channel
-            for y in [g.voice_channels for g in self.bot.guilds]
-            for x in y  # y is a list of voice channels
-        }  # Yes, this is ugly. It's also the most performant and commented.
-
-        zombie_players = {p for p in lavalink.player_manager.players if p.channel not in channels}
-        # Do not unroll to combine with next line.
-        # Can result in iterator changing size during context switching.
-        for zombie in zombie_players:
-            await zombie.destroy()

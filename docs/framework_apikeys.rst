@@ -18,7 +18,7 @@ and when accessed in the code it should be done by
 
 .. code-block:: python
 
-    await self.bot.db.api_tokens.get_raw("twitch", default={"client_id": None, "client_secret: None"})
+    await self.bot.db.api_tokens.get_raw("twitch", default={"client_id": None, "client_secret": None})
 
 Each service has its own dict of key, value pairs for each required key type. If there's only one key required then a name for the key is still required for storing and accessing.
 

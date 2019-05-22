@@ -440,7 +440,7 @@ async def remove_instance(instance):
             collection = await db.get_collection(name)
             await collection.drop()
     else:
-        pth = Path(instance_data["DATA_PATH"])
+        pth = Path(instance_vals["DATA_PATH"])
         safe_delete(pth)
     save_config(instance, {}, remove=True)
     print("The instance {} has been removed\n".format(instance))
