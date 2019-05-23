@@ -126,7 +126,7 @@ def init_events(bot, cli_flags):
                     owners.append(owner)
 
                 for co_owner in bot._co_owners:
-                    co_owner = await bot.get_user(co_owner)
+                    co_owner = bot.get_user(co_owner)
                     if co_owner is not None:
                         owners.append(co_owner)
 
@@ -191,7 +191,7 @@ def init_events(bot, cli_flags):
                 await ctx.send(error.args[0])
             else:
                 await ctx.send_help()
-        elif isinstance(error, commands.BadArgument):
+        elif isinstance(error, commands.UserInputError):
             await ctx.send_help()
         elif isinstance(error, commands.DisabledCommand):
             disabled_message = await bot.db.disabled_command_msg()

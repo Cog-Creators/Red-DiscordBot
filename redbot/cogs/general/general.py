@@ -307,14 +307,17 @@ class General(commands.Cog):
                 messages = []
                 for ud in data["list"]:
                     ud.setdefault("example", "N/A")
-                    description = _("{definition}\n\n**Example:** {example}").format(**ud)
-                    if len(description) > 2048:
-                        description = "{}...".format(description[:2045])
-
                     message = _(
                         "<{permalink}>\n {word} by {author}\n\n{description}\n\n"
                         "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
-                    ).format(word=ud.pop("word").capitalize(), description=description, **ud)
+                    ).format(word=ud.pop("word").capitalize(), description="{description}", **ud)
+                    max_desc_len = 2000 - len(message)
+
+                    description = _("{definition}\n\n**Example:** {example}").format(**ud)
+                    if len(description) > max_desc_len:
+                        description = "{}...".format(description[: max_desc_len - 3])
+
+                    message = message.format(description=description)
                     messages.append(message)
 
                 if messages is not None and len(messages) > 0:

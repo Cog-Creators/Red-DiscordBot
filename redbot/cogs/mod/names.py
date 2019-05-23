@@ -145,7 +145,7 @@ class ModInfo(MixinMeta):
         if voice_state and voice_state.channel:
             data.add_field(
                 name=_("Current voice channel"),
-                value="{0.name} (ID {0.id})".format(voice_state.channel),
+                value="{0.mention} ID: {0.id}".format(voice_state.channel),
                 inline=False,
             )
         data.set_footer(text=_("Member #{} | User ID: {}").format(member_number, user.id))
@@ -164,7 +164,7 @@ class ModInfo(MixinMeta):
         await ctx.send(embed=data)
 
     @commands.command()
-    async def names(self, ctx: commands.Context, user: discord.Member):
+    async def names(self, ctx: commands.Context, *, user: discord.Member):
         """Show previous names and nicknames of a user."""
         names, nicks = await self.get_names_and_nicks(user)
         msg = ""

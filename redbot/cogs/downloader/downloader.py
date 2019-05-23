@@ -199,7 +199,8 @@ class Downloader(commands.Cog):
         if not deps:
             return await ctx.send_help()
         repo = Repo("", "", "", Path.cwd(), loop=ctx.bot.loop)
-        success = await repo.install_raw_requirements(deps, self.LIB_PATH)
+        async with ctx.typing():
+            success = await repo.install_raw_requirements(deps, self.LIB_PATH)
 
         if success:
             await ctx.send(_("Libraries installed."))
