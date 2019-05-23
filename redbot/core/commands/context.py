@@ -180,7 +180,9 @@ class Context(commands.Context):
         """
         if self.guild and not self.channel.permissions_for(self.guild.me).embed_links:
             return False
-        return await self.bot.embed_requested(self.channel, self.author, command=self.command)
+        return await self.bot.embed_requested(
+            self.channel, self.author, command=self.command
+        )
 
     async def maybe_send_embed(self, message: str) -> discord.Message:
         """
@@ -208,7 +210,9 @@ class Context(commands.Context):
 
         if await self.embed_requested():
             return await self.send(
-                embed=discord.Embed(description=message, color=(await self.embed_colour()))
+                embed=discord.Embed(
+                    description=message, color=(await self.embed_colour())
+                )
             )
         else:
             return await self.send(message)

@@ -74,7 +74,8 @@ class RotatingFileHandler(logging.handlers.RotatingFileHandler):
             initial_path.replace(self.directory / f"{self.baseStem}-part1.log")
 
         match = re.match(
-            rf"{self.baseStem}(?:-part(?P<part>\d+)?)?.log", pathlib.Path(self.baseFilename).name
+            rf"{self.baseStem}(?:-part(?P<part>\d+)?)?.log",
+            pathlib.Path(self.baseFilename).name,
         )
         latest_part_num = int(match.groupdict(default="1").get("part", "1"))
         if self.backupCount < 1:
@@ -104,7 +105,9 @@ def init_logging(level: int, location: pathlib.Path) -> None:
     base_logger.setLevel(level)
 
     formatter = logging.Formatter(
-        "[{asctime}] [{levelname}] {name}: {message}", datefmt="%Y-%m-%d %H:%M:%S", style="{"
+        "[{asctime}] [{levelname}] {name}: {message}",
+        datefmt="%Y-%m-%d %H:%M:%S",
+        style="{",
     )
 
     stdout_handler = logging.StreamHandler(sys.stdout)

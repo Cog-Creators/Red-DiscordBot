@@ -46,7 +46,10 @@ class GlobalUniqueObjectFinder(commands.Converter):
             bot.get_all_channels(),
             bot.users,
             bot.guilds,
-            *(filter(lambda r: not r.is_default(), guild.roles) for guild in bot.guilds),
+            *(
+                filter(lambda r: not r.is_default(), guild.roles)
+                for guild in bot.guilds
+            ),
         )
 
         maybe_matches = []
@@ -56,7 +59,9 @@ class GlobalUniqueObjectFinder(commands.Converter):
 
         if ctx.guild is not None:
             for member in ctx.guild.members:
-                if member.nick == arg and not any(obj.id == member.id for obj in maybe_matches):
+                if member.nick == arg and not any(
+                    obj.id == member.id for obj in maybe_matches
+                ):
                     maybe_matches.append(member)
 
         if not maybe_matches:
@@ -98,7 +103,9 @@ class GuildUniqueObjectFinder(commands.Converter):
                 return role
 
         objects = itertools.chain(
-            guild.channels, guild.members, filter(lambda r: not r.is_default(), guild.roles)
+            guild.channels,
+            guild.members,
+            filter(lambda r: not r.is_default(), guild.roles),
         )
 
         maybe_matches = []
@@ -158,7 +165,9 @@ def RuleType(arg: str) -> bool:
         return False
 
     raise commands.BadArgument(
-        _('"{arg}" is not a valid rule. Valid rules are "allow" or "deny"').format(arg=arg)
+        _('"{arg}" is not a valid rule. Valid rules are "allow" or "deny"').format(
+            arg=arg
+        )
     )
 
 

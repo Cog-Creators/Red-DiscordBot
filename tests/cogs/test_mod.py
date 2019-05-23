@@ -30,7 +30,9 @@ async def test_modlog_case_create(mod, ctx, member_factory):
     moderator = ctx.author
     reason = "Test 12345"
     created_at = dt.utcnow()
-    case = await mod.create_case(bot, guild, created_at, case_type, usr, moderator, reason)
+    case = await mod.create_case(
+        bot, guild, created_at, case_type, usr, moderator, reason
+    )
     assert case is not None
     assert case.user == usr
     assert case.action_type == case_type

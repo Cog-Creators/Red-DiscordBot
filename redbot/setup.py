@@ -228,13 +228,17 @@ async def json_to_mongov2(instance):
             except ValueError:
                 continue
             new_driver = red_mongo.Mongo(
-                cog_name=cog_name, identifier=conf.driver.unique_cog_identifier, **storage_details
+                cog_name=cog_name,
+                identifier=conf.driver.unique_cog_identifier,
+                **storage_details,
             )
 
             curr_custom_data = custom_group_data.get(cog_name, {}).get(identifier, {})
 
             exported_data = await conf.driver.export_data(curr_custom_data)
-            conversion_log.info(f"Converting {cog_name} with identifier {identifier}...")
+            conversion_log.info(
+                f"Converting {cog_name} with identifier {identifier}..."
+            )
             await new_driver.import_data(exported_data, curr_custom_data)
 
     conversion_log.info("Cog conversion complete.")
@@ -250,7 +254,9 @@ async def mongov2_to_json(instance):
     from redbot.core.drivers import red_json
 
     core_conf = Config.get_core_conf()
-    new_driver = red_json.JSON(cog_name="Core", identifier="0", data_path_override=core_path)
+    new_driver = red_json.JSON(
+        cog_name="Core", identifier="0", data_path_override=core_path
+    )
 
     core_conf.init_custom("CUSTOM_GROUPS", 2)
     custom_group_data = await core_conf.custom("CUSTOM_GROUPS").all()
@@ -287,8 +293,12 @@ async def mongov2_to_json(instance):
             exported_data = await conf.driver.export_data(curr_custom_data)
 
             new_path = cog_data_path(raw_name=cog_name)
-            new_driver = red_json.JSON(cog_name, identifier, data_path_override=new_path)
-            conversion_log.info(f"Converting {cog_name} with identifier {identifier}...")
+            new_driver = red_json.JSON(
+                cog_name, identifier, data_path_override=new_path
+            )
+            conversion_log.info(
+                f"Converting {cog_name} with identifier {identifier}..."
+            )
             await new_driver.import_data(exported_data, curr_custom_data)
 
     # cog_data_path(raw_name=cog_name)
@@ -409,7 +419,9 @@ async def create_backup(instance):
             repo_mgr = RepoManager()
             repo_output = []
             for _, repo in repo_mgr._repos:
-                repo_output.append({"url": repo.url, "name": repo.name, "branch": repo.branch})
+                repo_output.append(
+                    {"url": repo.url, "name": repo.name, "branch": repo.branch}
+                )
             repo_filename = pth / "cogs" / "RepoManager" / "repos.json"
             with open(str(repo_filename), "w") as f:
                 f.write(json.dumps(repo_output, indent=4))
@@ -423,7 +435,11 @@ async def create_backup(instance):
             with tarfile.open(str(backup_file), "w:gz") as tar:
                 for f in to_backup:
                     tar.add(str(f), recursive=False)
-            print("A backup of {} has been made. It is at {}".format(instance, backup_file))
+            print(
+                "A backup of {} has been made. It is at {}".format(
+                    instance, backup_file
+                )
+            )
 
 
 async def remove_instance(instance):
@@ -519,7 +535,9 @@ def convert(instance, backend):
         save_config(instance, default_dirs)
         conversion_log.info(f"Conversion to {target} complete.")
     else:
-        conversion_log.info(f"Cannot convert {current_backend} to {target} at this time.")
+        conversion_log.info(
+            f"Cannot convert {current_backend} to {target} at this time."
+        )
 
 
 if __name__ == "__main__":

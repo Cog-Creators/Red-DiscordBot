@@ -176,7 +176,10 @@ class Economy(commands.Cog):
 
         await ctx.send(
             _("{user} transferred {num} {currency} to {other_user}").format(
-                user=from_.display_name, num=amount, currency=currency, other_user=to.display_name
+                user=from_.display_name,
+                num=amount,
+                currency=currency,
+                other_user=to.display_name,
             )
         )
 
@@ -206,7 +209,9 @@ class Economy(commands.Cog):
                 )
             elif creds.operation == "withdraw":
                 await bank.withdraw_credits(to, creds.sum)
-                msg = _("{author} removed {num} {currency} from {user}'s account.").format(
+                msg = _(
+                    "{author} removed {num} {currency} from {user}'s account."
+                ).format(
                     author=author.display_name,
                     num=creds.sum,
                     currency=currency,
@@ -214,7 +219,9 @@ class Economy(commands.Cog):
                 )
             else:
                 await bank.set_balance(to, creds.sum)
-                msg = _("{author} set {user}'s account balance to {num} {currency}.").format(
+                msg = _(
+                    "{author} set {user}'s account balance to {num} {currency}."
+                ).format(
                     author=author.display_name,
                     num=creds.sum,
                     currency=currency,
@@ -235,7 +242,9 @@ class Economy(commands.Cog):
                     "This will delete all bank accounts for {scope}.\nIf you're sure, type "
                     "`{prefix}bank reset yes`"
                 ).format(
-                    scope=self.bot.user.name if await bank.is_global() else _("this server"),
+                    scope=self.bot.user.name
+                    if await bank.is_global()
+                    else _("this server"),
                     prefix=ctx.prefix,
                 )
             )
@@ -243,7 +252,9 @@ class Economy(commands.Cog):
             await bank.wipe_bank(guild=ctx.guild)
             await ctx.send(
                 _("All bank accounts for {scope} have been deleted.").format(
-                    scope=self.bot.user.name if await bank.is_global() else _("this server")
+                    scope=self.bot.user.name
+                    if await bank.is_global()
+                    else _("this server")
                 )
             )
 
@@ -260,7 +271,9 @@ class Economy(commands.Cog):
             next_payday = await self.config.user(author).next_payday()
             if cur_time >= next_payday:
                 try:
-                    await bank.deposit_credits(author, await self.config.PAYDAY_CREDITS())
+                    await bank.deposit_credits(
+                        author, await self.config.PAYDAY_CREDITS()
+                    )
                 except errors.BalanceTooHigh as exc:
                     await bank.set_balance(author, exc.max_balance)
                     await ctx.send(
@@ -346,7 +359,9 @@ class Economy(commands.Cog):
 
     @commands.command()
     @guild_only_check()
-    async def leaderboard(self, ctx: commands.Context, top: int = 10, show_global: bool = False):
+    async def leaderboard(
+        self, ctx: commands.Context, top: int = 10, show_global: bool = False
+    ):
         """Print the leaderboard.
 
         Defaults to top 10.
@@ -387,7 +402,9 @@ class Economy(commands.Cog):
             balance = acc[1]["balance"]
 
             if acc[0] != author.id:
-                temp_msg += f"{f'{pos}.': <{pound_len+2}} {balance: <{bal_len + 5}} {name}\n"
+                temp_msg += (
+                    f"{f'{pos}.': <{pound_len+2}} {balance: <{bal_len + 5}} {name}\n"
+                )
 
             else:
                 temp_msg += (
@@ -420,7 +437,9 @@ class Economy(commands.Cog):
         guild = ctx.guild
         channel = ctx.channel
         if await bank.is_global():
-            valid_bid = await self.config.SLOT_MIN() <= bid <= await self.config.SLOT_MAX()
+            valid_bid = (
+                await self.config.SLOT_MIN() <= bid <= await self.config.SLOT_MAX()
+            )
             slot_time = await self.config.SLOT_TIME()
             last_slot = await self.config.user(author).last_slot()
         else:
@@ -472,7 +491,9 @@ class Economy(commands.Cog):
         payout = PAYOUTS.get(rows[1])
         if not payout:
             # Checks for two-consecutive-symbols special rewards
-            payout = PAYOUTS.get((rows[1][0], rows[1][1]), PAYOUTS.get((rows[1][1], rows[1][2])))
+            payout = PAYOUTS.get(
+                (rows[1][0], rows[1][1]), PAYOUTS.get((rows[1][1], rows[1][2]))
+            )
         if not payout:
             # Still nothing. Let's check for 3 generic same symbols
             # or 2 consecutive symbols
@@ -496,7 +517,9 @@ class Economy(commands.Cog):
                         "You've reached the maximum amount of {currency}! "
                         "Please spend some more \N{GRIMACING FACE}\n{old_balance} -> {new_balance}!"
                     ).format(
-                        currency=await bank.get_currency_name(getattr(channel, "guild", None)),
+                        currency=await bank.get_currency_name(
+                            getattr(channel, "guild", None)
+                        ),
                         old_balance=then,
                         new_balance=exc.max_balance,
                     )
@@ -568,7 +591,9 @@ class Economy(commands.Cog):
             await self.config.guild(guild).SLOT_MIN.set(bid)
         credits_name = await bank.get_currency_name(guild)
         await ctx.send(
-            _("Minimum bid is now {bid} {currency}.").format(bid=bid, currency=credits_name)
+            _("Minimum bid is now {bid} {currency}.").format(
+                bid=bid, currency=credits_name
+            )
         )
 
     @economyset.command()
@@ -577,7 +602,9 @@ class Economy(commands.Cog):
         slot_min = await self.config.SLOT_MIN()
         if bid < 1 or bid < slot_min:
             await ctx.send(
-                _("Invalid maximum bid amount. Must be greater than the minimum amount.")
+                _(
+                    "Invalid maximum bid amount. Must be greater than the minimum amount."
+                )
             )
             return
         guild = ctx.guild
@@ -587,7 +614,9 @@ class Economy(commands.Cog):
         else:
             await self.config.guild(guild).SLOT_MAX.set(bid)
         await ctx.send(
-            _("Maximum bid is now {bid} {currency}.").format(bid=bid, currency=credits_name)
+            _("Maximum bid is now {bid} {currency}.").format(
+                bid=bid, currency=credits_name
+            )
         )
 
     @economyset.command()
@@ -609,9 +638,9 @@ class Economy(commands.Cog):
         else:
             await self.config.guild(guild).PAYDAY_TIME.set(seconds)
         await ctx.send(
-            _("Value modified. At least {num} seconds must pass between each payday.").format(
-                num=seconds
-            )
+            _(
+                "Value modified. At least {num} seconds must pass between each payday."
+            ).format(num=seconds)
         )
 
     @economyset.command()
@@ -633,7 +662,9 @@ class Economy(commands.Cog):
         )
 
     @economyset.command()
-    async def rolepaydayamount(self, ctx: commands.Context, role: discord.Role, creds: int):
+    async def rolepaydayamount(
+        self, ctx: commands.Context, role: discord.Role, creds: int
+    ):
         """Set the amount earned each payday for a role."""
         guild = ctx.guild
         if creds <= 0 or creds > bank.MAX_BALANCE:
@@ -641,7 +672,9 @@ class Economy(commands.Cog):
             return
         credits_name = await bank.get_currency_name(guild)
         if await bank.is_global():
-            await ctx.send(_("The bank must be per-server for per-role paydays to work."))
+            await ctx.send(
+                _("The bank must be per-server for per-role paydays to work.")
+            )
         else:
             await self.config.role(role).PAYDAY_CREDITS.set(creds)
             await ctx.send(

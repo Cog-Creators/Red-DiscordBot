@@ -42,10 +42,14 @@ __all__ = ["red_help", "RedHelpFormatter"]
 
 T_ = Translator("Help", __file__)
 
-HelpTarget = Union[commands.Command, commands.Group, commands.Cog, dpy_commands.bot.BotBase, str]
+HelpTarget = Union[
+    commands.Command, commands.Group, commands.Cog, dpy_commands.bot.BotBase, str
+]
 
 # The below could be a protocol if we pulled in typing_extensions from mypy.
-SupportsCanSee = Union[commands.Command, commands.Group, dpy_commands.bot.BotBase, commands.Cog]
+SupportsCanSee = Union[
+    commands.Command, commands.Group, dpy_commands.bot.BotBase, commands.Cog
+]
 
 EmbedField = namedtuple("EmbedField", "name value inline")
 EMPTY_STRING = "\N{ZERO WIDTH SPACE}"
@@ -110,7 +114,8 @@ class RedHelpFormatter:
 
     async def get_group_help_mapping(self, ctx: Context, obj: commands.Group):
         return {
-            com.name: com async for com in self.help_filter_func(ctx, obj.all_commands.values())
+            com.name: com
+            async for com in self.help_filter_func(ctx, obj.all_commands.values())
         }
 
     async def get_bot_help_mapping(self, ctx):
@@ -148,7 +153,9 @@ class RedHelpFormatter:
 
         description = command.description or ""
         tagline = (await ctx.bot.db.help.tagline()) or self.get_default_tagline(ctx)
-        signature = f"`Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
+        signature = (
+            f"`Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
+        )
         subcommands = None
 
         if hasattr(command, "all_commands"):
@@ -156,7 +163,11 @@ class RedHelpFormatter:
             subcommands = await self.get_group_help_mapping(ctx, grp)
 
         if await ctx.embed_requested():
-            emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
+            emb = {
+                "embed": {"title": "", "description": ""},
+                "footer": {"text": ""},
+                "fields": [],
+            }
 
             if description:
                 emb["embed"]["title"] = f"*{description[:2044]}*"
@@ -184,7 +195,9 @@ class RedHelpFormatter:
                     shorten_line(f"**{name}** {command.short_doc}")
                     for name, command in sorted(subcommands.items())
                 )
-                for i, page in enumerate(pagify(subtext, page_length=1000, shorten_by=0)):
+                for i, page in enumerate(
+                    pagify(subtext, page_length=1000, shorten_by=0)
+                ):
                     if i == 0:
                         title = "**__Subcommands:__**"
                     else:
@@ -200,7 +213,9 @@ class RedHelpFormatter:
             subtext_header = None
             if subcommands:
                 subtext_header = "Subcommands:"
-                max_width = max(discord.utils._string_width(name) for name in subcommands.keys())
+                max_width = max(
+                    discord.utils._string_width(name) for name in subcommands.keys()
+                )
 
                 def width_maker(cmds):
                     doc_max_width = 80 - max_width
@@ -217,7 +232,16 @@ class RedHelpFormatter:
                 )
 
             to_page = "\n\n".join(
-                filter(None, (description, signature[1:-1], command.help, subtext_header, subtext))
+                filter(
+                    None,
+                    (
+                        description,
+                        signature[1:-1],
+                        command.help,
+                        subtext_header,
+                        subtext,
+                    ),
+                )
             )
             pages = [box(p) for p in pagify(to_page)]
             await self.send_pages(ctx, pages, embed=False)
@@ -247,7 +271,10 @@ class RedHelpFormatter:
         color = await ctx.embed_color()
         page_count = len(field_groups)
 
-        author_info = {"name": f"{ctx.me.display_name} Help Menu", "icon_url": ctx.me.avatar_url}
+        author_info = {
+            "name": f"{ctx.me.display_name} Help Menu",
+            "icon_url": ctx.me.avatar_url,
+        }
 
         if not field_groups:  # This can happen on single command without a docstring
             embed = discord.Embed(color=color, **embed_dict["embed"])
@@ -283,7 +310,11 @@ class RedHelpFormatter:
         tagline = (await ctx.bot.db.help.tagline()) or self.get_default_tagline(ctx)
 
         if await ctx.embed_requested():
-            emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
+            emb = {
+                "embed": {"title": "", "description": ""},
+                "footer": {"text": ""},
+                "fields": [],
+            }
 
             emb["footer"]["text"] = tagline
             if description:
@@ -300,7 +331,9 @@ class RedHelpFormatter:
                     shorten_line(f"**{name}** {command.short_doc}")
                     for name, command in sorted(coms.items())
                 )
-                for i, page in enumerate(pagify(command_text, page_length=1000, shorten_by=0)):
+                for i, page in enumerate(
+                    pagify(command_text, page_length=1000, shorten_by=0)
+                ):
                     if i == 0:
                         title = "**__Commands:__**"
                     else:
@@ -315,7 +348,9 @@ class RedHelpFormatter:
             subtext_header = None
             if coms:
                 subtext_header = "Commands:"
-                max_width = max(discord.utils._string_width(name) for name in coms.keys())
+                max_width = max(
+                    discord.utils._string_width(name) for name in coms.keys()
+                )
 
                 def width_maker(cmds):
                     doc_max_width = 80 - max_width
@@ -327,7 +362,8 @@ class RedHelpFormatter:
                         yield nm, doc, max_width - width_gap
 
                 subtext = "\n".join(
-                    f"  {name:<{width}} {doc}" for name, doc, width in width_maker(coms.items())
+                    f"  {name:<{width}} {doc}"
+                    for name, doc, width in width_maker(coms.items())
                 )
 
             to_page = "\n\n".join(filter(None, (description, subtext_header, subtext)))
@@ -345,7 +381,11 @@ class RedHelpFormatter:
 
         if await ctx.embed_requested():
 
-            emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
+            emb = {
+                "embed": {"title": "", "description": ""},
+                "footer": {"text": ""},
+                "fields": [],
+            }
 
             emb["footer"]["text"] = tagline
             if description:
@@ -368,7 +408,9 @@ class RedHelpFormatter:
                     for name, command in sorted(data.items())
                 )
 
-                for i, page in enumerate(pagify(cog_text, page_length=1000, shorten_by=0)):
+                for i, page in enumerate(
+                    pagify(cog_text, page_length=1000, shorten_by=0)
+                ):
                     title = title if i < 1 else f"{title} (continued)"
                     field = EmbedField(title, page, False)
                     emb["fields"].append(field)
@@ -444,23 +486,35 @@ class RedHelpFormatter:
         Sends an error, fuzzy help, or stays quiet based on settings
         """
         coms = [c async for c in self.help_filter_func(ctx, ctx.bot.walk_commands())]
-        fuzzy_commands = await fuzzy_command_search(ctx, help_for, commands=coms, min_score=75)
+        fuzzy_commands = await fuzzy_command_search(
+            ctx, help_for, commands=coms, min_score=75
+        )
         use_embeds = await ctx.embed_requested()
         if fuzzy_commands:
             ret = await format_fuzzy_results(ctx, fuzzy_commands, embed=use_embeds)
             if use_embeds:
-                ret.set_author(name=f"{ctx.me.display_name} Help Menu", icon_url=ctx.me.avatar_url)
-                tagline = (await ctx.bot.db.help.tagline()) or self.get_default_tagline(ctx)
+                ret.set_author(
+                    name=f"{ctx.me.display_name} Help Menu", icon_url=ctx.me.avatar_url
+                )
+                tagline = (await ctx.bot.db.help.tagline()) or self.get_default_tagline(
+                    ctx
+                )
                 ret.set_footer(text=tagline)
                 await ctx.send(embed=ret)
             else:
                 await ctx.send(ret)
         elif await ctx.bot.db.help.verify_exists():
-            ret = T_("Help topic for *{command_name}* not found.").format(command_name=help_for)
+            ret = T_("Help topic for *{command_name}* not found.").format(
+                command_name=help_for
+            )
             if use_embeds:
                 ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
-                ret.set_author(name=f"{ctx.me.display_name} Help Menu", icon_url=ctx.me.avatar_url)
-                tagline = (await ctx.bot.db.help.tagline()) or self.get_default_tagline(ctx)
+                ret.set_author(
+                    name=f"{ctx.me.display_name} Help Menu", icon_url=ctx.me.avatar_url
+                )
+                tagline = (await ctx.bot.db.help.tagline()) or self.get_default_tagline(
+                    ctx
+                )
                 ret.set_footer(text=tagline)
                 await ctx.send(embed=ret)
             else:
@@ -470,12 +524,14 @@ class RedHelpFormatter:
         """
         Sends an error
         """
-        ret = T_("Command *{command_name}* has no subcommand named *{not_found}*.").format(
-            command_name=command.qualified_name, not_found=not_found[0]
-        )
+        ret = T_(
+            "Command *{command_name}* has no subcommand named *{not_found}*."
+        ).format(command_name=command.qualified_name, not_found=not_found[0])
         if await ctx.embed_requested():
             ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
-            ret.set_author(name=f"{ctx.me.display_name} Help Menu", icon_url=ctx.me.avatar_url)
+            ret.set_author(
+                name=f"{ctx.me.display_name} Help Menu", icon_url=ctx.me.avatar_url
+            )
             tagline = (await ctx.bot.db.help.tagline()) or self.get_default_tagline(ctx)
             ret.set_footer(text=tagline)
             await ctx.send(embed=ret)
@@ -520,7 +576,8 @@ class RedHelpFormatter:
         """
 
         if not (
-            ctx.channel.permissions_for(ctx.me).add_reactions and await ctx.bot.db.help.use_menus()
+            ctx.channel.permissions_for(ctx.me).add_reactions
+            and await ctx.bot.db.help.use_menus()
         ):
 
             max_pages_in_guild = await ctx.bot.db.help.max_pages_in_guild()

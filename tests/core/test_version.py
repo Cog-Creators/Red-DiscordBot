@@ -33,4 +33,6 @@ def test_version_info_lt():
 
 
 def test_version_info_gt():
-    assert VersionInfo.from_str(version_tests[1]) > VersionInfo.from_str(version_tests[0])
+    assert VersionInfo.from_str(version_tests[1]) > VersionInfo.from_str(
+        version_tests[0]
+    )

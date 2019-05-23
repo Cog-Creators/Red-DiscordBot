@@ -114,7 +114,11 @@ class TriviaSession:
             async with self.ctx.typing():
                 await asyncio.sleep(3)
             self.count += 1
-            msg = bold(_("Question number {num}!").format(num=self.count)) + "\n\n" + question
+            msg = (
+                bold(_("Question number {num}!").format(num=self.count))
+                + "\n\n"
+                + question
+            )
             await self.ctx.send(msg)
             continue_ = await self.wait_for_answer(answers, delay, timeout)
             if continue_ is False:
@@ -131,12 +135,16 @@ class TriviaSession:
         for idx, tup in enumerate(self.settings["lists"].items()):
             name, author = tup
             if author:
-                title = _("{trivia_list} (by {author})").format(trivia_list=name, author=author)
+                title = _("{trivia_list} (by {author})").format(
+                    trivia_list=name, author=author
+                )
             else:
                 title = name
             list_names.append(title)
         await self.ctx.send(
-            _("Starting Trivia: {list_names}").format(list_names=humanize_list(list_names))
+            _("Starting Trivia: {list_names}").format(
+                list_names=humanize_list(list_names)
+            )
         )
 
     def _iter_questions(self):
@@ -195,7 +203,9 @@ class TriviaSession:
             await self.ctx.send(reply)
         else:
             self.scores[message.author] += 1
-            reply = _("You got it {user}! **+1** to you!").format(user=message.author.display_name)
+            reply = _("You got it {user}! **+1** to you!").format(
+                user=message.author.display_name
+            )
             await self.ctx.send(reply)
         return True
 
@@ -220,7 +230,10 @@ class TriviaSession:
         answers = tuple(s.lower() for s in answers)
 
         def _pred(message: discord.Message):
-            early_exit = message.channel != self.ctx.channel or message.author == self.ctx.guild.me
+            early_exit = (
+                message.channel != self.ctx.channel
+                or message.author == self.ctx.guild.me
+            )
             if early_exit:
                 return False
 
@@ -275,7 +288,9 @@ class TriviaSession:
             paid.
 
         """
-        (winner, score) = next((tup for tup in self.scores.most_common(1)), (None, None))
+        (winner, score) = next(
+            (tup for tup in self.scores.most_common(1)), (None, None)
+        )
         me_ = self.ctx.guild.me
         if winner is not None and winner != me_ and score > 0:
             contestants = list(self.scores.keys())
@@ -284,7 +299,9 @@ class TriviaSession:
             if len(contestants) >= 3:
                 amount = int(multiplier * score)
                 if amount > 0:
-                    LOG.debug("Paying trivia winner: %d credits --> %s", amount, str(winner))
+                    LOG.debug(
+                        "Paying trivia winner: %d credits --> %s", amount, str(winner)
+                    )
                     await bank.deposit_credits(winner, int(multiplier * score))
                     await self.ctx.send(
                         _(

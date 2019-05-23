@@ -32,7 +32,9 @@ class ModInfo(MixinMeta):
     @commands.guild_only()
     @commands.bot_has_permissions(manage_nicknames=True)
     @checks.admin_or_permissions(manage_nicknames=True)
-    async def rename(self, ctx: commands.Context, user: discord.Member, *, nickname: str = ""):
+    async def rename(
+        self, ctx: commands.Context, user: discord.Member, *, nickname: str = ""
+    ):
         """Change a user's nickname.
 
         Leaving the nickname empty will remove it.
@@ -45,7 +47,10 @@ class ModInfo(MixinMeta):
             await ctx.send(_("Nicknames must be between 2 and 32 characters long."))
             return
         if not (
-            (me.guild_permissions.manage_nicknames or me.guild_permissions.administrator)
+            (
+                me.guild_permissions.manage_nicknames
+                or me.guild_permissions.administrator
+            )
             and me.top_role > user.top_role
             and user != ctx.guild.owner
         ):
@@ -57,7 +62,9 @@ class ModInfo(MixinMeta):
             )
         else:
             try:
-                await user.edit(reason=get_audit_reason(ctx.author, None), nick=nickname)
+                await user.edit(
+                    reason=get_audit_reason(ctx.author, None), nick=nickname
+                )
             except discord.Forbidden:
                 # Just in case we missed something in the permissions check above
                 await ctx.send(_("I do not have permission to rename that member."))
@@ -105,7 +112,9 @@ class ModInfo(MixinMeta):
         user_created = user.created_at.strftime("%d %b %Y %H:%M")
         voice_state = user.voice
         member_number = (
-            sorted(guild.members, key=lambda m: m.joined_at or ctx.message.created_at).index(user)
+            sorted(
+                guild.members, key=lambda m: m.joined_at or ctx.message.created_at
+            ).index(user)
             + 1
         )
 
@@ -118,7 +127,9 @@ class ModInfo(MixinMeta):
         elif user.activity.type == discord.ActivityType.playing:
             activity = _("Playing {}").format(user.activity.name)
         elif user.activity.type == discord.ActivityType.streaming:
-            activity = _("Streaming [{}]({})").format(user.activity.name, user.activity.url)
+            activity = _("Streaming [{}]({})").format(
+                user.activity.name, user.activity.url
+            )
         elif user.activity.type == discord.ActivityType.listening:
             activity = _("Listening to {}").format(user.activity.name)
         elif user.activity.type == discord.ActivityType.watching:
@@ -148,7 +159,9 @@ class ModInfo(MixinMeta):
                 value="{0.mention} ID: {0.id}".format(voice_state.channel),
                 inline=False,
             )
-        data.set_footer(text=_("Member #{} | User ID: {}").format(member_number, user.id))
+        data.set_footer(
+            text=_("Member #{} | User ID: {}").format(member_number, user.id)
+        )
 
         name = str(user)
         name = " ~ ".join((name, user.nick)) if user.nick else name
@@ -182,4 +195,6 @@ class ModInfo(MixinMeta):
             msg = filter_various_mentions(msg)
             await ctx.send(msg)
         else:
-            await ctx.send(_("That user doesn't have any recorded name or nickname change."))
+            await ctx.send(
+                _("That user doesn't have any recorded name or nickname change.")
+            )

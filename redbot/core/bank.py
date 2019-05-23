@@ -35,7 +35,11 @@ _DEFAULT_GLOBAL = {
     "default_balance": 100,
 }
 
-_DEFAULT_GUILD = {"bank_name": "Twentysix bank", "currency": "credits", "default_balance": 100}
+_DEFAULT_GUILD = {
+    "bank_name": "Twentysix bank",
+    "currency": "credits",
+    "default_balance": 100,
+}
 
 _DEFAULT_MEMBER = {"name": "", "balance": 0, "created_at": 0}
 
@@ -46,7 +50,9 @@ _conf: Config = None
 
 def _init():
     global _conf
-    _conf = Config.get_conf(None, 384734293238749, cog_name="Bank", force_registration=True)
+    _conf = Config.get_conf(
+        None, 384734293238749, cog_name="Bank", force_registration=True
+    )
     _conf.register_global(**_DEFAULT_GLOBAL)
     _conf.register_guild(**_DEFAULT_GUILD)
     _conf.register_member(**_DEFAULT_MEMBER)
@@ -232,7 +238,9 @@ async def withdraw_credits(member: discord.Member, amount: int) -> int:
 
     """
     if not isinstance(amount, int):
-        raise TypeError("Withdrawal amount must be of type int, not {}.".format(type(amount)))
+        raise TypeError(
+            "Withdrawal amount must be of type int, not {}.".format(type(amount))
+        )
     if _invalid_amount(amount):
         raise ValueError("Invalid withdrawal amount {} < 0".format(amount))
 
@@ -267,7 +275,9 @@ async def deposit_credits(member: discord.Member, amount: int) -> int:
 
     """
     if not isinstance(amount, int):
-        raise TypeError("Deposit amount must be of type int, not {}.".format(type(amount)))
+        raise TypeError(
+            "Deposit amount must be of type int, not {}.".format(type(amount))
+        )
     if _invalid_amount(amount):
         raise ValueError("Invalid deposit amount {} <= 0".format(amount))
 
@@ -301,7 +311,9 @@ async def transfer_credits(from_: discord.Member, to: discord.Member, amount: in
 
     """
     if not isinstance(amount, int):
-        raise TypeError("Transfer amount must be of type int, not {}.".format(type(amount)))
+        raise TypeError(
+            "Transfer amount must be of type int, not {}.".format(type(amount))
+        )
     if _invalid_amount(amount):
         raise ValueError("Invalid transfer amount {} <= 0".format(amount))
 
@@ -325,7 +337,9 @@ async def wipe_bank(guild: Optional[discord.Guild] = None) -> None:
         await _conf.clear_all_members(guild)
 
 
-async def get_leaderboard(positions: int = None, guild: discord.Guild = None) -> List[tuple]:
+async def get_leaderboard(
+    positions: int = None, guild: discord.Guild = None
+) -> List[tuple]:
     """
     Gets the bank's leaderboard
 
@@ -359,7 +373,9 @@ async def get_leaderboard(positions: int = None, guild: discord.Guild = None) ->
         if guild is None:
             raise TypeError("Expected a guild, got NoneType object instead!")
         raw_accounts = await _conf.all_members(guild)
-    sorted_acc = sorted(raw_accounts.items(), key=lambda x: x[1]["balance"], reverse=True)
+    sorted_acc = sorted(
+        raw_accounts.items(), key=lambda x: x[1]["balance"], reverse=True
+    )
     if positions is None:
         return sorted_acc
     else:
@@ -397,7 +413,9 @@ async def get_leaderboard_position(
     except TypeError:
         raise
     else:
-        pos = discord.utils.find(lambda x: x[1][0] == member.id, enumerate(leaderboard, 1))
+        pos = discord.utils.find(
+            lambda x: x[1][0] == member.id, enumerate(leaderboard, 1)
+        )
         if pos is None:
             return None
         else:
@@ -426,7 +444,10 @@ async def get_account(member: Union[discord.Member, discord.User]) -> Account:
         all_accounts = await _conf.all_members(member.guild)
 
     if member.id not in all_accounts:
-        acc_data = {"name": member.display_name, "created_at": _DEFAULT_MEMBER["created_at"]}
+        acc_data = {
+            "name": member.display_name,
+            "created_at": _DEFAULT_MEMBER["created_at"],
+        }
         try:
             acc_data["balance"] = await get_default_balance(member.guild)
         except AttributeError:
@@ -540,7 +561,9 @@ async def set_bank_name(name: str, guild: discord.Guild = None) -> str:
     elif guild is not None:
         await _conf.guild(guild).bank_name.set(name)
     else:
-        raise RuntimeError("Guild must be provided if setting the name of a guild-specific bank.")
+        raise RuntimeError(
+            "Guild must be provided if setting the name of a guild-specific bank."
+        )
     return name
 
 

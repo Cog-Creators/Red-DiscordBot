@@ -90,7 +90,9 @@ class Case:
         for item in list(data.keys()):
             setattr(self, item, data[item])
 
-        await _conf.guild(self.guild).cases.set_raw(str(self.case_number), value=self.to_json())
+        await _conf.guild(self.guild).cases.set_raw(
+            str(self.case_number), value=self.to_json()
+        )
         self.bot.dispatch("modlog_case_edit", self)
 
     async def message_content(self, embed: bool = True):
@@ -110,13 +112,17 @@ class Case:
         """
         casetype = await get_casetype(self.action_type)
         title = "{}".format(
-            "Case #{} | {} {}".format(self.case_number, casetype.case_str, casetype.image)
+            "Case #{} | {} {}".format(
+                self.case_number, casetype.case_str, casetype.image
+            )
         )
 
         if self.reason:
             reason = "**Reason:** {}".format(self.reason)
         else:
-            reason = "**Reason:** Use `[p]reason {} <reason>` to add it".format(self.case_number)
+            reason = "**Reason:** Use `[p]reason {} <reason>` to add it".format(
+                self.case_number
+            )
 
         if self.moderator is not None:
             moderator = escape_spoilers(
@@ -141,7 +147,9 @@ class Case:
         if self.amended_by:
             amended_by = escape_spoilers(
                 "{}#{} ({})".format(
-                    self.amended_by.name, self.amended_by.discriminator, self.amended_by.id
+                    self.amended_by.name,
+                    self.amended_by.discriminator,
+                    self.amended_by.id,
                 )
             )
 
@@ -153,7 +161,9 @@ class Case:
 
         user = escape_spoilers(
             filter_invites(
-                "{}#{} ({})\n".format(self.user.name, self.user.discriminator, self.user.id)
+                "{}#{} ({})\n".format(
+                    self.user.name, self.user.discriminator, self.user.id
+                )
             )
         )  # Invites and spoilers get rendered even in embeds.
         if embed:
@@ -174,7 +184,9 @@ class Case:
             emb.timestamp = datetime.fromtimestamp(self.created_at)
             return emb
         else:
-            user = filter_mass_mentions(filter_urls(user))  # Further sanitization outside embeds
+            user = filter_mass_mentions(
+                filter_urls(user)
+            )  # Further sanitization outside embeds
             case_text = ""
             case_text += "{}\n".format(title)
             case_text += "**User:** {}\n".format(user)
@@ -213,7 +225,9 @@ class Case:
             "reason": self.reason,
             "until": self.until,
             "channel": self.channel.id if hasattr(self.channel, "id") else None,
-            "amended_by": self.amended_by.id if hasattr(self.amended_by, "id") else None,
+            "amended_by": self.amended_by.id
+            if hasattr(self.amended_by, "id")
+            else None,
             "modified_at": self.modified_at,
             "message": self.message.id if hasattr(self.message, "id") else None,
         }
@@ -383,7 +397,9 @@ async def get_next_case_number(guild: discord.Guild) -> str:
         The next case number
 
     """
-    cases = sorted((await _conf.guild(guild).get_raw("cases")), key=lambda x: int(x), reverse=True)
+    cases = sorted(
+        (await _conf.guild(guild).get_raw("cases")), key=lambda x: int(x), reverse=True
+    )
     return str(int(cases[0]) + 1) if cases else "1"
 
 
@@ -414,7 +430,9 @@ async def get_case(case_number: int, guild: discord.Guild, bot: Red) -> Case:
     try:
         case = await _conf.guild(guild).cases.get_raw(str(case_number))
     except KeyError as e:
-        raise RuntimeError("That case does not exist for guild {}".format(guild.name)) from e
+        raise RuntimeError(
+            "That case does not exist for guild {}".format(guild.name)
+        ) from e
     mod_channel = await get_modlog_channel(guild)
     return await Case.from_json(mod_channel, bot, case)
 
@@ -445,7 +463,11 @@ async def get_all_cases(guild: discord.Guild, bot: Red) -> List[Case]:
 
 
 async def get_cases_for_member(
-    guild: discord.Guild, bot: Red, *, member: discord.Member = None, member_id: int = None
+    guild: discord.Guild,
+    bot: Red,
+    *,
+    member: discord.Member = None,
+    member_id: int = None
 ) -> List[Case]:
     """
     Gets all cases for the specified member or member id in a guild.

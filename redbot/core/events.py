@@ -17,7 +17,12 @@ from .. import __version__ as red_version, version_info as red_version_info, Ver
 from . import commands
 from .config import get_latest_confs
 from .data_manager import storage_type
-from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
+from .utils.chat_formatting import (
+    inline,
+    bordered,
+    format_perms_list,
+    humanize_timedelta,
+)
 from .utils import fuzzy_command_search, format_fuzzy_results
 
 log = logging.getLogger("red")
@@ -69,7 +74,9 @@ def init_events(bot, cli_flags):
                     spec = await bot.cog_mgr.find_cog(package)
                     await bot.load_extension(spec)
                 except Exception as e:
-                    log.exception("Failed to load package {}".format(package), exc_info=e)
+                    log.exception(
+                        "Failed to load package {}".format(package), exc_info=e
+                    )
                     await bot.remove_loaded_package(package)
                     to_remove.append(package)
             for package in to_remove:
@@ -112,7 +119,9 @@ def init_events(bot, cli_flags):
 
         with contextlib.suppress(aiohttp.ClientError, discord.HTTPException):
             async with aiohttp.ClientSession() as session:
-                async with session.get("https://pypi.python.org/pypi/red-discordbot/json") as r:
+                async with session.get(
+                    "https://pypi.python.org/pypi/red-discordbot/json"
+                ) as r:
                     data = await r.json()
             if VersionInfo.from_str(data["info"]["version"]) > red_version_info:
                 INFO.append(
@@ -181,7 +190,10 @@ def init_events(bot, cli_flags):
                 return
 
             if ctx.cog:
-                if commands.Cog._get_overridden_method(ctx.cog.cog_command_error) is not None:
+                if (
+                    commands.Cog._get_overridden_method(ctx.cog.cog_command_error)
+                    is not None
+                ):
                     return
 
         if isinstance(error, commands.MissingRequiredArgument):
@@ -206,7 +218,9 @@ def init_events(bot, cli_flags):
             message = "Error in command '{}'. Check your console or logs for details.".format(
                 ctx.command.qualified_name
             )
-            exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
+            exception_log = "Exception in command '{}'\n" "".format(
+                ctx.command.qualified_name
+            )
             exception_log += "".join(
                 traceback.format_exception(type(error), error, error.__traceback__)
             )
@@ -217,9 +231,13 @@ def init_events(bot, cli_flags):
             if not fuzzy_commands:
                 pass
             elif await ctx.embed_requested():
-                await ctx.send(embed=await format_fuzzy_results(ctx, fuzzy_commands, embed=True))
+                await ctx.send(
+                    embed=await format_fuzzy_results(ctx, fuzzy_commands, embed=True)
+                )
             else:
-                await ctx.send(await format_fuzzy_results(ctx, fuzzy_commands, embed=False))
+                await ctx.send(
+                    await format_fuzzy_results(ctx, fuzzy_commands, embed=False)
+                )
         elif isinstance(error, commands.BotMissingPermissions):
             if bin(error.missing.value).count("1") == 1:  # Only one perm missing
                 plural = ""

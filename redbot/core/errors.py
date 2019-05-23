@@ -20,7 +20,9 @@ class PackageAlreadyLoaded(RedError):
         self.spec: importlib.machinery.ModuleSpec = spec
 
     def __str__(self) -> str:
-        return f"There is already a package named {self.spec.name.split('.')[-1]} loaded"
+        return (
+            f"There is already a package named {self.spec.name.split('.')[-1]} loaded"
+        )
 
 
 class CogLoadError(RedError):
@@ -38,7 +40,12 @@ class BalanceTooHigh(BankError, OverflowError):
     """Raised when trying to set a user's balance to higher than the maximum."""
 
     def __init__(
-        self, user: discord.abc.User, max_balance: int, currency_name: str, *args, **kwargs
+        self,
+        user: discord.abc.User,
+        max_balance: int,
+        currency_name: str,
+        *args,
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self.user = user

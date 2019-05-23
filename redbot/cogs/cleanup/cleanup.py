@@ -34,9 +34,13 @@ class Cleanup(commands.Cog):
         """
 
         prompt = await ctx.send(
-            _("Are you sure you want to delete {number} messages? (y/n)").format(number=number)
+            _("Are you sure you want to delete {number} messages? (y/n)").format(
+                number=number
+            )
         )
-        response = await ctx.bot.wait_for("message", check=MessagePredicate.same_context(ctx))
+        response = await ctx.bot.wait_for(
+            "message", check=MessagePredicate.same_context(ctx)
+        )
 
         if response.content.lower().startswith("y"):
             await prompt.delete()
@@ -203,7 +207,14 @@ class Cleanup(commands.Cog):
         reason = (
             "{}({}) deleted {} messages "
             " made by {}({}) in channel {}."
-            "".format(author.name, author.id, len(to_delete), member or "???", _id, channel.name)
+            "".format(
+                author.name,
+                author.id,
+                len(to_delete),
+                member or "???",
+                _id,
+                channel.name,
+            )
         )
         log.info(reason)
 
@@ -213,7 +224,10 @@ class Cleanup(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
     async def after(
-        self, ctx: commands.Context, message_id: RawMessageIds, delete_pinned: bool = False
+        self,
+        ctx: commands.Context,
+        message_id: RawMessageIds,
+        delete_pinned: bool = False,
     ):
         """Delete all messages after a specified message.
 
@@ -323,7 +337,9 @@ class Cleanup(commands.Cog):
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def messages(self, ctx: commands.Context, number: int, delete_pinned: bool = False):
+    async def messages(
+        self, ctx: commands.Context, number: int, delete_pinned: bool = False
+    ):
         """Delete the last X messages.
 
         Example:
@@ -339,7 +355,10 @@ class Cleanup(commands.Cog):
                 return
 
         to_delete = await self.get_messages_for_deletion(
-            channel=channel, number=number, before=ctx.message, delete_pinned=delete_pinned
+            channel=channel,
+            number=number,
+            before=ctx.message,
+            delete_pinned=delete_pinned,
         )
         to_delete.append(ctx.message)
 
@@ -353,7 +372,9 @@ class Cleanup(commands.Cog):
     @cleanup.command(name="bot")
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def cleanup_bot(self, ctx: commands.Context, number: int, delete_pinned: bool = False):
+    async def cleanup_bot(
+        self, ctx: commands.Context, number: int, delete_pinned: bool = False
+    ):
         """Clean up command messages and messages from the bot."""
 
         channel = ctx.channel
@@ -364,7 +385,9 @@ class Cleanup(commands.Cog):
             if not cont:
                 return
 
-        prefixes = await self.bot.get_prefix(ctx.message)  # This returns all server prefixes
+        prefixes = await self.bot.get_prefix(
+            ctx.message
+        )  # This returns all server prefixes
         if isinstance(prefixes, str):
             prefixes = [prefixes]
 
@@ -399,7 +422,9 @@ class Cleanup(commands.Cog):
             if p and len(p) > 0:
                 cmd_name = m.content[len(p) :].split(" ")[0]
                 return (
-                    bool(self.bot.get_command(cmd_name)) or is_alias(cmd_name) or is_cc(cmd_name)
+                    bool(self.bot.get_command(cmd_name))
+                    or is_alias(cmd_name)
+                    or is_cc(cmd_name)
                 )
             return False
 
@@ -453,7 +478,11 @@ class Cleanup(commands.Cog):
             me = ctx.guild.me
             can_mass_purge = channel.permissions_for(me).manage_messages
 
-        use_re = match_pattern and match_pattern.startswith("r(") and match_pattern.endswith(")")
+        use_re = (
+            match_pattern
+            and match_pattern.startswith("r(")
+            and match_pattern.endswith(")")
+        )
 
         if use_re:
             match_pattern = match_pattern[1:]  # strip 'r'

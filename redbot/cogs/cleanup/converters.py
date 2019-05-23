@@ -9,4 +9,6 @@ class RawMessageIds(Converter):
         if argument.isnumeric() and len(argument) >= 17:
             return int(argument)
 
-        raise BadArgument(_("{} doesn't look like a valid message ID.").format(argument))
+        raise BadArgument(
+            _("{} doesn't look like a valid message ID.").format(argument)
+        )

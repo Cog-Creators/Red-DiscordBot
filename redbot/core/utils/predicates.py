@@ -1,5 +1,15 @@
 import re
-from typing import Callable, ClassVar, List, Optional, Pattern, Sequence, Tuple, Union, cast
+from typing import (
+    Callable,
+    ClassVar,
+    List,
+    Optional,
+    Pattern,
+    Sequence,
+    Tuple,
+    Union,
+    cast,
+)
 
 import discord
 
@@ -54,7 +64,9 @@ class MessagePredicate(Callable[[discord.Message], bool]):
 
     """
 
-    def __init__(self, predicate: Callable[["MessagePredicate", discord.Message], bool]) -> None:
+    def __init__(
+        self, predicate: Callable[["MessagePredicate", discord.Message], bool]
+    ) -> None:
         self._pred: Callable[["MessagePredicate", discord.Message], bool] = predicate
         self.result = None
 
@@ -124,7 +136,9 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         """
         same_context = cls.same_context(ctx, channel, user)
         return cls(
-            lambda self, m: (same_context(m) and m.content.lower() == f"{ctx.prefix}cancel")
+            lambda self, m: (
+                same_context(m) and m.content.lower() == f"{ctx.prefix}cancel"
+            )
         )
 
     @classmethod
@@ -574,7 +588,9 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         """
         valid_int = cls.valid_int(ctx, channel, user)
         valid_float = cls.valid_float(ctx, channel, user)
-        return cls(lambda self, m: valid_int(m) or valid_float(m) and float(m.content) < value)
+        return cls(
+            lambda self, m: valid_int(m) or valid_float(m) and float(m.content) < value
+        )
 
     @classmethod
     def greater(
@@ -605,7 +621,9 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         """
         valid_int = cls.valid_int(ctx, channel, user)
         valid_float = cls.valid_float(ctx, channel, user)
-        return cls(lambda self, m: valid_int(m) or valid_float(m) and float(m.content) > value)
+        return cls(
+            lambda self, m: valid_int(m) or valid_float(m) and float(m.content) > value
+        )
 
     @classmethod
     def length_less(
@@ -887,12 +905,16 @@ class ReactionPredicate(Callable[[discord.Reaction, discord.abc.User], bool]):
     """List[str] : A list of all 26 alphabetical letter emojis."""
 
     NUMBER_EMOJIS: ClassVar[List[str]] = [
-        chr(code) + "\N{COMBINING ENCLOSING KEYCAP}" for code in range(ord("0"), ord("9") + 1)
+        chr(code) + "\N{COMBINING ENCLOSING KEYCAP}"
+        for code in range(ord("0"), ord("9") + 1)
     ]
     """List[str] : A list of all single-digit number emojis, 0 through 9."""
 
     def __init__(
-        self, predicate: Callable[["ReactionPredicate", discord.Reaction, discord.abc.User], bool]
+        self,
+        predicate: Callable[
+            ["ReactionPredicate", discord.Reaction, discord.abc.User], bool
+        ],
     ) -> None:
         self._pred: Callable[
             ["ReactionPredicate", discord.Reaction, discord.abc.User], bool
@@ -905,7 +927,9 @@ class ReactionPredicate(Callable[[discord.Reaction, discord.abc.User], bool]):
     # noinspection PyUnusedLocal
     @classmethod
     def same_context(
-        cls, message: Optional[discord.Message] = None, user: Optional[discord.abc.User] = None
+        cls,
+        message: Optional[discord.Message] = None,
+        user: Optional[discord.abc.User] = None,
     ) -> "ReactionPredicate":
         """Match if a reaction fits the described context.
 
@@ -961,7 +985,9 @@ class ReactionPredicate(Callable[[discord.Reaction, discord.abc.User], bool]):
         """
         same_context = cls.same_context(message, user)
 
-        def predicate(self: ReactionPredicate, r: discord.Reaction, u: discord.abc.User):
+        def predicate(
+            self: ReactionPredicate, r: discord.Reaction, u: discord.abc.User
+        ):
             if not same_context(r, u):
                 return False
 
@@ -976,7 +1002,9 @@ class ReactionPredicate(Callable[[discord.Reaction, discord.abc.User], bool]):
 
     @classmethod
     def yes_or_no(
-        cls, message: Optional[discord.Message] = None, user: Optional[discord.abc.User] = None
+        cls,
+        message: Optional[discord.Message] = None,
+        user: Optional[discord.abc.User] = None,
     ) -> "ReactionPredicate":
         """Match if the reaction is a tick or cross emoji.
 
@@ -1001,7 +1029,9 @@ class ReactionPredicate(Callable[[discord.Reaction, discord.abc.User], bool]):
         """
         same_context = cls.same_context(message, user)
 
-        def predicate(self: ReactionPredicate, r: discord.Reaction, u: discord.abc.User) -> bool:
+        def predicate(
+            self: ReactionPredicate, r: discord.Reaction, u: discord.abc.User
+        ) -> bool:
             if not same_context(r, u):
                 return False
 

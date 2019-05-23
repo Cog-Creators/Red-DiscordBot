@@ -92,7 +92,9 @@ class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):
         elif asyncio.iscoroutinefunction(func):
             self.__generator_instance = self.__sync_generator_async_pred()
         else:
-            raise TypeError("Must be either an async predicate, an async iterable, or both.")
+            raise TypeError(
+                "Must be either an async predicate, an async iterable, or both."
+            )
 
     async def __sync_generator_async_pred(self) -> AsyncIterator[_T]:
         for item in self.__iterable:

@@ -43,7 +43,9 @@ YAML_SCHEMA = Schema(
                                 bool, error=_("Rules must be either `true` or `false`.")
                             )
                         },
-                        error=_("Keys under command names must be IDs (numbers) or `default`."),
+                        error=_(
+                            "Keys under command names must be IDs (numbers) or `default`."
+                        ),
                     )
                 },
                 {},
@@ -177,7 +179,10 @@ class Permissions(commands.Cog):
     @permissions.group(name="acl", aliases=["yaml"])
     async def permissions_acl(self, ctx: commands.Context):
         """Manage permissions with YAML files."""
-        if ctx.invoked_subcommand is None or ctx.invoked_subcommand == self.permissions_acl:
+        if (
+            ctx.invoked_subcommand is None
+            or ctx.invoked_subcommand == self.permissions_acl
+        ):
             # Send a little guide on YAML formatting
             await ctx.send(
                 _("Example YAML for setting rules:\n")
@@ -344,7 +349,9 @@ class Permissions(commands.Cog):
        `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
         for w in who_or_what:
-            await self._remove_rule(cog_or_cmd=cog_or_command, model_id=w.id, guild_id=GLOBAL)
+            await self._remove_rule(
+                cog_or_cmd=cog_or_command, model_id=w.id, guild_id=GLOBAL
+            )
         await ctx.send(_("Rule removed."))
 
     @commands.guild_only()
@@ -373,7 +380,10 @@ class Permissions(commands.Cog):
     @checks.guildowner_or_permissions(administrator=True)
     @permissions.command(name="setdefaultserverrule", aliases=["setdefaultguildrule"])
     async def permissions_setdefaultguildrule(
-        self, ctx: commands.Context, allow_or_deny: ClearableRuleType, cog_or_command: CogOrCommand
+        self,
+        ctx: commands.Context,
+        allow_or_deny: ClearableRuleType,
+        cog_or_command: CogOrCommand,
     ):
         """Set the default rule for a command in this server.
 
@@ -396,7 +406,10 @@ class Permissions(commands.Cog):
     @checks.is_owner()
     @permissions.command(name="setdefaultglobalrule")
     async def permissions_setdefaultglobalrule(
-        self, ctx: commands.Context, allow_or_deny: ClearableRuleType, cog_or_command: CogOrCommand
+        self,
+        ctx: commands.Context,
+        allow_or_deny: ClearableRuleType,
+        cog_or_command: CogOrCommand,
     ):
         """Set the default global rule for a command.
 
@@ -410,7 +423,9 @@ class Permissions(commands.Cog):
         rule for. This is case sensitive.
         """
         await self._set_default_rule(
-            rule=cast(Optional[bool], allow_or_deny), cog_or_cmd=cog_or_command, guild_id=GLOBAL
+            rule=cast(Optional[bool], allow_or_deny),
+            cog_or_cmd=cog_or_command,
+            guild_id=GLOBAL,
         )
         await ctx.send(_("Default set."))
 
@@ -476,7 +491,9 @@ class Permissions(commands.Cog):
         async with self.config.custom(cog_or_cmd.type, cog_or_cmd.name).all() as rules:
             rules.setdefault(str(guild_id), {})[str(model_id)] = rule
 
-    async def _remove_rule(self, cog_or_cmd: CogOrCommand, model_id: int, guild_id: int) -> None:
+    async def _remove_rule(
+        self, cog_or_cmd: CogOrCommand, model_id: int, guild_id: int
+    ) -> None:
         """Remove a rule.
 
         Guild ID should be 0 for global rules.
@@ -524,7 +541,9 @@ class Permissions(commands.Cog):
             return
 
         try:
-            await self._yaml_set_acl(ctx.message.attachments[0], guild_id=guild_id, update=update)
+            await self._yaml_set_acl(
+                ctx.message.attachments[0], guild_id=guild_id, update=update
+            )
         except yaml.MarkedYAMLError as e:
             await ctx.send(_("Invalid syntax: ") + str(e))
         except SchemaError as e:
@@ -534,7 +553,9 @@ class Permissions(commands.Cog):
         else:
             await ctx.send(_("Rules set."))
 
-    async def _yaml_set_acl(self, source: discord.Attachment, guild_id: int, update: bool) -> None:
+    async def _yaml_set_acl(
+        self, source: discord.Attachment, guild_id: int, update: bool
+    ) -> None:
         """Set rules from a YAML file."""
         with io.BytesIO() as fp:
             await source.save(fp)
@@ -546,13 +567,18 @@ class Permissions(commands.Cog):
         if update is False:
             await self._clear_rules(guild_id)
 
-        for category, getter in ((COG, self.bot.get_cog), (COMMAND, self.bot.get_command)):
+        for category, getter in (
+            (COG, self.bot.get_cog),
+            (COMMAND, self.bot.get_command),
+        ):
             rules_dict = rules.get(category)
             if not rules_dict:
                 continue
             conf = self.config.custom(category)
             for cmd_name, cmd_rules in rules_dict.items():
-                cmd_rules = {str(model_id): rule for model_id, rule in cmd_rules.items()}
+                cmd_rules = {
+                    str(model_id): rule for model_id, rule in cmd_rules.items()
+                }
                 await conf.set_raw(cmd_name, str(guild_id), value=cmd_rules)
                 cmd_obj = getter(cmd_name)
                 if cmd_obj is not None:
@@ -567,9 +593,13 @@ class Permissions(commands.Cog):
             for cmd_name, cmd_rules in rules_dict.items():
                 model_rules = cmd_rules.get(str(guild_id))
                 if model_rules is not None:
-                    guild_rules[category][cmd_name] = dict(_int_key_map(model_rules.items()))
+                    guild_rules[category][cmd_name] = dict(
+                        _int_key_map(model_rules.items())
+                    )
 
-        fp = io.BytesIO(yaml.dump(guild_rules, default_flow_style=False).encode("utf-8"))
+        fp = io.BytesIO(
+            yaml.dump(guild_rules, default_flow_style=False).encode("utf-8")
+        )
         return discord.File(fp, filename="acl.yaml")
 
     @staticmethod
@@ -578,7 +608,9 @@ class Permissions(commands.Cog):
         if ctx.guild is None or ctx.guild.me.permissions_in(ctx.channel).add_reactions:
             msg = await ctx.send(_("Are you sure?"))
             # noinspection PyAsyncCall
-            task = start_adding_reactions(msg, ReactionPredicate.YES_OR_NO_EMOJIS, ctx.bot.loop)
+            task = start_adding_reactions(
+                msg, ReactionPredicate.YES_OR_NO_EMOJIS, ctx.bot.loop
+            )
             pred = ReactionPredicate.yes_or_no(msg, ctx.author)
             try:
                 await ctx.bot.wait_for("reaction_add", check=pred, timeout=30)
@@ -658,7 +690,9 @@ class Permissions(commands.Cog):
             if "owner_models" not in old_rules:
                 continue
             old_rules = old_rules["owner_models"]
-            for category, new_rules in zip(("cogs", "commands"), (new_cog_rules, new_cmd_rules)):
+            for category, new_rules in zip(
+                ("cogs", "commands"), (new_cog_rules, new_cmd_rules)
+            ):
                 if category in old_rules:
                     for name, rules in old_rules[category].items():
                         these_rules = new_rules.setdefault(name, {})
@@ -680,7 +714,10 @@ class Permissions(commands.Cog):
 
     async def _load_all_rules(self):
         """Load all of this cog's rules into loaded commands and cogs."""
-        for category, getter in ((COG, self.bot.get_cog), (COMMAND, self.bot.get_command)):
+        for category, getter in (
+            (COG, self.bot.get_cog),
+            (COMMAND, self.bot.get_command),
+        ):
             all_rules = await self.config.custom(category).all()
             for name, rules in all_rules.items():
                 obj = getter(name)
@@ -718,7 +755,10 @@ class Permissions(commands.Cog):
         This is done instead of just clearing all rules, which could
         clear rules set by other cogs.
         """
-        for category, getter in ((COG, self.bot.get_cog), (COMMAND, self.bot.get_command)):
+        for category, getter in (
+            (COG, self.bot.get_cog),
+            (COMMAND, self.bot.get_command),
+        ):
             all_rules = await self.config.custom(category).all()
             for name, rules in all_rules.items():
                 obj = getter(name)
@@ -744,7 +784,9 @@ class Permissions(commands.Cog):
                     cog_or_command.clear_rule_for(int(model_id), guild_id=guild_id)
 
 
-def _int_key_map(items_view: ItemsView[str, Any]) -> Iterator[Tuple[Union[str, int], Any]]:
+def _int_key_map(
+    items_view: ItemsView[str, Any]
+) -> Iterator[Tuple[Union[str, int], Any]]:
     for k, v in items_view:
         if k == "default":
             yield k, v

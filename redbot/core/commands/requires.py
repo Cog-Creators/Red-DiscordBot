@@ -224,7 +224,10 @@ PermState.TRANSITIONS = {
     PermState.NORMAL: {
         PermState.ACTIVE_ALLOW: (True, PermState.ACTIVE_ALLOW),
         PermState.NORMAL: (None, PermState.NORMAL),
-        PermState.PASSIVE_ALLOW: (True, {True: PermState.NORMAL, False: PermState.PASSIVE_ALLOW}),
+        PermState.PASSIVE_ALLOW: (
+            True,
+            {True: PermState.NORMAL, False: PermState.PASSIVE_ALLOW},
+        ),
         PermState.CAUTIOUS_ALLOW: (True, PermState.CAUTIOUS_ALLOW),
         PermState.ACTIVE_DENY: (False, PermState.ACTIVE_DENY),
     },
@@ -341,7 +344,9 @@ class Requires:
 
         return decorator
 
-    def get_rule(self, model: Union[int, str, PermissionModel], guild_id: int) -> PermState:
+    def get_rule(
+        self, model: Union[int, str, PermissionModel], guild_id: int
+    ) -> PermState:
         """Get the rule for a particular model.
 
         Parameters
@@ -368,7 +373,9 @@ class Requires:
             rules = self._global_rules
         return rules.get(model, PermState.NORMAL)
 
-    def set_rule(self, model_id: Union[str, int], rule: PermState, guild_id: int) -> None:
+    def set_rule(
+        self, model_id: Union[str, int], rule: PermState, guild_id: int
+    ) -> None:
         """Set the rule for a particular model.
 
         Parameters
@@ -462,7 +469,9 @@ class Requires:
             bot_user = ctx.guild.me
         bot_perms = ctx.channel.permissions_for(bot_user)
         if not (bot_perms.administrator or bot_perms >= self.bot_perms):
-            raise BotMissingPermissions(missing=self._missing_perms(self.bot_perms, bot_perms))
+            raise BotMissingPermissions(
+                missing=self._missing_perms(self.bot_perms, bot_perms)
+            )
 
     async def _transition_state(self, ctx: "Context") -> bool:
         prev_state = ctx.permission_state
@@ -743,4 +752,6 @@ def _validate_perms_dict(perms: Dict[str, bool]) -> None:
         if value is not True:
             # We reject any permission not specified as 'True', since this is the only value which
             # makes practical sense.
-            raise TypeError(f"Permission {perm} may only be specified as 'True', not {value}")
+            raise TypeError(
+                f"Permission {perm} may only be specified as 'True', not {value}"
+            )

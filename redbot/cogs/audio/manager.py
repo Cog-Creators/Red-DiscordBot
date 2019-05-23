@@ -57,7 +57,9 @@ class ServerManager:
             if self._proc.returncode is None:
                 raise RuntimeError("Internal Lavalink server is already running")
             else:
-                raise RuntimeError("Server manager has already been used - create another one")
+                raise RuntimeError(
+                    "Server manager has already been used - create another one"
+                )
 
         await self.maybe_download_jar()
 
@@ -79,7 +81,9 @@ class ServerManager:
         try:
             await asyncio.wait_for(self._wait_for_launcher(), timeout=120)
         except asyncio.TimeoutError:
-            log.warning("Timeout occurred whilst waiting for internal Lavalink server to be ready")
+            log.warning(
+                "Timeout occurred whilst waiting for internal Lavalink server to be ready"
+            )
 
         self._monitor_task = asyncio.create_task(self._monitor())
 
@@ -118,7 +122,10 @@ class ServerManager:
         This assumes we've already checked that java exists.
         """
         _proc: asyncio.subprocess.Process = await asyncio.create_subprocess_exec(
-            "java", "-version", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+            "java",
+            "-version",
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
         )
         # java -version outputs to stderr
         _, err = await _proc.communicate()
@@ -179,7 +186,9 @@ class ServerManager:
             )
 
     def _has_java_error(self) -> bool:
-        poss_error_file = LAVALINK_DOWNLOAD_DIR / "hs_err_pid{}.log".format(self._proc.pid)
+        poss_error_file = LAVALINK_DOWNLOAD_DIR / "hs_err_pid{}.log".format(
+            self._proc.pid
+        )
         return poss_error_file.exists()
 
     async def shutdown(self) -> None:

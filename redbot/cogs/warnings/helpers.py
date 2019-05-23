@@ -74,7 +74,9 @@ def get_command_from_input(bot, userinput: str):
         # command the user specified has the is_owner check
         return (
             None,
-            _("That command requires bot owner. I can't allow you to use that for an action"),
+            _(
+                "That command requires bot owner. I can't allow you to use that for an action"
+            ),
         )
     return "{prefix}" + orig, None
 

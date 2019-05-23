@@ -16,7 +16,9 @@ mute_unmute_issues = {
     "hierarchy_problem": _(
         "I cannot let you do that. You are not higher than the user in the role hierarchy."
     ),
-    "is_admin": _("That user cannot be muted, as they have the Administrator permission."),
+    "is_admin": _(
+        "That user cannot be muted, as they have the Administrator permission."
+    ),
     "permissions_issue": _(
         "Failed to mute user. I need the manage roles "
         "permission and the user I'm muting must be "
@@ -33,7 +35,9 @@ class MuteMixin(MixinMeta):
 
     @staticmethod
     async def _voice_perm_check(
-        ctx: commands.Context, user_voice_state: Optional[discord.VoiceState], **perms: bool
+        ctx: commands.Context,
+        user_voice_state: Optional[discord.VoiceState],
+        **perms: bool
     ) -> bool:
         """Check if the bot and user have sufficient permissions for voicebans.
 
@@ -55,9 +59,9 @@ class MuteMixin(MixinMeta):
         required_perms.update(**perms)
         if not voice_channel.permissions_for(ctx.me) >= required_perms:
             await ctx.send(
-                _("I require the {perms} permission(s) in that user's channel to do that.").format(
-                    perms=format_perms_list(required_perms)
-                )
+                _(
+                    "I require the {perms} permission(s) in that user's channel to do that."
+                ).format(perms=format_perms_list(required_perms))
             )
             return False
         if (
@@ -76,7 +80,9 @@ class MuteMixin(MixinMeta):
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(mute_members=True, deafen_members=True)
-    async def voiceunban(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
+    async def voiceunban(
+        self, ctx: commands.Context, user: discord.Member, *, reason: str = None
+    ):
         """Unban a user from speaking and listening in the server's voice channels."""
         user_voice_state = user.voice
         if (
@@ -120,7 +126,9 @@ class MuteMixin(MixinMeta):
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(mute_members=True, deafen_members=True)
-    async def voiceban(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
+    async def voiceban(
+        self, ctx: commands.Context, user: discord.Member, *, reason: str = None
+    ):
         """Ban a user from speaking and listening in the server's voice channels."""
         user_voice_state: discord.VoiceState = user.voice
         if (
@@ -159,7 +167,9 @@ class MuteMixin(MixinMeta):
             )
         except RuntimeError as e:
             await ctx.send(e)
-        await ctx.send(_("User has been banned from speaking or listening in voice channels"))
+        await ctx.send(
+            _("User has been banned from speaking or listening in voice channels")
+        )
 
     @commands.group()
     @commands.guild_only()
@@ -170,7 +180,9 @@ class MuteMixin(MixinMeta):
 
     @mute.command(name="voice")
     @commands.guild_only()
-    async def voice_mute(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
+    async def voice_mute(
+        self, ctx: commands.Context, user: discord.Member, *, reason: str = None
+    ):
         """Mute a user in their current voice channel."""
         user_voice_state = user.voice
         if (
@@ -185,7 +197,9 @@ class MuteMixin(MixinMeta):
         channel = user_voice_state.channel
         audit_reason = get_audit_reason(author, reason)
 
-        success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
+        success, issue = await self.mute_user(
+            guild, channel, author, user, audit_reason
+        )
 
         if success:
             try:
@@ -203,7 +217,9 @@ class MuteMixin(MixinMeta):
             except RuntimeError as e:
                 await ctx.send(e)
             await ctx.send(
-                _("Muted {user} in channel {channel.name}").format(user=user, channel=channel)
+                _("Muted {user} in channel {channel.name}").format(
+                    user=user, channel=channel
+                )
             )
         else:
             await ctx.send(issue)
@@ -221,7 +237,9 @@ class MuteMixin(MixinMeta):
         guild = ctx.guild
         audit_reason = get_audit_reason(author, reason)
 
-        success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
+        success, issue = await self.mute_user(
+            guild, channel, author, user, audit_reason
+        )
 
         if success:
             try:
@@ -246,7 +264,9 @@ class MuteMixin(MixinMeta):
     @commands.guild_only()
     @commands.bot_has_permissions(manage_roles=True)
     @checks.mod_or_permissions(administrator=True)
-    async def guild_mute(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
+    async def guild_mute(
+        self, ctx: commands.Context, user: discord.Member, *, reason: str = None
+    ):
         """Mutes user in the server"""
         author = ctx.message.author
         guild = ctx.guild
@@ -254,7 +274,9 @@ class MuteMixin(MixinMeta):
 
         mute_success = []
         for channel in guild.channels:
-            success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
+            success, issue = await self.mute_user(
+                guild, channel, author, user, audit_reason
+            )
             mute_success.append((success, issue))
             await asyncio.sleep(0.1)
         try:
@@ -300,7 +322,9 @@ class MuteMixin(MixinMeta):
         channel = user_voice_state.channel
         audit_reason = get_audit_reason(author, reason)
 
-        success, message = await self.unmute_user(guild, channel, author, user, audit_reason)
+        success, message = await self.unmute_user(
+            guild, channel, author, user, audit_reason
+        )
 
         if success:
             try:
@@ -318,7 +342,9 @@ class MuteMixin(MixinMeta):
             except RuntimeError as e:
                 await ctx.send(e)
             await ctx.send(
-                _("Unmuted {user} in channel {channel.name}").format(user=user, channel=channel)
+                _("Unmuted {user} in channel {channel.name}").format(
+                    user=user, channel=channel
+                )
             )
         else:
             await ctx.send(_("Unmute failed. Reason: {}").format(message))
@@ -336,7 +362,9 @@ class MuteMixin(MixinMeta):
         guild = ctx.guild
         audit_reason = get_audit_reason(author, reason)
 
-        success, message = await self.unmute_user(guild, channel, author, user, audit_reason)
+        success, message = await self.unmute_user(
+            guild, channel, author, user, audit_reason
+        )
 
         if success:
             try:
@@ -371,7 +399,9 @@ class MuteMixin(MixinMeta):
 
         unmute_success = []
         for channel in guild.channels:
-            success, message = await self.unmute_user(guild, channel, author, user, audit_reason)
+            success, message = await self.unmute_user(
+                guild, channel, author, user, audit_reason
+            )
             unmute_success.append((success, message))
             await asyncio.sleep(0.1)
         try:
@@ -413,7 +443,9 @@ class MuteMixin(MixinMeta):
         if all(getattr(permissions, p) is False for p in new_overs.keys()):
             return False, _(mute_unmute_issues["already_muted"])
 
-        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
+        elif not await is_allowed_by_hierarchy(
+            self.bot, self.settings, guild, author, user
+        ):
             return False, _(mute_unmute_issues["hierarchy_problem"])
 
         old_overs = {k: getattr(overwrites, k) for k in new_overs}
@@ -447,14 +479,18 @@ class MuteMixin(MixinMeta):
         if all(getattr(overwrites, k) == v for k, v in old_values.items()):
             return False, _(mute_unmute_issues["already_unmuted"])
 
-        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
+        elif not await is_allowed_by_hierarchy(
+            self.bot, self.settings, guild, author, user
+        ):
             return False, _(mute_unmute_issues["hierarchy_problem"])
 
         overwrites.update(**old_values)
         try:
             if overwrites.is_empty():
                 await channel.set_permissions(
-                    user, overwrite=cast(discord.PermissionOverwrite, None), reason=reason
+                    user,
+                    overwrite=cast(discord.PermissionOverwrite, None),
+                    reason=reason,
                 )
             else:
                 await channel.set_permissions(user, overwrite=overwrites, reason=reason)

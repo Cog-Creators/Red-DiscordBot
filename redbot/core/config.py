@@ -1,7 +1,16 @@
 import logging
 import collections
 from copy import deepcopy
-from typing import Any, Union, Tuple, Dict, Awaitable, AsyncContextManager, TypeVar, TYPE_CHECKING
+from typing import (
+    Any,
+    Union,
+    Tuple,
+    Dict,
+    Awaitable,
+    AsyncContextManager,
+    TypeVar,
+    TYPE_CHECKING,
+)
 import weakref
 
 import discord
@@ -258,9 +267,13 @@ class Group(Value):
                 driver=self.driver,
             )
         elif self.force_registration:
-            raise AttributeError("'{}' is not a valid registered Group or value.".format(item))
+            raise AttributeError(
+                "'{}' is not a valid registered Group or value.".format(item)
+            )
         else:
-            return Value(identifier_data=new_identifiers, default_value=None, driver=self.driver)
+            return Value(
+                identifier_data=new_identifiers, default_value=None, driver=self.driver
+            )
 
     async def clear_raw(self, *nested_path: Any):
         """
@@ -567,7 +580,9 @@ class Config:
         return str(identifier)
 
     @classmethod
-    def get_conf(cls, cog_instance, identifier: int, force_registration=False, cog_name=None):
+    def get_conf(
+        cls, cog_instance, identifier: int, force_registration=False, cog_name=None
+    ):
         """Get a Config instance for your cog.
 
         .. warning::
@@ -616,7 +631,11 @@ class Config:
         driver_details = basic_config.get("STORAGE_DETAILS", {})
 
         driver = get_driver(
-            driver_name, cog_name, uuid, data_path_override=cog_path_override, **driver_details
+            driver_name,
+            cog_name,
+            uuid,
+            data_path_override=cog_path_override,
+            **driver_details,
         )
         if driver_name == BackendType.JSON.value:
             driver.migrate_identifier(identifier)
@@ -717,7 +736,9 @@ class Config:
                 existing_is_dict = isinstance(_partial[k], dict)
                 if val_is_dict != existing_is_dict:
                     # != is XOR
-                    raise KeyError("You cannot register a Group and a Value under the same name.")
+                    raise KeyError(
+                        "You cannot register a Group and a Value under the same name."
+                    )
                 if val_is_dict:
                     Config._update_defaults(v, _partial=_partial[k])
                 else:

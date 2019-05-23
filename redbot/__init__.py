@@ -63,7 +63,9 @@ class VersionInfo:
         self.micro: int = micro
 
         if releaselevel not in self._RELEASE_LEVELS:
-            raise TypeError(f"'releaselevel' must be one of: {', '.join(self._RELEASE_LEVELS)}")
+            raise TypeError(
+                f"'releaselevel' must be one of: {', '.join(self._RELEASE_LEVELS)}"
+            )
 
         self.releaselevel: str = releaselevel
         self.serial: _Optional[int] = serial
@@ -122,10 +124,26 @@ class VersionInfo:
     def _generate_comparison_tuples(
         self, other: "VersionInfo"
     ) -> _List[
-        _Tuple[int, int, int, int, _Union[int, float], _Union[int, float], _Union[int, float]]
+        _Tuple[
+            int,
+            int,
+            int,
+            int,
+            _Union[int, float],
+            _Union[int, float],
+            _Union[int, float],
+        ]
     ]:
         tups: _List[
-            _Tuple[int, int, int, int, _Union[int, float], _Union[int, float], _Union[int, float]]
+            _Tuple[
+                int,
+                int,
+                int,
+                int,
+                _Union[int, float],
+                _Union[int, float],
+                _Union[int, float],
+            ]
         ] = []
         for obj in (self, other):
             tups.append(
@@ -157,7 +175,9 @@ class VersionInfo:
         ret = f"{self.major}.{self.minor}.{self.micro}"
         if self.releaselevel != self.FINAL:
             short = next(
-                k for k, v in self._SHORT_RELEASE_LEVELS.items() if v == self.releaselevel
+                k
+                for k, v in self._SHORT_RELEASE_LEVELS.items()
+                if v == self.releaselevel
             )
             ret += f"{short}{self.serial}"
         if self.post_release is not None:

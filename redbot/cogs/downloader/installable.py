@@ -120,7 +120,9 @@ class Installable(RepoJSONMixin):
 
         # noinspection PyBroadException
         try:
-            copy_func(src=str(self._location), dst=str(target_dir / self._location.stem))
+            copy_func(
+                src=str(self._location), dst=str(target_dir / self._location.stem)
+            )
         except:
             log.exception("Error occurred when copying path: {}".format(self._location))
             return False
@@ -132,7 +134,9 @@ class Installable(RepoJSONMixin):
         if self._info_file.exists():
             self._process_info_file()
 
-    def _process_info_file(self, info_file_path: Path = None) -> MutableMapping[str, Any]:
+    def _process_info_file(
+        self, info_file_path: Path = None
+    ) -> MutableMapping[str, Any]:
         """
         Processes an information file. Loads dependencies among other
         information into this object.
@@ -151,7 +155,9 @@ class Installable(RepoJSONMixin):
                 info = json.load(f)
             except json.JSONDecodeError:
                 info = {}
-                log.exception("Invalid JSON information file at path: {}".format(info_file_path))
+                log.exception(
+                    "Invalid JSON information file at path: {}".format(info_file_path)
+                )
             else:
                 self._info = info
 
@@ -162,13 +168,17 @@ class Installable(RepoJSONMixin):
         self.author = author
 
         try:
-            min_bot_version = VersionInfo.from_str(str(info.get("min_bot_version", __version__)))
+            min_bot_version = VersionInfo.from_str(
+                str(info.get("min_bot_version", __version__))
+            )
         except ValueError:
             min_bot_version = self.min_bot_version
         self.min_bot_version = min_bot_version
 
         try:
-            max_bot_version = VersionInfo.from_str(str(info.get("max_bot_version", __version__)))
+            max_bot_version = VersionInfo.from_str(
+                str(info.get("max_bot_version", __version__))
+            )
         except ValueError:
             max_bot_version = self.max_bot_version
         self.max_bot_version = max_bot_version

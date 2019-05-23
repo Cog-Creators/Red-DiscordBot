@@ -128,7 +128,9 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
         self._permissions_hooks: List[commands.CheckPredicate] = []
 
     async def send_help_for(
-        self, ctx: commands.Context, help_for: Union[commands.Command, commands.GroupMixin, str]
+        self,
+        ctx: commands.Context,
+        help_for: Union[commands.Command, commands.GroupMixin, str],
     ):
         """
         Invokes Red's helpformatter for a given context and object.
@@ -248,7 +250,9 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
         lib = spec.loader.load_module()
         if not hasattr(lib, "setup"):
             del lib
-            raise discord.ClientException(f"extension {name} does not have a setup function")
+            raise discord.ClientException(
+                f"extension {name} does not have a setup function"
+            )
 
         try:
             if asyncio.iscoroutinefunction(lib.setup):
@@ -281,7 +285,10 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             self.unregister_rpc_handler(meth)
 
     async def is_automod_immune(
-        self, to_check: Union[discord.Message, commands.Context, discord.abc.User, discord.Role]
+        self,
+        to_check: Union[
+            discord.Message, commands.Context, discord.abc.User, discord.Role
+        ],
     ) -> bool:
         """
         Checks if the user, message, context, or role should be considered immune from automated

@@ -55,7 +55,9 @@ class MoveToCore(MixinMeta):
             await ctx.send(await self.count_ignored())
 
     @ignore.command(name="channel")
-    async def ignore_channel(self, ctx: commands.Context, channel: discord.TextChannel = None):
+    async def ignore_channel(
+        self, ctx: commands.Context, channel: discord.TextChannel = None
+    ):
         """Ignore commands in the channel.
 
         Defaults to the current channel.
@@ -88,7 +90,9 @@ class MoveToCore(MixinMeta):
             await ctx.send(await self.count_ignored())
 
     @unignore.command(name="channel")
-    async def unignore_channel(self, ctx: commands.Context, channel: discord.TextChannel = None):
+    async def unignore_channel(
+        self, ctx: commands.Context, channel: discord.TextChannel = None
+    ):
         """Remove a channel from ignore the list.
 
         Defaults to the current channel.
@@ -123,5 +127,7 @@ class MoveToCore(MixinMeta):
                         ch_count += 1
             else:
                 svr_count += 1
-        msg = _("Currently ignoring:\n{} channels\n{} guilds\n").format(ch_count, svr_count)
+        msg = _("Currently ignoring:\n{} channels\n{} guilds\n").format(
+            ch_count, svr_count
+        )
         return box(msg)

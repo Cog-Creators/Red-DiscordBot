@@ -56,7 +56,9 @@ class CogManager:
 
         """
         return deduplicate_iterables(
-            [await self.install_path()], await self.user_defined_paths(), [self.CORE_PATH]
+            [await self.install_path()],
+            await self.user_defined_paths(),
+            [self.CORE_PATH],
         )
 
     async def install_path(self) -> Path:
@@ -214,7 +216,9 @@ class CogManager:
             When no cog with the requested name was found.
 
         """
-        real_paths = list(map(str, [await self.install_path()] + await self.user_defined_paths()))
+        real_paths = list(
+            map(str, [await self.install_path()] + await self.user_defined_paths())
+        )
 
         for finder, module_name, _ in pkgutil.iter_modules(real_paths):
             if name == module_name:
@@ -340,7 +344,9 @@ class CogManagerUI(commands.Cog):
         Add a path to the list of available cog paths.
         """
         if not path.is_dir():
-            await ctx.send(_("That path does not exist or does not point to a valid directory."))
+            await ctx.send(
+                _("That path does not exist or does not point to a valid directory.")
+            )
             return
 
         try:
@@ -422,7 +428,9 @@ class CogManagerUI(commands.Cog):
 
         install_path = await ctx.bot.cog_mgr.install_path()
         await ctx.send(
-            _("The bot will install new cogs to the `{}` directory.").format(install_path)
+            _("The bot will install new cogs to the `{}` directory.").format(
+                install_path
+            )
         )
 
     @commands.command()
@@ -442,7 +450,9 @@ class CogManagerUI(commands.Cog):
 
         if await ctx.embed_requested():
             loaded = _("**{} loaded:**\n").format(len(loaded)) + ", ".join(loaded)
-            unloaded = _("**{} unloaded:**\n").format(len(unloaded)) + ", ".join(unloaded)
+            unloaded = _("**{} unloaded:**\n").format(len(unloaded)) + ", ".join(
+                unloaded
+            )
 
             for page in pagify(loaded, delims=[", ", "\n"], page_length=1800):
                 e = discord.Embed(description=page, colour=discord.Colour.dark_green())

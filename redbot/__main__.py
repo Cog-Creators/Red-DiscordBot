@@ -105,7 +105,10 @@ def main():
     log.debug("Storage Type: %s", data_manager.storage_type())
 
     red = Red(
-        cli_flags=cli_flags, description=description, dm_help=None, fetch_offline_members=True
+        cli_flags=cli_flags,
+        description=description,
+        dm_help=None,
+        fetch_offline_members=True,
     )
     init_global_checks(red)
     init_events(red, cli_flags)
@@ -119,7 +122,9 @@ def main():
     bank._init()
     loop = asyncio.get_event_loop()
     if os.name == "posix":
-        loop.add_signal_handler(SIGTERM, lambda: asyncio.ensure_future(sigterm_handler(red, log)))
+        loop.add_signal_handler(
+            SIGTERM, lambda: asyncio.ensure_future(sigterm_handler(red, log))
+        )
     tmp_data = {}
     loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
     token = os.environ.get("RED_TOKEN", tmp_data["token"])
@@ -128,7 +133,9 @@ def main():
     prefix = cli_flags.prefix or tmp_data["prefix"]
     if not (token and prefix):
         if cli_flags.no_prompt is False:
-            new_token = interactive_config(red, token_set=bool(token), prefix_set=bool(prefix))
+            new_token = interactive_config(
+                red, token_set=bool(token), prefix_set=bool(prefix)
+            )
             if new_token:
                 token = new_token
         else:

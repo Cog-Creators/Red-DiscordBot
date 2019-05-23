@@ -106,7 +106,9 @@ class Admin(commands.Cog):
         """
         return ctx.author.top_role > role
 
-    async def _addrole(self, ctx: commands.Context, member: discord.Member, role: discord.Role):
+    async def _addrole(
+        self, ctx: commands.Context, member: discord.Member, role: discord.Role
+    ):
         try:
             await member.add_roles(role)
         except discord.Forbidden:
@@ -123,7 +125,9 @@ class Admin(commands.Cog):
                 )
             )
 
-    async def _removerole(self, ctx: commands.Context, member: discord.Member, role: discord.Role):
+    async def _removerole(
+        self, ctx: commands.Context, member: discord.Member, role: discord.Role
+    ):
         try:
             await member.remove_roles(role)
         except discord.Forbidden:
@@ -135,16 +139,20 @@ class Admin(commands.Cog):
                 await self.complain(ctx, T_(GENERIC_FORBIDDEN))
         else:
             await ctx.send(
-                _("I successfully removed {role.name} from {member.display_name}").format(
-                    role=role, member=member
-                )
+                _(
+                    "I successfully removed {role.name} from {member.display_name}"
+                ).format(role=role, member=member)
             )
 
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(manage_roles=True)
     async def addrole(
-        self, ctx: commands.Context, rolename: discord.Role, *, user: MemberDefaultAuthor = None
+        self,
+        ctx: commands.Context,
+        rolename: discord.Role,
+        *,
+        user: MemberDefaultAuthor = None
     ):
         """Add a role to a user.
 
@@ -164,7 +172,11 @@ class Admin(commands.Cog):
     @commands.guild_only()
     @checks.admin_or_permissions(manage_roles=True)
     async def removerole(
-        self, ctx: commands.Context, rolename: discord.Role, *, user: MemberDefaultAuthor = None
+        self,
+        ctx: commands.Context,
+        rolename: discord.Role,
+        *,
+        user: MemberDefaultAuthor = None
     ):
         """Remove a role from a user.
 
@@ -177,7 +189,11 @@ class Admin(commands.Cog):
             await self._removerole(ctx, user, rolename)
         else:
             await self.complain(
-                ctx, T_(USER_HIERARCHY_ISSUE), member=user, role=rolename, verb=_("remove")
+                ctx,
+                T_(USER_HIERARCHY_ISSUE),
+                member=user,
+                role=rolename,
+                verb=_("remove"),
             )
 
     @commands.group()
@@ -202,7 +218,9 @@ class Admin(commands.Cog):
             `[p]editrole colour Test #ff9900`
         """
         author = ctx.author
-        reason = "{}({}) changed the colour of role '{}'".format(author.name, author.id, role.name)
+        reason = "{}({}) changed the colour of role '{}'".format(
+            author.name, author.id, role.name
+        )
 
         if not self.pass_user_hierarchy_check(ctx, role):
             await self.complain(ctx, T_(ROLE_USER_HIERARCHY_ISSUE), role=role)
@@ -218,7 +236,9 @@ class Admin(commands.Cog):
 
     @editrole.command(name="name")
     @checks.admin_or_permissions(administrator=True)
-    async def edit_role_name(self, ctx: commands.Context, role: discord.Role, *, name: str):
+    async def edit_role_name(
+        self, ctx: commands.Context, role: discord.Role, *, name: str
+    ):
         """Edit a role's name.
 
         Use double quotes if the role or the name contain spaces.
@@ -280,7 +300,9 @@ class Admin(commands.Cog):
         await self.conf.guild(ctx.guild).announce_channel.set(channel.id)
 
         await ctx.send(
-            _("The announcement channel has been set to {channel.mention}").format(channel=channel)
+            _("The announcement channel has been set to {channel.mention}").format(
+                channel=channel
+            )
         )
 
     @announce.command(name="ignore")
@@ -293,7 +315,9 @@ class Admin(commands.Cog):
 
         if ignored:  # Keeping original logic....
             await ctx.send(
-                _("The server {guild.name} will receive announcements.").format(guild=ctx.guild)
+                _("The server {guild.name} will receive announcements.").format(
+                    guild=ctx.guild
+                )
             )
         else:
             await ctx.send(

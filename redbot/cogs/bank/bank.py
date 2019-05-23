@@ -46,7 +46,9 @@ def check_global_setting_admin():
             permissions = ctx.channel.permissions_for(author)
             is_guild_owner = author == ctx.guild.owner
             admin_role = await ctx.bot.db.guild(ctx.guild).admin_role()
-            return admin_role in author.roles or is_guild_owner or permissions.manage_guild
+            return (
+                admin_role in author.roles or is_guild_owner or permissions.manage_guild
+            )
         else:
             return await ctx.bot.is_owner(author)
 
@@ -84,7 +86,9 @@ class Bank(commands.Cog):
                 "Bank settings:\n\nBank name: {bank_name}\nCurrency: {currency_name}\n"
                 "Default balance: {default_balance}"
             ).format(
-                bank_name=bank_name, currency_name=currency_name, default_balance=default_balance
+                bank_name=bank_name,
+                currency_name=currency_name,
+                default_balance=default_balance,
             )
             await ctx.send(box(settings))
 
@@ -104,7 +108,10 @@ class Bank(commands.Cog):
                 _(
                     "This will toggle the bank to be {banktype}, deleting all accounts "
                     "in the process! If you're sure, type `{command}`"
-                ).format(banktype=word, command="{}bankset toggleglobal yes".format(ctx.prefix))
+                ).format(
+                    banktype=word,
+                    command="{}bankset toggleglobal yes".format(ctx.prefix),
+                )
             )
         else:
             await bank.set_global(not cur_setting)

@@ -6,7 +6,10 @@ def test_schema_update():
         str(GLOBAL): {
             "owner_models": {
                 "cogs": {
-                    "Admin": {"allow": [78631113035100160], "deny": [96733288462286848]},
+                    "Admin": {
+                        "allow": [78631113035100160],
+                        "deny": [96733288462286848],
+                    },
                     "Audio": {"allow": [133049272517001216], "default": "deny"},
                 },
                 "commands": {
@@ -44,10 +47,15 @@ def test_schema_update():
         {
             "Admin": {
                 str(GLOBAL): {"78631113035100160": True, "96733288462286848": False},
-                "43733288462286848": {"24231113035100160": True, "35533288462286848": False},
+                "43733288462286848": {
+                    "24231113035100160": True,
+                    "35533288462286848": False,
+                },
             },
             "Audio": {str(GLOBAL): {"133049272517001216": True, "default": False}},
-            "General": {"43733288462286848": {"133049272517001216": True, "default": False}},
+            "General": {
+                "43733288462286848": {"133049272517001216": True, "default": False}
+            },
         },
         {
             "cleanup bot": {

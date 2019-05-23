@@ -66,7 +66,9 @@ class Reports(commands.Cog):
 
     @checks.admin_or_permissions(manage_guild=True)
     @reportset.command(name="output")
-    async def reportset_output(self, ctx: commands.Context, channel: discord.TextChannel):
+    async def reportset_output(
+        self, ctx: commands.Context, channel: discord.TextChannel
+    ):
         """Set the channel where reports will be sent."""
         await self.config.guild(ctx.guild).output_channel.set(channel.id)
         await ctx.send(_("The report channel has been set."))
@@ -140,7 +142,9 @@ class Reports(commands.Cog):
         try:
             message = await self.bot.wait_for(
                 "message",
-                check=MessagePredicate.same_context(channel=author.dm_channel, user=author),
+                check=MessagePredicate.same_context(
+                    channel=author.dm_channel, user=author
+                ),
                 timeout=45,
             )
         except asyncio.TimeoutError:
@@ -175,7 +179,8 @@ class Reports(commands.Cog):
             em = discord.Embed(description=report)
             em.set_author(
                 name=_("Report from {author}{maybe_nick}").format(
-                    author=author, maybe_nick=(f" ({author.nick})" if author.nick else "")
+                    author=author,
+                    maybe_nick=(f" ({author.nick})" if author.nick else ""),
                 ),
                 icon_url=author.avatar_url,
             )
@@ -217,7 +222,9 @@ class Reports(commands.Cog):
             return
         g_active = await self.config.guild(guild).active()
         if not g_active:
-            return await author.send(_("Reporting has not been enabled for this server"))
+            return await author.send(
+                _("Reporting has not been enabled for this server")
+            )
         if guild.id not in self.antispam:
             self.antispam[guild.id] = {}
         if author.id not in self.antispam[guild.id]:
@@ -269,10 +276,14 @@ class Reports(commands.Cog):
         with contextlib.suppress(discord.Forbidden, discord.HTTPException):
             if val is None:
                 await author.send(
-                    _("There was an error sending your report, please contact a server admin.")
+                    _(
+                        "There was an error sending your report, please contact a server admin."
+                    )
                 )
             else:
-                await author.send(_("Your report was submitted. (Ticket #{})").format(val))
+                await author.send(
+                    _("Your report was submitted. (Ticket #{})").format(val)
+                )
                 self.antispam[guild.id][author.id].stamp()
 
     @report.after_invoke
@@ -369,7 +380,9 @@ class Reports(commands.Cog):
             + big_topic
         )
         try:
-            m = await tun.communicate(message=ctx.message, topic=topic, skip_message_content=True)
+            m = await tun.communicate(
+                message=ctx.message, topic=topic, skip_message_content=True
+            )
         except discord.Forbidden:
             await ctx.send(_("That user has DMs disabled."))
         else:

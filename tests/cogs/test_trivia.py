@@ -24,7 +24,10 @@ def test_trivia_lists():
                     else:
                         if not isinstance(dict_[key], list):
                             problem_lists.append(
-                                (l.stem, "The answers for '{}' are not a list".format(key))
+                                (
+                                    l.stem,
+                                    "The answers for '{}' are not a list".format(key),
+                                )
                             )
     if problem_lists:
         msg = ""

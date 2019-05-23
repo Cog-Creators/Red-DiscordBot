@@ -29,10 +29,14 @@ def test_existing_git_repo(tmpdir):
 
 @pytest.mark.asyncio
 async def test_add_repo(monkeypatch, repo_manager):
-    monkeypatch.setattr("redbot.cogs.downloader.repo_manager.Repo._run", fake_run_noprint)
+    monkeypatch.setattr(
+        "redbot.cogs.downloader.repo_manager.Repo._run", fake_run_noprint
+    )
 
     squid = await repo_manager.add_repo(
-        url="https://github.com/tekulvw/Squid-Plugins", name="squid", branch="rewrite_cogs"
+        url="https://github.com/tekulvw/Squid-Plugins",
+        name="squid",
+        branch="rewrite_cogs",
     )
 
     assert squid.available_modules == []
@@ -40,26 +44,35 @@ async def test_add_repo(monkeypatch, repo_manager):
 
 @pytest.mark.asyncio
 async def test_lib_install_requirements(monkeypatch, library_installable, repo, tmpdir):
-    monkeypatch.setattr("redbot.cogs.downloader.repo_manager.Repo._run", fake_run_noprint)
     monkeypatch.setattr(
-        "redbot.cogs.downloader.repo_manager.Repo.available_libraries", (library_installable,)
+        "redbot.cogs.downloader.repo_manager.Repo._run", fake_run_noprint
+    )
+    monkeypatch.setattr(
+        "redbot.cogs.downloader.repo_manager.Repo.available_libraries",
+        (library_installable,),
     )
 
     lib_path = Path(str(tmpdir)) / "cog_data_path" / "lib"
     sharedlib_path = lib_path / "cog_shared"
     sharedlib_path.mkdir(parents=True, exist_ok=True)
 
-    result = await repo.install_libraries(target_dir=sharedlib_path, req_target_dir=lib_path)
+    result = await repo.install_libraries(
+        target_dir=sharedlib_path, req_target_dir=lib_path
+    )
 
     assert result is True
 
 
 @pytest.mark.asyncio
 async def test_remove_repo(monkeypatch, repo_manager):
-    monkeypatch.setattr("redbot.cogs.downloader.repo_manager.Repo._run", fake_run_noprint)
+    monkeypatch.setattr(
+        "redbot.cogs.downloader.repo_manager.Repo._run", fake_run_noprint
+    )
 
     await repo_manager.add_repo(
-        url="https://github.com/tekulvw/Squid-Plugins", name="squid", branch="rewrite_cogs"
+        url="https://github.com/tekulvw/Squid-Plugins",
+        name="squid",
+        branch="rewrite_cogs",
     )
     assert repo_manager.get_repo("squid") is not None
     await repo_manager.delete_repo("squid")

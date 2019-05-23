@@ -42,8 +42,12 @@ class Repo(RepoJSONMixin):
     GIT_LATEST_COMMIT = "git -C {path} rev-parse {branch}"
     GIT_HARD_RESET = "git -C {path} reset --hard origin/{branch} -q"
     GIT_PULL = "git -C {path} pull --recurse-submodules -q --ff-only"
-    GIT_DIFF_FILE_STATUS = "git -C {path} diff --no-commit-id --name-status {old_hash} {new_hash}"
-    GIT_LOG = "git -C {path} log --relative-date --reverse {old_hash}.. {relative_file_path}"
+    GIT_DIFF_FILE_STATUS = (
+        "git -C {path} diff --no-commit-id --name-status {old_hash} {new_hash}"
+    )
+    GIT_LOG = (
+        "git -C {path} log --relative-date --reverse {old_hash}.. {relative_file_path}"
+    )
     GIT_DISCOVER_REMOTE_URL = "git -C {path} config --get remote.origin.url"
 
     PIP_INSTALL = "{python} -m pip install -U -t {target_dir} {reqs}"
@@ -88,7 +92,9 @@ class Repo(RepoJSONMixin):
         poss_repo = repo_manager.get_repo(argument)
         if poss_repo is None:
             raise commands.BadArgument(
-                _('Repo by the name "{repo_name}" does not exist.').format(repo_name=argument)
+                _('Repo by the name "{repo_name}" does not exist.').format(
+                    repo_name=argument
+                )
             )
         return poss_repo
 
@@ -131,7 +137,9 @@ class Repo(RepoJSONMixin):
 
         return ret
 
-    async def _get_commit_notes(self, old_commit_hash: str, relative_file_path: str) -> str:
+    async def _get_commit_notes(
+        self, old_commit_hash: str, relative_file_path: str
+    ) -> str:
         """
         Gets the commit notes from git log.
         :param old_commit_hash: Point in time to start getting messages
@@ -173,7 +181,9 @@ class Repo(RepoJSONMixin):
                         Installable(location=name)
                     )
         """
-        for file_finder, name, is_pkg in pkgutil.iter_modules(path=[str(self.folder_path)]):
+        for file_finder, name, is_pkg in pkgutil.iter_modules(
+            path=[str(self.folder_path)]
+        ):
             if is_pkg:
                 curr_modules.append(Installable(location=self.folder_path / name))
         self.available_modules = curr_modules
@@ -201,12 +211,17 @@ class Repo(RepoJSONMixin):
         """
         exists, path = self._existing_git_repo()
         if exists:
-            raise errors.ExistingGitRepo("A git repo already exists at path: {}".format(path))
+            raise errors.ExistingGitRepo(
+                "A git repo already exists at path: {}".format(path)
+            )
 
         if self.branch is not None:
             p = await self._run(
                 ProcessFormatter().format(
-                    self.GIT_CLONE, branch=self.branch, url=self.url, folder=self.folder_path
+                    self.GIT_CLONE,
+                    branch=self.branch,
+                    url=self.url,
+                    folder=self.folder_path,
                 )
             )
         else:
@@ -249,7 +264,9 @@ class Repo(RepoJSONMixin):
 
         if p.returncode != 0:
             raise errors.GitException(
-                "Could not determine current branch at path: {}".format(self.folder_path)
+                "Could not determine current branch at path: {}".format(
+                    self.folder_path
+                )
             )
 
         return p.stdout.decode().strip()
@@ -278,7 +295,9 @@ class Repo(RepoJSONMixin):
             )
 
         p = await self._run(
-            ProcessFormatter().format(self.GIT_LATEST_COMMIT, path=self.folder_path, branch=branch)
+            ProcessFormatter().format(
+                self.GIT_LATEST_COMMIT, path=self.folder_path, branch=branch
+            )
         )
 
         if p.returncode != 0:
@@ -309,7 +328,9 @@ class Repo(RepoJSONMixin):
         if folder is None:
             folder = self.folder_path
 
-        p = await self._run(ProcessFormatter().format(Repo.GIT_DISCOVER_REMOTE_URL, path=folder))
+        p = await self._run(
+            ProcessFormatter().format(Repo.GIT_DISCOVER_REMOTE_URL, path=folder)
+        )
 
         if p.returncode != 0:
             raise errors.NoRemoteURL("Unable to discover a repo URL.")
@@ -335,7 +356,9 @@ class Repo(RepoJSONMixin):
             )
 
         p = await self._run(
-            ProcessFormatter().format(self.GIT_HARD_RESET, path=self.folder_path, branch=branch)
+            ProcessFormatter().format(
+                self.GIT_HARD_RESET, path=self.folder_path, branch=branch
+            )
         )
 
         if p.returncode != 0:
@@ -359,7 +382,9 @@ class Repo(RepoJSONMixin):
 
         await self.hard_reset(branch=curr_branch)
 
-        p = await self._run(ProcessFormatter().format(self.GIT_PULL, path=self.folder_path))
+        p = await self._run(
+            ProcessFormatter().format(self.GIT_PULL, path=self.folder_path)
+        )
 
         if p.returncode != 0:
             raise errors.UpdateError(
@@ -435,7 +460,9 @@ class Repo(RepoJSONMixin):
             for lib in libraries:
                 ret = (
                     ret
-                    and await self.install_requirements(cog=lib, target_dir=req_target_dir)
+                    and await self.install_requirements(
+                        cog=lib, target_dir=req_target_dir
+                    )
                     and await lib.copy_to(target_dir=target_dir)
                 )
             return ret
@@ -466,7 +493,9 @@ class Repo(RepoJSONMixin):
 
         return await self.install_raw_requirements(cog.requirements, target_dir)
 
-    async def install_raw_requirements(self, requirements: Tuple[str], target_dir: Path) -> bool:
+    async def install_raw_requirements(
+        self, requirements: Tuple[str], target_dir: Path
+    ) -> bool:
         """Install a list of requirements using pip.
 
         Parameters
@@ -489,7 +518,10 @@ class Repo(RepoJSONMixin):
 
         p = await self._run(
             ProcessFormatter().format(
-                self.PIP_INSTALL, python=executable, target_dir=target_dir, reqs=requirements
+                self.PIP_INSTALL,
+                python=executable,
+                target_dir=target_dir,
+                reqs=requirements,
             )
         )
 
@@ -510,7 +542,11 @@ class Repo(RepoJSONMixin):
         """
         # noinspection PyTypeChecker
         return tuple(
-            [m for m in self.available_modules if m.type == InstallableType.COG and not m.disabled]
+            [
+                m
+                for m in self.available_modules
+                if m.type == InstallableType.COG and not m.disabled
+            ]
         )
 
     @property
@@ -520,7 +556,11 @@ class Repo(RepoJSONMixin):
         """
         # noinspection PyTypeChecker
         return tuple(
-            [m for m in self.available_modules if m.type == InstallableType.SHARED_LIBRARY]
+            [
+                m
+                for m in self.available_modules
+                if m.type == InstallableType.SHARED_LIBRARY
+            ]
         )
 
     @classmethod
@@ -586,7 +626,9 @@ class RepoManager:
         url, branch = self._parse_url(url, branch)
 
         # noinspection PyTypeChecker
-        r = Repo(url=url, name=name, branch=branch, folder_path=self.repos_folder / name)
+        r = Repo(
+            url=url, name=name, branch=branch, folder_path=self.repos_folder / name
+        )
         await r.clone()
 
         self._repos[name] = r
@@ -636,7 +678,9 @@ class RepoManager:
         """
         repo = self.get_repo(name)
         if repo is None:
-            raise errors.MissingGitRepo("There is no repo with the name {}".format(name))
+            raise errors.MissingGitRepo(
+                "There is no repo with the name {}".format(name)
+            )
 
         safe_delete(repo.folder_path)
 
@@ -645,7 +689,9 @@ class RepoManager:
         except KeyError:
             pass
 
-    async def update_repo(self, repo_name: str) -> MutableMapping[Repo, Tuple[str, str]]:
+    async def update_repo(
+        self, repo_name: str
+    ) -> MutableMapping[Repo, Tuple[str, str]]:
         repo = self._repos[repo_name]
         old, new = await repo.update()
         return {repo: (old, new)}

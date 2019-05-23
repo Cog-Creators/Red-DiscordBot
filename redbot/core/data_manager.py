@@ -30,7 +30,11 @@ basic_config = None
 
 instance_name = None
 
-basic_config_default = {"DATA_PATH": None, "COG_PATH_APPEND": "cogs", "CORE_PATH_APPEND": "core"}
+basic_config_default = {
+    "DATA_PATH": None,
+    "COG_PATH_APPEND": "cogs",
+    "CORE_PATH_APPEND": "core",
+}
 
 config_dir = None
 appdir = appdirs.AppDirs("Red-DiscordBot")
@@ -97,7 +101,9 @@ def load_basic_configuration(instance_name_: str):
 
 def _base_data_path() -> Path:
     if basic_config is None:
-        raise RuntimeError("You must load the basic config before you can get the base data path.")
+        raise RuntimeError(
+            "You must load the basic config before you can get the base data path."
+        )
     path = basic_config["DATA_PATH"]
     return Path(path).resolve()
 

@@ -38,7 +38,13 @@ class AntiSpam:
 
     def __interval_check(self, interval: AntiSpamInterval):
         return (
-            len([t for t in self.__event_timestamps if (t + interval.period) > datetime.utcnow()])
+            len(
+                [
+                    t
+                    for t in self.__event_timestamps
+                    if (t + interval.period) > datetime.utcnow()
+                ]
+            )
             >= interval.frequency
         )
 
@@ -56,5 +62,7 @@ class AntiSpam:
         """
         self.__event_timestamps.append(datetime.utcnow())
         self.__event_timestamps = [
-            t for t in self.__event_timestamps if t + self.__discard_after > datetime.utcnow()
+            t
+            for t in self.__event_timestamps
+            if t + self.__discard_after > datetime.utcnow()
         ]

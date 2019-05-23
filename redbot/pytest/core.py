@@ -61,7 +61,9 @@ def json_driver(tmpdir_factory):
 
     rand = str(uuid.uuid4())
     path = Path(str(tmpdir_factory.mktemp(rand)))
-    driver = red_json.JSON("PyTest", identifier=str(uuid.uuid4()), data_path_override=path)
+    driver = red_json.JSON(
+        "PyTest", identifier=str(uuid.uuid4()), data_path_override=path
+    )
     return driver
 
 
@@ -69,7 +71,9 @@ def json_driver(tmpdir_factory):
 def config(json_driver):
     config_module._config_cache = weakref.WeakValueDictionary()
     conf = Config(
-        cog_name="PyTest", unique_identifier=json_driver.unique_cog_identifier, driver=json_driver
+        cog_name="PyTest",
+        unique_identifier=json_driver.unique_cog_identifier,
+        driver=json_driver,
     )
     yield conf
 
@@ -124,7 +128,9 @@ def member_factory(guild_factory):
 
     class MemberFactory:
         def get(self):
-            return mock_member(random.randint(1, 999999999), guild_factory.get(), "Testing_Name")
+            return mock_member(
+                random.randint(1, 999999999), guild_factory.get(), "Testing_Name"
+            )
 
     return MemberFactory()
 

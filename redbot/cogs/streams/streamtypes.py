@@ -297,7 +297,9 @@ class MixerStream(Stream):
             raise APIError()
 
     def make_embed(self, data):
-        default_avatar = "https://mixer.com/_latest/assets/images/main/avatars/default.jpg"
+        default_avatar = (
+            "https://mixer.com/_latest/assets/images/main/avatars/default.jpg"
+        )
         user = data["user"]
         url = "https://mixer.com/" + data["token"]
         embed = discord.Embed(title=data["name"], url=url)
@@ -341,7 +343,9 @@ class PicartoStream(Stream):
 
     def make_embed(self, data):
         avatar = rnd(
-            "https://picarto.tv/user_data/usrimg/{}/dsdefault.jpg".format(data["name"].lower())
+            "https://picarto.tv/user_data/usrimg/{}/dsdefault.jpg".format(
+                data["name"].lower()
+            )
         )
         url = "https://picarto.tv/" + data["name"]
         thumbnail = data["thumbnails"]["web"]
@@ -363,5 +367,7 @@ class PicartoStream(Stream):
             data["adult"] = ""
 
         embed.color = 0x4C90F3
-        embed.set_footer(text="{adult}Category: {category} | Tags: {tags}".format(**data))
+        embed.set_footer(
+            text="{adult}Category: {category} | Tags: {tags}".format(**data)
+        )
         return embed

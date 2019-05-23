@@ -19,7 +19,9 @@ class Image(commands.Cog):
     def __init__(self, bot):
         super().__init__()
         self.bot = bot
-        self.settings = Config.get_conf(self, identifier=2652104208, force_registration=True)
+        self.settings = Config.get_conf(
+            self, identifier=2652104208, force_registration=True
+        )
         self.settings.register_global(**self.default_global)
         self.session = aiohttp.ClientSession()
         self.imgur_base_url = "https://api.imgur.com/3/"
@@ -31,7 +33,9 @@ class Image(commands.Cog):
         """Move the API keys from cog stored config to core bot config if they exist."""
         imgur_token = await self.settings.imgur_client_id()
         if imgur_token is not None and "imgur" not in await self.bot.db.api_tokens():
-            await self.bot.db.api_tokens.set_raw("imgur", value={"client_id": imgur_token})
+            await self.bot.db.api_tokens.set_raw(
+                "imgur", value={"client_id": imgur_token}
+            )
             await self.settings.imgur_client_id.clear()
 
     @commands.group(name="imgur")
@@ -75,7 +79,9 @@ class Image(commands.Cog):
             await ctx.send(msg)
         else:
             await ctx.send(
-                _("Something went wrong. Error code is {code}.").format(code=data["status"])
+                _("Something went wrong. Error code is {code}.").format(
+                    code=data["status"]
+                )
             )
 
     @_imgur.command(name="subreddit")
@@ -114,7 +120,9 @@ class Image(commands.Cog):
 
         links = []
         headers = {"Authorization": "Client-ID {}".format(imgur_client_id["client_id"])}
-        url = self.imgur_base_url + "gallery/r/{}/{}/{}/0".format(subreddit, sort, window)
+        url = self.imgur_base_url + "gallery/r/{}/{}/{}/0".format(
+            subreddit, sort, window
+        )
 
         async with self.session.get(url, headers=headers) as sub_get:
             data = await sub_get.json()
@@ -132,7 +140,9 @@ class Image(commands.Cog):
                 await ctx.send(_("No results found."))
         else:
             await ctx.send(
-                _("Something went wrong. Error code is {code}.").format(code=data["status"])
+                _("Something went wrong. Error code is {code}.").format(
+                    code=data["status"]
+                )
             )
 
     @checks.is_owner()

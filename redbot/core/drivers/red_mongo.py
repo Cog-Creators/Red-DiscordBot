@@ -87,7 +87,9 @@ class Mongo(BaseDriver):
         # noinspection PyTypeChecker
         return identifier_data.primary_key
 
-    async def rebuild_dataset(self, identifier_data: IdentifierData, cursor: AsyncIOMotorCursor):
+    async def rebuild_dataset(
+        self, identifier_data: IdentifierData, cursor: AsyncIOMotorCursor
+    ):
         ret = {}
         async for doc in cursor:
             pkeys = doc["_id"]["RED_primary_key"]
@@ -116,17 +118,23 @@ class Mongo(BaseDriver):
 
         pkey_filter = self.generate_primary_key_filter(identifier_data)
         if len(identifier_data.identifiers) > 0:
-            dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
+            dot_identifiers = ".".join(
+                map(self._escape_key, identifier_data.identifiers)
+            )
             proj = {"_id": False, dot_identifiers: True}
 
-            partial = await mongo_collection.find_one(filter=pkey_filter, projection=proj)
+            partial = await mongo_collection.find_one(
+                filter=pkey_filter, projection=proj
+            )
         else:
             # The case here is for partial primary keys like all_members()
             cursor = mongo_collection.find(filter=pkey_filter)
             partial = await self.rebuild_dataset(identifier_data, cursor)
 
         if partial is None:
-            raise KeyError("No matching document was found and Config expects a KeyError.")
+            raise KeyError(
+                "No matching document was found and Config expects a KeyError."
+            )
 
         for i in identifier_data.identifiers:
             partial = partial[i]
@@ -182,8 +190,12 @@ class Mongo(BaseDriver):
             # This covers cases 2-4
             await mongo_collection.delete_many(pkey_filter)
         else:
-            dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
-            await mongo_collection.update_one(pkey_filter, update={"$unset": {dot_identifiers: 1}})
+            dot_identifiers = ".".join(
+                map(self._escape_key, identifier_data.identifiers)
+            )
+            await mongo_collection.update_one(
+                pkey_filter, update={"$unset": {dot_identifiers: 1}}
+            )
 
     @staticmethod
     def _escape_key(key: str) -> str:

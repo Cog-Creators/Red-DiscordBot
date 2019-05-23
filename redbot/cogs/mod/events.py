@@ -25,7 +25,9 @@ class Events(MixinMeta):
             repeats = await self.settings.guild(guild).delete_repeats()
             if repeats == -1:
                 return False
-            guild_cache = self.cache[guild.id] = defaultdict(lambda: deque(maxlen=repeats))
+            guild_cache = self.cache[guild.id] = defaultdict(
+                lambda: deque(maxlen=repeats)
+            )
 
         if not message.content:
             return False
@@ -52,7 +54,9 @@ class Events(MixinMeta):
                     await guild.ban(author, reason=_("Mention spam (Autoban)"))
                 except discord.HTTPException:
                     log.info(
-                        "Failed to ban member for mention spam in server {}.".format(guild.id)
+                        "Failed to ban member for mention spam in server {}.".format(
+                            guild.id
+                        )
                     )
                 else:
                     try:

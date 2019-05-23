@@ -23,7 +23,9 @@ class MixinMeta(ABC):
     @staticmethod
     @abstractmethod
     async def _voice_perm_check(
-        ctx: commands.Context, user_voice_state: Optional[discord.VoiceState], **perms: bool
+        ctx: commands.Context,
+        user_voice_state: Optional[discord.VoiceState],
+        **perms: bool
     ) -> bool:
         raise NotImplementedError()
 
@@ -36,5 +38,7 @@ class MixinMeta(ABC):
 
     @staticmethod
     @abstractmethod
-    async def get_audit_log_entry(guild: discord.Guild, action: discord.AuditLogAction, target):
+    async def get_audit_log_entry(
+        guild: discord.Guild, action: discord.AuditLogAction, target
+    ):
         raise NotImplementedError()

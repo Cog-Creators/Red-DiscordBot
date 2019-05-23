@@ -86,23 +86,31 @@ class Streams(commands.Cog):
         twitch = await self.bot.db.api_tokens.get_raw("twitch", default={})
         for token_type, token in tokens.items():
             if token_type == "YoutubeStream" and "api_key" not in youtube:
-                await self.bot.db.api_tokens.set_raw("youtube", value={"api_key": token})
+                await self.bot.db.api_tokens.set_raw(
+                    "youtube", value={"api_key": token}
+                )
             if token_type == "TwitchStream" and "client_id" not in twitch:
                 # Don't need to check Community since they're set the same
-                await self.bot.db.api_tokens.set_raw("twitch", value={"client_id": token})
+                await self.bot.db.api_tokens.set_raw(
+                    "twitch", value={"client_id": token}
+                )
         await self.db.tokens.clear()
 
     @commands.command()
     async def twitchstream(self, ctx: commands.Context, channel_name: str):
         """Check if a Twitch channel is live."""
-        token = await self.bot.db.api_tokens.get_raw("twitch", default={"client_id": None})
+        token = await self.bot.db.api_tokens.get_raw(
+            "twitch", default={"client_id": None}
+        )
         stream = TwitchStream(name=channel_name, token=token)
         await self.check_online(ctx, stream)
 
     @commands.command()
     async def youtubestream(self, ctx: commands.Context, channel_id_or_name: str):
         """Check if a YouTube channel is live."""
-        apikey = await self.bot.db.api_tokens.get_raw("youtube", default={"api_key": None})
+        apikey = await self.bot.db.api_tokens.get_raw(
+            "youtube", default={"api_key": None}
+        )
         is_name = self.check_name_or_id(channel_id_or_name)
         if is_name:
             stream = YoutubeStream(name=channel_id_or_name, token=apikey)
@@ -151,7 +159,9 @@ class Streams(commands.Cog):
             )
         except APIError:
             await ctx.send(
-                _("Something went wrong whilst trying to contact the stream service's API.")
+                _(
+                    "Something went wrong whilst trying to contact the stream service's API."
+                )
             )
         else:
             if isinstance(info, tuple):
@@ -183,7 +193,9 @@ class Streams(commands.Cog):
     async def twitch_alert_channel(self, ctx: commands.Context, channel_name: str):
         """Toggle alerts in this channel for a Twitch stream."""
         if re.fullmatch(r"<#\d+>", channel_name):
-            await ctx.send("Please supply the name of a *Twitch* channel, not a Discord channel.")
+            await ctx.send(
+                "Please supply the name of a *Twitch* channel, not a Discord channel."
+            )
             return
         await self.stream_alert(ctx, TwitchStream, channel_name.lower())
 
@@ -271,7 +283,9 @@ class Streams(commands.Cog):
     async def stream_alert(self, ctx: commands.Context, _class, channel_name):
         stream = self.get_stream(_class, channel_name)
         if not stream:
-            token = await self.bot.db.api_tokens.get_raw(_class.token_name, default=None)
+            token = await self.bot.db.api_tokens.get_raw(
+                _class.token_name, default=None
+            )
             is_yt = _class.__name__ == "YoutubeStream"
             if is_yt and not self.check_name_or_id(channel_name):
                 stream = _class(id=channel_name, token=token)
@@ -297,7 +311,9 @@ class Streams(commands.Cog):
                 return
             except APIError:
                 await ctx.send(
-                    _("Something went wrong whilst trying to contact the stream service's API.")
+                    _(
+                        "Something went wrong whilst trying to contact the stream service's API."
+                    )
                 )
                 return
             else:
@@ -399,7 +415,9 @@ class Streams(commands.Cog):
         guild = ctx.guild
         await self.db.guild(guild).live_message_mention.set(False)
         await self.db.guild(guild).live_message_nomention.set(False)
-        await ctx.send(_("Stream alerts in this server will now use the default alert message."))
+        await ctx.send(
+            _("Stream alerts in this server will now use the default alert message.")
+        )
 
     @streamset.group()
     @commands.guild_only()
@@ -415,10 +433,14 @@ class Streams(commands.Cog):
         current_setting = await self.db.guild(guild).mention_everyone()
         if current_setting:
             await self.db.guild(guild).mention_everyone.set(False)
-            await ctx.send(_("`@\u200beveryone` will no longer be mentioned for stream alerts."))
+            await ctx.send(
+                _("`@\u200beveryone` will no longer be mentioned for stream alerts.")
+            )
         else:
             await self.db.guild(guild).mention_everyone.set(True)
-            await ctx.send(_("When a stream is live, `@\u200beveryone` will be mentioned."))
+            await ctx.send(
+                _("When a stream is live, `@\u200beveryone` will be mentioned.")
+            )
 
     @mention.command(aliases=["here"])
     @commands.guild_only()
@@ -428,7 +450,9 @@ class Streams(commands.Cog):
         current_setting = await self.db.guild(guild).mention_here()
         if current_setting:
             await self.db.guild(guild).mention_here.set(False)
-            await ctx.send(_("`@\u200bhere` will no longer be mentioned for stream alerts."))
+            await ctx.send(
+                _("`@\u200bhere` will no longer be mentioned for stream alerts.")
+            )
         else:
             await self.db.guild(guild).mention_here.set(True)
             await ctx.send(_("When a stream is live, `@\u200bhere` will be mentioned."))
@@ -441,9 +465,9 @@ class Streams(commands.Cog):
         if current_setting:
             await self.db.role(role).mention.set(False)
             await ctx.send(
-                _("`@\u200b{role.name}` will no longer be mentioned for stream alerts.").format(
-                    role=role
-                )
+                _(
+                    "`@\u200b{role.name}` will no longer be mentioned for stream alerts."
+                ).format(role=role)
             )
         else:
             await self.db.role(role).mention.set(True)
@@ -465,7 +489,9 @@ class Streams(commands.Cog):
         """Toggle alert deletion for when streams go offline."""
         await self.db.guild(ctx.guild).autodelete.set(on_off)
         if on_off:
-            await ctx.send(_("The notifications will be deleted once streams go offline."))
+            await ctx.send(
+                _("The notifications will be deleted once streams go offline.")
+            )
         else:
             await ctx.send(_("Notifications will no longer be deleted."))
 
@@ -561,25 +587,37 @@ class Streams(commands.Cog):
                         continue
                     for channel_id in stream.channels:
                         channel = self.bot.get_channel(channel_id)
-                        ignore_reruns = await self.db.guild(channel.guild).ignore_reruns()
+                        ignore_reruns = await self.db.guild(
+                            channel.guild
+                        ).ignore_reruns()
                         if ignore_reruns and is_rerun:
                             continue
-                        mention_str, edited_roles = await self._get_mention_str(channel.guild)
+                        mention_str, edited_roles = await self._get_mention_str(
+                            channel.guild
+                        )
 
                         if mention_str:
-                            alert_msg = await self.db.guild(channel.guild).live_message_mention()
+                            alert_msg = await self.db.guild(
+                                channel.guild
+                            ).live_message_mention()
                             if alert_msg:
-                                content = alert_msg.format(mention=mention_str, stream=stream)
+                                content = alert_msg.format(
+                                    mention=mention_str, stream=stream
+                                )
                             else:
                                 content = _("{mention}, {stream.name} is live!").format(
                                     mention=mention_str, stream=stream
                                 )
                         else:
-                            alert_msg = await self.db.guild(channel.guild).live_message_nomention()
+                            alert_msg = await self.db.guild(
+                                channel.guild
+                            ).live_message_nomention()
                             if alert_msg:
                                 content = alert_msg.format(stream=stream)
                             else:
-                                content = _("{stream.name} is live!").format(stream=stream)
+                                content = _("{stream.name} is live!").format(
+                                    stream=stream
+                                )
 
                         m = await channel.send(content, embed=embed)
                         stream._messages_cache.append(m)
@@ -588,7 +626,9 @@ class Streams(commands.Cog):
                                 await role.edit(mentionable=False)
                         await self.save_streams()
 
-    async def _get_mention_str(self, guild: discord.Guild) -> Tuple[str, List[discord.Role]]:
+    async def _get_mention_str(
+        self, guild: discord.Guild
+    ) -> Tuple[str, List[discord.Role]]:
         """Returns a 2-tuple with the string containing the mentions, and a list of
         all roles which need to have their `mentionable` property set back to False.
         """
@@ -643,7 +683,9 @@ class Streams(commands.Cog):
                         pass
                     else:
                         raw_stream["_messages_cache"].append(msg)
-            token = await self.bot.db.api_tokens.get_raw(_class.token_name, default=None)
+            token = await self.bot.db.api_tokens.get_raw(
+                _class.token_name, default=None
+            )
             if token is not None:
                 raw_stream["token"] = token
             streams.append(_class(**raw_stream))

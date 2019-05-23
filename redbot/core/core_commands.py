@@ -89,7 +89,9 @@ class CoreLogic:
                 log.exception("Package import failed", exc_info=e)
 
                 exception_log = "Exception during import of cog\n"
-                exception_log += "".join(traceback.format_exception(type(e), e, e.__traceback__))
+                exception_log += "".join(
+                    traceback.format_exception(type(e), e, e.__traceback__)
+                )
                 bot._last_exception = exception_log
                 failed_packages.append(name)
 
@@ -105,7 +107,9 @@ class CoreLogic:
                 log.exception("Package loading failed", exc_info=e)
 
                 exception_log = "Exception during loading of cog\n"
-                exception_log += "".join(traceback.format_exception(type(e), e, e.__traceback__))
+                exception_log += "".join(
+                    traceback.format_exception(type(e), e, e.__traceback__)
+                )
                 bot._last_exception = exception_log
                 failed_packages.append(name)
             else:
@@ -138,7 +142,11 @@ class CoreLogic:
         for m in modules:
             maybe_reload(m)
 
-        children = {name: lib for name, lib in sys.modules.items() if name.startswith(module_name)}
+        children = {
+            name: lib
+            for name, lib in sys.modules.items()
+            if name.startswith(module_name)
+        }
         for child_name, lib in children.items():
             importlib._bootstrap._exec(lib.__spec__, lib)
 
@@ -310,14 +318,19 @@ class Core(commands.Cog, CoreLogic):
         embed.add_field(name=_("Red version"), value=red_version)
         if outdated:
             embed.add_field(
-                name=_("Outdated"), value=_("Yes, {} is available").format(data["info"]["version"])
+                name=_("Outdated"),
+                value=_("Yes, {} is available").format(data["info"]["version"]),
             )
         if custom_info:
-            embed.add_field(name=_("About this instance"), value=custom_info, inline=False)
+            embed.add_field(
+                name=_("About this instance"), value=custom_info, inline=False
+            )
         embed.add_field(name=_("About Red"), value=about, inline=False)
 
         embed.set_footer(
-            text=_("Bringing joy since 02 Jan 2016 (over {} days ago!)").format(days_since)
+            text=_("Bringing joy since 02 Jan 2016 (over {} days ago!)").format(
+                days_since
+            )
         )
         try:
             await ctx.send(embed=embed)
@@ -385,7 +398,9 @@ class Core(commands.Cog, CoreLogic):
         current = await self.bot.db.embeds()
         await self.bot.db.embeds.set(not current)
         await ctx.send(
-            _("Embeds are now {} by default.").format(_("disabled") if current else _("enabled"))
+            _("Embeds are now {} by default.").format(
+                _("disabled") if current else _("enabled")
+            )
         )
 
     @embedset.command(name="guild")
@@ -431,7 +446,9 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("Embeds will now fall back to the global setting."))
         else:
             await ctx.send(
-                _("Embeds are now {} for you.").format(_("enabled") if enabled else _("disabled"))
+                _("Embeds are now {} for you.").format(
+                    _("enabled") if enabled else _("disabled")
+                )
             )
 
     @commands.command()
@@ -510,7 +527,9 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("I cannot leave a guild I am the owner of."))
             return
 
-        await ctx.send(_("Are you sure you want me to leave {}? (yes/no)").format(guild.name))
+        await ctx.send(
+            _("Are you sure you want me to leave {}? (yes/no)").format(guild.name)
+        )
         pred = MessagePredicate.yes_or_no(ctx)
         try:
             await self.bot.wait_for("message", check=pred, timeout=15)
@@ -531,7 +550,9 @@ class Core(commands.Cog, CoreLogic):
             return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
-            loaded, failed, not_found, already_loaded, failed_with_reason = await self._load(cogs)
+            loaded, failed, not_found, already_loaded, failed_with_reason = await self._load(
+                cogs
+            )
 
         if loaded:
             fmt = _("Loaded {packs}.")
@@ -603,7 +624,9 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(formed)
 
         if failed:
-            fmt = _("Failed to reload package{plural} {packs}. Check your logs for details")
+            fmt = _(
+                "Failed to reload package{plural} {packs}. Check your logs for details"
+            )
             formed = self._get_package_strings(failed, fmt)
             await ctx.send(formed)
 
@@ -653,10 +676,12 @@ class Core(commands.Cog, CoreLogic):
             if ctx.guild:
                 guild = ctx.guild
                 admin_role = (
-                    guild.get_role(await ctx.bot.db.guild(ctx.guild).admin_role()) or "Not set"
+                    guild.get_role(await ctx.bot.db.guild(ctx.guild).admin_role())
+                    or "Not set"
                 )
                 mod_role = (
-                    guild.get_role(await ctx.bot.db.guild(ctx.guild).mod_role()) or "Not set"
+                    guild.get_role(await ctx.bot.db.guild(ctx.guild).mod_role())
+                    or "Not set"
                 )
                 prefixes = await ctx.bot.db.guild(ctx.guild).prefix()
                 guild_settings = _("Admin role: {admin}\nMod role: {mod}\n").format(
@@ -801,7 +826,11 @@ class Core(commands.Cog, CoreLogic):
             game = discord.Game(name=game)
         else:
             game = None
-        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
+        status = (
+            ctx.bot.guilds[0].me.status
+            if len(ctx.bot.guilds) > 0
+            else discord.Status.online
+        )
         await ctx.bot.change_presence(status=status, activity=game)
         await ctx.send(_("Game set."))
 
@@ -811,9 +840,15 @@ class Core(commands.Cog, CoreLogic):
     async def _listening(self, ctx: commands.Context, *, listening: str = None):
         """Sets Red's listening status"""
 
-        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
+        status = (
+            ctx.bot.guilds[0].me.status
+            if len(ctx.bot.guilds) > 0
+            else discord.Status.online
+        )
         if listening:
-            activity = discord.Activity(name=listening, type=discord.ActivityType.listening)
+            activity = discord.Activity(
+                name=listening, type=discord.ActivityType.listening
+            )
         else:
             activity = None
         await ctx.bot.change_presence(status=status, activity=activity)
@@ -825,9 +860,15 @@ class Core(commands.Cog, CoreLogic):
     async def _watching(self, ctx: commands.Context, *, watching: str = None):
         """Sets Red's watching status"""
 
-        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
+        status = (
+            ctx.bot.guilds[0].me.status
+            if len(ctx.bot.guilds) > 0
+            else discord.Status.online
+        )
         if watching:
-            activity = discord.Activity(name=watching, type=discord.ActivityType.watching)
+            activity = discord.Activity(
+                name=watching, type=discord.ActivityType.watching
+            )
         else:
             activity = None
         await ctx.bot.change_presence(status=status, activity=activity)
@@ -976,7 +1017,9 @@ class Core(commands.Cog, CoreLogic):
         except asyncio.TimeoutError:
             self.owner.reset_cooldown(ctx)
             await ctx.send(
-                _("The `{prefix}set owner` request has timed out.").format(prefix=ctx.prefix)
+                _("The `{prefix}set owner` request has timed out.").format(
+                    prefix=ctx.prefix
+                )
             )
         else:
             if message.content.strip() == token:
@@ -1060,7 +1103,9 @@ class Core(commands.Cog, CoreLogic):
 
     @_set.command()
     @checks.is_owner()
-    async def api(self, ctx: commands.Context, service: str, *tokens: commands.converter.APIToken):
+    async def api(
+        self, ctx: commands.Context, service: str, *tokens: commands.converter.APIToken
+    ):
         """Set various external API tokens.
         
         This setting will be asked for by some 3rd party cogs and some core cogs.
@@ -1075,7 +1120,9 @@ class Core(commands.Cog, CoreLogic):
             await ctx.message.delete()
         entry = {k: v for t in tokens for k, v in t.items()}
         await ctx.bot.db.api_tokens.set_raw(service, value=entry)
-        await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
+        await ctx.send(
+            _("`{service}` API tokens have been set.").format(service=service)
+        )
 
     @commands.group()
     @checks.is_owner()
@@ -1131,7 +1178,9 @@ class Core(commands.Cog, CoreLogic):
         if verify:
             await ctx.send(_("Help will only show for commands which can be run."))
         else:
-            await ctx.send(_("Help will show up without checking if the commands can be run."))
+            await ctx.send(
+                _("Help will show up without checking if the commands can be run.")
+            )
 
     @helpset.command(name="verifyexists")
     async def helpset_verifyexists(self, ctx: commands.Context, verify: bool = None):
@@ -1174,7 +1223,9 @@ class Core(commands.Cog, CoreLogic):
             return
 
         await ctx.bot.db.help.page_char_limit.set(limit)
-        await ctx.send(_("Done. The character limit per page has been set to {}.").format(limit))
+        await ctx.send(
+            _("Done. The character limit per page has been set to {}.").format(limit)
+        )
 
     @helpset.command(name="maxpages")
     async def helpset_maxpages(self, ctx: commands.Context, pages: int):
@@ -1294,7 +1345,9 @@ class Core(commands.Cog, CoreLogic):
                 repo_output = []
                 repo_mgr = downloader_cog._repo_manager
                 for repo in repo_mgr._repos.values():
-                    repo_output.append({"url": repo.url, "name": repo.name, "branch": repo.branch})
+                    repo_output.append(
+                        {"url": repo.url, "name": repo.name, "branch": repo.branch}
+                    )
                 repo_filename = data_dir / "cogs" / "RepoManager" / "repos.json"
                 with open(str(repo_filename), "w") as f:
                     f.write(json.dumps(repo_output, indent=4))
@@ -1310,7 +1363,9 @@ class Core(commands.Cog, CoreLogic):
                     tar.add(str(f), recursive=False)
             print(str(backup_file))
             await ctx.send(
-                _("A backup has been made of this instance. It is at {}.").format(backup_file)
+                _("A backup has been made of this instance. It is at {}.").format(
+                    backup_file
+                )
             )
             if backup_file.stat().st_size > 8_000_000:
                 await ctx.send(_("This backup is too large to send via DM."))
@@ -1333,7 +1388,9 @@ class Core(commands.Cog, CoreLogic):
                             )
                     except discord.Forbidden:
                         await ctx.send(
-                            _("I don't seem to be able to DM you. Do you have closed DMs?")
+                            _(
+                                "I don't seem to be able to DM you. Do you have closed DMs?"
+                            )
                         )
                     except discord.HTTPException:
                         await ctx.send(_("I could not send the backup file."))
@@ -1364,7 +1421,9 @@ class Core(commands.Cog, CoreLogic):
         prefixes = await ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))
         prefix = prefixes[0]
 
-        content = _("Use `{}dm {} <text>` to reply to this user").format(prefix, author.id)
+        content = _("Use `{}dm {} <text>` to reply to this user").format(
+            prefix, author.id
+        )
 
         description = _("Sent by {} {}").format(author, source)
 
@@ -1385,7 +1444,9 @@ class Core(commands.Cog, CoreLogic):
                 await owner.send(content, embed=e)
             except discord.InvalidArgument:
                 await ctx.send(
-                    _("I cannot send your message, I'm unable to find my owner... *sigh*")
+                    _(
+                        "I cannot send your message, I'm unable to find my owner... *sigh*"
+                    )
                 )
             except discord.HTTPException:
                 await ctx.send(_("I'm unable to deliver your message. Sorry."))
@@ -1397,7 +1458,9 @@ class Core(commands.Cog, CoreLogic):
                 await owner.send("{}\n{}".format(content, box(msg_text)))
             except discord.InvalidArgument:
                 await ctx.send(
-                    _("I cannot send your message, I'm unable to find my owner... *sigh*")
+                    _(
+                        "I cannot send your message, I'm unable to find my owner... *sigh*"
+                    )
                 )
             except discord.HTTPException:
                 await ctx.send(_("I'm unable to deliver your message. Sorry."))
@@ -1442,7 +1505,9 @@ class Core(commands.Cog, CoreLogic):
                 await destination.send(embed=e)
             except discord.HTTPException:
                 await ctx.send(
-                    _("Sorry, I couldn't deliver your message to {}").format(destination)
+                    _("Sorry, I couldn't deliver your message to {}").format(
+                        destination
+                    )
                 )
             else:
                 await ctx.send(_("Message delivered to {}").format(destination))
@@ -1452,7 +1517,9 @@ class Core(commands.Cog, CoreLogic):
                 await destination.send("{}\n{}".format(box(response), content))
             except discord.HTTPException:
                 await ctx.send(
-                    _("Sorry, I couldn't deliver your message to {}").format(destination)
+                    _("Sorry, I couldn't deliver your message to {}").format(
+                        destination
+                    )
                 )
             else:
                 await ctx.send(_("Message delivered to {}").format(destination))
@@ -1598,7 +1665,10 @@ class Core(commands.Cog, CoreLogic):
 
     @localwhitelist.command(name="add")
     async def localwhitelist_add(
-        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
+        self,
+        ctx: commands.Context,
+        *,
+        user_or_role: Union[discord.Member, discord.Role],
     ):
         """
         Adds a user or role to the whitelist.
@@ -1629,7 +1699,10 @@ class Core(commands.Cog, CoreLogic):
 
     @localwhitelist.command(name="remove")
     async def localwhitelist_remove(
-        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
+        self,
+        ctx: commands.Context,
+        *,
+        user_or_role: Union[discord.Member, discord.Role],
     ):
         """
         Removes user or role from whitelist.
@@ -1672,7 +1745,10 @@ class Core(commands.Cog, CoreLogic):
 
     @localblacklist.command(name="add")
     async def localblacklist_add(
-        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
+        self,
+        ctx: commands.Context,
+        *,
+        user_or_role: Union[discord.Member, discord.Role],
     ):
         """
         Adds a user or role to the blacklist.
@@ -1708,7 +1784,10 @@ class Core(commands.Cog, CoreLogic):
 
     @localblacklist.command(name="remove")
     async def localblacklist_remove(
-        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
+        self,
+        ctx: commands.Context,
+        *,
+        user_or_role: Union[discord.Member, discord.Role],
     ):
         """
         Removes user or role from blacklist.
@@ -1766,7 +1845,9 @@ class Core(commands.Cog, CoreLogic):
         command_obj: commands.Command = ctx.bot.get_command(command)
         if command_obj is None:
             await ctx.send(
-                _("I couldn't find that command. Please note that it is case sensitive.")
+                _(
+                    "I couldn't find that command. Please note that it is case sensitive."
+                )
             )
             return
 
@@ -1788,7 +1869,9 @@ class Core(commands.Cog, CoreLogic):
         command_obj: commands.Command = ctx.bot.get_command(command)
         if command_obj is None:
             await ctx.send(
-                _("I couldn't find that command. Please note that it is case sensitive.")
+                _(
+                    "I couldn't find that command. Please note that it is case sensitive."
+                )
             )
             return
 
@@ -1822,7 +1905,9 @@ class Core(commands.Cog, CoreLogic):
         command_obj: commands.Command = ctx.bot.get_command(command)
         if command_obj is None:
             await ctx.send(
-                _("I couldn't find that command. Please note that it is case sensitive.")
+                _(
+                    "I couldn't find that command. Please note that it is case sensitive."
+                )
             )
             return
 
@@ -1844,7 +1929,9 @@ class Core(commands.Cog, CoreLogic):
         command_obj: commands.Command = ctx.bot.get_command(command)
         if command_obj is None:
             await ctx.send(
-                _("I couldn't find that command. Please note that it is case sensitive.")
+                _(
+                    "I couldn't find that command. Please note that it is case sensitive."
+                )
             )
             return
 
@@ -1911,7 +1998,10 @@ class Core(commands.Cog, CoreLogic):
 
     @autoimmune_group.command(name="add")
     async def autoimmune_add(
-        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
+        self,
+        ctx: commands.Context,
+        *,
+        user_or_role: Union[discord.Member, discord.Role],
     ):
         """
         Makes a user or roles immune from automated moderation actions
@@ -1924,7 +2014,10 @@ class Core(commands.Cog, CoreLogic):
 
     @autoimmune_group.command(name="remove")
     async def autoimmune_remove(
-        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
+        self,
+        ctx: commands.Context,
+        *,
+        user_or_role: Union[discord.Member, discord.Role],
     ):
         """
         Makes a user or roles immune from automated moderation actions
@@ -1937,7 +2030,10 @@ class Core(commands.Cog, CoreLogic):
 
     @autoimmune_group.command(name="isimmune")
     async def autoimmune_checkimmune(
-        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
+        self,
+        ctx: commands.Context,
+        *,
+        user_or_role: Union[discord.Member, discord.Role],
     ):
         """
         Checks if a user or role would be considered immune from automated actions

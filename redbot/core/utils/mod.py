@@ -89,7 +89,11 @@ def get_audit_reason(author: discord.Member, reason: str = None):
 
 
 async def is_allowed_by_hierarchy(
-    bot: "Red", settings: "Config", guild: discord.Guild, mod: discord.Member, user: discord.Member
+    bot: "Red",
+    settings: "Config",
+    guild: discord.Guild,
+    mod: discord.Member,
+    user: discord.Member,
 ):
     if not await settings.guild(guild).respect_hierarchy():
         return True

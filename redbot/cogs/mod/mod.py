@@ -55,7 +55,11 @@ class Mod(
 
     default_channel_settings = {"ignored": False}
 
-    default_member_settings = {"past_nicks": [], "perms_cache": {}, "banned_until": False}
+    default_member_settings = {
+        "past_nicks": [],
+        "perms_cache": {},
+        "banned_until": False,
+    }
 
     default_user_settings = {"past_names": []}
 
@@ -72,8 +76,12 @@ class Mod(
         self.ban_queue: List[Tuple[int, int]] = []
         self.unban_queue: List[Tuple[int, int]] = []
         self.cache: dict = {}
-        self.registration_task = self.bot.loop.create_task(self._casetype_registration())
-        self.tban_expiry_task = self.bot.loop.create_task(self.check_tempban_expirations())
+        self.registration_task = self.bot.loop.create_task(
+            self._casetype_registration()
+        )
+        self.tban_expiry_task = self.bot.loop.create_task(
+            self.check_tempban_expirations()
+        )
         self.last_case: dict = defaultdict(dict)
 
     async def initialize(self):
@@ -94,7 +102,9 @@ class Mod(
                 val = 3
             else:
                 val = -1
-            await self.settings.guild(discord.Object(id=guild_id)).delete_repeats.set(val)
+            await self.settings.guild(discord.Object(id=guild_id)).delete_repeats.set(
+                val
+            )
         await self.settings.version.set(__version__)
 
     @staticmethod
@@ -156,7 +166,9 @@ class Mod(
         return entry.user, entry.reason, entry.created_at
 
     @staticmethod
-    async def get_audit_log_entry(guild: discord.Guild, action: discord.AuditLogAction, target):
+    async def get_audit_log_entry(
+        guild: discord.Guild, action: discord.AuditLogAction, target
+    ):
         """Get an audit log entry.
 
         Any exceptions encountered when looking through the audit log will be

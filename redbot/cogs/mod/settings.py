@@ -123,7 +123,9 @@ class ModSettings(MixinMeta):
                 # purge and update cache to new repeat limits
                 self.cache[guild.id] = defaultdict(lambda: deque(maxlen=repeats))
                 await ctx.send(
-                    _("Messages repeated up to {num} times will be deleted.").format(num=repeats)
+                    _("Messages repeated up to {num} times will be deleted.").format(
+                        num=repeats
+                    )
                 )
             else:
                 await ctx.send(

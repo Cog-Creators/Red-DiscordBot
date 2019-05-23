@@ -149,7 +149,9 @@ class JSON(BaseDriver):
             partial[idents[-1]] = data
 
         for category, all_data in cog_data:
-            splitted_pkey = self._split_primary_key(category, custom_group_data, all_data)
+            splitted_pkey = self._split_primary_key(
+                category, custom_group_data, all_data
+            )
             for pkey, data in splitted_pkey:
                 ident_data = IdentifierData(
                     self.unique_cog_identifier,

@@ -61,8 +61,12 @@ def parse_cli_args():
     parser.add_argument(
         "--update-dev", help="Updates Red from the Github repo", action="store_true"
     )
-    parser.add_argument("--docs", help="Installs extra 'docs' when updating", action="store_true")
-    parser.add_argument("--test", help="Installs extra 'test' when updating", action="store_true")
+    parser.add_argument(
+        "--docs", help="Installs extra 'docs' when updating", action="store_true"
+    )
+    parser.add_argument(
+        "--test", help="Installs extra 'test' when updating", action="store_true"
+    )
     parser.add_argument(
         "--style", help="Installs extra 'style' when updating", action="store_true"
     )
@@ -390,7 +394,9 @@ def main_menu():
         print("3. Update Red")
         print("4. Create Instance")
         print("5. Remove Instance")
-        print("6. Debug information (use this if having issues with the launcher or bot)")
+        print(
+            "6. Debug information (use this if having issues with the launcher or bot)"
+        )
         print("7. Reinstall Red")
         print("0. Exit")
         choice = user_choice()
@@ -465,13 +471,17 @@ def main():
     if args.update:
         update_red(style=args.style, docs=args.docs, test=args.test, mongo=args.mongo)
     elif args.update_dev:
-        update_red(dev=True, style=args.style, docs=args.docs, test=args.test, mongo=args.mongo)
+        update_red(
+            dev=True, style=args.style, docs=args.docs, test=args.test, mongo=args.mongo
+        )
 
     if INTERACTIVE_MODE:
         main_menu()
     elif args.start:
         print("Starting Red...")
-        run_red(args.instancename, autorestart=args.auto_restart, cliflags=flags_to_pass)
+        run_red(
+            args.instancename, autorestart=args.auto_restart, cliflags=flags_to_pass
+        )
 
 
 if __name__ == "__main__":

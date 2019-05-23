@@ -5,7 +5,16 @@ replace those from the `discord.ext.commands` module.
 """
 import inspect
 import weakref
-from typing import Awaitable, Callable, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
+from typing import (
+    Awaitable,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    Union,
+    TYPE_CHECKING,
+)
 
 import discord
 from discord.ext import commands
@@ -81,7 +90,9 @@ class CogCommandMixin:
         """
         cur_rule = self.requires.get_rule(model_id, guild_id=guild_id)
         if cur_rule is PermState.PASSIVE_ALLOW:
-            self.requires.set_rule(model_id, PermState.CAUTIOUS_ALLOW, guild_id=guild_id)
+            self.requires.set_rule(
+                model_id, PermState.CAUTIOUS_ALLOW, guild_id=guild_id
+            )
         else:
             self.requires.set_rule(model_id, PermState.ACTIVE_DENY, guild_id=guild_id)
 
@@ -387,9 +398,13 @@ class Command(CogCommandMixin, commands.Command):
         for parent in parents:
             cur_rule = parent.requires.get_rule(model_id, guild_id=guild_id)
             if cur_rule is PermState.NORMAL:
-                parent.requires.set_rule(model_id, PermState.PASSIVE_ALLOW, guild_id=guild_id)
+                parent.requires.set_rule(
+                    model_id, PermState.PASSIVE_ALLOW, guild_id=guild_id
+                )
             elif cur_rule is PermState.ACTIVE_DENY:
-                parent.requires.set_rule(model_id, PermState.CAUTIOUS_ALLOW, guild_id=guild_id)
+                parent.requires.set_rule(
+                    model_id, PermState.CAUTIOUS_ALLOW, guild_id=guild_id
+                )
 
     def clear_rule_for(
         self, model_id: Union[int, str], guild_id: int
@@ -400,7 +415,9 @@ class Command(CogCommandMixin, commands.Command):
             if self.cog is not None:
                 parents.append(self.cog)
             for parent in parents:
-                should_continue = parent.reevaluate_rules_for(model_id, guild_id=guild_id)[1]
+                should_continue = parent.reevaluate_rules_for(
+                    model_id, guild_id=guild_id
+                )[1]
                 if not should_continue:
                     break
         return old_rule, new_rule
@@ -506,14 +523,19 @@ class CogGroupMixin:
 
         """
         cur_rule = self.requires.get_rule(model_id, guild_id=guild_id)
-        if cur_rule in (PermState.NORMAL, PermState.ACTIVE_ALLOW, PermState.ACTIVE_DENY):
+        if cur_rule in (
+            PermState.NORMAL,
+            PermState.ACTIVE_ALLOW,
+            PermState.ACTIVE_DENY,
+        ):
             # These three states are unaffected by subcommand rules
             return cur_rule, False
         else:
             # Remaining states can be changed if there exists no actively-allowed
             # subcommand (this includes subcommands multiple levels below)
             if any(
-                cmd.requires.get_rule(model_id, guild_id=guild_id) in PermState.ALLOWED_STATES
+                cmd.requires.get_rule(model_id, guild_id=guild_id)
+                in PermState.ALLOWED_STATES
                 for cmd in self.all_commands.values()
             ):
                 return cur_rule, False
@@ -521,7 +543,9 @@ class CogGroupMixin:
                 self.requires.set_rule(model_id, PermState.NORMAL, guild_id=guild_id)
                 return PermState.NORMAL, True
             elif cur_rule is PermState.CAUTIOUS_ALLOW:
-                self.requires.set_rule(model_id, PermState.ACTIVE_DENY, guild_id=guild_id)
+                self.requires.set_rule(
+                    model_id, PermState.ACTIVE_DENY, guild_id=guild_id
+                )
                 return PermState.ACTIVE_DENY, True
 
 
@@ -658,7 +682,9 @@ def group(name=None, **attrs):
 __command_disablers = weakref.WeakValueDictionary()
 
 
-def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitable[bool]]:
+def get_command_disabler(
+    guild: discord.Guild
+) -> Callable[["Context"], Awaitable[bool]]:
     """Get the command disabler for a guild.
 
     A command disabler is a simple check predicate which returns

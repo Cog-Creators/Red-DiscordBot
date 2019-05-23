@@ -91,7 +91,9 @@ async def test_bounded_gather():
     num_fail = random.randint(num_concurrent, num_tasks)
 
     tasks = [wait_task(i, random.random() / 1000, status) for i in range(num_tasks)]
-    tasks += [wait_task(i, random.random() / 1000, status, fail=True) for i in range(num_fail)]
+    tasks += [
+        wait_task(i, random.random() / 1000, status, fail=True) for i in range(num_fail)
+    ]
 
     num_failed = 0
 
@@ -128,7 +130,9 @@ async def test_bounded_gather_iter():
     num_fail = random.randint(num_concurrent, num_tasks)
 
     tasks = [wait_task(i, random.random() / 1000, status) for i in range(num_tasks)]
-    tasks += [wait_task(i, random.random() / 1000, status, fail=True) for i in range(num_fail)]
+    tasks += [
+        wait_task(i, random.random() / 1000, status, fail=True) for i in range(num_fail)
+    ]
     random.shuffle(tasks)
 
     num_failed = 0
@@ -169,7 +173,9 @@ async def test_bounded_gather_iter_cancel():
     num_fail = random.randint(num_concurrent, num_tasks)
 
     tasks = [wait_task(i, random.random() / 1000, status) for i in range(num_tasks)]
-    tasks += [wait_task(i, random.random() / 1000, status, fail=True) for i in range(num_fail)]
+    tasks += [
+        wait_task(i, random.random() / 1000, status, fail=True) for i in range(num_fail)
+    ]
     random.shuffle(tasks)
 
     num_failed = 0
@@ -194,5 +200,8 @@ async def test_bounded_gather_iter_cancel():
 
 
 def test_normalize_smartquotes():
-    assert common_filters.normalize_smartquotes("Should\u2018 normalize") == "Should' normalize"
+    assert (
+        common_filters.normalize_smartquotes("Should\u2018 normalize")
+        == "Should' normalize"
+    )
     assert common_filters.normalize_smartquotes("Same String") == "Same String"

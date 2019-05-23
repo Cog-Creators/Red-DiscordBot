@@ -88,7 +88,9 @@ async def menu(
     try:
         react, user = await ctx.bot.wait_for(
             "reaction_add",
-            check=ReactionPredicate.with_emojis(tuple(controls.keys()), message, ctx.author),
+            check=ReactionPredicate.with_emojis(
+                tuple(controls.keys()), message, ctx.author
+            ),
             timeout=timeout,
         )
     except asyncio.TimeoutError:

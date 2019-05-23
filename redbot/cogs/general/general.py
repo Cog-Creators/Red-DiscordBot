@@ -89,9 +89,13 @@ class General(commands.Cog):
         author = ctx.author
         if number > 1:
             n = randint(1, number)
-            await ctx.send("{author.mention} :game_die: {n} :game_die:".format(author=author, n=n))
+            await ctx.send(
+                "{author.mention} :game_die: {n} :game_die:".format(author=author, n=n)
+            )
         else:
-            await ctx.send(_("{author.mention} Maybe higher than 1? ;P").format(author=author))
+            await ctx.send(
+                _("{author.mention} Maybe higher than 1? ;P").format(author=author)
+            )
 
     @commands.command()
     async def flip(self, ctx, user: discord.Member = None):
@@ -103,7 +107,9 @@ class General(commands.Cog):
             msg = ""
             if user.id == ctx.bot.user.id:
                 user = ctx.author
-                msg = _("Nice try. You think this is funny?\n How about *this* instead:\n\n")
+                msg = _(
+                    "Nice try. You think this is funny?\n How about *this* instead:\n\n"
+                )
             char = "abcdefghijklmnopqrstuvwxyz"
             tran = "ɐqɔpǝɟƃɥᴉɾʞlɯuodbɹsʇnʌʍxʎz"
             table = str.maketrans(char, tran)
@@ -114,7 +120,9 @@ class General(commands.Cog):
             name = name.translate(table)
             await ctx.send(msg + "(╯°□°）╯︵ " + name[::-1])
         else:
-            await ctx.send(_("*flips a coin and... ") + choice([_("HEADS!*"), _("TAILS!*")]))
+            await ctx.send(
+                _("*flips a coin and... ") + choice([_("HEADS!*"), _("TAILS!*")])
+            )
 
     @commands.command()
     async def rps(self, ctx, your_choice: RPSParser):
@@ -122,7 +130,9 @@ class General(commands.Cog):
         author = ctx.author
         player_choice = your_choice.choice
         if not player_choice:
-            return await ctx.send("This isn't a valid option. Try rock, paper, or scissors.")
+            return await ctx.send(
+                "This isn't a valid option. Try rock, paper, or scissors."
+            )
         red_choice = choice((RPS.rock, RPS.paper, RPS.scissors))
         cond = {
             (RPS.rock, RPS.paper): False,
@@ -179,7 +189,8 @@ class General(commands.Cog):
             tmp = abs(self.stopwatches[author.id] - int(time.perf_counter()))
             tmp = str(datetime.timedelta(seconds=tmp))
             await ctx.send(
-                author.mention + _(" Stopwatch stopped! Time: **{seconds}**").format(seconds=tmp)
+                author.mention
+                + _(" Stopwatch stopped! Time: **{seconds}**").format(seconds=tmp)
             )
             self.stopwatches.pop(author.id, None)
 
@@ -219,7 +230,9 @@ class General(commands.Cog):
     async def serverinfo(self, ctx):
         """Show server information."""
         guild = ctx.guild
-        online = len([m.status for m in guild.members if m.status != discord.Status.offline])
+        online = len(
+            [m.status for m in guild.members if m.status != discord.Status.offline]
+        )
         total_users = len(guild.members)
         text_channels = len(guild.text_channels)
         voice_channels = len(guild.voice_channels)
@@ -265,7 +278,9 @@ class General(commands.Cog):
 
         except aiohttp.ClientError:
             await ctx.send(
-                _("No Urban Dictionary entries were found, or there was an error in the process.")
+                _(
+                    "No Urban Dictionary entries were found, or there was an error in the process."
+                )
             )
             return
 
@@ -282,7 +297,9 @@ class General(commands.Cog):
                     )
                     embed.url = ud["permalink"]
 
-                    description = _("{definition}\n\n**Example:** {example}").format(**ud)
+                    description = _("{definition}\n\n**Example:** {example}").format(
+                        **ud
+                    )
                     if len(description) > 2048:
                         description = "{}...".format(description[:2045])
                     embed.description = description
@@ -310,10 +327,16 @@ class General(commands.Cog):
                     message = _(
                         "<{permalink}>\n {word} by {author}\n\n{description}\n\n"
                         "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
-                    ).format(word=ud.pop("word").capitalize(), description="{description}", **ud)
+                    ).format(
+                        word=ud.pop("word").capitalize(),
+                        description="{description}",
+                        **ud,
+                    )
                     max_desc_len = 2000 - len(message)
 
-                    description = _("{definition}\n\n**Example:** {example}").format(**ud)
+                    description = _("{definition}\n\n**Example:** {example}").format(
+                        **ud
+                    )
                     if len(description) > max_desc_len:
                         description = "{}...".format(description[: max_desc_len - 3])
 
@@ -331,5 +354,7 @@ class General(commands.Cog):
                     )
         else:
             await ctx.send(
-                _("No Urban Dictionary entries were found, or there was an error in the process.")
+                _(
+                    "No Urban Dictionary entries were found, or there was an error in the process."
+                )
             )

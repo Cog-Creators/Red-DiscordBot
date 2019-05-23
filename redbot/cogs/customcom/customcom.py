@@ -60,7 +60,9 @@ class CommandObj:
         args = None
         while True:
             await ctx.send(_("Add a random response:"))
-            msg = await self.bot.wait_for("message", check=MessagePredicate.same_context(ctx))
+            msg = await self.bot.wait_for(
+                "message", check=MessagePredicate.same_context(ctx)
+            )
 
             if msg.content.lower() == "exit()":
                 break
@@ -134,7 +136,9 @@ class CommandObj:
         author = ctx.message.author
 
         if ask_for and not response:
-            await ctx.send(_("Do you want to create a 'randomized' custom command? (y/n)"))
+            await ctx.send(
+                _("Do you want to create a 'randomized' custom command? (y/n)")
+            )
 
             pred = MessagePredicate.yes_or_no(ctx)
             try:
@@ -256,7 +260,12 @@ class CustomCommands(commands.Cog):
     @customcom.command(name="cooldown")
     @checks.mod_or_permissions(administrator=True)
     async def cc_cooldown(
-        self, ctx, command: str.lower, cooldown: int = None, *, per: str.lower = "member"
+        self,
+        ctx,
+        command: str.lower,
+        cooldown: int = None,
+        *,
+        per: str.lower = "member",
     ):
         """Set, edit, or view the cooldown for a custom command.
 
@@ -276,7 +285,9 @@ class CustomCommands(commands.Cog):
                 cooldown = []
                 for per, rate in cooldowns.items():
                     cooldown.append(
-                        _("A {} may call this command every {} seconds").format(per, rate)
+                        _("A {} may call this command every {} seconds").format(
+                            per, rate
+                        )
                     )
                 return await ctx.send("\n".join(cooldown))
             else:
@@ -284,10 +295,14 @@ class CustomCommands(commands.Cog):
         per = {"server": "guild", "user": "member"}.get(per, per)
         allowed = ("guild", "member", "channel")
         if per not in allowed:
-            return await ctx.send(_("{} must be one of {}").format("per", ", ".join(allowed)))
+            return await ctx.send(
+                _("{} must be one of {}").format("per", ", ".join(allowed))
+            )
         cooldown = {per: cooldown}
         try:
-            await self.commandobj.edit(ctx=ctx, command=command, cooldowns=cooldown, ask_for=False)
+            await self.commandobj.edit(
+                ctx=ctx, command=command, cooldowns=cooldown, ask_for=False
+            )
             await ctx.send(_("Custom command cooldown successfully edited."))
         except NotFound:
             await ctx.send(
@@ -378,7 +393,9 @@ class CustomCommands(commands.Cog):
                     description=page,
                     colour=await ctx.embed_colour(),
                 )
-                embed.set_footer(text=_("Page {num}/{total}").format(num=idx, total=len(pages)))
+                embed.set_footer(
+                    text=_("Page {num}/{total}").format(num=idx, total=len(pages))
+                )
                 embed_pages.append(embed)
             await menus.menu(ctx, embed_pages, menus.DEFAULT_CONTROLS)
         else:
@@ -416,7 +433,10 @@ class CustomCommands(commands.Cog):
             "Created: {created_at}\n"
             "Type: {type}\n"
         ).format(
-            command_name=command_name, author=author, created_at=cmd["created_at"], type=_type
+            command_name=command_name,
+            author=author,
+            created_at=cmd["created_at"],
+            type=_type,
         )
 
         cooldowns = cmd["cooldowns"]
@@ -424,7 +444,9 @@ class CustomCommands(commands.Cog):
         if cooldowns:
             cooldown_text = _("Cooldowns:\n")
             for rate, per in cooldowns.items():
-                cooldown_text += _("{num} seconds per {period}\n").format(num=per, period=rate)
+                cooldown_text += _("{num} seconds per {period}\n").format(
+                    num=per, period=rate
+                )
             text += cooldown_text
 
         text += _("Responses:\n")
@@ -442,7 +464,12 @@ class CustomCommands(commands.Cog):
         # something similar once it's added
         user_allowed = True
 
-        if len(message.content) < 2 or is_private or not user_allowed or message.author.bot:
+        if (
+            len(message.content) < 2
+            or is_private
+            or not user_allowed
+            or message.author.bot
+        ):
             return
 
         ctx = await self.bot.get_context(message)
@@ -527,7 +554,10 @@ class CustomCommands(commands.Cog):
                 _("Arguments must be sequential. Missing arguments: ")
                 + ", ".join(str(i + low) for i in gaps)
             )
-        fin = [Parameter("_" + str(i), Parameter.POSITIONAL_OR_KEYWORD) for i in range(high + 1)]
+        fin = [
+            Parameter("_" + str(i), Parameter.POSITIONAL_OR_KEYWORD)
+            for i in range(high + 1)
+        ]
         for arg in args:
             index = int(arg[0]) - low
             anno = arg[1][1:]  # strip initial colon

@@ -35,7 +35,9 @@ def interactive_config(red, token_set, prefix_set):
         while not prefix:
             prefix = input("Prefix> ")
             if len(prefix) > 10:
-                print("Your prefix seems overly long. Are you sure that it's correct? (y/n)")
+                print(
+                    "Your prefix seems overly long. Are you sure that it's correct? (y/n)"
+                )
                 if not confirm("> "):
                     prefix = ""
             if prefix:
@@ -48,7 +50,9 @@ def parse_cli_flags(args):
     parser = argparse.ArgumentParser(
         description="Red - Discord Bot", usage="redbot <instance_name> [arguments]"
     )
-    parser.add_argument("--version", "-V", action="store_true", help="Show Red's current version")
+    parser.add_argument(
+        "--version", "-V", action="store_true", help="Show Red's current version"
+    )
     parser.add_argument(
         "--list-instances",
         action="store_true",
@@ -73,7 +77,9 @@ def parse_cli_flags(args):
         "security implications if misused. Can be "
         "multiple.",
     )
-    parser.add_argument("--prefix", "-p", action="append", help="Global prefix. Can be multiple")
+    parser.add_argument(
+        "--prefix", "-p", action="append", help="Global prefix. Can be multiple"
+    )
     parser.add_argument(
         "--no-prompt",
         action="store_true",
@@ -82,7 +88,9 @@ def parse_cli_flags(args):
         "result",
     )
     parser.add_argument(
-        "--no-cogs", action="store_true", help="Starts Red with no cogs loaded, only core"
+        "--no-cogs",
+        action="store_true",
+        help="Starts Red with no cogs loaded, only core",
     )
     parser.add_argument(
         "--load-cogs",
@@ -128,7 +136,9 @@ def parse_cli_flags(args):
         ),
     )
     parser.add_argument(
-        "instance_name", nargs="?", help="Name of the bot instance created during `redbot-setup`."
+        "instance_name",
+        nargs="?",
+        help="Name of the bot instance created during `redbot-setup`.",
     )
 
     args = parser.parse_args(args)

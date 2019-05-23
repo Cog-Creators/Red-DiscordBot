@@ -126,7 +126,9 @@ class Downloader(commands.Cog):
         # noinspection PyTypeChecker
         return tuple(failed)
 
-    async def _reinstall_libraries(self, cogs: Iterable[Installable]) -> Tuple[Installable]:
+    async def _reinstall_libraries(
+        self, cogs: Iterable[Installable]
+    ) -> Tuple[Installable]:
         """
         Reinstalls any shared libraries from the repos of cogs that
             were updated.
@@ -230,9 +232,13 @@ class Downloader(commands.Cog):
             return
         try:
             # noinspection PyTypeChecker
-            repo = await self._repo_manager.add_repo(name=name, url=repo_url, branch=branch)
+            repo = await self._repo_manager.add_repo(
+                name=name, url=repo_url, branch=branch
+            )
         except errors.ExistingGitRepo:
-            await ctx.send(_("That git repo has already been added under another name."))
+            await ctx.send(
+                _("That git repo has already been added under another name.")
+            )
         except errors.CloningError as err:
             await ctx.send(_("Something went wrong during the cloning process."))
             log.exception(
@@ -299,9 +305,9 @@ class Downloader(commands.Cog):
             return
         elif cog.min_python_version > sys.version_info:
             await ctx.send(
-                _("This cog requires at least python version {version}, aborting install.").format(
-                    version=".".join([str(n) for n in cog.min_python_version])
-                )
+                _(
+                    "This cog requires at least python version {version}, aborting install."
+                ).format(version=".".join([str(n) for n in cog.min_python_version]))
             )
             return
         ignore_max = cog.min_bot_version > cog.max_bot_version
@@ -317,7 +323,9 @@ class Downloader(commands.Cog):
                 + (
                     ""
                     if ignore_max
-                    else _(" and at most {max_version}").format(max_version=cog.max_bot_version)
+                    else _(" and at most {max_version}").format(
+                        max_version=cog.max_bot_version
+                    )
                 )
                 + _(", but you have {current_version}, aborting install.").format(
                     current_version=red_version_info
@@ -328,9 +336,9 @@ class Downloader(commands.Cog):
         if not await repo.install_requirements(cog, self.LIB_PATH):
             libraries = humanize_list(tuple(map(inline, cog.requirements)))
             await ctx.send(
-                _("Failed to install the required libraries for `{cog_name}`: {libraries}").format(
-                    cog_name=cog.name, libraries=libraries
-                )
+                _(
+                    "Failed to install the required libraries for `{cog_name}`: {libraries}"
+                ).format(cog_name=cog.name, libraries=libraries)
             )
             return
 
@@ -338,7 +346,9 @@ class Downloader(commands.Cog):
 
         await self._add_to_installed(cog)
 
-        await repo.install_libraries(target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH)
+        await repo.install_libraries(
+            target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH
+        )
 
         await ctx.send(
             _(
@@ -375,7 +385,9 @@ class Downloader(commands.Cog):
 
             message = ""
             if uninstalled_cogs:
-                message += _("Successfully uninstalled cogs: ") + humanize_list(uninstalled_cogs)
+                message += _("Successfully uninstalled cogs: ") + humanize_list(
+                    uninstalled_cogs
+                )
             if failed_cogs:
                 message += (
                     _("\nThese cog were installed but can no longer be located: ")
@@ -413,7 +425,9 @@ class Downloader(commands.Cog):
                 message = _("Cog update completed successfully.")
 
                 cognames = {c.name for c in installed_and_updated}
-                message += _("\nUpdated: ") + humanize_list(tuple(map(inline, cognames)))
+                message += _("\nUpdated: ") + humanize_list(
+                    tuple(map(inline, cognames))
+                )
             else:
                 await ctx.send(_("All installed cogs are already up to date."))
                 return
@@ -431,7 +445,9 @@ class Downloader(commands.Cog):
         query: discord.Message = await ctx.send(message)
         if can_react:
             # noinspection PyAsyncCall
-            start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS, ctx.bot.loop)
+            start_adding_reactions(
+                query, ReactionPredicate.YES_OR_NO_EMOJIS, ctx.bot.loop
+            )
             pred = ReactionPredicate.yes_or_no(query, ctx.author)
             event = "reaction_add"
         else:
@@ -552,7 +568,9 @@ class Downloader(commands.Cog):
 
         msg = _("Command: {command}\nMade by: {author}\nRepo: {repo}\nCog name: {cog}")
 
-        return msg.format(command=command_name, author=made_by, repo=repo_url, cog=cog_name)
+        return msg.format(
+            command=command_name, author=made_by, repo=repo_url, cog=cog_name
+        )
 
     def cog_name_from_instance(self, instance: object) -> str:
         """Determines the cog name that Downloader knows from the cog instance.

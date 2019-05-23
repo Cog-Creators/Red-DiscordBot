@@ -38,13 +38,15 @@ class ModLog(commands.Cog):
             if channel.permissions_for(guild.me).send_messages:
                 await modlog.set_modlog_channel(guild, channel)
                 await ctx.send(
-                    _("Mod events will be sent to {channel}").format(channel=channel.mention)
+                    _("Mod events will be sent to {channel}").format(
+                        channel=channel.mention
+                    )
                 )
             else:
                 await ctx.send(
-                    _("I do not have permissions to send messages in {channel}!").format(
-                        channel=channel.mention
-                    )
+                    _(
+                        "I do not have permissions to send messages in {channel}!"
+                    ).format(channel=channel.mention)
                 )
         else:
             try:
@@ -109,7 +111,9 @@ class ModLog(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    async def casesfor(self, ctx: commands.Context, *, member: Union[discord.Member, int]):
+    async def casesfor(
+        self, ctx: commands.Context, *, member: Union[discord.Member, int]
+    ):
         """Display cases for the specified member."""
         try:
             if isinstance(member, int):
@@ -132,7 +136,9 @@ class ModLog(commands.Cog):
 
         embed_requested = await ctx.embed_requested()
 
-        rendered_cases = [await case.message_content(embed=embed_requested) for case in cases]
+        rendered_cases = [
+            await case.message_content(embed=embed_requested) for case in cases
+        ]
 
         await menu(ctx, rendered_cases, DEFAULT_CONTROLS)
 
@@ -162,9 +168,13 @@ class ModLog(commands.Cog):
                 # triggered the case creation with an action
                 bot_perms = guild.me.guild_permissions
                 if bot_perms.view_audit_log:
-                    case_type = await modlog.get_casetype(case_before.action_type, guild)
+                    case_type = await modlog.get_casetype(
+                        case_before.action_type, guild
+                    )
                     if case_type is not None and case_type.audit_type is not None:
-                        audit_type = getattr(discord.AuditLogAction, case_type.audit_type)
+                        audit_type = getattr(
+                            discord.AuditLogAction, case_type.audit_type
+                        )
                         if audit_type:
                             audit_case = None
                             async for entry in guild.audit_logs(action=audit_type):
