@@ -287,7 +287,13 @@ class RedHelpFormatter:
 
             emb["footer"]["text"] = tagline
             if description:
-                emb["embed"]["title"] = f"*{description[:2044]}*"
+                splitted = description.split("\n\n")
+                name = "__{0}__".format(splitted[0])
+                value = "\n\n".join(splitted[1:]).replace("[p]", ctx.clean_prefix)
+                if not value:
+                    value = EMPTY_STRING
+                field = EmbedField(name[:252], value[:1024], False)
+                emb["fields"].append(field)
 
             if coms:
 
