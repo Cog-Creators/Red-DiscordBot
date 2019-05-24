@@ -246,7 +246,7 @@ class Downloader(commands.Cog):
             if repo.install_msg is not None:
                 await ctx.send(repo.install_msg.replace("[p]", ctx.prefix))
 
-    @repo.command(name="delete", aliases=["remove"], usage="<repo_name>")
+    @repo.command(name="delete", aliases=["remove", "del"], usage="<repo_name>")
     async def _repo_del(self, ctx, repo: Repo):
         """Remove a repo and its files."""
         await self._repo_manager.delete_repo(repo.name)
