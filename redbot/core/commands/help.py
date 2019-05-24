@@ -166,7 +166,7 @@ class RedHelpFormatter:
 
             if command.help:
                 splitted = command.help.split("\n\n")
-                name = "__{0}__".format(splitted[0])
+                name = splitted[0]
                 value = "\n\n".join(splitted[1:]).replace("[p]", ctx.clean_prefix)
                 if not value:
                     value = EMPTY_STRING
@@ -288,7 +288,7 @@ class RedHelpFormatter:
             emb["footer"]["text"] = tagline
             if description:
                 splitted = description.split("\n\n")
-                name = "__{0}__".format(splitted[0])
+                name = splitted[0]
                 value = "\n\n".join(splitted[1:]).replace("[p]", ctx.clean_prefix)
                 if not value:
                     value = EMPTY_STRING
