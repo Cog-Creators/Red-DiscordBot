@@ -296,7 +296,7 @@ class CustomCommands(commands.Cog):
                 )
             )
 
-    @customcom.command(name="delete")
+    @customcom.command(name="delete", aliases=["del", "remove"])
     @checks.mod_or_permissions(administrator=True)
     async def cc_delete(self, ctx, command: str.lower):
         """Delete a custom command.
