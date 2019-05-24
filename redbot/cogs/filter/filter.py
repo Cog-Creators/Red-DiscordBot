@@ -236,7 +236,7 @@ class Filter(commands.Cog):
         else:
             await ctx.send(_("Those words were already in the filter."))
 
-    @_filter.command(name="remove", aliases=["delete", "del"])
+    @_filter.command(name="delete", aliases=["remove", "del"])
     async def filter_remove(self, ctx: commands.Context, *, words: str):
         """Remove words from the filter.
 
