@@ -394,7 +394,7 @@ class Alias(commands.Cog):
             await ctx.send(_("Alias with name `{name}` was not found.").format(name=alias_name))
 
     @checks.is_owner()
-    @global_.command(name="del", aliases=["delete", "remove"])
+    @global_.command(name="delete", aliases=["delete", "remove"])
     async def _del_global_alias(self, ctx: commands.Context, alias_name: str):
         """Delete an existing global alias."""
         aliases = await self.unloaded_global_aliases()
