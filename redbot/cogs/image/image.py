@@ -138,20 +138,20 @@ class Image(commands.Cog):
     @checks.is_owner()
     @commands.command()
     async def imgurcreds(self, ctx):
-        """Explain how to set imgur API tokens"""
+        """Explain how to set imgur API tokens."""
 
         message = _(
             "To get an Imgur Client ID:\n"
             "1. Login to an Imgur account.\n"
-            "2. Visit [this](https://api.imgur.com/oauth2/addclient) page\n"
-            "3. Enter a name for your application\n"
-            "4. Select *Anonymous usage without user authorization* for the auth type\n"
-            "5. Set the authorization callback URL to `https://localhost`\n"
-            "6. Leave the app website blank\n"
-            "7. Enter a valid email address and a description\n"
-            "8. Check the captcha box and click next\n"
+            "2. Visit this page https://api.imgur.com/oauth2/addclient.\n"
+            "3. Enter a name for your application.\n"
+            "4. Select *Anonymous usage without user authorization* for the auth type.\n"
+            "5. Set the authorization callback URL to `https://localhost`.\n"
+            "6. Leave the app website blank.\n"
+            "7. Enter a valid email address and a description.\n"
+            "8. Check the captcha box and click next.\n"
             "9. Your Client ID will be on the next page.\n"
-            "10. do `{prefix}set api imgur client_id,your_client_id`\n"
+            "10. Run the command `{prefix}set api imgur client_id,<your_client_id_here>`.\n"
         ).format(prefix=ctx.prefix)
 
         await ctx.maybe_send_embed(message)
