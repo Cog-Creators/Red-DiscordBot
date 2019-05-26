@@ -3,6 +3,7 @@ from .abc import MixinMeta
 
 _ = i18n.Translator("Mod", __file__)
 
+
 class Slowmode(MixinMeta):
     """
     Commands regarding channel slowmode management.
