@@ -1,15 +1,7 @@
 import getpass
 import json
 from pathlib import Path
-from typing import (
-    Optional,
-    Any,
-    AsyncIterator,
-    Tuple,
-    Union,
-    Callable,
-    List,
-)
+from typing import Optional, Any, AsyncIterator, Tuple, Union, Callable, List
 
 try:
     import asyncpg
@@ -106,7 +98,7 @@ class PostgresDriver(BaseDriver):
                 pkey_len,
                 pkeys,
                 list(identifier_data.identifiers),
-                method=self._pool.fetchval
+                method=self._pool.fetchval,
             )
         except asyncpg.UndefinedTableError:
             raise KeyError from None
@@ -195,7 +187,7 @@ class PostgresDriver(BaseDriver):
                 pkey_type,
                 pkeys,
                 list(identifier_data.identifiers),
-                method=self._pool.fetchval
+                method=self._pool.fetchval,
             )
         except asyncpg.WrongObjectTypeError as exc:
             raise errors.StoredTypeError(*exc.args)
@@ -224,7 +216,7 @@ class PostgresDriver(BaseDriver):
                 pkey_type,
                 pkeys,
                 list(identifier_data.identifiers),
-                method=self._pool.fetchval
+                method=self._pool.fetchval,
             )
         except asyncpg.WrongObjectTypeError as exc:
             raise errors.StoredTypeError(*exc.args)
