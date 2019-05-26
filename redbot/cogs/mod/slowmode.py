@@ -1,3 +1,4 @@
+import discord
 from redbot.core import commands, i18n, checks
 from .abc import MixinMeta
 
@@ -14,12 +15,12 @@ class Slowmode(MixinMeta):
     @commands.bot_has_permissions(manage_channels=True)
     @checks.mod_or_permissions(manage_channels=True)
     async def slowmode(self, ctx, interval: int = 0):
-        """Change channel's slowmode setting.
+        """Changes channel's slowmode setting.
 
         Interval can be anything from 0 to 21600 seconds.
         Use without parameters or set to 0 to disable.
         """
-        if not 0 <= interval <= 21600:
+        if 0 <= interval <= 21600:
             await ctx.send(_("Interval must be between 0 and 21600 seconds!"))
             return
         await ctx.channel.edit(slowmode_delay=interval)
