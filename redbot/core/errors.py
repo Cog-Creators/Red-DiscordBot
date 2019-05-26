@@ -58,7 +58,16 @@ class ConfigError(RedError):
     """Error in a Config operation."""
 
 
-class CannotSetSubfield(ConfigError):
+class StoredTypeError(ConfigError, TypeError):
+    """A TypeError pertaining to stored Config data.
+
+    This error may arise when, for example, trying to increment a value
+    which is not a number, or trying to toggle a value which is not a
+    boolean.
+    """
+
+
+class CannotSetSubfield(StoredTypeError):
     """Tried to set sub-field of an invalid data structure.
 
     This would occur in the following example::
