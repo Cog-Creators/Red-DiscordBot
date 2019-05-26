@@ -14,7 +14,7 @@ class Slowmode(MixinMeta):
     @commands.bot_has_permissions(manage_channels=True)
     @checks.mod_or_permissions(manage_channels=True)
     async def slowmode(self, ctx, interval: int = 0):
-        """Changes channel's slowmode setting.
+        """Change channel's slowmode setting.
 
         Interval can be anything from 0 to 21600 seconds.
         Use without parameters or set to 0 to disable.
