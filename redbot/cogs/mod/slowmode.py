@@ -1,4 +1,3 @@
-import discord
 from redbot.core import commands, i18n, checks
 from .abc import MixinMeta
 
