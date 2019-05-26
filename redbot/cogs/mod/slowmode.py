@@ -26,15 +26,13 @@ class Slowmode(MixinMeta):
         if interval is None:
             interval = 0
         else:
-            match = re.match(r'(?i)(\d{1,5})([a-zA-Z])?', interval)
+            match = re.match(r"(?i)(\d{1,5})([a-zA-Z])?", interval)
             if match:
                 interval = int(match.group(1))
                 if match.group(2) is not None:
-                    interval = {
-                        "s": 1,
-                        "m": 60,
-                        "h": 60 * 60,
-                    }.get(match.group(2).lower(), -1) * interval
+                    interval = {"s": 1, "m": 60, "h": 60 * 60}.get(
+                        match.group(2).lower(), -1
+                    ) * interval
             if not match or not 0 <= interval <= 21600:
                 await ctx.send(_("Interval must be between 0 seconds and 6 hours!"))
                 return
