@@ -18,7 +18,7 @@ class Slowmode(MixinMeta):
         Interval can be anything from 0 to 21600 seconds.
         Use without parameters or set to 0 to disable.
         """
-        if 0 <= interval <= 21600:
+        if not 0 <= interval <= 21600:
             await ctx.send(_("Interval must be between 0 and 21600 seconds!"))
             return
         await ctx.channel.edit(slowmode_delay=interval)
