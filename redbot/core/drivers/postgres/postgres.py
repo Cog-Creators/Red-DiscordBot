@@ -8,7 +8,7 @@ try:
 except ModuleNotFoundError:
     asyncpg = None
 
-from ... import errors
+from ... import data_manager, errors
 from ..base import BaseDriver, IdentifierData, ConfigCategory
 from ..log import log
 
@@ -22,11 +22,6 @@ DROP_DDL_SCRIPT_PATH = _PKG_PATH / "drop_ddl.sql"
 class PostgresDriver(BaseDriver):
 
     _pool: Optional["asyncpg.pool.Pool"] = None
-
-    def __init__(self, cog_name, identifier, **kwargs):
-        self._schema_name: str = '"' + ".".join((cog_name, identifier)) + '"'
-
-        super().__init__(cog_name, identifier, **kwargs)
 
     @classmethod
     async def initialize(cls, **storage_details) -> None:
@@ -265,25 +260,11 @@ class PostgresDriver(BaseDriver):
                 else:
                     break
         if drop_db is True:
-            async with cls._pool.acquire() as conn:
-                settings = conn.get_settings()
-                db_name = settings.database
-                await conn.execute(f"DROP DATABASE $1", db_name)
+            storage_details = data_manager.storage_details()
+            await cls._pool.execute(f"DROP DATABASE $1", storage_details["database"])
         else:
-            async with cls._pool.acquire() as conn, conn.transaction():
-                async for cog_name, cog_id in cls.aiter_cogs():
-                    schema_name = await conn.fetchval(
-                        """
-                        SELECT schema_name
-                         FROM config.red_cogs
-                         WHERE cog_name = $1 AND cog_id = $2
-                        """,
-                        cog_name,
-                        cog_id,
-                    )
-                    await conn.execute("DROP SCHEMA $1 CASCADE", schema_name)
-                with DROP_DDL_SCRIPT_PATH.open() as fs:
-                    await conn.execute(fs.read())
+            with DROP_DDL_SCRIPT_PATH.open() as fs:
+                await cls._pool.execute(fs.read())
 
     @classmethod
     async def _execute(cls, query: str, *args, method: Optional[Callable] = None) -> Any:

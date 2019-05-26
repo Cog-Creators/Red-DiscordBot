@@ -481,6 +481,21 @@ CREATE OR REPLACE FUNCTION
 $$;
 
 
+CREATE OR REPLACE FUNCTION
+  config.delete_all_schemas()
+    RETURNS void
+    LANGUAGE plpgsql
+  AS $$
+  DECLARE
+    cog_entry record;
+  BEGIN
+    FOR cog_entry IN SELECT * FROM config.red_cogs t LOOP
+      EXECUTE format('DROP SCHEMA %I CASCADE', cog_entry.schemaname);
+    END LOOP;
+  END;
+$$;
+
+
 /*
  * Like `jsonb_set` but will insert new objects where one is missing along the path.
  */
