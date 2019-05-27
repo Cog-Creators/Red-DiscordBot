@@ -78,7 +78,7 @@ class PostgresDriver(BaseDriver):
         try:
             result = await self._execute(
                 f"""
-                SELECT config.get(
+                SELECT red_config.get(
                   cog_name := $1,
                   cog_id := $2,
                   config_category := $3,
@@ -109,7 +109,7 @@ class PostgresDriver(BaseDriver):
         try:
             await self._execute(
                 f"""
-                SELECT config.set(
+                SELECT red_config.set(
                   cog_name := $1,
                   cog_id := $2,
                   config_category := $3,
@@ -137,7 +137,7 @@ class PostgresDriver(BaseDriver):
         try:
             await self._execute(
                 f"""
-                SELECT config.clear(
+                SELECT red_config.clear(
                   cog_name := $1,
                   cog_id := $2,
                   config_category := $3,
@@ -161,7 +161,7 @@ class PostgresDriver(BaseDriver):
         try:
             return await self._execute(
                 f"""
-                SELECT config.inc(
+                SELECT red_config.inc(
                   cog_name := $1,
                   cog_id := $2,
                   config_category := $3,
@@ -192,7 +192,7 @@ class PostgresDriver(BaseDriver):
         try:
             return await self._execute(
                 f"""
-                SELECT config.inc(
+                SELECT red_config.inc(
                   cog_name := $1,
                   cog_id := $2,
                   config_category := $3,
@@ -218,7 +218,7 @@ class PostgresDriver(BaseDriver):
 
     @classmethod
     async def aiter_cogs(cls) -> AsyncIterator[Tuple[str, str]]:
-        query = "SELECT cog_name, cog_id FROM config.red_cogs"
+        query = "SELECT cog_name, cog_id FROM red_config.red_cogs"
         log.invisible(query)
         async with cls._pool.acquire() as conn, conn.transaction():
             async for row in conn.cursor(query):
