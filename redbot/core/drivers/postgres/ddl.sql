@@ -98,6 +98,8 @@ CREATE OR REPLACE FUNCTION
     OUT result jsonb
   )
     LANGUAGE 'plpgsql'
+    STABLE
+    PARALLEL SAFE
   AS $$
   DECLARE
     schemaname CONSTANT text := concat_ws('.', cog_name, cog_id);
@@ -475,6 +477,8 @@ CREATE OR REPLACE FUNCTION
   red_utils.jsonb_set2(target jsonb, new_value jsonb, VARIADIC identifiers text[])
     RETURNS jsonb
     LANGUAGE 'plpgsql'
+    IMMUTABLE
+    PARALLEL SAFE
   AS $$
   DECLARE
     num_identifiers CONSTANT integer := coalesce(array_length(identifiers, 1), 0);
@@ -513,6 +517,8 @@ CREATE OR REPLACE FUNCTION
   red_utils.generate_rows_from_object(object jsonb, num_missing_pkeys integer)
     RETURNS setof record
     LANGUAGE 'plpgsql'
+    IMMUTABLE
+    PARALLEL SAFE
   AS $$
   DECLARE
     pair record;
@@ -554,6 +560,8 @@ CREATE OR REPLACE FUNCTION
   red_utils.gen_pkey_placeholders(num_pkeys integer, pkey_type text DEFAULT 'text')
     RETURNS text
     LANGUAGE 'sql'
+    IMMUTABLE
+    PARALLEL SAFE
   AS $$
     SELECT string_agg(t.item, ', ')
     FROM (
@@ -573,6 +581,8 @@ CREATE OR REPLACE FUNCTION
   red_utils.gen_whereclause(num_pkeys integer)
     RETURNS text
     LANGUAGE 'sql'
+    IMMUTABLE
+    PARALLEL SAFE
   AS $$
     SELECT coalesce(string_agg(t.item, ' AND '), 'TRUE')
     FROM (
@@ -588,6 +598,8 @@ CREATE OR REPLACE FUNCTION
   red_utils.gen_pkey_columns(start integer, stop integer)
     RETURNS text
     LANGUAGE 'sql'
+    IMMUTABLE
+    PARALLEL SAFE
   AS $$
     SELECT string_agg(t.item, ', ')
     FROM (
@@ -603,6 +615,8 @@ CREATE OR REPLACE FUNCTION
   red_utils.gen_pkey_columns_casted(start integer, stop integer, pkey_type text DEFAULT 'text')
     RETURNS text
     LANGUAGE 'sql'
+    IMMUTABLE
+    PARALLEL SAFE
   AS $$
     SELECT string_agg(t.item, ', ')
     FROM (
@@ -621,6 +635,8 @@ CREATE OR REPLACE FUNCTION
   )
     RETURNS text
     LANGUAGE 'sql'
+    IMMUTABLE
+    PARALLEL SAFE
   AS $$
     SELECT string_agg(t.item, ', ')
     FROM (
@@ -639,9 +655,10 @@ CREATE AGGREGATE
    * If possible, use `jsonb_object_agg` instead for performance reasons.
    */
   red_utils.jsonb_object_agg2(json_data jsonb, VARIADIC primary_keys text[]) (
-    sfunc = red_utils.jsonb_set2,
-    stype = jsonb,
-    initcond = '{}'
+    SFUNC = red_utils.jsonb_set2,
+    STYPE = jsonb,
+    INITCOND = '{}',
+    PARALLEL = SAFE
   )
 ;
 
@@ -679,5 +696,5 @@ DROP EVENT TRIGGER IF EXISTS red_drop_schema_trigger;
 CREATE EVENT TRIGGER red_drop_schema_trigger
   ON SQL_DROP
   WHEN TAG IN ('DROP SCHEMA')
-  EXECUTE PROCEDURE red_config.drop_schema_trigger_function()
+  EXECUTE FUNCTION red_config.drop_schema_trigger_function()
 ;
