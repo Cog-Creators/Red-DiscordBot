@@ -23,9 +23,7 @@ class Slowmode(MixinMeta):
         You can specify the unit using `s`, `m` or `h` as suffix.
         Use without parameters or set to 0 to disable.
         """
-        if interval is None:
-            interval = 0
-        else:
+        if interval:
             match = re.match(r"(?i)(\d{1,5})([a-zA-Z])?", interval)
             if match:
                 interval = int(match.group(1))
@@ -36,6 +34,8 @@ class Slowmode(MixinMeta):
             if not match or not 0 <= interval <= 21600:
                 await ctx.send(_("Interval must be between 0 seconds and 6 hours!"))
                 return
+        else:
+            interval = 0
         await ctx.channel.edit(slowmode_delay=interval)
         if interval > 0:
             interval = humanize_timedelta(seconds=interval)
