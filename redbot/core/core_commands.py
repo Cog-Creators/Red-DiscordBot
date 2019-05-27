@@ -346,7 +346,7 @@ class Core(commands.Cog, CoreLogic):
 
         if not brief:
             if days:
-                fmt = _("{d} days, {h} hours, {m} minutes, and {s} seconds")
+                fmt = _("{d} day{plural}, {h} hours, {m} minutes, and {s} seconds")
             else:
                 fmt = _("{h} hours, {m} minutes, and {s} seconds")
         else:
@@ -354,7 +354,7 @@ class Core(commands.Cog, CoreLogic):
             if days:
                 fmt = _("{d}d ") + fmt
 
-        return fmt.format(d=days, h=hours, m=minutes, s=seconds)
+        return fmt.format(d=days, plural="s" if days > 1 else "", h=hours, m=minutes, s=seconds)
 
     @commands.group()
     async def embedset(self, ctx: commands.Context):
