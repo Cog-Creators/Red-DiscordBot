@@ -696,5 +696,5 @@ DROP EVENT TRIGGER IF EXISTS red_drop_schema_trigger;
 CREATE EVENT TRIGGER red_drop_schema_trigger
   ON SQL_DROP
   WHEN TAG IN ('DROP SCHEMA')
-  EXECUTE FUNCTION red_config.drop_schema_trigger_function()
+  EXECUTE PROCEDURE red_config.drop_schema_trigger_function()
 ;
