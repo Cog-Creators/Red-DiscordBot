@@ -101,7 +101,7 @@ CREATE OR REPLACE FUNCTION
    * Get config data.
    *
    * - When `pkeys` is a full primary key, all or part of a document
-   * will be retunrned.
+   * will be returned.
    * - When `pkeys` is not a full primary key, documents will be
    * aggregated together into a single JSONB object, with primary keys
    * as keys mapping to the documents.
