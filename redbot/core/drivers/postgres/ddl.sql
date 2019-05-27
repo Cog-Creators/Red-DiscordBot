@@ -20,20 +20,15 @@ CREATE OR REPLACE FUNCTION
   AS $$
   DECLARE
     schemaname CONSTANT text := concat_ws('.', cog_name, cog_id);
-    schema_exists boolean := (
-      SELECT EXISTS (
-        SELECT 1
-        FROM red_config.red_cogs t
-        WHERE t.cog_name = $1 AND t.cog_id = $2
-      )
-    );
-    table_exists boolean := schema_exists AND (
-      SELECT EXISTS (
-        SELECT 1
-        FROM information_schema.tables
-        WHERE table_schema = schemaname AND table_name = config_category
-      )
-    );
+    schema_exists CONSTANT boolean := exists(
+      SELECT 1
+      FROM red_config.red_cogs t
+      WHERE t.cog_name = $1 AND t.cog_id = $2);
+    table_exists CONSTANT boolean := schema_exists AND exists(
+      SELECT 1
+      FROM information_schema.tables
+      WHERE table_schema = schemaname AND table_name = config_category);
+
   BEGIN
     IF NOT schema_exists THEN
       PERFORM red_config.create_schema(cog_name, cog_id);
@@ -52,11 +47,13 @@ CREATE OR REPLACE FUNCTION
   AS $$
   BEGIN
     schemaname := concat_ws('.', new_cog_name, new_cog_id);
+
     EXECUTE format('CREATE SCHEMA IF NOT EXISTS %I', schemaname);
+
     INSERT INTO red_config.red_cogs AS t VALUES(new_cog_name, new_cog_id, schemaname)
-    ON CONFLICT(cog_name, cog_id) DO UPDATE SET
-        schemaname = excluded.schemaname
-    ;
+    ON CONFLICT(cog_name, cog_id) DO UPDATE
+    SET
+      schemaname = excluded.schemaname;
   END;
 $$;
 
@@ -67,16 +64,14 @@ CREATE OR REPLACE FUNCTION
     LANGUAGE 'plpgsql'
   AS $$
   DECLARE
-    pkey_columns text;
-    pkey_column_definitions text;
-    constraintname text := config_category||'_pkey';
+    constraintname CONSTANT text := config_category||'_pkey';
+    pkey_columns CONSTANT text := red_utils.gen_pkey_columns(1, pkey_len);
+    pkey_column_definitions CONSTANT text := red_utils.gen_pkey_column_definitions(
+      1, pkey_len, pkey_type);
+
   BEGIN
-    SELECT red_utils.gen_pkey_column_definitions(1, pkey_len, pkey_type)
-    INTO pkey_column_definitions;
-
-    SELECT red_utils.gen_pkey_columns(1, pkey_len) INTO pkey_columns;
-
-    EXECUTE format($query$
+    EXECUTE format(
+      $query$
       CREATE TABLE IF NOT EXISTS %I.%I (
         %s,
         json_data jsonb DEFAULT '{}' NOT NULL,
@@ -87,8 +82,7 @@ CREATE OR REPLACE FUNCTION
       config_category,
       pkey_column_definitions,
       constraintname,
-      pkey_columns
-    );
+      pkey_columns);
   END;
 $$;
 
@@ -107,52 +101,46 @@ CREATE OR REPLACE FUNCTION
   AS $$
   DECLARE
     schemaname CONSTANT text := concat_ws('.', cog_name, cog_id);
-    whereclause text;
     num_pkeys CONSTANT integer := coalesce(array_length(pkeys, 1), 0);
     num_missing_pkeys CONSTANT integer :=  pkey_len - num_pkeys;
-    missing_pkey_columns text;
-  BEGIN
-    SELECT red_utils.gen_whereclause(num_pkeys) INTO whereclause;
+    whereclause CONSTANT text := red_utils.gen_whereclause(num_pkeys);
 
+    missing_pkey_columns text;
+
+  BEGIN
     IF num_missing_pkeys <= 0 THEN
       -- No missing primary keys: we're getting all or part of a document.
-      EXECUTE
-        format(
-          'SELECT json_data #> $2 FROM %I.%I WHERE %s',
-          schemaname,
-          config_category,
-          whereclause
-        )
-        INTO result
-        USING pkeys, identifiers;
+      EXECUTE format(
+        'SELECT json_data #> $2 FROM %I.%I WHERE %s',
+        schemaname,
+        config_category,
+        whereclause)
+      INTO result
+      USING pkeys, identifiers;
 
     ELSIF num_missing_pkeys = 1 THEN
       -- 1 missing primary key: we can use the built-in jsonb_object_agg() aggregate function.
-      EXECUTE
-        format(
-          'SELECT jsonb_object_agg(%I::text, json_data) FROM %I.%I WHERE %s',
-          'primary_key_'||pkey_len,
-          schemaname,
-          config_category,
-          whereclause
-        )
-        INTO result
-        USING pkeys;
+      EXECUTE format(
+        'SELECT jsonb_object_agg(%I::text, json_data) FROM %I.%I WHERE %s',
+        'primary_key_'||pkey_len,
+        schemaname,
+        config_category,
+        whereclause)
+      INTO result
+      USING pkeys;
     ELSE
       -- Multiple missing primary keys: we must use our custom red_utils.jsonb_object_agg2()
       -- aggregate function.
-      SELECT red_utils.gen_pkey_columns_casted(num_pkeys + 1, pkey_len) INTO missing_pkey_columns;
+      missing_pkey_columns := red_utils.gen_pkey_columns_casted(num_pkeys + 1, pkey_len);
 
-      EXECUTE
-        format(
-          'SELECT red_utils.jsonb_object_agg2(json_data, %s) FROM %I.%I WHERE %s',
-          missing_pkey_columns,
-          schemaname,
-          config_category,
-          whereclause
-        )
-        INTO result
-        USING pkeys;
+      EXECUTE format(
+        'SELECT red_utils.jsonb_object_agg2(json_data, %s) FROM %I.%I WHERE %s',
+        missing_pkey_columns,
+        schemaname,
+        config_category,
+        whereclause)
+      INTO result
+      USING pkeys;
     END IF;
   END;
 $$;
@@ -174,22 +162,25 @@ CREATE OR REPLACE FUNCTION
   AS $$
   DECLARE
     schemaname CONSTANT text := concat_ws('.', cog_name, cog_id);
-    pkey_placeholders text;
-    new_document jsonb := red_utils.jsonb_set2('{}', new_value, VARIADIC identifiers);
-    constraintname text := config_category||'_pkey';
+    constraintname CONSTANT text := config_category||'_pkey';
     num_pkeys CONSTANT integer := coalesce(array_length(pkeys, 1), 0);
     num_missing_pkeys CONSTANT integer := pkey_len - num_pkeys;
+    pkey_placeholders CONSTANT text := red_utils.gen_pkey_placeholders(num_pkeys, pkey_type);
+
+    new_document jsonb;
     pkey_column_definitions text;
     whereclause text;
     missing_pkey_columns text;
+
   BEGIN
     PERFORM red_config.maybe_create_table(cog_name, cog_id, config_category, pkey_len, pkey_type);
 
-    SELECT red_utils.gen_pkey_placeholders(num_pkeys, pkey_type) INTO pkey_placeholders;
-
     IF num_missing_pkeys = 0 THEN
       -- Setting all or part of a document
-      EXECUTE format($query$
+      new_document := red_utils.jsonb_set2('{}', new_value, VARIADIC identifiers);
+
+      EXECUTE format(
+        $query$
         INSERT INTO %I.%I AS t VALUES (%s, $2)
         ON CONFLICT ON CONSTRAINT %I DO UPDATE
         SET
@@ -198,44 +189,37 @@ CREATE OR REPLACE FUNCTION
         schemaname,
         config_category,
         pkey_placeholders,
-        constraintname
-        ) USING pkeys, new_document, new_value, identifiers;
+        constraintname)
+      USING pkeys, new_document, new_value, identifiers;
 
     ELSE
       -- Setting multiple documents
-      SELECT red_utils.gen_whereclause(num_pkeys) INTO whereclause;
+      whereclause := red_utils.gen_whereclause(num_pkeys);
+      missing_pkey_columns := red_utils.gen_pkey_columns_casted(
+        num_pkeys + 1, pkey_len, pkey_type);
+      pkey_column_definitions := red_utils.gen_pkey_column_definitions(num_pkeys + 1, pkey_len);
 
       -- Delete all documents which we're setting first, since we don't know whether they'll be
       -- replaced by the subsequent INSERT.
-      EXECUTE format($query$
-          DELETE FROM %I.%I WHERE %s
-        $query$,
-        schemaname,
-        config_category,
-        whereclause
-      ) USING pkeys;
-
-      SELECT red_utils.gen_pkey_columns_casted(num_pkeys + 1, pkey_len, pkey_type)
-      INTO missing_pkey_columns;
-
-      SELECT red_utils.gen_pkey_column_definitions(start := num_pkeys + 1, stop := pkey_len)
-      INTO pkey_column_definitions;
+      EXECUTE format('DELETE FROM %I.%I WHERE %s', schemaname, config_category, whereclause)
+      USING pkeys;
 
       -- Insert all new documents
-      EXECUTE format($query$
-          INSERT INTO %I.%I AS t
-            SELECT %s, json_data
-            FROM red_utils.generate_rows_from_object($2, $3) AS f(%s, json_data jsonb)
-          ON CONFLICT ON CONSTRAINT %I DO UPDATE
-          SET
-            json_data = excluded.json_data
+      EXECUTE format(
+        $query$
+        INSERT INTO %I.%I AS t
+          SELECT %s, json_data
+          FROM red_utils.generate_rows_from_object($2, $3) AS f(%s, json_data jsonb)
+        ON CONFLICT ON CONSTRAINT %I DO UPDATE
+        SET
+          json_data = excluded.json_data
         $query$,
         schemaname,
         config_category,
         concat_ws(', ', pkey_placeholders, missing_pkey_columns),
         pkey_column_definitions,
-        constraintname
-      ) USING pkeys, new_value, num_missing_pkeys;
+        constraintname)
+      USING pkeys, new_value, num_missing_pkeys;
     END IF;
   END;
 $$;
@@ -256,49 +240,40 @@ CREATE OR REPLACE FUNCTION
     schemaname CONSTANT text := concat_ws('.', cog_name, cog_id);
     num_pkeys CONSTANT integer := coalesce(array_length(pkeys, 1), 0);
     num_identifiers CONSTANT integer := coalesce(array_length(identifiers, 1), 0);
-    whereclause text;
-  BEGIN
-    SELECT red_utils.gen_whereclause(num_pkeys) INTO whereclause;
 
+    whereclause text;
+
+  BEGIN
     IF num_identifiers > 0 THEN
       -- Popping a key from a document or nested document.
-      EXECUTE format($query$
-          UPDATE %I.%I AS t
-          SET
-            json_data = t.json_data #- $2
-          WHERE %s
+      whereclause := red_utils.gen_whereclause(num_pkeys);
+
+      EXECUTE format(
+        $query$
+        UPDATE %I.%I AS t
+        SET
+          json_data = t.json_data #- $2
+        WHERE %s
         $query$,
         schemaname,
         config_category,
-        whereclause
-      ) USING pkeys, identifiers;
+        whereclause)
+      USING pkeys, identifiers;
 
     ELSIF num_pkeys > 0 THEN
       -- Deleting one or many documents
-      EXECUTE format($query$
-          DELETE FROM %I.%I WHERE %s
-        $query$,
-        schemaname,
-        config_category,
-        whereclause
-      ) USING pkeys;
+      whereclause := red_utils.gen_whereclause(num_pkeys);
+
+      EXECUTE format('DELETE FROM %I.%I WHERE %s', schemaname, config_category, whereclause)
+      USING pkeys;
 
     ELSIF config_category != '' THEN
       -- Deleting an entire category
-      EXECUTE format($query$
-          DROP TABLE %I.%I CASCADE
-        $query$,
-        schemaname,
-        config_category
-      );
+      EXECUTE format('DROP TABLE %I.%I CASCADE', schemaname, config_category);
 
     ELSE
       -- Deleting an entire cog's data
-      EXECUTE format($query$
-          DROP SCHEMA %I CASCADE
-        $query$,
-        schemaname
-      );
+      EXECUTE format('DROP SCHEMA %I CASCADE', schemaname);
     END IF;
   END;
 $$;
@@ -321,12 +296,14 @@ CREATE OR REPLACE FUNCTION
   AS $$
   DECLARE
     schemaname CONSTANT text := concat_ws('.', cog_name, cog_id);
-    pkey_placeholders text;
     num_identifiers CONSTANT integer := coalesce(array_length(identifiers, 1), 0);
+    whereclause CONSTANT text := red_utils.gen_whereclause(pkey_len);
+
+    new_document jsonb;
     existing_document jsonb;
     existing_value jsonb;
-    new_document jsonb;
-    whereclause text;
+    pkey_placeholders text;
+
   BEGIN
     IF num_identifiers = 0 THEN
       -- Without identifiers, there's no chance we're actually incrementing a number
@@ -336,27 +313,26 @@ CREATE OR REPLACE FUNCTION
 
     PERFORM red_config.maybe_create_table(cog_name, cog_id, config_category, pkey_len, pkey_type);
 
-    SELECT red_utils.gen_whereclause(pkey_len) INTO whereclause;
-
     -- Look for the existing document
     EXECUTE format(
         'SELECT json_data FROM %I.%I WHERE %s',
         schemaname,
         config_category,
-        whereclause
-      ) INTO existing_document USING pkeys;
+        whereclause)
+    INTO existing_document USING pkeys;
 
     IF existing_document IS NULL THEN
       -- We need to insert a new document
       new_document := red_utils.jsonb_set2('{}', default_value + amount, VARIADIC identifiers);
-      SELECT red_utils.gen_pkey_placeholders(pkey_len, pkey_type) INTO pkey_placeholders;
+      pkey_placeholders := red_utils.gen_pkey_placeholders(pkey_len, pkey_type);
 
       EXECUTE format(
         'INSERT INTO %I.%I VALUES(%s, $2)',
         schemaname,
         config_category,
-        pkey_placeholders
-        ) USING pkeys, new_document;
+        pkey_placeholders)
+      USING pkeys, new_document;
+
       result := default_value + amount;
 
     ELSE
@@ -377,8 +353,8 @@ CREATE OR REPLACE FUNCTION
         'UPDATE %I.%I SET json_data = $2 WHERE %s',
         schemaname,
         config_category,
-        whereclause
-        ) USING pkeys, new_document;
+        whereclause)
+      USING pkeys, new_document;
     END IF;
   END;
 $$;
@@ -409,12 +385,14 @@ CREATE OR REPLACE FUNCTION
   AS $$
   DECLARE
     schemaname CONSTANT text := concat_ws('.', cog_name, cog_id);
-    pkey_placeholders text;
     num_identifiers CONSTANT integer := coalesce(array_length(identifiers, 1), 0);
+    whereclause CONSTANT text := red_utils.gen_whereclause(pkey_len);
+
+    new_document jsonb;
     existing_document jsonb;
     existing_value jsonb;
-    new_document jsonb;
-    whereclause text;
+    pkey_placeholders text;
+
   BEGIN
     IF num_identifiers = 0 THEN
       -- Without identifiers, there's no chance we're actually toggling a boolean
@@ -424,40 +402,39 @@ CREATE OR REPLACE FUNCTION
 
     PERFORM red_config.maybe_create_table(cog_name, cog_id, config_category, pkey_len, pkey_type);
 
-    SELECT red_utils.gen_whereclause(pkey_len) INTO whereclause;
-
     -- Look for the existing document
     EXECUTE format(
-        'SELECT json_data FROM %I.%I WHERE %s',
-        schemaname,
-        config_category,
-        whereclause
-      ) INTO existing_document USING pkeys;
+      'SELECT json_data FROM %I.%I WHERE %s',
+      schemaname,
+      config_category,
+      whereclause)
+    INTO existing_document USING pkeys;
 
     IF existing_document IS NULL THEN
       -- We need to insert a new document
       new_document := red_utils.jsonb_set2('{}', NOT default_value, VARIADIC identifiers);
-      SELECT red_utils.gen_pkey_placeholders(pkey_len, pkey_type) INTO pkey_placeholders;
+      pkey_placeholders := red_utils.gen_pkey_placeholders(pkey_len, pkey_type);
 
       EXECUTE format(
         'INSERT INTO %I.%I VALUES(%s, $2)',
         schemaname,
         config_category,
-        pkey_placeholders
-        ) USING pkeys, new_document;
-      SELECT NOT default_value INTO result;
+        pkey_placeholders)
+      USING pkeys, new_document;
+
+      result := default_value;
 
     ELSE
       -- We need to update the existing document
       existing_value := existing_document #> identifiers;
       IF existing_value IS NULL THEN
-        SELECT NOT default_value INTO result;
+        result := NOT default_value;
         new_document := red_utils.jsonb_set2(existing_document, to_jsonb(result), identifiers);
       ELSIF jsonb_typeof(existing_value) != 'boolean' THEN
         RAISE EXCEPTION 'Cannot increment non-boolean value %', existing_value
           USING ERRCODE = 'wrong_object_type';
       ELSE
-        SELECT NOT existing_value::text::boolean INTO result;
+        result := NOT existing_value::text::boolean;
         new_document := red_utils.jsonb_set2(existing_document, to_jsonb(result), identifiers);
       END IF;
 
@@ -465,8 +442,8 @@ CREATE OR REPLACE FUNCTION
         'UPDATE %I.%I SET json_data = $2 WHERE %s',
         schemaname,
         config_category,
-        whereclause
-        ) USING pkeys, new_document;
+        whereclause)
+      USING pkeys, new_document;
     END IF;
   END;
 $$;
@@ -500,29 +477,30 @@ CREATE OR REPLACE FUNCTION
     LANGUAGE 'plpgsql'
   AS $$
   DECLARE
-    cur_value_type text;
-    idx integer := 1;
     num_identifiers CONSTANT integer := coalesce(array_length(identifiers, 1), 0);
+
+    cur_value_type text;
+    idx integer;
+
   BEGIN
     IF num_identifiers = 0 THEN
       RETURN new_value;
     END IF;
-    LOOP
-      IF idx = num_identifiers THEN
-        RETURN jsonb_set(target, identifiers, new_value);
-      ELSE
-        cur_value_type := jsonb_typeof(target #> identifiers[:idx]);
-        IF cur_value_type IS NULL THEN
-          -- Parent key didn't exist in JSON before - insert new object
-          target := jsonb_set(target, identifiers[:idx], '{}'::jsonb);
-        ELSEIF cur_value_type != 'object' THEN
-          -- We can't set the sub-field of a null, int, float, array etc.
-          RAISE EXCEPTION 'Cannot set sub-field of %', cur_value_type
-            USING ERRCODE = 'error_in_assignment';
-        END IF;
+
+    FOR idx IN SELECT generate_series(1, num_identifiers - 1) LOOP
+      cur_value_type := jsonb_typeof(target #> identifiers[:idx]);
+      IF cur_value_type IS NULL THEN
+        -- Parent key didn't exist in JSON before - insert new object
+        target := jsonb_set(target, identifiers[:idx], '{}'::jsonb);
+
+      ELSIF cur_value_type != 'object' THEN
+        -- We can't set the sub-field of a null, int, float, array etc.
+        RAISE EXCEPTION 'Cannot set sub-field of "%s"', cur_value_type
+        USING ERRCODE = 'error_in_assignment';
       END IF;
-      idx := idx + 1;
     END LOOP;
+
+    RETURN jsonb_set(target, identifiers, new_value);
   END;
 $$;
 
@@ -547,17 +525,18 @@ CREATE OR REPLACE FUNCTION
         FROM jsonb_each(object);
     ELSE
       -- We need to return (key, key, ..., value) pairs: recurse into inner JSONB objects
-      SELECT red_utils.gen_pkey_column_definitions(start := 2, stop := num_missing_pkeys)
-      INTO column_definitions;
+      column_definitions := red_utils.gen_pkey_column_definitions(2, num_missing_pkeys);
 
       FOR pair IN SELECT * FROM jsonb_each(object) LOOP
-        RETURN QUERY EXECUTE format($query$
+        RETURN QUERY
+          EXECUTE format(
+            $query$
             SELECT $1 AS key_1, *
             FROM red_utils.generate_rows_from_object($2, $3)
               AS f(%s, json_data jsonb)
-          $query$,
-          column_definitions
-          ) USING pair.key, pair.value, num_missing_pkeys - 1;
+            $query$,
+            column_definitions)
+          USING pair.key, pair.value, num_missing_pkeys - 1;
       END LOOP;
     END IF;
     RETURN;
