@@ -8,6 +8,9 @@ CREATE SCHEMA IF NOT EXISTS red_config;
 CREATE SCHEMA IF NOT EXISTS red_utils;
 
 CREATE OR REPLACE FUNCTION
+  /*
+   * Create the config schema and/or table if they do not exist yet.
+   */
   red_config.maybe_create_table(
     cog_name text,
     cog_id text,
@@ -41,6 +44,9 @@ $$;
 
 
 CREATE OR REPLACE FUNCTION
+  /*
+   * Create the config schema for the given cog.
+   */
   red_config.create_schema(new_cog_name text, new_cog_id text, OUT schemaname text)
     RETURNS text
     LANGUAGE 'plpgsql'
@@ -59,6 +65,9 @@ $$;
 
 
 CREATE OR REPLACE FUNCTION
+  /*
+   * Create the config table for the given category.
+   */
   red_config.create_table(schemaname text, config_category text, pkey_len integer, pkey_type text)
     RETURNS void
     LANGUAGE 'plpgsql'
@@ -88,6 +97,15 @@ $$;
 
 
 CREATE OR REPLACE FUNCTION
+  /*
+   * Get config data.
+   *
+   * - When `pkeys` is a full primary key, all or part of a document
+   * will be retunrned.
+   * - When `pkeys` is not a full primary key, documents will be
+   * aggregated together into a single JSONB object, with primary keys
+   * as keys mapping to the documents.
+   */
   red_config.get(
     cog_name text,
     cog_id text,
@@ -149,6 +167,18 @@ $$;
 
 
 CREATE OR REPLACE FUNCTION
+  /*
+   * Set config data.
+   *
+   * - When `pkeys` is a full primary key, all or part of a document
+   * will be set.
+   * - When `pkeys` is not a full set, multiple documents will be
+   * replaced or removed - `new_value` must be a JSONB object mapping
+   * primary keys to the new documents.
+   *
+   * Raises `error_in_assignment` error when trying to set a sub-key
+   * of a non-document type.
+   */
   red_config.set(
     cog_name text,
     cog_id text,
@@ -228,6 +258,19 @@ $$;
 
 
 CREATE OR REPLACE FUNCTION
+  /*
+   * Clear config data.
+   *
+   * - When `identifiers` is not empty, this will clear a key from a
+   * document.
+   * - When `identifiers` is empty and `pkeys` is not empty, it will
+   * delete one or more documents.
+   * - When `pkeys` is empty, it will drop the whole table.
+   * - When `config_category` is NULL or an empty string, it will drop
+   * the whole schema.
+   *
+   * Has no effect when the document or key does not exist.
+   */
   red_config.clear(
     cog_name text,
     cog_id text,
@@ -269,7 +312,7 @@ CREATE OR REPLACE FUNCTION
       EXECUTE format('DELETE FROM %I.%I WHERE %s', schemaname, config_category, whereclause)
       USING pkeys;
 
-    ELSIF config_category != '' THEN
+    ELSIF config_category IS NOT NULL AND config_category != '' THEN
       -- Deleting an entire category
       EXECUTE format('DROP TABLE %I.%I CASCADE', schemaname, config_category);
 
@@ -282,6 +325,15 @@ $$;
 
 
 CREATE OR REPLACE FUNCTION
+  /*
+   * Increment a number within a document.
+   *
+   * If the value doesn't already exist, it is inserted as
+   * `default_value + amount`.
+   *
+   * Raises 'wrong_object_type' error when trying to increment a
+   * non-numeric value.
+   */
   red_config.inc(
     cog_name text,
     cog_id text,
@@ -364,7 +416,7 @@ $$;
 
 CREATE OR REPLACE FUNCTION
   /*
-   * Toggle a boolean within a JSONB object.
+   * Toggle a boolean within a document.
    *
    * If the value doesn't already exist, it is inserted as `NOT
    * default_value`.
@@ -472,7 +524,11 @@ $$;
 
 CREATE OR REPLACE FUNCTION
   /*
-   * Like `jsonb_set` but will insert new objects where one is missing along the path.
+   * Like `jsonb_set` but will insert new objects where one is missing
+   * along the path.
+   *
+   * Raises `error_in_assignment` error when trying to set a sub-key
+   * of a non-document type.
    */
   red_utils.jsonb_set2(target jsonb, new_value jsonb, VARIADIC identifiers text[])
     RETURNS jsonb
@@ -593,7 +649,7 @@ $$;
 
 CREATE OR REPLACE FUNCTION
   /*
-   * Generate a column definition list.
+   * Generate a comma-separated list of primary key column names.
    */
   red_utils.gen_pkey_columns(start integer, stop integer)
     RETURNS text
@@ -610,7 +666,8 @@ $$;
 
 CREATE OR REPLACE FUNCTION
   /*
-   * Generate a column definition list.
+   * Generate a comma-separated list of primary key column names casted
+   * to the given type.
    */
   red_utils.gen_pkey_columns_casted(start integer, stop integer, pkey_type text DEFAULT 'text')
     RETURNS text
@@ -628,7 +685,7 @@ $$;
 
 CREATE OR REPLACE FUNCTION
   /*
-   * Generate a column definition list.
+   * Generate a primary key column definition list.
    */
   red_utils.gen_pkey_column_definitions(
     start integer, stop integer, column_type text DEFAULT 'text'
@@ -652,7 +709,8 @@ CREATE AGGREGATE
    * Like `jsonb_object_agg` but aggregates more than two columns into a
    * single JSONB object.
    *
-   * If possible, use `jsonb_object_agg` instead for performance reasons.
+   * If possible, use `jsonb_object_agg` instead for performance
+   * reasons.
    */
   red_utils.jsonb_object_agg2(json_data jsonb, VARIADIC primary_keys text[]) (
     SFUNC = red_utils.jsonb_set2,
@@ -678,7 +736,8 @@ CREATE TABLE IF NOT EXISTS
 
 CREATE OR REPLACE FUNCTION
   /*
-   * Trigger for removing cog's entry from `red_config.red_cogs` table when schema is dropped.
+   * Trigger for removing cog's entry from `red_config.red_cogs` table
+   * when schema is dropped.
    */
   red_config.drop_schema_trigger_function()
     RETURNS event_trigger
