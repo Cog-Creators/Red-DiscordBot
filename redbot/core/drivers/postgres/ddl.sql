@@ -377,7 +377,8 @@ CREATE OR REPLACE FUNCTION
 
     IF existing_document IS NULL THEN
       -- We need to insert a new document
-      new_document := red_utils.jsonb_set2('{}', default_value + amount, VARIADIC identifiers);
+      result := default_value + amount;
+      new_document := red_utils.jsonb_set2('{}', result, VARIADIC identifiers);
       pkey_placeholders := red_utils.gen_pkey_placeholders(pkey_len, pkey_type);
 
       EXECUTE format(
@@ -387,20 +388,21 @@ CREATE OR REPLACE FUNCTION
         pkey_placeholders)
       USING pkeys, new_document;
 
-      result := default_value + amount;
-
     ELSE
       -- We need to update the existing document
       existing_value := existing_document #> identifiers;
+
       IF existing_value IS NULL THEN
         result := default_value + amount;
         new_document := red_utils.jsonb_set2(existing_document, to_jsonb(result), identifiers);
-      ELSIF jsonb_typeof(existing_value) != 'number' THEN
-        RAISE EXCEPTION 'Cannot increment non-numeric value %', existing_value
-          USING ERRCODE = 'wrong_object_type';
-      ELSE
+
+      ELSIF jsonb_typeof(existing_value) = 'number' THEN
         result := existing_value::text::numeric + amount;
         new_document := red_utils.jsonb_set2(existing_document, to_jsonb(result), identifiers);
+
+      ELSE
+        RAISE EXCEPTION 'Cannot increment non-numeric value %', existing_value
+        USING ERRCODE = 'wrong_object_type';
       END IF;
 
       EXECUTE format(
@@ -466,7 +468,8 @@ CREATE OR REPLACE FUNCTION
 
     IF existing_document IS NULL THEN
       -- We need to insert a new document
-      new_document := red_utils.jsonb_set2('{}', NOT default_value, VARIADIC identifiers);
+      result := NOT default_value;
+      new_document := red_utils.jsonb_set2('{}', result, VARIADIC identifiers);
       pkey_placeholders := red_utils.gen_pkey_placeholders(pkey_len, pkey_type);
 
       EXECUTE format(
@@ -476,20 +479,21 @@ CREATE OR REPLACE FUNCTION
         pkey_placeholders)
       USING pkeys, new_document;
 
-      result := default_value;
-
     ELSE
       -- We need to update the existing document
       existing_value := existing_document #> identifiers;
+
       IF existing_value IS NULL THEN
         result := NOT default_value;
         new_document := red_utils.jsonb_set2(existing_document, to_jsonb(result), identifiers);
-      ELSIF jsonb_typeof(existing_value) != 'boolean' THEN
-        RAISE EXCEPTION 'Cannot increment non-boolean value %', existing_value
-          USING ERRCODE = 'wrong_object_type';
-      ELSE
+
+      ELSIF jsonb_typeof(existing_value) = 'boolean' THEN
         result := NOT existing_value::text::boolean;
         new_document := red_utils.jsonb_set2(existing_document, to_jsonb(result), identifiers);
+
+      ELSE
+        RAISE EXCEPTION 'Cannot increment non-boolean value %', existing_value
+        USING ERRCODE = 'wrong_object_type';
       END IF;
 
       EXECUTE format(
