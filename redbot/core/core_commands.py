@@ -33,7 +33,7 @@ from redbot.core import (
     i18n,
 )
 from .utils.predicates import MessagePredicate
-from .utils.chat_formatting import pagify, box, inline
+from .utils.chat_formatting import humanize_timedelta, pagify, box, inline
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -333,28 +333,12 @@ class Core(commands.Cog, CoreLogic):
     async def uptime(self, ctx: commands.Context):
         """Shows Red's uptime"""
         since = ctx.bot.uptime.strftime("%Y-%m-%d %H:%M:%S")
-        passed = self.get_bot_uptime()
-        await ctx.send(_("Been up for: **{}** (since {} UTC)").format(passed, since))
-
-    def get_bot_uptime(self, *, brief: bool = False):
-        # Courtesy of Danny
-        now = datetime.datetime.utcnow()
-        delta = now - self.bot.uptime
-        hours, remainder = divmod(int(delta.total_seconds()), 3600)
-        minutes, seconds = divmod(remainder, 60)
-        days, hours = divmod(hours, 24)
-
-        if not brief:
-            if days:
-                fmt = _("{d} day{plural}, {h} hours, {m} minutes, and {s} seconds")
-            else:
-                fmt = _("{h} hours, {m} minutes, and {s} seconds")
-        else:
-            fmt = _("{h}h {m}m {s}s")
-            if days:
-                fmt = _("{d}d ") + fmt
-
-        return fmt.format(d=days, plural="s" if days > 1 else "", h=hours, m=minutes, s=seconds)
+        delta = datetime.datetime.utcnow() - self.bot.uptime
+        await ctx.send(
+            _("Been up for: **{}** (since {} UTC)").format(
+                humanize_timedelta(timedelta=delta), since
+            )
+        )
 
     @commands.group()
     async def embedset(self, ctx: commands.Context):
