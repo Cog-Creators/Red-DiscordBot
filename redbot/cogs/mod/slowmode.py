@@ -24,7 +24,7 @@ class Slowmode(MixinMeta):
         Use without parameters or set to 0 to disable.
         """
         if interval:
-            match = re.match(r"(?i)(\d{1,5})([a-zA-Z])?", interval)
+            match = re.match(r"(?i)(\d{1,5})([a-zA-Z])?$", interval)
             if match:
                 interval = int(match.group(1))
                 if match.group(2) is not None:
