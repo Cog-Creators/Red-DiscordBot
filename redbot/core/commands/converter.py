@@ -269,7 +269,6 @@ def get_timedelta_converter(
     type
         The converter class, which will be a subclass of `TimedeltaConverter`
     """
-    
 
     class PartialMeta(type(TimedeltaConverter)):
         __call__ = functools.partialmethod(
