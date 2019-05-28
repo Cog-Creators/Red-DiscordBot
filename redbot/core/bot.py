@@ -20,6 +20,8 @@ from .utils import common_filters
 
 CUSTOM_GROUPS = "CUSTOM_GROUPS"
 
+log = logging.getLogger("redbot")
+
 
 def _is_submodule(parent, child):
     return parent == child or child.startswith(parent + ".")
@@ -60,6 +62,8 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             disabled_commands=[],
             disabled_command_msg="That command is disabled.",
             api_tokens={},
+            extra_owner_destinations=[],
+            owner_opt_out_list=[],
         )
 
         self.db.register_guild(
@@ -463,6 +467,45 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             else:
                 ctx.permission_state = commands.PermState.DENIED_BY_HOOK
                 return False
+
+    async def get_owner_notification_destinations(self) -> List[discord.abc.Messageable]:
+        """
+        Gets the users and channels to send to
+        """
+        destinations = []
+        opt_outs = await self.db.owner_opt_out_list()
+        for user_id in (self.owner_id, *self._co_owners):
+            if user_id not in opt_outs:
+                user = self.get_user(user_id)
+                if user:
+                    destinations.append(user)
+
+        channel_ids = await self.db.extra_owner_destinations()
+        for channel_id in channel_ids:
+            channel = self.get_channel(channel_id)
+            if channel:
+                destinations.append(channel)
+
+        return destinations
+
+    async def send_to_owners(self, content=None, **kwargs):
+        """
+        This sends something to all owners and their configured extra destinations.
+
+        This takes the same arguments as discord.abc.Messageable.send
+
+        This logs failing sends
+        """
+        destinations = await self.get_owner_notification_destinations()
+        sends = [d.send(content, **kwargs) for d in destinations]
+        finished = await asyncio.gather(*sends, return_exceptions=True)
+        for fin in finished:
+            try:
+                fin.result()
+            except asyncio.CancelledError:
+                pass
+            except Exception:
+                log.exception("Failed to send an owner notification")
 
 
 class Red(RedBase, discord.AutoShardedClient):
