@@ -497,15 +497,17 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
         This logs failing sends
         """
         destinations = await self.get_owner_notification_destinations()
-        sends = [d.send(content, **kwargs) for d in destinations]
-        finished = await asyncio.gather(*sends, return_exceptions=True)
-        for fin in finished:
+
+        async def wrapped_send(location, content=None, **kwargs):
             try:
-                fin.result()
-            except asyncio.CancelledError:
-                pass
-            except Exception:
-                log.exception("Failed to send an owner notification")
+                await location.send(content, **kwargs)
+            except Exception as _exc:
+                log.exception(
+                    f"I could not send an owner notification to ({location.id}){location}"
+                )
+
+        sends = [wrapped_send(d, content, **kwargs) for d in destinations]
+        await asyncio.gather(*sends)
 
 
 class Red(RedBase, discord.AutoShardedClient):
