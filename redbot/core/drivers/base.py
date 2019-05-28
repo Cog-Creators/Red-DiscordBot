@@ -5,7 +5,7 @@ from typing import Tuple, Dict, Any, Union, List, AsyncIterator, Type
 __all__ = ["BaseDriver", "IdentifierData", "ConfigCategory"]
 
 
-class ConfigCategory(enum.Enum):
+class ConfigCategory(str, enum.Enum):
     GLOBAL = "GLOBAL"
     GUILD = "GUILD"
     CHANNEL = "TEXTCHANNEL"
@@ -42,6 +42,7 @@ _CATEGORY_PKEY_COUNTS = {
 class IdentifierData:
     def __init__(
         self,
+        cog_name: str,
         uuid: str,
         category: str,
         primary_key: Tuple[str, ...],
@@ -49,12 +50,17 @@ class IdentifierData:
         primary_key_len: int,
         is_custom: bool = False,
     ):
+        self._cog_name = cog_name
         self._uuid = uuid
         self._category = category
         self._primary_key = primary_key
         self._identifiers = identifiers
         self.primary_key_len = primary_key_len
         self._is_custom = is_custom
+
+    @property
+    def cog_name(self) -> str:
+        return self._cog_name
 
     @property
     def uuid(self) -> str:
@@ -78,7 +84,7 @@ class IdentifierData:
 
     def __repr__(self) -> str:
         return (
-            f"<IdentifierData uuid={self.uuid} category={self.category} "
+            f"<IdentifierData cog_name={self.cog_name} uuid={self.uuid} category={self.category} "
             f"primary_key={self.primary_key} identifiers={self.identifiers}>"
         )
 
@@ -87,6 +93,7 @@ class IdentifierData:
             raise ValueError("Identifiers must be strings.")
 
         return IdentifierData(
+            self.cog_name,
             self.uuid,
             self.category,
             self.primary_key,
@@ -96,11 +103,7 @@ class IdentifierData:
         )
 
     def to_tuple(self) -> Tuple[str, ...]:
-        return tuple(
-            item
-            for item in (self.uuid, self.category, *self.primary_key, *self.identifiers)
-            if len(item) > 0
-        )
+        return (self.cog_name, self.uuid, self.category, *self.primary_key, *self.identifiers)
 
 
 class BaseDriver(abc.ABC):
@@ -254,7 +257,7 @@ class BaseDriver(abc.ABC):
         """
         async for cog_name, cog_id in cls.aiter_cogs():
             driver = cls(cog_name, cog_id)
-            await driver.clear(IdentifierData(cog_id, "", (), (), 0))
+            await driver.clear(IdentifierData(cog_name, cog_id, "", (), (), 0))
 
     @staticmethod
     def _split_primary_key(
@@ -290,6 +293,7 @@ class BaseDriver(abc.ABC):
         ret = []
         for c in categories:
             ident_data = IdentifierData(
+                self.cog_name,
                 self.unique_cog_identifier,
                 c,
                 (),
@@ -310,6 +314,7 @@ class BaseDriver(abc.ABC):
             splitted_pkey = self._split_primary_key(category, custom_group_data, all_data)
             for pkey, data in splitted_pkey:
                 ident_data = IdentifierData(
+                    self.cog_name,
                     self.unique_cog_identifier,
                     category,
                     pkey,

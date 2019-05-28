@@ -801,6 +801,7 @@ class Config:
     def _get_base_group(self, category: str, *primary_keys: str) -> Group:
         pkey_len, is_custom = ConfigCategory.get_pkey_info(category, self.custom_groups)
         identifier_data = IdentifierData(
+            cog_name=self.cog_name,
             uuid=self.unique_identifier,
             category=category,
             primary_key=primary_keys,
@@ -1086,7 +1087,7 @@ class Config:
         """
         if not scopes:
             # noinspection PyTypeChecker
-            identifier_data = IdentifierData(self.unique_identifier, "", (), (), 0)
+            identifier_data = IdentifierData(self.cog_name, self.unique_identifier, "", (), (), 0)
             group = Group(identifier_data, defaults={}, driver=self.driver)
         else:
             group = self._get_base_group(*scopes)

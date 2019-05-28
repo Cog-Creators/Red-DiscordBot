@@ -19,6 +19,20 @@ DDL_SCRIPT_PATH = _PKG_PATH / "ddl.sql"
 DROP_DDL_SCRIPT_PATH = _PKG_PATH / "drop_ddl.sql"
 
 
+def encode_identifier_data(
+    id_data: IdentifierData
+) -> Tuple[str, str, str, List[str], List[str], int, bool]:
+    return (
+        id_data.cog_name,
+        id_data.uuid,
+        id_data.category,
+        ["0"] if id_data.category == ConfigCategory.GLOBAL else list(id_data.primary_key),
+        list(id_data.identifiers),
+        1 if id_data.category == ConfigCategory.GLOBAL else id_data.primary_key_len,
+        id_data.is_custom,
+    )
+
+
 class PostgresDriver(BaseDriver):
 
     _pool: Optional["asyncpg.pool.Pool"] = None
@@ -74,25 +88,10 @@ class PostgresDriver(BaseDriver):
         }
 
     async def get(self, identifier_data: IdentifierData):
-        pkeys, pkey_type, pkey_len = self._get_pkey_info(identifier_data)
         try:
             result = await self._execute(
-                f"""
-                SELECT red_config.get(
-                  cog_name := $1,
-                  cog_id := $2,
-                  config_category := $3,
-                  pkey_len := $4,
-                  pkeys := $5::{pkey_type}[],
-                  identifiers := $6
-                )
-                """,
-                self.cog_name,
-                self.unique_cog_identifier,
-                identifier_data.category,
-                pkey_len,
-                pkeys,
-                list(identifier_data.identifiers),
+                "SELECT red_config.get($1)",
+                encode_identifier_data(identifier_data),
                 method=self._pool.fetchval,
             )
         except asyncpg.UndefinedTableError:
@@ -105,51 +104,20 @@ class PostgresDriver(BaseDriver):
         return json.loads(result)
 
     async def set(self, identifier_data: IdentifierData, value=None):
-        pkeys, pkey_type, pkey_len = self._get_pkey_info(identifier_data)
         try:
             await self._execute(
-                f"""
-                SELECT red_config.set(
-                  cog_name := $1,
-                  cog_id := $2,
-                  config_category := $3,
-                  new_value := $4,
-                  pkey_len := $5,
-                  pkey_type := $6,
-                  pkeys := $7::{pkey_type}[],
-                  identifiers := $8
-                )
-                """,
-                self.cog_name,
-                self.unique_cog_identifier,
-                identifier_data.category,
+                "SELECT red_config.set($1, $2::jsonb)",
+                encode_identifier_data(identifier_data),
                 json.dumps(value),
-                pkey_len,
-                pkey_type,
-                pkeys,
-                list(identifier_data.identifiers),
             )
         except asyncpg.ErrorInAssignmentError:
             raise errors.CannotSetSubfield
 
     async def clear(self, identifier_data: IdentifierData):
-        pkeys, pkey_type, pkey_len = self._get_pkey_info(identifier_data)
         try:
             await self._execute(
-                f"""
-                SELECT red_config.clear(
-                  cog_name := $1,
-                  cog_id := $2,
-                  config_category := $3,
-                  pkeys := $4::{pkey_type}[],
-                  identifiers := $5
-                )
-                """,
-                self.cog_name,
-                self.unique_cog_identifier,
-                identifier_data.category,
-                pkeys,
-                list(identifier_data.identifiers),
+                "SELECT red_config.clear($1)",
+                encode_identifier_data(identifier_data),
             )
         except asyncpg.UndefinedTableError:
             pass
@@ -157,60 +125,23 @@ class PostgresDriver(BaseDriver):
     async def inc(
         self, identifier_data: IdentifierData, value: Union[int, float], default: Union[int, float]
     ) -> Union[int, float]:
-        pkeys, pkey_type, pkey_len = self._get_pkey_info(identifier_data)
         try:
             return await self._execute(
-                f"""
-                SELECT red_config.inc(
-                  cog_name := $1,
-                  cog_id := $2,
-                  config_category := $3,
-                  amount := $4,
-                  default_value := $5,
-                  pkey_len := $6,
-                  pkey_type := $7,
-                  pkeys := $8::{pkey_type}[],
-                  identifiers := $9
-                )
-                """,
-                self.cog_name,
-                self.unique_cog_identifier,
-                identifier_data.category,
+                f"SELECT red_config.inc($1, $2, $3)",
+                encode_identifier_data(identifier_data),
                 value,
                 default,
-                pkey_len,
-                pkey_type,
-                pkeys,
-                list(identifier_data.identifiers),
                 method=self._pool.fetchval,
             )
         except asyncpg.WrongObjectTypeError as exc:
             raise errors.StoredTypeError(*exc.args)
 
     async def toggle(self, identifier_data: IdentifierData, default: bool) -> bool:
-        pkeys, pkey_type, pkey_len = self._get_pkey_info(identifier_data)
         try:
             return await self._execute(
-                f"""
-                SELECT red_config.inc(
-                  cog_name := $1,
-                  cog_id := $2,
-                  config_category := $3,
-                  default_value := $4,
-                  pkey_len := $5,
-                  pkey_type := $6,
-                  pkeys := $7::{pkey_type}[],
-                  identifiers := $8
-                )
-                """,
-                self.cog_name,
-                self.unique_cog_identifier,
-                identifier_data.category,
+                "SELECT red_config.inc($1, $2)",
+                encode_identifier_data(identifier_data),
                 default,
-                pkey_len,
-                pkey_type,
-                pkeys,
-                list(identifier_data.identifiers),
                 method=self._pool.fetchval,
             )
         except asyncpg.WrongObjectTypeError as exc:
@@ -274,16 +205,3 @@ class PostgresDriver(BaseDriver):
         if args:
             log.invisible("Args: %s", args)
         return await method(query, *args)
-
-    @staticmethod
-    def _get_pkey_info(identifier_data: IdentifierData) -> Tuple[List[Union[int, str]], str, int]:
-        if identifier_data.category == ConfigCategory.GLOBAL.value:
-            return [0], "bigint", 1
-        elif identifier_data.is_custom:
-            return list(identifier_data.primary_key), "text", identifier_data.primary_key_len
-        else:
-            return (
-                list(map(int, identifier_data.primary_key)),
-                "bigint",
-                identifier_data.primary_key_len,
-            )

@@ -124,14 +124,14 @@ class JsonDriver(BaseDriver):
 
     async def get(self, identifier_data: IdentifierData):
         partial = self.data
-        full_identifiers = identifier_data.to_tuple()
+        full_identifiers = identifier_data.to_tuple()[1:]
         for i in full_identifiers:
             partial = partial[i]
         return copy.deepcopy(partial)
 
     async def set(self, identifier_data: IdentifierData, value=None):
         partial = self.data
-        full_identifiers = identifier_data.to_tuple()
+        full_identifiers = identifier_data.to_tuple()[1:]
         for i in full_identifiers[:-1]:
             try:
                 partial = partial.setdefault(i, {})
@@ -144,7 +144,7 @@ class JsonDriver(BaseDriver):
 
     async def clear(self, identifier_data: IdentifierData):
         partial = self.data
-        full_identifiers = identifier_data.to_tuple()
+        full_identifiers = identifier_data.to_tuple()[1:]
         try:
             for i in full_identifiers[:-1]:
                 partial = partial[i]
@@ -177,7 +177,7 @@ class JsonDriver(BaseDriver):
     async def import_data(self, cog_data, custom_group_data):
         def update_write_data(identifier_data: IdentifierData, _data):
             partial = self.data
-            idents = identifier_data.to_tuple()
+            idents = identifier_data.to_tuple()[1:]
             for ident in idents[:-1]:
                 partial = partial.setdefault(ident, {})
             partial[idents[-1]] = _data
@@ -186,6 +186,7 @@ class JsonDriver(BaseDriver):
             splitted_pkey = self._split_primary_key(category, custom_group_data, all_data)
             for pkey, data in splitted_pkey:
                 ident_data = IdentifierData(
+                    self.cog_name,
                     self.unique_cog_identifier,
                     category,
                     pkey,
