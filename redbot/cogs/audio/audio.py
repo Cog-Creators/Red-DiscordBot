@@ -592,7 +592,7 @@ class Audio(commands.Cog):
     async def spotifyapi(self, ctx):
         """Instructions to set the Spotify API tokens."""
         message = _(
-            f"1. Go to Spotify developers and log in with your Spotify account.\n"
+            "1. Go to Spotify developers and log in with your Spotify account.\n"
             "(https://developer.spotify.com/dashboard/applications)\n"
             '2. Click "Create An App".\n'
             "3. Fill out the form provided with your app name, etc.\n"
