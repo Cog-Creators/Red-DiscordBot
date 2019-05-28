@@ -39,6 +39,6 @@ class Slowmode(MixinMeta):
         await ctx.channel.edit(slowmode_delay=interval)
         if interval > 0:
             interval = humanize_timedelta(seconds=interval)
-            await ctx.send(_(f"Slowmode interval is now {interval}."))
+            await ctx.send(_("Slowmode interval is now {}.".format(interval)))
         else:
             await ctx.send(_("Slowmode has been disabled."))
