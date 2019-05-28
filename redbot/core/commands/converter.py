@@ -45,12 +45,16 @@ TIME_RE = re.compile(TIME_RE_STRING, re.I)
 
 def parse_timedelta(
     argument: str,
+    *,
     maximum: Optional[timedelta] = None,
     minimum: Optional[timedelta] = None,
     allowed_units: Optional[List[str]] = None,
 ) -> Optional[timedelta]:
     """
     This converts a user provided string into a timedelta
+
+    The units should be in order from largest to smallest. 
+    This works with or without whitespace.
 
     Parameters
     ----------
@@ -60,7 +64,7 @@ def parse_timedelta(
         If provided, any parsed value higher than this will raise an exception
     minimum : Optional[timedelta]
         If provided, any parsed value lower than this will raise an exception
-    allowed_untis : Optional[List[str]]
+    allowed_units : Optional[List[str]]
         If provided, you can constrain a user to expressing the amount of time
         in specific units. The units you can chose to provide are the same as the
         parser understands. `weeks` `days` `hours` `minutes` `seconds`
@@ -205,12 +209,25 @@ def get_dict_converter(*expected_keys: str, delims: Optional[List[str]] = None) 
 
 class TimedeltaConverter(dpy_commands.Converter):
     """
-    Converts user strings to timedeltas
+    This is a converter for timedeltas.
+    The units should be in order from largest to smallest.
+    This works with or without whitespace.
 
-    See `parse_timedelta` for more information
+    See `parse_timedelta` for more information about how this functions.
+
+    Attributes
+    ----------
+    maximum : Optional[timedelta]
+        If provided, any parsed value higher than this will raise an exception
+    minimum : Optional[timedelta]
+        If provided, any parsed value lower than this will raise an exception
+    allowed_units : Optional[List[str]]
+        If provided, you can constrain a user to expressing the amount of time
+        in specific units. The units you can chose to provide are the same as the
+        parser understands. `weeks` `days` `hours` `minutes` `seconds`
     """
 
-    def __init__(self, minimum=None, maximum=None, allowed_units=None):
+    def __init__(self, *, minimum=None, maximum=None, allowed_units=None):
         self.allowed_units = allowed_units
         self.minimum = minimum
         self.maximum = maximum
@@ -225,17 +242,41 @@ class TimedeltaConverter(dpy_commands.Converter):
 
 
 def get_timedelta_converter(
+    *,
     maximum: Optional[timedelta] = None,
     minimum: Optional[timedelta] = None,
     allowed_units: Optional[List[str]] = None,
 ) -> type:
     """
-    See `parse_timedelta` for more information
+    This creates a type suitable for typechecking which works with discord.py's
+    commands.
+    
+    See `parse_timedelta` for more information about how this functions.
+
+    Parameters
+    ----------
+    maximum : Optional[timedelta]
+        If provided, any parsed value higher than this will raise an exception
+    minimum : Optional[timedelta]
+        If provided, any parsed value lower than this will raise an exception
+    allowed_units : Optional[List[str]]
+        If provided, you can constrain a user to expressing the amount of time
+        in specific units. The units you can chose to provide are the same as the
+        parser understands. `weeks` `days` `hours` `minutes` `seconds`
+
+    Returns
+    -------
+    type
+        The converter class, which will be a subclass of `TimedeltaConverter`
     """
+    
 
     class PartialMeta(type(TimedeltaConverter)):
         __call__ = functools.partialmethod(
-            type(DictConverter).__call__, allowed_units, minimum, maximum
+            type(DictConverter).__call__,
+            allowed_units=allowed_units,
+            minimum=minimum,
+            maximum=maximum,
         )
 
     class ValidatedConverter(TimedeltaConverter, metaclass=PartialMeta):
