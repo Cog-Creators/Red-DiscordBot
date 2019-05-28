@@ -116,8 +116,7 @@ class PostgresDriver(BaseDriver):
     async def clear(self, identifier_data: IdentifierData):
         try:
             await self._execute(
-                "SELECT red_config.clear($1)",
-                encode_identifier_data(identifier_data),
+                "SELECT red_config.clear($1)", encode_identifier_data(identifier_data)
             )
         except asyncpg.UndefinedTableError:
             pass

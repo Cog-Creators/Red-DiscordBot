@@ -103,7 +103,12 @@ class IdentifierData:
         )
 
     def to_tuple(self) -> Tuple[str, ...]:
-        return (self.cog_name, self.uuid, self.category, *self.primary_key, *self.identifiers)
+        return tuple(
+            filter(
+                None,
+                (self.cog_name, self.uuid, self.category, *self.primary_key, *self.identifiers),
+            )
+        )
 
 
 class BaseDriver(abc.ABC):
