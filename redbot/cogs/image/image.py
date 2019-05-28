@@ -167,7 +167,7 @@ class Image(commands.Cog):
         giphy_api_key = await ctx.bot.db.api_tokens.get_raw("GIPHY", default=None)
         if not giphy_api_key:
             await ctx.send(
-                _("A API key has not been set! Please set one with `{prefix}giphycreds`.").format(
+                _("An API key has not been set! Please set one with `{prefix}giphycreds`.").format(
                     prefix=ctx.prefix
                 )
             )
@@ -200,7 +200,7 @@ class Image(commands.Cog):
         giphy_api_key = await ctx.bot.db.api_tokens.get_raw("GIPHY", default=None)
         if not giphy_api_key:
             await ctx.send(
-                _("A API key has not been set! Please set one with `{prefix}giphycreds`.").format(
+                _("An API key has not been set! Please set one with `{prefix}giphycreds`.").format(
                     prefix=ctx.prefix
                 )
             )
@@ -226,12 +226,12 @@ class Image(commands.Cog):
         """Explain how to set Giphy API tokens"""
 
         message = _(
-            "To get an Giphyr API Key:\n"
-            "1. Login to an Giphy account.\n"
+            "To get a Giphy API Key:\n"
+            "1. Login to a Giphy account.\n"
             "2. Visit [this](https://developers.giphy.com/dashboard) page\n"
             "3. Press `Create an App`\n"
-            "4. Write a app name, example: `Red Bot`\n"
-            "5. Write a app description, example: `Used for Red Bot`\n"
+            "4. Write an app name, example: `Red Bot`\n"
+            "5. Write an app description, example: `Used for Red Bot`\n"
             "6. Copy the API key shown.\n"
             "7. Do `{prefix}set api GIPHY api_key,your_api_key`\n"
         ).format(prefix=ctx.prefix)
