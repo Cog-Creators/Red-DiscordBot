@@ -39,7 +39,7 @@ _ = lambda s: s
 PAYOUTS = {
     (SMReel.two, SMReel.two, SMReel.six): {
         "payout": lambda x: x * 2500 + x,
-        "phrase": _("JACKPOT! 226! Your bid has been multiplied * 2500!"),
+        "phrase": _("JACKPOT! 226! Your bid has been multiplied * 250!"),
     },
     (SMReel.flc, SMReel.flc, SMReel.flc): {
         "payout": lambda x: x + 1000,
@@ -157,9 +157,9 @@ class Economy(commands.Cog):
         bal = await bank.get_balance(user)
         currency = await bank.get_currency_name(ctx.guild)
 
-        await ctx.send(
-            _("{user}'s balance is {num} {currency}").format(
+        await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="{user}'s Balance",description="You currently have {num} {currency}".format(
                 user=user.display_name, num=bal, currency=currency
+                )
             )
         )
 
@@ -174,7 +174,7 @@ class Economy(commands.Cog):
         except (ValueError, errors.BalanceTooHigh) as e:
             return await ctx.send(str(e))
 
-        await ctx.send(
+        await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Payment Sent!",description="{user} transferred {num} {currency} to {other_user}"))
             _("{user} transferred {num} {currency} to {other_user}").format(
                 user=from_.display_name, num=amount, currency=currency, other_user=to.display_name
             )
@@ -275,27 +275,20 @@ class Economy(commands.Cog):
                 await self.config.user(author).next_payday.set(next_payday)
 
                 pos = await bank.get_leaderboard_position(author)
-                await ctx.send(
-                    _(
-                        "{author.mention} Here, take some {currency}. "
-                        "Enjoy! (+{amount} {currency}!)\n\n"
-                        "You currently have {new_balance} {currency}.\n\n"
-                        "You are currently #{pos} on the global leaderboard!"
-                    ).format(
+                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Payday!",description="{author.mention} \n\n Take {amount} {currency}!\n You now have {new_balance} {currency}.\n".format(
                         author=author,
                         currency=credits_name,
                         amount=await self.config.PAYDAY_CREDITS(),
                         new_balance=await bank.get_balance(author),
                         pos=pos,
-                    )
-                )
+                            )
+                        )
+                    .set_footer(text="You are currently #{pos} on the global leaderboard!"))
 
             else:
                 dtime = self.display_time(next_payday - cur_time)
-                await ctx.send(
-                    _(
-                        "{author.mention} Too soon. For your next payday you have to wait {time}."
-                    ).format(author=author, time=dtime)
+                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Too soon!",description="For your next payday you have to wait **{time}**.".format(author=author, time=dtime)
+                    )
                 )
         else:
             next_payday = await self.config.member(author).next_payday()
@@ -322,26 +315,19 @@ class Economy(commands.Cog):
                 next_payday = cur_time + await self.config.guild(guild).PAYDAY_TIME()
                 await self.config.member(author).next_payday.set(next_payday)
                 pos = await bank.get_leaderboard_position(author)
-                await ctx.send(
-                    _(
-                        "{author.mention} Here, take some {currency}. "
-                        "Enjoy! (+{amount} {currency}!)\n\n"
-                        "You currently have {new_balance} {currency}.\n\n"
-                        "You are currently #{pos} on the global leaderboard!"
-                    ).format(
+                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Payday!",description="{author.mention} \n\n Take {amount} {currency}!\n You now have {new_balance} {currency}.\n".format(
                         author=author,
                         currency=credits_name,
-                        amount=credit_amount,
+                        amount=await self.config.PAYDAY_CREDITS(),
                         new_balance=await bank.get_balance(author),
                         pos=pos,
-                    )
-                )
+                            )
+                        )
+                    .set_footer(text="You are currently #{pos} on the global leaderboard!"))
             else:
                 dtime = self.display_time(next_payday - cur_time)
-                await ctx.send(
-                    _(
-                        "{author.mention} Too soon. For your next payday you have to wait {time}."
-                    ).format(author=author, time=dtime)
+                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Too soon!",description="For your next payday you have to wait **{time}**.".format(author=author, time=dtime)
+                    )
                 )
 
     @commands.command()
@@ -437,10 +423,10 @@ class Economy(commands.Cog):
             await ctx.send(_("You're on cooldown, try again in a bit."))
             return
         if not valid_bid:
-            await ctx.send(_("That's an invalid bid amount, sorry :/"))
+            await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description=":no_entry: That's an invalid bid amount, sorry."))
             return
         if not await bank.can_spend(author, bid):
-            await ctx.send(_("You ain't got enough money, friend."))
+            await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Insufficient Funds",description="You don't have enough money for that bid! Try `p.payday` to get some more!"))
             return
         if await bank.is_global():
             await self.config.user(author).last_slot.set(now)
