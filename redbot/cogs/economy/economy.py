@@ -157,7 +157,7 @@ class Economy(commands.Cog):
         bal = await bank.get_balance(user)
         currency = await bank.get_currency_name(ctx.guild)
 
-        await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="{user}'s Balance",description="You currently have {num} {currency}".format(
+        await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="{user}'s Balance".format(user=user.display_name),description="You currently have {num} {currency}".format(
                 user=user.display_name, num=bal, currency=currency
                 )
             )
@@ -283,7 +283,7 @@ class Economy(commands.Cog):
                         pos=pos,
                             )
                         )
-                    .set_footer(text="You are currently #{pos} on the global leaderboard!"))
+                    .set_footer(text="You are currently #{pos} on the global leaderboard!".format(pos=pos)))
 
             else:
                 dtime = self.display_time(next_payday - cur_time)
@@ -323,7 +323,7 @@ class Economy(commands.Cog):
                         pos=pos,
                             )
                         )
-                    .set_footer(text="You are currently #{pos} on the global leaderboard!"))
+                    .set_footer(text="You are currently #{pos} on the global leaderboard!".format(pos=pos)))
             else:
                 dtime = self.display_time(next_payday - cur_time)
                 await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Too soon!",description="For your next payday you have to wait **{time}**.".format(author=author, time=dtime)
