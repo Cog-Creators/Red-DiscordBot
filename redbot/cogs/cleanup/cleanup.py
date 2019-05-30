@@ -33,9 +33,7 @@ class Cleanup(commands.Cog):
         Tries its best to cleanup after itself if the response is positive.
         """
 
-        prompt = await ctx.send(
-            _("Are you sure you want to delete {number} messages? (y/n)").format(number=number)
-        )
+        prompt = await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="Are you sure you want to delete {number} messages? (y/n)".format(number=number)))
         response = await ctx.bot.wait_for("message", check=MessagePredicate.same_context(ctx))
 
         if response.content.lower().startswith("y"):
@@ -46,7 +44,7 @@ class Cleanup(commands.Cog):
                 pass
             return True
         else:
-            await ctx.send(_("Cancelled."))
+            await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="Cancelled."))
             return False
 
     @staticmethod
@@ -228,7 +226,7 @@ class Cleanup(commands.Cog):
         try:
             after = await channel.fetch_message(message_id)
         except discord.NotFound:
-            return await ctx.send(_("Message not found."))
+            return await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="Message not found."))
 
         to_delete = await self.get_messages_for_deletion(
             channel=channel, number=None, after=after, delete_pinned=delete_pinned
@@ -264,7 +262,7 @@ class Cleanup(commands.Cog):
         try:
             before = await channel.fetch_message(message_id)
         except discord.NotFound:
-            return await ctx.send(_("Message not found."))
+            return await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="Message not found."))
 
         to_delete = await self.get_messages_for_deletion(
             channel=channel, number=number, before=before, delete_pinned=delete_pinned
@@ -300,15 +298,11 @@ class Cleanup(commands.Cog):
         try:
             mone = await channel.fetch_message(one)
         except discord.errors.Notfound:
-            return await ctx.send(
-                _("Could not find a message with the ID of {id}.".format(id=one))
-            )
+            return await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="Could not find a message with the ID of {id}.".format(id=one)))
         try:
             mtwo = await channel.fetch_message(two)
         except discord.errors.Notfound:
-            return await ctx.send(
-                _("Could not find a message with the ID of {id}.".format(id=two))
-            )
+            return await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="Could not find a message with the ID of {id}.".format(id=two)))
         to_delete = await self.get_messages_for_deletion(
             channel=channel, before=mtwo, after=mone, delete_pinned=delete_pinned
         )
