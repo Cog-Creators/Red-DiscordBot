@@ -275,7 +275,7 @@ class Economy(commands.Cog):
                 await self.config.user(author).next_payday.set(next_payday)
 
                 pos = await bank.get_leaderboard_position(author)
-                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Payday!",description="{author.mention} \n\n Take {amount} {currency}!\n You now have {new_balance} {currency}.\n".format(
+                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Payday!",description="\n{author.mention} \n\n Take **{amount} {currency}**!\n You now have **{new_balance} {currency}**.\n".format(
                         author=author,
                         currency=credits_name,
                         amount=await self.config.PAYDAY_CREDITS(),
@@ -283,7 +283,7 @@ class Economy(commands.Cog):
                         pos=pos,
                             )
                         )
-                    .set_footer(text="You are currently #{pos} on the global leaderboard!".format(pos=pos)))
+                    .set_footer(text="You are currently **#{pos}** on the global leaderboard!".format(pos=pos)))
 
             else:
                 dtime = self.display_time(next_payday - cur_time)
@@ -315,7 +315,7 @@ class Economy(commands.Cog):
                 next_payday = cur_time + await self.config.guild(guild).PAYDAY_TIME()
                 await self.config.member(author).next_payday.set(next_payday)
                 pos = await bank.get_leaderboard_position(author)
-                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Payday!",description="{author.mention} \n\n Take {amount} {currency}!\n You now have {new_balance} {currency}.\n".format(
+                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Payday!",description="\n{author.mention} \n\n Take **{amount} {currency}**!\n You now have **{new_balance} {currency}**.\n".format(
                         author=author,
                         currency=credits_name,
                         amount=await self.config.PAYDAY_CREDITS(),
