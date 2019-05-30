@@ -420,7 +420,7 @@ class Economy(commands.Cog):
         now = calendar.timegm(ctx.message.created_at.utctimetuple())
 
         if (now - last_slot) < slot_time:
-            await ctx.send(_("You're on cooldown, try again in a bit."))
+            await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Slot Machine Cooldown",description=":no_entry: You must wait until you can play slots again!"))
             return
         if not valid_bid:
             await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description=":no_entry: That's an invalid bid amount, sorry."))
