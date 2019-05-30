@@ -275,7 +275,7 @@ class Core(commands.Cog, CoreLogic):
     @commands.command(hidden=True)
     async def ping(self, ctx: commands.Context):
         """Pong."""
-        await ctx.send("Pong.")
+        await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description=":ping_pong: **Pong!**"))
 
     @commands.command()
     async def info(self, ctx: commands.Context):
@@ -335,7 +335,7 @@ class Core(commands.Cog, CoreLogic):
         since = ctx.bot.uptime.strftime("%Y-%m-%d %H:%M:%S")
         delta = datetime.datetime.utcnow() - self.bot.uptime
         await ctx.send(
-            _("Been up for: **{}** (since {} UTC)").format(
+            _(":clock1: Been up for: **{}** (since {} UTC)").format(
                 humanize_timedelta(timedelta=delta), since
             )
         )
@@ -451,7 +451,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.is_owner()
     async def leave(self, ctx: commands.Context):
         """Leaves server"""
-        await ctx.send(_("Are you sure you want me to leave this server? (y/n)"))
+        await ctx.send(_(":door: Are you sure you want me to leave this server? (y/n)"))
 
         pred = MessagePredicate.yes_or_no(ctx)
         try:
@@ -499,7 +499,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("I cannot leave a guild I am the owner of."))
             return
 
-        await ctx.send(_("Are you sure you want me to leave {}? (yes/no)").format(guild.name))
+        await ctx.send(_(":door: Are you sure you want me to leave {}? (yes/no)").format(guild.name))
         pred = MessagePredicate.yes_or_no(ctx)
         try:
             await self.bot.wait_for("message", check=pred, timeout=15)
@@ -632,7 +632,7 @@ class Core(commands.Cog, CoreLogic):
         with by the process manager in use"""
         with contextlib.suppress(discord.HTTPException):
             if not silently:
-                await ctx.send(_("Restarting..."))
+                await ctx.send(_(":arrows_counterclockwise: Restarting..."))
         await ctx.bot.shutdown(restart=True)
 
     @commands.group(name="set")
@@ -678,7 +678,7 @@ class Core(commands.Cog, CoreLogic):
     async def adminrole(self, ctx: commands.Context, *, role: discord.Role):
         """Sets the admin role for this server"""
         await ctx.bot.db.guild(ctx.guild).admin_role.set(role.id)
-        await ctx.send(_("The admin role for this guild has been set."))
+        await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="The admin role for this guild has been set."))
 
     @_set.command()
     @checks.guildowner()
@@ -686,7 +686,7 @@ class Core(commands.Cog, CoreLogic):
     async def modrole(self, ctx: commands.Context, *, role: discord.Role):
         """Sets the mod role for this server"""
         await ctx.bot.db.guild(ctx.guild).mod_role.set(role.id)
-        await ctx.send(_("The mod role for this guild has been set."))
+        await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="The mod role for this guild has been set."))
 
     @_set.command(aliases=["usebotcolor"])
     @checks.guildowner()
@@ -920,11 +920,11 @@ class Core(commands.Cog, CoreLogic):
         """Sets Red's server prefix(es)"""
         if not prefixes:
             await ctx.bot.db.guild(ctx.guild).prefix.set([])
-            await ctx.send(_("Guild prefixes have been reset."))
+            await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="Server prefixes have been reset."))
             return
         prefixes = sorted(prefixes, reverse=True)
         await ctx.bot.db.guild(ctx.guild).prefix.set(prefixes)
-        await ctx.send(_("Prefix set."))
+        await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description=":white_check_mark: Prefix set."))
 
     @_set.command()
     @commands.cooldown(1, 60 * 10, commands.BucketType.default)
@@ -1051,7 +1051,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.is_owner()
     async def api(self, ctx: commands.Context, service: str, *, tokens: TokenConverter):
         """Set various external API tokens.
-        
+
         This setting will be asked for by some 3rd party cogs and some core cogs.
 
         To add the keys provide the service name and the tokens as a comma separated
@@ -1077,7 +1077,7 @@ class Core(commands.Cog, CoreLogic):
         Allows the help command to be sent as a paginated menu instead of seperate
         messages.
 
-        This defaults to False. 
+        This defaults to False.
         Using this without a setting will toggle.
         """
         if use_menus is None:
@@ -1378,7 +1378,7 @@ class Core(commands.Cog, CoreLogic):
             except discord.HTTPException:
                 await ctx.send(_("I'm unable to deliver your message. Sorry."))
             else:
-                await ctx.send(_("Your message has been sent."))
+                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="Your message has been sent."))
         else:
             msg_text = "{}\nMessage:\n\n{}\n{}".format(description, message, footer)
             try:
@@ -1390,7 +1390,7 @@ class Core(commands.Cog, CoreLogic):
             except discord.HTTPException:
                 await ctx.send(_("I'm unable to deliver your message. Sorry."))
             else:
-                await ctx.send(_("Your message has been sent."))
+                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="Your message has been sent."))
 
     @commands.command()
     @checks.is_owner()
@@ -1415,7 +1415,7 @@ class Core(commands.Cog, CoreLogic):
         fake_message = namedtuple("Message", "guild")
         prefixes = await ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))
         prefix = prefixes[0]
-        description = _("Owner of {}").format(ctx.bot.user)
+        description = _("Administration Team").format(ctx.bot.user)
         content = _("You can reply to this message with {}contact").format(prefix)
         if await ctx.embed_requested():
             e = discord.Embed(colour=discord.Colour.red(), description=message)
@@ -1525,7 +1525,7 @@ class Core(commands.Cog, CoreLogic):
             if user.id not in curr_list:
                 curr_list.append(user.id)
 
-        await ctx.send(_("User added to whitelist."))
+        await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="User added to whitelist."))
 
     @whitelist.command(name="list")
     async def whitelist_list(self, ctx: commands.Context):
@@ -1554,9 +1554,9 @@ class Core(commands.Cog, CoreLogic):
                 curr_list.remove(user.id)
 
         if removed:
-            await ctx.send(_("User has been removed from whitelist."))
+            await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="User has been removed from the whitelist."))
         else:
-            await ctx.send(_("User was not in the whitelist."))
+            await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="User is not in the whitelist."))
 
     @whitelist.command(name="clear")
     async def whitelist_clear(self, ctx: commands.Context):
@@ -1564,7 +1564,7 @@ class Core(commands.Cog, CoreLogic):
         Clears the whitelist.
         """
         await ctx.bot.db.whitelist.set([])
-        await ctx.send(_("Whitelist has been cleared."))
+        await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="The whitelist has been cleared."))
 
     @commands.group()
     @checks.is_owner()
@@ -1580,14 +1580,14 @@ class Core(commands.Cog, CoreLogic):
         Adds a user to the blacklist.
         """
         if await ctx.bot.is_owner(user):
-            await ctx.send(_("You cannot blacklist an owner!"))
+            await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="You cannot blacklist the owner!"))
             return
 
         async with ctx.bot.db.blacklist() as curr_list:
             if user.id not in curr_list:
                 curr_list.append(user.id)
 
-        await ctx.send(_("User added to blacklist."))
+        await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="User added to blacklist."))
 
     @blacklist.command(name="list")
     async def blacklist_list(self, ctx: commands.Context):
@@ -1616,9 +1616,9 @@ class Core(commands.Cog, CoreLogic):
                 curr_list.remove(user.id)
 
         if removed:
-            await ctx.send(_("User has been removed from blacklist."))
+            await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="User has been removed from the blacklist."))
         else:
-            await ctx.send(_("User was not in the blacklist."))
+            await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="User is not in the blacklist."))
 
     @blacklist.command(name="clear")
     async def blacklist_clear(self, ctx: commands.Context):
@@ -1626,7 +1626,7 @@ class Core(commands.Cog, CoreLogic):
         Clears the blacklist.
         """
         await ctx.bot.db.blacklist.set([])
-        await ctx.send(_("Blacklist has been cleared."))
+        await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="Blacklist has been cleared."))
 
     @commands.group()
     @commands.guild_only()
@@ -1650,9 +1650,9 @@ class Core(commands.Cog, CoreLogic):
                 curr_list.append(user_or_role.id)
 
         if user:
-            await ctx.send(_("User added to whitelist."))
+            await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="User added to whitelist."))
         else:
-            await ctx.send(_("Role added to whitelist."))
+            await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="Role added to whitelist."))
 
     @localwhitelist.command(name="list")
     async def localwhitelist_list(self, ctx: commands.Context):
@@ -1685,14 +1685,14 @@ class Core(commands.Cog, CoreLogic):
 
         if removed:
             if user:
-                await ctx.send(_("User has been removed from whitelist."))
+                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="User has been removed from the whitelist."))
             else:
-                await ctx.send(_("Role has been removed from whitelist."))
+                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="Role has been removed from the whitelist."))
         else:
             if user:
-                await ctx.send(_("User was not in the whitelist."))
+                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="User is not in the whitelist."))
             else:
-                await ctx.send(_("Role was not in the whitelist."))
+                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="Role is not in the whitelist."))
 
     @localwhitelist.command(name="clear")
     async def localwhitelist_clear(self, ctx: commands.Context):
@@ -1700,7 +1700,7 @@ class Core(commands.Cog, CoreLogic):
         Clears the whitelist.
         """
         await ctx.bot.db.guild(ctx.guild).whitelist.set([])
-        await ctx.send(_("Whitelist has been cleared."))
+        await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="The whitelist has been cleared."))
 
     @commands.group()
     @commands.guild_only()
@@ -1721,7 +1721,7 @@ class Core(commands.Cog, CoreLogic):
         user = isinstance(user_or_role, discord.Member)
 
         if user and await ctx.bot.is_owner(user_or_role):
-            await ctx.send(_("You cannot blacklist an owner!"))
+            await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="You cannot blacklist the owner!"))
             return
 
         async with ctx.bot.db.guild(ctx.guild).blacklist() as curr_list:
@@ -1729,9 +1729,9 @@ class Core(commands.Cog, CoreLogic):
                 curr_list.append(user_or_role.id)
 
         if user:
-            await ctx.send(_("User added to blacklist."))
+            await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="User added to blacklist."))
         else:
-            await ctx.send(_("Role added to blacklist."))
+            await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="Role added to blacklist."))
 
     @localblacklist.command(name="list")
     async def localblacklist_list(self, ctx: commands.Context):
@@ -1764,14 +1764,14 @@ class Core(commands.Cog, CoreLogic):
 
         if removed:
             if user:
-                await ctx.send(_("User has been removed from blacklist."))
+                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="User has been removed from the blacklist."))
             else:
-                await ctx.send(_("Role has been removed from blacklist."))
+                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="Role has been removed from the blacklist."))
         else:
             if user:
-                await ctx.send(_("User was not in the blacklist."))
+                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="User is not in the blacklist."))
             else:
-                await ctx.send(_("Role was not in the blacklist."))
+                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="Role is not in the blacklist."))
 
     @localblacklist.command(name="clear")
     async def localblacklist_clear(self, ctx: commands.Context):
@@ -1779,7 +1779,7 @@ class Core(commands.Cog, CoreLogic):
         Clears the blacklist.
         """
         await ctx.bot.db.guild(ctx.guild).blacklist.set([])
-        await ctx.send(_("Blacklist has been cleared."))
+        await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description="The blacklist has been cleared."))
 
     @checks.guildowner_or_permissions(administrator=True)
     @commands.group(name="command")
