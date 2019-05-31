@@ -1989,6 +1989,102 @@ class Core(commands.Cog, CoreLogic):
         else:
             await ctx.send(_("They are not Immune"))
 
+    @checks.is_owner()
+    @_set.group()
+    async def ownernotifications(self, ctx: commands.Context):
+        """
+        Commands for configuring owner notifications.
+        """
+        pass
+
+    @ownernotifications.command()
+    async def optin(self, ctx: commands.Context):
+        """
+        Opt-in on recieving owner notifications.
+
+        This is the default state.
+        """
+        async with ctx.bot.db.owner_opt_out_list() as opt_outs:
+            if ctx.author.id in opt_outs:
+                opt_outs.remove(ctx.author.id)
+
+        await ctx.tick()
+
+    @ownernotifications.command()
+    async def optout(self, ctx: commands.Context):
+        """
+        Opt-out of recieving owner notifications.
+        """
+        async with ctx.bot.db.owner_opt_out_list() as opt_outs:
+            if ctx.author.id not in opt_outs:
+                opt_outs.append(ctx.author.id)
+
+        await ctx.tick()
+
+    @ownernotifications.command()
+    async def adddestination(
+        self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
+    ):
+        """
+        Adds a destination text channel to recieve owner notifications
+        """
+
+        try:
+            channel_id = channel.id
+        except AttributeError:
+            channel_id = channel
+
+        async with ctx.bot.db.extra_owner_destinations() as extras:
+            if channel_id not in extras:
+                extras.append(channel_id)
+
+        await ctx.tick()
+
+    @ownernotifications.command(aliases=["remdestination", "deletedestination", "deldestination"])
+    async def removedestination(
+        self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
+    ):
+        """
+        Removes a destination text channel from recieving owner notifications.
+        """
+
+        try:
+            channel_id = channel.id
+        except AttributeError:
+            channel_id = channel
+
+        async with ctx.bot.db.extra_owner_destinations() as extras:
+            if channel_id in extras:
+                extras.remove(channel_id)
+
+        await ctx.tick()
+
+    @ownernotifications.command()
+    async def listdestinations(self, ctx: commands.Context):
+        """
+        Lists the configured extra destinations for owner notifications
+        """
+
+        channel_ids = await ctx.bot.db.extra_owner_destinations()
+
+        if not channel_ids:
+            await ctx.send(_("There are no extra channels being sent to."))
+            return
+
+        data = []
+
+        for channel_id in channel_ids:
+            channel = ctx.bot.get_channel(channel_id)
+            if channel:
+                # This includes the channel name in case the user can't see the channel.
+                data.append(f"{channel.mention} {channel} ({channel.id})")
+            else:
+                data.append(_("Unknown channel with id: {id}").format(id=channel_id))
+
+        output = "\n".join(data)
+        for page in pagify(output):
+            await ctx.send(page)
+
     # RPC handlers
     async def rpc_load(self, request):
         cog_name = request.params[0]
