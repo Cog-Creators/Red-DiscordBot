@@ -1379,7 +1379,7 @@ class Core(commands.Cog, CoreLogic):
                     send_embed = False
 
             if send_embed is None:
-                send_embed = await self.db.embeds()
+                send_embed = await ctx.bot.db.embeds()
 
             if send_embed:
 
