@@ -157,7 +157,7 @@ class Economy(commands.Cog):
         bal = await bank.get_balance(user)
         currency = await bank.get_currency_name(ctx.guild)
 
-        await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="{user}'s Balance".format(user=user.display_name),description="You currently have {num} {currency}".format(
+        await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="{user}'s Balance".format(user=user.display_name),description="You currently have **{num} {currency}**".format(
                 user=user.display_name, num=bal, currency=currency
                 )
             )
