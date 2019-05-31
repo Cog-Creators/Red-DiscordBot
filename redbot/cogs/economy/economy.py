@@ -283,7 +283,7 @@ class Economy(commands.Cog):
                         pos=pos,
                             )
                         )
-                    .set_footer(text="You are currently **#{pos}** on the global leaderboard!".format(pos=pos)))
+                    .set_footer(text="You are currently #{pos} on the global leaderboard!".format(pos=pos)))
 
             else:
                 dtime = self.display_time(next_payday - cur_time)
