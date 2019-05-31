@@ -275,7 +275,9 @@ class Core(commands.Cog, CoreLogic):
     @commands.command(hidden=True)
     async def ping(self, ctx: commands.Context):
         """Pong."""
-        await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description=":ping_pong: **Pong!** ``{}ms`".format(round(pingt * 1000))))
+        latencies = self.bot.latencies
+        for shard, pingt in latencies:
+            await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description=":ping_pong: **Pong!** `{}ms`".format(round(pingt * 1000))))
 
     @commands.command()
     async def info(self, ctx: commands.Context):
