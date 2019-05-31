@@ -157,11 +157,14 @@ class Economy(commands.Cog):
         bal = await bank.get_balance(user)
         currency = await bank.get_currency_name(ctx.guild)
 
-        await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="{user}'s Balance".format(user=user.display_name),description="You currently have {num} {currency}".format(
-                user=user.display_name, num=bal, currency=currency
+        try:
+            await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="{user}'s Balance".format(user=user.display_name),description="You currently have {num} {currency}".format(
+                    user=user.display_name, num=bal, currency=currency
+                    )
                 )
             )
-        )
+        except discord.HTTPException:
+            await ctx.send(_("I need the `Embed links` permission to send this"))
 
     @_bank.command()
     async def transfer(self, ctx: commands.Context, to: discord.Member, amount: int):
@@ -174,11 +177,14 @@ class Economy(commands.Cog):
         except (ValueError, errors.BalanceTooHigh) as e:
             return await ctx.send(str(e))
 
-        await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Payment Sent!",description="{user} transferred {num} {currency} to {other_user}".format(
-                user=from_.display_name, num=amount, currency=currency, other_user=to.display_name
+        try:
+            await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Payment Sent!",description="{user} transferred {num} {currency} to {other_user}".format(
+                    user=from_.display_name, num=amount, currency=currency, other_user=to.display_name
+                    )
                 )
             )
-        )
+        except discord.HTTPException:
+            await ctx.send(_("I need the `Embed links` permission to send this"))
 
     @_bank.command(name="set")
     @check_global_setting_admin()
@@ -275,21 +281,29 @@ class Economy(commands.Cog):
                 await self.config.user(author).next_payday.set(next_payday)
 
                 pos = await bank.get_leaderboard_position(author)
-                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Payday!",description="\n{author.mention} \n\n Take **{amount} {currency}**!\n You now have **{new_balance} {currency}**.\n".format(
-                        author=author,
-                        currency=credits_name,
-                        amount=await self.config.PAYDAY_CREDITS(),
-                        new_balance=await bank.get_balance(author),
-                        pos=pos,
+                try:
+                    await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Payday!",description="\n{author.mention} \n\n Take **{amount} {currency}**!\n You now have **{new_balance} {currency}**.\n".format(
+                            author=author,
+                            currency=credits_name,
+                            amount=await self.config.PAYDAY_CREDITS(),
+                            new_balance=await bank.get_balance(author),
+                            pos=pos,
+                                )
                             )
-                        )
-                    .set_footer(text="You are currently #{pos} on the global leaderboard!".format(pos=pos)))
+                            .set_footer(text="You are currently #{pos} on the global leaderboard!".format(pos=pos)))
+                except discord.HTTPException:
+                    await ctx.send(_("I need the `Embed links` permission to send this"))
+
 
             else:
                 dtime = self.display_time(next_payday - cur_time)
-                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Too soon!",description="For your next payday you have to wait **{time}**.".format(author=author, time=dtime)
+                try:
+                    await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Too soon!",description="For your next payday you have to wait **{time}**.".format(author=author, time=dtime)
+                        )
                     )
-                )
+                except discord.HTTPException:
+                    await ctx.send(_("I need the `Embed links` permission to send this"))
+
         else:
             next_payday = await self.config.member(author).next_payday()
             if cur_time >= next_payday:
@@ -315,20 +329,28 @@ class Economy(commands.Cog):
                 next_payday = cur_time + await self.config.guild(guild).PAYDAY_TIME()
                 await self.config.member(author).next_payday.set(next_payday)
                 pos = await bank.get_leaderboard_position(author)
-                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Payday!",description="\n{author.mention} \n\n Take **{amount} {currency}**!\n You now have **{new_balance} {currency}**.\n".format(
-                        author=author,
-                        currency=credits_name,
-                        amount=await self.config.PAYDAY_CREDITS(),
-                        new_balance=await bank.get_balance(author),
-                        pos=pos,
+                try:
+                    await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Payday!",description="\n{author.mention} \n\n Take **{amount} {currency}**!\n You now have **{new_balance} {currency}**.\n".format(
+                            author=author,
+                            currency=credits_name,
+                            amount=await self.config.PAYDAY_CREDITS(),
+                            new_balance=await bank.get_balance(author),
+                            pos=pos,
+                                )
                             )
-                        )
-                    .set_footer(text="You are currently #{pos} on the global leaderboard!".format(pos=pos)))
+                            .set_footer(text="You are currently #{pos} on the global leaderboard!".format(pos=pos)))
+                except discord.HTTPException:
+                    await ctx.send(_("I need the `Embed links` permission to send this"))
+
             else:
                 dtime = self.display_time(next_payday - cur_time)
-                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Too soon!",description="For your next payday you have to wait **{time}**.".format(author=author, time=dtime)
+                try:
+                    await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Too soon!",description="For your next payday you have to wait **{time}**.".format(author=author, time=dtime)
+                        )
                     )
-                )
+                except discord.HTTPException:
+                    await ctx.send(_("I need the `Embed links` permission to send this"))
+
 
     @commands.command()
     @guild_only_check()
@@ -420,13 +442,22 @@ class Economy(commands.Cog):
         now = calendar.timegm(ctx.message.created_at.utctimetuple())
 
         if (now - last_slot) < slot_time:
-            await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Slot Machine Cooldown",description=":no_entry: You must wait until you can play slots again!"))
+            try:
+                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Slot Machine Cooldown",description=":no_entry: You must wait until you can play slots again!"))
+            except discord.HTTPException:
+                await ctx.send(_("I need the `Embed links` permission to send this"))
             return
         if not valid_bid:
-            await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description=":no_entry: That's an invalid bid amount, sorry."))
+            try:
+                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),description=":no_entry: That's an invalid bid amount, sorry."))
+            except discord.HTTPException:
+                await ctx.send(_("I need the `Embed links` permission to send this"))
             return
         if not await bank.can_spend(author, bid):
-            await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Insufficient Funds",description="You don't have enough money for that bid! Try `p.payday` to get some more!"))
+            try:
+                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Insufficient Funds",description="You don't have enough money for that bid! Try `p.payday` to get some more!"))
+            except discord.HTTPException:
+                await ctx.send(_("I need the `Embed links` permission to send this"))
             return
         if await bank.is_global():
             await self.config.user(author).last_slot.set(now)
