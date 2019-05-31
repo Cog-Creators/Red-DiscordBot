@@ -1335,7 +1335,6 @@ class Core(commands.Cog, CoreLogic):
     async def contact(self, ctx: commands.Context, *, message: str):
         """Sends a message to the owner"""
         guild = ctx.message.guild
-        owner = discord.utils.get(ctx.bot.get_all_members(), id=ctx.bot.owner_id)
         author = ctx.message.author
         footer = _("User ID: {}").format(author.id)
 
@@ -1356,41 +1355,81 @@ class Core(commands.Cog, CoreLogic):
 
         description = _("Sent by {} {}").format(author, source)
 
-        if isinstance(author, discord.Member):
-            colour = author.colour
-        else:
-            colour = discord.Colour.red()
+        destinations = await ctx.bot.get_owner_notification_destinations()
 
-        if await ctx.embed_requested():
-            e = discord.Embed(colour=colour, description=message)
-            if author.avatar_url:
-                e.set_author(name=description, icon_url=author.avatar_url)
-            else:
-                e.set_author(name=description)
-            e.set_footer(text=footer)
+        if not destinations:
+            await ctx.send(_("I've been configured not to send this anywhere."))
+            return
 
-            try:
-                await owner.send(content, embed=e)
-            except discord.InvalidArgument:
-                await ctx.send(
-                    _("I cannot send your message, I'm unable to find my owner... *sigh*")
-                )
-            except discord.HTTPException:
-                await ctx.send(_("I'm unable to deliver your message. Sorry."))
+        successful = False
+
+        for destination in destinations:
+
+            is_dm = isinstance(destination, discord.User)
+            send_embed = None
+
+            if is_dm:
+                send_embed = await ctx.bot.db.user(destination).embeds()
             else:
-                await ctx.send(_("Your message has been sent."))
+                if not destination.permissions_for(destination.guild.me).send_messages:
+                    continue
+                if destination.permissions_for(destination.guild.me).embed_links:
+                    send_embed = await ctx.bot.db.guild(destination.guild).embeds()
+                else:
+                    send_embed = False
+
+            if send_embed is None:
+                send_embed = await ctx.bot.db.embeds()
+
+            if send_embed:
+
+                if not is_dm and await self.bot.db.guild(destination.guild).use_bot_color():
+                    color = destination.guild.me.color
+                else:
+                    color = ctx.bot.color
+
+                e = discord.Embed(colour=color, description=message)
+                if author.avatar_url:
+                    e.set_author(name=description, icon_url=author.avatar_url)
+                else:
+                    e.set_author(name=description)
+
+                e.set_footer(text=footer)
+
+                try:
+                    await destination.send(embed=e)
+                except discord.Forbidden:
+                    log.exception(f"Contact failed to {destination}({destination.id})")
+                    # Should this automatically opt them out?
+                except discord.HTTPException:
+                    log.exception(
+                        f"An unexpected error happened while attempting to"
+                        f" send contact to {destination}({destination.id})"
+                    )
+                else:
+                    successful = True
+
+            else:
+
+                msg_text = "{}\nMessage:\n\n{}\n{}".format(description, message, footer)
+
+                try:
+                    await destination.send("{}\n{}".format(content, box(msg_text)))
+                except discord.Forbidden:
+                    log.exception(f"Contact failed to {destination}({destination.id})")
+                    # Should this automatically opt them out?
+                except discord.HTTPException:
+                    log.exception(
+                        f"An unexpected error happened while attempting to"
+                        f" send contact to {destination}({destination.id})"
+                    )
+                else:
+                    successful = True
+
+        if successful:
+            await ctx.send(_("Your message has been sent."))
         else:
-            msg_text = "{}\nMessage:\n\n{}\n{}".format(description, message, footer)
-            try:
-                await owner.send("{}\n{}".format(content, box(msg_text)))
-            except discord.InvalidArgument:
-                await ctx.send(
-                    _("I cannot send your message, I'm unable to find my owner... *sigh*")
-                )
-            except discord.HTTPException:
-                await ctx.send(_("I'm unable to deliver your message. Sorry."))
-            else:
-                await ctx.send(_("Your message has been sent."))
+            await ctx.send(_("I'm unable to deliver your message. Sorry."))
 
     @commands.command()
     @checks.is_owner()
