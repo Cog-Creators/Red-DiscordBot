@@ -33,6 +33,9 @@ class Cleanup(commands.Cog):
         Tries its best to cleanup after itself if the response is positive.
         """
 
+        if ctx.assume_yes:
+            return True
+
         prompt = await ctx.send(
             _("Are you sure you want to delete {number} messages? (y/n)").format(number=number)
         )

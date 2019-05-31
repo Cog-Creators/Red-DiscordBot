@@ -23,6 +23,7 @@ class Context(commands.Context):
     """
 
     def __init__(self, **attrs):
+        self.assume_yes = attrs.pop("assume_yes", False)
         super().__init__(**attrs)
         self.permission_state: PermState = PermState.NORMAL
 
