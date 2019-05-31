@@ -106,7 +106,7 @@ plugins directly from Discord! A few examples are:
 - Casino
 - Reaction roles
 - Slow Mode
-- Anilist
+- AniList
 - And much, much more!
 
 Feel free to take a [peek](https://cogboard.red/t/approved-repositories/210) at a list of
