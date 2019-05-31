@@ -279,8 +279,8 @@ class Core(commands.Cog, CoreLogic):
         for shard, pingt in latencies:
             try:
                 await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title=":ping_pong: Pong!",description="\n **Latency to Discord:**\n```py\n{} ms```".format(round(pingt * 1000))))
-        except discord.HTTPException:
-            await ctx.send(_("I need the `Embed links` permission to send this"))
+            except discord.HTTPException:
+                await ctx.send(_("I need the `Embed links` permission to send this"))
 
     @commands.command()
     async def info(self, ctx: commands.Context):
