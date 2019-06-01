@@ -547,7 +547,11 @@ class Streams(commands.Cog):
         for stream in self.streams:
             with contextlib.suppress(Exception):
                 try:
-                    embed, is_rerun = await stream.is_online()
+                    if stream.__class__.__name__ == "TwitchStream":
+                        embed, is_rerun = await stream.is_online()
+                    else:
+                        embed = await stream.is_online()
+                        is_rerun = False
                 except OfflineStream:
                     if not stream._messages_cache:
                         continue

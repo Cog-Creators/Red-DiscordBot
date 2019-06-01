@@ -26,6 +26,7 @@
 # Additionally, this gives our users a bit more customization options including by
 # 3rd party cogs down the road.
 
+import asyncio
 from collections import namedtuple
 from typing import Union, List, AsyncIterator, Iterable, cast
 
@@ -166,7 +167,7 @@ class RedHelpFormatter:
 
             if command.help:
                 splitted = command.help.split("\n\n")
-                name = "__{0}__".format(splitted[0])
+                name = splitted[0]
                 value = "\n\n".join(splitted[1:]).replace("[p]", ctx.clean_prefix)
                 if not value:
                     value = EMPTY_STRING
@@ -287,7 +288,13 @@ class RedHelpFormatter:
 
             emb["footer"]["text"] = tagline
             if description:
-                emb["embed"]["title"] = f"*{description[:2044]}*"
+                splitted = description.split("\n\n")
+                name = splitted[0]
+                value = "\n\n".join(splitted[1:]).replace("[p]", ctx.clean_prefix)
+                if not value:
+                    value = EMPTY_STRING
+                field = EmbedField(name[:252], value[:1024], False)
+                emb["fields"].append(field)
 
             if coms:
 
@@ -549,10 +556,13 @@ class RedHelpFormatter:
                             )
                         )
         else:
-            if len(pages) > 1:
-                await menus.menu(ctx, pages, menus.DEFAULT_CONTROLS)
-            else:
-                await menus.menu(ctx, pages, {"\N{CROSS MARK}": menus.close_menu})
+            # Specifically ensuring the menu's message is sent prior to returning
+            m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
+            c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
+            # Allow other things to happen during menu timeout/interaction.
+            asyncio.create_task(menus.menu(ctx, pages, c, message=m))
+            # menu needs reactions added manually since we fed it a messsage
+            menus.start_adding_reactions(m, c.keys())
 
 
 @commands.command(name="help", hidden=True, i18n=T_)

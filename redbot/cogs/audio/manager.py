@@ -14,7 +14,7 @@ import aiohttp
 from redbot.core import data_manager
 
 JAR_VERSION = "3.2.0.3"
-JAR_BUILD = 772
+JAR_BUILD = 796
 LAVALINK_DOWNLOAD_URL = (
     f"https://github.com/Cog-Creators/Lavalink-Jars/releases/download/{JAR_VERSION}_{JAR_BUILD}/"
     f"Lavalink.jar"
