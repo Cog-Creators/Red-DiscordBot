@@ -157,15 +157,10 @@ class Economy(commands.Cog):
         bal = await bank.get_balance(user)
         currency = await bank.get_currency_name(ctx.guild)
 
-<<<<<<< HEAD
         try:
             await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="{user}'s Balance".format(user=user.display_name),description="You currently have {num} {currency}".format(
                     user=user.display_name, num=bal, currency=currency
                     )
-=======
-        await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="{user}'s Balance".format(user=user.display_name),description="You currently have **{num} {currency}**".format(
-                user=user.display_name, num=bal, currency=currency
->>>>>>> dceace271e9d3c70feee13786b1567f5ad5d8a58
                 )
             )
         except discord.HTTPException:
@@ -286,7 +281,6 @@ class Economy(commands.Cog):
                 await self.config.user(author).next_payday.set(next_payday)
 
                 pos = await bank.get_leaderboard_position(author)
-<<<<<<< HEAD
                 try:
                     await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Payday!",description="\n{author.mention} \n\n Take **{amount} {currency}**!\n You now have **{new_balance} {currency}**.\n".format(
                             author=author,
@@ -295,14 +289,6 @@ class Economy(commands.Cog):
                             new_balance=await bank.get_balance(author),
                             pos=pos,
                                 )
-=======
-                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Payday!",description="\n{author.mention} \n\n Take your **{amount} {currency}**!\n You now have **{new_balance} {currency}**.\n".format(
-                        author=author,
-                        currency=credits_name,
-                        amount=await self.config.PAYDAY_CREDITS(),
-                        new_balance=await bank.get_balance(author),
-                        pos=pos,
->>>>>>> dceace271e9d3c70feee13786b1567f5ad5d8a58
                             )
                             .set_footer(text="You are currently #{pos} on the global leaderboard!".format(pos=pos)))
                 except discord.HTTPException:
@@ -343,7 +329,6 @@ class Economy(commands.Cog):
                 next_payday = cur_time + await self.config.guild(guild).PAYDAY_TIME()
                 await self.config.member(author).next_payday.set(next_payday)
                 pos = await bank.get_leaderboard_position(author)
-<<<<<<< HEAD
                 try:
                     await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Payday!",description="\n{author.mention} \n\n Take **{amount} {currency}**!\n You now have **{new_balance} {currency}**.\n".format(
                             author=author,
@@ -352,14 +337,6 @@ class Economy(commands.Cog):
                             new_balance=await bank.get_balance(author),
                             pos=pos,
                                 )
-=======
-                await ctx.send(embed=discord.Embed(color=(await ctx.embed_colour()),title="Payday!",description="\n{author.mention} \n\n Take your **{amount} {currency}**!\n You now have **{new_balance} {currency}**.\n".format(
-                        author=author,
-                        currency=credits_name,
-                        amount=await self.config.PAYDAY_CREDITS(),
-                        new_balance=await bank.get_balance(author),
-                        pos=pos,
->>>>>>> dceace271e9d3c70feee13786b1567f5ad5d8a58
                             )
                             .set_footer(text="You are currently #{pos} on the global leaderboard!".format(pos=pos)))
                 except discord.HTTPException:
