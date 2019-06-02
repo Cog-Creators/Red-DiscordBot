@@ -3,7 +3,7 @@ import pathlib
 import platform
 import shutil
 import asyncio
-import asyncio.subprocess
+import asyncio.subprocess  # disables for # https://github.com/PyCQA/pylint/issues/1469
 import logging
 import re
 import tempfile
@@ -42,7 +42,7 @@ class ServerManager:
     def __init__(self) -> None:
         self.ready = asyncio.Event()
 
-        self._proc: Optional[asyncio.subprocess.Process] = None
+        self._proc: Optional[asyncio.subprocess.Process] = None  # pylint:disable=no-member
         self._monitor_task: Optional[asyncio.Task] = None
         self._shutdown: bool = False
 
@@ -67,7 +67,7 @@ class ServerManager:
         shutil.copyfile(BUNDLED_APP_YML, LAVALINK_APP_YML)
 
         args = await self._get_jar_args()
-        self._proc = await asyncio.subprocess.create_subprocess_exec(
+        self._proc = await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
             *args,
             cwd=str(LAVALINK_DOWNLOAD_DIR),
             stdout=asyncio.subprocess.PIPE,
@@ -117,7 +117,7 @@ class ServerManager:
         """
         This assumes we've already checked that java exists.
         """
-        _proc: asyncio.subprocess.Process = await asyncio.create_subprocess_exec(
+        _proc: asyncio.subprocess.Process = await asyncio.create_subprocess_exec(  # pylint:disable=no-member
             "java", "-version", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
         )
         # java -version outputs to stderr
@@ -173,7 +173,7 @@ class ServerManager:
             await self.start()
         else:
             log.critical(
-                "Your Java is borked. Please find the hs_err_pid{}.log file"
+                "Your Java is borked. Please find the hs_err_pid%d.log file"
                 " in the Audio data folder and report this issue.",
                 self._proc.pid,
             )
@@ -222,7 +222,7 @@ class ServerManager:
             return True
         args = await cls._get_jar_args()
         args.append("--version")
-        _proc = await asyncio.subprocess.create_subprocess_exec(
+        _proc = await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
             *args,
             cwd=str(LAVALINK_DOWNLOAD_DIR),
             stdout=asyncio.subprocess.PIPE,

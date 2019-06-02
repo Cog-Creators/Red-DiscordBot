@@ -28,6 +28,9 @@ COG = "COG"
 COMMAND = "COMMAND"
 GLOBAL = 0
 
+_OldConfigSchema = Dict[int, Dict[str, Dict[str, Dict[str, Dict[str, List[int]]]]]]
+_NewConfigSchema = Dict[str, Dict[int, Dict[str, Dict[int, bool]]]]
+
 # The strings in the schema are constants and should get extracted, but not translated until
 # runtime.
 translate = _
@@ -624,9 +627,6 @@ class Permissions(commands.Cog):
         await self.config.custom(COG).set(new_cog_rules)
         await self.config.custom(COMMAND).set(new_cmd_rules)
         await self.config.version.set(__version__)
-
-    _OldConfigSchema = Dict[int, Dict[str, Dict[str, Dict[str, Dict[str, List[int]]]]]]
-    _NewConfigSchema = Dict[str, Dict[int, Dict[str, Dict[int, bool]]]]
 
     @staticmethod
     def _get_updated_schema(

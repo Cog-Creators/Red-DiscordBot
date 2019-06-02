@@ -963,13 +963,13 @@ class Core(commands.Cog, CoreLogic):
                 "message", check=MessagePredicate.same_context(ctx), timeout=60
             )
         except asyncio.TimeoutError:
-            self.owner.reset_cooldown(ctx)
+            ctx.command.reset_cooldown(ctx)
             await ctx.send(
                 _("The `{prefix}set owner` request has timed out.").format(prefix=ctx.prefix)
             )
         else:
             if message.content.strip() == token:
-                self.owner.reset_cooldown(ctx)
+                ctx.command.reset_cooldown(ctx)
                 await ctx.bot.db.owner.set(ctx.author.id)
                 ctx.bot.owner_id = ctx.author.id
                 await ctx.send(_("You have been set as owner."))
