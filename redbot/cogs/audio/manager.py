@@ -37,7 +37,7 @@ class ServerManager:
     _java_version: ClassVar[Optional[Tuple[int, int]]] = None
     _up_to_date: ClassVar[Optional[bool]] = None
 
-    _blacklisted_archs = ["armv6l", "aarch32", "aarch64"]
+    _blacklisted_archs = []
 
     def __init__(self) -> None:
         self.ready = asyncio.Event()
