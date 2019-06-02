@@ -304,6 +304,7 @@ class Audio(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def audioset(self, ctx):
         """Music configuration options."""
         pass
@@ -666,6 +667,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     async def audiostats(self, ctx):
         """Audio stats."""
         server_num = len(lavalink.active_players())
@@ -718,6 +720,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def bump(self, ctx, index: int):
         """Bump a track number to the top of the queue."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -755,6 +758,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def disconnect(self, ctx):
         """Disconnect from the voice channel."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -773,6 +777,7 @@ class Audio(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     async def local(self, ctx):
         """Local playback commands."""
         pass
@@ -947,6 +952,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     async def now(self, ctx):
         """Now playing."""
         if not self._player_check(ctx):
@@ -1036,6 +1042,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def pause(self, ctx):
         """Pause or resume a playing track."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -1084,6 +1091,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def percent(self, ctx):
         """Queue percentage."""
         if not self._player_check(ctx):
@@ -1140,6 +1148,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def play(self, ctx, *, query):
         """Play a URL or search for a track."""
 
@@ -1520,6 +1529,7 @@ class Audio(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def playlist(self, ctx):
         """Playlist configuration options."""
         pass
@@ -1687,6 +1697,7 @@ class Audio(commands.Cog):
 
     @checks.is_owner()
     @playlist.command(name="download")
+    @commands.bot_has_permissions(attach_files=True)
     async def _playlist_download(self, ctx, playlist_name, v2=False):
         """Download a copy of a playlist.
 
@@ -1773,6 +1784,7 @@ class Audio(commands.Cog):
         await menu(ctx, page_list, DEFAULT_CONTROLS)
 
     @playlist.command(name="list")
+    @commands.bot_has_permissions(add_reactions=True)
     async def _playlist_list(self, ctx):
         """List saved playlists."""
         playlists = await self.config.guild(ctx.guild).playlists.get_raw()
@@ -2163,6 +2175,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def prev(self, ctx):
         """Skip to the start of the previously played track."""
         if not self._player_check(ctx):
@@ -2208,6 +2221,7 @@ class Audio(commands.Cog):
 
     @commands.group(invoke_without_command=True)
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     async def queue(self, ctx, *, page="1"):
         """List the queue.
 
@@ -2447,6 +2461,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def repeat(self, ctx):
         """Toggle repeat."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -2473,6 +2488,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def remove(self, ctx, index: int):
         """Remove a specific track number from the queue."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -2509,6 +2525,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     async def search(self, ctx, *, query):
         """Pick a track with a search.
 
@@ -2795,6 +2812,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def seek(self, ctx, seconds):
         """Seek ahead or behind on a track by seconds or a to a specific time.
 
@@ -2860,6 +2878,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def shuffle(self, ctx):
         """Toggle shuffle."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -2884,6 +2903,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def sing(self, ctx):
         """Make Red sing one of her songs"""
         ids = (
@@ -2899,6 +2919,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def skip(self, ctx, skip_to_track: int = None):
         """Skip to the next track, or to a given track number."""
         if not self._player_check(ctx):
@@ -3093,6 +3114,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def stop(self, ctx):
         """Stop playback and clear the queue."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -3126,6 +3148,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def volume(self, ctx, vol: int = None):
         """Set the volume, 1% - 150%."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -3172,6 +3195,7 @@ class Audio(commands.Cog):
 
     @commands.group(aliases=["llset"])
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     @checks.is_owner()
     async def llsetup(self, ctx):
         """Lavalink server configuration options."""
