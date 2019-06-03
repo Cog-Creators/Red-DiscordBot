@@ -265,11 +265,10 @@ class CoreLogic:
         str
             Invite URL.
         """
-        if self.bot.user.bot:
-            app_info = await self.bot.application_info()
-            perms_int = await self.bot.db.invite_perm()
-            permissions = discord.Permissions(perms_int)
-            return discord.utils.oauth_url(app_info.id, permissions)
+        app_info = await self.bot.application_info()
+        perms_int = await self.bot.db.invite_perm()
+        permissions = discord.Permissions(perms_int)
+        return discord.utils.oauth_url(app_info.id, permissions)
 
     @staticmethod
     async def _can_get_invite_url(ctx):
@@ -483,9 +482,6 @@ class Core(commands.Cog, CoreLogic):
         Define if the command should be accessible\
         for the average users.
         """
-        if not self.bot.user.bot:
-            await ctx.send("I'm not a bot account. I have no invite URL.")
-            return
         if await self.bot.db.invite_public():
             await self.bot.db.invite_public.set(False)
             await ctx.send("The invite is now private.")
