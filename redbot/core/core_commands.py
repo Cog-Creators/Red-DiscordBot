@@ -269,9 +269,8 @@ class CoreLogic:
         if self.bot.user.bot:
             app_info = await self.bot.application_info()
             perms_int = await self.bot.db.invite_perm()
-            redirect = await self.bot.db.invite_redirect()
             permissions = discord.Permissions(perms_int)
-            return discord.utils.oauth_url(app_info.id, permissions, redirect_uri=redirect)
+            return discord.utils.oauth_url(app_info.id, permissions)
 
     async def _can_get_invite_url(ctx):
         is_owner = await ctx.bot.is_owner(ctx.author)
@@ -529,26 +528,6 @@ class Core(commands.Cog, CoreLogic):
         """
         await self.bot.db.invite_perm.set(level)
         await ctx.send("The new permissions level has been set.")
-
-    @inviteset.command()
-    async def redirect(self, ctx, URL: str = None):
-        """
-        Make the invite link redirect to a website.
-
-        If the bot was successfully added, discord will redirect\
-        the user to the desired website.
-
-        Give nothing to disable.
-        """
-        if not URL:
-            await self.bot.db.invite_redirect.set(None)
-            await ctx.send("The invite won't redirect to an URL anymore.")
-            return
-        if not validators.url(URL):
-            await ctx.send("Invalid URL.")
-        else:
-            await self.bot.db.invite_redirect.set(URL)
-            await ctx.send("The invite link will now redirect to this URL.")
 
     @commands.command()
     @commands.guild_only()

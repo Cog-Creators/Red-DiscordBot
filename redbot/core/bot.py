@@ -58,7 +58,6 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             help__tagline="",
             invite_public=False,
             invite_perm=0,
-            invite_redirect=None,
             disabled_commands=[],
             disabled_command_msg="That command is disabled.",
             api_tokens={},
