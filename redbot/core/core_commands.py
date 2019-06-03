@@ -271,7 +271,8 @@ class CoreLogic:
             permissions = discord.Permissions(perms_int)
             return discord.utils.oauth_url(app_info.id, permissions)
 
-    async def _can_get_invite_url(self, ctx):
+    @staticmethod
+    async def _can_get_invite_url(ctx):
         is_owner = await ctx.bot.is_owner(ctx.author)
         is_invite_public = await ctx.bot.db.invite_public()
         return is_owner or is_invite_public
@@ -474,8 +475,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.is_owner()
     async def inviteset(self, ctx):
         """Setup the bot's invite"""
-        if not ctx.invoked_subcommand:
-            await ctx.send_help()
+        pass
 
     @inviteset.command()
     async def public(self, ctx, confirm: bool = False):
