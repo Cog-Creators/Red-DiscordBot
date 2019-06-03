@@ -238,7 +238,7 @@ class TimedeltaConverter(dpy_commands.Converter):
         self.maximum = maximum
 
     async def convert(self, ctx: "Context", argument: str) -> timedelta:
-        if self.default_unit and argument.isdigit():
+        if self.default_unit and argument.isdecimal():
             delta = timedelta(**{self.default_unit: int(argument)})
         else:
             delta = parse_timedelta(
