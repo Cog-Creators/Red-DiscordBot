@@ -60,6 +60,8 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             help__verify_checks=True,
             help__verify_exists=False,
             help__tagline="",
+            invite_public=False,
+            invite_perm=0,
             disabled_commands=[],
             disabled_command_msg="That command is disabled.",
             api_tokens={},
