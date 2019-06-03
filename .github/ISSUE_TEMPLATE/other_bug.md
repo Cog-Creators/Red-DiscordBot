@@ -1,3 +1,9 @@
+---
+name: Bug report
+about: For bugs that don't involve a command.
+
+---
+
 # Other bugs
 
 <!-- 

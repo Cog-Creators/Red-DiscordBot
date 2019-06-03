@@ -4,7 +4,6 @@ from pathlib import Path
 
 import pytest
 from unittest.mock import MagicMock
-from raven.versioning import fetch_git_sha
 
 from redbot.pytest.downloader import *
 
@@ -40,6 +39,22 @@ async def test_add_repo(monkeypatch, repo_manager):
 
 
 @pytest.mark.asyncio
+async def test_lib_install_requirements(monkeypatch, library_installable, repo, tmpdir):
+    monkeypatch.setattr("redbot.cogs.downloader.repo_manager.Repo._run", fake_run_noprint)
+    monkeypatch.setattr(
+        "redbot.cogs.downloader.repo_manager.Repo.available_libraries", (library_installable,)
+    )
+
+    lib_path = Path(str(tmpdir)) / "cog_data_path" / "lib"
+    sharedlib_path = lib_path / "cog_shared"
+    sharedlib_path.mkdir(parents=True, exist_ok=True)
+
+    result = await repo.install_libraries(target_dir=sharedlib_path, req_target_dir=lib_path)
+
+    assert result is True
+
+
+@pytest.mark.asyncio
 async def test_remove_repo(monkeypatch, repo_manager):
     monkeypatch.setattr("redbot.cogs.downloader.repo_manager.Repo._run", fake_run_noprint)
 
@@ -58,18 +73,6 @@ async def test_current_branch(bot_repo):
     # So this does work, just not sure how to fully automate the test
 
     assert branch not in ("WRONG", "")
-
-
-@pytest.mark.asyncio
-async def test_current_hash(bot_repo):
-    branch = await bot_repo.current_branch()
-    bot_repo.branch = branch
-
-    commit = await bot_repo.current_commit()
-
-    sentry_sha = fetch_git_sha(str(bot_repo.folder_path))
-
-    assert sentry_sha == commit
 
 
 @pytest.mark.asyncio

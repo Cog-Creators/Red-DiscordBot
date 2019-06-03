@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-
+#!/usr/bin/env python3
 import argparse
 import asyncio
 import json
@@ -177,26 +176,21 @@ def basic_setup():
 async def json_to_mongo(current_data_dir: Path, storage_details: dict):
     from redbot.core.drivers.red_mongo import Mongo
 
-    core_data_file = list(current_data_dir.glob("core/settings.json"))[0]
-    m = Mongo("Core", "0", **storage_details)
+    core_data_file = current_data_dir / "core" / "settings.json"
+    driver = Mongo(cog_name="Core", identifier="0", **storage_details)
     with core_data_file.open(mode="r") as f:
         core_data = json.loads(f.read())
-    collection = m.get_collection()
-    await collection.update_one(
-        {"_id": m.unique_cog_identifier}, update={"$set": core_data["0"]}, upsert=True
-    )
+    data = core_data.get("0", {})
+    for key, value in data.items():
+        await driver.set(key, value=value)
     for p in current_data_dir.glob("cogs/**/settings.json"):
+        cog_name = p.parent.stem
         with p.open(mode="r") as f:
-            cog_data = json.loads(f.read())
-        cog_i = None
-        for ident in list(cog_data.keys()):
-            cog_i = str(hash(ident))
-        cog_m = Mongo(p.parent.stem, cog_i, **storage_details)
-        cog_c = cog_m.get_collection()
-        for ident in list(cog_data.keys()):
-            await cog_c.update_one(
-                {"_id": cog_m.unique_cog_identifier}, update={"$set": cog_data[cog_i]}, upsert=True
-            )
+            cog_data = json.load(f)
+        for identifier, data in cog_data.items():
+            driver = Mongo(cog_name, identifier, **storage_details)
+            for key, value in data.items():
+                await driver.set(key, value=value)
 
 
 async def mongo_to_json(current_data_dir: Path, storage_details: dict):
@@ -204,22 +198,23 @@ async def mongo_to_json(current_data_dir: Path, storage_details: dict):
 
     m = Mongo("Core", "0", **storage_details)
     db = m.db
-    collection_names = await db.collection_names(include_system_collections=False)
-    for c_name in collection_names:
-        if c_name == "Core":
+    collection_names = await db.list_collection_names()
+    for collection_name in collection_names:
+        if collection_name == "Core":
             c_data_path = current_data_dir / "core"
         else:
-            c_data_path = current_data_dir / "cogs/{}".format(c_name)
-        output = {}
-        docs = await db[c_name].find().to_list(None)
-        c_id = None
-        for item in docs:
-            item_id = item.pop("_id")
-            if not c_id:
-                c_id = str(hash(item_id))
-            output[item_id] = item
-        target = JSON(c_name, c_id, data_path_override=c_data_path)
-        await target.jsonIO._threadsafe_save_json(output)
+            c_data_path = current_data_dir / "cogs" / collection_name
+        c_data_path.mkdir(parents=True, exist_ok=True)
+        # Every cog name has its own collection
+        collection = db[collection_name]
+        async for document in collection.find():
+            # Every cog has its own document.
+            # This means if two cogs have the same name but different identifiers, they will
+            # be two separate documents in the same collection
+            cog_id = document.pop("_id")
+            driver = JSON(collection_name, cog_id, data_path_override=c_data_path)
+            for key, value in document.items():
+                await driver.set(key, value=value)
 
 
 async def edit_instance():
@@ -265,23 +260,28 @@ async def edit_instance():
     if confirm("Would you like to change the storage type? (y/n):"):
         storage = get_storage_type()
 
-        storage_dict = {1: "JSON", 2: "MongoDB"}
+        storage_dict = {1: "JSON", 2: "MongoDBV2"}
         default_dirs["STORAGE_TYPE"] = storage_dict[storage]
-        if storage_dict.get(storage, 1) == "MongoDB":
+        if storage_dict.get(storage, 1) == "MongoDBV2":
             from redbot.core.drivers.red_mongo import get_config_details
 
             storage_details = get_config_details()
             default_dirs["STORAGE_DETAILS"] = storage_details
 
             if instance_data["STORAGE_TYPE"] == "JSON":
-                if confirm("Would you like to import your data? (y/n) "):
-                    await json_to_mongo(current_data_dir, storage_details)
-        else:
+                raise NotImplementedError("We cannot convert from JSON to MongoDB at this time.")
+                # if confirm("Would you like to import your data? (y/n) "):
+                #    await json_to_mongo(current_data_dir, storage_details)
+        elif storage_dict.get(storage, 1) == "JSON":
             storage_details = instance_data["STORAGE_DETAILS"]
             default_dirs["STORAGE_DETAILS"] = {}
             if instance_data["STORAGE_TYPE"] == "MongoDB":
                 if confirm("Would you like to import your data? (y/n) "):
                     await mongo_to_json(current_data_dir, storage_details)
+            elif instance_data["STORAGE_TYPE"] == "MongoDBV2":
+                raise NotImplementedError(
+                    "We cannot convert from this version of MongoDB to JSON at this time."
+                )
 
     if name != selected:
         save_config(selected, {}, remove=True)
@@ -376,6 +376,7 @@ async def remove_instance_interaction():
 
 
 def main():
+    args, _ = parse_cli_args()
     if args.delete:
         loop = asyncio.get_event_loop()
         loop.run_until_complete(remove_instance_interaction())
@@ -385,8 +386,6 @@ def main():
     else:
         basic_setup()
 
-
-args, _ = parse_cli_args()
 
 if __name__ == "__main__":
     try:

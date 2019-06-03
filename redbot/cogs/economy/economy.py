@@ -265,7 +265,7 @@ class Economy(commands.Cog):
                     await bank.set_balance(author, exc.max_balance)
                     await ctx.send(
                         _(
-                            "You've reached the maximum amount of {currency}! (**{balance:,}**) "
+                            "You've reached the maximum amount of {currency}!"
                             "Please spend some more \N{GRIMACING FACE}\n\n"
                             "You currently have {new_balance} {currency}."
                         ).format(currency=credits_name, new_balance=exc.max_balance)
@@ -388,7 +388,7 @@ class Economy(commands.Cog):
     @guild_only_check()
     async def payouts(self, ctx: commands.Context):
         """Show the payouts for the slot machine."""
-        await ctx.author.send(SLOT_PAYOUTS_MSG())
+        await ctx.author.send(SLOT_PAYOUTS_MSG)
 
     @commands.command()
     @guild_only_check()

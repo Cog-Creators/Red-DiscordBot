@@ -1,6 +1,7 @@
 from .image import Image
 
 
-def setup(bot):
-    n = Image(bot)
-    bot.add_cog(n)
+async def setup(bot):
+    cog = Image(bot)
+    await cog.initialize()
+    bot.add_cog(cog)

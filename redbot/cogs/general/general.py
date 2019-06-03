@@ -28,7 +28,7 @@ class RPSParser:
         elif argument == "scissors":
             self.choice = RPS.scissors
         else:
-            raise ValueError
+            self.choice = None
 
 
 @cog_i18n(_)
@@ -121,6 +121,8 @@ class General(commands.Cog):
         """Play Rock Paper Scissors."""
         author = ctx.author
         player_choice = your_choice.choice
+        if not player_choice:
+            return await ctx.send("This isn't a valid option. Try rock, paper, or scissors.")
         red_choice = choice((RPS.rock, RPS.paper, RPS.scissors))
         cond = {
             (RPS.rock, RPS.paper): False,
@@ -263,12 +265,13 @@ class General(commands.Cog):
 
         except aiohttp.ClientError:
             await ctx.send(
-                _("No Urban dictionary entries were found, or there was an error in the process")
+                _("No Urban Dictionary entries were found, or there was an error in the process.")
             )
             return
 
         if data.get("error") != 404:
-
+            if not data["list"]:
+                return await ctx.send(_("No Urban Dictionary entries were found."))
             if await ctx.embed_requested():
                 # a list of embeds
                 embeds = []
@@ -303,14 +306,14 @@ class General(commands.Cog):
             else:
                 messages = []
                 for ud in data["list"]:
-                    ud.set_default("example", "N/A")
+                    ud.setdefault("example", "N/A")
                     description = _("{definition}\n\n**Example:** {example}").format(**ud)
                     if len(description) > 2048:
                         description = "{}...".format(description[:2045])
 
                     message = _(
                         "<{permalink}>\n {word} by {author}\n\n{description}\n\n"
-                        "{thumbs_down} Down / {thumbs_up} Up, Powered by urban dictionary"
+                        "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
                     ).format(word=ud.pop("word").capitalize(), description=description, **ud)
                     messages.append(message)
 
@@ -325,6 +328,5 @@ class General(commands.Cog):
                     )
         else:
             await ctx.send(
-                _("No Urban dictionary entries were found, or there was an error in the process.")
+                _("No Urban Dictionary entries were found, or there was an error in the process.")
             )
-            return

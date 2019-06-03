@@ -1,4 +1,3 @@
-import os
 from datetime import datetime
 from typing import List, Union
 
@@ -7,7 +6,12 @@ import discord
 from redbot.core import Config
 from redbot.core.bot import Red
 
-from .utils.common_filters import filter_invites, filter_mass_mentions, filter_urls
+from .utils.common_filters import (
+    filter_invites,
+    filter_mass_mentions,
+    filter_urls,
+    escape_spoilers,
+)
 
 __all__ = [
     "Case",
@@ -15,6 +19,7 @@ __all__ = [
     "get_next_case_number",
     "get_case",
     "get_all_cases",
+    "get_cases_for_member",
     "create_case",
     "get_casetype",
     "get_all_casetypes",
@@ -29,15 +34,14 @@ _DEFAULT_GLOBAL = {"casetypes": {}}
 
 _DEFAULT_GUILD = {"mod_log": None, "cases": {}, "casetypes": {}}
 
+_conf: Config = None
 
-def _register_defaults():
+
+def _init():
+    global _conf
+    _conf = Config.get_conf(None, 1354799444, cog_name="ModLog")
     _conf.register_global(**_DEFAULT_GLOBAL)
     _conf.register_guild(**_DEFAULT_GUILD)
-
-
-if not os.environ.get("BUILDING_DOCS"):
-    _conf = Config.get_conf(None, 1354799444, cog_name="ModLog")
-    _register_defaults()
 
 
 class Case:
@@ -115,8 +119,10 @@ class Case:
             reason = "**Reason:** Use `[p]reason {} <reason>` to add it".format(self.case_number)
 
         if self.moderator is not None:
-            moderator = "{}#{} ({})\n".format(
-                self.moderator.name, self.moderator.discriminator, self.moderator.id
+            moderator = escape_spoilers(
+                "{}#{} ({})\n".format(
+                    self.moderator.name, self.moderator.discriminator, self.moderator.id
+                )
             )
         else:
             moderator = "Unknown"
@@ -133,8 +139,10 @@ class Case:
 
         amended_by = None
         if self.amended_by:
-            amended_by = "{}#{} ({})".format(
-                self.amended_by.name, self.amended_by.discriminator, self.amended_by.id
+            amended_by = escape_spoilers(
+                "{}#{} ({})".format(
+                    self.amended_by.name, self.amended_by.discriminator, self.amended_by.id
+                )
             )
 
         last_modified = None
@@ -143,9 +151,11 @@ class Case:
                 datetime.fromtimestamp(self.modified_at).strftime("%Y-%m-%d %H:%M:%S")
             )
 
-        user = filter_invites(
-            "{}#{} ({})\n".format(self.user.name, self.user.discriminator, self.user.id)
-        )  # Invites get rendered even in embeds.
+        user = escape_spoilers(
+            filter_invites(
+                "{}#{} ({})\n".format(self.user.name, self.user.discriminator, self.user.id)
+            )
+        )  # Invites and spoilers get rendered even in embeds.
         if embed:
             emb = discord.Embed(title=title, description=reason)
 
@@ -227,9 +237,21 @@ class Case:
         Case
             The case object for the requested case
 
+        Raises
+        ------
+        `discord.NotFound`
+            The user the case is for no longer exists
+        `discord.Forbidden`
+            Cannot read message history to fetch the original message.
+        `discord.HTTPException`
+            A generic API issue
         """
         guild = mod_channel.guild
-        message = await mod_channel.get_message(data["message"])
+        if data["message"]:
+            try:
+                message = await mod_channel.get_message(data["message"])
+            except discord.NotFound:
+                message = None
         user = await bot.get_user_info(data["user"])
         moderator = guild.get_member(data["moderator"])
         channel = guild.get_channel(data["channel"])
@@ -420,6 +442,92 @@ async def get_all_cases(guild: discord.Guild, bot: Red) -> List[Case]:
     for case in case_numbers:
         case_list.append(await get_case(case, guild, bot))
     return case_list
+
+
+async def get_cases_for_member(
+    guild: discord.Guild, bot: Red, *, member: discord.Member = None, member_id: int = None
+) -> List[Case]:
+    """
+    Gets all cases for the specified member or member id in a guild.
+
+    Parameters
+    ----------
+    guild: `discord.Guild`
+        The guild to get the cases from
+    bot: Red
+        The bot's instance
+    member: `discord.Member`
+        The member to get cases about
+    member_id: int
+        The id of the member to get cases about
+
+    Returns
+    -------
+    list
+        A list of all matching cases.
+
+    Raises
+    ------
+    ValueError
+        If at least one of member or member_id is not provided
+    `discord.NotFound`
+        A user with this ID does not exist.
+    `discord.Forbidden`
+        The bot does not have permission to fetch the modlog message which was sent.
+    `discord.HTTPException`
+        Fetching the user failed.
+    """
+
+    cases = await _conf.guild(guild).get_raw("cases")
+
+    if not (member_id or member):
+        raise ValueError("Expected a member or a member id to be provided.") from None
+
+    if not member_id:
+        member_id = member.id
+
+    if not member:
+        member = guild.get_member(member_id)
+        if not member:
+            member = await bot.get_user_info(member_id)
+
+    try:
+        mod_channel = await get_modlog_channel(guild)
+    except RuntimeError:
+        mod_channel = None
+
+    async def make_case(data: dict) -> Case:
+
+        message = None
+        if data["message"] and mod_channel:
+            try:
+                message = await mod_channel.get_message(data["message"])
+            except discord.NotFound:
+                pass
+
+        return Case(
+            bot=bot,
+            guild=bot.get_guild(data["guild"]),
+            created_at=data["created_at"],
+            action_type=data["action_type"],
+            user=member,
+            moderator=guild.get_member(data["moderator"]),
+            case_number=data["case_number"],
+            reason=data["reason"],
+            until=data["until"],
+            channel=guild.get_channel(data["channel"]),
+            amended_by=guild.get_member(data["amended_by"]),
+            modified_at=data["modified_at"],
+            message=message,
+        )
+
+    cases = [
+        await make_case(case_data)
+        for case_data in cases.values()
+        if case_data["user"] == member_id
+    ]
+
+    return cases
 
 
 async def create_case(
@@ -638,7 +746,6 @@ async def register_casetypes(new_types: List[dict]) -> List[CaseType]:
 
     Raises
     ------
-    RuntimeError
     KeyError
     ValueError
     AttributeError
@@ -653,42 +760,39 @@ async def register_casetypes(new_types: List[dict]) -> List[CaseType]:
         try:
             ct = await register_casetype(**new_type)
         except RuntimeError:
-            raise
-        except ValueError:
-            raise
-        except AttributeError:
-            raise
-        except TypeError:
-            raise
+            # We pass here because RuntimeError signifies the case was
+            # already registered.
+            pass
         else:
             type_list.append(ct)
     else:
         return type_list
 
 
-async def get_modlog_channel(guild: discord.Guild) -> Union[discord.TextChannel, None]:
+async def get_modlog_channel(guild: discord.Guild) -> discord.TextChannel:
     """
-    Get the current modlog channel
+    Get the current modlog channel.
 
     Parameters
     ----------
     guild: `discord.Guild`
-        The guild to get the modlog channel for
+        The guild to get the modlog channel for.
 
     Returns
     -------
-    `discord.TextChannel` or `None`
-        The channel object representing the modlog channel
+    `discord.TextChannel`
+        The channel object representing the modlog channel.
 
     Raises
     ------
     RuntimeError
-        If the modlog channel is not found
+        If the modlog channel is not found.
 
     """
     if hasattr(guild, "get_channel"):
         channel = guild.get_channel(await _conf.guild(guild).mod_log())
     else:
+        # For unit tests only
         channel = await _conf.guild(guild).mod_log()
     if channel is None:
         raise RuntimeError("Failed to get the mod log channel!")

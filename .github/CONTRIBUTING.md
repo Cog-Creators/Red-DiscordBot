@@ -31,7 +31,7 @@ We love receiving contributions from our community. Any assistance you can provi
 # 2. Ground Rules
 We've made a point to use [ZenHub](https://www.zenhub.com/) (a plugin for GitHub) as our main source of collaboration and coordination. Your experience contributing to Red will be greatly improved if you go get that plugin.
 1. Ensure cross compatibility for Windows, Mac OS and Linux.
-2. Ensure all Python features used in contributions exist and work in Python 3.6 and above.
+2. Ensure all Python features used in contributions exist and work in Python 3.7 and above.
 3. Create new tests for code you add or bugs you fix. It helps us help you by making sure we don't accidentally break anything :grinning:
 4. Create any issues for new features you'd like to implement and explain why this feature is useful to everyone and not just you personally.
 5. Don't add new cogs unless specifically given approval in an issue discussing said cog idea.
@@ -53,7 +53,7 @@ Red's repository is configured to follow a particular development workflow, usin
 
 ### 4.1 Setting up your development environment
 The following requirements must be installed prior to setting up:
- - Python 3.6.2 or greater (3.6.6 or greater on Windows)
+ - Python 3.7.0 or greater
  - git
  - pip
  - pipenv
@@ -79,7 +79,7 @@ Note: If you haven't used `pipenv` before but are comfortable with virtualenvs, 
 We've recently started using [tox](https://github.com/tox-dev/tox) to run all of our tests. It's extremely simple to use, and if you followed the previous section correctly, it is already installed to your virtual environment.
 
 Currently, tox does the following, creating its own virtual environments for each stage:
-- Runs all of our unit tests with [pytest](https://github.com/pytest-dev/pytest) on python 3.6 and 3.7 (test environments `py36` and `py37`)
+- Runs all of our unit tests with [pytest](https://github.com/pytest-dev/pytest) on python 3.7 (test environment `py37`)
 - Ensures documentation builds without warnings, and all hyperlinks have a valid destination (test environment `docs`)
 - Ensures that the code meets our style guide with [black](https://github.com/ambv/black) (test environment `style`)
 

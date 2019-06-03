@@ -1,15 +1,15 @@
-import sys
-import os
-from pathlib import Path
-from typing import List
-from copy import deepcopy
-import hashlib
-import shutil
+import inspect
 import logging
+import os
+import sys
+import tempfile
+from copy import deepcopy
+from pathlib import Path
 
 import appdirs
-import tempfile
+from discord.utils import deprecated
 
+from . import commands
 from .json_io import JsonIO
 
 __all__ = [
@@ -112,7 +112,8 @@ def cog_data_path(cog_instance=None, raw_name: str = None) -> Path:
     Parameters
     ----------
     cog_instance
-        The instance of the cog you wish to get a data path for.
+        The instance of the cog you wish to get a data path for. 
+        If calling from a command or method of your cog, this should be ``self``.
     raw_name : str
         The name of the cog to get a data path for.
 
@@ -153,124 +154,28 @@ def core_data_path() -> Path:
     return core_path.resolve()
 
 
-def _find_data_files(init_location: str) -> (Path, List[Path]):
-    """
-    Discovers all files in the bundled data folder of an installed cog.
-
-    Parameters
-    ----------
-    init_location
-
-    Returns
-    -------
-    (pathlib.Path, list of pathlib.Path)
-    """
-    init_file = Path(init_location)
-    if not init_file.is_file():
-        return []
-
-    package_folder = init_file.parent.resolve() / "data"
-    if not package_folder.is_dir():
-        return []
-
-    all_files = list(package_folder.rglob("*"))
-
-    return package_folder, [p.resolve() for p in all_files if p.is_file()]
-
-
-def _compare_and_copy(to_copy: List[Path], bundled_data_dir: Path, cog_data_dir: Path):
-    """
-    Filters out files from ``to_copy`` that already exist, and are the
-    same, in ``data_dir``. The files that are different are copied into
-    ``data_dir``.
-
-    Parameters
-    ----------
-    to_copy : list of pathlib.Path
-    bundled_data_dir : pathlib.Path
-    cog_data_dir : pathlib.Path
-    """
-
-    def hash_bytestr_iter(bytesiter, hasher, ashexstr=False):
-        for block in bytesiter:
-            hasher.update(block)
-        return hasher.hexdigest() if ashexstr else hasher.digest()
-
-    def file_as_blockiter(afile, blocksize=65536):
-        with afile:
-            block = afile.read(blocksize)
-            while len(block) > 0:
-                yield block
-                block = afile.read(blocksize)
-
-    lookup = {p: cog_data_dir.joinpath(p.relative_to(bundled_data_dir)) for p in to_copy}
-
-    for orig, poss_existing in lookup.items():
-        if not poss_existing.is_file():
-            poss_existing.parent.mkdir(exist_ok=True, parents=True)
-            exists_checksum = None
-        else:
-            exists_checksum = hash_bytestr_iter(
-                file_as_blockiter(poss_existing.open("rb")), hashlib.sha256()
-            )
-
-        orig_checksum = ...
-        if exists_checksum is not None:
-            orig_checksum = hash_bytestr_iter(file_as_blockiter(orig.open("rb")), hashlib.sha256())
-
-        if exists_checksum != orig_checksum:
-            shutil.copy(str(orig), str(poss_existing))
-            log.debug("Copying {} to {}".format(orig, poss_existing))
-
-
+# noinspection PyUnusedLocal
+@deprecated("bundled_data_path() without calling this function")
 def load_bundled_data(cog_instance, init_location: str):
+    pass
+
+
+def bundled_data_path(cog_instance: commands.Cog) -> Path:
     """
-    This function copies (and overwrites) data from the ``data/`` folder
-    of the installed cog.
+    Get the path to the "data" directory bundled with this cog.
+
+    The bundled data folder must be located alongside the ``.py`` file
+    which contains the cog class.
 
     .. important::
 
-        This function MUST be called from the ``setup()`` function of your
-        cog.
-
-    Examples
-    --------
-    >>> from redbot.core import data_manager
-    >>>
-    >>> def setup(bot):
-    >>>     cog = MyCog()
-    >>>     data_manager.load_bundled_data(cog, __file__)
-    >>>     bot.add_cog(cog)
+        You should *NEVER* write to this directory.
 
     Parameters
     ----------
     cog_instance
-        An instance of your cog class.
-    init_location : str
-        The ``__file__`` attribute of the file where your ``setup()``
-        function exists.
-    """
-    bundled_data_folder, to_copy = _find_data_files(init_location)
-
-    cog_data_folder = cog_data_path(cog_instance) / "bundled_data"
-
-    _compare_and_copy(to_copy, bundled_data_folder, cog_data_folder)
-
-
-def bundled_data_path(cog_instance) -> Path:
-    """
-    The "data" directory that has been copied from installed cogs.
-
-    .. important::
-
-        You should *NEVER* write to this directory. Data manager will
-        overwrite files in this directory each time `load_bundled_data`
-        is called. You should instead write to the directory provided by
-        `cog_data_path`.
-
-    Parameters
-    ----------
-    cog_instance
+        An instance of your cog. If calling from a command or method of
+        your cog, this should be ``self``.
 
     Returns
     -------
@@ -280,10 +185,10 @@ def bundled_data_path(cog_instance) -> Path:
     Raises
     ------
     FileNotFoundError
-        If no bundled data folder exists or if it hasn't been loaded yet.
-    """
+        If no bundled data folder exists.
 
-    bundled_path = cog_data_path(cog_instance) / "bundled_data"
+    """
+    bundled_path = Path(inspect.getfile(cog_instance.__class__)).parent / "data"
 
     if not bundled_path.is_dir():
         raise FileNotFoundError("No such directory {}".format(bundled_path))

@@ -140,7 +140,9 @@ class Downloader(commands.Cog):
         failed = []
 
         for repo in repos:
-            if not await repo.install_libraries(target_dir=self.SHAREDLIB_PATH):
+            if not await repo.install_libraries(
+                target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH
+            ):
                 failed.extend(repo.available_libraries)
 
         # noinspection PyTypeChecker
@@ -194,6 +196,8 @@ class Downloader(commands.Cog):
     @checks.is_owner()
     async def pipinstall(self, ctx, *deps: str):
         """Install a group of dependencies using pip."""
+        if not deps:
+            return await ctx.send_help()
         repo = Repo("", "", "", Path.cwd(), loop=ctx.bot.loop)
         success = await repo.install_raw_requirements(deps, self.LIB_PATH)
 
@@ -312,9 +316,13 @@ class Downloader(commands.Cog):
 
         await self._add_to_installed(cog)
 
-        await repo.install_libraries(self.SHAREDLIB_PATH)
+        await repo.install_libraries(target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH)
 
-        await ctx.send(_("Cog `{cog_name}` successfully installed.").format(cog_name=cog_name))
+        await ctx.send(
+            _(
+                "Cog `{cog_name}` successfully installed. You can load it with `{prefix}load {cog_name}`"
+            ).format(cog_name=cog_name, prefix=ctx.prefix)
+        )
         if cog.install_msg is not None:
             await ctx.send(cog.install_msg.replace("[p]", ctx.prefix))
 
@@ -502,7 +510,7 @@ class Downloader(commands.Cog):
         if isinstance(cog_installable, Installable):
             made_by = ", ".join(cog_installable.author) or _("Missing from info.json")
             repo = self._repo_manager.get_repo(cog_installable.repo_name)
-            repo_url = repo.url
+            repo_url = _("Missing from installed repos") if repo is None else repo.url
             cog_name = cog_installable.name
         else:
             made_by = "26 & co."

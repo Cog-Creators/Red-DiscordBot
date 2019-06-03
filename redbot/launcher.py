@@ -8,6 +8,7 @@ import asyncio
 import aiohttp
 
 import pkg_resources
+from redbot import MIN_PYTHON_VERSION
 from redbot.setup import (
     basic_setup,
     load_existing_config,
@@ -27,12 +28,6 @@ INTRO = "==========================\nRed Discord Bot - Launcher\n===============
 
 IS_WINDOWS = os.name == "nt"
 IS_MAC = sys.platform == "darwin"
-
-if IS_WINDOWS:
-    # Due to issues with ProactorEventLoop prior to 3.6.6 (bpo-26819)
-    MIN_PYTHON_VERSION = (3, 6, 6)
-else:
-    MIN_PYTHON_VERSION = (3, 6, 2)
 
 PYTHON_OK = sys.version_info >= MIN_PYTHON_VERSION
 
@@ -115,18 +110,7 @@ def update_red(dev=False, voice=False, mongo=False, docs=False, test=False):
         package = "Red-DiscordBot"
         if egg_l:
             package += "[{}]".format(", ".join(egg_l))
-    arguments = [
-        interpreter,
-        "-m",
-        "pip",
-        "install",
-        "-U",
-        "-I",
-        "--no-cache-dir",
-        "--force-reinstall",
-        "--process-dependency-links",
-        package,
-    ]
+    arguments = [interpreter, "-m", "pip", "install", "-U", package]
     if not is_venv():
         arguments.append("--user")
     code = subprocess.call(arguments)
@@ -463,6 +447,7 @@ def main_menu():
 
 
 def main():
+    args, flags_to_pass = parse_cli_args()
     if not PYTHON_OK:
         print(
             f"Python {'.'.join(map(str, MIN_PYTHON_VERSION))} is required to run Red, but you "
@@ -488,8 +473,6 @@ def main():
         print("Starting Red...")
         run_red(args.instancename, autorestart=args.auto_restart, cliflags=flags_to_pass)
 
-
-args, flags_to_pass = parse_cli_args()
 
 if __name__ == "__main__":
     try:

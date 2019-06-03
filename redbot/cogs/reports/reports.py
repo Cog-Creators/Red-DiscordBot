@@ -45,6 +45,7 @@ class Reports(commands.Cog):
         self.bot = bot
         self.config = Config.get_conf(self, 78631113035100160, force_registration=True)
         self.config.register_guild(**self.default_guild_settings)
+        self.config.init_custom("REPORT", 2)
         self.config.register_custom("REPORT", **self.default_report)
         self.antispam = {}
         self.user_cache = []
@@ -165,7 +166,7 @@ class Reports(commands.Cog):
         if channel is None:
             return None
 
-        files: List[discord.File] = await Tunnel.files_from_attatch(msg)
+        files: List[discord.File] = await Tunnel.files_from_attach(msg)
 
         ticket_number = await self.config.guild(guild).next_ticket()
         await self.config.guild(guild).next_ticket.set(ticket_number + 1)
@@ -316,7 +317,7 @@ class Reports(commands.Cog):
                 self.tunnel_store[k]["msgs"] = msgs
 
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_members=True)
+    @checks.mod_or_permissions(manage_roles=True)
     @report.command(name="interact")
     async def response(self, ctx, ticket_number: int):
         """Open a message tunnel.

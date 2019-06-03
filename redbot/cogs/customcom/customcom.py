@@ -358,7 +358,6 @@ class CustomCommands(commands.Cog):
                 result = responses
             else:
                 continue
-            # Replace newlines with spaces
             # Cut preview to 52 characters max
             if len(result) > 52:
                 result = result[:49] + "..."
@@ -369,7 +368,8 @@ class CustomCommands(commands.Cog):
             results.append((f"{ctx.clean_prefix}{command}", result))
 
         if await ctx.embed_requested():
-            content = "\n".join(map("**{0[0]}** {0[1]}".format, results))
+            # We need a space before the newline incase the CC preview ends in link (GH-2295)
+            content = " \n".join(map("**{0[0]}** {0[1]}".format, results))
             pages = list(pagify(content, page_length=1024))
             embed_pages = []
             for idx, page in enumerate(pages, start=1):
@@ -411,10 +411,12 @@ class CustomCommands(commands.Cog):
         _type = _("Random") if len(responses) > 1 else _("Normal")
 
         text = _(
-            "Command: {}\n"
-            "Author: {}\n"
-            "Created: {}\n"
-            "Type: {}\n".format(command_name, author, cmd["created_at"], _type)
+            "Command: {command_name}\n"
+            "Author: {author}\n"
+            "Created: {created_at}\n"
+            "Type: {type}\n"
+        ).format(
+            command_name=command_name, author=author, created_at=cmd["created_at"], type=_type
         )
 
         cooldowns = cmd["cooldowns"]
@@ -422,7 +424,7 @@ class CustomCommands(commands.Cog):
         if cooldowns:
             cooldown_text = _("Cooldowns:\n")
             for rate, per in cooldowns.items():
-                cooldown_text += _("{} seconds per {}\n".format(per, rate))
+                cooldown_text += _("{num} seconds per {period}\n").format(num=per, period=rate)
             text += cooldown_text
 
         text += _("Responses:\n")

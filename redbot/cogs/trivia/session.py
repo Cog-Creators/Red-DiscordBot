@@ -114,7 +114,7 @@ class TriviaSession:
             async with self.ctx.typing():
                 await asyncio.sleep(3)
             self.count += 1
-            msg = bold(_("**Question number {num}!").format(num=self.count)) + "\n\n" + question
+            msg = bold(_("Question number {num}!").format(num=self.count)) + "\n\n" + question
             await self.ctx.send(msg)
             continue_ = await self.wait_for_answer(answers, delay, timeout)
             if continue_ is False:
