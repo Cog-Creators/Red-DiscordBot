@@ -9,7 +9,6 @@ import os
 import sys
 import tarfile
 import traceback
-import validators
 from collections import namedtuple
 from pathlib import Path
 from random import SystemRandom
