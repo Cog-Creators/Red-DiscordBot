@@ -224,7 +224,7 @@ class TimedeltaConverter(dpy_commands.Converter):
     allowed_units : Optional[List[str]]
         If provided, you can constrain a user to expressing the amount of time
         in specific units. The units you can chose to provide are the same as the
-        parser understands. `weeks` `days` `hours` `minutes` `seconds`
+        parser understands: `weeks` `days` `hours` `minutes` `seconds`
     default_unit : Optional[str]
         If provided, it will additionally try to match integer-only input into
         a timedelta, using the unit specified. Same units as in `allowed_units`
@@ -254,6 +254,7 @@ class TimedeltaConverter(dpy_commands.Converter):
 
 def get_timedelta_converter(
     *,
+    default_unit: Optional[str] = None,
     maximum: Optional[timedelta] = None,
     minimum: Optional[timedelta] = None,
     allowed_units: Optional[List[str]] = None,
@@ -273,7 +274,11 @@ def get_timedelta_converter(
     allowed_units : Optional[List[str]]
         If provided, you can constrain a user to expressing the amount of time
         in specific units. The units you can chose to provide are the same as the
-        parser understands. `weeks` `days` `hours` `minutes` `seconds`
+        parser understands: `weeks` `days` `hours` `minutes` `seconds`
+    default_unit : Optional[str]
+        If provided, it will additionally try to match integer-only input into
+        a timedelta, using the unit specified. Same units as in `allowed_units`
+        apply.
 
     Returns
     -------
@@ -285,6 +290,7 @@ def get_timedelta_converter(
         __call__ = functools.partialmethod(
             type(DictConverter).__call__,
             allowed_units=allowed_units,
+            default_unit=default_unit,
             minimum=minimum,
             maximum=maximum,
         )
