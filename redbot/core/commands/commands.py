@@ -420,6 +420,10 @@ class Command(CogCommandMixin, commands.Command):
         To have red handle specific errors with the default behavior,
         call ``Red.on_command_error`` with ``unhandled_by_cog`` set to True.
 
+        Due to how discord.py wraps exceptions, the exception you are expecting here
+        is likely in ``error.original`` despite that the normal event handler for bot
+        wide command error handling has no such wrapping.
+
         For example:
 
             .. code-block:: python
@@ -427,10 +431,10 @@ class Command(CogCommandMixin, commands.Command):
                 @a_command.error
                 async def a_command_error_handler(self, ctx, error):
 
-                    if isisntance(error, MyErrrorType):
-                        self.log_exception(error)
+                    if isinstance(error.original, MyErrrorType):
+                        self.log_exception(error.original)
                     else:
-                        await ctx.bot.on_command_error(ctx, error, unhandled_by_cog=True)
+                        await ctx.bot.on_command_error(ctx, error.original, unhandled_by_cog=True)
 
         Parameters
         -----------
