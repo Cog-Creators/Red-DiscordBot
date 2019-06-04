@@ -421,7 +421,7 @@ class Command(CogCommandMixin, commands.Command):
         call ``Red.on_command_error`` with ``unhandled_by_cog`` set to True.
 
         Due to how discord.py wraps exceptions, the exception you are expecting here
-        is likely in `error.original` despite that the normal event handler for bot
+        is likely in ``error.original`` despite that the normal event handler for bot
         wide command error handling has no such wrapping.
 
         For example:
