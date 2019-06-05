@@ -713,7 +713,9 @@ def cost(cost: int):
             except Exception:
                 credits_name = await get_currency_name(context.guild)
                 raise commands.CheckFailure(
-                    _("You need at least {cost} {currency} to use this command.")
+                    _("You need at least {cost} {currency} to use this command.").format(
+                        cost=cost, currency=credits_name
+                    )
                 )
             else:
                 try:
