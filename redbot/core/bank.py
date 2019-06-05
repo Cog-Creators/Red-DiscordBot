@@ -1,9 +1,13 @@
 import datetime
 from typing import Union, List, Optional
+from functools import wraps
 
 import discord
 
-from . import Config, errors
+from . import Config, errors, commands
+from .i18n import Translator
+
+_ = Translator("Bank API", __file__)
 
 __all__ = [
     "MAX_BALANCE",
@@ -669,3 +673,62 @@ async def set_default_balance(amount: int, guild: discord.Guild = None) -> int:
         raise RuntimeError("Guild is missing and required.")
 
     return amount
+
+
+class AbortPurchase(Exception):
+    pass
+
+
+def cost(cost: int):
+    """
+    Decorates a function or command to have a cost
+    If the command raises an exception, the cost will be refunded.
+    You can intentionally refund by raising `AbortPurchase`
+    
+    Other exceptions will propogate.
+    """
+    if not isinstance(cost, int) or cost < 0:
+        raise ValueError("This decorator requires an integer cost greater than or equal to")
+
+    def deco(coro_or_command):
+
+        is_command = isinstance(coro_or_command, commands.Command)
+
+        coro = coro_or_command.callback if is_command else coro_or_command
+
+        @wraps(coro)
+        async def wrapped(*args, **kwargs):
+            context: commands.Context = None
+            for arg in args:
+                if isinstance(arg, commands.Context):
+                    context = arg
+                    break
+
+            if not context.guild and not await is_global():
+                raise commands.CheckFailure(
+                    "Can't pay for this command in DM without a global bank"
+                )
+            try:
+                await withdraw_credits(context.author, cost)
+            except Exception:
+                credits_name = await get_currency_name(context.guild)
+                raise commands.CheckFailure(
+                    _("You need at least {cost} {currency} to use this command.")
+                )
+            else:
+                try:
+                    await coro(*args, **kwargs)
+                except AbortPurchase:
+                    await deposit_credits(context.author, cost)
+                except Exception:
+                    await deposit_credits(context.author, cost)
+                    raise
+
+        if not is_command:
+            return wrapped
+        else:
+            wrapped.__module__ = coro_or_command.callback.__module__
+            coro_or_command.callback = wrapped
+            return coro_or_command
+
+    return deco
