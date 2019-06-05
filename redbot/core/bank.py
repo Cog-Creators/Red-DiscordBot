@@ -706,7 +706,7 @@ def cost(cost: int):
 
             if not context.guild and not await is_global():
                 raise commands.CheckFailure(
-                    "Can't pay for this command in DM without a global bank"
+                    _("Can't pay for this command in DM without a global bank")
                 )
             try:
                 await withdraw_credits(context.author, cost)
