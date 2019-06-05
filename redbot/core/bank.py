@@ -719,7 +719,7 @@ def cost(cost: int):
                 )
             else:
                 try:
-                    await coro(*args, **kwargs)
+                    return await coro(*args, **kwargs)
                 except AbortPurchase:
                     await deposit_credits(context.author, cost)
                 except Exception:
