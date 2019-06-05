@@ -688,7 +688,7 @@ def cost(cost: int):
     Other exceptions will propogate.
     """
     if not isinstance(cost, int) or cost < 0:
-        raise ValueError("This decorator requires an integer cost greater than or equal to")
+        raise ValueError("This decorator requires an integer cost greater than or equal to zero")
 
     def deco(coro_or_command):
 
