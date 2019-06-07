@@ -22,6 +22,7 @@ from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequen
 import aiohttp
 import discord
 import pkg_resources
+import pytz
 
 from redbot.core import (
     __version__,
@@ -1062,6 +1063,24 @@ class Core(commands.Cog, CoreLogic):
 
         await ctx.bot.db.token.set(token)
         await ctx.send(_("Token set. Restart me."))
+
+    @_set.command(name="timezone")
+    async def set_user_time(self, ctx: commands.Context, *, timezone: str):
+        """
+        Set's your timezone.
+
+        Some comands may use this. For a list of valid timezone codes, see
+        https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+
+        If not set, this defaults to `UTC`
+        """
+        try:
+            tzinfo = pytz.timezone(timezone)
+        except pytz.exceptions.UnknownTimeZoneError:
+            await ctx.send_help()
+        else:
+            await ctx.bot.db.user(ctx.author).timezone(timezone)
+            await ctx.tick()
 
     @_set.command()
     @checks.is_owner()

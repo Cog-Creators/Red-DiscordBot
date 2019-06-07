@@ -82,7 +82,10 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             autoimmune_ids=[],
         )
 
-        self.db.register_user(embeds=None)
+        self.db.register_user(
+            embeds=None,
+            timezone="UTC",  # This is the string form of a tz code : Example: "US/Eastern"
+        )
 
         self.db.init_custom(CUSTOM_GROUPS, 2)
         self.db.register_custom(CUSTOM_GROUPS)
