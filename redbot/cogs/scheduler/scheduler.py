@@ -36,7 +36,7 @@ class Scheduler(commands.Cog):
             recur=None, # optional, seconds between recurring commands.
             snooze_until=None, # optional, same type as start.
             guild_id=None, # optional, just here for convieneince of fetching during management commands.
-            tz_code="UTC", # tz code created with. This can be updated by the author.
+            tz_info="UTC", # tz code created with. This can be updated by the author.
         )
         self.main_loop_task = bot.loop.create_task(self.main_loop())
         self.main_loop_task.add_done_callback(self.crashed_loop_handler)

@@ -437,7 +437,6 @@ class Alias(commands.Cog):
     @commands.Cog.listener("on_red_scheduled_command_message")
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
-        """ If you update this, update on_red_scheduled_command_message """
         aliases = list(await self.unloaded_global_aliases())
         if message.guild is not None:
             aliases = aliases + list(await self.unloaded_aliases(message.guild))
