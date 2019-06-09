@@ -113,11 +113,11 @@ def main():
     red.add_cog(CogManagerUI())
     if cli_flags.dev:
         red.add_cog(Dev())
+    loop = asyncio.get_event_loop()
     # noinspection PyProtectedMember
-    modlog._init()
+    loop.run_until_complete(modlog._init())
     # noinspection PyProtectedMember
     bank._init()
-    loop = asyncio.get_event_loop()
     if os.name == "posix":
         loop.add_signal_handler(SIGTERM, lambda: asyncio.ensure_future(sigterm_handler(red, log)))
     tmp_data = {}
