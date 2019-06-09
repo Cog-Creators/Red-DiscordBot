@@ -6,10 +6,12 @@ import asyncio
 import asyncio.subprocess
 import logging
 import re
+import sys
 import tempfile
 from typing import Optional, Tuple, ClassVar, List
 
 import aiohttp
+from tqdm import tqdm
 
 from redbot.core import data_manager
 from .errors import LavalinkDownloadFailed
@@ -215,14 +217,26 @@ class ServerManager:
                 fd, path = tempfile.mkstemp()
                 file = open(fd, "wb")
                 nbytes = 0
-                try:
-                    chunk = await response.content.read(1024)
-                    while chunk:
-                        nbytes += file.write(chunk)
+                with tqdm(
+                    desc="Lavalink.jar",
+                    total=response.content_length,
+                    file=sys.stdout,
+                    unit="B",
+                    unit_scale=True,
+                    miniters=1,
+                    dynamic_ncols=True,
+                    leave=False,
+                ) as progress_bar:
+                    try:
                         chunk = await response.content.read(1024)
-                    file.flush()
-                finally:
-                    file.close()
+                        while chunk:
+                            chunk_size = file.write(chunk)
+                            nbytes += chunk_size
+                            progress_bar.update(chunk_size)
+                            chunk = await response.content.read(1024)
+                        file.flush()
+                    finally:
+                        file.close()
                 pathlib.Path(path).replace(LAVALINK_JAR_FILE)
 
         log.info("Successfully downloaded Lavalink.jar (%s bytes written)", format(nbytes, ","))
