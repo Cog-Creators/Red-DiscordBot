@@ -34,12 +34,13 @@ _conf: Optional[Config] = None
 
 _CASETYPES = "CASETYPES"
 _CASES = "CASES"
+_SCHEMA_VERSION = 2
 
 
 async def _init():
     global _conf
     _conf = Config.get_conf(None, 1354799444, cog_name="ModLog")
-    _conf.register_guild(mod_log=None, casetypes={})
+    _conf.register_guild(mod_log=None, casetypes={}, schema_version=1)
     _conf.init_custom(_CASETYPES, 1)
     _conf.init_custom(_CASES, 2)
     _conf.register_custom(
@@ -60,26 +61,34 @@ async def _init():
         modified_at=None,
         message=None,
     )
-    await _do_migration()
+    await _migrate_config(from_version=await _conf.schema_version(), to_version=_SCHEMA_VERSION)
 
 
-async def _do_migration():
-    all_casetypes = await _conf.get_raw("casetypes", default={})
-    if all_casetypes:
-        await _conf.custom(_CASETYPES).set(all_casetypes)
+async def _migrate_config(from_version: int, to_version: int):
+    if from_version == to_version:
+        return
+    elif from_version < to_version:
+        # casetypes go from GLOBAL -> casetypes to CASETYPES
+        all_casetypes = await _conf.get_raw("casetypes", default={})
+        if all_casetypes:
+            await _conf.custom(_CASETYPES).set(all_casetypes)
 
-    all_guild_data = await _conf.all_guilds()
-    all_cases = {}
-    for guild_id, guild_data in all_guild_data.items():
-        guild_cases = guild_data.pop("cases", None)
-        if guild_cases:
-            all_cases[str(guild_id)] = guild_cases
-    await _conf.custom(_CASES).set(all_cases)
+        # cases go from GUILD -> guild_id -> cases to CASES -> guild_id -> cases
+        all_guild_data = await _conf.all_guilds()
+        all_cases = {}
+        for guild_id, guild_data in all_guild_data.items():
+            guild_cases = guild_data.pop("cases", None)
+            if guild_cases:
+                all_cases[str(guild_id)] = guild_cases
+        await _conf.custom(_CASES).set(all_cases)
 
-    # migration done, now let's delete all the old stuff
-    await _conf.clear_raw("casetypes")
-    for guild_id in all_guild_data:
-        await _conf.guild(cast(discord.Guild, discord.Object(id=guild_id))).clear_raw("cases")
+        # new schema is now in place
+        await _conf.schema_version.set(_SCHEMA_VERSION)
+
+        # migration done, now let's delete all the old stuff
+        await _conf.clear_raw("casetypes")
+        for guild_id in all_guild_data:
+            await _conf.guild(cast(discord.Guild, discord.Object(id=guild_id))).clear_raw("cases")
 
 
 class Case:
