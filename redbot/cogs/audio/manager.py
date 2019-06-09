@@ -224,9 +224,8 @@ class ServerManager:
                 finally:
                     file.close()
                 pathlib.Path(path).replace(LAVALINK_JAR_FILE)
-        log.info(
-            "Successfully downloaded Lavalink.jar (%s bytes written)", format(nbytes, ",")
-        )
+
+        log.info("Successfully downloaded Lavalink.jar (%s bytes written)", format(nbytes, ","))
 
     @classmethod
     async def _is_up_to_date(cls):
