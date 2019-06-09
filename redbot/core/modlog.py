@@ -40,7 +40,8 @@ _SCHEMA_VERSION = 2
 async def _init():
     global _conf
     _conf = Config.get_conf(None, 1354799444, cog_name="ModLog")
-    _conf.register_guild(mod_log=None, casetypes={}, schema_version=1)
+    _conf.register_global(schema_version=1)
+    _conf.register_guild(mod_log=None, casetypes={})
     _conf.init_custom(_CASETYPES, 1)
     _conf.init_custom(_CASES, 2)
     _conf.register_custom(
