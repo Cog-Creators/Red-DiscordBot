@@ -12,6 +12,7 @@ from typing import Optional, Tuple, ClassVar, List
 import aiohttp
 
 from redbot.core import data_manager
+from .errors import LavalinkDownloadFailed
 
 JAR_VERSION = "3.2.0.3"
 JAR_BUILD = 796
@@ -200,9 +201,17 @@ class ServerManager:
         async with aiohttp.ClientSession() as session:
             async with session.get(LAVALINK_DOWNLOAD_URL) as response:
                 if response.status == 404:
-                    raise RuntimeError(
-                        f"Lavalink jar version {JAR_VERSION}_{JAR_BUILD} hasn't been published"
+                    # A 404 means our LAVALINK_DOWNLOAD_URL is invalid, so likely the jar version
+                    # hasn't been published yet
+                    raise LavalinkDownloadFailed(
+                        f"Lavalink jar version {JAR_VERSION}_{JAR_BUILD} hasn't been published "
+                        f"yet",
+                        response=response,
+                        should_retry=False,
                     )
+                elif 400 <= response.status < 600:
+                    # Other bad responses should be raised but we should retry just incase
+                    raise LavalinkDownloadFailed(response=response, should_retry=True)
                 fd, path = tempfile.mkstemp()
                 file = open(fd, "wb")
                 try:
