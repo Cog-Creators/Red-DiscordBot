@@ -213,7 +213,8 @@ class ServerManager:
                     file.flush()
                 finally:
                     file.close()
-                pathlib.Path(path).replace(LAVALINK_JAR_FILE)
+
+                shutil.move(path, str(LAVALINK_JAR_FILE), copy_function=shutil.copyfile)
 
     @classmethod
     async def _is_up_to_date(cls):
