@@ -214,14 +214,18 @@ class ServerManager:
                     raise LavalinkDownloadFailed(response=response, should_retry=True)
                 fd, path = tempfile.mkstemp()
                 file = open(fd, "wb")
+                nbytes = 0
                 try:
                     chunk = await response.content.read(1024)
                     while chunk:
-                        file.write(chunk)
+                        nbytes += file.write(chunk)
                         chunk = await response.content.read(1024)
                     file.flush()
                 finally:
                     file.close()
+                log.info(
+                    "Successfully downloaded Lavalink.jar (%s bytes written)", format(nbytes, ",")
+                )
                 pathlib.Path(path).replace(LAVALINK_JAR_FILE)
 
     @classmethod
