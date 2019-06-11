@@ -633,7 +633,7 @@ class Core(commands.Cog, CoreLogic):
                 )
             else:
                 formed = _("The following packages were unloaded: {packs}.").format(
-                    packs=umanize_list([inline(package) for package in unloaded])
+                    packs=humanize_list([inline(package) for package in unloaded])
                 )
             await ctx.send(formed)
 
@@ -644,7 +644,7 @@ class Core(commands.Cog, CoreLogic):
                 )
             else:
                 formed = _("The following packages were not loaded: {packs}.").format(
-                    packs=umanize_list([inline(package) for package in failed])
+                    packs=humanize_list([inline(package) for package in failed])
                 )
             await ctx.send(formed)
 
