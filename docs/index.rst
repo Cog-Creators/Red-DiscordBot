@@ -14,6 +14,8 @@ Welcome to Red - Discord Bot's documentation!
     install_linux_mac
     venv_guide
     autostart_systemd
+    autostart_mac
+    autostart_win
 
 .. toctree::
     :maxdepth: 2
