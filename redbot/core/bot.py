@@ -215,18 +215,19 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
     async def process_commands(self, message: discord.Message):
         """
-        modification from the base to do the same thing in the command case
-        
-        but dispatch an additional event for cogs which want to handle normal messages
-        differently to command messages, 
-        without the overhead of additional get_context calls per cog
+        Same as base method, but dispatches an additional event for cogs
+        which want to handle normal messages differently to command
+        messages,  without the overhead of additional get_context calls
+        per cog.
         """
         if not message.author.bot:
             ctx = await self.get_context(message)
-            if ctx.valid:
-                return await self.invoke(ctx)
+            await self.invoke(ctx)
+        else:
+            ctx = None
 
-        self.dispatch("message_without_command", message)
+        if ctx is None or ctx.valid is False:
+            self.dispatch("message_without_command", message)
 
     @staticmethod
     def list_packages():
