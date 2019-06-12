@@ -565,10 +565,12 @@ class Core(commands.Cog, CoreLogic):
         async with ctx.typing():
             loaded, failed, not_found, already_loaded, failed_with_reason = await self._load(cogs)
 
+        output = []
+
         if loaded:
             loaded_packages = humanize_list([inline(package) for package in loaded])
             formed = _("Loaded {packs}.").format(packs=loaded_packages)
-            await ctx.send(formed)
+            output.append(formed)
 
         if already_loaded:
             if len(already_loaded) == 1:
@@ -579,7 +581,7 @@ class Core(commands.Cog, CoreLogic):
                 formed = _("The following packages are already loaded: {packs}").format(
                     packs=humanize_list([inline(package) for package in already_loaded])
                 )
-            await ctx.send(formed)
+            output.append(formed)
 
         if failed:
             if len(failed) == 1:
@@ -592,7 +594,7 @@ class Core(commands.Cog, CoreLogic):
                     "Failed to load the following packages: {packs}"
                     "\nCheck your console or logs for details."
                 ).format(packs=humanize_list([inline(package) for package in failed]))
-            await ctx.send(formed)
+            output.append(formed)
 
         if not_found:
             if len(not_found) == 1:
@@ -603,7 +605,7 @@ class Core(commands.Cog, CoreLogic):
                 formed = _(
                     "The following packages were not found in any cog path: {packs}"
                 ).format(humanize_list([inline(package) for package in not_found]))
-            await ctx.send(formed)
+            output.append(formed)
 
         if failed_with_reason:
             reasons = "\n".join([f"`{x}`: {y}" for x, y in failed_with_reason])
@@ -615,7 +617,12 @@ class Core(commands.Cog, CoreLogic):
                 formed = _(
                     "These packages could not be loaded for the following reasons:\n\n{reasons}"
                 ).format(reasons=reasons)
-            await ctx.send(formed)
+            output.append(formed)
+
+        if output:
+            total_message = "\n\n".join(output)
+            for page in pagify(total_message):
+                await ctx.send(page)
 
     @commands.command()
     @checks.is_owner()
@@ -626,6 +633,8 @@ class Core(commands.Cog, CoreLogic):
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         unloaded, failed = await self._unload(cogs)
 
+        output = []
+
         if unloaded:
             if len(unloaded) == 1:
                 formed = _("The following package was unloaded: {pack}.").format(
@@ -635,7 +644,7 @@ class Core(commands.Cog, CoreLogic):
                 formed = _("The following packages were unloaded: {packs}.").format(
                     packs=humanize_list([inline(package) for package in unloaded])
                 )
-            await ctx.send(formed)
+            output.append(formed)
 
         if failed:
             if len(failed) == 1:
@@ -646,7 +655,12 @@ class Core(commands.Cog, CoreLogic):
                 formed = _("The following packages were not loaded: {packs}.").format(
                     packs=humanize_list([inline(package) for package in failed])
                 )
-            await ctx.send(formed)
+            output.append(formed)
+
+        if output:
+            total_message = "\n\n".join(output)
+            for page in pagify(total_message):
+                await ctx.send(page)
 
     @commands.command(name="reload")
     @checks.is_owner()
