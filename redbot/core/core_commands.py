@@ -35,6 +35,8 @@ from redbot.core import (
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import humanize_timedelta, pagify, box, inline
 
+from .commands.requires import PrivilegeLevel
+
 if TYPE_CHECKING:
     from redbot.core.bot import Red
 
@@ -1946,13 +1948,7 @@ class Core(commands.Cog, CoreLogic):
             )
             return
 
-        try:
-            can = await command_obj.can_run(
-                ctx, check_all_parents=True, change_permission_state=False
-            )
-        except commands.CommandError:
-            can = False
-        if not can:
+        if command_obj.requires.privilege_level > await PrivilegeLevel.from_ctx(ctx):
             await ctx.send(_("You are not allowed to disable that command."))
             return
 
@@ -2012,13 +2008,7 @@ class Core(commands.Cog, CoreLogic):
             )
             return
 
-        try:
-            can = await command_obj.can_run(
-                ctx, check_all_parents=True, change_permission_state=False
-            )
-        except commands.CommandError:
-            can = False
-        if not can:
+        if command_obj.requires.privilege_level > await PrivilegeLevel.from_ctx(ctx):
             await ctx.send(_("You are not allowed to enable that command."))
             return
 
