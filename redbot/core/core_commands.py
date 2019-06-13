@@ -673,11 +673,13 @@ class Core(commands.Cog, CoreLogic):
             loaded, failed, not_found, already_loaded, failed_with_reason = await self._reload(
                 cogs
             )
+        
+        output = []
 
         if loaded:
             loaded_packages = humanize_list([inline(package) for package in loaded])
             formed = _("Reloaded {packs}.").format(packs=loaded_packages)
-            await ctx.send(formed)
+            output.append(formed)
 
         if failed:
             if len(failed) == 1:
@@ -690,7 +692,7 @@ class Core(commands.Cog, CoreLogic):
                     "Failed to reload the following packages: {packs}"
                     "\nCheck your console or logs for details."
                 ).format(packs=humanize_list([inline(package) for package in failed]))
-            await ctx.send(formed)
+            output.append(formed)
 
         if not_found:
             if len(not_found) == 1:
@@ -701,7 +703,7 @@ class Core(commands.Cog, CoreLogic):
                 formed = _(
                     "The following packages were not found in any cog path: {packs}"
                 ).format(humanize_list([inline(package) for package in not_found]))
-            await ctx.send(formed)
+            output.append(formed)
 
         if failed_with_reason:
             reasons = "\n".join([f"`{x}`: {y}" for x, y in failed_with_reason])
@@ -713,7 +715,12 @@ class Core(commands.Cog, CoreLogic):
                 formed = _(
                     "These packages could not be reloaded for the following reasons:\n\n{reasons}"
                 ).format(reasons=reasons)
-            await ctx.send(formed)
+            output.append(formed)
+
+        if output:
+            total_message = "\n\n".join(output)
+            for page in pagify(total_message):
+                await ctx.send(page)
 
     @commands.command(name="shutdown")
     @checks.is_owner()
