@@ -1912,6 +1912,12 @@ class Core(commands.Cog, CoreLogic):
             )
             return
 
+        if self.command_manager in command_obj.parents or self.command_manager == command_obj:
+            await ctx.send(
+                _("The command to disable cannot be `command` or any of its subcommands.")
+            )
+            return
+
         async with ctx.bot.db.disabled_commands() as disabled_commands:
             if command not in disabled_commands:
                 disabled_commands.append(command_obj.qualified_name)
@@ -1932,6 +1938,22 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(
                 _("I couldn't find that command. Please note that it is case sensitive.")
             )
+            return
+
+        if self.command_manager in command_obj.parents or self.command_manager == command_obj:
+            await ctx.send(
+                _("The command to disable cannot be `command` or any of its subcommands.")
+            )
+            return
+
+        try:
+            can = await command_obj.can_run(
+                ctx, check_all_parents=True, change_permission_state=False
+            )
+        except commands.CommandError:
+            can = False
+        if not can:
+            await ctx.send(_("You are not allowed to disable that command."))
             return
 
         async with ctx.bot.db.guild(ctx.guild).disabled_commands() as disabled_commands:
@@ -1988,6 +2010,16 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(
                 _("I couldn't find that command. Please note that it is case sensitive.")
             )
+            return
+
+        try:
+            can = await command_obj.can_run(
+                ctx, check_all_parents=True, change_permission_state=False
+            )
+        except commands.CommandError:
+            can = False
+        if not can:
+            await ctx.send(_("You are not allowed to enable that command."))
             return
 
         async with ctx.bot.db.guild(ctx.guild).disabled_commands() as disabled_commands:
