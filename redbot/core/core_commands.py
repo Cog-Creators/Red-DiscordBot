@@ -673,7 +673,7 @@ class Core(commands.Cog, CoreLogic):
             loaded, failed, not_found, already_loaded, failed_with_reason = await self._reload(
                 cogs
             )
-        
+
         output = []
 
         if loaded:
