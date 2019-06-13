@@ -599,12 +599,12 @@ class Core(commands.Cog, CoreLogic):
         if not_found:
             if len(not_found) == 1:
                 formed = _("The following package was not found in any cog path: {pack}.").format(
-                    inline(not_found[0])
+                    pack=inline(not_found[0])
                 )
             else:
                 formed = _(
                     "The following packages were not found in any cog path: {packs}"
-                ).format(humanize_list([inline(package) for package in not_found]))
+                ).format(packs=humanize_list([inline(package) for package in not_found]))
             output.append(formed)
 
         if failed_with_reason:
@@ -684,9 +684,9 @@ class Core(commands.Cog, CoreLogic):
         if failed:
             if len(failed) == 1:
                 formed = _(
-                    "Failed to reload the following package: {packs}."
+                    "Failed to reload the following package: {pack}."
                     "\nCheck your console or logs for details."
-                ).format(inline(failed[0]))
+                ).format(pack=inline(failed[0]))
             else:
                 formed = _(
                     "Failed to reload the following packages: {packs}"
@@ -697,12 +697,12 @@ class Core(commands.Cog, CoreLogic):
         if not_found:
             if len(not_found) == 1:
                 formed = _("The following package was not found in any cog path: {pack}.").format(
-                    inline(not_found[0])
+                    pack=inline(not_found[0])
                 )
             else:
                 formed = _(
                     "The following packages were not found in any cog path: {packs}"
-                ).format(humanize_list([inline(package) for package in not_found]))
+                ).format(packs=humanize_list([inline(package) for package in not_found]))
             output.append(formed)
 
         if failed_with_reason:
