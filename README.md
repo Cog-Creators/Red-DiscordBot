@@ -84,12 +84,12 @@ community of cog repositories.**
 **The following platforms are officially supported:** 
 
 - [Windows](https://red-discordbot.readthedocs.io/en/stable/install_windows.html)
-- [MacOS](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html#mac)
-- [Ubuntu](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html#ubuntu-18-04-bionic-beaver-and-18-10-cosmic-cuttlefish)
-- [Debian Stretch](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html#debian-and-raspbian-stretch)
-- [CentOS 7](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html#centos-7-fedora-and-rhel)
-- [Arch Linux](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html#arch-linux)
-- [Raspbian Stretch](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html#debian-and-raspbian-stretch)
+- [MacOS](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html)
+- [Ubuntu](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html)
+- [Debian Stretch](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html)
+- [CentOS 7](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html)
+- [Arch Linux](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html)
+- [Raspbian Stretch](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html)
 
 
 If after reading the guide you are still experiencing issues, feel free to join the
