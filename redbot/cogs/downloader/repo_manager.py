@@ -524,6 +524,24 @@ class Repo(RepoJSONMixin):
             [m for m in self.available_modules if m.type == InstallableType.SHARED_LIBRARY]
         )
 
+    @property
+    def url(self):
+        parsed = urlsplit(self._url)
+        if parsed.password:
+            try:
+                if parsed.port is not None:
+                    suffix = f":{parsed.port}"
+                else:
+                    suffix = ""
+            except ValueError:
+                suffix = ""
+            return parsed._replace(netloc=parsed.hostname + suffix).geturl()
+        return self._url
+
+    @url.setter
+    def url(self, value):
+        self._url = value
+
     @classmethod
     async def from_folder(cls, folder: Path):
         repo = cls(name=folder.stem, branch="", url="", folder_path=folder)
@@ -667,20 +685,6 @@ class RepoManager:
             if old != new:
                 ret[repo] = (old, new)
         return ret
-
-    @property
-    def url(self):
-        parsed = urlsplit(self._url)
-        if parsed.password:
-            try:
-                if parsed.port is not None:
-                    suffix = f":{parsed.port}"
-                else:
-                    suffix = ""
-            except ValueError:
-                suffix = ""
-            return parsed._replace(netloc=parsed.hostname + suffix).geturl()
-        return self._url
 
     async def _load_repos(self, set=False) -> MutableMapping[str, Repo]:
         ret = {}
