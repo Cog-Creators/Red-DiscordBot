@@ -11,6 +11,7 @@ from subprocess import run as sp_run, PIPE
 from string import Formatter
 from sys import executable
 from typing import List, Tuple, Iterable, MutableMapping, Union, Optional
+from urllib.parse import urlsplit
 
 from redbot.core import data_manager, commands
 from redbot.core.utils import safe_delete
@@ -57,7 +58,7 @@ class Repo(RepoJSONMixin):
         available_modules: Tuple[Installable] = (),
         loop: asyncio.AbstractEventLoop = None,
     ):
-        self.url = url
+        self._url = url
         self.branch = branch
 
         self.name = name
@@ -206,13 +207,13 @@ class Repo(RepoJSONMixin):
         if self.branch is not None:
             p = await self._run(
                 ProcessFormatter().format(
-                    self.GIT_CLONE, branch=self.branch, url=self.url, folder=self.folder_path
+                    self.GIT_CLONE, branch=self.branch, url=self._url, folder=self.folder_path
                 )
             )
         else:
             p = await self._run(
                 ProcessFormatter().format(
-                    self.GIT_CLONE_NO_BRANCH, url=self.url, folder=self.folder_path
+                    self.GIT_CLONE_NO_BRANCH, url=self._url, folder=self.folder_path
                 )
             )
 
@@ -666,6 +667,20 @@ class RepoManager:
             if old != new:
                 ret[repo] = (old, new)
         return ret
+
+    @property
+    def url(self):
+        parsed = urlsplit(self._url)
+        if parsed.password:
+            try:
+                if parsed.port is not None:
+                    suffix = f":{parsed.port}"
+                else:
+                    suffix = ""
+            except ValueError:
+                suffix = ""
+            return parsed._replace(netloc=parsed.hostname + suffix).geturl()
+        return self._url
 
     async def _load_repos(self, set=False) -> MutableMapping[str, Repo]:
         ret = {}
