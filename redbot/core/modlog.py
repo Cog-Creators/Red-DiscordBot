@@ -116,7 +116,7 @@ class Case:
         if self.reason:
             reason = "**Reason:** {}".format(self.reason)
         else:
-            reason = "**Reason:** Use `[p]reason {} <reason>` to add it".format(self.case_number)
+            reason = "**Reason:** Use the `reason` command to add it"
 
         if self.moderator is not None:
             moderator = escape_spoilers(
