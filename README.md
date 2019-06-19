@@ -91,8 +91,6 @@ community of cog repositories.**
 - [Arch Linux](https://red-discordbot.readthedocs.io/en/v3-develop/install_linux_mac.html)
 - [Raspbian Stretch](https://red-discordbot.readthedocs.io/en/v3-develop/install_linux_mac.html)
 
-Already using **Red** V2? Take a look at the [Data Converter](https://red-discordbot.readthedocs.io/en/v3-develop/cog_dataconverter.html)
-to import your data to V3.
 
 If after reading the guide you are still experiencing issues, feel free to join the
 [Official Discord Server](https://discord.gg/red) and ask in the **#support** channel for help.
@@ -108,7 +106,7 @@ plugins directly from Discord! A few examples are:
 - Casino
 - Reaction roles
 - Slow Mode
-- Anilist
+- AniList
 - And much, much more!
 
 Feel free to take a [peek](https://cogboard.red/t/approved-repositories/210) at a list of
@@ -127,11 +125,6 @@ Join us on our [Official Discord Server](https://discord.gg/red)!
 # License
 
 Released under the [GNU GPL v3](https://www.gnu.org/licenses/gpl-3.0.en.html) license.
-
-This project vendors the
-[discord.py library by Rapptz](https://github.com/Rapptz/discord.py/tree/rewrite), which is
-licensed under the [MIT License](https://opensource.org/licenses/MIT). This amounts to everything
-within the *discord* folder of this repository.
 
 Red is named after the main character of "Transistor", a video game by
 [Super Giant Games](https://www.supergiantgames.com/games/transistor/).

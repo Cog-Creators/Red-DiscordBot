@@ -69,7 +69,8 @@ def safe_delete(pth: Path):
         shutil.rmtree(str(pth), ignore_errors=True)
 
 
-class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):
+# https://github.com/PyCQA/pylint/issues/2717
+class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=duplicate-bases
     """Class returned by `async_filter`. See that function for details.
 
     We don't recommend instantiating this class directly.
@@ -111,6 +112,9 @@ class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):
 
     async def __flatten(self) -> List[_T]:
         return [item async for item in self]
+
+    def __aiter__(self):
+        return self
 
     def __await__(self):
         # Simply return the generator filled into a list
@@ -176,7 +180,11 @@ async def async_enumerate(
 
 
 async def fuzzy_command_search(
-    ctx: commands.Context, term: Optional[str] = None, *, min_score: int = 80
+    ctx: commands.Context,
+    term: Optional[str] = None,
+    *,
+    commands: Optional[list] = None,
+    min_score: int = 80,
 ) -> Optional[List[commands.Command]]:
     """Search for commands which are similar in name to the one invoked.
 
@@ -230,7 +238,9 @@ async def fuzzy_command_search(
             return
 
     # Do the scoring. `extracted` is a list of tuples in the form `(command, score)`
-    extracted = process.extract(term, ctx.bot.walk_commands(), limit=5, scorer=fuzz.QRatio)
+    extracted = process.extract(
+        term, (commands or ctx.bot.walk_commands()), limit=5, scorer=fuzz.QRatio
+    )
     if not extracted:
         return
 

@@ -7,8 +7,6 @@ from redbot.core import checks, Config, commands
 
 _ = Translator("Image", __file__)
 
-GIPHY_API_KEY = "dc6zaTOxFJmzC"
-
 
 @cog_i18n(_)
 class Image(commands.Cog):
@@ -24,7 +22,7 @@ class Image(commands.Cog):
         self.session = aiohttp.ClientSession()
         self.imgur_base_url = "https://api.imgur.com/3/"
 
-    def __unload(self):
+    def cog_unload(self):
         self.session.detach()
 
     async def initialize(self) -> None:
@@ -138,20 +136,20 @@ class Image(commands.Cog):
     @checks.is_owner()
     @commands.command()
     async def imgurcreds(self, ctx):
-        """Explain how to set imgur API tokens"""
+        """Explain how to set imgur API tokens."""
 
         message = _(
             "To get an Imgur Client ID:\n"
             "1. Login to an Imgur account.\n"
-            "2. Visit [this](https://api.imgur.com/oauth2/addclient) page\n"
-            "3. Enter a name for your application\n"
-            "4. Select *Anonymous usage without user authorization* for the auth type\n"
-            "5. Set the authorization callback URL to `https://localhost`\n"
-            "6. Leave the app website blank\n"
-            "7. Enter a valid email address and a description\n"
-            "8. Check the captcha box and click next\n"
+            "2. Visit this page https://api.imgur.com/oauth2/addclient.\n"
+            "3. Enter a name for your application.\n"
+            "4. Select *Anonymous usage without user authorization* for the auth type.\n"
+            "5. Set the authorization callback URL to `https://localhost`.\n"
+            "6. Leave the app website blank.\n"
+            "7. Enter a valid email address and a description.\n"
+            "8. Check the captcha box and click next.\n"
             "9. Your Client ID will be on the next page.\n"
-            "10. do `{prefix}set api imgur client_id,your_client_id`\n"
+            "10. Run the command `{prefix}set api imgur client_id,<your_client_id_here>`.\n"
         ).format(prefix=ctx.prefix)
 
         await ctx.maybe_send_embed(message)
@@ -166,8 +164,17 @@ class Image(commands.Cog):
             await ctx.send_help()
             return
 
+        giphy_api_key = await ctx.bot.db.api_tokens.get_raw("GIPHY", default=None)
+        if not giphy_api_key:
+            await ctx.send(
+                _("An API key has not been set! Please set one with `{prefix}giphycreds`.").format(
+                    prefix=ctx.prefix
+                )
+            )
+            return
+
         url = "http://api.giphy.com/v1/gifs/search?&api_key={}&q={}".format(
-            GIPHY_API_KEY, keywords
+            giphy_api_key["api_key"], keywords
         )
 
         async with self.session.get(url) as r:
@@ -190,8 +197,17 @@ class Image(commands.Cog):
             await ctx.send_help()
             return
 
+        giphy_api_key = await ctx.bot.db.api_tokens.get_raw("GIPHY", default=None)
+        if not giphy_api_key:
+            await ctx.send(
+                _("An API key has not been set! Please set one with `{prefix}giphycreds`.").format(
+                    prefix=ctx.prefix
+                )
+            )
+            return
+
         url = "http://api.giphy.com/v1/gifs/random?&api_key={}&tag={}".format(
-            GIPHY_API_KEY, keywords
+            giphy_api_key["api_key"], keywords
         )
 
         async with self.session.get(url) as r:
@@ -203,3 +219,21 @@ class Image(commands.Cog):
                     await ctx.send(_("No results found."))
             else:
                 await ctx.send(_("Error contacting the API."))
+
+    @checks.is_owner()
+    @commands.command()
+    async def giphycreds(self, ctx):
+        """Explain how to set Giphy API tokens"""
+
+        message = _(
+            "To get a Giphy API Key:\n"
+            "1. Login to a Giphy account.\n"
+            "2. Visit [this](https://developers.giphy.com/dashboard) page\n"
+            "3. Press `Create an App`\n"
+            "4. Write an app name, example: `Red Bot`\n"
+            "5. Write an app description, example: `Used for Red Bot`\n"
+            "6. Copy the API key shown.\n"
+            "7. Do `{prefix}set api GIPHY api_key,your_api_key`\n"
+        ).format(prefix=ctx.prefix)
+
+        await ctx.maybe_send_embed(message)

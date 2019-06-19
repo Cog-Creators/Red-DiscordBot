@@ -47,7 +47,6 @@ class JsonIO:
         And:
             https://www.mjmwired.net/kernel/Documentation/filesystems/ext4.txt#310
         """
-        log.debug("Saving file {}".format(self.path))
         filename = self.path.stem
         tmp_file = "{}-{}.tmp".format(filename, uuid4().fields[0])
         tmp_path = self.path.parent / tmp_file
@@ -58,7 +57,7 @@ class JsonIO:
 
         tmp_path.replace(self.path)
 
-        # pylint: disable=E1101
+        # pylint: disable=no-member
         try:
             fd = os.open(self.path.parent, os.O_DIRECTORY)
             os.fsync(fd)
@@ -80,7 +79,6 @@ class JsonIO:
 
     # noinspection PyUnresolvedReferences
     def _load_json(self):
-        log.debug("Reading file {}".format(self.path))
         with self.path.open(encoding="utf-8", mode="r") as f:
             data = json.load(f)
         return data

@@ -57,7 +57,7 @@ class Trivia(commands.Cog):
             settings_dict = await settings.all()
             msg = box(
                 _(
-                    "**Current settings**\n"
+                    "Current settings\n"
                     "Bot gains points: {bot_plays}\n"
                     "Answer time limit: {delay} seconds\n"
                     "Lack of response timeout: {timeout} seconds\n"
@@ -444,6 +444,7 @@ class Trivia(commands.Cog):
                 break
         return "\n".join(lines)
 
+    @commands.Cog.listener()
     async def on_trivia_end(self, session: TriviaSession):
         """Event for a trivia session ending.
 
@@ -520,7 +521,7 @@ class Trivia(commands.Cog):
 
         return personal_lists + get_core_lists()
 
-    def __unload(self):
+    def cog_unload(self):
         for session in self.trivia_sessions:
             session.force_stop()
 

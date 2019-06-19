@@ -35,7 +35,7 @@ basic_config_default = {"DATA_PATH": None, "COG_PATH_APPEND": "cogs", "CORE_PATH
 config_dir = None
 appdir = appdirs.AppDirs("Red-DiscordBot")
 if sys.platform == "linux":
-    if 0 < os.getuid() < 1000:
+    if 0 < os.getuid() < 1000:  # pylint: disable=no-member
         config_dir = Path(appdir.site_data_dir)
 if not config_dir:
     config_dir = Path(appdir.user_config_dir)
@@ -112,7 +112,8 @@ def cog_data_path(cog_instance=None, raw_name: str = None) -> Path:
     Parameters
     ----------
     cog_instance
-        The instance of the cog you wish to get a data path for.
+        The instance of the cog you wish to get a data path for. 
+        If calling from a command or method of your cog, this should be ``self``.
     raw_name : str
         The name of the cog to get a data path for.
 
