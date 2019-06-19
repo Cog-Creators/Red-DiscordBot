@@ -346,20 +346,15 @@ class Economy(commands.Cog):
 
     @commands.command()
     @guild_only_check()
-    async def leaderboard(self, ctx: commands.Context, top: int = 10000, show_global: bool = False):
-        """Print the leaderboard.
-
-        Defaults to top 10.
-        """
+    async def leaderboard(self, ctx: commands.Context, offset: int = 0, show_global: bool = False):
+        """Print the leaderboard."""
         guild = ctx.guild
         author = ctx.author
-        if top < 1:
-            top = 10
         if (
             await bank.is_global() and show_global
         ):  # show_global is only applicable if bank is global
             guild = None
-        bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
+        bank_sorted = await bank.get_leaderboard(guild=guild)
         header = "{pound:4}{name:36}{score:2}\n".format(
             pound="#", name=_("Name"), score=_("Score")
         )
@@ -380,7 +375,7 @@ class Economy(commands.Cog):
                 f"```md\n{header}{''.join(''.join(highscores[x:x + 10]))}```"
                 for x in range(0, len(highscores), 10)
             ]
-            await menu(ctx, pages, DEFAULT_CONTROLS)
+            await menu(ctx, pages, DEFAULT_CONTROLS, page=int(offset/10))
         else:
             await ctx.send(_("There are no accounts in the bank."))
 
