@@ -119,7 +119,7 @@ class Value:
             # Is equivalent to this
 
             group_obj = conf.guild(some_guild)
-            value_obj = conf.foo
+            value_obj = group_obj.foo
             foo = await value_obj()
 
         .. important::
