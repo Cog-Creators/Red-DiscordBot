@@ -714,7 +714,7 @@ def cost(cost: int):
                 await withdraw_credits(context.author, cost)
             except Exception:
                 credits_name = await get_currency_name(context.guild)
-                raise commands.CheckFailure(
+                raise commands.UserFeedbackCheckFailure(
                     _("You need at least {cost} {currency} to use this command.").format(
                         cost=cost, currency=credits_name
                     )

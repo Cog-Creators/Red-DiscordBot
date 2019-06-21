@@ -22,3 +22,9 @@ class BotMissingPermissions(commands.CheckFailure):
     def __init__(self, missing: discord.Permissions, *args):
         self.missing: discord.Permissions = missing
         super().__init__(*args)
+
+
+class UserFeedbackCheckFailure(commands.CheckFailure):
+    """ A version of CheckFailure which isn't supressed """
+
+    pass

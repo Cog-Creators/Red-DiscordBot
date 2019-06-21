@@ -218,6 +218,9 @@ def init_events(bot, cli_flags):
                     perms=format_perms_list(error.missing), plural=plural
                 )
             )
+        elif isinstance(error, commands.UserFeedbackCheckFailure):
+            if error.message:
+                await ctx.send(error.message)
         elif isinstance(error, commands.CheckFailure):
             pass
         elif isinstance(error, commands.NoPrivateMessage):
