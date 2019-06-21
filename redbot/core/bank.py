@@ -28,6 +28,8 @@ __all__ = [
     "set_currency_name",
     "get_default_balance",
     "set_default_balance",
+    "cost",
+    "AbortPurchase",
 ]
 
 MAX_BALANCE = 2 ** 63 - 1
