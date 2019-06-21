@@ -107,8 +107,11 @@ def main():
     red = Red(
         cli_flags=cli_flags, description=description, dm_help=None, fetch_offline_members=True
     )
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(red.maybe_update_config())
     init_global_checks(red)
     init_events(red, cli_flags)
+
     red.add_cog(Core(red))
     red.add_cog(CogManagerUI())
     if cli_flags.dev:
@@ -117,7 +120,7 @@ def main():
     modlog._init()
     # noinspection PyProtectedMember
     bank._init()
-    loop = asyncio.get_event_loop()
+
     if os.name == "posix":
         loop.add_signal_handler(SIGTERM, lambda: asyncio.ensure_future(sigterm_handler(red, log)))
     tmp_data = {}
