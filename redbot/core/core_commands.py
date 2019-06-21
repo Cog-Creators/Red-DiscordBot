@@ -33,7 +33,7 @@ from redbot.core import (
     i18n,
 )
 from .utils.predicates import MessagePredicate
-from .utils.chat_formatting import humanize_timedelta, pagify, box, inline
+from .utils.chat_formatting import humanize_timedelta, pagify, box, inline, humanize_list
 
 from .commands.requires import PrivilegeLevel
 
@@ -705,15 +705,14 @@ class Core(commands.Cog, CoreLogic):
         if ctx.invoked_subcommand is None:
             if ctx.guild:
                 guild = ctx.guild
-                admin_role = (
-                    guild.get_role(await ctx.bot.db.guild(ctx.guild).admin_role()) or "Not set"
-                )
-                mod_role = (
-                    guild.get_role(await ctx.bot.db.guild(ctx.guild).mod_role()) or "Not set"
-                )
+                admin_role_ids = await ctx.bot.db.guild(ctx.guild).admin_role()
+                admin_roles = [r for r in guild.roles if r.id in admin_role_ids]
+                admin_roles_str = humanize_list(admin_roles) if admin_roles else "Not Set."
+                mod_roles = [r for r in guild.roles if r.id in admin_role_ids]
+                mod_roles_str = humanize_list(mod_roles) if mod_roles else "Not Set."
                 prefixes = await ctx.bot.db.guild(ctx.guild).prefix()
-                guild_settings = _("Admin role: {admin}\nMod role: {mod}\n").format(
-                    admin=admin_role, mod=mod_role
+                guild_settings = _("Admin roles: {admin}\nMod roles: {mod}\n").format(
+                    admin=admin_roles_str, mod=mod_roles_str
                 )
             else:
                 guild_settings = ""
@@ -739,18 +738,46 @@ class Core(commands.Cog, CoreLogic):
     @_set.command()
     @checks.guildowner()
     @commands.guild_only()
-    async def adminrole(self, ctx: commands.Context, *, role: discord.Role):
-        """Sets the admin role for this server"""
-        await ctx.bot.db.guild(ctx.guild).admin_role.set(role.id)
-        await ctx.send(_("The admin role for this guild has been set."))
+    async def addadminrole(self, ctx: commands.Context, *, role: discord.Role):
+        """ Adds an admin role for this guild """
+        async with ctx.bot.db.guild(ctx.guild).admin_role() as roles:
+            if role.id in roles:
+                return await ctx.send(_("This is already an admin role."))
+            roles.append(role.id)
+        await ctx.send(_("That role was added as an admin role for this guild."))
 
     @_set.command()
     @checks.guildowner()
     @commands.guild_only()
-    async def modrole(self, ctx: commands.Context, *, role: discord.Role):
-        """Sets the mod role for this server"""
-        await ctx.bot.db.guild(ctx.guild).mod_role.set(role.id)
-        await ctx.send(_("The mod role for this guild has been set."))
+    async def addmodrole(self, ctx: commands.Context, *, role: discord.Role):
+        """ Adds a mod role for this guild """
+        async with ctx.bot.db.guild(ctx.guild).mod_role() as roles:
+            if role.id in roles:
+                return await ctx.send(_("This is already a mod role."))
+            roles.append(role.id)
+        await ctx.send(_("That role was added as a mod role for this guild."))
+
+    @_set.command(aliases=["remadmindrole"])
+    @checks.guildowner()
+    @commands.guild_only()
+    async def removeadminrole(self, ctx: commands.Context, *, role: discord.Role):
+        """ Removes an admin role for this guild """
+        async with ctx.bot.db.guild(ctx.guild).admin_role() as roles:
+            if role.id not in roles:
+                return await ctx.send(_("This was not an admin role."))
+            roles.remove(role.id)
+        await ctx.send(_("That role was removed as an admin role for this guild."))
+
+    @_set.command(aliases=["remmodrole"])
+    @checks.guildowner()
+    @commands.guild_only()
+    async def removemodrole(self, ctx: commands.Context, *, role: discord.Role):
+        """ Removes a mod role for this guild """
+        async with ctx.bot.db.guild(ctx.guild).mod_role() as roles:
+            if role.id not in roles:
+                return await ctx.send(_("That was not a mod role."))
+            roles.remove(role.id)
+        await ctx.send(_("That role was removes as a mod role for this guild."))
 
     @_set.command(aliases=["usebotcolor"])
     @checks.guildowner()
