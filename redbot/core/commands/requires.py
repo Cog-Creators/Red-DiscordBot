@@ -126,13 +126,13 @@ class PrivilegeLevel(enum.IntEnum):
         # The following is simply an optimised way to check if the user has the
         # admin or mod role.
         guild_settings = ctx.bot.db.guild(ctx.guild)
-        admin_role_id = await guild_settings.admin_role()
-        mod_role_id = await guild_settings.mod_role()
+        admin_role_ids = set(await guild_settings.admin_role())
+        mod_role_ids = set(await guild_settings.mod_role())
         is_mod = False
         for role in ctx.author.roles:
-            if role.id == admin_role_id:
+            if role.id in admin_role_ids:
                 return cls.ADMIN
-            elif role.id == mod_role_id:
+            elif role.id in mod_role_ids:
                 is_mod = True
         if is_mod:
             return cls.MOD
