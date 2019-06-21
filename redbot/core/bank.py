@@ -707,7 +707,7 @@ def cost(cost: int):
                     break
 
             if not context.guild and not await is_global():
-                raise commands.CheckFailure(
+                raise commands.UserFeedbackCheckFailure(
                     _("Can't pay for this command in DM without a global bank")
                 )
             try:
