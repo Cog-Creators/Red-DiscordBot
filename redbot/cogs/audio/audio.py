@@ -2979,34 +2979,29 @@ class Audio(commands.Cog):
             return await self._skip_action(ctx, skip_to_track)
 
     async def _can_instaskip(self, ctx, member):
-        mod_role = await ctx.bot.db.guild(ctx.guild).mod_role()
-        admin_role = await ctx.bot.db.guild(ctx.guild).admin_role()
+
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
 
-        if dj_enabled:
-            is_active_dj = await self._has_dj_role(ctx, member)
-        else:
-            is_active_dj = False
-        is_owner = member.id == self.bot.owner_id
-        is_server_owner = member.id == ctx.guild.owner_id
-        is_coowner = any(x == member.id for x in self.bot._co_owners)
-        is_admin = (
-            discord.utils.get(ctx.guild.get_member(member.id).roles, id=admin_role) is not None
-        )
-        is_mod = discord.utils.get(ctx.guild.get_member(member.id).roles, id=mod_role) is not None
-        is_bot = member.bot is True
-        is_other_channel = await self._channel_check(ctx)
+        if member.bot:
+            return True
 
-        return (
-            is_active_dj
-            or is_owner
-            or is_server_owner
-            or is_coowner
-            or is_admin
-            or is_mod
-            or is_bot
-            or is_other_channel
-        )
+        if member.id == ctx.guild.owner_id:
+            return True
+
+        if dj_enabled:
+            if await self._has_dj_role(ctx, member):
+                return True
+
+        if await ctx.bot.is_owner(member):
+            return True
+
+        if await ctx.bot.is_mod(member):
+            return True
+
+        if await self._channel_check(ctx):
+            return True
+
+        return False
 
     async def _is_alone(self, ctx, member):
         try:
