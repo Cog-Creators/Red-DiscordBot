@@ -27,4 +27,6 @@ class BotMissingPermissions(commands.CheckFailure):
 class UserFeedbackCheckFailure(commands.CheckFailure):
     """ A version of CheckFailure which isn't supressed """
 
-    pass
+    def __init__(self, message=None, *args):
+        self.message = message
+        super().__init__(message, *args)
