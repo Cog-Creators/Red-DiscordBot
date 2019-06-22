@@ -739,45 +739,53 @@ class Core(commands.Cog, CoreLogic):
     @checks.guildowner()
     @commands.guild_only()
     async def addadminrole(self, ctx: commands.Context, *, role: discord.Role):
-        """ Adds an admin role for this guild """
+        """
+        Adds an admin role for this guild.
+        """
         async with ctx.bot.db.guild(ctx.guild).admin_role() as roles:
             if role.id in roles:
-                return await ctx.send(_("This is already an admin role."))
+                return await ctx.send(_("This role is already an admin role."))
             roles.append(role.id)
-        await ctx.send(_("That role was added as an admin role for this guild."))
+        await ctx.send(_("That role is now considered an admin role."))
 
     @_set.command()
     @checks.guildowner()
     @commands.guild_only()
     async def addmodrole(self, ctx: commands.Context, *, role: discord.Role):
-        """ Adds a mod role for this guild """
+        """
+        Adds a mod role for this guild.
+        """
         async with ctx.bot.db.guild(ctx.guild).mod_role() as roles:
             if role.id in roles:
-                return await ctx.send(_("This is already a mod role."))
+                return await ctx.send(_("This role is already a mod role."))
             roles.append(role.id)
-        await ctx.send(_("That role was added as a mod role for this guild."))
+        await ctx.send(_("That role is now considered a mod role."))
 
-    @_set.command(aliases=["remadmindrole"])
+    @_set.command(aliases=["remadmindrole", "deladminrole", "deleteadminrole"])
     @checks.guildowner()
     @commands.guild_only()
     async def removeadminrole(self, ctx: commands.Context, *, role: discord.Role):
-        """ Removes an admin role for this guild """
+        """
+        Removes an admin role for this guild.
+        """
         async with ctx.bot.db.guild(ctx.guild).admin_role() as roles:
             if role.id not in roles:
-                return await ctx.send(_("This was not an admin role."))
+                return await ctx.send(_("That role was not an admin role to begin with."))
             roles.remove(role.id)
-        await ctx.send(_("That role was removed as an admin role for this guild."))
+        await ctx.send(_("That role is no longer considered an admin role."))
 
-    @_set.command(aliases=["remmodrole"])
+    @_set.command(aliases=["remmodrole", "delmodrole", "deletemodrole"])
     @checks.guildowner()
     @commands.guild_only()
     async def removemodrole(self, ctx: commands.Context, *, role: discord.Role):
-        """ Removes a mod role for this guild """
+        """
+        Removes a mod role for this guild.
+        """
         async with ctx.bot.db.guild(ctx.guild).mod_role() as roles:
             if role.id not in roles:
-                return await ctx.send(_("That was not a mod role."))
+                return await ctx.send(_("That role was not a mod role to begin with."))
             roles.remove(role.id)
-        await ctx.send(_("That role was removes as a mod role for this guild."))
+        await ctx.send(_("That role is no longer considered a mod role."))
 
     @_set.command(aliases=["usebotcolor"])
     @checks.guildowner()

@@ -136,17 +136,20 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         self._permissions_hooks: List[commands.CheckPredicate] = []
 
     async def maybe_update_config(self):
-        """ This should be run prior to loading cogs or connecting to discord """
+        """
+        This should be run prior to loading cogs or connecting to discord.
+        """
         schema_version = await self.db.schema_version()
 
         if schema_version == 0:
             await self._schema_0_to_1()
             schema_version += 1
-
-        await self.db.schema_version.set(schema_version)
+            await self.db.schema_version.set(schema_version)
 
     async def _schema_0_to_1(self):
-        """ This contains the migration to allow multiple mod and multiple admin roles """
+        """
+        This contains the migration to allow multiple mod and multiple admin roles.
+        """
 
         log.info("Begin updating guild configs to support multiple mod/admin roles")
         all_guild_data = await self.db.all_guilds()
