@@ -235,7 +235,7 @@ class ServerManager:
             # Output is unexpected, suspect corrupted jarfile
             return False
         build = int(match["build"])
-        cls._up_to_date = build == JAR_BUILD
+        cls._up_to_date = build >= JAR_BUILD
         return cls._up_to_date
 
     @classmethod
