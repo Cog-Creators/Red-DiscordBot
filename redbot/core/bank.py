@@ -685,9 +685,12 @@ def cost(cost: int):
     """
     Decorates a function or command to have a cost
     If the command raises an exception, the cost will be refunded.
+
     You can intentionally refund by raising `AbortPurchase`
-    
-    Other exceptions will propogate.
+    (this error will be consumed and not show to users)
+
+    Other exceptions will propogate
+    and will be handled by Red's (and/or any other configured) error handling
     """
     if not isinstance(cost, int) or cost < 0:
         raise ValueError("This decorator requires an integer cost greater than or equal to zero")
@@ -708,7 +711,7 @@ def cost(cost: int):
 
             if not context.guild and not await is_global():
                 raise commands.UserFeedbackCheckFailure(
-                    _("Can't pay for this command in DM without a global bank")
+                    _("Can't pay for this command in DM without a global bank.")
                 )
             try:
                 await withdraw_credits(context.author, cost)
