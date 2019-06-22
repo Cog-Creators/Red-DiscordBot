@@ -120,7 +120,7 @@ class Audio(commands.Cog):
 
         self._connect_task = self.bot.loop.create_task(self.attempt_connect())
 
-    async def attempt_connect(self, timeout: int = 30):
+    async def attempt_connect(self, timeout: int = 50):
         while True:  # run until success
             external = await self.config.use_external_lavalink()
             if external is False:
@@ -1018,7 +1018,7 @@ class Audio(commands.Cog):
             (r, u) = await self.bot.wait_for(
                 "reaction_add",
                 check=ReactionPredicate.with_emojis(expected, message, ctx.author),
-                timeout=10.0,
+                timeout=30.0,
             )
         except asyncio.TimeoutError:
             return await self._clear_react(message)
@@ -1151,7 +1151,6 @@ class Audio(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     async def play(self, ctx, *, query):
         """Play a URL or search for a track."""
-
         guild_data = await self.config.guild(ctx.guild).all()
         restrict = await self.config.restrict()
         if restrict:
@@ -2222,23 +2221,30 @@ class Audio(commands.Cog):
     @commands.group(invoke_without_command=True)
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
-    async def queue(self, ctx, *, page="1"):
-        """List the queue.
+    async def queue(self, ctx, *, page: int = 1):
+        """List the songs in the queue."""
 
-        Use [p]queue search <search terms> to search the queue.
-        """
+        async def _queue_menu(
+            ctx: commands.Context,
+            pages: list,
+            controls: dict,
+            message: discord.Message,
+            page: int,
+            timeout: float,
+            emoji: str,
+        ):
+            if message:
+                await ctx.send_help(self.queue)
+                await message.delete()
+                return None
+
+        QUEUE_CONTROLS = {"⬅": prev_page, "❌": close_menu, "➡": next_page, "ℹ": _queue_menu}
+
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
         player = lavalink.get_player(ctx.guild.id)
         if not player.queue:
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
-        if not page.isdigit():
-            if page.startswith("search "):
-                return await self._queue_search(ctx=ctx, search_words=page.replace("search ", ""))
-            else:
-                return
-        else:
-            page = int(page)
         len_queue_pages = math.ceil(len(player.queue) / 10)
         queue_page_list = []
         for page_num in range(1, len_queue_pages + 1):
@@ -2246,7 +2252,7 @@ class Audio(commands.Cog):
             queue_page_list.append(embed)
         if page > len_queue_pages:
             page = len_queue_pages
-        await menu(ctx, queue_page_list, DEFAULT_CONTROLS, page=(page - 1))
+        await menu(ctx, queue_page_list, QUEUE_CONTROLS, page=(page - 1))
 
     async def _build_queue_page(self, ctx, player, page_num):
         shuffle = await self.config.guild(ctx.guild).shuffle()
@@ -2344,18 +2350,6 @@ class Audio(commands.Cog):
         embed.set_footer(text=text)
         return embed
 
-    async def _queue_search(self, ctx, *, search_words):
-        player = lavalink.get_player(ctx.guild.id)
-        search_list = await self._build_queue_search_list(player.queue, search_words)
-        if not search_list:
-            return await self._embed_msg(ctx, _("No matches."))
-        len_search_pages = math.ceil(len(search_list) / 10)
-        search_page_list = []
-        for page_num in range(1, len_search_pages + 1):
-            embed = await self._build_queue_search_page(ctx, page_num, search_list)
-            search_page_list.append(embed)
-        await menu(ctx, search_page_list, DEFAULT_CONTROLS)
-
     async def _build_queue_search_list(self, queue_list, search_words):
         track_list = []
         queue_idx = 0
@@ -2388,8 +2382,9 @@ class Audio(commands.Cog):
         for i, track in enumerate(
             search_list[search_idx_start:search_idx_end], start=search_idx_start
         ):
+
             track_idx = i + 1
-            if command == "search":
+            if type(track) is str:
                 local_path = await self.config.localpath()
                 track_location = track.replace("localtrack:{}/localtracks/".format(local_path), "")
                 track_match += "`{}.` **{}**\n".format(track_idx, track_location)
@@ -2458,6 +2453,28 @@ class Audio(commands.Cog):
                     "Removed {removed_tracks} tracks queued by members outside of the voice channel."
                 ).format(removed_tracks=removed_tracks),
             )
+
+    @queue.command(name="search")
+    @commands.guild_only()
+    async def _queue_search(self, ctx, *, search_words: str):
+        """Search the queue."""
+        try:
+            player = lavalink.get_player(ctx.guild.id)
+        except KeyError:
+            return await self._embed_msg(ctx, _("There's nothing in the queue."))
+        if not self._player_check(ctx) or not player.queue:
+            return await self._embed_msg(ctx, _("There's nothing in the queue."))
+
+        search_list = await self._build_queue_search_list(player.queue, search_words)
+        if not search_list:
+            return await self._embed_msg(ctx, _("No matches."))
+
+        len_search_pages = math.ceil(len(search_list) / 10)
+        search_page_list = []
+        for page_num in range(1, len_search_pages + 1):
+            embed = await self._build_queue_search_page(ctx, page_num, search_list)
+            search_page_list.append(embed)
+        await menu(ctx, search_page_list, DEFAULT_CONTROLS)
 
     @commands.command()
     @commands.guild_only()
@@ -2905,7 +2922,7 @@ class Audio(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     async def sing(self, ctx):
-        """Make Red sing one of her songs"""
+        """Make Red sing one of her songs."""
         ids = (
             "zGTkAVsrfg8",
             "cGMWL8cOeAU",
