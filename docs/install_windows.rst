@@ -39,8 +39,6 @@ Manually installing dependencies
 .. note:: Please make sure that the box to add Python to PATH is CHECKED, otherwise
           you may run into issues when trying to run Red.
 
-.. attention:: A restart might be required for the PATH changes to take an effect.
-
 * `Git <https://git-scm.com/download/win>`_
 
 .. attention:: Please choose the option to "Run Git from the Windows Command Prompt" in Git's setup.
@@ -54,6 +52,9 @@ Manually installing dependencies
 --------------
 Installing Red
 --------------
+
+.. attention:: You may need to restart your computer after installing dependencies
+               for the PATH changes to take effect.
 
 1. Open a command prompt (open Start, search for "command prompt", then click it)
 2. Create and activate a virtual environment (strongly recommended), see the section `using-venv`
