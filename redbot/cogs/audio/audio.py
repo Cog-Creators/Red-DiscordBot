@@ -1630,7 +1630,7 @@ class Audio(commands.Cog):
                         playlist_name_msg = await ctx.bot.wait_for(
                             "message",
                             timeout=15.0,
-                            check=MessagePredicate.regex(fr"^(?!{ctx.prefix})", ctx),
+                            check=MessagePredicate.regex(fr"^(?!{re.escape(ctx.prefix)})", ctx),
                         )
                         new_playlist_name = playlist_name_msg.content.split(" ")[0].strip('"')
                         if len(new_playlist_name) > 20:
@@ -1868,7 +1868,7 @@ class Audio(commands.Cog):
                 playlist_name_msg = await ctx.bot.wait_for(
                     "message",
                     timeout=15.0,
-                    check=MessagePredicate.regex(fr"^(?!{ctx.prefix})", ctx),
+                    check=MessagePredicate.regex(fr"^(?!{re.escape(ctx.prefix)})", ctx),
                 )
                 playlist_name = playlist_name_msg.content.split(" ")[0].strip('"')
                 if len(playlist_name) > 20:
