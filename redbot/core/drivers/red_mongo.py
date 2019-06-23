@@ -268,7 +268,7 @@ class Mongo(BaseDriver):
         # 2) We're clearing out full primary key and no identifiers
         # 3) We're clearing out partial primary key and no identifiers
         # 4) Primary key is empty, should wipe all documents in the collection
-        # 5) Category is empty, entire collection should be dropped
+        # 5) Category is empty, all of this cog's data should be deleted
         pkey_filter = self.generate_primary_key_filter(identifier_data)
         if identifier_data.identifiers:
             # This covers case 1
@@ -280,6 +280,7 @@ class Mongo(BaseDriver):
             mongo_collection = self.get_collection(identifier_data.category)
             await mongo_collection.delete_many(pkey_filter)
         else:
+            # This covers case 5
             db = self.db
             super_collection = db[self.cog_name]
             results = await db.list_collections(
