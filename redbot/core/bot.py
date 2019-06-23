@@ -27,7 +27,8 @@ def _is_submodule(parent, child):
     return parent == child or child.startswith(parent + ".")
 
 
-class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
+# barely spurious warning caused by our intentional shadowing
+class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: disable=no-member
     """Mixin for the main bot class.
 
     This exists because `Red` inherits from `discord.AutoShardedClient`, which
@@ -59,6 +60,8 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             help__verify_checks=True,
             help__verify_exists=False,
             help__tagline="",
+            invite_public=False,
+            invite_perm=0,
             disabled_commands=[],
             disabled_command_msg="That command is disabled.",
             api_tokens={},
@@ -212,18 +215,19 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
     async def process_commands(self, message: discord.Message):
         """
-        modification from the base to do the same thing in the command case
-        
-        but dispatch an additional event for cogs which want to handle normal messages
-        differently to command messages, 
-        without the overhead of additional get_context calls per cog
+        Same as base method, but dispatches an additional event for cogs
+        which want to handle normal messages differently to command
+        messages,  without the overhead of additional get_context calls
+        per cog.
         """
         if not message.author.bot:
             ctx = await self.get_context(message)
-            if ctx.valid:
-                return await self.invoke(ctx)
+            await self.invoke(ctx)
+        else:
+            ctx = None
 
-        self.dispatch("message_without_command", message)
+        if ctx is None or ctx.valid is False:
+            self.dispatch("message_without_command", message)
 
     @staticmethod
     def list_packages():
@@ -262,7 +266,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
         except Exception as e:
             self._remove_module_references(lib.__name__)
             self._call_module_finalizers(lib, name)
-            raise errors.CogLoadError() from e
+            raise errors.CogLoadError(e) from e
         else:
             self._BotBase__extensions[name] = lib
 

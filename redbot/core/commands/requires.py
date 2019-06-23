@@ -704,29 +704,35 @@ def mod():
 class _IntKeyDict(Dict[int, _T]):
     """Dict subclass which throws KeyError when a non-int key is used."""
 
+    get: Callable
+    setdefault: Callable
+
     def __getitem__(self, key: Any) -> _T:
         if not isinstance(key, int):
             raise TypeError("Keys must be of type `int`")
-        return super().__getitem__(key)
+        return super().__getitem__(key)  # pylint: disable=no-member
 
     def __setitem__(self, key: Any, value: _T) -> None:
         if not isinstance(key, int):
             raise TypeError("Keys must be of type `int`")
-        return super().__setitem__(key, value)
+        return super().__setitem__(key, value)  # pylint: disable=no-member
 
 
 class _RulesDict(Dict[Union[int, str], PermState]):
     """Dict subclass which throws a KeyError when an invalid key is used."""
 
+    get: Callable
+    setdefault: Callable
+
     def __getitem__(self, key: Any) -> PermState:
         if key != Requires.DEFAULT and not isinstance(key, int):
             raise TypeError(f'Expected "{Requires.DEFAULT}" or int key, not "{key}"')
-        return super().__getitem__(key)
+        return super().__getitem__(key)  # pylint: disable=no-member
 
     def __setitem__(self, key: Any, value: PermState) -> None:
         if key != Requires.DEFAULT and not isinstance(key, int):
             raise TypeError(f'Expected "{Requires.DEFAULT}" or int key, not "{key}"')
-        return super().__setitem__(key, value)
+        return super().__setitem__(key, value)  # pylint: disable=no-member
 
 
 def _validate_perms_dict(perms: Dict[str, bool]) -> None:

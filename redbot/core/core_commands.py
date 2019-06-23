@@ -35,6 +35,8 @@ from redbot.core import (
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import humanize_timedelta, pagify, box, inline
 
+from .commands.requires import PrivilegeLevel
+
 if TYPE_CHECKING:
     from redbot.core.bot import Red
 
@@ -265,7 +267,15 @@ class CoreLogic:
             Invite URL.
         """
         app_info = await self.bot.application_info()
-        return discord.utils.oauth_url(app_info.id)
+        perms_int = await self.bot.db.invite_perm()
+        permissions = discord.Permissions(perms_int)
+        return discord.utils.oauth_url(app_info.id, permissions)
+
+    @staticmethod
+    async def _can_get_invite_url(ctx):
+        is_owner = await ctx.bot.is_owner(ctx.author)
+        is_invite_public = await ctx.bot.db.invite_public()
+        return is_owner or is_invite_public
 
 
 @i18n.cog_i18n(_)
@@ -441,10 +451,64 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("No exception has occurred yet"))
 
     @commands.command()
-    @checks.is_owner()
-    async def invite(self, ctx: commands.Context):
+    @commands.check(CoreLogic._can_get_invite_url)
+    async def invite(self, ctx):
         """Show's Red's invite url"""
         await ctx.author.send(await self._invite_url())
+
+    @commands.group()
+    @checks.is_owner()
+    async def inviteset(self, ctx):
+        """Setup the bot's invite"""
+        pass
+
+    @inviteset.command()
+    async def public(self, ctx, confirm: bool = False):
+        """
+        Define if the command should be accessible\
+        for the average users.
+        """
+        if await self.bot.db.invite_public():
+            await self.bot.db.invite_public.set(False)
+            await ctx.send("The invite is now private.")
+            return
+        app_info = await self.bot.application_info()
+        if not app_info.bot_public:
+            await ctx.send(
+                "I am not a public bot. That means that nobody except "
+                "you can invite me on new servers.\n\n"
+                "You can change this by ticking `Public bot` in "
+                "your token settings: "
+                "https://discordapp.com/developers/applications/me/{0}".format(self.bot.user.id)
+            )
+            return
+        if not confirm:
+            await ctx.send(
+                "You're about to make the `{0}invite` command public. "
+                "All users will be able to invite me on their server.\n\n"
+                "If you agree, you can type `{0}inviteset public yes`.".format(ctx.prefix)
+            )
+        else:
+            await self.bot.db.invite_public.set(True)
+            await ctx.send("The invite command is now public.")
+
+    @inviteset.command()
+    async def perms(self, ctx, level: int):
+        """
+        Make the bot create its own role with permissions on join.
+
+        The bot will create its own role with the desired permissions\
+        when he join a new server. This is a special role that can't be\
+        deleted or removed from the bot.
+
+        For that, you need to give a valid permissions level.
+        You can generate one here: https://discordapi.com/permissions.html
+
+        Please note that you might need the two factor authentification for\
+        some permissions.
+        """
+        await self.bot.db.invite_perm.set(level)
+        await ctx.send("The new permissions level has been set.")
 
     @commands.command()
     @commands.guild_only()
@@ -963,13 +1027,13 @@ class Core(commands.Cog, CoreLogic):
                 "message", check=MessagePredicate.same_context(ctx), timeout=60
             )
         except asyncio.TimeoutError:
-            self.owner.reset_cooldown(ctx)
+            ctx.command.reset_cooldown(ctx)
             await ctx.send(
                 _("The `{prefix}set owner` request has timed out.").format(prefix=ctx.prefix)
             )
         else:
             if message.content.strip() == token:
-                self.owner.reset_cooldown(ctx)
+                ctx.command.reset_cooldown(ctx)
                 await ctx.bot.db.owner.set(ctx.author.id)
                 ctx.bot.owner_id = ctx.author.id
                 await ctx.send(_("You have been set as owner."))
@@ -1850,6 +1914,12 @@ class Core(commands.Cog, CoreLogic):
             )
             return
 
+        if self.command_manager in command_obj.parents or self.command_manager == command_obj:
+            await ctx.send(
+                _("The command to disable cannot be `command` or any of its subcommands.")
+            )
+            return
+
         async with ctx.bot.db.disabled_commands() as disabled_commands:
             if command not in disabled_commands:
                 disabled_commands.append(command_obj.qualified_name)
@@ -1870,6 +1940,16 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(
                 _("I couldn't find that command. Please note that it is case sensitive.")
             )
+            return
+
+        if self.command_manager in command_obj.parents or self.command_manager == command_obj:
+            await ctx.send(
+                _("The command to disable cannot be `command` or any of its subcommands.")
+            )
+            return
+
+        if command_obj.requires.privilege_level > await PrivilegeLevel.from_ctx(ctx):
+            await ctx.send(_("You are not allowed to disable that command."))
             return
 
         async with ctx.bot.db.guild(ctx.guild).disabled_commands() as disabled_commands:
@@ -1926,6 +2006,10 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(
                 _("I couldn't find that command. Please note that it is case sensitive.")
             )
+            return
+
+        if command_obj.requires.privilege_level > await PrivilegeLevel.from_ctx(ctx):
+            await ctx.send(_("You are not allowed to enable that command."))
             return
 
         async with ctx.bot.db.guild(ctx.guild).disabled_commands() as disabled_commands:
