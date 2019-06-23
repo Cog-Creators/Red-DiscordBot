@@ -188,23 +188,17 @@ Choose one of the following commands to install Red.
     If you're not inside an activated virtual environment, include the ``--user`` flag with all
     ``python3.7 -m pip`` commands.
 
-To install without audio support:
+To install without MongoDB support:
 
 .. code-block:: none
 
     python3.7 -m pip install -U Red-DiscordBot
 
-Or, to install with audio support:
+Or, to install with MongoDB support:
 
 .. code-block:: none
 
-    python3.7 -m pip install -U Red-DiscordBot[voice]
-
-Or, install with audio and MongoDB support:
-
-.. code-block:: none
-
-    python3.7 -m pip install -U Red-DiscordBot[voice,mongo]
+    python3.7 -m pip install -U Red-DiscordBot[mongo]
 
 .. note::
 

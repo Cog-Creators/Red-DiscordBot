@@ -456,18 +456,27 @@ class Streams(commands.Cog):
     @streamset.command()
     @checks.is_owner()
     async def twitchtoken(self, ctx: commands.Context):
-        """Explain how to set the twitch token"""
+        """Explain how to set the twitch token."""
 
         message = _(
             "To set the twitch API tokens, follow these steps:\n"
             "1. Go to this page: https://dev.twitch.tv/dashboard/apps.\n"
+<<<<<<< HEAD
             "2. Click *Register Your Application*\n"
             "3. Enter a name, set the OAuth Redirect URI to `http://localhost`, and \n"
             "select an Application Category of your choosing."
             "4. Click *Register*, and on the following page, click *New Secret* under Client Secret.\n"
             "5. do `{prefix}set api twitch client_id,your_client_id client_secret,your_client_secret`\n\n"
+=======
+            "2. Click *Register Your Application*.\n"
+            "3. Enter a name, set the OAuth Redirect URI to `http://localhost`, and "
+            "select an Application Category of your choosing.\n"
+            "4. Click *Register*.\n"
+            "5. On the following page, copy the Client ID.\n"
+            "6. Run the command `{prefix}set api twitch client_id,<your_client_id_here>`\n\n"
+>>>>>>> release/V3/develop
             "Note: These tokens are sensitive and should only be used in a private channel\n"
-            "or in DM with the bot.)\n"
+            "or in DM with the bot.\n"
         ).format(prefix=ctx.prefix)
 
         await ctx.maybe_send_embed(message)
@@ -475,17 +484,18 @@ class Streams(commands.Cog):
     @streamset.command()
     @checks.is_owner()
     async def youtubekey(self, ctx: commands.Context):
-        """Explain how to set the YouTube token"""
+        """Explain how to set the YouTube token."""
 
         message = _(
             "To get one, do the following:\n"
             "1. Create a project\n"
             "(see https://support.google.com/googleapi/answer/6251787 for details)\n"
             "2. Enable the YouTube Data API v3 \n"
-            "(see https://support.google.com/googleapi/answer/6158841for instructions)\n"
+            "(see https://support.google.com/googleapi/answer/6158841 for instructions)\n"
             "3. Set up your API key \n"
             "(see https://support.google.com/googleapi/answer/6158862 for instructions)\n"
-            "4. Copy your API key and do `{prefix}set api youtube api_key,your_api_key`\n\n"
+            "4. Copy your API key and run the command "
+            "`{prefix}set api youtube api_key,<your_api_key_here>`\n\n"
             "Note: These tokens are sensitive and should only be used in a private channel\n"
             "or in DM with the bot.\n"
         ).format(prefix=ctx.prefix)
@@ -756,8 +766,17 @@ class Streams(commands.Cog):
         for stream in self.streams:
             with contextlib.suppress(Exception):
                 try:
+<<<<<<< HEAD
                     embed = await stream.is_online()
                 except (OfflineStream, GameNotInStreamTargetGameList):
+=======
+                    if stream.__class__.__name__ == "TwitchStream":
+                        embed, is_rerun = await stream.is_online()
+                    else:
+                        embed = await stream.is_online()
+                        is_rerun = False
+                except OfflineStream:
+>>>>>>> release/V3/develop
                     if not stream._messages_cache:
                         continue
                     for message in stream._messages_cache:

@@ -30,7 +30,7 @@ def get_latest_confs() -> Tuple["Config"]:
     return tuple(ret)
 
 
-class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):
+class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):  # pylint: disable=duplicate-bases
     """Context manager implementation of config values.
 
     This class allows mutable config values to be both "get" and "set" from
@@ -119,7 +119,7 @@ class Value:
             # Is equivalent to this
 
             group_obj = conf.guild(some_guild)
-            value_obj = conf.foo
+            value_obj = group_obj.foo
             foo = await value_obj()
 
         .. important::
@@ -1135,7 +1135,8 @@ class Config:
             )
             group = Group(identifier_data, defaults={}, driver=self.driver)
         else:
-            group = self._get_base_group(*scopes)
+            cat, *scopes = scopes
+            group = self._get_base_group(cat, *scopes)
         await group.clear()
 
     async def clear_all(self):
