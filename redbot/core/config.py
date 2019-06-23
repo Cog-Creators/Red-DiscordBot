@@ -852,22 +852,9 @@ class Config:
             custom_group_data=self.custom_groups,
             is_custom=is_custom,
         )
-
-        if category == self.GLOBAL:
-            primary_key_len = 0
-        elif category == self.MEMBER:
-            primary_key_len = 2
-        elif is_custom:
-            primary_key_len = self.custom_groups[category]
-        else:
-            primary_key_len = 1
-        if len(primary_keys) < primary_key_len:
-            defaults = {}
-        else:
-            defaults = self.defaults.get(category, {})
         return Group(
             identifier_data=identifier_data,
-            defaults=defaults,
+            defaults=self.defaults.get(category, {}),
             driver=self.driver,
             force_registration=self.force_registration,
         )
@@ -988,7 +975,6 @@ class Config:
         """
         group = self._get_base_group(scope)
         ret = {}
-        defaults = self.defaults.get(scope, {})
 
         try:
             dict_ = await self.driver.get(group.identifier_data)
@@ -996,7 +982,7 @@ class Config:
             pass
         else:
             for k, v in dict_.items():
-                data = deepcopy(defaults)
+                data = group.defaults
                 data.update(v)
                 ret[int(k)] = data
 
@@ -1070,11 +1056,11 @@ class Config:
         """
         return await self._all_from_scope(self.USER)
 
-    def _all_members_from_guild(self, group: Group, guild_data: dict) -> dict:
+    @staticmethod
+    def _all_members_from_guild(group: Group, guild_data: dict) -> dict:
         ret = {}
-        defaults = self.defaults.get(self.MEMBER, {})
         for member_id, member_data in guild_data.items():
-            new_member_data = deepcopy(defaults)
+            new_member_data = group.defaults
             new_member_data.update(member_data)
             ret[int(member_id)] = new_member_data
         return ret
