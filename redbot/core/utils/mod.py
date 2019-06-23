@@ -130,7 +130,7 @@ async def is_mod_or_superior(
     elif isinstance(obj, discord.Role):
         if obj.id in await bot.db.guild(obj.guild).mod_role():
             return True
-        if await bot.db.guild(obj.guild).admin_role():
+        if obj.id in await bot.db.guild(obj.guild).admin_role():
             return True
         return False
     else:

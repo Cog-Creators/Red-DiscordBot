@@ -224,10 +224,10 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
     async def is_admin(self, member: discord.Member):
         """Checks if a member is an admin of their guild."""
-        admin_role_ids = set(await self.db.guild(member.guild).admin_role())
         try:
-            for role in member.roles:
-                if role.id in admin_role_ids:
+            member_snowflakes = member._roles  # DEP-WARN
+            for snowflake in await self.db.guild(member.guild).admin_role():
+                if member_snowflakes.has(snowflake):  # Dep-WARN
                     return True
         except AttributeError:  # someone passed a webhook to this
             pass
@@ -235,11 +235,13 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
     async def is_mod(self, member: discord.Member):
         """Checks if a member is a mod or admin of their guild."""
-        mod_role_ids = set(await self.db.guild(member.guild).mod_role())
-        mod_role_ids.update(await self.db.guild(member.guild).admin_role())
         try:
-            for role in member.roles:
-                if role.id in mod_role_ids:
+            member_snowflakes = member._roles  # DEP-WARN
+            for snowflake in await self.db.guild(member.guild).admin_role():
+                if member_snowflakes.has(snowflake):  # DEP-WARN
+                    return True
+            for snowflake in await self.db.guild(member.guild).mod_role():
+                if member_snowflakes.has(snowflake):  # DEP-WARN
                     return True
         except AttributeError:  # someone passed a webhook to this
             pass
