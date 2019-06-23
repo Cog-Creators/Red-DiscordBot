@@ -733,7 +733,8 @@ class Core(commands.Cog, CoreLogic):
                 guild_settings=guild_settings,
                 locale=locale,
             )
-            await ctx.send(box(settings))
+            for page in pagify(settings):
+                await ctx.send(box(page))
 
     @_set.command()
     @checks.guildowner()
