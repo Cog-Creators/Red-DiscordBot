@@ -127,12 +127,12 @@ class PrivilegeLevel(enum.IntEnum):
         # admin or mod role.
         guild_settings = ctx.bot.db.guild(ctx.guild)
 
-        snowflakes = ctx.author._roles  # DEP-WARN
+        member_snowflakes = ctx.author._roles  # DEP-WARN
         for snowflake in await guild_settings.admin_role():
-            if snowflakes.has(snowflake):  # DEP-WARN
+            if member_snowflakes.has(snowflake):  # DEP-WARN
                 return cls.ADMIN
         for snowflake in await guild_settings.mod_role():
-            if snowflakes.has(snowflake):  # DEP-WARN
+            if member_snowflakes.has(snowflake):  # DEP-WARN
                 return cls.MOD
 
         return cls.NONE
