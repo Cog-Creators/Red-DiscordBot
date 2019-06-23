@@ -31,6 +31,7 @@ from redbot.core.utils.menus import (
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from urllib.parse import urlparse
 from .manager import ServerManager
+from .errors import LavalinkDownloadFailed
 
 _ = Translator("Audio", __file__)
 
@@ -91,6 +92,7 @@ class Audio(commands.Cog):
         self._connect_task = None
         self._disconnect_task = None
         self._cleaned_up = False
+        self._connection_aborted = False
 
         self.spotify_token = None
         self.play_lock = {}
@@ -121,7 +123,10 @@ class Audio(commands.Cog):
         self._connect_task = self.bot.loop.create_task(self.attempt_connect())
 
     async def attempt_connect(self, timeout: int = 30):
-        while True:  # run until success
+        self._connection_aborted = False
+        max_retries = 5
+        retry_count = 0
+        while retry_count < max_retries:
             external = await self.config.use_external_lavalink()
             if external is False:
                 settings = self._default_lavalink_settings
@@ -134,21 +139,52 @@ class Audio(commands.Cog):
                 self._manager = ServerManager()
                 try:
                     await self._manager.start()
-                except RuntimeError as exc:
-                    log.exception(
-                        "Exception whilst starting internal Lavalink server, retrying...",
-                        exc_info=exc,
-                    )
+                except LavalinkDownloadFailed as exc:
                     await asyncio.sleep(1)
-                    continue
+                    if exc.should_retry:
+                        log.exception(
+                            "Exception whilst starting internal Lavalink server, retrying...",
+                            exc_info=exc,
+                        )
+                        retry_count += 1
+                        continue
+                    else:
+                        log.exception(
+                            "Fatal exception whilst starting internal Lavalink server, "
+                            "aborting...",
+                            exc_info=exc,
+                        )
+                        self._connection_aborted = True
+                        raise
                 except asyncio.CancelledError:
                     log.exception("Invalid machine architecture, cannot run Lavalink.")
                     raise
+                except Exception as exc:
+                    log.exception(
+                        "Unhandled exception whilst starting internal Lavalink server, "
+                        "aborting...",
+                        exc_info=exc,
+                    )
+                    self._connection_aborted = True
+                    raise
+                else:
+                    break
             else:
                 host = await self.config.host()
                 password = await self.config.password()
                 rest_port = await self.config.rest_port()
                 ws_port = await self.config.ws_port()
+                break
+        else:
+            log.critical(
+                "Setting up the Lavalink server failed after multiple attempts. See above "
+                "tracebacks for details."
+            )
+            self._connection_aborted = True
+            return
+
+        retry_count = 0
+        while retry_count < max_retries:
             try:
                 await lavalink.initialize(
                     bot=self.bot,
@@ -158,12 +194,26 @@ class Audio(commands.Cog):
                     ws_port=ws_port,
                     timeout=timeout,
                 )
-                return  # break infinite loop
             except asyncio.TimeoutError:
                 log.error("Connecting to Lavalink server timed out, retrying...")
                 if external is False and self._manager is not None:
                     await self._manager.shutdown()
+                retry_count += 1
                 await asyncio.sleep(1)  # prevent busylooping
+            except Exception as exc:
+                log.exception(
+                    "Unhandled exception whilst connecting to Lavalink, aborting...", exc_info=exc
+                )
+                self._connection_aborted = True
+                raise
+            else:
+                break
+        else:
+            self._connection_aborted = True
+            log.critical(
+                "Connecting to the Lavalink server failed after multiple attempts. See above "
+                "tracebacks for details."
+            )
 
     async def event_handler(self, player, event_type, extra):
         disconnect = await self.config.guild(player.channel.guild).disconnect()
@@ -1160,6 +1210,11 @@ class Audio(commands.Cog):
                 if not url_check:
                     return await self._embed_msg(ctx, _("That URL is not allowed."))
         if not self._player_check(ctx):
+            if self._connection_aborted:
+                msg = _("Connection to Lavalink has failed.")
+                if await ctx.bot.is_owner(ctx.author):
+                    msg += " " + _("Please check your console or logs for details.")
+                return await self._embed_msg(ctx, msg)
             try:
                 if (
                     not ctx.author.voice.channel.permissions_for(ctx.me).connect
@@ -2096,15 +2151,22 @@ class Audio(commands.Cog):
                 await self._embed_msg(ctx, _("You need the DJ role to use playlists."))
                 return False
         if not self._player_check(ctx):
+            if self._connection_aborted:
+                msg = _("Connection to Lavalink has failed.")
+                if await ctx.bot.is_owner(ctx.author):
+                    msg += " " + _("Please check your console or logs for details.")
+                await self._embed_msg(ctx, msg)
+                return False
             try:
                 if (
                     not ctx.author.voice.channel.permissions_for(ctx.me).connect
                     or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
                     and self._userlimit(ctx.author.voice.channel)
                 ):
-                    return await self._embed_msg(
+                    await self._embed_msg(
                         ctx, _("I don't have permission to connect to your channel.")
                     )
+                    return False
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
@@ -2560,6 +2622,11 @@ class Audio(commands.Cog):
         }
 
         if not self._player_check(ctx):
+            if self._connection_aborted:
+                msg = _("Connection to Lavalink has failed.")
+                if await ctx.bot.is_owner(ctx.author):
+                    msg += " " + _("Please check your console or logs for details.")
+                return await self._embed_msg(ctx, msg)
             try:
                 if (
                     not ctx.author.voice.channel.permissions_for(ctx.me).connect
@@ -2673,6 +2740,11 @@ class Audio(commands.Cog):
 
     async def _search_button_action(self, ctx, tracks, emoji, page):
         if not self._player_check(ctx):
+            if self._connection_aborted:
+                msg = _("Connection to Lavalink has failed.")
+                if await ctx.bot.is_owner(ctx.author):
+                    msg += " " + _("Please check your console or logs for details.")
+                return await self._embed_msg(ctx, msg)
             try:
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
@@ -3493,8 +3565,9 @@ class Audio(commands.Cog):
         else:
             self.play_lock[ctx.message.guild.id] = False
 
-    @staticmethod
-    def _player_check(ctx):
+    def _player_check(self, ctx: commands.Context):
+        if self._connection_aborted:
+            return False
         try:
             lavalink.get_player(ctx.guild.id)
             return True
