@@ -461,20 +461,11 @@ class Streams(commands.Cog):
         message = _(
             "To set the twitch API tokens, follow these steps:\n"
             "1. Go to this page: https://dev.twitch.tv/dashboard/apps.\n"
-<<<<<<< HEAD
             "2. Click *Register Your Application*\n"
             "3. Enter a name, set the OAuth Redirect URI to `http://localhost`, and \n"
             "select an Application Category of your choosing."
             "4. Click *Register*, and on the following page, click *New Secret* under Client Secret.\n"
             "5. do `{prefix}set api twitch client_id,your_client_id client_secret,your_client_secret`\n\n"
-=======
-            "2. Click *Register Your Application*.\n"
-            "3. Enter a name, set the OAuth Redirect URI to `http://localhost`, and "
-            "select an Application Category of your choosing.\n"
-            "4. Click *Register*.\n"
-            "5. On the following page, copy the Client ID.\n"
-            "6. Run the command `{prefix}set api twitch client_id,<your_client_id_here>`\n\n"
->>>>>>> release/V3/develop
             "Note: These tokens are sensitive and should only be used in a private channel\n"
             "or in DM with the bot.\n"
         ).format(prefix=ctx.prefix)
@@ -766,17 +757,8 @@ class Streams(commands.Cog):
         for stream in self.streams:
             with contextlib.suppress(Exception):
                 try:
-<<<<<<< HEAD
                     embed = await stream.is_online()
                 except (OfflineStream, GameNotInStreamTargetGameList):
-=======
-                    if stream.__class__.__name__ == "TwitchStream":
-                        embed, is_rerun = await stream.is_online()
-                    else:
-                        embed = await stream.is_online()
-                        is_rerun = False
-                except OfflineStream:
->>>>>>> release/V3/develop
                     if not stream._messages_cache:
                         continue
                     for message in stream._messages_cache:

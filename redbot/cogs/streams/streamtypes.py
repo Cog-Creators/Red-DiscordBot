@@ -354,32 +354,13 @@ class TwitchStream(Stream):
         status = stream["title"]
         if not status:
             status = "Untitled broadcast"
-<<<<<<< HEAD
         embed = discord.Embed(title=status, url=url)
-=======
-        if is_rerun:
-            status += " - Rerun"
-        embed = discord.Embed(title=status, url=url, color=0x6441A4)
->>>>>>> release/V3/develop
         embed.set_author(name=channel["display_name"])
         embed.add_field(name="Current viewers", value=stream["viewer_count"])
         embed.add_field(name="Total views", value=channel["view_count"])
         embed.set_thumbnail(url=logo)
-<<<<<<< HEAD
-        embed.set_image(url=rnd(stream["thumbnail_url"].format(width=320, height=180)))
         embed.set_footer(text="Playing: " + data["game"]["name"])
         embed.color = 0x6441A4
-=======
-        if data["stream"]["preview"]["medium"]:
-            embed.set_image(url=rnd(data["stream"]["preview"]["medium"]))
-        if channel["game"]:
-            embed.set_footer(text="Playing: " + channel["game"])
->>>>>>> release/V3/develop
-
-        return embed
-
-    def __repr__(self):
-        return "<{0.__class__.__name__}: {0.name} (ID: {0.id})>".format(self)
 
 
 class HitboxStream(Stream):
