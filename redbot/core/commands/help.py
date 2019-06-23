@@ -538,7 +538,7 @@ class RedHelpFormatter:
                     try:
                         await destination.send(embed=page)
                     except discord.Forbidden:
-                        await ctx.send(
+                        return await ctx.send(
                             T_(
                                 "I couldn't send the help message to you in DM. "
                                 "Either you blocked me or you disabled DMs in this server."
@@ -549,7 +549,7 @@ class RedHelpFormatter:
                     try:
                         await destination.send(page)
                     except discord.Forbidden:
-                        await ctx.send(
+                        return await ctx.send(
                             T_(
                                 "I couldn't send the help message to you in DM. "
                                 "Either you blocked me or you disabled DMs in this server."
