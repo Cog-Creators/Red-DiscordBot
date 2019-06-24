@@ -222,7 +222,9 @@ async def mongov1_to_json() -> Dict[str, Any]:
                 continue
             driver = drivers.JsonDriver(collection_name, cog_id)
             for category, value in document.items():
-                ident_data = IdentifierData(str(cog_id), category, tuple(), tuple(), 0)
+                ident_data = IdentifierData(
+                    str(collection_name), str(cog_id), category, tuple(), tuple(), 0
+                )
                 await driver.set(ident_data, value=value)
 
     conversion_log.info("Cog conversion complete.")
@@ -286,8 +288,8 @@ async def create_backup(instance: str) -> None:
     elif backend_type != BackendType.JSON:
         await do_migration(backend_type, BackendType.JSON)
     print("Backing up the instance's data...")
-    success = await _create_backup()
-    if success is not None:
+    backup_fpath = await _create_backup()
+    if backup_fpath is not None:
         print(f"A backup of {instance} has been made. It is at {backup_fpath}")
     else:
         print("Creating the backup failed.")

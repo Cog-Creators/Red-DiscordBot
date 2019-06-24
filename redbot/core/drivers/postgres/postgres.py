@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Optional, Any, AsyncIterator, Tuple, Union, Callable, List
 
 try:
+    # pylint: disable=import-error
     import asyncpg
 except ModuleNotFoundError:
     asyncpg = None

@@ -6,6 +6,7 @@ from typing import Match, Pattern, Tuple, Optional, AsyncIterator, Any, Dict, It
 from urllib.parse import quote_plus
 
 try:
+    # pylint: disable=import-error
     import pymongo.errors
     import motor.core
     import motor.motor_asyncio
