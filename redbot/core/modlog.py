@@ -477,7 +477,7 @@ async def get_next_case_number(guild: discord.Guild) -> int:
     if not case_numbers:
         return 1
     else:
-        return int(max(case_numbers)) + 1
+        return max(map(int, case_numbers)) + 1
 
 
 async def get_case(case_number: int, guild: discord.Guild, bot: Red) -> Case:
