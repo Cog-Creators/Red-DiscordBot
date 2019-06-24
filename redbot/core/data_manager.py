@@ -61,10 +61,12 @@ def create_temp_config():
     default_dirs["STORAGE_TYPE"] = "JSON"
     default_dirs["STORAGE_DETAILS"] = {}
 
-    with config_file.open("w+", encoding="utf-8") as fs:
+    with config_file.open("r", encoding="utf-8") as fs:
         config = json.load(fs)
-        config[name] = default_dirs
-        fs.seek(0)
+
+    config[name] = default_dirs
+
+    with config_file.open("w", encoding="utf-8") as fs:
         json.dump(config, fs, indent=4)
 
 
