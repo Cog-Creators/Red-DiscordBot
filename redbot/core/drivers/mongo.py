@@ -1,6 +1,8 @@
+import contextlib
+import itertools
 import re
 from getpass import getpass
-from typing import Match, Pattern, Tuple, Optional, AsyncIterator
+from typing import Match, Pattern, Tuple, Optional, AsyncIterator, Any, Dict, Iterator, List
 from urllib.parse import quote_plus
 
 try:
@@ -49,7 +51,7 @@ class MongoDriver(BaseDriver):
         else:
             url = "{}://{}{}/{}".format(uri, host, ports, database)
 
-        cls._conn = motor.motor_asyncio.AsyncIOMotorClient(url)
+        cls._conn = motor.motor_asyncio.AsyncIOMotorClient(url, retryWrites=True)
 
     @classmethod
     async def teardown(cls) -> None:
@@ -178,30 +180,104 @@ class MongoDriver(BaseDriver):
                 await self.clear(identifier_data)
                 return
             value = self._escape_dict_keys(value)
-
         mongo_collection = self.get_collection(identifier_data.category)
-        if len(dot_identifiers) > 0:
-            update_stmt = {"$set": {dot_identifiers: value}}
-        else:
-            update_stmt = {"$set": value}
+        num_pkeys = len(primary_key)
 
-        try:
-            await mongo_collection.update_one(
-                {"_id": {"RED_uuid": uuid, "RED_primary_key": primary_key}},
-                update=update_stmt,
-                upsert=True,
-            )
-        except pymongo.errors.WriteError as exc:
-            if exc.args and exc.args[0].startswith("Cannot create field"):
-                # There's a bit of a failing edge case here...
-                # If we accidentally set the sub-field of an array, and the key happens to be a
-                # digit, it will successfully set the value in the array, and not raise an error.
-                # This is different to how other drivers would behave, and could lead to unexpected
-                # behaviour.
-                raise errors.CannotSetSubfield
+        if num_pkeys >= identifier_data.primary_key_len:
+            # We're setting at the document level or below.
+            dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
+            if dot_identifiers:
+                update_stmt = {"$set": {dot_identifiers: value}}
             else:
-                # Unhandled driver exception, should expose.
-                raise
+                update_stmt = {"$set": value}
+
+            try:
+                await mongo_collection.update_one(
+                    {"_id": {"RED_uuid": uuid, "RED_primary_key": primary_key}},
+                    update=update_stmt,
+                    upsert=True,
+                )
+            except pymongo.errors.WriteError as exc:
+                if exc.args and exc.args[0].startswith("Cannot create field"):
+                    # There's a bit of a failing edge case here...
+                    # If we accidentally set the sub-field of an array, and the key happens to be a
+                    # digit, it will successfully set the value in the array, and not raise an
+                    # error. This is different to how other drivers would behave, and could lead to
+                    # unexpected behaviour.
+                    raise errors.CannotSetSubfield
+                else:
+                    # Unhandled driver exception, should expose.
+                    raise
+
+        else:
+            # We're setting above the document level.
+            # Easiest and most efficient thing to do is delete all documents that we're potentially
+            # replacing, then insert_many().
+            # We'll do it in a transaction so we can roll-back in case something goes horribly
+            # wrong.
+            pkey_filter = self.generate_primary_key_filter(identifier_data)
+            async with await self._conn.start_session() as session:
+                with contextlib.suppress(pymongo.errors.CollectionInvalid):
+                    # Collections must already exist when inserting documents within a transaction
+                    await self.db.create_collection(mongo_collection.full_name)
+                try:
+                    async with session.start_transaction():
+                        await mongo_collection.delete_many(pkey_filter, session=session)
+                        await mongo_collection.insert_many(
+                            self.generate_documents_to_insert(
+                                uuid, primary_key, value, identifier_data.primary_key_len
+                            ),
+                            session=session,
+                        )
+                except pymongo.errors.OperationFailure:
+                    # This DB version / setup doesn't support transactions, so we'll have to use
+                    # a shittier method.
+
+                    # The strategy here is to separate the existing documents and the new documents
+                    # into ones to be deleted, ones to be replaced, and new ones to be inserted.
+                    # Then we can do a bulk_write().
+
+                    # This is our list of (filter, new_document) tuples for replacing existing
+                    # documents. The `new_document` should be taken and removed from `value`, so
+                    # `value` only ends up containing documents which need to be inserted.
+                    to_replace: List[Tuple[Dict, Dict]] = []
+
+                    # This is our list of primary key filters which need deleting. They should
+                    # simply be all the primary keys which were part of existing documents but are
+                    # not included in the new documents.
+                    to_delete: List[Dict] = []
+                    async for document in mongo_collection.find(pkey_filter, session=session):
+                        pkey = document["_id"]["RED_primary_key"]
+                        new_document = value
+                        try:
+                            for pkey_part in pkey[num_pkeys:-1]:
+                                new_document = new_document[pkey_part]
+                            # This document is being replaced - remove it from `value`.
+                            new_document = new_document.pop(pkey[-1])
+                        except KeyError:
+                            # We've found the primary key of an old document which isn't in the
+                            # updated set of documents - it should be deleted.
+                            to_delete.append({"_id": {"RED_uuid": uuid, "RED_primary_key": pkey}})
+                        else:
+                            _filter = {"_id": {"RED_uuid": uuid, "RED_primary_key": pkey}}
+                            new_document.update(_filter)
+                            to_replace.append((_filter, new_document))
+
+                    # What's left of `value` should be the new documents needing to be inserted.
+                    to_insert = self.generate_documents_to_insert(
+                        uuid, primary_key, value, identifier_data.primary_key_len
+                    )
+                    requests = list(
+                        itertools.chain(
+                            (pymongo.DeleteOne(f) for f in to_delete),
+                            (pymongo.ReplaceOne(f, d) for f, d in to_replace),
+                            (pymongo.InsertOne(d) for d in to_insert if d),
+                        )
+                    )
+                    # This will pipeline the operations so they all complete quickly. However if
+                    # any of them fail, the rest of them will complete - i.e. this operation is not
+                    # atomic.
+                    await mongo_collection.bulk_write(requests, ordered=False)
 
     def generate_primary_key_filter(self, identifier_data: IdentifierData):
         uuid = self._escape_key(identifier_data.uuid)
@@ -217,13 +293,29 @@ class MongoDriver(BaseDriver):
             ret["_id.RED_primary_key"] = {"$exists": True}
         return ret
 
+    @classmethod
+    def generate_documents_to_insert(
+        cls, uuid: str, primary_keys: List[str], data: Dict[str, Dict[str, Any]], pkey_len: int
+    ) -> Iterator[Dict[str, Any]]:
+        num_missing_pkeys = pkey_len - len(primary_keys)
+        if num_missing_pkeys == 1:
+            for pkey, document in data.items():
+                document["_id"] = {"RED_uuid": uuid, "RED_primary_key": primary_keys + [pkey]}
+                yield document
+        else:
+            for pkey, inner_data in data.items():
+                for document in cls.generate_documents_to_insert(
+                    uuid, primary_keys + [pkey], inner_data, pkey_len
+                ):
+                    yield document
+
     async def clear(self, identifier_data: IdentifierData):
-        # There are four cases here:
+        # There are five cases here:
         # 1) We're clearing out a subset of identifiers (aka identifiers is NOT empty)
-        # 2) We're clearing out full primary key and no identifiers (single document)
+        # 2) We're clearing out full primary key and no identifiers
         # 3) We're clearing out partial primary key and no identifiers
         # 4) Primary key is empty, should wipe all documents in the collection
-        # 5) Category is empty, should wipe out documents in many collections
+        # 5) Category is empty, all of this cog's data should be deleted
         pkey_filter = self.generate_primary_key_filter(identifier_data)
         if identifier_data.identifiers:
             # This covers case 1

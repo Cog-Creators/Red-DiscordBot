@@ -236,7 +236,7 @@ class Filter(commands.Cog):
         else:
             await ctx.send(_("Those words were already in the filter."))
 
-    @_filter.command(name="remove")
+    @_filter.command(name="delete", aliases=["remove", "del"])
     async def filter_remove(self, ctx: commands.Context, *, words: str):
         """Remove words from the filter.
 
@@ -448,13 +448,12 @@ class Filter(commands.Cog):
         if not await self.settings.guild(member.guild).filter_names():
             return
 
-        word_list = await self.settings.guild(member.guild).filter()
-        for w in word_list:
-            if w in member.display_name.lower():
-                name_to_use = await self.settings.guild(member.guild).filter_default_name()
-                reason = _("Filtered nickname") if member.nick else _("Filtered name")
-                try:
-                    await member.edit(nick=name_to_use, reason=reason)
-                except discord.HTTPException:
-                    pass
-                return
+        if await self.filter_hits(member.display_name, member.guild):
+
+            name_to_use = await self.settings.guild(member.guild).filter_default_name()
+            reason = _("Filtered nickname") if member.nick else _("Filtered name")
+            try:
+                await member.edit(nick=name_to_use, reason=reason)
+            except discord.HTTPException:
+                pass
+            return

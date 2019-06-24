@@ -1,3 +1,4 @@
+import logging
 import asyncio
 import contextlib
 
@@ -5,8 +6,8 @@ import discord
 from redbot.core import commands, checks, i18n
 from redbot.core.utils.chat_formatting import box
 from .abc import MixinMeta
-from .log import log
 
+log = logging.getLogger("red.mod")
 _ = i18n.Translator("Mod", __file__)
 
 

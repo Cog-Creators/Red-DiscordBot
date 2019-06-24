@@ -5,6 +5,9 @@ import importlib
 import itertools
 import logging
 import sys
+import platform
+import getpass
+import pip
 import traceback
 from collections import namedtuple
 from pathlib import Path
@@ -29,7 +32,9 @@ from . import (
 )
 from .utils import create_backup
 from .utils.predicates import MessagePredicate
-from .utils.chat_formatting import pagify, box, inline
+from .utils.chat_formatting import humanize_timedelta, pagify, box, inline
+
+from .commands.requires import PrivilegeLevel
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -40,6 +45,8 @@ log = logging.getLogger("red")
 
 
 _ = i18n.Translator("Core", __file__)
+
+TokenConverter = commands.get_dict_converter(delims=[" ", ",", ";"])
 
 
 class CoreLogic:
@@ -259,7 +266,15 @@ class CoreLogic:
             Invite URL.
         """
         app_info = await self.bot.application_info()
-        return discord.utils.oauth_url(app_info.id)
+        perms_int = await self.bot.db.invite_perm()
+        permissions = discord.Permissions(perms_int)
+        return discord.utils.oauth_url(app_info.id, permissions)
+
+    @staticmethod
+    async def _can_get_invite_url(ctx):
+        is_owner = await ctx.bot.is_owner(ctx.author)
+        is_invite_public = await ctx.bot.db.invite_public()
+        return is_owner or is_invite_public
 
 
 @i18n.cog_i18n(_)
@@ -327,28 +342,12 @@ class Core(commands.Cog, CoreLogic):
     async def uptime(self, ctx: commands.Context):
         """Shows Red's uptime"""
         since = ctx.bot.uptime.strftime("%Y-%m-%d %H:%M:%S")
-        passed = self.get_bot_uptime()
-        await ctx.send(_("Been up for: **{}** (since {} UTC)").format(passed, since))
-
-    def get_bot_uptime(self, *, brief: bool = False):
-        # Courtesy of Danny
-        now = datetime.datetime.utcnow()
-        delta = now - self.bot.uptime
-        hours, remainder = divmod(int(delta.total_seconds()), 3600)
-        minutes, seconds = divmod(remainder, 60)
-        days, hours = divmod(hours, 24)
-
-        if not brief:
-            if days:
-                fmt = _("{d} days, {h} hours, {m} minutes, and {s} seconds")
-            else:
-                fmt = _("{h} hours, {m} minutes, and {s} seconds")
-        else:
-            fmt = _("{h}h {m}m {s}s")
-            if days:
-                fmt = _("{d}d ") + fmt
-
-        return fmt.format(d=days, h=hours, m=minutes, s=seconds)
+        delta = datetime.datetime.utcnow() - self.bot.uptime
+        await ctx.send(
+            _("Been up for: **{}** (since {} UTC)").format(
+                humanize_timedelta(timedelta=delta), since
+            )
+        )
 
     @commands.group()
     async def embedset(self, ctx: commands.Context):
@@ -451,10 +450,64 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("No exception has occurred yet"))
 
     @commands.command()
-    @checks.is_owner()
-    async def invite(self, ctx: commands.Context):
+    @commands.check(CoreLogic._can_get_invite_url)
+    async def invite(self, ctx):
         """Show's Red's invite url"""
         await ctx.author.send(await self._invite_url())
+
+    @commands.group()
+    @checks.is_owner()
+    async def inviteset(self, ctx):
+        """Setup the bot's invite"""
+        pass
+
+    @inviteset.command()
+    async def public(self, ctx, confirm: bool = False):
+        """
+        Define if the command should be accessible\
+        for the average users.
+        """
+        if await self.bot.db.invite_public():
+            await self.bot.db.invite_public.set(False)
+            await ctx.send("The invite is now private.")
+            return
+        app_info = await self.bot.application_info()
+        if not app_info.bot_public:
+            await ctx.send(
+                "I am not a public bot. That means that nobody except "
+                "you can invite me on new servers.\n\n"
+                "You can change this by ticking `Public bot` in "
+                "your token settings: "
+                "https://discordapp.com/developers/applications/me/{0}".format(self.bot.user.id)
+            )
+            return
+        if not confirm:
+            await ctx.send(
+                "You're about to make the `{0}invite` command public. "
+                "All users will be able to invite me on their server.\n\n"
+                "If you agree, you can type `{0}inviteset public yes`.".format(ctx.prefix)
+            )
+        else:
+            await self.bot.db.invite_public.set(True)
+            await ctx.send("The invite command is now public.")
+
+    @inviteset.command()
+    async def perms(self, ctx, level: int):
+        """
+        Make the bot create its own role with permissions on join.
+
+        The bot will create its own role with the desired permissions\
+        when he join a new server. This is a special role that can't be\
+        deleted or removed from the bot.
+
+        For that, you need to give a valid permissions level.
+        You can generate one here: https://discordapi.com/permissions.html
+
+        Please note that you might need the two factor authentification for\
+        some permissions.
+        """
+        await self.bot.db.invite_perm.set(level)
+        await ctx.send("The new permissions level has been set.")
 
     @commands.command()
     @commands.guild_only()
@@ -973,13 +1026,13 @@ class Core(commands.Cog, CoreLogic):
                 "message", check=MessagePredicate.same_context(ctx), timeout=60
             )
         except asyncio.TimeoutError:
-            self.owner.reset_cooldown(ctx)
+            ctx.command.reset_cooldown(ctx)
             await ctx.send(
                 _("The `{prefix}set owner` request has timed out.").format(prefix=ctx.prefix)
             )
         else:
             if message.content.strip() == token:
-                self.owner.reset_cooldown(ctx)
+                ctx.command.reset_cooldown(ctx)
                 await ctx.bot.db.owner.set(ctx.author.id)
                 ctx.bot.owner_id = ctx.author.id
                 await ctx.send(_("You have been set as owner."))
@@ -1059,7 +1112,7 @@ class Core(commands.Cog, CoreLogic):
 
     @_set.command()
     @checks.is_owner()
-    async def api(self, ctx: commands.Context, service: str, *tokens: commands.converter.APIToken):
+    async def api(self, ctx: commands.Context, service: str, *, tokens: TokenConverter):
         """Set various external API tokens.
         
         This setting will be asked for by some 3rd party cogs and some core cogs.
@@ -1072,8 +1125,7 @@ class Core(commands.Cog, CoreLogic):
         """
         if ctx.channel.permissions_for(ctx.me).manage_messages:
             await ctx.message.delete()
-        entry = {k: v for t in tokens for k, v in t.items()}
-        await ctx.bot.db.api_tokens.set_raw(service, value=entry)
+        await ctx.bot.db.api_tokens.set_raw(service, value=tokens)
         await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
 
     @commands.group()
@@ -1312,7 +1364,6 @@ class Core(commands.Cog, CoreLogic):
     async def contact(self, ctx: commands.Context, *, message: str):
         """Sends a message to the owner"""
         guild = ctx.message.guild
-        owner = discord.utils.get(ctx.bot.get_all_members(), id=ctx.bot.owner_id)
         author = ctx.message.author
         footer = _("User ID: {}").format(author.id)
 
@@ -1333,41 +1384,81 @@ class Core(commands.Cog, CoreLogic):
 
         description = _("Sent by {} {}").format(author, source)
 
-        if isinstance(author, discord.Member):
-            colour = author.colour
-        else:
-            colour = discord.Colour.red()
+        destinations = await ctx.bot.get_owner_notification_destinations()
 
-        if await ctx.embed_requested():
-            e = discord.Embed(colour=colour, description=message)
-            if author.avatar_url:
-                e.set_author(name=description, icon_url=author.avatar_url)
-            else:
-                e.set_author(name=description)
-            e.set_footer(text=footer)
+        if not destinations:
+            await ctx.send(_("I've been configured not to send this anywhere."))
+            return
 
-            try:
-                await owner.send(content, embed=e)
-            except discord.InvalidArgument:
-                await ctx.send(
-                    _("I cannot send your message, I'm unable to find my owner... *sigh*")
-                )
-            except discord.HTTPException:
-                await ctx.send(_("I'm unable to deliver your message. Sorry."))
+        successful = False
+
+        for destination in destinations:
+
+            is_dm = isinstance(destination, discord.User)
+            send_embed = None
+
+            if is_dm:
+                send_embed = await ctx.bot.db.user(destination).embeds()
             else:
-                await ctx.send(_("Your message has been sent."))
+                if not destination.permissions_for(destination.guild.me).send_messages:
+                    continue
+                if destination.permissions_for(destination.guild.me).embed_links:
+                    send_embed = await ctx.bot.db.guild(destination.guild).embeds()
+                else:
+                    send_embed = False
+
+            if send_embed is None:
+                send_embed = await ctx.bot.db.embeds()
+
+            if send_embed:
+
+                if not is_dm and await self.bot.db.guild(destination.guild).use_bot_color():
+                    color = destination.guild.me.color
+                else:
+                    color = ctx.bot.color
+
+                e = discord.Embed(colour=color, description=message)
+                if author.avatar_url:
+                    e.set_author(name=description, icon_url=author.avatar_url)
+                else:
+                    e.set_author(name=description)
+
+                e.set_footer(text=footer)
+
+                try:
+                    await destination.send(embed=e)
+                except discord.Forbidden:
+                    log.exception(f"Contact failed to {destination}({destination.id})")
+                    # Should this automatically opt them out?
+                except discord.HTTPException:
+                    log.exception(
+                        f"An unexpected error happened while attempting to"
+                        f" send contact to {destination}({destination.id})"
+                    )
+                else:
+                    successful = True
+
+            else:
+
+                msg_text = "{}\nMessage:\n\n{}\n{}".format(description, message, footer)
+
+                try:
+                    await destination.send("{}\n{}".format(content, box(msg_text)))
+                except discord.Forbidden:
+                    log.exception(f"Contact failed to {destination}({destination.id})")
+                    # Should this automatically opt them out?
+                except discord.HTTPException:
+                    log.exception(
+                        f"An unexpected error happened while attempting to"
+                        f" send contact to {destination}({destination.id})"
+                    )
+                else:
+                    successful = True
+
+        if successful:
+            await ctx.send(_("Your message has been sent."))
         else:
-            msg_text = "{}\nMessage:\n\n{}\n{}".format(description, message, footer)
-            try:
-                await owner.send("{}\n{}".format(content, box(msg_text)))
-            except discord.InvalidArgument:
-                await ctx.send(
-                    _("I cannot send your message, I'm unable to find my owner... *sigh*")
-                )
-            except discord.HTTPException:
-                await ctx.send(_("I'm unable to deliver your message. Sorry."))
-            else:
-                await ctx.send(_("Your message has been sent."))
+            await ctx.send(_("I'm unable to deliver your message. Sorry."))
 
     @commands.command()
     @checks.is_owner()
@@ -1431,6 +1522,59 @@ class Core(commands.Cog, CoreLogic):
         data_dir = Path(basic_config["DATA_PATH"])
         msg = _("Data path: {path}").format(path=data_dir)
         await ctx.send(box(msg))
+
+    @commands.command(hidden=True)
+    @checks.is_owner()
+    async def debuginfo(self, ctx: commands.Context):
+        """Shows debug information useful for debugging.."""
+
+        if sys.platform == "linux":
+            import distro
+
+        IS_WINDOWS = os.name == "nt"
+        IS_MAC = sys.platform == "darwin"
+        IS_LINUX = sys.platform == "linux"
+
+        pyver = "{}.{}.{} ({})".format(*sys.version_info[:3], platform.architecture()[0])
+        pipver = pip.__version__
+        redver = red_version_info
+        dpy_version = discord.__version__
+        if IS_WINDOWS:
+            os_info = platform.uname()
+            osver = "{} {} (version {})".format(os_info.system, os_info.release, os_info.version)
+        elif IS_MAC:
+            os_info = platform.mac_ver()
+            osver = "Mac OSX {} {}".format(os_info[0], os_info[2])
+        elif IS_LINUX:
+            os_info = distro.linux_distribution()
+            osver = "{} {}".format(os_info[0], os_info[1]).strip()
+        else:
+            osver = "Could not parse OS, report this on Github."
+        user_who_ran = getpass.getuser()
+
+        if await ctx.embed_requested():
+            e = discord.Embed(color=await ctx.embed_colour())
+            e.title = "Debug Info for Red"
+            e.add_field(name="Red version", value=redver, inline=True)
+            e.add_field(name="Python version", value=pyver, inline=True)
+            e.add_field(name="Discord.py version", value=dpy_version, inline=True)
+            e.add_field(name="Pip version", value=pipver, inline=True)
+            e.add_field(name="System arch", value=platform.machine(), inline=True)
+            e.add_field(name="User", value=user_who_ran, inline=True)
+            e.add_field(name="OS version", value=osver, inline=False)
+            await ctx.send(embed=e)
+        else:
+            info = (
+                "Debug Info for Red\n\n"
+                + "Red version: {}\n".format(redver)
+                + "Python version: {}\n".format(pyver)
+                + "Discord.py version: {}\n".format(dpy_version)
+                + "Pip version: {}\n".format(pipver)
+                + "System arch: {}\n".format(platform.machine())
+                + "User: {}\n".format(user_who_ran)
+                + "OS version: {}\n".format(osver)
+            )
+            await ctx.send(box(info))
 
     @commands.group()
     @checks.is_owner()
@@ -1735,6 +1879,12 @@ class Core(commands.Cog, CoreLogic):
             )
             return
 
+        if self.command_manager in command_obj.parents or self.command_manager == command_obj:
+            await ctx.send(
+                _("The command to disable cannot be `command` or any of its subcommands.")
+            )
+            return
+
         async with ctx.bot.db.disabled_commands() as disabled_commands:
             if command not in disabled_commands:
                 disabled_commands.append(command_obj.qualified_name)
@@ -1755,6 +1905,16 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(
                 _("I couldn't find that command. Please note that it is case sensitive.")
             )
+            return
+
+        if self.command_manager in command_obj.parents or self.command_manager == command_obj:
+            await ctx.send(
+                _("The command to disable cannot be `command` or any of its subcommands.")
+            )
+            return
+
+        if command_obj.requires.privilege_level > await PrivilegeLevel.from_ctx(ctx):
+            await ctx.send(_("You are not allowed to disable that command."))
             return
 
         async with ctx.bot.db.guild(ctx.guild).disabled_commands() as disabled_commands:
@@ -1811,6 +1971,10 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(
                 _("I couldn't find that command. Please note that it is case sensitive.")
             )
+            return
+
+        if command_obj.requires.privilege_level > await PrivilegeLevel.from_ctx(ctx):
+            await ctx.send(_("You are not allowed to enable that command."))
             return
 
         async with ctx.bot.db.guild(ctx.guild).disabled_commands() as disabled_commands:
@@ -1912,6 +2076,102 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("They are immune"))
         else:
             await ctx.send(_("They are not Immune"))
+
+    @checks.is_owner()
+    @_set.group()
+    async def ownernotifications(self, ctx: commands.Context):
+        """
+        Commands for configuring owner notifications.
+        """
+        pass
+
+    @ownernotifications.command()
+    async def optin(self, ctx: commands.Context):
+        """
+        Opt-in on recieving owner notifications.
+
+        This is the default state.
+        """
+        async with ctx.bot.db.owner_opt_out_list() as opt_outs:
+            if ctx.author.id in opt_outs:
+                opt_outs.remove(ctx.author.id)
+
+        await ctx.tick()
+
+    @ownernotifications.command()
+    async def optout(self, ctx: commands.Context):
+        """
+        Opt-out of recieving owner notifications.
+        """
+        async with ctx.bot.db.owner_opt_out_list() as opt_outs:
+            if ctx.author.id not in opt_outs:
+                opt_outs.append(ctx.author.id)
+
+        await ctx.tick()
+
+    @ownernotifications.command()
+    async def adddestination(
+        self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
+    ):
+        """
+        Adds a destination text channel to recieve owner notifications
+        """
+
+        try:
+            channel_id = channel.id
+        except AttributeError:
+            channel_id = channel
+
+        async with ctx.bot.db.extra_owner_destinations() as extras:
+            if channel_id not in extras:
+                extras.append(channel_id)
+
+        await ctx.tick()
+
+    @ownernotifications.command(aliases=["remdestination", "deletedestination", "deldestination"])
+    async def removedestination(
+        self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
+    ):
+        """
+        Removes a destination text channel from recieving owner notifications.
+        """
+
+        try:
+            channel_id = channel.id
+        except AttributeError:
+            channel_id = channel
+
+        async with ctx.bot.db.extra_owner_destinations() as extras:
+            if channel_id in extras:
+                extras.remove(channel_id)
+
+        await ctx.tick()
+
+    @ownernotifications.command()
+    async def listdestinations(self, ctx: commands.Context):
+        """
+        Lists the configured extra destinations for owner notifications
+        """
+
+        channel_ids = await ctx.bot.db.extra_owner_destinations()
+
+        if not channel_ids:
+            await ctx.send(_("There are no extra channels being sent to."))
+            return
+
+        data = []
+
+        for channel_id in channel_ids:
+            channel = ctx.bot.get_channel(channel_id)
+            if channel:
+                # This includes the channel name in case the user can't see the channel.
+                data.append(f"{channel.mention} {channel} ({channel.id})")
+            else:
+                data.append(_("Unknown channel with id: {id}").format(id=channel_id))
+
+        output = "\n".join(data)
+        for page in pagify(output):
+            await ctx.send(page)
 
     # RPC handlers
     async def rpc_load(self, request):

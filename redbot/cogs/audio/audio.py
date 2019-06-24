@@ -31,6 +31,7 @@ from redbot.core.utils.menus import (
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from urllib.parse import urlparse
 from .manager import ServerManager
+from .errors import LavalinkDownloadFailed
 
 _ = Translator("Audio", __file__)
 
@@ -91,6 +92,7 @@ class Audio(commands.Cog):
         self._connect_task = None
         self._disconnect_task = None
         self._cleaned_up = False
+        self._connection_aborted = False
 
         self.spotify_token = None
         self.play_lock = {}
@@ -121,7 +123,10 @@ class Audio(commands.Cog):
         self._connect_task = self.bot.loop.create_task(self.attempt_connect())
 
     async def attempt_connect(self, timeout: int = 30):
-        while True:  # run until success
+        self._connection_aborted = False
+        max_retries = 5
+        retry_count = 0
+        while retry_count < max_retries:
             external = await self.config.use_external_lavalink()
             if external is False:
                 settings = self._default_lavalink_settings
@@ -134,21 +139,52 @@ class Audio(commands.Cog):
                 self._manager = ServerManager()
                 try:
                     await self._manager.start()
-                except RuntimeError as exc:
-                    log.exception(
-                        "Exception whilst starting internal Lavalink server, retrying...",
-                        exc_info=exc,
-                    )
+                except LavalinkDownloadFailed as exc:
                     await asyncio.sleep(1)
-                    continue
+                    if exc.should_retry:
+                        log.exception(
+                            "Exception whilst starting internal Lavalink server, retrying...",
+                            exc_info=exc,
+                        )
+                        retry_count += 1
+                        continue
+                    else:
+                        log.exception(
+                            "Fatal exception whilst starting internal Lavalink server, "
+                            "aborting...",
+                            exc_info=exc,
+                        )
+                        self._connection_aborted = True
+                        raise
                 except asyncio.CancelledError:
                     log.exception("Invalid machine architecture, cannot run Lavalink.")
                     raise
+                except Exception as exc:
+                    log.exception(
+                        "Unhandled exception whilst starting internal Lavalink server, "
+                        "aborting...",
+                        exc_info=exc,
+                    )
+                    self._connection_aborted = True
+                    raise
+                else:
+                    break
             else:
                 host = await self.config.host()
                 password = await self.config.password()
                 rest_port = await self.config.rest_port()
                 ws_port = await self.config.ws_port()
+                break
+        else:
+            log.critical(
+                "Setting up the Lavalink server failed after multiple attempts. See above "
+                "tracebacks for details."
+            )
+            self._connection_aborted = True
+            return
+
+        retry_count = 0
+        while retry_count < max_retries:
             try:
                 await lavalink.initialize(
                     bot=self.bot,
@@ -158,12 +194,26 @@ class Audio(commands.Cog):
                     ws_port=ws_port,
                     timeout=timeout,
                 )
-                return  # break infinite loop
             except asyncio.TimeoutError:
                 log.error("Connecting to Lavalink server timed out, retrying...")
                 if external is False and self._manager is not None:
                     await self._manager.shutdown()
+                retry_count += 1
                 await asyncio.sleep(1)  # prevent busylooping
+            except Exception as exc:
+                log.exception(
+                    "Unhandled exception whilst connecting to Lavalink, aborting...", exc_info=exc
+                )
+                self._connection_aborted = True
+                raise
+            else:
+                break
+        else:
+            self._connection_aborted = True
+            log.critical(
+                "Connecting to the Lavalink server failed after multiple attempts. See above "
+                "tracebacks for details."
+            )
 
     async def event_handler(self, player, event_type, extra):
         disconnect = await self.config.guild(player.channel.guild).disconnect()
@@ -304,6 +354,7 @@ class Audio(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def audioset(self, ctx):
         """Music configuration options."""
         pass
@@ -592,15 +643,15 @@ class Audio(commands.Cog):
     async def spotifyapi(self, ctx):
         """Instructions to set the Spotify API tokens."""
         message = _(
-            f"1. Go to Spotify developers and log in with your Spotify account\n"
+            "1. Go to Spotify developers and log in with your Spotify account.\n"
             "(https://developer.spotify.com/dashboard/applications)\n"
-            '2. Click "Create An App"\n'
+            '2. Click "Create An App".\n'
             "3. Fill out the form provided with your app name, etc.\n"
-            '4. When asked if you\'re developing commercial integration select "No"\n'
+            '4. When asked if you\'re developing commercial integration select "No".\n'
             "5. Accept the terms and conditions.\n"
             "6. Copy your client ID and your client secret into:\n"
-            "`{prefix}set api spotify client_id,your_client_id "
-            "client_secret,your_client_secret`"
+            "`{prefix}set api spotify client_id,<your_client_id_here> "
+            "client_secret,<your_client_secret_here>`"
         ).format(prefix=ctx.prefix)
         await ctx.maybe_send_embed(message)
 
@@ -660,12 +711,13 @@ class Audio(commands.Cog):
             "6. Click on Create Credential at the top.\n"
             '7. At the top click the link for "API key".\n'
             "8. No application restrictions are needed. Click Create at the bottom.\n"
-            "9. You now have a key to add to `{prefix}set api youtube api_key,your_api_key`"
+            "9. You now have a key to add to `{prefix}set api youtube api_key,<your_api_key_here>`"
         ).format(prefix=ctx.prefix)
         await ctx.maybe_send_embed(message)
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     async def audiostats(self, ctx):
         """Audio stats."""
         server_num = len(lavalink.active_players())
@@ -718,6 +770,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def bump(self, ctx, index: int):
         """Bump a track number to the top of the queue."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -755,6 +808,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def disconnect(self, ctx):
         """Disconnect from the voice channel."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -773,6 +827,7 @@ class Audio(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     async def local(self, ctx):
         """Local playback commands."""
         pass
@@ -947,6 +1002,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     async def now(self, ctx):
         """Now playing."""
         if not self._player_check(ctx):
@@ -1036,6 +1092,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def pause(self, ctx):
         """Pause or resume a playing track."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -1084,6 +1141,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def percent(self, ctx):
         """Queue percentage."""
         if not self._player_check(ctx):
@@ -1140,6 +1198,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def play(self, ctx, *, query):
         """Play a URL or search for a track."""
 
@@ -1151,6 +1210,11 @@ class Audio(commands.Cog):
                 if not url_check:
                     return await self._embed_msg(ctx, _("That URL is not allowed."))
         if not self._player_check(ctx):
+            if self._connection_aborted:
+                msg = _("Connection to Lavalink has failed.")
+                if await ctx.bot.is_owner(ctx.author):
+                    msg += " " + _("Please check your console or logs for details.")
+                return await self._embed_msg(ctx, msg)
             try:
                 if (
                     not ctx.author.voice.channel.permissions_for(ctx.me).connect
@@ -1520,6 +1584,7 @@ class Audio(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def playlist(self, ctx):
         """Playlist configuration options."""
         pass
@@ -1620,7 +1685,7 @@ class Audio(commands.Cog):
                         playlist_name_msg = await ctx.bot.wait_for(
                             "message",
                             timeout=15.0,
-                            check=MessagePredicate.regex(fr"^(?!{ctx.prefix})", ctx),
+                            check=MessagePredicate.regex(fr"^(?!{re.escape(ctx.prefix)})", ctx),
                         )
                         new_playlist_name = playlist_name_msg.content.split(" ")[0].strip('"')
                         if len(new_playlist_name) > 20:
@@ -1687,6 +1752,7 @@ class Audio(commands.Cog):
 
     @checks.is_owner()
     @playlist.command(name="download")
+    @commands.bot_has_permissions(attach_files=True)
     async def _playlist_download(self, ctx, playlist_name, v2=False):
         """Download a copy of a playlist.
 
@@ -1773,6 +1839,7 @@ class Audio(commands.Cog):
         await menu(ctx, page_list, DEFAULT_CONTROLS)
 
     @playlist.command(name="list")
+    @commands.bot_has_permissions(add_reactions=True)
     async def _playlist_list(self, ctx):
         """List saved playlists."""
         playlists = await self.config.guild(ctx.guild).playlists.get_raw()
@@ -1856,7 +1923,7 @@ class Audio(commands.Cog):
                 playlist_name_msg = await ctx.bot.wait_for(
                     "message",
                     timeout=15.0,
-                    check=MessagePredicate.regex(fr"^(?!{ctx.prefix})", ctx),
+                    check=MessagePredicate.regex(fr"^(?!{re.escape(ctx.prefix)})", ctx),
                 )
                 playlist_name = playlist_name_msg.content.split(" ")[0].strip('"')
                 if len(playlist_name) > 20:
@@ -2084,15 +2151,22 @@ class Audio(commands.Cog):
                 await self._embed_msg(ctx, _("You need the DJ role to use playlists."))
                 return False
         if not self._player_check(ctx):
+            if self._connection_aborted:
+                msg = _("Connection to Lavalink has failed.")
+                if await ctx.bot.is_owner(ctx.author):
+                    msg += " " + _("Please check your console or logs for details.")
+                await self._embed_msg(ctx, msg)
+                return False
             try:
                 if (
                     not ctx.author.voice.channel.permissions_for(ctx.me).connect
                     or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
                     and self._userlimit(ctx.author.voice.channel)
                 ):
-                    return await self._embed_msg(
+                    await self._embed_msg(
                         ctx, _("I don't have permission to connect to your channel.")
                     )
+                    return False
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
@@ -2163,6 +2237,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def prev(self, ctx):
         """Skip to the start of the previously played track."""
         if not self._player_check(ctx):
@@ -2208,6 +2283,7 @@ class Audio(commands.Cog):
 
     @commands.group(invoke_without_command=True)
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     async def queue(self, ctx, *, page="1"):
         """List the queue.
 
@@ -2447,6 +2523,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def repeat(self, ctx):
         """Toggle repeat."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -2473,6 +2550,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def remove(self, ctx, index: int):
         """Remove a specific track number from the queue."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -2509,6 +2587,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     async def search(self, ctx, *, query):
         """Pick a track with a search.
 
@@ -2543,6 +2622,11 @@ class Audio(commands.Cog):
         }
 
         if not self._player_check(ctx):
+            if self._connection_aborted:
+                msg = _("Connection to Lavalink has failed.")
+                if await ctx.bot.is_owner(ctx.author):
+                    msg += " " + _("Please check your console or logs for details.")
+                return await self._embed_msg(ctx, msg)
             try:
                 if (
                     not ctx.author.voice.channel.permissions_for(ctx.me).connect
@@ -2656,6 +2740,11 @@ class Audio(commands.Cog):
 
     async def _search_button_action(self, ctx, tracks, emoji, page):
         if not self._player_check(ctx):
+            if self._connection_aborted:
+                msg = _("Connection to Lavalink has failed.")
+                if await ctx.bot.is_owner(ctx.author):
+                    msg += " " + _("Please check your console or logs for details.")
+                return await self._embed_msg(ctx, msg)
             try:
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
@@ -2795,6 +2884,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def seek(self, ctx, seconds):
         """Seek ahead or behind on a track by seconds or a to a specific time.
 
@@ -2860,6 +2950,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def shuffle(self, ctx):
         """Toggle shuffle."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -2884,6 +2975,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def sing(self, ctx):
         """Make Red sing one of her songs"""
         ids = (
@@ -2899,6 +2991,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def skip(self, ctx, skip_to_track: int = None):
         """Skip to the next track, or to a given track number."""
         if not self._player_check(ctx):
@@ -3093,6 +3186,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def stop(self, ctx):
         """Stop playback and clear the queue."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -3126,6 +3220,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def volume(self, ctx, vol: int = None):
         """Set the volume, 1% - 150%."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -3172,6 +3267,7 @@ class Audio(commands.Cog):
 
     @commands.group(aliases=["llset"])
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     @checks.is_owner()
     async def llsetup(self, ctx):
         """Lavalink server configuration options."""
@@ -3469,8 +3565,9 @@ class Audio(commands.Cog):
         else:
             self.play_lock[ctx.message.guild.id] = False
 
-    @staticmethod
-    def _player_check(ctx):
+    def _player_check(self, ctx: commands.Context):
+        if self._connection_aborted:
+            return False
         try:
             lavalink.get_player(ctx.guild.id)
             return True

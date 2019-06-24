@@ -26,7 +26,7 @@ def get_latest_confs() -> Tuple["Config"]:
     return tuple(ret)
 
 
-class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):
+class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):  # pylint: disable=duplicate-bases
     """Context manager implementation of config values.
 
     This class allows mutable config values to be both "get" and "set" from
@@ -115,7 +115,7 @@ class Value:
             # Is equivalent to this
 
             group_obj = conf.guild(some_guild)
-            value_obj = conf.foo
+            value_obj = group_obj.foo
             foo = await value_obj()
 
         .. important::
@@ -809,9 +809,15 @@ class Config:
             primary_key_len=pkey_len,
             is_custom=is_custom,
         )
+
+        if len(primary_keys) < identifier_data.primary_key_len:
+            # Don't mix in defaults with groups higher than the document level
+            defaults = {}
+        else:
+            defaults = self.defaults.get(category, {})
         return Group(
             identifier_data=identifier_data,
-            defaults=self.defaults.get(category, {}),
+            defaults=defaults,
             driver=self.driver,
             force_registration=self.force_registration,
         )
@@ -932,6 +938,7 @@ class Config:
         """
         group = self._get_base_group(scope)
         ret = {}
+        defaults = self.defaults.get(scope, {})
 
         try:
             dict_ = await self.driver.get(group.identifier_data)
@@ -939,7 +946,7 @@ class Config:
             pass
         else:
             for k, v in dict_.items():
-                data = group.defaults
+                data = deepcopy(defaults)
                 data.update(v)
                 ret[int(k)] = data
 
@@ -1013,11 +1020,11 @@ class Config:
         """
         return await self._all_from_scope(self.USER)
 
-    @staticmethod
-    def _all_members_from_guild(group: Group, guild_data: dict) -> dict:
+    def _all_members_from_guild(self, guild_data: dict) -> dict:
         ret = {}
+        defaults = self.defaults.get(self.MEMBER, {})
         for member_id, member_data in guild_data.items():
-            new_member_data = group.defaults
+            new_member_data = deepcopy(defaults)
             new_member_data.update(member_data)
             ret[int(member_id)] = new_member_data
         return ret
@@ -1056,7 +1063,7 @@ class Config:
                 pass
             else:
                 for guild_id, guild_data in dict_.items():
-                    ret[int(guild_id)] = self._all_members_from_guild(group, guild_data)
+                    ret[int(guild_id)] = self._all_members_from_guild(guild_data)
         else:
             group = self._get_base_group(self.MEMBER, str(guild.id))
             try:
@@ -1064,7 +1071,7 @@ class Config:
             except KeyError:
                 pass
             else:
-                ret = self._all_members_from_guild(group, guild_data)
+                ret = self._all_members_from_guild(guild_data)
         return ret
 
     async def _clear_scope(self, *scopes: str):
@@ -1090,7 +1097,8 @@ class Config:
             identifier_data = IdentifierData(self.cog_name, self.unique_identifier, "", (), (), 0)
             group = Group(identifier_data, defaults={}, driver=self.driver)
         else:
-            group = self._get_base_group(*scopes)
+            cat, *scopes = scopes
+            group = self._get_base_group(cat, *scopes)
         await group.clear()
 
     async def clear_all(self):

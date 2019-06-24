@@ -1,5 +1,6 @@
 import asyncio
 import inspect
+import logging
 import os
 from collections import Counter
 from enum import Enum
@@ -18,12 +19,15 @@ from .utils import common_filters
 
 CUSTOM_GROUPS = "CUSTOM_GROUPS"
 
+log = logging.getLogger("redbot")
+
 
 def _is_submodule(parent, child):
     return parent == child or child.startswith(parent + ".")
 
 
-class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
+# barely spurious warning caused by our intentional shadowing
+class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: disable=no-member
     """Mixin for the main bot class.
 
     This exists because `Red` inherits from `discord.AutoShardedClient`, which
@@ -55,9 +59,13 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             help__verify_checks=True,
             help__verify_exists=False,
             help__tagline="",
+            invite_public=False,
+            invite_perm=0,
             disabled_commands=[],
             disabled_command_msg="That command is disabled.",
             api_tokens={},
+            extra_owner_destinations=[],
+            owner_opt_out_list=[],
         )
 
         self.db.register_guild(
@@ -206,18 +214,19 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
     async def process_commands(self, message: discord.Message):
         """
-        modification from the base to do the same thing in the command case
-        
-        but dispatch an additional event for cogs which want to handle normal messages
-        differently to command messages, 
-        without the overhead of additional get_context calls per cog
+        Same as base method, but dispatches an additional event for cogs
+        which want to handle normal messages differently to command
+        messages,  without the overhead of additional get_context calls
+        per cog.
         """
         if not message.author.bot:
             ctx = await self.get_context(message)
-            if ctx.valid:
-                return await self.invoke(ctx)
+            await self.invoke(ctx)
+        else:
+            ctx = None
 
-        self.dispatch("message_without_command", message)
+        if ctx is None or ctx.valid is False:
+            self.dispatch("message_without_command", message)
 
     @staticmethod
     def list_packages():
@@ -255,8 +264,8 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
                 lib.setup(self)
         except Exception as e:
             self._remove_module_references(lib.__name__)
-            self._call_module_finalizers(lib, key)
-            raise errors.ExtensionFailed(key, e) from e
+            self._call_module_finalizers(lib, name)
+            raise errors.CogLoadError(e) from e
         else:
             self._BotBase__extensions[name] = lib
 
@@ -461,6 +470,47 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             else:
                 ctx.permission_state = commands.PermState.DENIED_BY_HOOK
                 return False
+
+    async def get_owner_notification_destinations(self) -> List[discord.abc.Messageable]:
+        """
+        Gets the users and channels to send to
+        """
+        destinations = []
+        opt_outs = await self.db.owner_opt_out_list()
+        for user_id in (self.owner_id, *self._co_owners):
+            if user_id not in opt_outs:
+                user = self.get_user(user_id)
+                if user:
+                    destinations.append(user)
+
+        channel_ids = await self.db.extra_owner_destinations()
+        for channel_id in channel_ids:
+            channel = self.get_channel(channel_id)
+            if channel:
+                destinations.append(channel)
+
+        return destinations
+
+    async def send_to_owners(self, content=None, **kwargs):
+        """
+        This sends something to all owners and their configured extra destinations.
+
+        This takes the same arguments as discord.abc.Messageable.send
+
+        This logs failing sends
+        """
+        destinations = await self.get_owner_notification_destinations()
+
+        async def wrapped_send(location, content=None, **kwargs):
+            try:
+                await location.send(content, **kwargs)
+            except Exception as _exc:
+                log.exception(
+                    f"I could not send an owner notification to ({location.id}){location}"
+                )
+
+        sends = [wrapped_send(d, content, **kwargs) for d in destinations]
+        await asyncio.gather(*sends)
 
 
 class Red(RedBase, discord.AutoShardedClient):

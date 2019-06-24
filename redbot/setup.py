@@ -23,7 +23,7 @@ conversion_log = logging.getLogger("red.converter")
 config_dir = None
 appdir = appdirs.AppDirs("Red-DiscordBot")
 if sys.platform == "linux":
-    if 0 < os.getuid() < 1000:
+    if 0 < os.getuid() < 1000:  # pylint: disable=no-member  # Non-exist on win
         config_dir = Path(appdir.site_data_dir)
 if not config_dir:
     config_dir = Path(appdir.user_config_dir)
@@ -420,7 +420,7 @@ def convert(instance, backend):
 
 if __name__ == "__main__":
     try:
-        cli()
+        cli()  # pylint: disable=no-value-for-parameter  # click
     except KeyboardInterrupt:
         print("Exiting...")
     else:
