@@ -120,13 +120,14 @@ class JSON(BaseDriver):
     async def set(self, identifier_data: IdentifierData, value=None):
         partial = self.data
         full_identifiers = identifier_data.to_tuple()
-        for i in full_identifiers[:-1]:
-            if i not in partial:
-                partial[i] = {}
-            partial = partial[i]
 
         async with self._lock:
+            for i in full_identifiers[:-1]:
+                if i not in partial:
+                    partial[i] = {}
+                partial = partial[i]
             partial[full_identifiers[-1]] = json.loads(json.dumps(value))
+
             await self._save()
 
     async def clear(self, identifier_data: IdentifierData):
