@@ -119,13 +119,16 @@ class JSON(BaseDriver):
     async def set(self, identifier_data: IdentifierData, value=None):
         partial = self.data
         full_identifiers = identifier_data.to_tuple()
+        # This is both our deepcopy() and our way of making sure this value is actually JSON
+        # serializable.
+        value_copy = json.loads(json.dumps(value))
 
         async with self._lock:
             for i in full_identifiers[:-1]:
                 if i not in partial:
                     partial[i] = {}
                 partial = partial[i]
-            partial[full_identifiers[-1]] = json.loads(json.dumps(value))
+            partial[full_identifiers[-1]] = value_copy
 
             await self._save()
 
