@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Tuple
 import copy
 import weakref
 import logging
@@ -156,7 +155,7 @@ class JSON(BaseDriver):
                     category,
                     pkey,
                     (),
-                    custom_group_data.get(category, {}),
+                    custom_group_data,
                     is_custom=category in custom_group_data,
                 )
                 update_write_data(ident_data, data)
