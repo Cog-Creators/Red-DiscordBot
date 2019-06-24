@@ -116,7 +116,6 @@ def main():
     red.add_cog(CogManagerUI())
     if cli_flags.dev:
         red.add_cog(Dev())
-    loop = asyncio.get_event_loop()
     # noinspection PyProtectedMember
     loop.run_until_complete(modlog._init())
     # noinspection PyProtectedMember
