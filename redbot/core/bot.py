@@ -161,10 +161,10 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
             if maybe_mod_role_id:
                 mod_roles.append(maybe_mod_role_id)
-                await self.config.db.guild(guild_obj).mod_role.set(mod_roles)
+                await self.db.guild(guild_obj).mod_role.set(mod_roles)
             if maybe_admin_role_id:
                 admin_roles.append(maybe_admin_role_id)
-                await self.config.db.guild(guild_obj).admin_role.set(admin_roles)
+                await self.db.guild(guild_obj).admin_role.set(admin_roles)
         log.info("Done updating guild configs to support multiple mod/admin roles")
 
     async def send_help_for(
