@@ -91,7 +91,7 @@ class ModInfo(MixinMeta):
         special_date = datetime(2016, 1, 10, 6, 8, 4, 443000)
         is_special = user.id == 96130341705637888 and guild.id == 133049272517001216
 
-        roles = sorted(user.roles, reverse=True)[:-1]
+        roles = user.roles[-1:1:-1]
         names, nicks = await self.get_names_and_nicks(user)
 
         joined_at = user.joined_at if not is_special else special_date
