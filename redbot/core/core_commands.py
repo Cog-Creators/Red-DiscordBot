@@ -707,7 +707,9 @@ class Core(commands.Cog, CoreLogic):
                 guild = ctx.guild
                 admin_role_ids = await ctx.bot.db.guild(ctx.guild).admin_role()
                 admin_role_names = [r.name for r in guild.roles if r.id in admin_role_ids]
-                admin_roles_str = humanize_list(admin_role_names) if admin_role_names else "Not Set."
+                admin_roles_str = (
+                    humanize_list(admin_role_names) if admin_role_names else "Not Set."
+                )
                 mod_role_ids = await ctx.bot.db.guild(ctx.guild).mod_role()
                 mod_role_names = [r.name for r in guild.roles if r.id in mod_role_ids]
                 mod_roles_str = humanize_list(mod_role_names) if mod_role_names else "Not Set."
