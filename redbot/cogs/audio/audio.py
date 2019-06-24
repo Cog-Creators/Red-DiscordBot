@@ -126,7 +126,7 @@ class Audio(commands.Cog):
 
         self._connect_task = self.bot.loop.create_task(self.attempt_connect())
 
-    async def attempt_connect(self, timeout: int = 30):
+    async def attempt_connect(self, timeout: int = 50):
         self._connection_aborted = False
         max_retries = 5
         retry_count = 0
