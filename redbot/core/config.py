@@ -1,8 +1,8 @@
-import logging
 import collections
-from copy import deepcopy
-from typing import Any, Union, Tuple, Dict, Awaitable, AsyncContextManager, TypeVar
+import logging
+import pickle
 import weakref
+from typing import Any, Union, Tuple, Dict, Awaitable, AsyncContextManager, TypeVar
 
 import discord
 
@@ -57,7 +57,7 @@ class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):  # pylint: disab
                 "list or dict) in order to use a config value as "
                 "a context manager."
             )
-        self.__original_value = deepcopy(self.raw_value)
+        self.__original_value = pickle.loads(pickle.dumps(self.raw_value, -1))
         return self.raw_value
 
     async def __aexit__(self, exc_type, exc, tb):
@@ -204,7 +204,7 @@ class Group(Value):
 
     @property
     def defaults(self):
-        return deepcopy(self._defaults)
+        return pickle.loads(pickle.dumps(self._defaults, -1))
 
     async def _get(self, default: Dict[str, Any] = ...) -> Dict[str, Any]:
         default = default if default is not ... else self.defaults
@@ -446,7 +446,7 @@ class Group(Value):
                 result = self.nested_update(value, defaults.get(key, {}))
                 defaults[key] = result
             else:
-                defaults[key] = deepcopy(current[key])
+                defaults[key] = pickle.loads(pickle.dumps(current[key], -1))
         return defaults
 
     async def set(self, value):
@@ -558,7 +558,7 @@ class Config:
 
     @property
     def defaults(self):
-        return deepcopy(self._defaults)
+        return pickle.loads(pickle.dumps(self._defaults, -1))
 
     @staticmethod
     def _create_uuid(identifier: int):
@@ -727,7 +727,7 @@ class Config:
         if key not in self._defaults:
             self._defaults[key] = {}
 
-        data = deepcopy(kwargs)
+        data = pickle.loads(pickle.dumps(kwargs, -1))
 
         for k, v in data.items():
             to_add = self._get_defaults_dict(k, v)
@@ -988,7 +988,7 @@ class Config:
             pass
         else:
             for k, v in dict_.items():
-                data = deepcopy(defaults)
+                data = pickle.loads(pickle.dumps(defaults, -1))
                 data.update(v)
                 ret[int(k)] = data
 
@@ -1066,7 +1066,7 @@ class Config:
         ret = {}
         defaults = self.defaults.get(self.MEMBER, {})
         for member_id, member_data in guild_data.items():
-            new_member_data = deepcopy(defaults)
+            new_member_data = pickle.loads(pickle.dumps(defaults, -1))
             new_member_data.update(member_data)
             ret[int(member_id)] = new_member_data
         return ret
