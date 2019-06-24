@@ -30,12 +30,13 @@ from redbot.core.utils.menus import (
 )
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from urllib.parse import urlparse
+from .equalizer import Equalizer
 from .manager import ServerManager
 from .errors import LavalinkDownloadFailed
 
 _ = Translator("Audio", __file__)
 
-__version__ = "0.0.9"
+__version__ = "0.0.10"
 __author__ = ["aikaterna"]
 
 log = logging.getLogger("red.audio")
@@ -84,6 +85,9 @@ class Audio(commands.Cog):
             vote_enabled=False,
             vote_percent=0,
         )
+
+        self.config.init_custom("EQUALIZER", 1)
+        self.config.register_custom("EQUALIZER", eq_bands=[], eq_presets={})
 
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)
@@ -811,8 +815,12 @@ class Audio(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     async def disconnect(self, ctx):
         """Disconnect from the voice channel."""
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
-        if self._player_check(ctx):
+        if not self._player_check(ctx):
+            return await self._embed_msg(ctx, _("Nothing playing."))
+        else:
+            dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+            player = lavalink.get_player(ctx.guild.id)
+
             if dj_enabled:
                 if not await self._can_instaskip(ctx, ctx.author):
                     return await self._embed_msg(ctx, _("You need the DJ role to disconnect."))
@@ -822,8 +830,267 @@ class Audio(commands.Cog):
                 return await self._embed_msg(ctx, _("There are other people listening to music."))
             else:
                 self._play_lock(ctx, False)
-                await lavalink.get_player(ctx.guild.id).stop()
-                await lavalink.get_player(ctx.guild.id).disconnect()
+                eq = player.fetch("eq")
+                if eq:
+                    await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
+                await player.stop()
+                await player.disconnect()
+
+    @commands.group(invoke_without_command=True)
+    @commands.guild_only()
+    @commands.cooldown(1, 15, discord.ext.commands.BucketType.guild)
+    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
+    @checks.mod_or_permissions(administrator=True)
+    async def eq(self, ctx):
+        """Equalizer management."""
+        if not self._player_check(ctx):
+            return await self._embed_msg(ctx, _("Nothing playing."))
+        player = lavalink.get_player(ctx.guild.id)
+        eq = player.fetch("eq", Equalizer())
+        reactions = ["◀", "⬅", "⏫", "🔼", "🔽", "⏬", "➡", "▶", "⏺", "ℹ"]
+        await self._eq_msg_clear(player.fetch("eq_message"))
+        eq_message = await ctx.send(box(eq.visualise(), lang="ini"))
+        player.store("eq_message", eq_message)
+
+        for reaction in reactions:
+            try:
+                await eq_message.add_reaction(reaction)
+            except discord.errors.NotFound:
+                pass
+
+        await self._eq_interact(ctx, player, eq, eq_message, 0)
+
+    @eq.command(name="delete")
+    async def _eq_delete(self, ctx, eq_preset: str):
+        """Delete a saved eq preset."""
+        eq_presets = await self.config.custom("EQUALIZER", ctx.guild.id).eq_presets()
+        eq_preset = eq_preset.lower()
+        try:
+            del eq_presets[eq_preset]
+        except KeyError:
+            return await self._embed_msg(
+                ctx,
+                _(
+                    "{eq_preset} is not in the eq preset list.".format(
+                        eq_preset=eq_preset.capitalize()
+                    )
+                ),
+            )
+
+        await self.config.custom("EQUALIZER", ctx.guild.id).eq_presets.set(eq_presets)
+        await self._embed_msg(
+            ctx, _("The {preset_name} preset was deleted.".format(preset_name=eq_preset))
+        )
+
+    @eq.command(name="list")
+    async def _eq_list(self, ctx):
+        """List saved eq presets."""
+        eq_presets = await self.config.custom("EQUALIZER", ctx.guild.id).eq_presets()
+        if not eq_presets.keys():
+            return await self._embed_msg(ctx, _("No saved equalizer presets."))
+        eq_list = "\n".join(list(sorted(eq_presets.keys())))
+        page_list = []
+        for page in pagify(eq_list, delims=[", "], page_length=1000):
+            embed = discord.Embed(
+                colour=await ctx.embed_colour(), title="Equalizer presets:", description=page
+            )
+            embed.set_footer(text=_("{num} preset(s)").format(num=len(list(eq_presets.keys()))))
+            page_list.append(embed)
+        await menu(ctx, page_list, DEFAULT_CONTROLS)
+
+    @eq.command(name="load")
+    async def _eq_load(self, ctx, eq_preset: str):
+        """Load a saved eq preset."""
+        eq_preset = eq_preset.lower()
+        eq_presets = await self.config.custom("EQUALIZER", ctx.guild.id).eq_presets()
+        try:
+            eq_values = eq_presets[eq_preset]
+        except KeyError:
+            return await self._embed_msg(
+                ctx, _("No preset named {eq_preset}.".format(eq_preset=eq_preset.capitalize()))
+            )
+        await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq_values)
+        if not self._player_check(ctx):
+            return await self._embed_msg(ctx, _("Nothing playing."))
+        player = lavalink.get_player(ctx.guild.id)
+        await self._eq_check(ctx, player)
+        eq = player.fetch("eq", Equalizer())
+        await self._eq_msg_clear(player.fetch("eq_message"))
+        message = await ctx.send(
+            content=box(eq.visualise(), lang="ini"),
+            embed=discord.Embed(
+                colour=await ctx.embed_colour(),
+                title=_("The {eq_preset} preset was loaded.".format(eq_preset=eq_preset)),
+            ),
+        )
+        player.store("eq_message", message)
+
+    @eq.command(name="reset")
+    async def _eq_reset(self, ctx):
+        """Reset the eq to 0 across all bands."""
+        if not self._player_check(ctx):
+            return await self._embed_msg(ctx, _("Nothing playing."))
+        player = lavalink.get_player(ctx.guild.id)
+        eq = player.fetch("eq", Equalizer())
+
+        for band in range(eq._band_count):
+            eq.set_gain(band, 0.0)
+
+        await self._apply_gains(ctx.guild.id, eq.bands)
+        await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
+        player.store("eq", eq)
+        await self._eq_msg_clear(player.fetch("eq_message"))
+        message = await ctx.send(
+            content=box(eq.visualise(), lang="ini"),
+            embed=discord.Embed(
+                colour=await ctx.embed_colour(), title=_("Equalizer values have been reset.")
+            ),
+        )
+        player.store("eq_message", message)
+
+    @eq.command(name="save")
+    @commands.cooldown(1, 15, discord.ext.commands.BucketType.guild)
+    async def _eq_save(self, ctx, eq_preset: str = None):
+        """Save the current eq settings to a preset."""
+        if not self._player_check(ctx):
+            return await self._embed_msg(ctx, _("Nothing playing."))
+        if not eq_preset:
+            await self._embed_msg(ctx, _("Please enter a name for this equalizer preset."))
+            try:
+
+                def pred(m):
+                    return (
+                        m.channel == ctx.channel
+                        and m.author == ctx.author
+                        and not m.content.startswith(ctx.prefix)
+                    )
+
+                eq_name_msg = await ctx.bot.wait_for("message", timeout=15.0, check=pred)
+                eq_preset = eq_name_msg.content.split(" ")[0].strip('"').lower()
+            except asyncio.TimeoutError:
+                return await self._embed_msg(
+                    ctx, _("No equalizer preset name entered, try the command again later.")
+                )
+
+        eq_exists_msg = None
+        eq_preset = eq_preset.lower().lstrip(ctx.prefix)
+        eq_presets = await self.config.custom("EQUALIZER", ctx.guild.id).eq_presets()
+        eq_list = list(eq_presets.keys())
+
+        if len(eq_preset) > 20:
+            return await self._embed_msg(ctx, _("Try the command again with a shorter name."))
+        if eq_preset in eq_list:
+            embed = discord.Embed(
+                colour=await ctx.embed_colour(),
+                title=_("Preset name already exists, do you want to replace it?"),
+            )
+            eq_exists_msg = await ctx.send(embed=embed)
+            start_adding_reactions(eq_exists_msg, ReactionPredicate.YES_OR_NO_EMOJIS)
+            pred = ReactionPredicate.yes_or_no(eq_exists_msg, ctx.author)
+            await ctx.bot.wait_for("reaction_add", check=pred)
+            if not pred.result:
+                await self._clear_react(eq_exists_msg)
+                embed2 = discord.Embed(
+                    colour=await ctx.embed_colour(), title=_("Not saving preset.")
+                )
+                return await eq_exists_msg.edit(embed=embed2)
+
+        player = lavalink.get_player(ctx.guild.id)
+        eq = player.fetch("eq", Equalizer())
+        to_append = {eq_preset: eq.bands}
+        new_eq_presets = {**eq_presets, **to_append}
+        await self.config.custom("EQUALIZER", ctx.guild.id).eq_presets.set(new_eq_presets)
+        embed3 = discord.Embed(
+            colour=await ctx.embed_colour(),
+            title=_(
+                "Current equalizer saved to the {preset_name} preset.".format(
+                    preset_name=eq_preset
+                )
+            ),
+        )
+        if eq_exists_msg:
+            await self._clear_react(eq_exists_msg)
+            await eq_exists_msg.edit(embed=embed3)
+        else:
+            await ctx.send(embed=embed3)
+
+    @eq.command(name="set")
+    async def _eq_set(self, ctx, band_name_or_position, band_value: float):
+        """Set an eq band with a band number or name and value.
+
+        Band positions are 1-15 and values have a range of -0.25 to 1.0.
+        Band names are 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k, 6.3k, 10k, and 16k Hz.
+        Setting a band value to -0.25 nullifies it while +0.25 is double.
+        """
+        if not self._player_check(ctx):
+            return await self._embed_msg(ctx, _("Nothing playing."))
+        player = lavalink.get_player(ctx.guild.id)
+        band_names = [
+            "25",
+            "40",
+            "63",
+            "100",
+            "160",
+            "250",
+            "400",
+            "630",
+            "1k",
+            "1.6k",
+            "2.5k",
+            "4k",
+            "6.3k",
+            "10k",
+            "16k",
+        ]
+
+        eq = player.fetch("eq", Equalizer())
+        bands_num = eq._band_count
+        if band_value > 1:
+            band_value = 1
+        elif band_value <= -0.25:
+            band_value = -0.25
+        else:
+            band_value = round(band_value, 1)
+
+        try:
+            band_number = int(band_name_or_position) - 1
+        except ValueError:
+            band_number = None
+
+        if band_number not in range(0, bands_num) and band_name_or_position not in band_names:
+            return await self._embed_msg(
+                ctx,
+                _(
+                    "Valid band numbers are 1-15 or the band names listed in the help for this command."
+                ),
+            )
+
+        if band_name_or_position in band_names:
+            band_pos = band_names.index(band_name_or_position)
+            band_int = False
+            eq.set_gain(int(band_pos), band_value)
+            await self._apply_gain(ctx.guild.id, int(band_pos), band_value)
+        else:
+            band_int = True
+            eq.set_gain(band_number, band_value)
+            await self._apply_gain(ctx.guild.id, band_number, band_value)
+
+        await self._eq_msg_clear(player.fetch("eq_message"))
+        await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
+        player.store("eq", eq)
+        band_name = band_names[band_number] if band_int else band_name_or_position
+        message = await ctx.send(
+            content=box(eq.visualise(), lang="ini"),
+            embed=discord.Embed(
+                colour=await ctx.embed_colour(),
+                title=_(
+                    "The {band_name}Hz band has been set to {band_value}.".format(
+                        band_name=band_name, band_value=band_value
+                    )
+                ),
+            ),
+        )
+        player.store("eq_message", message)
 
     @commands.group()
     @commands.guild_only()
@@ -1071,23 +1338,23 @@ class Audio(commands.Cog):
                 timeout=10.0,
             )
         except asyncio.TimeoutError:
-            return await self._clear_react(message)
+            return await self._clear_react(message, emoji)
         else:
             if task is not None:
                 task.cancel()
         reacts = {v: k for k, v in emoji.items()}
         react = reacts[r.emoji]
         if react == "prev":
-            await self._clear_react(message)
+            await self._clear_react(message, emoji)
             await ctx.invoke(self.prev)
         elif react == "stop":
-            await self._clear_react(message)
+            await self._clear_react(message, emoji)
             await ctx.invoke(self.stop)
         elif react == "pause":
-            await self._clear_react(message)
+            await self._clear_react(message, emoji)
             await ctx.invoke(self.pause)
         elif react == "next":
-            await self._clear_react(message)
+            await self._clear_react(message, emoji)
             await ctx.invoke(self.skip)
 
     @commands.command()
@@ -1237,8 +1504,10 @@ class Audio(commands.Cog):
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(ctx, _("You need the DJ role to queue tracks."))
         player = lavalink.get_player(ctx.guild.id)
+
         player.store("channel", ctx.channel.id)
         player.store("guild", ctx.guild.id)
+        await self._eq_check(ctx, player)
         await self._data_check(ctx)
         if (
             not ctx.author.voice or ctx.author.voice.channel != player.channel
@@ -2191,6 +2460,7 @@ class Audio(commands.Cog):
             return False
         if not await self._currency_check(ctx, jukebox_price):
             return False
+        await self._eq_check(ctx, player)
         await self._data_check(ctx)
         return True
 
@@ -2655,6 +2925,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx, _("You must be in the voice channel to enqueue tracks.")
             )
+        await self._eq_check(ctx, player)
         await self._data_check(ctx)
 
         if not isinstance(query, list):
@@ -3208,6 +3479,9 @@ class Audio(commands.Cog):
         if (player.is_playing) or (not player.is_playing and player.paused):
             await self._embed_msg(ctx, _("Stopping..."))
             await player.stop()
+            eq = player.fetch("eq")
+            if eq:
+                await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
             player.store("prev_requester", None)
             player.store("prev_song", None)
             player.store("playing_song", None)
@@ -3357,6 +3631,30 @@ class Audio(commands.Cog):
 
         self._restart_connect()
 
+    async def _apply_gain(self, guild_id, band, gain):
+        const = {
+            "op": "equalizer",
+            "guildId": str(guild_id),
+            "bands": [{"band": band, "gain": gain}],
+        }
+
+        try:
+            await lavalink.get_player(guild_id).node.send({**const})
+        except (KeyError, IndexError):
+            pass
+
+    async def _apply_gains(self, guild_id, gains):
+        const = {
+            "op": "equalizer",
+            "guildId": str(guild_id),
+            "bands": [{"band": x, "gain": y} for x, y in enumerate(gains)],
+        }
+
+        try:
+            await lavalink.get_player(guild_id).node.send({**const})
+        except (KeyError, IndexError):
+            pass
+
     async def _channel_check(self, ctx):
         try:
             player = lavalink.get_player(ctx.guild.id)
@@ -3407,11 +3705,16 @@ class Audio(commands.Cog):
         else:
             return False
 
-    @staticmethod
-    async def _clear_react(message):
+    async def _clear_react(self, message, emoji: dict = None):
         try:
             await message.clear_reactions()
-        except (discord.Forbidden, discord.HTTPException):
+        except discord.Forbidden:
+            if not emoji:
+                return
+            for key in emoji.values():
+                await asyncio.sleep(0.2)
+                await message.remove_reaction(key, self.bot.user)
+        except (discord.HTTPException, discord.NotFound):
             return
 
     async def _currency_check(self, ctx, jukebox_price: int):
@@ -3516,12 +3819,140 @@ class Audio(commands.Cog):
         embed = discord.Embed(colour=await ctx.embed_colour(), title=title)
         await ctx.send(embed=embed)
 
+    async def _eq_check(self, ctx, player):
+        eq = player.fetch("eq", Equalizer())
+
+        config_bands = await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands()
+        if not config_bands:
+            config_bands = eq.bands
+            await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
+
+        if eq.bands != config_bands:
+            band_num = list(range(0, eq._band_count))
+            band_value = config_bands
+            eq_dict = {}
+            for k, v in zip(band_num, band_value):
+                eq_dict[k] = v
+            for band, value in eq_dict.items():
+                eq.set_gain(band, value)
+            player.store("eq", eq)
+            await self._apply_gains(ctx.guild.id, config_bands)
+
+    async def _eq_interact(self, ctx, player, eq, message, selected):
+        player.store("eq", eq)
+        emoji = {
+            "far_left": "◀",
+            "one_left": "⬅",
+            "max_output": "⏫",
+            "output_up": "🔼",
+            "output_down": "🔽",
+            "min_output": "⏬",
+            "one_right": "➡",
+            "far_right": "▶",
+            "reset": "⏺",
+            "info": "ℹ",
+        }
+        selector = f'{" " * 8}{"   " * selected}^^'
+        try:
+            await message.edit(content=box(f"{eq.visualise()}\n{selector}", lang="ini"))
+        except discord.errors.NotFound:
+            return
+        try:
+            react_emoji, react_user = await self._get_eq_reaction(ctx, message, emoji)
+        except TypeError:
+            return
+
+        if not react_emoji:
+            await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
+            await self._clear_react(message, emoji)
+
+        if react_emoji == "⬅":
+            await self._remove_react(message, react_emoji, react_user)
+            await self._eq_interact(ctx, player, eq, message, max(selected - 1, 0))
+
+        if react_emoji == "➡":
+            await self._remove_react(message, react_emoji, react_user)
+            await self._eq_interact(ctx, player, eq, message, min(selected + 1, 14))
+
+        if react_emoji == "🔼":
+            await self._remove_react(message, react_emoji, react_user)
+            _max = "{:.2f}".format(min(eq.get_gain(selected) + 0.1, 1.0))
+            eq.set_gain(selected, float(_max))
+            await self._apply_gain(ctx.guild.id, selected, _max)
+            await self._eq_interact(ctx, player, eq, message, selected)
+
+        if react_emoji == "🔽":
+            await self._remove_react(message, react_emoji, react_user)
+            _min = "{:.2f}".format(max(eq.get_gain(selected) - 0.1, -0.25))
+            eq.set_gain(selected, float(_min))
+            await self._apply_gain(ctx.guild.id, selected, _min)
+            await self._eq_interact(ctx, player, eq, message, selected)
+
+        if react_emoji == "⏫":
+            await self._remove_react(message, react_emoji, react_user)
+            _max = 1.0
+            eq.set_gain(selected, _max)
+            await self._apply_gain(ctx.guild.id, selected, _max)
+            await self._eq_interact(ctx, player, eq, message, selected)
+
+        if react_emoji == "⏬":
+            await self._remove_react(message, react_emoji, react_user)
+            _min = -0.25
+            eq.set_gain(selected, _min)
+            await self._apply_gain(ctx.guild.id, selected, _min)
+            await self._eq_interact(ctx, player, eq, message, selected)
+
+        if react_emoji == "◀":
+            await self._remove_react(message, react_emoji, react_user)
+            selected = 0
+            await self._eq_interact(ctx, player, eq, message, selected)
+
+        if react_emoji == "▶":
+            await self._remove_react(message, react_emoji, react_user)
+            selected = 14
+            await self._eq_interact(ctx, player, eq, message, selected)
+
+        if react_emoji == "⏺":
+            await self._remove_react(message, react_emoji, react_user)
+            for band in range(eq._band_count):
+                eq.set_gain(band, 0.0)
+            await self._apply_gains(ctx.guild.id, eq.bands)
+            await self._eq_interact(ctx, player, eq, message, selected)
+
+        if react_emoji == "ℹ":
+            await self._remove_react(message, react_emoji, react_user)
+            await ctx.send_help(self.eq)
+            await self._eq_interact(ctx, player, eq, message, selected)
+
+    @staticmethod
+    async def _eq_msg_clear(eq_message):
+        if eq_message is not None:
+            try:
+                await eq_message.delete()
+            except discord.errors.NotFound:
+                pass
+
     async def _get_embed_colour(self, channel: discord.abc.GuildChannel):
         # Unfortunately we need this for when context is unavailable.
         if await self.bot.db.guild(channel.guild).use_bot_color():
             return channel.guild.me.color
         else:
             return self.bot.color
+
+    async def _get_eq_reaction(self, ctx, message, emoji):
+        try:
+            reaction, user = await self.bot.wait_for(
+                "reaction_add",
+                check=lambda r, u: r.message.id == message.id
+                and u.id == ctx.author.id
+                and r.emoji in emoji.values(),
+                timeout=30,
+            )
+        except asyncio.TimeoutError:
+            await self._clear_react(message, emoji)
+            return None
+        else:
+            return reaction.emoji, user
 
     async def _localtracks_folders(self, ctx):
         if not await self._localtracks_check(ctx):
@@ -3590,6 +4021,13 @@ class Audio(commands.Cog):
             remain = 0
         queue_total_duration = remain + queue_duration
         return queue_total_duration
+
+    @staticmethod
+    async def _remove_react(message, react_emoji, react_user):
+        try:
+            await message.remove_reaction(react_emoji, react_user)
+        except (discord.Forbidden, discord.HTTPException, discord.NotFound):
+            pass
 
     @staticmethod
     def _to_json(ctx, playlist_url, tracklist):
