@@ -1,10 +1,10 @@
 import asyncio
 import json
-import os
-from pathlib import Path
-import copy
-import weakref
 import logging
+import os
+import pickle
+import weakref
+from pathlib import Path
 from typing import Any, Dict
 from uuid import uuid4
 
@@ -65,7 +65,6 @@ class JSON(BaseDriver):
         self.data_path.mkdir(parents=True, exist_ok=True)
         self.data_path = self.data_path / self.file_name
 
-        self._loop = asyncio.get_event_loop()
         self._lock = asyncio.Lock()
         self._load_data()
 
@@ -115,7 +114,7 @@ class JSON(BaseDriver):
         full_identifiers = identifier_data.to_tuple()
         for i in full_identifiers:
             partial = partial[i]
-        return copy.deepcopy(partial)
+        return pickle.loads(pickle.dumps(partial, -1))
 
     async def set(self, identifier_data: IdentifierData, value=None):
         partial = self.data
@@ -173,7 +172,8 @@ class JSON(BaseDriver):
             await self._save()
 
     async def _save(self) -> None:
-        await self._loop.run_in_executor(None, _save_json, self.data_path, self.data)
+        loop = asyncio.get_running_loop()
+        await loop.run_in_executor(None, _save_json, self.data_path, self.data)
 
     def get_config_details(self):
         return

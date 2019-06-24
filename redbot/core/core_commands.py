@@ -1359,9 +1359,9 @@ class Core(commands.Cog, CoreLogic):
                 docs = await db[c_name].find().to_list(None)
                 for item in docs:
                     item_id = str(item.pop("_id"))
-                    output = item
                     target = JSON(c_name, item_id, data_path_override=c_data_path)
-                    await target.jsonIO._threadsafe_save_json(output)
+                    target.data = item
+                    await target._save()
         backup_filename = "redv3-{}-{}.tar.gz".format(
             instance_name, ctx.message.created_at.strftime("%Y-%m-%d %H-%M-%S")
         )
