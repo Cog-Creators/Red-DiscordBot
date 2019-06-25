@@ -907,7 +907,7 @@ class Audio(commands.Cog):
             eq_values = eq_presets[eq_preset]
         except KeyError:
             return await self._embed_msg(
-                ctx, _("No preset named {eq_preset}.".format(eq_preset=eq_preset.capitalize()))
+                ctx, _("No preset named {eq_preset}.".format(eq_preset=eq_preset))
             )
         await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq_values)
         if not self._player_check(ctx):
