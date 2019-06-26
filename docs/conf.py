@@ -40,7 +40,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx.ext.doctest",
-    "sphinxcontrib.asyncio",
+    "sphinxcontrib_trio",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -99,6 +99,9 @@ default_role = "any"
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
+
+# This will be needed until sphinx_rtd_theme supports the html5 writer
+html4_writer = True
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -211,3 +214,7 @@ intersphinx_mapping = {
 # If this string is non-empty, all blocks with ``>>>`` in them will be
 # tested, not just the ones explicitly marked with ``.. doctest::``
 doctest_test_doctest_blocks = ""
+
+# Autodoc options
+autodoc_default_flags = ["show-inheritance"]
+autodoc_typehints = "none"

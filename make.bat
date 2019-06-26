@@ -21,6 +21,12 @@ exit /B %ERRORLEVEL%
 black -l 99 --check !PYFILES!
 exit /B %ERRORLEVEL%
 
+:setupenv
+py -3.7 -m venv --clear .venv
+.\.venv\Scripts\python -m pip install -U pip setuptools
+.\.venv\Scripts\python -m pip install -r dev-requirements.txt
+exit /B %ERRORLEVEL%
+
 :help
 echo Usage:
 echo   make ^<command^>
