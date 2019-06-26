@@ -705,7 +705,7 @@ async def get_all_casetypes(guild: discord.Guild = None) -> List[CaseType]:
     """
     return [
         CaseType.from_json(name, data, guild=guild)
-        for name, data in await _conf.custom(_CASETYPES).all()
+        for name, data in (await _conf.custom(_CASETYPES).all()).items()
     ]
 
 
