@@ -24,7 +24,7 @@ exit /B %ERRORLEVEL%
 :setupenv
 py -3.7 -m venv --clear .venv
 .\.venv\Scripts\python -m pip install -U pip setuptools
-.\.venv\Scripts\python -m pip install -r dev-requirements.txt
+.\.venv\Scripts\python -m pip install -Ur dev-requirements.txt
 exit /B %ERRORLEVEL%
 
 :help

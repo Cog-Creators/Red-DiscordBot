@@ -21,4 +21,4 @@ bumpdeps:
 setupenv:
 	python3.7 -m venv --clear .venv
 	.venv/bin/pip install -U pip setuptools
-	.venv/bin/pip install -r dev-requirements.txt
+	.venv/bin/pip install -Ur dev-requirements.txt
