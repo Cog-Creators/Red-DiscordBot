@@ -34,3 +34,4 @@ echo.
 echo Commands:
 echo   reformat                   Reformat all .py files being tracked by git.
 echo   stylecheck                 Check which tracked .py files need reformatting.
+echo   setupenv                   Create or replace a virtual environment for development.

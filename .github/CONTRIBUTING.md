@@ -98,9 +98,10 @@ Our style checker of choice, [black](https://github.com/ambv/black), actually ha
 Use the command `black --help` to see how to use this tool. The full style guide is explained in detail on [black's GitHub repository](https://github.com/ambv/black). **There is one exception to this**, however, which is that we set the line length to 99, instead of black's default 88. When using `black` on the command line, simply use it like so: `black -l 99 -N <src>`.
 
 ### 4.4 Make
-You may have noticed we have a `Makefile` and a `make.bat` in the top-level directory. For now, you can do two things with them:
+You may have noticed we have a `Makefile` and a `make.bat` in the top-level directory. For now, you can do three things with them:
 1. `make reformat`: Reformat all python files in the project with Black
 2. `make stylecheck`: Check if any `.py` files in the project need reformatting
+3. `make setupenv`: Set up a new virtual environment in the `.venv` subdirectory, and install Red and its dependencies. If one already exists, it is cleared out and replaced.
 
 ### 4.5 Keeping your dependencies up to date
 Whenever you pull from upstream (V3/develop on the main repository) and you notice either of the files `setup.cfg` or `dev-requirements.txt` have been changed, it can often mean some package dependencies have been updated, added or removed. To make sure you're testing and formatting with the most up-to-date versions of our dependencies, run `make setupenv` to recreate your virtual environment. You could also simply do `pip install -Ur dev-requirements.txt`, but you will still have any dependencies which may have been removed previously.
