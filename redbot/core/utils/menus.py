@@ -257,8 +257,8 @@ class ReactionMenu(abc.ABC):
             class MyMenu(ReactionMenu, exit_button=True):
                 ...
 
-        See :meth:`object.__init_subclass__` for this special method
-        more generally.
+        See :meth:`object.__init_subclass__` for more info on this
+        special method more generally.
 
         Keyword Arguments
         -----------------
