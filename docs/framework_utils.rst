@@ -91,7 +91,7 @@ from some API and caches them, as the user scrolls through it:
     from redbot.core.utils import menus
     from .api import fetch_preceding_pages, fetch_following_pages
 
-    class LazilyPagedMenu(menus.PagedMenu):
+    class LazilyPagedMenu(menus.PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡")):
 
         def __init__(self, **kwargs) -> None:
             # PagedMenu.__init__ requires the pages kwarg.
@@ -130,6 +130,8 @@ ReactionMenu
 
 .. autoclass:: redbot.core.utils.menus.ReactionMenu
     :members:
+    :private-members:
+    :special-members: __init__, __init_subclass__
     :member-order: bysource
     :exclude-members: INITIAL_EMOJIS, handler, add_handler
 
@@ -145,6 +147,8 @@ PagedMenu
 ^^^^^^^^^
 .. autoclass:: PagedMenu
     :members:
+    :private-members:
+    :member-order: bysource
 
 OptionsMenu
 ^^^^^^^^^^^
