@@ -117,7 +117,7 @@ def main():
     if cli_flags.dev:
         red.add_cog(Dev())
     # noinspection PyProtectedMember
-    modlog._init()
+    loop.run_until_complete(modlog._init())
     # noinspection PyProtectedMember
     bank._init()
 

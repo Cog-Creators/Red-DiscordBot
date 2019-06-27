@@ -1,6 +1,5 @@
 import colorama as _colorama
 import discord as _discord
-import yaml as _yaml
 
 from .. import __version__, version_info, VersionInfo
 from .config import Config

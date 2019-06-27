@@ -907,7 +907,7 @@ class Audio(commands.Cog):
             eq_values = eq_presets[eq_preset]
         except KeyError:
             return await self._embed_msg(
-                ctx, _("No preset named {eq_preset}.".format(eq_preset=eq_preset.capitalize()))
+                ctx, _("No preset named {eq_preset}.".format(eq_preset=eq_preset))
             )
         await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq_values)
         if not self._player_check(ctx):
@@ -3511,6 +3511,9 @@ class Audio(commands.Cog):
     async def summon(self, ctx):
         """Summon the bot to a voice channel."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        if dj_enabled:
+            if not await self._can_instaskip(ctx, ctx.author):
+                return await self._embed_msg(ctx, _("You need the DJ role to summon the bot."))
         try:
             if (
                 not ctx.author.voice.channel.permissions_for(ctx.me).connect
@@ -3535,9 +3538,6 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx, _("Connection to Lavalink has not yet been established.")
             )
-        if dj_enabled:
-            if not await self._can_instaskip(ctx, ctx.author):
-                return await self._embed_msg(ctx, _("You need the DJ role to summon the bot."))
 
     @commands.command()
     @commands.guild_only()
