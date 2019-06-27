@@ -840,44 +840,63 @@ class Audio(commands.Cog):
     @commands.guild_only()
     @commands.cooldown(1, 15, discord.ext.commands.BucketType.guild)
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
-    @checks.mod_or_permissions(administrator=True)
     async def eq(self, ctx):
         """Equalizer management."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
+        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         player = lavalink.get_player(ctx.guild.id)
         eq = player.fetch("eq", Equalizer())
         reactions = ["◀", "⬅", "⏫", "🔼", "🔽", "⏬", "➡", "▶", "⏺", "ℹ"]
         await self._eq_msg_clear(player.fetch("eq_message"))
         eq_message = await ctx.send(box(eq.visualise(), lang="ini"))
-        player.store("eq_message", eq_message)
 
-        for reaction in reactions:
+        if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             try:
-                await eq_message.add_reaction(reaction)
+                await eq_message.add_reaction("ℹ")
             except discord.errors.NotFound:
                 pass
+        else:
+            for reaction in reactions:
+                try:
+                    await eq_message.add_reaction(reaction)
+                except discord.errors.NotFound:
+                    pass
 
-        await self._eq_interact(ctx, player, eq, eq_message, 0)
+        eq_msg_with_reacts = await ctx.fetch_message(eq_message.id)
+        player.store("eq_message", eq_msg_with_reacts)
+        await self._eq_interact(ctx, player, eq, eq_msg_with_reacts, 0)
 
     @eq.command(name="delete")
     async def _eq_delete(self, ctx, eq_preset: str):
         """Delete a saved eq preset."""
-        eq_presets = await self.config.custom("EQUALIZER", ctx.guild.id).eq_presets()
-        eq_preset = eq_preset.lower()
-        try:
-            del eq_presets[eq_preset]
-        except KeyError:
-            return await self._embed_msg(
-                ctx,
-                _(
-                    "{eq_preset} is not in the eq preset list.".format(
-                        eq_preset=eq_preset.capitalize()
+        async with self.config.custom("EQUALIZER", ctx.guild.id).eq_presets() as eq_presets:
+            eq_preset = eq_preset.lower()
+            try:
+                if eq_presets[eq_preset][
+                    "author"
+                ] != ctx.author.id and not await self._can_instaskip(ctx, ctx.author):
+                    return await self._embed_msg(
+                        ctx, _("You are not the author of that preset setting.")
                     )
-                ),
-            )
+                del eq_presets[eq_preset]
+            except KeyError:
+                return await self._embed_msg(
+                    ctx,
+                    _(
+                        "{eq_preset} is not in the eq preset list.".format(
+                            eq_preset=eq_preset.capitalize()
+                        )
+                    ),
+                )
+            except TypeError:
+                if await self._can_instaskip(ctx, ctx.author):
+                    del eq_presets[eq_preset]
+                else:
+                    return await self._embed_msg(
+                        ctx, _("You are not the author of that preset setting.")
+                    )
 
-        await self.config.custom("EQUALIZER", ctx.guild.id).eq_presets.set(eq_presets)
         await self._embed_msg(
             ctx, _("The {preset_name} preset was deleted.".format(preset_name=eq_preset))
         )
@@ -888,14 +907,29 @@ class Audio(commands.Cog):
         eq_presets = await self.config.custom("EQUALIZER", ctx.guild.id).eq_presets()
         if not eq_presets.keys():
             return await self._embed_msg(ctx, _("No saved equalizer presets."))
-        eq_list = "\n".join(list(sorted(eq_presets.keys())))
+
+        space = "\N{EN SPACE}"
+        header = box(f"[Preset Name]{space*9}[Author]\n", lang="ini")
+        preset_list = ""
+        for preset, bands in eq_presets.items():
+            try:
+                bands["author"]
+                author = self.bot.get_user(bands["author"])
+            except TypeError:
+                author = "None"
+            msg = f"{preset}{space*(22 - len(preset))}{author}\n"
+            preset_list += msg
+
         page_list = []
-        for page in pagify(eq_list, delims=[", "], page_length=1000):
+        for page in pagify(preset_list, delims=[", "], page_length=1000):
+            formatted_page = box(page, lang="ini")
             embed = discord.Embed(
-                colour=await ctx.embed_colour(), title="Equalizer presets:", description=page
+                colour=await ctx.embed_colour(), description=(f"{header}\n{formatted_page}")
             )
             embed.set_footer(text=_("{num} preset(s)").format(num=len(list(eq_presets.keys()))))
             page_list.append(embed)
+        if len(page_list) == 1:
+            return await ctx.send(embed=page_list[0])
         await menu(ctx, page_list, DEFAULT_CONTROLS)
 
     @eq.command(name="load")
@@ -904,15 +938,26 @@ class Audio(commands.Cog):
         eq_preset = eq_preset.lower()
         eq_presets = await self.config.custom("EQUALIZER", ctx.guild.id).eq_presets()
         try:
-            eq_values = eq_presets[eq_preset]
+            eq_values = eq_presets[eq_preset]["bands"]
         except KeyError:
             return await self._embed_msg(
                 ctx, _("No preset named {eq_preset}.".format(eq_preset=eq_preset))
             )
-        await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq_values)
+        except TypeError:
+            eq_values = eq_presets[eq_preset]
+
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
+
+        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         player = lavalink.get_player(ctx.guild.id)
+        if dj_enabled:
+            if not await self._can_instaskip(ctx, ctx.author):
+                return await self._embed_msg(
+                    ctx, _("You need the DJ role to load equalizer presets.")
+                )
+
+        await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq_values)
         await self._eq_check(ctx, player)
         eq = player.fetch("eq", Equalizer())
         await self._eq_msg_clear(player.fetch("eq_message"))
@@ -930,6 +975,12 @@ class Audio(commands.Cog):
         """Reset the eq to 0 across all bands."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
+        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        if dj_enabled:
+            if not await self._can_instaskip(ctx, ctx.author):
+                return await self._embed_msg(
+                    ctx, _("You need the DJ role to reset the equalizer.")
+                )
         player = lavalink.get_player(ctx.guild.id)
         eq = player.fetch("eq", Equalizer())
 
@@ -954,18 +1005,20 @@ class Audio(commands.Cog):
         """Save the current eq settings to a preset."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
+        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        if dj_enabled:
+            if not await self._can_instaskip(ctx, ctx.author):
+                return await self._embed_msg(
+                    ctx, _("You need the DJ role to save equalizer presets.")
+                )
         if not eq_preset:
             await self._embed_msg(ctx, _("Please enter a name for this equalizer preset."))
             try:
-
-                def pred(m):
-                    return (
-                        m.channel == ctx.channel
-                        and m.author == ctx.author
-                        and not m.content.startswith(ctx.prefix)
-                    )
-
-                eq_name_msg = await ctx.bot.wait_for("message", timeout=15.0, check=pred)
+                eq_name_msg = await ctx.bot.wait_for(
+                    "message",
+                    timeout=15.0,
+                    check=MessagePredicate.regex(fr"^(?!{re.escape(ctx.prefix)})", ctx),
+                )
                 eq_preset = eq_name_msg.content.split(" ")[0].strip('"').lower()
             except asyncio.TimeoutError:
                 return await self._embed_msg(
@@ -997,7 +1050,7 @@ class Audio(commands.Cog):
 
         player = lavalink.get_player(ctx.guild.id)
         eq = player.fetch("eq", Equalizer())
-        to_append = {eq_preset: eq.bands}
+        to_append = {eq_preset: {"author": ctx.author.id, "bands": eq.bands}}
         new_eq_presets = {**eq_presets, **to_append}
         await self.config.custom("EQUALIZER", ctx.guild.id).eq_presets.set(new_eq_presets)
         embed3 = discord.Embed(
@@ -1024,6 +1077,14 @@ class Audio(commands.Cog):
         """
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
+
+        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        if dj_enabled:
+            if not await self._can_instaskip(ctx, ctx.author):
+                return await self._embed_msg(
+                    ctx, _("You need the DJ role to set equalizer presets.")
+                )
+
         player = lavalink.get_player(ctx.guild.id)
         band_names = [
             "25",
