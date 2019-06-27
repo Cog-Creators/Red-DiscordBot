@@ -9,7 +9,7 @@ subclasses were added in version 3.2. Prior to that, the legacy
 These documents hope to be aimed at cog creators who may use reaction
 menus in one or two ways:
 
-1. Sending and managing common type of reaction menu which is provided
+1. Sending and managing a common type of reaction menu which is provided
    with this module, and
 2. Customising the existing reaction menus, or creating new ones from
    the :class:`ReactionMenu` ABC.
