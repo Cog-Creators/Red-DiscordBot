@@ -692,8 +692,8 @@ class ReactionMenu(abc.ABC):
         """The cleanup method for the menu.
 
         This method is called when the menu closes, times out, or
-        somehow forcibly exits. It is called within a `finally` clause,
-        so it shouldn't be missed.
+        somehow forcibly exits. It is called within a
+        `finally <finally>` clause, so it shouldn't be missed.
 
         By default, it does nothing.
         """
