@@ -12,6 +12,3 @@ _colorama.init()
 
 # Prevent discord PyNaCl missing warning
 _discord.voice_client.VoiceClient.warn_nacl = False
-
-# Warn on known unsafe usage of dependencies
-_yaml.load = _warn_unsafe(_yaml.load, "Use yaml.safe_load instead. See CVE-2017-18342")

@@ -23,7 +23,7 @@ from .utils import fuzzy_command_search, format_fuzzy_results
 log = logging.getLogger("red")
 init()
 
-INTRO = """
+INTRO = r"""
 ______         _           ______ _                       _  ______       _
 | ___ \       | |          |  _  (_)                     | | | ___ \     | |
 | |_/ /___  __| |  ______  | | | |_ ___  ___ ___  _ __ __| | | |_/ / ___ | |_

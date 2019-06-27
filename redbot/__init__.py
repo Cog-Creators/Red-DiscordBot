@@ -3,7 +3,6 @@ import sys as _sys
 import warnings as _warnings
 from math import inf as _inf
 from typing import (
-    Any as _Any,
     ClassVar as _ClassVar,
     Dict as _Dict,
     List as _List,
