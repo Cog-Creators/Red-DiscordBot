@@ -26,7 +26,6 @@
 # Additionally, this gives our users a bit more customization options including by
 # 3rd party cogs down the road.
 
-import asyncio
 from collections import namedtuple
 from typing import Union, List, AsyncIterator, Iterable, cast
 
@@ -556,13 +555,7 @@ class RedHelpFormatter:
                             )
                         )
         else:
-            # Specifically ensuring the menu's message is sent prior to returning
-            m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
-            c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
-            # Allow other things to happen during menu timeout/interaction.
-            asyncio.create_task(menus.menu(ctx, pages, c, message=m))
-            # menu needs reactions added manually since we fed it a messsage
-            menus.start_adding_reactions(m, c.keys())
+            await menus.PagedMenu.send_and_return(ctx, pages=pages)
 
 
 @commands.command(name="help", hidden=True, i18n=T_)

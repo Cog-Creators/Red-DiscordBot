@@ -307,6 +307,7 @@ class ReactionMenu(abc.ABC):
         if initial_emojis is None:
             # In order of appearance in source code
             cls.INITIAL_EMOJIS = list(filter(None, cls._HANDLERS.keys()))
+            cls.INITIAL_EMOJIS.reverse()
         else:
             cls.INITIAL_EMOJIS = initial_emojis
 
@@ -393,7 +394,7 @@ class ReactionMenu(abc.ABC):
                 handler_list[:] = [
                     (event, existing_handler)
                     for event, existing_handler in handler_list
-                    if existing_handler != handler
+                    if getattr(existing_handler, "__name__", None) != handler
                 ]
 
         entry = (event, handler)
@@ -683,9 +684,9 @@ class ReactionMenu(abc.ABC):
     async def _after_timeout(self):
         """This method is called after the menu times out.
 
-        By default, it simply calls :meth:`ReactionMenu.set_done`.
+        By default, it simply calls :meth:`ReactionMenu.exit_menu`.
         """
-        self.set_done()
+        await self.exit_menu()
 
     async def _cleanup(self):
         """The cleanup method for the menu.
@@ -833,10 +834,10 @@ class PagedMenu(ReactionMenu, exit_button=True, initial_emojis=("⬅", "❌", "�
 
     Keyword Arguments
     -----------------
-    pages : Sequence[Union[str, discord.Embed, Tuple[str, discord.Embed]]]
-        **Required!** A sequence of pages which the menu can scroll
-        through. The It can be a combination of strings (for text
-        content), embeds, or 2-tuples containing both.
+    pages : Iterable[Union[str, discord.Embed, Tuple[str, discord.Embed]]], **Required**
+        An iterable of pages which the menu can scroll through. It can
+        be a combination of strings (for text content), embeds, or
+        2-tuples containing (text, embed).
     pagenum_in_footer: bool
         Any embeds which don't already have non-empty footer text will
         have the following added to it: *Page <k>/<n>*, where *<k>* is
@@ -848,6 +849,12 @@ class PagedMenu(ReactionMenu, exit_button=True, initial_emojis=("⬅", "❌", "�
         this will be added like so: *Page <k>/<n> | <footer_text>*.
     first_page : int
         What the initial page index should be. Defaults to zero.
+    arrows_always : bool
+        When ``True``, the arrow reactions for previous and next page
+        buttons will be added, even when there is only one page in
+        ``pages``. This is only really useful for subclasses who might
+        only start with one page, but generate the rest dynamically.
+        Defaults to ``False``.
 
     Attributes
     ----------
@@ -867,15 +874,21 @@ class PagedMenu(ReactionMenu, exit_button=True, initial_emojis=("⬅", "❌", "�
     def __init__(
         self,
         *,
-        pages: Sequence[_Page],
+        pages: Iterable[_Page],
         footer_text: Optional[str] = None,
         first_page: int = 0,
+        arrows_always: bool = False,
         **kwargs,
     ) -> None:
-        super().__init__(**kwargs)
         self._pages = list(pages)
         self._cur_page = first_page
         self._footer_text = footer_text
+
+        if arrows_always is False and len(self._pages) == 1:
+            initial_emojis = ["❌"]
+        else:
+            initial_emojis = kwargs.get("initial_emojis")
+        super().__init__(initial_emojis=initial_emojis, **kwargs)
 
     # noinspection PyUnusedLocal
     @ReactionMenu.handler("⬅")
@@ -920,7 +933,7 @@ class PagedMenu(ReactionMenu, exit_button=True, initial_emojis=("⬅", "❌", "�
         await self.message.edit(content=content, embed=embed)
 
     async def _get_content_and_embed(
-        self, page: _Page,
+        self, page: _Page
     ) -> Tuple[Optional[str], Optional[discord.Embed]]:
         if isinstance(page, discord.Embed):
             content, embed = None, page
@@ -966,8 +979,8 @@ class OptionsMenu(Generic[_T], ReactionMenu):
 
     Keyword Arguments
     -----------------
-    options : Sequence[Tuple[str, _T]]
-        **Required!** The sequence of options, as described above.
+    options : Sequence[Tuple[str, _T]], **Required**
+        The sequence of options, as described above.
     emojis : Optional[Sequence[str]]
         The emojis to align with ``options``. If provided, this sequence
         must be at least as long as ``options``.  If omitted, the emojis

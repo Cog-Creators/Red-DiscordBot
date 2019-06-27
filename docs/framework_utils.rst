@@ -103,21 +103,21 @@ from some API and caches them, as the user scrolls through it:
         @menus.ReactionMenu.handler("⬅")
         async def prev_page(self, payload: discord.RawReactionActionEvent):
             self._remote_page_idx -= 1
-            if self._cur_idx == 0:
+            if self._cur_page == 0:
                 # Fetch the previous few pages and add them to the start of the page list
                 self._pages[0:0] = new_pages = await fetch_preceding_pages(self._remote_page_idx)
-                self._cur_idx += len(new_pages)
-            # The base method decrements self._cur_idx and updates the message
+                self._cur_page += len(new_pages)
+            # The base method decrements self._cur_page and updates the message
             await super().prev_page(payload)
 
         @menus.ReactionMenu.handler("➡")
         async def next_page(self, payload: discord.RawReactionActionEvent):
             self._remote_page_idx += 1
-            if self._cur_idx == len(self._pages) - 1:
+            if self._cur_page == len(self._pages) - 1:
                 # Fetch the next few pages and add them to the end of the page list
                 new_pages = await fetch_following_pages(self._remote_page_idx)
                 self._pages.extend(new_pages)
-            # The base method increments self._cur_idx and updates the message
+            # The base method increments self._cur_page and updates the message
             await super().next_page(payload)
 
 ReactionMenu

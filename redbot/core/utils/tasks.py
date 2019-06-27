@@ -114,16 +114,16 @@ class DeferrableTimer:
 
         if isinstance(aw, asyncio.Task):
             self._task = aw
-        elif self.__isawaitable(aw):
+        elif self._isawaitable(aw):
             self._task = self._loop.create_task(aw)
         else:
             raise TypeError('"aw" must be an awaitable object')
 
         self._future = self._loop.create_future()
 
-        self._task.add_done_callback(self.__task_done)
+        self._task.add_done_callback(self._task_done)
         if self.timeout is not None:
-            self._timer_handle = self._loop.call_later(self.timeout, self.__task_timed_out)
+            self._timer_handle = self._loop.call_later(self.timeout, self._task_timed_out)
 
         result = await self._future
         if result is False:
@@ -149,7 +149,7 @@ class DeferrableTimer:
         if self._timer_handle is None:
             raise RuntimeError("Cannot restart before waiting")
         self._timer_handle.cancel()
-        self._timer_handle = self._loop.call_later(self.timeout, self.__task_timed_out)
+        self._timer_handle = self._loop.call_later(self.timeout, self._task_timed_out)
 
     def cancel(self) -> bool:
         """Cancel the timer.
@@ -181,17 +181,16 @@ class DeferrableTimer:
                 self._timer_handle.cancel()
             return True
 
-    def __task_done(self, task: asyncio.Task) -> None:
-        if not task.cancelled():
+    def _task_done(self, task: asyncio.Task) -> None:
+        if not task.cancelled() and not self._future.done():
             self._future.set_result(True)
 
-    def __task_timed_out(self) -> None:
-        self._task.cancel()
+    def _task_timed_out(self) -> None:
         if not self._future.cancelled():
             self._future.set_result(False)
 
     @staticmethod
-    def __isawaitable(obj: Any) -> bool:
+    def _isawaitable(obj: Any) -> bool:
         return inspect.isawaitable(obj) or (
             isinstance(obj, functools.partial) and inspect.isawaitable(obj.func)
         )

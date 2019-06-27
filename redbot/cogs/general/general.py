@@ -6,7 +6,7 @@ import aiohttp
 import discord
 from redbot.core import commands
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
+from redbot.core.utils.menus import PagedMenu
 from redbot.core.utils.chat_formatting import escape, italics
 
 _ = T_ = Translator("General", __file__)
@@ -295,14 +295,7 @@ class General(commands.Cog):
                     embeds.append(embed)
 
                 if embeds is not None and len(embeds) > 0:
-                    await menu(
-                        ctx,
-                        pages=embeds,
-                        controls=DEFAULT_CONTROLS,
-                        message=None,
-                        page=0,
-                        timeout=30,
-                    )
+                    await PagedMenu.send_and_wait(ctx, pages=embeds)
             else:
                 messages = []
                 for ud in data["list"]:
@@ -321,14 +314,7 @@ class General(commands.Cog):
                     messages.append(message)
 
                 if messages is not None and len(messages) > 0:
-                    await menu(
-                        ctx,
-                        pages=messages,
-                        controls=DEFAULT_CONTROLS,
-                        message=None,
-                        page=0,
-                        timeout=30,
-                    )
+                    await PagedMenu.send_and_wait(ctx, pages=messages)
         else:
             await ctx.send(
                 _("No Urban Dictionary entries were found, or there was an error in the process.")

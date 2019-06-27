@@ -1,22 +1,24 @@
 import logging
-from typing import Optional, List, Union, Sequence
+from typing import Optional, List, Union, Sequence, TYPE_CHECKING
 
 import discord
 from fuzzywuzzy import process, fuzz
 
-from .. import commands
 from .chat_formatting import box
+
+if TYPE_CHECKING:
+    from ..commands import Context, Command
 
 __all__ = ["fuzzy_command_search", "format_fuzzy_results"]
 
 
 async def fuzzy_command_search(
-    ctx: commands.Context,
+    ctx: "Context",
     term: Optional[str] = None,
     *,
-    command_list: Optional[Sequence[commands.Command]] = None,
+    commands: Optional[Sequence["Command"]] = None,
     min_score: int = 80,
-) -> Optional[List[commands.Command]]:
+) -> Optional[List["Command"]]:
     """Search for commands which are similar in name to the one invoked.
 
     Returns a maximum of 5 commands which must all be at least matched
@@ -29,7 +31,7 @@ async def fuzzy_command_search(
     term : Optional[str]
         The name of the invoked command. If ``None``, `Context.invoked_with`
         will be used instead.
-    command_list : Optional[Sequence[commands.Command]]
+    commands : Optional[Sequence[commands.Command]]
     min_score : int
         The minimum score for matched commands to reach. Defaults to 80.
 
@@ -71,7 +73,7 @@ async def fuzzy_command_search(
 
     # Do the scoring. `extracted` is a list of tuples in the form `(command, score)`
     extracted = process.extract(
-        term, (command_list or ctx.bot.walk_commands()), limit=5, scorer=fuzz.QRatio
+        term, (commands or ctx.bot.walk_commands()), limit=5, scorer=fuzz.QRatio
     )
     if not extracted:
         return
@@ -89,10 +91,7 @@ async def fuzzy_command_search(
 
 
 async def format_fuzzy_results(
-    ctx: commands.Context,
-    matched_commands: List[commands.Command],
-    *,
-    embed: Optional[bool] = None,
+    ctx: "Context", matched_commands: List["Command"], *, embed: Optional[bool] = None
 ) -> Union[str, discord.Embed]:
     """Format the result of a fuzzy command search.
 

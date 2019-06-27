@@ -11,9 +11,9 @@ from redbot.cogs.bank import check_global_setting_guildowner, check_global_setti
 from redbot.core import Config, bank, commands, errors
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-
 from redbot.core.bot import Red
+
+from .leaderboard_menu import LeaderboardMenu
 
 T_ = Translator("Economy", __file__)
 
@@ -346,65 +346,19 @@ class Economy(commands.Cog):
 
     @commands.command()
     @guild_only_check()
-    async def leaderboard(self, ctx: commands.Context, top: int = 10, show_global: bool = False):
-        """Print the leaderboard.
-
-        Defaults to top 10.
-        """
+    async def leaderboard(self, ctx: commands.Context, show_global: bool = False):
+        """Print the leaderboard."""
         guild = ctx.guild
-        author = ctx.author
-        if top < 1:
-            top = 10
         if await bank.is_global() and show_global:
             # show_global is only applicable if bank is global
-            bank_sorted = await bank.get_leaderboard(positions=top, guild=None)
+            raw_accounts = await bank.get_leaderboard(guild=None)
         else:
-            bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
-        try:
-            bal_len = len(str(bank_sorted[0][1]["balance"]))
-            # first user is the largest we'll see
-        except IndexError:
-            return await ctx.send(_("There are no accounts in the bank."))
-        pound_len = len(str(len(bank_sorted)))
-        header = "{pound:{pound_len}}{score:{bal_len}}{name:2}\n".format(
-            pound="#",
-            name=_("Name"),
-            score=_("Score"),
-            bal_len=bal_len + 6,
-            pound_len=pound_len + 3,
-        )
-        highscores = []
-        pos = 1
-        temp_msg = header
-        for acc in bank_sorted:
-            try:
-                name = guild.get_member(acc[0]).display_name
-            except AttributeError:
-                user_id = ""
-                if await ctx.bot.is_owner(ctx.author):
-                    user_id = f"({str(acc[0])})"
-                name = f"{acc[1]['name']} {user_id}"
-            balance = acc[1]["balance"]
+            raw_accounts = await bank.get_leaderboard(guild=guild)
 
-            if acc[0] != author.id:
-                temp_msg += f"{f'{pos}.': <{pound_len+2}} {balance: <{bal_len + 5}} {name}\n"
-
-            else:
-                temp_msg += (
-                    f"{f'{pos}.': <{pound_len+2}} "
-                    f"{balance: <{bal_len + 5}} "
-                    f"<<{author.display_name}>>\n"
-                )
-            if pos % 10 == 0:
-                highscores.append(box(temp_msg, lang="md"))
-                temp_msg = header
-            pos += 1
-
-        if temp_msg != header:
-            highscores.append(box(temp_msg, lang="md"))
-
-        if highscores:
-            await menu(ctx, highscores, DEFAULT_CONTROLS)
+        if raw_accounts:
+            await LeaderboardMenu.send_and_wait(ctx, accounts=raw_accounts, timeout=60.0)
+        else:
+            await ctx.send(_("There are no accounts in the bank."))
 
     @commands.command()
     @guild_only_check()
@@ -496,7 +450,8 @@ class Economy(commands.Cog):
                 await channel.send(
                     _(
                         "You've reached the maximum amount of {currency}! "
-                        "Please spend some more \N{GRIMACING FACE}\n{old_balance} -> {new_balance}!"
+                        "Please spend some more \N{GRIMACING FACE}\n"
+                        "{old_balance} -> {new_balance}!"
                     ).format(
                         currency=await bank.get_currency_name(getattr(channel, "guild", None)),
                         old_balance=then,
