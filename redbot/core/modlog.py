@@ -742,7 +742,7 @@ async def register_casetype(
     ------
     RuntimeError
         If the case type is already registered
-    TypeError:
+    TypeError
         If a parameter is missing
     ValueError
         If a parameter's value is not valid
