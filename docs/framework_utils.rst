@@ -179,6 +179,13 @@ ReactionEvent
     .. autoattribute:: RAW_REACTION_CLEAR
         :annotation:
 
+Other Menu Utilities
+^^^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: start_adding_reactions
+
+.. autofunction:: menu
+
 Event Predicates
 ================
 
