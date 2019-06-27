@@ -23,7 +23,6 @@ from redbot.core.data_manager import (
     core_data_path,
     storage_details,
 )
-from redbot.core.json_io import JsonIO
 from redbot.core.utils import safe_delete
 from redbot.core import Config
 from redbot.core.drivers import BackendType, IdentifierData
@@ -50,7 +49,8 @@ def load_existing_config():
     if not config_file.exists():
         return {}
 
-    return JsonIO(config_file)._load_json()
+    with config_file.open(encoding="utf-8") as fs:
+        return json.load(fs)
 
 
 instance_data = load_existing_config()
@@ -74,7 +74,9 @@ def save_config(name, data, remove=False):
                 print("Not continuing")
                 sys.exit(0)
         config[name] = data
-    JsonIO(config_file)._save_json(config)
+
+    with config_file.open("w", encoding="utf-8") as fs:
+        json.dump(config, fs, indent=4)
 
 
 def get_data_dir():
@@ -220,7 +222,7 @@ async def json_to_mongov2(instance):
         if "." in cog_name:
             # Garbage handler
             continue
-        with p.open(mode="r") as f:
+        with p.open(mode="r", encoding="utf-8") as f:
             cog_data = json.load(f)
         for identifier, all_data in cog_data.items():
             try:
