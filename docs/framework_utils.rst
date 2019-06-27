@@ -59,15 +59,20 @@ along with the user who selected it. The menu stays running as a
 background task and the callback is called multiple times.
 
 .. code-block:: python
-    :emphasize-lines: 6, 7, 8
+    :emphasize-lines: 6, 7, 8, 9, 10, 11, 12, 13
 
     import discord
     from redbot.core.utils import menus
 
-    async def send_reactrole_menu(channel, reactroles) -> menus.OptionsMenu:
+    async def send_reactrole_menu(channel, bot, reactroles) -> menus.OptionsMenu:
         options = [(role.mention, role) for role in reactroles]
         return await menus.OptionsMenu.send_and_return(
-            channel=channel, options=options, title="React to add or remove a role"
+            channel=channel,
+            bot=bot,
+            options=options,
+            title="React to add or remove a role",
+            embed=True,
+            callback=add_or_remove_reactrole
         )
 
     async def add_or_remove_reactrole(member: discord.Member, role: discord.Role):
