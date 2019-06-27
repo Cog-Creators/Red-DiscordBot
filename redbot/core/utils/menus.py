@@ -878,16 +878,15 @@ class PagedMenu(ReactionMenu, exit_button=True, initial_emojis=("⬅", "❌", "�
         footer_text: Optional[str] = None,
         first_page: int = 0,
         arrows_always: bool = False,
+        initial_emojis: Optional[Sequence[str]] = None,
         **kwargs,
     ) -> None:
         self._pages = list(pages)
         self._cur_page = first_page
         self._footer_text = footer_text
 
-        if arrows_always is False and len(self._pages) == 1:
+        if initial_emojis is None and arrows_always is False and len(self._pages) == 1:
             initial_emojis = ["❌"]
-        else:
-            initial_emojis = kwargs.get("initial_emojis")
         super().__init__(initial_emojis=initial_emojis, **kwargs)
 
     # noinspection PyUnusedLocal
