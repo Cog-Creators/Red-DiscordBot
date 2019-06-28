@@ -179,13 +179,10 @@ class KickBanMixin(MixinMeta):
             return
         audit_reason = get_audit_reason(author, reason)
         try:
-            if reason == None:
+            if reason is None:
                 reason = "No reason was given."
-            else:
-                reason = reason
-            self == self.bot.get_cog("Mod")
             toggle = await self.settings.guild(guild).toggle_dm()
-            if toggle == True:
+            if toggle:
                 with contextlib.suppress(discord.HTTPException):
                     em = discord.Embed(
                         title=_("**You have been kicked from {guild}.**").format(guild=guild)
@@ -234,13 +231,12 @@ class KickBanMixin(MixinMeta):
         Minimum 0 days, maximum 7. Defaults to 0."""
         author = ctx.author
         guild = ctx.guild
-        if reason == None:
+        if reason is None:
             reason = "No reason was given."
         else:
             reason = reason
-        self == self.bot.get_cog("Mod")
         toggle = await self.settings.guild(guild).toggle_dm()
-        if toggle == True:
+        if toggle:
             with contextlib.suppress(discord.HTTPException):
                 em = discord.Embed(
                     title=_("**You have been banned from {guild}.**").format(guild=guild)
