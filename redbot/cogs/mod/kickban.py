@@ -233,8 +233,6 @@ class KickBanMixin(MixinMeta):
         guild = ctx.guild
         if reason is None:
             reason = "No reason was given."
-        else:
-            reason = reason
         toggle = await self.settings.guild(guild).toggle_dm()
         if toggle:
             with contextlib.suppress(discord.HTTPException):
