@@ -219,10 +219,8 @@ class KickBanMixin(MixinMeta):
         If days is not a number, it's treated as the first word of the reason.
         Minimum 0 days, maximum 7. Defaults to 0."""
         guild = ctx.guild
-        if days == None:
+        if days is None:
             days = await self.settings.guild(guild).default_days()
-        if days == 0:
-            days = 0
         result = await self.ban_user(
             user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
         )
