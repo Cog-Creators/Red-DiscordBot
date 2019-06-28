@@ -203,6 +203,7 @@ class ModSettings(MixinMeta):
                     command=f"{ctx.prefix}unban"
                 )
             )
+
     @modset.command()
     @commands.guild_only()
     async def toggledm(self, ctx: commands.Context, enabled: bool = None):
@@ -216,10 +217,6 @@ class ModSettings(MixinMeta):
             enabled = not await self.settings.guild(guild).toggle_dm()
         await self.settings.guild(guild).toggle_dm.set(enabled)
         if enabled:
-            await ctx.send(
-                _("Users will now be DM'd when they are kicked/banned.")
-                )
+            await ctx.send(_("Users will now be DM'd when they are kicked/banned."))
         else:
-            await ctx.send(
-                _("Users will not be DM'd when they are kicked/banned")
-                )
+            await ctx.send(_("Users will not be DM'd when they are kicked/banned"))

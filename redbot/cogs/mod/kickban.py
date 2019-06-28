@@ -188,7 +188,7 @@ class KickBanMixin(MixinMeta):
             if toggle == True:
                 with contextlib.suppress(discord.HTTPException):
                     em = discord.Embed(
-                    title=_("**You have been kicked from {guild}.**").format(guild=guild)
+                        title=_("**You have been kicked from {guild}.**").format(guild=guild)
                     )
                     em.add_field(name=_("**Reason**"), value=reason, inline=False)
                     await user.send(embed=em)
@@ -242,14 +242,14 @@ class KickBanMixin(MixinMeta):
         if toggle == True:
             with contextlib.suppress(discord.HTTPException):
                 em = discord.Embed(
-                title=_("**You have been banned from {guild}.**").format(guild=guild)
+                    title=_("**You have been banned from {guild}.**").format(guild=guild)
                 )
                 em.add_field(name=_("**Reason**"), value=reason, inline=False)
                 await user.send(embed=em)
         if days == 0:
             days = await self.settings.guild(guild).days()
         result = await self.ban_user(
-                user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
+            user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
         )
 
         if result is True:
