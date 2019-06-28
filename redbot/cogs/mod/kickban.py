@@ -179,15 +179,17 @@ class KickBanMixin(MixinMeta):
             return
         audit_reason = get_audit_reason(author, reason)
         try:
-            if reason is None:
+            if reason == None:
                 reason = "No reason was given."
+            else:
+                reason = reason
+            self == self.bot.get_cog("Mod")
             toggle = await self.settings.guild(guild).toggle_dm()
-            if toggle:
+            if toggle == True:
                 with contextlib.suppress(discord.HTTPException):
                     em = discord.Embed(
-                        title=_("**You have been kicked from {guild}.**").format(guild=guild)
+                    title=_("**You have been kicked from {guild}.**").format(guild=guild)
                     )
-                    em.add_field(name=_("**Moderator**"), value=author.name, inline=False)
                     em.add_field(name=_("**Reason**"), value=reason, inline=False)
                     await user.send(embed=em)
             await guild.kick(user, reason=audit_reason)
@@ -231,19 +233,23 @@ class KickBanMixin(MixinMeta):
         Minimum 0 days, maximum 7. Defaults to 0."""
         author = ctx.author
         guild = ctx.guild
-        if reason is None:
+        if reason == None:
             reason = "No reason was given."
+        else:
+            reason = reason
+        self == self.bot.get_cog("Mod")
         toggle = await self.settings.guild(guild).toggle_dm()
-        if toggle:
+        if toggle == True:
             with contextlib.suppress(discord.HTTPException):
                 em = discord.Embed(
-                    title=_("**You have been banned from {guild}.**").format(guild=guild)
+                title=_("**You have been banned from {guild}.**").format(guild=guild)
                 )
-                em.add_field(name=_("**Moderator**"), value=author.name, inline=False)
                 em.add_field(name=_("**Reason**"), value=reason, inline=False)
                 await user.send(embed=em)
+        if days == 0:
+            days = await self.settings.guild(guild).days()
         result = await self.ban_user(
-            user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
+                user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
         )
 
         if result is True:
