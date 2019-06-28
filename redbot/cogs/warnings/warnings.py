@@ -1,6 +1,5 @@
 from collections import namedtuple
 from typing import Union, Optional
-from discord.ext.commands import TextChannelConverter
 
 import discord
 
@@ -91,7 +90,7 @@ class Warnings(commands.Cog):
         guild = ctx.guild
         toggle = await self.config.guild(guild).toggle_dm()
         await self.config.guild(guild).toggle_dm.set(not toggle)
-        toggle = await self.config.guild(ctx.guild).toggle_dm()
+        toggle = not toggle
         if toggle == True:
             await ctx.send("Warns will now be sent to users DM's")
         else:
@@ -99,18 +98,12 @@ class Warnings(commands.Cog):
 
     @warningset.command()
     @commands.guild_only()
-    async def warnchannel(self, ctx: commands.Context, channel=None):
+    async def warnchannel(self, ctx: commands.Context, channel: discord.TextChannel):
         """Set the channel that warns get set to"""
         guild = ctx.guild
         try:
-            if channel == None:
-                channel = ctx.channel
-                await self.config.guild(guild).warn_channel.set(channel.id)
-                await ctx.send(f"The warn channel has been set to {channel.mention}")
-            else:
-                channel = await (TextChannelConverter()).convert(ctx, channel)
-                await self.config.guild(guild).warn_channel.set(channel.id)
-                await ctx.send(f"The warn channel has been set to {channel.mention}")
+            await self.config.guild(guild).warn_channel.set(channel.id)
+            await ctx.send(f"The warn channel has been set to {channel.mention}")
         except commands.BadArgument:
             return await ctx.send("Couldn't find that channel.")
 
@@ -121,7 +114,7 @@ class Warnings(commands.Cog):
         guild = ctx.guild
         toggle = await self.config.guild(guild).toggle_channel()
         await self.config.guild(guild).toggle_channel.set(not toggle)
-        toggle = await self.config.guild(ctx.guild).toggle_channel()
+        toggle = not toggle
         if toggle == True:
             await ctx.send("Warns will now be sent to channels")
         else:
@@ -380,14 +373,16 @@ class Warnings(commands.Cog):
             em.add_field(name=_("Points"), value=str(reason_type["points"]))
             warn_channel = await self.config.guild(ctx.guild).warn_channel()
             if warn_channel == None:
-                channel == ctx.channel
+                channel = ctx.channel
             else:
                 channel == warn_channel
                 await channel.send(
                     _("{user} has been warned.").format(user=user.mention), embed=em
                 )
         if dm and toggle_channel == False:
-            ctx.send("You have warned the user but you have DM and channel warns toggled off.")
+            await ctx.send(
+                "You have warned the user but you have DM and channel warns toggled off."
+            )
         try:
             reason_msg = _(
                 "{reason}\n\nUse `{prefix}unwarn {user} {message}` to remove this warning."
