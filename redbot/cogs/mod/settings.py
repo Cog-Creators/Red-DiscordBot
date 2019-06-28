@@ -26,6 +26,7 @@ class ModSettings(MixinMeta):
             respect_hierarchy = await self.settings.guild(guild).respect_hierarchy()
             delete_delay = await self.settings.guild(guild).delete_delay()
             reinvite_on_unban = await self.settings.guild(guild).reinvite_on_unban()
+            toggle_dm = await self.settings.guild(guild).toggle_dm()
             msg = ""
             msg += _("Delete repeats: {num_repeats}\n").format(
                 num_repeats=_("after {num} repeats").format(num=delete_repeats)
@@ -47,6 +48,9 @@ class ModSettings(MixinMeta):
             )
             msg += _("Reinvite on unban: {yes_or_no}\n").format(
                 yes_or_no=_("Yes") if reinvite_on_unban else _("No")
+            )
+            msg += _("Send message to users: {yes_or_no}\n").format(
+                yes_or_no=_("Yes") if toggle_dm else _("No")
             )
             await ctx.send(box(msg))
 
@@ -199,3 +203,20 @@ class ModSettings(MixinMeta):
                     command=f"{ctx.prefix}unban"
                 )
             )
+
+    @modset.command()
+    @commands.guild_only()
+    async def toggledm(self, ctx: commands.Context):
+        """Toggle whether to send a message to a user when they are kicked/banned.
+
+        If this is True, the bot will attempt to DM the user with the moderator
+        and reason as to why they were kicked/banned.
+        """
+        guild = ctx.guild
+        cur_setting = await self.settings.guild(guild).toggle_dm()
+        if not cur_setting:
+            await self.settings.guild(guild).toggle_dm.set(True)
+            await ctx.send(_("Users will now be DM'd when they are kicked/banned."))
+        else:
+            await self.settings.guild(guild).toggle_dm.set(False)
+            await ctx.send(_("Users will not be DM'd when they are kicked/banned."))
