@@ -300,10 +300,10 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                 await lib.setup(self)
             else:
                 lib.setup(self)
-        except Exception as e:
+        except Exception:
             self._remove_module_references(lib.__name__)
             self._call_module_finalizers(lib, name)
-            raise errors.CogLoadError(e) from e
+            raise
         else:
             self._BotBase__extensions[name] = lib
 
