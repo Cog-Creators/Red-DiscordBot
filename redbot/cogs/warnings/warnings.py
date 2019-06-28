@@ -25,7 +25,14 @@ _ = Translator("Warnings", __file__)
 class Warnings(commands.Cog):
     """Warn misbehaving users and take automated actions."""
 
-    default_guild = {"actions": [], "reasons": {}, "allow_custom_reasons": False, "toggle_dm": True, "warn_channel": None, "toggle_channel": False}
+    default_guild = {
+        "actions": [],
+        "reasons": {},
+        "allow_custom_reasons": False,
+        "toggle_dm": True,
+        "warn_channel": None,
+        "toggle_channel": False,
+    }
 
     default_member = {"total_points": 0, "status": "", "warnings": {}}
 
@@ -76,7 +83,7 @@ class Warnings(commands.Cog):
             await ctx.send(_("Custom reasons have been enabled."))
         else:
             await ctx.send(_("Custom reasons have been disabled."))
-            
+
     @warningset.command()
     @commands.guild_only()
     async def toggledm(self, ctx: commands.Context):
@@ -89,7 +96,7 @@ class Warnings(commands.Cog):
             await ctx.send("Warns will now be sent to users DM's")
         else:
             await ctx.send("Warns will not be sent to users DM's")
-            
+
     @warningset.command()
     @commands.guild_only()
     async def warnchannel(self, ctx: commands.Context, channel=None):
@@ -106,7 +113,7 @@ class Warnings(commands.Cog):
                 await ctx.send(f"The warn channel has been set to {channel.mention}")
         except commands.BadArgument:
             return await ctx.send("Couldn't find that channel.")
-        
+
     @warningset.command()
     @commands.guild_only()
     async def togglechannel(self, ctx: commands.Context):
@@ -119,6 +126,7 @@ class Warnings(commands.Cog):
             await ctx.send("Warns will now be sent to channels")
         else:
             await ctx.send("Warns will not be sent to channels")
+
     @commands.group()
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
@@ -184,7 +192,9 @@ class Warnings(commands.Cog):
                 registered_actions.remove(to_remove)
                 await ctx.tick()
             else:
-                await ctx.send(_("No action named {name} exists!").format(name=action_name))
+                await ctx.send(
+                    _("No action named {name} exists!").format(name=action_name)
+                )
 
     @commands.group()
     @commands.guild_only()
@@ -242,7 +252,8 @@ class Warnings(commands.Cog):
             for r, v in registered_reasons.items():
                 if await ctx.embed_requested():
                     em = discord.Embed(
-                        title=_("Reason: {name}").format(name=r), description=v["description"]
+                        title=_("Reason: {name}").format(name=r),
+                        description=v["description"],
                     )
                     em.add_field(name=_("Points"), value=str(v["points"]))
                     msg_list.append(em)
@@ -268,10 +279,20 @@ class Warnings(commands.Cog):
         async with guild_settings.actions() as registered_actions:
             for r in registered_actions:
                 if await ctx.embed_requested():
-                    em = discord.Embed(title=_("Action: {name}").format(name=r["action_name"]))
-                    em.add_field(name=_("Points"), value="{}".format(r["points"]), inline=False)
-                    em.add_field(name=_("Exceed command"), value=r["exceed_command"], inline=False)
-                    em.add_field(name=_("Drop command"), value=r["drop_command"], inline=False)
+                    em = discord.Embed(
+                        title=_("Action: {name}").format(name=r["action_name"])
+                    )
+                    em.add_field(
+                        name=_("Points"), value="{}".format(r["points"]), inline=False
+                    )
+                    em.add_field(
+                        name=_("Exceed command"),
+                        value=r["exceed_command"],
+                        inline=False,
+                    )
+                    em.add_field(
+                        name=_("Drop command"), value=r["drop_command"], inline=False
+                    )
                     msg_list.append(em)
                 else:
                     msg_list.append(
@@ -294,7 +315,7 @@ class Warnings(commands.Cog):
         user: discord.Member,
         points: Optional[int] = 1,
         *,
-        reason: str
+        reason: str,
     ):
         """Warn the user for the specified reason.
 
@@ -358,9 +379,13 @@ class Warnings(commands.Cog):
                     ),
                     embed=em,
                 )
-                await ctx.send(_("User {user} has been warned in their DM's.").format(user=user))
+                await ctx.send(
+                    _("User {user} has been warned in their DM's.").format(user=user)
+                )
         except discord.HTTPException:
-            await ctx.send("The warning couldn't be sent to the user because the user has DM's from server members turned off.")
+            await ctx.send(
+                "The warning couldn't be sent to the user because the user has DM's from server members turned off."
+            )
         toggle_channel = await self.config.guild(ctx.guild).toggle_channel()
         if toggle_channel == True:
             em = discord.Embed(
@@ -374,13 +399,12 @@ class Warnings(commands.Cog):
             else:
                 channel == warn_channel
                 await channel.send(
-                    _("{user} has been warned.").format(
-                        user=user.mention
-                    ),
-                    embed=em,
+                    _("{user} has been warned.").format(user=user.mention), embed=em
                 )
         if dm and toggle_channel == False:
-            ctx.send("You have warned the user but you have DM and channel warns toggled off.")
+            ctx.send(
+                "You have warned the user but you have DM and channel warns toggled off."
+            )
         try:
             reason_msg = _(
                 "{reason}\n\nUse `{prefix}unwarn {user} {message}` to remove this warning."
@@ -457,13 +481,16 @@ class Warnings(commands.Cog):
                         description=user_warnings[key]["description"],
                     )
                 await ctx.send_interactive(
-                    pagify(msg, shorten_by=58), box_lang=_("Warnings for {user}").format(user=user)
+                    pagify(msg, shorten_by=58),
+                    box_lang=_("Warnings for {user}").format(user=user),
                 )
 
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
-    async def unwarn(self, ctx: commands.Context, user: Union[discord.Member, int], warn_id: str):
+    async def unwarn(
+        self, ctx: commands.Context, user: Union[discord.Member, int], warn_id: str
+    ):
         """Remove a warning from a user."""
 
         guild = ctx.guild
