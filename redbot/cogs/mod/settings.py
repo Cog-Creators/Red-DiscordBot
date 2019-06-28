@@ -202,7 +202,7 @@ class ModSettings(MixinMeta):
 
     @modset.command()
     @commands.guild_only()
-    async def defaultdays(self, ctx: commands.Context, days : int = 0):
+    async def defaultdays(self, ctx: commands.Context, days: int = 0):
         """Set the default days worth of message to be deleted when a user is banned.
         The max amount of days is 7.
         """
@@ -213,6 +213,5 @@ class ModSettings(MixinMeta):
             await ctx.send(
                 _("{days} days worth of messages will be deleted when a user is banned.").format(
                     days=days
-                    )
                 )
-
+            )
