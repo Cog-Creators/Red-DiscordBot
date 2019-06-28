@@ -909,7 +909,14 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, _("No saved equalizer presets."))
 
         space = "\N{EN SPACE}"
-        header = box(f"[Preset Name]{space*9}[Author]\n", lang="ini")
+        header_name = _("Preset Name")
+        header_author = _("Author")
+        header = box(
+            "[{header_name}]{space}[{header_author}]\n".format(
+                header_name=header_name, space=space*9, header_author=header_author
+            ),
+            lang="ini",
+        )
         preset_list = ""
         for preset, bands in eq_presets.items():
             try:
