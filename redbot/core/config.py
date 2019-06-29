@@ -957,7 +957,7 @@ class Config:
 
         Parameters
         ----------
-        channel : `discord.TextChannel`
+        channel : `discord.CategoryChannel`
             A channel object.
 
         Returns
@@ -1112,7 +1112,7 @@ class Config:
             :code:`CHANNEL_ID -> data`.
 
         """
-        return await self._all_from_scope(self.VOICE_CHANNEL)
+        return await self._all_from_scope(self.TEXT_CHANNEL)
 
     async def all_voice_channels(self) -> dict:
         """Get all voice channel data as a dict.
