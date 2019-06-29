@@ -850,7 +850,7 @@ class Core(commands.Cog, CoreLogic):
 
         Acceptable values for the colour parameter can be found at:
 
-        https://discordpy.readthedocs.io/en/v1.0.1/ext/commands/api.html#discord.ext.commands.ColourConverter
+        https://discordpy.readthedocs.io/en/stable/ext/commands/api.html#discord.ext.commands.ColourConverter
         """
         if colour is None:
             ctx.bot.color = discord.Color.red()
