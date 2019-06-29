@@ -2819,9 +2819,6 @@ class Audio(commands.Cog):
                 ctx, ctx.author
             ):
                 return await self._embed_msg(ctx, _("You need the DJ role to toggle repeat."))
-        repeat = await self.config.guild(ctx.guild).repeat()
-        await self.config.guild(ctx.guild).repeat.set(not repeat)
-        repeat = await self.config.guild(ctx.guild).repeat()
         if self._player_check(ctx):
             await self._data_check(ctx)
             player = lavalink.get_player(ctx.guild.id)
@@ -2831,9 +2828,13 @@ class Audio(commands.Cog):
                 return await self._embed_msg(
                     ctx, _("You must be in the voice channel to toggle repeat.")
                 )
+
+        repeat = await self.config.guild(ctx.guild).repeat()
+        await self.config.guild(ctx.guild).repeat.set(not repeat)
         await self._embed_msg(
-            ctx, _("Repeat tracks: {true_or_false}.").format(true_or_false=repeat)
+            ctx, _("Repeat tracks: {true_or_false}.").format(true_or_false=not repeat)
         )
+        await self._data_check(ctx)
 
     @commands.command()
     @commands.guild_only()
@@ -3245,9 +3246,6 @@ class Audio(commands.Cog):
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(ctx, _("You need the DJ role to toggle shuffle."))
-        shuffle = await self.config.guild(ctx.guild).shuffle()
-        await self.config.guild(ctx.guild).shuffle.set(not shuffle)
-        shuffle = await self.config.guild(ctx.guild).shuffle()
         if self._player_check(ctx):
             await self._data_check(ctx)
             player = lavalink.get_player(ctx.guild.id)
@@ -3257,9 +3255,13 @@ class Audio(commands.Cog):
                 return await self._embed_msg(
                     ctx, _("You must be in the voice channel to toggle shuffle.")
                 )
+
+        shuffle = await self.config.guild(ctx.guild).shuffle()
+        await self.config.guild(ctx.guild).shuffle.set(not shuffle)
         await self._embed_msg(
-            ctx, _("Shuffle tracks: {true_or_false}.").format(true_or_false=shuffle)
+            ctx, _("Shuffle tracks: {true_or_false}.").format(true_or_false=not shuffle)
         )
+        await self._data_check(ctx)
 
     @commands.command()
     @commands.guild_only()
