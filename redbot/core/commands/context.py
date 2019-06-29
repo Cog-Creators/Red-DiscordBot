@@ -23,6 +23,7 @@ class Context(commands.Context):
     """
 
     def __init__(self, **attrs):
+        self.assume_yes = attrs.pop("assume_yes", False)
         super().__init__(**attrs)
         self.permission_state: PermState = PermState.NORMAL
 
@@ -62,45 +63,12 @@ class Context(commands.Context):
 
         return await super().send(content=content, **kwargs)
 
-    async def send_help(self) -> List[discord.Message]:
-        """Send the command help message.
-
-        Returns
-        -------
-        `list` of `discord.Message`
-            A list of help messages which were sent to the user.
-
-        """
-        command = self.invoked_subcommand or self.command
-        embed_wanted = await self.bot.embed_requested(
-            self.channel, self.author, command=self.bot.get_command("help")
-        )
-        if self.guild and not self.channel.permissions_for(self.guild.me).embed_links:
-            embed_wanted = False
-
-        ret = []
-        destination = self
-        if embed_wanted:
-            embeds = await self.bot.formatter.format_help_for(self, command)
-            for embed in embeds:
-                try:
-                    m = await destination.send(embed=embed)
-                except discord.HTTPException:
-                    destination = self.author
-                    m = await destination.send(embed=embed)
-                ret.append(m)
-        else:
-            f = commands.HelpFormatter()
-            msgs = await f.format_help_for(self, command)
-            for msg in msgs:
-                try:
-                    m = await destination.send(msg)
-                except discord.HTTPException:
-                    destination = self.author
-                    m = await destination.send(msg)
-                ret.append(m)
-
-        return ret
+    async def send_help(self, command=None):
+        """ Send the command help message. """
+        # This allows people to manually use this similarly
+        # to the upstream d.py version, while retaining our use.
+        command = command or self.command
+        await self.bot.send_help_for(self, command)
 
     async def tick(self) -> bool:
         """Add a tick reaction to the command message.

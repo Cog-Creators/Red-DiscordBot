@@ -1,0 +1,3 @@
+packaging
+tox
+-e .[docs,mongo,style,test]

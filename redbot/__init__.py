@@ -119,8 +119,14 @@ class VersionInfo:
             "dev_release": self.dev_release,
         }
 
-    def __lt__(self, other: "VersionInfo") -> bool:
-        tups: _List[_Tuple[int, int, int, int, int, int, int]] = []
+    def _generate_comparison_tuples(
+        self, other: "VersionInfo"
+    ) -> _List[
+        _Tuple[int, int, int, int, _Union[int, float], _Union[int, float], _Union[int, float]]
+    ]:
+        tups: _List[
+            _Tuple[int, int, int, int, _Union[int, float], _Union[int, float], _Union[int, float]]
+        ] = []
         for obj in (self, other):
             tups.append(
                 (
@@ -133,7 +139,19 @@ class VersionInfo:
                     obj.dev_release if obj.dev_release is not None else _inf,
                 )
             )
+        return tups
+
+    def __lt__(self, other: "VersionInfo") -> bool:
+        tups = self._generate_comparison_tuples(other)
         return tups[0] < tups[1]
+
+    def __eq__(self, other: "VersionInfo") -> bool:
+        tups = self._generate_comparison_tuples(other)
+        return tups[0] == tups[1]
+
+    def __le__(self, other: "VersionInfo") -> bool:
+        tups = self._generate_comparison_tuples(other)
+        return tups[0] <= tups[1]
 
     def __str__(self) -> str:
         ret = f"{self.major}.{self.minor}.{self.micro}"
@@ -156,7 +174,7 @@ class VersionInfo:
         )
 
 
-__version__ = "3.0.2"
+__version__ = "3.1.2"
 version_info = VersionInfo.from_str(__version__)
 
 # Filter fuzzywuzzy slow sequence matcher warning

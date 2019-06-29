@@ -13,8 +13,10 @@ import pkg_resources
 from colorama import Fore, Style, init
 from pkg_resources import DistributionNotFound
 
+from redbot.core.commands import RedHelpFormatter
 from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
 from . import commands
+from .config import get_latest_confs
 from .data_manager import storage_type
 from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
 from .utils import fuzzy_command_search, format_fuzzy_results
@@ -117,8 +119,8 @@ def init_events(bot, cli_flags):
                     "Outdated version! {} is available "
                     "but you're using {}".format(data["info"]["version"], red_version)
                 )
-                owner = await bot.get_user_info(bot.owner_id)
-                await owner.send(
+
+                await bot.send_to_owners(
                     "Your Red instance is out of date! {} is the current "
                     "version, however you are using {}!".format(
                         data["info"]["version"], red_version
@@ -166,8 +168,9 @@ def init_events(bot, cli_flags):
             if hasattr(ctx.command, "on_error"):
                 return
 
-            if ctx.cog and hasattr(ctx.cog, f"_{ctx.cog.__class__.__name__}__error"):
-                return
+            if ctx.cog:
+                if commands.Cog._get_overridden_method(ctx.cog.cog_command_error) is not None:
+                    return
 
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help()
@@ -176,7 +179,7 @@ def init_events(bot, cli_flags):
                 await ctx.send(error.args[0])
             else:
                 await ctx.send_help()
-        elif isinstance(error, commands.BadArgument):
+        elif isinstance(error, commands.UserInputError):
             await ctx.send_help()
         elif isinstance(error, commands.DisabledCommand):
             disabled_message = await bot.db.disabled_command_msg()
@@ -198,7 +201,12 @@ def init_events(bot, cli_flags):
             bot._last_exception = exception_log
             await ctx.send(inline(message))
         elif isinstance(error, commands.CommandNotFound):
-            fuzzy_commands = await fuzzy_command_search(ctx)
+            fuzzy_commands = await fuzzy_command_search(
+                ctx,
+                commands={
+                    c async for c in RedHelpFormatter.help_filter_func(ctx, bot.walk_commands())
+                },
+            )
             if not fuzzy_commands:
                 pass
             elif await ctx.embed_requested():
@@ -235,7 +243,8 @@ def init_events(bot, cli_flags):
             await ctx.send(
                 "This command is on cooldown. Try again in {}.".format(
                     humanize_timedelta(seconds=error.retry_after)
-                )
+                ),
+                delete_after=error.retry_after,
             )
         else:
             log.exception(type(error).__name__, exc_info=error)
@@ -302,6 +311,14 @@ def init_events(bot, cli_flags):
             command_obj = bot.get_command(command_name)
             if command_obj is not None:
                 command_obj.enable_in(guild)
+
+    @bot.event
+    async def on_cog_add(cog: commands.Cog):
+        confs = get_latest_confs()
+        for c in confs:
+            uuid = c.unique_identifier
+            group_data = c.custom_groups
+            await bot.db.custom("CUSTOM_GROUPS", c.cog_name, uuid).set(group_data)
 
 
 def _get_startup_screen_specs():

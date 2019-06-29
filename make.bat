@@ -14,23 +14,18 @@ for /F "tokens=* USEBACKQ" %%A in (`git ls-files "*.py"`) do (
 goto %1
 
 :reformat
-black -l 99 -N !PYFILES!
+black -l 99 !PYFILES!
 exit /B %ERRORLEVEL%
 
 :stylecheck
-black -l 99 -N --check !PYFILES!
+black -l 99 --check !PYFILES!
 exit /B %ERRORLEVEL%
 
-:update_vendor
-if [%REF%] == [] (
-    set REF2="rewrite"
-) else (
-    set REF2=%REF%
-)
-pip install --upgrade --no-deps -t . https://github.com/Rapptz/discord.py/archive/!REF2!.tar.gz#egg=discord.py
-del /S /Q "discord.py*-info"
-for /F %%i in ('dir /S /B discord.py*.egg-info') do rmdir /S /Q %%i
-goto reformat
+:setupenv
+py -3.7 -m venv --clear .venv
+.\.venv\Scripts\python -m pip install -U pip setuptools
+.\.venv\Scripts\python -m pip install -Ur dev-requirements.txt
+exit /B %ERRORLEVEL%
 
 :help
 echo Usage:
@@ -39,5 +34,4 @@ echo.
 echo Commands:
 echo   reformat                   Reformat all .py files being tracked by git.
 echo   stylecheck                 Check which tracked .py files need reformatting.
-echo   update_vendor              Update vendored discord.py library to %%REF%%, which defaults to
-echo                              "rewrite"
+echo   setupenv                   Create or replace a virtual environment for development.

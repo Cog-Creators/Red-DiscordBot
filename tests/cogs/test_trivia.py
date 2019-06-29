@@ -8,7 +8,7 @@ def test_trivia_lists():
     assert list_names
     problem_lists = []
     for l in list_names:
-        with l.open() as f:
+        with l.open(encoding="utf-8") as f:
             try:
                 dict_ = yaml.safe_load(f)
             except yaml.error.YAMLError as e:
