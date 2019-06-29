@@ -218,7 +218,7 @@ class TwitchStream(Stream):
             status = "Untitled broadcast"
         if is_rerun:
             status += " - Rerun"
-        embed = discord.Embed(title=status, url=url)
+        embed = discord.Embed(title=status, url=url, color=0x6441A4)
         embed.set_author(name=channel["display_name"])
         embed.add_field(name=_("Followers"), value=channel["followers"])
         embed.add_field(name=_("Total views"), value=channel["views"])
@@ -227,7 +227,6 @@ class TwitchStream(Stream):
             embed.set_image(url=rnd(data["stream"]["preview"]["medium"]))
         if channel["game"]:
             embed.set_footer(text=_("Playing: ") + channel["game"])
-        embed.color = 0x6441A4
 
         return embed
 
@@ -263,14 +262,13 @@ class HitboxStream(Stream):
         livestream = data["livestream"][0]
         channel = livestream["channel"]
         url = channel["channel_link"]
-        embed = discord.Embed(title=livestream["media_status"], url=url)
+        embed = discord.Embed(title=livestream["media_status"], url=url, color=0x98CB00)
         embed.set_author(name=livestream["media_name"])
         embed.add_field(name=_("Followers"), value=channel["followers"])
         embed.set_thumbnail(url=base_url + channel["user_logo"])
         if livestream["media_thumbnail"]:
             embed.set_image(url=rnd(base_url + livestream["media_thumbnail"]))
         embed.set_footer(text=_("Playing: ") + livestream["category_name"])
-        embed.color = 0x98CB00
 
         return embed
 
@@ -313,7 +311,7 @@ class MixerStream(Stream):
             embed.set_thumbnail(url=default_avatar)
         if data["thumbnail"]:
             embed.set_image(url=rnd(data["thumbnail"]["url"]))
-        embed.color = 0x4C90F3
+        embed.color = 0x4C90F3  # pylint: disable=assigning-non-slot
         if data["type"] is not None:
             embed.set_footer(text=_("Playing: ") + data["type"]["name"])
         return embed
@@ -348,13 +346,12 @@ class PicartoStream(Stream):
         )
         url = "https://picarto.tv/" + data["name"]
         thumbnail = data["thumbnails"]["web"]
-        embed = discord.Embed(title=data["title"], url=url)
+        embed = discord.Embed(title=data["title"], url=url, color=0x4C90F3)
         embed.set_author(name=data["name"])
         embed.set_image(url=rnd(thumbnail))
         embed.add_field(name=_("Followers"), value=data["followers"])
         embed.add_field(name=_("Total views"), value=data["viewers_total"])
         embed.set_thumbnail(url=avatar)
-        embed.color = 0x132332
         data["tags"] = ", ".join(data["tags"])
 
         if not data["tags"]:
@@ -365,6 +362,5 @@ class PicartoStream(Stream):
         else:
             data["adult"] = ""
 
-        embed.color = 0x4C90F3
         embed.set_footer(text=_("{adult}Category: {category} | Tags: {tags}").format(**data))
         return embed

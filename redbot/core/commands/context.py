@@ -23,6 +23,7 @@ class Context(commands.Context):
     """
 
     def __init__(self, **attrs):
+        self.assume_yes = attrs.pop("assume_yes", False)
         super().__init__(**attrs)
         self.permission_state: PermState = PermState.NORMAL
 
@@ -62,10 +63,12 @@ class Context(commands.Context):
 
         return await super().send(content=content, **kwargs)
 
-    async def send_help(self) -> List[discord.Message]:
+    async def send_help(self, command=None):
         """ Send the command help message. """
-        command = self.invoked_subcommand or self.command
-        await super().send_help(command)
+        # This allows people to manually use this similarly
+        # to the upstream d.py version, while retaining our use.
+        command = command or self.command
+        await self.bot.send_help_for(self, command)
 
     async def tick(self) -> bool:
         """Add a tick reaction to the command message.

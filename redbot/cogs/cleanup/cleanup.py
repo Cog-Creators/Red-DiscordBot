@@ -1,3 +1,4 @@
+import logging
 import re
 from datetime import datetime, timedelta
 from typing import Union, List, Callable, Set
@@ -8,11 +9,12 @@ from redbot.core import checks, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.mod import slow_deletion, mass_purge
-from redbot.cogs.mod.log import log
 from redbot.core.utils.predicates import MessagePredicate
 from .converters import RawMessageIds
 
 _ = Translator("Cleanup", __file__)
+
+log = logging.getLogger("red.cleanup")
 
 
 @cog_i18n(_)
@@ -32,6 +34,9 @@ class Cleanup(commands.Cog):
 
         Tries its best to cleanup after itself if the response is positive.
         """
+
+        if ctx.assume_yes:
+            return True
 
         prompt = await ctx.send(
             _("Are you sure you want to delete {number} messages? (y/n)").format(number=number)
@@ -262,7 +267,7 @@ class Cleanup(commands.Cog):
         author = ctx.author
 
         try:
-            before = await channel.get_message(message_id)
+            before = await channel.fetch_message(message_id)
         except discord.NotFound:
             return await ctx.send(_("Message not found."))
 
@@ -299,13 +304,13 @@ class Cleanup(commands.Cog):
         author = ctx.author
         try:
             mone = await channel.fetch_message(one)
-        except discord.errors.Notfound:
+        except discord.errors.NotFound:
             return await ctx.send(
                 _("Could not find a message with the ID of {id}.".format(id=one))
             )
         try:
             mtwo = await channel.fetch_message(two)
-        except discord.errors.Notfound:
+        except discord.errors.NotFound:
             return await ctx.send(
                 _("Could not find a message with the ID of {id}.".format(id=two))
             )

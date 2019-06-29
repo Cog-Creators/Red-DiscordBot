@@ -1,5 +1,6 @@
 import asyncio
 import contextlib
+import logging
 from collections import namedtuple
 from datetime import datetime, timedelta
 from typing import cast, Optional, Union
@@ -10,8 +11,8 @@ from redbot.core.utils.chat_formatting import pagify
 from redbot.core.utils.mod import is_allowed_by_hierarchy, get_audit_reason
 from .abc import MixinMeta
 from .converters import RawUserIds
-from .log import log
 
+log = logging.getLogger("red.mod")
 _ = i18n.Translator("Mod", __file__)
 
 
@@ -494,6 +495,56 @@ class KickBanMixin(MixinMeta):
             except RuntimeError as e:
                 await ctx.send(e)
             await ctx.send(_("Done. Enough chaos."))
+
+    @commands.command()
+    @commands.guild_only()
+    @commands.mod_or_permissions(move_members=True)
+    async def voicekick(
+        self, ctx: commands.Context, member: discord.Member, *, reason: str = None
+    ):
+        """Kick a member from a voice channel."""
+        author = ctx.author
+        guild = ctx.guild
+        user_voice_state: discord.VoiceState = member.voice
+
+        if await self._voice_perm_check(ctx, user_voice_state, move_members=True) is False:
+            return
+        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, member):
+            await ctx.send(
+                _(
+                    "I cannot let you do that. You are "
+                    "not higher than the user in the role "
+                    "hierarchy."
+                )
+            )
+            return
+        case_channel = member.voice.channel
+        # Store this channel for the case channel.
+
+        try:
+            await member.move_to(discord.Object(id=None))
+            # Work around till we get D.py 1.1.0, whereby we can directly do None.
+        except discord.Forbidden:  # Very unlikely that this will ever occur
+            await ctx.send(_("I am unable to kick this member from the voice channel."))
+            return
+        except discord.HTTPException:
+            await ctx.send(_("Something went wrong while attempting to kick that member"))
+            return
+        else:
+            try:
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    ctx.message.created_at,
+                    "vkick",
+                    member,
+                    author,
+                    reason,
+                    until=None,
+                    channel=case_channel,
+                )
+            except RuntimeError as e:
+                await ctx.send(e)
 
     @commands.command()
     @commands.guild_only()
