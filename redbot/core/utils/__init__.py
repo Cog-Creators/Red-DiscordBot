@@ -62,13 +62,13 @@ logging.getLogger().addFilter(_fuzzy_log_filter)
 def safe_delete(pth: Path):
     if pth.exists():
         for root, dirs, files in os.walk(str(pth)):
-            os.chmod(root, 0o755)
+            os.chmod(root, 0o700)
 
             for d in dirs:
-                os.chmod(os.path.join(root, d), 0o755)
+                os.chmod(os.path.join(root, d), 0o700)
 
             for f in files:
-                os.chmod(os.path.join(root, f), 0o755)
+                os.chmod(os.path.join(root, f), 0o700)
 
         shutil.rmtree(str(pth), ignore_errors=True)
 
