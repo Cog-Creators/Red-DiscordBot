@@ -34,6 +34,8 @@ from redbot.core import (
 )
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import humanize_timedelta, pagify, box, inline, humanize_list
+from .commands.requires import PrivilegeLevel
+
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -752,15 +754,17 @@ class Core(commands.Cog, CoreLogic):
         if ctx.invoked_subcommand is None:
             if ctx.guild:
                 guild = ctx.guild
-                admin_role = (
-                    guild.get_role(await ctx.bot.db.guild(ctx.guild).admin_role()) or "Not set"
+                admin_role_ids = await ctx.bot.db.guild(ctx.guild).admin_role()
+                admin_role_names = [r.name for r in guild.roles if r.id in admin_role_ids]
+                admin_roles_str = (
+                    humanize_list(admin_role_names) if admin_role_names else "Not Set."
                 )
-                mod_role = (
-                    guild.get_role(await ctx.bot.db.guild(ctx.guild).mod_role()) or "Not set"
-                )
+                mod_role_ids = await ctx.bot.db.guild(ctx.guild).mod_role()
+                mod_role_names = [r.name for r in guild.roles if r.id in mod_role_ids]
+                mod_roles_str = humanize_list(mod_role_names) if mod_role_names else "Not Set."
                 prefixes = await ctx.bot.db.guild(ctx.guild).prefix()
-                guild_settings = _("Admin role: {admin}\nMod role: {mod}\n").format(
-                    admin=admin_role, mod=mod_role
+                guild_settings = _("Admin roles: {admin}\nMod roles: {mod}\n").format(
+                    admin=admin_roles_str, mod=mod_roles_str
                 )
             else:
                 guild_settings = ""
@@ -781,23 +785,60 @@ class Core(commands.Cog, CoreLogic):
                 guild_settings=guild_settings,
                 locale=locale,
             )
-            await ctx.send(box(settings))
+            for page in pagify(settings):
+                await ctx.send(box(page))
 
     @_set.command()
     @checks.guildowner()
     @commands.guild_only()
-    async def adminrole(self, ctx: commands.Context, *, role: discord.Role):
-        """Sets the admin role for this server"""
-        await ctx.bot.db.guild(ctx.guild).admin_role.set(role.id)
-        await ctx.send(_("The admin role for this guild has been set."))
+    async def addadminrole(self, ctx: commands.Context, *, role: discord.Role):
+        """
+        Adds an admin role for this guild.
+        """
+        async with ctx.bot.db.guild(ctx.guild).admin_role() as roles:
+            if role.id in roles:
+                return await ctx.send(_("This role is already an admin role."))
+            roles.append(role.id)
+        await ctx.send(_("That role is now considered an admin role."))
 
     @_set.command()
     @checks.guildowner()
     @commands.guild_only()
-    async def modrole(self, ctx: commands.Context, *, role: discord.Role):
-        """Sets the mod role for this server"""
-        await ctx.bot.db.guild(ctx.guild).mod_role.set(role.id)
-        await ctx.send(_("The mod role for this guild has been set."))
+    async def addmodrole(self, ctx: commands.Context, *, role: discord.Role):
+        """
+        Adds a mod role for this guild.
+        """
+        async with ctx.bot.db.guild(ctx.guild).mod_role() as roles:
+            if role.id in roles:
+                return await ctx.send(_("This role is already a mod role."))
+            roles.append(role.id)
+        await ctx.send(_("That role is now considered a mod role."))
+
+    @_set.command(aliases=["remadmindrole", "deladminrole", "deleteadminrole"])
+    @checks.guildowner()
+    @commands.guild_only()
+    async def removeadminrole(self, ctx: commands.Context, *, role: discord.Role):
+        """
+        Removes an admin role for this guild.
+        """
+        async with ctx.bot.db.guild(ctx.guild).admin_role() as roles:
+            if role.id not in roles:
+                return await ctx.send(_("That role was not an admin role to begin with."))
+            roles.remove(role.id)
+        await ctx.send(_("That role is no longer considered an admin role."))
+
+    @_set.command(aliases=["remmodrole", "delmodrole", "deletemodrole"])
+    @checks.guildowner()
+    @commands.guild_only()
+    async def removemodrole(self, ctx: commands.Context, *, role: discord.Role):
+        """
+        Removes a mod role for this guild.
+        """
+        async with ctx.bot.db.guild(ctx.guild).mod_role() as roles:
+            if role.id not in roles:
+                return await ctx.send(_("That role was not a mod role to begin with."))
+            roles.remove(role.id)
+        await ctx.send(_("That role is no longer considered a mod role."))
 
     @_set.command(aliases=["usebotcolor"])
     @checks.guildowner()
@@ -858,7 +899,7 @@ class Core(commands.Cog, CoreLogic):
 
         Acceptable values for the colour parameter can be found at:
 
-        http://discordpy.readthedocs.io/en/rewrite/ext/commands/api.html#discord.ext.commands.ColourConverter
+        https://discordpy.readthedocs.io/en/stable/ext/commands/api.html#discord.ext.commands.ColourConverter
         """
         if colour is None:
             ctx.bot.color = discord.Color.red()
@@ -1367,9 +1408,9 @@ class Core(commands.Cog, CoreLogic):
                 docs = await db[c_name].find().to_list(None)
                 for item in docs:
                     item_id = str(item.pop("_id"))
-                    output = item
                     target = JSON(c_name, item_id, data_path_override=c_data_path)
-                    await target.jsonIO._threadsafe_save_json(output)
+                    target.data = item
+                    await target._save()
         backup_filename = "redv3-{}-{}.tar.gz".format(
             instance_name, ctx.message.created_at.strftime("%Y-%m-%d %H-%M-%S")
         )
@@ -1961,6 +2002,12 @@ class Core(commands.Cog, CoreLogic):
             )
             return
 
+        if self.command_manager in command_obj.parents or self.command_manager == command_obj:
+            await ctx.send(
+                _("The command to disable cannot be `command` or any of its subcommands.")
+            )
+            return
+
         async with ctx.bot.db.disabled_commands() as disabled_commands:
             if command not in disabled_commands:
                 disabled_commands.append(command_obj.qualified_name)
@@ -1981,6 +2028,16 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(
                 _("I couldn't find that command. Please note that it is case sensitive.")
             )
+            return
+
+        if self.command_manager in command_obj.parents or self.command_manager == command_obj:
+            await ctx.send(
+                _("The command to disable cannot be `command` or any of its subcommands.")
+            )
+            return
+
+        if command_obj.requires.privilege_level > await PrivilegeLevel.from_ctx(ctx):
+            await ctx.send(_("You are not allowed to disable that command."))
             return
 
         async with ctx.bot.db.guild(ctx.guild).disabled_commands() as disabled_commands:
@@ -2037,6 +2094,10 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(
                 _("I couldn't find that command. Please note that it is case sensitive.")
             )
+            return
+
+        if command_obj.requires.privilege_level > await PrivilegeLevel.from_ctx(ctx):
+            await ctx.send(_("You are not allowed to enable that command."))
             return
 
         async with ctx.bot.db.guild(ctx.guild).disabled_commands() as disabled_commands:

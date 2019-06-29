@@ -6,12 +6,15 @@ import asyncio
 import asyncio.subprocess  # disables for # https://github.com/PyCQA/pylint/issues/1469
 import logging
 import re
+import sys
 import tempfile
 from typing import Optional, Tuple, ClassVar, List
 
 import aiohttp
+from tqdm import tqdm
 
 from redbot.core import data_manager
+from .errors import LavalinkDownloadFailed
 
 JAR_VERSION = "3.2.0.3"
 JAR_BUILD = 796
@@ -200,21 +203,44 @@ class ServerManager:
         async with aiohttp.ClientSession() as session:
             async with session.get(LAVALINK_DOWNLOAD_URL) as response:
                 if response.status == 404:
-                    raise RuntimeError(
-                        f"Lavalink jar version {JAR_VERSION}_{JAR_BUILD} hasn't been published"
+                    # A 404 means our LAVALINK_DOWNLOAD_URL is invalid, so likely the jar version
+                    # hasn't been published yet
+                    raise LavalinkDownloadFailed(
+                        f"Lavalink jar version {JAR_VERSION}_{JAR_BUILD} hasn't been published "
+                        f"yet",
+                        response=response,
+                        should_retry=False,
                     )
+                elif 400 <= response.status < 600:
+                    # Other bad responses should be raised but we should retry just incase
+                    raise LavalinkDownloadFailed(response=response, should_retry=True)
                 fd, path = tempfile.mkstemp()
                 file = open(fd, "wb")
-                try:
-                    chunk = await response.content.read(1024)
-                    while chunk:
-                        file.write(chunk)
+                nbytes = 0
+                with tqdm(
+                    desc="Lavalink.jar",
+                    total=response.content_length,
+                    file=sys.stdout,
+                    unit="B",
+                    unit_scale=True,
+                    miniters=1,
+                    dynamic_ncols=True,
+                    leave=False,
+                ) as progress_bar:
+                    try:
                         chunk = await response.content.read(1024)
-                    file.flush()
-                finally:
-                    file.close()
+                        while chunk:
+                            chunk_size = file.write(chunk)
+                            nbytes += chunk_size
+                            progress_bar.update(chunk_size)
+                            chunk = await response.content.read(1024)
+                        file.flush()
+                    finally:
+                        file.close()
 
                 shutil.move(path, str(LAVALINK_JAR_FILE), copy_function=shutil.copyfile)
+
+        log.info("Successfully downloaded Lavalink.jar (%s bytes written)", format(nbytes, ","))
 
     @classmethod
     async def _is_up_to_date(cls):
@@ -235,7 +261,7 @@ class ServerManager:
             # Output is unexpected, suspect corrupted jarfile
             return False
         build = int(match["build"])
-        cls._up_to_date = build == JAR_BUILD
+        cls._up_to_date = build >= JAR_BUILD
         return cls._up_to_date
 
     @classmethod

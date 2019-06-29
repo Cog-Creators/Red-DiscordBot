@@ -123,29 +123,25 @@ async def is_mod_or_superior(
         If the wrong type of ``obj`` was passed.
 
     """
-    user = None
     if isinstance(obj, discord.Message):
         user = obj.author
     elif isinstance(obj, discord.Member):
         user = obj
     elif isinstance(obj, discord.Role):
-        pass
+        if obj.id in await bot.db.guild(obj.guild).mod_role():
+            return True
+        if obj.id in await bot.db.guild(obj.guild).admin_role():
+            return True
+        return False
     else:
         raise TypeError("Only messages, members or roles may be passed")
 
-    server = obj.guild
-    admin_role_id = await bot.db.guild(server).admin_role()
-    mod_role_id = await bot.db.guild(server).mod_role()
-
-    if isinstance(obj, discord.Role):
-        return obj.id in [admin_role_id, mod_role_id]
-
     if await bot.is_owner(user):
         return True
-    elif discord.utils.find(lambda r: r.id in (admin_role_id, mod_role_id), user.roles):
+    if await bot.is_mod(user):
         return True
-    else:
-        return False
+
+    return False
 
 
 def strfdelta(delta: timedelta):
@@ -208,27 +204,21 @@ async def is_admin_or_superior(
         If the wrong type of ``obj`` was passed.
 
     """
-    user = None
     if isinstance(obj, discord.Message):
         user = obj.author
     elif isinstance(obj, discord.Member):
         user = obj
     elif isinstance(obj, discord.Role):
-        pass
+        return obj.id in await bot.db.guild(obj.guild).admin_role()
     else:
         raise TypeError("Only messages, members or roles may be passed")
 
-    admin_role_id = await bot.db.guild(obj.guild).admin_role()
-
-    if isinstance(obj, discord.Role):
-        return obj.id == admin_role_id
-
-    if user and await bot.is_owner(user):
+    if await bot.is_owner(user):
         return True
-    elif discord.utils.get(user.roles, id=admin_role_id):
+    if await bot.is_admin(user):
         return True
-    else:
-        return False
+
+    return False
 
 
 async def check_permissions(ctx: "Context", perms: Dict[str, bool]) -> bool:

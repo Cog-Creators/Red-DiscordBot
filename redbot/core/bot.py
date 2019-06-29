@@ -67,14 +67,15 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             api_tokens={},
             extra_owner_destinations=[],
             owner_opt_out_list=[],
+            schema_version=0,
         )
 
         self.db.register_guild(
             prefix=[],
             whitelist=[],
             blacklist=[],
-            admin_role=None,
-            mod_role=None,
+            admin_role=[],
+            mod_role=[],
             embeds=None,
             use_bot_color=False,
             fuzzy=False,
@@ -134,6 +135,38 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         self._permissions_hooks: List[commands.CheckPredicate] = []
 
+    async def maybe_update_config(self):
+        """
+        This should be run prior to loading cogs or connecting to discord.
+        """
+        schema_version = await self.db.schema_version()
+
+        if schema_version == 0:
+            await self._schema_0_to_1()
+            schema_version += 1
+            await self.db.schema_version.set(schema_version)
+
+    async def _schema_0_to_1(self):
+        """
+        This contains the migration to allow multiple mod and multiple admin roles.
+        """
+
+        log.info("Begin updating guild configs to support multiple mod/admin roles")
+        all_guild_data = await self.db.all_guilds()
+        for guild_id, guild_data in all_guild_data.items():
+            guild_obj = discord.Object(id=guild_id)
+            mod_roles, admin_roles = [], []
+            maybe_mod_role_id = guild_data["mod_role"]
+            maybe_admin_role_id = guild_data["admin_role"]
+
+            if maybe_mod_role_id:
+                mod_roles.append(maybe_mod_role_id)
+                await self.db.guild(guild_obj).mod_role.set(mod_roles)
+            if maybe_admin_role_id:
+                admin_roles.append(maybe_admin_role_id)
+                await self.db.guild(guild_obj).admin_role.set(admin_roles)
+        log.info("Done updating guild configs to support multiple mod/admin roles")
+
     async def send_help_for(
         self, ctx: commands.Context, help_for: Union[commands.Command, commands.GroupMixin, str]
     ):
@@ -191,21 +224,25 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
     async def is_admin(self, member: discord.Member):
         """Checks if a member is an admin of their guild."""
-        admin_role = await self.db.guild(member.guild).admin_role()
         try:
-            if any(role.id == admin_role for role in member.roles):
-                return True
+            member_snowflakes = member._roles  # DEP-WARN
+            for snowflake in await self.db.guild(member.guild).admin_role():
+                if member_snowflakes.has(snowflake):  # Dep-WARN
+                    return True
         except AttributeError:  # someone passed a webhook to this
             pass
         return False
 
     async def is_mod(self, member: discord.Member):
         """Checks if a member is a mod or admin of their guild."""
-        mod_role = await self.db.guild(member.guild).mod_role()
-        admin_role = await self.db.guild(member.guild).admin_role()
         try:
-            if any(role.id in (mod_role, admin_role) for role in member.roles):
-                return True
+            member_snowflakes = member._roles  # DEP-WARN
+            for snowflake in await self.db.guild(member.guild).admin_role():
+                if member_snowflakes.has(snowflake):  # DEP-WARN
+                    return True
+            for snowflake in await self.db.guild(member.guild).mod_role():
+                if member_snowflakes.has(snowflake):  # DEP-WARN
+                    return True
         except AttributeError:  # someone passed a webhook to this
             pass
         return False
@@ -215,18 +252,19 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
     async def process_commands(self, message: discord.Message):
         """
-        modification from the base to do the same thing in the command case
-        
-        but dispatch an additional event for cogs which want to handle normal messages
-        differently to command messages, 
-        without the overhead of additional get_context calls per cog
+        Same as base method, but dispatches an additional event for cogs
+        which want to handle normal messages differently to command
+        messages,  without the overhead of additional get_context calls
+        per cog.
         """
         if not message.author.bot:
             ctx = await self.get_context(message)
-            if ctx.valid:
-                return await self.invoke(ctx)
+            await self.invoke(ctx)
+        else:
+            ctx = None
 
-        self.dispatch("message_without_command", message)
+        if ctx is None or ctx.valid is False:
+            self.dispatch("message_without_command", message)
 
     @staticmethod
     def list_packages():
