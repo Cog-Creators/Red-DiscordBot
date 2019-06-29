@@ -34,8 +34,8 @@ from redbot.core import (
 )
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import humanize_timedelta, pagify, box, inline, humanize_list
-
 from .commands.requires import PrivilegeLevel
+
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -148,25 +148,6 @@ class CoreLogic:
         children = {name: lib for name, lib in sys.modules.items() if name.startswith(module_name)}
         for child_name, lib in children.items():
             importlib._bootstrap._exec(lib.__spec__, lib)
-
-    @staticmethod
-    def _get_package_strings(
-        packages: List[str], fmt: str, other: Optional[Tuple[str, ...]] = None
-    ) -> str:
-        """
-        Gets the strings needed for the load, unload and reload commands
-        """
-        packages = [inline(name) for name in packages]
-
-        if other is None:
-            other = ("", "")
-        plural = "s" if len(packages) > 1 else ""
-        use_and, other = ("", other[0]) if len(packages) == 1 else (" and ", other[1])
-        packages_string = ", ".join(packages[:-1]) + use_and + packages[-1]
-
-        form = {"plural": plural, "packs": packages_string, "other": other}
-        final_string = fmt.format(**form)
-        return final_string
 
     async def _unload(self, cog_names: Iterable[str]) -> Tuple[List[str], List[str]]:
         """
@@ -586,38 +567,64 @@ class Core(commands.Cog, CoreLogic):
         async with ctx.typing():
             loaded, failed, not_found, already_loaded, failed_with_reason = await self._load(cogs)
 
+        output = []
+
         if loaded:
-            fmt = _("Loaded {packs}.")
-            formed = self._get_package_strings(loaded, fmt)
-            await ctx.send(formed)
+            loaded_packages = humanize_list([inline(package) for package in loaded])
+            formed = _("Loaded {packs}.").format(packs=loaded_packages)
+            output.append(formed)
 
         if already_loaded:
-            fmt = _("The package{plural} {packs} {other} already loaded.")
-            formed = self._get_package_strings(already_loaded, fmt, (_("is"), _("are")))
-            await ctx.send(formed)
+            if len(already_loaded) == 1:
+                formed = _("The following package is already loaded: {pack}").format(
+                    pack=inline(already_loaded[0])
+                )
+            else:
+                formed = _("The following packages are already loaded: {packs}").format(
+                    packs=humanize_list([inline(package) for package in already_loaded])
+                )
+            output.append(formed)
 
         if failed:
-            fmt = _(
-                "Failed to load package{plural} {packs}. Check your console or "
-                "logs for details."
-            )
-            formed = self._get_package_strings(failed, fmt)
-            await ctx.send(formed)
+            if len(failed) == 1:
+                formed = _(
+                    "Failed to load the following package: {pack}."
+                    "\nCheck your console or logs for details."
+                ).format(pack=inline(failed[0]))
+            else:
+                formed = _(
+                    "Failed to load the following packages: {packs}"
+                    "\nCheck your console or logs for details."
+                ).format(packs=humanize_list([inline(package) for package in failed]))
+            output.append(formed)
 
         if not_found:
-            fmt = _("The package{plural} {packs} {other} not found in any cog path.")
-            formed = self._get_package_strings(not_found, fmt, (_("was"), _("were")))
-            await ctx.send(formed)
+            if len(not_found) == 1:
+                formed = _("The following package was not found in any cog path: {pack}.").format(
+                    pack=inline(not_found[0])
+                )
+            else:
+                formed = _(
+                    "The following packages were not found in any cog path: {packs}"
+                ).format(packs=humanize_list([inline(package) for package in not_found]))
+            output.append(formed)
 
         if failed_with_reason:
-            fmt = _(
-                "{other} package{plural} could not be loaded for the following reason{plural}:\n\n"
-            )
             reasons = "\n".join([f"`{x}`: {y}" for x, y in failed_with_reason])
-            formed = self._get_package_strings(
-                [x for x, y in failed_with_reason], fmt, (_("This"), _("These"))
-            )
-            await ctx.send(formed + reasons)
+            if len(failed_with_reason) == 1:
+                formed = _(
+                    "This package could not be loaded for the following reason:\n\n{reason}"
+                ).format(reason=reasons)
+            else:
+                formed = _(
+                    "These packages could not be loaded for the following reasons:\n\n{reasons}"
+                ).format(reasons=reasons)
+            output.append(formed)
+
+        if output:
+            total_message = "\n\n".join(output)
+            for page in pagify(total_message):
+                await ctx.send(page)
 
     @commands.command()
     @checks.is_owner()
@@ -628,15 +635,34 @@ class Core(commands.Cog, CoreLogic):
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         unloaded, failed = await self._unload(cogs)
 
+        output = []
+
         if unloaded:
-            fmt = _("Package{plural} {packs} {other} unloaded.")
-            formed = self._get_package_strings(unloaded, fmt, (_("was"), _("were")))
-            await ctx.send(formed)
+            if len(unloaded) == 1:
+                formed = _("The following package was unloaded: {pack}.").format(
+                    pack=inline(unloaded[0])
+                )
+            else:
+                formed = _("The following packages were unloaded: {packs}.").format(
+                    packs=humanize_list([inline(package) for package in unloaded])
+                )
+            output.append(formed)
 
         if failed:
-            fmt = _("The package{plural} {packs} {other} not loaded.")
-            formed = self._get_package_strings(failed, fmt, (_("is"), _("are")))
-            await ctx.send(formed)
+            if len(failed) == 1:
+                formed = _("The following package was not loaded: {pack}.").format(
+                    pack=inline(failed[0])
+                )
+            else:
+                formed = _("The following packages were not loaded: {packs}.").format(
+                    packs=humanize_list([inline(package) for package in failed])
+                )
+            output.append(formed)
+
+        if output:
+            total_message = "\n\n".join(output)
+            for page in pagify(total_message):
+                await ctx.send(page)
 
     @commands.command(name="reload")
     @checks.is_owner()
@@ -650,30 +676,53 @@ class Core(commands.Cog, CoreLogic):
                 cogs
             )
 
+        output = []
+
         if loaded:
-            fmt = _("Package{plural} {packs} {other} reloaded.")
-            formed = self._get_package_strings(loaded, fmt, (_("was"), _("were")))
-            await ctx.send(formed)
+            loaded_packages = humanize_list([inline(package) for package in loaded])
+            formed = _("Reloaded {packs}.").format(packs=loaded_packages)
+            output.append(formed)
 
         if failed:
-            fmt = _("Failed to reload package{plural} {packs}. Check your logs for details")
-            formed = self._get_package_strings(failed, fmt)
-            await ctx.send(formed)
+            if len(failed) == 1:
+                formed = _(
+                    "Failed to reload the following package: {pack}."
+                    "\nCheck your console or logs for details."
+                ).format(pack=inline(failed[0]))
+            else:
+                formed = _(
+                    "Failed to reload the following packages: {packs}"
+                    "\nCheck your console or logs for details."
+                ).format(packs=humanize_list([inline(package) for package in failed]))
+            output.append(formed)
 
         if not_found:
-            fmt = _("The package{plural} {packs} {other} not found in any cog path.")
-            formed = self._get_package_strings(not_found, fmt, (_("was"), _("were")))
-            await ctx.send(formed)
+            if len(not_found) == 1:
+                formed = _("The following package was not found in any cog path: {pack}.").format(
+                    pack=inline(not_found[0])
+                )
+            else:
+                formed = _(
+                    "The following packages were not found in any cog path: {packs}"
+                ).format(packs=humanize_list([inline(package) for package in not_found]))
+            output.append(formed)
 
         if failed_with_reason:
-            fmt = _(
-                "{other} package{plural} could not be reloaded for the following reason{plural}:\n\n"
-            )
             reasons = "\n".join([f"`{x}`: {y}" for x, y in failed_with_reason])
-            formed = self._get_package_strings(
-                [x for x, y in failed_with_reason], fmt, (_("This"), _("These"))
-            )
-            await ctx.send(formed + reasons)
+            if len(failed_with_reason) == 1:
+                formed = _(
+                    "This package could not be reloaded for the following reason:\n\n{reason}"
+                ).format(reason=reasons)
+            else:
+                formed = _(
+                    "These packages could not be reloaded for the following reasons:\n\n{reasons}"
+                ).format(reasons=reasons)
+            output.append(formed)
+
+        if output:
+            total_message = "\n\n".join(output)
+            for page in pagify(total_message):
+                await ctx.send(page)
 
     @commands.command(name="shutdown")
     @checks.is_owner()
