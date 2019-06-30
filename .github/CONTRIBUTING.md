@@ -76,7 +76,7 @@ If you're not on Windows, you should also have GNU make installed, and you can o
         ```
     Each time you open a new command line, you should execute this command first. From here onwards, we will assume you are executing commands from within this activated virtual environment.
  
-**Note:** If you're comfortable with setting up virtual environments yourself and would rather do it manually, just run `pip install -r dev-requirements.txt` after setting it up.
+**Note:** If you're comfortable with setting up virtual environments yourself and would rather do it manually, just run `pip install -Ur tools/dev-requirements.txt` after setting it up.
 
 ### 4.2 Testing
 We've recently started using [tox](https://github.com/tox-dev/tox) to run all of our tests. It's extremely simple to use, and if you followed the previous section correctly, it is already installed to your virtual environment.
@@ -105,7 +105,7 @@ You may have noticed we have a `Makefile` and a `make.bat` in the top-level dire
 4. `make syncenv`: Sync your environment with Red's latest dependencies.
 
 ### 4.5 Keeping your dependencies up to date
-Whenever you pull from upstream (V3/develop on the main repository) and you notice either of the files `setup.cfg` or `dev-requirements.txt` have been changed, it can often mean some package dependencies have been updated, added or removed. To make sure you're testing and formatting with the most up-to-date versions of our dependencies, run `make syncenv`. You could also simply do `make newenv` to install them to a clean new virtual environment.
+Whenever you pull from upstream (V3/develop on the main repository) and you notice either of the files `setup.cfg` or `tools/dev-requirements.txt` have been changed, it can often mean some package dependencies have been updated, added or removed. To make sure you're testing and formatting with the most up-to-date versions of our dependencies, run `make syncenv`. You could also simply do `make newenv` to install them to a clean new virtual environment.
 
 ### 4.6 To contribute changes
 

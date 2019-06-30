@@ -23,4 +23,4 @@ newenv:
 	.venv/bin/pip install -U pip setuptools
 	$(MAKE) syncenv
 syncenv:
-	.venv/bin/pip install -Ur dev-requirements.txt
+	.venv/bin/pip install -Ur ./tools/dev-requirements.txt
