@@ -165,7 +165,7 @@ What is the official birthplace of country music?`Bristol
 Who wrote the song 'Do They Know It's Christmas' with Midge Ure?`Bob Geldof
 What instrument does Woody Allen play?`Clarinet
 Term meaning 'to gradually decrease in volume'?`Decrescendo
-He wrote the operas "The Magic Flute" and "The Marriage of Figaro"?`Wolfgang Amadeus Mozart
+He wrote the operas "The Magic Flute" and "The Marriage of Figaro"?`Wolfgang Amadeus Mozart`Mozart
 In 'La Traviata', who sings 'Sempre Libera'?`Violetta
 What do the initials B.B. stand for in B.B. King's name?`Blues Boy
 Name the musical film named after a state?`Oklahoma
@@ -184,7 +184,7 @@ Where does young Anakin Skywalker come from?`Tatooine
 Who was Dick Dastardley's pet?`Muttley
 What actress has received the most Oscar nominations?`Katherine Hepburn
 Who sang 'In The Air Tonight'?`Phil Collins
-Which of Beethoven's symphonies was the legendary "Incomplete"?`The 9th Symphony`9th`9
+Which of Beethoven's symphonies was the legendary "Incomplete"?`The 10th Symphony`10th`10
 Name the band: songs include "Let's Stick Together, The Price of Love"?`Bryan Ferry
 What is the name given to the type of West Indian music made famous by artists such as Bob Marley and Peter Tosh?`Reggae
 In the film 'American Hot Wax', who played the 'Mookie'?`Jay Leno
@@ -294,7 +294,7 @@ Name the band: songs include "Doctor Doctor, Hold Me Now, Don't Mess With Dr Dre
 Who sang 'All Right Now'?`Free
 Country singer Vince ____?`Gill
 What is Hawkeye's full name in M.A.S.H.?`Benjamin Franklin Pierce
-How many symphonies did Beethoven complete?`Eight`8
+How many symphonies did Beethoven complete?`Nine`9
 What is Peter Parker's secret identity?`Spiderman
 Before being married to Pamela Anderson what other famous actress was Tommy Lee married to?`Heather Locklear
 Who is the autor of the song 'Blue Suede Shoes'?`Carl Perkins
@@ -501,7 +501,7 @@ Juliette Binoche won an academy award for best supporting role in which film?`En
 Who runs Andy Capp's favorite pub?`Jack and Jill
 What was the first film directed by Robert Redford?`Ordinary People
 What was the first cartoon character called?`Oswald the Rabbit
-What composer was working on his 10th symphony at the time of his death?`Ludwig van Beethoven`Beethoven
+What famous composer was working on his 10th symphony at the time of his death?`Ludwig van Beethoven`Beethoven
 Popeye's chief adversary has two names, Bluto and ______?`Brutus
 What did Hannibal Lecter like to eat with liver?`Fava Beans
 Who was 'hooked on a feeling'?`Blue Suede
