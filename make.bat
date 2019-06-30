@@ -21,10 +21,13 @@ exit /B %ERRORLEVEL%
 black -l 99 --check !PYFILES!
 exit /B %ERRORLEVEL%
 
-:setupenv
+:newenv
 py -3.7 -m venv --clear .venv
 .\.venv\Scripts\python -m pip install -U pip setuptools
-.\.venv\Scripts\python -m pip install -Ur dev-requirements.txt
+goto syncenv
+
+:syncenv
+.\.venv\Scripts\python -m pip install -Ur .\tools\dev-requirements.txt
 exit /B %ERRORLEVEL%
 
 :help
@@ -34,4 +37,6 @@ echo.
 echo Commands:
 echo   reformat                   Reformat all .py files being tracked by git.
 echo   stylecheck                 Check which tracked .py files need reformatting.
-echo   setupenv                   Create or replace a virtual environment for development.
+echo   newenv                     Create or replace this project's virtual environment.
+echo   syncenv                    Sync this project's virtual environment to Red's latest
+echo                              dependencies.

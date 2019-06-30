@@ -18,7 +18,9 @@ bumpdeps:
 	python tools/bumpdeps.py
 
 # Development environment
-setupenv:
+newenv:
 	python3.7 -m venv --clear .venv
 	.venv/bin/pip install -U pip setuptools
+	$(MAKE) syncenv
+syncenv:
 	.venv/bin/pip install -Ur dev-requirements.txt
