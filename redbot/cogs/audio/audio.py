@@ -1660,8 +1660,8 @@ class Audio(commands.Cog):
 
         if not first_track_only and len(tracks) > 1:
             # a list of Tracks where all should be enqueued
-            # this is a Spotify playlist aleady made into a list of Tracks or a 
-            # url where Lavalink handles providing all Track objects to use, like a 
+            # this is a Spotify playlist aleady made into a list of Tracks or a
+            # url where Lavalink handles providing all Track objects to use, like a
             # YouTube or Soundcloud playlist
             track_len = 0
             for track in tracks:
