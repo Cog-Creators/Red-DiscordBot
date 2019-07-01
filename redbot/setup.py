@@ -409,8 +409,9 @@ async def create_backup(instance):
             from redbot.cogs.downloader.repo_manager import RepoManager
 
             repo_mgr = RepoManager()
+            await repo_mgr.initialize()
             repo_output = []
-            for _, repo in repo_mgr._repos:
+            for repo in repo_mgr._repos.values():
                 repo_output.append({"url": repo.url, "name": repo.name, "branch": repo.branch})
             repo_filename = pth / "cogs" / "RepoManager" / "repos.json"
             with open(str(repo_filename), "w") as f:
