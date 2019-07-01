@@ -1211,7 +1211,7 @@ class Audio(commands.Cog):
     async def _folder_list(self, ctx, folder):
         if not await self._localtracks_check(ctx):
             return
-        if not os.path.isdir(os.getcwd() + folder):
+        if not os.path.isdir(os.getcwd() + "/localtracks/{}/".format(folder)):
             return
         allowed_files = (".mp3", ".flac", ".ogg")
         folder_list = sorted(
@@ -1239,7 +1239,7 @@ class Audio(commands.Cog):
     async def _folder_tracks(self, ctx, player, folder):
         if not await self._localtracks_check(ctx):
             return
-        if not os.path.isdir(os.getcwd() + folder):
+        if not os.path.isdir(os.getcwd() + "/localtracks/{}/".format(folder)):
             return
         local_tracks = []
         for local_file in await self._all_folder_tracks(ctx, folder):
