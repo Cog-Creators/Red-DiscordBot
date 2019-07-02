@@ -1,7 +1,8 @@
 import asyncio
-import logging
 import collections
-from copy import deepcopy
+import logging
+import pickle
+import weakref
 from typing import (
     Any,
     Union,
@@ -10,19 +11,15 @@ from typing import (
     Awaitable,
     AsyncContextManager,
     TypeVar,
-    TYPE_CHECKING,
     MutableMapping,
     Optional,
 )
-import weakref
 
 import discord
 
 from .data_manager import cog_data_path, core_data_path
 from .drivers import get_driver, IdentifierData, BackendType
-
-if TYPE_CHECKING:
-    from .drivers.red_base import BaseDriver
+from .drivers.red_base import BaseDriver
 
 __all__ = ["Config", "get_latest_confs"]
 
@@ -42,7 +39,7 @@ def get_latest_confs() -> Tuple["Config"]:
     return tuple(ret)
 
 
-class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):
+class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):  # pylint: disable=duplicate-bases
     """Context manager implementation of config values.
 
     This class allows mutable config values to be both "get" and "set" from
@@ -76,7 +73,7 @@ class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):
                 "list or dict) in order to use a config value as "
                 "a context manager."
             )
-        self.__original_value = deepcopy(self.raw_value)
+        self.__original_value = pickle.loads(pickle.dumps(self.raw_value, -1))
         return self.raw_value
 
     async def __aexit__(self, exc_type, exc, tb):
@@ -174,7 +171,7 @@ class Value:
             # Is equivalent to this
 
             group_obj = conf.guild(some_guild)
-            value_obj = conf.foo
+            value_obj = group_obj.foo
             foo = await value_obj()
 
         .. important::
@@ -262,7 +259,7 @@ class Group(Value):
 
     @property
     def defaults(self):
-        return deepcopy(self._defaults)
+        return pickle.loads(pickle.dumps(self._defaults, -1))
 
     async def _get(self, default: Dict[str, Any] = ...) -> Dict[str, Any]:
         default = default if default is not ... else self.defaults
@@ -511,7 +508,7 @@ class Group(Value):
                 result = self.nested_update(value, defaults.get(key, {}))
                 defaults[key] = result
             else:
-                defaults[key] = deepcopy(current[key])
+                defaults[key] = pickle.loads(pickle.dumps(current[key], -1))
         return defaults
 
     async def set(self, value):
@@ -608,7 +605,7 @@ class Config:
         self,
         cog_name: str,
         unique_identifier: str,
-        driver: "BaseDriver",
+        driver: BaseDriver,
         force_registration: bool = False,
         defaults: dict = None,
     ):
@@ -626,7 +623,7 @@ class Config:
 
     @property
     def defaults(self):
-        return deepcopy(self._defaults)
+        return pickle.loads(pickle.dumps(self._defaults, -1))
 
     @staticmethod
     def _create_uuid(identifier: int):
@@ -795,7 +792,7 @@ class Config:
         if key not in self._defaults:
             self._defaults[key] = {}
 
-        data = deepcopy(kwargs)
+        data = pickle.loads(pickle.dumps(kwargs, -1))
 
         for k, v in data.items():
             to_add = self._get_defaults_dict(k, v)
@@ -918,9 +915,16 @@ class Config:
             custom_group_data=self.custom_groups,
             is_custom=is_custom,
         )
+
+        pkey_len = BaseDriver.get_pkey_len(identifier_data)
+        if len(primary_keys) < pkey_len:
+            # Don't mix in defaults with groups higher than the document level
+            defaults = {}
+        else:
+            defaults = self.defaults.get(category, {})
         return Group(
             identifier_data=identifier_data,
-            defaults=self.defaults.get(category, {}),
+            defaults=defaults,
             driver=self.driver,
             force_registration=self.force_registration,
             config=self,
@@ -1042,6 +1046,7 @@ class Config:
         """
         group = self._get_base_group(scope)
         ret = {}
+        defaults = self.defaults.get(scope, {})
 
         try:
             dict_ = await self.driver.get(group.identifier_data)
@@ -1049,7 +1054,7 @@ class Config:
             pass
         else:
             for k, v in dict_.items():
-                data = group.defaults
+                data = pickle.loads(pickle.dumps(defaults, -1))
                 data.update(v)
                 ret[int(k)] = data
 
@@ -1123,11 +1128,11 @@ class Config:
         """
         return await self._all_from_scope(self.USER)
 
-    @staticmethod
-    def _all_members_from_guild(group: Group, guild_data: dict) -> dict:
+    def _all_members_from_guild(self, guild_data: dict) -> dict:
         ret = {}
+        defaults = self.defaults.get(self.MEMBER, {})
         for member_id, member_data in guild_data.items():
-            new_member_data = group.defaults
+            new_member_data = pickle.loads(pickle.dumps(defaults, -1))
             new_member_data.update(member_data)
             ret[int(member_id)] = new_member_data
         return ret
@@ -1166,7 +1171,7 @@ class Config:
                 pass
             else:
                 for guild_id, guild_data in dict_.items():
-                    ret[int(guild_id)] = self._all_members_from_guild(group, guild_data)
+                    ret[int(guild_id)] = self._all_members_from_guild(guild_data)
         else:
             group = self._get_base_group(self.MEMBER, str(guild.id))
             try:
@@ -1174,7 +1179,7 @@ class Config:
             except KeyError:
                 pass
             else:
-                ret = self._all_members_from_guild(group, guild_data)
+                ret = self._all_members_from_guild(guild_data)
         return ret
 
     async def _clear_scope(self, *scopes: str):
@@ -1202,7 +1207,8 @@ class Config:
             )
             group = Group(identifier_data, defaults={}, driver=self.driver, config=self)
         else:
-            group = self._get_base_group(*scopes)
+            cat, *scopes = scopes
+            group = self._get_base_group(cat, *scopes)
         await group.clear()
 
     async def clear_all(self):

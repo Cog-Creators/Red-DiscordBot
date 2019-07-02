@@ -1,5 +1,6 @@
 import asyncio
 import contextlib
+import logging
 from collections import namedtuple
 from datetime import datetime, timedelta
 from typing import cast, Optional, Union
@@ -10,8 +11,8 @@ from redbot.core.utils.chat_formatting import pagify
 from redbot.core.utils.mod import is_allowed_by_hierarchy, get_audit_reason
 from .abc import MixinMeta
 from .converters import RawUserIds
-from .log import log
 
+log = logging.getLogger("red.mod")
 _ = i18n.Translator("Mod", __file__)
 
 
@@ -248,7 +249,7 @@ class KickBanMixin(MixinMeta):
         errors = {}
 
         async def show_results():
-            text = _("Banned {num} users from the server.".format(num=len(banned)))
+            text = _("Banned {num} users from the server.").format(num=len(banned))
             if errors:
                 text += _("\nErrors:\n")
                 text += "\n".join(errors.values())

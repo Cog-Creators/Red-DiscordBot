@@ -355,34 +355,56 @@ class Economy(commands.Cog):
         author = ctx.author
         if top < 1:
             top = 10
-        if (
-            await bank.is_global() and show_global
-        ):  # show_global is only applicable if bank is global
-            guild = None
-        bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
-        header = "{pound:4}{name:36}{score:2}\n".format(
-            pound="#", name=_("Name"), score=_("Score")
-        )
-        highscores = [
-            (
-                f"{f'{pos}.': <{3 if pos < 10 else 2}} {acc[1]['name']: <{35}s} "
-                f"{acc[1]['balance']: >{2 if pos < 10 else 1}}\n"
-            )
-            if acc[0] != author.id
-            else (
-                f"{f'{pos}.': <{3 if pos < 10 else 2}} <<{acc[1]['name'] + '>>': <{33}s} "
-                f"{acc[1]['balance']: >{2 if pos < 10 else 1}}\n"
-            )
-            for pos, acc in enumerate(bank_sorted, 1)
-        ]
-        if highscores:
-            pages = [
-                f"```md\n{header}{''.join(''.join(highscores[x:x + 10]))}```"
-                for x in range(0, len(highscores), 10)
-            ]
-            await menu(ctx, pages, DEFAULT_CONTROLS)
+        if await bank.is_global() and show_global:
+            # show_global is only applicable if bank is global
+            bank_sorted = await bank.get_leaderboard(positions=top, guild=None)
         else:
-            await ctx.send(_("There are no accounts in the bank."))
+            bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
+        try:
+            bal_len = len(str(bank_sorted[0][1]["balance"]))
+            # first user is the largest we'll see
+        except IndexError:
+            return await ctx.send(_("There are no accounts in the bank."))
+        pound_len = len(str(len(bank_sorted)))
+        header = "{pound:{pound_len}}{score:{bal_len}}{name:2}\n".format(
+            pound="#",
+            name=_("Name"),
+            score=_("Score"),
+            bal_len=bal_len + 6,
+            pound_len=pound_len + 3,
+        )
+        highscores = []
+        pos = 1
+        temp_msg = header
+        for acc in bank_sorted:
+            try:
+                name = guild.get_member(acc[0]).display_name
+            except AttributeError:
+                user_id = ""
+                if await ctx.bot.is_owner(ctx.author):
+                    user_id = f"({str(acc[0])})"
+                name = f"{acc[1]['name']} {user_id}"
+            balance = acc[1]["balance"]
+
+            if acc[0] != author.id:
+                temp_msg += f"{f'{pos}.': <{pound_len+2}} {balance: <{bal_len + 5}} {name}\n"
+
+            else:
+                temp_msg += (
+                    f"{f'{pos}.': <{pound_len+2}} "
+                    f"{balance: <{bal_len + 5}} "
+                    f"<<{author.display_name}>>\n"
+                )
+            if pos % 10 == 0:
+                highscores.append(box(temp_msg, lang="md"))
+                temp_msg = header
+            pos += 1
+
+        if temp_msg != header:
+            highscores.append(box(temp_msg, lang="md"))
+
+        if highscores:
+            await menu(ctx, highscores, DEFAULT_CONTROLS)
 
     @commands.command()
     @guild_only_check()
@@ -445,7 +467,9 @@ class Economy(commands.Cog):
             sign = "  "
             if i == 1:
                 sign = ">"
-            slot += "{}{} {} {}\n".format(sign, *[c.value for c in row])
+            slot += "{}{} {} {}\n".format(
+                sign, *[c.value for c in row]  # pylint: disable=no-member
+            )
 
         payout = PAYOUTS.get(rows[1])
         if not payout:

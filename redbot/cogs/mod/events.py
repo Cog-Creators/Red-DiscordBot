@@ -1,13 +1,14 @@
+import logging
 from datetime import datetime
 from collections import defaultdict, deque
 
 import discord
 from redbot.core import i18n, modlog, commands
 from redbot.core.utils.mod import is_mod_or_superior
-from . import log
 from .abc import MixinMeta
 
 _ = i18n.Translator("Mod", __file__)
+log = logging.getLogger("red.mod")
 
 
 class Events(MixinMeta):

@@ -122,7 +122,11 @@ class General(commands.Cog):
         author = ctx.author
         player_choice = your_choice.choice
         if not player_choice:
-            return await ctx.send("This isn't a valid option. Try rock, paper, or scissors.")
+            return await ctx.send(
+                _("This isn't a valid option. Try {r}, {p}, or {s}.").format(
+                    r="rock", p="paper", s="scissors"
+                )
+            )
         red_choice = choice((RPS.rock, RPS.paper, RPS.scissors))
         cond = {
             (RPS.rock, RPS.paper): False,
@@ -307,14 +311,17 @@ class General(commands.Cog):
                 messages = []
                 for ud in data["list"]:
                     ud.setdefault("example", "N/A")
-                    description = _("{definition}\n\n**Example:** {example}").format(**ud)
-                    if len(description) > 2048:
-                        description = "{}...".format(description[:2045])
-
                     message = _(
                         "<{permalink}>\n {word} by {author}\n\n{description}\n\n"
                         "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
-                    ).format(word=ud.pop("word").capitalize(), description=description, **ud)
+                    ).format(word=ud.pop("word").capitalize(), description="{description}", **ud)
+                    max_desc_len = 2000 - len(message)
+
+                    description = _("{definition}\n\n**Example:** {example}").format(**ud)
+                    if len(description) > max_desc_len:
+                        description = "{}...".format(description[: max_desc_len - 3])
+
+                    message = message.format(description=description)
                     messages.append(message)
 
                 if messages is not None and len(messages) > 0:
