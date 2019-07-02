@@ -8,6 +8,7 @@ from redbot.core.utils import (
     bounded_gather_iter,
     deduplicate_iterables,
     common_filters,
+    menus,
 )
 
 
@@ -196,3 +197,32 @@ async def test_bounded_gather_iter_cancel():
 def test_normalize_smartquotes():
     assert common_filters.normalize_smartquotes("Should\u2018 normalize") == "Should' normalize"
     assert common_filters.normalize_smartquotes("Same String") == "Same String"
+
+
+def test_menus_emoji_order_bysource():
+    class Menu1(menus.ReactionMenu):
+        @menus.ReactionMenu.handler("a")
+        async def handler1(self):
+            pass
+
+        @menus.ReactionMenu.handler("b")
+        async def handler2(self):
+            pass
+
+    class Menu2(menus.ReactionMenu):
+        @menus.ReactionMenu.handler("d")
+        async def handler3(self):
+            pass
+
+        @menus.ReactionMenu.handler("c")
+        async def handler4(self):
+            pass
+
+    class Menu3(Menu1, Menu2):
+        @menus.ReactionMenu.handler("e")
+        async def handler5(self):
+            pass
+
+    assert tuple(Menu1.INITIAL_EMOJIS) == ("a", "b")
+    assert tuple(Menu2.INITIAL_EMOJIS) == ("d", "c")
+    assert tuple(Menu3.INITIAL_EMOJIS) == ("a", "b", "d", "c", "e")

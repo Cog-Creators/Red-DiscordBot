@@ -36,7 +36,6 @@ import enum
 import functools
 import inspect
 import types
-from collections import OrderedDict
 from typing import (
     Union,
     Iterable,
@@ -63,6 +62,7 @@ from .. import commands
 from .chat_formatting import bold, underline
 from .predicates import ReactionPredicate
 from .tasks import DeferrableTimer
+from .utils import deduplicate_iterables
 
 if TYPE_CHECKING:
     from ..bot import Red
@@ -166,7 +166,7 @@ class ReactionMenu(abc.ABC):
     :meth:`ReactionMenu.__init_subclass__`.
     """
 
-    _HANDLERS: ClassVar[Dict[Optional[str], List[Tuple["ReactionEvent", str]]]]
+    _HANDLERS: ClassVar[Dict[str, Set[Tuple[ReactionEvent, Union[str, _CoroutineFunction]]]]]
 
     def __init__(
         self,
@@ -245,7 +245,6 @@ class ReactionMenu(abc.ABC):
         *args,
         exit_button: bool = False,
         initial_emojis: Optional[Sequence[str]] = None,
-        inherit_handlers: bool = True,
         **kwargs,
     ) -> None:
         """Subclass initializer for `ReactionMenu`.
@@ -265,49 +264,48 @@ class ReactionMenu(abc.ABC):
         exit_button : bool
             Set to ``True`` to include the default exit button reaction,
             which uses the \N{CROSS MARK} emoji, and is handled by
-            `ReactionMenu.exit_menu`. Defaults to ``False``.
+            `ReactionMenu.exit_menu` (or your subclass's overridden
+            version of that). Note that the exit button handler won't
+            be inherited from any base classes - it must be explicitly
+            enabled for every subclass.
         initial_emojis : Optional[Sequence[str]]
             An override for :attr:`ReactionMenu.INITIAL_EMOJIS`. The
             order of this sequence is preserved when adding reactions.
-        inherit_handlers : bool
-            Set to ``False`` to avoid inheriting reaction handlers from
-            base classes. Defaults to ``True``.
 
         """
         super().__init_subclass__(*args, **kwargs)
-        cls._HANDLERS = OrderedDict()
-
-        if inherit_handlers is True:
-            # Add handlers from superclasses
-            # The last superclass will always be `object`, so we can skip it.
-            # We can't necessarily rely on the ReactionMenu class being 2nd-last, so we will skip
-            # it within the loop below.
-            mro = inspect.getmro(cls)[0:-1]
-        else:
-            # Add handlers from this class only
-            mro = inspect.getmro(cls)[0:1]
-
-        for sprcls in reversed(mro):
-            if sprcls is ReactionMenu:
-                # This class doesn't have any handlers
+        cls._HANDLERS = {}
+        _emoji_linenos = {}
+        for member_name, member in inspect.getmembers(cls, predicate=inspect.iscoroutinefunction):
+            try:
+                emojis = member.__handle_emojis__
+                event = member.__handle_event__
+                lineno = member.__decorator_lineno__
+            except AttributeError:
                 continue
-            members = inspect.getmembers(sprcls, predicate=inspect.iscoroutinefunction)
-            for member_name, member in members:
-                try:
-                    emojis = member.__handle_emojis__
-                    event = member.__handle_event__
-                except AttributeError:
-                    continue
-                else:
-                    cls.add_handler(member, *emojis, event=event)
+            else:
+                cls.add_handler(member, *emojis, event=event)
+                if initial_emojis is None:
+                    for emoji in emojis:
+                        _emoji_linenos[emoji] = lineno
 
         if exit_button is True:
             cls.add_handler(cls.exit_menu, "❌")
 
         if initial_emojis is None:
             # In order of appearance in source code
-            cls.INITIAL_EMOJIS = list(filter(None, cls._HANDLERS.keys()))
-            cls.INITIAL_EMOJIS.reverse()
+            emojis = (
+                emoji for emoji, lineno in sorted(_emoji_linenos.items(), key=lambda t: t[1])
+            )
+            # Prepended with those inherited from bases
+            cls.INITIAL_EMOJIS = deduplicate_iterables(
+                *(
+                    base.INITIAL_EMOJIS
+                    for base in cls.__bases__
+                    if issubclass(base, ReactionMenu) and base.INITIAL_EMOJIS is not None
+                ),
+                emojis,
+            )
         else:
             cls.INITIAL_EMOJIS = initial_emojis
 
@@ -333,12 +331,16 @@ class ReactionMenu(abc.ABC):
             ``RAW_REACTION_ADD | RAW_REACTION_REMOVE``.
 
         """
+        # To retain order of appearance in source code, we can use stack inspection to record
+        # the line number where this decorator was called.
+        caller_lineno = inspect.stack()[1].lineno
 
         def decorator(callback: _CoroutineFunction) -> _CoroutineFunction:
             if not inspect.iscoroutinefunction(callback):
                 raise TypeError("Handlers must be coroutine functions")
             callback.__handle_emojis__ = emojis
             callback.__handle_event__ = event
+            callback.__decorator_lineno__ = caller_lineno
             return callback
 
         return decorator
@@ -346,7 +348,7 @@ class ReactionMenu(abc.ABC):
     @classmethod
     def add_handler(
         cls,
-        handler: Any,
+        handler: Union[_CoroutineFunction, functools.partial, functools.partialmethod],
         *emojis: str,
         event: ReactionEvent = ReactionEvent.RAW_REACTION_ADD | ReactionEvent.RAW_REACTION_REMOVE,
     ) -> None:
@@ -369,45 +371,25 @@ class ReactionMenu(abc.ABC):
 
         """
         if cls is ReactionMenu:
-            raise RuntimeError("You may only add handlers to subclasses of ReactionMenu")
+            raise RuntimeError("You may only add handlers to *subclasses* of ReactionMenu")
 
         if isinstance(handler, functools.partial):
             actual_callback = handler.func
         else:
             actual_callback = handler
             if handler is getattr(cls, handler.__name__, None):
-                # If the handler is a method of this subclass, we should
-                # use getattr() *at the time of reaction* rather than
-                # now. The reason for this is to ensure consistency
-                # between staticmethods, classmethods and instance
-                # methods.
+                # If the handler is a method of this subclass, we should use getattr() *on the
+                # instance* rather than on the class itself. The reason for this is to ensure
+                # consistency between staticmethods, classmethods and instance methods.
                 handler = handler.__name__
         if not inspect.iscoroutinefunction(actual_callback):
             raise TypeError("`handler` must be an `async def` method")
 
-        # If this is a method which has the same name as an existing
-        # handler, it is aiming to override a handler from a base class.
-        # So, we should remove the base class handler in favour of this
-        # one, even if they're handling different emojis or events.
-        if isinstance(handler, str):
-            for handler_list in cls._HANDLERS.values():
-                handler_list[:] = [
-                    (event, existing_handler)
-                    for event, existing_handler in handler_list
-                    if getattr(existing_handler, "__name__", None) != handler
-                ]
-
-        entry = (event, handler)
         if not emojis:
-            # For `on_reaction_clear` and `on_raw_reaction_clear` events
-            existing_handlers = cls._HANDLERS.setdefault(None, [])
-            if entry not in existing_handlers:
-                existing_handlers.append(entry)
+            cls._HANDLERS.setdefault("", set()).add((event, handler))
         else:
-            for emoji in emojis:
-                existing_handlers = cls._HANDLERS.setdefault(emoji, [])
-                if entry not in existing_handlers:
-                    existing_handlers.append(entry)
+            for emoji in deduplicate_iterables(emojis):
+                cls._HANDLERS.setdefault(emoji, set()).add((event, handler))
 
     @classmethod
     async def send_and_wait(
@@ -730,8 +712,8 @@ class ReactionMenu(abc.ABC):
             (ReactionEvent.RAW_REACTION_REMOVE, self.__on_raw_reaction_remove),
             (ReactionEvent.RAW_REACTION_CLEAR, self.__on_raw_reaction_clear),
         ):
-            for handler_list in self._HANDLERS.values():
-                for handler_event, handler in handler_list:
+            for handler_set in self._HANDLERS.values():
+                for handler_event, handler in handler_set:
                     if event & handler_event:
                         break
                 else:
@@ -806,7 +788,12 @@ class ReactionMenu(abc.ABC):
     def __iter_handlers(
         self, event: Optional[ReactionEvent] = None, emoji: Optional[str] = None
     ) -> Iterator[_CoroutineFunction]:
-        for handler_event, handler in self._HANDLERS.get(emoji, []) + self._HANDLERS.get(None, []):
+        handler_list = []
+        for key in (emoji, ""):
+            with contextlib.suppress(KeyError):
+                handler_list.extend(self._HANDLERS[key])
+
+        for handler_event, handler in handler_list:
             if event is None or event & handler_event:
                 if isinstance(handler, str):
                     yield getattr(self, handler)
@@ -816,7 +803,7 @@ class ReactionMenu(abc.ABC):
     async def __call_handlers(
         self, args, event: ReactionEvent, emoji: Optional[str] = None
     ) -> None:
-        if emoji not in self._HANDLERS and None not in self._HANDLERS:
+        if emoji not in self._HANDLERS and "" not in self._HANDLERS:
             return
         await asyncio.gather(*(handler(*args) for handler in self.__iter_handlers(event, emoji)))
 
@@ -1017,7 +1004,7 @@ class OptionsMenu(Generic[_T], ReactionMenu):
         self,
         *,
         options: Sequence[Tuple[str, _T]],
-        emojis: Optional[Sequence[str]] = None,
+        initial_emojis: Optional[Sequence[str]] = None,
         num_options_per_page: Optional[int] = None,
         exit_on_selection: bool = True,
         callback: Optional[Callable[[discord.abc.User, _T], Union[Awaitable[None], None]]] = None,
@@ -1030,14 +1017,13 @@ class OptionsMenu(Generic[_T], ReactionMenu):
         self._callback = callback
 
         num_options_per_page = num_options_per_page or len(options)
-        if emojis is not None:
-            if len(emojis) < num_options_per_page:
+        if initial_emojis is not None:
+            if len(initial_emojis) < num_options_per_page:
                 raise ValueError(
                     "The number of emojis must be at least as large as the number of options on "
                     "each page."
                 )
 
-            initial_emojis = emojis
         elif num_options_per_page <= 10:
             # We can use numbers
             initial_emojis = [
