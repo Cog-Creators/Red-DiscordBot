@@ -13,7 +13,7 @@ from redbot.core import Config, checks, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.mod import is_admin_or_superior
-from redbot.core.utils.chat_formatting import warning, pagify
+from redbot.core.utils.chat_formatting import warning, pagify, humanize_list
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 
 
@@ -38,7 +38,7 @@ class Warnings(commands.Cog):
     def __init__(self, bot: Red):
         super().__init__()
         self.config = Config.get_conf(self, identifier=5757575755)
-        self.config.register_guild(**self.default_guild)
+        self.config.register_guild(**self.default_guild, force_registration=True)
         self.config.register_member(**self.default_member)
         self.bot = bot
         self.registration_task = self.bot.loop.create_task(self.register_warningtype())
@@ -98,11 +98,16 @@ class Warnings(commands.Cog):
 
     @warningset.command()
     @commands.guild_only()
-    async def warnchannel(self, ctx: commands.Context, channel: discord.TextChannel):
+    async def warnchannel(self, ctx: commands.Context, channel: discord.TextChannel = None):
         """Set the channel that warns get set to"""
         guild = ctx.guild
-        await self.config.guild(guild).warn_channel.set(channel.id)
-        await ctx.send(f"The warn channel has been set to {channel.mention}")
+        if channel:
+            await self.config.guild(guild).warn_channel.set(channel.id)
+            await ctx.send(f"The warn channel has been set to {channel.mention}")
+        else:
+            await self.config.guild(guild).warn_channel.set(channel)
+            await ctx.send("The warn channel has been reset.")
+            
 
     @warningset.command()
     @commands.guild_only()
@@ -301,6 +306,7 @@ class Warnings(commands.Cog):
         is created by default.
         """
         channel = ctx.channel
+        guild = ctx.guild
         if user == ctx.author:
             await ctx.send(_("You cannot warn yourself."))
             return
@@ -359,22 +365,25 @@ class Warnings(commands.Cog):
             await ctx.send(
                 "The warning couldn't be sent to the user because the user has DM's from server members turned off."
             )
-        await ctx.send(_("User {user} has been warned in their DM's.").format(user=user))
-        toggle_channel = await self.config.guild(ctx.guild).toggle_channel()
+        toggle_channel = await self.config.guild(guild).toggle_channel()
         if toggle_channel:
             em = discord.Embed(
                 title=_("Warning from {user}").format(user=ctx.author),
                 description=reason_type["description"],
             )
             em.add_field(name=_("Points"), value=str(reason_type["points"]))
-            warn_channel = await self.config.guild(ctx.guild).warn_channel()
-            if warn_channel is None:
-                channel = ctx.channel
-            else:
+            warn_channel = self.bot.get_channel(await self.config.guild(guild).warn_channel())
+            if warn_channel:
                 channel = warn_channel
-                await channel.send(
-                    _("{user} has been warned.").format(user=user.mention), embed=em
+            else:
+                channel = ctx.channel
+            await channel.send(
+                _("{user} has been warned.").format(user=user.mention), embed=em
                 )
+        if not dm and not toggle_channel:
+            await ctx.send("You have warned the user but you have channel and DM warns turned off.")
+        else: 
+            await ctx.tick()
         try:
             reason_msg = _(
                 "{reason}\n\nUse `{prefix}unwarn {user} {message}` to remove this warning."
