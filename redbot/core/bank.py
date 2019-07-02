@@ -681,7 +681,7 @@ class AbortPurchase(Exception):
     pass
 
 
-def cost(cost: int):
+def cost(amount: int):
     """
     Decorates a function or command to have a cost.
 
@@ -693,7 +693,7 @@ def cost(cost: int):
     Other exceptions will propogate and will be handled by Red's (and/or
     any other configured) error handling.
     """
-    if not isinstance(cost, int) or cost < 0:
+    if not isinstance(amount, int) or amount < 0:
         raise ValueError("This decorator requires an integer cost greater than or equal to zero")
 
     def deco(coro_or_command):
@@ -715,21 +715,21 @@ def cost(cost: int):
                     _("Can't pay for this command in DM without a global bank.")
                 )
             try:
-                await withdraw_credits(context.author, cost)
+                await withdraw_credits(context.author, amount)
             except Exception:
                 credits_name = await get_currency_name(context.guild)
                 raise commands.UserFeedbackCheckFailure(
                     _("You need at least {cost} {currency} to use this command.").format(
-                        cost=cost, currency=credits_name
+                        cost=amount, currency=credits_name
                     )
                 )
             else:
                 try:
                     return await coro(*args, **kwargs)
                 except AbortPurchase:
-                    await deposit_credits(context.author, cost)
+                    await deposit_credits(context.author, amount)
                 except Exception:
-                    await deposit_credits(context.author, cost)
+                    await deposit_credits(context.author, amount)
                     raise
 
         if not is_command:
