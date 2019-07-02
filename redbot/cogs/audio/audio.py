@@ -1638,6 +1638,7 @@ class Audio(commands.Cog):
     async def _enqueue_tracks(self, ctx, query):
         player = lavalink.get_player(ctx.guild.id)
         guild_data = await self.config.guild(ctx.guild).all()
+        first_track_only = False
         if type(query) is not list:
             if not (
                 query.startswith("http")
@@ -1645,6 +1646,8 @@ class Audio(commands.Cog):
                 or query.startswith("ytsearch:")
             ):
                 query = f"ytsearch:{query}"
+            if query.startswith(("ytsearch", "localtracks")):
+                first_track_only = True
             tracks = await player.get_tracks(query)
             if not tracks:
                 return await self._embed_msg(ctx, _("Nothing found."))
@@ -1655,7 +1658,11 @@ class Audio(commands.Cog):
         queue_total_duration = lavalink.utils.format_time(queue_duration)
         before_queue_length = len(player.queue)
 
-        if ("ytsearch:" or "localtrack") not in query and len(tracks) > 1:
+        if not first_track_only and len(tracks) > 1:
+            # a list of Tracks where all should be enqueued
+            # this is a Spotify playlist aleady made into a list of Tracks or a
+            # url where Lavalink handles providing all Track objects to use, like a
+            # YouTube or Soundcloud playlist
             track_len = 0
             for track in tracks:
                 if guild_data["maxlength"] > 0:
@@ -1688,6 +1695,9 @@ class Audio(commands.Cog):
             if not player.current:
                 await player.play()
         else:
+            # a ytsearch: prefixed item where we only need the first Track returned
+            # this is in the case of [p]play <query>, a single Spotify url/code
+            # or this is a localtrack item
             try:
                 single_track = tracks[0]
                 if guild_data["maxlength"] > 0:
@@ -3077,14 +3087,17 @@ class Audio(commands.Cog):
 
         except AttributeError:
             if command == "search":
+                # [p]local search
                 return await ctx.invoke(self.play, query=("localtracks/{}".format(search_choice)))
             search_choice = search_choice.replace("localtrack:", "")
             local_path = await self.config.localpath()
             if not search_choice.startswith(local_path):
+                # folder display for [p]local play
                 return await ctx.invoke(
                     self.search, query=("localfolder:{}".format(search_choice))
                 )
             else:
+                # file display for a chosen folder in the [p]local play menus
                 return await ctx.invoke(self.play, query=("localtrack:{}".format(search_choice)))
 
         embed = discord.Embed(
