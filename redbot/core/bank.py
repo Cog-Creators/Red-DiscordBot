@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 from typing import Union, List, Optional
 from functools import wraps
@@ -683,7 +684,7 @@ class AbortPurchase(Exception):
 
 def cost(amount: int):
     """
-    Decorates a function or command to have a cost.
+    Decorates a coroutine-function or command to have a cost.
 
     If the command raises an exception, the cost will be refunded.
 
@@ -697,8 +698,9 @@ def cost(amount: int):
         raise ValueError("This decorator requires an integer cost greater than or equal to zero")
 
     def deco(coro_or_command):
-
         is_command = isinstance(coro_or_command, commands.Command)
+        if not is_command and not asyncio.iscoroutinefunction(coro_or_command):
+            raise TypeError("@bank.cost() can only be used on commands or `async def` functions")
 
         coro = coro_or_command.callback if is_command else coro_or_command
 
