@@ -112,7 +112,6 @@ def main():
     red = Red(
         cli_flags=cli_flags, description=description, dm_help=None, fetch_offline_members=True
     )
-    loop = asyncio.get_event_loop()
     loop.run_until_complete(red.maybe_update_config())
     init_global_checks(red)
     init_events(red, cli_flags)
