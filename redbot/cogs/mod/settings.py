@@ -26,6 +26,7 @@ class ModSettings(MixinMeta):
             respect_hierarchy = await self.settings.guild(guild).respect_hierarchy()
             delete_delay = await self.settings.guild(guild).delete_delay()
             reinvite_on_unban = await self.settings.guild(guild).reinvite_on_unban()
+            default_days = await self.settings.guild(guild).default_days()
             msg = ""
             msg += _("Delete repeats: {num_repeats}\n").format(
                 num_repeats=_("after {num} repeats").format(num=delete_repeats)
@@ -48,6 +49,7 @@ class ModSettings(MixinMeta):
             msg += _("Reinvite on unban: {yes_or_no}\n").format(
                 yes_or_no=_("Yes") if reinvite_on_unban else _("No")
             )
+            msg += _("Default days: {num_days} days\n").format(num_days=default_days)
             await ctx.send(box(msg))
 
     @modset.command()
