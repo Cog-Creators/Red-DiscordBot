@@ -5,11 +5,11 @@ __all__ = ["mod"]
 
 
 @pytest.fixture
-def mod(config, monkeypatch):
+async def mod(config, monkeypatch):
     from redbot.core import Config
 
     with monkeypatch.context() as m:
         m.setattr(Config, "get_conf", lambda *args, **kwargs: config)
 
-        modlog._init()
+        await modlog._init()
         return modlog

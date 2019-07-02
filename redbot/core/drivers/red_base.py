@@ -18,8 +18,8 @@ class IdentifierData:
         self,
         uuid: str,
         category: str,
-        primary_key: Tuple[str],
-        identifiers: Tuple[str],
+        primary_key: Tuple[str, ...],
+        identifiers: Tuple[str, ...],
         custom_group_data: dict,
         is_custom: bool = False,
     ):
@@ -183,7 +183,7 @@ class BaseDriver:
                 c,
                 (),
                 (),
-                custom_group_data.get(c, {}),
+                custom_group_data,
                 is_custom=c in custom_group_data,
             )
             try:
@@ -202,7 +202,19 @@ class BaseDriver:
                     category,
                     pkey,
                     (),
-                    custom_group_data.get(category, {}),
+                    custom_group_data,
                     is_custom=category in custom_group_data,
                 )
                 await self.set(ident_data, data)
+
+    @staticmethod
+    def get_pkey_len(identifier_data: IdentifierData) -> int:
+        cat = identifier_data.category
+        if cat == ConfigCategory.GLOBAL.value:
+            return 0
+        elif cat == ConfigCategory.MEMBER.value:
+            return 2
+        elif identifier_data.is_custom:
+            return identifier_data.custom_group_data[cat]
+        else:
+            return 1

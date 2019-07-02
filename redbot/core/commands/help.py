@@ -417,8 +417,9 @@ class RedHelpFormatter:
             pages = [box(p) for p in pagify(to_page)]
             await self.send_pages(ctx, pages, embed=False)
 
+    @staticmethod
     async def help_filter_func(
-        self, ctx, objects: Iterable[SupportsCanSee], bypass_hidden=False
+        ctx, objects: Iterable[SupportsCanSee], bypass_hidden=False
     ) -> AsyncIterator[SupportsCanSee]:
         """
         This does most of actual filtering.
@@ -450,7 +451,7 @@ class RedHelpFormatter:
         """
         Sends an error, fuzzy help, or stays quiet based on settings
         """
-        coms = [c async for c in self.help_filter_func(ctx, ctx.bot.walk_commands())]
+        coms = {c async for c in self.help_filter_func(ctx, ctx.bot.walk_commands())}
         fuzzy_commands = await fuzzy_command_search(ctx, help_for, commands=coms, min_score=75)
         use_embeds = await ctx.embed_requested()
         if fuzzy_commands:
@@ -538,7 +539,7 @@ class RedHelpFormatter:
                     try:
                         await destination.send(embed=page)
                     except discord.Forbidden:
-                        await ctx.send(
+                        return await ctx.send(
                             T_(
                                 "I couldn't send the help message to you in DM. "
                                 "Either you blocked me or you disabled DMs in this server."
@@ -549,7 +550,7 @@ class RedHelpFormatter:
                     try:
                         await destination.send(page)
                     except discord.Forbidden:
-                        await ctx.send(
+                        return await ctx.send(
                             T_(
                                 "I couldn't send the help message to you in DM. "
                                 "Either you blocked me or you disabled DMs in this server."
