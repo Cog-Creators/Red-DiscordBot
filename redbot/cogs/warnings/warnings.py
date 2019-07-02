@@ -103,7 +103,9 @@ class Warnings(commands.Cog):
         guild = ctx.guild
         if channel:
             await self.config.guild(guild).warn_channel.set(channel.id)
-            await ctx.send(_("The warn channel has been set to {channel}").format(channel=channel.mention))
+            await ctx.send(
+                _("The warn channel has been set to {channel}").format(channel=channel.mention)
+            )
         else:
             await self.config.guild(guild).warn_channel.set(channel)
             await ctx.send(_("The warn channel has been reset."))
@@ -362,8 +364,10 @@ class Warnings(commands.Cog):
                 )
         except discord.HTTPException:
             await ctx.send(
-                _("The warning couldn't be sent to the user because the user has DM's from server members turned off."
-            ))
+                _(
+                    "The warning couldn't be sent to the user because the user has DM's from server members turned off."
+                )
+            )
         toggle_channel = await self.config.guild(guild).toggle_channel()
         if toggle_channel:
             em = discord.Embed(
@@ -379,8 +383,8 @@ class Warnings(commands.Cog):
             await channel.send(_("{user} has been warned.").format(user=user.mention), embed=em)
         if not dm and not toggle_channel:
             await ctx.send(
-                _("You have warned the user but you have channel and DM warns turned off."
-            ))
+                _("You have warned the user but you have channel and DM warns turned off.")
+            )
         else:
             await ctx.tick()
         try:
