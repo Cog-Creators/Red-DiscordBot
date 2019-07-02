@@ -48,7 +48,6 @@ from typing import (
     Tuple,
     ClassVar,
     Dict,
-    Any,
     Sequence,
     Set,
     TypeVar,
