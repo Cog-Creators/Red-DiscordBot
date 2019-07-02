@@ -184,7 +184,7 @@ class DictConverter(dpy_commands.Converter):
 
         for key in iterator:
             if self.expected_keys and key not in self.expected_keys:
-                raise BadArgument(_("Unexpected key {key}").format(key))
+                raise BadArgument(_("Unexpected key {key}").format(key=key))
 
             ret[key] = next(iterator)
 
