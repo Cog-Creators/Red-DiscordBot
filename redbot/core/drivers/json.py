@@ -1,14 +1,14 @@
-import copy
+import asyncio
 import json
-import weakref
 import logging
+import os
+import pickle
+import weakref
 from pathlib import Path
-from typing import Dict, Any, Tuple, AsyncIterator, Optional
+from typing import Any, AsyncIterator, Dict, Optional, Tuple
+from uuid import uuid4
 
-from redbot.core import data_manager
-from .. import errors
-from ..json_io import JsonIO
-
+from .. import data_manager, errors
 from .base import BaseDriver, IdentifierData, ConfigCategory
 
 __all__ = ["JsonDriver"]
@@ -66,9 +66,10 @@ class JsonDriver(BaseDriver):
             self.data_path = data_manager.core_data_path()
         else:
             self.data_path = data_manager.cog_data_path(raw_name=cog_name)
-        self.jsonIO = JsonIO(self.data_path / self.file_name)
-
         self.data_path.mkdir(parents=True, exist_ok=True)
+        self.data_path = self.data_path / self.file_name
+
+        self._lock = asyncio.Lock()
         self._load_data()
 
     @property
@@ -105,10 +106,12 @@ class JsonDriver(BaseDriver):
             return
 
         try:
-            self.data = self.jsonIO._load_json()
+            with self.data_path.open("r", encoding="utf-8") as fs:
+                self.data = json.load(fs)
         except FileNotFoundError:
             self.data = {}
-            self.jsonIO._save_json(self.data)
+            with self.data_path.open("w", encoding="utf-8") as fs:
+                json.dump(self.data, fs, indent=4)
 
     def migrate_identifier(self, raw_identifier: int):
         if self.unique_cog_identifier in self.data:
@@ -119,7 +122,7 @@ class JsonDriver(BaseDriver):
             if ident in self.data:
                 self.data[self.unique_cog_identifier] = self.data[ident]
                 del self.data[ident]
-                self.jsonIO._save_json(self.data)
+                _save_json(self.data_path, self.data)
                 break
 
     async def get(self, identifier_data: IdentifierData):
@@ -127,20 +130,25 @@ class JsonDriver(BaseDriver):
         full_identifiers = identifier_data.to_tuple()[1:]
         for i in full_identifiers:
             partial = partial[i]
-        return copy.deepcopy(partial)
+        return pickle.loads(pickle.dumps(partial, -1))
 
     async def set(self, identifier_data: IdentifierData, value=None):
         partial = self.data
         full_identifiers = identifier_data.to_tuple()[1:]
-        for i in full_identifiers[:-1]:
-            try:
-                partial = partial.setdefault(i, {})
-            except AttributeError:
-                # Tried to set sub-field of non-object
-                raise errors.CannotSetSubfield
+        # This is both our deepcopy() and our way of making sure this value is actually JSON
+        # serializable.
+        value_copy = json.loads(json.dumps(value))
 
-        partial[full_identifiers[-1]] = copy.deepcopy(value)
-        await self.jsonIO._threadsafe_save_json(self.data)
+        async with self._lock:
+            for i in full_identifiers[:-1]:
+                try:
+                    partial = partial.setdefault(i, {})
+                except AttributeError:
+                    # Tried to set sub-field of non-object
+                    raise errors.CannotSetSubfield
+
+            partial[full_identifiers[-1]] = value_copy
+            await self._save()
 
     async def clear(self, identifier_data: IdentifierData):
         partial = self.data
@@ -148,11 +156,16 @@ class JsonDriver(BaseDriver):
         try:
             for i in full_identifiers[:-1]:
                 partial = partial[i]
-            del partial[full_identifiers[-1]]
         except KeyError:
             pass
         else:
-            await self.jsonIO._threadsafe_save_json(self.data)
+            async with self._lock:
+                try:
+                    del partial[full_identifiers[-1]]
+                except KeyError:
+                    pass
+                else:
+                    await self._save()
 
     @classmethod
     async def aiter_cogs(cls) -> AsyncIterator[Tuple[str, str]]:
@@ -182,16 +195,63 @@ class JsonDriver(BaseDriver):
                 partial = partial.setdefault(ident, {})
             partial[idents[-1]] = _data
 
-        for category, all_data in cog_data:
-            splitted_pkey = self._split_primary_key(category, custom_group_data, all_data)
-            for pkey, data in splitted_pkey:
-                ident_data = IdentifierData(
-                    self.cog_name,
-                    self.unique_cog_identifier,
-                    category,
-                    pkey,
-                    (),
-                    *ConfigCategory.get_pkey_info(category, custom_group_data),
-                )
-                update_write_data(ident_data, data)
-        await self.jsonIO._threadsafe_save_json(self.data)
+        async with self._lock:
+            for category, all_data in cog_data:
+                splitted_pkey = self._split_primary_key(category, custom_group_data, all_data)
+                for pkey, data in splitted_pkey:
+                    ident_data = IdentifierData(
+                        self.cog_name,
+                        self.unique_cog_identifier,
+                        category,
+                        pkey,
+                        (),
+                        *ConfigCategory.get_pkey_info(category, custom_group_data),
+                    )
+                    update_write_data(ident_data, data)
+            await self._save()
+
+    async def _save(self) -> None:
+        loop = asyncio.get_running_loop()
+        await loop.run_in_executor(None, _save_json, self.data_path, self.data)
+
+
+def _save_json(path: Path, data: Dict[str, Any]) -> None:
+    """
+    This fsync stuff here is entirely neccessary.
+
+    On windows, it is not available in entirety.
+    If a windows user ends up with tons of temp files, they should consider hosting on
+    something POSIX compatible, or using the mongo backend instead.
+
+    Most users wont encounter this issue, but with high write volumes,
+    without the fsync on both the temp file, and after the replace on the directory,
+    There's no real durability or atomicity guarantee from the filesystem.
+
+    In depth overview of underlying reasons why this is needed:
+        https://lwn.net/Articles/457667/
+
+    Also see:
+        http://man7.org/linux/man-pages/man2/open.2.html#NOTES (synchronous I/O section)
+    And:
+        https://www.mjmwired.net/kernel/Documentation/filesystems/ext4.txt#310
+    """
+    filename = path.stem
+    tmp_file = "{}-{}.tmp".format(filename, uuid4().fields[0])
+    tmp_path = path.parent / tmp_file
+    with tmp_path.open(encoding="utf-8", mode="w") as fs:
+        json.dump(data, fs, indent=4)
+        fs.flush()  # This does get closed on context exit, ...
+        os.fsync(fs.fileno())  # but that needs to happen prior to this line
+
+    tmp_path.replace(path)
+
+    try:
+        flag = os.O_DIRECTORY  # pylint: disable=no-member
+    except AttributeError:
+        pass
+    else:
+        fd = os.open(path.parent, flag)
+        try:
+            os.fsync(fd)
+        finally:
+            os.close(fd)

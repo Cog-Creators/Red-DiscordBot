@@ -56,24 +56,27 @@ The following requirements must be installed prior to setting up:
  - Python 3.7.0 or greater
  - git
  - pip
- - pipenv
  
-If you're not on Windows, you can optionally install [pyenv](https://github.com/pyenv/pyenv), which will help you run tests for different python versions.
+If you're not on Windows, you should also have GNU make installed, and you can optionally install [pyenv](https://github.com/pyenv/pyenv), which can help you run tests for different python versions.
 
 1. Fork and clone the repository to a directory on your local machine.
-2. Open a command line in that directory and execute the following commands:
+2. Open a command line in that directory and execute the following command:
     ```bash
-    pip install pipenv
-    pipenv install --dev
+    make newenv
     ```
-    Red, its dependencies, and all required development tools, are now installed to a virtual environment. Red is installed in editable mode, meaning that edits you make to the source code in the repository will be reflected when you run Red.
-3. Activate the new virtual environment with the command:
-    ```bash
-    pipenv shell
-    ```
-    From here onwards, we will assume you are executing commands from within this shell. Each time you open a new command line, you should execute this command first.
+    Red, its dependencies, and all required development tools, are now installed to a virtual environment located in the `.venv` subdirectory. Red is installed in editable mode, meaning that edits you make to the source code in the repository will be reflected when you run Red.
+3. Activate the new virtual environment with one of the following commands:
+    - Posix:
+        ```bash
+        source .venv/bin/activate
+        ```
+    - Windows:
+        ```powershell
+        .venv\Scripts\activate
+        ```
+    Each time you open a new command line, you should execute this command first. From here onwards, we will assume you are executing commands from within this activated virtual environment.
  
-Note: If you haven't used `pipenv` before but are comfortable with virtualenvs, just run `pip install pipenv` in the virtualenv you're already using and invoke the command above from the cloned Red repo. It will do the correct thing.
+**Note:** If you're comfortable with setting up virtual environments yourself and would rather do it manually, just run `pip install -Ur tools/dev-requirements.txt` after setting it up.
 
 ### 4.2 Testing
 We've recently started using [tox](https://github.com/tox-dev/tox) to run all of our tests. It's extremely simple to use, and if you followed the previous section correctly, it is already installed to your virtual environment.
@@ -95,12 +98,14 @@ Our style checker of choice, [black](https://github.com/ambv/black), actually ha
 Use the command `black --help` to see how to use this tool. The full style guide is explained in detail on [black's GitHub repository](https://github.com/ambv/black). **There is one exception to this**, however, which is that we set the line length to 99, instead of black's default 88. When using `black` on the command line, simply use it like so: `black -l 99 -N <src>`.
 
 ### 4.4 Make
-You may have noticed we have a `Makefile` and a `make.bat` in the top-level directory. For now, you can do two things with them:
+You may have noticed we have a `Makefile` and a `make.bat` in the top-level directory. For now, you can do three things with them:
 1. `make reformat`: Reformat all python files in the project with Black
 2. `make stylecheck`: Check if any `.py` files in the project need reformatting
+3. `make newenv`: Set up a new virtual environment in the `.venv` subdirectory, and install Red and its dependencies. If one already exists, it is cleared out and replaced.
+4. `make syncenv`: Sync your environment with Red's latest dependencies.
 
 ### 4.5 Keeping your dependencies up to date
-Whenever you pull from upstream (V3/develop on the main repository) and you notice the file `Pipfile.lock` has been changed, it usually means one of the package dependencies have been updated, added or removed. To make sure you're testing and formatting with the most up-to-date versions of our dependencies, run `pipenv install --dev` again.
+Whenever you pull from upstream (V3/develop on the main repository) and you notice either of the files `setup.cfg` or `tools/dev-requirements.txt` have been changed, it can often mean some package dependencies have been updated, added or removed. To make sure you're testing and formatting with the most up-to-date versions of our dependencies, run `make syncenv`. You could also simply do `make newenv` to install them to a clean new virtual environment.
 
 ### 4.6 To contribute changes
 

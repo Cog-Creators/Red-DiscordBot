@@ -13,7 +13,6 @@ import click
 
 import redbot.logging
 from redbot.core.cli import confirm
-from redbot.core.json_io import JsonIO
 from redbot.core.utils import safe_delete, create_backup as _create_backup
 from redbot.core import config, data_manager, drivers
 from redbot.core.drivers import BackendType, IdentifierData
@@ -39,7 +38,8 @@ def load_existing_config():
     if not config_file.exists():
         return {}
 
-    return JsonIO(config_file)._load_json()
+    with config_file.open(encoding="utf-8") as fs:
+        return json.load(fs)
 
 
 instance_data = load_existing_config()
@@ -63,7 +63,9 @@ def save_config(name, data, remove=False):
                 print("Not continuing")
                 sys.exit(0)
         _config[name] = data
-    JsonIO(config_file)._save_json(_config)
+
+    with config_file.open("w", encoding="utf-8") as fs:
+        json.dump(_config, fs, indent=4)
 
 
 def get_data_dir():
