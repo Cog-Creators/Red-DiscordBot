@@ -107,7 +107,6 @@ class Warnings(commands.Cog):
         else:
             await self.config.guild(guild).warn_channel.set(channel)
             await ctx.send("The warn channel has been reset.")
-            
 
     @warningset.command()
     @commands.guild_only()
@@ -377,12 +376,12 @@ class Warnings(commands.Cog):
                 channel = warn_channel
             else:
                 channel = ctx.channel
-            await channel.send(
-                _("{user} has been warned.").format(user=user.mention), embed=em
-                )
+            await channel.send(_("{user} has been warned.").format(user=user.mention), embed=em)
         if not dm and not toggle_channel:
-            await ctx.send("You have warned the user but you have channel and DM warns turned off.")
-        else: 
+            await ctx.send(
+                "You have warned the user but you have channel and DM warns turned off."
+            )
+        else:
             await ctx.tick()
         try:
             reason_msg = _(
