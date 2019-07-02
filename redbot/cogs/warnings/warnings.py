@@ -13,7 +13,7 @@ from redbot.core import Config, checks, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.mod import is_admin_or_superior
-from redbot.core.utils.chat_formatting import warning, pagify, humanize_list
+from redbot.core.utils.chat_formatting import warning, pagify
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 
 
@@ -38,7 +38,7 @@ class Warnings(commands.Cog):
     def __init__(self, bot: Red):
         super().__init__()
         self.config = Config.get_conf(self, identifier=5757575755)
-        self.config.register_guild(**self.default_guild, force_registration=True)
+        self.config.register_guild(**self.default_guild)
         self.config.register_member(**self.default_member)
         self.bot = bot
         self.registration_task = self.bot.loop.create_task(self.register_warningtype())
@@ -107,6 +107,7 @@ class Warnings(commands.Cog):
         else:
             await self.config.guild(guild).warn_channel.set(channel)
             await ctx.send("The warn channel has been reset.")
+            
 
     @warningset.command()
     @commands.guild_only()
@@ -376,12 +377,12 @@ class Warnings(commands.Cog):
                 channel = warn_channel
             else:
                 channel = ctx.channel
-            await channel.send(_("{user} has been warned.").format(user=user.mention), embed=em)
+            await channel.send(
+                _("{user} has been warned.").format(user=user.mention), embed=em
+                )
         if not dm and not toggle_channel:
-            await ctx.send(
-                "You have warned the user but you have channel and DM warns turned off."
-            )
-        else:
+            await ctx.send("You have warned the user but you have channel and DM warns turned off.")
+        else: 
             await ctx.tick()
         try:
             reason_msg = _(
