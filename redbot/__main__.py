@@ -3,6 +3,7 @@
 # Discord Version check
 
 import asyncio
+import json
 import logging
 import os
 import sys
@@ -12,7 +13,6 @@ import discord
 import redbot.logging
 from redbot.core.bot import Red, ExitCodes
 from redbot.core.cog_manager import CogManagerUI
-from redbot.core.json_io import JsonIO
 from redbot.core.global_checks import init_global_checks
 from redbot.core.events import init_events
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags
@@ -61,7 +61,8 @@ def list_instances():
         )
         sys.exit(1)
     else:
-        data = JsonIO(data_manager.config_file)._load_json()
+        with data_manager.config_file.open(encoding="utf-8") as fs:
+            data = json.load(fs)
         text = "Configured Instances:\n\n"
         for instance_name in sorted(data.keys()):
             text += "{}\n".format(instance_name)

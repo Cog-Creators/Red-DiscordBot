@@ -12,6 +12,7 @@ from .utils.common_filters import (
     filter_urls,
     escape_spoilers,
 )
+from .i18n import Translator
 
 __all__ = [
     "Case",
@@ -35,6 +36,9 @@ _conf: Optional[Config] = None
 _CASETYPES = "CASETYPES"
 _CASES = "CASES"
 _SCHEMA_VERSION = 2
+
+
+_ = Translator("ModLog", __file__)
 
 
 async def _init():
@@ -158,18 +162,18 @@ class Case:
         """
         casetype = await get_casetype(self.action_type)
         title = "{}".format(
-            "Case #{} | {} {}".format(self.case_number, casetype.case_str, casetype.image)
+            _("Case #{} | {} {}").format(self.case_number, casetype.case_str, casetype.image)
         )
 
         if self.reason:
-            reason = "**Reason:** {}".format(self.reason)
+            reason = _("**Reason:** {}").format(self.reason)
         else:
-            reason = "**Reason:** Use the `reason` command to add it"
+            reason = _("**Reason:** Use the `reason` command to add it")
 
         if self.moderator is not None:
             moderator = escape_spoilers(f"{self.moderator} ({self.moderator.id})")
         else:
-            moderator = "Unknown"
+            moderator = _("Unknown")
         until = None
         duration = None
         if self.until:
@@ -209,36 +213,40 @@ class Case:
 
             if avatar_url is not None:
                 emb.set_author(name=user, icon_url=avatar_url)
-            emb.add_field(name="Moderator", value=moderator, inline=False)
+            emb.add_field(name=_("Moderator"), value=moderator, inline=False)
             if until and duration:
-                emb.add_field(name="Until", value=until)
-                emb.add_field(name="Duration", value=duration)
+                emb.add_field(name=_("Until"), value=until)
+                emb.add_field(name=_("Duration"), value=duration)
 
             if isinstance(self.channel, int):
-                emb.add_field(name="Channel", value=f"{self.channel} (deleted)", inline=False)
+                emb.add_field(
+                    name=_("Channel"),
+                    value=_("{channel} (deleted)").format(channel=self.channel),
+                    inline=False,
+                )
             elif self.channel is not None:
-                emb.add_field(name="Channel", value=self.channel.name, inline=False)
+                emb.add_field(name=_("Channel"), value=self.channel.name, inline=False)
             if amended_by:
-                emb.add_field(name="Amended by", value=amended_by)
+                emb.add_field(name=_("Amended by"), value=amended_by)
             if last_modified:
-                emb.add_field(name="Last modified at", value=last_modified)
+                emb.add_field(name=_("Last modified at"), value=last_modified)
             emb.timestamp = datetime.fromtimestamp(self.created_at)
             return emb
         else:
             user = filter_mass_mentions(filter_urls(user))  # Further sanitization outside embeds
             case_text = ""
             case_text += "{}\n".format(title)
-            case_text += "**User:** {}\n".format(user)
-            case_text += "**Moderator:** {}\n".format(moderator)
+            case_text += _("**User:** {}\n").format(user)
+            case_text += _("**Moderator:** {}\n").format(moderator)
             case_text += "{}\n".format(reason)
             if until and duration:
-                case_text += "**Until:** {}\n**Duration:** {}\n".format(until, duration)
+                case_text += _("**Until:** {}\n**Duration:** {}\n").format(until, duration)
             if self.channel:
-                case_text += "**Channel**: {}\n".format(self.channel.name)
+                case_text += _("**Channel**: {}\n").format(self.channel.name)
             if amended_by:
-                case_text += "**Amended by:** {}\n".format(amended_by)
+                case_text += _("**Amended by:** {}\n").format(amended_by)
             if last_modified:
-                case_text += "**Last modified at:** {}\n".format(last_modified)
+                case_text += _("**Last modified at:** {}\n").format(last_modified)
             return case_text.strip()
 
     def to_json(self) -> dict:

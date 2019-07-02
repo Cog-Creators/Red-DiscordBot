@@ -65,7 +65,7 @@ class ModLog(commands.Cog):
             await ctx.send_help()
             lines = []
             for ct in casetypes:
-                enabled = "enabled" if await ct.is_enabled() else "disabled"
+                enabled = _("enabled") if await ct.is_enabled() else _("disabled")
                 lines.append(f"{ct.name} : {enabled}")
 
             await ctx.send(_("Current settings:\n") + box("\n".join(lines)))
@@ -79,7 +79,7 @@ class ModLog(commands.Cog):
             await casetype.set_enabled(not enabled)
             await ctx.send(
                 _("Case creation for {action_name} actions is now {enabled}.").format(
-                    action_name=action, enabled="enabled" if not enabled else "disabled"
+                    action_name=action, enabled=_("enabled") if not enabled else _("disabled")
                 )
             )
 
