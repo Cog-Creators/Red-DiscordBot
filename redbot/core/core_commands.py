@@ -1652,7 +1652,7 @@ class Core(commands.Cog, CoreLogic):
         """Shows debug information useful for debugging.."""
 
         if sys.platform == "linux":
-            import distro
+            import distro  # pylint: disable=import-error
 
         IS_WINDOWS = os.name == "nt"
         IS_MAC = sys.platform == "darwin"
