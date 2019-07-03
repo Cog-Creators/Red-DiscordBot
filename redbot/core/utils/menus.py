@@ -297,9 +297,9 @@ class ReactionMenu(abc.ABC):
                 emoji for emoji, lineno in sorted(_emoji_linenos.items(), key=lambda t: t[1])
             )
             # Prepended with those inherited from bases
-            cls.INITIAL_EMOJIS = deduplicate_iterables(
+            cls.INITIAL_EMOJIS = deduplicate_iterables(  # pylint: disable=no-member
                 *(
-                    base.INITIAL_EMOJIS  # pylint: disable=no-member
+                    base.INITIAL_EMOJIS
                     for base in cls.__bases__
                     if issubclass(base, ReactionMenu) and base.INITIAL_EMOJIS is not None
                 ),
