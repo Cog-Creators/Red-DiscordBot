@@ -86,17 +86,15 @@ class Context(commands.Context):
         else:
             return True
 
-    async def react_quietly(self, reaction: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, bool, str]) -> bool:
+    async def react_quietly(
+        self, reaction: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]
+    ) -> bool:
         """Adds a reaction to to the command message.
         Returns
         -------
         bool
             :code:`True` if adding the reaction succeeded.
         """
-        if reaction is True:
-            reaction = TICK
-        elif reaction is False:
-            reaction = "\N{CROSS MARK}"
         try:
             await self.message.add_reaction(reaction)
         except (discord.HTTPException, discord.NotFound, discord.Forbidden):
