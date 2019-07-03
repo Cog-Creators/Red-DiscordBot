@@ -299,14 +299,14 @@ class ReactionMenu(abc.ABC):
             # Prepended with those inherited from bases
             cls.INITIAL_EMOJIS = deduplicate_iterables(
                 *(
-                    base.INITIAL_EMOJIS
+                    base.INITIAL_EMOJIS  # pylint: disable=no-member
                     for base in cls.__bases__
                     if issubclass(base, ReactionMenu) and base.INITIAL_EMOJIS is not None
                 ),
                 emojis,
             )
         else:
-            cls.INITIAL_EMOJIS = initial_emojis
+            cls.INITIAL_EMOJIS = initial_emojis  # pylint: disable=no-member
 
     @staticmethod
     def handler(
