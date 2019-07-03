@@ -40,3 +40,7 @@ Bank
 
 .. automodule:: redbot.core.bank
     :members:
+    :exclude-members: cost
+
+    .. autofunction:: cost
+        :decorator:
