@@ -97,10 +97,8 @@ class Context(commands.Context):
         """
         try:
             await self.message.add_reaction(reaction)
-        except (discord.HTTPException, discord.NotFound, discord.Forbidden):
+        except discord.HTTPException:
             return False
-        except discord.InvalidArgument:
-            return False  # Possibly raise error here?
         else:
             return True
 
