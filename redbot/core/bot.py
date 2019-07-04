@@ -1,6 +1,6 @@
 import asyncio
-import contextlib
 import inspect
+import logging
 import os
 import re
 import types
@@ -296,21 +296,23 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         if name in self.extensions:
             raise errors.PackageAlreadyLoaded(name)
 
-        if not hasattr(module, "setup"):
+        try:
+            setup = getattr(module, "setup")
+        except AttributeError:
             del module
             raise discord.ClientException(f"extension {name} does not have a setup function")
-
-        try:
-            if asyncio.iscoroutinefunction(lib.setup):
-                await lib.setup(self)
-            else:
-                lib.setup(self)
-        except Exception as e:
-            self._remove_module_references(lib.__name__)
-            self._call_module_finalizers(lib, name)
-            raise
         else:
-            self._BotBase__extensions[name] = lib
+            try:
+                if asyncio.iscoroutinefunction(setup):
+                    await setup(self)
+                else:
+                    setup(self)
+            except Exception as e:
+                self._remove_module_references(module.__name__)
+                self._call_module_finalizers(module, name)
+                raise
+            else:
+                self._BotBase__extensions[name] = module
 
     def remove_cog(self, cogname: str):
         cog = self.get_cog(cogname)
