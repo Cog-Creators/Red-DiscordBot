@@ -19,7 +19,7 @@ import redbot.core
 from redbot.core import Config, commands, checks, bank
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import bold, box, pagify
+from redbot.core.utils.chat_formatting import bold, box, pagify, humanize_int
 from redbot.core.utils.menus import (
     menu,
     DEFAULT_CONTROLS,
@@ -442,7 +442,7 @@ class Audio(commands.Cog):
             await self._embed_msg(
                 ctx,
                 _("Track queueing command price set to {price} {currency}.").format(
-                    price=price, currency=await bank.get_currency_name(ctx.guild)
+                    price=humanize_int(price), currency=await bank.get_currency_name(ctx.guild)
                 ),
             )
 
@@ -3799,7 +3799,7 @@ class Audio(commands.Cog):
                 await self._embed_msg(
                     ctx,
                     _("Not enough {currency} ({required_credits} required).").format(
-                        currency=credits_name, required_credits=jukebox_price
+                        currency=credits_name, required_credits=humanize_int(jukebox_price)
                     ),
                 )
                 return False

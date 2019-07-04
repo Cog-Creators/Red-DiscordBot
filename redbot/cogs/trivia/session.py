@@ -6,7 +6,7 @@ from collections import Counter
 import discord
 from redbot.core import bank
 from redbot.core.i18n import Translator
-from redbot.core.utils.chat_formatting import box, bold, humanize_list
+from redbot.core.utils.chat_formatting import box, bold, humanize_list, humanize_int
 from redbot.core.utils.common_filters import normalize_smartquotes
 from .log import LOG
 
@@ -292,7 +292,7 @@ class TriviaSession:
                             " for coming first."
                         ).format(
                             user=winner.display_name,
-                            num=amount,
+                            num=humanize_int(amount),
                             currency=await bank.get_currency_name(self.ctx.guild),
                         )
                     )

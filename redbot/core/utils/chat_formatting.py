@@ -3,8 +3,9 @@ import datetime
 from typing import Sequence, Iterator, List, Optional
 
 import discord
+from babel.numbers import format_decimal
 
-from redbot.core.i18n import Translator
+from redbot.core.i18n import Translator, get_locale
 
 _ = Translator("UtilsChatFormatting", __file__)
 
@@ -429,3 +430,20 @@ def humanize_timedelta(
             strings.append(f"{period_value} {unit}")
 
     return ", ".join(strings)
+
+
+def humanize_int(val: int) -> str:
+    """
+    Convert an int to a str with digit separators based on bot locale
+
+    Parameters
+    ----------
+    val : int
+        The int to be formatted.
+
+    Returns
+    -------
+    str
+        locale aware formated number.
+    """
+    return format_decimal(val, locale=get_locale())
