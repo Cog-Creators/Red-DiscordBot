@@ -438,7 +438,7 @@ def humanize_int(val: Union[int, float]) -> str:
 
     Parameters
     ----------
-    val : int
+    val : Union[int, float]
         The int to be formatted.
 
     Returns
