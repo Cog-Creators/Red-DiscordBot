@@ -62,7 +62,7 @@ If you're not on Windows, you should also have GNU make installed, and you can o
 1. Fork and clone the repository to a directory on your local machine.
 2. Open a command line in that directory and execute the following command:
     ```bash
-    make setupenv
+    make newenv
     ```
     Red, its dependencies, and all required development tools, are now installed to a virtual environment located in the `.venv` subdirectory. Red is installed in editable mode, meaning that edits you make to the source code in the repository will be reflected when you run Red.
 3. Activate the new virtual environment with one of the following commands:
@@ -76,7 +76,7 @@ If you're not on Windows, you should also have GNU make installed, and you can o
         ```
     Each time you open a new command line, you should execute this command first. From here onwards, we will assume you are executing commands from within this activated virtual environment.
  
-**Note:** If you're comfortable with setting up virtual environments yourself and would rather do it manually, just run `pip install -r dev-requirements.txt` after setting it up.
+**Note:** If you're comfortable with setting up virtual environments yourself and would rather do it manually, just run `pip install -Ur tools/dev-requirements.txt` after setting it up.
 
 ### 4.2 Testing
 We've recently started using [tox](https://github.com/tox-dev/tox) to run all of our tests. It's extremely simple to use, and if you followed the previous section correctly, it is already installed to your virtual environment.
@@ -101,10 +101,11 @@ Use the command `black --help` to see how to use this tool. The full style guide
 You may have noticed we have a `Makefile` and a `make.bat` in the top-level directory. For now, you can do three things with them:
 1. `make reformat`: Reformat all python files in the project with Black
 2. `make stylecheck`: Check if any `.py` files in the project need reformatting
-3. `make setupenv`: Set up a new virtual environment in the `.venv` subdirectory, and install Red and its dependencies. If one already exists, it is cleared out and replaced.
+3. `make newenv`: Set up a new virtual environment in the `.venv` subdirectory, and install Red and its dependencies. If one already exists, it is cleared out and replaced.
+4. `make syncenv`: Sync your environment with Red's latest dependencies.
 
 ### 4.5 Keeping your dependencies up to date
-Whenever you pull from upstream (V3/develop on the main repository) and you notice either of the files `setup.cfg` or `dev-requirements.txt` have been changed, it can often mean some package dependencies have been updated, added or removed. To make sure you're testing and formatting with the most up-to-date versions of our dependencies, run `make setupenv` to recreate your virtual environment. You could also simply do `pip install -Ur dev-requirements.txt`, but you will still have any dependencies which may have been removed previously.
+Whenever you pull from upstream (V3/develop on the main repository) and you notice either of the files `setup.cfg` or `tools/dev-requirements.txt` have been changed, it can often mean some package dependencies have been updated, added or removed. To make sure you're testing and formatting with the most up-to-date versions of our dependencies, run `make syncenv`. You could also simply do `make newenv` to install them to a clean new virtual environment.
 
 ### 4.6 To contribute changes
 
