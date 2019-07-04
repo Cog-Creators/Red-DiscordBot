@@ -33,6 +33,7 @@ from urllib.parse import urlparse
 from .equalizer import Equalizer
 from .manager import ServerManager
 from .errors import LavalinkDownloadFailed
+from .localcache import music_cache
 
 _ = Translator("Audio", __file__)
 
@@ -1802,7 +1803,7 @@ class Audio(commands.Cog):
             else:
                 song_info = "{} {}".format(i["track"]["name"], i["track"]["artists"][0]["name"])
             try:
-                track_url = await self._youtube_api_search(yt_key, song_info)
+                track_url = await music_cache.get_url(yt_key, song_info, self.session)
             except (RuntimeError, aiohttp.client_exceptions.ServerDisconnectedError):
                 error_embed = discord.Embed(
                     colour=await ctx.embed_colour(),
@@ -1810,7 +1811,6 @@ class Audio(commands.Cog):
                 )
                 await playlist_msg.edit(embed=error_embed)
                 return None
-                pass
             try:
                 yt_track = await player.get_tracks(track_url)
             except (RuntimeError, aiohttp.client_exceptions.ServerDisconnectedError):
@@ -4181,21 +4181,6 @@ class Audio(commands.Cog):
         else:
             return False
 
-    async def _youtube_api_search(self, yt_key, query):
-        params = {"q": query, "part": "id", "key": yt_key, "maxResults": 1, "type": "video"}
-        yt_url = "https://www.googleapis.com/youtube/v3/search"
-        try:
-            async with self.session.request("GET", yt_url, params=params) as r:
-                if r.status == 400:
-                    return None
-                else:
-                    search_response = await r.json()
-        except RuntimeError:
-            return None
-        for search_result in search_response.get("items", []):
-            if search_result["id"]["kind"] == "youtube#video":
-                return "https://www.youtube.com/watch?v={}".format(search_result["id"]["videoId"])
-
     # Spotify-related methods below are originally from: https://github.com/Just-Some-Bots/MusicBot/blob/master/musicbot/spotify.py
 
     async def _check_token(self, token):
@@ -4280,6 +4265,7 @@ class Audio(commands.Cog):
             self.bot.loop.create_task(lavalink.close())
             if self._manager is not None:
                 self.bot.loop.create_task(self._manager.shutdown())
+            music_cache._save_cache()
             self._cleaned_up = True
 
     __del__ = cog_unload
