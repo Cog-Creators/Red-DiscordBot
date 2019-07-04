@@ -432,6 +432,30 @@ def humanize_timedelta(
     return ", ".join(strings)
 
 
+def _convertlocale(locale: str) -> str:
+    """
+    Convert a locale string to lang_territory format
+
+    Parameters
+    ----------
+    locale : str
+        Locale to be converted into a babel supported format.
+
+    Returns
+    -------
+    str
+        Babel compatible locale.
+    """
+    formatting = ""
+    if "." in locale:
+        locale, formatting = locale.split(".")
+    if "-" in locale:
+        locale = locale.replace("-", "_", 1)
+    if formatting:
+        locale = ".".join([locale, formatting])
+    return locale
+
+
 def humanize_int(val: Union[int, float]) -> str:
     """
     Convert an int to a str with digit separators based on bot locale
@@ -446,4 +470,4 @@ def humanize_int(val: Union[int, float]) -> str:
     str
         locale aware formated number.
     """
-    return format_decimal(val, locale=get_locale())
+    return format_decimal(val, locale=_convertlocale(get_locale()))
