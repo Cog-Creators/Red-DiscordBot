@@ -4198,7 +4198,6 @@ class Audio(commands.Cog):
 
     # Spotify-related methods below are originally from: https://github.com/Just-Some-Bots/MusicBot/blob/master/musicbot/spotify.py
 
-
     async def _check_token(self, token):
         now = int(time.time())
         return token["expires_at"] - now < 60

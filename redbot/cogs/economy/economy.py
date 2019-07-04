@@ -176,7 +176,10 @@ class Economy(commands.Cog):
 
         await ctx.send(
             _("{user} transferred {num} {currency} to {other_user}").format(
-                user=from_.display_name, num=humanize_int(amount), currency=currency, other_user=to.display_name
+                user=from_.display_name,
+                num=humanize_int(amount),
+                currency=currency,
+                other_user=to.display_name,
             )
         )
 
@@ -387,7 +390,9 @@ class Economy(commands.Cog):
             balance = acc[1]["balance"]
 
             if acc[0] != author.id:
-                temp_msg += f"{f'{pos}.': <{pound_len+2}} {humanize_int(balance): <{bal_len + 5}} {name}\n"
+                temp_msg += (
+                    f"{f'{pos}.': <{pound_len+2}} {humanize_int(balance): <{bal_len + 5}} {name}\n"
+                )
 
             else:
                 temp_msg += (
@@ -570,7 +575,9 @@ class Economy(commands.Cog):
             await self.config.guild(guild).SLOT_MIN.set(bid)
         credits_name = await bank.get_currency_name(guild)
         await ctx.send(
-            _("Minimum bid is now {bid} {currency}.").format(bid=humanize_int(bid), currency=credits_name)
+            _("Minimum bid is now {bid} {currency}.").format(
+                bid=humanize_int(bid), currency=credits_name
+            )
         )
 
     @economyset.command()
@@ -589,7 +596,9 @@ class Economy(commands.Cog):
         else:
             await self.config.guild(guild).SLOT_MAX.set(bid)
         await ctx.send(
-            _("Maximum bid is now {bid} {currency}.").format(bid=humanize_int(bid), currency=credits_name)
+            _("Maximum bid is now {bid} {currency}.").format(
+                bid=humanize_int(bid), currency=credits_name
+            )
         )
 
     @economyset.command()
