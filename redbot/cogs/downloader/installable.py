@@ -14,10 +14,10 @@ if TYPE_CHECKING:
     from .repo_manager import RepoManager
 
 
-class InstallableType(str, Enum):
-    UNKNOWN = "UNKNOWN"
-    COG = "COG"
-    SHARED_LIBRARY = "SHARED_LIBRARY"
+class InstallableType(Enum):
+    UNKNOWN = 0
+    COG = 1
+    SHARED_LIBRARY = 2
 
 
 class Installable(RepoJSONMixin):
