@@ -263,11 +263,6 @@ class CoreLogic:
 class Core(commands.Cog, CoreLogic):
     """Commands related to core functions"""
 
-    @commands.command(hidden=True)
-    async def ping(self, ctx: commands.Context):
-        """Pong."""
-        await ctx.send("Pong.")
-
     @commands.command()
     async def info(self, ctx: commands.Context):
         """Shows info about Red"""
@@ -282,10 +277,17 @@ class Core(commands.Cog, CoreLogic):
         days_since = (datetime.datetime.utcnow() - since).days
         dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
         python_version = "[{}.{}.{}]({})".format(*sys.version_info[:3], python_url)
-        red_version = "[{}]({})".format(__version__, red_pypi)
+        red_version = _("[{}]({}), modified specially for VexiBot").format(__version__, red_pypi)
         app_info = await self.bot.application_info()
         owner = app_info.owner
         custom_info = await self.bot.db.custom_info()
+        vex_message = _(
+            "<@418078199982063626> would like to especially thank the very kind "
+            "people on the [support server]({}). Without their help, this bot "
+            "would not be possible today. I would also like to thank [Twentysix]{} "
+            "who made this wonderful bot a reality. Finally, I want to thank all "
+            "the great people who develop the cogs that this bot uses."
+        ).format(support_server_url
 
         async with aiohttp.ClientSession() as session:
             async with session.get("{}/json".format(red_pypi)) as r:
@@ -303,12 +305,13 @@ class Core(commands.Cog, CoreLogic):
         embed.add_field(name=_("Instance owned by"), value=str(owner))
         embed.add_field(name="Python", value=python_version)
         embed.add_field(name="discord.py", value=dpy_version)
-        embed.add_field(name=_("Red version"), value=red_version)
+        embed.add_field(name=_("Red version"), value=red_version
         if outdated:
             embed.add_field(
                 name=_("Outdated"), value=_("Yes, {} is available").format(data["info"]["version"])
             )
-        if custom_info:
+        embed.add_field(name=_("A message from Vexima"), value=vex_message
+         if custom_info:
             embed.add_field(name=_("About this instance"), value=custom_info, inline=False)
         embed.add_field(name=_("About Red"), value=about, inline=False)
 
