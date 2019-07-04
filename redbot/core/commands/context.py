@@ -1,6 +1,6 @@
 import asyncio
 import contextlib
-from typing import Iterable, List, Union
+from typing import Iterable, List
 import discord
 from discord.ext import commands
 
@@ -81,22 +81,6 @@ class Context(commands.Context):
         """
         try:
             await self.message.add_reaction(TICK)
-        except discord.HTTPException:
-            return False
-        else:
-            return True
-
-    async def react_quietly(
-        self, reaction: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]
-    ) -> bool:
-        """Adds a reaction to to the command message.
-        Returns
-        -------
-        bool
-            :code:`True` if adding the reaction succeeded.
-        """
-        try:
-            await self.message.add_reaction(reaction)
         except discord.HTTPException:
             return False
         else:
