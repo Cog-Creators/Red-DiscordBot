@@ -282,11 +282,12 @@ class Core(commands.Cog, CoreLogic):
         owner = app_info.owner
         custom_info = await self.bot.db.custom_info()
         vex_message = _(
-            "<@418078199982063626> would like to especially thank the very kind "
-            "people on the [support server]({}). Without their help, this bot "
-            "would not be possible today. I would also like to thank [Twentysix]{} "
-            "who made this wonderful bot a reality. Finally, I want to thank all "
-            "the great people who develop the cogs that this bot uses."
+            "<@418078199982063626> would like to especially thank the very "
+            "kind people on the [support server]({}). Without their help, "
+            "this bot would not be possible today. I would also like to thank "
+            "[Twentysix]{} who made this wonderful bot a reality. Finally, I "
+            "want to thank all the great people who develop the cogs that"
+            "this bot uses."
         ).format(support_server_url)
 
         async with aiohttp.ClientSession() as session:
