@@ -1,6 +1,6 @@
 import itertools
 import datetime
-from typing import Sequence, Iterator, List, Optional
+from typing import Sequence, Iterator, List, Optional, Union
 
 import discord
 from babel.numbers import format_decimal
@@ -432,7 +432,7 @@ def humanize_timedelta(
     return ", ".join(strings)
 
 
-def humanize_int(val: int) -> str:
+def humanize_int(val: Union[int, float]) -> str:
     """
     Convert an int to a str with digit separators based on bot locale
 
