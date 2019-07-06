@@ -288,7 +288,7 @@ class Core(commands.Cog, CoreLogic):
             "kind people on the [support server]({}). Without their help, "
             "this bot would not be possible today. I would also like to thank "
             "[Twentysix]({}) who made this wonderful bot a reality. Finally, I "
-            "want to thank all the great people who develop the cogs that"
+            "want to thank all the great people who develop the cogs that "
             "this bot uses."
         ).format(support_server_url, author_repo)
 
