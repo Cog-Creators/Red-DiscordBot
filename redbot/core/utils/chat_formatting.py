@@ -3,11 +3,17 @@ import datetime
 from typing import Sequence, Iterator, List, Optional, Union
 
 import discord
+import babel.localedata
+from babel.core import Locale
 from babel.numbers import format_decimal
 
 from redbot.core.i18n import Translator, get_locale
 
 _ = Translator("UtilsChatFormatting", __file__)
+
+_supported_locales = babel.localedata.locale_identifiers()
+_cached_red_locale = None
+_cached_babel_locale = None
 
 
 def error(text: str) -> str:
@@ -432,28 +438,35 @@ def humanize_timedelta(
     return ", ".join(strings)
 
 
-def _convertlocale(locale: str) -> str:
-    """
-    Convert a locale string to lang_territory format
+def _get_babel_locale():
+    global _supported_locales, _cached_red_locale, _cached_babel_locale
+    red_locale = get_locale()
+    update = False
+    if (
+        _cached_red_locale is None
+        or _cached_babel_locale is None
+        or _cached_red_locale != red_locale
+    ):
+        _cached_red_locale = red_locale
+        update = True
 
-    Parameters
-    ----------
-    locale : str
-        Locale to be converted into a babel supported format.
-
-    Returns
-    -------
-    str
-        Babel compatible locale.
-    """
-    formatting = ""
-    if "." in locale:
-        locale, formatting = locale.split(".")
-    if "-" in locale:
-        locale = locale.replace("-", "_", 1)
-    if formatting:
-        locale = ".".join([locale, formatting])
-    return locale
+    if update:
+        try:
+            _cached_babel_locale = babel.get_locale_identifier(
+                babel.parse_locale(red_locale, sep="-"), sep="_"
+            )
+        except ValueError:
+            # ValueError is Raised by `parse_locale` when an invalid Locale is given to it
+            # Lets handle it silently and default to "en_US"
+            try:
+                # Try to find a babel locale that's close to the one used by red
+                _cached_babel_locale = Locale.negotiate([red_locale], _supported_locales, sep="-")
+            except (ValueError, TypeError, babel.core.UnknownLocaleError):
+                # If we fail to get a close match we will then default to "en_US"
+                _cached_babel_locale = None
+            if _cached_babel_locale is None:
+                _cached_babel_locale = "en_US"
+    return _cached_babel_locale
 
 
 def humanize_int(val: Union[int, float]) -> str:
@@ -468,6 +481,7 @@ def humanize_int(val: Union[int, float]) -> str:
     Returns
     -------
     str
-        locale aware formated number.
+        locale aware formatted number.
     """
-    return format_decimal(val, locale=_convertlocale(get_locale()))
+
+    return format_decimal(val, locale=_get_babel_locale())
