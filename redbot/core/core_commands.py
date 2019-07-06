@@ -273,11 +273,13 @@ class Core(commands.Cog, CoreLogic):
         support_server_url = "https://discord.gg/red"
         dpy_repo = "https://github.com/Rapptz/discord.py"
         python_url = "https://www.python.org/"
+        vb_repo = "https://github.com/Vexima/VexiBot-Red"
         since = datetime.datetime(2016, 1, 2, 0, 0)
         days_since = (datetime.datetime.utcnow() - since).days
         dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
         python_version = "[{}.{}.{}]({})".format(*sys.version_info[:3], python_url)
-        red_version = _("[{}]({}), modified specially for VexiBot").format(__version__, red_pypi)
+        red_version = "[{}]({})".format(__version__, red_pypi)
+        vb_version = _("[3.1.2.6]({})".format(vb_repo))
         app_info = await self.bot.application_info()
         owner = app_info.owner
         custom_info = await self.bot.db.custom_info()
@@ -306,11 +308,12 @@ class Core(commands.Cog, CoreLogic):
         embed.add_field(name=_("Instance owned by"), value=str(owner))
         embed.add_field(name="Python", value=python_version)
         embed.add_field(name="discord.py", value=dpy_version)
-        embed.add_field(name=_("Red version"), value=red_version)
+        embed.add_field(name=_("Red-DiscordBot version"), value=red_version)
         if outdated:
             embed.add_field(
                 name=_("Outdated"), value=_("Yes, {} is available").format(data["info"]["version"])
             )
+        embed.add_field(name=_("VexiBot-Red version"), value=vb_version)
         embed.add_field(name=_("A message from Vexima"), value=vex_message)
         if custom_info:
             embed.add_field(name=_("About this instance"), value=custom_info, inline=False)
