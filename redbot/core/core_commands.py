@@ -306,12 +306,12 @@ class Core(commands.Cog, CoreLogic):
         embed.add_field(name=_("Instance owned by"), value=str(owner))
         embed.add_field(name="Python", value=python_version)
         embed.add_field(name="discord.py", value=dpy_version)
-        embed.add_field(name=_("Red version"), value=red_version
+        embed.add_field(name=_("Red version"), value=red_version)
          if outdated:
             embed.add_field(
                 name=_("Outdated"), value=_("Yes, {} is available").format(data["info"]["version"])
             )
-        embed.add_field(name=_("A message from Vexima"), value=vex_message
+        embed.add_field(name=_("A message from Vexima"), value=vex_message)
          if custom_info:
             embed.add_field(name=_("About this instance"), value=custom_info, inline=False)
         embed.add_field(name=_("About Red"), value=about, inline=False)
