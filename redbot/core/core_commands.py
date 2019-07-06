@@ -288,7 +288,7 @@ class Core(commands.Cog, CoreLogic):
             "[Twentysix]{} who made this wonderful bot a reality. Finally, I "
             "want to thank all the great people who develop the cogs that"
             "this bot uses."
-        ).format(support_server_url)
+        ).format(support_server_url, author_repo)
 
         async with aiohttp.ClientSession() as session:
             async with session.get("{}/json".format(red_pypi)) as r:
