@@ -51,10 +51,10 @@ log = logging.getLogger("red.cog_manager")
 class CogManager:
     """Directory manager for Red's cogs.
 
-    This module allows you to load cogs from multiple directories and even from
-    outside the bot directory. You may also set a directory for downloader to
-    install new cogs to, the default being the ``cogs/`` folder in `RepoManager`'s
-    data directory.
+    This module allows you to load cogs from multiple directories and
+    even from outside the bot directory. You may also set a directory
+    for downloader to install new cogs to, the default being the
+    ``cogs/`` folder in `CogManager`'s data path.
     """
 
     CORE_PATH = Path(redbot.cogs.__file__).parent
@@ -64,7 +64,6 @@ class CogManager:
         default_cog_install_path = cog_data_path(self) / "cogs"
         default_cog_install_path.mkdir(parents=True, exist_ok=True)
         self.conf.register_global(paths=[], install_path=str(default_cog_install_path))
-        self._loop = loop or asyncio.get_event_loop()
 
     async def initialize(self):
         redbot.ext_cogs.__path__ = [str(p) for p in (await self.paths())[:-1]]
