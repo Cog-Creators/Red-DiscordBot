@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import functools
 import os
@@ -7,18 +9,20 @@ import shutil
 import re
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from subprocess import run as sp_run, PIPE
+from subprocess import run as sp_run, PIPE, CompletedProcess
 from string import Formatter
 from sys import executable
 from typing import (
     Tuple,
     Iterable,
     MutableMapping,
-    Union,
     Optional,
     Awaitable,
     AsyncContextManager,
-    TypeVar,
+    Generator,
+    Any,
+    Dict,
+    List,
 )
 
 import discord
@@ -31,13 +35,19 @@ from .installable import Installable, InstallableType, InstalledModule
 from .json_mixins import RepoJSONMixin
 from .log import log
 
-_T = TypeVar("_T")
-
 _ = Translator("RepoManager", __file__)
 
 
-class _RepoCheckoutCtxManager(Awaitable[_T], AsyncContextManager[_T]):
-    def __init__(self, repo, rev, exit_to_rev=None, force_checkout=False):
+class _RepoCheckoutCtxManager(
+    Awaitable[None], AsyncContextManager[None]
+):  # pylint: disable=duplicate-bases
+    def __init__(
+        self,
+        repo: Repo,
+        rev: Optional[str],
+        exit_to_rev: Optional[str] = None,
+        force_checkout: bool = False,
+    ):
         self.repo = repo
         self.rev = rev
         if exit_to_rev is None:
@@ -47,13 +57,13 @@ class _RepoCheckoutCtxManager(Awaitable[_T], AsyncContextManager[_T]):
         self.force_checkout = force_checkout
         self.coro = repo._checkout(self.rev, force_checkout=self.force_checkout)
 
-    def __await__(self):
+    def __await__(self) -> Generator[Any, None, None]:
         return self.coro.__await__()
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> None:
         await self
 
-    async def __aexit__(self, exc_type, exc, tb):
+    async def __aexit__(self, exc_type, exc, tb) -> None:
         if self.rev is not None:
             await self.repo._checkout(self.exit_to_rev, force_checkout=self.force_checkout)
 
@@ -105,8 +115,8 @@ class Repo(RepoJSONMixin):
         branch: str,
         commit: str,
         folder_path: Path,
-        available_modules: Tuple[Installable] = (),
-        loop: asyncio.AbstractEventLoop = None,
+        available_modules: Tuple[Installable, ...] = (),
+        loop: Optional[asyncio.AbstractEventLoop] = None,
     ):
         self.url = url
         self.branch = branch
@@ -125,12 +135,10 @@ class Repo(RepoJSONMixin):
 
         self._repo_lock = asyncio.Lock()
 
-        self._loop = loop
-        if self._loop is None:
-            self._loop = asyncio.get_event_loop()
+        self._loop = loop if loop is not None else asyncio.get_event_loop()
 
     @classmethod
-    async def convert(cls, ctx: commands.Context, argument: str):
+    async def convert(cls, ctx: commands.Context, argument: str) -> Repo:
         downloader_cog = ctx.bot.get_cog("Downloader")
         if downloader_cog is None:
             raise commands.CommandError(_("No Downloader cog found."))
@@ -144,7 +152,7 @@ class Repo(RepoJSONMixin):
             )
         return poss_repo
 
-    def _existing_git_repo(self) -> (bool, Path):
+    def _existing_git_repo(self) -> Tuple[bool, Path]:
         git_path = self.folder_path / ".git"
         return git_path.exists(), git_path
 
@@ -239,7 +247,7 @@ class Repo(RepoJSONMixin):
 
     async def get_last_module_occurrence(
         self, module_name: str, descendant_rev: Optional[str] = None
-    ) -> Tuple[Optional[str], Optional[Installable]]:
+    ) -> Optional[Installable]:
         """
         Gets module's `Installable` from last commit in which it still occurs.
 
@@ -294,7 +302,7 @@ class Repo(RepoJSONMixin):
                 return discord.utils.get(self.available_modules, name=module_name)
         return None
 
-    async def _is_module_modified(self, module: Installable, other_hash: str):
+    async def _is_module_modified(self, module: Installable, other_hash: str) -> bool:
         """
         Checks if given module was different in :code:`other_hash`.
 
@@ -323,7 +331,7 @@ class Repo(RepoJSONMixin):
 
     async def get_modified_modules(
         self, old_rev: str, new_rev: Optional[str] = None
-    ) -> Tuple[Installable]:
+    ) -> Tuple[Installable, ...]:
         """
         Gets modified modules between the two revisions.
         For every module that doesn't exist in :code:`new_rev`,
@@ -356,14 +364,14 @@ class Repo(RepoJSONMixin):
             await self.checkout(new_rev)
             modules = []
             new_modules = self.available_modules
-            for module in old_modules:
-                if module.name not in modified_modules:
+            for old_module in old_modules:
+                if old_module.name not in modified_modules:
                     continue
                 try:
-                    index = new_modules.index(module)
+                    index = new_modules.index(old_module)
                 except ValueError:
-                    module = await self.get_last_module_occurrence(module.name, new_rev)
-                    if await self._is_module_modified(module, old_hash):
+                    module = await self.get_last_module_occurrence(old_module.name, new_rev)
+                    if module is not None and await self._is_module_modified(module, old_hash):
                         modules.append(module)
                 else:
                     modules.append(new_modules[index])
@@ -424,7 +432,7 @@ class Repo(RepoJSONMixin):
 
         return p.stdout.decode().strip()
 
-    def _update_available_modules(self) -> Tuple[Installable]:
+    def _update_available_modules(self) -> Tuple[Installable, ...]:
         """
         Updates the available modules attribute for this repo.
         :return: List of available modules.
@@ -446,12 +454,17 @@ class Repo(RepoJSONMixin):
                 curr_modules.append(
                     Installable(location=self.folder_path / name, repo=self, commit=self.commit)
                 )
-        self.available_modules = curr_modules
+        self.available_modules = tuple(curr_modules)
 
-        # noinspection PyTypeChecker
-        return tuple(self.available_modules)
+        return self.available_modules
 
-    async def _run(self, *args, **kwargs):
+    async def _run(
+        self,
+        *args: Any,
+        valid_exit_codes: Tuple[int, ...] = (0,),
+        debug_only: bool = False,
+        **kwargs: Any,
+    ) -> CompletedProcess:
         """
         Parameters
         ----------
@@ -466,10 +479,8 @@ class Repo(RepoJSONMixin):
         env = os.environ.copy()
         env["GIT_TERMINAL_PROMPT"] = "0"
         kwargs["env"] = env
-        valid_exit_codes = kwargs.pop("valid_exit_codes", (0,))
-        debug_only = kwargs.pop("debug_only", False)
         async with self._repo_lock:
-            p = await self._loop.run_in_executor(
+            p: CompletedProcess = await self._loop.run_in_executor(
                 self._executor,
                 functools.partial(sp_run, *args, stdout=PIPE, stderr=PIPE, **kwargs),
             )
@@ -481,7 +492,7 @@ class Repo(RepoJSONMixin):
                     log.error(stderr)
             return p
 
-    async def _checkout(self, rev: Optional[str] = None, force_checkout: bool = False):
+    async def _checkout(self, rev: Optional[str] = None, force_checkout: bool = False) -> None:
         if rev is None:
             return
         if not force_checkout and self.commit == rev:
@@ -511,7 +522,7 @@ class Repo(RepoJSONMixin):
         *,
         exit_to_rev: Optional[str] = None,
         force_checkout: bool = False,
-    ):
+    ) -> _RepoCheckoutCtxManager:
         """
         Checks out repository to provided revision.
 
@@ -544,7 +555,7 @@ class Repo(RepoJSONMixin):
 
         return _RepoCheckoutCtxManager(self, rev, exit_to_rev, force_checkout)
 
-    async def clone(self) -> Tuple[str]:
+    async def clone(self) -> Tuple[Installable, ...]:
         """Clone a new repo.
 
         Returns
@@ -633,7 +644,7 @@ class Repo(RepoJSONMixin):
 
         return p.stdout.decode().strip()
 
-    async def latest_commit(self, branch: str = None) -> str:
+    async def latest_commit(self, branch: Optional[str] = None) -> str:
         """Determine the latest commit hash of the repo.
 
         Parameters
@@ -665,7 +676,7 @@ class Repo(RepoJSONMixin):
 
         return p.stdout.decode().strip()
 
-    async def current_url(self, folder: Path = None) -> str:
+    async def current_url(self, folder: Optional[Path] = None) -> str:
         """
         Discovers the FETCH URL for a Git repo.
 
@@ -695,7 +706,7 @@ class Repo(RepoJSONMixin):
 
         return p.stdout.decode().strip()
 
-    async def hard_reset(self, branch: str = None) -> None:
+    async def hard_reset(self, branch: Optional[str] = None) -> None:
         """Perform a hard reset on the current repo.
 
         Parameters
@@ -725,7 +736,7 @@ class Repo(RepoJSONMixin):
                 " the following path: {}".format(self.folder_path)
             )
 
-    async def update(self) -> (str, str):
+    async def update(self) -> Tuple[str, str]:
         """Update the current branch of this repo.
 
         Returns
@@ -791,7 +802,7 @@ class Repo(RepoJSONMixin):
 
     async def install_libraries(
         self, target_dir: Path, req_target_dir: Path, libraries: Iterable[Installable] = ()
-    ) -> Tuple[Tuple[InstalledModule], Tuple[Installable]]:
+    ) -> Tuple[Tuple[InstalledModule, ...], Tuple[Installable, ...]]:
         """Install shared libraries to the target directory.
 
         If :code:`libraries` is not specified, all shared libraries in the repo
@@ -858,7 +869,9 @@ class Repo(RepoJSONMixin):
 
         return await self.install_raw_requirements(cog.requirements, target_dir)
 
-    async def install_raw_requirements(self, requirements: Tuple[str], target_dir: Path) -> bool:
+    async def install_raw_requirements(
+        self, requirements: Iterable[str], target_dir: Path
+    ) -> bool:
         """Install a list of requirements using pip.
 
         Parameters
@@ -895,7 +908,7 @@ class Repo(RepoJSONMixin):
         return True
 
     @property
-    def available_cogs(self) -> Tuple[Installable]:
+    def available_cogs(self) -> Tuple[Installable, ...]:
         """`tuple` of `installable` : All available cogs in this Repo.
 
         This excludes hidden or shared packages.
@@ -906,7 +919,7 @@ class Repo(RepoJSONMixin):
         )
 
     @property
-    def available_libraries(self) -> Tuple[Installable]:
+    def available_libraries(self) -> Tuple[Installable, ...]:
         """`tuple` of `installable` : All available shared libraries in this
         Repo.
         """
@@ -916,7 +929,7 @@ class Repo(RepoJSONMixin):
         )
 
     @classmethod
-    async def from_folder(cls, folder: Path, branch: str = ""):
+    async def from_folder(cls, folder: Path, branch: str = "") -> Repo:
         repo = cls(name=folder.stem, branch=branch, commit="", url="", folder_path=folder)
         repo.url = await repo.current_url()
         if branch == "":
@@ -932,12 +945,12 @@ class RepoManager:
     GITHUB_OR_GITLAB_RE = re.compile(r"https?://git(?:hub)|(?:lab)\.com/")
     TREE_URL_RE = re.compile(r"(?P<tree>/tree)/(?P<branch>\S+)$")
 
-    def __init__(self):
-        self._repos = {}
+    def __init__(self) -> None:
+        self._repos: Dict[str, Repo] = {}
         self.conf = Config.get_conf(self, identifier=170708480, force_registration=True)
         self.conf.register_global(repos={})
 
-    async def initialize(self):
+    async def initialize(self) -> None:
         await self._load_repos(set_repos=True)
 
     @property
@@ -990,7 +1003,7 @@ class RepoManager:
 
         return r
 
-    def get_repo(self, name: str) -> Union[Repo, None]:
+    def get_repo(self, name: str) -> Optional[Repo]:
         """Get a Repo object for a repository.
 
         Parameters
@@ -1007,10 +1020,10 @@ class RepoManager:
         return self._repos.get(name, None)
 
     @property
-    def repos(self) -> Tuple[Repo]:
+    def repos(self) -> Tuple[Repo, ...]:
         return tuple(self._repos.values())
 
-    def get_all_repo_names(self) -> Tuple[str]:
+    def get_all_repo_names(self) -> Tuple[str, ...]:
         """Get all repo names.
 
         Returns
@@ -1021,7 +1034,7 @@ class RepoManager:
         # noinspection PyTypeChecker
         return tuple(self._repos.keys())
 
-    def get_all_cogs(self) -> Tuple[Installable]:
+    def get_all_cogs(self) -> Tuple[Installable, ...]:
         """Get all cogs.
 
         Returns
@@ -1029,12 +1042,12 @@ class RepoManager:
         `tuple` of `Installable`
 
         """
-        all_cogs = []
+        all_cogs: List[Installable] = []
         for repo in self._repos.values():
             all_cogs += repo.available_cogs
         return tuple(all_cogs)
 
-    async def delete_repo(self, name: str):
+    async def delete_repo(self, name: str) -> None:
         """Delete a repository and its folders.
 
         Parameters
@@ -1082,7 +1095,7 @@ class RepoManager:
                 ret[repo] = (old, new)
         return ret
 
-    async def _load_repos(self, set_repos=False) -> MutableMapping[str, Repo]:
+    async def _load_repos(self, set_repos: bool = False) -> MutableMapping[str, Repo]:
         ret = {}
         self.repos_folder.mkdir(parents=True, exist_ok=True)
         for folder in self.repos_folder.iterdir():

@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import json
 import distutils.dir_util
 import shutil
 from enum import Enum
 from pathlib import Path
-from typing import MutableMapping, Any, TYPE_CHECKING, Optional
+from typing import MutableMapping, Any, TYPE_CHECKING, Optional, Dict, Union, Callable, Tuple
 
 from .log import log
 from .json_mixins import RepoJSONMixin
@@ -34,8 +36,10 @@ class Installable(RepoJSONMixin):
     ----------
     repo_name : `str`
         Name of the repository which this package belongs to.
+    repo : Repo, optional
+        Repo object of the Installable, if repo is missing this will be `None`
     commit : `str`, optional
-        Installable's current commit.
+        Installable's commit. This is not the same as ``repo.commit``
     author : `tuple` of `str`, optional
         Name(s) of the author(s).
     bot_version : `tuple` of `int`
@@ -60,7 +64,7 @@ class Installable(RepoJSONMixin):
 
     """
 
-    def __init__(self, location: Path, repo: Optional["Repo"] = None, commit: str = ""):
+    def __init__(self, location: Path, repo: Optional[Repo] = None, commit: str = ""):
         """Base installable initializer.
 
         Parameters
@@ -68,10 +72,9 @@ class Installable(RepoJSONMixin):
         location : pathlib.Path
             Location (file or folder) to the installable.
         repo : Repo, optional
-            Repo object of the Installable,
-            if repo is missing, this will be `None`
+            Repo object of the Installable, if repo is missing this will be `None`
         commit : str
-            Installable's current commit
+            Installable's commit. This is not the same as ``repo.commit``
 
         """
         super().__init__(location)
@@ -82,15 +85,15 @@ class Installable(RepoJSONMixin):
         self.repo_name = self._location.parent.stem
         self.commit = commit
 
-        self.author = ()
+        self.author: Tuple[str, ...] = ()
         self.min_bot_version = red_version_info
         self.max_bot_version = red_version_info
         self.min_python_version = (3, 5, 1)
         self.hidden = False
         self.disabled = False
-        self.required_cogs = {}  # Cog name -> repo URL
-        self.requirements = ()
-        self.tags = ()
+        self.required_cogs: Dict[str, str] = {}  # Cog name -> repo URL
+        self.requirements: Tuple[str, ...] = ()
+        self.tags: Tuple[str, ...] = ()
         self.type = InstallableType.UNKNOWN
 
         if self._info_file.exists():
@@ -99,15 +102,15 @@ class Installable(RepoJSONMixin):
         if self._info == {}:
             self.type = InstallableType.COG
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         # noinspection PyProtectedMember
         return self._location == other._location
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self._location)
 
     @property
-    def name(self):
+    def name(self) -> str:
         """`str` : The name of this package."""
         return self._location.stem
 
@@ -120,6 +123,7 @@ class Installable(RepoJSONMixin):
         :return: Status of installation
         :rtype: bool
         """
+        copy_func: Callable[..., Any]
         if self._location.is_file():
             copy_func = shutil.copy2
         else:
@@ -135,13 +139,15 @@ class Installable(RepoJSONMixin):
             return False
         return True
 
-    def _read_info_file(self):
+    def _read_info_file(self) -> None:
         super()._read_info_file()
 
         if self._info_file.exists():
             self._process_info_file()
 
-    def _process_info_file(self, info_file_path: Path = None) -> MutableMapping[str, Any]:
+    def _process_info_file(
+        self, info_file_path: Optional[Path] = None
+    ) -> MutableMapping[str, Any]:
         """
         Processes an information file. Loads dependencies among other
         information into this object.
@@ -154,7 +160,7 @@ class Installable(RepoJSONMixin):
         if info_file_path is None or not info_file_path.is_file():
             raise ValueError("No valid information file path was found.")
 
-        info = {}
+        info: Dict[str, Any] = {}
         with info_file_path.open(encoding="utf-8") as f:
             try:
                 info = json.load(f)
@@ -183,7 +189,7 @@ class Installable(RepoJSONMixin):
         self.max_bot_version = max_bot_version
 
         try:
-            min_python_version = tuple(info.get("min_python_version", [3, 5, 1]))
+            min_python_version = tuple(info.get("min_python_version", (3, 5, 1)))
         except ValueError:
             min_python_version = self.min_python_version
         self.min_python_version = min_python_version
@@ -230,18 +236,17 @@ class InstalledModule(Installable):
     Attributes
     ----------
     pinned : `bool`
-        Whether or not this cog is pinned.
+        Whether or not this cog is pinned, always `False` if module is not a cog.
     """
 
     def __init__(
-        self, location: Path, repo: Optional["Repo"] = None, commit: str = "", pinned: bool = False
+        self, location: Path, repo: Optional[Repo] = None, commit: str = "", pinned: bool = False
     ):
         super().__init__(location=location, repo=repo, commit=commit)
-        if self.type == InstallableType.COG:
-            self.pinned = pinned
+        self.pinned: bool = pinned if self.type == InstallableType.COG else False
 
-    def to_json(self):
-        module_json = {
+    def to_json(self) -> Dict[str, Union[str, bool]]:
+        module_json: Dict[str, Union[str, bool]] = {
             "repo_name": self.repo_name,
             "module_name": self.name,
             "commit": self.commit,
@@ -251,12 +256,15 @@ class InstalledModule(Installable):
         return module_json
 
     @classmethod
-    def from_json(cls, data: dict, repo_mgr: "RepoManager"):
+    def from_json(
+        cls, data: Dict[str, Union[str, bool]], repo_mgr: RepoManager
+    ) -> InstalledModule:
         repo_name = data["repo_name"]
         cog_name = data["module_name"]
         commit = data.get("commit", "")
         pinned = data.get("pinned", False)
 
+        # TypedDict, where are you :/
         repo = repo_mgr.get_repo(repo_name)
         if repo is not None:
             repo_folder = repo.folder_path
@@ -268,7 +276,7 @@ class InstalledModule(Installable):
         return cls(location=location, repo=repo, commit=commit, pinned=pinned)
 
     @classmethod
-    def from_installable(cls, module: Installable, *, pinned: bool = False):
+    def from_installable(cls, module: Installable, *, pinned: bool = False) -> InstalledModule:
         return cls(
             location=module._location, repo=module.repo, commit=module.commit, pinned=pinned
         )

@@ -39,7 +39,7 @@ async def test_add_repo(monkeypatch, repo_manager):
         url="https://github.com/tekulvw/Squid-Plugins", name="squid", branch="rewrite_cogs"
     )
 
-    assert squid.available_modules == []
+    assert squid.available_modules == ()
 
 
 @pytest.mark.asyncio
