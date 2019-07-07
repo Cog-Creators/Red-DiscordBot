@@ -7,7 +7,7 @@ import discord
 from redbot.core import commands
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-from redbot.core.utils.chat_formatting import escape, italics
+from redbot.core.utils.chat_formatting import escape, italics, humanize_number
 
 _ = T_ = Translator("General", __file__)
 
@@ -89,7 +89,7 @@ class General(commands.Cog):
         author = ctx.author
         if number > 1:
             n = randint(1, number)
-            await ctx.send("{author.mention} :game_die: {n} :game_die:".format(author=author, n=n))
+            await ctx.send("{author.mention} :game_die: {n} :game_die:".format(author=author, n=humanize_number(n)))
         else:
             await ctx.send(_("{author.mention} Maybe higher than 1? ;P").format(author=author))
 
@@ -223,10 +223,10 @@ class General(commands.Cog):
     async def serverinfo(self, ctx):
         """Show server information."""
         guild = ctx.guild
-        online = len([m.status for m in guild.members if m.status != discord.Status.offline])
-        total_users = len(guild.members)
-        text_channels = len(guild.text_channels)
-        voice_channels = len(guild.voice_channels)
+        online = humanize_number(len([m.status for m in guild.members if m.status != discord.Status.offline]))
+        total_users = humanize_number(len(guild.members))
+        text_channels = humanize_number(len(guild.text_channels))
+        voice_channels = humanize_number(len(guild.voice_channels))
         passed = (ctx.message.created_at - guild.created_at).days
         created_at = _("Since {date}. That's over {num} days ago!").format(
             date=guild.created_at.strftime("%d %b %Y %H:%M"), num=passed
@@ -234,9 +234,9 @@ class General(commands.Cog):
         data = discord.Embed(description=created_at, colour=(await ctx.embed_colour()))
         data.add_field(name=_("Region"), value=str(guild.region))
         data.add_field(name=_("Users"), value=f"{online}/{total_users}")
-        data.add_field(name=_("Text Channels"), value=str(text_channels))
-        data.add_field(name=_("Voice Channels"), value=str(voice_channels))
-        data.add_field(name=_("Roles"), value=str(len(guild.roles)))
+        data.add_field(name=_("Text Channels"), value=text_channels)
+        data.add_field(name=_("Voice Channels"), value=voice_channels)
+        data.add_field(name=_("Roles"), value=humanize_number(len(guild.roles)))
         data.add_field(name=_("Owner"), value=str(guild.owner))
         data.set_footer(text=_("Server ID: ") + str(guild.id))
 

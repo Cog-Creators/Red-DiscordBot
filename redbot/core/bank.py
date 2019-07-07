@@ -5,7 +5,7 @@ from functools import wraps
 
 import discord
 
-from redbot.core.utils.chat_formatting import humanize_int
+from redbot.core.utils.chat_formatting import humanize_number
 from . import Config, errors, commands
 from .i18n import Translator
 
@@ -242,12 +242,12 @@ async def withdraw_credits(member: discord.Member, amount: int) -> int:
     if not isinstance(amount, int):
         raise TypeError("Withdrawal amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
-        raise ValueError("Invalid withdrawal amount {} < 0".format(humanize_int(amount)))
+        raise ValueError("Invalid withdrawal amount {} < 0".format(humanize_number(amount)))
 
     bal = await get_balance(member)
     if amount > bal:
         raise ValueError(
-            "Insufficient funds {} > {}".format(humanize_int(amount), humanize_int(bal))
+            "Insufficient funds {} > {}".format(humanize_number(amount), humanize_number(bal))
         )
 
     return await set_balance(member, bal - amount)
@@ -279,7 +279,7 @@ async def deposit_credits(member: discord.Member, amount: int) -> int:
     if not isinstance(amount, int):
         raise TypeError("Deposit amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
-        raise ValueError("Invalid deposit amount {} <= 0".format(humanize_int(amount)))
+        raise ValueError("Invalid deposit amount {} <= 0".format(humanize_number(amount)))
 
     bal = await get_balance(member)
     return await set_balance(member, amount + bal)
@@ -313,7 +313,7 @@ async def transfer_credits(from_: discord.Member, to: discord.Member, amount: in
     if not isinstance(amount, int):
         raise TypeError("Transfer amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
-        raise ValueError("Invalid transfer amount {} <= 0".format(humanize_int(amount)))
+        raise ValueError("Invalid transfer amount {} <= 0".format(humanize_number(amount)))
 
     await withdraw_credits(from_, amount)
     return await deposit_credits(to, amount)
@@ -725,7 +725,7 @@ def cost(amount: int):
                 credits_name = await get_currency_name(context.guild)
                 raise commands.UserFeedbackCheckFailure(
                     _("You need at least {cost} {currency} to use this command.").format(
-                        cost=humanize_int(amount), currency=credits_name
+                        cost=humanize_number(amount), currency=credits_name
                     )
                 )
             else:

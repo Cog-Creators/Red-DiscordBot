@@ -3,7 +3,7 @@ from typing import Optional
 
 import discord
 
-from redbot.core.utils.chat_formatting import humanize_int
+from redbot.core.utils.chat_formatting import humanize_number
 from .i18n import Translator
 
 _ = Translator(__name__, __file__)
@@ -48,5 +48,5 @@ class BalanceTooHigh(BankError, OverflowError):
 
     def __str__(self) -> str:
         return _("{user}'s balance cannot rise above max {currency}.").format(
-            user=self.user, max=humanize_int(self.max_balance), currency=self.currency_name
+            user=self.user, max=humanize_number(self.max_balance), currency=self.currency_name
         )
