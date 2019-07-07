@@ -30,7 +30,7 @@ Linux hosting
 |<https://www.scaleway.com/>`_       |`<https://online.net/>`_, based in Europe.            |
 +------------------------------------+------------------------------------------------------+
 |`DigitalOcean                       |US-based cheap VPSes. The gold standard. Locations    |
-|<https://m.do.co/c/71288f6af536/>`_ |available world wide.                                 |
+|<https://www.digitalocean.com/>`_   |available world wide.                                 |
 +------------------------------------+------------------------------------------------------+
 |`OVH <https://www.ovh.co.uk/>`_     |Cheap VPSes, used by many people. France and Canadian |
 |                                    |locations available.                                  |
