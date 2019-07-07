@@ -47,7 +47,7 @@ jobs:
             repo: Cog-Creators/Red-DiscordBot
             tags: true
     - stage: Crowdin Deployment
-      if: branch = V3/develop
+      if: branch = V3/develop AND type = push
       python: 3.7.2
       env:
         - DEPLOYING=true
