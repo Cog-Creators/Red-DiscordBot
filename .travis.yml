@@ -64,4 +64,4 @@ jobs:
         skip_cleanup: true
         on:
           repo: Cog-Creators/Red-DiscordBot
-          tags: true
+          branch: V3/develop
