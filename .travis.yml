@@ -29,6 +29,13 @@ jobs:
       env:
         - DEPLOYING=true
         - TOXENV=py36
+      before_deploy:
+        # Download translations prior to deployment
+        - curl https://artifacts.crowdin.com/repo/GPG-KEY-crowdin | sudo apt-key add -
+        - echo "deb https://artifacts.crowdin.com/repo/deb/ /" | sudo tee -a /etc/apt/sources.list
+        - sudo apt-get update -qq
+        - sudo apt-get install -y crowdin
+        - make download_translations
       deploy:
         - provider: pypi
           distributions: sdist bdist_wheel
@@ -40,7 +47,7 @@ jobs:
             repo: Cog-Creators/Red-DiscordBot
             tags: true
     - stage: Crowdin Deployment
-      if: tag IS present
+      if: branch = V3/develop
       python: 3.7.2
       env:
         - DEPLOYING=true

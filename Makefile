@@ -7,10 +7,13 @@ stylecheck:
 # Translations
 gettext:
 	redgettext --command-docstrings --verbose --recursive redbot --exclude-files "redbot/pytest/**/*"
-upload_translations:
-	$(MAKE) gettext
+upload_translations: gettext _crowdin_upload
+# We need to make gettext before downloading because crowdin CLI uses existing `.pot` files to know
+# where to extract the `.po` files.
+download_translations: gettext _crowdin_download
+_crowdin_upload:
 	crowdin upload sources
-download_translations:
+_crowdin_download:
 	crowdin download
 
 # Dependencies

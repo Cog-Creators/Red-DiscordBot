@@ -1,7 +1,6 @@
 *.json
 *.exe
 *.dll
-*.pot
 .data
 !/tests/cogs/dataconverter/data/**/*.json
 Pipfile
@@ -84,6 +83,8 @@ coverage.xml
 
 # Translations
 *.mo
+*.po
+*.pot
 
 # Django stuff:
 *.log
