@@ -432,14 +432,14 @@ def humanize_timedelta(
     return ", ".join(strings)
 
 
-def humanize_int(val: Union[int, float]) -> str:
+def humanize_number(val: Union[int, float]) -> str:
     """
-    Convert an int to a str with digit separators based on bot locale
+    Convert an int or float to a str with digit separators based on bot locale
 
     Parameters
     ----------
     val : Union[int, float]
-        The int to be formatted.
+        The int/float to be formatted.
 
     Returns
     -------
