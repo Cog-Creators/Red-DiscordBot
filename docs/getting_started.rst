@@ -151,7 +151,7 @@ download them using the downloader cog.
 
 You can start using the downloader cog by loading it: ``[p]load downloader``
 
-You can find cogs by searching on `cogs.red <https://cogs.red>`_. Find whatever you want,
+You can find cogs by searching on ``cogs.red``. Find whatever you want,
 there are hundreds of cogs available!
 
 .. note:: ``cogs.red``, the website that list all of the cogs is not
