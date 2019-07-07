@@ -70,9 +70,10 @@ show you **all of the available commands** of the bot with a small description.
     [p]help
 
 .. tip:: The message is generated dynamically and users will only see the
-    commands they can use. You can edit this using the permissions cog.
+    commands they can use. You can change what commands users can use with the
+    permissions cog.
 
-You can also pick a command to get its detailled description and the
+You can also pick a command to get its detailed description and the
 parameters.
 
 .. code-block:: none
@@ -102,7 +103,7 @@ To get the description of a subcommand, type this:
 
     [p]help commandgroup subcommand
 
-When using them, you also need to specify the command group.
+When using subcommands, you also need to specify the command group.
 As an example, ``cleanup`` has 6 subcommands. If you want
 to use one, do it like this: ``[p]cleanup messages 10``
 
@@ -113,7 +114,7 @@ Cogs
 ----
 
 Red is built with cogs, fancy term for plugins. They are
-modules that enhance the Red functionnalities. They contain
+modules that enhance the Red functionalities. They contain
 commands to use.
 
 Red comes with 19 cogs containing the basic features, such
@@ -145,7 +146,7 @@ Community cogs
 ~~~~~~~~~~~~~~
 
 There's an entire `community <https://discord.gg/red>`_ that contributes
-to Red. Those contibutors make additional cogs for you to use. You can
+to Red. Those contributors make additional cogs for you to use. You can
 download them using the downloader cog.
 
 You can start using the downloader cog by loading it: ``[p]load downloader``
@@ -196,7 +197,7 @@ The bot owner can access all commands on every guild. He can also use
 exclusive commands that can interact with the global settings
 or system files.
 
-If it *you* by default. If not set, use ``[p]set owner``
+*You* are the owner by default. If the owner isn't set, use ``[p]set owner``.
 
 ~~~~~~~~~~~~
 Server owner
@@ -210,8 +211,8 @@ bot owner).
 Administrator
 ~~~~~~~~~~~~~
 
-The administrator is defined by its roles. You can set an admin role
-with the ``[p]set adminrole`` command.
+The administrator is defined by its roles. You can set multiple admin roles
+with the ``[p]addadminrole`` and ``[p]removeadminrole`` commands.
 
 For example, in the mod cog, an admin can use the ``[p]modset`` command
 which defines the cog settings.
@@ -220,8 +221,8 @@ which defines the cog settings.
 Moderator
 ~~~~~~~~~
 
-A moderator is a step above the average users. You can set a moderator
-role with the ``[p]set modrole`` command.
+A moderator is a step above the average users. You can set multiple moderator
+roles with the ``[p]addmodrole`` and ``[p]removemodrole`` commands.
 
 For example, in the mod cog (again), a mod will be able to mute, kick and ban;
 but he won't be able to modify the cog settings with the ``[p]modset`` command.
@@ -237,23 +238,23 @@ but he won't be able to modify the cog settings with the ``[p]modset`` command.
 Hosting
 -------
 
-If you are hosting Red on your personnal computer, you will soon notice that
+If you are hosting Red on your personal computer, you will soon notice that
 if you close the window or if you shut down you computer, Red will be offline.
-He needs an environement to work and respond.
+She needs an environment to work and respond.
 
 You can try to host Red somewhere he will always be online, like on a virtual
-private server (VPS) or on a personnal server (e.g. Raspberry Pi).
+private server (VPS) or on a personal server (e.g. Raspberry Pi).
 
 If you want to do it, follow these steps.
 
 .. warning::
-    Before trying to host Red on a Linux environement, you need to know the
-    basics of the Unix commands, such as navigate the system files or use
+    Before trying to host Red on a Linux environment, you need to know the
+    basics of the Unix commands, such as navigating the system files or use
     a terminal text editor.
 
     You should follow `this guide
     <https://www.digitalocean.com/community/tutorials/an-introduction-to-linux-basics>`_
-    from DigitalOcean which will introduct you to the Linux basics.
+    from DigitalOcean which will introduce you to the Linux basics.
 
 1. **Find a host**
 
@@ -262,12 +263,12 @@ If you want to do it, follow these steps.
   quality VPS providers.
 
   You can also buy a Raspberry Pi (~$20), which is a micro-computer that will
-  be able to host Red. The model 3 or above is recommanded.
+  be able to host Red. The model 3 or above is recommended.
 
 2. **Install Linux**
 
   Most of the VPS providers have tools for installing Linux automatically. If
-  you're a beginner, we recommand **Ubuntu 18**.
+  you're a beginner, we recommend **Ubuntu 18**.
 
   For Raspberry Pi users, just install `Raspbian
   <https://www.raspberrypi.org/downloads/raspbian/>`_ on a micro-SD card.
@@ -311,14 +312,14 @@ If you want to do it, follow these steps.
 User documentation
 ------------------
 
-You will soon start using the Red core cogs. A detailled documentation is
+You will soon start using the Red core cogs. A detailed documentation is
 available for every core cog, under the :ref:`How to use <main>` section.
 
 The cog guides are formatted the same. They're divided into 3 sections:
 
 * **Guide**
 
-  This will introduct you to the cog and explain you how it works.
+  This will introduce you to the cog and explain you how it works.
 
 * **Commands**
 
@@ -335,7 +336,7 @@ The cog guides are formatted the same. They're divided into 3 sections:
 
   * **Description**
 
-    A detailled description of what the command does, with details about how
+    A detailed description of what the command does, with details about how
     it must be used.
 
   * **Arguments**
@@ -355,7 +356,3 @@ The cog guides are formatted the same. They're divided into 3 sections:
         For example, ``[days=1]`` in the ``ban`` command means that the number
         of days of messages to be deleted will be equal to ``1`` if not
         specified.
-
-* **Frequently asked questions**
-
-  A buch of questions frequently asked questions by the users about the cog.

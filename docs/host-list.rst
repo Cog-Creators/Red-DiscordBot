@@ -11,13 +11,13 @@ VPS providers
     of the :ref:`getting started <getting-started>` guide. Please take a look
     if you don't know how to host Red on a VPS.
 
-This is a list of the recommanded VPS providers.
+This is a list of the recommended VPS providers.
 
 .. warning::
-    Please be aware that a Linux server is controlled through command line.
+    Please be aware that a Linux server is controlled through a command line.
     If you don't know Unix basics, please take a look at `this guide
     <https://www.digitalocean.com/community/tutorials/an-introduction-to-linux-basics>`_
-    from DigitalOcean which will introduct you to the Linux basics.
+    from DigitalOcean which will introduce you to the Linux basics.
 
 -------------
 Linux hosting
@@ -32,7 +32,7 @@ Linux hosting
 |`DigitalOcean                       |US-based cheap VPSes. The gold standard. Locations    |
 |<https://www.digitalocean.com/>`_   |available world wide.                                 |
 +------------------------------------+------------------------------------------------------+
-|`OVH <https://www.ovh.co.uk/>`_     |Cheap VPSes, used by many people. France and Canadian |
+|`OVH <https://www.ovh.co.uk/>`_     |Cheap VPSes, used by many people. French and Canadian |
 |                                    |locations available.                                  |
 +------------------------------------+------------------------------------------------------+
 |`Time4VPS                           |Cheap VPSes, seemingly based in Lithuania.            |
