@@ -163,7 +163,9 @@ class Case:
         """
         casetype = await get_casetype(self.action_type)
         title = "{}".format(
-            _("Case #{} | {} {}").format(humanize_number(self.case_number), casetype.case_str, casetype.image)
+            _("Case #{} | {} {}").format(
+                humanize_number(self.case_number), casetype.case_str, casetype.image
+            )
         )
 
         if self.reason:

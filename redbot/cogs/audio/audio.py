@@ -613,7 +613,9 @@ class Audio(commands.Cog):
             msg += _("DJ Role:          [{role.name}]\n").format(role=dj_role_obj)
         if jukebox:
             msg += _("Jukebox:          [{jukebox_name}]\n").format(jukebox_name=jukebox)
-            msg += _("Command price:    [{jukebox_price}]\n").format(jukebox_price=humanize_number(jukebox_price))
+            msg += _("Command price:    [{jukebox_price}]\n").format(
+                jukebox_price=humanize_number(jukebox_price)
+            )
         if maxlength > 0:
             msg += _("Max track length: [{tracklength}]\n").format(
                 tracklength=self._dynamic_time(maxlength)
@@ -766,7 +768,11 @@ class Audio(commands.Cog):
                 ),
                 description=page,
             )
-            em.set_footer(text="Page {}/{}".format(humanize_number(pages), humanize_number((math.ceil(len(msg) / 1500)))))
+            em.set_footer(
+                text="Page {}/{}".format(
+                    humanize_number(pages), humanize_number((math.ceil(len(msg) / 1500)))
+                )
+            )
             pages += 1
             servers_embed.append(em)
 
@@ -894,7 +900,9 @@ class Audio(commands.Cog):
             embed = discord.Embed(
                 colour=await ctx.embed_colour(), title="Equalizer presets:", description=page
             )
-            embed.set_footer(text=_("{num} preset(s)").format(num=humanize_number(len(list(eq_presets.keys())))))
+            embed.set_footer(
+                text=_("{num} preset(s)").format(num=humanize_number(len(list(eq_presets.keys()))))
+            )
             page_list.append(embed)
         await menu(ctx, page_list, DEFAULT_CONTROLS)
 

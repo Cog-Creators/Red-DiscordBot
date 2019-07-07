@@ -89,7 +89,11 @@ class General(commands.Cog):
         author = ctx.author
         if number > 1:
             n = randint(1, number)
-            await ctx.send("{author.mention} :game_die: {n} :game_die:".format(author=author, n=humanize_number(n)))
+            await ctx.send(
+                "{author.mention} :game_die: {n} :game_die:".format(
+                    author=author, n=humanize_number(n)
+                )
+            )
         else:
             await ctx.send(_("{author.mention} Maybe higher than 1? ;P").format(author=author))
 
@@ -223,7 +227,9 @@ class General(commands.Cog):
     async def serverinfo(self, ctx):
         """Show server information."""
         guild = ctx.guild
-        online = humanize_number(len([m.status for m in guild.members if m.status != discord.Status.offline]))
+        online = humanize_number(
+            len([m.status for m in guild.members if m.status != discord.Status.offline])
+        )
         total_users = humanize_number(len(guild.members))
         text_channels = humanize_number(len(guild.text_channels))
         voice_channels = humanize_number(len(guild.voice_channels))
