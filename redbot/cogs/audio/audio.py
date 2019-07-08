@@ -2848,7 +2848,8 @@ class Audio(commands.Cog):
         await self._embed_msg(
             ctx, _("Repeat tracks: {true_or_false}.").format(true_or_false=not repeat)
         )
-        await self._data_check(ctx)
+        if self._player_check(ctx):
+            await self._data_check(ctx)
 
     @commands.command()
     @commands.guild_only()
@@ -3278,7 +3279,8 @@ class Audio(commands.Cog):
         await self._embed_msg(
             ctx, _("Shuffle tracks: {true_or_false}.").format(true_or_false=not shuffle)
         )
-        await self._data_check(ctx)
+        if self._player_check(ctx):
+            await self._data_check(ctx)
 
     @commands.command()
     @commands.guild_only()
