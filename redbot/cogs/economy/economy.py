@@ -246,17 +246,14 @@ class Economy(commands.Cog):
                     scope=self.bot.user.name if await bank.is_global() else _("this server")
                 )
             )
+
     @_bank.command()
     @commands.guild_only()
     @checks.guildowner()
     async def removedead(self, ctx, confirmation: bool = False):
         """Delete bank accounts for users no longer in the server"""
         if await bank.is_global():
-            return await ctx.send(
-                _(
-                    "This command will not work in a Global bank"
-                )
-            )
+            return await ctx.send(_("This command will not work in a Global bank"))
 
         if confirmation is False:
             await ctx.send(
@@ -276,11 +273,7 @@ class Economy(commands.Cog):
     async def memberdelete(self, ctx, member: discord.Member, confirmation: bool = False):
         """Delete bank for specified member."""
         if await bank.is_global():
-            return await ctx.send(
-                _(
-                    "This command will not work in a Global bank"
-                )
-            )
+            return await ctx.send(_("This command will not work in a Global bank"))
         if confirmation is False:
             await ctx.send(
                 _(
