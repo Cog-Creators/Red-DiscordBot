@@ -246,6 +246,37 @@ class Economy(commands.Cog):
                     scope=self.bot.user.name if await bank.is_global() else _("this server")
                 )
             )
+    @_bank.command()
+    @check_global_setting_guildowner()
+    async def removedead(self, ctx, confirmation: bool = False):
+        """Delete bank accounts for users no longer in the server"""
+        if confirmation is False:
+            await ctx.send(
+                _(
+                    "This will delete all bank accounts for user no longer in this server."
+                    "\nIf you're sure, type "
+                    "`{prefix}bank removedead yes`"
+                ).format(prefix=ctx.prefix)
+            )
+        else:
+            await bank.bank_local_clean(guild=ctx.guild)
+            await ctx.send(_("Bank accounts for user no longer in this server have been deleted."))
+
+    @_bank.command(aliases=["memberremove", "memberdel"])
+    @check_global_setting_guildowner()
+    async def memberdelete(self, ctx, member: discord.Member, confirmation: bool = False):
+        """Delete bank for specified member."""
+        if confirmation is False:
+            await ctx.send(
+                _(
+                    "This will delete {member} bank account."
+                    "\nIf you're sure, type "
+                    "`{prefix}bank memberdelete '{member}' yes`"
+                ).format(prefix=ctx.prefix, member=member)
+            )
+        else:
+            await bank.bank_local_clean(guild=ctx.guild, member=member)
+            await ctx.send(_("Bank account for {member} has been deleted.").format(member=member))
 
     @guild_only_check()
     @commands.command()
