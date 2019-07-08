@@ -8,7 +8,7 @@ from typing import cast, Iterable
 import discord
 
 from redbot.cogs.bank import check_global_setting_guildowner, check_global_setting_admin
-from redbot.core import Config, bank, commands, errors
+from redbot.core import Config, bank, commands, errors, checks
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
@@ -247,9 +247,17 @@ class Economy(commands.Cog):
                 )
             )
     @_bank.command()
-    @check_global_setting_guildowner()
+    @commands.guild_only()
+    @checks.guildowner()
     async def removedead(self, ctx, confirmation: bool = False):
         """Delete bank accounts for users no longer in the server"""
+        if await bank.is_global():
+            return await ctx.send(
+                _(
+                    "This command will not work in a Global bank"
+                )
+            )
+
         if confirmation is False:
             await ctx.send(
                 _(
@@ -263,9 +271,16 @@ class Economy(commands.Cog):
             await ctx.send(_("Bank accounts for user no longer in this server have been deleted."))
 
     @_bank.command(aliases=["memberremove", "memberdel"])
-    @check_global_setting_guildowner()
+    @commands.guild_only()
+    @checks.guildowner()
     async def memberdelete(self, ctx, member: discord.Member, confirmation: bool = False):
         """Delete bank for specified member."""
+        if await bank.is_global():
+            return await ctx.send(
+                _(
+                    "This command will not work in a Global bank"
+                )
+            )
         if confirmation is False:
             await ctx.send(
                 _(

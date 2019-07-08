@@ -331,6 +331,7 @@ async def wipe_bank(guild: Optional[discord.Guild] = None) -> None:
     else:
         await _conf.clear_all_members(guild)
 
+
 async def bank_local_clean(guild: discord.Guild, member: discord.member = None):
     """Remove data for members who are no longer in the server"""
     group = _conf._get_base_group(_conf.MEMBER, str(guild.id))
@@ -346,6 +347,7 @@ async def bank_local_clean(guild: discord.Guild, member: discord.member = None):
             member_id = f"{member.id}"
             if member_id in member_data:
                 del member_data[member_id]
+
 
 async def get_leaderboard(positions: int = None, guild: discord.Guild = None) -> List[tuple]:
     """
