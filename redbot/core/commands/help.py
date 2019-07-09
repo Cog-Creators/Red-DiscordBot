@@ -218,7 +218,16 @@ class RedHelpFormatter:
                 )
 
             to_page = "\n\n".join(
-                filter(None, (description, signature[1:-1], command.help, subtext_header, subtext))
+                filter(
+                    None,
+                    (
+                        description,
+                        signature[1:-1],
+                        command.help.replace("[p]", ctx.clean_prefix),
+                        subtext_header,
+                        subtext,
+                    ),
+                )
             )
             pages = [box(p) for p in pagify(to_page)]
             await self.send_pages(ctx, pages, embed=False)
