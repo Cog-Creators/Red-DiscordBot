@@ -1,0 +1,1 @@
+Mutes are now handled with a dedicated core cog.

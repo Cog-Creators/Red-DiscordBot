@@ -25,6 +25,7 @@ redbot/core/utils/antispam.py            @mikeshardmind
 redbot/core/utils/tunnel.py              @mikeshardmind
 redbot/core/utils/caching.py             @mikeshardmind
 redbot/core/utils/common_filters.py      @mikeshardmind
+redbot/core/utils/discord_helpers.py     @DiscordLiz
 
 # Cogs
 redbot/cogs/admin/*                 @tekulvw
@@ -40,6 +41,7 @@ redbot/cogs/general/*               @palmtree5
 redbot/cogs/image/*                 @palmtree5
 redbot/cogs/mod/*                   @palmtree5
 redbot/cogs/modlog/*                @palmtree5
+redbot/cogs/mutes/*                 @DiscordLiz
 redbot/cogs/streams/*               @Twentysix26 @palmtree5
 redbot/cogs/trivia/*                @Tobotimus
 redbot/cogs/reports/*               @mikeshardmind

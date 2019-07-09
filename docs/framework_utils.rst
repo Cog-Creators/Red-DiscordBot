@@ -51,3 +51,9 @@ Common Filters
 
 .. automodule:: redbot.core.utils.common_filters
     :members:
+
+Discord Helper Classes
+======================
+
+.. automodule:: redbot.core.utils.discord_helpers
+    :members:

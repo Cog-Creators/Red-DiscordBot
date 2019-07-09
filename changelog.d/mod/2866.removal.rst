@@ -1,0 +1,1 @@
+Mute is no longer a part of the Mod cog.

@@ -1,0 +1,1 @@
+Red now supports role mutes.

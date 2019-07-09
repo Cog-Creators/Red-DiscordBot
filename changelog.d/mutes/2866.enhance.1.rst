@@ -1,0 +1,1 @@
+Mutes can no longer be dodged by leaving and rejoining a server.
