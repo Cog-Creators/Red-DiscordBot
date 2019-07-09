@@ -913,7 +913,7 @@ class Audio(commands.Cog):
         header_author = _("Author")
         header = box(
             "[{header_name}]{space}[{header_author}]\n".format(
-                header_name=header_name, space=space*9, header_author=header_author
+                header_name=header_name, space=space * 9, header_author=header_author
             ),
             lang="ini",
         )
