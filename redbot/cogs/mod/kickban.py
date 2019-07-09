@@ -7,7 +7,7 @@ from typing import cast, Optional, Union
 
 import discord
 from redbot.core import commands, i18n, checks, modlog
-from redbot.core.utils.chat_formatting import pagify, humanize_number
+from redbot.core.utils.chat_formatting import pagify, humanize_number, format_perms_list
 from redbot.core.utils.mod import is_allowed_by_hierarchy, get_audit_reason
 from .abc import MixinMeta
 from .converters import RawUserIds
@@ -20,6 +20,48 @@ class KickBanMixin(MixinMeta):
     """
     Kick and ban commands and tasks go here.
     """
+
+    @staticmethod
+    async def _voice_perm_check(
+        ctx: commands.Context, user_voice_state: Optional[discord.VoiceState], **perms: bool
+    ) -> bool:
+        """Check if the bot and user have sufficient permissions for voicebans.
+
+        This also verifies that the user's voice state and connected
+        channel are not ``None``.
+
+        Returns
+        -------
+        bool
+            ``True`` if the permissions are sufficient and the user has
+            a valid voice state.
+
+        """
+        if user_voice_state is None or user_voice_state.channel is None:
+            await ctx.send(_("That user is not in a voice channel."))
+            return False
+        voice_channel: discord.VoiceChannel = user_voice_state.channel
+        required_perms = discord.Permissions()
+        required_perms.update(**perms)
+        if not voice_channel.permissions_for(ctx.me) >= required_perms:
+            await ctx.send(
+                _("I require the {perms} permission(s) in that user's channel to do that.").format(
+                    perms=format_perms_list(required_perms)
+                )
+            )
+            return False
+        if (
+            ctx.permission_state is commands.PermState.NORMAL
+            and not voice_channel.permissions_for(ctx.author) >= required_perms
+        ):
+            await ctx.send(
+                _(
+                    "You must have the {perms} permission(s) in that user's channel to use this "
+                    "command."
+                ).format(perms=format_perms_list(required_perms))
+            )
+            return False
+        return True
 
     @staticmethod
     async def get_invite_for_reinvite(ctx: commands.Context, max_age: int = 86400):
