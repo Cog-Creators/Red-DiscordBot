@@ -1,6 +1,7 @@
 import itertools
 import datetime
 from typing import Sequence, Iterator, List, Optional
+from io import BytesIO
 
 import discord
 
@@ -429,3 +430,27 @@ def humanize_timedelta(
             strings.append(f"{period_value} {unit}")
 
     return ", ".join(strings)
+
+
+def text_to_file(text: str, filename: str = "file.txt", *, spoiler: bool = False):
+    """Prepares text to be sent as a file on Discord, without character limit.
+
+    This writes text into a bytes object that can be used for the ``file`` or ``files`` parameters\
+    of :func:`discord.abc.send`.
+
+    Parameters
+    ----------
+    text: str
+        The text to put in your file.
+    filename: str
+        The name of the file sent. Defaults to ``file.txt``.
+    spoiler: bool
+        Whether the attachment is a spoiler. Defaults to ``False``.
+
+    Returns
+    -------
+    discord.File
+
+    """
+    file = BytesIO(bytes(text))
+    return discord.File(file, filename, spoiler=spoiler)
