@@ -288,8 +288,8 @@ class Economy(commands.Cog):
                 _(
                     "This will delete {member}'s bank account."
                     "\nIf you're sure, type "
-                    '`{prefix}bank cleanup member "{member}" yes`'
-                ).format(prefix=ctx.prefix, member=member)
+                    "`{prefix}bank cleanup member {member} yes`"
+                ).format(prefix=ctx.prefix, member=member.id)
             )
         else:
             await bank.bank_local_clean(guild=ctx.guild, member=member)
