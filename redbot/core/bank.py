@@ -332,7 +332,7 @@ async def wipe_bank(guild: Optional[discord.Guild] = None) -> None:
         await _conf.clear_all_members(guild)
 
 
-async def bank_local_clean(guild: discord.Guild, member: Optional[discord.member] = None) -> None:
+async def bank_local_clean(guild: discord.Guild, member: Optional[discord.Member] = None) -> None:
     """Delete bank account for the specified member or users no longer in guild is no member is specified
 
     Parameters
