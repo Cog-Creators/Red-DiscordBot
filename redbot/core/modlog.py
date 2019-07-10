@@ -463,6 +463,7 @@ class CaseType:
         CaseType
 
         """
+        data.pop(name, None)
         return cls(name=name, **data, **kwargs)
 
 
