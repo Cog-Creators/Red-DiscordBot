@@ -247,44 +247,56 @@ class Economy(commands.Cog):
                 )
             )
 
-    @_bank.command()
+    @_bank.group(name="cleanup")
     @commands.guild_only()
     @checks.guildowner()
-    async def removedead(self, ctx, confirmation: bool = False):
-        """Delete bank accounts for users no longer in the server"""
+    async def _cleanup(self,):
+        """Delete bank accounts for users."""
+
+    @_cleanup.command()
+    @commands.guild_only()
+    @checks.guildowner()
+    async def server(self, ctx, confirmation: bool = False):
+        """Delete bank accounts for users no longer in the server."""
         if await bank.is_global():
-            return await ctx.send(_("This command will not work in a Global bank"))
+            return await ctx.send(_("This command cannot be used with a global bank."))
 
         if confirmation is False:
             await ctx.send(
                 _(
-                    "This will delete all bank accounts for user no longer in this server."
+                    "This will delete all bank accounts for users no longer in this server."
                     "\nIf you're sure, type "
-                    "`{prefix}bank removedead yes`"
+                    "`{prefix}bank cleanup server yes`"
                 ).format(prefix=ctx.prefix)
             )
         else:
             await bank.bank_local_clean(guild=ctx.guild)
-            await ctx.send(_("Bank accounts for user no longer in this server have been deleted."))
+            await ctx.send(
+                _("Bank accounts for users no longer in this server have been deleted.")
+            )
 
-    @_bank.command(aliases=["memberremove", "memberdel"])
+    @_cleanup.command(aliases=["memberremove", "memberdel"])
     @commands.guild_only()
     @checks.guildowner()
-    async def memberdelete(self, ctx, member: discord.Member, confirmation: bool = False):
-        """Delete bank for specified member."""
+    async def member(self, ctx, member: discord.Member, confirmation: bool = False):
+        """Delete the bank account of a specified member."""
         if await bank.is_global():
-            return await ctx.send(_("This command will not work in a Global bank"))
+            return await ctx.send(_("This command cannot be used with a global bank."))
         if confirmation is False:
             await ctx.send(
                 _(
-                    "This will delete {member} bank account."
+                    "This will delete {member}'s bank account."
                     "\nIf you're sure, type "
-                    "`{prefix}bank memberdelete '{member}' yes`"
+                    '`{prefix}bank cleanup member "{member}" yes`'
                 ).format(prefix=ctx.prefix, member=member)
             )
         else:
             await bank.bank_local_clean(guild=ctx.guild, member=member)
-            await ctx.send(_("Bank account for {member} has been deleted.").format(member=member))
+            await ctx.send(
+                _("The bank account for {member} has been deleted.").format(
+                    member=member.display_name
+                )
+            )
 
     @guild_only_check()
     @commands.command()

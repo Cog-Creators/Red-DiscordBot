@@ -332,22 +332,36 @@ async def wipe_bank(guild: Optional[discord.Guild] = None) -> None:
         await _conf.clear_all_members(guild)
 
 
-async def bank_local_clean(guild: discord.Guild, member: discord.member = None):
-    """Remove data for members who are no longer in the server"""
-    # FIXME: use-config-bulk-update
-    # We do not recommend that devs use this protected method as it is not safe to be used in
-    # all cased and this can end up corrupting your config file
-    group = _conf._get_base_group(_conf.MEMBER, str(guild.id))
-    if member is not None:
+async def bank_local_clean(guild: discord.Guild, member: Optional[discord.member] = None) -> None:
+    """Delete bank account for the specified member or users no longer in guild is no member is specified
+
+    Parameters
+    ----------
+    guild: discord.Guild
+        The guild to clear accounts for
+    member : Optional[discord.Member] = None
+        The member clear account for. If unsupplied this will
+        delete accounts of users who are no longer in the guild.
+
+    Note:
+    ----------
+    >>> Config._get_base_group()
+    Should not be used to get groups as this is not a safe operation
+    using this could end up corrupting your config file
+
+    """
+
+    group = _conf._get_base_group(_conf.MEMBER, str(guild.id))  # FIXME: use-config-bulk-update
+    if member is None:
         accounts = await group.all()
         tmp = accounts.copy()
     async with group.all() as member_data:
-        if member is not None:
+        if member is None:
             for acc in tmp:
                 if not guild.get_member(acc):
                     del member_data[acc]
         else:
-            member_id = f"{member.id}"
+            member_id = str(member.id)
             if member_id in member_data:
                 del member_data[member_id]
 
