@@ -276,7 +276,7 @@ class Economy(commands.Cog):
                 _("Bank accounts for users no longer in this server have been deleted.")
             )
 
-    @_cleanup.command(aliases=["memberremove", "memberdel"])
+    @_cleanup.command()
     @commands.guild_only()
     @checks.guildowner()
     async def member(self, ctx, member: discord.Member, confirmation: bool = False):
