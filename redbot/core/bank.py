@@ -352,7 +352,7 @@ async def bank_prune(
         otherwise it will prune all invalid users from the bank.
 
     Notes
-    ------
+    -----
         :code:`Config._get_base_group()` should not be used to get config groups as
         this is not a safe operation using this could end up corrupting your config file.
 
