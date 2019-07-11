@@ -359,7 +359,7 @@ async def bank_prune(
     Raises
     ------
     BankPruneError
-        If both guild and user_id are None and the bank is Local.
+        If guild is :code:`None` and the bank is Local.
 
     """
 
