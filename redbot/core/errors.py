@@ -49,3 +49,9 @@ class BalanceTooHigh(BankError, OverflowError):
         return _("{user}'s balance cannot rise above {max:,} {currency}.").format(
             user=self.user, max=self.max_balance, currency=self.currency_name
         )
+
+
+class BankPruneError(BankError):
+    """Raised when trying to prune a local bank and no server is specified."""
+
+    pass

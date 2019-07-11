@@ -7,6 +7,8 @@ import discord
 
 from . import Config, errors, commands
 from .i18n import Translator
+from .bot import Red
+from .errors import BankPruneError
 
 _ = Translator("Bank API", __file__)
 
@@ -31,6 +33,7 @@ __all__ = [
     "set_default_balance",
     "cost",
     "AbortPurchase",
+    "bank_prune",
 ]
 
 MAX_BALANCE = 2 ** 63 - 1
@@ -332,16 +335,27 @@ async def wipe_bank(guild: Optional[discord.Guild] = None) -> None:
         await _conf.clear_all_members(guild)
 
 
-async def bank_local_clean(guild: discord.Guild, member: Optional[discord.Member] = None) -> None:
-    """Delete bank account for the specified member or users no longer in guild is no member is specified
+async def bank_prune(
+    bot: Red, guild: Optional[discord.Guild] = None, user_id: Optional[int] = None
+) -> None:
+    """Prune bank accounts from the bank
 
     Parameters
     ----------
-    guild: discord.Guild
-        The guild to clear accounts for
-    member : Optional[discord.Member] = None
-        The member clear account for. If unsupplied this will
-        delete accounts of users who are no longer in the guild.
+    bot: Red
+        The bot
+    guild: Optional[discord.Guild] = None
+        The guild to prune if bank is set to Local
+        This is required if bank is set to local
+    user_id : Optional[int] = None
+        The user id for the user who's account will be pruned.
+        If supplied this will prune only this user's bank account
+        Otherwise it will prune all invalid users from the bank
+
+    Raises
+    ------
+    BankPruneError
+        If both guild and user_id are None and the bank is Local
 
     Note:
     ----------
@@ -351,19 +365,34 @@ async def bank_local_clean(guild: discord.Guild, member: Optional[discord.Member
 
     """
 
-    group = _conf._get_base_group(_conf.MEMBER, str(guild.id))  # FIXME: use-config-bulk-update
-    if member is None:
+    global_bank = await is_global()
+
+    if global_bank:
+        _guilds = [g for g in bot.guilds if g.large and not (g.chunked or g.unavailable)]
+        group = _conf._get_base_group(_conf.USER)
+
+    else:
+        if guild is None:
+            raise BankPruneError("'guild' can't be None when pruning a local bank")
+        _guilds = [guild]
+        group = _conf._get_base_group(_conf.MEMBER, str(guild.id))
+
+    if user_id is None:
+        await bot.request_offline_members(*_guilds)
         accounts = await group.all()
         tmp = accounts.copy()
-    async with group.all() as member_data:
-        if member is None:
+        members = bot.get_all_members() if global_bank else guild.members
+        user_list = {str(m.id) for m in members}
+
+    async with group.all() as bank_data:  # FIXME: use-config-bulk-update
+        if user_id is None:
             for acc in tmp:
-                if not guild.get_member(acc):
-                    del member_data[acc]
+                if acc not in user_list:
+                    del bank_data[acc]
         else:
-            member_id = str(member.id)
-            if member_id in member_data:
-                del member_data[member_id]
+            user_id = str(user_id)
+            if user_id in bank_data:
+                del bank_data[user_id]
 
 
 async def get_leaderboard(positions: int = None, guild: discord.Guild = None) -> List[tuple]:
