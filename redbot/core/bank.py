@@ -345,21 +345,21 @@ async def bank_prune(
     bot : Red
         The bot.
     guild : discord.Guild
-        The guild to prune if bank is set to Local this is required if bank is set to local.
+        The guild to prune this is required if bank is set to local.
     user_id : int
         The id of the user who's account will be pruned.
         If supplied this will prune only this user's bank account
         otherwise it will prune all invalid users from the bank.
 
+    Notes
+    ------
+        :code:`Config._get_base_group()` should not be used to get config groups as
+        this is not a safe operation using this could end up corrupting your config file.
+
     Raises
     ------
     BankPruneError
         If both guild and user_id are None and the bank is Local.
-
-    Note:
-    -----
-        :code:`Config._get_base_group()` should not be used to get config groups as
-        this is not a safe operation using this could end up corrupting your config file.
 
     """
 
