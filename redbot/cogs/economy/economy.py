@@ -320,7 +320,7 @@ class Economy(commands.Cog):
                 ).format(prefix=ctx.prefix, id=uid, name=name)
             )
         else:
-            await bank.bank_prune(self.bot, guild=ctx.guild, user=uid)
+            await bank.bank_prune(self.bot, guild=ctx.guild, user_id=uid)
             await ctx.send(_("The bank account for {name} has been pruned.").format(name=name))
 
     @guild_only_check()
