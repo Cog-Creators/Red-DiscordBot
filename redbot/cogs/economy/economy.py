@@ -280,7 +280,7 @@ class Economy(commands.Cog):
     @_prune.command(name="global")
     @checks.is_owner()
     async def _global(self, ctx, confirmation: bool = False):
-        """Prune bank accounts for users who no longer share servers with the bot."""
+        """Prune bank accounts for users who no longer share a server with the bot."""
         global_bank = await bank.is_global()
         if global_bank is False:
             return await ctx.send(_("This command cannot be used with a local bank."))
