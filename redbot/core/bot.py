@@ -401,6 +401,30 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         await destination.send(content=content, **kwargs)
 
     def add_cog(self, cog: commands.Cog):
+        # TODO: 3.2 # change signature of `add_cog` to be async.
+        t = asyncio.create_task(self._actual_add_cog(cog))
+        t.add_done_callback(self._add_cog_done_callback)
+
+    def _add_cog_done_callback(self, fut: asyncio.Future):
+        # TODO: 3.2 # Removal with add_cog signature change
+        # This is a mess, removal in 3.2 with above sig change
+        try:
+            fut.result()
+        except asyncio.CancelledError:
+            pass
+        except Exception:
+            log.exception(
+                "An Exception occured during cog load. "
+                "The error should be more friendly after version 3.2, "
+                "but a partial fix without breaking developers "
+                "needed to be applied supressing some error handling potential until then."
+            )
+
+    async def _actual_add_cog(self, cog: commands.Cog):
+        # TODO: 3.2  # Change this to `async def add_cog`
+        # This has recieved some modifications to prevent an issue actually observed on a live bot
+        # This is the best possible compromise between fixing now and breaking out of cycle
+        # This will break some of our error handling, but prevent permission errors.
         if not isinstance(cog, commands.Cog):
             raise RuntimeError(
                 f"The {cog.__class__.__name__} cog in the {cog.__module__} package does "
@@ -435,6 +459,15 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                         "this requirement, see this page: "
                         "http://red-discordbot.readthedocs.io/en/v3-develop/framework_commands.html"
                     )
+            permissions_cog = self.get_cog("Permissions")
+            # The permisions cog won't ever be here while it's being loaded itself
+            # It's handled seperately in it's setup.
+            if permissions_cog:
+                await permissions_cog.red_cog_added(cog)
+                for command in cog.__cog_commands__:
+                    await permissions_cog.red_command_added(command)
+            # Do not convert the above back into a listener.
+            # The requires objects for these should be set prior to the cog being added to the bot.
             super().add_cog(cog)
             self.dispatch("cog_add", cog)
             for command in cog.__cog_commands__:
