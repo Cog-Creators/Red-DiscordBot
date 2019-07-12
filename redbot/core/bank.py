@@ -361,13 +361,15 @@ async def bank_prune(
     global_bank = await is_global()
 
     if global_bank:
-        _guilds = [g for g in bot.guilds if g.large and not (g.chunked or g.unavailable)]
+        _guilds = [g for g in bot.guilds if not g.unavailable and g.large and not g.chunked]
+        _uguilds = [g for g in bot.guilds if g.unavailable]
         group = _conf._get_base_group(_conf.USER)
 
     else:
         if guild is None:
             raise BankPruneError("'guild' can't be None when pruning a local bank")
-        _guilds = [guild]
+        _guilds = [guild] if not guild.unavailable and guild.large else []
+        _uguilds = [guild] if guild.unavailable else []
         group = _conf._get_base_group(_conf.MEMBER, str(guild.id))
 
     if user_id is None:
@@ -375,7 +377,7 @@ async def bank_prune(
         accounts = await group.all()
         tmp = accounts.copy()
         members = bot.get_all_members() if global_bank else guild.members
-        user_list = {str(m.id) for m in members}
+        user_list = {str(m.id) for m in members if m.guild not in _uguilds}
 
     async with group.all() as bank_data:  # FIXME: use-config-bulk-update
         if user_id is None:
