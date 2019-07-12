@@ -335,9 +335,7 @@ async def wipe_bank(guild: Optional[discord.Guild] = None) -> None:
         await _conf.clear_all_members(guild)
 
 
-async def bank_prune(
-    bot: Red, guild: discord.Guild = None, user_id: int = None
-) -> None:
+async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: int = None) -> None:
     """Prune bank accounts from the bank.
 
     Parameters

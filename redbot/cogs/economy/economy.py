@@ -8,6 +8,7 @@ from typing import cast, Iterable, Union
 import discord
 
 from redbot.cogs.bank import check_global_setting_guildowner, check_global_setting_admin
+from redbot.cogs.mod.converters import RawUserIds
 from redbot.core import Config, bank, commands, errors, checks
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
@@ -300,9 +301,7 @@ class Economy(commands.Cog):
             )
 
     @_prune.command()
-    async def user(
-        self, ctx, user: Union[discord.Member, int], confirmation: bool = False
-    ):
+    async def user(self, ctx, user: Union[discord.Member, RawUserIds], confirmation: bool = False):
         """Delete the bank account of a specified user."""
         try:
             name = user.display_name
