@@ -301,7 +301,7 @@ class Economy(commands.Cog):
 
     @_prune.command()
     async def user(
-        self, ctx, user: Union[discord.Member, discord.User, int], confirmation: bool = False
+        self, ctx, user: Union[discord.Member, int], confirmation: bool = False
     ):
         """Delete the bank account of a specified user."""
         try:

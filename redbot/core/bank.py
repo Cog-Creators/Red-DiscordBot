@@ -336,7 +336,7 @@ async def wipe_bank(guild: Optional[discord.Guild] = None) -> None:
 
 
 async def bank_prune(
-    bot: Red, guild: Optional[discord.Guild] = None, user_id: Optional[int] = None
+    bot: Red, guild: discord.Guild = None, user_id: int = None
 ) -> None:
     """Prune bank accounts from the bank.
 
@@ -345,16 +345,11 @@ async def bank_prune(
     bot : Red
         The bot.
     guild : discord.Guild
-        The guild to prune this is required if bank is set to local.
+        The guild to prune this is required if the bank is set to local.
     user_id : int
-        The id of the user who's account will be pruned.
+        The id of the user whose account will be pruned.
         If supplied this will prune only this user's bank account
         otherwise it will prune all invalid users from the bank.
-
-    Notes
-    -----
-        :code:`Config._get_base_group()` should not be used to get config groups as
-        this is not a safe operation using this could end up corrupting your config file.
 
     Raises
     ------
