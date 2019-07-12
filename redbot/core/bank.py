@@ -343,7 +343,7 @@ async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: int = None)
     bot : Red
         The bot.
     guild : discord.Guild
-        The guild to prune this is required if the bank is set to local.
+        The guild to prune. This is required if the bank is set to local.
     user_id : int
         The id of the user whose account will be pruned.
         If supplied this will prune only this user's bank account
