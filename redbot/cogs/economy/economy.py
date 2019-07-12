@@ -309,7 +309,7 @@ class Economy(commands.Cog):
         """Delete the bank account of a specified user."""
         global_bank = await bank.is_global()
         if global_bank is False and ctx.guild is None:
-            return await ctx.send(_("This command cannot be used in DM with a local bank."))
+            return await ctx.send(_("This command cannot be used in DMs with a local bank."))
         try:
             name = member_or_id.display_name
             uid = member_or_id.id
