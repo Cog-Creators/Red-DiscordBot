@@ -1,5 +1,6 @@
 import asyncio
 import inspect
+import contextlib
 import os
 import logging
 from collections import Counter
@@ -407,32 +408,46 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                 f"not inherit from the commands.Cog base class. The cog author must update "
                 f"the cog to adhere to this requirement."
             )
+        if cog.__cog_name__ in self.cogs:
+            raise RuntimeError(
+                f"There is already a cog named {cog.__cog_name__} loaded."
+            ) from None
         if not hasattr(cog, "requires"):
             commands.Cog.__init__(cog)
 
-        for cls in inspect.getmro(cog.__class__):
-            try:
-                hook = getattr(cog, f"_{cls.__name__}__permissions_hook")
-            except AttributeError:
-                pass
-            else:
-                self.add_permissions_hook(hook)
+        added_hooks = []
 
-        for command in cog.__cog_commands__:
+        try:
+            for cls in inspect.getmro(cog.__class__):
+                try:
+                    hook = getattr(cog, f"_{cls.__name__}__permissions_hook")
+                except AttributeError:
+                    pass
+                else:
+                    self.add_permissions_hook(hook)
+                    added_hooks.append(hook)
 
-            if not isinstance(command, commands.Command):
-                raise RuntimeError(
-                    f"The {cog.__class__.__name__} cog in the {cog.__module__} package,"
-                    " is not using Red's command module, and cannot be added. "
-                    "If this is your cog, please use `from redbot.core import commands`"
-                    "in place of `from discord.ext import commands`. For more details on "
-                    "this requirement, see this page: "
-                    "http://red-discordbot.readthedocs.io/en/v3-develop/framework_commands.html"
-                )
-        super().add_cog(cog)
-        self.dispatch("cog_add", cog)
-        for command in cog.__cog_commands__:
-            self.dispatch("command_add", command)
+            for command in cog.__cog_commands__:
+
+                if not isinstance(command, commands.Command):
+                    raise RuntimeError(
+                        f"The {cog.__class__.__name__} cog in the {cog.__module__} package,"
+                        " is not using Red's command module, and cannot be added. "
+                        "If this is your cog, please use `from redbot.core import commands`"
+                        "in place of `from discord.ext import commands`. For more details on "
+                        "this requirement, see this page: "
+                        "http://red-discordbot.readthedocs.io/en/v3-develop/framework_commands.html"
+                    )
+            super().add_cog(cog)
+            self.dispatch("cog_add", cog)
+            for command in cog.__cog_commands__:
+                self.dispatch("command_add", command)
+        except Exception:
+            for hook in added_hooks:
+                with contextlib.suppress(ValueError):
+                    self.remove_permissions_hook(hook)
+            del cog
+            raise
 
     def clear_permission_rules(self, guild_id: Optional[int]) -> None:
         """Clear all permission overrides in a scope.
