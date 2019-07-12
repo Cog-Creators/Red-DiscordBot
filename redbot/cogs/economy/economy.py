@@ -8,6 +8,7 @@ from typing import cast, Iterable, Union
 import discord
 
 from redbot.cogs.bank import check_global_setting_guildowner, check_global_setting_admin
+from redbot.cogs.mod.converters import RawUserIds
 from redbot.core import Config, bank, commands, errors, checks
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
@@ -300,28 +301,20 @@ class Economy(commands.Cog):
             )
 
     @_prune.command()
-    async def user(
-        self, ctx, user: Union[discord.Member, discord.User, int], confirmation: bool = False
-    ):
+    async def user(self, ctx, user_id: RawUserIds, confirmation: bool = False):
         """Delete the bank account of a specified user."""
-        try:
-            name = user.display_name
-            uid = user.id
-        except AttributeError:
-            name = user
-            uid = user
 
         if confirmation is False:
             await ctx.send(
                 _(
-                    "This will delete {name}'s bank account."
+                    "This will delete {id}'s bank account."
                     "\nIf you're sure, type "
                     "`{prefix}bank cleanup member {id} yes`"
-                ).format(prefix=ctx.prefix, id=uid, name=name)
+                ).format(prefix=ctx.prefix, id=user_id)
             )
         else:
-            await bank.bank_prune(self.bot, guild=ctx.guild, user_id=uid)
-            await ctx.send(_("The bank account for {name} has been pruned.").format(name=name))
+            await bank.bank_prune(self.bot, guild=ctx.guild, user_id=str(user_id))
+            await ctx.send(_("The bank account for {id} has been pruned.").format(id=user_id))
 
     @guild_only_check()
     @commands.command()
