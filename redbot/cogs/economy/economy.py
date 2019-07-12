@@ -316,7 +316,7 @@ class Economy(commands.Cog):
                 _(
                     "This will delete {name}'s bank account."
                     "\nIf you're sure, type "
-                    "`{prefix}bank cleanup member {id} yes`"
+                    "`{prefix}bank prune user {id} yes`"
                 ).format(prefix=ctx.prefix, id=uid, name=name)
             )
         else:
