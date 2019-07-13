@@ -15,16 +15,15 @@ import discord
 # return the correct loop object.
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
-else:
+elif sys.implementation.name == "cpython":
     # Let's not force this dependency, uvloop is much faster on cpython
-    if sys.implementation.name == "cpython":
-        try:
-            import uvloop
-        except ImportError:
-            uvloop = None
-            pass
-        else:
-            asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+    try:
+        import uvloop
+    except ImportError:
+        uvloop = None
+        pass
+    else:
+        asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 import redbot.logging
 from redbot.core.bot import Red, ExitCodes
