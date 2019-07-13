@@ -514,7 +514,7 @@ async def get_case(case_number: int, guild: discord.Guild, bot: Red) -> Case:
         If there is no case for the specified number
 
     """
-    
+
     case = await _conf.custom(_CASES, str(guild.id), str(case_number)).all()
     if not case["case_number"]:
         raise RuntimeError("That case does not exist for guild {}".format(guild.name))
