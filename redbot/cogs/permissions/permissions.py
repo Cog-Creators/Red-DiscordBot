@@ -436,31 +436,35 @@ class Permissions(commands.Cog):
             await self._clear_rules(guild_id=ctx.guild.id)
             await ctx.tick()
 
-    async def red_cog_added(self, cog: commands.Cog) -> None:
+    @commands.Cog.listener()
+    async def on_cog_add(self, cog: commands.Cog) -> None:
         """Event listener for `cog_add`.
 
         This loads rules whenever a new cog is added.
-
-        Do not convert to using Cog.listener decorator !!
-        This *must* be added manually prior to cog load, and removed at unload
         """
+        if cog is self:
+            # This cog has its rules loaded manually in setup()
+            return
         self._load_rules_for(
             cog_or_command=cog,
             rule_dict=await self.config.custom(COG, cog.__class__.__name__).all(),
         )
+        cog.requires.ready_event.set()
 
-    async def red_command_added(self, command: commands.Command) -> None:
+    @commands.Cog.listener()
+    async def on_command_add(self, command: commands.Command) -> None:
         """Event listener for `command_add`.
 
         This loads rules whenever a new command is added.
-
-        Do not convert to using Cog.listener decorator !!
-        This *must* be added manually prior to cog load, and removed at unload
         """
+        if command.cog is self:
+            # This cog's commands have their rules loaded manually in setup()
+            return
         self._load_rules_for(
             cog_or_command=command,
             rule_dict=await self.config.custom(COMMAND, command.qualified_name).all(),
         )
+        command.requires.ready_event.set()
 
     async def _add_rule(
         self, rule: bool, cog_or_cmd: CogOrCommand, model_id: int, guild_id: int
