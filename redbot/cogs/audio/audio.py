@@ -1974,20 +1974,20 @@ class Audio(commands.Cog):
     @playlist.command(
         name="append",
         usage=(
-                "<playlist_id> "
-                "[author=playlist_author_id] [guild=guild_id] [scope=Guild] "
-                "<track_name_OR_url>"
+            "<playlist_id> "
+            "[author=playlist_author_id] [guild=guild_id] [scope=Guild] "
+            "<track_name_OR_url>"
         ),
     )
     async def _playlist_append(
-            self,
-            ctx: commands.Context,
-            playlist_id: int, # TODO: Converter here
-            author: Optional[discord.User] = None,
-            guild: Optional[GuildConverter] = None,
-            scope: Optional[ScopeConverter] = None,
-            *,
-            query: str,
+        self,
+        ctx: commands.Context,
+        playlist_id: int,  # TODO: Converter here
+        author: Optional[discord.User] = None,
+        guild: Optional[GuildConverter] = None,
+        scope: Optional[ScopeConverter] = None,
+        *,
+        query: str,
     ):
         """Add a track URL, playlist link, or quick search to a playlist.
 
@@ -2046,15 +2046,15 @@ class Audio(commands.Cog):
 
     @playlist.command(name="copy")
     async def _playlist_copy(
-            self,
-            ctx,
-            playlist_id: int, # TODO: Converter here
-            from_scope: ScopeConverter,
-            to_scope: ScopeConverter,
-            from_author: Optional[discord.User] = None,
-            from_guild: Optional[GuildConverter] = None,
-            to_author: Optional[discord.User] = None,
-            to_guild: Optional[GuildConverter] = None,
+        self,
+        ctx,
+        playlist_id: int,  # TODO: Converter here
+        from_scope: ScopeConverter,
+        to_scope: ScopeConverter,
+        from_author: Optional[discord.User] = None,
+        from_guild: Optional[GuildConverter] = None,
+        to_author: Optional[discord.User] = None,
+        to_guild: Optional[GuildConverter] = None,
     ):
 
         """Copy a playlist from one scope to another."""
@@ -2105,13 +2105,13 @@ class Audio(commands.Cog):
         name="create", usage="[author=playlist_author_id] [guild=guild_id] [scope=Guild] <name>"
     )
     async def _playlist_create(
-            self,
-            ctx: commands.Context,
-            author: Optional[discord.User] = None,
-            guild: Optional[GuildConverter] = None,
-            scope: Optional[ScopeConverter] = None,
-            *,
-            playlist_name: str,
+        self,
+        ctx: commands.Context,
+        author: Optional[discord.User] = None,
+        guild: Optional[GuildConverter] = None,
+        scope: Optional[ScopeConverter] = None,
+        *,
+        playlist_name: str,
     ):
         """Create an empty playlist."""
         if scope is None:
@@ -2131,13 +2131,13 @@ class Audio(commands.Cog):
         usage="[author=playlist_author_id] [guild=guild_id] [scope=Guild] <playlist_id>",
     )
     async def _playlist_delete(
-            self,
-            ctx: commands.Context,
-            author: Optional[discord.User] = None,
-            guild: Optional[GuildConverter] = None,
-            scope: Optional[ScopeConverter] = None,
-            *,
-            playlist_id,  # TODO: Converter here
+        self,
+        ctx: commands.Context,
+        author: Optional[discord.User] = None,
+        guild: Optional[GuildConverter] = None,
+        scope: Optional[ScopeConverter] = None,
+        *,
+        playlist_id: int,  # TODO: Converter here
     ):
         """Delete a saved playlist."""
         if scope is None:
@@ -2170,13 +2170,13 @@ class Audio(commands.Cog):
     @playlist.command(name="download")
     @commands.bot_has_permissions(attach_files=True)
     async def _playlist_download(
-            self,
-            ctx: commands.Context,
-            playlist_id: int,
-            author: Optional[discord.User] = None,
-            guild: Optional[GuildConverter] = None,
-            scope: Optional[ScopeConverter] = None,
-            v2=False,
+        self,
+        ctx: commands.Context,
+        playlist_id: int,  # TODO: Converter here
+        author: Optional[discord.User] = None,
+        guild: Optional[GuildConverter] = None,
+        scope: Optional[ScopeConverter] = None,
+        v2=False,
     ):
         """Download a copy of a playlist.
 
@@ -2230,12 +2230,12 @@ class Audio(commands.Cog):
         usage="<playlist_id> [author=playlist_author_id] [guild=guild_id] [scope=Guild]",
     )
     async def _playlist_info(
-            self,
-            ctx: commands.Context,
-            playlist_id: int, # TODO: Converter here
-            author: Optional[discord.User] = None,
-            guild: Optional[GuildConverter] = None,
-            scope: Optional[ScopeConverter] = None,
+        self,
+        ctx: commands.Context,
+        playlist_id: int,  # TODO: Converter here
+        author: Optional[discord.User] = None,
+        guild: Optional[GuildConverter] = None,
+        scope: Optional[ScopeConverter] = None,
     ):
         """Retrieve information from a saved playlist."""
 
@@ -2297,11 +2297,11 @@ class Audio(commands.Cog):
     )
     @commands.bot_has_permissions(add_reactions=True)
     async def _playlist_list(
-            self,
-            ctx: commands.Context,
-            author: Optional[discord.User] = None,
-            guild: Optional[GuildConverter] = None,
-            scope: Optional[ScopeConverter] = None,
+        self,
+        ctx: commands.Context,
+        author: Optional[discord.User] = None,
+        guild: Optional[GuildConverter] = None,
+        scope: Optional[ScopeConverter] = None,
     ):
         """List saved playlists."""
 
@@ -2352,7 +2352,7 @@ class Audio(commands.Cog):
         plist_idx_end = plist_idx_start + 5
         plist = ""
         for i, playlist_info in enumerate(
-                abc_names[plist_idx_start:plist_idx_end], start=plist_idx_start
+            abc_names[plist_idx_start:plist_idx_end], start=plist_idx_start
         ):
             item_idx = i + 1
             plist += "`{}.` {}".format(item_idx, playlist_info)
@@ -2371,13 +2371,13 @@ class Audio(commands.Cog):
     @commands.cooldown(1, 15, commands.BucketType.guild)
     @playlist.command(name="queue")
     async def _playlist_queue(
-            self,
-            ctx: commands.Context,
-            author: Optional[discord.User] = None,
-            guild: Optional[GuildConverter] = None,
-            scope: Optional[ScopeConverter] = None,
-            *,
-            playlist_name: str,
+        self,
+        ctx: commands.Context,
+        author: Optional[discord.User] = None,
+        guild: Optional[GuildConverter] = None,
+        scope: Optional[ScopeConverter] = None,
+        *,
+        playlist_name: str,
     ):
         """Save the queue to a playlist."""
         if scope is None:
@@ -2414,14 +2414,14 @@ class Audio(commands.Cog):
         usage=("<playlist_id> [author=playlist_author_id] [guild=guild_id] [scope=Guild] <url>"),
     )
     async def _playlist_remove(
-            self,
-            ctx: commands.Context,
-            playlist_id: int,  # TODO: Converter here
-            author: Optional[discord.User] = None,
-            guild: Optional[GuildConverter] = None,
-            scope: Optional[ScopeConverter] = None,
-            *,
-            url: str,
+        self,
+        ctx: commands.Context,
+        playlist_id: int,  # TODO: Converter here
+        author: Optional[discord.User] = None,
+        guild: Optional[GuildConverter] = None,
+        scope: Optional[ScopeConverter] = None,
+        *,
+        url: str,
     ):
         """Remove a track from a playlist by url."""
         if scope is None:
@@ -2474,14 +2474,14 @@ class Audio(commands.Cog):
 
     @playlist.command(name="save")
     async def _playlist_save(
-            self,
-            ctx: commands.Context,
-            playlist_name: str,  # TODO: Converter here
-            author: Optional[discord.User] = None,
-            guild: Optional[GuildConverter] = None,
-            scope: Optional[ScopeConverter] = None,
-            *,
-            playlist_url,
+        self,
+        ctx: commands.Context,
+        playlist_name: str,  # TODO: Converter here
+        author: Optional[discord.User] = None,
+        guild: Optional[GuildConverter] = None,
+        scope: Optional[ScopeConverter] = None,
+        *,
+        playlist_url: str,
     ):
         """Save a playlist from a url."""
         if scope is None:
@@ -2508,16 +2508,19 @@ class Audio(commands.Cog):
 
     @playlist.command(name="start")
     async def _playlist_start(
-            self,
-            ctx: commands.Context,
-            author: Optional[discord.User] = None,
-            guild: Optional[GuildConverter] = None,
-            scope: Optional[ScopeConverter] = None,
-            *,
-            playlist_id: int,  # TODO: Converter here
+        self,
+        ctx: commands.Context,
+        author: Optional[discord.User] = None,
+        guild: Optional[GuildConverter] = None,
+        scope: Optional[ScopeConverter] = None,
+        *,
+        playlist_id: int,  # TODO: Converter here
     ):
         """Load a playlist into the queue."""
         if not await self._playlist_check(ctx):
+            return
+        jukebox_price = await self.config.guild(ctx.guild).jukebox_price()
+        if not await self._currency_check(ctx, jukebox_price):
             return
         if scope is None:
             scope = PlaylistScope.GUILD.value
@@ -2573,11 +2576,11 @@ class Audio(commands.Cog):
     @checks.is_owner()
     @playlist.command(name="upload")
     async def _playlist_upload(
-            self,
-            ctx: commands.Context,
-            author: Optional[discord.User] = None,
-            guild: Optional[GuildConverter] = None,
-            scope: Optional[ScopeConverter] = None,
+        self,
+        ctx: commands.Context,
+        author: Optional[discord.User] = None,
+        guild: Optional[GuildConverter] = None,
+        scope: Optional[ScopeConverter] = None,
     ):
         """Convert a Red v2 playlist file to a playlist."""
         if scope is None:
@@ -2623,9 +2626,9 @@ class Audio(commands.Cog):
             v2_playlist_name = v2_playlist_name_backup
 
         if (
-                not v2_playlist_url
-                or not self._match_yt_playlist(v2_playlist_url)
-                or not await player.get_tracks(v2_playlist_url)
+            not v2_playlist_url
+            or not self._match_yt_playlist(v2_playlist_url)
+            or not await player.get_tracks(v2_playlist_url)
         ):
             track_list = []
             track_count = 0
@@ -2687,9 +2690,9 @@ class Audio(commands.Cog):
                 return False
             try:
                 if (
-                        not ctx.author.voice.channel.permissions_for(ctx.me).connect
-                        or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                        and self._userlimit(ctx.author.voice.channel)
+                    not ctx.author.voice.channel.permissions_for(ctx.me).connect
+                    or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
+                    and self._userlimit(ctx.author.voice.channel)
                 ):
                     await self._embed_msg(
                         ctx, _("I don't have permission to connect to your channel.")
@@ -2711,27 +2714,11 @@ class Audio(commands.Cog):
         player.store("channel", ctx.channel.id)
         player.store("guild", ctx.guild.id)
         if (
-                not ctx.author.voice or ctx.author.voice.channel != player.channel
-        ) and not await self._can_instaskip(ctx, ctx.author):
-            await self._embed_msg(
-                ctx, _("You must be in the voice channel to use the playlist command.")
-            )
-            return False
-        await self._eq_check(ctx, player)
-        await self._data_check(ctx)
-        return True
-
-        player = lavalink.get_player(ctx.guild.id)
-        player.store("channel", ctx.channel.id)
-        player.store("guild", ctx.guild.id)
-        if (
             not ctx.author.voice or ctx.author.voice.channel != player.channel
         ) and not await self._can_instaskip(ctx, ctx.author):
             await self._embed_msg(
                 ctx, _("You must be in the voice channel to use the playlist command.")
             )
-            return False
-        if not await self._currency_check(ctx, jukebox_price):
             return False
         await self._eq_check(ctx, player)
         await self._data_check(ctx)

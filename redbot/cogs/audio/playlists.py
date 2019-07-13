@@ -240,12 +240,11 @@ async def get_playlist(
     `MissingAuthor`
         Trying to access the User scope without an user id.
     """
-    try:
-        playlist_data = await _config.custom(
-            *_prepare_config_scope(scope, author, guild), str(playlist_number)
-        ).all()
-    except KeyError as e:
-        raise RuntimeError(f"That playlist does not exist for the following scope: {scope}") from e
+    playlist_data = await _config.custom(
+        *_prepare_config_scope(scope, author, guild), str(playlist_number)
+    ).all()
+    if not playlist_data["id"]:
+        raise RuntimeError(f"That playlist does not exist for the following scope: {scope}")
     return await Playlist.from_json(bot, scope, playlist_number, playlist_data)
 
 
