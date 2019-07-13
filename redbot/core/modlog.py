@@ -464,7 +464,7 @@ class CaseType:
 
         """
         data_copy = data.copy()
-        data_copy.pop(name, None)
+        data_copy.pop("name", None)
         return cls(name=name, **data_copy, **kwargs)
 
 
