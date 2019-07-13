@@ -445,11 +445,7 @@ class Permissions(commands.Cog):
         if cog is self:
             # This cog has its rules loaded manually in setup()
             return
-        self._load_rules_for(
-            cog_or_command=cog,
-            rule_dict=await self.config.custom(COG, cog.__class__.__name__).all(),
-        )
-        cog.requires.ready_event.set()
+        await self._on_cog_add(cog)
 
     @commands.Cog.listener()
     async def on_command_add(self, command: commands.Command) -> None:
@@ -460,6 +456,16 @@ class Permissions(commands.Cog):
         if command.cog is self:
             # This cog's commands have their rules loaded manually in setup()
             return
+        await self._on_command_add(command)
+
+    async def _on_cog_add(self, cog: commands.Cog) -> None:
+        self._load_rules_for(
+            cog_or_command=cog,
+            rule_dict=await self.config.custom(COG, cog.__class__.__name__).all(),
+        )
+        cog.requires.ready_event.set()
+
+    async def _on_command_add(self, command: commands.Command) -> None:
         self._load_rules_for(
             cog_or_command=command,
             rule_dict=await self.config.custom(COMMAND, command.qualified_name).all(),
