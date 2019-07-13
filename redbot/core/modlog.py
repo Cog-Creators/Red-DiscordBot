@@ -463,7 +463,9 @@ class CaseType:
         CaseType
 
         """
-        return cls(name=name, **data, **kwargs)
+        data_copy = data.copy()
+        data_copy.pop(name, None)
+        return cls(name=name, **data_copy, **kwargs)
 
 
 async def get_next_case_number(guild: discord.Guild) -> int:
