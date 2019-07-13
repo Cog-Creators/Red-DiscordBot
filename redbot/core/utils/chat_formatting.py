@@ -432,7 +432,9 @@ def humanize_timedelta(
     return ", ".join(strings)
 
 
-def text_to_file(text: str, filename: str = "file.txt", *, spoiler: bool = False):
+def text_to_file(
+    text: str, filename: str = "file.txt", *, spoiler: bool = False, encoding: str = "utf-8"
+):
     """Prepares text to be sent as a file on Discord, without character limit.
 
     This writes text into a bytes object that can be used for the ``file`` or ``files`` parameters\
@@ -452,5 +454,5 @@ def text_to_file(text: str, filename: str = "file.txt", *, spoiler: bool = False
     discord.File
 
     """
-    file = BytesIO(bytes(text))
+    file = BytesIO(text.encode(encoding))
     return discord.File(file, filename, spoiler=spoiler)
