@@ -14,9 +14,10 @@ import os
 import random
 import re
 import time
-from typing import Optional
+from typing import Optional, cast
 import redbot.core
 from redbot.core import Config, commands, checks, bank
+from redbot.core.commands import GuildConverter
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import bold, box, pagify
@@ -32,7 +33,19 @@ from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from urllib.parse import urlparse
 from .equalizer import Equalizer
 from .manager import ServerManager
-from .errors import LavalinkDownloadFailed
+from .errors import LavalinkDownloadFailed, MissingGuild
+from .playlists import (
+    Playlist,
+    PlaylistScope,
+    get_playlist,
+    create_playlist,
+    delete_playlist,
+    get_all_playlist,
+    humanize_converter,
+    FakePlaylist,
+    _pass_config_to_playlist,
+)
+from .converters import ScopeConverter
 
 _ = Translator("Audio", __file__)
 
@@ -40,6 +53,8 @@ __version__ = "0.0.10"
 __author__ = ["aikaterna"]
 
 log = logging.getLogger("red.audio")
+
+_SCHEMA_VERSION = 2
 
 
 @cog_i18n(_)
@@ -57,8 +72,17 @@ class Audio(commands.Cog):
         super().__init__()
         self.bot = bot
         self.config = Config.get_conf(self, 2711759130, force_registration=True)
-
+        self.skip_votes = {}
+        self.session = aiohttp.ClientSession()
+        self._connect_task = None
+        self._disconnect_task = None
+        self._cleaned_up = False
+        self._connection_aborted = False
+        self.spotify_token = None
+        self.play_lock = {}
+        self._manager: Optional[ServerManager] = None
         default_global = dict(
+            schema_version=1,
             status=False,
             use_external_lavalink=False,
             restrict=True,
@@ -76,7 +100,6 @@ class Audio(commands.Cog):
             jukebox=False,
             jukebox_price=0,
             maxlength=0,
-            playlists={},
             notify=False,
             repeat=False,
             shuffle=False,
@@ -85,23 +108,17 @@ class Audio(commands.Cog):
             vote_enabled=False,
             vote_percent=0,
         )
-
+        _playlist = dict(id=None, author=None, name=None, playlist_url=None, tracks=[])
         self.config.init_custom("EQUALIZER", 1)
         self.config.register_custom("EQUALIZER", eq_bands=[], eq_presets={})
-
+        self.config.init_custom(PlaylistScope.GLOBAL.value, 1)
+        self.config.register_custom(PlaylistScope.GLOBAL.value, **_playlist)
+        self.config.init_custom(PlaylistScope.GUILD.value, 2)
+        self.config.register_custom(PlaylistScope.GUILD.value, **_playlist)
+        self.config.init_custom(PlaylistScope.USER.value, 2)
+        self.config.register_custom(PlaylistScope.USER.value, **_playlist)
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)
-        self.skip_votes = {}
-        self.session = aiohttp.ClientSession()
-        self._connect_task = None
-        self._disconnect_task = None
-        self._cleaned_up = False
-        self._connection_aborted = False
-
-        self.spotify_token = None
-        self.play_lock = {}
-
-        self._manager: Optional[ServerManager] = None
 
     async def cog_before_invoke(self, ctx):
         if self.llsetup in [ctx.command, ctx.command.root_parent]:
@@ -116,9 +133,40 @@ class Audio(commands.Cog):
             )
 
     async def initialize(self):
+        _pass_config_to_playlist(self.config)
+        await self._migrate_config(
+            from_version=await self.config.schema_version(), to_version=_SCHEMA_VERSION
+        )
         self._restart_connect()
         self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
         lavalink.register_event_listener(self.event_handler)
+
+    async def _migrate_config(self, from_version: int, to_version: int):
+        if from_version == to_version:
+            return
+        elif from_version < to_version:
+            all_guild_data = await self.config.all_guilds()
+            all_playlist = {}
+            for guild_id, guild_data in all_guild_data.items():
+                temp_guild_playlist = guild_data.pop("playlists", None)
+                if temp_guild_playlist:
+                    guild_playlist = {}
+                    for count, (name, data) in enumerate(temp_guild_playlist.item(), 1):
+                        playlist = {"id": count}
+                        playlist.update(data)
+                        guild_playlist[str(count)] = playlist
+                    if guild_playlist:
+                        all_playlist[str(guild_id)] = guild_playlist
+            await self.config.custom(PlaylistScope.GUILD.value).set(all_playlist)
+
+            # new schema is now in place
+            await self.config.schema_version.set(_SCHEMA_VERSION)
+
+            # migration done, now let's delete all the old stuff
+            for guild_id in all_guild_data:
+                await self.config.guild(
+                    cast(discord.Guild, discord.Object(id=guild_id))
+                ).clear_raw("playlists")
 
     def _restart_connect(self):
         if self._connect_task:
@@ -1549,7 +1597,6 @@ class Audio(commands.Cog):
             enqueue_tracks = False
         player = lavalink.get_player(ctx.guild.id)
         api_data = await self._check_api_tokens()
-        guild_data = await self.config.guild(ctx.guild).all()
         if "open.spotify.com" in query:
             query = "spotify:{}".format(
                 re.sub("(http[s]?:\/\/)?(open.spotify.com)\/", "", query).replace("/", ":")
@@ -1864,6 +1911,59 @@ class Audio(commands.Cog):
             pass
         return track_list
 
+    async def can_manage_playlist(
+        self, scope: str, playlist: Playlist, ctx: commands.Context, user, guild
+    ):
+        is_owner = await ctx.bot.is_owner(user)
+        has_perms = False
+        user_to_query = user if user else ctx.author
+        guild_to_query = guild if guild else ctx.guild
+        _3rd_party_lookup = ctx.author.id != user_to_query.id
+        _is_different_guild = (
+            True
+            if guild_to_query is None or ctx.guild is None
+            else guild_to_query.id != ctx.guild.id
+        )
+
+        if is_owner:
+            has_perms = True
+        elif scope == PlaylistScope.USER.value:
+            if not _3rd_party_lookup and playlist.author == user_to_query.id:
+                has_perms = True
+        elif scope == PlaylistScope.GUILD.value:
+            if not _is_different_guild:
+                dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+                if playlist.author == user_to_query.id:
+                    has_perms = True
+                elif guild.owner_id == user_to_query.id:
+                    has_perms = True
+                elif dj_enabled and await self._has_dj_role(ctx, user_to_query):
+                    has_perms = True
+                elif await ctx.bot.is_mod(user_to_query):
+                    has_perms = True
+
+        if has_perms is False:
+            if scope == PlaylistScope.GUILD.value and guild_to_query is None:
+                await ctx.maybe_send_embed(
+                    _(
+                        "You need to specify the Guild ID for the guild to lookup when using this in DMs."
+                    )
+                )
+            else:
+                if _is_different_guild:
+                    msg = _("You do not have the permissions to manage this Guild's playlist")
+                elif _3rd_party_lookup:
+                    msg = _("You do not have the permissions to manage this user's playlist")
+                else:
+                    msg = _(
+                        "You do not have the permissions to manage "
+                        "playlist in the {} scope.".format(scope)
+                    )
+
+                await ctx.maybe_send_embed(msg)
+            return False
+        return True
+
     @commands.group()
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
@@ -1871,171 +1971,213 @@ class Audio(commands.Cog):
         """Playlist configuration options."""
         pass
 
-    @playlist.command(name="append")
-    async def _playlist_append(self, ctx, playlist_name, *, url):
+    @playlist.command(
+        name="append",
+        usage=(
+                "<playlist_id> "
+                "[author=playlist_author_id] [guild=guild_id] [scope=Guild] "
+                "<track_name_OR_url>"
+        ),
+    )
+    async def _playlist_append(
+            self,
+            ctx: commands.Context,
+            playlist_id: int, # TODO: Converter here
+            author: Optional[discord.User] = None,
+            guild: Optional[GuildConverter] = None,
+            scope: Optional[ScopeConverter] = None,
+            *,
+            query: str,
+    ):
         """Add a track URL, playlist link, or quick search to a playlist.
 
         The track(s) will be appended to the end of the playlist.
         """
         if not await self._playlist_check(ctx):
             return
-        async with self.config.guild(ctx.guild).playlists() as playlists:
-            try:
-                if playlists[playlist_name][
-                    "author"
-                ] != ctx.author.id and not await self._can_instaskip(ctx, ctx.author):
-                    return await self._embed_msg(
-                        ctx, _("You are not the author of that playlist.")
-                    )
-                player = lavalink.get_player(ctx.guild.id)
-                to_append = await self._playlist_tracks(ctx, player, url)
-                if not to_append:
-                    return
-                track_list = playlists[playlist_name]["tracks"]
-                if track_list and len(to_append) == 1 and to_append[0] in track_list:
-                    return await self._embed_msg(
-                        ctx,
-                        _("{track} is already in {playlist}.").format(
-                            track=to_append[0]["info"]["title"], playlist=playlist_name
-                        ),
-                    )
-                if track_list:
-                    playlists[playlist_name]["tracks"] = track_list + to_append
-                else:
-                    playlists[playlist_name]["tracks"] = to_append
-            except KeyError:
-                return await self._embed_msg(ctx, _("No playlist with that name."))
-        if playlists[playlist_name]["playlist_url"] is not None:
-            playlists[playlist_name]["playlist_url"] = None
+        if scope is None:
+            scope = PlaylistScope.GUILD.value
+        guild = guild or ctx.guild
+        author = author or ctx.author
+        try:
+            playlist = await get_playlist(playlist_id, scope, self.bot, guild, author.id)
+        except RuntimeError:
+            return await ctx.maybe_send_embed(
+                _("Playlist {id} does not exist in {scope} scope.").format(
+                    id=playlist_id, scope=scope
+                )
+            )
+        except MissingGuild:
+            return await ctx.maybe_send_embed(
+                _("You need to specify the Guild ID for the guild to lookup.")
+            )
+
+        if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
+            return
+        player = lavalink.get_player(ctx.guild.id)
+        to_append = await self._playlist_tracks(ctx, player, query)
+        if not to_append:
+            return await ctx.maybe_send_embed(_("Could not find a track matching your query."))
+        track_list = playlist.tracks
+        if track_list and len(to_append) == 1 and to_append[0] in track_list:
+            return await ctx.maybe_send_embed(
+                _("{track} is already in {playlist} ({id}).").format(
+                    track=to_append[0]["info"]["title"], playlist=playlist.name, id=playlist.id
+                )
+            )
+        track_list.extend(to_append)
+        update = {"tracks": track_list, "url": None}
+        await playlist.edit(update)
+
         if len(to_append) == 1:
             track_title = to_append[0]["info"]["title"]
             return await self._embed_msg(
                 ctx,
-                _("{track} appended to {playlist}.").format(
-                    track=track_title, playlist=playlist_name
+                _("{track} appended to {playlist} ({id}).").format(
+                    track=track_title, playlist=playlist.name, id=playlist.id
                 ),
             )
         await self._embed_msg(
             ctx,
-            _("{num} tracks appended to {playlist}.").format(
-                num=len(to_append), playlist=playlist_name
+            _("{num} tracks appended to {playlist} ({id}).").format(
+                num=len(to_append), playlist=playlist.name, id=playlist.id
             ),
         )
 
-    @checks.is_owner()
     @playlist.command(name="copy")
-    async def _playlist_copy(self, ctx, playlist_name, from_server_id: int, to_server_id: int):
-        """Copy a playlist from one server to another."""
-        from_guild = self.bot.get_guild(from_server_id)
-        to_guild = self.bot.get_guild(to_server_id)
-        if not from_guild:
-            return await self._embed_msg(ctx, _("Invalid server ID for source server."))
-        if not to_guild:
-            return await self._embed_msg(ctx, _("Invalid server ID for target server."))
-        async with self.config.guild(from_guild).playlists() as from_playlists:
-            if playlist_name not in from_playlists:
-                return await self._embed_msg(
-                    ctx,
-                    _("No playlist with that name in {from_guild_name}.").format(
-                        from_guild_name=from_guild.name
-                    ),
+    async def _playlist_copy(
+            self,
+            ctx,
+            playlist_id: int, # TODO: Converter here
+            from_scope: ScopeConverter,
+            to_scope: ScopeConverter,
+            from_author: Optional[discord.User] = None,
+            from_guild: Optional[GuildConverter] = None,
+            to_author: Optional[discord.User] = None,
+            to_guild: Optional[GuildConverter] = None,
+    ):
+
+        """Copy a playlist from one scope to another."""
+
+        from_guild = from_guild or ctx.guild
+        from_author = from_author or ctx.author
+        to_guild = to_guild or ctx.guild
+        to_author = to_author or ctx.author
+
+        try:
+            from_playlist = await get_playlist(
+                playlist_id, from_scope, self.bot, from_guild, from_author.id
+            )
+        except RuntimeError:
+            return await ctx.maybe_send_embed(
+                _("Playlist {id} does not exist in {scope} scope.").format(
+                    id=playlist_id, scope=to_scope
                 )
-            async with self.config.guild(to_guild).playlists() as to_playlists:
-                try:
-                    target_playlists = to_playlists[playlist_name]
-                except KeyError:
-                    to_playlists[playlist_name] = from_playlists[playlist_name]
-                    return await self._embed_msg(
-                        ctx,
-                        _(
-                            "Playlist {name} copied from {from_guild_name} to {to_guild_name}."
-                        ).format(
-                            name=playlist_name,
-                            from_guild_name=from_guild.name,
-                            to_guild_name=to_guild.name,
-                        ),
-                    )
+            )
+        except MissingGuild:
+            return await ctx.maybe_send_embed(
+                _("You need to specify the Guild ID for the guild to lookup.")
+            )
 
-                if target_playlists:
-                    await self._embed_msg(
-                        ctx,
-                        _(
-                            "A playlist with that name already exists in {to_guild_name}.\nPlease enter a new name for this playlist."
-                        ).format(to_guild_name=to_guild.name),
-                    )
-                    try:
-                        playlist_name_msg = await ctx.bot.wait_for(
-                            "message",
-                            timeout=15.0,
-                            check=MessagePredicate.regex(fr"^(?!{re.escape(ctx.prefix)})", ctx),
-                        )
-                        new_playlist_name = playlist_name_msg.content.split(" ")[0].strip('"')
-                        if len(new_playlist_name) > 20:
-                            return await self._embed_msg(
-                                ctx, _("Try the playlist copy command again with a shorter name.")
-                            )
-                        if new_playlist_name in to_playlists:
-                            return await self._embed_msg(
-                                ctx,
-                                _(
-                                    "Playlist name already exists in {to_guild_name}, try the playlist copy command again with a different name."
-                                ).format(to_guild_name=to_guild.name),
-                            )
-                    except asyncio.TimeoutError:
-                        return await self._embed_msg(
-                            ctx, _("No playlist name entered, try again later.")
-                        )
-                    to_playlists[new_playlist_name] = from_playlists[playlist_name]
-                    return await self._embed_msg(
-                        ctx,
-                        _(
-                            "Playlist {name} copied from {from_guild_name} to {to_guild_name}.\nNew playlist name on {to_guild_name}: {new_name}"
-                        ).format(
-                            name=playlist_name,
-                            from_guild_name=from_guild.name,
-                            to_guild_name=to_guild.name,
-                            new_name=new_playlist_name,
-                        ),
-                    )
+        to_playlist = await create_playlist(
+            ctx,
+            to_scope,
+            from_playlist.name,
+            from_playlist.url,
+            from_playlist.tracks,
+            to_author,
+            to_guild,
+        )
+        return await self._embed_msg(
+            ctx,
+            _(
+                "Playlist {name} ({from_id}) copied from {from_scope} to {to_scope} ({to_id})."
+            ).format(
+                name=from_playlist.name,
+                from_id=from_playlist.id,
+                from_scope=from_scope,
+                to_scope=to_scope,
+                to_id=to_playlist.id,
+            ),
+        )
 
-    @playlist.command(name="create")
-    async def _playlist_create(self, ctx, playlist_name):
+    @playlist.command(
+        name="create", usage="[author=playlist_author_id] [guild=guild_id] [scope=Guild] <name>"
+    )
+    async def _playlist_create(
+            self,
+            ctx: commands.Context,
+            author: Optional[discord.User] = None,
+            guild: Optional[GuildConverter] = None,
+            scope: Optional[ScopeConverter] = None,
+            *,
+            playlist_name: str,
+    ):
         """Create an empty playlist."""
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
-        if dj_enabled:
-            if not await self._can_instaskip(ctx, ctx.author):
-                return await self._embed_msg(ctx, _("You need the DJ role to save playlists."))
-        async with self.config.guild(ctx.guild).playlists() as playlists:
-            if playlist_name in playlists:
-                return await self._embed_msg(
-                    ctx, _("Playlist name already exists, try again with a different name.")
-                )
-        playlist_name = playlist_name.split(" ")[0].strip('"')
-        playlist_list = self._to_json(ctx, None, None)
-        async with self.config.guild(ctx.guild).playlists() as playlists:
-            playlists[playlist_name] = playlist_list
-        await self._embed_msg(ctx, _("Empty playlist {name} created.").format(name=playlist_name))
+        if scope is None:
+            scope = PlaylistScope.GUILD.value
+        guild = guild or ctx.guild
+        author = author or ctx.author
+        temp_playlist = FakePlaylist(author.id)
+        if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
+            return
+        playlist = await create_playlist(ctx, scope, playlist_name, None, None, author, guild)
+        return await ctx.maybe_send_embed(
+            _("Empty playlist {name} ({id}) created.").format(name=playlist.name, id=playlist.id)
+        )
 
-    @playlist.command(name="delete")
-    async def _playlist_delete(self, ctx, playlist_name):
+    @playlist.command(
+        name="delete",
+        usage="[author=playlist_author_id] [guild=guild_id] [scope=Guild] <playlist_id>",
+    )
+    async def _playlist_delete(
+            self,
+            ctx: commands.Context,
+            author: Optional[discord.User] = None,
+            guild: Optional[GuildConverter] = None,
+            scope: Optional[ScopeConverter] = None,
+            *,
+            playlist_id,  # TODO: Converter here
+    ):
         """Delete a saved playlist."""
-        async with self.config.guild(ctx.guild).playlists() as playlists:
-            try:
-                if playlists[playlist_name][
-                    "author"
-                ] != ctx.author.id and not await self._can_instaskip(ctx, ctx.author):
-                    return await self._embed_msg(
-                        ctx, _("You are not the author of that playlist.")
-                    )
-                del playlists[playlist_name]
-            except KeyError:
-                return await self._embed_msg(ctx, _("No playlist with that name."))
-        await self._embed_msg(ctx, _("{name} playlist deleted.").format(name=playlist_name))
+        if scope is None:
+            scope = PlaylistScope.GUILD.value
+
+        guild = guild or ctx.guild
+        author = author or ctx.author
+
+        try:
+            playlist = await get_playlist(playlist_id, scope, self.bot, guild, author.id)
+        except RuntimeError:
+            return await ctx.maybe_send_embed(
+                _("Playlist {id} does not exist in {scope} scope.").format(
+                    id=playlist_id, scope=scope
+                )
+            )
+        except MissingGuild:
+            return await ctx.maybe_send_embed(
+                _("You need to specify the Guild ID for the guild to lookup.")
+            )
+        if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
+            return
+
+        await delete_playlist(scope, playlist.id, guild or ctx.guild, author or ctx.author)
+        await self._embed_msg(
+            ctx, _("{name} ({id}) playlist deleted.").format(name=playlist.name, id=playlist.id)
+        )
 
     @checks.is_owner()
     @playlist.command(name="download")
     @commands.bot_has_permissions(attach_files=True)
-    async def _playlist_download(self, ctx, playlist_name, v2=False):
+    async def _playlist_download(
+            self,
+            ctx: commands.Context,
+            playlist_id: int,
+            author: Optional[discord.User] = None,
+            guild: Optional[GuildConverter] = None,
+            scope: Optional[ScopeConverter] = None,
+            v2=False,
+    ):
         """Download a copy of a playlist.
 
         These files can be used with the [p]playlist upload command.
@@ -2043,67 +2185,97 @@ class Audio(commands.Cog):
         for the v2 variable."""
         if not await self._playlist_check(ctx):
             return
-        playlists = await self.config.guild(ctx.guild).playlists.get_raw()
-        v2_valid_urls = ["https://www.youtube.com/watch?v=", "https://soundcloud.com/"]
-        song_list = []
-        playlist_url = None
+
+        if scope is None:
+            scope = PlaylistScope.GUILD.value
+        guild = guild or ctx.guild
+        author = author or ctx.author
 
         try:
-            if playlists[playlist_name]["playlist_url"]:
-                playlist_url = playlists[playlist_name]["playlist_url"]
-            for track in playlists[playlist_name]["tracks"]:
-                if v2:
-                    if track["info"]["uri"].startswith(tuple(v2_valid_urls)):
-                        song_list.append(track["info"]["uri"])
-                else:
-                    song_list.append(track["info"]["uri"])
-        except TypeError:
+            playlist = await get_playlist(playlist_id, scope, self.bot, guild, author.id)
+        except RuntimeError:
+            return await ctx.maybe_send_embed(
+                _("Playlist {id} does not exist in {scope} scope.").format(
+                    id=playlist_id, scope=scope
+                )
+            )
+        except MissingGuild:
+            return await ctx.maybe_send_embed(
+                _("You need to specify the Guild ID for the guild to lookup.")
+            )
+
+        v2_valid_urls = ["https://www.youtube.com/watch?v=", "https://soundcloud.com/"]
+        song_list = []
+        if not playlist.tracks:
             return await self._embed_msg(ctx, _("That playlist has no tracks."))
-        except KeyError:
-            return await self._embed_msg(ctx, _("That playlist doesn't exist."))
+
+        for track in playlist.tracks:
+            if v2:
+                if track["info"]["uri"].startswith(tuple(v2_valid_urls)):
+                    song_list.append(track["info"]["uri"])
+            else:
+                song_list.append(track["info"]["uri"])
 
         playlist_data = json.dumps(
-            {"author": ctx.author.id, "link": playlist_url, "playlist": song_list}
+            {"author": playlist.author, "link": playlist.url, "playlist": song_list}
         )
         to_write = StringIO()
         to_write.write(playlist_data)
         to_write.seek(0)
-        await ctx.send(file=discord.File(to_write, filename=f"{playlist_name}.txt"))
+        await ctx.send(file=discord.File(to_write, filename=f"{playlist.name}.txt"))
         to_write.close()
 
-    @playlist.command(name="info")
-    async def _playlist_info(self, ctx, playlist_name):
+    @playlist.command(
+        name="info",
+        usage="<playlist_id> [author=playlist_author_id] [guild=guild_id] [scope=Guild]",
+    )
+    async def _playlist_info(
+            self,
+            ctx: commands.Context,
+            playlist_id: int, # TODO: Converter here
+            author: Optional[discord.User] = None,
+            guild: Optional[GuildConverter] = None,
+            scope: Optional[ScopeConverter] = None,
+    ):
         """Retrieve information from a saved playlist."""
-        playlists = await self.config.guild(ctx.guild).playlists.get_raw()
-        try:
-            author_id = playlists[playlist_name]["author"]
-        except KeyError:
-            return await self._embed_msg(ctx, _("No playlist with that name."))
+
+        if scope is None:
+            scope = PlaylistScope.GUILD.value
+        guild = guild or ctx.guild
+        author = author or ctx.author
 
         try:
-            track_len = len(playlists[playlist_name]["tracks"])
-        except TypeError:
-            track_len = 0
+            playlist = await get_playlist(playlist_id, scope, self.bot, guild, author.id)
+        except RuntimeError:
+            return await ctx.maybe_send_embed(
+                _("Playlist {id} does not exist in {scope} scope.").format(
+                    id=playlist_id, scope=scope
+                )
+            )
+        except MissingGuild:
+            return await ctx.maybe_send_embed(
+                _("You need to specify the Guild ID for the guild to lookup.")
+            )
+        track_len = len(playlist.tracks)
 
         msg = ""
         track_idx = 0
         if track_len > 0:
-            for track in playlists[playlist_name]["tracks"]:
+            for track in playlist.tracks:
                 track_idx = track_idx + 1
-                spaces = abs(len(str(track_idx)) - 5)
                 msg += "`{}.` **[{}]({})**\n".format(
                     track_idx, track["info"]["title"], track["info"]["uri"]
                 )
         else:
             msg = "No tracks."
-        playlist_url = playlists[playlist_name]["playlist_url"]
-        if not playlist_url:
-            embed_title = _("Playlist info for {playlist_name}:\n").format(
-                playlist_name=playlist_name
+
+        if not playlist.url:
+            embed_title = _("Playlist info for {playlist_name} ({id}):\n").format(
+                playlist_name=playlist.name, id=playlist.id
             )
         else:
-            embed_title = _("Playlist info for {playlist_name}:\nURL: {url}").format(
-                playlist_name=playlist_name, url=playlist_url
+            embed_title = _("Playlist info for {playlist_name} ({id}):\nURL: {url}").format(
+                playlist_name=playlist.name, url=playlist.url, id=playlist.id
             )
 
         page_list = []
@@ -2111,7 +2283,7 @@ class Audio(commands.Cog):
             embed = discord.Embed(
                 colour=await ctx.embed_colour(), title=embed_title, description=page
             )
-            author_obj = self.bot.get_user(author_id)
+            author_obj = self.bot.get_user(playlist.author)
             embed.set_footer(
                 text=_("Author: {author_name} | {num} track(s)").format(
                     author_name=author_obj, num=track_len
@@ -2120,24 +2292,45 @@ class Audio(commands.Cog):
             page_list.append(embed)
         await menu(ctx, page_list, DEFAULT_CONTROLS)
 
-    @playlist.command(name="list")
+    @playlist.command(
+        name="list", usage="[author=playlist_author_id] [guild=guild_id] [scope=Guild]"
+    )
     @commands.bot_has_permissions(add_reactions=True)
-    async def _playlist_list(self, ctx):
+    async def _playlist_list(
+            self,
+            ctx: commands.Context,
+            author: Optional[discord.User] = None,
+            guild: Optional[GuildConverter] = None,
+            scope: Optional[ScopeConverter] = None,
+    ):
         """List saved playlists."""
-        playlists = await self.config.guild(ctx.guild).playlists.get_raw()
+
+        if scope is None:
+            scope = PlaylistScope.GUILD.value
+        guild = guild or ctx.guild
+        author = author or ctx.author
+
+        try:
+            playlists = await get_all_playlist(scope, self.bot, guild, author.id)
+        except MissingGuild:
+            return await ctx.maybe_send_embed(
+                _("You need to specify the Guild ID for the guild to lookup.")
+            )
+
         if not playlists:
-            return await self._embed_msg(ctx, _("No saved playlists."))
+            return await ctx.maybe_send_embed(_("No saved playlists."))
+
         playlist_list = []
         space = "\N{EN SPACE}"
-        for playlist_name in playlists:
-            tracks = playlists[playlist_name]["tracks"]
+        for playlist in playlists:
+            tracks = playlist.tracks
             if not tracks:
                 tracks = []
-            author = playlists[playlist_name]["author"]
+            author = playlist.author
             playlist_list.append(
                 ("\n" + space * 4).join(
                     (
-                        bold(playlist_name),
+                        bold(playlist.name),
                         _("Tracks: {num}").format(num=len(tracks)),
                         _("Author: {name}\n").format(name=self.bot.get_user(author)),
                     )
@@ -2147,23 +2340,25 @@ class Audio(commands.Cog):
         len_playlist_list_pages = math.ceil(len(abc_names) / 5)
         playlist_embeds = []
         for page_num in range(1, len_playlist_list_pages + 1):
-            embed = await self._build_playlist_list_page(ctx, page_num, abc_names)
+            embed = await self._build_playlist_list_page(
+                ctx, page_num, abc_names, humanize_converter(scope)
+            )
             playlist_embeds.append(embed)
         await menu(ctx, playlist_embeds, DEFAULT_CONTROLS)
 
-    async def _build_playlist_list_page(self, ctx, page_num, abc_names):
+    async def _build_playlist_list_page(self, ctx, page_num, abc_names, scope):
         plist_num_pages = math.ceil(len(abc_names) / 5)
         plist_idx_start = (page_num - 1) * 5
         plist_idx_end = plist_idx_start + 5
         plist = ""
         for i, playlist_info in enumerate(
-            abc_names[plist_idx_start:plist_idx_end], start=plist_idx_start
+                abc_names[plist_idx_start:plist_idx_end], start=plist_idx_start
         ):
             item_idx = i + 1
             plist += "`{}.` {}".format(item_idx, playlist_info)
         embed = discord.Embed(
             colour=await ctx.embed_colour(),
-            title=_("Playlists for {server_name}:").format(server_name=ctx.guild.name),
+            title=_("Playlists for {server_name}:").format(server_name=scope.title()),
             description=plist,
         )
         embed.set_footer(
@@ -2173,21 +2368,28 @@ class Audio(commands.Cog):
         )
         return embed
 
-    @commands.cooldown(1, 15, discord.ext.commands.BucketType.guild)
+    @commands.cooldown(1, 15, commands.BucketType.guild)
     @playlist.command(name="queue")
-    async def _playlist_queue(self, ctx, playlist_name=None):
+    async def _playlist_queue(
+            self,
+            ctx: commands.Context,
+            author: Optional[discord.User] = None,
+            guild: Optional[GuildConverter] = None,
+            scope: Optional[ScopeConverter] = None,
+            *,
+            playlist_name: str,
+    ):
         """Save the queue to a playlist."""
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
-        if dj_enabled:
-            if not await self._can_instaskip(ctx, ctx.author):
-                return await self._embed_msg(ctx, _("You need the DJ role to save playlists."))
-        async with self.config.guild(ctx.guild).playlists() as playlists:
-            if playlist_name in playlists:
-                return await self._embed_msg(
-                    ctx, _("Playlist name already exists, try again with a different name.")
-                )
-            if not self._player_check(ctx):
-                return await self._embed_msg(ctx, _("Nothing playing."))
+        if scope is None:
+            scope = PlaylistScope.GUILD.value
+        guild = guild or ctx.guild
+        author = author or ctx.author
+        temp_playlist = FakePlaylist(author.id)
+        if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
+            return
+        if not self._player_check(ctx):
+            return await self._embed_msg(ctx, _("Nothing playing."))
+
         player = lavalink.get_player(ctx.guild.id)
         if not player.current:
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
@@ -2198,107 +2400,137 @@ class Audio(commands.Cog):
             queue_idx = player.queue.index(track)
             track_obj = self._track_creator(player, queue_idx)
             tracklist.append(track_obj)
-        if not playlist_name:
-            await self._embed_msg(ctx, _("Please enter a name for this playlist."))
 
-            try:
-                playlist_name_msg = await ctx.bot.wait_for(
-                    "message",
-                    timeout=15.0,
-                    check=MessagePredicate.regex(fr"^(?!{re.escape(ctx.prefix)})", ctx),
-                )
-                playlist_name = playlist_name_msg.content.split(" ")[0].strip('"')
-                if len(playlist_name) > 20:
-                    return await self._embed_msg(
-                        ctx, _("Try the command again with a shorter name.")
-                    )
-                if playlist_name in playlists:
-                    return await self._embed_msg(
-                        ctx, _("Playlist name already exists, try again with a different name.")
-                    )
-            except asyncio.TimeoutError:
-                return await self._embed_msg(ctx, _("No playlist name entered, try again later."))
-        playlist_list = self._to_json(ctx, None, tracklist)
-        async with self.config.guild(ctx.guild).playlists() as playlists:
-            playlist_name = playlist_name.split(" ")[0].strip('"')
-            playlists[playlist_name] = playlist_list
+        playlist = await create_playlist(ctx, scope, playlist_name, None, tracklist, author, guild)
         await self._embed_msg(
             ctx,
-            _("Playlist {name} saved from current queue: {num} tracks added.").format(
-                name=playlist_name.split(" ")[0].strip('"'), num=len(tracklist)
+            _("Playlist {name} ({id}) saved from current queue: {num} tracks added.").format(
+                name=playlist.name, num=len(playlist.tracks), id=playlist.id
             ),
         )
 
-    @playlist.command(name="remove")
-    async def _playlist_remove(self, ctx, playlist_name, url):
+    @playlist.command(
+        name="remove",
+        usage=("<playlist_id> [author=playlist_author_id] [guild=guild_id] [scope=Guild] <url>"),
+    )
+    async def _playlist_remove(
+            self,
+            ctx: commands.Context,
+            playlist_id: int,  # TODO: Converter here
+            author: Optional[discord.User] = None,
+            guild: Optional[GuildConverter] = None,
+            scope: Optional[ScopeConverter] = None,
+            *,
+            url: str,
+    ):
         """Remove a track from a playlist by url."""
-        async with self.config.guild(ctx.guild).playlists() as playlists:
-            try:
-                if playlists[playlist_name][
-                    "author"
-                ] != ctx.author.id and not await self._can_instaskip(ctx, ctx.author):
-                    return await self._embed_msg(
-                        ctx, _("You are not the author of that playlist.")
-                    )
-            except KeyError:
-                return await self._embed_msg(ctx, _("No playlist with that name."))
-            track_list = playlists[playlist_name]["tracks"]
-            clean_list = [track for track in track_list if not url == track["info"]["uri"]]
-            if len(playlists[playlist_name]["tracks"]) == len(clean_list):
-                return await self._embed_msg(ctx, _("URL not in playlist."))
-            del_count = len(playlists[playlist_name]["tracks"]) - len(clean_list)
-            if not clean_list:
-                del playlists[playlist_name]
-                return await self._embed_msg(ctx, _("No tracks left, removing playlist."))
-            playlists[playlist_name]["tracks"] = clean_list
-        if playlists[playlist_name]["playlist_url"] is not None:
-            playlists[playlist_name]["playlist_url"] = None
+        if scope is None:
+            scope = PlaylistScope.GUILD.value
+        guild = guild or ctx.guild
+        author = author or ctx.author
+
+        try:
+            playlist = await get_playlist(playlist_id, scope, self.bot, guild, author.id)
+        except RuntimeError:
+            return await ctx.maybe_send_embed(
+                _("Playlist {id} does not exist in {scope} scope.").format(
+                    id=playlist_id, scope=scope
+                )
+            )
+        except MissingGuild:
+            return await ctx.maybe_send_embed(
+                _("You need to specify the Guild ID for the guild to lookup.")
+            )
+
+        if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
+            return
+
+        track_list = playlist.tracks
+        clean_list = [track for track in track_list if url != track["info"]["uri"]]
+        if len(track_list) == len(clean_list):
+            return await self._embed_msg(ctx, _("URL not in playlist."))
+        del_count = len(track_list) - len(clean_list)
+        if not clean_list:
+            await delete_playlist(
+                scope=playlist.scope, playlist_id=playlist.id, guild=guild, author=playlist.author
+            )
+            return await self._embed_msg(ctx, _("No tracks left, removing playlist."))
+        update = {"tracks": clean_list, "url": None}
+        await playlist.edit(update)
         if del_count > 1:
             await self._embed_msg(
                 ctx,
-                _("{num} entries have been removed from the {playlist_name} playlist.").format(
-                    num=del_count, playlist_name=playlist_name
-                ),
+                _(
+                    "{num} entries have been removed from the {playlist_name} ({id}) playlist."
+                ).format(num=del_count, playlist_name=playlist.name, id=playlist.id),
             )
         else:
             await self._embed_msg(
                 ctx,
-                _("The track has been removed from the {playlist_name} playlist.").format(
-                    playlist_name=playlist_name
+                _("The track has been removed from the {playlist_name} ({id}) playlist.").format(
+                    playlist_name=playlist.name, id=playlist.id
                 ),
             )
 
     @playlist.command(name="save")
-    async def _playlist_save(self, ctx, playlist_name, playlist_url):
+    async def _playlist_save(
+            self,
+            ctx: commands.Context,
+            playlist_name: str,  # TODO: Converter here
+            author: Optional[discord.User] = None,
+            guild: Optional[GuildConverter] = None,
+            scope: Optional[ScopeConverter] = None,
+            *,
+            playlist_url,
+    ):
         """Save a playlist from a url."""
+        if scope is None:
+            scope = PlaylistScope.GUILD.value
+        guild = guild or ctx.guild
+        author = author or ctx.author
+        temp_playlist = FakePlaylist(author.id)
+        if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
+            return
         if not await self._playlist_check(ctx):
             return
         player = lavalink.get_player(ctx.guild.id)
         tracklist = await self._playlist_tracks(ctx, player, playlist_url)
-        playlist_list = self._to_json(ctx, playlist_url, tracklist)
         if tracklist is not None:
-            async with self.config.guild(ctx.guild).playlists() as playlists:
-                playlist_name = playlist_name.split(" ")[0].strip('"')
-                playlists[playlist_name] = playlist_list
-                return await self._embed_msg(
-                    ctx,
-                    _("Playlist {name} saved: {num} tracks added.").format(
-                        name=playlist_name, num=len(tracklist)
-                    ),
-                )
+            playlist = await create_playlist(
+                ctx, scope, playlist_name, playlist_url, tracklist, author, guild
+            )
+            return await self._embed_msg(
+                ctx,
+                _("Playlist {name} ({id}) saved: {num} tracks added.").format(
+                    name=playlist.name, num=len(tracklist), id=playlist.id
+                ),
+            )
 
     @playlist.command(name="start")
-    async def _playlist_start(self, ctx, playlist_name=None):
+    async def _playlist_start(
+            self,
+            ctx: commands.Context,
+            author: Optional[discord.User] = None,
+            guild: Optional[GuildConverter] = None,
+            scope: Optional[ScopeConverter] = None,
+            *,
+            playlist_id: int,  # TODO: Converter here
+    ):
         """Load a playlist into the queue."""
         if not await self._playlist_check(ctx):
             return
+        if scope is None:
+            scope = PlaylistScope.GUILD.value
+        guild = guild or ctx.guild
+        author = author or ctx.author
         maxlength = await self.config.guild(ctx.guild).maxlength()
-        playlists = await self.config.guild(ctx.guild).playlists.get_raw()
         author_obj = self.bot.get_user(ctx.author.id)
         track_len = 0
         try:
+            playlist = await get_playlist(playlist_id, scope, self.bot, guild, author.id)
             player = lavalink.get_player(ctx.guild.id)
-            for track in playlists[playlist_name]["tracks"]:
+            tracks = playlist.tracks
+            for track in tracks:
                 if track["info"]["uri"].startswith("localtracks/"):
                     if not await self._localtracks_check(ctx):
                         pass
@@ -2309,9 +2541,9 @@ class Audio(commands.Cog):
                         continue
                 player.add(author_obj, lavalink.rest_api.Track(data=track))
                 track_len += 1
-            if len(playlists[playlist_name]["tracks"]) > track_len:
+            if len(tracks) > track_len:
                 maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
-                    bad_tracks=(len(playlists[playlist_name]["tracks"]) - track_len)
+                    bad_tracks=(len(tracks) - track_len)
                 )
             else:
                 maxlength_msg = ""
@@ -2325,18 +2557,38 @@ class Audio(commands.Cog):
             await ctx.send(embed=embed)
             if not player.current:
                 await player.play()
+        except RuntimeError:
+            return await ctx.maybe_send_embed(
+                _("Playlist {id} does not exist in {scope} scope.").format(
+                    id=playlist_id, scope=scope
+                )
+            )
+        except MissingGuild:
+            return await ctx.maybe_send_embed(
+                _("You need to specify the Guild ID for the guild to lookup.")
+            )
         except TypeError:
-            await ctx.invoke(self.play, query=playlists[playlist_name]["playlist_url"])
-        except KeyError:
-            await self._embed_msg(ctx, _("That playlist doesn't exist."))
+            await ctx.invoke(self.play, query=playlist.url)
 
     @checks.is_owner()
     @playlist.command(name="upload")
-    async def _playlist_upload(self, ctx):
+    async def _playlist_upload(
+            self,
+            ctx: commands.Context,
+            author: Optional[discord.User] = None,
+            guild: Optional[GuildConverter] = None,
+            scope: Optional[ScopeConverter] = None,
+    ):
         """Convert a Red v2 playlist file to a playlist."""
+        if scope is None:
+            scope = PlaylistScope.GUILD.value
+        guild = guild or ctx.guild
+        author = author or ctx.author
+
         if not await self._playlist_check(ctx):
             return
         player = lavalink.get_player(ctx.guild.id)
+
         await self._embed_msg(
             ctx,
             _("Please upload the playlist file. Any other message will cancel this operation."),
@@ -2352,7 +2604,7 @@ class Audio(commands.Cog):
             file_url = file_message.attachments[0].url
         except IndexError:
             return await self._embed_msg(ctx, _("Upload cancelled."))
-        v2_playlist_name = (file_url.split("/")[6]).split(".")[0]
+        v2_playlist_name_backup = (file_url.split("/")[6]).split(".")[0]
         file_suffix = file_url.rsplit(".", 1)[1]
         if file_suffix != "txt":
             return await self._embed_msg(ctx, _("Only playlist files can be uploaded."))
@@ -2365,21 +2617,19 @@ class Audio(commands.Cog):
             v2_playlist_url = v2_playlist["link"]
         except KeyError:
             v2_playlist_url = None
+        try:
+            v2_playlist_name = v2_playlist["name"]
+        except KeyError:
+            v2_playlist_name = v2_playlist_name_backup
+
         if (
-            not v2_playlist_url
-            or not self._match_yt_playlist(v2_playlist_url)
-            or not await player.get_tracks(v2_playlist_url)
+                not v2_playlist_url
+                or not self._match_yt_playlist(v2_playlist_url)
+                or not await player.get_tracks(v2_playlist_url)
         ):
             track_list = []
             track_count = 0
-            async with self.config.guild(ctx.guild).playlists() as v3_playlists:
-                try:
-                    if v3_playlists[v2_playlist_name]:
-                        return await self._embed_msg(
-                            ctx, _("A playlist already exists with this name.")
-                        )
-                except KeyError:
-                    pass
+
             embed1 = discord.Embed(
                 colour=await ctx.embed_colour(), title=_("Please wait, adding tracks...")
             )
@@ -2405,9 +2655,11 @@ class Audio(commands.Cog):
                     await playlist_msg.edit(embed=embed2)
             if not track_list:
                 return await self._embed_msg(ctx, _("No tracks found."))
-            playlist_list = self._to_json(ctx, v2_playlist_url, track_list)
-            async with self.config.guild(ctx.guild).playlists() as v3_playlists:
-                v3_playlists[v2_playlist_name] = playlist_list
+
+            await create_playlist(
+                ctx, scope, v2_playlist_name, v2_playlist_url, track_list, author, guild
+            )
+
             if len(v2_playlist["playlist"]) != track_count:
                 bad_tracks = len(v2_playlist["playlist"]) - track_count
                 msg = _(
@@ -2426,12 +2678,6 @@ class Audio(commands.Cog):
             await ctx.invoke(self._playlist_save, v2_playlist_name, v2_playlist_url)
 
     async def _playlist_check(self, ctx):
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
-        jukebox_price = await self.config.guild(ctx.guild).jukebox_price()
-        if dj_enabled:
-            if not await self._can_instaskip(ctx, ctx.author):
-                await self._embed_msg(ctx, _("You need the DJ role to use playlists."))
-                return False
         if not self._player_check(ctx):
             if self._connection_aborted:
                 msg = _("Connection to Lavalink has failed.")
@@ -2441,9 +2687,9 @@ class Audio(commands.Cog):
                 return False
             try:
                 if (
-                    not ctx.author.voice.channel.permissions_for(ctx.me).connect
-                    or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                    and self._userlimit(ctx.author.voice.channel)
+                        not ctx.author.voice.channel.permissions_for(ctx.me).connect
+                        or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
+                        and self._userlimit(ctx.author.voice.channel)
                 ):
                     await self._embed_msg(
                         ctx, _("I don't have permission to connect to your channel.")
@@ -2460,6 +2706,20 @@ class Audio(commands.Cog):
             except AttributeError:
                 await self._embed_msg(ctx, _("Connect to a voice channel first."))
                 return False
+
+        player = lavalink.get_player(ctx.guild.id)
+        player.store("channel", ctx.channel.id)
+        player.store("guild", ctx.guild.id)
+        if (
+                not ctx.author.voice or ctx.author.voice.channel != player.channel
+        ) and not await self._can_instaskip(ctx, ctx.author):
+            await self._embed_msg(
+                ctx, _("You must be in the voice channel to use the playlist command.")
+            )
+            return False
+        await self._eq_check(ctx, player)
+        await self._data_check(ctx)
+        return True
 
         player = lavalink.get_player(ctx.guild.id)
         player.store("channel", ctx.channel.id)

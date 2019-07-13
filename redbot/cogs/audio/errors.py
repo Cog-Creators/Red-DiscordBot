@@ -31,3 +31,19 @@ class LavalinkDownloadFailed(AudioError, RuntimeError):
 
     def _response_repr(self) -> str:
         return f"[{self.response.status} {self.response.reason}]"
+
+
+class PlayListError(AudioError):
+    """Base exception for errors related to playlists."""
+
+
+class InvalidPlaylistScope(PlayListError):
+    """Provided playlist scope is not valid."""
+
+
+class MissingGuild(PlayListError):
+    """Trying to access the Guild scope without a guild."""
+
+
+class MissingAuthor(PlayListError):
+    """Trying to access the User scope without an user id."""
