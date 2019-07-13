@@ -20,8 +20,6 @@ class ScopeConverter(Converter):
 
 class PlaylistConverter(Converter):
     async def convert(self, ctx, argument) -> str:
-        scope = argument.upper()
-        valid_scopes = PlaylistScope.list() + ["GLOBAL", "GUILD", "USER"]
-        if scope not in valid_scopes:
-            raise BadArgument(_("{} doesn't look like a valid scope.").format(argument))
-        return standardize_scope(argument)
+        return argument
+        # TODO: Implement Dynamic Converter that accepts the ID or Name and looks up in Guild Scope
+    # Non guild Scopes the user should use ID to interact with them
