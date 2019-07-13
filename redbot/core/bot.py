@@ -1,6 +1,5 @@
 import asyncio
 import inspect
-import contextlib
 import os
 import logging
 from collections import Counter
@@ -444,8 +443,14 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                 self.dispatch("command_add", command)
         except Exception:
             for hook in added_hooks:
-                with contextlib.suppress(ValueError):
+                try:
                     self.remove_permissions_hook(hook)
+                except Exception:
+                    # This shouldn't be possible
+                    log.exception(
+                        "A hook got extremely screwed up, "
+                        "and could not be removed properly during another error in cog load."
+                    )
             del cog
             raise
 
