@@ -20,11 +20,11 @@ Basic Usage
 
     class MyCog:
         @commands.command()
-        async def balance(self, ctx, user: discord.Member=None):
+        async def balance(self, ctx, user: discord.Member = None):
             if user is None:
                 user = ctx.author
-            bal = bank.get_balance(user)
-            currency = bank.get_currency_name(ctx.guild)
+            bal = await bank.get_balance(user)
+            currency = await bank.get_currency_name(ctx.guild)
             await ctx.send(
                 "{}'s balance is {} {}".format(
                     user.display_name, bal, currency
