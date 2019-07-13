@@ -16,7 +16,7 @@ Basic Usage
 
 .. code-block:: python
 
-    from redbot.core import modlog
+    from redbot.core import commands, modlog
     import discord
 
     class MyCog:
