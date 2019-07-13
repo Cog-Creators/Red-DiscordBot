@@ -22,9 +22,9 @@ Basic Usage
     class MyCog:
         @commands.command()
         @checks.admin_or_permissions(ban_members=True)
-        async def ban(self, ctx, user: discord.Member, reason: str=None):
+        async def ban(self, ctx, user: discord.Member, reason: str = None):
             await ctx.guild.ban(user)
-            case = modlog.create_case(
+            case = await modlog.create_case(
                 ctx.guild, ctx.message.created_at, "ban", user,
                 ctx.author, reason, until=None, channel=None
             )
@@ -44,6 +44,13 @@ To register a single case type:
 
     class MyCog:
         def __init__(self, bot):
+            self.register_task = bot.loop.create_task(self.register_case())
+
+        def cog_unload(self):
+            self.register_task.cancel()
+
+        @staticmethod
+        async def register_case():
             ban_case = {
                 "name": "ban",
                 "default_setting": True,
@@ -51,7 +58,10 @@ To register a single case type:
                 "case_str": "Ban",
                 "audit_type": "ban"
             }
-            modlog.register_casetype(**ban_case)
+            try:
+                await modlog.register_casetype(**ban_case)
+            except RuntimeError:
+                pass
 
 To register multiple case types:
 
@@ -62,6 +72,13 @@ To register multiple case types:
 
     class MyCog:
         def __init__(self, bot):
+            self.register_task = bot.loop.create_task(self.register_cases())
+
+        def cog_unload(self):
+            self.register_task.cancel()
+
+        @staticmethod
+        async def register_cases():
             new_types = [
                 {
                     "name": "ban",
@@ -78,7 +95,10 @@ To register multiple case types:
                     "audit_type": "kick"
                 }
             ]
-            modlog.register_casetypes(new_types)
+            try:
+                await modlog.register_casetypes(new_types)
+            except RuntimeError:
+                pass
 
 .. important::
     Image should be the emoji you want to represent your case type with.
