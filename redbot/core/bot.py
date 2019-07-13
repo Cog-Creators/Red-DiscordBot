@@ -408,9 +408,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                 f"the cog to adhere to this requirement."
             )
         if cog.__cog_name__ in self.cogs:
-            raise RuntimeError(
-                f"There is already a cog named {cog.__cog_name__} loaded."
-            ) from None
+            raise RuntimeError(f"There is already a cog named {cog.__cog_name__} loaded.")
         if not hasattr(cog, "requires"):
             commands.Cog.__init__(cog)
 
