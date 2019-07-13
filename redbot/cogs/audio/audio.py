@@ -152,7 +152,7 @@ class Audio(commands.Cog):
                 if temp_guild_playlist:
                     guild_playlist = {}
                     for count, (name, data) in enumerate(temp_guild_playlist.item(), 1):
-                        playlist = {"id": count}
+                        playlist = {"id": count, "name": name}
                         playlist.update(data)
                         guild_playlist[str(count)] = playlist
                     if guild_playlist:
