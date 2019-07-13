@@ -712,8 +712,6 @@ class Permissions(commands.Cog):
                     cog_or_command.deny_to(model_id, guild_id=guild_id)
 
     def cog_unload(self) -> None:
-        self.bot.remove_listener(self.red_cog_added, "on_cog_add")
-        self.bot.remove_listener(self.red_command_added, "on_command_add")
         self.bot.loop.create_task(self._unload_all_rules())
 
     async def _unload_all_rules(self) -> None:
