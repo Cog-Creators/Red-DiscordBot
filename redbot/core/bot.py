@@ -454,7 +454,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         if permissions_not_loaded:
             command.requires.ready_event.set()
         if isinstance(command, commands.Group):
-            for subcommand in command.__cog_commands__:
+            for subcommand in set(command.walk_commands()):
                 self.dispatch("command_add", subcommand)
                 if permissions_not_loaded:
                     command.requires.ready_event.set()
@@ -463,7 +463,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         command = super().remove_command(name)
         command.requires.reset()
         if isinstance(command, commands.Group):
-            for subcommand in command.__cog_commands__:
+            for subcommand in set(command.walk_commands()):
                 subcommand.requires.reset()
 
     def clear_permission_rules(self, guild_id: Optional[int]) -> None:
