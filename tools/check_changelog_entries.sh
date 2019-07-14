@@ -12,4 +12,5 @@ if [[ $(git diff origin/V3/develop) ]]; then
   fi
 else
   echo "No changes to need changelog for."
+  exit 0
 fi
