@@ -1,5 +1,5 @@
 import argparse
-from typing import Union
+from typing import Tuple, Optional, Union
 
 import discord
 
@@ -10,7 +10,7 @@ from .playlists import PlaylistScope, standardize_scope, _pass_config_to_playlis
 
 _ = Translator("Audio", __file__)
 
-__all__ = ["ScopeConverter", "PlaylistConverter"]
+__all__ = ["ScopeConverter", "PlaylistConverter", "ScopeParser"]
 _config = None
 
 
@@ -76,10 +76,11 @@ class PlaylistConverter(commands.Converter):
 
 
 class ScopeParser(commands.Converter):
-    async def convert(self, ctx: commands.Context, argument: str):
-
+    async def convert(
+        self, ctx: commands.Context, argument: str
+    ) -> Tuple[str, discord.User, Optional[discord.Guild]]:
         target_scope: str = PlaylistScope.GUILD.value
-        target_user: Union[discord.Member, discord.User] = ctx.author
+        target_user:  Union[discord.Member, discord.User] = ctx.author
         target_guild: discord.Guild = ctx.guild
 
         argument = argument.replace("—", "--")
@@ -126,9 +127,8 @@ class ScopeParser(commands.Converter):
                 guild_raw = int(guild_raw)
                 target_guild = ctx.bot.get_guild(guild_raw)
             else:
-                guild_converter = commands.GuildConverter(ctx, guild_raw)
                 try:
-                    target_guild = await guild_converter.convert(ctx, guild_raw)
+                    target_guild = await commands.GuildConverter.convert(ctx, guild_raw)
                 except commands.BadArgument:
                     target_guild = None
             if target_guild is None:
