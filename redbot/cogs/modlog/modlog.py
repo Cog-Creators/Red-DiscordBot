@@ -38,7 +38,7 @@ class ModLog(commands.Cog):
             if channel.permissions_for(guild.me).send_messages:
                 await modlog.set_modlog_channel(guild, channel)
                 await ctx.send(
-                    _("Mod events will be sent to {channel}").format(channel=channel.mention)
+                    _("Mod events will be sent to {channel}.").format(channel=channel.mention)
                 )
             else:
                 await ctx.send(
@@ -74,7 +74,7 @@ class ModLog(commands.Cog):
 
         casetype = await modlog.get_casetype(action, guild)
         if not casetype:
-            await ctx.send(_("That action is not registered"))
+            await ctx.send(_("That action is not registered."))
         else:
             enabled = await casetype.is_enabled()
             await casetype.set_enabled(not enabled)
@@ -99,7 +99,7 @@ class ModLog(commands.Cog):
         try:
             case = await modlog.get_case(number, ctx.guild, self.bot)
         except RuntimeError:
-            await ctx.send(_("That case does not exist for that server"))
+            await ctx.send(_("That case does not exist for that server."))
             return
         else:
             if await ctx.embed_requested():

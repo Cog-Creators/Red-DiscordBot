@@ -153,9 +153,9 @@ class MongoDriver(BaseDriver):
         mongo_collection = self.get_collection(identifier_data.category)
 
         pkey_filter = self.generate_primary_key_filter(identifier_data)
+        escaped_identifiers = list(map(self._escape_key, identifier_data.identifiers))
         if len(identifier_data.identifiers) > 0:
-            dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
-            proj = {"_id": False, dot_identifiers: True}
+            proj = {"_id": False, ".".join(escaped_identifiers): True}
 
             partial = await mongo_collection.find_one(filter=pkey_filter, projection=proj)
         else:
@@ -166,7 +166,7 @@ class MongoDriver(BaseDriver):
         if partial is None:
             raise KeyError("No matching document was found and Config expects a KeyError.")
 
-        for i in identifier_data.identifiers:
+        for i in escaped_identifiers:
             partial = partial[i]
         if isinstance(partial, dict):
             return self._unescape_dict_keys(partial)
