@@ -19,7 +19,7 @@ Basic Usage
     from redbot.core import bank, commands
     import discord
 
-    class MyCog:
+    class MyCog(commands.Cog):
         @commands.command()
         async def balance(self, ctx, user: discord.Member = None):
             if user is None:
