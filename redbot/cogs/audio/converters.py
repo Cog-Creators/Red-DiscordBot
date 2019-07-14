@@ -23,7 +23,14 @@ def _pass_config_to_dependencies(config: Config):
 class ScopeConverter(commands.Converter):
     async def convert(self, ctx: commands.Context, arg: str) -> str:
         scope = arg.upper()
-        valid_scopes = PlaylistScope.list() + ["GLOBAL", "GUILD", "USER"]
+        valid_scopes = PlaylistScope.list() + [
+            "GLOBAL",
+            "GUILD",
+            "USER",
+            "SERVER",
+            "MEMBER",
+            "BOT",
+        ]
         if scope not in valid_scopes:
             raise commands.BadArgument(_("{} doesn't look like a valid scope.").format(arg))
         return standardize_scope(arg)

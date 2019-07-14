@@ -19,7 +19,7 @@ __all__ = [
     "create_playlist",
     "reset_playlist",
     "delete_playlist",
-    "humanize_converter",
+    "humanize_scope",
     "FakePlaylist",
 ]
 
@@ -48,7 +48,7 @@ def _pass_config_to_playlist(config: Config):
 
 def standardize_scope(scope):
     scope = scope.upper()
-    valid_scopes = ["GLOBAL", "GUILD", "SERVER", "USER", "MEMBER"]
+    valid_scopes = ["GLOBAL", "GUILD", "SERVER", "USER", "MEMBER", "BOT"]
 
     if scope in PlaylistScope.list():
         return scope
@@ -68,7 +68,7 @@ def standardize_scope(scope):
     return scope
 
 
-def humanize_converter(scope):
+def humanize_scope(scope):
 
     if scope == PlaylistScope.GLOBAL.value:
         return "Bot"
@@ -108,13 +108,10 @@ class Playlist:
         name: str,
         playlist_url: Optional[str] = None,
         tracks: Optional[List[dict]] = None,
-        user: Union[discord.Member, int] = None,
         guild: Optional[discord.Guild] = None,
     ):
         self.bot = bot
-        self.user = user
         self.guild = guild
-
         self.scope = standardize_scope(scope)
         self.config_scope = _prepare_config_scope(self.scope, author, guild)
         self.author = author
@@ -184,10 +181,9 @@ class Playlist:
             Trying to access the User scope without an user id.
         """
         guild = kwargs.get("guild")
-        user = kwargs.get("author")
-        author = data.get("author") or user.id if hasattr(user, "id") else user
+        author = data.get("author")
         playlist_id = data.get("id") or playlist_number
-        name = data.get("name", "John Doe")
+        name = data.get("name", "Unnamed")
         playlist_url = data.get("playlist_url", None)
         tracks = data.get("tracks", [])
 
@@ -195,7 +191,6 @@ class Playlist:
             bot=bot,
             guild=guild,
             scope=scope,
-            user=user,
             author=author,
             playlist_id=playlist_id,
             name=name,
@@ -330,16 +325,9 @@ async def create_playlist(
     """
 
     playlist = Playlist(
-        ctx.bot,
-        scope,
-        author.id,
-        ctx.message.id,
-        playlist_name,
-        playlist_url,
-        tracks,
-        ctx.author,
-        ctx.guild,
+        ctx.bot, scope, author.id, ctx.message.id, playlist_name, playlist_url, tracks, ctx.guild
     )
+
     await _config.custom(*_prepare_config_scope(scope, author.id, guild), str(ctx.message.id)).set(
         playlist.to_json()
     )
