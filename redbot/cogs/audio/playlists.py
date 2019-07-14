@@ -4,7 +4,7 @@ from typing import Union, Optional, List
 
 import discord
 
-from redbot.core.commands import commands
+from redbot.core import commands
 from .errors import InvalidPlaylistScope, MissingGuild, MissingAuthor
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -71,7 +71,7 @@ def standardize_scope(scope):
 def humanize_converter(scope):
 
     if scope == PlaylistScope.GLOBAL.value:
-        return "Global"
+        return "Bot"
     elif scope == PlaylistScope.GUILD.value:
         return "Server"
     elif scope == PlaylistScope.USER.value:
@@ -184,7 +184,7 @@ class Playlist:
             Trying to access the User scope without an user id.
         """
         guild = kwargs.get("guild")
-        user = kwargs.get("user")
+        user = kwargs.get("author")
         author = data.get("author") or user.id if hasattr(user, "id") else user
         playlist_id = data.get("id") or playlist_number
         name = data.get("name", "John Doe")
@@ -245,7 +245,9 @@ async def get_playlist(
     ).all()
     if not playlist_data["id"]:
         raise RuntimeError(f"That playlist does not exist for the following scope: {scope}")
-    return await Playlist.from_json(bot, scope, playlist_number, playlist_data)
+    return await Playlist.from_json(
+        bot, scope, playlist_number, playlist_data, guild=guild, author=author
+    )
 
 
 async def get_all_playlist(
@@ -278,7 +280,9 @@ async def get_all_playlist(
     """
     playlists = await _config.custom(*_prepare_config_scope(scope, author, guild)).all()
     return [
-        await Playlist.from_json(bot, scope, playlist_number, playlist_data)
+        await Playlist.from_json(
+            bot, scope, playlist_number, playlist_data, guild=guild, author=author
+        )
         for playlist_number, playlist_data in playlists.items()
     ]
 
