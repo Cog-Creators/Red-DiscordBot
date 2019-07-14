@@ -1,9 +1,8 @@
 import contextlib
-import inspect
 import io
 import os
 from pathlib import Path
-from typing import Callable, Union, Dict
+from typing import Callable, Union, Dict, Type
 
 __all__ = ["get_locale", "set_locale", "reload_locales", "cog_i18n", "Translator"]
 
@@ -170,12 +169,10 @@ from . import commands
 def cog_i18n(translator: Translator):
     """Get a class decorator to link the translator to this cog."""
 
-    def decorator(cog_class: type):
+    def decorator(cog_class: Type[commands.Cog]):
         cog_class.__translator__ = translator
-        for name, attr in inspect.getmembers(cog_class):
-            if isinstance(attr, (commands.Group, commands.Command)):
-                attr.translator = translator
-                setattr(cog_class, name, attr)
+        for command in cog_class.__cog_commands__:
+            command.translator = translator
         return cog_class
 
     return decorator
