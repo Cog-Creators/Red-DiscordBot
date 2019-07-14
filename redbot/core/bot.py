@@ -322,6 +322,8 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         super().remove_cog(cogname)
 
+        cog.requires.reset()
+
         for meth in self.rpc_handlers.pop(cogname.upper(), ()):
             self.unregister_rpc_handler(meth)
 
@@ -424,21 +426,10 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                     self.add_permissions_hook(hook)
                     added_hooks.append(hook)
 
-            for command in cog.__cog_commands__:
-
-                if not isinstance(command, commands.Command):
-                    raise RuntimeError(
-                        f"The {cog.__class__.__name__} cog in the {cog.__module__} package,"
-                        " is not using Red's command module, and cannot be added. "
-                        "If this is your cog, please use `from redbot.core import commands`"
-                        "in place of `from discord.ext import commands`. For more details on "
-                        "this requirement, see this page: "
-                        "http://red-discordbot.readthedocs.io/en/v3-develop/framework_commands.html"
-                    )
             super().add_cog(cog)
             self.dispatch("cog_add", cog)
-            for command in cog.__cog_commands__:
-                self.dispatch("command_add", command)
+            if "permissions" not in self.extensions:
+                cog.requires.ready_event.set()
         except Exception:
             for hook in added_hooks:
                 try:
@@ -451,6 +442,29 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                     )
             del cog
             raise
+
+    def add_command(self, command: commands.Command) -> None:
+        if not isinstance(command, commands.Command):
+            raise RuntimeError("Commands must be instances of `redbot.core.commands.Command`")
+
+        super().add_command(command)
+
+        permissions_not_loaded = "permissions" not in self.extensions
+        self.dispatch("command_add", command)
+        if permissions_not_loaded:
+            command.requires.ready_event.set()
+        if isinstance(command, commands.Group):
+            for subcommand in set(command.walk_commands()):
+                self.dispatch("command_add", subcommand)
+                if permissions_not_loaded:
+                    command.requires.ready_event.set()
+
+    def remove_command(self, name: str) -> None:
+        command = super().remove_command(name)
+        command.requires.reset()
+        if isinstance(command, commands.Group):
+            for subcommand in set(command.walk_commands()):
+                subcommand.requires.reset()
 
     def clear_permission_rules(self, guild_id: Optional[int]) -> None:
         """Clear all permission overrides in a scope.
