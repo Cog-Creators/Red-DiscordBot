@@ -25,8 +25,8 @@ Basic Usage
         async def ban(self, ctx, user: discord.Member, reason: str = None):
             await ctx.guild.ban(user)
             case = await modlog.create_case(
-                ctx.bot, ctx.guild, ctx.message.created_at, "ban", user,
-                moderator=ctx.author, reason=reason
+                ctx.bot, ctx.guild, ctx.message.created_at, action="ban",
+                user=user, moderator=ctx.author, reason=reason
             )
             await ctx.send("Done. It was about time.")
 
@@ -83,10 +83,7 @@ it from your setup function:
                     "audit_type": "kick"
                 }
             ]
-            try:
-                await modlog.register_casetypes(new_types)
-            except RuntimeError:
-                pass
+            await modlog.register_casetypes(new_types)
 
 .. code-block:: python
 
