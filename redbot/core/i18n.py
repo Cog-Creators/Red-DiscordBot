@@ -1,4 +1,5 @@
 import contextlib
+import inspect
 import io
 import os
 from pathlib import Path
@@ -171,7 +172,7 @@ def cog_i18n(translator: Translator):
 
     def decorator(cog_class: type):
         cog_class.__translator__ = translator
-        for name, attr in cog_class.__dict__.items():
+        for name, attr in inspect.getmembers(cog_class):
             if isinstance(attr, (commands.Group, commands.Command)):
                 attr.translator = translator
                 setattr(cog_class, name, attr)
