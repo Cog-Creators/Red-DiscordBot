@@ -35,7 +35,7 @@ Basic Usage
 Registering Case types
 **********************
 
-To register case types, use an asynchronous `initialize()` method and call
+To register case types, use an asynchronous ``initialize()`` method and call
 it from your setup function:
 
 .. code-block:: python
