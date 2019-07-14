@@ -30,6 +30,10 @@ goto syncenv
 .\.venv\Scripts\python -m pip install -Ur .\tools\dev-requirements.txt
 exit /B %ERRORLEVEL%
 
+:checkchangelog
+REM This is so that a travis specific check doesn't fail on windows
+exit /b 0
+
 :help
 echo Usage:
 echo   make ^<command^>
