@@ -112,13 +112,35 @@ Whenever you pull from upstream (V3/develop on the main repository) and you noti
 1. Create a new branch on your fork
 2. Make the changes
 3. If you like the changes and think the main Red project could use it:
+    * Create a towncrier entry for the changes. (See next section for details)
     * Run tests with `tox` to ensure your code is up to scratch
     * Create a Pull Request on GitHub with your changes
 
-### 4.7 How To Report A Bug
+### 4.9 Using towncrier
+
+Red uses towncrier to create changelogs
+
+To create a towncrier entry for your PR, create a file in `changelog.d` for it.
+The filename should be of the format `issuenumber.changetype.rst`
+
+You can create multiple entries if your PR fixes multiple things at once, but unless the fixes
+are strongly related, it is better to make multiple PRs
+
+Valid changetypes are:
+
+  * feature : New features
+  * bugfix : Bugfixes
+  * doc : documentation improvements and additions
+  * removal : removal of something
+  * misc : any changes which don't have a user facing change, and don't belong in the changelog for users.
+
+The contents of the file should be a short, human readable description of the impact of the changes made,
+not the technical details of the change.
+
+### 4.8 How To Report A Bug
 Please see our **ISSUES.MD** for more information.
 
-### 4.8 How To Suggest A Feature Or Enhancement
+### 4.9 How To Suggest A Feature Or Enhancement
 The goal of Red is to be as useful to as many people as possible, this means that all features must be useful to anyone and any server that uses Red.
 
 If you find yourself wanting a feature that Red does not already have, you're probably not alone. There's bound to be a great number of users out there needing the same thing and a lot of the features that Red has today have been added because of the needs of our users. Open an issue on our issues list and describe the feature you would like to see, how you would use it, how it should work, and why it would be useful to the Red community as a whole.
@@ -137,7 +159,7 @@ Pull requests are evaluated by their quality and how effectively they solve thei
 
 1. A pull request is submitted
 2. Core team members will review and test the pull request (usually within a week)
-3. After a majority of the core team approves your pull request:
+3. After a member of the core team approves your pull request:
     * If your pull request is considered an improvement or enhancement the project owner will have 1 day to veto or approve your pull request.
     * If your pull request is considered a new feature the project owner will have 1 week to veto or approve your pull request.
 4. If any feedback is given we expect a response within 1 week or we may decide to close the PR.

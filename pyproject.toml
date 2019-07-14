@@ -1,0 +1,5 @@
+[tool.towncrier]
+    package = "redbot"
+    filename = "CHANGELOG.rst"
+    directory = "changelog.d"
+    issue_format = "`#{issue} <https://github.com/Cog-Creators/Red-DiscordBot/issues/{issue}>`_"
