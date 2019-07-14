@@ -283,7 +283,7 @@ class Permissions(commands.Cog):
         ctx: commands.Context,
         allow_or_deny: RuleType,
         cog_or_command: CogOrCommand,
-        who_or_what: commands.Greedy[GlobalUniqueObjectFinder],
+        *who_or_what: GlobalUniqueObjectFinder,
     ):
         """Add a global rule to a command.
 
@@ -294,6 +294,9 @@ class Permissions(commands.Cog):
 
         `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
+        if not who_or_what:
+            await ctx.send_help()
+            return
         for w in who_or_what:
             await self._add_rule(
                 rule=cast(bool, allow_or_deny),
@@ -311,7 +314,7 @@ class Permissions(commands.Cog):
         ctx: commands.Context,
         allow_or_deny: RuleType,
         cog_or_command: CogOrCommand,
-        who_or_what: commands.Greedy[GuildUniqueObjectFinder],
+        *who_or_what: GuildUniqueObjectFinder,
     ):
         """Add a rule to a command in this server.
 
@@ -322,6 +325,9 @@ class Permissions(commands.Cog):
 
         `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
+        if not who_or_what:
+            await ctx.send_help()
+            return
         for w in who_or_what:
             await self._add_rule(
                 rule=cast(bool, allow_or_deny),
@@ -337,7 +343,7 @@ class Permissions(commands.Cog):
         self,
         ctx: commands.Context,
         cog_or_command: CogOrCommand,
-        who_or_what: commands.Greedy[GlobalUniqueObjectFinder],
+        *who_or_what: GlobalUniqueObjectFinder,
     ):
         """Remove a global rule from a command.
 
@@ -346,6 +352,9 @@ class Permissions(commands.Cog):
 
        `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
+        if not who_or_what:
+            await ctx.send_help()
+            return
         for w in who_or_what:
             await self._remove_rule(cog_or_cmd=cog_or_command, model_id=w.id, guild_id=GLOBAL)
         await ctx.send(_("Rule removed."))
@@ -357,7 +366,7 @@ class Permissions(commands.Cog):
         self,
         ctx: commands.Context,
         cog_or_command: CogOrCommand,
-        who_or_what: commands.Greedy[GlobalUniqueObjectFinder],
+        *who_or_what: GlobalUniqueObjectFinder,
     ):
         """Remove a server rule from a command.
 
@@ -366,6 +375,9 @@ class Permissions(commands.Cog):
 
         `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
+        if not who_or_what:
+            await ctx.send_help()
+            return
         for w in who_or_what:
             await self._remove_rule(
                 cog_or_cmd=cog_or_command, model_id=w.id, guild_id=ctx.guild.id
