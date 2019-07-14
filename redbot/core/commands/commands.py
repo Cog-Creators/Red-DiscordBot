@@ -174,10 +174,7 @@ class Command(CogCommandMixin, commands.Command):
         if self._help_override is not None:
             return self._help_override
         if self.translator is None:
-            if self.cog.translator:
-                translator = self.cog.translator
-            else:
-                translator = lambda s: s
+            translator = getattr(self.cog, "__translator__", lambda s: s)
         else:
             translator = self.translator
         command_doc = self.callback.__doc__
