@@ -116,7 +116,7 @@ Whenever you pull from upstream (V3/develop on the main repository) and you noti
     * Run tests with `tox` to ensure your code is up to scratch
     * Create a Pull Request on GitHub with your changes
 
-### 4.9 Using towncrier
+### 4.7 Using towncrier
 
 Red uses towncrier to create changelogs
 
