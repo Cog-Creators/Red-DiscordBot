@@ -457,7 +457,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             for subcommand in set(command.walk_commands()):
                 self.dispatch("command_add", subcommand)
                 if permissions_not_loaded:
-                    command.requires.ready_event.set()
+                    subcommand.requires.ready_event.set()
 
     def remove_command(self, name: str) -> None:
         command = super().remove_command(name)
