@@ -44,7 +44,12 @@ from .playlists import (
     humanize_scope,
     FakePlaylist,
 )
-from .converters import ScopeConverter, _pass_config_to_dependencies, PlaylistConverter
+from .converters import (
+    ScopeConverter,
+    _pass_config_to_dependencies,
+    PlaylistConverter,
+    ScopeParser,
+)
 
 _ = Translator("Audio", __file__)
 
@@ -2077,37 +2082,24 @@ class Audio(commands.Cog):
         """Playlist configuration options."""
         pass
 
-    @playlist.command(
-        name="append",
-        usage=(
-            "<id_or_name> "
-            "[scope=Guild] [author=playlist_author_id] [guild=guild_id ] "
-            "<track_name_OR_url>"
-        ),
-    )
+    @playlist.command(name="append", usage="<id_or_name> <track_name_OR_url>")
     async def _playlist_append(
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
-        scope: Optional[ScopeConverter] = None,
-        author: Optional[Union[discord.Member, discord.User]] = None,
-        guild: Optional[GuildConverter] = None,
-        *,
         query: str,
+        *,
+        scope_data: ScopeParser = None,
     ):
         """Add a track URL, playlist link, or quick search to a playlist.
 
         The track(s) will be appended to the end of the playlist.
         """
+        if scope_data is None:
+            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
+        scope, author, guild = scope_data
         if not await self._playlist_check(ctx):
             return
-        if scope is None:
-            scope = PlaylistScope.GUILD.value
-        if await self.bot.is_owner(ctx.author):
-            guild = guild or ctx.guild
-        else:
-            guild = ctx.guild
-        author = author or ctx.author
         playlist_id, playlist_arg = self._get_correct_playlist_id(
             playlist_matches, scope, author, guild
         )
@@ -2248,28 +2240,15 @@ class Audio(commands.Cog):
             ),
         )
 
-    @playlist.command(
-        name="create", usage="[author=playlist_author_id] [guild=guild_id] [scope=Guild] " "<name>"
-    )
+    @playlist.command(name="create", usage="<name>")
     async def _playlist_create(
-        self,
-        ctx: commands.Context,
-        author: Optional[Union[discord.Member, discord.User]] = None,
-        guild: Optional[GuildConverter] = None,
-        scope: Optional[ScopeConverter] = None,
-        *,
-        playlist_name: str,
+        self, ctx: commands.Context, playlist_name: str, *, scope_data: ScopeParser = None
     ):
         """Create an empty playlist."""
-        if scope is None:
-            scope = PlaylistScope.GUILD.value
+        if scope_data is None:
+            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
+        scope, author, guild = scope_data
 
-        if await self.bot.is_owner(ctx.author):
-            guild = guild or ctx.guild
-        else:
-            guild = ctx.guild
-
-        author = author or ctx.author
         temp_playlist = FakePlaylist(author.id)
 
         if not await self.can_manage_playlist(
@@ -2283,29 +2262,21 @@ class Audio(commands.Cog):
             _("Empty playlist {name} ({id}) created.").format(name=playlist.name, id=playlist.id),
         )
 
-    @playlist.command(
-        name="delete",
-        usage="[scope=Guild] [author=playlist_author_id] [guild=guild_id] " "<id_or_name>",
-    )
+    @playlist.command(name="delete", usage="<id_or_name>")
     async def _playlist_delete(
         self,
         ctx: commands.Context,
-        scope: Optional[ScopeConverter] = None,
-        author: Optional[Union[discord.Member, discord.User]] = None,
-        guild: Optional[GuildConverter] = None,
-        *,
         playlist_matches: PlaylistConverter,
+        *,
+        scope_data: ScopeParser = None,
     ):
         """Delete a saved playlist."""
-        if scope is None:
-            scope = PlaylistScope.GUILD.value
-        if await self.bot.is_owner(ctx.author):
-            guild = guild or ctx.guild
-        else:
-            guild = ctx.guild
-        author = author or ctx.author
+        if scope_data is None:
+            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
+        scope, author, guild = scope_data
+
         playlist_id, playlist_arg = self._get_correct_playlist_id(
-            playlist_matches, scope, author, author
+            playlist_matches, scope, author, guild
         )
         if playlist_id is None:
             return await self._embed_msg(
@@ -2336,26 +2307,25 @@ class Audio(commands.Cog):
         )
 
     @checks.is_owner()
-    @playlist.command(
-        name="download",
-        usage="<id_or_name> [scope=Guild] [author=playlist_author_id] [guild=guild_id] "
-        "[v2=False]",
-    )
+    @playlist.command(name="download", usage="<id_or_name>  " "[v2=False]")
     @commands.bot_has_permissions(attach_files=True)
     async def _playlist_download(
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
-        scope: Optional[ScopeConverter] = None,
-        author: Optional[Union[discord.Member, discord.User]] = None,
-        guild: Optional[GuildConverter] = None,
         v2=False,
+        *,
+        scope_data: ScopeParser = None,
     ):
         """Download a copy of a playlist.
 
         These files can be used with the [p]playlist upload command.
         Red v2-compatible playlists can be generated by passing True
         for the v2 variable."""
+        if scope_data is None:
+            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
+        scope, author, guild = scope_data
+
         if not await self._playlist_check(ctx):
             return
 
@@ -2416,27 +2386,18 @@ class Audio(commands.Cog):
         await ctx.send(file=discord.File(to_write, filename=f"{file_name}.txt"))
         to_write.close()
 
-    @playlist.command(
-        name="info",
-        usage="<id_or_name> " "[scope=Guild] [author=playlist_author_id] [guild=guild_id]",
-    )
+    @playlist.command(name="info", usage="<id_or_name>")
     async def _playlist_info(
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
-        scope: Optional[ScopeConverter] = None,
-        author: Optional[Union[discord.Member, discord.User]] = None,
-        guild: Optional[GuildConverter] = None,
+        *,
+        scope_data: ScopeParser = None,
     ):
         """Retrieve information from a saved playlist."""
-
-        if scope is None:
-            scope = PlaylistScope.GUILD.value
-        if await self.bot.is_owner(ctx.author):
-            guild = guild or ctx.guild
-        else:
-            guild = ctx.guild
-        author = author or ctx.author
+        if scope_data is None:
+            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
+        scope, author, guild = scope_data
 
         playlist_id, playlist_arg = self._get_correct_playlist_id(
             playlist_matches, scope, author, author
@@ -2495,27 +2456,13 @@ class Audio(commands.Cog):
             page_list.append(embed)
         await menu(ctx, page_list, DEFAULT_CONTROLS)
 
-    @playlist.command(
-        name="list", usage="[scope=Guild] [author=playlist_author_id] [guild=guild_id]"
-    )
+    @playlist.command(name="list", usage="")
     @commands.bot_has_permissions(add_reactions=True)
-    async def _playlist_list(
-        self,
-        ctx: commands.Context,
-        scope: Optional[ScopeConverter] = None,
-        author: Optional[Union[discord.Member, discord.User]] = None,
-        guild: Optional[GuildConverter] = None,
-    ):
+    async def _playlist_list(self, ctx: commands.Context, *, scope_data: ScopeParser = None):
         """List saved playlists."""
-
-        if scope is None:
-            scope = PlaylistScope.GUILD.value
-
-        if await self.bot.is_owner(ctx.author):
-            guild = guild or ctx.guild
-        else:
-            guild = ctx.guild
-        author = author or ctx.author
+        if scope_data is None:
+            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
+        scope, author, guild = scope_data
 
         try:
             playlists = await get_all_playlist(scope, self.bot, guild, author.id)
@@ -2577,26 +2524,16 @@ class Audio(commands.Cog):
         return embed
 
     @commands.cooldown(1, 15, commands.BucketType.guild)
-    @playlist.command(
-        name="queue", usage="[scope=Guild] [author=playlist_author_id] [guild=guild_id] " "<name>"
-    )
+    @playlist.command(name="queue", usage="<name>")
     async def _playlist_queue(
-        self,
-        ctx: commands.Context,
-        scope: Optional[ScopeConverter] = None,
-        author: Optional[Union[discord.Member, discord.User]] = None,
-        guild: Optional[GuildConverter] = None,
-        *,
-        playlist_name: str,
+        self, ctx: commands.Context, playlist_name: str, *, scope_data: ScopeParser = None
     ):
         """Save the queue to a playlist."""
-        if scope is None:
-            scope = PlaylistScope.GUILD.value
-        if await self.bot.is_owner(ctx.author):
-            guild = guild or ctx.guild
-        else:
-            guild = ctx.guild
-        author = author or ctx.author
+        if scope_data is None:
+            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
+
+        scope, author, guild = scope_data
+
         temp_playlist = FakePlaylist(author.id)
         if not await self.can_manage_playlist(
             scope, temp_playlist, ctx, author, guild, ctx.author
@@ -2624,30 +2561,19 @@ class Audio(commands.Cog):
             ),
         )
 
-    @playlist.command(
-        name="remove",
-        usage=(
-            "<id_or_name> " "[scope=Guild] [author=playlist_author_id] [guild=guild_id] " "<url>"
-        ),
-    )
+    @playlist.command(name="remove", usage=("<id_or_name> <url>"))
     async def _playlist_remove(
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
-        scope: Optional[ScopeConverter] = None,
-        author: Optional[Union[discord.Member, discord.User]] = None,
-        guild: Optional[GuildConverter] = None,
-        *,
         url: str,
+        *,
+        scope_data: ScopeParser = None,
     ):
         """Remove a track from a playlist by url."""
-        if scope is None:
-            scope = PlaylistScope.GUILD.value
-        if await self.bot.is_owner(ctx.author):
-            guild = guild or ctx.guild
-        else:
-            guild = ctx.guild
-        author = author or ctx.author
+        if scope_data is None:
+            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
+        scope, author, guild = scope_data
 
         playlist_id, playlist_arg = self._get_correct_playlist_id(
             playlist_matches, scope, author, author
@@ -2701,28 +2627,20 @@ class Audio(commands.Cog):
                 ),
             )
 
-    @playlist.command(
-        name="save",
-        usage=("<name> " "[scope=Guild] [author=playlist_author_id] [guild=guild_id] " "<url>"),
-    )
+    @playlist.command(name="save", usage=("<name> <url>"))
     async def _playlist_save(
         self,
         ctx: commands.Context,
         playlist_name: str,
-        scope: Optional[ScopeConverter] = None,
-        author: Optional[Union[discord.Member, discord.User]] = None,
-        guild: Optional[GuildConverter] = None,
-        *,
         playlist_url: str,
+        *,
+        scope_data: ScopeParser = None,
     ):
         """Save a playlist from a url."""
-        if scope is None:
-            scope = PlaylistScope.GUILD.value
-        if await self.bot.is_owner(ctx.author):
-            guild = guild or ctx.guild
-        else:
-            guild = ctx.guild
-        author = author or ctx.author
+        if scope_data is None:
+            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
+        scope, author, guild = scope_data
+
         temp_playlist = FakePlaylist(author.id)
         if not await self.can_manage_playlist(
             scope, temp_playlist, ctx, author, guild, ctx.author
@@ -2744,27 +2662,20 @@ class Audio(commands.Cog):
                 ),
             )
 
-    @playlist.command(
-        name="start",
-        usage=("[scope=Guild] [author=playlist_author_id] [guild=guild_id] " "<id_or_name>"),
-    )
+    @playlist.command(name="start", usage="<id_or_ name>")
     async def _playlist_start(
         self,
         ctx: commands.Context,
-        scope: Optional[ScopeConverter] = None,
-        author: Optional[Union[discord.Member, discord.User]] = None,
-        guild: Optional[GuildConverter] = None,
-        *,
         playlist_matches: PlaylistConverter,
+        *,
+        scope_data: ScopeParser = None,
     ):
         """Load a playlist into the queue."""
-        if scope is None:
-            scope = PlaylistScope.GUILD.value
-        if await self.bot.is_owner(ctx.author):
-            guild = guild or ctx.guild
-        else:
-            guild = ctx.guild
-        author = author or ctx.author
+        if scope_data is None:
+            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
+
+        scope, author, guild = scope_data
+
         playlist_id, playlist_arg = self._get_correct_playlist_id(
             playlist_matches, scope, author, author
         )
@@ -2828,21 +2739,13 @@ class Audio(commands.Cog):
             await ctx.invoke(self.play, query=playlist.url)
 
     @checks.is_owner()
-    @playlist.command(
-        name="upload", usage="[scope=Guild] [author=playlist_author_id] [guild=guild_id] "
-    )
-    async def _playlist_upload(
-        self,
-        ctx: commands.Context,
-        scope: Optional[ScopeConverter] = None,
-        author: Optional[Union[discord.Member, discord.User]] = None,
-        guild: Optional[GuildConverter] = None,
-    ):
+    @playlist.command(name="upload", usage="")
+    async def _playlist_upload(self, ctx: commands.Context, *, scope_data: ScopeParser = None):
         """Convert a Red v2 playlist file to a playlist."""
-        if scope is None:
-            scope = PlaylistScope.GUILD.value
-        guild = guild or ctx.guild
-        author = author or ctx.author
+        if scope_data is None:
+            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
+
+        scope, author, guild = scope_data
         temp_playlist = FakePlaylist(author.id)
         if not await self.can_manage_playlist(
             scope, temp_playlist, ctx, author, guild, ctx.author
@@ -2924,30 +2827,20 @@ class Audio(commands.Cog):
             guild=guild,
         )
 
-    @playlist.command(
-        name="rename",
-        usage=(
-            "<id_or_name> [scope=Guild] [author=playlist_author_id] [guild=guild_id] <new_name>"
-        ),
-    )
+    @playlist.command(name="rename", usage="<id_or_name> <new_name>")
     async def _playlist_rename(
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
-        scope: Optional[ScopeConverter] = None,
-        author: Optional[Union[discord.Member, discord.User]] = None,
-        guild: Optional[GuildConverter] = None,
-        *,
         new_name: str,
+        *,
+        scope_data: ScopeParser = None,
     ):
         """Rename an existing playlist."""
-        if scope is None:
-            scope = PlaylistScope.GUILD.value
-        if await self.bot.is_owner(ctx.author):
-            guild = guild or ctx.guild
-        else:
-            guild = ctx.guild
-        author = author or ctx.author
+        if scope_data is None:
+            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
+
+        scope, author, guild = scope_data
 
         playlist_id, playlist_arg = self._get_correct_playlist_id(
             playlist_matches, scope, author, author

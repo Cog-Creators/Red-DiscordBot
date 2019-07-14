@@ -273,6 +273,7 @@ async def get_all_playlist(
     `MissingAuthor`
         Trying to access the User scope without an user id.
     """
+
     playlists = await _config.custom(*_prepare_config_scope(scope, author, guild)).all()
     return [
         await Playlist.from_json(
