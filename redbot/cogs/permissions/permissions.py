@@ -294,6 +294,9 @@ class Permissions(commands.Cog):
 
         `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
+        if not who_or_what:
+            await ctx.send_help()
+            return
         for w in who_or_what:
             await self._add_rule(
                 rule=cast(bool, allow_or_deny),
@@ -322,6 +325,9 @@ class Permissions(commands.Cog):
 
         `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
+        if not who_or_what:
+            await ctx.send_help()
+            return
         for w in who_or_what:
             await self._add_rule(
                 rule=cast(bool, allow_or_deny),
@@ -346,6 +352,9 @@ class Permissions(commands.Cog):
 
        `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
+        if not who_or_what:
+            await ctx.send_help()
+            return
         for w in who_or_what:
             await self._remove_rule(cog_or_cmd=cog_or_command, model_id=w.id, guild_id=GLOBAL)
         await ctx.send(_("Rule removed."))
@@ -366,6 +375,9 @@ class Permissions(commands.Cog):
 
         `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
+        if not who_or_what:
+            await ctx.send_help()
+            return
         for w in who_or_what:
             await self._remove_rule(
                 cog_or_cmd=cog_or_command, model_id=w.id, guild_id=ctx.guild.id
