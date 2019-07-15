@@ -80,7 +80,7 @@ class ScopeParser(commands.Converter):
         self, ctx: commands.Context, argument: str
     ) -> Tuple[str, discord.User, Optional[discord.Guild]]:
         target_scope: str = PlaylistScope.GUILD.value
-        target_user:  Union[discord.Member, discord.User] = ctx.author
+        target_user: Union[discord.Member, discord.User] = ctx.author
         target_guild: discord.Guild = ctx.guild
 
         argument = argument.replace("—", "--")
@@ -122,11 +122,12 @@ class ScopeParser(commands.Converter):
             target_scope = standardize_scope(scope)
 
         if await ctx.bot.is_owner(ctx.author) and vals["guild"]:
+            target_guild = None
             guild_raw = " ".join(vals["guild"]).strip()
             if guild_raw.isnumeric():
                 guild_raw = int(guild_raw)
                 target_guild = ctx.bot.get_guild(guild_raw)
-            else:
+            if target_guild is None:
                 try:
                     target_guild = await commands.GuildConverter.convert(ctx, guild_raw)
                 except commands.BadArgument:
@@ -135,11 +136,12 @@ class ScopeParser(commands.Converter):
                 target_guild = await ctx.bot.fetch_guild(guild_raw) or ctx.author
 
         if vals["author"]:
+            target_user = None
             user_raw = " ".join(vals["author"]).strip()
             if user_raw.isnumeric():
                 user_raw = int(user_raw)
                 target_user = ctx.bot.get_user(user_raw)
-            else:
+            if target_user is None:
                 member_converter = commands.MemberConverter()
                 user_converter = commands.UserConverter()
                 try:
