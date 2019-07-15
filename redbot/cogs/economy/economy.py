@@ -38,43 +38,43 @@ class SMReel(Enum):
 _ = lambda s: s
 PAYOUTS = {
     (SMReel.two, SMReel.two, SMReel.six): {
-        "payout": lambda x: x * 901,
-        "phrase": _("JACKPOT! 226! Your bid has been multiplied * 900!"),
+        "payout": lambda x: x * 50,
+        "phrase": _("JACKPOT! 226! Your bid has been multiplied * 50!"),
     },
     (SMReel.flc, SMReel.flc, SMReel.flc): {
-        "payout": lambda x: x * 701,
-        "phrase": _("4LC! Your bid has been multiplied * 700!"),
+        "payout": lambda x: x * 25,
+        "phrase": _("4LC! Your bid has been multiplied * 25!"),
     },
     (SMReel.cherries, SMReel.cherries, SMReel.cherries): {
-        "payout": lambda x: x * 601,
-        "phrase": _("Three cherries! Your bid has been multiplied * 600!"),
+        "payout": lambda x: x * 20,
+        "phrase": _("Three cherries! Your bid has been multiplied * 20!"),
     },
     (SMReel.two, SMReel.six): {
-        "payout": lambda x: x * 5,
+        "payout": lambda x: x * 4,
         "phrase": _("2 6! Your bid has been multiplied * 4!"),
     },
     (SMReel.cherries, SMReel.cherries): {
-        "payout": lambda x: x * 3 + x,
+        "payout": lambda x: x * 3,
         "phrase": _("Two cherries! Your bid has been multiplied * 3!"),
     },
     "3 symbols": {
-        "payout": lambda x: x * 401,
-        "phrase": _("Three symbols! Your bid has been multiplied * 400!"),
+        "payout": lambda x: x * 10,
+        "phrase": _("Three symbols! Your bid has been multiplied * 10!"),
     },
     "2 symbols": {
-        "payout": lambda x: x * 3,
+        "payout": lambda x: x * 2,
         "phrase": _("Two consecutive symbols! Your bid has been multiplied * 2!"),
     },
 }
 
 SLOT_PAYOUTS_MSG = _(
     "Slot machine payouts:\n"
-    "{two.value} {two.value} {six.value} Bet * 900\n"
-    "{flc.value} {flc.value} {flc.value} Bet * 700\n"
-    "{cherries.value} {cherries.value} {cherries.value} Bet * 600\n"
+    "{two.value} {two.value} {six.value} Bet * 50\n"
+    "{flc.value} {flc.value} {flc.value} Bet * 25\n"
+    "{cherries.value} {cherries.value} {cherries.value} Bet * 20\n"
     "{two.value} {six.value} Bet * 4\n"
     "{cherries.value} {cherries.value} Bet * 3\n\n"
-    "Three symbols: Bet * 400\n"
+    "Three symbols: Bet * 10\n"
     "Two symbols: Bet * 2"
 ).format(**SMReel.__dict__)
 _ = T_
