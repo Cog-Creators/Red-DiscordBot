@@ -272,6 +272,12 @@ class Requires:
         `user_perms` will be used exclusively, otherwise, for levels
         other than bot owner, the user can still run the command if
         they have the required `user_perms`.
+    ready_event : asyncio.Event
+        Event for when this Requires object has had its rules loaded.
+        If permissions is loaded, this should be set when permissions
+        has finished loading rules into this object. If permissions
+        is not loaded, it should be set as soon as the command or cog
+        is added.
     user_perms : Optional[discord.Permissions]
         The required permissions for users to execute the command. Can
         be ``None``, in which case the `privilege_level` will be used
@@ -300,6 +306,7 @@ class Requires:
     ):
         self.checks: List[CheckPredicate] = checks
         self.privilege_level: Optional[PrivilegeLevel] = privilege_level
+        self.ready_event = asyncio.Event()
 
         if isinstance(user_perms, dict):
             self.user_perms: Optional[discord.Permissions] = discord.Permissions.none()
@@ -413,6 +420,16 @@ class Requires:
         if default is not None:
             rules[self.DEFAULT] = default
 
+    def reset(self) -> None:
+        """Reset this Requires object to its original state.
+
+        This will clear all rules, including defaults. It also resets
+        the `Requires.ready_event`.
+        """
+        self._guild_rules.clear()  # pylint: disable=no-member
+        self._global_rules.clear()  # pylint: disable=no-member
+        self.ready_event.clear()
+
     async def verify(self, ctx: "Context") -> bool:
         """Check if the given context passes the requirements.
 
@@ -438,6 +455,8 @@ class Requires:
             Propogated from any permissions checks.
 
         """
+        if not self.ready_event.is_set():
+            await self.ready_event.wait()
         await self._verify_bot(ctx)
 
         # Owner should never be locked out of commands for user permissions.
