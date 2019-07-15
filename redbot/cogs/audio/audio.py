@@ -2160,9 +2160,12 @@ class Audio(commands.Cog):
         scope, author, guild = scope_data
         if not await self._playlist_check(ctx):
             return
-        playlist_id, playlist_arg = await self._get_correct_playlist_id(
-            ctx, playlist_matches, scope, author, guild
-        )
+        try:
+            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+                ctx, playlist_matches, scope, author, author
+            )
+        except TooManyMatches as e:
+            return await self._embed_msg(ctx, str(e))
         if playlist_id is None:
             return await self._embed_msg(
                 ctx, _("Could not find match '{}' to a playlist").format(playlist_arg)
@@ -2248,9 +2251,13 @@ class Audio(commands.Cog):
         from_author = from_author or ctx.author
         to_author = to_author or ctx.author
 
-        playlist_id, playlist_arg = await self._get_correct_playlist_id(
-            ctx, playlist_matches, from_scope, from_author, from_guild
-        )
+        try:
+            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+                ctx, playlist_matches, from_scope, from_author, from_guild
+            )
+        except TooManyMatches as e:
+            return await self._embed_msg(ctx, str(e))
+
         if playlist_id is None:
             return await self._embed_msg(
                 ctx, _("Could not find match '{}' to a playlist").format(playlist_arg)
@@ -2335,9 +2342,12 @@ class Audio(commands.Cog):
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
         scope, author, guild = scope_data
 
-        playlist_id, playlist_arg = await self._get_correct_playlist_id(
-            ctx, playlist_matches, scope, author, guild
-        )
+        try:
+            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+                ctx, playlist_matches, scope, author, author
+            )
+        except TooManyMatches as e:
+            return await self._embed_msg(ctx, str(e))
         if playlist_id is None:
             return await self._embed_msg(
                 ctx, _("Could not find match '{}' to a playlist").format(playlist_arg)
@@ -2395,9 +2405,12 @@ class Audio(commands.Cog):
         guild = guild or ctx.guild
         author = author or ctx.author
 
-        playlist_id, playlist_arg = await self._get_correct_playlist_id(
-            ctx, playlist_matches, scope, author, author
-        )
+        try:
+            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+                ctx, playlist_matches, scope, author, author
+            )
+        except TooManyMatches as e:
+            return await self._embed_msg(ctx, str(e))
         if playlist_id is None:
             return await self._embed_msg(
                 ctx, _("Could not find match '{}' to a playlist").format(playlist_arg)
@@ -2459,9 +2472,12 @@ class Audio(commands.Cog):
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
         scope, author, guild = scope_data
 
-        playlist_id, playlist_arg = await self._get_correct_playlist_id(
-            ctx, playlist_matches, scope, author, author
-        )
+        try:
+            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+                ctx, playlist_matches, scope, author, author
+            )
+        except TooManyMatches as e:
+            return await self._embed_msg(ctx, str(e))
         if playlist_id is None:
             return await self._embed_msg(
                 ctx, _("Could not find match '{}' to a playlist").format(playlist_arg)
@@ -2639,9 +2655,12 @@ class Audio(commands.Cog):
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
         scope, author, guild = scope_data
 
-        playlist_id, playlist_arg = await self._get_correct_playlist_id(
-            ctx, playlist_matches, scope, author, author
-        )
+        try:
+            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+                ctx, playlist_matches, scope, author, author
+            )
+        except TooManyMatches as e:
+            return await self._embed_msg(ctx, str(e))
         if playlist_id is None:
             return await self._embed_msg(
                 ctx, _("Could not find match '{}' to a playlist").format(playlist_arg)
@@ -2740,9 +2759,12 @@ class Audio(commands.Cog):
 
         scope, author, guild = scope_data
 
-        playlist_id, playlist_arg = await self._get_correct_playlist_id(
-            ctx, playlist_matches, scope, author, author
-        )
+        try:
+            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+                ctx, playlist_matches, scope, author, author
+            )
+        except TooManyMatches as e:
+            return await self._embed_msg(ctx, str(e))
         if playlist_id is None:
             return await self._embed_msg(
                 ctx, _("Could not find match '{}' to a playlist").format(playlist_arg)
@@ -2816,9 +2838,13 @@ class Audio(commands.Cog):
 
         scope, author, guild = scope_data
 
-        playlist_id, playlist_arg = await self._get_correct_playlist_id(
-            ctx, playlist_matches, scope, author, author
-        )
+        try:
+            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+                ctx, playlist_matches, scope, author, author
+            )
+        except TooManyMatches as e:
+            return await self._embed_msg(ctx, str(e))
+
         if playlist_id is None:
             return await self._embed_msg(
                 ctx, _("Could not find match '{}' to a playlist").format(playlist_arg)
@@ -2953,9 +2979,12 @@ class Audio(commands.Cog):
 
         scope, author, guild = scope_data
 
-        playlist_id, playlist_arg = await self._get_correct_playlist_id(
-            ctx, playlist_matches, scope, author, author
-        )
+        try:
+            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+                ctx, playlist_matches, scope, author, author
+            )
+        except TooManyMatches as e:
+            return await self._embed_msg(ctx, str(e))
         if playlist_id is None:
             return await self._embed_msg(
                 ctx, _("Could not find match '{}' to a playlist").format(playlist_arg)
