@@ -123,11 +123,12 @@ class Case:
             The attributes to change
 
         """
+        # We don't want case_number to be changed
+        data.pop("case_number", None)
+
         for item in list(data.keys()):
             setattr(self, item, data[item])
 
-        # We don't want case_number to be changed
-        data.pop("case_number", None)
         await _conf.custom(_CASES, str(self.guild.id), str(self.case_number)).set(self.to_json())
         self.bot.dispatch("modlog_case_edit", self)
 
