@@ -1,4 +1,5 @@
 import argparse
+import functools
 from typing import Tuple, Optional, Union
 
 import discord
@@ -10,7 +11,13 @@ from .playlists import PlaylistScope, standardize_scope, _pass_config_to_playlis
 
 _ = Translator("Audio", __file__)
 
-__all__ = ["ScopeConverter", "PlaylistConverter", "ScopeParser"]
+__all__ = [
+    "ScopeConverter",
+    "PlaylistConverter",
+    "ScopeParser",
+    "LazyGreedyConverter",
+    "get_lazy_converter",
+]
 _config = None
 
 
@@ -19,11 +26,6 @@ def _pass_config_to_dependencies(config: Config):
     if _config is None:
         _config = config
     _pass_config_to_playlist(config)
-
-
-class NoExitParser(argparse.ArgumentParser):
-    def error(self, message):
-        raise commands.BadArgument()
 
 
 class ScopeConverter(commands.Converter):
@@ -73,6 +75,11 @@ class PlaylistConverter(commands.Converter):
             PlaylistScope.USER.value: user_matches,
             "arg": arg,
         }
+
+
+class NoExitParser(argparse.ArgumentParser):
+    def error(self, message):
+        raise commands.BadArgument()
 
 
 class ScopeParser(commands.Converter):
@@ -155,3 +162,32 @@ class ScopeParser(commands.Converter):
                 target_user = await ctx.bot.fetch_user(user_raw) or ctx.author
 
         return target_scope, target_user, target_guild
+
+
+class LazyGreedyConverter(commands.Converter):
+    def __init__(self, splitter: str):
+        self.splitter_Value = splitter
+
+    async def convert(self, ctx: commands.Context, argument: str) -> str:
+        argument = argument
+        full_message = ctx.message.content.split(f" {argument} ")
+        if len(full_message) == 1:
+            return argument
+        greedy_output = (
+            " ".join(full_message[1:]).replace("—", "--").split(f" {self.splitter_Value}")[0]
+        )
+        return f"{argument}{greedy_output}"
+
+
+def get_lazy_converter(splitter: str) -> type:
+    """
+    Returns a typechecking safe `LazyGreedyConverter` suitable for use with discord.py
+    """
+
+    class PartialMeta(type(LazyGreedyConverter)):
+        __call__ = functools.partialmethod(type(LazyGreedyConverter).__call__, splitter)
+
+    class ValidatedConverter(LazyGreedyConverter, metaclass=PartialMeta):
+        pass
+
+    return ValidatedConverter

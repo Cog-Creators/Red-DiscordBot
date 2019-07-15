@@ -46,9 +46,10 @@ from .playlists import (
 )
 from .converters import (
     ScopeConverter,
-    _pass_config_to_dependencies,
     PlaylistConverter,
     ScopeParser,
+    get_lazy_converter,
+    _pass_config_to_dependencies,
 )
 
 _ = Translator("Audio", __file__)
@@ -59,6 +60,7 @@ __author__ = ["aikaterna"]
 log = logging.getLogger("red.audio")
 
 _SCHEMA_VERSION = 2
+LazyGreedyConverter = get_lazy_converter("--")
 
 
 @cog_i18n(_)
@@ -2147,7 +2149,7 @@ class Audio(commands.Cog):
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
-        query: str,
+        query: LazyGreedyConverter,
         *,
         scope_data: ScopeParser = None,
     ):
