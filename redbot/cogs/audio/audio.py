@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import aiohttp
 import asyncio
 import base64
@@ -1992,7 +1993,7 @@ class Audio(commands.Cog):
         has_perms = False
         user_to_query = user if user else ctx.author
         guild_to_query = guild if guild else ctx.guild
-        _3rd_party_lookup = ctx.author.id != user_to_query.id
+        _is_different_user = ctx.author.id != user_to_query.id
         _is_different_guild = (
             True
             if guild_to_query is None or ctx.guild is None
@@ -2002,7 +2003,7 @@ class Audio(commands.Cog):
         if is_owner:
             has_perms = True
         elif scope == PlaylistScope.USER.value:
-            if not _3rd_party_lookup and playlist.author == user_to_query.id:
+            if not _is_different_user and playlist.author == user_to_query.id:
                 has_perms = True
         elif scope == PlaylistScope.GUILD.value:
             if not _is_different_guild:
@@ -2028,7 +2029,7 @@ class Audio(commands.Cog):
             else:
                 if _is_different_guild:
                     msg = _("You do not have the permissions to manage this Guild's playlist")
-                elif _3rd_party_lookup:
+                elif _is_different_user:
                     msg = _("You do not have the permissions to manage this user's playlist")
                 else:
                     msg = _(
@@ -2076,7 +2077,7 @@ class Audio(commands.Cog):
         correct_scope_matches = matches.get(scope)
         guild_to_query = guild.id
         user_to_query = author.id
-        if not matches:
+        if not correct_scope_matches:
             return None, original_input
         match_count = len(correct_scope_matches)
         if match_count == 1:
@@ -2084,21 +2085,21 @@ class Audio(commands.Cog):
         else:
             if scope == PlaylistScope.USER.value:
                 correct_scope_matches = [
-                    (i[2]["id"], i[2]["name"], len(i[2]["tracks"]))
-                    for i in matches
+                    (i[2]["id"], i[2]["name"], len(i[2]["tracks"]), i[2]["author"])
+                    for i in correct_scope_matches
                     if str(user_to_query) == i[0]
                 ]
             elif scope == PlaylistScope.GUILD.value:
                 correct_scope_matches = [
-                    (i[2]["id"], i[2]["name"], len(i[2]["tracks"]))
-                    for i in matches
+                    (i[2]["id"], i[2]["name"], len(i[2]["tracks"]), i[2]["author"])
+                    for i in correct_scope_matches
                     if str(guild_to_query) == i[0]
                 ]
             else:
                 correct_scope_matches = [
-                    (i[2]["id"], i[2]["name"], len(i[2]["tracks"])) for i in matches
+                    (i[2]["id"], i[2]["name"], len(i[2]["tracks"]), i[2]["author"])
+                    for i in correct_scope_matches
                 ]
-
         match_count = len(correct_scope_matches)
         if match_count == 1:
             return correct_scope_matches[0][0], original_input
@@ -2107,7 +2108,9 @@ class Audio(commands.Cog):
             if match_count > 10:
                 if original_input.isnumeric():
                     arg = int(original_input)
-                    correct_scope_matches = [(i, n) for i, n in correct_scope_matches if i == arg]
+                    correct_scope_matches = [
+                        (i, n, t, a) for i, n, t, a in correct_scope_matches if i == arg
+                    ]
                     match_count = len(correct_scope_matches)
                     if match_count == 1:
                         # Early Exit if found exact match,
@@ -2119,18 +2122,35 @@ class Audio(commands.Cog):
                         f"Please try to be more specific or you the playlist id."
                     )
 
-            playlists = ""
-            for number, (pid, pname) in enumerate(correct_scope_matches):
-                playlists += f"{number}. {pname} ({pid})\n"
+            # TODO : Convert this section to a new paged reaction menu
+            # FIXME: iterate over the matches and get largest values to make padding dynamic
+            pos_len = 3
+            pid_len = 25
+            ptracks_len = 14
+            pnamelen = 33
+            # playlists = f"{'#':{pos_len}} {'ID':{pid_len}} {'Tracks':{ptracks_len}} {'Name':{pnamelen}} {'Author':2}\n"
+            playlists = f"{'#':{pos_len}} {'ID':{pid_len}} {'Tracks':{ptracks_len}} {'Author':2}\n"
+            for number, (pid, pname, ptracks, pauthor) in enumerate(correct_scope_matches, 1):
+                author = self.bot.get_user(pauthor) or "Unknown"
+                line =  (
+                    f"{f'{number}.': <{pos_len}} "
+                    f"{f'<{pid}>': <{pid_len}} "
+                    f"{f'< {ptracks} >': <{ptracks_len}} "
+                    # f"{f'<{pname}>': <{pnamelen}} "
+                    f"< {author} >\n"
+                )
+                playlists += line
 
             msg = await context.send(
-                f"Multiple playlists found, which one would you like?\n{box(playlists)}"
+                f"Multiple playlists found, which one would you like?\n{box(playlists, lang='md')}"
             )
-            emojis = ReactionPredicate.NUMBER_EMOJIS[: len(playlists)]
+            avaliable_emojis = ReactionPredicate.NUMBER_EMOJIS[1:]
+            avaliable_emojis.append("🔟")
+            emojis = avaliable_emojis[: len(correct_scope_matches)]
             start_adding_reactions(msg, emojis)
             pred = ReactionPredicate.with_emojis(emojis, msg, user=context.author)
             try:
-                await context.bot.wait_for("reaction_add", check=pred, timeout=30)
+                await context.bot.wait_for("reaction_add", check=pred, timeout=60)
             except asyncio.TimeoutError:
                 raise TooManyMatches(
                     "Too many matches found and you did not select which one you wanted."
@@ -2141,21 +2161,63 @@ class Audio(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     async def playlist(self, ctx):
-        """Playlist configuration options."""
+        """Playlist configuration options.
+
+        Scope info:
+        ​ ​ ​ ​ **Global**:
+        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users for this bot.
+        ​ ​ ​ ​ ​ ​ ​ ​ Only editable by Bot owner.
+        ​ ​ ​ ​ **Guild**:
+        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users in this guild.
+        ​ ​ ​ ​ ​ ​ ​ ​ Editable By Bot Owner, Guild Owner, Guild Admins,
+        ​ ​ ​ ​ ​ ​ ​ ​ Guild Mods, DJ Role and playlist creator.
+        ​ ​ ​ ​ **User**:
+        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users in this bot, if --author is passed.
+        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner and creator.
+
+        """
         pass
 
-    @playlist.command(name="append", usage="<id_or_name> <track_name_OR_url>")
+    @playlist.command(name="append", usage="<playlist_name_OR_id> <track_name_OR_url> [args]")
     async def _playlist_append(
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
-        query: LazyGreedyConverter,
+        query: LazyGreedyConverter,  # FIXME: Playlist link failed
         *,
         scope_data: ScopeParser = None,
     ):
         """Add a track URL, playlist link, or quick search to a playlist.
 
         The track(s) will be appended to the end of the playlist.
+
+        ***Usage**:*:
+        ​ ​ ​ ​ [p]playlist append playlist_name_OR_id track_name_OR_url args
+
+        **Args**:
+        ​ ​ ​ ​ The following are all optional:
+        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
+        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
+        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        
+        Scope is one of the following:
+        ​ ​ ​ ​ Global
+        ​ ​ ​ ​ Guild
+        ​ ​ ​ ​ User
+        
+        Author can be one of the following:
+        ​ ​ ​ ​ User ID
+        ​ ​ ​ ​ User Mention
+        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        
+        Guild can be one of the following:
+        ​ ​ ​ ​ Guild ID
+        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+
+        Example use:
+        ​ ​ ​ ​ [p]playlist append MyGuildPlaylist Hello by Adele
+        ​ ​ ​ ​ [p]playlist append MyGlobalPlaylist Hello by Adele --scope Global
+        ​ ​ ​ ​ [p]playlist append MyGlobalPlaylist Hello by Adele --scope Global --Author Draper#6666
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
@@ -2170,7 +2232,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, str(e))
         if playlist_id is None:
             return await self._embed_msg(
-                ctx, _("Could not find match '{}' to a playlist").format(playlist_arg)
+                ctx, _("Could not match '{arg}' to a playlist").format(arg=playlist_arg)
             )
 
         try:
@@ -2226,7 +2288,7 @@ class Audio(commands.Cog):
             "<id_or_name> "
             "<from_scope> <to_scope> "
             "[from_author=Self] [from_guild=current_Guild]"
-            "[to_author=Self] [to_guild=current_Guild]"
+            "[to_author=Self] [to_guild=current_Guild]"  # TODO: Fix the documentation
         ),
     )
     async def _playlist_copy(
@@ -2262,7 +2324,7 @@ class Audio(commands.Cog):
 
         if playlist_id is None:
             return await self._embed_msg(
-                ctx, _("Could not find match '{}' to a playlist").format(playlist_arg)
+                ctx, _("Could not match '{arg}' to a playlist").format(arg=playlist_arg)
             )
 
         temp_playlist = FakePlaylist(to_author.id)
@@ -2309,11 +2371,40 @@ class Audio(commands.Cog):
             ),
         )
 
-    @playlist.command(name="create", usage="<name>")
+    @playlist.command(name="create", usage="<name> [args]")
     async def _playlist_create(
         self, ctx: commands.Context, playlist_name: str, *, scope_data: ScopeParser = None
     ):
-        """Create an empty playlist."""
+        """Create an empty playlist.
+
+        ***Usage**:
+        ​ ​ ​ ​ [p]playlist create playlist_name args
+
+        **Args**:
+        ​ ​ ​ ​ The following are all optional:
+        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
+        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
+        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        
+        Scope is one of the following:
+        ​ ​ ​ ​ Global
+        ​ ​ ​ ​ Guild
+        ​ ​ ​ ​ User
+        
+        Author can be one of the following:
+        ​ ​ ​ ​ User ID
+        ​ ​ ​ ​ User Mention
+        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        
+        Guild can be one of the following:
+        ​ ​ ​ ​ Guild ID
+        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+
+        Example use:
+        ​ ​ ​ ​ [p]playlist create MyGuildPlaylist
+        ​ ​ ​ ​ [p]playlist create MyGlobalPlaylist --scope Global
+        ​ ​ ​ ​ [p]playlist create MyPersonalPlaylist --scope User
+        """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
         scope, author, guild = scope_data
@@ -2331,7 +2422,7 @@ class Audio(commands.Cog):
             _("Empty playlist {name} ({id}) created.").format(name=playlist.name, id=playlist.id),
         )
 
-    @playlist.command(name="delete", usage="<id_or_name>")
+    @playlist.command(name="delete", usage="<playlist_name_OR_id> [args]")
     async def _playlist_delete(
         self,
         ctx: commands.Context,
@@ -2339,7 +2430,36 @@ class Audio(commands.Cog):
         *,
         scope_data: ScopeParser = None,
     ):
-        """Delete a saved playlist."""
+        """Delete a saved playlist.
+
+        ***Usage**:
+        ​ ​ ​ ​ [p]playlist delete playlist_name_OR_id args
+
+        **Args**:
+        ​ ​ ​ ​ The following are all optional:
+        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
+        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
+        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        
+        Scope is one of the following:
+        ​ ​ ​ ​ Global
+        ​ ​ ​ ​ Guild
+        ​ ​ ​ ​ User
+        
+        Author can be one of the following:
+        ​ ​ ​ ​ User ID
+        ​ ​ ​ ​ User Mention
+        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        
+        Guild can be one of the following:
+        ​ ​ ​ ​ Guild ID
+        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+
+        Example use:
+        ​ ​ ​ ​ [p]playlist delete MyGuildPlaylist
+        ​ ​ ​ ​ [p]playlist delete MyGlobalPlaylist --scope Global
+        ​ ​ ​ ​ [p]playlist delete MyPersonalPlaylist --scope User
+        """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
         scope, author, guild = scope_data
@@ -2352,7 +2472,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, str(e))
         if playlist_id is None:
             return await self._embed_msg(
-                ctx, _("Could not find match '{}' to a playlist").format(playlist_arg)
+                ctx, _("Could not match '{arg}' to a playlist").format(arg=playlist_arg)
             )
 
         try:
@@ -2379,13 +2499,13 @@ class Audio(commands.Cog):
         )
 
     @checks.is_owner()
-    @playlist.command(name="download", usage="<id_or_name>  " "[v2=False]")
+    @playlist.command(name="download", usage="<playlist_name_OR_id> [v2=False] [args]")
     @commands.bot_has_permissions(attach_files=True)
     async def _playlist_download(
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
-        v2=False,
+        v2: Optional[bool] = False,
         *,
         scope_data: ScopeParser = None,
     ):
@@ -2393,19 +2513,42 @@ class Audio(commands.Cog):
 
         These files can be used with the [p]playlist upload command.
         Red v2-compatible playlists can be generated by passing True
-        for the v2 variable."""
+        for the v2 variable.
+
+        ***Usage**:
+        ​ ​ ​ ​ [p]playlist download playlist_name_OR_id [v2=True_OR_False] args
+
+        **Args**:
+        ​ ​ ​ ​ The following are all optional:
+        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
+        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
+        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        
+        Scope is one of the following:
+        ​ ​ ​ ​ Global
+        ​ ​ ​ ​ Guild
+        ​ ​ ​ ​ User
+        
+        Author can be one of the following:
+        ​ ​ ​ ​ User ID
+        ​ ​ ​ ​ User Mention
+        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        
+        Guild can be one of the following:
+        ​ ​ ​ ​ Guild ID
+        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+
+        Example use:
+        ​ ​ ​ ​ [p]playlist download MyGuildPlaylist True
+        ​ ​ ​ ​ [p]playlist download MyGlobalPlaylist False --scope Global
+        ​ ​ ​ ​ [p]playlist download MyPersonalPlaylist --scope User
+        """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
         scope, author, guild = scope_data
 
         if not await self._playlist_check(ctx):
             return
-
-        if scope is None:
-            scope = PlaylistScope.GUILD.value
-
-        guild = guild or ctx.guild
-        author = author or ctx.author
 
         try:
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
@@ -2415,7 +2558,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, str(e))
         if playlist_id is None:
             return await self._embed_msg(
-                ctx, _("Could not find match '{}' to a playlist").format(playlist_arg)
+                ctx, _("Could not match '{arg}' to a playlist").format(arg=playlist_arg)
             )
 
         try:
@@ -2461,7 +2604,7 @@ class Audio(commands.Cog):
         await ctx.send(file=discord.File(to_write, filename=f"{file_name}.txt"))
         to_write.close()
 
-    @playlist.command(name="info", usage="<id_or_name>")
+    @playlist.command(name="info", usage="<playlist_name_OR_id> [args]")
     async def _playlist_info(
         self,
         ctx: commands.Context,
@@ -2469,7 +2612,36 @@ class Audio(commands.Cog):
         *,
         scope_data: ScopeParser = None,
     ):
-        """Retrieve information from a saved playlist."""
+        """Retrieve information from a saved playlist.
+
+        ***Usage**:
+        ​ ​ ​ ​ [p]playlist info playlist_name_OR_id args
+
+        **Args**:
+        ​ ​ ​ ​ The following are all optional:
+        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
+        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
+        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        
+        Scope is one of the following:
+        ​ ​ ​ ​ Global
+        ​ ​ ​ ​ Guild
+        ​ ​ ​ ​ User
+        
+        Author can be one of the following:
+        ​ ​ ​ ​ User ID
+        ​ ​ ​ ​ User Mention
+        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        
+        Guild can be one of the following:
+        ​ ​ ​ ​ Guild ID
+        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+
+        Example use:
+        ​ ​ ​ ​ [p]playlist info MyGuildPlaylist
+        ​ ​ ​ ​ [p]playlist info MyGlobalPlaylist --scope Global
+        ​ ​ ​ ​ [p]playlist info MyPersonalPlaylist --scope User
+        """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
         scope, author, guild = scope_data
@@ -2482,7 +2654,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, str(e))
         if playlist_id is None:
             return await self._embed_msg(
-                ctx, _("Could not find match '{}' to a playlist").format(playlist_arg)
+                ctx, _("Could not match '{arg}' to a playlist").format(arg=playlist_arg)
             )
 
         try:
@@ -2534,10 +2706,39 @@ class Audio(commands.Cog):
             page_list.append(embed)
         await menu(ctx, page_list, DEFAULT_CONTROLS)
 
-    @playlist.command(name="list", usage="")
+    @playlist.command(name="list", usage="[args]")
     @commands.bot_has_permissions(add_reactions=True)
     async def _playlist_list(self, ctx: commands.Context, *, scope_data: ScopeParser = None):
-        """List saved playlists."""
+        """List saved playlists.
+
+        ***Usage**:
+        ​ ​ ​ ​ [p]playlist list args
+
+        **Args**:
+        ​ ​ ​ ​ The following are all optional:
+        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
+        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
+        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        
+        Scope is one of the following:
+        ​ ​ ​ ​ Global
+        ​ ​ ​ ​ Guild
+        ​ ​ ​ ​ User
+        
+        Author can be one of the following:
+        ​ ​ ​ ​ User ID
+        ​ ​ ​ ​ User Mention
+        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        
+        Guild can be one of the following:
+        ​ ​ ​ ​ Guild ID
+        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+
+        Example use:
+        ​ ​ ​ ​ [p]playlist list
+        ​ ​ ​ ​ [p]playlist list --scope Global
+        ​ ​ ​ ​ [p]playlist list --scope User
+        """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
         scope, author, guild = scope_data
@@ -2606,11 +2807,40 @@ class Audio(commands.Cog):
         return embed
 
     @commands.cooldown(1, 15, commands.BucketType.guild)
-    @playlist.command(name="queue", usage="<name>")
+    @playlist.command(name="queue", usage="<name> [args]")
     async def _playlist_queue(
         self, ctx: commands.Context, playlist_name: str, *, scope_data: ScopeParser = None
     ):
-        """Save the queue to a playlist."""
+        """Save the queue to a playlist.
+
+        ***Usage**:
+        ​ ​ ​ ​ [p]playlist queue playlist_name
+
+        **Args**:
+        ​ ​ ​ ​ The following are all optional:
+        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
+        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
+        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        
+        Scope is one of the following:
+        ​ ​ ​ ​ Global
+        ​ ​ ​ ​ Guild
+        ​ ​ ​ ​ User
+        
+        Author can be one of the following:
+        ​ ​ ​ ​ User ID
+        ​ ​ ​ ​ User Mention
+        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        
+        Guild can be one of the following:
+        ​ ​ ​ ​ Guild ID
+        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+
+        Example use:
+        ​ ​ ​ ​ [p]playlist queue MyGuildPlaylist
+        ​ ​ ​ ​ [p]playlist queue MyGlobalPlaylist --scope Global
+        ​ ​ ​ ​ [p]playlist queue MyPersonalPlaylist --scope User
+        """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
 
@@ -2643,7 +2873,7 @@ class Audio(commands.Cog):
             ),
         )
 
-    @playlist.command(name="remove", usage=("<id_or_name> <url>"))
+    @playlist.command(name="remove", usage="<playlist_name_OR_id> <url> [args]")
     async def _playlist_remove(
         self,
         ctx: commands.Context,
@@ -2652,7 +2882,36 @@ class Audio(commands.Cog):
         *,
         scope_data: ScopeParser = None,
     ):
-        """Remove a track from a playlist by url."""
+        """Remove a track from a playlist by url.
+
+         ***Usage**:
+        ​ ​ ​ ​ [p]playlist remove playlist_name_OR_id url args
+
+        **Args**:
+        ​ ​ ​ ​ The following are all optional:
+        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
+        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
+        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        
+        Scope is one of the following:
+        ​ ​ ​ ​ Global
+        ​ ​ ​ ​ Guild
+        ​ ​ ​ ​ User
+        
+        Author can be one of the following:
+        ​ ​ ​ ​ User ID
+        ​ ​ ​ ​ User Mention
+        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        
+        Guild can be one of the following:
+        ​ ​ ​ ​ Guild ID
+        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+
+        Example use:
+        ​ ​ ​ ​ [p]playlist remove MyGuildPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU
+        ​ ​ ​ ​ [p]playlist remove MyGlobalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope Global
+        ​ ​ ​ ​ [p]playlist remove MyPersonalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope User
+        """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
         scope, author, guild = scope_data
@@ -2665,7 +2924,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, str(e))
         if playlist_id is None:
             return await self._embed_msg(
-                ctx, _("Could not find match '{}' to a playlist").format(playlist_arg)
+                ctx, _("Could not match '{arg}' to a playlist").format(arg=playlist_arg)
             )
 
         try:
@@ -2712,7 +2971,7 @@ class Audio(commands.Cog):
                 ),
             )
 
-    @playlist.command(name="save", usage=("<name> <url>"))
+    @playlist.command(name="save", usage="<name> <url> [args]")
     async def _playlist_save(
         self,
         ctx: commands.Context,
@@ -2721,7 +2980,36 @@ class Audio(commands.Cog):
         *,
         scope_data: ScopeParser = None,
     ):
-        """Save a playlist from a url."""
+        """Save a playlist from a url.
+
+        ***Usage**:
+        ​ ​ ​ ​ [p]playlist save name url args
+
+        **Args**:
+        ​ ​ ​ ​ The following are all optional:
+        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
+        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
+        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        
+        Scope is one of the following:
+        ​ ​ ​ ​ Global
+        ​ ​ ​ ​ Guild
+        ​ ​ ​ ​ User
+        
+        Author can be one of the following:
+        ​ ​ ​ ​ User ID
+        ​ ​ ​ ​ User Mention
+        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        
+        Guild can be one of the following:
+        ​ ​ ​ ​ Guild ID
+        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+
+        Example use:
+        ​ ​ ​ ​ [p]playlist save MyGuildPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM
+        ​ ​ ​ ​ [p]playlist save MyGlobalPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM --scope Global
+        ​ ​ ​ ​ [p]playlist save MyPersonalPlaylist https://open.spotify.com/playlist/1RyeIbyFeIJVnNzlGr5KkR --scope User
+        """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
         scope, author, guild = scope_data
@@ -2747,7 +3035,7 @@ class Audio(commands.Cog):
                 ),
             )
 
-    @playlist.command(name="start", usage="<id_or_name>")
+    @playlist.command(name="start", usage="<playlist_name_OR_id> [args]")
     async def _playlist_start(
         self,
         ctx: commands.Context,
@@ -2755,7 +3043,36 @@ class Audio(commands.Cog):
         *,
         scope_data: ScopeParser = None,
     ):
-        """Load a playlist into the queue."""
+        """Load a playlist into the queue.
+
+        ***Usage**:
+        ​ ​ ​ ​ [p]playlist start playlist_name_OR_id args
+
+        **Args**:
+        ​ ​ ​ ​ The following are all optional:
+        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
+        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
+        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        
+        Scope is one of the following:
+        ​ ​ ​ ​ Global
+        ​ ​ ​ ​ Guild
+        ​ ​ ​ ​ User
+        
+        Author can be one of the following:
+        ​ ​ ​ ​ User ID
+        ​ ​ ​ ​ User Mention
+        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        
+        Guild can be one of the following:
+        ​ ​ ​ ​ Guild ID
+        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+
+        Example use:
+        ​ ​ ​ ​ [p]playlist start MyGuildPlaylist
+        ​ ​ ​ ​ [p]playlist start MyGlobalPlaylist --scope Global
+        ​ ​ ​ ​ [p]playlist start MyPersonalPlaylist --scope User
+        """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
 
@@ -2769,7 +3086,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, str(e))
         if playlist_id is None:
             return await self._embed_msg(
-                ctx, _("Could not find match '{}' to a playlist").format(playlist_arg)
+                ctx, _("Could not match '{arg}' to a playlist").format(arg=playlist_arg)
             )
 
         if not await self._playlist_check(ctx):
@@ -2825,7 +3142,7 @@ class Audio(commands.Cog):
         except TypeError:
             await ctx.invoke(self.play, query=playlist.url)
 
-    @playlist.command(name="update", usage="<id_or_name>")
+    @playlist.command(name="update", usage="<playlist_name_OR_id> [args]")
     async def _playlist_update(
         self,
         ctx: commands.Context,
@@ -2833,7 +3150,36 @@ class Audio(commands.Cog):
         *,
         scope_data: ScopeParser = None,
     ):
-        """Updated a playlist."""
+        """Updates all tracks in a playlist.
+
+        ***Usage**:
+        ​ ​ ​ ​ [p]playlist update playlist_name_OR_id args
+
+        **Args**:
+        ​ ​ ​ ​ The following are all optional:
+        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
+        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
+        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        
+        Scope is one of the following:
+        ​ ​ ​ ​ Global
+        ​ ​ ​ ​ Guild
+        ​ ​ ​ ​ User
+        
+        Author can be one of the following:
+        ​ ​ ​ ​ User ID
+        ​ ​ ​ ​ User Mention
+        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        
+        Guild can be one of the following:
+        ​ ​ ​ ​ Guild ID
+        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+
+        Example use:
+        ​ ​ ​ ​ [p]playlist update MyGuildPlaylist
+        ​ ​ ​ ​ [p]playlist update MyGlobalPlaylist --scope Global
+        ​ ​ ​ ​ [p]playlist update MyPersonalPlaylist --scope User
+        """
 
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
@@ -2849,7 +3195,7 @@ class Audio(commands.Cog):
 
         if playlist_id is None:
             return await self._embed_msg(
-                ctx, _("Could not find match '{}' to a playlist").format(playlist_arg)
+                ctx, _("Could not match '{arg}' to a playlist").format(arg=playlist_arg)
             )
 
         if not await self._playlist_check(ctx):
@@ -2878,9 +3224,41 @@ class Audio(commands.Cog):
             )
 
     @checks.is_owner()
-    @playlist.command(name="upload", usage="")
+    @playlist.command(name="upload", usage="[args]")
     async def _playlist_upload(self, ctx: commands.Context, *, scope_data: ScopeParser = None):
-        """Convert a Red v2 playlist file to a playlist."""
+        """Uploads a playlist file as a playlist for the bot.
+
+        V2 and old V3 playlist will be slow.
+        V3 Playlist made with [p]playlist download will load a lot faster.
+
+        ***Usage**:
+        ​ ​ ​ ​ [p]playlist upload args
+
+        **Args**:
+        ​ ​ ​ ​ The following are all optional:
+        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
+        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
+        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        
+        Scope is one of the following:
+        ​ ​ ​ ​ Global
+        ​ ​ ​ ​ Guild
+        ​ ​ ​ ​ User
+        
+        Author can be one of the following:
+        ​ ​ ​ ​ User ID
+        ​ ​ ​ ​ User Mention
+        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        
+        Guild can be one of the following:
+        ​ ​ ​ ​ Guild ID
+        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+
+        Example use:
+        ​ ​ ​ ​ [p]playlist upload
+        ​ ​ ​ ​ [p]playlist upload --scope Global
+        ​ ​ ​ ​ [p]playlist upload --scope User
+        """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
 
@@ -2966,7 +3344,7 @@ class Audio(commands.Cog):
             guild=guild,
         )
 
-    @playlist.command(name="rename", usage="<id_or_name> <new_name>")
+    @playlist.command(name="rename", usage="<playlist_name_OR_id> <new_name> [args]")
     async def _playlist_rename(
         self,
         ctx: commands.Context,
@@ -2975,7 +3353,36 @@ class Audio(commands.Cog):
         *,
         scope_data: ScopeParser = None,
     ):
-        """Rename an existing playlist."""
+        """Rename an existing playlist.
+
+        ***Usage**:
+        ​ ​ ​ ​ [p]playlist rename playlist_name_OR_id new_name args
+
+        **Args**:
+        ​ ​ ​ ​ The following are all optional:
+        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
+        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
+        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        
+        Scope is one of the following:
+        ​ ​ ​ ​ Global
+        ​ ​ ​ ​ Guild
+        ​ ​ ​ ​ User
+        
+        Author can be one of the following:
+        ​ ​ ​ ​ User ID
+        ​ ​ ​ ​ User Mention
+        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        
+        Guild can be one of the following:
+        ​ ​ ​ ​ Guild ID
+        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+
+        Example use:
+        ​ ​ ​ ​ [p]playlist update MyGuildPlaylist RenamedGuildPlaylist
+        ​ ​ ​ ​ [p]playlist update MyGlobalPlaylist RenamedGlobalPlaylist --scope Global
+        ​ ​ ​ ​ [p]playlist update MyPersonalPlaylist RenamedPersonalPlaylist --scope User
+        """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
 
@@ -2989,7 +3396,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, str(e))
         if playlist_id is None:
             return await self._embed_msg(
-                ctx, _("Could not find match '{}' to a playlist").format(playlist_arg)
+                ctx, _("Could not match '{arg}' to a playlist").format(arg=playlist_arg)
             )
 
         try:

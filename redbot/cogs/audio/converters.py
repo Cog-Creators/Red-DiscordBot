@@ -67,7 +67,7 @@ class PlaylistConverter(commands.Converter):
             if arg == pid or arg.lower() == pdata.get("name").lower()
         ]
         if not user_matches and not guild_matches and not global_matches:
-            raise commands.BadArgument(_("Could not find match '{}' to a playlist").format(arg))
+            raise commands.BadArgument(_("Could not match '{}' to a playlist").format(arg))
 
         return {
             PlaylistScope.GLOBAL.value: global_matches,
@@ -102,7 +102,11 @@ class ScopeParser(commands.Converter):
 
         parser.add_argument("--scope", nargs="*", dest="scope", default=[])
         parser.add_argument("--guild", nargs="*", dest="guild", default=[])
+        parser.add_argument("--server", nargs="*", dest="guild", default=[])
         parser.add_argument("--author", nargs="*", dest="author", default=[])
+        parser.add_argument("--user", nargs="*", dest="author", default=[])
+        parser.add_argument("--member", nargs="*", dest="author", default=[])
+
         if not command:
             parser.add_argument("command", nargs="*")
 
@@ -127,10 +131,10 @@ class ScopeParser(commands.Converter):
                     _("{} doesn't look like a valid scope.").format(scope_raw)
                 )
             target_scope = standardize_scope(scope)
-
-        if await ctx.bot.is_owner(ctx.author) and vals["guild"]:
+        guild = vals.get("guild", None) or vals.get("server", None)
+        if await ctx.bot.is_owner(ctx.author) and guild:
             target_guild = None
-            guild_raw = " ".join(vals["guild"]).strip()
+            guild_raw = " ".join(guild).strip()
             if guild_raw.isnumeric():
                 guild_raw = int(guild_raw)
                 target_guild = ctx.bot.get_guild(guild_raw)
@@ -142,9 +146,10 @@ class ScopeParser(commands.Converter):
             if target_guild is None:
                 target_guild = await ctx.bot.fetch_guild(guild_raw) or ctx.author
 
-        if vals["author"]:
+        author = vals.get("author", None) or vals.get("user", None) or vals.get("member", None)
+        if author:
             target_user = None
-            user_raw = " ".join(vals["author"]).strip()
+            user_raw = " ".join(author).strip()
             if user_raw.isnumeric():
                 user_raw = int(user_raw)
                 target_user = ctx.bot.get_user(user_raw)
