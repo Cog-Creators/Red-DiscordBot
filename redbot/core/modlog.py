@@ -251,6 +251,7 @@ class Case:
         else:
             user_id = self.user.id
         data = {
+            "case_number": self.case_number,
             "action_type": self.action_type,
             "guild": self.guild.id,
             "created_at": self.created_at,
