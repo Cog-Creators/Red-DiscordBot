@@ -80,8 +80,8 @@ class ScopeParser(commands.Converter):
         self, ctx: commands.Context, argument: str
     ) -> Tuple[str, discord.User, Optional[discord.Guild]]:
         target_scope: str = PlaylistScope.GUILD.value
-        target_user: Union[discord.Member, discord.User] = ctx.author
-        target_guild: discord.Guild = ctx.guild
+        target_user: Optional[Union[discord.Member, discord.User]] = ctx.author
+        target_guild: Optional[discord.Guild] = ctx.guild
 
         argument = argument.replace("—", "--")
 

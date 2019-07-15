@@ -46,7 +46,7 @@ def _pass_config_to_playlist(config: Config):
         _config = config
 
 
-def standardize_scope(scope):
+def standardize_scope(scope) -> str:
     scope = scope.upper()
     valid_scopes = ["GLOBAL", "GUILD", "SERVER", "USER", "MEMBER", "BOT"]
 
