@@ -120,17 +120,20 @@ Whenever you pull from upstream (V3/develop on the main repository) and you noti
 
 Red uses towncrier to create changelogs
 
-To create a towncrier entry for your PR, create a file in `changelog.d` for it.
+To create a towncrier entry for your PR, create a file in `changelog.d` for it. If the changes are for a specific cog, place the file in the related subdirectory.
+
 The filename should be of the format `issuenumber.changetype.rst`
 
-You can create multiple entries if your PR fixes multiple things at once, but unless the fixes
-are strongly related, it is better to make multiple PRs
+You can create multiple entries if your PR should show up in multiple categories.
 
 Valid changetypes are:
 
+  * breaking : Breaking changes
+  * dep : Changes to dependencies
+  * enhance : Enhancements
   * feature : New features
   * bugfix : Bugfixes
-  * doc : documentation improvements and additions
+  * docs : documentation improvements and additions
   * removal : removal of something
   * misc : any changes which don't have a user facing change, and don't belong in the changelog for users.
 

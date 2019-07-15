@@ -90,17 +90,12 @@
         showcontent = true
 
     [[tool.towncrier.type]]
-        directory = "deprecation"
-        name = "Deprecations"
+        directory = "bugfix"
+        name = "Bug Fixes"
         showcontent = true
 
     [[tool.towncrier.type]]
-        directory = "fix"
-        name = "Fixes"
-        showcontent = true
-
-    [[tool.towncrier.type]]
-        directory = "enhancements"
+        directory = "enhance"
         name = "Enhancements"
         showcontent = true
 
@@ -120,6 +115,11 @@
         showcontent = false
 
     [[tool.towncrier.type]]
-        directory = "dependency"
+        directory = "dep"
         name = "Changes to dependencies"
+        showcontent = true
+
+    [[tool.towncrier.type]]
+        directory = "docs"
+        name = "Documentation Changes"
         showcontent = true
