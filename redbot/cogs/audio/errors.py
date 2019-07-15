@@ -47,3 +47,7 @@ class MissingGuild(PlayListError):
 
 class MissingAuthor(PlayListError):
     """Trying to access the User scope without an user id."""
+
+
+class TooManyMatches(PlayListError):
+    """Too many playlist match user input."""

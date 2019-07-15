@@ -122,11 +122,11 @@ class Playlist:
 
     async def edit(self, data: dict):
         """
-        Edits a Playlist
+        Edits a Playlist.
         Parameters
         ----------
         data: dict
-            The attributes to change
+            The attributes to change.
         """
         for item in list(data.keys()):
             setattr(self, item, data[item])
@@ -134,11 +134,11 @@ class Playlist:
         await _config.custom(*self.config_scope, str(self.id)).set(self.to_json())
 
     def to_json(self) -> dict:
-        """Transform the object to a dict
+        """Transform the object to a dict.
         Returns
         -------
         dict
-            The playlist in the form of a dict
+            The playlist in the form of a dict.
         """
         data = dict(
             id=self.id,
@@ -152,13 +152,13 @@ class Playlist:
 
     @classmethod
     async def from_json(cls, bot: Red, scope: str, playlist_number: int, data: dict, **kwargs):
-        """Get a Playlist object from the provided information
+        """Get a Playlist object from the provided information.
         Parameters
         ----------
         bot: Red
-            The bot's instance. Needed to get the target user
+            The bot's instance. Needed to get the target user.
         scope:str
-            The custom config scope. One of 'GLOBALPLAYLIST', 'GUILDPLAYLIST' or 'USERPLAYLIST'
+            The custom config scope. One of 'GLOBALPLAYLIST', 'GUILDPLAYLIST' or 'USERPLAYLIST'.
         playlist_number: int
             The playlist's number.
         data: dict
@@ -207,7 +207,7 @@ async def get_playlist(
     author: Optional[int] = None,
 ) -> Playlist:
     """
-    Gets the playlist with the associated playlist number
+    Gets the playlist with the associated playlist number.
     Parameters
     ----------
     playlist_number: int
@@ -249,7 +249,7 @@ async def get_all_playlist(
     scope: str, bot: Red, guild: Optional[discord.Guild] = None, author: Optional[int] = None
 ) -> List[Playlist]:
     """
-    Gets all playlist for the specified scope
+    Gets all playlist for the specified scope.
     Parameters
     ----------
     scope: str
@@ -339,7 +339,7 @@ async def reset_playlist(
     scope: str, guild: Optional[discord.Guild] = None, author: Optional[int] = None
 ) -> None:
     """
-    Wipes all playlists for the specified scope
+    Wipes all playlists for the specified scope.
 
     Parameters
     ----------
@@ -369,7 +369,7 @@ async def delete_playlist(
     author: Optional[int] = None,
 ) -> None:
     """
-        Deletes the specified playlist
+        Deletes the specified playlist.
 
         Parameters
         ----------

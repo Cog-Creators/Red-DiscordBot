@@ -33,7 +33,7 @@ from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from urllib.parse import urlparse
 from .equalizer import Equalizer
 from .manager import ServerManager
-from .errors import LavalinkDownloadFailed, MissingGuild
+from .errors import LavalinkDownloadFailed, MissingGuild, TooManyMatches
 from .playlists import (
     Playlist,
     PlaylistScope,
@@ -2039,8 +2039,32 @@ class Audio(commands.Cog):
         return True
 
     def _get_correct_playlist_id(
-        self, matches: dict, scope: str, author: discord.User, guild: discord.Guild
+        self, context:commands.Context, matches: dict, scope: str, author: discord.User, guild: discord.Guild
     ) -> Tuple[Optional[int], str]:
+        """
+        Parameters
+        ----------
+        context: commands.Context
+            The context in which this is being called.
+        matches: dict
+            A dict of the matches found where key is scope and value is matches.
+        scope:str
+            The custom config scope. A value from :code:`PlaylistScope`.
+        author: discord.User
+            The user.
+        guild: discord.Guild
+            The guild.
+        Returns
+        -------
+        Tuple[Optional[int], str]
+            Tuple of Playlist ID or None if none found and original user input.
+        Raises
+        ------
+        `TooManyMatches`
+            When more than 10 matches are found or
+            When multiple matches are found but none is selected.
+
+        """
         original_input = matches.get("arg")
         correct_scope_matches = matches.get(scope)
         guild_to_query = guild.id
@@ -2071,9 +2095,38 @@ class Audio(commands.Cog):
         match_count = len(correct_scope_matches)
         if match_count == 1:
             return correct_scope_matches[0][0], original_input
-        else:  # TODO: Finish me
+        else:
             # We done all the trimming we can with the info available time to ask the user
-            return None, original_input
+            if match_count > 10:
+                if original_input.isnumeric():
+                    arg = int(original_input)
+                    correct_scope_matches = [(i,n) for i,n in correct_scope_matches if i == arg]
+                    match_count = len(correct_scope_matches)
+                    if match_count == 1:
+                        # Early Exit if found exact match,
+                        # Needed if user name a playlist the same as an exist playlist ID
+                        return correct_scope_matches[0][0], original_input
+                if match_count > 10:
+                    raise TooManyMatches(f"{match_count} playlist match {arg} "
+                                         f"Please try to be more specific or you the playlist id.")
+
+            playlists = ""
+            for number, (pid, pname) in enumerate(correct_scope_matches):
+                playlists += f"{number}. {pname} ({pid})\n"
+
+            msg = await context.send(
+                f"Multiple playlists found, which one would you like?\n{box(playlists)}"
+            )
+            emojis = ReactionPredicate.NUMBER_EMOJIS[: len(playlists)]
+            start_adding_reactions(msg, emojis)
+            pred = ReactionPredicate.with_emojis(emojis, msg, user=context.author)
+            try:
+                await context.bot.wait_for("reaction_add", check=pred, timeout=30)
+            except asyncio.TimeoutError:
+                raise TooManyMatches(
+                    "Too many matches found and you did not select which one you wanted."
+                )
+            return correct_scope_matches[pred.result][0], original_input
 
     @commands.group()
     @commands.guild_only()
@@ -2100,7 +2153,7 @@ class Audio(commands.Cog):
         scope, author, guild = scope_data
         if not await self._playlist_check(ctx):
             return
-        playlist_id, playlist_arg = self._get_correct_playlist_id(
+        playlist_id, playlist_arg = self._get_correct_playlist_id(ctx,
             playlist_matches, scope, author, guild
         )
         if playlist_id is None:
@@ -2165,16 +2218,16 @@ class Audio(commands.Cog):
         ),
     )
     async def _playlist_copy(
-        self,
-        ctx: commands.Context,
-        playlist_matches: PlaylistConverter,
-        from_scope: ScopeConverter,
-        to_scope: ScopeConverter,
-        from_author: Optional[Union[discord.Member, discord.User]] = None,
-        from_guild: Optional[GuildConverter] = None,
-        to_author: Optional[Union[discord.Member, discord.User]] = None,
-        to_guild: Optional[GuildConverter] = None,
-    ):
+            self,
+            ctx: commands.Context,
+            playlist_matches: PlaylistConverter,
+            from_scope: ScopeConverter,
+            to_scope: ScopeConverter,
+            from_author: Optional[Union[discord.Member, discord.User]] = None,
+            from_guild: Optional[GuildConverter] = None,
+            to_author: Optional[Union[discord.Member, discord.User]] = None,
+            to_guild: Optional[GuildConverter] = None,
+        ):
 
         """Copy a playlist from one scope to another."""
 
@@ -2188,7 +2241,7 @@ class Audio(commands.Cog):
         from_author = from_author or ctx.author
         to_author = to_author or ctx.author
 
-        playlist_id, playlist_arg = self._get_correct_playlist_id(
+        playlist_id, playlist_arg = self._get_correct_playlist_id(ctx,
             playlist_matches, from_scope, from_author, from_guild
         )
         if playlist_id is None:
@@ -2275,7 +2328,7 @@ class Audio(commands.Cog):
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
         scope, author, guild = scope_data
 
-        playlist_id, playlist_arg = self._get_correct_playlist_id(
+        playlist_id, playlist_arg = self._get_correct_playlist_id(ctx,
             playlist_matches, scope, author, guild
         )
         if playlist_id is None:
@@ -2335,7 +2388,7 @@ class Audio(commands.Cog):
         guild = guild or ctx.guild
         author = author or ctx.author
 
-        playlist_id, playlist_arg = self._get_correct_playlist_id(
+        playlist_id, playlist_arg = self._get_correct_playlist_id(ctx,
             playlist_matches, scope, author, author
         )
         if playlist_id is None:
@@ -2399,7 +2452,7 @@ class Audio(commands.Cog):
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
         scope, author, guild = scope_data
 
-        playlist_id, playlist_arg = self._get_correct_playlist_id(
+        playlist_id, playlist_arg = self._get_correct_playlist_id(ctx,
             playlist_matches, scope, author, author
         )
         if playlist_id is None:
@@ -2471,8 +2524,17 @@ class Audio(commands.Cog):
                 ctx, _("You need to specify the Guild ID for the guild to lookup.")
             )
 
+        if scope == PlaylistScope.GUILD.value:
+            name = f"{guild.name}"
+        elif scope == PlaylistScope.USER.value:
+            name = f"{author}"
+        else:
+            name = guild.me.display_name
+
         if not playlists:
-            return await self._embed_msg(ctx, _("No saved playlists."))
+            return await self._embed_msg(
+                ctx, _("No saved playlists for {scope}.").format(scope=name)
+            )
 
         playlist_list = []
         space = "\N{EN SPACE}"
@@ -2490,12 +2552,7 @@ class Audio(commands.Cog):
         abc_names = sorted(playlist_list, key=str.lower)
         len_playlist_list_pages = math.ceil(len(abc_names) / 5)
         playlist_embeds = []
-        if scope == PlaylistScope.GUILD.value:
-            name = f"{guild.name}"
-        elif scope == PlaylistScope.USER.value:
-            name = f"{author}"
-        else:
-            name = guild.me.display_name
+
         for page_num in range(1, len_playlist_list_pages + 1):
             embed = await self._build_playlist_list_page(ctx, page_num, abc_names, name)
             playlist_embeds.append(embed)
@@ -2513,7 +2570,7 @@ class Audio(commands.Cog):
             plist += "`{}.` {}".format(item_idx, playlist_info)
         embed = discord.Embed(
             colour=await ctx.embed_colour(),
-            title=_("Playlists for {server_name}:").format(server_name=scope),
+            title=_("Playlists for {scope}:").format(scope=scope),
             description=plist,
         )
         embed.set_footer(
@@ -2575,7 +2632,7 @@ class Audio(commands.Cog):
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
         scope, author, guild = scope_data
 
-        playlist_id, playlist_arg = self._get_correct_playlist_id(
+        playlist_id, playlist_arg = self._get_correct_playlist_id(ctx,
             playlist_matches, scope, author, author
         )
         if playlist_id is None:
@@ -2676,7 +2733,7 @@ class Audio(commands.Cog):
 
         scope, author, guild = scope_data
 
-        playlist_id, playlist_arg = self._get_correct_playlist_id(
+        playlist_id, playlist_arg = self._get_correct_playlist_id(ctx,
             playlist_matches, scope, author, author
         )
         if playlist_id is None:
@@ -2842,7 +2899,7 @@ class Audio(commands.Cog):
 
         scope, author, guild = scope_data
 
-        playlist_id, playlist_arg = self._get_correct_playlist_id(
+        playlist_id, playlist_arg = self._get_correct_playlist_id(ctx,
             playlist_matches, scope, author, author
         )
         if playlist_id is None:
