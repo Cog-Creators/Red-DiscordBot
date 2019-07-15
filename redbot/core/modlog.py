@@ -48,24 +48,8 @@ async def _init():
     _conf.register_guild(mod_log=None, casetypes={})
     _conf.init_custom(_CASETYPES, 1)
     _conf.init_custom(_CASES, 2)
-    _conf.register_custom(
-        _CASETYPES, default_setting=None, image=None, case_str=None, audit_type=None
-    )
-    _conf.register_custom(
-        _CASES,
-        case_number=None,
-        action_type=None,
-        guild=None,
-        created_at=None,
-        user=None,
-        moderator=None,
-        reason=None,
-        until=None,
-        channel=None,
-        amended_by=None,
-        modified_at=None,
-        message=None,
-    )
+    _conf.register_custom(_CASETYPES)
+    _conf.register_custom(_CASES)
     await _migrate_config(from_version=await _conf.schema_version(), to_version=_SCHEMA_VERSION)
 
 
@@ -139,6 +123,9 @@ class Case:
             The attributes to change
 
         """
+        # We don't want case_number to be changed
+        data.pop("case_number", None)
+
         for item in list(data.keys()):
             setattr(self, item, data[item])
 
@@ -267,6 +254,7 @@ class Case:
         else:
             user_id = self.user.id
         data = {
+            "case_number": self.case_number,
             "action_type": self.action_type,
             "guild": self.guild.id,
             "created_at": self.created_at,
@@ -516,7 +504,7 @@ async def get_case(case_number: int, guild: discord.Guild, bot: Red) -> Case:
     """
 
     case = await _conf.custom(_CASES, str(guild.id), str(case_number)).all()
-    if not case["case_number"]:
+    if not case:
         raise RuntimeError("That case does not exist for guild {}".format(guild.name))
     mod_channel = await get_modlog_channel(guild)
     return await Case.from_json(mod_channel, bot, case_number, case)
@@ -693,14 +681,12 @@ async def get_casetype(name: str, guild: Optional[discord.Guild] = None) -> Opti
     -------
     Optional[CaseType]
     """
-    try:
-        data = await _conf.custom(_CASETYPES, name).all()
-    except KeyError:
+    data = await _conf.custom(_CASETYPES, name).all()
+    if not data:
         return
-    else:
-        casetype = CaseType.from_json(name, data)
-        casetype.guild = guild
-        return casetype
+    casetype = CaseType.from_json(name, data)
+    casetype.guild = guild
+    return casetype
 
 
 async def get_all_casetypes(guild: discord.Guild = None) -> List[CaseType]:
