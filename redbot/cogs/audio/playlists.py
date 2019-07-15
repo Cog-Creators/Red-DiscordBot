@@ -5,7 +5,7 @@ from typing import Union, Optional, List
 import discord
 
 from redbot.core import commands
-from .errors import InvalidPlaylistScope, MissingGuild, MissingAuthor
+from .errors import InvalidPlaylistScope, MissingGuild, MissingAuthor, NotAllowed
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_list
@@ -128,6 +128,9 @@ class Playlist:
         data: dict
             The attributes to change.
         """
+        if "id" in data:  # Disallow ID editing
+            raise NotAllowed("Playlist ID cannot be edited")
+
         for item in list(data.keys()):
             setattr(self, item, data[item])
 
