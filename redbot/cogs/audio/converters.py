@@ -20,6 +20,24 @@ __all__ = [
 ]
 _config = None
 
+_SCOPE_HELP = """
+Scope is one of the following:
+​ ​ ​ ​ Global
+​ ​ ​ ​ Guild
+​ ​ ​ ​ User
+"""
+_USER_HELP = """
+Author can be one of the following:
+​ ​ ​ ​ User ID
+​ ​ ​ ​ User Mention
+​ ​ ​ ​ User Name#123 
+"""
+_GUILD_HELP = """
+Guild can be one of the following:
+​ ​ ​ ​ Guild ID
+​ ​ ​ ​ Guild name 
+"""
+
 
 def _pass_config_to_dependencies(config: Config):
     global _config
@@ -112,44 +130,62 @@ class ScopeParser(commands.Converter):
                 "BOT",
             ]
             if scope not in valid_scopes:
-                raise commands.BadArgument(
-                    _("{} doesn't look like a valid scope.").format(scope_raw)
-                )
+                raise commands.ArgParserFailure("--scope", scope_raw, custom_help=_SCOPE_HELP)
             target_scope = standardize_scope(scope)
+        is_owner = await ctx.bot.is_owner(ctx.author)
         guild = vals.get("guild", None) or vals.get("server", None)
-        if await ctx.bot.is_owner(ctx.author) and guild:
+        if is_owner and guild:
             target_guild = None
             guild_raw = " ".join(guild).strip()
             if guild_raw.isnumeric():
                 guild_raw = int(guild_raw)
-                target_guild = ctx.bot.get_guild(guild_raw)
+                try:
+                    target_guild = ctx.bot.get_guild(guild_raw)
+                except Exception:
+                    target_guild = None
+                guild_raw = str(guild_raw)
             if target_guild is None:
                 try:
                     target_guild = await commands.GuildConverter.convert(ctx, guild_raw)
-                except commands.BadArgument:
+                except Exception:
                     target_guild = None
             if target_guild is None:
-                target_guild = await ctx.bot.fetch_guild(guild_raw) or ctx.author
-
+                try:
+                    target_guild = await ctx.bot.fetch_guild(guild_raw)
+                except Exception:
+                    target_guild = None
+            if target_guild is None:
+                raise commands.ArgParserFailure("--guild", guild_raw, custom_help=_GUILD_HELP)
+        elif not is_owner and guild:
+            raise commands.BadArgument("You cannot use `--guild`")
         author = vals.get("author", None) or vals.get("user", None) or vals.get("member", None)
         if author:
             target_user = None
             user_raw = " ".join(author).strip()
             if user_raw.isnumeric():
                 user_raw = int(user_raw)
-                target_user = ctx.bot.get_user(user_raw)
+                try:
+                    target_user = ctx.bot.get_user(user_raw)
+                except Exception:
+                    target_user = None
+                user_raw = str(user_raw)
             if target_user is None:
                 member_converter = commands.MemberConverter()
                 user_converter = commands.UserConverter()
                 try:
                     target_user = await member_converter.convert(ctx, user_raw)
-                except commands.BadArgument:
+                except Exception:
                     try:
                         target_user = await user_converter.convert(ctx, user_raw)
-                    except commands.BadArgument:
+                    except Exception:
                         target_user = None
             if target_user is None:
-                target_user = await ctx.bot.fetch_user(user_raw) or ctx.author
+                try:
+                    target_user = await ctx.bot.fetch_user(user_raw)
+                except Exception:
+                    target_user = None
+            if target_user is None:
+                raise commands.ArgParserFailure("--author", user_raw, custom_help=_USER_HELP)
 
         return target_scope, target_user, target_guild
 
@@ -216,8 +252,8 @@ class ComplexScopeParser(commands.Converter):
             to_scope_raw = " ".join(vals["to_scope"]).strip()
             to_scope = to_scope_raw.upper().strip()
             if to_scope not in valid_scopes:
-                raise commands.BadArgument(
-                    _("{} doesn't look like a valid scope.").format(to_scope_raw)
+                raise commands.ArgParserFailure(
+                    "--to-scope", to_scope_raw, custom_help=_SCOPE_HELP
                 )
             target_scope = standardize_scope(to_scope)
 
@@ -226,8 +262,8 @@ class ComplexScopeParser(commands.Converter):
             from_scope = from_scope_raw.upper().strip()
 
             if from_scope not in valid_scopes:
-                raise commands.BadArgument(
-                    _("{} doesn't look like a valid scope.").format(from_scope_raw)
+                raise commands.ArgParserFailure(
+                    "--from-scope", from_scope_raw, custom_help=_SCOPE_HELP
                 )
             source_scope = standardize_scope(from_scope)
 
@@ -237,29 +273,54 @@ class ComplexScopeParser(commands.Converter):
             to_guild_raw = " ".join(to_guild).strip()
             if to_guild_raw.isnumeric():
                 to_guild_raw = int(to_guild_raw)
-                target_guild = ctx.bot.get_guild(to_guild_raw)
+                try:
+                    target_guild = ctx.bot.get_guild(to_guild_raw)
+                except Exception:
+                    target_guild = None
+                to_guild_raw = str(to_guild_raw)
             if target_guild is None:
                 try:
                     target_guild = await commands.GuildConverter.convert(ctx, to_guild_raw)
-                except commands.BadArgument:
+                except Exception:
                     target_guild = None
             if target_guild is None:
-                target_guild = await ctx.bot.fetch_guild(to_guild_raw) or ctx.guild
-
+                try:
+                    target_guild = await ctx.bot.fetch_guild(to_guild_raw)
+                except Exception:
+                    target_guild = None
+            if target_guild is None:
+                raise commands.ArgParserFailure(
+                    "--to-guild", to_guild_raw, custom_help=_GUILD_HELP
+                )
+        elif not is_owner and to_guild:
+            raise commands.BadArgument("You cannot use `--guild`")
         from_guild = vals.get("from_guild", None) or vals.get("from_server", None)
         if is_owner and from_guild:
             source_guild = None
             from_guild_raw = " ".join(from_guild).strip()
             if from_guild_raw.isnumeric():
                 from_guild_raw = int(from_guild_raw)
-                source_guild = ctx.bot.get_guild(from_guild_raw)
+                try:
+                    source_guild = ctx.bot.get_guild(from_guild_raw)
+                except Exception:
+                    source_guild = None
+                from_guild_raw = str(from_guild_raw)
             if source_guild is None:
                 try:
                     source_guild = await commands.GuildConverter.convert(ctx, from_guild_raw)
-                except commands.BadArgument:
+                except Exception:
                     source_guild = None
             if source_guild is None:
-                source_guild = await ctx.bot.fetch_guild(from_guild_raw) or ctx.guild
+                try:
+                    source_guild = await ctx.bot.fetch_guild(from_guild_raw)
+                except Exception:
+                    source_guild = None
+            if source_guild is None:
+                raise commands.ArgParserFailure(
+                    "--from-guild", from_guild_raw, custom_help=_GUILD_HELP
+                )
+        elif not is_owner and from_guild:
+            raise commands.BadArgument("You cannot use `--guild`")
 
         to_author = (
             vals.get("to_author", None) or vals.get("to_user", None) or vals.get("to_member", None)
@@ -269,20 +330,28 @@ class ComplexScopeParser(commands.Converter):
             to_user_raw = " ".join(to_author).strip()
             if to_user_raw.isnumeric():
                 to_user_raw = int(to_user_raw)
-                target_user = ctx.bot.get_user(to_user_raw)
+                try:
+                    source_user = ctx.bot.get_user(to_user_raw)
+                except Exception:
+                    source_user = None
+                to_user_raw = str(to_user_raw)
             if target_user is None:
                 member_converter = commands.MemberConverter()
                 user_converter = commands.UserConverter()
                 try:
                     target_user = await member_converter.convert(ctx, to_user_raw)
-                except commands.BadArgument:
+                except Exception:
                     try:
                         target_user = await user_converter.convert(ctx, to_user_raw)
-                    except commands.BadArgument:
+                    except Exception:
                         target_user = None
             if target_user is None:
-                target_user = await ctx.bot.fetch_user(to_user_raw) or ctx.author
-
+                try:
+                    target_user = await ctx.bot.fetch_user(to_user_raw)
+                except Exception:
+                    target_user = None
+            if target_user is None:
+                raise commands.ArgParserFailure("--to-author", to_user_raw, custom_help=_USER_HELP)
         from_author = (
             vals.get("from_author", None)
             or vals.get("from_user", None)
@@ -293,19 +362,30 @@ class ComplexScopeParser(commands.Converter):
             from_user_raw = " ".join(from_author).strip()
             if from_user_raw.isnumeric():
                 from_user_raw = int(from_user_raw)
-                source_user = ctx.bot.get_user(from_user_raw)
+                try:
+                    target_user = ctx.bot.get_user(from_user_raw)
+                except Exception:
+                    source_user = None
+                from_user_raw = str(from_user_raw)
             if source_user is None:
                 member_converter = commands.MemberConverter()
                 user_converter = commands.UserConverter()
                 try:
                     source_user = await member_converter.convert(ctx, from_user_raw)
-                except commands.BadArgument:
+                except Exception:
                     try:
                         source_user = await user_converter.convert(ctx, from_user_raw)
-                    except commands.BadArgument:
+                    except Exception:
                         source_user = None
             if source_user is None:
-                source_user = await ctx.bot.fetch_user(from_user_raw) or ctx.author
+                try:
+                    source_user = await ctx.bot.fetch_user(from_user_raw)
+                except Exception:
+                    source_user = None
+            if source_user is None:
+                raise commands.ArgParserFailure(
+                    "--from-author", from_user_raw, custom_help=_USER_HELP
+                )
 
         return source_scope, source_user, source_guild, target_scope, target_user, target_guild
 
@@ -328,7 +408,6 @@ class LazyGreedyConverter(commands.Converter):
         greedy_output = (" " + full_message.replace("—", "--")).partition(
             f" {self.splitter_Value}"
         )[0]
-        print(f"'{greedy_output}'")  # TODO: Remove me
         return f"{greedy_output}".strip()
 
 

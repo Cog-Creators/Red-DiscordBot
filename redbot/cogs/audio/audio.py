@@ -1986,34 +1986,31 @@ class Audio(commands.Cog):
         return track_list
 
     async def can_manage_playlist(  # TODO:Jack managed to Edit a playlist that belong to another user
-        self, scope: str, playlist: Playlist, ctx: commands.Context, user, guild, invoker
+        self, scope: str, playlist: Playlist, ctx: commands.Context, user, guild
     ):
-        is_owner = await ctx.bot.is_owner(invoker)
-        has_perms = False
-        user_to_query = user if user else ctx.author
-        guild_to_query = guild if guild else ctx.guild
-        is_different_user = ctx.author.id != user_to_query.id
-        is_different_guild = (
-            True
-            if guild_to_query is None or ctx.guild is None
-            else ctx.guild.id != guild_to_query.id
-        )
 
+        is_owner = await ctx.bot.is_owner(ctx.author)
+        has_perms = False
+        user_to_query = user
+        guild_to_query = guild
+
+        is_different_user = ctx.author.id != user_to_query.id
+        is_different_guild = True if guild_to_query is None else ctx.guild.id != guild_to_query.id
         if is_owner:
             has_perms = True
         elif scope == PlaylistScope.USER.value:
-            if not is_different_user and playlist.author == user_to_query.id:
+            if not is_different_user and playlist.author == user_to_query.id == ctx.author.id:
                 has_perms = True
         elif scope == PlaylistScope.GUILD.value:
             if not is_different_guild:
                 dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
-                if playlist.author == user_to_query.id:
+                if guild.owner_id == ctx.author.id:
                     has_perms = True
-                elif guild.owner_id == invoker.id:
+                elif dj_enabled and await self._has_dj_role(ctx, ctx.author):
                     has_perms = True
-                elif dj_enabled and await self._has_dj_role(ctx, invoker):
+                elif await ctx.bot.is_mod(ctx.author):
                     has_perms = True
-                elif await ctx.bot.is_mod(invoker):
+                elif not dj_enabled and playlist.author == user_to_query.id == ctx.author.id:
                     has_perms = True
 
         if has_perms is False:
@@ -2026,14 +2023,21 @@ class Audio(commands.Cog):
                     ),
                 )
             else:
-                if is_different_guild:
-                    msg = _("You do not have the permissions to manage this guild's playlist.")
-                elif is_different_user:
-                    msg = _("You do not have the permissions to manage this user's playlist.")
+                if scope == PlaylistScope.GUILD.value and not is_different_user:
+                    msg = _(
+                        "You do not have the permissions to manage {guild}'s playlist."
+                    ).format(guild=guild_to_query)
+                elif (
+                    scope in [PlaylistScope.GUILD.value, PlaylistScope.USER.value]
+                    and is_different_user
+                ):
+                    msg = _("You do not have the permissions to manage {user}'s playlist.").format(
+                        user=user_to_query
+                    )
                 else:
                     msg = _(
                         "You do not have the permissions to manage "
-                        "playlists in the {} scope.".format(humanize_scope(scope))
+                        "playlists in the {scope} scope.".format(scope=humanize_scope(scope))
                     )
 
                 await self._embed_msg(ctx, msg)
@@ -2118,32 +2122,37 @@ class Audio(commands.Cog):
                 if match_count > 10:
                     raise TooManyMatches(
                         f"{match_count} playlist match {arg} "
-                        f"Please try to be more specific or you the playlist id."
+                        f"Please try to be more specific or use the playlist id."
                     )
 
-            # TODO : Convert this section to a new paged reaction menu
+            # TODO : Convert this section to a new paged reaction menu when Toby Menus are Merged
             pos_len = 3
+
             # pid_len = 1 or max(*[len(str(i[0])) for i in correct_scope_matches], 3) + 1
             # pnamelen = 1 or max(*[len(str(i[1])) for i in correct_scope_matches], 5) + 1
             # ptracks_len = 1 or max(*[len(str(i[2])) for i in correct_scope_matches], 6) + 1
-
-            playlists = f"{'#':{pos_len}}\n"
             # playlists = f"{'#':{pos_len}} {'ID':{pid_len}} {'Tracks':{ptracks_len}} {'Name':{pnamelen}} {'Author':2}\n"
             # playlists = f"{'#':{pos_len}} {'ID':{pid_len}} {'Tracks':{ptracks_len}} {'Author':2}\n"
+
+            playlists = f"{'#':{pos_len}}\n"
+
             for number, (pid, pname, ptracks, pauthor) in enumerate(correct_scope_matches, 1):
                 author = self.bot.get_user(pauthor) or "Unknown"
                 line = (
-                    f"{number}"
+                    f"{number}."
                     f"    <{pname}>\n"
-                    f" - ID: {pid}\n"
-                    f" - Tracks: {ptracks}\n"
+                    f" - ID: < {pid} >\n"
+                    f" - Tracks: <{ptracks}>\n"
                     f" - Author: < {author} >\n\n"
                 )
                 playlists += line
 
-            msg = await context.send(
-                f"Multiple playlists found, which one would you like?\n{box(playlists, lang='md')}"
+            embed = discord.Embed(
+                title="Multiple playlists found, which one would you like?",
+                description=box(playlists, lang="md"),
+                colour=await context.embed_colour(),
             )
+            msg = await context.send(embed=embed)
             avaliable_emojis = ReactionPredicate.NUMBER_EMOJIS[1:]
             avaliable_emojis.append("🔟")
             emojis = avaliable_emojis[: len(correct_scope_matches)]
@@ -2183,7 +2192,7 @@ class Audio(commands.Cog):
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
-        query: LazyGreedyConverter,  # FIXME: Playlist link failed
+        query: LazyGreedyConverter,
         *,
         scope_data: ScopeParser = None,
     ):
@@ -2222,12 +2231,11 @@ class Audio(commands.Cog):
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
         scope, author, guild = scope_data
-        print(query)  # TODO: Remove me
         if not await self._playlist_check(ctx):
             return
         try:
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
-                ctx, playlist_matches, scope, author, author
+                ctx, playlist_matches, scope, author, guild
             )
         except TooManyMatches as e:
             return await self._embed_msg(ctx, str(e))
@@ -2250,7 +2258,7 @@ class Audio(commands.Cog):
                 ctx, _("You need to specify the Guild ID for the guild to lookup.")
             )
 
-        if not await self.can_manage_playlist(scope, playlist, ctx, author, guild, ctx.author):
+        if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
             return
         player = lavalink.get_player(ctx.guild.id)
         to_append = await self._playlist_tracks(ctx, player, query)
@@ -2352,9 +2360,7 @@ class Audio(commands.Cog):
             )
 
         temp_playlist = FakePlaylist(to_author.id)
-        if not await self.can_manage_playlist(
-            to_scope, temp_playlist, ctx, to_author, to_guild, ctx.author
-        ):
+        if not await self.can_manage_playlist(to_scope, temp_playlist, ctx, to_author, to_guild):
             return
 
         try:
@@ -2435,9 +2441,7 @@ class Audio(commands.Cog):
 
         temp_playlist = FakePlaylist(author.id)
 
-        if not await self.can_manage_playlist(
-            scope, temp_playlist, ctx, author, guild, ctx.author
-        ):
+        if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
             return
         playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
         if playlist_name.isnumeric():
@@ -2497,7 +2501,7 @@ class Audio(commands.Cog):
 
         try:
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
-                ctx, playlist_matches, scope, author, author
+                ctx, playlist_matches, scope, author, guild
             )
         except TooManyMatches as e:
             return await self._embed_msg(ctx, str(e))
@@ -2520,7 +2524,7 @@ class Audio(commands.Cog):
                 ctx, _("You need to specify the Guild ID for the guild to lookup.")
             )
 
-        if not await self.can_manage_playlist(scope, playlist, ctx, author, guild, ctx.author):
+        if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
             return
 
         await delete_playlist(scope, playlist.id, guild or ctx.guild, author or ctx.author)
@@ -2583,7 +2587,7 @@ class Audio(commands.Cog):
 
         try:
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
-                ctx, playlist_matches, scope, author, author
+                ctx, playlist_matches, scope, author, guild
             )
         except TooManyMatches as e:
             return await self._embed_msg(ctx, str(e))
@@ -2679,7 +2683,7 @@ class Audio(commands.Cog):
 
         try:
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
-                ctx, playlist_matches, scope, author, author
+                ctx, playlist_matches, scope, author, guild
             )
         except TooManyMatches as e:
             return await self._embed_msg(ctx, str(e))
@@ -2879,9 +2883,7 @@ class Audio(commands.Cog):
         scope, author, guild = scope_data
 
         temp_playlist = FakePlaylist(author.id)
-        if not await self.can_manage_playlist(
-            scope, temp_playlist, ctx, author, guild, ctx.author
-        ):
+        if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
             return
         playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
         if playlist_name.isnumeric():
@@ -2958,7 +2960,7 @@ class Audio(commands.Cog):
 
         try:
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
-                ctx, playlist_matches, scope, author, author
+                ctx, playlist_matches, scope, author, guild
             )
         except TooManyMatches as e:
             return await self._embed_msg(ctx, str(e))
@@ -2981,7 +2983,7 @@ class Audio(commands.Cog):
                 ctx, _("You need to specify the Guild ID for the guild to lookup.")
             )
 
-        if not await self.can_manage_playlist(scope, playlist, ctx, author, guild, ctx.author):
+        if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
             return
 
         track_list = playlist.tracks
@@ -3055,9 +3057,7 @@ class Audio(commands.Cog):
         scope, author, guild = scope_data
 
         temp_playlist = FakePlaylist(author.id)
-        if not await self.can_manage_playlist(
-            scope, temp_playlist, ctx, author, guild, ctx.author
-        ):
+        if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
             return
         playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
         if playlist_name.isnumeric():
@@ -3127,7 +3127,7 @@ class Audio(commands.Cog):
 
         try:
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
-                ctx, playlist_matches, scope, author, author
+                ctx, playlist_matches, scope, author, guild
             )
         except TooManyMatches as e:
             return await self._embed_msg(ctx, str(e))
@@ -3235,7 +3235,7 @@ class Audio(commands.Cog):
 
         try:
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
-                ctx, playlist_matches, scope, author, author
+                ctx, playlist_matches, scope, author, guild
             )
         except TooManyMatches as e:
             return await self._embed_msg(ctx, str(e))
@@ -3311,9 +3311,7 @@ class Audio(commands.Cog):
 
         scope, author, guild = scope_data
         temp_playlist = FakePlaylist(author.id)
-        if not await self.can_manage_playlist(
-            scope, temp_playlist, ctx, author, guild, ctx.author
-        ):
+        if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
             return
 
         if not await self._playlist_check(ctx):
@@ -3446,7 +3444,7 @@ class Audio(commands.Cog):
 
         try:
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
-                ctx, playlist_matches, scope, author, author
+                ctx, playlist_matches, scope, author, guild
             )
         except TooManyMatches as e:
             return await self._embed_msg(ctx, str(e))
@@ -3469,7 +3467,7 @@ class Audio(commands.Cog):
                 ctx, _("You need to specify the Guild ID for the guild to lookup.")
             )
 
-        if not await self.can_manage_playlist(scope, playlist, ctx, author, guild, ctx.author):
+        if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
             return
         old_name = playlist.name
         update = {"name": new_name}

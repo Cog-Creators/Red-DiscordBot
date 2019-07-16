@@ -175,6 +175,13 @@ def init_events(bot, cli_flags):
 
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help()
+        elif isinstance(error, commands.ArgParserFailure):
+            msg = f"`{error.user_input}` is not a valid value for `{error.cmd}`"
+            if error.custom_help_msg:
+                msg += f"\n{error.custom_help_msg}"
+            await ctx.send(msg)
+            if error.send_cmd_help:
+                await ctx.send_help()
         elif isinstance(error, commands.ConversionFailure):
             if error.args:
                 await ctx.send(error.args[0])
