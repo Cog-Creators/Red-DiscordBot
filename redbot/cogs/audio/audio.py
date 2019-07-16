@@ -2132,7 +2132,7 @@ class Audio(commands.Cog):
             playlists = f"{'#':{pos_len}} {'ID':{pid_len}} {'Tracks':{ptracks_len}} {'Author':2}\n"
             for number, (pid, pname, ptracks, pauthor) in enumerate(correct_scope_matches, 1):
                 author = self.bot.get_user(pauthor) or "Unknown"
-                line =  (
+                line = (
                     f"{f'{number}.': <{pos_len}} "
                     f"{f'<{pid}>': <{pid_len}} "
                     f"{f'< {ptracks} >': <{ptracks_len}} "
