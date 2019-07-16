@@ -12,7 +12,7 @@ from .playlists import PlaylistScope, standardize_scope, _pass_config_to_playlis
 _ = Translator("Audio", __file__)
 
 __all__ = [
-    "ScopeConverter",
+    "ComplexScopeParser",
     "PlaylistConverter",
     "ScopeParser",
     "LazyGreedyConverter",
@@ -26,22 +26,6 @@ def _pass_config_to_dependencies(config: Config):
     if _config is None:
         _config = config
     _pass_config_to_playlist(config)
-
-
-class ScopeConverter(commands.Converter):
-    async def convert(self, ctx: commands.Context, arg: str) -> str:
-        scope = arg.upper()
-        valid_scopes = PlaylistScope.list() + [
-            "GLOBAL",
-            "GUILD",
-            "USER",
-            "SERVER",
-            "MEMBER",
-            "BOT",
-        ]
-        if scope not in valid_scopes:
-            raise commands.BadArgument(_("{} doesn't look like a valid scope.").format(arg))
-        return standardize_scope(arg)
 
 
 class PlaylistConverter(commands.Converter):
@@ -121,6 +105,7 @@ class ScopeParser(commands.Converter):
             valid_scopes = PlaylistScope.list() + [
                 "GLOBAL",
                 "GUILD",
+                "AUTHOR",
                 "USER",
                 "SERVER",
                 "MEMBER",
@@ -167,6 +152,162 @@ class ScopeParser(commands.Converter):
                 target_user = await ctx.bot.fetch_user(user_raw) or ctx.author
 
         return target_scope, target_user, target_guild
+
+
+class ComplexScopeParser(commands.Converter):
+    async def convert(
+        self, ctx: commands.Context, argument: str
+    ) -> Tuple[
+        str, discord.User, Optional[discord.Guild], str, discord.User, Optional[discord.Guild]
+    ]:
+
+        target_scope: str = PlaylistScope.GUILD.value
+        target_user: Optional[Union[discord.Member, discord.User]] = ctx.author
+        target_guild: Optional[discord.Guild] = ctx.guild
+
+        source_scope: str = PlaylistScope.GUILD.value
+        source_user: Optional[Union[discord.Member, discord.User]] = ctx.author
+        source_guild: Optional[discord.Guild] = ctx.guild
+
+        argument = argument.replace("—", "--")
+
+        command, *arguments = argument.split(" -- ")
+        if arguments:
+            argument = " -- ".join(arguments)
+        else:
+            command = None
+
+        parser = NoExitParser(description="Playlist Scope Parsing", add_help=False)
+
+        parser.add_argument("--to-scope", nargs="*", dest="to_scope", default=[])
+        parser.add_argument("--to-guild", nargs="*", dest="to_guild", default=[])
+        parser.add_argument("--to-server", nargs="*", dest="to_server", default=[])
+        parser.add_argument("--to-author", nargs="*", dest="to_author", default=[])
+        parser.add_argument("--to-user", nargs="*", dest="to_user", default=[])
+        parser.add_argument("--to-member", nargs="*", dest="to_member", default=[])
+
+        parser.add_argument("--from-scope", nargs="*", dest="from_scope", default=[])
+        parser.add_argument("--from-guild", nargs="*", dest="from_guild", default=[])
+        parser.add_argument("--from-server", nargs="*", dest="from_server", default=[])
+        parser.add_argument("--from-author", nargs="*", dest="from_author", default=[])
+        parser.add_argument("--from-user", nargs="*", dest="from_user", default=[])
+        parser.add_argument("--from-member", nargs="*", dest="from_member", default=[])
+
+        if not command:
+            parser.add_argument("command", nargs="*")
+
+        try:
+            vals = vars(parser.parse_args(argument.split()))
+        except Exception as exc:
+            raise commands.BadArgument() from exc
+
+        is_owner = await ctx.bot.is_owner(ctx.author)
+        valid_scopes = PlaylistScope.list() + [
+            "GLOBAL",
+            "GUILD",
+            "AUTHOR",
+            "USER",
+            "SERVER",
+            "MEMBER",
+            "BOT",
+        ]
+
+        if vals["to_scope"]:
+            to_scope_raw = " ".join(vals["to_scope"]).strip()
+            to_scope = to_scope_raw.upper().strip()
+            if to_scope not in valid_scopes:
+                raise commands.BadArgument(
+                    _("{} doesn't look like a valid scope.").format(to_scope_raw)
+                )
+            target_scope = standardize_scope(to_scope)
+
+        if vals["from_scope"]:
+            from_scope_raw = " ".join(vals["from_scope"]).strip()
+            from_scope = from_scope_raw.upper().strip()
+
+            if from_scope not in valid_scopes:
+                raise commands.BadArgument(
+                    _("{} doesn't look like a valid scope.").format(from_scope_raw)
+                )
+            source_scope = standardize_scope(from_scope)
+
+        to_guild = vals.get("to_guild", None) or vals.get("to_server", None)
+        if is_owner and to_guild:
+            target_guild = None
+            to_guild_raw = " ".join(to_guild).strip()
+            if to_guild_raw.isnumeric():
+                to_guild_raw = int(to_guild_raw)
+                target_guild = ctx.bot.get_guild(to_guild_raw)
+            if target_guild is None:
+                try:
+                    target_guild = await commands.GuildConverter.convert(ctx, to_guild_raw)
+                except commands.BadArgument:
+                    target_guild = None
+            if target_guild is None:
+                target_guild = await ctx.bot.fetch_guild(to_guild_raw) or ctx.guild
+
+        from_guild = vals.get("from_guild", None) or vals.get("from_server", None)
+        if is_owner and from_guild:
+            source_guild = None
+            from_guild_raw = " ".join(from_guild).strip()
+            if from_guild_raw.isnumeric():
+                from_guild_raw = int(from_guild_raw)
+                source_guild = ctx.bot.get_guild(from_guild_raw)
+            if source_guild is None:
+                try:
+                    source_guild = await commands.GuildConverter.convert(ctx, from_guild_raw)
+                except commands.BadArgument:
+                    source_guild = None
+            if source_guild is None:
+                source_guild = await ctx.bot.fetch_guild(from_guild_raw) or ctx.guild
+
+        to_author = (
+            vals.get("to_author", None) or vals.get("to_user", None) or vals.get("to_member", None)
+        )
+        if to_author:
+            target_user = None
+            to_user_raw = " ".join(to_author).strip()
+            if to_user_raw.isnumeric():
+                to_user_raw = int(to_user_raw)
+                target_user = ctx.bot.get_user(to_user_raw)
+            if target_user is None:
+                member_converter = commands.MemberConverter()
+                user_converter = commands.UserConverter()
+                try:
+                    target_user = await member_converter.convert(ctx, to_user_raw)
+                except commands.BadArgument:
+                    try:
+                        target_user = await user_converter.convert(ctx, to_user_raw)
+                    except commands.BadArgument:
+                        target_user = None
+            if target_user is None:
+                target_user = await ctx.bot.fetch_user(to_user_raw) or ctx.author
+
+        from_author = (
+            vals.get("from_author", None)
+            or vals.get("from_user", None)
+            or vals.get("from_member", None)
+        )
+        if from_author:
+            source_user = None
+            from_user_raw = " ".join(from_author).strip()
+            if from_user_raw.isnumeric():
+                from_user_raw = int(from_user_raw)
+                source_user = ctx.bot.get_user(from_user_raw)
+            if source_user is None:
+                member_converter = commands.MemberConverter()
+                user_converter = commands.UserConverter()
+                try:
+                    source_user = await member_converter.convert(ctx, from_user_raw)
+                except commands.BadArgument:
+                    try:
+                        source_user = await user_converter.convert(ctx, from_user_raw)
+                    except commands.BadArgument:
+                        source_user = None
+            if source_user is None:
+                source_user = await ctx.bot.fetch_user(from_user_raw) or ctx.author
+
+        return source_scope, source_user, source_guild, target_scope, target_user, target_guild
 
 
 class LazyGreedyConverter(commands.Converter):

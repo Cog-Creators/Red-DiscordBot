@@ -18,7 +18,6 @@ import time
 from typing import Optional, cast, Tuple, Union
 import redbot.core
 from redbot.core import Config, commands, checks, bank
-from redbot.core.commands import GuildConverter
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import bold, box, pagify
@@ -46,8 +45,8 @@ from .playlists import (
     FakePlaylist,
 )
 from .converters import (
-    ScopeConverter,
     PlaylistConverter,
+    ComplexScopeParser,
     ScopeParser,
     get_lazy_converter,
     _pass_config_to_dependencies,
@@ -2284,38 +2283,61 @@ class Audio(commands.Cog):
             ),
         )
 
-    @playlist.command(
-        name="copy",
-        usage=(
-            "<id_or_name> "
-            "<from_scope> <to_scope> "
-            "[from_author=Self] [from_guild=current_Guild]"
-            "[to_author=Self] [to_guild=current_Guild]"  # TODO: Fix the documentation
-        ),
-    )
+    @playlist.command(name="copy", usage="<id_or_name> [args]")
     async def _playlist_copy(
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
-        from_scope: ScopeConverter,
-        to_scope: ScopeConverter,
-        from_author: Optional[Union[discord.Member, discord.User]] = None,
-        from_guild: Optional[GuildConverter] = None,
-        to_author: Optional[Union[discord.Member, discord.User]] = None,
-        to_guild: Optional[GuildConverter] = None,
+        *,
+        scope_data: ComplexScopeParser = None,
     ):
 
-        """Copy a playlist from one scope to another."""
+        """Copy a playlist from one scope to another.
 
-        if await self.bot.is_owner(ctx.author):
-            to_guild = to_guild or ctx.guild
-            from_guild = from_guild or ctx.guild
-        else:
-            to_guild = ctx.guild
-            from_guild = ctx.guild
+        ***Usage**:*:
+        ​ ​ ​ ​ [p]playlist copy playlist_name_OR_id args
 
-        from_author = from_author or ctx.author
-        to_author = to_author or ctx.author
+        **Args**:
+        ​ ​ ​ ​ The following are all optional:
+        ​ ​ ​ ​ ​ ​ ​ ​ --from-scope <scope>
+        ​ ​ ​ ​ ​ ​ ​ ​ --from-author [user]
+        ​ ​ ​ ​ ​ ​ ​ ​ --from-guild [guild] **Only the bot owner can use this**
+
+        ​ ​ ​ ​ ​ ​ ​ ​ --to-scope <scope>
+        ​ ​ ​ ​ ​ ​ ​ ​ --to-author [user]
+        ​ ​ ​ ​ ​ ​ ​ ​ --to-guild [guild] **Only the bot owner can use this**
+
+        Scope is one of the following:
+        ​ ​ ​ ​ Global
+        ​ ​ ​ ​ Guild
+        ​ ​ ​ ​ User
+
+        Author can be one of the following:
+        ​ ​ ​ ​ User ID
+        ​ ​ ​ ​ User Mention
+        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+
+        Guild can be one of the following:
+        ​ ​ ​ ​ Guild ID
+        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+
+        Example use:
+        ​ ​ ​ ​ [p]playlist copy MyGuildPlaylist --from-scope Guild --to-scope Global
+        ​ ​ ​ ​ [p]playlist copy MyGlobalPlaylist --from-scope Global --to-Author Draper#6666 --to-scope User
+        ​ ​ ​ ​ [p]playlist copy MyPersonalPlaylist --from-scope user --to-Author Draper#6666 --to-scope Guild --to-guild Red - Discord Bot
+
+        """
+
+        if scope_data is None:
+            scope_data = [
+                PlaylistScope.GUILD.value,
+                ctx.author,
+                ctx.guild,
+                PlaylistScope.GUILD.value,
+                ctx.author,
+                ctx.guild,
+            ]
+        from_scope, from_author, from_guild, to_scope, to_author, to_guild = scope_data
 
         try:
             playlist_id, playlist_arg = await self._get_correct_playlist_id(

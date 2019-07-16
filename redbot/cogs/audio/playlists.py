@@ -48,7 +48,7 @@ def _pass_config_to_playlist(config: Config):
 
 def standardize_scope(scope) -> str:
     scope = scope.upper()
-    valid_scopes = ["GLOBAL", "GUILD", "SERVER", "USER", "MEMBER", "BOT"]
+    valid_scopes = ["GLOBAL", "GUILD", "AUTHOR", "USER", "SERVER", "MEMBER", "BOT"]
 
     if scope in PlaylistScope.list():
         return scope
@@ -58,11 +58,11 @@ def standardize_scope(scope) -> str:
             f" Scope needs to be one of the following: {humanize_list(valid_scopes)}"
         )
 
-    if scope in ["GLOBAL"]:
+    if scope in ["GLOBAL", "BOT"]:
         scope = PlaylistScope.GLOBAL.value
     elif scope in ["GUILD", "SERVER"]:
         scope = PlaylistScope.GUILD.value
-    elif scope in ["USER", "MEMBER"]:
+    elif scope in ["USER", "MEMBER", "AUTHOR"]:
         scope = PlaylistScope.USER.value
 
     return scope
