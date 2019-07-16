@@ -11,8 +11,9 @@
   * [4.4 Make](#44-make)
   * [4.5 Keeping your dependencies up to date](#45-keeping-your-dependencies-up-to-date)
   * [4.6 To contribute changes](#46-to-contribute-changes)
-  * [4.7 How To Report A Bug](#47-how-to-report-a-bug)
-  * [4.8 How To Suggest A Feature Or Enhancement](#48-how-to-suggest-a-feature-or-enhancement)
+  * [4.7 Using towncrier](#47-using-towncrier)
+  * [4.8 How To Report A Bug](#47-how-to-report-a-bug)
+  * [4.9 How To Suggest A Feature Or Enhancement](#48-how-to-suggest-a-feature-or-enhancement)
 * [5. Code Review Process](#5-code-review-process)
   * [5.1 Issues](#51-issues)
   * [5.2 Pull Requests](#52-pull-requests)
@@ -118,13 +119,12 @@ Whenever you pull from upstream (V3/develop on the main repository) and you noti
 
 ### 4.7 Using towncrier
 
-Red uses towncrier to create changelogs
+Red uses towncrier to create changelogs.
 
 To create a towncrier entry for your PR, create a file in `changelog.d` for it. If the changes are for a specific cog, place the file in the related subdirectory.
 
-The filename should be of the format `issuenumber.changetype.rst`
-
-You can create multiple entries if your PR should show up in multiple categories.
+The filename should be of the format `issuenumber.changetype.(.count).rst`, where `(.count)` is an optional
+part of the filename should multiple entries for the same issue number and type be neccessary.
 
 Valid changetypes are:
 
@@ -135,7 +135,7 @@ Valid changetypes are:
   * bugfix : Bugfixes
   * docs : documentation improvements and additions
   * removal : removal of something
-  * misc : any changes which don't have a user facing change, and don't belong in the changelog for users.
+  * misc : any changes which don't have a user facing change, and don't belong in the changelog for users
 
 The contents of the file should be a short, human readable description of the impact of the changes made,
 not the technical details of the change.
