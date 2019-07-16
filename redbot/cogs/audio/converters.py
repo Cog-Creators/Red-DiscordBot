@@ -51,7 +51,7 @@ class PlaylistConverter(commands.Converter):
             if arg == pid or arg.lower() in pdata.get("name").lower()
         ]
         if not user_matches and not guild_matches and not global_matches:
-            raise commands.BadArgument(_("Could not match '{}' to a playlist").format(arg))
+            raise commands.BadArgument(_("Could not match '{}' to a playlist.").format(arg))
 
         return {
             PlaylistScope.GLOBAL.value: global_matches,
@@ -82,7 +82,7 @@ class ScopeParser(commands.Converter):
         else:
             command = None
 
-        parser = NoExitParser(description="Playlist Scope Parsing", add_help=False)
+        parser = NoExitParser(description="Playlist Scope Parsing.", add_help=False)
 
         parser.add_argument("--scope", nargs="*", dest="scope", default=[])
         parser.add_argument("--guild", nargs="*", dest="guild", default=[])
@@ -177,7 +177,7 @@ class ComplexScopeParser(commands.Converter):
         else:
             command = None
 
-        parser = NoExitParser(description="Playlist Scope Parsing", add_help=False)
+        parser = NoExitParser(description="Playlist Scope Parsing.", add_help=False)
 
         parser.add_argument("--to-scope", nargs="*", dest="to_scope", default=[])
         parser.add_argument("--to-guild", nargs="*", dest="to_guild", default=[])
@@ -334,7 +334,7 @@ class LazyGreedyConverter(commands.Converter):
 
 def get_lazy_converter(splitter: str) -> type:
     """
-    Returns a typechecking safe `LazyGreedyConverter` suitable for use with discord.py
+    Returns a typechecking safe `LazyGreedyConverter` suitable for use with discord.py.
     """
 
     class PartialMeta(type(LazyGreedyConverter)):

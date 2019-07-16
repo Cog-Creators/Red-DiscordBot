@@ -15,7 +15,7 @@ import os
 import random
 import re
 import time
-from typing import Optional, cast, Tuple, Union
+from typing import Optional, cast, Tuple
 import redbot.core
 from redbot.core import Config, commands, checks, bank
 from redbot.core.data_manager import cog_data_path
@@ -2123,20 +2123,20 @@ class Audio(commands.Cog):
 
             # TODO : Convert this section to a new paged reaction menu
             pos_len = 3
-            pid_len = 1 or max(*[len(str(i[0])) for i in correct_scope_matches], 3) + 1
-            pnamelen = 1 or max(*[len(str(i[1])) for i in correct_scope_matches], 5) + 1
-            ptracks_len = 1 or max(*[len(str(i[2])) for i in correct_scope_matches], 6) + 1
+            # pid_len = 1 or max(*[len(str(i[0])) for i in correct_scope_matches], 3) + 1
+            # pnamelen = 1 or max(*[len(str(i[1])) for i in correct_scope_matches], 5) + 1
+            # ptracks_len = 1 or max(*[len(str(i[2])) for i in correct_scope_matches], 6) + 1
 
-            playlists = f"{'#':{pos_len}}"
+            playlists = f"{'#':{pos_len}}\n"
             # playlists = f"{'#':{pos_len}} {'ID':{pid_len}} {'Tracks':{ptracks_len}} {'Name':{pnamelen}} {'Author':2}\n"
             # playlists = f"{'#':{pos_len}} {'ID':{pid_len}} {'Tracks':{ptracks_len}} {'Author':2}\n"
             for number, (pid, pname, ptracks, pauthor) in enumerate(correct_scope_matches, 1):
                 author = self.bot.get_user(pauthor) or "Unknown"
                 line = (
-                    f"{f'{number}.': <{pos_len}}"
-                    f"   <{pname}>\n"
-                    f" - ID: {f'<{pid}>': <{pid_len}}\n"
-                    f" - Tracks: {f'< {ptracks} >': <{ptracks_len}}\n"
+                    f"{number}"
+                    f"    <{pname}>\n"
+                    f" - ID: {pid}\n"
+                    f" - Tracks: {ptracks}\n"
                     f" - Author: < {author} >\n\n"
                 )
                 playlists += line
@@ -2165,14 +2165,14 @@ class Audio(commands.Cog):
 
         Scope info:
         ​ ​ ​ ​ **Global**:
-        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users for this bot.
-        ​ ​ ​ ​ ​ ​ ​ ​ Only editable by Bot owner.
+        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users of this bot.
+        ​ ​ ​ ​ ​ ​ ​ ​ Only editable by bot owner.
         ​ ​ ​ ​ **Guild**:
         ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users in this guild.
         ​ ​ ​ ​ ​ ​ ​ ​ Editable By Bot Owner, Guild Owner, Guild Admins,
         ​ ​ ​ ​ ​ ​ ​ ​ Guild Mods, DJ Role and playlist creator.
         ​ ​ ​ ​ **User**:
-        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users in this bot, if --author is passed.
+        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all bot users, if --author is passed.
         ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner and creator.
 
         """
@@ -2208,11 +2208,11 @@ class Audio(commands.Cog):
         Author can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        ​ ​ ​ ​ User Name#123 
         
         Guild can be one of the following:
         ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+        ​ ​ ​ ​ Guild name 
 
         Example use:
         ​ ​ ​ ​ [p]playlist append MyGuildPlaylist Hello by Adele
@@ -2233,7 +2233,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, str(e))
         if playlist_id is None:
             return await self._embed_msg(
-                ctx, _("Could not match '{arg}' to a playlist").format(arg=playlist_arg)
+                ctx, _("Could not match '{arg}' to a playlist.").format(arg=playlist_arg)
             )
 
         try:
@@ -2315,11 +2315,11 @@ class Audio(commands.Cog):
         Author can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        ​ ​ ​ ​ User Name#123 
 
         Guild can be one of the following:
         ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+        ​ ​ ​ ​ Guild name 
 
         Example use:
         ​ ​ ​ ​ [p]playlist copy MyGuildPlaylist --from-scope Guild --to-scope Global
@@ -2348,7 +2348,7 @@ class Audio(commands.Cog):
 
         if playlist_id is None:
             return await self._embed_msg(
-                ctx, _("Could not match '{arg}' to a playlist").format(arg=playlist_arg)
+                ctx, _("Could not match '{arg}' to a playlist.").format(arg=playlist_arg)
             )
 
         temp_playlist = FakePlaylist(to_author.id)
@@ -2418,11 +2418,11 @@ class Audio(commands.Cog):
         Author can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        ​ ​ ​ ​ User Name#123 
         
         Guild can be one of the following:
         ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+        ​ ​ ​ ​ Guild name 
 
         Example use:
         ​ ​ ​ ​ [p]playlist create MyGuildPlaylist
@@ -2440,7 +2440,7 @@ class Audio(commands.Cog):
         ):
             return
         playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
-        if playlist_name.isnumberic():
+        if playlist_name.isnumeric():
             return await self._embed_msg(
                 ctx,
                 _(
@@ -2480,11 +2480,11 @@ class Audio(commands.Cog):
         Author can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        ​ ​ ​ ​ User Name#123 
         
         Guild can be one of the following:
         ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+        ​ ​ ​ ​ Guild name 
 
         Example use:
         ​ ​ ​ ​ [p]playlist delete MyGuildPlaylist
@@ -2503,7 +2503,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, str(e))
         if playlist_id is None:
             return await self._embed_msg(
-                ctx, _("Could not match '{arg}' to a playlist").format(arg=playlist_arg)
+                ctx, _("Could not match '{arg}' to a playlist.").format(arg=playlist_arg)
             )
 
         try:
@@ -2563,11 +2563,11 @@ class Audio(commands.Cog):
         Author can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        ​ ​ ​ ​ User Name#123 
         
         Guild can be one of the following:
         ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+        ​ ​ ​ ​ Guild name 
 
         Example use:
         ​ ​ ​ ​ [p]playlist download MyGuildPlaylist True
@@ -2589,7 +2589,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, str(e))
         if playlist_id is None:
             return await self._embed_msg(
-                ctx, _("Could not match '{arg}' to a playlist").format(arg=playlist_arg)
+                ctx, _("Could not match '{arg}' to a playlist.").format(arg=playlist_arg)
             )
 
         try:
@@ -2662,11 +2662,11 @@ class Audio(commands.Cog):
         Author can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        ​ ​ ​ ​ User Name#123 
         
         Guild can be one of the following:
         ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+        ​ ​ ​ ​ Guild name 
 
         Example use:
         ​ ​ ​ ​ [p]playlist info MyGuildPlaylist
@@ -2685,7 +2685,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, str(e))
         if playlist_id is None:
             return await self._embed_msg(
-                ctx, _("Could not match '{arg}' to a playlist").format(arg=playlist_arg)
+                ctx, _("Could not match '{arg}' to a playlist.").format(arg=playlist_arg)
             )
 
         try:
@@ -2759,11 +2759,11 @@ class Audio(commands.Cog):
         Author can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        ​ ​ ​ ​ User Name#123 
         
         Guild can be one of the following:
         ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+        ​ ​ ​ ​ Guild name 
 
         Example use:
         ​ ​ ​ ​ [p]playlist list
@@ -2815,7 +2815,8 @@ class Audio(commands.Cog):
             playlist_embeds.append(embed)
         await menu(ctx, playlist_embeds, DEFAULT_CONTROLS)
 
-    async def _build_playlist_list_page(self, ctx, page_num, abc_names, scope):
+    @staticmethod
+    async def _build_playlist_list_page(ctx, page_num, abc_names, scope):
         plist_num_pages = math.ceil(len(abc_names) / 5)
         plist_idx_start = (page_num - 1) * 5
         plist_idx_end = plist_idx_start + 5
@@ -2831,7 +2832,7 @@ class Audio(commands.Cog):
             description=plist,
         )
         embed.set_footer(
-            text=_("Page {page_num}/{total_pages} | {num} playlists").format(
+            text=_("Page {page_num}/{total_pages} | {num} playlists.").format(
                 page_num=page_num, total_pages=plist_num_pages, num=len(abc_names)
             )
         )
@@ -2861,11 +2862,11 @@ class Audio(commands.Cog):
         Author can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        ​ ​ ​ ​ User Name#123 
         
         Guild can be one of the following:
         ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+        ​ ​ ​ ​ Guild name 
 
         Example use:
         ​ ​ ​ ​ [p]playlist queue MyGuildPlaylist
@@ -2883,7 +2884,7 @@ class Audio(commands.Cog):
         ):
             return
         playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
-        if playlist_name.isnumberic():
+        if playlist_name.isnumeric():
             return await self._embed_msg(
                 ctx,
                 _(
@@ -2940,11 +2941,11 @@ class Audio(commands.Cog):
         Author can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        ​ ​ ​ ​ User Name#123 
         
         Guild can be one of the following:
         ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+        ​ ​ ​ ​ Guild name 
 
         Example use:
         ​ ​ ​ ​ [p]playlist remove MyGuildPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU
@@ -2963,7 +2964,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, str(e))
         if playlist_id is None:
             return await self._embed_msg(
-                ctx, _("Could not match '{arg}' to a playlist").format(arg=playlist_arg)
+                ctx, _("Could not match '{arg}' to a playlist.").format(arg=playlist_arg)
             )
 
         try:
@@ -3038,11 +3039,11 @@ class Audio(commands.Cog):
         Author can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        ​ ​ ​ ​ User Name#123 
         
         Guild can be one of the following:
         ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+        ​ ​ ​ ​ Guild name 
 
         Example use:
         ​ ​ ​ ​ [p]playlist save MyGuildPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM
@@ -3059,7 +3060,7 @@ class Audio(commands.Cog):
         ):
             return
         playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
-        if playlist_name.isnumberic():
+        if playlist_name.isnumeric():
             return await self._embed_msg(
                 ctx,
                 _(
@@ -3108,11 +3109,11 @@ class Audio(commands.Cog):
         Author can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        ​ ​ ​ ​ User Name#123 
         
         Guild can be one of the following:
         ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+        ​ ​ ​ ​ Guild name 
 
         Example use:
         ​ ​ ​ ​ [p]playlist start MyGuildPlaylist
@@ -3215,11 +3216,11 @@ class Audio(commands.Cog):
         Author can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        ​ ​ ​ ​ User Name#123 
         
         Guild can be one of the following:
         ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+        ​ ​ ​ ​ Guild name 
 
         Example use:
         ​ ​ ​ ​ [p]playlist update MyGuildPlaylist
@@ -3241,7 +3242,7 @@ class Audio(commands.Cog):
 
         if playlist_id is None:
             return await self._embed_msg(
-                ctx, _("Could not match '{arg}' to a playlist").format(arg=playlist_arg)
+                ctx, _("Could not match '{arg}' to a playlist.").format(arg=playlist_arg)
             )
 
         if not await self._playlist_check(ctx):
@@ -3294,11 +3295,11 @@ class Audio(commands.Cog):
         Author can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        ​ ​ ​ ​ User Name#123 
         
         Guild can be one of the following:
         ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+        ​ ​ ​ ​ Guild name 
 
         Example use:
         ​ ​ ​ ​ [p]playlist upload
@@ -3418,11 +3419,11 @@ class Audio(commands.Cog):
         Author can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123 (In double quotes if there are spaces)
+        ​ ​ ​ ​ User Name#123 
         
         Guild can be one of the following:
         ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Guild name (In double quotes if there are spaces)
+        ​ ​ ​ ​ Guild name 
 
         Example use:
         ​ ​ ​ ​ [p]playlist update MyGuildPlaylist RenamedGuildPlaylist
@@ -3435,7 +3436,7 @@ class Audio(commands.Cog):
         scope, author, guild = scope_data
 
         new_name = new_name.split(" ")[0].strip('"')[:32]
-        if new_name.isnumberic():
+        if new_name.isnumeric():
             return await self._embed_msg(
                 ctx,
                 _(
@@ -3451,7 +3452,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, str(e))
         if playlist_id is None:
             return await self._embed_msg(
-                ctx, _("Could not match '{arg}' to a playlist").format(arg=playlist_arg)
+                ctx, _("Could not match '{arg}' to a playlist.").format(arg=playlist_arg)
             )
 
         try:
@@ -3478,8 +3479,9 @@ class Audio(commands.Cog):
         )
         await ctx.maybe_send_embed(msg)
 
+    @staticmethod
     async def _load_v3_playlist(
-        self, ctx, scope, uploaded_playlist_name, uploaded_playlist_url, track_list, author, guild
+        ctx, scope, uploaded_playlist_name, uploaded_playlist_url, track_list, author, guild
     ):
         embed1 = discord.Embed(
             colour=await ctx.embed_colour(), title=_("Please wait, adding tracks...")
@@ -3541,16 +3543,14 @@ class Audio(commands.Cog):
             track_count += 1
             try:
                 track = await player.get_tracks(song_url)
-            except RuntimeError:
-                pass
-            except KeyError:
-                pass
+            except Exception:
+                continue
             try:
                 track_obj = self._track_creator(player, other_track=track[0])
                 track_list.append(track_obj)
                 successfull_count += 1
-            except IndexError:
-                pass
+            except Exception:
+                continue
             if track_count % 5 == 0:
                 embed2 = discord.Embed(
                     colour=await ctx.embed_colour(),

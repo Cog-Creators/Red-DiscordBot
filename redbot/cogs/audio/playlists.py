@@ -85,19 +85,19 @@ def _prepare_config_scope(
 
     if scope == PlaylistScope.GLOBAL.value:
         config_scope = [PlaylistScope.GLOBAL.value]
-    elif scope == PlaylistScope.GUILD.value:
-        if guild is None:
-            raise MissingGuild("Invalid guild for guild scope")
-        config_scope = [PlaylistScope.GUILD.value, str(guild.id)]
     elif scope == PlaylistScope.USER.value:
         if author is None:
-            raise MissingAuthor("Invalid author for user scope")
+            raise MissingAuthor("Invalid author for user scope.")
         config_scope = [PlaylistScope.USER.value, str(author)]
+    else:
+        if guild is None:
+            raise MissingGuild("Invalid guild for guild scope.")
+        config_scope = [PlaylistScope.GUILD.value, str(guild.id)]
     return config_scope
 
 
 class Playlist:
-    """A single playlist"""
+    """A single playlist."""
 
     def __init__(
         self,
@@ -129,7 +129,7 @@ class Playlist:
             The attributes to change.
         """
         if "id" in data:  # Disallow ID editing
-            raise NotAllowed("Playlist ID cannot be edited")
+            raise NotAllowed("Playlist ID cannot be edited.")
 
         for item in list(data.keys()):
             setattr(self, item, data[item])
