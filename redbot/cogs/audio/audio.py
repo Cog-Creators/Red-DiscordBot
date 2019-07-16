@@ -1986,27 +1986,27 @@ class Audio(commands.Cog):
             pass
         return track_list
 
-    async def can_manage_playlist(
+    async def can_manage_playlist(  # TODO:Jack managed to Edit a playlist that belong to another user
         self, scope: str, playlist: Playlist, ctx: commands.Context, user, guild, invoker
     ):
         is_owner = await ctx.bot.is_owner(invoker)
         has_perms = False
         user_to_query = user if user else ctx.author
         guild_to_query = guild if guild else ctx.guild
-        _is_different_user = ctx.author.id != user_to_query.id
-        _is_different_guild = (
+        is_different_user = ctx.author.id != user_to_query.id
+        is_different_guild = (
             True
             if guild_to_query is None or ctx.guild is None
-            else guild_to_query.id != ctx.guild.id
+            else ctx.guild.id != guild_to_query.id
         )
 
         if is_owner:
             has_perms = True
         elif scope == PlaylistScope.USER.value:
-            if not _is_different_user and playlist.author == user_to_query.id:
+            if not is_different_user and playlist.author == user_to_query.id:
                 has_perms = True
         elif scope == PlaylistScope.GUILD.value:
-            if not _is_different_guild:
+            if not is_different_guild:
                 dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
                 if playlist.author == user_to_query.id:
                     has_perms = True
@@ -2027,10 +2027,10 @@ class Audio(commands.Cog):
                     ),
                 )
             else:
-                if _is_different_guild:
-                    msg = _("You do not have the permissions to manage this Guild's playlist")
-                elif _is_different_user:
-                    msg = _("You do not have the permissions to manage this user's playlist")
+                if is_different_guild:
+                    msg = _("You do not have the permissions to manage this guild's playlist.")
+                elif is_different_user:
+                    msg = _("You do not have the permissions to manage this user's playlist.")
                 else:
                     msg = _(
                         "You do not have the permissions to manage "
@@ -2124,20 +2124,21 @@ class Audio(commands.Cog):
 
             # TODO : Convert this section to a new paged reaction menu
             pos_len = 3
-            pid_len = max(*[len(str(i[0])) for i in correct_scope_matches], 3) + 3
-            pnamelen = max(*[len(str(i[1])) for i in correct_scope_matches], 5) + 3
-            ptracks_len = max(*[len(str(i[2])) for i in correct_scope_matches], 6) + 5
+            pid_len = 1 or max(*[len(str(i[0])) for i in correct_scope_matches], 3) + 1
+            pnamelen = 1 or max(*[len(str(i[1])) for i in correct_scope_matches], 5) + 1
+            ptracks_len = 1 or max(*[len(str(i[2])) for i in correct_scope_matches], 6) + 1
 
+            playlists = f"{'#':{pos_len}}"
             # playlists = f"{'#':{pos_len}} {'ID':{pid_len}} {'Tracks':{ptracks_len}} {'Name':{pnamelen}} {'Author':2}\n"
-            playlists = f"{'#':{pos_len}} {'ID':{pid_len}} {'Tracks':{ptracks_len}} {'Author':2}\n"
+            # playlists = f"{'#':{pos_len}} {'ID':{pid_len}} {'Tracks':{ptracks_len}} {'Author':2}\n"
             for number, (pid, pname, ptracks, pauthor) in enumerate(correct_scope_matches, 1):
                 author = self.bot.get_user(pauthor) or "Unknown"
                 line = (
-                    f"{f'{number}.': <{pos_len}} "
-                    f"{f'<{pid}>': <{pid_len}} "
-                    f"{f'< {ptracks} >': <{ptracks_len}} "
-                    # f"{f'<{pname}>': <{pnamelen}} "
-                    f"< {author} >\n"
+                    f"{f'{number}.': <{pos_len}}"
+                    f"   <{pname}>\n"
+                    f" - ID: {f'<{pid}>': <{pid_len}}\n"
+                    f" - Tracks: {f'< {ptracks} >': <{ptracks_len}}\n"
+                    f" - Author: < {author} >\n\n"
                 )
                 playlists += line
 
@@ -2416,7 +2417,14 @@ class Audio(commands.Cog):
             scope, temp_playlist, ctx, author, guild, ctx.author
         ):
             return
-        playlist_name = playlist_name.split(" ")[0].strip('"')
+        playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
+        if playlist_name.isnumberic():
+            return await self._embed_msg(
+                ctx,
+                _(
+                    "Playlist names must be a single word (up to 32 characters) and not numbers only."
+                ),
+            )
         playlist = await create_playlist(ctx, scope, playlist_name, None, None, author, guild)
         return await self._embed_msg(
             ctx,
@@ -2852,6 +2860,14 @@ class Audio(commands.Cog):
             scope, temp_playlist, ctx, author, guild, ctx.author
         ):
             return
+        playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
+        if playlist_name.isnumberic():
+            return await self._embed_msg(
+                ctx,
+                _(
+                    "Playlist names must be a single word (up to 32 characters) and not numbers only."
+                ),
+            )
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
 
@@ -2865,7 +2881,7 @@ class Audio(commands.Cog):
             queue_idx = player.queue.index(track)
             track_obj = self._track_creator(player, queue_idx)
             tracklist.append(track_obj)
-        playlist_name = playlist_name.split(" ")[0].strip('"')
+
         playlist = await create_playlist(ctx, scope, playlist_name, None, tracklist, author, guild)
         await self._embed_msg(
             ctx,
@@ -3020,10 +3036,17 @@ class Audio(commands.Cog):
             scope, temp_playlist, ctx, author, guild, ctx.author
         ):
             return
+        playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
+        if playlist_name.isnumberic():
+            return await self._embed_msg(
+                ctx,
+                _(
+                    "Playlist names must be a single word (up to 32 characters) and not numbers only."
+                ),
+            )
         if not await self._playlist_check(ctx):
             return
         player = lavalink.get_player(ctx.guild.id)
-        playlist_name = playlist_name.split(" ")[0].strip('"')
         tracklist = await self._playlist_tracks(ctx, player, playlist_url)
         if tracklist is not None:
             playlist = await create_playlist(
@@ -3389,6 +3412,15 @@ class Audio(commands.Cog):
 
         scope, author, guild = scope_data
 
+        new_name = new_name.split(" ")[0].strip('"')[:32]
+        if new_name.isnumberic():
+            return await self._embed_msg(
+                ctx,
+                _(
+                    "Playlist names must be a single word (up to 32 characters) and not numbers only."
+                ),
+            )
+
         try:
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, author
@@ -3417,7 +3449,6 @@ class Audio(commands.Cog):
         if not await self.can_manage_playlist(scope, playlist, ctx, author, guild, ctx.author):
             return
         old_name = playlist.name
-        new_name = new_name.split(" ")[0].strip('"')
         update = {"name": new_name}
         await playlist.edit(update)
         msg = _("'{old}' playlist has been renamed to '{new}' ({id})").format(
