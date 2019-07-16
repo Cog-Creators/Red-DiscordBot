@@ -175,13 +175,19 @@ class LazyGreedyConverter(commands.Converter):
 
     async def convert(self, ctx: commands.Context, argument: str) -> str:
         argument = argument
-        full_message = ctx.message.content.rsplit(f" {argument} ")
+        full_message = ctx.message.content.partition(f" {argument} ")
         if len(full_message) == 1:
-            return argument
-        greedy_output = (" " + " ".join(full_message[1:]).replace("—", "--")).split(
-            f" {self.splitter_Value}", 1
+            full_message = (
+                (argument if argument not in full_message else "") + " " + full_message[0]
+            )
+        elif len(full_message) > 1:
+            full_message = (
+                (argument if argument not in full_message else "") + " " + full_message[-1]
+            )
+        greedy_output = (" " + full_message.replace("—", "--")).partition(
+            f" {self.splitter_Value}"
         )[0]
-        return f"{argument}{greedy_output}"
+        return f"{greedy_output}"
 
 
 def get_lazy_converter(splitter: str) -> type:
