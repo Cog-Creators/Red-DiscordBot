@@ -187,7 +187,8 @@ class LazyGreedyConverter(commands.Converter):
         greedy_output = (" " + full_message.replace("—", "--")).partition(
             f" {self.splitter_Value}"
         )[0]
-        return f"{greedy_output}"
+        print(f"'{greedy_output}'")  # TODO: Remove me
+        return f"{greedy_output}".strip()
 
 
 def get_lazy_converter(splitter: str) -> type:

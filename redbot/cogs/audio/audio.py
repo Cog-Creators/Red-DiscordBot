@@ -2123,11 +2123,11 @@ class Audio(commands.Cog):
                     )
 
             # TODO : Convert this section to a new paged reaction menu
-            # FIXME: iterate over the matches and get largest values to make padding dynamic
             pos_len = 3
-            pid_len = 25
-            ptracks_len = 14
-            pnamelen = 33
+            pid_len = max(*[len(str(i[0])) for i in correct_scope_matches], 3) + 3
+            pnamelen = max(*[len(str(i[1])) for i in correct_scope_matches], 5) + 3
+            ptracks_len = max(*[len(str(i[2])) for i in correct_scope_matches], 6) + 5
+
             # playlists = f"{'#':{pos_len}} {'ID':{pid_len}} {'Tracks':{ptracks_len}} {'Name':{pnamelen}} {'Author':2}\n"
             playlists = f"{'#':{pos_len}} {'ID':{pid_len}} {'Tracks':{ptracks_len}} {'Author':2}\n"
             for number, (pid, pname, ptracks, pauthor) in enumerate(correct_scope_matches, 1):
@@ -2222,6 +2222,7 @@ class Audio(commands.Cog):
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
         scope, author, guild = scope_data
+        print(query)  # TODO: Remove me
         if not await self._playlist_check(ctx):
             return
         try:
