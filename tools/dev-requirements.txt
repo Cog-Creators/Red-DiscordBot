@@ -1,4 +1,3 @@
 packaging
 tox
-towncrier
 -e .[docs,mongo,style,test]
