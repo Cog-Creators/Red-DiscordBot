@@ -12,8 +12,8 @@
   * [4.5 Keeping your dependencies up to date](#45-keeping-your-dependencies-up-to-date)
   * [4.6 To contribute changes](#46-to-contribute-changes)
   * [4.7 Using towncrier](#47-using-towncrier)
-  * [4.8 How To Report A Bug](#47-how-to-report-a-bug)
-  * [4.9 How To Suggest A Feature Or Enhancement](#48-how-to-suggest-a-feature-or-enhancement)
+  * [4.8 How To Report A Bug](#48-how-to-report-a-bug)
+  * [4.9 How To Suggest A Feature Or Enhancement](#49-how-to-suggest-a-feature-or-enhancement)
 * [5. Code Review Process](#5-code-review-process)
   * [5.1 Issues](#51-issues)
   * [5.2 Pull Requests](#52-pull-requests)
@@ -123,7 +123,7 @@ Red uses towncrier to create changelogs.
 
 To create a towncrier entry for your PR, create a file in `changelog.d` for it. If the changes are for a specific cog, place the file in the related subdirectory.
 
-The filename should be of the format `issuenumber.changetype.(.count).rst`, where `(.count)` is an optional
+The filename should be of the format `issuenumber.changetype(.count).rst`, where `(.count)` is an optional
 part of the filename should multiple entries for the same issue number and type be neccessary.
 
 Valid changetypes are:
