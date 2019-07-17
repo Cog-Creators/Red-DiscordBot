@@ -4,7 +4,11 @@
 Versioning
 ==========
 
-Red uses semantic versioning.
+Red is versioned as ``major.minor.micro``
+
+While this is very similar to SemVer, we have our own set of guarantees.
+
+Major versions are for project wide rewrites and are not expected in the foreseeable future.
 
 ==========
 Guarantees
