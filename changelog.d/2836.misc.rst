@@ -1,0 +1,1 @@
+New :meth:`humanize_number` in :module:`redbot.core.utils.chat_formatting` is used throughout the bot.
