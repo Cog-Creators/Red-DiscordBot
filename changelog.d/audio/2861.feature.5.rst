@@ -1,0 +1,16 @@
+There are 3 different type of playlist now.
+
+    Global Playlist
+
+    - These playlists will ne available in all servers the bot is in.
+    - These can be managed by the Bot Owner only.
+
+    Server Playlist
+
+    - These playlists will only be available in the server they were created in.
+    - These can be managed by the Bot Owner, Guild Owner, Mods, Admins, DJs and creator (if DJ role is disabled).
+
+    User Playlist
+
+    - These playlists will be available in all servers both the bot and the creator are in.
+    - These can be managed by the Bot Owner and Creator only.
