@@ -35,6 +35,20 @@ a text editor or IDE (examples include `Sublime Text 3 <https://www.sublimetext.
 `Visual Studio Code <https://code.visualstudio.com/>`_, `Atom <https://atom.io/>`_, and
 `PyCharm <http://www.jetbrains.com/pycharm/>`_).
 
+.. attention:: 
+    While you can intentionally override Red's cogs/extensions, this may break things.
+    We would prefer if people wanted custom behavior
+    for any core cog/extension, an issue and/or PR is made
+    Overriding Permissions specifically is dangerous.
+
+    Sublassing to make changes to Red's cogs/extensions
+    may not be a safe way to stay up to date either,
+    as changes to cogs and their interactions with red
+    are not guaranteed to not be breaking.
+
+    Any cogs doing this are doing so at their own risk,
+    and should also inform users of associated risks.
+
 --------------
 Creating a cog
 --------------
