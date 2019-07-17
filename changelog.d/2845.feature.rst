@@ -1,0 +1,5 @@
+Added New commands to Economy
+
+- ``[p]bank prune user`` - This will delete a users account
+- ``[p]bank prune local`` - This will prune a local bank from users who are no longer in the server
+- ``[p]bank prune global`` - This will prune the global bank from users who do not share any servers with the bot
