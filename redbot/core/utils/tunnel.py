@@ -132,7 +132,9 @@ class Tunnel(metaclass=TunnelMeta):
         return rets
 
     @staticmethod
-    async def files_from_attach(m: discord.Message) -> List[discord.File]:
+    async def files_from_attach(
+        m: discord.Message, *, use_cached: bool = False
+    ) -> List[discord.File]:
         """
         makes a list of file objects from a message
         returns an empty list if none, or if the sum of file sizes
@@ -142,6 +144,8 @@ class Tunnel(metaclass=TunnelMeta):
         ---------
         m: `discord.Message`
             A message to get attachments from
+        use_cached: `bool`
+            Whether to use ``proxy_url`` rather than ``url`` when downloading the attachment
 
         Returns
         -------
@@ -154,7 +158,7 @@ class Tunnel(metaclass=TunnelMeta):
         if m.attachments and sum(a.size for a in m.attachments) <= max_size:
             for a in m.attachments:
                 _fp = io.BytesIO()
-                await a.save(_fp)
+                await a.save(_fp, use_cached=use_cached)
                 files.append(discord.File(_fp, filename=a.filename))
         return files
 
