@@ -1,0 +1,1 @@
+Non-core cog packages are now importable with ``from redbot.ext_cogs import <cog_package>``

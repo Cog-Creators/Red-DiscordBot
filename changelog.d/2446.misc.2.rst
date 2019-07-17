@@ -1,0 +1,1 @@
+``Red.load_extension()`` now takes an extension name or module object, not a `ModuleSpec`.
