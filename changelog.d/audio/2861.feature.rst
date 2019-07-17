@@ -1,0 +1,15 @@
+Changes to Playlists and new playlist APIs
+
+- :class:`Playlist` is used to store playlists going forward
+- :func:`get_playlist` can be used to retrieve a Playlist object
+- :func:`get_all_playlist` can be used to retrieve all Playlists from a scope
+- :func:`create_playlist` can be used to create new playlists
+- :func:`delete_playlist` can be used to delete existing playlists
+
+Changes to Audio Cog
+- :class:`ScopeParser` is used to parse optional arguments for all playlist commands
+- :func:`can_manage_playlist` is now used to check users permissions when managing playlists
+- Playlists are now stored in 3 different scopes `GLOBALPLAYLIST`, `GUILDPLAYLIST`, `USERPLAYLIST`
+- `[p]playlist download` will now generate a larger playlist file that is not backwards compatible, for backwards compatibility use v2=True argument
+- `[p]playlist rename` will now allow users to rename existing playlists
+- `[p]playlist update` will allow users to update non custom Playlists to the latest available tracks

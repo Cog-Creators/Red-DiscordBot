@@ -3124,6 +3124,11 @@ class Audio(commands.Cog):
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
 
         scope, author, guild = scope_data
+        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        if dj_enabled:
+            if not await self._can_instaskip(ctx, ctx.author):
+                await self._embed_msg(ctx, _("You need the DJ role to start playing playlists."))
+                return False
 
         try:
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
