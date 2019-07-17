@@ -5,6 +5,6 @@ Changes to :module:`redbot.core.commands.events`
 - Automatic handling of :class:`redbot.core.commands.errors.ArgParserFailure` on :func:`on_command_error`
 
 Changes to :module:`redbot.cogs.audio.audio`
-- Playlists are now stored in 3 different scopes `GLOBALPLAYLIST`, `GUILDPLAYLIST`, `USERPLAYLIST`
+- Playlists are now stored in 3 different scopes ``GLOBALPLAYLIST``, ``GUILDPLAYLIST``, ``USERPLAYLIST``
 - :class:`ScopeParser` is used to parse optional arguments for all playlist commands
 - :func:`can_manage_playlist` is now used to check users permissions when managing playlists
