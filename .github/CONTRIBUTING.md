@@ -11,8 +11,9 @@
   * [4.4 Make](#44-make)
   * [4.5 Keeping your dependencies up to date](#45-keeping-your-dependencies-up-to-date)
   * [4.6 To contribute changes](#46-to-contribute-changes)
-  * [4.7 How To Report A Bug](#47-how-to-report-a-bug)
-  * [4.8 How To Suggest A Feature Or Enhancement](#48-how-to-suggest-a-feature-or-enhancement)
+  * [4.7 Using towncrier](#47-using-towncrier)
+  * [4.8 How To Report A Bug](#48-how-to-report-a-bug)
+  * [4.9 How To Suggest A Feature Or Enhancement](#49-how-to-suggest-a-feature-or-enhancement)
 * [5. Code Review Process](#5-code-review-process)
   * [5.1 Issues](#51-issues)
   * [5.2 Pull Requests](#52-pull-requests)
@@ -98,7 +99,7 @@ Our style checker of choice, [black](https://github.com/ambv/black), actually ha
 Use the command `black --help` to see how to use this tool. The full style guide is explained in detail on [black's GitHub repository](https://github.com/ambv/black). **There is one exception to this**, however, which is that we set the line length to 99, instead of black's default 88. When using `black` on the command line, simply use it like so: `black -l 99 -N <src>`.
 
 ### 4.4 Make
-You may have noticed we have a `Makefile` and a `make.bat` in the top-level directory. For now, you can do three things with them:
+You may have noticed we have a `Makefile` and a `make.bat` in the top-level directory. For now, you can do a few things with them:
 1. `make reformat`: Reformat all python files in the project with Black
 2. `make stylecheck`: Check if any `.py` files in the project need reformatting
 3. `make newenv`: Set up a new virtual environment in the `.venv` subdirectory, and install Red and its dependencies. If one already exists, it is cleared out and replaced.
@@ -112,13 +113,37 @@ Whenever you pull from upstream (V3/develop on the main repository) and you noti
 1. Create a new branch on your fork
 2. Make the changes
 3. If you like the changes and think the main Red project could use it:
+    * Create a towncrier entry for the changes. (See next section for details)
     * Run tests with `tox` to ensure your code is up to scratch
     * Create a Pull Request on GitHub with your changes
 
-### 4.7 How To Report A Bug
+### 4.7 Using towncrier
+
+Red uses towncrier to create changelogs.
+
+To create a towncrier entry for your PR, create a file in `changelog.d` for it. If the changes are for a specific cog, place the file in the related subdirectory.
+
+The filename should be of the format `issuenumber.changetype(.count).rst`, where `(.count)` is an optional
+part of the filename should multiple entries for the same issue number and type be neccessary.
+
+Valid changetypes are:
+
+  * breaking : Breaking changes
+  * dep : Changes to dependencies
+  * enhance : Enhancements
+  * feature : New features
+  * bugfix : Bugfixes
+  * docs : documentation improvements and additions
+  * removal : removal of something
+  * misc : any changes which don't have a user facing change, and don't belong in the changelog for users
+
+The contents of the file should be a short, human readable description of the impact of the changes made,
+not the technical details of the change.
+
+### 4.8 How To Report A Bug
 Please see our **ISSUES.MD** for more information.
 
-### 4.8 How To Suggest A Feature Or Enhancement
+### 4.9 How To Suggest A Feature Or Enhancement
 The goal of Red is to be as useful to as many people as possible, this means that all features must be useful to anyone and any server that uses Red.
 
 If you find yourself wanting a feature that Red does not already have, you're probably not alone. There's bound to be a great number of users out there needing the same thing and a lot of the features that Red has today have been added because of the needs of our users. Open an issue on our issues list and describe the feature you would like to see, how you would use it, how it should work, and why it would be useful to the Red community as a whole.
@@ -137,7 +162,7 @@ Pull requests are evaluated by their quality and how effectively they solve thei
 
 1. A pull request is submitted
 2. Core team members will review and test the pull request (usually within a week)
-3. After a majority of the core team approves your pull request:
+3. After a member of the core team approves your pull request:
     * If your pull request is considered an improvement or enhancement the project owner will have 1 day to veto or approve your pull request.
     * If your pull request is considered a new feature the project owner will have 1 week to veto or approve your pull request.
 4. If any feedback is given we expect a response within 1 week or we may decide to close the PR.
