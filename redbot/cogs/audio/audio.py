@@ -1985,7 +1985,7 @@ class Audio(commands.Cog):
             pass
         return track_list
 
-    async def can_manage_playlist(  # TODO:Jack managed to Edit a playlist that belong to another user
+    async def can_manage_playlist(
         self, scope: str, playlist: Playlist, ctx: commands.Context, user, guild
     ):
 
@@ -1994,12 +1994,13 @@ class Audio(commands.Cog):
         user_to_query = user
         guild_to_query = guild
 
-        is_different_user = ctx.author.id != user_to_query.id
+        is_different_user = len(set({playlist.author, user_to_query.id, ctx.author.id})) != 1
         is_different_guild = True if guild_to_query is None else ctx.guild.id != guild_to_query.id
+
         if is_owner:
             has_perms = True
         elif scope == PlaylistScope.USER.value:
-            if not is_different_user and playlist.author == user_to_query.id == ctx.author.id:
+            if not is_different_user:
                 has_perms = True
         elif scope == PlaylistScope.GUILD.value:
             if not is_different_guild:
@@ -2010,37 +2011,30 @@ class Audio(commands.Cog):
                     has_perms = True
                 elif await ctx.bot.is_mod(ctx.author):
                     has_perms = True
-                elif not dj_enabled and playlist.author == user_to_query.id == ctx.author.id:
+                elif not dj_enabled and not is_different_user:
                     has_perms = True
 
         if has_perms is False:
-            if scope == PlaylistScope.GUILD.value and guild_to_query is None:
-                await self._embed_msg(
-                    ctx,
-                    _(
-                        "You need to specify the Guild ID "
-                        "for the guild to lookup when using this in DMs."
-                    ),
+            if scope == PlaylistScope.GUILD.value and (
+                is_different_guild or not is_different_user
+            ):
+                msg = _("You do not have the permissions to manage playlist in {guild}.").format(
+                    guild=guild_to_query
                 )
+            elif (
+                scope in [PlaylistScope.GUILD.value, PlaylistScope.USER.value]
+                and is_different_user
+            ):
+                msg = _(
+                    "You do not have the permissions to manage playlist owned by {user}."
+                ).format(user=user_to_query)
             else:
-                if scope == PlaylistScope.GUILD.value and not is_different_user:
-                    msg = _(
-                        "You do not have the permissions to manage {guild}'s playlist."
-                    ).format(guild=guild_to_query)
-                elif (
-                    scope in [PlaylistScope.GUILD.value, PlaylistScope.USER.value]
-                    and is_different_user
-                ):
-                    msg = _("You do not have the permissions to manage {user}'s playlist.").format(
-                        user=user_to_query
-                    )
-                else:
-                    msg = _(
-                        "You do not have the permissions to manage "
-                        "playlists in the {scope} scope.".format(scope=humanize_scope(scope))
-                    )
+                msg = _(
+                    "You do not have the permissions to manage "
+                    "playlists in the {scope} scope.".format(scope=humanize_scope(scope))
+                )
 
-                await self._embed_msg(ctx, msg)
+            await self._embed_msg(ctx, msg)
             return False
         return True
 
