@@ -335,7 +335,7 @@ async def wipe_bank(guild: Optional[discord.Guild] = None) -> None:
         await _conf.clear_all_members(guild)
 
 
-async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: str = None) -> None:
+async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: int = None) -> None:
     """Prune bank accounts from the bank.
 
     Parameters
@@ -343,8 +343,8 @@ async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: str = None)
     bot : Red
         The bot.
     guild : discord.Guild
-        The guild to prune this is required if the bank is set to local.
-    user_id : str
+        The guild to prune. This is required if the bank is set to local.
+    user_id : int
         The id of the user whose account will be pruned.
         If supplied this will prune only this user's bank account
         otherwise it will prune all invalid users from the bank.
@@ -359,13 +359,15 @@ async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: str = None)
     global_bank = await is_global()
 
     if global_bank:
-        _guilds = [g for g in bot.guilds if g.large and not (g.chunked or g.unavailable)]
+        _guilds = [g for g in bot.guilds if not g.unavailable and g.large and not g.chunked]
+        _uguilds = [g for g in bot.guilds if g.unavailable]
         group = _conf._get_base_group(_conf.USER)
 
     else:
         if guild is None:
             raise BankPruneError("'guild' can't be None when pruning a local bank")
-        _guilds = [guild]
+        _guilds = [guild] if not guild.unavailable and guild.large else []
+        _uguilds = [guild] if guild.unavailable else []
         group = _conf._get_base_group(_conf.MEMBER, str(guild.id))
 
     if user_id is None:
@@ -373,7 +375,7 @@ async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: str = None)
         accounts = await group.all()
         tmp = accounts.copy()
         members = bot.get_all_members() if global_bank else guild.members
-        user_list = {str(m.id) for m in members}
+        user_list = {str(m.id) for m in members if m.guild not in _uguilds}
 
     async with group.all() as bank_data:  # FIXME: use-config-bulk-update
         if user_id is None:
@@ -381,6 +383,7 @@ async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: str = None)
                 if acc not in user_list:
                     del bank_data[acc]
         else:
+            user_id = str(user_id)
             if user_id in bank_data:
                 del bank_data[user_id]
 

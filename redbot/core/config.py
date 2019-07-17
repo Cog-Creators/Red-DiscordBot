@@ -835,9 +835,8 @@ class Config:
     def _get_base_group(self, category: str, *primary_keys: str) -> Group:
         """
         .. warning::
-            :code:`_get_base_group()` should not be used to get config groups as
+            :code:`Config._get_base_group()` should not be used to get config groups as
             this is not a safe operation. Using this could end up corrupting your config file.
-
         """
         is_custom = category not in (
             self.GLOBAL,

@@ -273,12 +273,14 @@ class Economy(commands.Cog):
             )
         else:
             await bank.bank_prune(self.bot, guild=ctx.guild)
-            await ctx.send(_("Bank accounts for users no longer in this serve have been deleted."))
+            await ctx.send(
+                _("Bank accounts for users no longer in this server have been deleted.")
+            )
 
     @_prune.command(name="global")
     @checks.is_owner()
     async def _global(self, ctx, confirmation: bool = False):
-        """Prune bank accounts for users who no longer share servers with the bot."""
+        """Prune bank accounts for users who no longer share a server with the bot."""
         global_bank = await bank.is_global()
         if global_bank is False:
             return await ctx.send(_("This command cannot be used with a local bank."))
@@ -287,7 +289,7 @@ class Economy(commands.Cog):
             await ctx.send(
                 _(
                     "This will delete all bank accounts for users "
-                    "who no longer share servers with the bot."
+                    "who no longer share a server with the bot."
                     "\nIf you're sure, type `{prefix}bank prune global yes`"
                 ).format(prefix=ctx.prefix)
             )
@@ -296,25 +298,36 @@ class Economy(commands.Cog):
             await ctx.send(
                 _(
                     "Bank accounts for users who "
-                    "no longer share servers with the bot have been pruned."
+                    "no longer share a server with the bot have been pruned."
                 )
             )
 
-    @_prune.command()
-    async def user(self, ctx, user_id: RawUserIds, confirmation: bool = False):
+    @_prune.command(usage="<user> [confirmation=False]")
+    async def user(
+        self, ctx, member_or_id: Union[discord.Member, RawUserIds], confirmation: bool = False
+    ):
         """Delete the bank account of a specified user."""
+        global_bank = await bank.is_global()
+        if global_bank is False and ctx.guild is None:
+            return await ctx.send(_("This command cannot be used in DMs with a local bank."))
+        try:
+            name = member_or_id.display_name
+            uid = member_or_id.id
+        except AttributeError:
+            name = member_or_id
+            uid = member_or_id
 
         if confirmation is False:
             await ctx.send(
                 _(
-                    "This will delete {id}'s bank account."
+                    "This will delete {name}'s bank account."
                     "\nIf you're sure, type "
-                    "`{prefix}bank cleanup member {id} yes`"
-                ).format(prefix=ctx.prefix, id=user_id)
+                    "`{prefix}bank prune user {id} yes`"
+                ).format(prefix=ctx.prefix, id=uid, name=name)
             )
         else:
-            await bank.bank_prune(self.bot, guild=ctx.guild, user_id=str(user_id))
-            await ctx.send(_("The bank account for {id} has been pruned.").format(id=user_id))
+            await bank.bank_prune(self.bot, guild=ctx.guild, user_id=uid)
+            await ctx.send(_("The bank account for {name} has been pruned.").format(name=name))
 
     @guild_only_check()
     @commands.command()
