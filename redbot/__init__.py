@@ -173,7 +173,7 @@ class VersionInfo:
         )
 
 
-__version__ = "3.1.2"
+__version__ = "3.1.4"
 version_info = VersionInfo.from_str(__version__)
 
 # Filter fuzzywuzzy slow sequence matcher warning

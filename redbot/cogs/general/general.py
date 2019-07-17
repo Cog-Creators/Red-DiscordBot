@@ -274,7 +274,7 @@ class General(commands.Cog):
             return
 
         if data.get("error") != 404:
-            if not data["list"]:
+            if not data.get("list"):
                 return await ctx.send(_("No Urban Dictionary entries were found."))
             if await ctx.embed_requested():
                 # a list of embeds
