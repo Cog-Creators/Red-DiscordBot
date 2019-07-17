@@ -7,6 +7,7 @@ Changes to Playlists and new playlist APIs see :module:`redbot.cogs.audio.playli
 - :func:`delete_playlist` can be used to delete existing playlists
 
 Changes to :module:`redbot.cogs.audio.audio`
+
 - All Playlist commands now accept optional arguments, use ``[p]help playlist <subcommand> for more details``
 - ``[p]playlist download`` will now generate a larger playlist file that is not backwards compatible, for backwards compatibility use v2=True argument
 - ``[p]playlist rename`` will now allow users to rename existing playlists
