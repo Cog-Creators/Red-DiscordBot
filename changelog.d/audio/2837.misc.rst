@@ -1,0 +1,1 @@
+Spotify to YouTube track conversion will now permanently cache entries into a local cache file to stop repeated API calls for previously searched tracks
