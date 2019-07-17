@@ -121,6 +121,8 @@ class ReactionMenu(abc.ABC):
     used, just as the built-in ones are detailed below under the
     *Keyword Arguments* heading.
 
+    .. versionadded:: 3.2
+
     Keyword Arguments
     -----------------
     timeout : Optional[float]
@@ -136,8 +138,6 @@ class ReactionMenu(abc.ABC):
     instead, they should be created through the
     :meth:`ReactionMenu.send_and_wait` or
     :meth:`ReactionMenu.send_and_return` classmethods.
-
-    .. versionadded:: 3.2
 
     Attributes
     ----------

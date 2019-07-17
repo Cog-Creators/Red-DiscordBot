@@ -1,0 +1,1 @@
+New class-based reaction menus are used throughout the bot except in the audio cog.
