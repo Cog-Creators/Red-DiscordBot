@@ -1,6 +1,5 @@
 import aiohttp
 import asyncio
-import base64
 import datetime
 import discord
 from fuzzywuzzy import process
@@ -32,8 +31,8 @@ from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from urllib.parse import urlparse
 from .equalizer import Equalizer
 from .manager import ServerManager
-from .errors import LavalinkDownloadFailed
-from .localcache import music_cache
+from .errors import LavalinkDownloadFailed, SpotifyFetchError
+from .apis import MusicCache
 
 _ = Translator("Audio", __file__)
 
@@ -94,12 +93,13 @@ class Audio(commands.Cog):
         self.config.register_global(**default_global)
         self.skip_votes = {}
         self.session = aiohttp.ClientSession()
+        self.music_cache = MusicCache(bot, self.session)
         self._connect_task = None
         self._disconnect_task = None
         self._cleaned_up = False
         self._connection_aborted = False
 
-        self.spotify_token = None
+
         self.play_lock = {}
 
         self._manager: Optional[ServerManager] = None
@@ -120,6 +120,7 @@ class Audio(commands.Cog):
         self._restart_connect()
         self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
         lavalink.register_event_listener(self.event_handler)
+        await self.music_cache.initialize()
 
     def _restart_connect(self):
         if self._connect_task:
@@ -1611,14 +1612,13 @@ class Audio(commands.Cog):
 
         await self._enqueue_tracks(ctx, query)
 
-    async def _get_spotify_tracks(self, ctx, query):
+    async def _get_spotify_tracks(self, ctx, query): #TODO:
         if ctx.invoked_with == "play":
             enqueue_tracks = True
         else:
             enqueue_tracks = False
         player = lavalink.get_player(ctx.guild.id)
         api_data = await self._check_api_tokens()
-        guild_data = await self.config.guild(ctx.guild).all()
         if "open.spotify.com" in query:
             query = "spotify:{}".format(
                 re.sub("(http[s]?:\/\/)?(open.spotify.com)\/", "", query).replace("/", ":")
@@ -1648,15 +1648,22 @@ class Audio(commands.Cog):
 
             parts = query.split(":")
             if "track" in parts:
-                res = await self._make_spotify_req(
-                    "https://api.spotify.com/v1/tracks/{0}".format(parts[-1])
-                )
                 try:
-                    query = "{} {}".format(res["artists"][0]["name"], res["name"])
+                    res = await self.music_cache.spotify_query("track", parts[-1])
+                    if res is None:
+                        return await self._embed_msg(ctx, _("Nothing found."))
+                except SpotifyFetchError as error:
+                    return await self._embed_msg(
+                        ctx,
+                        _(
+                            error.message
+                        ).format(prefix=ctx.prefix),
+                    )
+                try:
                     if enqueue_tracks:
-                        return await self._enqueue_tracks(ctx, query)
+                        return await self._enqueue_tracks(ctx, res[0])
                     else:
-                        tracks = await player.get_tracks(f"ytsearch:{query}")
+                        tracks = await player.get_tracks(f"ytsearch:{res[0]}")
                         if not tracks:
                             return await self._embed_msg(ctx, _("Nothing found."))
                         single_track = []
@@ -1814,49 +1821,25 @@ class Audio(commands.Cog):
         if type(query) is list:
             self._play_lock(ctx, False)
 
-    async def _spotify_playlist(self, ctx, stype, yt_key, query):
+    async def _spotify_playlist(self, ctx, stype, yt_key, query): # TODO:
         player = lavalink.get_player(ctx.guild.id)
         spotify_info = []
-        if stype == "album":
-            r = await self._make_spotify_req("https://api.spotify.com/v1/albums/{0}".format(query))
-        else:
-            r = await self._make_spotify_req(
-                "https://api.spotify.com/v1/playlists/{0}/tracks".format(query)
-            )
         try:
-            if r["error"]["status"] == 401:
-                return await self._embed_msg(
-                    ctx,
-                    _(
-                        "The Spotify API key or client secret has not been set properly. "
-                        "\nUse `{prefix}audioset spotifyapi` for instructions."
-                    ).format(prefix=ctx.prefix),
-                )
-        except KeyError:
-            pass
-        while True:
-            try:
-                try:
-                    spotify_info.extend(r["tracks"]["items"])
-                except KeyError:
-                    spotify_info.extend(r["items"])
-            except KeyError:
-                return await self._embed_msg(
-                    ctx, _("This doesn't seem to be a valid Spotify URL or code.")
-                )
-
-            try:
-                if r["next"] is not None:
-                    r = await self._make_spotify_req(r["next"])
-                    continue
-                else:
-                    break
-            except KeyError:
-                if r["tracks"]["next"] is not None:
-                    r = await self._make_spotify_req(r["tracks"]["next"])
-                    continue
-                else:
-                    break
+            youtube_links = await self.music_cache.spotify_query(stype, query)
+        except SpotifyFetchError as error:
+            return await self._embed_msg(
+                ctx,
+                _(
+                    error.message
+                ).format(prefix=ctx.prefix),
+            )
+        except (RuntimeError, aiohttp.client_exceptions.ServerDisconnectedError):
+            error_embed = discord.Embed(
+                colour=await ctx.embed_colour(),
+                title=_("The connection was reset while loading the playlist."),
+            )
+            await ctx.send(embed=error_embed)
+            return None
 
         embed1 = discord.Embed(
             colour=await ctx.embed_colour(), title=_("Please wait, adding tracks...")
@@ -1865,13 +1848,10 @@ class Audio(commands.Cog):
         track_list = []
         track_count = 0
         now = int(time.time())
-        for i in spotify_info:
-            if stype == "album":
-                song_info = "{} {}".format(i["name"], i["artists"][0]["name"])
-            else:
-                song_info = "{} {}".format(i["track"]["name"], i["track"]["artists"][0]["name"])
+
+        for t in youtube_links:
             try:
-                track_url = await music_cache.get_url(yt_key, song_info, self.session)
+                yt_track = await player.get_tracks(t)
             except (RuntimeError, aiohttp.client_exceptions.ServerDisconnectedError):
                 error_embed = discord.Embed(
                     colour=await ctx.embed_colour(),
@@ -1879,10 +1859,6 @@ class Audio(commands.Cog):
                 )
                 await playlist_msg.edit(embed=error_embed)
                 return None
-            try:
-                yt_track = await player.get_tracks(track_url)
-            except (RuntimeError, aiohttp.client_exceptions.ServerDisconnectedError):
-                return
             try:
                 track_list.append(yt_track[0])
             except IndexError:
@@ -4253,65 +4229,8 @@ class Audio(commands.Cog):
 
     # Spotify-related methods below are originally from: https://github.com/Just-Some-Bots/MusicBot/blob/master/musicbot/spotify.py
 
-    async def _check_token(self, token):
-        now = int(time.time())
-        return token["expires_at"] - now < 60
 
-    async def _get_spotify_token(self):
-        if self.spotify_token and not await self._check_token(self.spotify_token):
-            return self.spotify_token["access_token"]
-        token = await self._request_token()
-        if token is None:
-            log.debug("Requested a token from Spotify, did not end up getting one.")
-        try:
-            token["expires_at"] = int(time.time()) + token["expires_in"]
-        except KeyError:
-            return
-        self.spotify_token = token
-        log.debug("Created a new access token for Spotify: {0}".format(token))
-        return self.spotify_token["access_token"]
 
-    async def _make_get(self, url, headers=None):
-        async with self.session.request("GET", url, headers=headers) as r:
-            if r.status != 200:
-                log.debug(
-                    "Issue making GET request to {0}: [{1.status}] {2}".format(
-                        url, r, await r.json()
-                    )
-                )
-            return await r.json()
-
-    async def _make_post(self, url, payload, headers=None):
-        async with self.session.post(url, data=payload, headers=headers) as r:
-            if r.status != 200:
-                log.debug(
-                    "Issue making POST request to {0}: [{1.status}] {2}".format(
-                        url, r, await r.json()
-                    )
-                )
-            return await r.json()
-
-    async def _make_spotify_req(self, url):
-        token = await self._get_spotify_token()
-        return await self._make_get(url, headers={"Authorization": "Bearer {0}".format(token)})
-
-    def _make_token_auth(self, client_id, client_secret):
-        auth_header = base64.b64encode((client_id + ":" + client_secret).encode("ascii"))
-        return {"Authorization": "Basic %s" % auth_header.decode("ascii")}
-
-    async def _request_token(self):
-        self.client_id = await self.bot.db.api_tokens.get_raw("spotify", default={"client_id": ""})
-        self.client_secret = await self.bot.db.api_tokens.get_raw(
-            "spotify", default={"client_secret": ""}
-        )
-        payload = {"grant_type": "client_credentials"}
-        headers = self._make_token_auth(
-            self.client_id["client_id"], self.client_secret["client_secret"]
-        )
-        r = await self._make_post(
-            "https://accounts.spotify.com/api/token", payload=payload, headers=headers
-        )
-        return r
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
@@ -4324,6 +4243,7 @@ class Audio(commands.Cog):
     def cog_unload(self):
         if not self._cleaned_up:
             self.bot.loop.create_task(self.session.close())
+            self.bot.loop.create_task(self.music_cache.close())
 
             if self._disconnect_task:
                 self._disconnect_task.cancel()
@@ -4335,7 +4255,7 @@ class Audio(commands.Cog):
             self.bot.loop.create_task(lavalink.close())
             if self._manager is not None:
                 self.bot.loop.create_task(self._manager.shutdown())
-            music_cache._save_cache()
+
             self._cleaned_up = True
 
     __del__ = cog_unload
