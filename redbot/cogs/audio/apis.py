@@ -9,7 +9,7 @@ from typing import List
 import aiosqlite
 from appdirs import AppDirs
 
-from redbot.cogs.audio.errors import SpotifyFetchError
+from .errors import SpotifyFetchError
 
 log = logging.getLogger("red.audio.cache")
 
