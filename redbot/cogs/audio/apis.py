@@ -185,12 +185,6 @@ class MusicCache:
             await database.execute(_CREATE_YOUTUBE_TABLE)
             await database.execute(_CREATE_SPOTIFY_TABLE)
             await database.commit()
-        # await self.con.set_type_codec(
-        #     'json',
-        #     encoder=json.dumps,
-        #     decoder=json.loads,
-        #     schema='pg_catalog'
-        # )
 
     async def _insert(self, table, values: tuple):
         if table == "youtube":
@@ -213,7 +207,7 @@ class MusicCache:
             await database.commit()
 
     async def _query(self, stmnt, param):
-        async with aiosqlite.connect(self.path, self.bot.loop) as database:
+        async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
             output = await database.fetchone(stmnt, param)
             return output[0] if output else None
 
@@ -316,6 +310,7 @@ class MusicCache:
                     break
         return tracks
 
+    @method_cache(maxsize=256)
     async def spotify_query(self, query_type, uri):
         print("spotify_query")
         val = row = await self._query(_SPOTIFY_TABLE_QUERY, uri)
@@ -329,6 +324,7 @@ class MusicCache:
             youtube_urls = [val]
         return youtube_urls
 
+    @method_cache(maxsize=256)
     async def youtube_query(self, track_info):
         print("youtube_query")
         val = row = await self._query(_YOUTUBE_TABLE_QUERY, track_info)
