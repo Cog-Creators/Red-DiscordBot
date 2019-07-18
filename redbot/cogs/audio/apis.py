@@ -167,9 +167,8 @@ class MusicCache:
 
     async def initialize(self):
         async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
-            await database.execute(_DROP_SPOTIFY_TABLE)
-            await database.execute(_DROP_YOUTUBE_TABLE)
-            await database.commit()
+            # await database.execute(_DROP_SPOTIFY_TABLE)
+            # await database.execute(_DROP_YOUTUBE_TABLE)
             await database.execute(_CREATE_YOUTUBE_TABLE)
             await database.execute(_CREATE_SPOTIFY_TABLE)
             await database.commit()
@@ -219,7 +218,7 @@ class MusicCache:
         song_url = track_data["external_urls"]["spotify"]
         uri = track_data["uri"]
 
-        return artist_name, track_name, track_info, song_url, uri
+        return song_url, track_info, uri, artist_name, track_name
 
     async def _spotify_first_time_query(self, query_type, uri, skip_youtube=False):
         print("_spotify_first_time_query")
@@ -229,10 +228,10 @@ class MusicCache:
 
         database_entries = []
         for track in tracks:
-            artist_name, track_name, track_info, song_url, uri = self._get_spotify_track_info(
+            song_url, track_info, uri, artist_name, track_name = self._get_spotify_track_info(
                 track
             )
-            database_entries.append((artist_name, track_name, track_info, song_url, uri))
+            database_entries.append((song_url, track_info, uri, artist_name, track_name))
             if skip_youtube is False:
                 val = await self._query(_QUERY_YOUTUBE_TABLE, {"track": track_info})
                 if val is None:
@@ -248,10 +247,10 @@ class MusicCache:
 
     async def _youtube_first_time_query(self, track_info):
         print("_youtube_first_time_query")
-        track = await self.youtube_api.call(track_info)
-        if track:
-            await self._insert("youtube", (track_info, track))
-        return track
+        track_url = await self.youtube_api.call(track_info)
+        if track_url:
+            await self._insert("youtube", (track_info, track_url))
+        return track_url
 
     async def _spotify_fetch_tracks(self, query_type, uri, recursive=False):
         if recursive is False:
@@ -298,7 +297,10 @@ class MusicCache:
 
     async def spotify_query(self, query_type, uri, skip_youtube=False):
         print("spotify_query")
-        val = await self._query(_QUERY_SPOTIFY_TABLE, {"uri": uri})
+        if query_type == "track":
+            val = await self._query(_QUERY_SPOTIFY_TABLE, {"uri": f"spotify:track:{uri}"})
+        else:
+            val = None
         youtube_urls = []
         if val is None:
             urls = await self._spotify_first_time_query(query_type, uri, skip_youtube)
