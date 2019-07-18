@@ -33,7 +33,7 @@ _CREATE_SPOTIFY_TABLE = """
                             id INTEGER PRIMARY KEY AUTOINCREMENT,
                             song_url TEXT,
                             track_info TEXT,
-                            uri TEXT
+                            uri TEXT,
                             artist_name TEXT, 
                             track_name TEXT
                         );
