@@ -93,7 +93,7 @@ class Audio(commands.Cog):
         self.config.register_global(**default_global)
         self.skip_votes = {}
         self.session = aiohttp.ClientSession()
-        self.music_cache = MusicCache(bot, self.session)
+        self.music_cache = MusicCache(bot, self.session, path=str(cog_data_path(raw_name="Audio")))
         self._connect_task = None
         self._disconnect_task = None
         self._cleaned_up = False

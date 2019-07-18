@@ -7,7 +7,6 @@ import weakref
 from typing import List
 
 import aiosqlite
-from appdirs import AppDirs
 
 from .errors import SpotifyFetchError
 
@@ -43,9 +42,6 @@ _INSER_SPOTIFY_TABLE = """
 
 _YOUTUBE_TABLE_QUERY = """SELECT youtube_url FROM youtube WHERE song_info='?'"""
 _SPOTIFY_TABLE_QUERY = """SELECT track_info FROM spotify WHERE uri=?"""
-
-dirs = AppDirs("Red-DiscordBot", "Audio")
-_DATABASE_PATH = str(os.path.join(dirs.user_data_dir, "cache.db"))
 
 
 def method_cache(*lru_args, **lru_kwargs):
@@ -177,13 +173,15 @@ class YouTubeAPI:
 
 
 class MusicCache:
-    def __init__(self, bot, session):
+    def __init__(self, bot, session, path):
         self.bot = bot
         self.spotify_api = SpotifyAPI(bot, session)
         self.youtube_api = YouTubeAPI(bot, session)
+        self.path = os.path.abspath(str(os.path.join(path, "cache.db")))
 
     async def initialize(self):
-        async with aiosqlite.connect(_DATABASE_PATH, loop=self.bot.loop) as database:
+        print(self.path)
+        async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
             await database.execute(_CREATE_YOUTUBE_TABLE)
             await database.execute(_CREATE_SPOTIFY_TABLE)
             await database.commit()
@@ -200,7 +198,7 @@ class MusicCache:
         elif table == "spotify":
             table = _INSER_SPOTIFY_TABLE
 
-        async with aiosqlite.connect(_DATABASE_PATH, self.bot.loop) as database:
+        async with aiosqlite.connect(self.path, self.bot.loop) as database:
             await database.execute(table, values)
             await database.commit()
 
@@ -210,12 +208,12 @@ class MusicCache:
         elif table == "spotify":
             table = _INSER_SPOTIFY_TABLE
 
-        async with aiosqlite.connect(_DATABASE_PATH, self.bot.loop) as database:
+        async with aiosqlite.connect(self.path, self.bot.loop) as database:
             await database.executemany(table, values)
             await database.commit()
 
     async def _query(self, stmnt, param):
-        async with aiosqlite.connect(_DATABASE_PATH, self.bot.loop) as database:
+        async with aiosqlite.connect(self.path, self.bot.loop) as database:
             return await database.fetchone(stmnt, param)
 
     @staticmethod
