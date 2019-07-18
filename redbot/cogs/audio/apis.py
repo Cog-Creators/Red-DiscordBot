@@ -37,7 +37,7 @@ _INSER_YOUTUBE_TABLE = """
     """
 
 _INSER_SPOTIFY_TABLE = """
-        INSERT INTO youtube(song_url, track_info, uri, artist_name, track_name) VALUES(?, ?, ?, ?, ?);
+        INSERT INTO spotify(song_url, track_info, uri, artist_name, track_name) VALUES(?, ?, ?, ?, ?);
     """
 
 _YOUTUBE_TABLE_QUERY = "SELECT youtube_url FROM youtube WHERE song_info='{}';"
