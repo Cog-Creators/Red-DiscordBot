@@ -22,7 +22,7 @@ _CREATE_YOUTUBE_TABLE = """
             """
 
 _CREATE_UNIQUE_INDEX_YOUTUBE_TABLE = (
-    "CREATE UNIQUE INDEX IF NOT EXISTS idx_youtube_url ON youtube (youtube_url);"
+    "CREATE UNIQUE INDEX IF NOT EXISTS idx_youtube_url ON youtube (track_info, youtube_url);"
 )
 
 _INSERT_YOUTUBE_TABLE = """
@@ -34,7 +34,7 @@ _QUERY_YOUTUBE_TABLE = "SELECT youtube_url FROM youtube WHERE track_info=':track
 _DROP_SPOTIFY_TABLE = "DROP TABLE spotify;"
 
 _CREATE_UNIQUE_INDEX_SPOTIFY_TABLE = (
-    "CREATE UNIQUE INDEX IF NOT EXISTS idx_spotify_uri ON spotify (uri);"
+    "CREATE UNIQUE INDEX IF NOT EXISTS idx_spotify_uri ON spotify (track_info, uri);"
 )
 
 _CREATE_SPOTIFY_TABLE = """
