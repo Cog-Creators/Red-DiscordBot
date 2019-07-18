@@ -1,0 +1,1 @@
+Removed translations catalogs from source control, will now upload to crowdin on commit and download from crowdin before release.
