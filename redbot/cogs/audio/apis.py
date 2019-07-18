@@ -194,9 +194,9 @@ class MusicCache:
             await database.executemany(table, values)
             await database.commit()
 
-    async def _query(self, stmnt):
+    async def _query(self, stmnt, params):
         async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
-            async with database.execute(stmnt) as cursor:
+            async with database.execute(stmnt, params) as cursor:
                 output = await cursor.fetchone()
                 print("Querry", output, stmnt)
                 return output[0] if output else None
