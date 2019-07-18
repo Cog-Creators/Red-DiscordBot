@@ -198,7 +198,7 @@ class MusicCache:
         elif table == "spotify":
             table = _INSER_SPOTIFY_TABLE
 
-        async with aiosqlite.connect(self.path, self.bot.loop) as database:
+        async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
             await database.execute(table, values)
             await database.commit()
 
@@ -208,13 +208,14 @@ class MusicCache:
         elif table == "spotify":
             table = _INSER_SPOTIFY_TABLE
 
-        async with aiosqlite.connect(self.path, self.bot.loop) as database:
+        async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
             await database.executemany(table, values)
             await database.commit()
 
     async def _query(self, stmnt, param):
         async with aiosqlite.connect(self.path, self.bot.loop) as database:
-            return await database.fetchone(stmnt, param)
+            output = await database.fetchone(stmnt, param)
+            return output[0] if output else None
 
     @staticmethod
     async def _spotify_format_call(stype, key):
@@ -237,6 +238,7 @@ class MusicCache:
         return artist_name, track_name, track_info, song_url, uri
 
     async def _spotify_first_time_query(self, query_type, uri):
+        print("_spotify_first_time_query")
         youtube_urls = []
 
         tracks = await self._spotify_fetch_songs(query_type, uri)
@@ -260,6 +262,7 @@ class MusicCache:
         return youtube_urls
 
     async def _youtube_first_time_query(self, track_info):
+        print("_youtube_first_time_query")
         track = await self.youtube_api.call(track_info)
         if track:
             await self._insert("youtube", (track_info, track))
@@ -314,6 +317,7 @@ class MusicCache:
         return tracks
 
     async def spotify_query(self, query_type, uri):
+        print("spotify_query")
         val = row = await self._query(_SPOTIFY_TABLE_QUERY, uri)
         if row:
             val = row.get("track_info", None)
@@ -326,6 +330,7 @@ class MusicCache:
         return youtube_urls
 
     async def youtube_query(self, track_info):
+        print("youtube_query")
         val = row = await self._query(_YOUTUBE_TABLE_QUERY, track_info)
         if row:
             val = row.get("youtube_url", None)
