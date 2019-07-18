@@ -33,20 +33,21 @@ class LavalinkDownloadFailed(AudioError, RuntimeError):
         return f"[{self.response.status} {self.response.reason}]"
 
 
-
 class ApiError(AudioError):
     """"""
+
 
 class SpotifyApiError(ApiError):
     """"""
 
+
 class SpotifyFetchError(SpotifyApiError):
     """"""
+
     def __init__(self, message, *args):
         self.message = message
         super().__init__(*args)
 
+
 class YouTubeApiError(ApiError):
     """"""
-
-

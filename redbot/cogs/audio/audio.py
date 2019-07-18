@@ -99,7 +99,6 @@ class Audio(commands.Cog):
         self._cleaned_up = False
         self._connection_aborted = False
 
-
         self.play_lock = {}
 
         self._manager: Optional[ServerManager] = None
@@ -1612,7 +1611,7 @@ class Audio(commands.Cog):
 
         await self._enqueue_tracks(ctx, query)
 
-    async def _get_spotify_tracks(self, ctx, query): #TODO:
+    async def _get_spotify_tracks(self, ctx, query):
         if ctx.invoked_with == "play":
             enqueue_tracks = True
         else:
@@ -1653,12 +1652,7 @@ class Audio(commands.Cog):
                     if res is None:
                         return await self._embed_msg(ctx, _("Nothing found."))
                 except SpotifyFetchError as error:
-                    return await self._embed_msg(
-                        ctx,
-                        _(
-                            error.message
-                        ).format(prefix=ctx.prefix),
-                    )
+                    return await self._embed_msg(ctx, _(error.message).format(prefix=ctx.prefix))
                 try:
                     if enqueue_tracks:
                         return await self._enqueue_tracks(ctx, res[0])
@@ -1681,9 +1675,7 @@ class Audio(commands.Cog):
             elif "album" in parts:
                 query = parts[-1]
                 self._play_lock(ctx, True)
-                track_list = await self._spotify_playlist(
-                    ctx, "album", api_data["youtube_api"], query
-                )
+                track_list = await self._spotify_playlist(ctx, "album", query)
                 if not track_list:
                     self._play_lock(ctx, False)
                     return
@@ -1695,13 +1687,9 @@ class Audio(commands.Cog):
                 query = parts[-1]
                 self._play_lock(ctx, True)
                 if "user" in parts:
-                    track_list = await self._spotify_playlist(
-                        ctx, "user_playlist", api_data["youtube_api"], query
-                    )
+                    track_list = await self._spotify_playlist(ctx, "user_playlist", query)
                 else:
-                    track_list = await self._spotify_playlist(
-                        ctx, "playlist", api_data["youtube_api"], query
-                    )
+                    track_list = await self._spotify_playlist(ctx, "playlist", query)
                 if not track_list:
                     self._play_lock(ctx, False)
                     return
@@ -1821,18 +1809,13 @@ class Audio(commands.Cog):
         if type(query) is list:
             self._play_lock(ctx, False)
 
-    async def _spotify_playlist(self, ctx, stype, yt_key, query): # TODO:
+    async def _spotify_playlist(self, ctx, stype, query):
         player = lavalink.get_player(ctx.guild.id)
         spotify_info = []
         try:
             youtube_links = await self.music_cache.spotify_query(stype, query)
         except SpotifyFetchError as error:
-            return await self._embed_msg(
-                ctx,
-                _(
-                    error.message
-                ).format(prefix=ctx.prefix),
-            )
+            return await self._embed_msg(ctx, _(error.message).format(prefix=ctx.prefix))
         except (RuntimeError, aiohttp.client_exceptions.ServerDisconnectedError):
             error_embed = discord.Embed(
                 colour=await ctx.embed_colour(),
@@ -4228,9 +4211,6 @@ class Audio(commands.Cog):
             return False
 
     # Spotify-related methods below are originally from: https://github.com/Just-Some-Bots/MusicBot/blob/master/musicbot/spotify.py
-
-
-
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):

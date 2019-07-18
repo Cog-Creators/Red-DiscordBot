@@ -1,11 +1,13 @@
 import base64
 import functools
 import logging
-import socket
+import os
 import time
 import weakref
+from typing import List
 
-import asyncpg
+import aiosqlite
+from appdirs import AppDirs
 
 from redbot.cogs.audio.errors import SpotifyFetchError
 
@@ -32,15 +34,18 @@ _CREATE_SPOTIFY_TABLE = """
                     """
 
 _INSER_YOUTUBE_TABLE = """
-        INSERT INTO youtube(song_info, youtube_url) VALUES($1, $2)
+        INSERT INTO youtube(song_info, youtube_url) VALUES(?, ?)
     """
 
 _INSER_SPOTIFY_TABLE = """
-        INSERT INTO youtube(song_url, track_info, uri, artist_name, track_name) VALUES($1, $2, $3, $4, $5)
+        INSERT INTO youtube(song_url, track_info, uri, artist_name, track_name) VALUES(?, ?, ?, ?, ?)
     """
 
-_YOUTUBE_TABLE_QUERY = """SELECT youtube_url FROM youtube WHERE song_info = '$1'"""
-_SPOTIFY_TABLE_QUERY = """SELECT track_info FROM spotify WHERE uri = '$1'"""
+_YOUTUBE_TABLE_QUERY = """SELECT youtube_url FROM youtube WHERE song_info='?'"""
+_SPOTIFY_TABLE_QUERY = """SELECT track_info FROM spotify WHERE uri=?"""
+
+dirs = AppDirs("Red-DiscordBot", "Audio")
+_DATABASE_PATH = str(os.path.join(dirs.user_data_dir, "cache.db"))
 
 
 def method_cache(*lru_args, **lru_kwargs):
@@ -62,7 +67,7 @@ def method_cache(*lru_args, **lru_kwargs):
     return decorator
 
 
-class SpotifyAPIClass:
+class SpotifyAPI:
     def __init__(self, bot, session):
         self.bot = bot
         self.session = session
@@ -99,7 +104,6 @@ class SpotifyAPIClass:
                 )
             return await r.json()
 
-    @method_cache()
     async def get_client(self):
         if self.client_id is None:
             self.client_id = (
@@ -140,13 +144,13 @@ class SpotifyAPIClass:
         return await self._make_get(url, headers={"Authorization": "Bearer {0}".format(token)})
 
 
-class YouTubeAPIClass:
+class YouTubeAPI:
     def __init__(self, bot, session):
         self.bot = bot
         self.session = session
         self.api_key = None
 
-    async def get_api(self,):
+    async def get_api_key(self,):
         if self.api_key is None:
             self.api_key = (
                 await self.bot.db.api_tokens.get_raw("youtube", default={"api_key": ""})
@@ -157,7 +161,7 @@ class YouTubeAPIClass:
         params = {
             "q": query,
             "part": "id",
-            "key": await self.get_api(),
+            "key": await self.get_api_key(),
             "maxResults": 1,
             "type": "video",
         }
@@ -171,16 +175,18 @@ class YouTubeAPIClass:
             if search_result["id"]["kind"] == "youtube#video":
                 return f"https://www.youtube.com/watch?v={search_result['id']['videoId']}"
 
+
 class MusicCache:
     def __init__(self, bot, session):
         self.bot = bot
-        self.spotify_api = SpotifyAPIClass(bot, session)
-        self.youtube_api = YouTubeAPIClass(bot, session)
+        self.spotify_api = SpotifyAPI(bot, session)
+        self.youtube_api = YouTubeAPI(bot, session)
 
     async def initialize(self):
-        self.con = await asyncpg.connect()
-        await self.con.execute(_CREATE_YOUTUBE_TABLE)
-        await self.con.execute(_CREATE_SPOTIFY_TABLE)
+        async with aiosqlite.connect(_DATABASE_PATH, self.bot.loop) as database:
+            await database.execute(_CREATE_YOUTUBE_TABLE)
+            await database.execute(_CREATE_SPOTIFY_TABLE)
+            await database.commit()
         # await self.con.set_type_codec(
         #     'json',
         #     encoder=json.dumps,
@@ -188,20 +194,29 @@ class MusicCache:
         #     schema='pg_catalog'
         # )
 
-    async def close(self):
-        await self.con.close()
-
-    async def _insert(self, table, values):
+    async def _insert(self, table, values: tuple):
         if table == "youtube":
             table = _INSER_YOUTUBE_TABLE
         elif table == "spotify":
             table = _INSER_SPOTIFY_TABLE
 
-        async with self.con.acquire() as connection:
-            await connection.execute(table, values)
+        async with aiosqlite.connect(_DATABASE_PATH, self.bot.loop) as database:
+            await database.execute(table, values)
+            await database.commit()
+
+    async def _insert_many(self, table, values: List[tuple]):
+        if table == "youtube":
+            table = _INSER_YOUTUBE_TABLE
+        elif table == "spotify":
+            table = _INSER_SPOTIFY_TABLE
+
+        async with aiosqlite.connect(_DATABASE_PATH, self.bot.loop) as database:
+            await database.executemany(table, values)
+            await database.commit()
 
     async def _query(self, stmnt, param):
-        return await self.con.fetchrow(stmnt, param)
+        async with aiosqlite.connect(_DATABASE_PATH, self.bot.loop) as database:
+            return await database.fetchone(stmnt, param)
 
     @staticmethod
     async def _spotify_format_call(stype, key):
@@ -228,11 +243,12 @@ class MusicCache:
 
         tracks = await self._spotify_fetch_songs(query_type, uri)
 
+        database_entries = []
         for track in tracks:
             artist_name, track_name, track_info, song_url, uri = self._get_spotify_track_info(
                 track
             )
-            await self._insert("spotify", (artist_name, track_name, track_info, song_url, uri))
+            database_entries.append((artist_name, track_name, track_info, song_url, uri))
             val = row = await self._query(_YOUTUBE_TABLE_QUERY, track_info)
             if row:
                 val = row.get("youtube_url", None)
@@ -240,6 +256,8 @@ class MusicCache:
                 val = await self.youtube_query(track_info)
             if val:
                 youtube_urls.append(val)
+
+        await self._insert_many("spotify", (artist_name, track_name, track_info, song_url, uri))
 
         return youtube_urls
 

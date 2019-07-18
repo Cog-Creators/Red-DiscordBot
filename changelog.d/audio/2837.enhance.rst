@@ -1,0 +1,1 @@
+Spotify and Youtube API calls are cached to avoid repeated calls in the future.
