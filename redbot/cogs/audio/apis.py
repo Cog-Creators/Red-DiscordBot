@@ -41,8 +41,8 @@ _INSER_SPOTIFY_TABLE = """
         INSERT INTO youtube(song_url, track_info, uri, artist_name, track_name) VALUES(?, ?, ?, ?, ?)
     """
 
-_YOUTUBE_TABLE_QUERY = """SELECT youtube_url FROM youtube WHERE song_info='?'"""
-_SPOTIFY_TABLE_QUERY = """SELECT track_info FROM spotify WHERE uri=?"""
+_YOUTUBE_TABLE_QUERY = "SELECT youtube_url FROM youtube WHERE song_info='{}'"
+_SPOTIFY_TABLE_QUERY = "SELECT track_info FROM spotify WHERE uri={}"
 
 
 def method_cache(*lru_args, **lru_kwargs):
@@ -211,9 +211,9 @@ class MusicCache:
             await database.executemany(table, values)
             await database.commit()
 
-    async def _query(self, stmnt, param):
+    async def _query(self, stmnt):
         async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
-            async with database.execute(stmnt, param) as cursor:
+            async with database.execute(stmnt) as cursor:
                 output = await cursor.fetchone()
                 return output[0] if output else None
 
@@ -249,7 +249,7 @@ class MusicCache:
                 track
             )
             database_entries.append((artist_name, track_name, track_info, song_url, uri))
-            val = row = await self._query(_YOUTUBE_TABLE_QUERY, (track_info,))
+            val = row = await self._query(_YOUTUBE_TABLE_QUERY.format(track_info))
             if row:
                 val = row.get("youtube_url", None)
             if val is None:
@@ -313,7 +313,7 @@ class MusicCache:
 
     async def spotify_query(self, query_type, uri):
         print("spotify_query")
-        val = row = await self._query(_SPOTIFY_TABLE_QUERY, (uri,))
+        val = row = await self._query(_SPOTIFY_TABLE_QUERY.format(uri))
         if row:
             val = row.get("track_info", None)
         if val is None:
@@ -326,7 +326,7 @@ class MusicCache:
 
     async def youtube_query(self, track_info):
         print("youtube_query")
-        val = row = await self._query(_YOUTUBE_TABLE_QUERY, (track_info,))
+        val = row = await self._query(_YOUTUBE_TABLE_QUERY.format(track_info))
         if row:
             val = row.get("youtube_url", None)
         if val is None:
