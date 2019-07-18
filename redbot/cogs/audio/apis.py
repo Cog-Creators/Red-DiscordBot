@@ -23,7 +23,7 @@ _CREATE_YOUTUBE_TABLE = """
 _INSERT_YOUTUBE_TABLE = """
         INSERT INTO youtube(track_info, youtube_url) VALUES(?, ?);
     """
-_QUERY_YOUTUBE_TABLE = "SELECT youtube_url FROM youtube WHERE track_info='{}';"
+_QUERY_YOUTUBE_TABLE = "SELECT youtube_url FROM youtube WHERE track_info=':track';"
 
 
 _DROP_SPOTIFY_TABLE = "DROP TABLE spotify;"
@@ -42,7 +42,7 @@ _CREATE_SPOTIFY_TABLE = """
 _INSER_SPOTIFY_TABLE = """
         INSERT INTO spotify(song_url, track_info, uri, artist_name, track_name) VALUES(?, ?, ?, ?, ?);
     """
-_QUERY_SPOTIFY_TABLE = "SELECT track_info FROM spotify WHERE uri='{}';"
+_QUERY_SPOTIFY_TABLE = "SELECT track_info FROM spotify WHERE uri=':uri';"
 
 
 class SpotifyAPI:
@@ -198,6 +198,7 @@ class MusicCache:
         async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
             async with database.execute(stmnt) as cursor:
                 output = await cursor.fetchone()
+                print("Querry", output, stmnt)
                 return output[0] if output else None
 
     @staticmethod
@@ -233,7 +234,7 @@ class MusicCache:
             )
             database_entries.append((artist_name, track_name, track_info, song_url, uri))
             if skip_youtube is False:
-                val = await self._query(_QUERY_YOUTUBE_TABLE.format(track_info))
+                val = await self._query(_QUERY_YOUTUBE_TABLE, {"track": track_info})
                 if val is None:
                     val = await self.youtube_query(track_info)
                 if val:
@@ -297,7 +298,7 @@ class MusicCache:
 
     async def spotify_query(self, query_type, uri, skip_youtube=False):
         print("spotify_query")
-        val = await self._query(_QUERY_SPOTIFY_TABLE.format(uri))
+        val = await self._query(_QUERY_SPOTIFY_TABLE, {"uri": uri})
         youtube_urls = []
         if val is None:
             urls = await self._spotify_first_time_query(query_type, uri, skip_youtube)
@@ -309,7 +310,7 @@ class MusicCache:
 
     async def youtube_query(self, track_info):
         print("youtube_query")
-        val = await self._query(_QUERY_YOUTUBE_TABLE.format(track_info))
+        val = await self._query(_QUERY_YOUTUBE_TABLE, {"track": track_info})
         if val is None:
             youtube_url = await self._youtube_first_time_query(track_info)
         else:
