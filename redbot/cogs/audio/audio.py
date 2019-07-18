@@ -1648,7 +1648,9 @@ class Audio(commands.Cog):
             parts = query.split(":")
             if "track" in parts:
                 try:
-                    res = await self.music_cache.spotify_query("track", parts[-1])
+                    res = await self.music_cache.spotify_query(
+                        "track", parts[-1], skip_youtube=True
+                    )
                     if res is None:
                         return await self._embed_msg(ctx, _("Nothing found."))
                 except SpotifyFetchError as error:

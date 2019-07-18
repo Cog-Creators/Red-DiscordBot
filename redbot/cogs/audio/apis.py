@@ -1,9 +1,7 @@
 import base64
-import functools
 import logging
 import os
 import time
-import weakref
 from typing import List
 
 import aiosqlite
@@ -14,15 +12,21 @@ log = logging.getLogger("red.audio.cache")
 
 
 _DROP_YOUTUBE_TABLE = "DROP TABLE youtube;"
-_DROP_SPOTIFY_TABLE = "DROP TABLE spotify;"
 
 _CREATE_YOUTUBE_TABLE = """
                 CREATE TABLE IF NOT EXISTS youtube(
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    song_info TEXT,
+                    track_info TEXT,
                     youtube_url TEXT
                 );
             """
+_INSERT_YOUTUBE_TABLE = """
+        INSERT INTO youtube(track_info, youtube_url) VALUES(?, ?);
+    """
+_QUERY_YOUTUBE_TABLE = "SELECT youtube_url FROM youtube WHERE track_info='{}';"
+
+
+_DROP_SPOTIFY_TABLE = "DROP TABLE spotify;"
 
 _CREATE_SPOTIFY_TABLE = """
                         CREATE TABLE IF NOT EXISTS spotify(
@@ -35,35 +39,10 @@ _CREATE_SPOTIFY_TABLE = """
                         );
                     """
 
-_INSER_YOUTUBE_TABLE = """
-        INSERT INTO youtube(song_info, youtube_url) VALUES(?, ?);
-    """
-
 _INSER_SPOTIFY_TABLE = """
         INSERT INTO spotify(song_url, track_info, uri, artist_name, track_name) VALUES(?, ?, ?, ?, ?);
     """
-
-_YOUTUBE_TABLE_QUERY = "SELECT youtube_url FROM youtube WHERE song_info='{}';"
-_SPOTIFY_TABLE_QUERY = "SELECT track_info FROM spotify WHERE uri='{}';"
-
-
-# def method_cache(*lru_args, **lru_kwargs):
-#     def decorator(func):
-#         @functools.wraps(func)
-#         def wrapped_func(self, *args, **kwargs):
-#             self_weakref = weakref.ref(self)
-#
-#             @functools.wraps(func)
-#             @functools.lru_cache(*lru_args, **lru_kwargs)
-#             def instance_method_cache(*args, **kwargs):
-#                 return func(self_weakref(), *args, **kwargs)
-#
-#             setattr(self, func.__name__, instance_method_cache)
-#             return instance_method_cache(*args, **kwargs)
-#
-#         return wrapped_func
-#
-#     return decorator
+_QUERY_SPOTIFY_TABLE = "SELECT track_info FROM spotify WHERE uri='{}';"
 
 
 class SpotifyAPI:
@@ -187,18 +166,17 @@ class MusicCache:
         self.path = os.path.abspath(str(os.path.join(path, "cache.db")))
 
     async def initialize(self):
-        print(self.path)
         async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
             await database.execute(_DROP_SPOTIFY_TABLE)
             await database.execute(_DROP_YOUTUBE_TABLE)
-
+            await database.commit()
             await database.execute(_CREATE_YOUTUBE_TABLE)
             await database.execute(_CREATE_SPOTIFY_TABLE)
             await database.commit()
 
     async def _insert(self, table, values: tuple):
         if table == "youtube":
-            table = _INSER_YOUTUBE_TABLE
+            table = _INSERT_YOUTUBE_TABLE
         elif table == "spotify":
             table = _INSER_SPOTIFY_TABLE
 
@@ -208,7 +186,7 @@ class MusicCache:
 
     async def _insert_many(self, table, values: List[tuple]):
         if table == "youtube":
-            table = _INSER_YOUTUBE_TABLE
+            table = _INSERT_YOUTUBE_TABLE
         elif table == "spotify":
             table = _INSER_SPOTIFY_TABLE
 
@@ -242,7 +220,7 @@ class MusicCache:
 
         return artist_name, track_name, track_info, song_url, uri
 
-    async def _spotify_first_time_query(self, query_type, uri):
+    async def _spotify_first_time_query(self, query_type, uri, skip_youtube=False):
         print("_spotify_first_time_query")
         youtube_urls = []
 
@@ -254,13 +232,16 @@ class MusicCache:
                 track
             )
             database_entries.append((artist_name, track_name, track_info, song_url, uri))
-            val = await self._query(_YOUTUBE_TABLE_QUERY.format(track_info))
-            if val is None:
-                val = await self.youtube_query(track_info)
-            if val:
-                youtube_urls.append(val)
+            if skip_youtube is False:
+                val = await self._query(_QUERY_YOUTUBE_TABLE.format(track_info))
+                if val is None:
+                    val = await self.youtube_query(track_info)
+                if val:
+                    youtube_urls.append(val)
+            else:
+                youtube_urls.append(track_info)
 
-        await self._insert_many("spotify", (artist_name, track_name, track_info, song_url, uri))
+        await self._insert_many("spotify", (song_url, track_info, uri, artist_name, track_name))
 
         return youtube_urls
 
@@ -314,13 +295,13 @@ class MusicCache:
 
         return tracks
 
-    async def spotify_query(self, query_type, uri):
+    async def spotify_query(self, query_type, uri, skip_youtube=False):
         print("spotify_query")
-        val = await self._query(_SPOTIFY_TABLE_QUERY.format(uri))
+        val = await self._query(_QUERY_SPOTIFY_TABLE.format(uri))
         youtube_urls = []
         if val is None:
-            urls = await self._spotify_first_time_query(query_type, uri)
-            youtube_urls.expand(urls)
+            urls = await self._spotify_first_time_query(query_type, uri, skip_youtube)
+            youtube_urls.extend(urls)
 
         else:
             youtube_urls.append(val)
@@ -328,7 +309,7 @@ class MusicCache:
 
     async def youtube_query(self, track_info):
         print("youtube_query")
-        val = await self._query(_YOUTUBE_TABLE_QUERY.format(track_info))
+        val = await self._query(_QUERY_YOUTUBE_TABLE.format(track_info))
         if val is None:
             youtube_url = await self._youtube_first_time_query(track_info)
         else:
