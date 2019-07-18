@@ -213,7 +213,7 @@ class MusicCache:
                 return output[0] if output else None
 
     @staticmethod
-    async def _spotify_format_call(stype, key):
+    def _spotify_format_call(stype, key):
         if stype == "album":
             query = "https://api.spotify.com/v1/albums/{0}".format(key)
         elif stype == "track":
@@ -318,7 +318,7 @@ class MusicCache:
         if row:
             val = row.get("track_info", None)
         if val is None:
-            youtube_urls = self._spotify_first_time_query(query_type, uri)
+            youtube_urls = await self._spotify_first_time_query(query_type, uri)
         else:
             if val is None:
                 return None
@@ -332,7 +332,7 @@ class MusicCache:
         if row:
             val = row.get("youtube_url", None)
         if val is None:
-            youtube_url = self._youtube_first_time_query(track_info)
+            youtube_url = await self._youtube_first_time_query(track_info)
         else:
             youtube_url = val
         return youtube_url
