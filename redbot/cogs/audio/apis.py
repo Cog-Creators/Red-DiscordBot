@@ -316,7 +316,6 @@ class MusicCache:
                     break
         return tracks
 
-    @method_cache(maxsize=256)
     async def spotify_query(self, query_type, uri):
         print("spotify_query")
         val = row = await self._query(_SPOTIFY_TABLE_QUERY, (uri,))
@@ -330,7 +329,6 @@ class MusicCache:
             youtube_urls = [val]
         return youtube_urls
 
-    @method_cache(maxsize=256)
     async def youtube_query(self, track_info):
         print("youtube_query")
         val = row = await self._query(_YOUTUBE_TABLE_QUERY, (track_info,))
