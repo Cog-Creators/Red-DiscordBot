@@ -241,7 +241,7 @@ class MusicCache:
             else:
                 youtube_urls.append(track_info)
 
-        await self._insert_many("spotify", (song_url, track_info, uri, artist_name, track_name))
+        await self._insert_many("spotify", database_entries)
 
         return youtube_urls
 
