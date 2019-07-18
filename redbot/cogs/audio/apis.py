@@ -13,12 +13,15 @@ from .errors import SpotifyFetchError
 log = logging.getLogger("red.audio.cache")
 
 
+_DROP_YOUTUBE_TABLE = "DROP TABLE youtube;"
+_DROP_SPOTIFY_TABLE = "DROP TABLE spotify;"
+
 _CREATE_YOUTUBE_TABLE = """
                 CREATE TABLE IF NOT EXISTS youtube(
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     song_info TEXT,
                     youtube_url TEXT
-                )
+                );
             """
 
 _CREATE_SPOTIFY_TABLE = """
@@ -29,7 +32,7 @@ _CREATE_SPOTIFY_TABLE = """
                             uri TEXT
                             artist_name TEXT, 
                             track_name TEXT
-                        )
+                        );
                     """
 
 _INSER_YOUTUBE_TABLE = """
@@ -186,6 +189,9 @@ class MusicCache:
     async def initialize(self):
         print(self.path)
         async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
+            await database.execute(_DROP_SPOTIFY_TABLE)
+            await database.execute(_DROP_YOUTUBE_TABLE)
+
             await database.execute(_CREATE_YOUTUBE_TABLE)
             await database.execute(_CREATE_SPOTIFY_TABLE)
             await database.commit()
