@@ -48,7 +48,7 @@ _CREATE_SPOTIFY_TABLE = """
                         );
                     """
 
-_INSER_SPOTIFY_TABLE = """
+_INSERT_SPOTIFY_TABLE = """
         INSERT OR REPLACE INTO spotify(song_url, track_info, uri, artist_name, track_name) VALUES(?, ?, ?, ?, ?);
     """
 _QUERY_SPOTIFY_TABLE = "SELECT track_info FROM spotify WHERE uri=':uri';"
@@ -192,7 +192,7 @@ class MusicCache:
         if table == "youtube":
             table = _INSERT_YOUTUBE_TABLE
         elif table == "spotify":
-            table = _INSER_SPOTIFY_TABLE
+            table = _INSERT_SPOTIFY_TABLE
 
         async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
             await database.execute(table, values)
@@ -202,7 +202,7 @@ class MusicCache:
         if table == "youtube":
             table = _INSERT_YOUTUBE_TABLE
         elif table == "spotify":
-            table = _INSER_SPOTIFY_TABLE
+            table = _INSERT_SPOTIFY_TABLE
 
         async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
             await database.executemany(table, values)
