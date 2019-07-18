@@ -17,7 +17,7 @@ _CREATE_YOUTUBE_TABLE = """
                 CREATE TABLE IF NOT EXISTS youtube(
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     song_info TEXT,
-                    youtube_url TEXT,
+                    youtube_url TEXT
                 )
             """
 
