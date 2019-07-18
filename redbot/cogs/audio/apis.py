@@ -69,6 +69,7 @@ class SpotifyAPI:
         self.session = session
         self.spotify_token = None
         self.client_id = None
+        self.client_secret = None
 
     @staticmethod
     async def _check_token(token):
@@ -77,6 +78,11 @@ class SpotifyAPI:
 
     @staticmethod
     def _make_token_auth(client_id, client_secret):
+        if client_id is None:
+            client_id = ""
+        if client_secret is None:
+            client_secret = ""
+
         auth_header = base64.b64encode((client_id + ":" + client_secret).encode("ascii"))
         return {"Authorization": "Basic %s" % auth_header.decode("ascii")}
 
@@ -100,22 +106,20 @@ class SpotifyAPI:
                 )
             return await r.json()
 
-    async def get_client(self):
-        if self.client_id is None:
-            self.client_id = (
-                await self.bot.db.api_tokens.get_raw("spotify", default={"client_id": ""})
-            ).get("client_id")
-        return self.client_id
+    async def get_auth(self):
+        if self.client_id is None or self.client_secret is None:
+            data = await self.bot.db.api_tokens.get_raw(
+                "spotify", default={"client_id": None, "client_secret": None}
+            )
+
+            self.client_id = data.get("client_id")
+            self.client_secret = data.get("client_secret")
 
     async def _request_token(self):
-        self.client_id = await self.get_client()
-        self.client_secret = await self.bot.db.api_tokens.get_raw(
-            "spotify", default={"client_secret": ""}
-        )
+        await self.get_auth()
+
         payload = {"grant_type": "client_credentials"}
-        headers = self._make_token_auth(
-            self.client_id["client_id"], self.client_secret["client_secret"]
-        )
+        headers = self._make_token_auth(self.client_id, self.client_secret)
         r = await self._make_post(
             "https://accounts.spotify.com/api/token", payload=payload, headers=headers
         )
