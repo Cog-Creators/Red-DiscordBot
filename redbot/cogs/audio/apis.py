@@ -20,13 +20,20 @@ _CREATE_YOUTUBE_TABLE = """
                     youtube_url TEXT
                 );
             """
+
+_CREATE_UNIQUE_INDEX_YOUTUBE_TABLE = (
+    "CREATE UNIQUE INDEX idx_youtube_url ON youtube (youtube_url);"
+)
+
 _INSERT_YOUTUBE_TABLE = """
-        INSERT INTO youtube(track_info, youtube_url) VALUES(?, ?);
+        INSERT OR REPLACE INTO youtube(track_info, youtube_url) VALUES(?, ?);
     """
 _QUERY_YOUTUBE_TABLE = "SELECT youtube_url FROM youtube WHERE track_info=':track';"
 
 
 _DROP_SPOTIFY_TABLE = "DROP TABLE spotify;"
+
+_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE = "CREATE UNIQUE INDEX idx_spotify_uri ON spotify (uri);"
 
 _CREATE_SPOTIFY_TABLE = """
                         CREATE TABLE IF NOT EXISTS spotify(
@@ -40,11 +47,14 @@ _CREATE_SPOTIFY_TABLE = """
                     """
 
 _INSER_SPOTIFY_TABLE = """
-        INSERT INTO spotify(song_url, track_info, uri, artist_name, track_name) VALUES(?, ?, ?, ?, ?);
+        INSERT OR REPLACE INTO spotify(song_url, track_info, uri, artist_name, track_name) VALUES(?, ?, ?, ?, ?);
     """
 _QUERY_SPOTIFY_TABLE = "SELECT track_info FROM spotify WHERE uri=':uri';"
 
 
+# update test set name='john' where id=3012
+# IF @@ROWCOUNT=0
+#   insert into test(name) values('john');
 class SpotifyAPI:
     def __init__(self, bot, session):
         self.bot = bot
@@ -167,10 +177,13 @@ class MusicCache:
 
     async def initialize(self):
         async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
-            # await database.execute(_DROP_SPOTIFY_TABLE)
-            # await database.execute(_DROP_YOUTUBE_TABLE)
+            await database.execute(_DROP_SPOTIFY_TABLE)  # TODO: Remove me
+            await database.execute(_DROP_YOUTUBE_TABLE)  # TODO: Remove me
+            await database.commit()  # TODO: Remove me
             await database.execute(_CREATE_YOUTUBE_TABLE)
+            await database.execute(_CREATE_UNIQUE_INDEX_YOUTUBE_TABLE)
             await database.execute(_CREATE_SPOTIFY_TABLE)
+            await database.execute(_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE)
             await database.commit()
 
     async def _insert(self, table, values: tuple):
