@@ -6,6 +6,7 @@ import time
 import weakref
 from typing import List
 
+import async_lru
 import aiosqlite
 
 from .errors import SpotifyFetchError
@@ -51,7 +52,7 @@ def method_cache(*lru_args, **lru_kwargs):
             self_weakref = weakref.ref(self)
 
             @functools.wraps(func)
-            @functools.lru_cache(*lru_args, **lru_kwargs)
+            @async_lru.alru_cache(*lru_args, **lru_kwargs)
             def instance_method_cache(*args, **kwargs):
                 return func(self_weakref(), *args, **kwargs)
 
