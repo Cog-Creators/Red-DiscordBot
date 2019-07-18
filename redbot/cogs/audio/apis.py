@@ -1,6 +1,7 @@
 import base64
 import functools
 import logging
+import socket
 import time
 import weakref
 
@@ -11,15 +12,15 @@ from redbot.cogs.audio.errors import SpotifyFetchError
 log = logging.getLogger("red.audio.cache")
 
 
-_CREATE_YOUTUBE_TABLE = '''
+_CREATE_YOUTUBE_TABLE = """
                 CREATE TABLE IF NOT EXISTS youtube(
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     song_info TEXT,
                     youtube_url TEXT,
                 )
-            '''
+            """
 
-_CREATE_SPOTIFY_TABLE = '''
+_CREATE_SPOTIFY_TABLE = """
                         CREATE TABLE IF NOT EXISTS spotify(
                             id INTEGER PRIMARY KEY AUTOINCREMENT,
                             song_url TEXT,
@@ -28,15 +29,15 @@ _CREATE_SPOTIFY_TABLE = '''
                             artist_name TEXT, 
                             track_name TEXT
                         )
-                    '''
+                    """
 
-_INSER_YOUTUBE_TABLE = '''
+_INSER_YOUTUBE_TABLE = """
         INSERT INTO youtube(song_info, youtube_url) VALUES($1, $2)
-    '''
+    """
 
-_INSER_SPOTIFY_TABLE = '''
+_INSER_SPOTIFY_TABLE = """
         INSERT INTO youtube(song_url, track_info, uri, artist_name, track_name) VALUES($1, $2, $3, $4, $5)
-    '''
+    """
 
 _YOUTUBE_TABLE_QUERY = """SELECT youtube_url FROM youtube WHERE song_info = '$1'"""
 _SPOTIFY_TABLE_QUERY = """SELECT track_info FROM spotify WHERE uri = '$1'"""
@@ -47,13 +48,17 @@ def method_cache(*lru_args, **lru_kwargs):
         @functools.wraps(func)
         def wrapped_func(self, *args, **kwargs):
             self_weakref = weakref.ref(self)
+
             @functools.wraps(func)
             @functools.lru_cache(*lru_args, **lru_kwargs)
             def instance_method_cache(*args, **kwargs):
                 return func(self_weakref(), *args, **kwargs)
+
             setattr(self, func.__name__, instance_method_cache)
             return instance_method_cache(*args, **kwargs)
+
         return wrapped_func
+
     return decorator
 
 
@@ -98,13 +103,14 @@ class SpotifyAPIClass:
     async def get_client(self):
         if self.client_id is None:
             self.client_id = (
-                await self.bot.db.api_tokens.get_raw("spotify", default={"client_id": ""})).get(
-                "client_id")
+                await self.bot.db.api_tokens.get_raw("spotify", default={"client_id": ""})
+            ).get("client_id")
         return self.client_id
 
     async def _request_token(self):
         self.client_id = await self.get_client()
-        self.client_secret = await self.bot.db.api_tokens.get_raw("spotify", default={"client_secret": ""}
+        self.client_secret = await self.bot.db.api_tokens.get_raw(
+            "spotify", default={"client_secret": ""}
         )
         payload = {"grant_type": "client_credentials"}
         headers = self._make_token_auth(
@@ -129,7 +135,7 @@ class SpotifyAPIClass:
         log.debug("Created a new access token for Spotify: {0}".format(token))
         return self.spotify_token["access_token"]
 
-    async def call(self, url): # TODO: replace all make_spotify_req in Audio
+    async def call(self, url):  # TODO: replace all make_spotify_req in Audio
         token = await self._get_spotify_token()
         return await self._make_get(url, headers={"Authorization": "Bearer {0}".format(token)})
 
@@ -140,14 +146,21 @@ class YouTubeAPIClass:
         self.session = session
         self.api_key = None
 
-    async def get_api(self, ):
+    async def get_api(self,):
         if self.api_key is None:
-            self.api_key = (await self.bot.db.api_tokens.get_raw("youtube", default={"api_key": ""})).get(
-                "api_key")
+            self.api_key = (
+                await self.bot.db.api_tokens.get_raw("youtube", default={"api_key": ""})
+            ).get("api_key")
         return self.api_key
 
     async def call(self, query):
-        params = {"q": query, "part": "id", "key": await self.get_api(), "maxResults": 1, "type": "video"}
+        params = {
+            "q": query,
+            "part": "id",
+            "key": await self.get_api(),
+            "maxResults": 1,
+            "type": "video",
+        }
         yt_url = "https://www.googleapis.com/youtube/v3/search"
         async with self.session.request("GET", yt_url, params=params) as r:
             if r.status == 400:
@@ -158,7 +171,6 @@ class YouTubeAPIClass:
             if search_result["id"]["kind"] == "youtube#video":
                 return f"https://www.youtube.com/watch?v={search_result['id']['videoId']}"
 
-
 class MusicCache:
     def __init__(self, bot, session):
         self.bot = bot
@@ -166,7 +178,7 @@ class MusicCache:
         self.youtube_api = YouTubeAPIClass(bot, session)
 
     async def initialize(self):
-        self.con = await asyncpg.connect(user='postgres', password='12345678', database='audiocache', host='localhost', port=8080)
+        self.con = await asyncpg.connect()
         await self.con.execute(_CREATE_YOUTUBE_TABLE)
         await self.con.execute(_CREATE_SPOTIFY_TABLE)
         # await self.con.set_type_codec(
@@ -217,7 +229,9 @@ class MusicCache:
         tracks = await self._spotify_fetch_songs(query_type, uri)
 
         for track in tracks:
-            artist_name, track_name, track_info, song_url, uri = self._get_spotify_track_info(track)
+            artist_name, track_name, track_info, song_url, uri = self._get_spotify_track_info(
+                track
+            )
             await self._insert("spotify", (artist_name, track_name, track_info, song_url, uri))
             val = row = await self._query(_YOUTUBE_TABLE_QUERY, track_info)
             if row:
@@ -247,7 +261,8 @@ class MusicCache:
                     (
                         "The Spotify API key or client secret has not been set properly. "
                         "\nUse `{prefix}audioset spotifyapi` for instructions."
-                    ))
+                    )
+                )
         except KeyError:
             pass
         if query_type == "track":
@@ -274,7 +289,9 @@ class MusicCache:
                     break
             except KeyError:
                 if results["tracks"]["next"] is not None:
-                    results = await self._spotify_fetch_songs(query_type, uri, results["tracks"]["next"])
+                    results = await self._spotify_fetch_songs(
+                        query_type, uri, results["tracks"]["next"]
+                    )
                     continue
                 else:
                     break
@@ -301,10 +318,3 @@ class MusicCache:
         else:
             youtube_url = val
         return youtube_url
-
-
-
-
-
-
-
