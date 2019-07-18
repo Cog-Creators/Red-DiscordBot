@@ -1,10 +1,12 @@
 import base64
 import logging
 import os
+import sqlite3
 import time
-from typing import List
+from typing import List, Optional, Dict, Tuple
 
 import aiosqlite
+import discord
 
 from .errors import SpotifyFetchError
 
@@ -28,35 +30,52 @@ _CREATE_UNIQUE_INDEX_YOUTUBE_TABLE = (
 _INSERT_YOUTUBE_TABLE = """
         INSERT OR REPLACE INTO youtube(track_info, youtube_url) VALUES(?, ?);
     """
-_QUERY_YOUTUBE_TABLE = "SELECT youtube_url FROM youtube WHERE track_info=':track';"
+_QUERY_YOUTUBE_TABLE = "SELECT youtube_url FROM youtube WHERE track_info=:track;"
 
 
 _DROP_SPOTIFY_TABLE = "DROP TABLE spotify;"
 
 _CREATE_UNIQUE_INDEX_SPOTIFY_TABLE = (
-    "CREATE UNIQUE INDEX IF NOT EXISTS idx_spotify_uri ON spotify (track_info, uri);"
+    "CREATE UNIQUE INDEX IF NOT EXISTS idx_spotify_uri ON spotify (id, type, uri);"
 )
 
 _CREATE_SPOTIFY_TABLE = """
                         CREATE TABLE IF NOT EXISTS spotify(
-                            id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            song_url TEXT,
-                            track_info TEXT,
+                            id TEXT,
+                            type TEXT,
                             uri TEXT,
+                            track_name TEXT,
                             artist_name TEXT, 
-                            track_name TEXT
+                            song_url TEXT,
+                            track_info TEXT
                         );
                     """
 
 _INSERT_SPOTIFY_TABLE = """
-        INSERT OR REPLACE INTO spotify(song_url, track_info, uri, artist_name, track_name) VALUES(?, ?, ?, ?, ?);
+        INSERT OR REPLACE INTO spotify(id, type, uri, track_name, artist_name, song_url, track_info) VALUES(?, ?, ?, ?, ?, ?, ?);
     """
-_QUERY_SPOTIFY_TABLE = "SELECT track_info FROM spotify WHERE uri=':uri';"
+_QUERY_SPOTIFY_TABLE = "SELECT track_info FROM spotify WHERE uri=:uri;"
 
 
-# update test set name='john' where id=3012
-# IF @@ROWCOUNT=0
-#   insert into test(name) values('john');
+class Notifier:
+    def __init__(self, ctx, message, updates, **kwargs):
+        self.context = ctx
+        self.message = message
+        self.updates = updates
+        self.color = None
+
+    async def notify_user(self, current, total, key):
+        if self.color is None:
+            self.color = await self.context.embed_colour()
+        embed2 = discord.Embed(
+            colour=self.color, title=self.updates.get(key).format(num=current, total=total)
+        )
+        try:
+            await self.message.edit(embed=embed2)
+        except discord.errors.NotFound:
+            pass
+
+
 class SpotifyAPI:
     def __init__(self, bot, session):
         self.bot = bot
@@ -80,8 +99,10 @@ class SpotifyAPI:
         auth_header = base64.b64encode((client_id + ":" + client_secret).encode("ascii"))
         return {"Authorization": "Basic %s" % auth_header.decode("ascii")}
 
-    async def _make_get(self, url, headers=None):
-        async with self.session.request("GET", url, headers=headers) as r:
+    async def _make_get(self, url, headers=None, params=None):
+        if params is None:
+            params = {}
+        async with self.session.request("GET", url, params=params, headers=headers) as r:
             if r.status != 200:
                 log.debug(
                     "Issue making GET request to {0}: [{1.status}] {2}".format(
@@ -90,17 +111,7 @@ class SpotifyAPI:
                 )
             return await r.json()
 
-    async def _make_post(self, url, payload, headers=None):
-        async with self.session.post(url, data=payload, headers=headers) as r:
-            if r.status != 200:
-                log.debug(
-                    "Issue making POST request to {0}: [{1.status}] {2}".format(
-                        url, r, await r.json()
-                    )
-                )
-            return await r.json()
-
-    async def get_auth(self):
+    async def _get_auth(self):
         if self.client_id is None or self.client_secret is None:
             data = await self.bot.db.api_tokens.get_raw(
                 "spotify", default={"client_id": None, "client_secret": None}
@@ -110,11 +121,11 @@ class SpotifyAPI:
             self.client_secret = data.get("client_secret")
 
     async def _request_token(self):
-        await self.get_auth()
+        await self._get_auth()
 
         payload = {"grant_type": "client_credentials"}
         headers = self._make_token_auth(self.client_id, self.client_secret)
-        r = await self._make_post(
+        r = await self.post_call(
             "https://accounts.spotify.com/api/token", payload=payload, headers=headers
         )
         return r
@@ -133,9 +144,21 @@ class SpotifyAPI:
         log.debug("Created a new access token for Spotify: {0}".format(token))
         return self.spotify_token["access_token"]
 
-    async def call(self, url):
+    async def post_call(self, url, payload, headers=None):
+        async with self.session.post(url, data=payload, headers=headers) as r:
+            if r.status != 200:
+                log.debug(
+                    "Issue making POST request to {0}: [{1.status}] {2}".format(
+                        url, r, await r.json()
+                    )
+                )
+            return await r.json()
+
+    async def get_call(self, url, params):
         token = await self._get_spotify_token()
-        return await self._make_get(url, headers={"Authorization": "Bearer {0}".format(token)})
+        return await self._make_get(
+            url, params=params, headers={"Authorization": "Bearer {0}".format(token)}
+        )
 
 
 class YouTubeAPI:
@@ -144,18 +167,18 @@ class YouTubeAPI:
         self.session = session
         self.api_key = None
 
-    async def get_api_key(self,):
+    async def _get_api_key(self,):
         if self.api_key is None:
             self.api_key = (
                 await self.bot.db.api_tokens.get_raw("youtube", default={"api_key": ""})
             ).get("api_key")
         return self.api_key
 
-    async def call(self, query):
+    async def get_call(self, query):
         params = {
             "q": query,
             "part": "id",
-            "key": await self.get_api_key(),
+            "key": await self._get_api_key(),
             "maxResults": 1,
             "type": "video",
         }
@@ -179,139 +202,169 @@ class MusicCache:
 
     async def initialize(self):
         async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
-            await database.execute(_DROP_SPOTIFY_TABLE)  # TODO: Remove me
-            await database.execute(_DROP_YOUTUBE_TABLE)  # TODO: Remove me
-            await database.commit()  # TODO: Remove me
             await database.execute(_CREATE_YOUTUBE_TABLE)
             await database.execute(_CREATE_UNIQUE_INDEX_YOUTUBE_TABLE)
             await database.execute(_CREATE_SPOTIFY_TABLE)
             await database.execute(_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE)
             await database.commit()
 
-    async def _insert(self, table, values: tuple):
+    async def _insert(self, table: str, values: tuple) -> None:
         if table == "youtube":
-            table = _INSERT_YOUTUBE_TABLE
+            query = _INSERT_YOUTUBE_TABLE
         elif table == "spotify":
-            table = _INSERT_SPOTIFY_TABLE
+            query = _INSERT_SPOTIFY_TABLE
 
         async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
-            await database.execute(table, values)
+            await database.execute(query, values)
             await database.commit()
 
-    async def _insert_many(self, table, values: List[tuple]):
+    async def _insert_many(self, table: str, values: List[tuple]) -> None:
         if table == "youtube":
-            table = _INSERT_YOUTUBE_TABLE
+            query = _INSERT_YOUTUBE_TABLE
         elif table == "spotify":
-            table = _INSERT_SPOTIFY_TABLE
+            query = _INSERT_SPOTIFY_TABLE
 
         async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
-            await database.executemany(table, values)
+            await database.executemany(query, values)
             await database.commit()
 
-    async def _query(self, stmnt, params):
+    async def _query(self, query: str, params: Dict[str, str]) -> Optional[str]:
         async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
-            async with database.execute(stmnt, params) as cursor:
+            async with database.execute(query, params) as cursor:
                 output = await cursor.fetchone()
-                print("Querry", output, stmnt)
                 return output[0] if output else None
 
     @staticmethod
-    def _spotify_format_call(stype, key):
-        if stype == "album":
+    def _spotify_format_call(qtype: str, key: str) -> Tuple[str, dict]:
+        params = {}
+        if qtype == "album":
             query = "https://api.spotify.com/v1/albums/{0}/tracks".format(key)
-        elif stype == "track":
+        elif qtype == "track":
             query = "https://api.spotify.com/v1/tracks/{0}".format(key)
         else:
             query = "https://api.spotify.com/v1/playlists/{0}/tracks".format(key)
-        return query
+            params = {
+                "fields": "total, next,items(track(id,type,name,artists,external_urls,uri,is_local))"
+            }
+        return query, params
 
     @staticmethod
-    def _get_spotify_track_info(track_data):  # This is Erroing
+    def _get_spotify_track_info(track_data: dict) -> Tuple[str, ...]:
         artist_name = track_data["artists"][0]["name"]
         track_name = track_data["name"]
         track_info = f"{track_name} {artist_name}"
-        song_url = track_data["external_urls"]["spotify"]
+        song_url = track_data.get("external_urls", {}).get("spotify")
         uri = track_data["uri"]
+        _id = track_data["id"]
+        _type = track_data["type"]
 
-        return song_url, track_info, uri, artist_name, track_name
+        return song_url, track_info, uri, artist_name, track_name, _id, _type
 
-    async def _spotify_first_time_query(self, query_type, uri, skip_youtube=False):
-        print("_spotify_first_time_query")
+    async def _spotify_first_time_query(
+        self, query_type: str, uri: str, skip_youtube: bool = False
+    ) -> List[str]:
         youtube_urls = []
 
-        tracks = await self._spotify_fetch_tracks(query_type, uri)
-
+        tracks = await self._spotify_fetch_tracks(query_type, uri, params=None)
+        total_tracks = len(tracks)
         database_entries = []
+        track_count = 0
         for track in tracks:
-            song_url, track_info, uri, artist_name, track_name = self._get_spotify_track_info(
+            song_url, track_info, uri, artist_name, track_name, _id, _type = self._get_spotify_track_info(
                 track
             )
-            database_entries.append((song_url, track_info, uri, artist_name, track_name))
+
+            database_entries.append(
+                (_id, _type, uri, track_name, artist_name, song_url, track_info)
+            )
             if skip_youtube is False:
                 val = await self._query(_QUERY_YOUTUBE_TABLE, {"track": track_info})
                 if val is None:
-                    val = await self.youtube_query(track_info)
+                    val = await self._youtube_first_time_query(track_info)
                 if val:
                     youtube_urls.append(val)
             else:
                 youtube_urls.append(track_info)
-
-        await self._insert_many("spotify", database_entries)
+            track_count += 1
+            if (track_count % 5 == 0) or (track_count == total_tracks):
+                if self.notifier:
+                    await self.notifier.notify_user(track_count, total_tracks, "youtube")
+        try:
+            await self._insert_many("spotify", database_entries)
+        except sqlite3.OperationalError:
+            pass
 
         return youtube_urls
 
     async def _youtube_first_time_query(self, track_info):
-        print("_youtube_first_time_query")
-        track_url = await self.youtube_api.call(track_info)
+        track_url = await self.youtube_api.get_call(track_info)
         if track_url:
-            await self._insert("youtube", (track_info, track_url))
+            try:
+                await self._insert("youtube", (track_info, track_url))
+            except sqlite3.OperationalError:
+                pass
         return track_url
 
-    async def _spotify_fetch_tracks(self, query_type, uri, recursive=False):
+    async def _spotify_fetch_tracks(self, query_type, uri, recursive=False, params=None):
+
         if recursive is False:
-            call = self._spotify_format_call(query_type, uri)
-            results = await self.spotify_api.call(call)
+            call, params = self._spotify_format_call(query_type, uri)
+            results = await self.spotify_api.get_call(call, params)
         else:
-            results = await self.spotify_api.call(recursive)
+            results = await self.spotify_api.get_call(recursive, params)
         try:
-            if results["error"]["status"] == 401:
+            if results["error"]["status"] == 401 and not recursive:
                 raise SpotifyFetchError(
                     (
                         "The Spotify API key or client secret has not been set properly. "
                         "\nUse `{prefix}audioset spotifyapi` for instructions."
                     )
                 )
+            elif recursive:
+                return {"next": None}
         except KeyError:
             pass
-
-        if query_type == "track":
-            tracks = [results]
-        else:
-            tracks = results["items"]
-
+        if recursive:
+            return results
+        tracks = []
+        track_count = 0
+        total_tracks = results.get("total", 1)
         while True:
+            new_tracks = 0
             if query_type == "track":
-                break
+                new_tracks = results
+                tracks.append(new_tracks)
+            elif query_type == "album":
+                tracks_raw = results.get("items", [])
+                if tracks_raw:
+                    new_tracks = results["items"]
+                    tracks.extend(new_tracks)
+            else:
+                tracks_raw = results.get("items", [])
+                if tracks_raw:
+                    new_tracks = [k["track"] for k in tracks_raw if k.get("track")]
+                    tracks.extend(new_tracks)
+            track_count += len(new_tracks)
+            if self.notifier:
+                await self.notifier.notify_user(track_count, total_tracks, "spotify")
+
             try:
-                tracks.extend(results["items"])
+                if results.get("next") is not None:
+                    results = await self._spotify_fetch_tracks(
+                        query_type, uri, results["next"], params
+                    )
+                    continue
+                else:
+                    break
             except KeyError:
                 raise SpotifyFetchError(
                     "This doesn't seem to be a valid Spotify playlist/album URL or code."
                 )
 
-            try:
-                if results["next"] is not None:
-                    results = await self._spotify_fetch_tracks(query_type, uri, results["next"])
-                    continue
-                else:
-                    break
-            except KeyError:
-                break
-
         return tracks
 
-    async def spotify_query(self, query_type, uri, skip_youtube=False):
-        print("spotify_query")
+    async def spotify_query(self, query_type, uri, skip_youtube=False, notify: Notifier = None):
+        self.notifier = notify
         if query_type == "track":
             val = await self._query(_QUERY_SPOTIFY_TABLE, {"uri": f"spotify:track:{uri}"})
         else:
@@ -326,7 +379,6 @@ class MusicCache:
         return youtube_urls
 
     async def youtube_query(self, track_info):
-        print("youtube_query")
         val = await self._query(_QUERY_YOUTUBE_TABLE, {"track": track_info})
         if val is None:
             youtube_url = await self._youtube_first_time_query(track_info)

@@ -32,7 +32,7 @@ from urllib.parse import urlparse
 from .equalizer import Equalizer
 from .manager import ServerManager
 from .errors import LavalinkDownloadFailed, SpotifyFetchError
-from .apis import MusicCache
+from .apis import MusicCache, Notifier
 
 _ = Translator("Audio", __file__)
 
@@ -1813,12 +1813,24 @@ class Audio(commands.Cog):
 
     async def _spotify_playlist(self, ctx, stype, query):
         player = lavalink.get_player(ctx.guild.id)
-        spotify_info = []
+
         try:
-            youtube_links = await self.music_cache.spotify_query(stype, query)
+            embed1 = discord.Embed(
+                colour=await ctx.embed_colour(), title=_("Please wait, finding tracks...")
+            )
+            playlist_msg = await ctx.send(embed=embed1)
+            notifier = Notifier(
+                ctx,
+                playlist_msg,
+                {
+                    "spotify": _("Getting track {num}/{total}..."),
+                    "youtube": _("Matching track {num}/{total}..."),
+                },
+            )
+            youtube_links = await self.music_cache.spotify_query(stype, query, notify=notifier)
         except SpotifyFetchError as error:
             return await self._embed_msg(ctx, _(error.message).format(prefix=ctx.prefix))
-        except (RuntimeError, aiohttp.client_exceptions.ServerDisconnectedError):
+        except (RuntimeError, aiohttp.ServerDisconnectedError):
             error_embed = discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("The connection was reset while loading the playlist."),
@@ -1829,7 +1841,10 @@ class Audio(commands.Cog):
         embed1 = discord.Embed(
             colour=await ctx.embed_colour(), title=_("Please wait, adding tracks...")
         )
-        playlist_msg = await ctx.send(embed=embed1)
+        try:
+            await playlist_msg.edit(embed=embed1)
+        except discord.errors.NotFound:
+            pass
         track_list = []
         track_count = 0
         now = int(time.time())
@@ -1837,7 +1852,7 @@ class Audio(commands.Cog):
         for t in youtube_links:
             try:
                 yt_track = await player.get_tracks(t)
-            except (RuntimeError, aiohttp.client_exceptions.ServerDisconnectedError):
+            except (RuntimeError, aiohttp.ServerDisconnectedError):
                 error_embed = discord.Embed(
                     colour=await ctx.embed_colour(),
                     title=_("The connection was reset while loading the playlist."),
@@ -1849,21 +1864,21 @@ class Audio(commands.Cog):
             except IndexError:
                 pass
             track_count += 1
-            if (track_count % 5 == 0) or (track_count == len(spotify_info)):
+            if (track_count % 5 == 0) or (track_count == len(youtube_links)):
                 embed2 = discord.Embed(
                     colour=await ctx.embed_colour(),
                     title=_("Loading track {num}/{total}...").format(
-                        num=track_count, total=len(spotify_info)
+                        num=track_count, total=len(youtube_links)
                     ),
                 )
                 if track_count == 5:
                     five_time = int(time.time()) - now
                 if track_count >= 5:
-                    remain_tracks = len(spotify_info) - track_count
+                    remain_tracks = len(youtube_links) - track_count
                     time_remain = (remain_tracks / 5) * five_time
-                    if track_count < len(spotify_info):
+                    if track_count < len(youtube_links):
                         seconds = self._dynamic_time(int(time_remain))
-                    if track_count == len(spotify_info):
+                    if track_count == len(youtube_links):
                         seconds = "0s"
                     embed2.set_footer(
                         text=_("Approximate time remaining: {seconds}").format(seconds=seconds)
@@ -4225,7 +4240,6 @@ class Audio(commands.Cog):
     def cog_unload(self):
         if not self._cleaned_up:
             self.bot.loop.create_task(self.session.close())
-            self.bot.loop.create_task(self.music_cache.close())
 
             if self._disconnect_task:
                 self._disconnect_task.cancel()
