@@ -244,7 +244,7 @@ class MusicCache:
                 track
             )
             database_entries.append((artist_name, track_name, track_info, song_url, uri))
-            val = row = await self._query(_YOUTUBE_TABLE_QUERY, track_info)
+            val = row = await self._query(_YOUTUBE_TABLE_QUERY, (track_info,))
             if row:
                 val = row.get("youtube_url", None)
             if val is None:
@@ -314,7 +314,7 @@ class MusicCache:
     @method_cache(maxsize=256)
     async def spotify_query(self, query_type, uri):
         print("spotify_query")
-        val = row = await self._query(_SPOTIFY_TABLE_QUERY, uri)
+        val = row = await self._query(_SPOTIFY_TABLE_QUERY, (uri,))
         if row:
             val = row.get("track_info", None)
         if val is None:
@@ -328,7 +328,7 @@ class MusicCache:
     @method_cache(maxsize=256)
     async def youtube_query(self, track_info):
         print("youtube_query")
-        val = row = await self._query(_YOUTUBE_TABLE_QUERY, track_info)
+        val = row = await self._query(_YOUTUBE_TABLE_QUERY, (track_info,))
         if row:
             val = row.get("youtube_url", None)
         if val is None:
