@@ -2,7 +2,7 @@ api_key_env: CROWDIN_API_KEY
 project_identifier_env: CROWDIN_PROJECT_ID
 base_path: ./redbot/
 files:
-  - source: cogs/**/locales/messages.pot
+  - source: cogs/**/messages.pot
     translation: /%original_path%/%locale%.po
-  - source: core/**/locales/messages.pot
+  - source: core/**/messages.pot
     translation: /%original_path%/%locale%.po

@@ -27,3 +27,8 @@ newenv:
 	$(MAKE) syncenv
 syncenv:
 	.venv/bin/pip install -Ur ./tools/dev-requirements.txt
+
+# Changelog check
+checkchangelog:
+	bash tools/check_changelog_entries.sh
+	python -m towncrier --draft
