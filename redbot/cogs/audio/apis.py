@@ -208,8 +208,9 @@ class MusicCache:
 
     async def _query(self, stmnt, param):
         async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
-            output = await database.fetchone(stmnt, param)
-            return output[0] if output else None
+            async with database.execute(stmnt, param) as cursor:
+                output = await cursor.fetchone()
+                return output[0] if output else None
 
     @staticmethod
     async def _spotify_format_call(stype, key):
