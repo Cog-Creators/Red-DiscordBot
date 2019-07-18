@@ -183,7 +183,7 @@ class MusicCache:
         self.youtube_api = YouTubeAPI(bot, session)
 
     async def initialize(self):
-        async with aiosqlite.connect(_DATABASE_PATH, self.bot.loop) as database:
+        async with aiosqlite.connect(_DATABASE_PATH, loop=self.bot.loop) as database:
             await database.execute(_CREATE_YOUTUBE_TABLE)
             await database.execute(_CREATE_SPOTIFY_TABLE)
             await database.commit()
