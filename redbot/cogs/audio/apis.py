@@ -220,7 +220,7 @@ class MusicCache:
     @staticmethod
     def _spotify_format_call(stype, key):
         if stype == "album":
-            query = "https://api.spotify.com/v1/albums/{0}".format(key)
+            query = "https://api.spotify.com/v1/albums/{0}/tracks".format(key)
         elif stype == "track":
             query = "https://api.spotify.com/v1/tracks/{0}".format(key)
         else:
@@ -228,7 +228,7 @@ class MusicCache:
         return query
 
     @staticmethod
-    def _get_spotify_track_info(track_data):
+    def _get_spotify_track_info(track_data):  # This is Erroing
         artist_name = track_data["artists"][0]["name"]
         track_name = track_data["name"]
         track_info = f"{track_name} {artist_name}"
@@ -284,21 +284,21 @@ class MusicCache:
                 )
         except KeyError:
             pass
+
         if query_type == "track":
             tracks = [results]
         else:
-            try:
-                tracks = results["tracks"]["items"]
-            except KeyError:
-                tracks = results["items"]
+            tracks = results["items"]
+
         while True:
+            if query_type == "track":
+                break
             try:
-                try:
-                    tracks.extend(results["tracks"]["items"])
-                except KeyError:
-                    tracks.extend(results["items"])
+                tracks.extend(results["items"])
             except KeyError:
-                raise SpotifyFetchError("This doesn't seem to be a valid Spotify URL or code.")
+                raise SpotifyFetchError(
+                    "This doesn't seem to be a valid Spotify playlist/album URL or code."
+                )
 
             try:
                 if results["next"] is not None:
@@ -307,13 +307,8 @@ class MusicCache:
                 else:
                     break
             except KeyError:
-                if results["tracks"]["next"] is not None:
-                    results = await self._spotify_fetch_songs(
-                        query_type, uri, results["tracks"]["next"]
-                    )
-                    continue
-                else:
-                    break
+                break
+
         return tracks
 
     async def spotify_query(self, query_type, uri):
