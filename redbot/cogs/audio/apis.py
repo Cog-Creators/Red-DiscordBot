@@ -45,9 +45,7 @@ _QUERY_YOUTUBE_TABLE = "SELECT * FROM youtube WHERE track_info=:track;"
 _DROP_SPOTIFY_TABLE = "DROP TABLE spotify;"
 
 _CREATE_UNIQUE_INDEX_SPOTIFY_TABLE = (
-    "CREATE UNIQUE INDEX IF NOT EXISTS "
-    "idx_spotify_uri ON "
-    "spotify (id, type, uri);"
+    "CREATE UNIQUE INDEX IF NOT EXISTS " "idx_spotify_uri ON " "spotify (id, type, uri);"
 )
 
 _CREATE_SPOTIFY_TABLE = """
@@ -80,9 +78,7 @@ _CREATE_LAVALINK_TABLE = """
             """
 
 _CREATE_UNIQUE_INDEX_LAVALINK_TABLE = (
-    "CREATE UNIQUE INDEX IF NOT EXISTS "
-    "idx_lavalink_query "
-    "ON lavalink (query);"
+    "CREATE UNIQUE INDEX IF NOT EXISTS " "idx_lavalink_query " "ON lavalink (query);"
 )
 
 _INSERT_LAVALINK_TABLE = """

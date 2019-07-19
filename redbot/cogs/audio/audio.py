@@ -1312,7 +1312,9 @@ class Audio(commands.Cog):
             return
         local_tracks = []
         for local_file in await self._all_folder_tracks(ctx, folder):
-            track = await self.music_cache.load_tracks(player, "localtracks/{}/{}".format(folder, local_file))
+            track = await self.music_cache.load_tracks(
+                player, "localtracks/{}/{}".format(folder, local_file)
+            )
             try:
                 local_tracks.append(track[0])
             except IndexError:
