@@ -245,22 +245,22 @@ class MusicCache:
         await self.database.disconnect()
 
     async def _insert(self, table: str, values: tuple) -> None:
-        query = _PARSER.get(table, "insert")
+        query = _PARSER.get(table, {}).get("insert")
         if query is None:
             raise InvalidTableError(f"{table} is not a valid table in the database.")
 
         return await self.database.execute(query=query, values=values)
 
     async def insert_many(self, table: str, values: List[tuple]) -> None:
-        query = _PARSER.get(table, "insert")
+        query = _PARSER.get(table, {}).get("insert")
         if query is None:
             raise InvalidTableError(f"{table} is not a valid table in the database.")
 
         return await self.database.execute_many(query=query, values=values)
 
     async def fetch_one(self, table: str, values: Dict[str, str]) -> Optional[str]:
-        column = _PARSER.get(table, "select")
-        query = _PARSER.get(table, "query")
+        column = _PARSER.get(table, {}).get("select")
+        query = _PARSER.get(table, {}).get("query")
         if column is None:
             raise InvalidTableError(f"{table} is not a valid table in the database.")
 
@@ -269,8 +269,8 @@ class MusicCache:
         return getattr(row, column, None)
 
     async def fetch_all(self, table: str, values: Dict[str, str]) -> List[Row]:
-        column = _PARSER.get(table, "select")
-        query = _PARSER.get(table, "query")
+        column = _PARSER.get(table, {}).get("select")
+        query = _PARSER.get(table, {}).get("query")
         if column is None:
             raise InvalidTableError(f"{table} is not a valid table in the database.")
 

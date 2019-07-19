@@ -4253,8 +4253,6 @@ class Audio(commands.Cog):
             if self._manager is not None:
                 self.bot.loop.create_task(self._manager.shutdown())
 
-            await self.music_cache.close()
-
             self._cleaned_up = True
 
     __del__ = cog_unload
