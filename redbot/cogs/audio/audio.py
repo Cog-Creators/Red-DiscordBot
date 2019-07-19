@@ -4240,6 +4240,7 @@ class Audio(commands.Cog):
     def cog_unload(self):
         if not self._cleaned_up:
             self.bot.loop.create_task(self.session.close())
+            self.bot.loop.create_task(self.music_cache.close())
 
             if self._disconnect_task:
                 self._disconnect_task.cancel()
@@ -4251,6 +4252,8 @@ class Audio(commands.Cog):
             self.bot.loop.create_task(lavalink.close())
             if self._manager is not None:
                 self.bot.loop.create_task(self._manager.shutdown())
+
+            await self.music_cache.close()
 
             self._cleaned_up = True
 

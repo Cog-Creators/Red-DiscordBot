@@ -34,15 +34,15 @@ class LavalinkDownloadFailed(AudioError, RuntimeError):
 
 
 class ApiError(AudioError):
-    """"""
+    """Base exception for API errors in the Audio cog."""
 
 
 class SpotifyApiError(ApiError):
-    """"""
+    """Base exception for Spotify API errors."""
 
 
 class SpotifyFetchError(SpotifyApiError):
-    """"""
+    """Fetching Spotify data failed."""
 
     def __init__(self, message, *args):
         self.message = message
@@ -50,4 +50,12 @@ class SpotifyFetchError(SpotifyApiError):
 
 
 class YouTubeApiError(ApiError):
-    """"""
+    """Base exception for YouTube Data API errors."""
+
+
+class DatabaseError(AudioError):
+    """Base exception for database errors in the Audio cog."""
+
+
+class InvalidTableError(DatabaseError):
+    """Provided table to query is not a valid table."""

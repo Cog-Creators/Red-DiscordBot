@@ -3,16 +3,18 @@ import logging
 import os
 import sqlite3
 import time
+from sqlite3 import Row
 from typing import List, Optional, Dict, Tuple
 
 import aiohttp
-import aiosqlite
+from databases import Database
+
 import discord
 
 from redbot.core.bot import Red
 from redbot.core.commands import commands
 
-from .errors import SpotifyFetchError
+from .errors import SpotifyFetchError, InvalidTableError
 
 log = logging.getLogger("red.audio.cache")
 
@@ -34,7 +36,7 @@ _CREATE_UNIQUE_INDEX_YOUTUBE_TABLE = (
 _INSERT_YOUTUBE_TABLE = """
         INSERT OR REPLACE INTO youtube(track_info, youtube_url) VALUES(?, ?);
     """
-_QUERY_YOUTUBE_TABLE = "SELECT youtube_url FROM youtube WHERE track_info=:track;"
+_QUERY_YOUTUBE_TABLE = "SELECT * FROM youtube WHERE track_info=:track;"
 
 
 _DROP_SPOTIFY_TABLE = "DROP TABLE spotify;"
@@ -58,7 +60,20 @@ _CREATE_SPOTIFY_TABLE = """
 _INSERT_SPOTIFY_TABLE = """
         INSERT OR REPLACE INTO spotify(id, type, uri, track_name, artist_name, song_url, track_info) VALUES(?, ?, ?, ?, ?, ?, ?);
     """
-_QUERY_SPOTIFY_TABLE = "SELECT track_info FROM spotify WHERE uri=:uri;"
+_QUERY_SPOTIFY_TABLE = "SELECT * FROM spotify WHERE uri=:uri;"
+
+_PARSER = {
+    "youtube": {
+        "select": "track_info",
+        "insert": _INSERT_YOUTUBE_TABLE,
+        "query": _QUERY_YOUTUBE_TABLE,
+    },
+    "spotify": {
+        "select": "youtube_url",
+        "insert": _INSERT_SPOTIFY_TABLE,
+        "query": _QUERY_SPOTIFY_TABLE,
+    },
+}
 
 
 class Notifier:
@@ -215,41 +230,51 @@ class MusicCache:
         self.bot = bot
         self.spotify_api = SpotifyAPI(bot, session)
         self.youtube_api = YouTubeAPI(bot, session)
-        self.path = os.path.abspath(str(os.path.join(path, "cache.db")))
+        self.database = Database(
+            f'sqlite:///{os.path.abspath(str(os.path.join(path, "cache.db")))}'
+        )
 
     async def initialize(self):
-        async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
-            await database.execute(_CREATE_YOUTUBE_TABLE)
-            await database.execute(_CREATE_UNIQUE_INDEX_YOUTUBE_TABLE)
-            await database.execute(_CREATE_SPOTIFY_TABLE)
-            await database.execute(_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE)
-            await database.commit()
+        await self.database.connect()
+        await self.database.execute(query=_CREATE_YOUTUBE_TABLE)
+        await self.database.execute(query=_CREATE_UNIQUE_INDEX_YOUTUBE_TABLE)
+        await self.database.execute(query=_CREATE_SPOTIFY_TABLE)
+        await self.database.execute(query=_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE)
+
+    async def close(self):
+        await self.database.disconnect()
 
     async def _insert(self, table: str, values: tuple) -> None:
-        if table == "youtube":
-            query = _INSERT_YOUTUBE_TABLE
-        elif table == "spotify":
-            query = _INSERT_SPOTIFY_TABLE
+        query = _PARSER.get(table, "insert")
+        if query is None:
+            raise InvalidTableError(f"{table} is not a valid table in the database.")
 
-        async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
-            await database.execute(query, values)
-            await database.commit()
+        return await self.database.execute(query=query, values=values)
 
-    async def _insert_many(self, table: str, values: List[tuple]) -> None:
-        if table == "youtube":
-            query = _INSERT_YOUTUBE_TABLE
-        elif table == "spotify":
-            query = _INSERT_SPOTIFY_TABLE
+    async def insert_many(self, table: str, values: List[tuple]) -> None:
+        query = _PARSER.get(table, "insert")
+        if query is None:
+            raise InvalidTableError(f"{table} is not a valid table in the database.")
 
-        async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
-            await database.executemany(query, values)
-            await database.commit()
+        return await self.database.execute_many(query=query, values=values)
 
-    async def _query(self, query: str, params: Dict[str, str]) -> Optional[str]:
-        async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
-            async with database.execute(query, params) as cursor:
-                output = await cursor.fetchone()
-                return output[0] if output else None
+    async def fetch_one(self, table: str, values: Dict[str, str]) -> Optional[str]:
+        column = _PARSER.get(table, "select")
+        query = _PARSER.get(table, "query")
+        if column is None:
+            raise InvalidTableError(f"{table} is not a valid table in the database.")
+
+        row = await self.database.fetch_one(query=query, values=values)
+
+        return getattr(row, column, None)
+
+    async def fetch_all(self, table: str, values: Dict[str, str]) -> List[Row]:
+        column = _PARSER.get(table, "select")
+        query = _PARSER.get(table, "query")
+        if column is None:
+            raise InvalidTableError(f"{table} is not a valid table in the database.")
+
+        return await self.database.fetch_all(query=query, values=values)
 
     @staticmethod
     def _spotify_format_call(qtype: str, key: str) -> Tuple[str, dict]:
@@ -295,7 +320,7 @@ class MusicCache:
                 (_id, _type, uri, track_name, artist_name, song_url, track_info)
             )
             if skip_youtube is False:
-                val = await self._query(_QUERY_YOUTUBE_TABLE, {"track": track_info})
+                val = await self.fetch_one("youtube", {"track": track_info})
                 if val is None:
                     val = await self._youtube_first_time_query(track_info)
                 if val:
@@ -307,7 +332,7 @@ class MusicCache:
                 if self.notifier:
                     await self.notifier.notify_user(track_count, total_tracks, "youtube")
         try:
-            await self._insert_many("spotify", database_entries)
+            await self.insert_many("spotify", database_entries)
         except sqlite3.OperationalError:
             pass
 
@@ -385,7 +410,7 @@ class MusicCache:
     ):
         self.notifier = notify
         if query_type == "track":
-            val = await self._query(_QUERY_SPOTIFY_TABLE, {"uri": f"spotify:track:{uri}"})
+            val = await self.fetch_one("spotify", {"uri": f"spotify:track:{uri}"})
         else:
             val = None
         youtube_urls = []
@@ -398,7 +423,7 @@ class MusicCache:
         return youtube_urls
 
     async def youtube_query(self, track_info: str):
-        val = await self._query(_QUERY_YOUTUBE_TABLE, {"track": track_info})
+        val = await self.fetch_one("youtube", {"track": track_info})
         if val is None:
             youtube_url = await self._youtube_first_time_query(track_info)
         else:
