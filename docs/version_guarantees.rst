@@ -33,4 +33,4 @@ Breaking changes may only occur on a minor or major version bump.
 
 A change not covered by our guarantees may not be considered breaking for these purposes, 
 while still being documented as a breaking change in internal documentation
-for the purposes of other internal APIs
+for the purposes of other internal APIs.
