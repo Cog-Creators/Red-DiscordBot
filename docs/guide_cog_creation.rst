@@ -41,7 +41,7 @@ a text editor or IDE (examples include `Sublime Text 3 <https://www.sublimetext.
     for any core cog/extension, an issue and/or PR is made
     Overriding Permissions specifically is dangerous.
 
-    Sublassing to make changes to Red's cogs/extensions
+    Subclassing to make changes to Red's cogs/extensions
     may not be a safe way to stay up to date either,
     as changes to cogs and their interactions with red
     are not guaranteed to not be breaking.
