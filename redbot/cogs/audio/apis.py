@@ -5,8 +5,12 @@ import sqlite3
 import time
 from typing import List, Optional, Dict, Tuple
 
+import aiohttp
 import aiosqlite
 import discord
+
+from redbot.core.bot import Red
+from redbot.core.commands import commands
 
 from .errors import SpotifyFetchError
 
@@ -58,13 +62,17 @@ _QUERY_SPOTIFY_TABLE = "SELECT track_info FROM spotify WHERE uri=:uri;"
 
 
 class Notifier:
-    def __init__(self, ctx, message, updates, **kwargs):
+    def __init__(self, ctx: commands.Context, message: discord.Message, updates: dict, **kwargs):
         self.context = ctx
         self.message = message
         self.updates = updates
         self.color = None
 
-    async def notify_user(self, current, total, key):
+    async def notify_user(self, current: int, total: int, key: str):
+        """
+        This updates an existing message.
+        Based on the message found in :variable:`Notifier.updates` as per the `key` param
+        """
         if self.color is None:
             self.color = await self.context.embed_colour()
         embed2 = discord.Embed(
@@ -77,7 +85,9 @@ class Notifier:
 
 
 class SpotifyAPI:
-    def __init__(self, bot, session):
+    """Wrapper for the Spotify API."""
+
+    def __init__(self, bot: Red, session: aiohttp.ClientSession):
         self.bot = bot
         self.session = session
         self.spotify_token = None
@@ -85,7 +95,7 @@ class SpotifyAPI:
         self.client_secret = None
 
     @staticmethod
-    async def _check_token(token):
+    async def _check_token(token: str):
         now = int(time.time())
         return token["expires_at"] - now < 60
 
@@ -99,7 +109,7 @@ class SpotifyAPI:
         auth_header = base64.b64encode((client_id + ":" + client_secret).encode("ascii"))
         return {"Authorization": "Basic %s" % auth_header.decode("ascii")}
 
-    async def _make_get(self, url, headers=None, params=None):
+    async def _make_get(self, url: str, headers: dict = None, params: dict = None):
         if params is None:
             params = {}
         async with self.session.request("GET", url, params=params, headers=headers) as r:
@@ -144,7 +154,7 @@ class SpotifyAPI:
         log.debug("Created a new access token for Spotify: {0}".format(token))
         return self.spotify_token["access_token"]
 
-    async def post_call(self, url, payload, headers=None):
+    async def post_call(self, url: str, payload: dict, headers: dict = None):
         async with self.session.post(url, data=payload, headers=headers) as r:
             if r.status != 200:
                 log.debug(
@@ -154,7 +164,7 @@ class SpotifyAPI:
                 )
             return await r.json()
 
-    async def get_call(self, url, params):
+    async def get_call(self, url: str, params: dict):
         token = await self._get_spotify_token()
         return await self._make_get(
             url, params=params, headers={"Authorization": "Bearer {0}".format(token)}
@@ -162,7 +172,9 @@ class SpotifyAPI:
 
 
 class YouTubeAPI:
-    def __init__(self, bot, session):
+    """Wrapper for the YouTube Data API."""
+
+    def __init__(self, bot: Red, session: aiohttp.ClientSession):
         self.bot = bot
         self.session = session
         self.api_key = None
@@ -174,7 +186,7 @@ class YouTubeAPI:
             ).get("api_key")
         return self.api_key
 
-    async def get_call(self, query):
+    async def get_call(self, query: str):
         params = {
             "q": query,
             "part": "id",
@@ -194,7 +206,12 @@ class YouTubeAPI:
 
 
 class MusicCache:
-    def __init__(self, bot, session, path):
+    """
+    Handles music queries to the Spotify and Youtube Data API.
+    Always tries the Cache first.
+    """
+
+    def __init__(self, bot: Red, session: aiohttp.ClientSession, path: str):
         self.bot = bot
         self.spotify_api = SpotifyAPI(bot, session)
         self.youtube_api = YouTubeAPI(bot, session)
@@ -296,7 +313,7 @@ class MusicCache:
 
         return youtube_urls
 
-    async def _youtube_first_time_query(self, track_info):
+    async def _youtube_first_time_query(self, track_info: str):
         track_url = await self.youtube_api.get_call(track_info)
         if track_url:
             try:
@@ -305,7 +322,7 @@ class MusicCache:
                 pass
         return track_url
 
-    async def _spotify_fetch_tracks(self, query_type, uri, recursive=False, params=None):
+    async def _spotify_fetch_tracks(self, query_type: str, uri: str, recursive=False, params=None):
 
         if recursive is False:
             call, params = self._spotify_format_call(query_type, uri)
@@ -363,7 +380,9 @@ class MusicCache:
 
         return tracks
 
-    async def spotify_query(self, query_type, uri, skip_youtube=False, notify: Notifier = None):
+    async def spotify_query(
+        self, query_type: str, uri: str, skip_youtube: bool = False, notify: Notifier = None
+    ):
         self.notifier = notify
         if query_type == "track":
             val = await self._query(_QUERY_SPOTIFY_TABLE, {"uri": f"spotify:track:{uri}"})
@@ -378,7 +397,7 @@ class MusicCache:
             youtube_urls.append(val)
         return youtube_urls
 
-    async def youtube_query(self, track_info):
+    async def youtube_query(self, track_info: str):
         val = await self._query(_QUERY_YOUTUBE_TABLE, {"track": track_info})
         if val is None:
             youtube_url = await self._youtube_first_time_query(track_info)
