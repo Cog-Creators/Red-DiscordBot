@@ -1,0 +1,1 @@
+Create documentation covering what we consider a developer facing breaking change and guarantees regarding them.
