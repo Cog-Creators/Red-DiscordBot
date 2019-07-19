@@ -14,7 +14,7 @@ Major versions are for project wide rewrites and are not expected in the foresee
 Guarantees
 ==========
 
-Anything in the ``redbot.core`` module or any of it's submodules 
+Anything in the ``redbot.core`` module or any of its submodules 
 which is not private (even if not documented) should not break without notice.
 
 Anything in the ``redbot.cogs`` module or any of it's submodules is specifically
