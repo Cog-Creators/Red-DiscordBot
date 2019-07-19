@@ -1,1 +1,1 @@
-All Playlist commands now accept optional arguments, use ``[p]help playlist <subcommand>`` for more details.
+All Playlist commands now accept optional arguments, use :code:`[p]help playlist <subcommand>` for more details.
