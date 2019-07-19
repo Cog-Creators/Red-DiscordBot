@@ -1312,7 +1312,7 @@ class Audio(commands.Cog):
             return
         local_tracks = []
         for local_file in await self._all_folder_tracks(ctx, folder):
-            track = await player.get_tracks("localtracks/{}/{}".format(folder, local_file))
+            track = await self.music_cache.load_tracks(player, "localtracks/{}/{}".format(folder, local_file))
             try:
                 local_tracks.append(track[0])
             except IndexError:
@@ -1659,7 +1659,7 @@ class Audio(commands.Cog):
                     if enqueue_tracks:
                         return await self._enqueue_tracks(ctx, res[0])
                     else:
-                        tracks = await player.get_tracks(f"ytsearch:{res[0]}")
+                        tracks = await self.music_cache.load_tracks(player, f"ytsearch:{res[0]}")
                         if not tracks:
                             return await self._embed_msg(ctx, _("Nothing found."))
                         single_track = []
@@ -1718,7 +1718,7 @@ class Audio(commands.Cog):
                 query = f"ytsearch:{query}"
             if query.startswith(("ytsearch", "localtracks")):
                 first_track_only = True
-            tracks = await player.get_tracks(query)
+            tracks = await self.music_cache.load_tracks(player, query)
             if not tracks:
                 return await self._embed_msg(ctx, _("Nothing found."))
         else:
@@ -1851,7 +1851,7 @@ class Audio(commands.Cog):
 
         for t in youtube_links:
             try:
-                yt_track = await player.get_tracks(t)
+                yt_track = await self.music_cache.load_tracks(player, t)
             except (RuntimeError, aiohttp.ServerDisconnectedError):
                 error_embed = discord.Embed(
                     colour=await ctx.embed_colour(),
@@ -1864,18 +1864,18 @@ class Audio(commands.Cog):
             except IndexError:
                 pass
             track_count += 1
-            if (track_count % 5 == 0) or (track_count == len(youtube_links)):
+            if (track_count % 25 == 0) or (track_count == len(youtube_links)):
                 embed2 = discord.Embed(
                     colour=await ctx.embed_colour(),
                     title=_("Loading track {num}/{total}...").format(
                         num=track_count, total=len(youtube_links)
                     ),
                 )
-                if track_count == 5:
+                if track_count == 25:
                     five_time = int(time.time()) - now
-                if track_count >= 5:
+                if track_count >= 25:
                     remain_tracks = len(youtube_links) - track_count
-                    time_remain = (remain_tracks / 5) * five_time
+                    time_remain = (remain_tracks / 25) * five_time
                     if track_count < len(youtube_links):
                         seconds = self._dynamic_time(int(time_remain))
                     if track_count == len(youtube_links):
@@ -1883,6 +1883,7 @@ class Audio(commands.Cog):
                     embed2.set_footer(
                         text=_("Approximate time remaining: {seconds}").format(seconds=seconds)
                     )
+
                 try:
                     await playlist_msg.edit(embed=embed2)
                 except discord.errors.NotFound:
@@ -2412,7 +2413,7 @@ class Audio(commands.Cog):
         if (
             not v2_playlist_url
             or not self._match_yt_playlist(v2_playlist_url)
-            or not await player.get_tracks(v2_playlist_url)
+            or not await self.music_cache.load_tracks(player, v2_playlist_url)
         ):
             track_list = []
             track_count = 0
@@ -2430,7 +2431,7 @@ class Audio(commands.Cog):
             playlist_msg = await ctx.send(embed=embed1)
             for song_url in v2_playlist["playlist"]:
                 try:
-                    track = await player.get_tracks(song_url)
+                    track = await self.music_cache.load_tracks(player, song_url)
                 except RuntimeError:
                     pass
                 try:
@@ -2439,7 +2440,7 @@ class Audio(commands.Cog):
                     track_count = track_count + 1
                 except IndexError:
                     pass
-                if track_count % 5 == 0:
+                if track_count % 25 == 0:
                     embed2 = discord.Embed(
                         colour=await ctx.embed_colour(),
                         title=_("Loading track {num}/{total}...").format(
@@ -2548,11 +2549,11 @@ class Audio(commands.Cog):
         elif not query.startswith("http"):
             query = "ytsearch:{}".format(query)
             search = True
-            tracks = await player.get_tracks(query)
+            tracks = await self.music_cache.load_tracks(player, query)
             if not tracks:
                 return await self._embed_msg(ctx, _("Nothing found."))
         else:
-            tracks = await player.get_tracks(query)
+            tracks = await self.music_cache.load_tracks(player, query)
         if not search and len(tracklist) == 0:
             for track in tracks:
                 track_obj = self._track_creator(player, other_track=track)
@@ -2588,7 +2589,7 @@ class Audio(commands.Cog):
         if player.fetch("prev_song") is None:
             return await self._embed_msg(ctx, _("No previous track."))
         else:
-            last_track = await player.get_tracks(player.fetch("prev_song"))
+            last_track = await self.music_cache.load_tracks(player, player.fetch("prev_song"))
             player.add(player.fetch("prev_requester"), last_track[0])
             queue_len = len(player.queue)
             bump_song = player.queue[-1]
@@ -3010,7 +3011,7 @@ class Audio(commands.Cog):
             if query.startswith("list ") or query.startswith("folder:"):
                 if query.startswith("list "):
                     query = "ytsearch:{}".format(query.replace("list ", ""))
-                    tracks = await player.get_tracks(query)
+                    tracks = await self.music_cache.load_tracks(player, query)
                 else:
                     query = query.replace("folder:", "")
                     tracks = await self._folder_tracks(ctx, player, query)
@@ -3052,7 +3053,7 @@ class Audio(commands.Cog):
                 return await ctx.send(embed=songembed)
             elif query.startswith("sc "):
                 query = "scsearch:{}".format(query.replace("sc ", ""))
-                tracks = await player.get_tracks(query)
+                tracks = await self.music_cache.load_tracks(player, query)
             elif ":localtrack:" in query:
                 track_location = query.split(":")[2]
                 tracks = await self._folder_list(ctx, track_location)
@@ -3065,9 +3066,9 @@ class Audio(commands.Cog):
                     tracks = await self._folder_list(ctx, folder)
             elif not self._match_url(query):
                 query = "ytsearch:{}".format(query)
-                tracks = await player.get_tracks(query)
+                tracks = await self.music_cache.load_tracks(player, query)
             else:
-                tracks = await player.get_tracks(query)
+                tracks = await self.music_cache.load_tracks(player, query)
             if not tracks:
                 return await self._embed_msg(ctx, _("Nothing found."))
         else:
@@ -4240,6 +4241,7 @@ class Audio(commands.Cog):
     def cog_unload(self):
         if not self._cleaned_up:
             self.bot.loop.create_task(self.session.close())
+            self.bot.loop.create_task(self.music_cache.close())
 
             if self._disconnect_task:
                 self._disconnect_task.cancel()

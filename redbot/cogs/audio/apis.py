@@ -1,14 +1,21 @@
 import base64
+import contextlib
+import json
 import logging
 import os
 import sqlite3
 import time
-from typing import List, Optional, Dict, Tuple
+from typing import List, Optional, Dict, Tuple, Mapping
 
-import aiosqlite
+import aiohttp
 import discord
+from databases import Database
+from lavalink.rest_api import LoadResult
 
-from .errors import SpotifyFetchError
+
+from redbot.core.bot import Red
+from redbot.core import commands
+from .errors import SpotifyFetchError, InvalidTableError
 
 log = logging.getLogger("red.audio.cache")
 
@@ -28,15 +35,19 @@ _CREATE_UNIQUE_INDEX_YOUTUBE_TABLE = (
 )
 
 _INSERT_YOUTUBE_TABLE = """
-        INSERT OR REPLACE INTO youtube(track_info, youtube_url) VALUES(?, ?);
+        INSERT OR REPLACE INTO 
+        youtube(track_info, youtube_url) 
+        VALUES (:track_info, :track_url);
     """
-_QUERY_YOUTUBE_TABLE = "SELECT youtube_url FROM youtube WHERE track_info=:track;"
+_QUERY_YOUTUBE_TABLE = "SELECT * FROM youtube WHERE track_info=:track;"
 
 
 _DROP_SPOTIFY_TABLE = "DROP TABLE spotify;"
 
 _CREATE_UNIQUE_INDEX_SPOTIFY_TABLE = (
-    "CREATE UNIQUE INDEX IF NOT EXISTS idx_spotify_uri ON spotify (id, type, uri);"
+    "CREATE UNIQUE INDEX IF NOT EXISTS "
+    "idx_spotify_uri ON "
+    "spotify (id, type, uri);"
 )
 
 _CREATE_SPOTIFY_TABLE = """
@@ -52,19 +63,55 @@ _CREATE_SPOTIFY_TABLE = """
                     """
 
 _INSERT_SPOTIFY_TABLE = """
-        INSERT OR REPLACE INTO spotify(id, type, uri, track_name, artist_name, song_url, track_info) VALUES(?, ?, ?, ?, ?, ?, ?);
+        INSERT OR REPLACE INTO 
+        spotify(id, type, uri, track_name, artist_name, song_url, track_info) 
+        VALUES (:id, :type, :uri, :track_name, :artist_name, :song_url, :track_info);
     """
-_QUERY_SPOTIFY_TABLE = "SELECT track_info FROM spotify WHERE uri=:uri;"
+_QUERY_SPOTIFY_TABLE = "SELECT * FROM spotify WHERE uri=:uri;"
+
+
+_DROP_LAVALINK_TABLE = "DROP TABLE lavalink;"
+
+_CREATE_LAVALINK_TABLE = """
+                CREATE TABLE IF NOT EXISTS lavalink(
+                    query TEXT,
+                    data BLOB
+                );
+            """
+
+_CREATE_UNIQUE_INDEX_LAVALINK_TABLE = (
+    "CREATE UNIQUE INDEX IF NOT EXISTS "
+    "idx_lavalink_query "
+    "ON lavalink (query);"
+)
+
+_INSERT_LAVALINK_TABLE = """
+        INSERT OR REPLACE INTO 
+        lavalink(query, data) 
+        VALUES (:query, :data);
+    """
+_QUERY_LAVALINK_TABLE = "SELECT * FROM lavalink WHERE query=:query;"
+
+
+_PARSER = {
+    "youtube": {"insert": _INSERT_YOUTUBE_TABLE, "youtube_url": {"query": _QUERY_YOUTUBE_TABLE}},
+    "spotify": {"insert": _INSERT_SPOTIFY_TABLE, "track_info": {"query": _QUERY_SPOTIFY_TABLE}},
+    "lavalink": {"insert": _INSERT_LAVALINK_TABLE, "data": {"query": _QUERY_LAVALINK_TABLE}},
+}
 
 
 class Notifier:
-    def __init__(self, ctx, message, updates, **kwargs):
+    def __init__(self, ctx: commands.Context, message: discord.Message, updates: dict, **kwargs):
         self.context = ctx
         self.message = message
         self.updates = updates
         self.color = None
 
-    async def notify_user(self, current, total, key):
+    async def notify_user(self, current: int, total: int, key: str):
+        """
+        This updates an existing message.
+        Based on the message found in :variable:`Notifier.updates` as per the `key` param
+        """
         if self.color is None:
             self.color = await self.context.embed_colour()
         embed2 = discord.Embed(
@@ -77,7 +124,9 @@ class Notifier:
 
 
 class SpotifyAPI:
-    def __init__(self, bot, session):
+    """Wrapper for the Spotify API."""
+
+    def __init__(self, bot: Red, session: aiohttp.ClientSession):
         self.bot = bot
         self.session = session
         self.spotify_token = None
@@ -85,7 +134,7 @@ class SpotifyAPI:
         self.client_secret = None
 
     @staticmethod
-    async def _check_token(token):
+    async def _check_token(token: str):
         now = int(time.time())
         return token["expires_at"] - now < 60
 
@@ -99,7 +148,7 @@ class SpotifyAPI:
         auth_header = base64.b64encode((client_id + ":" + client_secret).encode("ascii"))
         return {"Authorization": "Basic %s" % auth_header.decode("ascii")}
 
-    async def _make_get(self, url, headers=None, params=None):
+    async def _make_get(self, url: str, headers: dict = None, params: dict = None):
         if params is None:
             params = {}
         async with self.session.request("GET", url, params=params, headers=headers) as r:
@@ -144,7 +193,7 @@ class SpotifyAPI:
         log.debug("Created a new access token for Spotify: {0}".format(token))
         return self.spotify_token["access_token"]
 
-    async def post_call(self, url, payload, headers=None):
+    async def post_call(self, url: str, payload: dict, headers: dict = None):
         async with self.session.post(url, data=payload, headers=headers) as r:
             if r.status != 200:
                 log.debug(
@@ -154,7 +203,7 @@ class SpotifyAPI:
                 )
             return await r.json()
 
-    async def get_call(self, url, params):
+    async def get_call(self, url: str, params: dict):
         token = await self._get_spotify_token()
         return await self._make_get(
             url, params=params, headers={"Authorization": "Bearer {0}".format(token)}
@@ -162,7 +211,9 @@ class SpotifyAPI:
 
 
 class YouTubeAPI:
-    def __init__(self, bot, session):
+    """Wrapper for the YouTube Data API."""
+
+    def __init__(self, bot: Red, session: aiohttp.ClientSession):
         self.bot = bot
         self.session = session
         self.api_key = None
@@ -174,7 +225,7 @@ class YouTubeAPI:
             ).get("api_key")
         return self.api_key
 
-    async def get_call(self, query):
+    async def get_call(self, query: str):
         params = {
             "q": query,
             "part": "id",
@@ -194,45 +245,55 @@ class YouTubeAPI:
 
 
 class MusicCache:
-    def __init__(self, bot, session, path):
+    """
+    Handles music queries to the Spotify and Youtube Data API.
+    Always tries the Cache first.
+    """
+
+    def __init__(self, bot: Red, session: aiohttp.ClientSession, path: str):
         self.bot = bot
         self.spotify_api = SpotifyAPI(bot, session)
         self.youtube_api = YouTubeAPI(bot, session)
-        self.path = os.path.abspath(str(os.path.join(path, "cache.db")))
+        self.database = Database(
+            f'sqlite:///{os.path.abspath(str(os.path.join(path, "cache.db")))}'
+        )
 
     async def initialize(self):
-        async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
-            await database.execute(_CREATE_YOUTUBE_TABLE)
-            await database.execute(_CREATE_UNIQUE_INDEX_YOUTUBE_TABLE)
-            await database.execute(_CREATE_SPOTIFY_TABLE)
-            await database.execute(_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE)
-            await database.commit()
+        await self.database.connect()
+        await self.database.execute(query=_CREATE_LAVALINK_TABLE)
+        await self.database.execute(query=_CREATE_UNIQUE_INDEX_LAVALINK_TABLE)
+        await self.database.execute(query=_CREATE_YOUTUBE_TABLE)
+        await self.database.execute(query=_CREATE_UNIQUE_INDEX_YOUTUBE_TABLE)
+        await self.database.execute(query=_CREATE_SPOTIFY_TABLE)
+        await self.database.execute(query=_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE)
 
-    async def _insert(self, table: str, values: tuple) -> None:
-        if table == "youtube":
-            query = _INSERT_YOUTUBE_TABLE
-        elif table == "spotify":
-            query = _INSERT_SPOTIFY_TABLE
+    async def close(self):
+        await self.database.disconnect()
 
-        async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
-            await database.execute(query, values)
-            await database.commit()
+    async def insert(self, table: str, values: List[dict]) -> None:
+        query = _PARSER.get(table, {}).get("insert")
+        if query is None:
+            raise InvalidTableError(f"{table} is not a valid table in the database.")
 
-    async def _insert_many(self, table: str, values: List[tuple]) -> None:
-        if table == "youtube":
-            query = _INSERT_YOUTUBE_TABLE
-        elif table == "spotify":
-            query = _INSERT_SPOTIFY_TABLE
+        await self.database.execute_many(query=query, values=values)
 
-        async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
-            await database.executemany(query, values)
-            await database.commit()
+    async def fetch_one(self, table: str, query: str, values: Dict[str, str]) -> Optional[str]:
+        table = _PARSER.get(table, {})
+        sql_query = table.get(query, {}).get("query")
+        if not table:
+            raise InvalidTableError(f"{table} is not a valid table in the database.")
 
-    async def _query(self, query: str, params: Dict[str, str]) -> Optional[str]:
-        async with aiosqlite.connect(self.path, loop=self.bot.loop) as database:
-            async with database.execute(query, params) as cursor:
-                output = await cursor.fetchone()
-                return output[0] if output else None
+        row = await self.database.fetch_one(query=sql_query, values=values)
+
+        return getattr(row, query, None)
+
+    async def fetch_all(self, table: str, query: str, values: Dict[str, str]) -> List[Mapping]:
+        table = _PARSER.get(table, {})
+        sql_query = table.get(query, {}).get("query")
+        if not table:
+            raise InvalidTableError(f"{table} is not a valid table in the database.")
+
+        return await self.database.fetch_all(query=sql_query, values=values)
 
     @staticmethod
     def _spotify_format_call(qtype: str, key: str) -> Tuple[str, dict]:
@@ -244,7 +305,13 @@ class MusicCache:
         else:
             query = "https://api.spotify.com/v1/playlists/{0}/tracks".format(key)
             params = {
-                "fields": "total, next,items(track(id,type,name,artists,external_urls,uri,is_local))"
+                "fields": (
+                    "total,"
+                    "next,"
+                    "items("
+                    "track(id,type,name,artists,external_urls,uri,is_local)"
+                    ")"
+                )
             }
         return query, params
 
@@ -275,10 +342,18 @@ class MusicCache:
             )
 
             database_entries.append(
-                (_id, _type, uri, track_name, artist_name, song_url, track_info)
+                {
+                    "id": _id,
+                    "type": _type,
+                    "uri": uri,
+                    "track_name": track_name,
+                    "artist_name": artist_name,
+                    "song_url": song_url,
+                    "track_info": track_info,
+                }
             )
             if skip_youtube is False:
-                val = await self._query(_QUERY_YOUTUBE_TABLE, {"track": track_info})
+                val = await self.fetch_one("youtube", "youtube_url", {"track": track_info})
                 if val is None:
                     val = await self._youtube_first_time_query(track_info)
                 if val:
@@ -286,26 +361,22 @@ class MusicCache:
             else:
                 youtube_urls.append(track_info)
             track_count += 1
-            if (track_count % 5 == 0) or (track_count == total_tracks):
+            if (track_count % 25 == 0) or (track_count == total_tracks):
                 if self.notifier:
                     await self.notifier.notify_user(track_count, total_tracks, "youtube")
-        try:
-            await self._insert_many("spotify", database_entries)
-        except sqlite3.OperationalError:
-            pass
+        with contextlib.suppress(sqlite3.OperationalError):
+            await self.insert("spotify", database_entries)
 
         return youtube_urls
 
-    async def _youtube_first_time_query(self, track_info):
+    async def _youtube_first_time_query(self, track_info: str):
         track_url = await self.youtube_api.get_call(track_info)
         if track_url:
-            try:
-                await self._insert("youtube", (track_info, track_url))
-            except sqlite3.OperationalError:
-                pass
+            with contextlib.suppress(sqlite3.OperationalError):
+                await self.insert("youtube", [{"track_info": track_info, "track_url": track_url}])
         return track_url
 
-    async def _spotify_fetch_tracks(self, query_type, uri, recursive=False, params=None):
+    async def _spotify_fetch_tracks(self, query_type: str, uri: str, recursive=False, params=None):
 
         if recursive is False:
             call, params = self._spotify_format_call(query_type, uri)
@@ -363,10 +434,12 @@ class MusicCache:
 
         return tracks
 
-    async def spotify_query(self, query_type, uri, skip_youtube=False, notify: Notifier = None):
+    async def spotify_query(
+        self, query_type: str, uri: str, skip_youtube: bool = False, notify: Notifier = None
+    ):
         self.notifier = notify
         if query_type == "track":
-            val = await self._query(_QUERY_SPOTIFY_TABLE, {"uri": f"spotify:track:{uri}"})
+            val = await self.fetch_one("spotify", "track_info", {"uri": f"spotify:track:{uri}"})
         else:
             val = None
         youtube_urls = []
@@ -378,10 +451,22 @@ class MusicCache:
             youtube_urls.append(val)
         return youtube_urls
 
-    async def youtube_query(self, track_info):
-        val = await self._query(_QUERY_YOUTUBE_TABLE, {"track": track_info})
+    async def youtube_query(self, track_info: str):
+        val = await self.fetch_one("youtube", "youtube_url", {"track": track_info})
         if val is None:
             youtube_url = await self._youtube_first_time_query(track_info)
         else:
             youtube_url = val
         return youtube_url
+
+    async def load_tracks(self, player, query):
+        val = await self.fetch_one("lavalink", "data", {"query": query})
+        if val:
+            results = LoadResult(json.loads(val))
+        else:
+            results = await player.load_tracks(query)
+            if results.load_type and not results.has_error:
+                # with contextlib.suppress(sqlite3.OperationalError):
+                await self.insert("lavalink", [{"query": query, "data": json.dumps(results._raw)}])
+
+        return results.tracks
