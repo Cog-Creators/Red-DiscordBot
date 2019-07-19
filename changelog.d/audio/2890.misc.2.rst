@@ -1,0 +1,1 @@
+:class:`MusicCache` now handles the Spotify and Youtube Data API calls, this queries the cache first before making API calls
