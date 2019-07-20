@@ -66,7 +66,6 @@ class CacheLevel:
 
     def __add__(self, other):
         if isinstance(other, CacheLevel):
-            val = self.value + other.value
             return CacheLevel(self.value + other.value)
         else:
             raise TypeError(
@@ -111,21 +110,11 @@ class CacheLevel:
 
     def is_subset(self, other):
         """Returns ``True`` if self has the same or fewer caching levels as other."""
-        if isinstance(other, CacheLevel):
-            return (self.value & other.value) == self.value
-        else:
-            raise TypeError(
-                f"cannot compare {self.__class__.__name__} with {other.__class__.__name__}"
-            )
+        return (self.value & other.value) == self.value
 
     def is_superset(self, other):
         """Returns ``True`` if self has the same or more caching levels as other."""
-        if isinstance(other, CacheLevel):
-            return (self.value | other.value) == self.value
-        else:
-            raise TypeError(
-                f"cannot compare {self.__class__.__name__} with {other.__class__.__name__}"
-            )
+        return (self.value | other.value) == self.value
 
     def is_strict_subset(self, other):
         """Returns ``True`` if the caching level on other are a strict subset of those on self."""

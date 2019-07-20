@@ -735,7 +735,7 @@ class Audio(commands.Cog):
         3: Enables Lavalink Cache
         5: Enables all Caches
 
-        If you wish to disabke a specific cache use negative number.
+        If you wish to disable a specific cache use negative number.
 
         """
         current_level = CacheLevel(await self.config.cache_level())
@@ -1795,7 +1795,9 @@ class Audio(commands.Cog):
                     ctx, _("This doesn't seem to be a valid Spotify URL or code.")
                 )
 
-    async def _enqueue_tracks(self, ctx, query, playlist_queue=False):
+    async def _enqueue_tracks(
+        self, ctx, query, playlist_queue=False
+    ):  # TODO: query needs to be validated before enqueuing for cached values
         player = lavalink.get_player(ctx.guild.id)
         if playlist_queue is False:
             try:
@@ -1986,9 +1988,7 @@ class Audio(commands.Cog):
             else:
                 enqueued_tracks += 1
                 player.add(ctx.author, yt_track[0])
-            await self._enqueue_tracks(
-                ctx, yt_track[0], playlist_queue=True
-            )  # TODO: yt_track needs to be validated before enqueing
+            await self._enqueue_tracks(ctx, yt_track[0], playlist_queue=True)
             track_list.append(yt_track[0])
             if (track_count % 5 == 0) or (track_count == len(youtube_links)):
                 key = "lavalink"
