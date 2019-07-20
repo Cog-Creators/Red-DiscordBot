@@ -247,7 +247,7 @@ class YouTubeAPI:
 
 
 @cog_i18n(_)
-class MusicCache:
+class MusicCache:  # So .. Need to see a more efficient way to do the queries
     """
     Handles music queries to the Spotify and Youtube Data API.
     Always tries the Cache first.
@@ -317,15 +317,6 @@ class MusicCache:
             query = "https://api.spotify.com/v1/tracks/{0}".format(key)
         else:
             query = "https://api.spotify.com/v1/playlists/{0}/tracks".format(key)
-            params = {
-                "fields": (
-                    "total,"
-                    "next,"
-                    "items("
-                    "track(id,type,name,artists,external_urls,uri,is_local)"
-                    ")"
-                )
-            }
         return query, params
 
     @staticmethod
@@ -442,25 +433,23 @@ class MusicCache:
             return results
         tracks = []
         track_count = 0
-        total_tracks = results.get("total", 1)
+        total_tracks = results.get("tracks", results).get("total", 1)
         while True:
             new_tracks = []
             if query_type == "track":
                 new_tracks = results
                 tracks.append(new_tracks)
             elif query_type == "album":
-                tracks_raw = results.get("items", [])
+                tracks_raw = results.get("tracks", results).get("items", [])
                 if tracks_raw:
-                    new_tracks = results["items"]
+                    new_tracks = tracks_raw
                     tracks.extend(new_tracks)
             else:
-                tracks_raw = results.get("items", [])
+                tracks_raw = results.get("tracks", results).get("items", [])
                 if tracks_raw:
                     new_tracks = [k["track"] for k in tracks_raw if k.get("track")]
                     tracks.extend(new_tracks)
-            track_count += len(
-                new_tracks
-            )  # TypeError: object of type 'int' has no len()  https://open.spotify.com/playlist/3BJpjDyMPvTf1xhDpAwwi9?si=JvygJGayRqe8CbXpnnNQwA
+            track_count += len(new_tracks)
             if self.notifier:
                 await self.notifier.notify_user(
                     current=track_count, total=total_tracks, key="spotify"
@@ -528,14 +517,19 @@ class MusicCache:
                 await self.update("lavalink", {"query": query})
         if val and not forced:
             results = LoadResult(json.loads(val))
+            called_api = False
         else:
+            called_api = True
             results = None
             retries = 0
             while results is None:
                 with contextlib.suppress(asyncio.TimeoutError, KeyError):
                     results = await player.load_tracks(query)
                 retries += 1
-                await asyncio.sleep(5)
+                if retries < 3 and results is None:
+                    await asyncio.sleep(
+                        5 * retries * 0
+                    )  # TODO: So think of a good way to handle this ...
                 if retries == 3 and results is None:
                     return []
             if cache_enabled and results.load_type and not results.has_error:
@@ -553,4 +547,4 @@ class MusicCache:
                         ],
                     )
 
-        return results.tracks
+        return results.tracks, called_api

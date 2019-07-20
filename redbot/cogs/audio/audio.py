@@ -1392,8 +1392,11 @@ class Audio(commands.Cog):
         if not os.path.isdir(os.getcwd() + "/localtracks/{}/".format(folder)):
             return
         local_tracks = []
+        called_api = False
         for local_file in await self._all_folder_tracks(ctx, folder):
-            track = await self.music_cache.lavalink_query(
+            if called_api is True:
+                await asyncio.sleep(2)
+            track, called_api = await self.music_cache.lavalink_query(
                 player, "localtracks/{}/{}".format(folder, local_file)
             )
             try:
@@ -1699,14 +1702,12 @@ class Audio(commands.Cog):
             enqueue_tracks = True
         else:
             enqueue_tracks = False
-        print(1, query)
         player = lavalink.get_player(ctx.guild.id)
         api_data = await self._check_api_tokens()
         if "open.spotify.com" in query:
             query = "spotify:{}".format(
                 re.sub("(http[s]?:\/\/)?(open.spotify.com)\/", "", query).replace("/", ":")
             )
-        print(2, query)
         if query.startswith("spotify:"):
             if (
                 not api_data["spotify_client_id"]
@@ -1729,9 +1730,7 @@ class Audio(commands.Cog):
                     )
             except KeyError:
                 pass
-            print(3, query)
             parts = query.split(":")
-            print(4, parts)
             if "track" in parts:
                 try:
                     res = await self.music_cache.spotify_query(
@@ -1742,11 +1741,12 @@ class Audio(commands.Cog):
                 except SpotifyFetchError as error:
                     await self._play_lock(ctx, False)
                     return await self._embed_msg(ctx, _(error.message).format(prefix=ctx.prefix))
+                await self._play_lock(ctx, False)
                 try:
                     if enqueue_tracks:
                         return await self._enqueue_tracks(ctx, res[0])
                     else:
-                        tracks = await self.music_cache.lavalink_query(
+                        tracks, called_api = await self.music_cache.lavalink_query(
                             player, f"ytsearch:{res[0]}"
                         )
                         if not tracks:
@@ -1767,34 +1767,22 @@ class Audio(commands.Cog):
             elif "album" in parts:
                 query = parts[-1]
                 self._play_lock(ctx, True)
-                track_list = await self._spotify_playlist(ctx, "album", query)
-                completed = True if track_list else False
-                if completed:
-                    self._play_lock(ctx, False)
-                    return
-                if enqueue_tracks:
-                    return await self._enqueue_tracks(ctx, track_list)
-                else:
-                    return track_list
+                track_list = await self._spotify_playlist(ctx, "album", query, enqueue_tracks)
+                self._play_lock(ctx, False)
+                return track_list
             elif "playlist" in parts:
                 query = parts[-1]
-                print(5, query)
                 self._play_lock(ctx, True)
                 if "user" in parts:
-                    enqueue_tracks = False
-                    track_list = await self._spotify_playlist(ctx, "user_playlist", query)
-                    completed = True if track_list else False
+                    track_list = await self._spotify_playlist(
+                        ctx, "user_playlist", query, enqueue_tracks
+                    )
                 else:
-                    track_list = await self._spotify_playlist(ctx, "playlist", query)
-                    enqueue_tracks = False
-                    completed = True if track_list else False
-                if completed:
-                    self._play_lock(ctx, False)
-                    return
-                if enqueue_tracks and not completed:
-                    return await self._enqueue_tracks(ctx, track_list)
-                else:
-                    return track_list
+                    track_list = await self._spotify_playlist(
+                        ctx, "playlist", query, enqueue_tracks
+                    )
+                self._play_lock(ctx, False)
+                return track_list
 
             else:
                 return await self._embed_msg(
@@ -1824,7 +1812,7 @@ class Audio(commands.Cog):
                 query = f"ytsearch:{query}"
             if query.startswith(("ytsearch", "localtracks")):
                 first_track_only = True
-            tracks = await self.music_cache.lavalink_query(player, query)
+            tracks, called_api = await self.music_cache.lavalink_query(player, query)
             if not tracks:
                 return await self._embed_msg(ctx, _("Nothing found."))
         elif playlist_queue:
@@ -1925,7 +1913,8 @@ class Audio(commands.Cog):
         if playlist_queue is False:
             self._play_lock(ctx, False)
 
-    async def _spotify_playlist(self, ctx, stype, query):
+    async def _spotify_playlist(self, ctx, stype, query, enqueue=False):
+
         player = lavalink.get_player(ctx.guild.id)
         guild_data = await self.config.guild(ctx.guild).all()
         try:
@@ -1941,7 +1930,6 @@ class Audio(commands.Cog):
                     "youtube": _("Matching track {num}/{total}..."),
                 },
             )
-            print(query)
             youtube_links = await self.music_cache.spotify_query(stype, query, notify=notifier)
         except SpotifyFetchError as error:
             await self._play_lock(ctx, False)
@@ -1977,10 +1965,12 @@ class Audio(commands.Cog):
         queue_dur = await queue_duration(ctx)
         queue_total_duration = lavalink.utils.format_time(queue_dur)
         before_queue_length = len(player.queue)
-
+        called_api = False
         for t in youtube_links:
+            if called_api is True:
+                await asyncio.sleep(2)
             try:
-                yt_track = await self.music_cache.lavalink_query(player, t)
+                yt_track, called_api = await self.music_cache.lavalink_query(player, t)
             except (RuntimeError, aiohttp.ServerDisconnectedError):
                 await self._play_lock(ctx, False)
                 error_embed = discord.Embed(
@@ -1992,36 +1982,38 @@ class Audio(commands.Cog):
             track_count += 1
             if not yt_track:
                 continue
-            if guild_data["maxlength"] > 0:
-                if track_limit(yt_track[0], guild_data["maxlength"]):
+            track_list.append(yt_track[0])
+            if enqueue:
+                if guild_data["maxlength"] > 0:
+                    if track_limit(yt_track[0], guild_data["maxlength"]):
+                        enqueued_tracks += 1
+                        player.add(ctx.author, yt_track[0])
+                else:
                     enqueued_tracks += 1
                     player.add(ctx.author, yt_track[0])
-            else:
-                enqueued_tracks += 1
-                player.add(ctx.author, yt_track[0])
-            await self._enqueue_tracks(ctx, yt_track[0], playlist_queue=True)
-            track_list.append(yt_track[0])
-            if (track_count % 5 == 0) or (track_count == len(youtube_links)):
-                key = "lavalink"
-                seconds = "???"
-                second_key = None
-                if track_count == 5:
-                    five_time = int(time.time()) - now
-                if track_count >= 5:
-                    remain_tracks = len(youtube_links) - track_count
-                    time_remain = (remain_tracks / 5) * five_time
-                    if track_count < len(youtube_links):
-                        seconds = self._dynamic_time(int(time_remain))
-                    if track_count == len(youtube_links):
-                        seconds = "0s"
-                    second_key = "lavalink_time"
-                await notifier.notify_user(
-                    current=track_count,
-                    total=len(youtube_links),
-                    key=key,
-                    seconds_key=second_key,
-                    seconds=seconds,
-                )
+                await self._enqueue_tracks(ctx, yt_track[0], playlist_queue=True)
+
+                if (track_count % 5 == 0) or (track_count == len(youtube_links)):
+                    key = "lavalink"
+                    seconds = "???"
+                    second_key = None
+                    if track_count == 5:
+                        five_time = int(time.time()) - now
+                    if track_count >= 5:
+                        remain_tracks = len(youtube_links) - track_count
+                        time_remain = (remain_tracks / 5) * five_time
+                        if track_count < len(youtube_links):
+                            seconds = self._dynamic_time(int(time_remain))
+                        if track_count == len(youtube_links):
+                            seconds = "0s"
+                        second_key = "lavalink_time"
+                    await notifier.notify_user(
+                        current=track_count,
+                        total=len(youtube_links),
+                        key=key,
+                        seconds_key=second_key,
+                        seconds=seconds,
+                    )
 
         if len(track_list) == 0:
             embed3 = discord.Embed(
@@ -2037,30 +2029,32 @@ class Audio(commands.Cog):
                 return await playlist_msg.edit(embed=embed3)
             except discord.errors.NotFound:
                 pass
-        if len(youtube_links) > enqueued_tracks:
-            maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
-                bad_tracks=(len(youtube_links) - enqueued_tracks)
-            )
-        else:
-            maxlength_msg = ""
-        embed = discord.Embed(
-            colour=await ctx.embed_colour(),
-            title=_("Playlist Enqueued"),
-            description=_("Added {num} tracks to the queue.{maxlength_msg}").format(
-                num=enqueued_tracks, maxlength_msg=maxlength_msg
-            ),
-        )
-        if not guild_data["shuffle"] and queue_dur > 0:
-            embed.set_footer(
-                text=_(
-                    "{time} until start of playlist playback: starts at #{position} in queue"
-                ).format(time=queue_total_duration, position=before_queue_length + 1)
-            )
+        if enqueue:
+            if len(youtube_links) > enqueued_tracks:
+                maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
+                    bad_tracks=(len(youtube_links) - enqueued_tracks)
+                )
+            else:
+                maxlength_msg = ""
 
-        try:
-            await playlist_msg.edit(embed=embed)
-        except discord.errors.NotFound:
-            pass
+                embed = discord.Embed(
+                    colour=await ctx.embed_colour(),
+                    title=_("Playlist Enqueued"),
+                    description=_("Added {num} tracks to the queue.{maxlength_msg}").format(
+                        num=enqueued_tracks, maxlength_msg=maxlength_msg
+                    ),
+                )
+                if not guild_data["shuffle"] and queue_dur > 0:
+                    embed.set_footer(
+                        text=_(
+                            "{time} until start of playlist playback: starts at #{position} in queue"
+                        ).format(time=queue_total_duration, position=before_queue_length + 1)
+                    )
+
+                try:
+                    await playlist_msg.edit(embed=embed)
+                except discord.errors.NotFound:
+                    pass
         self._play_lock(ctx, False)
         return track_list
 
@@ -2569,7 +2563,7 @@ class Audio(commands.Cog):
         if (
             not v2_playlist_url
             or not self._match_yt_playlist(v2_playlist_url)
-            or not await self.music_cache.lavalink_query(player, v2_playlist_url)
+            or not (await self.music_cache.lavalink_query(player, v2_playlist_url))[0]
         ):
             track_list = []
             track_count = 0
@@ -2587,9 +2581,12 @@ class Audio(commands.Cog):
             playlist_msg = await ctx.send(embed=embed1)
             notifier = Notifier(ctx, playlist_msg, {"v2": _("Loading track {num}/{total}...")})
             total_tracks = len(v2_playlist["playlist"])
+            called_api = False
             for song_url in v2_playlist["playlist"]:
+                if called_api is True:
+                    await asyncio.sleep(2)
                 try:
-                    track = await self.music_cache.lavalink_query(player, song_url)
+                    track, called_api = await self.music_cache.lavalink_query(player, song_url)
                 except RuntimeError:
                     pass
                 try:
@@ -2701,11 +2698,11 @@ class Audio(commands.Cog):
         elif not query.startswith("http"):
             query = "ytsearch:{}".format(query)
             search = True
-            tracks = await self.music_cache.lavalink_query(player, query)
+            tracks, called_api = await self.music_cache.lavalink_query(player, query)
             if not tracks:
                 return await self._embed_msg(ctx, _("Nothing found."))
         else:
-            tracks = await self.music_cache.lavalink_query(player, query)
+            tracks, called_api = await self.music_cache.lavalink_query(player, query)
         if not search and len(tracklist) == 0:
             for track in tracks:
                 track_obj = self._track_creator(player, other_track=track)
@@ -2741,7 +2738,9 @@ class Audio(commands.Cog):
         if player.fetch("prev_song") is None:
             return await self._embed_msg(ctx, _("No previous track."))
         else:
-            last_track = await self.music_cache.lavalink_query(player, player.fetch("prev_song"))
+            last_track, called_api = await self.music_cache.lavalink_query(
+                player, player.fetch("prev_song")
+            )
             player.add(player.fetch("prev_requester"), last_track[0])
             queue_len = len(player.queue)
             bump_song = player.queue[-1]
@@ -3163,7 +3162,7 @@ class Audio(commands.Cog):
             if query.startswith("list ") or query.startswith("folder:"):
                 if query.startswith("list "):
                     query = "ytsearch:{}".format(query.replace("list ", ""))
-                    tracks = await self.music_cache.lavalink_query(player, query)
+                    tracks, called_api = await self.music_cache.lavalink_query(player, query)
                 else:
                     query = query.replace("folder:", "")
                     tracks = await self._folder_tracks(ctx, player, query)
@@ -3205,7 +3204,7 @@ class Audio(commands.Cog):
                 return await ctx.send(embed=songembed)
             elif query.startswith("sc "):
                 query = "scsearch:{}".format(query.replace("sc ", ""))
-                tracks = await self.music_cache.lavalink_query(player, query)
+                tracks, called_api = await self.music_cache.lavalink_query(player, query)
             elif ":localtrack:" in query:
                 track_location = query.split(":")[2]
                 tracks = await self._folder_list(ctx, track_location)
@@ -3218,9 +3217,9 @@ class Audio(commands.Cog):
                     tracks = await self._folder_list(ctx, folder)
             elif not self._match_url(query):
                 query = "ytsearch:{}".format(query)
-                tracks = await self.music_cache.lavalink_query(player, query)
+                tracks, called_api = await self.music_cache.lavalink_query(player, query)
             else:
-                tracks = await self.music_cache.lavalink_query(player, query)
+                tracks, called_api = await self.music_cache.lavalink_query(player, query)
             if not tracks:
                 return await self._embed_msg(ctx, _("Nothing found."))
         else:
