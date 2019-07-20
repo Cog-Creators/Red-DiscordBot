@@ -444,7 +444,7 @@ class MusicCache:
         track_count = 0
         total_tracks = results.get("total", 1)
         while True:
-            new_tracks = 0
+            new_tracks = []
             if query_type == "track":
                 new_tracks = results
                 tracks.append(new_tracks)
@@ -458,7 +458,7 @@ class MusicCache:
                 if tracks_raw:
                     new_tracks = [k["track"] for k in tracks_raw if k.get("track")]
                     tracks.extend(new_tracks)
-            track_count += len(new_tracks)
+            track_count += len(new_tracks)  # TypeError: object of type 'int' has no len()  https://open.spotify.com/playlist/3BJpjDyMPvTf1xhDpAwwi9?si=JvygJGayRqe8CbXpnnNQwA
             if self.notifier:
                 await self.notifier.notify_user(
                     current=track_count, total=total_tracks, key="spotify"
@@ -503,7 +503,7 @@ class MusicCache:
 
     async def youtube_query(self, track_info: str) -> str:
         current_cache_level = CacheLevel(await self.config.cache_level())
-        cache_enabled = CacheLevel.set_youtube().is_subset()
+        cache_enabled = CacheLevel.set_youtube().is_subset(current_cache_level)
         val = None
         if cache_enabled:
             val = await self.fetch_one("youtube", "youtube_url", {"track": track_info})

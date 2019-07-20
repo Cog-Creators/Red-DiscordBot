@@ -1679,7 +1679,7 @@ class Audio(commands.Cog):
 
         if "open.spotify.com" in query:
             query = "spotify:{}".format(
-                re.sub("(http[s]?:\/\/)?(open.spotify.com)\/", "", query).replace("/", ":")
+                re.sub("(http[s]?://)?(open.spotify.com)/", "", query).replace("/", ":")
             )
         if query.startswith("spotify:"):
             return await self._get_spotify_tracks(ctx, query)
@@ -1699,12 +1699,14 @@ class Audio(commands.Cog):
             enqueue_tracks = True
         else:
             enqueue_tracks = False
+        print(1, query)
         player = lavalink.get_player(ctx.guild.id)
         api_data = await self._check_api_tokens()
         if "open.spotify.com" in query:
             query = "spotify:{}".format(
                 re.sub("(http[s]?:\/\/)?(open.spotify.com)\/", "", query).replace("/", ":")
             )
+        print(2, query)
         if query.startswith("spotify:"):
             if (
                 not api_data["spotify_client_id"]
@@ -1727,8 +1729,9 @@ class Audio(commands.Cog):
                     )
             except KeyError:
                 pass
-
+            print(3, query)
             parts = query.split(":")
+            print(4, parts)
             if "track" in parts:
                 try:
                     res = await self.music_cache.spotify_query(
@@ -1737,6 +1740,7 @@ class Audio(commands.Cog):
                     if res is None:
                         return await self._embed_msg(ctx, _("Nothing found."))
                 except SpotifyFetchError as error:
+                    await self._play_lock(ctx, False)
                     return await self._embed_msg(ctx, _(error.message).format(prefix=ctx.prefix))
                 try:
                     if enqueue_tracks:
@@ -1752,6 +1756,7 @@ class Audio(commands.Cog):
                         return single_track
 
                 except KeyError:
+                    await self._play_lock(ctx, False)
                     return await self._embed_msg(
                         ctx,
                         _(
@@ -1773,6 +1778,7 @@ class Audio(commands.Cog):
                     return track_list
             elif "playlist" in parts:
                 query = parts[-1]
+                print(5, query)
                 self._play_lock(ctx, True)
                 if "user" in parts:
                     enqueue_tracks = False
@@ -1881,6 +1887,7 @@ class Audio(commands.Cog):
                 else:
                     player.add(ctx.author, single_track)
             except IndexError:
+                await self._play_lock(ctx, False)
                 return await self._embed_msg(
                     ctx, _("Nothing found. Check your Lavalink logs for details.")
                 )
@@ -1934,10 +1941,13 @@ class Audio(commands.Cog):
                     "youtube": _("Matching track {num}/{total}..."),
                 },
             )
+            print(query)
             youtube_links = await self.music_cache.spotify_query(stype, query, notify=notifier)
         except SpotifyFetchError as error:
+            await self._play_lock(ctx, False)
             return await self._embed_msg(ctx, _(error.message).format(prefix=ctx.prefix))
         except (RuntimeError, aiohttp.ServerDisconnectedError):
+            await self._play_lock(ctx, False)
             error_embed = discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("The connection was reset while loading the playlist."),
@@ -1972,6 +1982,7 @@ class Audio(commands.Cog):
             try:
                 yt_track = await self.music_cache.lavalink_query(player, t)
             except (RuntimeError, aiohttp.ServerDisconnectedError):
+                await self._play_lock(ctx, False)
                 error_embed = discord.Embed(
                     colour=await ctx.embed_colour(),
                     title=_("The connection was reset while loading the playlist."),
@@ -2133,6 +2144,7 @@ class Audio(commands.Cog):
                 try:
                     target_playlists = to_playlists[playlist_name]
                 except KeyError:
+
                     to_playlists[playlist_name] = from_playlists[playlist_name]
                     return await self._embed_msg(
                         ctx,
