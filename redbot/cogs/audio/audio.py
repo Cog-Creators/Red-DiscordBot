@@ -14,6 +14,8 @@ import random
 import re
 import time
 from typing import Optional
+from urllib.parse import urlparse
+
 import redbot.core
 from redbot.core import Config, commands, checks, bank
 from redbot.core.data_manager import cog_data_path
@@ -28,11 +30,12 @@ from redbot.core.utils.menus import (
     start_adding_reactions,
 )
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
-from urllib.parse import urlparse
+from .apis import MusicCache
+from redbot.cogs.audio.utils import Notifier, CacheLevel
 from .equalizer import Equalizer
 from .manager import ServerManager
 from .errors import LavalinkDownloadFailed, SpotifyFetchError
-from .apis import MusicCache, Notifier
+from .utils import track_limit, queue_duration
 
 _ = Translator("Audio", __file__)
 
@@ -59,6 +62,7 @@ class Audio(commands.Cog):
         self.config = Config.get_conf(self, 2711759130, force_registration=True)
 
         default_global = dict(
+            cache_level=0,
             status=False,
             use_external_lavalink=False,
             restrict=True,
@@ -119,7 +123,7 @@ class Audio(commands.Cog):
         self._restart_connect()
         self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
         lavalink.register_event_listener(self.event_handler)
-        await self.music_cache.initialize()
+        await self.music_cache.initialize(self.config)
 
     def _restart_connect(self):
         if self._connect_task:
@@ -720,6 +724,83 @@ class Audio(commands.Cog):
         ).format(prefix=ctx.prefix)
         await ctx.maybe_send_embed(message)
 
+    @audioset.command(name="cache", usage="level=[5, 3, 2, 1, 0, -1, -2, -3]")
+    @checks.is_owner()
+    async def _storage(self, ctx: commands.Context, *, level: int = None):
+        """Sets the caching level.
+        Level can one of the following:
+        0: Disables all caching
+        1: Enables Spotify Cache
+        2: Enables YouTube Cache
+        3: Enables Lavalink Cache
+        5: Enables all Caches
+
+        If you wish to disabke a specific cache use negative number.
+
+        """
+        current_level = CacheLevel(await self.config.cache_level())
+        spotify_cache = CacheLevel.set_spotify()
+        youtube_cache = CacheLevel.set_youtube()
+        lavalink_cache = CacheLevel.set_lavalink()
+        has_spotify_cache = current_level.is_superset(spotify_cache)
+        has_youtube_cache = current_level.is_superset(youtube_cache)
+        has_lavalink_cache = current_level.is_superset(lavalink_cache)
+
+        if level is None:
+            msg = _(
+                "Spotify cache is {spotify_status}\n"
+                "Youtube cache is {youtube_status}\n"
+                "Lavalink cache is {lavalink_status}\n"
+            ).format(
+                spotify_status=_("enabled") if has_spotify_cache else _("disabled"),
+                youtube_status=_("enabled") if has_youtube_cache else _("disabled"),
+                lavalink_status=_("enabled") if has_lavalink_cache else _("disabled"),
+            )
+            await ctx.send(msg)  # TODO : Make it into a nice  Embed + Add to audioset embed
+            return await ctx.send_help()
+        if level not in [5, 3, 2, 1, 0, -1, -2, -3]:
+            return await ctx.send_help()
+
+        removing = level < 0
+
+        if level == 5:
+            newcache = CacheLevel.all()
+        elif level == 0:
+            newcache = CacheLevel.none()
+        elif level in [-3, 3]:
+            if removing:
+                newcache = current_level - lavalink_cache
+            else:
+                newcache = current_level + lavalink_cache
+        elif level in [-2, 2]:
+            if removing:
+                newcache = current_level - youtube_cache
+            else:
+                newcache = current_level + youtube_cache
+        elif level in [-1, 1]:
+            if removing:
+                newcache = current_level - spotify_cache
+            else:
+                newcache = current_level + spotify_cache
+        else:
+            return await ctx.send_help()
+
+        has_spotify_cache = newcache.is_superset(spotify_cache)
+        has_youtube_cache = newcache.is_superset(youtube_cache)
+        has_lavalink_cache = newcache.is_superset(lavalink_cache)
+        msg = _(
+            "Spotify cache is {spotify_status}\n"
+            "Youtube cache is {youtube_status}\n"
+            "Lavalink cache is {lavalink_status}\n"
+        ).format(
+            spotify_status=_("enabled") if has_spotify_cache else _("disabled"),
+            youtube_status=_("enabled") if has_youtube_cache else _("disabled"),
+            lavalink_status=_("enabled") if has_lavalink_cache else _("disabled"),
+        )
+        await ctx.send(msg)  # TODO : Make it into a nice  Embed + Add to audioset embed
+
+        await self.config.cache_level.set(newcache.value)
+
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
@@ -925,7 +1006,7 @@ class Audio(commands.Cog):
                 author = self.bot.get_user(bands["author"])
             except TypeError:
                 author = "None"
-            msg = f"{preset}{space*(22 - len(preset))}{author}\n"
+            msg = f"{preset}{space * (22 - len(preset))}{author}\n"
             preset_list += msg
 
         page_list = []
@@ -1312,7 +1393,7 @@ class Audio(commands.Cog):
             return
         local_tracks = []
         for local_file in await self._all_folder_tracks(ctx, folder):
-            track = await self.music_cache.load_tracks(
+            track = await self.music_cache.lavalink_query(
                 player, "localtracks/{}/{}".format(folder, local_file)
             )
             try:
@@ -1661,7 +1742,9 @@ class Audio(commands.Cog):
                     if enqueue_tracks:
                         return await self._enqueue_tracks(ctx, res[0])
                     else:
-                        tracks = await self.music_cache.load_tracks(player, f"ytsearch:{res[0]}")
+                        tracks = await self.music_cache.lavalink_query(
+                            player, f"ytsearch:{res[0]}"
+                        )
                         if not tracks:
                             return await self._embed_msg(ctx, _("Nothing found."))
                         single_track = []
@@ -1680,7 +1763,8 @@ class Audio(commands.Cog):
                 query = parts[-1]
                 self._play_lock(ctx, True)
                 track_list = await self._spotify_playlist(ctx, "album", query)
-                if not track_list:
+                completed = True if track_list else False
+                if completed:
                     self._play_lock(ctx, False)
                     return
                 if enqueue_tracks:
@@ -1691,13 +1775,17 @@ class Audio(commands.Cog):
                 query = parts[-1]
                 self._play_lock(ctx, True)
                 if "user" in parts:
+                    enqueue_tracks = False
                     track_list = await self._spotify_playlist(ctx, "user_playlist", query)
+                    completed = True if track_list else False
                 else:
                     track_list = await self._spotify_playlist(ctx, "playlist", query)
-                if not track_list:
+                    enqueue_tracks = False
+                    completed = True if track_list else False
+                if completed:
                     self._play_lock(ctx, False)
                     return
-                if enqueue_tracks:
+                if enqueue_tracks and not completed:
                     return await self._enqueue_tracks(ctx, track_list)
                 else:
                     return track_list
@@ -1707,11 +1795,19 @@ class Audio(commands.Cog):
                     ctx, _("This doesn't seem to be a valid Spotify URL or code.")
                 )
 
-    async def _enqueue_tracks(self, ctx, query):
+    async def _enqueue_tracks(self, ctx, query, playlist_queue=False):
         player = lavalink.get_player(ctx.guild.id)
+        if playlist_queue is False:
+            try:
+                if self.play_lock[ctx.message.guild.id]:
+                    return await self._embed_msg(
+                        ctx, _("Wait until the playlist has finished loading.")
+                    )
+            except KeyError:
+                self._play_lock(ctx, True)
         guild_data = await self.config.guild(ctx.guild).all()
         first_track_only = False
-        if type(query) is not list:
+        if type(query) is not list and not playlist_queue:
             if not (
                 query.startswith("http")
                 or query.startswith("localtracks")
@@ -1720,14 +1816,16 @@ class Audio(commands.Cog):
                 query = f"ytsearch:{query}"
             if query.startswith(("ytsearch", "localtracks")):
                 first_track_only = True
-            tracks = await self.music_cache.load_tracks(player, query)
+            tracks = await self.music_cache.lavalink_query(player, query)
             if not tracks:
                 return await self._embed_msg(ctx, _("Nothing found."))
+        elif playlist_queue:
+            tracks = [query]
         else:
             tracks = query
 
-        queue_duration = await self._queue_duration(ctx)
-        queue_total_duration = lavalink.utils.format_time(queue_duration)
+        queue_dur = await queue_duration(ctx)
+        queue_total_duration = lavalink.utils.format_time(queue_dur)
         before_queue_length = len(player.queue)
 
         if not first_track_only and len(tracks) > 1:
@@ -1738,7 +1836,7 @@ class Audio(commands.Cog):
             track_len = 0
             for track in tracks:
                 if guild_data["maxlength"] > 0:
-                    if self._track_limit(ctx, track, guild_data["maxlength"]):
+                    if track_limit(track, guild_data["maxlength"]):
                         track_len += 1
                         player.add(ctx.author, track)
                 else:
@@ -1758,7 +1856,7 @@ class Audio(commands.Cog):
                     num=track_len, maxlength_msg=maxlength_msg
                 ),
             )
-            if not guild_data["shuffle"] and queue_duration > 0:
+            if not guild_data["shuffle"] and queue_dur > 0:
                 embed.set_footer(
                     text=_(
                         "{time} until start of playlist playback: starts at #{position} in queue"
@@ -1773,7 +1871,7 @@ class Audio(commands.Cog):
             try:
                 single_track = tracks[0]
                 if guild_data["maxlength"] > 0:
-                    if self._track_limit(ctx, single_track, guild_data["maxlength"]):
+                    if track_limit(single_track, guild_data["maxlength"]):
                         player.add(ctx.author, single_track)
                     else:
                         return await self._embed_msg(ctx, _("Track exceeds maximum length."))
@@ -1784,38 +1882,43 @@ class Audio(commands.Cog):
                 return await self._embed_msg(
                     ctx, _("Nothing found. Check your Lavalink logs for details.")
                 )
-
-            if "localtracks" in single_track.uri:
-                if not single_track.title == "Unknown title":
-                    description = "**{} - {}**\n{}".format(
-                        single_track.author,
-                        single_track.title,
-                        single_track.uri.replace("localtracks/", ""),
-                    )
+            if not playlist_queue:
+                if "localtracks" in single_track.uri:
+                    if not single_track.title == "Unknown title":
+                        description = "**{} - {}**\n{}".format(
+                            single_track.author,
+                            single_track.title,
+                            single_track.uri.replace("localtracks/", ""),
+                        )
+                    else:
+                        description = "{}".format(single_track.uri.replace("localtracks/", ""))
                 else:
-                    description = "{}".format(single_track.uri.replace("localtracks/", ""))
-            else:
-                description = "**[{}]({})**".format(single_track.title, single_track.uri)
-            embed = discord.Embed(
-                colour=await ctx.embed_colour(), title=_("Track Enqueued"), description=description
-            )
-            if not guild_data["shuffle"] and queue_duration > 0:
-                embed.set_footer(
-                    text=_("{time} until track playback: #{position} in queue").format(
-                        time=queue_total_duration, position=before_queue_length + 1
-                    )
+                    description = "**[{}]({})**".format(single_track.title, single_track.uri)
+                embed = discord.Embed(
+                    colour=await ctx.embed_colour(),
+                    title=_("Track Enqueued"),
+                    description=description,
                 )
-            elif queue_duration > 0:
-                embed.set_footer(text=_("#{position} in queue").format(position=len(player.queue)))
+                if not guild_data["shuffle"] and queue_dur > 0:
+                    embed.set_footer(
+                        text=_("{time} until track playback: #{position} in queue").format(
+                            time=queue_total_duration, position=before_queue_length + 1
+                        )
+                    )
+                elif queue_dur > 0:
+                    embed.set_footer(
+                        text=_("#{position} in queue").format(position=len(player.queue))
+                    )
+                await ctx.send(embed=embed)
             if not player.current:
                 await player.play()
-        await ctx.send(embed=embed)
-        if type(query) is list:
+
+        if playlist_queue is False:
             self._play_lock(ctx, False)
 
     async def _spotify_playlist(self, ctx, stype, query):
         player = lavalink.get_player(ctx.guild.id)
-
+        guild_data = await self.config.guild(ctx.guild).all()
         try:
             embed1 = discord.Embed(
                 colour=await ctx.embed_colour(), title=_("Please wait, finding tracks...")
@@ -1850,10 +1953,22 @@ class Audio(commands.Cog):
         track_list = []
         track_count = 0
         now = int(time.time())
+        notifier = Notifier(
+            ctx,
+            playlist_msg,
+            {
+                "lavalink": _("Loading track {num}/{total}..."),
+                "lavalink_time": _("Approximate time remaining: {seconds}"),
+            },
+        )
+        enqueued_tracks = 0
+        queue_dur = await queue_duration(ctx)
+        queue_total_duration = lavalink.utils.format_time(queue_dur)
+        before_queue_length = len(player.queue)
 
         for t in youtube_links:
             try:
-                yt_track = await self.music_cache.load_tracks(player, t)
+                yt_track = await self.music_cache.lavalink_query(player, t)
             except (RuntimeError, aiohttp.ServerDisconnectedError):
                 error_embed = discord.Embed(
                     colour=await ctx.embed_colour(),
@@ -1861,35 +1976,41 @@ class Audio(commands.Cog):
                 )
                 await playlist_msg.edit(embed=error_embed)
                 return None
-            try:
-                track_list.append(yt_track[0])
-            except IndexError:
-                pass
             track_count += 1
-            if (track_count % 25 == 0) or (track_count == len(youtube_links)):
-                embed2 = discord.Embed(
-                    colour=await ctx.embed_colour(),
-                    title=_("Loading track {num}/{total}...").format(
-                        num=track_count, total=len(youtube_links)
-                    ),
-                )
-                if track_count == 25:
+            if not yt_track:
+                continue
+            if guild_data["maxlength"] > 0:
+                if track_limit(yt_track[0], guild_data["maxlength"]):
+                    enqueued_tracks += 1
+                    player.add(ctx.author, yt_track[0])
+            else:
+                enqueued_tracks += 1
+                player.add(ctx.author, yt_track[0])
+            await self._enqueue_tracks(
+                ctx, yt_track[0], playlist_queue=True
+            )  # TODO: yt_track needs to be validated before enqueing
+            track_list.append(yt_track[0])
+            if (track_count % 5 == 0) or (track_count == len(youtube_links)):
+                key = "lavalink"
+                seconds = "???"
+                second_key = None
+                if track_count == 5:
                     five_time = int(time.time()) - now
-                if track_count >= 25:
+                if track_count >= 5:
                     remain_tracks = len(youtube_links) - track_count
-                    time_remain = (remain_tracks / 25) * five_time
+                    time_remain = (remain_tracks / 5) * five_time
                     if track_count < len(youtube_links):
                         seconds = self._dynamic_time(int(time_remain))
                     if track_count == len(youtube_links):
                         seconds = "0s"
-                    embed2.set_footer(
-                        text=_("Approximate time remaining: {seconds}").format(seconds=seconds)
-                    )
-
-                try:
-                    await playlist_msg.edit(embed=embed2)
-                except discord.errors.NotFound:
-                    pass
+                    second_key = "lavalink_time"
+                await notifier.notify_user(
+                    current=track_count,
+                    total=len(youtube_links),
+                    key=key,
+                    seconds_key=second_key,
+                    seconds=seconds,
+                )
 
         if len(track_list) == 0:
             embed3 = discord.Embed(
@@ -1905,10 +2026,31 @@ class Audio(commands.Cog):
                 return await playlist_msg.edit(embed=embed3)
             except discord.errors.NotFound:
                 pass
+        if len(youtube_links) > enqueued_tracks:
+            maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
+                bad_tracks=(len(youtube_links) - enqueued_tracks)
+            )
+        else:
+            maxlength_msg = ""
+        embed = discord.Embed(
+            colour=await ctx.embed_colour(),
+            title=_("Playlist Enqueued"),
+            description=_("Added {num} tracks to the queue.{maxlength_msg}").format(
+                num=enqueued_tracks, maxlength_msg=maxlength_msg
+            ),
+        )
+        if not guild_data["shuffle"] and queue_dur > 0:
+            embed.set_footer(
+                text=_(
+                    "{time} until start of playlist playback: starts at #{position} in queue"
+                ).format(time=queue_total_duration, position=before_queue_length + 1)
+            )
+
         try:
-            await playlist_msg.delete()
+            await playlist_msg.edit(embed=embed)
         except discord.errors.NotFound:
             pass
+        self._play_lock(ctx, False)
         return track_list
 
     @commands.group()
@@ -2352,7 +2494,7 @@ class Audio(commands.Cog):
                     if not os.path.isfile(track["info"]["uri"]):
                         continue
                 if maxlength > 0:
-                    if not self._track_limit(ctx, track["info"]["length"], maxlength):
+                    if not track_limit(track["info"]["length"], maxlength):
                         continue
                 player.add(author_obj, lavalink.rest_api.Track(data=track))
                 track_len += 1
@@ -2415,7 +2557,7 @@ class Audio(commands.Cog):
         if (
             not v2_playlist_url
             or not self._match_yt_playlist(v2_playlist_url)
-            or not await self.music_cache.load_tracks(player, v2_playlist_url)
+            or not await self.music_cache.lavalink_query(player, v2_playlist_url)
         ):
             track_list = []
             track_count = 0
@@ -2431,9 +2573,11 @@ class Audio(commands.Cog):
                 colour=await ctx.embed_colour(), title=_("Please wait, adding tracks...")
             )
             playlist_msg = await ctx.send(embed=embed1)
+            notifier = Notifier(ctx, playlist_msg, {"v2": _("Loading track {num}/{total}...")})
+            total_tracks = len(v2_playlist["playlist"])
             for song_url in v2_playlist["playlist"]:
                 try:
-                    track = await self.music_cache.load_tracks(player, song_url)
+                    track = await self.music_cache.lavalink_query(player, song_url)
                 except RuntimeError:
                     pass
                 try:
@@ -2442,14 +2586,8 @@ class Audio(commands.Cog):
                     track_count = track_count + 1
                 except IndexError:
                     pass
-                if track_count % 25 == 0:
-                    embed2 = discord.Embed(
-                        colour=await ctx.embed_colour(),
-                        title=_("Loading track {num}/{total}...").format(
-                            num=track_count, total=len(v2_playlist["playlist"])
-                        ),
-                    )
-                    await playlist_msg.edit(embed=embed2)
+                if track_count % 5 == 0 or (track_count == total_tracks):
+                    await notifier.notify_user(current=track_count, total=total_tracks, key="v2")
             if not track_list:
                 return await self._embed_msg(ctx, _("No tracks found."))
             playlist_list = self._to_json(ctx, v2_playlist_url, track_list)
@@ -2551,11 +2689,11 @@ class Audio(commands.Cog):
         elif not query.startswith("http"):
             query = "ytsearch:{}".format(query)
             search = True
-            tracks = await self.music_cache.load_tracks(player, query)
+            tracks = await self.music_cache.lavalink_query(player, query)
             if not tracks:
                 return await self._embed_msg(ctx, _("Nothing found."))
         else:
-            tracks = await self.music_cache.load_tracks(player, query)
+            tracks = await self.music_cache.lavalink_query(player, query)
         if not search and len(tracklist) == 0:
             for track in tracks:
                 track_obj = self._track_creator(player, other_track=track)
@@ -2591,7 +2729,7 @@ class Audio(commands.Cog):
         if player.fetch("prev_song") is None:
             return await self._embed_msg(ctx, _("No previous track."))
         else:
-            last_track = await self.music_cache.load_tracks(player, player.fetch("prev_song"))
+            last_track = await self.music_cache.lavalink_query(player, player.fetch("prev_song"))
             player.add(player.fetch("prev_requester"), last_track[0])
             queue_len = len(player.queue)
             bump_song = player.queue[-1]
@@ -2726,8 +2864,8 @@ class Audio(commands.Cog):
         )
         if await self.config.guild(ctx.guild).thumbnail() and player.current.thumbnail:
             embed.set_thumbnail(url=player.current.thumbnail)
-        queue_duration = await self._queue_duration(ctx)
-        queue_total_duration = lavalink.utils.format_time(queue_duration)
+        queue_dur = await queue_duration(ctx)
+        queue_total_duration = lavalink.utils.format_time(queue_dur)
         text = _(
             "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining"
         ).format(
@@ -3013,20 +3151,20 @@ class Audio(commands.Cog):
             if query.startswith("list ") or query.startswith("folder:"):
                 if query.startswith("list "):
                     query = "ytsearch:{}".format(query.replace("list ", ""))
-                    tracks = await self.music_cache.load_tracks(player, query)
+                    tracks = await self.music_cache.lavalink_query(player, query)
                 else:
                     query = query.replace("folder:", "")
                     tracks = await self._folder_tracks(ctx, player, query)
                 if not tracks:
                     return await self._embed_msg(ctx, _("Nothing found."))
 
-                queue_duration = await self._queue_duration(ctx)
-                queue_total_duration = lavalink.utils.format_time(queue_duration)
+                queue_dur = await queue_duration(ctx)
+                queue_total_duration = lavalink.utils.format_time(queue_dur)
 
                 track_len = 0
                 for track in tracks:
                     if guild_data["maxlength"] > 0:
-                        if self._track_limit(ctx, track, guild_data["maxlength"]):
+                        if track_limit(track, guild_data["maxlength"]):
                             track_len += 1
                             player.add(ctx.author, track)
                     else:
@@ -3046,7 +3184,7 @@ class Audio(commands.Cog):
                         num=track_len, maxlength_msg=maxlength_msg
                     ),
                 )
-                if not guild_data["shuffle"] and queue_duration > 0:
+                if not guild_data["shuffle"] and queue_dur > 0:
                     songembed.set_footer(
                         text=_(
                             "{time} until start of search playback: starts at #{position} in queue"
@@ -3055,7 +3193,7 @@ class Audio(commands.Cog):
                 return await ctx.send(embed=songembed)
             elif query.startswith("sc "):
                 query = "scsearch:{}".format(query.replace("sc ", ""))
-                tracks = await self.music_cache.load_tracks(player, query)
+                tracks = await self.music_cache.lavalink_query(player, query)
             elif ":localtrack:" in query:
                 track_location = query.split(":")[2]
                 tracks = await self._folder_list(ctx, track_location)
@@ -3068,9 +3206,9 @@ class Audio(commands.Cog):
                     tracks = await self._folder_list(ctx, folder)
             elif not self._match_url(query):
                 query = "ytsearch:{}".format(query)
-                tracks = await self.music_cache.load_tracks(player, query)
+                tracks = await self.music_cache.lavalink_query(player, query)
             else:
-                tracks = await self.music_cache.load_tracks(player, query)
+                tracks = await self.music_cache.lavalink_query(player, query)
             if not tracks:
                 return await self._embed_msg(ctx, _("Nothing found."))
         else:
@@ -3155,19 +3293,19 @@ class Audio(commands.Cog):
         embed = discord.Embed(
             colour=await ctx.embed_colour(), title=_("Track Enqueued"), description=description
         )
-        queue_duration = await self._queue_duration(ctx)
-        queue_total_duration = lavalink.utils.format_time(queue_duration)
-        if not guild_data["shuffle"] and queue_duration > 0:
+        queue_dur = await queue_duration(ctx)
+        queue_total_duration = lavalink.utils.format_time(queue_dur)
+        if not guild_data["shuffle"] and queue_dur > 0:
             embed.set_footer(
                 text=_("{time} until track playback: #{position} in queue").format(
                     time=queue_total_duration, position=len(player.queue) + 1
                 )
             )
-        elif queue_duration > 0:
+        elif queue_dur > 0:
             embed.set_footer(text=_("#{position} in queue").format(position=len(player.queue) + 1))
 
         if guild_data["maxlength"] > 0:
-            if self._track_limit(ctx, search_choice.length, guild_data["maxlength"]):
+            if track_limit(search_choice.length, guild_data["maxlength"]):
                 player.add(ctx.author, search_choice)
             else:
                 return await self._embed_msg(ctx, _("Track exceeds maximum length."))
@@ -4123,26 +4261,6 @@ class Audio(commands.Cog):
             return False
 
     @staticmethod
-    async def _queue_duration(ctx):
-        player = lavalink.get_player(ctx.guild.id)
-        duration = []
-        for i in range(len(player.queue)):
-            if not player.queue[i].is_stream:
-                duration.append(player.queue[i].length)
-        queue_duration = sum(duration)
-        if not player.queue:
-            queue_duration = 0
-        try:
-            if not player.current.is_stream:
-                remain = player.current.length - player.position
-            else:
-                remain = 0
-        except AttributeError:
-            remain = 0
-        queue_total_duration = remain + queue_duration
-        return queue_total_duration
-
-    @staticmethod
     async def _remove_react(message, react_emoji, react_user):
         try:
             await message.remove_reaction(react_emoji, react_user)
@@ -4174,19 +4292,6 @@ class Audio(commands.Cog):
         for key, value in zip(keys, values):
             track_obj[key] = value
         return track_obj
-
-    @staticmethod
-    def _track_limit(ctx, track, maxlength):
-        try:
-            length = round(track.length / 1000)
-        except AttributeError:
-            length = round(track / 1000)
-        if length > 900000000000000:  # livestreams return 9223372036854775807ms
-            return True
-        elif length >= maxlength:
-            return False
-        else:
-            return True
 
     async def _time_convert(self, length):
         match = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])").match(length)
@@ -4255,7 +4360,6 @@ class Audio(commands.Cog):
             self.bot.loop.create_task(lavalink.close())
             if self._manager is not None:
                 self.bot.loop.create_task(self._manager.shutdown())
-
             self._cleaned_up = True
 
     __del__ = cog_unload
