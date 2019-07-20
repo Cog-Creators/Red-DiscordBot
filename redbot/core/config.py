@@ -1359,7 +1359,7 @@ class Config:
             return self.get_custom_lock(self.GUILD)
         else:
             id_data = IdentifierData(
-                self.uuid, self.MEMBER, (str(guild.id),), Tuple[str](), self.custom_groups
+                self.unique_identifier, self.MEMBER, (str(guild.id),), (), self.custom_groups
             )
             return self._lock_cache.setdefault(id_data, asyncio.Lock())
 
@@ -1376,7 +1376,7 @@ class Config:
         asyncio.Lock
         """
         id_data = IdentifierData(
-            self.uuid, group_identifier, Tuple[str](), Tuple[str](), self.custom_groups
+            self.unique_identifier, group_identifier, (), (), self.custom_groups
         )
         return self._lock_cache.setdefault(id_data, asyncio.Lock())
 
