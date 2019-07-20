@@ -314,7 +314,7 @@ class Core(commands.Cog, CoreLogic):
                 name=_("Outdated"), value=_("Yes, {} is available").format(data["info"]["version"])
             )
         embed.add_field(name=_("VexiBot-Red version"), value=vb_version)
-        embed.add_field(name=_("A message from Vexima"), value=vex_message)
+        embed.add_field(name=_("A message from Vexed"), value=vex_message)
         if custom_info:
             embed.add_field(name=_("About this instance"), value=custom_info, inline=False)
         embed.add_field(name=_("About Red"), value=about, inline=False)
