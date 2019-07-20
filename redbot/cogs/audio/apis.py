@@ -458,7 +458,9 @@ class MusicCache:
                 if tracks_raw:
                     new_tracks = [k["track"] for k in tracks_raw if k.get("track")]
                     tracks.extend(new_tracks)
-            track_count += len(new_tracks)  # TypeError: object of type 'int' has no len()  https://open.spotify.com/playlist/3BJpjDyMPvTf1xhDpAwwi9?si=JvygJGayRqe8CbXpnnNQwA
+            track_count += len(
+                new_tracks
+            )  # TypeError: object of type 'int' has no len()  https://open.spotify.com/playlist/3BJpjDyMPvTf1xhDpAwwi9?si=JvygJGayRqe8CbXpnnNQwA
             if self.notifier:
                 await self.notifier.notify_user(
                     current=track_count, total=total_tracks, key="spotify"
