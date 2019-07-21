@@ -232,3 +232,10 @@ class Notifier:
             self.last_msg_time = time.time()
         except discord.errors.NotFound:
             pass
+
+    async def update_text(self, text: str) -> NoReturn:
+        embed2 = discord.Embed(colour=self.color, title=text)
+        try:
+            await self.message.edit(embed=embed2)
+        except discord.errors.NotFound:
+            pass
