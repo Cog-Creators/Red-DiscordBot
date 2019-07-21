@@ -56,6 +56,7 @@ class TooManyMatches(PlayListError):
 class NotAllowed(PlayListError):
     """Too many playlist match user input."""
 
+
 class ApiError(AudioError):
     """Base exception for API errors in the Audio cog."""
 

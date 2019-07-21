@@ -21,19 +21,19 @@ __all__ = [
 _config = None
 
 _SCOPE_HELP = """
-Scope is one of the following:
+Scope must be a valid version of one of the following:
 ​ ​ ​ ​ Global
 ​ ​ ​ ​ Guild
 ​ ​ ​ ​ User
 """
 _USER_HELP = """
-Author can be one of the following:
+Author must be a valid version of one of the following:
 ​ ​ ​ ​ User ID
 ​ ​ ​ ​ User Mention
 ​ ​ ​ ​ User Name#123 
 """
 _GUILD_HELP = """
-Guild can be one of the following:
+Guild must be a valid version of one of the following:
 ​ ​ ​ ​ Guild ID
 ​ ​ ​ ​ Guild name 
 """
@@ -132,6 +132,8 @@ class ScopeParser(commands.Converter):
             if scope not in valid_scopes:
                 raise commands.ArgParserFailure("--scope", scope_raw, custom_help=_SCOPE_HELP)
             target_scope = standardize_scope(scope)
+        elif "--scope" in argument and not vals["scope"]:
+            raise commands.ArgParserFailure("--scope", "Nothing", custom_help=_SCOPE_HELP)
         is_owner = await ctx.bot.is_owner(ctx.author)
         guild = vals.get("guild", None) or vals.get("server", None)
         if is_owner and guild:
@@ -256,6 +258,8 @@ class ComplexScopeParser(commands.Converter):
                     "--to-scope", to_scope_raw, custom_help=_SCOPE_HELP
                 )
             target_scope = standardize_scope(to_scope)
+        elif "--to-scope" in argument and not vals["to_scope"]:
+            raise commands.ArgParserFailure("--to-scope", "Nothing", custom_help=_SCOPE_HELP)
 
         if vals["from_scope"]:
             from_scope_raw = " ".join(vals["from_scope"]).strip()
@@ -266,6 +270,8 @@ class ComplexScopeParser(commands.Converter):
                     "--from-scope", from_scope_raw, custom_help=_SCOPE_HELP
                 )
             source_scope = standardize_scope(from_scope)
+        elif "--from-scope" in argument and not vals["to_scope"]:
+            raise commands.ArgParserFailure("--to-scope", "Nothing", custom_help=_SCOPE_HELP)
 
         to_guild = vals.get("to_guild", None) or vals.get("to_server", None)
         if is_owner and to_guild:

@@ -1462,7 +1462,7 @@ class Audio(commands.Cog):
             if called_api is True:
                 await asyncio.sleep(2)
             track, called_api = await self.music_cache.lavalink_query(
-                player, "localtracks/{}/{}".format(folder, local_file)
+                player, "localtracks/{}/{}".format(folder, local_file), ctx=ctx
             )
             try:
                 local_tracks.append(track[0])
@@ -1692,6 +1692,7 @@ class Audio(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     async def play(self, ctx, *, query):
         """Play a URL or search for a track."""
+        await self.music_cache.play_random(ctx) #TODO : Remove This
         guild_data = await self.config.guild(ctx.guild).all()
         restrict = await self.config.restrict()
         if restrict:
@@ -1799,9 +1800,10 @@ class Audio(commands.Cog):
             if "track" in parts:
                 try:
                     res = await self.music_cache.spotify_query(
-                        "track", parts[-1], skip_youtube=True
+                        "track", parts[-1], skip_youtube=True, ctx=ctx
                     )
                     if res is None:
+                        
                         return await self._embed_msg(ctx, _("Nothing found."))
                 except SpotifyFetchError as error:
                     self._play_lock(ctx, False)
@@ -1812,7 +1814,7 @@ class Audio(commands.Cog):
                         return await self._enqueue_tracks(ctx, res[0])
                     else:
                         tracks, called_api = await self.music_cache.lavalink_query(
-                            player, f"ytsearch:{res[0]}"
+                            player, f"ytsearch:{res[0]}", ctx=ctx
                         )
                         if not tracks:
                             return await self._embed_msg(ctx, _("Nothing found."))
@@ -1876,7 +1878,7 @@ class Audio(commands.Cog):
                 query = f"ytsearch:{query}"
             if query.startswith(("ytsearch", "localtracks")):
                 first_track_only = True
-            tracks, called_api = await self.music_cache.lavalink_query(player, query)
+            tracks, called_api = await self.music_cache.lavalink_query(player, query, ctx=ctx)
             if not tracks:
                 return await self._embed_msg(ctx, _("Nothing found."))
         else:
@@ -1986,7 +1988,9 @@ class Audio(commands.Cog):
                     "youtube": _("Matching track {num}/{total}..."),
                 },
             )
-            youtube_links = await self.music_cache.spotify_query(stype, query, notify=notifier)
+            youtube_links = await self.music_cache.spotify_query(
+                stype, query, notify=notifier, ctx=ctx
+            )
         except SpotifyFetchError as error:
             self._play_lock(ctx, False)
             return await self._embed_msg(ctx, _(error.message).format(prefix=ctx.prefix))
@@ -2026,7 +2030,7 @@ class Audio(commands.Cog):
             if called_api is True:
                 await asyncio.sleep(2)
             try:
-                yt_track, called_api = await self.music_cache.lavalink_query(player, t)
+                yt_track, called_api = await self.music_cache.lavalink_query(player, t, ctx=ctx)
             except (RuntimeError, aiohttp.ServerDisconnectedError):
                 self._play_lock(ctx, False)
                 error_embed = discord.Embed(
@@ -2050,15 +2054,15 @@ class Audio(commands.Cog):
                 if not player.current:
                     await player.play()
 
-                if (track_count % 5 == 0) or (track_count == len(youtube_links)):
+                if (track_count % 2 == 0) or (track_count == len(youtube_links)):
                     key = "lavalink"
                     seconds = "???"
                     second_key = None
-                    if track_count == 5:
+                    if track_count == 2:
                         five_time = int(time.time()) - now
-                    if track_count >= 5:
+                    if track_count >= 2:
                         remain_tracks = len(youtube_links) - track_count
-                        time_remain = (remain_tracks / 5) * five_time
+                        time_remain = (remain_tracks / 2) * five_time
                         if track_count < len(youtube_links):
                             seconds = self._dynamic_time(int(time_remain))
                         if track_count == len(youtube_links):
@@ -2374,7 +2378,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 _("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=scope
+                    id=playlist_id, scope=humanize_scope(scope)
                 ),
             )
         except MissingGuild:
@@ -2495,7 +2499,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 _("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=to_scope
+                    id=playlist_id, scope=humanize_scope(to_scope)
                 ),
             )
         except MissingGuild:
@@ -2519,8 +2523,8 @@ class Audio(commands.Cog):
             ).format(
                 name=from_playlist.name,
                 from_id=from_playlist.id,
-                from_scope=from_scope,
-                to_scope=to_scope,
+                from_scope=humanize_scope(from_scope),
+                to_scope=humanize_scope(to_scope),
                 to_id=to_playlist.id,
             ),
         )
@@ -2640,7 +2644,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 _("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=scope
+                    id=playlist_id, scope=humanize_scope(scope)
                 ),
             )
         except MissingGuild:
@@ -2726,7 +2730,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 _("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=scope
+                    id=playlist_id, scope=humanize_scope(scope)
                 ),
             )
         except MissingGuild:
@@ -2829,7 +2833,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 _("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=scope
+                    id=playlist_id, scope=humanize_scope(scope)
                 ),
             )
         except MissingGuild:
@@ -3106,7 +3110,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 _("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=scope
+                    id=playlist_id, scope=humanize_scope(scope)
                 ),
             )
         except MissingGuild:
@@ -3315,7 +3319,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 _("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=scope
+                    id=playlist_id, scope=humanize_scope(scope)
                 ),
             )
         except MissingGuild:
@@ -3394,7 +3398,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 _("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=scope
+                    id=playlist_id, scope=humanize_scope(scope)
                 ),
             )
         except MissingGuild:
@@ -3494,7 +3498,9 @@ class Audio(commands.Cog):
         if (
             not uploaded_playlist_url
             or not self._match_yt_playlist(uploaded_playlist_url)
-            or not (await self.music_cache.lavalink_query(player, uploaded_playlist_url))[0]
+            or not (await self.music_cache.lavalink_query(player, uploaded_playlist_url, ctx=ctx))[
+                0
+            ]
         ):
             if version == "v3":
                 return await self._load_v3_playlist(
@@ -3595,7 +3601,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 _("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=scope
+                    id=playlist_id, scope=humanize_scope(scope)
                 ),
             )
         except MissingGuild:
@@ -3673,10 +3679,16 @@ class Audio(commands.Cog):
             colour=await ctx.embed_colour(), title=_("Please wait, adding tracks...")
         )
         playlist_msg = await ctx.send(embed=embed1)
+        notifier = Notifier(ctx, playlist_msg, {"playlist": _("Loading track {num}/{total}...")})
+        called_api = False
         for song_url in uploaded_track_list:
+            if called_api is True:
+                await asyncio.sleep(2)
             track_count += 1
             try:
-                track = await player.get_tracks(song_url)
+                track, called_api = await self.music_cache.lavalink_query(
+                    player, song_url, ctx=ctx
+                )
             except Exception:
                 continue
             try:
@@ -3685,14 +3697,10 @@ class Audio(commands.Cog):
                 successfull_count += 1
             except Exception:
                 continue
-            if track_count % 5 == 0:
-                embed2 = discord.Embed(
-                    colour=await ctx.embed_colour(),
-                    title=_("Loading track {num}/{total}...").format(
-                        num=track_count, total=uploaded_track_count
-                    ),
+            if (track_count % 2 == 0) or (track_count == len(uploaded_track_list)):
+                await notifier.notify_user(
+                    current=track_count, total=len(uploaded_track_list), key="playlist"
                 )
-                await playlist_msg.edit(embed=embed2)
 
         playlist = await create_playlist(
             ctx, scope, uploaded_playlist_name, playlist_url, track_list, author, guild
@@ -3800,11 +3808,12 @@ class Audio(commands.Cog):
         elif not query.startswith("http"):
             query = "ytsearch:{}".format(query)
             search = True
-            tracks, called_api = await self.music_cache.lavalink_query(player, query)
+            tracks, called_api = await self.music_cache.lavalink_query(player, query, ctx=ctx)
             if not tracks:
+                
                 return await self._embed_msg(ctx, _("Nothing found."))
         else:
-            tracks, called_api = await self.music_cache.lavalink_query(player, query)
+            tracks, called_api = await self.music_cache.lavalink_query(player, query, ctx=ctx)
         if not search and len(tracklist) == 0:
             for track in tracks:
                 track_obj = self._track_creator(player, other_track=track)
@@ -3841,7 +3850,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, _("No previous track."))
         else:
             last_track, called_api = await self.music_cache.lavalink_query(
-                player, player.fetch("prev_song")
+                player, player.fetch("prev_song"), ctx=ctx
             )
             player.add(player.fetch("prev_requester"), last_track[0])
             queue_len = len(player.queue)
@@ -4264,7 +4273,9 @@ class Audio(commands.Cog):
             if query.startswith("list ") or query.startswith("folder:"):
                 if query.startswith("list "):
                     query = "ytsearch:{}".format(query.replace("list ", ""))
-                    tracks, called_api = await self.music_cache.lavalink_query(player, query)
+                    tracks, called_api = await self.music_cache.lavalink_query(
+                        player, query, ctx=ctx
+                    )
                 else:
                     query = query.replace("folder:", "")
                     tracks = await self._folder_tracks(ctx, player, query)
@@ -4306,7 +4317,7 @@ class Audio(commands.Cog):
                 return await ctx.send(embed=songembed)
             elif query.startswith("sc "):
                 query = "scsearch:{}".format(query.replace("sc ", ""))
-                tracks, called_api = await self.music_cache.lavalink_query(player, query)
+                tracks, called_api = await self.music_cache.lavalink_query(player, query, ctx=ctx)
             elif ":localtrack:" in query:
                 track_location = query.split(":")[2]
                 tracks = await self._folder_list(ctx, track_location)
@@ -4319,9 +4330,9 @@ class Audio(commands.Cog):
                     tracks = await self._folder_list(ctx, folder)
             elif not self._match_url(query):
                 query = "ytsearch:{}".format(query)
-                tracks, called_api = await self.music_cache.lavalink_query(player, query)
+                tracks, called_api = await self.music_cache.lavalink_query(player, query, ctx=ctx)
             else:
-                tracks, called_api = await self.music_cache.lavalink_query(player, query)
+                tracks, called_api = await self.music_cache.lavalink_query(player, query, ctx=ctx)
             if not tracks:
                 return await self._embed_msg(ctx, _("Nothing found."))
         else:
@@ -5442,6 +5453,9 @@ class Audio(commands.Cog):
             return True
         else:
             return False
+
+    async def cog_after_invoke(self, ctx: commands.Context):
+        await self.music_cache.run_tasks(ctx)
 
     # Spotify-related methods below are originally from: https://github.com/Just-Some-Bots/MusicBot/blob/master/musicbot/spotify.py
 

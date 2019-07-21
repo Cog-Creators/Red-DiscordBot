@@ -5,6 +5,7 @@ import datetime
 import json
 import logging
 import os
+import random
 import sqlite3
 import time
 from typing import List, Optional, Dict, Tuple, Mapping, Union, NoReturn
@@ -16,7 +17,7 @@ from lavalink.rest_api import LoadResult, Track
 
 from redbot.cogs.audio.utils import Notifier, CacheLevel
 from redbot.core.bot import Red
-from redbot.core import Config
+from redbot.core import Config, commands
 from redbot.core.i18n import Translator, cog_i18n
 from .errors import SpotifyFetchError, InvalidTableError
 
@@ -102,6 +103,7 @@ _INSERT_LAVALINK_TABLE = """
         VALUES (:query, :data, :last_updated, :last_fetched);
     """
 _QUERY_LAVALINK_TABLE = "SELECT * FROM lavalink WHERE query=:query;"
+_QUERY_LAST_FETCHED_LAVALINK_TABLE = "SELECT * FROM lavalink WHERE last_fetched LIKE :last_fetched;"
 _UPDATE_LAVALINK_TABLE = """UPDATE lavalink
               SET last_fetched=:last_fetched 
               WHERE query=:query;"""
@@ -119,8 +121,9 @@ _PARSER = {
     },
     "lavalink": {
         "insert": _INSERT_LAVALINK_TABLE,
-        "data": {"query": _QUERY_LAVALINK_TABLE},
+        "data": {"query": _QUERY_LAVALINK_TABLE, "played": _QUERY_LAST_FETCHED_LAVALINK_TABLE},
         "update": _UPDATE_LAVALINK_TABLE,
+
     },
 }
 
@@ -260,6 +263,8 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         self.database = Database(
             f'sqlite:///{os.path.abspath(str(os.path.join(path, "cache.db")))}'
         )
+        self._tasks = {}
+        self._lock = asyncio.Lock()
 
     async def initialize(self, config: Config) -> NoReturn:
         await self.database.connect()
@@ -292,23 +297,38 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             raise InvalidTableError(f"{table} is not a valid table in the database.")
         await self.database.fetch_one(query=sql_query, values=values)
 
-    async def fetch_one(self, table: str, query: str, values: Dict[str, str]) -> Optional[str]:
+    async def fetch_one(
+        self, table: str, query: str, values: Dict[str, str]
+    ) -> Tuple[Optional[str], bool]:
         table = _PARSER.get(table, {})
         sql_query = table.get(query, {}).get("query")
         if not table:
             raise InvalidTableError(f"{table} is not a valid table in the database.")
 
         row = await self.database.fetch_one(query=sql_query, values=values)
+        last_updated = getattr(row, "last_updated", None)
+        need_update = (
+            (
+                datetime.datetime.fromisoformat(last_updated) + datetime.timedelta(days=30)
+            )  # TODO: Do not Hard code this ..... Give Owner option to customize
+            < datetime.datetime.now(datetime.timezone.utc)
+            if last_updated
+            else True
+        )
 
-        return getattr(row, query, None)
+        return getattr(row, query, None), need_update # need_update
+
+        # TODO: Create a task to remove entries from DB that haven't been fetched in x days ... customizable by Owner
 
     async def fetch_all(self, table: str, query: str, values: Dict[str, str]) -> List[Mapping]:
         table = _PARSER.get(table, {})
-        sql_query = table.get(query, {}).get("query")
+        sql_query = table.get(query, {}).get("played")
         if not table:
             raise InvalidTableError(f"{table} is not a valid table in the database.")
 
         return await self.database.fetch_all(query=sql_query, values=values)
+
+
 
     @staticmethod
     def _spotify_format_call(qtype: str, key: str) -> Tuple[str, dict]:
@@ -339,6 +359,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         uri: str,
         skip_youtube: bool = False,
         current_cache_level: CacheLevel = CacheLevel.none(),
+        ctx: commands.Context = None,
     ) -> List[str]:
         youtube_urls = []
 
@@ -368,36 +389,42 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             if skip_youtube is False:
                 val = None
                 if CacheLevel.set_youtube().is_subset(current_cache_level):
-                    val = await self.fetch_one("youtube", "youtube_url", {"track": track_info})
+                    val, update = await self.fetch_one(
+                        "youtube", "youtube_url", {"track": track_info}
+                    )
+                    if update:
+                        val = None
                 if val is None:
-                    val = await self._youtube_first_time_query(track_info)
+                    val = await self._youtube_first_time_query(track_info, ctx=ctx)
                 else:
-                    await self.update("youtube", {"track": track_info})
+                    asyncio.create_task(self.update("youtube", {"track": track_info}))
 
                 if val:
                     youtube_urls.append(val)
             else:
                 youtube_urls.append(track_info)
             track_count += 1
-            if (track_count % 5 == 0) or (track_count == total_tracks):
+            if (track_count % 2 == 0) or (track_count == total_tracks):
                 if self.notifier:
                     await self.notifier.notify_user(
                         current=track_count, total=total_tracks, key="youtube"
                     )
         if CacheLevel.set_spotify().is_subset(current_cache_level):
-            with contextlib.suppress(sqlite3.OperationalError):
-                await self.insert("spotify", database_entries)
-
+            asyncio.create_task(self.insert("spotify", database_entries))
         return youtube_urls
 
     async def _youtube_first_time_query(
-        self, track_info: str, current_cache_level: CacheLevel = CacheLevel.none()
+        self,
+        track_info: str,
+        current_cache_level: CacheLevel = CacheLevel.none(),
+        ctx: commands.Context = None,
     ) -> str:
         track_url = await self.youtube_api.get_call(track_info)
         if CacheLevel.set_youtube().is_subset(current_cache_level) and track_url:
             time_now = str(datetime.datetime.now(datetime.timezone.utc))
-            with contextlib.suppress(sqlite3.OperationalError):
-                await self.insert(
+            asyncio.create_task(
+                ctx,
+                self.insert(
                     "youtube",
                     [
                         {
@@ -407,7 +434,8 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                             "last_fetched": time_now,
                         }
                     ],
-                )
+                ),
+            )
         return track_url
 
     async def _spotify_fetch_tracks(
@@ -473,50 +501,67 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         return tracks
 
     async def spotify_query(
-        self, query_type: str, uri: str, skip_youtube: bool = False, notify: Notifier = None
+        self,
+        query_type: str,
+        uri: str,
+        skip_youtube: bool = False,
+        notify: Notifier = None,
+        ctx: commands.Context = None,
     ) -> List[str]:
         self.notifier = notify
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_spotify().is_subset(current_cache_level)
         if query_type == "track" and cache_enabled:
-            val = await self.fetch_one("spotify", "track_info", {"uri": f"spotify:track:{uri}"})
+            val, update = await self.fetch_one(
+                "spotify", "track_info", {"uri": f"spotify:track:{uri}"}
+            )
+            if update:
+                val = None
         else:
             val = None
         youtube_urls = []
         if val is None:
             urls = await self._spotify_first_time_query(
-                query_type, uri, skip_youtube, current_cache_level=current_cache_level
+                query_type, uri, skip_youtube, current_cache_level=current_cache_level, ctx=ctx
             )
             youtube_urls.extend(urls)
 
         else:
-            await self.update("spotify", {"uri": f"spotify:track:{uri}"})
+            if query_type == "track" and cache_enabled:
+                asyncio.create_task(self.update("spotify", {"uri": f"spotify:track:{uri}"}))
             youtube_urls.append(val)
         return youtube_urls
 
-    async def youtube_query(self, track_info: str) -> str:
+    async def youtube_query(self, track_info: str, ctx: commands.Context = None) -> str:
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_youtube().is_subset(current_cache_level)
         val = None
         if cache_enabled:
-            val = await self.fetch_one("youtube", "youtube_url", {"track": track_info})
+            val, update = await self.fetch_one("youtube", "youtube_url", {"track": track_info})
+            if update:
+                val = None
         if val is None:
             youtube_url = await self._youtube_first_time_query(
-                track_info, current_cache_level=current_cache_level
+                track_info, current_cache_level=current_cache_level, ctx=ctx
             )
         else:
-            await self.update("youtube", {"track": track_info})
+            if cache_enabled:
+                asyncio.create_task(self.update("youtube", {"track": track_info}))
             youtube_url = val
         return youtube_url
 
-    async def lavalink_query(self, player, query, forced=False) -> List[Track]:
+    async def lavalink_query(
+        self, player, query, forced=False, ctx: commands.Context = None
+    ) -> Tuple[List[Track], bool]:
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         val = None
         if cache_enabled:
-            val = await self.fetch_one("lavalink", "data", {"query": query})
+            val, update = await self.fetch_one("lavalink", "data", {"query": query})
+            if update:
+                val = None
             if val:
-                await self.update("lavalink", {"query": query})
+                asyncio.create_task(self.update("lavalink", {"query": query}))
         if val and not forced:
             results = LoadResult(json.loads(val))
             called_api = False
@@ -529,24 +574,49 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                     results = await player.load_tracks(query)
                 retries += 1
                 if retries < 3 and results is None:
-                    await asyncio.sleep(
-                        5 * retries * 0
-                    )  # TODO: So think of a good way to handle this ...
+                    await asyncio.sleep(1)  # TODO: So think of a good way to handle this ...
                 if retries == 3 and results is None:
-                    return []
+                    return [], called_api
             if cache_enabled and results.load_type and not results.has_error:
                 with contextlib.suppress(sqlite3.OperationalError):
                     time_now = str(datetime.datetime.now(datetime.timezone.utc))
-                    await self.insert(
-                        "lavalink",
-                        [
-                            {
-                                "query": query,
-                                "data": json.dumps(results._raw),
-                                "last_updated": time_now,
-                                "last_fetched": time_now,
-                            }
-                        ],
+                    asyncio.create_task(
+                        ctx,
+                        self.insert(
+                            "lavalink",
+                            [
+                                {
+                                    "query": query,
+                                    "data": json.dumps(results._raw),
+                                    "last_updated": time_now,
+                                    "last_fetched": time_now,
+                                }
+                            ],
+                        ),
                     )
 
         return results.tracks, called_api
+
+    async def run_tasks(self, ctx: commands.Context):
+        async with self._lock:
+            if ctx.message.id in self._tasks:
+                tasks = self._tasks[ctx.message.id]
+                await asyncio.gather(*tasks, loop=self.bot.loop)
+                del self._tasks[ctx.message.id]
+
+    def append_task(self, ctx: commands.Context, task: asyncio.coroutines):
+        if ctx.message.id not in self._tasks:
+            self._tasks[ctx.message.id] = []
+        self._tasks[ctx.message.id].append(task)
+
+    async def play_random(self, ctx: commands.Context,): # TODO : Test This
+        date = '%' + str((datetime.datetime.now() - datetime.timedelta(days=random.randrange(1, 8))).date()) + '%'
+        vals = await self.fetch_all(
+            "lavalink", "data", {"last_fetched": date}
+        )
+        recently_played = [r.data for r in vals if r]
+        if recently_played:
+            track = random.choice(recently_played)
+            results = LoadResult(json.loads(track))
+            print(results.tracks[0])
+
