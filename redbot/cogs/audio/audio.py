@@ -1739,9 +1739,9 @@ class Audio(commands.Cog):
                     if res is None:
                         return await self._embed_msg(ctx, _("Nothing found."))
                 except SpotifyFetchError as error:
-                    await self._play_lock(ctx, False)
+                    self._play_lock(ctx, False)
                     return await self._embed_msg(ctx, _(error.message).format(prefix=ctx.prefix))
-                await self._play_lock(ctx, False)
+                self._play_lock(ctx, False)
                 try:
                     if enqueue_tracks:
                         return await self._enqueue_tracks(ctx, res[0])
@@ -1756,7 +1756,7 @@ class Audio(commands.Cog):
                         return single_track
 
                 except KeyError:
-                    await self._play_lock(ctx, False)
+                    self._play_lock(ctx, False)
                     return await self._embed_msg(
                         ctx,
                         _(
@@ -1790,20 +1790,19 @@ class Audio(commands.Cog):
                 )
 
     async def _enqueue_tracks(
-        self, ctx, query, playlist_queue=False
+        self, ctx, query
     ):  # TODO: query needs to be validated before enqueuing for cached values
         player = lavalink.get_player(ctx.guild.id)
-        if playlist_queue is False:
-            try:
-                if self.play_lock[ctx.message.guild.id]:
-                    return await self._embed_msg(
-                        ctx, _("Wait until the playlist has finished loading.")
-                    )
-            except KeyError:
-                self._play_lock(ctx, True)
+        try:
+            if self.play_lock[ctx.message.guild.id]:
+                return await self._embed_msg(
+                    ctx, _("Wait until the playlist has finished loading.")
+                )
+        except KeyError:
+            self._play_lock(ctx, True)
         guild_data = await self.config.guild(ctx.guild).all()
         first_track_only = False
-        if type(query) is not list and not playlist_queue:
+        if type(query) is not list:
             if not (
                 query.startswith("http")
                 or query.startswith("localtracks")
@@ -1815,8 +1814,6 @@ class Audio(commands.Cog):
             tracks, called_api = await self.music_cache.lavalink_query(player, query)
             if not tracks:
                 return await self._embed_msg(ctx, _("Nothing found."))
-        elif playlist_queue:
-            tracks = [query]
         else:
             tracks = query
 
@@ -1875,43 +1872,37 @@ class Audio(commands.Cog):
                 else:
                     player.add(ctx.author, single_track)
             except IndexError:
-                await self._play_lock(ctx, False)
+                self._play_lock(ctx, False)
                 return await self._embed_msg(
                     ctx, _("Nothing found. Check your Lavalink logs for details.")
                 )
-            if not playlist_queue:
-                if "localtracks" in single_track.uri:
-                    if not single_track.title == "Unknown title":
-                        description = "**{} - {}**\n{}".format(
-                            single_track.author,
-                            single_track.title,
-                            single_track.uri.replace("localtracks/", ""),
-                        )
-                    else:
-                        description = "{}".format(single_track.uri.replace("localtracks/", ""))
+            if "localtracks" in single_track.uri:
+                if not single_track.title == "Unknown title":
+                    description = "**{} - {}**\n{}".format(
+                        single_track.author,
+                        single_track.title,
+                        single_track.uri.replace("localtracks/", ""),
+                    )
                 else:
-                    description = "**[{}]({})**".format(single_track.title, single_track.uri)
-                embed = discord.Embed(
-                    colour=await ctx.embed_colour(),
-                    title=_("Track Enqueued"),
-                    description=description,
+                    description = "{}".format(single_track.uri.replace("localtracks/", ""))
+            else:
+                description = "**[{}]({})**".format(single_track.title, single_track.uri)
+            embed = discord.Embed(
+                colour=await ctx.embed_colour(), title=_("Track Enqueued"), description=description
+            )
+            if not guild_data["shuffle"] and queue_dur > 0:
+                embed.set_footer(
+                    text=_("{time} until track playback: #{position} in queue").format(
+                        time=queue_total_duration, position=before_queue_length + 1
+                    )
                 )
-                if not guild_data["shuffle"] and queue_dur > 0:
-                    embed.set_footer(
-                        text=_("{time} until track playback: #{position} in queue").format(
-                            time=queue_total_duration, position=before_queue_length + 1
-                        )
-                    )
-                elif queue_dur > 0:
-                    embed.set_footer(
-                        text=_("#{position} in queue").format(position=len(player.queue))
-                    )
-                await ctx.send(embed=embed)
-            if not player.current:
-                await player.play()
+            elif queue_dur > 0:
+                embed.set_footer(text=_("#{position} in queue").format(position=len(player.queue)))
+            await ctx.send(embed=embed)
+        if not player.current:
+            await player.play()
 
-        if playlist_queue is False:
-            self._play_lock(ctx, False)
+        self._play_lock(ctx, False)
 
     async def _spotify_playlist(self, ctx, stype, query, enqueue=False):
 
@@ -1932,10 +1923,10 @@ class Audio(commands.Cog):
             )
             youtube_links = await self.music_cache.spotify_query(stype, query, notify=notifier)
         except SpotifyFetchError as error:
-            await self._play_lock(ctx, False)
+            self._play_lock(ctx, False)
             return await self._embed_msg(ctx, _(error.message).format(prefix=ctx.prefix))
         except (RuntimeError, aiohttp.ServerDisconnectedError):
-            await self._play_lock(ctx, False)
+            self._play_lock(ctx, False)
             error_embed = discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("The connection was reset while loading the playlist."),
@@ -1972,7 +1963,7 @@ class Audio(commands.Cog):
             try:
                 yt_track, called_api = await self.music_cache.lavalink_query(player, t)
             except (RuntimeError, aiohttp.ServerDisconnectedError):
-                await self._play_lock(ctx, False)
+                self._play_lock(ctx, False)
                 error_embed = discord.Embed(
                     colour=await ctx.embed_colour(),
                     title=_("The connection was reset while loading the playlist."),
@@ -1991,7 +1982,8 @@ class Audio(commands.Cog):
                 else:
                     enqueued_tracks += 1
                     player.add(ctx.author, yt_track[0])
-                await self._enqueue_tracks(ctx, yt_track[0], playlist_queue=True)
+                if not player.current:
+                    await player.play()
 
                 if (track_count % 5 == 0) or (track_count == len(youtube_links)):
                     key = "lavalink"

@@ -263,6 +263,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
 
     async def initialize(self, config: Config) -> NoReturn:
         await self.database.connect()
+        await self.database.execute(query="PRAGMA TEMP_STORE = 2;")
         await self.database.execute(query=_CREATE_LAVALINK_TABLE)
         await self.database.execute(query=_CREATE_UNIQUE_INDEX_LAVALINK_TABLE)
         await self.database.execute(query=_CREATE_YOUTUBE_TABLE)
@@ -272,6 +273,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         self.config = config
 
     async def close(self) -> NoReturn:
+        await self.database.execute(query="PRAGMA optimize;")
         await self.database.disconnect()
 
     async def insert(self, table: str, values: List[dict]) -> NoReturn:
