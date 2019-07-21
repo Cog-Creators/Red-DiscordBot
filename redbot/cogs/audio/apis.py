@@ -395,7 +395,9 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                     if update:
                         val = None
                 if val is None:
-                    val = await self._youtube_first_time_query(track_info, current_cache_level=current_cache_level, ctx=ctx)
+                    val = await self._youtube_first_time_query(
+                        track_info, current_cache_level=current_cache_level, ctx=ctx
+                    )
                 if youtube_cache and val:
                     asyncio.create_task(self.update("youtube", {"track": track_info}))
 
@@ -524,7 +526,6 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 query_type, uri, skip_youtube, current_cache_level=current_cache_level, ctx=ctx
             )
             youtube_urls.extend(urls)
-
         else:
             if query_type == "track" and cache_enabled:
                 asyncio.create_task(self.update("spotify", {"uri": f"spotify:track:{uri}"}))
@@ -626,7 +627,9 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             recently_played = [r.data for r in vals if r]
             if not recently_played:
                 tries += 1
-            if tries > 10 and not recently_played: #  Allow owner to customize date range and improve logic
+            if (
+                tries > 10 and not recently_played
+            ):  #  Allow owner to customize date range and improve logic
                 break
 
         if recently_played:
