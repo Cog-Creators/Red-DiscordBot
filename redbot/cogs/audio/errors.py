@@ -33,6 +33,29 @@ class LavalinkDownloadFailed(AudioError, RuntimeError):
         return f"[{self.response.status} {self.response.reason}]"
 
 
+class PlayListError(AudioError):
+    """Base exception for errors related to playlists."""
+
+
+class InvalidPlaylistScope(PlayListError):
+    """Provided playlist scope is not valid."""
+
+
+class MissingGuild(PlayListError):
+    """Trying to access the Guild scope without a guild."""
+
+
+class MissingAuthor(PlayListError):
+    """Trying to access the User scope without an user id."""
+
+
+class TooManyMatches(PlayListError):
+    """Too many playlist match user input."""
+
+
+class NotAllowed(PlayListError):
+    """Too many playlist match user input."""
+
 class ApiError(AudioError):
     """Base exception for API errors in the Audio cog."""
 

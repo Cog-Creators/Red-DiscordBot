@@ -1,0 +1,2 @@
+:class:`ScopeParser` is used to parse optional arguments for all playlist commands.
+
