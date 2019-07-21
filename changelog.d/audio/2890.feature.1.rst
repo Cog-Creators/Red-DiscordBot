@@ -1,0 +1,1 @@
+Added ``[p]audioset auto``, this will auto play recently played songs if queue is empty.
