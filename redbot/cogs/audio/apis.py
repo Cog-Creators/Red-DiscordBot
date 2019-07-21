@@ -367,6 +367,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         database_entries = []
         track_count = 0
         time_now = str(datetime.datetime.now(datetime.timezone.utc))
+        youtube_cache = CacheLevel.set_youtube().is_subset(current_cache_level)
         for track in tracks:
             song_url, track_info, uri, artist_name, track_name, _id, _type = self._get_spotify_track_info(
                 track
@@ -387,15 +388,15 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             )
             if skip_youtube is False:
                 val = None
-                if CacheLevel.set_youtube().is_subset(current_cache_level):
+                if youtube_cache:
                     val, update = await self.fetch_one(
                         "youtube", "youtube_url", {"track": track_info}
                     )
                     if update:
                         val = None
                 if val is None:
-                    val = await self._youtube_first_time_query(track_info, ctx=ctx)
-                else:
+                    val = await self._youtube_first_time_query(track_info, current_cache_level=current_cache_level, ctx=ctx)
+                if youtube_cache and val:
                     asyncio.create_task(self.update("youtube", {"track": track_info}))
 
                 if val:
@@ -608,6 +609,8 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
 
     async def play_random(self):  # TODO : Test This
         recently_played = []
+        tries = 0
+        tracks = []
         while not recently_played:
             date = (
                 "%"
@@ -621,8 +624,13 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             )
             vals = await self.fetch_all("lavalink", "data", {"last_fetched": date})
             recently_played = [r.data for r in vals if r]
+            if not recently_played:
+                tries += 1
+            if tries > 10 and not recently_played: #  Allow owner to customize date range and improve logic
+                break
 
         if recently_played:
             track = random.choice(recently_played)
             results = LoadResult(json.loads(track))
-        return results.tracks
+            tracks = results.tracks
+        return tracks

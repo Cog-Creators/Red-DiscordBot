@@ -340,9 +340,10 @@ class Audio(commands.Cog):
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END and autoplay:
             tracks = await self.music_cache.play_random()
-            player.add(player.channel.guild.me, tracks[0])
-            if not player.current:
-                await player.play()
+            if tracks:
+                player.add(player.channel.guild.me, tracks[0])
+                if not player.current:
+                    await player.play()
 
         elif event_type == lavalink.LavalinkEvents.QUEUE_END and disconnect:
             await player.disconnect()
@@ -401,8 +402,8 @@ class Audio(commands.Cog):
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         if not cache_enabled:
             return await self._embed_msg(
-            ctx, _("Bot Owner has not enabled caching, this cannot be enabled.")
-        )
+                ctx, _("Bot Owner has not enabled caching, this cannot be enabled.")
+            )
 
         auto_play = await self.config.guild(ctx.guild).auto_play()
         await self.config.guild(ctx.guild).auto_play.set(not auto_play)

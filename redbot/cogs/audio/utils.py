@@ -159,10 +159,8 @@ class CacheLevel:
 
     def _set(self, index, value):
         if value is True:
-            print((1 << index))
             self.value |= 1 << index
         elif value is False:
-            print(~(1 << index))
             self.value &= ~(1 << index)
         else:
             raise TypeError("Value to set for CacheLevel must be a bool.")
