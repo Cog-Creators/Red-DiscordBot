@@ -655,7 +655,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             tracks = await self.play_random()
 
         else:
-            results = await player.load_tracks(_TOP_100_US) # TODO: Make this customizable
+            results = await player.load_tracks(_TOP_100_US)  # TODO: Make this customizable
             tracks = results.tracks
 
         if tracks:

@@ -666,10 +666,10 @@ class Audio(commands.Cog):
             ).format(**data)
         if is_owner:
             msg += _(
-                "\n---Cache Settings---        \n" +
-                _("Spotify cache:    [{spotify_status}]\n") +
-                _("Youtube cache:    [{youtube_status}]\n") +
-                _("Lavalink cache:   [{lavalink_status}]\n")
+                "\n---Cache Settings---        \n"
+                + _("Spotify cache:    [{spotify_status}]\n")
+                + _("Youtube cache:    [{youtube_status}]\n")
+                + _("Lavalink cache:   [{lavalink_status}]\n")
             ).format(
                 spotify_status=_("Enabled") if has_spotify_cache else _("Disabled"),
                 youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
