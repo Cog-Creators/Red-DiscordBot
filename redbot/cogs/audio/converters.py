@@ -1,13 +1,12 @@
 import argparse
 import functools
-from typing import Tuple, Optional, Union
+from typing import Optional, Tuple, Union
 
 import discord
 
-from redbot.core import Config
-from redbot.core import commands
+from redbot.core import Config, commands
 from redbot.core.i18n import Translator
-from .playlists import PlaylistScope, standardize_scope, _pass_config_to_playlist
+from .playlists import PlaylistScope, _pass_config_to_playlist, standardize_scope
 
 _ = Translator("Audio", __file__)
 
@@ -418,7 +417,6 @@ class LazyGreedyConverter(commands.Converter):
         self.splitter_Value = splitter
 
     async def convert(self, ctx: commands.Context, argument: str) -> str:
-        argument = argument
         full_message = ctx.message.content.partition(f" {argument} ")
         if len(full_message) == 1:
             full_message = (
