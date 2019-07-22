@@ -978,7 +978,7 @@ class Audio(commands.Cog):
                 author = self.bot.get_user(bands["author"])
             except TypeError:
                 author = "None"
-            msg = f"{preset}{space*(22 - len(preset))}{author}\n"
+            msg = f"{preset}{space * (22 - len(preset))}{author}\n"
             preset_list += msg
 
         page_list = []
@@ -2244,7 +2244,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 _("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=scope
+                    id=playlist_id, scope=humanize_scope(scope)
                 ),
             )
         except MissingGuild:
@@ -2365,7 +2365,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 _("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=to_scope
+                    id=playlist_id, scope=humanize_scope(to_scope)
                 ),
             )
         except MissingGuild:
@@ -2389,8 +2389,8 @@ class Audio(commands.Cog):
             ).format(
                 name=from_playlist.name,
                 from_id=from_playlist.id,
-                from_scope=from_scope,
-                to_scope=to_scope,
+                from_scope=humanize_scope(from_scope),
+                to_scope=humanize_scope(to_scope),
                 to_id=to_playlist.id,
             ),
         )
@@ -2705,7 +2705,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 _("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=scope
+                    id=playlist_id, scope=humanize_scope(scope)
                 ),
             )
         except MissingGuild:
@@ -2982,7 +2982,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 _("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=scope
+                    id=playlist_id, scope=humanize_scope(scope)
                 ),
             )
         except MissingGuild:
@@ -3191,7 +3191,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 _("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=scope
+                    id=playlist_id, scope=humanize_scope(scope)
                 ),
             )
         except MissingGuild:
@@ -3270,7 +3270,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 _("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=scope
+                    id=playlist_id, scope=humanize_scope(scope)
                 ),
             )
         except MissingGuild:
@@ -3471,7 +3471,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 _("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=scope
+                    id=playlist_id, scope=humanize_scope(scope)
                 ),
             )
         except MissingGuild:

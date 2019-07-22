@@ -21,19 +21,19 @@ __all__ = [
 _config = None
 
 _SCOPE_HELP = """
-Scope is one of the following:
+Scope must be a valid version of one of the following:
 ​ ​ ​ ​ Global
 ​ ​ ​ ​ Guild
 ​ ​ ​ ​ User
 """
 _USER_HELP = """
-Author can be one of the following:
+Author must be a valid version of one of the following:
 ​ ​ ​ ​ User ID
 ​ ​ ​ ​ User Mention
 ​ ​ ​ ​ User Name#123 
 """
 _GUILD_HELP = """
-Guild can be one of the following:
+Guild must be a valid version of one of the following:
 ​ ​ ​ ​ Guild ID
 ​ ​ ​ ​ Guild name 
 """
@@ -132,6 +132,8 @@ class ScopeParser(commands.Converter):
             if scope not in valid_scopes:
                 raise commands.ArgParserFailure("--scope", scope_raw, custom_help=_SCOPE_HELP)
             target_scope = standardize_scope(scope)
+        elif "--scope" in argument and not vals["scope"]:
+            raise commands.ArgParserFailure("--scope", "Nothing", custom_help=_SCOPE_HELP)
         is_owner = await ctx.bot.is_owner(ctx.author)
         guild = vals.get("guild", None) or vals.get("server", None)
         if is_owner and guild:
@@ -156,8 +158,10 @@ class ScopeParser(commands.Converter):
                     target_guild = None
             if target_guild is None:
                 raise commands.ArgParserFailure("--guild", guild_raw, custom_help=_GUILD_HELP)
-        elif not is_owner and guild:
+        elif not is_owner and (guild or any(x in argument for x in ["--guild", "--server"])):
             raise commands.BadArgument("You cannot use `--guild`")
+        elif any(x in argument for x in ["--guild", "--server"]):
+            raise commands.ArgParserFailure("--guild", "Nothing", custom_help=_GUILD_HELP)
         author = vals.get("author", None) or vals.get("user", None) or vals.get("member", None)
         if author:
             target_user = None
@@ -186,6 +190,8 @@ class ScopeParser(commands.Converter):
                     target_user = None
             if target_user is None:
                 raise commands.ArgParserFailure("--author", user_raw, custom_help=_USER_HELP)
+        elif any(x in argument for x in ["--author", "--user", "--member"]):
+            raise commands.ArgParserFailure("--scope", "Nothing", custom_help=_USER_HELP)
 
         return target_scope, target_user, target_guild
 
@@ -256,6 +262,8 @@ class ComplexScopeParser(commands.Converter):
                     "--to-scope", to_scope_raw, custom_help=_SCOPE_HELP
                 )
             target_scope = standardize_scope(to_scope)
+        elif "--to-scope" in argument and not vals["to_scope"]:
+            raise commands.ArgParserFailure("--to-scope", "Nothing", custom_help=_SCOPE_HELP)
 
         if vals["from_scope"]:
             from_scope_raw = " ".join(vals["from_scope"]).strip()
@@ -266,6 +274,8 @@ class ComplexScopeParser(commands.Converter):
                     "--from-scope", from_scope_raw, custom_help=_SCOPE_HELP
                 )
             source_scope = standardize_scope(from_scope)
+        elif "--from-scope" in argument and not vals["to_scope"]:
+            raise commands.ArgParserFailure("--to-scope", "Nothing", custom_help=_SCOPE_HELP)
 
         to_guild = vals.get("to_guild", None) or vals.get("to_server", None)
         if is_owner and to_guild:
@@ -292,8 +302,13 @@ class ComplexScopeParser(commands.Converter):
                 raise commands.ArgParserFailure(
                     "--to-guild", to_guild_raw, custom_help=_GUILD_HELP
                 )
-        elif not is_owner and to_guild:
-            raise commands.BadArgument("You cannot use `--guild`")
+        elif not is_owner and (
+            to_guild or any(x in argument for x in ["--to-guild", "--to-server"])
+        ):
+            raise commands.BadArgument("You cannot use `--to-server`")
+        elif any(x in argument for x in ["--to-guild", "--to-server"]):
+            raise commands.ArgParserFailure("--to-server", "Nothing", custom_help=_GUILD_HELP)
+
         from_guild = vals.get("from_guild", None) or vals.get("from_server", None)
         if is_owner and from_guild:
             source_guild = None
@@ -319,8 +334,12 @@ class ComplexScopeParser(commands.Converter):
                 raise commands.ArgParserFailure(
                     "--from-guild", from_guild_raw, custom_help=_GUILD_HELP
                 )
-        elif not is_owner and from_guild:
-            raise commands.BadArgument("You cannot use `--guild`")
+        elif not is_owner and (
+            from_guild or any(x in argument for x in ["--from-guild", "--from-server"])
+        ):
+            raise commands.BadArgument("You cannot use `--from-server`")
+        elif any(x in argument for x in ["--from-guild", "--from-server"]):
+            raise commands.ArgParserFailure("--from-server", "Nothing", custom_help=_GUILD_HELP)
 
         to_author = (
             vals.get("to_author", None) or vals.get("to_user", None) or vals.get("to_member", None)
@@ -352,6 +371,8 @@ class ComplexScopeParser(commands.Converter):
                     target_user = None
             if target_user is None:
                 raise commands.ArgParserFailure("--to-author", to_user_raw, custom_help=_USER_HELP)
+        elif any(x in argument for x in ["--to-author", "--to-user", "--to-member"]):
+            raise commands.ArgParserFailure("--to-user", "Nothing", custom_help=_USER_HELP)
         from_author = (
             vals.get("from_author", None)
             or vals.get("from_user", None)
@@ -386,6 +407,8 @@ class ComplexScopeParser(commands.Converter):
                 raise commands.ArgParserFailure(
                     "--from-author", from_user_raw, custom_help=_USER_HELP
                 )
+        elif any(x in argument for x in ["--from-author", "--from-user", "--from-member"]):
+            raise commands.ArgParserFailure("--from-user", "Nothing", custom_help=_USER_HELP)
 
         return source_scope, source_user, source_guild, target_scope, target_user, target_guild
 
