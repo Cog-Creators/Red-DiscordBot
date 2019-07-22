@@ -12,12 +12,10 @@ def track_limit(track, maxlength):
         length = round(track.length / 1000)
     except AttributeError:
         length = round(track / 1000)
-    if length > 900000000000000:  # livestreams return 9223372036854775807ms
-        return True
-    elif length >= maxlength:
+
+    if maxlength < length <= 900000000000000:  # livestreams return 9223372036854775807ms
         return False
-    else:
-        return True
+    return True
 
 
 async def queue_duration(ctx):

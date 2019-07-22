@@ -1,40 +1,41 @@
-import aiohttp
 import asyncio
 import datetime
-import discord
-from fuzzywuzzy import process
 import heapq
-from io import StringIO
 import json
-import lavalink
 import logging
 import math
 import os
 import random
 import re
 import time
+from io import StringIO
 from typing import Optional
 from urllib.parse import urlparse
 
+import aiohttp
+import discord
+import lavalink
+from fuzzywuzzy import process
+
 import redbot.core
-from redbot.core import Config, commands, checks, bank
+from redbot.core import Config, bank, checks, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import bold, box, pagify
 from redbot.core.utils.menus import (
-    menu,
     DEFAULT_CONTROLS,
-    prev_page,
-    next_page,
     close_menu,
+    menu,
+    next_page,
+    prev_page,
     start_adding_reactions,
 )
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from .apis import MusicCache
 from .equalizer import Equalizer
-from .manager import ServerManager
 from .errors import LavalinkDownloadFailed, SpotifyFetchError
-from .utils import track_limit, queue_duration, Notifier, CacheLevel
+from .manager import ServerManager
+from .utils import CacheLevel, Notifier, queue_duration, track_limit
 
 _ = Translator("Audio", __file__)
 

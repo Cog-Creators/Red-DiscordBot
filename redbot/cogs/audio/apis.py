@@ -8,18 +8,17 @@ import os
 import random
 import sqlite3
 import time
-from typing import List, Optional, Dict, Tuple, Mapping, Union, NoReturn
+from typing import Dict, List, Mapping, NoReturn, Optional, Tuple, Union
 
 import aiohttp
 from databases import Database
 from lavalink.rest_api import LoadResult, Track
 
-
-from redbot.cogs.audio.utils import Notifier, CacheLevel
-from redbot.core.bot import Red
 from redbot.core import Config, commands
+from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from .errors import SpotifyFetchError, InvalidTableError
+from .errors import InvalidTableError, SpotifyFetchError
+from .utils import CacheLevel, Notifier
 
 log = logging.getLogger("red.audio.cache")
 _ = Translator("Audio", __file__)
@@ -406,11 +405,10 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             else:
                 youtube_urls.append(track_info)
             track_count += 1
-            if (track_count % 2 == 0) or (track_count == total_tracks):
-                if self.notifier:
-                    await self.notifier.notify_user(
-                        current=track_count, total=total_tracks, key="youtube"
-                    )
+            if ((track_count % 2 == 0) or (track_count == total_tracks)) and self.notifier:
+                await self.notifier.notify_user(
+                    current=track_count, total=total_tracks, key="youtube"
+                )
         if CacheLevel.set_spotify().is_subset(current_cache_level):
             asyncio.create_task(self.insert("spotify", database_entries))
         return youtube_urls
