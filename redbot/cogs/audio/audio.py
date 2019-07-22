@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import datetime
 import heapq
 import json
@@ -340,11 +341,7 @@ class Audio(commands.Cog):
                 await notify_channel.send(embed=embed)
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END and autoplay:
-            tracks = await self.music_cache.play_random()
-            if tracks:
-                player.add(player.channel.guild.me, tracks[0])
-                if not player.current:
-                    await player.play()
+            await self.music_cache.autoplay(player)
 
         elif event_type == lavalink.LavalinkEvents.QUEUE_END and disconnect:
             await player.disconnect()
@@ -399,12 +396,6 @@ class Audio(commands.Cog):
 
         This setting takes precedence over [p]audioset dc.
         """
-        current_cache_level = CacheLevel(await self.config.cache_level())
-        cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
-        if not cache_enabled:
-            return await self._embed_msg(
-                ctx, _("Bot Owner has not enabled caching, this cannot be enabled.")
-            )
 
         auto_play = await self.config.guild(ctx.guild).auto_play()
         await self.config.guild(ctx.guild).auto_play.set(not auto_play)
@@ -631,13 +622,23 @@ class Audio(commands.Cog):
         jukebox_price = data["jukebox_price"]
         thumbnail = data["thumbnail"]
         dc = data["disconnect"]
+        autoplay = data["auto_play"]
         jarbuild = redbot.core.__version__
         maxlength = data["maxlength"]
         vote_percent = data["vote_percent"]
+        current_level = CacheLevel(global_data["cache_level"])
+        spotify_cache = CacheLevel.set_spotify()
+        youtube_cache = CacheLevel.set_youtube()
+        lavalink_cache = CacheLevel.set_lavalink()
+        has_spotify_cache = current_level.is_superset(spotify_cache)
+        has_youtube_cache = current_level.is_superset(youtube_cache)
+        has_lavalink_cache = current_level.is_superset(lavalink_cache)
+
         msg = "----" + _("Server Settings") + "----        \n"
         if dc:
             msg += _("Auto-disconnect:  [{dc}]\n").format(dc=dc)
-
+        if autoplay:
+            msg += _("Auto-play:        [{autoplay}]\n").format(autoplay=autoplay)
         if emptydc_enabled:
             msg += _("Disconnect timer: [{num_seconds}]\n").format(
                 num_seconds=self._dynamic_time(emptydc_timer)
@@ -663,8 +664,20 @@ class Audio(commands.Cog):
             msg += _(
                 "Vote skip:        [{vote_enabled}]\nSkip percentage:  [{vote_percent}%]\n"
             ).format(**data)
+        if is_owner:
+            msg += _(
+                "\n---Cache Settings---        \n" +
+                _("Spotify cache:    [{spotify_status}]\n") +
+                _("Youtube cache:    [{youtube_status}]\n") +
+                _("Lavalink cache:   [{lavalink_status}]\n")
+            ).format(
+                spotify_status=_("Enabled") if has_spotify_cache else _("Disabled"),
+                youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
+                lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
+            )
+
         msg += _(
-            "---Lavalink Settings---        \n"
+            "\n---Lavalink Settings---        \n"
             "Cog version:      [{version}]\n"
             "Jar build:        [{jarbuild}]\n"
             "External server:  [{use_external_lavalink}]\n"
@@ -1297,6 +1310,7 @@ class Audio(commands.Cog):
     @local.command(name="play")
     async def local_play(self, ctx):
         """Play a local track."""
+
         if not await self._localtracks_check(ctx):
             return
         localtracks_folders = await self._localtracks_folders(ctx)
@@ -2078,6 +2092,9 @@ class Audio(commands.Cog):
                     await playlist_msg.edit(embed=embed)
                 except discord.errors.NotFound:
                     pass
+        else:
+            with contextlib.suppress(discord.HTTPException):
+                await playlist_msg.delete()
         self._play_lock(ctx, False)
         return track_list
 
@@ -3636,7 +3653,8 @@ class Audio(commands.Cog):
 
     async def _skip_action(self, ctx, skip_to_track: int = None):
         player = lavalink.get_player(ctx.guild.id)
-        if not player.queue:
+        autoplay = await self.config.guild(player.channel.guild).auto_play()
+        if not player.queue and not autoplay:
             try:
                 pos, dur = player.position, player.current.length
             except AttributeError:
@@ -3659,6 +3677,9 @@ class Audio(commands.Cog):
                     )
                 )
             return await ctx.send(embed=embed)
+        elif autoplay:
+            return await player.skip()
+
         queue_to_append = []
         if skip_to_track is not None and skip_to_track != 1:
             if skip_to_track < 1:

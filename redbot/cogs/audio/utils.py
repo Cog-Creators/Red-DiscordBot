@@ -63,39 +63,16 @@ class CacheLevel:
         return hash(self.value)
 
     def __add__(self, other):
-        if isinstance(other, CacheLevel):
-            return CacheLevel(self.value + other.value)
-        else:
-            raise TypeError(
-                "cannot add {} with {}".format(self.__class__.__name__, other.__class__.__name__)
-            )
+        return CacheLevel(self.value + other.value)
 
     def __radd__(self, other):
-        if isinstance(other, CacheLevel):
-            val = other.value + self.value
-            return CacheLevel(val)
-        else:
-            raise TypeError(
-                "cannot add {} with {}".format(self.__class__.__name__, other.__class__.__name__)
-            )
+        return CacheLevel(other.value + self.value)
 
     def __sub__(self, other):
-        if isinstance(other, CacheLevel):
-            val = self.value - other.value
-            return CacheLevel(val)
-        else:
-            raise TypeError(
-                "cannot add {} with {}".format(self.__class__.__name__, other.__class__.__name__)
-            )
+        return CacheLevel(self.value - other.value)
 
     def __rsub__(self, other):
-        if isinstance(other, CacheLevel):
-            val = other.value - self.value
-            return CacheLevel(val)
-        else:
-            raise TypeError(
-                "cannot add {} with {}".format(self.__class__.__name__, other.__class__.__name__)
-            )
+        return CacheLevel(other.value - self.value)
 
     def __str__(self):
         return "{0:b}".format(self.value)

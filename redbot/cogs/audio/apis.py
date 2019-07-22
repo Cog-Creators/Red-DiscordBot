@@ -11,6 +11,7 @@ import time
 from typing import Dict, List, Mapping, NoReturn, Optional, Tuple, Union
 
 import aiohttp
+import lavalink
 from databases import Database
 from lavalink.rest_api import LoadResult, Track
 
@@ -126,6 +127,15 @@ _PARSER = {
         "update": _UPDATE_LAVALINK_TABLE,
     },
 }
+
+_TOP_100_GLOBALS = (
+    "https://feed2json.org/convert?url="
+    "https%3A%2F%2Fwww.youtube.com%2Ffeeds%2Fvideos.xml%3F"
+    "playlist_id%3DPL4fGSI1pDJn5kI81J1fYWK5eZRl1zJ5kM"
+)
+
+_TOP_100_GLOBALS = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn6puJdseH2Rt9sMvt9E2M4i"
+_TOP_100_US = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn5rWitrRWFKdm-ulaFiIyoK"
 
 
 class SpotifyAPI:
@@ -260,6 +270,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         self.bot = bot
         self.spotify_api = SpotifyAPI(bot, session)
         self.youtube_api = YouTubeAPI(bot, session)
+        self._session = session
         self.database = Database(
             f'sqlite:///{os.path.abspath(str(os.path.join(path, "cache.db")))}'
         )
@@ -563,19 +574,17 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         if val and not forced:
             results = LoadResult(json.loads(val))
             called_api = False
+            tracks = results.tracks
         else:
             called_api = True
-            results = None
-            retries = 0
-            while results is None:
-                with contextlib.suppress(asyncio.TimeoutError, KeyError):
+            with contextlib.suppress(asyncio.TimeoutError):
+                try:
                     results = await player.load_tracks(query)
-                retries += 1
-                if retries < 3 and results is None:
-                    await asyncio.sleep(1)  # TODO: So think of a good way to handle this ...
-                if retries == 3 and results is None:
-                    return [], called_api
+                except KeyError:
+                    return [], True
+
             if cache_enabled and results.load_type and not results.has_error:
+                tracks = results.tracks
                 with contextlib.suppress(sqlite3.OperationalError):
                     time_now = str(datetime.datetime.now(datetime.timezone.utc))
                     asyncio.create_task(
@@ -591,8 +600,11 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                             ],
                         )
                     )
-
-        return results.tracks, called_api
+            elif results.has_error:
+                tracks = []
+            else:
+                tracks = results.tracks
+        return tracks, called_api
 
     async def run_tasks(self, ctx: commands.Context):
         async with self._lock:
@@ -606,7 +618,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             self._tasks[ctx.message.id] = []
         self._tasks[ctx.message.id].append(task)
 
-    async def play_random(self):  # TODO : Test This
+    async def play_random(self):
         recently_played = []
         tries = 0
         tracks = []
@@ -635,3 +647,18 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             results = LoadResult(json.loads(track))
             tracks = results.tracks
         return tracks
+
+    async def autoplay(self, player: lavalink.Player):
+        current_cache_level = CacheLevel(await self.config.cache_level())
+        cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
+        if cache_enabled:
+            tracks = await self.play_random()
+
+        else:
+            results = await player.load_tracks(_TOP_100_US) # TODO: Make this customizable
+            tracks = results.tracks
+
+        if tracks:
+            player.add(player.channel.guild.me, random.choice(tracks))
+            if not player.current:
+                await player.play()
