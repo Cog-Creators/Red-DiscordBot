@@ -1,2 +1,5 @@
 # We still need this because RTD is special
 setuptools==40.8.0
+
+# copy button for code blocks
+sphinx-copybutton

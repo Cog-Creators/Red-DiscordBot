@@ -41,6 +41,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.doctest",
     "sphinxcontrib_trio",
+    "sphinx_copybutton",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
