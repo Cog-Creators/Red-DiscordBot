@@ -1,1 +1,1 @@
-``[p]playlist`` commands now can be used by everyone regardless of DJ settings, however it will respect DJ settings when creating/modifying playlist in the server.
+:code:`[p]playlist` commands now can be used by everyone regardless of DJ settings, however it will respect DJ settings when creating/modifying playlist in the server.

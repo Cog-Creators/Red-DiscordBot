@@ -8,18 +8,17 @@ import os
 import random
 import sqlite3
 import time
-from typing import List, Optional, Dict, Tuple, Mapping, Union, NoReturn
+from typing import Dict, List, Mapping, NoReturn, Optional, Tuple, Union
 
 import aiohttp
 from databases import Database
 from lavalink.rest_api import LoadResult, Track
 
-
-from redbot.cogs.audio.utils import Notifier, CacheLevel
-from redbot.core.bot import Red
 from redbot.core import Config, commands
+from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from .errors import SpotifyFetchError, InvalidTableError
+from .errors import InvalidTableError, SpotifyFetchError
+from .utils import CacheLevel, Notifier
 
 log = logging.getLogger("red.audio.cache")
 _ = Translator("Audio", __file__)
@@ -103,7 +102,9 @@ _INSERT_LAVALINK_TABLE = """
         VALUES (:query, :data, :last_updated, :last_fetched);
     """
 _QUERY_LAVALINK_TABLE = "SELECT * FROM lavalink WHERE query=:query;"
-_QUERY_LAST_FETCHED_LAVALINK_TABLE = "SELECT * FROM lavalink WHERE last_fetched LIKE :last_fetched;"
+_QUERY_LAST_FETCHED_LAVALINK_TABLE = (
+    "SELECT * FROM lavalink WHERE last_fetched LIKE :last_fetched;"
+)
 _UPDATE_LAVALINK_TABLE = """UPDATE lavalink
               SET last_fetched=:last_fetched 
               WHERE query=:query;"""
@@ -123,9 +124,17 @@ _PARSER = {
         "insert": _INSERT_LAVALINK_TABLE,
         "data": {"query": _QUERY_LAVALINK_TABLE, "played": _QUERY_LAST_FETCHED_LAVALINK_TABLE},
         "update": _UPDATE_LAVALINK_TABLE,
-
     },
 }
+
+_TOP_100_GLOBALS = (
+    "https://feed2json.org/convert?url="
+    "https%3A%2F%2Fwww.youtube.com%2Ffeeds%2Fvideos.xml%3F"
+    "playlist_id%3DPL4fGSI1pDJn5kI81J1fYWK5eZRl1zJ5kM"
+)
+
+_TOP_100_GLOBALS = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn6puJdseH2Rt9sMvt9E2M4i"
+_TOP_100_US = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn5rWitrRWFKdm-ulaFiIyoK"
 
 
 class SpotifyAPI:
@@ -260,6 +269,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         self.bot = bot
         self.spotify_api = SpotifyAPI(bot, session)
         self.youtube_api = YouTubeAPI(bot, session)
+        self._session = session
         self.database = Database(
             f'sqlite:///{os.path.abspath(str(os.path.join(path, "cache.db")))}'
         )
@@ -316,7 +326,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             else True
         )
 
-        return getattr(row, query, None), need_update # need_update
+        return getattr(row, query, None), need_update  # need_update
 
         # TODO: Create a task to remove entries from DB that haven't been fetched in x days ... customizable by Owner
 
@@ -327,8 +337,6 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             raise InvalidTableError(f"{table} is not a valid table in the database.")
 
         return await self.database.fetch_all(query=sql_query, values=values)
-
-
 
     @staticmethod
     def _spotify_format_call(qtype: str, key: str) -> Tuple[str, dict]:
@@ -368,6 +376,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         database_entries = []
         track_count = 0
         time_now = str(datetime.datetime.now(datetime.timezone.utc))
+        youtube_cache = CacheLevel.set_youtube().is_subset(current_cache_level)
         for track in tracks:
             song_url, track_info, uri, artist_name, track_name, _id, _type = self._get_spotify_track_info(
                 track
@@ -388,15 +397,17 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             )
             if skip_youtube is False:
                 val = None
-                if CacheLevel.set_youtube().is_subset(current_cache_level):
+                if youtube_cache:
                     val, update = await self.fetch_one(
                         "youtube", "youtube_url", {"track": track_info}
                     )
                     if update:
                         val = None
                 if val is None:
-                    val = await self._youtube_first_time_query(track_info, ctx=ctx)
-                else:
+                    val = await self._youtube_first_time_query(
+                        track_info, current_cache_level=current_cache_level, ctx=ctx
+                    )
+                if youtube_cache and val:
                     asyncio.create_task(self.update("youtube", {"track": track_info}))
 
                 if val:
@@ -404,11 +415,10 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             else:
                 youtube_urls.append(track_info)
             track_count += 1
-            if (track_count % 2 == 0) or (track_count == total_tracks):
-                if self.notifier:
-                    await self.notifier.notify_user(
-                        current=track_count, total=total_tracks, key="youtube"
-                    )
+            if ((track_count % 2 == 0) or (track_count == total_tracks)) and self.notifier:
+                await self.notifier.notify_user(
+                    current=track_count, total=total_tracks, key="youtube"
+                )
         if CacheLevel.set_spotify().is_subset(current_cache_level):
             asyncio.create_task(self.insert("spotify", database_entries))
         return youtube_urls
@@ -423,7 +433,6 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         if CacheLevel.set_youtube().is_subset(current_cache_level) and track_url:
             time_now = str(datetime.datetime.now(datetime.timezone.utc))
             asyncio.create_task(
-                ctx,
                 self.insert(
                     "youtube",
                     [
@@ -434,7 +443,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                             "last_fetched": time_now,
                         }
                     ],
-                ),
+                )
             )
         return track_url
 
@@ -525,7 +534,6 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 query_type, uri, skip_youtube, current_cache_level=current_cache_level, ctx=ctx
             )
             youtube_urls.extend(urls)
-
         else:
             if query_type == "track" and cache_enabled:
                 asyncio.create_task(self.update("spotify", {"uri": f"spotify:track:{uri}"}))
@@ -565,23 +573,20 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         if val and not forced:
             results = LoadResult(json.loads(val))
             called_api = False
+            tracks = results.tracks
         else:
             called_api = True
-            results = None
-            retries = 0
-            while results is None:
-                with contextlib.suppress(asyncio.TimeoutError, KeyError):
+            with contextlib.suppress(asyncio.TimeoutError):
+                try:
                     results = await player.load_tracks(query)
-                retries += 1
-                if retries < 3 and results is None:
-                    await asyncio.sleep(1)  # TODO: So think of a good way to handle this ...
-                if retries == 3 and results is None:
-                    return [], called_api
+                except KeyError:
+                    return [], True
+
             if cache_enabled and results.load_type and not results.has_error:
+                tracks = results.tracks
                 with contextlib.suppress(sqlite3.OperationalError):
                     time_now = str(datetime.datetime.now(datetime.timezone.utc))
                     asyncio.create_task(
-                        ctx,
                         self.insert(
                             "lavalink",
                             [
@@ -592,10 +597,13 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                                     "last_fetched": time_now,
                                 }
                             ],
-                        ),
+                        )
                     )
-
-        return results.tracks, called_api
+            elif results.has_error:
+                tracks = []
+            else:
+                tracks = results.tracks
+        return tracks, called_api
 
     async def run_tasks(self, ctx: commands.Context):
         async with self._lock:
@@ -609,14 +617,47 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             self._tasks[ctx.message.id] = []
         self._tasks[ctx.message.id].append(task)
 
-    async def play_random(self, ctx: commands.Context,): # TODO : Test This
-        date = '%' + str((datetime.datetime.now() - datetime.timedelta(days=random.randrange(1, 8))).date()) + '%'
-        vals = await self.fetch_all(
-            "lavalink", "data", {"last_fetched": date}
-        )
-        recently_played = [r.data for r in vals if r]
+    async def play_random(self):
+        recently_played = []
+        tries = 0
+        tracks = []
+        while not recently_played:
+            date = (
+                "%"
+                + str(
+                    (
+                        datetime.datetime.now(datetime.timezone.utc)
+                        - datetime.timedelta(days=random.randrange(1, 8))
+                    ).date()
+                )
+                + "%"
+            )
+            vals = await self.fetch_all("lavalink", "data", {"last_fetched": date})
+            recently_played = [r.data for r in vals if r]
+            if not recently_played:
+                tries += 1
+            if (
+                tries > 10 and not recently_played
+            ):  #  Allow owner to customize date range and improve logic
+                break
+
         if recently_played:
             track = random.choice(recently_played)
             results = LoadResult(json.loads(track))
-            print(results.tracks[0])
+            tracks = results.tracks
+        return tracks
 
+    async def autoplay(self, player: lavalink.Player):
+        current_cache_level = CacheLevel(await self.config.cache_level())
+        cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
+        if cache_enabled:
+            tracks = await self.play_random()
+
+        else:
+            results = await player.load_tracks(_TOP_100_US)  # TODO: Make this customizable
+            tracks = results.tracks
+
+        if tracks:
+            player.add(player.channel.guild.me, random.choice(tracks))
+            if not player.current:
+                await player.play()

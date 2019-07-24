@@ -1,14 +1,13 @@
 from collections import namedtuple
 from enum import Enum, unique
-from typing import Union, Optional, List
+from typing import List, Optional, Union
 
 import discord
 
-from redbot.core import commands
-from .errors import InvalidPlaylistScope, MissingGuild, MissingAuthor, NotAllowed
-from redbot.core import Config
+from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_list
+from .errors import InvalidPlaylistScope, MissingAuthor, MissingGuild, NotAllowed
 
 _config = None
 __all__ = [

@@ -1,1 +1,1 @@
-Spotify, Youtube Data and Lavalink API calls can cached to avoid repeated calls in the future, see ``[p]audioset cache``
+Spotify, Youtube Data and Lavalink API calls can be cached to avoid repeated calls in the future, see ``[p]audioset cache``.

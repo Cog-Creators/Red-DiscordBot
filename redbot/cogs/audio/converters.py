@@ -1,13 +1,12 @@
 import argparse
 import functools
-from typing import Tuple, Optional, Union
+from typing import Optional, Tuple, Union
 
 import discord
 
-from redbot.core import Config
-from redbot.core import commands
+from redbot.core import Config, commands
 from redbot.core.i18n import Translator
-from .playlists import PlaylistScope, standardize_scope, _pass_config_to_playlist
+from .playlists import PlaylistScope, _pass_config_to_playlist, standardize_scope
 
 _ = Translator("Audio", __file__)
 
@@ -158,8 +157,10 @@ class ScopeParser(commands.Converter):
                     target_guild = None
             if target_guild is None:
                 raise commands.ArgParserFailure("--guild", guild_raw, custom_help=_GUILD_HELP)
-        elif not is_owner and guild:
+        elif not is_owner and (guild or any(x in argument for x in ["--guild", "--server"])):
             raise commands.BadArgument("You cannot use `--guild`")
+        elif any(x in argument for x in ["--guild", "--server"]):
+            raise commands.ArgParserFailure("--guild", "Nothing", custom_help=_GUILD_HELP)
         author = vals.get("author", None) or vals.get("user", None) or vals.get("member", None)
         if author:
             target_user = None
@@ -188,6 +189,8 @@ class ScopeParser(commands.Converter):
                     target_user = None
             if target_user is None:
                 raise commands.ArgParserFailure("--author", user_raw, custom_help=_USER_HELP)
+        elif any(x in argument for x in ["--author", "--user", "--member"]):
+            raise commands.ArgParserFailure("--scope", "Nothing", custom_help=_USER_HELP)
 
         return target_scope, target_user, target_guild
 
@@ -298,8 +301,13 @@ class ComplexScopeParser(commands.Converter):
                 raise commands.ArgParserFailure(
                     "--to-guild", to_guild_raw, custom_help=_GUILD_HELP
                 )
-        elif not is_owner and to_guild:
-            raise commands.BadArgument("You cannot use `--guild`")
+        elif not is_owner and (
+            to_guild or any(x in argument for x in ["--to-guild", "--to-server"])
+        ):
+            raise commands.BadArgument("You cannot use `--to-server`")
+        elif any(x in argument for x in ["--to-guild", "--to-server"]):
+            raise commands.ArgParserFailure("--to-server", "Nothing", custom_help=_GUILD_HELP)
+
         from_guild = vals.get("from_guild", None) or vals.get("from_server", None)
         if is_owner and from_guild:
             source_guild = None
@@ -325,8 +333,12 @@ class ComplexScopeParser(commands.Converter):
                 raise commands.ArgParserFailure(
                     "--from-guild", from_guild_raw, custom_help=_GUILD_HELP
                 )
-        elif not is_owner and from_guild:
-            raise commands.BadArgument("You cannot use `--guild`")
+        elif not is_owner and (
+            from_guild or any(x in argument for x in ["--from-guild", "--from-server"])
+        ):
+            raise commands.BadArgument("You cannot use `--from-server`")
+        elif any(x in argument for x in ["--from-guild", "--from-server"]):
+            raise commands.ArgParserFailure("--from-server", "Nothing", custom_help=_GUILD_HELP)
 
         to_author = (
             vals.get("to_author", None) or vals.get("to_user", None) or vals.get("to_member", None)
@@ -358,6 +370,8 @@ class ComplexScopeParser(commands.Converter):
                     target_user = None
             if target_user is None:
                 raise commands.ArgParserFailure("--to-author", to_user_raw, custom_help=_USER_HELP)
+        elif any(x in argument for x in ["--to-author", "--to-user", "--to-member"]):
+            raise commands.ArgParserFailure("--to-user", "Nothing", custom_help=_USER_HELP)
         from_author = (
             vals.get("from_author", None)
             or vals.get("from_user", None)
@@ -392,6 +406,8 @@ class ComplexScopeParser(commands.Converter):
                 raise commands.ArgParserFailure(
                     "--from-author", from_user_raw, custom_help=_USER_HELP
                 )
+        elif any(x in argument for x in ["--from-author", "--from-user", "--from-member"]):
+            raise commands.ArgParserFailure("--from-user", "Nothing", custom_help=_USER_HELP)
 
         return source_scope, source_user, source_guild, target_scope, target_user, target_guild
 
@@ -401,7 +417,6 @@ class LazyGreedyConverter(commands.Converter):
         self.splitter_Value = splitter
 
     async def convert(self, ctx: commands.Context, argument: str) -> str:
-        argument = argument
         full_message = ctx.message.content.partition(f" {argument} ")
         if len(full_message) == 1:
             full_message = (

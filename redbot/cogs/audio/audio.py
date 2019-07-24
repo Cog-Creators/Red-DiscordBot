@@ -1,59 +1,59 @@
 # -*- coding: utf-8 -*-
-import aiohttp
 import asyncio
 import datetime
-import discord
-from fuzzywuzzy import process
 import heapq
-from io import StringIO
 import json
-import lavalink
 import logging
 import math
 import os
 import random
 import re
 import time
-from typing import Optional, cast, Tuple
+from io import StringIO
+from typing import Optional, Tuple, cast
 from urllib.parse import urlparse
 
+import aiohttp
+import discord
+import lavalink
+from fuzzywuzzy import process
+
 import redbot.core
-from redbot.core import Config, commands, checks, bank
+from redbot.core import Config, bank, checks, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import bold, box, pagify
 from redbot.core.utils.menus import (
-    menu,
     DEFAULT_CONTROLS,
-    prev_page,
-    next_page,
     close_menu,
+    menu,
+    next_page,
+    prev_page,
     start_adding_reactions,
 )
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from .apis import MusicCache
-from .utils import Notifier, CacheLevel
+from .converters import (
+    ComplexScopeParser,
+    PlaylistConverter,
+    ScopeParser,
+    _pass_config_to_dependencies,
+    get_lazy_converter,
+)
 from .equalizer import Equalizer
+from .errors import LavalinkDownloadFailed, MissingGuild, SpotifyFetchError, TooManyMatches
 from .manager import ServerManager
-from .errors import LavalinkDownloadFailed, SpotifyFetchError, MissingGuild, TooManyMatches
 from .playlists import (
+    FakePlaylist,
     Playlist,
     PlaylistScope,
-    get_playlist,
     create_playlist,
     delete_playlist,
     get_all_playlist,
+    get_playlist,
     humanize_scope,
-    FakePlaylist,
 )
-from .converters import (
-    PlaylistConverter,
-    ComplexScopeParser,
-    ScopeParser,
-    get_lazy_converter,
-    _pass_config_to_dependencies,
-)
-from .utils import track_limit, queue_duration
+from .utils import CacheLevel, Notifier, queue_duration, track_limit
 
 _ = Translator("Audio", __file__)
 
@@ -103,6 +103,7 @@ class Audio(commands.Cog):
 
         default_guild = dict(
             disconnect=False,
+            auto_play=False,
             dj_enabled=False,
             dj_role=None,
             emptydc_enabled=False,
@@ -291,6 +292,7 @@ class Audio(commands.Cog):
 
     async def event_handler(self, player, event_type, extra):
         disconnect = await self.config.guild(player.channel.guild).disconnect()
+        autoplay = await self.config.guild(player.channel.guild).auto_play()
         notify = await self.config.guild(player.channel.guild).notify()
         status = await self.config.status()
 
@@ -402,7 +404,10 @@ class Audio(commands.Cog):
                 )
                 await notify_channel.send(embed=embed)
 
-        if event_type == lavalink.LavalinkEvents.QUEUE_END and disconnect:
+        if event_type == lavalink.LavalinkEvents.QUEUE_END and autoplay:
+            await self.music_cache.autoplay(player)
+
+        elif event_type == lavalink.LavalinkEvents.QUEUE_END and disconnect:
             await player.disconnect()
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END and status:
@@ -447,6 +452,20 @@ class Audio(commands.Cog):
             _("Auto-disconnection at queue end: {true_or_false}.").format(
                 true_or_false=not disconnect
             ),
+        )
+
+    @audioset.command()
+    @checks.mod_or_permissions(manage_messages=True)
+    async def auto(self, ctx):
+        """Toggle the bot auto-play recent songs when playlist is empty.
+
+        This setting takes precedence over [p]audioset dc.
+        """
+
+        auto_play = await self.config.guild(ctx.guild).auto_play()
+        await self.config.guild(ctx.guild).auto_play.set(not auto_play)
+        await self._embed_msg(
+            ctx, _("Auto-play at queue end: {true_or_false}.").format(true_or_false=not auto_play)
         )
 
     @audioset.command()
@@ -668,13 +687,23 @@ class Audio(commands.Cog):
         jukebox_price = data["jukebox_price"]
         thumbnail = data["thumbnail"]
         dc = data["disconnect"]
+        autoplay = data["auto_play"]
         jarbuild = redbot.core.__version__
         maxlength = data["maxlength"]
         vote_percent = data["vote_percent"]
+        current_level = CacheLevel(global_data["cache_level"])
+        spotify_cache = CacheLevel.set_spotify()
+        youtube_cache = CacheLevel.set_youtube()
+        lavalink_cache = CacheLevel.set_lavalink()
+        has_spotify_cache = current_level.is_superset(spotify_cache)
+        has_youtube_cache = current_level.is_superset(youtube_cache)
+        has_lavalink_cache = current_level.is_superset(lavalink_cache)
+
         msg = "----" + _("Server Settings") + "----        \n"
         if dc:
             msg += _("Auto-disconnect:  [{dc}]\n").format(dc=dc)
-
+        if autoplay:
+            msg += _("Auto-play:        [{autoplay}]\n").format(autoplay=autoplay)
         if emptydc_enabled:
             msg += _("Disconnect timer: [{num_seconds}]\n").format(
                 num_seconds=self._dynamic_time(emptydc_timer)
@@ -700,8 +729,20 @@ class Audio(commands.Cog):
             msg += _(
                 "Vote skip:        [{vote_enabled}]\nSkip percentage:  [{vote_percent}%]\n"
             ).format(**data)
+        if is_owner:
+            msg += _(
+                "\n---Cache Settings---        \n"
+                + _("Spotify cache:    [{spotify_status}]\n")
+                + _("Youtube cache:    [{youtube_status}]\n")
+                + _("Lavalink cache:   [{lavalink_status}]\n")
+            ).format(
+                spotify_status=_("Enabled") if has_spotify_cache else _("Disabled"),
+                youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
+                lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
+            )
+
         msg += _(
-            "---Lavalink Settings---        \n"
+            "\n---Lavalink Settings---        \n"
             "Cog version:      [{version}]\n"
             "Jar build:        [{jarbuild}]\n"
             "External server:  [{use_external_lavalink}]\n"
@@ -1334,6 +1375,7 @@ class Audio(commands.Cog):
     @local.command(name="play")
     async def local_play(self, ctx):
         """Play a local track."""
+
         if not await self._localtracks_check(ctx):
             return
         localtracks_folders = await self._localtracks_folders(ctx)
@@ -1692,7 +1734,6 @@ class Audio(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     async def play(self, ctx, *, query):
         """Play a URL or search for a track."""
-        await self.music_cache.play_random(ctx) #TODO : Remove This
         guild_data = await self.config.guild(ctx.guild).all()
         restrict = await self.config.restrict()
         if restrict:
@@ -1803,7 +1844,7 @@ class Audio(commands.Cog):
                         "track", parts[-1], skip_youtube=True, ctx=ctx
                     )
                     if res is None:
-                        
+
                         return await self._embed_msg(ctx, _("Nothing found."))
                 except SpotifyFetchError as error:
                     self._play_lock(ctx, False)
@@ -2763,8 +2804,14 @@ class Audio(commands.Cog):
             ]
             playlist_data[
                 "playlist"
-            ] = playlist_songs_backwards_compatible  # TODO: Remove me in a few releases
-            playlist_data["link"] = playlist.url  # TODO: Remove me in a few releases
+            ] = (
+                playlist_songs_backwards_compatible
+            )  # TODO: Keep new playlists backwards compatible, Remove me in a few releases
+            playlist_data[
+                "link"
+            ] = (
+                playlist.url
+            )  # TODO: Keep new playlists backwards compatible, Remove me in a few releases
             file_name = playlist.id
         playlist_data.update({"schema": schema, "version": version})
         playlist_data = json.dumps(playlist_data)
@@ -3810,7 +3857,6 @@ class Audio(commands.Cog):
             search = True
             tracks, called_api = await self.music_cache.lavalink_query(player, query, ctx=ctx)
             if not tracks:
-                
                 return await self._embed_msg(ctx, _("Nothing found."))
         else:
             tracks, called_api = await self.music_cache.lavalink_query(player, query, ctx=ctx)
@@ -4722,7 +4768,8 @@ class Audio(commands.Cog):
 
     async def _skip_action(self, ctx, skip_to_track: int = None):
         player = lavalink.get_player(ctx.guild.id)
-        if not player.queue:
+        autoplay = await self.config.guild(player.channel.guild).auto_play()
+        if not player.queue and not autoplay:
             try:
                 pos, dur = player.position, player.current.length
             except AttributeError:
@@ -4745,6 +4792,9 @@ class Audio(commands.Cog):
                     )
                 )
             return await ctx.send(embed=embed)
+        elif autoplay:
+            return await player.skip()
+
         queue_to_append = []
         if skip_to_track is not None and skip_to_track != 1:
             if skip_to_track < 1:
@@ -5453,9 +5503,6 @@ class Audio(commands.Cog):
             return True
         else:
             return False
-
-    async def cog_after_invoke(self, ctx: commands.Context):
-        await self.music_cache.run_tasks(ctx)
 
     # Spotify-related methods below are originally from: https://github.com/Just-Some-Bots/MusicBot/blob/master/musicbot/spotify.py
 

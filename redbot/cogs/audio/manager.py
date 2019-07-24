@@ -1,15 +1,15 @@
-import itertools
-import pathlib
-import platform
-import shutil
 import asyncio
 import asyncio.subprocess  # disables for # https://github.com/PyCQA/pylint/issues/1469
+import itertools
 import logging
+import pathlib
+import platform
 import re
+import shutil
 import sys
 import tempfile
 import time
-from typing import Optional, Tuple, ClassVar, List
+from typing import ClassVar, List, Optional, Tuple
 
 import aiohttp
 from tqdm import tqdm

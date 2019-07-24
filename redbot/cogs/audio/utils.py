@@ -12,12 +12,10 @@ def track_limit(track, maxlength):
         length = round(track.length / 1000)
     except AttributeError:
         length = round(track / 1000)
-    if length > 900000000000000:  # livestreams return 9223372036854775807ms
-        return True
-    elif length >= maxlength:
+
+    if maxlength < length <= 900000000000000:  # livestreams return 9223372036854775807ms
         return False
-    else:
-        return True
+    return True
 
 
 async def queue_duration(ctx):
@@ -65,39 +63,16 @@ class CacheLevel:
         return hash(self.value)
 
     def __add__(self, other):
-        if isinstance(other, CacheLevel):
-            return CacheLevel(self.value + other.value)
-        else:
-            raise TypeError(
-                "cannot add {} with {}".format(self.__class__.__name__, other.__class__.__name__)
-            )
+        return CacheLevel(self.value + other.value)
 
     def __radd__(self, other):
-        if isinstance(other, CacheLevel):
-            val = other.value + self.value
-            return CacheLevel(val)
-        else:
-            raise TypeError(
-                "cannot add {} with {}".format(self.__class__.__name__, other.__class__.__name__)
-            )
+        return CacheLevel(other.value + self.value)
 
     def __sub__(self, other):
-        if isinstance(other, CacheLevel):
-            val = self.value - other.value
-            return CacheLevel(val)
-        else:
-            raise TypeError(
-                "cannot add {} with {}".format(self.__class__.__name__, other.__class__.__name__)
-            )
+        return CacheLevel(self.value - other.value)
 
     def __rsub__(self, other):
-        if isinstance(other, CacheLevel):
-            val = other.value - self.value
-            return CacheLevel(val)
-        else:
-            raise TypeError(
-                "cannot add {} with {}".format(self.__class__.__name__, other.__class__.__name__)
-            )
+        return CacheLevel(other.value - self.value)
 
     def __str__(self):
         return "{0:b}".format(self.value)
@@ -159,10 +134,8 @@ class CacheLevel:
 
     def _set(self, index, value):
         if value is True:
-            print((1 << index))
             self.value |= 1 << index
         elif value is False:
-            print(~(1 << index))
             self.value &= ~(1 << index)
         else:
             raise TypeError("Value to set for CacheLevel must be a bool.")
