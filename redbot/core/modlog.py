@@ -171,7 +171,7 @@ async def _migrate_config(from_version: int, to_version: int):
         all_casetypes = {
             casetype_name: {
                 inner_key: inner_value
-                for inner_key, inner_value in casetype_data
+                for inner_key, inner_value in casetype_data.items()
                 if inner_key != "audit_type"
             }
             for casetype_name, casetype_data in (await _conf.custom(_CASETYPES).all()).items()
