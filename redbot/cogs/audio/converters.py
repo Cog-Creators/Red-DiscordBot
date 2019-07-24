@@ -6,7 +6,7 @@ import discord
 
 from redbot.core import Config, commands
 from redbot.core.i18n import Translator
-from .playlists import PlaylistScope, _pass_config_to_playlist, standardize_scope
+from .playlists import PlaylistScope, standardize_scope
 
 _ = Translator("Audio", __file__)
 
@@ -15,6 +15,7 @@ __all__ = [
     "PlaylistConverter",
     "ScopeParser",
     "LazyGreedyConverter",
+    "standardize_scope",
     "get_lazy_converter",
 ]
 _config = None
@@ -38,11 +39,10 @@ Guild must be a valid version of one of the following:
 """
 
 
-def _pass_config_to_dependencies(config: Config):
+def _pass_config_to_converters(config: Config):
     global _config
     if _config is None:
         _config = config
-    _pass_config_to_playlist(config)
 
 
 class PlaylistConverter(commands.Converter):

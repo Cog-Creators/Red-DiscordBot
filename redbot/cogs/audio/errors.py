@@ -83,3 +83,15 @@ class DatabaseError(AudioError):
 
 class InvalidTableError(DatabaseError):
     """Provided table to query is not a valid table."""
+
+
+class LocalTrackError(AudioError):
+    """Base exception for local track errors."""
+
+
+class InvalidLocalTrack(LocalTrackError):
+    """Base exception for local track errors."""
+
+
+class InvalidLocalTrackFolder(LocalTrackError):
+    """Base exception for local track errors."""

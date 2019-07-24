@@ -1,10 +1,41 @@
+import contextlib
+import re
 import time
 from typing import NoReturn
+from urllib.parse import urlparse
 
 import discord
 import lavalink
 
-from redbot.core import commands
+from redbot.core import Config, commands
+from .converters import _pass_config_to_converters
+from .localtracks import _pass_config_to_localtracks
+from .playlists import _pass_config_to_playlist
+
+
+__all__ = [
+    "pass_config_to_dependencies",
+    "track_limit",
+    "queue_duration",
+    "draw_time",
+    "dynamic_time",
+    "match_url",
+    "match_yt_playlist",
+    "remove_react",
+    "get_description",
+    "track_creator",
+    "time_convert",
+    "url_check",
+    "userlimit",
+    "CacheLevel",
+    "Notifier",
+]
+
+
+def pass_config_to_dependencies(config: Config):
+    _pass_config_to_playlist(config)
+    _pass_config_to_converters(config)
+    _pass_config_to_localtracks(config)
 
 
 def track_limit(track, maxlength):
@@ -24,9 +55,9 @@ async def queue_duration(ctx):
     for i in range(len(player.queue)):
         if not player.queue[i].is_stream:
             duration.append(player.queue[i].length)
-    queue_duration = sum(duration)
+    queue_dur = sum(duration)
     if not player.queue:
-        queue_duration = 0
+        queue_dur = 0
     try:
         if not player.current.is_stream:
             remain = player.current.length - player.position
@@ -34,8 +65,142 @@ async def queue_duration(ctx):
             remain = 0
     except AttributeError:
         remain = 0
-    queue_total_duration = remain + queue_duration
+    queue_total_duration = remain + queue_dur
     return queue_total_duration
+
+
+async def draw_time(ctx):
+    player = lavalink.get_player(ctx.guild.id)
+    paused = player.paused
+    pos = player.position
+    dur = player.current.length
+    sections = 12
+    loc_time = round((pos / dur) * sections)
+    bar = "\N{BOX DRAWINGS HEAVY HORIZONTAL}"
+    seek = "\N{RADIO BUTTON}"
+    if paused:
+        msg = "\N{DOUBLE VERTICAL BAR}"
+    else:
+        msg = "\N{BLACK RIGHT-POINTING TRIANGLE}"
+    for i in range(sections):
+        if i == loc_time:
+            msg += seek
+        else:
+            msg += bar
+    return msg
+
+
+def dynamic_time(seconds):
+    m, s = divmod(seconds, 60)
+    h, m = divmod(m, 60)
+    d, h = divmod(h, 24)
+
+    if d > 0:
+        msg = "{0}d {1}h"
+    elif d == 0 and h > 0:
+        msg = "{1}h {2}m"
+    elif d == 0 and h == 0 and m > 0:
+        msg = "{2}m {3}s"
+    elif d == 0 and h == 0 and m == 0 and s > 0:
+        msg = "{3}s"
+    else:
+        msg = ""
+    return msg.format(d, h, m, s)
+
+
+def match_url(url):
+    try:
+        query_url = urlparse(url)
+        return all([query_url.scheme, query_url.netloc, query_url.path])
+    except Exception:
+        return False
+
+
+def match_yt_playlist(url):
+    yt_list_playlist = re.compile(
+        r"^(https?://)?(www\.)?(youtube\.com|youtu\.?be)(/playlist\?).*(list=)(.*)(&|$)"
+    )
+    if yt_list_playlist.match(url):
+        return True
+    return False
+
+
+async def remove_react(message, react_emoji, react_user):
+    with contextlib.suppress(discord.HTTPException):
+        await message.remove_reaction(react_emoji, react_user)
+
+
+async def get_description(track):
+    if "localtracks" in track.uri:  # TODO: Local
+        if not track.title == "Unknown title":
+            return "**{} - {}**\n{}".format(
+                track.author, track.title, track.uri.replace("localtracks/", "")
+            )
+        else:
+            return "{}".format(track.uri.replace("localtracks/", ""))
+    else:
+        return "**[{}]({})**".format(track.title, track.uri)
+
+
+def track_creator(player, position=None, other_track=None):
+    if position == "np":
+        queued_track = player.current
+    elif position is None:
+        queued_track = other_track
+    else:
+        queued_track = player.queue[position]
+    track_keys = queued_track._info.keys()
+    track_values = queued_track._info.values()
+    track_id = queued_track.track_identifier
+    track_info = {}
+    for k, v in zip(track_keys, track_values):
+        track_info[k] = v
+    keys = ["track", "info"]
+    values = [track_id, track_info]
+    track_obj = {}
+    for key, value in zip(keys, values):
+        track_obj[key] = value
+    return track_obj
+
+
+def time_convert(length):
+    match = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])").match(length)
+    if match is not None:
+        hr = int(match.group(1)) if match.group(1) else 0
+        mn = int(match.group(2)) if match.group(2) else 0
+        sec = int(match.group(3)) if match.group(3) else 0
+        pos = sec + (mn * 60) + (hr * 3600)
+        return pos * 1000
+    else:
+        try:
+            return int(length) * 1000
+        except ValueError:
+            return 0
+
+
+def url_check(url):
+    valid_tld = [
+        "youtube.com",
+        "youtu.be",
+        "soundcloud.com",
+        "bandcamp.com",
+        "vimeo.com",
+        "mixer.com",
+        "twitch.tv",
+        "spotify.com",
+        "localtracks",
+    ]
+    query_url = urlparse(url)
+    url_domain = ".".join(query_url.netloc.split(".")[-2:])
+    if not query_url.netloc:
+        url_domain = ".".join(query_url.path.split("/")[0].split(".")[-2:])
+    return True if url_domain in valid_tld else False
+
+
+def userlimit(channel):
+    if channel.user_limit == 0 or channel.user_limit > len(channel.members) + 1:
+        return False
+    return True
 
 
 class CacheLevel:

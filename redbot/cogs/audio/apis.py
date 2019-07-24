@@ -11,6 +11,7 @@ import time
 from typing import Dict, List, Mapping, NoReturn, Optional, Tuple, Union
 
 import aiohttp
+import lavalink
 from databases import Database
 from lavalink.rest_api import LoadResult, Track
 
@@ -127,11 +128,11 @@ _PARSER = {
     },
 }
 
-_TOP_100_GLOBALS = (
-    "https://feed2json.org/convert?url="
-    "https%3A%2F%2Fwww.youtube.com%2Ffeeds%2Fvideos.xml%3F"
-    "playlist_id%3DPL4fGSI1pDJn5kI81J1fYWK5eZRl1zJ5kM"
-)
+# _TOP_100_GLOBALS = (
+#     "https://feed2json.org/convert?url="
+#     "https%3A%2F%2Fwww.youtube.com%2Ffeeds%2Fvideos.xml%3F"
+#     "playlist_id%3DPL4fGSI1pDJn5kI81J1fYWK5eZRl1zJ5kM"
+# )
 
 _TOP_100_GLOBALS = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn6puJdseH2Rt9sMvt9E2M4i"
 _TOP_100_US = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn5rWitrRWFKdm-ulaFiIyoK"
@@ -275,6 +276,8 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         )
         self._tasks = {}
         self._lock = asyncio.Lock()
+        self.config: Config = None
+        self.notifier: Notifier = None
 
     async def initialize(self, config: Config) -> NoReturn:
         await self.database.connect()
@@ -367,7 +370,6 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         uri: str,
         skip_youtube: bool = False,
         current_cache_level: CacheLevel = CacheLevel.none(),
-        ctx: commands.Context = None,
     ) -> List[str]:
         youtube_urls = []
 
@@ -405,7 +407,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                         val = None
                 if val is None:
                     val = await self._youtube_first_time_query(
-                        track_info, current_cache_level=current_cache_level, ctx=ctx
+                        track_info, current_cache_level=current_cache_level
                     )
                 if youtube_cache and val:
                     asyncio.create_task(self.update("youtube", {"track": track_info}))
@@ -424,10 +426,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         return youtube_urls
 
     async def _youtube_first_time_query(
-        self,
-        track_info: str,
-        current_cache_level: CacheLevel = CacheLevel.none(),
-        ctx: commands.Context = None,
+        self, track_info: str, current_cache_level: CacheLevel = CacheLevel.none()
     ) -> str:
         track_url = await self.youtube_api.get_call(track_info)
         if CacheLevel.set_youtube().is_subset(current_cache_level) and track_url:
@@ -510,12 +509,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         return tracks
 
     async def spotify_query(
-        self,
-        query_type: str,
-        uri: str,
-        skip_youtube: bool = False,
-        notify: Notifier = None,
-        ctx: commands.Context = None,
+        self, query_type: str, uri: str, skip_youtube: bool = False, notify: Notifier = None
     ) -> List[str]:
         self.notifier = notify
         current_cache_level = CacheLevel(await self.config.cache_level())
@@ -531,7 +525,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         youtube_urls = []
         if val is None:
             urls = await self._spotify_first_time_query(
-                query_type, uri, skip_youtube, current_cache_level=current_cache_level, ctx=ctx
+                query_type, uri, skip_youtube, current_cache_level=current_cache_level
             )
             youtube_urls.extend(urls)
         else:
@@ -540,7 +534,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             youtube_urls.append(val)
         return youtube_urls
 
-    async def youtube_query(self, track_info: str, ctx: commands.Context = None) -> str:
+    async def youtube_query(self, track_info: str) -> str:
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_youtube().is_subset(current_cache_level)
         val = None
@@ -550,7 +544,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 val = None
         if val is None:
             youtube_url = await self._youtube_first_time_query(
-                track_info, current_cache_level=current_cache_level, ctx=ctx
+                track_info, current_cache_level=current_cache_level
             )
         else:
             if cache_enabled:
@@ -558,9 +552,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             youtube_url = val
         return youtube_url
 
-    async def lavalink_query(
-        self, player, query, forced=False, ctx: commands.Context = None
-    ) -> Tuple[List[Track], bool]:
+    async def lavalink_query(self, player, query, forced=False) -> Tuple[List[Track], bool]:
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         val = None
