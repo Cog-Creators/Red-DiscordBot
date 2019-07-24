@@ -640,7 +640,10 @@ class Core(commands.Cog, CoreLogic):
     @commands.command()
     @checks.is_owner()
     async def unload(self, ctx: commands.Context, *cogs: str):
-        """Unloads packages"""
+        """
+        Unloads packages
+        You can see loaded packages with `[p]cogs`
+        """
         if not cogs:
             return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
