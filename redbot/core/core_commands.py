@@ -567,7 +567,11 @@ class Core(commands.Cog, CoreLogic):
     @commands.command()
     @checks.is_owner()
     async def load(self, ctx: commands.Context, *cogs: str):
-        """Loads packages"""
+        """
+        Loads packages
+
+        You can see unloaded packages with `[p]cogs`
+        """
         if not cogs:
             return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
