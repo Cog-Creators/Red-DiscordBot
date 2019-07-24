@@ -410,7 +410,9 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                         track_info, current_cache_level=current_cache_level
                     )
                 if youtube_cache and val:
-                    asyncio.create_task(self.update("youtube", {"track": track_info}))
+                    asyncio.create_task(
+                        asyncio.shield(self.update("youtube", {"track": track_info}))
+                    )
 
                 if val:
                     youtube_urls.append(val)
@@ -422,7 +424,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                     current=track_count, total=total_tracks, key="youtube"
                 )
         if CacheLevel.set_spotify().is_subset(current_cache_level):
-            asyncio.create_task(self.insert("spotify", database_entries))
+            asyncio.create_task(asyncio.shield(self.insert("spotify", database_entries)))
         return youtube_urls
 
     async def _youtube_first_time_query(
@@ -432,16 +434,18 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         if CacheLevel.set_youtube().is_subset(current_cache_level) and track_url:
             time_now = str(datetime.datetime.now(datetime.timezone.utc))
             asyncio.create_task(
-                self.insert(
-                    "youtube",
-                    [
-                        {
-                            "track_info": track_info,
-                            "track_url": track_url,
-                            "last_updated": time_now,
-                            "last_fetched": time_now,
-                        }
-                    ],
+                asyncio.shield(
+                    self.insert(
+                        "youtube",
+                        [
+                            {
+                                "track_info": track_info,
+                                "track_url": track_url,
+                                "last_updated": time_now,
+                                "last_fetched": time_now,
+                            }
+                        ],
+                    )
                 )
             )
         return track_url
@@ -530,7 +534,9 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             youtube_urls.extend(urls)
         else:
             if query_type == "track" and cache_enabled:
-                asyncio.create_task(self.update("spotify", {"uri": f"spotify:track:{uri}"}))
+                asyncio.create_task(
+                    asyncio.shield(self.update("spotify", {"uri": f"spotify:track:{uri}"}))
+                )
             youtube_urls.append(val)
         return youtube_urls
 
@@ -548,7 +554,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             )
         else:
             if cache_enabled:
-                asyncio.create_task(self.update("youtube", {"track": track_info}))
+                asyncio.create_task(asyncio.shield(self.update("youtube", {"track": track_info})))
             youtube_url = val
         return youtube_url
 
@@ -561,7 +567,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             if update:
                 val = None
             if val:
-                asyncio.create_task(self.update("lavalink", {"query": query}))
+                asyncio.create_task(asyncio.shield(self.update("lavalink", {"query": query})))
         if val and not forced:
             results = LoadResult(json.loads(val))
             called_api = False
@@ -579,16 +585,18 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 with contextlib.suppress(sqlite3.OperationalError):
                     time_now = str(datetime.datetime.now(datetime.timezone.utc))
                     asyncio.create_task(
-                        self.insert(
-                            "lavalink",
-                            [
-                                {
-                                    "query": query,
-                                    "data": json.dumps(results._raw),
-                                    "last_updated": time_now,
-                                    "last_fetched": time_now,
-                                }
-                            ],
+                        asyncio.shield(
+                            self.insert(
+                                "lavalink",
+                                [
+                                    {
+                                        "query": query,
+                                        "data": json.dumps(results._raw),
+                                        "last_updated": time_now,
+                                        "last_fetched": time_now,
+                                    }
+                                ],
+                            )
                         )
                     )
             elif results.has_error:

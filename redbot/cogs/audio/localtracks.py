@@ -1,28 +1,36 @@
 import asyncio
 import os
 import re
-from pathlib import Path
-from typing import Generator, List, Optional, Union
+from pathlib import Path, WindowsPath, PurePath, PosixPath
+from typing import List, Union
+from operator import attrgetter
 
-from fuzzywuzzy import process
+from redbot.core.data_manager import cog_data_path
+
+from redbot.core.bot import Red
 
 from redbot.core import Config
 from redbot.core.i18n import Translator
 
 _config = None
+_bot = None
+
 _ = Translator("Audio", __file__)
 
 
-def _pass_config_to_localtracks(config: Config):
-    global _config
+def _pass_config_to_localtracks(config: Config, bot: Red):
+    global _config, _bot
     if _config is None:
         _config = config
+    if _bot is None:
+        _bot = bot
 
 
 class ChdirClean(object):
     def __init__(self, directory):
         self.old_dir = os.getcwd()
         self.new_dir = directory
+        self.cwd = None
 
     def __enter__(self):
         return self
@@ -32,29 +40,63 @@ class ChdirClean(object):
         return isinstance(value, OSError)
 
     def chdir_in(self):
+        self.cwd = Path(self.new_dir)
         os.chdir(self.new_dir)
 
     def chdir_out(self):
+        self.cwd = Path(self.old_dir)
         os.chdir(self.old_dir)
 
 
 class LocalPath(ChdirClean):
     _supported_music_ext = (".mp3", ".flac", ".ogg")
 
-    def __init__(self, path, **kwargs):
-        try:
-            local_path = asyncio.get_event_loop().run_until_complete(_config.localpath())
-        except Exception:
-            local_path = None
+    def __init__(self, path, localtrack_folder, **kwargs):
+        if isinstance(path, str):
+            path = path
+        elif isinstance(path, LocalPath):
+            path = str(path.path.absolute())
+        elif isinstance(path, (Path, WindowsPath, PosixPath)):
+            path = str(path.absolute())
+        else:
+            path = str(path)
 
-        self.local_track_path = Path(local_path) if local_path else None
-        self.path = Path(path)
+        self.cwd = Path.cwd()
+        if (os.sep + "localtracks") in localtrack_folder:
+            self.localtrack_folder = Path(localtrack_folder) if localtrack_folder else self.cwd
+        else:
+            self.localtrack_folder = (
+                Path(localtrack_folder) / "localtracks"
+                if localtrack_folder
+                else self.cwd / "localtracks"
+            )
+
+        try:
+            _path = Path(path)
+            self.localtrack_folder.relative_to(path)
+            _path.relative_to(str(self.localtrack_folder.absolute()))
+            self.path = _path
+        except (ValueError, TypeError):
+            self.path = self.localtrack_folder.joinpath(path) if path else self.localtrack_folder
+
         if self.path.is_file():
             parent = self.path.parent
         else:
             parent = self.path
         self.parent = parent
-        super().__init__(str(self.parent))
+
+        super().__init__(str(self.parent.absolute()))
+        self.cwd = Path.cwd()
+
+    @property
+    def name(self):
+        return str(self.path.name)
+
+    @classmethod
+    def joinpath(cls, localtrack_folder, *args):
+        modified = cls(None, localtrack_folder)
+        modified.path = modified.path.joinpath(*args)
+        return modified
 
     def multiglob(self, *patterns):
         paths = []
@@ -76,18 +118,28 @@ class LocalPath(ChdirClean):
             if p.suffix in self._supported_music_ext:
                 yield p
 
+    def __str__(self):
+        return str(self.path.absolute())
+
     def to_string(self):
         return str(self.path.absolute())
 
     def to_string_hidden(self, arg: str = None):
+        print("\n\n" + str(self.path.absolute()) + "\n" + str(self.localtrack_folder.absolute()))
         return str(self.path.absolute()).replace(
-            str(self.local_track_path.absolute()) if arg is None else arg, ""
+            str(self.localtrack_folder.absolute()) if arg is None else arg, ""
         )
 
     def tracks_in_tree(self):
+        tracks = []
         for track in self.multirglob(*[f"*{ext}" for ext in self._supported_music_ext]):
             if track.is_file():
-                yield AudioTrack.spawn_track(track, local=True)
+                tracks.append(
+                    AudioTrack.spawn_track(
+                        LocalPath(track, str(self.localtrack_folder.absolute())), local=True
+                    )
+                )
+        return tracks
 
     def subfolders_in_tree(self):
         files = list(self.multirglob(*[f"*{ext}" for ext in self._supported_music_ext]))
@@ -95,15 +147,24 @@ class LocalPath(ChdirClean):
         for f in files:
             if f.parent not in folders:
                 folders.append(f.parent)
-
+        return_folders = []
         for folder in folders:
             if folder.is_dir():
-                yield LocalPath(folder)
+                return_folders.append(
+                    LocalPath(str(folder.absolute()), str(self.localtrack_folder.absolute()))
+                )
+        return return_folders
 
     def tracks_in_folder(self):
+        tracks = []
         for track in self.multiglob(*[f"*{ext}" for ext in self._supported_music_ext]):
             if track.is_file():
-                yield AudioTrack.spawn_track(track, local=True)
+                tracks.append(
+                    AudioTrack.spawn_track(
+                        LocalPath(track, str(self.localtrack_folder.absolute())), local=True
+                    )
+                )
+        return tracks
 
     def subfolders(self):
         files = list(self.multiglob(*[f"*{ext}" for ext in self._supported_music_ext]))
@@ -111,10 +172,13 @@ class LocalPath(ChdirClean):
         for f in files:
             if f.parent not in folders:
                 folders.append(f.parent)
-
+        return_folders = []
         for folder in folders:
             if folder.is_dir():
-                yield LocalPath(folder)
+                return_folders.append(
+                    LocalPath(str(folder.absolute()), str(self.localtrack_folder.absolute()))
+                )
+        return return_folders
 
 
 class AudioTrack:
@@ -138,7 +202,11 @@ class AudioTrack:
 
     @staticmethod
     def calculate_logic(track):
-        return dict()
+        returning = {}
+        if isinstance(track, LocalPath):
+            returning["local"] = True
+
+        return returning
 
     def get_query(self):
         if self.is_local:
@@ -171,60 +239,3 @@ async def _localtracks_check(self, ctx):
             return False
     else:
         return True
-
-
-async def _localtracks_folders(self, ctx, show_all=False):
-    if not await self._localtracks_check(ctx):
-        return
-    audio_data = LocalPath(await _config.localpath())
-    return audio_data.subfolders_in_tree() if show_all else audio_data.subfolders()
-
-
-async def _folder_list(self, ctx, folder, show_all=False):
-    if not await self._localtracks_check(ctx):
-        return
-    folder = LocalPath(folder)
-    if not folder.path.is_dir():
-        return
-    return folder.tracks_in_tree() if show_all else folder.tracks_in_folder()
-
-
-async def _folder_tracks(self, ctx, player, folder, show_all=False):
-    if not await self._localtracks_check(ctx):
-        return
-    folder = LocalPath(folder)
-    audio_data = LocalPath(await _config.localpath())
-    try:
-        folder.path.relative_to(audio_data.to_string())
-    except ValueError:
-        return
-    local_tracks = []
-    for local_file in await self._all_folder_tracks(ctx, folder, show_all):
-        trackdata = await player.load_tracks(local_file.track.to_string())
-        try:
-            local_tracks.append(trackdata.tracks[0])
-        except IndexError:
-            pass
-    return local_tracks
-
-
-async def _local_play_all(self, ctx, folder, show_all=False):
-    if not await self._localtracks_check(ctx):
-        return
-    await ctx.invoke(self.search, query=("folder:" + folder), show_all=show_all)
-
-
-async def _all_folder_tracks(self, ctx, folder, show_all=False) -> Optional[Generator[AudioTrack]]:
-    if not await self._localtracks_check(ctx):
-        return
-    folder = LocalPath(folder)
-    return folder.tracks_in_tree() if show_all else folder.tracks_in_folder()
-
-
-async def _build_local_search_list(to_search, search_words):
-    search_results = process.extract(search_words, to_search, limit=50)
-    search_list = []
-    for track_match, percent_match in search_results:
-        if percent_match > 75:
-            search_list.append(track_match)
-    return search_list

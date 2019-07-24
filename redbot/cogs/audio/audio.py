@@ -18,6 +18,7 @@ import lavalink
 from fuzzywuzzy import process
 
 import redbot.core
+from redbot.cogs.audio.localtracks import LocalPath
 from redbot.core import Config, bank, checks, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
@@ -46,7 +47,7 @@ from .playlists import (
     get_playlist,
     humanize_scope,
 )
-from .utils import CacheLevel, Notifier, pass_config_to_dependencies, queue_duration, track_limit
+from .utils import *
 
 _ = Translator("Audio", __file__)
 
@@ -111,6 +112,7 @@ class Audio(commands.Cog):
             volume=100,
             vote_enabled=False,
             vote_percent=0,
+            room_lock=None,
         )
         _playlist = dict(id=None, author=None, name=None, playlist_url=None, tracks=[])
         self.config.init_custom("EQUALIZER", 1)
@@ -148,7 +150,7 @@ class Audio(commands.Cog):
             )
 
     async def initialize(self):
-        pass_config_to_dependencies(self.config)
+        pass_config_to_dependencies(self.config, self.bot)
         await self._migrate_config(
             from_version=await self.config.schema_version(), to_version=_SCHEMA_VERSION
         )
@@ -503,7 +505,7 @@ class Audio(commands.Cog):
             await self._embed_msg(
                 ctx,
                 _("Empty disconnect timer set to {num_seconds}.").format(
-                    num_seconds=self._dynamic_time(seconds)
+                    num_seconds=dynamic_time(seconds)
                 ),
             )
 
@@ -533,7 +535,7 @@ class Audio(commands.Cog):
 
     @audioset.command()
     @checks.is_owner()
-    async def localpath(self, ctx: commands.Context, local_path=None):
+    async def localpath(self, ctx: commands.Context, local_path=None):  # TODO: Rework this
         """Set the localtracks path if the Lavalink.jar is not run from the Audio data folder.
 
         Leave the path blank to reset the path to the default, the Audio data directory.
@@ -620,17 +622,14 @@ class Audio(commands.Cog):
         Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).
         Invalid input will turn the max length setting off."""
         if not isinstance(seconds, int):
-            seconds = int(await self._time_convert(seconds) / 1000)
+            seconds = int(await time_convert(seconds) / 1000)
         if seconds < 0:
             return await self._embed_msg(ctx, _("Can't be less than zero."))
         if seconds == 0:
             await self._embed_msg(ctx, _("Track max length disabled."))
         else:
             await self._embed_msg(
-                ctx,
-                _("Track max length set to {seconds}.").format(
-                    seconds=self._dynamic_time(seconds)
-                ),
+                ctx, _("Track max length set to {seconds}.").format(seconds=dynamic_time(seconds))
             )
 
         await self.config.guild(ctx.guild).maxlength.set(seconds)
@@ -699,7 +698,7 @@ class Audio(commands.Cog):
             msg += _("Auto-play:        [{autoplay}]\n").format(autoplay=autoplay)
         if emptydc_enabled:
             msg += _("Disconnect timer: [{num_seconds}]\n").format(
-                num_seconds=self._dynamic_time(emptydc_timer)
+                num_seconds=dynamic_time(emptydc_timer)
             )
         if dj_enabled:
             msg += _("DJ Role:          [{role.name}]\n").format(role=dj_role_obj)
@@ -708,7 +707,7 @@ class Audio(commands.Cog):
             msg += _("Command price:    [{jukebox_price}]\n").format(jukebox_price=jukebox_price)
         if maxlength > 0:
             msg += _("Max track length: [{tracklength}]\n").format(
-                tracklength=self._dynamic_time(maxlength)
+                tracklength=dynamic_time(maxlength)
             )
         msg += _(
             "Repeat:           [{repeat}]\n"
@@ -823,7 +822,7 @@ class Audio(commands.Cog):
         ).format(prefix=ctx.prefix)
         await ctx.maybe_send_embed(message)
 
-    @audioset.command(name="cache", usage="level=[5, 3, 2, 1, 0, -1, -2, -3]")
+    @audioset.command(name="cache", usage="level=[5, 3, 2, 1, 0, -1, -2, -3]")  # TODO Improve docs
     @checks.is_owner()
     async def _storage(self, ctx: commands.Context, *, level: int = None):
         """Sets the caching level.
@@ -911,7 +910,7 @@ class Audio(commands.Cog):
         msg = ""
         for p in lavalink.all_players():
             connect_start = p.fetch("connect")
-            connect_dur = self._dynamic_time(
+            connect_dur = dynamic_time(
                 int((datetime.datetime.utcnow() - connect_start).total_seconds())
             )
             try:
@@ -1019,7 +1018,7 @@ class Audio(commands.Cog):
 
     @commands.group(invoke_without_command=True)
     @commands.guild_only()
-    @commands.cooldown(1, 15, discord.ext.commands.BucketType.guild)
+    @commands.cooldown(1, 15, commands.BucketType.guild)
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     async def eq(self, ctx: commands.Context):
         """Equalizer management."""
@@ -1187,7 +1186,7 @@ class Audio(commands.Cog):
         player.store("eq_message", message)
 
     @eq.command(name="save")
-    @commands.cooldown(1, 15, discord.ext.commands.BucketType.guild)
+    @commands.cooldown(1, 15, commands.BucketType.guild)
     async def _eq_save(self, ctx: commands.Context, eq_preset: str = None):
         """Save the current eq settings to a preset."""
         if not self._player_check(ctx):
@@ -1345,32 +1344,30 @@ class Audio(commands.Cog):
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     async def local(self, ctx: commands.Context):
         """Local playback commands."""
+        if not await self._localtracks_check(
+            ctx
+        ):  # TODO: Convert into a check for the local group
+            return
         pass
 
     @local.command(name="folder", aliases=["start"])
-    async def local_folder(self, ctx: commands.Context, folder=None):
+    async def local_folder(self, ctx: commands.Context, tree: Optional[bool] = False, folder=None):
         """Play all songs in a localtracks folder."""
-        if not await self._localtracks_check(ctx):
-            return
+        local_path = await self.config.localpath()
         if not folder:
             await ctx.invoke(self.local_play)
         else:
-            try:
-                folder_path = os.getcwd() + "/localtracks/{}/".format(folder)
-                os.listdir(folder_path)
-            except OSError:
+            dir = LocalPath.joinpath(local_path, folder)
+            if not dir.path.is_dir():
                 return await self._embed_msg(
                     ctx, _("No localtracks folder named {name}.").format(name=folder)
                 )
-            await self._local_play_all(ctx, folder)
+            await self._local_play_all(ctx, dir.to_string(), show_all=tree)
 
     @local.command(name="play")
-    async def local_play(self, ctx: commands.Context):
+    async def local_play(self, ctx: commands.Context, tree: Optional[bool] = False):
         """Play a local track."""
-
-        if not await self._localtracks_check(ctx):
-            return
-        localtracks_folders = await self._localtracks_folders(ctx)
+        localtracks_folders = await self._localtracks_folders(ctx, tree)
         if not localtracks_folders:
             return await self._embed_msg(ctx, _("No local track folders found."))
         len_folder_pages = math.ceil(len(localtracks_folders) / 5)
@@ -1405,37 +1402,93 @@ class Audio(commands.Cog):
         }
 
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
-        if dj_enabled:
-            if not await self._can_instaskip(ctx, ctx.author):
-                return await menu(ctx, folder_page_list, DEFAULT_CONTROLS)
-            else:
-                await menu(ctx, folder_page_list, LOCAL_FOLDER_CONTROLS)
+        if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
+            return await menu(ctx, folder_page_list, DEFAULT_CONTROLS)
         else:
             await menu(ctx, folder_page_list, LOCAL_FOLDER_CONTROLS)
 
     @local.command(name="search")
-    async def local_search(self, ctx: commands.Context, *, search_words):
+    async def local_search(
+        self, ctx: commands.Context, tree: Optional[bool] = False, *, search_words
+    ):
         """Search for songs across all localtracks folders."""
-        if not await self._localtracks_check(ctx):
-            return
-        localtracks_folders = await self._localtracks_folders(ctx)
-        if not localtracks_folders:
+        all_tracks = await self._folder_list(ctx, await self.config.localpath(), show_all=tree)
+        if not all_tracks:
             return await self._embed_msg(ctx, _("No album folders found."))
-        all_tracks = []
-        for local_folder in localtracks_folders:
-            folder_tracks = await self._folder_list(ctx, local_folder)
-            all_tracks = all_tracks + folder_tracks
         search_list = await self._build_local_search_list(all_tracks, search_words)
         if not search_list:
             return await self._embed_msg(ctx, _("No matches."))
         await ctx.invoke(self.search, query=search_list)
 
-    # async def _all_folder_tracks(self, ctx:commands.Context, folder):
-    # async def _build_local_search_list(to_search, search_words):
-    # async def _folder_list(self, ctx:commands.Context, folder):
-    # async def _folder_tracks(self, ctx:commands.Context, player, folder):
-    # async def _local_play_all(self, ctx:commands.Context, folder):
-    # async def _localtracks_check(self, ctx:commands.Context):
+    async def _localtracks_folders(self, ctx, show_all=False):
+        local_path = await self.config.localpath()
+        audio_data = LocalPath(local_path, local_path)
+        if not await self._localtracks_check(ctx):
+            return
+
+        return audio_data.subfolders_in_tree() if show_all else audio_data.subfolders()
+
+    async def _folder_list(self, ctx, folder, show_all=False):
+        if not await self._localtracks_check(ctx):
+            return
+        local_path = await self.config.localpath()
+        folder = LocalPath(folder, local_path)
+        if not folder.path.is_dir():
+            return
+        return folder.tracks_in_tree() if show_all else folder.tracks_in_folder()
+
+    async def _folder_tracks(self, ctx, player, folder, show_all=False):
+        if not await self._localtracks_check(ctx):
+            return
+        local_path = await self.config.localpath()
+        folder = LocalPath(folder, local_path)
+        audio_data = LocalPath(local_path, local_path)
+        try:
+            folder.path.relative_to(audio_data.to_string())
+        except ValueError:
+            return
+        local_tracks = []
+        for local_file in await self._all_folder_tracks(ctx, folder, show_all):
+            trackdata = await player.load_tracks(local_file.track.to_string())
+            try:
+                local_tracks.append(trackdata.tracks[0])
+            except IndexError:
+                pass
+        return local_tracks
+
+    async def _local_play_all(self, ctx, folder, show_all=False):
+        if not await self._localtracks_check(ctx):
+            return
+        await ctx.invoke(self.search, query=("folder:" + folder), show_all=show_all)
+
+    async def _all_folder_tracks(self, ctx, folder, show_all=False):
+        if not await self._localtracks_check(ctx):
+            return
+        local_path = await self.config.localpath()
+        folder = LocalPath(folder, local_path)
+        return folder.tracks_in_tree() if show_all else folder.tracks_in_folder()
+
+    async def _localtracks_check(self, ctx):
+        local_path = await self.config.localpath()
+        folder = LocalPath(None, local_path)
+        if folder.localtrack_folder.is_dir():
+            return True
+        if ctx.invoked_with != "start":
+            await self._embed_msg(ctx, _("No localtracks folder."))
+
+        return False
+
+    @staticmethod
+    async def _build_local_search_list(to_search, search_words):
+        to_search_string = {i.track.name for i in to_search}
+        search_results = process.extract(search_words, to_search_string, limit=50)
+        search_list = []
+        for track_match, percent_match in search_results:
+            if percent_match > 75:
+                search_list.extend(
+                    [i.track.to_string_hidden() for i in to_search if i.track.name == track_match]
+                )
+        return search_list
 
     @commands.command()
     @commands.guild_only()
@@ -1448,7 +1501,7 @@ class Audio(commands.Cog):
         emoji = {"prev": "⏮", "stop": "⏹", "pause": "⏸", "next": "⏭"}
         player = lavalink.get_player(ctx.guild.id)
         if player.current:
-            arrow = await self._draw_time(ctx)
+            arrow = await draw_time(ctx)
             pos = lavalink.utils.format_time(player.position)
             if player.current.is_stream:
                 dur = "LIVE"
@@ -1641,9 +1694,9 @@ class Audio(commands.Cog):
         guild_data = await self.config.guild(ctx.guild).all()
         restrict = await self.config.restrict()
         if restrict:
-            if self._match_url(query):
-                url_check = self._url_check(query)
-                if not url_check:
+            if match_url(query):
+                valid_url = url_check(query)
+                if not valid_url:
                     return await self._embed_msg(ctx, _("That URL is not allowed."))
         if not self._player_check(ctx):
             if self._connection_aborted:
@@ -1655,7 +1708,7 @@ class Audio(commands.Cog):
                 if (
                     not ctx.author.voice.channel.permissions_for(ctx.me).connect
                     or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                    and self._userlimit(ctx.author.voice.channel)
+                    and userlimit(ctx.author.voice.channel)
                 ):
                     return await self._embed_msg(
                         ctx, _("I don't have permission to connect to your channel.")
@@ -1703,7 +1756,7 @@ class Audio(commands.Cog):
             await self._localtracks_check(ctx)
             query = query.replace("localtrack:", "").replace((local_path + "/"), "")
         allowed_files = (".mp3", ".flac", ".ogg")
-        if not self._match_url(query) and not (query.lower().endswith(allowed_files)):
+        if not match_url(query) and not (query.lower().endswith(allowed_files)):
             query = "ytsearch:{}".format(query)
 
         await self._enqueue_tracks(ctx, query)
@@ -2007,7 +2060,7 @@ class Audio(commands.Cog):
                         remain_tracks = len(youtube_links) - track_count
                         time_remain = (remain_tracks / 2) * five_time
                         if track_count < len(youtube_links):
-                            seconds = self._dynamic_time(int(time_remain))
+                            seconds = dynamic_time(int(time_remain))
                         if track_count == len(youtube_links):
                             seconds = "0s"
                         second_key = "lavalink_time"
@@ -2984,11 +3037,11 @@ class Audio(commands.Cog):
         if not player.current:
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
         tracklist = []
-        np_song = self._track_creator(player, "np")
+        np_song = track_creator(player, "np")
         tracklist.append(np_song)
         for track in player.queue:
             queue_idx = player.queue.index(track)
-            track_obj = self._track_creator(player, queue_idx)
+            track_obj = track_creator(player, queue_idx)
             tracklist.append(track_obj)
 
         playlist = await create_playlist(ctx, scope, playlist_name, None, tracklist, author, guild)
@@ -3446,7 +3499,7 @@ class Audio(commands.Cog):
         )
         if (
             not uploaded_playlist_url
-            or not self._match_yt_playlist(uploaded_playlist_url)
+            or not match_yt_playlist(uploaded_playlist_url)
             or not (await self.music_cache.lavalink_query(player, uploaded_playlist_url))[0]
         ):
             if version == "v3":
@@ -3637,7 +3690,7 @@ class Audio(commands.Cog):
             except Exception:
                 continue
             try:
-                track_obj = self._track_creator(player, other_track=track[0])
+                track_obj = track_creator(player, other_track=track[0])
                 track_list.append(track_obj)
                 successfull_count += 1
             except Exception:
@@ -3696,7 +3749,7 @@ class Audio(commands.Cog):
                 if (
                     not ctx.author.voice.channel.permissions_for(ctx.me).connect
                     or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                    and self._userlimit(ctx.author.voice.channel)
+                    and userlimit(ctx.author.voice.channel)
                 ):
                     await self._embed_msg(
                         ctx, _("I don't have permission to connect to your channel.")
@@ -3749,7 +3802,7 @@ class Audio(commands.Cog):
             if not tracks:
                 return await self._embed_msg(ctx, _("Nothing found."))
             for track in tracks:
-                track_obj = self._track_creator(player, other_track=track)
+                track_obj = track_creator(player, other_track=track)
                 tracklist.append(track_obj)
             self._play_lock(ctx, False)
         elif not query.startswith("http"):
@@ -3762,10 +3815,10 @@ class Audio(commands.Cog):
             tracks, called_api = await self.music_cache.lavalink_query(player, query)
         if not search and len(tracklist) == 0:
             for track in tracks:
-                track_obj = self._track_creator(player, other_track=track)
+                track_obj = track_creator(player, other_track=track)
                 tracklist.append(track_obj)
         elif len(tracklist) == 0:
-            track_obj = self._track_creator(player, other_track=tracks[0])
+            track_obj = track_creator(player, other_track=tracks[0])
             tracklist.append(track_obj)
         return tracklist
 
@@ -3861,7 +3914,7 @@ class Audio(commands.Cog):
         queue_idx_end = queue_idx_start + 10
         queue_list = ""
         try:
-            arrow = await self._draw_time(ctx)
+            arrow = await draw_time(ctx)
         except AttributeError:
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
         pos = lavalink.utils.format_time(player.position)
@@ -3954,7 +4007,7 @@ class Audio(commands.Cog):
         queue_idx = 0
         for track in queue_list:
             queue_idx = queue_idx + 1
-            if not self._match_url(track.uri):
+            if not match_url(track.uri):
                 if track.title == "Unknown title":
                     track_title = track.uri.split("/")[2]
                 else:
@@ -4187,7 +4240,7 @@ class Audio(commands.Cog):
                 if (
                     not ctx.author.voice.channel.permissions_for(ctx.me).connect
                     or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                    and self._userlimit(ctx.author.voice.channel)
+                    and userlimit(ctx.author.voice.channel)
                 ):
                     return await self._embed_msg(
                         ctx, _("I don't have permission to connect to your channel.")
@@ -4272,7 +4325,7 @@ class Audio(commands.Cog):
                     return await self._local_play_all(ctx, localfolder)
                 else:
                     tracks = await self._folder_list(ctx, folder)
-            elif not self._match_url(query):
+            elif not match_url(query):
                 query = "ytsearch:{}".format(query)
                 tracks, called_api = await self.music_cache.lavalink_query(player, query)
             else:
@@ -4479,7 +4532,7 @@ class Audio(commands.Cog):
                     abs_position = False
                 except ValueError:
                     abs_position = True
-                    seconds = int(await self._time_convert(seconds) / 1000)
+                    seconds = int(await time_convert(seconds) / 1000)
                 if seconds == 0:
                     return await self._embed_msg(ctx, _("Invalid input for the time to seek."))
                 if not abs_position:
@@ -4727,7 +4780,7 @@ class Audio(commands.Cog):
             embed = discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("Track Skipped"),
-                description=await self._get_description(player.current),
+                description=await get_description(player.current),
             )
             await ctx.send(embed=embed)
 
@@ -4787,7 +4840,7 @@ class Audio(commands.Cog):
             if (
                 not ctx.author.voice.channel.permissions_for(ctx.me).connect
                 or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                and self._userlimit(ctx.author.voice.channel)
+                and userlimit(ctx.author.voice.channel)
             ):
                 return await self._embed_msg(
                     ctx, _("I don't have permission to connect to your channel.")

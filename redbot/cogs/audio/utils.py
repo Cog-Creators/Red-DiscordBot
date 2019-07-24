@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 
 import discord
 import lavalink
+from redbot.core.bot import Red
 
 from redbot.core import Config, commands
 from .converters import _pass_config_to_converters
@@ -32,10 +33,10 @@ __all__ = [
 ]
 
 
-def pass_config_to_dependencies(config: Config):
-    _pass_config_to_playlist(config)
-    _pass_config_to_converters(config)
-    _pass_config_to_localtracks(config)
+def pass_config_to_dependencies(config: Config, bot: Red):
+    _pass_config_to_playlist(config, bot)
+    _pass_config_to_converters(config, bot)
+    _pass_config_to_localtracks(config, bot)
 
 
 def track_limit(track, maxlength):

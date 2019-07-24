@@ -3,6 +3,7 @@ import functools
 from typing import Optional, Tuple, Union
 
 import discord
+from redbot.core.bot import Red
 
 from redbot.core import Config, commands
 from redbot.core.i18n import Translator
@@ -19,6 +20,7 @@ __all__ = [
     "get_lazy_converter",
 ]
 _config = None
+_bot = None
 
 _SCOPE_HELP = """
 Scope must be a valid version of one of the following:
@@ -39,10 +41,12 @@ Guild must be a valid version of one of the following:
 """
 
 
-def _pass_config_to_converters(config: Config):
-    global _config
+def _pass_config_to_converters(config: Config, bot: Red):
+    global _config, _bot
     if _config is None:
         _config = config
+    if _bot is None:
+        _bot = bot
 
 
 class PlaylistConverter(commands.Converter):
