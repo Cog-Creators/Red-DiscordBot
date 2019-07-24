@@ -570,7 +570,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Loads packages
 
-        You can see unloaded packages with `[p]cogs`
+        You can see a list of packages with `[p]cogs`
         """
         if not cogs:
             return await ctx.send_help()
@@ -642,7 +642,8 @@ class Core(commands.Cog, CoreLogic):
     async def unload(self, ctx: commands.Context, *cogs: str):
         """
         Unloads packages
-        You can see loaded packages with `[p]cogs`
+
+        You can see a list of packages with `[p]cogs`
         """
         if not cogs:
             return await ctx.send_help()
