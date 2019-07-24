@@ -77,7 +77,7 @@ async def _init(bot: Red):
         attempts = 0
 
         while mod is None and attempts < 12:  # wait up to an hour to find a matching case
-
+            attempts += 1
             try:
                 entry = await guild.audit_logs(
                     action=discord.AuditLogAction.ban, before=before, after=after
@@ -115,17 +115,20 @@ async def _init(bot: Red):
         attempts = 0
 
         while mod is None and attempts < 12:  # wait up to an hour to find a matching case
-
+            attempts += 1
             try:
                 entry = await guild.audit_logs(
                     action=discord.AuditLogAction.unban, before=before, after=after
-                ).find(lambda e: e.target.id == user.id and e.mod.id != guild.me.id)
+                ).find(lambda e: e.target.id == user.id)
             except discord.Forbidden:
                 break
             except discord.HTTPException:
                 pass
             else:
                 if entry:
+                    if entry.mod.id == guild.me.id:
+                        # Don't create modlog entires for the bot's own unbans, cogs do this.
+                        return
                     mod, reason, date = entry.mod, entry.reason, entry.created_at
 
             await asyncio.sleep(300)
