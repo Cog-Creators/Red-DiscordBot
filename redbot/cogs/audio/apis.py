@@ -128,11 +128,6 @@ _PARSER = {
     },
 }
 
-# _TOP_100_GLOBALS = (
-#     "https://feed2json.org/convert?url="
-#     "https%3A%2F%2Fwww.youtube.com%2Ffeeds%2Fvideos.xml%3F"
-#     "playlist_id%3DPL4fGSI1pDJn5kI81J1fYWK5eZRl1zJ5kM"
-# )
 
 _TOP_100_GLOBALS = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn6puJdseH2Rt9sMvt9E2M4i"
 _TOP_100_US = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn5rWitrRWFKdm-ulaFiIyoK"
