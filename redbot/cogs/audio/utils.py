@@ -10,7 +10,7 @@ from redbot.core.bot import Red
 
 from redbot.core import Config, commands
 from .converters import _pass_config_to_converters
-from .localtracks import _pass_config_to_localtracks
+from .localtracks import _pass_config_to_localtracks, LocalPath
 from .playlists import _pass_config_to_playlist
 
 
@@ -33,10 +33,10 @@ __all__ = [
 ]
 
 
-def pass_config_to_dependencies(config: Config, bot: Red):
+def pass_config_to_dependencies(config: Config, bot: Red, localtracks_folder: str):
     _pass_config_to_playlist(config, bot)
     _pass_config_to_converters(config, bot)
-    _pass_config_to_localtracks(config, bot)
+    _pass_config_to_localtracks(config, bot, localtracks_folder)
 
 
 def track_limit(track, maxlength):
@@ -132,13 +132,14 @@ async def remove_react(message, react_emoji, react_user):
 
 
 async def get_description(track):
-    if "localtracks" in track.uri:  # TODO: Local
+    if "localtracks" in track.uri:
+        local_track = LocalPath(track.uri)
         if not track.title == "Unknown title":
             return "**{} - {}**\n{}".format(
-                track.author, track.title, track.uri.replace("localtracks/", "")
+                track.author, track.title, local_track.to_string_hidden()
             )
         else:
-            return "{}".format(track.uri.replace("localtracks/", ""))
+            return local_track.to_string_hidden()
     else:
         return "**[{}]({})**".format(track.title, track.uri)
 
