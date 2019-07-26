@@ -1,12 +1,24 @@
+# Data files
 *.json
-*.pyc
-__pycache__
 data
 !data/trivia/*
 !data/audio/playlists/*
+
+# Python
+*.pyc
+__pycache__
+
+#Microsoft Piles
 *.exe
 *.dll
+
+# Red Discord bot files
 start_red*
 start_launcher.sh
 start_launcher.command
+
+# Hidden Files
 lib
+
+# IDE Files
+.idea/

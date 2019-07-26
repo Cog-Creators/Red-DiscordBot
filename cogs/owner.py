@@ -841,6 +841,7 @@ class Owner:
         server_url = "https://discord.gg/red"
         dpy_repo = "https://github.com/Rapptz/discord.py"
         python_url = "https://www.python.org/"
+        version_tree = "https://github.com/Cog-Creators/Red-DiscordBot/tree/V3/develop"
         since = datetime.datetime(2016, 1, 2, 0, 0)
         days_since = (datetime.datetime.utcnow() - since).days
         dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
@@ -860,12 +861,12 @@ class Owner:
             owner = "Unknown"
 
         about = (
-            "This is an instance of [Red, an open source Discord bot]({}) "
-            "created by [Twentysix]({}) and improved by many.\n\n"
-            "Red is backed by a passionate community who contributes and "
-            "creates content for everyone to enjoy. [Join us today]({}) "
-            "and help us improve!\n\n"
-            "".format(red_repo, author_repo, server_url))
+            "This Version of [Red]({}) is dead "
+            "Why the hell you using this dead version "
+            "go and use [V3]({}) like everyone is doing \n\n"
+            "Oh i guess you having nostalgia i apoligize \n\n"
+            "[Join the red support ssverer]({})" # i did this on purpose :omegalul:
+            "".format(red_repo, version_tree, server_url))
 
         embed = discord.Embed(colour=discord.Colour.red())
         embed.add_field(name="Instance owned by", value=str(owner))
