@@ -179,30 +179,38 @@ class LocalPath(ChdirClean):
 
 
 class Query:
-    def __init__(self, query: Union[LocalPath, str], **kwargs):
-        self.valid = query != "InvalidQueryPlaceHolderName"
-        self.id = kwargs.get("id", None)
+    def __init__(self, query: Union[LocalPath, str], **kwargs)
+        self.valid : bool = query != "InvalidQueryPlaceHolderName"
+        self.id: Optional[str] = kwargs.get("id", None)
         _localtrack = LocalPath(query)
-        self.track = _localtrack if (_localtrack.is_file() or _localtrack.is_dir()) else query
-        self.is_local = kwargs.get("local", False)
-        self.is_spotify = kwargs.get("spotify", False)
-        self.is_youtube = kwargs.get("youtube", False)
-        self.is_soundcloud = kwargs.get("soundcloud", False)
-        self.is_bandcamp = kwargs.get("bandcamp", False)
-        self.is_vimeo = kwargs.get("vimeo", False)
-        self.is_mixer = kwargs.get("mixer", False)
-        self.is_twitch = kwargs.get("twitch", False)
-        self.is_other = kwargs.get("other", False)
-        self.single_track = kwargs.get("single", False)
-        self.is_playlist = kwargs.get("playlist", False)
-        self.is_album = kwargs.get("album", False)
-        self.is_search = kwargs.get("search", False)
+        self.track: Union[LocalPath, str] = _localtrack if (_localtrack.is_file() or _localtrack.is_dir()) else query
+        
+        self.is_local: bool = kwargs.get("local", False)
+        self.is_spotify: bool  = kwargs.get("spotify", False)
+        self.is_youtube: bool  = kwargs.get("youtube", False)
+        self.is_soundcloud: bool  = kwargs.get("soundcloud", False)
+        self.is_bandcamp: bool  = kwargs.get("bandcamp", False)
+        self.is_vimeo: bool  = kwargs.get("vimeo", False)
+        self.is_mixer: bool  = kwargs.get("mixer", False)
+        self.is_twitch: bool  = kwargs.get("twitch", False)
+        self.is_other: bool  = kwargs.get("other", False)
+        self.is_playlist: bool  = kwargs.get("playlist", False)
+        self.is_album: bool  = kwargs.get("album", False)
+        self.is_search: bool  = kwargs.get("search", False)
+        self.is_stream: bool = kwargs.get("stream", False)
 
-        self.lavalink_query = self.get_query()
+        self.single_track: bool  = kwargs.get("single", False)
 
-        self.local_name = kwargs.get("name", None)
+        self.start_time: int = kwargs.get("start_time", 0)
+        self.local_name: Optional[str] = kwargs.get("name", None)
+
+        self.lavalink_query: str = self.get_query()
+
         if self.is_playlist or self.is_album:
             self.single_track = False
+
+    def __str__(self):
+        return str(self.lavalink_query)
 
     @classmethod
     def process_input(cls, query, **kwargs):
@@ -210,7 +218,7 @@ class Query:
             query = "InvalidQueryPlaceHolderName"
         if isinstance(query, str):
             query = query.strip("<>")
-        elif isinstance(query, Query):
+        elif isinstance(query, Query): #TODO: Add full path
             return query
         possible_values = dict()
         possible_values.update(kwargs)
@@ -220,8 +228,15 @@ class Query:
     @staticmethod
     def calculate_logic(track):
         returning = {}
-        if isinstance(track, LocalPath) and (track.is_file() or track.is_dir()):
+        if isinstance(track, LocalPath) and (
+            track.is_file() or track.is_dir()
+        ):
             returning["local"] = True
+            if track.is_file():
+                returning["single"] = True
+            elif track.is_dir():
+                returning["album"] = True
+            returning["name"] = track.name
         else:
             track = str(track)
             _localtrack = LocalPath(track)
@@ -235,40 +250,56 @@ class Query:
                 returning["local"] = True
                 returning["name"] = _localtrack.name
                 return returning
-            query_url = urlparse(track)
-            url_domain = ".".join(query_url.netloc.split(".")[-2:])
-            if not query_url.netloc:
-                url_domain = ".".join(query_url.path.split("/")[0].split(".")[-2:])
-            if url_domain in ["youtube.com", "youtu.be"]:
-                returning["youtube"] = True
-            elif url_domain == "spotify.com":
-                returning["spotify"] = True
-            elif url_domain == "soundcloud.com":
-                returning["soundcloud"] = True
-            elif url_domain == "bandcamp.com":
-                returning["bandcamp"] = True
-            elif url_domain == "vimeo.com":
-                returning["vimeo"] = True
-            elif url_domain == "mixer.com":
-                returning["mixer"] = True
-            elif url_domain == "twitch.tv":
-                returning["twitch"] = True
-            elif "http:/" not in track:
+            try:
+                query_url = urlparse(track)  
+                if all([query_url.scheme, query_url.netloc, query_url.path]):
+                    url_domain = ".".join(query_url.netloc.split(".")[-2:])
+                    if not query_url.netloc:
+                        url_domain = ".".join(query_url.path.split("/")[0].split(".")[-2:])
+                    if url_domain in ["youtube.com", "youtu.be"]:
+                        returning["youtube"] = True
+                        if "&t=" in track:
+                            match = re.search(r"&t=(\d+)s?", track)
+                            if match:
+                                returning["start_time"] = match.group(1)
+                    elif url_domain == "spotify.com":
+                        returning["spotify"] = True
+                    elif url_domain == "soundcloud.com":
+                        returning["soundcloud"] = True
+                        if "#t=" in track:
+                            match = re.search(r"#t=(\d+):(\d+)s?", track)
+                            if match:
+                                returning["start_time"] = (int(match.group(1)) * 60) + int(match.group(2))
+                    elif url_domain == "bandcamp.com":
+                        returning["bandcamp"] = True
+                    elif url_domain == "vimeo.com":
+                        returning["vimeo"] = True
+                    elif url_domain == "mixer.com":
+                        returning["mixer"] = True
+                    elif url_domain == "twitch.tv":
+                        returning["twitch"] = True
+                        if "?t=" in track:
+                            match = re.search(r"\?t=(\d+)h(\d+)m(\d+)s", track)
+                            if match:
+                                returning["start_time"] = (int(match.group(1)) * 60 * 60) + (int(match.group(2)) * 60) + int(match.group(3))
+                   
+                        if not any(x in track for x in ["/clip/", "/videos/"]):
+                            returning["stream"] = True
+                    else:
+                        returning["other"] = True
+                        returning["single"] = True
+                else:
+                    returning["search"] = True
+                    returning["youtube"] = True
+                    returning["single"] = True
+            except Exception:
                 returning["search"] = True
                 returning["youtube"] = True
                 returning["single"] = True
-            else:
-                returning["other"] = True
-                returning["single"] = True
-
         return returning
 
     def get_query(self):
         if self.is_local:
-            if self.track.path.is_file():
-                self.single_track = True
-            elif self.track.path.is_dir():
-                self.is_album = True
             return self.track.to_string()
         elif self.is_spotify:
             if "/playlist/" in self.track:
@@ -278,7 +309,11 @@ class Query:
             elif "/track/" in self.track:
                 self.single_track = True
             val = re.sub(r"(http[s]?://)?(open.spotify.com)/", "", self.track).replace("/", ":")
-            self.id = val.split(":")[-1]
+            self.id = val.split(":", 1)[-1]
+            if "#" in self.id:
+                match = re.search(r"#(\d+):(\d+)", self.track)
+                if match:
+                    self.start_time = (int(match.group(1)) * 60) + int(match.group(2))
             return f"spotify:{val}"
         elif self.is_youtube:
             if "playlist?" in self.track:
@@ -286,8 +321,11 @@ class Query:
             else:
                 self.single_track = True
             return f"ytsearch:{self.track}"
+        elif self.is_soundcloud:
+            return f"scsearch:{self.track}"
         else:
             return self.track
+
 
 
 async def _localtracks_check(self, ctx):
