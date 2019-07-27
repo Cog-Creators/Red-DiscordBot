@@ -1316,7 +1316,12 @@ class Config:
             return self.get_custom_lock(self.GUILD)
         else:
             id_data = IdentifierData(
-                self.unique_identifier, self.MEMBER, (str(guild.id),), (), self.custom_groups
+                self.cog_name,
+                self.unique_identifier,
+                category=self.MEMBER,
+                primary_key=(str(guild.id),),
+                identifiers=(),
+                primary_key_len=2,
             )
             return self._lock_cache.setdefault(id_data, asyncio.Lock())
 
@@ -1332,10 +1337,23 @@ class Config:
         -------
         asyncio.Lock
         """
-        id_data = IdentifierData(
-            self.unique_identifier, group_identifier, (), (), self.custom_groups
-        )
-        return self._lock_cache.setdefault(id_data, asyncio.Lock())
+        try:
+            pkey_len, is_custom = ConfigCategory.get_pkey_info(
+                group_identifier, self.custom_groups
+            )
+        except KeyError:
+            raise ValueError(f"Custom group not initialized: {group_identifier}") from None
+        else:
+            id_data = IdentifierData(
+                self.cog_name,
+                self.unique_identifier,
+                category=group_identifier,
+                primary_key=(),
+                identifiers=(),
+                primary_key_len=pkey_len,
+                is_custom=is_custom,
+            )
+            return self._lock_cache.setdefault(id_data, asyncio.Lock())
 
 
 async def migrate(cur_driver_cls: Type[BaseDriver], new_driver_cls: Type[BaseDriver]) -> None:
