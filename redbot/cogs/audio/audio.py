@@ -1446,9 +1446,7 @@ class Audio(commands.Cog):
         audio_data = localtracks.LocalPath(
             localtracks.LocalPath(None).localtrack_folder.absolute()
         )
-        if not await self._localtracks_check(ctx):  # TODO: Remove
-            print("Failed Check : _localtracks_folders")
-            print(audio_data.to_string())
+        if not await self._localtracks_check(ctx):
             return
 
         return audio_data.subfolders_in_tree() if show_all else audio_data.subfolders()
@@ -1457,7 +1455,6 @@ class Audio(commands.Cog):
         if not await self._localtracks_check(ctx):
             return
         query = localtracks.Query.process_input(query)
-        print(query.track)
         if not query.track.is_dir():
             return
         return query.track.tracks_in_tree() if show_all else query.track.tracks_in_folder()
@@ -1465,22 +1462,19 @@ class Audio(commands.Cog):
     async def _folder_tracks(
         self, ctx, player: lavalink.player_manager.Player, query: localtracks.Query, show_all=False
     ):
-        if not await self._localtracks_check(ctx):  # TODO: Remove
-            print("Failed Check : _folder_tracks")
-            print(query.track.to_string())
+        if not await self._localtracks_check(ctx):
             return
 
         audio_data = localtracks.LocalPath(None)
         try:
             query.track.path.relative_to(audio_data.to_string())
-        except ValueError:  # TODO: Remove
-            print("Erroring here : ValueError")
-            print(query.track.path)
-            print(audio_data.to_string())
+        except ValueError:
             return
         local_tracks = []
         for local_file in await self._all_folder_tracks(ctx, query, show_all):
+            print(local_file.track.to_string())
             trackdata = await player.load_tracks(local_file.track.to_string())
+            print(trackdata.__dict__)
             try:
                 local_tracks.append(trackdata.tracks[0])
             except IndexError:
@@ -1491,8 +1485,6 @@ class Audio(commands.Cog):
         self, ctx: commands.Context, query: localtracks.Query, show_all=False, from_search=False
     ):
         if not await self._localtracks_check(ctx):
-            print("Failed Check : _local_play_all")
-            print(query.track.to_string())
             return
         if from_search:
             query = localtracks.Query.process_input(
@@ -1504,11 +1496,11 @@ class Audio(commands.Cog):
         self, ctx: commands.Context, query: localtracks.Query, show_all=False
     ):
         if not await self._localtracks_check(ctx):
-            print("Failed Check : _all_folder_tracks")
-            print(query.track.to_string())
             return
 
-        return query.track.tracks_in_tree() if show_all else query.track.tracks_in_folder()
+        return (
+            query.track.tracks_in_tree() if show_all else query.track.tracks_in_folder()
+        )  # FIXME
 
     async def _localtracks_check(self, ctx: commands.Context):  # TODO: Remove
         folder = localtracks.LocalPath(None)
@@ -1516,8 +1508,6 @@ class Audio(commands.Cog):
             return True
         if ctx.invoked_with != "start":
             await self._embed_msg(ctx, _("No localtracks folder."))
-        print("Inside _localtracks_check")
-        print(folder.to_string())
         return False
 
     @staticmethod
@@ -4355,10 +4345,8 @@ class Audio(commands.Cog):
                     result, called_api = await self.music_cache.lavalink_query(player, query)
                     tracks = result.tracks
                 else:
-                    print("local folder")
-                    tracks = await self._folder_tracks(ctx, player, query)
+                    tracks = await self._folder_tracks(ctx, player, query, True)
                 if not tracks:
-                    print("Line 4360")
                     return await self._embed_msg(ctx, _("Nothing found."))
 
                 queue_dur = await queue_duration(ctx)
@@ -4398,16 +4386,13 @@ class Audio(commands.Cog):
                 tracks = await self._folder_list(ctx, query)
             elif query.is_local and query.is_album:
                 if ctx.invoked_with == "folder":
-                    print("local")
                     return await self._local_play_all(ctx, query, from_search=True)
                 else:
-                    print("list")
                     tracks = await self._folder_list(ctx, query)
             else:
                 result, called_api = await self.music_cache.lavalink_query(player, query)
                 tracks = result.tracks
             if not tracks:
-                print("Line 4406")
                 return await self._embed_msg(ctx, _("Nothing found."))
         else:
             tracks = query
