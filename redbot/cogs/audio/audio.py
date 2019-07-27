@@ -3433,7 +3433,8 @@ class Audio(commands.Cog):
             )
         else:
             return await self._embed_msg(
-                ctx, _("{name} ({id}) has been updated.").format(id=playlist.id, name=playlist.name)
+                ctx,
+                _("{name} ({id}) has been updated.").format(id=playlist.id, name=playlist.name),
             )
 
     @checks.is_owner()
