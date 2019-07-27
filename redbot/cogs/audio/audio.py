@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import asyncio
+import contextlib
 import datetime
 import heapq
 import json
@@ -5138,9 +5139,10 @@ class Audio(commands.Cog):
         except discord.Forbidden:
             if not emoji:
                 return
-            for key in emoji.values():
-                await asyncio.sleep(0.2)
-                await message.remove_reaction(key, self.bot.user)
+            with contextlib.suppress(discord.HTTPException):
+                for key in emoji.values():
+                    await asyncio.sleep(0.2)
+                    await message.remove_reaction(key, self.bot.user)
         except discord.HTTPException:
             return
 
