@@ -88,7 +88,7 @@ async def _init(bot: Red):
                 pass
             else:
                 if entry:
-                    if entry.mod.id == guild.me.id:
+                    if entry.user.id == guild.me.id:
                         # Don't create modlog entires for the bot's own bans, cogs do this.
                         return
                     mod, reason, date = entry.mod, entry.reason, entry.created_at
@@ -126,7 +126,7 @@ async def _init(bot: Red):
                 pass
             else:
                 if entry:
-                    if entry.mod.id == guild.me.id:
+                    if entry.user.id == guild.me.id:
                         # Don't create modlog entires for the bot's own unbans, cogs do this.
                         return
                     mod, reason, date = entry.mod, entry.reason, entry.created_at
