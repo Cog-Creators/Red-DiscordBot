@@ -13,14 +13,13 @@ from typing import Dict, List, Mapping, NoReturn, Optional, Tuple, Union
 import aiohttp
 import lavalink
 from databases import Database
-from lavalink.rest_api import LoadResult, Track
+from lavalink.rest_api import LoadResult
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from .errors import InvalidTableError, SpotifyFetchError
 from .utils import CacheLevel, Notifier
-from . import localtracks
 
 log = logging.getLogger("red.audio.cache")
 _ = Translator("Audio", __file__)
