@@ -637,7 +637,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 if not recently_played:
                     tries += 1
                 if (
-                    tries > 50 and not recently_played
+                    tries > 15 and not recently_played
                 ):  #  Allow owner to customize date range and improve logic
                     break
 
@@ -659,7 +659,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         tracks = None
         if cache_enabled:
             tracks = await self.play_random()
-        if tracks is None:
+        if not tracks:
             results = await player.load_tracks(_TOP_100_US)  # TODO: Make this customizable
             tracks = results.tracks
 
