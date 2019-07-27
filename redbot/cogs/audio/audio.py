@@ -1423,7 +1423,17 @@ class Audio(commands.Cog):
         """Search for songs across all localtracks folders."""
         if not await self._localtracks_check(ctx):
             return
-        all_tracks = await self._folder_list(ctx, await self.config.localpath(), show_all=True)
+        all_tracks = await self._folder_list(
+            ctx,
+            (
+                localtracks.Query.process_input(
+                    localtracks.LocalPath(
+                        await self.config.localpath()
+                    ).localtrack_folder.absolute()
+                )
+            ),
+            show_all=True,
+        )
         if not all_tracks:
             return await self._embed_msg(ctx, _("No album folders found."))
         search_list = await self._build_local_search_list(all_tracks, search_words)
@@ -1432,7 +1442,9 @@ class Audio(commands.Cog):
         await ctx.invoke(self.search, query=search_list)
 
     async def _localtracks_folders(self, ctx: commands.Context, show_all=False):
-        audio_data = localtracks.LocalPath(None)
+        audio_data = localtracks.LocalPath(
+            localtracks.LocalPath(None).localtrack_folder.absolute()
+        )
         if not await self._localtracks_check(ctx):
             return
 
@@ -1442,6 +1454,7 @@ class Audio(commands.Cog):
         if not await self._localtracks_check(ctx):
             return
         query = localtracks.Query.process_input(query)
+        print(query.track)
         if not query.track.is_dir():
             return
         return query.track.tracks_in_tree() if show_all else query.track.tracks_in_folder()
