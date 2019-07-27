@@ -72,31 +72,28 @@ async def _init(bot: Red):
         when = datetime.utcnow()
         before = when + timedelta(minutes=1)
         after = when - timedelta(minutes=1)
+        await asyncio.sleep(10)  # prevent small delays from causing a 5 minute delay on entry
 
-        mod, reason, date = None, None, None
         attempts = 0
-
-        while mod is None and attempts < 12:  # wait up to an hour to find a matching case
+        while attempts < 12:  # wait up to an hour to find a matching case
             attempts += 1
             try:
                 entry = await guild.audit_logs(
                     action=discord.AuditLogAction.ban, before=before, after=after
-                ).find(lambda e: e.target.id == member.id)
+                ).find(lambda e: e.target.id == member.id and after < e.created_at < before)
             except discord.Forbidden:
                 break
             except discord.HTTPException:
                 pass
             else:
                 if entry:
-                    if entry.user.id == guild.me.id:
+                    if entry.user.id != guild.me.id:
                         # Don't create modlog entires for the bot's own bans, cogs do this.
-                        return
-                    mod, reason, date = entry.user, entry.reason, entry.created_at
+                        mod, reason, date = entry.user, entry.reason, entry.created_at
+                        await create_case(_bot_ref, guild, date, "ban", member, mod, reason)
+                    return
 
             await asyncio.sleep(300)
-
-        if mod:
-            await create_case(_bot_ref, guild, date, "ban", member, mod, reason)
 
     async def on_member_unban(guild: discord.Guild, user: discord.User):
         if not guild.me.guild_permissions.view_audit_log:
@@ -110,31 +107,28 @@ async def _init(bot: Red):
         when = datetime.utcnow()
         before = when + timedelta(minutes=1)
         after = when - timedelta(minutes=1)
+        await asyncio.sleep(10)  # prevent small delays from causing a 5 minute delay on entry
 
-        mod, reason, date = None, None, None
         attempts = 0
-
-        while mod is None and attempts < 12:  # wait up to an hour to find a matching case
+        while attempts < 12:  # wait up to an hour to find a matching case
             attempts += 1
             try:
                 entry = await guild.audit_logs(
                     action=discord.AuditLogAction.unban, before=before, after=after
-                ).find(lambda e: e.target.id == user.id)
+                ).find(lambda e: e.target.id == user.id and after < e.created_at < before)
             except discord.Forbidden:
                 break
             except discord.HTTPException:
                 pass
             else:
                 if entry:
-                    if entry.user.id == guild.me.id:
+                    if entry.user.id != guild.me.id:
                         # Don't create modlog entires for the bot's own unbans, cogs do this.
-                        return
-                    mod, reason, date = entry.user, entry.reason, entry.created_at
+                        mod, reason, date = entry.user, entry.reason, entry.created_at
+                        await create_case(_bot_ref, guild, date, "unban", user, mod, reason)
+                    return
 
             await asyncio.sleep(300)
-
-        if mod:
-            await create_case(_bot_ref, guild, date, "unban", user, mod, reason)
 
     bot.add_listener(on_member_ban)
     bot.add_listener(on_member_unban)
