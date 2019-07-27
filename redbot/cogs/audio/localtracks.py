@@ -265,7 +265,7 @@ class Query:
                 if track.startswith("sc "):
                     returning["invoked_from"] = "sc search"
                 elif track.startswith("list "):
-                    returning["invoked_from"] = "list"
+                    returning["invoked_from"] = "search list"
                 track = _remove_start.sub("", track, 1)
                 returning["queryforced"] = track
             _localtrack = LocalPath(track)

@@ -1469,7 +1469,10 @@ class Audio(commands.Cog):
         audio_data = localtracks.LocalPath(None)
         try:
             query.track.path.relative_to(audio_data.to_string())
-        except ValueError:
+        except ValueError: #TODO: Remove
+            print("Erroring here")
+            print(query.track.path)
+            print(audio_data.to_string())
             return
         local_tracks = []
         for local_file in await self._all_folder_tracks(ctx, query, show_all):
