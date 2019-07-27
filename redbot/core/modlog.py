@@ -91,7 +91,7 @@ async def _init(bot: Red):
                     if entry.user.id == guild.me.id:
                         # Don't create modlog entires for the bot's own bans, cogs do this.
                         return
-                    mod, reason, date = entry.mod, entry.reason, entry.created_at
+                    mod, reason, date = entry.user, entry.reason, entry.created_at
 
             await asyncio.sleep(300)
 
@@ -129,7 +129,7 @@ async def _init(bot: Red):
                     if entry.user.id == guild.me.id:
                         # Don't create modlog entires for the bot's own unbans, cogs do this.
                         return
-                    mod, reason, date = entry.mod, entry.reason, entry.created_at
+                    mod, reason, date = entry.user, entry.reason, entry.created_at
 
             await asyncio.sleep(300)
 
