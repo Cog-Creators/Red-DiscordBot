@@ -3862,7 +3862,8 @@ class Audio(commands.Cog):
             if not tracks:
                 return await self._embed_msg(ctx, _("Nothing found."))
         else:
-            tracks, called_api = await self.music_cache.lavalink_query(player, query)
+            result, called_api = await self.music_cache.lavalink_query(player, query)
+            tracks = result.tracks
 
         if not search and len(tracklist) == 0:
             for track in tracks:
