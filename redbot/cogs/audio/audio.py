@@ -894,7 +894,7 @@ class Audio(commands.Cog):
     async def _cacheage(self, ctx: commands.Context, age: int):
         """Sets the cache max age.
 
-        This commands allows you to set the max number of days before an entry in the cache before invalid.
+        This commands allows you to set the max number of days before an entry in the cache becomes invalid.
         """
         msg = ""
         if age < 7:
