@@ -19,7 +19,8 @@ from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from .errors import InvalidTableError, SpotifyFetchError
-from .utils import CacheLevel, Notifier
+from .utils import CacheLevel, Notifier, queue_duration
+from . import localtracks
 
 log = logging.getLogger("red.audio.cache")
 _ = Translator("Audio", __file__)
@@ -317,8 +318,9 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         last_updated = getattr(row, "last_updated", None)
         need_update = (
             (
-                datetime.datetime.fromisoformat(last_updated) + datetime.timedelta(days=30)
-            )  # TODO: Do not Hard code this ..... Give Owner option to customize
+                datetime.datetime.fromisoformat(last_updated)
+                + datetime.timedelta(days=await self.config.cache_age())
+            )
             < datetime.datetime.now(datetime.timezone.utc)
             if last_updated
             else True
@@ -577,7 +579,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             with contextlib.suppress(asyncio.TimeoutError):
                 try:
                     results = await player.load_tracks(query)
-                except KeyError:
+                except Exception:
                     return (
                         LoadResult({"loadType": "LOAD_FAILED", "playlistInfo": {}, "tracks": []}),
                         True,
@@ -635,7 +637,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 if not recently_played:
                     tries += 1
                 if (
-                    tries > 10 and not recently_played
+                    tries > 50 and not recently_played
                 ):  #  Allow owner to customize date range and improve logic
                     break
 

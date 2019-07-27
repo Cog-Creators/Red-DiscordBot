@@ -12,6 +12,7 @@ _config = None
 _bot = None
 _localtrack_folder = None
 _ = Translator("Audio", __file__)
+_remove_start = re.compile(r"^(sc|list) ")
 
 
 def _pass_config_to_localtracks(config: Config, bot: Red, folder: str):
@@ -260,6 +261,13 @@ class Query:
                 returning["album"] = True
         else:
             track = str(track)
+            if track.startswith("sc ") or track.startswith("list "):
+                if track.startswith("sc "):
+                    returning["invoked_from"] = "sc search"
+                elif track.startswith("list "):
+                    returning["invoked_from"] = "list"
+                track = _remove_start.sub("", track, 1)
+                returning["queryforced"] = track
             _localtrack = LocalPath(track)
             if _localtrack.is_file():
                 returning["local"] = True
@@ -318,6 +326,7 @@ class Query:
                             "/", ":"
                         )
                         _id = val.split(":", 1)[-1]
+                        _id = _id.split("?")[0]
                         returning["id"] = _id
                         if "#" in _id:
                             match = re.search(r"#(\d+):(\d+)", track)
