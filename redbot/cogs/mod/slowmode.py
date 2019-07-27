@@ -21,7 +21,7 @@ class Slowmode(MixinMeta):
         ctx,
         *,
         interval: commands.TimedeltaConverter(
-            minimum=timedelta(seconds=0), maximum=timedelta(hours=6)
+            minimum=timedelta(seconds=0), maximum=timedelta(hours=6), default_unit="seconds"
         ) = timedelta(seconds=0),
     ):
         """Changes channel's slowmode setting.

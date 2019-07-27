@@ -88,6 +88,19 @@ class IdentifierData:
             f"primary_key={self.primary_key} identifiers={self.identifiers}>"
         )
 
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, IdentifierData):
+            return False
+        return (
+            self.uuid == other.uuid
+            and self.category == other.category
+            and self.primary_key == other.primary_key
+            and self.identifiers == other.identifiers
+        )
+
+    def __hash__(self) -> int:
+        return hash((self.uuid, self.category, self.primary_key, self.identifiers))
+
     def add_identifier(self, *identifier: str) -> "IdentifierData":
         if not all(isinstance(i, str) for i in identifier):
             raise ValueError("Identifiers must be strings.")

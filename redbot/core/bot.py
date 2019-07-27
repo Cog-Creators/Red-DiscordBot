@@ -460,6 +460,8 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
     def remove_command(self, name: str) -> None:
         command = super().remove_command(name)
+        if not command:
+            return
         command.requires.reset()
         if isinstance(command, commands.Group):
             for subcommand in set(command.walk_commands()):
