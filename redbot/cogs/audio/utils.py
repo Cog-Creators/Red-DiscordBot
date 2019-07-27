@@ -6,11 +6,12 @@ from urllib.parse import urlparse
 
 import discord
 import lavalink
-from redbot.core.bot import Red
 
 from redbot.core import Config, commands
+from redbot.core.bot import Red
+
 from .converters import _pass_config_to_converters
-from .localtracks import _pass_config_to_localtracks, LocalPath
+from . import localtracks
 from .playlists import _pass_config_to_playlist
 
 
@@ -36,7 +37,7 @@ __all__ = [
 def pass_config_to_dependencies(config: Config, bot: Red, localtracks_folder: str):
     _pass_config_to_playlist(config, bot)
     _pass_config_to_converters(config, bot)
-    _pass_config_to_localtracks(config, bot, localtracks_folder)
+    localtracks._pass_config_to_localtracks(config, bot, localtracks_folder)
 
 
 def track_limit(track, maxlength):
@@ -132,8 +133,8 @@ async def remove_react(message, react_emoji, react_user):
 
 
 async def get_description(track):
-    if "localtracks" in track.uri:
-        local_track = LocalPath(track.uri)
+    if f"{os.sep}localtracks" in track.uri:
+        local_track = localtracks.LocalPath(track.uri)
         if not track.title == "Unknown title":
             return "**{} - {}**\n{}".format(
                 track.author, track.title, local_track.to_string_hidden()
@@ -172,10 +173,10 @@ def time_convert(length):
         mn = int(match.group(2)) if match.group(2) else 0
         sec = int(match.group(3)) if match.group(3) else 0
         pos = sec + (mn * 60) + (hr * 3600)
-        return pos * 1000
+        return pos
     else:
         try:
-            return int(length) * 1000
+            return int(length)
         except ValueError:
             return 0
 

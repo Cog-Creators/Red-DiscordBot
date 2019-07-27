@@ -3,9 +3,9 @@ import functools
 from typing import Optional, Tuple, Union
 
 import discord
-from redbot.core.bot import Red
 
 from redbot.core import Config, commands
+from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 from .playlists import PlaylistScope, standardize_scope
 

@@ -1,5 +1,4 @@
-from redbot.core import Config
-from redbot.core import commands
+from redbot.core import commands, Config
 
 _config = None
 
