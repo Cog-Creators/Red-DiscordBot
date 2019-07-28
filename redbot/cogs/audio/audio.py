@@ -327,13 +327,6 @@ class Audio(commands.Cog):
                 )
 
         if event_type == lavalink.LavalinkEvents.TRACK_START:
-            self.bot.dispatch(
-                "track_start",
-                player.channel.guild,
-                player.requester,
-                player.current.requester,
-                player.current,
-            )
             playing_song = player.fetch("playing_song")
             requester = player.fetch("requester")
             player.store("prev_song", playing_song)
@@ -341,6 +334,9 @@ class Audio(commands.Cog):
             player.store("playing_song", player.current.uri)
             player.store("requester", player.current.requester)
             self.skip_votes[player.channel.guild] = []
+            self.bot.dispatch(
+                "track_start", player.channel.guild, player.current.requester, player.current
+            )
         if event_type == lavalink.LavalinkEvents.TRACK_END:
             self.bot.dispatch("track_end", player.channel.guild)
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
