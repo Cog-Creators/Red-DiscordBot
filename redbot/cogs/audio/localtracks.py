@@ -57,27 +57,17 @@ class LocalPath(ChdirClean):
             path = str(path)
 
         self.cwd = Path.cwd()
-        print("Global folder: ", _localtrack_folder)
-
         if f"{os.sep}localtracks" in _localtrack_folder:
-            print("Predefined")
             self.localtrack_folder = Path(_localtrack_folder) if _localtrack_folder else self.cwd
         else:
-            print("Fixed")
             self.localtrack_folder = Path(_localtrack_folder) / "localtracks"
-        print(self.localtrack_folder.absolute())
 
         try:
             _path = Path(path)
-            print("PATH: ", _path)
-            self.localtrack_folder.relative_to(path)
-            _path.relative_to(str(self.localtrack_folder.absolute()))
+            _path.relative_to(self.localtrack_folder)
             self.path = _path
-            print("IS Relative")
         except (ValueError, TypeError):
-            print("Is Not relative:")
             self.path = self.localtrack_folder.joinpath(path) if path else self.localtrack_folder
-        print("PATH Final", self.path)
         try:
             if self.path.is_file():
                 parent = self.path.parent
@@ -170,7 +160,7 @@ class LocalPath(ChdirClean):
     def tracks_in_tree(self):
         tracks = []
         for track in self.multirglob(*[f"*{ext}" for ext in self._supported_music_ext]):
-            if track.is_file() and track.parent != self.localtrack_folder:
+            if track.exists() and track.is_file() and track.parent != self.localtrack_folder:
                 tracks.append(Query.process_input(LocalPath(str(track.absolute()))))
         return tracks
 
@@ -178,7 +168,7 @@ class LocalPath(ChdirClean):
         files = list(self.multirglob(*[f"*{ext}" for ext in self._supported_music_ext]))
         folders = []
         for f in files:
-            if f.parent not in folders and f.parent != self.localtrack_folder:
+            if f.exists() and f.parent not in folders and f.parent != self.localtrack_folder:
                 folders.append(f.parent)
         return_folders = []
         for folder in folders:
@@ -189,7 +179,7 @@ class LocalPath(ChdirClean):
     def tracks_in_folder(self):
         tracks = []
         for track in self.multiglob(*[f"*{ext}" for ext in self._supported_music_ext]):
-            if track.exists() and track.is_file():
+            if track.exists() and track.is_file() and track.parent != self.localtrack_folder:
                 tracks.append(Query.process_input(LocalPath(str(track.absolute()))))
         return tracks
 
@@ -197,7 +187,7 @@ class LocalPath(ChdirClean):
         files = list(self.multiglob(*[f"*{ext}" for ext in self._supported_music_ext]))
         folders = []
         for f in files:
-            if f.parent not in folders:
+            if f.exists() and f.parent not in folders and f.parent != self.localtrack_folder:
                 folders.append(f.parent)
         return_folders = []
         for folder in folders:
