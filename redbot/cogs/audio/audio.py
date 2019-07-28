@@ -477,12 +477,28 @@ class Audio(commands.Cog):
         This setting takes precedence over [p]audioset dc.
         """
 
+        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        if dj_enabled:
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._has_dj_role(
+                ctx, ctx.author
+            ):
+                return await self._embed_msg(ctx, _("You need the DJ role to toggle repeat."))
+
         autoplay = await self.config.guild(ctx.guild).auto_play()
+        repeat = await self.config.guild(ctx.guild).repeat()
+        msg = ""
+        msg += _("Auto-play when queue ends: {true_or_false}.").format(true_or_false=not autoplay)
         await self.config.guild(ctx.guild).auto_play.set(not autoplay)
-        await self._embed_msg(
-            ctx,
-            _("Auto-play when queue ends: {true_or_false}.").format(true_or_false=not autoplay),
+        if not autoplay is True and repeat is True:
+            msg += _("\nRepeat has been disabled.")
+            await self.config.guild(ctx.guild).repeat.set(False)
+
+        embed = discord.Embed(
+            title=_("Auto-play settings changed"), description=msg, colour=await ctx.embed_colour()
         )
+        await ctx.send(embed=embed)
+        if self._player_check(ctx):
+            await self._data_check(ctx)
 
     @audioset.command()
     @checks.admin_or_permissions(manage_roles=True)
@@ -4248,11 +4264,19 @@ class Audio(commands.Cog):
                     ctx, _("You must be in the voice channel to toggle repeat.")
                 )
 
+        autoplay = await self.config.guild(ctx.guild).auto_play()
         repeat = await self.config.guild(ctx.guild).repeat()
+        msg = ""
+        msg += _("Repeat tracks: {true_or_false}.").format(true_or_false=not repeat)
         await self.config.guild(ctx.guild).repeat.set(not repeat)
-        await self._embed_msg(
-            ctx, _("Repeat tracks: {true_or_false}.").format(true_or_false=not repeat)
+        if not repeat is True and autoplay is True:
+            msg += _("\nAuto-play has been disabled.")
+            await self.config.guild(ctx.guild).auto_play.set(False)
+
+        embed = discord.Embed(
+            title=_("Repeat settings changed"), description=msg, colour=await ctx.embed_colour()
         )
+        await ctx.send(embed=embed)
         if self._player_check(ctx):
             await self._data_check(ctx)
 
