@@ -338,18 +338,14 @@ class Audio(commands.Cog):
                 "track_start", player.channel.guild, player.current.requester, player.current
             )
         if event_type == lavalink.LavalinkEvents.TRACK_END:
+            prev_song = player.fetch("prev_song")
+            prev_requester = player.fetch("prev_requester")
+            self.bot.dispatch("queue_end", player.channel.guild, prev_song, prev_requester)
             self.bot.dispatch("track_end", player.channel.guild)
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
             prev_song = player.fetch("prev_song")
             prev_requester = player.fetch("prev_requester")
-            self.bot.dispatch(
-                "queue_end",
-                player.channel.guild,
-                prev_song,
-                prev_requester,
-                player.current,
-                player.current.requester,
-            )
+            self.bot.dispatch("queue_end", player.channel.guild, prev_song, prev_requester)
 
         if event_type == lavalink.LavalinkEvents.TRACK_START and notify:
             notify_channel = player.fetch("channel")
@@ -686,7 +682,7 @@ class Audio(commands.Cog):
         thumbnail = data["thumbnail"]
         dc = data["disconnect"]
         autoplay = data["auto_play"]
-        jarbuild = redbot.core.__version__
+        jarbuild = redbot.core.__version__  # ... hmmm
         maxlength = data["maxlength"]
         vote_percent = data["vote_percent"]
         current_level = CacheLevel(global_data["cache_level"])
