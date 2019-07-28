@@ -92,6 +92,12 @@ class LocalPath(ChdirClean):
         except OSError:
             return False
 
+    def exists(self):
+        try:
+            return self.path.exists()
+        except OSError:
+            return False
+
     def is_file(self):
         try:
             return self.path.is_file()
@@ -167,14 +173,14 @@ class LocalPath(ChdirClean):
                 folders.append(f.parent)
         return_folders = []
         for folder in folders:
-            if folder.is_dir():
+            if folder.exits() and folder.is_dir():
                 return_folders.append(LocalPath(str(folder.absolute())))
         return return_folders
 
     def tracks_in_folder(self):
         tracks = []
         for track in self.multiglob(*[f"*{ext}" for ext in self._supported_music_ext]):
-            if track.is_file():
+            if track.exits() and track.is_file():
                 tracks.append(Query.process_input(LocalPath(str(track.absolute()))))
         return tracks
 
@@ -186,7 +192,7 @@ class LocalPath(ChdirClean):
                 folders.append(f.parent)
         return_folders = []
         for folder in folders:
-            if folder.is_dir():
+            if folder.exits() and folder.is_dir():
                 return_folders.append(LocalPath(str(folder.absolute())))
         return return_folders
 
@@ -199,7 +205,7 @@ class Query:
         _localtrack: LocalPath = LocalPath(query)
 
         self.track: Union[LocalPath, str] = _localtrack if (
-            _localtrack.is_file() or _localtrack.is_dir()
+            (_localtrack.is_file() or _localtrack.is_dir()) and _localtrack.exists()
         ) else query
 
         self.valid: bool = query != "InvalidQueryPlaceHolderName"
@@ -255,7 +261,11 @@ class Query:
     @staticmethod
     def parse(track, **kwargs):
         returning = {}
-        if type(track) == type(LocalPath) and (track.is_file() or track.is_dir()):
+        if (
+            type(track) == type(LocalPath)
+            and (track.is_file() or track.is_dir())
+            and track.exists()
+        ):
             returning["local"] = True
             returning["name"] = track.name
             if track.is_file():
@@ -272,16 +282,17 @@ class Query:
                 track = _remove_start.sub("", track, 1)
                 returning["queryforced"] = track
             _localtrack = LocalPath(track)
-            if _localtrack.is_file():
-                returning["local"] = True
-                returning["single"] = True
-                returning["name"] = _localtrack.name
-                return returning
-            elif _localtrack.is_dir():
-                returning["album"] = True
-                returning["local"] = True
-                returning["name"] = _localtrack.name
-                return returning
+            if _localtrack.exists():
+                if _localtrack.is_file():
+                    returning["local"] = True
+                    returning["single"] = True
+                    returning["name"] = _localtrack.name
+                    return returning
+                elif _localtrack.is_dir():
+                    returning["album"] = True
+                    returning["local"] = True
+                    returning["name"] = _localtrack.name
+                    return returning
             try:
                 query_url = urlparse(track)
                 if all([query_url.scheme, query_url.netloc, query_url.path]):

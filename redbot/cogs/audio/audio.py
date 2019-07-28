@@ -555,7 +555,7 @@ class Audio(commands.Cog):
 
     @audioset.command()
     @checks.is_owner()
-    async def localpath(self, ctx: commands.Context, local_path=None):
+    async def localpath(self, ctx: commands.Context, *, local_path=None):
         """Set the localtracks path if the Lavalink.jar is not run from the Audio data folder.
 
         Leave the path blank to reset the path to the default, the Audio data directory.
@@ -609,7 +609,7 @@ class Audio(commands.Cog):
             )
 
         temp = localtracks.LocalPath(local_path)
-        if not temp.localtrack_folder.is_dir():
+        if not temp.localtrack_folder.exists():
             warn_msg = _(
                 "The path that was entered does not have localtracks folder in "
                 "that location. The path will still be saved, but please check the path and "
@@ -1390,7 +1390,7 @@ class Audio(commands.Cog):
             await ctx.invoke(self.local_play, play_subfolders=play_subfolders)
         else:
             dir = localtracks.LocalPath.joinpath(folder)
-            if not dir.is_dir():
+            if not dir.exists():
                 return await self._embed_msg(
                     ctx, _("No localtracks folder named {name}.").format(name=folder)
                 )
@@ -1402,7 +1402,9 @@ class Audio(commands.Cog):
         """Play a local track."""
         if not await self._localtracks_check(ctx):
             return
-        localtracks_folders = await self._localtracks_folders(ctx, search_subfolders=play_subfolders)
+        localtracks_folders = await self._localtracks_folders(
+            ctx, search_subfolders=play_subfolders
+        )
         if not localtracks_folders:
             return await self._embed_msg(ctx, _("No local track folders found."))
         len_folder_pages = math.ceil(len(localtracks_folders) / 5)
@@ -1456,8 +1458,7 @@ class Audio(commands.Cog):
                     localtracks.LocalPath(
                         await self.config.localpath()
                     ).localtrack_folder.absolute(),
-                    search_subfolders=play_subfolders
-
+                    search_subfolders=play_subfolders,
                 )
             ),
             show_all=play_subfolders,
@@ -1482,9 +1483,13 @@ class Audio(commands.Cog):
         if not await self._localtracks_check(ctx):
             return
         query = localtracks.Query.process_input(query)
-        if not query.track.is_dir():
+        if not query.track.exists():
             return
-        return query.track.tracks_in_tree() if query.search_subfolders else query.track.tracks_in_folder()
+        return (
+            query.track.tracks_in_tree()
+            if query.search_subfolders
+            else query.track.tracks_in_folder()
+        )
 
     async def _folder_tracks(
         self, ctx, player: lavalink.player_manager.Player, query: localtracks.Query
@@ -1517,19 +1522,19 @@ class Audio(commands.Cog):
             )
         await ctx.invoke(self.search, query=query)
 
-    async def _all_folder_tracks(
-        self, ctx: commands.Context, query: localtracks.Query
-    ):
+    async def _all_folder_tracks(self, ctx: commands.Context, query: localtracks.Query):
         if not await self._localtracks_check(ctx):
             return
 
         return (
-            query.track.tracks_in_tree() if query.search_subfolders else query.track.tracks_in_folder()
+            query.track.tracks_in_tree()
+            if query.search_subfolders
+            else query.track.tracks_in_folder()
         )
 
     async def _localtracks_check(self, ctx: commands.Context):  # TODO: Remove
         folder = localtracks.LocalPath(None)
-        if folder.localtrack_folder.is_dir():
+        if folder.localtrack_folder.exists():
             return True
         if ctx.invoked_with != "start":
             await self._embed_msg(ctx, _("No localtracks folder."))
@@ -4483,10 +4488,10 @@ class Audio(commands.Cog):
 
         except AttributeError:
             search_choice = localtracks.Query.process_input(search_choice)
-            if search_choice.track.is_dir():
+            if search_choice.track.exists() and search_choice.track.is_dir():
                 search_choice.invoked_from = "local folder"
                 return await ctx.invoke(self.search, query=search_choice)
-            elif search_choice.track.is_file():
+            elif search_choice.track.exists() and search_choice.track.is_file():
                 search_choice.invoked_from = "localtrack"
             return await ctx.invoke(self.play, query=search_choice)
 
