@@ -137,6 +137,7 @@ class ScopeParser(commands.Converter):
             target_scope = standardize_scope(scope)
         elif "--scope" in argument and not vals["scope"]:
             raise commands.ArgParserFailure("--scope", "Nothing", custom_help=_SCOPE_HELP)
+
         is_owner = await ctx.bot.is_owner(ctx.author)
         guild = vals.get("guild", None) or vals.get("server", None)
         if is_owner and guild:
@@ -165,6 +166,7 @@ class ScopeParser(commands.Converter):
             raise commands.BadArgument("You cannot use `--guild`")
         elif any(x in argument for x in ["--guild", "--server"]):
             raise commands.ArgParserFailure("--guild", "Nothing", custom_help=_GUILD_HELP)
+
         author = vals.get("author", None) or vals.get("user", None) or vals.get("member", None)
         if author:
             target_user = None
@@ -376,6 +378,7 @@ class ComplexScopeParser(commands.Converter):
                 raise commands.ArgParserFailure("--to-author", to_user_raw, custom_help=_USER_HELP)
         elif any(x in argument for x in ["--to-author", "--to-user", "--to-member"]):
             raise commands.ArgParserFailure("--to-user", "Nothing", custom_help=_USER_HELP)
+
         from_author = (
             vals.get("from_author", None)
             or vals.get("from_user", None)
