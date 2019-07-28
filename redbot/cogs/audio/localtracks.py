@@ -173,14 +173,14 @@ class LocalPath(ChdirClean):
                 folders.append(f.parent)
         return_folders = []
         for folder in folders:
-            if folder.exits() and folder.is_dir():
+            if folder.exists() and folder.is_dir():
                 return_folders.append(LocalPath(str(folder.absolute())))
         return return_folders
 
     def tracks_in_folder(self):
         tracks = []
         for track in self.multiglob(*[f"*{ext}" for ext in self._supported_music_ext]):
-            if track.exits() and track.is_file():
+            if track.exists() and track.is_file():
                 tracks.append(Query.process_input(LocalPath(str(track.absolute()))))
         return tracks
 
@@ -192,7 +192,7 @@ class LocalPath(ChdirClean):
                 folders.append(f.parent)
         return_folders = []
         for folder in folders:
-            if folder.exits() and folder.is_dir():
+            if folder.exists() and folder.is_dir():
                 return_folders.append(LocalPath(str(folder.absolute())))
         return return_folders
 
