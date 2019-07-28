@@ -189,6 +189,7 @@ def url_check(url):
         "soundcloud.com",
         "bandcamp.com",
         "vimeo.com",
+        "beam.pro",
         "mixer.com",
         "twitch.tv",
         "spotify.com",

@@ -370,7 +370,7 @@ class Query:
                             returning["album"] = True
                         else:
                             returning["single"] = True
-                    elif url_domain == "vimeo.com":
+                    elif url_domain in ["vimeo.com", "beam.pro"]:
                         returning["vimeo"] = True
                     elif url_domain == "mixer.com":
                         returning["mixer"] = True

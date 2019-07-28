@@ -750,7 +750,9 @@ class Audio(commands.Cog):
             ).format(**data)
         if is_owner:
             msg += _(
-                "\n---" + _("Cache Settings")+"---        \n"
+                "\n---"
+                + _("Cache Settings")
+                + "---        \n"
                 + _("Max age:          [{max_age}]\n")
                 + _("Spotify cache:    [{spotify_status}]\n")
                 + _("Youtube cache:    [{youtube_status}]\n")
@@ -769,7 +771,13 @@ class Audio(commands.Cog):
             "Jar version:      [{jarversion}]\n"
             "Jar build:        [{jarbuild}]\n"
             "External server:  [{use_external_lavalink}]\n"
-        ).format(version=__version__, redlava=lavalink.__version__, jarversion=JAR_VERSION, jarbuild=JAR_BUILD, **global_data)
+        ).format(
+            version=__version__,
+            redlava=lavalink.__version__,
+            jarversion=JAR_VERSION,
+            jarbuild=JAR_BUILD,
+            **global_data,
+        )
         if is_owner:
             msg += _("Localtracks path: [{localpath}]\n").format(**global_data)
 
