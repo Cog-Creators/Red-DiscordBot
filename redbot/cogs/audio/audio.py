@@ -422,7 +422,7 @@ class Audio(commands.Cog):
 
         if event_type == lavalink.LavalinkEvents.TRACK_EXCEPTION:
             message_channel = player.fetch("channel")
-            if message_channel:  # TODO Improve
+            if message_channel:
                 message_channel = self.bot.get_channel(message_channel)
                 if f"localtracks{os.sep}" in player.current.uri:
                     query = localtracks.Query.process_input(player.current.uri)
@@ -1558,7 +1558,7 @@ class Audio(commands.Cog):
             else query.track.tracks_in_folder()
         )
 
-    async def _localtracks_check(self, ctx: commands.Context):  # TODO: Remove
+    async def _localtracks_check(self, ctx: commands.Context):
         folder = localtracks.LocalPath(None)
         if folder.localtrack_folder.exists():
             return True
@@ -4402,10 +4402,9 @@ class Audio(commands.Cog):
 
         if not isinstance(query, list):
             query = localtracks.Query.process_input(query)
-            await ctx.send(box(str(query.__dict__), lang="json"))
             if (
                 query.invoked_from == "search list" or query.invoked_from == "local folder"
-            ):  # TODO Write a search list, and search sc group for the search command
+            ):
                 if query.invoked_from == "search list":
                     result, called_api = await self.music_cache.lavalink_query(player, query)
                     tracks = result.tracks
@@ -4580,7 +4579,7 @@ class Audio(commands.Cog):
                     )
             except AttributeError:
                 # query = Query.process_input(track)
-                if f"{os.sep}localtracks" not in str(track) and command != "search":  # TODO: P1
+                if f"{os.sep}localtracks" not in str(track) and command != "search":
                     search_list += "`{}.` **{}**\n".format(search_track_num, track)
                     folder = True
                 elif command == "search":

@@ -231,12 +231,14 @@ class Query:
         self.start_time: int = kwargs.get("start_time", 0)
         self.track_index: Optional[int] = kwargs.get("track_index", None)
 
+        if self.invoked_from == "sc search":
+            self.is_youtube = False
+            self.is_soundcloud = True
+
         self.lavalink_query: str = self.get_query()
 
         if self.is_playlist or self.is_album:
             self.single_track = False
-
-        print(self.__dict__)
 
     def __str__(self):
         return str(self.lavalink_query)
@@ -277,10 +279,12 @@ class Query:
             if track.startswith("sc ") or track.startswith("list "):
                 if track.startswith("sc "):
                     returning["invoked_from"] = "sc search"
+                    returning["soundcloud"] = True
                 elif track.startswith("list "):
                     returning["invoked_from"] = "search list"
                 track = _remove_start.sub("", track, 1)
                 returning["queryforced"] = track
+
             _localtrack = LocalPath(track)
             if _localtrack.exists():
                 if _localtrack.is_file():
