@@ -57,18 +57,27 @@ class LocalPath(ChdirClean):
             path = str(path)
 
         self.cwd = Path.cwd()
+        print("Global folder: ", _localtrack_folder)
+
         if f"{os.sep}localtracks" in _localtrack_folder:
+            print("Predefined")
             self.localtrack_folder = Path(_localtrack_folder) if _localtrack_folder else self.cwd
         else:
+            print("Fixed")
             self.localtrack_folder = Path(_localtrack_folder) / "localtracks"
+        print(self.localtrack_folder.absolute())
 
         try:
             _path = Path(path)
+            print("PATH: ", _path)
             self.localtrack_folder.relative_to(path)
             _path.relative_to(str(self.localtrack_folder.absolute()))
             self.path = _path
+            print("IS Relative")
         except (ValueError, TypeError):
+            print("Is Not relative:")
             self.path = self.localtrack_folder.joinpath(path) if path else self.localtrack_folder
+        print("PATH Final", self.path)
         try:
             if self.path.is_file():
                 parent = self.path.parent
