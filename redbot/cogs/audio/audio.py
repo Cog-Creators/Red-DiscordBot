@@ -5,6 +5,7 @@ import datetime
 import heapq
 import json
 import logging
+from copy import copy
 
 import math
 import os
@@ -285,6 +286,7 @@ class Audio(commands.Cog):
         disconnect = await self.config.guild(player.channel.guild).disconnect()
         autoplay = await self.config.guild(player.channel.guild).auto_play()
         notify = await self.config.guild(player.channel.guild).notify()
+        repeat = await self.config.guild(player.channel.guild).repeat()
         status = await self.config.status()
 
         async def _players_check():
@@ -354,7 +356,7 @@ class Audio(commands.Cog):
                         await player.fetch("notify_message").delete()
                     except discord.errors.NotFound:
                         pass
-                if f"{os.sep}localtracks" in player.current.uri:
+                if f"{os.sep}localtracks" in player.current.uri if player.current else False:
                     if not player.current.title == "Unknown title":
                         description = "**{} - {}**\n{}".format(
                             player.current.author,
@@ -439,6 +441,9 @@ class Audio(commands.Cog):
                 )
                 embed.set_footer(text=_("Skipping..."))
                 await message_channel.send(embed=embed)
+            if repeat:
+                await player.skip()
+            else:
                 await player.skip()
 
     @commands.group()
