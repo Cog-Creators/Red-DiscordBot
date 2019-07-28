@@ -340,8 +340,7 @@ class Audio(commands.Cog):
         if event_type == lavalink.LavalinkEvents.TRACK_END:
             prev_song = player.fetch("prev_song")
             prev_requester = player.fetch("prev_requester")
-            self.bot.dispatch("queue_end", player.channel.guild, prev_song, prev_requester)
-            self.bot.dispatch("track_end", player.channel.guild)
+            self.bot.dispatch("track_end", player.channel.guild, prev_song, prev_requester)
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
             prev_song = player.fetch("prev_song")
             prev_requester = player.fetch("prev_requester")
