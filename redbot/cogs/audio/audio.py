@@ -1456,8 +1456,7 @@ class Audio(commands.Cog):
                     ).localtrack_folder.absolute(),
                     search_subfolders=play_subfolders,
                 )
-            ),
-            show_all=play_subfolders,
+            )
         )
         if not all_tracks:
             return await self._embed_msg(ctx, _("No album folders found."))
