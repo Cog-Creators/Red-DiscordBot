@@ -222,7 +222,6 @@ class Query:
         self.is_search: bool = kwargs.get("search", False)
         self.is_stream: bool = kwargs.get("stream", False)
         self.single_track: bool = kwargs.get("single", False)
-
         self.id: Optional[str] = kwargs.get("id", None)
         self.invoked_from: Optional[str] = kwargs.get("invoked_from", None)
         self.local_name: Optional[str] = kwargs.get("name", None)
@@ -236,6 +235,8 @@ class Query:
 
         if self.is_playlist or self.is_album:
             self.single_track = False
+
+        print(self.__dict__)
 
     def __str__(self):
         return str(self.lavalink_query)

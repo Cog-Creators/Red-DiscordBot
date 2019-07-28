@@ -1,0 +1,1 @@
+:code:`[p]queue` now works where there no tracks in the queue (it shows current track playing).

@@ -1,0 +1,1 @@
+:code:`[p]audioset cacheage` can be used to set maximum age of an entry in the cache.

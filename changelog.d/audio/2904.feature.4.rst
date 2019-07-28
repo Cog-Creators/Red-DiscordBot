@@ -1,0 +1,4 @@
+:code:`on_track_start`, :code:`on_track_end` and :code:`on_queue_end` events are now dispatched by Audio.
+ - :code:`on_track_start(discord.Guild, lavalink.Track, discord.Member)`
+ - :code:`on_track_end(discord.Guild, lavalink.Track, discord.Member)`
+ - :code:`on_queue_end(discord.Guild, lavalink.Track, discord.Member)`

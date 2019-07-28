@@ -1,0 +1,1 @@
+:code:`[p]audioset auto` can be used to enable auto play once the queue runs out, based on recent songs if cache is enabled.

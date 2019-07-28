@@ -39,7 +39,7 @@ from .apis import MusicCache
 from .converters import ComplexScopeParser, PlaylistConverter, ScopeParser, get_lazy_converter
 from .equalizer import Equalizer
 from .errors import LavalinkDownloadFailed, MissingGuild, SpotifyFetchError, TooManyMatches
-from .manager import ServerManager
+from .manager import ServerManager, JAR_BUILD, JAR_VERSION
 from .playlists import (
     FakePlaylist,
     Playlist,
@@ -599,6 +599,7 @@ class Audio(commands.Cog):
             "  |           |__02 Groovy Song.mp3\n"
             "```\n"
             "The folder path given to this command must contain the localtracks folder.\n"
+            "**This folder and files need to be visible to the user where `Lavalink.jar` is being run from.**\n"
             "Use this command with no path given to reset it to the default, the Audio data directory for this bot.\n"
             "Do you want to continue to set the provided path for local tracks?"
         )
@@ -707,7 +708,6 @@ class Audio(commands.Cog):
         thumbnail = data["thumbnail"]
         dc = data["disconnect"]
         autoplay = data["auto_play"]
-        jarbuild = redbot.core.__version__  # ... hmmm
         maxlength = data["maxlength"]
         vote_percent = data["vote_percent"]
         current_level = CacheLevel(global_data["cache_level"])
@@ -750,7 +750,7 @@ class Audio(commands.Cog):
             ).format(**data)
         if is_owner:
             msg += _(
-                "\n---Cache Settings---        \n"
+                "\n---" + _("Cache Settings")+"---        \n"
                 + _("Max age:          [{max_age}]\n")
                 + _("Spotify cache:    [{spotify_status}]\n")
                 + _("Youtube cache:    [{youtube_status}]\n")
@@ -763,11 +763,13 @@ class Audio(commands.Cog):
             )
 
         msg += _(
-            "\n---Lavalink Settings---        \n"
+            "\n---" + _("Lavalink Settings") + "---        \n"
             "Cog version:      [{version}]\n"
+            "Red-Lavalink:     [{redlava}]\n"
+            "Jar version:      [{jarversion}]\n"
             "Jar build:        [{jarbuild}]\n"
             "External server:  [{use_external_lavalink}]\n"
-        ).format(version=__version__, jarbuild=jarbuild, **global_data)
+        ).format(version=__version__, redlava=lavalink.__version__, jarversion=JAR_VERSION, jarbuild=JAR_BUILD, **global_data)
         if is_owner:
             msg += _("Localtracks path: [{localpath}]\n").format(**global_data)
 
@@ -4392,6 +4394,7 @@ class Audio(commands.Cog):
 
         if not isinstance(query, list):
             query = localtracks.Query.process_input(query)
+            await ctx.send(box(str(query.__dict__), lang="json"))
             if (
                 query.invoked_from == "search list" or query.invoked_from == "local folder"
             ):  # TODO Write a search list, and search sc group for the search command
@@ -4905,6 +4908,7 @@ class Audio(commands.Cog):
         """Stop playback and clear the queue."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
+        autoplay = await self.config.guild(ctx.guild).auto_play()
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
         player = lavalink.get_player(ctx.guild.id)
@@ -4925,7 +4929,6 @@ class Audio(commands.Cog):
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(ctx, _("You need the DJ role to stop the music."))
         if player.is_playing or (not player.is_playing and player.paused):
-            await self._embed_msg(ctx, _("Stopping..."))
             await player.stop()
             eq = player.fetch("eq")
             if eq:
@@ -4934,6 +4937,8 @@ class Audio(commands.Cog):
             player.store("prev_song", None)
             player.store("playing_song", None)
             player.store("requester", None)
+            if not autoplay:
+                await self._embed_msg(ctx, _("Stopping..."))
 
     @commands.command()
     @commands.guild_only()
