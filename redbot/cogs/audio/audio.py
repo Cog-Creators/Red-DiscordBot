@@ -334,7 +334,7 @@ class Audio(commands.Cog):
             player.store("requester", player.current.requester)
             self.skip_votes[player.channel.guild] = []
             self.bot.dispatch(
-                "track_start", player.channel.guild, player.current.requester, player.current
+                "track_start", player.channel.guild, player.current, player.current.requester
             )
         if event_type == lavalink.LavalinkEvents.TRACK_END:
             prev_song = player.fetch("prev_song")
