@@ -221,6 +221,7 @@ class Query:
         self.id: Optional[str] = kwargs.get("id", None)
         self.invoked_from: Optional[str] = kwargs.get("invoked_from", None)
         self.local_name: Optional[str] = kwargs.get("name", None)
+        self.search_subfolders: bool = kwargs.get("search_subfolders", False)
         self.spotify_uri: Optional[str] = kwargs.get("uri", None)
 
         self.start_time: int = kwargs.get("start_time", 0)
@@ -243,6 +244,8 @@ class Query:
             query = query.strip("<>")
 
         elif isinstance(query, Query):
+            for key, val in kwargs.items():
+                setattr(query, key, val)
             return query
         possible_values = dict()
         possible_values.update(dict(**kwargs))
