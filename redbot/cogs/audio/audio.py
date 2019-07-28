@@ -1456,7 +1456,7 @@ class Audio(commands.Cog):
                     ).localtrack_folder.absolute(),
                     search_subfolders=play_subfolders,
                 )
-            )
+            ),
         )
         if not all_tracks:
             return await self._embed_msg(ctx, _("No album folders found."))
@@ -1541,7 +1541,7 @@ class Audio(commands.Cog):
         search_results = process.extract(search_words, to_search_string, limit=50)
         search_list = []
         for track_match, percent_match in search_results:
-            if percent_match > 75:
+            if percent_match > 60:
                 search_list.extend(
                     [i.track.to_string_hidden() for i in to_search if i.track.name == track_match]
                 )
