@@ -285,7 +285,6 @@ class Audio(commands.Cog):
         disconnect = await self.config.guild(player.channel.guild).disconnect()
         autoplay = await self.config.guild(player.channel.guild).auto_play()
         notify = await self.config.guild(player.channel.guild).notify()
-        notify = await self.config.guild(player.channel.guild).notify()
         status = await self.config.status()
 
         async def _players_check():
