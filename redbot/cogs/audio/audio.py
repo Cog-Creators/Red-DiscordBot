@@ -1380,7 +1380,7 @@ class Audio(commands.Cog):
 
     @local.command(name="folder", aliases=["start"])
     async def local_folder(
-        self, ctx: commands.Context, play_subfolders: Optional[bool] = False, *, folder: str = None
+        self, ctx: commands.Context, play_subfolders: Optional[bool] = True, *, folder: str = None
     ):
         """Play all songs in a localtracks folder."""
         if not await self._localtracks_check(ctx):
@@ -1398,7 +1398,7 @@ class Audio(commands.Cog):
             await self._local_play_all(ctx, query, from_search=False)
 
     @local.command(name="play")
-    async def local_play(self, ctx: commands.Context, play_subfolders: Optional[bool] = False):
+    async def local_play(self, ctx: commands.Context, play_subfolders: Optional[bool] = True):
         """Play a local track."""
         if not await self._localtracks_check(ctx):
             return
@@ -1406,7 +1406,7 @@ class Audio(commands.Cog):
             ctx, search_subfolders=play_subfolders
         )
         if not localtracks_folders:
-            return await self._embed_msg(ctx, _("No local track folders found."))
+            return await self._embed_msg(ctx, _("No album folders found."))
         len_folder_pages = math.ceil(len(localtracks_folders) / 5)
         folder_page_list = []
         for page_num in range(1, len_folder_pages + 1):
