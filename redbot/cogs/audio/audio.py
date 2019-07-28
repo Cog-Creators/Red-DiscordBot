@@ -285,6 +285,7 @@ class Audio(commands.Cog):
         disconnect = await self.config.guild(player.channel.guild).disconnect()
         autoplay = await self.config.guild(player.channel.guild).auto_play()
         notify = await self.config.guild(player.channel.guild).notify()
+        notify = await self.config.guild(player.channel.guild).notify()
         status = await self.config.status()
 
         async def _players_check():
@@ -326,6 +327,13 @@ class Audio(commands.Cog):
                 )
 
         if event_type == lavalink.LavalinkEvents.TRACK_START:
+            self.bot.dispatch(
+                "track_start",
+                player.channel.guild,
+                player.requester,
+                player.current.requester,
+                player.current,
+            )
             playing_song = player.fetch("playing_song")
             requester = player.fetch("requester")
             player.store("prev_song", playing_song)
@@ -333,6 +341,19 @@ class Audio(commands.Cog):
             player.store("playing_song", player.current.uri)
             player.store("requester", player.current.requester)
             self.skip_votes[player.channel.guild] = []
+        if event_type == lavalink.LavalinkEvents.TRACK_END:
+            self.bot.dispatch("track_end", player.channel.guild)
+        if event_type == lavalink.LavalinkEvents.QUEUE_END:
+            prev_song = player.fetch("prev_song")
+            prev_requester = player.fetch("prev_requester")
+            self.bot.dispatch(
+                "queue_end",
+                player.channel.guild,
+                prev_song,
+                prev_requester,
+                player.current,
+                player.current.requester,
+            )
 
         if event_type == lavalink.LavalinkEvents.TRACK_START and notify:
             notify_channel = player.fetch("channel")
@@ -1358,13 +1379,15 @@ class Audio(commands.Cog):
         """Local playback commands."""
 
     @local.command(name="folder", aliases=["start"])
-    async def local_folder(self, ctx: commands.Context, *, folder: str = None):
+    async def local_folder(
+        self, ctx: commands.Context, play_subfolders: Optional[bool] = False, *, folder: str = None
+    ):
         """Play all songs in a localtracks folder."""
         if not await self._localtracks_check(ctx):
             return
 
         if not folder:
-            await ctx.invoke(self.local_play)
+            await ctx.invoke(self.local_play, play_subfolders=play_subfolders)
         else:
             dir = localtracks.LocalPath.joinpath(folder)
             if not dir.is_dir():
@@ -1372,14 +1395,14 @@ class Audio(commands.Cog):
                     ctx, _("No localtracks folder named {name}.").format(name=folder)
                 )
             query = localtracks.Query.process_input(dir)
-            await self._local_play_all(ctx, query, show_all=True, from_search=False)
+            await self._local_play_all(ctx, query, show_all=play_subfolders, from_search=False)
 
     @local.command(name="play")
-    async def local_play(self, ctx: commands.Context):
+    async def local_play(self, ctx: commands.Context, play_subfolders: Optional[bool] = False):
         """Play a local track."""
         if not await self._localtracks_check(ctx):
             return
-        localtracks_folders = await self._localtracks_folders(ctx, True)
+        localtracks_folders = await self._localtracks_folders(ctx, play_subfolders)
         if not localtracks_folders:
             return await self._embed_msg(ctx, _("No local track folders found."))
         len_folder_pages = math.ceil(len(localtracks_folders) / 5)
@@ -1420,7 +1443,9 @@ class Audio(commands.Cog):
             await menu(ctx, folder_page_list, LOCAL_FOLDER_CONTROLS)
 
     @local.command(name="search")
-    async def local_search(self, ctx: commands.Context, *, search_words):
+    async def local_search(
+        self, ctx: commands.Context, play_subfolders: Optional[bool] = True, *, search_words
+    ):
         """Search for songs across all localtracks folders."""
         if not await self._localtracks_check(ctx):
             return
@@ -1433,7 +1458,7 @@ class Audio(commands.Cog):
                     ).localtrack_folder.absolute()
                 )
             ),
-            show_all=True,
+            show_all=play_subfolders,
         )
         if not all_tracks:
             return await self._embed_msg(ctx, _("No album folders found."))
@@ -1472,9 +1497,7 @@ class Audio(commands.Cog):
             return
         local_tracks = []
         for local_file in await self._all_folder_tracks(ctx, query, show_all):
-            print(local_file.track.to_string())
             trackdata = await player.load_tracks(local_file.track.to_string())
-            print(trackdata.__dict__)
             try:
                 local_tracks.append(trackdata.tracks[0])
             except IndexError:
