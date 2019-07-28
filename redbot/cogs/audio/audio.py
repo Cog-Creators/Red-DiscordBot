@@ -419,17 +419,23 @@ class Audio(commands.Cog):
             await _status_check(player_check[1])
 
         if event_type == lavalink.LavalinkEvents.TRACK_EXCEPTION:
-            if f"{os.sep}localtracks" in player.current.uri:
-                return
             message_channel = player.fetch("channel")
-            if message_channel:
+            if message_channel:  # TODO Improve
                 message_channel = self.bot.get_channel(message_channel)
+                if f"localtracks{os.sep}" in player.current.uri:
+                    query = localtracks.Query.process_input(player.current.uri)
+                    if player.current.title == "Unknown title":
+                        description = query.track.to_string_hidden()
+                    else:
+                        song = bold("{} - {}").format(player.current.author, player.current.title)
+                        description = "{}\n{}".format(song, query.track.to_string_hidden())
+                else:
+                    description = bold("[{}]({})").format(player.current.title, player.current.uri)
+
                 embed = discord.Embed(
                     colour=(await self._get_embed_colour(message_channel)),
                     title=_("Track Error"),
-                    description="{}\n**[{}]({})**".format(
-                        extra, player.current.title, player.current.uri
-                    ),
+                    description="{}\n{}".format(extra, description),
                 )
                 embed.set_footer(text=_("Skipping..."))
                 await message_channel.send(embed=embed)
