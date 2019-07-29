@@ -755,6 +755,10 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             tracks = results.tracks
 
         if tracks:
-            player.add(player.channel.guild.me, random.choice(tracks))
+            track = random.choice(tracks)
+            player.add(player.channel.guild.me, track)
+            self.bot.dispatch(
+                "auto_play_track", player.channel.guild, track, player.channel.guild.me
+            )
             if not player.current:
                 await player.play()

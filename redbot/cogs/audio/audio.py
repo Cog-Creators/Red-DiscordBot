@@ -17,6 +17,7 @@ import aiohttp
 import discord
 import lavalink
 from fuzzywuzzy import process
+from lavalink import TrackEndReason
 from lavalink.rest_api import PlaylistInfo
 
 import redbot.core
@@ -340,6 +341,12 @@ class Audio(commands.Cog):
             prev_song = player.fetch("prev_song")
             prev_requester = player.fetch("prev_requester")
             self.bot.dispatch("track_end", player.channel.guild, prev_song, prev_requester)
+
+            if not player.queue and not (
+                extra == TrackEndReason.CLEANUP or extra == TrackEndReason.STOPPED
+            ):
+                await self.music_cache.autoplay(player)
+
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
             prev_song = player.fetch("prev_song")
             prev_requester = player.fetch("prev_requester")
@@ -408,9 +415,6 @@ class Audio(commands.Cog):
                 )
                 await notify_channel.send(embed=embed)
 
-        if event_type == lavalink.LavalinkEvents.QUEUE_END and autoplay:
-            await self.music_cache.autoplay(player)
-
         elif event_type == lavalink.LavalinkEvents.QUEUE_END and disconnect:
             await player.disconnect()
 
@@ -439,10 +443,12 @@ class Audio(commands.Cog):
                 )
                 embed.set_footer(text=_("Skipping..."))
                 await message_channel.send(embed=embed)
-            if repeat:
-                await player.skip()
-            else:
-                await player.skip()
+            # TODO : Pending PR to Red-Lava to make tracks comparable natively
+            new_queue = [
+                t for t in player.queue if t.track_identifier != player.current.track_identifier
+            ]
+            player.queue = new_queue
+            await player.skip()
 
     @commands.group()
     @commands.guild_only()
@@ -1978,9 +1984,12 @@ class Audio(commands.Cog):
                     if track_limit(track, guild_data["maxlength"]):
                         track_len += 1
                         player.add(ctx.author, track)
+                        self.bot.dispatch("enqueue_track", player.channel.guild, track, ctx.author)
+
                 else:
                     track_len += 1
                     player.add(ctx.author, track)
+                    self.bot.dispatch("enqueue_track", player.channel.guild, track, ctx.author)
 
             if len(tracks) > track_len:
                 maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
@@ -2018,11 +2027,17 @@ class Audio(commands.Cog):
                 if guild_data["maxlength"] > 0:
                     if track_limit(single_track, guild_data["maxlength"]):
                         player.add(ctx.author, single_track)
+                        self.bot.dispatch(
+                            "enqueue_track", player.channel.guild, single_track, ctx.author
+                        )
                     else:
                         return await self._embed_msg(ctx, _("Track exceeds maximum length."))
 
                 else:
                     player.add(ctx.author, single_track)
+                    self.bot.dispatch(
+                        "enqueue_track", player.channel.guild, single_track, ctx.author
+                    )
             except IndexError:
                 self._play_lock(ctx, False)
                 return await self._embed_msg(
@@ -2164,9 +2179,16 @@ class Audio(commands.Cog):
                     if track_limit(yt_track[0], guild_data["maxlength"]):
                         enqueued_tracks += 1
                         player.add(ctx.author, yt_track[0])
+                        self.bot.dispatch(
+                            "enqueue_track", player.channel.guild, yt_track[0], ctx.author
+                        )
                 else:
                     enqueued_tracks += 1
                     player.add(ctx.author, yt_track[0])
+                    self.bot.dispatch(
+                        "enqueue_track", player.channel.guild, yt_track[0], ctx.author
+                    )
+
                 if not player.current:
                     await player.play()
 
@@ -3386,15 +3408,17 @@ class Audio(commands.Cog):
             player = lavalink.get_player(ctx.guild.id)
             tracks = playlist.tracks
             for track in tracks:
-                if f"{os.sep}localtracks" in track["info"]["uri"]:
+                track = lavalink.rest_api.Track(data=track)
+                if f"{os.sep}localtracks" in track.info.uri:
                     if not await self._localtracks_check(ctx):
                         pass
-                    if not dataclasses.LocalPath(track["info"]["uri"]).is_file():
+                    if not dataclasses.LocalPath(track.info.uri).is_file():
                         continue
                 if maxlength > 0:
-                    if not track_limit(track["info"]["length"], maxlength):
+                    if not track_limit(track.info.length, maxlength):
                         continue
-                player.add(author_obj, lavalink.rest_api.Track(data=track))
+                player.add(author_obj, track)
+                self.bot.dispatch("enqueue_track", player.channel.guild, track, ctx.author)
                 track_len += 1
             if len(tracks) > track_len:
                 maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
@@ -3967,6 +3991,7 @@ class Audio(commands.Cog):
             )
             last_track = result.tracks
             player.add(player.fetch("prev_requester"), last_track[0])
+            self.bot.dispatch("enqueue_track", player.channel.guild, last_track[0], ctx.author)
             queue_len = len(player.queue)
             bump_song = player.queue[-1]
             player.queue.insert(0, bump_song)
@@ -4425,9 +4450,13 @@ class Audio(commands.Cog):
                         if track_limit(track, guild_data["maxlength"]):
                             track_len += 1
                             player.add(ctx.author, track)
+                            self.bot.dispatch(
+                                "enqueue_track", player.channel.guild, track, ctx.author
+                            )
                     else:
                         track_len += 1
                         player.add(ctx.author, track)
+                        self.bot.dispatch("enqueue_track", player.channel.guild, track, ctx.author)
                     if not player.current:
                         await player.play()
                 if len(tracks) > track_len:
@@ -4549,10 +4578,12 @@ class Audio(commands.Cog):
         if guild_data["maxlength"] > 0:
             if track_limit(search_choice.length, guild_data["maxlength"]):
                 player.add(ctx.author, search_choice)
+                self.bot.dispatch("enqueue_track", player.channel.guild, search_choice, ctx.author)
             else:
                 return await self._embed_msg(ctx, _("Track exceeds maximum length."))
         else:
             player.add(ctx.author, search_choice)
+            self.bot.dispatch("enqueue_track", player.channel.guild, search_choice, ctx.author)
         if not player.current:
             await player.play()
         await ctx.send(embed=embed)
@@ -4911,7 +4942,7 @@ class Audio(commands.Cog):
                 description=await get_description(player.current),
             )
             await ctx.send(embed=embed)
-
+        self.bot.dispatch("skip_track", player.channel.guild, player.current, ctx.author)
         await player.play()
         player.queue += queue_to_append
 
