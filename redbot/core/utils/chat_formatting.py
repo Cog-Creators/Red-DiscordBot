@@ -441,7 +441,7 @@ def humanize_number(val: Union[int, float], override_locale=None) -> str:
     val : Union[int, float]
         The int/float to be formatted.
     override_locale: Optional[str]
-        A value to override the bots locale
+        A value to override the bots locale.
 
     Returns
     -------
