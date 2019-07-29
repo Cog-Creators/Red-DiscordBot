@@ -277,7 +277,9 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
 
     async def initialize(self, config: Config) -> NoReturn:
         await self.database.connect()
-        await self.database.execute(query="PRAGMA TEMP_STORE = 2;")
+        await self.database.execute(query="PRAGMA temp_store = 2;")
+        await self.database.execute(query="PRAGMA journal_mode = wal;")
+
         await self.database.execute(query=_CREATE_LAVALINK_TABLE)
         await self.database.execute(query=_CREATE_UNIQUE_INDEX_LAVALINK_TABLE)
         await self.database.execute(query=_CREATE_YOUTUBE_TABLE)
@@ -291,8 +293,8 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         await self.database.disconnect()
 
     async def insert(self, table: str, values: List[dict]) -> NoReturn:
-        if table == "spotify":
-            return
+        # if table == "spotify":
+        #     return
         query = _PARSER.get(table, {}).get("insert")
         if query is None:
             raise InvalidTableError(f"{table} is not a valid table in the database.")
@@ -300,8 +302,8 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         await self.database.execute_many(query=query, values=values)
 
     async def update(self, table: str, values: Dict[str, str]) -> NoReturn:
-        if table == "spotify":
-            return
+        # if table == "spotify":
+        #     return
         table = _PARSER.get(table, {})
         sql_query = table.get("update")
         time_now = str(datetime.datetime.now(datetime.timezone.utc))
