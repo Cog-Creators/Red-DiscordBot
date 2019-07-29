@@ -1,4 +1,5 @@
-from datetime import datetime
+import asyncio
+from datetime import datetime, timedelta
 from typing import List, Union, Optional, cast
 
 import discord
@@ -14,6 +15,8 @@ from .utils.common_filters import (
     escape_spoilers,
 )
 from .i18n import Translator
+
+from .generic_casetypes import all_generics
 
 __all__ = [
     "Case",
@@ -33,17 +36,20 @@ __all__ = [
 ]
 
 _conf: Optional[Config] = None
+_bot_ref: Optional[Red] = None
 
 _CASETYPES = "CASETYPES"
 _CASES = "CASES"
-_SCHEMA_VERSION = 2
+_SCHEMA_VERSION = 3
 
 
 _ = Translator("ModLog", __file__)
 
 
-async def _init():
+async def _init(bot: Red):
     global _conf
+    global _bot_ref
+    _bot_ref = bot
     _conf = Config.get_conf(None, 1354799444, cog_name="ModLog")
     _conf.register_global(schema_version=1)
     _conf.register_guild(mod_log=None, casetypes={})
@@ -52,12 +58,88 @@ async def _init():
     _conf.register_custom(_CASETYPES)
     _conf.register_custom(_CASES)
     await _migrate_config(from_version=await _conf.schema_version(), to_version=_SCHEMA_VERSION)
+    await register_casetypes(all_generics)
+
+    async def on_member_ban(guild: discord.Guild, member: discord.Member):
+
+        if not guild.me.guild_permissions.view_audit_log:
+            return
+
+        try:
+            await get_modlog_channel(guild)
+        except RuntimeError:
+            return  # No modlog channel so no point in continuing
+
+        when = datetime.utcnow()
+        before = when + timedelta(minutes=1)
+        after = when - timedelta(minutes=1)
+        await asyncio.sleep(10)  # prevent small delays from causing a 5 minute delay on entry
+
+        attempts = 0
+        while attempts < 12:  # wait up to an hour to find a matching case
+            attempts += 1
+            try:
+                entry = await guild.audit_logs(
+                    action=discord.AuditLogAction.ban, before=before, after=after
+                ).find(lambda e: e.target.id == member.id and after < e.created_at < before)
+            except discord.Forbidden:
+                break
+            except discord.HTTPException:
+                pass
+            else:
+                if entry:
+                    if entry.user.id != guild.me.id:
+                        # Don't create modlog entires for the bot's own bans, cogs do this.
+                        mod, reason, date = entry.user, entry.reason, entry.created_at
+                        await create_case(_bot_ref, guild, date, "ban", member, mod, reason)
+                    return
+
+            await asyncio.sleep(300)
+
+    async def on_member_unban(guild: discord.Guild, user: discord.User):
+        if not guild.me.guild_permissions.view_audit_log:
+            return
+
+        try:
+            await get_modlog_channel(guild)
+        except RuntimeError:
+            return  # No modlog channel so no point in continuing
+
+        when = datetime.utcnow()
+        before = when + timedelta(minutes=1)
+        after = when - timedelta(minutes=1)
+        await asyncio.sleep(10)  # prevent small delays from causing a 5 minute delay on entry
+
+        attempts = 0
+        while attempts < 12:  # wait up to an hour to find a matching case
+            attempts += 1
+            try:
+                entry = await guild.audit_logs(
+                    action=discord.AuditLogAction.unban, before=before, after=after
+                ).find(lambda e: e.target.id == user.id and after < e.created_at < before)
+            except discord.Forbidden:
+                break
+            except discord.HTTPException:
+                pass
+            else:
+                if entry:
+                    if entry.user.id != guild.me.id:
+                        # Don't create modlog entires for the bot's own unbans, cogs do this.
+                        mod, reason, date = entry.user, entry.reason, entry.created_at
+                        await create_case(_bot_ref, guild, date, "unban", user, mod, reason)
+                    return
+
+            await asyncio.sleep(300)
+
+    bot.add_listener(on_member_ban)
+    bot.add_listener(on_member_unban)
 
 
 async def _migrate_config(from_version: int, to_version: int):
     if from_version == to_version:
         return
-    elif from_version < to_version:
+
+    if from_version < 2 <= to_version:
         # casetypes go from GLOBAL -> casetypes to CASETYPES
         all_casetypes = await _conf.get_raw("casetypes", default={})
         if all_casetypes:
@@ -73,12 +155,25 @@ async def _migrate_config(from_version: int, to_version: int):
         await _conf.custom(_CASES).set(all_cases)
 
         # new schema is now in place
-        await _conf.schema_version.set(_SCHEMA_VERSION)
+        await _conf.schema_version.set(2)
 
         # migration done, now let's delete all the old stuff
         await _conf.clear_raw("casetypes")
         for guild_id in all_guild_data:
             await _conf.guild(cast(discord.Guild, discord.Object(id=guild_id))).clear_raw("cases")
+
+    if from_version < 3 <= to_version:
+        all_casetypes = {
+            casetype_name: {
+                inner_key: inner_value
+                for inner_key, inner_value in casetype_data.items()
+                if inner_key != "audit_type"
+            }
+            for casetype_name, casetype_data in (await _conf.custom(_CASETYPES).all()).items()
+        }
+
+        await _conf.custom(_CASETYPES).set(all_casetypes)
+        await _conf.schema_version.set(3)
 
 
 class Case:
@@ -132,6 +227,17 @@ class Case:
 
         await _conf.custom(_CASES, str(self.guild.id), str(self.case_number)).set(self.to_json())
         self.bot.dispatch("modlog_case_edit", self)
+        if not self.message:
+            return
+        try:
+            use_embed = await self.bot.embed_requested(self.message.channel, self.guild.me)
+            case_content = await self.message_content(use_embed)
+            if use_embed:
+                await self.message.edit(embed=case_content)
+            else:
+                await self.message.edit(content=case_content)
+        finally:
+            return None
 
     async def message_content(self, embed: bool = True):
         """
@@ -374,9 +480,7 @@ class CaseType:
         The emoji to use for the case type (for example, :boot:)
     case_str: str
         The string representation of the case (example: Ban)
-    audit_type: `str`, optional
-        The action type of the action as it would appear in the
-        audit log
+        
     """
 
     def __init__(
@@ -385,14 +489,12 @@ class CaseType:
         default_setting: bool,
         image: str,
         case_str: str,
-        audit_type: Optional[str] = None,
         guild: Optional[discord.Guild] = None,
     ):
         self.name = name
         self.default_setting = default_setting
         self.image = image
         self.case_str = case_str
-        self.audit_type = audit_type
         self.guild = guild
 
     async def to_json(self):
@@ -401,7 +503,6 @@ class CaseType:
             "default_setting": self.default_setting,
             "image": self.image,
             "case_str": self.case_str,
-            "audit_type": self.audit_type,
         }
         await _conf.custom(_CASETYPES, self.name).set(data)
 
@@ -666,7 +767,19 @@ async def create_case(
     )
     await _conf.custom(_CASES, str(guild.id), str(next_case_number)).set(case.to_json())
     bot.dispatch("modlog_case_create", case)
-    return case
+    try:
+        mod_channel = await get_modlog_channel(case.guild)
+        use_embeds = await case.bot.embed_requested(mod_channel, case.guild.me)
+        case_content = await case.message_content(use_embeds)
+        if use_embeds:
+            msg = await mod_channel.send(embed=case_content)
+        else:
+            msg = await mod_channel.send(case_content)
+        await case.edit({"message": msg})
+    except (RuntimeError, discord.HTTPException):
+        pass
+    finally:
+        return case
 
 
 async def get_casetype(name: str, guild: Optional[discord.Guild] = None) -> Optional[CaseType]:
@@ -709,7 +822,7 @@ async def get_all_casetypes(guild: discord.Guild = None) -> List[CaseType]:
 
 
 async def register_casetype(
-    name: str, default_setting: bool, image: str, case_str: str, audit_type: str = None
+    name: str, default_setting: bool, image: str, case_str: str
 ) -> CaseType:
     """
     Registers a case type. If the case type exists and
@@ -728,9 +841,6 @@ async def register_casetype(
         The emoji to use for the case type (for example, :boot:)
     case_str: str
         The string representation of the case (example: Ban)
-    audit_type: `str`, optional
-        The action type of the action as it would appear in the
-        audit log
 
     Returns
     -------
@@ -745,8 +855,6 @@ async def register_casetype(
         If a parameter is missing
     ValueError
         If a parameter's value is not valid
-    AttributeError
-        If the audit_type is not an attribute of `discord.AuditLogAction`
 
     """
     if not isinstance(name, str):
@@ -757,16 +865,10 @@ async def register_casetype(
         raise ValueError("The 'image' is not a string!")
     if not isinstance(case_str, str):
         raise ValueError("The 'case_str' is not a string!")
-    if audit_type is not None:
-        if not isinstance(audit_type, str):
-            raise ValueError("The 'audit_type' is not a string!")
-        try:
-            getattr(discord.AuditLogAction, audit_type)
-        except AttributeError:
-            raise
+
     ct = await get_casetype(name)
     if ct is None:
-        casetype = CaseType(name, default_setting, image, case_str, audit_type)
+        casetype = CaseType(name, default_setting, image, case_str)
         await casetype.to_json()
         return casetype
     else:
@@ -781,9 +883,6 @@ async def register_casetype(
             changed = True
         if ct.case_str != case_str:
             ct.case_str = case_str
-            changed = True
-        if ct.audit_type != audit_type:
-            ct.audit_type = audit_type
             changed = True
         if changed:
             await ct.to_json()
