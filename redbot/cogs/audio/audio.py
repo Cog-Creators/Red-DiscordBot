@@ -341,7 +341,7 @@ class Audio(commands.Cog):
             prev_requester = player.fetch("prev_requester")
             self.bot.dispatch("track_end", player.channel.guild, prev_song, prev_requester)
 
-            if autoplay and player.fetch("playing_song") is not None:
+            if autoplay and not player.queue and player.fetch("playing_song") is not None:
                 await self.music_cache.autoplay(player)
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
@@ -403,7 +403,7 @@ class Audio(commands.Cog):
                 player_check = await _players_check()
                 await _status_check(player_check[1])
 
-        if event_type == lavalink.LavalinkEvents.QUEUE_END and notify:
+        if event_type == lavalink.LavalinkEvents.QUEUE_END and notify and not autoplay:
             notify_channel = player.fetch("channel")
             if notify_channel:
                 notify_channel = self.bot.get_channel(notify_channel)
@@ -4134,7 +4134,8 @@ class Audio(commands.Cog):
         queue_dur = await queue_duration(ctx)
         queue_total_duration = lavalink.utils.format_time(queue_dur)
         text = _(
-            "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining\n"
+            "Page {page_num}/{total_pages} | {num_tracks} "
+            "tracks, {num_remaining} remaining  |  \n\n"
         ).format(
             page_num=page_num,
             total_pages=queue_num_pages,
@@ -4143,13 +4144,13 @@ class Audio(commands.Cog):
         )
         text += _("Repeat") + ": " + ("\N{WHITE HEAVY CHECK MARK}" if repeat else "\N{CROSS MARK}")
         text += (
-            (" | " if text else "")
+            " | "
             + _("Shuffle")
             + ": "
             + ("\N{WHITE HEAVY CHECK MARK}" if shuffle else "\N{CROSS MARK}")
         )
         text += (
-            (" | " if text else "")
+            " | "
             + _("Auto-Play")
             + ": "
             + ("\N{WHITE HEAVY CHECK MARK}" if autoplay else "\N{CROSS MARK}")
