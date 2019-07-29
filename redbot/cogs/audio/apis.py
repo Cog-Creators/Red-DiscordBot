@@ -367,6 +367,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
 
     async def _spotify_first_time_query(
         self,
+        ctx: commands.Context,
         query_type: str,
         uri: str,
         skip_youtube: bool = False,
@@ -381,9 +382,15 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         time_now = str(datetime.datetime.now(datetime.timezone.utc))
         youtube_cache = CacheLevel.set_youtube().is_subset(current_cache_level)
         for track in tracks:
-            song_url, track_info, uri, artist_name, track_name, _id, _type = self._get_spotify_track_info(
-                track
-            )
+            (
+                song_url,
+                track_info,
+                uri,
+                artist_name,
+                track_name,
+                _id,
+                _type,
+            ) = self._get_spotify_track_info(track)
 
             database_entries.append(
                 {
@@ -410,10 +417,11 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                         val = None
                 if val is None:
                     val = await self._youtube_first_time_query(
-                        track_info, current_cache_level=current_cache_level
+                        ctx, track_info, current_cache_level=current_cache_level
                     )
                 if youtube_cache and val:
-                    asyncio.create_task(self.update("youtube", {"track": track_info}))
+                    task = self.update("youtube", {"track": track_info})
+                    self.append_task(ctx, task)
 
                 if val:
                     youtube_urls.append(val)
@@ -425,28 +433,31 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                     current=track_count, total=total_tracks, key="youtube"
                 )
         if CacheLevel.set_spotify().is_subset(current_cache_level):
-            asyncio.create_task(self.insert("spotify", database_entries))
+            tasks = self.insert("spotify", database_entries)
+            self.append_task(ctx, task)
         return youtube_urls
 
     async def _youtube_first_time_query(
-        self, track_info: str, current_cache_level: CacheLevel = CacheLevel.none()
+        self,
+        ctx: commands.Context,
+        track_info: str,
+        current_cache_level: CacheLevel = CacheLevel.none(),
     ) -> str:
         track_url = await self.youtube_api.get_call(track_info)
         if CacheLevel.set_youtube().is_subset(current_cache_level) and track_url:
             time_now = str(datetime.datetime.now(datetime.timezone.utc))
-            asyncio.create_task(
-                self.insert(
-                    "youtube",
-                    [
-                        {
-                            "track_info": track_info,
-                            "track_url": track_url,
-                            "last_updated": time_now,
-                            "last_fetched": time_now,
-                        }
-                    ],
-                )
+            task = self.insert(
+                "youtube",
+                [
+                    {
+                        "track_info": track_info,
+                        "track_url": track_url,
+                        "last_updated": time_now,
+                        "last_fetched": time_now,
+                    }
+                ],
             )
+            self.append_task(ctx, task)
         return track_url
 
     async def _spotify_fetch_tracks(
@@ -512,13 +523,20 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         return tracks
 
     async def spotify_query(
-        self, query_type: str, uri: str, skip_youtube: bool = False, notify: Notifier = None
+        self,
+        ctx: commands.Context,
+        query_type: str,
+        uri: str,
+        skip_youtube: bool = False,
+        notify: Notifier = None,
     ) -> List[str]:
         """
         Queries the Database then falls back to Spotify and YouTube APIs.
 
         Parameters
         ----------
+        ctx: commands.Context
+            The context this method is being called under.
         query_type : str
             Type of query to perform (Pl
         uri: str
@@ -548,16 +566,17 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         youtube_urls = []
         if val is None:
             urls = await self._spotify_first_time_query(
-                query_type, uri, skip_youtube, current_cache_level=current_cache_level
+                ctx, query_type, uri, skip_youtube, current_cache_level=current_cache_level
             )
             youtube_urls.extend(urls)
         else:
             if query_type == "track" and cache_enabled:
-                asyncio.create_task(self.update("spotify", {"uri": f"spotify:track:{uri}"}))
+                task = self.update("spotify", {"uri": f"spotify:track:{uri}"})
+                self.append_task(ctx, task)
             youtube_urls.append(val)
         return youtube_urls
 
-    async def youtube_query(self, track_info: str) -> str:
+    async def youtube_query(self, ctx: commands.Context, track_info: str) -> str:
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_youtube().is_subset(current_cache_level)
         val = None
@@ -569,16 +588,21 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 val = None
         if val is None:
             youtube_url = await self._youtube_first_time_query(
-                track_info, current_cache_level=current_cache_level
+                ctx, track_info, current_cache_level=current_cache_level
             )
         else:
             if cache_enabled:
-                asyncio.create_task(self.update("youtube", {"track": track_info}))
+                task = self.update("youtube", {"track": track_info})
+                self.append_task(ctx, task)
             youtube_url = val
         return youtube_url
 
     async def lavalink_query(
-        self, player: lavalink.Player, query: dataclasses.Query, forced: bool = False
+        self,
+        ctx: commands.Context,
+        player: lavalink.Player,
+        query: dataclasses.Query,
+        forced: bool = False,
     ) -> Tuple[LoadResult, bool]:
         """
         A replacement for :code:`lavalink.Player.load_tracks`.
@@ -587,6 +611,8 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
 
         Parameters
         ----------
+        ctx: commands.Context
+            The context this method is being called under.
         player : lavalink.Player
             The player who's requesting the query.
         query: dataclasses.Query
@@ -609,13 +635,14 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             if update:
                 val = None
             if val:
-                asyncio.create_task(self.update("lavalink", {"query": query}))
+                task = self.update("lavalink", {"query": query})
+                self.append_task(ctx, task)
         if val and not forced:
             results = LoadResult(json.loads(val))
             called_api = False
             if results.has_error:
                 # If cached value has an invalid entry make a new call so that it gets updated
-                return await self.lavalink_query(player, query, forced=True)
+                return await self.lavalink_query(ctx, player, query, forced=True)
         else:
             called_api = True
             with contextlib.suppress(asyncio.TimeoutError):
@@ -630,19 +657,18 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             if cache_enabled and results.load_type and not results.has_error:
                 with contextlib.suppress(sqlite3.OperationalError):
                     time_now = str(datetime.datetime.now(datetime.timezone.utc))
-                    asyncio.create_task(
-                        self.insert(
-                            "lavalink",
-                            [
-                                {
-                                    "query": query,
-                                    "data": json.dumps(results._raw),
-                                    "last_updated": time_now,
-                                    "last_fetched": time_now,
-                                }
-                            ],
-                        )
+                    task = self.insert(
+                        "lavalink",
+                        [
+                            {
+                                "query": query,
+                                "data": json.dumps(results._raw),
+                                "last_updated": time_now,
+                                "last_fetched": time_now,
+                            }
+                        ],
                     )
+                    self.append_task(ctx, task)
         return results, called_api
 
     async def run_tasks(self, ctx: commands.Context):
@@ -651,6 +677,12 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 tasks = self._tasks[ctx.message.id]
                 await asyncio.gather(*tasks, loop=self.bot.loop)
                 del self._tasks[ctx.message.id]
+
+    async def run_all_tasks(self):
+        async with self._lock:
+            tasks = [t for v in self._tasks.values() for t in v]
+            await asyncio.gather(*tasks, loop=self.bot.loop)
+            self._tasks = {}
 
     def append_task(self, ctx: commands.Context, task: asyncio.coroutines):
         if ctx.message.id not in self._tasks:

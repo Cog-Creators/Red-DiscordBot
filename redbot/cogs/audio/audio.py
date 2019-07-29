@@ -1895,7 +1895,9 @@ class Audio(commands.Cog):
 
         if query.single_track:
             try:
-                res = await self.music_cache.spotify_query("track", query.id, skip_youtube=True)
+                res = await self.music_cache.spotify_query(
+                    ctx, "track", query.id, skip_youtube=True
+                )
                 if res is None:
                     return await self._embed_msg(ctx, _("Nothing found."))
             except SpotifyFetchError as error:
@@ -1907,7 +1909,7 @@ class Audio(commands.Cog):
                     return await self._enqueue_tracks(ctx, dataclasses.Query.process_input(res[0]))
                 else:
                     result, called_api = await self.music_cache.lavalink_query(
-                        player, dataclasses.Query.process_input(res[0])
+                        ctx, player, dataclasses.Query.process_input(res[0])
                     )
                     tracks = result.tracks
                     if not tracks:
@@ -1955,7 +1957,7 @@ class Audio(commands.Cog):
                 first_track_only = True
                 index = query.track_index
                 seek = query.start_time
-            result, called_api = await self.music_cache.lavalink_query(player, query)
+            result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
             tracks = result.tracks
             _playlist_meta = result._raw.get("playlistInfo", {})
             playlist_data = PlaylistInfo(**_playlist_meta) if _playlist_meta else None
@@ -2080,7 +2082,9 @@ class Audio(commands.Cog):
                     "youtube": _("Matching track {num}/{total}..."),
                 },
             )
-            youtube_links = await self.music_cache.spotify_query(stype, query.id, notify=notifier)
+            youtube_links = await self.music_cache.spotify_query(
+                ctx, stype, query.id, notify=notifier
+            )
         except SpotifyFetchError as error:
             self._play_lock(ctx, False)
             return await self._embed_msg(ctx, _(error.message).format(prefix=ctx.prefix))
@@ -2121,7 +2125,7 @@ class Audio(commands.Cog):
             #     await asyncio.sleep(2)
             try:
                 result, called_api = await self.music_cache.lavalink_query(
-                    player, dataclasses.Query.process_input(t)
+                    ctx, player, dataclasses.Query.process_input(t)
                 )
             except (RuntimeError, aiohttp.ServerDisconnectedError):
                 self._play_lock(ctx, False)
@@ -3596,7 +3600,7 @@ class Audio(commands.Cog):
             or not match_yt_playlist(uploaded_playlist_url)
             or not (
                 await self.music_cache.lavalink_query(
-                    player, dataclasses.Query.process_input(uploaded_playlist_url)
+                    ctx, player, dataclasses.Query.process_input(uploaded_playlist_url)
                 )
             )[0].tracks
         ):
@@ -3792,7 +3796,7 @@ class Audio(commands.Cog):
             track_count += 1
             try:
                 result, called_api = await self.music_cache.lavalink_query(
-                    player, dataclasses.Query.process_input(song_url)
+                    ctx, player, dataclasses.Query.process_input(song_url)
                 )
                 track = result.tracks
             except Exception:
@@ -3917,12 +3921,12 @@ class Audio(commands.Cog):
             self._play_lock(ctx, False)
         elif query.is_search:
             search = True
-            result, called_api = await self.music_cache.lavalink_query(player, query)
+            result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
             tracks = result.tracks
             if not tracks:
                 return await self._embed_msg(ctx, _("Nothing found."))
         else:
-            result, called_api = await self.music_cache.lavalink_query(player, query)
+            result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
             tracks = result.tracks
 
         if not search and len(tracklist) == 0:
@@ -3961,7 +3965,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, _("No previous track."))
         else:
             result, called_api = await self.music_cache.lavalink_query(
-                player, player.fetch("prev_song")
+                ctx, player, player.fetch("prev_song")
             )
             last_track = result.tracks
             player.add(player.fetch("prev_requester"), last_track[0])
@@ -4407,7 +4411,7 @@ class Audio(commands.Cog):
             query = dataclasses.Query.process_input(query)
             if query.invoked_from == "search list" or query.invoked_from == "local folder":
                 if query.invoked_from == "search list":
-                    result, called_api = await self.music_cache.lavalink_query(player, query)
+                    result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
                     tracks = result.tracks
                 else:
                     tracks = await self._folder_tracks(ctx, player, query)
@@ -4455,7 +4459,7 @@ class Audio(commands.Cog):
                 else:
                     tracks = await self._folder_list(ctx, query)
             else:
-                result, called_api = await self.music_cache.lavalink_query(player, query)
+                result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
                 tracks = result.tracks
             if not tracks:
                 return await self._embed_msg(ctx, _("Nothing found."))
@@ -5451,6 +5455,7 @@ class Audio(commands.Cog):
         if not self._cleaned_up:
             self.session.detach()
             # self.bot.loop.create_task()
+            self.bot.loop.create_task(self.music_cache.run_all_tasks())
             self.bot.loop.create_task(self.music_cache.close())
 
             if self._disconnect_task:
@@ -5477,11 +5482,17 @@ class Audio(commands.Cog):
     @_playlist_save.error
     @_playlist_update.error
     @_playlist_upload.error
-    async def _clear_lock_on_error(self, ctx, error):
+    async def _clear_lock_on_error(self, ctx: commands.Context, error):
         # TODO: Change this in a future PR
         # Make it so that this can be used to show user friendly errors
         if not isinstance(error, (commands.BadArgument, commands.CheckFailure)):
             self.play_lock[ctx.message.guild.id] = False
         await ctx.bot.on_command_error(ctx, error.original, unhandled_by_cog=True)
+
+    async def cog_after_invoke(self, ctx: commands.Context):
+        await self._process_db(ctx)
+
+    async def _process_db(self, ctx: commands.Context):
+        await self.music_cache.run_tasks(ctx)
 
     __del__ = cog_unload
