@@ -5493,7 +5493,7 @@ class Audio(commands.Cog):
     async def _process_db(self, ctx: commands.Context):
         await self.music_cache.run_tasks(ctx)
 
-    async def _close_database(self):
+    async def _close_database(self):  # FIXME: This is killing the bot ?
         await self.music_cache.run_all_pending_tasks()
         await self.music_cache.close()
 

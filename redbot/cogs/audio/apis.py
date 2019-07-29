@@ -435,7 +435,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                     current=track_count, total=total_tracks, key="youtube"
                 )
         if CacheLevel.set_spotify().is_subset(current_cache_level):
-            tasks = self.insert("spotify", database_entries)
+            task = self.insert("spotify", database_entries)
             self.append_task(ctx, task)
         return youtube_urls
 
