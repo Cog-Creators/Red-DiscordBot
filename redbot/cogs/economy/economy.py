@@ -394,7 +394,10 @@ class Economy(commands.Cog):
             balance = humanize_number(acc[1]["balance"])
 
             if acc[0] != author.id:
-                temp_msg += f"{f'{humanize_number(pos)}.': <{pound_len+2}} {balance: <{bal_len + 5}} {name}\n"
+                temp_msg += (
+                    f"{f'{humanize_number(pos)}.': <{pound_len+2}} "
+                    f"{balance: <{bal_len + 5}} {name}\n"
+                )
 
             else:
                 temp_msg += (

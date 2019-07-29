@@ -1,1 +1,1 @@
-New :meth:`humanize_number` in :module:`redbot.core.utils.chat_formatting` function to convert numbers into text which respect locale.
+New :func:`humanize_number` in :module:`redbot.core.utils.chat_formatting` function to convert numbers into text which respect locale.

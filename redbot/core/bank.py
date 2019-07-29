@@ -242,12 +242,19 @@ async def withdraw_credits(member: discord.Member, amount: int) -> int:
     if not isinstance(amount, int):
         raise TypeError("Withdrawal amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
-        raise ValueError("Invalid withdrawal amount {} < 0".format(humanize_number(amount)))
+        raise ValueError(
+            "Invalid withdrawal amount {} < 0".format(
+                humanize_number(amount, override_locale="en_US")
+            )
+        )
 
     bal = await get_balance(member)
     if amount > bal:
         raise ValueError(
-            "Insufficient funds {} > {}".format(humanize_number(amount), humanize_number(bal))
+            "Insufficient funds {} > {}".format(
+                humanize_number(amount, override_locale="en_US"),
+                humanize_number(bal, override_locale="en_US"),
+            )
         )
 
     return await set_balance(member, bal - amount)
@@ -279,7 +286,11 @@ async def deposit_credits(member: discord.Member, amount: int) -> int:
     if not isinstance(amount, int):
         raise TypeError("Deposit amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
-        raise ValueError("Invalid deposit amount {} <= 0".format(humanize_number(amount)))
+        raise ValueError(
+            "Invalid deposit amount {} <= 0".format(
+                humanize_number(amount, override_locale="en_US")
+            )
+        )
 
     bal = await get_balance(member)
     return await set_balance(member, amount + bal)
@@ -313,7 +324,11 @@ async def transfer_credits(from_: discord.Member, to: discord.Member, amount: in
     if not isinstance(amount, int):
         raise TypeError("Transfer amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
-        raise ValueError("Invalid transfer amount {} <= 0".format(humanize_number(amount)))
+        raise ValueError(
+            "Invalid transfer amount {} <= 0".format(
+                humanize_number(amount, override_locale="en_US")
+            )
+        )
 
     await withdraw_credits(from_, amount)
     return await deposit_credits(to, amount)
