@@ -1535,11 +1535,9 @@ class Audio(commands.Cog):
             return
         local_tracks = []
         for local_file in await self._all_folder_tracks(ctx, query):
-            trackdata = await player.load_tracks(local_file.track.to_string())
-            try:
+            trackdata = await self.music_cache.lavalink_query(ctx, player, local_file)
+            with contextlib.suppress(IndexError):
                 local_tracks.append(trackdata.tracks[0])
-            except IndexError:
-                pass
         return local_tracks
 
     async def _local_play_all(
