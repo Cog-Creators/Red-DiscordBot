@@ -422,8 +422,8 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                         ctx, track_info, current_cache_level=current_cache_level
                     )
                 if youtube_cache and val:
-                    task = self.update("youtube", {"track": track_info})
-                    self.append_task(ctx, task)
+                    task = ("update", ("youtube", {"track": track_info}))
+                    self.append_task(ctx, *task)
 
                 if val:
                     youtube_urls.append(val)
@@ -435,8 +435,8 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                     current=track_count, total=total_tracks, key="youtube"
                 )
         if CacheLevel.set_spotify().is_subset(current_cache_level):
-            task = self.insert("spotify", database_entries)
-            self.append_task(ctx, task)
+            task = ("insert", ("spotify", database_entries))
+            self.append_task(ctx, *task)
         return youtube_urls
 
     async def _youtube_first_time_query(
@@ -448,18 +448,21 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         track_url = await self.youtube_api.get_call(track_info)
         if CacheLevel.set_youtube().is_subset(current_cache_level) and track_url:
             time_now = str(datetime.datetime.now(datetime.timezone.utc))
-            task = self.insert(
-                "youtube",
-                [
-                    {
-                        "track_info": track_info,
-                        "track_url": track_url,
-                        "last_updated": time_now,
-                        "last_fetched": time_now,
-                    }
-                ],
+            task = (
+                "insert",
+                (
+                    "youtube",
+                    [
+                        {
+                            "track_info": track_info,
+                            "track_url": track_url,
+                            "last_updated": time_now,
+                            "last_fetched": time_now,
+                        }
+                    ],
+                ),
             )
-            self.append_task(ctx, task)
+            self.append_task(ctx, *task)
         return track_url
 
     async def _spotify_fetch_tracks(
@@ -573,8 +576,8 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             youtube_urls.extend(urls)
         else:
             if query_type == "track" and cache_enabled:
-                task = self.update("spotify", {"uri": f"spotify:track:{uri}"})
-                self.append_task(ctx, task)
+                task = ("update", ("spotify", {"uri": f"spotify:track:{uri}"}))
+                self.append_task(ctx, *task)
             youtube_urls.append(val)
         return youtube_urls
 
@@ -594,8 +597,8 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             )
         else:
             if cache_enabled:
-                task = self.update("youtube", {"track": track_info})
-                self.append_task(ctx, task)
+                task = ("update", ("youtube", {"track": track_info}))
+                self.append_task(ctx, *task)
             youtube_url = val
         return youtube_url
 
@@ -629,6 +632,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         val = None
+        _raw_query = query
         query = str(query)
         if cache_enabled and not forced:
             update = True  # If fetch fails always run a new query to lavalink
@@ -637,20 +641,20 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             if update:
                 val = None
             if val:
-                task = self.update("lavalink", {"query": query})
-                self.append_task(ctx, task)
+                task = ("update", ("lavalink", {"query": query}))
+                self.append_task(ctx, *task)
         if val and not forced:
             results = LoadResult(json.loads(val))
             called_api = False
             if results.has_error:
                 # If cached value has an invalid entry make a new call so that it gets updated
-                return await self.lavalink_query(ctx, player, query, forced=True)
+                return await self.lavalink_query(ctx, player, _raw_query, forced=True)
         else:
             called_api = True
             with contextlib.suppress(asyncio.TimeoutError):
                 try:
                     results = await player.load_tracks(query)
-                except Exception:
+                except KeyError:
                     return (
                         LoadResult({"loadType": "LOAD_FAILED", "playlistInfo": {}, "tracks": []}),
                         True,
@@ -659,44 +663,74 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             if cache_enabled and results.load_type and not results.has_error:
                 with contextlib.suppress(sqlite3.OperationalError):
                     time_now = str(datetime.datetime.now(datetime.timezone.utc))
-                    task = self.insert(
-                        "lavalink",
-                        [
-                            {
-                                "query": query,
-                                "data": json.dumps(results._raw),
-                                "last_updated": time_now,
-                                "last_fetched": time_now,
-                            }
-                        ],
+                    task = (
+                        "insert",
+                        (
+                            "lavalink",
+                            [
+                                {
+                                    "query": query,
+                                    "data": json.dumps(results._raw),
+                                    "last_updated": time_now,
+                                    "last_fetched": time_now,
+                                }
+                            ],
+                        ),
                     )
-                    self.append_task(ctx, task)
+                    self.append_task(ctx, *task)
         return results, called_api
 
     async def run_tasks(self, ctx: commands.Context):  # TODO Change logs to debug
         async with self._lock:
             if ctx.message.id in self._tasks:
-                log.info(f"Running all database writes for {ctx.message.id} ({ctx.author})")
-                tasks = self._tasks[ctx.message.id]
-                await asyncio.gather(*tasks, loop=self.bot.loop)
-                del self._tasks[ctx.message.id]
-                log.info(
-                    f"All database writes for {ctx.message.id} "
-                    f"({ctx.author}) have been completed"
-                )
+                log.info(f"Running database writes for {ctx.message.id} ({ctx.author})")
+                try:
+                    tasks = self._tasks[ctx.message.id]
+                    del self._tasks[ctx.message.id]
+                    await asyncio.gather(
+                        *[asyncio.ensure_future(self.insert(*a)) for a in tasks["insert"]],
+                        loop=self.bot.loop,
+                        return_exceptions=True,
+                    )
+                    await asyncio.gather(
+                        *[asyncio.ensure_future(self.update(*a)) for a in tasks["update"]],
+                        loop=self.bot.loop,
+                        return_exceptions=True,
+                    )
+                except BaseException:
+                    pass
+                finally:
+                    log.info(f"Completed database writes for {ctx.message.id} " f"({ctx.author})")
 
-    async def run_all_pending_tasks(self):  # TODO Change logs to debug
+    async def run_all_pending_tasks(self):
         async with self._lock:
-            log.info("Running all pending Writes to database")
-            tasks = [t for v in self._tasks.values() for t in v]
-            await asyncio.gather(*tasks, loop=self.bot.loop)
-            self._tasks = {}
-            log.info("All pending writes to database have finished")
+            log.debug("Running pending writes to database")
+            try:
+                tasks = {"update": [], "insert": []}
+                for k, task in self._tasks.items():
+                    for t, args in task.items():
+                        tasks[t].append(args)
+                self._tasks = {}
 
-    def append_task(self, ctx: commands.Context, task: asyncio.coroutines):
+                await asyncio.gather(
+                    *[asyncio.ensure_future(self.insert(*a)) for a in tasks["insert"]],
+                    loop=self.bot.loop,
+                    return_exceptions=True,
+                )
+                await asyncio.gather(
+                    *[asyncio.ensure_future(self.update(*a)) for a in tasks["update"]],
+                    loop=self.bot.loop,
+                    return_exceptions=True,
+                )
+            except BaseException:
+                pass
+            finally:
+                log.debug("Completed pending writes to database have finished")
+
+    def append_task(self, ctx: commands.Context, event: str, task: tuple):
         if ctx.message.id not in self._tasks:
-            self._tasks[ctx.message.id] = []
-        self._tasks[ctx.message.id].append(task)
+            self._tasks[ctx.message.id] = {"update": [], "insert": []}
+        self._tasks[ctx.message.id][event].append(task)
 
     async def play_random(self):
         recently_played = []

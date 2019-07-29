@@ -341,13 +341,7 @@ class Audio(commands.Cog):
             prev_requester = player.fetch("prev_requester")
             self.bot.dispatch("track_end", player.channel.guild, prev_song, prev_requester)
 
-            if (
-                autoplay
-                and not player.queue
-                and not player.is_playing
-                and not player.paused
-                and not (extra == TrackEndReason.REPLACED or extra == TrackEndReason.STOPPED)
-            ):
+            if autoplay and player.fetch("playing_song") is not None:
                 await self.music_cache.autoplay(player)
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
@@ -660,7 +654,7 @@ class Audio(commands.Cog):
         Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).
         Invalid input will turn the max length setting off."""
         if not isinstance(seconds, int):
-            seconds = await time_convert(seconds)
+            seconds = time_convert(seconds)
         if seconds < 0:
             return await self._embed_msg(ctx, _("Can't be less than zero."))
         if seconds == 0:
@@ -3412,13 +3406,14 @@ class Audio(commands.Cog):
             tracks = playlist.tracks
             for track in tracks:
                 track = lavalink.rest_api.Track(data=track)
-                if f"{os.sep}localtracks" in track.info.uri:
+                if f"{os.sep}localtracks" in track.uri:
+                    local_path = dataclasses.LocalPath(track.uri)
                     if not await self._localtracks_check(ctx):
                         pass
-                    if not dataclasses.LocalPath(track.info.uri).is_file():
+                    if not local_path.exists() and not local_path.is_file():
                         continue
                 if maxlength > 0:
-                    if not track_limit(track.info.length, maxlength):
+                    if not track_limit(track.length, maxlength):
                         continue
                 player.add(author_obj, track)
                 self.bot.dispatch("enqueue_track", player.channel.guild, track, ctx.author)
@@ -4688,7 +4683,7 @@ class Audio(commands.Cog):
                     abs_position = False
                 except ValueError:
                     abs_position = True
-                    seconds = await time_convert(seconds)
+                    seconds = time_convert(seconds)
                 if seconds == 0:
                     return await self._embed_msg(ctx, _("Invalid input for the time to seek."))
                 if not abs_position:
@@ -4876,7 +4871,7 @@ class Audio(commands.Cog):
     async def _skip_action(self, ctx: commands.Context, skip_to_track: int = None):
         player = lavalink.get_player(ctx.guild.id)
         autoplay = await self.config.guild(player.channel.guild).auto_play()
-        if not player.queue and not autoplay:
+        if not player.current or (not player.queue and not autoplay):
             try:
                 pos, dur = player.position, player.current.length
             except AttributeError:
@@ -5486,7 +5481,7 @@ class Audio(commands.Cog):
     def cog_unload(self):
         if not self._cleaned_up:
             self.session.detach()
-
+            self.bot.loop.create_task(self._close_database())
             if self._disconnect_task:
                 self._disconnect_task.cancel()
 
@@ -5497,7 +5492,7 @@ class Audio(commands.Cog):
             self.bot.loop.create_task(lavalink.close())
             if self._manager is not None:
                 self.bot.loop.create_task(self._manager.shutdown())
-            self.bot.loop.create_task(self._close_database())
+
             self._cleaned_up = True
 
     @bump.error
@@ -5515,9 +5510,20 @@ class Audio(commands.Cog):
     async def _clear_lock_on_error(self, ctx: commands.Context, error):
         # TODO: Change this in a future PR
         # Make it so that this can be used to show user friendly errors
-        if not isinstance(error, (commands.BadArgument, commands.CheckFailure)):
+        if not isinstance(
+            error,
+            (
+                commands.CheckFailure,
+                commands.UserInputError,
+                commands.DisabledCommand,
+                commands.CommandOnCooldown,
+            ),
+        ):
             self.play_lock[ctx.message.guild.id] = False
-        await ctx.bot.on_command_error(ctx, error.original, unhandled_by_cog=True)
+            await self.music_cache.run_tasks(ctx)
+        await ctx.bot.on_command_error(
+            ctx, error.original if hasattr(error, "original") else error, unhandled_by_cog=True
+        )
 
     async def cog_after_invoke(self, ctx: commands.Context):
         await self._process_db(ctx)
