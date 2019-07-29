@@ -285,7 +285,6 @@ class Audio(commands.Cog):
         disconnect = await self.config.guild(player.channel.guild).disconnect()
         autoplay = await self.config.guild(player.channel.guild).auto_play()
         notify = await self.config.guild(player.channel.guild).notify()
-        repeat = await self.config.guild(player.channel.guild).repeat()
         status = await self.config.status()
 
         async def _players_check():
@@ -342,8 +341,12 @@ class Audio(commands.Cog):
             prev_requester = player.fetch("prev_requester")
             self.bot.dispatch("track_end", player.channel.guild, prev_song, prev_requester)
 
-            if not player.queue and not (
-                extra == TrackEndReason.CLEANUP or extra == TrackEndReason.STOPPED
+            if (
+                autoplay
+                and not player.queue
+                and not player.is_playing
+                and not player.paused
+                and not (extra == TrackEndReason.CLEANUP or extra == TrackEndReason.STOPPED)
             ):
                 await self.music_cache.autoplay(player)
 
