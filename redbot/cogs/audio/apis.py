@@ -18,9 +18,9 @@ from lavalink.rest_api import LoadResult
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from . import dataclasses
 from .errors import InvalidTableError, SpotifyFetchError
-from .utils import CacheLevel, Notifier, queue_duration
-from . import localtracks
+from .utils import CacheLevel, Notifier
 
 log = logging.getLogger("red.audio.cache")
 _ = Translator("Audio", __file__)
@@ -291,6 +291,8 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         await self.database.disconnect()
 
     async def insert(self, table: str, values: List[dict]) -> NoReturn:
+        if table == "spotify":
+            return
         query = _PARSER.get(table, {}).get("insert")
         if query is None:
             raise InvalidTableError(f"{table} is not a valid table in the database.")
@@ -298,6 +300,8 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         await self.database.execute_many(query=query, values=values)
 
     async def update(self, table: str, values: Dict[str, str]) -> NoReturn:
+        if table == "spotify":
+            return
         table = _PARSER.get(table, {})
         sql_query = table.get("update")
         time_now = str(datetime.datetime.now(datetime.timezone.utc))
@@ -326,7 +330,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             else True
         )
 
-        return getattr(row, query, None), need_update  # need_update
+        return getattr(row, query, None), need_update if table != "spotify" else True
 
         # TODO: Create a task to remove entries from DB that haven't been fetched in x days ... customizable by Owner
 
@@ -510,6 +514,24 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
     async def spotify_query(
         self, query_type: str, uri: str, skip_youtube: bool = False, notify: Notifier = None
     ) -> List[str]:
+        """
+        Queries the Database then falls back to Spotify and YouTube APIs.
+
+        Parameters
+        ----------
+        query_type : str
+            Type of query to perform (Pl
+        uri: str
+            Spotify URL ID .
+        skip_youtube:bool
+            Whether or not to skip YouTube API Calls.
+        notify: Notifier
+            A Notifier object to handle the user UI notifications while tracks are loaded.
+        Returns
+        -------
+        List[str]
+            List of Youtube URLs.
+        """
         self.notifier = notify
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_spotify().is_subset(current_cache_level)
@@ -555,7 +577,27 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             youtube_url = val
         return youtube_url
 
-    async def lavalink_query(self, player, query, forced=False) -> Tuple[LoadResult, bool]:
+    async def lavalink_query(
+        self, player: lavalink.Player, query: dataclasses.Query, forced: bool = False
+    ) -> Tuple[LoadResult, bool]:
+        """
+        A replacement for :code:`lavalink.Player.load_tracks`.
+        This will try to get a valid cached entry first if not found or if in valid
+        it will then call the lavalink API.
+
+        Parameters
+        ----------
+        player : lavalink.Player
+            The player who's requesting the query.
+        query: dataclasses.Query
+            The Query object for the query in question.
+        forced:bool
+            Whether or not to skip cache and call API first..
+        Returns
+        -------
+        Tuple[lavalink.LoadResult, bool]
+            Tuple with the Load result and whether or not the API was called.
+        """
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         val = None
@@ -620,7 +662,15 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         tries = 0
         tracks = []
         try:
+            # TODO: This is disgusting but it works...
+            # Maybe to a full week contain rather and then get a random song from that.
+            # Instad of going for a single day that may or may not exist.
+            # This is usually only a problem on the first few days of the cache usage
+            # Where the change of the date having no entries is larger than
+            # The change to have an entry.
+            # That is why if this fails 15 times we break and default to a youtube playlist.
             while not recently_played:
+
                 date = (
                     "%"
                     + str(
@@ -652,7 +702,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
 
     async def autoplay(
         self, player: lavalink.Player
-    ):  # TODO: Look at other ways to increment to this
+    ):  # TODO: Look at other ways to increment to this.
         # Example https://api.spotify.com/v1/browse/new-releases
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)

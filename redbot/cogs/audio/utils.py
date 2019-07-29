@@ -10,11 +10,9 @@ import lavalink
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
-
+from . import dataclasses
 from .converters import _pass_config_to_converters
-from . import localtracks
 from .playlists import _pass_config_to_playlist
-
 
 __all__ = [
     "pass_config_to_dependencies",
@@ -38,7 +36,7 @@ __all__ = [
 def pass_config_to_dependencies(config: Config, bot: Red, localtracks_folder: str):
     _pass_config_to_playlist(config, bot)
     _pass_config_to_converters(config, bot)
-    localtracks._pass_config_to_localtracks(config, bot, localtracks_folder)
+    dataclasses._pass_config_to_dataclasses(config, bot, localtracks_folder)
 
 
 def track_limit(track, maxlength):
@@ -135,7 +133,7 @@ async def remove_react(message, react_emoji, react_user):
 
 async def get_description(track):
     if f"{os.sep}localtracks" in track.uri:
-        local_track = localtracks.LocalPath(track.uri)
+        local_track = dataclasses.LocalPath(track.uri)
         if not track.title == "Unknown title":
             return "**{} - {}**\n{}".format(
                 track.author, track.title, local_track.to_string_hidden()

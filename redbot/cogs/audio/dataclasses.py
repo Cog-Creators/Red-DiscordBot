@@ -1,7 +1,7 @@
 import os
 import re
-from pathlib import Path, WindowsPath, PosixPath
-from typing import List, Union, Optional
+from pathlib import Path, PosixPath, WindowsPath
+from typing import List, Optional, Union
 from urllib.parse import urlparse
 
 from redbot.core import Config
@@ -15,7 +15,7 @@ _ = Translator("Audio", __file__)
 _remove_start = re.compile(r"^(sc|list) ")
 
 
-def _pass_config_to_localtracks(config: Config, bot: Red, folder: str):
+def _pass_config_to_dataclasses(config: Config, bot: Red, folder: str):
     global _config, _bot, _localtrack_folder
     if _config is None:
         _config = config
@@ -47,6 +47,12 @@ class ChdirClean(object):
 
 
 class LocalPath(ChdirClean):
+    """
+    Local tracks class.
+    Used to handle system dir trees in a cross system manner.
+    The only use of this class is for `localtracks`.
+    """
+
     _supported_music_ext = (".mp3", ".flac", ".ogg")
 
     def __init__(self, path, **kwargs):
@@ -197,6 +203,11 @@ class LocalPath(ChdirClean):
 
 
 class Query:
+    """
+    Query data class.
+    Use: Query.process_input(query) to generate the Query object.
+    """
+
     def __init__(self, query: Union[LocalPath, str], **kwargs):
         query = kwargs.get("queryforced", query)
         self._raw: Union[LocalPath, str] = query
@@ -235,7 +246,7 @@ class Query:
             self.is_youtube = False
             self.is_soundcloud = True
 
-        self.lavalink_query: str = self.get_query()
+        self.lavalink_query: str = self._get_query()
 
         if self.is_playlist or self.is_album:
             self.single_track = False
@@ -244,7 +255,21 @@ class Query:
         return str(self.lavalink_query)
 
     @classmethod
-    def process_input(cls, query, **kwargs):
+    def process_input(cls, query: Union[LocalPath, str], **kwargs):
+        """
+        A replacement for :code:`lavalink.Player.load_tracks`.
+        This will try to get a valid cached entry first if not found or if in valid
+        it will then call the lavalink API.
+
+        Parameters
+        ----------
+        query : Union[Query, LocalPath, str]
+            The query string or LocalPath object.
+        Returns
+        -------
+        Query
+            Returns a parsed Query object.
+        """
         if not query:
             query = "InvalidQueryPlaceHolderName"
 
@@ -257,11 +282,11 @@ class Query:
             return query
         possible_values = dict()
         possible_values.update(dict(**kwargs))
-        possible_values.update(cls.parse(query, **kwargs))
+        possible_values.update(cls._parse(query, **kwargs))
         return cls(query, **possible_values)
 
     @staticmethod
-    def parse(track, **kwargs):
+    def _parse(track, **kwargs):
         returning = {}
         if (
             type(track) == type(LocalPath)
@@ -315,7 +340,7 @@ class Query:
                             if match:
                                 returning["track_index"] = int(match.group(1)) - 1
                         if any(k in track for k in ["playlist?", "&list="]):
-                            if "watch?" in track:
+                            if all(x in track in track for x in ["&start_radio=", "watch?"]):
                                 returning["track_index"] = 0
                                 returning["playlist"] = True
                                 returning["single"] = False
@@ -407,7 +432,7 @@ class Query:
                 returning["single"] = True
         return returning
 
-    def get_query(self):
+    def _get_query(self):
         if self.is_local:
             return self.track.to_string()
         elif self.is_spotify:

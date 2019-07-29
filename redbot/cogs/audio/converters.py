@@ -19,6 +19,7 @@ __all__ = [
     "standardize_scope",
     "get_lazy_converter",
 ]
+
 _config = None
 _bot = None
 
