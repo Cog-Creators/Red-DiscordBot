@@ -678,7 +678,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 await asyncio.gather(*tasks, loop=self.bot.loop)
                 del self._tasks[ctx.message.id]
 
-    async def run_all_tasks(self):
+    async def run_all_pending_tasks(self):
         async with self._lock:
             tasks = [t for v in self._tasks.values() for t in v]
             await asyncio.gather(*tasks, loop=self.bot.loop)

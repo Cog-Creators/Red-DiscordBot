@@ -5455,8 +5455,7 @@ class Audio(commands.Cog):
         if not self._cleaned_up:
             self.session.detach()
             # self.bot.loop.create_task()
-            self.bot.loop.create_task(self.music_cache.run_all_tasks())
-            self.bot.loop.create_task(self.music_cache.close())
+            self.bot.loop.create_task(self.music_cache.run_all_pending_tasks())
 
             if self._disconnect_task:
                 self._disconnect_task.cancel()
@@ -5468,6 +5467,7 @@ class Audio(commands.Cog):
             self.bot.loop.create_task(lavalink.close())
             if self._manager is not None:
                 self.bot.loop.create_task(self._manager.shutdown())
+            self.bot.loop.create_task(self.music_cache.close())
             self._cleaned_up = True
 
     @bump.error
