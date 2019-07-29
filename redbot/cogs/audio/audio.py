@@ -346,7 +346,7 @@ class Audio(commands.Cog):
                 and not player.queue
                 and not player.is_playing
                 and not player.paused
-                and not (extra == TrackEndReason.CLEANUP or extra == TrackEndReason.STOPPED)
+                and not (extra == TrackEndReason.REPLACED or extra == TrackEndReason.STOPPED)
             ):
                 await self.music_cache.autoplay(player)
 
