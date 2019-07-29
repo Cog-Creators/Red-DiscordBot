@@ -673,18 +673,25 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                     self.append_task(ctx, task)
         return results, called_api
 
-    async def run_tasks(self, ctx: commands.Context):
+    async def run_tasks(self, ctx: commands.Context):  # TODO Change logs to debug
         async with self._lock:
             if ctx.message.id in self._tasks:
+                log.info(f"Running all database writes for {ctx.message.id} ({ctx.author})")
                 tasks = self._tasks[ctx.message.id]
                 await asyncio.gather(*tasks, loop=self.bot.loop)
                 del self._tasks[ctx.message.id]
+                log.info(
+                    f"All database writes for {ctx.message.id} "
+                    f"({ctx.author}) have been completed"
+                )
 
-    async def run_all_pending_tasks(self):
+    async def run_all_pending_tasks(self):  # TODO Change logs to debug
         async with self._lock:
+            log.info("Running all pending Writes to database")
             tasks = [t for v in self._tasks.values() for t in v]
             await asyncio.gather(*tasks, loop=self.bot.loop)
             self._tasks = {}
+            log.info("All pending writes to database have finished")
 
     def append_task(self, ctx: commands.Context, task: asyncio.coroutines):
         if ctx.message.id not in self._tasks:
