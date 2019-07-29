@@ -651,14 +651,12 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 return await self.lavalink_query(ctx, player, _raw_query, forced=True)
         else:
             called_api = True
-            with contextlib.suppress(asyncio.TimeoutError):
-                try:
-                    results = await player.load_tracks(query)
-                except KeyError:
-                    return (
-                        LoadResult({"loadType": "LOAD_FAILED", "playlistInfo": {}, "tracks": []}),
-                        True,
-                    )
+            results = None
+            with contextlib.suppress(asyncio.TimeoutError, KeyError):
+                results = await player.load_tracks(query)
+
+            if results is None:
+                results = LoadResult({"loadType": "LOAD_FAILED", "playlistInfo": {}, "tracks": []})
 
             if cache_enabled and results.load_type and not results.has_error:
                 with contextlib.suppress(sqlite3.OperationalError):
