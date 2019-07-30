@@ -328,7 +328,7 @@ class Command(CogCommandMixin, commands.Command):
                 can_run = await self.can_run(
                     ctx, check_all_parents=True, change_permission_state=False
                 )
-            except commands.CheckFailure:
+            except (commands.CheckFailure, commands.errors.DisabledCommand):
                 return False
             else:
                 if can_run is False:
