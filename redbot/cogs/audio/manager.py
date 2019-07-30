@@ -20,12 +20,14 @@ from .errors import LavalinkDownloadFailed
 
 JAR_VERSION = os.getenv("RED_AUDIO_JAR_VERSION", "3.2.0.3")
 JAR_BUILD = os.getenv("RED_AUDIO_JAR_BUILD", "796")
+LAVALINK_DOWNLOAD_URL = os.getenv("RED_AUDIO_LAVALINK_DOWNLOAD_URL")
+
 if JAR_BUILD.isnumeric():
     JAR_BUILD = int(JAR_BUILD)
 else:
     raise ValueError(f"{JAR_BUILD} is not a valid build")
 
-LAVALINK_DOWNLOAD_URL = (
+LAVALINK_DOWNLOAD_URL = LAVALINK_DOWNLOAD_URL or (
     f"https://github.com/Cog-Creators/Lavalink-Jars/releases/download/{JAR_VERSION}_{JAR_BUILD}/"
     f"Lavalink.jar"
 )
