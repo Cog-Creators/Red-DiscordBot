@@ -1982,6 +1982,7 @@ class Audio(commands.Cog):
             _playlist_meta = result._raw.get("playlistInfo", {})
             playlist_data = PlaylistInfo(**_playlist_meta) if _playlist_meta else None
             if not tracks:
+                self._play_lock(ctx, False)
                 return await self._embed_msg(ctx, _("Nothing found."))
         else:
             tracks = query
@@ -2047,6 +2048,7 @@ class Audio(commands.Cog):
                             "enqueue_track", player.channel.guild, single_track, ctx.author
                         )
                     else:
+                        self._play_lock(ctx, False)
                         return await self._embed_msg(ctx, _("Track exceeds maximum length."))
 
                 else:
@@ -5426,7 +5428,7 @@ class Audio(commands.Cog):
                 commands.CommandOnCooldown,
             ),
         ):
-            self.play_lock[ctx.message.guild.id] = False
+            self._play_lock(ctx, False)
             await self.music_cache.run_tasks(ctx)
         await ctx.bot.on_command_error(
             ctx, error.original if hasattr(error, "original") else error, unhandled_by_cog=True
