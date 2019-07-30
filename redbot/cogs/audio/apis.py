@@ -653,10 +653,9 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                     self.append_task(ctx, *task)
 
                 if val:
-                    youtube_url = val
                     try:
                         result, called_api = await self.lavalink_query(
-                            ctx, player, dataclasses.Query.process_input(youtube_url)
+                            ctx, player, dataclasses.Query.process_input(val)
                         )
                     except (RuntimeError, aiohttp.ServerDisconnectedError):
                         lock(ctx, False)
@@ -823,6 +822,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 task = ("update", ("lavalink", {"query": query}))
                 self.append_task(ctx, *task)
         if val and not forced:
+            print("in cache:", val)
             results = LoadResult(json.loads(val))
             called_api = False
             if results.has_error:
@@ -831,9 +831,10 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         else:
             called_api = True
             results = None
+            print("Not cache:", query)
             with contextlib.suppress(Exception):
                 results = await player.load_tracks(query)
-
+            print(results.__dict__)
             if results is None:
                 results = LoadResult({"loadType": "LOAD_FAILED", "playlistInfo": {}, "tracks": []})
 
