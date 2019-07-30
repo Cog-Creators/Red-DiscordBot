@@ -286,6 +286,7 @@ class Audio(commands.Cog):
         autoplay = await self.config.guild(player.channel.guild).auto_play()
         notify = await self.config.guild(player.channel.guild).notify()
         status = await self.config.status()
+        repeat = await self.config.guild(player.channel.guild).repeat()
 
         async def _players_check():
             try:
@@ -444,7 +445,10 @@ class Audio(commands.Cog):
             new_queue = [
                 t for t in player.queue if t.track_identifier != player.current.track_identifier
             ]
+            log.debug(f"Removed {len(player.queue) - len(new_queue)} broken tracks from the queue")
             player.queue = new_queue
+            if repeat:
+                player.current = None
             await player.skip()
 
     @commands.group()
@@ -3427,9 +3431,9 @@ class Audio(commands.Cog):
             embed = discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("Playlist Enqueued"),
-                description=_("Added {num} tracks to the queue.{maxlength_msg}").format(
-                    num=track_len, maxlength_msg=maxlength_msg
-                ),
+                description=_(
+                    "{playlistname}\nAdded {num} tracks to the queue.{maxlength_msg}"
+                ).format(num=track_len, maxlength_msg=maxlength_msg, playlistname=playlist.name),
             )
             await ctx.send(embed=embed)
             if not player.current:
