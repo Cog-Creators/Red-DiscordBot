@@ -833,6 +833,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             with contextlib.suppress(Exception):
                 results = await player.load_tracks(query)
             print(results._raw if results else None)  # TODO Remove
+            print(query)
             if results is None:
                 results = LoadResult({"loadType": "LOAD_FAILED", "playlistInfo": {}, "tracks": []})
 
