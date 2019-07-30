@@ -1916,7 +1916,7 @@ class Audio(commands.Cog):
         if query.single_track:
             try:
                 res = await self.music_cache.spotify_query(
-                    ctx, "track", query.id, skip_youtube=True
+                    ctx, "track", query.id, skip_youtube=True, notifier=None
                 )
                 if res is None:
                     return await self._embed_msg(ctx, _("Nothing found."))

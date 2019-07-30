@@ -273,8 +273,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         )
         self._tasks = {}
         self._lock = asyncio.Lock()
-        self.config: Config = None
-        self.notifier: Notifier = None
+        self.config: Optional[Config] = None
 
     async def initialize(self, config: Config) -> NoReturn:
         await self.database.connect()
@@ -373,12 +372,13 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         ctx: commands.Context,
         query_type: str,
         uri: str,
+        notifier: Notifier,
         skip_youtube: bool = False,
         current_cache_level: CacheLevel = CacheLevel.none(),
     ) -> List[str]:
         youtube_urls = []
 
-        tracks = await self._spotify_fetch_tracks(query_type, uri, params=None)
+        tracks = await self._spotify_fetch_tracks(query_type, uri, params=None, notifier=notifier)
         total_tracks = len(tracks)
         database_entries = []
         track_count = 0
@@ -431,10 +431,8 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             else:
                 youtube_urls.append(track_info)
             track_count += 1
-            if ((track_count % 2 == 0) or (track_count == total_tracks)) and self.notifier:
-                await self.notifier.notify_user(
-                    current=track_count, total=total_tracks, key="youtube"
-                )
+            if ((track_count % 2 == 0) or (track_count == total_tracks)) and notifier:
+                await notifier.notify_user(current=track_count, total=total_tracks, key="youtube")
         if CacheLevel.set_spotify().is_subset(current_cache_level):
             task = ("insert", ("spotify", database_entries))
             self.append_task(ctx, *task)
@@ -467,7 +465,12 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         return track_url
 
     async def _spotify_fetch_tracks(
-        self, query_type: str, uri: str, recursive: Union[str, bool] = False, params=None
+        self,
+        query_type: str,
+        uri: str,
+        recursive: Union[str, bool] = False,
+        params=None,
+        notifier: Optional[Notifier] = None,
     ) -> Union[List[str], dict]:
 
         if recursive is False:
@@ -508,15 +511,13 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                     new_tracks = [k["track"] for k in tracks_raw if k.get("track")]
                     tracks.extend(new_tracks)
             track_count += len(new_tracks)
-            if self.notifier:
-                await self.notifier.notify_user(
-                    current=track_count, total=total_tracks, key="spotify"
-                )
+            if notifier:
+                await notifier.notify_user(current=track_count, total=total_tracks, key="spotify")
 
             try:
                 if results.get("next") is not None:
                     results = await self._spotify_fetch_tracks(
-                        query_type, uri, results["next"], params
+                        query_type, uri, results["next"], params, notifier=notifier
                     )
                     continue
                 else:
@@ -534,7 +535,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         query_type: str,
         uri: str,
         skip_youtube: bool = False,
-        notify: Notifier = None,
+        notifier: Optional[Notifier] = None,
     ) -> List[str]:
         """
         Queries the Database then falls back to Spotify and YouTube APIs.
@@ -549,14 +550,13 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             Spotify URL ID .
         skip_youtube:bool
             Whether or not to skip YouTube API Calls.
-        notify: Notifier
+        notifier: Notifier
             A Notifier object to handle the user UI notifications while tracks are loaded.
         Returns
         -------
         List[str]
             List of Youtube URLs.
         """
-        self.notifier = notify
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_spotify().is_subset(current_cache_level)
         if query_type == "track" and cache_enabled:
@@ -572,7 +572,12 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         youtube_urls = []
         if val is None:
             urls = await self._spotify_first_time_query(
-                ctx, query_type, uri, skip_youtube, current_cache_level=current_cache_level
+                ctx,
+                query_type,
+                uri,
+                notifier,
+                skip_youtube,
+                current_cache_level=current_cache_level,
             )
             youtube_urls.extend(urls)
         else:
@@ -590,11 +595,10 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         enqueue: bool,
         player: lavalink.Player,
         lock: Callable,
-        notify: Notifier = None,
+        notifier: Optional[Notifier] = None,
     ) -> List[lavalink.Track]:
         track_list = []
         try:
-            self.notifier = notify
             current_cache_level = CacheLevel(await self.config.cache_level())
             guild_data = await self.config.guild(ctx.guild).all()
 
@@ -604,7 +608,9 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             queue_dur = await queue_duration(ctx)
             queue_total_duration = lavalink.utils.format_time(queue_dur)
             before_queue_length = len(player.queue)
-            tracks_from_spotify = await self._spotify_fetch_tracks(query_type, uri, params=None)
+            tracks_from_spotify = await self._spotify_fetch_tracks(
+                query_type, uri, params=None, notifier=notifier
+            )
             total_tracks = len(tracks_from_spotify)
             database_entries = []
             time_now = str(datetime.datetime.now(datetime.timezone.utc))
@@ -664,7 +670,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                             colour=await ctx.embed_colour(),
                             title=_("The connection was reset while loading the playlist."),
                         )
-                        await self.notifier.update_embed(error_embed)
+                        await notifier.update_embed(error_embed)
                         break
                     track_object = result.tracks
                 else:
@@ -683,7 +689,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                         if track_count == total_tracks:
                             seconds = "0s"
                         second_key = "lavalink_time"
-                    await self.notifier.notify_user(
+                    await notifier.notify_user(
                         current=track_count,
                         total=total_tracks,
                         key=key,
@@ -726,7 +732,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                         "at `{prefix}audioset youtubeapi`."
                     ).format(prefix=ctx.prefix),
                 )
-                await self.notifier.update_embed(embed3)
+                await notifier.update_embed(embed3)
 
             if enqueue:
                 if total_tracks > enqueued_tracks:
@@ -751,7 +757,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                         ).format(time=queue_total_duration, position=before_queue_length + 1)
                     )
 
-                await self.notifier.update_embed(embed)
+                await notifier.update_embed(embed)
             lock(ctx, False)
 
             if spotify_cache:
@@ -944,7 +950,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 track = random.choice(recently_played)
                 results = LoadResult(json.loads(track))
                 tracks = results.tracks
-        except Exception:
+        except BaseException:
             tracks = None
 
         return tracks
