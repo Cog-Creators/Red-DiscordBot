@@ -265,14 +265,14 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
 
     def __init__(self, bot: Red, session: aiohttp.ClientSession, path: str):
         self.bot = bot
-        self.spotify_api = SpotifyAPI(bot, session)
-        self.youtube_api = YouTubeAPI(bot, session)
-        self._session = session
-        self.database = Database(
+        self.spotify_api: SpotifyAPI = SpotifyAPI(bot, session)
+        self.youtube_api: YouTubeAPI = YouTubeAPI(bot, session)
+        self._session: aiohttp.ClientSession = session
+        self.database: Database = Database(
             f'sqlite:///{os.path.abspath(str(os.path.join(path, "cache.db")))}'
         )
-        self._tasks = {}
-        self._lock = asyncio.Lock()
+        self._tasks: dict = {}
+        self._lock: asyncio.Lock = asyncio.Lock()
         self.config: Optional[Config] = None
 
     async def initialize(self, config: Config) -> NoReturn:
