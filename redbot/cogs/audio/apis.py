@@ -657,22 +657,23 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 if val:
                     youtube_url = val
                 track_count += 1
-                if not val:
-                    continue
+                if val:
 
-                try:
-                    result, called_api = await self.lavalink_query(
-                        ctx, player, dataclasses.Query.process_input(youtube_url)
-                    )
-                except (RuntimeError, aiohttp.ServerDisconnectedError):
-                    lock(ctx, False)
-                    error_embed = discord.Embed(
-                        colour=await ctx.embed_colour(),
-                        title=_("The connection was reset while loading the playlist."),
-                    )
-                    await self.notifier.update_embed(error_embed)
-                    break
-                track_object = result.tracks
+                    try:
+                        result, called_api = await self.lavalink_query(
+                            ctx, player, dataclasses.Query.process_input(youtube_url)
+                        )
+                    except (RuntimeError, aiohttp.ServerDisconnectedError):
+                        lock(ctx, False)
+                        error_embed = discord.Embed(
+                            colour=await ctx.embed_colour(),
+                            title=_("The connection was reset while loading the playlist."),
+                        )
+                        await self.notifier.update_embed(error_embed)
+                        break
+                    track_object = result.tracks
+                else:
+                    track_object = []
                 if (track_count % 2 == 0) or (track_count == total_tracks):
                     key = "lavalink"
                     seconds = "???"
