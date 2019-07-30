@@ -699,6 +699,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                     continue
                 single_track = track_object[0]
                 track_list.append(single_track)
+                print(enqueue)
                 if enqueue:
                     if guild_data["maxlength"] > 0:
                         if track_limit(single_track, guild_data["maxlength"]):
@@ -758,6 +759,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 task = ("insert", ("spotify", database_entries))
                 self.append_task(ctx, *task)
         except BaseException as e:
+            print("inside enqueue", e)  # TODO: Remove
             lock(ctx, False)
             raise e
         finally:

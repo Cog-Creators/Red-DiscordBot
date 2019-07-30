@@ -2098,7 +2098,13 @@ class Audio(commands.Cog):
                 },
             )
             track_list = await self.music_cache.spotify_enqueue(
-                ctx, stype, query.id, enqueue, player, lock=self._play_lock, notify=notifier
+                ctx,
+                stype,
+                query.id,
+                enqueue=enqueue,
+                player=player,
+                lock=self._play_lock,
+                notify=notifier,
             )
         except SpotifyFetchError as error:
             self._play_lock(ctx, False)
@@ -2111,6 +2117,10 @@ class Audio(commands.Cog):
             )
             await ctx.send(embed=error_embed)
             return None
+        except BaseException as e:
+            print(e)  # TODO: Remove
+            self._play_lock(ctx, False)
+            raise e
         self._play_lock(ctx, False)
         return track_list
 
