@@ -2118,7 +2118,6 @@ class Audio(commands.Cog):
             await ctx.send(embed=error_embed)
             return None
         except BaseException as e:
-            print(e)  # TODO: Remove
             self._play_lock(ctx, False)
             raise e
         self._play_lock(ctx, False)
