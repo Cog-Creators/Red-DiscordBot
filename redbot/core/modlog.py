@@ -39,7 +39,7 @@ _bot_ref: Optional[Red] = None
 
 _CASETYPES = "CASETYPES"
 _CASES = "CASES"
-_SCHEMA_VERSION = 3
+_SCHEMA_VERSION = 4
 
 
 _ = Translator("ModLog", __file__)
@@ -51,7 +51,7 @@ async def _init(bot: Red):
     _bot_ref = bot
     _conf = Config.get_conf(None, 1354799444, cog_name="ModLog")
     _conf.register_global(schema_version=1)
-    _conf.register_guild(mod_log=None, casetypes={})
+    _conf.register_guild(mod_log=None, casetypes={}, latest_case_number=0)
     _conf.init_custom(_CASETYPES, 1)
     _conf.init_custom(_CASES, 2)
     _conf.register_custom(_CASETYPES)
@@ -173,6 +173,14 @@ async def _migrate_config(from_version: int, to_version: int):
 
         await _conf.custom(_CASETYPES).set(all_casetypes)
         await _conf.schema_version.set(3)
+
+    if from_version < 4 <= to_version:
+        # set latest_case_number
+        for guild_id, cases in (await _conf.custom(_CASES).all()).items():
+            if cases:
+                await _conf.guild(
+                    cast(discord.Guild, discord.Object(id=guild_id))
+                ).latest_case_number.set(max(map(int, cases.keys())))
 
 
 class Case:
@@ -477,7 +485,7 @@ class CaseType:
         The emoji to use for the case type (for example, :boot:)
     case_str: str
         The string representation of the case (example: Ban)
-        
+
     """
 
     def __init__(
@@ -572,11 +580,7 @@ async def get_next_case_number(guild: discord.Guild) -> int:
         The next case number
 
     """
-    case_numbers = (await _conf.custom(_CASES, guild.id).all()).keys()
-    if not case_numbers:
-        return 1
-    else:
-        return max(map(int, case_numbers)) + 1
+    return await _conf.guild(guild).latest_case_number() + 1
 
 
 async def get_case(case_number: int, guild: discord.Guild, bot: Red) -> Case:
@@ -763,6 +767,7 @@ async def create_case(
         message=None,
     )
     await _conf.custom(_CASES, str(guild.id), str(next_case_number)).set(case.to_json())
+    await _conf.guild(guild).latest_case_number.set(next_case_number)
     bot.dispatch("modlog_case_create", case)
     try:
         mod_channel = await get_modlog_channel(case.guild)
@@ -982,7 +987,7 @@ async def set_modlog_channel(
 
 async def reset_cases(guild: discord.Guild) -> None:
     """
-    Wipes all modlog cases for the specified guild
+    Wipes all modlog cases for the specified guild.
 
     Parameters
     ----------
@@ -991,6 +996,7 @@ async def reset_cases(guild: discord.Guild) -> None:
 
     """
     await _conf.custom(_CASES, str(guild.id)).clear()
+    await _conf.guild(guild).latest_case_number.clear()
 
 
 def _strfdelta(delta):
