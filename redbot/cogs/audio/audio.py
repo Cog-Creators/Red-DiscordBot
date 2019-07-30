@@ -2082,7 +2082,6 @@ class Audio(commands.Cog):
     ):
 
         player = lavalink.get_player(ctx.guild.id)
-        guild_data = await self.config.guild(ctx.guild).all()
         try:
             embed1 = discord.Embed(
                 colour=await ctx.embed_colour(), title=_("Please wait, finding tracks...")
@@ -2094,10 +2093,12 @@ class Audio(commands.Cog):
                 {
                     "spotify": _("Getting track {num}/{total}..."),
                     "youtube": _("Matching track {num}/{total}..."),
+                    "lavalink": _("Loading track {num}/{total}..."),
+                    "lavalink_time": _("Approximate time remaining: {seconds}"),
                 },
             )
-            youtube_links = await self.music_cache.spotify_query(
-                ctx, stype, query.id, notify=notifier
+            track_list = await self.music_cache.spotify_enqueue(
+                ctx, stype, query.id, enqueue, player, notify=notifier
             )
         except SpotifyFetchError as error:
             self._play_lock(ctx, False)
@@ -2110,129 +2111,6 @@ class Audio(commands.Cog):
             )
             await ctx.send(embed=error_embed)
             return None
-
-        embed1 = discord.Embed(
-            colour=await ctx.embed_colour(), title=_("Please wait, adding tracks...")
-        )
-        try:
-            await playlist_msg.edit(embed=embed1)
-        except discord.errors.NotFound:
-            pass
-        track_list = []
-        track_count = 0
-        now = int(time.time())
-        notifier = Notifier(
-            ctx,
-            playlist_msg,
-            {
-                "lavalink": _("Loading track {num}/{total}..."),
-                "lavalink_time": _("Approximate time remaining: {seconds}"),
-            },
-        )
-        enqueued_tracks = 0
-        queue_dur = await queue_duration(ctx)
-        queue_total_duration = lavalink.utils.format_time(queue_dur)
-        before_queue_length = len(player.queue)
-        called_api = False
-        for t in youtube_links:
-            # if called_api is True:
-            #     await asyncio.sleep(2)
-            try:
-                result, called_api = await self.music_cache.lavalink_query(
-                    ctx, player, dataclasses.Query.process_input(t)
-                )
-            except (RuntimeError, aiohttp.ServerDisconnectedError):
-                self._play_lock(ctx, False)
-                error_embed = discord.Embed(
-                    colour=await ctx.embed_colour(),
-                    title=_("The connection was reset while loading the playlist."),
-                )
-                await playlist_msg.edit(embed=error_embed)
-                return None
-            track_count += 1
-            yt_track = result.tracks
-            if (track_count % 2 == 0) or (track_count == len(youtube_links)):
-                key = "lavalink"
-                seconds = "???"
-                second_key = None
-                if track_count == 2:
-                    five_time = int(time.time()) - now
-                if track_count >= 2:
-                    remain_tracks = len(youtube_links) - track_count
-                    time_remain = (remain_tracks / 2) * five_time
-                    if track_count < len(youtube_links):
-                        seconds = dynamic_time(int(time_remain))
-                    if track_count == len(youtube_links):
-                        seconds = "0s"
-                    second_key = "lavalink_time"
-                await notifier.notify_user(
-                    current=track_count,
-                    total=len(youtube_links),
-                    key=key,
-                    seconds_key=second_key,
-                    seconds=seconds,
-                )
-            if not yt_track:
-                continue
-            track_list.append(yt_track[0])
-            if enqueue:
-                if guild_data["maxlength"] > 0:
-                    if track_limit(yt_track[0], guild_data["maxlength"]):
-                        enqueued_tracks += 1
-                        player.add(ctx.author, yt_track[0])
-                        self.bot.dispatch(
-                            "enqueue_track", player.channel.guild, yt_track[0], ctx.author
-                        )
-                else:
-                    enqueued_tracks += 1
-                    player.add(ctx.author, yt_track[0])
-                    self.bot.dispatch(
-                        "enqueue_track", player.channel.guild, yt_track[0], ctx.author
-                    )
-
-                if not player.current:
-                    await player.play()
-
-        if len(track_list) == 0:
-            embed3 = discord.Embed(
-                colour=await ctx.embed_colour(),
-                title=_(
-                    "Nothing found.\nThe YouTube API key may be invalid "
-                    "or you may be rate limited on YouTube's search service.\n"
-                    "Check the YouTube API key again and follow the instructions "
-                    "at `{prefix}audioset youtubeapi`."
-                ).format(prefix=ctx.prefix),
-            )
-            try:
-                return await playlist_msg.edit(embed=embed3)
-            except discord.errors.NotFound:
-                pass
-        if enqueue:
-            if len(youtube_links) > enqueued_tracks:
-                maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
-                    bad_tracks=(len(youtube_links) - enqueued_tracks)
-                )
-            else:
-                maxlength_msg = ""
-
-            embed = discord.Embed(
-                colour=await ctx.embed_colour(),
-                title=_("Playlist Enqueued"),
-                description=_("Added {num} tracks to the queue.{maxlength_msg}").format(
-                    num=enqueued_tracks, maxlength_msg=maxlength_msg
-                ),
-            )
-            if not guild_data["shuffle"] and queue_dur > 0:
-                embed.set_footer(
-                    text=_(
-                        "{time} until start of playlist playback: starts at #{position} in queue"
-                    ).format(time=queue_total_duration, position=before_queue_length + 1)
-                )
-
-            try:
-                await playlist_msg.edit(embed=embed)
-            except discord.errors.NotFound:
-                pass
         self._play_lock(ctx, False)
         return track_list
 

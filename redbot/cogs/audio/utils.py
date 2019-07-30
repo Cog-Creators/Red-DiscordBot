@@ -380,3 +380,10 @@ class Notifier:
             await self.message.edit(embed=embed2)
         except discord.errors.NotFound:
             pass
+
+    async def update_embed(self, embed: discord.Embed) -> NoReturn:
+        try:
+            await self.message.edit(embed=embed)
+            self.last_msg_time = time.time()
+        except discord.errors.NotFound:
+            pass
