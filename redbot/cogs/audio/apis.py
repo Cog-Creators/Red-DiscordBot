@@ -600,6 +600,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
 
             now = int(time.time())
             enqueued_tracks = 0
+            consecutive_fails = 0
             queue_dur = await queue_duration(ctx)
             queue_total_duration = lavalink.utils.format_time(queue_dur)
             before_queue_length = len(player.queue)
@@ -690,8 +691,12 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                         seconds=seconds,
                     )
 
+                if consecutive_fails >= 10:
+                    break
                 if not track_object:
+                    consecutive_fails += 1
                     continue
+                consecutive_fails = 0
                 single_track = track_object[0]
                 track_list.append(single_track)
                 if enqueue:
