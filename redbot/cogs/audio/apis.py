@@ -20,7 +20,7 @@ from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from . import dataclasses
-from .errors import InvalidTableError, SpotifyFetchError
+from .errors import InvalidTableError, SpotifyFetchError, YouTubeApiError
 from .utils import CacheLevel, Notifier, queue_duration, dynamic_time, track_limit
 
 log = logging.getLogger("red.audio.cache")
@@ -247,7 +247,12 @@ class YouTubeAPI:
         }
         yt_url = "https://www.googleapis.com/youtube/v3/search"
         async with self.session.request("GET", yt_url, params=params) as r:
-            if r.status == 400:
+            if r.status in [400, 404]:
+                return None
+            elif r.status in [403, 429]:
+                if r.reason == "quotaExceeded":
+                    raise YouTubeApiError("Your YouTube Data API quota has been reached.")
+
                 return None
             else:
                 search_response = await r.json()
@@ -672,6 +677,14 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                         )
                         await notifier.update_embed(error_embed)
                         break
+                    except asyncio.TimeoutError:
+                        lock(ctx, False)
+                        error_embed = discord.Embed(
+                            colour=await ctx.embed_colour(),
+                            title=_("Player timedout, skipping remaning tracks."),
+                        )
+                        await notifier.update_embed(error_embed)
+                        break
                     track_object = result.tracks
                 else:
                     track_object = []
@@ -698,6 +711,11 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                     )
 
                 if consecutive_fails >= 10:
+                    error_embed = discord.Embed(
+                        colour=await ctx.embed_colour(),
+                        title=_("Failing to get tracks, skipping remaning."),
+                    )
+                    await notifier.update_embed(error_embed)
                     break
                 if not track_object:
                     consecutive_fails += 1
@@ -841,11 +859,12 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         else:
             called_api = True
             results = None
-            with contextlib.suppress(Exception):
+            try:
                 results = await player.load_tracks(query)
+            except KeyError:
+                results = None
             if results is None:
                 results = LoadResult({"loadType": "LOAD_FAILED", "playlistInfo": {}, "tracks": []})
-
             if cache_enabled and results.load_type and not results.has_error:
                 with contextlib.suppress(sqlite3.Error):
                     time_now = str(datetime.datetime.now(datetime.timezone.utc))

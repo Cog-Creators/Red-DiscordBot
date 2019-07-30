@@ -773,7 +773,7 @@ class Audio(commands.Cog):
                 "Vote skip:        [{vote_enabled}]\nSkip percentage:  [{vote_percent}%]\n"
             ).format(**data)
         if is_owner:
-            msg += _(
+            msg += (
                 "\n---"
                 + _("Cache Settings")
                 + "---        \n"
@@ -909,16 +909,21 @@ class Audio(commands.Cog):
         has_lavalink_cache = current_level.is_superset(lavalink_cache)
 
         if level is None:
-            msg = _(
-                "Spotify cache is {spotify_status}\n"
-                "Youtube cache is {youtube_status}\n"
-                "Lavalink cache is {lavalink_status}\n"
+            msg = (
+                "---"
+                + _("Cache Settings")
+                + "---        \n"
+                + _("Max age:          [{max_age}]\n")
+                + _("Spotify cache:    [{spotify_status}]\n")
+                + _("Youtube cache:    [{youtube_status}]\n")
+                + _("Lavalink cache:   [{lavalink_status}]\n")
             ).format(
-                spotify_status=_("enabled") if has_spotify_cache else _("disabled"),
-                youtube_status=_("enabled") if has_youtube_cache else _("disabled"),
-                lavalink_status=_("enabled") if has_lavalink_cache else _("disabled"),
+                max_age=str(await self.config.cache_age()) + " " + _("days"),
+                spotify_status=_("Enabled") if has_spotify_cache else _("Disabled"),
+                youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
+                lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
             )
-            await ctx.send(msg)  # TODO : Make it into a nice  Embed + Add to audioset embed
+            await ctx.send(box(msg, lang="ini"))
             return await ctx.send_help()
         if level not in [5, 3, 2, 1, 0, -1, -2, -3]:
             return await ctx.send_help()
@@ -950,16 +955,21 @@ class Audio(commands.Cog):
         has_spotify_cache = newcache.is_superset(spotify_cache)
         has_youtube_cache = newcache.is_superset(youtube_cache)
         has_lavalink_cache = newcache.is_superset(lavalink_cache)
-        msg = _(
-            "Spotify cache is {spotify_status}\n"
-            "Youtube cache is {youtube_status}\n"
-            "Lavalink cache is {lavalink_status}\n"
+        msg = (
+            "---"
+            + _("Cache Settings")
+            + "---        \n"
+            + _("Max age:          [{max_age}]\n")
+            + _("Spotify cache:    [{spotify_status}]\n")
+            + _("Youtube cache:    [{youtube_status}]\n")
+            + _("Lavalink cache:   [{lavalink_status}]\n")
         ).format(
-            spotify_status=_("enabled") if has_spotify_cache else _("disabled"),
-            youtube_status=_("enabled") if has_youtube_cache else _("disabled"),
-            lavalink_status=_("enabled") if has_lavalink_cache else _("disabled"),
+            max_age=str(await self.config.cache_age()) + " " + _("days"),
+            spotify_status=_("Enabled") if has_spotify_cache else _("Disabled"),
+            youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
+            lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
         )
-        await ctx.send(msg)  # TODO : Make it into a nice  Embed + Add to audioset embed
+        await ctx.send(box(msg, lang="ini"))
 
         await self.config.cache_level.set(newcache.value)
 

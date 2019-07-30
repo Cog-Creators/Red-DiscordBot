@@ -301,6 +301,25 @@ class Query:
                 returning["album"] = True
         else:
             track = str(track)
+            if track.startswith("spotify:"):
+                returning["spotify"] = True
+                if ":playlist:" in track:
+                    returning["playlist"] = True
+                elif ":album:" in track:
+                    returning["album"] = True
+                elif ":track:" in track:
+                    returning["single"] = True
+                _id = track.split(":", 2)[-1]
+                _id = _id.split("?")[0]
+                returning["id"] = _id
+                if "#" in _id:
+                    match = re.search(r"#(\d+):(\d+)", track)
+                    if match:
+                        returning["start_time"] = (int(match.group(1)) * 60) + int(
+                            match.group(2)
+                        )
+                returning["uri"] = track
+                return returning
             if track.startswith("sc ") or track.startswith("list "):
                 if track.startswith("sc "):
                     returning["invoked_from"] = "sc search"
@@ -368,6 +387,8 @@ class Query:
                         val = re.sub(r"(http[s]?://)?(open.spotify.com)/", "", track).replace(
                             "/", ":"
                         )
+                        if "user:" in val:
+                            val = val.split(":", 2)[-1]
                         _id = val.split(":", 1)[-1]
                         _id = _id.split("?")[0]
                         returning["id"] = _id
