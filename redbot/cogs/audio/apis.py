@@ -411,7 +411,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 val = None
                 if youtube_cache:
                     update = True
-                    with contextlib.suppress(sqlite3.InterfaceError):
+                    with contextlib.suppress(sqlite3.Error):
                         val, update = await self.fetch_one(
                             "youtube", "youtube_url", {"track": track_info}
                         )
@@ -560,7 +560,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         cache_enabled = CacheLevel.set_spotify().is_subset(current_cache_level)
         if query_type == "track" and cache_enabled:
             update = True
-            with contextlib.suppress(sqlite3.InterfaceError):
+            with contextlib.suppress(sqlite3.Error):
                 val, update = await self.fetch_one(
                     "spotify", "track_info", {"uri": f"spotify:track:{uri}"}
                 )
@@ -587,7 +587,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         val = None
         if cache_enabled:
             update = True
-            with contextlib.suppress(sqlite3.InterfaceError):
+            with contextlib.suppress(sqlite3.Error):
                 val, update = await self.fetch_one("youtube", "youtube_url", {"track": track_info})
             if update:
                 val = None
@@ -635,8 +635,8 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         _raw_query = query
         query = str(query)
         if cache_enabled and not forced:
-            update = True  # If fetch fails always run a new query to lavalink
-            with contextlib.suppress(sqlite3.InterfaceError):
+            update = True
+            with contextlib.suppress(sqlite3.Error):
                 val, update = await self.fetch_one("lavalink", "data", {"query": query})
             if update:
                 val = None
@@ -652,14 +652,13 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         else:
             called_api = True
             results = None
-            with contextlib.suppress(asyncio.TimeoutError, KeyError):
+            with contextlib.suppress(Exception):
                 results = await player.load_tracks(query)
-
             if results is None:
                 results = LoadResult({"loadType": "LOAD_FAILED", "playlistInfo": {}, "tracks": []})
 
             if cache_enabled and results.load_type and not results.has_error:
-                with contextlib.suppress(sqlite3.OperationalError):
+                with contextlib.suppress(sqlite3.Error):
                     time_now = str(datetime.datetime.now(datetime.timezone.utc))
                     task = (
                         "insert",
@@ -681,8 +680,8 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
     async def run_tasks(self, ctx: commands.Context):  # TODO Change logs to debug
         async with self._lock:
             if ctx.message.id in self._tasks:
-                log.info(f"Running database writes for {ctx.message.id} ({ctx.author})")
-                try:
+                log.debug(f"Running database writes for {ctx.message.id} ({ctx.author})")
+                with contextlib.suppress(BaseException):
                     tasks = self._tasks[ctx.message.id]
                     del self._tasks[ctx.message.id]
                     await asyncio.gather(
@@ -695,15 +694,12 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                         loop=self.bot.loop,
                         return_exceptions=True,
                     )
-                except BaseException:
-                    pass
-                finally:
-                    log.info(f"Completed database writes for {ctx.message.id} " f"({ctx.author})")
+                log.debug(f"Completed database writes for {ctx.message.id} " f"({ctx.author})")
 
     async def run_all_pending_tasks(self):
         async with self._lock:
             log.debug("Running pending writes to database")
-            try:
+            with contextlib.suppress(BaseException):
                 tasks = {"update": [], "insert": []}
                 for k, task in self._tasks.items():
                     for t, args in task.items():
@@ -720,10 +716,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                     loop=self.bot.loop,
                     return_exceptions=True,
                 )
-            except BaseException:
-                pass
-            finally:
-                log.debug("Completed pending writes to database have finished")
+            log.debug("Completed pending writes to database have finished")
 
     def append_task(self, ctx: commands.Context, event: str, task: tuple):
         if ctx.message.id not in self._tasks:
