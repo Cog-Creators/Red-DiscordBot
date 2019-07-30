@@ -2121,7 +2121,7 @@ class Audio(commands.Cog):
                 enqueue=enqueue,
                 player=player,
                 lock=self._play_lock,
-                notify=notifier,
+                notifier=notifier,
             )
         except SpotifyFetchError as error:
             self._play_lock(ctx, False)
