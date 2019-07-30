@@ -611,7 +611,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
 
             youtube_cache = CacheLevel.set_youtube().is_subset(current_cache_level)
             spotify_cache = CacheLevel.set_spotify().is_subset(current_cache_level)
-
+            print(enqueue)  # TODO: Remove
             for track in tracks_from_spotify:
                 youtube_url = None
                 (
@@ -700,7 +700,6 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                     continue
                 single_track = track_object[0]
                 track_list.append(single_track)
-                print(enqueue)
                 if enqueue:
                     if guild_data["maxlength"] > 0:
                         if track_limit(single_track, guild_data["maxlength"]):
