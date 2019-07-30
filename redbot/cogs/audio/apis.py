@@ -822,7 +822,6 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 task = ("update", ("lavalink", {"query": query}))
                 self.append_task(ctx, *task)
         if val and not forced:
-            print("in cache:", val)
             results = LoadResult(json.loads(val))
             called_api = False
             if results.has_error:
@@ -831,10 +830,9 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         else:
             called_api = True
             results = None
-            print("Not cache:", query)
             with contextlib.suppress(Exception):
                 results = await player.load_tracks(query)
-            print(results.__dict__)
+            print(results._raw if results else None)  # TODO Remove
             if results is None:
                 results = LoadResult({"loadType": "LOAD_FAILED", "playlistInfo": {}, "tracks": []})
 
