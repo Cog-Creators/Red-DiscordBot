@@ -606,13 +606,11 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             tracks_from_spotify = await self._spotify_fetch_tracks(query_type, uri, params=None)
             total_tracks = len(tracks_from_spotify)
             database_entries = []
-            track_count = 0
             time_now = str(datetime.datetime.now(datetime.timezone.utc))
 
             youtube_cache = CacheLevel.set_youtube().is_subset(current_cache_level)
             spotify_cache = CacheLevel.set_spotify().is_subset(current_cache_level)
-            print(enqueue)  # TODO: Remove
-            for track in tracks_from_spotify:
+            for track_count, track in enumerate(tracks_from_spotify):
                 youtube_url = None
                 (
                     song_url,
@@ -656,7 +654,6 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
 
                 if val:
                     youtube_url = val
-                track_count += 1
                 if val:
 
                     try:
@@ -699,6 +696,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 if not track_object:
                     continue
                 single_track = track_object[0]
+                print(single_track)
                 track_list.append(single_track)
                 if enqueue:
                     if guild_data["maxlength"] > 0:
