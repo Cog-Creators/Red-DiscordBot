@@ -315,9 +315,7 @@ class Query:
                 if "#" in _id:
                     match = re.search(r"#(\d+):(\d+)", track)
                     if match:
-                        returning["start_time"] = (int(match.group(1)) * 60) + int(
-                            match.group(2)
-                        )
+                        returning["start_time"] = (int(match.group(1)) * 60) + int(match.group(2))
                 returning["uri"] = track
                 return returning
             if track.startswith("sc ") or track.startswith("list "):
