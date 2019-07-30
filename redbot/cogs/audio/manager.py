@@ -2,6 +2,7 @@ import asyncio
 import asyncio.subprocess  # disables for # https://github.com/PyCQA/pylint/issues/1469
 import itertools
 import logging
+import os
 import pathlib
 import platform
 import re
@@ -17,14 +18,19 @@ from tqdm import tqdm
 from redbot.core import data_manager
 from .errors import LavalinkDownloadFailed
 
-JAR_VERSION = "3.2.0.3"
-JAR_BUILD = 796
+JAR_VERSION = os.getenv("RED_AUDIO_JAR_VERSION", "3.2.0.3")
+JAR_BUILD = os.getenv("RED_AUDIO_JAR_BUILD", "796")
+if JAR_BUILD.isnumeric():
+    JAR_BUILD = int(JAR_BUILD)
+else:
+    raise ValueError(f"{JAR_BUILD} is not a valid build")
+
 LAVALINK_DOWNLOAD_URL = (
     f"https://github.com/Cog-Creators/Lavalink-Jars/releases/download/{JAR_VERSION}_{JAR_BUILD}/"
     f"Lavalink.jar"
 )
 LAVALINK_DOWNLOAD_DIR = data_manager.cog_data_path(raw_name="Audio")
-LAVALINK_JAR_FILE = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
+LAVALINK_JAR_FILE = LAVALINK_DOWNLOAD_DIR / f"Lavalink-{JAR_VERSION}_{JAR_BUILD}.jar"
 
 BUNDLED_APP_YML = pathlib.Path(__file__).parent / "data" / "application.yml"
 LAVALINK_APP_YML = LAVALINK_DOWNLOAD_DIR / "application.yml"
