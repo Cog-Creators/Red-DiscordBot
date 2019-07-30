@@ -8,9 +8,10 @@ import os
 import random
 import sqlite3
 import time
-from typing import Dict, List, Mapping, NoReturn, Optional, Tuple, Union
+from typing import Dict, List, Mapping, NoReturn, Optional, Tuple, Union, Callable
 
 import aiohttp
+import discord
 import lavalink
 from databases import Database
 from lavalink.rest_api import LoadResult
@@ -20,7 +21,7 @@ from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from . import dataclasses
 from .errors import InvalidTableError, SpotifyFetchError
-from .utils import CacheLevel, Notifier
+from .utils import CacheLevel, Notifier, queue_duration, dynamic_time, track_limit
 
 log = logging.getLogger("red.audio.cache")
 _ = Translator("Audio", __file__)
@@ -581,6 +582,183 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             youtube_urls.append(val)
         return youtube_urls
 
+    async def spotify_enqueue(
+        self,
+        ctx: commands.Context,
+        query_type: str,
+        uri: str,
+        enqueue: bool,
+        player: lavalink.Player,
+        lock: Callable,
+        notify: Notifier = None,
+    ) -> List[lavalink.Track]:
+        track_list = []
+        try:
+            self.notifier = notify
+            current_cache_level = CacheLevel(await self.config.cache_level())
+            guild_data = await self.config.guild(ctx.guild).all()
+
+            now = int(time.time())
+            enqueued_tracks = 0
+            queue_dur = await queue_duration(ctx)
+            queue_total_duration = lavalink.utils.format_time(queue_dur)
+            before_queue_length = len(player.queue)
+            tracks_from_spotify = await self._spotify_fetch_tracks(query_type, uri, params=None)
+            total_tracks = len(tracks_from_spotify)
+            database_entries = []
+            time_now = str(datetime.datetime.now(datetime.timezone.utc))
+
+            youtube_cache = CacheLevel.set_youtube().is_subset(current_cache_level)
+            spotify_cache = CacheLevel.set_spotify().is_subset(current_cache_level)
+            for track_count, track in enumerate(tracks_from_spotify):
+                youtube_url = None
+                (
+                    song_url,
+                    track_info,
+                    uri,
+                    artist_name,
+                    track_name,
+                    _id,
+                    _type,
+                ) = self._get_spotify_track_info(track)
+
+                database_entries.append(
+                    {
+                        "id": _id,
+                        "type": _type,
+                        "uri": uri,
+                        "track_name": track_name,
+                        "artist_name": artist_name,
+                        "song_url": song_url,
+                        "track_info": track_info,
+                        "last_updated": time_now,
+                        "last_fetched": time_now,
+                    }
+                )
+                val = None
+                if youtube_cache:
+                    update = True
+                    with contextlib.suppress(sqlite3.Error):
+                        val, update = await self.fetch_one(
+                            "youtube", "youtube_url", {"track": track_info}
+                        )
+                    if update:
+                        val = None
+                if val is None:
+                    val = await self._youtube_first_time_query(
+                        ctx, track_info, current_cache_level=current_cache_level
+                    )
+                if youtube_cache and val:
+                    task = ("update", ("youtube", {"track": track_info}))
+                    self.append_task(ctx, *task)
+
+                if val:
+                    try:
+                        result, called_api = await self.lavalink_query(
+                            ctx, player, dataclasses.Query.process_input(val)
+                        )
+                    except (RuntimeError, aiohttp.ServerDisconnectedError):
+                        lock(ctx, False)
+                        error_embed = discord.Embed(
+                            colour=await ctx.embed_colour(),
+                            title=_("The connection was reset while loading the playlist."),
+                        )
+                        await self.notifier.update_embed(error_embed)
+                        break
+                    track_object = result.tracks
+                else:
+                    track_object = []
+                if (track_count % 2 == 0) or (track_count == total_tracks):
+                    key = "lavalink"
+                    seconds = "???"
+                    second_key = None
+                    if track_count == 2:
+                        five_time = int(time.time()) - now
+                    if track_count >= 2:
+                        remain_tracks = total_tracks - track_count
+                        time_remain = (remain_tracks / 2) * five_time
+                        if track_count < total_tracks:
+                            seconds = dynamic_time(int(time_remain))
+                        if track_count == total_tracks:
+                            seconds = "0s"
+                        second_key = "lavalink_time"
+                    await self.notifier.notify_user(
+                        current=track_count,
+                        total=total_tracks,
+                        key=key,
+                        seconds_key=second_key,
+                        seconds=seconds,
+                    )
+
+                if not track_object:
+                    continue
+                single_track = track_object[0]
+                track_list.append(single_track)
+                if enqueue:
+                    if guild_data["maxlength"] > 0:
+                        if track_limit(single_track, guild_data["maxlength"]):
+                            enqueued_tracks += 1
+                            player.add(ctx.author, single_track)
+                            self.bot.dispatch(
+                                "enqueue_track", player.channel.guild, single_track, ctx.author
+                            )
+                    else:
+                        enqueued_tracks += 1
+                        player.add(ctx.author, single_track)
+                        self.bot.dispatch(
+                            "enqueue_track", player.channel.guild, single_track, ctx.author
+                        )
+
+                    if not player.current:
+                        await player.play()
+            if len(track_list) == 0:
+                embed3 = discord.Embed(
+                    colour=await ctx.embed_colour(),
+                    title=_(
+                        "Nothing found.\nThe YouTube API key may be invalid "
+                        "or you may be rate limited on YouTube's search service.\n"
+                        "Check the YouTube API key again and follow the instructions "
+                        "at `{prefix}audioset youtubeapi`."
+                    ).format(prefix=ctx.prefix),
+                )
+                await self.notifier.update_embed(embed3)
+
+            if enqueue:
+                if total_tracks > enqueued_tracks:
+                    maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
+                        bad_tracks=(total_tracks - enqueued_tracks)
+                    )
+                else:
+                    maxlength_msg = ""
+
+                embed = discord.Embed(
+                    colour=await ctx.embed_colour(),
+                    title=_("Playlist Enqueued"),
+                    description=_("Added {num} tracks to the queue.{maxlength_msg}").format(
+                        num=enqueued_tracks, maxlength_msg=maxlength_msg
+                    ),
+                )
+                if not guild_data["shuffle"] and queue_dur > 0:
+                    embed.set_footer(
+                        text=_(
+                            "{time} until start of playlist"
+                            " playback: starts at #{position} in queue"
+                        ).format(time=queue_total_duration, position=before_queue_length + 1)
+                    )
+
+                await self.notifier.update_embed(embed)
+            lock(ctx, False)
+
+            if spotify_cache:
+                task = ("insert", ("spotify", database_entries))
+                self.append_task(ctx, *task)
+        except BaseException as e:
+            lock(ctx, False)
+            raise e
+        finally:
+            lock(ctx, False)
+        return track_list
+
     async def youtube_query(self, ctx: commands.Context, track_info: str) -> str:
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_youtube().is_subset(current_cache_level)
@@ -677,7 +855,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                     self.append_task(ctx, *task)
         return results, called_api
 
-    async def run_tasks(self, ctx: commands.Context):  # TODO Change logs to debug
+    async def run_tasks(self, ctx: commands.Context):
         async with self._lock:
             if ctx.message.id in self._tasks:
                 log.debug(f"Running database writes for {ctx.message.id} ({ctx.author})")
