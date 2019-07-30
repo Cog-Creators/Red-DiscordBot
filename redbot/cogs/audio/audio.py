@@ -1658,7 +1658,11 @@ class Audio(commands.Cog):
         repeat = await self.config.guild(ctx.guild).repeat()
         autoplay = await self.config.guild(ctx.guild).auto_play()
         text = ""
-        text += _("Repeat") + ": " + ("\N{WHITE HEAVY CHECK MARK}" if repeat else "\N{CROSS MARK}")
+        text += (
+            _("Auto-Play")
+            + ": "
+            + ("\N{WHITE HEAVY CHECK MARK}" if autoplay else "\N{CROSS MARK}")
+        )
         text += (
             (" | " if text else "")
             + _("Shuffle")
@@ -1667,9 +1671,9 @@ class Audio(commands.Cog):
         )
         text += (
             (" | " if text else "")
-            + _("Auto-Play")
+            + _("Repeat")
             + ": "
-            + ("\N{WHITE HEAVY CHECK MARK}" if autoplay else "\N{CROSS MARK}")
+            + ("\N{WHITE HEAVY CHECK MARK}" if repeat else "\N{CROSS MARK}")
         )
         embed.set_footer(text=text)
 
@@ -4050,18 +4054,22 @@ class Audio(commands.Cog):
             num_tracks=len(player.queue) + 1,
             num_remaining=queue_total_duration,
         )
-        text += _("Repeat") + ": " + ("\N{WHITE HEAVY CHECK MARK}" if repeat else "\N{CROSS MARK}")
         text += (
-            " | "
+            _("Auto-Play")
+            + ": "
+            + ("\N{WHITE HEAVY CHECK MARK}" if autoplay else "\N{CROSS MARK}")
+        )
+        text += (
+            (" | " if text else "")
             + _("Shuffle")
             + ": "
             + ("\N{WHITE HEAVY CHECK MARK}" if shuffle else "\N{CROSS MARK}")
         )
         text += (
-            " | "
-            + _("Auto-Play")
+            (" | " if text else "")
+            + _("Repeat")
             + ": "
-            + ("\N{WHITE HEAVY CHECK MARK}" if autoplay else "\N{CROSS MARK}")
+            + ("\N{WHITE HEAVY CHECK MARK}" if repeat else "\N{CROSS MARK}")
         )
         embed.set_footer(text=text)
         return embed
