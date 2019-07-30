@@ -8,7 +8,7 @@ import os
 import random
 import sqlite3
 import time
-from typing import Dict, List, Mapping, NoReturn, Optional, Tuple, Union
+from typing import Dict, List, Mapping, NoReturn, Optional, Tuple, Union, Callable
 
 import aiohttp
 import discord
@@ -589,6 +589,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         uri: str,
         enqueue: bool,
         player: lavalink.Player,
+        lock: Callable,
         notify: Notifier = None,
     ) -> List[lavalink.Track]:
         track_list = []
@@ -660,11 +661,11 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                     continue
 
                 try:
-                    result, called_api = await self.music_cache.lavalink_query(
+                    result, called_api = await self.lavalink_query(
                         ctx, player, dataclasses.Query.process_input(youtube_url)
                     )
                 except (RuntimeError, aiohttp.ServerDisconnectedError):
-                    self._play_lock(ctx, False)
+                    lock(ctx, False)
                     error_embed = discord.Embed(
                         colour=await ctx.embed_colour(),
                         title=_("The connection was reset while loading the playlist."),
@@ -751,16 +752,16 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                     )
 
                 await self.notifier.update_embed(embed)
-            self._play_lock(ctx, False)
+            lock(ctx, False)
 
             if spotify_cache:
                 task = ("insert", ("spotify", database_entries))
                 self.append_task(ctx, *task)
         except BaseException as e:
-            self._play_lock(ctx, False)
+            lock(ctx, False)
             raise e
         finally:
-            self._play_lock(ctx, False)
+            lock(ctx, False)
         return track_list
 
     async def youtube_query(self, ctx: commands.Context, track_info: str) -> str:

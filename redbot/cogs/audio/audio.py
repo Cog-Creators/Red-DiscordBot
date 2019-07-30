@@ -2098,7 +2098,7 @@ class Audio(commands.Cog):
                 },
             )
             track_list = await self.music_cache.spotify_enqueue(
-                ctx, stype, query.id, enqueue, player, notify=notifier
+                ctx, stype, query.id, enqueue, player, lock=self._play_lock, notify=notifier
             )
         except SpotifyFetchError as error:
             self._play_lock(ctx, False)
