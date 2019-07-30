@@ -413,7 +413,7 @@ class Audio(commands.Cog):
                 )
                 await notify_channel.send(embed=embed)
 
-        elif event_type == lavalink.LavalinkEvents.QUEUE_END and disconnect:
+        elif event_type == lavalink.LavalinkEvents.QUEUE_END and disconnect and not autoplay:
             await player.disconnect()
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END and status:
@@ -465,17 +465,28 @@ class Audio(commands.Cog):
 
         This setting takes precedence over [p]audioset emptydisconnect.
         """
+
         disconnect = await self.config.guild(ctx.guild).disconnect()
-        await self.config.guild(ctx.guild).disconnect.set(not disconnect)
-        await self._embed_msg(
-            ctx,
-            _("Auto-disconnection at queue end: {true_or_false}.").format(
-                true_or_false=not disconnect
-            ),
+        autoplay = await self.config.guild(ctx.guild).auto_play()
+        msg = ""
+        msg += _("Auto-disconnection at queue end: {true_or_false}.").format(
+            true_or_false=not disconnect
         )
+        await self.config.guild(ctx.guild).repeat.set(not disconnect)
+        if not disconnect is True and autoplay is True:
+            msg += _("\nAuto-play has been disabled.")
+            await self.config.guild(ctx.guild).auto_play.set(False)
+
+        await self.config.guild(ctx.guild).disconnect.set(not disconnect)
+
+        embed = discord.Embed(
+            title=_("Auto-disconnection settings changed"),
+            description=msg,
+            colour=await ctx.embed_colour(),
+        )
+        await ctx.send(embed=embed)
 
     @audioset.command()
-    @checks.mod_or_permissions(manage_messages=True)
     async def auto(self, ctx: commands.Context):
         """Toggle the bot auto-play recent songs when playlist is empty.
 
@@ -491,12 +502,16 @@ class Audio(commands.Cog):
 
         autoplay = await self.config.guild(ctx.guild).auto_play()
         repeat = await self.config.guild(ctx.guild).repeat()
+        disconnect = await self.config.guild(ctx.guild).disconnect()
         msg = ""
         msg += _("Auto-play when queue ends: {true_or_false}.").format(true_or_false=not autoplay)
         await self.config.guild(ctx.guild).auto_play.set(not autoplay)
         if not autoplay is True and repeat is True:
             msg += _("\nRepeat has been disabled.")
             await self.config.guild(ctx.guild).repeat.set(False)
+        if not autoplay is True and disconnect is True:
+            msg += _("\nAuto-disconnecting at queue end has been disabled.")
+            await self.config.guild(ctx.guild).disconnect.set(False)
 
         embed = discord.Embed(
             title=_("Auto-play settings changed"), description=msg, colour=await ctx.embed_colour()
