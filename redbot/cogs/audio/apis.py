@@ -637,14 +637,17 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 )
                 val = None
                 if youtube_cache:
+                    print("Youtube cache is on")
                     update = True
                     with contextlib.suppress(sqlite3.InterfaceError):
                         val, update = await self.fetch_one(
                             "youtube", "youtube_url", {"track": track_info}
                         )
                     if update:
+                        print("Youtube cache needs update")
                         val = None
                 if val is None:
+                    print("Calling youtube API")
                     val = await self._youtube_first_time_query(
                         ctx, track_info, current_cache_level=current_cache_level
                     )
@@ -654,8 +657,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
 
                 if val:
                     youtube_url = val
-                if val:
-
+                    print("Lava query", youtube_url)
                     try:
                         result, called_api = await self.lavalink_query(
                             ctx, player, dataclasses.Query.process_input(youtube_url)
@@ -670,6 +672,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                         break
                     track_object = result.tracks
                 else:
+                    print("Youtube returned None")
                     track_object = []
                 if (track_count % 2 == 0) or (track_count == total_tracks):
                     key = "lavalink"
@@ -696,7 +699,6 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 if not track_object:
                     continue
                 single_track = track_object[0]
-                print(single_track)
                 track_list.append(single_track)
                 if enqueue:
                     if guild_data["maxlength"] > 0:
