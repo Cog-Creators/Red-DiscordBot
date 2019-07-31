@@ -620,6 +620,15 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 query_type, uri, params=None, notifier=notifier
             )
             total_tracks = len(tracks_from_spotify)
+            if total_tracks < 1:
+                lock(ctx, False)
+                embed3 = discord.Embed(
+                    colour=await ctx.embed_colour(),
+                    title=_("This doesn't seem to be a supported Spotify URL or code."),
+                )
+                await notifier.update_embed(embed3)
+
+                return track_list
             database_entries = []
             time_now = str(datetime.datetime.now(datetime.timezone.utc))
 
