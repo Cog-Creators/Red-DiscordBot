@@ -755,7 +755,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 )
                 await notifier.update_embed(embed3)
 
-            if enqueue:
+            if enqueue and tracks_from_spotify:
                 if total_tracks > enqueued_tracks:
                     maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
                         bad_tracks=(total_tracks - enqueued_tracks)

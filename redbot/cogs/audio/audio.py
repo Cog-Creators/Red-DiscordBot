@@ -487,24 +487,16 @@ class Audio(commands.Cog):
         await ctx.send(embed=embed)
 
     @audioset.command()
+    @checks.mod_or_permissions(manage_messages=True)
     async def auto(self, ctx: commands.Context):
         """Toggle the bot auto-play recent songs when playlist is empty.
 
         This setting takes precedence over [p]audioset dc.
         """
-
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
-        if dj_enabled:
-            if not await self._can_instaskip(ctx, ctx.author) and not await self._has_dj_role(
-                ctx, ctx.author
-            ):
-                return await self._embed_msg(ctx, _("You need the DJ role to toggle repeat."))
-
         autoplay = await self.config.guild(ctx.guild).auto_play()
         repeat = await self.config.guild(ctx.guild).repeat()
         disconnect = await self.config.guild(ctx.guild).disconnect()
-        msg = ""
-        msg += _("Auto-play when queue ends: {true_or_false}.").format(true_or_false=not autoplay)
+        msg = _("Auto-play when queue ends: {true_or_false}.").format(true_or_false=not autoplay)
         await self.config.guild(ctx.guild).auto_play.set(not autoplay)
         if not autoplay is True and repeat is True:
             msg += _("\nRepeat has been disabled.")
