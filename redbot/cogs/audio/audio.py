@@ -89,7 +89,7 @@ class Audio(commands.Cog):
         default_global = dict(
             schema_version=1,
             cache_level=0,
-            cache_age=30,
+            cache_age=365,
             status=False,
             use_external_lavalink=False,
             restrict=True,
