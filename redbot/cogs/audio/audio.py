@@ -847,14 +847,11 @@ class Audio(commands.Cog):
         autoplaylist = data["autoplaylist"]
 
         msg = "----" + _("Server Settings") + "----        \n"
-        if dc:
-            msg += _("Auto-disconnect:  [{dc}]\n").format(dc=dc)
-        if autoplay:
-            msg += _("Auto-play:        [{autoplay}]\n").format(autoplay=autoplay)
-        if emptydc_enabled:
-            msg += _("Disconnect timer: [{num_seconds}]\n").format(
-                num_seconds=dynamic_time(emptydc_timer)
-            )
+        msg += _("Auto-disconnect:  [{dc}]\n").format(dc=dc)
+        msg += _("Auto-play:        [{autoplay}]\n").format(autoplay=autoplay)
+        msg += _("Disconnect timer: [{num_seconds}]\n").format(
+            num_seconds=dynamic_time(emptydc_timer)
+        )
         if dj_enabled:
             msg += _("DJ Role:          [{role.name}]\n").format(role=dj_role_obj)
         if jukebox:
