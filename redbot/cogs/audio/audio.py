@@ -510,9 +510,6 @@ class Audio(commands.Cog):
         )
         await ctx.send(embed=embed)
 
-
-
-
     @audioset.group(name="autoplay")
     async def _autoplay(self, ctx: commands.Context):
         """Change auto-play setting."""
@@ -541,11 +538,11 @@ class Audio(commands.Cog):
 
     @_autoplay.command(name="playlist", usage="<playlist_name_OR_id> [args]")
     async def _auto_playlist(
-            self,
-            ctx: commands.Context,
-            playlist_matches: PlaylistConverter,
-            *,
-            scope_data: ScopeParser = None,
+        self,
+        ctx: commands.Context,
+        playlist_matches: PlaylistConverter,
+        *,
+        scope_data: ScopeParser = None,
     ):
         """Set a playlist to auto-play songs from.
 
@@ -596,10 +593,7 @@ class Audio(commands.Cog):
             tracks = playlist.tracks
             if not tracks:
                 return await self._embed_msg(
-                    ctx,
-                    _("Playlist {name} has no tracks.").format(
-                        name=playlist.name
-                    ),
+                    ctx, _("Playlist {name} has no tracks.").format(name=playlist.name)
                 )
             playlist_data = dict(enabled=True, id=playlist.id, name=playlist.name, scope=scope)
             await self.config.guild(ctx.guild).autoplaylist.set(playlist_data)
@@ -617,7 +611,7 @@ class Audio(commands.Cog):
         else:
             return await self._embed_msg(
                 ctx,
-                _("Playlist {name} (id) will be used for autoplay.").format(
+                _("Playlist {name} {id} will be used for autoplay.").format(
                     name=playlist.name, id=playlist.id
                 ),
             )
@@ -627,10 +621,7 @@ class Audio(commands.Cog):
         """Resets auto-play to the default playlist."""
         playlist_data = dict(enabled=False, id=None, name=None, scope=None)
         await self.config.guild(ctx.guild).autoplaylist.set(playlist_data)
-        return await self._embed_msg(
-            ctx,
-            _("Set auto-play playlist to default value.")
-        )
+        return await self._embed_msg(ctx, _("Set auto-play playlist to default value."))
 
     @audioset.command()
     @checks.admin_or_permissions(manage_roles=True)
@@ -901,18 +892,13 @@ class Audio(commands.Cog):
                 pid = _("Cached")
                 pscope = _("Cached")
             msg += (
-                        "\n---"
-                        + _("Auto-play Settings")
-                        + "---        \n"
-                        + _("Playlist name:    [{pname}]\n")
-                        + _("Playlist ID:      [{pid}]\n")
-                        + _("Playlist scope:   [{pscope}]\n")
-                ).format(
-                    pname=pname,
-                    pid=pid,
-                    pscope=pscope,
-                )
-
+                "\n---"
+                + _("Auto-play Settings")
+                + "---        \n"
+                + _("Playlist name:    [{pname}]\n")
+                + _("Playlist ID:      [{pid}]\n")
+                + _("Playlist scope:   [{pscope}]\n")
+            ).format(pname=pname, pid=pid, pscope=pscope)
 
         if is_owner:
             msg += (
@@ -935,11 +921,7 @@ class Audio(commands.Cog):
             "Cog version:      [{version}]\n"
             "Red-Lavalink:     [{redlava}]\n"
             "External server:  [{use_external_lavalink}]\n"
-        ).format(
-            version=__version__,
-            redlava=lavalink.__version__,
-            **global_data,
-        )
+        ).format(version=__version__, redlava=lavalink.__version__, **global_data)
         if is_owner:
             msg += _("Localtracks path: [{localpath}]\n").format(**global_data)
 
@@ -3496,7 +3478,13 @@ class Audio(commands.Cog):
                 title=_("Playlist Enqueued"),
                 description=_(
                     "{name} - (id) [{scope}]\nAdded {num} tracks to the queue.{maxlength_msg}"
-                ).format(num=track_len, maxlength_msg=maxlength_msg, name=playlist.name, id=playlist.id, scope=scope_name),
+                ).format(
+                    num=track_len,
+                    maxlength_msg=maxlength_msg,
+                    name=playlist.name,
+                    id=playlist.id,
+                    scope=scope_name,
+                ),
             )
             await ctx.send(embed=embed)
             if not player.current:
@@ -3514,8 +3502,6 @@ class Audio(commands.Cog):
             )
         except TypeError:
             await ctx.invoke(self.play, query=playlist.url)
-
-
 
     @playlist.command(name="update", usage="<playlist_name_OR_id> [args]")
     async def _playlist_update(

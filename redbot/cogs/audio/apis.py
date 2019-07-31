@@ -992,9 +992,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
 
         return tracks
 
-    async def autoplay(
-        self, player: lavalink.Player
-    ):
+    async def autoplay(self, player: lavalink.Player):
         autoplaylist = await self.config.guild(player.channel.guild).autoplaylist()
         playlist = None
         tracks = None
@@ -1005,7 +1003,8 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                     autoplaylist["scope"],
                     self.bot,
                     player.channel.guild,
-                    player.channel.guild.me.id)
+                    player.channel.guild.me.id,
+                )
                 tracks = [lavalink.rest_api.Track(data=track) for track in playlist.tracks]
             except BaseException:
                 pass
