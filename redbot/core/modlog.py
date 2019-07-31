@@ -598,6 +598,27 @@ async def get_case(case_number: int, guild: discord.Guild, bot: Red) -> Case:
     return await Case.from_json(mod_channel, bot, case_number, case)
 
 
+async def get_latest_case(guild: discord.Guild, bot: Red) -> Optional[Case]:
+    """Get the latest case for the specified guild.
+
+    Parameters
+    ----------
+    guild : discord.Guild
+        The guild to get the latest case for.
+    bot : Red
+        The bot object.
+
+    Returns
+    -------
+    Optional[Case]
+        The latest case object. `None` if it the guild has no cases.
+
+    """
+    case_number = await _conf.guild(guild).latest_case_number()
+    if case_number:
+        return await get_case(case_number, guild, bot)
+
+
 async def get_all_cases(guild: discord.Guild, bot: Red) -> List[Case]:
     """
     Gets all cases for the specified guild
