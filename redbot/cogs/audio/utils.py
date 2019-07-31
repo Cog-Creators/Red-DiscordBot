@@ -1,3 +1,4 @@
+import asyncio
 import contextlib
 import os
 import re
@@ -21,6 +22,7 @@ __all__ = [
     "draw_time",
     "dynamic_time",
     "match_url",
+    "clear_react",
     "match_yt_playlist",
     "remove_react",
     "get_description",
@@ -129,6 +131,20 @@ def match_yt_playlist(url):
 async def remove_react(message, react_emoji, react_user):
     with contextlib.suppress(discord.HTTPException):
         await message.remove_reaction(react_emoji, react_user)
+
+
+async def clear_react(bot: Red, message: discord.Message, emoji: dict = None):
+    try:
+        await message.clear_reactions()
+    except discord.Forbidden:
+        if not emoji:
+            return
+        with contextlib.suppress(discord.HTTPException):
+            for key in emoji.values():
+                await asyncio.sleep(0.2)
+                await message.remove_reaction(key, bot.user)
+    except discord.HTTPException:
+        return
 
 
 async def get_description(track):

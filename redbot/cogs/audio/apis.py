@@ -8,21 +8,21 @@ import os
 import random
 import sqlite3
 import time
-from typing import Dict, List, Mapping, NoReturn, Optional, Tuple, Union, Callable
+from typing import Callable, Dict, List, Mapping, NoReturn, Optional, Tuple, Union
 
 import aiohttp
 import discord
 import lavalink
 from databases import Database
 from lavalink.rest_api import LoadResult
-from redbot.cogs.audio.playlists import get_playlist
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from . import dataclasses
 from .errors import InvalidTableError, SpotifyFetchError, YouTubeApiError
-from .utils import CacheLevel, Notifier, queue_duration, dynamic_time, track_limit
+from .playlists import get_playlist
+from .utils import CacheLevel, Notifier, dynamic_time, queue_duration, track_limit
 
 log = logging.getLogger("red.audio.cache")
 _ = Translator("Audio", __file__)

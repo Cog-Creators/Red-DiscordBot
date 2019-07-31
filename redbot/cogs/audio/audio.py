@@ -1238,6 +1238,7 @@ class Audio(commands.Cog):
     async def eq(self, ctx: commands.Context):
         """Equalizer management."""
         if not self._player_check(ctx):
+            ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(ctx, _("Nothing playing."))
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         player = lavalink.get_player(ctx.guild.id)
@@ -1252,11 +1253,7 @@ class Audio(commands.Cog):
             except discord.errors.NotFound:
                 pass
         else:
-            for reaction in reactions:
-                try:
-                    await eq_message.add_reaction(reaction)
-                except discord.errors.NotFound:
-                    pass
+            start_adding_reactions(eq_message, reactions, self.bot.loop)
 
         eq_msg_with_reacts = await ctx.fetch_message(eq_message.id)
         player.store("eq_message", eq_msg_with_reacts)
@@ -5301,17 +5298,8 @@ class Audio(commands.Cog):
             return False
 
     async def _clear_react(self, message: discord.Message, emoji: dict = None):
-        try:
-            await message.clear_reactions()
-        except discord.Forbidden:
-            if not emoji:
-                return
-            with contextlib.suppress(discord.HTTPException):
-                for key in emoji.values():
-                    await asyncio.sleep(0.2)
-                    await message.remove_reaction(key, self.bot.user)
-        except discord.HTTPException:
-            return
+        """Non blocking version of clear_react"""
+        return self.bot.loop.create_task(clear_react(self.bot, message, emoji))
 
     async def _currency_check(self, ctx: commands.Context, jukebox_price: int):
         jukebox = await self.config.guild(ctx.guild).jukebox()
