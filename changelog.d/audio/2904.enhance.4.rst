@@ -1,0 +1,1 @@
+Adding and removing reactions is audio is no longer a blocking action.
