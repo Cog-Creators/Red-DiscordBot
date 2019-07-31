@@ -20,7 +20,6 @@ from .generic_casetypes import all_generics
 __all__ = [
     "Case",
     "CaseType",
-    "get_next_case_number",
     "get_case",
     "get_all_cases",
     "get_cases_for_member",
@@ -567,24 +566,6 @@ class CaseType:
         return cls(name=name, **data_copy, **kwargs)
 
 
-async def get_next_case_number(guild: discord.Guild) -> int:
-    """
-    Gets the next case number
-
-    Parameters
-    ----------
-    guild: `discord.Guild`
-        The guild to get the next case number for
-
-    Returns
-    -------
-    int
-        The next case number
-
-    """
-    return await _conf.guild(guild).latest_case_number() + 1
-
-
 async def get_case(case_number: int, guild: discord.Guild, bot: Red) -> Case:
     """
     Gets the case with the associated case number
@@ -754,7 +735,7 @@ async def create_case(
     async with _conf.guild(guild).latest_case_number.get_lock():
         # We're getting the case number from config, incrementing it, awaiting something, then
         # setting it again. This warrants acquiring the lock.
-        next_case_number = await get_next_case_number(guild)
+        next_case_number = await _conf.guild(guild).latest_case_number() + 1
 
         case = Case(
             bot,
