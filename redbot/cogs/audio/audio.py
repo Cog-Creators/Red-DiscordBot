@@ -17,7 +17,6 @@ import aiohttp
 import discord
 import lavalink
 from fuzzywuzzy import process
-from lavalink import TrackEndReason
 from lavalink.rest_api import PlaylistInfo
 
 import redbot.core
@@ -39,7 +38,7 @@ from .apis import MusicCache
 from .converters import ComplexScopeParser, PlaylistConverter, ScopeParser, get_lazy_converter
 from .equalizer import Equalizer
 from .errors import LavalinkDownloadFailed, MissingGuild, SpotifyFetchError, TooManyMatches
-from .manager import JAR_BUILD, JAR_VERSION, ServerManager
+from .manager import ServerManager
 from .playlists import (
     FakePlaylist,
     Playlist,
@@ -99,8 +98,9 @@ class Audio(commands.Cog):
         )
 
         default_guild = dict(
-            disconnect=False,
             auto_play=False,
+            autoplaylist=dict(enabled=False, id=None, name=None, scope=None),
+            disconnect=False,
             dj_enabled=False,
             dj_role=None,
             emptydc_enabled=False,
@@ -147,15 +147,19 @@ class Audio(commands.Cog):
 
     async def initialize(self):
         pass_config_to_dependencies(self.config, self.bot, await self.config.localpath())
-        await self._migrate_config(
-            from_version=await self.config.schema_version(), to_version=_SCHEMA_VERSION
+        await self.music_cache.initialize(self.config)
+        asyncio.ensure_future(
+            self._migrate_config(
+                from_version=await self.config.schema_version(), to_version=_SCHEMA_VERSION
+            )
         )
         self._restart_connect()
         self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
         lavalink.register_event_listener(self.event_handler)
-        await self.music_cache.initialize(self.config)
 
     async def _migrate_config(self, from_version: int, to_version: int):
+        database_entries = []
+        time_now = str(datetime.datetime.now(datetime.timezone.utc))
         if from_version == to_version:
             return
         elif from_version < to_version:
@@ -166,13 +170,27 @@ class Audio(commands.Cog):
                 if temp_guild_playlist:
                     guild_playlist = {}
                     for count, (name, data) in enumerate(temp_guild_playlist.items(), 1):
+                        if not data or not name:
+                            continue
                         playlist = {"id": count, "name": name}
                         playlist.update(data)
                         guild_playlist[str(count)] = playlist
+
+                        tracks_in_playlist = data.get("tracks", []) or []
+                        for t in tracks_in_playlist:
+                            uri = t.get("info", {}).get("uri")
+                            if uri:
+                                database_entries.append(
+                                    {
+                                        "query": uri,
+                                        "data": json.dumps(t),
+                                        "last_updated": time_now,
+                                        "last_fetched": time_now,
+                                    }
+                                )
                     if guild_playlist:
                         all_playlist[str(guild_id)] = guild_playlist
             await self.config.custom(PlaylistScope.GUILD.value).set(all_playlist)
-
             # new schema is now in place
             await self.config.schema_version.set(_SCHEMA_VERSION)
 
@@ -181,6 +199,12 @@ class Audio(commands.Cog):
                 await self.config.guild(
                     cast(discord.Guild, discord.Object(id=guild_id))
                 ).clear_raw("playlists")
+        if database_entries:
+            # task = ("insert", ("lavalink", database_entries))
+            # self.music_cache.append_task(None, *task, _id=1)
+            # await self.music_cache.run_tasks(None, 1)
+
+            asyncio.ensure_future(self.music_cache.insert("lavalink", database_entries))
 
     def _restart_connect(self):
         if self._connect_task:
@@ -486,13 +510,16 @@ class Audio(commands.Cog):
         )
         await ctx.send(embed=embed)
 
-    @audioset.command()
-    @checks.mod_or_permissions(manage_messages=True)
-    async def auto(self, ctx: commands.Context):
-        """Toggle the bot auto-play recent songs when playlist is empty.
 
-        This setting takes precedence over [p]audioset dc.
-        """
+
+
+    @audioset.group(name="autoplay")
+    async def _autoplay(self, ctx: commands.Context):
+        """Change auto-play setting."""
+
+    @_autoplay.command()
+    async def toggle(self, ctx: commands.Context):
+        """Toggle auto-play when there no songs in queue."""
         autoplay = await self.config.guild(ctx.guild).auto_play()
         repeat = await self.config.guild(ctx.guild).repeat()
         disconnect = await self.config.guild(ctx.guild).disconnect()
@@ -511,6 +538,99 @@ class Audio(commands.Cog):
         await ctx.send(embed=embed)
         if self._player_check(ctx):
             await self._data_check(ctx)
+
+    @_autoplay.command(name="playlist", usage="<playlist_name_OR_id> [args]")
+    async def _auto_playlist(
+            self,
+            ctx: commands.Context,
+            playlist_matches: PlaylistConverter,
+            *,
+            scope_data: ScopeParser = None,
+    ):
+        """Set a playlist to auto-play songs from.
+
+        ***Usage**:
+        ​ ​ ​ ​ [p]audioset autopl playlist_name_OR_id args
+
+        **Args**:
+        ​ ​ ​ ​ The following are all optional:
+        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
+        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
+        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+
+        Scope is one of the following:
+        ​ ​ ​ ​ Global
+        ​ ​ ​ ​ Guild
+        ​ ​ ​ ​ User
+
+        Author can be one of the following:
+        ​ ​ ​ ​ User ID
+        ​ ​ ​ ​ User Mention
+        ​ ​ ​ ​ User Name#123
+
+        Guild can be one of the following:
+        ​ ​ ​ ​ Guild ID
+        ​ ​ ​ ​ Guild name
+
+        Example use:
+        ​ ​ ​ ​ [p]audioset autopl MyGuildPlaylist
+        ​ ​ ​ ​ [p]audioset autopl MyGlobalPlaylist --scope Global
+        ​ ​ ​ ​ [p]audioset autopl PersonalPlaylist --scope User --author Draper
+        """
+        if scope_data is None:
+            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
+
+        scope, author, guild = scope_data
+        try:
+            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+                ctx, playlist_matches, scope, author, guild
+            )
+        except TooManyMatches as e:
+            return await self._embed_msg(ctx, str(e))
+        if playlist_id is None:
+            return await self._embed_msg(
+                ctx, _("Could not match '{arg}' to a playlist").format(arg=playlist_arg)
+            )
+        try:
+            playlist = await get_playlist(playlist_id, scope, self.bot, guild, author.id)
+            tracks = playlist.tracks
+            if not tracks:
+                return await self._embed_msg(
+                    ctx,
+                    _("Playlist {name} has no tracks.").format(
+                        name=playlist.name
+                    ),
+                )
+            playlist_data = dict(enabled=True, id=playlist.id, name=playlist.name, scope=scope)
+            await self.config.guild(ctx.guild).autoplaylist.set(playlist_data)
+        except RuntimeError:
+            return await self._embed_msg(
+                ctx,
+                _("Playlist {id} does not exist in {scope} scope.").format(
+                    id=playlist_id, scope=humanize_scope(scope)
+                ),
+            )
+        except MissingGuild:
+            return await self._embed_msg(
+                ctx, _("You need to specify the Guild ID for the guild to lookup.")
+            )
+        else:
+            return await self._embed_msg(
+                ctx,
+                _("Playlist {name} (id) will be used for autoplay.").format(
+                    name=playlist.name, id=playlist.id
+                ),
+            )
+
+    @_autoplay.command(name="reset")
+    async def _reset(self, ctx: commands.Context):
+        """Resets auto-play to the default playlist."""
+        playlist_data = dict(enabled=False, id=None, name=None, scope=None)
+        await self.config.guild(ctx.guild).autoplaylist.set(playlist_data)
+        return await self._embed_msg(
+            ctx,
+            _("Set auto-play playlist to default value.")
+        )
 
     @audioset.command()
     @checks.admin_or_permissions(manage_roles=True)
@@ -733,6 +853,7 @@ class Audio(commands.Cog):
         has_spotify_cache = current_level.is_superset(spotify_cache)
         has_youtube_cache = current_level.is_superset(youtube_cache)
         has_lavalink_cache = current_level.is_superset(lavalink_cache)
+        autoplaylist = data["autoplaylist"]
 
         msg = "----" + _("Server Settings") + "----        \n"
         if dc:
@@ -764,6 +885,35 @@ class Audio(commands.Cog):
             msg += _(
                 "Vote skip:        [{vote_enabled}]\nSkip percentage:  [{vote_percent}%]\n"
             ).format(**data)
+        if autoplay or autoplaylist["enabled"]:
+            if autoplaylist["enabled"]:
+                pname = autoplaylist["name"]
+                pid = autoplaylist["id"]
+                pscope = autoplaylist["scope"]
+                if pscope == PlaylistScope.GUILD.value:
+                    pscope = f"Server"
+                elif pscope == PlaylistScope.USER.value:
+                    pscope = f"User"
+                else:
+                    pscope = "Global"
+            else:
+                pname = _("Cached")
+                pid = _("Cached")
+                pscope = _("Cached")
+            msg += (
+                        "\n---"
+                        + _("Auto-play Settings")
+                        + "---        \n"
+                        + _("Playlist name:    [{pname}]\n")
+                        + _("Playlist ID:      [{pid}]\n")
+                        + _("Playlist scope:   [{pscope}]\n")
+                ).format(
+                    pname=pname,
+                    pid=pid,
+                    pscope=pscope,
+                )
+
+
         if is_owner:
             msg += (
                 "\n---"
@@ -784,14 +934,10 @@ class Audio(commands.Cog):
             "\n---" + _("Lavalink Settings") + "---        \n"
             "Cog version:      [{version}]\n"
             "Red-Lavalink:     [{redlava}]\n"
-            "Jar version:      [{jarversion}]\n"
-            "Jar build:        [{jarbuild}]\n"
             "External server:  [{use_external_lavalink}]\n"
         ).format(
             version=__version__,
             redlava=lavalink.__version__,
-            jarversion=JAR_VERSION,
-            jarbuild=JAR_BUILD,
             **global_data,
         )
         if is_owner:
@@ -1559,7 +1705,7 @@ class Audio(commands.Cog):
             return
         local_tracks = []
         for local_file in await self._all_folder_tracks(ctx, query):
-            trackdata = await self.music_cache.lavalink_query(ctx, player, local_file)
+            trackdata, called_api = await self.music_cache.lavalink_query(ctx, player, local_file)
             with contextlib.suppress(IndexError):
                 local_tracks.append(trackdata.tracks[0])
         return local_tracks
@@ -1924,7 +2070,7 @@ class Audio(commands.Cog):
                 res = await self.music_cache.spotify_query(
                     ctx, "track", query.id, skip_youtube=True, notifier=None
                 )
-                if res is None:
+                if not res:
                     return await self._embed_msg(ctx, _("Nothing found."))
             except SpotifyFetchError as error:
                 self._play_lock(ctx, False)
@@ -3338,12 +3484,19 @@ class Audio(commands.Cog):
                 )
             else:
                 maxlength_msg = ""
+            if scope == PlaylistScope.GUILD.value:
+                scope_name = f"{guild.name}"
+            elif scope == PlaylistScope.USER.value:
+                scope_name = f"{author}"
+            else:
+                scope_name = guild.me.display_name
+
             embed = discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("Playlist Enqueued"),
                 description=_(
-                    "{playlistname}\nAdded {num} tracks to the queue.{maxlength_msg}"
-                ).format(num=track_len, maxlength_msg=maxlength_msg, playlistname=playlist.name),
+                    "{name} - (id) [{scope}]\nAdded {num} tracks to the queue.{maxlength_msg}"
+                ).format(num=track_len, maxlength_msg=maxlength_msg, name=playlist.name, id=playlist.id, scope=scope_name),
             )
             await ctx.send(embed=embed)
             if not player.current:
@@ -3361,6 +3514,8 @@ class Audio(commands.Cog):
             )
         except TypeError:
             await ctx.invoke(self.play, query=playlist.url)
+
+
 
     @playlist.command(name="update", usage="<playlist_name_OR_id> [args]")
     async def _playlist_update(
@@ -5450,7 +5605,7 @@ class Audio(commands.Cog):
     async def _process_db(self, ctx: commands.Context):
         await self.music_cache.run_tasks(ctx)
 
-    async def _close_database(self):  # FIXME: This is killing the bot ?
+    async def _close_database(self):
         await self.music_cache.run_all_pending_tasks()
         await self.music_cache.close()
 

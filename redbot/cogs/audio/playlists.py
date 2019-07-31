@@ -71,14 +71,14 @@ def standardize_scope(scope) -> str:
     return scope
 
 
-def humanize_scope(scope):
+def humanize_scope(scope, ctx=None):
 
     if scope == PlaylistScope.GLOBAL.value:
-        return "Bot"
+        return ctx.name if ctx else "Bot"
     elif scope == PlaylistScope.GUILD.value:
-        return "Server"
+        return ctx.name if ctx else "Server"
     elif scope == PlaylistScope.USER.value:
-        return "User"
+        return ctx.name if ctx else "User"
 
 
 def _prepare_config_scope(

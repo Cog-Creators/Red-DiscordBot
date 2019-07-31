@@ -15,6 +15,7 @@ import discord
 import lavalink
 from databases import Database
 from lavalink.rest_api import LoadResult
+from redbot.cogs.audio.playlists import get_playlist
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
@@ -393,6 +394,8 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         time_now = str(datetime.datetime.now(datetime.timezone.utc))
         youtube_cache = CacheLevel.set_youtube().is_subset(current_cache_level)
         for track in tracks:
+            if track.get("error", {}).get("message") == "invalid id":
+                continue
             (
                 song_url,
                 track_info,
@@ -897,10 +900,12 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                     self.append_task(ctx, *task)
         return results, called_api
 
-    async def run_tasks(self, ctx: commands.Context):
+    async def run_tasks(self, ctx: Optional[commands.Context] = None, _id=None):
+        lock_id = _id or ctx.message.id
+        lock_author = ctx.author if ctx else None
         async with self._lock:
-            if ctx.message.id in self._tasks:
-                log.debug(f"Running database writes for {ctx.message.id} ({ctx.author})")
+            if lock_id in self._tasks:
+                log.debug(f"Running database writes for {lock_id} ({lock_author})")
                 with contextlib.suppress(BaseException):
                     tasks = self._tasks[ctx.message.id]
                     del self._tasks[ctx.message.id]
@@ -914,7 +919,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                         loop=self.bot.loop,
                         return_exceptions=True,
                     )
-                log.debug(f"Completed database writes for {ctx.message.id} " f"({ctx.author})")
+                log.debug(f"Completed database writes for {lock_id} " f"({lock_author})")
 
     async def run_all_pending_tasks(self):
         async with self._lock:
@@ -938,10 +943,11 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 )
             log.debug("Completed pending writes to database have finished")
 
-    def append_task(self, ctx: commands.Context, event: str, task: tuple):
-        if ctx.message.id not in self._tasks:
-            self._tasks[ctx.message.id] = {"update": [], "insert": []}
-        self._tasks[ctx.message.id][event].append(task)
+    def append_task(self, ctx: commands.Context, event: str, task: tuple, _id=None):
+        lock_id = _id or ctx.message.id
+        if lock_id not in self._tasks:
+            self._tasks[lock_id] = {"update": [], "insert": []}
+        self._tasks[lock_id][event].append(task)
 
     async def play_random(self):
         recently_played = []
@@ -988,16 +994,30 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
 
     async def autoplay(
         self, player: lavalink.Player
-    ):  # TODO: Look at other ways to increment to this.
-        # Example https://api.spotify.com/v1/browse/new-releases
+    ):
+        autoplaylist = await self.config.guild(player.channel.guild).autoplaylist()
+        playlist = None
+        tracks = None
+        if autoplaylist["enabled"]:
+            try:
+                playlist = await get_playlist(
+                    autoplaylist["id"],
+                    autoplaylist["scope"],
+                    self.bot,
+                    player.channel.guild,
+                    player.channel.guild.me.id)
+                tracks = [lavalink.rest_api.Track(data=track) for track in playlist.tracks]
+            except BaseException:
+                pass
+
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
-        tracks = None
-        if cache_enabled:
-            tracks = await self.play_random()
-        if not tracks:
-            results = await player.load_tracks(_TOP_100_US)  # TODO: Make this customizable
-            tracks = results.tracks
+        if playlist is None or not getattr(playlist, "tracks", None):
+            if cache_enabled:
+                tracks = await self.play_random()
+            if not tracks:
+                results = await player.load_tracks(_TOP_100_US)
+                tracks = results.tracks
 
         if tracks:
             track = random.choice(tracks)
