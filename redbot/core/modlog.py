@@ -182,6 +182,8 @@ async def _migrate_config(from_version: int, to_version: int):
                     cast(discord.Guild, discord.Object(id=guild_id))
                 ).latest_case_number.set(max(map(int, cases.keys())))
 
+        await _conf.schema_version.set(4)
+
 
 class Case:
     """A single mod log case"""
@@ -749,25 +751,29 @@ async def create_case(
     if user == bot.user:
         return
 
-    next_case_number = await get_next_case_number(guild)
+    async with _conf.guild(guild).latest_case_number.get_lock():
+        # We're getting the case number from config, incrementing it, awaiting something, then
+        # setting it again. This warrants acquiring the lock.
+        next_case_number = await get_next_case_number(guild)
 
-    case = Case(
-        bot,
-        guild,
-        int(created_at.timestamp()),
-        action_type,
-        user,
-        moderator,
-        next_case_number,
-        reason,
-        int(until.timestamp()) if until else None,
-        channel,
-        amended_by=None,
-        modified_at=None,
-        message=None,
-    )
-    await _conf.custom(_CASES, str(guild.id), str(next_case_number)).set(case.to_json())
-    await _conf.guild(guild).latest_case_number.set(next_case_number)
+        case = Case(
+            bot,
+            guild,
+            int(created_at.timestamp()),
+            action_type,
+            user,
+            moderator,
+            next_case_number,
+            reason,
+            int(until.timestamp()) if until else None,
+            channel,
+            amended_by=None,
+            modified_at=None,
+            message=None,
+        )
+        await _conf.custom(_CASES, str(guild.id), str(next_case_number)).set(case.to_json())
+        await _conf.guild(guild).latest_case_number.set(next_case_number)
+
     bot.dispatch("modlog_case_create", case)
     try:
         mod_channel = await get_modlog_channel(case.guild)
