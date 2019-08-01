@@ -263,7 +263,7 @@ class YouTubeAPI:
 
 
 @cog_i18n(_)
-class MusicCache:  # So .. Need to see a more efficient way to do the queries
+class MusicCache:
     """
     Handles music queries to the Spotify and Youtube Data API.
     Always tries the Cache first.
@@ -442,7 +442,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             else:
                 youtube_urls.append(track_info)
             track_count += 1
-            if ((track_count % 2 == 0) or (track_count == total_tracks)) and notifier:
+            if notifier and ((track_count % 2 == 0) or (track_count == total_tracks)):
                 await notifier.notify_user(current=track_count, total=total_tracks, key="youtube")
         if CacheLevel.set_spotify().is_subset(current_cache_level):
             task = ("insert", ("spotify", database_entries))
@@ -853,9 +853,9 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         val = None
-        _raw_query = query
+        _raw_query = dataclasses.Query.process_input(query)
         query = str(query)
-        if cache_enabled and not forced:
+        if cache_enabled and not forced and not _raw_query.is_local:
             update = True
             with contextlib.suppress(sqlite3.Error):
                 val, update = await self.fetch_one("lavalink", "data", {"query": query})
@@ -879,7 +879,12 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 results = None
             if results is None:
                 results = LoadResult({"loadType": "LOAD_FAILED", "playlistInfo": {}, "tracks": []})
-            if cache_enabled and results.load_type and not results.has_error:
+            if (
+                cache_enabled
+                and results.load_type
+                and not results.has_error
+                and not _raw_query.is_local
+            ):
                 with contextlib.suppress(sqlite3.Error):
                     time_now = str(datetime.datetime.now(datetime.timezone.utc))
                     task = (
@@ -977,9 +982,7 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
                 recently_played = [r.data for r in vals if r]
                 if not recently_played:
                     tries += 1
-                if (
-                    tries > 15 and not recently_played
-                ):  #  Allow owner to customize date range and improve logic
+                if tries > 15 and not recently_played:
                     break
 
             if recently_played:

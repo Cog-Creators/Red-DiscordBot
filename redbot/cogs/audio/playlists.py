@@ -131,7 +131,8 @@ class Playlist:
         data: dict
             The attributes to change.
         """
-        if "id" in data:  # Disallow ID editing
+        # Disallow ID editing
+        if "id" in data:
             raise NotAllowed("Playlist ID cannot be edited.")
 
         for item in list(data.keys()):
