@@ -4482,7 +4482,7 @@ class Audio(commands.Cog):
             if removed.title == "Unknown title":
                 removed_title = local_path
             else:
-                removed_title = "{} - {}\n".format(removed.author, removed.title, local_path)
+                removed_title = "{} - {}\n{}".format(removed.author, removed.title, local_path)
         else:
             removed_title = removed.title
         await self._embed_msg(
@@ -4572,7 +4572,6 @@ class Audio(commands.Cog):
                     tracks = await self._folder_tracks(ctx, player, query)
                 if not tracks:
                     return await self._embed_msg(ctx, _("Nothing found."))
-
                 queue_dur = await queue_duration(ctx)
                 queue_total_duration = lavalink.utils.format_time(queue_dur)
 
@@ -4687,7 +4686,6 @@ class Audio(commands.Cog):
         except AttributeError:
             search_choice = dataclasses.Query.process_input(search_choice)
             if search_choice.track.exists() and search_choice.track.is_dir():
-                search_choice.invoked_from = "local folder"
                 return await ctx.invoke(self.search, query=search_choice)
             elif search_choice.track.exists() and search_choice.track.is_file():
                 search_choice.invoked_from = "localtrack"
