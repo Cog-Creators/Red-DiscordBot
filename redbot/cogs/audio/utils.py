@@ -150,7 +150,7 @@ async def clear_react(bot: Red, message: discord.Message, emoji: dict = None):
 async def get_description(track):
     if f"{os.sep}localtracks" in track.uri:
         local_track = dataclasses.LocalPath(track.uri)
-        if not track.title == "Unknown title":
+        if track.title != "Unknown title":
             return "**{} - {}**\n{}".format(
                 track.author, track.title, local_track.to_string_hidden()
             )

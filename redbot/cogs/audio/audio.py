@@ -384,7 +384,7 @@ class Audio(commands.Cog):
                     except discord.errors.NotFound:
                         pass
                 if f"{os.sep}localtracks" in player.current.uri if player.current else False:
-                    if not player.current.title == "Unknown title":
+                    if player.current.title != "Unknown title":
                         description = "**{} - {}**\n{}".format(
                             player.current.author,
                             player.current.title,
@@ -451,9 +451,7 @@ class Audio(commands.Cog):
                 if f"{os.sep}localtracks" in player.current.uri:
                     query = dataclasses.Query.process_input(player.current.uri)
                     if player.current.title == "Unknown title":
-                        description = "**{} - {}**\n{}".format(
-                            player.current.author,
-                            player.current.title,
+                        description = "{}".format(
                             query.track.to_string_hidden(),
                         )
                     else:
@@ -1200,10 +1198,11 @@ class Audio(commands.Cog):
         player.queue.insert(0, bump_song)
         removed = player.queue.pop(index)
         if f"{os.sep}localtracks" in removed.uri:
+            local_path = localtracks.LocalPath(removed.uri).to_string_hidden()
             if removed.title == "Unknown title":
-                removed_title = localtracks.LocalPath(removed.uri).to_string_hidden()
+                removed_title = local_path
             else:
-                removed_title = "{} - {}".format(removed.author, removed.title)
+                removed_title = "{} - {}\n{}".format(removed.author, removed.title, local_path)
         else:
             removed_title = removed.title
         await self._embed_msg(
@@ -1882,9 +1881,7 @@ class Audio(commands.Cog):
         if f"{os.sep}localtracks" in player.current.uri:
             query = dataclasses.Query.process_input(player.current.uri)
             if player.current.title == "Unknown title":
-                description = "**{} - {}**\n{}".format(
-                    player.current.author, player.current.title, query.track.to_string_hidden()
-                )
+                description = "{}".format(query.track.to_string_hidden())
             else:
                 song = bold("{} - {}").format(player.current.author, player.current.title)
                 description = "{}\n{}".format(song, query.track.to_string_hidden())
@@ -2201,7 +2198,7 @@ class Audio(commands.Cog):
                     ctx, _("Nothing found. Check your Lavalink logs for details.")
                 )
             if f"{os.sep}localtracks" in single_track.uri:
-                if not single_track.title == "Unknown title":
+                if single_track.title != "Unknown title":
                     description = "**{} - {}**\n{}".format(
                         single_track.author,
                         single_track.title,
@@ -4070,11 +4067,13 @@ class Audio(commands.Cog):
             player.queue.pop(queue_len)
             await player.skip()
             if f"{os.sep}localtracks" in player.current.uri:
-                description = "**{} - {}**\n{}".format(
-                    player.current.author,
-                    player.current.title,
-                    dataclasses.LocalPath(player.current.uri).to_string_hidden(),
-                )
+                query = dataclasses.Query.process_input(player.current.uri)
+                if player.current.title == "Unknown title":
+                    description = "{}".format(query.track.to_string_hidden()
+                                              )
+                else:
+                    song = bold("{} - {}").format(player.current.author, player.current.title)
+                    description = "{}\n{}".format(song, query.track.to_string_hidden())
             else:
                 description = f"**[{player.current.title}]({player.current.uri})**"
             embed = discord.Embed(
@@ -4118,7 +4117,7 @@ class Audio(commands.Cog):
                 else:
                     dur = lavalink.utils.format_time(player.current.length)
                 if f"{os.sep}localtracks" in player.current.uri:
-                    if not player.current.title == "Unknown title":
+                    if player.current.title != "Unknown title":
                         song = "**{track.author} - {track.title}**\n{uri}\n"
                     else:
                         song = "{uri}\n"
@@ -4205,7 +4204,7 @@ class Audio(commands.Cog):
             queue_list += _("**Currently livestreaming:**")
 
         elif f"{os.sep}localtracks" in player.current.uri:
-            if not player.current.title == "Unknown title":
+            if player.current.title != "Unknown title":
                 queue_list += "\n".join(
                     (
                         _("Playing: ")
@@ -4482,10 +4481,11 @@ class Audio(commands.Cog):
         index -= 1
         removed = player.queue.pop(index)
         if f"{os.sep}localtracks" in removed.uri:
+            local_path = dataclasses.LocalPath(removed.uri).to_string_hidden()
             if removed.title == "Unknown title":
-                removed_title = dataclasses.LocalPath(removed.uri).to_string_hidden()
+                removed_title = local_path
             else:
-                removed_title = "{} - {}".format(removed.author, removed.title)
+                removed_title = "{} - {}\n".format(removed.author, removed.title, local_path)
         else:
             removed_title = removed.title
         await self._embed_msg(
@@ -4678,7 +4678,7 @@ class Audio(commands.Cog):
         try:
             if f"{os.sep}localtracks" in search_choice.uri:
                 localtrack = dataclasses.LocalPath(search_choice.uri)
-                if search_choice.title == "Unknown title":
+                if search_choice.title != "Unknown title":
                     description = "**{} - {}**\n{}".format(
                         search_choice.author, search_choice.title, localtrack.to_string_hidden()
                     )
