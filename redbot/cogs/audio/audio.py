@@ -4950,7 +4950,7 @@ class Audio(commands.Cog):
                     )
                 )
             return await ctx.send(embed=embed)
-        elif autoplay:
+        elif autoplay and not player.queue:
             embed = discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("Track Skipped"),
