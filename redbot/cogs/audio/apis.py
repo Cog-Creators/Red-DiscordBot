@@ -1021,6 +1021,9 @@ class MusicCache:
                 tracks = results.tracks
 
         if tracks:
+            random.shuffle(tracks)
+            random.shuffle(tracks)
+            random.shuffle(tracks)
             track = random.choice(tracks)
             player.add(player.channel.guild.me, track)
             self.bot.dispatch(

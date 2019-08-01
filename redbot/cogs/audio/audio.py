@@ -451,9 +451,7 @@ class Audio(commands.Cog):
                 if f"{os.sep}localtracks" in player.current.uri:
                     query = dataclasses.Query.process_input(player.current.uri)
                     if player.current.title == "Unknown title":
-                        description = "{}".format(
-                            query.track.to_string_hidden(),
-                        )
+                        description = "{}".format(query.track.to_string_hidden())
                     else:
                         song = bold("{} - {}").format(player.current.author, player.current.title)
                         description = "{}\n{}".format(song, query.track.to_string_hidden())
@@ -4069,8 +4067,7 @@ class Audio(commands.Cog):
             if f"{os.sep}localtracks" in player.current.uri:
                 query = dataclasses.Query.process_input(player.current.uri)
                 if player.current.title == "Unknown title":
-                    description = "{}".format(query.track.to_string_hidden()
-                                              )
+                    description = "{}".format(query.track.to_string_hidden())
                 else:
                     song = bold("{} - {}").format(player.current.author, player.current.title)
                     description = "{}\n{}".format(song, query.track.to_string_hidden())
