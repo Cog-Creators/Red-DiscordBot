@@ -364,14 +364,6 @@ class Query:
                             else:
                                 returning["playlist"] = True if not _has_index else False
                                 returning["single"] = True if _has_index else False
-                                # match = re.search(r"watch\?(.*?)&", track)
-                                # if match:
-                                #     track = track.split(match.group(1))
-                                #     returning["queryforced"] = track[0] + match.group(1)
-                                #     returning["track_index"] = 0
-                                #     returning["single"] = True
-                                #     return returning
-
                         else:
                             returning["single"] = True
                     elif url_domain == "spotify.com":

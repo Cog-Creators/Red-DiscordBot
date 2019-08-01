@@ -1003,11 +1003,13 @@ class Audio(commands.Cog):
         ).format(prefix=ctx.prefix)
         await ctx.maybe_send_embed(message)
 
-    @audioset.command(name="cache", usage="level=[5, 3, 2, 1, 0, -1, -2, -3]")  # TODO Improve docs
+    @audioset.command(name="cache", usage="level=[5, 3, 2, 1, 0, -1, -2, -3]")
     @checks.is_owner()
     async def _storage(self, ctx: commands.Context, *, level: int = None):
         """Sets the caching level.
+
         Level can one of the following:
+
         0: Disables all caching
         1: Enables Spotify Cache
         2: Enables YouTube Cache

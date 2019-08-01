@@ -638,7 +638,6 @@ class MusicCache:  # So .. Need to see a more efficient way to do the queries
             youtube_cache = CacheLevel.set_youtube().is_subset(current_cache_level)
             spotify_cache = CacheLevel.set_spotify().is_subset(current_cache_level)
             for track_count, track in enumerate(tracks_from_spotify):
-                youtube_url = None
                 (
                     song_url,
                     track_info,
