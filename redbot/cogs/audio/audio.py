@@ -448,7 +448,7 @@ class Audio(commands.Cog):
             message_channel = player.fetch("channel")
             if message_channel:
                 message_channel = self.bot.get_channel(message_channel)
-                if f"localtracks{os.sep}" in player.current.uri:
+                if f"{os.sep}localtracks" in player.current.uri:
                     query = dataclasses.Query.process_input(player.current.uri)
                     if player.current.title == "Unknown title":
                         description = query.track.to_string_hidden()
@@ -1735,7 +1735,7 @@ class Audio(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
-    async def now(self, ctx: commands.Context, simple: bool = False):
+    async def now(self, ctx: commands.Context):
         """Now playing."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
@@ -1807,8 +1807,7 @@ class Audio(commands.Cog):
         embed.set_footer(text=text)
 
         message = await ctx.send(embed=embed)
-        if simple:
-            return
+
         player.store("np_message", message)
 
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -4090,7 +4089,62 @@ class Audio(commands.Cog):
         player = lavalink.get_player(ctx.guild.id)
         if not player.queue:
             if player.current:
-                return await ctx.invoke(self.now, simple=True)
+                arrow = await draw_time(ctx)
+                pos = lavalink.utils.format_time(player.position)
+                if player.current.is_stream:
+                    dur = "LIVE"
+                else:
+                    dur = lavalink.utils.format_time(player.current.length)
+                if f"{os.sep}localtracks" in player.current.uri:
+                    if not player.current.title == "Unknown title":
+                        song = "**{track.author} - {track.title}**\n{uri}\n"
+                    else:
+                        song = "{uri}\n"
+                else:
+                    song = "**[{track.title}]({track.uri})**\n"
+                song += _("Requested by: **{track.requester}**")
+                song += "\n\n{arrow}`{pos}`/`{dur}`"
+                song = song.format(
+                    track=player.current,
+                    uri=dataclasses.LocalPath(player.current.uri).to_string_hidden()
+                    if f"{os.sep}localtracks" in player.current.uri
+                    else player.current.uri,
+                    arrow=arrow,
+                    pos=pos,
+                    dur=dur,
+                )
+
+                embed = discord.Embed(
+                    colour=await ctx.embed_colour(), title=_("Now Playing"), description=song
+                )
+                if await self.config.guild(ctx.guild).thumbnail() and player.current:
+                    if player.current.thumbnail:
+                        embed.set_thumbnail(url=player.current.thumbnail)
+
+                shuffle = await self.config.guild(ctx.guild).shuffle()
+                repeat = await self.config.guild(ctx.guild).repeat()
+                autoplay = await self.config.guild(ctx.guild).auto_play()
+                text = ""
+                text += (
+                    _("Auto-Play")
+                    + ": "
+                    + ("\N{WHITE HEAVY CHECK MARK}" if autoplay else "\N{CROSS MARK}")
+                )
+                text += (
+                    (" | " if text else "")
+                    + _("Shuffle")
+                    + ": "
+                    + ("\N{WHITE HEAVY CHECK MARK}" if shuffle else "\N{CROSS MARK}")
+                )
+                text += (
+                    (" | " if text else "")
+                    + _("Repeat")
+                    + ": "
+                    + ("\N{WHITE HEAVY CHECK MARK}" if repeat else "\N{CROSS MARK}")
+                )
+                embed.set_footer(text=text)
+
+                return await ctx.send(embed=embed)
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
         async with ctx.typing():
             len_queue_pages = math.ceil(len(player.queue) / 10)
