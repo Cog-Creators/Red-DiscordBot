@@ -3473,7 +3473,8 @@ class Audio(commands.Cog):
                 colour=await ctx.embed_colour(),
                 title=_("Playlist Enqueued"),
                 description=_(
-                    "{name} - ({id}) [{scope}]\nAdded {num} tracks to the queue.{maxlength_msg}"
+                    "{name} - (`{id}`) [**{scope}**]\nAdded {num} "
+                    "tracks to the queue.{maxlength_msg}"
                 ).format(
                     num=track_len,
                     maxlength_msg=maxlength_msg,
