@@ -4999,8 +4999,6 @@ class Audio(commands.Cog):
         await player.play()
         player.queue += queue_to_append
 
-    # async def _get_description(self, track):
-
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
