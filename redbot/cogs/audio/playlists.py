@@ -75,11 +75,11 @@ def standardize_scope(scope) -> str:
 def humanize_scope(scope, ctx=None):
 
     if scope == PlaylistScope.GLOBAL.value:
-        return ctx.name if ctx else "Bot"
+        return ctx.name if ctx else "Global"
     elif scope == PlaylistScope.GUILD.value:
         return ctx.name if ctx else "Server"
     elif scope == PlaylistScope.USER.value:
-        return ctx.name if ctx else "User"
+        return str(ctx) if ctx else "User"
 
 
 def _prepare_config_scope(

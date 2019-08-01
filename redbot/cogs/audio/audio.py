@@ -511,6 +511,7 @@ class Audio(commands.Cog):
         await ctx.send(embed=embed)
 
     @audioset.group(name="autoplay")
+    @checks.mod_or_permissions(manage_messages=True)
     async def _autoplay(self, ctx: commands.Context):
         """Change auto-play setting."""
 
@@ -2305,9 +2306,9 @@ class Audio(commands.Cog):
             if scope == PlaylistScope.GUILD.value and (
                 is_different_guild or not is_different_user
             ):
-                msg = _("You do not have the permissions to manage playlist in {guild}.").format(
-                    guild=guild_to_query
-                )
+                msg = _(
+                    "You do not have the permissions to manage that playlist in {guild}."
+                ).format(guild=guild_to_query)
             elif (
                 scope in [PlaylistScope.GUILD.value, PlaylistScope.USER.value]
                 and is_different_user
@@ -2664,6 +2665,20 @@ class Audio(commands.Cog):
             to_author,
             to_guild,
         )
+        if to_scope == PlaylistScope.GLOBAL.value:
+            to_scope_name = ctx.guild.me
+        elif to_scope == PlaylistScope.USER.value:
+            to_scope_name = to_author
+        else:
+            to_scope_name = to_guild
+
+        if from_scope == PlaylistScope.GLOBAL.value:
+            from_scope_name = ctx.guild.me
+        elif from_scope == PlaylistScope.USER.value:
+            from_scope_name = from_author
+        else:
+            from_scope_name = from_guild
+
         return await self._embed_msg(
             ctx,
             _(
@@ -2671,8 +2686,8 @@ class Audio(commands.Cog):
             ).format(
                 name=from_playlist.name,
                 from_id=from_playlist.id,
-                from_scope=humanize_scope(from_scope),
-                to_scope=humanize_scope(to_scope),
+                from_scope=humanize_scope(from_scope, ctx=from_scope_name),
+                to_scope=humanize_scope(to_scope, ctx=to_scope_name),
                 to_id=to_playlist.id,
             ),
         )
