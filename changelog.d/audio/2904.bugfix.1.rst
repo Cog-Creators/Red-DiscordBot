@@ -1,1 +1,1 @@
-:code:`[p]audioset settings` now reports the JAR build and JAR version for local lavalink JAR correctly.
+:code:`[p]audioset settings` no longer shows lavalink JAR version.
