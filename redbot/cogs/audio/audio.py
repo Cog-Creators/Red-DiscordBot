@@ -4978,7 +4978,6 @@ class Audio(commands.Cog):
                 return await self._embed_msg(
                     ctx, _("Can't skip to a track while shuffle is enabled.")
                 )
-            nexttrack = player.queue[min(skip_to_track - 1, len(player.queue) - 1)]
             embed = discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("{skip_to_track} Tracks Skipped".format(skip_to_track=skip_to_track)),
