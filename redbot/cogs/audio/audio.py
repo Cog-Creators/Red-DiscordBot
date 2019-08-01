@@ -1588,11 +1588,12 @@ class Audio(commands.Cog):
         )
         if not localtracks_folders:
             return await self._embed_msg(ctx, _("No album folders found."))
-        len_folder_pages = math.ceil(len(localtracks_folders) / 5)
-        folder_page_list = []
-        for page_num in range(1, len_folder_pages + 1):
-            embed = await self._build_search_page(ctx, localtracks_folders, page_num)
-            folder_page_list.append(embed)
+        async with ctx.typing():
+            len_folder_pages = math.ceil(len(localtracks_folders) / 5)
+            folder_page_list = []
+            for page_num in range(1, len_folder_pages + 1):
+                embed = await self._build_search_page(ctx, localtracks_folders, page_num)
+                folder_page_list.append(embed)
 
         async def _local_folder_menu(
             ctx: commands.Context,
@@ -1645,7 +1646,8 @@ class Audio(commands.Cog):
         )
         if not all_tracks:
             return await self._embed_msg(ctx, _("No album folders found."))
-        search_list = await self._build_local_search_list(all_tracks, search_words)
+        async with ctx.typing():
+            search_list = await self._build_local_search_list(all_tracks, search_words)
         if not search_list:
             return await self._embed_msg(ctx, _("No matches."))
         await ctx.invoke(self.search, query=search_list)
@@ -4090,14 +4092,15 @@ class Audio(commands.Cog):
             if player.current:
                 return await ctx.invoke(self.now, simple=True)
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
-        len_queue_pages = math.ceil(len(player.queue) / 10)
-        queue_page_list = []
-        for page_num in range(1, len_queue_pages + 1):
-            embed = await self._build_queue_page(ctx, player, page_num)
-            queue_page_list.append(embed)
-        if page > len_queue_pages:
-            page = len_queue_pages
-        await menu(ctx, queue_page_list, QUEUE_CONTROLS, page=(page - 1))
+        async with ctx.typing():
+            len_queue_pages = math.ceil(len(player.queue) / 10)
+            queue_page_list = []
+            for page_num in range(1, len_queue_pages + 1):
+                embed = await self._build_queue_page(ctx, player, page_num)
+                queue_page_list.append(embed)
+            if page > len_queue_pages:
+                page = len_queue_pages
+            await menu(ctx, queue_page_list, QUEUE_CONTROLS, page=(page - 1))
 
     async def _build_queue_page(
         self, ctx: commands.Context, player: lavalink.player_manager.Player, page_num
