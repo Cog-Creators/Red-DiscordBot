@@ -451,7 +451,11 @@ class Audio(commands.Cog):
                 if f"{os.sep}localtracks" in player.current.uri:
                     query = dataclasses.Query.process_input(player.current.uri)
                     if player.current.title == "Unknown title":
-                        description = query.track.to_string_hidden()
+                        description = "**{} - {}**\n{}".format(
+                            player.current.author,
+                            player.current.title,
+                            query.track.to_string_hidden(),
+                        )
                     else:
                         song = bold("{} - {}").format(player.current.author, player.current.title)
                         description = "{}\n{}".format(song, query.track.to_string_hidden())
@@ -1878,7 +1882,9 @@ class Audio(commands.Cog):
         if f"{os.sep}localtracks" in player.current.uri:
             query = dataclasses.Query.process_input(player.current.uri)
             if player.current.title == "Unknown title":
-                description = query.track.to_string_hidden()
+                description = "**{} - {}**\n{}".format(
+                    player.current.author, player.current.title, query.track.to_string_hidden()
+                )
             else:
                 song = bold("{} - {}").format(player.current.author, player.current.title)
                 description = "{}\n{}".format(song, query.track.to_string_hidden())
@@ -4064,7 +4070,8 @@ class Audio(commands.Cog):
             player.queue.pop(queue_len)
             await player.skip()
             if f"{os.sep}localtracks" in player.current.uri:
-                description = "**{}**\n{}".format(
+                description = "**{} - {}**\n{}".format(
+                    player.current.author,
                     player.current.title,
                     dataclasses.LocalPath(player.current.uri).to_string_hidden(),
                 )
