@@ -1650,7 +1650,7 @@ class Audio(commands.Cog):
             search_list = await self._build_local_search_list(all_tracks, search_words)
         if not search_list:
             return await self._embed_msg(ctx, _("No matches."))
-        await ctx.invoke(self.search, query=search_list)
+        return await ctx.invoke(self.search, query=search_list)
 
     async def _localtracks_folders(self, ctx: commands.Context, search_subfolders=False):
         audio_data = dataclasses.LocalPath(
@@ -4146,6 +4146,7 @@ class Audio(commands.Cog):
 
                 return await ctx.send(embed=embed)
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
+
         async with ctx.typing():
             len_queue_pages = math.ceil(len(player.queue) / 10)
             queue_page_list = []
@@ -4154,7 +4155,7 @@ class Audio(commands.Cog):
                 queue_page_list.append(embed)
             if page > len_queue_pages:
                 page = len_queue_pages
-            await menu(ctx, queue_page_list, QUEUE_CONTROLS, page=(page - 1))
+        return await menu(ctx, queue_page_list, QUEUE_CONTROLS, page=(page - 1))
 
     async def _build_queue_page(
         self, ctx: commands.Context, player: lavalink.player_manager.Player, page_num
