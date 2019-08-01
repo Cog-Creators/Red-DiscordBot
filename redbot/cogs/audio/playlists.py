@@ -3,6 +3,7 @@ from enum import Enum, unique
 from typing import List, Optional, Union
 
 import discord
+import lavalink
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
@@ -122,6 +123,7 @@ class Playlist:
         self.name = name
         self.url = playlist_url
         self.tracks = tracks or []
+        self.tracks_obj = [lavalink.Track(data=track) for track in self.tracks]
 
     async def edit(self, data: dict):
         """

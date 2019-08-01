@@ -1007,7 +1007,7 @@ class MusicCache:
                     player.channel.guild,
                     player.channel.guild.me.id,
                 )
-                tracks = [lavalink.rest_api.Track(data=track) for track in playlist.tracks]
+                tracks = playlist.tracks_obj
             except BaseException:
                 pass
 

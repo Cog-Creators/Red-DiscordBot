@@ -3441,9 +3441,8 @@ class Audio(commands.Cog):
         try:
             playlist = await get_playlist(playlist_id, scope, self.bot, guild, author.id)
             player = lavalink.get_player(ctx.guild.id)
-            tracks = playlist.tracks
+            tracks = playlist.tracks_obj
             for track in tracks:
-                track = lavalink.rest_api.Track(data=track)
                 if f"{os.sep}localtracks" in track.uri:
                     local_path = dataclasses.LocalPath(track.uri)
                     if not await self._localtracks_check(ctx):
