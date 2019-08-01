@@ -279,7 +279,7 @@ class Core(commands.Cog, CoreLogic):
         dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
         python_version = "[{}.{}.{}]({})".format(*sys.version_info[:3], python_url)
         red_version = "[{}]({})".format(__version__, red_pypi)
-        vb_version = _("[3.1.4]({})".format(vb_repo))
+        vb_version = _("[3.1.5]({})".format(vb_repo))
         app_info = await self.bot.application_info()
         owner = app_info.owner
         custom_info = await self.bot.db.custom_info()
