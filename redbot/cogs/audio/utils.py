@@ -33,6 +33,10 @@ __all__ = [
     "CacheLevel",
     "Notifier",
 ]
+_re_time_converter = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
+re_yt_list_playlist = re.compile(
+    r"^(https?://)?(www\.)?(youtube\.com|youtu\.?be)(/playlist\?).*(list=)(.*)(&|$)"
+)
 
 
 def pass_config_to_dependencies(config: Config, bot: Red, localtracks_folder: str):
@@ -120,10 +124,7 @@ def match_url(url):
 
 
 def match_yt_playlist(url):
-    yt_list_playlist = re.compile(
-        r"^(https?://)?(www\.)?(youtube\.com|youtu\.?be)(/playlist\?).*(list=)(.*)(&|$)"
-    )
-    if yt_list_playlist.match(url):
+    if re_yt_list_playlist.match(url):
         return True
     return False
 
@@ -182,7 +183,7 @@ def track_creator(player, position=None, other_track=None):
 
 
 def time_convert(length):
-    match = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])").match(length)
+    match = re.compile(_re_time_converter).match(length)
     if match is not None:
         hr = int(match.group(1)) if match.group(1) else 0
         mn = int(match.group(2)) if match.group(2) else 0
