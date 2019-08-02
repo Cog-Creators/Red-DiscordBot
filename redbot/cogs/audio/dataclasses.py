@@ -391,13 +391,16 @@ class Query:
                             val = val.split(":", 2)[-1]
                         _id = val.split(":", 1)[-1]
                         _id = _id.split("?")[0]
-                        returning["id"] = _id
+
                         if "#" in _id:
+                            _id = _id.split("#")[0]
                             match = re.search(_re_spotify_timestamp, track)
                             if match:
                                 returning["start_time"] = (int(match.group(1)) * 60) + int(
                                     match.group(2)
                                 )
+
+                        returning["id"] = _id
                         returning["uri"] = f"spotify:{val}"
                     elif url_domain == "soundcloud.com":
                         returning["soundcloud"] = True

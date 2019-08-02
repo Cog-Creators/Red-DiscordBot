@@ -2062,7 +2062,9 @@ class Audio(commands.Cog):
             self._play_lock(ctx, False)
             try:
                 if enqueue_tracks:
-                    return await self._enqueue_tracks(ctx, dataclasses.Query.process_input(res[0]))
+                    new_query = dataclasses.Query.process_input(res[0])
+                    new_query.start_time = query.start_time
+                    return await self._enqueue_tracks(ctx, new_query)
                 else:
                     result, called_api = await self.music_cache.lavalink_query(
                         ctx, player, dataclasses.Query.process_input(res[0])
@@ -2070,7 +2072,10 @@ class Audio(commands.Cog):
                     tracks = result.tracks
                     if not tracks:
                         return await self._embed_msg(ctx, _("Nothing found."))
-                    single_track = [tracks[0]]
+                    single_track = tracks[0]
+                    single_track.start_timestamp = query.start_time * 1000
+                    single_track = [single_track]
+
                     return single_track
 
             except KeyError:
@@ -2112,8 +2117,8 @@ class Audio(commands.Cog):
             if query.single_track:
                 first_track_only = True
                 index = query.track_index
-            if query.is_spotify:
-                seek = query.start_time
+                if query.start_time:
+                    seek = query.start_time
             result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
             tracks = result.tracks
             playlist_data = result.playlist_info
