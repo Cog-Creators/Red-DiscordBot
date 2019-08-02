@@ -872,7 +872,9 @@ class MusicCache:
                 task = ("update", ("lavalink", {"query": query}))
                 self.append_task(ctx, *task)
         if val and not forced:
-            results = LoadResult(json.loads(val))
+            data = json.loads(val)
+            data["query"] = query
+            results = LoadResult(data)
             called_api = False
             if results.has_error:
                 # If cached value has an invalid entry make a new call so that it gets updated
