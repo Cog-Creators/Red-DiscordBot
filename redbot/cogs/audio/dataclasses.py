@@ -265,7 +265,7 @@ class Query:
 
         Parameters
         ----------
-        query : Union[Query, LocalPath, str]
+        query : Union[Query, LocalPath, lavalink.Track, str]
             The query string or LocalPath object.
         Returns
         -------
