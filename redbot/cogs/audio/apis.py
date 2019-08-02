@@ -107,7 +107,14 @@ _INSERT_LAVALINK_TABLE = """
     """
 _QUERY_LAVALINK_TABLE = "SELECT * FROM lavalink WHERE query=:query;"
 _QUERY_LAST_FETCHED_LAVALINK_TABLE = (
-    "SELECT * FROM lavalink WHERE last_fetched LIKE :last_fetched;"
+    "SELECT * FROM lavalink "
+    "WHERE last_fetched LIKE :day1"
+    " OR last_fetched LIKE :day2"
+    " OR last_fetched LIKE :day3"
+    " OR last_fetched LIKE :day4"
+    " OR last_fetched LIKE :day5"
+    " OR last_fetched LIKE :day6"
+    " OR last_fetched LIKE :day7;"
 )
 _UPDATE_LAVALINK_TABLE = """UPDATE lavalink
               SET last_fetched=:last_fetched 
@@ -954,48 +961,38 @@ class MusicCache:
         self._tasks[lock_id][event].append(task)
 
     async def play_random(self):
-        recently_played = []
-        tries = 0
         tracks = []
         try:
-            # TODO: This is disgusting but it works...
-            # Maybe to a full week contain rather and then get a random song from that.
-            # Instad of going for a single day that may or may not exist.
-            # This is usually only a problem on the first few days of the cache usage
-            # Where the change of the date having no entries is larger than
-            # The change to have an entry.
-            # That is why if this fails 15 times we break and default to a youtube playlist.
-            while not recently_played:
-
+            query_data = {}
+            for i in range(1, 8):
                 date = (
                     "%"
                     + str(
                         (
                             datetime.datetime.now(datetime.timezone.utc)
-                            - datetime.timedelta(days=random.randrange(1, 8))
+                            - datetime.timedelta(days=i)
                         ).date()
                     )
                     + "%"
                 )
+                query_data[f"day{i}"] = date
 
-                vals = await self.fetch_all("lavalink", "data", {"last_fetched": date})
-                recently_played = [r.data for r in vals if r]
-                if not recently_played:
-                    tries += 1
-                if tries > 15 and not recently_played:
-                    break
+            vals = await self.fetch_all("lavalink", "data", query_data)
+            recently_played = [r.data for r in vals if r]
 
             if recently_played:
                 track = random.choice(recently_played)
                 results = LoadResult(json.loads(track))
                 tracks = results.tracks
         except BaseException:
-            tracks = None
+            tracks = []
 
         return tracks
 
     async def autoplay(self, player: lavalink.Player):
         autoplaylist = await self.config.guild(player.channel.guild).autoplaylist()
+        current_cache_level = CacheLevel(await self.config.cache_level())
+        cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         playlist = None
         tracks = None
         if autoplaylist["enabled"]:
@@ -1011,8 +1008,6 @@ class MusicCache:
             except BaseException:
                 pass
 
-        current_cache_level = CacheLevel(await self.config.cache_level())
-        cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         if playlist is None or not getattr(playlist, "tracks", None):
             if cache_enabled:
                 tracks = await self.play_random()
