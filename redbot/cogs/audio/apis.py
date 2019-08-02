@@ -713,16 +713,16 @@ class MusicCache:
                     key = "lavalink"
                     seconds = "???"
                     second_key = None
-                    if track_count == 2:
-                        five_time = int(time.time()) - now
-                    if track_count >= 2:
-                        remain_tracks = total_tracks - track_count
-                        time_remain = (remain_tracks / 2) * five_time
-                        if track_count < total_tracks:
-                            seconds = dynamic_time(int(time_remain))
-                        if track_count == total_tracks:
-                            seconds = "0s"
-                        second_key = "lavalink_time"
+                    # if track_count == 2:
+                    #     five_time = int(time.time()) - now
+                    # if track_count >= 2:
+                        # remain_tracks = total_tracks - track_count
+                        # time_remain = (remain_tracks / 2) * five_time
+                        # if track_count < total_tracks:
+                        #     seconds = dynamic_time(int(time_remain))
+                        # if track_count == total_tracks:
+                        #     seconds = "0s"
+                        # second_key = "lavalink_time"
                     await notifier.notify_user(
                         current=track_count,
                         total=total_tracks,
@@ -1019,7 +1019,17 @@ class MusicCache:
             random.shuffle(tracks)
             random.shuffle(tracks)
             random.shuffle(tracks)
-            track = random.choice(tracks)
+            valid = False
+            while valid is False:
+                track = random.choice(tracks)
+                if track.has_error:
+                    continue
+                query = dataclasses.Query.process_input(track)
+                if not query.valid:
+                    continue
+                if query.is_local and not query.track.exists():
+                    continue
+                valid = True
             player.add(player.channel.guild.me, track)
             self.bot.dispatch(
                 "auto_play_track", player.channel.guild, track, player.channel.guild.me
