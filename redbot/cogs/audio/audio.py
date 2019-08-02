@@ -2114,6 +2114,7 @@ class Audio(commands.Cog):
         playlist_data = None
         seek = 0
         if type(query) is not list:
+
             if query.single_track:
                 first_track_only = True
                 index = query.track_index
@@ -2182,9 +2183,9 @@ class Audio(commands.Cog):
             try:
 
                 single_track = tracks[index] if index else tracks[0]
+                if seek and seek > 0:
+                    single_track.start_timestamp = seek * 1000
                 if guild_data["maxlength"] > 0:
-                    if seek and seek > 0:
-                        single_track.start_timestamp = seek * 1000
                     if track_limit(single_track, guild_data["maxlength"]):
                         player.add(ctx.author, single_track)
                         self.bot.dispatch(
