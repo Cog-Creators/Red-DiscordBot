@@ -2224,7 +2224,9 @@ class Audio(commands.Cog):
             await player.play()
             if not player.queue:
                 if seek > 0:
-                    await player.seek(seek * 1000)
+                    await player.seek(
+                        seek * 1000
+                    )  # TODO: Once lavalink PR is merged update this to work on all songs in queue
 
         self._play_lock(ctx, False)
 
