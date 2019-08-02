@@ -4,6 +4,8 @@ from pathlib import Path, PosixPath, WindowsPath
 from typing import List, Optional, Union
 from urllib.parse import urlparse
 
+import lavalink
+
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
@@ -255,7 +257,7 @@ class Query:
         return str(self.lavalink_query)
 
     @classmethod
-    def process_input(cls, query: Union[LocalPath, str], **kwargs):
+    def process_input(cls, query: Union[LocalPath, lavalink.Track, str], **kwargs):
         """
         A replacement for :code:`lavalink.Player.load_tracks`.
         This will try to get a valid cached entry first if not found or if in valid
@@ -272,6 +274,7 @@ class Query:
         """
         if not query:
             query = "InvalidQueryPlaceHolderName"
+        possible_values = dict()
 
         if isinstance(query, str):
             query = query.strip("<>")
@@ -280,7 +283,10 @@ class Query:
             for key, val in kwargs.items():
                 setattr(query, key, val)
             return query
-        possible_values = dict()
+        elif isinstance(query, lavalink.Track):
+            possible_values["stream"] = query.is_stream
+            query = query.uri
+
         possible_values.update(dict(**kwargs))
         possible_values.update(cls._parse(query, **kwargs))
         return cls(query, **possible_values)
