@@ -1024,8 +1024,6 @@ class MusicCache:
             valid = False
             while valid is False:
                 track = random.choice(tracks)
-                if track.has_error:
-                    continue
                 query = dataclasses.Query.process_input(track)
                 if not query.valid:
                     continue
