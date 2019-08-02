@@ -2116,8 +2116,7 @@ class Audio(commands.Cog):
                 seek = query.start_time
             result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
             tracks = result.tracks
-            _playlist_meta = result._raw.get("playlistInfo", {})
-            playlist_data = PlaylistInfo(**_playlist_meta) if _playlist_meta else None
+            playlist_data = result.playlist_info
             if not tracks:
                 self._play_lock(ctx, False)
                 return await self._embed_msg(ctx, _("Nothing found."))
@@ -2178,8 +2177,9 @@ class Audio(commands.Cog):
             try:
 
                 single_track = tracks[index] if index else tracks[0]
-                print(single_track.__dict__)
                 if guild_data["maxlength"] > 0:
+                    if seek:
+                        single_track.start_timestamp = seek * 1000
                     if track_limit(single_track, guild_data["maxlength"]):
                         player.add(ctx.author, single_track)
                         self.bot.dispatch(
@@ -2226,11 +2226,6 @@ class Audio(commands.Cog):
         await ctx.send(embed=embed)
         if not player.current:
             await player.play()
-            if not player.queue:
-                if seek > 0:
-                    await player.seek(
-                        seek * 1000
-                    )  # TODO: Once lavalink PR is merged update this to work on all songs in queue
 
         self._play_lock(ctx, False)
 
@@ -5056,10 +5051,10 @@ class Audio(commands.Cog):
                         )
                     ),
                 )
-            elif player.shuffle:
-                return await self._embed_msg(
-                    ctx, _("Can't skip to a track while shuffle is enabled.")
-                )
+            # elif player.shuffle:
+            #     return await self._embed_msg(
+            #         ctx, _("Can't skip to a track while shuffle is enabled.")
+            #     )
             embed = discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("{skip_to_track} Tracks Skipped".format(skip_to_track=skip_to_track)),
@@ -5401,10 +5396,8 @@ class Audio(commands.Cog):
         shuffle = await self.config.guild(ctx.guild).shuffle()
         repeat = await self.config.guild(ctx.guild).repeat()
         volume = await self.config.guild(ctx.guild).volume()
-        if player.repeat != repeat:
-            player.repeat = repeat
-        if player.shuffle != shuffle:
-            player.shuffle = shuffle
+        player.repeat = repeat
+        player.shuffle = shuffle
         if player.volume != volume:
             await player.set_volume(volume)
 
