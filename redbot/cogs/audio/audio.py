@@ -2178,7 +2178,7 @@ class Audio(commands.Cog):
 
                 single_track = tracks[index] if index else tracks[0]
                 if guild_data["maxlength"] > 0:
-                    if seek:
+                    if seek and seek > 0:
                         single_track.start_timestamp = seek * 1000
                     if track_limit(single_track, guild_data["maxlength"]):
                         player.add(ctx.author, single_track)
