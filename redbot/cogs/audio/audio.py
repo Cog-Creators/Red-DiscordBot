@@ -438,6 +438,7 @@ class Audio(commands.Cog):
                 await notify_channel.send(embed=embed)
 
         elif event_type == lavalink.LavalinkEvents.QUEUE_END and disconnect and not autoplay:
+            self.bot.dispatch("audio_disconnect", player.channel.guild)
             await player.disconnect()
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END and status:
@@ -1226,6 +1227,7 @@ class Audio(commands.Cog):
             ):
                 return await self._embed_msg(ctx, _("There are other people listening to music."))
             else:
+                self.bot.dispatch("audio_disconnect", ctx.guild)
                 self._play_lock(ctx, False)
                 eq = player.fetch("eq")
                 if eq:
@@ -2110,6 +2112,7 @@ class Audio(commands.Cog):
             if query.single_track:
                 first_track_only = True
                 index = query.track_index
+            if query.is_spotify:
                 seek = query.start_time
             result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
             tracks = result.tracks
@@ -2175,6 +2178,7 @@ class Audio(commands.Cog):
             try:
 
                 single_track = tracks[index] if index else tracks[0]
+                print(single_track.__dict__)
                 if guild_data["maxlength"] > 0:
                     if track_limit(single_track, guild_data["maxlength"]):
                         player.add(ctx.author, single_track)
