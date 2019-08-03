@@ -1238,16 +1238,18 @@ class Audio(commands.Cog):
         player.queue.insert(0, bump_song)
         removed = player.queue.pop(index)
         if f"{os.sep}localtracks" in removed.uri:
-            local_path = localtracks.LocalPath(removed.uri).to_string_hidden()
-            if removed.title == "Unknown title":
-                removed_title = local_path
+            localtrack = dataclasses.LocalPath(removed.uri)
+            if removed.title != "Unknown title":
+                description = "**{} - {}**\n{}".format(
+                    removed.author, removed.title, localtrack.to_string_hidden()
+                )
             else:
-                removed_title = "{} - {}\n{}".format(removed.author, removed.title, local_path)
+                description = localtrack.to_string_hidden()
         else:
-            removed_title = removed.title
-        await self._embed_msg(
-            ctx, _("Moved {track} to the top of the queue.").format(track=removed_title)
-        )
+            description = "**[{}]({})**".format(removed.title, removed.uri)
+        await ctx.send(embed=discord.Embed(title=_("Moved track to the top of the queue."),
+                                           colour=await ctx.embed_colour(),
+                                           description=description))
 
     @commands.command()
     @commands.guild_only()
