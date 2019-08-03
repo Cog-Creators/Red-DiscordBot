@@ -5707,15 +5707,15 @@ class Audio(commands.Cog):
         ):
             self._play_lock(ctx, False)
             await self.music_cache.run_tasks(ctx)
-            exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
-            exception_log += "".join(
-                traceback.format_exception(type(error), error, error.__traceback__)
-            )
-            self.bot._last_exception = exception_log
             message = "Error in command '{}'. Check your console or logs for details.".format(
                 ctx.command.qualified_name
             )
             await ctx.send(inline(message))
+        exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
+        exception_log += "".join(
+            traceback.format_exception(type(error), error, error.__traceback__)
+        )
+        self.bot._last_exception = exception_log
 
         await ctx.bot.on_command_error(
             ctx, getattr(error, "original", error), unhandled_by_cog=True
