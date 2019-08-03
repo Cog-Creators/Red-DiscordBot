@@ -3493,72 +3493,71 @@ class Audio(commands.Cog):
         jukebox_price = await self.config.guild(ctx.guild).jukebox_price()
         if not await self._currency_check(ctx, jukebox_price):
             return
-        async with ctx.typing():
-            maxlength = await self.config.guild(ctx.guild).maxlength()
-            author_obj = self.bot.get_user(ctx.author.id)
-            track_len = 0
-            try:
-                playlist = await get_playlist(playlist_id, scope, self.bot, guild, author.id)
-                player = lavalink.get_player(ctx.guild.id)
-                tracks = playlist.tracks_obj
-                for track in tracks:
-                    if f"{os.sep}localtracks" in track.uri:
-                        local_path = dataclasses.LocalPath(track.uri)
-                        if not await self._localtracks_check(ctx):
-                            pass
-                        if not local_path.exists() and not local_path.is_file():
-                            continue
-                    if maxlength > 0:
-                        if not track_limit(track.length, maxlength):
-                            continue
-                    player.add(author_obj, track)
-                    self.bot.dispatch("enqueue_track", player.channel.guild, track, ctx.author)
-                    track_len += 1
-                player.maybe_shuffle()
-                if len(tracks) > track_len:
-                    maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
-                        bad_tracks=(len(tracks) - track_len)
-                    )
-                else:
-                    maxlength_msg = ""
-                if scope == PlaylistScope.GUILD.value:
-                    scope_name = f"{guild.name}"
-                elif scope == PlaylistScope.USER.value:
-                    scope_name = f"{author}"
-                else:
-                    scope_name = guild.me.display_name
+        maxlength = await self.config.guild(ctx.guild).maxlength()
+        author_obj = self.bot.get_user(ctx.author.id)
+        track_len = 0
+        try:
+            playlist = await get_playlist(playlist_id, scope, self.bot, guild, author.id)
+            player = lavalink.get_player(ctx.guild.id)
+            tracks = playlist.tracks_obj
+            for track in tracks:
+                if f"{os.sep}localtracks" in track.uri:
+                    local_path = dataclasses.LocalPath(track.uri)
+                    if not await self._localtracks_check(ctx):
+                        pass
+                    if not local_path.exists() and not local_path.is_file():
+                        continue
+                if maxlength > 0:
+                    if not track_limit(track.length, maxlength):
+                        continue
+                player.add(author_obj, track)
+                self.bot.dispatch("enqueue_track", player.channel.guild, track, ctx.author)
+                track_len += 1
+            player.maybe_shuffle()
+            if len(tracks) > track_len:
+                maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
+                    bad_tracks=(len(tracks) - track_len)
+                )
+            else:
+                maxlength_msg = ""
+            if scope == PlaylistScope.GUILD.value:
+                scope_name = f"{guild.name}"
+            elif scope == PlaylistScope.USER.value:
+                scope_name = f"{author}"
+            else:
+                scope_name = guild.me.display_name
 
-                embed = discord.Embed(
-                    colour=await ctx.embed_colour(),
-                    title=_("Playlist Enqueued"),
-                    description=_(
-                        "{name} - (`{id}`) [**{scope}**]\nAdded {num} "
-                        "tracks to the queue.{maxlength_msg}"
-                    ).format(
-                        num=track_len,
-                        maxlength_msg=maxlength_msg,
-                        name=playlist.name,
-                        id=playlist.id,
-                        scope=scope_name,
-                    ),
-                )
-                await ctx.send(embed=embed)
-                if not player.current:
-                    await player.play()
-                return
-            except RuntimeError:
-                return await self._embed_msg(
-                    ctx,
-                    _("Playlist {id} does not exist in {scope} scope.").format(
-                        id=playlist_id, scope=humanize_scope(scope)
-                    ),
-                )
-            except MissingGuild:
-                return await self._embed_msg(
-                    ctx, _("You need to specify the Guild ID for the guild to lookup.")
-                )
-            except TypeError:
-                return await ctx.invoke(self.play, query=playlist.url)
+            embed = discord.Embed(
+                colour=await ctx.embed_colour(),
+                title=_("Playlist Enqueued"),
+                description=_(
+                    "{name} - (`{id}`) [**{scope}**]\nAdded {num} "
+                    "tracks to the queue.{maxlength_msg}"
+                ).format(
+                    num=track_len,
+                    maxlength_msg=maxlength_msg,
+                    name=playlist.name,
+                    id=playlist.id,
+                    scope=scope_name,
+                ),
+            )
+            await ctx.send(embed=embed)
+            if not player.current:
+                await player.play()
+            return
+        except RuntimeError:
+            return await self._embed_msg(
+                ctx,
+                _("Playlist {id} does not exist in {scope} scope.").format(
+                    id=playlist_id, scope=humanize_scope(scope)
+                ),
+            )
+        except MissingGuild:
+            return await self._embed_msg(
+                ctx, _("You need to specify the Guild ID for the guild to lookup.")
+            )
+        except TypeError:
+            return await ctx.invoke(self.play, query=playlist.url)
 
     @playlist.command(name="update", usage="<playlist_name_OR_id> [args]")
     async def _playlist_update(
