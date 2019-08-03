@@ -17,7 +17,6 @@ import aiohttp
 import discord
 import lavalink
 from fuzzywuzzy import process
-from lavalink.rest_api import PlaylistInfo
 
 import redbot.core
 from redbot.core import Config, bank, checks, commands
@@ -495,7 +494,7 @@ class Audio(commands.Cog):
         autoplay = await self.config.guild(ctx.guild).auto_play()
         msg = ""
         msg += _("Auto-disconnection at queue end: {true_or_false}.").format(
-            true_or_false=not disconnect
+            true_or_false=_("Enabled") if not disconnect else _("Disabled")
         )
         await self.config.guild(ctx.guild).repeat.set(not disconnect)
         if not disconnect is True and autoplay is True:
@@ -522,7 +521,9 @@ class Audio(commands.Cog):
         autoplay = await self.config.guild(ctx.guild).auto_play()
         repeat = await self.config.guild(ctx.guild).repeat()
         disconnect = await self.config.guild(ctx.guild).disconnect()
-        msg = _("Auto-play when queue ends: {true_or_false}.").format(true_or_false=not autoplay)
+        msg = _("Auto-play when queue ends: {true_or_false}.").format(
+            true_or_false=_("Enabled") if not autoplay else _("Disabled")
+        )
         await self.config.guild(ctx.guild).auto_play.set(not autoplay)
         if not autoplay is True and repeat is True:
             msg += _("\nRepeat has been disabled.")
@@ -648,7 +649,10 @@ class Audio(commands.Cog):
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         await self.config.guild(ctx.guild).dj_enabled.set(not dj_enabled)
         await self._embed_msg(
-            ctx, _("DJ role enabled: {true_or_false}.").format(true_or_false=not dj_enabled)
+            ctx,
+            _("DJ role: {true_or_false}.").format(
+                true_or_false=_("Enabled") if not dj_enabled else _("Disabled")
+            ),
         )
 
     @audioset.command()
@@ -797,7 +801,10 @@ class Audio(commands.Cog):
         notify = await self.config.guild(ctx.guild).notify()
         await self.config.guild(ctx.guild).notify.set(not notify)
         await self._embed_msg(
-            ctx, _("Verbose mode on: {true_or_false}.").format(true_or_false=not notify)
+            ctx,
+            _("Verbose mode: {true_or_false}.").format(
+                true_or_false=_("Enabled") if not notify else _("Disabled")
+            ),
         )
 
     @audioset.command()
@@ -811,7 +818,10 @@ class Audio(commands.Cog):
         restrict = await self.config.restrict()
         await self.config.restrict.set(not restrict)
         await self._embed_msg(
-            ctx, _("Commercial links only: {true_or_false}.").format(true_or_false=not restrict)
+            ctx,
+            _("Commercial links only: {true_or_false}.").format(
+                true_or_false=_("Enabled") if not restrict else _("Disabled")
+            ),
         )
 
     @audioset.command()
@@ -840,6 +850,11 @@ class Audio(commands.Cog):
         maxlength = data["maxlength"]
         vote_percent = data["vote_percent"]
         current_level = CacheLevel(global_data["cache_level"])
+        song_repeat = _("Enabled") if data["repeat"] else _("Disabled")
+        song_shuffle = _("Enabled") if data["shuffle"] else _("Disabled")
+        song_notify = _("Enabled") if data["notify"] else _("Disabled")
+        song_status = _("Enabled") if data["status"] else _("Disabled")
+
         spotify_cache = CacheLevel.set_spotify()
         youtube_cache = CacheLevel.set_youtube()
         lavalink_cache = CacheLevel.set_lavalink()
@@ -847,10 +862,12 @@ class Audio(commands.Cog):
         has_youtube_cache = current_level.is_superset(youtube_cache)
         has_lavalink_cache = current_level.is_superset(lavalink_cache)
         autoplaylist = data["autoplaylist"]
-
+        vote_enabled = data["vote_enabled"]
         msg = "----" + _("Server Settings") + "----        \n"
-        msg += _("Auto-disconnect:  [{dc}]\n").format(dc=dc)
-        msg += _("Auto-play:        [{autoplay}]\n").format(autoplay=autoplay)
+        msg += _("Auto-disconnect:  [{dc}]\n").format(dc=_("Enabled") if dc else _("Disabled"))
+        msg += _("Auto-play:        [{autoplay}]\n").format(
+            autoplay=_("Enabled") if autoplay else _("Disabled")
+        )
         if emptydc_enabled:
             msg += _("Disconnect timer: [{num_seconds}]\n").format(
                 num_seconds=dynamic_time(emptydc_timer)
@@ -869,13 +886,18 @@ class Audio(commands.Cog):
             "Shuffle:          [{shuffle}]\n"
             "Song notify msgs: [{notify}]\n"
             "Songs as status:  [{status}]\n"
-        ).format(**global_data, **data)
+        ).format(repeat=song_repeat, shuffle=song_shuffle, notify=song_notify, status=song_status)
         if thumbnail:
-            msg += _("Thumbnails:       [{0}]\n").format(thumbnail)
+            msg += _("Thumbnails:       [{0}]\n").format(
+                _("Enabled") if thumbnail else _("Disabled")
+            )
         if vote_percent > 0:
             msg += _(
                 "Vote skip:        [{vote_enabled}]\nSkip percentage:  [{vote_percent}%]\n"
-            ).format(**data)
+            ).format(
+                vote_percent=vote_percent,
+                vote_enabled=_("Enabled") if vote_enabled else _("Disabled"),
+            )
         if autoplay or autoplaylist["enabled"]:
             if autoplaylist["enabled"]:
                 pname = autoplaylist["name"]
@@ -952,7 +974,10 @@ class Audio(commands.Cog):
         status = await self.config.status()
         await self.config.status.set(not status)
         await self._embed_msg(
-            ctx, _("Song titles as status: {true_or_false}.").format(true_or_false=not status)
+            ctx,
+            _("Song titles as status: {true_or_false}.").format(
+                true_or_false=_("Enabled") if not status else _("Disabled")
+            ),
         )
 
     @audioset.command()
@@ -962,7 +987,10 @@ class Audio(commands.Cog):
         thumbnail = await self.config.guild(ctx.guild).thumbnail()
         await self.config.guild(ctx.guild).thumbnail.set(not thumbnail)
         await self._embed_msg(
-            ctx, _("Thumbnail display: {true_or_false}.").format(true_or_false=not thumbnail)
+            ctx,
+            _("Thumbnail display: {true_or_false}.").format(
+                true_or_false=_("Enabled") if not thumbnail else _("Disabled")
+            ),
         )
 
     @audioset.command()
@@ -1184,6 +1212,8 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx, _("You must be in the voice channel to bump a track.")
             )
+        if player.shuffle:
+            return await self._embed_msg(ctx, _("Can't skip to a track while shuffle is enabled."))
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(ctx, _("You need the DJ role to bump tracks."))
@@ -2149,6 +2179,7 @@ class Audio(commands.Cog):
                     track_len += 1
                     player.add(ctx.author, track)
                     self.bot.dispatch("enqueue_track", player.channel.guild, track, ctx.author)
+            player.maybe_shuffle()
 
             if len(tracks) > track_len:
                 maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
@@ -2188,6 +2219,7 @@ class Audio(commands.Cog):
                 if guild_data["maxlength"] > 0:
                     if track_limit(single_track, guild_data["maxlength"]):
                         player.add(ctx.author, single_track)
+                        player.maybe_shuffle()
                         self.bot.dispatch(
                             "enqueue_track", player.channel.guild, single_track, ctx.author
                         )
@@ -2197,6 +2229,7 @@ class Audio(commands.Cog):
 
                 else:
                     player.add(ctx.author, single_track)
+                    player.maybe_shuffle()
                     self.bot.dispatch(
                         "enqueue_track", player.channel.guild, single_track, ctx.author
                     )
@@ -3481,6 +3514,7 @@ class Audio(commands.Cog):
                     player.add(author_obj, track)
                     self.bot.dispatch("enqueue_track", player.channel.guild, track, ctx.author)
                     track_len += 1
+                player.maybe_shuffle()
                 if len(tracks) > track_len:
                     maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
                         bad_tracks=(len(tracks) - track_len)
@@ -4447,7 +4481,9 @@ class Audio(commands.Cog):
         autoplay = await self.config.guild(ctx.guild).auto_play()
         repeat = await self.config.guild(ctx.guild).repeat()
         msg = ""
-        msg += _("Repeat tracks: {true_or_false}.").format(true_or_false=not repeat)
+        msg += _("Repeat tracks: {true_or_false}.").format(
+            true_or_false=_("Enabled") if not repeat else _("Disabled")
+        )
         await self.config.guild(ctx.guild).repeat.set(not repeat)
         if not repeat is True and autoplay is True:
             msg += _("\nAuto-play has been disabled.")
@@ -4599,6 +4635,7 @@ class Audio(commands.Cog):
                         self.bot.dispatch("enqueue_track", player.channel.guild, track, ctx.author)
                     if not player.current:
                         await player.play()
+                player.maybe_shuffle()
                 if len(tracks) > track_len:
                     maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
                         bad_tracks=(len(tracks) - track_len)
@@ -4717,11 +4754,13 @@ class Audio(commands.Cog):
         if guild_data["maxlength"] > 0:
             if track_limit(search_choice.length, guild_data["maxlength"]):
                 player.add(ctx.author, search_choice)
+                player.maybe_shuffle()
                 self.bot.dispatch("enqueue_track", player.channel.guild, search_choice, ctx.author)
             else:
                 return await self._embed_msg(ctx, _("Track exceeds maximum length."))
         else:
             player.add(ctx.author, search_choice)
+            player.maybe_shuffle()
             self.bot.dispatch("enqueue_track", player.channel.guild, search_choice, ctx.author)
         if not player.current:
             await player.play()
@@ -4875,7 +4914,10 @@ class Audio(commands.Cog):
         shuffle = await self.config.guild(ctx.guild).shuffle()
         await self.config.guild(ctx.guild).shuffle.set(not shuffle)
         await self._embed_msg(
-            ctx, _("Shuffle tracks: {true_or_false}.").format(true_or_false=not shuffle)
+            ctx,
+            _("Shuffle tracks: {true_or_false}.").format(
+                true_or_false=_("Enabled") if not shuffle else _("Disabled")
+            ),
         )
         if self._player_check(ctx):
             await self._data_check(ctx)
@@ -5222,7 +5264,7 @@ class Audio(commands.Cog):
             embed = discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("External lavalink server: {true_or_false}.").format(
-                    true_or_false=not external
+                    true_or_false=_("Enabled") if not external else _("Disabled")
                 ),
             )
             await ctx.send(embed=embed)
@@ -5231,7 +5273,9 @@ class Audio(commands.Cog):
                 await self._manager.shutdown()
             await self._embed_msg(
                 ctx,
-                _("External lavalink server: {true_or_false}.").format(true_or_false=not external),
+                _("External lavalink server: {true_or_false}.").format(
+                    true_or_false=_("Enabled") if not external else _("Disabled")
+                ),
             )
 
         self._restart_connect()

@@ -772,7 +772,7 @@ class MusicCache:
                     ).format(prefix=ctx.prefix),
                 )
                 await notifier.update_embed(embed3)
-
+            player.maybe_shuffle()
             if enqueue and tracks_from_spotify:
                 if total_tracks > enqueued_tracks:
                     maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
