@@ -3768,9 +3768,7 @@ class Audio(commands.Cog):
             self._playlist_save,
             playlist_name=uploaded_playlist_name,
             playlist_url=uploaded_playlist_url,
-            scope=scope,
-            author=author,
-            guild=guild,
+            scope_data=(scope, author, guild),
         )
 
     @playlist.command(name="rename", usage="<playlist_name_OR_id> <new_name> [args]")
