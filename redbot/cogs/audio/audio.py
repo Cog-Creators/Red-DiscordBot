@@ -1247,9 +1247,13 @@ class Audio(commands.Cog):
                 description = localtrack.to_string_hidden()
         else:
             description = "**[{}]({})**".format(removed.title, removed.uri)
-        await ctx.send(embed=discord.Embed(title=_("Moved track to the top of the queue."),
-                                           colour=await ctx.embed_colour(),
-                                           description=description))
+        await ctx.send(
+            embed=discord.Embed(
+                title=_("Moved track to the top of the queue."),
+                colour=await ctx.embed_colour(),
+                description=description,
+            )
+        )
 
     @commands.command()
     @commands.guild_only()
