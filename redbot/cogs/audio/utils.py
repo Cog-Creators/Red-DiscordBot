@@ -383,7 +383,7 @@ class Notifier:
             colour=self.color,
             title=self.updates.get(key).format(num=current, total=total, seconds=seconds),
         )
-        if seconds:
+        if seconds and seconds_key:
             embed2.set_footer(text=self.updates.get(seconds_key).format(seconds=seconds))
         try:
             await self.message.edit(embed=embed2)
