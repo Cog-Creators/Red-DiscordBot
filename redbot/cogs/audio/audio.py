@@ -465,10 +465,7 @@ class Audio(commands.Cog):
                 )
                 embed.set_footer(text=_("Skipping..."))
                 await message_channel.send(embed=embed)
-            # TODO : Pending PR to Red-Lava to make tracks comparable natively
-            new_queue = [
-                t for t in player.queue if t.track_identifier != player.current.track_identifier
-            ]
+            new_queue = [t for t in player.queue if t != player.current]
             log.debug(f"Removed {len(player.queue) - len(new_queue)} broken tracks from the queue")
             player.queue = new_queue
             if repeat:
@@ -853,7 +850,7 @@ class Audio(commands.Cog):
         song_repeat = _("Enabled") if data["repeat"] else _("Disabled")
         song_shuffle = _("Enabled") if data["shuffle"] else _("Disabled")
         song_notify = _("Enabled") if data["notify"] else _("Disabled")
-        song_status = _("Enabled") if global_data["status"] else _("Disabled") #TODO
+        song_status = _("Enabled") if global_data["status"] else _("Disabled")
 
         spotify_cache = CacheLevel.set_spotify()
         youtube_cache = CacheLevel.set_youtube()
@@ -943,7 +940,13 @@ class Audio(commands.Cog):
             "Cog version:      [{version}]\n"
             "Red-Lavalink:     [{redlava}]\n"
             "External server:  [{use_external_lavalink}]\n"
-        ).format(version=__version__, redlava=lavalink.__version__, use_external_lavalink=_("Enabled") if global_data["use_external_lavalink"]  else _("Disabled"),)
+        ).format(
+            version=__version__,
+            redlava=lavalink.__version__,
+            use_external_lavalink=_("Enabled")
+            if global_data["use_external_lavalink"]
+            else _("Disabled"),
+        )
         if is_owner:
             msg += _("Localtracks path: [{localpath}]\n").format(**global_data)
 
@@ -1073,7 +1076,11 @@ class Audio(commands.Cog):
                 youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
                 lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
             )
-            await ctx.send(box(msg, lang="ini"))
+            await ctx.send(
+                embed=discord.Embed(
+                    colour=await ctx.embed_colour(), description=box(msg, lang="ini")
+                )
+            )
             return await ctx.send_help()
         if level not in [5, 3, 2, 1, 0, -1, -2, -3]:
             return await ctx.send_help()
@@ -1119,7 +1126,9 @@ class Audio(commands.Cog):
             youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
             lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
         )
-        await ctx.send(box(msg, lang="ini"))
+        await ctx.send(
+            embed=discord.Embed(colour=await ctx.embed_colour(), description=box(msg, lang="ini"))
+        )
 
         await self.config.cache_level.set(newcache.value)
 
