@@ -620,7 +620,7 @@ class MusicCache:
             current_cache_level = CacheLevel(await self.config.cache_level())
             guild_data = await self.config.guild(ctx.guild).all()
 
-            now = int(time.time())
+            # now = int(time.time())
             enqueued_tracks = 0
             consecutive_fails = 0
             queue_dur = await queue_duration(ctx)

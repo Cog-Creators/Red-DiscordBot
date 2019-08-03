@@ -853,7 +853,7 @@ class Audio(commands.Cog):
         song_repeat = _("Enabled") if data["repeat"] else _("Disabled")
         song_shuffle = _("Enabled") if data["shuffle"] else _("Disabled")
         song_notify = _("Enabled") if data["notify"] else _("Disabled")
-        song_status = _("Enabled") if data["status"] else _("Disabled")
+        song_status = _("Enabled") if global_data["status"] else _("Disabled") #TODO
 
         spotify_cache = CacheLevel.set_spotify()
         youtube_cache = CacheLevel.set_youtube()
@@ -943,7 +943,7 @@ class Audio(commands.Cog):
             "Cog version:      [{version}]\n"
             "Red-Lavalink:     [{redlava}]\n"
             "External server:  [{use_external_lavalink}]\n"
-        ).format(version=__version__, redlava=lavalink.__version__, **global_data)
+        ).format(version=__version__, redlava=lavalink.__version__, use_external_lavalink=_("Enabled") if global_data["use_external_lavalink"]  else _("Disabled"),)
         if is_owner:
             msg += _("Localtracks path: [{localpath}]\n").format(**global_data)
 
