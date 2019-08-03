@@ -5,6 +5,8 @@ import datetime
 import heapq
 import json
 import logging
+import traceback
+
 import math
 import os
 import random
@@ -22,7 +24,7 @@ import redbot.core
 from redbot.core import Config, bank, checks, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import bold, box, pagify
+from redbot.core.utils.chat_formatting import bold, box, pagify, inline
 from redbot.core.utils.menus import (
     DEFAULT_CONTROLS,
     close_menu,
@@ -5705,8 +5707,18 @@ class Audio(commands.Cog):
         ):
             self._play_lock(ctx, False)
             await self.music_cache.run_tasks(ctx)
+            exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
+            exception_log += "".join(
+                traceback.format_exception(type(error), error, error.__traceback__)
+            )
+            self.bot._last_exception = exception_log
+            message = "Error in command '{}'. Check your console or logs for details.".format(
+                ctx.command.qualified_name
+            )
+            await ctx.send(inline(message))
+
         await ctx.bot.on_command_error(
-            ctx, error.original if hasattr(error, "original") else error, unhandled_by_cog=True
+            ctx, getattr(error, "original", error), unhandled_by_cog=True
         )
 
     async def cog_after_invoke(self, ctx: commands.Context):
