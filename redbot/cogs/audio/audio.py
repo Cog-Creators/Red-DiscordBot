@@ -2177,8 +2177,10 @@ class Audio(commands.Cog):
                 self._play_lock(ctx, False)
                 embed = discord.Embed(title=_("Nothing found."), colour=await ctx.embed_colour())
                 if await self.config.use_external_lavalink() and query.is_local:
-                    embed.description = _("Note: Local tracks will not work "
-                                          "if the lavalink.jar cannot see the track.")
+                    embed.description = _(
+                        "Note: Local tracks will not work "
+                        "if the lavalink.jar cannot see the track."
+                    )
                 return await ctx.send(embed=embed)
         else:
             tracks = query
@@ -4641,11 +4643,14 @@ class Audio(commands.Cog):
                 else:
                     tracks = await self._folder_tracks(ctx, player, query)
                 if not tracks:
-                    embed = discord.Embed(title=_("Nothing found."),
-                                          colour=await ctx.embed_colour())
+                    embed = discord.Embed(
+                        title=_("Nothing found."), colour=await ctx.embed_colour()
+                    )
                     if await self.config.use_external_lavalink() and query.is_local:
-                        embed.description = _("Note: Local tracks will not work "
-                                              "if the lavalink.jar cannot see the track.")
+                        embed.description = _(
+                            "Note: Local tracks will not work "
+                            "if the lavalink.jar cannot see the track."
+                        )
                     return await ctx.send(embed=embed)
                 queue_dur = await queue_duration(ctx)
                 queue_total_duration = lavalink.utils.format_time(queue_dur)
@@ -4698,8 +4703,10 @@ class Audio(commands.Cog):
             if not tracks:
                 embed = discord.Embed(title=_("Nothing found."), colour=await ctx.embed_colour())
                 if await self.config.use_external_lavalink() and query.is_local:
-                    embed.description = _("Note: Local tracks will not work "
-                                          "if the lavalink.jar cannot see the track.")
+                    embed.description = _(
+                        "Note: Local tracks will not work "
+                        "if the lavalink.jar cannot see the track."
+                    )
                 return await ctx.send(embed=embed)
         else:
             tracks = query
