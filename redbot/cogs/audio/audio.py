@@ -5721,11 +5721,11 @@ class Audio(commands.Cog):
                 ctx.command.qualified_name
             )
             await ctx.send(inline(message))
-        exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
-        exception_log += "".join(
-            traceback.format_exception(type(error), error, error.__traceback__)
-        )
-        self.bot._last_exception = exception_log
+            exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
+            exception_log += "".join(
+                traceback.format_exception(type(error), error, error.__traceback__)
+            )
+            self.bot._last_exception = exception_log
 
         await ctx.bot.on_command_error(
             ctx, getattr(error, "original", error), unhandled_by_cog=True
