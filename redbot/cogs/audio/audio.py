@@ -4428,27 +4428,56 @@ class Audio(commands.Cog):
         player.queue.clear()
         await self._embed_msg(ctx, _("The queue has been cleared."))
 
-    @queue.command(name="clean")
+    @queue.group(name="clean")
     @commands.guild_only()
     async def _queue_clean(self, ctx: commands.Context):
         """Removes songs from the queue if the requester is not in the voice channel."""
+        if ctx.invoked_subcommand is None:
+            try:
+                player = lavalink.get_player(ctx.guild.id)
+            except KeyError:
+                return await self._embed_msg(ctx, _("There's nothing in the queue."))
+            dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+            if not self._player_check(ctx) or not player.queue:
+                return await self._embed_msg(ctx, _("There's nothing in the queue."))
+            if dj_enabled:
+                if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
+                    ctx, ctx.author
+                ):
+                    return await self._embed_msg(ctx, _("You need the DJ role to clean the queue."))
+            clean_tracks = []
+            removed_tracks = 0
+            listeners = player.channel.members
+            for track in player.queue:
+                if track.requester in listeners:
+                    clean_tracks.append(track)
+                else:
+                    removed_tracks += 1
+            player.queue = clean_tracks
+            if removed_tracks == 0:
+                await self._embed_msg(ctx, _("Removed 0 tracks."))
+            else:
+                await self._embed_msg(
+                    ctx,
+                    _(
+                        "Removed {removed_tracks} tracks queued by members o"
+                        "utside of the voice channel."
+                    ).format(removed_tracks=removed_tracks),
+                )
+
+    @queue.command(name="self")
+    @commands.guild_only()
+    async def _queue_clean_self(self, ctx: commands.Context):
+        """Removes all tracks you requested from the queue."""
         try:
             player = lavalink.get_player(ctx.guild.id)
         except KeyError:
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
-        if not self._player_check(ctx) or not player.queue:
-            return await self._embed_msg(ctx, _("There's nothing in the queue."))
-        if dj_enabled:
-            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
-                ctx, ctx.author
-            ):
-                return await self._embed_msg(ctx, _("You need the DJ role to clean the queue."))
+
         clean_tracks = []
         removed_tracks = 0
-        listeners = player.channel.members
         for track in player.queue:
-            if track.requester in listeners:
+            if track.requester != ctx.author:
                 clean_tracks.append(track)
             else:
                 removed_tracks += 1
@@ -4459,9 +4488,9 @@ class Audio(commands.Cog):
             await self._embed_msg(
                 ctx,
                 _(
-                    "Removed {removed_tracks} tracks queued by members o"
-                    "utside of the voice channel."
-                ).format(removed_tracks=removed_tracks),
+                    "Removed {removed_tracks} tracks queued by {member.display_name} "
+                    "outside of the voice channel."
+                ).format(removed_tracks=removed_tracks, member=ctx.author),
             )
 
     @queue.command(name="search")
@@ -4485,6 +4514,25 @@ class Audio(commands.Cog):
             embed = await self._build_queue_search_page(ctx, page_num, search_list)
             search_page_list.append(embed)
         await menu(ctx, search_page_list, DEFAULT_CONTROLS)
+
+    @queue.command(name="shuffle")
+    @commands.guild_only()
+    async def _queue_shuffle(self, ctx: commands.Context):
+        """Shuffles the queue."""
+        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        if dj_enabled:
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
+                    ctx, ctx.author
+            ):
+                return await self._embed_msg(ctx, _("You need the DJ role to clean the queue."))
+        try:
+            player = lavalink.get_player(ctx.guild.id)
+        except KeyError:
+            return await self._embed_msg(ctx, _("There's nothing in the queue."))
+        if not self._player_check(ctx) or not player.queue:
+            return await self._embed_msg(ctx, _("There's nothing in the queue."))
+
+        player.force_shuffle(0)
 
     @commands.command()
     @commands.guild_only()
@@ -4886,25 +4934,26 @@ class Audio(commands.Cog):
         Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`)."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
+        is_alone = await self._is_alone(ctx, ctx.author)
+        is_requester = await self.is_requester(ctx, ctx.author)
+        can_skip = await self._can_instaskip(ctx, ctx.author)
+
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
         player = lavalink.get_player(ctx.guild.id)
         if (
             not ctx.author.voice or ctx.author.voice.channel != player.channel
-        ) and not await self._can_instaskip(ctx, ctx.author):
+        ) and not can_skip:
             return await self._embed_msg(ctx, _("You must be in the voice channel to use seek."))
-        if dj_enabled:
-            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
-                ctx, ctx.author
-            ):
-                return await self._embed_msg(ctx, _("You need the DJ role to use seek."))
-        if vote_enabled:
-            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
-                ctx, ctx.author
-            ):
-                return await self._embed_msg(
-                    ctx, _("There are other people listening - vote to skip instead.")
-                )
+
+        if vote_enabled and not can_skip and not is_alone:
+            return await self._embed_msg(
+                ctx, _("There are other people listening - vote to skip instead.")
+            )
+
+        if dj_enabled and not (can_skip or is_requester) and not is_alone:
+            return await self._embed_msg(ctx, _("You need the DJ role or be the track requester to use seek."))
+
         if player.current:
             if player.current.is_stream:
                 return await self._embed_msg(ctx, _("Can't seek on a stream."))
@@ -5005,11 +5054,18 @@ class Audio(commands.Cog):
             )
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
-        if dj_enabled and not vote_enabled and not await self._can_instaskip(ctx, ctx.author):
-            if not await self._is_alone(ctx, ctx.author):
-                return await self._embed_msg(ctx, _("You need the DJ role to skip tracks."))
+        is_alone = await self._is_alone(ctx, ctx.author)
+        is_requester = await self.is_requester(ctx, ctx.author)
+        can_skip = await self._can_instaskip(ctx, ctx.author)
+
+        if dj_enabled and not vote_enabled:
+            if not (can_skip or is_requester) and not is_alone:
+                return await self._embed_msg(ctx, _("You need the DJ role or be the track requester to skip tracks."))
+            if is_requester and not can_skip and skip_to_track is None and skip_to_track > 1:
+                return await self._embed_msg(ctx, _("You can only skip the current track."))
+
         if vote_enabled:
-            if not await self._can_instaskip(ctx, ctx.author):
+            if not can_skip:
                 if skip_to_track is not None:
                     return await self._embed_msg(
                         ctx, _("Can't skip to a specific track in vote mode without the DJ role.")
@@ -5101,6 +5157,17 @@ class Audio(commands.Cog):
             return True
         else:
             return False
+
+    async def is_requester(self, ctx: commands.Context, member: discord.Member):
+        try:
+            player = lavalink.get_player(ctx.guild.id)
+            log.info(f"Current requester is {player.current}")
+            if player.current.requester.id == member.id:
+                return True
+            return False
+        except Exception as e:
+            log.error(e)
+        return False
 
     async def _skip_action(self, ctx: commands.Context, skip_to_track: int = None):
         player = lavalink.get_player(ctx.guild.id)
