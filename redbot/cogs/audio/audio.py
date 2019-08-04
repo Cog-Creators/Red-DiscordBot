@@ -181,6 +181,7 @@ class Audio(commands.Cog):
                         for t in tracks_in_playlist:
                             uri = t.get("info", {}).get("uri")
                             if uri:
+                                t = {"loadType": "V2_COMPAT", "tracks": [t], "query": uri}
                                 database_entries.append(
                                     {
                                         "query": uri,
@@ -5702,6 +5703,8 @@ class Audio(commands.Cog):
     @_playlist_upload.error
     async def _clear_lock_on_error(self, ctx: commands.Context, error):
         # TODO: Change this in a future PR
+        # FIXME: This seems to be consuming tracebacks and not adding them to last traceback
+        # which is handled by on_command_error
         # Make it so that this can be used to show user friendly errors
         if not isinstance(
             error,

@@ -22,7 +22,7 @@ from redbot.core.i18n import Translator, cog_i18n
 from . import dataclasses
 from .errors import InvalidTableError, SpotifyFetchError, YouTubeApiError
 from .playlists import get_playlist
-from .utils import CacheLevel, Notifier, dynamic_time, queue_duration, track_limit
+from .utils import CacheLevel, Notifier, queue_duration, track_limit
 
 log = logging.getLogger("red.audio.cache")
 _ = Translator("Audio", __file__)
@@ -893,6 +893,7 @@ class MusicCache:
                 and results.load_type
                 and not results.has_error
                 and not _raw_query.is_local
+                and results.tracks
             ):
                 with contextlib.suppress(sqlite3.Error):
                     time_now = str(datetime.datetime.now(datetime.timezone.utc))
