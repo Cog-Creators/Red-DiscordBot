@@ -2178,8 +2178,10 @@ class Audio(commands.Cog):
                 embed = discord.Embed(title=_("Nothing found."), colour=await ctx.embed_colour())
                 if await self.config.use_external_lavalink() and query.is_local:
                     embed.description = _(
-                        "Note: Local tracks will not work "
-                        "if the lavalink.jar cannot see the track."
+                        "Local tracks will not work "
+                        "if the Lavalink.jar cannot see the track.\n"
+                        "This may be due to permissions or because Lavalink.jar is being run "
+                        "in a different machine than the local tracks."
                     )
                 return await ctx.send(embed=embed)
         else:
@@ -4648,8 +4650,10 @@ class Audio(commands.Cog):
                     )
                     if await self.config.use_external_lavalink() and query.is_local:
                         embed.description = _(
-                            "Note: Local tracks will not work "
-                            "if the lavalink.jar cannot see the track."
+                            "Local tracks will not work "
+                            "if the Lavalink.jar cannot see the track.\n"
+                            "This may be due to permissions or because Lavalink.jar is being run "
+                            "in a different machine than the local tracks."
                         )
                     return await ctx.send(embed=embed)
                 queue_dur = await queue_duration(ctx)
@@ -4704,8 +4708,10 @@ class Audio(commands.Cog):
                 embed = discord.Embed(title=_("Nothing found."), colour=await ctx.embed_colour())
                 if await self.config.use_external_lavalink() and query.is_local:
                     embed.description = _(
-                        "Note: Local tracks will not work "
-                        "if the lavalink.jar cannot see the track."
+                        "Local tracks will not work "
+                        "if the Lavalink.jar cannot see the track.\n"
+                        "This may be due to permissions or because Lavalink.jar is being run "
+                        "in a different machine than the local tracks."
                     )
                 return await ctx.send(embed=embed)
         else:
