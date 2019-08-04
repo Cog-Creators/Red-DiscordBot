@@ -5707,7 +5707,7 @@ class Audio(commands.Cog):
         # which is handled by on_command_error
         # Make it so that this can be used to show user friendly errors
         if not isinstance(
-            error,
+            getattr(error, "original", error),
             (
                 commands.CheckFailure,
                 commands.UserInputError,
