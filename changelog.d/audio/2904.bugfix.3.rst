@@ -1,0 +1,1 @@
+:code:`[p]audioset settings` now uses `ctx.is_owner()` to check if context author is the bot owner
