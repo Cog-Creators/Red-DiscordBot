@@ -4359,8 +4359,9 @@ class Audio(commands.Cog):
         for track in queue_list:
             queue_idx = queue_idx + 1
             if not match_url(track.uri):
+                query = dataclasses.Query.process_input(track)
                 if track.title == "Unknown title":
-                    track_title = track.uri.split("/")[2]
+                    track_title = query.track.to_string_hidden()
                 else:
                     track_title = "{} - {}".format(track.author, track.title)
             else:
