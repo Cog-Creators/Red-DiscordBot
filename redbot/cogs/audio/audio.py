@@ -2280,7 +2280,10 @@ class Audio(commands.Cog):
                     )
                 )
             elif queue_dur > 0:
-                embed.set_footer(text=_("#{position} in queue").format(position=len(player.queue)))
+                index = next((i for i, e in enumerate(player.queue) if e == single_track), None)
+                if index:
+                    embed.set_footer(text=_("#{position} in queue").format(position=index + 1))
+
         await ctx.send(embed=embed)
         if not player.current:
             await player.play()
@@ -4758,14 +4761,6 @@ class Audio(commands.Cog):
         )
         queue_dur = await queue_duration(ctx)
         queue_total_duration = lavalink.utils.format_time(queue_dur)
-        if not guild_data["shuffle"] and queue_dur > 0:
-            embed.set_footer(
-                text=_("{time} until track playback: #{position} in queue").format(
-                    time=queue_total_duration, position=len(player.queue) + 1
-                )
-            )
-        elif queue_dur > 0:
-            embed.set_footer(text=_("#{position} in queue").format(position=len(player.queue) + 1))
 
         if guild_data["maxlength"] > 0:
             if track_limit(search_choice.length, guild_data["maxlength"]):
@@ -4778,6 +4773,18 @@ class Audio(commands.Cog):
             player.add(ctx.author, search_choice)
             player.maybe_shuffle()
             self.bot.dispatch("enqueue_track", player.channel.guild, search_choice, ctx.author)
+
+        if not guild_data["shuffle"] and queue_dur > 0:
+            embed.set_footer(
+                text=_("{time} until track playback: #{position} in queue").format(
+                    time=queue_total_duration, position=len(player.queue) + 1
+                )
+            )
+        elif queue_dur > 0:
+            index = next((i for i, e in enumerate(player.queue) if e == search_choice), None)
+            if index:
+                embed.set_footer(text=_("#{position} in queue").format(position=index + 1))
+
         if not player.current:
             await player.play()
         await ctx.send(embed=embed)
