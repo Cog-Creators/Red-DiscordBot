@@ -4444,7 +4444,9 @@ class Audio(commands.Cog):
                 if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
                     ctx, ctx.author
                 ):
-                    return await self._embed_msg(ctx, _("You need the DJ role to clean the queue."))
+                    return await self._embed_msg(
+                        ctx, _("You need the DJ role to clean the queue.")
+                    )
             clean_tracks = []
             removed_tracks = 0
             listeners = player.channel.members
@@ -4522,7 +4524,7 @@ class Audio(commands.Cog):
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
-                    ctx, ctx.author
+                ctx, ctx.author
             ):
                 return await self._embed_msg(ctx, _("You need the DJ role to clean the queue."))
         try:
@@ -4941,9 +4943,7 @@ class Audio(commands.Cog):
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
         player = lavalink.get_player(ctx.guild.id)
-        if (
-            not ctx.author.voice or ctx.author.voice.channel != player.channel
-        ) and not can_skip:
+        if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
             return await self._embed_msg(ctx, _("You must be in the voice channel to use seek."))
 
         if vote_enabled and not can_skip and not is_alone:
@@ -4952,7 +4952,9 @@ class Audio(commands.Cog):
             )
 
         if dj_enabled and not (can_skip or is_requester) and not is_alone:
-            return await self._embed_msg(ctx, _("You need the DJ role or be the track requester to use seek."))
+            return await self._embed_msg(
+                ctx, _("You need the DJ role or be the track requester to use seek.")
+            )
 
         if player.current:
             if player.current.is_stream:
@@ -5060,7 +5062,9 @@ class Audio(commands.Cog):
 
         if dj_enabled and not vote_enabled:
             if not (can_skip or is_requester) and not is_alone:
-                return await self._embed_msg(ctx, _("You need the DJ role or be the track requester to skip tracks."))
+                return await self._embed_msg(
+                    ctx, _("You need the DJ role or be the track requester to skip tracks.")
+                )
             if is_requester and not can_skip and skip_to_track is None and skip_to_track > 1:
                 return await self._embed_msg(ctx, _("You can only skip the current track."))
 
