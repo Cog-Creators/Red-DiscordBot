@@ -834,7 +834,7 @@ class Audio(commands.Cog):
     @audioset.command()
     async def settings(self, ctx: commands.Context):
         """Show the current settings."""
-        is_owner = ctx.author.id == self.bot.owner_id
+        is_owner = await ctx.bot.is_owner(ctx.author)
         data = await self.config.guild(ctx.guild).all()
         global_data = await self.config.all()
         dj_role_obj = ctx.guild.get_role(data["dj_role"])
