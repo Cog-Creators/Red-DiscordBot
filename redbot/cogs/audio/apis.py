@@ -802,7 +802,7 @@ class MusicCache:
             if spotify_cache:
                 task = ("insert", ("spotify", database_entries))
                 self.append_task(ctx, *task)
-        except BaseException as e:
+        except Exception as e:
             lock(ctx, False)
             raise e
         finally:
@@ -861,7 +861,7 @@ class MusicCache:
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         val = None
         _raw_query = dataclasses.Query.process_input(query)
-        query = str(query)
+        query = str(_raw_query)
         if cache_enabled and not forced and not _raw_query.is_local:
             update = True
             with contextlib.suppress(sqlite3.Error):
@@ -920,7 +920,7 @@ class MusicCache:
         async with self._lock:
             if lock_id in self._tasks:
                 log.debug(f"Running database writes for {lock_id} ({lock_author})")
-                with contextlib.suppress(BaseException):
+                with contextlib.suppress(Exception):
                     tasks = self._tasks[ctx.message.id]
                     del self._tasks[ctx.message.id]
                     await asyncio.gather(
@@ -938,7 +938,7 @@ class MusicCache:
     async def run_all_pending_tasks(self):
         async with self._lock:
             log.debug("Running pending writes to database")
-            with contextlib.suppress(BaseException):
+            with contextlib.suppress(Exception):
                 tasks = {"update": [], "insert": []}
                 for k, task in self._tasks.items():
                     for t, args in task.items():
@@ -987,7 +987,7 @@ class MusicCache:
                 track = random.choice(recently_played)
                 results = LoadResult(json.loads(track))
                 tracks = results.tracks
-        except BaseException:
+        except Exception:
             tracks = []
 
         return tracks
@@ -1008,7 +1008,7 @@ class MusicCache:
                     player.channel.guild.me.id,
                 )
                 tracks = playlist.tracks_obj
-            except BaseException:
+            except Exception:
                 pass
 
         if playlist is None or not getattr(playlist, "tracks", None):

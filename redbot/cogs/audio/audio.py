@@ -6,6 +6,7 @@ import heapq
 import json
 import logging
 import traceback
+from collections import namedtuple
 
 import math
 import os
@@ -86,6 +87,8 @@ class Audio(commands.Cog):
         self._connection_aborted = False
         self.play_lock = {}
         self._manager: Optional[ServerManager] = None
+        self.owns_autoplay = True
+
         default_global = dict(
             schema_version=1,
             cache_level=0,
@@ -369,7 +372,9 @@ class Audio(commands.Cog):
             self.bot.dispatch("track_end", player.channel.guild, prev_song, prev_requester)
 
             if autoplay and not player.queue and player.fetch("playing_song") is not None:
-                await self.music_cache.autoplay(player)
+                self.bot.dispatch("should_auto_play", player.channel.guild, self.play_query)
+                if self.owns_autoplay:
+                    await self.music_cache.autoplay(player)
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
             prev_song = player.fetch("prev_song")
@@ -468,12 +473,51 @@ class Audio(commands.Cog):
                 )
                 embed.set_footer(text=_("Skipping..."))
                 await message_channel.send(embed=embed)
-            new_queue = [t for t in player.queue if t != player.current]
-            log.debug(f"Removed {len(player.queue) - len(new_queue)} broken tracks from the queue")
-            player.queue = new_queue
+            while True:
+                if player.current in player.queue:
+                    player.queue.remove(player.current)
+                else:
+                    break
             if repeat:
                 player.current = None
             await player.skip()
+
+    async def play_query(self, query: str, guild: discord.Guild, channel: discord.VoiceChannel):
+        if not self._player_check(guild.me):
+            try:
+                if (
+                        not channel.permissions_for(guild.me).connect
+                        or not channel.permissions_for(guild.me).move_members
+                        and userlimit(channel)
+                ):
+                    log.info(f"I don't have permission to connect to {channel} in {guild}.")
+
+                await lavalink.connect(channel)
+                player = lavalink.get_player(guild.id)
+                player.store("connect", datetime.datetime.utcnow())
+            except IndexError:
+                log.debug(f"Connection to Lavalink has not yet been established"
+                          f" while trying to connect to to {channel} in {guild}.")
+                return
+
+        player = lavalink.get_player(guild.id)
+
+        player.store("channel", channel.id)
+        player.store("guild", guild.id)
+        await self._data_check(guild.me)
+        query = dataclasses.Query.process_input(query)
+        ctx = namedtuple("Context", "message")
+        results, called_api = self.music_cache.lavalink_query(ctx(guild), player, query)
+        if not results.tracks:
+            log.info(f"Query returned no tracks.")
+            return
+        track = results.tracks[0]
+        player.add(player.channel.guild.me, track)
+        self.bot.dispatch(
+            "auto_play_track", player.channel.guild, track, player.channel.guild.me
+        )
+        if not player.current:
+            await player.play()
 
     @commands.group()
     @commands.guild_only()
@@ -2196,6 +2240,7 @@ class Audio(commands.Cog):
             # url where Lavalink handles providing all Track objects to use, like a
             # YouTube or Soundcloud playlist
             track_len = 0
+            empty_queue = not player.queue
             for track in tracks:
                 if guild_data["maxlength"] > 0:
                     if track_limit(track, guild_data["maxlength"]):
@@ -2207,7 +2252,7 @@ class Audio(commands.Cog):
                     track_len += 1
                     player.add(ctx.author, track)
                     self.bot.dispatch("enqueue_track", player.channel.guild, track, ctx.author)
-            player.maybe_shuffle()
+            player.maybe_shuffle(0 if empty_queue else 1)
 
             if len(tracks) > track_len:
                 maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
@@ -2339,7 +2384,7 @@ class Audio(commands.Cog):
             )
             await ctx.send(embed=error_embed)
             return None
-        except BaseException as e:
+        except Exception as e:
             self._play_lock(ctx, False)
             raise e
         self._play_lock(ctx, False)
@@ -2437,26 +2482,23 @@ class Audio(commands.Cog):
         if not correct_scope_matches:
             return None, original_input
         match_count = len(correct_scope_matches)
-        if match_count == 1:
-            return correct_scope_matches[0][2]["id"], original_input
+        if scope == PlaylistScope.USER.value:
+            correct_scope_matches = [
+                (i[2]["id"], i[2]["name"], len(i[2]["tracks"]), i[2]["author"])
+                for i in correct_scope_matches
+                if str(user_to_query) == i[0]
+            ]
+        elif scope == PlaylistScope.GUILD.value:
+            correct_scope_matches = [
+                (i[2]["id"], i[2]["name"], len(i[2]["tracks"]), i[2]["author"])
+                for i in correct_scope_matches
+                if str(guild_to_query) == i[0]
+            ]
         else:
-            if scope == PlaylistScope.USER.value:
-                correct_scope_matches = [
-                    (i[2]["id"], i[2]["name"], len(i[2]["tracks"]), i[2]["author"])
-                    for i in correct_scope_matches
-                    if str(user_to_query) == i[0]
-                ]
-            elif scope == PlaylistScope.GUILD.value:
-                correct_scope_matches = [
-                    (i[2]["id"], i[2]["name"], len(i[2]["tracks"]), i[2]["author"])
-                    for i in correct_scope_matches
-                    if str(guild_to_query) == i[0]
-                ]
-            else:
-                correct_scope_matches = [
-                    (i[2]["id"], i[2]["name"], len(i[2]["tracks"]), i[2]["author"])
-                    for i in correct_scope_matches
-                ]
+            correct_scope_matches = [
+                (i[2]["id"], i[2]["name"], len(i[2]["tracks"]), i[2]["author"])
+                for i in correct_scope_matches
+            ]
         match_count = len(correct_scope_matches)
         if match_count == 1:
             return correct_scope_matches[0][0], original_input
@@ -2503,11 +2545,20 @@ class Audio(commands.Cog):
             avaliable_emojis = ReactionPredicate.NUMBER_EMOJIS[1:]
             avaliable_emojis.append("🔟")
             emojis = avaliable_emojis[: len(correct_scope_matches)]
+            emojis.append("❌")
             start_adding_reactions(msg, emojis)
             pred = ReactionPredicate.with_emojis(emojis, msg, user=context.author)
             try:
                 await context.bot.wait_for("reaction_add", check=pred, timeout=60)
             except asyncio.TimeoutError:
+                with contextlib.suppress(discord.HTTPException):
+                    await msg.delete()
+                raise TooManyMatches(
+                    "Too many matches found and you did not select which one you wanted."
+                )
+            if emojis[pred.result] == "❌":
+                with contextlib.suppress(discord.HTTPException):
+                    await msg.delete()
                 raise TooManyMatches(
                     "Too many matches found and you did not select which one you wanted."
                 )
@@ -2588,7 +2639,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, str(e))
         if playlist_id is None:
             return await self._embed_msg(
-                ctx, _("Could not match '{arg}' to a playlist.").format(arg=playlist_arg)
+                ctx, _("Could not match '{arg}' to a playlist").format(arg=playlist_arg)
             )
 
         try:
@@ -3531,6 +3582,7 @@ class Audio(commands.Cog):
             playlist = await get_playlist(playlist_id, scope, self.bot, guild, author.id)
             player = lavalink.get_player(ctx.guild.id)
             tracks = playlist.tracks_obj
+            empty_queue = not player.queue
             for track in tracks:
                 if f"{os.sep}localtracks" in track.uri:
                     local_path = dataclasses.LocalPath(track.uri)
@@ -3544,7 +3596,7 @@ class Audio(commands.Cog):
                 player.add(author_obj, track)
                 self.bot.dispatch("enqueue_track", player.channel.guild, track, ctx.author)
                 track_len += 1
-            player.maybe_shuffle()
+            player.maybe_shuffle(0 if empty_queue else 1)
             if len(tracks) > track_len:
                 maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
                     bad_tracks=(len(tracks) - track_len)
@@ -4107,7 +4159,6 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, _("Nothing playing."))
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         player = lavalink.get_player(ctx.guild.id)
-        shuffle = await self.config.guild(ctx.guild).shuffle()
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
                 ctx, ctx.author
@@ -4119,8 +4170,6 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx, _("You must be in the voice channel to skip the music.")
             )
-        if shuffle:
-            return await self._embed_msg(ctx, _("Turn shuffle off to use this command."))
         if player.fetch("prev_song") is None:
             return await self._embed_msg(ctx, _("No previous track."))
         else:
@@ -4428,7 +4477,7 @@ class Audio(commands.Cog):
         player.queue.clear()
         await self._embed_msg(ctx, _("The queue has been cleared."))
 
-    @queue.group(name="clean")
+    @queue.group(name="clean", autohelp=False)
     @commands.guild_only()
     async def _queue_clean(self, ctx: commands.Context):
         """Removes songs from the queue if the requester is not in the voice channel."""
@@ -4467,13 +4516,16 @@ class Audio(commands.Cog):
                     ).format(removed_tracks=removed_tracks),
                 )
 
-    @queue.command(name="self")
+    @_queue_clean.command(name="self", autohelp=False)
     @commands.guild_only()
     async def _queue_clean_self(self, ctx: commands.Context):
         """Removes all tracks you requested from the queue."""
+
         try:
             player = lavalink.get_player(ctx.guild.id)
         except KeyError:
+            return await self._embed_msg(ctx, _("There's nothing in the queue."))
+        if not self._player_check(ctx) or not player.queue:
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
 
         clean_tracks = []
@@ -4490,8 +4542,7 @@ class Audio(commands.Cog):
             await self._embed_msg(
                 ctx,
                 _(
-                    "Removed {removed_tracks} tracks queued by {member.display_name} "
-                    "outside of the voice channel."
+                    "Removed {removed_tracks} tracks queued by {member.display_name}."
                 ).format(removed_tracks=removed_tracks, member=ctx.author),
             )
 
@@ -4527,6 +4578,8 @@ class Audio(commands.Cog):
                 ctx, ctx.author
             ):
                 return await self._embed_msg(ctx, _("You need the DJ role to clean the queue."))
+        if not self._player_check(ctx):
+            return await self._embed_msg(ctx, _("There's nothing in the queue."))
         try:
             player = lavalink.get_player(ctx.guild.id)
         except KeyError:
@@ -4535,6 +4588,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
 
         player.force_shuffle(0)
+        return await self._embed_msg(ctx, _("Queue has been shuffled."))
 
     @commands.command()
     @commands.guild_only()
@@ -4710,6 +4764,7 @@ class Audio(commands.Cog):
                 queue_total_duration = lavalink.utils.format_time(queue_dur)
 
                 track_len = 0
+                empty_queue = not player.queue
                 for track in tracks:
                     if guild_data["maxlength"] > 0:
                         if track_limit(track, guild_data["maxlength"]):
@@ -4724,7 +4779,7 @@ class Audio(commands.Cog):
                         self.bot.dispatch("enqueue_track", player.channel.guild, track, ctx.author)
                     if not player.current:
                         await player.play()
-                player.maybe_shuffle()
+                player.maybe_shuffle(0 if empty_queue else 1)
                 if len(tracks) > track_len:
                     maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
                         bad_tracks=(len(tracks) - track_len)
