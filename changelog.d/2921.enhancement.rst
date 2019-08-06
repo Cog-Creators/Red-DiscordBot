@@ -1,1 +1,0 @@
-JSON files are now stored without indentation.
