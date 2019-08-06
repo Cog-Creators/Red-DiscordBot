@@ -1437,11 +1437,11 @@ class Core(commands.Cog, CoreLogic):
                     repo_output.append({"url": repo.url, "name": repo.name, "branch": repo.branch})
                 repo_filename = data_dir / "cogs" / "RepoManager" / "repos.json"
                 with open(str(repo_filename), "w") as f:
-                    f.write(json.dumps(repo_output))
+                    f.write(json.dumps(repo_output, indent=4))
             instance_data = {instance_name: basic_config}
             instance_file = data_dir / "instance.json"
             with open(str(instance_file), "w") as instance_out:
-                instance_out.write(json.dumps(instance_data))
+                instance_out.write(json.dumps(instance_data, indent=4))
             for f in data_dir.glob("**/*"):
                 if not any(ex in str(f) for ex in exclusions):
                     to_backup.append(f)

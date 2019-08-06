@@ -67,7 +67,7 @@ def create_temp_config():
     config[name] = default_dirs
 
     with config_file.open("w", encoding="utf-8") as fs:
-        json.dump(config, fs)
+        json.dump(config, fs, indent=4)
 
 
 def load_basic_configuration(instance_name_: str):

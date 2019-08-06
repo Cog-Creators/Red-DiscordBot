@@ -76,7 +76,7 @@ def save_config(name, data, remove=False):
         config[name] = data
 
     with config_file.open("w", encoding="utf-8") as fs:
-        json.dump(config, fs)
+        json.dump(config, fs, indent=4)
 
 
 def get_data_dir():
@@ -415,11 +415,11 @@ async def create_backup(instance):
                 repo_output.append({"url": repo.url, "name": repo.name, "branch": repo.branch})
             repo_filename = pth / "cogs" / "RepoManager" / "repos.json"
             with open(str(repo_filename), "w") as f:
-                f.write(json.dumps(repo_output))
+                f.write(json.dumps(repo_output, indent=4))
             instance_vals = {instance_name: basic_config}
             instance_file = pth / "instance.json"
             with open(str(instance_file), "w") as instance_out:
-                instance_out.write(json.dumps(instance_vals))
+                instance_out.write(json.dumps(instance_vals, indent=4))
             for f in pth.glob("**/*"):
                 if not any(ex in str(f) for ex in exclusions):
                     to_backup.append(f)
