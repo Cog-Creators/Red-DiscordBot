@@ -2728,7 +2728,7 @@ class Audio(commands.Cog):
             playlists += line
 
         embed = discord.Embed(
-            title="Multiple playlists found, which one would you like?",
+            title="Playlists found, which one would you like?",
             description=box(playlists, lang="md"),
             colour=await context.embed_colour(),
         )
@@ -4190,8 +4190,8 @@ class Audio(commands.Cog):
                 t = {"loadType": "V2_COMPAT", "tracks": [t], "query": uri}
                 database_entries.append(
                     {
-                        "query":        uri,
-                        "data":         json.dumps(t),
+                        "query": uri,
+                        "data": json.dumps(t),
                         "last_updated": time_now,
                         "last_fetched": time_now,
                     }
