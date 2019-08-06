@@ -501,7 +501,7 @@ class Audio(commands.Cog):
                     or not channel.permissions_for(guild.me).move_members
                     and userlimit(channel)
                 ):
-                    log.info(f"I don't have permission to connect to {channel} in {guild}.")
+                    log.error(f"I don't have permission to connect to {channel} in {guild}.")
 
                 await lavalink.connect(channel)
                 player = lavalink.get_player(guild.id)
@@ -523,14 +523,14 @@ class Audio(commands.Cog):
         results, called_api = self.music_cache.lavalink_query(ctx(guild), player, query)
 
         if not results.tracks:
-            log.info(f"Query returned no tracks.")
+            log.debug(f"Query returned no tracks.")
             return
         track = results.tracks[0]
 
         if not await is_allowed(
             guild, f"{track.title} {track.author} {track.uri} {str(query._raw)}"
         ):
-            log.info(f"Query is not allowed in {guild} ({guild.id})")
+            log.debug(f"Query is not allowed in {guild} ({guild.id})")
             return
 
         player.add(player.channel.guild.me, track)
@@ -2422,7 +2422,7 @@ class Audio(commands.Cog):
                         f"{str(dataclasses.Query.process_input(track))}"
                     ),
                 ):
-                    log.info(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                    log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
                     continue
                 elif guild_data["maxlength"] > 0:
                     if track_limit(track, guild_data["maxlength"]):
@@ -2482,7 +2482,7 @@ class Audio(commands.Cog):
                         f"{str(dataclasses.Query.process_input(single_track))}"
                     ),
                 ):
-                    log.info(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                    log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
                     self._play_lock(ctx, False)
                     return await self._embed_msg(
                         ctx, _("This track is not allowed in this server.")
@@ -3783,7 +3783,7 @@ class Audio(commands.Cog):
                         f"{str(dataclasses.Query.process_input(track))}"
                     ),
                 ):
-                    log.info(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                    log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
                     continue
                 if f"{os.sep}localtracks" in track.uri:
                     local_path = dataclasses.LocalPath(track.uri)
@@ -4998,7 +4998,7 @@ class Audio(commands.Cog):
                             f"{str(dataclasses.Query.process_input(track))}"
                         ),
                     ):
-                        log.info(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                        log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
                         continue
                     elif guild_data["maxlength"] > 0:
                         if track_limit(track, guild_data["maxlength"]):
@@ -5137,7 +5137,7 @@ class Audio(commands.Cog):
                 f"{str(dataclasses.Query.process_input(search_choice))}"
             ),
         ):
-            log.info(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+            log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
             self._play_lock(ctx, False)
             return await self._embed_msg(ctx, _("This track is not allowed in this server."))
         elif guild_data["maxlength"] > 0:
@@ -5472,7 +5472,7 @@ class Audio(commands.Cog):
     async def is_requester(ctx: commands.Context, member: discord.Member):
         try:
             player = lavalink.get_player(ctx.guild.id)
-            log.info(f"Current requester is {player.current}")
+            log.debug(f"Current requester is {player.current}")
             if player.current.requester.id == member.id:
                 return True
             return False

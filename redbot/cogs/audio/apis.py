@@ -752,7 +752,7 @@ class MusicCache:
                     ),
                 ):
                     has_not_allowed = True
-                    log.info(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                    log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
                     continue
                 track_list.append(single_track)
                 if enqueue:
@@ -1055,7 +1055,7 @@ class MusicCache:
                         f"{str(dataclasses.Query.process_input(track))}"
                     ),
                 ):
-                    log.info(
+                    log.debug(
                         f"Query is not allowed in {player.channel.guild} ({player.channel.guild.id})"
                     )
                     continue
