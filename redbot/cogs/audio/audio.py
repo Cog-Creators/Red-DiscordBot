@@ -2723,7 +2723,7 @@ class Audio(commands.Cog):
                 f"    <{pname}>\n"
                 f" - Scope   < {humanize_scope(scope)} >\n"
                 f" - ID:     < {pid} >\n"
-                f" - Tracks: <{ptracks}>\n"
+                f" - Tracks: < {ptracks} >\n"
                 f" - Author: < {author} >\n\n"
             )
             playlists += line
