@@ -590,69 +590,110 @@ class Audio(commands.Cog):
     @audioset.group(name="restrictions")
     @checks.mod_or_permissions(manage_messages=True)
     async def _perms(self, ctx: commands.Context):
-        """Adds URLs and keywords to a blacklist or a whitelist."""
+        """Manages the keyword whitelist and blacklist."""
         pass
 
-    @_perms.command(name="blacklist")
-    async def _perms_blacklist(self, ctx: commands.Context, *, url_or_keyword: str):
-        """Adds a URL or keyword to the blacklist."""
+    @_perms.group(name="whitelist")
+    async def _perms_whitelist(self, ctx: commands.Context):
+        """Manages the keyword whitelist."""
+        pass
+
+    @_perms.group(name="blacklist")
+    async def _perms_blacklist(self, ctx: commands.Context):
+        """Manages the keyword blacklist."""
+        pass
+
+    @_perms_blacklist.command(name="add")
+    async def _perms_blacklist_add(self, ctx: commands.Context, *, url_or_keyword: str):
+        """Adds a keyword to the blacklist."""
         url_or_keyword = url_or_keyword.lower().strip()
         if not url_or_keyword:
             return await ctx.send_help()
-        remove = False
+        exists = False
         async with self.config.guild(ctx.guild).url_keyword_blacklist() as blacklist:
             if url_or_keyword in blacklist:
-                blacklist.remove(url_or_keyword)
-                remove = True
+                exists = True
             else:
                 blacklist.append(url_or_keyword)
-        embed = discord.Embed(title=_("Blacklist modified"), colour=await ctx.embed_colour())
-        if remove:
-            embed.description = _("Removed: `{blacklisted}` from the blacklist.").format(
-                blacklisted=url_or_keyword
-            )
+        if exists:
+            return await self._embed_msg(ctx, _("Keyword already in the blacklist."))
         else:
+            embed = discord.Embed(title=_("Blacklist modified"), colour=await ctx.embed_colour())
             embed.description = _("Added: `{blacklisted}` to the blacklist.").format(
                 blacklisted=url_or_keyword
             )
-        await ctx.send(embed=embed)
+            await ctx.send(embed=embed)
 
-    @_perms.command(name="whitelist")
-    async def _perms_whitelist(self, ctx: commands.Context, *, url_or_keyword: str):
-        """Adds a URL or keyword to the whitelist.
+    @_perms_whitelist.command(name="add")
+    async def _perms_whitelist_add(self, ctx: commands.Context, *, url_or_keyword: str):
+        """Adds a keyword to the whitelist.
 
         If anything is added to whitelist, it will blacklist everything else.
         """
         url_or_keyword = url_or_keyword.lower().strip()
         if not url_or_keyword:
             return await ctx.send_help()
-        remove = False
+        exists = False
         async with self.config.guild(ctx.guild).url_keyword_whitelist() as whitelist:
             if url_or_keyword in whitelist:
-                whitelist.remove(url_or_keyword)
-                remove = True
+                exists = True
             else:
                 whitelist.append(url_or_keyword)
-        embed = discord.Embed(title=_("Whitelist modified"), colour=await ctx.embed_colour())
-        if remove:
-            embed.description = _("Removed: `{whitelisted}` from the whitelist.").format(
-                whitelisted=url_or_keyword
-            )
+        if exists:
+            return await self._embed_msg(ctx, _("Keyword already in the whitelist."))
         else:
+            embed = discord.Embed(title=_("Whitelist modified"), colour=await ctx.embed_colour())
             embed.description = _("Added: `{whitelisted}` to the whitelist.").format(
                 whitelisted=url_or_keyword
             )
-        await ctx.send(embed=embed)
+            await ctx.send(embed=embed)
 
-    @_perms.group(name="list")
-    @checks.mod_or_permissions(manage_messages=True)
-    async def _perms_list(self, ctx: commands.Context):
-        """List the current restrictions."""
-        pass
+    @_perms_blacklist.command(name="delete", aliases=["del", "remove"])
+    async def _perms_blacklist_delete(self, ctx: commands.Context, *, url_or_keyword: str):
+        """Removes a keyword from the blacklist."""
+        url_or_keyword = url_or_keyword.lower().strip()
+        if not url_or_keyword:
+            return await ctx.send_help()
+        exists = True
+        async with self.config.guild(ctx.guild).url_keyword_blacklist() as blacklist:
+            if url_or_keyword not in blacklist:
+                exists = False
+            else:
+                blacklist.remove(url_or_keyword)
+        if not exists:
+            return await self._embed_msg(ctx, _("Keyword is not in the blacklist."))
+        else:
+            embed = discord.Embed(title=_("Blacklist modified"), colour=await ctx.embed_colour())
+            embed.description = _("Removed: `{blacklisted}` from the blacklist.").format(
+                blacklisted=url_or_keyword
+            )
+            await ctx.send(embed=embed)
 
-    @_perms_list.command(name="whitelist")
-    async def _perms_list_whitelist(self, ctx: commands.Context):
-        """List all  URLs and keywords added to the whitelist."""
+    @_perms_whitelist.command(name="delete", aliases=["del", "remove"])
+    async def _perms_whitelist_delete(self, ctx: commands.Context, *, url_or_keyword: str):
+        """Removes a keyword from the whitelist."""
+        url_or_keyword = url_or_keyword.lower().strip()
+        if not url_or_keyword:
+            return await ctx.send_help()
+        exists = True
+        async with self.config.guild(ctx.guild).url_keyword_whitelist() as whitelist:
+            if url_or_keyword not in whitelist:
+                exists = False
+            else:
+                whitelist.remove(url_or_keyword)
+        if not exists:
+            return await self._embed_msg(ctx, _("Keyword already in the whitelist."))
+        else:
+            embed = discord.Embed(title=_("Whitelist modified"), colour=await ctx.embed_colour())
+            embed.description = _("Removed: `{whitelisted}` from the whitelist.").format(
+                whitelisted=url_or_keyword
+            )
+            await ctx.send(embed=embed)
+
+    @_perms_whitelist.command(name="list")
+    async def _perms_whitelist_list(self, ctx: commands.Context):
+        """List all keywords added to the whitelist."""
+        """List all keywords added to the whitelist."""
         whitelist = await self.config.guild(ctx.guild).url_keyword_whitelist()
         if not whitelist:
             return await self._embed_msg(ctx, _("Nothing in the whitelist."))
@@ -676,9 +717,9 @@ class Audio(commands.Cog):
         )
         await menu(ctx, pages, DEFAULT_CONTROLS)
 
-    @_perms_list.command(name="blacklist")
-    async def _perms_list_blacklist(self, ctx: commands.Context):
-        """List all  URLs and keywords added to the blacklist."""
+    @_perms_blacklist.command(name="list")
+    async def _perms_blacklist_list(self, ctx: commands.Context):
+        """List all keywords added to the blacklist."""
         blacklist = await self.config.guild(ctx.guild).url_keyword_blacklist()
         if not blacklist:
             return await self._embed_msg(ctx, _("Nothing in the blacklist."))
@@ -702,24 +743,18 @@ class Audio(commands.Cog):
         )
         await menu(ctx, pages, DEFAULT_CONTROLS)
 
-    @_perms.group(name="clear")
-    @checks.mod_or_permissions(manage_messages=True)
-    async def _perms_clear(self, ctx: commands.Context):
-        """Remove all restriction from the server."""
-        pass
-
-    @_perms_clear.command(name="whitelist")
-    async def _perms_clear_whitelist(self, ctx: commands.Context):
-        """Clear all  URLs and keywords added to the whitelist."""
+    @_perms_whitelist.command(name="clear")
+    async def _perms_whitelist_clear(self, ctx: commands.Context):
+        """Clear all keywords from the whitelist."""
         whitelist = await self.config.guild(ctx.guild).url_keyword_whitelist()
         if not whitelist:
             return await self._embed_msg(ctx, _("Nothing in the whitelist."))
         await self.config.guild(ctx.guild).url_keyword_whitelist.clear()
         return await self._embed_msg(ctx, _("All entries have been removed from the whitelist."))
 
-    @_perms_clear.command(name="blacklist")
-    async def _perms_clear_blacklist(self, ctx: commands.Context):
-        """Clear all  URLs and keywords added to the blacklist."""
+    @_perms_blacklist.command(name="clear")
+    async def _perms_blacklist_clear(self, ctx: commands.Context):
+        """Clear all keywords added to the blacklist."""
         blacklist = await self.config.guild(ctx.guild).url_keyword_blacklist()
         if not blacklist:
             return await self._embed_msg(ctx, _("Nothing in the blacklist."))
@@ -1529,7 +1564,7 @@ class Audio(commands.Cog):
         player.store("eq_message", eq_msg_with_reacts)
         await self._eq_interact(ctx, player, eq, eq_msg_with_reacts, 0)
 
-    @eq.command(name="delete")
+    @eq.command(name="delete", aliases=["del", "remove"])
     async def _eq_delete(self, ctx: commands.Context, eq_preset: str):
         """Delete a saved eq preset."""
         async with self.config.custom("EQUALIZER", ctx.guild.id).eq_presets() as eq_presets:
@@ -3066,7 +3101,7 @@ class Audio(commands.Cog):
             _("Empty playlist {name} ({id}) created.").format(name=playlist.name, id=playlist.id),
         )
 
-    @playlist.command(name="delete", usage="<playlist_name_OR_id> [args]")
+    @playlist.command(name="delete", aliases=["del"], usage="<playlist_name_OR_id> [args]")
     async def _playlist_delete(
         self,
         ctx: commands.Context,
