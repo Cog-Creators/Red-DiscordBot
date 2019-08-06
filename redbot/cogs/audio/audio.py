@@ -207,10 +207,6 @@ class Audio(commands.Cog):
                     cast(discord.Guild, discord.Object(id=guild_id))
                 ).clear_raw("playlists")
         if database_entries:
-            # task = ("insert", ("lavalink", database_entries))
-            # self.music_cache.append_task(None, *task, _id=1)
-            # await self.music_cache.run_tasks(None, 1)
-
             asyncio.ensure_future(self.music_cache.insert("lavalink", database_entries))
 
     def _restart_connect(self):
@@ -4141,8 +4137,8 @@ class Audio(commands.Cog):
         )
         await ctx.maybe_send_embed(msg)
 
-    @staticmethod
     async def _load_v3_playlist(
+        self,
         ctx: commands.Context,
         scope: str,
         uploaded_playlist_name: str,
@@ -4186,6 +4182,22 @@ class Audio(commands.Cog):
             colour=await ctx.embed_colour(), title=_("Playlist Saved"), description=msg
         )
         await playlist_msg.edit(embed=embed3)
+        database_entries = []
+        time_now = str(datetime.datetime.now(datetime.timezone.utc))
+        for t in track_list:
+            uri = t.get("info", {}).get("uri")
+            if uri:
+                t = {"loadType": "V2_COMPAT", "tracks": [t], "query": uri}
+                database_entries.append(
+                    {
+                        "query":        uri,
+                        "data":         json.dumps(t),
+                        "last_updated": time_now,
+                        "last_fetched": time_now,
+                    }
+                )
+        if database_entries:
+            asyncio.ensure_future(self.music_cache.insert("lavalink", database_entries))
 
     async def _load_v2_playlist(
         self,
