@@ -2754,6 +2754,8 @@ class Audio(commands.Cog):
             raise TooManyMatches(
                 "Too many matches found and you did not select which one you wanted."
             )
+        with contextlib.suppress(discord.HTTPException):
+            await msg.delete()
         return correct_scope_matches[pred.result][0], original_input
 
     @commands.group()

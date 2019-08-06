@@ -341,13 +341,12 @@ class MusicCache:
         need_update = True
         with contextlib.suppress(TypeError):
             if last_updated:
-                last_update = (
-                        datetime.datetime.fromisoformat(last_updated)
-                        + datetime.timedelta(days=await self.config.cache_age())
-                    )
+                last_update = datetime.datetime.fromisoformat(last_updated) + datetime.timedelta(
+                    days=await self.config.cache_age()
+                )
                 last_update.replace(tzinfo=datetime.timezone.utc)
 
-                need_update = (last_update < datetime.datetime.now(datetime.timezone.utc))
+                need_update = last_update < datetime.datetime.now(datetime.timezone.utc)
 
         return getattr(row, query, None), need_update if table != "spotify" else True
 
