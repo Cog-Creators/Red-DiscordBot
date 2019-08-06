@@ -338,15 +338,16 @@ class MusicCache:
 
         row = await self.database.fetch_one(query=sql_query, values=values)
         last_updated = getattr(row, "last_updated", None)
-        need_update = (
-            (
-                datetime.datetime.fromisoformat(last_updated)
-                + datetime.timedelta(days=await self.config.cache_age())
-            )
-            < datetime.datetime.now(datetime.timezone.utc)
-            if last_updated
-            else True
-        )
+        need_update = True
+        with contextlib.suppress(TypeError):
+            if last_updated:
+                last_update = (
+                        datetime.datetime.fromisoformat(last_updated)
+                        + datetime.timedelta(days=await self.config.cache_age())
+                    )
+                last_update.replace(tzinfo=datetime.timezone.utc)
+
+                need_update = (last_update < datetime.datetime.now(datetime.timezone.utc))
 
         return getattr(row, query, None), need_update if table != "spotify" else True
 

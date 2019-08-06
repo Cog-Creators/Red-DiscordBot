@@ -2721,7 +2721,8 @@ class Audio(commands.Cog):
             line = (
                 f"{number}."
                 f"    <{pname}>\n"
-                f" - ID: < {pid} >\n"
+                f" - Scope   < {humanize_scope(scope)} >\n"
+                f" - ID:     < {pid} >\n"
                 f" - Tracks: <{ptracks}>\n"
                 f" - Author: < {author} >\n\n"
             )
