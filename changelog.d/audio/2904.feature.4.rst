@@ -1,7 +1,9 @@
-:code:`on_track_start`, :code:`on_track_end` :code:`on_enqueue_track`, :code:`on_auto_play_track` and :code:`on_queue_end` events are now dispatched by Audio.
+New events dispatched by Audio.
 
- - :code:`on_track_start(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)`
- - :code:`on_track_end(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)`
- - :code:`on_enqueue_track(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)`
- - :code:`on_auto_play_track(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)`
- - :code:`on_queue_end(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)`
+ - :code:`on_red_audio_track_start(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)`
+ - :code:`on_red_audio_track_end(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)`
+ - :code:`on_red_audio_track_enqueue(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)`
+ - :code:`on_red_audio_track_auto_play(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)`
+ - :code:`on_red_audio_queue_end(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)`
+ - :code:`on_red_audio_audio_disconnect(guild: discord.Guild)`
+ - :code:`on_red_audio_should_auto_play(guild: discord.Guild, play: Callable)`

@@ -120,6 +120,8 @@ class Audio(commands.Cog):
             vote_enabled=False,
             vote_percent=0,
             room_lock=None,
+            url_keyword_blacklist=[],
+            url_keyword_whitelist=[],
         )
         _playlist = dict(id=None, author=None, name=None, playlist_url=None, tracks=[])
         self.config.init_custom("EQUALIZER", 1)
@@ -364,22 +366,31 @@ class Audio(commands.Cog):
             player.store("requester", player.current.requester)
             self.skip_votes[player.channel.guild] = []
             self.bot.dispatch(
-                "track_start", player.channel.guild, player.current, player.current.requester
+                "red_audio_track_start",
+                player.channel.guild,
+                player.current,
+                player.current.requester,
             )
         if event_type == lavalink.LavalinkEvents.TRACK_END:
             prev_song = player.fetch("prev_song")
             prev_requester = player.fetch("prev_requester")
-            self.bot.dispatch("track_end", player.channel.guild, prev_song, prev_requester)
+            self.bot.dispatch(
+                "red_audio_track_end", player.channel.guild, prev_song, prev_requester
+            )
 
             if autoplay and not player.queue and player.fetch("playing_song") is not None:
-                self.bot.dispatch("should_auto_play", player.channel.guild, self.play_query)
+                self.bot.dispatch(
+                    "red_audio_should_auto_play", player.channel.guild, self.play_query
+                )
                 if self.owns_autoplay:
                     await self.music_cache.autoplay(player)
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
             prev_song = player.fetch("prev_song")
             prev_requester = player.fetch("prev_requester")
-            self.bot.dispatch("queue_end", player.channel.guild, prev_song, prev_requester)
+            self.bot.dispatch(
+                "red_audio_queue_end", player.channel.guild, prev_song, prev_requester
+            )
 
         if event_type == lavalink.LavalinkEvents.TRACK_START and notify:
             notify_channel = player.fetch("channel")
@@ -445,7 +456,7 @@ class Audio(commands.Cog):
                 await notify_channel.send(embed=embed)
 
         elif event_type == lavalink.LavalinkEvents.QUEUE_END and disconnect and not autoplay:
-            self.bot.dispatch("audio_disconnect", player.channel.guild)
+            self.bot.dispatch("red_audio_audio_disconnect", player.channel.guild)
             await player.disconnect()
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END and status:
@@ -486,9 +497,9 @@ class Audio(commands.Cog):
         if not self._player_check(guild.me):
             try:
                 if (
-                        not channel.permissions_for(guild.me).connect
-                        or not channel.permissions_for(guild.me).move_members
-                        and userlimit(channel)
+                    not channel.permissions_for(guild.me).connect
+                    or not channel.permissions_for(guild.me).move_members
+                    and userlimit(channel)
                 ):
                     log.info(f"I don't have permission to connect to {channel} in {guild}.")
 
@@ -496,8 +507,10 @@ class Audio(commands.Cog):
                 player = lavalink.get_player(guild.id)
                 player.store("connect", datetime.datetime.utcnow())
             except IndexError:
-                log.debug(f"Connection to Lavalink has not yet been established"
-                          f" while trying to connect to to {channel} in {guild}.")
+                log.debug(
+                    f"Connection to Lavalink has not yet been established"
+                    f" while trying to connect to to {channel} in {guild}."
+                )
                 return
 
         player = lavalink.get_player(guild.id)
@@ -508,16 +521,37 @@ class Audio(commands.Cog):
         query = dataclasses.Query.process_input(query)
         ctx = namedtuple("Context", "message")
         results, called_api = self.music_cache.lavalink_query(ctx(guild), player, query)
+
         if not results.tracks:
             log.info(f"Query returned no tracks.")
             return
         track = results.tracks[0]
+
+        if not await is_allowed(
+            guild, f"{track.title} {track.author} {track.uri} {str(query._raw)}"
+        ):
+            log.info(f"Query is not allowed in {guild} ({guild.id})")
+            return
+
         player.add(player.channel.guild.me, track)
         self.bot.dispatch(
-            "auto_play_track", player.channel.guild, track, player.channel.guild.me
+            "red_audio_track_auto_play", player.channel.guild, track, player.channel.guild.me
         )
         if not player.current:
             await player.play()
+
+    async def delegate_autoplay(self, cog: commands.Cog = None):
+        """
+        Parameters
+        ----------
+        cog: Optional[commands.Cog]
+            The Cog who is taking ownership of Audio's autoplay.
+            If :code:`None` gives ownership back to Audio
+        """
+        if cog is not None:
+            self.owns_autoplay = False
+        else:
+            self.owns_autoplay = True
 
     @commands.group()
     @commands.guild_only()
@@ -553,6 +587,145 @@ class Audio(commands.Cog):
             colour=await ctx.embed_colour(),
         )
         await ctx.send(embed=embed)
+
+    @audioset.group(name="restrictions")
+    @checks.mod_or_permissions(manage_messages=True)
+    async def _perms(self, ctx: commands.Context):
+        """Adds URLs and keywords to a blacklist or a whitelist."""
+        pass
+
+    @_perms.command(name="blacklist")
+    async def _perms_blacklist(self, ctx: commands.Context, *, url_or_keyword: str):
+        """Adds a URL or keyword to the blacklist."""
+        url_or_keyword = url_or_keyword.lower().strip()
+        if not url_or_keyword:
+            return await ctx.send_help()
+        remove = False
+        async with self.config.guild(ctx.guild).url_keyword_blacklist() as blacklist:
+            if url_or_keyword in blacklist:
+                blacklist.remove(url_or_keyword)
+                remove = True
+            else:
+                blacklist.append(url_or_keyword)
+        embed = discord.Embed(title=_("Blacklist modified"), colour=await ctx.embed_colour())
+        if remove:
+            embed.description = _("Removed: `{blacklisted}` from the blacklist.").format(
+                blacklisted=url_or_keyword
+            )
+        else:
+            embed.description = _("Added: `{blacklisted}` to the blacklist.").format(
+                blacklisted=url_or_keyword
+            )
+        await ctx.send(embed=embed)
+
+    @_perms.command(name="whitelist")
+    async def _perms_whitelist(self, ctx: commands.Context, *, url_or_keyword: str):
+        """Adds a URL or keyword to the whitelist.
+
+        If anything is added to whitelist, it will blacklist everything else.
+        """
+        url_or_keyword = url_or_keyword.lower().strip()
+        if not url_or_keyword:
+            return await ctx.send_help()
+        remove = False
+        async with self.config.guild(ctx.guild).url_keyword_whitelist() as whitelist:
+            if url_or_keyword in whitelist:
+                whitelist.remove(url_or_keyword)
+                remove = True
+            else:
+                whitelist.append(url_or_keyword)
+        embed = discord.Embed(title=_("Whitelist modified"), colour=await ctx.embed_colour())
+        if remove:
+            embed.description = _("Removed: `{whitelisted}` from the whitelist.").format(
+                whitelisted=url_or_keyword
+            )
+        else:
+            embed.description = _("Added: `{whitelisted}` to the whitelist.").format(
+                whitelisted=url_or_keyword
+            )
+        await ctx.send(embed=embed)
+
+    @_perms.group(name="list")
+    @checks.mod_or_permissions(manage_messages=True)
+    async def _perms_list(self, ctx: commands.Context):
+        """List the current restrictions."""
+        pass
+
+    @_perms_list.command(name="whitelist")
+    async def _perms_list_whitelist(self, ctx: commands.Context):
+        """List all  URLs and keywords added to the whitelist."""
+        whitelist = await self.config.guild(ctx.guild).url_keyword_whitelist()
+        if not whitelist:
+            return await self._embed_msg(ctx, _("Nothing in the whitelist."))
+        whitelist.sort()
+        text = ""
+        total = len(whitelist)
+        pages = []
+        for i, entry in enumerate(whitelist, 1):
+            text += f"{i}. [{entry}]"
+            if i != total:
+                text += "\n"
+                if i % 10 == 0:
+                    pages.append(box(text, lang="ini"))
+                    text = ""
+            else:
+                pages.append(box(text, lang="ini"))
+        embed_colour = await ctx.embed_colour()
+        pages = list(
+            discord.Embed(title="Whitelist", description=page, colour=embed_colour)
+            for page in pages
+        )
+        await menu(ctx, pages, DEFAULT_CONTROLS)
+
+    @_perms_list.command(name="blacklist")
+    async def _perms_list_blacklist(self, ctx: commands.Context):
+        """List all  URLs and keywords added to the blacklist."""
+        blacklist = await self.config.guild(ctx.guild).url_keyword_blacklist()
+        if not blacklist:
+            return await self._embed_msg(ctx, _("Nothing in the blacklist."))
+        blacklist.sort()
+        text = ""
+        total = len(blacklist)
+        pages = []
+        for i, entry in enumerate(blacklist, 1):
+            text += f"{i}. [{entry}]"
+            if i != total:
+                text += "\n"
+                if i % 10 == 0:
+                    pages.append(box(text, lang="ini"))
+                    text = ""
+            else:
+                pages.append(box(text, lang="ini"))
+        embed_colour = await ctx.embed_colour()
+        pages = list(
+            discord.Embed(title="Whitelist", description=page, colour=embed_colour)
+            for page in pages
+        )
+        await menu(ctx, pages, DEFAULT_CONTROLS)
+
+    @_perms.group(name="clear")
+    @checks.mod_or_permissions(manage_messages=True)
+    async def _perms_clear(self, ctx: commands.Context):
+        """Remove all restriction from the server."""
+        pass
+
+    @_perms_clear.command(name="whitelist")
+    async def _perms_clear_whitelist(self, ctx: commands.Context):
+        """Clear all  URLs and keywords added to the whitelist."""
+        whitelist = await self.config.guild(ctx.guild).url_keyword_whitelist()
+        if not whitelist:
+            return await self._embed_msg(ctx, _("Nothing in the whitelist."))
+        await self.config.guild(ctx.guild).url_keyword_whitelist.clear()
+        return await self._embed_msg(ctx, _("All entries have been removed from the whitelist."))
+
+    @_perms_clear.command(name="blacklist")
+    async def _perms_clear_blacklist(self, ctx: commands.Context):
+        """Clear all  URLs and keywords added to the blacklist."""
+        blacklist = await self.config.guild(ctx.guild).url_keyword_blacklist()
+        if not blacklist:
+            return await self._embed_msg(ctx, _("Nothing in the blacklist."))
+        await self.config.guild(ctx.guild).url_keyword_blacklist.clear()
+        return await self._embed_msg(ctx, _("All entries have been removed from the blacklist."))
 
     @audioset.group(name="autoplay")
     @checks.mod_or_permissions(manage_messages=True)
@@ -1321,7 +1494,7 @@ class Audio(commands.Cog):
             ):
                 return await self._embed_msg(ctx, _("There are other people listening to music."))
             else:
-                self.bot.dispatch("audio_disconnect", ctx.guild)
+                self.bot.dispatch("red_audio_audio_disconnect", ctx.guild)
                 self._play_lock(ctx, False)
                 eq = player.fetch("eq")
                 if eq:
@@ -1668,12 +1841,12 @@ class Audio(commands.Cog):
         if not folder:
             await ctx.invoke(self.local_play, play_subfolders=play_subfolders)
         else:
-            dir = dataclasses.LocalPath.joinpath(folder)
-            if not dir.exists():
+            _dir = dataclasses.LocalPath.joinpath(folder)
+            if not _dir.exists():
                 return await self._embed_msg(
                     ctx, _("No localtracks folder named {name}.").format(name=folder)
                 )
-            query = dataclasses.Query.process_input(dir, search_subfolders=play_subfolders)
+            query = dataclasses.Query.process_input(_dir, search_subfolders=play_subfolders)
             await self._local_play_all(ctx, query, from_search=False)
 
     @local.command(name="play")
@@ -2242,16 +2415,29 @@ class Audio(commands.Cog):
             track_len = 0
             empty_queue = not player.queue
             for track in tracks:
-                if guild_data["maxlength"] > 0:
+                if not await is_allowed(
+                    ctx.guild,
+                    (
+                        f"{track.title} {track.author} {track.uri} "
+                        f"{str(dataclasses.Query.process_input(track))}"
+                    ),
+                ):
+                    log.info(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                    continue
+                elif guild_data["maxlength"] > 0:
                     if track_limit(track, guild_data["maxlength"]):
                         track_len += 1
                         player.add(ctx.author, track)
-                        self.bot.dispatch("enqueue_track", player.channel.guild, track, ctx.author)
+                        self.bot.dispatch(
+                            "red_audio_track_enqueue", player.channel.guild, track, ctx.author
+                        )
 
                 else:
                     track_len += 1
                     player.add(ctx.author, track)
-                    self.bot.dispatch("enqueue_track", player.channel.guild, track, ctx.author)
+                    self.bot.dispatch(
+                        "red_audio_track_enqueue", player.channel.guild, track, ctx.author
+                    )
             player.maybe_shuffle(0 if empty_queue else 1)
 
             if len(tracks) > track_len:
@@ -2289,12 +2475,27 @@ class Audio(commands.Cog):
                 single_track = tracks[index] if index else tracks[0]
                 if seek and seek > 0:
                     single_track.start_timestamp = seek * 1000
-                if guild_data["maxlength"] > 0:
+                if not await is_allowed(
+                    ctx.guild,
+                    (
+                        f"{single_track.title} {single_track.author} {single_track.uri} "
+                        f"{str(dataclasses.Query.process_input(single_track))}"
+                    ),
+                ):
+                    log.info(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                    self._play_lock(ctx, False)
+                    return await self._embed_msg(
+                        ctx, _("This track is not allowed in this server.")
+                    )
+                elif guild_data["maxlength"] > 0:
                     if track_limit(single_track, guild_data["maxlength"]):
                         player.add(ctx.author, single_track)
                         player.maybe_shuffle()
                         self.bot.dispatch(
-                            "enqueue_track", player.channel.guild, single_track, ctx.author
+                            "red_audio_track_enqueue",
+                            player.channel.guild,
+                            single_track,
+                            ctx.author,
                         )
                     else:
                         self._play_lock(ctx, False)
@@ -2304,7 +2505,7 @@ class Audio(commands.Cog):
                     player.add(ctx.author, single_track)
                     player.maybe_shuffle()
                     self.bot.dispatch(
-                        "enqueue_track", player.channel.guild, single_track, ctx.author
+                        "red_audio_track_enqueue", player.channel.guild, single_track, ctx.author
                     )
             except IndexError:
                 self._play_lock(ctx, False)
@@ -2481,7 +2682,6 @@ class Audio(commands.Cog):
         user_to_query = author.id
         if not correct_scope_matches:
             return None, original_input
-        match_count = len(correct_scope_matches)
         if scope == PlaylistScope.USER.value:
             correct_scope_matches = [
                 (i[2]["id"], i[2]["name"], len(i[2]["tracks"]), i[2]["author"])
@@ -2500,69 +2700,61 @@ class Audio(commands.Cog):
                 for i in correct_scope_matches
             ]
         match_count = len(correct_scope_matches)
-        if match_count == 1:
-            return correct_scope_matches[0][0], original_input
-        else:
-            # We done all the trimming we can with the info available time to ask the user
+        # We done all the trimming we can with the info available time to ask the user
+        if match_count > 10:
+            if original_input.isnumeric():
+                arg = int(original_input)
+                correct_scope_matches = [
+                    (i, n, t, a) for i, n, t, a in correct_scope_matches if i == arg
+                ]
             if match_count > 10:
-                if original_input.isnumeric():
-                    arg = int(original_input)
-                    correct_scope_matches = [
-                        (i, n, t, a) for i, n, t, a in correct_scope_matches if i == arg
-                    ]
-                    match_count = len(correct_scope_matches)
-                    if match_count == 1:
-                        # Early Exit if found exact match,
-                        # Needed if user name a playlist the same as an exist playlist ID
-                        return correct_scope_matches[0][0], original_input
-                if match_count > 10:
-                    raise TooManyMatches(
-                        f"{match_count} playlist match {arg} "
-                        f"Please try to be more specific or use the playlist id."
-                    )
-
-            # TODO : Convert this section to a new paged reaction menu when Toby Menus are Merged
-            pos_len = 3
-            playlists = f"{'#':{pos_len}}\n"
-
-            for number, (pid, pname, ptracks, pauthor) in enumerate(correct_scope_matches, 1):
-                author = self.bot.get_user(pauthor) or "Unknown"
-                line = (
-                    f"{number}."
-                    f"    <{pname}>\n"
-                    f" - ID: < {pid} >\n"
-                    f" - Tracks: <{ptracks}>\n"
-                    f" - Author: < {author} >\n\n"
+                raise TooManyMatches(
+                    f"{match_count} playlist match {arg} "
+                    f"Please try to be more specific or use the playlist id."
                 )
-                playlists += line
 
-            embed = discord.Embed(
-                title="Multiple playlists found, which one would you like?",
-                description=box(playlists, lang="md"),
-                colour=await context.embed_colour(),
+        # TODO : Convert this section to a new paged reaction menu when Toby Menus are Merged
+        pos_len = 3
+        playlists = f"{'#':{pos_len}}\n"
+
+        for number, (pid, pname, ptracks, pauthor) in enumerate(correct_scope_matches, 1):
+            author = self.bot.get_user(pauthor) or "Unknown"
+            line = (
+                f"{number}."
+                f"    <{pname}>\n"
+                f" - ID: < {pid} >\n"
+                f" - Tracks: <{ptracks}>\n"
+                f" - Author: < {author} >\n\n"
             )
-            msg = await context.send(embed=embed)
-            avaliable_emojis = ReactionPredicate.NUMBER_EMOJIS[1:]
-            avaliable_emojis.append("🔟")
-            emojis = avaliable_emojis[: len(correct_scope_matches)]
-            emojis.append("❌")
-            start_adding_reactions(msg, emojis)
-            pred = ReactionPredicate.with_emojis(emojis, msg, user=context.author)
-            try:
-                await context.bot.wait_for("reaction_add", check=pred, timeout=60)
-            except asyncio.TimeoutError:
-                with contextlib.suppress(discord.HTTPException):
-                    await msg.delete()
-                raise TooManyMatches(
-                    "Too many matches found and you did not select which one you wanted."
-                )
-            if emojis[pred.result] == "❌":
-                with contextlib.suppress(discord.HTTPException):
-                    await msg.delete()
-                raise TooManyMatches(
-                    "Too many matches found and you did not select which one you wanted."
-                )
-            return correct_scope_matches[pred.result][0], original_input
+            playlists += line
+
+        embed = discord.Embed(
+            title="Multiple playlists found, which one would you like?",
+            description=box(playlists, lang="md"),
+            colour=await context.embed_colour(),
+        )
+        msg = await context.send(embed=embed)
+        avaliable_emojis = ReactionPredicate.NUMBER_EMOJIS[1:]
+        avaliable_emojis.append("🔟")
+        emojis = avaliable_emojis[: len(correct_scope_matches)]
+        emojis.append("❌")
+        start_adding_reactions(msg, emojis)
+        pred = ReactionPredicate.with_emojis(emojis, msg, user=context.author)
+        try:
+            await context.bot.wait_for("reaction_add", check=pred, timeout=60)
+        except asyncio.TimeoutError:
+            with contextlib.suppress(discord.HTTPException):
+                await msg.delete()
+            raise TooManyMatches(
+                "Too many matches found and you did not select which one you wanted."
+            )
+        if emojis[pred.result] == "❌":
+            with contextlib.suppress(discord.HTTPException):
+                await msg.delete()
+            raise TooManyMatches(
+                "Too many matches found and you did not select which one you wanted."
+            )
+        return correct_scope_matches[pred.result][0], original_input
 
     @commands.group()
     @commands.guild_only()
@@ -3584,6 +3776,15 @@ class Audio(commands.Cog):
             tracks = playlist.tracks_obj
             empty_queue = not player.queue
             for track in tracks:
+                if not await is_allowed(
+                    ctx.guild,
+                    (
+                        f"{track.title} {track.author} {track.uri} "
+                        f"{str(dataclasses.Query.process_input(track))}"
+                    ),
+                ):
+                    log.info(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                    continue
                 if f"{os.sep}localtracks" in track.uri:
                     local_path = dataclasses.LocalPath(track.uri)
                     if not await self._localtracks_check(ctx):
@@ -3593,8 +3794,11 @@ class Audio(commands.Cog):
                 if maxlength > 0:
                     if not track_limit(track.length, maxlength):
                         continue
+
                 player.add(author_obj, track)
-                self.bot.dispatch("enqueue_track", player.channel.guild, track, ctx.author)
+                self.bot.dispatch(
+                    "red_audio_track_enqueue", player.channel.guild, track, ctx.author
+                )
                 track_len += 1
             player.maybe_shuffle(0 if empty_queue else 1)
             if len(tracks) > track_len:
@@ -4178,7 +4382,9 @@ class Audio(commands.Cog):
             )
             last_track = result.tracks
             player.add(player.fetch("prev_requester"), last_track[0])
-            self.bot.dispatch("enqueue_track", player.channel.guild, last_track[0], ctx.author)
+            self.bot.dispatch(
+                "red_audio_track_enqueue", player.channel.guild, last_track[0], ctx.author
+            )
             queue_len = len(player.queue)
             bump_song = player.queue[-1]
             player.queue.insert(0, bump_song)
@@ -4410,7 +4616,8 @@ class Audio(commands.Cog):
         embed.set_footer(text=text)
         return embed
 
-    async def _build_queue_search_list(self, queue_list, search_words):
+    @staticmethod
+    async def _build_queue_search_list(queue_list, search_words):
         track_list = []
         queue_idx = 0
         for track in queue_list:
@@ -4434,7 +4641,8 @@ class Audio(commands.Cog):
                     search_list.append([queue_position, title])
         return search_list
 
-    async def _build_queue_search_page(self, ctx: commands.Context, page_num, search_list):
+    @staticmethod
+    async def _build_queue_search_page(ctx: commands.Context, page_num, search_list):
         search_num_pages = math.ceil(len(search_list) / 10)
         search_idx_start = (page_num - 1) * 10
         search_idx_end = search_idx_start + 10
@@ -4541,9 +4749,9 @@ class Audio(commands.Cog):
         else:
             await self._embed_msg(
                 ctx,
-                _(
-                    "Removed {removed_tracks} tracks queued by {member.display_name}."
-                ).format(removed_tracks=removed_tracks, member=ctx.author),
+                _("Removed {removed_tracks} tracks queued by {member.display_name}.").format(
+                    removed_tracks=removed_tracks, member=ctx.author
+                ),
             )
 
     @queue.command(name="search")
@@ -4581,9 +4789,26 @@ class Audio(commands.Cog):
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
         try:
+            if (
+                not ctx.author.voice.channel.permissions_for(ctx.me).connect
+                or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
+                and userlimit(ctx.author.voice.channel)
+            ):
+                return await self._embed_msg(
+                    ctx, _("I don't have permission to connect to your channel.")
+                )
+            await lavalink.connect(ctx.author.voice.channel)
             player = lavalink.get_player(ctx.guild.id)
+            player.store("connect", datetime.datetime.utcnow())
+        except AttributeError:
+            return await self._embed_msg(ctx, _("Connect to a voice channel first."))
+        except IndexError:
+            return await self._embed_msg(
+                ctx, _("Connection to Lavalink has not yet been established.")
+            )
         except KeyError:
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
+
         if not self._player_check(ctx) or not player.queue:
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
 
@@ -4766,17 +4991,28 @@ class Audio(commands.Cog):
                 track_len = 0
                 empty_queue = not player.queue
                 for track in tracks:
-                    if guild_data["maxlength"] > 0:
+                    if not await is_allowed(
+                        ctx.guild,
+                        (
+                            f"{track.title} {track.author} {track.uri} "
+                            f"{str(dataclasses.Query.process_input(track))}"
+                        ),
+                    ):
+                        log.info(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                        continue
+                    elif guild_data["maxlength"] > 0:
                         if track_limit(track, guild_data["maxlength"]):
                             track_len += 1
                             player.add(ctx.author, track)
                             self.bot.dispatch(
-                                "enqueue_track", player.channel.guild, track, ctx.author
+                                "red_audio_track_enqueue", player.channel.guild, track, ctx.author
                             )
                     else:
                         track_len += 1
                         player.add(ctx.author, track)
-                        self.bot.dispatch("enqueue_track", player.channel.guild, track, ctx.author)
+                        self.bot.dispatch(
+                            "red_audio_track_enqueue", player.channel.guild, track, ctx.author
+                        )
                     if not player.current:
                         await player.play()
                 player.maybe_shuffle(0 if empty_queue else 1)
@@ -4894,18 +5130,32 @@ class Audio(commands.Cog):
         )
         queue_dur = await queue_duration(ctx)
         queue_total_duration = lavalink.utils.format_time(queue_dur)
+        if not await is_allowed(
+            ctx.guild,
+            (
+                f"{search_choice.title} {search_choice.author} {search_choice.uri} "
+                f"{str(dataclasses.Query.process_input(search_choice))}"
+            ),
+        ):
+            log.info(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+            self._play_lock(ctx, False)
+            return await self._embed_msg(ctx, _("This track is not allowed in this server."))
+        elif guild_data["maxlength"] > 0:
 
-        if guild_data["maxlength"] > 0:
             if track_limit(search_choice.length, guild_data["maxlength"]):
                 player.add(ctx.author, search_choice)
                 player.maybe_shuffle()
-                self.bot.dispatch("enqueue_track", player.channel.guild, search_choice, ctx.author)
+                self.bot.dispatch(
+                    "red_audio_track_enqueue", player.channel.guild, search_choice, ctx.author
+                )
             else:
                 return await self._embed_msg(ctx, _("Track exceeds maximum length."))
         else:
             player.add(ctx.author, search_choice)
             player.maybe_shuffle()
-            self.bot.dispatch("enqueue_track", player.channel.guild, search_choice, ctx.author)
+            self.bot.dispatch(
+                "red_audio_track_enqueue", player.channel.guild, search_choice, ctx.author
+            )
 
         if not guild_data["shuffle"] and queue_dur > 0:
             embed.set_footer(
@@ -4922,7 +5172,8 @@ class Audio(commands.Cog):
             await player.play()
         await ctx.send(embed=embed)
 
-    async def _build_search_page(self, ctx: commands.Context, tracks, page_num):
+    @staticmethod
+    async def _build_search_page(ctx: commands.Context, tracks, page_num):
         search_num_pages = math.ceil(len(tracks) / 5)
         search_idx_start = (page_num - 1) * 5
         search_idx_end = search_idx_start + 5
@@ -5217,7 +5468,8 @@ class Audio(commands.Cog):
         else:
             return False
 
-    async def is_requester(self, ctx: commands.Context, member: discord.Member):
+    @staticmethod
+    async def is_requester(ctx: commands.Context, member: discord.Member):
         try:
             player = lavalink.get_player(ctx.guild.id)
             log.info(f"Current requester is {player.current}")
@@ -5299,7 +5551,7 @@ class Audio(commands.Cog):
                 description=await get_description(player.current),
             )
             await ctx.send(embed=embed)
-        self.bot.dispatch("skip_track", player.channel.guild, player.current, ctx.author)
+        self.bot.dispatch("red_audio_skip_track", player.channel.guild, player.current, ctx.author)
         await player.play()
         player.queue += queue_to_append
 
@@ -5343,7 +5595,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    @commands.cooldown(1, 15, discord.ext.commands.BucketType.guild)
+    @commands.cooldown(1, 15, commands.BucketType.guild)
     @commands.bot_has_permissions(embed_links=True)
     async def summon(self, ctx: commands.Context):
         """Summon the bot to a voice channel."""

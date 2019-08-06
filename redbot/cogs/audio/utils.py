@@ -30,6 +30,7 @@ __all__ = [
     "time_convert",
     "url_check",
     "userlimit",
+    "is_allowed",
     "CacheLevel",
     "Notifier",
 ]
@@ -38,8 +39,14 @@ re_yt_list_playlist = re.compile(
     r"^(https?://)?(www\.)?(youtube\.com|youtu\.?be)(/playlist\?).*(list=)(.*)(&|$)"
 )
 
+_config = None
+_bot = None
+
 
 def pass_config_to_dependencies(config: Config, bot: Red, localtracks_folder: str):
+    global _bot, _config
+    _bot = bot
+    _config = config
     _pass_config_to_playlist(config, bot)
     _pass_config_to_converters(config, bot)
     dataclasses._pass_config_to_dataclasses(config, bot, localtracks_folder)
@@ -54,6 +61,15 @@ def track_limit(track, maxlength):
     if maxlength < length <= 900000000000000:  # livestreams return 9223372036854775807ms
         return False
     return True
+
+
+async def is_allowed(guild: discord.Guild, query: str):
+    query = query.lower().strip()
+    whitelist = set(await _config.guild(guild).url_keyword_whitelist())
+    if whitelist:
+        return any(i in query for i in whitelist)
+    blacklist = set(await _config.guild(guild).url_keyword_blacklist())
+    return not any(i in query for i in blacklist)
 
 
 async def queue_duration(ctx):

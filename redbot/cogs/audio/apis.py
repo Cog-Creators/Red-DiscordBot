@@ -22,7 +22,7 @@ from redbot.core.i18n import Translator, cog_i18n
 from . import dataclasses
 from .errors import InvalidTableError, SpotifyFetchError, YouTubeApiError
 from .playlists import get_playlist
-from .utils import CacheLevel, Notifier, queue_duration, track_limit
+from .utils import CacheLevel, Notifier, queue_duration, track_limit, is_allowed
 
 log = logging.getLogger("red.audio.cache")
 _ = Translator("Audio", __file__)
@@ -616,6 +616,7 @@ class MusicCache:
         notifier: Optional[Notifier] = None,
     ) -> List[lavalink.Track]:
         track_list = []
+        has_not_allowed = False
         try:
             current_cache_level = CacheLevel(await self.config.cache_level())
             guild_data = await self.config.guild(ctx.guild).all()
@@ -734,7 +735,7 @@ class MusicCache:
                 if consecutive_fails >= 10:
                     error_embed = discord.Embed(
                         colour=await ctx.embed_colour(),
-                        title=_("Failing to get tracks, skipping remaning."),
+                        title=_("Failing to get tracks, skipping remaining."),
                     )
                     await notifier.update_embed(error_embed)
                     break
@@ -743,6 +744,16 @@ class MusicCache:
                     continue
                 consecutive_fails = 0
                 single_track = track_object[0]
+                if not await is_allowed(
+                    ctx.guild,
+                    (
+                        f"{single_track.title} {single_track.author} {single_track.uri} "
+                        f"{str(dataclasses.Query.process_input(single_track))}"
+                    ),
+                ):
+                    has_not_allowed = True
+                    log.info(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                    continue
                 track_list.append(single_track)
                 if enqueue:
                     if guild_data["maxlength"] > 0:
@@ -750,28 +761,35 @@ class MusicCache:
                             enqueued_tracks += 1
                             player.add(ctx.author, single_track)
                             self.bot.dispatch(
-                                "enqueue_track", player.channel.guild, single_track, ctx.author
+                                "red_audio_track_enqueue",
+                                player.channel.guild,
+                                single_track,
+                                ctx.author,
                             )
                     else:
                         enqueued_tracks += 1
                         player.add(ctx.author, single_track)
                         self.bot.dispatch(
-                            "enqueue_track", player.channel.guild, single_track, ctx.author
+                            "red_audio_track_enqueue",
+                            player.channel.guild,
+                            single_track,
+                            ctx.author,
                         )
 
                     if not player.current:
                         await player.play()
             if len(track_list) == 0:
-                embed3 = discord.Embed(
-                    colour=await ctx.embed_colour(),
-                    title=_(
-                        "Nothing found.\nThe YouTube API key may be invalid "
-                        "or you may be rate limited on YouTube's search service.\n"
-                        "Check the YouTube API key again and follow the instructions "
-                        "at `{prefix}audioset youtubeapi`."
-                    ).format(prefix=ctx.prefix),
-                )
-                await notifier.update_embed(embed3)
+                if not has_not_allowed:
+                    embed3 = discord.Embed(
+                        colour=await ctx.embed_colour(),
+                        title=_(
+                            "Nothing found.\nThe YouTube API key may be invalid "
+                            "or you may be rate limited on YouTube's search service.\n"
+                            "Check the YouTube API key again and follow the instructions "
+                            "at `{prefix}audioset youtubeapi`."
+                        ).format(prefix=ctx.prefix),
+                    )
+                    await ctx.send(embed=embed3)
             player.maybe_shuffle()
             if enqueue and tracks_from_spotify:
                 if total_tracks > enqueued_tracks:
@@ -1030,10 +1048,21 @@ class MusicCache:
                     continue
                 if query.is_local and not query.track.exists():
                     continue
+                if not await is_allowed(
+                    player.channel.guild,
+                    (
+                        f"{track.title} {track.author} {track.uri} "
+                        f"{str(dataclasses.Query.process_input(track))}"
+                    ),
+                ):
+                    log.info(
+                        f"Query is not allowed in {player.channel.guild} ({player.channel.guild.id})"
+                    )
+                    continue
                 valid = True
             player.add(player.channel.guild.me, track)
             self.bot.dispatch(
-                "auto_play_track", player.channel.guild, track, player.channel.guild.me
+                "red_audio_track_auto_play", player.channel.guild, track, player.channel.guild.me
             )
             if not player.current:
                 await player.play()
