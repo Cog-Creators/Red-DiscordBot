@@ -6,4 +6,4 @@ New events dispatched by Audio.
  - :code:`on_red_audio_track_auto_play(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)`
  - :code:`on_red_audio_queue_end(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)`
  - :code:`on_red_audio_audio_disconnect(guild: discord.Guild)`
- - :code:`on_red_audio_should_auto_play(guild: discord.Guild, play: Callable)`
+ - :code:`on_red_audio_should_auto_play(guild: discord.Guild, channel:discord.VoiceChannel, play: Callable)`

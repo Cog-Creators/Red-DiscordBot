@@ -380,7 +380,7 @@ class Audio(commands.Cog):
 
             if autoplay and not player.queue and player.fetch("playing_song") is not None:
                 self.bot.dispatch(
-                    "red_audio_should_auto_play", player.channel.guild, self.play_query
+                    "red_audio_should_auto_play", player.channel.guild, player.channel, self.play_query
                 )
                 if self.owns_autoplay:
                     await self.music_cache.autoplay(player)
