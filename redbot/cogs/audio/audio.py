@@ -2708,7 +2708,7 @@ class Audio(commands.Cog):
                 ]
             if match_count > 10:
                 raise TooManyMatches(
-                    f"{match_count} playlist match {arg} "
+                    f"{match_count} playlist match {original_input} "
                     f"Please try to be more specific or use the playlist id."
                 )
 
