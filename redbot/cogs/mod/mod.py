@@ -68,7 +68,7 @@ class Mod(
 
         self.settings = Config.get_conf(self, 4961522000, force_registration=True)
         self.settings.register_global(**self.default_global_settings)
-        self.settings.register_guild(**self.default_guild_settings)
+        self.settings.register_guild(**self.default_guild_settings, force_registration=True)
         self.settings.register_channel(**self.default_channel_settings)
         self.settings.register_member(**self.default_member_settings)
         self.settings.register_user(**self.default_user_settings)
