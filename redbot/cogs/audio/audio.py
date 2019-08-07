@@ -368,7 +368,7 @@ class Audio(commands.Cog):
             requester = player.fetch("requester")
             player.store("prev_song", playing_song)
             player.store("prev_requester", requester)
-            player.store("playing_song", player.current.uri)
+            player.store("playing_song", player.current)
             player.store("requester", player.current.requester)
             self.bot.dispatch(
                 "red_audio_track_start",
@@ -410,7 +410,7 @@ class Audio(commands.Cog):
                         await player.fetch("notify_message").delete()
                     except discord.errors.NotFound:
                         pass
-                if player.current.extras.get("autoplay") and (prev_song is None):
+                if player.current.extras.get("autoplay") and (prev_song is None and prev_song.extras.get("autoplay")):
                     embed = discord.Embed(
                         colour=(await self._get_embed_colour(notify_channel)),
                         title=_("Auto play started."),
@@ -4671,13 +4671,10 @@ class Audio(commands.Cog):
         if player.fetch("prev_song") is None:
             return await self._embed_msg(ctx, _("No previous track."))
         else:
-            result, called_api = await self.music_cache.lavalink_query(
-                ctx, player, player.fetch("prev_song")
-            )
-            last_track = result.tracks
-            player.add(player.fetch("prev_requester"), last_track[0])
+            track = player.fetch("prev_song")
+            player.add(player.fetch("prev_requester"), track)
             self.bot.dispatch(
-                "red_audio_track_enqueue", player.channel.guild, last_track[0], ctx.author
+                "red_audio_track_enqueue", player.channel.guild, track, ctx.author
             )
             queue_len = len(player.queue)
             bump_song = player.queue[-1]
