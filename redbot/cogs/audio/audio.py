@@ -776,7 +776,7 @@ class Audio(commands.Cog):
         """Change auto-play setting."""
 
     @_autoplay.command()
-    async def toggle(self, ctx: commands.Context):
+    async def _autoplay_toggle(self, ctx: commands.Context):
         """Toggle auto-play when there no songs in queue."""
         autoplay = await self.config.guild(ctx.guild).auto_play()
         repeat = await self.config.guild(ctx.guild).repeat()
@@ -800,7 +800,7 @@ class Audio(commands.Cog):
             await self._data_check(ctx)
 
     @_autoplay.command(name="playlist", usage="<playlist_name_OR_id> [args]")
-    async def _auto_playlist(
+    async def __autoplay_playlist(
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
@@ -880,7 +880,7 @@ class Audio(commands.Cog):
             )
 
     @_autoplay.command(name="reset")
-    async def _reset(self, ctx: commands.Context):
+    async def _autoplay_reset(self, ctx: commands.Context):
         """Resets auto-play to the default playlist."""
         playlist_data = dict(enabled=False, id=None, name=None, scope=None)
         await self.config.guild(ctx.guild).autoplaylist.set(playlist_data)
@@ -2356,6 +2356,57 @@ class Audio(commands.Cog):
         if query.is_spotify:
             return await self._get_spotify_tracks(ctx, query)
         await self._enqueue_tracks(ctx, query)
+
+    @commands.command()
+    @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
+    @checks.mod_or_permissions(manage_messages=True)
+    async def autoplay(self, ctx: commands.Context):
+        """Starts auto play."""
+        if not self._player_check(ctx):
+            if self._connection_aborted:
+                msg = _("Connection to Lavalink has failed.")
+                if await ctx.bot.is_owner(ctx.author):
+                    msg += " " + _("Please check your console or logs for details.")
+                return await self._embed_msg(ctx, msg)
+            try:
+                if (
+                    not ctx.author.voice.channel.permissions_for(ctx.me).connect
+                    or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
+                    and userlimit(ctx.author.voice.channel)
+                ):
+                    return await self._embed_msg(
+                        ctx, _("I don't have permission to connect to your channel.")
+                    )
+                await lavalink.connect(ctx.author.voice.channel)
+                player = lavalink.get_player(ctx.guild.id)
+                player.store("connect", datetime.datetime.utcnow())
+            except AttributeError:
+                return await self._embed_msg(ctx, _("Connect to a voice channel first."))
+            except IndexError:
+                return await self._embed_msg(
+                    ctx, _("Connection to Lavalink has not yet been established.")
+                )
+        guild_data = await self.config.guild(ctx.guild).all()
+        if guild_data["dj_enabled"]:
+            if not await self._can_instaskip(ctx, ctx.author):
+                return await self._embed_msg(ctx, _("You need the DJ role to queue tracks."))
+        player = lavalink.get_player(ctx.guild.id)
+
+        player.store("channel", ctx.channel.id)
+        player.store("guild", ctx.guild.id)
+        await self._eq_check(ctx, player)
+        await self._data_check(ctx)
+        if (
+            not ctx.author.voice or ctx.author.voice.channel != player.channel
+        ) and not await self._can_instaskip(ctx, ctx.author):
+            return await self._embed_msg(
+                ctx, _("You must be in the voice channel to use the autoplay command.")
+            )
+        if not await self._currency_check(ctx, guild_data["jukebox_price"]):
+            return
+        await self.music_cache.autoplay(player)
+        await ctx.invoke(self._autoplay_toggle)
 
     async def _get_spotify_tracks(self, ctx: commands.Context, query: dataclasses.Query):
         if ctx.invoked_with == "play":
