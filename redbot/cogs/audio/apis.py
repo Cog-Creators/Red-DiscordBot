@@ -1034,7 +1034,9 @@ class MusicCache:
                 tracks = await self.play_random()
             if not tracks:
                 ctx = NamedTuple("Context", "message")
-                results, called_api = await self.lavalink_query(ctx(player.channel.guild), player, _TOP_100_US)
+                results, called_api = await self.lavalink_query(
+                    ctx(player.channel.guild), player, _TOP_100_US
+                )
                 tracks = results.tracks
 
         if tracks:
