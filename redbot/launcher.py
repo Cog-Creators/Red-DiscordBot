@@ -20,7 +20,7 @@ from redbot.core import __version__, version_info as red_version_info, VersionIn
 from redbot.core.cli import confirm
 
 if sys.platform == "linux":
-    import distro
+    import distro  # pylint: disable=import-error
 
 INTERACTIVE_MODE = not len(sys.argv) > 1  # CLI flags = non-interactive
 
