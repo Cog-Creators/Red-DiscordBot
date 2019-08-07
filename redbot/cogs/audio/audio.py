@@ -790,7 +790,7 @@ class Audio(commands.Cog):
     async def _autoplay(self, ctx: commands.Context):
         """Change auto-play setting."""
 
-    @_autoplay.command()
+    @_autoplay.command(name="toggle")
     async def _autoplay_toggle(self, ctx: commands.Context):
         """Toggle auto-play when there no songs in queue."""
         autoplay = await self.config.guild(ctx.guild).auto_play()
