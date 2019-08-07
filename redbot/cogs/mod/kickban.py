@@ -213,7 +213,7 @@ class KickBanMixin(MixinMeta):
 
         If days is not a number, it's treated as the first word of the reason.
         Minimum 0 days, maximum 7. If not specified, and defaultdays is set,
-        defaultdays will be used instead."""
+        it will be used instead."""
         guild = ctx.guild
         if days is None:
             days = await self.settings.guild(guild).default_days()
