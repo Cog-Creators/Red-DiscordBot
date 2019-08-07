@@ -410,7 +410,9 @@ class Audio(commands.Cog):
                         await player.fetch("notify_message").delete()
                     except discord.errors.NotFound:
                         pass
-                if player.current.extras.get("autoplay") and (prev_song is None and prev_song.extras.get("autoplay")):
+                if player.current.extras.get("autoplay") and (
+                    prev_song is None and prev_song.extras.get("autoplay")
+                ):
                     embed = discord.Embed(
                         colour=(await self._get_embed_colour(notify_channel)),
                         title=_("Auto play started."),
@@ -4673,9 +4675,7 @@ class Audio(commands.Cog):
         else:
             track = player.fetch("prev_song")
             player.add(player.fetch("prev_requester"), track)
-            self.bot.dispatch(
-                "red_audio_track_enqueue", player.channel.guild, track, ctx.author
-            )
+            self.bot.dispatch("red_audio_track_enqueue", player.channel.guild, track, ctx.author)
             queue_len = len(player.queue)
             bump_song = player.queue[-1]
             player.queue.insert(0, bump_song)
