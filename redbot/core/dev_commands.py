@@ -233,7 +233,7 @@ class Dev(commands.Cog):
             cleaned = self.cleanup_code(response.content)
 
             if cleaned in ("quit", "exit", "exit()"):
-                await ctx.send("Exiting.")
+                await ctx.send(_("Exiting."))
                 self.sessions.remove(ctx.channel.id)
                 return
 

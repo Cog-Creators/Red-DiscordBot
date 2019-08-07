@@ -16,17 +16,17 @@ Basic Usage
 
 .. code-block:: python
 
-    from redbot.core import modlog
+    from redbot.core import commands, modlog
     import discord
 
-    class MyCog:
+    class MyCog(commands.Cog):
         @commands.command()
         @checks.admin_or_permissions(ban_members=True)
-        async def ban(self, ctx, user: discord.Member, reason: str=None):
+        async def ban(self, ctx, user: discord.Member, reason: str = None):
             await ctx.guild.ban(user)
-            case = modlog.create_case(
-                ctx.guild, ctx.message.created_at, "ban", user,
-                ctx.author, reason, until=None, channel=None
+            case = await modlog.create_case(
+                ctx.bot, ctx.guild, ctx.message.created_at, action="ban",
+                user=user, moderator=ctx.author, reason=reason
             )
             await ctx.send("Done. It was about time.")
 
@@ -35,50 +35,60 @@ Basic Usage
 Registering Case types
 **********************
 
-To register a single case type:
+To register case types, use an asynchronous ``initialize()`` method and call
+it from your setup function:
 
 .. code-block:: python
 
-    from redbot.core import modlog
+    # mycog/mycog.py
+    from redbot.core import modlog, commands
     import discord
 
-    class MyCog:
-        def __init__(self, bot):
+    class MyCog(commands.Cog):
+
+        async def initialize(self):
+            await self.register_casetypes()
+
+        @staticmethod
+        async def register_casetypes():
+            # Registering a single casetype
             ban_case = {
                 "name": "ban",
                 "default_setting": True,
-                "image": ":hammer:",
+                "image": "\N{HAMMER}",
                 "case_str": "Ban",
-                "audit_type": "ban"
             }
-            modlog.register_casetype(**ban_case)
+            try:
+                await modlog.register_casetype(**ban_case)
+            except RuntimeError:
+                pass
 
-To register multiple case types:
-
-.. code-block:: python
-
-    from redbot.core import modlog
-    import discord
-
-    class MyCog:
-        def __init__(self, bot):
+            # Registering multiple casetypes
             new_types = [
                 {
-                    "name": "ban",
+                    "name": "hackban",
                     "default_setting": True,
-                    "image": ":hammer:",
-                    "case_str": "Ban",
-                    "audit_type": "ban"
+                    "image": "\N{BUST IN SILHOUETTE}\N{HAMMER}",
+                    "case_str": "Hackban",
                 },
                 {
                     "name": "kick",
                     "default_setting": True,
-                    "image": ":boot:",
+                    "image": "\N{WOMANS BOOTS}",
                     "case_str": "Kick",
-                    "audit_type": "kick"
                 }
             ]
-            modlog.register_casetypes(new_types)
+            await modlog.register_casetypes(new_types)
+
+.. code-block:: python
+
+    # mycog/__init__.py
+    from .mycog import MyCog
+
+    async def setup(bot):
+        cog = MyCog()
+        await cog.initialize()
+        bot.add_cog(cog)
 
 .. important::
     Image should be the emoji you want to represent your case type with.
