@@ -6121,7 +6121,7 @@ class Audio(commands.Cog):
                     pause_times.setdefault(server.id, time.time())
                 else:
                     stop_times.pop(server.id, None)
-                    if p.paused:
+                    if p.paused and server.id in pause_times:
                         try:
                             await p.pause(False)
                         except Exception:
