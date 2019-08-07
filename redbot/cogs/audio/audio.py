@@ -109,6 +109,8 @@ class Audio(commands.Cog):
             dj_role=None,
             emptydc_enabled=False,
             emptydc_timer=0,
+            emptypause_enabled=False,
+            emptypause_timer=0,
             jukebox=False,
             jukebox_price=0,
             maxlength=0,
@@ -354,13 +356,13 @@ class Audio(commands.Cog):
                 )
 
         if event_type == lavalink.LavalinkEvents.TRACK_START:
+            self.skip_votes[player.channel.guild] = []
             playing_song = player.fetch("playing_song")
             requester = player.fetch("requester")
             player.store("prev_song", playing_song)
             player.store("prev_requester", requester)
             player.store("playing_song", player.current.uri)
             player.store("requester", player.current.requester)
-            self.skip_votes[player.channel.guild] = []
             self.bot.dispatch(
                 "red_audio_track_start",
                 player.channel.guild,
@@ -931,6 +933,28 @@ class Audio(commands.Cog):
 
     @audioset.command()
     @checks.mod_or_permissions(administrator=True)
+    async def emptypause(self, ctx: commands.Context, seconds: int):
+        """Auto-pause after x seconds when room is empty. 0 to disable."""
+        if seconds < 0:
+            return await self._embed_msg(ctx, _("Can't be less than zero."))
+        if 10 > seconds > 0:
+            seconds = 10
+        if seconds == 0:
+            enabled = False
+            await self._embed_msg(ctx, _("Empty pause disabled."))
+        else:
+            enabled = True
+            await self._embed_msg(
+                ctx,
+                _("Empty pause timer set to {num_seconds}.").format(
+                    num_seconds=dynamic_time(seconds)
+                ),
+            )
+        await self.config.guild(ctx.guild).emptypause_timer.set(seconds)
+        await self.config.guild(ctx.guild).emptypause_enabled.set(enabled)
+
+    @audioset.command()
+    @checks.mod_or_permissions(administrator=True)
     async def jukebox(self, ctx: commands.Context, price: int):
         """Set a price for queueing tracks for non-mods. 0 to disable."""
         if price < 0:
@@ -1093,6 +1117,8 @@ class Audio(commands.Cog):
         dj_enabled = data["dj_enabled"]
         emptydc_enabled = data["emptydc_enabled"]
         emptydc_timer = data["emptydc_timer"]
+        emptypause_enabled = data["emptypause_enabled"]
+        emptypause_timer = data["emptypause_timer"]
         jukebox = data["jukebox"]
         jukebox_price = data["jukebox_price"]
         thumbnail = data["thumbnail"]
@@ -1122,6 +1148,10 @@ class Audio(commands.Cog):
         if emptydc_enabled:
             msg += _("Disconnect timer: [{num_seconds}]\n").format(
                 num_seconds=dynamic_time(emptydc_timer)
+            )
+        if emptypause_enabled:
+            msg += _("Auto Pause timer: [{num_seconds}]\n").format(
+                num_seconds=dynamic_time(emptypause_timer)
             )
         if dj_enabled:
             msg += _("DJ Role:          [{role.name}]\n").format(role=dj_role_obj)
@@ -2894,18 +2924,35 @@ class Audio(commands.Cog):
         if not to_append:
             return await self._embed_msg(ctx, _("Could not find a track matching your query."))
         track_list = playlist.tracks
-        if track_list and len(to_append) == 1 and to_append[0] in track_list:
-            return await self._embed_msg(
-                ctx,
-                _("{track} is already in {playlist} ({id}).").format(
-                    track=to_append[0]["info"]["title"], playlist=playlist.name, id=playlist.id
-                ),
-            )
-        track_list.extend(to_append)
-        update = {"tracks": track_list, "url": None}
-        await playlist.edit(update)
+        tracks_obj_list = playlist.tracks_obj
+        to_append_count = len(to_append)
+        appended = 0
 
-        if len(to_append) == 1:
+        if to_append and to_append_count == 1:
+            to = lavalink.Track(to_append[0])
+            if to in tracks_obj_list:
+                return await self._embed_msg(
+                    ctx,
+                    _("{track} is already in {playlist} ({id}).").format(
+                        track=to.title, playlist=playlist.name, id=playlist.id
+                    ),
+                )
+            else:
+                appended += 1
+        if to_append and to_append_count > 1:
+            to_append_temp = []
+            for t in to_append:
+                to = lavalink.Track(t)
+                if to not in tracks_obj_list:
+                    appended += 1
+                    to_append_temp.append(t)
+            to_append = to_append_temp
+        if appended > 0:
+            track_list.extend(to_append)
+            update = {"tracks": track_list, "url": None}
+            await playlist.edit(update)
+
+        if to_append_count == 1 and appended == 1:
             track_title = to_append[0]["info"]["title"]
             return await self._embed_msg(
                 ctx,
@@ -2913,12 +2960,20 @@ class Audio(commands.Cog):
                     track=track_title, playlist=playlist.name, id=playlist.id
                 ),
             )
-        await self._embed_msg(
-            ctx,
-            _("{num} tracks appended to {playlist} ({id}).").format(
-                num=len(to_append), playlist=playlist.name, id=playlist.id
-            ),
+
+        desc = _("{num} tracks appended to {playlist} ({id}).").format(
+            num=appended, playlist=playlist.name, id=playlist.id
         )
+        if to_append_count > appended:
+            diff = to_append_count - appended
+            desc += _("\n{existing} {plural} already in the playlist and were skipped.").format(
+                existing=diff, plural=_("tracks are") if diff != 1 else _("track is")
+            )
+
+        embed = discord.Embed(
+            title=_("Playlist modified"), colour=await ctx.embed_colour(), description=desc
+        )
+        await ctx.send(embed=embed)
 
     @playlist.command(name="copy", usage="<id_or_name> [args]")
     async def _playlist_copy(
@@ -3176,6 +3231,119 @@ class Audio(commands.Cog):
         await self._embed_msg(
             ctx, _("{name} ({id}) playlist deleted.").format(name=playlist.name, id=playlist.id)
         )
+
+    @playlist.command(name="remdupe", usage="<playlist_name_OR_id> [args]")
+    async def _playlist_remdupe(
+        self,
+        ctx: commands.Context,
+        playlist_matches: PlaylistConverter,
+        *,
+        scope_data: ScopeParser = None,
+    ):
+        """Remove duplicate tracks from a saved playlist.
+
+        ***Usage**:
+        ​ ​ ​ ​ [p]playlist remdupes playlist_name_OR_id args
+
+        **Args**:
+        ​ ​ ​ ​ The following are all optional:
+        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
+        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
+        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+
+        Scope is one of the following:
+        ​ ​ ​ ​ Global
+        ​ ​ ​ ​ Guild
+        ​ ​ ​ ​ User
+
+        Author can be one of the following:
+        ​ ​ ​ ​ User ID
+        ​ ​ ​ ​ User Mention
+        ​ ​ ​ ​ User Name#123
+
+        Guild can be one of the following:
+        ​ ​ ​ ​ Guild ID
+        ​ ​ ​ ​ Guild name
+
+        Example use:
+        ​ ​ ​ ​ [p]playlist remdupes MyGuildPlaylist
+        ​ ​ ​ ​ [p]playlist remdupes MyGlobalPlaylist --scope Global
+        ​ ​ ​ ​ [p]playlist remdupes MyPersonalPlaylist --scope User
+        """
+        if scope_data is None:
+            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
+        scope, author, guild = scope_data
+
+        try:
+            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+                ctx, playlist_matches, scope, author, guild
+            )
+        except TooManyMatches as e:
+            return await self._embed_msg(ctx, str(e))
+        if playlist_id is None:
+            return await self._embed_msg(
+                ctx, _("Could not match '{arg}' to a playlist.").format(arg=playlist_arg)
+            )
+
+        try:
+            playlist = await get_playlist(playlist_id, scope, self.bot, guild, author.id)
+        except RuntimeError:
+            return await self._embed_msg(
+                ctx,
+                _("Playlist {id} does not exist in {scope} scope.").format(
+                    id=playlist_id, scope=humanize_scope(scope)
+                ),
+            )
+        except MissingGuild:
+            return await self._embed_msg(
+                ctx, _("You need to specify the Guild ID for the guild to lookup.")
+            )
+
+        if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
+            return
+
+        track_objects = playlist.tracks_obj
+        original_count = len(track_objects)
+        unique_tracks = set()
+        unique_tracks_add = unique_tracks.add
+        track_objects = [
+            x for x in track_objects if not (x in unique_tracks or unique_tracks_add(x))
+        ]
+
+        tracklist = []
+        for track in track_objects:
+            track_keys = track._info.keys()
+            track_values = track._info.values()
+            track_id = track.track_identifier
+            track_info = {}
+            for k, v in zip(track_keys, track_values):
+                track_info[k] = v
+            keys = ["track", "info"]
+            values = [track_id, track_info]
+            track_obj = {}
+            for key, value in zip(keys, values):
+                track_obj[key] = value
+            tracklist.append(track_obj)
+
+        final_count = len(tracklist)
+        if original_count - final_count != 0:
+            update = {"tracks": tracklist, "url": None}
+            await playlist.edit(update)
+
+        if original_count - final_count != 0:
+            await self._embed_msg(
+                ctx,
+                _("Removed {track_diff} duplicated tracks from {name} ({id}) playlist.").format(
+                    name=playlist.name, id=playlist.id, track_diff=original_count - final_count
+                ),
+            )
+        else:
+            await self._embed_msg(
+                ctx,
+                _("{name} ({id}) playlist has no duplicate tracks.").format(
+                    name=playlist.name, id=playlist.id
+                ),
+            )
 
     @checks.is_owner()
     @playlist.command(name="download", usage="<playlist_name_OR_id> [v2=False] [args]")
@@ -4370,7 +4538,7 @@ class Audio(commands.Cog):
         player: lavalink.player_manager.Player,
         query: dataclasses.Query,
     ):
-        search = False
+        search = query.is_search
         tracklist = []
 
         if query.is_spotify:
@@ -4389,7 +4557,6 @@ class Audio(commands.Cog):
                 tracklist.append(track_obj)
             self._play_lock(ctx, False)
         elif query.is_search:
-            search = True
             result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
             tracks = result.tracks
             if not tracks:
@@ -5937,30 +6104,51 @@ class Audio(commands.Cog):
 
     async def disconnect_timer(self):
         stop_times = {}
-
+        pause_times = {}
         while True:
             for p in lavalink.all_players():
                 server = p.channel.guild
 
                 if [self.bot.user] == p.channel.members:
-                    stop_times.setdefault(server.id, int(time.time()))
+                    stop_times.setdefault(server.id, time.time())
+                    pause_times.setdefault(server.id, time.time())
                 else:
                     stop_times.pop(server.id, None)
-
-            for sid in stop_times.copy():
+                    if p.paused:
+                        try:
+                            await p.pause(False)
+                        except Exception:
+                            log.error(
+                                "Exception raised in Audio's emptypause_timer.", exc_info=True
+                            )
+                        finally:
+                            pause_times.pop(server.id, None)
+                    else:
+                        pause_times.pop(server.id, None)
+            servers = stop_times.copy()
+            servers.update(pause_times)
+            for sid in servers:
                 server_obj = self.bot.get_guild(sid)
-                if await self.config.guild(server_obj).emptydc_enabled():
+                if sid in stop_times and await self.config.guild(server_obj).emptydc_enabled():
                     emptydc_timer = await self.config.guild(server_obj).emptydc_timer()
-                    if (int(time.time()) - stop_times[sid]) >= emptydc_timer:
+                    if (time.time() - stop_times[sid]) >= emptydc_timer:
                         stop_times.pop(sid)
                         try:
                             await lavalink.get_player(sid).disconnect()
                         except Exception:
-                            log.error(
-                                "Exception raised in Audio's disconnect_timer.", exc_info=True
-                            )
+                            log.error("Exception raised in Audio's emptydc_timer.", exc_info=True)
                             pass
-
+                elif (
+                    sid in pause_times and await self.config.guild(server_obj).emptypause_enabled()
+                ):
+                    emptypause_timer = await self.config.guild(server_obj).emptypause_timer()
+                    if (time.time() - pause_times.get(sid)) >= emptypause_timer:
+                        try:
+                            await lavalink.get_player(sid).pause()
+                        except Exception:
+                            log.error(
+                                "Exception raised in Audio's emptypause_timer.", exc_info=True
+                            )
             await asyncio.sleep(5)
 
     @staticmethod

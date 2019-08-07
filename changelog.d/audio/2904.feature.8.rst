@@ -1,0 +1,1 @@
+:code:`[p]playlist remdupe` can be used to remove duplicated tracks from a playlist.
