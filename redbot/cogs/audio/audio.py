@@ -402,6 +402,7 @@ class Audio(commands.Cog):
 
         if event_type == lavalink.LavalinkEvents.TRACK_START and notify:
             notify_channel = player.fetch("channel")
+            prev_song = player.fetch("prev_song")
             if notify_channel:
                 notify_channel = self.bot.get_channel(notify_channel)
                 if player.fetch("notify_message") is not None:
@@ -409,6 +410,14 @@ class Audio(commands.Cog):
                         await player.fetch("notify_message").delete()
                     except discord.errors.NotFound:
                         pass
+                if player.current.extras.get("autoplay") and (
+                    prev_song is None or not prev_song.extras.get("autoplay")
+                ):
+                    embed = discord.Embed(
+                        colour=(await self._get_embed_colour(notify_channel)),
+                        title=_("Auto play started."),
+                    )
+                    await notify_channel.send(embed=embed)
                 if f"{os.sep}localtracks" in player.current.uri if player.current else False:
                     if player.current.title != "Unknown title":
                         description = "**{} - {}**\n{}".format(
@@ -501,7 +510,13 @@ class Audio(commands.Cog):
                 player.current = None
             await player.skip()
 
-    async def play_query(self, query: str, guild: discord.Guild, channel: discord.VoiceChannel):
+    async def play_query(
+        self,
+        query: str,
+        guild: discord.Guild,
+        channel: discord.VoiceChannel,
+        is_autoplay: bool = True,
+    ):
         if not self._player_check(guild.me):
             try:
                 if (
@@ -540,7 +555,7 @@ class Audio(commands.Cog):
         ):
             log.debug(f"Query is not allowed in {guild} ({guild.id})")
             return
-
+        track.extras = {"autoplay": is_autoplay}
         player.add(player.channel.guild.me, track)
         self.bot.dispatch(
             "red_audio_track_auto_play", player.channel.guild, track, player.channel.guild.me
@@ -2408,6 +2423,8 @@ class Audio(commands.Cog):
         await self.music_cache.autoplay(player)
         if not guild_data["auto_play"]:
             await ctx.invoke(self._autoplay_toggle)
+        if not guild_data["notify"]:
+            await self._embed_msg(ctx, _("Auto play started."))
 
     async def _get_spotify_tracks(self, ctx: commands.Context, query: dataclasses.Query):
         if ctx.invoked_with == "play":
