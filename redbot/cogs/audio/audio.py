@@ -411,7 +411,7 @@ class Audio(commands.Cog):
                     except discord.errors.NotFound:
                         pass
                 if player.current.extras.get("autoplay") and (
-                    prev_song is None or not prev_song.extras.get("autoplay")
+                    prev_song is None
                 ):
                     embed = discord.Embed(
                         colour=(await self._get_embed_colour(notify_channel)),
