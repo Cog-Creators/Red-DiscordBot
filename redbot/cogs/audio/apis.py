@@ -8,7 +8,8 @@ import os
 import random
 import sqlite3
 import time
-from typing import Callable, Dict, List, Mapping, NoReturn, Optional, Tuple, Union, NamedTuple
+from collections import namedtuple
+from typing import Callable, Dict, List, Mapping, NoReturn, Optional, Tuple, Union
 
 import aiohttp
 import discord
@@ -1033,7 +1034,7 @@ class MusicCache:
             if cache_enabled:
                 tracks = await self.play_random()
             if not tracks:
-                ctx = NamedTuple("Context", "message")
+                ctx = namedtuple("Context", "message")
                 results, called_api = await self.lavalink_query(
                     ctx(player.channel.guild), player, _TOP_100_US
                 )
