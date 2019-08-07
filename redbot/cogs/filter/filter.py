@@ -40,7 +40,7 @@ class Filter(commands.Cog):
     async def register_filterban():
         try:
             await modlog.register_casetype(
-                "filterban", False, ":filing_cabinet: :hammer:", "Filter ban", "ban"
+                "filterban", False, ":filing_cabinet: :hammer:", "Filter ban"
             )
         except RuntimeError:
             pass
@@ -286,6 +286,10 @@ class Filter(commands.Cog):
     def invalidate_cache(self, guild: discord.Guild, channel: discord.TextChannel = None):
         """ Invalidate a cached pattern"""
         self.pattern_cache.pop((guild, channel), None)
+        if channel is None:
+            for keyset in list(self.pattern_cache.keys()):  # cast needed, no remove
+                if guild in keyset:
+                    self.pattern_cache.pop(keyset, None)
 
     async def add_to_filter(
         self, server_or_channel: Union[discord.Guild, discord.TextChannel], words: list

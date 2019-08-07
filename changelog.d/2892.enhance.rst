@@ -1,0 +1,1 @@
+Red's Help Formatter is now considered to have a stable API.

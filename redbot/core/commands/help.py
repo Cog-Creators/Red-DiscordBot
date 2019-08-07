@@ -1,7 +1,6 @@
 # This is a full replacement of discord.py's help command
-# Signatures are not guaranteed to be unchanging in this file.
-# At a later date when this is more set in stone, this warning will be removed.
-# At said later date, there should also be things added to support extra formatter
+#
+# At a later date, there should be things added to support extra formatter
 # registration from 3rd party cogs.
 #
 # This exists due to deficiencies in discord.py which conflict
@@ -218,7 +217,16 @@ class RedHelpFormatter:
                 )
 
             to_page = "\n\n".join(
-                filter(None, (description, signature[1:-1], command.help, subtext_header, subtext))
+                filter(
+                    None,
+                    (
+                        description,
+                        signature[1:-1],
+                        command.help.replace("[p]", ctx.clean_prefix),
+                        subtext_header,
+                        subtext,
+                    ),
+                )
             )
             pages = [box(p) for p in pagify(to_page)]
             await self.send_pages(ctx, pages, embed=False)
@@ -432,14 +440,14 @@ class RedHelpFormatter:
         for obj in objects:
             if verify_checks and not show_hidden:
                 # Default Red behavior, can_see includes a can_run check.
-                if await obj.can_see(ctx):
+                if await obj.can_see(ctx) and getattr(obj, "enabled", True):
                     yield obj
             elif verify_checks:
                 try:
                     can_run = await obj.can_run(ctx)
                 except discord.DiscordException:
                     can_run = False
-                if can_run:
+                if can_run and getattr(obj, "enabled", True):
                     yield obj
             elif not show_hidden:
                 if not getattr(obj, "hidden", False):  # Cog compatibility
