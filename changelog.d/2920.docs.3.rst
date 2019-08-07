@@ -1,0 +1,1 @@
+openSUSE now has a section in Linux install docs.

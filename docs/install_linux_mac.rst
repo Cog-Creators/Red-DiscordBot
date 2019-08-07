@@ -22,6 +22,9 @@ The pre-requirements are:
  - git
  - Java Runtime Environment 8 or later (for audio support)
 
+We also recommend installing some basic compiler tools, in case our dependencies don't provide
+pre-built "wheels" for your architecture.
+
 .. _install-arch:
 
 ~~~~~~~~~~
@@ -36,7 +39,7 @@ Arch Linux
 .. _install-rhel:
 
 ~~~~~~~~~~~~~~~~~
-CentOS 7 and RHEL
+CentOS and RHEL 7
 ~~~~~~~~~~~~~~~~~
 
 .. code-block:: none
@@ -48,14 +51,17 @@ CentOS 7 and RHEL
 
 Complete the rest of the installation by `installing Python 3.7 with pyenv <install-python-pyenv>`.
 
-.. _install-debian-buster:
-.. _install-raspbian-buster:
+.. _install-debian:
+.. _install-raspbian:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+Debian and Raspbian
+~~~~~~~~~~~~~~~~~~~
+
 Debian and Raspbian Buster
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+**************************
 
-Debuan and Raspbian Buster have all required packages available in official repositories. Install
+Debian and Raspbian Buster have all required packages available in official repositories. Install
 them with apt:
 
 .. code-block:: none
@@ -64,12 +70,8 @@ them with apt:
     sudo apt install python3 python3-dev python3-venv python3-pip git default-jre-headless \
       build-essential
 
-.. _install-debian-stretch:
-.. _install-raspbian-stretch:
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Debian and Raspbian Stretch
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+***************************
 
 We recommend installing pyenv as a method of installing non-native versions of python on
 Debian/Raspbian Stretch. This guide will tell you how. First, run the following commands:
@@ -122,41 +124,78 @@ one-by-one:
 It's possible you will have network issues. If so, go in your Applications folder, inside it, go in
 the Python 3.7 folder then double click ``Install certificates.command``.
 
+.. _install-opensuse:
+
+~~~~~~~~
+openSUSE
+~~~~~~~~
+
+openSUSE Leap
+*************
+
+We recommend installing a community package to get Python 3.7 on openSUSE Leap. This package will
+be installed to the ``/opt`` directory.
+
+First, add the Opt-Python community repository:
+
+.. code-block:: none
+
+    source /etc/os-release
+    sudo zypper ar -f https://download.opensuse.org/repositories/home:/Rotkraut:/Opt-Python/openSUSE_Leap_${VERSION_ID}/ Opt-Python
+
+Now install the pre-requirements with zypper:
+
+.. code-block:: none
+
+    sudo zypper install opt-python37 opt-python37-setuptools git-core java-11-openjdk-headless
+    sudo zypper install -t pattern devel_basis
+
+Since Python is now installed to ``/opt/python``, we should add it to PATH. You can add a file in
+``/etc/profile.d/`` to do this:
+
+.. code-block:: none
+
+    echo 'export PATH="/opt/python/bin:$PATH"' | sudo tee /etc/profile.d/opt-python.sh
+    source /etc/profile.d/opt-python.sh
+
+Now, install pip with easy_install:
+
+.. code-block:: none
+
+    sudo /opt/python/bin/easy_install-3.7 pip
+
+openSUSE Tumbleweed
+*******************
+
+openSUSE Tumbleweed has all required dependencies available in official repositories. Install them
+with zypper:
+
+.. code-block:: none
+
+    sudo zypper install python3-base python3-pip git-core java-12-openjdk-headless
+    sudo zypper install -t pattern devel_basis
+
 .. _install-ubuntu:
-.. _install-ubuntu-bionic:
-.. _install-ubuntu-disco:
 
-~~~~~~~~~~~~~~~~~~~~~~
-Ubuntu 18.04 and above
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~
+Ubuntu
+~~~~~~
 
-Ubuntu 18.04 and above has all required packages available in official repositories. Install them
-with apt:
+.. note:: **Ubuntu 16.04 Users**
+
+    You must add a 3rd-party repository to install Python 3.7 on Ubuntu 16.04 with apt. We
+    recommend the ``deadsnakes`` repository:
+
+    .. code-block:: none
+
+        sudo apt install software-properties-common
+        sudo add-apt-repository ppa:deadsnakes/ppa
+
+Install the pre-requirements with apt:
 
 .. code-block:: none
 
     sudo apt update
-    sudo apt install python3.7 python3.7-dev python3.7-venv python3-pip git default-jre-headless \
-      build-essential
-
-.. _install-ubuntu-xenial:
-
-~~~~~~~~~~~~
-Ubuntu 16.04
-~~~~~~~~~~~~
-
-We recommend adding the ``deadsnakes`` apt repository to install Python 3.7 or greater:
-
-.. code-block:: none
-
-    sudo apt install software-properties-common
-    sudo add-apt-repository ppa:deadsnakes/ppa
-    sudo apt update
-
-Now, install the pre-requirements with the following command:
-
-.. code-block:: none
-
     sudo apt install python3.7 python3.7-dev python3.7-venv python3-pip git default-jre-headless \
       build-essential
 
