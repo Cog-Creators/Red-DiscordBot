@@ -21,7 +21,7 @@ class ModSettings(MixinMeta):
         if ctx.invoked_subcommand is None:
             guild = ctx.guild
             # Display current settings
-            data = await self.config.guild(guild).all()
+            data = await self.conf.guild(guild).all()
             delete_repeats = data["delete_repeats"]
             ban_mention_spam = data["ban_mention_spam"]
             respect_hierarchy = data["respect_hierarchy"]
