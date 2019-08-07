@@ -152,6 +152,13 @@ class Audio(commands.Cog):
             raise RuntimeError(
                 "Not running audio command due to invalid machine architecture for Lavalink."
             )
+        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        if dj_enabled:
+            dj_role_obj = ctx.guild.get_role(await self.config.guild(ctx.guild).dj_role())
+            if not dj_role_obj:
+                await self.config.guild(ctx.guild).dj_enabled.set(None)
+                await self.config.guild(ctx.guild).dj_role.set(None)
+                await self._embed_msg(ctx, _("No DJ role found. Disabling DJ mode."))
 
     async def initialize(self):
         pass_config_to_dependencies(self.config, self.bot, await self.config.localpath())
@@ -886,8 +893,8 @@ class Audio(commands.Cog):
 
         DJ mode allows users with the DJ role to use audio commands.
         """
-        dj_role_id = await self.config.guild(ctx.guild).dj_role()
-        if dj_role_id is None:
+        dj_role = ctx.guild.get_role(await self.config.guild(ctx.guild).dj_role())
+        if dj_role is None:
             await self._embed_msg(
                 ctx, _("Please set a role to use with DJ mode. Enter the role name or ID now.")
             )
@@ -1111,8 +1118,8 @@ class Audio(commands.Cog):
     async def settings(self, ctx: commands.Context):
         """Show the current settings."""
         is_owner = await ctx.bot.is_owner(ctx.author)
-        data = await self.config.guild(ctx.guild).all()
         global_data = await self.config.all()
+        data = await self.config.guild(ctx.guild).all()
         dj_role_obj = ctx.guild.get_role(data["dj_role"])
         dj_enabled = data["dj_enabled"]
         emptydc_enabled = data["emptydc_enabled"]
@@ -1153,7 +1160,7 @@ class Audio(commands.Cog):
             msg += _("Auto Pause timer: [{num_seconds}]\n").format(
                 num_seconds=dynamic_time(emptypause_timer)
             )
-        if dj_enabled:
+        if dj_enabled and dj_role_obj:
             msg += _("DJ Role:          [{role.name}]\n").format(role=dj_role_obj)
         if jukebox:
             msg += _("Jukebox:          [{jukebox_name}]\n").format(jukebox_name=jukebox)

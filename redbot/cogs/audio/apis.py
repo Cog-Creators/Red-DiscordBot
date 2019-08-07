@@ -8,7 +8,7 @@ import os
 import random
 import sqlite3
 import time
-from typing import Callable, Dict, List, Mapping, NoReturn, Optional, Tuple, Union
+from typing import Callable, Dict, List, Mapping, NoReturn, Optional, Tuple, Union, NamedTuple
 
 import aiohttp
 import discord
@@ -1029,11 +1029,12 @@ class MusicCache:
             except Exception:
                 pass
 
-        if playlist is None or not getattr(playlist, "tracks", None):
+        if not tracks or not getattr(playlist, "tracks", None):
             if cache_enabled:
                 tracks = await self.play_random()
             if not tracks:
-                results = await player.load_tracks(_TOP_100_US)
+                ctx = NamedTuple("Context", "message")
+                results, called_api = await self.lavalink_query(ctx(player.channel.guild), player, _TOP_100_US)
                 tracks = results.tracks
 
         if tracks:
