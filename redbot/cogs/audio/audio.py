@@ -2405,9 +2405,9 @@ class Audio(commands.Cog):
             )
         if not await self._currency_check(ctx, guild_data["jukebox_price"]):
             return
+        await self.music_cache.autoplay(player)
         if not guild_data["auto_play"]:
-            await self.music_cache.autoplay(player)
-        await ctx.invoke(self._autoplay_toggle)
+            await ctx.invoke(self._autoplay_toggle)
 
     async def _get_spotify_tracks(self, ctx: commands.Context, query: dataclasses.Query):
         if ctx.invoked_with == "play":
