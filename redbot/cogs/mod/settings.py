@@ -21,12 +21,13 @@ class ModSettings(MixinMeta):
         if ctx.invoked_subcommand is None:
             guild = ctx.guild
             # Display current settings
-            delete_repeats = await self.settings.guild(guild).delete_repeats()
-            ban_mention_spam = await self.settings.guild(guild).ban_mention_spam()
-            respect_hierarchy = await self.settings.guild(guild).respect_hierarchy()
-            delete_delay = await self.settings.guild(guild).delete_delay()
-            reinvite_on_unban = await self.settings.guild(guild).reinvite_on_unban()
-            default_days = await self.settings.guild(guild).default_days()
+            data = await self.config.guild(guild).all()
+            delete_repeats = data["delete_repeats"]
+            ban_mention_spam = data["ban_mention_spam"]
+            respect_hierarchy = data["respect_hierarchy"]
+            delete_delay = data["delete_delay"]
+            reinvite_on_unban = data["reinvite_on_unban"]
+            default_days = data["default_days"]
             msg = ""
             msg += _("Delete repeats: {num_repeats}\n").format(
                 num_repeats=_("after {num} repeats").format(num=delete_repeats)
