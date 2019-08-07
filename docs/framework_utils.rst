@@ -79,7 +79,7 @@ background task and the callback is called multiple times.
         if role in member.roles:
             await member.remove_roles(role, reason="Removing reactrole")
         else:
-            await member.add_roles(role, "Adding reactrole")
+            await member.add_roles(role, reason="Adding reactrole")
 
 Extending Provided Menus
 ++++++++++++++++++++++++
