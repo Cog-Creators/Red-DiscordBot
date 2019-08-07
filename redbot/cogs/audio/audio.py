@@ -410,9 +410,7 @@ class Audio(commands.Cog):
                         await player.fetch("notify_message").delete()
                     except discord.errors.NotFound:
                         pass
-                if player.current.extras.get("autoplay") and (
-                    prev_song is None
-                ):
+                if player.current.extras.get("autoplay") and (prev_song is None):
                     embed = discord.Embed(
                         colour=(await self._get_embed_colour(notify_channel)),
                         title=_("Auto play started."),
