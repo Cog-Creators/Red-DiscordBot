@@ -212,8 +212,7 @@ class KickBanMixin(MixinMeta):
         """Ban a user from this server and optionally delete days of messages.
 
         If days is not a number, it's treated as the first word of the reason.
-        Minimum 0 days, maximum 7. If not specified, and defaultdays is set,
-        it will be used instead."""
+        Minimum 0 days, maximum 7. If not specified, defaultdays setting will be used instead."""
         guild = ctx.guild
         if days is None:
             days = await self.settings.guild(guild).default_days()
