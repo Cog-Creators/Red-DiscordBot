@@ -14,7 +14,7 @@ import random
 import re
 import time
 from io import StringIO
-from typing import Optional, Tuple, Union, cast
+from typing import Optional, Tuple, Union, cast, List
 
 import aiohttp
 import discord
@@ -4172,7 +4172,6 @@ class Audio(commands.Cog):
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
 
         scope, author, guild = scope_data
-
         try:
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild
@@ -4191,7 +4190,7 @@ class Audio(commands.Cog):
             playlist = await get_playlist(playlist_id, scope, self.bot, guild, author.id)
             if playlist.url:
                 player = lavalink.get_player(ctx.guild.id)
-                await self._maybe_update_playlist(ctx, player, playlist)
+                added, removed, playlist = await self._maybe_update_playlist(ctx, player, playlist)
             else:
                 return await self._embed_msg(ctx, _("Custom playlists cannot be updated."))
         except RuntimeError:
@@ -4206,10 +4205,59 @@ class Audio(commands.Cog):
                 ctx, _("You need to specify the Guild ID for the guild to lookup.")
             )
         else:
-            return await self._embed_msg(
-                ctx,
-                _("{name} ({id}) has been updated.").format(id=playlist.id, name=playlist.name),
-            )
+            if added or removed:
+                _colour = await ctx.embed_colour()
+                embeds = []
+                total_added = len(added)
+                total_removed = len(removed)
+                total_pages = math.ceil(total_removed / 10) + math.ceil(total_added / 10)
+                page_count = 0
+                if removed:
+                    removed_text = ""
+                    for i, track in enumerate(removed, 1):
+                        if len(track.title) > 40:
+                            track_title = str(track.title).replace("[", "")
+                            track_title = "{}...".format((track_title[:40]).rstrip(" "))
+                        else:
+                            track_title = track.title
+                        removed_text += f"`{i}.` **[{track_title}]({track.uri})**\n"
+                        if i % 10 == 0 or i == total_removed:
+                            page_count += 1
+                            embed = discord.Embed(
+                                title=_("Tracks removed"), colour=_colour, description=removed_text
+                            )
+                            text = _("Page {page_num}/{total_pages}").format(
+                                page_num=page_count, total_pages=total_pages
+                            )
+                            embed.set_footer(text=text)
+                            embeds.append(embed)
+                            removed_text = ""
+                if added:
+                    added_text = ""
+                    for i, track in enumerate(added, 1):
+                        if len(track.title) > 40:
+                            track_title = str(track.title).replace("[", "")
+                            track_title = "{}...".format((track_title[:40]).rstrip(" "))
+                        else:
+                            track_title = track.title
+                        added_text += f"`{i}.` **[{track_title}]({track.uri})**\n"
+                        if i % 10 == 0 or i == total_added:
+                            page_count += 1
+                            embed = discord.Embed(
+                                title=_("Tracks added"), colour=_colour, description=added_text
+                            )
+                            text = _("Page {page_num}/{total_pages}").format(
+                                page_num=page_count, total_pages=total_pages
+                            )
+                            embed.set_footer(text=text)
+                            embeds.append(embed)
+                            added_text = ""
+                await menu(ctx, embeds, DEFAULT_CONTROLS)
+            else:
+                return await self._embed_msg(
+                    ctx,
+                    _("No changes for {name} ({id}).").format(id=playlist.id, name=playlist.name),
+                )
 
     @checks.is_owner()
     @playlist.command(name="upload", usage="[args]")
@@ -4551,9 +4599,9 @@ class Audio(commands.Cog):
 
     async def _maybe_update_playlist(
         self, ctx: commands.Context, player: lavalink.player_manager.Player, playlist: Playlist
-    ) -> Playlist:
+    ) -> Tuple[List[lavalink.Track], List[lavalink.Track], Playlist]:
         if playlist.url is None:
-            return playlist
+            return [], [], playlist
         results = {}
         updated_tracks = await self._playlist_tracks(
             ctx, player, dataclasses.Query.process_input(playlist.url)
@@ -4563,8 +4611,15 @@ class Audio(commands.Cog):
             results["url"] = None
         if updated_tracks:  # Tracks have been updated
             results["tracks"] = updated_tracks
-        await playlist.edit(results)
-        return playlist
+
+        old_tracks = playlist.tracks_obj
+        new_tracks = [lavalink.Track(data=track) for track in updated_tracks]
+        removed = list(set(old_tracks) - set(new_tracks))
+        added = list(set(new_tracks) - set(old_tracks))
+        if removed or added:
+            await playlist.edit(results)
+
+        return added, removed, playlist
 
     async def _playlist_check(self, ctx: commands.Context):
         if not self._player_check(ctx):
