@@ -165,14 +165,14 @@ async def clear_react(bot: Red, message: discord.Message, emoji: dict = None):
 
 
 async def get_description(track):
-    query = dataclasses.Query.process_input(track)
-    if query.is_local:
+    if any(x in track.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]):
+        local_track = dataclasses.LocalPath(track.uri)
         if track.title != "Unknown title":
             return "**{} - {}**\n{}".format(
-                track.author, track.title, query.track.to_string_hidden()
+                track.author, track.title, local_track.to_string_hidden()
             )
         else:
-            return query.track.to_string_hidden()
+            return local_track.to_string_hidden()
     else:
         return "**[{}]({})**".format(track.title, track.uri)
 
@@ -297,8 +297,7 @@ class CacheLevel:
         return self.is_subset(other) and self != other
 
     def is_strict_superset(self, other):
-        """Returns ``True`` if the caching level
-        on other are a strict superset of those on self."""
+        """Returns ``True`` if the caching level on other are a strict superset of those on self."""
         return self.is_superset(other) and self != other
 
     __le__ = is_subset

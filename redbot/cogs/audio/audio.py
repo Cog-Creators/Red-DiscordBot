@@ -333,7 +333,10 @@ class Audio(commands.Cog):
                     get_single_title = lavalink.active_players()[0].current.uri
                     if not get_single_title.startswith("http"):
                         get_single_title = get_single_title.rsplit("/", 1)[-1]
-                elif f"localtracks{os.sep}" in lavalink.active_players()[0].current.uri:
+                elif any(
+                    x in lavalink.active_players()[0].current.uri
+                    for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
+                ):
                     get_single_title = "{} - {}".format(
                         lavalink.active_players()[0].current.author,
                         lavalink.active_players()[0].current.title,
@@ -421,7 +424,14 @@ class Audio(commands.Cog):
                     )
                     await notify_channel.send(embed=embed)
 
-                if f"localtracks{os.sep}" in player.current.uri if player.current else False:
+                if (
+                    any(
+                        x in player.current.uri
+                        for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
+                    )
+                    if player.current
+                    else False
+                ):
                     if player.current.title != "Unknown title":
                         description = "**{} - {}**\n{}".format(
                             player.current.author,
@@ -487,7 +497,10 @@ class Audio(commands.Cog):
             message_channel = player.fetch("channel")
             if message_channel:
                 message_channel = self.bot.get_channel(message_channel)
-                if f"localtracks{os.sep}" in player.current.uri:
+                if any(
+                    x in player.current.uri
+                    for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
+                ):
                     query = dataclasses.Query.process_input(player.current.uri)
                     if player.current.title == "Unknown title":
                         description = "{}".format(query.track.to_string_hidden())
@@ -1477,7 +1490,9 @@ class Audio(commands.Cog):
                 int((datetime.datetime.utcnow() - connect_start).total_seconds())
             )
             try:
-                if f"localtracks{os.sep}" in p.current.uri:
+                if any(
+                    x in p.current.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
+                ):
                     if p.current.title == "Unknown title":
                         current_title = localtracks.LocalPath(p.current.uri).to_string_hidden()
                         msg += "{} [`{}`]: **{}**\n".format(
@@ -1548,7 +1563,7 @@ class Audio(commands.Cog):
         bump_song = player.queue[bump_index]
         player.queue.insert(0, bump_song)
         removed = player.queue.pop(index)
-        if f"localtracks{os.sep}" in removed.uri:
+        if any(x in removed.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]):
             localtrack = dataclasses.LocalPath(removed.uri)
             if removed.title != "Unknown title":
                 description = "**{} - {}**\n{}".format(
@@ -2112,7 +2127,9 @@ class Audio(commands.Cog):
                 dur = "LIVE"
             else:
                 dur = lavalink.utils.format_time(player.current.length)
-            if f"localtracks{os.sep}" in player.current.uri:
+            if any(
+                x in player.current.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
+            ):
                 if not player.current.title == "Unknown title":
                     song = "**{track.author} - {track.title}**\n{uri}\n"
                 else:
@@ -2124,7 +2141,10 @@ class Audio(commands.Cog):
             song = song.format(
                 track=player.current,
                 uri=dataclasses.LocalPath(player.current.uri).to_string_hidden()
-                if f"localtracks{os.sep}" in player.current.uri
+                if any(
+                    x in player.current.uri
+                    for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
+                )
                 else player.current.uri,
                 arrow=arrow,
                 pos=pos,
@@ -2237,7 +2257,7 @@ class Audio(commands.Cog):
 
         if not player.current:
             return await self._embed_msg(ctx, _("Nothing playing."))
-        if f"localtracks{os.sep}" in player.current.uri:
+        if any(x in player.current.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]):
             query = dataclasses.Query.process_input(player.current.uri)
             if player.current.title == "Unknown title":
                 description = "{}".format(query.track.to_string_hidden())
@@ -2866,7 +2886,9 @@ class Audio(commands.Cog):
                 return await self._embed_msg(
                     ctx, _("Nothing found. Check your Lavalink logs for details.")
                 )
-            if f"localtracks{os.sep}" in single_track.uri:
+            if any(
+                x in single_track.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
+            ):
                 if single_track.title != "Unknown title":
                     description = "**{} - {}**\n{}".format(
                         single_track.author,
@@ -4284,7 +4306,8 @@ class Audio(commands.Cog):
                 ):
                     log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
                     continue
-                if f"localtracks{os.sep}" in track.uri:
+                if any(x in track.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]):
+
                     local_path = dataclasses.LocalPath(track.uri)
                     if not await self._localtracks_check(ctx):
                         pass
@@ -4954,7 +4977,9 @@ class Audio(commands.Cog):
             player.queue.insert(0, bump_song)
             player.queue.pop(queue_len)
             await player.skip()
-            if f"localtracks{os.sep}" in player.current.uri:
+            if any(
+                x in player.current.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
+            ):
                 query = dataclasses.Query.process_input(player.current.uri)
                 if player.current.title == "Unknown title":
                     description = "{}".format(query.track.to_string_hidden())
@@ -5003,7 +5028,10 @@ class Audio(commands.Cog):
                     dur = "LIVE"
                 else:
                     dur = lavalink.utils.format_time(player.current.length)
-                if f"localtracks{os.sep}" in player.current.uri:
+                if any(
+                    x in player.current.uri
+                    for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
+                ):
                     if player.current.title != "Unknown title":
                         song = "**{track.author} - {track.title}**\n{uri}\n"
                     else:
@@ -5015,7 +5043,10 @@ class Audio(commands.Cog):
                 song = song.format(
                     track=player.current,
                     uri=dataclasses.LocalPath(player.current.uri).to_string_hidden()
-                    if f"localtracks{os.sep}" in player.current.uri
+                    if any(
+                        x in player.current.uri
+                        for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
+                    )
                     else player.current.uri,
                     arrow=arrow,
                     pos=pos,
@@ -5090,7 +5121,9 @@ class Audio(commands.Cog):
         if player.current.is_stream:
             queue_list += _("**Currently livestreaming:**")
 
-        elif f"localtracks{os.sep}" in player.current.uri:
+        elif any(
+            x in player.current.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
+        ):
             if player.current.title != "Unknown title":
                 queue_list += "\n".join(
                     (
@@ -5126,7 +5159,7 @@ class Audio(commands.Cog):
                 track_title = track.title
             req_user = track.requester
             track_idx = i + 1
-            if f"localtracks{os.sep}" in track.uri:
+            if any(x in track.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]):
                 if track.title == "Unknown title":
                     queue_list += f"`{track_idx}.` " + ", ".join(
                         (
@@ -5441,7 +5474,7 @@ class Audio(commands.Cog):
             )
         index -= 1
         removed = player.queue.pop(index)
-        if f"localtracks{os.sep}" in removed.uri:
+        if any(x in search_choice.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]):
             local_path = dataclasses.LocalPath(removed.uri).to_string_hidden()
             if removed.title == "Unknown title":
                 removed_title = local_path
@@ -5667,7 +5700,10 @@ class Audio(commands.Cog):
         except IndexError:
             search_choice = tracks[-1]
         try:
-            if f"localtracks{os.sep}" in search_choice.uri:
+            if any(
+                x in search_choice.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
+            ):
+
                 localtrack = dataclasses.LocalPath(search_choice.uri)
                 if search_choice.title != "Unknown title":
                     description = "**{} - {}**\n{}".format(
@@ -5747,7 +5783,7 @@ class Audio(commands.Cog):
             if search_track_num == 0:
                 search_track_num = 5
             try:
-                if f"localtracks{os.sep}" in track.uri:
+                if any(x in track.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]):
                     search_list += "`{0}.` **{1}**\n[{2}]\n".format(
                         search_track_num,
                         track.title,
@@ -5759,7 +5795,10 @@ class Audio(commands.Cog):
                     )
             except AttributeError:
                 # query = Query.process_input(track)
-                if f"localtracks{os.sep}" not in str(track) and command != "search":
+                if (
+                    any(x in str(track) for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"])
+                    and command != "search"
+                ):
                     search_list += "`{}.` **{}**\n".format(search_track_num, track)
                     folder = True
                 elif command == "search":
