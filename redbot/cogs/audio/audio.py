@@ -3851,9 +3851,24 @@ class Audio(commands.Cog):
             for track in playlist.tracks:
                 track_idx = track_idx + 1
                 query = dataclasses.Query.process_input(track["info"]["uri"])
-                msg += "`{}.` **[{}]({})**\n".format(
-                    track_idx, track["info"]["title"], query.to_string_user()
-                )
+                if any(
+                    x in str(query)
+                    for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
+                ):
+                    if track["info"]["title"] != "Unknown title":
+                        msg += "`{}.` **{} - {}**\n{}\n".format(
+                            track_idx,
+                            track["info"]["author"],
+                            track["info"]["title"],
+                            query.to_string_user(),
+                        )
+                    else:
+                        msg += "`{}.` {}\n".format(track_idx, query.to_string_user())
+                else:
+                    msg += "`{}.` **[{}]({})**\n".format(
+                        track_idx, track["info"]["title"], track["info"]["uri"]
+                    )
+
         else:
             msg = "No tracks."
 
@@ -5474,7 +5489,7 @@ class Audio(commands.Cog):
             )
         index -= 1
         removed = player.queue.pop(index)
-        if any(x in search_choice.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]):
+        if any(x in removed.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]):
             local_path = dataclasses.LocalPath(removed.uri).to_string_hidden()
             if removed.title == "Unknown title":
                 removed_title = local_path
