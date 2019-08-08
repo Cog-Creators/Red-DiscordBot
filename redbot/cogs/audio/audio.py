@@ -317,7 +317,9 @@ class Audio(commands.Cog):
                 "tracebacks for details."
             )
 
-    async def event_handler(self, player, event_type, extra):
+    async def event_handler(
+        self, player: lavalink.Player, event_type: lavalink.LavalinkEvents, extra
+    ):
         disconnect = await self.config.guild(player.channel.guild).disconnect()
         autoplay = await self.config.guild(player.channel.guild).auto_play()
         notify = await self.config.guild(player.channel.guild).notify()
@@ -630,89 +632,89 @@ class Audio(commands.Cog):
         pass
 
     @_perms_blacklist.command(name="add")
-    async def _perms_blacklist_add(self, ctx: commands.Context, *, url_or_keyword: str):
+    async def _perms_blacklist_add(self, ctx: commands.Context, *, keyword: str):
         """Adds a keyword to the blacklist."""
-        url_or_keyword = url_or_keyword.lower().strip()
-        if not url_or_keyword:
+        keyword = keyword.lower().strip()
+        if not keyword:
             return await ctx.send_help()
         exists = False
         async with self.config.guild(ctx.guild).url_keyword_blacklist() as blacklist:
-            if url_or_keyword in blacklist:
+            if keyword in blacklist:
                 exists = True
             else:
-                blacklist.append(url_or_keyword)
+                blacklist.append(keyword)
         if exists:
             return await self._embed_msg(ctx, _("Keyword already in the blacklist."))
         else:
             embed = discord.Embed(title=_("Blacklist modified"), colour=await ctx.embed_colour())
             embed.description = _("Added: `{blacklisted}` to the blacklist.").format(
-                blacklisted=url_or_keyword
+                blacklisted=keyword
             )
             await ctx.send(embed=embed)
 
     @_perms_whitelist.command(name="add")
-    async def _perms_whitelist_add(self, ctx: commands.Context, *, url_or_keyword: str):
+    async def _perms_whitelist_add(self, ctx: commands.Context, *, keyword: str):
         """Adds a keyword to the whitelist.
 
         If anything is added to whitelist, it will blacklist everything else.
         """
-        url_or_keyword = url_or_keyword.lower().strip()
-        if not url_or_keyword:
+        keyword = keyword.lower().strip()
+        if not keyword:
             return await ctx.send_help()
         exists = False
         async with self.config.guild(ctx.guild).url_keyword_whitelist() as whitelist:
-            if url_or_keyword in whitelist:
+            if keyword in whitelist:
                 exists = True
             else:
-                whitelist.append(url_or_keyword)
+                whitelist.append(keyword)
         if exists:
             return await self._embed_msg(ctx, _("Keyword already in the whitelist."))
         else:
             embed = discord.Embed(title=_("Whitelist modified"), colour=await ctx.embed_colour())
             embed.description = _("Added: `{whitelisted}` to the whitelist.").format(
-                whitelisted=url_or_keyword
+                whitelisted=keyword
             )
             await ctx.send(embed=embed)
 
     @_perms_blacklist.command(name="delete", aliases=["del", "remove"])
-    async def _perms_blacklist_delete(self, ctx: commands.Context, *, url_or_keyword: str):
+    async def _perms_blacklist_delete(self, ctx: commands.Context, *, keyword: str):
         """Removes a keyword from the blacklist."""
-        url_or_keyword = url_or_keyword.lower().strip()
-        if not url_or_keyword:
+        keyword = keyword.lower().strip()
+        if not keyword:
             return await ctx.send_help()
         exists = True
         async with self.config.guild(ctx.guild).url_keyword_blacklist() as blacklist:
-            if url_or_keyword not in blacklist:
+            if keyword not in blacklist:
                 exists = False
             else:
-                blacklist.remove(url_or_keyword)
+                blacklist.remove(keyword)
         if not exists:
             return await self._embed_msg(ctx, _("Keyword is not in the blacklist."))
         else:
             embed = discord.Embed(title=_("Blacklist modified"), colour=await ctx.embed_colour())
             embed.description = _("Removed: `{blacklisted}` from the blacklist.").format(
-                blacklisted=url_or_keyword
+                blacklisted=keyword
             )
             await ctx.send(embed=embed)
 
     @_perms_whitelist.command(name="delete", aliases=["del", "remove"])
-    async def _perms_whitelist_delete(self, ctx: commands.Context, *, url_or_keyword: str):
+    async def _perms_whitelist_delete(self, ctx: commands.Context, *, keyword: str):
         """Removes a keyword from the whitelist."""
-        url_or_keyword = url_or_keyword.lower().strip()
-        if not url_or_keyword:
+        keyword = keyword.lower().strip()
+        if not keyword:
             return await ctx.send_help()
         exists = True
         async with self.config.guild(ctx.guild).url_keyword_whitelist() as whitelist:
-            if url_or_keyword not in whitelist:
+            if keyword not in whitelist:
                 exists = False
             else:
-                whitelist.remove(url_or_keyword)
+                whitelist.remove(keyword)
         if not exists:
             return await self._embed_msg(ctx, _("Keyword already in the whitelist."))
         else:
             embed = discord.Embed(title=_("Whitelist modified"), colour=await ctx.embed_colour())
             embed.description = _("Removed: `{whitelisted}` from the whitelist.").format(
-                whitelisted=url_or_keyword
+                whitelisted=keyword
             )
             await ctx.send(embed=embed)
 
@@ -1075,7 +1077,7 @@ class Audio(commands.Cog):
 
     @audioset.command()
     @checks.mod_or_permissions(administrator=True)
-    async def maxlength(self, ctx: commands.Context, seconds):
+    async def maxlength(self, ctx: commands.Context, seconds: Union[int, str]):
         """Max length of a track to queue in seconds. 0 to disable.
 
         Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).
@@ -2891,7 +2893,7 @@ class Audio(commands.Cog):
         self._play_lock(ctx, False)
 
     async def _spotify_playlist(
-        self, ctx: commands.Context, stype, query: dataclasses.Query, enqueue=False
+        self, ctx: commands.Context, stype: str, query: dataclasses.Query, enqueue: bool = False
     ):
 
         player = lavalink.get_player(ctx.guild.id)
@@ -5446,7 +5448,7 @@ class Audio(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
-    async def search(self, ctx: commands.Context, *, query):
+    async def search(self, ctx: commands.Context, *, query: str):
         """Pick a track with a search.
 
         Use `[p]search list <search term>` to queue all tracks found
@@ -5787,7 +5789,7 @@ class Audio(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def seek(self, ctx: commands.Context, seconds):
+    async def seek(self, ctx: commands.Context, seconds: Union[int, str]):
         """Seek ahead or behind on a track by seconds or a to a specific time.
 
         Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`)."""
@@ -6483,11 +6485,11 @@ class Audio(commands.Cog):
             await asyncio.sleep(5)
 
     @staticmethod
-    async def _embed_msg(ctx: commands.Context, title):
+    async def _embed_msg(ctx: commands.Context, title: str):
         embed = discord.Embed(colour=await ctx.embed_colour(), title=title)
         await ctx.send(embed=embed)
 
-    async def _eq_check(self, ctx: commands.Context, player: lavalink.player_manager.Player):
+    async def _eq_check(self, ctx: commands.Context, player: lavalink.Player):
         eq = player.fetch("eq", Equalizer())
 
         config_bands = await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands()
@@ -6506,7 +6508,9 @@ class Audio(commands.Cog):
             player.store("eq", eq)
             await self._apply_gains(ctx.guild.id, config_bands)
 
-    async def _eq_interact(self, ctx: commands.Context, player, eq, message, selected):
+    async def _eq_interact(
+        self, ctx: commands.Context, player: lavalink.Player, eq, message, selected
+    ):
         player.store("eq", eq)
         emoji = {
             "far_left": "◀",
