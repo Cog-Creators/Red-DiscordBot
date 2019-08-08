@@ -218,18 +218,16 @@ class KickBanMixin(MixinMeta):
         self,
         ctx: commands.Context,
         user: discord.Member,
-        days: Optional[int] = None,
+        days: Optional[int] = 0,
         *,
         reason: str = None,
     ):
         """Ban a user from this server and optionally delete days of messages.
 
         If days is not a number, it's treated as the first word of the reason.
-        Minimum 0 days, maximum 7. If not specified, defaultdays setting will be used instead."""
+        Minimum 0 days, maximum 7. Defaults to 0."""
         author = ctx.author
         guild = ctx.guild
-        if days is None:
-            days = await self.settings.guild(guild).default_days()
         if reason == None:
             reason = "No reason was given."
         else:
