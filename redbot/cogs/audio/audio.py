@@ -1931,13 +1931,14 @@ class Audio(commands.Cog):
         if not folder:
             await ctx.invoke(self.local_play, play_subfolders=play_subfolders)
         else:
+            folder = folder.strip()
             _dir = dataclasses.LocalPath.joinpath(folder)
             if not _dir.exists():
                 return await self._embed_msg(
                     ctx, _("No localtracks folder named {name}.").format(name=folder)
                 )
             query = dataclasses.Query.process_input(_dir, search_subfolders=play_subfolders)
-            await self._local_play_all(ctx, query, from_search=False)
+            await self._local_play_all(ctx, query, from_search=False if not folder else True)
 
     @local.command(name="play")
     async def local_play(self, ctx: commands.Context, play_subfolders: Optional[bool] = True):
@@ -3062,8 +3063,12 @@ class Audio(commands.Cog):
             if match_count > 10:
                 raise TooManyMatches(
                     f"{match_count} playlist match {original_input} "
-                    f"Please try to be more specific or use the playlist id."
+                    f"Please try to be more specific or use the playlist ID."
                 )
+        elif match_count == 1:
+            return correct_scope_matches[0][0], original_input
+        elif match_count == 0:
+            return None, original_input
 
         # TODO : Convert this section to a new paged reaction menu when Toby Menus are Merged
         pos_len = 3
@@ -4113,13 +4118,13 @@ class Audio(commands.Cog):
             await self._embed_msg(
                 ctx,
                 _(
-                    "{num} entries have been removed from the {playlist_name} ({id}) playlist."
+                    "{num} entries have been removed from the playlist {playlist_name} ({id})."
                 ).format(num=del_count, playlist_name=playlist.name, id=playlist.id),
             )
         else:
             await self._embed_msg(
                 ctx,
-                _("The track has been removed from the {playlist_name} ({id}) playlist.").format(
+                _("The track has been removed from the playlist: {playlist_name} ({id}).").format(
                     playlist_name=playlist.name, id=playlist.id
                 ),
             )
@@ -5243,48 +5248,45 @@ class Audio(commands.Cog):
         player.queue.clear()
         await self._embed_msg(ctx, _("The queue has been cleared."))
 
-    @queue.group(name="clean", autohelp=False)
+    @queue.command(name="clean")
     @commands.guild_only()
     async def _queue_clean(self, ctx: commands.Context):
         """Removes songs from the queue if the requester is not in the voice channel."""
-        if ctx.invoked_subcommand is None:
-            try:
-                player = lavalink.get_player(ctx.guild.id)
-            except KeyError:
-                return await self._embed_msg(ctx, _("There's nothing in the queue."))
-            dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
-            if not self._player_check(ctx) or not player.queue:
-                return await self._embed_msg(ctx, _("There's nothing in the queue."))
-            if dj_enabled:
-                if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
-                    ctx, ctx.author
-                ):
-                    return await self._embed_msg(
-                        ctx, _("You need the DJ role to clean the queue.")
-                    )
-            clean_tracks = []
-            removed_tracks = 0
-            listeners = player.channel.members
-            for track in player.queue:
-                if track.requester in listeners:
-                    clean_tracks.append(track)
-                else:
-                    removed_tracks += 1
-            player.queue = clean_tracks
-            if removed_tracks == 0:
-                await self._embed_msg(ctx, _("Removed 0 tracks."))
+        try:
+            player = lavalink.get_player(ctx.guild.id)
+        except KeyError:
+            return await self._embed_msg(ctx, _("There's nothing in the queue."))
+        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        if not self._player_check(ctx) or not player.queue:
+            return await self._embed_msg(ctx, _("There's nothing in the queue."))
+        if dj_enabled:
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
+                ctx, ctx.author
+            ):
+                return await self._embed_msg(ctx, _("You need the DJ role to clean the queue."))
+        clean_tracks = []
+        removed_tracks = 0
+        listeners = player.channel.members
+        for track in player.queue:
+            if track.requester in listeners:
+                clean_tracks.append(track)
             else:
-                await self._embed_msg(
-                    ctx,
-                    _(
-                        "Removed {removed_tracks} tracks queued by members o"
-                        "utside of the voice channel."
-                    ).format(removed_tracks=removed_tracks),
-                )
+                removed_tracks += 1
+        player.queue = clean_tracks
+        if removed_tracks == 0:
+            await self._embed_msg(ctx, _("Removed 0 tracks."))
+        else:
+            await self._embed_msg(
+                ctx,
+                _(
+                    "Removed {removed_tracks} tracks queued by members o"
+                    "utside of the voice channel."
+                ).format(removed_tracks=removed_tracks),
+            )
 
-    @_queue_clean.command(name="self", autohelp=False)
+    @queue.command(name="cleanself")
     @commands.guild_only()
-    async def _queue_clean_self(self, ctx: commands.Context):
+    async def _queue_cleanself(self, ctx: commands.Context):
         """Removes all tracks you requested from the queue."""
 
         try:
