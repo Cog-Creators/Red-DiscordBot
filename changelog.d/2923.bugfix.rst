@@ -1,0 +1,1 @@
+Check the recipient balance before transferring and stop transfer if will go above the maximum allowed balance.
