@@ -220,4 +220,3 @@ class ModSettings(MixinMeta):
             await ctx.send(_("Users will now be DM'd when they are kicked/banned."))
         else:
             await ctx.send(_("Users will not be DM'd when they are kicked/banned"))
-
