@@ -2467,10 +2467,8 @@ class Audio(commands.Cog):
             not ctx.author.voice or ctx.author.voice.channel != player.channel
         ) and not await self._can_instaskip(ctx, ctx.author):
             return await self._embed_msg(
-                ctx, _("You must be in the voice channel to use the play command.")
+                ctx, _("You must be in the voice channel to use the genre command.")
             )
-        if not await self._currency_check(ctx, guild_data["jukebox_price"]):
-            return
         api_data = await self._check_api_tokens()
 
         if (
@@ -2514,6 +2512,8 @@ class Audio(commands.Cog):
         query = dataclasses.Query.process_input(playlists_pick)
         if not query.valid:
             return await self._embed_msg(ctx, _("No tracks to play."))
+        if not await self._currency_check(ctx, guild_data["jukebox_price"]):
+            return
         if query.is_spotify:
             return await self._get_spotify_tracks(ctx, query)
         return await self._embed_msg(ctx, _("Couldn't find tracks for the selected playlist."))
