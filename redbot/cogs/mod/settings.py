@@ -27,7 +27,7 @@ class ModSettings(MixinMeta):
             respect_hierarchy = data["respect_hierarchy"]
             delete_delay = data["delete_delay"]
             reinvite_on_unban = data["reinvite_on_unban"]
-            default_days = data["default_days"]
+            toggle_dm = data["toggle_dm"]
             msg = ""
             msg += _("Delete repeats: {num_repeats}\n").format(
                 num_repeats=_("after {num} repeats").format(num=delete_repeats)
@@ -53,8 +53,6 @@ class ModSettings(MixinMeta):
             msg += _("Send message to users: {yes_or_no}\n").format(
                 yes_or_no=_("Yes") if toggle_dm else _("No")
             )
-            msg += _("Default days: {num_days} days\n").format(num_days=default_days)
-            await ctx.send(box(msg))
 
     @modset.command()
     @commands.guild_only()
