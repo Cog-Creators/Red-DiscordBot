@@ -218,16 +218,18 @@ class KickBanMixin(MixinMeta):
         self,
         ctx: commands.Context,
         user: discord.Member,
-        days: Optional[int] = 0,
+        days: Optional[int] = None,
         *,
         reason: str = None,
     ):
         """Ban a user from this server and optionally delete days of messages.
 
         If days is not a number, it's treated as the first word of the reason.
-        Minimum 0 days, maximum 7. Defaults to 0."""
+        Minimum 0 days, maximum 7. If not specified, defaultdays setting will be used instead."""
         author = ctx.author
         guild = ctx.guild
+        if days is None:
+            days = await self.settings.guild(guild).default_days()
         if reason == None:
             reason = "No reason was given."
         else:
@@ -241,12 +243,9 @@ class KickBanMixin(MixinMeta):
                 )
                 em.add_field(name=_("**Reason**"), value=reason, inline=False)
                 await user.send(embed=em)
-        if days == 0:
-            days = await self.settings.guild(guild).days()
         result = await self.ban_user(
             user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
         )
-
         if result is True:
             await ctx.send(_("Done. It was about time."))
         elif isinstance(result, str):
