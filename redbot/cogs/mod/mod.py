@@ -54,7 +54,6 @@ class Mod(
         "reinvite_on_unban": False,
         "current_tempbans": [],
         "toggle_dm": False,
-        "default_days": 0,
     }
 
     default_channel_settings = {"ignored": False}
@@ -81,6 +80,7 @@ class Mod(
         await self._maybe_update_config()
 
     def cog_unload(self):
+        self.registration_task.cancel()
         self.tban_expiry_task.cancel()
 
     async def _maybe_update_config(self):
