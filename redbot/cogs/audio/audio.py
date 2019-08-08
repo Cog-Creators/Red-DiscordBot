@@ -3850,8 +3850,9 @@ class Audio(commands.Cog):
         if track_len > 0:
             for track in playlist.tracks:
                 track_idx = track_idx + 1
+                query = dataclasses.Query.process_input(track["info"]["uri"])
                 msg += "`{}.` **[{}]({})**\n".format(
-                    track_idx, track["info"]["title"], track["info"]["uri"]
+                    track_idx, track["info"]["title"], query.to_string_user()
                 )
         else:
             msg = "No tracks."

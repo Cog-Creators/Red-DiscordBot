@@ -466,3 +466,8 @@ class Query:
         elif self.is_search and self.is_soundcloud:
             return f"scsearch:{self.track}"
         return self.track
+
+    def to_string_user(self):
+        if self.is_local:
+            return str(self.track.to_string_hidden())
+        return str(self._raw)
