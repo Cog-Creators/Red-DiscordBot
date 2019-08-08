@@ -2381,13 +2381,13 @@ class Audio(commands.Cog):
         """Pick a Playlist from a list of categories to start playing."""
 
         async def _category_search_menu(
-                ctx: commands.Context,
-                pages: list,
-                controls: dict,
-                message: discord.Message,
-                page: int,
-                timeout: float,
-                emoji: str,
+            ctx: commands.Context,
+            pages: list,
+            controls: dict,
+            message: discord.Message,
+            page: int,
+            timeout: float,
+            emoji: str,
         ):
             if message:
                 output = await self._genre_search_button_action(ctx, category_list, emoji, page)
@@ -2395,13 +2395,13 @@ class Audio(commands.Cog):
                 return output
 
         async def _playlist_search_menu(
-                ctx: commands.Context,
-                pages: list,
-                controls: dict,
-                message: discord.Message,
-                page: int,
-                timeout: float,
-                emoji: str,
+            ctx: commands.Context,
+            pages: list,
+            controls: dict,
+            message: discord.Message,
+            page: int,
+            timeout: float,
+            emoji: str,
         ):
             if message:
                 output = await self._genre_search_button_action(ctx, playlists_list, emoji, page)
@@ -2424,9 +2424,9 @@ class Audio(commands.Cog):
             "3⃣": _playlist_search_menu,
             "4⃣": _playlist_search_menu,
             "5⃣": _playlist_search_menu,
-            "⬅":  prev_page,
-            "❌":  close_menu,
-            "➡":  next_page,
+            "⬅": prev_page,
+            "❌": close_menu,
+            "➡": next_page,
         }
 
         guild_data = await self.config.guild(ctx.guild).all()
@@ -2438,9 +2438,9 @@ class Audio(commands.Cog):
                 return await self._embed_msg(ctx, msg)
             try:
                 if (
-                        not ctx.author.voice.channel.permissions_for(ctx.me).connect
-                        or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                        and userlimit(ctx.author.voice.channel)
+                    not ctx.author.voice.channel.permissions_for(ctx.me).connect
+                    or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
+                    and userlimit(ctx.author.voice.channel)
                 ):
                     return await self._embed_msg(
                         ctx, _("I don't have permission to connect to your channel.")
@@ -2464,7 +2464,7 @@ class Audio(commands.Cog):
         await self._eq_check(ctx, player)
         await self._data_check(ctx)
         if (
-                not ctx.author.voice or ctx.author.voice.channel != player.channel
+            not ctx.author.voice or ctx.author.voice.channel != player.channel
         ) and not await self._can_instaskip(ctx, ctx.author):
             return await self._embed_msg(
                 ctx, _("You must be in the voice channel to use the play command.")
@@ -2474,9 +2474,9 @@ class Audio(commands.Cog):
         api_data = await self._check_api_tokens()
 
         if (
-                not api_data["spotify_client_id"]
-                or not api_data["spotify_client_secret"]
-                or not api_data["youtube_api"]
+            not api_data["spotify_client_id"]
+            or not api_data["spotify_client_secret"]
+            or not api_data["youtube_api"]
         ):
             return await self._embed_msg(
                 ctx,
@@ -2493,16 +2493,22 @@ class Audio(commands.Cog):
         len_folder_pages = math.ceil(len(category_list) / 5)
         category_search_page_list = []
         for page_num in range(1, len_folder_pages + 1):
-            embed = await self._build_genre_search_page(ctx, category_list, page_num, _("Categories"))
+            embed = await self._build_genre_search_page(
+                ctx, category_list, page_num, _("Categories")
+            )
             category_search_page_list.append(embed)
         category_pick = await menu(ctx, category_search_page_list, CATEGORY_SEARCH_CONTROLS)
-        playlists_list = await self.music_cache.spotify_api.get_playlist_from_category(category_pick)
+        playlists_list = await self.music_cache.spotify_api.get_playlist_from_category(
+            category_pick
+        )
         if not playlists_list:
             return await self._embed_msg(ctx, _("No categories found, try again later."))
         len_folder_pages = math.ceil(len(playlists_list) / 5)
         playlists_search_page_list = []
         for page_num in range(1, len_folder_pages + 1):
-            embed = await self._build_genre_search_page(ctx, playlists_list, page_num, _("Playlists"))
+            embed = await self._build_genre_search_page(
+                ctx, playlists_list, page_num, _("Playlists")
+            )
             playlists_search_page_list.append(embed)
         playlists_pick = await menu(ctx, playlists_search_page_list, PLAYLIST_SEARCH_CONTROLS)
         query = dataclasses.Query.process_input(playlists_pick)
@@ -2549,8 +2555,7 @@ class Audio(commands.Cog):
         )
         embed.set_footer(
             text=_("Page {page_num}/{total_pages}").format(
-                page_num=page_num,
-                total_pages=search_num_pages,
+                page_num=page_num, total_pages=search_num_pages
             )
         )
         return embed
@@ -2610,7 +2615,7 @@ class Audio(commands.Cog):
             await self._embed_msg(ctx, _("Auto play started."))
 
     async def _get_spotify_tracks(self, ctx: commands.Context, query: dataclasses.Query):
-        if ctx.invoked_with == "play":
+        if ctx.invoked_with in ["play", "genre"]:
             enqueue_tracks = True
         else:
             enqueue_tracks = False
