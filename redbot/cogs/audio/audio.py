@@ -2380,7 +2380,7 @@ class Audio(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     async def genre(self, ctx: commands.Context):
-        """Pick a Playlist from a list of categories to start playing."""
+        """Pick a Spotify playlist from a list of categories to start playing."""
 
         async def _category_search_menu(
             ctx: commands.Context,
@@ -2433,6 +2433,21 @@ class Audio(commands.Cog):
             "➡": next_page,
         }
 
+        api_data = await self._check_api_tokens()
+        if (
+            not api_data["spotify_client_id"]
+            or not api_data["spotify_client_secret"]
+            or not api_data["youtube_api"]
+        ):
+            return await self._embed_msg(
+                ctx,
+                _(
+                    "The owner needs to set the Spotify client ID, Spotify client secret, "
+                    "and YouTube API key before Spotify URLs or codes can be used. "
+                    "\nSee `{prefix}audioset youtubeapi` and `{prefix}audioset spotifyapi` "
+                    "for instructions."
+                ).format(prefix=ctx.prefix),
+            )
         guild_data = await self.config.guild(ctx.guild).all()
         if not self._player_check(ctx):
             if self._connection_aborted:
@@ -2473,22 +2488,6 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx, _("You must be in the voice channel to use the genre command.")
             )
-        api_data = await self._check_api_tokens()
-
-        if (
-            not api_data["spotify_client_id"]
-            or not api_data["spotify_client_secret"]
-            or not api_data["youtube_api"]
-        ):
-            return await self._embed_msg(
-                ctx,
-                _(
-                    "The owner needs to set the Spotify client ID, Spotify client secret, "
-                    "and YouTube API key before Spotify URLs or codes can be used. "
-                    "\nSee `{prefix}audioset youtubeapi` and `{prefix}audioset spotifyapi` "
-                    "for instructions."
-                ).format(prefix=ctx.prefix),
-            )
         category_list = await self.music_cache.spotify_api.get_categories()
         if not category_list:
             return await self._embed_msg(ctx, _("No categories found, try again later."))
@@ -2499,7 +2498,9 @@ class Audio(commands.Cog):
                 ctx, category_list, page_num, _("Categories")
             )
             category_search_page_list.append(embed)
-        category_name, category_pick = await menu(ctx, category_search_page_list, CATEGORY_SEARCH_CONTROLS)
+        category_name, category_pick = await menu(
+            ctx, category_search_page_list, CATEGORY_SEARCH_CONTROLS
+        )
         playlists_list = await self.music_cache.spotify_api.get_playlist_from_category(
             category_pick
         )
@@ -2509,7 +2510,11 @@ class Audio(commands.Cog):
         playlists_search_page_list = []
         for page_num in range(1, len_folder_pages + 1):
             embed = await self._build_genre_search_page(
-                ctx, playlists_list, page_num, _("Playlists for {friendly_name}").format(friendly_name=category_name), playlist=True
+                ctx,
+                playlists_list,
+                page_num,
+                _("Playlists for {friendly_name}").format(friendly_name=category_name),
+                playlist=True,
             )
             playlists_search_page_list.append(embed)
         playlists_pick = await menu(ctx, playlists_search_page_list, PLAYLIST_SEARCH_CONTROLS)
