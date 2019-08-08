@@ -180,13 +180,18 @@ class KickBanMixin(MixinMeta):
                 reason = reason
             self == self.bot.get_cog("Mod")
             toggle = await self.settings.guild(guild).toggle_dm()
-            if toggle == True:
-                with contextlib.suppress(discord.HTTPException):
-                    em = discord.Embed(
-                        title=_("**You have been kicked from {guild}.**").format(guild=guild)
-                    )
-                    em.add_field(name=_("**Reason**"), value=reason, inline=False)
-                    await user.send(embed=em)
+            try:
+                if toggle == True:
+                    if guild.me.top_role >= user.top_role and user != guild.owner and author != user:
+                        with contextlib.suppress(discord.HTTPException):
+                            em = discord.Embed(
+                                title=_("**You have been kicked from {guild}.**").format(guild=guild)
+                            )
+                            em.add_field(name=_("**Reason**"), value=reason, inline=False)
+                            await user.send(embed=em)
+            except discord.HTTPException:
+                return
+
             await guild.kick(user, reason=audit_reason)
             log.info("{}({}) kicked {}({})".format(author.name, author.id, user.name, user.id))
         except discord.errors.Forbidden:
