@@ -2404,7 +2404,9 @@ class Audio(commands.Cog):
             emoji: str,
         ):
             if message:
-                output = await self._genre_search_button_action(ctx, playlists_list, emoji, page, playlist=True)
+                output = await self._genre_search_button_action(
+                    ctx, playlists_list, emoji, page, playlist=True
+                )
                 await message.delete()
                 return output
 
@@ -2519,7 +2521,9 @@ class Audio(commands.Cog):
         return await self._embed_msg(ctx, _("Couldn't find tracks for the selected playlist."))
 
     @staticmethod
-    async def _genre_search_button_action(ctx: commands.Context, options, emoji, page, playlist=False):
+    async def _genre_search_button_action(
+        ctx: commands.Context, options, emoji, page, playlist=False
+    ):
         try:
             if emoji == "1⃣":
                 search_choice = options[0 + (page * 5)]
@@ -6664,6 +6668,7 @@ class Audio(commands.Cog):
 
     @bump.error
     @disconnect.error
+    @genre.error
     @local_folder.error
     @local_play.error
     @local_search.error
