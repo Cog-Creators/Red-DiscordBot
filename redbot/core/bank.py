@@ -314,9 +314,7 @@ async def transfer_credits(from_: discord.Member, to: discord.Member, amount: in
 
     if await get_balance(to) + amount > MAX_BALANCE:
         currency = (
-            await get_currency_name()
-            if await is_global()
-            else await get_currency_name(to.guild)
+            await get_currency_name() if await is_global() else await get_currency_name(to.guild)
         )
         raise errors.BalanceTooHigh(
             user=to.display_name, max_balance=MAX_BALANCE, currency_name=currency
