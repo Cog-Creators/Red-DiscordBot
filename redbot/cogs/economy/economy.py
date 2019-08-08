@@ -554,7 +554,7 @@ class Economy(commands.Cog):
                         payday_time=await conf.PAYDAY_TIME(),
                         payday_amount=await conf.PAYDAY_CREDITS(),
                         register_amount=await bank.get_default_balance(guild),
-                        maximum_bal=await bank.get_max_balance(guild)
+                        maximum_bal=await bank.get_max_balance(guild),
                     )
                 )
             )
