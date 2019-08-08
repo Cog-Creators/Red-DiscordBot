@@ -242,7 +242,15 @@ class SpotifyAPI:
         params = {}
         result = await self.get_call(url, params=params)
         playlists = result.get("playlists", {}).get("items", [])
-        return [{c["name"]: c["uri"]} for c in playlists]
+        return [
+            {
+                "name": c["name"],
+                "uri": c["uri"],
+                "url": c.get("external_urls", {}).get("spotify"),
+                "tracks": c.get("tracks", {}).get("total", "Unknown"),
+            }
+            for c in playlists
+        ]
 
 
 class YouTubeAPI:

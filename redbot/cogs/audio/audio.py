@@ -2404,7 +2404,7 @@ class Audio(commands.Cog):
             emoji: str,
         ):
             if message:
-                output = await self._genre_search_button_action(ctx, playlists_list, emoji, page)
+                output = await self._genre_search_button_action(ctx, playlists_list, emoji, page, playlist=True)
                 await message.delete()
                 return output
 
@@ -2507,7 +2507,7 @@ class Audio(commands.Cog):
         playlists_search_page_list = []
         for page_num in range(1, len_folder_pages + 1):
             embed = await self._build_genre_search_page(
-                ctx, playlists_list, page_num, _("Playlists")
+                ctx, playlists_list, page_num, _("Playlists"), playlist=True
             )
             playlists_search_page_list.append(embed)
         playlists_pick = await menu(ctx, playlists_search_page_list, PLAYLIST_SEARCH_CONTROLS)
@@ -2519,7 +2519,7 @@ class Audio(commands.Cog):
         return await self._embed_msg(ctx, _("Couldn't find tracks for the selected playlist."))
 
     @staticmethod
-    async def _genre_search_button_action(ctx: commands.Context, options, emoji, page):
+    async def _genre_search_button_action(ctx: commands.Context, options, emoji, page, playlist=False):
         try:
             if emoji == "1⃣":
                 search_choice = options[0 + (page * 5)]
@@ -2533,10 +2533,15 @@ class Audio(commands.Cog):
                 search_choice = options[4 + (page * 5)]
         except IndexError:
             search_choice = options[-1]
-        return list(search_choice.values())[0]
+        if not playlist:
+            return list(search_choice.values())[0]
+        else:
+            return search_choice.get("uri")
 
     @staticmethod
-    async def _build_genre_search_page(ctx: commands.Context, tracks, page_num, title):
+    async def _build_genre_search_page(
+        ctx: commands.Context, tracks, page_num, title, playlist=False
+    ):
         search_num_pages = math.ceil(len(tracks) / 5)
         search_idx_start = (page_num - 1) * 5
         search_idx_end = search_idx_start + 5
@@ -2548,7 +2553,15 @@ class Audio(commands.Cog):
             if search_track_num == 0:
                 search_track_num = 5
                 # query = Query.process_input(track)
-            search_list += "`{}.` **{}**\n".format(search_track_num, list(entry.keys())[0])
+            if playlist:
+                name = "**[{}]({})** - {}".format(
+                    entry.get("name"),
+                    entry.get("url"),
+                    str(entry.get("tracks")) + " " + _("tracks"),
+                )
+            else:
+                name = f"{list(entry.keys())[0]}"
+            search_list += "`{}.` {}\n".format(search_track_num, name)
 
         embed = discord.Embed(
             colour=await ctx.embed_colour(), title=title, description=search_list
