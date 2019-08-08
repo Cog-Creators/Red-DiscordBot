@@ -81,7 +81,10 @@ class LocalPath(ChdirClean):
             _path.relative_to(self.localtrack_folder)
             self.path = _path
         except (ValueError, TypeError):
+            if path and path.startswith("localtracks/"):
+                path = path.replace("localtracks/", "", 1)
             self.path = self.localtrack_folder.joinpath(path) if path else self.localtrack_folder
+
         try:
             if self.path.is_file():
                 parent = self.path.parent

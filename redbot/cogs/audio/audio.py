@@ -4309,12 +4309,10 @@ class Audio(commands.Cog):
                     continue
                 if any(x in track.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]):
                     local_path = dataclasses.LocalPath(track.uri)
-                    print(local_path.to_string())
                     if not await self._localtracks_check(ctx):
                         pass
                     if not local_path.exists() and not local_path.is_file():
                         continue
-                print(track.uri)
                 if maxlength > 0:
                     if not track_limit(track.length, maxlength):
                         continue
