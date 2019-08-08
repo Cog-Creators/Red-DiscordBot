@@ -3845,18 +3845,20 @@ class Audio(commands.Cog):
             )
         track_len = len(playlist.tracks)
 
-        msg = ""
+        msg = "​"
         track_idx = 0
         if track_len > 0:
+            spaces = "\N{EN SPACE}" * (len(str(len(playlist.tracks))) + 2)
             for track in playlist.tracks:
                 track_idx = track_idx + 1
                 query = dataclasses.Query.process_input(track["info"]["uri"])
                 if any(x in str(query) for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]):
                     if track["info"]["title"] != "Unknown title":
-                        msg += "`{}.` **{} - {}**\n{}\n".format(
+                        msg += "`{}.` **{} - {}**\n{}{}\n".format(
                             track_idx,
                             track["info"]["author"],
                             track["info"]["title"],
+                            spaces,
                             query.to_string_user(),
                         )
                     else:
@@ -3879,7 +3881,7 @@ class Audio(commands.Cog):
             )
 
         page_list = []
-        for page in pagify(msg, delims=["\n"], page_length=1000):
+        for page in pagify(msg, delims=["\n"], page_length=2000):
             embed = discord.Embed(
                 colour=await ctx.embed_colour(), title=embed_title, description=page
             )
