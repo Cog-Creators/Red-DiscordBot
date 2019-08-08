@@ -672,7 +672,7 @@ async def set_max_balance(amount: int, guild: discord.Guild = None) -> int:
         If the amount is invalid.
 
     """
-    if amount < 0 or amount > _MAX_BALANCE:
+    if not (0 <= amount <= _MAX_BALANCE):
         raise ValueError(
             "Amount must be greater than zero and less than {max:,}.".format(max=_MAX_BALANCE)
         )
