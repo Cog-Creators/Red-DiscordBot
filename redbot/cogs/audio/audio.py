@@ -2499,7 +2499,7 @@ class Audio(commands.Cog):
                 ctx, category_list, page_num, _("Categories")
             )
             category_search_page_list.append(embed)
-        category_pick = await menu(ctx, category_search_page_list, CATEGORY_SEARCH_CONTROLS)
+        category_name, category_pick = await menu(ctx, category_search_page_list, CATEGORY_SEARCH_CONTROLS)
         playlists_list = await self.music_cache.spotify_api.get_playlist_from_category(
             category_pick
         )
@@ -2509,7 +2509,7 @@ class Audio(commands.Cog):
         playlists_search_page_list = []
         for page_num in range(1, len_folder_pages + 1):
             embed = await self._build_genre_search_page(
-                ctx, playlists_list, page_num, _("Playlists"), playlist=True
+                ctx, playlists_list, page_num, _("Playlists for {friendly_name}").format(friendly_name=category_name), playlist=True
             )
             playlists_search_page_list.append(embed)
         playlists_pick = await menu(ctx, playlists_search_page_list, PLAYLIST_SEARCH_CONTROLS)
@@ -2540,7 +2540,7 @@ class Audio(commands.Cog):
         except IndexError:
             search_choice = options[-1]
         if not playlist:
-            return list(search_choice.values())[0]
+            return list(search_choice.items())[0]
         else:
             return search_choice.get("uri")
 
