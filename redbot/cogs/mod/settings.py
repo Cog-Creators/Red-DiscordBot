@@ -53,6 +53,7 @@ class ModSettings(MixinMeta):
             msg += _("Send message to users: {yes_or_no}\n").format(
                 yes_or_no=_("Yes") if toggle_dm else _("No")
             )
+            await ctx.send(box(msg))
 
     @modset.command()
     @commands.guild_only()
