@@ -223,18 +223,3 @@ class ModSettings(MixinMeta):
         else:
             await ctx.send(_("Users will not be DM'd when they are kicked/banned"))
 
-    @modset.command()
-    @commands.guild_only()
-    async def defaultdays(self, ctx: commands.Context, days: int = 0):
-        """Set the default days worth of messages to be deleted when a user is banned.
-        The amount of days has to be between 0 and 7.
-        """
-        guild = ctx.guild
-        if not (0 <= days <= 7):
-            return await ctx.send(_("Invalid days. Must be between 0 and 7."))
-        await self.settings.guild(guild).default_days.set(days)
-        await ctx.send(
-            _("{days} days worth of messages will be deleted when a user is banned.").format(
-                days=days
-            )
-        )
