@@ -1005,7 +1005,7 @@ class MusicCache:
             if recently_played:
                 track = random.choice(recently_played)
                 results = LoadResult(json.loads(track))
-                tracks = results.tracks
+                tracks = list(results.tracks)
         except Exception:
             tracks = []
 
@@ -1038,14 +1038,19 @@ class MusicCache:
                 results, called_api = await self.lavalink_query(
                     ctx(player.channel.guild), player, _TOP_100_US
                 )
-                tracks = results.tracks
-
+                tracks = list(results.tracks)
         if tracks:
-            random.shuffle(tracks)
-            random.shuffle(tracks)
-            random.shuffle(tracks)
-            valid = False
-            while valid is False:
+            multiple = len(tracks) > 1
+            if not multiple:
+                track = tracks[0]
+            else:
+                random.shuffle(tracks)
+                random.shuffle(tracks)
+                random.shuffle(tracks)
+
+            valid = not multiple
+
+            while valid is False and multiple:
                 track = random.choice(tracks)
                 query = dataclasses.Query.process_input(track)
                 if not query.valid:
@@ -1064,6 +1069,7 @@ class MusicCache:
                     )
                     continue
                 valid = True
+
             track.extras = {"autoplay": True}
             player.add(player.channel.guild.me, track)
             self.bot.dispatch(

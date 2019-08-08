@@ -543,7 +543,7 @@ class Audio(commands.Cog):
         await self._data_check(guild.me)
         query = dataclasses.Query.process_input(query)
         ctx = namedtuple("Context", "message")
-        results, called_api = self.music_cache.lavalink_query(ctx(guild), player, query)
+        results, called_api = await self.music_cache.lavalink_query(ctx(guild), player, query)
 
         if not results.tracks:
             log.debug(f"Query returned no tracks.")
@@ -574,7 +574,9 @@ class Audio(commands.Cog):
         if cog is not None:
             self.owns_autoplay = False
         else:
-            self.owns_autoplay = True
+            if self.owns_autoplay not in [True, False]:
+                raise RuntimeError("A Cog already has ownership of Auto Play")
+            self.owns_autoplay = cog
 
     @commands.group()
     @commands.guild_only()
