@@ -230,6 +230,20 @@ class SpotifyAPI:
             url, params=params, headers={"Authorization": "Bearer {0}".format(token)}
         )
 
+    async def get_categories(self) -> List[Dict[str, str]]:
+        url = "https://api.spotify.com/v1/browse/categories"
+        params = {}
+        result = await self.get_call(url, params=params)
+        categories = result.get("categories", {}).get("items", [])
+        return [{c["name"]: c["id"]} for c in categories]
+
+    async def get_playlist_from_category(self, category: str):
+        url = f"https://api.spotify.com/v1/browse/categories/{category}/playlists"
+        params = {}
+        result = await self.get_call(url, params=params)
+        playlists = result.get("playlists", {}).get("items", [])
+        return [{c["name"]: c["uri"]} for c in playlists]
+
 
 class YouTubeAPI:
     """Wrapper for the YouTube Data API."""

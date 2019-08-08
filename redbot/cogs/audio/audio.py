@@ -2377,6 +2377,187 @@ class Audio(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
+    async def genre(self, ctx: commands.Context):
+        """Pick a Playlist from a list of categories to start playing."""
+
+        async def _category_search_menu(
+                ctx: commands.Context,
+                pages: list,
+                controls: dict,
+                message: discord.Message,
+                page: int,
+                timeout: float,
+                emoji: str,
+        ):
+            if message:
+                output = await self._genre_search_button_action(ctx, category_list, emoji, page)
+                await message.delete()
+                return output
+
+        async def _playlist_search_menu(
+                ctx: commands.Context,
+                pages: list,
+                controls: dict,
+                message: discord.Message,
+                page: int,
+                timeout: float,
+                emoji: str,
+        ):
+            if message:
+                output = await self._genre_search_button_action(ctx, playlists_list, emoji, page)
+                await message.delete()
+                return output
+
+        CATEGORY_SEARCH_CONTROLS = {
+            "1⃣": _category_search_menu,
+            "2⃣": _category_search_menu,
+            "3⃣": _category_search_menu,
+            "4⃣": _category_search_menu,
+            "5⃣": _category_search_menu,
+            "⬅": prev_page,
+            "❌": close_menu,
+            "➡": next_page,
+        }
+        PLAYLIST_SEARCH_CONTROLS = {
+            "1⃣": _playlist_search_menu,
+            "2⃣": _playlist_search_menu,
+            "3⃣": _playlist_search_menu,
+            "4⃣": _playlist_search_menu,
+            "5⃣": _playlist_search_menu,
+            "⬅":  prev_page,
+            "❌":  close_menu,
+            "➡":  next_page,
+        }
+
+        guild_data = await self.config.guild(ctx.guild).all()
+        if not self._player_check(ctx):
+            if self._connection_aborted:
+                msg = _("Connection to Lavalink has failed.")
+                if await ctx.bot.is_owner(ctx.author):
+                    msg += " " + _("Please check your console or logs for details.")
+                return await self._embed_msg(ctx, msg)
+            try:
+                if (
+                        not ctx.author.voice.channel.permissions_for(ctx.me).connect
+                        or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
+                        and userlimit(ctx.author.voice.channel)
+                ):
+                    return await self._embed_msg(
+                        ctx, _("I don't have permission to connect to your channel.")
+                    )
+                await lavalink.connect(ctx.author.voice.channel)
+                player = lavalink.get_player(ctx.guild.id)
+                player.store("connect", datetime.datetime.utcnow())
+            except AttributeError:
+                return await self._embed_msg(ctx, _("Connect to a voice channel first."))
+            except IndexError:
+                return await self._embed_msg(
+                    ctx, _("Connection to Lavalink has not yet been established.")
+                )
+        if guild_data["dj_enabled"]:
+            if not await self._can_instaskip(ctx, ctx.author):
+                return await self._embed_msg(ctx, _("You need the DJ role to queue tracks."))
+        player = lavalink.get_player(ctx.guild.id)
+
+        player.store("channel", ctx.channel.id)
+        player.store("guild", ctx.guild.id)
+        await self._eq_check(ctx, player)
+        await self._data_check(ctx)
+        if (
+                not ctx.author.voice or ctx.author.voice.channel != player.channel
+        ) and not await self._can_instaskip(ctx, ctx.author):
+            return await self._embed_msg(
+                ctx, _("You must be in the voice channel to use the play command.")
+            )
+        if not await self._currency_check(ctx, guild_data["jukebox_price"]):
+            return
+        api_data = await self._check_api_tokens()
+
+        if (
+                not api_data["spotify_client_id"]
+                or not api_data["spotify_client_secret"]
+                or not api_data["youtube_api"]
+        ):
+            return await self._embed_msg(
+                ctx,
+                _(
+                    "The owner needs to set the Spotify client ID, Spotify client secret, "
+                    "and YouTube API key before Spotify URLs or codes can be used. "
+                    "\nSee `{prefix}audioset youtubeapi` and `{prefix}audioset spotifyapi` "
+                    "for instructions."
+                ).format(prefix=ctx.prefix),
+            )
+        category_list = await self.music_cache.spotify_api.get_categories()
+        if not category_list:
+            return await self._embed_msg(ctx, _("No categories found, try again later."))
+        len_folder_pages = math.ceil(len(category_list) / 5)
+        category_search_page_list = []
+        for page_num in range(1, len_folder_pages + 1):
+            embed = await self._build_genre_search_page(ctx, category_list, page_num, _("Categories"))
+            category_search_page_list.append(embed)
+        category_pick = await menu(ctx, category_search_page_list, CATEGORY_SEARCH_CONTROLS)
+        playlists_list = await self.music_cache.spotify_api.get_playlist_from_category(category_pick)
+        if not playlists_list:
+            return await self._embed_msg(ctx, _("No categories found, try again later."))
+        len_folder_pages = math.ceil(len(playlists_list) / 5)
+        playlists_search_page_list = []
+        for page_num in range(1, len_folder_pages + 1):
+            embed = await self._build_genre_search_page(ctx, playlists_list, page_num, _("Playlists"))
+            playlists_search_page_list.append(embed)
+        playlists_pick = await menu(ctx, playlists_search_page_list, PLAYLIST_SEARCH_CONTROLS)
+        query = dataclasses.Query.process_input(playlists_pick)
+        if not query.valid:
+            return await self._embed_msg(ctx, _("No tracks to play."))
+        if query.is_spotify:
+            return await self._get_spotify_tracks(ctx, query)
+        return await self._embed_msg(ctx, _("Couldn't find tracks for the selected playlist."))
+
+    @staticmethod
+    async def _genre_search_button_action(ctx: commands.Context, options, emoji, page):
+        try:
+            if emoji == "1⃣":
+                search_choice = options[0 + (page * 5)]
+            if emoji == "2⃣":
+                search_choice = options[1 + (page * 5)]
+            if emoji == "3⃣":
+                search_choice = options[2 + (page * 5)]
+            if emoji == "4⃣":
+                search_choice = options[3 + (page * 5)]
+            if emoji == "5⃣":
+                search_choice = options[4 + (page * 5)]
+        except IndexError:
+            search_choice = options[-1]
+        return list(search_choice.values())[0]
+
+    @staticmethod
+    async def _build_genre_search_page(ctx: commands.Context, tracks, page_num, title):
+        search_num_pages = math.ceil(len(tracks) / 5)
+        search_idx_start = (page_num - 1) * 5
+        search_idx_end = search_idx_start + 5
+        search_list = ""
+        for i, entry in enumerate(tracks[search_idx_start:search_idx_end], start=search_idx_start):
+            search_track_num = i + 1
+            if search_track_num > 5:
+                search_track_num = search_track_num % 5
+            if search_track_num == 0:
+                search_track_num = 5
+                # query = Query.process_input(track)
+            search_list += "`{}.` **{}**\n".format(search_track_num, list(entry.keys())[0])
+
+        embed = discord.Embed(
+            colour=await ctx.embed_colour(), title=title, description=search_list
+        )
+        embed.set_footer(
+            text=_("Page {page_num}/{total_pages}").format(
+                page_num=page_num,
+                total_pages=search_num_pages,
+            )
+        )
+        return embed
+
+    @commands.command()
+    @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     @checks.mod_or_permissions(manage_messages=True)
     async def autoplay(self, ctx: commands.Context):
         """Starts auto play."""
