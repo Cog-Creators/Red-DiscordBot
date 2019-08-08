@@ -3851,10 +3851,7 @@ class Audio(commands.Cog):
             for track in playlist.tracks:
                 track_idx = track_idx + 1
                 query = dataclasses.Query.process_input(track["info"]["uri"])
-                if any(
-                    x in str(query)
-                    for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
-                ):
+                if any(x in str(query) for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]):
                     if track["info"]["title"] != "Unknown title":
                         msg += "`{}.` **{} - {}**\n{}\n".format(
                             track_idx,
