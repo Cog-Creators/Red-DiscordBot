@@ -545,7 +545,8 @@ class Economy(commands.Cog):
                         "Slot cooldown: {slot_time}\n"
                         "Payday amount: {payday_amount}\n"
                         "Payday cooldown: {payday_time}\n"
-                        "Amount given at account registration: {register_amount}"
+                        "Amount given at account registration: {register_amount}\n"
+                        "Maximum allowed balance: {maximum_bal}"
                     ).format(
                         slot_min=await conf.SLOT_MIN(),
                         slot_max=await conf.SLOT_MAX(),
@@ -553,6 +554,7 @@ class Economy(commands.Cog):
                         payday_time=await conf.PAYDAY_TIME(),
                         payday_amount=await conf.PAYDAY_CREDITS(),
                         register_amount=await bank.get_default_balance(guild),
+                        maximum_bal=await bank.get_max_balance(guild)
                     )
                 )
             )
@@ -620,7 +622,7 @@ class Economy(commands.Cog):
     async def paydayamount(self, ctx: commands.Context, creds: int):
         """Set the amount earned each payday."""
         guild = ctx.guild
-        if creds <= 0 or creds > bank.MAX_BALANCE:
+        if creds <= 0 or creds > await bank.get_max_balance(ctx.guild):
             await ctx.send(_("Har har so funny."))
             return
         credits_name = await bank.get_currency_name(guild)
@@ -638,7 +640,7 @@ class Economy(commands.Cog):
     async def rolepaydayamount(self, ctx: commands.Context, role: discord.Role, creds: int):
         """Set the amount earned each payday for a role."""
         guild = ctx.guild
-        if creds <= 0 or creds > bank.MAX_BALANCE:
+        if creds <= 0 or creds > await bank.get_max_balance(ctx.guild):
             await ctx.send(_("Har har so funny."))
             return
         credits_name = await bank.get_currency_name(guild)
