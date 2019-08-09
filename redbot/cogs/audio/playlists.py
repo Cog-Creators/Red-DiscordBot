@@ -92,11 +92,11 @@ def _prepare_config_scope(
     elif scope == PlaylistScope.USER.value:
         if author is None:
             raise MissingAuthor("Invalid author for user scope.")
-        config_scope = [PlaylistScope.USER.value, str(author)]
+        config_scope = [PlaylistScope.USER.value, str(getattr(author, "id", author))]
     else:
         if guild is None:
             raise MissingGuild("Invalid guild for guild scope.")
-        config_scope = [PlaylistScope.GUILD.value, str(guild.id)]
+        config_scope = [PlaylistScope.GUILD.value, str(getattr(guild, "id", guild))]
     return config_scope
 
 
@@ -282,7 +282,6 @@ async def get_all_playlist(
     `MissingAuthor`
         Trying to access the User scope without an user id.
     """
-
     playlists = await _config.custom(*_prepare_config_scope(scope, author, guild)).all()
     return [
         await Playlist.from_json(
@@ -375,7 +374,7 @@ async def delete_playlist(
     scope: str,
     playlist_id: Union[str, int],
     guild: Optional[discord.Guild] = None,
-    author: Optional[int] = None,
+    author: Optional[Union[discord.abc.User, int]] = None,
 ) -> None:
     """
         Deletes the specified playlist.
