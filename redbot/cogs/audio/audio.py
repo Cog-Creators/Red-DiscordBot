@@ -389,14 +389,15 @@ class Audio(commands.Cog):
             )
 
             if autoplay and not player.queue and player.fetch("playing_song") is not None:
-                self.bot.dispatch(
-                    "red_audio_should_auto_play",
-                    player.channel.guild,
-                    player.channel,
-                    self.play_query,
-                )
                 if self.owns_autoplay is True:
                     await self.music_cache.autoplay(player)
+                else:
+                    self.bot.dispatch(
+                        "red_audio_should_auto_play",
+                        player.channel.guild,
+                        player.channel,
+                        self.play_query,
+                    )
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
             prev_song = player.fetch("prev_song")
@@ -2654,14 +2655,11 @@ class Audio(commands.Cog):
             )
         if not await self._currency_check(ctx, guild_data["jukebox_price"]):
             return
-        if self.owns_autoplay  is True:
+        if self.owns_autoplay is True:
             await self.music_cache.autoplay(player)
         else:
             self.bot.dispatch(
-                "red_audio_should_auto_play",
-                player.channel.guild,
-                player.channel,
-                self.play_query,
+                "red_audio_should_auto_play", player.channel.guild, player.channel, self.play_query
             )
         if not guild_data["auto_play"]:
             await ctx.invoke(self._autoplay_toggle)

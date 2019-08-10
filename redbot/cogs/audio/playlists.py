@@ -83,9 +83,7 @@ def humanize_scope(scope, ctx=None):
 
 
 def _prepare_config_scope(
-    scope,
-    author: Union[discord.abc.User, int] = None,
-    guild: discord.Guild = None,
+    scope, author: Union[discord.abc.User, int] = None, guild: discord.Guild = None
 ):
     scope = standardize_scope(scope)
 
@@ -380,7 +378,8 @@ async def reset_playlist(
 async def delete_playlist(
     scope: str,
     playlist_id: Union[str, int],
-    guild: discord.Guild, int = None,
+    guild: discord.Guild,
+    int=None,
     author: Union[discord.abc.User, int] = None,
 ) -> None:
     """
