@@ -83,7 +83,7 @@ def humanize_scope(scope, ctx=None):
 
 
 def _prepare_config_scope(
-    scope, author: Optional[int] = None, guild: Optional[discord.Guild] = None
+    scope, author: Optional[Union[discord.abc.User, int]] = None, guild: Optional[discord.Guild] = None
 ):
     scope = standardize_scope(scope)
 
@@ -212,8 +212,8 @@ async def get_playlist(
     playlist_number: int,
     scope: str,
     bot: Red,
-    guild: Optional[discord.Guild] = None,
-    author: Optional[int] = None,
+    guild: Optional[Union[discord.Guild, int]] = None,
+    author: Optional[Union[discord.abc.User, int]] = None,
 ) -> Playlist:
     """
     Gets the playlist with the associated playlist number.
@@ -255,7 +255,7 @@ async def get_playlist(
 
 
 async def get_all_playlist(
-    scope: str, bot: Red, guild: Optional[discord.Guild] = None, author: Optional[int] = None
+    scope: str, bot: Red, guild: Optional[Union[discord.Guild, int]] = None, author: Optional[Union[discord.abc.User, int]] = None
 ) -> List[Playlist]:
     """
     Gets all playlist for the specified scope.
@@ -337,14 +337,14 @@ async def create_playlist(
         ctx.bot, scope, author.id, ctx.message.id, playlist_name, playlist_url, tracks, ctx.guild
     )
 
-    await _config.custom(*_prepare_config_scope(scope, author.id, guild), str(ctx.message.id)).set(
+    await _config.custom(*_prepare_config_scope(scope, author, guild), str(ctx.message.id)).set(
         playlist.to_json()
     )
     return playlist
 
 
 async def reset_playlist(
-    scope: str, guild: Optional[discord.Guild] = None, author: Optional[int] = None
+    scope: str, guild: Optional[discord.Guild, int] = None, author: Optional[Union[discord.abc.User, int]] = None
 ) -> None:
     """
     Wipes all playlists for the specified scope.
@@ -373,7 +373,7 @@ async def reset_playlist(
 async def delete_playlist(
     scope: str,
     playlist_id: Union[str, int],
-    guild: Optional[discord.Guild] = None,
+    guild: Optional[discord.Guild, int] = None,
     author: Optional[Union[discord.abc.User, int]] = None,
 ) -> None:
     """
