@@ -83,7 +83,9 @@ def humanize_scope(scope, ctx=None):
 
 
 def _prepare_config_scope(
-    scope, author: Optional[Union[discord.abc.User, int]] = None, guild: Optional[discord.Guild] = None
+    scope,
+    author: Optional[Union[discord.abc.User, int]] = None,
+    guild: Optional[discord.Guild] = None,
 ):
     scope = standardize_scope(scope)
 
@@ -255,7 +257,10 @@ async def get_playlist(
 
 
 async def get_all_playlist(
-    scope: str, bot: Red, guild: Optional[Union[discord.Guild, int]] = None, author: Optional[Union[discord.abc.User, int]] = None
+    scope: str,
+    bot: Red,
+    guild: Optional[Union[discord.Guild, int]] = None,
+    author: Optional[Union[discord.abc.User, int]] = None,
 ) -> List[Playlist]:
     """
     Gets all playlist for the specified scope.
@@ -344,7 +349,9 @@ async def create_playlist(
 
 
 async def reset_playlist(
-    scope: str, guild: Optional[discord.Guild, int] = None, author: Optional[Union[discord.abc.User, int]] = None
+    scope: str,
+    guild: Optional[discord.Guild, int] = None,
+    author: Optional[Union[discord.abc.User, int]] = None,
 ) -> None:
     """
     Wipes all playlists for the specified scope.
