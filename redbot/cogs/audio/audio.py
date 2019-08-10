@@ -395,7 +395,7 @@ class Audio(commands.Cog):
                     player.channel,
                     self.play_query,
                 )
-                if self.owns_autoplay:
+                if self.owns_autoplay is True:
                     await self.music_cache.autoplay(player)
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
@@ -587,10 +587,10 @@ class Audio(commands.Cog):
             The Cog who is taking ownership of Audio's autoplay.
             If :code:`None` gives ownership back to Audio
         """
-        if cog is not None:
-            self.owns_autoplay = False
+        if cog is None:
+            self.owns_autoplay = True
         else:
-            if self.owns_autoplay not in [True, False]:
+            if self.owns_autoplay is not True:
                 raise RuntimeError("A Cog already has ownership of Auto Play")
             self.owns_autoplay = cog
 
