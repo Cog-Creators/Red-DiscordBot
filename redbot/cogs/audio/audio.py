@@ -2654,7 +2654,15 @@ class Audio(commands.Cog):
             )
         if not await self._currency_check(ctx, guild_data["jukebox_price"]):
             return
-        await self.music_cache.autoplay(player)
+        if self.owns_autoplay  is True:
+            await self.music_cache.autoplay(player)
+        else:
+            self.bot.dispatch(
+                "red_audio_should_auto_play",
+                player.channel.guild,
+                player.channel,
+                self.play_query,
+            )
         if not guild_data["auto_play"]:
             await ctx.invoke(self._autoplay_toggle)
         if not guild_data["notify"]:
