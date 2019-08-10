@@ -593,7 +593,7 @@ class Audio(commands.Cog):
             self.owns_autoplay = True
         else:
             if self.owns_autoplay is not True and self.bot.get_cog(
-                getattr(self.owns_autoplay, "name", None)
+                self.owns_autoplay.__class__.__name__
             ):
                 raise RuntimeError("A Cog already has ownership of Auto Play")
             self.owns_autoplay = cog
