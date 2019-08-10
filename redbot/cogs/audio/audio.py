@@ -140,6 +140,7 @@ class Audio(commands.Cog):
         self.play_lock = {}
 
         self._manager: Optional[ServerManager] = None
+        self.bot.dispatch("red_audio_initialized", self)
 
     async def cog_before_invoke(self, ctx: commands.Context):
         if self.llsetup in [ctx.command, ctx.command.root_parent]:
