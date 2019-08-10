@@ -1065,10 +1065,6 @@ class MusicCache:
             multiple = len(tracks) > 1
             if not multiple:
                 track = tracks[0]
-            else:
-                random.shuffle(tracks)
-                random.shuffle(tracks)
-                random.shuffle(tracks)
 
             valid = not multiple
 

@@ -87,8 +87,8 @@ class Audio(commands.Cog):
         self._connection_aborted = False
         self.play_lock = {}
         self._manager: Optional[ServerManager] = None
-        self.owns_autoplay = True
-
+        self._cog_name = None
+        self._cog_id = None
         default_global = dict(
             schema_version=1,
             cache_level=0,
@@ -141,6 +141,27 @@ class Audio(commands.Cog):
 
         self._manager: Optional[ServerManager] = None
         self.bot.dispatch("red_audio_initialized", self)
+
+    @property
+    def owns_autoplay(self):
+        c = self.bot.get_cog(self._cog_name)
+        if c and id(c) == self._cog_id:
+            return c
+
+    @owns_autoplay.setter
+    def owns_autoplay(self, value: commands.Cog):
+        if self.owns_autoplay:
+            raise RuntimeError(
+                f"`{self._cog_name}` already has ownership of autoplay, "
+                f"please unload it if you wish to load `{value.qualified_name}`."
+            )
+        self._cog_name = value.qualified_name
+        self._cog_id = id(value)
+
+    @owns_autoplay.deleter
+    def owns_autoplay(self):
+        self._cog_name = None
+        self._cog_id = None
 
     async def cog_before_invoke(self, ctx: commands.Context):
         if self.llsetup in [ctx.command, ctx.command.root_parent]:
@@ -390,11 +411,12 @@ class Audio(commands.Cog):
             )
 
             if autoplay and not player.queue and player.fetch("playing_song") is not None:
-                if self.owns_autoplay is True:
+                if self.owns_autoplay is None:
                     await self.music_cache.autoplay(player)
                 else:
                     self.bot.dispatch(
                         "red_audio_should_auto_play",
+                        player,
                         player.channel.guild,
                         player.channel,
                         self.play_query,
@@ -590,12 +612,8 @@ class Audio(commands.Cog):
             If :code:`None` gives ownership back to Audio
         """
         if cog is None:
-            self.owns_autoplay = True
+            del self.owns_autoplay
         else:
-            if self.owns_autoplay is not True and self.bot.get_cog(
-                self.owns_autoplay.__class__.__name__
-            ):
-                raise RuntimeError("A Cog already has ownership of Auto Play")
             self.owns_autoplay = cog
 
     @commands.group()
@@ -2658,16 +2676,24 @@ class Audio(commands.Cog):
             )
         if not await self._currency_check(ctx, guild_data["jukebox_price"]):
             return
-        if self.owns_autoplay is True:
+        if self.owns_autoplay is None:
             await self.music_cache.autoplay(player)
         else:
             self.bot.dispatch(
-                "red_audio_should_auto_play", player.channel.guild, player.channel, self.play_query
+                "red_audio_should_auto_play",
+                player,
+                player.channel.guild,
+                player.channel,
+                self.play_query,
             )
         if not guild_data["auto_play"]:
             await ctx.invoke(self._autoplay_toggle)
-        if not guild_data["notify"]:
+        if not guild_data["notify"] and (
+            (player.current and not player.current.extras.get("autoplay")) or not player.current
+        ):
             await self._embed_msg(ctx, _("Auto play started."))
+        elif not guild_data["notify"] and player.current:
+            await self._embed_msg(ctx, _("Adding a track to queue."))
 
     async def _get_spotify_tracks(self, ctx: commands.Context, query: dataclasses.Query):
         if ctx.invoked_with in ["play", "genre"]:
