@@ -343,7 +343,7 @@ class Audio(commands.Cog):
         self, player: lavalink.Player, event_type: lavalink.LavalinkEvents, extra
     ):
         disconnect = await self.config.guild(player.channel.guild).disconnect()
-        autoplay = await self.config.guild(player.channel.guild).auto_play()
+        autoplay = await self.config.guild(player.channel.guild).auto_play() or self.owns_autoplay
         notify = await self.config.guild(player.channel.guild).notify()
         status = await self.config.status()
         repeat = await self.config.guild(player.channel.guild).repeat()
@@ -611,10 +611,10 @@ class Audio(commands.Cog):
             The Cog who is taking ownership of Audio's autoplay.
             If :code:`None` gives ownership back to Audio
         """
-        if cog is None:
-            del self.owns_autoplay
-        else:
+        if isinstance(cog, commands.Cog):
             self.owns_autoplay = cog
+        else:
+            del self.owns_autoplay
 
     @commands.group()
     @commands.guild_only()
@@ -1241,7 +1241,15 @@ class Audio(commands.Cog):
                 vote_percent=vote_percent,
                 vote_enabled=_("Enabled") if vote_enabled else _("Disabled"),
             )
-        if autoplay or autoplaylist["enabled"]:
+
+        if self.owns_autoplay is not None:
+            msg += (
+                "\n---"
+                + _("Auto-play Settings")
+                + "---        \n"
+                + _("Owning Cog:       [{name}]\n").format(name=self._cog_name)
+            )
+        elif autoplay or autoplaylist["enabled"]:
             if autoplaylist["enabled"]:
                 pname = autoplaylist["name"]
                 pid = autoplaylist["id"]
@@ -2190,7 +2198,7 @@ class Audio(commands.Cog):
 
         shuffle = await self.config.guild(ctx.guild).shuffle()
         repeat = await self.config.guild(ctx.guild).repeat()
-        autoplay = await self.config.guild(ctx.guild).auto_play()
+        autoplay = await self.config.guild(ctx.guild).auto_play() or self.owns_autoplay
         text = ""
         text += (
             _("Auto-Play")
@@ -5111,7 +5119,7 @@ class Audio(commands.Cog):
 
                 shuffle = await self.config.guild(ctx.guild).shuffle()
                 repeat = await self.config.guild(ctx.guild).repeat()
-                autoplay = await self.config.guild(ctx.guild).auto_play()
+                autoplay = await self.config.guild(ctx.guild).auto_play() or self.owns_autoplay
                 text = ""
                 text += (
                     _("Auto-Play")
@@ -5150,7 +5158,7 @@ class Audio(commands.Cog):
     ):
         shuffle = await self.config.guild(ctx.guild).shuffle()
         repeat = await self.config.guild(ctx.guild).repeat()
-        autoplay = await self.config.guild(ctx.guild).auto_play()
+        autoplay = await self.config.guild(ctx.guild).auto_play() or self.owns_autoplay
 
         queue_num_pages = math.ceil(len(player.queue) / 10)
         queue_idx_start = (page_num - 1) * 10
@@ -6131,7 +6139,7 @@ class Audio(commands.Cog):
 
     async def _skip_action(self, ctx: commands.Context, skip_to_track: int = None):
         player = lavalink.get_player(ctx.guild.id)
-        autoplay = await self.config.guild(player.channel.guild).auto_play()
+        autoplay = await self.config.guild(player.channel.guild).auto_play() or self.owns_autoplay
         if not player.current or (not player.queue and not autoplay):
             try:
                 pos, dur = player.position, player.current.length
