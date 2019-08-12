@@ -175,8 +175,6 @@ class KickBanMixin(MixinMeta):
         audit_reason = get_audit_reason(author, reason)
         if reason == None:
             reason = "No reason was given."
-        else:
-            reason = reason
         self == self.bot.get_cog("Mod")
         toggle = await self.settings.guild(guild).toggle_dm()
         if toggle == True:
@@ -231,8 +229,6 @@ class KickBanMixin(MixinMeta):
         guild = ctx.guild
         if reason == None:
             reason = "No reason was given."
-        else:
-            reason = reason
         self == self.bot.get_cog("Mod")
         toggle = await self.settings.guild(guild).toggle_dm()
         if toggle == True:
