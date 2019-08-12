@@ -521,7 +521,7 @@ class Audio(commands.Cog):
             message_channel = player.fetch("channel")
             if message_channel:
                 message_channel = self.bot.get_channel(message_channel)
-                if any(
+                if player.current and any(
                     x in player.current.uri
                     for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
                 ):
@@ -929,7 +929,7 @@ class Audio(commands.Cog):
         else:
             return await self._embed_msg(
                 ctx,
-                _("Playlist {name} {id} will be used for autoplay.").format(
+                _("Playlist {name} (`{id}`) will be used for autoplay.").format(
                     name=playlist.name, id=playlist.id
                 ),
             )
@@ -1491,7 +1491,8 @@ class Audio(commands.Cog):
     async def _cacheage(self, ctx: commands.Context, age: int):
         """Sets the cache max age.
 
-        This commands allows you to set the max number of days before an entry in the cache becomes invalid.
+        This commands allows you to set the max number of days
+        before an entry in the cache becomes invalid.
         """
         msg = ""
         if age < 7:
@@ -1630,6 +1631,7 @@ class Audio(commands.Cog):
             ):
                 return await self._embed_msg(ctx, _("There are other people listening to music."))
             else:
+                await self._embed_msg(ctx, _("Disconnecting..."))
                 self.bot.dispatch("red_audio_audio_disconnect", ctx.guild)
                 self._play_lock(ctx, False)
                 eq = player.fetch("eq")
@@ -2813,7 +2815,7 @@ class Audio(commands.Cog):
                 if await self.config.use_external_lavalink() and query.is_local:
                     embed.description = _(
                         "Local tracks will not work "
-                        "if the Lavalink.jar cannot see the track.\n"
+                        "if the `Lavalink.jar` cannot see the track.\n"
                         "This may be due to permissions or because Lavalink.jar is being run "
                         "in a different machine than the local tracks."
                     )
@@ -3292,7 +3294,7 @@ class Audio(commands.Cog):
             if to in tracks_obj_list:
                 return await self._embed_msg(
                     ctx,
-                    _("{track} is already in {playlist} ({id}).").format(
+                    _("{track} is already in {playlist} (`{id}`).").format(
                         track=to.title, playlist=playlist.name, id=playlist.id
                     ),
                 )
@@ -3315,12 +3317,12 @@ class Audio(commands.Cog):
             track_title = to_append[0]["info"]["title"]
             return await self._embed_msg(
                 ctx,
-                _("{track} appended to {playlist} ({id}).").format(
+                _("{track} appended to {playlist} (`{id}`).").format(
                     track=track_title, playlist=playlist.name, id=playlist.id
                 ),
             )
 
-        desc = _("{num} tracks appended to {playlist} ({id}).").format(
+        desc = _("{num} tracks appended to {playlist} (`{id}`).").format(
             num=appended, playlist=playlist.name, id=playlist.id
         )
         if to_append_count > appended:
@@ -3588,7 +3590,7 @@ class Audio(commands.Cog):
         await delete_playlist(scope, playlist.id, guild or ctx.guild, author or ctx.author)
 
         await self._embed_msg(
-            ctx, _("{name} ({id}) playlist deleted.").format(name=playlist.name, id=playlist.id)
+            ctx, _("{name} (`{id}`) playlist deleted.").format(name=playlist.name, id=playlist.id)
         )
 
     @playlist.command(name="remdupe", usage="<playlist_name_OR_id> [args]")
@@ -3692,14 +3694,14 @@ class Audio(commands.Cog):
         if original_count - final_count != 0:
             await self._embed_msg(
                 ctx,
-                _("Removed {track_diff} duplicated tracks from {name} ({id}) playlist.").format(
+                _("Removed {track_diff} duplicated tracks from {name} (`{id}`) playlist.").format(
                     name=playlist.name, id=playlist.id, track_diff=original_count - final_count
                 ),
             )
         else:
             await self._embed_msg(
                 ctx,
-                _("{name} ({id}) playlist has no duplicate tracks.").format(
+                _("{name} (`{id}`) playlist has no duplicate tracks.").format(
                     name=playlist.name, id=playlist.id
                 ),
             )
@@ -3915,11 +3917,11 @@ class Audio(commands.Cog):
             msg = "No tracks."
 
         if not playlist.url:
-            embed_title = _("Playlist info for {playlist_name} ({id}):\n").format(
+            embed_title = _("Playlist info for {playlist_name} (`{id}`):\n").format(
                 playlist_name=playlist.name, id=playlist.id
             )
         else:
-            embed_title = _("Playlist info for {playlist_name} ({id}):\nURL: {url}").format(
+            embed_title = _("Playlist info for {playlist_name} (`{id}`):\nURL: {url}").format(
                 playlist_name=playlist.name, url=playlist.url, id=playlist.id
             )
 
@@ -4107,7 +4109,7 @@ class Audio(commands.Cog):
         playlist = await create_playlist(ctx, scope, playlist_name, None, tracklist, author, guild)
         await self._embed_msg(
             ctx,
-            _("Playlist {name} ({id}) saved from current queue: {num} tracks added.").format(
+            _("Playlist {name} (`{id}`) saved from current queue: {num} tracks added.").format(
                 name=playlist.name, num=len(playlist.tracks), id=playlist.id
             ),
         )
@@ -4199,15 +4201,15 @@ class Audio(commands.Cog):
             await self._embed_msg(
                 ctx,
                 _(
-                    "{num} entries have been removed from the playlist {playlist_name} ({id})."
+                    "{num} entries have been removed from the playlist {playlist_name} (`{id}`)."
                 ).format(num=del_count, playlist_name=playlist.name, id=playlist.id),
             )
         else:
             await self._embed_msg(
                 ctx,
-                _("The track has been removed from the playlist: {playlist_name} ({id}).").format(
-                    playlist_name=playlist.name, id=playlist.id
-                ),
+                _(
+                    "The track has been removed from the playlist: {playlist_name} (`{id}`)."
+                ).format(playlist_name=playlist.name, id=playlist.id),
             )
 
     @playlist.command(name="save", usage="<name> <url> [args]")
@@ -4277,7 +4279,7 @@ class Audio(commands.Cog):
             )
             return await self._embed_msg(
                 ctx,
-                _("Playlist {name} ({id}) saved: {num} tracks added.").format(
+                _("Playlist {name} (`{id}`) saved: {num} tracks added.").format(
                     name=playlist.name, num=len(tracklist), id=playlist.id
                 ),
             )
@@ -4552,7 +4554,9 @@ class Audio(commands.Cog):
             else:
                 return await self._embed_msg(
                     ctx,
-                    _("No changes for {name} ({id}).").format(id=playlist.id, name=playlist.name),
+                    _("No changes for {name} (`{id}`).").format(
+                        id=playlist.id, name=playlist.name
+                    ),
                 )
 
     @checks.is_owner()
@@ -4760,7 +4764,7 @@ class Audio(commands.Cog):
         old_name = playlist.name
         update = {"name": new_name}
         await playlist.edit(update)
-        msg = _("'{old}' playlist has been renamed to '{new}' ({id})").format(
+        msg = _("'{old}' playlist has been renamed to '{new}' (`{id}`)").format(
             old=bold(old_name), new=bold(playlist.name), id=playlist.id
         )
         await ctx.maybe_send_embed(msg)
@@ -4793,7 +4797,7 @@ class Audio(commands.Cog):
             ctx, scope, uploaded_playlist_name, uploaded_playlist_url, track_list, author, guild
         )
         if not track_count:
-            msg = _("Empty playlist {name} ({id}) created.").format(
+            msg = _("Empty playlist {name} (`{id}`) created.").format(
                 name=playlist.name, id=playlist.id
             )
         elif uploaded_track_count != track_count:
@@ -4875,7 +4879,7 @@ class Audio(commands.Cog):
             ctx, scope, uploaded_playlist_name, playlist_url, track_list, author, guild
         )
         if not successfull_count:
-            msg = _("Empty playlist {name} ({id}) created.").format(
+            msg = _("Empty playlist {name} (`{id}`) created.").format(
                 name=playlist.name, id=playlist.id
             )
         elif uploaded_track_count != successfull_count:
@@ -5631,7 +5635,7 @@ class Audio(commands.Cog):
                     if await self.config.use_external_lavalink() and query.is_local:
                         embed.description = _(
                             "Local tracks will not work "
-                            "if the Lavalink.jar cannot see the track.\n"
+                            "if the `Lavalink.jar` cannot see the track.\n"
                             "This may be due to permissions or because Lavalink.jar is being run "
                             "in a different machine than the local tracks."
                         )
@@ -5701,7 +5705,7 @@ class Audio(commands.Cog):
                 if await self.config.use_external_lavalink() and query.is_local:
                     embed.description = _(
                         "Local tracks will not work "
-                        "if the Lavalink.jar cannot see the track.\n"
+                        "if the `Lavalink.jar` cannot see the track.\n"
                         "This may be due to permissions or because Lavalink.jar is being run "
                         "in a different machine than the local tracks."
                     )
@@ -5852,18 +5856,23 @@ class Audio(commands.Cog):
                     )
             except AttributeError:
                 # query = Query.process_input(track)
+                track = dataclasses.Query.process_input(track)
                 if (
                     any(x in str(track) for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"])
                     and command != "search"
                 ):
-                    search_list += "`{}.` **{}**\n".format(search_track_num, track)
+                    search_list += "`{}.` **{}**\n".format(
+                        search_track_num, track.to_string_user()
+                    )
                     folder = True
                 elif command == "search":
-                    search_list += "`{}.` **{}**\n".format(search_track_num, track)
+                    search_list += "`{}.` **{}**\n".format(
+                        search_track_num, track.to_string_user()
+                    )
                     folder = False
                 else:
                     search_list += "`{}.` **{}**\n".format(
-                        search_track_num, dataclasses.LocalPath(track).to_string_hidden()
+                        search_track_num, track.to_string_user()
                     )
                     folder = False
         try:
@@ -6017,6 +6026,8 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx, _("You must be in the voice channel to skip the music.")
             )
+        if not player.current:
+            return await self._embed_msg(ctx, _("Nothing playing."))
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
         is_alone = await self._is_alone(ctx, ctx.author)
@@ -6238,7 +6249,12 @@ class Audio(commands.Cog):
         if dj_enabled and not vote_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(ctx, _("You need the DJ role to stop the music."))
-        if player.is_playing or (not player.is_playing and player.paused):
+        if (
+            player.is_playing
+            or (not player.is_playing and player.paused)
+            or player.queue
+            or getattr(player.current, "extras", {}).get("autoplay")
+        ):
             eq = player.fetch("eq")
             if eq:
                 await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
