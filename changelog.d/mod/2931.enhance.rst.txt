@@ -1,0 +1,1 @@
+Added a command to toggle kick/bans sending an embed to the user detailing the reason for the kick/ban, the server they were kicked/banned and if it was a kick or a ban.
