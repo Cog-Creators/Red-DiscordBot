@@ -210,7 +210,7 @@ class ModSettings(MixinMeta):
     async def toggledm(self, ctx: commands.Context, enabled: bool = None):
         """Toggle whether to send a message to a user when they are kicked/banned.
 
-        If this is True, the bot will attempt to DM the user with the moderator
+        If this is True, the bot will attempt to DM the user with the guild name
         and reason as to why they were kicked/banned.
         """
         guild = ctx.guild
