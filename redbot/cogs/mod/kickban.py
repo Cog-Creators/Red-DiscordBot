@@ -173,11 +173,10 @@ class KickBanMixin(MixinMeta):
             await ctx.send(_("I cannot do that due to discord hierarchy rules"))
             return
         audit_reason = get_audit_reason(author, reason)
-        try:
-            if reason == None:
-                reason = "No reason was given."
-            else:
-                reason = reason
+        if reason == None:
+            reason = "No reason was given."
+        else:
+            reason = reason
             self == self.bot.get_cog("Mod")
             toggle = await self.settings.guild(guild).toggle_dm()
             if toggle == True:
@@ -194,7 +193,7 @@ class KickBanMixin(MixinMeta):
                         )
                         em.add_field(name=_("**Reason**"), value=reason, inline=False)
                         await user.send(embed=em)
-
+        try:
             await guild.kick(user, reason=audit_reason)
             log.info("{}({}) kicked {}({})".format(author.name, author.id, user.name, user.id))
         except discord.errors.Forbidden:
