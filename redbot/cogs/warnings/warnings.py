@@ -24,7 +24,14 @@ _ = Translator("Warnings", __file__)
 class Warnings(commands.Cog):
     """Warn misbehaving users and take automated actions."""
 
-    default_guild = {"actions": [], "reasons": {}, "allow_custom_reasons": False}
+    default_guild = {
+        "actions": [],
+        "reasons": {},
+        "allow_custom_reasons": False,
+        "toggle_dm": True,
+        "warn_channel": None,
+        "toggle_channel": False,
+    }
 
     default_member = {"total_points": 0, "status": "", "warnings": {}}
 
@@ -75,6 +82,45 @@ class Warnings(commands.Cog):
             await ctx.send(_("Custom reasons have been enabled."))
         else:
             await ctx.send(_("Custom reasons have been disabled."))
+
+    @warningset.command()
+    @commands.guild_only()
+    async def toggledm(self, ctx: commands.Context):
+        """Toggle warns being sent to the users DM's"""
+        guild = ctx.guild
+        toggle = await self.config.guild(guild).toggle_dm()
+        await self.config.guild(guild).toggle_dm.set(not toggle)
+        toggle = not toggle
+        if toggle:
+            await ctx.send(_("Warns will now be sent to users DM's"))
+        else:
+            await ctx.send(_("Warns will not be sent to users DM's"))
+
+    @warningset.command()
+    @commands.guild_only()
+    async def warnchannel(self, ctx: commands.Context, channel: discord.TextChannel = None):
+        """Set the channel that warns get set to"""
+        guild = ctx.guild
+        if channel:
+            await self.config.guild(guild).warn_channel.set(channel.id)
+            await ctx.send(
+                _("The warn channel has been set to {channel}").format(channel=channel.mention)
+            )
+        else:
+            await self.config.guild(guild).warn_channel.set(channel)
+            await ctx.send(_("The warn channel has been reset."))
+
+    @warningset.command()
+    @commands.guild_only()
+    async def togglechannel(self, ctx: commands.Context):
+        """Toggle if the warn should be sent to a channel"""
+        guild = ctx.guild
+        toggle = await self.config.guild(guild).toggle_channel()
+        await self.config.guild(guild).toggle_channel.set(not toggle)
+        if not toggle:
+            await ctx.send(_("Warns will now be sent to channels"))
+        else:
+            await ctx.send(_("Warns will not be sent to channels"))
 
     @commands.group()
     @commands.guild_only()
@@ -251,7 +297,7 @@ class Warnings(commands.Cog):
         user: discord.Member,
         points: Optional[int] = 1,
         *,
-        reason: str
+        reason: str,
     ):
         """Warn the user for the specified reason.
 
@@ -260,6 +306,8 @@ class Warnings(commands.Cog):
         `<reason>` can be a registered reason if it exists or a custom one
         is created by default.
         """
+        channel = ctx.channel
+        guild = ctx.guild
         if user == ctx.author:
             await ctx.send(_("You cannot warn yourself."))
             return
@@ -301,19 +349,44 @@ class Warnings(commands.Cog):
 
         await warning_points_add_check(self.config, ctx, user, current_point_count)
         try:
+            dm = await self.config.guild(ctx.guild).toggle_dm()
+            if dm:
+                em = discord.Embed(
+                    title=_("Warning from {user}").format(user=ctx.author),
+                    description=reason_type["description"],
+                )
+                em.add_field(name=_("Points"), value=str(reason_type["points"]))
+                await user.send(
+                    _("You have received a warning in {guild_name}.").format(
+                        guild_name=ctx.guild.name
+                    ),
+                    embed=em,
+                )
+        except discord.HTTPException:
+            await ctx.send(
+                _(
+                    "The warning couldn't be sent to the user because the user has DM's from server members turned off."
+                )
+            )
+        toggle_channel = await self.config.guild(guild).toggle_channel()
+        if toggle_channel:
             em = discord.Embed(
                 title=_("Warning from {user}").format(user=ctx.author),
                 description=reason_type["description"],
             )
             em.add_field(name=_("Points"), value=str(reason_type["points"]))
-            await user.send(
-                _("You have received a warning in {guild_name}.").format(
-                    guild_name=ctx.guild.name
-                ),
-                embed=em,
+            warn_channel = self.bot.get_channel(await self.config.guild(guild).warn_channel())
+            if warn_channel:
+                channel = warn_channel
+            else:
+                channel = ctx.channel
+            await channel.send(_("{user} has been warned.").format(user=user.mention), embed=em)
+        if not dm and not toggle_channel:
+            await ctx.send(
+                _("You have warned the user but you have channel and DM warns turned off.")
             )
-        except discord.HTTPException:
-            pass
+        else:
+            await ctx.tick()
         try:
             reason_msg = _(
                 "{reason}\n\nUse `{prefix}unwarn {user} {message}` to remove this warning."
@@ -338,7 +411,6 @@ class Warnings(commands.Cog):
             )
         except RuntimeError:
             pass
-        await ctx.send(_("User {user} has been warned.").format(user=user))
 
     @commands.command()
     @commands.guild_only()
