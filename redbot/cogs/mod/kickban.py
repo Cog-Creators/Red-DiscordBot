@@ -227,7 +227,7 @@ class KickBanMixin(MixinMeta):
         Minimum 0 days, maximum 7. Defaults to 0."""
         author = ctx.author
         guild = ctx.guild
-        if reason == None:
+        if reason is None:
             reason = "No reason was given."
         self == self.bot.get_cog("Mod")
         toggle = await self.settings.guild(guild).toggle_dm()
