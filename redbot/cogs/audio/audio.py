@@ -6775,6 +6775,7 @@ class Audio(commands.Cog):
 
     def cog_unload(self):
         if not self._cleaned_up:
+            self.bot.dispatch("red_audio_unload", self)
             self.session.detach()
             self.bot.loop.create_task(self._close_database())
             if self._disconnect_task:
