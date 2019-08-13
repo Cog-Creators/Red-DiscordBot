@@ -1223,7 +1223,9 @@ class Audio(commands.Cog):
             msg += _("DJ Role:          [{role.name}]\n").format(role=dj_role_obj)
         if jukebox:
             msg += _("Jukebox:          [{jukebox_name}]\n").format(jukebox_name=jukebox)
-            msg += _("Command price:    [{jukebox_price}]\n").format(jukebox_price=humanize_number(jukebox_price))
+            msg += _("Command price:    [{jukebox_price}]\n").format(
+                jukebox_price=humanize_number(jukebox_price)
+            )
         if maxlength > 0:
             msg += _("Max track length: [{tracklength}]\n").format(
                 tracklength=dynamic_time(maxlength)
