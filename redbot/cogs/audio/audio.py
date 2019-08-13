@@ -396,7 +396,9 @@ class Audio(commands.Cog):
             player.store("prev_song", playing_song)
             player.store("prev_requester", requester)
             player.store("playing_song", player.current)
-            player.store("requester", player.current.requester)
+            player.store(
+                "requester", player.current.requester if player.current else player.current
+            )
             self.bot.dispatch(
                 "red_audio_track_start",
                 player.channel.guild,
