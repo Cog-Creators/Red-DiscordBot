@@ -372,21 +372,19 @@ class CustomCommands(commands.Cog):
         if await ctx.embed_requested():
             # We need a space before the newline incase the CC preview ends in link (GH-2295)
             content = " \n".join(map("**{0[0]}** {0[1]}".format, results))
-            pages = list(pagify(content, page_length=1024))
-            embed_pages = []
-            for idx, page in enumerate(pages, start=1):
+            pages = []
+            for idx, page in enumerate(pagify(content, page_length=1024), start=1):
                 embed = discord.Embed(
                     title=_("Custom Command List"),
                     description=page,
                     colour=await ctx.embed_colour(),
                 )
-                embed.set_footer(text=_("Page {num}/{total}").format(num=idx, total=len(pages)))
-                embed_pages.append(embed)
-            await menus.menu(ctx, embed_pages, menus.DEFAULT_CONTROLS)
+                pages.append(embed)
         else:
             content = "\n".join(map("{0[0]:<12} : {0[1]}".format, results))
-            pages = list(map(box, pagify(content, page_length=2000, shorten_by=10)))
-            await menus.menu(ctx, pages, menus.DEFAULT_CONTROLS)
+            pages = map(box, pagify(content, page_length=2000, shorten_by=10))
+
+        await menus.PagedMenu.send_and_wait(ctx, pages=pages)
 
     @customcom.command(name="show")
     async def cc_show(self, ctx, command_name: str):

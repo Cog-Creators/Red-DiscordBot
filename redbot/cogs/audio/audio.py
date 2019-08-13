@@ -25,7 +25,7 @@ import redbot.core
 from redbot.core import Config, bank, checks, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import bold, box, pagify, inline
+from redbot.core.utils.chat_formatting import bold, box, pagify, inline, humanize_number
 from redbot.core.utils.menus import (
     DEFAULT_CONTROLS,
     close_menu,
@@ -342,6 +342,8 @@ class Audio(commands.Cog):
     async def event_handler(
         self, player: lavalink.Player, event_type: lavalink.LavalinkEvents, extra
     ):
+        print(event_type)
+        print(extra)
         disconnect = await self.config.guild(player.channel.guild).disconnect()
         autoplay = await self.config.guild(player.channel.guild).auto_play() or self.owns_autoplay
         notify = await self.config.guild(player.channel.guild).notify()
@@ -1031,7 +1033,7 @@ class Audio(commands.Cog):
             await self._embed_msg(
                 ctx,
                 _("Track queueing command price set to {price} {currency}.").format(
-                    price=price, currency=await bank.get_currency_name(ctx.guild)
+                    price=humanize_number(price), currency=await bank.get_currency_name(ctx.guild)
                 ),
             )
 
@@ -1221,7 +1223,7 @@ class Audio(commands.Cog):
             msg += _("DJ Role:          [{role.name}]\n").format(role=dj_role_obj)
         if jukebox:
             msg += _("Jukebox:          [{jukebox_name}]\n").format(jukebox_name=jukebox)
-            msg += _("Command price:    [{jukebox_price}]\n").format(jukebox_price=jukebox_price)
+            msg += _("Command price:    [{jukebox_price}]\n").format(jukebox_price=humanize_number(jukebox_price))
         if maxlength > 0:
             msg += _("Max track length: [{tracklength}]\n").format(
                 tracklength=dynamic_time(maxlength)
@@ -1553,11 +1555,15 @@ class Audio(commands.Cog):
             em = discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("Playing in {num}/{total} servers:").format(
-                    num=server_num, total=total_num
+                    num=humanize_number(server_num), total=humanize_number(total_num)
                 ),
                 description=page,
             )
-            em.set_footer(text="Page {}/{}".format(pages, (math.ceil(len(msg) / 1500))))
+            em.set_footer(
+                text="Page {}/{}".format(
+                    humanize_number(pages), humanize_number((math.ceil(len(msg) / 1500)))
+                )
+            )
             pages += 1
             servers_embed.append(em)
 
@@ -1735,7 +1741,9 @@ class Audio(commands.Cog):
             embed = discord.Embed(
                 colour=await ctx.embed_colour(), description=f"{header}\n{formatted_page}"
             )
-            embed.set_footer(text=_("{num} preset(s)").format(num=len(list(eq_presets.keys()))))
+            embed.set_footer(
+                text=_("{num} preset(s)").format(num=humanize_number(len(list(eq_presets.keys()))))
+            )
             page_list.append(embed)
         if len(page_list) == 1:
             return await ctx.send(embed=page_list[0])
@@ -6075,8 +6083,8 @@ class Audio(commands.Cog):
                         " Votes: {num_votes}/{num_members}"
                         " ({cur_percent}% out of {required_percent}% needed)"
                     ).format(
-                        num_votes=num_votes,
-                        num_members=num_members,
+                        num_votes=humanize_number(num_votes),
+                        num_members=humanize_number(num_members),
                         cur_percent=vote,
                         required_percent=percent,
                     )
@@ -6540,7 +6548,7 @@ class Audio(commands.Cog):
                 await self._embed_msg(
                     ctx,
                     _("Not enough {currency} ({required_credits} required).").format(
-                        currency=credits_name, required_credits=jukebox_price
+                        currency=credits_name, required_credits=humanize_number(jukebox_price)
                     ),
                 )
                 return False

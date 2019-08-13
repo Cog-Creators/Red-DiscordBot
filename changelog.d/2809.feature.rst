@@ -1,0 +1,1 @@
+Improved class-based menu utilities have been added. See :module:`redbot.core.utils.menus` for details.

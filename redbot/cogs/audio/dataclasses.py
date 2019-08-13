@@ -61,7 +61,9 @@ class LocalPath(ChdirClean):
     The only use of this class is for `localtracks`.
     """
 
-    _supported_music_ext = (".mp3", ".flac", ".ogg")
+    _fully_supported_music_ext = (".mp3", ".flac", ".ogg")
+    _partially_supported_music_ext = (".m3u", ".m4a")
+    _all_music_ext = _fully_supported_music_ext + _partially_supported_music_ext
 
     def __init__(self, path, **kwargs):
         self._path = path
@@ -151,7 +153,7 @@ class LocalPath(ChdirClean):
 
     def _filtered(self, paths: List[Path]):
         for p in paths:
-            if p.suffix in self._supported_music_ext:
+            if p.suffix in self._fully_supported_music_ext:
                 yield p
 
     def __str__(self):
@@ -178,13 +180,13 @@ class LocalPath(ChdirClean):
 
     def tracks_in_tree(self):
         tracks = []
-        for track in self.multirglob(*[f"*{ext}" for ext in self._supported_music_ext]):
+        for track in self.multirglob(*[f"*{ext}" for ext in self._fully_supported_music_ext]):
             if track.exists() and track.is_file() and track.parent != self.localtrack_folder:
                 tracks.append(Query.process_input(LocalPath(str(track.absolute()))))
         return tracks
 
     def subfolders_in_tree(self):
-        files = list(self.multirglob(*[f"*{ext}" for ext in self._supported_music_ext]))
+        files = list(self.multirglob(*[f"*{ext}" for ext in self._fully_supported_music_ext]))
         folders = []
         for f in files:
             if f.exists() and f.parent not in folders and f.parent != self.localtrack_folder:
@@ -197,13 +199,13 @@ class LocalPath(ChdirClean):
 
     def tracks_in_folder(self):
         tracks = []
-        for track in self.multiglob(*[f"*{ext}" for ext in self._supported_music_ext]):
+        for track in self.multiglob(*[f"*{ext}" for ext in self._fully_supported_music_ext]):
             if track.exists() and track.is_file() and track.parent != self.localtrack_folder:
                 tracks.append(Query.process_input(LocalPath(str(track.absolute()))))
         return tracks
 
     def subfolders(self):
-        files = list(self.multiglob(*[f"*{ext}" for ext in self._supported_music_ext]))
+        files = list(self.multiglob(*[f"*{ext}" for ext in self._fully_supported_music_ext]))
         folders = []
         for f in files:
             if f.exists() and f.parent not in folders and f.parent != self.localtrack_folder:

@@ -10,10 +10,12 @@ import discord
 from redbot.cogs.bank import check_global_setting_guildowner, check_global_setting_admin
 from redbot.core import Config, bank, commands, errors
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.chat_formatting import box, humanize_number
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 
 from redbot.core.bot import Red
+
+from .leaderboard_menu import LeaderboardMenu
 
 T_ = Translator("Economy", __file__)
 
@@ -159,7 +161,7 @@ class Economy(commands.Cog):
 
         await ctx.send(
             _("{user}'s balance is {num} {currency}").format(
-                user=user.display_name, num=bal, currency=currency
+                user=user.display_name, num=humanize_number(bal), currency=currency
             )
         )
 
@@ -176,7 +178,10 @@ class Economy(commands.Cog):
 
         await ctx.send(
             _("{user} transferred {num} {currency} to {other_user}").format(
-                user=from_.display_name, num=amount, currency=currency, other_user=to.display_name
+                user=from_.display_name,
+                num=humanize_number(amount),
+                currency=currency,
+                other_user=to.display_name,
             )
         )
 
@@ -200,7 +205,7 @@ class Economy(commands.Cog):
                 await bank.deposit_credits(to, creds.sum)
                 msg = _("{author} added {num} {currency} to {user}'s account.").format(
                     author=author.display_name,
-                    num=creds.sum,
+                    num=humanize_number(creds.sum),
                     currency=currency,
                     user=to.display_name,
                 )
@@ -208,7 +213,7 @@ class Economy(commands.Cog):
                 await bank.withdraw_credits(to, creds.sum)
                 msg = _("{author} removed {num} {currency} from {user}'s account.").format(
                     author=author.display_name,
-                    num=creds.sum,
+                    num=humanize_number(creds.sum),
                     currency=currency,
                     user=to.display_name,
                 )
@@ -216,7 +221,7 @@ class Economy(commands.Cog):
                 await bank.set_balance(to, creds.sum)
                 msg = _("{author} set {user}'s account balance to {num} {currency}.").format(
                     author=author.display_name,
-                    num=creds.sum,
+                    num=humanize_number(creds.sum),
                     currency=currency,
                     user=to.display_name,
                 )
@@ -268,7 +273,9 @@ class Economy(commands.Cog):
                             "You've reached the maximum amount of {currency}!"
                             "Please spend some more \N{GRIMACING FACE}\n\n"
                             "You currently have {new_balance} {currency}."
-                        ).format(currency=credits_name, new_balance=exc.max_balance)
+                        ).format(
+                            currency=credits_name, new_balance=humanize_number(exc.max_balance)
+                        )
                     )
                     return
                 next_payday = cur_time + await self.config.PAYDAY_TIME()
@@ -284,9 +291,9 @@ class Economy(commands.Cog):
                     ).format(
                         author=author,
                         currency=credits_name,
-                        amount=await self.config.PAYDAY_CREDITS(),
-                        new_balance=await bank.get_balance(author),
-                        pos=pos,
+                        amount=humanize_number(await self.config.PAYDAY_CREDITS()),
+                        new_balance=humanize_number(await bank.get_balance(author)),
+                        pos=humanize_number(pos) if pos else pos,
                     )
                 )
 
@@ -316,7 +323,9 @@ class Economy(commands.Cog):
                             "You've reached the maximum amount of {currency}! "
                             "Please spend some more \N{GRIMACING FACE}\n\n"
                             "You currently have {new_balance} {currency}."
-                        ).format(currency=credits_name, new_balance=exc.max_balance)
+                        ).format(
+                            currency=credits_name, new_balance=humanize_number(exc.max_balance)
+                        )
                     )
                     return
                 next_payday = cur_time + await self.config.guild(guild).PAYDAY_TIME()
@@ -331,9 +340,9 @@ class Economy(commands.Cog):
                     ).format(
                         author=author,
                         currency=credits_name,
-                        amount=credit_amount,
-                        new_balance=await bank.get_balance(author),
-                        pos=pos,
+                        amount=humanize_number(credit_amount),
+                        new_balance=humanize_number(await bank.get_balance(author)),
+                        pos=humanize_number(pos) if pos else pos,
                     )
                 )
             else:
@@ -346,65 +355,19 @@ class Economy(commands.Cog):
 
     @commands.command()
     @guild_only_check()
-    async def leaderboard(self, ctx: commands.Context, top: int = 10, show_global: bool = False):
-        """Print the leaderboard.
-
-        Defaults to top 10.
-        """
+    async def leaderboard(self, ctx: commands.Context, show_global: bool = False):
+        """Print the leaderboard."""
         guild = ctx.guild
-        author = ctx.author
-        if top < 1:
-            top = 10
         if await bank.is_global() and show_global:
             # show_global is only applicable if bank is global
-            bank_sorted = await bank.get_leaderboard(positions=top, guild=None)
+            raw_accounts = await bank.get_leaderboard(guild=None)
         else:
-            bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
-        try:
-            bal_len = len(str(bank_sorted[0][1]["balance"]))
-            # first user is the largest we'll see
-        except IndexError:
-            return await ctx.send(_("There are no accounts in the bank."))
-        pound_len = len(str(len(bank_sorted)))
-        header = "{pound:{pound_len}}{score:{bal_len}}{name:2}\n".format(
-            pound="#",
-            name=_("Name"),
-            score=_("Score"),
-            bal_len=bal_len + 6,
-            pound_len=pound_len + 3,
-        )
-        highscores = []
-        pos = 1
-        temp_msg = header
-        for acc in bank_sorted:
-            try:
-                name = guild.get_member(acc[0]).display_name
-            except AttributeError:
-                user_id = ""
-                if await ctx.bot.is_owner(ctx.author):
-                    user_id = f"({str(acc[0])})"
-                name = f"{acc[1]['name']} {user_id}"
-            balance = acc[1]["balance"]
+            raw_accounts = await bank.get_leaderboard(guild=guild)
 
-            if acc[0] != author.id:
-                temp_msg += f"{f'{pos}.': <{pound_len+2}} {balance: <{bal_len + 5}} {name}\n"
-
-            else:
-                temp_msg += (
-                    f"{f'{pos}.': <{pound_len+2}} "
-                    f"{balance: <{bal_len + 5}} "
-                    f"<<{author.display_name}>>\n"
-                )
-            if pos % 10 == 0:
-                highscores.append(box(temp_msg, lang="md"))
-                temp_msg = header
-            pos += 1
-
-        if temp_msg != header:
-            highscores.append(box(temp_msg, lang="md"))
-
-        if highscores:
-            await menu(ctx, highscores, DEFAULT_CONTROLS)
+        if raw_accounts:
+            await LeaderboardMenu.send_and_wait(ctx, accounts=raw_accounts, timeout=60.0)
+        else:
+            await ctx.send(_("There are no accounts in the bank."))
 
     @commands.command()
     @guild_only_check()
@@ -496,11 +459,12 @@ class Economy(commands.Cog):
                 await channel.send(
                     _(
                         "You've reached the maximum amount of {currency}! "
-                        "Please spend some more \N{GRIMACING FACE}\n{old_balance} -> {new_balance}!"
+                        "Please spend some more \N{GRIMACING FACE}\n"
+                        "{old_balance} -> {new_balance}!"
                     ).format(
                         currency=await bank.get_currency_name(getattr(channel, "guild", None)),
-                        old_balance=then,
-                        new_balance=exc.max_balance,
+                        old_balance=humanize_number(then),
+                        new_balance=humanize_number(exc.max_balance),
                     )
                 )
                 return
@@ -519,9 +483,9 @@ class Economy(commands.Cog):
                 slot=slot,
                 author=author,
                 phrase=phrase,
-                amount=bid,
-                old_balance=then,
-                new_balance=now,
+                amount=humanize_number(bid),
+                old_balance=humanize_number(then),
+                new_balance=humanize_number(now),
             )
         )
 
@@ -547,12 +511,12 @@ class Economy(commands.Cog):
                         "Payday cooldown: {payday_time}\n"
                         "Amount given at account registration: {register_amount}"
                     ).format(
-                        slot_min=await conf.SLOT_MIN(),
-                        slot_max=await conf.SLOT_MAX(),
-                        slot_time=await conf.SLOT_TIME(),
-                        payday_time=await conf.PAYDAY_TIME(),
-                        payday_amount=await conf.PAYDAY_CREDITS(),
-                        register_amount=await bank.get_default_balance(guild),
+                        slot_min=humanize_number(await conf.SLOT_MIN()),
+                        slot_max=humanize_number(await conf.SLOT_MAX()),
+                        slot_time=humanize_number(await conf.SLOT_TIME()),
+                        payday_time=humanize_number(await conf.PAYDAY_TIME()),
+                        payday_amount=humanize_number(await conf.PAYDAY_CREDITS()),
+                        register_amount=humanize_number(await bank.get_default_balance(guild)),
                     )
                 )
             )
@@ -570,7 +534,9 @@ class Economy(commands.Cog):
             await self.config.guild(guild).SLOT_MIN.set(bid)
         credits_name = await bank.get_currency_name(guild)
         await ctx.send(
-            _("Minimum bid is now {bid} {currency}.").format(bid=bid, currency=credits_name)
+            _("Minimum bid is now {bid} {currency}.").format(
+                bid=humanize_number(bid), currency=credits_name
+            )
         )
 
     @economyset.command()
@@ -589,7 +555,9 @@ class Economy(commands.Cog):
         else:
             await self.config.guild(guild).SLOT_MAX.set(bid)
         await ctx.send(
-            _("Maximum bid is now {bid} {currency}.").format(bid=bid, currency=credits_name)
+            _("Maximum bid is now {bid} {currency}.").format(
+                bid=humanize_number(bid), currency=credits_name
+            )
         )
 
     @economyset.command()
@@ -630,7 +598,7 @@ class Economy(commands.Cog):
             await self.config.guild(guild).PAYDAY_CREDITS.set(creds)
         await ctx.send(
             _("Every payday will now give {num} {currency}.").format(
-                num=creds, currency=credits_name
+                num=humanize_number(creds), currency=credits_name
             )
         )
 
@@ -650,7 +618,7 @@ class Economy(commands.Cog):
                 _(
                     "Every payday will now give {num} {currency} "
                     "to people with the role {role_name}."
-                ).format(num=creds, currency=credits_name, role_name=role.name)
+                ).format(num=humanize_number(creds), currency=credits_name, role_name=role.name)
             )
 
     @economyset.command()
@@ -663,7 +631,7 @@ class Economy(commands.Cog):
         await bank.set_default_balance(creds, guild)
         await ctx.send(
             _("Registering an account will now give {num} {currency}.").format(
-                num=creds, currency=credits_name
+                num=humanize_number(creds), currency=credits_name
             )
         )
 

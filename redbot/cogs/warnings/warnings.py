@@ -14,8 +14,7 @@ from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.mod import is_admin_or_superior
 from redbot.core.utils.chat_formatting import warning, pagify
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-
+from redbot.core.utils.menus import PagedMenu
 
 _ = Translator("Warnings", __file__)
 
@@ -210,7 +209,7 @@ class Warnings(commands.Cog):
                         ).format(reason_name=r, **v)
                     )
         if msg_list:
-            await menu(ctx, msg_list, DEFAULT_CONTROLS)
+            await PagedMenu.send_and_wait(ctx, pages=msg_list)
         else:
             await ctx.send(_("There are no reasons configured!"))
 
@@ -238,7 +237,7 @@ class Warnings(commands.Cog):
                         ).format(**r)
                     )
         if msg_list:
-            await menu(ctx, msg_list, DEFAULT_CONTROLS)
+            await PagedMenu.send_and_wait(ctx, pages=msg_list)
         else:
             await ctx.send(_("There are no actions configured!"))
 

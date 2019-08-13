@@ -5,7 +5,13 @@ from redbot.pytest.mod import *
 
 @pytest.mark.asyncio
 async def test_modlog_register_casetype(mod):
-    ct = {"name": "ban", "default_setting": True, "image": ":hammer:", "case_str": "Ban"}
+    ct = {
+        "name": "ban",
+        "default_setting": True,
+        "image": ":hammer:",
+        "case_str": "Ban",
+        "audit_type": "ban",
+    }
     casetype = await mod.register_casetype(**ct)
     assert casetype is not None
 
