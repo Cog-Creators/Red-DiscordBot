@@ -49,7 +49,7 @@ def parse_timedelta(
     maximum: Optional[timedelta] = None,
     minimum: Optional[timedelta] = None,
     allowed_units: Optional[List[str]] = None,
-) -> Optional[timedelta]:
+) -> timedelta:
     """
     This converts a user provided string into a timedelta
 
@@ -71,14 +71,14 @@ def parse_timedelta(
 
     Returns
     -------
-    Optional[timedelta]
-        If matched, the timedelta which was parsed. This can return `None`
+    timedelta
+        The timedelta which was parsed.
 
     Raises
     ------
     BadArgument
-        If the argument passed uses a unit not allowed, but understood
-        or if the value is out of bounds.
+        If the argument passed uses a unit not allowed but understood, if the value is
+        out of bounds or if the value can't be converted.
     """
     matches = TIME_RE.match(argument)
     allowed_units = allowed_units or ["weeks", "days", "hours", "minutes", "seconds"]
@@ -104,7 +104,12 @@ def parse_timedelta(
                     ).format(minimum=humanize_timedelta(timedelta=minimum))
                 )
             return delta
-    return None
+    raise BadArgument(
+        _(
+            "The format is incorrect. Here are some examples of the format: "
+            '`"1 week"`, `"2 days"`, `12h`, `2h30m`'
+        )
+    )
 
 
 class GuildConverter(discord.Guild):
