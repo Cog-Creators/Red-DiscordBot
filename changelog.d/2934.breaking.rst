@@ -1,0 +1,1 @@
+Red's context.send may raise a different new exception type in an effort to reduce bad API calls.
