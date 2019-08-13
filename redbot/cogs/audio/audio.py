@@ -5182,7 +5182,7 @@ class Audio(commands.Cog):
             dur = lavalink.utils.format_time(player.current.length)
 
         if player.current.is_stream:
-            queue_list += _("**Currently livestreaming:**")
+            queue_list += _("**Currently livestreaming:**\n")
 
         elif any(
             x in player.current.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
