@@ -1,9 +1,12 @@
 import asyncio
 import contextlib
+import logging
 from typing import Iterable, List, Union
+
 import discord
 from discord.ext import commands
 
+from ..errors import PreventedAPIException
 from .requires import PermState
 from ..utils.chat_formatting import box
 from ..utils.predicates import MessagePredicate
@@ -12,6 +15,8 @@ from ..utils import common_filters
 TICK = "\N{WHITE HEAVY CHECK MARK}"
 
 __all__ = ["Context"]
+
+log = logging.getLogger("red")
 
 
 class Context(commands.Context):
@@ -54,6 +59,12 @@ class Context(commands.Context):
         discord.Message
             The message that was sent.
 
+        Raises
+        ------
+        PreventedAPIException
+            Bot does not have send messages as a permission
+        discord.HTTPException
+            There may be other cases where this fails.
         """
 
         _filter = kwargs.pop("filter", common_filters.filter_mass_mentions)
@@ -61,7 +72,15 @@ class Context(commands.Context):
         if _filter and content:
             content = _filter(str(content))
 
-        return await super().send(content=content, **kwargs)
+        if self.channel.permissions_for(self.me).send_messages:
+            try:
+                return await super().send(content=content, **kwargs)
+            except discord.HTTPException as exc:
+                if exc.code == 50007:
+                    log.warning(f"User id: {self.author.id} was (unsuccessfully) sent a DM")
+                raise
+        else:
+            raise PreventedAPIException()
 
     async def send_help(self, command=None):
         """ Send the command help message. """
@@ -79,12 +98,19 @@ class Context(commands.Context):
             :code:`True` if adding the reaction succeeded.
 
         """
-        try:
-            await self.message.add_reaction(TICK)
-        except discord.HTTPException:
-            return False
+        if self.channel.permissions_for(self.me).add_reactions:
+            try:
+                await self.message.add_reaction(TICK)
+            except discord.HTTPException as exc:
+                if exc.code == 90001:
+                    log.warning(
+                        f"User id {self.author.id} blocked us and is being reacted to unsuccessfully"
+                    )
+                return False
+            else:
+                return True
         else:
-            return True
+            return False
 
     async def react_quietly(
         self, reaction: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]
@@ -95,12 +121,19 @@ class Context(commands.Context):
         bool
             :code:`True` if adding the reaction succeeded.
         """
-        try:
-            await self.message.add_reaction(reaction)
-        except discord.HTTPException:
-            return False
+        if self.channel.permissions_for(self.me).add_reactions:
+            try:
+                await self.message.add_reaction(reaction)
+            except discord.HTTPException as exc:
+                if exc.code == 90001:
+                    log.warning(
+                        f"User id {self.author.id} blocked us and is being reacted to unsuccessfully"
+                    )
+                return False
+            else:
+                return True
         else:
-            return True
+            return False
 
     async def send_interactive(
         self, messages: Iterable[str], box_lang: str = None, timeout: int = 15

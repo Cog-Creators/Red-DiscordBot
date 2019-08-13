@@ -1,0 +1,1 @@
+Red logs some instances of bad API calls. This may be enhanced further later.

@@ -49,3 +49,34 @@ class BalanceTooHigh(BankError, OverflowError):
         return _("{user}'s balance cannot rise above {max:,} {currency}.").format(
             user=self.user, max=self.max_balance, currency=self.currency_name
         )
+
+
+class PreventedAPIException(RedError):
+    """
+    Raised when Red detects an attempt to do something which would cause a 403
+    
+    This exists due to new autoban thresholds which were implemented on 2019-08-11
+    These thresholds are being tightended on 2019-09-10
+
+    Initial threshold: 25,000 bad calls per hour
+    Enhanced threshold 10,000 bad calls per hour
+
+    The bad calls in this case are any calls which generate these http codes:
+        401
+        403
+        429
+
+    The status codes and thresholds for this are subject to change.
+    No code should rely on these, just avoid causing them where possible.
+
+    Currently, there is no confirmation on excluding blocked user 403's from this limit.
+    We may need to account for this in some places in code.
+
+    The following are discord specific codes which are not detectable in advance, but are
+    403 HTTP Exceptions.
+    
+        Blocked reaction discord error code: 90001
+        Cannot DM user (blocked or closed DMs) discord error code: 50007
+    
+    Last updated for accuracy: 2019-08-13
+    """

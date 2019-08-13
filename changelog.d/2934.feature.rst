@@ -1,0 +1,1 @@
+New exception type added for handling prevented bad API calls
