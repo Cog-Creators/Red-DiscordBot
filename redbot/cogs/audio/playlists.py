@@ -259,6 +259,7 @@ async def get_all_playlist(
     bot: Red,
     guild: Union[discord.Guild, int] = None,
     author: Union[discord.abc.User, int] = None,
+    specified_user: bool = False,
 ) -> List[Playlist]:
     """
     Gets all playlist for the specified scope.
@@ -272,6 +273,8 @@ async def get_all_playlist(
         The ID of the user to get the playlist from if scope is USERPLAYLIST.
     bot: Red
         The bot's instance
+    specified_user:bool
+        Whether or not user ID was passed as an argparse.
     Returns
     -------
     list
@@ -286,12 +289,22 @@ async def get_all_playlist(
         Trying to access the User scope without an user id.
     """
     playlists = await _config.custom(*_prepare_config_scope(scope, author, guild)).all()
-    return [
-        await Playlist.from_json(
-            bot, scope, playlist_number, playlist_data, guild=guild, author=author
-        )
-        for playlist_number, playlist_data in playlists.items()
-    ]
+    if specified_user:
+        user_id = getattr(author, "id", author)
+        return [
+            await Playlist.from_json(
+                bot, scope, playlist_number, playlist_data, guild=guild, author=author
+            )
+            for playlist_number, playlist_data in playlists.items()
+            if user_id == playlist_data.get("author")
+        ]
+    else:
+        return [
+            await Playlist.from_json(
+                bot, scope, playlist_number, playlist_data, guild=guild, author=author
+            )
+            for playlist_number, playlist_data in playlists.items()
+        ]
 
 
 async def create_playlist(
