@@ -18,6 +18,7 @@ from .. import __version__ as red_version, version_info as red_version_info, Ver
 from . import commands
 from .config import get_latest_confs
 from .data_manager import storage_type
+from .errors import PreventedAPIException
 from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
 from .utils import fuzzy_command_search, format_fuzzy_results
 
@@ -250,6 +251,9 @@ def init_events(bot, cli_flags):
                 ),
                 delete_after=error.retry_after,
             )
+        elif isinstance(error, PreventedAPIException):
+            if log.getEffectiveLevel() <= logging.DEBUG:
+                log.exception("A Prevented API Exception was not handled.", exc_info=error)
         else:
             log.exception(type(error).__name__, exc_info=error)
 

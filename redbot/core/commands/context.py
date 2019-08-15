@@ -80,7 +80,9 @@ class Context(commands.Context):
                     log.warning(f"User id: {self.author.id} was (unsuccessfully) sent a DM")
                 raise
         else:
-            raise PreventedAPIException()
+            raise PreventedAPIException(
+                f"Missing `send_messages` in channel with id {self.channel.id}"
+            )
 
     async def send_help(self, command=None):
         """ Send the command help message. """
