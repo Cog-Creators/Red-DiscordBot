@@ -9,11 +9,14 @@ from urllib.parse import urlparse
 import discord
 import lavalink
 
+from redbot.core.utils import box
+
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from . import dataclasses
 from .converters import _pass_config_to_converters
-from .playlists import _pass_config_to_playlist
+from .playlists import _pass_config_to_playlist, humanize_scope
+from .audio_menus import _pass_config_to_menus
 
 __all__ = [
     "pass_config_to_dependencies",
@@ -32,6 +35,7 @@ __all__ = [
     "userlimit",
     "is_allowed",
     "CacheLevel",
+    "format_playlist_picker_data",
     "Notifier",
 ]
 _re_time_converter = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
@@ -49,6 +53,7 @@ def pass_config_to_dependencies(config: Config, bot: Red, localtracks_folder: st
     _config = config
     _pass_config_to_playlist(config, bot)
     _pass_config_to_converters(config, bot)
+    _pass_config_to_menus(config, bot)
     dataclasses._pass_config_to_dataclasses(config, bot, localtracks_folder)
 
 
@@ -129,6 +134,18 @@ def dynamic_time(seconds):
     else:
         msg = ""
     return msg.format(d, h, m, s)
+
+
+def format_playlist_picker_data(pid, pname, ptracks, pauthor, scope):
+    author = _bot.get_user(pauthor) or "Unknown"
+    line = (
+        f" - Name:   <{pname}>\n"
+        f" - Scope:  < {humanize_scope(scope)} >\n"
+        f" - ID:     < {pid} >\n"
+        f" - Tracks: < {ptracks} >\n"
+        f" - Author: < {author} >\n\n"
+    )
+    return box(line, lang="md")
 
 
 def match_url(url):

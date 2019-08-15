@@ -22,6 +22,7 @@ import lavalink
 from fuzzywuzzy import process
 
 import redbot.core
+from redbot.cogs.audio.audio_menus import QueueMenu
 from redbot.core import Config, bank, checks, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
@@ -33,6 +34,7 @@ from redbot.core.utils.menus import (
     next_page,
     prev_page,
     start_adding_reactions,
+    PagedOptionsMenu,
 )
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from . import dataclasses
@@ -53,9 +55,10 @@ from .playlists import (
 )
 from .utils import *
 
+
 _ = Translator("Audio", __file__)
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __author__ = ["aikaterna", "Draper"]
 
 log = logging.getLogger("red.audio")
@@ -342,8 +345,6 @@ class Audio(commands.Cog):
     async def event_handler(
         self, player: lavalink.Player, event_type: lavalink.LavalinkEvents, extra
     ):
-        print(event_type)
-        print(extra)
         disconnect = await self.config.guild(player.channel.guild).disconnect()
         autoplay = await self.config.guild(player.channel.guild).auto_play() or self.owns_autoplay
         notify = await self.config.guild(player.channel.guild).notify()
@@ -521,15 +522,18 @@ class Audio(commands.Cog):
             player_check = await _players_check()
             await _status_check(player_check[1])
 
-        if event_type == lavalink.LavalinkEvents.TRACK_EXCEPTION:
+        if event_type in [
+            lavalink.LavalinkEvents.TRACK_EXCEPTION,
+            lavalink.LavalinkEvents.TRACK_STUCK,
+        ]:
             message_channel = player.fetch("channel")
             if message_channel:
                 message_channel = self.bot.get_channel(message_channel)
+                query = dataclasses.Query.process_input(player.current.uri)
                 if player.current and any(
                     x in player.current.uri
                     for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
                 ):
-                    query = dataclasses.Query.process_input(player.current.uri)
                     if player.current.title == "Unknown title":
                         description = "{}".format(query.track.to_string_hidden())
                     else:
@@ -538,11 +542,18 @@ class Audio(commands.Cog):
                 else:
                     description = bold("[{}]({})").format(player.current.title, player.current.uri)
 
-                embed = discord.Embed(
-                    colour=(await self._get_embed_colour(message_channel)),
-                    title=_("Track Error"),
-                    description="{}\n{}".format(extra, description),
-                )
+                if event_type == lavalink.LavalinkEvents.TRACK_STUCK:
+                    embed = discord.Embed(
+                        colour=(await self._get_embed_colour(message_channel)),
+                        title=_("Track is stuck"),
+                        description="{}".format(description),
+                    )
+                else:
+                    embed = discord.Embed(
+                        colour=(await self._get_embed_colour(message_channel)),
+                        title=_("Track Error"),
+                        description="{}\n{}".format(extra, description),
+                    )
                 embed.set_footer(text=_("Skipping..."))
                 await message_channel.send(embed=embed)
             while True:
@@ -859,7 +870,7 @@ class Audio(commands.Cog):
             await self._data_check(ctx)
 
     @_autoplay.command(name="playlist", usage="<playlist_name_OR_id> [args]")
-    async def __autoplay_playlist(
+    async def _autoplay_playlist(
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
@@ -900,6 +911,8 @@ class Audio(commands.Cog):
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
 
         scope, author, guild = scope_data
+
+
         try:
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild
@@ -2752,8 +2765,21 @@ class Audio(commands.Cog):
                 res = await self.music_cache.spotify_query(
                     ctx, "track", query.id, skip_youtube=True, notifier=None
                 )
+
                 if not res:
-                    return await self._embed_msg(ctx, _("Nothing found."))
+                    title = _("Nothing found.")
+                    if (
+                        query.is_local
+                        and query.track.suffix in dataclasses._partially_supported_music_ext
+                    ):
+                        description = _(
+                            "**{suffix}** is not a fully supported format and some tracks may not play."
+                        ).format(suffix=query.track.suffix)
+                    return await ctx.send(
+                        embed=discord.Embed(
+                            colour=ctx.embed_colour(), title=title, description=description
+                        )
+                    )
             except SpotifyFetchError as error:
                 self._play_lock(ctx, False)
                 return await self._embed_msg(ctx, _(error.message).format(prefix=ctx.prefix))
@@ -2764,12 +2790,24 @@ class Audio(commands.Cog):
                     new_query.start_time = query.start_time
                     return await self._enqueue_tracks(ctx, new_query)
                 else:
-                    result, called_api = await self.music_cache.lavalink_query(
-                        ctx, player, dataclasses.Query.process_input(res[0])
-                    )
+                    query = dataclasses.Query.process_input(res[0])
+                    result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
                     tracks = result.tracks
                     if not tracks:
-                        return await self._embed_msg(ctx, _("Nothing found."))
+                        title = _("Nothing found.")
+                        if (
+                            query.is_local
+                            and query.track.suffix in dataclasses._partially_supported_music_ext
+                        ):
+                            description = _(
+                                "**{suffix}** is not a fully supported format and some "
+                                "tracks may not play."
+                            ).format(suffix=query.track.suffix)
+                        return await ctx.send(
+                            embed=discord.Embed(
+                                colour=ctx.embed_colour(), title=title, description=description
+                            )
+                        )
                     single_track = tracks[0]
                     single_track.start_timestamp = query.start_time * 1000
                     single_track = [single_track]
@@ -2831,6 +2869,14 @@ class Audio(commands.Cog):
                         "This may be due to permissions or because Lavalink.jar is being run "
                         "in a different machine than the local tracks."
                     )
+                elif (
+                    query.is_local
+                    and query.track.suffix in dataclasses._partially_supported_music_ext
+                ):
+                    embed.description = _(
+                        "**{suffix}** is not a fully supported format and some "
+                        "tracks may not play."
+                    ).format(suffix=query.track.suffix)
                 return await ctx.send(embed=embed)
         else:
             tracks = query
@@ -3077,44 +3123,15 @@ class Audio(commands.Cog):
             return False
         return True
 
-    async def _get_correct_playlist_id(
-        self,
-        context: commands.Context,
-        matches: dict,
-        scope: str,
-        author: discord.User,
-        guild: discord.Guild,
-    ) -> Tuple[Optional[int], str]:
-        """
-        Parameters
-        ----------
-        context: commands.Context
-            The context in which this is being called.
-        matches: dict
-            A dict of the matches found where key is scope and value is matches.
-        scope:str
-            The custom config scope. A value from :code:`PlaylistScope`.
-        author: discord.User
-            The user.
-        guild: discord.Guild
-            The guild.
-        Returns
-        -------
-        Tuple[Optional[int], str]
-            Tuple of Playlist ID or None if none found and original user input.
-        Raises
-        ------
-        `TooManyMatches`
-            When more than 10 matches are found or
-            When multiple matches are found but none is selected.
-
-        """
+    @staticmethod
+    def _filter_playlist_matches(matches, scope, guild, author):
         original_input = matches.get("arg")
         correct_scope_matches = matches.get(scope)
         guild_to_query = guild.id
         user_to_query = author.id
         if not correct_scope_matches:
-            return None, original_input
+            return None, 0, original_input
+
         if scope == PlaylistScope.USER.value:
             correct_scope_matches = [
                 (i[2]["id"], i[2]["name"], len(i[2]["tracks"]), i[2]["author"])
@@ -3140,61 +3157,54 @@ class Audio(commands.Cog):
                 correct_scope_matches = [
                     (i, n, t, a) for i, n, t, a in correct_scope_matches if i == arg
                 ]
-            if match_count > 10:
-                raise TooManyMatches(
-                    f"{match_count} playlist match {original_input} "
-                    f"Please try to be more specific or use the playlist ID."
-                )
-        elif match_count == 1:
-            return correct_scope_matches[0][0], original_input
-        elif match_count == 0:
+
+        correct_options = [
+            (format_playlist_picker_data(i[0], i[1], i[2], i[3], scope), i[0])
+            for i in correct_scope_matches
+        ]
+        return correct_options, len(correct_options), original_input
+
+    async def _get_correct_playlist_id(
+        self,
+        context: commands.Context,
+        matches: dict,
+        scope: str,
+        author: discord.User,
+        guild: discord.Guild,
+    ) -> Tuple[Optional[int], str]:
+        """
+        Parameters
+        ----------
+        context: commands.Context
+            The context in which this is being called.
+        matches: dict
+            A dict of the matches found where key is scope and value is matches.
+        scope:str
+            The custom config scope. A value from :code:`PlaylistScope`.
+        author: discord.User
+            The user.
+        guild: discord.Guild
+            The guild.
+        Returns
+        -------
+        Tuple[Optional[int], str]
+            Tuple of Playlist ID or None if none found and original user input.
+        """
+
+        correct_options, option_count, original_input = self._filter_playlist_matches(matches, scope, guild, author)
+        if option_count == 1:
+            return correct_options[0][1], original_input
+        elif not option_count:
             return None, original_input
-
-        # TODO : Convert this section to a new paged reaction menu when Toby Menus are Merged
-        pos_len = 3
-        playlists = f"{'#':{pos_len}}\n"
-
-        for number, (pid, pname, ptracks, pauthor) in enumerate(correct_scope_matches, 1):
-            author = self.bot.get_user(pauthor) or "Unknown"
-            line = (
-                f"{number}."
-                f"    <{pname}>\n"
-                f" - Scope:  < {humanize_scope(scope)} >\n"
-                f" - ID:     < {pid} >\n"
-                f" - Tracks: < {ptracks} >\n"
-                f" - Author: < {author} >\n\n"
-            )
-            playlists += line
-
-        embed = discord.Embed(
-            title="Playlists found, which one would you like?",
-            description=box(playlists, lang="md"),
-            colour=await context.embed_colour(),
+        menu_instance = await PagedOptionsMenu.send_and_wait(
+            context,
+            timeout=60,
+            pagenum_in_footer=1,
+            options=correct_options,
+            title="Playlist Picker"
         )
-        msg = await context.send(embed=embed)
-        avaliable_emojis = ReactionPredicate.NUMBER_EMOJIS[1:]
-        avaliable_emojis.append("🔟")
-        emojis = avaliable_emojis[: len(correct_scope_matches)]
-        emojis.append("❌")
-        start_adding_reactions(msg, emojis)
-        pred = ReactionPredicate.with_emojis(emojis, msg, user=context.author)
-        try:
-            await context.bot.wait_for("reaction_add", check=pred, timeout=60)
-        except asyncio.TimeoutError:
-            with contextlib.suppress(discord.HTTPException):
-                await msg.delete()
-            raise TooManyMatches(
-                "Too many matches found and you did not select which one you wanted."
-            )
-        if emojis[pred.result] == "❌":
-            with contextlib.suppress(discord.HTTPException):
-                await msg.delete()
-            raise TooManyMatches(
-                "Too many matches found and you did not select which one you wanted."
-            )
-        with contextlib.suppress(discord.HTTPException):
-            await msg.delete()
-        return correct_scope_matches[pred.result][0], original_input
+        playlist_id = menu_instance.selection
+        return playlist_id, original_input
 
     @commands.group()
     @commands.guild_only()
@@ -4996,7 +5006,20 @@ class Audio(commands.Cog):
                 pass
             tracks = await self._get_spotify_tracks(ctx, query)
             if not tracks:
-                return await self._embed_msg(ctx, _("Nothing found."))
+                title = _("Nothing found.")
+                if (
+                    query.is_local
+                    and query.track.suffix in dataclasses._partially_supported_music_ext
+                ):
+                    description = _(
+                        "**{suffix}** is not a fully supported format and some "
+                        "tracks may not play."
+                    ).format(suffix=query.track.suffix)
+                return await ctx.send(
+                    embed=discord.Embed(
+                        colour=ctx.embed_colour(), title=title, description=description
+                    )
+                )
             for track in tracks:
                 track_obj = track_creator(player, other_track=track)
                 tracklist.append(track_obj)
@@ -5005,7 +5028,20 @@ class Audio(commands.Cog):
             result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
             tracks = result.tracks
             if not tracks:
-                return await self._embed_msg(ctx, _("Nothing found."))
+                title = _("Nothing found.")
+                if (
+                    query.is_local
+                    and query.track.suffix in dataclasses._partially_supported_music_ext
+                ):
+                    description = _(
+                        "**{suffix}** is not a fully supported format and some "
+                        "tracks may not play."
+                    ).format(suffix=query.track.suffix)
+                return await ctx.send(
+                    embed=discord.Embed(
+                        colour=ctx.embed_colour(), title=title, description=description
+                    )
+                )
         else:
             result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
             tracks = result.tracks
@@ -5073,22 +5109,6 @@ class Audio(commands.Cog):
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     async def queue(self, ctx: commands.Context, *, page: int = 1):
         """List the songs in the queue."""
-
-        async def _queue_menu(
-            ctx: commands.Context,
-            pages: list,
-            controls: dict,
-            message: discord.Message,
-            page: int,
-            timeout: float,
-            emoji: str,
-        ):
-            if message:
-                await ctx.send_help(self.queue)
-                await message.delete()
-                return None
-
-        QUEUE_CONTROLS = {"⬅": prev_page, "❌": close_menu, "➡": next_page, "ℹ": _queue_menu}
 
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
@@ -5159,15 +5179,15 @@ class Audio(commands.Cog):
                 return await ctx.send(embed=embed)
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
 
-        async with ctx.typing():
-            len_queue_pages = math.ceil(len(player.queue) / 10)
-            queue_page_list = []
-            for page_num in range(1, len_queue_pages + 1):
-                embed = await self._build_queue_page(ctx, player, page_num)
-                queue_page_list.append(embed)
-            if page > len_queue_pages:
-                page = len_queue_pages
-        return await menu(ctx, queue_page_list, QUEUE_CONTROLS, page=(page - 1))
+        # async with ctx.typing():
+        #     len_queue_pages = math.ceil(len(player.queue) / 10)
+        #     queue_page_list = []
+        #     for page_num in range(1, len_queue_pages + 1):
+        #         embed = await self._build_queue_page(ctx, player, page_num)
+        #         queue_page_list.append(embed)
+        #     if page > len_queue_pages:
+        #         page = len_queue_pages
+        return await QueueMenu.send_and_wait(ctx, ctx.channel, self.bot, player=player, queue_cms=self.queue)
 
     async def _build_queue_page(
         self, ctx: commands.Context, player: lavalink.player_manager.Player, page_num
@@ -5192,7 +5212,7 @@ class Audio(commands.Cog):
             dur = lavalink.utils.format_time(player.current.length)
 
         if player.current.is_stream:
-            queue_list += _("**Currently livestreaming:**")
+            queue_list += _("**Currently livestreaming:**\n")
 
         elif any(
             x in player.current.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
@@ -5651,7 +5671,16 @@ class Audio(commands.Cog):
                             "This may be due to permissions or because Lavalink.jar is being run "
                             "in a different machine than the local tracks."
                         )
+                    elif (
+                        query.is_local
+                        and query.track.suffix in dataclasses._partially_supported_music_ext
+                    ):
+                        embed.description = _(
+                            "**{suffix}** is not a fully supported format and some "
+                            "tracks may not play."
+                        ).format(suffix=query.track.suffix)
                     return await ctx.send(embed=embed)
+
                 queue_dur = await queue_duration(ctx)
                 queue_total_duration = lavalink.utils.format_time(queue_dur)
 
@@ -5721,6 +5750,14 @@ class Audio(commands.Cog):
                         "This may be due to permissions or because Lavalink.jar is being run "
                         "in a different machine than the local tracks."
                     )
+                elif (
+                    query.is_local
+                    and query.track.suffix in dataclasses._partially_supported_music_ext
+                ):
+                    embed.description = _(
+                        "**{suffix}** is not a fully supported format and some "
+                        "tracks may not play."
+                    ).format(suffix=query.track.suffix)
                 return await ctx.send(embed=embed)
         else:
             tracks = query
