@@ -3473,7 +3473,7 @@ class Audio(commands.Cog):
         return await self._embed_msg(
             ctx,
             _(
-                "Playlist {name} ({from_id}) copied from {from_scope} to {to_scope} ({to_id})."
+                "Playlist {name} (`{from_id}`) copied from {from_scope} to {to_scope} (`{to_id}`)."
             ).format(
                 name=from_playlist.name,
                 from_id=from_playlist.id,
@@ -3616,7 +3616,7 @@ class Audio(commands.Cog):
             ctx, _("{name} (`{id}`) playlist deleted.").format(name=playlist.name, id=playlist.id)
         )
 
-    @playlist.command(name="remdupe", usage="<playlist_name_OR_id> [args]")
+    @playlist.command(name="dedupe", usage="<playlist_name_OR_id> [args]")
     async def _playlist_remdupe(
         self,
         ctx: commands.Context,
@@ -3627,7 +3627,7 @@ class Audio(commands.Cog):
         """Remove duplicate tracks from a saved playlist.
 
         **Usage**:
-        ​ ​ ​ ​ [p]playlist remdupes playlist_name_OR_id args
+        ​ ​ ​ ​ [p]playlist dedupe playlist_name_OR_id args
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
@@ -3650,9 +3650,9 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ [p]playlist remdupes MyGuildPlaylist
-        ​ ​ ​ ​ [p]playlist remdupes MyGlobalPlaylist --scope Global
-        ​ ​ ​ ​ [p]playlist remdupes MyPersonalPlaylist --scope User
+        ​ ​ ​ ​ [p]playlist dedupe MyGuildPlaylist
+        ​ ​ ​ ​ [p]playlist dedupe MyGlobalPlaylist --scope Global
+        ​ ​ ​ ​ [p]playlist dedupe MyPersonalPlaylist --scope User
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
