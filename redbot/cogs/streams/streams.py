@@ -328,7 +328,7 @@ class Streams(commands.Cog):
             "select an Application Category of your choosing.\n"
             "4. Click *Register*.\n"
             "5. On the following page, copy the Client ID.\n"
-            "6. Run the command `{prefix}set api twitch client_id,<your_client_id_here>`\n\n"
+            "6. Run the command `{prefix}set api twitch client_id <your_client_id_here>`\n\n"
             "Note: These tokens are sensitive and should only be used in a private channel\n"
             "or in DM with the bot.\n"
         ).format(prefix=ctx.prefix)
@@ -349,7 +349,7 @@ class Streams(commands.Cog):
             "3. Set up your API key \n"
             "(see https://support.google.com/googleapi/answer/6158862 for instructions)\n"
             "4. Copy your API key and run the command "
-            "`{prefix}set api youtube api_key,<your_api_key_here>`\n\n"
+            "`{prefix}set api youtube api_key <your_api_key_here>`\n\n"
             "Note: These tokens are sensitive and should only be used in a private channel\n"
             "or in DM with the bot.\n"
         ).format(prefix=ctx.prefix)
