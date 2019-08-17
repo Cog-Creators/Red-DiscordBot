@@ -84,18 +84,14 @@ class Reports(commands.Cog):
             await ctx.send(_("Reporting is now disabled."))
 
     async def internal_filter(self, m: discord.Member, mod=False, perms=None):
-        ret = False
-        if mod:
-            guild = m.guild
-            admin_role = guild.get_role(await self.bot.db.guild(guild).admin_role())
-            mod_role = guild.get_role(await self.bot.db.guild(guild).mod_role())
-            ret |= any(r in m.roles for r in (mod_role, admin_role))
-        if perms:
-            ret |= m.guild_permissions >= perms
+        if perms and m.guild_permissions >= perms:
+            return True
+        if mod and await self.bot.is_mod(m):
+            return True
         # The following line is for consistency with how perms are handled
-        # in Red, though I'm not sure it makse sense to use here.
-        ret |= await self.bot.is_owner(m)
-        return ret
+        # in Red, though I'm not sure it makes sense to use here.
+        if await self.bot.is_owner(m):
+            return True
 
     async def discover_guild(
         self,
@@ -289,6 +285,7 @@ class Reports(commands.Cog):
                 except discord.NotFound:
                     pass
 
+    @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         """
         oh dear....
@@ -308,6 +305,7 @@ class Reports(commands.Cog):
             )
             self.tunnel_store.pop(t[0], None)
 
+    @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         for k, v in self.tunnel_store.items():
             topic = _("Re: ticket# {1} in {0.name}").format(*k)

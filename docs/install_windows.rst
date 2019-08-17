@@ -37,21 +37,24 @@ Manually installing dependencies
 * `Python <https://www.python.org/downloads/>`_ - Red needs Python 3.7.0 or greater
 
 .. note:: Please make sure that the box to add Python to PATH is CHECKED, otherwise
-          you may run into issues when trying to run Red
+          you may run into issues when trying to run Red.
 
 * `Git <https://git-scm.com/download/win>`_
 
-.. attention:: Please choose the option to "Run Git from the Windows Command Prompt" in Git's setup
+.. attention:: Please choose the option to "Run Git from the Windows Command Prompt" in Git's setup.
 
 * `Java <https://java.com/en/download/manual.jsp>`_ - needed for Audio
 
-.. attention:: Please choose the "Windows Online" installer
+.. attention:: Please choose the "Windows Online" installer.
 
 .. _installing-red-windows:
 
 --------------
 Installing Red
 --------------
+
+.. attention:: You may need to restart your computer after installing dependencies
+               for the PATH changes to take effect.
 
 1. Open a command prompt (open Start, search for "command prompt", then click it)
 2. Create and activate a virtual environment (strongly recommended), see the section `using-venv`
@@ -62,23 +65,17 @@ Installing Red
       If you're not inside an activated virtual environment, include the ``--user`` flag with all
       ``pip`` commands.
 
-  * No audio:
+  * No MongoDB support:
 
     .. code-block:: none
 
         python -m pip install -U Red-DiscordBot
 
-  * With audio:
+  * With MongoDB support:
 
     .. code-block:: none
 
-        python -m pip install -U Red-DiscordBot[voice]
-
-  * With audio and MongoDB support:
-
-    .. code-block:: none
-
-        python -m pip install -U Red-DiscordBot[voice,mongo]
+        python -m pip install -U Red-DiscordBot[mongo]
 
   .. note::
 
@@ -111,7 +108,7 @@ Once done setting up the instance, run the following command to run Red:
 
 It will walk through the initial setup, asking for your token and a prefix.
 You can find out how to obtain a token with
-`this guide <https://discordpy.readthedocs.io/en/rewrite/discord.html#creating-a-bot-account>`_,
+`this guide <https://discordpy.readthedocs.io/en/v1.0.1/discord.html#creating-a-bot-account>`_,
 section "Creating a Bot Account".
 
 You may also run Red via the launcher, which allows you to restart the bot

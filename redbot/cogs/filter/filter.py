@@ -33,14 +33,14 @@ class Filter(commands.Cog):
         self.register_task = self.bot.loop.create_task(self.register_filterban())
         self.pattern_cache = {}
 
-    def __unload(self):
+    def cog_unload(self):
         self.register_task.cancel()
 
     @staticmethod
     async def register_filterban():
         try:
             await modlog.register_casetype(
-                "filterban", False, ":filing_cabinet: :hammer:", "Filter ban", "ban"
+                "filterban", False, ":filing_cabinet: :hammer:", "Filter ban"
             )
         except RuntimeError:
             pass
@@ -236,7 +236,7 @@ class Filter(commands.Cog):
         else:
             await ctx.send(_("Those words were already in the filter."))
 
-    @_filter.command(name="remove")
+    @_filter.command(name="delete", aliases=["remove", "del"])
     async def filter_remove(self, ctx: commands.Context, *, words: str):
         """Remove words from the filter.
 
@@ -286,6 +286,10 @@ class Filter(commands.Cog):
     def invalidate_cache(self, guild: discord.Guild, channel: discord.TextChannel = None):
         """ Invalidate a cached pattern"""
         self.pattern_cache.pop((guild, channel), None)
+        if channel is None:
+            for keyset in list(self.pattern_cache.keys()):  # cast needed, no remove
+                if guild in keyset:
+                    self.pattern_cache.pop(keyset, None)
 
     async def add_to_filter(
         self, server_or_channel: Union[discord.Guild, discord.TextChannel], words: list
@@ -409,6 +413,7 @@ class Filter(commands.Cog):
                                 reason,
                             )
 
+    @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         if isinstance(message.channel, discord.abc.PrivateChannel):
             return
@@ -422,15 +427,18 @@ class Filter(commands.Cog):
 
         await self.check_filter(message)
 
+    @commands.Cog.listener()
     async def on_message_edit(self, _prior, message):
         # message content has to change for non-bot's currently.
         # if this changes, we should compare before passing it.
         await self.on_message(message)
 
+    @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
         if before.display_name != after.display_name:
             await self.maybe_filter_name(after)
 
+    @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
         await self.maybe_filter_name(member)
 
@@ -444,13 +452,12 @@ class Filter(commands.Cog):
         if not await self.settings.guild(member.guild).filter_names():
             return
 
-        word_list = await self.settings.guild(member.guild).filter()
-        for w in word_list:
-            if w in member.display_name.lower():
-                name_to_use = await self.settings.guild(member.guild).filter_default_name()
-                reason = _("Filtered nickname") if member.nick else _("Filtered name")
-                try:
-                    await member.edit(nick=name_to_use, reason=reason)
-                except discord.HTTPException:
-                    pass
-                return
+        if await self.filter_hits(member.display_name, member.guild):
+
+            name_to_use = await self.settings.guild(member.guild).filter_default_name()
+            reason = _("Filtered nickname") if member.nick else _("Filtered name")
+            try:
+                await member.edit(nick=name_to_use, reason=reason)
+            except discord.HTTPException:
+                pass
+            return

@@ -20,6 +20,7 @@ if TYPE_CHECKING:
 
 __all__ = [
     "Cog",
+    "CogMixin",
     "CogCommandMixin",
     "CogGroupMixin",
     "Command",
@@ -155,6 +156,13 @@ class Command(CogCommandMixin, commands.Command):
         self._help_override = kwargs.pop("help_override", None)
         self.translator = kwargs.pop("i18n", None)
 
+    def _ensure_assignment_on_copy(self, other):
+        super()._ensure_assignment_on_copy(other)
+
+        # Red specific
+        other.requires = self.requires
+        return other
+
     @property
     def help(self):
         """Help string for this command.
@@ -166,7 +174,7 @@ class Command(CogCommandMixin, commands.Command):
         if self._help_override is not None:
             return self._help_override
         if self.translator is None:
-            translator = lambda s: s
+            translator = getattr(self.cog, "__translator__", lambda s: s)
         else:
             translator = self.translator
         command_doc = self.callback.__doc__
@@ -241,9 +249,9 @@ class Command(CogCommandMixin, commands.Command):
                 if result is False:
                     return False
 
-        if self.parent is None and self.instance is not None:
+        if self.parent is None and self.cog is not None:
             # For top-level commands, we need to check the cog's requires too
-            ret = await self.instance.requires.verify(ctx)
+            ret = await self.cog.requires.verify(ctx)
             if ret is False:
                 return False
 
@@ -320,7 +328,7 @@ class Command(CogCommandMixin, commands.Command):
                 can_run = await self.can_run(
                     ctx, check_all_parents=True, change_permission_state=False
                 )
-            except commands.CheckFailure:
+            except (commands.CheckFailure, commands.errors.DisabledCommand):
                 return False
             else:
                 if can_run is False:
@@ -374,8 +382,8 @@ class Command(CogCommandMixin, commands.Command):
     def allow_for(self, model_id: Union[int, str], guild_id: int) -> None:
         super().allow_for(model_id, guild_id=guild_id)
         parents = self.parents
-        if self.instance is not None:
-            parents.append(self.instance)
+        if self.cog is not None:
+            parents.append(self.cog)
         for parent in parents:
             cur_rule = parent.requires.get_rule(model_id, guild_id=guild_id)
             if cur_rule is PermState.NORMAL:
@@ -389,8 +397,8 @@ class Command(CogCommandMixin, commands.Command):
         old_rule, new_rule = super().clear_rule_for(model_id, guild_id=guild_id)
         if old_rule is PermState.ACTIVE_ALLOW:
             parents = self.parents
-            if self.instance is not None:
-                parents.append(self.instance)
+            if self.cog is not None:
+                parents.append(self.cog)
             for parent in parents:
                 should_continue = parent.reevaluate_rules_for(model_id, guild_id=guild_id)[1]
                 if not should_continue:
@@ -412,6 +420,10 @@ class Command(CogCommandMixin, commands.Command):
         To have red handle specific errors with the default behavior,
         call ``Red.on_command_error`` with ``unhandled_by_cog`` set to True.
 
+        Due to how discord.py wraps exceptions, the exception you are expecting here
+        is likely in ``error.original`` despite that the normal event handler for bot
+        wide command error handling has no such wrapping.
+
         For example:
 
             .. code-block:: python
@@ -419,10 +431,10 @@ class Command(CogCommandMixin, commands.Command):
                 @a_command.error
                 async def a_command_error_handler(self, ctx, error):
 
-                    if isisntance(error, MyErrrorType):
-                        self.log_exception(error)
+                    if isinstance(error.original, MyErrrorType):
+                        self.log_exception(error.original)
                     else:
-                        await ctx.bot.on_command_error(ctx, error, unhandled_by_cog=True)
+                        await ctx.bot.on_command_error(ctx, error.original, unhandled_by_cog=True)
 
         Parameters
         -----------
@@ -445,10 +457,11 @@ class GroupMixin(discord.ext.commands.GroupMixin):
 
     def command(self, *args, **kwargs):
         """A shortcut decorator that invokes :func:`.command` and adds it to
-        the internal command list.
+        the internal command list via :meth:`~.GroupMixin.add_command`.
         """
 
         def decorator(func):
+            kwargs.setdefault("parent", self)
             result = command(*args, **kwargs)(func)
             self.add_command(result)
             return result
@@ -457,10 +470,11 @@ class GroupMixin(discord.ext.commands.GroupMixin):
 
     def group(self, *args, **kwargs):
         """A shortcut decorator that invokes :func:`.group` and adds it to
-        the internal command list.
+        the internal command list via :meth:`~.GroupMixin.add_command`.
         """
 
         def decorator(func):
+            kwargs.setdefault("parent", self)
             result = group(*args, **kwargs)(func)
             self.add_command(result)
             return result
@@ -527,6 +541,10 @@ class Group(GroupMixin, Command, CogGroupMixin, commands.Group):
         super().__init__(*args, **kwargs)
 
     async def invoke(self, ctx: "Context"):
+        # we skip prepare in some cases to avoid some things
+        # We still always want this part of the behavior though
+        ctx.command = self
+        # Our re-ordered behavior below.
         view = ctx.view
         previous = view.index
         view.skip_ws()
@@ -547,16 +565,81 @@ class Group(GroupMixin, Command, CogGroupMixin, commands.Group):
             # how our permissions system works, we don't want it to skip the checks
             # as well.
             await self._verify_checks(ctx)
+            # this is actually why we don't prepare earlier.
 
         await super().invoke(ctx)
 
 
-class Cog(CogCommandMixin, CogGroupMixin):
-    """Base class for a cog."""
+class CogMixin(CogGroupMixin, CogCommandMixin):
+    """Mixin class for a cog, intended for use with discord.py's cog class"""
 
     @property
-    def all_commands(self) -> Dict[str, Command]:
-        return {cmd.name: cmd for cmd in self.__dict__.values() if isinstance(cmd, Command)}
+    def help(self):
+        doc = self.__doc__
+        translator = getattr(self, "__translator__", lambda s: s)
+        if doc:
+            return inspect.cleandoc(translator(doc))
+
+    async def can_run(self, ctx: "Context", **kwargs) -> bool:
+        """
+        This really just exists to allow easy use with other methods using can_run
+        on commands and groups such as help formatters.
+        
+        kwargs used in that won't apply here as they don't make sense to,
+        but will be swallowed silently for a compatible signature for ease of use.
+
+        Parameters
+        ----------
+        ctx : `Context`
+            The invocation context to check with.
+
+        Returns
+        -------
+        bool
+            ``True`` if this cog is usable in the given context.
+        """
+
+        try:
+            can_run = await self.requires.verify(ctx)
+        except commands.CommandError:
+            return False
+
+        return can_run
+
+    async def can_see(self, ctx: "Context") -> bool:
+        """Check if this cog is visible in the given context.
+
+        In short, this will verify whether
+        the user is allowed to access the cog by permissions.
+
+        This has an identical signature to the one used by commands, and groups,
+        but needs a different underlying mechanism.
+
+        Parameters
+        ----------
+        ctx : `Context`
+            The invocation context to check with.
+
+        Returns
+        -------
+        bool
+            ``True`` if this cog is visible in the given context.
+
+        """
+
+        return await self.can_run(ctx)
+
+
+class Cog(CogMixin, commands.Cog):
+    """
+    Red's Cog base class
+
+    This includes a metaclass from discord.py
+    """
+
+    # NB: Do not move the inheritcance of this. Keeping the mix of that metaclass
+    # seperate gives us more freedoms in several places.
+    pass
 
 
 def command(name=None, cls=Command, **attrs):

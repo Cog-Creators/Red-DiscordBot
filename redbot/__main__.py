@@ -3,26 +3,20 @@
 # Discord Version check
 
 import asyncio
+import json
 import logging
 import os
 import sys
 
 import discord
 
-import redbot.logging
-from redbot.core.bot import Red, ExitCodes
-from redbot.core.cog_manager import CogManagerUI
-from redbot.core.json_io import JsonIO
-from redbot.core.global_checks import init_global_checks
-from redbot.core.events import init_events
-from redbot.core.cli import interactive_config, confirm, parse_cli_flags
-from redbot.core.core_commands import Core
-from redbot.core.dev_commands import Dev
-from redbot.core import __version__, modlog, bank, data_manager
-from signal import SIGTERM
-
-# Let's not force this dependency, uvloop is much faster on cpython
-if sys.implementation.name == "cpython":
+# Set the event loop policies here so any subsequent `get_event_loop()`
+# calls, in particular those as a result of the following imports,
+# return the correct loop object.
+if sys.platform == "win32":
+    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+elif sys.implementation.name == "cpython":
+    # Let's not force this dependency, uvloop is much faster on cpython
     try:
         import uvloop
     except ImportError:
@@ -31,8 +25,17 @@ if sys.implementation.name == "cpython":
     else:
         asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
-if sys.platform == "win32":
-    asyncio.set_event_loop(asyncio.ProactorEventLoop())
+import redbot.logging
+from redbot.core.bot import Red, ExitCodes
+from redbot.core.cog_manager import CogManagerUI
+from redbot.core.global_checks import init_global_checks
+from redbot.core.events import init_events
+from redbot.core.cli import interactive_config, confirm, parse_cli_flags
+from redbot.core.core_commands import Core
+from redbot.core.dev_commands import Dev
+from redbot.core import __version__, modlog, bank, data_manager
+from signal import SIGTERM
+
 
 log = logging.getLogger("red.main")
 
@@ -61,7 +64,8 @@ def list_instances():
         )
         sys.exit(1)
     else:
-        data = JsonIO(data_manager.config_file)._load_json()
+        with data_manager.config_file.open(encoding="utf-8") as fs:
+            data = json.load(fs)
         text = "Configured Instances:\n\n"
         for instance_name in sorted(data.keys()):
             text += "{}\n".format(instance_name)
@@ -104,18 +108,23 @@ def main():
     log.debug("Data Path: %s", data_manager._base_data_path())
     log.debug("Storage Type: %s", data_manager.storage_type())
 
-    red = Red(cli_flags=cli_flags, description=description, pm_help=None)
+    red = Red(
+        cli_flags=cli_flags, description=description, dm_help=None, fetch_offline_members=True
+    )
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(red.maybe_update_config())
     init_global_checks(red)
     init_events(red, cli_flags)
+
     red.add_cog(Core(red))
     red.add_cog(CogManagerUI())
     if cli_flags.dev:
         red.add_cog(Dev())
     # noinspection PyProtectedMember
-    modlog._init()
+    loop.run_until_complete(modlog._init(red))
     # noinspection PyProtectedMember
     bank._init()
-    loop = asyncio.get_event_loop()
+
     if os.name == "posix":
         loop.add_signal_handler(SIGTERM, lambda: asyncio.ensure_future(sigterm_handler(red, log)))
     tmp_data = {}
