@@ -40,7 +40,7 @@ class Filter(commands.Cog):
     async def register_filterban():
         try:
             await modlog.register_casetype(
-                "filterban", False, ":filing_cabinet: :hammer:", "Filter ban", "ban"
+                "filterban", False, ":filing_cabinet: :hammer:", "Filter ban"
             )
         except RuntimeError:
             pass
@@ -236,7 +236,7 @@ class Filter(commands.Cog):
         else:
             await ctx.send(_("Those words were already in the filter."))
 
-    @_filter.command(name="remove")
+    @_filter.command(name="delete", aliases=["remove", "del"])
     async def filter_remove(self, ctx: commands.Context, *, words: str):
         """Remove words from the filter.
 
@@ -286,6 +286,10 @@ class Filter(commands.Cog):
     def invalidate_cache(self, guild: discord.Guild, channel: discord.TextChannel = None):
         """ Invalidate a cached pattern"""
         self.pattern_cache.pop((guild, channel), None)
+        if channel is None:
+            for keyset in list(self.pattern_cache.keys()):  # cast needed, no remove
+                if guild in keyset:
+                    self.pattern_cache.pop(keyset, None)
 
     async def add_to_filter(
         self, server_or_channel: Union[discord.Guild, discord.TextChannel], words: list
@@ -448,13 +452,12 @@ class Filter(commands.Cog):
         if not await self.settings.guild(member.guild).filter_names():
             return
 
-        word_list = await self.settings.guild(member.guild).filter()
-        for w in word_list:
-            if w in member.display_name.lower():
-                name_to_use = await self.settings.guild(member.guild).filter_default_name()
-                reason = _("Filtered nickname") if member.nick else _("Filtered name")
-                try:
-                    await member.edit(nick=name_to_use, reason=reason)
-                except discord.HTTPException:
-                    pass
-                return
+        if await self.filter_hits(member.display_name, member.guild):
+
+            name_to_use = await self.settings.guild(member.guild).filter_default_name()
+            reason = _("Filtered nickname") if member.nick else _("Filtered name")
+            try:
+                await member.edit(nick=name_to_use, reason=reason)
+            except discord.HTTPException:
+                pass
+            return

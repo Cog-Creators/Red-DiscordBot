@@ -84,6 +84,8 @@ class CommandObj:
         return "{:%d/%m/%Y %H:%M:%S}".format(datetime.utcnow())
 
     async def get(self, message: discord.Message, command: str) -> Tuple[str, Dict]:
+        if not command:
+            raise NotFound()
         ccinfo = await self.db(message.guild).commands.get_raw(command, default=None)
         if not ccinfo:
             raise NotFound()
@@ -296,7 +298,7 @@ class CustomCommands(commands.Cog):
                 )
             )
 
-    @customcom.command(name="delete")
+    @customcom.command(name="delete", aliases=["del", "remove"])
     @checks.mod_or_permissions(administrator=True)
     async def cc_delete(self, ctx, command: str.lower):
         """Delete a custom command.
@@ -468,6 +470,7 @@ class CustomCommands(commands.Cog):
         # wrap the command here so it won't register with the bot
         fake_cc = commands.command(name=ctx.invoked_with)(self.cc_callback)
         fake_cc.params = self.prepare_args(raw_response)
+        fake_cc.requires.ready_event.set()
         ctx.command = fake_cc
 
         await self.bot.invoke(ctx)

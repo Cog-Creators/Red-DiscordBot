@@ -375,7 +375,7 @@ class Alias(commands.Cog):
             await ctx.send(_("There is no alias with the name `{name}`").format(name=alias_name))
 
     @checks.mod_or_permissions(manage_guild=True)
-    @alias.command(name="del")
+    @alias.command(name="delete", aliases=["del", "remove"])
     @commands.guild_only()
     async def _del_alias(self, ctx: commands.Context, alias_name: str):
         """Delete an existing alias on this server."""
@@ -394,7 +394,7 @@ class Alias(commands.Cog):
             await ctx.send(_("Alias with name `{name}` was not found.").format(name=alias_name))
 
     @checks.is_owner()
-    @global_.command(name="del")
+    @global_.command(name="delete", aliases=["del", "remove"])
     async def _del_global_alias(self, ctx: commands.Context, alias_name: str):
         """Delete an existing global alias."""
         aliases = await self.unloaded_global_aliases()

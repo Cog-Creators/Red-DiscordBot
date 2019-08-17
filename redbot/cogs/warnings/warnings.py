@@ -125,7 +125,7 @@ class Warnings(commands.Cog):
                 registered_actions.sort(key=lambda a: a["points"], reverse=True)
                 await ctx.send(_("Action {name} has been added.").format(name=name))
 
-    @warnaction.command(name="del")
+    @warnaction.command(name="delete", aliases=["del", "remove"])
     @commands.guild_only()
     async def action_del(self, ctx: commands.Context, action_name: str):
         """Delete the action with the specified name."""
@@ -175,7 +175,7 @@ class Warnings(commands.Cog):
 
         await ctx.send(_("The new reason has been registered."))
 
-    @warnreason.command(name="del", aliases=["remove"])
+    @warnreason.command(name="delete", aliases=["remove", "del"])
     @commands.guild_only()
     async def reason_del(self, ctx: commands.Context, reason_name: str):
         """Delete a warning reason."""

@@ -16,7 +16,6 @@ redbot/core/drivers/*                    @tekulvw
 redbot/core/events.py                    @tekulvw
 redbot/core/global_checks.py             @tekulvw
 redbot/core/i18n.py                      @tekulvw
-redbot/core/json_io.py                   @tekulvw
 redbot/core/modlog.py                    @palmtree5
 redbot/core/rpc.py                       @tekulvw
 redbot/core/utils/chat_formatting.py     @tekulvw

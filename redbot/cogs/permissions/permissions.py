@@ -28,6 +28,9 @@ COG = "COG"
 COMMAND = "COMMAND"
 GLOBAL = 0
 
+_OldConfigSchema = Dict[int, Dict[str, Dict[str, Dict[str, Dict[str, List[int]]]]]]
+_NewConfigSchema = Dict[str, Dict[int, Dict[str, Dict[int, bool]]]]
+
 # The strings in the schema are constants and should get extracted, but not translated until
 # runtime.
 translate = _
@@ -280,7 +283,7 @@ class Permissions(commands.Cog):
         ctx: commands.Context,
         allow_or_deny: RuleType,
         cog_or_command: CogOrCommand,
-        who_or_what: commands.Greedy[GlobalUniqueObjectFinder],
+        *who_or_what: GlobalUniqueObjectFinder,
     ):
         """Add a global rule to a command.
 
@@ -291,6 +294,9 @@ class Permissions(commands.Cog):
 
         `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
+        if not who_or_what:
+            await ctx.send_help()
+            return
         for w in who_or_what:
             await self._add_rule(
                 rule=cast(bool, allow_or_deny),
@@ -308,7 +314,7 @@ class Permissions(commands.Cog):
         ctx: commands.Context,
         allow_or_deny: RuleType,
         cog_or_command: CogOrCommand,
-        who_or_what: commands.Greedy[GuildUniqueObjectFinder],
+        *who_or_what: GuildUniqueObjectFinder,
     ):
         """Add a rule to a command in this server.
 
@@ -319,6 +325,9 @@ class Permissions(commands.Cog):
 
         `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
+        if not who_or_what:
+            await ctx.send_help()
+            return
         for w in who_or_what:
             await self._add_rule(
                 rule=cast(bool, allow_or_deny),
@@ -334,7 +343,7 @@ class Permissions(commands.Cog):
         self,
         ctx: commands.Context,
         cog_or_command: CogOrCommand,
-        who_or_what: commands.Greedy[GlobalUniqueObjectFinder],
+        *who_or_what: GlobalUniqueObjectFinder,
     ):
         """Remove a global rule from a command.
 
@@ -343,6 +352,9 @@ class Permissions(commands.Cog):
 
        `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
+        if not who_or_what:
+            await ctx.send_help()
+            return
         for w in who_or_what:
             await self._remove_rule(cog_or_cmd=cog_or_command, model_id=w.id, guild_id=GLOBAL)
         await ctx.send(_("Rule removed."))
@@ -354,7 +366,7 @@ class Permissions(commands.Cog):
         self,
         ctx: commands.Context,
         cog_or_command: CogOrCommand,
-        who_or_what: commands.Greedy[GlobalUniqueObjectFinder],
+        *who_or_what: GlobalUniqueObjectFinder,
     ):
         """Remove a server rule from a command.
 
@@ -363,6 +375,9 @@ class Permissions(commands.Cog):
 
         `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
+        if not who_or_what:
+            await ctx.send_help()
+            return
         for w in who_or_what:
             await self._remove_rule(
                 cog_or_cmd=cog_or_command, model_id=w.id, guild_id=ctx.guild.id
@@ -433,31 +448,41 @@ class Permissions(commands.Cog):
             await self._clear_rules(guild_id=ctx.guild.id)
             await ctx.tick()
 
-    async def red_cog_added(self, cog: commands.Cog) -> None:
+    @commands.Cog.listener()
+    async def on_cog_add(self, cog: commands.Cog) -> None:
         """Event listener for `cog_add`.
 
         This loads rules whenever a new cog is added.
-
-        Do not convert to using Cog.listener decorator !!
-        This *must* be added manually prior to cog load, and removed at unload
         """
+        if cog is self:
+            # This cog has its rules loaded manually in setup()
+            return
+        await self._on_cog_add(cog)
+
+    @commands.Cog.listener()
+    async def on_command_add(self, command: commands.Command) -> None:
+        """Event listener for `command_add`.
+
+        This loads rules whenever a new command is added.
+        """
+        if command.cog is self:
+            # This cog's commands have their rules loaded manually in setup()
+            return
+        await self._on_command_add(command)
+
+    async def _on_cog_add(self, cog: commands.Cog) -> None:
         self._load_rules_for(
             cog_or_command=cog,
             rule_dict=await self.config.custom(COG, cog.__class__.__name__).all(),
         )
+        cog.requires.ready_event.set()
 
-    async def red_command_added(self, command: commands.Command) -> None:
-        """Event listener for `command_add`.
-
-        This loads rules whenever a new command is added.
-
-        Do not convert to using Cog.listener decorator !!
-        This *must* be added manually prior to cog load, and removed at unload
-        """
+    async def _on_command_add(self, command: commands.Command) -> None:
         self._load_rules_for(
             cog_or_command=command,
             rule_dict=await self.config.custom(COMMAND, command.qualified_name).all(),
         )
+        command.requires.ready_event.set()
 
     async def _add_rule(
         self, rule: bool, cog_or_cmd: CogOrCommand, model_id: int, guild_id: int
@@ -625,9 +650,6 @@ class Permissions(commands.Cog):
         await self.config.custom(COMMAND).set(new_cmd_rules)
         await self.config.version.set(__version__)
 
-    _OldConfigSchema = Dict[int, Dict[str, Dict[str, Dict[str, Dict[str, List[int]]]]]]
-    _NewConfigSchema = Dict[str, Dict[int, Dict[str, Dict[int, bool]]]]
-
     @staticmethod
     def _get_updated_schema(
         old_config: _OldConfigSchema
@@ -708,8 +730,6 @@ class Permissions(commands.Cog):
                     cog_or_command.deny_to(model_id, guild_id=guild_id)
 
     def cog_unload(self) -> None:
-        self.bot.remove_listener(self.red_cog_added, "on_cog_add")
-        self.bot.remove_listener(self.red_command_added, "on_command_add")
         self.bot.loop.create_task(self._unload_all_rules())
 
     async def _unload_all_rules(self) -> None:

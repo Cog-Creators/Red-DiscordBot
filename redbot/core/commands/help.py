@@ -1,7 +1,6 @@
 # This is a full replacement of discord.py's help command
-# Signatures are not guaranteed to be unchanging in this file.
-# At a later date when this is more set in stone, this warning will be removed.
-# At said later date, there should also be things added to support extra formatter
+#
+# At a later date, there should be things added to support extra formatter
 # registration from 3rd party cogs.
 #
 # This exists due to deficiencies in discord.py which conflict
@@ -26,6 +25,7 @@
 # Additionally, this gives our users a bit more customization options including by
 # 3rd party cogs down the road.
 
+import asyncio
 from collections import namedtuple
 from typing import Union, List, AsyncIterator, Iterable, cast
 
@@ -166,7 +166,7 @@ class RedHelpFormatter:
 
             if command.help:
                 splitted = command.help.split("\n\n")
-                name = "__{0}__".format(splitted[0])
+                name = splitted[0]
                 value = "\n\n".join(splitted[1:]).replace("[p]", ctx.clean_prefix)
                 if not value:
                     value = EMPTY_STRING
@@ -217,7 +217,16 @@ class RedHelpFormatter:
                 )
 
             to_page = "\n\n".join(
-                filter(None, (description, signature[1:-1], command.help, subtext_header, subtext))
+                filter(
+                    None,
+                    (
+                        description,
+                        signature[1:-1],
+                        command.help.replace("[p]", ctx.clean_prefix),
+                        subtext_header,
+                        subtext,
+                    ),
+                )
             )
             pages = [box(p) for p in pagify(to_page)]
             await self.send_pages(ctx, pages, embed=False)
@@ -287,7 +296,13 @@ class RedHelpFormatter:
 
             emb["footer"]["text"] = tagline
             if description:
-                emb["embed"]["title"] = f"*{description[:2044]}*"
+                splitted = description.split("\n\n")
+                name = splitted[0]
+                value = "\n\n".join(splitted[1:]).replace("[p]", ctx.clean_prefix)
+                if not value:
+                    value = EMPTY_STRING
+                field = EmbedField(name[:252], value[:1024], False)
+                emb["fields"].append(field)
 
             if coms:
 
@@ -410,8 +425,9 @@ class RedHelpFormatter:
             pages = [box(p) for p in pagify(to_page)]
             await self.send_pages(ctx, pages, embed=False)
 
+    @staticmethod
     async def help_filter_func(
-        self, ctx, objects: Iterable[SupportsCanSee], bypass_hidden=False
+        ctx, objects: Iterable[SupportsCanSee], bypass_hidden=False
     ) -> AsyncIterator[SupportsCanSee]:
         """
         This does most of actual filtering.
@@ -424,14 +440,14 @@ class RedHelpFormatter:
         for obj in objects:
             if verify_checks and not show_hidden:
                 # Default Red behavior, can_see includes a can_run check.
-                if await obj.can_see(ctx):
+                if await obj.can_see(ctx) and getattr(obj, "enabled", True):
                     yield obj
             elif verify_checks:
                 try:
                     can_run = await obj.can_run(ctx)
                 except discord.DiscordException:
                     can_run = False
-                if can_run:
+                if can_run and getattr(obj, "enabled", True):
                     yield obj
             elif not show_hidden:
                 if not getattr(obj, "hidden", False):  # Cog compatibility
@@ -443,7 +459,7 @@ class RedHelpFormatter:
         """
         Sends an error, fuzzy help, or stays quiet based on settings
         """
-        coms = [c async for c in self.help_filter_func(ctx, ctx.bot.walk_commands())]
+        coms = {c async for c in self.help_filter_func(ctx, ctx.bot.walk_commands())}
         fuzzy_commands = await fuzzy_command_search(ctx, help_for, commands=coms, min_score=75)
         use_embeds = await ctx.embed_requested()
         if fuzzy_commands:
@@ -531,7 +547,7 @@ class RedHelpFormatter:
                     try:
                         await destination.send(embed=page)
                     except discord.Forbidden:
-                        await ctx.send(
+                        return await ctx.send(
                             T_(
                                 "I couldn't send the help message to you in DM. "
                                 "Either you blocked me or you disabled DMs in this server."
@@ -542,17 +558,20 @@ class RedHelpFormatter:
                     try:
                         await destination.send(page)
                     except discord.Forbidden:
-                        await ctx.send(
+                        return await ctx.send(
                             T_(
                                 "I couldn't send the help message to you in DM. "
                                 "Either you blocked me or you disabled DMs in this server."
                             )
                         )
         else:
-            if len(pages) > 1:
-                await menus.menu(ctx, pages, menus.DEFAULT_CONTROLS)
-            else:
-                await menus.menu(ctx, pages, {"\N{CROSS MARK}": menus.close_menu})
+            # Specifically ensuring the menu's message is sent prior to returning
+            m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
+            c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
+            # Allow other things to happen during menu timeout/interaction.
+            asyncio.create_task(menus.menu(ctx, pages, c, message=m))
+            # menu needs reactions added manually since we fed it a messsage
+            menus.start_adding_reactions(m, c.keys())
 
 
 @commands.command(name="help", hidden=True, i18n=T_)

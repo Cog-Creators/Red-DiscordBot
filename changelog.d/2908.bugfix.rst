@@ -1,0 +1,1 @@
+Fixed error in `[p]reason` when setting the reason for a case without a moderator.

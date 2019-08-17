@@ -122,7 +122,11 @@ class General(commands.Cog):
         author = ctx.author
         player_choice = your_choice.choice
         if not player_choice:
-            return await ctx.send("This isn't a valid option. Try rock, paper, or scissors.")
+            return await ctx.send(
+                _("This isn't a valid option. Try {r}, {p}, or {s}.").format(
+                    r="rock", p="paper", s="scissors"
+                )
+            )
         red_choice = choice((RPS.rock, RPS.paper, RPS.scissors))
         cond = {
             (RPS.rock, RPS.paper): False,
@@ -270,7 +274,7 @@ class General(commands.Cog):
             return
 
         if data.get("error") != 404:
-            if not data["list"]:
+            if not data.get("list"):
                 return await ctx.send(_("No Urban Dictionary entries were found."))
             if await ctx.embed_requested():
                 # a list of embeds
