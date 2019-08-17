@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
-"PO-Revision-Date: 2018-04-15 16:41-0400\n"
-"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"POT-Creation-Date: 2019-07-05 22:33+0200\n"
+"PO-Revision-Date: 2019-07-06 16:12\n"
+"Last-Translator: Robert Jansen (Kowlin)\n"
 "Language-Team: Arabic\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: ENCODING\n"
-"Generated-By: pygettext.py 1.5\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.0\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
@@ -16,35 +16,88 @@ msgstr ""
 "X-Crowdin-File: /cogs/image/locales/messages.pot\n"
 "Language: ar_SA\n"
 
-#: ../image.py:47 ../image.py:92
-msgid "A client ID has not been set! Please set one with {}"
+#: redbot/cogs/image/image.py:13
+#, docstring
+msgid "Image related commands."
 msgstr ""
 
-#: ../image.py:57
-msgid "Your search returned no results"
+#: redbot/cogs/image/image.py:37
+#, docstring
+msgid "Retrieve pictures from Imgur.\\n\\n        Make sure to set the Client ID using `[p]imgurcreds`.\\n        "
 msgstr ""
 
-#: ../image.py:60
-msgid "Search results...\n"
+#: redbot/cogs/image/image.py:45
+#, docstring
+msgid "Search Imgur for the specified term.\\n\\n        Returns up to 3 results.\\n        "
 msgstr ""
 
-#: ../image.py:66 ../image.py:115
-msgid "Something went wrong. Error code is {}"
+#: redbot/cogs/image/image.py:54 redbot/cogs/image/image.py:107
+msgid "A Client ID has not been set! Please set one with `{prefix}imgurcreds`."
 msgstr ""
 
-#: ../image.py:78
+#: redbot/cogs/image/image.py:66
+msgid "Your search returned no results."
+msgstr ""
+
+#: redbot/cogs/image/image.py:69
+msgid "Search results...\\n"
+msgstr ""
+
+#: redbot/cogs/image/image.py:76 redbot/cogs/image/image.py:133
+msgid "Something went wrong. Error code is {code}."
+msgstr ""
+
+#: redbot/cogs/image/image.py:83
+#, docstring
+msgid "Get images from a subreddit.\\n\\n        You can customize the search with the following options:\\n        - `<sort_type>`: new, top\\n        - `<window>`: day, week, month, year, all\\n        "
+msgstr ""
+
+#: redbot/cogs/image/image.py:97
 msgid "Only 'new' and 'top' are a valid sort type."
 msgstr ""
 
-#: ../image.py:113 ../image.py:151 ../image.py:173
+#: redbot/cogs/image/image.py:130 redbot/cogs/image/image.py:186
+#: redbot/cogs/image/image.py:219
 msgid "No results found."
 msgstr ""
 
-#: ../image.py:131
-msgid "Set the imgur client id!"
+#: redbot/cogs/image/image.py:139
+#, docstring
+msgid "Explain how to set imgur API tokens."
 msgstr ""
 
-#: ../image.py:153 ../image.py:175
-msgid "Error contacting the API"
+#: redbot/cogs/image/image.py:141
+msgid "To get an Imgur Client ID:\\n1. Login to an Imgur account.\\n2. Visit this page https://api.imgur.com/oauth2/addclient.\\n3. Enter a name for your application.\\n4. Select *Anonymous usage without user authorization* for the auth type.\\n5. Set the authorization callback URL to `https://localhost`.\\n6. Leave the app website blank.\\n7. Enter a valid email address and a description.\\n8. Check the captcha box and click next.\\n9. Your Client ID will be on the next page.\\n10. Run the command `{prefix}set api imgur client_id,<your_client_id_here>`.\\n"
+msgstr ""
+
+#: redbot/cogs/image/image.py:160
+#, docstring
+msgid "Retrieve the first search result from Giphy."
+msgstr ""
+
+#: redbot/cogs/image/image.py:170 redbot/cogs/image/image.py:203
+msgid "An API key has not been set! Please set one with `{prefix}giphycreds`."
+msgstr ""
+
+#: redbot/cogs/image/image.py:188
+msgid "Error contacting the Giphy API."
+msgstr ""
+
+#: redbot/cogs/image/image.py:193
+#, docstring
+msgid "Retrieve a random GIF from a Giphy search."
+msgstr ""
+
+#: redbot/cogs/image/image.py:221
+msgid "Error contacting the API."
+msgstr ""
+
+#: redbot/cogs/image/image.py:226
+#, docstring
+msgid "Explain how to set Giphy API tokens"
+msgstr ""
+
+#: redbot/cogs/image/image.py:228
+msgid "To get a Giphy API Key:\\n1. Login to a Giphy account.\\n2. Visit [this](https://developers.giphy.com/dashboard) page\\n3. Press `Create an App`\\n4. Write an app name, example: `Red Bot`\\n5. Write an app description, example: `Used for Red Bot`\\n6. Copy the API key shown.\\n7. Do `{prefix}set api GIPHY api_key,your_api_key`\\n"
 msgstr ""
 

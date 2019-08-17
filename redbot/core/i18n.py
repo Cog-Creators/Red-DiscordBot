@@ -1,11 +1,12 @@
+import contextlib
+import io
 import os
-import re
 from pathlib import Path
-from typing import Callable, Union
+from typing import Callable, Union, Dict
 
 __all__ = ["get_locale", "set_locale", "reload_locales", "cog_i18n", "Translator"]
 
-_current_locale = "en_us"
+_current_locale = "en-US"
 
 WAITING_FOR_MSGID = 1
 IN_MSGID = 2
@@ -33,105 +34,60 @@ def reload_locales():
         translator.load_translations()
 
 
-def _parse(translation_file):
+def _parse(translation_file: io.TextIOWrapper) -> Dict[str, str]:
     """
-    Custom gettext parsing of translation files. All credit for this code goes
-    to ProgVal/Valentin Lorentz and the Limnoria project.
+    Custom gettext parsing of translation files.
 
-    https://github.com/ProgVal/Limnoria/blob/master/src/i18n.py
+    Parameters
+    ----------
+    translation_file : io.TextIOWrapper
+        An open text file containing translations.
 
-    :param translation_file:
-        An open file-like object containing translations.
-    :return:
-        A set of 2-tuples containing the original string and the translated version.
+    Returns
+    -------
+    Dict[str, str]
+        A dict mapping the original strings to their translations. Empty
+        translated strings are omitted.
+
     """
-    step = WAITING_FOR_MSGID
-    translations = set()
+    step = None
+    untranslated = ""
+    translated = ""
+    translations = {}
     for line in translation_file:
-        line = line[0:-1]  # Remove the ending \n
-        line = line
+        line = line.strip()
 
         if line.startswith(MSGID):
-            # Don't check if step is WAITING_FOR_MSGID
-            untranslated = ""
-            translated = ""
-            data = line[len(MSGID) : -1]
-            if len(data) == 0:  # Multiline mode
-                step = IN_MSGID
-            else:
-                untranslated += data
-                step = WAITING_FOR_MSGSTR
+            # New msgid
+            if step is IN_MSGSTR and translated:
+                # Store the last translation
+                translations[_unescape(untranslated)] = _unescape(translated)
+            step = IN_MSGID
+            untranslated = line[len(MSGID) : -1]
+        elif line.startswith('"') and line.endswith('"'):
+            if step is IN_MSGID:
+                # Line continuing on from msgid
+                untranslated += line[1:-1]
+            elif step is IN_MSGSTR:
+                # Line continuing on from msgstr
+                translated += line[1:-1]
+        elif line.startswith(MSGSTR):
+            # New msgstr
+            step = IN_MSGSTR
+            translated = line[len(MSGSTR) : -1]
 
-        elif step is IN_MSGID and line.startswith('"') and line.endswith('"'):
-            untranslated += line[1:-1]
-        elif step is IN_MSGID and untranslated == "":  # Empty MSGID
-            step = WAITING_FOR_MSGID
-        elif step is IN_MSGID:  # the MSGID is finished
-            step = WAITING_FOR_MSGSTR
-
-        if step is WAITING_FOR_MSGSTR and line.startswith(MSGSTR):
-            data = line[len(MSGSTR) : -1]
-            if len(data) == 0:  # Multiline mode
-                step = IN_MSGSTR
-            else:
-                translations |= {(untranslated, data)}
-                step = WAITING_FOR_MSGID
-
-        elif step is IN_MSGSTR and line.startswith('"') and line.endswith('"'):
-            translated += line[1:-1]
-        elif step is IN_MSGSTR:  # the MSGSTR is finished
-            step = WAITING_FOR_MSGID
-            if translated == "":
-                translated = untranslated
-            translations |= {(untranslated, translated)}
-    if step is IN_MSGSTR:
-        if translated == "":
-            translated = untranslated
-        translations |= {(untranslated, translated)}
+    if step is IN_MSGSTR and translated:
+        # Store the final translation
+        translations[_unescape(untranslated)] = _unescape(translated)
     return translations
 
 
-def _normalize(string, remove_newline=False):
-    """
-    String normalization.
-
-    All credit for this code goes
-    to ProgVal/Valentin Lorentz and the Limnoria project.
-
-    https://github.com/ProgVal/Limnoria/blob/master/src/i18n.py
-
-    :param string:
-    :param remove_newline:
-    :return:
-    """
-
-    def normalize_whitespace(s):
-        """Normalizes the whitespace in a string; \s+ becomes one space."""
-        if not s:
-            return str(s)  # not the same reference
-        starts_with_space = s[0] in " \n\t\r"
-        ends_with_space = s[-1] in " \n\t\r"
-        if remove_newline:
-            newline_re = re.compile("[\r\n]+")
-            s = " ".join(filter(None, newline_re.split(s)))
-        s = " ".join(filter(None, s.split("\t")))
-        s = " ".join(filter(None, s.split(" ")))
-        if starts_with_space:
-            s = " " + s
-        if ends_with_space:
-            s += " "
-        return s
-
-    if string is None:
-        return ""
-
-    string = string.replace("\\n\\n", "\n\n")
-    string = string.replace("\\n", " ")
-    string = string.replace('\\"', '"')
-    string = string.replace("'", "'")
-    string = normalize_whitespace(string)
-    string = string.strip("\n")
-    string = string.strip("\t")
+def _unescape(string):
+    string = string.replace(r"\\", "\\")
+    string = string.replace(r"\t", "\t")
+    string = string.replace(r"\r", "\r")
+    string = string.replace(r"\n", "\n")
+    string = string.replace(r"\"", '"')
     return string
 
 
@@ -179,9 +135,8 @@ class Translator(Callable[[str], str]):
         This will look for the string in the translator's :code:`.pot` file,
         with respect to the current locale.
         """
-        normalized_untranslated = _normalize(untranslated, True)
         try:
-            return self.translations[normalized_untranslated]
+            return self.translations[untranslated]
         except KeyError:
             return untranslated
 
@@ -190,31 +145,19 @@ class Translator(Callable[[str], str]):
         Loads the current translations.
         """
         self.translations = {}
-        translation_file = None
         locale_path = get_locale_path(self.cog_folder, "po")
-        try:
-
-            try:
-                translation_file = locale_path.open("ru", encoding="utf-8")
-            except ValueError:  # We are using Windows
-                translation_file = locale_path.open("r", encoding="utf-8")
-            self._parse(translation_file)
-        except (IOError, FileNotFoundError):  # The translation is unavailable
-            pass
-        finally:
-            if translation_file is not None:
-                translation_file.close()
+        with contextlib.suppress(IOError, FileNotFoundError):
+            with locale_path.open(encoding="utf-8") as file:
+                self._parse(file)
 
     def _parse(self, translation_file):
-        self.translations = {}
-        for translation in _parse(translation_file):
-            self._add_translation(*translation)
+        self.translations.update(_parse(translation_file))
 
     def _add_translation(self, untranslated, translated):
-        untranslated = _normalize(untranslated, True)
-        translated = _normalize(translated)
+        untranslated = _unescape(untranslated)
+        translated = _unescape(translated)
         if translated:
-            self.translations.update({untranslated: translated})
+            self.translations[untranslated] = translated
 
 
 # This import to be down here to avoid circular import issues.

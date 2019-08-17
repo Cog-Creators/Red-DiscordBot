@@ -72,15 +72,15 @@ Locking the ``[p]play`` command to approved server(s) as a bot owner:
 
 .. code-block:: none
 
-    [p]permissions setglobaldefault play deny
+    [p]permissions setdefaultglobalrule deny play
     [p]permissions addglobalrule allow play [server ID or name]
 
 Locking the ``[p]play`` command to specific voice channel(s) as a serverowner or admin:
 
 .. code-block:: none
 
-    [p]permissions setserverdefault deny play
-    [p]permissions setserverdefault deny "playlist start"
+    [p]permissions setdefaultserverrule deny play
+    [p]permissions setdefaultserverrule deny "playlist start"
     [p]permissions addserverrule allow play [voice channel ID or name]
     [p]permissions addserverrule allow "playlist start" [voice channel ID or name]
 
