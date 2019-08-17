@@ -126,16 +126,14 @@ class PrivilegeLevel(enum.IntEnum):
         # The following is simply an optimised way to check if the user has the
         # admin or mod role.
         guild_settings = ctx.bot.db.guild(ctx.guild)
-        admin_role_id = await guild_settings.admin_role()
-        mod_role_id = await guild_settings.mod_role()
-        is_mod = False
-        for role in ctx.author.roles:
-            if role.id == admin_role_id:
+
+        member_snowflakes = ctx.author._roles  # DEP-WARN
+        for snowflake in await guild_settings.admin_role():
+            if member_snowflakes.has(snowflake):  # DEP-WARN
                 return cls.ADMIN
-            elif role.id == mod_role_id:
-                is_mod = True
-        if is_mod:
-            return cls.MOD
+        for snowflake in await guild_settings.mod_role():
+            if member_snowflakes.has(snowflake):  # DEP-WARN
+                return cls.MOD
 
         return cls.NONE
 
@@ -274,6 +272,12 @@ class Requires:
         `user_perms` will be used exclusively, otherwise, for levels
         other than bot owner, the user can still run the command if
         they have the required `user_perms`.
+    ready_event : asyncio.Event
+        Event for when this Requires object has had its rules loaded.
+        If permissions is loaded, this should be set when permissions
+        has finished loading rules into this object. If permissions
+        is not loaded, it should be set as soon as the command or cog
+        is added.
     user_perms : Optional[discord.Permissions]
         The required permissions for users to execute the command. Can
         be ``None``, in which case the `privilege_level` will be used
@@ -302,6 +306,7 @@ class Requires:
     ):
         self.checks: List[CheckPredicate] = checks
         self.privilege_level: Optional[PrivilegeLevel] = privilege_level
+        self.ready_event = asyncio.Event()
 
         if isinstance(user_perms, dict):
             self.user_perms: Optional[discord.Permissions] = discord.Permissions.none()
@@ -415,6 +420,16 @@ class Requires:
         if default is not None:
             rules[self.DEFAULT] = default
 
+    def reset(self) -> None:
+        """Reset this Requires object to its original state.
+
+        This will clear all rules, including defaults. It also resets
+        the `Requires.ready_event`.
+        """
+        self._guild_rules.clear()  # pylint: disable=no-member
+        self._global_rules.clear()  # pylint: disable=no-member
+        self.ready_event.clear()
+
     async def verify(self, ctx: "Context") -> bool:
         """Check if the given context passes the requirements.
 
@@ -440,6 +455,8 @@ class Requires:
             Propogated from any permissions checks.
 
         """
+        if not self.ready_event.is_set():
+            await self.ready_event.wait()
         await self._verify_bot(ctx)
 
         # Owner should never be locked out of commands for user permissions.
@@ -704,29 +721,35 @@ def mod():
 class _IntKeyDict(Dict[int, _T]):
     """Dict subclass which throws KeyError when a non-int key is used."""
 
+    get: Callable
+    setdefault: Callable
+
     def __getitem__(self, key: Any) -> _T:
         if not isinstance(key, int):
             raise TypeError("Keys must be of type `int`")
-        return super().__getitem__(key)
+        return super().__getitem__(key)  # pylint: disable=no-member
 
     def __setitem__(self, key: Any, value: _T) -> None:
         if not isinstance(key, int):
             raise TypeError("Keys must be of type `int`")
-        return super().__setitem__(key, value)
+        return super().__setitem__(key, value)  # pylint: disable=no-member
 
 
 class _RulesDict(Dict[Union[int, str], PermState]):
     """Dict subclass which throws a KeyError when an invalid key is used."""
 
+    get: Callable
+    setdefault: Callable
+
     def __getitem__(self, key: Any) -> PermState:
         if key != Requires.DEFAULT and not isinstance(key, int):
             raise TypeError(f'Expected "{Requires.DEFAULT}" or int key, not "{key}"')
-        return super().__getitem__(key)
+        return super().__getitem__(key)  # pylint: disable=no-member
 
     def __setitem__(self, key: Any, value: PermState) -> None:
         if key != Requires.DEFAULT and not isinstance(key, int):
             raise TypeError(f'Expected "{Requires.DEFAULT}" or int key, not "{key}"')
-        return super().__setitem__(key, value)
+        return super().__setitem__(key, value)  # pylint: disable=no-member
 
 
 def _validate_perms_dict(perms: Dict[str, bool]) -> None:

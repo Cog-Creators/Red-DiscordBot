@@ -20,7 +20,7 @@ from redbot.core import __version__, version_info as red_version_info, VersionIn
 from redbot.core.cli import confirm
 
 if sys.platform == "linux":
-    import distro
+    import distro  # pylint: disable=import-error
 
 INTERACTIVE_MODE = not len(sys.argv) > 1  # CLI flags = non-interactive
 
@@ -254,7 +254,7 @@ async def reset_red():
         "please select option 5 in the launcher."
     )
     await asyncio.sleep(2)
-    print("\nIf you continue you will remove these instanes.\n")
+    print("\nIf you continue you will remove these instances.\n")
     for instance in list(instances.keys()):
         print("    - {}".format(instance))
     await asyncio.sleep(3)

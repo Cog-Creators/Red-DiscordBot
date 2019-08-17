@@ -8,7 +8,7 @@ from sys import path as syspath
 from typing import Tuple, Union, Iterable
 
 import discord
-from redbot.core import checks, commands, Config
+from redbot.core import checks, commands, Config, version_info as red_version_info
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
@@ -199,7 +199,8 @@ class Downloader(commands.Cog):
         if not deps:
             return await ctx.send_help()
         repo = Repo("", "", "", Path.cwd(), loop=ctx.bot.loop)
-        success = await repo.install_raw_requirements(deps, self.LIB_PATH)
+        async with ctx.typing():
+            success = await repo.install_raw_requirements(deps, self.LIB_PATH)
 
         if success:
             await ctx.send(_("Libraries installed."))
@@ -245,7 +246,7 @@ class Downloader(commands.Cog):
             if repo.install_msg is not None:
                 await ctx.send(repo.install_msg.replace("[p]", ctx.prefix))
 
-    @repo.command(name="delete", aliases=["remove"], usage="<repo_name>")
+    @repo.command(name="delete", aliases=["remove", "del"], usage="<repo_name>")
     async def _repo_del(self, ctx, repo: Repo):
         """Remove a repo and its files."""
         await self._repo_manager.delete_repo(repo.name)
@@ -303,6 +304,26 @@ class Downloader(commands.Cog):
                 )
             )
             return
+        ignore_max = cog.min_bot_version > cog.max_bot_version
+        if (
+            cog.min_bot_version > red_version_info
+            or not ignore_max
+            and cog.max_bot_version < red_version_info
+        ):
+            await ctx.send(
+                _("This cog requires at least Red version {min_version}").format(
+                    min_version=cog.min_bot_version
+                )
+                + (
+                    ""
+                    if ignore_max
+                    else _(" and at most {max_version}").format(max_version=cog.max_bot_version)
+                )
+                + _(", but you have {current_version}, aborting install.").format(
+                    current_version=red_version_info
+                )
+            )
+            return
 
         if not await repo.install_requirements(cog, self.LIB_PATH):
             libraries = humanize_list(tuple(map(inline, cog.requirements)))
@@ -344,7 +365,8 @@ class Downloader(commands.Cog):
 
                 poss_installed_path = (await self.cog_install_path()) / real_name
                 if poss_installed_path.exists():
-                    ctx.bot.unload_extension(real_name)
+                    with contextlib.suppress(commands.ExtensionNotLoaded):
+                        ctx.bot.unload_extension(real_name)
                     await self._delete_cog(poss_installed_path)
                     uninstalled_cogs.append(inline(real_name))
                 else:
@@ -402,35 +424,39 @@ class Downloader(commands.Cog):
             return await ctx.send(
                 _("None of the updated cogs were previously loaded. Update complete.")
             )
-        message = _("Would you like to reload the updated cogs?")
-        can_react = ctx.channel.permissions_for(ctx.me).add_reactions
-        if not can_react:
-            message += " (y/n)"
-        query: discord.Message = await ctx.send(message)
-        if can_react:
-            # noinspection PyAsyncCall
-            start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS, ctx.bot.loop)
-            pred = ReactionPredicate.yes_or_no(query, ctx.author)
-            event = "reaction_add"
-        else:
-            pred = MessagePredicate.yes_or_no(ctx)
-            event = "message"
-        try:
-            await ctx.bot.wait_for(event, check=pred, timeout=30)
-        except asyncio.TimeoutError:
-            await query.delete()
-            return
 
-        if pred.result is True:
+        if not ctx.assume_yes:
+            message = _("Would you like to reload the updated cogs?")
+            can_react = ctx.channel.permissions_for(ctx.me).add_reactions
+            if not can_react:
+                message += " (y/n)"
+            query: discord.Message = await ctx.send(message)
             if can_react:
-                with contextlib.suppress(discord.Forbidden):
-                    await query.clear_reactions()
-            await ctx.invoke(ctx.bot.get_cog("Core").reload, *cognames)
-        else:
-            if can_react:
-                await query.delete()
+                # noinspection PyAsyncCall
+                start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS, ctx.bot.loop)
+                pred = ReactionPredicate.yes_or_no(query, ctx.author)
+                event = "reaction_add"
             else:
-                await ctx.send(_("OK then."))
+                pred = MessagePredicate.yes_or_no(ctx)
+                event = "message"
+            try:
+                await ctx.bot.wait_for(event, check=pred, timeout=30)
+            except asyncio.TimeoutError:
+                await query.delete()
+                return
+
+            if not pred.result:
+                if can_react:
+                    await query.delete()
+                else:
+                    await ctx.send(_("OK then."))
+                return
+            else:
+                if can_react:
+                    with contextlib.suppress(discord.Forbidden):
+                        await query.clear_reactions()
+
+        await ctx.invoke(ctx.bot.get_cog("Core").reload, *cognames)
 
     @cog.command(name="list", usage="<repo_name>")
     async def _cog_list(self, ctx, repo: Repo):
