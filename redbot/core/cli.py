@@ -1,7 +1,6 @@
 import argparse
 import asyncio
-
-from redbot.core.bot import Red
+import logging
 
 
 def confirm(m=""):
@@ -30,7 +29,7 @@ def interactive_config(red, token_set, prefix_set):
             "\nPick a prefix. A prefix is what you type before a "
             "command. Example:\n"
             "!help\n^ The exclamation mark is the prefix in this case.\n"
-            "Can be multiple characters. You will be able to change it "
+            "The prefix can be multiple characters. You will be able to change it "
             "later and add more of them.\nChoose your prefix:\n"
         )
         while not prefix:
@@ -42,26 +41,7 @@ def interactive_config(red, token_set, prefix_set):
             if prefix:
                 loop.run_until_complete(red.db.prefix.set([prefix]))
 
-    ask_sentry(red)
-
     return token
-
-
-def ask_sentry(red: Red):
-    loop = asyncio.get_event_loop()
-    print(
-        "\nThank you for installing Red V3 beta! The current version\n"
-        " is not suited for production use and is aimed at testing\n"
-        " the current and upcoming featureset, that's why we will\n"
-        " also collect the fatal error logs to help us fix any new\n"
-        " found issues in a timely manner. If you wish to opt in\n"
-        ' the process please type "yes":\n'
-    )
-    if not confirm("> "):
-        loop.run_until_complete(red.db.enable_sentry.set(False))
-    else:
-        loop.run_until_complete(red.db.enable_sentry.set(True))
-        print("\nThank you for helping us with the development process!")
 
 
 def parse_cli_flags(args):
@@ -112,21 +92,20 @@ def parse_cli_flags(args):
         "Can be used with the --no-cogs flag to load these cogs exclusively.",
     )
     parser.add_argument(
-        "--self-bot", action="store_true", help="Specifies if Red should log in as selfbot"
-    )
-    parser.add_argument(
-        "--not-bot",
-        action="store_true",
-        help="Specifies if the token used belongs to a bot account.",
-    )
-    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Makes Red quit with code 0 just before the "
         "login. This is useful for testing the boot "
         "process.",
     )
-    parser.add_argument("--debug", action="store_true", help="Sets the loggers level as debug")
+    parser.add_argument(
+        "--debug",
+        action="store_const",
+        dest="logging_level",
+        const=logging.DEBUG,
+        default=logging.INFO,
+        help="Sets the loggers level as debug",
+    )
     parser.add_argument("--dev", action="store_true", help="Enables developer mode")
     parser.add_argument(
         "--mentionable",

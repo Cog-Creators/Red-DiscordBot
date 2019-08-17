@@ -1,12 +1,17 @@
+import asyncio
 import datetime
-import os
-from typing import Union, List
+from typing import Union, List, Optional
+from functools import wraps
 
 import discord
 
-from redbot.core import Config
+from . import Config, errors, commands
+from .i18n import Translator
+
+_ = Translator("Bank API", __file__)
 
 __all__ = [
+    "MAX_BALANCE",
     "Account",
     "get_balance",
     "set_balance",
@@ -24,7 +29,11 @@ __all__ = [
     "set_currency_name",
     "get_default_balance",
     "set_default_balance",
+    "cost",
+    "AbortPurchase",
 ]
+
+MAX_BALANCE = 2 ** 63 - 1
 
 _DEFAULT_GLOBAL = {
     "is_global": False,
@@ -39,6 +48,17 @@ _DEFAULT_MEMBER = {"name": "", "balance": 0, "created_at": 0}
 
 _DEFAULT_USER = _DEFAULT_MEMBER
 
+_conf: Config = None
+
+
+def _init():
+    global _conf
+    _conf = Config.get_conf(None, 384734293238749, cog_name="Bank", force_registration=True)
+    _conf.register_global(**_DEFAULT_GLOBAL)
+    _conf.register_guild(**_DEFAULT_GUILD)
+    _conf.register_member(**_DEFAULT_MEMBER)
+    _conf.register_user(**_DEFAULT_USER)
+
 
 class Account:
     """A single account.
@@ -49,18 +69,6 @@ class Account:
         self.name = name
         self.balance = balance
         self.created_at = created_at
-
-
-def _register_defaults():
-    _conf.register_global(**_DEFAULT_GLOBAL)
-    _conf.register_guild(**_DEFAULT_GUILD)
-    _conf.register_member(**_DEFAULT_MEMBER)
-    _conf.register_user(**_DEFAULT_USER)
-
-
-if not os.environ.get("BUILDING_DOCS"):
-    _conf = Config.get_conf(None, 384734293238749, cog_name="Bank", force_registration=True)
-    _register_defaults()
 
 
 def _encoded_current_time() -> int:
@@ -170,10 +178,22 @@ async def set_balance(member: discord.Member, amount: int) -> int:
     ------
     ValueError
         If attempting to set the balance to a negative number.
+    BalanceTooHigh
+        If attempting to set the balance to a value greater than
+        ``bank.MAX_BALANCE``
 
     """
     if amount < 0:
         raise ValueError("Not allowed to have negative balance.")
+    if amount > MAX_BALANCE:
+        currency = (
+            await get_currency_name()
+            if await is_global()
+            else await get_currency_name(member.guild)
+        )
+        raise errors.BalanceTooHigh(
+            user=member.display_name, max_balance=MAX_BALANCE, currency_name=currency
+        )
     if await is_global():
         group = _conf.user(member)
     else:
@@ -191,7 +211,7 @@ async def set_balance(member: discord.Member, amount: int) -> int:
 
 
 def _invalid_amount(amount: int) -> bool:
-    return amount <= 0
+    return amount < 0
 
 
 async def withdraw_credits(member: discord.Member, amount: int) -> int:
@@ -214,10 +234,14 @@ async def withdraw_credits(member: discord.Member, amount: int) -> int:
     ValueError
         If the withdrawal amount is invalid or if the account has insufficient
         funds.
+    TypeError
+        If the withdrawal amount is not an `int`.
 
     """
+    if not isinstance(amount, int):
+        raise TypeError("Withdrawal amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
-        raise ValueError("Invalid withdrawal amount {} <= 0".format(amount))
+        raise ValueError("Invalid withdrawal amount {} < 0".format(amount))
 
     bal = await get_balance(member)
     if amount > bal:
@@ -245,8 +269,12 @@ async def deposit_credits(member: discord.Member, amount: int) -> int:
     ------
     ValueError
         If the deposit amount is invalid.
+    TypeError
+        If the deposit amount is not an `int`.
 
     """
+    if not isinstance(amount, int):
+        raise TypeError("Deposit amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
         raise ValueError("Invalid deposit amount {} <= 0".format(amount))
 
@@ -269,14 +297,18 @@ async def transfer_credits(from_: discord.Member, to: discord.Member, amount: in
     Returns
     -------
     int
-        The new balance.
+        The new balance of the member gaining credits.
 
     Raises
     ------
     ValueError
         If the amount is invalid or if ``from_`` has insufficient funds.
+    TypeError
+        If the amount is not an `int`.
 
     """
+    if not isinstance(amount, int):
+        raise TypeError("Transfer amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
         raise ValueError("Invalid transfer amount {} <= 0".format(amount))
 
@@ -284,12 +316,20 @@ async def transfer_credits(from_: discord.Member, to: discord.Member, amount: in
     return await deposit_credits(to, amount)
 
 
-async def wipe_bank():
-    """Delete all accounts from the bank."""
+async def wipe_bank(guild: Optional[discord.Guild] = None) -> None:
+    """Delete all accounts from the bank.
+
+    Parameters
+    ----------
+    guild : discord.Guild
+        The guild to clear accounts for. If unsupplied and the bank is
+        per-server, all accounts in every guild will be wiped.
+
+    """
     if await is_global():
         await _conf.clear_all_users()
     else:
-        await _conf.clear_all_members()
+        await _conf.clear_all_members(guild)
 
 
 async def get_leaderboard(positions: int = None, guild: discord.Guild = None) -> List[tuple]:
@@ -388,19 +428,18 @@ async def get_account(member: Union[discord.Member, discord.User]) -> Account:
 
     """
     if await is_global():
-        acc_data = (await _conf.user(member)()).copy()
-        default = _DEFAULT_USER.copy()
+        all_accounts = await _conf.all_users()
     else:
-        acc_data = (await _conf.member(member)()).copy()
-        default = _DEFAULT_MEMBER.copy()
+        all_accounts = await _conf.all_members(member.guild)
 
-    if acc_data == {}:
-        acc_data = default
-        acc_data["name"] = member.display_name
+    if member.id not in all_accounts:
+        acc_data = {"name": member.display_name, "created_at": _DEFAULT_MEMBER["created_at"]}
         try:
             acc_data["balance"] = await get_default_balance(member.guild)
         except AttributeError:
             acc_data["balance"] = await get_default_balance()
+    else:
+        acc_data = all_accounts[member.id]
 
     acc_data["created_at"] = _decode_time(acc_data["created_at"])
     return Account(**acc_data)
@@ -637,3 +676,69 @@ async def set_default_balance(amount: int, guild: discord.Guild = None) -> int:
         raise RuntimeError("Guild is missing and required.")
 
     return amount
+
+
+class AbortPurchase(Exception):
+    pass
+
+
+def cost(amount: int):
+    """
+    Decorates a coroutine-function or command to have a cost.
+
+    If the command raises an exception, the cost will be refunded.
+
+    You can intentionally refund by raising `AbortPurchase`
+    (this error will be consumed and not show to users)
+
+    Other exceptions will propogate and will be handled by Red's (and/or
+    any other configured) error handling.
+    """
+    if not isinstance(amount, int) or amount < 0:
+        raise ValueError("This decorator requires an integer cost greater than or equal to zero")
+
+    def deco(coro_or_command):
+        is_command = isinstance(coro_or_command, commands.Command)
+        if not is_command and not asyncio.iscoroutinefunction(coro_or_command):
+            raise TypeError("@bank.cost() can only be used on commands or `async def` functions")
+
+        coro = coro_or_command.callback if is_command else coro_or_command
+
+        @wraps(coro)
+        async def wrapped(*args, **kwargs):
+            context: commands.Context = None
+            for arg in args:
+                if isinstance(arg, commands.Context):
+                    context = arg
+                    break
+
+            if not context.guild and not await is_global():
+                raise commands.UserFeedbackCheckFailure(
+                    _("Can't pay for this command in DM without a global bank.")
+                )
+            try:
+                await withdraw_credits(context.author, amount)
+            except Exception:
+                credits_name = await get_currency_name(context.guild)
+                raise commands.UserFeedbackCheckFailure(
+                    _("You need at least {cost} {currency} to use this command.").format(
+                        cost=amount, currency=credits_name
+                    )
+                )
+            else:
+                try:
+                    return await coro(*args, **kwargs)
+                except AbortPurchase:
+                    await deposit_credits(context.author, amount)
+                except Exception:
+                    await deposit_credits(context.author, amount)
+                    raise
+
+        if not is_command:
+            return wrapped
+        else:
+            wrapped.__module__ = coro_or_command.callback.__module__
+            coro_or_command.callback = wrapped
+            return coro_or_command
+
+    return deco

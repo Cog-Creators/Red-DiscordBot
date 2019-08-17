@@ -1,11 +1,13 @@
 import asyncio
 from datetime import timedelta
-from typing import List, Iterable, Union
+from typing import List, Iterable, Union, TYPE_CHECKING, Dict
 
 import discord
 
-from redbot.core import Config
-from redbot.core.bot import Red
+if TYPE_CHECKING:
+    from .. import Config
+    from ..bot import Red
+    from ..commands import Context
 
 
 async def mass_purge(messages: List[discord.Message], channel: discord.TextChannel):
@@ -87,7 +89,7 @@ def get_audit_reason(author: discord.Member, reason: str = None):
 
 
 async def is_allowed_by_hierarchy(
-    bot: Red, settings: Config, guild: discord.Guild, mod: discord.Member, user: discord.Member
+    bot: "Red", settings: "Config", guild: discord.Guild, mod: discord.Member, user: discord.Member
 ):
     if not await settings.guild(guild).respect_hierarchy():
         return True
@@ -95,7 +97,9 @@ async def is_allowed_by_hierarchy(
     return mod.top_role.position > user.top_role.position or is_special
 
 
-async def is_mod_or_superior(bot: Red, obj: Union[discord.Message, discord.Member, discord.Role]):
+async def is_mod_or_superior(
+    bot: "Red", obj: Union[discord.Message, discord.Member, discord.Role]
+):
     """Check if an object has mod or superior permissions.
 
     If a message is passed, its author's permissions are checked. If a role is
@@ -119,29 +123,25 @@ async def is_mod_or_superior(bot: Red, obj: Union[discord.Message, discord.Membe
         If the wrong type of ``obj`` was passed.
 
     """
-    user = None
     if isinstance(obj, discord.Message):
         user = obj.author
     elif isinstance(obj, discord.Member):
         user = obj
     elif isinstance(obj, discord.Role):
-        pass
+        if obj.id in await bot.db.guild(obj.guild).mod_role():
+            return True
+        if obj.id in await bot.db.guild(obj.guild).admin_role():
+            return True
+        return False
     else:
         raise TypeError("Only messages, members or roles may be passed")
 
-    server = obj.guild
-    admin_role_id = await bot.db.guild(server).admin_role()
-    mod_role_id = await bot.db.guild(server).mod_role()
-
-    if isinstance(obj, discord.Role):
-        return obj.id in [admin_role_id, mod_role_id]
-
     if await bot.is_owner(user):
         return True
-    elif discord.utils.find(lambda r: r.id in (admin_role_id, mod_role_id), user.roles):
+    if await bot.is_mod(user):
         return True
-    else:
-        return False
+
+    return False
 
 
 def strfdelta(delta: timedelta):
@@ -179,7 +179,7 @@ def strfdelta(delta: timedelta):
 
 
 async def is_admin_or_superior(
-    bot: Red, obj: Union[discord.Message, discord.Member, discord.Role]
+    bot: "Red", obj: Union[discord.Message, discord.Member, discord.Role]
 ):
     """Same as `is_mod_or_superior` except for admin permissions.
 
@@ -204,24 +204,51 @@ async def is_admin_or_superior(
         If the wrong type of ``obj`` was passed.
 
     """
-    user = None
     if isinstance(obj, discord.Message):
         user = obj.author
     elif isinstance(obj, discord.Member):
         user = obj
     elif isinstance(obj, discord.Role):
-        pass
+        return obj.id in await bot.db.guild(obj.guild).admin_role()
     else:
         raise TypeError("Only messages, members or roles may be passed")
 
-    admin_role_id = await bot.db.guild(obj.guild).admin_role()
-
-    if isinstance(obj, discord.Role):
-        return obj.id == admin_role_id
-
-    if user and await bot.is_owner(user):
+    if await bot.is_owner(user):
         return True
-    elif discord.utils.get(user.roles, id=admin_role_id):
+    if await bot.is_admin(user):
         return True
-    else:
+
+    return False
+
+
+async def check_permissions(ctx: "Context", perms: Dict[str, bool]) -> bool:
+    """Check if the author has required permissions.
+
+    This will always return ``True`` if the author is a bot owner, or
+    has the ``administrator`` permission. If ``perms`` is empty, this
+    will only check if the user is a bot owner.
+
+    Parameters
+    ----------
+    ctx : Context
+        The command invokation context to check.
+    perms : Dict[str, bool]
+        A dictionary mapping permissions to their required states.
+        Valid permission names are those listed as properties of
+        the `discord.Permissions` class.
+
+    Returns
+    -------
+    bool
+        ``True`` if the author has the required permissions.
+
+    """
+    if await ctx.bot.is_owner(ctx.author):
+        return True
+    elif not perms:
         return False
+    resolved = ctx.channel.permissions_for(ctx.author)
+
+    return resolved.administrator or all(
+        getattr(resolved, name, None) == value for name, value in perms.items()
+    )

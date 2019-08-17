@@ -2,6 +2,9 @@ import asyncio
 
 import discord
 from redbot.core import commands
+from redbot.core.i18n import Translator
+
+_ = Translator("Announcer", __file__)
 
 
 class Announcer:
@@ -63,7 +66,9 @@ class Announcer:
             try:
                 await channel.send(self.message)
             except discord.Forbidden:
-                await bot_owner.send("I could not announce to server: {}".format(g.id))
+                await bot_owner.send(
+                    _("I could not announce to server: {server.id}").format(server=g)
+                )
             await asyncio.sleep(0.5)
 
         self.active = False

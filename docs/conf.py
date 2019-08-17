@@ -39,7 +39,8 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
-    "sphinxcontrib.asyncio",
+    "sphinx.ext.doctest",
+    "sphinxcontrib_trio",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -98,6 +99,9 @@ default_role = "any"
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
+
+# This will be needed until sphinx_rtd_theme supports the html5 writer
+html4_writer = True
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -190,9 +194,27 @@ texinfo_documents = [
 ]
 
 
-# Example configuration for intersphinx: refer to the Python standard library.
+# -- Options for linkcheck builder ----------------------------------------
+
+# A list of regular expressions that match URIs that should not be
+# checked when doing a linkcheck build.
+linkcheck_ignore = [r"https://java.com*", r"https://chocolatey.org*"]
+
+
+# -- Options for extensions -----------------------------------------------
+
+# Intersphinx
 intersphinx_mapping = {
-    "python": ("https://docs.python.org/3.6", None),
-    "dpy": ("https://discordpy.readthedocs.io/en/rewrite/", None),
+    "python": ("https://docs.python.org/3", None),
+    "dpy": ("https://discordpy.readthedocs.io/en/v1.0.1/", None),
     "motor": ("https://motor.readthedocs.io/en/stable/", None),
 }
+
+# Doctest
+# If this string is non-empty, all blocks with ``>>>`` in them will be
+# tested, not just the ones explicitly marked with ``.. doctest::``
+doctest_test_doctest_blocks = ""
+
+# Autodoc options
+autodoc_default_flags = ["show-inheritance"]
+autodoc_typehints = "none"

@@ -1,6 +1,6 @@
 import logging
 import asyncio
-from typing import Union
+from typing import Union, List
 from datetime import timedelta
 from copy import copy
 import contextlib
@@ -11,6 +11,7 @@ from redbot.core.utils.chat_formatting import pagify, box
 from redbot.core.utils.antispam import AntiSpam
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils.tunnel import Tunnel
 
 
@@ -20,7 +21,7 @@ log = logging.getLogger("red.reports")
 
 
 @cog_i18n(_)
-class Reports:
+class Reports(commands.Cog):
 
     default_guild_settings = {"output_channel": None, "active": False, "next_ticket": 1}
 
@@ -40,9 +41,11 @@ class Reports:
     ]
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
         self.config = Config.get_conf(self, 78631113035100160, force_registration=True)
         self.config.register_guild(**self.default_guild_settings)
+        self.config.init_custom("REPORT", 2)
         self.config.register_custom("REPORT", **self.default_report)
         self.antispam = {}
         self.user_cache = []
@@ -58,23 +61,20 @@ class Reports:
     @commands.guild_only()
     @commands.group(name="reportset")
     async def reportset(self, ctx: commands.Context):
-        """
-        Settings for the report system.
-        """
+        """Manage Reports."""
         pass
 
     @checks.admin_or_permissions(manage_guild=True)
     @reportset.command(name="output")
-    async def setoutput(self, ctx: commands.Context, channel: discord.TextChannel):
-        """Set the channel where reports will show up"""
+    async def reportset_output(self, ctx: commands.Context, channel: discord.TextChannel):
+        """Set the channel where reports will be sent."""
         await self.config.guild(ctx.guild).output_channel.set(channel.id)
         await ctx.send(_("The report channel has been set."))
 
     @checks.admin_or_permissions(manage_guild=True)
     @reportset.command(name="toggle", aliases=["toggleactive"])
-    async def report_toggle(self, ctx: commands.Context):
-        """Enables or Disables reporting for the server"""
-
+    async def reportset_toggle(self, ctx: commands.Context):
+        """Enable or Disable reporting for this server."""
         active = await self.config.guild(ctx.guild).active()
         active = not active
         await self.config.guild(ctx.guild).active.set(active)
@@ -84,20 +84,14 @@ class Reports:
             await ctx.send(_("Reporting is now disabled."))
 
     async def internal_filter(self, m: discord.Member, mod=False, perms=None):
-        ret = False
-        if mod:
-            guild = m.guild
-            admin_role = discord.utils.get(
-                guild.roles, id=await self.bot.db.guild(guild).admin_role()
-            )
-            mod_role = discord.utils.get(guild.roles, id=await self.bot.db.guild(guild).mod_role())
-            ret |= any(r in m.roles for r in (mod_role, admin_role))
-        if perms:
-            ret |= m.guild_permissions >= perms
+        if perms and m.guild_permissions >= perms:
+            return True
+        if mod and await self.bot.is_mod(m):
+            return True
         # The following line is for consistency with how perms are handled
-        # in Red, though I'm not sure it makse sense to use here.
-        ret |= await self.bot.is_owner(m)
-        return ret
+        # in Red, though I'm not sure it makes sense to use here.
+        if await self.bot.is_owner(m):
+            return True
 
     async def discover_guild(
         self,
@@ -137,13 +131,14 @@ class Reports:
         output += "\n{}".format(prompt)
 
         for page in pagify(output, delims=["\n"]):
-            dm = await author.send(box(page))
-
-        def pred(m):
-            return m.author == author and m.channel == dm.channel
+            await author.send(box(page))
 
         try:
-            message = await self.bot.wait_for("message", check=pred, timeout=45)
+            message = await self.bot.wait_for(
+                "message",
+                check=MessagePredicate.same_context(channel=author.dm_channel, user=author),
+                timeout=45,
+            )
         except asyncio.TimeoutError:
             await author.send(_("You took too long to select. Try again later."))
             return None
@@ -167,7 +162,7 @@ class Reports:
         if channel is None:
             return None
 
-        files = await Tunnel.files_from_attatch(msg)
+        files: List[discord.File] = await Tunnel.files_from_attach(msg)
 
         ticket_number = await self.config.guild(guild).next_ticket()
         await self.config.guild(guild).next_ticket.set(ticket_number + 1)
@@ -203,11 +198,10 @@ class Reports:
 
     @commands.group(name="report", invoke_without_command=True)
     async def report(self, ctx: commands.Context, *, _report: str = ""):
-        """
-        Send a report.
+        """Send a report.
 
         Use without arguments for interactive reporting, or do
-        [p]report <text> to use it non-interactively.
+        `[p]report <text>` to use it non-interactively.
         """
         author = ctx.author
         guild = ctx.guild
@@ -248,7 +242,7 @@ class Reports:
             val = await self.send_report(_m, guild)
         else:
             try:
-                dm = await author.send(
+                await author.send(
                     _(
                         "Please respond to this message with your Report."
                         "\nYour report should be a single message"
@@ -257,11 +251,12 @@ class Reports:
             except discord.Forbidden:
                 return await ctx.send(_("This requires DMs enabled."))
 
-            def pred(m):
-                return m.author == author and m.channel == dm.channel
-
             try:
-                message = await self.bot.wait_for("message", check=pred, timeout=180)
+                message = await self.bot.wait_for(
+                    "message",
+                    check=MessagePredicate.same_context(ctx, channel=author.dm_channel),
+                    timeout=180,
+                )
             except asyncio.TimeoutError:
                 return await author.send(_("You took too long. Try again later."))
             else:
@@ -290,6 +285,7 @@ class Reports:
                 except discord.NotFound:
                     pass
 
+    @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         """
         oh dear....
@@ -309,6 +305,7 @@ class Reports:
             )
             self.tunnel_store.pop(t[0], None)
 
+    @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         for k, v in self.tunnel_store.items():
             topic = _("Re: ticket# {1} in {0.name}").format(*k)
@@ -317,19 +314,18 @@ class Reports:
             if msgs:
                 self.tunnel_store[k]["msgs"] = msgs
 
-    @checks.mod_or_permissions(manage_members=True)
+    @commands.guild_only()
+    @checks.mod_or_permissions(manage_roles=True)
     @report.command(name="interact")
     async def response(self, ctx, ticket_number: int):
-        """
-        Open a message tunnel.
-        
+        """Open a message tunnel.
+
         This tunnel will forward things you say in this channel
         to the ticket opener's direct messages.
 
         Tunnels do not persist across bot restarts.
         """
 
-        # note, mod_or_permissions is an implicit guild_only
         guild = ctx.guild
         rec = await self.config.custom("REPORT", guild.id, ticket_number).report()
 
@@ -352,8 +348,7 @@ class Reports:
             )
 
         big_topic = _(
-            "{who} opened a 2-way communication "
-            "about ticket number {ticketnum}. Anything you say or upload here "
+            " Anything you say or upload here "
             "(8MB file size limitation on uploads) "
             "will be forwarded to them until the communication is closed.\n"
             "You can close a communication at any point by reacting with "
@@ -362,8 +357,12 @@ class Reports:
             "\N{WHITE HEAVY CHECK MARK}.\n"
             "Tunnels are not persistent across bot restarts."
         )
-        topic = big_topic.format(
-            ticketnum=ticket_number, who=_("A moderator in `{guild.name}` has").format(guild=guild)
+        topic = (
+            _(
+                "A moderator in the server `{guild.name}` has opened a 2-way communication about "
+                "ticket number {ticket_number}."
+            ).format(guild=guild, ticket_number=ticket_number)
+            + big_topic
         )
         try:
             m = await tun.communicate(message=ctx.message, topic=topic, skip_message_content=True)
@@ -371,4 +370,9 @@ class Reports:
             await ctx.send(_("That user has DMs disabled."))
         else:
             self.tunnel_store[(guild, ticket_number)] = {"tun": tun, "msgs": m}
-            await ctx.send(big_topic.format(who=_("You have"), ticketnum=ticket_number))
+            await ctx.send(
+                _(
+                    "You have opened a 2-way communication about ticket number {ticket_number}."
+                ).format(ticket_number=ticket_number)
+                + big_topic
+            )

@@ -1,19 +1,23 @@
 """Module for Trivia cog."""
+import pathlib
 from collections import Counter
+from typing import List
 import yaml
 import discord
 from redbot.core import commands
-from redbot.ext import trivia as ext_trivia
 from redbot.core import Config, checks
 from redbot.core.data_manager import cog_data_path
-from redbot.core.utils.chat_formatting import box, pagify
+from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils.chat_formatting import box, pagify, bold
 from redbot.cogs.bank import check_global_setting_admin
 from .log import LOG
 from .session import TriviaSession
 
-__all__ = ["Trivia", "UNIQUE_ID"]
+__all__ = ["Trivia", "UNIQUE_ID", "get_core_lists"]
 
-UNIQUE_ID = 0xb3c0e453
+UNIQUE_ID = 0xB3C0E453
+
+_ = Translator("Trivia", __file__)
 
 
 class InvalidListError(Exception):
@@ -22,10 +26,12 @@ class InvalidListError(Exception):
     pass
 
 
-class Trivia:
+@cog_i18n(_)
+class Trivia(commands.Cog):
     """Play trivia with friends!"""
 
     def __init__(self):
+        super().__init__()
         self.trivia_sessions = []
         self.conf = Config.get_conf(self, identifier=UNIQUE_ID, force_registration=True)
 
@@ -45,20 +51,21 @@ class Trivia:
     @commands.guild_only()
     @checks.mod_or_permissions(administrator=True)
     async def triviaset(self, ctx: commands.Context):
-        """Manage trivia settings."""
+        """Manage Trivia settings."""
         if ctx.invoked_subcommand is None:
             settings = self.conf.guild(ctx.guild)
             settings_dict = await settings.all()
             msg = box(
-                "**Current settings**\n"
-                "Bot gains points: {bot_plays}\n"
-                "Answer time limit: {delay} seconds\n"
-                "Lack of response timeout: {timeout} seconds\n"
-                "Points to win: {max_score}\n"
-                "Reveal answer on timeout: {reveal_answer}\n"
-                "Payout multiplier: {payout_multiplier}\n"
-                "Allow lists to override settings: {allow_override}"
-                "".format(**settings_dict),
+                _(
+                    "Current settings\n"
+                    "Bot gains points: {bot_plays}\n"
+                    "Answer time limit: {delay} seconds\n"
+                    "Lack of response timeout: {timeout} seconds\n"
+                    "Points to win: {max_score}\n"
+                    "Reveal answer on timeout: {reveal_answer}\n"
+                    "Payout multiplier: {payout_multiplier}\n"
+                    "Allow lists to override settings: {allow_override}"
+                ).format(**settings_dict),
                 lang="py",
             )
             await ctx.send(msg)
@@ -67,33 +74,34 @@ class Trivia:
     async def triviaset_max_score(self, ctx: commands.Context, score: int):
         """Set the total points required to win."""
         if score < 0:
-            await ctx.send("Score must be greater than 0.")
+            await ctx.send(_("Score must be greater than 0."))
             return
         settings = self.conf.guild(ctx.guild)
         await settings.max_score.set(score)
-        await ctx.send("Done. Points required to win set to {}.".format(score))
+        await ctx.send(_("Done. Points required to win set to {num}.").format(num=score))
 
     @triviaset.command(name="timelimit")
     async def triviaset_timelimit(self, ctx: commands.Context, seconds: float):
         """Set the maximum seconds permitted to answer a question."""
         if seconds < 4.0:
-            await ctx.send("Must be at least 4 seconds.")
+            await ctx.send(_("Must be at least 4 seconds."))
             return
         settings = self.conf.guild(ctx.guild)
         await settings.delay.set(seconds)
-        await ctx.send("Done. Maximum seconds to answer set to {}.".format(seconds))
+        await ctx.send(_("Done. Maximum seconds to answer set to {num}.").format(num=seconds))
 
     @triviaset.command(name="stopafter")
     async def triviaset_stopafter(self, ctx: commands.Context, seconds: float):
         """Set how long until trivia stops due to no response."""
         settings = self.conf.guild(ctx.guild)
         if seconds < await settings.delay():
-            await ctx.send("Must be larger than the answer time limit.")
+            await ctx.send(_("Must be larger than the answer time limit."))
             return
         await settings.timeout.set(seconds)
         await ctx.send(
-            "Done. Trivia sessions will now time out after {}"
-            " seconds of no responses.".format(seconds)
+            _(
+                "Done. Trivia sessions will now time out after {num} seconds of no responses."
+            ).format(num=seconds)
         )
 
     @triviaset.command(name="override")
@@ -101,46 +109,44 @@ class Trivia:
         """Allow/disallow trivia lists to override settings."""
         settings = self.conf.guild(ctx.guild)
         await settings.allow_override.set(enabled)
-        enabled = "now" if enabled else "no longer"
-        await ctx.send(
-            "Done. Trivia lists can {} override the trivia settings"
-            " for this server.".format(enabled)
-        )
+        if enabled:
+            await ctx.send(
+                _("Done. Trivia lists can now override the trivia settings for this server.")
+            )
+        else:
+            await ctx.send(
+                _(
+                    "Done. Trivia lists can no longer override the trivia settings for this "
+                    "server."
+                )
+            )
 
-    @triviaset.command(name="botplays")
-    async def trivaset_bot_plays(self, ctx: commands.Context, true_or_false: bool):
+    @triviaset.command(name="botplays", usage="<true_or_false>")
+    async def trivaset_bot_plays(self, ctx: commands.Context, enabled: bool):
         """Set whether or not the bot gains points.
 
         If enabled, the bot will gain a point if no one guesses correctly.
         """
         settings = self.conf.guild(ctx.guild)
-        await settings.bot_plays.set(true_or_false)
-        await ctx.send(
-            "Done. "
-            + (
-                "I'll gain a point if users don't answer in time."
-                if true_or_false
-                else "Alright, I won't embarass you at trivia anymore."
-            )
-        )
+        await settings.bot_plays.set(enabled)
+        if enabled:
+            await ctx.send(_("Done. I'll now gain a point if users don't answer in time."))
+        else:
+            await ctx.send(_("Alright, I won't embarass you at trivia anymore."))
 
-    @triviaset.command(name="revealanswer")
-    async def trivaset_reveal_answer(self, ctx: commands.Context, true_or_false: bool):
+    @triviaset.command(name="revealanswer", usage="<true_or_false>")
+    async def trivaset_reveal_answer(self, ctx: commands.Context, enabled: bool):
         """Set whether or not the answer is revealed.
 
         If enabled, the bot will reveal the answer if no one guesses correctly
         in time.
         """
         settings = self.conf.guild(ctx.guild)
-        await settings.reveal_answer.set(true_or_false)
-        await ctx.send(
-            "Done. "
-            + (
-                "I'll reveal the answer if no one knows it."
-                if true_or_false
-                else "I won't reveal the answer to the questions anymore."
-            )
-        )
+        await settings.reveal_answer.set(enabled)
+        if enabled:
+            await ctx.send(_("Done. I'll reveal the answer if no one knows it."))
+        else:
+            await ctx.send(_("Alright, I won't reveal the answer to the questions anymore."))
 
     @triviaset.command(name="payout")
     @check_global_setting_admin()
@@ -156,13 +162,13 @@ class Trivia:
         """
         settings = self.conf.guild(ctx.guild)
         if multiplier < 0:
-            await ctx.send("Multiplier must be at least 0.")
+            await ctx.send(_("Multiplier must be at least 0."))
             return
         await settings.payout_multiplier.set(multiplier)
-        if not multiplier:
-            await ctx.send("Done. I will no longer reward the winner with a payout.")
-            return
-        await ctx.send("Done. Payout multiplier set to {}.".format(multiplier))
+        if multiplier:
+            await ctx.send(_("Done. Payout multiplier set to {num}.").format(num=multiplier))
+        else:
+            await ctx.send(_("Done. I will no longer reward the winner with a payout."))
 
     @commands.group(invoke_without_command=True)
     @commands.guild_only()
@@ -178,7 +184,7 @@ class Trivia:
         categories = [c.lower() for c in categories]
         session = self._get_trivia_session(ctx.channel)
         if session is not None:
-            await ctx.send("There is already an ongoing trivia session in this channel.")
+            await ctx.send(_("There is already an ongoing trivia session in this channel."))
             return
         trivia_dict = {}
         authors = []
@@ -189,15 +195,17 @@ class Trivia:
                 dict_ = self.get_trivia_list(category)
             except FileNotFoundError:
                 await ctx.send(
-                    "Invalid category `{0}`. See `{1}trivia list`"
-                    " for a list of trivia categories."
-                    "".format(category, ctx.prefix)
+                    _(
+                        "Invalid category `{name}`. See `{prefix}trivia list` for a list of "
+                        "trivia categories."
+                    ).format(name=category, prefix=ctx.prefix)
                 )
             except InvalidListError:
                 await ctx.send(
-                    "There was an error parsing the trivia list for"
-                    " the `{}` category. It may be formatted"
-                    " incorrectly.".format(category)
+                    _(
+                        "There was an error parsing the trivia list for the `{name}` category. It "
+                        "may be formatted incorrectly."
+                    ).format(name=category)
                 )
             else:
                 trivia_dict.update(dict_)
@@ -206,7 +214,7 @@ class Trivia:
             return
         if not trivia_dict:
             await ctx.send(
-                "The trivia list was parsed successfully, however it appears to be empty!"
+                _("The trivia list was parsed successfully, however it appears to be empty!")
             )
             return
         settings = await self.conf.guild(ctx.guild).all()
@@ -223,7 +231,7 @@ class Trivia:
         """Stop an ongoing trivia session."""
         session = self._get_trivia_session(ctx.channel)
         if session is None:
-            await ctx.send("There is no ongoing trivia session in this channel.")
+            await ctx.send(_("There is no ongoing trivia session in this channel."))
             return
         author = ctx.author
         auth_checks = (
@@ -236,20 +244,28 @@ class Trivia:
         if any(auth_checks):
             await session.end_game()
             session.force_stop()
-            await ctx.send("Trivia stopped.")
+            await ctx.send(_("Trivia stopped."))
         else:
-            await ctx.send("You are not allowed to do that.")
+            await ctx.send(_("You are not allowed to do that."))
 
     @trivia.command(name="list")
     async def trivia_list(self, ctx: commands.Context):
         """List available trivia categories."""
         lists = set(p.stem for p in self._all_lists())
-
-        msg = box("**Available trivia lists**\n\n{}".format(", ".join(sorted(lists))))
-        if len(msg) > 1000:
-            await ctx.author.send(msg)
-            return
-        await ctx.send(msg)
+        if await ctx.embed_requested():
+            await ctx.send(
+                embed=discord.Embed(
+                    title=_("Available trivia lists"),
+                    colour=await ctx.embed_colour(),
+                    description=", ".join(sorted(lists)),
+                )
+            )
+        else:
+            msg = box(bold(_("Available trivia lists")) + "\n\n" + ", ".join(sorted(lists)))
+            if len(msg) > 1000:
+                await ctx.author.send(msg)
+            else:
+                await ctx.send(msg)
 
     @trivia.group(name="leaderboard", aliases=["lboard"], autohelp=False)
     async def trivia_leaderboard(self, ctx: commands.Context):
@@ -271,19 +287,21 @@ class Trivia:
     ):
         """Leaderboard for this server.
 
-        <sort_by> can be any of the following fields:
-         - wins  : total wins
-         - avg   : average score
-         - total : total correct answers
+        `<sort_by>` can be any of the following fields:
+         - `wins`  : total wins
+         - `avg`   : average score
+         - `total` : total correct answers
+         - `games` : total games played
 
-        <top> is the number of ranks to show on the leaderboard.
+        `<top>` is the number of ranks to show on the leaderboard.
         """
         key = self._get_sort_key(sort_by)
         if key is None:
             await ctx.send(
-                "Unknown field `{}`, see `{}help trivia "
-                "leaderboard server` for valid fields to sort by."
-                "".format(sort_by, ctx.prefix)
+                _(
+                    "Unknown field `{field_name}`, see `{prefix}help trivia leaderboard server` "
+                    "for valid fields to sort by."
+                ).format(field_name=sort_by, prefix=ctx.prefix)
             )
             return
         guild = ctx.guild
@@ -298,20 +316,21 @@ class Trivia:
     ):
         """Global trivia leaderboard.
 
-        <sort_by> can be any of the following fields:
-         - wins  : total wins
-         - avg   : average score
-         - total : total correct answers from all sessions
-         - games : total games played
+        `<sort_by>` can be any of the following fields:
+         - `wins`  : total wins
+         - `avg`   : average score
+         - `total` : total correct answers from all sessions
+         - `games` : total games played
 
-        <top> is the number of ranks to show on the leaderboard.
+        `<top>` is the number of ranks to show on the leaderboard.
         """
         key = self._get_sort_key(sort_by)
         if key is None:
             await ctx.send(
-                "Unknown field `{}`, see `{}help trivia "
-                "leaderboard global` for valid fields to sort by."
-                "".format(sort_by, ctx.prefix)
+                _(
+                    "Unknown field `{field_name}`, see `{prefix}help trivia leaderboard server` "
+                    "for valid fields to sort by."
+                ).format(field_name=sort_by, prefix=ctx.prefix)
             )
             return
         data = await self.conf.all_members()
@@ -330,7 +349,8 @@ class Trivia:
                 collated_data[member] = collated_member_data
         await self.send_leaderboard(ctx, collated_data, key, top)
 
-    def _get_sort_key(self, key: str):
+    @staticmethod
+    def _get_sort_key(key: str):
         key = key.lower()
         if key in ("wins", "average_score", "total_score", "games"):
             return key
@@ -362,15 +382,16 @@ class Trivia:
 
         """
         if not data:
-            await ctx.send("There are no scores on record!")
+            await ctx.send(_("There are no scores on record!"))
             return
         leaderboard = self._get_leaderboard(data, key, top)
         ret = []
-        for page in pagify(leaderboard):
+        for page in pagify(leaderboard, shorten_by=10):
             ret.append(await ctx.send(box(page, lang="py")))
         return ret
 
-    def _get_leaderboard(self, data: dict, key: str, top: int):
+    @staticmethod
+    def _get_leaderboard(data: dict, key: str, top: int):
         # Mix in average score
         for member, stats in data.items():
             if stats["games"] != 0:
@@ -382,7 +403,7 @@ class Trivia:
         try:
             priority.remove(key)
         except ValueError:
-            raise ValueError("{} is not a valid key.".format(key))
+            raise ValueError(f"{key} is not a valid key.")
         # Put key last in reverse priority
         priority.append(key)
         items = data.items()
@@ -391,16 +412,15 @@ class Trivia:
         max_name_len = max(map(lambda m: len(str(m)), data.keys()))
         # Headers
         headers = (
-            "Rank",
-            "Member{}".format(" " * (max_name_len - 6)),
-            "Wins",
-            "Games Played",
-            "Total Score",
-            "Average Score",
+            _("Rank"),
+            _("Member") + " " * (max_name_len - 6),
+            _("Wins"),
+            _("Games Played"),
+            _("Total Score"),
+            _("Average Score"),
         )
-        lines = [" | ".join(headers)]
+        lines = [" | ".join(headers), " | ".join(("-" * len(h) for h in headers))]
         # Header underlines
-        lines.append(" | ".join(("-" * len(h) for h in headers)))
         for rank, tup in enumerate(items, 1):
             member, m_data = tup
             # Align fields to header width
@@ -424,6 +444,7 @@ class Trivia:
                 break
         return "\n".join(lines)
 
+    @commands.Cog.listener()
     async def on_trivia_end(self, session: TriviaSession):
         """Event for a trivia session ending.
 
@@ -484,7 +505,7 @@ class Trivia:
 
         with path.open(encoding="utf-8") as file:
             try:
-                dict_ = yaml.load(file)
+                dict_ = yaml.safe_load(file)
             except yaml.error.YAMLError as exc:
                 raise InvalidListError("YAML parsing failed.") from exc
             else:
@@ -495,11 +516,17 @@ class Trivia:
             (session for session in self.trivia_sessions if session.ctx.channel == channel), None
         )
 
-    def _all_lists(self):
-        personal_lists = tuple(p.resolve() for p in cog_data_path(self).glob("*.yaml"))
+    def _all_lists(self) -> List[pathlib.Path]:
+        personal_lists = [p.resolve() for p in cog_data_path(self).glob("*.yaml")]
 
-        return personal_lists + tuple(ext_trivia.lists())
+        return personal_lists + get_core_lists()
 
-    def __unload(self):
+    def cog_unload(self):
         for session in self.trivia_sessions:
             session.force_stop()
+
+
+def get_core_lists() -> List[pathlib.Path]:
+    """Return a list of paths for all trivia lists packaged with the bot."""
+    core_lists_path = pathlib.Path(__file__).parent.resolve() / "data/lists"
+    return list(core_lists_path.glob("*.yaml"))

@@ -3,13 +3,16 @@ import inspect
 import io
 import textwrap
 import traceback
+import re
 from contextlib import redirect_stdout
 from copy import copy
 
 import discord
+
 from . import checks, commands
 from .i18n import Translator
 from .utils.chat_formatting import box, pagify
+from .utils.predicates import MessagePredicate
 
 """
 Notice:
@@ -21,11 +24,14 @@ https://github.com/Rapptz/RoboDanny/blob/master/cogs/repl.py
 
 _ = Translator("Dev", __file__)
 
+START_CODE_BLOCK_RE = re.compile(r"^((```py)(?=\s)|(```))")
 
-class Dev:
+
+class Dev(commands.Cog):
     """Various development focused utilities."""
 
     def __init__(self):
+        super().__init__()
         self._last_result = None
         self.sessions = set()
 
@@ -34,7 +40,7 @@ class Dev:
         """Automatically removes code blocks from the code."""
         # remove ```py\n```
         if content.startswith("```") and content.endswith("```"):
-            return "\n".join(content.split("\n")[1:-1])
+            return START_CODE_BLOCK_RE.sub("", content)[:-3]
 
         # remove `foo`
         return content.strip("` \n")
@@ -55,13 +61,18 @@ class Dev:
         return pagify(msg, delims=["\n", " "], priority=True, shorten_by=10)
 
     @staticmethod
-    def sanitize_output(ctx: commands.Context, input_: str) -> str:
+    def sanitize_output(ctx: commands.Context, keys: dict, input_: str) -> str:
         """Hides the bot's token from a string."""
         token = ctx.bot.http.token
         r = "[EXPUNGED]"
         result = input_.replace(token, r)
         result = result.replace(token.lower(), r)
         result = result.replace(token.upper(), r)
+        for provider, data in keys.items():
+            for name, key in data.items():
+                result = result.replace(key, r)
+                result = result.replace(key.upper(), r)
+                result = result.replace(key.lower(), r)
         return result
 
     @commands.command()
@@ -84,7 +95,7 @@ class Dev:
             author   - command author's member object
             message  - the command's message object
             discord  - discord.py library
-            commands - discord.py commands extension
+            commands - redbot.core.commands
             _        - The result of the last dev command.
         """
         env = {
@@ -110,12 +121,13 @@ class Dev:
             await ctx.send(box("{}: {!s}".format(type(e).__name__, e), lang="py"))
             return
 
-        if asyncio.iscoroutine(result):
+        if inspect.isawaitable(result):
             result = await result
 
         self._last_result = result
 
-        result = self.sanitize_output(ctx, str(result))
+        api_keys = await ctx.bot.db.api_tokens()
+        result = self.sanitize_output(ctx, api_keys, str(result))
 
         await ctx.send_interactive(self.get_pages(result), box_lang="py")
 
@@ -138,7 +150,7 @@ class Dev:
             author   - command author's member object
             message  - the command's message object
             discord  - discord.py library
-            commands - discord.py commands extension
+            commands - redbot.core.commands
             _        - The result of the last dev command.
         """
         env = {
@@ -179,7 +191,8 @@ class Dev:
             msg = "{}{}".format(printed, result)
         else:
             msg = printed
-        msg = self.sanitize_output(ctx, msg)
+        api_keys = await ctx.bot.db.api_tokens()
+        msg = self.sanitize_output(ctx, api_keys, msg)
 
         await ctx.send_interactive(self.get_pages(msg), box_lang="py")
 
@@ -214,17 +227,13 @@ class Dev:
         self.sessions.add(ctx.channel.id)
         await ctx.send(_("Enter code to execute or evaluate. `exit()` or `quit` to exit."))
 
-        msg_check = lambda m: (
-            m.author == ctx.author and m.channel == ctx.channel and m.content.startswith("`")
-        )
-
         while True:
-            response = await ctx.bot.wait_for("message", check=msg_check)
+            response = await ctx.bot.wait_for("message", check=MessagePredicate.regex(r"^`", ctx))
 
             cleaned = self.cleanup_code(response.content)
 
             if cleaned in ("quit", "exit", "exit()"):
-                await ctx.send("Exiting.")
+                await ctx.send(_("Exiting."))
                 self.sessions.remove(ctx.channel.id)
                 return
 
@@ -267,7 +276,8 @@ class Dev:
                 elif value:
                     msg = "{}".format(value)
 
-            msg = self.sanitize_output(ctx, msg)
+            api_keys = await ctx.bot.db.api_tokens()
+            msg = self.sanitize_output(ctx, api_keys, msg)
 
             try:
                 await ctx.send_interactive(self.get_pages(msg), box_lang="py")

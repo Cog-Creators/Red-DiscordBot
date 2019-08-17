@@ -5,8 +5,9 @@ Commands Package
 ================
 
 This package acts almost identically to :doc:`discord.ext.commands <dpy:ext/commands/api>`; i.e.
-they both have the same attributes. Some of these attributes, however, have been slightly modified,
-as outlined below.
+all of the attributes from discord.py's are also in ours. 
+Some of these attributes, however, have been slightly modified, while others have been added to
+extend functionlities used throughout the bot, as outlined below.
 
 .. autofunction:: redbot.core.commands.command
 
@@ -20,3 +21,6 @@ as outlined below.
 
 .. autoclass:: redbot.core.commands.Context
     :members:
+
+.. automodule:: redbot.core.commands.requires
+    :members: PrivilegeLevel, PermState, Requires

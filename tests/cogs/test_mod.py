@@ -4,14 +4,8 @@ from redbot.pytest.mod import *
 
 
 @pytest.mark.asyncio
-async def test_modlog_register_casetype(mod, ctx):
-    ct = {
-        "name": "ban",
-        "default_setting": True,
-        "image": ":hammer:",
-        "case_str": "Ban",
-        "audit_type": "ban",
-    }
+async def test_modlog_register_casetype(mod):
+    ct = {"name": "ban", "default_setting": True, "image": ":hammer:", "case_str": "Ban"}
     casetype = await mod.register_casetype(**ct)
     assert casetype is not None
 
@@ -19,6 +13,9 @@ async def test_modlog_register_casetype(mod, ctx):
 @pytest.mark.asyncio
 async def test_modlog_case_create(mod, ctx, member_factory):
     from datetime import datetime as dt
+
+    # Run casetype register test to register casetype in this test too
+    await test_modlog_register_casetype(mod)
 
     usr = member_factory.get()
     guild = ctx.guild

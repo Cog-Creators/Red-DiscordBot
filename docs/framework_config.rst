@@ -187,6 +187,7 @@ This usage guide will cover the following features:
 
 - :py:meth:`Group.get_raw`
 - :py:meth:`Group.set_raw`
+- :py:meth:`Group.clear_raw`
 
 For this example let's suppose that we're creating a cog that allows users to buy and own multiple pets using
 the built-in Economy credits::
@@ -290,6 +291,37 @@ We're responsible pet owners here, so we've also got to have a way to feed our p
 
             await ctx.send("Your pet is now at {}/100 hunger!".format(new_hunger)
 
+Of course, if we're less than responsible pet owners, there are consequences::
+
+    #continued
+        @commands.command()
+        async def adopt(self, ctx, pet_name: str, *, member: discord.Member):
+            try:
+                pet = await self.conf.user(member).pets.get_raw(pet_name)
+            except KeyError:
+                await ctx.send("That person doesn't own that pet!")
+                return
+
+            hunger = pet.get("hunger")
+            if hunger < 80:
+                await ctx.send("That pet is too well taken care of to be adopted.")
+                return
+
+            await self.conf.user(member).pets.clear_raw(pet_name)
+
+            # this is equivalent to doing the following
+
+            pets = await self.conf.user(member).pets()
+            del pets[pet_name]
+            await self.conf.user(member).pets.set(pets)
+
+            await self.conf.user(ctx.author).pets.set_raw(pet_name, value=pet)
+            await ctx.send(
+                "Your request to adopt this pet has been granted due to "
+                "how poorly it was taken care of."
+            )
+
+
 *************
 V2 Data Usage
 *************
@@ -341,6 +373,21 @@ API Reference
     Before we begin with the nitty gritty API Reference, you should know that there are tons of working code examples
     inside the bot itself! Simply take a peek inside of the :code:`tests/core/test_config.py` file for examples of using
     Config in all kinds of ways.
+
+.. important::
+
+    When getting, setting or clearing values in Config, all keys are casted to `str` for you. This
+    includes keys within a `dict` when one is being set, as well as keys in  nested dictionaries
+    within that `dict`. For example::
+
+        >>> conf = Config.get_conf(self, identifier=999)
+        >>> conf.register_global(foo={})
+        >>> await conf.foo.set_raw(123, value=True)
+        >>> await conf.foo()
+        {'123': True}
+        >>> await conf.foo.set({123: True, 456: {789: False}}
+        >>> await conf.foo()
+        {'123': True, '456': {'789': False}}
 
 .. automodule:: redbot.core.config
 

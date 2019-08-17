@@ -11,14 +11,8 @@ Welcome to Red - Discord Bot's documentation!
     :caption: Installation Guides:
 
     install_windows
-    install_mac
-    install_ubuntu_xenial
-    install_ubuntu_bionic
-    install_debian
-    install_centos
-    install_arch
-    install_raspbian
-    cog_dataconverter
+    install_linux_mac
+    venv_guide
     autostart_systemd
     autostart_pm2
 
@@ -26,6 +20,7 @@ Welcome to Red - Discord Bot's documentation!
     :maxdepth: 2
     :caption: Cog Reference:
 
+    cog_customcom
     cog_downloader
     cog_permissions
 
@@ -35,20 +30,27 @@ Welcome to Red - Discord Bot's documentation!
 
     guide_migration
     guide_cog_creation
-    guide_data_conversion
+    framework_apikeys
     framework_bank
     framework_bot
+    framework_checks
     framework_cogmanager
+    framework_commands
     framework_config
     framework_datamanager
     framework_downloader
     framework_events
     framework_i18n
     framework_modlog
-    framework_commands
     framework_rpc
     framework_utils
+    version_guarantees
 
+.. toctree::
+    :maxdepth: 2
+    :caption: Changelogs:
+
+    changelog_3_1_0
 
 
 Indices and tables

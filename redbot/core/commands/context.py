@@ -1,11 +1,13 @@
-
 import asyncio
-from typing import Iterable, List
+import contextlib
+from typing import Iterable, List, Union
 import discord
 from discord.ext import commands
 
-from redbot.core.utils.chat_formatting import box
-
+from .requires import PermState
+from ..utils.chat_formatting import box
+from ..utils.predicates import MessagePredicate
+from ..utils import common_filters
 
 TICK = "\N{WHITE HEAVY CHECK MARK}"
 
@@ -20,45 +22,53 @@ class Context(commands.Context):
     This class inherits from `discord.ext.commands.Context`.
     """
 
-    async def send_help(self) -> List[discord.Message]:
-        """Send the command help message.
+    def __init__(self, **attrs):
+        self.assume_yes = attrs.pop("assume_yes", False)
+        super().__init__(**attrs)
+        self.permission_state: PermState = PermState.NORMAL
+
+    async def send(self, content=None, **kwargs):
+        """Sends a message to the destination with the content given.
+
+        This acts the same as `discord.ext.commands.Context.send`, with
+        one added keyword argument as detailed below in *Other Parameters*.
+
+        Parameters
+        ----------
+        content : str
+            The content of the message to send.
+
+        Other Parameters
+        ----------------
+        filter : Callable[`str`] -> `str`
+            A function which is used to sanitize the ``content`` before
+            it is sent. Defaults to
+            :func:`~redbot.core.utils.common_filters.filter_mass_mentions`.
+            This must take a single `str` as an argument, and return
+            the sanitized `str`.
+        \*\*kwargs
+            See `discord.ext.commands.Context.send`.
 
         Returns
         -------
-        `list` of `discord.Message`
-            A list of help messages which were sent to the user.
+        discord.Message
+            The message that was sent.
 
         """
-        command = self.invoked_subcommand or self.command
-        embed_wanted = await self.bot.embed_requested(
-            self.channel, self.author, command=self.bot.get_command("help")
-        )
-        if self.guild and not self.channel.permissions_for(self.guild.me).embed_links:
-            embed_wanted = False
 
-        ret = []
-        destination = self
-        if embed_wanted:
-            embeds = await self.bot.formatter.format_help_for(self, command)
-            for embed in embeds:
-                try:
-                    m = await destination.send(embed=embed)
-                except discord.HTTPException:
-                    destination = self.author
-                    m = await destination.send(embed=embed)
-                ret.append(m)
-        else:
-            f = commands.HelpFormatter()
-            msgs = await f.format_help_for(self, command)
-            for msg in msgs:
-                try:
-                    m = await destination.send(msg)
-                except discord.HTTPException:
-                    destination = self.author
-                    m = await destination.send(msg)
-                ret.append(m)
+        _filter = kwargs.pop("filter", common_filters.filter_mass_mentions)
 
-        return ret
+        if _filter and content:
+            content = _filter(str(content))
+
+        return await super().send(content=content, **kwargs)
+
+    async def send_help(self, command=None):
+        """ Send the command help message. """
+        # This allows people to manually use this similarly
+        # to the upstream d.py version, while retaining our use.
+        command = command or self.command
+        await self.bot.send_help_for(self, command)
 
     async def tick(self) -> bool:
         """Add a tick reaction to the command message.
@@ -71,6 +81,22 @@ class Context(commands.Context):
         """
         try:
             await self.message.add_reaction(TICK)
+        except discord.HTTPException:
+            return False
+        else:
+            return True
+
+    async def react_quietly(
+        self, reaction: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]
+    ) -> bool:
+        """Adds a reaction to to the command message.
+        Returns
+        -------
+        bool
+            :code:`True` if adding the reaction succeeded.
+        """
+        try:
+            await self.message.add_reaction(reaction)
         except discord.HTTPException:
             return False
         else:
@@ -100,10 +126,6 @@ class Context(commands.Context):
         messages = tuple(messages)
         ret = []
 
-        more_check = lambda m: (
-            m.author == self.author and m.channel == self.channel and m.content.lower() == "more"
-        )
-
         for idx, page in enumerate(messages, 1):
             if box_lang is None:
                 msg = await self.send(page)
@@ -124,9 +146,14 @@ class Context(commands.Context):
                     "".format(is_are, n_remaining, plural)
                 )
                 try:
-                    resp = await self.bot.wait_for("message", check=more_check, timeout=timeout)
+                    resp = await self.bot.wait_for(
+                        "message",
+                        check=MessagePredicate.lower_equal_to("more", self),
+                        timeout=timeout,
+                    )
                 except asyncio.TimeoutError:
-                    await query.delete()
+                    with contextlib.suppress(discord.HTTPException):
+                        await query.delete()
                     break
                 else:
                     try:
@@ -134,8 +161,9 @@ class Context(commands.Context):
                     except (discord.HTTPException, AttributeError):
                         # In case the bot can't delete other users' messages,
                         # or is not a bot account
-                        # or chanel is a DM
-                        await query.delete()
+                        # or channel is a DM
+                        with contextlib.suppress(discord.HTTPException):
+                            await query.delete()
         return ret
 
     async def embed_colour(self):
@@ -201,3 +229,20 @@ class Context(commands.Context):
             )
         else:
             return await self.send(message)
+
+    @property
+    def clean_prefix(self) -> str:
+        """str: The command prefix, but a mention prefix is displayed nicer."""
+        me = self.me
+        return self.prefix.replace(me.mention, f"@{me.display_name}")
+
+    @property
+    def me(self) -> discord.abc.User:
+        """discord.abc.User: The bot member or user object.
+
+        If the context is DM, this will be a `discord.User` object.
+        """
+        if self.guild is not None:
+            return self.guild.me
+        else:
+            return self.bot.user

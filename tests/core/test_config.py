@@ -1,3 +1,4 @@
+import asyncio
 from unittest.mock import patch
 import pytest
 
@@ -225,6 +226,15 @@ async def test_set_dynamic_attr(config):
 
 
 @pytest.mark.asyncio
+async def test_clear_dynamic_attr(config):
+    await config.foo.set(True)
+    await config.clear_raw("foo")
+
+    with pytest.raises(KeyError):
+        await config.get_raw("foo")
+
+
+@pytest.mark.asyncio
 async def test_get_dynamic_attr(config):
     assert await config.get_raw("foobaz", default=True) is True
 
@@ -430,3 +440,117 @@ async def test_set_then_mutate(config):
     list1.append("foo")
     list1 = await config.list1()
     assert "foo" not in list1
+
+
+@pytest.mark.asyncio
+async def test_call_group_fills_defaults(config):
+    config.register_global(subgroup={"foo": True})
+    subgroup = await config.subgroup()
+    assert "foo" in subgroup
+
+
+@pytest.mark.asyncio
+async def test_group_call_ctxmgr_writes(config):
+    config.register_global(subgroup={"foo": True})
+    async with config.subgroup() as subgroup:
+        subgroup["bar"] = False
+
+    subgroup = await config.subgroup()
+    assert subgroup == {"foo": True, "bar": False}
+
+
+@pytest.mark.asyncio
+async def test_all_works_as_ctxmgr(config):
+    config.register_global(subgroup={"foo": True})
+    async with config.subgroup.all() as subgroup:
+        subgroup["bar"] = False
+
+    subgroup = await config.subgroup()
+    assert subgroup == {"foo": True, "bar": False}
+
+
+@pytest.mark.asyncio
+async def test_get_raw_mixes_defaults(config):
+    config.register_global(subgroup={"foo": True})
+    await config.subgroup.set_raw("bar", value=False)
+
+    subgroup = await config.get_raw("subgroup")
+    assert subgroup == {"foo": True, "bar": False}
+
+
+@pytest.mark.asyncio
+async def test_cast_str_raw(config):
+    await config.set_raw(123, 456, value=True)
+    assert await config.get_raw(123, 456) is True
+    assert await config.get_raw("123", "456") is True
+    await config.clear_raw("123", 456)
+
+
+@pytest.mark.asyncio
+async def test_cast_str_nested(config):
+    config.register_global(foo={})
+    await config.foo.set({123: True, 456: {789: False}})
+    assert await config.foo() == {"123": True, "456": {"789": False}}
+
+
+def test_config_custom_noinit(config):
+    with pytest.raises(ValueError):
+        config.custom("TEST", 1, 2, 3)
+
+
+def test_config_custom_init(config):
+    config.init_custom("TEST", 3)
+    config.custom("TEST", 1, 2, 3)
+
+
+def test_config_custom_doubleinit(config):
+    config.init_custom("TEST", 3)
+    with pytest.raises(ValueError):
+        config.init_custom("TEST", 2)
+
+
+@pytest.mark.asyncio
+async def test_config_locks_cache(config, empty_guild):
+    lock1 = config.foo.get_lock()
+    assert lock1 is config.foo.get_lock()
+    lock2 = config.guild(empty_guild).foo.get_lock()
+    assert lock2 is config.guild(empty_guild).foo.get_lock()
+    assert lock1 is not lock2
+
+
+@pytest.mark.asyncio
+async def test_config_value_atomicity(config):
+    config.register_global(foo=[])
+    tasks = []
+    for _ in range(15):
+
+        async def func():
+            async with config.foo.get_lock():
+                foo = await config.foo()
+                foo.append(0)
+                await asyncio.sleep(0.1)
+                await config.foo.set(foo)
+
+        tasks.append(func())
+
+    await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
+
+    assert len(await config.foo()) == 15
+
+
+@pytest.mark.asyncio
+async def test_config_ctxmgr_atomicity(config):
+    config.register_global(foo=[])
+    tasks = []
+    for _ in range(15):
+
+        async def func():
+            async with config.foo() as foo:
+                foo.append(0)
+                await asyncio.sleep(0.1)
+
+        tasks.append(func())
+
+    await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
+
+    assert len(await config.foo()) == 15

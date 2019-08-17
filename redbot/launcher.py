@@ -8,30 +8,36 @@ import asyncio
 import aiohttp
 
 import pkg_resources
-from pathlib import Path
-from distutils.version import StrictVersion
+from redbot import MIN_PYTHON_VERSION
 from redbot.setup import (
     basic_setup,
     load_existing_config,
     remove_instance,
     remove_instance_interaction,
     create_backup,
-    save_config,
 )
-from redbot.core import __version__
-from redbot.core.utils import safe_delete
+from redbot.core import __version__, version_info as red_version_info, VersionInfo
 from redbot.core.cli import confirm
 
 if sys.platform == "linux":
-    import distro
+    import distro  # pylint: disable=import-error
 
-PYTHON_OK = sys.version_info >= (3, 6)
 INTERACTIVE_MODE = not len(sys.argv) > 1  # CLI flags = non-interactive
 
 INTRO = "==========================\nRed Discord Bot - Launcher\n==========================\n"
 
 IS_WINDOWS = os.name == "nt"
 IS_MAC = sys.platform == "darwin"
+
+PYTHON_OK = sys.version_info >= MIN_PYTHON_VERSION
+
+
+def is_venv():
+    """Return True if the process is in a venv or in a virtualenv."""
+    # credit to @calebj
+    return hasattr(sys, "real_prefix") or (
+        hasattr(sys, "base_prefix") and sys.base_prefix != sys.prefix
+    )
 
 
 def parse_cli_args():
@@ -55,11 +61,11 @@ def parse_cli_args():
     parser.add_argument(
         "--update-dev", help="Updates Red from the Github repo", action="store_true"
     )
-    parser.add_argument(
-        "--voice", help="Installs extra 'voice' when updating", action="store_true"
-    )
     parser.add_argument("--docs", help="Installs extra 'docs' when updating", action="store_true")
     parser.add_argument("--test", help="Installs extra 'test' when updating", action="store_true")
+    parser.add_argument(
+        "--style", help="Installs extra 'style' when updating", action="store_true"
+    )
     parser.add_argument(
         "--mongo", help="Installs extra 'mongo' when updating", action="store_true"
     )
@@ -71,7 +77,7 @@ def parse_cli_args():
     return parser.parse_known_args()
 
 
-def update_red(dev=False, reinstall=False, voice=False, mongo=False, docs=False, test=False):
+def update_red(dev=False, style=False, mongo=False, docs=False, test=False):
     interpreter = sys.executable
     print("Updating Red...")
     # If the user ran redbot-launcher.exe, updating with pip will fail
@@ -88,8 +94,8 @@ def update_red(dev=False, reinstall=False, voice=False, mongo=False, docs=False,
             os.remove(new_name)
         os.rename(old_name, new_name)
     egg_l = []
-    if voice:
-        egg_l.append("voice")
+    if style:
+        egg_l.append("style")
     if mongo:
         egg_l.append("mongo")
     if docs:
@@ -104,25 +110,10 @@ def update_red(dev=False, reinstall=False, voice=False, mongo=False, docs=False,
         package = "Red-DiscordBot"
         if egg_l:
             package += "[{}]".format(", ".join(egg_l))
-    if reinstall:
-        code = subprocess.call(
-            [
-                interpreter,
-                "-m",
-                "pip",
-                "install",
-                "-U",
-                "-I",
-                "--force-reinstall",
-                "--no-cache-dir",
-                "--process-dependency-links",
-                package,
-            ]
-        )
-    else:
-        code = subprocess.call(
-            [interpreter, "-m", "pip", "install", "-U", "--process-dependency-links", package]
-        )
+    arguments = [interpreter, "-m", "pip", "install", "-U", package]
+    if not is_venv():
+        arguments.append("--user")
+    code = subprocess.call(arguments)
     if code == 0:
         print("Red has been updated")
     else:
@@ -136,9 +127,10 @@ def update_red(dev=False, reinstall=False, voice=False, mongo=False, docs=False,
 
 
 def run_red(selected_instance, autorestart: bool = False, cliflags=None):
+    interpreter = sys.executable
     while True:
         print("Starting {}...".format(selected_instance))
-        cmd_list = ["redbot", selected_instance]
+        cmd_list = [interpreter, "-m", "redbot", selected_instance]
         if cliflags:
             cmd_list += cliflags
         status = subprocess.call(cmd_list)
@@ -190,19 +182,6 @@ def cli_flag_getter():
         choice = user_choice()
         if choice == "y":
             flags.append("--no-cogs")
-        print("Is this a selfbot? (y/n)")
-        choice = user_choice()
-        if choice == "y":
-            print(
-                "Please note that selfbots are not allowed by Discord. See"
-                "https://support.discordapp.com/hc/en-us/articles/115002192352-Automated-user-accounts-self-bots-"
-                "for more information."
-            )
-            flags.append("--self-bot")
-        print("Does this token belong to a user account rather than a bot account? (y/n)")
-        choice = user_choice()
-        if choice == "y":
-            flags.append("--not-bot")
         print("Do you want to do a dry run? (y/n)")
         choice = user_choice()
         if choice == "y":
@@ -275,7 +254,7 @@ async def reset_red():
         "please select option 5 in the launcher."
     )
     await asyncio.sleep(2)
-    print("\nIf you continue you will remove these instanes.\n")
+    print("\nIf you continue you will remove these instances.\n")
     for instance in list(instances.keys()):
         print("    - {}".format(instance))
     await asyncio.sleep(3)
@@ -288,11 +267,11 @@ async def reset_red():
     if confirm("\nDo you want to create a backup for an instance? (y/n) "):
         for index, instance in instances.items():
             print("\nRemoving {}...".format(index))
-            await create_backup(index, instance)
-            await remove_instance(index, instance)
+            await create_backup(index)
+            await remove_instance(index)
     else:
         for index, instance in instances.items():
-            await remove_instance(index, instance)
+            await remove_instance(index)
     print("All instances have been removed.")
 
 
@@ -314,13 +293,13 @@ def user_choice():
 
 def extras_selector():
     print("Enter any extra requirements you want installed\n")
-    print("Options are: voice, docs, test, mongo\n")
+    print("Options are: style, docs, test, mongo\n")
     selected = user_choice()
     selected = selected.split()
     return selected
 
 
-def development_choice(reinstall=False, can_go_back=True):
+def development_choice(can_go_back=True):
     while True:
         print("\n")
         print("Do you want to install stable or development version?")
@@ -336,8 +315,7 @@ def development_choice(reinstall=False, can_go_back=True):
             selected = extras_selector()
             update_red(
                 dev=False,
-                reinstall=reinstall,
-                voice=True if "voice" in selected else False,
+                style=True if "style" in selected else False,
                 docs=True if "docs" in selected else False,
                 test=True if "test" in selected else False,
                 mongo=True if "mongo" in selected else False,
@@ -347,8 +325,7 @@ def development_choice(reinstall=False, can_go_back=True):
             selected = extras_selector()
             update_red(
                 dev=True,
-                reinstall=reinstall,
-                voice=True if "voice" in selected else False,
+                style=True if "style" in selected else False,
                 docs=True if "docs" in selected else False,
                 test=True if "test" in selected else False,
                 mongo=True if "mongo" in selected else False,
@@ -393,7 +370,7 @@ async def is_outdated():
         async with session.get("{}/json".format(red_pypi)) as r:
             data = await r.json()
             new_version = data["info"]["version"]
-    return StrictVersion(new_version) > StrictVersion(__version__), new_version
+    return VersionInfo.from_str(new_version) > red_version_info, new_version
 
 
 def main_menu():
@@ -419,14 +396,14 @@ def main_menu():
         choice = user_choice()
         if choice == "1":
             instance = instance_menu()
-            cli_flags = cli_flag_getter()
             if instance:
+                cli_flags = cli_flag_getter()
                 run_red(instance, autorestart=True, cliflags=cli_flags)
             wait()
         elif choice == "2":
             instance = instance_menu()
-            cli_flags = cli_flag_getter()
             if instance:
+                cli_flags = cli_flag_getter()
                 run_red(instance, autorestart=False, cliflags=cli_flags)
             wait()
         elif choice == "3":
@@ -453,14 +430,14 @@ def main_menu():
                 print("0. Back")
                 choice = user_choice()
                 if choice == "1":
-                    if development_choice(reinstall=True):
+                    if development_choice():
                         wait()
                 elif choice == "2":
                     loop.run_until_complete(reset_red())
                     wait()
                 elif choice == "3":
                     loop.run_until_complete(reset_red())
-                    development_choice(reinstall=True, can_go_back=False)
+                    development_choice(can_go_back=False)
                     wait()
                 elif choice == "0":
                     break
@@ -470,10 +447,13 @@ def main_menu():
 
 
 def main():
+    args, flags_to_pass = parse_cli_args()
     if not PYTHON_OK:
-        raise RuntimeError(
-            "Red requires Python 3.6 or greater. Please install the correct version!"
+        print(
+            f"Python {'.'.join(map(str, MIN_PYTHON_VERSION))} is required to run Red, but you "
+            f"have {sys.version}! Please update Python."
         )
+        sys.exit(1)
     if args.debuginfo:  # Check first since the function triggers an exit
         debug_info()
 
@@ -483,9 +463,9 @@ def main():
             "Please try again using only one of --update or --update-dev"
         )
     if args.update:
-        update_red(voice=args.voice, docs=args.docs, test=args.test, mongo=args.mongo)
+        update_red(style=args.style, docs=args.docs, test=args.test, mongo=args.mongo)
     elif args.update_dev:
-        update_red(dev=True, voice=args.voice, docs=args.docs, test=args.test, mongo=args.mongo)
+        update_red(dev=True, style=args.style, docs=args.docs, test=args.test, mongo=args.mongo)
 
     if INTERACTIVE_MODE:
         main_menu()
@@ -493,8 +473,6 @@ def main():
         print("Starting Red...")
         run_red(args.instancename, autorestart=args.auto_restart, cliflags=flags_to_pass)
 
-
-args, flags_to_pass = parse_cli_args()
 
 if __name__ == "__main__":
     try:

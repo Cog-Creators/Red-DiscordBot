@@ -1,8 +1,9 @@
 import asyncio
+from typing import Optional
 
 from aiohttp import web
 from aiohttp_json_rpc import JsonRpc
-from aiohttp_json_rpc.rpc import unpack_request_args
+from aiohttp_json_rpc.rpc import JsonRpcMethod
 
 import logging
 
@@ -11,7 +12,7 @@ log = logging.getLogger("red.rpc")
 __all__ = ["RPC", "RPCMixin", "get_name"]
 
 
-def get_name(func, prefix=None):
+def get_name(func, prefix=""):
     class_name = prefix or func.__self__.__class__.__name__.lower()
     func_name = func.__name__.strip("_")
     if class_name == "redrpc":
@@ -24,13 +25,13 @@ class RedRpc(JsonRpc):
         super().__init__(*args, **kwargs)
         self.add_methods(("", self.get_method_info))
 
-    def _add_method(self, method, prefix=""):
+    def _add_method(self, method, name="", prefix=""):
         if not asyncio.iscoroutinefunction(method):
             return
 
-        name = get_name(method, prefix)
+        name = name or get_name(method, prefix)
 
-        self.methods[name] = method
+        self.methods[name] = JsonRpcMethod(method)
 
     def remove_method(self, method):
         meth_name = get_name(method)
@@ -63,25 +64,26 @@ class RPC:
     def __init__(self):
         self.app = web.Application()
         self._rpc = RedRpc()
-        self.app.router.add_route("*", "/", self._rpc)
+        self.app.router.add_route("*", "/", self._rpc.handle_request)
 
-        self.app_handler = self.app.make_handler()
-
-        self.server = None
+        self._runner = web.AppRunner(self.app)
+        self._site: Optional[web.TCPSite] = None
 
     async def initialize(self):
         """
         Finalizes the initialization of the RPC server and allows it to begin
         accepting queries.
         """
-        self.server = await self.app.loop.create_server(self.app_handler, "127.0.0.1", 6133)
+        await self._runner.setup()
+        self._site = web.TCPSite(self._runner, host="127.0.0.1", port=6133)
+        await self._site.start()
         log.debug("Created RPC server listener.")
 
-    def close(self):
+    async def close(self):
         """
         Closes the RPC server.
         """
-        self.server.close()
+        await self._runner.cleanup()
 
     def add_method(self, method, prefix: str = None):
         if prefix is None:
@@ -90,7 +92,7 @@ class RPC:
         if not asyncio.iscoroutinefunction(method):
             raise TypeError("RPC methods must be coroutines.")
 
-        self._rpc.add_methods((prefix, unpack_request_args(method)))
+        self._rpc.add_methods((prefix, method))
 
     def add_multi_method(self, *methods, prefix: str = None):
         if not all(asyncio.iscoroutinefunction(m) for m in methods):
@@ -111,13 +113,14 @@ class RPCMixin:
         super().__init__(**kwargs)
         self.rpc = RPC()
 
-        self.rpc_handlers = {}  # Lowered cog name to method
+        self.rpc_handlers = {}  # Uppercase cog name to method
 
     def register_rpc_handler(self, method):
         """
         Registers a method to act as an RPC handler if the internal RPC server is active.
 
-        When calling this method through the RPC server, use the naming scheme "cogname__methodname".
+        When calling this method through the RPC server, use the naming scheme
+        "cogname__methodname".
 
         .. important::
 
@@ -132,6 +135,7 @@ class RPCMixin:
         self.rpc.add_method(method)
 
         cog_name = method.__self__.__class__.__name__.upper()
+
         if cog_name not in self.rpc_handlers:
             self.rpc_handlers[cog_name] = []
 
