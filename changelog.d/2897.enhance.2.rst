@@ -1,0 +1,1 @@
+Modlog no longer generates cases without being told to for actions the bot did.

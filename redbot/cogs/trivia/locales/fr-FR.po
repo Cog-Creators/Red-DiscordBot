@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-01-11 02:18+0000\n"
-"PO-Revision-Date: 2019-02-25 03:06\n"
-"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"POT-Creation-Date: 2019-07-05 22:33+0200\n"
+"PO-Revision-Date: 2019-07-06 16:11\n"
+"Last-Translator: Robert Jansen (Kowlin)\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 2.2\n"
+"Generated-By: redgettext 3.0\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
@@ -87,22 +87,8 @@ msgid "Manage Trivia settings."
 msgstr "Gérer les paramètres du Trivia."
 
 #: redbot/cogs/trivia/trivia.py:59
-msgid "**Current settings**\n"
-"Bot gains points: {bot_plays}\n"
-"Answer time limit: {delay} seconds\n"
-"Lack of response timeout: {timeout} seconds\n"
-"Points to win: {max_score}\n"
-"Reveal answer on timeout: {reveal_answer}\n"
-"Payout multiplier: {payout_multiplier}\n"
-"Allow lists to override settings: {allow_override}"
-msgstr "**Paramètres actuels**\n"
-"Le bot gagne des points : {bot_plays}\n"
-"Délai de réponse : {delay} secondes\n"
-"Délai de non-réponse : {timeout} secondes\n"
-"Points pour gagner : {max_score}\n"
-"Révéler la réponse à la fin du délai : {reveal_answer}\n"
-"Multiplicateur des gains : {payout_multiplier}\n"
-"Autoriser les listes à remplacer les paramètres : {allow_override}"
+msgid "Current settings\\nBot gains points: {bot_plays}\\nAnswer time limit: {delay} seconds\\nLack of response timeout: {timeout} seconds\\nPoints to win: {max_score}\\nReveal answer on timeout: {reveal_answer}\\nPayout multiplier: {payout_multiplier}\\nAllow lists to override settings: {allow_override}"
+msgstr "Paramètres actuels**\\nLe bot gagne des points : {bot_plays}\\nDélai de réponse : {delay} secondes\\nDélai de non-réponse : {timeout} secondes\\nPoints pour gagner : {max_score}\\nRévéler la réponse à la fin du délai : {reveal_answer}\\nMultiplicateur des gains : {payout_multiplier}\\nAutoriser les listes à remplacer les paramètres : {allow_override}"
 
 #: redbot/cogs/trivia/trivia.py:75
 #, docstring
@@ -133,7 +119,7 @@ msgstr "Fait. Le nombre de secondes pour répondre est défini à {num}."
 #: redbot/cogs/trivia/trivia.py:95
 #, docstring
 msgid "Set how long until trivia stops due to no response."
-msgstr "Définissez combien de temps avant l'arrêt des quizz en raison de l'absence de réponse."
+msgstr "Définissez combien de temps avant l'arrêt du Trivia en raison de l'absence de réponse."
 
 #: redbot/cogs/trivia/trivia.py:98
 msgid "Must be larger than the answer time limit."
@@ -158,11 +144,8 @@ msgstr "Fait. Les listes de trivia ne peuvent maintenant plus substituer les par
 
 #: redbot/cogs/trivia/trivia.py:126
 #, docstring
-msgid "Set whether or not the bot gains points.\n\n"
-"        If enabled, the bot will gain a point if no one guesses correctly.\n"
-"        "
-msgstr "Définit si le bot gagne ou non des points.\n\n"
-"Si cette option est activée, le bot gagnera un point si personne ne devine correctement."
+msgid "Set whether or not the bot gains points.\\n\\n        If enabled, the bot will gain a point if no one guesses correctly.\\n        "
+msgstr "Définit si le bot gagne ou non des points.\\n\\n        Si cette option est activée, le bot gagnera un point si personne ne devine correctement.\\n        "
 
 #: redbot/cogs/trivia/trivia.py:133
 msgid "Done. I'll now gain a point if users don't answer in time."
@@ -174,12 +157,8 @@ msgstr "D'accord, je ne vous dérangerais plus pour les Trivia."
 
 #: redbot/cogs/trivia/trivia.py:139
 #, docstring
-msgid "Set whether or not the answer is revealed.\n\n"
-"        If enabled, the bot will reveal the answer if no one guesses correctly\n"
-"        in time.\n"
-"        "
-msgstr "Définissez si la réponse est révélée ou non.\n\n"
-"S'il est activé, le bot révélera la réponse si personne ne devine correctement à temps."
+msgid "Set whether or not the answer is revealed.\\n\\n        If enabled, the bot will reveal the answer if no one guesses correctly\\n        in time.\\n        "
+msgstr "Définissez si la réponse est révélée ou non.\\n\\n        Si activé, le bot révélera la réponse si personne ne devine correctement à temps.\\n        "
 
 #: redbot/cogs/trivia/trivia.py:147
 msgid "Done. I'll reveal the answer if no one knows it."
@@ -191,21 +170,8 @@ msgstr "D'accord, je ne révélerais plus la réponse aux questions."
 
 #: redbot/cogs/trivia/trivia.py:154
 #, docstring
-msgid "Set the payout multiplier.\n\n"
-"        This can be any positive decimal number. If a user wins trivia when at\n"
-"        least 3 members are playing, they will receive credits. Set to 0 to\n"
-"        disable.\n\n"
-"        The number of credits is determined by multiplying their total score by\n"
-"        this multiplier.\n"
-"        "
-msgstr "Définissez le multiplicateur de gains.\n\n"
-"        Il peut s'agir de n'importe quel nombre décimal positif.\n"
-"        Si un utilisateur gagne un Trivia alors qu'il y a au moins\n"
-"        3 membres qui jouent, ils recevront des crédits. \n"
-"        Réglez sur 0 pour désactiver.\n\n"
-"        Le nombre de crédits est déterminé en multipliant leur\n"
-"        score total par ce multiplicateur.\n"
-"        "
+msgid "Set the payout multiplier.\\n\\n        This can be any positive decimal number. If a user wins trivia when at\\n        least 3 members are playing, they will receive credits. Set to 0 to\\n        disable.\\n\\n        The number of credits is determined by multiplying their total score by\\n        this multiplier.\\n        "
+msgstr "Définissez le multiplicateur de gains.\\n\\n        Il peut s'agir de n'importe quel nombre décimal positif.\\n        Si un utilisateur gagne un Trivia alors qu'il y a au moins\\n        3 membres qui jouent, ils recevront des crédits. \\n        Réglez sur 0 pour désactiver.\\n\\n        Le nombre de crédits est déterminé en multipliant leur\\n        score total par ce multiplicateur.\\n        "
 
 #: redbot/cogs/trivia/trivia.py:165
 msgid "Multiplier must be at least 0."
@@ -221,15 +187,8 @@ msgstr "Fait. Je ne récompenserais plus le gagnant avec un gain."
 
 #: redbot/cogs/trivia/trivia.py:176
 #, docstring
-msgid "Start trivia session on the specified category.\n\n"
-"        You may list multiple categories, in which case the trivia will involve\n"
-"        questions from all of them.\n"
-"        "
-msgstr "Lancez une session de Trivia sur la catégorie spécifiée.\n\n"
-"        Vous pouvez énumérer plusieurs catégories, auquel cas\n"
-"        le Trivia comportera les éléments suivants\n"
-"        des questions de la part de chacun d'eux.\n"
-"        "
+msgid "Start trivia session on the specified category.\\n\\n        You may list multiple categories, in which case the trivia will involve\\n        questions from all of them.\\n        "
+msgstr "Lancez une session de Trivia sur la catégorie spécifiée.\\n\\n        Vous pouvez énumérer plusieurs catégories, auquel cas\\n        le Trivia comportera les éléments suivants\\n        des questions de la part de chacun d'eux.\\n        "
 
 #: redbot/cogs/trivia/trivia.py:187
 msgid "There is already an ongoing trivia session in this channel."
@@ -275,33 +234,13 @@ msgstr "Listes Trivia disponibles"
 
 #: redbot/cogs/trivia/trivia.py:272
 #, docstring
-msgid "Leaderboard for trivia.\n\n"
-"        Defaults to the top 10 of this server, sorted by total wins. Use\n"
-"        subcommands for a more customised leaderboard.\n"
-"        "
-msgstr "Classements pour Trivia.\n\n"
-"        Par défaut pour le top 10 de ce serveur, trié par le total des victoires.\n"
-"        Utilisez les sous-commandes pour un classement\n"
-"        plus personnaliser.\n"
-"        "
+msgid "Leaderboard for trivia.\\n\\n        Defaults to the top 10 of this server, sorted by total wins. Use\\n        subcommands for a more customised leaderboard.\\n        "
+msgstr "Classements pour le Trivia.\\n\\n        Par défaut pour le top 10 de ce serveur, trié par le total des victoires.\\n        Utilisez les sous-commandes pour un classement\\n        plus personnaliser.\\n        "
 
 #: redbot/cogs/trivia/trivia.py:288
 #, docstring
-msgid "Leaderboard for this server.\n\n"
-"        `<sort_by>` can be any of the following fields:\n"
-"         - `wins`  : total wins\n"
-"         - `avg`   : average score\n"
-"         - `total` : total correct answers\n"
-"         - `games` : total games played\n\n"
-"        `<top>` is the number of ranks to show on the leaderboard.\n"
-"        "
-msgstr "Classement pour ce serveur.\n\n"
-"        `<sort_by>` peut être l'un des champs suivants :\n"
-"        - `wins` : nombre total de victoires\n"
-"        - `avg` : score moyen\n"
-"        - `total` : nombre total de bonnes réponses\n"
-"        - `games` : nombre total de parties jouées\n\n"
-"        `<top>` est le nombre de rangs a afficher sur le classement.        "
+msgid "Leaderboard for this server.\\n\\n        `<sort_by>` can be any of the following fields:\\n         - `wins`  : total wins\\n         - `avg`   : average score\\n         - `total` : total correct answers\\n         - `games` : total games played\\n\\n        `<top>` is the number of ranks to show on the leaderboard.\\n        "
+msgstr "Classement pour ce serveur.\\n\\n        `<sort_by>` peut être l'un des champs suivants :\\n        - `wins` : nombre total de victoires\\n        - `avg` : score moyen\\n        - `total` : nombre total de bonnes réponses\\n        - `games` : nombre total de parties jouées\\n\\n        `<top>` est le nombre de rangs a afficher sur le classement.\\n        "
 
 #: redbot/cogs/trivia/trivia.py:301 redbot/cogs/trivia/trivia.py:330
 msgid "Unknown field `{field_name}`, see `{prefix}help trivia leaderboard server` for valid fields to sort by."
@@ -309,22 +248,8 @@ msgstr "Champ `{field_name}` inconnu, voir `{prefix}help trivia leaderboard serv
 
 #: redbot/cogs/trivia/trivia.py:317
 #, docstring
-msgid "Global trivia leaderboard.\n\n"
-"        `<sort_by>` can be any of the following fields:\n"
-"         - `wins`  : total wins\n"
-"         - `avg`   : average score\n"
-"         - `total` : total correct answers from all sessions\n"
-"         - `games` : total games played\n\n"
-"        `<top>` is the number of ranks to show on the leaderboard.\n"
-"        "
-msgstr "Classement global Trivia.\n\n"
-"        `<sort_by>` peut être l'un des champs suivants :\n"
-"        - `wins` : nombre total de victoires\n"
-"        - `avg` : score moyen\n"
-"        - `total` : nombre total de bonnes réponses\n"
-"        - `games` : nombre total de parties jouées\n\n"
-"        `<top>` est le nombre de rangs a afficher sur le classement.\n"
-"        "
+msgid "Global trivia leaderboard.\\n\\n        `<sort_by>` can be any of the following fields:\\n         - `wins`  : total wins\\n         - `avg`   : average score\\n         - `total` : total correct answers from all sessions\\n         - `games` : total games played\\n\\n        `<top>` is the number of ranks to show on the leaderboard.\\n        "
+msgstr "Classement global Trivia.\\n\\n        `<sort_by>` peut être l'un des champs suivants :\\n        - `wins` : nombre total de victoires\\n        - `avg` : score moyen\\n        - `total` : nombre total de bonnes réponses\\n        - `games` : nombre total de parties jouées\\n\\n        `<top>` est le nombre de rangs a afficher sur le classement.\\n        "
 
 #: redbot/cogs/trivia/trivia.py:385
 msgid "There are no scores on record!"
