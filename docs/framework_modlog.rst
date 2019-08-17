@@ -57,9 +57,6 @@ it from your setup function:
                 "default_setting": True,
                 "image": "\N{HAMMER}",
                 "case_str": "Ban",
-                # audit_type should be omitted if the action doesn't show
-                # up in the audit log.
-                "audit_type": "ban",
             }
             try:
                 await modlog.register_casetype(**ban_case)
@@ -73,14 +70,12 @@ it from your setup function:
                     "default_setting": True,
                     "image": "\N{BUST IN SILHOUETTE}\N{HAMMER}",
                     "case_str": "Hackban",
-                    "audit_type": "ban",
                 },
                 {
                     "name": "kick",
                     "default_setting": True,
                     "image": "\N{WOMANS BOOTS}",
                     "case_str": "Kick",
-                    "audit_type": "kick"
                 }
             ]
             await modlog.register_casetypes(new_types)
