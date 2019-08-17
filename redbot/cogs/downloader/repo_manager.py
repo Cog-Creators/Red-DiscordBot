@@ -2,13 +2,15 @@ import asyncio
 import functools
 import os
 import pkgutil
+import shlex
 import shutil
 import re
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from subprocess import run as sp_run, PIPE
+from string import Formatter
 from sys import executable
-from typing import Tuple, MutableMapping, Union, Optional
+from typing import List, Tuple, Iterable, MutableMapping, Union, Optional
 
 from redbot.core import data_manager, commands
 from redbot.core.utils import safe_delete
@@ -20,6 +22,17 @@ from .json_mixins import RepoJSONMixin
 from .log import log
 
 _ = Translator("RepoManager", __file__)
+
+
+class ProcessFormatter(Formatter):
+    def vformat(self, format_string, args, kwargs):
+        return shlex.split(super().vformat(format_string, args, kwargs))
+
+    def get_value(self, key, args, kwargs):
+        obj = super().get_value(key, args, kwargs)
+        if isinstance(obj, str) or not isinstance(obj, Iterable):
+            return shlex.quote(str(obj))
+        return " ".join(shlex.quote(str(o)) for o in obj)
 
 
 class Repo(RepoJSONMixin):
@@ -94,8 +107,11 @@ class Repo(RepoJSONMixin):
         :return: Mapping of filename -> status_letter
         """
         p = await self._run(
-            self.GIT_DIFF_FILE_STATUS.format(
-                path=self.folder_path, old_hash=old_hash, new_hash=new_hash
+            ProcessFormatter().format(
+                self.GIT_DIFF_FILE_STATUS,
+                path=self.folder_path,
+                old_hash=old_hash,
+                new_hash=new_hash,
             )
         )
 
@@ -124,7 +140,8 @@ class Repo(RepoJSONMixin):
         :return: Git commit note log
         """
         p = await self._run(
-            self.GIT_LOG.format(
+            ProcessFormatter().format(
+                self.GIT_LOG,
                 path=self.folder_path,
                 old_hash=old_commit_hash,
                 relative_file_path=relative_file_path,
@@ -156,9 +173,7 @@ class Repo(RepoJSONMixin):
                         Installable(location=name)
                     )
         """
-        for file_finder, name, is_pkg in pkgutil.walk_packages(
-            path=[str(self.folder_path)], onerror=lambda name: None
-        ):
+        for file_finder, name, is_pkg in pkgutil.iter_modules(path=[str(self.folder_path)]):
             if is_pkg:
                 curr_modules.append(Installable(location=self.folder_path / name))
         self.available_modules = curr_modules
@@ -190,13 +205,15 @@ class Repo(RepoJSONMixin):
 
         if self.branch is not None:
             p = await self._run(
-                self.GIT_CLONE.format(
-                    branch=self.branch, url=self.url, folder=self.folder_path
-                ).split()
+                ProcessFormatter().format(
+                    self.GIT_CLONE, branch=self.branch, url=self.url, folder=self.folder_path
+                )
             )
         else:
             p = await self._run(
-                self.GIT_CLONE_NO_BRANCH.format(url=self.url, folder=self.folder_path).split()
+                ProcessFormatter().format(
+                    self.GIT_CLONE_NO_BRANCH, url=self.url, folder=self.folder_path
+                )
             )
 
         if p.returncode:
@@ -226,7 +243,9 @@ class Repo(RepoJSONMixin):
                 "A git repo does not exist at path: {}".format(self.folder_path)
             )
 
-        p = await self._run(self.GIT_CURRENT_BRANCH.format(path=self.folder_path).split())
+        p = await self._run(
+            ProcessFormatter().format(self.GIT_CURRENT_BRANCH, path=self.folder_path)
+        )
 
         if p.returncode != 0:
             raise errors.GitException(
@@ -259,7 +278,7 @@ class Repo(RepoJSONMixin):
             )
 
         p = await self._run(
-            self.GIT_LATEST_COMMIT.format(path=self.folder_path, branch=branch).split()
+            ProcessFormatter().format(self.GIT_LATEST_COMMIT, path=self.folder_path, branch=branch)
         )
 
         if p.returncode != 0:
@@ -290,7 +309,7 @@ class Repo(RepoJSONMixin):
         if folder is None:
             folder = self.folder_path
 
-        p = await self._run(Repo.GIT_DISCOVER_REMOTE_URL.format(path=folder).split())
+        p = await self._run(ProcessFormatter().format(Repo.GIT_DISCOVER_REMOTE_URL, path=folder))
 
         if p.returncode != 0:
             raise errors.NoRemoteURL("Unable to discover a repo URL.")
@@ -316,7 +335,7 @@ class Repo(RepoJSONMixin):
             )
 
         p = await self._run(
-            self.GIT_HARD_RESET.format(path=self.folder_path, branch=branch).split()
+            ProcessFormatter().format(self.GIT_HARD_RESET, path=self.folder_path, branch=branch)
         )
 
         if p.returncode != 0:
@@ -340,7 +359,7 @@ class Repo(RepoJSONMixin):
 
         await self.hard_reset(branch=curr_branch)
 
-        p = await self._run(self.GIT_PULL.format(path=self.folder_path).split())
+        p = await self._run(ProcessFormatter().format(self.GIT_PULL, path=self.folder_path))
 
         if p.returncode != 0:
             raise errors.UpdateError(
@@ -383,7 +402,7 @@ class Repo(RepoJSONMixin):
         return await cog.copy_to(target_dir=target_dir)
 
     async def install_libraries(
-        self, target_dir: Path, libraries: Tuple[Installable] = ()
+        self, target_dir: Path, req_target_dir: Path, libraries: Tuple[Installable] = ()
     ) -> bool:
         """Install shared libraries to the target directory.
 
@@ -394,6 +413,8 @@ class Repo(RepoJSONMixin):
         ----------
         target_dir : pathlib.Path
             Directory to install shared libraries to.
+        req_target_dir : pathlib.Path
+            Directory to install shared library requirements to.
         libraries : `tuple` of `Installable`
             A subset of available libraries.
 
@@ -412,7 +433,11 @@ class Repo(RepoJSONMixin):
         if len(libraries) > 0:
             ret = True
             for lib in libraries:
-                ret = ret and await lib.copy_to(target_dir=target_dir)
+                ret = (
+                    ret
+                    and await self.install_requirements(cog=lib, target_dir=req_target_dir)
+                    and await lib.copy_to(target_dir=target_dir)
+                )
             return ret
         return True
 
@@ -463,9 +488,9 @@ class Repo(RepoJSONMixin):
         # TODO: Check and see if any of these modules are already available
 
         p = await self._run(
-            self.PIP_INSTALL.format(
-                python=executable, target_dir=target_dir, reqs=" ".join(requirements)
-            ).split()
+            ProcessFormatter().format(
+                self.PIP_INSTALL, python=executable, target_dir=target_dir, reqs=requirements
+            )
         )
 
         if p.returncode != 0:
@@ -509,14 +534,11 @@ class Repo(RepoJSONMixin):
 
 class RepoManager:
 
-    GITHUB_OR_GITLAB_RE = re.compile("https?://git(?:hub)|(?:lab)\.com/")
+    GITHUB_OR_GITLAB_RE = re.compile(r"https?://git(?:hub)|(?:lab)\.com/")
     TREE_URL_RE = re.compile(r"(?P<tree>/tree)/(?P<branch>\S+)$")
 
     def __init__(self):
         self._repos = {}
-
-        loop = asyncio.get_event_loop()
-        loop.create_task(self._load_repos(set=True))  # str_name: Repo
 
     async def initialize(self):
         await self._load_repos(set=True)

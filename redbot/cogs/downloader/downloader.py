@@ -8,7 +8,7 @@ from sys import path as syspath
 from typing import Tuple, Union, Iterable
 
 import discord
-from redbot.core import checks, commands, Config
+from redbot.core import checks, commands, Config, version_info as red_version_info
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
@@ -140,7 +140,9 @@ class Downloader(commands.Cog):
         failed = []
 
         for repo in repos:
-            if not await repo.install_libraries(target_dir=self.SHAREDLIB_PATH):
+            if not await repo.install_libraries(
+                target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH
+            ):
                 failed.extend(repo.available_libraries)
 
         # noinspection PyTypeChecker
@@ -194,8 +196,11 @@ class Downloader(commands.Cog):
     @checks.is_owner()
     async def pipinstall(self, ctx, *deps: str):
         """Install a group of dependencies using pip."""
+        if not deps:
+            return await ctx.send_help()
         repo = Repo("", "", "", Path.cwd(), loop=ctx.bot.loop)
-        success = await repo.install_raw_requirements(deps, self.LIB_PATH)
+        async with ctx.typing():
+            success = await repo.install_raw_requirements(deps, self.LIB_PATH)
 
         if success:
             await ctx.send(_("Libraries installed."))
@@ -241,7 +246,7 @@ class Downloader(commands.Cog):
             if repo.install_msg is not None:
                 await ctx.send(repo.install_msg.replace("[p]", ctx.prefix))
 
-    @repo.command(name="delete", aliases=["remove"], usage="<repo_name>")
+    @repo.command(name="delete", aliases=["remove", "del"], usage="<repo_name>")
     async def _repo_del(self, ctx, repo: Repo):
         """Remove a repo and its files."""
         await self._repo_manager.delete_repo(repo.name)
@@ -299,12 +304,33 @@ class Downloader(commands.Cog):
                 )
             )
             return
+        ignore_max = cog.min_bot_version > cog.max_bot_version
+        if (
+            cog.min_bot_version > red_version_info
+            or not ignore_max
+            and cog.max_bot_version < red_version_info
+        ):
+            await ctx.send(
+                _("This cog requires at least Red version {min_version}").format(
+                    min_version=cog.min_bot_version
+                )
+                + (
+                    ""
+                    if ignore_max
+                    else _(" and at most {max_version}").format(max_version=cog.max_bot_version)
+                )
+                + _(", but you have {current_version}, aborting install.").format(
+                    current_version=red_version_info
+                )
+            )
+            return
 
         if not await repo.install_requirements(cog, self.LIB_PATH):
+            libraries = humanize_list(tuple(map(inline, cog.requirements)))
             await ctx.send(
-                _(
-                    "Failed to install the required libraries for `{cog_name}`: `{libraries}`"
-                ).format(cog_name=cog.name, libraries=cog.requirements)
+                _("Failed to install the required libraries for `{cog_name}`: {libraries}").format(
+                    cog_name=cog.name, libraries=libraries
+                )
             )
             return
 
@@ -312,40 +338,54 @@ class Downloader(commands.Cog):
 
         await self._add_to_installed(cog)
 
-        await repo.install_libraries(self.SHAREDLIB_PATH)
+        await repo.install_libraries(target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH)
 
-        await ctx.send(_("Cog `{cog_name}` successfully installed.").format(cog_name=cog_name))
+        await ctx.send(
+            _(
+                "Cog `{cog_name}` successfully installed. You can load it with `{prefix}load {cog_name}`"
+            ).format(cog_name=cog_name, prefix=ctx.prefix)
+        )
         if cog.install_msg is not None:
             await ctx.send(cog.install_msg.replace("[p]", ctx.prefix))
 
-    @cog.command(name="uninstall", usage="<cog_name>")
-    async def _cog_uninstall(self, ctx, cog: InstalledCog):
-        """Uninstall a cog.
+    @cog.command(name="uninstall", usage="<cogs>")
+    async def _cog_uninstall(self, ctx, cogs: commands.Greedy[InstalledCog]):
+        """Uninstall cogs.
 
         You may only uninstall cogs which were previously installed
         by Downloader.
         """
-        # noinspection PyUnresolvedReferences,PyProtectedMember
-        real_name = cog.name
+        if not cogs:
+            return await ctx.send_help()
+        async with ctx.typing():
+            uninstalled_cogs = []
+            failed_cogs = []
+            for cog in set(cogs):
+                real_name = cog.name
 
-        poss_installed_path = (await self.cog_install_path()) / real_name
-        if poss_installed_path.exists():
-            await self._delete_cog(poss_installed_path)
-            # noinspection PyTypeChecker
-            await self._remove_from_installed(cog)
-            await ctx.send(
-                _("Cog `{cog_name}` was successfully uninstalled.").format(cog_name=real_name)
-            )
-        else:
-            await ctx.send(
-                _(
-                    "That cog was installed but can no longer"
-                    " be located. You may need to remove it's"
-                    " files manually if it is still usable."
-                    " Also make sure you've unloaded the cog"
-                    " with `{prefix}unload {cog_name}`."
-                ).format(cog_name=real_name)
-            )
+                poss_installed_path = (await self.cog_install_path()) / real_name
+                if poss_installed_path.exists():
+                    with contextlib.suppress(commands.ExtensionNotLoaded):
+                        ctx.bot.unload_extension(real_name)
+                    await self._delete_cog(poss_installed_path)
+                    uninstalled_cogs.append(inline(real_name))
+                else:
+                    failed_cogs.append(real_name)
+                await self._remove_from_installed(cog)
+
+            message = ""
+            if uninstalled_cogs:
+                message += _("Successfully uninstalled cogs: ") + humanize_list(uninstalled_cogs)
+            if failed_cogs:
+                message += (
+                    _("\nThese cog were installed but can no longer be located: ")
+                    + humanize_list(tuple(map(inline, failed_cogs)))
+                    + _(
+                        "\nYou may need to remove their files manually if they are still usable."
+                        " Also make sure you've unloaded those cogs with `{prefix}unload {cogs}`."
+                    ).format(prefix=ctx.prefix, cogs=" ".join(failed_cogs))
+                )
+        await ctx.send(message)
 
     @cog.command(name="update")
     async def _cog_update(self, ctx, cog_name: InstalledCog = None):
@@ -372,43 +412,51 @@ class Downloader(commands.Cog):
                 await self._reinstall_libraries(installed_and_updated)
                 message = _("Cog update completed successfully.")
 
-                cognames = [c.name for c in installed_and_updated]
+                cognames = {c.name for c in installed_and_updated}
                 message += _("\nUpdated: ") + humanize_list(tuple(map(inline, cognames)))
             else:
                 await ctx.send(_("All installed cogs are already up to date."))
                 return
         await ctx.send(message)
 
-        message = _("Would you like to reload the updated cogs?")
-        can_react = ctx.channel.permissions_for(ctx.me).add_reactions
-        if not can_react:
-            message += " (y/n)"
-        query: discord.Message = await ctx.send(message)
-        if can_react:
-            # noinspection PyAsyncCall
-            start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS, ctx.bot.loop)
-            pred = ReactionPredicate.yes_or_no(query, ctx.author)
-            event = "reaction_add"
-        else:
-            pred = MessagePredicate.yes_or_no(ctx)
-            event = "message"
-        try:
-            await ctx.bot.wait_for(event, check=pred, timeout=30)
-        except asyncio.TimeoutError:
-            await query.delete()
-            return
+        cognames &= set(ctx.bot.extensions.keys())  # only reload loaded cogs
+        if not cognames:
+            return await ctx.send(
+                _("None of the updated cogs were previously loaded. Update complete.")
+            )
 
-        if pred.result is True:
+        if not ctx.assume_yes:
+            message = _("Would you like to reload the updated cogs?")
+            can_react = ctx.channel.permissions_for(ctx.me).add_reactions
+            if not can_react:
+                message += " (y/n)"
+            query: discord.Message = await ctx.send(message)
             if can_react:
-                with contextlib.suppress(discord.Forbidden):
-                    await query.clear_reactions()
-
-            await ctx.invoke(ctx.bot.get_cog("Core").reload, *cognames)
-        else:
-            if can_react:
-                await query.delete()
+                # noinspection PyAsyncCall
+                start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS, ctx.bot.loop)
+                pred = ReactionPredicate.yes_or_no(query, ctx.author)
+                event = "reaction_add"
             else:
-                await ctx.send(_("OK then."))
+                pred = MessagePredicate.yes_or_no(ctx)
+                event = "message"
+            try:
+                await ctx.bot.wait_for(event, check=pred, timeout=30)
+            except asyncio.TimeoutError:
+                await query.delete()
+                return
+
+            if not pred.result:
+                if can_react:
+                    await query.delete()
+                else:
+                    await ctx.send(_("OK then."))
+                return
+            else:
+                if can_react:
+                    with contextlib.suppress(discord.Forbidden):
+                        await query.clear_reactions()
+
+        await ctx.invoke(ctx.bot.get_cog("Core").reload, *cognames)
 
     @cog.command(name="list", usage="<repo_name>")
     async def _cog_list(self, ctx, repo: Repo):
@@ -499,7 +547,7 @@ class Downloader(commands.Cog):
         if isinstance(cog_installable, Installable):
             made_by = ", ".join(cog_installable.author) or _("Missing from info.json")
             repo = self._repo_manager.get_repo(cog_installable.repo_name)
-            repo_url = repo.url
+            repo_url = _("Missing from installed repos") if repo is None else repo.url
             cog_name = cog_installable.name
         else:
             made_by = "26 & co."
@@ -542,12 +590,12 @@ class Downloader(commands.Cog):
             return
 
         # Check if in installed cogs
-        cog_name = self.cog_name_from_instance(command.instance)
+        cog_name = self.cog_name_from_instance(command.cog)
         installed, cog_installable = await self.is_installed(cog_name)
         if installed:
             msg = self.format_findcog_info(command_name, cog_installable)
         else:
             # Assume it's in a base cog
-            msg = self.format_findcog_info(command_name, command.instance)
+            msg = self.format_findcog_info(command_name, command.cog)
 
         await ctx.send(box(msg))
