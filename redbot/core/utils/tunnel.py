@@ -2,7 +2,6 @@ import discord
 from datetime import datetime
 from redbot.core.utils.chat_formatting import pagify
 import io
-import sys
 import weakref
 from typing import List, Optional
 from .common_filters import filter_mass_mentions
@@ -72,7 +71,7 @@ class Tunnel(metaclass=TunnelMeta):
         self.last_interaction = datetime.utcnow()
 
     async def react_close(self, *, uid: int, message: str = ""):
-        send_to = self.origin if uid == self.sender.id else self.sender
+        send_to = self.recipient if uid == self.sender.id else self.origin
         closer = next(filter(lambda x: x.id == uid, (self.sender, self.recipient)), None)
         await send_to.send(filter_mass_mentions(message.format(closer=closer)))
 
@@ -133,7 +132,7 @@ class Tunnel(metaclass=TunnelMeta):
         return rets
 
     @staticmethod
-    async def files_from_attatch(m: discord.Message) -> List[discord.File]:
+    async def files_from_attach(m: discord.Message) -> List[discord.File]:
         """
         makes a list of file objects from a message
         returns an empty list if none, or if the sum of file sizes
@@ -151,16 +150,16 @@ class Tunnel(metaclass=TunnelMeta):
 
         """
         files = []
-        size = 0
-        max_size = 8 * 1024 * 1024
-        for a in m.attachments:
-            _fp = io.BytesIO()
-            await a.save(_fp)
-            size += sys.getsizeof(_fp)
-            if size > max_size:
-                return []
-            files.append(discord.File(_fp, filename=a.filename))
+        max_size = 8 * 1000 * 1000
+        if m.attachments and sum(a.size for a in m.attachments) <= max_size:
+            for a in m.attachments:
+                _fp = io.BytesIO()
+                await a.save(_fp)
+                files.append(discord.File(_fp, filename=a.filename))
         return files
+
+    # Backwards-compatible typo fix (GH-2496)
+    files_from_attatch = files_from_attach
 
     async def communicate(
         self, *, message: discord.Message, topic: str = None, skip_message_content: bool = False
@@ -205,10 +204,10 @@ class Tunnel(metaclass=TunnelMeta):
             content = topic
 
         if message.attachments:
-            attach = await self.files_from_attatch(message)
+            attach = await self.files_from_attach(message)
             if not attach:
                 await message.channel.send(
-                    "Could not forward attatchments. "
+                    "Could not forward attachments. "
                     "Total size of attachments in a single "
                     "message must be less than 8MB."
                 )

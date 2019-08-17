@@ -1,5 +1,6 @@
 import discord
-from typing import Union
+import re
+from typing import Union, Set
 
 from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
@@ -30,15 +31,16 @@ class Filter(commands.Cog):
         self.settings.register_member(**default_member_settings)
         self.settings.register_channel(**default_channel_settings)
         self.register_task = self.bot.loop.create_task(self.register_filterban())
+        self.pattern_cache = {}
 
-    def __unload(self):
+    def cog_unload(self):
         self.register_task.cancel()
 
     @staticmethod
     async def register_filterban():
         try:
             await modlog.register_casetype(
-                "filterban", False, ":filing_cabinet: :hammer:", "Filter ban", "ban"
+                "filterban", False, ":filing_cabinet: :hammer:", "Filter ban"
             )
         except RuntimeError:
             pass
@@ -163,6 +165,7 @@ class Filter(commands.Cog):
                     tmp += word + " "
         added = await self.add_to_filter(channel, word_list)
         if added:
+            self.invalidate_cache(ctx.guild, ctx.channel)
             await ctx.send(_("Words added to filter."))
         else:
             await ctx.send(_("Words already in the filter."))
@@ -196,6 +199,7 @@ class Filter(commands.Cog):
         removed = await self.remove_from_filter(channel, word_list)
         if removed:
             await ctx.send(_("Words removed from filter."))
+            self.invalidate_cache(ctx.guild, ctx.channel)
         else:
             await ctx.send(_("Those words weren't in the filter."))
 
@@ -227,11 +231,12 @@ class Filter(commands.Cog):
                     tmp += word + " "
         added = await self.add_to_filter(server, word_list)
         if added:
+            self.invalidate_cache(ctx.guild)
             await ctx.send(_("Words successfully added to filter."))
         else:
             await ctx.send(_("Those words were already in the filter."))
 
-    @_filter.command(name="remove")
+    @_filter.command(name="delete", aliases=["remove", "del"])
     async def filter_remove(self, ctx: commands.Context, *, words: str):
         """Remove words from the filter.
 
@@ -259,6 +264,7 @@ class Filter(commands.Cog):
                     tmp += word + " "
         removed = await self.remove_from_filter(server, word_list)
         if removed:
+            self.invalidate_cache(ctx.guild)
             await ctx.send(_("Words successfully removed from filter."))
         else:
             await ctx.send(_("Those words weren't in the filter."))
@@ -276,6 +282,14 @@ class Filter(commands.Cog):
             await ctx.send(_("Names and nicknames will no longer be filtered."))
         else:
             await ctx.send(_("Names and nicknames will now be filtered."))
+
+    def invalidate_cache(self, guild: discord.Guild, channel: discord.TextChannel = None):
+        """ Invalidate a cached pattern"""
+        self.pattern_cache.pop((guild, channel), None)
+        if channel is None:
+            for keyset in list(self.pattern_cache.keys()):  # cast needed, no remove
+                if guild in keyset:
+                    self.pattern_cache.pop(keyset, None)
 
     async def add_to_filter(
         self, server_or_channel: Union[discord.Guild, discord.TextChannel], words: list
@@ -317,17 +331,48 @@ class Filter(commands.Cog):
 
         return removed
 
+    async def filter_hits(
+        self, text: str, server_or_channel: Union[discord.Guild, discord.TextChannel]
+    ) -> Set[str]:
+
+        try:
+            guild = server_or_channel.guild
+            channel = server_or_channel
+        except AttributeError:
+            guild = server_or_channel
+            channel = None
+
+        hits: Set[str] = set()
+
+        try:
+            pattern = self.pattern_cache[(guild, channel)]
+        except KeyError:
+            word_list = set(await self.settings.guild(guild).filter())
+            if channel:
+                word_list |= set(await self.settings.channel(channel).filter())
+
+            if word_list:
+                pattern = re.compile(
+                    "|".join(rf"\b{re.escape(w)}\b" for w in word_list), flags=re.I
+                )
+            else:
+                pattern = None
+
+            self.pattern_cache[(guild, channel)] = pattern
+
+        if pattern:
+            hits |= set(pattern.findall(text))
+        return hits
+
     async def check_filter(self, message: discord.Message):
         server = message.guild
         author = message.author
-        word_list = set(
-            await self.settings.guild(server).filter()
-            + await self.settings.channel(message.channel).filter()
-        )
+
         filter_count = await self.settings.guild(server).filterban_count()
         filter_time = await self.settings.guild(server).filterban_time()
         user_count = await self.settings.member(author).filter_count()
         next_reset_time = await self.settings.member(author).next_reset_time()
+
         if filter_count > 0 and filter_time > 0:
             if message.created_at.timestamp() >= next_reset_time:
                 next_reset_time = message.created_at.timestamp() + filter_time
@@ -336,37 +381,39 @@ class Filter(commands.Cog):
                     user_count = 0
                     await self.settings.member(author).filter_count.set(user_count)
 
-        if word_list:
-            for w in word_list:
-                if w in message.content.lower():
-                    try:
-                        await message.delete()
-                    except discord.HTTPException:
-                        pass
-                    else:
-                        if filter_count > 0 and filter_time > 0:
-                            user_count += 1
-                            await self.settings.member(author).filter_count.set(user_count)
-                            if (
-                                user_count >= filter_count
-                                and message.created_at.timestamp() < next_reset_time
-                            ):
-                                reason = _("Autoban (too many filtered messages.)")
-                                try:
-                                    await server.ban(author, reason=reason)
-                                except discord.HTTPException:
-                                    pass
-                                else:
-                                    await modlog.create_case(
-                                        self.bot,
-                                        server,
-                                        message.created_at,
-                                        "filterban",
-                                        author,
-                                        server.me,
-                                        reason,
-                                    )
+        hits = await self.filter_hits(message.content, message.channel)
 
+        if hits:
+            try:
+                await message.delete()
+            except discord.HTTPException:
+                pass
+            else:
+                self.bot.dispatch("filter_message_delete", message, hits)
+                if filter_count > 0 and filter_time > 0:
+                    user_count += 1
+                    await self.settings.member(author).filter_count.set(user_count)
+                    if (
+                        user_count >= filter_count
+                        and message.created_at.timestamp() < next_reset_time
+                    ):
+                        reason = _("Autoban (too many filtered messages.)")
+                        try:
+                            await server.ban(author, reason=reason)
+                        except discord.HTTPException:
+                            pass
+                        else:
+                            await modlog.create_case(
+                                self.bot,
+                                server,
+                                message.created_at,
+                                "filterban",
+                                author,
+                                server.me,
+                                reason,
+                            )
+
+    @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         if isinstance(message.channel, discord.abc.PrivateChannel):
             return
@@ -380,15 +427,18 @@ class Filter(commands.Cog):
 
         await self.check_filter(message)
 
+    @commands.Cog.listener()
     async def on_message_edit(self, _prior, message):
         # message content has to change for non-bot's currently.
         # if this changes, we should compare before passing it.
         await self.on_message(message)
 
+    @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
         if before.display_name != after.display_name:
             await self.maybe_filter_name(after)
 
+    @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
         await self.maybe_filter_name(member)
 
@@ -402,13 +452,12 @@ class Filter(commands.Cog):
         if not await self.settings.guild(member.guild).filter_names():
             return
 
-        word_list = await self.settings.guild(member.guild).filter()
-        for w in word_list:
-            if w in member.display_name.lower():
-                name_to_use = await self.settings.guild(member.guild).filter_default_name()
-                reason = _("Filtered nickname") if member.nick else _("Filtered name")
-                try:
-                    await member.edit(nick=name_to_use, reason=reason)
-                except discord.HTTPException:
-                    pass
-                return
+        if await self.filter_hits(member.display_name, member.guild):
+
+            name_to_use = await self.settings.guild(member.guild).filter_default_name()
+            reason = _("Filtered nickname") if member.nick else _("Filtered name")
+            try:
+                await member.edit(nick=name_to_use, reason=reason)
+            except discord.HTTPException:
+                pass
+            return

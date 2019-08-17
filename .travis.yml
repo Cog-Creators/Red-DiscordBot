@@ -3,16 +3,16 @@ language: python
 cache: pip
 notifications:
   email: false
-sudo: true
 
 python:
-- 3.6.6
-- 3.7
+- 3.7.2
 env:
   global:
-    PIPENV_IGNORE_VIRTUALENVS=1
+    - PIPENV_IGNORE_VIRTUALENVS=1
   matrix:
-    TOXENV=py
+    - TOXENV=py
+    - TOXENV=docs
+    - TOXENV=style
 
 install:
 - pip install --upgrade pip tox
@@ -22,44 +22,39 @@ script:
 
 jobs:
   include:
-
-    - python: 3.6.6
-      env: TOXENV=docs
-    - python: 3.6.6
-      env: TOXENV=style
-
     # These jobs only occur on tag creation if the prior ones succeed
     - stage: PyPi Deployment
       if: tag IS present
-      python: 3.6.6
+      python: 3.7.2
       env:
         - DEPLOYING=true
+        - TOXENV=py36
       deploy:
         - provider: pypi
+          distributions: sdist bdist_wheel
           user: Red-DiscordBot
           password:
             secure: Ty9vYnd/wCuQkVC/OsS4E2jT9LVDVfzsFrQc4U2hMYcTJnYbl/3omyObdCWCOBC40vUDkVHAQU8ULHzoCA+2KX9Ds/7/P5zCumAA0uJRR9Smw7OlRzSMxJI+/lGq4CwXKzxDZKuo5rsxXEbW5qmYjtO8Mk6KuLkvieb1vyr2DcqWEFzg/7TZNDfD1oP8et8ITQ26lLP1dtQx/jlAiIBzgK9wziuwj1Divb9A///VsGz43N8maZ+jfsDjYqrfUVWTy3ar7JPUplletenYCR1PmQ5C46XfV0kitKd1aITJ48YPAKyYgKy8AIT+Uz1JArTnqdzLSFRNELS57qS00lzgllbteCyWQ8Uzy0Zpxb/5DDH8/mL1n0MyJrF8qjZd2hLNAXg3z/k9bGXeiMLGwoxRlGXkL2XpiVgI93UKKyVyooGNMgPTc/QdSc7krjAWcOtX/HgLR34jxeLPFEdzJNAFIimfDD8N+XTFcNBw6EvOYm/n5MXkckNoX/G+ThNobHZ7VKSASltZ9zBRAJ2dDh35G3CYmVEk33U77RKbL9le/Za9QVBcAO8i6rqVGYkdO7thHHKHc/1CB1jNnjsFSDt0bURtNfAqfwKCurQC8487zbEzT+2fog3Wygv7g3cklaRg4guY8UjZuFWStYGqbroTsOCd9ATNqeO5B13pNhllSzU=
           skip_cleanup: true
           on:
             repo: Cog-Creators/Red-DiscordBot
-            python: 3.6.6
             tags: true
     - stage: Crowdin Deployment
       if: tag IS present
-      python: 3.6.6
+      python: 3.7.2
       env:
         - DEPLOYING=true
+        - TOXENV=py36
       before_deploy:
       - curl https://artifacts.crowdin.com/repo/GPG-KEY-crowdin | sudo apt-key add -
       - echo "deb https://artifacts.crowdin.com/repo/deb/ /" | sudo tee -a /etc/apt/sources.list
       - sudo apt-get update -qq
       - sudo apt-get install -y crowdin
-      - pip install redgettext==2.1
+      - pip install redgettext==3.1
       deploy:
       - provider: script
-        script: make gettext
+        script: make upload_translations
         skip_cleanup: true
         on:
           repo: Cog-Creators/Red-DiscordBot
-          python: 3.6.6
           tags: true

@@ -1,7 +1,6 @@
 import argparse
 import asyncio
-
-from redbot.core.bot import Red
+import logging
 
 
 def confirm(m=""):
@@ -30,7 +29,7 @@ def interactive_config(red, token_set, prefix_set):
             "\nPick a prefix. A prefix is what you type before a "
             "command. Example:\n"
             "!help\n^ The exclamation mark is the prefix in this case.\n"
-            "Can be multiple characters. You will be able to change it "
+            "The prefix can be multiple characters. You will be able to change it "
             "later and add more of them.\nChoose your prefix:\n"
         )
         while not prefix:
@@ -42,24 +41,7 @@ def interactive_config(red, token_set, prefix_set):
             if prefix:
                 loop.run_until_complete(red.db.prefix.set([prefix]))
 
-    ask_sentry(red)
-
     return token
-
-
-def ask_sentry(red: Red):
-    loop = asyncio.get_event_loop()
-    print(
-        "\nThank you for installing Red V3! Red is constantly undergoing\n"
-        " improvements, and we would like ask if you are comfortable with\n"
-        " the bot automatically submitting fatal error logs to the development\n"
-        ' team. If you wish to opt into the process please type "yes":\n'
-    )
-    if not confirm("> "):
-        loop.run_until_complete(red.db.enable_sentry.set(False))
-    else:
-        loop.run_until_complete(red.db.enable_sentry.set(True))
-        print("\nThank you for helping us with the development process!")
 
 
 def parse_cli_flags(args):
@@ -116,7 +98,14 @@ def parse_cli_flags(args):
         "login. This is useful for testing the boot "
         "process.",
     )
-    parser.add_argument("--debug", action="store_true", help="Sets the loggers level as debug")
+    parser.add_argument(
+        "--debug",
+        action="store_const",
+        dest="logging_level",
+        const=logging.DEBUG,
+        default=logging.INFO,
+        help="Sets the loggers level as debug",
+    )
     parser.add_argument("--dev", action="store_true", help="Enables developer mode")
     parser.add_argument(
         "--mentionable",

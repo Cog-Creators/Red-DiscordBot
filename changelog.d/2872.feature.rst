@@ -1,0 +1,1 @@
+Red now uses towncrier for changelog generation
