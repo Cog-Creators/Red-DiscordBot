@@ -88,9 +88,8 @@ class Warnings(commands.Cog):
     async def toggledm(self, ctx: commands.Context):
         """Toggle warns being sent to the users DM's"""
         guild = ctx.guild
-        toggle = await self.config.guild(guild).toggle_dm()
-        await self.config.guild(guild).toggle_dm.set(not toggle)
-        toggle = not toggle
+        toggle = not await self.config.guild(guild).toggle_dm()
+        await self.config.guild(guild).toggle_dm.set(toggle)
         if toggle:
             await ctx.send(_("Warns will now be sent to users DM's"))
         else:
@@ -363,11 +362,8 @@ class Warnings(commands.Cog):
                     embed=em,
                 )
         except discord.HTTPException:
-            await ctx.send(
-                _(
-                    "The warning couldn't be sent to the user because the user has DM's from server members turned off."
-                )
-            )
+            pass
+
         toggle_channel = await self.config.guild(guild).toggle_channel()
         if toggle_channel:
             em = discord.Embed(
@@ -381,10 +377,6 @@ class Warnings(commands.Cog):
             else:
                 channel = ctx.channel
             await channel.send(_("{user} has been warned.").format(user=user.mention), embed=em)
-        if not dm and not toggle_channel:
-            await ctx.send(
-                _("You have warned the user but you have channel and DM warns turned off.")
-            )
         else:
             await ctx.tick()
         try:
