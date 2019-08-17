@@ -111,7 +111,7 @@ class JsonDriver(BaseDriver):
         except FileNotFoundError:
             self.data = {}
             with self.data_path.open("w", encoding="utf-8") as fs:
-                json.dump(self.data, fs, indent=4)
+                json.dump(self.data, fs)
 
     def migrate_identifier(self, raw_identifier: int):
         if self.unique_cog_identifier in self.data:
@@ -239,7 +239,7 @@ def _save_json(path: Path, data: Dict[str, Any]) -> None:
     tmp_file = "{}-{}.tmp".format(filename, uuid4().fields[0])
     tmp_path = path.parent / tmp_file
     with tmp_path.open(encoding="utf-8", mode="w") as fs:
-        json.dump(data, fs, indent=4)
+        json.dump(data, fs)
         fs.flush()  # This does get closed on context exit, ...
         os.fsync(fs.fileno())  # but that needs to happen prior to this line
 
