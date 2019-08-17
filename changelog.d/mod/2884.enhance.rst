@@ -1,0 +1,1 @@
+Slowmode now accepts integer only inputs as seconds 
