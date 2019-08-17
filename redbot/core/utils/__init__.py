@@ -19,13 +19,17 @@ from typing import (
     Tuple,
     TypeVar,
     Union,
+    Set,
+    TYPE_CHECKING,
 )
 
 import discord
 from fuzzywuzzy import fuzz, process
-from redbot.core import commands
 
 from .chat_formatting import box
+
+if TYPE_CHECKING:
+    from ..commands import Command, Context
 
 __all__ = [
     "bounded_gather",
@@ -58,18 +62,19 @@ logging.getLogger().addFilter(_fuzzy_log_filter)
 def safe_delete(pth: Path):
     if pth.exists():
         for root, dirs, files in os.walk(str(pth)):
-            os.chmod(root, 0o755)
+            os.chmod(root, 0o700)
 
             for d in dirs:
-                os.chmod(os.path.join(root, d), 0o755)
+                os.chmod(os.path.join(root, d), 0o700)
 
             for f in files:
-                os.chmod(os.path.join(root, f), 0o755)
+                os.chmod(os.path.join(root, f), 0o700)
 
         shutil.rmtree(str(pth), ignore_errors=True)
 
 
-class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):
+# https://github.com/PyCQA/pylint/issues/2717
+class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=duplicate-bases
     """Class returned by `async_filter`. See that function for details.
 
     We don't recommend instantiating this class directly.
@@ -111,6 +116,9 @@ class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):
 
     async def __flatten(self) -> List[_T]:
         return [item async for item in self]
+
+    def __aiter__(self):
+        return self
 
     def __await__(self):
         # Simply return the generator filled into a list
@@ -176,12 +184,12 @@ async def async_enumerate(
 
 
 async def fuzzy_command_search(
-    ctx: commands.Context,
+    ctx: "Context",
     term: Optional[str] = None,
     *,
-    commands: Optional[list] = None,
+    commands: Optional[Set["Command"]] = None,
     min_score: int = 80,
-) -> Optional[List[commands.Command]]:
+) -> Optional[List["Command"]]:
     """Search for commands which are similar in name to the one invoked.
 
     Returns a maximum of 5 commands which must all be at least matched
@@ -192,8 +200,11 @@ async def fuzzy_command_search(
     ctx : `commands.Context <redbot.core.commands.Context>`
         The command invocation context.
     term : Optional[str]
-        The name of the invoked command. If ``None``, `Context.invoked_with`
-        will be used instead.
+        The name of the invoked command. If ``None``,
+        `Context.invoked_with` will be used instead.
+    commands : Optional[Set[commands.Command]]
+        The commands available to choose from when doing a fuzzy match.
+        When omitted, `Bot.walk_commands` will be used instead.
     min_score : int
         The minimum score for matched commands to reach. Defaults to 80.
 
@@ -235,7 +246,7 @@ async def fuzzy_command_search(
 
     # Do the scoring. `extracted` is a list of tuples in the form `(command, score)`
     extracted = process.extract(
-        term, (commands or ctx.bot.walk_commands()), limit=5, scorer=fuzz.QRatio
+        term, (commands or set(ctx.bot.walk_commands())), limit=5, scorer=fuzz.QRatio
     )
     if not extracted:
         return
@@ -253,10 +264,7 @@ async def fuzzy_command_search(
 
 
 async def format_fuzzy_results(
-    ctx: commands.Context,
-    matched_commands: List[commands.Command],
-    *,
-    embed: Optional[bool] = None,
+    ctx: "Context", matched_commands: List["Command"], *, embed: Optional[bool] = None
 ) -> Union[str, discord.Embed]:
     """Format the result of a fuzzy command search.
 

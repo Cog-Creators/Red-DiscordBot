@@ -57,7 +57,7 @@ class Trivia(commands.Cog):
             settings_dict = await settings.all()
             msg = box(
                 _(
-                    "**Current settings**\n"
+                    "Current settings\n"
                     "Bot gains points: {bot_plays}\n"
                     "Answer time limit: {delay} seconds\n"
                     "Lack of response timeout: {timeout} seconds\n"

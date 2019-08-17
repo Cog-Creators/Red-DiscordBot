@@ -20,12 +20,15 @@ from .utils import common_filters
 
 CUSTOM_GROUPS = "CUSTOM_GROUPS"
 
+log = logging.getLogger("redbot")
+
 
 def _is_submodule(parent, child):
     return parent == child or child.startswith(parent + ".")
 
 
-class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
+# barely spurious warning caused by our intentional shadowing
+class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: disable=no-member
     """Mixin for the main bot class.
 
     This exists because `Red` inherits from `discord.AutoShardedClient`, which
@@ -52,18 +55,27 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             custom_info=None,
             help__page_char_limit=1000,
             help__max_pages_in_guild=2,
+            help__use_menus=False,
+            help__show_hidden=False,
+            help__verify_checks=True,
+            help__verify_exists=False,
             help__tagline="",
+            invite_public=False,
+            invite_perm=0,
             disabled_commands=[],
             disabled_command_msg="That command is disabled.",
             api_tokens={},
+            extra_owner_destinations=[],
+            owner_opt_out_list=[],
+            schema_version=0,
         )
 
         self.db.register_guild(
             prefix=[],
             whitelist=[],
             blacklist=[],
-            admin_role=None,
-            mod_role=None,
+            admin_role=[],
+            mod_role=[],
             embeds=None,
             use_bot_color=False,
             fuzzy=False,
@@ -123,6 +135,38 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
         self._permissions_hooks: List[commands.CheckPredicate] = []
 
+    async def maybe_update_config(self):
+        """
+        This should be run prior to loading cogs or connecting to discord.
+        """
+        schema_version = await self.db.schema_version()
+
+        if schema_version == 0:
+            await self._schema_0_to_1()
+            schema_version += 1
+            await self.db.schema_version.set(schema_version)
+
+    async def _schema_0_to_1(self):
+        """
+        This contains the migration to allow multiple mod and multiple admin roles.
+        """
+
+        log.info("Begin updating guild configs to support multiple mod/admin roles")
+        all_guild_data = await self.db.all_guilds()
+        for guild_id, guild_data in all_guild_data.items():
+            guild_obj = discord.Object(id=guild_id)
+            mod_roles, admin_roles = [], []
+            maybe_mod_role_id = guild_data["mod_role"]
+            maybe_admin_role_id = guild_data["admin_role"]
+
+            if maybe_mod_role_id:
+                mod_roles.append(maybe_mod_role_id)
+                await self.db.guild(guild_obj).mod_role.set(mod_roles)
+            if maybe_admin_role_id:
+                admin_roles.append(maybe_admin_role_id)
+                await self.db.guild(guild_obj).admin_role.set(admin_roles)
+        log.info("Done updating guild configs to support multiple mod/admin roles")
+
     async def send_help_for(
         self, ctx: commands.Context, help_for: Union[commands.Command, commands.GroupMixin, str]
     ):
@@ -180,21 +224,25 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
     async def is_admin(self, member: discord.Member):
         """Checks if a member is an admin of their guild."""
-        admin_role = await self.db.guild(member.guild).admin_role()
         try:
-            if any(role.id == admin_role for role in member.roles):
-                return True
+            member_snowflakes = member._roles  # DEP-WARN
+            for snowflake in await self.db.guild(member.guild).admin_role():
+                if member_snowflakes.has(snowflake):  # Dep-WARN
+                    return True
         except AttributeError:  # someone passed a webhook to this
             pass
         return False
 
     async def is_mod(self, member: discord.Member):
         """Checks if a member is a mod or admin of their guild."""
-        mod_role = await self.db.guild(member.guild).mod_role()
-        admin_role = await self.db.guild(member.guild).admin_role()
         try:
-            if any(role.id in (mod_role, admin_role) for role in member.roles):
-                return True
+            member_snowflakes = member._roles  # DEP-WARN
+            for snowflake in await self.db.guild(member.guild).admin_role():
+                if member_snowflakes.has(snowflake):  # DEP-WARN
+                    return True
+            for snowflake in await self.db.guild(member.guild).mod_role():
+                if member_snowflakes.has(snowflake):  # DEP-WARN
+                    return True
         except AttributeError:  # someone passed a webhook to this
             pass
         return False
@@ -204,18 +252,19 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
     async def process_commands(self, message: discord.Message):
         """
-        modification from the base to do the same thing in the command case
-        
-        but dispatch an additional event for cogs which want to handle normal messages
-        differently to command messages, 
-        without the overhead of additional get_context calls per cog
+        Same as base method, but dispatches an additional event for cogs
+        which want to handle normal messages differently to command
+        messages,  without the overhead of additional get_context calls
+        per cog.
         """
         if not message.author.bot:
             ctx = await self.get_context(message)
-            if ctx.valid:
-                return await self.invoke(ctx)
+            await self.invoke(ctx)
+        else:
+            ctx = None
 
-        self.dispatch("message_without_command", message)
+        if ctx is None or ctx.valid is False:
+            self.dispatch("message_without_command", message)
 
     @staticmethod
     def list_packages():
@@ -253,8 +302,8 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
                 lib.setup(self)
         except Exception as e:
             self._remove_module_references(lib.__name__)
-            self._call_module_finalizers(lib, key)
-            raise errors.ExtensionFailed(key, e) from e
+            self._call_module_finalizers(lib, name)
+            raise
         else:
             self._BotBase__extensions[name] = lib
 
@@ -272,6 +321,8 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
                 self.remove_permissions_hook(hook)
 
         super().remove_cog(cogname)
+
+        cog.requires.reset()
 
         for meth in self.rpc_handlers.pop(cogname.upper(), ()):
             self.unregister_rpc_handler(meth)
@@ -358,32 +409,64 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
                 f"not inherit from the commands.Cog base class. The cog author must update "
                 f"the cog to adhere to this requirement."
             )
+        if cog.__cog_name__ in self.cogs:
+            raise RuntimeError(f"There is already a cog named {cog.__cog_name__} loaded.")
         if not hasattr(cog, "requires"):
             commands.Cog.__init__(cog)
 
-        for cls in inspect.getmro(cog.__class__):
-            try:
-                hook = getattr(cog, f"_{cls.__name__}__permissions_hook")
-            except AttributeError:
-                pass
-            else:
-                self.add_permissions_hook(hook)
+        added_hooks = []
 
-        for command in cog.__cog_commands__:
+        try:
+            for cls in inspect.getmro(cog.__class__):
+                try:
+                    hook = getattr(cog, f"_{cls.__name__}__permissions_hook")
+                except AttributeError:
+                    pass
+                else:
+                    self.add_permissions_hook(hook)
+                    added_hooks.append(hook)
 
-            if not isinstance(command, commands.Command):
-                raise RuntimeError(
-                    f"The {cog.__class__.__name__} cog in the {cog.__module__} package,"
-                    " is not using Red's command module, and cannot be added. "
-                    "If this is your cog, please use `from redbot.core import commands`"
-                    "in place of `from discord.ext import commands`. For more details on "
-                    "this requirement, see this page: "
-                    "http://red-discordbot.readthedocs.io/en/v3-develop/framework_commands.html"
-                )
-        super().add_cog(cog)
-        self.dispatch("cog_add", cog)
-        for command in cog.__cog_commands__:
-            self.dispatch("command_add", command)
+            super().add_cog(cog)
+            self.dispatch("cog_add", cog)
+            if "permissions" not in self.extensions:
+                cog.requires.ready_event.set()
+        except Exception:
+            for hook in added_hooks:
+                try:
+                    self.remove_permissions_hook(hook)
+                except Exception:
+                    # This shouldn't be possible
+                    log.exception(
+                        "A hook got extremely screwed up, "
+                        "and could not be removed properly during another error in cog load."
+                    )
+            del cog
+            raise
+
+    def add_command(self, command: commands.Command) -> None:
+        if not isinstance(command, commands.Command):
+            raise RuntimeError("Commands must be instances of `redbot.core.commands.Command`")
+
+        super().add_command(command)
+
+        permissions_not_loaded = "permissions" not in self.extensions
+        self.dispatch("command_add", command)
+        if permissions_not_loaded:
+            command.requires.ready_event.set()
+        if isinstance(command, commands.Group):
+            for subcommand in set(command.walk_commands()):
+                self.dispatch("command_add", subcommand)
+                if permissions_not_loaded:
+                    subcommand.requires.ready_event.set()
+
+    def remove_command(self, name: str) -> None:
+        command = super().remove_command(name)
+        if not command:
+            return
+        command.requires.reset()
+        if isinstance(command, commands.Group):
+            for subcommand in set(command.walk_commands()):
+                subcommand.requires.reset()
 
     def clear_permission_rules(self, guild_id: Optional[int]) -> None:
         """Clear all permission overrides in a scope.
@@ -459,6 +542,47 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             else:
                 ctx.permission_state = commands.PermState.DENIED_BY_HOOK
                 return False
+
+    async def get_owner_notification_destinations(self) -> List[discord.abc.Messageable]:
+        """
+        Gets the users and channels to send to
+        """
+        destinations = []
+        opt_outs = await self.db.owner_opt_out_list()
+        for user_id in (self.owner_id, *self._co_owners):
+            if user_id not in opt_outs:
+                user = self.get_user(user_id)
+                if user:
+                    destinations.append(user)
+
+        channel_ids = await self.db.extra_owner_destinations()
+        for channel_id in channel_ids:
+            channel = self.get_channel(channel_id)
+            if channel:
+                destinations.append(channel)
+
+        return destinations
+
+    async def send_to_owners(self, content=None, **kwargs):
+        """
+        This sends something to all owners and their configured extra destinations.
+
+        This takes the same arguments as discord.abc.Messageable.send
+
+        This logs failing sends
+        """
+        destinations = await self.get_owner_notification_destinations()
+
+        async def wrapped_send(location, content=None, **kwargs):
+            try:
+                await location.send(content, **kwargs)
+            except Exception as _exc:
+                log.exception(
+                    f"I could not send an owner notification to ({location.id}){location}"
+                )
+
+        sends = [wrapped_send(d, content, **kwargs) for d in destinations]
+        await asyncio.gather(*sends)
 
 
 class Red(RedBase, discord.AutoShardedClient):

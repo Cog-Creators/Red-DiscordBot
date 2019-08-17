@@ -1,7 +1,6 @@
 # This is a full replacement of discord.py's help command
-# Signatures are not guaranteed to be unchanging in this file.
-# At a later date when this is more set in stone, this warning will be removed.
-# At said later date, there should also be things added to support extra formatter
+#
+# At a later date, there should be things added to support extra formatter
 # registration from 3rd party cogs.
 #
 # This exists due to deficiencies in discord.py which conflict
@@ -26,6 +25,7 @@
 # Additionally, this gives our users a bit more customization options including by
 # 3rd party cogs down the road.
 
+import asyncio
 from collections import namedtuple
 from typing import Union, List, AsyncIterator, Iterable, cast
 
@@ -77,14 +77,6 @@ class RedHelpFormatter:
     should not need or want a shared state.
     """
 
-    # Class vars for things which should be configurable at a later date but aren't now
-    # Technically, someone can just use a cog to switch these in real time for now.
-
-    USE_MENU = False
-    CONFIRM_UNAVAILABLE_COMMAND_EXISTENCES = False
-    SHOW_HIDDEN = False
-    VERIFY_CHECKS = True
-
     async def send_help(self, ctx: Context, help_for: HelpTarget = None):
         """ 
         This delegates to other functions. 
@@ -102,7 +94,7 @@ class RedHelpFormatter:
                 await self.command_not_found(ctx, help_for)
                 return
             except NoSubCommand as exc:
-                if self.CONFIRM_UNAVAILABLE_COMMAND_EXISTENCES:
+                if await ctx.bot.db.help.verify_exists():
                     await self.subcommand_not_found(ctx, exc.last, exc.not_found)
                     return
                 help_for = exc.last
@@ -138,7 +130,7 @@ class RedHelpFormatter:
 
     async def format_command_help(self, ctx: Context, obj: commands.Command):
 
-        send = self.CONFIRM_UNAVAILABLE_COMMAND_EXISTENCES
+        send = await ctx.bot.db.help.verify_exists()
         if not send:
             async for _ in self.help_filter_func(ctx, (obj,), bypass_hidden=True):
                 # This is a really lazy option for not
@@ -174,7 +166,7 @@ class RedHelpFormatter:
 
             if command.help:
                 splitted = command.help.split("\n\n")
-                name = "__{0}__".format(splitted[0])
+                name = splitted[0]
                 value = "\n\n".join(splitted[1:]).replace("[p]", ctx.clean_prefix)
                 if not value:
                     value = EMPTY_STRING
@@ -182,8 +174,14 @@ class RedHelpFormatter:
                 emb["fields"].append(field)
 
             if subcommands:
+
+                def shorten_line(a_line: str) -> str:
+                    if len(a_line) < 70:  # embed max width needs to be lower
+                        return a_line
+                    return a_line[:67] + "..."
+
                 subtext = "\n".join(
-                    f"**{name}** {command.short_doc}"
+                    shorten_line(f"**{name}** {command.short_doc}")
                     for name, command in sorted(subcommands.items())
                 )
                 for i, page in enumerate(pagify(subtext, page_length=1000, shorten_by=0)):
@@ -219,7 +217,16 @@ class RedHelpFormatter:
                 )
 
             to_page = "\n\n".join(
-                filter(None, (description, signature[1:-1], command.help, subtext_header, subtext))
+                filter(
+                    None,
+                    (
+                        description,
+                        signature[1:-1],
+                        command.help.replace("[p]", ctx.clean_prefix),
+                        subtext_header,
+                        subtext,
+                    ),
+                )
             )
             pages = [box(p) for p in pagify(to_page)]
             await self.send_pages(ctx, pages, embed=False)
@@ -251,6 +258,12 @@ class RedHelpFormatter:
 
         author_info = {"name": f"{ctx.me.display_name} Help Menu", "icon_url": ctx.me.avatar_url}
 
+        if not field_groups:  # This can happen on single command without a docstring
+            embed = discord.Embed(color=color, **embed_dict["embed"])
+            embed.set_author(**author_info)
+            embed.set_footer(**embed_dict["footer"])
+            pages.append(embed)
+
         for i, group in enumerate(field_groups, 1):
             embed = discord.Embed(color=color, **embed_dict["embed"])
 
@@ -272,7 +285,7 @@ class RedHelpFormatter:
     async def format_cog_help(self, ctx: Context, obj: commands.Cog):
 
         coms = await self.get_cog_help_mapping(ctx, obj)
-        if not (coms or self.CONFIRM_UNAVAILABLE_COMMAND_EXISTENCES):
+        if not (coms or await ctx.bot.db.help.verify_exists()):
             return
 
         description = obj.help
@@ -283,11 +296,24 @@ class RedHelpFormatter:
 
             emb["footer"]["text"] = tagline
             if description:
-                emb["embed"]["title"] = f"*{description[:2044]}*"
+                splitted = description.split("\n\n")
+                name = splitted[0]
+                value = "\n\n".join(splitted[1:]).replace("[p]", ctx.clean_prefix)
+                if not value:
+                    value = EMPTY_STRING
+                field = EmbedField(name[:252], value[:1024], False)
+                emb["fields"].append(field)
 
             if coms:
+
+                def shorten_line(a_line: str) -> str:
+                    if len(a_line) < 70:  # embed max width needs to be lower
+                        return a_line
+                    return a_line[:67] + "..."
+
                 command_text = "\n".join(
-                    f"**{name}** {command.short_doc}" for name, command in sorted(coms.items())
+                    shorten_line(f"**{name}** {command.short_doc}")
+                    for name, command in sorted(coms.items())
                 )
                 for i, page in enumerate(pagify(command_text, page_length=1000, shorten_by=0)):
                     if i == 0:
@@ -347,8 +373,14 @@ class RedHelpFormatter:
                 else:
                     title = f"**__No Category:__**"
 
+                def shorten_line(a_line: str) -> str:
+                    if len(a_line) < 70:  # embed max width needs to be lower
+                        return a_line
+                    return a_line[:67] + "..."
+
                 cog_text = "\n".join(
-                    f"**{name}** {command.short_doc}" for name, command in sorted(data.items())
+                    shorten_line(f"**{name}** {command.short_doc}")
+                    for name, command in sorted(data.items())
                 )
 
                 for i, page in enumerate(pagify(cog_text, page_length=1000, shorten_by=0)):
@@ -393,23 +425,32 @@ class RedHelpFormatter:
             pages = [box(p) for p in pagify(to_page)]
             await self.send_pages(ctx, pages, embed=False)
 
+    @staticmethod
     async def help_filter_func(
-        self, ctx, objects: Iterable[SupportsCanSee], bypass_hidden=False
+        ctx, objects: Iterable[SupportsCanSee], bypass_hidden=False
     ) -> AsyncIterator[SupportsCanSee]:
         """
         This does most of actual filtering.
         """
+
+        show_hidden = bypass_hidden or await ctx.bot.db.help.show_hidden()
+        verify_checks = await ctx.bot.db.help.verify_checks()
+
         # TODO: Settings for this in core bot db
         for obj in objects:
-            if self.VERIFY_CHECKS and not (self.SHOW_HIDDEN or bypass_hidden):
+            if verify_checks and not show_hidden:
                 # Default Red behavior, can_see includes a can_run check.
-                if await obj.can_see(ctx):
+                if await obj.can_see(ctx) and getattr(obj, "enabled", True):
                     yield obj
-            elif self.VERIFY_CHECKS:
-                if await obj.can_run(ctx):
+            elif verify_checks:
+                try:
+                    can_run = await obj.can_run(ctx)
+                except discord.DiscordException:
+                    can_run = False
+                if can_run and getattr(obj, "enabled", True):
                     yield obj
-            elif not (self.SHOW_HIDDEN or bypass_hidden):
-                if getattr(obj, "hidden", False):  # Cog compatibility
+            elif not show_hidden:
+                if not getattr(obj, "hidden", False):  # Cog compatibility
                     yield obj
             else:
                 yield obj
@@ -418,7 +459,7 @@ class RedHelpFormatter:
         """
         Sends an error, fuzzy help, or stays quiet based on settings
         """
-        coms = [c async for c in self.help_filter_func(ctx, ctx.bot.walk_commands())]
+        coms = {c async for c in self.help_filter_func(ctx, ctx.bot.walk_commands())}
         fuzzy_commands = await fuzzy_command_search(ctx, help_for, commands=coms, min_score=75)
         use_embeds = await ctx.embed_requested()
         if fuzzy_commands:
@@ -430,8 +471,8 @@ class RedHelpFormatter:
                 await ctx.send(embed=ret)
             else:
                 await ctx.send(ret)
-        elif self.CONFIRM_UNAVAILABLE_COMMAND_EXISTENCES:
-            ret = T_("Command *{command_name}* not found.").format(command_name=help_for)
+        elif await ctx.bot.db.help.verify_exists():
+            ret = T_("Help topic for *{command_name}* not found.").format(command_name=help_for)
             if use_embeds:
                 ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
                 ret.set_author(name=f"{ctx.me.display_name} Help Menu", icon_url=ctx.me.avatar_url)
@@ -445,10 +486,17 @@ class RedHelpFormatter:
         """
         Sends an error
         """
-        ret = T_("Command *{command_name}* has no subcommands.").format(
-            command_name=command.qualified_name
+        ret = T_("Command *{command_name}* has no subcommand named *{not_found}*.").format(
+            command_name=command.qualified_name, not_found=not_found[0]
         )
-        await ctx.send(ret)
+        if await ctx.embed_requested():
+            ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
+            ret.set_author(name=f"{ctx.me.display_name} Help Menu", icon_url=ctx.me.avatar_url)
+            tagline = (await ctx.bot.db.help.tagline()) or self.get_default_tagline(ctx)
+            ret.set_footer(text=tagline)
+            await ctx.send(embed=ret)
+        else:
+            await ctx.send(ret)
 
     @staticmethod
     def parse_command(ctx, help_for: str):
@@ -487,19 +535,43 @@ class RedHelpFormatter:
         Sends pages based on settings.
         """
 
-        if not self.USE_MENU:
+        if not (
+            ctx.channel.permissions_for(ctx.me).add_reactions and await ctx.bot.db.help.use_menus()
+        ):
 
             max_pages_in_guild = await ctx.bot.db.help.max_pages_in_guild()
             destination = ctx.author if len(pages) > max_pages_in_guild else ctx
 
             if embed:
                 for page in pages:
-                    await destination.send(embed=page)
+                    try:
+                        await destination.send(embed=page)
+                    except discord.Forbidden:
+                        return await ctx.send(
+                            T_(
+                                "I couldn't send the help message to you in DM. "
+                                "Either you blocked me or you disabled DMs in this server."
+                            )
+                        )
             else:
                 for page in pages:
-                    await destination.send(page)
+                    try:
+                        await destination.send(page)
+                    except discord.Forbidden:
+                        return await ctx.send(
+                            T_(
+                                "I couldn't send the help message to you in DM. "
+                                "Either you blocked me or you disabled DMs in this server."
+                            )
+                        )
         else:
-            await menus.menu(ctx, pages, menus.DEFAULT_CONTROLS)
+            # Specifically ensuring the menu's message is sent prior to returning
+            m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
+            c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
+            # Allow other things to happen during menu timeout/interaction.
+            asyncio.create_task(menus.menu(ctx, pages, c, message=m))
+            # menu needs reactions added manually since we fed it a messsage
+            menus.start_adding_reactions(m, c.keys())
 
 
 @commands.command(name="help", hidden=True, i18n=T_)

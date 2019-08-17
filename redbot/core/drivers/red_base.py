@@ -18,8 +18,8 @@ class IdentifierData:
         self,
         uuid: str,
         category: str,
-        primary_key: Tuple[str],
-        identifiers: Tuple[str],
+        primary_key: Tuple[str, ...],
+        identifiers: Tuple[str, ...],
         custom_group_data: dict,
         is_custom: bool = False,
     ):
@@ -55,6 +55,19 @@ class IdentifierData:
             f"<IdentifierData uuid={self.uuid} category={self.category} primary_key={self.primary_key}"
             f" identifiers={self.identifiers}>"
         )
+
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, IdentifierData):
+            return False
+        return (
+            self.uuid == other.uuid
+            and self.category == other.category
+            and self.primary_key == other.primary_key
+            and self.identifiers == other.identifiers
+        )
+
+    def __hash__(self) -> int:
+        return hash((self.uuid, self.category, self.primary_key, self.identifiers))
 
     def add_identifier(self, *identifier: str) -> "IdentifierData":
         if not all(isinstance(i, str) for i in identifier):
@@ -183,7 +196,7 @@ class BaseDriver:
                 c,
                 (),
                 (),
-                custom_group_data.get(c, {}),
+                custom_group_data,
                 is_custom=c in custom_group_data,
             )
             try:
@@ -202,7 +215,19 @@ class BaseDriver:
                     category,
                     pkey,
                     (),
-                    custom_group_data.get(category, {}),
+                    custom_group_data,
                     is_custom=category in custom_group_data,
                 )
                 await self.set(ident_data, data)
+
+    @staticmethod
+    def get_pkey_len(identifier_data: IdentifierData) -> int:
+        cat = identifier_data.category
+        if cat == ConfigCategory.GLOBAL.value:
+            return 0
+        elif cat == ConfigCategory.MEMBER.value:
+            return 2
+        elif identifier_data.is_custom:
+            return identifier_data.custom_group_data[cat]
+        else:
+            return 1
