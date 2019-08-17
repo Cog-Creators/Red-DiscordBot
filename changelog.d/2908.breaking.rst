@@ -1,0 +1,1 @@
+``redbot.core.modlog.get_next_case_number()`` has been removed.

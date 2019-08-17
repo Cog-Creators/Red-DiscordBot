@@ -3,18 +3,21 @@ import pathlib
 import platform
 import shutil
 import asyncio
-import asyncio.subprocess
+import asyncio.subprocess  # disables for # https://github.com/PyCQA/pylint/issues/1469
 import logging
 import re
+import sys
 import tempfile
 from typing import Optional, Tuple, ClassVar, List
 
 import aiohttp
+from tqdm import tqdm
 
 from redbot.core import data_manager
+from .errors import LavalinkDownloadFailed
 
-JAR_VERSION = "3.2.0.3"
-JAR_BUILD = 751
+JAR_VERSION = "3.2.1"
+JAR_BUILD = 823
 LAVALINK_DOWNLOAD_URL = (
     f"https://github.com/Cog-Creators/Lavalink-Jars/releases/download/{JAR_VERSION}_{JAR_BUILD}/"
     f"Lavalink.jar"
@@ -37,12 +40,12 @@ class ServerManager:
     _java_version: ClassVar[Optional[Tuple[int, int]]] = None
     _up_to_date: ClassVar[Optional[bool]] = None
 
-    _blacklisted_archs = ["armv6l", "aarch32", "aarch64"]
+    _blacklisted_archs = []
 
     def __init__(self) -> None:
         self.ready = asyncio.Event()
 
-        self._proc: Optional[asyncio.subprocess.Process] = None
+        self._proc: Optional[asyncio.subprocess.Process] = None  # pylint:disable=no-member
         self._monitor_task: Optional[asyncio.Task] = None
         self._shutdown: bool = False
 
@@ -67,7 +70,7 @@ class ServerManager:
         shutil.copyfile(BUNDLED_APP_YML, LAVALINK_APP_YML)
 
         args = await self._get_jar_args()
-        self._proc = await asyncio.subprocess.create_subprocess_exec(
+        self._proc = await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
             *args,
             cwd=str(LAVALINK_DOWNLOAD_DIR),
             stdout=asyncio.subprocess.PIPE,
@@ -117,7 +120,7 @@ class ServerManager:
         """
         This assumes we've already checked that java exists.
         """
-        _proc: asyncio.subprocess.Process = await asyncio.create_subprocess_exec(
+        _proc: asyncio.subprocess.Process = await asyncio.create_subprocess_exec(  # pylint:disable=no-member
             "java", "-version", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
         )
         # java -version outputs to stderr
@@ -173,7 +176,7 @@ class ServerManager:
             await self.start()
         else:
             log.critical(
-                "Your Java is borked. Please find the hs_err_pid{}.log file"
+                "Your Java is borked. Please find the hs_err_pid%d.log file"
                 " in the Audio data folder and report this issue.",
                 self._proc.pid,
             )
@@ -200,20 +203,44 @@ class ServerManager:
         async with aiohttp.ClientSession() as session:
             async with session.get(LAVALINK_DOWNLOAD_URL) as response:
                 if response.status == 404:
-                    raise RuntimeError(
-                        f"Lavalink jar version {JAR_VERSION}_{JAR_BUILD} hasn't been published"
+                    # A 404 means our LAVALINK_DOWNLOAD_URL is invalid, so likely the jar version
+                    # hasn't been published yet
+                    raise LavalinkDownloadFailed(
+                        f"Lavalink jar version {JAR_VERSION}_{JAR_BUILD} hasn't been published "
+                        f"yet",
+                        response=response,
+                        should_retry=False,
                     )
+                elif 400 <= response.status < 600:
+                    # Other bad responses should be raised but we should retry just incase
+                    raise LavalinkDownloadFailed(response=response, should_retry=True)
                 fd, path = tempfile.mkstemp()
                 file = open(fd, "wb")
-                try:
-                    chunk = await response.content.read(1024)
-                    while chunk:
-                        file.write(chunk)
+                nbytes = 0
+                with tqdm(
+                    desc="Lavalink.jar",
+                    total=response.content_length,
+                    file=sys.stdout,
+                    unit="B",
+                    unit_scale=True,
+                    miniters=1,
+                    dynamic_ncols=True,
+                    leave=False,
+                ) as progress_bar:
+                    try:
                         chunk = await response.content.read(1024)
-                    file.flush()
-                finally:
-                    file.close()
-                pathlib.Path(path).replace(LAVALINK_JAR_FILE)
+                        while chunk:
+                            chunk_size = file.write(chunk)
+                            nbytes += chunk_size
+                            progress_bar.update(chunk_size)
+                            chunk = await response.content.read(1024)
+                        file.flush()
+                    finally:
+                        file.close()
+
+                shutil.move(path, str(LAVALINK_JAR_FILE), copy_function=shutil.copyfile)
+
+        log.info("Successfully downloaded Lavalink.jar (%s bytes written)", format(nbytes, ","))
 
     @classmethod
     async def _is_up_to_date(cls):
@@ -222,7 +249,7 @@ class ServerManager:
             return True
         args = await cls._get_jar_args()
         args.append("--version")
-        _proc = await asyncio.subprocess.create_subprocess_exec(
+        _proc = await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
             *args,
             cwd=str(LAVALINK_DOWNLOAD_DIR),
             stdout=asyncio.subprocess.PIPE,
@@ -234,7 +261,7 @@ class ServerManager:
             # Output is unexpected, suspect corrupted jarfile
             return False
         build = int(match["build"])
-        cls._up_to_date = build == JAR_BUILD
+        cls._up_to_date = build >= JAR_BUILD
         return cls._up_to_date
 
     @classmethod

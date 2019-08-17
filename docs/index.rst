@@ -51,6 +51,7 @@ Welcome to Red - Discord Bot's documentation!
     framework_modlog
     framework_rpc
     framework_utils
+    version_guarantees
 
 .. toctree::
     :maxdepth: 2
