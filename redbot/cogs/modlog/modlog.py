@@ -38,7 +38,7 @@ class ModLog(commands.Cog):
             if channel.permissions_for(guild.me).send_messages:
                 await modlog.set_modlog_channel(guild, channel)
                 await ctx.send(
-                    _("Mod events will be sent to {channel}").format(channel=channel.mention)
+                    _("Mod events will be sent to {channel}.").format(channel=channel.mention)
                 )
             else:
                 await ctx.send(
@@ -66,7 +66,7 @@ class ModLog(commands.Cog):
             await ctx.send_help()
             lines = []
             for ct in casetypes:
-                enabled = "enabled" if await ct.is_enabled() else "disabled"
+                enabled = _("enabled") if await ct.is_enabled() else _("disabled")
                 lines.append(f"{ct.name} : {enabled}")
 
             await ctx.send(_("Current settings:\n") + box("\n".join(lines)))
@@ -74,13 +74,13 @@ class ModLog(commands.Cog):
 
         casetype = await modlog.get_casetype(action, guild)
         if not casetype:
-            await ctx.send(_("That action is not registered"))
+            await ctx.send(_("That action is not registered."))
         else:
             enabled = await casetype.is_enabled()
             await casetype.set_enabled(not enabled)
             await ctx.send(
                 _("Case creation for {action_name} actions is now {enabled}.").format(
-                    action_name=action, enabled="enabled" if not enabled else "disabled"
+                    action_name=action, enabled=_("enabled") if not enabled else _("disabled")
                 )
             )
 
@@ -99,7 +99,7 @@ class ModLog(commands.Cog):
         try:
             case = await modlog.get_case(number, ctx.guild, self.bot)
         except RuntimeError:
-            await ctx.send(_("That case does not exist for that server"))
+            await ctx.send(_("That case does not exist for that server."))
             return
         else:
             if await ctx.embed_requested():
@@ -150,41 +150,28 @@ class ModLog(commands.Cog):
         guild = ctx.guild
         if case is None:
             # get the latest case
-            case = int(await modlog.get_next_case_number(guild)) - 1
-        try:
-            case_before = await modlog.get_case(case, guild, self.bot)
-        except RuntimeError:
-            await ctx.send(_("That case does not exist!"))
-            return
-        else:
-            if case_before.moderator is None:
-                # No mod set, so attempt to find out if the author
-                # triggered the case creation with an action
-                bot_perms = guild.me.guild_permissions
-                if bot_perms.view_audit_log:
-                    case_type = await modlog.get_casetype(case_before.action_type, guild)
-                    if case_type is not None and case_type.audit_type is not None:
-                        audit_type = getattr(discord.AuditLogAction, case_type.audit_type)
-                        if audit_type:
-                            audit_case = None
-                            async for entry in guild.audit_logs(action=audit_type):
-                                if (
-                                    entry.target.id == case_before.user.id
-                                    and entry.action == audit_type
-                                ):
-                                    audit_case = entry
-                                    break
-                            if audit_case:
-                                case_before.moderator = audit_case.user
-            is_guild_owner = author == guild.owner
-            is_case_author = author == case_before.moderator
-            author_is_mod = await ctx.bot.is_mod(author)
-            if not (is_guild_owner or is_case_author or author_is_mod):
-                await ctx.send(_("You are not authorized to modify that case!"))
+            case_obj = await modlog.get_latest_case(guild, self.bot)
+            if case_obj is None:
+                await ctx.send(_("There are no modlog cases in this server."))
                 return
-            to_modify = {"reason": reason}
-            if case_before.moderator != author:
-                to_modify["amended_by"] = author
-            to_modify["modified_at"] = ctx.message.created_at.timestamp()
-            await case_before.edit(to_modify)
-            await ctx.send(_("Reason has been updated."))
+        else:
+            try:
+                case_obj = await modlog.get_case(case, guild, self.bot)
+            except RuntimeError:
+                await ctx.send(_("That case does not exist!"))
+                return
+
+        is_guild_owner = author == guild.owner
+        is_case_author = author == case_obj.moderator
+        author_is_mod = await ctx.bot.is_mod(author)
+        if not (is_guild_owner or is_case_author or author_is_mod):
+            await ctx.send(_("You are not authorized to modify that case!"))
+            return
+        to_modify = {"reason": reason}
+        if case_obj.moderator != author:
+            to_modify["amended_by"] = author
+        to_modify["modified_at"] = ctx.message.created_at.timestamp()
+        await case_obj.edit(to_modify)
+        await ctx.send(
+            _("Reason for case #{num} has been updated.").format(num=case_obj.case_number)
+        )

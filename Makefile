@@ -12,3 +12,20 @@ upload_translations:
 	crowdin upload sources
 download_translations:
 	crowdin download
+
+# Dependencies
+bumpdeps:
+	python tools/bumpdeps.py
+
+# Development environment
+newenv:
+	python3.7 -m venv --clear .venv
+	.venv/bin/pip install -U pip setuptools
+	$(MAKE) syncenv
+syncenv:
+	.venv/bin/pip install -Ur ./tools/dev-requirements.txt
+
+# Changelog check
+checkchangelog:
+	bash tools/check_changelog_entries.sh
+	python -m towncrier --draft
