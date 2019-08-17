@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-01-11 02:18+0000\n"
-"PO-Revision-Date: 2019-02-25 03:06\n"
-"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"POT-Creation-Date: 2019-07-05 22:33+0200\n"
+"PO-Revision-Date: 2019-07-06 16:12\n"
+"Last-Translator: Robert Jansen (Kowlin)\n"
 "Language-Team: Bulgarian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 2.2\n"
+"Generated-By: redgettext 3.0\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
@@ -16,86 +16,69 @@ msgstr ""
 "X-Crowdin-File: /cogs/cleanup/locales/messages.pot\n"
 "Language: bg_BG\n"
 
-#: redbot/cogs/cleanup/cleanup.py:19
+#: redbot/cogs/cleanup/cleanup.py:22
 #, docstring
 msgid "Commands for cleaning up messages."
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:36
+#: redbot/cogs/cleanup/cleanup.py:42
 msgid "Are you sure you want to delete {number} messages? (y/n)"
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:48
+#: redbot/cogs/cleanup/cleanup.py:54
 msgid "Cancelled."
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:107
+#: redbot/cogs/cleanup/cleanup.py:113
 #, docstring
 msgid "Delete messages."
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:116
+#: redbot/cogs/cleanup/cleanup.py:122
 #, docstring
-msgid "Delete the last X messages matching the specified text.\n\n"
-"        Example:\n"
-"            `[p]cleanup text \"test\" 5`\n\n"
-"        Remember to use double quotes.\n"
-"        "
+msgid "Delete the last X messages matching the specified text.\\n\\n        Example:\\n            `[p]cleanup text \\\"test\\\" 5`\\n\\n        Remember to use double quotes.\\n        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:161
+#: redbot/cogs/cleanup/cleanup.py:167
 #, docstring
-msgid "Delete the last X messages from a specified user.\n\n"
-"        Examples:\n"
-"            `[p]cleanup user @​Twentysix 2`\n"
-"            `[p]cleanup user Red 6`\n"
-"        "
+msgid "Delete the last X messages from a specified user.\\n\\n        Examples:\\n            `[p]cleanup user @​Twentysix 2`\\n            `[p]cleanup user Red 6`\\n        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:215
+#: redbot/cogs/cleanup/cleanup.py:223
 #, docstring
-msgid "Delete all messages after a specified message.\n\n"
-"        To get a message id, enable developer mode in Discord's\n"
-"        settings, 'appearance' tab. Then right click a message\n"
-"        and copy its id.\n"
-"        "
+msgid "Delete all messages after a specified message.\\n\\n        To get a message id, enable developer mode in Discord's\\n        settings, 'appearance' tab. Then right click a message\\n        and copy its id.\\n        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:228 redbot/cogs/cleanup/cleanup.py:260
+#: redbot/cogs/cleanup/cleanup.py:236 redbot/cogs/cleanup/cleanup.py:272
 msgid "Message not found."
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:247
+#: redbot/cogs/cleanup/cleanup.py:259
 #, docstring
-msgid "Deletes X messages before specified message.\n\n"
-"        To get a message id, enable developer mode in Discord's\n"
-"        settings, 'appearance' tab. Then right click a message\n"
-"        and copy its id.\n"
-"        "
+msgid "Deletes X messages before specified message.\\n\\n        To get a message id, enable developer mode in Discord's\\n        settings, 'appearance' tab. Then right click a message\\n        and copy its id.\\n        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:278
+#: redbot/cogs/cleanup/cleanup.py:296
 #, docstring
-msgid "Delete the last X messages.\n\n"
-"        Example:\n"
-"            `[p]cleanup messages 26`\n"
-"        "
+msgid "Delete the messages between Messsage One and Message Two, providing the messages IDs.\\n\\n        The first message ID should be the older message and the second one the newer.\\n\\n        Example:\\n            `[p]cleanup between 123456789123456789 987654321987654321`\\n        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:308
+#: redbot/cogs/cleanup/cleanup.py:332
+#, docstring
+msgid "Delete the last X messages.\\n\\n        Example:\\n            `[p]cleanup messages 26`\\n        "
+msgstr ""
+
+#: redbot/cogs/cleanup/cleanup.py:362
 #, docstring
 msgid "Clean up command messages and messages from the bot."
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:383
+#: redbot/cogs/cleanup/cleanup.py:437
 #, docstring
-msgid "Clean up messages owned by the bot.\n\n"
-"        By default, all messages are cleaned. If a third argument is specified,\n"
-"        it is used for pattern matching: If it begins with r( and ends with ),\n"
-"        then it is interpreted as a regex, and messages that match it are\n"
-"        deleted. Otherwise, it is used in a simple substring test.\n\n"
-"        Some helpful regex flags to include in your pattern:\n"
-"        Dots match newlines: (?s); Ignore case: (?i); Both: (?si)\n"
-"        "
+msgid "Clean up messages owned by the bot.\\n\\n        By default, all messages are cleaned. If a third argument is specified,\\n        it is used for pattern matching: If it begins with r( and ends with ),\\n        then it is interpreted as a regex, and messages that match it are\\n        deleted. Otherwise, it is used in a simple substring test.\\n\\n        Some helpful regex flags to include in your pattern:\\n        Dots match newlines: (?s); Ignore case: (?i); Both: (?si)\\n        "
+msgstr ""
+
+#: redbot/cogs/cleanup/converters.py:12
+msgid "{} doesn't look like a valid message ID."
 msgstr ""
 

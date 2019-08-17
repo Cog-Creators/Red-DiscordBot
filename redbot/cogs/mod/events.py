@@ -1,13 +1,14 @@
+import logging
 from datetime import datetime
 from collections import defaultdict, deque
 
 import discord
 from redbot.core import i18n, modlog, commands
 from redbot.core.utils.mod import is_mod_or_superior
-from . import log
 from .abc import MixinMeta
 
 _ = i18n.Translator("Mod", __file__)
+log = logging.getLogger("red.mod")
 
 
 class Events(MixinMeta):
@@ -92,77 +93,6 @@ class Events(MixinMeta):
         deleted = await self.check_duplicates(message)
         if not deleted:
             await self.check_mention_spam(message)
-
-    @commands.Cog.listener()
-    async def on_member_ban(self, guild: discord.Guild, member: discord.Member):
-        if (guild.id, member.id) in self.ban_queue:
-            self.ban_queue.remove((guild.id, member.id))
-            return
-        try:
-            await modlog.get_modlog_channel(guild)
-        except RuntimeError:
-            return  # No modlog channel so no point in continuing
-        mod, reason, date = await self.get_audit_entry_info(
-            guild, discord.AuditLogAction.ban, member
-        )
-        if date is None:
-            date = datetime.now()
-        try:
-            await modlog.create_case(
-                self.bot, guild, date, "ban", member, mod, reason if reason else None
-            )
-        except RuntimeError as e:
-            print(e)
-
-    @commands.Cog.listener()
-    async def on_member_unban(self, guild: discord.Guild, user: discord.User):
-        if (guild.id, user.id) in self.unban_queue:
-            self.unban_queue.remove((guild.id, user.id))
-            return
-        try:
-            await modlog.get_modlog_channel(guild)
-        except RuntimeError:
-            return  # No modlog channel so no point in continuing
-        mod, reason, date = await self.get_audit_entry_info(
-            guild, discord.AuditLogAction.unban, user
-        )
-        if date is None:
-            date = datetime.now()
-        try:
-            await modlog.create_case(self.bot, guild, date, "unban", user, mod, reason)
-        except RuntimeError as e:
-            print(e)
-
-    @commands.Cog.listener()
-    async def on_modlog_case_create(self, case: modlog.Case):
-        """
-        An event for modlog case creation
-        """
-        try:
-            mod_channel = await modlog.get_modlog_channel(case.guild)
-        except RuntimeError:
-            return
-        use_embeds = await case.bot.embed_requested(mod_channel, case.guild.me)
-        case_content = await case.message_content(use_embeds)
-        if use_embeds:
-            msg = await mod_channel.send(embed=case_content)
-        else:
-            msg = await mod_channel.send(case_content)
-        await case.edit({"message": msg})
-
-    @commands.Cog.listener()
-    async def on_modlog_case_edit(self, case: modlog.Case):
-        """
-        Event for modlog case edits
-        """
-        if not case.message:
-            return
-        use_embed = await case.bot.embed_requested(case.message.channel, case.guild.me)
-        case_content = await case.message_content(use_embed)
-        if use_embed:
-            await case.message.edit(embed=case_content)
-        else:
-            await case.message.edit(content=case_content)
 
     @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
