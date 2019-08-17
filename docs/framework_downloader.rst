@@ -30,7 +30,10 @@ Keys common to both repo and cog info.json (case sensitive)
 Keys specific to the cog info.json (case sensitive)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- ``bot_version`` (list of integer) - Min version number of Red in the format ``(MAJOR, MINOR, PATCH)``
+- ``min_bot_version`` (string) - Min version number of Red in the format ``MAJOR.MINOR.MICRO``
+
+- ``max_bot_version`` (string) - Max version number of Red in the format ``MAJOR.MINOR.MICRO``,
+  if ``min_bot_version`` is newer than ``max_bot_version``, ``max_bot_version`` will be ignored
 
 - ``hidden`` (bool) - Determines if a cog is visible in the cog list for a repo.
 

@@ -1,0 +1,125 @@
+[tool.towncrier]
+    package = "redbot"
+    filename = "CHANGELOG.rst"
+    directory = "changelog.d"
+    issue_format = "`#{issue} <https://github.com/Cog-Creators/Red-DiscordBot/issues/{issue}>`_"
+
+    [[tool.towncrier.section]]
+        path = ""
+        name = "Core Bot Changes"
+
+    [[tool.towncrier.section]]
+        path = "admin"
+        name = "Admin"
+
+    [[tool.towncrier.section]]
+        path = "alias"
+        name = "Alias"
+    
+    [[tool.towncrier.section]]
+        path = "audio"
+        name = "Audio"
+
+    [[tool.towncrier.section]]
+        path = "bank"
+        name = "Bank"
+    
+    [[tool.towncrier.section]]
+        path = "cleanup"
+        name = "Cleanup"
+    
+    [[tool.towncrier.section]]
+        path = "customcom"
+        name = "CustomCom"
+    
+    [[tool.towncrier.section]]
+        path = "downloader"
+        name = "Downloader"
+
+    [[tool.towncrier.section]]
+        path = "economy"
+        name = "Economy"
+    
+    [[tool.towncrier.section]]
+        path = "filter"
+        name = "Filter"
+    
+    [[tool.towncrier.section]]
+        path = "general"
+        name = "General"
+    
+    [[tool.towncrier.section]]
+        path = "image"
+        name = "Image"
+    
+    [[tool.towncrier.section]]
+        path = "mod"
+        name = "Mod"
+
+    [[tool.towncrier.section]]
+        path = "modlog"
+        name = "ModLog"
+    
+    [[tool.towncrier.section]]
+        path = "mutes"
+        name = "Mutes"
+    
+    [[tool.towncrier.section]]
+        path = "permissions"
+        name = "Permissions"
+
+    [[tool.towncrier.section]]
+        path = "reports"
+        name = "Reports"
+    
+    [[tool.towncrier.section]]
+        path = "streams"
+        name = "Streams"
+    
+    [[tool.towncrier.section]]
+        path = "trivia"
+        name = "Trivia"
+    
+    [[tool.towncrier.section]]
+        path = "warnings"
+        name = "Warnings"
+
+    [[tool.towncrier.type]]
+        directory = "breaking"
+        name = "Breaking Changes"
+        showcontent = true
+
+    [[tool.towncrier.type]]
+        directory = "bugfix"
+        name = "Bug Fixes"
+        showcontent = true
+
+    [[tool.towncrier.type]]
+        directory = "enhance"
+        name = "Enhancements"
+        showcontent = true
+
+    [[tool.towncrier.type]]
+        directory = "feature"
+        name = "New Feature"
+        showcontent = true
+
+    [[tool.towncrier.type]]
+        directory = "removal"
+        name = "Removals"
+        showcontent = true
+
+    [[tool.towncrier.type]]
+        directory = "misc"
+        name = "Miscellaneous changes"
+        showcontent = false
+
+    [[tool.towncrier.type]]
+        directory = "dep"
+        name = "Changes to dependencies"
+        showcontent = true
+
+    [[tool.towncrier.type]]
+        directory = "docs"
+        name = "Documentation Changes"
+        showcontent = true

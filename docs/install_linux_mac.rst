@@ -92,7 +92,7 @@ one-by-one:
     brew install python --with-brewed-openssl
     brew install git
     brew tap caskroom/versions
-    brew cask install java8
+    brew cask install homebrew/cask-versions/adoptopenjdk8
 
 It's possible you will have network issues. If so, go in your Applications folder, inside it, go in the Python 3.7 folder then double click ``Install certificates.command``
 
@@ -188,23 +188,17 @@ Choose one of the following commands to install Red.
     If you're not inside an activated virtual environment, include the ``--user`` flag with all
     ``python3.7 -m pip`` commands.
 
-To install without audio support:
+To install without MongoDB support:
 
 .. code-block:: none
 
     python3.7 -m pip install -U Red-DiscordBot
 
-Or, to install with audio support:
+Or, to install with MongoDB support:
 
 .. code-block:: none
 
-    python3.7 -m pip install -U Red-DiscordBot[voice]
-
-Or, install with audio and MongoDB support:
-
-.. code-block:: none
-
-    python3.7 -m pip install -U Red-DiscordBot[voice,mongo]
+    python3.7 -m pip install -U Red-DiscordBot[mongo]
 
 .. note::
 
@@ -237,7 +231,7 @@ Once done setting up the instance, run the following command to run Red:
 
 It will walk through the initial setup, asking for your token and a prefix.
 You can find out how to obtain a token with
-`this guide <https://discordpy.readthedocs.io/en/rewrite/discord.html#creating-a-bot-account>`_,
+`this guide <https://discordpy.readthedocs.io/en/v1.0.1/discord.html#creating-a-bot-account>`_,
 section "Creating a Bot Account".
 
 You may also run Red via the launcher, which allows you to restart the bot
