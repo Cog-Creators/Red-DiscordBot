@@ -194,11 +194,7 @@ async def set_balance(member: discord.Member, amount: int) -> int:
         raise ValueError("Not allowed to have negative balance.")
     max_bal = await get_max_balance(member.guild)
     if amount > max_bal:
-        currency = (
-            await get_currency_name()
-            if await is_global()
-            else await get_currency_name(member.guild)
-        )
+        currency = await get_currency_name(member.guild)
         raise errors.BalanceTooHigh(
             user=member.display_name, max_balance=max_bal, currency_name=currency
         )
@@ -313,12 +309,23 @@ async def transfer_credits(from_: discord.Member, to: discord.Member, amount: in
         If the amount is invalid or if ``from_`` has insufficient funds.
     TypeError
         If the amount is not an `int`.
+    BalanceTooHigh
+        If the balance after the transfer would be greater than
+        ``bank.MAX_BALANCE``
 
     """
     if not isinstance(amount, int):
         raise TypeError("Transfer amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
         raise ValueError("Invalid transfer amount {} <= 0".format(amount))
+
+    max_bal = await get_max_balance(to.guild)
+
+    if await get_balance(to) + amount > max_bal:
+        currency = await get_currency_name(to.guild)
+        raise errors.BalanceTooHigh(
+            user=to.display_name, max_balance=max_bal, currency_name=currency
+        )
 
     await withdraw_credits(from_, amount)
     return await deposit_credits(to, amount)
@@ -767,7 +774,7 @@ def cost(amount: int):
     You can intentionally refund by raising `AbortPurchase`
     (this error will be consumed and not show to users)
 
-    Other exceptions will propogate and will be handled by Red's (and/or
+    Other exceptions will propagate and will be handled by Red's (and/or
     any other configured) error handling.
     """
     if not isinstance(amount, int) or amount < 0:
