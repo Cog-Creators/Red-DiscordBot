@@ -305,6 +305,9 @@ async def transfer_credits(from_: discord.Member, to: discord.Member, amount: in
         If the amount is invalid or if ``from_`` has insufficient funds.
     TypeError
         If the amount is not an `int`.
+    BalanceTooHigh
+        If the balance after the transfer would be greater than
+        ``bank.MAX_BALANCE``
 
     """
     if not isinstance(amount, int):
