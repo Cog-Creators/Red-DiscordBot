@@ -186,11 +186,7 @@ async def set_balance(member: discord.Member, amount: int) -> int:
     if amount < 0:
         raise ValueError("Not allowed to have negative balance.")
     if amount > MAX_BALANCE:
-        currency = (
-            await get_currency_name()
-            if await is_global()
-            else await get_currency_name(member.guild)
-        )
+        currency = await get_currency_name(member.guild)
         raise errors.BalanceTooHigh(
             user=member.display_name, max_balance=MAX_BALANCE, currency_name=currency
         )
@@ -316,9 +312,7 @@ async def transfer_credits(from_: discord.Member, to: discord.Member, amount: in
         raise ValueError("Invalid transfer amount {} <= 0".format(amount))
 
     if await get_balance(to) + amount > MAX_BALANCE:
-        currency = (
-            await get_currency_name() if await is_global() else await get_currency_name(to.guild)
-        )
+        currency = await get_currency_name(to.guild)
         raise errors.BalanceTooHigh(
             user=to.display_name, max_balance=MAX_BALANCE, currency_name=currency
         )
