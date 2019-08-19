@@ -3008,10 +3008,6 @@ class Audio(commands.Cog):
                         time=queue_total_duration, position=before_queue_length + 1
                     )
                 )
-            elif queue_dur > 0:
-                index = next((i for i, e in enumerate(player.queue) if e == single_track), None)
-                if index:
-                    embed.set_footer(text=_("#{position} in queue").format(position=index + 1))
 
         await ctx.send(embed=embed)
         if not player.current:
@@ -5154,6 +5150,9 @@ class Audio(commands.Cog):
 
         if player.current.is_stream:
             queue_list += _("**Currently livestreaming:**\n")
+            queue_list += "**[{current.title}]({current.uri})**\n".format(current=player.current)
+            queue_list += _("Requested by: **{user}**").format(user=player.current.requester)
+            queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
 
         elif any(
             x in player.current.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
@@ -5813,10 +5812,6 @@ class Audio(commands.Cog):
                     time=queue_total_duration, position=len(player.queue) + 1
                 )
             )
-        elif queue_dur > 0:
-            index = next((i for i, e in enumerate(player.queue) if e == search_choice), None)
-            if index:
-                embed.set_footer(text=_("#{position} in queue").format(position=index + 1))
 
         if not player.current:
             await player.play()
