@@ -1,11 +1,38 @@
 import importlib.machinery
 from typing import Optional
+from unittest import mock
 
 import discord
+from aiohttp import ClientResponse
+from aiohttp.helpers import TimerNoop
+from yarl import URL
 
 from .i18n import Translator
 
 _ = Translator(__name__, __file__)
+
+__all__ = (
+    "RedError",
+    "PackageAlreadyLoaded",
+    "CogLoadError",
+    "BankError",
+    "BalanceTooHigh",
+    "PreventedAPIException",
+)
+
+_FakeResponseObject = ClientResponse(
+    "get",
+    URL("https://example.org"),
+    request_info=mock.Mock(),
+    writer=mock.Mock(),
+    continue100=None,
+    timer=TimerNoop(),
+    traces=[],
+    loop=mock.Mock(),
+    session=mock.Mock(),
+)
+
+_FakeResponseObject.status = 403
 
 
 class RedError(Exception):
@@ -51,7 +78,7 @@ class BalanceTooHigh(BankError, OverflowError):
         )
 
 
-class PreventedAPIException(RedError):
+class PreventedAPIException(RedError, discord.Forbidden):
     """
     Raised when Red detects an attempt to do something which would cause a 403
     
@@ -80,3 +107,8 @@ class PreventedAPIException(RedError):
     
     Last updated for accuracy: 2019-08-13
     """
+
+    def __init__(self, message=""):
+        super().__init__(_FakeResponseObject, message)
+        self.code = -26
+        self.text = ""
