@@ -207,7 +207,9 @@ class Streams(commands.Cog):
         if games:
             games = games.split("|")
         if re.fullmatch(r"<#\d+>", channel_name):
-            await ctx.send("Please supply the name of a *Twitch* channel, not a Discord channel.")
+            await ctx.send(
+                _("Please supply the name of a *Twitch* channel, not a Discord channel.")
+            )
             return
         await self.stream_alert(ctx, TwitchStream, channel_name.lower(), games=games)
 
@@ -486,7 +488,7 @@ class Streams(commands.Cog):
             "3. Set up your API key \n"
             "(see https://support.google.com/googleapi/answer/6158862 for instructions)\n"
             "4. Copy your API key and run the command "
-            "`{prefix}set api youtube api_key,<your_api_key_here>`\n\n"
+            "`{prefix}set api youtube api_key <your_api_key_here>`\n\n"
             "Note: These tokens are sensitive and should only be used in a private channel\n"
             "or in DM with the bot.\n"
         ).format(prefix=ctx.prefix)
@@ -562,7 +564,7 @@ class Streams(commands.Cog):
         if message is not None:
             guild = ctx.guild
             await self.db.guild(guild).live_message_mention.set(message)
-            await ctx.send(_("stream alert message set!"))
+            await ctx.send(_("Stream alert message set!"))
         else:
             await ctx.send_help()
 
@@ -578,7 +580,7 @@ class Streams(commands.Cog):
         if message is not None:
             guild = ctx.guild
             await self.db.guild(guild).live_message_nomention.set(message)
-            await ctx.send(_("stream alert message set!"))
+            await ctx.send(_("Stream alert message set!"))
         else:
             await ctx.send_help()
 

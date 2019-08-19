@@ -540,9 +540,6 @@ class RepoManager:
     def __init__(self):
         self._repos = {}
 
-        loop = asyncio.get_event_loop()
-        loop.create_task(self._load_repos(set=True))  # str_name: Repo
-
     async def initialize(self):
         await self._load_repos(set=True)
 

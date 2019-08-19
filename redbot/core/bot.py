@@ -67,14 +67,15 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             api_tokens={},
             extra_owner_destinations=[],
             owner_opt_out_list=[],
+            schema_version=0,
         )
 
         self.db.register_guild(
             prefix=[],
             whitelist=[],
             blacklist=[],
-            admin_role=None,
-            mod_role=None,
+            admin_role=[],
+            mod_role=[],
             embeds=None,
             use_bot_color=False,
             fuzzy=False,
@@ -134,6 +135,38 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         self._permissions_hooks: List[commands.CheckPredicate] = []
 
+    async def maybe_update_config(self):
+        """
+        This should be run prior to loading cogs or connecting to discord.
+        """
+        schema_version = await self.db.schema_version()
+
+        if schema_version == 0:
+            await self._schema_0_to_1()
+            schema_version += 1
+            await self.db.schema_version.set(schema_version)
+
+    async def _schema_0_to_1(self):
+        """
+        This contains the migration to allow multiple mod and multiple admin roles.
+        """
+
+        log.info("Begin updating guild configs to support multiple mod/admin roles")
+        all_guild_data = await self.db.all_guilds()
+        for guild_id, guild_data in all_guild_data.items():
+            guild_obj = discord.Object(id=guild_id)
+            mod_roles, admin_roles = [], []
+            maybe_mod_role_id = guild_data["mod_role"]
+            maybe_admin_role_id = guild_data["admin_role"]
+
+            if maybe_mod_role_id:
+                mod_roles.append(maybe_mod_role_id)
+                await self.db.guild(guild_obj).mod_role.set(mod_roles)
+            if maybe_admin_role_id:
+                admin_roles.append(maybe_admin_role_id)
+                await self.db.guild(guild_obj).admin_role.set(admin_roles)
+        log.info("Done updating guild configs to support multiple mod/admin roles")
+
     async def send_help_for(
         self, ctx: commands.Context, help_for: Union[commands.Command, commands.GroupMixin, str]
     ):
@@ -191,21 +224,25 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
     async def is_admin(self, member: discord.Member):
         """Checks if a member is an admin of their guild."""
-        admin_role = await self.db.guild(member.guild).admin_role()
         try:
-            if any(role.id == admin_role for role in member.roles):
-                return True
+            member_snowflakes = member._roles  # DEP-WARN
+            for snowflake in await self.db.guild(member.guild).admin_role():
+                if member_snowflakes.has(snowflake):  # Dep-WARN
+                    return True
         except AttributeError:  # someone passed a webhook to this
             pass
         return False
 
     async def is_mod(self, member: discord.Member):
         """Checks if a member is a mod or admin of their guild."""
-        mod_role = await self.db.guild(member.guild).mod_role()
-        admin_role = await self.db.guild(member.guild).admin_role()
         try:
-            if any(role.id in (mod_role, admin_role) for role in member.roles):
-                return True
+            member_snowflakes = member._roles  # DEP-WARN
+            for snowflake in await self.db.guild(member.guild).admin_role():
+                if member_snowflakes.has(snowflake):  # DEP-WARN
+                    return True
+            for snowflake in await self.db.guild(member.guild).mod_role():
+                if member_snowflakes.has(snowflake):  # DEP-WARN
+                    return True
         except AttributeError:  # someone passed a webhook to this
             pass
         return False
@@ -266,7 +303,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         except Exception as e:
             self._remove_module_references(lib.__name__)
             self._call_module_finalizers(lib, name)
-            raise errors.CogLoadError(e) from e
+            raise
         else:
             self._BotBase__extensions[name] = lib
 
@@ -284,6 +321,8 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                 self.remove_permissions_hook(hook)
 
         super().remove_cog(cogname)
+
+        cog.requires.reset()
 
         for meth in self.rpc_handlers.pop(cogname.upper(), ()):
             self.unregister_rpc_handler(meth)
@@ -370,32 +409,64 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                 f"not inherit from the commands.Cog base class. The cog author must update "
                 f"the cog to adhere to this requirement."
             )
+        if cog.__cog_name__ in self.cogs:
+            raise RuntimeError(f"There is already a cog named {cog.__cog_name__} loaded.")
         if not hasattr(cog, "requires"):
             commands.Cog.__init__(cog)
 
-        for cls in inspect.getmro(cog.__class__):
-            try:
-                hook = getattr(cog, f"_{cls.__name__}__permissions_hook")
-            except AttributeError:
-                pass
-            else:
-                self.add_permissions_hook(hook)
+        added_hooks = []
 
-        for command in cog.__cog_commands__:
+        try:
+            for cls in inspect.getmro(cog.__class__):
+                try:
+                    hook = getattr(cog, f"_{cls.__name__}__permissions_hook")
+                except AttributeError:
+                    pass
+                else:
+                    self.add_permissions_hook(hook)
+                    added_hooks.append(hook)
 
-            if not isinstance(command, commands.Command):
-                raise RuntimeError(
-                    f"The {cog.__class__.__name__} cog in the {cog.__module__} package,"
-                    " is not using Red's command module, and cannot be added. "
-                    "If this is your cog, please use `from redbot.core import commands`"
-                    "in place of `from discord.ext import commands`. For more details on "
-                    "this requirement, see this page: "
-                    "http://red-discordbot.readthedocs.io/en/v3-develop/framework_commands.html"
-                )
-        super().add_cog(cog)
-        self.dispatch("cog_add", cog)
-        for command in cog.__cog_commands__:
-            self.dispatch("command_add", command)
+            super().add_cog(cog)
+            self.dispatch("cog_add", cog)
+            if "permissions" not in self.extensions:
+                cog.requires.ready_event.set()
+        except Exception:
+            for hook in added_hooks:
+                try:
+                    self.remove_permissions_hook(hook)
+                except Exception:
+                    # This shouldn't be possible
+                    log.exception(
+                        "A hook got extremely screwed up, "
+                        "and could not be removed properly during another error in cog load."
+                    )
+            del cog
+            raise
+
+    def add_command(self, command: commands.Command) -> None:
+        if not isinstance(command, commands.Command):
+            raise RuntimeError("Commands must be instances of `redbot.core.commands.Command`")
+
+        super().add_command(command)
+
+        permissions_not_loaded = "permissions" not in self.extensions
+        self.dispatch("command_add", command)
+        if permissions_not_loaded:
+            command.requires.ready_event.set()
+        if isinstance(command, commands.Group):
+            for subcommand in set(command.walk_commands()):
+                self.dispatch("command_add", subcommand)
+                if permissions_not_loaded:
+                    subcommand.requires.ready_event.set()
+
+    def remove_command(self, name: str) -> None:
+        command = super().remove_command(name)
+        if not command:
+            return
+        command.requires.reset()
+        if isinstance(command, commands.Group):
+            for subcommand in set(command.walk_commands()):
+                subcommand.requires.reset()
 
     def clear_permission_rules(self, guild_id: Optional[int]) -> None:
         """Clear all permission overrides in a scope.
