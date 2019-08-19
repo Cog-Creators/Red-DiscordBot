@@ -1,1 +1,0 @@
-Updated linux install docs, adding sections for Fedora Linux and Debian/Raspbian Buster.
