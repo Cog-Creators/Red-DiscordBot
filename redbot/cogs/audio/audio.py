@@ -412,6 +412,12 @@ class Audio(commands.Cog):
                 "red_audio_track_end", player.channel.guild, prev_song, prev_requester
             )
 
+        if event_type == lavalink.LavalinkEvents.QUEUE_END:
+            prev_song = player.fetch("prev_song")
+            prev_requester = player.fetch("prev_requester")
+            self.bot.dispatch(
+                "red_audio_queue_end", player.channel.guild, prev_song, prev_requester
+            )
             if autoplay and not player.queue and player.fetch("playing_song") is not None:
                 if self.owns_autoplay is None:
                     await self.music_cache.autoplay(player)
@@ -423,13 +429,6 @@ class Audio(commands.Cog):
                         player.channel,
                         self.play_query,
                     )
-
-        if event_type == lavalink.LavalinkEvents.QUEUE_END:
-            prev_song = player.fetch("prev_song")
-            prev_requester = player.fetch("prev_requester")
-            self.bot.dispatch(
-                "red_audio_queue_end", player.channel.guild, prev_song, prev_requester
-            )
 
         if event_type == lavalink.LavalinkEvents.TRACK_START and notify:
             notify_channel = player.fetch("channel")
@@ -1637,6 +1636,8 @@ class Audio(commands.Cog):
                 self.bot.dispatch("red_audio_audio_disconnect", ctx.guild)
                 self._play_lock(ctx, False)
                 eq = player.fetch("eq")
+                player.queue = []
+                player.store("playing_song", None)
                 if eq:
                     await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
                 await player.stop()
