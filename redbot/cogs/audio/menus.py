@@ -27,13 +27,13 @@ def _pass_config_to_menus(config: Config, bot: Red):
 
 
 class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡", "ℹ")):
-    def __init__(self, *, player, queue_cms, **kwargs) -> None:
+    def __init__(self, *, player, queue_cms, timeout=None, **kwargs) -> None:
         self._player = player
         self._queue = player.queue or []
         self._queue_cmd = queue_cms
         self._cur_song = 0
         self._queue_length = len(self._queue)
-        super().__init__(pages=[], arrows_always=True, **kwargs)
+        super().__init__(pages=[], arrows_always=True, timeout=timeout, **kwargs)
 
     async def _before_send(self, **kwargs) -> None:
         if not self._pages:
@@ -45,7 +45,7 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
     @PagedMenu.handler("ℹ")
     async def _queue_help(self, payload: Optional[discord.RawReactionActionEvent] = None) -> None:
         await self.ctx.send_help(self._queue_cmd)
-        await self.ctx.message.delete()
+        await self.exit_menu(payload=payload)
 
     @PagedMenu.handler("⬅")
     async def prev_page(self, payload: Optional[discord.RawReactionActionEvent] = None) -> None:
@@ -78,7 +78,7 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
 
         await super().next_page(payload=payload)
 
-    async def _format_page(self) -> str:
+    async def _format_page(self) -> discord.Embed:
         songs = self._queue[self._cur_song : self._cur_song + 10]
 
         shuffle = await _config.guild(self.ctx.guild).shuffle()
