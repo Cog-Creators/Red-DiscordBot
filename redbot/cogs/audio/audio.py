@@ -2050,7 +2050,7 @@ class Audio(commands.Cog):
 
     @local.command(name="search")
     async def local_search(
-        self, ctx: commands.Context, play_subfolders: Optional[bool] = True, *, search_words
+        self, ctx: commands.Context, search_subfolders: Optional[bool] = True, *, search_words
     ):
         """Search for songs across all localtracks folders."""
         if not await self._localtracks_check(ctx):
@@ -2062,7 +2062,7 @@ class Audio(commands.Cog):
                     dataclasses.LocalPath(
                         await self.config.localpath()
                     ).localtrack_folder.absolute(),
-                    search_subfolders=play_subfolders,
+                    search_subfolders=search_subfolders,
                 )
             ),
         )
