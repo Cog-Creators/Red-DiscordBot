@@ -1,0 +1,1 @@
+Menus now use the new class-based menus.

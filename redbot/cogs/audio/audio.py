@@ -22,7 +22,7 @@ import lavalink
 from fuzzywuzzy import process
 
 import redbot.core
-from redbot.cogs.audio.audio_menus import QueueMenu
+from redbot.cogs.audio.config import pass_config_to_dependencies
 from redbot.core import Config, bank, checks, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
@@ -54,6 +54,7 @@ from .playlists import (
     humanize_scope,
 )
 from .utils import *
+from .menus import QueueMenu
 
 
 _ = Translator("Audio", __file__)
@@ -794,7 +795,7 @@ class Audio(commands.Cog):
             discord.Embed(title="Whitelist", description=page, colour=embed_colour)
             for page in pages
         )
-        await menu(ctx, pages, DEFAULT_CONTROLS)
+        await PagedMenu.send_and_wait(ctx, pages=pages)
 
     @_perms_blacklist.command(name="list")
     async def _perms_blacklist_list(self, ctx: commands.Context):
@@ -820,7 +821,7 @@ class Audio(commands.Cog):
             discord.Embed(title="Whitelist", description=page, colour=embed_colour)
             for page in pages
         )
-        await menu(ctx, pages, DEFAULT_CONTROLS)
+        await PagedMenu.send_and_wait(ctx, pages=pages)
 
     @_perms_whitelist.command(name="clear")
     async def _perms_whitelist_clear(self, ctx: commands.Context):
@@ -911,7 +912,6 @@ class Audio(commands.Cog):
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
 
         scope, author, guild = scope_data
-
 
         try:
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
@@ -1582,7 +1582,7 @@ class Audio(commands.Cog):
             pages += 1
             servers_embed.append(em)
 
-        await menu(ctx, servers_embed, DEFAULT_CONTROLS)
+        await PagedMenu.send_and_wait(ctx, pages=servers_embed)
 
     @commands.command()
     @commands.guild_only()
@@ -1762,7 +1762,7 @@ class Audio(commands.Cog):
             page_list.append(embed)
         if len(page_list) == 1:
             return await ctx.send(embed=page_list[0])
-        await menu(ctx, page_list, DEFAULT_CONTROLS)
+        await PagedMenu.send_and_wait(ctx, pages=page_list)
 
     @eq.command(name="load")
     async def _eq_load(self, ctx: commands.Context, eq_preset: str):
@@ -2057,9 +2057,9 @@ class Audio(commands.Cog):
 
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
-            return await menu(ctx, folder_page_list, DEFAULT_CONTROLS)
+            return await menu(ctx, folder_page_list, DEFAULT_CONTROLS)  # TODO: Use Tobys menu
         else:
-            await menu(ctx, folder_page_list, LOCAL_FOLDER_CONTROLS)
+            await menu(ctx, folder_page_list, LOCAL_FOLDER_CONTROLS)  # TODO: Use Tobys menu
 
     @local.command(name="search")
     async def local_search(
@@ -2579,7 +2579,7 @@ class Audio(commands.Cog):
             category_search_page_list.append(embed)
         category_name, category_pick = await menu(
             ctx, category_search_page_list, CATEGORY_SEARCH_CONTROLS
-        )
+        )  # TODO: Use Tobys menu
         playlists_list = await self.music_cache.spotify_api.get_playlist_from_category(
             category_pick
         )
@@ -2596,7 +2596,9 @@ class Audio(commands.Cog):
                 playlist=True,
             )
             playlists_search_page_list.append(embed)
-        playlists_pick = await menu(ctx, playlists_search_page_list, PLAYLIST_SEARCH_CONTROLS)
+        playlists_pick = await menu(
+            ctx, playlists_search_page_list, PLAYLIST_SEARCH_CONTROLS
+        )  # TODO: Use Tobys menu
         query = dataclasses.Query.process_input(playlists_pick)
         if not query.valid:
             return await self._embed_msg(ctx, _("No tracks to play."))
@@ -2772,6 +2774,7 @@ class Audio(commands.Cog):
                         query.is_local
                         and query.track.suffix in dataclasses._partially_supported_music_ext
                     ):
+                        title = _("Track is not playable.")
                         description = _(
                             "**{suffix}** is not a fully supported format and some tracks may not play."
                         ).format(suffix=query.track.suffix)
@@ -2799,6 +2802,7 @@ class Audio(commands.Cog):
                             query.is_local
                             and query.track.suffix in dataclasses._partially_supported_music_ext
                         ):
+                            title = _("Track is not playable.")
                             description = _(
                                 "**{suffix}** is not a fully supported format and some "
                                 "tracks may not play."
@@ -2861,7 +2865,9 @@ class Audio(commands.Cog):
             playlist_data = result.playlist_info
             if not tracks:
                 self._play_lock(ctx, False)
-                embed = discord.Embed(title=_("Nothing found."), colour=await ctx.embed_colour())
+                title = _("Nothing found.")
+                colour = await ctx.embed_colour()
+                embed = discord.Embed(title=title, colour=colour)
                 if await self.config.use_external_lavalink() and query.is_local:
                     embed.description = _(
                         "Local tracks will not work "
@@ -2873,6 +2879,8 @@ class Audio(commands.Cog):
                     query.is_local
                     and query.track.suffix in dataclasses._partially_supported_music_ext
                 ):
+                    title = _("Track is not playable.")
+                    embed = discord.Embed(title=title, colour=colour)
                     embed.description = _(
                         "**{suffix}** is not a fully supported format and some "
                         "tracks may not play."
@@ -3191,7 +3199,9 @@ class Audio(commands.Cog):
             Tuple of Playlist ID or None if none found and original user input.
         """
 
-        correct_options, option_count, original_input = self._filter_playlist_matches(matches, scope, guild, author)
+        correct_options, option_count, original_input = self._filter_playlist_matches(
+            matches, scope, guild, author
+        )
         if option_count == 1:
             return correct_options[0][1], original_input
         elif not option_count:
@@ -3201,7 +3211,7 @@ class Audio(commands.Cog):
             timeout=60,
             pagenum_in_footer=1,
             options=correct_options,
-            title="Playlist Picker"
+            title="Playlist Picker",
         )
         playlist_id = menu_instance.selection
         return playlist_id, original_input
@@ -3959,7 +3969,7 @@ class Audio(commands.Cog):
                 )
             )
             page_list.append(embed)
-        await menu(ctx, page_list, DEFAULT_CONTROLS)
+        await PagedMenu.send_and_wait(ctx, pages=page_list)
 
     @playlist.command(name="list", usage="[args]")
     @commands.bot_has_permissions(add_reactions=True)
@@ -4037,7 +4047,7 @@ class Audio(commands.Cog):
         for page_num in range(1, len_playlist_list_pages + 1):
             embed = await self._build_playlist_list_page(ctx, page_num, abc_names, name)
             playlist_embeds.append(embed)
-        await menu(ctx, playlist_embeds, DEFAULT_CONTROLS)
+        await PagedMenu.send_and_wait(ctx, pages=playlist_embeds)
 
     @staticmethod
     async def _build_playlist_list_page(ctx: commands.Context, page_num, abc_names, scope):
@@ -4572,7 +4582,9 @@ class Audio(commands.Cog):
                             embed.set_footer(text=text)
                             embeds.append(embed)
                             added_text = ""
-                await menu(ctx, embeds, DEFAULT_CONTROLS)
+                await menu(
+                    ctx, embeds, DEFAULT_CONTROLS
+                )  # TODO: Use Tobys menu - With a jump button for Added/Removed
             else:
                 return await self._embed_msg(
                     ctx,
@@ -5011,6 +5023,7 @@ class Audio(commands.Cog):
                     query.is_local
                     and query.track.suffix in dataclasses._partially_supported_music_ext
                 ):
+                    title = _("Track is not playable.")
                     description = _(
                         "**{suffix}** is not a fully supported format and some "
                         "tracks may not play."
@@ -5033,6 +5046,7 @@ class Audio(commands.Cog):
                     query.is_local
                     and query.track.suffix in dataclasses._partially_supported_music_ext
                 ):
+                    title = _("Track is not playable.")
                     description = _(
                         "**{suffix}** is not a fully supported format and some "
                         "tracks may not play."
@@ -5179,15 +5193,9 @@ class Audio(commands.Cog):
                 return await ctx.send(embed=embed)
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
 
-        # async with ctx.typing():
-        #     len_queue_pages = math.ceil(len(player.queue) / 10)
-        #     queue_page_list = []
-        #     for page_num in range(1, len_queue_pages + 1):
-        #         embed = await self._build_queue_page(ctx, player, page_num)
-        #         queue_page_list.append(embed)
-        #     if page > len_queue_pages:
-        #         page = len_queue_pages
-        return await QueueMenu.send_and_wait(ctx, ctx.channel, self.bot, player=player, queue_cms=self.queue)
+        return await QueueMenu.send_and_wait(
+            ctx, ctx.channel, self.bot, player=player, queue_cms=self.queue
+        )
 
     async def _build_queue_page(
         self, ctx: commands.Context, player: lavalink.player_manager.Player, page_num
@@ -5461,7 +5469,7 @@ class Audio(commands.Cog):
         for page_num in range(1, len_search_pages + 1):
             embed = await self._build_queue_search_page(ctx, page_num, search_list)
             search_page_list.append(embed)
-        await menu(ctx, search_page_list, DEFAULT_CONTROLS)
+        await menu(ctx, search_page_list, DEFAULT_CONTROLS)  # TODO: Use Tobys menu
 
     @queue.command(name="shuffle")
     @commands.guild_only()
@@ -5661,8 +5669,9 @@ class Audio(commands.Cog):
                 else:
                     tracks = await self._folder_tracks(ctx, player, query)
                 if not tracks:
+                    colour=await ctx.embed_colour()
                     embed = discord.Embed(
-                        title=_("Nothing found."), colour=await ctx.embed_colour()
+                        title=_("Nothing found."), colour=colour
                     )
                     if await self.config.use_external_lavalink() and query.is_local:
                         embed.description = _(
@@ -5675,6 +5684,9 @@ class Audio(commands.Cog):
                         query.is_local
                         and query.track.suffix in dataclasses._partially_supported_music_ext
                     ):
+                        embed = discord.Embed(
+                            title=_("Track is not playable."), colour=colour
+                        )
                         embed.description = _(
                             "**{suffix}** is not a fully supported format and some "
                             "tracks may not play."
@@ -5742,7 +5754,8 @@ class Audio(commands.Cog):
                 result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
                 tracks = result.tracks
             if not tracks:
-                embed = discord.Embed(title=_("Nothing found."), colour=await ctx.embed_colour())
+                colour = await ctx.embed_colour()
+                embed = discord.Embed(title=_("Nothing found."), colour=colour)
                 if await self.config.use_external_lavalink() and query.is_local:
                     embed.description = _(
                         "Local tracks will not work "
@@ -5754,6 +5767,7 @@ class Audio(commands.Cog):
                     query.is_local
                     and query.track.suffix in dataclasses._partially_supported_music_ext
                 ):
+                    embed = discord.Embed(title=_("Track is not playable."), colour=colour)
                     embed.description = _(
                         "**{suffix}** is not a fully supported format and some "
                         "tracks may not play."
@@ -5771,9 +5785,9 @@ class Audio(commands.Cog):
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
-                return await menu(ctx, search_page_list, DEFAULT_CONTROLS)
+                return await menu(ctx, search_page_list, DEFAULT_CONTROLS)  # TODO: Use Tobys menu
 
-        await menu(ctx, search_page_list, SEARCH_CONTROLS)
+        await menu(ctx, search_page_list, SEARCH_CONTROLS)  # TODO: Use Tobys menu
 
     async def _search_button_action(self, ctx: commands.Context, tracks, emoji, page):
         if not self._player_check(ctx):

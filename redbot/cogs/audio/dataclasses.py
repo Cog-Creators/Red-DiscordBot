@@ -23,7 +23,22 @@ _re_soundcloud_timestamp = re.compile(r"#t=(\d+):(\d+)s?")
 _re_twitch_timestamp = re.compile(r"\?t=(\d+)h(\d+)m(\d+)s")
 
 _fully_supported_music_ext = (".mp3", ".flac", ".ogg")
-_partially_supported_music_ext = (".m3u", ".m4a")
+_partially_supported_music_ext = (
+    ".m3u",
+    ".m4a",
+    ".mp4",
+    ".mid",
+    ".aac",
+    ".mka",
+    ".amr",
+    ".aiff",
+    ".wma",
+    ".ra",
+    ".ac3",
+    ".wav",
+    ".au",
+    ".voc",
+)
 
 
 def _pass_config_to_dataclasses(config: Config, bot: Red, folder: str):

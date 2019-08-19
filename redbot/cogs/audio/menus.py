@@ -1,17 +1,17 @@
-from typing import List, Tuple, Dict, Any, Optional
+from typing import Optional
 import os
 import discord
 import lavalink
 import math
 
-from redbot.cogs.audio import dataclasses
 
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
-from redbot.core.utils import chat_formatting as chatutils
 from redbot.core.utils.chat_formatting import bold
 from redbot.core.utils.menus import PagedMenu
+from . import dataclasses
+from .utils import draw_time, queue_duration
 
 _ = Translator("Audio", __file__)
 _config = None
@@ -24,8 +24,6 @@ def _pass_config_to_menus(config: Config, bot: Red):
         _config = config
     if _bot is None:
         _bot = bot
-
-from redbot.cogs.audio.utils import draw_time, queue_duration
 
 
 class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡", "ℹ")):
@@ -88,6 +86,7 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
         autoplay = await _config.guild(self.ctx.guild).auto_play()
 
         queue_num_pages = math.ceil(self._queue_length / 10)
+        page = math.ceil(self._cur_song / 10) + 1
         queue_list = ""
         arrow = await draw_time(self.ctx)
         pos = lavalink.utils.format_time(self._player.position)
@@ -101,15 +100,19 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
             queue_list += _("**Currently livestreaming:**\n")
 
         elif any(
-                x in self._player.current.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
+            x in self._player.current.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
         ):
             if self._player.current.title != "Unknown title":
                 queue_list += "\n".join(
                     (
                         _("Playing: ")
-                        + "**{current.author} - {current.title}**".format(current=self._player.current),
+                        + "**{current.author} - {current.title}**".format(
+                            current=self._player.current
+                        ),
                         dataclasses.LocalPath(self._player.current.uri).to_string_hidden(),
-                        _("Requested by: **{user}**\n").format(user=self._player.current.requester),
+                        _("Requested by: **{user}**\n").format(
+                            user=self._player.current.requester
+                        ),
                         f"{arrow}`{pos}`/`{dur}`\n\n",
                     )
                 )
@@ -118,13 +121,17 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
                     (
                         _("Playing: ")
                         + dataclasses.LocalPath(self._player.current.uri).to_string_hidden(),
-                        _("Requested by: **{user}**\n").format(user=self._player.current.requester),
+                        _("Requested by: **{user}**\n").format(
+                            user=self._player.current.requester
+                        ),
                         f"{arrow}`{pos}`/`{dur}`\n\n",
                     )
                 )
         else:
             queue_list += _("Playing: ")
-            queue_list += "**[{current.title}]({current.uri})**\n".format(current=self._player.current)
+            queue_list += "**[{current.title}]({current.uri})**\n".format(
+                current=self._player.current
+            )
             queue_list += _("Requested by: **{user}**").format(user=self._player.current.requester)
             queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
 
@@ -166,28 +173,27 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
             "Page {cur_page}/{total_pages} | {num_tracks} "
             "tracks, {num_remaining} remaining  |  \n\n"
         ).format(
-            cur_page=self._cur_page + 1,
+            cur_page=page,
             total_pages=queue_num_pages,
             num_tracks=self._queue_length,
             num_remaining=queue_total_duration,
         )
         text += (
-                _("Auto-Play")
-                + ": "
-                + ("\N{WHITE HEAVY CHECK MARK}" if autoplay else "\N{CROSS MARK}")
+            _("Auto-Play")
+            + ": "
+            + ("\N{WHITE HEAVY CHECK MARK}" if autoplay else "\N{CROSS MARK}")
         )
         text += (
-                (" | " if text else "")
-                + _("Shuffle")
-                + ": "
-                + ("\N{WHITE HEAVY CHECK MARK}" if shuffle else "\N{CROSS MARK}")
+            (" | " if text else "")
+            + _("Shuffle")
+            + ": "
+            + ("\N{WHITE HEAVY CHECK MARK}" if shuffle else "\N{CROSS MARK}")
         )
         text += (
-                (" | " if text else "")
-                + _("Repeat")
-                + ": "
-                + ("\N{WHITE HEAVY CHECK MARK}" if repeat else "\N{CROSS MARK}")
+            (" | " if text else "")
+            + _("Repeat")
+            + ": "
+            + ("\N{WHITE HEAVY CHECK MARK}" if repeat else "\N{CROSS MARK}")
         )
         embed.set_footer(text=text)
         return embed
-

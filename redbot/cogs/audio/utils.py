@@ -11,15 +11,12 @@ import lavalink
 
 from redbot.core.utils import box
 
-from redbot.core import Config, commands
+from redbot.core import commands, Config
 from redbot.core.bot import Red
 from . import dataclasses
-from .converters import _pass_config_to_converters
-from .playlists import _pass_config_to_playlist, humanize_scope
-from .audio_menus import _pass_config_to_menus
+from .playlists import humanize_scope
 
 __all__ = [
-    "pass_config_to_dependencies",
     "track_limit",
     "queue_duration",
     "draw_time",
@@ -47,14 +44,12 @@ _config = None
 _bot = None
 
 
-def pass_config_to_dependencies(config: Config, bot: Red, localtracks_folder: str):
-    global _bot, _config
-    _bot = bot
-    _config = config
-    _pass_config_to_playlist(config, bot)
-    _pass_config_to_converters(config, bot)
-    _pass_config_to_menus(config, bot)
-    dataclasses._pass_config_to_dataclasses(config, bot, localtracks_folder)
+def _pass_config_to_utils(config: Config, bot: Red):
+    global _config, _bot
+    if _config is None:
+        _config = config
+    if _bot is None:
+        _bot = bot
 
 
 def track_limit(track, maxlength):
