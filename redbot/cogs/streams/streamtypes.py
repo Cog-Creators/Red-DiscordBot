@@ -366,26 +366,11 @@ class TwitchStream(Stream):
             status = "Untitled broadcast"
         embed = discord.Embed(title=status, url=url)
         embed.set_author(name=channel["display_name"])
-<<<<<<< HEAD
         embed.add_field(name="Current viewers", value=stream["viewer_count"])
         embed.add_field(name="Total views", value=channel["view_count"])
         embed.set_thumbnail(url=logo)
         embed.set_footer(text="Playing: " + data["game"]["name"])
         embed.color = 0x6441A4
-=======
-        embed.add_field(name=_("Followers"), value=channel["followers"])
-        embed.add_field(name=_("Total views"), value=channel["views"])
-        embed.set_thumbnail(url=logo)
-        if data["stream"]["preview"]["medium"]:
-            embed.set_image(url=rnd(data["stream"]["preview"]["medium"]))
-        if channel["game"]:
-            embed.set_footer(text=_("Playing: ") + channel["game"])
-
-        return embed
-
-    def __repr__(self):
-        return "<{0.__class__.__name__}: {0.name} (ID: {0.id})>".format(self)
->>>>>>> release/V3/develop
 
 
 class HitboxStream(Stream):
