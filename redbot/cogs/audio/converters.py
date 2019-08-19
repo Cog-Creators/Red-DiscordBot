@@ -38,7 +38,7 @@ Author must be a valid version of one of the following:
 _GUILD_HELP = """
 Guild must be a valid version of one of the following:
 ​ ​ ​ ​ Guild ID
-​ ​ ​ ​ Guild name 
+​ ​ ​ ​ Exact guild name 
 """
 
 
@@ -91,10 +91,11 @@ class NoExitParser(argparse.ArgumentParser):
 class ScopeParser(commands.Converter):
     async def convert(
         self, ctx: commands.Context, argument: str
-    ) -> Tuple[str, discord.User, Optional[discord.Guild]]:
+    ) -> Tuple[str, discord.User, Optional[discord.Guild], bool]:
         target_scope: str = PlaylistScope.GUILD.value
         target_user: Optional[Union[discord.Member, discord.User]] = ctx.author
         target_guild: Optional[discord.Guild] = ctx.guild
+        specified_user = False
 
         argument = argument.replace("—", "--")
 
@@ -196,26 +197,37 @@ class ScopeParser(commands.Converter):
                     target_user = None
             if target_user is None:
                 raise commands.ArgParserFailure("--author", user_raw, custom_help=_USER_HELP)
+            else:
+                specified_user = True
         elif any(x in argument for x in ["--author", "--user", "--member"]):
             raise commands.ArgParserFailure("--scope", "Nothing", custom_help=_USER_HELP)
 
-        return target_scope, target_user, target_guild
+        return target_scope, target_user, target_guild, specified_user
 
 
 class ComplexScopeParser(commands.Converter):
     async def convert(
         self, ctx: commands.Context, argument: str
     ) -> Tuple[
-        str, discord.User, Optional[discord.Guild], str, discord.User, Optional[discord.Guild]
+        str,
+        discord.User,
+        Optional[discord.Guild],
+        bool,
+        str,
+        discord.User,
+        Optional[discord.Guild],
+        bool,
     ]:
 
         target_scope: str = PlaylistScope.GUILD.value
         target_user: Optional[Union[discord.Member, discord.User]] = ctx.author
         target_guild: Optional[discord.Guild] = ctx.guild
+        specified_target_user = False
 
         source_scope: str = PlaylistScope.GUILD.value
         source_user: Optional[Union[discord.Member, discord.User]] = ctx.author
         source_guild: Optional[discord.Guild] = ctx.guild
+        specified_source_user = False
 
         argument = argument.replace("—", "--")
 
@@ -377,6 +389,8 @@ class ComplexScopeParser(commands.Converter):
                     target_user = None
             if target_user is None:
                 raise commands.ArgParserFailure("--to-author", to_user_raw, custom_help=_USER_HELP)
+            else:
+                specified_target_user = True
         elif any(x in argument for x in ["--to-author", "--to-user", "--to-member"]):
             raise commands.ArgParserFailure("--to-user", "Nothing", custom_help=_USER_HELP)
 
@@ -414,10 +428,21 @@ class ComplexScopeParser(commands.Converter):
                 raise commands.ArgParserFailure(
                     "--from-author", from_user_raw, custom_help=_USER_HELP
                 )
+            else:
+                specified_source_user = True
         elif any(x in argument for x in ["--from-author", "--from-user", "--from-member"]):
             raise commands.ArgParserFailure("--from-user", "Nothing", custom_help=_USER_HELP)
 
-        return source_scope, source_user, source_guild, target_scope, target_user, target_guild
+        return (
+            source_scope,
+            source_user,
+            source_guild,
+            specified_source_user,
+            target_scope,
+            target_user,
+            target_guild,
+            specified_target_user,
+        )
 
 
 class LazyGreedyConverter(commands.Converter):

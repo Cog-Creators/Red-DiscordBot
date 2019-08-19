@@ -1046,7 +1046,7 @@ class MusicCache:
                     autoplaylist["scope"],
                     self.bot,
                     player.channel.guild,
-                    player.channel.guild.me.id,
+                    player.channel.guild.me,
                 )
                 tracks = playlist.tracks_obj
             except Exception:
