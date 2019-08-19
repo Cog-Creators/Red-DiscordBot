@@ -63,7 +63,11 @@ Installing Red
   .. note::
 
       If you're not inside an activated virtual environment, include the ``--user`` flag with all
-      ``pip`` commands.
+      ``python -m pip install`` commands, like this:
+
+      .. code-block:: none
+
+          python -m pip install --user -U Red-DiscordBot
 
   * No MongoDB support:
 
