@@ -350,12 +350,12 @@ class Warnings(commands.Cog):
         await warning_points_add_check(self.config, ctx, user, current_point_count)
         dm = await self.config.guild(ctx.guild).toggle_dm()
         if dm:
+            em = discord.Embed(
+                title=_("Warning from {user}").format(user=ctx.author),
+                description=reason_type["description"],
+            )
+            em.add_field(name=_("Points"), value=str(reason_type["points"]))
             with contextlib.suppress(discord.HTTPException):
-                em = discord.Embed(
-                    title=_("Warning from {user}").format(user=ctx.author),
-                    description=reason_type["description"],
-                )
-                em.add_field(name=_("Points"), value=str(reason_type["points"]))
                 await user.send(
                     _("You have received a warning in {guild_name}.").format(
                         guild_name=ctx.guild.name
