@@ -149,7 +149,7 @@ class Image(commands.Cog):
             "7. Enter a valid email address and a description.\n"
             "8. Check the captcha box and click next.\n"
             "9. Your Client ID will be on the next page.\n"
-            "10. Run the command `{prefix}set api imgur client_id,<your_client_id_here>`.\n"
+            "10. Run the command `{prefix}set api imgur client_id <your_client_id_here>`.\n"
         ).format(prefix=ctx.prefix)
 
         await ctx.maybe_send_embed(message)
@@ -223,17 +223,17 @@ class Image(commands.Cog):
     @checks.is_owner()
     @commands.command()
     async def giphycreds(self, ctx):
-        """Explain how to set Giphy API tokens"""
+        """Explain how to set Giphy API tokens."""
 
         message = _(
             "To get a Giphy API Key:\n"
             "1. Login to a Giphy account.\n"
-            "2. Visit [this](https://developers.giphy.com/dashboard) page\n"
-            "3. Press `Create an App`\n"
-            "4. Write an app name, example: `Red Bot`\n"
-            "5. Write an app description, example: `Used for Red Bot`\n"
+            "2. Visit this page https://developers.giphy.com/dashboard.\n"
+            "3. Press *Create an App*.\n"
+            "4. Write an app name, example: *Red Bot*.\n"
+            "5. Write an app description, example: *Used for Red Bot*.\n"
             "6. Copy the API key shown.\n"
-            "7. Do `{prefix}set api GIPHY api_key,your_api_key`\n"
+            "7. Run the command `{prefix}set api GIPHY api_key <your_api_key_here>`.\n"
         ).format(prefix=ctx.prefix)
 
         await ctx.maybe_send_embed(message)
