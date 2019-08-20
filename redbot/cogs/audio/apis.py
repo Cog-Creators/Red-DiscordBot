@@ -23,7 +23,7 @@ from redbot.core.i18n import Translator, cog_i18n
 from . import dataclasses
 from .errors import InvalidTableError, SpotifyFetchError, YouTubeApiError
 from .playlists import get_playlist
-from .utils import CacheLevel, Notifier, queue_duration, track_limit, is_allowed
+from .utils import CacheLevel, Notifier, is_allowed, queue_duration, track_limit
 
 log = logging.getLogger("red.audio.cache")
 _ = Translator("Audio", __file__)

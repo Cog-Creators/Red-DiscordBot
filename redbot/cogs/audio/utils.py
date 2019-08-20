@@ -9,9 +9,9 @@ from urllib.parse import urlparse
 import discord
 import lavalink
 
-from redbot.core.utils import box
 from redbot.core import Config, commands
 from redbot.core.bot import Red
+from redbot.core.utils import box
 from . import dataclasses
 from .playlists import humanize_scope
 

@@ -392,7 +392,6 @@ async def delete_playlist(
     scope: str,
     playlist_id: Union[str, int],
     guild: discord.Guild,
-    int=None,
     author: Union[discord.abc.User, int] = None,
 ) -> None:
     """

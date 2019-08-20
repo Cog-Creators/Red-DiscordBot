@@ -122,6 +122,10 @@ class LocalPath(ChdirClean):
     def name(self):
         return str(self.path.name)
 
+    @property
+    def suffix(self):
+        return str(self.path.suffix)
+
     def is_dir(self):
         try:
             return self.path.is_dir()
@@ -494,3 +498,9 @@ class Query:
         if self.is_local:
             return str(self.track.to_string_hidden())
         return str(self._raw)
+
+    @property
+    def suffix(self):
+        if self.is_local:
+            return self.track.suffix
+        return None

@@ -1,9 +1,10 @@
-from typing import Optional
+# -*- coding: utf-8 -*-
 import os
+from typing import Optional
+
 import discord
 import lavalink
 import math
-
 
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -26,13 +27,16 @@ def _pass_config_to_menus(config: Config, bot: Red):
         _bot = bot
 
 
-class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡", "ℹ")):
-    def __init__(self, *, player, queue_cms, timeout=None, **kwargs) -> None:
+class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡", "🔀", "🔃", "ℹ")):
+    def __init__(self, *, player, audio_cog, timeout=None, first_page=0, **kwargs) -> None:
         self._player = player
         self._queue = player.queue or []
-        self._queue_cmd = queue_cms
-        self._cur_song = 0
+        self._audio_cog = audio_cog
+        self._queue_cmd = self._audio_cog.queue
         self._queue_length = len(self._queue)
+        self._cur_song = 10 * max(first_page - 1, 0)
+        if self._cur_song > self._queue_length:
+            self._cur_song = 0
         super().__init__(pages=[], arrows_always=True, timeout=timeout, **kwargs)
 
     async def _before_send(self, **kwargs) -> None:
@@ -47,8 +51,34 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
         await self.ctx.send_help(self._queue_cmd)
         await self.exit_menu(payload=payload)
 
+    @PagedMenu.handler("🔃")
+    async def _queue_refresh(
+        self, payload: Optional[discord.RawReactionActionEvent] = None
+    ) -> None:
+        self._player = lavalink.get_player(self.ctx.guild.id)
+        self._queue = self._player.queue or []
+        self._queue_length = len(self._queue)
+        self._cur_page = 0
+        self._pages = [await self._format_page()]
+        await super()._update_message()
+
+    @PagedMenu.handler("🔀")
+    async def _queue_shuffle(
+        self, payload: Optional[discord.RawReactionActionEvent] = None
+    ) -> None:
+        await self.ctx.invoke(self._audio_cog._queue_shuffle)
+        self._player = lavalink.get_player(self.ctx.guild.id)
+        self._queue = self._player.queue or []
+        self._queue_length = len(self._queue)
+        self._cur_page = 0
+        self._pages = [await self._format_page()]
+        await super()._update_message()
+
     @PagedMenu.handler("⬅")
     async def prev_page(self, payload: Optional[discord.RawReactionActionEvent] = None) -> None:
+        self._player = lavalink.get_player(self.ctx.guild.id)
+        self._queue = self._player.queue or []
+        self._queue_length = len(self._queue)
         if self._queue_length < 10:
             return
         if self._cur_song == 0:
@@ -66,6 +96,9 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
 
     @PagedMenu.handler("➡")
     async def next_page(self, payload: Optional[discord.RawReactionActionEvent] = None) -> None:
+        self._player = lavalink.get_player(self.ctx.guild.id)
+        self._queue = self._player.queue or []
+        self._queue_length = len(self._queue)
         if self._queue_length < 10:
             return
         if self._cur_song > self._queue_length - 10:
@@ -98,6 +131,11 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
 
         if self._player.current.is_stream:
             queue_list += _("**Currently livestreaming:**\n")
+            queue_list += "**[{current.title}]({current.uri})**\n".format(
+                current=self._player.current
+            )
+            queue_list += _("Requested by: **{user}**").format(user=self._player.current.requester)
+            queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
 
         elif any(
             x in self._player.current.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
