@@ -1,6 +1,7 @@
 from collections import namedtuple
 from typing import Union, Optional
 
+import contextlib
 import discord
 
 from redbot.cogs.warnings.helpers import (
@@ -347,9 +348,9 @@ class Warnings(commands.Cog):
         await member_settings.total_points.set(current_point_count)
 
         await warning_points_add_check(self.config, ctx, user, current_point_count)
-        try:
-            dm = await self.config.guild(ctx.guild).toggle_dm()
-            if dm:
+        dm = await self.config.guild(ctx.guild).toggle_dm()
+        if dm:
+            with contextlib.suppress(discord.HTTPException):
                 em = discord.Embed(
                     title=_("Warning from {user}").format(user=ctx.author),
                     description=reason_type["description"],
@@ -361,8 +362,6 @@ class Warnings(commands.Cog):
                     ),
                     embed=em,
                 )
-        except discord.HTTPException:
-            pass
 
         toggle_channel = await self.config.guild(guild).toggle_channel()
         if toggle_channel:
