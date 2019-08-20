@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+import contextlib
 import os
+from datetime import timezone, datetime, timedelta
 from typing import Optional
 
 import discord
@@ -29,6 +31,11 @@ def _pass_config_to_menus(config: Config, bot: Red):
 
 class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡", "🔀", "🔃", "ℹ")):
     def __init__(self, *, player, audio_cog, timeout=None, first_page=0, **kwargs) -> None:
+        now = datetime.now(tz=timezone.utc) - timedelta(seconds=60)
+        self._shuffle_timer = now
+        self._refresh_timer = now
+        self._refresh_msg = None
+        self._shuffle_msg = None
         self._player = player
         self._queue = player.queue or []
         self._audio_cog = audio_cog
@@ -44,7 +51,7 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
             self._pages = [await self._format_page()]
         if self._queue_length < 10:
             # Only one page, no need for arrows
-            self._initial_emojis = ("❌", "ℹ")
+            self._initial_emojis = ("❌", "🔀", "🔃", "ℹ")
 
     @PagedMenu.handler("ℹ")
     async def _queue_help(self, payload: Optional[discord.RawReactionActionEvent] = None) -> None:
@@ -55,23 +62,47 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
     async def _queue_refresh(
         self, payload: Optional[discord.RawReactionActionEvent] = None
     ) -> None:
+        now = datetime.now(tz=timezone.utc)
+        if self._refresh_timer + timedelta(seconds=5) > now:
+            if self._refresh_msg is None:
+                self._refresh_msg = await self.ctx.maybe_send_embed(
+                    _("There's a 5 second cooldown on this queue refresh.")
+                )
+            return
         self._player = lavalink.get_player(self.ctx.guild.id)
         self._queue = self._player.queue or []
         self._queue_length = len(self._queue)
         self._cur_page = 0
         self._pages = [await self._format_page()]
+        self._refresh_timer = now
+        if self._refresh_msg is not None:
+            with contextlib.suppress(discord.HTTPException):
+                await self._refresh_msg.delete()
+            self._refresh_msg = None
         await super()._update_message()
 
     @PagedMenu.handler("🔀")
     async def _queue_shuffle(
         self, payload: Optional[discord.RawReactionActionEvent] = None
     ) -> None:
+        now = datetime.now(tz=timezone.utc)
+        if self._shuffle_timer + timedelta(seconds=30) > now:
+            if self._shuffle_msg is None:
+                self._shuffle_msg = await self.ctx.maybe_send_embed(
+                    _("There's a 30 second cooldown on queue shuffle.")
+                )
+            return
         await self.ctx.invoke(self._audio_cog._queue_shuffle)
         self._player = lavalink.get_player(self.ctx.guild.id)
         self._queue = self._player.queue or []
         self._queue_length = len(self._queue)
         self._cur_page = 0
         self._pages = [await self._format_page()]
+        self._shuffle_timer = now
+        if self._shuffle_msg is not None:
+            with contextlib.suppress(discord.HTTPException):
+                await self._shuffle_msg.delete()
+            self._shuffle_msg = None
         await super()._update_message()
 
     @PagedMenu.handler("⬅")

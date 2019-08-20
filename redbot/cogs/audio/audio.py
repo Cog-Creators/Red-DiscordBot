@@ -5421,6 +5421,7 @@ class Audio(commands.Cog):
 
     @queue.command(name="shuffle")
     @commands.guild_only()
+    @commands.cooldown(1, 30, commands.BucketType.guild)
     async def _queue_shuffle(self, ctx: commands.Context):
         """Shuffles the queue."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
