@@ -1,6 +1,6 @@
 import asyncio
 import contextlib
-from typing import Iterable, List, Union
+from typing import Iterable, List, Union, Optional
 import discord
 from discord.ext import commands
 
@@ -70,37 +70,19 @@ class Context(commands.Context):
         command = command or self.command
         await self.bot.send_help_for(self, command)
 
-    async def tick(self) -> bool:
-        """Add a tick reaction to the command message.
+    async def tick(self) -> Optional[discord.Message]:
+        """Sends a check mark as a message. This is usually used to indicate success.
 
         Returns
         -------
-        bool
-            :code:`True` if adding the reaction succeeded.
+        discord.Message:
+            The message which was sent if sent.   
 
         """
         try:
-            await self.message.add_reaction(TICK)
+            return await self.send(TICK)
         except discord.HTTPException:
-            return False
-        else:
-            return True
-
-    async def react_quietly(
-        self, reaction: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]
-    ) -> bool:
-        """Adds a reaction to to the command message.
-        Returns
-        -------
-        bool
-            :code:`True` if adding the reaction succeeded.
-        """
-        try:
-            await self.message.add_reaction(reaction)
-        except discord.HTTPException:
-            return False
-        else:
-            return True
+            return None
 
     async def send_interactive(
         self, messages: Iterable[str], box_lang: str = None, timeout: int = 15
