@@ -76,6 +76,7 @@ class Audio(commands.Cog):
         self.skip_votes = {}
         self.play_lock = {}
         self._dj_status_cache = {}
+        self._dj_role_cache = {}
         self.session = aiohttp.ClientSession()
         self._connect_task = None
         self._disconnect_task = None
@@ -174,11 +175,13 @@ class Audio(commands.Cog):
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         if dj_enabled:
-            dj_role_obj = ctx.guild.get_role(await self.config.guild(ctx.guild).dj_role())
+            dj_role = self._dj_role_cache.setdefault(ctx.guild.id, await self.config.guild(ctx.guild).dj_role())
+            dj_role_obj = ctx.guild.get_role(dj_role)
             if not dj_role_obj:
                 await self.config.guild(ctx.guild).dj_enabled.set(None)
                 self._dj_status_cache[ctx.guild.id] = None
                 await self.config.guild(ctx.guild).dj_role.set(None)
+                self._dj_role_cache[ctx.guild.id] = None
                 await self._embed_msg(ctx, _("No DJ role found. Disabling DJ mode."))
 
     async def initialize(self):
@@ -951,7 +954,8 @@ class Audio(commands.Cog):
 
         DJ mode allows users with the DJ role to use audio commands.
         """
-        dj_role = ctx.guild.get_role(await self.config.guild(ctx.guild).dj_role())
+        dj_role = self._dj_role_cache.setdefault(ctx.guild.id, await self.config.guild(ctx.guild).dj_role())
+        dj_role = ctx.guild.get_role(dj_role)
         if dj_role is None:
             await self._embed_msg(
                 ctx, _("Please set a role to use with DJ mode. Enter the role name or ID now.")
@@ -1171,7 +1175,9 @@ class Audio(commands.Cog):
     async def role(self, ctx: commands.Context, role_name: discord.Role):
         """Set the role to use for DJ mode."""
         await self.config.guild(ctx.guild).dj_role.set(role_name.id)
-        dj_role_obj = ctx.guild.get_role(await self.config.guild(ctx.guild).dj_role())
+        self._dj_role_cache[ctx.guild.id] = role_name.id
+        dj_role = self._dj_role_cache.setdefault(ctx.guild.id, await self.config.guild(ctx.guild).dj_role())
+        dj_role_obj = ctx.guild.get_role(dj_role)
         await self._embed_msg(ctx, _("DJ role set to: {role.name}.").format(role=dj_role_obj))
 
     @audioset.command()
@@ -6177,7 +6183,8 @@ class Audio(commands.Cog):
         return nonbots <= 1
 
     async def _has_dj_role(self, ctx: commands.Context, member: discord.Member):
-        dj_role_obj = ctx.guild.get_role(await self.config.guild(ctx.guild).dj_role())
+        dj_role = self._dj_role_cache.setdefault(ctx.guild.id, await self.config.guild(ctx.guild).dj_role())
+        dj_role_obj = ctx.guild.get_role(dj_role)
         if dj_role_obj in ctx.guild.get_member(member.id).roles:
             return True
         else:

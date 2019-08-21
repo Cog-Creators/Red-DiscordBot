@@ -1,1 +1,1 @@
-DJ_ENABLED setting is now stored on memory after first fetch, to reduce duplicated calls.
+DJ_ENABLED and DJ_ROLE settings are now stored on memory after first fetch, to reduce duplicated calls.
