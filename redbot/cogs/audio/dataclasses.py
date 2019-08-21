@@ -71,10 +71,18 @@ class LocalPath(ChdirClean):
             path = str(path)
 
         self.cwd = Path.cwd()
-        if any(x in _localtrack_folder for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]):
-            self.localtrack_folder = Path(_localtrack_folder) if _localtrack_folder else self.cwd
+        _lt_folder = Path(_localtrack_folder) if _localtrack_folder else self.cwd
+        _path = Path(path) if path else self.cwd
+
+        if _lt_folder.parts[-1].lower() == "localtracks" and not kwargs.get("forced"):
+            self.localtrack_folder = _lt_folder
+        elif kwargs.get("forced"):
+            if _path.parts[-1].lower() == "localtracks":
+                self.localtrack_folder = _path
+            else:
+                self.localtrack_folder = _path / "localtracks"
         else:
-            self.localtrack_folder = Path(_localtrack_folder) / "localtracks"
+            self.localtrack_folder = _lt_folder / "localtracks"
 
         try:
             _path = Path(path)

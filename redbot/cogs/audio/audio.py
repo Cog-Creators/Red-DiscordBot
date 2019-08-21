@@ -1091,27 +1091,28 @@ class Audio(commands.Cog):
             except discord.errors.Forbidden:
                 pass
             return
-
-        try:
-            if os.getcwd() != local_path:
-                os.chdir(local_path)
-            os.listdir(local_path)
-        except OSError:
+        temp = dataclasses.LocalPath(local_path, forced=True)
+        if not temp.exists() or not temp.is_dir():
             return await self._embed_msg(
                 ctx,
                 _("{local_path} does not seem like a valid path.").format(local_path=local_path),
             )
 
-        temp = dataclasses.LocalPath(local_path)
         if not temp.localtrack_folder.exists():
             warn_msg = _(
-                "The path that was entered does not have localtracks folder in "
-                "that location. The path will still be saved, but please check the path and "
-                "create a localtracks in that location before attempting "
-                "to play local tracks or start your Lavalink.jar."
+                "`{localtracks}` does not exist. "
+                "The path will still be saved, but please check the path and "
+                "create a localtracks folder in `{localfolder}` before attempting "
+                "to play local tracks."
+            ).format(localfolder=temp.absolute(), localtracks=temp.localtrack_folder.absolute())
+            await ctx.send(
+                embed=discord.Embed(
+                    title=_("Incorrect environment."),
+                    description=warn_msg,
+                    colour=await ctx.embed_colour(),
+                )
             )
-            await self._embed_msg(ctx, warn_msg)
-
+        local_path = str(temp.localtrack_folder.absolute())
         await self.config.localpath.set(local_path)
         pass_config_to_dependencies(self.config, self.bot, local_path)
         await self._embed_msg(
