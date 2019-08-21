@@ -176,7 +176,9 @@ class Audio(commands.Cog):
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         if dj_enabled:
-            dj_role = self._dj_role_cache.setdefault(ctx.guild.id, await self.config.guild(ctx.guild).dj_role())
+            dj_role = self._dj_role_cache.setdefault(
+                ctx.guild.id, await self.config.guild(ctx.guild).dj_role()
+            )
             dj_role_obj = ctx.guild.get_role(dj_role)
             if not dj_role_obj:
                 await self.config.guild(ctx.guild).dj_enabled.set(None)
@@ -955,7 +957,9 @@ class Audio(commands.Cog):
 
         DJ mode allows users with the DJ role to use audio commands.
         """
-        dj_role = self._dj_role_cache.setdefault(ctx.guild.id, await self.config.guild(ctx.guild).dj_role())
+        dj_role = self._dj_role_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_role()
+        )
         dj_role = ctx.guild.get_role(dj_role)
         if dj_role is None:
             await self._embed_msg(
@@ -1177,7 +1181,9 @@ class Audio(commands.Cog):
         """Set the role to use for DJ mode."""
         await self.config.guild(ctx.guild).dj_role.set(role_name.id)
         self._dj_role_cache[ctx.guild.id] = role_name.id
-        dj_role = self._dj_role_cache.setdefault(ctx.guild.id, await self.config.guild(ctx.guild).dj_role())
+        dj_role = self._dj_role_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_role()
+        )
         dj_role_obj = ctx.guild.get_role(dj_role)
         await self._embed_msg(ctx, _("DJ role set to: {role.name}.").format(role=dj_role_obj))
 
@@ -4787,7 +4793,9 @@ class Audio(commands.Cog):
         except RuntimeError:
             return await self._embed_msg(
                 ctx,
-                _("Playlist does not exist in {scope} scope.").format(scope=humanize_scope(scope, the=True)),
+                _("Playlist does not exist in {scope} scope.").format(
+                    scope=humanize_scope(scope, the=True)
+                ),
             )
         except MissingGuild:
             return await self._embed_msg(
@@ -6035,7 +6043,7 @@ class Audio(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def shuffle(self, ctx: commands.Context, *, shuffle_bumped:Optional[bool]=True):
+    async def shuffle(self, ctx: commands.Context, *, shuffle_bumped: Optional[bool] = True):
         """Toggle shuffle.
 
         shuffle_bumped defaults to True,
@@ -6207,7 +6215,9 @@ class Audio(commands.Cog):
         return nonbots <= 1
 
     async def _has_dj_role(self, ctx: commands.Context, member: discord.Member):
-        dj_role = self._dj_role_cache.setdefault(ctx.guild.id, await self.config.guild(ctx.guild).dj_role())
+        dj_role = self._dj_role_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_role()
+        )
         dj_role_obj = ctx.guild.get_role(dj_role)
         if dj_role_obj in ctx.guild.get_member(member.id).roles:
             return True
