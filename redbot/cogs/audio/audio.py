@@ -1410,7 +1410,7 @@ class Audio(commands.Cog):
     async def _storage(self, ctx: commands.Context, *, level: int = None):
         """Sets the caching level.
 
-        Level can one of the following:
+        Level can be one of the following:
 
         0: Disables all caching
         1: Enables Spotify Cache
@@ -1418,7 +1418,7 @@ class Audio(commands.Cog):
         3: Enables Lavalink Cache
         5: Enables all Caches
 
-        If you wish to disable a specific cache use negative number.
+        If you wish to disable a specific cache use a negative number.
 
         """
         current_level = CacheLevel(await self.config.cache_level())
@@ -1517,7 +1517,7 @@ class Audio(commands.Cog):
             age = 7
         msg += _("I've set the cache age to {age} days").format(age=age)
         await self.config.cache_age.set(age)
-        await ctx.maybe_send_embed(msg)
+        await self._embed_msg(ctx, msg)
 
     @commands.command()
     @commands.guild_only()
@@ -3069,7 +3069,7 @@ class Audio(commands.Cog):
             if not guild_data["shuffle"] and queue_dur > 0:
                 embed.set_footer(
                     text=_("{time} until track playback: #{position} in queue").format(
-                        time=queue_total_duration, position=1
+                        time=queue_total_duration, position=before_queue_length + 1
                     )
                 )
 
@@ -3173,7 +3173,7 @@ class Audio(commands.Cog):
             else:
                 msg = _(
                     "You do not have the permissions to manage "
-                    "playlists in the {scope} scope.".format(scope=humanize_scope(scope))
+                    "playlists in {scope} scope.".format(scope=humanize_scope(scope, the=True))
                 )
 
             await self._embed_msg(ctx, msg)
@@ -3362,12 +3362,12 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ [p]playlist append MyGlobalPlaylist Hello by Adele --scope Global --Author Draper#6666
         """
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild]
+            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
         if not await self._playlist_check(ctx):
             return
         playlist, playlist_arg = await self._get_correct_playlist_id(
-            ctx, playlist_matches, scope, author, guild
+            ctx, playlist_matches, scope, author, guild, specified_user
         )
         if playlist is False:
             return
@@ -3499,7 +3499,7 @@ class Audio(commands.Cog):
         )
 
         from_playlist, playlist_arg = await self._get_correct_playlist_id(
-            ctx, playlist_matches, from_scope, from_author, from_guild
+            ctx, playlist_matches, from_scope, from_author, from_guild, specified_from_user
         )
         if from_playlist is False:
             return
@@ -3521,14 +3521,14 @@ class Audio(commands.Cog):
             to_guild,
         )
         if to_scope == PlaylistScope.GLOBAL.value:
-            to_scope_name = ctx.guild.me
+            to_scope_name = "the Global"
         elif to_scope == PlaylistScope.USER.value:
             to_scope_name = to_author
         else:
             to_scope_name = to_guild
 
         if from_scope == PlaylistScope.GLOBAL.value:
-            from_scope_name = ctx.guild.me
+            from_scope_name = "the Global"
         elif from_scope == PlaylistScope.USER.value:
             from_scope_name = from_author
         else:
@@ -3541,8 +3541,8 @@ class Audio(commands.Cog):
             ).format(
                 name=from_playlist.name,
                 from_id=from_playlist.id,
-                from_scope=humanize_scope(from_scope, ctx=from_scope_name),
-                to_scope=humanize_scope(to_scope, ctx=to_scope_name),
+                from_scope=humanize_scope(from_scope, ctx=from_scope_name, the=True),
+                to_scope=humanize_scope(to_scope, ctx=to_scope_name, the=True),
                 to_id=to_playlist.id,
             ),
         )
@@ -3651,7 +3651,7 @@ class Audio(commands.Cog):
         scope, author, guild, specified_user = scope_data
 
         playlist, playlist_arg = await self._get_correct_playlist_id(
-            ctx, playlist_matches, scope, author, guild
+            ctx, playlist_matches, scope, author, guild, specified_user
         )
         if playlist is False:
             return
@@ -3720,7 +3720,7 @@ class Audio(commands.Cog):
         )
 
         playlist, playlist_arg = await self._get_correct_playlist_id(
-            ctx, playlist_matches, scope, author, guild
+            ctx, playlist_matches, scope, author, guild, specified_user
         )
 
         if playlist is False:
@@ -3831,7 +3831,7 @@ class Audio(commands.Cog):
         scope, author, guild, specified_user = scope_data
 
         playlist, playlist_arg = await self._get_correct_playlist_id(
-            ctx, playlist_matches, scope, author, guild
+            ctx, playlist_matches, scope, author, guild, specified_user
         )
 
         if playlist is False:
@@ -3929,7 +3929,7 @@ class Audio(commands.Cog):
         )
 
         playlist, playlist_arg = await self._get_correct_playlist_id(
-            ctx, playlist_matches, scope, author, guild
+            ctx, playlist_matches, scope, author, guild, specified_user
         )
 
         if playlist is False:
@@ -4045,7 +4045,14 @@ class Audio(commands.Cog):
         else:
             name = "the global scope"
 
-        if not playlists:
+        if not playlists and specified_user:
+            return await self._embed_msg(
+                ctx,
+                _("No saved playlists for {scope} created by {author}.").format(
+                    scope=name, author=author
+                ),
+            )
+        elif not playlists:
             return await self._embed_msg(
                 ctx, _("No saved playlists for {scope}.").format(scope=name)
             )
@@ -4219,7 +4226,7 @@ class Audio(commands.Cog):
         )
 
         playlist, playlist_arg = await self._get_correct_playlist_id(
-            ctx, playlist_matches, scope, author, guild
+            ctx, playlist_matches, scope, author, guild, specified_user
         )
 
         if playlist is False:
@@ -4386,7 +4393,7 @@ class Audio(commands.Cog):
                 return False
 
         playlist, playlist_arg = await self._get_correct_playlist_id(
-            ctx, playlist_matches, scope, author, guild
+            ctx, playlist_matches, scope, author, guild, specified_user
         )
 
         if playlist is False:
@@ -4511,7 +4518,7 @@ class Audio(commands.Cog):
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
         playlist, playlist_arg = await self._get_correct_playlist_id(
-            ctx, playlist_matches, scope, author, guild
+            ctx, playlist_matches, scope, author, guild, specified_user
         )
 
         if playlist is False:
@@ -4775,12 +4782,12 @@ class Audio(commands.Cog):
 
         try:
             playlist, playlist_arg = await self._get_correct_playlist_id(
-                ctx, playlist_matches, scope, author, guild
+                ctx, playlist_matches, scope, author, guild, specified_user
             )
         except RuntimeError:
             return await self._embed_msg(
                 ctx,
-                _("Playlist does not exist in {scope} scope.").format(scope=humanize_scope(scope)),
+                _("Playlist does not exist in {scope} scope.").format(scope=humanize_scope(scope, the=True)),
             )
         except MissingGuild:
             return await self._embed_msg(
@@ -4796,13 +4803,16 @@ class Audio(commands.Cog):
 
         if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
             return
+        scope_name = humanize_scope(
+            scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
+        )
         old_name = playlist.name
         update = {"name": new_name}
         await playlist.edit(update)
-        msg = _("'{old}' playlist has been renamed to '{new}' (`{id}`)").format(
-            old=bold(old_name), new=bold(playlist.name), id=playlist.id
+        msg = _("'{old}' playlist has been renamed to '{new}' (`{id}`) [**{scope}**]").format(
+            old=bold(old_name), new=bold(playlist.name), id=playlist.id, scope=scope_name
         )
-        await ctx.maybe_send_embed(msg)
+        await self._embed_msg(ctx, msg)
 
     async def _load_v3_playlist(
         self,
@@ -4831,9 +4841,12 @@ class Audio(commands.Cog):
         playlist = await create_playlist(
             ctx, scope, uploaded_playlist_name, uploaded_playlist_url, track_list, author, guild
         )
+        scope_name = humanize_scope(
+            scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
+        )
         if not track_count:
-            msg = _("Empty playlist {name} (`{id}`) created.").format(
-                name=playlist.name, id=playlist.id
+            msg = _("Empty playlist {name} (`{id}`) [**{scope}**] created.").format(
+                name=playlist.name, id=playlist.id, scope=scope_name
             )
         elif uploaded_track_count != track_count:
             bad_tracks = uploaded_track_count - track_count
@@ -4913,9 +4926,12 @@ class Audio(commands.Cog):
         playlist = await create_playlist(
             ctx, scope, uploaded_playlist_name, playlist_url, track_list, author, guild
         )
+        scope_name = humanize_scope(
+            scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
+        )
         if not successfull_count:
-            msg = _("Empty playlist {name} (`{id}`) created.").format(
-                name=playlist.name, id=playlist.id
+            msg = _("Empty playlist {name} (`{id}`) [**{scope}**] created.").format(
+                name=playlist.name, id=playlist.id, scope=scope_name
             )
         elif uploaded_track_count != successfull_count:
             bad_tracks = uploaded_track_count - successfull_count
