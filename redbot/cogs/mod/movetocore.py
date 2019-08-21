@@ -25,7 +25,7 @@ class MoveToCore(MixinMeta):
     async def on_command_error(self, ctx: commands.Context, error: Exception):
         # Every message which isn't a command but which
         # starts with a bot prefix is dispatched as a command error
-        if not isinstance(error, commands.CommandNotFound): 
+        if not isinstance(error, commands.CommandNotFound):
             await self._delete_delay(ctx)
 
     async def _delete_delay(self, ctx: commands.Context):
