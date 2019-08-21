@@ -3245,7 +3245,7 @@ class Audio(commands.Cog):
             menu_instance = await PagedOptionsMenu.send_and_wait(
                 context,
                 timeout=60,
-                pagenum_in_footer=1,
+                pagenum_in_footer=True,
                 options=correct_options,
                 title=_("Playlist Picker"),
                 embed=True,
@@ -3943,18 +3943,20 @@ class Audio(commands.Cog):
             )
 
         page_list = []
-        for page in pagify(msg, delims=["\n"], page_length=2000):
+        pages = list(pagify(msg, delims=["\n"], page_length=2000))
+        total_pages = len(pages)
+        for numb, page in enumerate(pages, start=1):
             embed = discord.Embed(
                 colour=await ctx.embed_colour(), title=embed_title, description=page
             )
             author_obj = self.bot.get_user(playlist.author)
             embed.set_footer(
-                text=_("Author: {author_name} | {num} track(s)").format(
-                    author_name=author_obj, num=track_len
+                text=_("Page {page}/{pages} | Author: {author_name} | {num} track(s)").format(
+                    author_name=author_obj, num=track_len, pages=total_pages, page=numb
                 )
             )
             page_list.append(embed)
-        await PagedMenu.send_and_wait(ctx, pages=page_list)
+        await PagedMenu.send_and_wait(ctx, pages=page_list, pagenum_in_footer=True)
 
     @playlist.command(name="list", usage="[args]")
     @commands.bot_has_permissions(add_reactions=True)
@@ -4548,6 +4550,7 @@ class Audio(commands.Cog):
                     scope=scope,
                     author=author,
                     guild=guild,
+                    specified_user=specified_user,
                     playlist_matches=playlist_matches,
                     timeout=60.0,
                 )

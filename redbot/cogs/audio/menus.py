@@ -280,6 +280,7 @@ class PlayListChangesMenu(
         scope,
         author,
         guild,
+        specified_user,
         playlist_matches,
         timeout=None,
         **kwargs,
@@ -291,12 +292,16 @@ class PlayListChangesMenu(
         self._scope = scope
         self._playlist_author = author
         self._playlist_guild = guild
+        self._specified_user = specified_user
 
         super().__init__(pages=[], arrows_always=True, timeout=timeout, **kwargs)
 
     async def _before_send(self, **kwargs) -> None:
-        if not self._pages:
-            self._pages = self._removed_pages[0]
+        if not self._pages and self._removed_pages:
+            self._focus_pages = self._removed_pages
+        elif not self._pages and self._added_pages:
+            self._focus_pages = self._added_pages
+        self._pages = self._focus_pages
 
     @PagedMenu.handler("ℹ")
     async def _playlist_info(
@@ -306,7 +311,12 @@ class PlayListChangesMenu(
         await self.ctx.invoke(
             self._info_command,
             playlist_matches=self._playlist_matches,
-            scope_data=(self._scope, self._playlist_author, self._playlist_guild),
+            scope_data=(
+                self._scope,
+                self._playlist_author,
+                self._playlist_guild,
+                self._specified_user,
+            ),
         )
 
     @PagedMenu.handler("➖")
@@ -315,11 +325,10 @@ class PlayListChangesMenu(
     ) -> None:
         if not self._removed_pages:
             return
-        self._pages = self._removed_pages[0]
         self._focus_pages = self._removed_pages
         self._cur_page = 0
-        self._pages.insert(0, self._focus_pages[0])
-        await super().next_page(payload=payload)
+        self._pages = self._focus_pages
+        await super()._update_message()
 
     @PagedMenu.handler("➕")
     async def _playlist_added(
@@ -327,35 +336,7 @@ class PlayListChangesMenu(
     ) -> None:
         if not self._added_pages:
             return
-        self._pages = self._added_pages[0]
         self._focus_pages = self._added_pages
+        self._pages = self._focus_pages
         self._cur_page = 0
-        self._pages.insert(0, self._focus_pages[0])
-        await super().next_page(payload=payload)
-
-    @PagedMenu.handler("⬅")
-    async def prev_page(self, payload: Optional[discord.RawReactionActionEvent] = None) -> None:
-        page_count = len(self._focus_pages)
-        if page_count < 2:
-            return
-        self._cur_page -= 1
-        if self._cur_page < 0:
-            self._cur_page = page_count + self._cur_page
-        if self._cur_page > page_count:
-            self._cur_page = 0
-        self._pages.insert(0, self._focus_pages[self._cur_page])
-        await super().prev_page(payload=payload)
-
-    @PagedMenu.handler("➡")
-    async def next_page(self, payload: Optional[discord.RawReactionActionEvent] = None) -> None:
-        page_count = len(self._focus_pages)
-        if page_count < 2:
-            return
-        self._cur_page += 1
-        if self._cur_page < 0:
-            self._cur_page = page_count + self._cur_page
-        if self._cur_page > page_count:
-            self._cur_page = 0
-        self._pages.insert(0, self._focus_pages[self._cur_page])
-
-        await super().next_page(payload=payload)
+        await super()._update_message()
