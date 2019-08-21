@@ -1088,7 +1088,7 @@ class MusicCache:
                     continue
                 valid = True
 
-            track.extras = {"autoplay": True}
+            track.extras["autoplay"] = True
             player.add(player.channel.guild.me, track)
             self.bot.dispatch(
                 "red_audio_track_auto_play", player.channel.guild, track, player.channel.guild.me

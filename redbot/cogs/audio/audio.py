@@ -113,6 +113,7 @@ class Audio(commands.Cog):
             notify=False,
             repeat=False,
             shuffle=False,
+            shuffle_bumped=True,
             thumbnail=False,
             volume=100,
             vote_enabled=False,
@@ -610,7 +611,7 @@ class Audio(commands.Cog):
         ):
             log.debug(f"Query is not allowed in {guild} ({guild.id})")
             return
-        track.extras = {"autoplay": is_autoplay}
+        track.extras["autoplay"] = is_autoplay
         player.add(player.channel.guild.me, track)
         self.bot.dispatch(
             "red_audio_track_auto_play", player.channel.guild, track, player.channel.guild.me
@@ -1610,6 +1611,7 @@ class Audio(commands.Cog):
 
         bump_index = index - 1
         bump_song = player.queue[bump_index]
+        bump_song.extras["bumped"] = True
         player.queue.insert(0, bump_song)
         removed = player.queue.pop(index)
         if any(x in removed.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]):
@@ -2566,6 +2568,7 @@ class Audio(commands.Cog):
 
         else:
             single_track.requester = ctx.author
+            single_track.extras["bumped"] = True
             player.queue.insert(0, single_track)
             player.maybe_shuffle()
             self.bot.dispatch(
@@ -6016,8 +6019,12 @@ class Audio(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def shuffle(self, ctx: commands.Context):
-        """Toggle shuffle."""
+    async def shuffle(self, ctx: commands.Context, *, shuffle_bumped:Optional[bool]=True):
+        """Toggle shuffle.
+
+        shuffle_bumped defaults to True,
+        set to False if you wish to avoid bumped songs being shuffled.
+        """
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
@@ -6036,6 +6043,7 @@ class Audio(commands.Cog):
 
         shuffle = await self.config.guild(ctx.guild).shuffle()
         await self.config.guild(ctx.guild).shuffle.set(not shuffle)
+        await self.config.guild(ctx.guild).shuffle_bumped.set(shuffle_bumped)
         await self._embed_msg(
             ctx,
             _("Shuffle tracks: {true_or_false}.").format(
@@ -6610,8 +6618,10 @@ class Audio(commands.Cog):
         shuffle = await self.config.guild(ctx.guild).shuffle()
         repeat = await self.config.guild(ctx.guild).repeat()
         volume = await self.config.guild(ctx.guild).volume()
+        shuffle_bumped = await self.config.guild(ctx.guild).shuffle_bumped()
         player.repeat = repeat
         player.shuffle = shuffle
+        player.shuffle_bumped = shuffle_bumped
         if player.volume != volume:
             await player.set_volume(volume)
 

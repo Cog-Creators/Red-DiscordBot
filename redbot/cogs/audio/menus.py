@@ -66,7 +66,7 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
         if self._refresh_timer + timedelta(seconds=5) > now:
             if self._refresh_msg is None:
                 self._refresh_msg = await self.ctx.maybe_send_embed(
-                    _("There's a 5 second cooldown on this queue refresh.")
+                    _("There's a 5 second cooldown on queue refresh.")
                 )
             return
         self._player = lavalink.get_player(self.ctx.guild.id)
