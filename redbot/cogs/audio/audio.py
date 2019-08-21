@@ -1506,7 +1506,7 @@ class Audio(commands.Cog):
             age = 7
         msg += _("I've set the cache age to {age} days").format(age=age)
         await self.config.cache_age.set(age)
-        await ctx.maybe_send_embed(msg)
+        await self._embed_msg(ctx, msg)
 
     @commands.command()
     @commands.guild_only()
@@ -4803,7 +4803,7 @@ class Audio(commands.Cog):
         msg = _("'{old}' playlist has been renamed to '{new}' (`{id}`)").format(
             old=bold(old_name), new=bold(playlist.name), id=playlist.id
         )
-        await ctx.maybe_send_embed(msg)
+        await self._embed_msg(ctx, msg)
 
     async def _load_v3_playlist(
         self,
