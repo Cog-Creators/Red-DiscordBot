@@ -7,6 +7,7 @@ import lavalink
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
+from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_list
 from .errors import InvalidPlaylistScope, MissingAuthor, MissingGuild, NotAllowed
 
@@ -27,6 +28,7 @@ __all__ = [
 
 FakePlaylist = namedtuple("Playlist", "author")
 
+_ = Translator("Audio", __file__)
 
 @unique
 class PlaylistScope(Enum):
@@ -72,14 +74,14 @@ def standardize_scope(scope) -> str:
     return scope
 
 
-def humanize_scope(scope, ctx=None):
+def humanize_scope(scope, ctx=None, the=None):
 
     if scope == PlaylistScope.GLOBAL.value:
-        return "Global"
+        return ctx or _("the ") if the else "" + "Global"
     elif scope == PlaylistScope.GUILD.value:
-        return ctx.name if ctx else "Server"
+        return ctx.name if ctx else _("the ") if the else "" + "Server"
     elif scope == PlaylistScope.USER.value:
-        return str(ctx) if ctx else "User"
+        return str(ctx) if ctx else _("the ") if the else "" + "User"
 
 
 def _prepare_config_scope(
