@@ -440,8 +440,10 @@ class Audio(commands.Cog):
                         await player.fetch("notify_message").delete()
                     except discord.errors.NotFound:
                         pass
-                if player.current.extras.get("autoplay") and (
-                    prev_song is None or not prev_song.extras.get("autoplay")
+                if (
+                    autoplay
+                    and player.current.extras.get("autoplay")
+                    and (prev_song is None or not prev_song.extras.get("autoplay"))
                 ):
                     embed = discord.Embed(
                         colour=(await self._get_embed_colour(notify_channel)),
@@ -3408,9 +3410,16 @@ class Audio(commands.Cog):
                 ctx.guild,
                 False,
             ]
-        from_scope, from_author, from_guild, specified_from_user, to_scope, to_author, to_guild, specified_to_user = (
-            scope_data
-        )
+        (
+            from_scope,
+            from_author,
+            from_guild,
+            specified_from_user,
+            to_scope,
+            to_author,
+            to_guild,
+            specified_to_user,
+        ) = scope_data
 
         try:
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
