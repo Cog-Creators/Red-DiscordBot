@@ -933,9 +933,11 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 _("Playlist {name} (`{id}`) [**{scope}**] will be used for autoplay.").format(
-                    name=playlist.name, id=playlist.id, scope=humanize_scope(
-                    scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
-                ),
+                    name=playlist.name,
+                    id=playlist.id,
+                    scope=humanize_scope(
+                        scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
+                    ),
                 ),
             )
 
@@ -3741,7 +3743,8 @@ class Audio(commands.Cog):
             await self._embed_msg(
                 ctx,
                 _(
-                    "Removed {track_diff} duplicated tracks from {name} (`{id}`) [**{scope}**] playlist."
+                    "Removed {track_diff} duplicated "
+                    "tracks from {name} (`{id}`) [**{scope}**] playlist."
                 ).format(
                     name=playlist.name,
                     id=playlist.id,
@@ -4272,7 +4275,8 @@ class Audio(commands.Cog):
             await self._embed_msg(
                 ctx,
                 _(
-                    "{num} entries have been removed from the playlist {playlist_name} (`{id}`) [**{scope}**]."
+                    "{num} entries have been removed from the"
+                    " playlist {playlist_name} (`{id}`) [**{scope}**]."
                 ).format(
                     num=del_count, playlist_name=playlist.name, id=playlist.id, scope=scope_name
                 ),
@@ -4281,7 +4285,8 @@ class Audio(commands.Cog):
             await self._embed_msg(
                 ctx,
                 _(
-                    "The track has been removed from the playlist: {playlist_name} (`{id}`) [**{scope}**]."
+                    "The track has been removed from the"
+                    " playlist: {playlist_name} (`{id}`) [**{scope}**]."
                 ).format(playlist_name=playlist.name, id=playlist.id, scope=scope_name),
             )
 

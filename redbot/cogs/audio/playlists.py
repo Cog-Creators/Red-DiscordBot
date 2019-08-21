@@ -30,6 +30,7 @@ FakePlaylist = namedtuple("Playlist", "author")
 
 _ = Translator("Audio", __file__)
 
+
 @unique
 class PlaylistScope(Enum):
     GLOBAL = "GLOBALPLAYLIST"
