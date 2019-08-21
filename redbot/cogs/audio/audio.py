@@ -74,12 +74,13 @@ class Audio(commands.Cog):
         self.bot = bot
         self.config = Config.get_conf(self, 2711759130, force_registration=True)
         self.skip_votes = {}
+        self.play_lock = {}
+        self._dj_status_cache = {}
         self.session = aiohttp.ClientSession()
         self._connect_task = None
         self._disconnect_task = None
         self._cleaned_up = False
         self._connection_aborted = False
-        self.play_lock = {}
         self._manager: Optional[ServerManager] = None
         self._cog_name = None
         self._cog_id = None
@@ -131,7 +132,6 @@ class Audio(commands.Cog):
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)
         self.music_cache = MusicCache(bot, self.session, path=str(cog_data_path(raw_name="Audio")))
-        self.play_lock = {}
 
         self._manager: Optional[ServerManager] = None
         self.bot.dispatch("red_audio_initialized", self)
@@ -162,17 +162,22 @@ class Audio(commands.Cog):
             pass
         elif self._connect_task.cancelled():
             await ctx.send(
-                "You have attempted to run Audio's Lavalink server on an unsupported"
-                " architecture. Only settings related commands will be available."
+                _(
+                    "You have attempted to run Audio's Lavalink server on an unsupported"
+                    " architecture. Only settings related commands will be available."
+                )
             )
             raise RuntimeError(
                 "Not running audio command due to invalid machine architecture for Lavalink."
             )
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         if dj_enabled:
             dj_role_obj = ctx.guild.get_role(await self.config.guild(ctx.guild).dj_role())
             if not dj_role_obj:
                 await self.config.guild(ctx.guild).dj_enabled.set(None)
+                self._dj_status_cache[ctx.guild.id] = None
                 await self.config.guild(ctx.guild).dj_role.set(None)
                 await self._embed_msg(ctx, _("No DJ role found. Disabling DJ mode."))
 
@@ -958,9 +963,11 @@ class Audio(commands.Cog):
                 await ctx.invoke(self.role, pred.result)
             except asyncio.TimeoutError:
                 return await self._embed_msg(ctx, _("Response timed out, try again later."))
-
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         await self.config.guild(ctx.guild).dj_enabled.set(not dj_enabled)
+        self._dj_status_cache[ctx.guild.id] = not dj_enabled
         await self._embed_msg(
             ctx,
             _("DJ role: {true_or_false}.").format(
@@ -1570,7 +1577,9 @@ class Audio(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     async def bump(self, ctx: commands.Context, index: int):
         """Bump a track number to the top of the queue."""
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
 
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
@@ -1623,7 +1632,9 @@ class Audio(commands.Cog):
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
         else:
-            dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+            dj_enabled = self._dj_status_cache.setdefault(
+                ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+            )
             player = lavalink.get_player(ctx.guild.id)
 
             if dj_enabled:
@@ -1654,7 +1665,9 @@ class Audio(commands.Cog):
         if not self._player_check(ctx):
             ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(ctx, _("Nothing playing."))
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         player = lavalink.get_player(ctx.guild.id)
         eq = player.fetch("eq", Equalizer())
         reactions = ["◀", "⬅", "⏫", "🔼", "🔽", "⏬", "➡", "▶", "⏺", "ℹ"]
@@ -1761,7 +1774,9 @@ class Audio(commands.Cog):
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
 
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         player = lavalink.get_player(ctx.guild.id)
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
@@ -1787,7 +1802,9 @@ class Audio(commands.Cog):
         """Reset the eq to 0 across all bands."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(
@@ -1817,7 +1834,9 @@ class Audio(commands.Cog):
         """Save the current eq settings to a preset."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(
@@ -1891,7 +1910,9 @@ class Audio(commands.Cog):
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
 
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(
@@ -2212,7 +2233,9 @@ class Audio(commands.Cog):
 
         player.store("np_message", message)
 
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
         if dj_enabled or vote_enabled:
             if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
@@ -2256,7 +2279,9 @@ class Audio(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     async def pause(self, ctx: commands.Context):
         """Pause or resume a playing track."""
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
         player = lavalink.get_player(ctx.guild.id)
@@ -3110,7 +3135,9 @@ class Audio(commands.Cog):
                 has_perms = True
         elif scope == PlaylistScope.GUILD.value:
             if not is_different_guild:
-                dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+                dj_enabled = self._dj_status_cache.setdefault(
+                    ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+                )
                 if guild.owner_id == ctx.author.id:
                     has_perms = True
                 elif dj_enabled and await self._has_dj_role(ctx, ctx.author):
@@ -4341,7 +4368,9 @@ class Audio(commands.Cog):
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
                 await self._embed_msg(ctx, _("You need the DJ role to start playing playlists."))
@@ -5027,7 +5056,9 @@ class Audio(commands.Cog):
         """Skip to the start of the previously played track."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         player = lavalink.get_player(ctx.guild.id)
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
@@ -5325,7 +5356,9 @@ class Audio(commands.Cog):
             player = lavalink.get_player(ctx.guild.id)
         except KeyError:
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         if not self._player_check(ctx) or not player.queue:
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
         if dj_enabled:
@@ -5344,7 +5377,9 @@ class Audio(commands.Cog):
             player = lavalink.get_player(ctx.guild.id)
         except KeyError:
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         if not self._player_check(ctx) or not player.queue:
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
         if dj_enabled:
@@ -5429,7 +5464,9 @@ class Audio(commands.Cog):
     @commands.cooldown(1, 30, commands.BucketType.guild)
     async def _queue_shuffle(self, ctx: commands.Context):
         """Shuffles the queue."""
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
                 ctx, ctx.author
@@ -5469,7 +5506,9 @@ class Audio(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     async def repeat(self, ctx: commands.Context):
         """Toggle repeat."""
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author) and not await self._has_dj_role(
                 ctx, ctx.author
@@ -5508,7 +5547,9 @@ class Audio(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     async def remove(self, ctx: commands.Context, index: int):
         """Remove a specific track number from the queue."""
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
         player = lavalink.get_player(ctx.guild.id)
@@ -5696,7 +5737,9 @@ class Audio(commands.Cog):
         else:
             tracks = query
 
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
                 len_search_pages = math.ceil(len(tracks) / 5)
@@ -5902,7 +5945,9 @@ class Audio(commands.Cog):
         """Seek ahead or behind on a track by seconds or a to a specific time.
 
         Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`)."""
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
         is_alone = await self._is_alone(ctx, ctx.author)
         is_requester = await self.is_requester(ctx, ctx.author)
@@ -5967,7 +6012,9 @@ class Audio(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     async def shuffle(self, ctx: commands.Context):
         """Toggle shuffle."""
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(ctx, _("You need the DJ role to toggle shuffle."))
@@ -6024,7 +6071,9 @@ class Audio(commands.Cog):
             )
         if not player.current:
             return await self._embed_msg(ctx, _("Nothing playing."))
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
         is_alone = await self._is_alone(ctx, ctx.author)
         is_requester = await self.is_requester(ctx, ctx.author)
@@ -6082,7 +6131,9 @@ class Audio(commands.Cog):
 
     async def _can_instaskip(self, ctx: commands.Context, member: discord.Member):
 
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
 
         if member.bot:
             return True
@@ -6224,7 +6275,9 @@ class Audio(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     async def stop(self, ctx: commands.Context):
         """Stop playback and clear the queue."""
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
@@ -6268,7 +6321,9 @@ class Audio(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     async def summon(self, ctx: commands.Context):
         """Summon the bot to a voice channel."""
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(ctx, _("You need the DJ role to summon the bot."))
@@ -6302,7 +6357,9 @@ class Audio(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     async def volume(self, ctx: commands.Context, vol: int = None):
         """Set the volume, 1% - 150%."""
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         if not vol:
             vol = await self.config.guild(ctx.guild).volume()
             embed = discord.Embed(

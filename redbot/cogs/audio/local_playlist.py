@@ -1,5 +1,5 @@
-from xml.dom import minidom
 from random import randrange
+from xml.dom import minidom
 
 try:
     from chardet.universaldetector import UniversalDetector

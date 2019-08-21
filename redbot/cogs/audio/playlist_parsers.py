@@ -1,5 +1,5 @@
-from xml.dom import minidom
 import re
+from xml.dom import minidom
 
 __all__ = ["PLSParser", "XMLParser", "M3UParser", "XSPFParser", "TXTParser"]
 _re_parse_url = re.compile(r" parseUrl=\d")
