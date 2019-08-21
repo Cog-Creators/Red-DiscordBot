@@ -2709,7 +2709,7 @@ class Audio(commands.Cog):
             (player.current and not player.current.extras.get("autoplay")) or not player.current
         ):
             await self._embed_msg(ctx, _("Auto play started."))
-        elif not guild_data["notify"] and player.current:
+        elif player.current:
             await self._embed_msg(ctx, _("Adding a track to queue."))
 
     async def _get_spotify_tracks(self, ctx: commands.Context, query: dataclasses.Query):
