@@ -452,6 +452,7 @@ def text_to_file(
     Returns
     -------
     discord.File
+        The file containing your text.
 
     """
     file = BytesIO(text.encode(encoding))
