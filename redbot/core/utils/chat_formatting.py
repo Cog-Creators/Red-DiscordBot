@@ -437,7 +437,7 @@ def text_to_file(
 ):
     """Prepares text to be sent as a file on Discord, without character limit.
 
-    This writes text into a bytes object that can be used for the ``file`` or ``files`` parameters\
+    This writes text into a bytes object that can be used for the ``file`` or ``files`` parameters
     of :func:`discord.abc.send`.
 
     Parameters
