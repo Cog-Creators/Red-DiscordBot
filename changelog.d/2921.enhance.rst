@@ -1,0 +1,1 @@
+JSON config files are now stored without indentation, this is to reduce file size and increase performance of write operations.

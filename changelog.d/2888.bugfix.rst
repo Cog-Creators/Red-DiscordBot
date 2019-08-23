@@ -1,0 +1,1 @@
+Fixed remove_command error when trying to remove a non-existent command
