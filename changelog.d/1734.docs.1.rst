@@ -1,2 +1,0 @@
-Start the user guides covering cogs and the user interface of the bot. This
-includes, for now, a "Getting started" guide.
