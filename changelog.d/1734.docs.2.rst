@@ -1,0 +1,1 @@
+Add a user guide for the core Admin cog.
