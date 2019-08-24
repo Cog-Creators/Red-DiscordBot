@@ -24,9 +24,9 @@ This cog will provide tools for server admins and bot owner.
 It can add or remove a role to a member, edit one, make some available
 for members so they can self-assign them as they wish.
 
-It also provides tools for bot owner such as server locking (once enabled,
+It also provides tools for the bot owner such as server locking (once enabled,
 the bot will instantly leave new servers he joins) and announcements, which
-will tell something in all servers he's in.
+will tell something in all the servers of the bot.
 
 .. _admin-commands:
 
@@ -100,7 +100,8 @@ List all of the available roles you can assign to yourself.
 selfrole add
 """"""""""""
 
-.. note:: This command is locked to the ``Manage roles`` permission.
+.. note:: This command is locked to the members with the ``Manage roles``
+    permission.
 
 **Syntax**
 
@@ -110,7 +111,7 @@ selfrole add
 
 **Description**
 
-Add a role to the available selfroles list.
+Add a role to the list of selfroles.
 
 .. warning:: Members will be able to assign themselves the role.
     Make sure it doesn't give extra perms or anything that can break
@@ -126,7 +127,8 @@ Add a role to the available selfroles list.
 selfrole delete
 """""""""""""""
 
-.. note:: This command is locked to the ``Manage roles`` permission.
+.. note:: This command is locked to the member with the ``Manage roles``
+    permission.
 
 **Syntax**
 
@@ -136,7 +138,7 @@ selfrole delete
 
 **Description**
 
-Removes a role from the available selfroles list.
+Removes a role from the list of selfroles.
 
 **Arguments**
 
@@ -158,7 +160,7 @@ addrole
 
 **Description**
 
-Add a role to a member. If ``user`` is not given, it will be considered
+Adds a role to a member. If ``user`` is not given, it will be considered
 as yourself, the command author.
 
 **Arguments**
@@ -184,7 +186,7 @@ removerole
 
 **Description**
 
-Remove a role from a member. If ``user`` is not given, it will be considered
+Removes a role from a member. If ``user`` is not given, it will be considered
 as yourself, the command author.
 
 **Arguments**
@@ -210,7 +212,7 @@ editrole
 
 **Description**
 
-Edits a role from the server.
+Edits a setting of a role.
 
 .. _admin-command-editrole-name:
 
@@ -226,7 +228,7 @@ editrole name
 
 **Description**
 
-Edit a role name from the guild.
+Edits the name of a role.
 
 **Arguments**
 
@@ -248,7 +250,7 @@ editrole color
 
 **Description**
 
-Edit a role color from the guild.
+Edits the color of a role.
 
 **Arguments**
 
@@ -305,7 +307,7 @@ announce channel
 
 **Description**
 
-Set the channel where the bot owner announcements will be done.
+Sets the channel where the bot owner announcements will be done.
 
 **Arguments**
 
@@ -328,14 +330,15 @@ announce ignore
 
 **Description**
 
-Enable or disable the announcements on the selected guild.
+Enables or disables the announcements on the selected guild.
 
 **Arguments**
 
-* ``[guild=ctx]``: The guild where the announcements will be enabled/disabled.
+* ``[guild=ctx]``: The server where the announcements will be enabled/disabled.
+    Defaults to the current server.
 
-.. warning:: You need proper permissions if you're trying to edit a guild
-    setting from another one.
+.. warning:: You need the appropriate permissions if you're trying to edit a
+    server setting from a different one.
 
 .. _admin-command-announce-cancel:
 
@@ -353,4 +356,4 @@ announce cancel
 
 **Description**
 
-Cancel a running announcement.
+Cancels an active announcement.
