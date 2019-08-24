@@ -96,7 +96,6 @@ default_role = "any"
 with open("prolog.txt", "r") as file:
     rst_prolog = file.read()
 
-
 # -- Options for HTML output ----------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
