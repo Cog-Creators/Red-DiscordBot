@@ -92,6 +92,9 @@ todo_include_todos = False
 # Role which is assigned when you make a simple reference within backticks
 default_role = "any"
 
+# Includes substitutions for all files
+with open("prolog.txt", "r") as file:
+    rst_prolog = file.read()
 
 # -- Options for HTML output ----------------------------------------------
 
