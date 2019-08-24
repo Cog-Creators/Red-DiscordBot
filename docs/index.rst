@@ -30,6 +30,7 @@ Welcome to Red - Discord Bot's documentation!
     :caption: User guides:
 
     getting_started
+    cog_guides/alias
 
 .. toctree::
     :maxdepth: 2
