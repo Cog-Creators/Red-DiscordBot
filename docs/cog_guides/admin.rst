@@ -55,8 +55,7 @@ by admins using the :ref:`selfrole add command <admin-command-selfrole-add>`.
 
 **Arguments**
 
-* ``<selfrole>``: The role you want to attribute to yourself. Please give
-  **the exact role name or ID**, or it won't be detected.
+* ``<selfrole>``: The role you want to attribute to yourself. |role-input|
 
 .. _admin-command-selfrole-remove:
 
@@ -77,8 +76,7 @@ by admins.
 
 **Arguments**
 
-* ``<selfrole>``: The role you want to remove from yourself. Please give
-  **the exact role name or ID**, or it won't be detected.
+* ``<selfrole>``: The role you want to remove from yourself. |role-input|
 
 .. _admin-command-selfrole-list:
 
@@ -120,8 +118,7 @@ Add a role to the available selfroles list.
 
 **Arguments**
 
-* ``<role>``: The role to add to the list. Please give
-  **the exact role name or ID**, or it won't be detected.
+* ``<role>``: The role to add to the list. |role-input|
 
 .. _admin-command-selfrole-delete:
 
@@ -143,8 +140,7 @@ Removes a role from the available selfroles list.
 
 **Arguments**
 
-* ``<role>``: The role to remove from the list. Please give
-  **the exact role name or ID**, or it won't be detected.
+* ``<role>``: The role to remove from the list. |role-input|
 
 .. _admin-command-addrole:
 
@@ -167,13 +163,10 @@ as yourself, the command author.
 
 **Arguments**
 
-* ``<role>``: The role to add to the member. Please give
-  **the exact role name or ID**, or it won't be detected. If the role
-  name has spaces, give it between quotes like this: ``[p]addrole "my
-  role with spaces"``
+* ``<role>``: The role to add to the member. |role-input|
 
-* ``[user=ctx]``: Member you want to add the role to. Default to the
-  command author.
+* ``[user=ctx]``: The member you want to add the role to. Default to the
+  command author. |member-input|
 
 .. _admin-command-removerole:
 
@@ -196,13 +189,10 @@ as yourself, the command author.
 
 **Arguments**
 
-* ``<role>``: The role to remove. Please give
-  **the exact role name or ID**, or it won't be detected. If the role
-  name has spaces, give it between quotes like this: ``[p]removerole "my
-  role with spaces"``
+* ``<role>``: The role to remove. |role-input|
 
-* ``[user=ctx]``: The member to remove the role from. Default to the
-  command author.
+* ``[user=ctx]``: The member to remove the role from. |member-input| Default to
+  the command author.
 
 .. _admin-command-editrole:
 
@@ -240,12 +230,9 @@ Edit a role name from the guild.
 
 **Arguments**
 
-* ``<role>``: The role name to edit. Please give
-  **the exact role name or ID**, or it won't be detected. If the role
-  name has spaces, give it between quotes like this: ``[p]removerole "my
-  role with spaces"``
+* ``<role>``: The role name to edit. |role-input|
 
-* ``<name>``: The new role name
+* ``<name>``: The new role name.
 
 .. _admin-command-editrole-color:
 
@@ -261,25 +248,19 @@ editrole color
 
 **Description**
 
-Edit a role color from the guild. You can give an hexadecimal code or a color
-name for the color. For a complete list of the available color names,
-check :class:`~discord.Color`.
+Edit a role color from the guild.
 
-Examples:
+**Arguments**
+
+* ``<role>``: The role name to edit. |role-input|
+
+* ``<color>``: The new color to assign. |color-input|
+
+**Examples**
 
 * ``[p]editrole color "My role" #ff0000``
 
 * ``[p]editrole color "My role" dark_blue``
-
-**Arguments**
-
-* ``<role>``: The role name to edit. Please give
-  **the exact role name or ID**, or it won't be detected. If the role
-  name has spaces, give it between quotes like this: ``[p]removerole "my
-  role with spaces"``
-
-* ``<color>``: The new color to assign. Can be a name (e.g. ``green``) or
-  an hexadecimal code (e.g. ``#ff0000``)
 
 .. _admin-command-announce:
 
@@ -329,7 +310,7 @@ Set the channel where the bot owner announcements will be done.
 **Arguments**
 
 * ``[channel=ctx]``: The channel that will be used for bot announcements.
-  Default to where you typed the command.
+  |channel-input| Default to where you typed the command.
 
 .. _admin-command-announce-ignore:
 
