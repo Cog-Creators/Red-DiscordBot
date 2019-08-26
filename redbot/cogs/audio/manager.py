@@ -21,7 +21,7 @@ JAR_VERSION = "3.2.1"
 JAR_BUILD = 823
 LAVALINK_DOWNLOAD_URL = (
     f"https://github.com/Cog-Creators/Lavalink-Jars/releases/download/{JAR_VERSION}_{JAR_BUILD}/"
-    f"Lavalink.jar"
+    "Lavalink.jar"
 )
 LAVALINK_DOWNLOAD_DIR = data_manager.cog_data_path(raw_name="Audio")
 LAVALINK_JAR_FILE = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
@@ -31,7 +31,10 @@ LAVALINK_APP_YML = LAVALINK_DOWNLOAD_DIR / "application.yml"
 
 READY_LINE_RE = re.compile(rb"Started Launcher in \S+ seconds")
 BUILD_LINE_RE = re.compile(rb"Build:\s+(?P<build>\d+)")
-
+java_version_line_re = re.compile(
+    r'version "(?P<major>\d+).(?P<minor>\d+).\d+(?:_\d+)?(?:-[A-Za-z0-9]+)?"'
+)
+java_short_version_re = re.compile(r'version "(?P<major>\d+)"')
 log = logging.getLogger("red.audio.manager")
 
 
@@ -134,15 +137,11 @@ class ServerManager:
         #     ... version "MAJOR.MINOR.PATCH[_BUILD]" ...
         #     ...
         # We only care about the major and minor parts though.
-        version_line_re = re.compile(
-            r'version "(?P<major>\d+).(?P<minor>\d+).\d+(?:_\d+)?(?:-[A-Za-z0-9]+)?"'
-        )
-        short_version_re = re.compile(r'version "(?P<major>\d+)"')
 
         lines = version_info.splitlines()
         for line in lines:
-            match = version_line_re.search(line)
-            short_match = short_version_re.search(line)
+            match = java_version_line_re.search(line)
+            short_match = java_short_version_re.search(line)
             if match:
                 return int(match["major"]), int(match["minor"])
             elif short_match:

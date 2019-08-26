@@ -1,6 +1,5 @@
 import asyncio
 import contextlib
-import os
 import re
 import time
 from typing import NoReturn
@@ -12,6 +11,7 @@ import lavalink
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.utils import box
+from redbot.core.utils.chat_formatting import bold
 from . import dataclasses
 from .playlists import humanize_scope
 
@@ -24,7 +24,7 @@ __all__ = [
     "clear_react",
     "match_yt_playlist",
     "remove_react",
-    "get_description",
+    "get_track_description",
     "track_creator",
     "time_convert",
     "url_check",
@@ -176,17 +176,17 @@ async def clear_react(bot: Red, message: discord.Message, emoji: dict = None):
         return
 
 
-async def get_description(track):
-    if any(x in track.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]):
-        local_track = dataclasses.LocalPath(track.uri)
-        if track.title != "Unknown title":
-            return "**{} - {}**\n{}".format(
-                track.author, track.title, local_track.to_string_hidden()
-            )
+def get_track_description(track):
+
+    if track and hasattr(track, "uri"):
+        query = dataclasses.Query.process_input(track.uri)
+        if query.is_local:
+            if track.title != "Unknown title":
+                return "**{} - {}**\n{}".format(track.author, track.title, query.to_string_user())
+            else:
+                return query.to_string_user()
         else:
-            return local_track.to_string_hidden()
-    else:
-        return "**[{}]({})**".format(track.title, track.uri)
+            return bold("**[{}]({})**").format(track.title, track.uri)
 
 
 def track_creator(player, position=None, other_track=None):
