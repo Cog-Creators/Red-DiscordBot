@@ -872,7 +872,7 @@ class Audio(commands.Cog):
         """Set a playlist to auto-play songs from.
 
         **Usage**:
-        ​ ​ ​ ​ [p]audioset autopl playlist_name_OR_id args
+        ​ ​ ​ ​ [p]audioset autoplay playlist_name_OR_id args
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
@@ -895,9 +895,9 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ [p]audioset autopl MyGuildPlaylist
-        ​ ​ ​ ​ [p]audioset autopl MyGlobalPlaylist --scope Global
-        ​ ​ ​ ​ [p]audioset autopl PersonalPlaylist --scope User --author Draper
+        ​ ​ ​ ​ [p]audioset autoplay MyGuildPlaylist
+        ​ ​ ​ ​ [p]audioset autoplay MyGlobalPlaylist --scope Global
+        ​ ​ ​ ​ [p]audioset autoplay PersonalPlaylist --scope User --author Draper
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
