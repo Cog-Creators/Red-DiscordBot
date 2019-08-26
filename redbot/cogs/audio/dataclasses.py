@@ -10,13 +10,14 @@ from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 
-_config = None
-_bot = None
-_localtrack_folder = None
+_config: Optional[Config] = None
+_bot: Optional[Red] = None
+_localtrack_folder: Optional[str] = None
+# noinspection PyUnusedName
 _ = Translator("Audio", __file__)
 _remove_start = re.compile(r"^(sc|list) ")
-_re_youtube_timestam = re.compile(r"&t=(\d+)s?")
-_re_yotube_index = re.compile(r"&index=(\d+)")
+_re_youtube_timestamp = re.compile(r"&t=(\d+)s?")
+_re_youtube_index = re.compile(r"&index=(\d+)")
 _re_spotify_url = re.compile(r"(http[s]?://)?(open.spotify.com)/")
 _re_spotify_timestamp = re.compile(r"#(\d+):(\d+)")
 _re_soundcloud_timestamp = re.compile(r"#t=(\d+):(\d+)s?")
@@ -364,6 +365,7 @@ class Query:
                     returning["local"] = True
                     returning["name"] = _localtrack.name
                     return returning
+            # noinspection PyBroadException
             try:
                 query_url = urlparse(track)
                 if all([query_url.scheme, query_url.netloc, query_url.path]):
@@ -374,11 +376,11 @@ class Query:
                         returning["youtube"] = True
                         _has_index = "&index=" in track
                         if "&t=" in track:
-                            match = re.search(_re_youtube_timestam, track)
+                            match = re.search(_re_youtube_timestamp, track)
                             if match:
                                 returning["start_time"] = int(match.group(1))
                         if _has_index:
-                            match = re.search(_re_yotube_index, track)
+                            match = re.search(_re_youtube_index, track)
                             if match:
                                 returning["track_index"] = int(match.group(1)) - 1
                         if any(k in track for k in ["playlist?", "&list="]):

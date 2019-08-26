@@ -42,6 +42,7 @@ class PlaylistScope(Enum):
 
     @staticmethod
     def list():
+        # noinspection PyTypeChecker
         return list(map(lambda c: c.value, PlaylistScope))
 
 
@@ -395,7 +396,6 @@ async def delete_playlist(
     scope: str,
     playlist_id: Union[str, int],
     guild: discord.Guild,
-    int=None,
     author: Union[discord.abc.User, int] = None,
 ) -> None:
     """

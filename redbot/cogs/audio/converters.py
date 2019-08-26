@@ -7,6 +7,8 @@ import discord
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
+
+# noinspection PyProtectedMember
 from .playlists import PlaylistScope, standardize_scope
 
 _ = Translator("Audio", __file__)
@@ -88,6 +90,9 @@ class NoExitParser(argparse.ArgumentParser):
         raise commands.BadArgument()
 
 
+# noinspection PyBroadException,PyBroadException,PyBroadException,PyBroadException,
+# PyBroadException,PyBroadException
+# noinspection PyBroadException
 class ScopeParser(commands.Converter):
     async def convert(
         self, ctx: commands.Context, argument: str
@@ -205,6 +210,11 @@ class ScopeParser(commands.Converter):
         return target_scope, target_user, target_guild, specified_user
 
 
+# noinspection PyBroadException,PyBroadException,PyBroadException,PyBroadException,
+# PyBroadException,PyBroadException
+# noinspection PyBroadException,PyBroadException,PyBroadException,PyBroadException,
+# PyBroadException,PyBroadException
+# noinspection PyBroadException,PyBroadException
 class ComplexScopeParser(commands.Converter):
     async def convert(
         self, ctx: commands.Context, argument: str
@@ -465,6 +475,7 @@ class LazyGreedyConverter(commands.Converter):
         return f"{greedy_output}".strip()
 
 
+# noinspection PySameParameterValue,PyUnusedName
 def get_lazy_converter(splitter: str) -> type:
     """
     Returns a typechecking safe `LazyGreedyConverter` suitable for use with discord.py.
