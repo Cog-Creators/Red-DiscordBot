@@ -58,6 +58,7 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
         await self.ctx.send_help(self._queue_cmd)
         await self.exit_menu(payload=payload)
 
+    # noinspection PyUnusedLocal
     @PagedMenu.handler("🔃")
     async def _queue_refresh(
         self, payload: Optional[discord.RawReactionActionEvent] = None
@@ -81,6 +82,7 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
             self._refresh_msg = None
         await super()._update_message()
 
+    # noinspection PyUnusedLocal
     @PagedMenu.handler("🔀")
     async def _queue_shuffle(
         self, payload: Optional[discord.RawReactionActionEvent] = None
@@ -92,6 +94,7 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
                     _("There's a 30 second cooldown on queue shuffle.")
                 )
             return
+        # noinspection PyProtectedMember
         await self.ctx.invoke(self._audio_cog._queue_shuffle)
         self._player = lavalink.get_player(self.ctx.guild.id)
         self._queue = self._player.queue or []
@@ -143,6 +146,7 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
         await super().next_page(payload=payload)
 
     async def _format_page(self) -> discord.Embed:
+        # noinspection PyPep8
         songs = self._queue[self._cur_song : self._cur_song + 10]
 
         shuffle = await _config.guild(self.ctx.guild).shuffle()
@@ -319,6 +323,7 @@ class PlayListChangesMenu(
             ),
         )
 
+    # noinspection PyUnusedLocal
     @PagedMenu.handler("➖")
     async def _playlist_removed(
         self, payload: Optional[discord.RawReactionActionEvent] = None
@@ -330,6 +335,7 @@ class PlayListChangesMenu(
         self._pages = self._focus_pages
         await super()._update_message()
 
+    # noinspection PyUnusedLocal
     @PagedMenu.handler("➕")
     async def _playlist_added(
         self, payload: Optional[discord.RawReactionActionEvent] = None

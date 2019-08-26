@@ -2,10 +2,12 @@ from random import randrange
 from xml.dom import minidom
 
 try:
+    # noinspection PyPackageRequirements
     from chardet.universaldetector import UniversalDetector
 
     chardet = True
 except ImportError:
+    UniversalDetector = None
     chardet = False
 
 from .playlist_parsers import *
@@ -22,14 +24,14 @@ class Track:
 
         self.Inverted = False
 
-    def defineArtist(self, Artist):
+    def define_artist(self, Artist):
         self.Artist = Artist
         if self.Inverted:
             self.Title = self.Name.split(" - " + Artist)[0]
         else:
             self.Title = self.Name.split(Artist + " - ")[1]
 
-    def nameParse(self, invert=False):
+    def name_parse(self, invert=False):
         if invert:
             self.Inverted = True
         invert = self.Inverted
@@ -65,7 +67,7 @@ class Track:
                 probcursor = probcursor + 1
             return results
 
-    def mustInvert(self, artist):
+    def must_invert(self, artist):
         if self.Name.lower().rfind(artist.lower()) > 0:
             self.Inverted = True
         else:
@@ -78,22 +80,24 @@ class LocalPlaylist:
         self.Tracks = Tracks
         self.Inverted = False
         self.Encoding = Encoding
+        self.randTracks = list()
 
-    def nameParse(self, invert=False):
+    def name_parse(self, invert=False):
+        # noinspection PyShadowingNames
         for track in self.Tracks:
-            track.nameParse(invert)
+            track.name_parse(invert)
 
-    def mustInvert(self, artist=None):
-        if artist == None:
-            self.randTracks = list()
+    def must_invert(self, artist=None):
+        if artist is None:
             for i in range(0, 3, 1):
                 self.randTracks.append(self.Tracks[randrange(0, len(self.Tracks) - 1)])
             return self.randTracks
         else:
+            # noinspection PyShadowingNames
             for track in self.randTracks:
-                if track.mustInvert(artist):
-                    for track in self.Tracks:
-                        track.Inverted = True
+                if track.must_invert(artist):
+                    for t in self.Tracks:
+                        t.Inverted = True
                     self.Inverted = True
                     return True
 
@@ -101,35 +105,40 @@ class LocalPlaylist:
 def type_guess(data):
     lines = data.split("\n")
     if "#EXTM3U" in lines[0]:
+        # noinspection PyBroadException
         try:
             lines.decode("utf-8")
             return ".m3u8"
-        except:
+        except Exception:
             return ".m3u"
     if "[playlist]" in lines[0]:
         return ".pls"
     dom = minidom.parseString(data)
+    # noinspection PyBroadException
     try:
         for namespace in dom.getElementsByTagName("playlist")[0].attributes.items():
+            # noinspection PyBroadException
             try:
                 if namespace[1] == "http://xspf.org/ns/0/":
                     return ".xspf"
-            except:
+            except Exception:
                 pass
-    except:
+    except Exception:
         pass
+    # noinspection PyBroadException
     try:
         dom.getElementsByTagName("plist")
         return ".xml"
-    except:
+    except Exception:
         return None
 
 
 def decode(filename, data):
+    encoding = "utf-8"
     if ".m3u8" in filename:
-        encoding = "utf-8"
         data = data.decode(encoding)
     elif any(i in filename for i in [".m3u", ".pls", ".txt"]):
+        # noinspection PyBroadException
         try:
             encoding = "ISO-8859-2"
             data = data.decode(encoding)
@@ -139,21 +148,20 @@ def decode(filename, data):
                 u.feed(data)
                 u.close()
                 if u.result["confidence"] > 0.5:
+                    # noinspection PyBroadException
                     try:
                         encoding = u.result["encoding"]
                         data = data.decode(encoding)
-                    except:
+                    except Exception:
                         encoding = "ascii"
                 else:
                     encoding = "ascii"
             else:
                 encoding = "ascii"
-    elif ".xml" in filename or ".xspf" in filename:
-        encoding = "utf-8"
-
     return {"data": data, "encoding": encoding}
 
 
+# noinspection PySameParameterValue
 def parse(filename=None, filedata=None, encoding=None):
     if filedata is not None:
         file = filedata
@@ -169,6 +177,7 @@ def parse(filename=None, filedata=None, encoding=None):
         file = decoded["data"]
         encoding = decoded["encoding"]
     else:
+        # noinspection PyBroadException
         try:
             file = file.decode(encoding)
         except Exception:

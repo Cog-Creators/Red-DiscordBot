@@ -1,10 +1,15 @@
 from redbot.core import Config
 from redbot.core.bot import Red
 
+# noinspection PyProtectedMember
 from .converters import _pass_config_to_converters
 from .dataclasses import _pass_config_to_dataclasses
 from .menus import _pass_config_to_menus
+
+# noinspection PyProtectedMember
 from .playlists import _pass_config_to_playlist
+
+# noinspection PyProtectedMember
 from .utils import _pass_config_to_utils
 
 

@@ -6,9 +6,8 @@ _re_parse_url = re.compile(r" parseUrl=\d")
 
 
 class TXTParser:
-    def parse(self, file, encoding, trackObject, playlistObject):
-        Track = trackObject
-        LocalPlaylist = playlistObject
+    @staticmethod
+    def parse(file, encoding, trackObject, playlistObject):
         playlist = list()
 
         lines = file.splitlines()
@@ -22,10 +21,11 @@ class TXTParser:
             fileref = line
 
             if fileref is not None:
-                playlist.append(Track(File=fileref))
+                playlist.append(trackObject(File=fileref))
+                # noinspection PyUnusedLocal
                 fileref = None
 
-        return LocalPlaylist(Tracks=playlist, Encoding=encoding)
+        return playlistObject(Tracks=playlist, Encoding=encoding)
 
 
 class PLSParser:
@@ -33,7 +33,7 @@ class PLSParser:
     genKeys = dict()
 
     @staticmethod
-    def iniParse(data):
+    def ini_parse(data):
         result = dict()
         lines = data.splitlines()
         for line in lines:
@@ -42,36 +42,34 @@ class PLSParser:
                 result[parts[0]] = parts[1]
         return result
 
-    def mkKeys(self, cursor):
-        cKeys = list()
+    def mk_keys(self, cursor):
+        c_keys = list()
         for key in self.Keys:
-            cKeys.append(key + str(cursor))
+            c_keys.append(key + str(cursor))
             self.genKeys[key + str(cursor)] = key
-        return cKeys
+        return c_keys
 
-    def getKeyName(self, genKey):
+    def get_key_name(self, genKey):
         return self.genKeys[genKey]
 
     def parse(self, data, encoding, trackObject, playlistObject):
-        Track = trackObject
-        LocalPlaylist = playlistObject
         playlist = list()
-        data = self.iniParse(data)
+        data = self.ini_parse(data)
 
         finish = False
         cursor = 1
         while not finish:
-            keys = self.mkKeys(cursor)
+            keys = self.mk_keys(cursor)
             result = dict()
             for key in keys:
                 try:
-                    result[self.getKeyName(key)] = data[key]
+                    result[self.get_key_name(key)] = data[key]
                 except KeyError:
                     pass
             if len(result) > 0:
                 try:
                     playlist.append(
-                        Track(
+                        trackObject(
                             Name=result["Title"],
                             Duration=int(result["Length"]),
                             File=result["File"],
@@ -83,13 +81,12 @@ class PLSParser:
             else:
                 finish = True
 
-        return LocalPlaylist(Tracks=playlist, Encoding=encoding)
+        return playlistObject(Tracks=playlist, Encoding=encoding)
 
 
 class XMLParser:
-    def parse(self, data, trackObject, playlistObject):
-        Track = trackObject
-        LocalPlaylist = playlistObject
+    @staticmethod
+    def parse(data, trackObject, playlistObject):
         dom = minidom.parseString(data)
 
         tracks = (
@@ -99,7 +96,7 @@ class XMLParser:
         )
         playlist = list()
         for track in tracks:
-            t = Track()
+            t = trackObject()
             items = track.getElementsByTagName("key")
             for item in items:
                 key = item.childNodes[0].nodeValue
@@ -118,22 +115,21 @@ class XMLParser:
                     t.Album = value
                 playlist.append(t)
 
-        return LocalPlaylist(Tracks=playlist, Encoding="utf-8")
+        return playlistObject(Tracks=playlist, Encoding="utf-8")
 
 
 class XSPFParser:
     playlist = list()
 
     def parse(self, data, trackObject, playlistObject):
-        Track = trackObject
-        LocalPlaylist = playlistObject
         dom = minidom.parseString(data)
 
         tracks = dom.getElementsByTagName("trackList")[0].getElementsByTagName("track")
         for track in tracks:
-            t = Track()
+            t = trackObject()
             for item in track.childNodes:
                 key = item.nodeName
+                # noinspection PyBroadException
                 try:
                     value = item.childNodes[0].nodeValue
                     if key == "creator":
@@ -147,15 +143,14 @@ class XSPFParser:
                     if key == "album":
                         t.Album = value
                     self.playlist.append(t)
-                except:
+                except Exception:
                     pass
-        return LocalPlaylist(Tracks=self.playlist, Encoding="utf-8")
+        return playlistObject(Tracks=self.playlist, Encoding="utf-8")
 
 
 class M3UParser:
-    def parse(self, file, encoding, trackObject, playlistObject):
-        Track = trackObject
-        LocalPlaylist = playlistObject
+    @staticmethod
+    def parse(file, encoding, trackObject, playlistObject):
         playlist = list()
 
         lines = file.splitlines()
@@ -186,8 +181,8 @@ class M3UParser:
                 else:
                     name = None
                     length = None
-                playlist.append(Track(Name=name, Duration=length, File=fileref))
+                playlist.append(trackObject(Name=name, Duration=length, File=fileref))
                 info = None
                 fileref = None
 
-        return LocalPlaylist(Tracks=playlist, Encoding=encoding)
+        return playlistObject(Tracks=playlist, Encoding=encoding)

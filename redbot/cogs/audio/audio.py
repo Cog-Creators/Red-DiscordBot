@@ -50,6 +50,7 @@ from .utils import *
 _ = Translator("Audio", __file__)
 
 __version__ = "1.1.0"
+# noinspection PyUnusedName
 __author__ = ["aikaterna", "Draper"]
 
 log = logging.getLogger("red.audio")
@@ -608,6 +609,7 @@ class Audio(commands.Cog):
             return
         track = results.tracks[0]
 
+        # noinspection PyProtectedMember
         if not await is_allowed(
             guild, f"{track.title} {track.author} {track.uri} {str(query._raw)}"
         ):
@@ -656,7 +658,7 @@ class Audio(commands.Cog):
             true_or_false=_("Enabled") if not disconnect else _("Disabled")
         )
         await self.config.guild(ctx.guild).repeat.set(not disconnect)
-        if not disconnect is True and autoplay is True:
+        if disconnect is not True and autoplay is True:
             msg += _("\nAuto-play has been disabled.")
             await self.config.guild(ctx.guild).auto_play.set(False)
 
@@ -858,10 +860,10 @@ class Audio(commands.Cog):
             true_or_false=_("Enabled") if not autoplay else _("Disabled")
         )
         await self.config.guild(ctx.guild).auto_play.set(not autoplay)
-        if not autoplay is True and repeat is True:
+        if autoplay is not True and repeat is True:
             msg += _("\nRepeat has been disabled.")
             await self.config.guild(ctx.guild).repeat.set(False)
-        if not autoplay is True and disconnect is True:
+        if autoplay is not True and disconnect is True:
             msg += _("\nAuto-disconnecting at queue end has been disabled.")
             await self.config.guild(ctx.guild).disconnect.set(False)
 
@@ -915,7 +917,8 @@ class Audio(commands.Cog):
 
         scope, author, guild, specified_user = scope_data
 
-        playlist, playlist_arg = await self._get_correct_playlist_id(
+        # noinspection PyTypeChecker
+        playlist, playlist_arg = await self._get_correct_playlist(
             ctx, playlist_matches, scope, author, guild, specified_user
         )
         if playlist is False:
@@ -1098,27 +1101,28 @@ class Audio(commands.Cog):
             except discord.errors.Forbidden:
                 pass
             return
-
-        try:
-            if os.getcwd() != local_path:
-                os.chdir(local_path)
-            os.listdir(local_path)
-        except OSError:
+        temp = dataclasses.LocalPath(local_path, forced=True)
+        if not temp.exists() or not temp.is_dir():
             return await self._embed_msg(
                 ctx,
                 _("{local_path} does not seem like a valid path.").format(local_path=local_path),
             )
 
-        temp = dataclasses.LocalPath(local_path)
         if not temp.localtrack_folder.exists():
             warn_msg = _(
-                "The path that was entered does not have localtracks folder in "
-                "that location. The path will still be saved, but please check the path and "
-                "create a localtracks in that location before attempting "
-                "to play local tracks or start your Lavalink.jar."
+                "`{localtracks}` does not exist. "
+                "The path will still be saved, but please check the path and "
+                "create a localtracks folder in `{localfolder}` before attempting "
+                "to play local tracks."
+            ).format(localfolder=temp.absolute(), localtracks=temp.localtrack_folder.absolute())
+            await ctx.send(
+                embed=discord.Embed(
+                    title=_("Incorrect environment."),
+                    description=warn_msg,
+                    colour=await ctx.embed_colour(),
+                )
             )
-            await self._embed_msg(ctx, warn_msg)
-
+        local_path = str(temp.localtrack_folder.absolute())
         await self.config.localpath.set(local_path)
         pass_config_to_dependencies(self.config, self.bot, local_path)
         await self._embed_msg(
@@ -1827,6 +1831,7 @@ class Audio(commands.Cog):
         player = lavalink.get_player(ctx.guild.id)
         eq = player.fetch("eq", Equalizer())
 
+        # noinspection PyProtectedMember
         for band in range(eq._band_count):
             eq.set_gain(band, 0.0)
 
@@ -1953,6 +1958,7 @@ class Audio(commands.Cog):
         ]
 
         eq = player.fetch("eq", Equalizer())
+        # noinspection PyProtectedMember
         bands_num = eq._band_count
         if band_value > 1:
             band_value = 1
@@ -2096,6 +2102,7 @@ class Audio(commands.Cog):
     async def _folder_list(self, ctx: commands.Context, query: dataclasses.Query):
         if not await self._localtracks_check(ctx):
             return
+        # noinspection PyTypeChecker,PyTypeChecker
         query = dataclasses.Query.process_input(query)
         if not query.track.exists():
             return
@@ -2351,6 +2358,7 @@ class Audio(commands.Cog):
         queue_tracks = player.queue
         requesters = {"total": 0, "users": {}}
 
+        # noinspection PyShadowingNames
         async def _usercount(req_username):
             if req_username in requesters["users"]:
                 requesters["users"][req_username]["songcount"] += 1
@@ -2524,6 +2532,7 @@ class Audio(commands.Cog):
             title = _("Nothing found.")
             colour = await ctx.embed_colour()
             embed = discord.Embed(title=title, colour=colour)
+            # noinspection PyProtectedMember
             if await self.config.use_external_lavalink() and query.is_local:
                 embed.description = _(
                     "Local tracks will not work "
@@ -2789,7 +2798,7 @@ class Audio(commands.Cog):
             (player.current and not player.current.extras.get("autoplay")) or not player.current
         ):
             await self._embed_msg(ctx, _("Auto play started."))
-        elif not guild_data["notify"] and player.current:
+        elif player.current:
             await self._embed_msg(ctx, _("Adding a track to queue."))
 
     async def _get_spotify_tracks(self, ctx: commands.Context, query: dataclasses.Query):
@@ -2827,11 +2836,11 @@ class Audio(commands.Cog):
                 res = await self.music_cache.spotify_query(
                     ctx, "track", query.id, skip_youtube=True, notifier=None
                 )
-
                 if not res:
                     title = _("Nothing found.")
                     colour = await ctx.embed_colour()
                     embed = discord.Embed(colour=colour, title=title)
+                    # noinspection PyProtectedMember
                     if (
                         query.is_local
                         and query.suffix in dataclasses._partially_supported_music_ext
@@ -2859,6 +2868,7 @@ class Audio(commands.Cog):
                     if not tracks:
                         colour = await ctx.embed_colour()
                         embed = discord.Embed(title=_("Nothing found."), colour=colour)
+                        # noinspection PyProtectedMember
                         if (
                             query.is_local
                             and query.suffix in dataclasses._partially_supported_music_ext
@@ -2928,6 +2938,7 @@ class Audio(commands.Cog):
                 title = _("Nothing found.")
                 colour = await ctx.embed_colour()
                 embed = discord.Embed(title=title, colour=colour)
+                # noinspection PyProtectedMember
                 if await self.config.use_external_lavalink() and query.is_local:
                     embed.description = _(
                         "Local tracks will not work "
@@ -3186,21 +3197,23 @@ class Audio(commands.Cog):
             return False
         return True
 
-    async def _get_correct_playlist_id(
+    async def _get_correct_playlist(
         self,
         context: commands.Context,
-        matches: dict,
+        matches: Union[dict, PlaylistConverter],
         scope: str,
         author: discord.User,
         guild: discord.Guild,
         specified_user: bool = False,
-    ) -> Tuple[Optional[int], str]:
+    ) -> Union[
+        Tuple[None, Optional[str]], Tuple[Playlist, Optional[str]], Tuple[bool, Optional[str]]
+    ]:
         """
         Parameters
         ----------
         context: commands.Context
             The context in which this is being called.
-        matches: dict
+        matches: Union[dict, PlaylistConverter]
             A dict of the matches found where key is scope and value is matches.
         scope:str
             The custom config scope. A value from :code:`PlaylistScope`.
@@ -3212,14 +3225,10 @@ class Audio(commands.Cog):
             Whether or not a user ID was specified via argparse.
         Returns
         -------
-        Tuple[Optional[int], str]
-            Tuple of Playlist ID or None if none found and original user input.
-        Raises
-        ------
-        `TooManyMatches`
-            When more than 10 matches are found or
-            When multiple matches are found but none is selected.
-
+        Union[Tuple[None, Optional[str]],
+              Tuple[Playlist, Optional[str]],
+              Tuple[bool, Optional[str]]]
+            Tuple of Playlist or None if none found and original user input.
         """
         original_input = matches.get("arg")
         correct_scope_matches = matches.get(scope)
@@ -3335,44 +3344,45 @@ class Audio(commands.Cog):
         *,
         scope_data: ScopeParser = None,
     ):
+        # noinspection PyPep8
         """Add a track URL, playlist link, or quick search to a playlist.
 
-        The track(s) will be appended to the end of the playlist.
+                The track(s) will be appended to the end of the playlist.
 
-        **Usage**:
-        ​ ​ ​ ​ [p]playlist append playlist_name_OR_id track_name_OR_url args
+                **Usage**:
+                ​ ​ ​ ​ [p]playlist append playlist_name_OR_id track_name_OR_url args
 
-        **Args**:
-        ​ ​ ​ ​ The following are all optional:
-        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+                **Args**:
+                ​ ​ ​ ​ The following are all optional:
+                ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
+                ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
+                ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
 
-        Scope is one of the following:
-        ​ ​ ​ ​ Global
-        ​ ​ ​ ​ Guild
-        ​ ​ ​ ​ User
+                Scope is one of the following:
+                ​ ​ ​ ​ Global
+                ​ ​ ​ ​ Guild
+                ​ ​ ​ ​ User
 
-        Author can be one of the following:
-        ​ ​ ​ ​ User ID
-        ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123
+                Author can be one of the following:
+                ​ ​ ​ ​ User ID
+                ​ ​ ​ ​ User Mention
+                ​ ​ ​ ​ User Name#123
 
-        Guild can be one of the following:
-        ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Exact guild name
+                Guild can be one of the following:
+                ​ ​ ​ ​ Guild ID
+                ​ ​ ​ ​ Exact guild name
 
-        Example use:
-        ​ ​ ​ ​ [p]playlist append MyGuildPlaylist Hello by Adele
-        ​ ​ ​ ​ [p]playlist append MyGlobalPlaylist Hello by Adele --scope Global
-        ​ ​ ​ ​ [p]playlist append MyGlobalPlaylist Hello by Adele --scope Global --Author Draper#6666
-        """
+                Example use:
+                ​ ​ ​ ​ [p]playlist append MyGuildPlaylist Hello by Adele
+                ​ ​ ​ ​ [p]playlist append MyGlobalPlaylist Hello by Adele --scope Global
+                ​ ​ ​ ​ [p]playlist append MyGlobalPlaylist Hello by Adele --scope Global --Author Draper#6666
+                """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
         if not await self._playlist_check(ctx):
             return
-        playlist, playlist_arg = await self._get_correct_playlist_id(
+        playlist, playlist_arg = await self._get_correct_playlist(
             ctx, playlist_matches, scope, author, guild, specified_user
         )
         if playlist is False:
@@ -3453,41 +3463,42 @@ class Audio(commands.Cog):
         scope_data: ComplexScopeParser = None,
     ):
 
+        # noinspection PyPep8,PyPep8
         """Copy a playlist from one scope to another.
 
-        **Usage**:
-        ​ ​ ​ ​ [p]playlist copy playlist_name_OR_id args
+                **Usage**:
+                ​ ​ ​ ​ [p]playlist copy playlist_name_OR_id args
 
-        **Args**:
-        ​ ​ ​ ​ The following are all optional:
-        ​ ​ ​ ​ ​ ​ ​ ​ --from-scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --from-author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --from-guild [guild] **Only the bot owner can use this**
+                **Args**:
+                ​ ​ ​ ​ The following are all optional:
+                ​ ​ ​ ​ ​ ​ ​ ​ --from-scope <scope>
+                ​ ​ ​ ​ ​ ​ ​ ​ --from-author [user]
+                ​ ​ ​ ​ ​ ​ ​ ​ --from-guild [guild] **Only the bot owner can use this**
 
-        ​ ​ ​ ​ ​ ​ ​ ​ --to-scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --to-author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --to-guild [guild] **Only the bot owner can use this**
+                ​ ​ ​ ​ ​ ​ ​ ​ --to-scope <scope>
+                ​ ​ ​ ​ ​ ​ ​ ​ --to-author [user]
+                ​ ​ ​ ​ ​ ​ ​ ​ --to-guild [guild] **Only the bot owner can use this**
 
-        Scope is one of the following:
-        ​ ​ ​ ​ Global
-        ​ ​ ​ ​ Guild
-        ​ ​ ​ ​ User
+                Scope is one of the following:
+                ​ ​ ​ ​ Global
+                ​ ​ ​ ​ Guild
+                ​ ​ ​ ​ User
 
-        Author can be one of the following:
-        ​ ​ ​ ​ User ID
-        ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123
+                Author can be one of the following:
+                ​ ​ ​ ​ User ID
+                ​ ​ ​ ​ User Mention
+                ​ ​ ​ ​ User Name#123
 
-        Guild can be one of the following:
-        ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Exact guild name
+                Guild can be one of the following:
+                ​ ​ ​ ​ Guild ID
+                ​ ​ ​ ​ Exact guild name
 
-        Example use:
-        ​ ​ ​ ​ [p]playlist copy MyGuildPlaylist --from-scope Guild --to-scope Global
-        ​ ​ ​ ​ [p]playlist copy MyGlobalPlaylist --from-scope Global --to-author Draper#6666 --to-scope User
-        ​ ​ ​ ​ [p]playlist copy MyPersonalPlaylist --from-scope user --to-author Draper#6666 --to-scope Guild --to-guild Red - Discord Bot
+                Example use:
+                ​ ​ ​ ​ [p]playlist copy MyGuildPlaylist --from-scope Guild --to-scope Global
+                ​ ​ ​ ​ [p]playlist copy MyGlobalPlaylist --from-scope Global --to-author Draper#6666 --to-scope User
+                ​ ​ ​ ​ [p]playlist copy MyPersonalPlaylist --from-scope user --to-author Draper#6666 --to-scope Guild --to-guild Red - Discord Bot
 
-        """
+                """
 
         if scope_data is None:
             scope_data = [
@@ -3500,11 +3511,18 @@ class Audio(commands.Cog):
                 ctx.guild,
                 False,
             ]
-        from_scope, from_author, from_guild, specified_from_user, to_scope, to_author, to_guild, specified_to_user = (
-            scope_data
-        )
+        (
+            from_scope,
+            from_author,
+            from_guild,
+            specified_from_user,
+            to_scope,
+            to_author,
+            to_guild,
+            specified_to_user,
+        ) = scope_data
 
-        from_playlist, playlist_arg = await self._get_correct_playlist_id(
+        from_playlist, playlist_arg = await self._get_correct_playlist(
             ctx, playlist_matches, from_scope, from_author, from_guild, specified_from_user
         )
         if from_playlist is False:
@@ -3656,7 +3674,7 @@ class Audio(commands.Cog):
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
 
-        playlist, playlist_arg = await self._get_correct_playlist_id(
+        playlist, playlist_arg = await self._get_correct_playlist(
             ctx, playlist_matches, scope, author, guild, specified_user
         )
         if playlist is False:
@@ -3725,7 +3743,7 @@ class Audio(commands.Cog):
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
 
-        playlist, playlist_arg = await self._get_correct_playlist_id(
+        playlist, playlist_arg = await self._get_correct_playlist(
             ctx, playlist_matches, scope, author, guild, specified_user
         )
 
@@ -3749,7 +3767,9 @@ class Audio(commands.Cog):
 
         tracklist = []
         for track in track_objects:
+            # noinspection PyProtectedMember
             track_keys = track._info.keys()
+            # noinspection PyProtectedMember
             track_values = track._info.values()
             track_id = track.track_identifier
             track_info = {}
@@ -3771,7 +3791,8 @@ class Audio(commands.Cog):
             await self._embed_msg(
                 ctx,
                 _(
-                    "Removed {track_diff} duplicated tracks from {name} (`{id}`) [**{scope}**] playlist."
+                    "Removed {track_diff} duplicated "
+                    "tracks from {name} (`{id}`) [**{scope}**] playlist."
                 ).format(
                     name=playlist.name,
                     id=playlist.id,
@@ -3836,7 +3857,7 @@ class Audio(commands.Cog):
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
 
-        playlist, playlist_arg = await self._get_correct_playlist_id(
+        playlist, playlist_arg = await self._get_correct_playlist(
             ctx, playlist_matches, scope, author, guild, specified_user
         )
 
@@ -3934,7 +3955,7 @@ class Audio(commands.Cog):
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
 
-        playlist, playlist_arg = await self._get_correct_playlist_id(
+        playlist, playlist_arg = await self._get_correct_playlist(
             ctx, playlist_matches, scope, author, guild, specified_user
         )
 
@@ -4179,7 +4200,8 @@ class Audio(commands.Cog):
         await self._embed_msg(
             ctx,
             _(
-                "Playlist {name} (`{id}`) [**{scope}**] saved from current queue: {num} tracks added."
+                "Playlist {name} (`{id}`) [**{scope}**] "
+                "saved from current queue: {num} tracks added."
             ).format(
                 name=playlist.name, num=len(playlist.tracks), id=playlist.id, scope=scope_name
             ),
@@ -4194,36 +4216,37 @@ class Audio(commands.Cog):
         *,
         scope_data: ScopeParser = None,
     ):
+        # noinspection PyPep8,PyPep8
         """Remove a track from a playlist by url.
 
-         **Usage**:
-        ​ ​ ​ ​ [p]playlist remove playlist_name_OR_id url args
+                 **Usage**:
+                ​ ​ ​ ​ [p]playlist remove playlist_name_OR_id url args
 
-        **Args**:
-        ​ ​ ​ ​ The following are all optional:
-        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+                **Args**:
+                ​ ​ ​ ​ The following are all optional:
+                ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
+                ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
+                ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
 
-        Scope is one of the following:
-        ​ ​ ​ ​ Global
-        ​ ​ ​ ​ Guild
-        ​ ​ ​ ​ User
+                Scope is one of the following:
+                ​ ​ ​ ​ Global
+                ​ ​ ​ ​ Guild
+                ​ ​ ​ ​ User
 
-        Author can be one of the following:
-        ​ ​ ​ ​ User ID
-        ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123
+                Author can be one of the following:
+                ​ ​ ​ ​ User ID
+                ​ ​ ​ ​ User Mention
+                ​ ​ ​ ​ User Name#123
 
-        Guild can be one of the following:
-        ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Exact guild name
+                Guild can be one of the following:
+                ​ ​ ​ ​ Guild ID
+                ​ ​ ​ ​ Exact guild name
 
-        Example use:
-        ​ ​ ​ ​ [p]playlist remove MyGuildPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU
-        ​ ​ ​ ​ [p]playlist remove MyGlobalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope Global
-        ​ ​ ​ ​ [p]playlist remove MyPersonalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope User
-        """
+                Example use:
+                ​ ​ ​ ​ [p]playlist remove MyGuildPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU
+                ​ ​ ​ ​ [p]playlist remove MyGlobalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope Global
+                ​ ​ ​ ​ [p]playlist remove MyPersonalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope User
+                """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
@@ -4231,7 +4254,7 @@ class Audio(commands.Cog):
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
 
-        playlist, playlist_arg = await self._get_correct_playlist_id(
+        playlist, playlist_arg = await self._get_correct_playlist(
             ctx, playlist_matches, scope, author, guild, specified_user
         )
 
@@ -4261,7 +4284,8 @@ class Audio(commands.Cog):
             await self._embed_msg(
                 ctx,
                 _(
-                    "{num} entries have been removed from the playlist {playlist_name} (`{id}`) [**{scope}**]."
+                    "{num} entries have been removed "
+                    "from the playlist {playlist_name} (`{id}`) [**{scope}**]."
                 ).format(
                     num=del_count, playlist_name=playlist.name, id=playlist.id, scope=scope_name
                 ),
@@ -4270,7 +4294,8 @@ class Audio(commands.Cog):
             await self._embed_msg(
                 ctx,
                 _(
-                    "The track has been removed from the playlist: {playlist_name} (`{id}`) [**{scope}**]."
+                    "The track has been removed from the playlist: "
+                    "{playlist_name} (`{id}`) [**{scope}**]."
                 ).format(playlist_name=playlist.name, id=playlist.id, scope=scope_name),
             )
 
@@ -4283,36 +4308,37 @@ class Audio(commands.Cog):
         *,
         scope_data: ScopeParser = None,
     ):
+        # noinspection PyPep8,PyPep8,PyPep8
         """Save a playlist from a url.
 
-        **Usage**:
-        ​ ​ ​ ​ [p]playlist save name url args
+                **Usage**:
+                ​ ​ ​ ​ [p]playlist save name url args
 
-        **Args**:
-        ​ ​ ​ ​ The following are all optional:
-        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+                **Args**:
+                ​ ​ ​ ​ The following are all optional:
+                ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
+                ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
+                ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
 
-        Scope is one of the following:
-        ​ ​ ​ ​ Global
-        ​ ​ ​ ​ Guild
-        ​ ​ ​ ​ User
+                Scope is one of the following:
+                ​ ​ ​ ​ Global
+                ​ ​ ​ ​ Guild
+                ​ ​ ​ ​ User
 
-        Author can be one of the following:
-        ​ ​ ​ ​ User ID
-        ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123
+                Author can be one of the following:
+                ​ ​ ​ ​ User ID
+                ​ ​ ​ ​ User Mention
+                ​ ​ ​ ​ User Name#123
 
-        Guild can be one of the following:
-        ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Exact guild name
+                Guild can be one of the following:
+                ​ ​ ​ ​ Guild ID
+                ​ ​ ​ ​ Exact guild name
 
-        Example use:
-        ​ ​ ​ ​ [p]playlist save MyGuildPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM
-        ​ ​ ​ ​ [p]playlist save MyGlobalPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM --scope Global
-        ​ ​ ​ ​ [p]playlist save MyPersonalPlaylist https://open.spotify.com/playlist/1RyeIbyFeIJVnNzlGr5KkR --scope User
-        """
+                Example use:
+                ​ ​ ​ ​ [p]playlist save MyGuildPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM
+                ​ ​ ​ ​ [p]playlist save MyGlobalPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM --scope Global
+                ​ ​ ​ ​ [p]playlist save MyPersonalPlaylist https://open.spotify.com/playlist/1RyeIbyFeIJVnNzlGr5KkR --scope User
+                """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
@@ -4398,7 +4424,7 @@ class Audio(commands.Cog):
                 await self._embed_msg(ctx, _("You need the DJ role to start playing playlists."))
                 return False
 
-        playlist, playlist_arg = await self._get_correct_playlist_id(
+        playlist, playlist_arg = await self._get_correct_playlist(
             ctx, playlist_matches, scope, author, guild, specified_user
         )
 
@@ -4523,7 +4549,7 @@ class Audio(commands.Cog):
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
-        playlist, playlist_arg = await self._get_correct_playlist_id(
+        playlist, playlist_arg = await self._get_correct_playlist(
             ctx, playlist_matches, scope, author, guild, specified_user
         )
 
@@ -4787,7 +4813,7 @@ class Audio(commands.Cog):
             )
 
         try:
-            playlist, playlist_arg = await self._get_correct_playlist_id(
+            playlist, playlist_arg = await self._get_correct_playlist(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except RuntimeError:
@@ -4908,11 +4934,13 @@ class Audio(commands.Cog):
         )
         playlist_msg = await ctx.send(embed=embed1)
         notifier = Notifier(ctx, playlist_msg, {"playlist": _("Loading track {num}/{total}...")})
+        # noinspection PyUnusedLocal
         called_api = False
         for song_url in uploaded_track_list:
             # if called_api is True:
             #     await asyncio.sleep(2)
             track_count += 1
+            # noinspection PyBroadException
             try:
                 result, called_api = await self.music_cache.lavalink_query(
                     ctx, player, dataclasses.Query.process_input(song_url)
@@ -4920,6 +4948,7 @@ class Audio(commands.Cog):
                 track = result.tracks
             except Exception:
                 continue
+            # noinspection PyBroadException
             try:
                 track_obj = track_creator(player, other_track=track[0])
                 track_list.append(track_obj)
@@ -5045,6 +5074,7 @@ class Audio(commands.Cog):
             if not tracks:
                 colour = await ctx.embed_colour()
                 embed = discord.Embed(title=_("Nothing found."), colour=colour)
+                # noinspection PyProtectedMember
                 if query.is_local and query.suffix in dataclasses._partially_supported_music_ext:
                     embed = discord.Embed(title=_("Track is not playable."), colour=colour)
                     embed.description = _(
@@ -5062,6 +5092,7 @@ class Audio(commands.Cog):
             if not tracks:
                 colour = await ctx.embed_colour()
                 embed = discord.Embed(title=_("Nothing found."), colour=colour)
+                # noinspection PyProtectedMember
                 if query.is_local and query.suffix in dataclasses._partially_supported_music_ext:
                     embed = discord.Embed(title=_("Track is not playable."), colour=colour)
                     embed.description = _(
@@ -5564,7 +5595,7 @@ class Audio(commands.Cog):
             true_or_false=_("Enabled") if not repeat else _("Disabled")
         )
         await self.config.guild(ctx.guild).repeat.set(not repeat)
-        if not repeat is True and autoplay is True:
+        if repeat is not True and autoplay is True:
             msg += _("\nAuto-play has been disabled.")
             await self.config.guild(ctx.guild).auto_play.set(False)
 
@@ -5674,6 +5705,7 @@ class Audio(commands.Cog):
                 if not tracks:
                     colour = await ctx.embed_colour()
                     embed = discord.Embed(title=_("Nothing found."), colour=colour)
+                    # noinspection PyProtectedMember,PyProtectedMember
                     if await self.config.use_external_lavalink() and query.is_local:
                         embed.description = _(
                             "Local tracks will not work "
@@ -5691,7 +5723,6 @@ class Audio(commands.Cog):
                             "tracks may not play."
                         ).format(suffix=query.suffix)
                     return await ctx.send(embed=embed)
-
                 queue_dur = await queue_duration(ctx)
                 queue_total_duration = lavalink.utils.format_time(queue_dur)
 
@@ -5753,6 +5784,7 @@ class Audio(commands.Cog):
             if not tracks:
                 colour = await ctx.embed_colour()
                 embed = discord.Embed(title=_("Nothing found."), colour=colour)
+                # noinspection PyProtectedMember
                 if await self.config.use_external_lavalink() and query.is_local:
                     embed.description = _(
                         "Local tracks will not work "
@@ -5789,17 +5821,15 @@ class Audio(commands.Cog):
                 string, search = self._format_search_options(track)
                 _track = track, search
                 folder_page_list.append((string, search))
-        try:
-            title_check = _track[0].uri
+        if hasattr(_track[0], "uri"):
             title = _("Tracks Found:")
             footer = _("search results")
-        except AttributeError:
-            if _track[1].track.is_dir():
-                title = _("Folders Found:")
-                footer = _("local folders")
-            else:
-                title = _("Files Found:")
-                footer = _("local tracks")
+        elif _track[1].track.is_dir():
+            title = _("Folders Found:")
+            footer = _("local folders")
+        else:
+            title = _("Files Found:")
+            footer = _("local tracks")
 
         menu_instance = await PagedOptionsMenu.send_and_wait(
             ctx,
@@ -5818,6 +5848,7 @@ class Audio(commands.Cog):
         if not tracks:
             colour = await ctx.embed_colour()
             embed = discord.Embed(title=_("Nothing found."), colour=colour)
+            # noinspection PyProtectedMember
             if await self.config.use_external_lavalink() and query.is_local:
                 embed.description = _(
                     "Local tracks will not work "
@@ -5909,6 +5940,7 @@ class Audio(commands.Cog):
         search_idx_end = search_idx_start + 5
         search_list = ""
         command = ctx.invoked_with
+        folder = False
         for i, track in enumerate(tracks[search_idx_start:search_idx_end], start=search_idx_start):
             search_track_num = i + 1
             if search_track_num > 5:
@@ -5941,23 +5973,19 @@ class Audio(commands.Cog):
                     search_list += "`{}.` **{}**\n".format(
                         search_track_num, track.to_string_user()
                     )
-                    folder = False
                 else:
                     search_list += "`{}.` **{}**\n".format(
                         search_track_num, track.to_string_user()
                     )
-                    folder = False
-        try:
-            title_check = tracks[0].uri
+        if hasattr(tracks[0], "uri"):
             title = _("Tracks Found:")
             footer = _("search results")
-        except AttributeError:
-            if folder:
-                title = _("Folders Found:")
-                footer = _("local folders")
-            else:
-                title = _("Files Found:")
-                footer = _("local tracks")
+        elif folder:
+            title = _("Folders Found:")
+            footer = _("local folders")
+        else:
+            title = _("Files Found:")
+            footer = _("local tracks")
         embed = discord.Embed(
             colour=await ctx.embed_colour(), title=title, description=search_list
         )
@@ -6296,7 +6324,9 @@ class Audio(commands.Cog):
             )
             await ctx.send(embed=embed)
             if player.repeat:
+                # noinspection PyPep8
                 queue_to_append = player.queue[0 : min(skip_to_track - 1, len(player.queue) - 1)]
+            # noinspection PyPep8
             player.queue = player.queue[
                 min(skip_to_track - 1, len(player.queue) - 1) : len(player.queue)
             ]
@@ -6664,6 +6694,7 @@ class Audio(commands.Cog):
                 else:
                     stop_times.pop(server.id, None)
                     if p.paused and server.id in pause_times:
+                        # noinspection PyBroadException
                         try:
                             await p.pause(False)
                         except Exception:
@@ -6682,6 +6713,7 @@ class Audio(commands.Cog):
                     emptydc_timer = await self.config.guild(server_obj).emptydc_timer()
                     if (time.time() - stop_times[sid]) >= emptydc_timer:
                         stop_times.pop(sid)
+                        # noinspection PyBroadException
                         try:
                             await lavalink.get_player(sid).disconnect()
                         except Exception:
@@ -6692,6 +6724,7 @@ class Audio(commands.Cog):
                 ):
                     emptypause_timer = await self.config.guild(server_obj).emptypause_timer()
                     if (time.time() - pause_times.get(sid)) >= emptypause_timer:
+                        # noinspection PyBroadException
                         try:
                             await lavalink.get_player(sid).pause()
                         except Exception:
@@ -6714,6 +6747,7 @@ class Audio(commands.Cog):
             await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
 
         if eq.bands != config_bands:
+            # noinspection PyProtectedMember
             band_num = list(range(0, eq._band_count))
             band_value = config_bands
             eq_dict = {}
@@ -6802,6 +6836,7 @@ class Audio(commands.Cog):
 
         if react_emoji == "⏺":
             await remove_react(message, react_emoji, react_user)
+            # noinspection PyProtectedMember
             for band in range(eq._band_count):
                 eq.set_gain(band, 0.0)
             await self._apply_gains(ctx.guild.id, eq.bands)
@@ -6820,7 +6855,7 @@ class Audio(commands.Cog):
             except discord.errors.NotFound:
                 pass
 
-    async def _get_embed_colour(self, channel: discord.abc.GuildChannel):
+    async def _get_embed_colour(self, channel: discord.TextChannel):
         # Unfortunately we need this for when context is unavailable.
         if await self.bot.db.guild(channel.guild).use_bot_color():
             return channel.guild.me.color
@@ -6940,4 +6975,5 @@ class Audio(commands.Cog):
         await self.music_cache.run_all_pending_tasks()
         await self.music_cache.close()
 
+    # noinspection PyUnusedName
     __del__ = cog_unload
