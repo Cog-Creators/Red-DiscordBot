@@ -224,7 +224,4 @@ def storage_details() -> dict:
     -------
     dict
     """
-    try:
-        return basic_config["STORAGE_DETAILS"]
-    except KeyError as e:
-        raise RuntimeError("Bot basic config has not been loaded yet.") from e
+    return basic_config.get("STORAGE_DETAILS", {})

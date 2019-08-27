@@ -89,7 +89,7 @@ class Tunnel(metaclass=TunnelMeta):
         destination: discord.abc.Messageable,
         content: str = None,
         embed=None,
-        files: Optional[List[discord.File]] = None
+        files: Optional[List[discord.File]] = None,
     ) -> List[discord.Message]:
         """
         This does the actual sending, use this instead of a full tunnel
