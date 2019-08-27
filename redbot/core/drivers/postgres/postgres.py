@@ -58,7 +58,7 @@ class PostgresDriver(BaseDriver):
     def get_config_details():
         unixmsg = (
             ""
-            if sys.platform != "win32"
+            if sys.platform == "win32"
             else (
                 " - Common directories for PostgreSQL Unix-domain sockets (/run/postgresql, "
                 "/var/run/postgresl, /var/pgsql_socket, /private/tmp, and /tmp),\n"
@@ -104,7 +104,7 @@ class PostgresDriver(BaseDriver):
             or None
         )
 
-        passfile = r"%APPDATA%\postgresql\pgpass.conf" if sys.platform != "win32" else "~/.pgpass"
+        passfile = r"%APPDATA%\postgresql\pgpass.conf" if sys.platform == "win32" else "~/.pgpass"
         password = getpass.getpass(
             f"Enter the PostgreSQL server password. The input will be hidden.\n"
             f"  NOTE: If using ident/peer authentication (no password), enter NONE.\n"
