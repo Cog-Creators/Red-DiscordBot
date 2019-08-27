@@ -22,7 +22,6 @@ from discord.embeds import EmptyEmbed
 from fuzzywuzzy import process
 
 import redbot.core
-from redbot.cogs.audio.config import pass_config_to_dependencies
 from redbot.core import Config, bank, checks, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
@@ -31,6 +30,7 @@ from redbot.core.utils.menus import PagedMenu, PagedOptionsMenu, start_adding_re
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from . import dataclasses
 from .apis import MusicCache
+from .config import pass_config_to_dependencies
 from .converters import ComplexScopeParser, PlaylistConverter, ScopeParser, get_lazy_converter
 from .equalizer import Equalizer
 from .errors import LavalinkDownloadFailed, MissingGuild, SpotifyFetchError
