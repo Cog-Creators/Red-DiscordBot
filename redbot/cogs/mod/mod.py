@@ -79,7 +79,6 @@ class Mod(
         await self._maybe_update_config()
 
     def cog_unload(self):
-        self.registration_task.cancel()
         self.tban_expiry_task.cancel()
 
     async def _maybe_update_config(self):
