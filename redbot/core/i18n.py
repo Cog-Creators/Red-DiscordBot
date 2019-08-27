@@ -192,6 +192,18 @@ def _get_babel_locale(red_locale: str) -> babel.core.Locale:
 
 
 def get_babel_locale(locale: Optional[str] = None) -> babel.core.Locale:
+    """Function to get a ``babel.core.Locale`` for specified locale or the bots locale.
+
+    Parameters
+    ----------
+    locale : : Optional[str]
+    The locale to get, if ``None`` is specified it defaults to the bot's locale.
+
+    Returns
+    -------
+    babel.core.Locale
+        The babel locale object.
+    """
     if locale is None:
         locale = get_locale()
     return _get_babel_locale(locale)

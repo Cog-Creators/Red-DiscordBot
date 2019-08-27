@@ -1,6 +1,8 @@
 import itertools
 import datetime
 from typing import Sequence, Iterator, List, Optional, Union
+from io import BytesIO
+
 
 import discord
 from babel.numbers import format_decimal
@@ -449,3 +451,30 @@ def humanize_number(val: Union[int, float], override_locale=None) -> str:
         locale aware formatted number.
     """
     return format_decimal(val, locale=get_babel_locale(override_locale))
+
+
+def text_to_file(
+    text: str, filename: str = "file.txt", *, spoiler: bool = False, encoding: str = "utf-8"
+):
+    """Prepares text to be sent as a file on Discord, without character limit.
+
+    This writes text into a bytes object that can be used for the ``file`` or ``files`` parameters
+    of :meth:`discord.abc.Messageable.send`.
+
+    Parameters
+    ----------
+    text: str
+        The text to put in your file.
+    filename: str
+        The name of the file sent. Defaults to ``file.txt``.
+    spoiler: bool
+        Whether the attachment is a spoiler. Defaults to ``False``.
+
+    Returns
+    -------
+    discord.File
+        The file containing your text.
+
+    """
+    file = BytesIO(text.encode(encoding))
+    return discord.File(file, filename, spoiler=spoiler)
