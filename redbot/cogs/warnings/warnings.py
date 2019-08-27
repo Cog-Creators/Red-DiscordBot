@@ -250,7 +250,7 @@ class Warnings(commands.Cog):
         user: discord.Member,
         points: Optional[int] = 1,
         *,
-        reason: str
+        reason: str,
     ):
         """Warn the user for the specified reason.
 

@@ -429,10 +429,9 @@ class Audio(commands.Cog):
             if notify_channel:
                 notify_channel = self.bot.get_channel(notify_channel)
                 if player.fetch("notify_message") is not None:
-                    try:
+                    with contextlib.suppress(discord.HTTPException):
                         await player.fetch("notify_message").delete()
-                    except discord.errors.NotFound:
-                        pass
+
                 if (
                     autoplay
                     and player.current.extras.get("autoplay")
@@ -1085,10 +1084,8 @@ class Audio(commands.Cog):
         await ctx.bot.wait_for("reaction_add", check=pred)
 
         if not pred.result:
-            try:
+            with contextlib.suppress(discord.HTTPException):
                 await info.delete()
-            except discord.errors.Forbidden:
-                pass
             return
         temp = dataclasses.LocalPath(local_path, forced=True)
         if not temp.exists() or not temp.is_dir():
@@ -2202,10 +2199,8 @@ class Audio(commands.Cog):
             song = _("Nothing.")
 
         if player.fetch("np_message") is not None:
-            try:
+            with contextlib.suppress(discord.HTTPException):
                 await player.fetch("np_message").delete()
-            except discord.errors.NotFound:
-                pass
 
         embed = discord.Embed(
             colour=await ctx.embed_colour(), title=_("Now Playing"), description=song
@@ -6853,10 +6848,8 @@ class Audio(commands.Cog):
     @staticmethod
     async def _eq_msg_clear(eq_message: discord.Message):
         if eq_message is not None:
-            try:
+            with contextlib.suppress(discord.HTTPException):
                 await eq_message.delete()
-            except discord.errors.NotFound:
-                pass
 
     async def _get_embed_colour(self, channel: discord.TextChannel):
         # Unfortunately we need this for when context is unavailable.
