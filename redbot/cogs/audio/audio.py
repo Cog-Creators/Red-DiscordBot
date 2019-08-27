@@ -654,8 +654,8 @@ class Audio(commands.Cog):
             '4. When asked if you\'re developing commercial integration select "No".\n'
             "5. Accept the terms and conditions.\n"
             "6. Copy your client ID and your client secret into:\n"
-            "`{prefix}set api spotify client_id,<your_client_id_here> "
-            "client_secret,<your_client_secret_here>`"
+            "`{prefix}set api spotify client_id <your_client_id_here> "
+            "client_secret <your_client_secret_here>`"
         ).format(prefix=ctx.prefix)
         await ctx.maybe_send_embed(message)
 
@@ -715,7 +715,7 @@ class Audio(commands.Cog):
             "6. Click on Create Credential at the top.\n"
             '7. At the top click the link for "API key".\n'
             "8. No application restrictions are needed. Click Create at the bottom.\n"
-            "9. You now have a key to add to `{prefix}set api youtube api_key,<your_api_key_here>`"
+            "9. You now have a key to add to `{prefix}set api youtube api_key <your_api_key_here>`"
         ).format(prefix=ctx.prefix)
         await ctx.maybe_send_embed(message)
 

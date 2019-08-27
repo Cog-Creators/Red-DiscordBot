@@ -7,15 +7,13 @@ import pytest
 from _pytest.monkeypatch import MonkeyPatch
 from redbot.core import Config
 from redbot.core.bot import Red
-from redbot.core import config as config_module
-
-from redbot.core.drivers import red_json
+from redbot.core import config as config_module, drivers
 
 __all__ = [
     "monkeysession",
     "override_data_path",
     "coroutine",
-    "json_driver",
+    "driver",
     "config",
     "config_fr",
     "red",
@@ -56,34 +54,31 @@ def coroutine():
 
 
 @pytest.fixture()
-def json_driver(tmpdir_factory):
+def driver(tmpdir_factory):
     import uuid
 
     rand = str(uuid.uuid4())
     path = Path(str(tmpdir_factory.mktemp(rand)))
-    driver = red_json.JSON("PyTest", identifier=str(uuid.uuid4()), data_path_override=path)
-    return driver
+    return drivers.get_driver("PyTest", str(random.randint(1, 999999)), data_path_override=path)
 
 
 @pytest.fixture()
-def config(json_driver):
+def config(driver):
     config_module._config_cache = weakref.WeakValueDictionary()
-    conf = Config(
-        cog_name="PyTest", unique_identifier=json_driver.unique_cog_identifier, driver=json_driver
-    )
+    conf = Config(cog_name="PyTest", unique_identifier=driver.unique_cog_identifier, driver=driver)
     yield conf
 
 
 @pytest.fixture()
-def config_fr(json_driver):
+def config_fr(driver):
     """
     Mocked config object with force_register enabled.
     """
     config_module._config_cache = weakref.WeakValueDictionary()
     conf = Config(
         cog_name="PyTest",
-        unique_identifier=json_driver.unique_cog_identifier,
-        driver=json_driver,
+        unique_identifier=driver.unique_cog_identifier,
+        driver=driver,
         force_registration=True,
     )
     yield conf
@@ -176,7 +171,7 @@ def red(config_fr):
 
     Config.get_core_conf = lambda *args, **kwargs: config_fr
 
-    red = Red(cli_flags=cli_flags, description=description, dm_help=None)
+    red = Red(cli_flags=cli_flags, description=description, dm_help=None, owner_id=None)
 
     yield red
 

@@ -200,6 +200,12 @@ Or, to install with MongoDB support:
 
     python3.7 -m pip install -U Red-DiscordBot[mongo]
 
+Or, to install with PostgreSQL support:
+
+.. code-block:: none
+
+    python3.7 -m pip install -U Red-DiscordBot[postgres]
+
 .. note::
 
   To install the development version, replace ``Red-DiscordBot`` in the above commands with the
