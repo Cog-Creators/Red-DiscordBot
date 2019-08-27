@@ -95,7 +95,7 @@ class Events(MixinMeta):
             await self.check_mention_spam(message)
 
     @commands.Cog.listener()
-    async def on_member_update(self, before: discord.Member, after: discord.Member):
+    async def on_user_update(self, before: discord.User, after: discord.User):
         if before.name != after.name:
             async with self.settings.user(before).past_names() as name_list:
                 while None in name_list:  # clean out null entries from a bug
@@ -107,6 +107,8 @@ class Events(MixinMeta):
                 while len(name_list) > 20:
                     name_list.pop(0)
 
+    @commands.Cog.listener()
+    async def on_member_update(self, before: discord.Member, after: discord.Member):
         if before.nick != after.nick and after.nick is not None:
             async with self.settings.member(before).past_nicks() as nick_list:
                 while None in nick_list:  # clean out null entries from a bug
