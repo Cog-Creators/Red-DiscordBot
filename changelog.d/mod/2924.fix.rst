@@ -1,0 +1,1 @@
+``modset deletedelay`` doesn't delete non-commands.
