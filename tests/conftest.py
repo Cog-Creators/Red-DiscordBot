@@ -26,15 +26,7 @@ def _get_backend_type():
 @pytest.fixture(scope="session", autouse=True)
 async def _setup_driver():
     backend_type = _get_backend_type()
-    if backend_type == drivers.BackendType.POSTGRES:
-        storage_details = {
-            "host": os.getenv("RED_POSTGRES_HOST", "localhost"),
-            "port": int(os.getenv("RED_POSTGRES_PORT", "5432")),
-            "user": os.getenv("RED_POSTGRES_USER", "postgres"),
-            "password": os.getenv("RED_POSTGRES_PASSWORD"),
-            "database": os.getenv("RED_POSTGRES_DATABASE", "red_db"),
-        }
-    elif backend_type == drivers.BackendType.MONGO:
+    if backend_type == drivers.BackendType.MONGO:
         storage_details = {
             "URI": os.getenv("RED_MONGO_URI", "mongodb"),
             "HOST": os.getenv("RED_MONGO_HOST", "localhost"),

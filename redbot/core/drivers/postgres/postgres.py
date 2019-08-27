@@ -1,5 +1,6 @@
 import getpass
 import json
+import sys
 from pathlib import Path
 from typing import Optional, Any, AsyncIterator, Tuple, Union, Callable, List
 
@@ -55,30 +56,77 @@ class PostgresDriver(BaseDriver):
 
     @staticmethod
     def get_config_details():
-        host = input("Enter PostgreSQL server address [localhost]: ")
-        if not host:
-            host = "localhost"
+        unixmsg = (
+            ""
+            if sys.platform != "win32"
+            else (
+                " - Common directories for PostgreSQL Unix-domain sockets (/run/postgresql, "
+                "/var/run/postgresl, /var/pgsql_socket, /private/tmp, and /tmp),\n"
+            )
+        )
+        host = (
+            input(
+                f"Enter the PostgreSQL server's address.\n"
+                f"If left blank, Red will try the following, in order:\n"
+                f" - The PGHOST environment variable,\n{unixmsg}"
+                f" - localhost.\n"
+                f"> "
+            )
+            or None
+        )
+
+        print(
+            "Enter the PostgreSQL server port.\n"
+            "If left blank, this will default to either:\n"
+            " - The PGPORT environment variable,\n"
+            " - 5432."
+        )
         while True:
-            port = input("Enter PostgreSQL server port [5432]: ")
-            if not port:
-                port = 5432
+            port = input("> ") or None
+            if port is None:
                 break
+
+            try:
+                port = int(port)
+            except ValueError:
+                print("Port must be a number")
             else:
-                try:
-                    port = int(port)
-                except ValueError:
-                    print("Port must be a number")
-                else:
-                    break
-        user = input("Enter PostgreSQL server username [postgres]: ")
-        if not user:
-            user = "postgres"
+                break
 
-        password = getpass.getpass("Enter PostgreSQL server password (input will be hidden): ")
+        user = (
+            input(
+                "Enter the PostgreSQL server username.\n"
+                "If left blank, this will default to either:\n"
+                " - The PGUSER environment variable,\n"
+                " - The OS name of the user running Red (ident/peer authentication).\n"
+                "> "
+            )
+            or None
+        )
 
-        database = input("Enter PostgreSQL database name [postgres]: ")
-        if not database:
-            database = "postgres"
+        passfile = r"%APPDATA%\postgresql\pgpass.conf" if sys.platform != "win32" else "~/.pgpass"
+        password = getpass.getpass(
+            f"Enter the PostgreSQL server password. The input will be hidden.\n"
+            f"  NOTE: If using ident/peer authentication (no password), enter NONE.\n"
+            f"When NONE is entered, this will default to:\n"
+            f" - The PGPASSWORD environment variable,\n"
+            f" - Looking up the password in the {passfile} passfile,\n"
+            f" - No password.\n"
+            f"> "
+        )
+        if password == "NONE":
+            password = None
+
+        database = (
+            input(
+                "Enter the PostgreSQL database's name.\n"
+                "If left blank, this will default to either:\n"
+                " - The PGDATABASE environment variable,\n"
+                " - The OS name of the user running Red.\n"
+                "> "
+            )
+            or None
+        )
 
         return {
             "host": host,
