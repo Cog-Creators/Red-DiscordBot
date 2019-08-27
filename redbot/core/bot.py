@@ -1,7 +1,7 @@
 import asyncio
 import inspect
-import os
 import logging
+import os
 from collections import Counter
 from enum import Enum
 from importlib.machinery import ModuleSpec
@@ -9,10 +9,9 @@ from pathlib import Path
 from typing import Optional, Union, List
 
 import discord
-import sys
 from discord.ext.commands import when_mentioned_or
 
-from . import Config, i18n, commands, errors
+from . import Config, i18n, commands, errors, drivers
 from .cog_manager import CogManager
 
 from .rpc import RPCMixin
@@ -592,8 +591,8 @@ class Red(RedBase, discord.AutoShardedClient):
 
     async def logout(self):
         """Logs out of Discord and closes all connections."""
-
         await super().logout()
+        await drivers.get_driver_class().teardown()
 
     async def shutdown(self, *, restart: bool = False):
         """Gracefully quit Red.
