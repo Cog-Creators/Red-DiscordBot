@@ -2,7 +2,7 @@ import re
 from xml.dom import minidom
 
 __all__ = ["PLSParser", "XMLParser", "M3UParser", "XSPFParser", "TXTParser"]
-_re_parse_url = re.compile(r" parseUrl=\d")
+_RE_PARSE_URL = re.compile(r" parseUrl=\d")
 
 
 class TXTParser:
@@ -173,7 +173,7 @@ class M3UParser:
                 fileref = line
 
             if info is not None and fileref is not None:
-                fileref = re.sub(_re_parse_url, "", fileref)
+                fileref = re.sub(_RE_PARSE_URL, "", fileref)
                 if "=" not in info:
                     info = info.split(",")
                     length = int(info[0])

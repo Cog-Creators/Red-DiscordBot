@@ -15,13 +15,14 @@ _bot: Optional[Red] = None
 _localtrack_folder: Optional[str] = None
 # noinspection PyUnusedName
 _ = Translator("Audio", __file__)
-_remove_start = re.compile(r"^(sc|list) ")
-_re_youtube_timestamp = re.compile(r"&t=(\d+)s?")
-_re_youtube_index = re.compile(r"&index=(\d+)")
-_re_spotify_url = re.compile(r"(http[s]?://)?(open.spotify.com)/")
-_re_spotify_timestamp = re.compile(r"#(\d+):(\d+)")
-_re_soundcloud_timestamp = re.compile(r"#t=(\d+):(\d+)s?")
-_re_twitch_timestamp = re.compile(r"\?t=(\d+)h(\d+)m(\d+)s")
+
+_RE_REMOVE_START = re.compile(r"^(sc|list) ")
+_RE_YOUTUBE_TIMESTAMP = re.compile(r"&t=(\d+)s?")
+_RE_YOUTUBE_INDEX = re.compile(r"&index=(\d+)")
+_RE_SPOTIFY_URL = re.compile(r"(http[s]?://)?(open.spotify.com)/")
+_RE_SPOTIFY_TIMESTAMP = re.compile(r"#(\d+):(\d+)")
+_RE_SOUNDCLOUD_TIMESTAMP = re.compile(r"#t=(\d+):(\d+)s?")
+_RE_TWITCH_TIMESTAMP = re.compile(r"\?t=(\d+)h(\d+)m(\d+)s")
 
 _fully_supported_music_ext = (".mp3", ".flac", ".ogg")
 _partially_supported_music_ext = (
@@ -361,7 +362,7 @@ class Query:
                 _id = _id.split("?")[0]
                 returning["id"] = _id
                 if "#" in _id:
-                    match = re.search(_re_spotify_timestamp, track)
+                    match = re.search(_RE_SPOTIFY_TIMESTAMP, track)
                     if match:
                         returning["start_time"] = (int(match.group(1)) * 60) + int(match.group(2))
                 returning["uri"] = track
@@ -372,7 +373,7 @@ class Query:
                     returning["soundcloud"] = True
                 elif track.startswith("list "):
                     returning["invoked_from"] = "search list"
-                track = _remove_start.sub("", track, 1)
+                track = _RE_REMOVE_START.sub("", track, 1)
                 returning["queryforced"] = track
 
             _localtrack = LocalPath(track)
@@ -398,11 +399,11 @@ class Query:
                         returning["youtube"] = True
                         _has_index = "&index=" in track
                         if "&t=" in track:
-                            match = re.search(_re_youtube_timestamp, track)
+                            match = re.search(_RE_YOUTUBE_TIMESTAMP, track)
                             if match:
                                 returning["start_time"] = int(match.group(1))
                         if _has_index:
-                            match = re.search(_re_youtube_index, track)
+                            match = re.search(_RE_YOUTUBE_INDEX, track)
                             if match:
                                 returning["track_index"] = int(match.group(1)) - 1
                         if any(k in track for k in ["playlist?", "&list="]):
@@ -423,7 +424,7 @@ class Query:
                             returning["album"] = True
                         elif "/track/" in track:
                             returning["single"] = True
-                        val = re.sub(_re_spotify_url, "", track).replace("/", ":")
+                        val = re.sub(_RE_SPOTIFY_URL, "", track).replace("/", ":")
                         if "user:" in val:
                             val = val.split(":", 2)[-1]
                         _id = val.split(":", 1)[-1]
@@ -431,7 +432,7 @@ class Query:
 
                         if "#" in _id:
                             _id = _id.split("#")[0]
-                            match = re.search(_re_spotify_timestamp, track)
+                            match = re.search(_RE_SPOTIFY_TIMESTAMP, track)
                             if match:
                                 returning["start_time"] = (int(match.group(1)) * 60) + int(
                                     match.group(2)
@@ -442,7 +443,7 @@ class Query:
                     elif url_domain == "soundcloud.com":
                         returning["soundcloud"] = True
                         if "#t=" in track:
-                            match = re.search(_re_soundcloud_timestamp, track)
+                            match = re.search(_RE_SOUNDCLOUD_TIMESTAMP, track)
                             if match:
                                 returning["start_time"] = (int(match.group(1)) * 60) + int(
                                     match.group(2)
@@ -467,7 +468,7 @@ class Query:
                     elif url_domain == "twitch.tv":
                         returning["twitch"] = True
                         if "?t=" in track:
-                            match = re.search(_re_twitch_timestamp, track)
+                            match = re.search(_RE_TWITCH_TIMESTAMP, track)
                             if match:
                                 returning["start_time"] = (
                                     (int(match.group(1)) * 60 * 60)
