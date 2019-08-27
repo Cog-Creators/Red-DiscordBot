@@ -517,13 +517,13 @@ class Economy(commands.Cog):
         await channel.send(
             (
                 "{slot}\n{author.mention} {phrase}\n\n"
-                + _("Your bid: {bid")
+                + _("Your bid: {bid}")
                 + _("\n{old_balance} - {bid} (Your bid) + {pay} (Winnings) → {new_balance}!")
             ).format(
                 slot=slot,
                 author=author,
                 phrase=phrase,
-                amount=bid,
+                bid=bid,
                 old_balance=then,
                 new_balance=now,
                 pay=pay,
