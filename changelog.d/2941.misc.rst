@@ -1,0 +1,1 @@
+Add `pip-wheel-metadata` folder to `.gitignore` file - pip creates it when installing Red in venv

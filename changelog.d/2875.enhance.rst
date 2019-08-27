@@ -1,0 +1,1 @@
+Slots now has a 62.5% expected payout and won't inflate economy when spammed.
