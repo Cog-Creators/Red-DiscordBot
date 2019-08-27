@@ -2570,9 +2570,7 @@ class Audio(commands.Cog):
                 ctx, category_list, page_num, _("Categories")
             )
             category_search_page_list.append(embed)
-        cat_menu_output = await menu(
-            ctx, category_search_page_list, category_search_controls
-        )
+        cat_menu_output = await menu(ctx, category_search_page_list, category_search_controls)
         if not cat_menu_output:
             return await self._embed_msg(ctx, _("No categories selected, try again later."))
         category_name, category_pick = cat_menu_output
