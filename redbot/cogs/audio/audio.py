@@ -439,10 +439,9 @@ class Audio(commands.Cog):
             if notify_channel:
                 notify_channel = self.bot.get_channel(notify_channel)
                 if player.fetch("notify_message") is not None:
-                    try:
+                    with contextlib.suppress(discord.HTTPException):
                         await player.fetch("notify_message").delete()
-                    except discord.errors.NotFound:
-                        pass
+
                 if (
                     autoplay
                     and player.current.extras.get("autoplay")
@@ -1091,10 +1090,8 @@ class Audio(commands.Cog):
         await ctx.bot.wait_for("reaction_add", check=pred)
 
         if not pred.result:
-            try:
+            with contextlib.suppress(discord.HTTPException):
                 await info.delete()
-            except discord.errors.Forbidden:
-                pass
             return
         temp = dataclasses.LocalPath(local_path, forced=True)
         if not temp.exists() or not temp.is_dir():
@@ -2031,7 +2028,8 @@ class Audio(commands.Cog):
             emoji: str,
         ):
             if message:
-                await message.delete()
+                with contextlib.suppress(discord.HTTPException):
+                    await message.delete()
                 await self._search_button_action(ctx, localtracks_folders, emoji, page)
                 return None
 
@@ -2203,10 +2201,8 @@ class Audio(commands.Cog):
             song = _("Nothing.")
 
         if player.fetch("np_message") is not None:
-            try:
+            with contextlib.suppress(discord.HTTPException):
                 await player.fetch("np_message").delete()
-            except discord.errors.NotFound:
-                pass
 
         embed = discord.Embed(
             colour=await ctx.embed_colour(), title=_("Now Playing"), description=song
@@ -2466,7 +2462,8 @@ class Audio(commands.Cog):
         ):
             if message:
                 output = await self._genre_search_button_action(ctx, category_list, emoji, page)
-                await message.delete()
+                with contextlib.suppress(discord.HTTPException):
+                    await message.delete()
                 return output
 
         # noinspection PyUnusedLocal,PyShadowingNames
@@ -2483,7 +2480,8 @@ class Audio(commands.Cog):
                 output = await self._genre_search_button_action(
                     ctx, playlists_list, emoji, page, playlist=True
                 )
-                await message.delete()
+                with contextlib.suppress(discord.HTTPException):
+                    await message.delete()
                 return output
 
         category_search_controls = {
@@ -2572,9 +2570,12 @@ class Audio(commands.Cog):
                 ctx, category_list, page_num, _("Categories")
             )
             category_search_page_list.append(embed)
-        category_name, category_pick = await menu(
+        cat_menu_output = await menu(
             ctx, category_search_page_list, category_search_controls
         )
+        if not cat_menu_output:
+            return await self._embed_msg(ctx, _("No categories selected, try again later."))
+        category_name, category_pick = cat_menu_output
         playlists_list = await self.music_cache.spotify_api.get_playlist_from_category(
             category_pick
         )
@@ -5195,7 +5196,8 @@ class Audio(commands.Cog):
         ):
             if message:
                 await ctx.send_help(self.queue)
-                await message.delete()
+                with contextlib.suppress(discord.HTTPException):
+                    await message.delete()
                 return None
 
         queue_controls = {"⬅": prev_page, "❌": close_menu, "➡": next_page, "ℹ": _queue_menu}
@@ -5695,7 +5697,8 @@ class Audio(commands.Cog):
         ):
             if message:
                 await self._search_button_action(ctx, tracks, emoji, page)
-                await message.delete()
+                with contextlib.suppress(discord.HTTPException):
+                    await message.delete()
                 return None
 
         search_controls = {
@@ -6846,10 +6849,8 @@ class Audio(commands.Cog):
     @staticmethod
     async def _eq_msg_clear(eq_message: discord.Message):
         if eq_message is not None:
-            try:
+            with contextlib.suppress(discord.HTTPException):
                 await eq_message.delete()
-            except discord.errors.NotFound:
-                pass
 
     async def _get_embed_colour(self, channel: discord.TextChannel):
         # Unfortunately we need this for when context is unavailable.
