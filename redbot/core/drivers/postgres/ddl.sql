@@ -323,6 +323,9 @@ CREATE OR REPLACE FUNCTION
     ELSE
       -- Deleting an entire cog's data
       EXECUTE format('DROP SCHEMA %I CASCADE', schemaname);
+
+      DELETE FROM red_config.red_cogs
+      WHERE cog_name = id_data.cog_name AND cog_id = id_data.cog_id;
     END IF;
   END;
 $$;
@@ -606,6 +609,8 @@ CREATE OR REPLACE FUNCTION
     FOR cog_entry IN SELECT * FROM red_config.red_cogs t LOOP
       EXECUTE format('DROP SCHEMA %I CASCADE', cog_entry.schemaname);
     END LOOP;
+    -- Clear out red_config.red_cogs table
+    DELETE FROM red_config.red_cogs WHERE TRUE;
   END;
 $$;
 
@@ -831,29 +836,4 @@ CREATE TABLE IF NOT EXISTS
     schemaname text NOT NULL,
     PRIMARY KEY (cog_name, cog_id)
 )
-;
-
-
-CREATE OR REPLACE FUNCTION
-  /*
-   * Trigger for removing cog's entry from `red_config.red_cogs` table
-   * when schema is dropped.
-   */
-  red_config.drop_schema_trigger_function()
-    RETURNS event_trigger
-    LANGUAGE 'plpgsql'
-  AS $$
-  DECLARE
-    obj record;
-  BEGIN
-    FOR obj IN SELECT * FROM pg_event_trigger_dropped_objects() LOOP
-      DELETE FROM red_config.red_cogs AS r WHERE r.schemaname = obj.object_name;
-    END LOOP;
-  END;
-$$;
-DROP EVENT TRIGGER IF EXISTS red_drop_schema_trigger;
-CREATE EVENT TRIGGER red_drop_schema_trigger
-  ON SQL_DROP
-  WHEN TAG IN ('DROP SCHEMA')
-  EXECUTE PROCEDURE red_config.drop_schema_trigger_function()
 ;
