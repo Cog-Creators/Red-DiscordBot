@@ -452,6 +452,7 @@ def humanize_number(val: Union[int, float], override_locale=None) -> str:
     """
     return format_decimal(val, locale=get_babel_locale(override_locale))
 
+
 def text_to_file(
     text: str, filename: str = "file.txt", *, spoiler: bool = False, encoding: str = "utf-8"
 ):
