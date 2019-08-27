@@ -1,0 +1,1 @@
+Updated the giphycreds command to match the formatting of the other API commands.
