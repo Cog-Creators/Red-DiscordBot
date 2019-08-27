@@ -488,6 +488,7 @@ class Economy(commands.Cog):
             elif has_two:
                 payout = PAYOUTS["2 symbols"]
 
+        pay = 0
         if payout:
             then = await bank.get_balance(author)
             pay = payout["payout"](bid)
@@ -516,8 +517,8 @@ class Economy(commands.Cog):
         await channel.send(
             (
                 "{slot}\n{author.mention} {phrase}\n\n"
-                + _("Your bid: {amount}")
-                + "\n{old_balance} → {new_balance}!"
+                + _("Your bid: {bid")
+                + _("\n{old_balance} - {bid} (Your bid) + {pay} (Winnings) → {new_balance}!")
             ).format(
                 slot=slot,
                 author=author,
@@ -525,6 +526,7 @@ class Economy(commands.Cog):
                 amount=bid,
                 old_balance=then,
                 new_balance=now,
+                pay=pay,
             )
         )
 
