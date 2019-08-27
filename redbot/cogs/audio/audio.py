@@ -2195,7 +2195,7 @@ class Audio(commands.Cog):
                 dur = lavalink.utils.format_time(player.current.length)
 
             song = get_track_description(player.current)
-            song += _("Requested by: **{track.requester}**")
+            song += _("\n Requested by: **{track.requester}**")
             song += "\n\n{arrow}`{pos}`/`{dur}`"
             song = song.format(track=player.current, arrow=arrow, pos=pos, dur=dur)
         else:
@@ -5173,7 +5173,7 @@ class Audio(commands.Cog):
                 else:
                     dur = lavalink.utils.format_time(player.current.length)
                 song = get_track_description(player.current)
-                song += _("Requested by: **{track.requester}**")
+                song += _("\n Requested by: **{track.requester}**")
                 song += "\n\n{arrow}`{pos}`/`{dur}`"
                 song = song.format(track=player.current, arrow=arrow, pos=pos, dur=dur)
 
@@ -5828,18 +5828,18 @@ class Audio(commands.Cog):
             colour = await ctx.embed_colour()
             embed = discord.Embed(title=_("Nothing found."), colour=colour)
             # noinspection PyProtectedMember
-            if await self.config.use_external_lavalink() and query.is_local:
+            if await self.config.use_external_lavalink() and choice.is_local:
                 embed.description = _(
                     "Local tracks will not work "
                     "if the `Lavalink.jar` cannot see the track.\n"
                     "This may be due to permissions or because Lavalink.jar is being run "
                     "in a different machine than the local tracks."
                 )
-            elif query.is_local and query.suffix in dataclasses._partially_supported_music_ext:
+            elif choice.is_local and choice.suffix in dataclasses._partially_supported_music_ext:
                 embed = discord.Embed(title=_("Track is not playable."), colour=colour)
                 embed.description = _(
                     "**{suffix}** is not a fully supported format and some " "tracks may not play."
-                ).format(suffix=query.suffix)
+                ).format(suffix=choice.suffix)
             return await self._embed_msg(ctx, embed=embed)
         queue_dur = await queue_duration(ctx)
         queue_total_duration = lavalink.utils.format_time(queue_dur)

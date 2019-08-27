@@ -28,19 +28,40 @@ _fully_supported_music_ext = (".mp3", ".flac", ".ogg")
 _partially_supported_music_ext = (
     ".m3u",
     ".m4a",
-    ".mp4",
-    ".mid",
     ".aac",
-    ".mka",
-    ".amr",
-    ".aiff",
-    ".wma",
     ".ra",
-    ".ac3",
     ".wav",
+    ".opus",
+    ".wma",
+    ".ts",
     ".au",
-    ".voc",
+    # These do not work
+    # ".mid",
+    # ".mka",
+    # ".amr",
+    # ".aiff",
+    # ".ac3",
+    # ".voc",
+    # ".dsf",
 )
+_partially_supported_video_ext = (
+    ".mp4",
+    ".mov",
+    ".flv",
+    ".webm",
+    ".mkv",
+    ".wmv",
+    ".3gp",
+    ".m4v",
+    # These do not work
+    # ".vob",
+    # ".mts",
+    # ".avi",
+    # ".mpg",
+    # ".mpeg",
+    # ".swf",
+)
+_partially_supported_music_ext += _partially_supported_video_ext
 
 
 def _pass_config_to_dataclasses(config: Config, bot: Red, folder: str):

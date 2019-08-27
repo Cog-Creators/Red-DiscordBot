@@ -177,16 +177,17 @@ async def clear_react(bot: Red, message: discord.Message, emoji: dict = None):
 
 
 def get_track_description(track):
-
     if track and hasattr(track, "uri"):
         query = dataclasses.Query.process_input(track.uri)
         if query.is_local:
             if track.title != "Unknown title":
-                return "**{} - {}**\n{}".format(track.author, track.title, query.to_string_user())
+                return "**{} - {}**\n{} ".format(track.author, track.title, query.to_string_user())
             else:
                 return query.to_string_user()
         else:
-            return bold("**[{}]({})**").format(track.title, track.uri)
+            return bold("[{}]({}) ").format(track.title, track.uri)
+    elif hasattr(track, "to_string_user") and track.is_local:
+        return track.to_string_user() + " "
 
 
 def track_creator(player, position=None, other_track=None):

@@ -179,7 +179,7 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
                 queue_list += "\n".join(
                     (
                         _("Playing: ")
-                        + "**{current.author} - {current.title}**".format(
+                        + "**{current.author} - {current.title}**\n".format(
                             current=self._player.current
                         ),
                         dataclasses.LocalPath(self._player.current.uri).to_string_hidden(),
@@ -194,7 +194,7 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
                     (
                         _("Playing: ")
                         + dataclasses.LocalPath(self._player.current.uri).to_string_hidden(),
-                        _("Requested by: **{user}**\n").format(
+                        _(" Requested by: **{user}**\n").format(
                             user=self._player.current.requester
                         ),
                         f"{arrow}`{pos}`/`{dur}`\n\n",
