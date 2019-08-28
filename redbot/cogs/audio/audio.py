@@ -1553,6 +1553,8 @@ class Audio(commands.Cog):
         if restrict:
             if self._match_url(query):
                 url_check = self._url_check(query)
+                if not url_check:
+                    return await self._embed_msg(ctx, _("That URL is not allowed."))
         if not self._player_check(ctx):
             if self._connection_aborted:
                 msg = _("Connection to Lavalink has failed.")
