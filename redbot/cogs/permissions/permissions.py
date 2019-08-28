@@ -283,7 +283,7 @@ class Permissions(commands.Cog):
         ctx: commands.Context,
         allow_or_deny: RuleType,
         cog_or_command: CogOrCommand,
-        *who_or_what: GlobalUniqueObjectFinder,
+        who_or_what: GlobalUniqueObjectFinder,
     ):
         """Add a global rule to a command.
 
@@ -314,7 +314,7 @@ class Permissions(commands.Cog):
         ctx: commands.Context,
         allow_or_deny: RuleType,
         cog_or_command: CogOrCommand,
-        *who_or_what: GuildUniqueObjectFinder,
+        who_or_what: GuildUniqueObjectFinder,
     ):
         """Add a rule to a command in this server.
 
@@ -343,7 +343,7 @@ class Permissions(commands.Cog):
         self,
         ctx: commands.Context,
         cog_or_command: CogOrCommand,
-        *who_or_what: GlobalUniqueObjectFinder,
+        who_or_what: GlobalUniqueObjectFinder,
     ):
         """Remove a global rule from a command.
 
@@ -366,7 +366,7 @@ class Permissions(commands.Cog):
         self,
         ctx: commands.Context,
         cog_or_command: CogOrCommand,
-        *who_or_what: GlobalUniqueObjectFinder,
+        who_or_what: GlobalUniqueObjectFinder,
     ):
         """Remove a server rule from a command.
 
