@@ -387,13 +387,18 @@ def cli(ctx, debug):
         "will be asked about this."
     ),
 )
-def delete(instance: str, no_prompt: Optional[bool], drop_db: Optional[bool]):
+def delete(
+    instance: str,
+    no_prompt: Optional[bool],
+    drop_db: Optional[bool],
+    remove_datapath: Optional[bool],
+):
     loop = asyncio.get_event_loop()
     if no_prompt is None:
         interactive = None
     else:
         interactive = not no_prompt
-    loop.run_until_complete(remove_instance(instance, interactive, drop_db))
+    loop.run_until_complete(remove_instance(instance, interactive, drop_db, remove_datapath))
 
 
 @cli.command()
