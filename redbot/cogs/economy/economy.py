@@ -1,7 +1,7 @@
 import calendar
 import logging
 import random
-from collections import defaultdict, deque
+from collections import defaultdict, deque, namedtuple
 from enum import Enum
 from typing import cast, Iterable
 
@@ -20,6 +20,7 @@ T_ = Translator("Economy", __file__)
 logger = logging.getLogger("red.economy")
 
 NUM_ENC = "\N{COMBINING ENCLOSING KEYCAP}"
+MOCK_MEMBER = namedtuple("Member", "id guild")
 
 
 class SMReel(Enum):
@@ -159,7 +160,10 @@ class Economy(commands.Cog):
 
         bal = await bank.get_balance(user)
         currency = await bank.get_currency_name(ctx.guild)
-
+        max_bal = await bank.get_max_balance(ctx.guild)
+        if bal > max_bal:
+            bal = max_bal
+            await bank.set_balance(user, bal)
         await ctx.send(
             _("{user}'s balance is {num} {currency}").format(
                 user=user.display_name, num=humanize_number(bal), currency=currency
@@ -363,6 +367,7 @@ class Economy(commands.Cog):
         """
         guild = ctx.guild
         author = ctx.author
+        max_bal = await bank.get_max_balance(ctx.guild)
         if top < 1:
             top = 10
         if await bank.is_global() and show_global:
@@ -372,6 +377,9 @@ class Economy(commands.Cog):
             bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
         try:
             bal_len = len(humanize_number(bank_sorted[0][1]["balance"]))
+            bal_len_max = len(humanize_number(max_bal))
+            if bal_len > bal_len_max:
+                bal_len = bal_len_max
             # first user is the largest we'll see
         except IndexError:
             return await ctx.send(_("There are no accounts in the bank."))
@@ -394,8 +402,12 @@ class Economy(commands.Cog):
                 if await ctx.bot.is_owner(ctx.author):
                     user_id = f"({str(acc[0])})"
                 name = f"{acc[1]['name']} {user_id}"
-            balance = humanize_number(acc[1]["balance"])
 
+            balance = acc[1]["balance"]
+            if balance > max_bal:
+                balance = max_bal
+                await bank.set_balance(MOCK_MEMBER(acc[0], guild), balance)
+            balance = humanize_number(balance)
             if acc[0] != author.id:
                 temp_msg += (
                     f"{f'{humanize_number(pos)}.': <{pound_len+2}} "
@@ -641,9 +653,13 @@ class Economy(commands.Cog):
     async def paydayamount(self, ctx: commands.Context, creds: int):
         """Set the amount earned each payday."""
         guild = ctx.guild
-        if creds <= 0 or creds > await bank.get_max_balance(ctx.guild):
-            await ctx.send(_("Har har so funny."))
-            return
+        max_balance = await bank.get_max_balance(ctx.guild)
+        if creds <= 0 or creds > max_balance:
+            return await ctx.send(
+                _("Amount must be greater than zero and less than {maxbal}.").format(
+                    maxbal=humanize_number(max_balance)
+                )
+            )
         credits_name = await bank.get_currency_name(guild)
         if await bank.is_global():
             await self.config.PAYDAY_CREDITS.set(creds)
@@ -659,9 +675,13 @@ class Economy(commands.Cog):
     async def rolepaydayamount(self, ctx: commands.Context, role: discord.Role, creds: int):
         """Set the amount earned each payday for a role."""
         guild = ctx.guild
-        if creds <= 0 or creds > await bank.get_max_balance(ctx.guild):
-            await ctx.send(_("Har har so funny."))
-            return
+        max_balance = await bank.get_max_balance(ctx.guild)
+        if creds <= 0 or creds > max_balance:
+            return await ctx.send(
+                _("Amount must be greater than zero and less than {maxbal}.").format(
+                    maxbal=humanize_number(max_balance)
+                )
+            )
         credits_name = await bank.get_currency_name(guild)
         if await bank.is_global():
             await ctx.send(_("The bank must be per-server for per-role paydays to work."))
@@ -678,8 +698,13 @@ class Economy(commands.Cog):
     async def registeramount(self, ctx: commands.Context, creds: int):
         """Set the initial balance for new bank accounts."""
         guild = ctx.guild
-        if creds < 0:
-            creds = 0
+        max_balance = await bank.get_max_balance(ctx.guild)
+        if creds < 0 or creds > max_balance:
+            return await ctx.send(
+                _("Amount must be greater than or equal to zero and less than {maxbal}.").format(
+                    maxbal=humanize_number(max_balance)
+                )
+            )
         credits_name = await bank.get_currency_name(guild)
         await bank.set_default_balance(creds, guild)
         await ctx.send(

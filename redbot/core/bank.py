@@ -651,7 +651,7 @@ async def get_max_balance(guild: discord.Guild = None) -> int:
     Parameters
     ----------
     guild : `discord.Guild`, optional
-        The guild to get the currency name for (required if bank is
+        The guild to get the max balance for (required if bank is
         guild-specific).
 
     Returns
@@ -674,14 +674,14 @@ async def get_max_balance(guild: discord.Guild = None) -> int:
 
 
 async def set_max_balance(amount: int, guild: discord.Guild = None) -> int:
-    """Set the currency name for the bank.
+    """Set the maximum balance for the bank.
 
     Parameters
     ----------
     amount : int
         The new maximum balance.
     guild : `discord.Guild`, optional
-        The guild to set the currency name for (required if bank is
+        The guild to set the max balance for (required if bank is
         guild-specific).
 
     Returns
@@ -697,9 +697,11 @@ async def set_max_balance(amount: int, guild: discord.Guild = None) -> int:
         If the amount is invalid.
 
     """
-    if not (0 <= amount <= _MAX_BALANCE):
+    if not (0 < amount <= _MAX_BALANCE):
         raise ValueError(
-            "Amount must be greater than zero and less than {max:,}.".format(max=_MAX_BALANCE)
+            "Amount must be greater than zero and less than {max}.".format(
+                max=humanize_number(_MAX_BALANCE, override_locale="en_US")
+            )
         )
 
     if await is_global():
@@ -708,7 +710,7 @@ async def set_max_balance(amount: int, guild: discord.Guild = None) -> int:
         await _conf.guild(guild).max_balance.set(amount)
     else:
         raise RuntimeError(
-            "Guild must be provided if setting the currency name of a guild-specific bank."
+            "Guild must be provided if setting the maximum balance of a guild-specific bank."
         )
     return amount
 
@@ -766,6 +768,10 @@ async def set_default_balance(amount: int, guild: discord.Guild = None) -> int:
 
     """
     amount = int(amount)
+    max_bal = await get_max_balance(guild)
+    if amount > max_bal:
+        amount = max_bal
+
     if amount < 0:
         raise ValueError("Amount must be greater than zero.")
 

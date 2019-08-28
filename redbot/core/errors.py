@@ -46,7 +46,7 @@ class BalanceTooHigh(BankError, OverflowError):
         self.currency_name = currency_name
 
     def __str__(self) -> str:
-        return _("{user}'s balance cannot rise above max {currency}.").format(
+        return _("{user}'s balance cannot rise above {max} {currency}.").format(
             user=self.user, max=humanize_number(self.max_balance), currency=self.currency_name
         )
 
