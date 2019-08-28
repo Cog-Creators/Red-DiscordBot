@@ -62,9 +62,7 @@ def check_global_setting_admin():
 
 def guild_only_check():
     async def pred(ctx: commands.Context):
-        if await bank.is_global():
-            return True
-        elif not await bank.is_global() and ctx.guild is not None:
+        if await bank.is_global() or not await bank.is_global() and ctx.guild is not None:
             return True
         else:
             return False
@@ -98,26 +96,23 @@ class Bank(commands.Cog):
         super().__init__()
         self.bot = bot
 
+    @guild_only_check()
     @check_global_setting_admin()
     @checks.guildowner_or_permissions(administrator=True)
     @commands.group(autohelp=True)
     async def bankset(self, ctx: commands.Context):
-        """Base command for bank settings."""
+        """Manage the bank settings."""
         if ctx.invoked_subcommand is None:
-            if await bank.is_global():
-                bank_name = await bank._conf.bank_name()
-                currency_name = await bank._conf.currency()
-                default_balance = await bank._conf.default_balance()
-            else:
-                if not ctx.guild:
-                    return
-                bank_name = await bank._conf.guild(ctx.guild).bank_name()
-                currency_name = await bank._conf.guild(ctx.guild).currency()
-                default_balance = await bank._conf.guild(ctx.guild).default_balance()
-
+            guild = ctx.guild
+            bank_name = await bank.get_bank_name(guild)
+            currency_name = await bank.get_currency_name(guild)
+            default_balance = await bank.get_default_balance(guild)
             settings = _(
-                "Bank settings:\n\nBank name: {bank_name}\nCurrency: {currency_name}\n"
-                "Default balance: {default_balance}\nMaximum allowed balance: {maximum_bal}"
+                "Bank settings:\n\n"
+                "Bank name: {bank_name}\n"
+                "Currency: {currency_name}\n"
+                "Initial balance: {default_balance}\n"
+                "Maximum allowed balance: {maximum_bal}"
             ).format(
                 bank_name=bank_name,
                 currency_name=currency_name,
@@ -168,13 +163,8 @@ class Bank(commands.Cog):
         """Set the maximum balance a user can get."""
         try:
             await bank.set_max_balance(amount, ctx.guild)
-        except ValueError:
-            # noinspection PyProtectedMember
-            return await ctx.send(
-                _("Amount must be greater than zero and less than {max}.").format(
-                    max=humanize_number(bank._MAX_BALANCE)
-                )
-            )
+        except ValueError as e:
+            return await ctx.send(str(e))
         await ctx.send(
             _("Maximum balance has been set to: {amount}").format(amount=humanize_number(amount))
         )
@@ -193,7 +183,7 @@ class Bank(commands.Cog):
         credits_name = await bank.get_currency_name(guild)
         await bank.set_default_balance(creds, guild)
         await ctx.send(
-            _("Registering an account will now give {num} {currency}.").format(
+            _("New accounts will start with {num} {currency}.").format(
                 num=humanize_number(creds), currency=credits_name
             )
         )
@@ -205,7 +195,35 @@ class Bank(commands.Cog):
         pass
 
     @_bank.command()
-    async def balance(self, ctx: commands.Context, user: discord.Member = None):
+    @check_global_setting_guildowner()
+    async def reset(self, ctx, confirmation: bool = False):
+        """Delete all bank accounts."""
+        if confirmation is False:
+            await ctx.send(
+                _(
+                    "This will delete all bank accounts for {scope}.\nIf you're sure, type "
+                    "`{prefix}bank reset yes`"
+                ).format(
+                    scope=self.bot.user.name if await bank.is_global() else _("this server"),
+                    prefix=ctx.prefix,
+                )
+            )
+        else:
+            await bank.wipe_bank(guild=ctx.guild)
+            await ctx.send(
+                _("All bank accounts for {scope} have been deleted.").format(
+                    scope=self.bot.user.name if await bank.is_global() else _("this server")
+                )
+            )
+
+    @guild_only_check()
+    @commands.group(name="balance")
+    async def _balance(self, ctx: commands.Context):
+        """Manage the currency."""
+        pass
+
+    @_balance.command(name="check")
+    async def _balance_check(self, ctx: commands.Context, user: discord.Member = None):
         """Show the user's account balance.
 
         Defaults to yours."""
@@ -224,8 +242,8 @@ class Bank(commands.Cog):
             )
         )
 
-    @_bank.command()
-    async def transfer(self, ctx: commands.Context, to: discord.Member, amount: int):
+    @_balance.command(name="transfer")
+    async def _balance_transfer(self, ctx: commands.Context, to: discord.Member, amount: int):
         """Transfer currency to other users."""
         from_ = ctx.author
         currency = await bank.get_currency_name(ctx.guild)
@@ -244,9 +262,9 @@ class Bank(commands.Cog):
             )
         )
 
-    @_bank.command(name="set")
+    @_balance.command(name="set")
     @check_global_setting_admin()
-    async def _set(self, ctx: commands.Context, to: discord.Member, creds: SetParser):
+    async def _balance_set(self, ctx: commands.Context, to: discord.Member, creds: SetParser):
         """Set the balance of user's bank account.
 
         Passing positive and negative values will add/remove currency instead.
@@ -289,28 +307,6 @@ class Bank(commands.Cog):
         else:
             await ctx.send(msg)
 
-    @_bank.command()
-    @check_global_setting_guildowner()
-    async def reset(self, ctx, confirmation: bool = False):
-        """Delete all bank accounts."""
-        if confirmation is False:
-            await ctx.send(
-                _(
-                    "This will delete all bank accounts for {scope}.\nIf you're sure, type "
-                    "`{prefix}bank reset yes`"
-                ).format(
-                    scope=self.bot.user.name if await bank.is_global() else _("this server"),
-                    prefix=ctx.prefix,
-                )
-            )
-        else:
-            await bank.wipe_bank(guild=ctx.guild)
-            await ctx.send(
-                _("All bank accounts for {scope} have been deleted.").format(
-                    scope=self.bot.user.name if await bank.is_global() else _("this server")
-                )
-            )
-
     @commands.command()
     @guild_only_check()
     async def leaderboard(self, ctx: commands.Context, top: int = 10, show_global: bool = False):
@@ -329,10 +325,10 @@ class Bank(commands.Cog):
         else:
             bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
         try:
-            bal_len = len(humanize_number(bank_sorted[0][1]["balance"]))
-            bal_len_max = len(humanize_number(max_bal))
-            if bal_len > bal_len_max:
-                bal_len = bal_len_max
+            if bank_sorted[0][1]["balance"] > max_bal:
+                bal_len = len(humanize_number(max_bal))
+            else:
+                bal_len = len(humanize_number(bank_sorted[0][1]["balance"]))
             # first user is the largest we'll see
         except IndexError:
             return await ctx.send(_("There are no accounts in the bank."))

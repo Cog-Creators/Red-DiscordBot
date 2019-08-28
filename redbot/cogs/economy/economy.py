@@ -7,7 +7,7 @@ from typing import Iterable, cast
 
 import discord
 
-from redbot.cogs.bank import check_global_setting_admin
+from redbot.cogs.bank import check_global_setting_admin, guild_only_check
 from redbot.core import Config, bank, commands, errors
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
@@ -74,18 +74,6 @@ SLOT_PAYOUTS_MSG = _(
     "Two symbols: Bet * 2"
 ).format(**SMReel.__dict__)
 _ = T_
-
-
-def guild_only_check():
-    async def pred(ctx: commands.Context):
-        if await bank.is_global():
-            return True
-        elif not await bank.is_global() and ctx.guild is not None:
-            return True
-        else:
-            return False
-
-    return commands.check(pred)
 
 
 @cog_i18n(_)
@@ -312,7 +300,8 @@ class Economy(commands.Cog):
                 await channel.send(
                     _(
                         "You've reached the maximum amount of {currency}! "
-                        "Please spend some more \N{GRIMACING FACE}\n{old_balance} -> {new_balance}!"
+                        "Please spend some more \N{GRIMACING FACE}\n"
+                        "{old_balance} -> {new_balance}!"
                     ).format(
                         currency=await bank.get_currency_name(getattr(channel, "guild", None)),
                         old_balance=humanize_number(then),
@@ -362,7 +351,7 @@ class Economy(commands.Cog):
                         "Slot cooldown: {slot_time}\n"
                         "Payday amount: {payday_amount}\n"
                         "Payday cooldown: {payday_time}\n"
-                        "Amount given at account registration: {register_amount}\n"
+                        "Initial balance: {register_amount}\n"
                         "Maximum allowed balance: {maximum_bal}"
                     ).format(
                         slot_min=humanize_number(await conf.SLOT_MIN()),
