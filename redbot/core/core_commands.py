@@ -263,6 +263,11 @@ class CoreLogic:
 class Core(commands.Cog, CoreLogic):
     """Commands related to core functions"""
 
+    @commands.command(hidden=True)
+    async def ping(self, ctx: commands.Context):
+        """Pong."""
+        await ctx.send("Pong.")
+
     @commands.command()
     async def info(self, ctx: commands.Context):
         """Shows info about Red"""
@@ -273,24 +278,14 @@ class Core(commands.Cog, CoreLogic):
         support_server_url = "https://discord.gg/red"
         dpy_repo = "https://github.com/Rapptz/discord.py"
         python_url = "https://www.python.org/"
-        vb_repo = "https://github.com/Vexima/VexiBot-Red"
         since = datetime.datetime(2016, 1, 2, 0, 0)
         days_since = (datetime.datetime.utcnow() - since).days
         dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
         python_version = "[{}.{}.{}]({})".format(*sys.version_info[:3], python_url)
         red_version = "[{}]({})".format(__version__, red_pypi)
-        vb_version = _("[3.1.5]({})".format(vb_repo))
         app_info = await self.bot.application_info()
         owner = app_info.owner
         custom_info = await self.bot.db.custom_info()
-        vex_message = _(
-            "<@418078199982063626> would like to especially thank the very "
-            "kind people on the [support server]({}). Without their help, "
-            "this bot would not be possible today. I would also like to thank "
-            "[Twentysix]({}) who made this wonderful bot a reality. Finally, I "
-            "want to thank all the great people who develop the cogs that "
-            "this bot uses."
-        ).format(support_server_url, author_repo)
 
         async with aiohttp.ClientSession() as session:
             async with session.get("{}/json".format(red_pypi)) as r:
@@ -308,13 +303,11 @@ class Core(commands.Cog, CoreLogic):
         embed.add_field(name=_("Instance owned by"), value=str(owner))
         embed.add_field(name="Python", value=python_version)
         embed.add_field(name="discord.py", value=dpy_version)
-        embed.add_field(name=_("Red-DiscordBot version"), value=red_version)
+        embed.add_field(name=_("Red version"), value=red_version)
         if outdated:
             embed.add_field(
                 name=_("Outdated"), value=_("Yes, {} is available").format(data["info"]["version"])
             )
-        embed.add_field(name=_("VexiBot-Red version"), value=vb_version)
-        embed.add_field(name=_("A message from Vexed"), value=vex_message)
         if custom_info:
             embed.add_field(name=_("About this instance"), value=custom_info, inline=False)
         embed.add_field(name=_("About Red"), value=about, inline=False)
@@ -567,11 +560,7 @@ class Core(commands.Cog, CoreLogic):
     @commands.command()
     @checks.is_owner()
     async def load(self, ctx: commands.Context, *cogs: str):
-        """
-        Loads packages
-
-        You can see a list of packages with `[p]cogs`
-        """
+        """Loads packages"""
         if not cogs:
             return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
@@ -640,11 +629,7 @@ class Core(commands.Cog, CoreLogic):
     @commands.command()
     @checks.is_owner()
     async def unload(self, ctx: commands.Context, *cogs: str):
-        """
-        Unloads packages
-
-        You can see a list of packages with `[p]cogs`
-        """
+        """Unloads packages"""
         if not cogs:
             return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
