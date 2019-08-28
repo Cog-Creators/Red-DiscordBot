@@ -1,26 +1,21 @@
 import calendar
 import logging
 import random
-from collections import defaultdict, deque, namedtuple
+from collections import defaultdict, deque
 from enum import Enum
-from typing import cast, Iterable
+from typing import Iterable, cast
 
 import discord
 
-from redbot.cogs.bank import check_global_setting_guildowner, check_global_setting_admin
+from redbot.cogs.bank import check_global_setting_admin
 from redbot.core import Config, bank, commands, errors
+from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, humanize_number
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-
-from redbot.core.bot import Red
-
-T_ = Translator("Economy", __file__)
 
 logger = logging.getLogger("red.economy")
-
+T_ = Translator("Economy", __file__)
 NUM_ENC = "\N{COMBINING ENCLOSING KEYCAP}"
-MOCK_MEMBER = namedtuple("Member", "id guild")
 
 
 class SMReel(Enum):
@@ -93,24 +88,6 @@ def guild_only_check():
     return commands.check(pred)
 
 
-class SetParser:
-    def __init__(self, argument):
-        allowed = ("+", "-")
-        self.sum = int(argument)
-        if argument and argument[0] in allowed:
-            if self.sum < 0:
-                self.operation = "withdraw"
-            elif self.sum > 0:
-                self.operation = "deposit"
-            else:
-                raise RuntimeError
-            self.sum = abs(self.sum)
-        elif argument.isdigit():
-            self.operation = "set"
-        else:
-            raise RuntimeError
-
-
 @cog_i18n(_)
 class Economy(commands.Cog):
     """Get rich and have fun with imaginary currency!"""
@@ -135,7 +112,6 @@ class Economy(commands.Cog):
     def __init__(self, bot: Red):
         super().__init__()
         self.bot = bot
-        self.file_path = "data/economy/settings.json"
         self.config = Config.get_conf(self, 1256844281)
         self.config.register_guild(**self.default_guild_settings)
         self.config.register_global(**self.default_global_settings)
@@ -143,119 +119,6 @@ class Economy(commands.Cog):
         self.config.register_user(**self.default_user_settings)
         self.config.register_role(**self.default_role_settings)
         self.slot_register = defaultdict(dict)
-
-    @guild_only_check()
-    @commands.group(name="bank")
-    async def _bank(self, ctx: commands.Context):
-        """Manage the bank."""
-        pass
-
-    @_bank.command()
-    async def balance(self, ctx: commands.Context, user: discord.Member = None):
-        """Show the user's account balance.
-
-        Defaults to yours."""
-        if user is None:
-            user = ctx.author
-
-        bal = await bank.get_balance(user)
-        currency = await bank.get_currency_name(ctx.guild)
-        max_bal = await bank.get_max_balance(ctx.guild)
-        if bal > max_bal:
-            bal = max_bal
-            await bank.set_balance(user, bal)
-        await ctx.send(
-            _("{user}'s balance is {num} {currency}").format(
-                user=user.display_name, num=humanize_number(bal), currency=currency
-            )
-        )
-
-    @_bank.command()
-    async def transfer(self, ctx: commands.Context, to: discord.Member, amount: int):
-        """Transfer currency to other users."""
-        from_ = ctx.author
-        currency = await bank.get_currency_name(ctx.guild)
-
-        try:
-            await bank.transfer_credits(from_, to, amount)
-        except (ValueError, errors.BalanceTooHigh) as e:
-            return await ctx.send(str(e))
-
-        await ctx.send(
-            _("{user} transferred {num} {currency} to {other_user}").format(
-                user=from_.display_name,
-                num=humanize_number(amount),
-                currency=currency,
-                other_user=to.display_name,
-            )
-        )
-
-    @_bank.command(name="set")
-    @check_global_setting_admin()
-    async def _set(self, ctx: commands.Context, to: discord.Member, creds: SetParser):
-        """Set the balance of user's bank account.
-
-        Passing positive and negative values will add/remove currency instead.
-
-        Examples:
-        - `[p]bank set @Twentysix 26` - Sets balance to 26
-        - `[p]bank set @Twentysix +2` - Increases balance by 2
-        - `[p]bank set @Twentysix -6` - Decreases balance by 6
-        """
-        author = ctx.author
-        currency = await bank.get_currency_name(ctx.guild)
-
-        try:
-            if creds.operation == "deposit":
-                await bank.deposit_credits(to, creds.sum)
-                msg = _("{author} added {num} {currency} to {user}'s account.").format(
-                    author=author.display_name,
-                    num=humanize_number(creds.sum),
-                    currency=currency,
-                    user=to.display_name,
-                )
-            elif creds.operation == "withdraw":
-                await bank.withdraw_credits(to, creds.sum)
-                msg = _("{author} removed {num} {currency} from {user}'s account.").format(
-                    author=author.display_name,
-                    num=humanize_number(creds.sum),
-                    currency=currency,
-                    user=to.display_name,
-                )
-            else:
-                await bank.set_balance(to, creds.sum)
-                msg = _("{author} set {user}'s account balance to {num} {currency}.").format(
-                    author=author.display_name,
-                    num=humanize_number(creds.sum),
-                    currency=currency,
-                    user=to.display_name,
-                )
-        except (ValueError, errors.BalanceTooHigh) as e:
-            await ctx.send(str(e))
-        else:
-            await ctx.send(msg)
-
-    @_bank.command()
-    @check_global_setting_guildowner()
-    async def reset(self, ctx, confirmation: bool = False):
-        """Delete all bank accounts."""
-        if confirmation is False:
-            await ctx.send(
-                _(
-                    "This will delete all bank accounts for {scope}.\nIf you're sure, type "
-                    "`{prefix}bank reset yes`"
-                ).format(
-                    scope=self.bot.user.name if await bank.is_global() else _("this server"),
-                    prefix=ctx.prefix,
-                )
-            )
-        else:
-            await bank.wipe_bank(guild=ctx.guild)
-            await ctx.send(
-                _("All bank accounts for {scope} have been deleted.").format(
-                    scope=self.bot.user.name if await bank.is_global() else _("this server")
-                )
-            )
 
     @guild_only_check()
     @commands.command()
@@ -357,79 +220,6 @@ class Economy(commands.Cog):
                         "{author.mention} Too soon. For your next payday you have to wait {time}."
                     ).format(author=author, time=dtime)
                 )
-
-    @commands.command()
-    @guild_only_check()
-    async def leaderboard(self, ctx: commands.Context, top: int = 10, show_global: bool = False):
-        """Print the leaderboard.
-
-        Defaults to top 10.
-        """
-        guild = ctx.guild
-        author = ctx.author
-        max_bal = await bank.get_max_balance(ctx.guild)
-        if top < 1:
-            top = 10
-        if await bank.is_global() and show_global:
-            # show_global is only applicable if bank is global
-            bank_sorted = await bank.get_leaderboard(positions=top, guild=None)
-        else:
-            bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
-        try:
-            bal_len = len(humanize_number(bank_sorted[0][1]["balance"]))
-            bal_len_max = len(humanize_number(max_bal))
-            if bal_len > bal_len_max:
-                bal_len = bal_len_max
-            # first user is the largest we'll see
-        except IndexError:
-            return await ctx.send(_("There are no accounts in the bank."))
-        pound_len = len(str(len(bank_sorted)))
-        header = "{pound:{pound_len}}{score:{bal_len}}{name:2}\n".format(
-            pound="#",
-            name=_("Name"),
-            score=_("Score"),
-            bal_len=bal_len + 6,
-            pound_len=pound_len + 3,
-        )
-        highscores = []
-        pos = 1
-        temp_msg = header
-        for acc in bank_sorted:
-            try:
-                name = guild.get_member(acc[0]).display_name
-            except AttributeError:
-                user_id = ""
-                if await ctx.bot.is_owner(ctx.author):
-                    user_id = f"({str(acc[0])})"
-                name = f"{acc[1]['name']} {user_id}"
-
-            balance = acc[1]["balance"]
-            if balance > max_bal:
-                balance = max_bal
-                await bank.set_balance(MOCK_MEMBER(acc[0], guild), balance)
-            balance = humanize_number(balance)
-            if acc[0] != author.id:
-                temp_msg += (
-                    f"{f'{humanize_number(pos)}.': <{pound_len+2}} "
-                    f"{balance: <{bal_len + 5}} {name}\n"
-                )
-
-            else:
-                temp_msg += (
-                    f"{f'{humanize_number(pos)}.': <{pound_len+2}} "
-                    f"{balance: <{bal_len + 5}} "
-                    f"<<{author.display_name}>>\n"
-                )
-            if pos % 10 == 0:
-                highscores.append(box(temp_msg, lang="md"))
-                temp_msg = header
-            pos += 1
-
-        if temp_msg != header:
-            highscores.append(box(temp_msg, lang="md"))
-
-        if highscores:
-            await menu(ctx, highscores, DEFAULT_CONTROLS)
 
     @commands.command()
     @guild_only_check()
@@ -693,25 +483,6 @@ class Economy(commands.Cog):
                     "to people with the role {role_name}."
                 ).format(num=humanize_number(creds), currency=credits_name, role_name=role.name)
             )
-
-    @economyset.command()
-    async def registeramount(self, ctx: commands.Context, creds: int):
-        """Set the initial balance for new bank accounts."""
-        guild = ctx.guild
-        max_balance = await bank.get_max_balance(ctx.guild)
-        if creds < 0 or creds > max_balance:
-            return await ctx.send(
-                _("Amount must be greater than or equal to zero and less than {maxbal}.").format(
-                    maxbal=humanize_number(max_balance)
-                )
-            )
-        credits_name = await bank.get_currency_name(guild)
-        await bank.set_default_balance(creds, guild)
-        await ctx.send(
-            _("Registering an account will now give {num} {currency}.").format(
-                num=humanize_number(creds), currency=credits_name
-            )
-        )
 
     # What would I ever do without stackoverflow?
     @staticmethod
