@@ -59,7 +59,7 @@ def save_config(name, data, remove=False):
                 "WARNING: An instance already exists with this name. "
                 "Continuing will overwrite the existing instance config."
             )
-            if not confirm("Are you absolutely certain you want to continue (y/n)? "):
+            if not confirm("Are you absolutely certain you want to continue? (y/n) "):
                 print("Not continuing")
                 sys.exit(0)
         _config[name] = data
@@ -100,7 +100,7 @@ def get_data_dir():
             sys.exit(1)
 
     print("You have chosen {} to be your data directory.".format(default_data_dir))
-    if not confirm("Please confirm (y/n):"):
+    if not confirm("Please confirm (y/n): "):
         print("Please start the process over.")
         sys.exit(0)
     return default_data_dir
@@ -258,18 +258,18 @@ async def edit_instance():
 
     current_data_dir = Path(_instance_data["DATA_PATH"])
     print("You have selected '{}' as the instance to modify.".format(selected))
-    if not confirm("Please confirm (y/n):"):
+    if not confirm("Please confirm (y/n): "):
         print("Ok, we will not continue then.")
         return
 
     print("Ok, we will continue on.")
     print()
-    if confirm("Would you like to change the instance name? (y/n)"):
+    if confirm("Would you like to change the instance name? (y/n) "):
         name = get_name()
     else:
         name = selected
 
-    if confirm("Would you like to change the data location? (y/n)"):
+    if confirm("Would you like to change the data location? (y/n) "):
         default_data_dir = get_data_dir()
         default_dirs["DATA_PATH"] = str(default_data_dir.resolve())
     else:
@@ -300,12 +300,18 @@ async def create_backup(instance: str) -> None:
 async def remove_instance(
     instance,
     interactive: bool = False,
+    _create_backup: Optional[bool] = None,
     drop_db: Optional[bool] = None,
     remove_datapath: Optional[bool] = None,
 ):
     data_manager.load_basic_configuration(instance)
 
-    if confirm("Would you like to make a backup of the data for this instance? (y/n)"):
+    if interactive is True and _create_backup is None:
+        _create_backup = confirm(
+            "Would you like to make a backup of the data for this instance? (y/n) "
+        )
+
+    if _create_backup is True:
         await create_backup(instance)
 
     backend = get_current_backend(instance)
@@ -317,7 +323,9 @@ async def remove_instance(
     await driver_cls.delete_all_data(interactive=interactive, drop_db=drop_db)
 
     if interactive is True and remove_datapath is None:
-        remove_datapath = confirm("Would you like to delete the instance's entire datapath? (y/n)")
+        remove_datapath = confirm(
+            "Would you like to delete the instance's entire datapath? (y/n) "
+        )
 
     if remove_datapath is True:
         data_path = data_manager.core_data_path().parent
