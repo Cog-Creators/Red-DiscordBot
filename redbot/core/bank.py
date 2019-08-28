@@ -694,8 +694,7 @@ async def set_max_balance(amount: int, guild: discord.Guild = None) -> int:
     RuntimeError
         If the bank is guild-specific and guild was not provided.
     ValueError
-        If the amount is invalid.
-
+        If the amount is less than 0 or higher than 2 ** 63 - 1.
     """
     if not (0 < amount <= _MAX_BALANCE):
         raise ValueError(
