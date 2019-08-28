@@ -1,8 +1,8 @@
 import importlib.machinery
-from typing import Optional
 
 import discord
 
+from redbot.core.utils.chat_formatting import humanize_number
 from .i18n import Translator
 
 _ = Translator(__name__, __file__)
@@ -46,6 +46,40 @@ class BalanceTooHigh(BankError, OverflowError):
         self.currency_name = currency_name
 
     def __str__(self) -> str:
-        return _("{user}'s balance cannot rise above {max:,} {currency}.").format(
-            user=self.user, max=self.max_balance, currency=self.currency_name
+        return _("{user}'s balance cannot rise above max {currency}.").format(
+            user=self.user, max=humanize_number(self.max_balance), currency=self.currency_name
         )
+
+
+class MissingExtraRequirements(RedError):
+    """Raised when an extra requirement is missing but required."""
+
+
+class ConfigError(RedError):
+    """Error in a Config operation."""
+
+
+class StoredTypeError(ConfigError, TypeError):
+    """A TypeError pertaining to stored Config data.
+
+    This error may arise when, for example, trying to increment a value
+    which is not a number, or trying to toggle a value which is not a
+    boolean.
+    """
+
+
+class CannotSetSubfield(StoredTypeError):
+    """Tried to set sub-field of an invalid data structure.
+
+    This would occur in the following example::
+
+        >>> import asyncio
+        >>> from redbot.core import Config
+        >>> config = Config.get_conf(None, 1234, cog_name="Example")
+        >>> async def example():
+        ...     await config.foo.set(True)
+        ...     await config.set_raw("foo", "bar", False)  # Should raise here
+        ...
+        >>> asyncio.run(example())
+
+    """

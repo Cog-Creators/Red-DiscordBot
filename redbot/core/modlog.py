@@ -20,7 +20,6 @@ from .generic_casetypes import all_generics
 __all__ = [
     "Case",
     "CaseType",
-    "get_next_case_number",
     "get_case",
     "get_all_cases",
     "get_cases_for_member",
@@ -39,7 +38,7 @@ _bot_ref: Optional[Red] = None
 
 _CASETYPES = "CASETYPES"
 _CASES = "CASES"
-_SCHEMA_VERSION = 3
+_SCHEMA_VERSION = 4
 
 
 _ = Translator("ModLog", __file__)
@@ -51,7 +50,7 @@ async def _init(bot: Red):
     _bot_ref = bot
     _conf = Config.get_conf(None, 1354799444, cog_name="ModLog")
     _conf.register_global(schema_version=1)
-    _conf.register_guild(mod_log=None, casetypes={})
+    _conf.register_guild(mod_log=None, casetypes={}, latest_case_number=0)
     _conf.init_custom(_CASETYPES, 1)
     _conf.init_custom(_CASES, 2)
     _conf.register_custom(_CASETYPES)
@@ -75,7 +74,8 @@ async def _init(bot: Red):
         await asyncio.sleep(10)  # prevent small delays from causing a 5 minute delay on entry
 
         attempts = 0
-        while attempts < 12:  # wait up to an hour to find a matching case
+        # wait up to an hour to find a matching case
+        while attempts < 12 and guild.me.guild_permissions.view_audit_log:
             attempts += 1
             try:
                 entry = await guild.audit_logs(
@@ -110,7 +110,8 @@ async def _init(bot: Red):
         await asyncio.sleep(10)  # prevent small delays from causing a 5 minute delay on entry
 
         attempts = 0
-        while attempts < 12:  # wait up to an hour to find a matching case
+        # wait up to an hour to find a matching case
+        while attempts < 12 and guild.me.guild_permissions.view_audit_log:
             attempts += 1
             try:
                 entry = await guild.audit_logs(
@@ -173,6 +174,16 @@ async def _migrate_config(from_version: int, to_version: int):
 
         await _conf.custom(_CASETYPES).set(all_casetypes)
         await _conf.schema_version.set(3)
+
+    if from_version < 4 <= to_version:
+        # set latest_case_number
+        for guild_id, cases in (await _conf.custom(_CASES).all()).items():
+            if cases:
+                await _conf.guild(
+                    cast(discord.Guild, discord.Object(id=guild_id))
+                ).latest_case_number.set(max(map(int, cases.keys())))
+
+        await _conf.schema_version.set(4)
 
 
 class Case:
@@ -477,7 +488,7 @@ class CaseType:
         The emoji to use for the case type (for example, :boot:)
     case_str: str
         The string representation of the case (example: Ban)
-        
+
     """
 
     def __init__(
@@ -557,28 +568,6 @@ class CaseType:
         return cls(name=name, **data_copy, **kwargs)
 
 
-async def get_next_case_number(guild: discord.Guild) -> int:
-    """
-    Gets the next case number
-
-    Parameters
-    ----------
-    guild: `discord.Guild`
-        The guild to get the next case number for
-
-    Returns
-    -------
-    int
-        The next case number
-
-    """
-    case_numbers = (await _conf.custom(_CASES, guild.id).all()).keys()
-    if not case_numbers:
-        return 1
-    else:
-        return max(map(int, case_numbers)) + 1
-
-
 async def get_case(case_number: int, guild: discord.Guild, bot: Red) -> Case:
     """
     Gets the case with the associated case number
@@ -609,6 +598,27 @@ async def get_case(case_number: int, guild: discord.Guild, bot: Red) -> Case:
         raise RuntimeError("That case does not exist for guild {}".format(guild.name))
     mod_channel = await get_modlog_channel(guild)
     return await Case.from_json(mod_channel, bot, case_number, case)
+
+
+async def get_latest_case(guild: discord.Guild, bot: Red) -> Optional[Case]:
+    """Get the latest case for the specified guild.
+
+    Parameters
+    ----------
+    guild : discord.Guild
+        The guild to get the latest case for.
+    bot : Red
+        The bot object.
+
+    Returns
+    -------
+    Optional[Case]
+        The latest case object. `None` if it the guild has no cases.
+
+    """
+    case_number = await _conf.guild(guild).latest_case_number()
+    if case_number:
+        return await get_case(case_number, guild, bot)
 
 
 async def get_all_cases(guild: discord.Guild, bot: Red) -> List[Case]:
@@ -745,24 +755,29 @@ async def create_case(
     if user == bot.user:
         return
 
-    next_case_number = await get_next_case_number(guild)
+    async with _conf.guild(guild).latest_case_number.get_lock():
+        # We're getting the case number from config, incrementing it, awaiting something, then
+        # setting it again. This warrants acquiring the lock.
+        next_case_number = await _conf.guild(guild).latest_case_number() + 1
 
-    case = Case(
-        bot,
-        guild,
-        int(created_at.timestamp()),
-        action_type,
-        user,
-        moderator,
-        next_case_number,
-        reason,
-        int(until.timestamp()) if until else None,
-        channel,
-        amended_by=None,
-        modified_at=None,
-        message=None,
-    )
-    await _conf.custom(_CASES, str(guild.id), str(next_case_number)).set(case.to_json())
+        case = Case(
+            bot,
+            guild,
+            int(created_at.timestamp()),
+            action_type,
+            user,
+            moderator,
+            next_case_number,
+            reason,
+            int(until.timestamp()) if until else None,
+            channel,
+            amended_by=None,
+            modified_at=None,
+            message=None,
+        )
+        await _conf.custom(_CASES, str(guild.id), str(next_case_number)).set(case.to_json())
+        await _conf.guild(guild).latest_case_number.set(next_case_number)
+
     bot.dispatch("modlog_case_create", case)
     try:
         mod_channel = await get_modlog_channel(case.guild)
@@ -982,7 +997,7 @@ async def set_modlog_channel(
 
 async def reset_cases(guild: discord.Guild) -> None:
     """
-    Wipes all modlog cases for the specified guild
+    Wipes all modlog cases for the specified guild.
 
     Parameters
     ----------
@@ -991,6 +1006,7 @@ async def reset_cases(guild: discord.Guild) -> None:
 
     """
     await _conf.custom(_CASES, str(guild.id)).clear()
+    await _conf.guild(guild).latest_case_number.clear()
 
 
 def _strfdelta(delta):

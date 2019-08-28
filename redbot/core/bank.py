@@ -5,6 +5,7 @@ from functools import wraps
 
 import discord
 
+from redbot.core.utils.chat_formatting import humanize_number
 from . import Config, errors, commands
 from .i18n import Translator
 
@@ -186,11 +187,7 @@ async def set_balance(member: discord.Member, amount: int) -> int:
     if amount < 0:
         raise ValueError("Not allowed to have negative balance.")
     if amount > MAX_BALANCE:
-        currency = (
-            await get_currency_name()
-            if await is_global()
-            else await get_currency_name(member.guild)
-        )
+        currency = await get_currency_name(member.guild)
         raise errors.BalanceTooHigh(
             user=member.display_name, max_balance=MAX_BALANCE, currency_name=currency
         )
@@ -241,11 +238,20 @@ async def withdraw_credits(member: discord.Member, amount: int) -> int:
     if not isinstance(amount, int):
         raise TypeError("Withdrawal amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
-        raise ValueError("Invalid withdrawal amount {} < 0".format(amount))
+        raise ValueError(
+            "Invalid withdrawal amount {} < 0".format(
+                humanize_number(amount, override_locale="en_US")
+            )
+        )
 
     bal = await get_balance(member)
     if amount > bal:
-        raise ValueError("Insufficient funds {} > {}".format(amount, bal))
+        raise ValueError(
+            "Insufficient funds {} > {}".format(
+                humanize_number(amount, override_locale="en_US"),
+                humanize_number(bal, override_locale="en_US"),
+            )
+        )
 
     return await set_balance(member, bal - amount)
 
@@ -276,7 +282,11 @@ async def deposit_credits(member: discord.Member, amount: int) -> int:
     if not isinstance(amount, int):
         raise TypeError("Deposit amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
-        raise ValueError("Invalid deposit amount {} <= 0".format(amount))
+        raise ValueError(
+            "Invalid deposit amount {} <= 0".format(
+                humanize_number(amount, override_locale="en_US")
+            )
+        )
 
     bal = await get_balance(member)
     return await set_balance(member, amount + bal)
@@ -305,12 +315,25 @@ async def transfer_credits(from_: discord.Member, to: discord.Member, amount: in
         If the amount is invalid or if ``from_`` has insufficient funds.
     TypeError
         If the amount is not an `int`.
+    BalanceTooHigh
+        If the balance after the transfer would be greater than
+        ``bank.MAX_BALANCE``
 
     """
     if not isinstance(amount, int):
         raise TypeError("Transfer amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
-        raise ValueError("Invalid transfer amount {} <= 0".format(amount))
+        raise ValueError(
+            "Invalid transfer amount {} <= 0".format(
+                humanize_number(amount, override_locale="en_US")
+            )
+        )
+
+    if await get_balance(to) + amount > MAX_BALANCE:
+        currency = await get_currency_name(to.guild)
+        raise errors.BalanceTooHigh(
+            user=to.display_name, max_balance=MAX_BALANCE, currency_name=currency
+        )
 
     await withdraw_credits(from_, amount)
     return await deposit_credits(to, amount)
@@ -722,7 +745,7 @@ def cost(amount: int):
                 credits_name = await get_currency_name(context.guild)
                 raise commands.UserFeedbackCheckFailure(
                     _("You need at least {cost} {currency} to use this command.").format(
-                        cost=amount, currency=credits_name
+                        cost=humanize_number(amount), currency=credits_name
                     )
                 )
             else:

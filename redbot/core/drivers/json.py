@@ -5,12 +5,13 @@ import os
 import pickle
 import weakref
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, AsyncIterator, Dict, Optional, Tuple
 from uuid import uuid4
 
-from .red_base import BaseDriver, IdentifierData
+from .. import data_manager, errors
+from .base import BaseDriver, IdentifierData, ConfigCategory
 
-__all__ = ["JSON"]
+__all__ = ["JsonDriver"]
 
 
 _shared_datastore = {}
@@ -35,9 +36,10 @@ def finalize_driver(cog_name):
             _finalizers.remove(f)
 
 
-class JSON(BaseDriver):
+# noinspection PyProtectedMember
+class JsonDriver(BaseDriver):
     """
-    Subclass of :py:class:`.red_base.BaseDriver`.
+    Subclass of :py:class:`.BaseDriver`.
 
     .. py:attribute:: file_name
 
@@ -50,26 +52,25 @@ class JSON(BaseDriver):
 
     def __init__(
         self,
-        cog_name,
-        identifier,
+        cog_name: str,
+        identifier: str,
         *,
-        data_path_override: Path = None,
-        file_name_override: str = "settings.json"
+        data_path_override: Optional[Path] = None,
+        file_name_override: str = "settings.json",
     ):
         super().__init__(cog_name, identifier)
         self.file_name = file_name_override
-        if data_path_override:
+        if data_path_override is not None:
             self.data_path = data_path_override
+        elif cog_name == "Core" and identifier == "0":
+            self.data_path = data_manager.core_data_path()
         else:
-            self.data_path = Path.cwd() / "cogs" / ".data" / self.cog_name
+            self.data_path = data_manager.cog_data_path(raw_name=cog_name)
         self.data_path.mkdir(parents=True, exist_ok=True)
         self.data_path = self.data_path / self.file_name
 
         self._lock = asyncio.Lock()
         self._load_data()
-
-    async def has_valid_connection(self) -> bool:
-        return True
 
     @property
     def data(self):
@@ -78,6 +79,21 @@ class JSON(BaseDriver):
     @data.setter
     def data(self, value):
         _shared_datastore[self.cog_name] = value
+
+    @classmethod
+    async def initialize(cls, **storage_details) -> None:
+        # No initializing to do
+        return
+
+    @classmethod
+    async def teardown(cls) -> None:
+        # No tearing down to do
+        return
+
+    @staticmethod
+    def get_config_details() -> Dict[str, Any]:
+        # No driver-specific configuration needed
+        return {}
 
     def _load_data(self):
         if self.cog_name not in _driver_counts:
@@ -95,7 +111,7 @@ class JSON(BaseDriver):
         except FileNotFoundError:
             self.data = {}
             with self.data_path.open("w", encoding="utf-8") as fs:
-                json.dump(self.data, fs, indent=4)
+                json.dump(self.data, fs)
 
     def migrate_identifier(self, raw_identifier: int):
         if self.unique_cog_identifier in self.data:
@@ -111,30 +127,32 @@ class JSON(BaseDriver):
 
     async def get(self, identifier_data: IdentifierData):
         partial = self.data
-        full_identifiers = identifier_data.to_tuple()
+        full_identifiers = identifier_data.to_tuple()[1:]
         for i in full_identifiers:
             partial = partial[i]
         return pickle.loads(pickle.dumps(partial, -1))
 
     async def set(self, identifier_data: IdentifierData, value=None):
         partial = self.data
-        full_identifiers = identifier_data.to_tuple()
+        full_identifiers = identifier_data.to_tuple()[1:]
         # This is both our deepcopy() and our way of making sure this value is actually JSON
         # serializable.
         value_copy = json.loads(json.dumps(value))
 
         async with self._lock:
             for i in full_identifiers[:-1]:
-                if i not in partial:
-                    partial[i] = {}
-                partial = partial[i]
-            partial[full_identifiers[-1]] = value_copy
+                try:
+                    partial = partial.setdefault(i, {})
+                except AttributeError:
+                    # Tried to set sub-field of non-object
+                    raise errors.CannotSetSubfield
 
+            partial[full_identifiers[-1]] = value_copy
             await self._save()
 
     async def clear(self, identifier_data: IdentifierData):
         partial = self.data
-        full_identifiers = identifier_data.to_tuple()
+        full_identifiers = identifier_data.to_tuple()[1:]
         try:
             for i in full_identifiers[:-1]:
                 partial = partial[i]
@@ -149,14 +167,32 @@ class JSON(BaseDriver):
                 else:
                     await self._save()
 
+    @classmethod
+    async def aiter_cogs(cls) -> AsyncIterator[Tuple[str, str]]:
+        yield "Core", "0"
+        for _dir in data_manager.cog_data_path().iterdir():
+            fpath = _dir / "settings.json"
+            if not fpath.exists():
+                continue
+            with fpath.open() as f:
+                try:
+                    data = json.load(f)
+                except json.JSONDecodeError:
+                    continue
+            if not isinstance(data, dict):
+                continue
+            for cog, inner in data.items():
+                if not isinstance(inner, dict):
+                    continue
+                for cog_id in inner:
+                    yield cog, cog_id
+
     async def import_data(self, cog_data, custom_group_data):
         def update_write_data(identifier_data: IdentifierData, _data):
             partial = self.data
-            idents = identifier_data.to_tuple()
+            idents = identifier_data.to_tuple()[1:]
             for ident in idents[:-1]:
-                if ident not in partial:
-                    partial[ident] = {}
-                partial = partial[ident]
+                partial = partial.setdefault(ident, {})
             partial[idents[-1]] = _data
 
         async with self._lock:
@@ -164,12 +200,12 @@ class JSON(BaseDriver):
                 splitted_pkey = self._split_primary_key(category, custom_group_data, all_data)
                 for pkey, data in splitted_pkey:
                     ident_data = IdentifierData(
+                        self.cog_name,
                         self.unique_cog_identifier,
                         category,
                         pkey,
                         (),
-                        custom_group_data,
-                        is_custom=category in custom_group_data,
+                        *ConfigCategory.get_pkey_info(category, custom_group_data),
                     )
                     update_write_data(ident_data, data)
             await self._save()
@@ -177,9 +213,6 @@ class JSON(BaseDriver):
     async def _save(self) -> None:
         loop = asyncio.get_running_loop()
         await loop.run_in_executor(None, _save_json, self.data_path, self.data)
-
-    def get_config_details(self):
-        return
 
 
 def _save_json(path: Path, data: Dict[str, Any]) -> None:
@@ -206,7 +239,7 @@ def _save_json(path: Path, data: Dict[str, Any]) -> None:
     tmp_file = "{}-{}.tmp".format(filename, uuid4().fields[0])
     tmp_path = path.parent / tmp_file
     with tmp_path.open(encoding="utf-8", mode="w") as fs:
-        json.dump(data, fs, indent=4)
+        json.dump(data, fs)
         fs.flush()  # This does get closed on context exit, ...
         os.fsync(fs.fileno())  # but that needs to happen prior to this line
 
