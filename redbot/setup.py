@@ -395,7 +395,7 @@ def delete(
 ):
     loop = asyncio.get_event_loop()
     if no_prompt is None:
-        interactive = None
+        interactive = False
     else:
         interactive = not no_prompt
     loop.run_until_complete(remove_instance(instance, interactive, drop_db, remove_datapath))
