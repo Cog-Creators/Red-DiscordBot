@@ -328,11 +328,6 @@ async def transfer_credits(from_: discord.Member, to: discord.Member, amount: in
                 humanize_number(amount, override_locale="en_US")
             )
         )
-    if await get_balance(to) + amount > MAX_BALANCE:
-        currency = await get_currency_name(to.guild)
-        raise errors.BalanceTooHigh(
-            user=to.display_name, max_balance=MAX_BALANCE, currency_name=currency
-        )
 
     if await get_balance(to) + amount > MAX_BALANCE:
         currency = await get_currency_name(to.guild)

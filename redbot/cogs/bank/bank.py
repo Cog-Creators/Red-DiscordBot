@@ -130,4 +130,11 @@ class Bank(commands.Cog):
         await bank.set_currency_name(name, ctx.guild)
         await ctx.send(_("Currency name has been set to: {name}").format(name=name))
 
+    @bankset.command(name="maxbal")
+    @check_global_setting_guildowner()
+    async def bankset_maxbal(self, ctx: commands.Context, *, amount: int):
+        """Set the maximum balance a user can get."""
+        await bank.set_max_balance(amount, ctx.guild)
+        await ctx.send(_("Maximum balance has been set to: {amount:,}").format(amount=amount))
+
     # ENDSECTION
