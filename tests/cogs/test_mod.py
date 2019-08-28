@@ -10,7 +10,6 @@ async def test_modlog_register_casetype(mod):
         "default_setting": True,
         "image": ":hammer:",
         "case_str": "Ban",
-        "audit_type": "ban",
     }
     casetype = await mod.register_casetype(**ct)
     assert casetype is not None
