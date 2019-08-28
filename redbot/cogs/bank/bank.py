@@ -62,7 +62,7 @@ def check_global_setting_admin():
 
 def guild_only_check():
     async def pred(ctx: commands.Context):
-        if await bank.is_global() or not await bank.is_global() and ctx.guild is not None:
+        if await bank.is_global() or (not await bank.is_global() and ctx.guild is not None):
             return True
         else:
             return False
