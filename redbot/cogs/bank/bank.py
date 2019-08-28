@@ -1,5 +1,5 @@
 import discord
-from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.chat_formatting import box, humanize_number
 
 from redbot.core import checks, bank, commands
 from redbot.core.i18n import Translator, cog_i18n
@@ -88,7 +88,9 @@ class Bank(commands.Cog):
                 "Bank settings:\n\nBank name: {bank_name}\nCurrency: {currency_name}\n"
                 "Default balance: {default_balance}"
             ).format(
-                bank_name=bank_name, currency_name=currency_name, default_balance=default_balance
+                bank_name=bank_name,
+                currency_name=currency_name,
+                default_balance=humanize_number(default_balance),
             )
             await ctx.send(box(settings))
 

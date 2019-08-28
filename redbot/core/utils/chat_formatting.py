@@ -1,11 +1,13 @@
 import itertools
 import datetime
-from typing import Sequence, Iterator, List, Optional
+from typing import Sequence, Iterator, List, Optional, Union
 from io import BytesIO
 
-import discord
 
-from redbot.core.i18n import Translator
+import discord
+from babel.numbers import format_decimal
+
+from redbot.core.i18n import Translator, get_babel_locale
 
 _ = Translator("UtilsChatFormatting", __file__)
 
@@ -430,6 +432,25 @@ def humanize_timedelta(
             strings.append(f"{period_value} {unit}")
 
     return ", ".join(strings)
+
+
+def humanize_number(val: Union[int, float], override_locale=None) -> str:
+    """
+    Convert an int or float to a str with digit separators based on bot locale
+
+    Parameters
+    ----------
+    val : Union[int, float]
+        The int/float to be formatted.
+    override_locale: Optional[str]
+        A value to override the bots locale.
+
+    Returns
+    -------
+    str
+        locale aware formatted number.
+    """
+    return format_decimal(val, locale=get_babel_locale(override_locale))
 
 
 def text_to_file(

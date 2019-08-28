@@ -74,7 +74,8 @@ async def _init(bot: Red):
         await asyncio.sleep(10)  # prevent small delays from causing a 5 minute delay on entry
 
         attempts = 0
-        while attempts < 12:  # wait up to an hour to find a matching case
+        # wait up to an hour to find a matching case
+        while attempts < 12 and guild.me.guild_permissions.view_audit_log:
             attempts += 1
             try:
                 entry = await guild.audit_logs(
@@ -109,7 +110,8 @@ async def _init(bot: Red):
         await asyncio.sleep(10)  # prevent small delays from causing a 5 minute delay on entry
 
         attempts = 0
-        while attempts < 12:  # wait up to an hour to find a matching case
+        # wait up to an hour to find a matching case
+        while attempts < 12 and guild.me.guild_permissions.view_audit_log:
             attempts += 1
             try:
                 entry = await guild.audit_logs(
