@@ -1,0 +1,5 @@
+The following commands have been renamed.
+
+    - `[p]bank balance` to `[p]balance check`
+    - `[p]bank set` to `[p]balance set`
+    - `[p]bank transfer` to `[p]balance transfer`

@@ -1,0 +1,5 @@
+The following commands have been moved to the Bank Cog.
+
+    - `[p]bank`
+    - `[p]leaderboard`
+    - `[p]economyset registerbalance` to `[p]bankset initialbalance`
