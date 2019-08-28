@@ -13,7 +13,7 @@ import click
 
 import redbot.logging
 from redbot.core.cli import confirm
-from redbot.core.utils import safe_delete, create_backup as _create_backup
+from redbot.core.utils import safe_delete, create_backup as red_create_backup
 from redbot.core import config, data_manager, drivers
 from redbot.core.drivers import BackendType, IdentifierData
 
@@ -290,7 +290,7 @@ async def create_backup(instance: str) -> None:
     elif backend_type != BackendType.JSON:
         await do_migration(backend_type, BackendType.JSON)
     print("Backing up the instance's data...")
-    backup_fpath = await _create_backup()
+    backup_fpath = await red_create_backup()
     if backup_fpath is not None:
         print(f"A backup of {instance} has been made. It is at {backup_fpath}")
     else:
@@ -370,6 +370,16 @@ def cli(ctx, debug):
 @click.argument("instance", type=click.Choice(instance_list))
 @click.option("--no-prompt", default=False, help="Don't ask for user input during the process.")
 @click.option(
+    "--create-backup",
+    "_create_backup",
+    type=bool,
+    default=None,
+    help=(
+        "Create backup of this instance's data. "
+        "If this option and --no-prompt are omitted, you will be asked about this."
+    ),
+)
+@click.option(
     "--drop-db",
     type=bool,
     default=None,
@@ -390,6 +400,7 @@ def cli(ctx, debug):
 def delete(
     instance: str,
     no_prompt: Optional[bool],
+    _create_backup: Optional[bool],
     drop_db: Optional[bool],
     remove_datapath: Optional[bool],
 ):
@@ -398,7 +409,9 @@ def delete(
         interactive = False
     else:
         interactive = not no_prompt
-    loop.run_until_complete(remove_instance(instance, interactive, drop_db, remove_datapath))
+    loop.run_until_complete(
+        remove_instance(instance, interactive, _create_backup, drop_db, remove_datapath)
+    )
 
 
 @cli.command()
