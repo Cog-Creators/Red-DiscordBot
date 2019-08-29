@@ -368,47 +368,49 @@ def cli(ctx, debug):
 
 @cli.command()
 @click.argument("instance", type=click.Choice(instance_list))
-@click.option("--no-prompt", default=False, help="Don't ask for user input during the process.")
 @click.option(
-    "--create-backup",
+    "--no-prompt",
+    "interactive",
+    is_flag=True,
+    default=True,
+    help="Don't ask for user input during the process.",
+)
+@click.option(
+    "--backup/--no-backup",
     "_create_backup",
-    type=bool,
+    is_flag=True,
     default=None,
     help=(
         "Create backup of this instance's data. "
-        "If this option and --no-prompt are omitted, you will be asked about this."
+        "If these options and --no-prompt are omitted, you will be asked about this."
     ),
 )
 @click.option(
-    "--drop-db",
-    type=bool,
+    "--drop-db/--no-drop-db",
+    is_flag=True,
     default=None,
     help=(
         "Drop the entire database constaining this instance's data. Has no effect on JSON "
-        "instances. If this option and --no-prompt are omitted, you will be asked about this."
+        "instances. If these options and --no-prompt are omitted, you will be asked about this."
     ),
 )
 @click.option(
-    "--remove-datapath",
-    type=bool,
+    "--remove-datapath/--no-remove-datapath",
+    is_flag=True,
     default=None,
     help=(
-        "Remove this entire instance's datapath. If this option and --no-prompt are omitted, you "
-        "will be asked about this."
+        "Remove this entire instance's datapath. If these options and --no-prompt are omitted, "
+        "you will be asked about this."
     ),
 )
 def delete(
     instance: str,
-    no_prompt: Optional[bool],
+    interactive: bool,
     _create_backup: Optional[bool],
     drop_db: Optional[bool],
     remove_datapath: Optional[bool],
 ):
     loop = asyncio.get_event_loop()
-    if no_prompt is None:
-        interactive = False
-    else:
-        interactive = not no_prompt
     loop.run_until_complete(
         remove_instance(instance, interactive, _create_backup, drop_db, remove_datapath)
     )
