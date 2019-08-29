@@ -1,1 +1,0 @@
-User can now pass ``--create-backup`` flag to ``redbot-setup delete`` to create backup without prompting (or to replace default behavior of ``--no-prompt``)
