@@ -699,14 +699,15 @@ class Economy(commands.Cog):
         """Set the initial balance for new bank accounts."""
         guild = ctx.guild
         max_balance = await bank.get_max_balance(ctx.guild)
-        if creds < 0 or creds > max_balance:
+        credits_name = await bank.get_currency_name(guild)
+        try:
+            await bank.set_default_balance(creds, guild)
+        except ValueError:
             return await ctx.send(
                 _("Amount must be greater than or equal to zero and less than {maxbal}.").format(
                     maxbal=humanize_number(max_balance)
                 )
             )
-        credits_name = await bank.get_currency_name(guild)
-        await bank.set_default_balance(creds, guild)
         await ctx.send(
             _("Registering an account will now give {num} {currency}.").format(
                 num=humanize_number(creds), currency=credits_name
