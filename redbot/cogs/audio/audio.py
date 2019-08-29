@@ -24,7 +24,7 @@ import redbot.core
 from redbot.core import Config, bank, checks, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import bold, box, pagify, humanize_number
+from redbot.core.utils.chat_formatting import bold, box, humanize_number, inline, pagify
 from redbot.core.utils.menus import (
     DEFAULT_CONTROLS,
     close_menu,
@@ -3476,8 +3476,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 _("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=
-              _scope(to_scope, the=True)
+                    id=playlist_id, scope=humanize_scope(to_scope, the=True)
                 ),
             )
         except MissingGuild:
