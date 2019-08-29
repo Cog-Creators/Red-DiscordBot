@@ -763,16 +763,18 @@ async def set_default_balance(amount: int, guild: discord.Guild = None) -> int:
     RuntimeError
         If the bank is guild-specific and guild was not provided.
     ValueError
-        If the amount is invalid.
+        If the amount is less than 0 or higher than the max allowed balance.
 
     """
     amount = int(amount)
     max_bal = await get_max_balance(guild)
-    if amount > max_bal:
-        amount = max_bal
 
-    if amount < 0:
-        raise ValueError("Amount must be greater than zero.")
+    if not (0 < amount <= max_bal):
+        raise ValueError(
+            "Amount must be greater than zero and less than {max}.".format(
+                max=humanize_number(max_bal, override_locale="en_US")
+            )
+        )
 
     if await is_global():
         await _conf.default_balance.set(amount)
