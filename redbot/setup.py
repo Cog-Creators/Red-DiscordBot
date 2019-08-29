@@ -12,7 +12,6 @@ import appdirs
 import click
 
 import redbot.logging
-from redbot.core.cli import confirm
 from redbot.core.utils import safe_delete, create_backup as red_create_backup
 from redbot.core import config, data_manager, drivers
 from redbot.core.drivers import BackendType, IdentifierData
@@ -59,7 +58,9 @@ def save_config(name, data, remove=False):
                 "WARNING: An instance already exists with this name. "
                 "Continuing will overwrite the existing instance config."
             )
-            if not confirm("Are you absolutely certain you want to continue? (y/n) "):
+            if not click.confirm(
+                "Are you absolutely certain you want to continue?", default=False
+            ):
                 print("Not continuing")
                 sys.exit(0)
         _config[name] = data
@@ -100,7 +101,7 @@ def get_data_dir():
             sys.exit(1)
 
     print("You have chosen {} to be your data directory.".format(default_data_dir))
-    if not confirm("Please confirm (y/n): "):
+    if not click.confirm("Please confirm", default=True):
         print("Please start the process over.")
         sys.exit(0)
     return default_data_dir
@@ -258,18 +259,18 @@ async def edit_instance():
 
     current_data_dir = Path(_instance_data["DATA_PATH"])
     print("You have selected '{}' as the instance to modify.".format(selected))
-    if not confirm("Please confirm (y/n): "):
+    if not click.confirm("Please confirm", default=True):
         print("Ok, we will not continue then.")
         return
 
     print("Ok, we will continue on.")
     print()
-    if confirm("Would you like to change the instance name? (y/n) "):
+    if click.confirm("Would you like to change the instance name?", default=False):
         name = get_name()
     else:
         name = selected
 
-    if confirm("Would you like to change the data location? (y/n) "):
+    if click.confirm("Would you like to change the data location?", default=False):
         default_data_dir = get_data_dir()
         default_dirs["DATA_PATH"] = str(default_data_dir.resolve())
     else:
@@ -307,8 +308,8 @@ async def remove_instance(
     data_manager.load_basic_configuration(instance)
 
     if interactive is True and _create_backup is None:
-        _create_backup = confirm(
-            "Would you like to make a backup of the data for this instance? (y/n) "
+        _create_backup = click.confirm(
+            "Would you like to make a backup of the data for this instance?", default=False
         )
 
     if _create_backup is True:
@@ -323,8 +324,8 @@ async def remove_instance(
     await driver_cls.delete_all_data(interactive=interactive, drop_db=drop_db)
 
     if interactive is True and remove_datapath is None:
-        remove_datapath = confirm(
-            "Would you like to delete the instance's entire datapath? (y/n) "
+        remove_datapath = click.confirm(
+            "Would you like to delete the instance's entire datapath?", default=False
         )
 
     if remove_datapath is True:
