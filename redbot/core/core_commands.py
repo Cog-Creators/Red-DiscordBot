@@ -435,7 +435,13 @@ class Core(commands.Cog, CoreLogic):
     @commands.check(CoreLogic._can_get_invite_url)
     async def invite(self, ctx):
         """Show's Red's invite url"""
-        await ctx.author.send(await self._invite_url())
+        try:
+            await ctx.author.send(await self._invite_url())
+        except discord.errors.Forbidden:
+            await ctx.send(
+                "I couldn't send the invite message to you in DM. "
+                "Either you blocked me or you disabled DMs in this server."
+            )
 
     @commands.group()
     @checks.is_owner()
