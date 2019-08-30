@@ -51,6 +51,10 @@ class BalanceTooHigh(BankError, OverflowError):
         )
 
 
+class BankPruneError(BankError):
+    """Raised when trying to prune a local bank and no server is specified."""
+
+
 class MissingExtraRequirements(RedError):
     """Raised when an extra requirement is missing but required."""
 

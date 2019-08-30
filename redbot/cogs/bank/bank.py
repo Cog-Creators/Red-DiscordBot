@@ -1,7 +1,9 @@
 from collections import namedtuple
+from typing import Union
 
 import discord
 
+from redbot.cogs.mod.converters import RawUserIds
 from redbot.core import bank, checks, commands, errors
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
@@ -216,6 +218,87 @@ class Bank(commands.Cog):
                     scope=self.bot.user.name if await bank.is_global() else _("this server")
                 )
             )
+
+    @_bank.group(name="prune")
+    @check_global_setting_admin()
+    async def _prune(self, ctx):
+        """Prune bank accounts."""
+        pass
+
+    @_prune.command(name="local")
+    @commands.guild_only()
+    @checks.guildowner()
+    async def _local(self, ctx, confirmation: bool = False):
+        """Prune bank accounts for users no longer in the server."""
+        global_bank = await bank.is_global()
+        if global_bank is True:
+            return await ctx.send(_("This command cannot be used with a global bank."))
+
+        if confirmation is False:
+            await ctx.send(
+                _(
+                    "This will delete all bank accounts for users no longer in this server."
+                    "\nIf you're sure, type "
+                    "`{prefix}bank prune local yes`"
+                ).format(prefix=ctx.prefix)
+            )
+        else:
+            await bank.bank_prune(self.bot, guild=ctx.guild)
+            await ctx.send(
+                _("Bank accounts for users no longer in this server have been deleted.")
+            )
+
+    @_prune.command(name="global")
+    @checks.is_owner()
+    async def _global(self, ctx, confirmation: bool = False):
+        """Prune bank accounts for users who no longer share a server with the bot."""
+        global_bank = await bank.is_global()
+        if global_bank is False:
+            return await ctx.send(_("This command cannot be used with a local bank."))
+
+        if confirmation is False:
+            await ctx.send(
+                _(
+                    "This will delete all bank accounts for users "
+                    "who no longer share a server with the bot."
+                    "\nIf you're sure, type `{prefix}bank prune global yes`"
+                ).format(prefix=ctx.prefix)
+            )
+        else:
+            await bank.bank_prune(self.bot)
+            await ctx.send(
+                _(
+                    "Bank accounts for users who "
+                    "no longer share a server with the bot have been pruned."
+                )
+            )
+
+    @_prune.command(usage="<user> [confirmation=False]")
+    async def user(
+        self, ctx, member_or_id: Union[discord.Member, RawUserIds], confirmation: bool = False
+    ):
+        """Delete the bank account of a specified user."""
+        global_bank = await bank.is_global()
+        if global_bank is False and ctx.guild is None:
+            return await ctx.send(_("This command cannot be used in DMs with a local bank."))
+        try:
+            name = member_or_id.display_name
+            uid = member_or_id.id
+        except AttributeError:
+            name = member_or_id
+            uid = member_or_id
+
+        if confirmation is False:
+            await ctx.send(
+                _(
+                    "This will delete {name}'s bank account."
+                    "\nIf you're sure, type "
+                    "`{prefix}bank prune user {id} yes`"
+                ).format(prefix=ctx.prefix, id=uid, name=name)
+            )
+        else:
+            await bank.bank_prune(self.bot, guild=ctx.guild, user_id=uid)
+            await ctx.send(_("The bank account for {name} has been pruned.").format(name=name))
 
     @guild_only_check()
     @commands.group(name="balance")
