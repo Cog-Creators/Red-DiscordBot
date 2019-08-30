@@ -446,8 +446,7 @@ class Core(commands.Cog, CoreLogic):
     @inviteset.command()
     async def public(self, ctx, confirm: bool = False):
         """
-        Define if the command should be accessible\
-        for the average users.
+        Define if the command should be accessible for the average user.
         """
         if await self.bot.db.invite_public():
             await self.bot.db.invite_public.set(False)
@@ -479,13 +478,13 @@ class Core(commands.Cog, CoreLogic):
         Make the bot create its own role with permissions on join.
 
         The bot will create its own role with the desired permissions\
-        when he join a new server. This is a special role that can't be\
+        when it joins a new server. This is a special role that can't be\
         deleted or removed from the bot.
 
-        For that, you need to give a valid permissions level.
+        For that, you need to provide a valid permissions level.
         You can generate one here: https://discordapi.com/permissions.html
 
-        Please note that you might need the two factor authentification for\
+        Please note that you might need two factor authentification for\
         some permissions.
         """
         await self.bot.db.invite_perm.set(level)
