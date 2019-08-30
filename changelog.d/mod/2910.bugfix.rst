@@ -1,0 +1,1 @@
+userinfo doesn't break with absurd numbers of roles.
