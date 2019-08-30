@@ -1,0 +1,1 @@
+``redbot-setup delete`` no longer prompts about backup when user passes ``--no-prompt`` option
