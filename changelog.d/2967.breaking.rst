@@ -1,1 +1,11 @@
 The main bot config is no longer directly accessible to cogs. New methods have been added for use where this is concerned.
+New methods for this include
+
+  - ``bot.get_shared_api_tokens``
+  - ``bot.get_shared_api_tokens``
+  - ``bot.get_embed_color``
+  - ``bot.get_embed_colour``
+  - ``bot.get_admin_roles``
+  - ``bot.get_admin_role_ids``
+  - ``bot.get_mod_roles``
+  - ``bot.get_mod_role_ids``
