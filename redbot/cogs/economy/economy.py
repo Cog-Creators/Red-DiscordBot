@@ -1,7 +1,7 @@
 import calendar
 import logging
 import random
-from collections import defaultdict, deque
+from collections import defaultdict, deque, namedtuple
 from enum import Enum
 from typing import Iterable, cast
 
@@ -16,6 +16,7 @@ from redbot.core.utils.chat_formatting import box, humanize_number
 logger = logging.getLogger("red.economy")
 T_ = Translator("Economy", __file__)
 NUM_ENC = "\N{COMBINING ENCLOSING KEYCAP}"
+MOCK_MEMBER = namedtuple("Member", "id guild")
 
 
 class SMReel(Enum):
