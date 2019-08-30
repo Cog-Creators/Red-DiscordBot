@@ -126,6 +126,10 @@ class ModInfo(MixinMeta):
 
         if roles:
             roles = ", ".join([x.mention for x in roles])
+            # 400 BAD REQUEST (error code: 50035): Invalid Form Body
+            # In embed.fields.2.value: Must be 1024 or fewer in length.
+            if len(roles) > 1024:
+                roles = _("User has too many roles to display in an embed.")
         else:
             roles = None
 
