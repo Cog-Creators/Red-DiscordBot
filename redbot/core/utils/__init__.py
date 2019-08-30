@@ -221,9 +221,9 @@ async def fuzzy_command_search(
 
     """
     if ctx.guild is not None:
-        enabled = await ctx.bot.db.guild(ctx.guild).fuzzy()
+        enabled = await ctx.bot._config.guild(ctx.guild).fuzzy()
     else:
-        enabled = await ctx.bot.db.fuzzy()
+        enabled = await ctx.bot._config.fuzzy()
 
     if not enabled:
         return

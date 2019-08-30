@@ -115,7 +115,7 @@ def main():
     red = Red(
         cli_flags=cli_flags, description=description, dm_help=None, fetch_offline_members=True
     )
-    loop.run_until_complete(red.maybe_update_config())
+    loop.run_until_complete(red._maybe_update_config())
     init_global_checks(red)
     init_events(red, cli_flags)
 

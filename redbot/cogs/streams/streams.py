@@ -82,27 +82,27 @@ class Streams(commands.Cog):
     async def move_api_keys(self):
         """Move the API keys from cog stored config to core bot config if they exist."""
         tokens = await self.db.tokens()
-        youtube = await self.bot.db.api_tokens.get_raw("youtube", default={})
-        twitch = await self.bot.db.api_tokens.get_raw("twitch", default={})
+        youtube = await self.bot.get_shared_api_tokens("youtube")
+        twitch = await self.bot.get_shared_api_tokens("twitch")
         for token_type, token in tokens.items():
             if token_type == "YoutubeStream" and "api_key" not in youtube:
-                await self.bot.db.api_tokens.set_raw("youtube", value={"api_key": token})
+                await self.bot.set_shared_api_tokens("youtube", api_key=token)
             if token_type == "TwitchStream" and "client_id" not in twitch:
                 # Don't need to check Community since they're set the same
-                await self.bot.db.api_tokens.set_raw("twitch", value={"client_id": token})
+                await self.bot.set_shared_api_tokens("twitch", client_id=token)
         await self.db.tokens.clear()
 
     @commands.command()
     async def twitchstream(self, ctx: commands.Context, channel_name: str):
         """Check if a Twitch channel is live."""
-        token = await self.bot.db.api_tokens.get_raw("twitch", default={"client_id": None})
+        token = (await self.bot.get_shared_api_tokens("twitch")).get("client_id")
         stream = TwitchStream(name=channel_name, token=token)
         await self.check_online(ctx, stream)
 
     @commands.command()
     async def youtubestream(self, ctx: commands.Context, channel_id_or_name: str):
         """Check if a YouTube channel is live."""
-        apikey = await self.bot.db.api_tokens.get_raw("youtube", default={"api_key": None})
+        apikey = await self.bot.get_shared_api_tokens("youtube")
         is_name = self.check_name_or_id(channel_id_or_name)
         if is_name:
             stream = YoutubeStream(name=channel_id_or_name, token=apikey)
@@ -273,7 +273,7 @@ class Streams(commands.Cog):
     async def stream_alert(self, ctx: commands.Context, _class, channel_name):
         stream = self.get_stream(_class, channel_name)
         if not stream:
-            token = await self.bot.db.api_tokens.get_raw(_class.token_name, default=None)
+            token = await self.bot.get_shared_api_tokens(_class.token_name)
             is_yt = _class.__name__ == "YoutubeStream"
             if is_yt and not self.check_name_or_id(channel_name):
                 stream = _class(id=channel_name, token=token)
@@ -651,8 +651,8 @@ class Streams(commands.Cog):
                         pass
                     else:
                         raw_stream["_messages_cache"].append(msg)
-            token = await self.bot.db.api_tokens.get_raw(_class.token_name, default=None)
-            if token is not None:
+            token = await self.bot.get_shared_api_tokens(_class.token_name)
+            if token:
                 raw_stream["token"] = token
             streams.append(_class(**raw_stream))
 

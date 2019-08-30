@@ -37,19 +37,19 @@ ______         _           ______ _                       _  ______       _
 def init_events(bot, cli_flags):
     @bot.event
     async def on_connect():
-        if bot.uptime is None:
+        if bot._uptime is None:
             print("Connected to Discord. Getting ready...")
 
     @bot.event
     async def on_ready():
-        if bot.uptime is not None:
+        if bot._uptime is not None:
             return
 
-        bot.uptime = datetime.datetime.utcnow()
+        bot._uptime = datetime.datetime.utcnow()
         packages = []
 
         if cli_flags.no_cogs is False:
-            packages.extend(await bot.db.packages())
+            packages.extend(await bot._config.packages())
 
         if cli_flags.load_cogs:
             packages.extend(cli_flags.load_cogs)
@@ -90,8 +90,8 @@ def init_events(bot, cli_flags):
         except:
             invite_url = "Could not fetch invite url"
 
-        prefixes = cli_flags.prefix or (await bot.db.prefix())
-        lang = await bot.db.locale()
+        prefixes = cli_flags.prefix or (await bot._config.prefix())
+        lang = await bot._config.locale()
         red_pkg = pkg_resources.get_distribution("Red-DiscordBot")
         dpy_version = discord.__version__
 
@@ -160,7 +160,7 @@ def init_events(bot, cli_flags):
         if invite_url:
             print("\nInvite URL: {}\n".format(invite_url))
 
-        bot.color = discord.Colour(await bot.db.color())
+        bot.color = discord.Colour(await bot._config.color())
 
     @bot.event
     async def on_command_error(ctx, error, unhandled_by_cog=False):
@@ -183,7 +183,7 @@ def init_events(bot, cli_flags):
         elif isinstance(error, commands.UserInputError):
             await ctx.send_help()
         elif isinstance(error, commands.DisabledCommand):
-            disabled_message = await bot.db.disabled_command_msg()
+            disabled_message = await bot._config.disabled_command_msg()
             if disabled_message:
                 await ctx.send(disabled_message.replace("{command}", ctx.invoked_with))
         elif isinstance(error, commands.CommandInvokeError):
@@ -255,12 +255,12 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_message(message):
-        bot.counter["messages_read"] += 1
+        bot._counter["messages_read"] += 1
         await bot.process_commands(message)
         discord_now = message.created_at
         if (
-            not bot.checked_time_accuracy
-            or (discord_now - timedelta(minutes=60)) > bot.checked_time_accuracy
+            not bot._checked_time_accuracy
+            or (discord_now - timedelta(minutes=60)) > bot._checked_time_accuracy
         ):
             system_now = datetime.datetime.utcnow()
             diff = abs((discord_now - system_now).total_seconds())
@@ -270,28 +270,28 @@ def init_events(bot, cli_flags):
                     "clock. Any time sensitive code may fail.",
                     diff,
                 )
-            bot.checked_time_accuracy = discord_now
+            bot._checked_time_accuracy = discord_now
 
     @bot.event
     async def on_resumed():
-        bot.counter["sessions_resumed"] += 1
+        bot._counter["sessions_resumed"] += 1
 
     @bot.event
     async def on_command(command):
-        bot.counter["processed_commands"] += 1
+        bot._counter["processed_commands"] += 1
 
     @bot.event
     async def on_command_add(command: commands.Command):
-        disabled_commands = await bot.db.disabled_commands()
+        disabled_commands = await bot._config.disabled_commands()
         if command.qualified_name in disabled_commands:
             command.enabled = False
         for guild in bot.guilds:
-            disabled_commands = await bot.db.guild(guild).disabled_commands()
+            disabled_commands = await bot._config.guild(guild).disabled_commands()
             if command.qualified_name in disabled_commands:
                 command.disable_in(guild)
 
     async def _guild_added(guild: discord.Guild):
-        disabled_commands = await bot.db.guild(guild).disabled_commands()
+        disabled_commands = await bot._config.guild(guild).disabled_commands()
         for command_name in disabled_commands:
             command_obj = bot.get_command(command_name)
             if command_obj is not None:
@@ -310,7 +310,7 @@ def init_events(bot, cli_flags):
     @bot.event
     async def on_guild_leave(guild: discord.Guild):
         # Clean up any unneeded checks
-        disabled_commands = await bot.db.guild(guild).disabled_commands()
+        disabled_commands = await bot._config.guild(guild).disabled_commands()
         for command_name in disabled_commands:
             command_obj = bot.get_command(command_name)
             if command_obj is not None:
@@ -322,7 +322,7 @@ def init_events(bot, cli_flags):
         for c in confs:
             uuid = c.unique_identifier
             group_data = c.custom_groups
-            await bot.db.custom("CUSTOM_GROUPS", c.cog_name, uuid).set(group_data)
+            await bot._config.custom("CUSTOM_GROUPS", c.cog_name, uuid).set(group_data)
 
 
 def _get_startup_screen_specs():
