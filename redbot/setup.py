@@ -391,7 +391,7 @@ def cli(ctx, debug):
     help=(
         "Delete this instance's data. "
         "If these options and --no-prompt are omitted, you will be asked about this."
-    )
+    ),
 )
 @click.option(
     "--backup/--no-backup",
