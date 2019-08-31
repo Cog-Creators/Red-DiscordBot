@@ -1,1 +1,1 @@
-:code:`[p]audioset settings` now reports lavalink lib version.
+``[p]audioset settings`` now reports lavalink lib version.

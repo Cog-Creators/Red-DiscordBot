@@ -1,1 +1,1 @@
-:code:`[p]playlist remove` now removes the playlist url if the playlist was created through :code:`[p]playlist save`.
+``[p]playlist remove`` now removes the playlist url if the playlist was created through ``[p]playlist save``.

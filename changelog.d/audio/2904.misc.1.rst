@@ -1,1 +1,1 @@
-:class:`red.cogs.audio.localpaths.Query` and :class:`red.cogs.audio.localpaths.LocalPath` have been implemented to handle localtracks and queries
+:class:`red.cogs.audio.localpaths.Query` and :class:`red.cogs.audio.localpaths.LocalPath` have been implemented to handle localtracks and queries.

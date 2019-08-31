@@ -1,1 +1,1 @@
-:code:`[p]queue clean self` can be used to remove all songs you requested from the queue.
+``[p]queue clean self`` can be used to remove all songs you requested from the queue.

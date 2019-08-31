@@ -1,1 +1,1 @@
-New dependency: ``databases[sqlite]`` 
+New dependency: ``databases[sqlite]`` .
