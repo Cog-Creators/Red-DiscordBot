@@ -1,1 +1,1 @@
-:code:`[p]audioset autoplay` can be used to enable auto play once the queue runs out.
+``[p]audioset autoplay`` can be used to enable auto play once the queue runs out.

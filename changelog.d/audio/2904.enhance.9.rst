@@ -1,1 +1,1 @@
-Turn off DJ mode if the DJ role is deleted.
+``[p]genre`` command can be used to play spotify playlist.

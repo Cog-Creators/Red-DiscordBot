@@ -1,1 +1,1 @@
-:code:`[p]audioset settings` no longer shows lavalink JAR version.
+``[p]audioset settings`` no longer shows lavalink JAR version.

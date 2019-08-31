@@ -1,1 +1,1 @@
-Adding a playlist and album to a saved playlist skips tracks already in the playlist.
+Turn off DJ mode if the DJ role is deleted.
