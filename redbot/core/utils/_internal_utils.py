@@ -381,7 +381,7 @@ def async_tqdm(
     iterable: Optional[Union[Iterable, AsyncIterable]] = None,
     *args,
     refresh_interval: float = 0.5,
-    **kwargs
+    **kwargs,
 ) -> Union[tqdm, _AsyncTqdm]:
     """Same as `tqdm() <https://tqdm.github.io>`_, except it can be used
     in ``async for`` loops, and a task can be spawned to asynchronously
