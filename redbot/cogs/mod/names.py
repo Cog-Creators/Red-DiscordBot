@@ -125,11 +125,38 @@ class ModInfo(MixinMeta):
             activity = _("Watching {}").format(user.activity.name)
 
         if roles:
+
             roles = ", ".join([x.mention for x in roles])
             # 400 BAD REQUEST (error code: 50035): Invalid Form Body
             # In embed.fields.2.value: Must be 1024 or fewer in length.
             if len(roles) > 1024:
-                roles = _("User has too many roles to display in an embed.")
+                # Alternative string building time.
+                # This is not the most optimal, but if you're hitting this, you are losing more time
+                # to every single check running on users than the occasional user info invoke
+                # We don't start by building this way, since the number of times we hit this should be
+                # infintesimally small compared to when we don't across all uses of Red.
+                continuation_string = _(
+                    "and {numeric_number} more roles not displayed due to embed limits."
+                )
+                available_length = 1024 - len(continuation_string)  # do not attempt to tweak, i18n
+
+                role_chunks = []
+                remaining_roles = 0
+
+                for r in roles:
+                    chunk = f"{r.mention}, "
+                    chunk_size = len(chunk)
+
+                    if chunk_size < available_length:
+                        available_length -= chunk_size
+                        role_chunks.append(chunk)
+                    else:
+                        remaining_roles += 1
+
+                role_chunks.append(continuation_string.format(numeric_number=remaining_roles))
+
+                roles = "".join(role_chunks)
+
         else:
             roles = None
 
