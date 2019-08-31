@@ -3,15 +3,12 @@ import contextlib
 import datetime
 import importlib
 import itertools
-import json
 import logging
 import os
-import pathlib
 import sys
 import platform
 import getpass
 import pip
-import tarfile
 import traceback
 from collections import namedtuple
 from pathlib import Path
@@ -23,15 +20,18 @@ import aiohttp
 import discord
 import pkg_resources
 
-from redbot.core import (
+from . import (
     __version__,
     version_info as red_version_info,
     VersionInfo,
     checks,
     commands,
+    drivers,
     errors,
     i18n,
+    config,
 )
+from .utils import create_backup
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import humanize_timedelta, pagify, box, inline, humanize_list
 from .commands.requires import PrivilegeLevel
@@ -435,7 +435,13 @@ class Core(commands.Cog, CoreLogic):
     @commands.check(CoreLogic._can_get_invite_url)
     async def invite(self, ctx):
         """Show's Red's invite url"""
-        await ctx.author.send(await self._invite_url())
+        try:
+            await ctx.author.send(await self._invite_url())
+        except discord.errors.Forbidden:
+            await ctx.send(
+                "I couldn't send the invite message to you in DM. "
+                "Either you blocked me or you disabled DMs in this server."
+            )
 
     @commands.group()
     @checks.is_owner()
@@ -446,8 +452,7 @@ class Core(commands.Cog, CoreLogic):
     @inviteset.command()
     async def public(self, ctx, confirm: bool = False):
         """
-        Define if the command should be accessible\
-        for the average users.
+        Define if the command should be accessible for the average user.
         """
         if await self.bot.db.invite_public():
             await self.bot.db.invite_public.set(False)
@@ -479,13 +484,13 @@ class Core(commands.Cog, CoreLogic):
         Make the bot create its own role with permissions on join.
 
         The bot will create its own role with the desired permissions\
-        when he join a new server. This is a special role that can't be\
+        when it joins a new server. This is a special role that can't be\
         deleted or removed from the bot.
 
-        For that, you need to give a valid permissions level.
+        For that, you need to provide a valid permissions level.
         You can generate one here: https://discordapi.com/permissions.html
 
-        Please note that you might need the two factor authentification for\
+        Please note that you might need two factor authentification for\
         some permissions.
         """
         await self.bot.db.invite_perm.set(level)
@@ -1307,105 +1312,71 @@ class Core(commands.Cog, CoreLogic):
 
     @commands.command()
     @checks.is_owner()
-    async def backup(self, ctx: commands.Context, *, backup_path: str = None):
-        """Creates a backup of all data for the instance."""
-        if backup_path:
-            path = pathlib.Path(backup_path)
-            if not (path.exists() and path.is_dir()):
-                return await ctx.send(
-                    _("That path doesn't seem to exist.  Please provide a valid path.")
-                )
-        from redbot.core.data_manager import basic_config, instance_name
-        from redbot.core.drivers.red_json import JSON
+    async def backup(self, ctx: commands.Context, *, backup_dir: str = None):
+        """Creates a backup of all data for the instance.
 
-        data_dir = Path(basic_config["DATA_PATH"])
-        if basic_config["STORAGE_TYPE"] == "MongoDB":
-            from redbot.core.drivers.red_mongo import Mongo
-
-            m = Mongo("Core", "0", **basic_config["STORAGE_DETAILS"])
-            db = m.db
-            collection_names = await db.list_collection_names()
-            for c_name in collection_names:
-                if c_name == "Core":
-                    c_data_path = data_dir / basic_config["CORE_PATH_APPEND"]
-                else:
-                    c_data_path = data_dir / basic_config["COG_PATH_APPEND"] / c_name
-                docs = await db[c_name].find().to_list(None)
-                for item in docs:
-                    item_id = str(item.pop("_id"))
-                    target = JSON(c_name, item_id, data_path_override=c_data_path)
-                    target.data = item
-                    await target._save()
-        backup_filename = "redv3-{}-{}.tar.gz".format(
-            instance_name, ctx.message.created_at.strftime("%Y-%m-%d %H-%M-%S")
-        )
-        if data_dir.exists():
-            if not backup_path:
-                backup_pth = data_dir.home()
-            else:
-                backup_pth = Path(backup_path)
-            backup_file = backup_pth / backup_filename
-
-            to_backup = []
-            exclusions = [
-                "__pycache__",
-                "Lavalink.jar",
-                os.path.join("Downloader", "lib"),
-                os.path.join("CogManager", "cogs"),
-                os.path.join("RepoManager", "repos"),
-            ]
-            downloader_cog = ctx.bot.get_cog("Downloader")
-            if downloader_cog and hasattr(downloader_cog, "_repo_manager"):
-                repo_output = []
-                repo_mgr = downloader_cog._repo_manager
-                for repo in repo_mgr._repos.values():
-                    repo_output.append({"url": repo.url, "name": repo.name, "branch": repo.branch})
-                repo_filename = data_dir / "cogs" / "RepoManager" / "repos.json"
-                with open(str(repo_filename), "w") as f:
-                    f.write(json.dumps(repo_output, indent=4))
-            instance_data = {instance_name: basic_config}
-            instance_file = data_dir / "instance.json"
-            with open(str(instance_file), "w") as instance_out:
-                instance_out.write(json.dumps(instance_data, indent=4))
-            for f in data_dir.glob("**/*"):
-                if not any(ex in str(f) for ex in exclusions):
-                    to_backup.append(f)
-            with tarfile.open(str(backup_file), "w:gz") as tar:
-                for f in to_backup:
-                    tar.add(str(f), recursive=False)
-            print(str(backup_file))
-            await ctx.send(
-                _("A backup has been made of this instance. It is at {}.").format(backup_file)
-            )
-            if backup_file.stat().st_size > 8_000_000:
-                await ctx.send(_("This backup is too large to send via DM."))
-                return
-            await ctx.send(_("Would you like to receive a copy via DM? (y/n)"))
-
-            pred = MessagePredicate.yes_or_no(ctx)
-            try:
-                await ctx.bot.wait_for("message", check=pred, timeout=60)
-            except asyncio.TimeoutError:
-                await ctx.send(_("Response timed out."))
-            else:
-                if pred.result is True:
-                    await ctx.send(_("OK, it's on its way!"))
-                    try:
-                        async with ctx.author.typing():
-                            await ctx.author.send(
-                                _("Here's a copy of the backup"),
-                                file=discord.File(str(backup_file)),
-                            )
-                    except discord.Forbidden:
-                        await ctx.send(
-                            _("I don't seem to be able to DM you. Do you have closed DMs?")
-                        )
-                    except discord.HTTPException:
-                        await ctx.send(_("I could not send the backup file."))
-                else:
-                    await ctx.send(_("OK then."))
+        You may provide a path to a directory for the backup archive to
+        be placed in. If the directory does not exist, the bot will
+        attempt to create it.
+        """
+        if backup_dir is None:
+            dest = Path.home()
         else:
-            await ctx.send(_("That directory doesn't seem to exist..."))
+            dest = Path(backup_dir)
+
+        driver_cls = drivers.get_driver_class()
+        if driver_cls != drivers.JsonDriver:
+            await ctx.send(_("Converting data to JSON for backup..."))
+            async with ctx.typing():
+                await config.migrate(driver_cls, drivers.JsonDriver)
+
+        log.info("Creating backup for this instance...")
+        try:
+            backup_fpath = await create_backup(dest)
+        except OSError as exc:
+            await ctx.send(
+                _(
+                    "Creating the backup archive failed! Please check your console or logs for "
+                    "details."
+                )
+            )
+            log.exception("Failed to create backup archive", exc_info=exc)
+            return
+
+        if backup_fpath is None:
+            await ctx.send(_("Your datapath appears to be empty."))
+            return
+
+        log.info("Backup archive created successfully at '%s'", backup_fpath)
+        await ctx.send(
+            _("A backup has been made of this instance. It is located at `{path}`.").format(
+                path=backup_fpath
+            )
+        )
+        if backup_fpath.stat().st_size > 8_000_000:
+            await ctx.send(_("This backup is too large to send via DM."))
+            return
+        await ctx.send(_("Would you like to receive a copy via DM? (y/n)"))
+
+        pred = MessagePredicate.yes_or_no(ctx)
+        try:
+            await ctx.bot.wait_for("message", check=pred, timeout=60)
+        except asyncio.TimeoutError:
+            await ctx.send(_("Response timed out."))
+        else:
+            if pred.result is True:
+                await ctx.send(_("OK, it's on its way!"))
+                try:
+                    async with ctx.author.typing():
+                        await ctx.author.send(
+                            _("Here's a copy of the backup"), file=discord.File(str(backup_fpath))
+                        )
+                except discord.Forbidden:
+                    await ctx.send(_("I don't seem to be able to DM you. Do you have closed DMs?"))
+                except discord.HTTPException:
+                    await ctx.send(_("I could not send the backup file."))
+            else:
+                await ctx.send(_("OK then."))
 
     @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)

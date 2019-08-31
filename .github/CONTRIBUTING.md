@@ -128,7 +128,9 @@ Red uses towncrier to create changelogs.
 To create a towncrier entry for your PR, create a file in `changelog.d` for it. If the changes are for a specific cog, place the file in the related subdirectory.
 
 The filename should be of the format `issuenumber.changetype(.count).rst`, where `(.count)` is an optional
-part of the filename should multiple entries for the same issue number and type be neccessary.
+part of the filename should multiple entries for the same issue number and type be necessary.
+If there is not an issue associated with your PR,
+you may use the PR number in place of the issue number.
 
 Valid changetypes are:
 

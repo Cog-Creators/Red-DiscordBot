@@ -36,8 +36,8 @@ Manually installing dependencies
 
 * `Python <https://www.python.org/downloads/>`_ - Red needs Python 3.7.0 or greater
 
-.. note:: Please make sure that the box to add Python to PATH is CHECKED, otherwise
-          you may run into issues when trying to run Red.
+.. attention:: Please make sure that the box to add Python to PATH is CHECKED, otherwise
+               you may run into issues when trying to run Red.
 
 * `Git <https://git-scm.com/download/win>`_
 
@@ -62,10 +62,14 @@ Installing Red
 
   .. note::
 
-      If you're not inside an activated virtual environment, include the ``--user`` flag with all
-      ``pip`` commands.
+      If you're not inside an activated virtual environment, use ``py -3.7`` in place of
+      ``python``, and include the ``--user`` flag with all ``pip install`` commands, like this:
 
-  * No MongoDB support:
+      .. code-block:: none
+
+          py -3.7 -m pip install --user -U Red-DiscordBot
+
+  * Normal installation:
 
     .. code-block:: none
 
@@ -76,6 +80,12 @@ Installing Red
     .. code-block:: none
 
         python -m pip install -U Red-DiscordBot[mongo]
+
+  * With PostgreSQL support:
+
+    .. code-block:: none
+
+        python3.7 -m pip install -U Red-DiscordBot[postgres]
 
   .. note::
 

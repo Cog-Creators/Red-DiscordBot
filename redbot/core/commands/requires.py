@@ -719,7 +719,7 @@ def mod():
 
 
 class _IntKeyDict(Dict[int, _T]):
-    """Dict subclass which throws KeyError when a non-int key is used."""
+    """Dict subclass which throws TypeError when a non-int key is used."""
 
     get: Callable
     setdefault: Callable
@@ -736,7 +736,7 @@ class _IntKeyDict(Dict[int, _T]):
 
 
 class _RulesDict(Dict[Union[int, str], PermState]):
-    """Dict subclass which throws a KeyError when an invalid key is used."""
+    """Dict subclass which throws a TypeError when an invalid key is used."""
 
     get: Callable
     setdefault: Callable

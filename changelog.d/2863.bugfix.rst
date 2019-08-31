@@ -1,0 +1,1 @@
+Help properly hides disabled commands.

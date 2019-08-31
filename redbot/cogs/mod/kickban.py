@@ -7,7 +7,7 @@ from typing import cast, Optional, Union
 
 import discord
 from redbot.core import commands, i18n, checks, modlog
-from redbot.core.utils.chat_formatting import pagify
+from redbot.core.utils.chat_formatting import pagify, humanize_number
 from redbot.core.utils.mod import is_allowed_by_hierarchy, get_audit_reason
 from .abc import MixinMeta
 from .converters import RawUserIds
@@ -244,7 +244,9 @@ class KickBanMixin(MixinMeta):
         errors = {}
 
         async def show_results():
-            text = _("Banned {num} users from the server.").format(num=len(banned))
+            text = _("Banned {num} users from the server.").format(
+                num=humanize_number(len(banned))
+            )
             if errors:
                 text += _("\nErrors:\n")
                 text += "\n".join(errors.values())

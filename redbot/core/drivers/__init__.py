@@ -1,50 +1,110 @@
 import enum
+from typing import Optional, Type
 
-from .red_base import IdentifierData
+from .. import data_manager
+from .base import IdentifierData, BaseDriver, ConfigCategory
+from .json import JsonDriver
+from .mongo import MongoDriver
+from .postgres import PostgresDriver
 
-__all__ = ["get_driver", "IdentifierData", "BackendType"]
+__all__ = [
+    "get_driver",
+    "ConfigCategory",
+    "IdentifierData",
+    "BaseDriver",
+    "JsonDriver",
+    "MongoDriver",
+    "PostgresDriver",
+    "BackendType",
+]
 
 
 class BackendType(enum.Enum):
     JSON = "JSON"
     MONGO = "MongoDBV2"
     MONGOV1 = "MongoDB"
+    POSTGRES = "Postgres"
 
 
-def get_driver(type, *args, **kwargs):
+_DRIVER_CLASSES = {
+    BackendType.JSON: JsonDriver,
+    BackendType.MONGO: MongoDriver,
+    BackendType.POSTGRES: PostgresDriver,
+}
+
+
+def get_driver_class(storage_type: Optional[BackendType] = None) -> Type[BaseDriver]:
+    """Get the driver class for the given storage type.
+
+    Parameters
+    ----------
+    storage_type : Optional[BackendType]
+        The backend you want a driver class for. Omit to try to obtain
+        the backend from data manager.
+
+    Returns
+    -------
+    Type[BaseDriver]
+        A subclass of `BaseDriver`.
+
+    Raises
+    ------
+    ValueError
+        If there is no driver for the given storage type.
+
     """
-    Selectively import/load driver classes based on the selected type. This
-    is required so that dependencies can differ between installs (e.g. so that
-    you don't need to install a mongo dependency if you will just be running a
-    json data backend).
+    if storage_type is None:
+        storage_type = BackendType(data_manager.storage_type())
+    try:
+        return _DRIVER_CLASSES[storage_type]
+    except KeyError:
+        raise ValueError(f"No driver found for storage type {storage_type}") from None
 
-    .. note::
 
-        See the respective classes for information on what ``args`` and ``kwargs``
-        should be.
+def get_driver(
+    cog_name: str, identifier: str, storage_type: Optional[BackendType] = None, **kwargs
+):
+    """Get a driver instance.
 
-    :param str type:
-        One of: json, mongo
-    :param args:
-        Dependent on driver type.
-    :param kwargs:
-        Dependent on driver type.
-    :return:
-        Subclass of :py:class:`.red_base.BaseDriver`.
+    Parameters
+    ----------
+    cog_name : str
+        The cog's name.
+    identifier : str
+        The cog's discriminator.
+    storage_type : Optional[BackendType]
+        The backend you want a driver for. Omit to try to obtain the
+        backend from data manager.
+    **kwargs
+        Driver-specific keyword arguments.
+
+    Returns
+    -------
+    BaseDriver
+        A driver instance.
+
+    Raises
+    ------
+    RuntimeError
+        If the storage type is MongoV1 or invalid.
+
     """
-    if type == "JSON":
-        from .red_json import JSON
+    if storage_type is None:
+        try:
+            storage_type = BackendType(data_manager.storage_type())
+        except RuntimeError:
+            storage_type = BackendType.JSON
 
-        return JSON(*args, **kwargs)
-    elif type == "MongoDBV2":
-        from .red_mongo import Mongo
-
-        return Mongo(*args, **kwargs)
-    elif type == "MongoDB":
-        raise RuntimeError(
-            "Please convert to JSON first to continue using the bot."
-            " This is a required conversion prior to using the new Mongo driver."
-            " This message will be updated with a link to the update docs once those"
-            " docs have been created."
-        )
-    raise RuntimeError("Invalid driver type: '{}'".format(type))
+    try:
+        driver_cls: Type[BaseDriver] = get_driver_class(storage_type)
+    except ValueError:
+        if storage_type == BackendType.MONGOV1:
+            raise RuntimeError(
+                "Please convert to JSON first to continue using the bot."
+                " This is a required conversion prior to using the new Mongo driver."
+                " This message will be updated with a link to the update docs once those"
+                " docs have been created."
+            ) from None
+        else:
+            raise RuntimeError(f"Invalid driver type: '{storage_type}'") from None
+    return driver_cls(cog_name, identifier, **kwargs)

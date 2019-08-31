@@ -5,23 +5,22 @@ import pickle
 import weakref
 from typing import (
     Any,
-    Union,
-    Tuple,
-    Dict,
-    Awaitable,
     AsyncContextManager,
-    TypeVar,
+    Awaitable,
+    Dict,
     MutableMapping,
     Optional,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
 )
 
 import discord
 
-from .data_manager import cog_data_path, core_data_path
-from .drivers import get_driver, IdentifierData, BackendType
-from .drivers.red_base import BaseDriver
+from .drivers import IdentifierData, get_driver, ConfigCategory, BaseDriver
 
-__all__ = ["Config", "get_latest_confs"]
+__all__ = ["Config", "get_latest_confs", "migrate"]
 
 log = logging.getLogger("red.config")
 
@@ -101,7 +100,7 @@ class Value:
         Information on identifiers for this value.
     default
         The default value for the data element that `identifiers` points at.
-    driver : `redbot.core.drivers.red_base.BaseDriver`
+    driver : `redbot.core.drivers.BaseDriver`
         A reference to `Config.driver`.
 
     """
@@ -250,7 +249,7 @@ class Group(Value):
         All registered default values for this Group.
     force_registration : `bool`
         Same as `Config.force_registration`.
-    driver : `redbot.core.drivers.red_base.BaseDriver`
+    driver : `redbot.core.drivers.BaseDriver`
         A reference to `Config.driver`.
 
     """
@@ -586,7 +585,7 @@ class Config:
         Unique identifier provided to differentiate cog data when name
         conflicts occur.
     driver
-        An instance of a driver that implements `redbot.core.drivers.red_base.BaseDriver`.
+        An instance of a driver that implements `redbot.core.drivers.BaseDriver`.
     force_registration : `bool`
         Determines if Config should throw an error if a cog attempts to access
         an attribute which has not been previously registered.
@@ -634,7 +633,7 @@ class Config:
         self.force_registration = force_registration
         self._defaults = defaults or {}
 
-        self.custom_groups = {}
+        self.custom_groups: Dict[str, int] = {}
         self._lock_cache: MutableMapping[
             IdentifierData, asyncio.Lock
         ] = weakref.WeakValueDictionary()
@@ -642,10 +641,6 @@ class Config:
     @property
     def defaults(self):
         return pickle.loads(pickle.dumps(self._defaults, -1))
-
-    @staticmethod
-    def _create_uuid(identifier: int):
-        return str(identifier)
 
     @classmethod
     def get_conf(cls, cog_instance, identifier: int, force_registration=False, cog_name=None):
@@ -681,25 +676,12 @@ class Config:
             A new Config object.
 
         """
-        if cog_instance is None and cog_name is not None:
-            cog_path_override = cog_data_path(raw_name=cog_name)
-        else:
-            cog_path_override = cog_data_path(cog_instance=cog_instance)
+        uuid = str(identifier)
+        if cog_name is None:
+            cog_name = type(cog_instance).__name__
 
-        cog_name = cog_path_override.stem
-        # uuid = str(hash(identifier))
-        uuid = cls._create_uuid(identifier)
-
-        # We have to import this here otherwise we have a circular dependency
-        from .data_manager import basic_config
-
-        driver_name = basic_config.get("STORAGE_TYPE", "JSON")
-        driver_details = basic_config.get("STORAGE_DETAILS", {})
-
-        driver = get_driver(
-            driver_name, cog_name, uuid, data_path_override=cog_path_override, **driver_details
-        )
-        if driver_name == BackendType.JSON.value:
+        driver = get_driver(cog_name, uuid)
+        if hasattr(driver, "migrate_identifier"):
             driver.migrate_identifier(identifier)
 
         conf = cls(
@@ -712,7 +694,7 @@ class Config:
 
     @classmethod
     def get_core_conf(cls, force_registration: bool = False):
-        """Get a Config instance for a core module.
+        """Get a Config instance for the core bot.
 
         All core modules that require a config instance should use this
         classmethod instead of `get_conf`.
@@ -723,24 +705,9 @@ class Config:
             See `force_registration`.
 
         """
-        core_path = core_data_path()
-
-        # We have to import this here otherwise we have a circular dependency
-        from .data_manager import basic_config
-
-        driver_name = basic_config.get("STORAGE_TYPE", "JSON")
-        driver_details = basic_config.get("STORAGE_DETAILS", {})
-
-        driver = get_driver(
-            driver_name, "Core", "0", data_path_override=core_path, **driver_details
+        return cls.get_conf(
+            None, cog_name="Core", identifier=0, force_registration=force_registration
         )
-        conf = cls(
-            cog_name="Core",
-            driver=driver,
-            unique_identifier="0",
-            force_registration=force_registration,
-        )
-        return conf
 
     def __getattr__(self, item: str) -> Union[Group, Value]:
         """Same as `group.__getattr__` except for global data.
@@ -916,26 +883,24 @@ class Config:
         self.custom_groups[group_identifier] = identifier_count
 
     def _get_base_group(self, category: str, *primary_keys: str) -> Group:
-        is_custom = category not in (
-            self.GLOBAL,
-            self.GUILD,
-            self.USER,
-            self.MEMBER,
-            self.ROLE,
-            self.CHANNEL,
-        )
+        """
+        .. warning::
+            :code:`Config._get_base_group()` should not be used to get config groups as
+            this is not a safe operation. Using this could end up corrupting your config file.
+        """
         # noinspection PyTypeChecker
+        pkey_len, is_custom = ConfigCategory.get_pkey_info(category, self.custom_groups)
         identifier_data = IdentifierData(
+            cog_name=self.cog_name,
             uuid=self.unique_identifier,
             category=category,
             primary_key=primary_keys,
             identifiers=(),
-            custom_group_data=self.custom_groups,
+            primary_key_len=pkey_len,
             is_custom=is_custom,
         )
 
-        pkey_len = BaseDriver.get_pkey_len(identifier_data)
-        if len(primary_keys) < pkey_len:
+        if len(primary_keys) < identifier_data.primary_key_len:
             # Don't mix in defaults with groups higher than the document level
             defaults = {}
         else:
@@ -1220,9 +1185,7 @@ class Config:
         """
         if not scopes:
             # noinspection PyTypeChecker
-            identifier_data = IdentifierData(
-                self.unique_identifier, "", (), (), self.custom_groups
-            )
+            identifier_data = IdentifierData(self.cog_name, self.unique_identifier, "", (), (), 0)
             group = Group(identifier_data, defaults={}, driver=self.driver, config=self)
         else:
             cat, *scopes = scopes
@@ -1359,7 +1322,12 @@ class Config:
             return self.get_custom_lock(self.GUILD)
         else:
             id_data = IdentifierData(
-                self.unique_identifier, self.MEMBER, (str(guild.id),), (), self.custom_groups
+                self.cog_name,
+                self.unique_identifier,
+                category=self.MEMBER,
+                primary_key=(str(guild.id),),
+                identifiers=(),
+                primary_key_len=2,
             )
             return self._lock_cache.setdefault(id_data, asyncio.Lock())
 
@@ -1375,10 +1343,33 @@ class Config:
         -------
         asyncio.Lock
         """
-        id_data = IdentifierData(
-            self.unique_identifier, group_identifier, (), (), self.custom_groups
-        )
-        return self._lock_cache.setdefault(id_data, asyncio.Lock())
+        try:
+            pkey_len, is_custom = ConfigCategory.get_pkey_info(
+                group_identifier, self.custom_groups
+            )
+        except KeyError:
+            raise ValueError(f"Custom group not initialized: {group_identifier}") from None
+        else:
+            id_data = IdentifierData(
+                self.cog_name,
+                self.unique_identifier,
+                category=group_identifier,
+                primary_key=(),
+                identifiers=(),
+                primary_key_len=pkey_len,
+                is_custom=is_custom,
+            )
+            return self._lock_cache.setdefault(id_data, asyncio.Lock())
+
+
+async def migrate(cur_driver_cls: Type[BaseDriver], new_driver_cls: Type[BaseDriver]) -> None:
+    """Migrate from one driver type to another."""
+    # Get custom group data
+    core_conf = Config.get_core_conf()
+    core_conf.init_custom("CUSTOM_GROUPS", 2)
+    all_custom_group_data = await core_conf.custom("CUSTOM_GROUPS").all()
+
+    await cur_driver_cls.migrate_to(new_driver_cls, all_custom_group_data)
 
 
 def _str_key_dict(value: Dict[Any, _T]) -> Dict[str, _T]:

@@ -1,5 +1,5 @@
 import discord
-from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.chat_formatting import box, humanize_number
 
 from redbot.core import checks, bank, commands
 from redbot.core.i18n import Translator, cog_i18n
@@ -86,9 +86,12 @@ class Bank(commands.Cog):
 
             settings = _(
                 "Bank settings:\n\nBank name: {bank_name}\nCurrency: {currency_name}\n"
-                "Default balance: {default_balance}"
+                "Default balance: {default_balance}\nMaximum allowed balance: {maximum_bal}"
             ).format(
-                bank_name=bank_name, currency_name=currency_name, default_balance=default_balance
+                bank_name=bank_name,
+                currency_name=currency_name,
+                default_balance=humanize_number(default_balance),
+                maximum_bal=humanize_number(await bank.get_max_balance(ctx.guild)),
             )
             await ctx.send(box(settings))
 
@@ -127,5 +130,22 @@ class Bank(commands.Cog):
         """Set the name for the bank's currency."""
         await bank.set_currency_name(name, ctx.guild)
         await ctx.send(_("Currency name has been set to: {name}").format(name=name))
+
+    @bankset.command(name="maxbal")
+    @check_global_setting_guildowner()
+    async def bankset_maxbal(self, ctx: commands.Context, *, amount: int):
+        """Set the maximum balance a user can get."""
+        try:
+            await bank.set_max_balance(amount, ctx.guild)
+        except ValueError:
+            # noinspection PyProtectedMember
+            return await ctx.send(
+                _("Amount must be greater than zero and less than {max}.").format(
+                    max=humanize_number(bank._MAX_BALANCE)
+                )
+            )
+        await ctx.send(
+            _("Maximum balance has been set to: {amount}").format(amount=humanize_number(amount))
+        )
 
     # ENDSECTION

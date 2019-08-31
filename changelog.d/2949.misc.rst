@@ -1,0 +1,1 @@
+Renamed two changelog files from fix to bugfix.

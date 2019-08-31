@@ -33,7 +33,7 @@ from redbot.core.events import init_events
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags
 from redbot.core.core_commands import Core
 from redbot.core.dev_commands import Dev
-from redbot.core import __version__, modlog, bank, data_manager
+from redbot.core import __version__, modlog, bank, data_manager, drivers
 from signal import SIGTERM
 
 
@@ -99,7 +99,11 @@ def main():
         )
         cli_flags.instance_name = "temporary_red"
         data_manager.create_temp_config()
+    loop = asyncio.get_event_loop()
+
     data_manager.load_basic_configuration(cli_flags.instance_name)
+    driver_cls = drivers.get_driver_class()
+    loop.run_until_complete(driver_cls.initialize(**data_manager.storage_details()))
     redbot.logging.init_logging(
         level=cli_flags.logging_level, location=data_manager.core_data_path() / "logs"
     )
@@ -111,7 +115,6 @@ def main():
     red = Red(
         cli_flags=cli_flags, description=description, dm_help=None, fetch_offline_members=True
     )
-    loop = asyncio.get_event_loop()
     loop.run_until_complete(red.maybe_update_config())
     init_global_checks(red)
     init_events(red, cli_flags)
