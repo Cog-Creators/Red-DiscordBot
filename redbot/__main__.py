@@ -52,8 +52,8 @@ async def _get_prefix_and_token(red, indict):
     :param indict:
     :return:
     """
-    indict["token"] = await red.db.token()
-    indict["prefix"] = await red.db.prefix()
+    indict["token"] = await red._config.token()
+    indict["prefix"] = await red._config.prefix()
 
 
 def list_instances():
@@ -153,11 +153,11 @@ def main():
         loop.run_until_complete(red.start(token, bot=True))
     except discord.LoginFailure:
         log.critical("This token doesn't seem to be valid.")
-        db_token = loop.run_until_complete(red.db.token())
+        db_token = loop.run_until_complete(red._config.token())
         if db_token and not cli_flags.no_prompt:
             print("\nDo you want to reset the token? (y/n)")
             if confirm("> "):
-                loop.run_until_complete(red.db.token.set(""))
+                loop.run_until_complete(red._config.token.set(""))
                 print("Token has been reset.")
     except KeyboardInterrupt:
         log.info("Keyboard interrupt detected. Quitting...")
