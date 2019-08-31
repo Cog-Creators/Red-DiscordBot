@@ -410,7 +410,7 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
         return
 
     dest.mkdir(parents=True, exist_ok=True)
-    timestr = datetime.utcnow().isoformat(timespec="minutes")
+    timestr = datetime.utcnow().strftime("%Y-%m-%dT%H-%M-%S")
     backup_fpath = dest / f"redv3_{data_manager.instance_name}_{timestr}.tar.gz"
 
     to_backup = []

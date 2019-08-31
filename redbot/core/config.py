@@ -883,6 +883,12 @@ class Config:
         self.custom_groups[group_identifier] = identifier_count
 
     def _get_base_group(self, category: str, *primary_keys: str) -> Group:
+        """
+        .. warning::
+            :code:`Config._get_base_group()` should not be used to get config groups as
+            this is not a safe operation. Using this could end up corrupting your config file.
+        """
+        # noinspection PyTypeChecker
         pkey_len, is_custom = ConfigCategory.get_pkey_info(category, self.custom_groups)
         identifier_data = IdentifierData(
             cog_name=self.cog_name,

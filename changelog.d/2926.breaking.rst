@@ -1,0 +1,1 @@
+Removed :cons:`bank.MAX_BALANCE`, use :meth:`bank.get_max_balance()` from now.
