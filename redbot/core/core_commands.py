@@ -908,10 +908,10 @@ class Core(commands.Cog, CoreLogic):
         https://discordpy.readthedocs.io/en/stable/ext/commands/api.html#discord.ext.commands.ColourConverter
         """
         if colour is None:
-            ctx.bot.color = discord.Color.red()
+            ctx.bot._color = discord.Color.red()
             await ctx.bot._config.color.set(discord.Color.red().value)
             return await ctx.send(_("The color has been reset."))
-        ctx.bot.color = colour
+        ctx.bot._color = colour
         await ctx.bot._config.color.set(colour.value)
         await ctx.send(_("The color has been set."))
 
@@ -1432,10 +1432,10 @@ class Core(commands.Cog, CoreLogic):
 
             if send_embed:
 
-                if not is_dm and await self.bot._config.guild(destination.guild).use_bot_color():
-                    color = destination.guild.me.color
+                if not is_dm:
+                    color = await ctx.bot.get_embed_color(destination)
                 else:
-                    color = ctx.bot.color
+                    color = ctx.bot._color
 
                 e = discord.Embed(colour=color, description=message)
                 if author.avatar_url:

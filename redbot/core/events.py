@@ -160,7 +160,7 @@ def init_events(bot, cli_flags):
         if invite_url:
             print("\nInvite URL: {}\n".format(invite_url))
 
-        bot.color = discord.Colour(await bot._config.color())
+        bot._color = discord.Colour(await bot._config.color())
 
     @bot.event
     async def on_command_error(ctx, error, unhandled_by_cog=False):
