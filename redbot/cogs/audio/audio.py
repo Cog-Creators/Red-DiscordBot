@@ -64,9 +64,6 @@ _SCHEMA_VERSION = 2
 LazyGreedyConverter = get_lazy_converter("--")
 
 
-# noinspection PyUnusedLocal,PyBroadException,PyBroadException,PyBroadException,
-# PyBroadException,PyBroadException
-# noinspection PyPep8
 @cog_i18n(_)
 class Audio(commands.Cog):
     """Play audio through voice channels."""
@@ -6329,10 +6326,6 @@ class Audio(commands.Cog):
                         )
                     ),
                 )
-            # elif player.shuffle:
-            #     return await self._embed_msg(
-            #         ctx, _("Can't skip to a track while shuffle is enabled.")
-            #     )
             embed = discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("{skip_to_track} Tracks Skipped".format(skip_to_track=skip_to_track)),
