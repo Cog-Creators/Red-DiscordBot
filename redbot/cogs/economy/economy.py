@@ -1,7 +1,7 @@
 import calendar
 import logging
 import random
-from collections import defaultdict, deque, namedtuple
+from collections import defaultdict, deque
 from enum import Enum
 from typing import Iterable, cast
 
@@ -13,12 +13,13 @@ from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, humanize_number
 
+# noinspection PyUnusedName
 logger = logging.getLogger("red.economy")
-T_ = Translator("Economy", __file__)
+_ = Translator("Economy", __file__)
 NUM_ENC = "\N{COMBINING ENCLOSING KEYCAP}"
-MOCK_MEMBER = namedtuple("Member", "id guild")
 
 
+# noinspection PyUnusedName
 class SMReel(Enum):
     cherries = "\N{CHERRIES}"
     cookie = "\N{COOKIE}"
@@ -32,7 +33,6 @@ class SMReel(Enum):
     snowflake = "\N{SNOWFLAKE}"
 
 
-_ = lambda s: s
 PAYOUTS = {
     (SMReel.two, SMReel.two, SMReel.six): {
         "payout": lambda x: x * 50,
@@ -74,7 +74,6 @@ SLOT_PAYOUTS_MSG = _(
     "Three symbols: Bet * 10\n"
     "Two symbols: Bet * 2"
 ).format(**SMReel.__dict__)
-_ = T_
 
 
 @cog_i18n(_)
@@ -310,7 +309,7 @@ class Economy(commands.Cog):
                     )
                 )
                 return
-            phrase = T_(payout["phrase"])
+            phrase = _(payout["phrase"])
         else:
             then = await bank.get_balance(author)
             await bank.withdraw_credits(author, bid)
