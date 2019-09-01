@@ -332,7 +332,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         This will not clear existing values not specified.
         """
 
-        async with self._config.api.tokens.get_attr(service_name)() as method_abuse:
+        async with self._config.api_tokens.get_attr(service_name)() as method_abuse:
             method_abuse.update(**tokens)
 
     async def get_context(self, message, *, cls=commands.Context):
