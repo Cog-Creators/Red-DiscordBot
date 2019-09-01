@@ -87,7 +87,7 @@ class CoreLogic:
 
         for name in cog_names:
             try:
-                spec = await bot.cog_mgr.find_cog(name)
+                spec = await bot._cog_mgr.find_cog(name)
                 if spec:
                     cogspecs.append((spec, name))
                 else:
@@ -2197,7 +2197,7 @@ class Core(commands.Cog, CoreLogic):
     async def rpc_load(self, request):
         cog_name = request.params[0]
 
-        spec = await self.bot.cog_mgr.find_cog(cog_name)
+        spec = await self.bot._cog_mgr.find_cog(cog_name)
         if spec is None:
             raise LookupError("No such cog found.")
 

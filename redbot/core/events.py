@@ -67,7 +67,7 @@ def init_events(bot, cli_flags):
             print("Loading packages...")
             for package in packages:
                 try:
-                    spec = await bot.cog_mgr.find_cog(package)
+                    spec = await bot._cog_mgr.find_cog(package)
                     await bot.load_extension(spec)
                 except Exception as e:
                     log.exception("Failed to load package {}".format(package), exc_info=e)
@@ -243,7 +243,6 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_message(message):
-        bot._counter["messages_read"] += 1
         await bot.process_commands(message)
         discord_now = message.created_at
         if (
@@ -259,14 +258,6 @@ def init_events(bot, cli_flags):
                     diff,
                 )
             bot._checked_time_accuracy = discord_now
-
-    @bot.event
-    async def on_resumed():
-        bot._counter["sessions_resumed"] += 1
-
-    @bot.event
-    async def on_command(command):
-        bot._counter["processed_commands"] += 1
 
     @bot.event
     async def on_command_add(command: commands.Command):
