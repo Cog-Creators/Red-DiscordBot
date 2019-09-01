@@ -9,11 +9,11 @@ def init_global_checks(bot):
         if await bot.is_owner(ctx.author):
             return True
 
-        whitelist = await bot.db.whitelist()
+        whitelist = await bot._config.whitelist()
         if whitelist:
             return ctx.author.id in whitelist
 
-        return ctx.author.id not in await bot.db.blacklist()
+        return ctx.author.id not in await bot._config.blacklist()
 
     @bot.check_once
     async def local_perms(ctx: commands.Context):
@@ -22,7 +22,7 @@ def init_global_checks(bot):
             return True
         elif ctx.guild is None:
             return True
-        guild_settings = bot.db.guild(ctx.guild)
+        guild_settings = bot._config.guild(ctx.guild)
         local_blacklist = await guild_settings.blacklist()
         local_whitelist = await guild_settings.whitelist()
 

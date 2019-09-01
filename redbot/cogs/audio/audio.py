@@ -475,7 +475,7 @@ class Audio(commands.Cog):
                 else:
                     dur = lavalink.utils.format_time(player.current.length)
                 embed = discord.Embed(
-                    colour=(await self.bot.get_embed_colour(notify_channel)),
+                    colour=(await self.bot.get_embed_color(notify_channel)),
                     title=_("Now Playing"),
                     description=description,
                 )
@@ -538,7 +538,7 @@ class Audio(commands.Cog):
                     description = bold("[{}]({})").format(player.current.title, player.current.uri)
 
                 embed = discord.Embed(
-                    colour=(await self.bot.get_embed_colour(message_channel)),
+                    colour=(await self.bot.get_embed_color(message_channel)),
                     title=_("Track Error"),
                     description="{}\n{}".format(extra, description),
                 )
