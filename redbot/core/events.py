@@ -187,6 +187,7 @@ def init_events(bot, cli_flags):
             if disabled_message:
                 await ctx.send(disabled_message.replace("{command}", ctx.invoked_with))
         elif isinstance(error, commands.CommandInvokeError):
+            bot.counter.increment("command_error", 1)
             log.exception(
                 "Exception in command '{}'".format(ctx.command.qualified_name),
                 exc_info=error.original,
@@ -251,11 +252,12 @@ def init_events(bot, cli_flags):
                 delete_after=error.retry_after,
             )
         else:
+            bot.counter.increment("command_error", 1)
             log.exception(type(error).__name__, exc_info=error)
 
     @bot.event
     async def on_message(message):
-        bot.counter["messages_read"] += 1
+        bot.counter.increment("messages_read", 1)
         await bot.process_commands(message)
         discord_now = message.created_at
         if (
@@ -274,11 +276,11 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_resumed():
-        bot.counter["sessions_resumed"] += 1
+        bot.counter.increment("sessions_resumed", 1)
 
     @bot.event
     async def on_command(command):
-        bot.counter["processed_commands"] += 1
+        bot.counter.increment("processed_commands", 1)
 
     @bot.event
     async def on_command_add(command: commands.Command):
@@ -299,6 +301,7 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_guild_join(guild: discord.Guild):
+        bot.counter.increment("guild_join", 1)
         await _guild_added(guild)
 
     @bot.event
@@ -310,6 +313,7 @@ def init_events(bot, cli_flags):
     @bot.event
     async def on_guild_leave(guild: discord.Guild):
         # Clean up any unneeded checks
+        bot.counter.increment("guild_remove", 1)
         disabled_commands = await bot.db.guild(guild).disabled_commands()
         for command_name in disabled_commands:
             command_obj = bot.get_command(command_name)

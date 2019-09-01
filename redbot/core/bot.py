@@ -2,7 +2,6 @@ import asyncio
 import inspect
 import logging
 import os
-from collections import Counter
 from enum import Enum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
@@ -15,7 +14,7 @@ from . import Config, i18n, commands, errors, drivers
 from .cog_manager import CogManager
 
 from .rpc import RPCMixin
-from .utils import common_filters
+from .utils import common_filters, counters
 
 CUSTOM_GROUPS = "CUSTOM_GROUPS"
 
@@ -117,7 +116,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         if "command_not_found" not in kwargs:
             kwargs["command_not_found"] = "Command {} not found.\n{}"
 
-        self.counter = Counter()
+        self.counter = counters.Counter()
         self.uptime = None
         self.checked_time_accuracy = None
         self.color = discord.Embed.Empty  # This is needed or color ends up 0x000000
