@@ -47,9 +47,9 @@ def check_global_setting_admin():
                 return True
             if ctx.channel.permissions_for(author).manage_guild:
                 return True
-            admin_roles = set(await ctx.bot.db.guild(ctx.guild).admin_role())
+            admin_role_ids = await ctx.bot.get_admin_role_ids(ctx.guild.id)
             for role in author.roles:
-                if role.id in admin_roles:
+                if role.id in admin_role_ids:
                     return True
         else:
             return await ctx.bot.is_owner(author)
