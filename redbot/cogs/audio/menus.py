@@ -178,12 +178,12 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
             if self._player.current.title != "Unknown title":
                 queue_list += "\n".join(
                     (
-                        _("Playing: ")
-                        + "**{current.author} - {current.title}**\n".format(
+                        _("Playing:"),
+                        "**{current.author} - {current.title}**\n".format(
                             current=self._player.current
                         ),
                         dataclasses.LocalPath(self._player.current.uri).to_string_hidden(),
-                        _("Requested by: **{user}**\n").format(
+                        _(" Requested by: **{user}**\n").format(
                             user=self._player.current.requester
                         ),
                         f"{arrow}`{pos}`/`{dur}`\n\n",
@@ -192,8 +192,8 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
             else:
                 queue_list += "\n".join(
                     (
-                        _("Playing: ")
-                        + dataclasses.LocalPath(self._player.current.uri).to_string_hidden(),
+                        _("Playing:"),
+                        dataclasses.LocalPath(self._player.current.uri).to_string_hidden(),
                         _(" Requested by: **{user}**\n").format(
                             user=self._player.current.requester
                         ),
@@ -201,15 +201,14 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
                     )
                 )
         else:
-            queue_list += _("Playing: ")
-            queue_list += "**[{current.title}]({current.uri})**\n".format(
+            queue_list += _("Playing:")
+            queue_list += "**\n[{current.title}]({current.uri})**\n".format(
                 current=self._player.current
             )
             queue_list += _("Requested by: **{user}**").format(user=self._player.current.requester)
             queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
 
         for i, track in enumerate(songs, start=self._cur_song):
-
             if len(track.title) > 40:
                 track_title = str(track.title).replace("[", "")
                 track_title = "{}...".format((track_title[:40]).rstrip(" "))
@@ -222,27 +221,27 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
                     queue_list += f"`{track_idx}.` " + ", ".join(
                         (
                             bold(dataclasses.LocalPath(track.uri).to_string_hidden()),
-                            _("requested by **{user}**\n").format(user=req_user),
+                            _("requested by **{user}**").format(user=req_user),
                         )
                     )
                 else:
                     queue_list += f"`{track_idx}.` **{track.author} - {track_title}**, " + _(
-                        "requested by **{user}**\n"
+                        "requested by **{user}**"
                     ).format(user=req_user)
             else:
                 queue_list += f"`{track_idx}.` **[{track_title}]({track.uri})**, "
-                queue_list += _("requested by **{user}**\n").format(user=req_user)
-
+                queue_list += _("requested by **{user}**").format(user=req_user)
+            queue_list += "\n"
         embed = discord.Embed(
             colour=await self.ctx.embed_colour(),
-            title="Queue for " + self.ctx.guild.name,
+            title=_("Queue for {guild}").format(guild=self.ctx.guild.name),
             description=queue_list,
         )
         if await _config.guild(self.ctx.guild).thumbnail() and self._player.current.thumbnail:
             embed.set_thumbnail(url=self._player.current.thumbnail)
         queue_dur = await queue_duration(self.ctx)
         queue_total_duration = lavalink.utils.format_time(queue_dur)
-        text = _(
+        footer = _(
             "Page {cur_page}/{total_pages} | {num_tracks} "
             "tracks, {num_remaining} remaining  |  \n\n"
         ).format(
@@ -251,24 +250,24 @@ class QueueMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡"
             num_tracks=self._queue_length,
             num_remaining=queue_total_duration,
         )
-        text += (
+        footer += (
             _("Auto-Play")
             + ": "
             + ("\N{WHITE HEAVY CHECK MARK}" if autoplay else "\N{CROSS MARK}")
         )
-        text += (
-            (" | " if text else "")
+        footer += (
+            (" | " if footer else "")
             + _("Shuffle")
             + ": "
             + ("\N{WHITE HEAVY CHECK MARK}" if shuffle else "\N{CROSS MARK}")
         )
-        text += (
-            (" | " if text else "")
+        footer += (
+            (" | " if footer else "")
             + _("Repeat")
             + ": "
             + ("\N{WHITE HEAVY CHECK MARK}" if repeat else "\N{CROSS MARK}")
         )
-        embed.set_footer(text=text)
+        embed.set_footer(text=footer)
         return embed
 
 
