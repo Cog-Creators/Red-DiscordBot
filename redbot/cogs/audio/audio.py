@@ -448,7 +448,7 @@ class Audio(commands.Cog):
                     and (prev_song is None or not prev_song.extras.get("autoplay"))
                 ):
                     embed = discord.Embed(
-                        colour=(await self._get_embed_colour(notify_channel)),
+                        colour=(await self.bot.get_embed_colour(notify_channel)),
                         title=_("Auto play started."),
                     )
                     await notify_channel.send(embed=embed)
@@ -478,7 +478,7 @@ class Audio(commands.Cog):
                 else:
                     dur = lavalink.utils.format_time(player.current.length)
                 embed = discord.Embed(
-                    colour=(await self._get_embed_colour(notify_channel)),
+                    colour=(await self.bot.get_embed_colour(notify_channel)),
                     title=_("Now Playing"),
                     description=description,
                 )
@@ -510,7 +510,8 @@ class Audio(commands.Cog):
             if notify_channel:
                 notify_channel = self.bot.get_channel(notify_channel)
                 embed = discord.Embed(
-                    colour=(await self._get_embed_colour(notify_channel)), title=_("Queue ended.")
+                    colour=(await self.bot.get_embed_colour(notify_channel)),
+                    title=_("Queue ended."),
                 )
                 await notify_channel.send(embed=embed)
 
@@ -540,7 +541,7 @@ class Audio(commands.Cog):
                     description = bold("[{}]({})").format(player.current.title, player.current.uri)
 
                 embed = discord.Embed(
-                    colour=(await self._get_embed_colour(message_channel)),
+                    colour=(await self.bot.get_embed_colour(message_channel)),
                     title=_("Track Error"),
                     description="{}\n{}".format(extra, description),
                 )
@@ -6264,8 +6265,7 @@ class Audio(commands.Cog):
         dj_role_obj = ctx.guild.get_role(await self.config.guild(ctx.guild).dj_role())
         if dj_role_obj in ctx.guild.get_member(member.id).roles:
             return True
-        else:
-            return False
+        return False
 
     @staticmethod
     async def is_requester(ctx: commands.Context, member: discord.Member):
@@ -6634,14 +6634,12 @@ class Audio(commands.Cog):
             return False
 
     async def _check_api_tokens(self):
-        spotify = await self.bot.db.api_tokens.get_raw(
-            "spotify", default={"client_id": "", "client_secret": ""}
-        )
-        youtube = await self.bot.db.api_tokens.get_raw("youtube", default={"api_key": ""})
+        spotify = await self.bot.get_shared_api_tokens("spotify")
+        youtube = await self.bot.get_shared_api_tokens("youtube")
         return {
-            "spotify_client_id": spotify["client_id"],
-            "spotify_client_secret": spotify["client_secret"],
-            "youtube_api": youtube["api_key"],
+            "spotify_client_id": spotify.get("client_id", ""),
+            "spotify_client_secret": spotify.get("client_secret", ""),
+            "youtube_api": youtube.get("api_key", ""),
         }
 
     async def _check_external(self):
@@ -6857,13 +6855,6 @@ class Audio(commands.Cog):
         if eq_message is not None:
             with contextlib.suppress(discord.HTTPException):
                 await eq_message.delete()
-
-    async def _get_embed_colour(self, channel: discord.TextChannel):
-        # Unfortunately we need this for when context is unavailable.
-        if await self.bot.db.guild(channel.guild).use_bot_color():
-            return channel.guild.me.color
-        else:
-            return self.bot.color
 
     async def _get_eq_reaction(self, ctx: commands.Context, message: discord.Message, emoji):
         try:
