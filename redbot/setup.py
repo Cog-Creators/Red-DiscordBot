@@ -12,8 +12,7 @@ import appdirs
 import click
 
 import redbot.logging
-from redbot.core.cli import confirm
-from redbot.core.utils import safe_delete, create_backup as _create_backup
+from redbot.core.utils import safe_delete, create_backup as red_create_backup
 from redbot.core import config, data_manager, drivers
 from redbot.core.drivers import BackendType, IdentifierData
 
@@ -59,7 +58,9 @@ def save_config(name, data, remove=False):
                 "WARNING: An instance already exists with this name. "
                 "Continuing will overwrite the existing instance config."
             )
-            if not confirm("Are you absolutely certain you want to continue (y/n)? "):
+            if not click.confirm(
+                "Are you absolutely certain you want to continue?", default=False
+            ):
                 print("Not continuing")
                 sys.exit(0)
         _config[name] = data
@@ -100,7 +101,7 @@ def get_data_dir():
             sys.exit(1)
 
     print("You have chosen {} to be your data directory.".format(default_data_dir))
-    if not confirm("Please confirm (y/n):"):
+    if not click.confirm("Please confirm", default=True):
         print("Please start the process over.")
         sys.exit(0)
     return default_data_dir
@@ -258,18 +259,18 @@ async def edit_instance():
 
     current_data_dir = Path(_instance_data["DATA_PATH"])
     print("You have selected '{}' as the instance to modify.".format(selected))
-    if not confirm("Please confirm (y/n):"):
+    if not click.confirm("Please confirm", default=True):
         print("Ok, we will not continue then.")
         return
 
     print("Ok, we will continue on.")
     print()
-    if confirm("Would you like to change the instance name? (y/n)"):
+    if click.confirm("Would you like to change the instance name?", default=False):
         name = get_name()
     else:
         name = selected
 
-    if confirm("Would you like to change the data location? (y/n)"):
+    if click.confirm("Would you like to change the data location?", default=False):
         default_data_dir = get_data_dir()
         default_dirs["DATA_PATH"] = str(default_data_dir.resolve())
     else:
@@ -290,7 +291,7 @@ async def create_backup(instance: str) -> None:
     elif backend_type != BackendType.JSON:
         await do_migration(backend_type, BackendType.JSON)
     print("Backing up the instance's data...")
-    backup_fpath = await _create_backup()
+    backup_fpath = await red_create_backup()
     if backup_fpath is not None:
         print(f"A backup of {instance} has been made. It is at {backup_fpath}")
     else:
@@ -300,12 +301,18 @@ async def create_backup(instance: str) -> None:
 async def remove_instance(
     instance,
     interactive: bool = False,
+    _create_backup: Optional[bool] = None,
     drop_db: Optional[bool] = None,
     remove_datapath: Optional[bool] = None,
 ):
     data_manager.load_basic_configuration(instance)
 
-    if confirm("Would you like to make a backup of the data for this instance? (y/n)"):
+    if interactive is True and _create_backup is None:
+        _create_backup = click.confirm(
+            "Would you like to make a backup of the data for this instance?", default=False
+        )
+
+    if _create_backup is True:
         await create_backup(instance)
 
     backend = get_current_backend(instance)
@@ -317,7 +324,9 @@ async def remove_instance(
     await driver_cls.delete_all_data(interactive=interactive, drop_db=drop_db)
 
     if interactive is True and remove_datapath is None:
-        remove_datapath = confirm("Would you like to delete the instance's entire datapath? (y/n)")
+        remove_datapath = click.confirm(
+            "Would you like to delete the instance's entire datapath?", default=False
+        )
 
     if remove_datapath is True:
         data_path = data_manager.core_data_path().parent
@@ -360,32 +369,52 @@ def cli(ctx, debug):
 
 @cli.command()
 @click.argument("instance", type=click.Choice(instance_list))
-@click.option("--no-prompt", default=False, help="Don't ask for user input during the process.")
 @click.option(
-    "--drop-db",
-    type=bool,
+    "--no-prompt",
+    "interactive",
+    is_flag=True,
+    default=True,
+    help="Don't ask for user input during the process.",
+)
+@click.option(
+    "--backup/--no-backup",
+    "_create_backup",
+    is_flag=True,
+    default=None,
+    help=(
+        "Create backup of this instance's data. "
+        "If these options and --no-prompt are omitted, you will be asked about this."
+    ),
+)
+@click.option(
+    "--drop-db/--no-drop-db",
+    is_flag=True,
     default=None,
     help=(
         "Drop the entire database constaining this instance's data. Has no effect on JSON "
-        "instances. If this option and --no-prompt are omitted, you will be asked about this."
+        "instances. If these options and --no-prompt are omitted, you will be asked about this."
     ),
 )
 @click.option(
-    "--remove-datapath",
-    type=bool,
+    "--remove-datapath/--no-remove-datapath",
+    is_flag=True,
     default=None,
     help=(
-        "Remove this entire instance's datapath. If this option and --no-prompt are omitted, you "
-        "will be asked about this."
+        "Remove this entire instance's datapath. If these options and --no-prompt are omitted, "
+        "you will be asked about this."
     ),
 )
-def delete(instance: str, no_prompt: Optional[bool], drop_db: Optional[bool]):
+def delete(
+    instance: str,
+    interactive: bool,
+    _create_backup: Optional[bool],
+    drop_db: Optional[bool],
+    remove_datapath: Optional[bool],
+):
     loop = asyncio.get_event_loop()
-    if no_prompt is None:
-        interactive = None
-    else:
-        interactive = not no_prompt
-    loop.run_until_complete(remove_instance(instance, interactive, drop_db))
+    loop.run_until_complete(
+        remove_instance(instance, interactive, _create_backup, drop_db, remove_datapath)
+    )
 
 
 @cli.command()
