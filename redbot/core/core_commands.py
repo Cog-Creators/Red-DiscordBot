@@ -853,14 +853,14 @@ class Core(commands.Cog, CoreLogic):
         """
         Toggle whether to use the bot owner-configured colour for embeds.
 
-        Default is to not use the bot's configured colour, in which case the
-        colour used will be the colour of the bot's top role.
+        Default is to use the bot's configured colour.
+        Otherwise, the colour used will be the colour of the bot's top role.
         """
         current_setting = await ctx.bot._config.guild(ctx.guild).use_bot_color()
         await ctx.bot._config.guild(ctx.guild).use_bot_color.set(not current_setting)
         await ctx.send(
             _("The bot {} use its configured color for embeds.").format(
-                _("will not") if current_setting else _("will")
+                _("will not") if not current_setting else _("will")
             )
         )
 
