@@ -90,7 +90,7 @@ class Alias(commands.Cog):
 
     def is_command(self, alias_name: str) -> bool:
         command = self.bot.get_command(alias_name)
-        return command is not None
+        return command is not None and alias_name not in commands.RESERVED_COMMAND_QUALNAMES
 
     @staticmethod
     def is_valid_alias_name(alias_name: str) -> bool:
