@@ -126,10 +126,10 @@ class ModInfo(MixinMeta):
 
         if roles:
 
-            roles = ", ".join([x.mention for x in roles])
+            role_str = ", ".join([x.mention for x in roles])
             # 400 BAD REQUEST (error code: 50035): Invalid Form Body
             # In embed.fields.2.value: Must be 1024 or fewer in length.
-            if len(roles) > 1024:
+            if len(role_str) > 1024:
                 # Alternative string building time.
                 # This is not the most optimal, but if you're hitting this, you are losing more time
                 # to every single check running on users than the occasional user info invoke
@@ -155,16 +155,16 @@ class ModInfo(MixinMeta):
 
                 role_chunks.append(continuation_string.format(numeric_number=remaining_roles))
 
-                roles = "".join(role_chunks)
+                role_str = "".join(role_chunks)
 
         else:
-            roles = None
+            role_str = None
 
         data = discord.Embed(description=activity, colour=user.colour)
         data.add_field(name=_("Joined Discord on"), value=created_on)
         data.add_field(name=_("Joined this server on"), value=joined_on)
-        if roles is not None:
-            data.add_field(name=_("Roles"), value=roles, inline=False)
+        if role_str is not None:
+            data.add_field(name=_("Roles"), value=role_str, inline=False)
         if names:
             # May need sanitizing later, but mentions do not ping in embeds currently
             val = filter_invites(", ".join(names))
