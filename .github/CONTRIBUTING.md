@@ -105,6 +105,10 @@ You may have noticed we have a `Makefile` and a `make.bat` in the top-level dire
 3. `make newenv`: Set up a new virtual environment in the `.venv` subdirectory, and install Red and its dependencies. If one already exists, it is cleared out and replaced.
 4. `make syncenv`: Sync your environment with Red's latest dependencies.
 
+The other make recipes are most likely for project maintainers rather than contributors.
+
+You can specify the Python executable used in the make recipes with the `PYTHON` environment variable, e.g. `make PYTHON=/usr/bin/python3.7 newenv`.
+
 ### 4.5 Keeping your dependencies up to date
 Whenever you pull from upstream (V3/develop on the main repository) and you notice either of the files `setup.cfg` or `tools/dev-requirements.txt` have been changed, it can often mean some package dependencies have been updated, added or removed. To make sure you're testing and formatting with the most up-to-date versions of our dependencies, run `make syncenv`. You could also simply do `make newenv` to install them to a clean new virtual environment.
 
