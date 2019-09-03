@@ -28,11 +28,11 @@ __all__ = [
     "GroupMixin",
     "command",
     "group",
-    "RESERVED_COMMAND_QUALNAMES",
+    "RESERVED_COMMAND_NAMES",
 ]
 
 #: The following names are reserved for various reasons
-RESERVED_COMMAND_QUALNAMES = (
+RESERVED_COMMAND_NAMES = (
     "cancel",  # reserved due to use in ``redbot.core.utils.MessagePredicate``
 )
 
@@ -163,7 +163,7 @@ class Command(CogCommandMixin, commands.Command):
         self.translator = kwargs.pop("i18n", None)
         if self.parent is None:
             for name in (self.name, *self.aliases):
-                if name in RESERVED_COMMAND_QUALNAMES:
+                if name in RESERVED_COMMAND_NAMES:
                     raise RuntimeError(
                         f"The name `{name}` cannot be set as a command name. It is reserved for internal use."
                     )
