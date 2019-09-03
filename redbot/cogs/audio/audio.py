@@ -6849,14 +6849,12 @@ class Audio(commands.Cog):
             return False
 
     async def _check_api_tokens(self):
-        spotify = await self.bot.db.api_tokens.get_raw(
-            "spotify", default={"client_id": "", "client_secret": ""}
-        )
-        youtube = await self.bot.db.api_tokens.get_raw("youtube", default={"api_key": ""})
+        spotify = await self.bot.get_shared_api_tokens("spotify")
+        youtube = await self.bot.get_shared_api_tokens("youtube")
         return {
-            "spotify_client_id": spotify["client_id"],
-            "spotify_client_secret": spotify["client_secret"],
-            "youtube_api": youtube["api_key"],
+            "spotify_client_id": spotify.get("client_id", ""),
+            "spotify_client_secret": spotify.get("client_secret", ""),
+            "youtube_api": youtube.get("api_key", ""),
         }
 
     async def _check_external(self):
@@ -6963,11 +6961,7 @@ class Audio(commands.Cog):
 
     async def _embed_msg(self, ctx: commands.Context, **kwargs):
         # noinspection PyTypeChecker
-        colour = (
-            await ctx.embed_colour()
-            if hasattr(ctx, "embed_colour")
-            else await self._get_embed_colour(ctx)
-        )
+        colour = await self.bot.get_embed_color(ctx)
         title = kwargs.get("title", EmptyEmbed) or EmptyEmbed
         _type = kwargs.get("type", "rich") or "rich"
         url = kwargs.get("url", EmptyEmbed) or EmptyEmbed
@@ -7100,13 +7094,6 @@ class Audio(commands.Cog):
         if eq_message is not None:
             with contextlib.suppress(discord.HTTPException):
                 await eq_message.delete()
-
-    async def _get_embed_colour(self, channel: discord.TextChannel):
-        # Unfortunately we need this for when context is unavailable.
-        if await self.bot.db.guild(channel.guild).use_bot_color():
-            return channel.guild.me.color
-        else:
-            return self.bot.color
 
     async def _get_eq_reaction(self, ctx: commands.Context, message: discord.Message, emoji):
         try:

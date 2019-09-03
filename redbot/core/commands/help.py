@@ -25,7 +25,6 @@
 # Additionally, this gives our users a bit more customization options including by
 # 3rd party cogs down the road.
 
-import asyncio
 from collections import namedtuple
 from typing import Union, List, AsyncIterator, Iterable, cast
 

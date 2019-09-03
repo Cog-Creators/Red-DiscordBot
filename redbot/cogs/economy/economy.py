@@ -1,7 +1,7 @@
 import calendar
 import logging
 import random
-from collections import defaultdict, deque, namedtuple
+from collections import defaultdict, deque
 from enum import Enum
 from typing import cast, Iterable, Union
 
@@ -22,7 +22,6 @@ T_ = Translator("Economy", __file__)
 logger = logging.getLogger("red.economy")
 
 NUM_ENC = "\N{COMBINING ENCLOSING KEYCAP}"
-MOCK_MEMBER = namedtuple("Member", "id guild")
 
 
 class SMReel(Enum):

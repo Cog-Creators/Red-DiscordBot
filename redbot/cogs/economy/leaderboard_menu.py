@@ -1,21 +1,27 @@
-from typing import List, Tuple, Dict, Any, Optional
+from collections import namedtuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import discord
 
+from redbot.core import bank
 from redbot.core.i18n import Translator
 from redbot.core.utils import chat_formatting as chatutils
 from redbot.core.utils.menus import PagedMenu
 
 _ = Translator("what is the point of this", __file__)
+MOCK_MEMBER = namedtuple("Member", "id guild")
 
 
 class LeaderboardMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡")):
     def __init__(self, *, accounts: List[Tuple[int, Dict[str, Any]]], **kwargs) -> None:
         self._accounts = accounts
         self._cur_rank = 0
+        self.max_bal = None
         super().__init__(pages=[], arrows_always=True, **kwargs)
 
     async def _before_send(self, **kwargs) -> None:
+        if self.max_bal is None:
+            self.max_bal = await bank.get_max_balance(self.ctx.guild)
         if not self._pages:
             self._pages = [await self._format_page()]
         if len(self._accounts) < 10:
@@ -56,8 +62,8 @@ class LeaderboardMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌",
         await super().next_page(payload=payload)
 
     async def _format_page(self) -> str:
-        accounts = self._accounts[self._cur_rank : self._cur_rank + 10]
 
+        accounts = self._accounts[self._cur_rank : self._cur_rank + 10]
         bal_colwidth = len(chatutils.humanize_number(accounts[0][1]["balance"])) + 5
         pos_colwidth = len(chatutils.humanize_number(len(accounts))) + 2
 
@@ -105,7 +111,12 @@ class LeaderboardMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌",
                 username = f"<<{username}>>"
 
             pos_str = f"{chatutils.humanize_number(pos)}."
-            balance = chatutils.humanize_number(account_data["balance"])
+
+            balance = account_data["balance"]
+            if balance > self.max_bal:
+                balance = self.max_bal
+                await bank.set_balance(MOCK_MEMBER(user_id, guild), balance)
+            balance = chatutils.humanize_number(balance)
             lines.append(f"{pos_str:<{pos_colwidth}} {balance:<{bal_colwidth}} {username}")
 
         return chatutils.box("\n".join(lines), lang="md")
