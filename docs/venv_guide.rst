@@ -3,9 +3,23 @@
 =======================================
 Installing Red in a Virtual Environment
 =======================================
+Creating a virtual environment is really easy and usually prevents many common installation
+problems. Firstly, simply choose how you'd like to create your virtual environment:
+
+* :ref:`using-venv` (quick and easy, involves two commands)
+* :ref:`using-pyenv-virtualenv` (recommended if you installed Python with pyenv)
+
+**Why Should I Use a Virtual Environment?**
+
+90% of the installation and setup issues raised in our support channels are resolved when the user
+creates a virtual environment.
+
+**What Are Virtual Environments For?**
+
 Virtual environments allow you to isolate red's library dependencies, cog dependencies and python
-binaries from the rest of your system. It is strongly recommended you use this if you use python
-for more than just Red.
+binaries from the rest of your system. It also makes sure Red and its dependencies are installed to
+a predictable location. It makes uninstalling Red as simple as removing a single folder, without
+worrying about losing your data or other things on your system becoming broken.
 
 .. _using-venv:
 
@@ -17,18 +31,18 @@ python.
 
 First, choose a directory where you would like to create your virtual environment. It's a good idea
 to keep it in a location which is easy to type out the path to. From now, we'll call it
-``path/to/venv/`` (or ``path\to\venv\`` on Windows).
+``redenv``.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~
 ``venv`` on Linux or Mac
 ~~~~~~~~~~~~~~~~~~~~~~~~
 Create your virtual environment with the following command::
 
-    python3.7 -m venv path/to/venv/
+    python3.7 -m venv redenv
 
 And activate it with the following command::
 
-    source path/to/venv/bin/activate
+    source redenv/bin/activate
 
 .. important::
 
@@ -42,11 +56,11 @@ Continue reading `below <after-activating-virtual-environment>`.
 ~~~~~~~~~~~~~~~~~~~
 Create your virtual environment with the following command::
 
-    python -m venv path\to\venv\
+    py -3.7 -m venv redenv
 
 And activate it with the following command::
 
-    path\to\venv\Scripts\activate.bat
+    redenv\Scripts\activate.bat
 
 .. important::
 
@@ -86,7 +100,8 @@ Now activate your virtualenv with the following command::
 .. important::
 
     You must activate the virtual environment with the above command every time you open a new
-    shell to run, install or update Red.
+    shell to run, install or update Red. You can check out other commands like ``pyenv local`` and
+    ``pyenv global`` if you wish to keep the virtualenv activated all the time.
 
 Continue reading `below <after-activating-virtual-environment>`.
 
