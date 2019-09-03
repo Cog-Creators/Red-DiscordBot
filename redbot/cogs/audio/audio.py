@@ -6879,7 +6879,7 @@ class Audio(commands.Cog):
                 await bank.withdraw_credits(ctx.author, jukebox_price)
             else:
                 credits_name = await bank.get_currency_name(ctx.guild)
-                bal = bank.get_balance(ctx.author)
+                bal = await bank.get_balance(ctx.author)
                 await self._embed_msg(
                     ctx,
                     title=_("Not enough {currency}").format(currency=credits_name),
