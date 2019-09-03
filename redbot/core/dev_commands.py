@@ -126,7 +126,7 @@ class Dev(commands.Cog):
 
         self._last_result = result
 
-        api_keys = await ctx.bot.db.api_tokens()
+        api_keys = await ctx.bot._config.api_tokens()
         result = self.sanitize_output(ctx, api_keys, str(result))
 
         await ctx.send_interactive(self.get_pages(result), box_lang="py")
@@ -191,7 +191,7 @@ class Dev(commands.Cog):
             msg = "{}{}".format(printed, result)
         else:
             msg = printed
-        api_keys = await ctx.bot.db.api_tokens()
+        api_keys = await ctx.bot._config.api_tokens()
         msg = self.sanitize_output(ctx, api_keys, msg)
 
         await ctx.send_interactive(self.get_pages(msg), box_lang="py")
@@ -276,7 +276,7 @@ class Dev(commands.Cog):
                 elif value:
                     msg = "{}".format(value)
 
-            api_keys = await ctx.bot.db.api_tokens()
+            api_keys = await ctx.bot._config.api_tokens()
             msg = self.sanitize_output(ctx, api_keys, msg)
 
             try:
