@@ -6451,8 +6451,7 @@ class Audio(commands.Cog):
         dj_role_obj = ctx.guild.get_role(dj_role)
         if dj_role_obj in ctx.guild.get_member(member.id).roles:
             return True
-        else:
-            return False
+        return False
 
     @staticmethod
     async def is_requester(ctx: commands.Context, member: discord.Member):
@@ -6516,10 +6515,6 @@ class Audio(commands.Cog):
                         )
                     ),
                 )
-            # elif player.shuffle:
-            #     return await self._embed_msg(
-            #         ctx, _("Can't skip to a track while shuffle is enabled.")
-            #     )
             embed = discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("{skip_to_track} Tracks Skipped".format(skip_to_track=skip_to_track)),

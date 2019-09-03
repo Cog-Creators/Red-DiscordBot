@@ -189,12 +189,9 @@ class SpotifyAPI:
 
     async def _get_auth(self) -> NoReturn:
         if self.client_id is None or self.client_secret is None:
-            data = await self.bot.db.api_tokens.get_raw(
-                "spotify", default={"client_id": None, "client_secret": None}
-            )
-
-            self.client_id = data.get("client_id")
-            self.client_secret = data.get("client_secret")
+            tokens = await self.bot.get_shared_api_tokens("spotify")
+            self.client_id = tokens.get("client_id", "")
+            self.client_secret = tokens.get("client_secret", "")
 
     async def _request_token(self) -> dict:
         await self._get_auth()
@@ -270,9 +267,8 @@ class YouTubeAPI:
 
     async def _get_api_key(self,) -> Optional[str]:
         if self.api_key is None:
-            self.api_key = (
-                await self.bot.db.api_tokens.get_raw("youtube", default={"api_key": ""})
-            ).get("api_key")
+            tokens = await self.bot.get_shared_api_tokens("youtube")
+            self.api_key = tokens.get("api_key", "")
         return self.api_key
 
     async def get_call(self, query: str) -> Optional[str]:
@@ -382,7 +378,7 @@ class MusicCache:
         # TODO: Create a task to remove entries
         #  from DB that haven't been fetched in x days ... customizable by Owner
 
-    # noinspection PySameParameterValue,PySameParameterValue
+    # noinspection PySameParameterValue
     async def fetch_all(self, table: str, query: str, values: Dict[str, str]) -> List[Mapping]:
         table = _PARSER.get(table, {})
         sql_query = table.get(query, {}).get("played")

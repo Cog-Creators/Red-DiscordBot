@@ -90,6 +90,9 @@ class NoExitParser(argparse.ArgumentParser):
         raise commands.BadArgument()
 
 
+# noinspection PyBroadException,PyBroadException,PyBroadException,PyBroadException,
+# PyBroadException,PyBroadException
+# noinspection PyBroadException
 class ScopeParser(commands.Converter):
     async def convert(
         self, ctx: commands.Context, argument: str
@@ -214,6 +217,11 @@ class ScopeParser(commands.Converter):
         return target_scope, target_user, target_guild, specified_user
 
 
+# noinspection PyBroadException,PyBroadException,PyBroadException,PyBroadException,
+# PyBroadException,PyBroadException
+# noinspection PyBroadException,PyBroadException,PyBroadException,PyBroadException,
+# PyBroadException,PyBroadException
+# noinspection PyBroadException,PyBroadException
 class ComplexScopeParser(commands.Converter):
     async def convert(
         self, ctx: commands.Context, argument: str

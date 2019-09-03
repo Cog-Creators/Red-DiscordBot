@@ -20,9 +20,7 @@ def roomlocked():
 
         room_id = await _config.guild(ctx.guild).room_lock()
         if room_id is None or ctx.channel.id == room_id:
-            val = True
-        else:
-            val = False
-        return val
+            return True
+        return False
 
     return commands.check(predicate)

@@ -1,1 +1,0 @@
-``[p]genre`` command can be used to play spotify playlist.
