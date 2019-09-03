@@ -1,9 +1,10 @@
-from redbot.core.commands import Converter, BadArgument
+from redbot.core.commands import BadArgument, Converter
 from redbot.core.i18n import Translator
 
 _ = Translator("Cleanup", __file__)
 
 
+# noinspection PyMethodMayBeStatic
 class RawMessageIds(Converter):
     async def convert(self, ctx, argument):
         if argument.isnumeric() and len(argument) >= 17:

@@ -6,14 +6,13 @@ from collections import Counter
 from enum import Enum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Optional, Union, List, Dict
+from typing import Dict, List, Optional, Union
 
 import discord
 from discord.ext.commands import when_mentioned_or
 
-from . import Config, i18n, commands, errors, drivers
+from . import Config, commands, drivers, errors, i18n
 from .cog_manager import CogManager
-
 from .rpc import RPCMixin
 from .utils import common_filters
 
@@ -89,11 +88,13 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         async def prefix_manager(bot, message):
             if not cli_flags.prefix:
+                # noinspection PyProtectedMember
                 global_prefix = await bot._config.prefix()
             else:
                 global_prefix = cli_flags.prefix
             if message.guild is None:
                 return global_prefix
+            # noinspection PyProtectedMember
             server_prefix = await bot._config.guild(message.guild).prefix()
             if cli_flags.mentionable:
                 return (
@@ -158,6 +159,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         return self._color
 
+    # noinspection PyUnusedName
     get_embed_colour = get_embed_color
 
     async def _maybe_update_config(self):
@@ -250,6 +252,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
     async def is_admin(self, member: discord.Member) -> bool:
         """Checks if a member is an admin of their guild."""
         try:
+            # noinspection PyProtectedMember
             member_snowflakes = member._roles  # DEP-WARN
             for snowflake in await self._config.guild(member.guild).admin_role():
                 if member_snowflakes.has(snowflake):  # Dep-WARN
@@ -261,6 +264,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
     async def is_mod(self, member: discord.Member) -> bool:
         """Checks if a member is a mod or admin of their guild."""
         try:
+            # noinspection PyProtectedMember
             member_snowflakes = member._roles  # DEP-WARN
             for snowflake in await self._config.guild(member.guild).admin_role():
                 if member_snowflakes.has(snowflake):  # DEP-WARN
@@ -388,7 +392,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                 await lib.setup(self)
             else:
                 lib.setup(self)
-        except Exception as e:
+        except Exception:
             self._remove_module_references(lib.__name__)
             self._call_module_finalizers(lib, name)
             raise

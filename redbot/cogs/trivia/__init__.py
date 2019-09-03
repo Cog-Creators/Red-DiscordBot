@@ -1,7 +1,7 @@
 """Package for Trivia cog."""
-from .trivia import *
-from .session import *
 from .log import *
+from .session import *
+from .trivia import *
 
 
 def setup(bot):

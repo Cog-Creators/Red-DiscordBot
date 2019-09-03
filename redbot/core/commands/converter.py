@@ -1,12 +1,11 @@
-import re
 import functools
+import re
 from datetime import timedelta
-from typing import TYPE_CHECKING, Optional, List, Dict
+from typing import Dict, List, Optional, TYPE_CHECKING
 
 import discord
 from discord.ext import commands as dpy_commands
 
-from . import BadArgument
 from ..i18n import Translator
 from ..utils.chat_formatting import humanize_timedelta
 
@@ -86,19 +85,19 @@ def parse_timedelta(
         params = {k: int(v) for k, v in matches.groupdict().items() if v is not None}
         for k in params.keys():
             if k not in allowed_units:
-                raise BadArgument(
+                raise dpy_commands.BadArgument(
                     _("`{unit}` is not a valid unit of time for this command").format(unit=k)
                 )
         if params:
             delta = timedelta(**params)
             if maximum and maximum < delta:
-                raise BadArgument(
+                raise dpy_commands.BadArgument(
                     _(
                         "This amount of time is too large for this command. (Maximum: {maximum})"
                     ).format(maximum=humanize_timedelta(timedelta=maximum))
                 )
             if minimum and delta < minimum:
-                raise BadArgument(
+                raise dpy_commands.BadArgument(
                     _(
                         "This amount of time is too small for this command. (Minimum: {minimum})"
                     ).format(minimum=humanize_timedelta(timedelta=minimum))
@@ -127,7 +126,7 @@ class GuildConverter(discord.Guild):
             ret = ctx.bot.get_guild(guild_id)
 
         if ret is None:
-            raise BadArgument(_('Server "{name}" not found.').format(name=argument))
+            raise dpy_commands.BadArgument(_('Server "{name}" not found.').format(name=argument))
 
         return ret
 
@@ -149,16 +148,16 @@ class APIToken(discord.ext.commands.Converter):
     """
 
     async def convert(self, ctx, argument) -> dict:
-        bot = ctx.bot
         result = {}
-        match = re.split(r";|,| ", argument)
-        # provide two options to split incase for whatever reason one is part of the api key we're using
+        match = re.split(r"[;, ]", argument)
+        # provide two options to split
+        # incase for whatever reason one is part of the api key we're using
         if len(match) > 1:
             result[match[0]] = "".join(r for r in match[1:])
         else:
-            raise BadArgument(_("The provided tokens are not in a valid format."))
+            raise dpy_commands.BadArgument(_("The provided tokens are not in a valid format."))
         if not result:
-            raise BadArgument(_("The provided tokens are not in a valid format."))
+            raise dpy_commands.BadArgument(_("The provided tokens are not in a valid format."))
         return result
 
 
@@ -178,13 +177,13 @@ class DictConverter(dpy_commands.Converter):
         args = self.pattern.split(argument)
 
         if len(args) % 2 != 0:
-            raise BadArgument()
+            raise dpy_commands.BadArgument()
 
         iterator = iter(args)
 
         for key in iterator:
             if self.expected_keys and key not in self.expected_keys:
-                raise BadArgument(_("Unexpected key {key}").format(key=key))
+                raise dpy_commands.BadArgument(_("Unexpected key {key}").format(key=key))
 
             ret[key] = next(iterator)
 
@@ -249,7 +248,7 @@ class TimedeltaConverter(dpy_commands.Converter):
             )
         if delta is not None:
             return delta
-        raise BadArgument()  # This allows this to be a required argument.
+        raise dpy_commands.BadArgument()  # This allows this to be a required argument.
 
 
 def get_timedelta_converter(

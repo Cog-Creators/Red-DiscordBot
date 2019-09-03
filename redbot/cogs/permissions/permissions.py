@@ -2,24 +2,24 @@ import asyncio
 import io
 import textwrap
 from copy import copy
-from typing import Union, Optional, Dict, List, Tuple, Any, Iterator, ItemsView, cast
+from typing import Any, Dict, ItemsView, Iterator, List, Optional, Tuple, Union, cast
 
 import discord
 import yaml
-from schema import And, Or, Schema, SchemaError, Optional as UseOptional
+from schema import And, Optional as UseOptional, Or, Schema, SchemaError
+
 from redbot.core import checks, commands, config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.menus import start_adding_reactions
-from redbot.core.utils.predicates import ReactionPredicate, MessagePredicate
-
+from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from .converters import (
-    CogOrCommand,
-    RuleType,
     ClearableRuleType,
-    GuildUniqueObjectFinder,
+    CogOrCommand,
     GlobalUniqueObjectFinder,
+    GuildUniqueObjectFinder,
+    RuleType,
 )
 
 _ = Translator("Permissions", __file__)
@@ -33,8 +33,7 @@ _NewConfigSchema = Dict[str, Dict[int, Dict[str, Dict[int, bool]]]]
 
 # The strings in the schema are constants and should get extracted, but not translated until
 # runtime.
-translate = _
-_ = lambda s: s
+
 YAML_SCHEMA = Schema(
     Or(
         {
@@ -43,36 +42,35 @@ YAML_SCHEMA = Schema(
                     str: And(
                         {
                             Or(int, "default"): And(
-                                bool, error=_("Rules must be either `true` or `false`.")
+                                bool, error="Rules must be either `true` or `false`."
                             )
                         },
-                        error=_("Keys under command names must be IDs (numbers) or `default`."),
+                        error="Keys under command names must be IDs (numbers) or `default`.",
                     )
                 },
                 {},
-                error=_("Keys under `COMMAND` must be command names (strings)."),
+                error="Keys under `COMMAND` must be command names (strings).",
             ),
             UseOptional(COG): Or(
                 {
                     str: Or(
                         {
                             Or(int, "default"): And(
-                                bool, error=_("Rules must be either `true` or `false`.")
+                                bool, error="Rules must be either `true` or `false`."
                             )
                         },
                         {},
-                        error=_("Keys under cog names must be IDs or `default`."),
+                        error="Keys under cog names must be IDs or `default`.",
                     )
                 },
                 {},
-                error=_("Keys under `COG` must be cog names (strings)."),
+                error="Keys under `COG` must be cog names (strings).",
             ),
         },
         {},
-        error=_("Top-level keys must be either `COG` or `COMMAND`."),
+        error="Top-level keys must be either `COG` or `COMMAND`.",
     )
 )
-_ = translate
 
 __version__ = "1.0.0"
 
@@ -553,9 +551,7 @@ class Permissions(commands.Cog):
         except yaml.MarkedYAMLError as e:
             await ctx.send(_("Invalid syntax: ") + str(e))
         except SchemaError as e:
-            await ctx.send(
-                _("Your YAML file did not match the schema: ") + translate(e.errors[-1])
-            )
+            await ctx.send(_("Your YAML file did not match the schema: ") + _(e.errors[-1]))
         else:
             await ctx.send(_("Rules set."))
 

@@ -1,19 +1,19 @@
-import logging
 import asyncio
-from typing import Union, List
-from datetime import timedelta
-from copy import copy
 import contextlib
+import logging
+from copy import copy
+from datetime import timedelta
+from typing import List, Union
+
 import discord
 
 from redbot.core import Config, checks, commands
-from redbot.core.utils.chat_formatting import pagify, box
-from redbot.core.utils.antispam import AntiSpam
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils.antispam import AntiSpam
+from redbot.core.utils.chat_formatting import box, pagify
 from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils.tunnel import Tunnel
-
 
 _ = Translator("Reports", __file__)
 
@@ -327,7 +327,7 @@ class Reports(commands.Cog):
         """
 
         guild = ctx.guild
-        rec = await self.config.custom("REPORT", guild.id, ticket_number).report()
+        rec = await self.config.custom("REPORT", guild.id, str(ticket_number)).report()
 
         try:
             user = guild.get_member(rec.get("user_id"))

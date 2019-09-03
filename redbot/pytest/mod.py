@@ -1,4 +1,5 @@
 import pytest
+
 from redbot.core import modlog
 
 __all__ = ["mod"]
@@ -11,5 +12,6 @@ async def mod(config, monkeypatch, red):
     with monkeypatch.context() as m:
         m.setattr(Config, "get_conf", lambda *args, **kwargs: config)
 
+        # noinspection PyProtectedMember
         await modlog._init(red)
         return modlog

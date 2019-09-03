@@ -5,12 +5,11 @@ replace those from the `discord.ext.commands` module.
 """
 import inspect
 import weakref
-from typing import Awaitable, Callable, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
+from typing import Awaitable, Callable, Dict, List, Optional, TYPE_CHECKING, Tuple, Union
 
 import discord
 from discord.ext import commands
 
-from . import converter as converters
 from .errors import ConversionFailure
 from .requires import PermState, PrivilegeLevel, Requires
 from ..i18n import Translator

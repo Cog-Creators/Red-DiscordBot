@@ -1,10 +1,12 @@
 import discord
+
 from redbot.core import commands
 from redbot.core.i18n import Translator
 
 _ = Translator("AdminConverters", __file__)
 
 
+# noinspection PyMethodMayBeStatic
 class MemberDefaultAuthor(commands.Converter):
     async def convert(self, ctx: commands.Context, arg: str) -> discord.Member:
         member_converter = commands.MemberConverter()
@@ -18,6 +20,7 @@ class MemberDefaultAuthor(commands.Converter):
         return member
 
 
+# noinspection PyMethodMayBeStatic
 class SelfRole(commands.Converter):
     async def convert(self, ctx: commands.Context, arg: str) -> discord.Role:
         admin = ctx.command.cog

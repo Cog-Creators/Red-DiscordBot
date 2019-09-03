@@ -3,12 +3,13 @@ import contextlib
 import logging
 from collections import namedtuple
 from datetime import datetime, timedelta
-from typing import cast, Optional, Union
+from typing import Optional, Union, cast
 
 import discord
-from redbot.core import commands, i18n, checks, modlog
-from redbot.core.utils.chat_formatting import pagify, humanize_number
-from redbot.core.utils.mod import is_allowed_by_hierarchy, get_audit_reason
+
+from redbot.core import checks, commands, i18n, modlog
+from redbot.core.utils.chat_formatting import humanize_number, pagify
+from redbot.core.utils.mod import get_audit_reason, is_allowed_by_hierarchy
 from .abc import MixinMeta
 from .converters import RawUserIds
 
@@ -16,6 +17,7 @@ log = logging.getLogger("red.mod")
 _ = i18n.Translator("Mod", __file__)
 
 
+# noinspection PyAbstractClass
 class KickBanMixin(MixinMeta):
     """
     Kick and ban commands and tasks go here.
@@ -84,7 +86,6 @@ class KickBanMixin(MixinMeta):
 
         audit_reason = get_audit_reason(author, reason)
 
-        queue_entry = (guild.id, user.id)
         try:
             await guild.ban(user, reason=audit_reason, delete_message_days=days)
             log.info(
@@ -95,7 +96,7 @@ class KickBanMixin(MixinMeta):
         except discord.Forbidden:
             return _("I'm not allowed to do that.")
         except Exception as e:
-            return e  # TODO: impproper return type? Is this intended to be re-raised?
+            return e  # TODO: improper return type? Is this intended to be re-raised?
 
         if create_modlog_case:
             try:
@@ -130,7 +131,6 @@ class KickBanMixin(MixinMeta):
                         now = datetime.utcnow()
                         if now > unban_time:  # Time to unban the user
                             user = await self.bot.fetch_user(uid)
-                            queue_entry = (guild.id, user.id)
                             try:
                                 await guild.unban(user, reason=_("Tempban finished"))
                                 guild_tempbans.remove(uid)
@@ -315,7 +315,6 @@ class KickBanMixin(MixinMeta):
         for user_id in user_ids:
             user = discord.Object(id=user_id)
             audit_reason = get_audit_reason(author, reason)
-            queue_entry = (guild.id, user_id)
             try:
                 await guild.ban(user, reason=audit_reason, delete_message_days=days)
                 log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
@@ -365,7 +364,6 @@ class KickBanMixin(MixinMeta):
         if invite is None:
             invite = ""
 
-        queue_entry = (guild.id, user.id)
         await self.settings.member(user).banned_until.set(unban_time.timestamp())
         cur_tbans = await self.settings.guild(guild).current_tempbans()
         cur_tbans.append(user.id)
@@ -437,7 +435,6 @@ class KickBanMixin(MixinMeta):
         if invite is None:
             invite = ""
 
-        queue_entry = (guild.id, user.id)
         try:  # We don't want blocked DMs preventing us from banning
             msg = await user.send(
                 _(
@@ -558,7 +555,6 @@ class KickBanMixin(MixinMeta):
         if user not in bans:
             await ctx.send(_("It seems that user isn't banned!"))
             return
-        queue_entry = (guild.id, user.id)
         try:
             await guild.unban(user, reason=audit_reason)
         except discord.HTTPException:

@@ -2,20 +2,19 @@ import asyncio
 import functools
 import os
 import pkgutil
+import re
 import shlex
 import shutil
-import re
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from subprocess import run as sp_run, PIPE
 from string import Formatter
+from subprocess import PIPE, run as sp_run
 from sys import executable
-from typing import List, Tuple, Iterable, MutableMapping, Union, Optional
+from typing import Iterable, MutableMapping, Optional, Tuple, Union
 
-from redbot.core import data_manager, commands
-from redbot.core.utils import safe_delete
+from redbot.core import commands, data_manager
 from redbot.core.i18n import Translator
-
+from redbot.core.utils import safe_delete
 from . import errors
 from .installable import Installable, InstallableType
 from .json_mixins import RepoJSONMixin

@@ -1,14 +1,11 @@
-import pathlib
-from collections import namedtuple
 from pathlib import Path
-
-import pytest
 from unittest.mock import MagicMock
 
-from redbot.pytest.downloader import *
+import pytest
 
-from redbot.cogs.downloader.repo_manager import RepoManager, Repo
 from redbot.cogs.downloader.errors import ExistingGitRepo
+from redbot.cogs.downloader.repo_manager import Repo
+from redbot.pytest.downloader import *
 
 
 def test_existing_git_repo(tmpdir):
@@ -22,6 +19,7 @@ def test_existing_git_repo(tmpdir):
         folder_path=repo_folder.parent,
     )
 
+    # noinspection PyProtectedMember
     exists, _ = r._existing_git_repo()
 
     assert exists is True
@@ -106,6 +104,7 @@ def test_tree_url_parse(repo_manager):
     ]
 
     for test_case in cases:
+        # noinspection PyProtectedMember
         assert test_case["expected"] == repo_manager._parse_url(*test_case["input"])
 
 
@@ -122,4 +121,5 @@ def test_tree_url_non_github(repo_manager):
     ]
 
     for test_case in cases:
+        # noinspection PyProtectedMember
         assert test_case["expected"] == repo_manager._parse_url(*test_case["input"])

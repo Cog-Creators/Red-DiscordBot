@@ -1,9 +1,10 @@
-from redbot.core.commands import Converter, BadArgument
+from redbot.core.commands import BadArgument, Converter
 from redbot.core.i18n import Translator
 
 _ = Translator("Mod", __file__)
 
 
+# noinspection PyMethodMayBeStatic
 class RawUserIds(Converter):
     async def convert(self, ctx, argument):
         # This is for the hackban command, where we receive IDs that

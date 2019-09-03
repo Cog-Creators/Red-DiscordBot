@@ -1,4 +1,5 @@
 import pytest
+
 from redbot.core import commands
 
 
@@ -11,10 +12,12 @@ def group():
     return fixturegroup
 
 
+# noinspection PyPep8Naming
 def is_Command(obj):
     return isinstance(obj, commands.Command)
 
 
+# noinspection PyPep8Naming
 def is_Group(obj):
     return isinstance(obj, commands.Group)
 

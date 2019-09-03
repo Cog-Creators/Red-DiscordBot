@@ -1,5 +1,5 @@
-from .cleanup import Cleanup
 from redbot.core.bot import Red
+from .cleanup import Cleanup
 
 
 def setup(bot: Red):

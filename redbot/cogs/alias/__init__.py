@@ -1,5 +1,5 @@
-from .alias import Alias
 from redbot.core.bot import Red
+from .alias import Alias
 
 
 def setup(bot: Red):

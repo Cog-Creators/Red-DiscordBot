@@ -67,13 +67,13 @@ this dependency will be ignored, and must be added to ``setup.cfg``
 manually.
 """
 import shlex
-import sys
 import subprocess as sp
+import sys
 import tempfile
 import textwrap
 import venv
 from pathlib import Path
-from typing import Sequence, Iterable, Dict
+from typing import Dict, Iterable, Sequence
 
 import packaging.requirements
 import setuptools.config

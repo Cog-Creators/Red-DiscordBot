@@ -1,16 +1,16 @@
-import re
 import random
+import re
+from collections import OrderedDict
 from datetime import datetime, timedelta
 from inspect import Parameter
-from collections import OrderedDict
-from typing import Mapping, Tuple, Dict, Set
+from typing import Dict, Mapping, Set, Tuple
 
 import discord
 
 from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import menus
-from redbot.core.utils.chat_formatting import box, pagify, escape
+from redbot.core.utils.chat_formatting import box, escape, pagify
 from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("CustomCommands", __file__)

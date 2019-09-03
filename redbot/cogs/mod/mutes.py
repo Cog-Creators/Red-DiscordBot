@@ -1,29 +1,28 @@
 import asyncio
-from typing import cast, Optional
+from typing import Optional, cast
 
 import discord
-from redbot.core import commands, checks, i18n, modlog
+
+from redbot.core import checks, commands, i18n, modlog
 from redbot.core.utils.chat_formatting import format_perms_list
 from redbot.core.utils.mod import get_audit_reason, is_allowed_by_hierarchy
 from .abc import MixinMeta
 
-T_ = i18n.Translator("Mod", __file__)
+_ = i18n.Translator("Mod", __file__)
 
-_ = lambda s: s
 mute_unmute_issues = {
-    "already_muted": _("That user can't send messages in this channel."),
-    "already_unmuted": _("That user isn't muted in this channel."),
-    "hierarchy_problem": _(
+    "already_muted": "That user can't send messages in this channel.",
+    "already_unmuted": "That user isn't muted in this channel.",
+    "hierarchy_problem": (
         "I cannot let you do that. You are not higher than the user in the role hierarchy."
     ),
-    "is_admin": _("That user cannot be muted, as they have the Administrator permission."),
-    "permissions_issue": _(
+    "is_admin": "That user cannot be muted, as they have the Administrator permission.",
+    "permissions_issue": (
         "Failed to mute user. I need the manage roles "
         "permission and the user I'm muting must be "
         "lower than myself in the role hierarchy."
     ),
 }
-_ = T_
 
 
 class MuteMixin(MixinMeta):

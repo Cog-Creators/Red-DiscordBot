@@ -27,7 +27,7 @@
 
 import asyncio
 from collections import namedtuple
-from typing import Union, List, AsyncIterator, Iterable, cast
+from typing import AsyncIterator, Iterable, List, Union, cast
 
 import discord
 from discord.ext import commands as dpy_commands
@@ -35,7 +35,7 @@ from discord.ext import commands as dpy_commands
 from . import commands
 from .context import Context
 from ..i18n import Translator
-from ..utils import menus, fuzzy_command_search, format_fuzzy_results
+from ..utils import format_fuzzy_results, fuzzy_command_search, menus
 from ..utils.chat_formatting import box, pagify
 
 __all__ = ["red_help", "RedHelpFormatter"]
@@ -94,6 +94,7 @@ class RedHelpFormatter:
                 await self.command_not_found(ctx, help_for)
                 return
             except NoSubCommand as exc:
+                # noinspection PyProtectedMember
                 if await ctx.bot._config.help.verify_exists():
                     await self.subcommand_not_found(ctx, exc.last, exc.not_found)
                     return
@@ -130,6 +131,7 @@ class RedHelpFormatter:
 
     async def format_command_help(self, ctx: Context, obj: commands.Command):
 
+        # noinspection PyProtectedMember
         send = await ctx.bot._config.help.verify_exists()
         if not send:
             async for _ in self.help_filter_func(ctx, (obj,), bypass_hidden=True):
@@ -147,6 +149,7 @@ class RedHelpFormatter:
         command = obj
 
         description = command.description or ""
+        # noinspection PyProtectedMember
         tagline = (await ctx.bot._config.help.tagline()) or self.get_default_tagline(ctx)
         signature = f"`Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
         subcommands = None
@@ -175,6 +178,7 @@ class RedHelpFormatter:
 
             if subcommands:
 
+                # noinspection PySameParameterValue
                 def shorten_line(a_line: str) -> str:
                     if len(a_line) < 70:  # embed max width needs to be lower
                         return a_line
@@ -200,11 +204,13 @@ class RedHelpFormatter:
             subtext_header = None
             if subcommands:
                 subtext_header = "Subcommands:"
+                # noinspection PyProtectedMember
                 max_width = max(discord.utils._string_width(name) for name in subcommands.keys())
 
                 def width_maker(cmds):
                     doc_max_width = 80 - max_width
                     for nm, com in sorted(cmds):
+                        # noinspection PyProtectedMember
                         width_gap = discord.utils._string_width(nm) - len(nm)
                         doc = com.short_doc
                         if len(doc) > doc_max_width:
@@ -250,6 +256,7 @@ class RedHelpFormatter:
 
         pages = []
 
+        # noinspection PyProtectedMember
         page_char_limit = await ctx.bot._config.help.page_char_limit()
         field_groups = self.group_embed_fields(embed_dict["fields"], page_char_limit)
 
@@ -285,10 +292,12 @@ class RedHelpFormatter:
     async def format_cog_help(self, ctx: Context, obj: commands.Cog):
 
         coms = await self.get_cog_help_mapping(ctx, obj)
+        # noinspection PyProtectedMember
         if not (coms or await ctx.bot._config.help.verify_exists()):
             return
 
         description = obj.help
+        # noinspection PyProtectedMember
         tagline = (await ctx.bot._config.help.tagline()) or self.get_default_tagline(ctx)
 
         if await ctx.embed_requested():
@@ -306,6 +315,7 @@ class RedHelpFormatter:
 
             if coms:
 
+                # noinspection PySameParameterValue
                 def shorten_line(a_line: str) -> str:
                     if len(a_line) < 70:  # embed max width needs to be lower
                         return a_line
@@ -330,11 +340,13 @@ class RedHelpFormatter:
             subtext_header = None
             if coms:
                 subtext_header = "Commands:"
+                # noinspection PyProtectedMember
                 max_width = max(discord.utils._string_width(name) for name in coms.keys())
 
                 def width_maker(cmds):
                     doc_max_width = 80 - max_width
                     for nm, com in sorted(cmds):
+                        # noinspection PyProtectedMember
                         width_gap = discord.utils._string_width(nm) - len(nm)
                         doc = com.short_doc
                         if len(doc) > doc_max_width:
@@ -356,6 +368,7 @@ class RedHelpFormatter:
             return
 
         description = ctx.bot.description or ""
+        # noinspection PyProtectedMember
         tagline = (await ctx.bot._config.help.tagline()) or self.get_default_tagline(ctx)
 
         if await ctx.embed_requested():
@@ -373,6 +386,7 @@ class RedHelpFormatter:
                 else:
                     title = f"**__No Category:__**"
 
+                # noinspection PySameParameterValue
                 def shorten_line(a_line: str) -> str:
                     if len(a_line) < 70:  # embed max width needs to be lower
                         return a_line
@@ -399,6 +413,7 @@ class RedHelpFormatter:
             for k, v in coms:
                 names.extend(list(v.name for v in v.values()))
 
+            # noinspection PyProtectedMember
             max_width = max(
                 discord.utils._string_width((name or "No Category:")) for name in names
             )
@@ -406,6 +421,7 @@ class RedHelpFormatter:
             def width_maker(cmds):
                 doc_max_width = 80 - max_width
                 for nm, com in cmds:
+                    # noinspection PyProtectedMember
                     width_gap = discord.utils._string_width(nm) - len(nm)
                     doc = com.short_doc
                     if len(doc) > doc_max_width:
@@ -433,7 +449,9 @@ class RedHelpFormatter:
         This does most of actual filtering.
         """
 
+        # noinspection PyProtectedMember
         show_hidden = bypass_hidden or await ctx.bot._config.help.show_hidden()
+        # noinspection PyProtectedMember
         verify_checks = await ctx.bot._config.help.verify_checks()
 
         # TODO: Settings for this in core bot db
@@ -462,10 +480,12 @@ class RedHelpFormatter:
         coms = {c async for c in self.help_filter_func(ctx, ctx.bot.walk_commands())}
         fuzzy_commands = await fuzzy_command_search(ctx, help_for, commands=coms, min_score=75)
         use_embeds = await ctx.embed_requested()
+        # noinspection PyProtectedMember
         if fuzzy_commands:
             ret = await format_fuzzy_results(ctx, fuzzy_commands, embed=use_embeds)
             if use_embeds:
                 ret.set_author(name=f"{ctx.me.display_name} Help Menu", icon_url=ctx.me.avatar_url)
+                # noinspection PyProtectedMember
                 tagline = (await ctx.bot._config.help.tagline()) or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
                 await ctx.send(embed=ret)
@@ -476,6 +496,7 @@ class RedHelpFormatter:
             if use_embeds:
                 ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
                 ret.set_author(name=f"{ctx.me.display_name} Help Menu", icon_url=ctx.me.avatar_url)
+                # noinspection PyProtectedMember
                 tagline = (await ctx.bot._config.help.tagline()) or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
                 await ctx.send(embed=ret)
@@ -492,6 +513,7 @@ class RedHelpFormatter:
         if await ctx.embed_requested():
             ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
             ret.set_author(name=f"{ctx.me.display_name} Help Menu", icon_url=ctx.me.avatar_url)
+            # noinspection PyProtectedMember
             tagline = (await ctx.bot._config.help.tagline()) or self.get_default_tagline(ctx)
             ret.set_footer(text=tagline)
             await ctx.send(embed=ret)
@@ -528,18 +550,19 @@ class RedHelpFormatter:
 
         return com
 
-    async def send_pages(
-        self, ctx: Context, pages: List[Union[str, discord.Embed]], embed: bool = True
-    ):
+    @staticmethod
+    async def send_pages(ctx: Context, pages: List[Union[str, discord.Embed]], embed: bool = True):
         """
         Sends pages based on settings.
         """
 
+        # noinspection PyProtectedMember
         if not (
             ctx.channel.permissions_for(ctx.me).add_reactions
             and await ctx.bot._config.help.use_menus()
         ):
 
+            # noinspection PyProtectedMember
             max_pages_in_guild = await ctx.bot._config.help.max_pages_in_guild()
             destination = ctx.author if len(pages) > max_pages_in_guild else ctx
 

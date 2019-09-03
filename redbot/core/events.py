@@ -1,10 +1,10 @@
-import contextlib
-import sys
+import asyncio
 import codecs
+import contextlib
 import datetime
 import logging
+import sys
 import traceback
-import asyncio
 from datetime import timedelta
 
 import aiohttp
@@ -14,17 +14,17 @@ from colorama import Fore, Style, init
 from pkg_resources import DistributionNotFound
 
 from redbot.core.commands import RedHelpFormatter
-from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
 from . import commands
 from .config import get_latest_confs
 from .data_manager import storage_type
-from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
-from .utils import fuzzy_command_search, format_fuzzy_results
+from .utils import format_fuzzy_results, fuzzy_command_search
+from .utils.chat_formatting import bordered, format_perms_list, humanize_timedelta, inline
+from .. import VersionInfo, __version__ as red_version, version_info as red_version_info
 
 log = logging.getLogger("red")
 init()
 
-INTRO = """
+INTRO = r"""
 ______         _           ______ _                       _  ______       _
 | ___ \       | |          |  _  (_)                     | | | ___ \     | |
 | |_/ /___  __| |  ______  | | | |_ ___  ___ ___  _ __ __| | | |_/ / ___ | |_
@@ -37,11 +37,13 @@ ______         _           ______ _                       _  ______       _
 def init_events(bot, cli_flags):
     @bot.event
     async def on_connect():
+        # noinspection PyProtectedMember
         if bot._uptime is None:
             print("Connected to Discord. Getting ready...")
 
     @bot.event
     async def on_ready():
+        # noinspection PyProtectedMember
         if bot._uptime is not None:
             return
 
@@ -49,6 +51,7 @@ def init_events(bot, cli_flags):
         packages = []
 
         if cli_flags.no_cogs is False:
+            # noinspection PyProtectedMember
             packages.extend(await bot._config.packages())
 
         if cli_flags.load_cogs:
@@ -87,15 +90,17 @@ def init_events(bot, cli_flags):
         try:
             data = await bot.application_info()
             invite_url = discord.utils.oauth_url(data.id)
-        except:
+        except Exception:
             invite_url = "Could not fetch invite url"
 
+        # noinspection PyProtectedMember
         prefixes = cli_flags.prefix or (await bot._config.prefix())
+        # noinspection PyProtectedMember
         lang = await bot._config.locale()
         red_pkg = pkg_resources.get_distribution("Red-DiscordBot")
         dpy_version = discord.__version__
 
-        INFO = [
+        info1 = [
             str(bot.user),
             "Prefixes: {}".format(", ".join(prefixes)),
             "Language: {}".format(lang),
@@ -105,18 +110,18 @@ def init_events(bot, cli_flags):
         ]
 
         if guilds:
-            INFO.extend(("Servers: {}".format(guilds), "Users: {}".format(users)))
+            info1.extend(("Servers: {}".format(guilds), "Users: {}".format(users)))
         else:
             print("Ready. I'm not in any server yet!")
 
-        INFO.append("{} cogs with {} commands".format(len(bot.cogs), len(bot.commands)))
+        info1.append("{} cogs with {} commands".format(len(bot.cogs), len(bot.commands)))
 
         with contextlib.suppress(aiohttp.ClientError, discord.HTTPException):
             async with aiohttp.ClientSession() as session:
                 async with session.get("https://pypi.python.org/pypi/red-discordbot/json") as r:
                     data = await r.json()
             if VersionInfo.from_str(data["info"]["version"]) > red_version_info:
-                INFO.append(
+                info1.append(
                     "Outdated version! {} is available "
                     "but you're using {}".format(data["info"]["version"], red_version)
                 )
@@ -127,11 +132,12 @@ def init_events(bot, cli_flags):
                         data["info"]["version"], red_version
                     )
                 )
-        INFO2 = []
+        info2 = []
 
         mongo_enabled = storage_type() != "JSON"
         reqs_installed = {"docs": None, "test": None}
         for key in reqs_installed.keys():
+            # noinspection PyProtectedMember
             reqs = [x.name for x in red_pkg._dep_map[key]]
             try:
                 pkg_resources.require(reqs)
@@ -151,15 +157,16 @@ def init_events(bot, cli_flags):
 
         for option, enabled in options:
             enabled = on_symbol if enabled else off_symbol
-            INFO2.append("{} {}".format(enabled, option))
+            info2.append("{} {}".format(enabled, option))
 
         print(Fore.RED + INTRO)
         print(Style.RESET_ALL)
-        print(bordered(INFO, INFO2, ascii_border=ascii_border))
+        print(bordered(info1, info2, ascii_border=ascii_border))
 
         if invite_url:
             print("\nInvite URL: {}\n".format(invite_url))
 
+        # noinspection PyProtectedMember
         bot._color = discord.Colour(await bot._config.color())
 
     @bot.event
@@ -170,6 +177,7 @@ def init_events(bot, cli_flags):
                 return
 
             if ctx.cog:
+                # noinspection PyProtectedMember
                 if commands.Cog._get_overridden_method(ctx.cog.cog_command_error) is not None:
                     return
 
@@ -183,6 +191,7 @@ def init_events(bot, cli_flags):
         elif isinstance(error, commands.UserInputError):
             await ctx.send_help()
         elif isinstance(error, commands.DisabledCommand):
+            # noinspection PyProtectedMember
             disabled_message = await bot._config.disabled_command_msg()
             if disabled_message:
                 await ctx.send(disabled_message.replace("{command}", ctx.invoked_with))
@@ -255,9 +264,11 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_message(message):
+        # noinspection PyProtectedMember
         bot._counter["messages_read"] += 1
         await bot.process_commands(message)
         discord_now = message.created_at
+        # noinspection PyProtectedMember,PyProtectedMember
         if (
             not bot._checked_time_accuracy
             or (discord_now - timedelta(minutes=60)) > bot._checked_time_accuracy
@@ -274,23 +285,28 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_resumed():
+        # noinspection PyProtectedMember
         bot._counter["sessions_resumed"] += 1
 
     @bot.event
     async def on_command(command):
+        # noinspection PyProtectedMember
         bot._counter["processed_commands"] += 1
 
     @bot.event
     async def on_command_add(command: commands.Command):
+        # noinspection PyProtectedMember
         disabled_commands = await bot._config.disabled_commands()
         if command.qualified_name in disabled_commands:
             command.enabled = False
         for guild in bot.guilds:
+            # noinspection PyProtectedMember
             disabled_commands = await bot._config.guild(guild).disabled_commands()
             if command.qualified_name in disabled_commands:
                 command.disable_in(guild)
 
     async def _guild_added(guild: discord.Guild):
+        # noinspection PyProtectedMember
         disabled_commands = await bot._config.guild(guild).disabled_commands()
         for command_name in disabled_commands:
             command_obj = bot.get_command(command_name)
@@ -310,6 +326,7 @@ def init_events(bot, cli_flags):
     @bot.event
     async def on_guild_leave(guild: discord.Guild):
         # Clean up any unneeded checks
+        # noinspection PyProtectedMember
         disabled_commands = await bot._config.guild(guild).disabled_commands()
         for command_name in disabled_commands:
             command_obj = bot.get_command(command_name)
@@ -322,6 +339,7 @@ def init_events(bot, cli_flags):
         for c in confs:
             uuid = c.unique_identifier
             group_data = c.custom_groups
+            # noinspection PyProtectedMember
             await bot._config.custom("CUSTOM_GROUPS", c.cog_name, uuid).set(group_data)
 
 

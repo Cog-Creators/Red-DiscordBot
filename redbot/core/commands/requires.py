@@ -9,17 +9,17 @@ checks like bot permissions checks.
 import asyncio
 import enum
 from typing import (
-    Union,
-    Optional,
-    List,
-    Callable,
-    Awaitable,
-    Dict,
     Any,
-    TYPE_CHECKING,
-    TypeVar,
-    Tuple,
+    Awaitable,
+    Callable,
     ClassVar,
+    Dict,
+    List,
+    Optional,
+    TYPE_CHECKING,
+    Tuple,
+    TypeVar,
+    Union,
 )
 
 import discord
@@ -125,8 +125,10 @@ class PrivilegeLevel(enum.IntEnum):
 
         # The following is simply an optimised way to check if the user has the
         # admin or mod role.
+        # noinspection PyProtectedMember
         guild_settings = ctx.bot._config.guild(ctx.guild)
 
+        # noinspection PyProtectedMember
         member_snowflakes = ctx.author._roles  # DEP-WARN
         for snowflake in await guild_settings.admin_role():
             if member_snowflakes.has(snowflake):  # DEP-WARN

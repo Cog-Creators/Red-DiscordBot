@@ -1,13 +1,15 @@
 import datetime
 import time
 from enum import Enum
-from random import randint, choice
+from random import choice, randint
+
 import aiohttp
 import discord
+
 from redbot.core import commands
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-from redbot.core.utils.chat_formatting import escape, italics, humanize_number
+from redbot.core.utils.chat_formatting import escape, humanize_number, italics
+from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 
 _ = T_ = Translator("General", __file__)
 
@@ -35,31 +37,28 @@ class RPSParser:
 class General(commands.Cog):
     """General commands."""
 
-    global _
-    _ = lambda s: s
     ball = [
-        _("As I see it, yes"),
-        _("It is certain"),
-        _("It is decidedly so"),
-        _("Most likely"),
-        _("Outlook good"),
-        _("Signs point to yes"),
-        _("Without a doubt"),
-        _("Yes"),
-        _("Yes – definitely"),
-        _("You may rely on it"),
-        _("Reply hazy, try again"),
-        _("Ask again later"),
-        _("Better not tell you now"),
-        _("Cannot predict now"),
-        _("Concentrate and ask again"),
-        _("Don't count on it"),
-        _("My reply is no"),
-        _("My sources say no"),
-        _("Outlook not so good"),
-        _("Very doubtful"),
+        "As I see it, yes",
+        "It is certain",
+        "It is decidedly so",
+        "Most likely",
+        "Outlook good",
+        "Signs point to yes",
+        "Without a doubt",
+        "Yes",
+        "Yes – definitely",
+        "You may rely on it",
+        "Reply hazy, try again",
+        "Ask again later",
+        "Better not tell you now",
+        "Cannot predict now",
+        "Concentrate and ask again",
+        "Don't count on it",
+        "My reply is no",
+        "My sources say no",
+        "Outlook not so good",
+        "Very doubtful",
     ]
-    _ = T_
 
     def __init__(self):
         super().__init__()

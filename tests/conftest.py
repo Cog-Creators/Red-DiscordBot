@@ -3,7 +3,7 @@ import os
 
 import pytest
 
-from redbot.core import drivers, data_manager
+from redbot.core import data_manager, drivers
 
 
 @pytest.fixture(scope="session")

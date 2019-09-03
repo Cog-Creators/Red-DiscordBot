@@ -1,8 +1,7 @@
-import itertools
 import datetime
-from typing import Sequence, Iterator, List, Optional, Union
+import itertools
 from io import BytesIO
-
+from typing import Iterator, List, Optional, Sequence, Union
 
 import discord
 from babel.numbers import format_decimal
@@ -201,9 +200,10 @@ def bordered(*columns: Sequence[str], ascii_border: bool = False) -> str:
     return "\n".join(lines).format(**borders)
 
 
+# noinspection PyIncorrectDocstring
 def pagify(
     text: str,
-    delims: Sequence[str] = ["\n"],
+    delims: Sequence[str] = None,
     *,
     priority: bool = False,
     escape_mass_mentions: bool = True,
@@ -243,8 +243,9 @@ def pagify(
     ------
     `str`
         Pages of the given text.
-
     """
+    if delims is None:
+        delims = ["\n"]
     in_text = text
     page_length -= shorten_by
     while len(in_text) > page_length:
@@ -469,12 +470,13 @@ def text_to_file(
         The name of the file sent. Defaults to ``file.txt``.
     spoiler: bool
         Whether the attachment is a spoiler. Defaults to ``False``.
+    encoding : str
+        The encoding to save the file as, defaults to UTF-8.
 
     Returns
     -------
     discord.File
         The file containing your text.
-
     """
     file = BytesIO(text.encode(encoding))
     return discord.File(file, filename, spoiler=spoiler)

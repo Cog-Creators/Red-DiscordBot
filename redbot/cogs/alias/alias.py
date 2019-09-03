@@ -1,15 +1,15 @@
 from copy import copy
 from re import findall, search
 from string import Formatter
-from typing import Generator, Tuple, Iterable, Optional
+from typing import Generator, Iterable, Optional, Tuple, List, Union, Any
 
 import discord
 from discord.ext.commands.view import StringView
-from redbot.core import Config, commands, checks
+
+from redbot.core import Config, checks, commands
+from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
-
-from redbot.core.bot import Red
 from .alias_entry import AliasEntry
 
 _ = Translator("Alias", __file__)
@@ -163,9 +163,10 @@ class Alias(commands.Cog):
                 return p
         raise ValueError(_("No prefix found."))
 
+    @staticmethod
     def get_extra_args_from_alias(
-        self, message: discord.Message, prefix: str, alias: AliasEntry
-    ) -> str:
+        message: discord.Message, prefix: str, alias: AliasEntry
+    ) -> List[Union[str, Any]]:
         """
         When an alias is executed by a user in chat this function tries
             to get any extra arguments passed in with the call.
@@ -198,6 +199,7 @@ class Alias(commands.Cog):
             return
 
         try:
+            # noinspection PyPep8
             potential_alias = message.content[len(prefix) :].split(" ")[0]
         except IndexError:
             return False
@@ -213,13 +215,13 @@ class Alias(commands.Cog):
         new_message = copy(message)
         try:
             args = self.get_extra_args_from_alias(message, prefix, alias)
-        except commands.BadArgument as bae:
+        except commands.BadArgument:
             return
 
         trackform = _TrackingFormatter()
         command = trackform.format(alias.command, *args)
 
-        # noinspection PyDunderSlots
+        # noinspection PyDunderSlots,PyPep8
         new_message.content = "{}{} {}".format(
             prefix, command, " ".join(args[trackform.max + 1 :])
         )

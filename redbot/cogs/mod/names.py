@@ -2,11 +2,12 @@ from datetime import datetime
 from typing import cast
 
 import discord
-from redbot.core import commands, i18n, checks
+
+from redbot.core import checks, commands, i18n
 from redbot.core.utils.common_filters import (
+    escape_spoilers_and_mass_mentions,
     filter_invites,
     filter_various_mentions,
-    escape_spoilers_and_mass_mentions,
 )
 from redbot.core.utils.mod import get_audit_reason
 from .abc import MixinMeta
@@ -14,6 +15,7 @@ from .abc import MixinMeta
 _ = i18n.Translator("Mod", __file__)
 
 
+# noinspection PyAbstractClass
 class ModInfo(MixinMeta):
     """
     Commands regarding names, userinfo, etc.
@@ -131,10 +133,12 @@ class ModInfo(MixinMeta):
             # In embed.fields.2.value: Must be 1024 or fewer in length.
             if len(role_str) > 1024:
                 # Alternative string building time.
-                # This is not the most optimal, but if you're hitting this, you are losing more time
+                # This is not the most optimal,
+                # but if you're hitting this, you are losing more time
                 # to every single check running on users than the occasional user info invoke
-                # We don't start by building this way, since the number of times we hit this should be
-                # infintesimally small compared to when we don't across all uses of Red.
+                # We don't start by building this way,
+                # since the number of times we hit this should be
+                # infinitesimally small compared to when we don't across all uses of Red.
                 continuation_string = _(
                     "and {numeric_number} more roles not displayed due to embed limits."
                 )

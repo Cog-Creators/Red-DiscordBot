@@ -18,7 +18,7 @@ from typing import (
 
 import discord
 
-from .drivers import IdentifierData, get_driver, ConfigCategory, BaseDriver
+from .drivers import BaseDriver, ConfigCategory, IdentifierData, get_driver
 
 __all__ = ["Config", "get_latest_confs", "migrate"]
 
@@ -142,6 +142,7 @@ class Value:
             A lock which is weakly cached for this value object.
 
         """
+        # noinspection PyProtectedMember
         return self._config._lock_cache.setdefault(self.identifier_data, asyncio.Lock())
 
     async def _get(self, default=...):
@@ -873,6 +874,7 @@ class Config:
         """
         self._register_default(group_identifier, **kwargs)
 
+    # noinspection PySameParameterValue
     def init_custom(self, group_identifier: str, identifier_count: int):
         """
         Initializes a custom group for usage. This method must be called first!

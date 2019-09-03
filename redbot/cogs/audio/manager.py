@@ -1,14 +1,14 @@
-import itertools
-import pathlib
-import platform
-import shutil
 import asyncio
 import asyncio.subprocess  # disables for # https://github.com/PyCQA/pylint/issues/1469
+import itertools
 import logging
+import pathlib
+import platform
 import re
+import shutil
 import sys
 import tempfile
-from typing import Optional, Tuple, ClassVar, List
+from typing import ClassVar, List, Optional, Tuple
 
 import aiohttp
 from tqdm import tqdm
@@ -115,6 +115,7 @@ class ServerManager:
             cls._java_available = (2, 0) > version >= (1, 8) or version >= (8, 0)
         return cls._java_available, cls._java_version
 
+    # noinspection PyPep8
     @staticmethod
     async def _get_java_version() -> Tuple[int, int]:
         """

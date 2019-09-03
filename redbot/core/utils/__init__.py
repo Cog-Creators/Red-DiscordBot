@@ -4,33 +4,33 @@ import logging
 import os
 import shutil
 import tarfile
-from asyncio import AbstractEventLoop, as_completed, Semaphore
+from asyncio import AbstractEventLoop, Semaphore, as_completed
 from asyncio.futures import isfuture
+from datetime import datetime
 from itertools import chain
 from pathlib import Path
 from typing import (
     Any,
-    AsyncIterator,
     AsyncIterable,
+    AsyncIterator,
     Awaitable,
     Callable,
     Iterable,
     Iterator,
     List,
     Optional,
+    Set,
+    TYPE_CHECKING,
     Tuple,
     TypeVar,
     Union,
-    Set,
-    TYPE_CHECKING,
 )
 
 import discord
-from datetime import datetime
 from fuzzywuzzy import fuzz, process
 
-from .. import commands, data_manager
 from .chat_formatting import box
+from .. import data_manager
 
 if TYPE_CHECKING:
     from ..commands import Command, Context
@@ -221,8 +221,10 @@ async def fuzzy_command_search(
 
     """
     if ctx.guild is not None:
+        # noinspection PyProtectedMember
         enabled = await ctx.bot._config.guild(ctx.guild).fuzzy()
     else:
+        # noinspection PyProtectedMember
         enabled = await ctx.bot._config.fuzzy()
 
     if not enabled:
@@ -244,7 +246,7 @@ async def fuzzy_command_search(
 
         try:
             await cmd_obj.get(ctx.message, term)
-        except:
+        except Exception:
             pass
         else:
             return
@@ -351,6 +353,7 @@ def bounded_gather_iter(
     pending = []
 
     for cof in coros_or_futures:
+        # noinspection PyProtectedMember
         if isfuture(cof) and cof._loop is not loop:
             raise ValueError("futures are tied to different event loops")
 
@@ -428,6 +431,7 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
     repo_mgr = RepoManager()
     await repo_mgr.initialize()
     repo_output = []
+    # noinspection PyProtectedMember
     for _, repo in repo_mgr._repos:
         repo_output.append({"url": repo.url, "name": repo.name, "branch": repo.branch})
     repos_file = data_path / "cogs" / "RepoManager" / "repos.json"

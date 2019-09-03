@@ -1,6 +1,6 @@
-import discord
-
 import random
+
+import discord
 
 
 def randomize_colour(embed: discord.Embed) -> discord.Embed:

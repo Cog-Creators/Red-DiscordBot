@@ -1,15 +1,15 @@
 import asyncio
 import datetime
-from typing import Union, List, Optional
 from functools import wraps
+from typing import List, Optional, Union
 
 import discord
 
 from redbot.core.utils.chat_formatting import humanize_number
-from . import Config, errors, commands
-from .i18n import Translator
+from . import Config, commands, errors
 from .bot import Red
 from .errors import BankPruneError
+from .i18n import Translator
 
 _ = Translator("Bank API", __file__)
 
@@ -394,6 +394,7 @@ async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: int = None)
     if global_bank:
         _guilds = [g for g in bot.guilds if not g.unavailable and g.large and not g.chunked]
         _uguilds = [g for g in bot.guilds if g.unavailable]
+        # noinspection PyProtectedMember
         group = _conf._get_base_group(_conf.USER)
 
     else:
@@ -401,6 +402,7 @@ async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: int = None)
             raise BankPruneError("'guild' can't be None when pruning a local bank")
         _guilds = [guild] if not guild.unavailable and guild.large else []
         _uguilds = [guild] if guild.unavailable else []
+        # noinspection PyProtectedMember
         group = _conf._get_base_group(_conf.MEMBER, str(guild.id))
 
     if user_id is None:

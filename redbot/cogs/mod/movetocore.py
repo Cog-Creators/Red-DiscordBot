@@ -1,9 +1,10 @@
-import logging
 import asyncio
 import contextlib
+import logging
 
 import discord
-from redbot.core import commands, checks, i18n
+
+from redbot.core import checks, commands, i18n
 from redbot.core.utils.chat_formatting import box
 from .abc import MixinMeta
 
@@ -12,6 +13,7 @@ _ = i18n.Translator("Mod", __file__)
 
 
 # TODO: Empty this to core red.
+# noinspection PyAbstractClass
 class MoveToCore(MixinMeta):
     """
     Mixin for things which should really not be in mod, but have not been moved out yet.

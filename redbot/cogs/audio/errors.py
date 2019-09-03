@@ -17,6 +17,7 @@ class LavalinkDownloadFailed(AudioError, RuntimeError):
 
     """
 
+    # noinspection PySameParameterValue
     def __init__(self, *args, response: aiohttp.ClientResponse, should_retry: bool = False):
         super().__init__(*args)
         self.response = response

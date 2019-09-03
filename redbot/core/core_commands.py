@@ -1,41 +1,38 @@
 import asyncio
 import contextlib
 import datetime
+import getpass
 import importlib
 import itertools
 import logging
 import os
-import sys
 import platform
-import getpass
-import pip
+import sys
 import traceback
 from collections import namedtuple
 from pathlib import Path
-from random import SystemRandom
-from string import ascii_letters, digits
-from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequence, Dict
+from typing import Dict, Iterable, List, Optional, Sequence, TYPE_CHECKING, Tuple, Union
 
 import aiohttp
 import discord
+import pip
 import pkg_resources
 
 from . import (
-    __version__,
-    version_info as red_version_info,
     VersionInfo,
+    __version__,
     checks,
     commands,
+    config,
     drivers,
     errors,
     i18n,
-    config,
+    version_info as red_version_info,
 )
-from .utils import create_backup
-from .utils.predicates import MessagePredicate
-from .utils.chat_formatting import humanize_timedelta, pagify, box, inline, humanize_list
 from .commands.requires import PrivilegeLevel
-
+from .utils import create_backup
+from .utils.chat_formatting import box, humanize_list, humanize_timedelta, inline, pagify
+from .utils.predicates import MessagePredicate
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -138,6 +135,7 @@ class CoreLogic:
             except KeyError:
                 pass
             else:
+                # noinspection PyProtectedMember,PyProtectedMember
                 importlib._bootstrap._exec(lib.__spec__, lib)
 
         # noinspection PyTypeChecker
@@ -147,6 +145,7 @@ class CoreLogic:
 
         children = {name: lib for name, lib in sys.modules.items() if name.startswith(module_name)}
         for child_name, lib in children.items():
+            # noinspection PyProtectedMember,PyProtectedMember
             importlib._bootstrap._exec(lib.__spec__, lib)
 
     async def _unload(self, cog_names: Iterable[str]) -> Tuple[List[str], List[str]]:
@@ -223,8 +222,10 @@ class CoreLogic:
         """
         if prefixes:
             prefixes = sorted(prefixes, reverse=True)
+            # noinspection PyProtectedMember
             await self.bot._config.prefix.set(prefixes)
             return prefixes
+        # noinspection PyProtectedMember
         return await self.bot._config.prefix()
 
     @classmethod
@@ -249,6 +250,7 @@ class CoreLogic:
             Invite URL.
         """
         app_info = await self.bot.application_info()
+        # noinspection PyProtectedMember
         perms_int = await self.bot._config.invite_perm()
         permissions = discord.Permissions(perms_int)
         return discord.utils.oauth_url(app_info.id, permissions)
@@ -256,6 +258,7 @@ class CoreLogic:
     @staticmethod
     async def _can_get_invite_url(ctx):
         is_owner = await ctx.bot.is_owner(ctx.author)
+        # noinspection PyProtectedMember
         is_invite_public = await ctx.bot._config.invite_public()
         return is_owner or is_invite_public
 
@@ -286,6 +289,7 @@ class Core(commands.Cog, CoreLogic):
         red_version = "[{}]({})".format(__version__, red_pypi)
         app_info = await self.bot.application_info()
         owner = app_info.owner
+        # noinspection PyProtectedMember
         custom_info = await self.bot._config.custom_info()
 
         async with aiohttp.ClientSession() as session:
@@ -344,11 +348,14 @@ class Core(commands.Cog, CoreLogic):
         """
         if ctx.invoked_subcommand is None:
             text = _("Embed settings:\n\n")
+            # noinspection PyProtectedMember
             global_default = await self.bot._config.embeds()
             text += _("Global default: {}\n").format(global_default)
             if ctx.guild:
+                # noinspection PyProtectedMember
                 guild_setting = await self.bot._config.guild(ctx.guild).embeds()
                 text += _("Guild setting: {}\n").format(guild_setting)
+            # noinspection PyProtectedMember
             user_setting = await self.bot._config.user(ctx.author).embeds()
             text += _("User setting: {}").format(user_setting)
             await ctx.send(box(text))
@@ -363,7 +370,9 @@ class Core(commands.Cog, CoreLogic):
         or guild hasn't set a preference. The
         default is to use embeds.
         """
+        # noinspection PyProtectedMember
         current = await self.bot._config.embeds()
+        # noinspection PyProtectedMember
         await self.bot._config.embeds.set(not current)
         await ctx.send(
             _("Embeds are now {} by default.").format(_("disabled") if current else _("enabled"))
@@ -384,6 +393,7 @@ class Core(commands.Cog, CoreLogic):
         used for all commands done in a guild channel except
         for help commands.
         """
+        # noinspection PyProtectedMember
         await self.bot._config.guild(ctx.guild).embeds.set(enabled)
         if enabled is None:
             await ctx.send(_("Embeds will now fall back to the global setting."))
@@ -407,6 +417,7 @@ class Core(commands.Cog, CoreLogic):
         used for all commands done in a DM with the bot, as
         well as all help commands everywhere.
         """
+        # noinspection PyProtectedMember
         await self.bot._config.user(ctx.author).embeds.set(enabled)
         if enabled is None:
             await ctx.send(_("Embeds will now fall back to the global setting."))
@@ -426,7 +437,9 @@ class Core(commands.Cog, CoreLogic):
         else:
             destination = ctx.channel
 
+        # noinspection PyProtectedMember
         if self.bot._last_exception:
+            # noinspection PyProtectedMember
             for page in pagify(self.bot._last_exception, shorten_by=10):
                 await destination.send(box(page, lang="py"))
         else:
@@ -455,7 +468,9 @@ class Core(commands.Cog, CoreLogic):
         """
         Define if the command should be accessible for the average user.
         """
+        # noinspection PyProtectedMember
         if await self.bot._config.invite_public():
+            # noinspection PyProtectedMember
             await self.bot._config.invite_public.set(False)
             await ctx.send("The invite is now private.")
             return
@@ -476,6 +491,7 @@ class Core(commands.Cog, CoreLogic):
                 "If you agree, you can type `{0}inviteset public yes`.".format(ctx.prefix)
             )
         else:
+            # noinspection PyProtectedMember
             await self.bot._config.invite_public.set(True)
             await ctx.send("The invite command is now public.")
 
@@ -494,6 +510,7 @@ class Core(commands.Cog, CoreLogic):
         Please note that you might need two factor authentification for\
         some permissions.
         """
+        # noinspection PyProtectedMember
         await self.bot._config.invite_perm.set(level)
         await ctx.send("The new permissions level has been set.")
 
@@ -760,14 +777,17 @@ class Core(commands.Cog, CoreLogic):
         if ctx.invoked_subcommand is None:
             if ctx.guild:
                 guild = ctx.guild
+                # noinspection PyProtectedMember
                 admin_role_ids = await ctx.bot._config.guild(ctx.guild).admin_role()
                 admin_role_names = [r.name for r in guild.roles if r.id in admin_role_ids]
                 admin_roles_str = (
                     humanize_list(admin_role_names) if admin_role_names else "Not Set."
                 )
+                # noinspection PyProtectedMember
                 mod_role_ids = await ctx.bot._config.guild(ctx.guild).mod_role()
                 mod_role_names = [r.name for r in guild.roles if r.id in mod_role_ids]
                 mod_roles_str = humanize_list(mod_role_names) if mod_role_names else "Not Set."
+                # noinspection PyProtectedMember
                 prefixes = await ctx.bot._config.guild(ctx.guild).prefix()
                 guild_settings = _("Admin roles: {admin}\nMod roles: {mod}\n").format(
                     admin=admin_roles_str, mod=mod_roles_str
@@ -776,7 +796,9 @@ class Core(commands.Cog, CoreLogic):
                 guild_settings = ""
                 prefixes = None  # This is correct. The below can happen in a guild.
             if not prefixes:
+                # noinspection PyProtectedMember
                 prefixes = await ctx.bot._config.prefix()
+            # noinspection PyProtectedMember
             locale = await ctx.bot._config.locale()
 
             prefix_string = " ".join(prefixes)
@@ -801,6 +823,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Adds an admin role for this guild.
         """
+        # noinspection PyProtectedMember
         async with ctx.bot._config.guild(ctx.guild).admin_role() as roles:
             if role.id in roles:
                 return await ctx.send(_("This role is already an admin role."))
@@ -814,6 +837,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Adds a mod role for this guild.
         """
+        # noinspection PyProtectedMember
         async with ctx.bot._config.guild(ctx.guild).mod_role() as roles:
             if role.id in roles:
                 return await ctx.send(_("This role is already a mod role."))
@@ -827,6 +851,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Removes an admin role for this guild.
         """
+        # noinspection PyProtectedMember
         async with ctx.bot._config.guild(ctx.guild).admin_role() as roles:
             if role.id not in roles:
                 return await ctx.send(_("That role was not an admin role to begin with."))
@@ -840,6 +865,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Removes a mod role for this guild.
         """
+        # noinspection PyProtectedMember
         async with ctx.bot._config.guild(ctx.guild).mod_role() as roles:
             if role.id not in roles:
                 return await ctx.send(_("That role was not a mod role to begin with."))
@@ -856,7 +882,9 @@ class Core(commands.Cog, CoreLogic):
         Default is to use the bot's configured colour.
         Otherwise, the colour used will be the colour of the bot's top role.
         """
+        # noinspection PyProtectedMember
         current_setting = await ctx.bot._config.guild(ctx.guild).use_bot_color()
+        # noinspection PyProtectedMember
         await ctx.bot._config.guild(ctx.guild).use_bot_color.set(not current_setting)
         await ctx.send(
             _("The bot {} use its configured color for embeds.").format(
@@ -873,7 +901,9 @@ class Core(commands.Cog, CoreLogic):
 
         Default is for fuzzy command search to be disabled.
         """
+        # noinspection PyProtectedMember
         current_setting = await ctx.bot._config.guild(ctx.guild).fuzzy()
+        # noinspection PyProtectedMember
         await ctx.bot._config.guild(ctx.guild).fuzzy.set(not current_setting)
         await ctx.send(
             _("Fuzzy command search has been {} for this server.").format(
@@ -889,7 +919,9 @@ class Core(commands.Cog, CoreLogic):
 
         Default is for fuzzy command search to be disabled.
         """
+        # noinspection PyProtectedMember
         current_setting = await ctx.bot._config.fuzzy()
+        # noinspection PyProtectedMember
         await ctx.bot._config.fuzzy.set(not current_setting)
         await ctx.send(
             _("Fuzzy command search has been {} in DMs.").format(
@@ -909,9 +941,11 @@ class Core(commands.Cog, CoreLogic):
         """
         if colour is None:
             ctx.bot._color = discord.Color.red()
+            # noinspection PyProtectedMember
             await ctx.bot._config.color.set(discord.Color.red().value)
             return await ctx.send(_("The color has been reset."))
         ctx.bot._color = colour
+        # noinspection PyProtectedMember
         await ctx.bot._config.color.set(colour.value)
         await ctx.send(_("The color has been set."))
 
@@ -1077,10 +1111,12 @@ class Core(commands.Cog, CoreLogic):
     async def serverprefix(self, ctx: commands.Context, *prefixes: str):
         """Sets Red's server prefix(es)"""
         if not prefixes:
+            # noinspection PyProtectedMember
             await ctx.bot._config.guild(ctx.guild).prefix.set([])
             await ctx.send(_("Guild prefixes have been reset."))
             return
         prefixes = sorted(prefixes, reverse=True)
+        # noinspection PyProtectedMember
         await ctx.bot._config.guild(ctx.guild).prefix.set(prefixes)
         await ctx.send(_("Prefix set."))
 
@@ -1099,6 +1135,7 @@ class Core(commands.Cog, CoreLogic):
         locale_list = [loc.stem.lower() for loc in list(red_path.glob("**/*.po"))]
         if locale_name.lower() in locale_list or locale_name.lower() == "en-us":
             i18n.set_locale(locale_name)
+            # noinspection PyProtectedMember
             await ctx.bot._config.locale.set(locale_name)
             await ctx.send(_("Locale has been set."))
         else:
@@ -1120,10 +1157,12 @@ class Core(commands.Cog, CoreLogic):
         `[My link](https://example.com)`
         """
         if not text:
+            # noinspection PyProtectedMember
             await ctx.bot._config.custom_info.clear()
             await ctx.send(_("The custom text has been cleared."))
             return
         if len(text) <= 1024:
+            # noinspection PyProtectedMember
             await ctx.bot._config.custom_info.set(text)
             await ctx.send(_("The custom text has been set."))
             await ctx.invoke(self.info)
@@ -1145,6 +1184,7 @@ class Core(commands.Cog, CoreLogic):
         """
         if ctx.channel.permissions_for(ctx.me).manage_messages:
             await ctx.message.delete()
+        # noinspection PyProtectedMember
         await ctx.bot._config.api_tokens.set_raw(service, value=tokens)
         await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
 
@@ -1164,7 +1204,9 @@ class Core(commands.Cog, CoreLogic):
         Using this without a setting will toggle.
         """
         if use_menus is None:
+            # noinspection PyProtectedMember
             use_menus = not await ctx.bot._config.help.use_menus()
+        # noinspection PyProtectedMember
         await ctx.bot._config.help.use_menus.set(use_menus)
         if use_menus:
             await ctx.send(_("Help will use menus."))
@@ -1180,7 +1222,9 @@ class Core(commands.Cog, CoreLogic):
         Using this without a setting will toggle.
         """
         if show_hidden is None:
+            # noinspection PyProtectedMember
             show_hidden = not await ctx.bot._config.help.show_hidden()
+        # noinspection PyProtectedMember
         await ctx.bot._config.help.show_hidden.set(show_hidden)
         if show_hidden:
             await ctx.send(_("Help will not filter hidden commands"))
@@ -1197,7 +1241,9 @@ class Core(commands.Cog, CoreLogic):
         Using this without a setting will toggle.
         """
         if verify is None:
+            # noinspection PyProtectedMember
             verify = not await ctx.bot._config.help.verify_checks()
+        # noinspection PyProtectedMember
         await ctx.bot._config.help.verify_checks.set(verify)
         if verify:
             await ctx.send(_("Help will only show for commands which can be run."))
@@ -1216,7 +1262,9 @@ class Core(commands.Cog, CoreLogic):
         Using this without a setting will toggle.
         """
         if verify is None:
+            # noinspection PyProtectedMember
             verify = not await ctx.bot._config.help.verify_exists()
+        # noinspection PyProtectedMember
         await ctx.bot._config.help.verify_exists.set(verify)
         if verify:
             await ctx.send(_("Help will verify the existence of help topics."))
@@ -1244,6 +1292,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("You must give a positive value!"))
             return
 
+        # noinspection PyProtectedMember
         await ctx.bot._config.help.page_char_limit.set(limit)
         await ctx.send(_("Done. The character limit per page has been set to {}.").format(limit))
 
@@ -1263,6 +1312,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("You must give a value of zero or greater!"))
             return
 
+        # noinspection PyProtectedMember
         await ctx.bot._config.help.max_pages_in_guild.set(pages)
         await ctx.send(_("Done. The page limit has been set to {}.").format(pages))
 
@@ -1275,6 +1325,7 @@ class Core(commands.Cog, CoreLogic):
         specified, the default will be used instead.
         """
         if tagline is None:
+            # noinspection PyProtectedMember
             await ctx.bot._config.help.tagline.set("")
             return await ctx.send(_("The tagline has been reset."))
 
@@ -1287,6 +1338,7 @@ class Core(commands.Cog, CoreLogic):
             )
             return
 
+        # noinspection PyProtectedMember
         await ctx.bot._config.help.tagline.set(tagline)
         await ctx.send(_("The tagline has been set to {}.").format(tagline[:1900]))
 
@@ -1415,19 +1467,23 @@ class Core(commands.Cog, CoreLogic):
         for destination in destinations:
 
             is_dm = isinstance(destination, discord.User)
+            # noinspection PyUnusedLocal
             send_embed = None
 
             if is_dm:
+                # noinspection PyProtectedMember
                 send_embed = await ctx.bot._config.user(destination).embeds()
             else:
                 if not destination.permissions_for(destination.guild.me).send_messages:
                     continue
                 if destination.permissions_for(destination.guild.me).embed_links:
+                    # noinspection PyProtectedMember
                     send_embed = await ctx.bot._config.guild(destination.guild).embeds()
                 else:
                     send_embed = False
 
             if send_embed is None:
+                # noinspection PyProtectedMember
                 send_embed = await ctx.bot._config.embeds()
 
             if send_embed:
@@ -1435,6 +1491,7 @@ class Core(commands.Cog, CoreLogic):
                 if not is_dm:
                     color = await ctx.bot.get_embed_color(destination)
                 else:
+                    # noinspection PyProtectedMember
                     color = ctx.bot._color
 
                 e = discord.Embed(colour=color, description=message)
@@ -1537,6 +1594,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.is_owner()
     async def datapath(self, ctx: commands.Context):
         """Prints the bot's data path."""
+        # noinspection PyProtectedMember
         from redbot.core.data_manager import basic_config
 
         data_dir = Path(basic_config["DATA_PATH"])
@@ -1551,21 +1609,21 @@ class Core(commands.Cog, CoreLogic):
         if sys.platform == "linux":
             import distro  # pylint: disable=import-error
 
-        IS_WINDOWS = os.name == "nt"
-        IS_MAC = sys.platform == "darwin"
-        IS_LINUX = sys.platform == "linux"
+        is_windows = os.name == "nt"
+        is_mac = sys.platform == "darwin"
+        is_linux = sys.platform == "linux"
 
         pyver = "{}.{}.{} ({})".format(*sys.version_info[:3], platform.architecture()[0])
         pipver = pip.__version__
         redver = red_version_info
         dpy_version = discord.__version__
-        if IS_WINDOWS:
+        if is_windows:
             os_info = platform.uname()
             osver = "{} {} (version {})".format(os_info.system, os_info.release, os_info.version)
-        elif IS_MAC:
+        elif is_mac:
             os_info = platform.mac_ver()
             osver = "Mac OSX {} {}".format(os_info[0], os_info[2])
-        elif IS_LINUX:
+        elif is_linux:
             os_info = distro.linux_distribution()
             osver = "{} {}".format(os_info[0], os_info[1]).strip()
         else:
@@ -1609,6 +1667,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Adds a user to the whitelist.
         """
+        # noinspection PyProtectedMember
         async with ctx.bot._config.whitelist() as curr_list:
             if user.id not in curr_list:
                 curr_list.append(user.id)
@@ -1620,6 +1679,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Lists whitelisted users.
         """
+        # noinspection PyProtectedMember
         curr_list = await ctx.bot._config.whitelist()
 
         msg = _("Whitelisted Users:")
@@ -1636,6 +1696,7 @@ class Core(commands.Cog, CoreLogic):
         """
         removed = False
 
+        # noinspection PyProtectedMember
         async with ctx.bot._config.whitelist() as curr_list:
             if user.id in curr_list:
                 removed = True
@@ -1651,6 +1712,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Clears the whitelist.
         """
+        # noinspection PyProtectedMember
         await ctx.bot._config.whitelist.set([])
         await ctx.send(_("Whitelist has been cleared."))
 
@@ -1671,6 +1733,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("You cannot blacklist an owner!"))
             return
 
+        # noinspection PyProtectedMember
         async with ctx.bot._config.blacklist() as curr_list:
             if user.id not in curr_list:
                 curr_list.append(user.id)
@@ -1682,6 +1745,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Lists blacklisted users.
         """
+        # noinspection PyProtectedMember
         curr_list = await ctx.bot._config.blacklist()
 
         msg = _("Blacklisted Users:")
@@ -1698,6 +1762,7 @@ class Core(commands.Cog, CoreLogic):
         """
         removed = False
 
+        # noinspection PyProtectedMember
         async with ctx.bot._config.blacklist() as curr_list:
             if user.id in curr_list:
                 removed = True
@@ -1713,6 +1778,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Clears the blacklist.
         """
+        # noinspection PyProtectedMember
         await ctx.bot._config.blacklist.set([])
         await ctx.send(_("Blacklist has been cleared."))
 
@@ -1733,6 +1799,7 @@ class Core(commands.Cog, CoreLogic):
         Adds a user or role to the whitelist.
         """
         user = isinstance(user_or_role, discord.Member)
+        # noinspection PyProtectedMember
         async with ctx.bot._config.guild(ctx.guild).whitelist() as curr_list:
             if user_or_role.id not in curr_list:
                 curr_list.append(user_or_role.id)
@@ -1747,6 +1814,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Lists whitelisted users and roles.
         """
+        # noinspection PyProtectedMember
         curr_list = await ctx.bot._config.guild(ctx.guild).whitelist()
 
         msg = _("Whitelisted Users and roles:")
@@ -1766,6 +1834,7 @@ class Core(commands.Cog, CoreLogic):
         user = isinstance(user_or_role, discord.Member)
 
         removed = False
+        # noinspection PyProtectedMember
         async with ctx.bot._config.guild(ctx.guild).whitelist() as curr_list:
             if user_or_role.id in curr_list:
                 removed = True
@@ -1787,6 +1856,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Clears the whitelist.
         """
+        # noinspection PyProtectedMember
         await ctx.bot._config.guild(ctx.guild).whitelist.set([])
         await ctx.send(_("Whitelist has been cleared."))
 
@@ -1812,6 +1882,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("You cannot blacklist an owner!"))
             return
 
+        # noinspection PyProtectedMember
         async with ctx.bot._config.guild(ctx.guild).blacklist() as curr_list:
             if user_or_role.id not in curr_list:
                 curr_list.append(user_or_role.id)
@@ -1826,6 +1897,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Lists blacklisted users and roles.
         """
+        # noinspection PyProtectedMember
         curr_list = await ctx.bot._config.guild(ctx.guild).blacklist()
 
         msg = _("Blacklisted Users and Roles:")
@@ -1845,6 +1917,7 @@ class Core(commands.Cog, CoreLogic):
         removed = False
         user = isinstance(user_or_role, discord.Member)
 
+        # noinspection PyProtectedMember
         async with ctx.bot._config.guild(ctx.guild).blacklist() as curr_list:
             if user_or_role.id in curr_list:
                 removed = True
@@ -1866,6 +1939,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Clears the blacklist.
         """
+        # noinspection PyProtectedMember
         await ctx.bot._config.guild(ctx.guild).blacklist.set([])
         await ctx.send(_("Blacklist has been cleared."))
 
@@ -1905,6 +1979,7 @@ class Core(commands.Cog, CoreLogic):
             )
             return
 
+        # noinspection PyProtectedMember
         async with ctx.bot._config.disabled_commands() as disabled_commands:
             if command not in disabled_commands:
                 disabled_commands.append(command_obj.qualified_name)
@@ -1937,6 +2012,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("You are not allowed to disable that command."))
             return
 
+        # noinspection PyProtectedMember
         async with ctx.bot._config.guild(ctx.guild).disabled_commands() as disabled_commands:
             if command not in disabled_commands:
                 disabled_commands.append(command_obj.qualified_name)
@@ -1971,6 +2047,7 @@ class Core(commands.Cog, CoreLogic):
             )
             return
 
+        # noinspection PyProtectedMember
         async with ctx.bot._config.disabled_commands() as disabled_commands:
             with contextlib.suppress(ValueError):
                 disabled_commands.remove(command_obj.qualified_name)
@@ -1997,6 +2074,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("You are not allowed to enable that command."))
             return
 
+        # noinspection PyProtectedMember
         async with ctx.bot._config.guild(ctx.guild).disabled_commands() as disabled_commands:
             with contextlib.suppress(ValueError):
                 disabled_commands.remove(command_obj.qualified_name)
@@ -2018,6 +2096,7 @@ class Core(commands.Cog, CoreLogic):
         To include the command name in the message, include the
         `{command}` placeholder.
         """
+        # noinspection PyProtectedMember
         await ctx.bot._config.disabled_command_msg.set(message)
         await ctx.tick()
 
@@ -2037,6 +2116,7 @@ class Core(commands.Cog, CoreLogic):
 
         configured for automatic moderation action immunity
         """
+        # noinspection PyProtectedMember
         ai_ids = await ctx.bot._config.guild(ctx.guild).autoimmune_ids()
 
         roles = {r.name for r in ctx.guild.roles if r.id in ai_ids}
@@ -2065,6 +2145,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Makes a user or roles immune from automated moderation actions
         """
+        # noinspection PyProtectedMember
         async with ctx.bot._config.guild(ctx.guild).autoimmune_ids() as ai_ids:
             if user_or_role.id in ai_ids:
                 return await ctx.send(_("Already added."))
@@ -2078,6 +2159,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Makes a user or roles immune from automated moderation actions
         """
+        # noinspection PyProtectedMember
         async with ctx.bot._config.guild(ctx.guild).autoimmune_ids() as ai_ids:
             if user_or_role.id not in ai_ids:
                 return await ctx.send(_("Not in list."))
@@ -2112,6 +2194,7 @@ class Core(commands.Cog, CoreLogic):
 
         This is the default state.
         """
+        # noinspection PyProtectedMember
         async with ctx.bot._config.owner_opt_out_list() as opt_outs:
             if ctx.author.id in opt_outs:
                 opt_outs.remove(ctx.author.id)
@@ -2123,6 +2206,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Opt-out of recieving owner notifications.
         """
+        # noinspection PyProtectedMember
         async with ctx.bot._config.owner_opt_out_list() as opt_outs:
             if ctx.author.id not in opt_outs:
                 opt_outs.append(ctx.author.id)
@@ -2142,6 +2226,7 @@ class Core(commands.Cog, CoreLogic):
         except AttributeError:
             channel_id = channel
 
+        # noinspection PyProtectedMember
         async with ctx.bot._config.extra_owner_destinations() as extras:
             if channel_id not in extras:
                 extras.append(channel_id)
@@ -2161,6 +2246,7 @@ class Core(commands.Cog, CoreLogic):
         except AttributeError:
             channel_id = channel
 
+        # noinspection PyProtectedMember
         async with ctx.bot._config.extra_owner_destinations() as extras:
             if channel_id in extras:
                 extras.remove(channel_id)
@@ -2173,6 +2259,7 @@ class Core(commands.Cog, CoreLogic):
         Lists the configured extra destinations for owner notifications
         """
 
+        # noinspection PyProtectedMember
         channel_ids = await ctx.bot._config.extra_owner_destinations()
 
         if not channel_ids:

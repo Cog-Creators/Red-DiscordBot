@@ -1,17 +1,19 @@
-from .errors import (
-    StreamNotFound,
-    APIError,
-    OfflineStream,
-    InvalidYoutubeCredentials,
-    InvalidTwitchCredentials,
-)
-from redbot.core.i18n import Translator
-from random import choice, sample
+import json
+from random import choice
 from string import ascii_letters
 from typing import ClassVar, Optional
-import discord
+
 import aiohttp
-import json
+import discord
+
+from redbot.core.i18n import Translator
+from .errors import (
+    APIError,
+    InvalidTwitchCredentials,
+    InvalidYoutubeCredentials,
+    OfflineStream,
+    StreamNotFound,
+)
 
 TWITCH_BASE_URL = "https://api.twitch.tv"
 TWITCH_ID_ENDPOINT = TWITCH_BASE_URL + "/kraken/users?login="
@@ -28,7 +30,7 @@ _ = Translator("Streams", __file__)
 
 def rnd(url):
     """Appends a random parameter to the url to avoid Discord's caching"""
-    return url + "?rnd=" + "".join([choice(ascii_letters) for i in range(6)])
+    return url + "?rnd=" + "".join([choice(ascii_letters) for _ in range(6)])
 
 
 class Stream:
@@ -45,7 +47,7 @@ class Stream:
     async def is_online(self):
         raise NotImplementedError()
 
-    def make_embed(self):
+    def make_embed(self, data):
         raise NotImplementedError()
 
     def export(self):
@@ -301,7 +303,7 @@ class MixerStream(Stream):
         default_avatar = "https://mixer.com/_latest/assets/images/main/avatars/default.jpg"
         user = data["user"]
         url = "https://mixer.com/" + data["token"]
-        embed = discord.Embed(title=data["name"], url=url)
+        embed = discord.Embed(title=data["name"], url=url, colour=discord.Colour(0x4C90F3))
         embed.set_author(name=user["username"])
         embed.add_field(name=_("Followers"), value=data["numFollowers"])
         embed.add_field(name=_("Total views"), value=data["viewersTotal"])
@@ -310,8 +312,9 @@ class MixerStream(Stream):
         else:
             embed.set_thumbnail(url=default_avatar)
         if data["thumbnail"]:
-            embed.set_image(url=rnd(data["thumbnail"]["url"]))
-        embed.color = 0x4C90F3  # pylint: disable=assigning-non-slot
+            embed.set_image(
+                url=rnd(data["thumbnail"]["url"])
+            )  # pylint: disable=assigning-non-slot
         if data["type"] is not None:
             embed.set_footer(text=_("Playing: ") + data["type"]["name"])
         return embed

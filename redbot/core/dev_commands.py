@@ -1,9 +1,9 @@
 import asyncio
 import inspect
 import io
+import re
 import textwrap
 import traceback
-import re
 from contextlib import redirect_stdout
 from copy import copy
 
@@ -126,6 +126,7 @@ class Dev(commands.Cog):
 
         self._last_result = result
 
+        # noinspection PyProtectedMember
         api_keys = await ctx.bot._config.api_tokens()
         result = self.sanitize_output(ctx, api_keys, str(result))
 
@@ -180,7 +181,7 @@ class Dev(commands.Cog):
         try:
             with redirect_stdout(stdout):
                 result = await func()
-        except:
+        except Exception:
             printed = "{}{}".format(stdout.getvalue(), traceback.format_exc())
         else:
             printed = stdout.getvalue()
@@ -191,6 +192,7 @@ class Dev(commands.Cog):
             msg = "{}{}".format(printed, result)
         else:
             msg = printed
+        # noinspection PyProtectedMember
         api_keys = await ctx.bot._config.api_tokens()
         msg = self.sanitize_output(ctx, api_keys, msg)
 
@@ -265,7 +267,7 @@ class Dev(commands.Cog):
                     result = executor(code, variables)
                     if inspect.isawaitable(result):
                         result = await result
-            except:
+            except Exception:
                 value = stdout.getvalue()
                 msg = "{}{}".format(value, traceback.format_exc())
             else:
@@ -276,6 +278,7 @@ class Dev(commands.Cog):
                 elif value:
                     msg = "{}".format(value)
 
+            # noinspection PyProtectedMember
             api_keys = await ctx.bot._config.api_tokens()
             msg = self.sanitize_output(ctx, api_keys, msg)
 

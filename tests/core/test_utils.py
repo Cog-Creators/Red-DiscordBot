@@ -1,13 +1,16 @@
 import asyncio
-import pytest
 import random
 import textwrap
+
+import pytest
+
+# noinspection PyProtectedMember
 from redbot.core.utils import (
-    chat_formatting,
     bounded_gather,
     bounded_gather_iter,
-    deduplicate_iterables,
+    chat_formatting,
     common_filters,
+    deduplicate_iterables,
 )
 
 

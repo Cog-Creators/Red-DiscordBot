@@ -1,6 +1,5 @@
 import pytest
 
-from redbot.pytest.rpc import *
 from redbot.core.rpc import get_name
 
 
@@ -11,21 +10,25 @@ def test_get_name(cog):
 
 
 def test_internal_methods_exist(rpc):
+    # noinspection PyProtectedMember
     assert "GET_METHODS" in rpc._rpc.methods
 
 
 def test_add_method(rpc, cog):
     rpc.add_method(cog.cofunc)
 
+    # noinspection PyProtectedMember
     assert get_name(cog.cofunc) in rpc._rpc.methods
 
 
 def test_double_add(rpc, cog):
     rpc.add_method(cog.cofunc)
+    # noinspection PyProtectedMember
     count = len(rpc._rpc.methods)
 
     rpc.add_method(cog.cofunc)
 
+    # noinspection PyProtectedMember
     assert count == len(rpc._rpc.methods)
 
 
@@ -40,6 +43,7 @@ def test_add_multi(rpc, cog):
 
     names = [get_name(f) for f in funcs]
 
+    # noinspection PyProtectedMember
     assert all(n in rpc._rpc.methods for n in names)
 
 
@@ -51,28 +55,35 @@ def test_add_multi_bad(rpc, cog):
 
     names = [get_name(f) for f in funcs]
 
+    # noinspection PyProtectedMember
     assert not any(n in rpc._rpc.methods for n in names)
 
 
 def test_remove_method(rpc, existing_func):
+    # noinspection PyProtectedMember
     before_count = len(rpc._rpc.methods)
     rpc.remove_method(existing_func)
 
+    # noinspection PyProtectedMember
     assert get_name(existing_func) not in rpc._rpc.methods
+    # noinspection PyProtectedMember
     assert before_count - 1 == len(rpc._rpc.methods)
 
 
 def test_remove_multi_method(rpc, existing_multi_func):
+    # noinspection PyProtectedMember
     before_count = len(rpc._rpc.methods)
     name = get_name(existing_multi_func[0])
     prefix = name.split("__")[0]
 
     rpc.remove_methods(prefix)
 
+    # noinspection PyProtectedMember
     assert before_count - len(existing_multi_func) == len(rpc._rpc.methods)
 
     names = [get_name(f) for f in existing_multi_func]
 
+    # noinspection PyProtectedMember
     assert not any(n in rpc._rpc.methods for n in names)
 
 

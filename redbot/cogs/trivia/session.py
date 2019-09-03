@@ -1,33 +1,33 @@
 """Module to manage trivia sessions."""
 import asyncio
-import time
 import random
+import time
 from collections import Counter
+
 import discord
+
 from redbot.core import bank
 from redbot.core.i18n import Translator
-from redbot.core.utils.chat_formatting import box, bold, humanize_list, humanize_number
+from redbot.core.utils.chat_formatting import bold, box, humanize_list, humanize_number
 from redbot.core.utils.common_filters import normalize_smartquotes
 from .log import LOG
 
 __all__ = ["TriviaSession"]
 
-T_ = Translator("TriviaSession", __file__)
+_ = Translator("TriviaSession", __file__)
 
 
-_ = lambda s: s
 _REVEAL_MESSAGES = (
-    _("I know this one! {answer}!"),
-    _("Easy: {answer}."),
-    _("Oh really? It's {answer} of course."),
+    "I know this one! {answer}!",
+    "Easy: {answer}.",
+    "Oh really? It's {answer} of course.",
 )
 _FAIL_MESSAGES = (
-    _("To the next one I guess..."),
-    _("Moving on..."),
-    _("I'm sure you'll know the answer of the next one."),
-    _("\N{PENSIVE FACE} Next one."),
+    "To the next one I guess...",
+    "Moving on...",
+    "I'm sure you'll know the answer of the next one.",
+    "\N{PENSIVE FACE} Next one.",
 )
-_ = T_
 
 
 class TriviaSession:
@@ -186,9 +186,9 @@ class TriviaSession:
                 self.stop()
                 return False
             if self.settings["reveal_answer"]:
-                reply = T_(random.choice(_REVEAL_MESSAGES)).format(answer=answers[0])
+                reply = _(random.choice(_REVEAL_MESSAGES)).format(answer=answers[0])
             else:
-                reply = T_(random.choice(_FAIL_MESSAGES))
+                reply = _(random.choice(_FAIL_MESSAGES))
             if self.settings["bot_plays"]:
                 reply += _(" **+1** for me!")
                 self.scores[self.ctx.guild.me] += 1

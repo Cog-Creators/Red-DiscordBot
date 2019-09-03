@@ -1,21 +1,19 @@
 import asyncio
 from datetime import datetime, timedelta
-from typing import List, Union, Optional, cast
+from typing import List, Optional, Union, cast
 
 import discord
 
 from redbot.core import Config
 from redbot.core.bot import Red
-
+from .generic_casetypes import all_generics
+from .i18n import Translator
 from .utils.common_filters import (
+    escape_spoilers,
     filter_invites,
     filter_mass_mentions,
     filter_urls,
-    escape_spoilers,
 )
-from .i18n import Translator
-
-from .generic_casetypes import all_generics
 
 __all__ = [
     "Case",
@@ -833,6 +831,7 @@ async def get_all_casetypes(guild: discord.Guild = None) -> List[CaseType]:
     ]
 
 
+# noinspection PySameParameterValue
 async def register_casetype(
     name: str, default_setting: bool, image: str, case_str: str
 ) -> CaseType:

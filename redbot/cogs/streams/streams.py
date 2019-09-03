@@ -1,31 +1,32 @@
+import asyncio
 import contextlib
+import re
+from collections import defaultdict
+from typing import List, Optional, Tuple
 
 import discord
+
 from redbot.core import Config, checks, commands
-from redbot.core.utils.chat_formatting import pagify
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils.chat_formatting import pagify
+from . import streamtypes as _streamtypes
+from .errors import (
+    APIError,
+    InvalidTwitchCredentials,
+    InvalidYoutubeCredentials,
+    OfflineStream,
+    StreamNotFound,
+    StreamsError,
+)
 from .streamtypes import (
-    Stream,
-    TwitchStream,
     HitboxStream,
     MixerStream,
     PicartoStream,
+    Stream,
+    TwitchStream,
     YoutubeStream,
 )
-from .errors import (
-    OfflineStream,
-    StreamNotFound,
-    APIError,
-    InvalidYoutubeCredentials,
-    StreamsError,
-    InvalidTwitchCredentials,
-)
-from . import streamtypes as _streamtypes
-from collections import defaultdict
-import asyncio
-import re
-from typing import Optional, List, Tuple
 
 CHECK_DELAY = 60
 
@@ -555,16 +556,20 @@ class Streams(commands.Cog):
                         embed = await stream.is_online()
                         is_rerun = False
                 except OfflineStream:
+                    # noinspection PyProtectedMember
                     if not stream._messages_cache:
                         continue
+                    # noinspection PyProtectedMember
                     for message in stream._messages_cache:
                         with contextlib.suppress(Exception):
                             autodelete = await self.db.guild(message.guild).autodelete()
                             if autodelete:
                                 await message.delete()
+                    # noinspection PyProtectedMember
                     stream._messages_cache.clear()
                     await self.save_streams()
                 else:
+                    # noinspection PyProtectedMember
                     if stream._messages_cache:
                         continue
                     for channel_id in stream.channels:
@@ -590,6 +595,7 @@ class Streams(commands.Cog):
                                 content = _("{stream.name} is live!").format(stream=stream)
 
                         m = await channel.send(content, embed=embed)
+                        # noinspection PyProtectedMember
                         stream._messages_cache.append(m)
                         if edited_roles:
                             for role in edited_roles:

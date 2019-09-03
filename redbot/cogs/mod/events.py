@@ -1,9 +1,10 @@
 import logging
-from datetime import datetime
 from collections import defaultdict, deque
+from typing import Optional
 
 import discord
-from redbot.core import i18n, modlog, commands
+
+from redbot.core import commands, i18n, modlog
 from redbot.core.utils.mod import is_mod_or_superior
 from .abc import MixinMeta
 
@@ -11,6 +12,7 @@ _ = i18n.Translator("Mod", __file__)
 log = logging.getLogger("red.mod")
 
 
+# noinspection PyAbstractClass
 class Events(MixinMeta):
     """
     This is a mixin for the core mod cog

@@ -1,4 +1,4 @@
-from redbot.cogs.permissions.permissions import Permissions, GLOBAL
+from redbot.cogs.permissions.permissions import GLOBAL, Permissions
 
 
 def test_schema_update():
@@ -39,6 +39,7 @@ def test_schema_update():
             }
         },
     }
+    # noinspection PyProtectedMember
     new = Permissions._get_updated_schema(old)
     assert new == (
         {

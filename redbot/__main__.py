@@ -25,15 +25,34 @@ elif sys.implementation.name == "cpython":
     else:
         asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
+# noinspection PyPep8
 import redbot.logging
+
+# noinspection PyPep8
 from redbot.core.bot import Red, ExitCodes
+
+# noinspection PyProtectedMember,PyPep8
 from redbot.core.cog_manager import CogManagerUI
+
+# noinspection PyPep8
 from redbot.core.global_checks import init_global_checks
+
+# noinspection PyPep8
 from redbot.core.events import init_events
+
+# noinspection PyPep8
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags
+
+# noinspection PyPep8
 from redbot.core.core_commands import Core
+
+# noinspection PyPep8
 from redbot.core.dev_commands import Dev
+
+# noinspection PyPep8
 from redbot.core import __version__, modlog, bank, data_manager, drivers
+
+# noinspection PyPep8
 from signal import SIGTERM
 
 
@@ -52,7 +71,9 @@ async def _get_prefix_and_token(red, indict):
     :param indict:
     :return:
     """
+    # noinspection PyProtectedMember
     indict["token"] = await red._config.token()
+    # noinspection PyProtectedMember
     indict["prefix"] = await red._config.prefix()
 
 
@@ -109,12 +130,14 @@ def main():
     )
 
     log.debug("====Basic Config====")
+    # noinspection PyProtectedMember
     log.debug("Data Path: %s", data_manager._base_data_path())
     log.debug("Storage Type: %s", data_manager.storage_type())
 
     red = Red(
         cli_flags=cli_flags, description=description, dm_help=None, fetch_offline_members=True
     )
+    # noinspection PyProtectedMember
     loop.run_until_complete(red._maybe_update_config())
     init_global_checks(red)
     init_events(red, cli_flags)
@@ -153,10 +176,12 @@ def main():
         loop.run_until_complete(red.start(token, bot=True))
     except discord.LoginFailure:
         log.critical("This token doesn't seem to be valid.")
+        # noinspection PyProtectedMember
         db_token = loop.run_until_complete(red._config.token())
         if db_token and not cli_flags.no_prompt:
             print("\nDo you want to reset the token? (y/n)")
             if confirm("> "):
+                # noinspection PyProtectedMember
                 loop.run_until_complete(red._config.token.set(""))
                 print("Token has been reset.")
     except KeyboardInterrupt:
@@ -175,6 +200,7 @@ def main():
         except AttributeError:
             pass
 
+        # noinspection PyProtectedMember
         sys.exit(red._shutdown_mode.value)
 
 

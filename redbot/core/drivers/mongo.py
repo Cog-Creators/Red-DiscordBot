@@ -2,7 +2,7 @@ import contextlib
 import itertools
 import re
 from getpass import getpass
-from typing import Match, Pattern, Tuple, Optional, AsyncIterator, Any, Dict, Iterator, List
+from typing import Any, AsyncIterator, Dict, Iterator, List, Match, Optional, Pattern, Tuple
 from urllib.parse import quote_plus
 
 try:
@@ -175,7 +175,6 @@ class MongoDriver(BaseDriver):
     async def set(self, identifier_data: IdentifierData, value=None):
         uuid = self._escape_key(identifier_data.uuid)
         primary_key = list(map(self._escape_key, self.get_primary_key(identifier_data)))
-        dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
         if isinstance(value, dict):
             if len(value) == 0:
                 await self.clear(identifier_data)

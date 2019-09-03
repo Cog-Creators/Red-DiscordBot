@@ -2,7 +2,6 @@ from pathlib import Path
 
 import pytest
 
-from redbot.pytest.cog_manager import *
 from redbot.core import cog_manager
 
 

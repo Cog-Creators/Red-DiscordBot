@@ -2,8 +2,6 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from redbot.pytest.admin import *
-
 
 @pytest.mark.asyncio
 async def test_serverlock_check(admin, coroutine):
@@ -38,6 +36,7 @@ async def test_announcer_ignore(announcer, empty_guild, empty_channel):
 
     guild.get_channel.return_value = empty_channel
 
+    # noinspection PyProtectedMember
     ret = await announcer._get_announce_channel(guild)
 
     assert guild.get_channel.called

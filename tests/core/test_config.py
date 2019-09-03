@@ -1,5 +1,6 @@
 import asyncio
 from unittest.mock import patch
+
 import pytest
 
 
@@ -300,7 +301,6 @@ async def test_member_clear_all(config, member_factory):
         await config.member(member).foo.set(True)
         server_ids.append(member.guild.id)
 
-    member = member_factory.get()
     assert len(await config.all_members()) == len(server_ids)
 
     await config.clear_all_members()

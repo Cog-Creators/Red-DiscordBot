@@ -1,10 +1,9 @@
 import discord
-from redbot.core.utils.chat_formatting import box, humanize_number
 
-from redbot.core import checks, bank, commands
-from redbot.core.i18n import Translator, cog_i18n
-
+from redbot.core import bank, checks, commands
 from redbot.core.bot import Red  # Only used for type hints
+from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils.chat_formatting import box, humanize_number
 
 _ = Translator("Bank", __file__)
 
@@ -74,14 +73,20 @@ class Bank(commands.Cog):
         """Base command for bank settings."""
         if ctx.invoked_subcommand is None:
             if await bank.is_global():
+                # noinspection PyProtectedMember
                 bank_name = await bank._conf.bank_name()
+                # noinspection PyProtectedMember
                 currency_name = await bank._conf.currency()
+                # noinspection PyProtectedMember
                 default_balance = await bank._conf.default_balance()
             else:
                 if not ctx.guild:
                     return
+                # noinspection PyProtectedMember
                 bank_name = await bank._conf.guild(ctx.guild).bank_name()
+                # noinspection PyProtectedMember
                 currency_name = await bank._conf.guild(ctx.guild).currency()
+                # noinspection PyProtectedMember
                 default_balance = await bank._conf.guild(ctx.guild).default_balance()
 
             settings = _(

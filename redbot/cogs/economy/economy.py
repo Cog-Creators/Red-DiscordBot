@@ -3,20 +3,19 @@ import logging
 import random
 from collections import defaultdict, deque, namedtuple
 from enum import Enum
-from typing import cast, Iterable, Union
+from typing import Iterable, Union, cast
 
 import discord
 
-from redbot.cogs.bank import check_global_setting_guildowner, check_global_setting_admin
+from redbot.cogs.bank import check_global_setting_admin, check_global_setting_guildowner
 from redbot.cogs.mod.converters import RawUserIds
-from redbot.core import Config, bank, commands, errors, checks
+from redbot.core import Config, bank, checks, commands, errors
+from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, humanize_number
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
+from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 
-from redbot.core.bot import Red
-
-T_ = Translator("Economy", __file__)
+_ = Translator("Economy", __file__)
 
 logger = logging.getLogger("red.economy")
 
@@ -37,35 +36,34 @@ class SMReel(Enum):
     snowflake = "\N{SNOWFLAKE}"
 
 
-_ = lambda s: s
 PAYOUTS = {
     (SMReel.two, SMReel.two, SMReel.six): {
         "payout": lambda x: x * 50,
-        "phrase": _("JACKPOT! 226! Your bid has been multiplied * 50!"),
+        "phrase": "JACKPOT! 226! Your bid has been multiplied * 50!",
     },
     (SMReel.flc, SMReel.flc, SMReel.flc): {
         "payout": lambda x: x * 25,
-        "phrase": _("4LC! Your bid has been multiplied * 25!"),
+        "phrase": "4LC! Your bid has been multiplied * 25!",
     },
     (SMReel.cherries, SMReel.cherries, SMReel.cherries): {
         "payout": lambda x: x * 20,
-        "phrase": _("Three cherries! Your bid has been multiplied * 20!"),
+        "phrase": "Three cherries! Your bid has been multiplied * 20!",
     },
     (SMReel.two, SMReel.six): {
         "payout": lambda x: x * 4,
-        "phrase": _("2 6! Your bid has been multiplied * 4!"),
+        "phrase": "2 6! Your bid has been multiplied * 4!",
     },
     (SMReel.cherries, SMReel.cherries): {
         "payout": lambda x: x * 3,
-        "phrase": _("Two cherries! Your bid has been multiplied * 3!"),
+        "phrase": "Two cherries! Your bid has been multiplied * 3!",
     },
     "3 symbols": {
         "payout": lambda x: x * 10,
-        "phrase": _("Three symbols! Your bid has been multiplied * 10!"),
+        "phrase": "Three symbols! Your bid has been multiplied * 10!",
     },
     "2 symbols": {
         "payout": lambda x: x * 2,
-        "phrase": _("Two consecutive symbols! Your bid has been multiplied * 2!"),
+        "phrase": "Two consecutive symbols! Your bid has been multiplied * 2!",
     },
 }
 
@@ -79,7 +77,6 @@ SLOT_PAYOUTS_MSG = _(
     "Three symbols: Bet * 10\n"
     "Two symbols: Bet * 2"
 ).format(**SMReel.__dict__)
-_ = T_
 
 
 def guild_only_check():
@@ -604,7 +601,8 @@ class Economy(commands.Cog):
                 await channel.send(
                     _(
                         "You've reached the maximum amount of {currency}! "
-                        "Please spend some more \N{GRIMACING FACE}\n{old_balance} -> {new_balance}!"
+                        "Please spend some more \N{GRIMACING FACE}\n"
+                        "{old_balance} -> {new_balance}!"
                     ).format(
                         currency=await bank.get_currency_name(getattr(channel, "guild", None)),
                         old_balance=humanize_number(then),
@@ -612,7 +610,7 @@ class Economy(commands.Cog):
                     )
                 )
                 return
-            phrase = T_(payout["phrase"])
+            phrase = _(payout["phrase"])
         else:
             then = await bank.get_balance(author)
             await bank.withdraw_credits(author, bid)

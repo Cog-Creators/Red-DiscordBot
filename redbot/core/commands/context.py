@@ -1,19 +1,21 @@
 import asyncio
 import contextlib
 from typing import Iterable, List, Union
+
 import discord
 from discord.ext import commands
 
 from .requires import PermState
+from ..utils import common_filters
 from ..utils.chat_formatting import box
 from ..utils.predicates import MessagePredicate
-from ..utils import common_filters
 
 TICK = "\N{WHITE HEAVY CHECK MARK}"
 
 __all__ = ["Context"]
 
 
+# noinspection PyPep8
 class Context(commands.Context):
     """Command invocation context for Red.
 

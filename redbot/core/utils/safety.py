@@ -1,5 +1,5 @@
-import warnings
 import functools
+import warnings
 
 
 def unsafe(f, message=None):

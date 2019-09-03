@@ -64,6 +64,7 @@ author = "Cog Creators"
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
+# noinspection PyPep8
 from redbot.core import __version__
 
 # The short X.Y version.

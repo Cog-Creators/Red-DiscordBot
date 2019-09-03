@@ -1,13 +1,13 @@
 from collections import defaultdict, deque
 
-from redbot.core import commands, i18n, checks
+from redbot.core import checks, commands, i18n
 from redbot.core.utils.chat_formatting import box
-
 from .abc import MixinMeta
 
 _ = i18n.Translator("Mod", __file__)
 
 
+# noinspection PyAbstractClass
 class ModSettings(MixinMeta):
     """
     This is a mixin for the mod cog containing all settings commands.

@@ -1,6 +1,6 @@
 import itertools
 import re
-from typing import NamedTuple, Union, Optional
+from typing import NamedTuple, Optional, Union
 
 import discord
 
@@ -18,6 +18,7 @@ def _match_id(arg: str) -> Optional[int]:
         return int(m.group(1))
 
 
+# noinspection PyMethodMayBeStatic
 class GlobalUniqueObjectFinder(commands.Converter):
     async def convert(
         self, ctx: commands.Context, arg: str
@@ -77,6 +78,7 @@ class GlobalUniqueObjectFinder(commands.Converter):
             )
 
 
+# noinspection PyMethodMayBeStatic
 class GuildUniqueObjectFinder(commands.Converter):
     async def convert(
         self, ctx: commands.Context, arg: str
@@ -151,6 +153,7 @@ class CogOrCommand(NamedTuple):
         )
 
 
+# noinspection PyPep8Naming
 def RuleType(arg: str) -> bool:
     if arg.lower() in ("allow", "whitelist", "allowed"):
         return True
@@ -162,6 +165,7 @@ def RuleType(arg: str) -> bool:
     )
 
 
+# noinspection PyPep8Naming
 def ClearableRuleType(arg: str) -> Optional[bool]:
     if arg.lower() in ("allow", "whitelist", "allowed"):
         return True

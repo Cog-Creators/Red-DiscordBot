@@ -3,7 +3,7 @@ import functools
 import io
 import os
 from pathlib import Path
-from typing import Callable, Union, Dict, Optional
+from typing import Callable, Dict, Optional, Union
 
 import babel.localedata
 from babel.core import Locale
@@ -74,6 +74,7 @@ def _parse(translation_file: io.TextIOWrapper) -> Dict[str, str]:
                 # Store the last translation
                 translations[_unescape(untranslated)] = _unescape(translated)
             step = IN_MSGID
+            # noinspection PyPep8
             untranslated = line[len(MSGID) : -1]
         elif line.startswith('"') and line.endswith('"'):
             if step is IN_MSGID:
@@ -85,6 +86,7 @@ def _parse(translation_file: io.TextIOWrapper) -> Dict[str, str]:
         elif line.startswith(MSGSTR):
             # New msgstr
             step = IN_MSGSTR
+            # noinspection PyPep8
             translated = line[len(MSGSTR) : -1]
 
     if step is IN_MSGSTR and translated:
@@ -102,6 +104,7 @@ def _unescape(string):
     return string
 
 
+# noinspection PySameParameterValue
 def get_locale_path(cog_folder: Path, extension: str) -> Path:
     """
     Gets the folder path containing localization files.
