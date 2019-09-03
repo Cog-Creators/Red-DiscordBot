@@ -3,7 +3,7 @@ commands.requires
 =================
 This module manages the logic of resolving command permissions and
 requirements. This includes rules which override those requirements,
-as well as custom checks which can be overriden, and some special
+as well as custom checks which can be overridden, and some special
 checks like bot permissions checks.
 """
 import asyncio
@@ -95,8 +95,8 @@ class PrivilegeLevel(enum.IntEnum):
     """Enumeration for special privileges."""
 
     # Maintainer Note: do NOT re-order these.
-    # Each privelege level also implies access to the ones before it.
-    # Inserting new privelege levels at a later point is fine if that is considered.
+    # Each privilege level also implies access to the ones before it.
+    # Inserting new privilege levels at a later point is fine if that is considered.
 
     NONE = enum.auto()
     """No special privilege level."""
@@ -441,7 +441,7 @@ class Requires:
         Parameters
         ----------
         ctx : "Context"
-            The invkokation context to check with.
+            The invocation context to check with.
 
         Returns
         -------
@@ -454,7 +454,7 @@ class Requires:
             If the bot is missing required permissions to run the
             command.
         CommandError
-            Propogated from any permissions checks.
+            Propagated from any permissions checks.
 
         """
         if not self.ready_event.is_set():
@@ -488,7 +488,7 @@ class Requires:
         cur_state = self._get_rule_from_ctx(ctx)
         should_invoke, next_state = prev_state.transition_to(cur_state)
         if should_invoke is None:
-            # NORMAL invokation, we simply follow standard procedure
+            # NORMAL invocation, we simply follow standard procedure
             should_invoke = await self._verify_user(ctx)
         elif isinstance(next_state, dict):
             # NORMAL to PASSIVE_ALLOW; should we proceed as normal or transition?

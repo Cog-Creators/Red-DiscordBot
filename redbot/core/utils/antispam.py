@@ -11,7 +11,7 @@ class AntiSpam:
     Custom class which is more flexible than using discord.py's
     `commands.cooldown()`
 
-    Can be intialized with a custom set of intervals
+    Can be initialized with a custom set of intervals
     These should be provided as a list of tuples in the form
     (timedelta, quantity)
 

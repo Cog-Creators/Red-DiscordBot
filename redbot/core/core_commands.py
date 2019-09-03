@@ -126,7 +126,7 @@ class CoreLogic:
 
     @staticmethod
     def _cleanup_and_refresh_modules(module_name: str) -> None:
-        """Interally reloads modules so that changes are detected"""
+        """Integrally reloads modules so that changes are detected"""
         splitted = module_name.split(".")
 
         def maybe_reload(new_name):
@@ -507,7 +507,7 @@ class Core(commands.Cog, CoreLogic):
         For that, you need to provide a valid permissions level.
         You can generate one here: https://discordapi.com/permissions.html
 
-        Please note that you might need two factor authentification for\
+        Please note that you might need two factor authentication for\
         some permissions.
         """
         # noinspection PyProtectedMember
@@ -1282,7 +1282,7 @@ class Core(commands.Cog, CoreLogic):
 
         This setting only applies to embedded help.
 
-        Please note that setting a relitavely small character limit may
+        Please note that setting a relatively small character limit may
         mean some pages will exceed this limit. This is because categories
         are never spread across multiple pages in the help message.
 
@@ -2133,7 +2133,7 @@ class Core(commands.Cog, CoreLogic):
             output += ", ".join(members)
 
         if not output:
-            output = _("No immunty settings here.")
+            output = _("No immunity settings here.")
 
         for page in pagify(output):
             await ctx.send(page)
@@ -2190,7 +2190,7 @@ class Core(commands.Cog, CoreLogic):
     @ownernotifications.command()
     async def optin(self, ctx: commands.Context):
         """
-        Opt-in on recieving owner notifications.
+        Opt-in on receiving owner notifications.
 
         This is the default state.
         """
@@ -2204,7 +2204,7 @@ class Core(commands.Cog, CoreLogic):
     @ownernotifications.command()
     async def optout(self, ctx: commands.Context):
         """
-        Opt-out of recieving owner notifications.
+        Opt-out of receiving owner notifications.
         """
         # noinspection PyProtectedMember
         async with ctx.bot._config.owner_opt_out_list() as opt_outs:
@@ -2218,7 +2218,7 @@ class Core(commands.Cog, CoreLogic):
         self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
     ):
         """
-        Adds a destination text channel to recieve owner notifications
+        Adds a destination text channel to receive owner notifications
         """
 
         try:
@@ -2238,7 +2238,7 @@ class Core(commands.Cog, CoreLogic):
         self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
     ):
         """
-        Removes a destination text channel from recieving owner notifications.
+        Removes a destination text channel from receiving owner notifications.
         """
 
         try:

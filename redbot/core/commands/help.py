@@ -594,7 +594,7 @@ class RedHelpFormatter:
             c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
             # Allow other things to happen during menu timeout/interaction.
             asyncio.create_task(menus.menu(ctx, pages, c, message=m))
-            # menu needs reactions added manually since we fed it a messsage
+            # menu needs reactions added manually since we fed it a message
             menus.start_adding_reactions(m, c.keys())
 
 

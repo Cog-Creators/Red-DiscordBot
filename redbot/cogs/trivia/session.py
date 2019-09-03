@@ -238,7 +238,7 @@ class TriviaSession:
         return _pred
 
     async def end_game(self):
-        """End the trivia session and display scrores."""
+        """End the trivia session and display scores."""
         if self.scores:
             await self.send_table()
         multiplier = self.settings["payout_multiplier"]

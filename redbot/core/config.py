@@ -438,7 +438,7 @@ class Group(Value):
 
         Note
         ----
-        If retreiving a sub-group, the return value of this method will
+        If retrieving a sub-group, the return value of this method will
         include registered defaults for values which have not yet been set.
 
         Parameters

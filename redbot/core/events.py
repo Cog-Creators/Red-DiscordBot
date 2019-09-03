@@ -245,7 +245,7 @@ def init_events(bot, cli_flags):
                 async with ctx.typing():
                     # the sleep here is so that commands using this for ratelimit purposes
                     # are not made more lenient than intended, while still being
-                    # more convienient for the user than redoing it less than a second later.
+                    # more convenient for the user than redoing it less than a second later.
                     await asyncio.sleep(error.retry_after)
                     await ctx.bot.invoke(ctx)
                     # done this way so checks still occur if there are other

@@ -86,7 +86,7 @@ async def _init(bot: Red):
             else:
                 if entry:
                     if entry.user.id != guild.me.id:
-                        # Don't create modlog entires for the bot's own bans, cogs do this.
+                        # Don't create modlog entries for the bot's own bans, cogs do this.
                         mod, reason, date = entry.user, entry.reason, entry.created_at
                         await create_case(_bot_ref, guild, date, "ban", member, mod, reason)
                     return
@@ -122,7 +122,7 @@ async def _init(bot: Red):
             else:
                 if entry:
                     if entry.user.id != guild.me.id:
-                        # Don't create modlog entires for the bot's own unbans, cogs do this.
+                        # Don't create modlog entries for the bot's own unbans, cogs do this.
                         mod, reason, date = entry.user, entry.reason, entry.created_at
                         await create_case(_bot_ref, guild, date, "unban", user, mod, reason)
                     return
@@ -335,7 +335,7 @@ class Case:
             emb.timestamp = datetime.fromtimestamp(self.created_at)
             return emb
         else:
-            user = filter_mass_mentions(filter_urls(user))  # Further sanitization outside embeds
+            user = filter_mass_mentions(filter_urls(user))  # Further sanitation outside embeds
             case_text = ""
             case_text += "{}\n".format(title)
             case_text += _("**User:** {}\n").format(user)

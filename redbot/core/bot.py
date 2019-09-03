@@ -198,7 +198,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         self, ctx: commands.Context, help_for: Union[commands.Command, commands.GroupMixin, str]
     ):
         """
-        Invokes Red's helpformatter for a given context and object.
+        Invokes Red's help formatter for a given context and object.
         """
         return await self._help_formatter.send_help(ctx, help_for)
 
@@ -469,7 +469,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         **kwargs,
     ):
         """
-        This is a convienience wrapper around
+        This is a convenience wrapper around
 
         discord.abc.Messageable.send
 

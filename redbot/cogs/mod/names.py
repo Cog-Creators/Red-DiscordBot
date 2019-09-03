@@ -67,7 +67,7 @@ class ModInfo(MixinMeta):
                 if exc.status == 400:  # BAD REQUEST
                     await ctx.send(_("That nickname is invalid."))
                 else:
-                    await ctx.send(_("An unexpected error has occured."))
+                    await ctx.send(_("An unexpected error has occurred."))
             else:
                 await ctx.send(_("Done."))
 

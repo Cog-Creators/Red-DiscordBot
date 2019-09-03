@@ -178,7 +178,7 @@ class CommandObj:
         await self.db(ctx.guild).commands.set_raw(command, value=ccinfo)
 
     async def delete(self, ctx: commands.Context, command: str):
-        """Delete an already exisiting custom command"""
+        """Delete an already existing custom command"""
         # Check if this command is registered
         if not await self.db(ctx.guild).commands.get_raw(command, default=None):
             raise NotFound()
@@ -390,7 +390,7 @@ class CustomCommands(commands.Cog):
 
     @customcom.command(name="show")
     async def cc_show(self, ctx, command_name: str):
-        """Shows a custom command's reponses and its settings."""
+        """Shows a custom command's responses and its settings."""
 
         try:
             cmd = await self.commandobj.get_full(ctx.message, command_name)

@@ -133,7 +133,7 @@ class Trivia(commands.Cog):
         if enabled:
             await ctx.send(_("Done. I'll now gain a point if users don't answer in time."))
         else:
-            await ctx.send(_("Alright, I won't embarass you at trivia anymore."))
+            await ctx.send(_("Alright, I won't embarrass you at trivia anymore."))
 
     @triviaset.command(name="revealanswer", usage="<true_or_false>")
     async def trivaset_reveal_answer(self, ctx: commands.Context, enabled: bool):

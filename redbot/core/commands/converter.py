@@ -163,7 +163,7 @@ class APIToken(discord.ext.commands.Converter):
 
 class DictConverter(dpy_commands.Converter):
     """
-    Converts pairs of space seperated values to a dict
+    Converts pairs of space separated values to a dict
     """
 
     def __init__(self, *expected_keys: str, delims: Optional[List[str]] = None):

@@ -73,7 +73,7 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         Parameters
         ----------
         ctx : Optional[Context]
-            The current invokation context.
+            The current invocation context.
         channel : Optional[discord.TextChannel]
             The channel we expect a message in. If unspecified,
             defaults to ``ctx.channel``. If ``ctx`` is unspecified

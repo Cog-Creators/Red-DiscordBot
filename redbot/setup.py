@@ -391,7 +391,7 @@ def cli(ctx, debug):
     is_flag=True,
     default=None,
     help=(
-        "Drop the entire database constaining this instance's data. Has no effect on JSON "
+        "Drop the entire database containing this instance's data. Has no effect on JSON "
         "instances. If these options and --no-prompt are omitted, you will be asked about this."
     ),
 )

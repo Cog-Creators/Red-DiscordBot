@@ -103,7 +103,7 @@ class Events(MixinMeta):
                 while None in name_list:  # clean out null entries from a bug
                     name_list.remove(None)
                 if after.name in name_list:
-                    # Ensure order is maintained without duplicates occuring
+                    # Ensure order is maintained without duplicates occurring
                     name_list.remove(after.name)
                 name_list.append(after.name)
                 while len(name_list) > 20:

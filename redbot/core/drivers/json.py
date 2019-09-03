@@ -217,7 +217,7 @@ class JsonDriver(BaseDriver):
 
 def _save_json(path: Path, data: Dict[str, Any]) -> None:
     """
-    This fsync stuff here is entirely neccessary.
+    This fsync stuff here is entirely necessary.
 
     On windows, it is not available in entirety.
     If a windows user ends up with tons of temp files, they should consider hosting on

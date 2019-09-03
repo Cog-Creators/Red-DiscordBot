@@ -321,7 +321,7 @@ def escape(text: str, *, mass_mentions: bool = False, formatting: bool = False) 
     mass_mentions : `bool`, optional
         Set to :code:`True` to escape mass mentions in the text.
     formatting : `bool`, optional
-        Set to :code:`True` to escpae any markdown formatting in the text.
+        Set to :code:`True` to escape any markdown formatting in the text.
 
     Returns
     -------
@@ -338,7 +338,7 @@ def escape(text: str, *, mass_mentions: bool = False, formatting: bool = False) 
 
 
 def humanize_list(items: Sequence[str]) -> str:
-    """Get comma-separted list, with the last element joined with *and*.
+    """Get comma-separated list, with the last element joined with *and*.
 
     This uses an Oxford comma, because without one, items containing
     the word *and* would make the output difficult to interpret.
