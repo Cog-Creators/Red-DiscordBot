@@ -15,10 +15,7 @@ from .log import LOG
 __all__ = ["TriviaSession"]
 
 T_ = Translator("TriviaSession", __file__)
-
-
-def _(s):
-    return s
+_ = lambda s: s
 
 
 _REVEAL_MESSAGES = (

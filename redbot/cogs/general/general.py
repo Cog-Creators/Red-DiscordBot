@@ -38,11 +38,7 @@ class General(commands.Cog):
     """General commands."""
 
     global _
-
-    @staticmethod
-    def _(s):
-        return s
-
+    _ = lambda s: s
     ball = [
         _("As I see it, yes"),
         _("It is certain"),

@@ -34,10 +34,7 @@ _NewConfigSchema = Dict[str, Dict[int, Dict[str, Dict[int, bool]]]]
 # The strings in the schema are constants and should get extracted, but not translated until
 # runtime.
 translate = _
-
-
-def _(s):
-    return s
+_ = lambda s: s
 
 
 YAML_SCHEMA = Schema(

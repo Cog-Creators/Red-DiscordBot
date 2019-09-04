@@ -296,7 +296,7 @@ async def test_member_clear(config, member_factory):
 @pytest.mark.asyncio
 async def test_member_clear_all(config, member_factory):
     server_ids = []
-    for _ in range(5):
+    for _loop_counter in range(5):
         member = member_factory.get()
         await config.member(member).foo.set(True)
         server_ids.append(member.guild.id)
@@ -332,7 +332,7 @@ async def test_clear_value(config):
 @pytest.mark.asyncio
 async def test_user_get_all_from_kind(config, user_factory):
     config.register_user(foo=False, bar=True)
-    for _ in range(5):
+    for _loop_counter in range(5):
         user = user_factory.get()
         await config.user(user).foo.set(True)
 
@@ -340,7 +340,7 @@ async def test_user_get_all_from_kind(config, user_factory):
 
     assert len(all_data) == 5
 
-    for _, v in all_data.items():
+    for _loop_counter, v in all_data.items():
         assert v["foo"] is True
         assert v["bar"] is True
 
@@ -523,7 +523,7 @@ async def test_config_locks_cache(config, empty_guild):
 async def test_config_value_atomicity(config):
     config.register_global(foo=[])
     tasks = []
-    for _ in range(15):
+    for _loop_counter in range(15):
 
         async def func():
             async with config.foo.get_lock():
@@ -543,7 +543,7 @@ async def test_config_value_atomicity(config):
 async def test_config_ctxmgr_atomicity(config):
     config.register_global(foo=[])
     tasks = []
-    for _ in range(15):
+    for _loop_counter in range(15):
 
         async def func():
             async with config.foo() as foo:

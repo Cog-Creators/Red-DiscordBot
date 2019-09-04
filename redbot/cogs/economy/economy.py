@@ -36,8 +36,7 @@ class SMReel(Enum):
     snowflake = "\N{SNOWFLAKE}"
 
 
-def _(s):
-    return s
+_ = lambda s: s
 
 
 PAYOUTS = {

@@ -30,7 +30,7 @@ _ = Translator("Streams", __file__)
 
 def rnd(url):
     """Appends a random parameter to the url to avoid Discord's caching"""
-    return url + "?rnd=" + "".join([choice(ascii_letters) for _ in range(6)])
+    return url + "?rnd=" + "".join([choice(ascii_letters) for _loop_counter in range(6)])
 
 
 class Stream:

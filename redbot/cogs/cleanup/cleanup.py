@@ -403,14 +403,9 @@ class Cleanup(commands.Cog):
         cc_cog = self.bot.get_cog("CustomCommands")
         if cc_cog is not None:
             command_names: Set[str] = await cc_cog.get_command_names(ctx.guild)
-
-            def is_cc(name):
-                return name in command_names
-
+            is_cc = lambda name: name in command_names
         else:
-
-            def is_cc(name):
-                return False
+            is_cc = lambda name: False
 
         alias_cog = self.bot.get_cog("Alias")
         if alias_cog is not None:
@@ -418,14 +413,9 @@ class Cleanup(commands.Cog):
                 set((a.name for a in await alias_cog.unloaded_global_aliases()))
                 | set(a.name for a in await alias_cog.unloaded_aliases(ctx.guild))
             )
-
-            def is_alias(name):
-                return name in alias_names
-
+            is_alias = lambda name: name in alias_names
         else:
-
-            def is_alias(name):
-                return False
+            is_alias = lambda name: False
 
         bot_id = self.bot.user.id
 

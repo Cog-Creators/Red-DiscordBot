@@ -13,10 +13,7 @@ log = logging.getLogger("red.admin")
 
 T_ = Translator("Admin", __file__)
 
-
-def _(s):
-    return s
-
+_ = lambda s: s
 
 GENERIC_FORBIDDEN = _(
     "I attempted to do something that Discord denied me permissions for."
