@@ -3,18 +3,17 @@ import logging
 import random
 from collections import defaultdict, deque, namedtuple
 from enum import Enum
-from typing import cast, Iterable, Union
+from typing import Iterable, Union, cast
 
 import discord
 
-from redbot.cogs.bank import check_global_setting_guildowner, check_global_setting_admin
+from redbot.cogs.bank import check_global_setting_admin, check_global_setting_guildowner
 from redbot.cogs.mod.converters import RawUserIds
-from redbot.core import Config, bank, commands, errors, checks
+from redbot.core import Config, bank, checks, commands, errors
+from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, humanize_number
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-
-from redbot.core.bot import Red
+from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 
 T_ = Translator("Economy", __file__)
 
@@ -37,7 +36,10 @@ class SMReel(Enum):
     snowflake = "\N{SNOWFLAKE}"
 
 
-_ = lambda s: s
+def _(s):
+    return s
+
+
 PAYOUTS = {
     (SMReel.two, SMReel.two, SMReel.six): {
         "payout": lambda x: x * 50,
@@ -604,7 +606,8 @@ class Economy(commands.Cog):
                 await channel.send(
                     _(
                         "You've reached the maximum amount of {currency}! "
-                        "Please spend some more \N{GRIMACING FACE}\n{old_balance} -> {new_balance}!"
+                        "Please spend some more \N{GRIMACING FACE}\n"
+                        "{old_balance} -> {new_balance}!"
                     ).format(
                         currency=await bank.get_currency_name(getattr(channel, "guild", None)),
                         old_balance=humanize_number(then),

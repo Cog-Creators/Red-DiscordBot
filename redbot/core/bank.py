@@ -1,15 +1,15 @@
 import asyncio
 import datetime
-from typing import Union, List, Optional
 from functools import wraps
+from typing import List, Optional, Union
 
 import discord
 
 from redbot.core.utils.chat_formatting import humanize_number
-from . import Config, errors, commands
-from .i18n import Translator
+from . import Config, commands, errors
 from .bot import Red
 from .errors import BankPruneError
+from .i18n import Translator
 
 _ = Translator("Bank API", __file__)
 
@@ -358,7 +358,7 @@ async def wipe_bank(guild: Optional[discord.Guild] = None) -> None:
     Parameters
     ----------
     guild : discord.Guild
-        The guild to clear accounts for. If unsupplied and the bank is
+        The guild to clear accounts for. If un-supplied and the bank is
         per-server, all accounts in every guild will be wiped.
 
     """

@@ -3,17 +3,16 @@ import pkgutil
 from importlib import import_module, invalidate_caches
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Union, List, Optional
+from typing import List, Optional, Union
+
+import discord
 
 import redbot.cogs
 from redbot.core.utils import deduplicate_iterables
-import discord
-
 from . import checks, commands
 from .config import Config
-from .i18n import Translator, cog_i18n
 from .data_manager import cog_data_path
-
+from .i18n import Translator, cog_i18n
 from .utils.chat_formatting import box, pagify
 
 __all__ = ["CogManager"]

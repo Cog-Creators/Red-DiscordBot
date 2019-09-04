@@ -1,7 +1,5 @@
 import pytest
 
-from redbot.pytest.mod import *
-
 
 @pytest.mark.asyncio
 async def test_modlog_register_casetype(mod):

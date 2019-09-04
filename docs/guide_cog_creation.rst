@@ -88,7 +88,7 @@ To test your cog, you will need a running instance of V3.
 Assuming you installed V3 as outlined above, run :code:`redbot-setup`
 and provide the requested information. Once that's done, run Red
 by doing :code:`redbot <instance name> --dev` to start Red.
-Complete the inital setup by providing a valid token and setting a
+Complete the initial setup by providing a valid token and setting a
 prefix. Once the bot has started up, use the link provided in the
 console to add it to a server (note that you must have the
 :code:`Manage Server` (or :code:`Administrator`) permission to add bots

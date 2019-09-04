@@ -1,6 +1,6 @@
 import abc
 import enum
-from typing import Tuple, Dict, Any, Union, List, AsyncIterator, Type
+from typing import Any, AsyncIterator, Dict, List, Tuple, Type, Union
 
 __all__ = ["BaseDriver", "IdentifierData", "ConfigCategory"]
 
@@ -263,7 +263,7 @@ class BaseDriver(abc.ABC):
 
         The driver must be initialized before this operation.
 
-        The BaseDriver provides a generic method which may be overriden
+        The BaseDriver provides a generic method which may be overridden
         by subclasses.
 
         Parameters

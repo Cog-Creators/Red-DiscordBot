@@ -5,11 +5,12 @@
 import asyncio
 import contextlib
 import functools
-from typing import Union, Iterable, Optional
+from typing import Iterable, Optional, Union
+
 import discord
 
-from .. import commands
 from .predicates import ReactionPredicate
+from .. import commands
 
 _ReactableEmoji = Union[str, discord.Emoji]
 

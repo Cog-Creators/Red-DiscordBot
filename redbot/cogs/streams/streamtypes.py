@@ -1,17 +1,19 @@
-from .errors import (
-    StreamNotFound,
-    APIError,
-    OfflineStream,
-    InvalidYoutubeCredentials,
-    InvalidTwitchCredentials,
-)
-from redbot.core.i18n import Translator
-from random import choice, sample
+import json
+from random import choice
 from string import ascii_letters
 from typing import ClassVar, Optional
-import discord
+
 import aiohttp
-import json
+import discord
+
+from redbot.core.i18n import Translator
+from .errors import (
+    APIError,
+    InvalidTwitchCredentials,
+    InvalidYoutubeCredentials,
+    OfflineStream,
+    StreamNotFound,
+)
 
 TWITCH_BASE_URL = "https://api.twitch.tv"
 TWITCH_ID_ENDPOINT = TWITCH_BASE_URL + "/kraken/users?login="
@@ -28,7 +30,7 @@ _ = Translator("Streams", __file__)
 
 def rnd(url):
     """Appends a random parameter to the url to avoid Discord's caching"""
-    return url + "?rnd=" + "".join([choice(ascii_letters) for i in range(6)])
+    return url + "?rnd=" + "".join([choice(ascii_letters) for _ in range(6)])
 
 
 class Stream:

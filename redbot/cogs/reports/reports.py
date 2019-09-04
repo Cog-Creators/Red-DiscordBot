@@ -1,19 +1,19 @@
-import logging
 import asyncio
-from typing import Union, List
-from datetime import timedelta
-from copy import copy
 import contextlib
+import logging
+from copy import copy
+from datetime import timedelta
+from typing import List, Union
+
 import discord
 
 from redbot.core import Config, checks, commands
-from redbot.core.utils.chat_formatting import pagify, box
-from redbot.core.utils.antispam import AntiSpam
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils.antispam import AntiSpam
+from redbot.core.utils.chat_formatting import box, pagify
 from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils.tunnel import Tunnel
-
 
 _ = Translator("Reports", __file__)
 
@@ -27,7 +27,7 @@ class Reports(commands.Cog):
 
     default_report = {"report": {}}
 
-    # This can be made configureable later if it
+    # This can be made configurable later if it
     # becomes an issue.
     # Intervals should be a list of tuples in the form
     # (period: timedelta, max_frequency: int)
@@ -327,7 +327,7 @@ class Reports(commands.Cog):
         """
 
         guild = ctx.guild
-        rec = await self.config.custom("REPORT", guild.id, ticket_number).report()
+        rec = await self.config.custom("REPORT", guild.id, str(ticket_number)).report()
 
         try:
             user = guild.get_member(rec.get("user_id"))
@@ -352,8 +352,8 @@ class Reports(commands.Cog):
             "(8MB file size limitation on uploads) "
             "will be forwarded to them until the communication is closed.\n"
             "You can close a communication at any point by reacting with "
-            "the \N{NEGATIVE SQUARED CROSS MARK} to the last message recieved.\n"
-            "Any message succesfully forwarded will be marked with "
+            "the \N{NEGATIVE SQUARED CROSS MARK} to the last message received.\n"
+            "Any message successfully forwarded will be marked with "
             "\N{WHITE HEAVY CHECK MARK}.\n"
             "Tunnels are not persistent across bot restarts."
         )

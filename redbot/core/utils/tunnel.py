@@ -1,9 +1,11 @@
-import discord
-from datetime import datetime
-from redbot.core.utils.chat_formatting import pagify
 import io
 import weakref
+from datetime import datetime
 from typing import List, Optional
+
+import discord
+
+from redbot.core.utils.chat_formatting import pagify
 from .common_filters import filter_mass_mentions
 
 _instances = weakref.WeakValueDictionary({})
@@ -36,7 +38,7 @@ class TunnelMeta(type):
                     temp = super(TunnelMeta, cls).__call__(*args, **kwargs)
                     _instances[lockout_tuple] = temp
                     return temp
-            except:  # NOQA: E722
+            except Exception:  # NOQA: E722
                 # Am I really supposed to except a runtime error flake >.>
                 continue
             else:

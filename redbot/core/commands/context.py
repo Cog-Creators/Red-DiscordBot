@@ -1,13 +1,14 @@
 import asyncio
 import contextlib
 from typing import Iterable, List, Union
+
 import discord
 from discord.ext import commands
 
 from .requires import PermState
+from ..utils import common_filters
 from ..utils.chat_formatting import box
 from ..utils.predicates import MessagePredicate
-from ..utils import common_filters
 
 TICK = "\N{WHITE HEAVY CHECK MARK}"
 
@@ -28,7 +29,7 @@ class Context(commands.Context):
         self.permission_state: PermState = PermState.NORMAL
 
     async def send(self, content=None, **kwargs):
-        """Sends a message to the destination with the content given.
+        r"""Sends a message to the destination with the content given.
 
         This acts the same as `discord.ext.commands.Context.send`, with
         one added keyword argument as detailed below in *Other Parameters*.

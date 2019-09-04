@@ -27,7 +27,7 @@
 
 import asyncio
 from collections import namedtuple
-from typing import Union, List, AsyncIterator, Iterable, cast
+from typing import AsyncIterator, Iterable, List, Union, cast
 
 import discord
 from discord.ext import commands as dpy_commands
@@ -35,7 +35,7 @@ from discord.ext import commands as dpy_commands
 from . import commands
 from .context import Context
 from ..i18n import Translator
-from ..utils import menus, fuzzy_command_search, format_fuzzy_results
+from ..utils import format_fuzzy_results, fuzzy_command_search, menus
 from ..utils.chat_formatting import box, pagify
 
 __all__ = ["red_help", "RedHelpFormatter"]
@@ -528,8 +528,9 @@ class RedHelpFormatter:
 
         return com
 
+    @staticmethod
     async def send_pages(
-        self, ctx: Context, pages: List[Union[str, discord.Embed]], embed: bool = True
+            ctx: Context, pages: List[Union[str, discord.Embed]], embed: bool = True
     ):
         """
         Sends pages based on settings.
@@ -571,7 +572,7 @@ class RedHelpFormatter:
             c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
             # Allow other things to happen during menu timeout/interaction.
             asyncio.create_task(menus.menu(ctx, pages, c, message=m))
-            # menu needs reactions added manually since we fed it a messsage
+            # menu needs reactions added manually since we fed it a message
             menus.start_adding_reactions(m, c.keys())
 
 

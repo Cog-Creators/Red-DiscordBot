@@ -1,8 +1,7 @@
-import itertools
 import datetime
-from typing import Sequence, Iterator, List, Optional, Union
+import itertools
 from io import BytesIO
-
+from typing import Iterator, List, Optional, Sequence, Union
 
 import discord
 from babel.numbers import format_decimal

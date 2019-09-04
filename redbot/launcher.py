@@ -1,23 +1,24 @@
+import argparse
+import asyncio
 import getpass
 import os
 import platform
 import subprocess
 import sys
-import argparse
-import asyncio
-import aiohttp
 
+import aiohttp
 import pkg_resources
+
 from redbot import MIN_PYTHON_VERSION
+from redbot.core import VersionInfo, __version__, version_info as red_version_info
+from redbot.core.cli import confirm
 from redbot.setup import (
     basic_setup,
+    create_backup,
     load_existing_config,
     remove_instance,
     remove_instance_interaction,
-    create_backup,
 )
-from redbot.core import __version__, version_info as red_version_info, VersionInfo
-from redbot.core.cli import confirm
 
 if sys.platform == "linux":
     import distro  # pylint: disable=import-error
@@ -422,7 +423,8 @@ def main_menu():
                 clear_screen()
                 print("==== Reinstall Red ====")
                 print(
-                    "1. Reinstall Red requirements (discard code changes, keep data and 3rd party cogs)"
+                    "1. Reinstall Red requirements "
+                    "(discard code changes, keep data and 3rd party cogs)"
                 )
                 print("2. Reset all data")
                 print("3. Factory reset (discard code changes, reset all data)")

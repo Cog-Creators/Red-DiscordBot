@@ -6,14 +6,13 @@ from collections import Counter
 from enum import Enum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Optional, Union, List, Dict
+from typing import Dict, List, Optional, Union
 
 import discord
 from discord.ext.commands import when_mentioned_or
 
-from . import Config, i18n, commands, errors, drivers
+from . import Config, commands, drivers, errors, i18n
 from .cog_manager import CogManager
-
 from .rpc import RPCMixin
 from .utils import common_filters
 
@@ -388,7 +387,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                 await lib.setup(self)
             else:
                 lib.setup(self)
-        except Exception as e:
+        except Exception:
             self._remove_module_references(lib.__name__)
             self._call_module_finalizers(lib, name)
             raise
@@ -465,7 +464,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         **kwargs,
     ):
         """
-        This is a convienience wrapper around
+        This is a convenience wrapper around
 
         discord.abc.Messageable.send
 

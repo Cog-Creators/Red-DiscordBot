@@ -5,23 +5,23 @@ import shutil
 import sys
 from pathlib import Path
 from sys import path as syspath
-from typing import Tuple, Union, Iterable
+from typing import Iterable, Tuple, Union
 
 import discord
-from redbot.core import checks, commands, Config, version_info as red_version_info
+
+from redbot.core import Config, checks, commands, version_info as red_version_info
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box, pagify, humanize_list, inline
+from redbot.core.utils.chat_formatting import box, humanize_list, inline, pagify
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
-
 from . import errors
 from .checks import do_install_agreement
 from .converters import InstalledCog
 from .installable import Installable
 from .log import log
-from .repo_manager import RepoManager, Repo
+from .repo_manager import Repo, RepoManager
 
 _ = Translator("Downloader", __file__)
 
@@ -342,7 +342,8 @@ class Downloader(commands.Cog):
 
         await ctx.send(
             _(
-                "Cog `{cog_name}` successfully installed. You can load it with `{prefix}load {cog_name}`"
+                "Cog `{cog_name}` successfully installed. "
+                "You can load it with `{prefix}load {cog_name}`"
             ).format(cog_name=cog_name, prefix=ctx.prefix)
         )
         if cog.install_msg is not None:
@@ -558,7 +559,8 @@ class Downloader(commands.Cog):
 
         return msg.format(command=command_name, author=made_by, repo=repo_url, cog=cog_name)
 
-    def cog_name_from_instance(self, instance: object) -> str:
+    @staticmethod
+    def cog_name_from_instance(instance: object) -> str:
         """Determines the cog name that Downloader knows from the cog instance.
 
         Probably.

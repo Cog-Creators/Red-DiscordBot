@@ -1,10 +1,9 @@
 import discord
-from redbot.core.utils.chat_formatting import box, humanize_number
 
-from redbot.core import checks, bank, commands
-from redbot.core.i18n import Translator, cog_i18n
-
+from redbot.core import bank, checks, commands
 from redbot.core.bot import Red  # Only used for type hints
+from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils.chat_formatting import box, humanize_number
 
 _ = Translator("Bank", __file__)
 

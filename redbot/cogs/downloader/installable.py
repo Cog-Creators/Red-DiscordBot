@@ -1,14 +1,13 @@
-import json
 import distutils.dir_util
+import json
 import shutil
 from enum import Enum
 from pathlib import Path
-from typing import MutableMapping, Any, TYPE_CHECKING
+from typing import Any, MutableMapping, TYPE_CHECKING
 
-from .log import log
+from redbot.core import VersionInfo, __version__, version_info as red_version_info
 from .json_mixins import RepoJSONMixin
-
-from redbot.core import __version__, version_info as red_version_info, VersionInfo
+from .log import log
 
 if TYPE_CHECKING:
     from .repo_manager import RepoManager
@@ -121,7 +120,7 @@ class Installable(RepoJSONMixin):
         # noinspection PyBroadException
         try:
             copy_func(src=str(self._location), dst=str(target_dir / self._location.stem))
-        except:
+        except Exception:
             log.exception("Error occurred when copying path: {}".format(self._location))
             return False
         return True
@@ -150,7 +149,6 @@ class Installable(RepoJSONMixin):
             try:
                 info = json.load(f)
             except json.JSONDecodeError:
-                info = {}
                 log.exception("Invalid JSON information file at path: {}".format(info_file_path))
             else:
                 self._info = info

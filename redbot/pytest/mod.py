@@ -1,4 +1,5 @@
 import pytest
+
 from redbot.core import modlog
 
 __all__ = ["mod"]

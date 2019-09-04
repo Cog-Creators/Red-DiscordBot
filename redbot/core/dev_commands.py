@@ -1,9 +1,9 @@
 import asyncio
 import inspect
 import io
+import re
 import textwrap
 import traceback
-import re
 from contextlib import redirect_stdout
 from copy import copy
 
@@ -89,7 +89,7 @@ class Dev(commands.Cog):
         lines or asynchronous code, see [p]repl or [p]eval.
 
         Environment Variables:
-            ctx      - command invokation context
+            ctx      - command invocation context
             bot      - bot object
             channel  - the current channel object
             author   - command author's member object
@@ -144,7 +144,7 @@ class Dev(commands.Cog):
         as they are not mixed and they are formatted correctly.
 
         Environment Variables:
-            ctx      - command invokation context
+            ctx      - command invocation context
             bot      - bot object
             channel  - the current channel object
             author   - command author's member object
@@ -180,7 +180,7 @@ class Dev(commands.Cog):
         try:
             with redirect_stdout(stdout):
                 result = await func()
-        except:
+        except Exception:
             printed = "{}{}".format(stdout.getvalue(), traceback.format_exc())
         else:
             printed = stdout.getvalue()
@@ -265,7 +265,7 @@ class Dev(commands.Cog):
                     result = executor(code, variables)
                     if inspect.isawaitable(result):
                         result = await result
-            except:
+            except Exception:
                 value = stdout.getvalue()
                 msg = "{}{}".format(value, traceback.format_exc())
             else:

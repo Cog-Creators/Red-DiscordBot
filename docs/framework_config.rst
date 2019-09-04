@@ -124,7 +124,7 @@ Notice a few things in the above examples:
     self.config.<insert scope here, or nothing if global>.variable_name.set(new_value)
 
 It is also possible to use :code:`async with` syntax to get and set config
-values. When entering the statement, the config value is retreived, and on exit,
+values. When entering the statement, the config value is retrieved, and on exit,
 it is saved. This puts a safeguard on any code within the :code:`async with`
 block such that if it breaks from the block in any way (whether it be from
 :code:`return`, :code:`break`, :code:`continue` or an exception), the value will

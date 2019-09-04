@@ -1,5 +1,4 @@
 import pytest
-from redbot.pytest.economy import *
 
 
 @pytest.mark.asyncio

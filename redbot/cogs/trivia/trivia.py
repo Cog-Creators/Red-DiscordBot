@@ -2,14 +2,15 @@
 import pathlib
 from collections import Counter
 from typing import List
-import yaml
+
 import discord
-from redbot.core import commands
-from redbot.core import Config, checks
+import yaml
+
+from redbot.cogs.bank import check_global_setting_admin
+from redbot.core import Config, checks, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box, pagify, bold
-from redbot.cogs.bank import check_global_setting_admin
+from redbot.core.utils.chat_formatting import bold, box, pagify
 from .log import LOG
 from .session import TriviaSession
 
@@ -132,7 +133,7 @@ class Trivia(commands.Cog):
         if enabled:
             await ctx.send(_("Done. I'll now gain a point if users don't answer in time."))
         else:
-            await ctx.send(_("Alright, I won't embarass you at trivia anymore."))
+            await ctx.send(_("Alright, I won't embarrass you at trivia anymore."))
 
     @triviaset.command(name="revealanswer", usage="<true_or_false>")
     async def trivaset_reveal_answer(self, ctx: commands.Context, enabled: bool):

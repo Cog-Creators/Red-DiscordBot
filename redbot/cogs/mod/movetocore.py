@@ -1,9 +1,10 @@
-import logging
 import asyncio
 import contextlib
+import logging
 
 import discord
-from redbot.core import commands, checks, i18n
+
+from redbot.core import checks, commands, i18n
 from redbot.core.utils.chat_formatting import box
 from .abc import MixinMeta
 

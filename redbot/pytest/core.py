@@ -1,13 +1,13 @@
 import random
+import weakref
 from collections import namedtuple
 from pathlib import Path
-import weakref
 
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
-from redbot.core import Config
+
+from redbot.core import Config, config as config_module, drivers
 from redbot.core.bot import Red
-from redbot.core import config as config_module, drivers
 
 __all__ = [
     "monkeysession",
@@ -90,7 +90,8 @@ def guild_factory():
     mock_guild = namedtuple("Guild", "id members")
 
     class GuildFactory:
-        def get(self):
+        @staticmethod
+        def get():
             return mock_guild(random.randint(1, 999999999), [])
 
     return GuildFactory()
@@ -118,7 +119,8 @@ def member_factory(guild_factory):
     mock_member = namedtuple("Member", "id guild display_name")
 
     class MemberFactory:
-        def get(self):
+        @staticmethod
+        def get():
             return mock_member(random.randint(1, 999999999), guild_factory.get(), "Testing_Name")
 
     return MemberFactory()
@@ -134,7 +136,8 @@ def user_factory():
     mock_user = namedtuple("User", "id")
 
     class UserFactory:
-        def get(self):
+        @staticmethod
+        def get():
             return mock_user(random.randint(1, 999999999))
 
     return UserFactory()

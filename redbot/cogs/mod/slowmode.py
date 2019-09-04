@@ -1,8 +1,8 @@
-import re
-from .abc import MixinMeta
 from datetime import timedelta
-from redbot.core import commands, i18n, checks
+
+from redbot.core import checks, commands, i18n
 from redbot.core.utils.chat_formatting import humanize_timedelta
+from .abc import MixinMeta
 
 _ = i18n.Translator("Mod", __file__)
 

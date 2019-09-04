@@ -1,14 +1,11 @@
-import pathlib
-from collections import namedtuple
 from pathlib import Path
-
-import pytest
 from unittest.mock import MagicMock
 
-from redbot.pytest.downloader import *
+import pytest
 
-from redbot.cogs.downloader.repo_manager import RepoManager, Repo
 from redbot.cogs.downloader.errors import ExistingGitRepo
+from redbot.cogs.downloader.repo_manager import Repo
+from redbot.pytest.downloader import *
 
 
 def test_existing_git_repo(tmpdir):

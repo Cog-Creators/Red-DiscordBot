@@ -3,7 +3,7 @@ import functools
 import io
 import os
 from pathlib import Path
-from typing import Callable, Union, Dict, Optional
+from typing import Callable, Dict, Optional, Union
 
 import babel.localedata
 from babel.core import Locale

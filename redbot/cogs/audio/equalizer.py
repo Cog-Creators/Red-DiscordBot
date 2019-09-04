@@ -5,7 +5,7 @@
 class Equalizer:
     def __init__(self):
         self._band_count = 15
-        self.bands = [0.0 for x in range(self._band_count)]
+        self.bands = [0.0 for _ in range(self._band_count)]
 
     def set_gain(self, band: int, gain: float):
         if band < 0 or band >= self._band_count:
@@ -27,8 +27,6 @@ class Equalizer:
         gains = [1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0, -0.1, -0.2, -0.25]
 
         for gain in gains:
-            prefix = " "
-
             if gain > 0:
                 prefix = "+"
             elif gain == 0:

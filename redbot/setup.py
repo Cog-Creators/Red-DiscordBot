@@ -6,15 +6,15 @@ import os
 import sys
 from copy import deepcopy
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
 
 import appdirs
 import click
 
 import redbot.logging
-from redbot.core.utils import safe_delete, create_backup as red_create_backup
 from redbot.core import config, data_manager, drivers
 from redbot.core.drivers import BackendType, IdentifierData
+from redbot.core.utils import create_backup as red_create_backup, safe_delete
 
 conversion_log = logging.getLogger("red.converter")
 
@@ -391,7 +391,7 @@ def cli(ctx, debug):
     is_flag=True,
     default=None,
     help=(
-        "Drop the entire database constaining this instance's data. Has no effect on JSON "
+        "Drop the entire database containing this instance's data. Has no effect on JSON "
         "instances. If these options and --no-prompt are omitted, you will be asked about this."
     ),
 )

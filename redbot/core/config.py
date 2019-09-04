@@ -18,7 +18,7 @@ from typing import (
 
 import discord
 
-from .drivers import IdentifierData, get_driver, ConfigCategory, BaseDriver
+from .drivers import BaseDriver, ConfigCategory, IdentifierData, get_driver
 
 __all__ = ["Config", "get_latest_confs", "migrate"]
 
@@ -437,7 +437,7 @@ class Group(Value):
 
         Note
         ----
-        If retreiving a sub-group, the return value of this method will
+        If retrieving a sub-group, the return value of this method will
         include registered defaults for values which have not yet been set.
 
         Parameters

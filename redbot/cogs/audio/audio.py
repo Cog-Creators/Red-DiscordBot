@@ -1,38 +1,40 @@
-import aiohttp
 import asyncio
 import base64
 import datetime
-import discord
-from fuzzywuzzy import process
 import heapq
-from io import StringIO
 import json
-import lavalink
 import logging
-import math
 import os
 import random
 import re
 import time
+from io import StringIO
 from typing import Optional
+from urllib.parse import urlparse
+
+import aiohttp
+import discord
+import lavalink
+import math
+from fuzzywuzzy import process
+
 import redbot.core
-from redbot.core import Config, commands, checks, bank
+from redbot.core import Config, bank, checks, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import bold, box, pagify, humanize_number
+from redbot.core.utils.chat_formatting import bold, box, humanize_number, pagify
 from redbot.core.utils.menus import (
-    menu,
     DEFAULT_CONTROLS,
-    prev_page,
-    next_page,
     close_menu,
+    menu,
+    next_page,
+    prev_page,
     start_adding_reactions,
 )
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
-from urllib.parse import urlparse
 from .equalizer import Equalizer
-from .manager import ServerManager
 from .errors import LavalinkDownloadFailed
+from .manager import ServerManager
 
 _ = Translator("Audio", __file__)
 
@@ -467,7 +469,8 @@ class Audio(commands.Cog):
         info_msg = _(
             "This setting is only for bot owners to set a localtracks folder location "
             "if the Lavalink.jar is being ran from outside of the Audio data directory.\n"
-            "In the example below, the full path for 'ParentDirectory' must be passed to this command.\n"
+            "In the example below, the full path for "
+            "'ParentDirectory' must be passed to this command.\n"
             "The path must not contain spaces.\n"
             "```\n"
             "ParentDirectory\n"
@@ -479,8 +482,10 @@ class Audio(commands.Cog):
             "  |__ Lavalink.jar\n"
             "  |__ application.yml\n"
             "```\n"
-            "The folder path given to this command must contain the Lavalink.jar, the application.yml, and the localtracks folder.\n"
-            "Use this command with no path given to reset it to the default, the Audio data directory for this bot.\n"
+            "The folder path given to this command must "
+            "contain the Lavalink.jar, the application.yml, and the localtracks folder.\n"
+            "Use this command with no path given to reset it"
+            " to the default, the Audio data directory for this bot.\n"
             "Do you want to continue to set the provided path for local tracks?"
         )
         info = await ctx.maybe_send_embed(info_msg)
@@ -570,7 +575,8 @@ class Audio(commands.Cog):
         """Toggle the domain restriction on Audio.
 
         When toggled off, users will be able to play songs from non-commercial websites and links.
-        When toggled on, users are restricted to YouTube, SoundCloud, Mixer, Vimeo, Twitch, and Bandcamp links."""
+        When toggled on, users are restricted to YouTube, SoundCloud, \
+        Mixer, Vimeo, Twitch, and Bandcamp links."""
         restrict = await self.config.restrict()
         await self.config.restrict.set(not restrict)
         await self._embed_msg(
@@ -713,7 +719,8 @@ class Audio(commands.Cog):
             "(https://console.developers.google.com/)\n"
             "2. You should be prompted to create a new project (name does not matter).\n"
             "3. Click on Enable APIs and Services at the top.\n"
-            "4. In the list of APIs choose or search for YouTube Data API v3 and click on it. Choose Enable.\n"
+            "4. In the list of APIs choose or search for YouTube Data API "
+            "v3 and click on it. Choose Enable.\n"
             "5. Click on Credentials on the left navigation bar.\n"
             "6. Click on Create Credential at the top.\n"
             '7. At the top click the link for "API key".\n'
@@ -845,7 +852,7 @@ class Audio(commands.Cog):
 
     @commands.group(invoke_without_command=True)
     @commands.guild_only()
-    @commands.cooldown(1, 15, discord.ext.commands.BucketType.guild)
+    @commands.cooldown(1, 15, commands.BucketType.guild)
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     async def eq(self, ctx):
         """Equalizer management."""
@@ -938,7 +945,7 @@ class Audio(commands.Cog):
         for page in pagify(preset_list, delims=[", "], page_length=1000):
             formatted_page = box(page, lang="ini")
             embed = discord.Embed(
-                colour=await ctx.embed_colour(), description=(f"{header}\n{formatted_page}")
+                colour=await ctx.embed_colour(), description=f"{header}\n{formatted_page}"
             )
             embed.set_footer(
                 text=_("{num} preset(s)").format(num=humanize_number(len(list(eq_presets.keys()))))
@@ -1016,7 +1023,7 @@ class Audio(commands.Cog):
         player.store("eq_message", message)
 
     @eq.command(name="save")
-    @commands.cooldown(1, 15, discord.ext.commands.BucketType.guild)
+    @commands.cooldown(1, 15, commands.BucketType.guild)
     async def _eq_save(self, ctx, eq_preset: str = None):
         """Save the current eq settings to a preset."""
         if not self._player_check(ctx):
@@ -1088,7 +1095,8 @@ class Audio(commands.Cog):
         """Set an eq band with a band number or name and value.
 
         Band positions are 1-15 and values have a range of -0.25 to 1.0.
-        Band names are 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k, 6.3k, 10k, and 16k Hz.
+        Band names are 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, \
+        2.5k, 4k, 6.3k, 10k, and 16k Hz.
         Setting a band value to -0.25 nullifies it while +0.25 is double.
         """
         if not self._player_check(ctx):
@@ -1138,7 +1146,8 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 _(
-                    "Valid band numbers are 1-15 or the band names listed in the help for this command."
+                    "Valid band numbers are 1-15 or the band names "
+                    "listed in the help for this command."
                 ),
             )
 
@@ -1221,7 +1230,7 @@ class Audio(commands.Cog):
                 await self._search_button_action(ctx, localtracks_folders, emoji, page)
                 return None
 
-        LOCAL_FOLDER_CONTROLS = {
+        local_folder_controls = {
             "1⃣": _local_folder_menu,
             "2⃣": _local_folder_menu,
             "3⃣": _local_folder_menu,
@@ -1237,9 +1246,9 @@ class Audio(commands.Cog):
             if not await self._can_instaskip(ctx, ctx.author):
                 return await menu(ctx, folder_page_list, DEFAULT_CONTROLS)
             else:
-                await menu(ctx, folder_page_list, LOCAL_FOLDER_CONTROLS)
+                await menu(ctx, folder_page_list, local_folder_controls)
         else:
-            await menu(ctx, folder_page_list, LOCAL_FOLDER_CONTROLS)
+            await menu(ctx, folder_page_list, local_folder_controls)
 
     @local.command(name="search")
     async def local_search(self, ctx, *, search_words):
@@ -1604,7 +1613,7 @@ class Audio(commands.Cog):
 
         if "open.spotify.com" in query:
             query = "spotify:{}".format(
-                re.sub("(http[s]?:\/\/)?(open.spotify.com)\/", "", query).replace("/", ":")
+                re.sub(r"(http[s]?://)?(open.spotify.com)/", "", query).replace("/", ":")
             )
         if query.startswith("spotify:"):
             return await self._get_spotify_tracks(ctx, query)
@@ -1612,7 +1621,7 @@ class Audio(commands.Cog):
         if query.startswith("localtrack:"):
             local_path = await self.config.localpath()
             await self._localtracks_check(ctx)
-            query = query.replace("localtrack:", "").replace(((local_path) + "/"), "")
+            query = query.replace("localtrack:", "").replace((local_path + "/"), "")
         allowed_files = (".mp3", ".flac", ".ogg")
         if not self._match_url(query) and not (query.lower().endswith(allowed_files)):
             query = "ytsearch:{}".format(query)
@@ -1626,10 +1635,9 @@ class Audio(commands.Cog):
             enqueue_tracks = False
         player = lavalink.get_player(ctx.guild.id)
         api_data = await self._check_api_tokens()
-        guild_data = await self.config.guild(ctx.guild).all()
         if "open.spotify.com" in query:
             query = "spotify:{}".format(
-                re.sub("(http[s]?:\/\/)?(open.spotify.com)\/", "", query).replace("/", ":")
+                re.sub(r"(http[s]?://)?(open.spotify.com)/", "", query).replace("/", ":")
             )
         if query.startswith("spotify:"):
             if (
@@ -1667,8 +1675,7 @@ class Audio(commands.Cog):
                         tracks = await player.get_tracks(f"ytsearch:{query}")
                         if not tracks:
                             return await self._embed_msg(ctx, _("Nothing found."))
-                        single_track = []
-                        single_track.append(tracks[0])
+                        single_track = list(tracks[0])
                         return single_track
 
                 except KeyError:
@@ -1747,7 +1754,7 @@ class Audio(commands.Cog):
             track_len = 0
             for track in tracks:
                 if guild_data["maxlength"] > 0:
-                    if self._track_limit(ctx, track, guild_data["maxlength"]):
+                    if self._track_limit(track, guild_data["maxlength"]):
                         track_len += 1
                         player.add(ctx.author, track)
                 else:
@@ -1782,7 +1789,7 @@ class Audio(commands.Cog):
             try:
                 single_track = tracks[0]
                 if guild_data["maxlength"] > 0:
-                    if self._track_limit(ctx, single_track, guild_data["maxlength"]):
+                    if self._track_limit(single_track, guild_data["maxlength"]):
                         player.add(ctx.author, single_track)
                     else:
                         return await self._embed_msg(ctx, _("Track exceeds maximum length."))
@@ -2037,7 +2044,8 @@ class Audio(commands.Cog):
                     await self._embed_msg(
                         ctx,
                         _(
-                            "A playlist with that name already exists in {to_guild_name}.\nPlease enter a new name for this playlist."
+                            "A playlist with that name already exists in {to_guild_name}."
+                            "\nPlease enter a new name for this playlist."
                         ).format(to_guild_name=to_guild.name),
                     )
                     try:
@@ -2055,7 +2063,8 @@ class Audio(commands.Cog):
                             return await self._embed_msg(
                                 ctx,
                                 _(
-                                    "Playlist name already exists in {to_guild_name}, try the playlist copy command again with a different name."
+                                    "Playlist name already exists in {to_guild_name}, "
+                                    "try the playlist copy command again with a different name."
                                 ).format(to_guild_name=to_guild.name),
                             )
                     except asyncio.TimeoutError:
@@ -2066,7 +2075,8 @@ class Audio(commands.Cog):
                     return await self._embed_msg(
                         ctx,
                         _(
-                            "Playlist {name} copied from {from_guild_name} to {to_guild_name}.\nNew playlist name on {to_guild_name}: {new_name}"
+                            "Playlist {name} copied from {from_guild_name} to {to_guild_name}.\n"
+                            "New playlist name on {to_guild_name}: {new_name}"
                         ).format(
                             name=playlist_name,
                             from_guild_name=from_guild.name,
@@ -2167,7 +2177,6 @@ class Audio(commands.Cog):
         if track_len > 0:
             for track in playlists[playlist_name]["tracks"]:
                 track_idx = track_idx + 1
-                spaces = abs(len(str(track_idx)) - 5)
                 msg += "`{}.` **[{}]({})**\n".format(
                     track_idx, track["info"]["title"], track["info"]["uri"]
                 )
@@ -2228,7 +2237,8 @@ class Audio(commands.Cog):
             playlist_embeds.append(embed)
         await menu(ctx, playlist_embeds, DEFAULT_CONTROLS)
 
-    async def _build_playlist_list_page(self, ctx, page_num, abc_names):
+    @staticmethod
+    async def _build_playlist_list_page(ctx, page_num, abc_names):
         plist_num_pages = math.ceil(len(abc_names) / 5)
         plist_idx_start = (page_num - 1) * 5
         plist_idx_end = plist_idx_start + 5
@@ -2250,7 +2260,7 @@ class Audio(commands.Cog):
         )
         return embed
 
-    @commands.cooldown(1, 15, discord.ext.commands.BucketType.guild)
+    @commands.cooldown(1, 15, commands.BucketType.guild)
     @playlist.command(name="queue")
     async def _playlist_queue(self, ctx, playlist_name=None):
         """Save the queue to a playlist."""
@@ -2382,7 +2392,7 @@ class Audio(commands.Cog):
                     if not os.path.isfile(track["info"]["uri"]):
                         continue
                 if maxlength > 0:
-                    if not self._track_limit(ctx, track["info"]["length"], maxlength):
+                    if not self._track_limit(track["info"]["length"], maxlength):
                         continue
                 player.add(author_obj, lavalink.rest_api.Track(data=track))
                 track_len += 1
@@ -2561,7 +2571,7 @@ class Audio(commands.Cog):
             query = " ".join(query)
         if "open.spotify.com" in query:
             query = "spotify:{}".format(
-                re.sub("(http[s]?:\/\/)?(open.spotify.com)\/", "", query).replace("/", ":")
+                re.sub(r"(http[s]?://)?(open.spotify.com)/", "", query).replace("/", ":")
             )
         if query.startswith("spotify:"):
             try:
@@ -2661,7 +2671,7 @@ class Audio(commands.Cog):
                 await message.delete()
                 return None
 
-        QUEUE_CONTROLS = {"⬅": prev_page, "❌": close_menu, "➡": next_page, "ℹ": _queue_menu}
+        queue_controls = {"⬅": prev_page, "❌": close_menu, "➡": next_page, "ℹ": _queue_menu}
 
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
@@ -2675,7 +2685,7 @@ class Audio(commands.Cog):
             queue_page_list.append(embed)
         if page > len_queue_pages:
             page = len_queue_pages
-        await menu(ctx, queue_page_list, QUEUE_CONTROLS, page=(page - 1))
+        await menu(ctx, queue_page_list, queue_controls, page=(page - 1))
 
     async def _build_queue_page(self, ctx, player, page_num):
         shuffle = await self.config.guild(ctx.guild).shuffle()
@@ -2801,7 +2811,6 @@ class Audio(commands.Cog):
         search_idx_start = (page_num - 1) * 10
         search_idx_end = search_idx_start + 10
         track_match = ""
-        command = ctx.invoked_with
         for i, track in enumerate(
             search_list[search_idx_start:search_idx_end], start=search_idx_start
         ):
@@ -2873,7 +2882,8 @@ class Audio(commands.Cog):
             await self._embed_msg(
                 ctx,
                 _(
-                    "Removed {removed_tracks} tracks queued by members outside of the voice channel."
+                    "Removed {removed_tracks} tracks queued by "
+                    "members outside of the voice channel."
                 ).format(removed_tracks=removed_tracks),
             )
 
@@ -2990,7 +3000,7 @@ class Audio(commands.Cog):
                 await message.delete()
                 return None
 
-        SEARCH_CONTROLS = {
+        search_controls = {
             "1⃣": _search_menu,
             "2⃣": _search_menu,
             "3⃣": _search_menu,
@@ -3056,7 +3066,7 @@ class Audio(commands.Cog):
                 track_len = 0
                 for track in tracks:
                     if guild_data["maxlength"] > 0:
-                        if self._track_limit(ctx, track, guild_data["maxlength"]):
+                        if self._track_limit(track, guild_data["maxlength"]):
                             track_len += 1
                             player.add(ctx.author, track)
                     else:
@@ -3117,7 +3127,7 @@ class Audio(commands.Cog):
             if not await self._can_instaskip(ctx, ctx.author):
                 return await menu(ctx, search_page_list, DEFAULT_CONTROLS)
 
-        await menu(ctx, search_page_list, SEARCH_CONTROLS)
+        await menu(ctx, search_page_list, search_controls)
 
     async def _search_button_action(self, ctx, tracks, emoji, page):
         if not self._player_check(ctx):
@@ -3197,7 +3207,7 @@ class Audio(commands.Cog):
             embed.set_footer(text=_("#{position} in queue").format(position=len(player.queue) + 1))
 
         if guild_data["maxlength"] > 0:
-            if self._track_limit(ctx, search_choice.length, guild_data["maxlength"]):
+            if self._track_limit(search_choice.length, guild_data["maxlength"]):
                 player.add(ctx.author, search_choice)
             else:
                 return await self._embed_msg(ctx, _("Track exceeds maximum length."))
@@ -3243,7 +3253,7 @@ class Audio(commands.Cog):
                     )
                     folder = False
         try:
-            title_check = tracks[0].uri
+            tracks[0].uri
             title = _("Tracks Found:")
             footer = _("search results")
         except AttributeError:
@@ -3532,7 +3542,6 @@ class Audio(commands.Cog):
                 return await self._embed_msg(
                     ctx, _("Can't skip to a track while shuffle is enabled.")
                 )
-            nexttrack = player.queue[min(skip_to_track - 1, len(player.queue) - 1)]
             embed = discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("{skip_to_track} Tracks Skipped".format(skip_to_track=skip_to_track)),
@@ -3591,7 +3600,7 @@ class Audio(commands.Cog):
         if dj_enabled and not vote_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(ctx, _("You need the DJ role to stop the music."))
-        if (player.is_playing) or (not player.is_playing and player.paused):
+        if player.is_playing or (not player.is_playing and player.paused):
             await self._embed_msg(ctx, _("Stopping..."))
             await player.stop()
             eq = player.fetch("eq")
@@ -3604,7 +3613,7 @@ class Audio(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    @commands.cooldown(1, 15, discord.ext.commands.BucketType.guild)
+    @commands.cooldown(1, 15, commands.BucketType.guild)
     @commands.bot_has_permissions(embed_links=True)
     async def summon(self, ctx):
         """Summon the bot to a voice channel."""
@@ -3781,7 +3790,8 @@ class Audio(commands.Cog):
 
         self._restart_connect()
 
-    async def _apply_gain(self, guild_id, band, gain):
+    @staticmethod
+    async def _apply_gain(guild_id, band, gain):
         const = {
             "op": "equalizer",
             "guildId": str(guild_id),
@@ -3793,7 +3803,8 @@ class Audio(commands.Cog):
         except (KeyError, IndexError):
             pass
 
-    async def _apply_gains(self, guild_id, gains):
+    @staticmethod
+    async def _apply_gains(guild_id, gains):
         const = {
             "op": "equalizer",
             "guildId": str(guild_id),
@@ -4197,7 +4208,7 @@ class Audio(commands.Cog):
         return track_obj
 
     @staticmethod
-    def _track_limit(ctx, track, maxlength):
+    def _track_limit(track, maxlength):
         try:
             length = round(track.length / 1000)
         except AttributeError:
@@ -4209,7 +4220,8 @@ class Audio(commands.Cog):
         else:
             return True
 
-    async def _time_convert(self, length):
+    @staticmethod
+    async def _time_convert(length):
         match = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])").match(length)
         if match is not None:
             hr = int(match.group(1)) if match.group(1) else 0
@@ -4266,9 +4278,11 @@ class Audio(commands.Cog):
             if search_result["id"]["kind"] == "youtube#video":
                 return "https://www.youtube.com/watch?v={}".format(search_result["id"]["videoId"])
 
-    # Spotify-related methods below are originally from: https://github.com/Just-Some-Bots/MusicBot/blob/master/musicbot/spotify.py
+    # Spotify-related methods below are originally from:
+    # https://github.com/Just-Some-Bots/MusicBot/blob/master/musicbot/spotify.py
 
-    async def _check_token(self, token):
+    @staticmethod
+    async def _check_token(token):
         now = int(time.time())
         return token["expires_at"] - now < 60
 
@@ -4310,7 +4324,8 @@ class Audio(commands.Cog):
         token = await self._get_spotify_token()
         return await self._make_get(url, headers={"Authorization": "Bearer {0}".format(token)})
 
-    def _make_token_auth(self, client_id, client_secret):
+    @staticmethod
+    def _make_token_auth(client_id, client_secret):
         auth_header = base64.b64encode((client_id + ":" + client_secret).encode("ascii"))
         return {"Authorization": "Basic %s" % auth_header.decode("ascii")}
 

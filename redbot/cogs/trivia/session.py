@@ -1,12 +1,14 @@
 """Module to manage trivia sessions."""
 import asyncio
-import time
 import random
+import time
 from collections import Counter
+
 import discord
+
 from redbot.core import bank
 from redbot.core.i18n import Translator
-from redbot.core.utils.chat_formatting import box, bold, humanize_list, humanize_number
+from redbot.core.utils.chat_formatting import bold, box, humanize_list, humanize_number
 from redbot.core.utils.common_filters import normalize_smartquotes
 from .log import LOG
 
@@ -15,7 +17,10 @@ __all__ = ["TriviaSession"]
 T_ = Translator("TriviaSession", __file__)
 
 
-_ = lambda s: s
+def _(s):
+    return s
+
+
 _REVEAL_MESSAGES = (
     _("I know this one! {answer}!"),
     _("Easy: {answer}."),
@@ -238,7 +243,7 @@ class TriviaSession:
         return _pred
 
     async def end_game(self):
-        """End the trivia session and display scrores."""
+        """End the trivia session and display scores."""
         if self.scores:
             await self.send_table()
         multiplier = self.settings["payout_multiplier"]
@@ -304,7 +309,7 @@ def _parse_answers(answers):
     The reason this exists is because of YAML's ambiguous syntax. For example,
     if the answer to a question in YAML is ``yes``, YAML will load it as the
     boolean value ``True``, which is not necessarily the desired answer. This
-    function aims to undo that for bools, and possibly for numbers in the
+    function aims to undo that for booleans, and possibly for numbers in the
     future too.
 
     Parameters

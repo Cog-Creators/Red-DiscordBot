@@ -57,6 +57,6 @@ type the following command in the terminal, still by adding the instance name af
 .. warning:: If the service doesn't stop in the next 10 seconds, the process is killed.
     Check your logs to know the cause of the error that prevents the shutdown.
 
-To view Red’s log, you can acccess through journalctl:
+To view Red’s log, you can access through journalctl:
 
 :code:`sudo journalctl -u red@instancename`

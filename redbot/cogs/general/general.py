@@ -1,13 +1,15 @@
 import datetime
 import time
 from enum import Enum
-from random import randint, choice
+from random import choice, randint
+
 import aiohttp
 import discord
+
 from redbot.core import commands
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-from redbot.core.utils.chat_formatting import escape, italics, humanize_number
+from redbot.core.utils.chat_formatting import escape, humanize_number, italics
+from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 
 _ = T_ = Translator("General", __file__)
 
@@ -36,7 +38,11 @@ class General(commands.Cog):
     """General commands."""
 
     global _
-    _ = lambda s: s
+
+    @staticmethod
+    def _(s):
+        return s
+
     ball = [
         _("As I see it, yes"),
         _("It is certain"),

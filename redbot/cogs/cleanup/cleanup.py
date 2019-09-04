@@ -1,7 +1,7 @@
 import logging
 import re
 from datetime import datetime, timedelta
-from typing import Union, List, Callable, Set
+from typing import Callable, List, Set, Union
 
 import discord
 
@@ -9,7 +9,7 @@ from redbot.core import checks, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import humanize_number
-from redbot.core.utils.mod import slow_deletion, mass_purge
+from redbot.core.utils.mod import mass_purge, slow_deletion
 from redbot.core.utils.predicates import MessagePredicate
 from .converters import RawMessageIds
 
@@ -403,18 +403,24 @@ class Cleanup(commands.Cog):
         cc_cog = self.bot.get_cog("CustomCommands")
         if cc_cog is not None:
             command_names: Set[str] = await cc_cog.get_command_names(ctx.guild)
-            is_cc = lambda name: name in command_names
+
+            def is_cc(name):
+                return name in command_names
         else:
-            is_cc = lambda name: False
+            def is_cc(name):
+                return False
         alias_cog = self.bot.get_cog("Alias")
         if alias_cog is not None:
             alias_names: Set[str] = (
                 set((a.name for a in await alias_cog.unloaded_global_aliases()))
                 | set(a.name for a in await alias_cog.unloaded_aliases(ctx.guild))
             )
-            is_alias = lambda name: name in alias_names
+
+            def is_alias(name):
+                return name in alias_names
         else:
-            is_alias = lambda name: False
+            def is_alias(name):
+                return False
 
         bot_id = self.bot.user.id
 

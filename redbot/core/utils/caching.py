@@ -42,7 +42,8 @@ class LRUDict:
     def pop(self, key):
         return self._dict.pop(key)
 
-    # all of the below access all of the items, and therefore shouldnt modify the ordering for eviction
+    # All of the below access all of the items, and
+    # therefore shouldnt modify the ordering for eviction
     def keys(self):
         return self._dict.keys()
 

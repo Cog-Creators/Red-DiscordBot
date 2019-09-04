@@ -1,9 +1,9 @@
 import logging
-from datetime import datetime
 from collections import defaultdict, deque
 
 import discord
-from redbot.core import i18n, modlog, commands
+
+from redbot.core import commands, i18n, modlog
 from redbot.core.utils.mod import is_mod_or_superior
 from .abc import MixinMeta
 
@@ -101,7 +101,7 @@ class Events(MixinMeta):
                 while None in name_list:  # clean out null entries from a bug
                     name_list.remove(None)
                 if after.name in name_list:
-                    # Ensure order is maintained without duplicates occuring
+                    # Ensure order is maintained without duplicates occurring
                     name_list.remove(after.name)
                 name_list.append(after.name)
                 while len(name_list) > 20:

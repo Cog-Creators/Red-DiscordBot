@@ -1,31 +1,32 @@
+import asyncio
 import contextlib
+import re
+from collections import defaultdict
+from typing import List, Optional, Tuple
 
 import discord
+
 from redbot.core import Config, checks, commands
-from redbot.core.utils.chat_formatting import pagify
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils.chat_formatting import pagify
+from . import streamtypes as _streamtypes
+from .errors import (
+    APIError,
+    InvalidTwitchCredentials,
+    InvalidYoutubeCredentials,
+    OfflineStream,
+    StreamNotFound,
+    StreamsError,
+)
 from .streamtypes import (
-    Stream,
-    TwitchStream,
     HitboxStream,
     MixerStream,
     PicartoStream,
+    Stream,
+    TwitchStream,
     YoutubeStream,
 )
-from .errors import (
-    OfflineStream,
-    StreamNotFound,
-    APIError,
-    InvalidYoutubeCredentials,
-    StreamsError,
-    InvalidTwitchCredentials,
-)
-from . import streamtypes as _streamtypes
-from collections import defaultdict
-import asyncio
-import re
-from typing import Optional, List, Tuple
 
 CHECK_DELAY = 60
 

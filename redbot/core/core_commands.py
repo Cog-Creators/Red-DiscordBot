@@ -1,41 +1,38 @@
 import asyncio
 import contextlib
 import datetime
+import getpass
 import importlib
 import itertools
 import logging
 import os
-import sys
 import platform
-import getpass
-import pip
+import sys
 import traceback
 from collections import namedtuple
 from pathlib import Path
-from random import SystemRandom
-from string import ascii_letters, digits
-from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequence, Dict
+from typing import Dict, Iterable, List, Optional, Sequence, TYPE_CHECKING, Tuple, Union
 
 import aiohttp
 import discord
+import pip
 import pkg_resources
 
 from . import (
-    __version__,
-    version_info as red_version_info,
     VersionInfo,
+    __version__,
     checks,
     commands,
+    config,
     drivers,
     errors,
     i18n,
-    config,
+    version_info as red_version_info,
 )
-from .utils import create_backup
-from .utils.predicates import MessagePredicate
-from .utils.chat_formatting import humanize_timedelta, pagify, box, inline, humanize_list
 from .commands.requires import PrivilegeLevel
-
+from .utils import create_backup
+from .utils.chat_formatting import box, humanize_list, humanize_timedelta, inline, pagify
+from .utils.predicates import MessagePredicate
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -491,7 +488,7 @@ class Core(commands.Cog, CoreLogic):
         For that, you need to provide a valid permissions level.
         You can generate one here: https://discordapi.com/permissions.html
 
-        Please note that you might need two factor authentification for\
+        Please note that you might need two factor authentication for\
         some permissions.
         """
         await self.bot._config.invite_perm.set(level)
@@ -1551,21 +1548,21 @@ class Core(commands.Cog, CoreLogic):
         if sys.platform == "linux":
             import distro  # pylint: disable=import-error
 
-        IS_WINDOWS = os.name == "nt"
-        IS_MAC = sys.platform == "darwin"
-        IS_LINUX = sys.platform == "linux"
+        is_windows = os.name == "nt"
+        is_mac = sys.platform == "darwin"
+        is_linux = sys.platform == "linux"
 
         pyver = "{}.{}.{} ({})".format(*sys.version_info[:3], platform.architecture()[0])
         pipver = pip.__version__
         redver = red_version_info
         dpy_version = discord.__version__
-        if IS_WINDOWS:
+        if is_windows:
             os_info = platform.uname()
             osver = "{} {} (version {})".format(os_info.system, os_info.release, os_info.version)
-        elif IS_MAC:
+        elif is_mac:
             os_info = platform.mac_ver()
             osver = "Mac OSX {} {}".format(os_info[0], os_info[2])
-        elif IS_LINUX:
+        elif is_linux:
             os_info = distro.linux_distribution()
             osver = "{} {}".format(os_info[0], os_info[1]).strip()
         else:
@@ -2053,7 +2050,7 @@ class Core(commands.Cog, CoreLogic):
             output += ", ".join(members)
 
         if not output:
-            output = _("No immunty settings here.")
+            output = _("No immunity settings here.")
 
         for page in pagify(output):
             await ctx.send(page)
@@ -2108,7 +2105,7 @@ class Core(commands.Cog, CoreLogic):
     @ownernotifications.command()
     async def optin(self, ctx: commands.Context):
         """
-        Opt-in on recieving owner notifications.
+        Opt-in on receiving owner notifications.
 
         This is the default state.
         """
@@ -2121,7 +2118,7 @@ class Core(commands.Cog, CoreLogic):
     @ownernotifications.command()
     async def optout(self, ctx: commands.Context):
         """
-        Opt-out of recieving owner notifications.
+        Opt-out of receiving owner notifications.
         """
         async with ctx.bot._config.owner_opt_out_list() as opt_outs:
             if ctx.author.id not in opt_outs:
@@ -2134,7 +2131,7 @@ class Core(commands.Cog, CoreLogic):
         self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
     ):
         """
-        Adds a destination text channel to recieve owner notifications
+        Adds a destination text channel to receive owner notifications
         """
 
         try:
@@ -2153,7 +2150,7 @@ class Core(commands.Cog, CoreLogic):
         self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
     ):
         """
-        Removes a destination text channel from recieving owner notifications.
+        Removes a destination text channel from receiving owner notifications.
         """
 
         try:

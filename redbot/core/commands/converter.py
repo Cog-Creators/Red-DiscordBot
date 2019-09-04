@@ -1,7 +1,7 @@
-import re
 import functools
+import re
 from datetime import timedelta
-from typing import TYPE_CHECKING, Optional, List, Dict
+from typing import Dict, List, Optional, TYPE_CHECKING
 
 import discord
 from discord.ext import commands as dpy_commands
@@ -149,10 +149,10 @@ class APIToken(discord.ext.commands.Converter):
     """
 
     async def convert(self, ctx, argument) -> dict:
-        bot = ctx.bot
         result = {}
-        match = re.split(r";|,| ", argument)
-        # provide two options to split incase for whatever reason one is part of the api key we're using
+        match = re.split(r"[;, ]", argument)
+        # Provide two options to split incase for
+        # whatever reason one is part of the api key we're using
         if len(match) > 1:
             result[match[0]] = "".join(r for r in match[1:])
         else:
@@ -164,7 +164,7 @@ class APIToken(discord.ext.commands.Converter):
 
 class DictConverter(dpy_commands.Converter):
     """
-    Converts pairs of space seperated values to a dict
+    Converts pairs of space separated values to a dict
     """
 
     def __init__(self, *expected_keys: str, delims: Optional[List[str]] = None):
