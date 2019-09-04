@@ -102,9 +102,10 @@ class CommandObj:
     async def create(self, ctx: commands.Context, command: str, *, response):
         """Create a custom command"""
         # Check if this command is already registered as a customcommand
-        if command in commands.RESERVED_COMMAND_NAMES or await self.db(
-            ctx.guild
-        ).commands.get_raw(command, default=None):
+        if (
+            await self.db(ctx.guild).commands.get_raw(command, default=None)
+            or command in commands.RESERVED_COMMAND_NAMES
+        ):
             raise AlreadyExists()
         # test to raise
         ctx.cog.prepare_args(response if isinstance(response, str) else response[0])
