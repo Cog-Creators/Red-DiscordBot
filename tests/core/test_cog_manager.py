@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 
 from redbot.core import cog_manager
+from redbot.pytest.cog_manager import *
 
 
 @pytest.mark.skip

@@ -358,7 +358,7 @@ async def wipe_bank(guild: Optional[discord.Guild] = None) -> None:
     Parameters
     ----------
     guild : discord.Guild
-        The guild to clear accounts for. If un-supplied and the bank is
+        The guild to clear accounts for. If unsupplied and the bank is
         per-server, all accounts in every guild will be wiped.
 
     """

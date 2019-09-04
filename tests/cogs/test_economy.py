@@ -1,5 +1,7 @@
 import pytest
 
+from redbot.pytest.economy import *
+
 
 @pytest.mark.asyncio
 async def test_bank_register(bank, ctx):

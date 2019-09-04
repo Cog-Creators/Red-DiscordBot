@@ -1,5 +1,7 @@
 import pytest
 
+from redbot.pytest.alias import *
+
 
 def test_is_valid_alias_name(alias):
     assert alias.is_valid_alias_name("valid") is True

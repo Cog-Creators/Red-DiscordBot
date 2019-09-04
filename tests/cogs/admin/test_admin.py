@@ -2,6 +2,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from redbot.pytest.admin import *
+
 
 @pytest.mark.asyncio
 async def test_serverlock_check(admin, coroutine):
