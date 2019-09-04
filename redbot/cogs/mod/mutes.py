@@ -14,6 +14,7 @@ T_ = i18n.Translator("Mod", __file__)
 def _(s):
     return s
 
+
 mute_unmute_issues = {
     "already_muted": _("That user can't send messages in this channel."),
     "already_unmuted": _("That user isn't muted in this channel."),

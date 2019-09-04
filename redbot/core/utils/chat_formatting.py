@@ -468,6 +468,8 @@ def text_to_file(
         The name of the file sent. Defaults to ``file.txt``.
     spoiler: bool
         Whether the attachment is a spoiler. Defaults to ``False``.
+    encoding : str
+        The encoding to save the file as, defaults to UTF-8.
 
     Returns
     -------

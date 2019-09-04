@@ -82,30 +82,30 @@ def bot_repo(event_loop):
 
 # Installable
 INFO_JSON = {
-    "author":          ("tekulvw",),
+    "author": ("tekulvw",),
     "min_bot_version": "3.0.0",
     "max_bot_version": "3.0.2",
     "description": "A long description",
-    "hidden":          False,
+    "hidden": False,
     "install_msg": "A post-installation message",
-    "required_cogs":   {},
-    "requirements":    "tabulate",
+    "required_cogs": {},
+    "requirements": "tabulate",
     "short": "A short description",
-    "tags":            ("tag1", "tag2"),
+    "tags": ("tag1", "tag2"),
     "type": "COG",
 }
 
 LIBRARY_INFO_JSON = {
-    "author":          ("seputaes",),
+    "author": ("seputaes",),
     "min_bot_version": "3.0.0",
     "max_bot_version": "3.0.2",
     "description": "A long library description",
-    "hidden":          False,  # libraries are always hidden, this tests it will be flipped
+    "hidden": False,  # libraries are always hidden, this tests it will be flipped
     "install_msg": "A library install message",
-    "required_cogs":   {},
-    "requirements":    "tabulate",
+    "required_cogs": {},
+    "requirements": "tabulate",
     "short": "A short library description",
-    "tags":            ("libtag1", "libtag2"),
+    "tags": ("libtag1", "libtag2"),
     "type": "SHARED_LIBRARY",
 }
 

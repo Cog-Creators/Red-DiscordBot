@@ -414,7 +414,7 @@ class Audio(commands.Cog):
         """Auto-disconnection after x seconds while stopped. 0 to disable."""
         if seconds < 0:
             return await self._embed_msg(ctx, _("Can't be less than zero."))
-        if seconds < 10 and seconds > 0:
+        if 10 > seconds > 0:
             seconds = 10
         if seconds == 0:
             enabled = False
@@ -3563,7 +3563,8 @@ class Audio(commands.Cog):
         await player.play()
         player.queue += queue_to_append
 
-    async def _get_description(self, track):
+    @staticmethod
+    async def _get_description(track):
         if "localtracks" in track.uri:
             if not track.title == "Unknown title":
                 return "**{} - {}**\n{}".format(

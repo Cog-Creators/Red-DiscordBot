@@ -164,9 +164,7 @@ class Alias(commands.Cog):
         raise ValueError(_("No prefix found."))
 
     @staticmethod
-    def get_extra_args_from_alias(
-            message: discord.Message, prefix: str, alias: AliasEntry
-    ) -> str:
+    def get_extra_args_from_alias(message: discord.Message, prefix: str, alias: AliasEntry) -> str:
         """
         When an alias is executed by a user in chat this function tries
             to get any extra arguments passed in with the call.

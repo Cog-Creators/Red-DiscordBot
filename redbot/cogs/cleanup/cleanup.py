@@ -406,9 +406,12 @@ class Cleanup(commands.Cog):
 
             def is_cc(name):
                 return name in command_names
+
         else:
+
             def is_cc(name):
                 return False
+
         alias_cog = self.bot.get_cog("Alias")
         if alias_cog is not None:
             alias_names: Set[str] = (
@@ -418,7 +421,9 @@ class Cleanup(commands.Cog):
 
             def is_alias(name):
                 return name in alias_names
+
         else:
+
             def is_alias(name):
                 return False
 
