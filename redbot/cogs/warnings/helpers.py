@@ -1,9 +1,13 @@
+# Standard Library
 import asyncio
 import inspect
+
 from copy import copy
 
+# Red Dependencies
 import discord
 
+# Red Imports
 from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator
 from redbot.core.utils.predicates import MessagePredicate

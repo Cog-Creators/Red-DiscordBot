@@ -1,14 +1,18 @@
+# Standard Library
 import asyncio
 import inspect
 import io
 import re
 import textwrap
 import traceback
+
 from contextlib import redirect_stdout
 from copy import copy
 
+# Red Dependencies
 import discord
 
+# Red Relative Imports
 from . import checks, commands
 from .i18n import Translator
 from .utils.chat_formatting import box, pagify

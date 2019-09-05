@@ -1,12 +1,18 @@
+# Standard Library
 import json
+
 from random import choice
 from string import ascii_letters
 from typing import ClassVar, Optional
 
+# Red Dependencies
 import aiohttp
 import discord
 
+# Red Imports
 from redbot.core.i18n import Translator
+
+# Red Relative Imports
 from .errors import (
     APIError,
     InvalidTwitchCredentials,

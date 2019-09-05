@@ -1,14 +1,21 @@
+# Standard Library
 import contextlib
 import pkgutil
+
 from importlib import import_module, invalidate_caches
 from importlib.machinery import ModuleSpec
 from pathlib import Path
 from typing import List, Optional, Union
 
+# Red Dependencies
 import discord
 
+# Red Imports
 import redbot.cogs
+
 from redbot.core.utils import deduplicate_iterables
+
+# Red Relative Imports
 from . import checks, commands
 from .config import Config
 from .data_manager import cog_data_path

@@ -3,16 +3,21 @@
 This module contains extended classes and functions which are intended to
 replace those from the `discord.ext.commands` module.
 """
+# Standard Library
 import inspect
 import weakref
-from typing import Awaitable, Callable, Dict, List, Optional, TYPE_CHECKING, Tuple, Union
 
+from typing import TYPE_CHECKING, Awaitable, Callable, Dict, List, Optional, Tuple, Union
+
+# Red Dependencies
 import discord
+
 from discord.ext import commands
 
+# Red Relative Imports
+from ..i18n import Translator
 from .errors import ConversionFailure
 from .requires import PermState, PrivilegeLevel, Requires
-from ..i18n import Translator
 
 if TYPE_CHECKING:
     from .context import Context

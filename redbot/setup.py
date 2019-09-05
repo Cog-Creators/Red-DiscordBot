@@ -1,17 +1,22 @@
 #!/usr/bin/env python3
+# Standard Library
 import asyncio
 import json
 import logging
 import os
 import sys
+
 from copy import deepcopy
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+# Red Dependencies
 import appdirs
 import click
 
+# Red Imports
 import redbot.logging
+
 from redbot.core import config, data_manager, drivers
 from redbot.core.drivers import BackendType, IdentifierData
 from redbot.core.utils import create_backup as red_create_backup, safe_delete

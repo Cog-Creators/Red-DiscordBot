@@ -1,7 +1,11 @@
+# Red Dependencies
 import discord
 
+# Red Imports
 from redbot.core import commands
 from redbot.core.i18n import Translator
+
+# Red Relative Imports
 from .installable import Installable
 
 _ = Translator("Koala", __file__)

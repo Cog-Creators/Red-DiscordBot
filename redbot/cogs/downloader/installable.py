@@ -1,11 +1,16 @@
+# Standard Library
 import distutils.dir_util
 import json
 import shutil
+
 from enum import Enum
 from pathlib import Path
-from typing import Any, MutableMapping, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, MutableMapping
 
+# Red Imports
 from redbot.core import VersionInfo, __version__, version_info as red_version_info
+
+# Red Relative Imports
 from .json_mixins import RepoJSONMixin
 from .log import log
 

@@ -2,15 +2,19 @@
 # https://github.com/Lunar-Dust/Dusty-Cogs/blob/master/menu/menu.py
 #
 # Ported to Red V3 by Palm\_\_ (https://github.com/palmtree5)
+# Standard Library
 import asyncio
 import contextlib
 import functools
+
 from typing import Iterable, Optional, Union
 
+# Red Dependencies
 import discord
 
-from .predicates import ReactionPredicate
+# Red Relative Imports
 from .. import commands
+from .predicates import ReactionPredicate
 
 _ReactableEmoji = Union[str, discord.Emoji]
 

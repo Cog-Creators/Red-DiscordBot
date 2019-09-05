@@ -1,7 +1,10 @@
+# Standard Library
 import asyncio
-from datetime import timedelta
-from typing import Dict, Iterable, List, TYPE_CHECKING, Union
 
+from datetime import timedelta
+from typing import TYPE_CHECKING, Dict, Iterable, List, Union
+
+# Red Dependencies
 import discord
 
 if TYPE_CHECKING:

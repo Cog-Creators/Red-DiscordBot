@@ -1,15 +1,21 @@
+# Standard Library
 from copy import copy
 from re import findall, search
 from string import Formatter
 from typing import Generator, Iterable, List, Optional, Tuple
 
+# Red Dependencies
 import discord
+
 from discord.ext.commands.view import StringView
 
+# Red Imports
 from redbot.core import Config, checks, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
+
+# Red Relative Imports
 from .alias_entry import AliasEntry
 
 _ = Translator("Alias", __file__)

@@ -1,12 +1,16 @@
+# Standard Library
 import calendar
 import logging
 import random
+
 from collections import defaultdict, deque, namedtuple
 from enum import Enum
 from typing import Iterable, Union, cast
 
+# Red Dependencies
 import discord
 
+# Red Imports
 from redbot.cogs.bank import check_global_setting_admin, check_global_setting_guildowner
 from redbot.cogs.mod.converters import RawUserIds
 from redbot.core import Config, bank, checks, commands, errors

@@ -1,15 +1,21 @@
+# Standard Library
 import asyncio
 import contextlib
 import re
+
 from collections import defaultdict
 from typing import List, Optional, Tuple
 
+# Red Dependencies
 import discord
 
+# Red Imports
 from redbot.core import Config, checks, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import pagify
+
+# Red Relative Imports
 from . import streamtypes as _streamtypes
 from .errors import (
     APIError,

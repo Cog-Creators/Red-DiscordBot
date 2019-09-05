@@ -1,8 +1,11 @@
+# Standard Library
 from abc import ABC, abstractmethod
 from typing import Optional
 
+# Red Dependencies
 import discord
 
+# Red Imports
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 

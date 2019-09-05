@@ -1,11 +1,16 @@
+# Standard Library
 import random
 import weakref
+
 from collections import namedtuple
 from pathlib import Path
 
+# Red Dependencies
 import pytest
+
 from _pytest.monkeypatch import MonkeyPatch
 
+# Red Imports
 from redbot.core import Config, config as config_module, drivers
 from redbot.core.bot import Red
 

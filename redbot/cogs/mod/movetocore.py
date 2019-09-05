@@ -1,11 +1,16 @@
+# Standard Library
 import asyncio
 import contextlib
 import logging
 
+# Red Dependencies
 import discord
 
+# Red Imports
 from redbot.core import checks, commands, i18n
 from redbot.core.utils.chat_formatting import box
+
+# Red Relative Imports
 from .abc import MixinMeta
 
 log = logging.getLogger("red.mod")

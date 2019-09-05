@@ -1,15 +1,18 @@
+# Standard Library
 import asyncio
 import json
 import logging
 import os
 import shutil
 import tarfile
+
 from asyncio import AbstractEventLoop, Semaphore, as_completed
 from asyncio.futures import isfuture
 from datetime import datetime
 from itertools import chain
 from pathlib import Path
 from typing import (
+    TYPE_CHECKING,
     Any,
     AsyncIterable,
     AsyncIterator,
@@ -20,17 +23,19 @@ from typing import (
     List,
     Optional,
     Set,
-    TYPE_CHECKING,
     Tuple,
     TypeVar,
     Union,
 )
 
+# Red Dependencies
 import discord
+
 from fuzzywuzzy import fuzz, process
 
-from .chat_formatting import box
+# Red Relative Imports
 from .. import data_manager
+from .chat_formatting import box
 
 if TYPE_CHECKING:
     from ..commands import Command, Context

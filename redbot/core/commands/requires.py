@@ -6,9 +6,12 @@ requirements. This includes rules which override those requirements,
 as well as custom checks which can be overridden, and some special
 checks like bot permissions checks.
 """
+# Standard Library
 import asyncio
 import enum
+
 from typing import (
+    TYPE_CHECKING,
     Any,
     Awaitable,
     Callable,
@@ -16,14 +19,15 @@ from typing import (
     Dict,
     List,
     Optional,
-    TYPE_CHECKING,
     Tuple,
     TypeVar,
     Union,
 )
 
+# Red Dependencies
 import discord
 
+# Red Relative Imports
 from .converter import GuildConverter
 from .errors import BotMissingPermissions
 

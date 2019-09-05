@@ -1,7 +1,7 @@
-from typing import Tuple
-
+# Red Dependencies
 import discord
 
+# Red Imports
 from redbot.core import commands
 
 

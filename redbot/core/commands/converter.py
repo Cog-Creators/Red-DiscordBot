@@ -1,14 +1,19 @@
+# Standard Library
 import functools
 import re
-from datetime import timedelta
-from typing import Dict, List, Optional, TYPE_CHECKING
 
+from datetime import timedelta
+from typing import TYPE_CHECKING, Dict, List, Optional
+
+# Red Dependencies
 import discord
+
 from discord.ext import commands as dpy_commands
 
-from . import BadArgument
+# Red Relative Imports
 from ..i18n import Translator
 from ..utils.chat_formatting import humanize_timedelta
+from . import BadArgument
 
 if TYPE_CHECKING:
     from .context import Context

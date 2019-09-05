@@ -1,4 +1,5 @@
 """The checks in this module run on every command."""
+# Red Relative Imports
 from . import commands
 
 

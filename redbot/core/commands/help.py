@@ -25,18 +25,23 @@
 # Additionally, this gives our users a bit more customization options including by
 # 3rd party cogs down the road.
 
+# Standard Library
 import asyncio
+
 from collections import namedtuple
 from typing import AsyncIterator, Iterable, List, Union, cast
 
+# Red Dependencies
 import discord
+
 from discord.ext import commands as dpy_commands
 
-from . import commands
-from .context import Context
+# Red Relative Imports
 from ..i18n import Translator
 from ..utils import format_fuzzy_results, fuzzy_command_search, menus
 from ..utils.chat_formatting import box, pagify
+from . import commands
+from .context import Context
 
 __all__ = ["red_help", "RedHelpFormatter"]
 

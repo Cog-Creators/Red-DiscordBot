@@ -1,11 +1,17 @@
+# Standard Library
 import asyncio
 import datetime
+
 from functools import wraps
 from typing import List, Optional, Union
 
+# Red Dependencies
 import discord
 
+# Red Imports
 from redbot.core.utils.chat_formatting import humanize_number
+
+# Red Relative Imports
 from . import Config, commands, errors
 from .bot import Red
 from .errors import BankPruneError

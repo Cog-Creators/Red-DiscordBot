@@ -1,3 +1,4 @@
+# Standard Library
 import asyncio
 import contextlib
 import datetime
@@ -9,15 +10,18 @@ import os
 import platform
 import sys
 import traceback
+
 from collections import namedtuple
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Sequence, TYPE_CHECKING, Tuple, Union
+from typing import TYPE_CHECKING, Dict, Iterable, List, Optional, Sequence, Tuple, Union
 
+# Red Dependencies
 import aiohttp
 import discord
 import pip
 import pkg_resources
 
+# Red Relative Imports
 from . import (
     VersionInfo,
     __version__,

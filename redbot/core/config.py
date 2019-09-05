@@ -1,8 +1,10 @@
+# Standard Library
 import asyncio
 import collections
 import logging
 import pickle
 import weakref
+
 from typing import (
     Any,
     AsyncContextManager,
@@ -16,8 +18,10 @@ from typing import (
     Union,
 )
 
+# Red Dependencies
 import discord
 
+# Red Relative Imports
 from .drivers import BaseDriver, ConfigCategory, IdentifierData, get_driver
 
 __all__ = ["Config", "get_latest_confs", "migrate"]

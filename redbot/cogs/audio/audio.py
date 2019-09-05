@@ -1,24 +1,30 @@
+# Standard Library
 import asyncio
 import base64
 import datetime
 import heapq
 import json
 import logging
+import math
 import os
 import random
 import re
 import time
+
 from io import StringIO
 from typing import Optional
 from urllib.parse import urlparse
 
+# Red Dependencies
 import aiohttp
 import discord
 import lavalink
-import math
+
 from fuzzywuzzy import process
 
+# Red Imports
 import redbot.core
+
 from redbot.core import Config, bank, checks, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
@@ -32,6 +38,8 @@ from redbot.core.utils.menus import (
     start_adding_reactions,
 )
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
+
+# Red Relative Imports
 from .equalizer import Equalizer
 from .errors import LavalinkDownloadFailed
 from .manager import ServerManager

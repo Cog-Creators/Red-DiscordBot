@@ -1,8 +1,12 @@
+# Standard Library
 import re
+
 from typing import Set, Union
 
+# Red Dependencies
 import discord
 
+# Red Imports
 from redbot.core import Config, checks, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n

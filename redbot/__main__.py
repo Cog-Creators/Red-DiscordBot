@@ -1,13 +1,14 @@
 #!/usr/bin/env python
-
-# Discord Version check
-
+# Standard Library
 import asyncio
 import json
 import logging
 import os
 import sys
 
+from signal import SIGTERM
+
+# Red Dependencies
 import discord
 
 # Set the event loop policies here so any subsequent `get_event_loop()`
@@ -25,20 +26,17 @@ elif sys.implementation.name == "cpython":
     else:
         asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
-import redbot.logging
-from redbot.core.bot import Red, ExitCodes
-from redbot.core.cog_manager import CogManagerUI
-from redbot.core.global_checks import init_global_checks
-from redbot.core.events import init_events
-from redbot.core.cli import interactive_config, confirm, parse_cli_flags
-from redbot.core.core_commands import Core
-from redbot.core.dev_commands import Dev
-from redbot.core import __version__, modlog, bank, data_manager, drivers
-from signal import SIGTERM
-
+import redbot.logging  # isort:skip
+from redbot.core import __version__, bank, data_manager, drivers, modlog  # isort:skip
+from redbot.core.bot import ExitCodes, Red  # isort:skip
+from redbot.core.cli import confirm, interactive_config, parse_cli_flags  # isort:skip
+from redbot.core.cog_manager import CogManagerUI  # isort:skip
+from redbot.core.core_commands import Core  # isort:skip
+from redbot.core.dev_commands import Dev  # isort:skip
+from redbot.core.events import init_events  # isort:skip
+from redbot.core.global_checks import init_global_checks  # isort:skip
 
 log = logging.getLogger("red.main")
-
 #
 #               Red - Discord Bot v3
 #

@@ -1,5 +1,7 @@
+# Standard Library
 import random
 
+# Red Dependencies
 import discord
 
 

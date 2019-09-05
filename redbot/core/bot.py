@@ -1,16 +1,21 @@
+# Standard Library
 import asyncio
 import inspect
 import logging
 import os
+
 from collections import Counter
 from enum import Enum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
+# Red Dependencies
 import discord
+
 from discord.ext.commands import when_mentioned_or
 
+# Red Relative Imports
 from . import Config, commands, drivers, errors, i18n
 from .cog_manager import CogManager
 from .rpc import RPCMixin

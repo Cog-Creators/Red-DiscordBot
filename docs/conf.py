@@ -17,6 +17,8 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+
+# Standard Library
 import os
 import sys
 
@@ -64,7 +66,7 @@ author = "Cog Creators"
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-from redbot.core import __version__
+from redbot.core import __version__  # isort:skip
 
 # The short X.Y version.
 version = __version__

@@ -1,16 +1,21 @@
+# Standard Library
 import inspect
 import json
 import logging
 import os
 import sys
 import tempfile
+
 from copy import deepcopy
 from pathlib import Path
 from typing import Any, Dict
 
+# Red Dependencies
 import appdirs
+
 from discord.utils import deprecated
 
+# Red Relative Imports
 from . import commands
 
 __all__ = [

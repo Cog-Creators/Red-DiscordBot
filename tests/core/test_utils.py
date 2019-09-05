@@ -1,9 +1,12 @@
+# Standard Library
 import asyncio
 import random
 import textwrap
 
+# Red Dependencies
 import pytest
 
+# Red Imports
 from redbot.core.utils import (
     bounded_gather,
     bounded_gather_iter,

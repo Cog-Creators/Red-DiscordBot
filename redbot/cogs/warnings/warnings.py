@@ -1,8 +1,11 @@
+# Standard Library
 from collections import namedtuple
 from typing import Optional, Union
 
+# Red Dependencies
 import discord
 
+# Red Imports
 from redbot.cogs.warnings.helpers import (
     get_command_for_dropping_points,
     get_command_for_exceeded_points,

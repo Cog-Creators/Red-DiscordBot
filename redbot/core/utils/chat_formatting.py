@@ -1,11 +1,16 @@
+# Standard Library
 import datetime
 import itertools
+
 from io import BytesIO
 from typing import Iterator, List, Optional, Sequence, Union
 
+# Red Dependencies
 import discord
+
 from babel.numbers import format_decimal
 
+# Red Imports
 from redbot.core.i18n import Translator, get_babel_locale
 
 _ = Translator("UtilsChatFormatting", __file__)

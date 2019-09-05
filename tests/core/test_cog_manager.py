@@ -1,7 +1,10 @@
+# Standard Library
 from pathlib import Path
 
+# Red Dependencies
 import pytest
 
+# Red Imports
 from redbot.core import cog_manager
 from redbot.pytest.cog_manager import *
 

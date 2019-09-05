@@ -1,3 +1,4 @@
+# Standard Library
 import argparse
 import asyncio
 import getpass
@@ -6,9 +7,11 @@ import platform
 import subprocess
 import sys
 
+# Red Dependencies
 import aiohttp
 import pkg_resources
 
+# Red Imports
 from redbot import MIN_PYTHON_VERSION
 from redbot.core import VersionInfo, __version__, version_info as red_version_info
 from redbot.core.cli import confirm

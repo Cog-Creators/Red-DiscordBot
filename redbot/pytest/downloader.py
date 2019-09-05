@@ -1,9 +1,13 @@
+# Standard Library
 import json
+
 from collections import namedtuple
 from pathlib import Path
 
+# Red Dependencies
 import pytest
 
+# Red Imports
 from redbot.cogs.downloader.installable import Installable
 from redbot.cogs.downloader.repo_manager import Repo, RepoManager
 

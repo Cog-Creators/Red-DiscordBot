@@ -1,8 +1,15 @@
+# Standard Library
 import getpass
 import json
 import sys
+
 from pathlib import Path
 from typing import Any, AsyncIterator, Callable, List, Optional, Tuple, Union
+
+# Red Relative Imports
+from ... import data_manager, errors
+from ..base import BaseDriver, ConfigCategory, IdentifierData
+from ..log import log
 
 try:
     # pylint: disable=import-error
@@ -10,9 +17,6 @@ try:
 except ModuleNotFoundError:
     asyncpg = None
 
-from ... import data_manager, errors
-from ..base import BaseDriver, IdentifierData, ConfigCategory
-from ..log import log
 
 __all__ = ["PostgresDriver"]
 

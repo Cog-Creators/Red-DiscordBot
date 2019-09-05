@@ -1,8 +1,13 @@
+# Standard Library
 import importlib.machinery
 
+# Red Dependencies
 import discord
 
+# Red Imports
 from redbot.core.utils.chat_formatting import humanize_number
+
+# Red Relative Imports
 from .i18n import Translator
 
 _ = Translator(__name__, __file__)

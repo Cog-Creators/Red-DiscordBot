@@ -1,16 +1,22 @@
 """Module for Trivia cog."""
+# Standard Library
 import pathlib
+
 from collections import Counter
 from typing import List
 
+# Red Dependencies
 import discord
 import yaml
 
+# Red Imports
 from redbot.cogs.bank import check_global_setting_admin
 from redbot.core import Config, checks, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import bold, box, pagify
+
+# Red Relative Imports
 from .log import LOG
 from .session import TriviaSession
 

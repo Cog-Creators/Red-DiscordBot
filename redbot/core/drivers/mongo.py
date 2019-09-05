@@ -1,9 +1,15 @@
+# Standard Library
 import contextlib
 import itertools
 import re
+
 from getpass import getpass
 from typing import Any, AsyncIterator, Dict, Iterator, List, Match, Optional, Pattern, Tuple
 from urllib.parse import quote_plus
+
+# Red Relative Imports
+from .. import errors
+from .base import BaseDriver, IdentifierData
 
 try:
     # pylint: disable=import-error
@@ -14,8 +20,6 @@ except ModuleNotFoundError:
     motor = None
     pymongo = None
 
-from .. import errors
-from .base import BaseDriver, IdentifierData
 
 __all__ = ["MongoDriver"]
 

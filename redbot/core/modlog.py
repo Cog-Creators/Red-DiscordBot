@@ -1,11 +1,17 @@
+# Standard Library
 import asyncio
+
 from datetime import datetime, timedelta
 from typing import List, Optional, Union, cast
 
+# Red Dependencies
 import discord
 
+# Red Imports
 from redbot.core import Config
 from redbot.core.bot import Red
+
+# Red Relative Imports
 from .generic_casetypes import all_generics
 from .i18n import Translator
 from .utils.common_filters import (

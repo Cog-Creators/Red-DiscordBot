@@ -1,15 +1,21 @@
+# Standard Library
 import asyncio
 import contextlib
 import logging
+
 from collections import namedtuple
 from datetime import datetime, timedelta
 from typing import Optional, Union, cast
 
+# Red Dependencies
 import discord
 
+# Red Imports
 from redbot.core import checks, commands, i18n, modlog
 from redbot.core.utils.chat_formatting import humanize_number, pagify
 from redbot.core.utils.mod import get_audit_reason, is_allowed_by_hierarchy
+
+# Red Relative Imports
 from .abc import MixinMeta
 from .converters import RawUserIds
 

@@ -1,11 +1,16 @@
+# Standard Library
 from abc import ABC
 from collections import defaultdict
 
+# Red Dependencies
 import discord
 
+# Red Imports
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+
+# Red Relative Imports
 from .events import Events
 from .kickban import KickBanMixin
 from .movetocore import MoveToCore

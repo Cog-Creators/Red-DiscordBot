@@ -1,6 +1,9 @@
+# Standard Library
 import warnings
-from typing import Awaitable, Dict, TYPE_CHECKING
 
+from typing import TYPE_CHECKING, Awaitable, Dict
+
+# Red Relative Imports
 from .commands import (
     admin,
     admin_or_permissions,
