@@ -341,9 +341,6 @@ def humanize_list(
 ) -> str:
     """Get comma-separated list, with the last element joined with *and*.
 
-    This uses an Oxford comma, because without one, items containing
-    the word *and* would make the output difficult to interpret.
-
     Parameters
     ----------
     items : Sequence[str]
@@ -351,29 +348,30 @@ def humanize_list(
     locale : Optional[str]
         The locale to convert, if not specified it defaults to the bot's locale.
     style : str
-        The style to format the list with. See above for description.
-        * standard:
-          A typical 'and' list for arbitrary placeholders.
-          eg. "January, February, and March"
-        * standard-short:
-          A short version of a 'and' list, suitable for use with short or
-          abbreviated placeholder values.
-          eg. "Jan., Feb., and Mar."
-        * or:
-          A typical 'or' list for arbitrary placeholders.
-          eg. "January, February, or March"
-        * or-short:
-          A short version of an 'or' list.
-          eg. "Jan., Feb., or Mar."
-        * unit:
-          A list suitable for wide units.
-          eg. "3 feet, 7 inches"
-        * unit-short:
-          A list suitable for short units
-          eg. "3 ft, 7 in"
-        * unit-narrow:
-          A list suitable for narrow units, where space on the screen is very limited.
-          eg. "3′ 7″"
+        The style to format the list with.
+
+        standard
+            A typical 'and' list for arbitrary placeholders.
+            eg. "January, February, and March"
+        standard-short
+             A short version of a 'and' list, suitable for use with short or
+             abbreviated placeholder values.
+             eg. "Jan., Feb., and Mar."
+        or
+            A typical 'or' list for arbitrary placeholders.
+            eg. "January, February, or March"
+        or-short
+            A short version of an 'or' list.
+            eg. "Jan., Feb., or Mar."
+        unit
+            A list suitable for wide units.
+            eg. "3 feet, 7 inches"
+        unit-short
+            A list suitable for short units
+            eg. "3 ft, 7 in"
+        unit-narrow
+            A list suitable for narrow units, where space on the screen is very limited.
+            eg. "3′ 7″"
 
     Raises
     ------
