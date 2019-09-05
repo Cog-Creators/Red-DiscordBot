@@ -207,7 +207,7 @@ def bordered(*columns: Sequence[str], ascii_border: bool = False) -> str:
 
 def pagify(
     text: str,
-    delims: Sequence[str] = ["\n"],
+    delims: Sequence[str] = None,
     *,
     priority: bool = False,
     escape_mass_mentions: bool = True,
@@ -249,6 +249,8 @@ def pagify(
         Pages of the given text.
 
     """
+    if delims is None:
+        delims = ["\n"]
     in_text = text
     page_length -= shorten_by
     while len(in_text) > page_length:

@@ -456,7 +456,7 @@ class Requires:
             If the bot is missing required permissions to run the
             command.
         CommandError
-            Propogated from any permissions checks.
+            Propagated from any permissions checks.
 
         """
         if not self.ready_event.is_set():

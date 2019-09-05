@@ -479,7 +479,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         This should realistically only be used for responding using user provided
         input. (unfortunately, including usernames)
-        Manually crafted messages which dont take any user input have no need of this
+        Manually crafted messages which don't take any user input have no need of this
         """
 
         content = kwargs.pop("content", None)

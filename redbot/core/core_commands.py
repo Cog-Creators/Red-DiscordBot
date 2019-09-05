@@ -130,7 +130,7 @@ class CoreLogic:
 
     @staticmethod
     def _cleanup_and_refresh_modules(module_name: str) -> None:
-        """Interally reloads modules so that changes are detected"""
+        """Integrally reloads modules so that changes are detected"""
         splitted = module_name.split(".")
 
         def maybe_reload(new_name):

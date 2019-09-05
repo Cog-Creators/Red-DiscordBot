@@ -3260,17 +3260,15 @@ class Audio(commands.Cog):
                         track.replace("localtrack:{}/localtracks/".format(local_path), ""),
                     )
                     folder = False
-        try:
-            tracks[0].uri
+        if hasattr(track[0], "uri"):
             title = _("Tracks Found:")
             footer = _("search results")
-        except AttributeError:
-            if folder:
-                title = _("Folders Found:")
-                footer = _("local folders")
-            else:
-                title = _("Files Found:")
-                footer = _("local tracks")
+        elif folder:
+            title = _("Folders Found:")
+            footer = _("local folders")
+        else:
+            title = _("Files Found:")
+            footer = _("local tracks")
         embed = discord.Embed(
             colour=await ctx.embed_colour(), title=title, description=search_list
         )

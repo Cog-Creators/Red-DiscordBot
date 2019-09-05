@@ -435,7 +435,7 @@ class Command(CogCommandMixin, commands.Command):
                 @a_command.error
                 async def a_command_error_handler(self, ctx, error):
 
-                    if isinstance(error.original, MyErrrorType):
+                    if isinstance(error.original, MyErrorType):
                         self.log_exception(error.original)
                     else:
                         await ctx.bot.on_command_error(ctx, error.original, unhandled_by_cog=True)
