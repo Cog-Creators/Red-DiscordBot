@@ -16,7 +16,6 @@ import discord
 import lavalink
 from databases import Database
 
-# noinspection PyProtectedMember
 from lavalink.rest_api import LoadResult
 
 from redbot.core import Config, commands
@@ -30,7 +29,6 @@ from .utils import CacheLevel, Notifier, is_allowed, queue_duration, track_limit
 log = logging.getLogger("red.audio.cache")
 _ = Translator("Audio", __file__)
 
-# noinspection PyUnusedName
 _DROP_YOUTUBE_TABLE = "DROP TABLE youtube;"
 
 _CREATE_YOUTUBE_TABLE = """
@@ -57,7 +55,6 @@ _UPDATE_YOUTUBE_TABLE = """UPDATE youtube
               SET last_fetched=:last_fetched 
               WHERE track_info=:track;"""
 
-# noinspection PyUnusedName
 _DROP_SPOTIFY_TABLE = "DROP TABLE spotify;"
 
 _CREATE_UNIQUE_INDEX_SPOTIFY_TABLE = (
@@ -90,7 +87,6 @@ _UPDATE_SPOTIFY_TABLE = """UPDATE spotify
               SET last_fetched=:last_fetched 
               WHERE uri=:uri;"""
 
-# noinspection PyUnusedName
 _DROP_LAVALINK_TABLE = "DROP TABLE lavalink;"
 
 _CREATE_LAVALINK_TABLE = """
@@ -145,12 +141,10 @@ _PARSER = {
     },
 }
 
-# noinspection PyUnusedName
 _TOP_100_GLOBALS = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn6puJdseH2Rt9sMvt9E2M4i"
 _TOP_100_US = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn5rWitrRWFKdm-ulaFiIyoK"
 
 
-# noinspection PySameParameterValue
 class SpotifyAPI:
     """Wrapper for the Spotify API."""
 
@@ -295,7 +289,6 @@ class YouTubeAPI:
                 return f"https://www.youtube.com/watch?v={search_result['id']['videoId']}"
 
 
-# noinspection PySameParameterValue,PySameParameterValue,PyUnusedLocal
 @cog_i18n(_)
 class MusicCache:
     """
@@ -606,7 +599,6 @@ class MusicCache:
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_spotify().is_subset(current_cache_level)
         if query_type == "track" and cache_enabled:
-            # noinspection PyUnusedLocal
             update = True
             with contextlib.suppress(sqlite3.Error):
                 val, update = await self.fetch_one(
@@ -634,7 +626,6 @@ class MusicCache:
             youtube_urls.append(val)
         return youtube_urls
 
-    # noinspection PyUnusedLocal
     async def spotify_enqueue(
         self,
         ctx: commands.Context,
@@ -908,7 +899,6 @@ class MusicCache:
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         val = None
-        # noinspection PyTypeChecker
         _raw_query = dataclasses.Query.process_input(query)
         query = str(_raw_query)
         if cache_enabled and not forced and not _raw_query.is_local:
@@ -946,7 +936,6 @@ class MusicCache:
             ):
                 with contextlib.suppress(sqlite3.Error):
                     time_now = str(datetime.datetime.now(datetime.timezone.utc))
-                    # noinspection PyProtectedMember
                     task = (
                         "insert",
                         (
@@ -1015,7 +1004,6 @@ class MusicCache:
 
     async def play_random(self):
         tracks = []
-        # noinspection PyBroadException
         try:
             query_data = {}
             for i in range(1, 8):
@@ -1032,7 +1020,6 @@ class MusicCache:
                 query_data[f"day{i}"] = date
 
             vals = await self.fetch_all("lavalink", "data", query_data)
-            # noinspection PyUnresolvedReferences
             recently_played = [r.data for r in vals if r]
 
             if recently_played:
@@ -1051,7 +1038,6 @@ class MusicCache:
         playlist = None
         tracks = None
         if autoplaylist["enabled"]:
-            # noinspection PyBroadException
             try:
                 playlist = await get_playlist(
                     autoplaylist["id"],

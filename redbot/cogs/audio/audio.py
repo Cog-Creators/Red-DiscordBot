@@ -36,7 +36,7 @@ from redbot.core.utils.menus import (
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from . import dataclasses
 from .apis import MusicCache
-from .converters import ComplexScopeParser, PlaylistConverter, ScopeParser, get_lazy_converter
+from .converters import ComplexScopeParser, ScopeParser, get_lazy_converter, get_playlist_converter
 from .equalizer import Equalizer
 from .errors import LavalinkDownloadFailed, MissingGuild, SpotifyFetchError, TooManyMatches
 from .manager import ServerManager
@@ -55,13 +55,13 @@ from .utils import *
 _ = Translator("Audio", __file__)
 
 __version__ = "1.0.0"
-# noinspection PyUnusedName
 __author__ = ["aikaterna", "Draper"]
 
 log = logging.getLogger("red.audio")
 
 _SCHEMA_VERSION = 2
 LazyGreedyConverter = get_lazy_converter("--")
+PlaylistConverter = get_playlist_converter()
 
 
 @cog_i18n(_)
@@ -593,7 +593,6 @@ class Audio(commands.Cog):
             return
         track = results.tracks[0]
 
-        # noinspection PyProtectedMember
         if not await is_allowed(
             guild, f"{track.title} {track.author} {track.uri} {str(query._raw)}"
         ):
@@ -901,7 +900,6 @@ class Audio(commands.Cog):
 
         scope, author, guild, specified_user = scope_data
         try:
-            # noinspection PyTypeChecker
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
@@ -1807,7 +1805,6 @@ class Audio(commands.Cog):
         player = lavalink.get_player(ctx.guild.id)
         eq = player.fetch("eq", Equalizer())
 
-        # noinspection PyProtectedMember
         for band in range(eq._band_count):
             eq.set_gain(band, 0.0)
 
@@ -1930,7 +1927,6 @@ class Audio(commands.Cog):
         ]
 
         eq = player.fetch("eq", Equalizer())
-        # noinspection PyProtectedMember
         bands_num = eq._band_count
         if band_value > 1:
             band_value = 1
@@ -2023,7 +2019,6 @@ class Audio(commands.Cog):
                 embed = await self._build_search_page(ctx, localtracks_folders, page_num)
                 folder_page_list.append(embed)
 
-        # noinspection PyUnusedLocal,PyShadowingNames
         async def _local_folder_menu(
             ctx: commands.Context,
             pages: list,
@@ -2094,7 +2089,6 @@ class Audio(commands.Cog):
     async def _folder_list(self, ctx: commands.Context, query: dataclasses.Query):
         if not await self._localtracks_check(ctx):
             return
-        # noinspection PyTypeChecker,PyTypeChecker
         query = dataclasses.Query.process_input(query)
         if not query.track.exists():
             return
@@ -2344,7 +2338,6 @@ class Audio(commands.Cog):
         queue_tracks = player.queue
         requesters = {"total": 0, "users": {}}
 
-        # noinspection PyShadowingNames
         async def _usercount(req_username):
             if req_username in requesters["users"]:
                 requesters["users"][req_username]["songcount"] += 1
@@ -2456,7 +2449,6 @@ class Audio(commands.Cog):
     async def genre(self, ctx: commands.Context):
         """Pick a Spotify playlist from a list of categories to start playing."""
 
-        # noinspection PyUnusedLocal,PyShadowingNames
         async def _category_search_menu(
             ctx: commands.Context,
             pages: list,
@@ -2472,7 +2464,6 @@ class Audio(commands.Cog):
                     await message.delete()
                 return output
 
-        # noinspection PyUnusedLocal,PyShadowingNames
         async def _playlist_search_menu(
             ctx: commands.Context,
             pages: list,
@@ -2606,7 +2597,6 @@ class Audio(commands.Cog):
             return await self._get_spotify_tracks(ctx, query)
         return await self._embed_msg(ctx, _("Couldn't find tracks for the selected playlist."))
 
-    # noinspection PyUnusedLocal
     @staticmethod
     async def _genre_search_button_action(
         ctx: commands.Context, options, emoji, page, playlist=False
@@ -3286,7 +3276,8 @@ class Audio(commands.Cog):
         Example use:
         ​ ​ ​ ​ [p]playlist append MyGuildPlaylist Hello by Adele
         ​ ​ ​ ​ [p]playlist append MyGlobalPlaylist Hello by Adele --scope Global
-        ​ ​ ​ ​ [p]playlist append MyGlobalPlaylist Hello by Adele --scope Global --Author Draper#6666
+        ​ ​ ​ ​ [p]playlist append MyGlobalPlaylist Hello by Adele --scope Global
+        --Author Draper#6666
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
@@ -3294,7 +3285,6 @@ class Audio(commands.Cog):
         if not await self._playlist_check(ctx):
             return
         try:
-            # noinspection PyTypeChecker
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
@@ -3422,8 +3412,10 @@ class Audio(commands.Cog):
 
         Example use:
         ​ ​ ​ ​ [p]playlist copy MyGuildPlaylist --from-scope Guild --to-scope Global
-        ​ ​ ​ ​ [p]playlist copy MyGlobalPlaylist --from-scope Global --to-author Draper#6666 --to-scope User
-        ​ ​ ​ ​ [p]playlist copy MyPersonalPlaylist --from-scope user --to-author Draper#6666 --to-scope Guild --to-guild Red - Discord Bot
+        ​ ​ ​ ​ [p]playlist copy MyGlobalPlaylist --from-scope Global --to-author Draper#6666
+        --to-scope User
+        ​ ​ ​ ​ [p]playlist copy MyPersonalPlaylist --from-scope user --to-author Draper#6666
+        --to-scope Guild --to-guild Red - Discord Bot
 
         """
 
@@ -3450,7 +3442,6 @@ class Audio(commands.Cog):
         ) = scope_data
 
         try:
-            # noinspection PyTypeChecker
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
                 ctx, playlist_matches, from_scope, from_author, from_guild, specified_from_user
             )
@@ -3622,7 +3613,6 @@ class Audio(commands.Cog):
         scope, author, guild, specified_user = scope_data
 
         try:
-            # noinspection PyTypeChecker
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
@@ -3707,7 +3697,6 @@ class Audio(commands.Cog):
         )
 
         try:
-            # noinspection PyTypeChecker
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
@@ -3745,9 +3734,7 @@ class Audio(commands.Cog):
 
         tracklist = []
         for track in track_objects:
-            # noinspection PyProtectedMember
             track_keys = track._info.keys()
-            # noinspection PyProtectedMember
             track_values = track._info.values()
             track_id = track.track_identifier
             track_info = {}
@@ -3836,7 +3823,6 @@ class Audio(commands.Cog):
         scope, author, guild, specified_user = scope_data
 
         try:
-            # noinspection PyTypeChecker
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
@@ -3949,7 +3935,6 @@ class Audio(commands.Cog):
         )
 
         try:
-            # noinspection PyTypeChecker
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
@@ -4207,7 +4192,8 @@ class Audio(commands.Cog):
         await self._embed_msg(
             ctx,
             _(
-                "Playlist {name} (`{id}`) [**{scope}**] saved from current queue: {num} tracks added."
+                "Playlist {name} (`{id}`) [**{scope}**] saved "
+                "from current queue: {num} tracks added."
             ).format(
                 name=playlist.name, num=len(playlist.tracks), id=playlist.id, scope=scope_name
             ),
@@ -4249,8 +4235,10 @@ class Audio(commands.Cog):
 
         Example use:
         ​ ​ ​ ​ [p]playlist remove MyGuildPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU
-        ​ ​ ​ ​ [p]playlist remove MyGlobalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope Global
-        ​ ​ ​ ​ [p]playlist remove MyPersonalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope User
+        ​ ​ ​ ​ [p]playlist remove MyGlobalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU
+        --scope Global
+        ​ ​ ​ ​ [p]playlist remove MyPersonalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU
+        --scope User
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
@@ -4260,7 +4248,6 @@ class Audio(commands.Cog):
         )
 
         try:
-            # noinspection PyTypeChecker
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
@@ -4354,9 +4341,12 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ [p]playlist save MyGuildPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM
-        ​ ​ ​ ​ [p]playlist save MyGlobalPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM --scope Global
-        ​ ​ ​ ​ [p]playlist save MyPersonalPlaylist https://open.spotify.com/playlist/1RyeIbyFeIJVnNzlGr5KkR --scope User
+        ​ ​ ​ ​ [p]playlist save MyGuildPlaylist
+        https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM
+        ​ ​ ​ ​ [p]playlist save MyGlobalPlaylist
+        https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM --scope Global
+        ​ ​ ​ ​ [p]playlist save MyPersonalPlaylist
+        https://open.spotify.com/playlist/1RyeIbyFeIJVnNzlGr5KkR --scope User
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
@@ -4442,7 +4432,6 @@ class Audio(commands.Cog):
                 return False
 
         try:
-            # noinspection PyTypeChecker
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
@@ -4582,7 +4571,6 @@ class Audio(commands.Cog):
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
         try:
-            # noinspection PyTypeChecker
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
@@ -4848,7 +4836,6 @@ class Audio(commands.Cog):
             )
 
         try:
-            # noinspection PyTypeChecker
             playlist_id, playlist_arg = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
@@ -4972,13 +4959,8 @@ class Audio(commands.Cog):
         )
         playlist_msg = await ctx.send(embed=embed1)
         notifier = Notifier(ctx, playlist_msg, {"playlist": _("Loading track {num}/{total}...")})
-        # noinspection PyUnusedLocal
-        called_api = False
         for song_url in uploaded_track_list:
-            # if called_api is True:
-            #     await asyncio.sleep(2)
             track_count += 1
-            # noinspection PyBroadException
             try:
                 result, called_api = await self.music_cache.lavalink_query(
                     ctx, player, dataclasses.Query.process_input(song_url)
@@ -4986,7 +4968,6 @@ class Audio(commands.Cog):
                 track = result.tracks
             except Exception:
                 continue
-            # noinspection PyBroadException
             try:
                 track_obj = track_creator(player, other_track=track[0])
                 track_list.append(track_obj)
@@ -5188,7 +5169,6 @@ class Audio(commands.Cog):
     async def queue(self, ctx: commands.Context, *, page: int = 1):
         """List the songs in the queue."""
 
-        # noinspection PyUnusedLocal,PyShadowingNames
         async def _queue_menu(
             ctx: commands.Context,
             pages: list,
@@ -5689,7 +5669,6 @@ class Audio(commands.Cog):
         instead of YouTube.
         """
 
-        # noinspection PyUnusedLocal,PyShadowingNames
         async def _search_menu(
             ctx: commands.Context,
             pages: list,
@@ -6690,7 +6669,6 @@ class Audio(commands.Cog):
                 else:
                     stop_times.pop(server.id, None)
                     if p.paused and server.id in pause_times:
-                        # noinspection PyBroadException
                         try:
                             await p.pause(False)
                         except Exception:
@@ -6709,7 +6687,6 @@ class Audio(commands.Cog):
                     emptydc_timer = await self.config.guild(server_obj).emptydc_timer()
                     if (time.time() - stop_times[sid]) >= emptydc_timer:
                         stop_times.pop(sid)
-                        # noinspection PyBroadException
                         try:
                             await lavalink.get_player(sid).disconnect()
                         except Exception:
@@ -6720,7 +6697,6 @@ class Audio(commands.Cog):
                 ):
                     emptypause_timer = await self.config.guild(server_obj).emptypause_timer()
                     if (time.time() - pause_times.get(sid)) >= emptypause_timer:
-                        # noinspection PyBroadException
                         try:
                             await lavalink.get_player(sid).pause()
                         except Exception:
@@ -6743,7 +6719,6 @@ class Audio(commands.Cog):
             await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
 
         if eq.bands != config_bands:
-            # noinspection PyProtectedMember
             band_num = list(range(0, eq._band_count))
             band_value = config_bands
             eq_dict = {}
@@ -6832,7 +6807,6 @@ class Audio(commands.Cog):
 
         if react_emoji == "⏺":
             await remove_react(message, react_emoji, react_user)
-            # noinspection PyProtectedMember
             for band in range(eq._band_count):
                 eq.set_gain(band, 0.0)
             await self._apply_gains(ctx.guild.id, eq.bands)
@@ -6962,5 +6936,4 @@ class Audio(commands.Cog):
         await self.music_cache.run_all_pending_tasks()
         await self.music_cache.close()
 
-    # noinspection PyUnusedName
     __del__ = cog_unload

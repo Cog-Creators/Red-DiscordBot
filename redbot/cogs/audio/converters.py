@@ -8,7 +8,6 @@ from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 
-# noinspection PyProtectedMember
 from .playlists import PlaylistScope, standardize_scope
 
 _ = Translator("Audio", __file__)
@@ -20,6 +19,7 @@ __all__ = [
     "LazyGreedyConverter",
     "standardize_scope",
     "get_lazy_converter",
+    "get_playlist_converter",
 ]
 
 _config = None
@@ -90,9 +90,6 @@ class NoExitParser(argparse.ArgumentParser):
         raise commands.BadArgument()
 
 
-# noinspection PyBroadException,PyBroadException,PyBroadException,PyBroadException,
-# PyBroadException,PyBroadException
-# noinspection PyBroadException
 class ScopeParser(commands.Converter):
     async def convert(
         self, ctx: commands.Context, argument: str
@@ -210,11 +207,6 @@ class ScopeParser(commands.Converter):
         return target_scope, target_user, target_guild, specified_user
 
 
-# noinspection PyBroadException,PyBroadException,PyBroadException,PyBroadException,
-# PyBroadException,PyBroadException
-# noinspection PyBroadException,PyBroadException,PyBroadException,PyBroadException,
-# PyBroadException,PyBroadException
-# noinspection PyBroadException,PyBroadException
 class ComplexScopeParser(commands.Converter):
     async def convert(
         self, ctx: commands.Context, argument: str
@@ -475,7 +467,6 @@ class LazyGreedyConverter(commands.Converter):
         return f"{greedy_output}".strip()
 
 
-# noinspection PySameParameterValue,PyUnusedName
 def get_lazy_converter(splitter: str) -> type:
     """
     Returns a typechecking safe `LazyGreedyConverter` suitable for use with discord.py.
@@ -485,6 +476,20 @@ def get_lazy_converter(splitter: str) -> type:
         __call__ = functools.partialmethod(type(LazyGreedyConverter).__call__, splitter)
 
     class ValidatedConverter(LazyGreedyConverter, metaclass=PartialMeta):
+        pass
+
+    return ValidatedConverter
+
+
+def get_playlist_converter() -> type:
+    """
+    Returns a typechecking safe `PlaylistConverter` suitable for use with discord.py.
+    """
+
+    class PartialMeta(type(PlaylistConverter)):
+        __call__ = functools.partialmethod(type(PlaylistConverter).__call__)
+
+    class ValidatedConverter(PlaylistConverter, metaclass=PartialMeta):
         pass
 
     return ValidatedConverter

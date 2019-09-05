@@ -13,10 +13,8 @@ from redbot.core import Config, commands
 from redbot.core.bot import Red
 from . import dataclasses
 
-# noinspection PyProtectedMember
 from .converters import _pass_config_to_converters
 
-# noinspection PyProtectedMember
 from .playlists import _pass_config_to_playlist
 
 __all__ = [
@@ -53,7 +51,6 @@ def pass_config_to_dependencies(config: Config, bot: Red, localtracks_folder: st
     _config = config
     _pass_config_to_playlist(config, bot)
     _pass_config_to_converters(config, bot)
-    # noinspection PyProtectedMember
     dataclasses._pass_config_to_dataclasses(config, bot, localtracks_folder)
 
 
@@ -137,7 +134,6 @@ def dynamic_time(seconds):
 
 
 def match_url(url):
-    # noinspection PyBroadException
     try:
         query_url = urlparse(url)
         return all([query_url.scheme, query_url.netloc, query_url.path])
@@ -190,9 +186,7 @@ def track_creator(player, position=None, other_track=None):
         queued_track = other_track
     else:
         queued_track = player.queue[position]
-    # noinspection PyProtectedMember
     track_keys = queued_track._info.keys()
-    # noinspection PyProtectedMember
     track_values = queued_track._info.values()
     track_id = queued_track.track_identifier
     track_info = {}
@@ -309,13 +303,9 @@ class CacheLevel:
         other are a strict superset of those on self."""
         return self.is_superset(other) and self != other
 
-    # noinspection PyUnusedName
     __le__ = is_subset
-    # noinspection PyUnusedName
     __ge__ = is_superset
-    # noinspection PyUnusedName
     __lt__ = is_strict_subset
-    # noinspection PyUnusedName
     __gt__ = is_strict_superset
 
     @classmethod
@@ -384,7 +374,6 @@ class CacheLevel:
 
 
 class Notifier:
-    # noinspection PyUnusedLocal
     def __init__(self, ctx: commands.Context, message: discord.Message, updates: dict, **kwargs):
         self.context = ctx
         self.message = message
