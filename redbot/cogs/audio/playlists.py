@@ -23,6 +23,7 @@ __all__ = [
     "reset_playlist",
     "delete_playlist",
     "humanize_scope",
+    "standardize_scope",
     "FakePlaylist",
 ]
 
@@ -42,7 +43,6 @@ class PlaylistScope(Enum):
 
     @staticmethod
     def list():
-        # noinspection PyTypeChecker
         return list(map(lambda c: c.value, PlaylistScope))
 
 

@@ -22,7 +22,6 @@ class TXTParser:
 
             if fileref is not None:
                 playlist.append(trackObject(File=fileref))
-                # noinspection PyUnusedLocal
                 fileref = None
 
         return playlistObject(Tracks=playlist, Encoding=encoding)
@@ -129,7 +128,6 @@ class XSPFParser:
             t = trackObject()
             for item in track.childNodes:
                 key = item.nodeName
-                # noinspection PyBroadException
                 try:
                     value = item.childNodes[0].nodeValue
                     if key == "creator":

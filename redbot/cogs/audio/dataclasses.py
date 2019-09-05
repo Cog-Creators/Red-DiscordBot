@@ -13,7 +13,6 @@ from redbot.core.i18n import Translator
 _config: Optional[Config] = None
 _bot: Optional[Red] = None
 _localtrack_folder: Optional[str] = None
-# noinspection PyUnusedName
 _ = Translator("Audio", __file__)
 
 _RE_REMOVE_START = re.compile(r"^(sc|list) ")
@@ -321,7 +320,7 @@ class Query:
         return str(self.lavalink_query)
 
     @classmethod
-    def process_input(cls, query: Union[LocalPath, lavalink.Track, str], **kwargs):
+    def process_input(cls, query: Union[LocalPath, lavalink.Track, "Query", str], **kwargs):
         """
         A replacement for :code:`lavalink.Player.load_tracks`.
         This will try to get a valid cached entry first if not found or if in valid
@@ -409,7 +408,6 @@ class Query:
                     returning["local"] = True
                     returning["name"] = _localtrack.name
                     return returning
-            # noinspection PyBroadException
             try:
                 query_url = urlparse(track)
                 if all([query_url.scheme, query_url.netloc, query_url.path]):

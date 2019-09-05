@@ -8,7 +8,6 @@ from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 
-# noinspection PyProtectedMember
 from .playlists import PlaylistScope, standardize_scope
 
 _ = Translator("Audio", __file__)
@@ -20,6 +19,7 @@ __all__ = [
     "LazyGreedyConverter",
     "standardize_scope",
     "get_lazy_converter",
+    "get_playlist_converter",
 ]
 
 _config = None
@@ -90,9 +90,6 @@ class NoExitParser(argparse.ArgumentParser):
         raise commands.BadArgument()
 
 
-# noinspection PyBroadException,PyBroadException,PyBroadException,PyBroadException,
-# PyBroadException,PyBroadException
-# noinspection PyBroadException
 class ScopeParser(commands.Converter):
     async def convert(
         self, ctx: commands.Context, argument: str
@@ -152,20 +149,17 @@ class ScopeParser(commands.Converter):
             guild_raw = " ".join(guild).strip()
             if guild_raw.isnumeric():
                 guild_raw = int(guild_raw)
-                # noinspection PyBroadException
                 try:
                     target_guild = ctx.bot.get_guild(guild_raw)
                 except Exception:
                     target_guild = None
                 guild_raw = str(guild_raw)
             if target_guild is None:
-                # noinspection PyBroadException
                 try:
                     target_guild = await commands.GuildConverter.convert(ctx, guild_raw)
                 except Exception:
                     target_guild = None
             if target_guild is None:
-                # noinspection PyBroadException
                 try:
                     target_guild = await ctx.bot.fetch_guild(guild_raw)
                 except Exception:
@@ -183,7 +177,6 @@ class ScopeParser(commands.Converter):
             user_raw = " ".join(author).strip()
             if user_raw.isnumeric():
                 user_raw = int(user_raw)
-                # noinspection PyBroadException
                 try:
                     target_user = ctx.bot.get_user(user_raw)
                 except Exception:
@@ -192,17 +185,14 @@ class ScopeParser(commands.Converter):
             if target_user is None:
                 member_converter = commands.MemberConverter()
                 user_converter = commands.UserConverter()
-                # noinspection PyBroadException
                 try:
                     target_user = await member_converter.convert(ctx, user_raw)
                 except Exception:
-                    # noinspection PyBroadException
                     try:
                         target_user = await user_converter.convert(ctx, user_raw)
                     except Exception:
                         target_user = None
             if target_user is None:
-                # noinspection PyBroadException
                 try:
                     target_user = await ctx.bot.fetch_user(user_raw)
                 except Exception:
@@ -217,11 +207,6 @@ class ScopeParser(commands.Converter):
         return target_scope, target_user, target_guild, specified_user
 
 
-# noinspection PyBroadException,PyBroadException,PyBroadException,PyBroadException,
-# PyBroadException,PyBroadException
-# noinspection PyBroadException,PyBroadException,PyBroadException,PyBroadException,
-# PyBroadException,PyBroadException
-# noinspection PyBroadException,PyBroadException
 class ComplexScopeParser(commands.Converter):
     async def convert(
         self, ctx: commands.Context, argument: str
@@ -318,20 +303,17 @@ class ComplexScopeParser(commands.Converter):
             to_guild_raw = " ".join(to_guild).strip()
             if to_guild_raw.isnumeric():
                 to_guild_raw = int(to_guild_raw)
-                # noinspection PyBroadException
                 try:
                     target_guild = ctx.bot.get_guild(to_guild_raw)
                 except Exception:
                     target_guild = None
                 to_guild_raw = str(to_guild_raw)
             if target_guild is None:
-                # noinspection PyBroadException
                 try:
                     target_guild = await commands.GuildConverter.convert(ctx, to_guild_raw)
                 except Exception:
                     target_guild = None
             if target_guild is None:
-                # noinspection PyBroadException
                 try:
                     target_guild = await ctx.bot.fetch_guild(to_guild_raw)
                 except Exception:
@@ -353,20 +335,17 @@ class ComplexScopeParser(commands.Converter):
             from_guild_raw = " ".join(from_guild).strip()
             if from_guild_raw.isnumeric():
                 from_guild_raw = int(from_guild_raw)
-                # noinspection PyBroadException
                 try:
                     source_guild = ctx.bot.get_guild(from_guild_raw)
                 except Exception:
                     source_guild = None
                 from_guild_raw = str(from_guild_raw)
             if source_guild is None:
-                # noinspection PyBroadException
                 try:
                     source_guild = await commands.GuildConverter.convert(ctx, from_guild_raw)
                 except Exception:
                     source_guild = None
             if source_guild is None:
-                # noinspection PyBroadException
                 try:
                     source_guild = await ctx.bot.fetch_guild(from_guild_raw)
                 except Exception:
@@ -390,7 +369,6 @@ class ComplexScopeParser(commands.Converter):
             to_user_raw = " ".join(to_author).strip()
             if to_user_raw.isnumeric():
                 to_user_raw = int(to_user_raw)
-                # noinspection PyBroadException
                 try:
                     source_user = ctx.bot.get_user(to_user_raw)
                 except Exception:
@@ -399,17 +377,14 @@ class ComplexScopeParser(commands.Converter):
             if target_user is None:
                 member_converter = commands.MemberConverter()
                 user_converter = commands.UserConverter()
-                # noinspection PyBroadException
                 try:
                     target_user = await member_converter.convert(ctx, to_user_raw)
                 except Exception:
-                    # noinspection PyBroadException
                     try:
                         target_user = await user_converter.convert(ctx, to_user_raw)
                     except Exception:
                         target_user = None
             if target_user is None:
-                # noinspection PyBroadException
                 try:
                     target_user = await ctx.bot.fetch_user(to_user_raw)
                 except Exception:
@@ -431,7 +406,6 @@ class ComplexScopeParser(commands.Converter):
             from_user_raw = " ".join(from_author).strip()
             if from_user_raw.isnumeric():
                 from_user_raw = int(from_user_raw)
-                # noinspection PyBroadException
                 try:
                     target_user = ctx.bot.get_user(from_user_raw)
                 except Exception:
@@ -440,17 +414,14 @@ class ComplexScopeParser(commands.Converter):
             if source_user is None:
                 member_converter = commands.MemberConverter()
                 user_converter = commands.UserConverter()
-                # noinspection PyBroadException
                 try:
                     source_user = await member_converter.convert(ctx, from_user_raw)
                 except Exception:
-                    # noinspection PyBroadException
                     try:
                         source_user = await user_converter.convert(ctx, from_user_raw)
                     except Exception:
                         source_user = None
             if source_user is None:
-                # noinspection PyBroadException
                 try:
                     source_user = await ctx.bot.fetch_user(from_user_raw)
                 except Exception:
@@ -496,7 +467,6 @@ class LazyGreedyConverter(commands.Converter):
         return f"{greedy_output}".strip()
 
 
-# noinspection PySameParameterValue,PyUnusedName
 def get_lazy_converter(splitter: str) -> type:
     """
     Returns a typechecking safe `LazyGreedyConverter` suitable for use with discord.py.
@@ -506,6 +476,20 @@ def get_lazy_converter(splitter: str) -> type:
         __call__ = functools.partialmethod(type(LazyGreedyConverter).__call__, splitter)
 
     class ValidatedConverter(LazyGreedyConverter, metaclass=PartialMeta):
+        pass
+
+    return ValidatedConverter
+
+
+def get_playlist_converter() -> type:
+    """
+    Returns a typechecking safe `PlaylistConverter` suitable for use with discord.py.
+    """
+
+    class PartialMeta(type(PlaylistConverter)):
+        __call__ = functools.partialmethod(type(PlaylistConverter).__call__)
+
+    class ValidatedConverter(PlaylistConverter, metaclass=PartialMeta):
         pass
 
     return ValidatedConverter
