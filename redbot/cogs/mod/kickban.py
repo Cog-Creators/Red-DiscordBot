@@ -66,7 +66,7 @@ class KickBanMixin(MixinMeta):
         days: int = 0,
         reason: str = None,
         create_modlog_case=False,
-    ) -> Union[str, bool]:
+    ) -> Union[str, bool, Exception]:
         author = ctx.author
         guild = ctx.guild
 
@@ -95,7 +95,7 @@ class KickBanMixin(MixinMeta):
         except discord.Forbidden:
             return _("I'm not allowed to do that.")
         except Exception as e:
-            return e  # TODO: improper return type? Is this intended to be re-raised?
+            return e  # FIXME: improper return type? Is this intended to be re-raised?
 
         if create_modlog_case:
             try:

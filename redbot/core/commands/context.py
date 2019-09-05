@@ -1,6 +1,6 @@
 import asyncio
 import contextlib
-from typing import Iterable, List, Union
+from typing import Iterable, List, Optional, Union
 
 import discord
 from discord.ext import commands
@@ -28,15 +28,15 @@ class Context(commands.Context):
         super().__init__(**attrs)
         self.permission_state: PermState = PermState.NORMAL
 
-    async def send(self, content=None, **kwargs):
-        r"""Sends a message to the destination with the content given.
+    async def send(self, content: Optional[Union[str, Exception]] = None, **kwargs):
+        """Sends a message to the destination with the content given.
 
         This acts the same as `discord.ext.commands.Context.send`, with
         one added keyword argument as detailed below in *Other Parameters*.
 
         Parameters
         ----------
-        content : str
+        content : Optional[Union[str, Exception]]
             The content of the message to send.
 
         Other Parameters
@@ -47,7 +47,7 @@ class Context(commands.Context):
             :func:`~redbot.core.utils.common_filters.filter_mass_mentions`.
             This must take a single `str` as an argument, and return
             the sanitized `str`.
-        \*\*kwargs
+        **kwargs
             See `discord.ext.commands.Context.send`.
 
         Returns

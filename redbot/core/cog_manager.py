@@ -345,7 +345,7 @@ class CogManagerUI(commands.Cog):
         try:
             await ctx.bot.cog_mgr.add_path(path)
         except ValueError as e:
-            await ctx.send(str(e))
+            await ctx.send(e)
         else:
             await ctx.send(_("Path successfully added."))
 

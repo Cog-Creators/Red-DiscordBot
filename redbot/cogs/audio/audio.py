@@ -575,7 +575,7 @@ class Audio(commands.Cog):
         """Toggle the domain restriction on Audio.
 
         When toggled off, users will be able to play songs from non-commercial websites and links.
-        When toggled on, users are restricted to YouTube, SoundCloud, \
+        When toggled on, users are restricted to YouTube, SoundCloud,
         Mixer, Vimeo, Twitch, and Bandcamp links."""
         restrict = await self.config.restrict()
         await self.config.restrict.set(not restrict)
@@ -1675,7 +1675,7 @@ class Audio(commands.Cog):
                         tracks = await player.get_tracks(f"ytsearch:{query}")
                         if not tracks:
                             return await self._embed_msg(ctx, _("Nothing found."))
-                        single_track = list(tracks[0])
+                        single_track = [tracks[0]]
                         return single_track
 
                 except KeyError:
@@ -4131,8 +4131,7 @@ class Audio(commands.Cog):
     @staticmethod
     def _match_yt_playlist(url):
         yt_list_playlist = re.compile(
-            r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)"
-            r"(\/playlist\?).*(list=)(.*)(&|$)"
+            r"^(https?://)?(www\.)?(youtube\.com|youtu\.?be)" r"(/playlist\?).*(list=)(.*)(&|$)"
         )
         if yt_list_playlist.match(url):
             return True

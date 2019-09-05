@@ -359,9 +359,7 @@ class Warnings(commands.Cog):
                     warning(_("You are not allowed to check warnings for other users!"))
                 )
 
-            try:
-                user.id
-            except AttributeError:
+            if not hasattr(user, "id"):
                 userid: int = user
                 user = ctx.guild.get_member(userid)
                 user = user or namedtuple("Member", "id guild")(userid, ctx.guild)

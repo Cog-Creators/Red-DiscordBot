@@ -116,7 +116,7 @@ class MuteMixin(MixinMeta):
                 channel=None,
             )
         except RuntimeError as e:
-            await ctx.send(str(e))
+            await ctx.send(e)
         await ctx.send(_("User is now allowed to speak and listen in voice channels"))
 
     @commands.command()
@@ -160,7 +160,7 @@ class MuteMixin(MixinMeta):
                 channel=None,
             )
         except RuntimeError as e:
-            await ctx.send(str(e))
+            await ctx.send(e)
         await ctx.send(_("User has been banned from speaking or listening in voice channels"))
 
     @commands.group()
@@ -203,7 +203,7 @@ class MuteMixin(MixinMeta):
                     channel=channel,
                 )
             except RuntimeError as e:
-                await ctx.send(str(e))
+                await ctx.send(e)
             await ctx.send(
                 _("Muted {user} in channel {channel.name}").format(user=user, channel=channel)
             )
@@ -239,7 +239,7 @@ class MuteMixin(MixinMeta):
                     channel=channel,
                 )
             except RuntimeError as e:
-                await ctx.send(str(e))
+                await ctx.send(e)
             await channel.send(_("User has been muted in this channel."))
         else:
             await channel.send(issue)
@@ -272,7 +272,7 @@ class MuteMixin(MixinMeta):
                 channel=None,
             )
         except RuntimeError as e:
-            await ctx.send(str(e))
+            await ctx.send(e)
         await ctx.send(_("User has been muted in this server."))
 
     @commands.group()
@@ -318,7 +318,7 @@ class MuteMixin(MixinMeta):
                     channel=channel,
                 )
             except RuntimeError as e:
-                await ctx.send(str(e))
+                await ctx.send(e)
             await ctx.send(
                 _("Unmuted {user} in channel {channel.name}").format(user=user, channel=channel)
             )
@@ -354,7 +354,7 @@ class MuteMixin(MixinMeta):
                     channel=channel,
                 )
             except RuntimeError as e:
-                await ctx.send(str(e))
+                await ctx.send(e)
             await ctx.send(_("User unmuted in this channel."))
         else:
             await ctx.send(_("Unmute failed. Reason: {}").format(message))
@@ -388,7 +388,7 @@ class MuteMixin(MixinMeta):
                 until=None,
             )
         except RuntimeError as e:
-            await ctx.send(str(e))
+            await ctx.send(e)
         await ctx.send(_("User has been unmuted in this server."))
 
     async def mute_user(

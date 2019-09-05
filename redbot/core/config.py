@@ -913,7 +913,7 @@ class Config:
             config=self,
         )
 
-    def guild(self, guild: discord.Guild) -> Group:
+    def guild(self, guild: Union[discord.Guild, discord.Object]) -> Group:
         """Returns a `Group` for the given guild.
 
         Parameters
