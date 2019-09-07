@@ -232,21 +232,9 @@ def init_events(bot, cli_flags):
         elif isinstance(error, commands.NoPrivateMessage):
             await ctx.send("That command is not available in DMs.")
         elif isinstance(error, commands.CommandOnCooldown):
-            if error.retry_after < 1:
-                async with ctx.typing():
-                    # the sleep here is so that commands using this for ratelimit purposes
-                    # are not made more lenient than intended, while still being
-                    # more convienient for the user than redoing it less than a second later.
-                    await asyncio.sleep(error.retry_after)
-                    await ctx.bot.invoke(ctx)
-                    # done this way so checks still occur if there are other
-                    # failures possible than just cooldown.
-                    # do not change to ctx.reinvoke()
-                    return
-
             await ctx.send(
                 "This command is on cooldown. Try again in {}.".format(
-                    humanize_timedelta(seconds=error.retry_after)
+                    humanize_timedelta(seconds=error.retry_after) or "1 second"
                 ),
                 delete_after=error.retry_after,
             )
