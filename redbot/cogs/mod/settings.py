@@ -28,6 +28,7 @@ class ModSettings(MixinMeta):
             delete_delay = data["delete_delay"]
             reinvite_on_unban = data["reinvite_on_unban"]
             toggle_dm = data["toggle_dm"]
+            default_days = data["default_days"]
             msg = ""
             msg += _("Delete repeats: {num_repeats}\n").format(
                 num_repeats=_("after {num} repeats").format(num=delete_repeats)
@@ -53,6 +54,7 @@ class ModSettings(MixinMeta):
             msg += _("Send message to users: {yes_or_no}\n").format(
                 yes_or_no=_("Yes") if toggle_dm else _("No")
             )
+            msg += _("Default days: {num_days} days\n").format(num_days=default_days)
             await ctx.send(box(msg))
 
     @modset.command()
@@ -221,3 +223,20 @@ class ModSettings(MixinMeta):
             await ctx.send(_("Users will now be DM'd when they are kicked/banned."))
         else:
             await ctx.send(_("Users will not be DM'd when they are kicked/banned"))
+
+    @modset.command()
+    @commands.guild_only()
+    async def defaultdays(self, ctx: commands.Context, days: int = 0):
+        """Set the default days worth of messages to be deleted when a user is banned.
+        The amount of days has to be between 0 and 7.
+        """
+        guild = ctx.guild
+        if not (0 <= days <= 7):
+            return await ctx.send(_("Invalid days. Must be between 0 and 7."))
+        await self.settings.guild(guild).default_days.set(days)
+        await ctx.send(
+            _("{days} days worth of messages will be deleted when a user is banned.").format(
+                days=days
+            )
+        )
+

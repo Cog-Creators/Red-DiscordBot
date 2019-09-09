@@ -7,7 +7,7 @@ from typing import cast, Optional, Union
 
 import discord
 from redbot.core import commands, i18n, checks, modlog
-from redbot.core.utils.chat_formatting import pagify
+from redbot.core.utils.chat_formatting import pagify, humanize_number
 from redbot.core.utils.mod import is_allowed_by_hierarchy, get_audit_reason
 from .abc import MixinMeta
 from .converters import RawUserIds
@@ -217,18 +217,20 @@ class KickBanMixin(MixinMeta):
         self,
         ctx: commands.Context,
         user: discord.Member,
-        days: Optional[int] = 0,
+        days: Optional[int] = None,
         *,
         reason: str = None,
     ):
         """Ban a user from this server and optionally delete days of messages.
 
         If days is not a number, it's treated as the first word of the reason.
-        Minimum 0 days, maximum 7. Defaults to 0."""
+        Minimum 0 days, maximum 7. If not specified, defaultdays setting will be used instead."""
         author = ctx.author
         guild = ctx.guild
         if reason is None:
             reason = "No reason was given."
+        if days is None:
+            days = await self.settings.guild(guild).default_days()
         self == self.bot.get_cog("Mod")
         toggle = await self.settings.guild(guild).toggle_dm()
         if toggle:
@@ -269,7 +271,9 @@ class KickBanMixin(MixinMeta):
         errors = {}
 
         async def show_results():
-            text = _("Banned {num} users from the server.").format(num=len(banned))
+            text = _("Banned {num} users from the server.").format(
+                num=humanize_number(len(banned))
+            )
             if errors:
                 text += _("\nErrors:\n")
                 text += "\n".join(errors.values())

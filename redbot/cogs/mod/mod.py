@@ -54,6 +54,7 @@ class Mod(
         "reinvite_on_unban": False,
         "current_tempbans": [],
         "toggle_dm": False,
+        "default_days": 0,
     }
 
     default_channel_settings = {"ignored": False}

@@ -125,7 +125,7 @@ class PrivilegeLevel(enum.IntEnum):
 
         # The following is simply an optimised way to check if the user has the
         # admin or mod role.
-        guild_settings = ctx.bot.db.guild(ctx.guild)
+        guild_settings = ctx.bot._config.guild(ctx.guild)
 
         member_snowflakes = ctx.author._roles  # DEP-WARN
         for snowflake in await guild_settings.admin_role():
@@ -719,7 +719,7 @@ def mod():
 
 
 class _IntKeyDict(Dict[int, _T]):
-    """Dict subclass which throws KeyError when a non-int key is used."""
+    """Dict subclass which throws TypeError when a non-int key is used."""
 
     get: Callable
     setdefault: Callable
@@ -736,7 +736,7 @@ class _IntKeyDict(Dict[int, _T]):
 
 
 class _RulesDict(Dict[Union[int, str], PermState]):
-    """Dict subclass which throws a KeyError when an invalid key is used."""
+    """Dict subclass which throws a TypeError when an invalid key is used."""
 
     get: Callable
     setdefault: Callable

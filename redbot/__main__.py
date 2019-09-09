@@ -33,7 +33,7 @@ from redbot.core.events import init_events
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags
 from redbot.core.core_commands import Core
 from redbot.core.dev_commands import Dev
-from redbot.core import __version__, modlog, bank, data_manager
+from redbot.core import __version__, modlog, bank, data_manager, drivers
 from signal import SIGTERM
 
 
@@ -52,8 +52,8 @@ async def _get_prefix_and_token(red, indict):
     :param indict:
     :return:
     """
-    indict["token"] = await red.db.token()
-    indict["prefix"] = await red.db.prefix()
+    indict["token"] = await red._config.token()
+    indict["prefix"] = await red._config.prefix()
 
 
 def list_instances():
@@ -99,7 +99,11 @@ def main():
         )
         cli_flags.instance_name = "temporary_red"
         data_manager.create_temp_config()
+    loop = asyncio.get_event_loop()
+
     data_manager.load_basic_configuration(cli_flags.instance_name)
+    driver_cls = drivers.get_driver_class()
+    loop.run_until_complete(driver_cls.initialize(**data_manager.storage_details()))
     redbot.logging.init_logging(
         level=cli_flags.logging_level, location=data_manager.core_data_path() / "logs"
     )
@@ -111,8 +115,7 @@ def main():
     red = Red(
         cli_flags=cli_flags, description=description, dm_help=None, fetch_offline_members=True
     )
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(red.maybe_update_config())
+    loop.run_until_complete(red._maybe_update_config())
     init_global_checks(red)
     init_events(red, cli_flags)
 
@@ -150,11 +153,11 @@ def main():
         loop.run_until_complete(red.start(token, bot=True))
     except discord.LoginFailure:
         log.critical("This token doesn't seem to be valid.")
-        db_token = loop.run_until_complete(red.db.token())
+        db_token = loop.run_until_complete(red._config.token())
         if db_token and not cli_flags.no_prompt:
             print("\nDo you want to reset the token? (y/n)")
             if confirm("> "):
-                loop.run_until_complete(red.db.token.set(""))
+                loop.run_until_complete(red._config.token.set(""))
                 print("Token has been reset.")
     except KeyboardInterrupt:
         log.info("Keyboard interrupt detected. Quitting...")

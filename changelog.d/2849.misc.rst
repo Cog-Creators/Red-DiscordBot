@@ -1,0 +1,2 @@
+Added the function ``redbot.core.utils.chat_formatting.text_to_file`` to
+prepare a long text to be send as a file.

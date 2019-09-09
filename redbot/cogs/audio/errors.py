@@ -31,3 +31,67 @@ class LavalinkDownloadFailed(AudioError, RuntimeError):
 
     def _response_repr(self) -> str:
         return f"[{self.response.status} {self.response.reason}]"
+
+
+class PlayListError(AudioError):
+    """Base exception for errors related to playlists."""
+
+
+class InvalidPlaylistScope(PlayListError):
+    """Provided playlist scope is not valid."""
+
+
+class MissingGuild(PlayListError):
+    """Trying to access the Guild scope without a guild."""
+
+
+class MissingAuthor(PlayListError):
+    """Trying to access the User scope without an user id."""
+
+
+class TooManyMatches(PlayListError):
+    """Too many playlist match user input."""
+
+
+class NotAllowed(PlayListError):
+    """Too many playlist match user input."""
+
+
+class ApiError(AudioError):
+    """Base exception for API errors in the Audio cog."""
+
+
+class SpotifyApiError(ApiError):
+    """Base exception for Spotify API errors."""
+
+
+class SpotifyFetchError(SpotifyApiError):
+    """Fetching Spotify data failed."""
+
+    def __init__(self, message, *args):
+        self.message = message
+        super().__init__(*args)
+
+
+class YouTubeApiError(ApiError):
+    """Base exception for YouTube Data API errors."""
+
+
+class DatabaseError(AudioError):
+    """Base exception for database errors in the Audio cog."""
+
+
+class InvalidTableError(DatabaseError):
+    """Provided table to query is not a valid table."""
+
+
+class LocalTrackError(AudioError):
+    """Base exception for local track errors."""
+
+
+class InvalidLocalTrack(LocalTrackError):
+    """Base exception for local track errors."""
+
+
+class InvalidLocalTrackFolder(LocalTrackError):
+    """Base exception for local track errors."""

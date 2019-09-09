@@ -1,0 +1,1 @@
+``--[no-]backup``, ``--[no-]drop-db`` and ``--[no-]remove-datapath`` in ``redbot-setup delete`` command are now on/off flags.
