@@ -1,0 +1,2 @@
+Added features to mod to be able to toggle warns being sent to both DM's and channel.
+Added a command to set the channel the warns get sent to. (defaults to the channel the warn was issued in). 
