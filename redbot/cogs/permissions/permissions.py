@@ -368,7 +368,9 @@ class Permissions(commands.Cog):
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     @permissions.command(
-        name="removeserverrule", usage="<cog_or_command> <who_or_what>...", aliases=["removeguildrule"]
+        name="removeserverrule",
+        usage="<cog_or_command> <who_or_what>...",
+        aliases=["removeguildrule"],
     )
     async def permissions_removeguildrule(
         self,
