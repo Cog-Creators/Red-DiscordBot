@@ -53,6 +53,7 @@ class Mod(
         "delete_delay": -1,
         "reinvite_on_unban": False,
         "current_tempbans": [],
+        "toggle_dm": False,
     }
 
     default_channel_settings = {"ignored": False}
