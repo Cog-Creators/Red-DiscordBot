@@ -204,6 +204,7 @@ class ModSettings(MixinMeta):
                     command=f"{ctx.prefix}unban"
                 )
             )
+
     @modset.command()
     @commands.guild_only()
     async def toggledm(self, ctx: commands.Context, enabled: bool = None):
