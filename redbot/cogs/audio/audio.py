@@ -296,7 +296,7 @@ class Audio(commands.Cog):
                 else:
                     dur = lavalink.utils.format_time(player.current.length)
                 embed = discord.Embed(
-                    colour=(await self._get_embed_colour(notify_channel)),
+                    colour=(await self.bot.get_embed_color(notify_channel)),
                     title=_("Now Playing"),
                     description=description,
                 )
@@ -328,7 +328,8 @@ class Audio(commands.Cog):
             if notify_channel:
                 notify_channel = self.bot.get_channel(notify_channel)
                 embed = discord.Embed(
-                    colour=(await self._get_embed_colour(notify_channel)), title=_("Queue ended.")
+                    colour=(await self.bot.get_embed_colour(notify_channel)),
+                    title=_("Queue ended."),
                 )
                 await notify_channel.send(embed=embed)
 
@@ -346,7 +347,7 @@ class Audio(commands.Cog):
             if message_channel:
                 message_channel = self.bot.get_channel(message_channel)
                 embed = discord.Embed(
-                    colour=(await self._get_embed_colour(message_channel)),
+                    colour=(await self.bot.get_embed_color(message_channel)),
                     title=_("Track Error"),
                     description="{}\n**[{}]({})**".format(
                         extra, player.current.title, player.current.uri
@@ -3834,14 +3835,12 @@ class Audio(commands.Cog):
             return False
 
     async def _check_api_tokens(self):
-        spotify = await self.bot.db.api_tokens.get_raw(
-            "spotify", default={"client_id": "", "client_secret": ""}
-        )
-        youtube = await self.bot.db.api_tokens.get_raw("youtube", default={"api_key": ""})
+        spotify = await self.bot.get_shared_api_tokens("spotify")
+        youtube = await self.bot.get_shared_api_tokens("youtube")
         return {
-            "spotify_client_id": spotify["client_id"],
-            "spotify_client_secret": spotify["client_secret"],
-            "youtube_api": youtube["api_key"],
+            "spotify_client_id": spotify.get("client_id", ""),
+            "spotify_client_secret": spotify.get("client_secret", ""),
+            "youtube_api": youtube.get("api_key", ""),
         }
 
     async def _check_external(self):
@@ -4081,13 +4080,6 @@ class Audio(commands.Cog):
             except discord.errors.NotFound:
                 pass
 
-    async def _get_embed_colour(self, channel: discord.abc.GuildChannel):
-        # Unfortunately we need this for when context is unavailable.
-        if await self.bot.db.guild(channel.guild).use_bot_color():
-            return channel.guild.me.color
-        else:
-            return self.bot.color
-
     async def _get_eq_reaction(self, ctx, message, emoji):
         try:
             reaction, user = await self.bot.wait_for(
@@ -4323,10 +4315,9 @@ class Audio(commands.Cog):
         return {"Authorization": "Basic %s" % auth_header.decode("ascii")}
 
     async def _request_token(self):
-        self.client_id = await self.bot.db.api_tokens.get_raw("spotify", default={"client_id": ""})
-        self.client_secret = await self.bot.db.api_tokens.get_raw(
-            "spotify", default={"client_secret": ""}
-        )
+        tokens = await self.bot.get_shared_api_tokens("spotify")
+        self.client_id = tokens.get("client_id", "")
+        self.client_secret = tokens.get("client_secret", "")
         payload = {"grant_type": "client_credentials"}
         headers = self._make_token_auth(
             self.client_id["client_id"], self.client_secret["client_secret"]
