@@ -127,16 +127,19 @@ class KickBanMixin(MixinMeta):
                         unban_time = datetime.utcfromtimestamp(
                             await self.settings.member(member(uid, guild)).banned_until()
                         )
-                        now = datetime.utcnow()
-                        if now > unban_time:  # Time to unban the user
+                        if datetime.utcnow() > unban_time:  # Time to unban the user
                             user = await self.bot.fetch_user(uid)
                             queue_entry = (guild.id, user.id)
                             try:
                                 await guild.unban(user, reason=_("Tempban finished"))
                                 guild_tempbans.remove(uid)
-                            except discord.Forbidden:
-                                log.info("Failed to unban member due to permissions")
                             except discord.HTTPException as e:
+                                if e.code == 50013:  # 50013: Missing permissions
+                                    log.info(
+                                        f"Failed to unban {user}({user.id}) user from "
+                                        f"{guild.name}({guild.id}) guild due to permissions"
+                                    )
+                                    break  # skip the rest of this guild
                                 log.info(f"Failed to unban member: error code: {e.code}")
             await asyncio.sleep(60)
 
