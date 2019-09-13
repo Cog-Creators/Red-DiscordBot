@@ -318,8 +318,9 @@ You can find out how to obtain a token with
 section "Creating a Bot Account".
 
 You may also run Red via the launcher, which allows you to restart the bot
-from discord, and enable auto-restart. You may also update the bot from the
-launcher menu. Use the following command to run the launcher:
+from discord, and enable auto-restart. Please note the launcher will be
+deprecated soon. You may also update the bot from the launcher menu. Use
+the following command to run the launcher:
 
 .. code-block:: none
 
