@@ -8,8 +8,8 @@ Installing Red on Windows
 Needed Software
 ---------------
 
-The following software dependencies can all be installed quickly and easily through powershell,
-using a trusted package manager for windows called `Chocolatey <https://chocolatey.org>`_
+The following software dependencies can all be installed quickly and easily through PowerShell,
+using a trusted package manager for Windows called `Chocolatey <https://chocolatey.org>`_
 
 We also provide instructions for manually installing all of the dependencies.
 
@@ -17,7 +17,7 @@ We also provide instructions for manually installing all of the dependencies.
 Installing using powershell and chocolatey
 ******************************************
 
-To install via powershell, search "powershell" in the windows start menu,
+To install via PowerShell, search "powershell" in the Windows start menu,
 right-click on it and then click "Run as administrator"
 
 Then run each of the following commands:
@@ -41,7 +41,7 @@ Manually installing dependencies
 
 * `Git <https://git-scm.com/download/win>`_
 
-.. attention:: Please choose the option to "Run Git from the Windows Command Prompt" in Git's setup.
+.. attention:: Please choose the option to "Git from the command line and also from 3rd-party software" in Git's setup.
 
 * `Java <https://java.com/en/download/manual.jsp>`_ - needed for Audio
 
@@ -122,8 +122,9 @@ You can find out how to obtain a token with
 section "Creating a Bot Account".
 
 You may also run Red via the launcher, which allows you to restart the bot
-from discord, and enable auto-restart. You may also update the bot from the
-launcher menu. Use the following command to run the launcher:
+from discord, and enable auto-restart. Please note the launcher will be
+deprecated soon. You may also update the bot from the launcher menu. Use
+the following command to run the launcher:
 
 .. code-block:: none
 
