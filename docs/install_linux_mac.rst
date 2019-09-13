@@ -18,8 +18,8 @@ Please install the pre-requirements using the commands listed for your operating
 
 The pre-requirements are:
  - Python 3.7.0 or greater
- - pip 9.0 or greater
- - git
+ - Pip 9.0 or greater
+ - Git
  - Java Runtime Environment 8 or later (for audio support)
 
 We also recommend installing some basic compiler tools, in case our dependencies don't provide
