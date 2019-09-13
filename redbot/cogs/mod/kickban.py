@@ -134,7 +134,8 @@ class KickBanMixin(MixinMeta):
                                 await guild.unban(user, reason=_("Tempban finished"))
                                 guild_tempbans.remove(uid)
                             except discord.HTTPException as e:
-                                if e.code == 50013:  # 50013: Missing permissions
+                                # 50013: Missing permissions error code or 403: Forbidden status
+                                if e.code == 50013 or e.status == 403:
                                     log.info(
                                         f"Failed to unban {user}({user.id}) user from "
                                         f"{guild.name}({guild.id}) guild due to permissions"
