@@ -451,8 +451,7 @@ def main():
     if not PYTHON_OK:
         print(
             "Python {req_ver} is required to run Red, but you have {sys_ver}!".format(
-                req_ver='.'.join(map(str, MIN_PYTHON_VERSION)),
-                sys_ver=sys.version,
+                req_ver=".".join(map(str, MIN_PYTHON_VERSION)), sys_ver=sys.version
             )
         )  # Don't make an f-string, these may not exist on the python version being rejected!
         sys.exit(1)
