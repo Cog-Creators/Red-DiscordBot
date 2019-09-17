@@ -1,0 +1,1 @@
+Replaced two instances of .db -> ._config in the interactive config that were missed due to being called red.db rather than bot.db. 
