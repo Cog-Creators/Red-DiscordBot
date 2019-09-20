@@ -190,7 +190,7 @@ async def set_balance(member: Union[discord.Member, discord.User], amount: int) 
     ValueError
         If attempting to set the balance to a negative number.
     RuntimeError
-        If the bank is guild-specific and guild was not provided.
+        If the bank is guild-specific and a discord.User object is provided.
     BalanceTooHigh
         If attempting to set the balance to a value greater than
         ``bank._MAX_BALANCE``.
@@ -334,7 +334,7 @@ async def transfer_credits(
     TypeError
         If the amount is not an `int`.
     RuntimeError
-        If the bank is guild-specific and guild was not provided.
+        If the bank is guild-specific and a discord.User object is provided.
     BalanceTooHigh
         If the balance after the transfer would be greater than
         ``bank._MAX_BALANCE``.
