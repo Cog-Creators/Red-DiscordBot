@@ -193,7 +193,7 @@ async def set_balance(member: Union[discord.Member, discord.User], amount: int) 
         If the bank is guild-specific and guild was not provided.
     BalanceTooHigh
         If attempting to set the balance to a value greater than
-        ``bank.MAX_BALANCE``
+        ``bank._MAX_BALANCE``.
 
     """
     if amount < 0:
@@ -337,7 +337,7 @@ async def transfer_credits(
         If the bank is guild-specific and guild was not provided.
     BalanceTooHigh
         If the balance after the transfer would be greater than
-        ``bank.MAX_BALANCE``
+        ``bank._MAX_BALANCE``.
     """
     if not isinstance(amount, int):
         raise TypeError("Transfer amount must be of type int, not {}.".format(type(amount)))
