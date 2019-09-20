@@ -25,6 +25,8 @@
 # Additionally, this gives our users a bit more customization options including by
 # 3rd party cogs down the road.
 
+# Note: 3rd party help must not remove the copyright notice
+
 import asyncio
 from collections import namedtuple
 from typing import Union, List, AsyncIterator, Iterable, cast
