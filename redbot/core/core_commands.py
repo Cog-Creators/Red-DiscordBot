@@ -327,9 +327,10 @@ class Core(commands.Cog, CoreLogic):
         """Shows Red's uptime"""
         since = ctx.bot.uptime.strftime("%Y-%m-%d %H:%M:%S")
         delta = datetime.datetime.utcnow() - self.bot.uptime
+        uptime_str = humanize_timedelta(timedelta=delta) or _("Less than one second")
         await ctx.send(
-            _("Been up for: **{}** (since {} UTC)").format(
-                humanize_timedelta(timedelta=delta), since
+            _("Been up for: **{time_quantity}** (since {timestamp} UTC)").format(
+                time_quantity=uptime_str, timestamp=since
             )
         )
 
