@@ -1145,7 +1145,7 @@ class Core(commands.Cog, CoreLogic):
         """
         if ctx.channel.permissions_for(ctx.me).manage_messages:
             await ctx.message.delete()
-        await ctx.bot._config.api_tokens.set_raw(service, value=tokens)
+        await ctx.bot.set_shared_api_tokens(service, **tokens)
         await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
 
     @commands.group()

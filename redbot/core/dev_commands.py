@@ -61,19 +61,10 @@ class Dev(commands.Cog):
         return pagify(msg, delims=["\n", " "], priority=True, shorten_by=10)
 
     @staticmethod
-    def sanitize_output(ctx: commands.Context, keys: dict, input_: str) -> str:
+    def sanitize_output(ctx: commands.Context, input_: str) -> str:
         """Hides the bot's token from a string."""
         token = ctx.bot.http.token
-        r = "[EXPUNGED]"
-        result = input_.replace(token, r)
-        result = result.replace(token.lower(), r)
-        result = result.replace(token.upper(), r)
-        for provider, data in keys.items():
-            for name, key in data.items():
-                result = result.replace(key, r)
-                result = result.replace(key.upper(), r)
-                result = result.replace(key.lower(), r)
-        return result
+        return re.sub(re.escape(token), "[EXPUNGED]", input_, re.I)
 
     @commands.command()
     @checks.is_owner()
@@ -125,9 +116,7 @@ class Dev(commands.Cog):
             result = await result
 
         self._last_result = result
-
-        api_keys = await ctx.bot._config.api_tokens()
-        result = self.sanitize_output(ctx, api_keys, str(result))
+        result = self.sanitize_output(ctx, str(result))
 
         await ctx.send_interactive(self.get_pages(result), box_lang="py")
 
@@ -191,8 +180,7 @@ class Dev(commands.Cog):
             msg = "{}{}".format(printed, result)
         else:
             msg = printed
-        api_keys = await ctx.bot._config.api_tokens()
-        msg = self.sanitize_output(ctx, api_keys, msg)
+        msg = self.sanitize_output(ctx, msg)
 
         await ctx.send_interactive(self.get_pages(msg), box_lang="py")
 
@@ -276,8 +264,7 @@ class Dev(commands.Cog):
                 elif value:
                     msg = "{}".format(value)
 
-            api_keys = await ctx.bot._config.api_tokens()
-            msg = self.sanitize_output(ctx, api_keys, msg)
+            msg = self.sanitize_output(ctx, msg)
 
             try:
                 await ctx.send_interactive(self.get_pages(msg), box_lang="py")
