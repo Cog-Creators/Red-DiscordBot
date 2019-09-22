@@ -1,0 +1,1 @@
+Search for a cog in core cogs path first
