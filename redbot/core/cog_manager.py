@@ -280,10 +280,10 @@ class CogManager:
 
         """
         with contextlib.suppress(NoSuchCog):
-            return await self._find_ext_cog(name)
+            return await self._find_core_cog(name)
 
         with contextlib.suppress(NoSuchCog):
-            return await self._find_core_cog(name)
+            return await self._find_ext_cog(name)
 
     async def available_modules(self) -> List[str]:
         """Finds the names of all available modules to load."""
