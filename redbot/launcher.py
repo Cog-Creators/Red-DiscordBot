@@ -450,9 +450,10 @@ def main():
     args, flags_to_pass = parse_cli_args()
     if not PYTHON_OK:
         print(
-            f"Python {'.'.join(map(str, MIN_PYTHON_VERSION))} is required to run Red, but you "
-            f"have {sys.version}! Please update Python."
-        )
+            "Python {req_ver} is required to run Red, but you have {sys_ver}!".format(
+                req_ver=".".join(map(str, MIN_PYTHON_VERSION)), sys_ver=sys.version
+            )
+        )  # Don't make an f-string, these may not exist on the python version being rejected!
         sys.exit(1)
     if args.debuginfo:  # Check first since the function triggers an exit
         debug_info()
