@@ -1289,7 +1289,7 @@ class Core(commands.Cog, CoreLogic):
             return
 
         await ctx.bot._config.help.tagline.set(tagline)
-        await ctx.send(_("The tagline has been set to {}.").format(tagline[:1900]))
+        await ctx.send(_("The tagline has been set to "{}".").format(tagline[:1900]))
 
     @commands.command()
     @checks.is_owner()
