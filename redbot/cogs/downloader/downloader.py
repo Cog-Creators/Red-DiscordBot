@@ -600,6 +600,6 @@ class Downloader(commands.Cog):
                 # Assume it's in a base cog
                 msg = self.format_findcog_info(command_name, cog)
         else:
-            msg = _("This command is not provided by a cog")
+            msg = _("This command is not provided by a cog.")
 
         await ctx.send(box(msg))
