@@ -65,7 +65,7 @@ class Downloader(commands.Cog):
             The default cog install path.
 
         """
-        return await self.bot.cog_mgr.install_path()
+        return await self.bot._cog_mgr.install_path()
 
     async def installed_cogs(self) -> Tuple[Installable]:
         """Get info on installed cogs.

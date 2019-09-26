@@ -2,11 +2,12 @@ import asyncio
 import inspect
 import logging
 import os
-from collections import Counter
+from collections import namedtuple
+from datetime import datetime
 from enum import Enum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Optional, Union, List, Dict
+from typing import Optional, Union, List, Dict, NoReturn
 
 import discord
 from discord.ext.commands import when_mentioned_or
@@ -18,8 +19,13 @@ from .rpc import RPCMixin
 from .utils import common_filters
 
 CUSTOM_GROUPS = "CUSTOM_GROUPS"
+SHARED_API_TOKENS = "SHARED_API_TOKENS"
 
 log = logging.getLogger("redbot")
+
+__all__ = ["RedBase", "Red", "ExitCodes"]
+
+NotMessage = namedtuple("NotMessage", "guild")
 
 
 def _is_submodule(parent, child):
@@ -63,7 +69,6 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             invite_perm=0,
             disabled_commands=[],
             disabled_command_msg="That command is disabled.",
-            api_tokens={},
             extra_owner_destinations=[],
             owner_opt_out_list=[],
             schema_version=0,
@@ -86,6 +91,9 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         self._config.init_custom(CUSTOM_GROUPS, 2)
         self._config.register_custom(CUSTOM_GROUPS)
+
+        self._config.init_custom(SHARED_API_TOKENS, 2)
+        self._config.register_custom(SHARED_API_TOKENS)
 
         async def prefix_manager(bot, message):
             if not cli_flags.prefix:
@@ -117,14 +125,12 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         if "command_not_found" not in kwargs:
             kwargs["command_not_found"] = "Command {} not found.\n{}"
 
-        self._counter = Counter()
         self._uptime = None
         self._checked_time_accuracy = None
         self._color = discord.Embed.Empty  # This is needed or color ends up 0x000000
 
-        self.main_dir = bot_dir
-
-        self.cog_mgr = CogManager()
+        self._main_dir = bot_dir
+        self._cog_mgr = CogManager()
 
         super().__init__(*args, help_command=None, **kwargs)
         # Do not manually use the help formatter attribute here, see `send_help_for`,
@@ -134,9 +140,165 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         self._permissions_hooks: List[commands.CheckPredicate] = []
 
+    @property
+    def cog_mgr(self) -> NoReturn:
+        raise AttributeError("Please don't mess with the cog manager internals.")
+
+    @property
+    def uptime(self) -> datetime:
+        """ Allow access to the value, but we don't want cog creators setting it """
+        return self._uptime
+
+    @uptime.setter
+    def uptime(self, value) -> NoReturn:
+        raise RuntimeError(
+            "Hey, we're cool with sharing info about the uptime, but don't try and assign to it please."
+        )
+
+    @property
+    def db(self) -> NoReturn:
+        raise AttributeError(
+            "We really don't want you touching the bot config directly. "
+            "If you need something in here, take a look at the exposed methods "
+            "and use the one which corresponds to your needs or "
+            "open an issue if you need an additional method for your use case."
+        )
+
+    @property
+    def counter(self) -> NoReturn:
+        raise AttributeError(
+            "Please make your own counter object by importing ``Counter`` from ``collections``."
+        )
+
+    @property
+    def color(self) -> NoReturn:
+        raise AttributeError("Please fetch the embed color with `get_embed_color`")
+
+    @property
+    def colour(self) -> NoReturn:
+        raise AttributeError("Please fetch the embed colour with `get_embed_colour`")
+
+    async def allowed_by_whitelist_blacklist(
+        self,
+        who: Optional[Union[discord.Member, discord.User]] = None,
+        *,
+        who_id: Optional[int] = None,
+        guild_id: Optional[int] = None,
+        role_ids: Optional[List[int]] = None,
+    ) -> bool:
+        """
+        This checks if a user or member is allowed to run things,
+        as considered by Red's whitelist and blacklist.
+        
+        If given a user object, this function will check the global lists
+        
+        If given a member, this will additionally check guild lists
+        
+        If omiting a user or member, you must provide a value for ``who_id``
+        
+        You may also provide a value for ``guild_id`` in this case
+        
+        If providing a member by guild and member ids,
+        you should supply ``role_ids`` as well
+
+        Parameters
+        ----------
+        who : Optional[Union[discord.Member, discord.User]]
+            The user or member object to check
+        
+        Other Parameters
+        ----------------
+        who_id : Optional[int]
+            The id of the user or member to check
+            If not providing a value for ``who``, this is a required parameter.
+        guild_id : Optional[int]
+            When used in conjunction with a provided value for ``who_id``, checks
+            the lists for the corresponding guild as well.
+        role_ids : Optional[List[int]]
+            When used with both ``who_id`` and ``guild_id``, checks the role ids provided.
+            This is required for accurate checking of members in a guild if providing ids.
+
+        Raises
+        ------
+        TypeError
+            Did not provide ``who`` or ``who_id``
+        """
+        # Contributor Note:
+        # All config calls are delayed until needed in this section
+        # All changes should be made keeping in mind that this is also used as a global check
+
+        guild = None
+        mocked = False  # used for an accurate delayed role id expansion later.
+        if not who:
+            if not who_id:
+                raise TypeError("Must provide a value for either `who` or `who_id`")
+            mocked = True
+            who = discord.Object(id=who_id)
+            if guild_id:
+                guild = discord.Object(id=guild_id)
+        else:
+            guild = getattr(who, "guild", None)
+
+        if await self.is_owner(who):
+            return True
+
+        global_whitelist = await self._config.whitelist()
+        if global_whitelist:
+            if who.id not in global_whitelist:
+                return False
+        else:
+            # blacklist is only used when whitelist doesn't exist.
+            global_blacklist = await self._config.blacklist()
+            if who.id in global_blacklist:
+                return False
+
+        if guild:
+            # The delayed expansion of ids to check saves time in the DM case.
+            # Converting to a set reduces the total lookup time in section
+            if mocked:
+                ids = {i for i in (who.id, *(role_ids or [])) if i != guild.id}
+            else:
+                # DEP-WARN
+                # This uses member._roles (getattr is for the user case)
+                # If this is removed upstream (undocumented)
+                # there is a silent failure potential, and role blacklist/whitelists will break.
+                ids = {i for i in (who.id, *(getattr(who, "_roles", []))) if i != guild.id}
+
+            guild_whitelist = await self._config.guild(guild).whitelist()
+            if guild_whitelist:
+                if ids.isdisjoint(guild_whitelist):
+                    return False
+            else:
+                guild_blacklist = self._config.guild(guild).blacklist()
+                if not ids.isdisjoint(guild_blacklist):
+                    return False
+
+        return True
+
+    async def get_valid_prefixes(self, guild: Optional[discord.Guild] = None) -> List[str]:
+        """
+        This gets the valid prefixes for a guild.
+
+        If not provided a guild (or passed None) it will give the DM prefixes.
+
+        This is just a fancy wrapper around ``get_prefix``
+
+        Parameters
+        ----------
+        guild : Optional[discord.Guild]
+            The guild you want prefixes for. Omit (or pass None) for the DM prefixes
+        
+        Returns
+        -------
+        List[str]
+            If a guild was specified, the valid prefixes in that guild.
+            If a guild was not specified, the valid prefixes for DMs
+        """
+        return await self.get_prefix(NotMessage(guild))
+
     async def get_embed_color(self, location: discord.abc.Messageable) -> discord.Color:
         """
-        Get the embed color for a location.
+        Get the embed color for a location. This takes into account all related settings.
 
         Parameters
         ----------
@@ -170,6 +332,24 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             await self._schema_0_to_1()
             schema_version += 1
             await self._config.schema_version.set(schema_version)
+        if schema_version == 1:
+            await self._schema_1_to_2()
+            schema_version += 1
+            await self._config.schema_version.set(schema_version)
+
+    async def _schema_1_to_2(self):
+        """
+        This contains the migration of shared API tokens to a custom config scope
+        """
+
+        log.info("Moving shared API tokens to a custom group")
+        all_shared_api_tokens = await self._config.get_raw("api_tokens", default={})
+        for service_name, token_mapping in all_shared_api_tokens.items():
+            service_partial = self._config.custom(SHARED_API_TOKENS, service_name)
+            async with service_partial.all() as basically_bulk_update:
+                basically_bulk_update.update(token_mapping)
+
+        await self._config.clear_raw("api_tokens")
 
     async def _schema_0_to_1(self):
         """
@@ -320,7 +500,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             A Mapping of token names to tokens.
             This mapping exists because some services have multiple tokens.
         """
-        return await self._config.api_tokens.get_raw(service_name, default={})
+        return await self._config.custom(SHARED_API_TOKENS, service_name).all()
 
     async def set_shared_api_tokens(self, service_name: str, **tokens: str):
         """
@@ -330,10 +510,44 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         ``set api`` command
     
         This will not clear existing values not specified.
+
+        Parameters
+        ----------
+        service_name: str
+            The service to set tokens for
+        **tokens
+            token_name -> token
+
+        Examples
+        --------
+        Setting the api_key for youtube from a value in a variable ``my_key``
+
+        >>> await ctx.bot.set_shared_api_tokens("youtube", api_key=my_key)
         """
 
-        async with self._config.api_tokens.get_attr(service_name)() as method_abuse:
-            method_abuse.update(**tokens)
+        async with self._config.custom(SHARED_API_TOKENS, service_name).all() as group:
+            group.update(tokens)
+
+    async def remove_shared_api_tokens(self, service_name: str, *token_names: str):
+        """
+        Removes shared API tokens
+
+        Parameters
+        ----------
+        service_name: str
+            The service to remove tokens for
+        *token_names: str
+            The name of each token to be removed
+
+        Examples
+        --------
+        Removing the api_key for youtube
+
+        >>> await ctx.bot.remove_shared_api_tokens("youtube", "api_key")
+        """
+        async with self._config.custom(SHARED_API_TOKENS, service_name).all() as group:
+            for name in token_names:
+                group.pop(name, None)
 
     async def get_context(self, message, *, cls=commands.Context):
         return await super().get_context(message, cls=cls)
