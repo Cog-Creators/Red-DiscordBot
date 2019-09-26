@@ -520,7 +520,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         Examples
         --------
-        Setting the api_key for youtube to a value stored as ``my_key``
+        Setting the api_key for youtube from a value in a variable ``my_key``
 
         >>> await ctx.bot.set_shared_api_tokens("youtube", api_key=my_key)
         """
