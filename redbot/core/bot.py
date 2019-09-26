@@ -152,7 +152,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
     @uptime.setter
     def uptime(self, value) -> NoReturn:
         raise RuntimeError(
-            "Hey, we're cool with sharing info about the uptime, but dont try and assign to it please."
+            "Hey, we're cool with sharing info about the uptime, but don't try and assign to it please."
         )
 
     @property
@@ -279,7 +279,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         """
         This gets the valid prefixes for a guild.
 
-        If not provided a guild (or passed none) it will give the DM prefixes.
+        If not provided a guild (or passed None) it will give the DM prefixes.
 
         This is just a fancy wrapper around ``get_prefix``
 
@@ -510,6 +510,19 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         ``set api`` command
     
         This will not clear existing values not specified.
+
+        Parameters
+        ----------
+        service_name: str
+            The service to set tokens for
+        **tokens
+            token_name -> token
+
+        Examples
+        --------
+        Setting the api_key for youtube to a value stored as ``my_key``
+
+        >>> await ctx.bot.set_shared_api_tokens("youtube", api_key=my_key)
         """
 
         async with self._config.custom(SHARED_API_TOKENS, service_name).all() as group:
@@ -518,6 +531,19 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
     async def remove_shared_api_tokens(self, service_name: str, *token_names: str):
         """
         Removes shared API tokens
+
+        Parameters
+        ----------
+        service_name: str
+            The service to remove tokens for
+        *token_names: str
+            The name of each token to be removed
+
+        Examples
+        --------
+        Removing the api_key for youtube
+
+        >>> await ctx.bot.remove_shared_api_tokens("youtube", "api_key")
         """
         async with self._config.custom(SHARED_API_TOKENS, service_name).all() as group:
             for name in token_names:
