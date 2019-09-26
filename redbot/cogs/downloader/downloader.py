@@ -590,12 +590,16 @@ class Downloader(commands.Cog):
             return
 
         # Check if in installed cogs
-        cog_name = self.cog_name_from_instance(command.cog)
-        installed, cog_installable = await self.is_installed(cog_name)
-        if installed:
-            msg = self.format_findcog_info(command_name, cog_installable)
+        cog = command.cog
+        if cog:
+            cog_name = self.cog_name_from_instance(cog)
+            installed, cog_installable = await self.is_installed(cog_name)
+            if installed:
+                msg = self.format_findcog_info(command_name, cog_installable)
+            else:
+                # Assume it's in a base cog
+                msg = self.format_findcog_info(command_name, cog)
         else:
-            # Assume it's in a base cog
-            msg = self.format_findcog_info(command_name, command.cog)
+            msg = _("This command is not provided by a cog.")
 
         await ctx.send(box(msg))
