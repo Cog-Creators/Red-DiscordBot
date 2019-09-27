@@ -27,9 +27,9 @@ HIERARCHY_ISSUE_ADD = _(
 )
 
 HIERARCHY_ISSUE_REMOVE = _(
-    "I tried to remove {role.name} to {member.display_name} but that role"
+    "I tried to remove {role.name} from {member.display_name} but that role"
     " is higher than my highest role in the Discord hierarchy so I was"
-    " unable to successfully add it. Please give me a higher role and "
+    " unable to successfully remove it. Please give me a higher role and "
     "try again."
 )
 
@@ -41,9 +41,9 @@ USER_HIERARCHY_ISSUE_ADD = _(
 )
 
 USER_HIERARCHY_ISSUE_REMOVE = _(
-    "I tried to remove {role.name} to {member.display_name} but that role"
+    "I tried to remove {role.name} from {member.display_name} but that role"
     " is higher than your highest role in the Discord hierarchy so I was"
-    " unable to successfully add it. Please get a higher role and "
+    " unable to successfully remove it. Please get a higher role and "
     "try again."
 )
 
