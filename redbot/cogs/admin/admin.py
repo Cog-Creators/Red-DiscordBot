@@ -125,9 +125,7 @@ class Admin(commands.Cog):
             await member.add_roles(role)
         except discord.Forbidden:
             if not self.pass_hierarchy_check(ctx, role):
-                await self.complain(
-                    ctx, T_(HIERARCHY_ISSUE_ADD), role=role, member=member
-                )
+                await self.complain(ctx, T_(HIERARCHY_ISSUE_ADD), role=role, member=member)
             else:
                 await self.complain(ctx, T_(GENERIC_FORBIDDEN))
         else:
@@ -142,9 +140,7 @@ class Admin(commands.Cog):
             await member.remove_roles(role)
         except discord.Forbidden:
             if not self.pass_hierarchy_check(ctx, role):
-                await self.complain(
-                    ctx, T_(HIERARCHY_ISSUE_REMOVE), role=role, member=member
-                )
+                await self.complain(ctx, T_(HIERARCHY_ISSUE_REMOVE), role=role, member=member)
             else:
                 await self.complain(ctx, T_(GENERIC_FORBIDDEN))
         else:
@@ -170,9 +166,7 @@ class Admin(commands.Cog):
             # noinspection PyTypeChecker
             await self._addrole(ctx, user, rolename)
         else:
-            await self.complain(
-                ctx, T_(USER_HIERARCHY_ISSUE_ADD), member=user, role=rolename
-            )
+            await self.complain(ctx, T_(USER_HIERARCHY_ISSUE_ADD), member=user, role=rolename)
 
     @commands.command()
     @commands.guild_only()
@@ -190,9 +184,7 @@ class Admin(commands.Cog):
             # noinspection PyTypeChecker
             await self._removerole(ctx, user, rolename)
         else:
-            await self.complain(
-                ctx, T_(USER_HIERARCHY_ISSUE_REMOVE), member=user, role=rolename
-            )
+            await self.complain(ctx, T_(USER_HIERARCHY_ISSUE_REMOVE), member=user, role=rolename)
 
     @commands.group()
     @commands.guild_only()
