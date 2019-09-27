@@ -269,7 +269,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                 if ids.isdisjoint(guild_whitelist):
                     return False
             else:
-                guild_blacklist = self._config.guild(guild).blacklist()
+                guild_blacklist = await self._config.guild(guild).blacklist()
                 if not ids.isdisjoint(guild_blacklist):
                     return False
 
