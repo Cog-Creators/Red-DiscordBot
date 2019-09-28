@@ -671,12 +671,12 @@ def command(name=None, cls=Command, **attrs):
     return commands.command(name, cls, **attrs)
 
 
-def group(name=None, **attrs):
+def group(name=None, cls=Group, **attrs):
     """A decorator which transforms an async function into a `Group`.
 
     Same interface as `discord.ext.commands.group`.
     """
-    return command(name, cls=Group, **attrs)
+    return command(name, cls, **attrs)
 
 
 __command_disablers = weakref.WeakValueDictionary()
