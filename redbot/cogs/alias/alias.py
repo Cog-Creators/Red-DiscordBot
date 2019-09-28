@@ -89,8 +89,12 @@ class Alias(commands.Cog):
         return False, None
 
     def is_command(self, alias_name: str) -> bool:
+        """
+        The logic here is that if this returns true, the name shouldnt be used for an alias
+        The function name can be changed when alias is reworked
+        """
         command = self.bot.get_command(alias_name)
-        return command is not None and alias_name not in commands.RESERVED_COMMAND_NAMES
+        return command is not None or alias_name in commands.RESERVED_COMMAND_NAMES
 
     @staticmethod
     def is_valid_alias_name(alias_name: str) -> bool:
