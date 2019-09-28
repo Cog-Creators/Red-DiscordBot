@@ -102,10 +102,7 @@ class CommandObj:
     async def create(self, ctx: commands.Context, command: str, *, response):
         """Create a custom command"""
         # Check if this command is already registered as a customcommand
-        if (
-            await self.db(ctx.guild).commands.get_raw(command, default=None)
-            or command in commands.RESERVED_COMMAND_NAMES
-        ):
+        if await self.db(ctx.guild).commands.get_raw(command, default=None):
             raise AlreadyExists()
         # test to raise
         ctx.cog.prepare_args(response if isinstance(response, str) else response[0])
@@ -224,6 +221,9 @@ class CustomCommands(commands.Cog):
 
         Note: This command is interactive.
         """
+        if command in (*self.bot.all_commands, *commands.RESERVED_COMMAND_NAMES):
+            await ctx.send(_("There already exists a bot command with the same name."))
+            return
         responses = await self.commandobj.get_responses(ctx=ctx)
         try:
             await self.commandobj.create(ctx=ctx, command=command, response=responses)
@@ -243,7 +243,7 @@ class CustomCommands(commands.Cog):
         Example:
         - `[p]customcom create simple yourcommand Text you want`
         """
-        if command in self.bot.all_commands:
+        if command in (*self.bot.all_commands, *commands.RESERVED_COMMAND_NAMES):
             await ctx.send(_("There already exists a bot command with the same name."))
             return
         try:
