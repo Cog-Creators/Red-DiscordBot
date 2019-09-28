@@ -204,15 +204,16 @@ class CustomCommands(commands.Cog):
         """Custom commands management."""
         pass
 
-    @customcom.group(name="create", aliases=["add"])
+    @customcom.group(name="create", aliases=["add"], invoke_without_command=True)
     @checks.mod_or_permissions(administrator=True)
-    async def cc_create(self, ctx: commands.Context):
+    async def cc_create(self, ctx: commands.Context, command: str.lower, *, text: str):
         """Create custom commands.
 
+        If a type is not specified, a simple CC will be created.
         CCs can be enhanced with arguments, see the guide
         [here](https://red-discordbot.readthedocs.io/en/v3-develop/cog_customcom.html).
         """
-        pass
+        await ctx.invoke(self.cc_create_simple, command=command, text=text)
 
     @cc_create.command(name="random")
     @checks.mod_or_permissions(administrator=True)
