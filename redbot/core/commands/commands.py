@@ -574,6 +574,14 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
     """Mixin class for a cog, intended for use with discord.py's cog class"""
 
     @property
+    def all_commands(self) -> Dict[str, Command]:
+        """
+        This does not have identical behavior to 
+        Group.all_commands but should return what you expect
+        """
+        return {cmd.name: cmd for cmd in self.__cog_commands__}
+
+    @property
     def help(self):
         doc = self.__doc__
         translator = getattr(self, "__translator__", lambda s: s)
