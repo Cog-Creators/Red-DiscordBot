@@ -29,6 +29,7 @@ Then run each of the following commands:
     choco install git --params "/GitOnlyOnPath /WindowsTerminal" -y
     choco install jre8 python -y; exit
 
+From here, continue onto `installing Red <installing-red-windows>`.
 
 ********************************
 Manually installing dependencies
