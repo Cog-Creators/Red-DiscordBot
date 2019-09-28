@@ -21,7 +21,7 @@ def interactive_config(red, token_set, prefix_set):
                 print("That doesn't look like a valid token.")
                 token = ""
             if token:
-                loop.run_until_complete(red.db.token.set(token))
+                loop.run_until_complete(red._config.token.set(token))
 
     if not prefix_set:
         prefix = ""
@@ -39,7 +39,7 @@ def interactive_config(red, token_set, prefix_set):
                 if not confirm("> "):
                     prefix = ""
             if prefix:
-                loop.run_until_complete(red.db.prefix.set([prefix]))
+                loop.run_until_complete(red._config.prefix.set([prefix]))
 
     return token
 

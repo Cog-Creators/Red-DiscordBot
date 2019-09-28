@@ -2503,10 +2503,12 @@ class Audio(commands.Cog):
         }
 
         api_data = await self._check_api_tokens()
-        if (
-            not api_data["spotify_client_id"]
-            or not api_data["spotify_client_secret"]
-            or not api_data["youtube_api"]
+        if any(
+            [
+                not api_data["spotify_client_id"],
+                not api_data["spotify_client_secret"],
+                not api_data["youtube_api"],
+            ]
         ):
             return await self._embed_msg(
                 ctx,
@@ -2557,7 +2559,10 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx, _("You must be in the voice channel to use the genre command.")
             )
-        category_list = await self.music_cache.spotify_api.get_categories()
+        try:
+            category_list = await self.music_cache.spotify_api.get_categories()
+        except SpotifyFetchError as error:
+            return await self._embed_msg(ctx, _(error.message).format(prefix=ctx.prefix))
         if not category_list:
             return await self._embed_msg(ctx, _("No categories found, try again later."))
         len_folder_pages = math.ceil(len(category_list) / 5)
@@ -3035,16 +3040,22 @@ class Audio(commands.Cog):
         has_perms = False
         user_to_query = user
         guild_to_query = guild
+        dj_enabled = None
+        playlist_author = (
+            guild.get_member(playlist.author)
+            if guild
+            else self.bot.get_user(playlist.author) or user
+        )
 
         is_different_user = len({playlist.author, user_to_query.id, ctx.author.id}) != 1
         is_different_guild = True if guild_to_query is None else ctx.guild.id != guild_to_query.id
 
         if is_owner:
             has_perms = True
-        elif scope == PlaylistScope.USER.value:
+        elif playlist.scope == PlaylistScope.USER.value:
             if not is_different_user:
                 has_perms = True
-        elif scope == PlaylistScope.GUILD.value:
+        elif playlist.scope == PlaylistScope.GUILD.value:
             if not is_different_guild:
                 dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
                 if guild.owner_id == ctx.author.id:
@@ -3057,19 +3068,18 @@ class Audio(commands.Cog):
                     has_perms = True
 
         if has_perms is False:
-            if scope == PlaylistScope.GUILD.value and (
-                is_different_guild or not is_different_user
-            ):
+            if playlist.scope == PlaylistScope.GUILD.value and (is_different_guild or dj_enabled):
                 msg = _(
                     "You do not have the permissions to manage that playlist in {guild}."
                 ).format(guild=guild_to_query)
             elif (
-                scope in [PlaylistScope.GUILD.value, PlaylistScope.USER.value]
+                playlist.scope in [PlaylistScope.GUILD.value, PlaylistScope.USER.value]
                 and is_different_user
             ):
+
                 msg = _(
                     "You do not have the permissions to manage playlist owned by {user}."
-                ).format(user=user_to_query)
+                ).format(user=playlist_author)
             else:
                 msg = _(
                     "You do not have the permissions to manage "
@@ -3368,7 +3378,7 @@ class Audio(commands.Cog):
             )
 
         embed = discord.Embed(
-            title=_("Playlist modified"), colour=await ctx.embed_colour(), description=desc
+            title=_("Playlist Modified"), colour=await ctx.embed_colour(), description=desc
         )
         await ctx.send(embed=embed)
 
@@ -4779,7 +4789,7 @@ class Audio(commands.Cog):
             self._playlist_save,
             playlist_name=uploaded_playlist_name,
             playlist_url=uploaded_playlist_url,
-            scope_data=(scope, author, guild),
+            scope_data=(scope, author, guild, specified_user),
         )
 
     @playlist.command(name="rename", usage="<playlist_name_OR_id> <new_name> [args]")
@@ -6147,7 +6157,12 @@ class Audio(commands.Cog):
                 return await self._embed_msg(
                     ctx, _("You need the DJ role or be the track requester to skip tracks.")
                 )
-            if is_requester and not can_skip and skip_to_track is None and skip_to_track > 1:
+            if (
+                is_requester
+                and not can_skip
+                and isinstance(skip_to_track, int)
+                and skip_to_track > 1
+            ):
                 return await self._embed_msg(ctx, _("You can only skip the current track."))
 
         if vote_enabled:
