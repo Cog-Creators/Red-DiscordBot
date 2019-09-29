@@ -1,1 +1,1 @@
-Update Git PATH install (Windows) and capitalise some words
+Update Git PATH install (Windows), capitalise some words, don't mention to launcher

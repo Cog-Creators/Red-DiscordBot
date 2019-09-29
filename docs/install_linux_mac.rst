@@ -316,13 +316,3 @@ It will walk through the initial setup, asking for your token and a prefix.
 You can find out how to obtain a token with
 `this guide <https://discordpy.readthedocs.io/en/v1.0.1/discord.html#creating-a-bot-account>`_,
 section "Creating a Bot Account".
-
-You may also run Red via the launcher, which allows you to restart the bot
-from discord, and enable auto-restart. Please note the launcher will be
-deprecated soon. You may also update the bot from the launcher menu. Use
-the following command to run the launcher:
-
-.. code-block:: none
-
-    redbot-launcher
-
