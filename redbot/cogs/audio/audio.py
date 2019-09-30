@@ -209,7 +209,7 @@ class Audio(commands.Cog):
                     for count, (name, data) in enumerate(temp_guild_playlist.items(), 1):
                         if not data or not name:
                             continue
-                        playlist = {"id": count, "name": name}
+                        playlist = {"id": count, "name": name, "guild": int(guild_id)}
                         playlist.update(data)
                         guild_playlist[str(count)] = playlist
 
@@ -3463,7 +3463,7 @@ class Audio(commands.Cog):
                 ctx, _("Could not match '{arg}' to a playlist.").format(arg=playlist_arg)
             )
 
-        temp_playlist = FakePlaylist(to_author.id)
+        temp_playlist = FakePlaylist(to_author.id, to_scope)
         if not await self.can_manage_playlist(to_scope, temp_playlist, ctx, to_author, to_guild):
             return
 
@@ -3557,7 +3557,7 @@ class Audio(commands.Cog):
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
 
-        temp_playlist = FakePlaylist(author.id)
+        temp_playlist = FakePlaylist(author.id, scope)
         scope_name = humanize_scope(
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
@@ -4172,7 +4172,7 @@ class Audio(commands.Cog):
         scope_name = humanize_scope(
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
-        temp_playlist = FakePlaylist(author.id)
+        temp_playlist = FakePlaylist(author.id, scope)
         if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
             return
         playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
@@ -4365,7 +4365,7 @@ class Audio(commands.Cog):
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
 
-        temp_playlist = FakePlaylist(author.id)
+        temp_playlist = FakePlaylist(author.id, scope)
         if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
             return
         playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
@@ -4711,7 +4711,7 @@ class Audio(commands.Cog):
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
-        temp_playlist = FakePlaylist(author.id)
+        temp_playlist = FakePlaylist(author.id, scope)
         if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
             return
 
