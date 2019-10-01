@@ -1,0 +1,1 @@
+Adds methods to Config for accessing things by id without mocked objects

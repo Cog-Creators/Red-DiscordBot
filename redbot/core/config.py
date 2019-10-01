@@ -913,6 +913,22 @@ class Config:
             config=self,
         )
 
+    def guild_from_id(self, guild_id: int) -> Group:
+        """Returns a `Group` for the given guild id.
+
+        Parameters
+        ----------
+        guild_id : int
+            A guild id.
+
+        Returns
+        -------
+        `Group <redbot.core.config.Group>`
+            The guild's Group object.
+
+        """
+        return self._get_base_group(self.GUILD, str(guild_id))
+
     def guild(self, guild: discord.Guild) -> Group:
         """Returns a `Group` for the given guild.
 
@@ -928,6 +944,24 @@ class Config:
 
         """
         return self._get_base_group(self.GUILD, str(guild.id))
+
+    def channel_from_id(self, channel_id: int) -> Group:
+        """Returns a `Group` for the given channel id.
+
+        This does not discriminate between text and voice channels.
+
+        Parameters
+        ----------
+        channel_id : int
+            A channel id.
+
+        Returns
+        -------
+        `Group <redbot.core.config.Group>`
+            The channel's Group object.
+
+        """
+        return self._get_base_group(self.CHANNEL, str(channel_id))
 
     def channel(self, channel: discord.TextChannel) -> Group:
         """Returns a `Group` for the given channel.
@@ -947,6 +981,22 @@ class Config:
         """
         return self._get_base_group(self.CHANNEL, str(channel.id))
 
+    def role_from_id(self, role_id: int) -> Group:
+        """Returns a `Group` for the given role id.
+
+        Parameters
+        ----------
+        role_id : int
+            A role id.
+
+        Returns
+        -------
+        `Group <redbot.core.config.Group>`
+            The role's Group object.
+
+        """
+        return self._get_base_group(self.ROLE, str(role_id))
+
     def role(self, role: discord.Role) -> Group:
         """Returns a `Group` for the given role.
 
@@ -963,6 +1013,22 @@ class Config:
         """
         return self._get_base_group(self.ROLE, str(role.id))
 
+    def user_from_id(self, user_id: int) -> Group:
+        """Returns a `Group` for the given user id.
+
+        Parameters
+        ----------
+        user_id : int
+            The user's id
+
+        Returns
+        -------
+        `Group <redbot.core.config.Group>`
+            The user's Group object.
+
+        """
+        return self._get_base_group(self.USER, str(user_id))
+
     def user(self, user: discord.abc.User) -> Group:
         """Returns a `Group` for the given user.
 
@@ -978,6 +1044,24 @@ class Config:
 
         """
         return self._get_base_group(self.USER, str(user.id))
+
+    def member_from_ids(self, guild_id: int, member_id: int) -> Group:
+        """Returns a `Group` for the ids which represent a member.
+
+        Parameters
+        ----------
+        guild_id : int
+            The id of the guild of the member
+        member_id : int
+            The id of the member
+
+        Returns
+        -------
+        `Group <redbot.core.config.Group>`
+            The member's Group object.
+
+        """
+        return self._get_base_group(self.MEMBER, str(guild_id), str(member_id))
 
     def member(self, member: discord.Member) -> Group:
         """Returns a `Group` for the given member.
