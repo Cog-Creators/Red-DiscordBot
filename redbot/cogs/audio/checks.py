@@ -1,5 +1,7 @@
 from redbot.core import Config, commands
 
+from .apis import HAS_SQL
+
 _config = None
 
 
@@ -24,3 +26,8 @@ def roomlocked():
         return False
 
     return commands.check(predicate)
+
+
+def can_have_caching():
+    async def predicate(ctx: commands.Context):
+        return HAS_SQL

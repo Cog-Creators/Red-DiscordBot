@@ -6,16 +6,23 @@ import json
 import logging
 import os
 import random
-import sqlite3
 import time
 from collections import namedtuple
 from typing import Callable, Dict, List, Mapping, NoReturn, Optional, Tuple, Union
 
+try:
+    from sqlite3 import Error as SQLError
+    from databases import Database
+
+    HAS_SQL = True
+except ModuleNotFoundError:
+    HAS_SQL = False
+    SQLError = ModuleNotFoundError
+    Database = None
+
 import aiohttp
 import discord
 import lavalink
-from databases import Database
-
 from lavalink.rest_api import LoadResult
 
 from redbot.core import Config, commands
@@ -309,85 +316,98 @@ class MusicCache:
         self.spotify_api: SpotifyAPI = SpotifyAPI(bot, session)
         self.youtube_api: YouTubeAPI = YouTubeAPI(bot, session)
         self._session: aiohttp.ClientSession = session
-        self.database: Database = Database(
-            f'sqlite:///{os.path.abspath(str(os.path.join(path, "cache.db")))}'
-        )
+        if HAS_SQL:
+            self.database: Database = Database(
+                f'sqlite:///{os.path.abspath(str(os.path.join(path, "cache.db")))}'
+            )
+        else:
+            self.database = None
+
         self._tasks: dict = {}
         self._lock: asyncio.Lock = asyncio.Lock()
         self.config: Optional[Config] = None
 
     async def initialize(self, config: Config) -> NoReturn:
-        await self.database.connect()
+        if HAS_SQL:
+            await self.database.connect()
 
-        await self.database.execute(query="PRAGMA temp_store = 2;")
-        await self.database.execute(query="PRAGMA journal_mode = wal;")
-        await self.database.execute(query="PRAGMA wal_autocheckpoint;")
-        await self.database.execute(query="PRAGMA read_uncommitted = 1;")
+            await self.database.execute(query="PRAGMA temp_store = 2;")
+            await self.database.execute(query="PRAGMA journal_mode = wal;")
+            await self.database.execute(query="PRAGMA wal_autocheckpoint;")
+            await self.database.execute(query="PRAGMA read_uncommitted = 1;")
 
-        await self.database.execute(query=_CREATE_LAVALINK_TABLE)
-        await self.database.execute(query=_CREATE_UNIQUE_INDEX_LAVALINK_TABLE)
-        await self.database.execute(query=_CREATE_YOUTUBE_TABLE)
-        await self.database.execute(query=_CREATE_UNIQUE_INDEX_YOUTUBE_TABLE)
-        await self.database.execute(query=_CREATE_SPOTIFY_TABLE)
-        await self.database.execute(query=_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE)
+            await self.database.execute(query=_CREATE_LAVALINK_TABLE)
+            await self.database.execute(query=_CREATE_UNIQUE_INDEX_LAVALINK_TABLE)
+            await self.database.execute(query=_CREATE_YOUTUBE_TABLE)
+            await self.database.execute(query=_CREATE_UNIQUE_INDEX_YOUTUBE_TABLE)
+            await self.database.execute(query=_CREATE_SPOTIFY_TABLE)
+            await self.database.execute(query=_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE)
         self.config = config
 
     async def close(self) -> NoReturn:
-        await self.database.execute(query="PRAGMA optimize;")
-        await self.database.disconnect()
+        if HAS_SQL:
+            await self.database.execute(query="PRAGMA optimize;")
+            await self.database.disconnect()
 
     async def insert(self, table: str, values: List[dict]) -> NoReturn:
         # if table == "spotify":
         #     return
-        query = _PARSER.get(table, {}).get("insert")
-        if query is None:
-            raise InvalidTableError(f"{table} is not a valid table in the database.")
+        if HAS_SQL:
+            query = _PARSER.get(table, {}).get("insert")
+            if query is None:
+                raise InvalidTableError(f"{table} is not a valid table in the database.")
 
-        await self.database.execute_many(query=query, values=values)
+            await self.database.execute_many(query=query, values=values)
 
     async def update(self, table: str, values: Dict[str, str]) -> NoReturn:
         # if table == "spotify":
         #     return
-        table = _PARSER.get(table, {})
-        sql_query = table.get("update")
-        time_now = str(datetime.datetime.now(datetime.timezone.utc))
-        values["last_fetched"] = time_now
-        if not table:
-            raise InvalidTableError(f"{table} is not a valid table in the database.")
-        await self.database.fetch_one(query=sql_query, values=values)
+        if HAS_SQL:
+            table = _PARSER.get(table, {})
+            sql_query = table.get("update")
+            time_now = str(datetime.datetime.now(datetime.timezone.utc))
+            values["last_fetched"] = time_now
+            if not table:
+                raise InvalidTableError(f"{table} is not a valid table in the database.")
+            await self.database.fetch_one(query=sql_query, values=values)
 
     async def fetch_one(
         self, table: str, query: str, values: Dict[str, str]
     ) -> Tuple[Optional[str], bool]:
         table = _PARSER.get(table, {})
         sql_query = table.get(query, {}).get("query")
-        if not table:
-            raise InvalidTableError(f"{table} is not a valid table in the database.")
+        if HAS_SQL:
+            if not table:
+                raise InvalidTableError(f"{table} is not a valid table in the database.")
 
-        row = await self.database.fetch_one(query=sql_query, values=values)
-        last_updated = getattr(row, "last_updated", None)
-        need_update = True
-        with contextlib.suppress(TypeError):
-            if last_updated:
-                last_update = datetime.datetime.fromisoformat(last_updated) + datetime.timedelta(
-                    days=await self.config.cache_age()
-                )
-                last_update.replace(tzinfo=datetime.timezone.utc)
+            row = await self.database.fetch_one(query=sql_query, values=values)
+            last_updated = getattr(row, "last_updated", None)
+            need_update = True
+            with contextlib.suppress(TypeError):
+                if last_updated:
+                    last_update = datetime.datetime.fromisoformat(
+                        last_updated
+                    ) + datetime.timedelta(days=await self.config.cache_age())
+                    last_update.replace(tzinfo=datetime.timezone.utc)
 
-                need_update = last_update < datetime.datetime.now(datetime.timezone.utc)
+                    need_update = last_update < datetime.datetime.now(datetime.timezone.utc)
 
-        return getattr(row, query, None), need_update if table != "spotify" else True
+            return getattr(row, query, None), need_update if table != "spotify" else True
+        else:
+            return None, True
 
         # TODO: Create a task to remove entries
         #  from DB that haven't been fetched in x days ... customizable by Owner
 
     async def fetch_all(self, table: str, query: str, values: Dict[str, str]) -> List[Mapping]:
-        table = _PARSER.get(table, {})
-        sql_query = table.get(query, {}).get("played")
-        if not table:
-            raise InvalidTableError(f"{table} is not a valid table in the database.")
+        if HAS_SQL:
+            table = _PARSER.get(table, {})
+            sql_query = table.get(query, {}).get("played")
+            if not table:
+                raise InvalidTableError(f"{table} is not a valid table in the database.")
 
-        return await self.database.fetch_all(query=sql_query, values=values)
+            return await self.database.fetch_all(query=sql_query, values=values)
+        return []
 
     @staticmethod
     def _spotify_format_call(qtype: str, key: str) -> Tuple[str, dict]:
@@ -459,7 +479,7 @@ class MusicCache:
                 val = None
                 if youtube_cache:
                     update = True
-                    with contextlib.suppress(sqlite3.Error):
+                    with contextlib.suppress(SQLError):
                         val, update = await self.fetch_one(
                             "youtube", "youtube_url", {"track": track_info}
                         )
@@ -604,11 +624,13 @@ class MusicCache:
         List[str]
             List of Youtube URLs.
         """
-        current_cache_level = CacheLevel(await self.config.cache_level())
+        current_cache_level = (
+            CacheLevel(await self.config.cache_level()) if HAS_SQL else CacheLevel.none()
+        )
         cache_enabled = CacheLevel.set_spotify().is_subset(current_cache_level)
         if query_type == "track" and cache_enabled:
             update = True
-            with contextlib.suppress(sqlite3.Error):
+            with contextlib.suppress(SQLError):
                 val, update = await self.fetch_one(
                     "spotify", "track_info", {"uri": f"spotify:track:{uri}"}
                 )
@@ -647,7 +669,9 @@ class MusicCache:
         track_list = []
         has_not_allowed = False
         try:
-            current_cache_level = CacheLevel(await self.config.cache_level())
+            current_cache_level = (
+                CacheLevel(await self.config.cache_level()) if HAS_SQL else CacheLevel.none()
+            )
             guild_data = await self.config.guild(ctx.guild).all()
 
             # now = int(time.time())
@@ -701,7 +725,7 @@ class MusicCache:
                 val = None
                 if youtube_cache:
                     update = True
-                    with contextlib.suppress(sqlite3.Error):
+                    with contextlib.suppress(SQLError):
                         val, update = await self.fetch_one(
                             "youtube", "youtube_url", {"track": track_info}
                         )
@@ -857,12 +881,14 @@ class MusicCache:
         return track_list
 
     async def youtube_query(self, ctx: commands.Context, track_info: str) -> str:
-        current_cache_level = CacheLevel(await self.config.cache_level())
+        current_cache_level = (
+            CacheLevel(await self.config.cache_level()) if HAS_SQL else CacheLevel.none()
+        )
         cache_enabled = CacheLevel.set_youtube().is_subset(current_cache_level)
         val = None
         if cache_enabled:
             update = True
-            with contextlib.suppress(sqlite3.Error):
+            with contextlib.suppress(SQLError):
                 val, update = await self.fetch_one("youtube", "youtube_url", {"track": track_info})
             if update:
                 val = None
@@ -904,14 +930,16 @@ class MusicCache:
         Tuple[lavalink.LoadResult, bool]
             Tuple with the Load result and whether or not the API was called.
         """
-        current_cache_level = CacheLevel(await self.config.cache_level())
+        current_cache_level = (
+            CacheLevel(await self.config.cache_level()) if HAS_SQL else CacheLevel.none()
+        )
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         val = None
         _raw_query = dataclasses.Query.process_input(query)
         query = str(_raw_query)
         if cache_enabled and not forced and not _raw_query.is_local:
             update = True
-            with contextlib.suppress(sqlite3.Error):
+            with contextlib.suppress(SQLError):
                 val, update = await self.fetch_one("lavalink", "data", {"query": query})
             if update:
                 val = None
@@ -942,7 +970,7 @@ class MusicCache:
                 and not _raw_query.is_local
                 and results.tracks
             ):
-                with contextlib.suppress(sqlite3.Error):
+                with contextlib.suppress(SQLError):
                     time_now = str(datetime.datetime.now(datetime.timezone.utc))
                     task = (
                         "insert",
@@ -1041,12 +1069,14 @@ class MusicCache:
 
     async def autoplay(self, player: lavalink.Player):
         autoplaylist = await self.config.guild(player.channel.guild).autoplaylist()
-        current_cache_level = CacheLevel(await self.config.cache_level())
+        current_cache_level = (
+            CacheLevel(await self.config.cache_level()) if HAS_SQL else CacheLevel.none()
+        )
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         playlist = None
         tracks = None
         if autoplaylist["enabled"]:
-            try:
+            with contextlib.suppress(Exception):
                 playlist = await get_playlist(
                     autoplaylist["id"],
                     autoplaylist["scope"],
@@ -1055,8 +1085,6 @@ class MusicCache:
                     player.channel.guild.me,
                 )
                 tracks = playlist.tracks_obj
-            except Exception:
-                pass
 
         if not tracks or not getattr(playlist, "tracks", None):
             if cache_enabled:

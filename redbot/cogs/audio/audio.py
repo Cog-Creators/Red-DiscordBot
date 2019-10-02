@@ -35,7 +35,8 @@ from redbot.core.utils.menus import (
 )
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from . import dataclasses
-from .apis import MusicCache
+from .apis import MusicCache, HAS_SQL
+from .checks import can_have_caching
 from .converters import ComplexScopeParser, ScopeParser, get_lazy_converter, get_playlist_converter
 from .equalizer import Equalizer
 from .errors import LavalinkDownloadFailed, MissingGuild, SpotifyFetchError, TooManyMatches
@@ -51,6 +52,7 @@ from .playlists import (
     humanize_scope,
 )
 from .utils import *
+
 
 _ = Translator("Audio", __file__)
 
@@ -193,6 +195,19 @@ class Audio(commands.Cog):
         self._restart_connect()
         self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
         lavalink.register_event_listener(self.event_handler)
+        if not HAS_SQL:
+            error_message = (
+                "Audio version: {version}\nThis version requires SQL to "
+                "access the caching features, "
+                "your Python install is missing the module sqlite3.\n\n"
+                "For instructions on how to fix it Google "
+                "`ModuleNotFoundError: No module named '_sqlite3'`\n"
+                "You will need to reinstall "
+                "Python with SQL dependencies installed.\n\n"
+            ).format(version=__version__)
+            with contextlib.suppress(discord.HTTPException):
+                await self.bot.send_to_owners(error_message)
+            log.critical(error_message)
 
     async def _migrate_config(self, from_version: int, to_version: int):
         database_entries = []
@@ -237,7 +252,7 @@ class Audio(commands.Cog):
                 await self.config.guild(
                     cast(discord.Guild, discord.Object(id=guild_id))
                 ).clear_raw("playlists")
-        if database_entries:
+        if database_entries and HAS_SQL:
             asyncio.ensure_future(self.music_cache.insert("lavalink", database_entries))
 
     def _restart_connect(self):
@@ -1401,6 +1416,7 @@ class Audio(commands.Cog):
 
     @audioset.command(name="cache", usage="level=[5, 3, 2, 1, 0, -1, -2, -3]")
     @checks.is_owner()
+    @can_have_caching()
     async def _storage(self, ctx: commands.Context, *, level: int = None):
         """Sets the caching level.
 
@@ -1496,6 +1512,7 @@ class Audio(commands.Cog):
 
     @audioset.command(name="cacheage")
     @checks.is_owner()
+    @can_have_caching()
     async def _cacheage(self, ctx: commands.Context, age: int):
         """Sets the cache max age.
 
@@ -4945,7 +4962,7 @@ class Audio(commands.Cog):
                         "last_fetched": time_now,
                     }
                 )
-        if database_entries:
+        if database_entries and HAS_SQL:
             asyncio.ensure_future(self.music_cache.insert("lavalink", database_entries))
 
     async def _load_v2_playlist(
