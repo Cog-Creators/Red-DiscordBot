@@ -1,1 +1,1 @@
-``[p]seek`` and `[p]skip`` can be used by user if they are the song requester while DJ mode is enabled, if votes are disabled.
+``[p]seek`` and ``[p]skip`` can be used by user if they are the song requester while DJ mode is enabled, if votes are disabled.
