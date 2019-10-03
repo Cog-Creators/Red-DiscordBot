@@ -345,7 +345,7 @@ class Downloader(commands.Cog):
                 "Cog `{cog_name}` successfully installed. You can load it with `{prefix}load {cog_name}`"
             ).format(cog_name=cog_name, prefix=ctx.prefix)
         )
-        if cog.install_msg is not None:
+        if cog.install_msg:
             await ctx.send(cog.install_msg.replace("[p]", ctx.prefix))
 
     @cog.command(name="uninstall", usage="<cogs>")
