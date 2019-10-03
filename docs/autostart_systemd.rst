@@ -1,4 +1,4 @@
-.. systemd service guide
+.. _systemd-service-guide:
 
 ==============================================
 Setting up auto-restart using systemd on Linux
