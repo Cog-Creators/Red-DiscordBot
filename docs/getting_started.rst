@@ -83,7 +83,7 @@ parameters.
 
 The parameters are shown as enclosed in ``< >`` if they're required, or
 ``[ ]`` if optional.
-As an example, the ban command will show this in the help message, considering
+As an example, the ban command will show this in the help message, assuming
 your prefix is ``!``:
 ``Syntax: !ban <user> [days] [reason]``
 
@@ -242,9 +242,9 @@ Hosting
 
 If you are hosting Red on your personal computer, you will soon notice that
 if you close the window or if you shut down you computer, Red will be offline.
-It needs an environment to work and respond.
+She needs an environment to work and respond.
 
-You can try to host Red somewhere he will always be online, like on a virtual
+You can try to host Red somewhere she will always be online, like on a virtual
 private server (VPS) or on a personal server (e.g. Raspberry Pi).
 
 If you want to do it, follow these steps.
