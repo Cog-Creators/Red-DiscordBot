@@ -6,7 +6,6 @@
   ws.onmessage = function(event) {
     console.log(JSON.parse(event.data));
   }
-
   function ws_call_method(method, params) {
     var request = {
       jsonrpc: "2.0",
