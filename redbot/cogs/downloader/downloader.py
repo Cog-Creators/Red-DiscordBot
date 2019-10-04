@@ -1,6 +1,7 @@
 import asyncio
 import contextlib
 import os
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -222,11 +223,16 @@ class Downloader(commands.Cog):
     async def _repo_add(self, ctx, name: str, repo_url: str, branch: str = None):
         """Add a new repo.
 
-        We recommend using only A-z, numbers and underscores in the repo name for compatibility.
+        Repo names can only contain characters A-z, numbers, underscores, and hyphens.
         The branch will be the default branch if not specified.
         """
         agreed = await do_install_agreement(ctx)
         if not agreed:
+            return
+        if re.match("^[a-zA-Z0-9_\-]*$", name) is None:
+            await ctx.send(
+                _("Repo names can only contain characters A-z, numbers, underscores, and hyphens.")
+            )
             return
         try:
             # noinspection PyTypeChecker
