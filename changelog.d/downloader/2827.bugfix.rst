@@ -1,1 +1,1 @@
-Invalid repo names no longer cause an error.
+Repo names can now only contain the characters listed in the help text (A-Z, 0-9, underscores, and hyphens).
