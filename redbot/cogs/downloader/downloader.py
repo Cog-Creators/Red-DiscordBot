@@ -243,7 +243,9 @@ class Downloader(commands.Cog):
             )
         except OSError:
             await ctx.send(
-                _("Something went wrong trying to add that repo. Your repo name might have an invalid character.")
+                _(
+                    "Something went wrong trying to add that repo. Your repo name might have an invalid character."
+                )
             )
         else:
             await ctx.send(_("Repo `{name}` successfully added.").format(name=name))
