@@ -1,6 +1,7 @@
 import asyncio
 import contextlib
 import os
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -227,6 +228,11 @@ class Downloader(commands.Cog):
         """
         agreed = await do_install_agreement(ctx)
         if not agreed:
+            return
+        if re.match("^[a-zA-Z0-9_]*$", name) is None:
+            await ctx.send(
+                _("Repo names can only contain characters A-z, numbers and underscores.")
+            )
             return
         try:
             # noinspection PyTypeChecker
