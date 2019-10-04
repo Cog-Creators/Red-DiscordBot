@@ -13,7 +13,7 @@ In order to create the service file, you will first need the location of your :c
 .. code-block:: bash
 
     # If redbot is installed in a virtualenv
-    source path/to/venv/bin/activate
+    source redenv/bin/activate
 
     # If you are using pyenv
     pyenv shell <name>
