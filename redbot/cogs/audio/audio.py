@@ -19,7 +19,7 @@ import redbot.core
 from redbot.core import Config, commands, checks, bank
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import bold, box, pagify
+from redbot.core.utils.chat_formatting import bold, box, pagify, humanize_number
 from redbot.core.utils.menus import (
     menu,
     DEFAULT_CONTROLS,
@@ -296,7 +296,7 @@ class Audio(commands.Cog):
                 else:
                     dur = lavalink.utils.format_time(player.current.length)
                 embed = discord.Embed(
-                    colour=(await self._get_embed_colour(notify_channel)),
+                    colour=(await self.bot.get_embed_color(notify_channel)),
                     title=_("Now Playing"),
                     description=description,
                 )
@@ -328,7 +328,8 @@ class Audio(commands.Cog):
             if notify_channel:
                 notify_channel = self.bot.get_channel(notify_channel)
                 embed = discord.Embed(
-                    colour=(await self._get_embed_colour(notify_channel)), title=_("Queue ended.")
+                    colour=(await self.bot.get_embed_colour(notify_channel)),
+                    title=_("Queue ended."),
                 )
                 await notify_channel.send(embed=embed)
 
@@ -346,7 +347,7 @@ class Audio(commands.Cog):
             if message_channel:
                 message_channel = self.bot.get_channel(message_channel)
                 embed = discord.Embed(
-                    colour=(await self._get_embed_colour(message_channel)),
+                    colour=(await self.bot.get_embed_color(message_channel)),
                     title=_("Track Error"),
                     description="{}\n**[{}]({})**".format(
                         extra, player.current.title, player.current.uri
@@ -442,7 +443,7 @@ class Audio(commands.Cog):
             await self._embed_msg(
                 ctx,
                 _("Track queueing command price set to {price} {currency}.").format(
-                    price=price, currency=await bank.get_currency_name(ctx.guild)
+                    price=humanize_number(price), currency=await bank.get_currency_name(ctx.guild)
                 ),
             )
 
@@ -613,7 +614,9 @@ class Audio(commands.Cog):
             msg += _("DJ Role:          [{role.name}]\n").format(role=dj_role_obj)
         if jukebox:
             msg += _("Jukebox:          [{jukebox_name}]\n").format(jukebox_name=jukebox)
-            msg += _("Command price:    [{jukebox_price}]\n").format(jukebox_price=jukebox_price)
+            msg += _("Command price:    [{jukebox_price}]\n").format(
+                jukebox_price=humanize_number(jukebox_price)
+            )
         if maxlength > 0:
             msg += _("Max track length: [{tracklength}]\n").format(
                 tracklength=self._dynamic_time(maxlength)
@@ -762,11 +765,15 @@ class Audio(commands.Cog):
             em = discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("Playing in {num}/{total} servers:").format(
-                    num=server_num, total=total_num
+                    num=humanize_number(server_num), total=humanize_number(total_num)
                 ),
                 description=page,
             )
-            em.set_footer(text="Page {}/{}".format(pages, (math.ceil(len(msg) / 1500))))
+            em.set_footer(
+                text="Page {}/{}".format(
+                    humanize_number(pages), humanize_number((math.ceil(len(msg) / 1500)))
+                )
+            )
             pages += 1
             servers_embed.append(em)
 
@@ -933,7 +940,9 @@ class Audio(commands.Cog):
             embed = discord.Embed(
                 colour=await ctx.embed_colour(), description=(f"{header}\n{formatted_page}")
             )
-            embed.set_footer(text=_("{num} preset(s)").format(num=len(list(eq_presets.keys()))))
+            embed.set_footer(
+                text=_("{num} preset(s)").format(num=humanize_number(len(list(eq_presets.keys()))))
+            )
             page_list.append(embed)
         if len(page_list) == 1:
             return await ctx.send(embed=page_list[0])
@@ -1869,6 +1878,7 @@ class Audio(commands.Cog):
                 song_info = "{} {}".format(i["name"], i["artists"][0]["name"])
             else:
                 song_info = "{} {}".format(i["track"]["name"], i["track"]["artists"][0]["name"])
+
             try:
                 track_url = await self._youtube_api_search(yt_key, song_info)
             except (RuntimeError, aiohttp.client_exceptions.ServerDisconnectedError):
@@ -1878,7 +1888,6 @@ class Audio(commands.Cog):
                 )
                 await playlist_msg.edit(embed=error_embed)
                 return None
-                pass
             try:
                 yt_track = await player.get_tracks(track_url)
             except (RuntimeError, aiohttp.client_exceptions.ServerDisconnectedError):
@@ -3416,8 +3425,8 @@ class Audio(commands.Cog):
                         " Votes: {num_votes}/{num_members}"
                         " ({cur_percent}% out of {required_percent}% needed)"
                     ).format(
-                        num_votes=num_votes,
-                        num_members=num_members,
+                        num_votes=humanize_number(num_votes),
+                        num_members=humanize_number(num_members),
                         cur_percent=vote,
                         required_percent=percent,
                     )
@@ -3826,14 +3835,12 @@ class Audio(commands.Cog):
             return False
 
     async def _check_api_tokens(self):
-        spotify = await self.bot.db.api_tokens.get_raw(
-            "spotify", default={"client_id": "", "client_secret": ""}
-        )
-        youtube = await self.bot.db.api_tokens.get_raw("youtube", default={"api_key": ""})
+        spotify = await self.bot.get_shared_api_tokens("spotify")
+        youtube = await self.bot.get_shared_api_tokens("youtube")
         return {
-            "spotify_client_id": spotify["client_id"],
-            "spotify_client_secret": spotify["client_secret"],
-            "youtube_api": youtube["api_key"],
+            "spotify_client_id": spotify.get("client_id", ""),
+            "spotify_client_secret": spotify.get("client_secret", ""),
+            "youtube_api": youtube.get("api_key", ""),
         }
 
     async def _check_external(self):
@@ -3869,7 +3876,7 @@ class Audio(commands.Cog):
                 await self._embed_msg(
                     ctx,
                     _("Not enough {currency} ({required_credits} required).").format(
-                        currency=credits_name, required_credits=jukebox_price
+                        currency=credits_name, required_credits=humanize_number(jukebox_price)
                     ),
                 )
                 return False
@@ -4072,13 +4079,6 @@ class Audio(commands.Cog):
                 await eq_message.delete()
             except discord.errors.NotFound:
                 pass
-
-    async def _get_embed_colour(self, channel: discord.abc.GuildChannel):
-        # Unfortunately we need this for when context is unavailable.
-        if await self.bot.db.guild(channel.guild).use_bot_color():
-            return channel.guild.me.color
-        else:
-            return self.bot.color
 
     async def _get_eq_reaction(self, ctx, message, emoji):
         try:
@@ -4315,10 +4315,9 @@ class Audio(commands.Cog):
         return {"Authorization": "Basic %s" % auth_header.decode("ascii")}
 
     async def _request_token(self):
-        self.client_id = await self.bot.db.api_tokens.get_raw("spotify", default={"client_id": ""})
-        self.client_secret = await self.bot.db.api_tokens.get_raw(
-            "spotify", default={"client_secret": ""}
-        )
+        tokens = await self.bot.get_shared_api_tokens("spotify")
+        self.client_id = tokens.get("client_id", "")
+        self.client_secret = tokens.get("client_secret", "")
         payload = {"grant_type": "client_credentials"}
         headers = self._make_token_auth(
             self.client_id["client_id"], self.client_secret["client_secret"]

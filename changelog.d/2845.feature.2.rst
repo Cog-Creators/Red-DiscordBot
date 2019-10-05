@@ -1,0 +1,3 @@
+Added :func:`bank_prune` to :module:`redbot.core.bank`
+
+- :func:`bank_prune` can be used to delete a specific user's bank account or remove all invalid bank accounts (For users who are not in the guild if bank is local or share servers with the bot if bank is global).

@@ -574,7 +574,7 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         """
         valid_int = cls.valid_int(ctx, channel, user)
         valid_float = cls.valid_float(ctx, channel, user)
-        return cls(lambda self, m: valid_int(m) or valid_float(m) and float(m.content) < value)
+        return cls(lambda self, m: (valid_int(m) or valid_float(m)) and float(m.content) < value)
 
     @classmethod
     def greater(
@@ -605,7 +605,7 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         """
         valid_int = cls.valid_int(ctx, channel, user)
         valid_float = cls.valid_float(ctx, channel, user)
-        return cls(lambda self, m: valid_int(m) or valid_float(m) and float(m.content) > value)
+        return cls(lambda self, m: (valid_int(m) or valid_float(m)) and float(m.content) > value)
 
     @classmethod
     def length_less(

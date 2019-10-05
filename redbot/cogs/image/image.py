@@ -28,8 +28,9 @@ class Image(commands.Cog):
     async def initialize(self) -> None:
         """Move the API keys from cog stored config to core bot config if they exist."""
         imgur_token = await self.settings.imgur_client_id()
-        if imgur_token is not None and "imgur" not in await self.bot.db.api_tokens():
-            await self.bot.db.api_tokens.set_raw("imgur", value={"client_id": imgur_token})
+        if imgur_token is not None:
+            if not await self.bot.get_shared_api_tokens("imgur"):
+                await self.bot.set_shared_api_tokens(client_id=imgur_token)
             await self.settings.imgur_client_id.clear()
 
     @commands.group(name="imgur")
@@ -48,7 +49,7 @@ class Image(commands.Cog):
         """
         url = self.imgur_base_url + "gallery/search/time/all/0"
         params = {"q": term}
-        imgur_client_id = await ctx.bot.db.api_tokens.get_raw("imgur", default=None)
+        imgur_client_id = (await ctx.bot.get_shared_api_tokens("imgur")).get("client_id")
         if not imgur_client_id:
             await ctx.send(
                 _(
@@ -56,7 +57,7 @@ class Image(commands.Cog):
                 ).format(prefix=ctx.prefix)
             )
             return
-        headers = {"Authorization": "Client-ID {}".format(imgur_client_id["client_id"])}
+        headers = {"Authorization": "Client-ID {}".format(imgur_client_id)}
         async with self.session.get(url, headers=headers, params=params) as search_get:
             data = await search_get.json()
 
@@ -101,7 +102,7 @@ class Image(commands.Cog):
             await ctx.send_help()
             return
 
-        imgur_client_id = await ctx.bot.db.api_tokens.get_raw("imgur", default=None)
+        imgur_client_id = (await ctx.bot.get_shared_api_tokens("imgur")).get("client_id")
         if not imgur_client_id:
             await ctx.send(
                 _(
@@ -111,7 +112,7 @@ class Image(commands.Cog):
             return
 
         links = []
-        headers = {"Authorization": "Client-ID {}".format(imgur_client_id["client_id"])}
+        headers = {"Authorization": "Client-ID {}".format(imgur_client_id)}
         url = self.imgur_base_url + "gallery/r/{}/{}/{}/0".format(subreddit, sort, window)
 
         async with self.session.get(url, headers=headers) as sub_get:
@@ -164,7 +165,7 @@ class Image(commands.Cog):
             await ctx.send_help()
             return
 
-        giphy_api_key = await ctx.bot.db.api_tokens.get_raw("GIPHY", default=None)
+        giphy_api_key = (await ctx.bot.get_shared_api_tokens("GIPHY")).get("api_key")
         if not giphy_api_key:
             await ctx.send(
                 _("An API key has not been set! Please set one with `{prefix}giphycreds`.").format(
@@ -174,7 +175,7 @@ class Image(commands.Cog):
             return
 
         url = "http://api.giphy.com/v1/gifs/search?&api_key={}&q={}".format(
-            giphy_api_key["api_key"], keywords
+            giphy_api_key, keywords
         )
 
         async with self.session.get(url) as r:
@@ -197,7 +198,7 @@ class Image(commands.Cog):
             await ctx.send_help()
             return
 
-        giphy_api_key = await ctx.bot.db.api_tokens.get_raw("GIPHY", default=None)
+        giphy_api_key = (await ctx.bot.get_shared_api_tokens("GIPHY")).get("api_key")
         if not giphy_api_key:
             await ctx.send(
                 _("An API key has not been set! Please set one with `{prefix}giphycreds`.").format(
@@ -207,7 +208,7 @@ class Image(commands.Cog):
             return
 
         url = "http://api.giphy.com/v1/gifs/random?&api_key={}&tag={}".format(
-            giphy_api_key["api_key"], keywords
+            giphy_api_key, keywords
         )
 
         async with self.session.get(url) as r:

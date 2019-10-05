@@ -128,9 +128,10 @@ async def is_mod_or_superior(
     elif isinstance(obj, discord.Member):
         user = obj
     elif isinstance(obj, discord.Role):
-        if obj.id in await bot.db.guild(obj.guild).mod_role():
+        gid = obj.guild.id
+        if obj in await bot.get_admin_role_ids(gid):
             return True
-        if obj.id in await bot.db.guild(obj.guild).admin_role():
+        if obj in await bot.get_mod_role_ids(gid):
             return True
         return False
     else:
@@ -209,7 +210,7 @@ async def is_admin_or_superior(
     elif isinstance(obj, discord.Member):
         user = obj
     elif isinstance(obj, discord.Role):
-        return obj.id in await bot.db.guild(obj.guild).admin_role()
+        return obj.id in await bot.get_admin_role_ids(obj.guild.id)
     else:
         raise TypeError("Only messages, members or roles may be passed")
 

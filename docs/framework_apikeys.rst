@@ -18,7 +18,7 @@ and when accessed in the code it should be done by
 
 .. code-block:: python
 
-    await self.bot.db.api_tokens.get_raw("twitch", default={"client_id": None, "client_secret": None})
+    await self.bot.get_shared_api_keys("twitch")
 
 Each service has its own dict of key, value pairs for each required key type. If there's only one key required then a name for the key is still required for storing and accessing.
 
@@ -30,7 +30,7 @@ and when accessed in the code it should be done by
 
 .. code-block:: python
 
-    await self.bot.db.api_tokens.get_raw("youtube", default={"api_key": None})
+    await self.bot.get_shared_api_keys("youtube")
 
 
 ***********
@@ -42,7 +42,7 @@ Basic Usage
     class MyCog:
         @commands.command()
         async def youtube(self, ctx, user: str):
-            apikey = await self.bot.db.api_tokens.get_raw("youtube", default={"api_key": None})
-            if apikey["api_key"] is None:
+            youtube_keys = await self.bot.get_shared_api_keys("youtube")
+            if youtube_keys.get("api_key") is None:
                 return await ctx.send("The YouTube API key has not been set.")
             # Use the API key to access content as you normally would
