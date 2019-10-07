@@ -19,7 +19,7 @@ from .errors import LavalinkDownloadFailed
 JAR_VERSION = "3.2.1"
 JAR_BUILD = 823
 LAVALINK_DOWNLOAD_URL = (
-    f"https://github.com/Cog-Creators/Lavalink-Jars/releases/download/{JAR_VERSION}_{JAR_BUILD}/"
+    f"https://ci.fredboat.com/guestAuth/repository/download/Lavalink_Build/.lastSuccessful/"
     f"Lavalink.jar"
 )
 LAVALINK_DOWNLOAD_DIR = data_manager.cog_data_path(raw_name="Audio")
