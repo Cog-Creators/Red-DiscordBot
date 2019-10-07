@@ -416,7 +416,12 @@ Value
 Driver Reference
 ****************
 
-.. automodule:: redbot.core.drivers
+.. autofunction:: redbot.core.drivers.get_driver
+
+.. autoclass:: redbot.core.drivers.BackendType
+    :members:
+
+.. autoclass:: redbot.core.drivers.ConfigCategory
     :members:
 
 Base Driver
@@ -429,3 +434,7 @@ JSON Driver
 .. autoclass:: redbot.core.drivers.JsonDriver
     :members:
 
+Postgres Driver
+^^^^^^^^^^^^^^^
+.. autoclass:: redbot.core.drivers.PostgresDriver
+    :members:
