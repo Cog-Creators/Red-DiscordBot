@@ -316,3 +316,7 @@ It will walk through the initial setup, asking for your token and a prefix.
 You can find out how to obtain a token with
 `this guide <https://discordpy.readthedocs.io/en/v1.0.1/discord.html#creating-a-bot-account>`_,
 section "Creating a Bot Account".
+
+.. tip::
+   If it's the first time you're using Red, you should check our `getting-started` guide
+   that will walk you through all essential information on how to interact with Red.
