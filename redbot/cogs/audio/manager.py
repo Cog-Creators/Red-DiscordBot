@@ -16,8 +16,6 @@ from tqdm import tqdm
 from redbot.core import data_manager
 from .errors import LavalinkDownloadFailed
 
-JAR_VERSION = "3.2.1"
-JAR_BUILD = 823
 LAVALINK_DOWNLOAD_URL = (
     f"https://ci.fredboat.com/guestAuth/repository/download/Lavalink_Build/.lastSuccessful/"
     f"Lavalink.jar"
