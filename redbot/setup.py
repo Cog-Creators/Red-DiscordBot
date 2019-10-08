@@ -183,7 +183,7 @@ def basic_setup():
         "Your basic configuration has been saved. Please run `redbot <name>` to"
         " continue your setup process and to run the bot.\n\n"
         "First time? Read the quickstart guide:\n"
-        "https://docs.discord.red/en/latest/getting_started.html"
+        "https://docs.discord.red/en/stable/getting_started.html"
     )
 
 
