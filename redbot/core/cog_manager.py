@@ -314,9 +314,7 @@ class CogManagerUI(commands.Cog):
     @commands.command()
     @checks.is_owner()
     async def paths(self, ctx: commands.Context):
-        """
-        Lists current cog paths in order of priority.
-        """
+        """Lists current cog paths in order of priority."""
         cog_mgr = ctx.bot._cog_mgr
         install_path = await cog_mgr.install_path()
         core_path = cog_mgr.CORE_PATH
@@ -400,9 +398,9 @@ class CogManagerUI(commands.Cog):
     @checks.is_owner()
     async def installpath(self, ctx: commands.Context, path: Path = None):
         """Returns the current install path or sets it if one is provided.
+
         The provided path must be absolute or relative to the bot's
         directory and it must already exist.
-
         No installed cogs will be transferred in the process.
         """
         if path:

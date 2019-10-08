@@ -1,0 +1,1 @@
+Unify docstring idents in CogManager, and use user's prefix insead of !
