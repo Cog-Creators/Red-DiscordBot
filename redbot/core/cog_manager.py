@@ -336,9 +336,7 @@ class CogManagerUI(commands.Cog):
     @commands.command()
     @checks.is_owner()
     async def addpath(self, ctx: commands.Context, path: Path):
-        """
-        Add a path to the list of available cog paths.
-        """
+        """Add a path to the list of available cog paths."""
         if not path.is_dir():
             await ctx.send(_("That path does not exist or does not point to a valid directory."))
             return
@@ -353,9 +351,8 @@ class CogManagerUI(commands.Cog):
     @commands.command()
     @checks.is_owner()
     async def removepath(self, ctx: commands.Context, path_number: int):
-        """
-        Removes a path from the available cog paths given the path_number
-            from !paths
+        """Removes a path from the available cog paths given the path_number
+        from [p]paths.
         """
         path_number -= 1
         if path_number < 0:
@@ -375,9 +372,7 @@ class CogManagerUI(commands.Cog):
     @commands.command()
     @checks.is_owner()
     async def reorderpath(self, ctx: commands.Context, from_: int, to: int):
-        """
-        Reorders paths internally to allow discovery of different cogs.
-        """
+        """Reorders paths internally to allow discovery of different cogs."""
         # Doing this because in the paths command they're 1 indexed
         from_ -= 1
         to -= 1
@@ -404,10 +399,9 @@ class CogManagerUI(commands.Cog):
     @commands.command()
     @checks.is_owner()
     async def installpath(self, ctx: commands.Context, path: Path = None):
-        """
-        Returns the current install path or sets it if one is provided.
-            The provided path must be absolute or relative to the bot's
-            directory and it must already exist.
+        """Returns the current install path or sets it if one is provided.
+        The provided path must be absolute or relative to the bot's
+        directory and it must already exist.
 
         No installed cogs will be transferred in the process.
         """
@@ -428,9 +422,7 @@ class CogManagerUI(commands.Cog):
     @commands.command()
     @checks.is_owner()
     async def cogs(self, ctx: commands.Context):
-        """
-        Lists all loaded and available cogs.
-        """
+        """Lists all loaded and available cogs."""
         loaded = set(ctx.bot.extensions.keys())
 
         all_cogs = set(await ctx.bot._cog_mgr.available_modules())
