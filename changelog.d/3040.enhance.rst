@@ -1,0 +1,1 @@
+Add aliases if there exist below syntax in help formatter.
