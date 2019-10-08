@@ -350,7 +350,6 @@ class CogManagerUI(commands.Cog):
     @checks.is_owner()
     async def removepath(self, ctx: commands.Context, path_number: int):
         """Removes a path from the available cog paths given the path_number
-        from [p]paths.
         """
         path_number -= 1
         if path_number < 0:
