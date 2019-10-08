@@ -30,6 +30,7 @@ def roomlocked():
 
 def can_have_caching():
     """Check to disable Caching commands if SQLite is not avaliable."""
+
     async def predicate(ctx: commands.Context):
         return HAS_SQL
 

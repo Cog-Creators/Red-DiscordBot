@@ -775,7 +775,6 @@ class Audio(commands.Cog):
     @_perms_whitelist.command(name="list")
     async def _perms_whitelist_list(self, ctx: commands.Context):
         """List all keywords added to the whitelist."""
-        """List all keywords added to the whitelist."""
         whitelist = await self.config.guild(ctx.guild).url_keyword_whitelist()
         if not whitelist:
             return await self._embed_msg(ctx, _("Nothing in the whitelist."))
@@ -1605,10 +1604,6 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx, _("You must be in the voice channel to bump a track.")
             )
-        # if player.shuffle:
-        #     return await self._embed_msg(
-        #         ctx, _("Can't bump a track while shuffle is enabled.")
-        #     )
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(ctx, _("You need the DJ role to bump tracks."))
@@ -2658,7 +2653,6 @@ class Audio(commands.Cog):
                 search_track_num = search_track_num % 5
             if search_track_num == 0:
                 search_track_num = 5
-                # query = Query.process_input(track)
             if playlist:
                 name = "**[{}]({})** - {}".format(
                     entry.get("name"),
@@ -3085,7 +3079,25 @@ class Audio(commands.Cog):
                     has_perms = True
 
         if has_perms is False:
-            if playlist.scope == PlaylistScope.GUILD.value and (is_different_guild or dj_enabled):
+            if hasattr(playlist, "name"):
+                msg = _(
+                    "You do not have the permissions to manage {name} " "(`{id}`) [**{scope}**]."
+                ).format(
+                    user=playlist_author,
+                    name=playlist.name,
+                    id=playlist.id,
+                    scope=humanize_scope(
+                        playlist.scope,
+                        ctx=guild_to_query
+                        if playlist.scope == PlaylistScope.GUILD.value
+                        else playlist_author
+                        if playlist.scope == PlaylistScope.USER.value
+                        else None,
+                    ),
+                )
+            elif playlist.scope == PlaylistScope.GUILD.value and (
+                is_different_guild or dj_enabled
+            ):
                 msg = _(
                     "You do not have the permissions to manage that playlist in {guild}."
                 ).format(guild=guild_to_query)
@@ -3093,7 +3105,6 @@ class Audio(commands.Cog):
                 playlist.scope in [PlaylistScope.GUILD.value, PlaylistScope.USER.value]
                 and is_different_user
             ):
-
                 msg = _(
                     "You do not have the permissions to manage playlist owned by {user}."
                 ).format(user=playlist_author)
@@ -3189,8 +3200,8 @@ class Audio(commands.Cog):
                 ]
             if match_count > 10:
                 raise TooManyMatches(
-                    f"{match_count} playlist match {original_input} "
-                    f"Please try to be more specific or use the playlist ID."
+                    f"{match_count} playlist match {original_input}: "
+                    f"Please try to be more specific, or use the playlist ID."
                 )
         elif match_count == 1:
             return correct_scope_matches[0][0], original_input
@@ -4613,6 +4624,8 @@ class Audio(commands.Cog):
             return
         try:
             playlist = await get_playlist(playlist_id, scope, self.bot, guild, author)
+            if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
+                return
             if playlist.url:
                 player = lavalink.get_player(ctx.guild.id)
                 added, removed, playlist = await self._maybe_update_playlist(ctx, player, playlist)
@@ -4844,9 +4857,9 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ [p]playlist update MyGuildPlaylist RenamedGuildPlaylist
-        ​ ​ ​ ​ [p]playlist update MyGlobalPlaylist RenamedGlobalPlaylist --scope Global
-        ​ ​ ​ ​ [p]playlist update MyPersonalPlaylist RenamedPersonalPlaylist --scope User
+        ​ ​ ​ ​ [p]playlist rename MyGuildPlaylist RenamedGuildPlaylist
+        ​ ​ ​ ​ [p]playlist rename MyGlobalPlaylist RenamedGlobalPlaylist --scope Global
+        ​ ​ ​ ​ [p]playlist rename MyPersonalPlaylist RenamedPersonalPlaylist --scope User
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
