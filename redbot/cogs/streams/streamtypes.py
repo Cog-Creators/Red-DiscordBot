@@ -335,7 +335,7 @@ class TwitchStream(Stream):
                             async with aiohttp.ClientSession() as session:
                                 async with session.get(
                                     TWITCH_GAMES_ENDPOINT,
-                                    headers=headers,
+                                    headers=header,
                                     params={"id": stream["game_id"]},
                                 ) as game_data:
                                     gd = await game_data.json(encoding="utf-8")

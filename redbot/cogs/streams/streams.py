@@ -322,7 +322,7 @@ class Streams(commands.Cog):
                     game.channels.remove(channel_id)
                 elif _all and ctx.channel.id in local_channel_ids:
                     if channel_id in game.channels:
-                        gamestream.channels.remove(channel_id)
+                        games.channels.remove(channel_id)
             if not game.channels:
                 to_remove.append(game)
 
@@ -834,7 +834,7 @@ class Streams(commands.Cog):
                                 channel.guild
                             ).game_live_message_nomention()
                             if alert_msg:
-                                content = alert_msg.format(stream=stream)
+                                content = alert_msg.format(game=game)
                             else:
                                 content = _(
                                     "There are channels currently playing {game.name}!"
