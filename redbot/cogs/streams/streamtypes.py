@@ -163,7 +163,7 @@ class TwitchStream(Stream):
 
         url = TWITCH_STREAMS_ENDPOINT + self.id
         header = {
-            "Client-ID": str(self._token["client_id"]),
+            "Client-ID": str(self._token),
             "Accept": "application/vnd.twitchtv.v5+json",
         }
 
@@ -188,7 +188,7 @@ class TwitchStream(Stream):
 
     async def fetch_id(self):
         header = {
-            "Client-ID": str(self._token["client_id"]),
+            "Client-ID": str(self._token),
             "Accept": "application/vnd.twitchtv.v5+json",
         }
         url = TWITCH_ID_ENDPOINT + self.name
