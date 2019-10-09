@@ -1,0 +1,1 @@
+Fix [p] that was not replaced by prefix in name of embed fields in help formatter.
