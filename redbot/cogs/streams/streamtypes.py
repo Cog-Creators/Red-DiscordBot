@@ -370,7 +370,7 @@ class TwitchStream(Stream):
         embed.add_field(name="Total views", value=channel["view_count"])
         embed.set_thumbnail(url=logo)
         embed.set_footer(text="Playing: " + data["game"]["name"])
-        embed.color = 0x6441A4
+        embed.color = 0x6441A4  # pylint: disable=assigning-non-slot
 
 
 class HitboxStream(Stream):
