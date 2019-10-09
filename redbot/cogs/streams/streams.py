@@ -109,7 +109,7 @@ class Streams(commands.Cog):
     @commands.command()
     async def twitchstream(self, ctx: commands.Context, channel_name: str):
         """Check if a Twitch channel is live."""
-        token = (await self.bot.get_shared_api_tokens("twitch"))
+        token = await self.bot.get_shared_api_tokens("twitch")
         if not token:
             await ctx.send(
                 _(
