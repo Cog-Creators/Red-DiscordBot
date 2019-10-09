@@ -204,7 +204,7 @@ class RedHelpFormatter:
 
             if command.help:
                 splitted = command.help.split("\n\n")
-                name = splitted[0]
+                name = splitted[0].replace("[p]", ctx.clean_prefix)
                 value = "\n\n".join(splitted[1:]).replace("[p]", ctx.clean_prefix)
                 if not value:
                     value = EMPTY_STRING
