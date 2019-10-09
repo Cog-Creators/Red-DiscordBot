@@ -1,0 +1,1 @@
+Fix a TypeError in TwitchStream class when calling Twitch client_id from Red shared APIs tokens.
