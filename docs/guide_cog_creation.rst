@@ -18,9 +18,19 @@ Getting started
 ---------------
 
 To start off, be sure that you have installed Python 3.7.
-Open a terminal or command prompt and type :code:`python3.7 -m pip install -U Red-DiscordBot`
+Next, you need to decide if you want to develop against the Stable or Develop verison of Red.
+Depending on what your goal is should help determine which version you need
+
+.. attention:: 
+    The Develop version may have changes on it that break compatibility with the Stable version and other cogs.
+    If your goal is to support both versions, make sure you build compatibility layers or use separete branches to keep compatibility until the next Red release
+
+Open a terminal or command prompt and type one of the following
+    Stable Version: :code:`python3.7 -m pip install -U Red-DiscordBot`
+    
+    Develop Version: :code:`python3.7 -m pip install -U git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=Red-DiscordBot`
+
 (Windows users may need to use :code:`py -3.7` or :code:`python` instead of :code:`python3.7`)
-This will install the latest version of V3.
 
 --------------------
 Setting up a package
