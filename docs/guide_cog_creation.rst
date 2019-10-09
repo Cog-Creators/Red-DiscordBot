@@ -110,13 +110,15 @@ The bot should respond with :code:`I can do stuff!`. If it did, you
 have successfully created a cog!
 
 .. note:: **Package/Folder layout**
+
     You must make sure you structure your local path correctly or 
     you get an error about missing the setup function. As cogs are 
     considered packages, they are each contained within separate folders.
     The folder you need to add using :code:`[p]addpath` is the parent
     folder of these package folders. Below is an example
 
-    .. code-block:: text
+    .. code-block:: none
+
         - D:\
         -- red-env
         -- red-data
@@ -127,6 +129,7 @@ have successfully created a cog!
         ---- coolcog
         ------ __init__.py
         ------ coolcog.py
+    
     You would then use :code:`[p]addpath D:\red-cogs` to add the path
     and then you can use :code:`[p]load mycog` or :code:`[p]load coolcog`
     to load them
