@@ -1,1 +1,1 @@
-Fix a TypeError in TwitchStream class when calling Twitch client_id from Red shared APIs tokens.
+Fix a TypeError in TwitchStream class when calling Twitch client_id from Red shared APIs tokens and also changed the stream_alert function for Twitch alerts to make it works with how TwitchStream class works now.
