@@ -1,0 +1,1 @@
+Automatic handling of :class:`redbot.core.commands.errors.ArgParserFailure` on :meth:`Cog.on_command_error`.

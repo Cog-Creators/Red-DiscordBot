@@ -87,7 +87,7 @@ class CoreLogic:
 
         for name in cog_names:
             try:
-                spec = await bot.cog_mgr.find_cog(name)
+                spec = await bot._cog_mgr.find_cog(name)
                 if spec:
                     cogspecs.append((spec, name))
                 else:
@@ -298,6 +298,7 @@ class Core(commands.Cog, CoreLogic):
             "Red is backed by a passionate community who contributes and "
             "creates content for everyone to enjoy. [Join us today]({}) "
             "and help us improve!\n\n"
+            "(c) Cog Creators"
         ).format(red_repo, author_repo, org_repo, support_server_url)
 
         embed = discord.Embed(color=(await ctx.embed_colour()))
@@ -326,9 +327,10 @@ class Core(commands.Cog, CoreLogic):
         """Shows Red's uptime"""
         since = ctx.bot.uptime.strftime("%Y-%m-%d %H:%M:%S")
         delta = datetime.datetime.utcnow() - self.bot.uptime
+        uptime_str = humanize_timedelta(timedelta=delta) or _("Less than one second")
         await ctx.send(
-            _("Been up for: **{}** (since {} UTC)").format(
-                humanize_timedelta(timedelta=delta), since
+            _("Been up for: **{time_quantity}** (since {timestamp} UTC)").format(
+                time_quantity=uptime_str, timestamp=since
             )
         )
 
@@ -1145,7 +1147,7 @@ class Core(commands.Cog, CoreLogic):
         """
         if ctx.channel.permissions_for(ctx.me).manage_messages:
             await ctx.message.delete()
-        await ctx.bot._config.api_tokens.set_raw(service, value=tokens)
+        await ctx.bot.set_shared_api_tokens(service, **tokens)
         await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
 
     @commands.group()
@@ -1288,7 +1290,7 @@ class Core(commands.Cog, CoreLogic):
             return
 
         await ctx.bot._config.help.tagline.set(tagline)
-        await ctx.send(_("The tagline has been set to {}.").format(tagline[:1900]))
+        await ctx.send(_("The tagline has been set."))
 
     @commands.command()
     @checks.is_owner()
@@ -2197,7 +2199,7 @@ class Core(commands.Cog, CoreLogic):
     async def rpc_load(self, request):
         cog_name = request.params[0]
 
-        spec = await self.bot.cog_mgr.find_cog(cog_name)
+        spec = await self.bot._cog_mgr.find_cog(cog_name)
         if spec is None:
             raise LookupError("No such cog found.")
 

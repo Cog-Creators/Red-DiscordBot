@@ -1,0 +1,1 @@
+Fixed MessagePredicate.greater and MessagePredicate.less allowing any valid int instead of only valid ints/floats that are greater/less than the given value.

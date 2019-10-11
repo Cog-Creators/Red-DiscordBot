@@ -1,0 +1,1 @@
+``[p]playlist remove`` now removes the playlist url if the playlist was created through ``[p]playlist save``.
