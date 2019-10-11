@@ -1,1 +1,1 @@
-Unify capitalisation in `help playlist`
+Unify capitalisation in `[p]help playlist`.
