@@ -455,7 +455,10 @@ class Audio(commands.Cog):
                 if (
                     autoplay
                     and player.current.extras.get("autoplay")
-                    and (prev_song is None or not prev_song.extras.get("autoplay"))
+                    and (
+                        prev_song is None
+                        or (hasattr(prev_song, "extras") and not prev_song.extras.get("autoplay"))
+                    )
                 ):
                     await self._embed_msg(notify_channel, title=_("Auto Play Started."))
 
@@ -2697,9 +2700,7 @@ class Audio(commands.Cog):
         description = get_track_description(single_track)
         footer = None
         if not play_now and not guild_data["shuffle"] and queue_dur > 0:
-            footer = _("{time} until track playback: #{position} in queue").format(
-                time=queue_total_duration, position=before_queue_length + 1
-            )
+            footer = _("{time} until track playback: #1 in queue")
         await self._embed_msg(
             ctx, title=_("Track Enqueued"), description=description, footer=footer
         )
@@ -3349,7 +3350,11 @@ class Audio(commands.Cog):
             )
         except SpotifyFetchError as error:
             self._play_lock(ctx, False)
-            return await self._embed_msg(ctx, title=_(error.message).format(prefix=ctx.prefix))
+            return await self._embed_msg(
+                ctx,
+                title=_("Invalid Environment"),
+                description=_(error.message).format(prefix=ctx.prefix),
+            )
         except (RuntimeError, aiohttp.ServerDisconnectedError):
             self._play_lock(ctx, False)
             error_embed = discord.Embed(
@@ -5917,7 +5922,7 @@ class Audio(commands.Cog):
                 )
         player.queue.clear()
         await self._embed_msg(
-            ctx, title=_("Unable To Clear Queue"), description=_("The queue has been cleared.")
+            ctx, title=_("Queue Modified"), description=_("The queue has been cleared.")
         )
 
     @queue.command(name="clean")
