@@ -893,7 +893,7 @@ class Audio(commands.Cog):
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
-            return await self._embed_msg(ctx, str(e))
+            return await self._embed_msg(ctx, title=str(e))
         if playlist_id is None:
             return await self._embed_msg(
                 ctx,
@@ -3646,7 +3646,7 @@ class Audio(commands.Cog):
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
-            return await self._embed_msg(ctx, str(e))
+            return await self._embed_msg(ctx, title=str(e))
         if playlist_id is None:
             return await self._embed_msg(
                 ctx,
@@ -3660,7 +3660,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 title=_("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=humanize_scope(to_scope, the=True)
+                    id=playlist_id, scope=humanize_scope(scope, the=True)
                 ),
             )
         except MissingGuild:
@@ -3811,7 +3811,7 @@ class Audio(commands.Cog):
                 ctx, playlist_matches, from_scope, from_author, from_guild, specified_from_user
             )
         except TooManyMatches as e:
-            return await self._embed_msg(ctx, str(e))
+            return await self._embed_msg(ctx, title=str(e))
 
         if playlist_id is None:
             return await self._embed_msg(
@@ -3988,7 +3988,7 @@ class Audio(commands.Cog):
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
-            return await self._embed_msg(ctx, str(e))
+            return await self._embed_msg(ctx, title=str(e))
         if playlist_id is None:
             return await self._embed_msg(
                 ctx,
@@ -4075,7 +4075,7 @@ class Audio(commands.Cog):
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
-            return await self._embed_msg(ctx, str(e))
+            return await self._embed_msg(ctx, title=str(e))
         if playlist_id is None:
             return await self._embed_msg(
                 ctx,
@@ -4208,7 +4208,7 @@ class Audio(commands.Cog):
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
-            return await self._embed_msg(ctx, str(e))
+            return await self._embed_msg(ctx, title=str(e))
         if playlist_id is None:
             return await self._embed_msg(
                 ctx,
@@ -4325,7 +4325,7 @@ class Audio(commands.Cog):
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
-            return await self._embed_msg(ctx, str(e))
+            return await self._embed_msg(ctx, title=str(e))
         if playlist_id is None:
             return await self._embed_msg(
                 ctx,
@@ -4650,7 +4650,7 @@ class Audio(commands.Cog):
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
-            return await self._embed_msg(ctx, str(e))
+            return await self._embed_msg(ctx, title=str(e))
         if playlist_id is None:
             return await self._embed_msg(
                 ctx,
@@ -4848,7 +4848,7 @@ class Audio(commands.Cog):
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
-            return await self._embed_msg(ctx, str(e))
+            return await self._embed_msg(ctx, title=str(e))
         if playlist_id is None:
             return await self._embed_msg(
                 ctx,
@@ -5276,7 +5276,7 @@ class Audio(commands.Cog):
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
-            return await self._embed_msg(ctx, str(e))
+            return await self._embed_msg(ctx, title=str(e))
         if playlist_id is None:
             return await self._embed_msg(
                 ctx,
@@ -5392,7 +5392,7 @@ class Audio(commands.Cog):
     ):
         track_list = []
         track_count = 0
-        successfull_count = 0
+        successful_count = 0
         uploaded_track_count = len(uploaded_track_list)
 
         embed1 = discord.Embed(
@@ -5412,7 +5412,7 @@ class Audio(commands.Cog):
             try:
                 track_obj = track_creator(player, other_track=track[0])
                 track_list.append(track_obj)
-                successfull_count += 1
+                successful_count += 1
             except Exception:
                 continue
             if (track_count % 2 == 0) or (track_count == len(uploaded_track_list)):
@@ -5426,19 +5426,19 @@ class Audio(commands.Cog):
         scope_name = humanize_scope(
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
-        if not successfull_count:
+        if not successful_count:
             msg = _("Empty playlist {name} (`{id}`) [**{scope}**] created.").format(
                 name=playlist.name, id=playlist.id, scope=scope_name
             )
-        elif uploaded_track_count != successfull_count:
-            bad_tracks = uploaded_track_count - successfull_count
+        elif uploaded_track_count != successful_count:
+            bad_tracks = uploaded_track_count - successful_count
             msg = _(
                 "Added {num} tracks from the {playlist_name} playlist. {num_bad} track(s) "
                 "could not be loaded."
-            ).format(num=successfull_count, playlist_name=playlist.name, num_bad=bad_tracks)
+            ).format(num=successful_count, playlist_name=playlist.name, num_bad=bad_tracks)
         else:
             msg = _("Added {num} tracks from the {playlist_name} playlist.").format(
-                num=successfull_count, playlist_name=playlist.name
+                num=successful_count, playlist_name=playlist.name
             )
         embed3 = discord.Embed(
             colour=await ctx.embed_colour(), title=_("Playlist Saved"), description=msg
@@ -5729,7 +5729,7 @@ class Audio(commands.Cog):
         try:
             arrow = await draw_time(ctx)
         except AttributeError:
-            return await self._embed_msg(ctx, _("There's nothing in the queue."))
+            return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
         pos = lavalink.utils.format_time(player.position)
 
         if player.current.is_stream:

@@ -10,8 +10,7 @@ import lavalink
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
-from redbot.core.utils import box
-from redbot.core.utils.chat_formatting import bold
+from redbot.core.utils.chat_formatting import bold, box
 from . import dataclasses
 from .playlists import humanize_scope
 
