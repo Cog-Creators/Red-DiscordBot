@@ -1,1 +1,1 @@
-[Tunnel] Added ``use_cached`` and ``images_only`` kwargs to `redbot.core.utils.Tunnel.files_from_attach`
+[Tunnel] Added ``use_cached`` and ``images_only`` kwargs to `redbot.core.utils.Tunnel.files_from_attach`.

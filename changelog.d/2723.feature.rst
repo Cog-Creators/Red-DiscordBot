@@ -1,1 +1,1 @@
-Added a config driver for PostgreSQL
+Added a config driver for PostgreSQL.

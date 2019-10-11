@@ -1,1 +1,1 @@
-Stop using `:` character in backup's filename - Windows doesn't accept it
+Stop using `:` character in backup's filename - Windows doesn't accept it.

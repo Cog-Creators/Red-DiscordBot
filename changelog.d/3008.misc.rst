@@ -1,1 +1,1 @@
-update some UI to include copyright
+Update some UI to include copyright.

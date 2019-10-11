@@ -1,1 +1,1 @@
-Fixes an issue with clearing rules in permissions
+Fixes an issue with clearing rules in permissions.

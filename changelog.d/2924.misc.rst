@@ -1,1 +1,1 @@
-Fixed Requires docs inconsistencies
+Fixed Requires docs inconsistencies.

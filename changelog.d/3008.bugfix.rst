@@ -1,1 +1,1 @@
-Uptime command works with uptimes of under a second
+Uptime command now works with uptimes of under a second.

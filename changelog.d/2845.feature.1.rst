@@ -1,4 +1,4 @@
-Added New commands to Economy
+Added new commands to Economy:
 
 - ``[p]bank prune user`` - This will delete a user's bank account.
 - ``[p]bank prune local`` - This will prune the bank of accounts from users no longer in the server.

@@ -1,1 +1,1 @@
-Removes bot._counter, Makes a few more attrs private (cog_mgr, main_dir)
+Removes bot._counter, Makes a few more attrs private (cog_mgr, main_dir).

@@ -1,1 +1,1 @@
-Some generic modlog casetypes are now pre-registered for cog creator use
+Some generic modlog casetypes are now pre-registered for cog creator use.

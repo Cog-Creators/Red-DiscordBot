@@ -1,1 +1,1 @@
-Add quotation marks to helpset tagline's response so two consecutive full stops don't appear
+Add quotation marks to helpset tagline's response so two consecutive full stops don't appear.

@@ -1,1 +1,1 @@
-``redbot-setup delete`` no longer errors about "unexpected keyword argument"
+``redbot-setup delete`` no longer errors about "unexpected keyword argument".

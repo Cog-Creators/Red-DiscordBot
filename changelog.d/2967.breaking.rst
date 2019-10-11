@@ -1,5 +1,5 @@
 The main bot config is no longer directly accessible to cogs. New methods have been added for use where this is concerned.
-New methods for this include
+New methods for this include:
 
   - ``bot.get_shared_api_tokens``
   - ``bot.set_shared_api_tokens``

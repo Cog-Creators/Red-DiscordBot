@@ -1,1 +1,1 @@
-Modlog entries now show up properly without the mod cog loaded
+Modlog entries now show up properly without the mod cog loaded.

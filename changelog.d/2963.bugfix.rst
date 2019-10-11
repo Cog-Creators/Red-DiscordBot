@@ -1,1 +1,1 @@
-[Core] Inviteset public and perms help string cleanup
+[Core] ``[p]inviteset public`` and ``perms`` help string cleanup.

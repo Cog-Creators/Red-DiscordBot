@@ -1,1 +1,1 @@
-Allow passing cls in the :func:`redbot.core.commands.group()` decorator
+Allow passing cls in the :func:`redbot.core.commands.group()` decorator.

@@ -1,1 +1,1 @@
-Added more information about ``redbot.core.utils.humanize_timedelta`` into the docs
+Added more information about ``redbot.core.utils.humanize_timedelta`` into the docs.
