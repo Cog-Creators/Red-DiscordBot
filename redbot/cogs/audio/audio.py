@@ -914,13 +914,16 @@ class Audio(commands.Cog):
         except RuntimeError:
             return await self._embed_msg(
                 ctx,
-                _("Playlist {id} does not exist in {scope} scope.").format(
+                title=_("No Playlist Found"),
+                description=_("Playlist {id} does not exist in {scope} scope.").format(
                     id=playlist_id, scope=humanize_scope(scope, the=True)
                 ),
             )
         except MissingGuild:
             return await self._embed_msg(
-                ctx, _("You need to specify the Guild ID for the guild to lookup.")
+                ctx,
+                title=_("Missing Arguments"),
+                description=_("You need to specify the Guild ID for the guild to lookup."),
             )
         else:
             return await self._embed_msg(
@@ -1638,10 +1641,6 @@ class Audio(commands.Cog):
                 title=_("Unable To Bump Track"),
                 description=_("You must be in the voice channel to bump a track."),
             )
-        # if player.shuffle:
-        #     return await self._embed_msg(
-        #         ctx, _("Can't bump a track while shuffle is enabled.")
-        #     )
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(
@@ -2050,7 +2049,8 @@ class Audio(commands.Cog):
             content=box(eq.visualise(), lang="ini"),
             embed=discord.Embed(
                 colour=await ctx.embed_colour(),
-                title=_(
+                title=_("Preset Modified"),
+                description=_(
                     "The {band_name}Hz band has been set to {band_value}.".format(
                         band_name=band_name, band_value=band_value
                     )
@@ -3649,7 +3649,9 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, str(e))
         if playlist_id is None:
             return await self._embed_msg(
-                ctx, _("Could not match '{arg}' to a playlist").format(arg=playlist_arg)
+                ctx,
+                title=_("Playlist Not Found"),
+                description=_("Could not match '{arg}' to a playlist").format(arg=playlist_arg),
             )
 
         try:
@@ -3657,12 +3659,15 @@ class Audio(commands.Cog):
         except RuntimeError:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist Not Found"),
-                description=_("Could not match '{arg}' to a playlist").format(arg=playlist_arg),
+                title=_("Playlist {id} does not exist in {scope} scope.").format(
+                    id=playlist_id, scope=humanize_scope(to_scope, the=True)
+                ),
             )
         except MissingGuild:
             return await self._embed_msg(
-                ctx, title=_("You need to specify the Guild ID for the guild to lookup.")
+                ctx,
+                title=_("Missing Arguments"),
+                description=_("You need to specify the Guild ID for the guild to lookup."),
             )
 
         if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
@@ -3810,7 +3815,9 @@ class Audio(commands.Cog):
 
         if playlist_id is None:
             return await self._embed_msg(
-                ctx, _("Could not match '{arg}' to a playlist.").format(arg=playlist_arg)
+                ctx,
+                title=_("Playlist Not Found"),
+                description=_("Could not match '{arg}' to a playlist.").format(arg=playlist_arg),
             )
 
         temp_playlist = FakePlaylist(to_author.id, to_scope)
@@ -3825,7 +3832,9 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 title=_("Playlist Not Found"),
-                description=_("Could not match '{arg}' to a playlist.").format(arg=playlist_arg),
+                description=_("Playlist {id} does not exist in {scope} scope.").format(
+                    id=playlist_id, scope=humanize_scope(to_scope, the=True)
+                ),
             )
         except MissingGuild:
             return await self._embed_msg(
@@ -4079,13 +4088,16 @@ class Audio(commands.Cog):
         except RuntimeError:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist {id} does not exist in {scope} scope.").format(
+                title=_("Playlist Not Found"),
+                description=_("Playlist {id} does not exist in {scope} scope.").format(
                     id=playlist_id, scope=humanize_scope(scope, the=True)
                 ),
             )
         except MissingGuild:
             return await self._embed_msg(
-                ctx, title=_("You need to specify the Guild ID for the guild to lookup.")
+                ctx,
+                title=_("Missing Arguments"),
+                description=_("You need to specify the Guild ID for the guild to lookup."),
             )
 
         if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
@@ -4122,7 +4134,8 @@ class Audio(commands.Cog):
         if original_count - final_count != 0:
             await self._embed_msg(
                 ctx,
-                _(
+                title=_("Playlist Modified"),
+                description=_(
                     "Removed {track_diff} duplicated "
                     "tracks from {name} (`{id}`) [**{scope}**] playlist."
                 ).format(
@@ -4135,9 +4148,10 @@ class Audio(commands.Cog):
         else:
             await self._embed_msg(
                 ctx,
-                _("{name} (`{id}`) [**{scope}**] playlist has no duplicate tracks.").format(
-                    name=playlist.name, id=playlist.id, scope=scope_name
-                ),
+                title=_("Playlist Has Not Been Modified"),
+                description=_(
+                    "{name} (`{id}`) [**{scope}**] playlist has no duplicate tracks."
+                ).format(name=playlist.name, id=playlist.id, scope=scope_name),
             )
 
     @checks.is_owner()
@@ -4207,13 +4221,16 @@ class Audio(commands.Cog):
         except RuntimeError:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist {id} does not exist in {scope} scope.").format(
+                title=_("Playlist Not Found"),
+                description=_("Playlist {id} does not exist in {scope} scope.").format(
                     id=playlist_id, scope=humanize_scope(scope, the=True)
                 ),
             )
         except MissingGuild:
             return await self._embed_msg(
-                ctx, title=_("You need to specify the Guild ID for the guild to lookup.")
+                ctx,
+                title=_("Missing Arguments"),
+                description=_("You need to specify the Guild ID for the guild to lookup."),
             )
 
         schema = 2
@@ -4321,13 +4338,16 @@ class Audio(commands.Cog):
         except RuntimeError:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist {id} does not exist in {scope} scope.").format(
+                title=_("Playlist Not Found"),
+                description=_("Playlist {id} does not exist in {scope} scope.").format(
                     id=playlist_id, scope=humanize_scope(scope, the=True)
                 ),
             )
         except MissingGuild:
             return await self._embed_msg(
-                ctx, title=_("You need to specify the Guild ID for the guild to lookup.")
+                ctx,
+                title=_("Missing Arguments"),
+                description=_("You need to specify the Guild ID for the guild to lookup."),
             )
         track_len = len(playlist.tracks)
 
@@ -4642,13 +4662,16 @@ class Audio(commands.Cog):
         except RuntimeError:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist {id} does not exist in {scope} scope.").format(
+                title=_("Playlist Not Found"),
+                description=_("Playlist {id} does not exist in {scope} scope.").format(
                     id=playlist_id, scope=humanize_scope(scope, the=True)
                 ),
             )
         except MissingGuild:
             return await self._embed_msg(
-                ctx, title=_("You need to specify the Guild ID for the guild to lookup.")
+                ctx,
+                title=_("Missing Arguments"),
+                description=_("You need to specify the Guild ID for the guild to lookup."),
             )
 
         if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
@@ -4907,13 +4930,16 @@ class Audio(commands.Cog):
         except RuntimeError:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist {id} does not exist in {scope} scope.").format(
+                title=_("Playlist Not Found"),
+                description=_("Playlist {id} does not exist in {scope} scope.").format(
                     id=playlist_id, scope=humanize_scope(scope, the=True)
                 ),
             )
         except MissingGuild:
             return await self._embed_msg(
-                ctx, title=_("You need to specify the Guild ID for the guild to lookup.")
+                ctx,
+                title=_("Missing Arguments"),
+                description=_("You need to specify the Guild ID for the guild to lookup."),
             )
         except TypeError:
             if playlist:
@@ -4993,13 +5019,16 @@ class Audio(commands.Cog):
         except RuntimeError:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist {id} does not exist in {scope} scope.").format(
+                title=_("Playlist Not Found"),
+                description=_("Playlist {id} does not exist in {scope} scope.").format(
                     id=playlist_id, scope=humanize_scope(scope, the=True)
                 ),
             )
         except MissingGuild:
             return await self._embed_msg(
-                ctx, title=_("You need to specify the Guild ID for the guild to lookup.")
+                ctx,
+                title=_("Missing Arguments"),
+                description=_("You need to specify the Guild ID for the guild to lookup."),
             )
         else:
             scope_name = humanize_scope(
@@ -6304,6 +6333,8 @@ class Audio(commands.Cog):
                         ).format(time=queue_total_duration, position=len(player.queue) + 1)
                     )
                 return await self._embed_msg(ctx, embed=songembed)
+            elif query.is_local and query.single_track:
+                tracks = await self._folder_list(ctx, query)
             elif query.is_local and query.is_album:
                 if ctx.invoked_with == "folder":
                     return await self._local_play_all(ctx, query, from_search=True)
@@ -6408,7 +6439,7 @@ class Audio(commands.Cog):
                 search_choice.invoked_from = "localtrack"
             return await ctx.invoke(self.play, query=search_choice)
 
-        embed = discord.Embed(
+        songembed = discord.Embed(
             colour=await ctx.embed_colour(), title=_("Track Enqueued"), description=description
         )
         queue_dur = await queue_duration(ctx)
@@ -6441,7 +6472,7 @@ class Audio(commands.Cog):
             )
 
         if not guild_data["shuffle"] and queue_dur > 0:
-            embed.set_footer(
+            songembed.set_footer(
                 text=_("{time} until track playback: #{position} in queue").format(
                     time=queue_total_duration, position=len(player.queue) + 1
                 )
