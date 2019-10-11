@@ -1,1 +1,1 @@
-Fixes a typo in `Ahsoka Tano`'s name in the starwars trivia
+Fixes a typo in ``Ahsoka Tano``'s name in the starwars trivia.
