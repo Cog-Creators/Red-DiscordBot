@@ -1,0 +1,1 @@
+Users are no longer able to accidentally overwrite existing playlist if a new one with the same name is created/rename.

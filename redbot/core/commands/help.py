@@ -1,3 +1,8 @@
+# Warning: The implementation below touches several private attributes.
+# While this implementation will be updated, and public interfaces maintained, derived classes
+# should not assume these private attributes are version safe, and use the provided HelpSettings
+# class for these settings.
+
 # This is a full replacement of discord.py's help command
 #
 # At a later date, there should be things added to support extra formatter
@@ -25,8 +30,11 @@
 # Additionally, this gives our users a bit more customization options including by
 # 3rd party cogs down the road.
 
+# Note: 3rd party help must not remove the copyright notice
+
 import asyncio
 from collections import namedtuple
+from dataclasses import dataclass
 from typing import Union, List, AsyncIterator, Iterable, cast
 
 import discord
@@ -38,7 +46,7 @@ from ..i18n import Translator
 from ..utils import menus, fuzzy_command_search, format_fuzzy_results
 from ..utils.chat_formatting import box, pagify
 
-__all__ = ["red_help", "RedHelpFormatter"]
+__all__ = ["red_help", "RedHelpFormatter", "HelpSettings"]
 
 T_ = Translator("Help", __file__)
 
@@ -49,6 +57,36 @@ SupportsCanSee = Union[commands.Command, commands.Group, dpy_commands.bot.BotBas
 
 EmbedField = namedtuple("EmbedField", "name value inline")
 EMPTY_STRING = "\N{ZERO WIDTH SPACE}"
+
+
+@dataclass(frozen=True)
+class HelpSettings:
+    """
+    A representation of help settings.
+    """
+
+    page_char_limit: int = 1000
+    max_pages_in_guild: int = 2
+    use_menus: bool = False
+    show_hidden: bool = False
+    verify_checks: bool = True
+    verify_exists: bool = False
+    tagline: str = ""
+
+    # Contrib Note: This is intentional to not accept the bot object
+    # There are plans to allow guild and user specific help settings
+    # Adding a non-context based method now would involve a breaking change later.
+    # At a later date, more methods should be exposed for non-context based creation.
+    #
+    # This is also why we aren't just caching the
+    # current state of these settings on the bot object.
+    @classmethod
+    async def from_context(cls, context: Context):
+        """
+        Get the HelpSettings for the current context
+        """
+        settings = await context.bot._config.help.all()
+        return cls(**settings)
 
 
 class NoCommand(Exception):

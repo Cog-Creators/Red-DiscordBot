@@ -1,0 +1,1 @@
+:class:`ArgParserFailure` was added to :class:`redbot.core.commands.errors` to allow user friendly errors from ArgParser Converters.

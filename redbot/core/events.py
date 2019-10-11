@@ -67,7 +67,7 @@ def init_events(bot, cli_flags):
             print("Loading packages...")
             for package in packages:
                 try:
-                    spec = await bot.cog_mgr.find_cog(package)
+                    spec = await bot._cog_mgr.find_cog(package)
                     await bot.load_extension(spec)
                 except Exception as e:
                     log.exception("Failed to load package {}".format(package), exc_info=e)
@@ -175,6 +175,13 @@ def init_events(bot, cli_flags):
 
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help()
+        elif isinstance(error, commands.ArgParserFailure):
+            msg = f"`{error.user_input}` is not a valid value for `{error.cmd}`"
+            if error.custom_help_msg:
+                msg += f"\n{error.custom_help_msg}"
+            await ctx.send(msg)
+            if error.send_cmd_help:
+                await ctx.send_help()
         elif isinstance(error, commands.ConversionFailure):
             if error.args:
                 await ctx.send(error.args[0])
@@ -232,21 +239,9 @@ def init_events(bot, cli_flags):
         elif isinstance(error, commands.NoPrivateMessage):
             await ctx.send("That command is not available in DMs.")
         elif isinstance(error, commands.CommandOnCooldown):
-            if error.retry_after < 1:
-                async with ctx.typing():
-                    # the sleep here is so that commands using this for ratelimit purposes
-                    # are not made more lenient than intended, while still being
-                    # more convienient for the user than redoing it less than a second later.
-                    await asyncio.sleep(error.retry_after)
-                    await ctx.bot.invoke(ctx)
-                    # done this way so checks still occur if there are other
-                    # failures possible than just cooldown.
-                    # do not change to ctx.reinvoke()
-                    return
-
             await ctx.send(
                 "This command is on cooldown. Try again in {}.".format(
-                    humanize_timedelta(seconds=error.retry_after)
+                    humanize_timedelta(seconds=error.retry_after) or "1 second"
                 ),
                 delete_after=error.retry_after,
             )
@@ -255,7 +250,6 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_message(message):
-        bot._counter["messages_read"] += 1
         await bot.process_commands(message)
         discord_now = message.created_at
         if (
@@ -271,14 +265,6 @@ def init_events(bot, cli_flags):
                     diff,
                 )
             bot._checked_time_accuracy = discord_now
-
-    @bot.event
-    async def on_resumed():
-        bot._counter["sessions_resumed"] += 1
-
-    @bot.event
-    async def on_command(command):
-        bot._counter["processed_commands"] += 1
 
     @bot.event
     async def on_command_add(command: commands.Command):

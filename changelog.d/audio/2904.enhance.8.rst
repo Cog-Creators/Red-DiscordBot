@@ -1,0 +1,1 @@
+Turn off DJ mode if the DJ role is deleted.

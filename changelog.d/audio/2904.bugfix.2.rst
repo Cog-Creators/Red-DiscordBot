@@ -1,0 +1,1 @@
+:code:`KeyError: loadType` when trying to play tracks has been fixed.
