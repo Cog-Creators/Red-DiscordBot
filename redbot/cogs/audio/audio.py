@@ -2325,6 +2325,8 @@ class Audio(commands.Cog):
             ):
                 return
 
+        if not player.queue:
+            expected = ("⏹", "⏯")
         if player.current:
             task = start_adding_reactions(message, expected[:4], ctx.bot.loop)
         else:
@@ -5714,8 +5716,44 @@ class Audio(commands.Cog):
                     + ("\N{WHITE HEAVY CHECK MARK}" if repeat else "\N{CROSS MARK}")
                 )
                 embed.set_footer(text=text)
+                message = await self._embed_msg(ctx, embed=embed)
+                dj_enabled = self._dj_status_cache.setdefault(
+                    ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+                )
+                vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
+                if dj_enabled or vote_enabled:
+                    if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
+                        ctx, ctx.author
+                    ):
+                        return
 
-                return await self._embed_msg(ctx, embed=embed)
+                expected = ("⏹", "⏯")
+                emoji = {"stop": "⏹", "pause": "⏯"}
+                if player.current:
+                    task = start_adding_reactions(message, expected[:4], ctx.bot.loop)
+                else:
+                    task = None
+
+                try:
+                    (r, u) = await self.bot.wait_for(
+                        "reaction_add",
+                        check=ReactionPredicate.with_emojis(expected, message, ctx.author),
+                        timeout=30.0,
+                    )
+                except asyncio.TimeoutError:
+                    return await self._clear_react(message, emoji)
+                else:
+                    if task is not None:
+                        task.cancel()
+                reacts = {v: k for k, v in emoji.items()}
+                react = reacts[r.emoji]
+                if react == "stop":
+                    await self._clear_react(message, emoji)
+                    return await ctx.invoke(self.stop)
+                elif react == "pause":
+                    await self._clear_react(message, emoji)
+                    return await ctx.invoke(self.pause)
+                return
             return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
 
         async with ctx.typing():
