@@ -1,0 +1,1 @@
+Reset cooldown upon failure of commands that has a cooldown timer.

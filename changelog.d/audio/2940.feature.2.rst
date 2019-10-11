@@ -1,0 +1,1 @@
+``[p]shuffle`` command has an additional argument to tell the bot whether it should shuffle bumped tracks.

@@ -1898,6 +1898,7 @@ class Audio(commands.Cog):
         )
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
+                ctx.command.reset_cooldown(ctx)
                 return await self._embed_msg(
                     ctx,
                     title=_("Unable To Save Preset"),
@@ -1913,6 +1914,7 @@ class Audio(commands.Cog):
                 )
                 eq_preset = eq_name_msg.content.split(" ")[0].strip('"').lower()
             except asyncio.TimeoutError:
+                ctx.command.reset_cooldown(ctx)
                 return await self._embed_msg(
                     ctx,
                     title=_("Unable To Save Preset"),
@@ -1927,6 +1929,7 @@ class Audio(commands.Cog):
         eq_list = list(eq_presets.keys())
 
         if len(eq_preset) > 20:
+            ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(
                 ctx,
                 title=_("Unable To Save Preset"),
@@ -1944,6 +1947,7 @@ class Audio(commands.Cog):
                 embed2 = discord.Embed(
                     colour=await ctx.embed_colour(), title=_("Not saving preset.")
                 )
+                ctx.command.reset_cooldown(ctx)
                 return await eq_exists_msg.edit(embed=embed2)
 
         player = lavalink.get_player(ctx.guild.id)
@@ -4560,9 +4564,11 @@ class Audio(commands.Cog):
         )
         temp_playlist = FakePlaylist(author.id, scope)
         if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
+            ctx.command.reset_cooldown(ctx)
             return
         playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
         if playlist_name.isnumeric():
+            ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(
                 ctx,
                 title=_("Invalid Playlist Name"),
@@ -4572,10 +4578,12 @@ class Audio(commands.Cog):
                 ),
             )
         if not self._player_check(ctx):
+            ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(ctx, title=_("Nothing playing."))
 
         player = lavalink.get_player(ctx.guild.id)
         if not player.queue:
+            ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
         tracklist = []
         np_song = track_creator(player, "np")
@@ -6027,6 +6035,7 @@ class Audio(commands.Cog):
                     description=_("You need the DJ role to shuffle the queue."),
                 )
         if not self._player_check(ctx):
+            ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(
                 ctx,
                 title=_("Unable To Shuffle Queue"),
@@ -6996,6 +7005,7 @@ class Audio(commands.Cog):
         )
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
+                ctx.command.reset_cooldown(ctx)
                 return await self._embed_msg(
                     ctx,
                     title=_("Unable To Join Voice Channel"),
@@ -7007,6 +7017,7 @@ class Audio(commands.Cog):
                 or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
                 and userlimit(ctx.author.voice.channel)
             ):
+                ctx.command.reset_cooldown(ctx)
                 return await self._embed_msg(
                     ctx,
                     title=_("Unable To Join Voice Channel"),
@@ -7019,15 +7030,18 @@ class Audio(commands.Cog):
             else:
                 player = lavalink.get_player(ctx.guild.id)
                 if ctx.author.voice.channel == player.channel:
+                    ctx.command.reset_cooldown(ctx)
                     return
                 await player.move_to(ctx.author.voice.channel)
         except AttributeError:
+            ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(
                 ctx,
                 title=_("Unable To Join Voice Channel"),
                 description=_("Connect to a voice channel first."),
             )
         except IndexError:
+            ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(
                 ctx,
                 title=_("Unable To Join Voice Channel"),
