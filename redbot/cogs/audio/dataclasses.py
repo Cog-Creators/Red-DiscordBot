@@ -52,6 +52,9 @@ _partially_supported_video_ext = (
     ".wmv",
     ".3gp",
     ".m4v",
+    ".mk3d",  # https://github.com/Devoxin/lavaplayer
+    ".mka",  # https://github.com/Devoxin/lavaplayer
+    ".mks",  # https://github.com/Devoxin/lavaplayer
     # These do not work
     # ".vob",
     # ".mts",
