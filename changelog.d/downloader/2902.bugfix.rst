@@ -1,1 +1,1 @@
-``findcog`` no longer attempts to find a cog for commands without one.
+``[p]findcog`` no longer attempts to find a cog for commands without one.

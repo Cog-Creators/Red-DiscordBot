@@ -1,1 +1,1 @@
-``modset deletedelay`` doesn't delete non-commands.
+``[p]modset deletedelay`` doesn't delete non-commands.
