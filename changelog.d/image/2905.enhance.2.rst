@@ -1,1 +1,1 @@
-Updated the giphycreds command to match the formatting of the other API commands.
+Updated the ``[p]giphycreds`` command to match the formatting of the other API commands.
