@@ -1,6 +1,5 @@
 import asyncio
 import contextlib
-import os
 import re
 import time
 from typing import NoReturn
@@ -11,14 +10,12 @@ import lavalink
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
+from redbot.core.utils import box
+from redbot.core.utils.chat_formatting import bold
 from . import dataclasses
-
-from .converters import _pass_config_to_converters
-
-from .playlists import _pass_config_to_playlist
+from .playlists import humanize_scope
 
 __all__ = [
-    "pass_config_to_dependencies",
     "track_limit",
     "queue_duration",
     "draw_time",
@@ -27,17 +24,18 @@ __all__ = [
     "clear_react",
     "match_yt_playlist",
     "remove_react",
-    "get_description",
+    "get_track_description",
     "track_creator",
     "time_convert",
     "url_check",
     "userlimit",
     "is_allowed",
     "CacheLevel",
+    "format_playlist_picker_data",
     "Notifier",
 ]
-_re_time_converter = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
-re_yt_list_playlist = re.compile(
+_RE_TIME_CONVERTER = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
+_RE_YT_LIST_PLAYLIST = re.compile(
     r"^(https?://)?(www\.)?(youtube\.com|youtu\.?be)(/playlist\?).*(list=)(.*)(&|$)"
 )
 
@@ -45,13 +43,12 @@ _config = None
 _bot = None
 
 
-def pass_config_to_dependencies(config: Config, bot: Red, localtracks_folder: str):
-    global _bot, _config
-    _bot = bot
-    _config = config
-    _pass_config_to_playlist(config, bot)
-    _pass_config_to_converters(config, bot)
-    dataclasses._pass_config_to_dataclasses(config, bot, localtracks_folder)
+def _pass_config_to_utils(config: Config, bot: Red):
+    global _config, _bot
+    if _config is None:
+        _config = config
+    if _bot is None:
+        _bot = bot
 
 
 def track_limit(track, maxlength):
@@ -133,6 +130,18 @@ def dynamic_time(seconds):
     return msg.format(d, h, m, s)
 
 
+def format_playlist_picker_data(pid, pname, ptracks, pauthor, scope):
+    author = _bot.get_user(pauthor) or "Unknown"
+    line = (
+        f" - Name:   <{pname}>\n"
+        f" - Scope:  < {humanize_scope(scope)} >\n"
+        f" - ID:     < {pid} >\n"
+        f" - Tracks: < {ptracks} >\n"
+        f" - Author: < {author} >\n\n"
+    )
+    return box(line, lang="md")
+
+
 def match_url(url):
     try:
         query_url = urlparse(url)
@@ -142,7 +151,7 @@ def match_url(url):
 
 
 def match_yt_playlist(url):
-    if re_yt_list_playlist.match(url):
+    if _RE_YT_LIST_PLAYLIST.match(url):
         return True
     return False
 
@@ -166,17 +175,18 @@ async def clear_react(bot: Red, message: discord.Message, emoji: dict = None):
         return
 
 
-async def get_description(track):
-    if any(x in track.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]):
-        local_track = dataclasses.LocalPath(track.uri)
-        if track.title != "Unknown title":
-            return "**{} - {}**\n{}".format(
-                track.author, track.title, local_track.to_string_hidden()
-            )
+def get_track_description(track):
+    if track and hasattr(track, "uri"):
+        query = dataclasses.Query.process_input(track.uri)
+        if query.is_local:
+            if track.title != "Unknown title":
+                return "**{} - {}**\n{} ".format(track.author, track.title, query.to_string_user())
+            else:
+                return query.to_string_user()
         else:
-            return local_track.to_string_hidden()
-    else:
-        return "**[{}]({})**".format(track.title, track.uri)
+            return bold("[{}]({}) ").format(track.title, track.uri)
+    elif hasattr(track, "to_string_user") and track.is_local:
+        return track.to_string_user() + " "
 
 
 def track_creator(player, position=None, other_track=None):
@@ -201,7 +211,7 @@ def track_creator(player, position=None, other_track=None):
 
 
 def time_convert(length):
-    match = re.compile(_re_time_converter).match(length)
+    match = _RE_TIME_CONVERTER.match(length)
     if match is not None:
         hr = int(match.group(1)) if match.group(1) else 0
         mn = int(match.group(2)) if match.group(2) else 0

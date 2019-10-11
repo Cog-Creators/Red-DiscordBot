@@ -18,6 +18,7 @@ import aiohttp
 import discord
 import lavalink
 import math
+from discord.embeds import EmptyEmbed
 from fuzzywuzzy import process
 
 import redbot.core
@@ -36,7 +37,7 @@ from redbot.core.utils.menus import (
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from . import dataclasses
 from .apis import MusicCache, HAS_SQL
-from .checks import can_have_caching
+from .config import pass_config_to_dependencies
 from .converters import ComplexScopeParser, ScopeParser, get_lazy_converter, get_playlist_converter
 from .equalizer import Equalizer
 from .errors import LavalinkDownloadFailed, MissingGuild, SpotifyFetchError, TooManyMatches
@@ -53,10 +54,9 @@ from .playlists import (
 )
 from .utils import *
 
-
 _ = Translator("Audio", __file__)
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __author__ = ["aikaterna", "Draper"]
 
 log = logging.getLogger("red.audio")
@@ -82,12 +82,14 @@ class Audio(commands.Cog):
         self.bot = bot
         self.config = Config.get_conf(self, 2711759130, force_registration=True)
         self.skip_votes = {}
+        self.play_lock = {}
+        self._dj_status_cache = {}
+        self._dj_role_cache = {}
         self.session = aiohttp.ClientSession()
         self._connect_task = None
         self._disconnect_task = None
         self._cleaned_up = False
         self._connection_aborted = False
-        self.play_lock = {}
         self._manager: Optional[ServerManager] = None
         self._cog_name = None
         self._cog_id = None
@@ -119,6 +121,7 @@ class Audio(commands.Cog):
             notify=False,
             repeat=False,
             shuffle=False,
+            shuffle_bumped=True,
             thumbnail=False,
             volume=100,
             vote_enabled=False,
@@ -139,7 +142,6 @@ class Audio(commands.Cog):
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)
         self.music_cache = MusicCache(bot, self.session, path=str(cog_data_path(raw_name="Audio")))
-        self.play_lock = {}
 
         self._manager: Optional[ServerManager] = None
         self.bot.dispatch("red_audio_initialized", self)
@@ -170,19 +172,28 @@ class Audio(commands.Cog):
             pass
         elif self._connect_task.cancelled():
             await ctx.send(
-                "You have attempted to run Audio's Lavalink server on an unsupported"
-                " architecture. Only settings related commands will be available."
+                _(
+                    "You have attempted to run Audio's Lavalink server on an unsupported"
+                    " architecture. Only settings related commands will be available."
+                )
             )
             raise RuntimeError(
                 "Not running audio command due to invalid machine architecture for Lavalink."
             )
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         if dj_enabled:
-            dj_role_obj = ctx.guild.get_role(await self.config.guild(ctx.guild).dj_role())
+            dj_role = self._dj_role_cache.setdefault(
+                ctx.guild.id, await self.config.guild(ctx.guild).dj_role()
+            )
+            dj_role_obj = ctx.guild.get_role(dj_role)
             if not dj_role_obj:
                 await self.config.guild(ctx.guild).dj_enabled.set(None)
+                self._dj_status_cache[ctx.guild.id] = None
                 await self.config.guild(ctx.guild).dj_role.set(None)
-                await self._embed_msg(ctx, _("No DJ role found. Disabling DJ mode."))
+                self._dj_role_cache[ctx.guild.id] = None
+                await self._embed_msg(ctx, title=_("No DJ role found. Disabling DJ mode."))
 
     async def initialize(self):
         pass_config_to_dependencies(self.config, self.bot, await self.config.localpath())
@@ -365,21 +376,7 @@ class Audio(commands.Cog):
 
         async def _players_check():
             try:
-                get_single_title = lavalink.active_players()[0].current.title
-                if get_single_title == "Unknown title":
-                    get_single_title = lavalink.active_players()[0].current.uri
-                    if not get_single_title.startswith("http"):
-                        get_single_title = get_single_title.rsplit("/", 1)[-1]
-                elif any(
-                    x in lavalink.active_players()[0].current.uri
-                    for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
-                ):
-                    get_single_title = "{} - {}".format(
-                        lavalink.active_players()[0].current.author,
-                        lavalink.active_players()[0].current.title,
-                    )
-                else:
-                    get_single_title = lavalink.active_players()[0].current.title
+                get_single_title = get_track_description(lavalink.active_players()[0].current)
                 playing_servers = len(lavalink.active_players())
             except IndexError:
                 get_single_title = None
@@ -459,52 +456,32 @@ class Audio(commands.Cog):
                     and player.current.extras.get("autoplay")
                     and (prev_song is None or not prev_song.extras.get("autoplay"))
                 ):
-                    embed = discord.Embed(
-                        colour=(await self.bot.get_embed_colour(notify_channel)),
-                        title=_("Auto play started."),
-                    )
-                    await notify_channel.send(embed=embed)
+                    await self._embed_msg(notify_channel, title=_("Auto Play Started."))
 
-                if (
-                    any(
-                        x in player.current.uri
-                        for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
-                    )
-                    if player.current
-                    else False
-                ):
-                    if player.current.title != "Unknown title":
-                        description = "**{} - {}**\n{}".format(
-                            player.current.author,
-                            player.current.title,
-                            dataclasses.LocalPath(player.current.uri).to_string_hidden(),
-                        )
-                    else:
-                        description = "{}".format(
-                            dataclasses.LocalPath(player.current.uri).to_string_hidden()
-                        )
-                else:
-                    description = "**[{}]({})**".format(player.current.title, player.current.uri)
+                description = get_track_description(player.current)
+                if not description:
+                    return
                 if player.current.is_stream:
                     dur = "LIVE"
                 else:
                     dur = lavalink.utils.format_time(player.current.length)
-                embed = discord.Embed(
-                    colour=(await self.bot.get_embed_color(notify_channel)),
-                    title=_("Now Playing"),
-                    description=description,
-                )
-                embed.set_footer(
-                    text=_("Track length: {length} | Requested by: {user}").format(
-                        length=dur, user=player.current.requester
-                    )
-                )
+
+                thumb = None
                 if (
                     await self.config.guild(player.channel.guild).thumbnail()
                     and player.current.thumbnail
                 ):
-                    embed.set_thumbnail(url=player.current.thumbnail)
-                notify_message = await notify_channel.send(embed=embed)
+                    thumb = player.current.thumbnail
+
+                notify_message = await self._embed_msg(
+                    notify_channel,
+                    title=_("Now Playing"),
+                    description=description,
+                    footer=_("Track length: {length} | Requested by: {user}").format(
+                        length=dur, user=player.current.requester
+                    ),
+                    thumbnail=thumb,
+                )
                 player.store("notify_message", notify_message)
 
         if event_type == lavalink.LavalinkEvents.TRACK_START and status:
@@ -521,11 +498,7 @@ class Audio(commands.Cog):
             notify_channel = player.fetch("channel")
             if notify_channel:
                 notify_channel = self.bot.get_channel(notify_channel)
-                embed = discord.Embed(
-                    colour=(await self.bot.get_embed_colour(notify_channel)),
-                    title=_("Queue ended."),
-                )
-                await notify_channel.send(embed=embed)
+                await self._embed_msg(notify_channel, title=_("Queue Ended."))
 
         elif event_type == lavalink.LavalinkEvents.QUEUE_END and disconnect and not autoplay:
             self.bot.dispatch("red_audio_audio_disconnect", player.channel.guild)
@@ -535,30 +508,23 @@ class Audio(commands.Cog):
             player_check = await _players_check()
             await _status_check(player_check[1])
 
-        if event_type == lavalink.LavalinkEvents.TRACK_EXCEPTION:
+        if event_type in [
+            lavalink.LavalinkEvents.TRACK_EXCEPTION,
+            lavalink.LavalinkEvents.TRACK_STUCK,
+        ]:
             message_channel = player.fetch("channel")
             if message_channel:
                 message_channel = self.bot.get_channel(message_channel)
-                if player.current and any(
-                    x in player.current.uri
-                    for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
-                ):
-                    query = dataclasses.Query.process_input(player.current.uri)
-                    if player.current.title == "Unknown title":
-                        description = "{}".format(query.track.to_string_hidden())
-                    else:
-                        song = bold("{} - {}").format(player.current.author, player.current.title)
-                        description = "{}\n{}".format(song, query.track.to_string_hidden())
+                description = get_track_description(player.current)
+                if event_type == lavalink.LavalinkEvents.TRACK_STUCK:
+                    embed = discord.Embed(
+                        title=_("Track Is Stuck"), description="{}".format(description)
+                    )
                 else:
-                    description = bold("[{}]({})").format(player.current.title, player.current.uri)
-
-                embed = discord.Embed(
-                    colour=(await self.bot.get_embed_color(message_channel)),
-                    title=_("Track Error"),
-                    description="{}\n{}".format(extra, description),
-                )
-                embed.set_footer(text=_("Skipping..."))
-                await message_channel.send(embed=embed)
+                    embed = discord.Embed(
+                        title=_("Track Error"), description="{}\n{}".format(extra, description)
+                    )
+                await self._embed_msg(message_channel, embed=embed, footer=_("Skipping..."))
             while True:
                 if player.current in player.queue:
                     player.queue.remove(player.current)
@@ -613,7 +579,7 @@ class Audio(commands.Cog):
         ):
             log.debug(f"Query is not allowed in {guild} ({guild.id})")
             return
-        track.extras = {"autoplay": is_autoplay}
+        track.extras["autoplay"] = is_autoplay
         player.add(player.channel.guild.me, track)
         self.bot.dispatch(
             "red_audio_track_auto_play", player.channel.guild, track, player.channel.guild.me

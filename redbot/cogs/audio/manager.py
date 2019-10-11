@@ -17,22 +17,24 @@ from tqdm import tqdm
 from redbot.core import data_manager
 from .errors import LavalinkDownloadFailed
 
+log = logging.getLogger("red.audio.manager")
 JAR_VERSION = "3.2.1"
 JAR_BUILD = 823
 LAVALINK_DOWNLOAD_URL = (
     f"https://github.com/Cog-Creators/Lavalink-Jars/releases/download/{JAR_VERSION}_{JAR_BUILD}/"
-    f"Lavalink.jar"
+    "Lavalink.jar"
 )
 LAVALINK_DOWNLOAD_DIR = data_manager.cog_data_path(raw_name="Audio")
 LAVALINK_JAR_FILE = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
-
 BUNDLED_APP_YML = pathlib.Path(__file__).parent / "data" / "application.yml"
 LAVALINK_APP_YML = LAVALINK_DOWNLOAD_DIR / "application.yml"
 
-READY_LINE_RE = re.compile(rb"Started Launcher in \S+ seconds")
-BUILD_LINE_RE = re.compile(rb"Build:\s+(?P<build>\d+)")
-
-log = logging.getLogger("red.audio.manager")
+_RE_READY_LINE = re.compile(rb"Started Launcher in \S+ seconds")
+_RE_BUILD_LINE = re.compile(rb"Build:\s+(?P<build>\d+)")
+_RE_JAVA_VERSION_LINE = re.compile(
+    r'version "(?P<major>\d+).(?P<minor>\d+).\d+(?:_\d+)?(?:-[A-Za-z0-9]+)?"'
+)
+_RE_JAVA_SHORT_VERSION = re.compile(r'version "(?P<major>\d+)"')
 
 
 class ServerManager:
@@ -133,15 +135,11 @@ class ServerManager:
         #     ... version "MAJOR.MINOR.PATCH[_BUILD]" ...
         #     ...
         # We only care about the major and minor parts though.
-        version_line_re = re.compile(
-            r'version "(?P<major>\d+).(?P<minor>\d+).\d+(?:_\d+)?(?:-[A-Za-z0-9]+)?"'
-        )
-        short_version_re = re.compile(r'version "(?P<major>\d+)"')
 
         lines = version_info.splitlines()
         for line in lines:
-            match = version_line_re.search(line)
-            short_match = short_version_re.search(line)
+            match = _RE_JAVA_VERSION_LINE.search(line)
+            short_match = _RE_JAVA_SHORT_VERSION.search(line)
             if match:
                 return int(match["major"]), int(match["minor"])
             elif short_match:
@@ -157,7 +155,7 @@ class ServerManager:
         lastmessage = 0
         for i in itertools.cycle(range(50)):
             line = await self._proc.stdout.readline()
-            if READY_LINE_RE.search(line):
+            if _RE_READY_LINE.search(line):
                 self.ready.set()
                 break
             if self._proc.returncode is not None and lastmessage + 2 < time.time():
@@ -259,7 +257,7 @@ class ServerManager:
             stderr=asyncio.subprocess.STDOUT,
         )
         stdout = (await _proc.communicate())[0]
-        match = BUILD_LINE_RE.search(stdout)
+        match = _RE_BUILD_LINE.search(stdout)
         if not match:
             # Output is unexpected, suspect corrupted jarfile
             return False
