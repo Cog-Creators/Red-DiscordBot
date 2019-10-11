@@ -1,1 +1,1 @@
-Fixed an error when reloading the core mod cog
+Fixed an error when reloading the core mod cog.

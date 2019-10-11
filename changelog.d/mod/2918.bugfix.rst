@@ -1,1 +1,1 @@
-Fixed Mod cog not recording username changes for ``[p]names`` and ``[p]userinfo`` commands
+Fixed Mod cog not recording username changes for ``[p]names`` and ``[p]userinfo`` commands.
