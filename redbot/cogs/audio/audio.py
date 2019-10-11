@@ -5049,8 +5049,6 @@ class Audio(commands.Cog):
             scope_name = humanize_scope(
                 scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
             )
-            player = lavalink.get_player(ctx.guild.id)
-            added, removed, playlist = await self._maybe_update_playlist(ctx, player, playlist)
             if added or removed:
                 _colour = await ctx.embed_colour()
                 removed_embeds = []
