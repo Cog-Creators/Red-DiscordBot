@@ -694,6 +694,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         Returns
         -------
         discord.Message
+            The message that was sent.
         """
 
         content = kwargs.pop("content", None)
