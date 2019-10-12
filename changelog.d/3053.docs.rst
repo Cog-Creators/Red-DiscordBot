@@ -1,0 +1,1 @@
+Change links to d.py docs to use stable version instead of v1.0.1.
