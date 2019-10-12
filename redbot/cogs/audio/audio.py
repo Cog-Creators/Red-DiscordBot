@@ -994,7 +994,7 @@ class Audio(commands.Cog):
     @audioset.command()
     @checks.mod_or_permissions(administrator=True)
     async def emptydisconnect(self, ctx: commands.Context, seconds: int):
-        """Auto-disconnection after x seconds while stopped. 0 to disable."""
+        """Auto-disconnect from channel when bot is alone in it for x seconds. 0 to disable."""
         if seconds < 0:
             return await self._embed_msg(ctx, _("Can't be less than zero."))
         if 10 > seconds > 0:
