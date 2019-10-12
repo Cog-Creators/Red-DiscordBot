@@ -6305,6 +6305,8 @@ class Audio(commands.Cog):
         await self._eq_check(ctx, player)
         await self._data_check(ctx)
 
+        before_queue_length = len(player.queue)
+
         if not isinstance(query, list):
             query = dataclasses.Query.process_input(query)
             if query.invoked_from == "search list" or query.invoked_from == "local folder":
@@ -6380,7 +6382,7 @@ class Audio(commands.Cog):
                     songembed.set_footer(
                         text=_(
                             "{time} until start of search playback: starts at #{position} in queue"
-                        ).format(time=queue_total_duration, position=len(player.queue) + 1)
+                        ).format(time=queue_total_duration, position=before_queue_length + 1)
                     )
                 return await self._embed_msg(ctx, embed=songembed)
             elif query.is_local and query.single_track:
@@ -6494,6 +6496,8 @@ class Audio(commands.Cog):
         )
         queue_dur = await queue_duration(ctx)
         queue_total_duration = lavalink.utils.format_time(queue_dur)
+        before_queue_length = len(player.queue)
+
         if not await is_allowed(
             ctx.guild,
             (
@@ -6524,7 +6528,7 @@ class Audio(commands.Cog):
         if not guild_data["shuffle"] and queue_dur > 0:
             songembed.set_footer(
                 text=_("{time} until track playback: #{position} in queue").format(
-                    time=queue_total_duration, position=len(player.queue) + 1
+                    time=queue_total_duration, position=before_queue_length + 1
                 )
             )
 
