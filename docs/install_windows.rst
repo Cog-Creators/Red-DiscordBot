@@ -119,5 +119,5 @@ Once done setting up the instance, run the following command to run Red:
 
 It will walk through the initial setup, asking for your token and a prefix.
 You can find out how to obtain a token with
-`this guide <https://discordpy.readthedocs.io/en/v1.0.1/discord.html#creating-a-bot-account>`_,
+`this guide <https://discordpy.readthedocs.io/en/stable/discord.html#creating-a-bot-account>`_,
 section "Creating a Bot Account".

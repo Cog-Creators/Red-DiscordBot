@@ -7,7 +7,7 @@
 Migrating Cogs to V3
 ====================
 
-First, be sure to read `discord.py's migration guide <https://discordpy.readthedocs.io/en/v1.0.1/migrating.html>`_
+First, be sure to read `discord.py's migration guide <https://discordpy.readthedocs.io/en/stable/migrating.html>`_
 as that covers all of the changes to discord.py that will affect the migration process
 
 ----------------
