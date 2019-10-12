@@ -690,6 +690,10 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         This should realistically only be used for responding using user provided
         input. (unfortunately, including usernames)
         Manually crafted messages which dont take any user input have no need of this
+        
+        Returns
+        -------
+        discord.Message
         """
 
         content = kwargs.pop("content", None)
@@ -702,7 +706,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             if filter_all_links:
                 content = common_filters.filter_urls(content)
 
-        await destination.send(content=content, **kwargs)
+        return await destination.send(content=content, **kwargs)
 
     def add_cog(self, cog: commands.Cog):
         if not isinstance(cog, commands.Cog):
