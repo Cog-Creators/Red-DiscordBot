@@ -1604,6 +1604,10 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx, _("You must be in the voice channel to bump a track.")
             )
+        # if player.shuffle:
+        #     return await self._embed_msg(
+        #         ctx, _("Can't bump a track while shuffle is enabled.")
+        #     )
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(ctx, _("You need the DJ role to bump tracks."))
@@ -3727,89 +3731,90 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ [p]playlist dedupe MyGlobalPlaylist --scope Global
         ​ ​ ​ ​ [p]playlist dedupe MyPersonalPlaylist --scope User
         """
-        if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
-        scope, author, guild, specified_user = scope_data
-        scope_name = humanize_scope(
-            scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
-        )
-
-        try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
-                ctx, playlist_matches, scope, author, guild, specified_user
-            )
-        except TooManyMatches as e:
-            return await self._embed_msg(ctx, str(e))
-        if playlist_id is None:
-            return await self._embed_msg(
-                ctx, _("Could not match '{arg}' to a playlist.").format(arg=playlist_arg)
+        async with ctx.typing():
+            if scope_data is None:
+                scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope, author, guild, specified_user = scope_data
+            scope_name = humanize_scope(
+                scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
             )
 
-        try:
-            playlist = await get_playlist(playlist_id, scope, self.bot, guild, author)
-        except RuntimeError:
-            return await self._embed_msg(
-                ctx,
-                _("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=humanize_scope(scope, the=True)
-                ),
-            )
-        except MissingGuild:
-            return await self._embed_msg(
-                ctx, _("You need to specify the Guild ID for the guild to lookup.")
-            )
+            try:    
+                playlist_id, playlist_arg = await self._get_correct_playlist_id(
+                    ctx, playlist_matches, scope, author, guild, specified_user
+                )
+            except TooManyMatches as e:
+                return await self._embed_msg(ctx, str(e))
+            if playlist_id is None:
+                return await self._embed_msg(
+                    ctx, _("Could not match '{arg}' to a playlist.").format(arg=playlist_arg)
+                )
 
-        if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
-            return
+            try:
+                playlist = await get_playlist(playlist_id, scope, self.bot, guild, author)
+            except RuntimeError:
+                return await self._embed_msg(
+                    ctx,
+                    _("Playlist {id} does not exist in {scope} scope.").format(
+                        id=playlist_id, scope=humanize_scope(scope, the=True)
+                    ),
+                )
+            except MissingGuild:
+                return await self._embed_msg(
+                    ctx, _("You need to specify the Guild ID for the guild to lookup.")
+                )
 
-        track_objects = playlist.tracks_obj
-        original_count = len(track_objects)
-        unique_tracks = set()
-        unique_tracks_add = unique_tracks.add
-        track_objects = [
-            x for x in track_objects if not (x in unique_tracks or unique_tracks_add(x))
-        ]
+            if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
+                return
 
-        tracklist = []
-        for track in track_objects:
-            track_keys = track._info.keys()
-            track_values = track._info.values()
-            track_id = track.track_identifier
-            track_info = {}
-            for k, v in zip(track_keys, track_values):
-                track_info[k] = v
-            keys = ["track", "info"]
-            values = [track_id, track_info]
-            track_obj = {}
-            for key, value in zip(keys, values):
-                track_obj[key] = value
-            tracklist.append(track_obj)
+            track_objects = playlist.tracks_obj
+            original_count = len(track_objects)
+            unique_tracks = set()
+            unique_tracks_add = unique_tracks.add
+            track_objects = [
+                x for x in track_objects if not (x in unique_tracks or unique_tracks_add(x))
+            ]
 
-        final_count = len(tracklist)
-        if original_count - final_count != 0:
-            update = {"tracks": tracklist, "url": None}
-            await playlist.edit(update)
+            tracklist = []
+            for track in track_objects:
+                track_keys = track._info.keys()
+                track_values = track._info.values()
+                track_id = track.track_identifier
+                track_info = {}
+                for k, v in zip(track_keys, track_values):
+                    track_info[k] = v
+                keys = ["track", "info"]
+                values = [track_id, track_info]
+                track_obj = {}
+                for key, value in zip(keys, values):
+                    track_obj[key] = value
+                tracklist.append(track_obj)
 
-        if original_count - final_count != 0:
-            await self._embed_msg(
-                ctx,
-                _(
-                    "Removed {track_diff} duplicated "
-                    "tracks from {name} (`{id}`) [**{scope}**] playlist."
-                ).format(
-                    name=playlist.name,
-                    id=playlist.id,
-                    track_diff=original_count - final_count,
-                    scope=scope_name,
-                ),
-            )
-        else:
-            await self._embed_msg(
-                ctx,
-                _("{name} (`{id}`) [**{scope}**] playlist has no duplicate tracks.").format(
-                    name=playlist.name, id=playlist.id, scope=scope_name
-                ),
-            )
+            final_count = len(tracklist)
+            if original_count - final_count != 0:
+                update = {"tracks": tracklist, "url": None}
+                await playlist.edit(update)
+
+            if original_count - final_count != 0:
+                await self._embed_msg(
+                    ctx,
+                    _(
+                        "Removed {track_diff} duplicated "
+                        "tracks from {name} (`{id}`) [**{scope}**] playlist."
+                    ).format(
+                        name=playlist.name,
+                        id=playlist.id,
+                        track_diff=original_count - final_count,
+                        scope=scope_name,
+                    ),
+                )
+            else:
+                await self._embed_msg(
+                    ctx,
+                    _("{name} (`{id}`) [**{scope}**] playlist has no duplicate tracks.").format(
+                        name=playlist.name, id=playlist.id, scope=scope_name
+                    ),
+                )
 
     @checks.is_owner()
     @playlist.command(name="download", usage="<playlist_name_OR_id> [v2=False] [args]")
