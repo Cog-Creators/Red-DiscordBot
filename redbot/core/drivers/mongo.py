@@ -113,6 +113,7 @@ class MongoDriver(BaseDriver):
         attributes of :py:class:`core.config.Config`.
 
         :param str category:
+            The group identifier of a category.
         :return:
             PyMongo collection object.
         """

@@ -1275,6 +1275,7 @@ class Config:
         Returns
         -------
         asyncio.Lock
+            A lock for all guild data.
         """
         return self.get_custom_lock(self.GUILD)
 
@@ -1284,6 +1285,7 @@ class Config:
         Returns
         -------
         asyncio.Lock
+            A lock for all channels data.
         """
         return self.get_custom_lock(self.CHANNEL)
 
@@ -1293,6 +1295,7 @@ class Config:
         Returns
         -------
         asyncio.Lock
+            A lock for all roles data.
         """
         return self.get_custom_lock(self.ROLE)
 
@@ -1302,6 +1305,7 @@ class Config:
         Returns
         -------
         asyncio.Lock
+            A lock for all user data.
         """
         return self.get_custom_lock(self.USER)
 
@@ -1317,6 +1321,9 @@ class Config:
         Returns
         -------
         asyncio.Lock
+            A lock for all member data for the given guild.
+            If ``guild`` is omitted this will give a lock
+            for all data for all members in all guilds.
         """
         if guild is None:
             return self.get_custom_lock(self.GUILD)
@@ -1342,6 +1349,7 @@ class Config:
         Returns
         -------
         asyncio.Lock
+            A lock for all data in a custom scope with given group identifier.
         """
         try:
             pkey_len, is_custom = ConfigCategory.get_pkey_info(
