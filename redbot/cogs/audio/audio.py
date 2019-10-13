@@ -3735,7 +3735,7 @@ class Audio(commands.Cog):
                 scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
             )
 
-            try:    
+            try:
                 playlist_id, playlist_arg = await self._get_correct_playlist_id(
                     ctx, playlist_matches, scope, author, guild, specified_user
                 )
