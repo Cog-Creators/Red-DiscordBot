@@ -1604,10 +1604,6 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx, _("You must be in the voice channel to bump a track.")
             )
-        # if player.shuffle:
-        #     return await self._embed_msg(
-        #         ctx, _("Can't bump a track while shuffle is enabled.")
-        #     )
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(ctx, _("You need the DJ role to bump tracks."))
