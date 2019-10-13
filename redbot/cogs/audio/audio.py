@@ -3804,6 +3804,7 @@ class Audio(commands.Cog):
                         scope=scope_name,
                     ),
                 )
+                return
             else:
                 await self._embed_msg(
                     ctx,
@@ -3811,6 +3812,7 @@ class Audio(commands.Cog):
                         name=playlist.name, id=playlist.id, scope=scope_name
                     ),
                 )
+                return
 
     @checks.is_owner()
     @playlist.command(name="download", usage="<playlist_name_OR_id> [v2=False] [args]")
