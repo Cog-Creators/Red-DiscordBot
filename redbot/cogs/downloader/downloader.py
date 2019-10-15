@@ -43,14 +43,10 @@ class Downloader(commands.Cog):
         self.SHAREDLIB_PATH = self.LIB_PATH / "cog_shared"
         self.SHAREDLIB_INIT = self.SHAREDLIB_PATH / "__init__.py"
 
-        self.LIB_PATH.mkdir(parents=True, exist_ok=True)
         self.SHAREDLIB_PATH.mkdir(parents=True, exist_ok=True)
         if not self.SHAREDLIB_INIT.exists():
             with self.SHAREDLIB_INIT.open(mode="w", encoding="utf-8") as _:
                 pass
-
-        if str(self.LIB_PATH) not in syspath:
-            syspath.insert(1, str(self.LIB_PATH))
 
         self._repo_manager = RepoManager()
 
