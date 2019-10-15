@@ -6,7 +6,9 @@ import asyncio
 import json
 import logging
 import os
+import shutil
 import sys
+from copy import deepcopy
 
 import discord
 
@@ -31,6 +33,7 @@ from redbot.core.cog_manager import CogManagerUI
 from redbot.core.global_checks import init_global_checks
 from redbot.core.events import init_events
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags
+from redbot.setup import get_data_dir, get_name, save_config
 from redbot.core.core_commands import Core
 from redbot.core.dev_commands import Dev
 from redbot.core import __version__, modlog, bank, data_manager, drivers
@@ -56,6 +59,12 @@ async def _get_prefix_and_token(red, indict):
     indict["prefix"] = await red._config.prefix()
 
 
+def _get_instance_names():
+    with data_manager.config_file.open(encoding="utf-8") as fs:
+        data = json.load(fs)
+    return sorted(data.keys())
+
+
 def list_instances():
     if not data_manager.config_file.exists():
         print(
@@ -64,13 +73,95 @@ def list_instances():
         )
         sys.exit(1)
     else:
-        with data_manager.config_file.open(encoding="utf-8") as fs:
-            data = json.load(fs)
         text = "Configured Instances:\n\n"
-        for instance_name in sorted(data.keys()):
+        for instance_name in _get_instance_names():
             text += "{}\n".format(instance_name)
         print(text)
         sys.exit(0)
+
+
+def edit_instance(red, cli_flags):
+    old_name = cli_flags.instance_name
+    token = cli_flags.token
+    owner = cli_flags.owner
+    new_name = cli_flags.edit_instance_name
+    data_path = cli_flags.edit_data_path
+    copy_data = cli_flags.copy_data
+    no_prompt = cli_flags.no_prompt
+
+    driver_cls = drivers.get_driver_class()
+    loop = asyncio.get_event_loop()
+    if data_path is None and copy_data:
+        print("--copy-data can't be used without --edit-data-path argument")
+        sys.exit(1)
+    if no_prompt and all(to_change is None for to_change in (token, owner, new_name, data_path)):
+        print(
+            "No arguments to edit were provided. Available arguments (check help for more "
+            "information): --edit-instance-name, --edit-data-path, --copy-data, --owner, --token"
+        )
+        sys.exit(1)
+
+    if token:
+        loop.run_until_complete(red.db.token.set(token))
+    elif not no_prompt and confirm("Would you like to change instance's token?", default=False):
+        interactive_config(red, False, True, print_header=False)
+    if owner:
+        loop.run_until_complete(red.db.token.set(owner))
+    elif not no_prompt and confirm("Would you like to change instance's owner?", default=False):
+        print(
+            "Remember:\n"
+            "ONLY the person who is hosting Red should be owner. "
+            "This has SERIOUS security implications. "
+            "The owner can access any data that is present on the host system."
+        )
+        if confirm("Are you sure you want to change instance's owner?", default=False):
+            print("Please enter a Discord user id for new owner:")
+            while True:
+                owner_id = input("> ").strip()
+                if not (15 <= len(owner_id) <= 21 and owner_id.isdecimal()):
+                    print("That doesn't look like a valid Discord user id.")
+                    continue
+                owner_id = int(owner_id)
+                loop.run_until_complete(red.db.owner.set(owner))
+                break
+        else:
+            print("Instance's owner will remain unchanged.")
+    loop.run_until_complete(driver_cls.teardown())
+
+    data = deepcopy(data_manager.basic_config)
+
+    if new_name:
+        name = new_name
+    elif not no_prompt and confirm("Would you like to change the instance name?", default=False):
+        new_name = get_name()
+        if new_name in _get_instance_names():
+            print(
+                "WARNING: An instance already exists with this name. "
+                "Continuing will overwrite the existing instance config."
+            )
+            if not confirm(
+                "Are you absolutely certain you want to continue with this instance name?",
+                default=False,
+            ):
+                print("Instance name will remain unchanged.")
+    else:
+        name = old_name
+
+    if confirm("Would you like to change the data location?", default=False):
+        data["DATA_PATH"] = get_data_dir()
+        if confirm("Do you want to copy the data from old location?", default=True):
+            try:
+                os.rmdir(data["DATA_PATH"])
+            except OSError:
+                print("Can't copy the data to non-empty location.")
+                if not confirm("Do you still want to use the new data location?"):
+                    data["DATA_PATH"] = data_manager.basic_config["DATA_PATH"]
+            else:
+                shutil.copytree(data_manager.basic_config["DATA_PATH"], data["DATA_PATH"])
+
+    save_config(name, data)
+    if old_name != name:
+        save_config(old_name, {}, remove=True)
 
 
 async def sigterm_handler(red, log):
@@ -87,7 +178,7 @@ def main():
         print(description)
         print("Current Version: {}".format(__version__))
         sys.exit(0)
-    elif not cli_flags.instance_name and not cli_flags.no_instance:
+    elif not cli_flags.instance_name and (not cli_flags.no_instance or cli_flags.edit):
         print("Error: No instance name was provided!")
         sys.exit(1)
     if cli_flags.no_instance:
@@ -116,6 +207,14 @@ def main():
         cli_flags=cli_flags, description=description, dm_help=None, fetch_offline_members=True
     )
     loop.run_until_complete(red._maybe_update_config())
+
+    if cli_flags.edit:
+        try:
+            edit_instance(red, cli_flags)
+        finally:
+            loop.run_until_complete(driver_cls.teardown())
+        sys.exit(0)
+
     init_global_checks(red)
     init_events(red, cli_flags)
 
@@ -155,8 +254,8 @@ def main():
         log.critical("This token doesn't seem to be valid.")
         db_token = loop.run_until_complete(red._config.token())
         if db_token and not cli_flags.no_prompt:
-            print("\nDo you want to reset the token? (y/n)")
-            if confirm("> "):
+            print("")
+            if confirm("Do you want to reset the token?"):
                 loop.run_until_complete(red._config.token.set(""))
                 print("Token has been reset.")
     except KeyboardInterrupt:
