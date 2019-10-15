@@ -5237,10 +5237,10 @@ class Audio(commands.Cog):
                     dur = "LIVE"
                 else:
                     dur = lavalink.utils.format_time(player.current.length)
-                if any(
-                    x in player.current.uri
-                    for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
-                ):
+
+                query = dataclasses.Query.process_input(player.current)
+
+                if query.is_local:
                     if player.current.title != "Unknown title":
                         song = "**{track.author} - {track.title}**\n{uri}\n"
                     else:
@@ -5327,15 +5327,15 @@ class Audio(commands.Cog):
         else:
             dur = lavalink.utils.format_time(player.current.length)
 
-        if player.current.is_stream:
+        query = dataclasses.Query.process_input(player.current)
+
+        if query.is_stream:
             queue_list += _("**Currently livestreaming:**\n")
             queue_list += "**[{current.title}]({current.uri})**\n".format(current=player.current)
             queue_list += _("Requested by: **{user}**").format(user=player.current.requester)
             queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
 
-        elif any(
-            x in player.current.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
-        ):
+        elif query.is_local:
             if player.current.title != "Unknown title":
                 queue_list += "\n".join(
                     (
@@ -5371,7 +5371,9 @@ class Audio(commands.Cog):
                 track_title = track.title
             req_user = track.requester
             track_idx = i + 1
-            if any(x in track.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]):
+            query = dataclasses.Query.process_input(track)
+
+            if query.is_local:
                 if track.title == "Unknown title":
                     queue_list += f"`{track_idx}.` " + ", ".join(
                         (
