@@ -200,11 +200,16 @@ class Admin(commands.Cog):
         """Edit a role's colour.
 
         Use double quotes if the role contains spaces.
+        
         Colour must be in hexadecimal format.
+        
         [Online colour picker](http://www.w3schools.com/colors/colors_picker.asp)
 
+        
         Examples:
+        
             `[p]editrole colour "The Transistor" #ff0000`
+        
             `[p]editrole colour Test #ff9900`
         """
         author = ctx.author
@@ -229,7 +234,9 @@ class Admin(commands.Cog):
 
         Use double quotes if the role or the name contain spaces.
 
+        
         Examples:
+        
             `[p]editrole name \"The Transistor\" Test`
         """
         author = ctx.message.author

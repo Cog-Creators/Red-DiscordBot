@@ -210,6 +210,8 @@ class CustomCommands(commands.Cog):
         """Create custom commands.
 
         If a type is not specified, a simple CC will be created.
+        
+        
         CCs can be enhanced with arguments, see the guide
         [here](https://red-discordbot.readthedocs.io/en/v3-develop/cog_customcom.html).
         """
@@ -271,6 +273,7 @@ class CustomCommands(commands.Cog):
         custom command.
 
         Example:
+
         - `[p]customcom cooldown yourcommand 30`
         """
         if cooldown is None:
@@ -308,6 +311,7 @@ class CustomCommands(commands.Cog):
         """Delete a custom command.
 
         Example:
+        
         - `[p]customcom delete yourcommand`
         """
         try:
@@ -322,6 +326,7 @@ class CustomCommands(commands.Cog):
         """Edit a custom command.
 
         Example:
+        
         - `[p]customcom edit yourcommand Text you want`
         """
         try:

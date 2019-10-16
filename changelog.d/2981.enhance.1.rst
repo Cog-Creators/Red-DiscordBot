@@ -1,0 +1,1 @@
+The help command now supports replacing ``[botname]`` in command/cog help with the bot's display name

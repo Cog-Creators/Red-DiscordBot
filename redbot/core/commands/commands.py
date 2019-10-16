@@ -4,6 +4,7 @@ This module contains extended classes and functions which are intended to
 replace those from the `discord.ext.commands` module.
 """
 import inspect
+import re
 import weakref
 from typing import Awaitable, Callable, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 
@@ -36,6 +37,25 @@ RESERVED_COMMAND_NAMES = (
     "cancel",  # reserved due to use in ``redbot.core.utils.MessagePredicate``
 )
 
+#: Regex for adjusting newlines in help to make use of docstrings more intelligently
+HELP_NEWLINE_ADJUSTER = re.compile(r"(?P<NL>\n)?\n(?!\n)")
+
+def adjust_help_whitespace(help_str: str) -> str:
+    """
+    Adjusts whitespace
+    
+    Specifically, this just handles the last new line in a group of newlines.
+    If it's a singular newline, it's replaced with a singular
+    space to be treated as a line continuation, otherwise it's removed.
+    """
+
+    def repl(m):
+        if "NL" in m.groupdict():
+            return ""
+        return " "
+    return HELP_NEWLINE_ADJUSTER.sub(repl, help_str)
+    
+
 _ = Translator("commands.commands", __file__)
 
 
@@ -56,6 +76,49 @@ class CogCommandMixin:
             bot_perms=getattr(decorated, "__requires_bot_perms__", {}),
             checks=getattr(decorated, "__requires_checks__", []),
         )
+
+    def format_help_for_context(self, ctx: "Context") -> str:
+        """
+        This formats the help string based on values in context
+
+        The steps are (roughly) the following:
+
+            - get the localized help
+            - swap some instances of new lines for spaces
+            - substitute ``[p]`` with ``ctx.clean_prefix``
+            - substitute ``[botname]`` with ``ctx.me.display_name``
+
+        More steps may be added at a later time.
+
+        Parameters
+        ----------
+        ctx: Context
+
+        Returns
+        -------
+        str
+            Localized help with some formatting
+        """
+
+        help_str = self.help
+        if not help_str:
+            # Short circuit out on an empty help string
+            return help_str
+
+        line_adjusted = adjust_help_whitespace(help_str)
+
+        formatting_pattern = re.compile(r"\[p\]|\[botname\]")
+
+        def replacement(m: re.Match) -> str:
+            s = m.group(0)
+            if s == "[p]":
+                return ctx.clean_prefix
+            if s == "[botname]":
+                return ctx.me.display_name
+            # We shouldnt get here:
+            return s
+
+        return formatting_pattern.sub(replacement, line_adjusted)
 
     def allow_for(self, model_id: Union[int, str], guild_id: int) -> None:
         """Actively allow this command for the given model.

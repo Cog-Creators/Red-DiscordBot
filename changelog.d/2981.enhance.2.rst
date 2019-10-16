@@ -1,0 +1,3 @@
+docstrings for command help handle whitespace slightly differently to accommodate ease of writing good help.
+  - Singular newlines will be treated as line continuations
+  - groups of newlines will have their last newline removed.

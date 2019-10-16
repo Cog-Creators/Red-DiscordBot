@@ -83,8 +83,11 @@ class Image(commands.Cog):
     ):
         """Get images from a subreddit.
 
+        
         You can customize the search with the following options:
+        
         - `<sort_type>`: new, top
+        
         - `<window>`: day, week, month, year, all
         """
         sort_type = sort_type.lower()

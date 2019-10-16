@@ -1,0 +1,1 @@
+All of help's text is ready for localization.

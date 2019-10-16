@@ -198,9 +198,13 @@ class Economy(commands.Cog):
 
         Passing positive and negative values will add/remove currency instead.
 
+        
         Examples:
+        
         - `[p]bank set @Twentysix 26` - Sets balance to 26
+        
         - `[p]bank set @Twentysix +2` - Increases balance by 2
+        
         - `[p]bank set @Twentysix -6` - Decreases balance by 6
         """
         author = ctx.author

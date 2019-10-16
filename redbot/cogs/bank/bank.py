@@ -101,6 +101,7 @@ class Bank(commands.Cog):
         """Toggle whether the bank is global or not.
 
         If the bank is global, it will become per-server.
+        
         If the bank is per-server, it will become global.
         """
         cur_setting = await bank.is_global()
