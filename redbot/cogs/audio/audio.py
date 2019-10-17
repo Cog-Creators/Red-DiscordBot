@@ -202,7 +202,7 @@ class Audio(commands.Cog):
                 "your Python install is missing some of them.\n\n"
                 "For instructions on how to fix it Google "
                 f"`{_ERROR}`\n"
-                "You will need to SQL dependencies installed.\n\n"
+                "You will need to install the missing SQL dependency.\n\n"
             ).format(version=__version__)
             with contextlib.suppress(discord.HTTPException):
                 await self.bot.send_to_owners(error_message)

@@ -16,11 +16,13 @@ try:
 
     HAS_SQL = True
     _ERROR = None
-except ModuleNotFoundError as err:
-    _ERROR = err
+except (ModuleNotFoundError, ImportError) as err:
+    _ERROR = "{0}: {1}".format(type(err).__name__, err)
+    _ERROR_ARGS = f"Arguments:\n{err.args!r}"
     HAS_SQL = False
-    SQLError = ModuleNotFoundError
+    SQLError = err.__class__
     Database = None
+
 
 import aiohttp
 import discord
