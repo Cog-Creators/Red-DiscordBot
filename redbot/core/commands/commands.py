@@ -11,7 +11,7 @@ import discord
 from discord.ext import commands
 
 from . import converter as converters
-from .errors import ConversionFailure
+from .errors import ConversionFailure, MultipleConversionFailures
 from .requires import PermState, PrivilegeLevel, Requires
 from ..i18n import Translator
 
@@ -307,6 +307,8 @@ class Command(CogCommandMixin, commands.Command):
             return await super().do_conversion(ctx, converter, argument, param)
         except commands.BadArgument as exc:
             raise ConversionFailure(converter, argument, param, *exc.args) from exc
+        except commands.BadUnionArgument as exc:
+            raise MultipleConversionFailures(converter, argument, param, exc.args[2]) from exc
         except ValueError as exc:
             # Some common converters need special treatment...
             if converter in (int, float):
