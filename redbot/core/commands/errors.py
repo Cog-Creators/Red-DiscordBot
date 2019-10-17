@@ -31,6 +31,7 @@ class MultipleConversionFailures(commands.BadUnionArgument):
         self.param = param
         super().__init__(param, converters, errors)
 
+
 class BotMissingPermissions(commands.CheckFailure):
     """Raised if the bot is missing permissions required to run a command."""
 
