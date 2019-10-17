@@ -15,7 +15,9 @@ try:
     from databases import Database
 
     HAS_SQL = True
-except ModuleNotFoundError:
+    _ERROR = None
+except ModuleNotFoundError as err:
+    _ERROR = err
     HAS_SQL = False
     SQLError = ModuleNotFoundError
     Database = None
