@@ -1,0 +1,1 @@
+Display all error messages when an argument with multiple possible types fails.
