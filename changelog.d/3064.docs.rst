@@ -1,1 +1,1 @@
-Update console image in Getting Started guide to use 3.2.0.
+Update console image in Getting Started guide to use 3.2.0 and a be in no servers.
