@@ -201,7 +201,7 @@ class Audio(commands.Cog):
                 "access the caching features, "
                 "your Python install is missing some of them.\n\n"
                 "For instructions on how to fix it Google "
-                f"`{_ERROR}`\n"
+                f"`{_ERROR}`.\n"
                 "You will need to install the missing SQL dependency.\n\n"
             ).format(version=__version__)
             with contextlib.suppress(discord.HTTPException):

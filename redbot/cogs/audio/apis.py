@@ -7,6 +7,7 @@ import logging
 import os
 import random
 import time
+import traceback
 from collections import namedtuple
 from typing import Callable, Dict, List, Mapping, NoReturn, Optional, Tuple, Union
 
@@ -17,7 +18,7 @@ try:
     HAS_SQL = True
     _ERROR = None
 except (ModuleNotFoundError, ImportError) as err:
-    _ERROR = "{0}: {1}".format(type(err).__name__, err)
+    _ERROR = "".join(traceback.format_exception_only(type(err), err)).strip()
     _ERROR_ARGS = f"Arguments:\n{err.args!r}"
     HAS_SQL = False
     SQLError = err.__class__
