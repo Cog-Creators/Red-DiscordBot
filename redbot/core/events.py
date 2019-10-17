@@ -234,10 +234,12 @@ def init_events(bot, cli_flags):
         elif isinstance(error, commands.UserFeedbackCheckFailure):
             if error.message:
                 await ctx.send(error.message)
-        elif isinstance(error, commands.CheckFailure):
-            pass
         elif isinstance(error, commands.NoPrivateMessage):
             await ctx.send("That command is not available in DMs.")
+        elif isinstance(error, commands.PrivateMessageOnly):
+            await ctx.send("That command is only available in DMs.")
+        elif isinstance(error, commands.CheckFailure):
+            pass
         elif isinstance(error, commands.CommandOnCooldown):
             await ctx.send(
                 "This command is on cooldown. Try again in {}.".format(

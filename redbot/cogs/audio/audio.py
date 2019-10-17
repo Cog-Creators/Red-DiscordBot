@@ -1580,9 +1580,8 @@ class Audio(commands.Cog):
                 int((datetime.datetime.utcnow() - connect_start).total_seconds())
             )
             try:
-                if any(
-                    x in p.current.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
-                ):
+                query = dataclasses.Query.process_input(p.current.uri)
+                if query.is_local:
                     if p.current.title == "Unknown title":
                         current_title = localtracks.LocalPath(p.current.uri).to_string_hidden()
                         msg += "{} [`{}`]: **{}**\n".format(
@@ -2270,7 +2269,6 @@ class Audio(commands.Cog):
                 dur = "LIVE"
             else:
                 dur = lavalink.utils.format_time(player.current.length)
-
             song = get_track_description(player.current)
             song += _("\n Requested by: **{track.requester}**")
             song += "\n\n{arrow}`{pos}`/`{dur}`"
@@ -4369,7 +4367,7 @@ class Audio(commands.Cog):
             for track in playlist.tracks:
                 track_idx = track_idx + 1
                 query = dataclasses.Query.process_input(track["info"]["uri"])
-                if any(x in str(query) for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]):
+                if query.is_local:
                     if track["info"]["title"] != "Unknown title":
                         msg += "`{}.` **{} - {}**\n{}{}\n".format(
                             track_idx,
@@ -4895,7 +4893,8 @@ class Audio(commands.Cog):
                 ):
                     log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
                     continue
-                if any(x in track.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]):
+                query = dataclasses.Query.process_input(track.uri)
+                if query.is_local:
                     local_path = dataclasses.LocalPath(track.uri)
                     if not await self._localtracks_check(ctx):
                         pass
@@ -5684,7 +5683,6 @@ class Audio(commands.Cog):
                 song += _("\n Requested by: **{track.requester}**")
                 song += "\n\n{arrow}`{pos}`/`{dur}`"
                 song = song.format(track=player.current, arrow=arrow, pos=pos, dur=dur)
-
                 embed = discord.Embed(
                     colour=await ctx.embed_colour(), title=_("Now Playing"), description=song
                 )
@@ -5786,15 +5784,15 @@ class Audio(commands.Cog):
         else:
             dur = lavalink.utils.format_time(player.current.length)
 
-        if player.current.is_stream:
+        query = dataclasses.Query.process_input(player.current)
+
+        if query.is_stream:
             queue_list += _("**Currently livestreaming:**\n")
             queue_list += "**[{current.title}]({current.uri})**\n".format(current=player.current)
             queue_list += _("Requested by: **{user}**").format(user=player.current.requester)
             queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
 
-        elif any(
-            x in player.current.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
-        ):
+        elif query.is_local:
             if player.current.title != "Unknown title":
                 queue_list += "\n".join(
                     (
@@ -5830,7 +5828,9 @@ class Audio(commands.Cog):
                 track_title = track.title
             req_user = track.requester
             track_idx = i + 1
-            if any(x in track.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]):
+            query = dataclasses.Query.process_input(track)
+
+            if query.is_local:
                 if track.title == "Unknown title":
                     queue_list += f"`{track_idx}.` " + ", ".join(
                         (
@@ -6469,9 +6469,8 @@ class Audio(commands.Cog):
         except IndexError:
             search_choice = tracks[-1]
         try:
-            if any(
-                x in search_choice.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]
-            ):
+            query = dataclasses.Query.process_input(search_choice.uri)
+            if query.is_local:
 
                 localtrack = dataclasses.LocalPath(search_choice.uri)
                 if search_choice.title != "Unknown title":
@@ -6557,7 +6556,8 @@ class Audio(commands.Cog):
             if search_track_num == 0:
                 search_track_num = 5
             try:
-                if any(x in track.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]):
+                query = dataclasses.Query.process_input(track.uri)
+                if query.is_local:
                     search_list += "`{0}.` **{1}**\n[{2}]\n".format(
                         search_track_num,
                         track.title,
@@ -6570,10 +6570,7 @@ class Audio(commands.Cog):
             except AttributeError:
                 # query = Query.process_input(track)
                 track = dataclasses.Query.process_input(track)
-                if (
-                    any(x in str(track) for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"])
-                    and command != "search"
-                ):
+                if track.is_local and command != "search":
                     search_list += "`{}.` **{}**\n".format(
                         search_track_num, track.to_string_user()
                     )
