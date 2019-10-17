@@ -205,7 +205,8 @@ class Audio(commands.Cog):
                 "You will need to install the missing SQL dependency.\n\n"
             ).format(version=__version__)
             with contextlib.suppress(discord.HTTPException):
-                await self.bot.send_to_owners(error_message)
+                for page in pagify(error_message):
+                    await self.bot.send_to_owners(page)
             log.critical(error_message)
 
     async def _migrate_config(self, from_version: int, to_version: int):
