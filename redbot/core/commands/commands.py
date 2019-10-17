@@ -308,7 +308,7 @@ class Command(CogCommandMixin, commands.Command):
         except commands.BadArgument as exc:
             raise ConversionFailure(converter, argument, param, *exc.args) from exc
         except commands.BadUnionArgument as exc:
-            raise MultipleConversionFailures(converter, argument, param, exc.args[2]) from exc
+            raise MultipleConversionFailures(exc.converters, argument, param, exc.errors) from exc
         except ValueError as exc:
             # Some common converters need special treatment...
             if converter in (int, float):
