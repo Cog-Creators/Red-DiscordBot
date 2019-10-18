@@ -11,7 +11,7 @@ import discord
 from discord.ext import commands
 
 from . import converter as converters
-from .errors import ConversionFailure, MultipleConversionFailures
+from .errors import ConversionFailure
 from .requires import PermState, PrivilegeLevel, Requires
 from ..i18n import Translator
 
