@@ -1,0 +1,1 @@
+Discord.py is updated to 1.2.4 to handle a critical issue with voice connections
