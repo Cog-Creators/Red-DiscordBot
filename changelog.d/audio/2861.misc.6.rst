@@ -1,0 +1,1 @@
+:meth:`Audio._migrate_config` will automatically migrate old schema playlist to the new schema.

@@ -1,0 +1,1 @@
+Fixed user parameter being labeled as discord.TextChannel instead of discord.abc.User.

@@ -175,10 +175,7 @@ class Context(commands.Context):
         discord.Colour:
             The colour to be used
         """
-        if self.guild and await self.bot.db.guild(self.guild).use_bot_color():
-            return self.guild.me.color
-        else:
-            return self.bot.color
+        return await self.bot.get_embed_color(self)
 
     @property
     def embed_color(self):
