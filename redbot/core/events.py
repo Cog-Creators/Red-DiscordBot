@@ -108,6 +108,7 @@ def init_events(bot, cli_flags):
             INFO.extend(("Servers: {}".format(guilds), "Users: {}".format(users)))
         else:
             print("Ready. I'm not in any server yet!")
+            print("")
 
         INFO.append("{} cogs with {} commands".format(len(bot.cogs), len(bot.commands)))
 
@@ -159,6 +160,11 @@ def init_events(bot, cli_flags):
 
         if invite_url:
             print("\nInvite URL: {}\n".format(invite_url))
+
+        if guilds == None:
+            print(
+                "Looking for a quick guide on setting up Red? https://docs.discord.red/en/stable/getting_started.html"
+            )
 
         bot._color = discord.Colour(await bot._config.color())
 
