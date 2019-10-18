@@ -1,0 +1,1 @@
+Discord.py docs links will now always use docs for currently used version of discord.py.
