@@ -17,9 +17,8 @@ try:
 
     HAS_SQL = True
     _ERROR = None
-except (ModuleNotFoundError, ImportError) as err:
+except ImportError as err:
     _ERROR = "".join(traceback.format_exception_only(type(err), err)).strip()
-    _ERROR_ARGS = f"Arguments:\n{err.args!r}"
     HAS_SQL = False
     SQLError = err.__class__
     Database = None
