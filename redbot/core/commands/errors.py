@@ -5,7 +5,6 @@ from discord.ext import commands
 
 __all__ = [
     "ConversionFailure",
-    "MultipleConversionFailures",
     "BotMissingPermissions",
     "UserFeedbackCheckFailure",
     "ArgParserFailure",
@@ -20,16 +19,6 @@ class ConversionFailure(commands.BadArgument):
         self.argument = argument
         self.param = param
         super().__init__(*args)
-
-
-class MultipleConversionFailures(commands.BadUnionArgument):
-    """Raised when :data:`typing.Union` converter fails for all its associated types."""
-
-    def __init__(self, converters: list, argument: str, param: inspect.Parameter, errors: list):
-        self.converters = converters
-        self.argument = argument
-        self.param = param
-        super().__init__(param, converters, errors)
 
 
 class BotMissingPermissions(commands.CheckFailure):

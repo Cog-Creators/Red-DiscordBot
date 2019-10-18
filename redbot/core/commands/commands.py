@@ -307,8 +307,6 @@ class Command(CogCommandMixin, commands.Command):
             return await super().do_conversion(ctx, converter, argument, param)
         except commands.BadArgument as exc:
             raise ConversionFailure(converter, argument, param, *exc.args) from exc
-        except commands.BadUnionArgument as exc:
-            raise MultipleConversionFailures(exc.converters, argument, param, exc.errors) from exc
         except ValueError as exc:
             # Some common converters need special treatment...
             if converter in (int, float):
