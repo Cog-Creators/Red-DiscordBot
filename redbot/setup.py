@@ -113,10 +113,10 @@ def get_storage_type():
     while storage is None:
         print()
         print("Please choose your storage backend (if you're unsure, choose 1).")
-        print("1. JSON (file storage, requires no database).")
+        print("1. JSON (file storage, does not require a database).")
         print("2. MongoDB")
         print("3. PostgreSQL")
-        print("4. SplitFiles (experimental, not currently recommended)")
+        print("4. SplitFiles (multiple file storage, does not require a database)")
         storage = input("> ")
         try:
             storage = int(storage)
