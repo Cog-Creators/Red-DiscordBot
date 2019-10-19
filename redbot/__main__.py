@@ -157,7 +157,7 @@ def main():
         loop.run_until_complete(red.http.close())
         sys.exit(0)
     try:
-        loop.run_until_complete(red.start(token, bot=True))
+        loop.run_until_complete(red.start(token, bot=True, cli_flags=cli_flags))
     except discord.LoginFailure:
         log.critical("This token doesn't seem to be valid.")
         db_token = loop.run_until_complete(red._config.token())
