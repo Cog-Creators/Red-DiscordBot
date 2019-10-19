@@ -214,7 +214,7 @@ class Audio(commands.Cog):
                 for page in pagify(error_message):
                     await self.bot.send_to_owners(page)
             log.critical(error_message)
-        
+
         self._ready_event.set()
         self.bot.dispatch("red_audio_initialized", self)
 
