@@ -174,6 +174,7 @@ class JsonDriver(BaseDriver):
             fpath = _dir / "settings.json"
             if not fpath.exists():
                 continue
+            cog_name = _dir.name
             with fpath.open() as f:
                 try:
                     data = json.load(f)
@@ -181,11 +182,10 @@ class JsonDriver(BaseDriver):
                     continue
             if not isinstance(data, dict):
                 continue
-            for cog, inner in data.items():
+            for cog_id, inner in data.items():
                 if not isinstance(inner, dict):
                     continue
-                for cog_id in inner:
-                    yield cog, cog_id
+                yield cog_name, cog_id
 
     async def import_data(self, cog_data, custom_group_data):
         def update_write_data(identifier_data: IdentifierData, _data):

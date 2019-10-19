@@ -42,7 +42,6 @@ class SplitFilesDriver(BaseDriverMixin, metaclass=DriverSingleton):
         self.data_path.mkdir(parents=True, exist_ok=True)
         self.data = XXHashStorage(self.data_path, bin_count)
         self.lock = asyncio.Lock()
-        self._block_saves = False  # Don't touch this without a long hard thought.
 
     # Begin satisfying methods solely for BaseDriver compat
     @classmethod
@@ -150,8 +149,6 @@ class SplitFilesDriver(BaseDriverMixin, metaclass=DriverSingleton):
             await self.save_bins(changed_bins)
 
     async def save_bins(self, bins: Optional[Iterable[int]] = None, *, all_bins: bool = False):
-        if self._block_saves:
-            return
         if all_bins:
             bins = range(self.data._bin_count)
         elif not bins:
