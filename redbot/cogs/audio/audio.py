@@ -142,7 +142,11 @@ class Audio(commands.Cog):
         self.play_lock = {}
 
         self._manager: Optional[ServerManager] = None
-        self.bot.dispatch("red_audio_initialized", self)
+        # These has to be a task since this requires the bot to be ready
+        # If it waits for ready in startup, we cause a deadlock during initial load
+        # as initial load happens before the bot can ever be ready.
+        self._init_task = self.bot.loop.create_task(self.initialize())
+        self._ready_event = asyncio.Event()
 
     @property
     def owns_autoplay(self):
@@ -166,6 +170,7 @@ class Audio(commands.Cog):
         self._cog_id = None
 
     async def cog_before_invoke(self, ctx: commands.Context):
+        await self._ready_event.wait()
         if self.llsetup in [ctx.command, ctx.command.root_parent]:
             pass
         elif self._connect_task.cancelled():
@@ -185,6 +190,7 @@ class Audio(commands.Cog):
                 await self._embed_msg(ctx, _("No DJ role found. Disabling DJ mode."))
 
     async def initialize(self):
+        await self.bot.wait_until_ready()
         pass_config_to_dependencies(self.config, self.bot, await self.config.localpath())
         await self.music_cache.initialize(self.config)
         asyncio.ensure_future(
@@ -208,6 +214,9 @@ class Audio(commands.Cog):
                 for page in pagify(error_message):
                     await self.bot.send_to_owners(page)
             log.critical(error_message)
+        
+        self._ready_event.set()
+        self.bot.dispatch("red_audio_initialized", self)
 
     async def _migrate_config(self, from_version: int, to_version: int):
         database_entries = []
@@ -6904,6 +6913,9 @@ class Audio(commands.Cog):
 
             if self._connect_task:
                 self._connect_task.cancel()
+
+            if self._init_task:
+                self._init_task.cancel()
 
             lavalink.unregister_event_listener(self.event_handler)
             self.bot.loop.create_task(lavalink.close())
