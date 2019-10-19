@@ -108,7 +108,7 @@ def get_data_dir():
 
 
 def get_storage_type():
-    storage_dict = {1: "JSON", 2: "MongoDB", 3: "PostgreSQL"}
+    storage_dict = {1: "JSON", 2: "MongoDB", 3: "PostgreSQL", 4: "SplitFiles"}
     storage = None
     while storage is None:
         print()
@@ -116,6 +116,7 @@ def get_storage_type():
         print("1. JSON (file storage, requires no database).")
         print("2. MongoDB")
         print("3. PostgreSQL")
+        print("4. SplitFiles (experimental, not currently recommended)")
         storage = input("> ")
         try:
             storage = int(storage)
@@ -154,7 +155,12 @@ def basic_setup():
 
     storage = get_storage_type()
 
-    storage_dict = {1: BackendType.JSON, 2: BackendType.MONGO, 3: BackendType.POSTGRES}
+    storage_dict = {
+        1: BackendType.JSON,
+        2: BackendType.MONGO,
+        3: BackendType.POSTGRES,
+        4: BackendType.SplitFiles,
+    }
     storage_type: BackendType = storage_dict.get(storage, BackendType.JSON)
     default_dirs["STORAGE_TYPE"] = storage_type.value
     driver_cls = drivers.get_driver_class(storage_type)
@@ -181,6 +187,8 @@ def get_target_backend(backend) -> BackendType:
         return BackendType.MONGO
     elif backend == "postgres":
         return BackendType.POSTGRES
+    elif backend == "splitfiles":
+        return BackendType.SplitFiles
 
 
 async def do_migration(
@@ -419,7 +427,7 @@ def delete(
 
 @cli.command()
 @click.argument("instance", type=click.Choice(instance_list))
-@click.argument("backend", type=click.Choice(["json", "mongo", "postgres"]))
+@click.argument("backend", type=click.Choice(["json", "mongo", "postgres", "splitfiles"]))
 def convert(instance, backend):
     current_backend = get_current_backend(instance)
     target = get_target_backend(backend)

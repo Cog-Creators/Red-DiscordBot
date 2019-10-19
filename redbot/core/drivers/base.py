@@ -124,11 +124,7 @@ class IdentifierData:
         )
 
 
-class BaseDriver(abc.ABC):
-    def __init__(self, cog_name: str, identifier: str, **kwargs):
-        self.cog_name = cog_name
-        self.unique_cog_identifier = identifier
-
+class BaseDriverABC(abc.ABC):
     @classmethod
     @abc.abstractmethod
     async def initialize(cls, **storage_details) -> None:
@@ -226,6 +222,18 @@ class BaseDriver(abc.ABC):
 
         """
         raise NotImplementedError
+
+
+class BaseDriverMixin:
+    """
+    You can inherit from this if you have a conflicting ABC with BaseDriver
+    classes inheriting from this must still provide the interface expected by the ABC
+    even if they are incompatible with inheriting from them.
+    """
+
+    def __init__(self, cog_name: str, identifier: str, **kwargs):
+        self.cog_name = cog_name
+        self.unique_cog_identifier = identifier
 
     @classmethod
     async def migrate_to(
@@ -340,3 +348,9 @@ class BaseDriver(abc.ABC):
                     *ConfigCategory.get_pkey_info(category, custom_group_data),
                 )
                 await self.set(ident_data, data)
+
+
+class BaseDriver(BaseDriverMixin, BaseDriverABC):
+    """ Exists for metaclass conflict avoidance """
+
+    pass

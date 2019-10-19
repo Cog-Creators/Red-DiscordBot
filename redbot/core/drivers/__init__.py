@@ -2,19 +2,23 @@ import enum
 from typing import Optional, Type
 
 from .. import data_manager
-from .base import IdentifierData, BaseDriver, ConfigCategory
+from .base import IdentifierData, BaseDriver, BaseDriverMixin, BaseDriverABC, ConfigCategory
 from .json import JsonDriver
 from .mongo import MongoDriver
 from .postgres import PostgresDriver
+from .splitfiles import SplitFilesDriver
 
 __all__ = [
     "get_driver",
     "ConfigCategory",
     "IdentifierData",
     "BaseDriver",
+    "BaseDriverMixin",
+    "BaseDriverABC",
     "JsonDriver",
     "MongoDriver",
     "PostgresDriver",
+    "SplitFilesDriver",
     "BackendType",
 ]
 
@@ -24,12 +28,14 @@ class BackendType(enum.Enum):
     MONGO = "MongoDBV2"
     MONGOV1 = "MongoDB"
     POSTGRES = "Postgres"
+    SplitFiles = "SplitFiles"
 
 
 _DRIVER_CLASSES = {
     BackendType.JSON: JsonDriver,
     BackendType.MONGO: MongoDriver,
     BackendType.POSTGRES: PostgresDriver,
+    BackendType.SplitFiles: SplitFilesDriver,
 }
 
 
