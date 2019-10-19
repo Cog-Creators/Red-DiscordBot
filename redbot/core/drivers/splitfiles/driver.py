@@ -32,7 +32,7 @@ class SplitFilesDriver(BaseDriverMixin, metaclass=DriverSingleton):
         self.cog_name = cog_name
         self.unique_cog_identifier = identifier
         if cog_name == "Core" and identifier == "0":
-            self.data_path = data_manager.core_data_path() /"coredata-splitfiles"
+            self.data_path = data_manager.core_data_path() / "coredata-splitfiles"
         else:
             self.data_path = (
                 data_manager.cog_data_path(raw_name=cog_name) / "splitfiles" / identifier
