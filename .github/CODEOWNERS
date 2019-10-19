@@ -13,6 +13,8 @@ redbot/core/commands/*                   @mikeshardmind
 redbot/core/data_manager.py              @tekulvw
 redbot/core/dev_commands.py              @tekulvw
 redbot/core/drivers/*                    @tekulvw
+redbot/core/drivers/postgres/*           @Tobotimus
+redbot/core/drivers/splitfiles/*         @mikeshardmind
 redbot/core/events.py                    @tekulvw
 redbot/core/global_checks.py             @tekulvw
 redbot/core/i18n.py                      @tekulvw
