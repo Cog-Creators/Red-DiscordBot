@@ -43,37 +43,45 @@ class XXHashStorage:
     This exists seperately from config to allow using this outside of config.
     """
 
-    def __init__(self, path: Path, bin_count: int, *, load_on_creation=True):
+    def __init__(self, path: Path, bin_count: int, *, load_on_creation: bool = False):
         self.data_path = path
         self._bin_count = bin_count
         self._bins = [dict() for _ in range(bin_count)]
         if load_on_creation:
             self.load()
+            self._loaded_bins = set(range(bin_count))
+        else:
+            self._loaded_bins = set()
 
-    def load(self):
-        """ Config should not manually call this. """
-        for i in range(self._bin_count):
-            fpath = self.data_path / f"{i}.pickle"
-            if fpath.exists() and fpath.is_file():
-                with fpath.open(mode="rb") as fp:
-                    try:
-                        data = _SafishUnpickler(fp).load()
-                    except pickle.UnpicklingError:
-                        self._bins[i] = dict()
-                    else:
-                        self._bins[i] = data
-            else:
-                self._bins[i] = dict()
+    def load(self, *bins):
+        bins = bins or range(self._bin_count)
+        for i in bins:
+            if i not in self._loaded_bins:
+                self._loaded_bins.add(i)
+                fpath = self.data_path / f"{i}.pickle"
+                if fpath.exists() and fpath.is_file():
+                    with fpath.open(mode="rb") as fp:
+                        try:
+                            data = _SafishUnpickler(fp).load()
+                        except pickle.UnpicklingError:
+                            self._bins[i] = dict()
+                        else:
+                            self._bins[i] = data
+                else:
+                    self._bins[i] = dict()
 
     def insert(self, key, value):
         """ Inserts a value, returning the bin number which was changed """
         b = _get_bin(".".join(key), self._bin_count)
+        self.load(b)
         # We dont want to be sticking user provided mutables into this.
         value_copy = pickle.loads(pickle.dumps(value))
         self._bins[b][key] = value_copy
         return b
 
     def iter_by_key_prefix(self, key_prefix):
+        self.load()
+
         def is_prefixed(key):
             return key[: len(key_prefix)] == key_prefix
 
@@ -85,11 +93,13 @@ class XXHashStorage:
     def clear(self, key) -> int:
         """ clears a specific key, returning the bin number which was changed """
         b = _get_bin(".".join(key), self._bin_count)
+        self.load(b)
         self._bins[b].pop(key, None)
         return b
 
     def get(self, key):
         b = _get_bin(".".join(key), self._bin_count)
+        self.load(b)
         val = self._bins[b][key]
         # Don't give back a anything from the actual internal data structure
         return pickle.loads(pickle.dumps(val))
