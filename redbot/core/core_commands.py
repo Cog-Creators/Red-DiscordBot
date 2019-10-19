@@ -275,7 +275,11 @@ class Core(commands.Cog, CoreLogic):
         author_repo = "https://github.com/Twentysix26"
         org_repo = "https://github.com/Cog-Creators"
         red_repo = org_repo + "/Red-DiscordBot"
-        red_pypi = "https://pypi.python.org/pypi/Red-DiscordBot"
+        red_pypi = (
+            "https://pypi.python.org/pypi/Red-DiscordBot"
+            if not red_version_info.dev_release
+            else "https://github.com/Cog-Creators/Red-DiscordBot/tree/V3/develop"
+        )
         support_server_url = "https://discord.gg/red"
         dpy_repo = "https://github.com/Rapptz/discord.py"
         python_url = "https://www.python.org/"

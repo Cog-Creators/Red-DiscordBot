@@ -36,7 +36,7 @@ class VersionInfo:
         r"(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<micro>0|[1-9]\d*)"
         r"(?:(?P<releaselevel>a|b|rc)(?P<serial>0|[1-9]\d*))?"
         r"(?:\.post(?P<post_release>0|[1-9]\d*))?"
-        r"(?:\.dev(?P<dev_release>0|[1-9]\d*))?"
+        r"(?P<dev_release>\.dev)?"
         r"$",
         flags=_re.IGNORECASE,
     )
@@ -55,7 +55,7 @@ class VersionInfo:
         releaselevel: str,
         serial: _Optional[int] = None,
         post_release: _Optional[int] = None,
-        dev_release: _Optional[int] = None,
+        dev_release: bool = False,
     ) -> None:
         self.major: int = major
         self.minor: int = minor
@@ -67,7 +67,7 @@ class VersionInfo:
         self.releaselevel: str = releaselevel
         self.serial: _Optional[int] = serial
         self.post_release: _Optional[int] = post_release
-        self.dev_release: _Optional[int] = dev_release
+        self.dev_release: bool = dev_release
 
     @classmethod
     def from_str(cls, version_str: str) -> "VersionInfo":
@@ -91,9 +91,11 @@ class VersionInfo:
             kwargs["releaselevel"] = cls._SHORT_RELEASE_LEVELS[releaselevel]
         else:
             kwargs["releaselevel"] = cls.FINAL
-        for key in ("serial", "post_release", "dev_release"):
+        for key in ("serial", "post_release"):
             if match[key] is not None:
                 kwargs[key] = int(match[key])
+        if match["dev_release"] is not None:
+            kwargs["dev_release"] = True
         return cls(**kwargs)
 
     @classmethod
@@ -120,12 +122,8 @@ class VersionInfo:
 
     def _generate_comparison_tuples(
         self, other: "VersionInfo"
-    ) -> _List[
-        _Tuple[int, int, int, int, _Union[int, float], _Union[int, float], _Union[int, float]]
-    ]:
-        tups: _List[
-            _Tuple[int, int, int, int, _Union[int, float], _Union[int, float], _Union[int, float]]
-        ] = []
+    ) -> _List[_Tuple[int, int, int, int, _Union[int, float], _Union[int, float], bool]]:
+        tups: _List[_Tuple[int, int, int, int, _Union[int, float], _Union[int, float], bool]] = []
         for obj in (self, other):
             tups.append(
                 (
@@ -135,22 +133,26 @@ class VersionInfo:
                     obj._RELEASE_LEVELS.index(obj.releaselevel),
                     obj.serial if obj.serial is not None else _inf,
                     obj.post_release if obj.post_release is not None else -_inf,
-                    obj.dev_release if obj.dev_release is not None else _inf,
+                    obj.dev_release,
                 )
             )
         return tups
 
     def __lt__(self, other: "VersionInfo") -> bool:
         tups = self._generate_comparison_tuples(other)
-        return tups[0] < tups[1]
+        if tups[0][:-1] == tups[1][:-1] and tups[0][-1] is False and tups[1][-1] is True:
+            return True
+        return tups[0][:-1] < tups[1][:-1]
 
     def __eq__(self, other: "VersionInfo") -> bool:
         tups = self._generate_comparison_tuples(other)
-        return tups[0] == tups[1]
+        return tups[0][:-1] == tups[1][:-1] and tups[0][-1] == tups[1][-1]
 
     def __le__(self, other: "VersionInfo") -> bool:
         tups = self._generate_comparison_tuples(other)
-        return tups[0] <= tups[1]
+        if tups[0][:-1] == tups[1][:-1] and tups[0][-1] != tups[1][-1]:
+            return False
+        return tups[0][:-1] <= tups[1][:-1]
 
     def __str__(self) -> str:
         ret = f"{self.major}.{self.minor}.{self.micro}"
@@ -162,7 +164,7 @@ class VersionInfo:
         if self.post_release is not None:
             ret += f".post{self.post_release}"
         if self.dev_release is not None:
-            ret += f".dev{self.dev_release}"
+            ret += f".dev"
         return ret
 
     def __repr__(self) -> str:
@@ -173,7 +175,7 @@ class VersionInfo:
         )
 
 
-__version__ = "3.1.6"
+__version__ = "3.1.6.dev"
 version_info = VersionInfo.from_str(__version__)
 
 # Filter fuzzywuzzy slow sequence matcher warning
