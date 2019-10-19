@@ -32,13 +32,12 @@ class SplitFilesDriver(BaseDriverMixin, metaclass=DriverSingleton):
         self.cog_name = cog_name
         self.unique_cog_identifier = identifier
         if cog_name == "Core" and identifier == "0":
-            self.data_path = data_manager.core_data_path()
-            bin_count = 1
+            self.data_path = data_manager.core_data_path() /"coredata-splitfiles"
         else:
             self.data_path = (
                 data_manager.cog_data_path(raw_name=cog_name) / "splitfiles" / identifier
             )
-            bin_count = 1000  # Consider allowing resizing later on
+        bin_count = 1000  # Consider allowing resizing later on
         self.data_path.mkdir(parents=True, exist_ok=True)
         self.data = XXHashStorage(self.data_path, bin_count)
         self.lock = asyncio.Lock()
