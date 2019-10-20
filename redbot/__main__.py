@@ -124,7 +124,7 @@ def main():
     LIB_PATH = data_manager.cog_data_path(raw_name="Downloader") / "lib"
     LIB_PATH.mkdir(parents=True, exist_ok=True)
     if str(LIB_PATH) not in sys.path:
-        sys.path.insert(1, str(LIB_PATH))
+        sys.path.append(str(LIB_PATH))
 
     red.add_cog(Core(red))
     red.add_cog(CogManagerUI())
