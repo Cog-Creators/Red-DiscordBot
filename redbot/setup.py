@@ -53,16 +53,6 @@ def save_config(name, data, remove=False):
     if remove and name in _config:
         _config.pop(name)
     else:
-        if name in _config:
-            print(
-                "WARNING: An instance already exists with this name. "
-                "Continuing will overwrite the existing instance config."
-            )
-            if not click.confirm(
-                "Are you absolutely certain you want to continue?", default=False
-            ):
-                print("Not continuing")
-                sys.exit(0)
         _config[name] = data
 
     with config_file.open("w", encoding="utf-8") as fs:
@@ -73,12 +63,9 @@ def get_data_dir():
     default_data_dir = Path(appdir.user_data_dir)
 
     print(
-        "Hello! Before we begin the full configuration process we need to"
-        " gather some initial information about where you'd like us"
-        " to store your bot's data. We've attempted to figure out a"
-        " sane default data location which is printed below. If you don't"
-        " want to change this default please press [ENTER], otherwise"
-        " input your desired data location."
+        "We've attempted to figure out a sane default data location which is printed below."
+        " If you don't want to change this default please press [ENTER],"
+        " otherwise input your desired data location."
     )
     print()
     print("Default: {}".format(default_data_dir))
@@ -104,7 +91,7 @@ def get_data_dir():
     if not click.confirm("Please confirm", default=True):
         print("Please start the process over.")
         sys.exit(0)
-    return default_data_dir
+    return str(default_data_dir.resolve())
 
 
 def get_storage_type():
@@ -147,10 +134,15 @@ def basic_setup():
     :return:
     """
 
+    print(
+        "Hello! Before we begin the full configuration process we need to"
+        " gather some initial information about where you'd like us"
+        " to store your bot's data."
+    )
     default_data_dir = get_data_dir()
 
     default_dirs = deepcopy(data_manager.basic_config_default)
-    default_dirs["DATA_PATH"] = str(default_data_dir.resolve())
+    default_dirs["DATA_PATH"] = default_data_dir
 
     storage = get_storage_type()
 
@@ -161,6 +153,16 @@ def basic_setup():
     default_dirs["STORAGE_DETAILS"] = driver_cls.get_config_details()
 
     name = get_name()
+    if name in instance_data:
+        print(
+            "WARNING: An instance already exists with this name. "
+            "Continuing will overwrite the existing instance config."
+        )
+        if not click.confirm(
+            "Are you absolutely certain you want to continue?", default=False
+        ):
+            print("Not continuing")
+            sys.exit(0)
     save_config(name, default_dirs)
 
     print()
@@ -234,53 +236,6 @@ async def mongov1_to_json() -> Dict[str, Any]:
     await drivers.MongoDriver.teardown()
 
     return {}
-
-
-async def edit_instance():
-    _instance_list = load_existing_config()
-    if not _instance_list:
-        print("No instances have been set up!")
-        return
-
-    print(
-        "You have chosen to edit an instance. The following "
-        "is a list of instances that currently exist:\n"
-    )
-    for instance in _instance_list.keys():
-        print("{}\n".format(instance))
-    print("Please select one of the above by entering its name")
-    selected = input("> ")
-
-    if selected not in _instance_list.keys():
-        print("That isn't a valid instance!")
-        return
-    _instance_data = _instance_list[selected]
-    default_dirs = deepcopy(data_manager.basic_config_default)
-
-    current_data_dir = Path(_instance_data["DATA_PATH"])
-    print("You have selected '{}' as the instance to modify.".format(selected))
-    if not click.confirm("Please confirm", default=True):
-        print("Ok, we will not continue then.")
-        return
-
-    print("Ok, we will continue on.")
-    print()
-    if click.confirm("Would you like to change the instance name?", default=False):
-        name = get_name()
-    else:
-        name = selected
-
-    if click.confirm("Would you like to change the data location?", default=False):
-        default_data_dir = get_data_dir()
-        default_dirs["DATA_PATH"] = str(default_data_dir.resolve())
-    else:
-        default_dirs["DATA_PATH"] = str(current_data_dir.resolve())
-
-    if name != selected:
-        save_config(selected, {}, remove=True)
-    save_config(name, default_dirs)
-
-    print("Your basic configuration has been edited")
 
 
 async def create_backup(instance: str) -> None:

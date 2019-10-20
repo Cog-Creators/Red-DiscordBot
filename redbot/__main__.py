@@ -9,6 +9,7 @@ import os
 import shutil
 import sys
 from copy import deepcopy
+from pathlib import Path
 
 import discord
 
@@ -88,9 +89,13 @@ def edit_instance(red, cli_flags):
     new_name = cli_flags.edit_instance_name
     data_path = cli_flags.edit_data_path
     copy_data = cli_flags.copy_data
+    confirm_overwrite = cli_flags.overwrite_existing_instance
 
     if data_path is None and copy_data:
         print("--copy-data can't be used without --edit-data-path argument")
+        sys.exit(1)
+    if new_name is None and confirm_overwrite:
+        print("--overwrite-existing-instance can't be used without --edit-instance-name argument")
         sys.exit(1)
     if no_prompt and all(to_change is None for to_change in (token, owner, new_name, data_path)):
         print(
@@ -103,8 +108,8 @@ def edit_instance(red, cli_flags):
     _edit_owner(red, owner, no_prompt)
 
     data = deepcopy(data_manager.basic_config)
-    name = _edit_instance_name(old_name, new_name, no_prompt)
-    _edit_data_path(data, copy_data, data_path, no_prompt)
+    name = _edit_instance_name(old_name, new_name, confirm_overwrite, no_prompt)
+    _edit_data_path(data, data_path, copy_data, no_prompt)
 
     save_config(name, data)
     if old_name != name:
@@ -113,20 +118,27 @@ def edit_instance(red, cli_flags):
 
 def _edit_token(red, token, no_prompt):
     if token:
-        red.loop.run_until_complete(red.db.token.set(token))
+        red.loop.run_until_complete(red._config.token.set(token))
     elif not no_prompt and confirm("Would you like to change instance's token?", default=False):
         interactive_config(red, False, True, print_header=False)
+        print("Token updated.\n")
 
 
 def _edit_owner(red, owner, no_prompt):
     if owner:
-        red.loop.run_until_complete(red.db.token.set(owner))
+        if not (15 <= len(str(owner)) <= 21):
+            print(
+                "The provided owner id doesn't look like a valid Discord user id."
+                " Instance's owner will remain unchanged."
+            )
+            return
+        red.loop.run_until_complete(red._config.owner.set(owner))
     elif not no_prompt and confirm("Would you like to change instance's owner?", default=False):
         print(
             "Remember:\n"
-            "ONLY the person who is hosting Red should be owner. "
-            "This has SERIOUS security implications. "
-            "The owner can access any data that is present on the host system."
+            "ONLY the person who is hosting Red should be owner."
+            " This has SERIOUS security implications."
+            " The owner can access any data that is present on the host system.\n"
         )
         if confirm("Are you sure you want to change instance's owner?", default=False):
             print("Please enter a Discord user id for new owner:")
@@ -136,15 +148,25 @@ def _edit_owner(red, owner, no_prompt):
                     print("That doesn't look like a valid Discord user id.")
                     continue
                 owner_id = int(owner_id)
-                red.loop.run_until_complete(red.db.owner.set(owner))
+                red.loop.run_until_complete(red._config.owner.set(owner_id))
                 break
         else:
             print("Instance's owner will remain unchanged.")
+        print()
 
 
-def _edit_instance_name(old_name, new_name, no_prompt):
+def _edit_instance_name(old_name, new_name, confirm_overwrite, no_prompt):
     if new_name:
         name = new_name
+        if name in _get_instance_names() and not confirm_overwrite:
+            name = old_name
+            print(
+                "An instance already exists with this name."
+                " Continuing would overwrite the existing instance config.\n"
+                "Instance name will remain unchanged.\n"
+                "If you want to replace existing instance,"
+                " run this command with --overwrite-existing-instance flag."
+            )
     elif not no_prompt and confirm("Would you like to change the instance name?", default=False):
         name = get_name()
         if name in _get_instance_names():
@@ -158,6 +180,7 @@ def _edit_instance_name(old_name, new_name, no_prompt):
             ):
                 print("Instance name will remain unchanged.")
                 name = old_name
+            print()
     else:
         name = old_name
     return name
@@ -167,16 +190,15 @@ def _edit_data_path(data, data_path, copy_data, no_prompt):
     # This modifies the passed dict.
     if data_path:
         data["DATA_PATH"] = data_path
-        if copy_data:
-            if _copy_data(data):
-                return
+        if copy_data and not _copy_data(data):
             print("Can't copy data to non-empty location. Data location will remain unchanged.")
             data["DATA_PATH"] = data_manager.basic_config["DATA_PATH"]
     elif not no_prompt and confirm("Would you like to change the data location?", default=False):
         data["DATA_PATH"] = get_data_dir()
-        if confirm("Do you want to copy the data from old location?", default=True):
-            if _copy_data(data):
-                return
+        if (
+            confirm("Do you want to copy the data from old location?", default=True)
+            and not _copy_data(data)
+        ):
             print("Can't copy the data to non-empty location.")
             if not confirm("Do you still want to use the new data location?"):
                 data["DATA_PATH"] = data_manager.basic_config["DATA_PATH"]
@@ -184,10 +206,13 @@ def _edit_data_path(data, data_path, copy_data, no_prompt):
 
 
 def _copy_data(data):
-    try:
-        os.rmdir(data["DATA_PATH"])
-    except OSError:
-        return False
+    if Path(data["DATA_PATH"]).exists():
+        if any(os.scandir(data["DATA_PATH"])):
+            return False
+        else:
+            # this is needed because copytree doesn't work when destination folder exists
+            # Python 3.8 has `dirs_exist_ok` option for that
+            os.rmdir(data["DATA_PATH"])
     shutil.copytree(data_manager.basic_config["DATA_PATH"], data["DATA_PATH"])
     return True
 
@@ -239,6 +264,8 @@ def main():
     if cli_flags.edit:
         try:
             edit_instance(red, cli_flags)
+        except (KeyboardInterrupt, EOFError):
+            print("Aborted!")
         finally:
             loop.run_until_complete(driver_cls.teardown())
         sys.exit(0)

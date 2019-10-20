@@ -91,6 +91,12 @@ def parse_cli_flags(args):
         help="New name for the instance. This argument only works with --edit argument passed.",
     )
     parser.add_argument(
+        "--overwrite-existing-instance",
+        action="store_true",
+        help="Confirm overwriting of existing instance when changing name."
+        " This argument only works with --edit argument passed.",
+    )
+    parser.add_argument(
         "--edit-data-path",
         type=str,
         help=(
