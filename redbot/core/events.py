@@ -108,7 +108,6 @@ def init_events(bot, cli_flags):
             INFO.extend(("Servers: {}".format(guilds), "Users: {}".format(users)))
         else:
             print("Ready. I'm not in any server yet!")
-            print("")
 
         INFO.append("{} cogs with {} commands".format(len(bot.cogs), len(bot.commands)))
 
