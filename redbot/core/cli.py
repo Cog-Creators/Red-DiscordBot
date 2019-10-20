@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import logging
+import sys
 from typing import Optional
 
 
@@ -15,7 +16,11 @@ def confirm(text: str, default: Optional[bool] = None) -> bool:
         raise TypeError(f"expected bool, not {type(default)}")
 
     while True:
-        value = input(f"{text}: [{options}] ").lower().strip()
+        try:
+            value = input(f"{text}: [{options}] ").lower().strip()
+        except (KeyboardInterrupt, EOFError):
+            print("\nAborted!")
+            sys.exit(1)
         if value in ("y", "yes"):
             return True
         if value in ("n", "no"):

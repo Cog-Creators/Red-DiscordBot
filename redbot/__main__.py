@@ -81,16 +81,14 @@ def list_instances():
 
 
 def edit_instance(red, cli_flags):
-    old_name = cli_flags.instance_name
+    no_prompt = cli_flags.no_prompt
     token = cli_flags.token
     owner = cli_flags.owner
+    old_name = cli_flags.instance_name
     new_name = cli_flags.edit_instance_name
     data_path = cli_flags.edit_data_path
     copy_data = cli_flags.copy_data
-    no_prompt = cli_flags.no_prompt
 
-    driver_cls = drivers.get_driver_class()
-    loop = asyncio.get_event_loop()
     if data_path is None and copy_data:
         print("--copy-data can't be used without --edit-data-path argument")
         sys.exit(1)
@@ -101,12 +99,28 @@ def edit_instance(red, cli_flags):
         )
         sys.exit(1)
 
+    _edit_token(red, token, no_prompt)
+    _edit_owner(red, owner, no_prompt)
+
+    data = deepcopy(data_manager.basic_config)
+    name = _edit_instance_name(old_name, new_name, no_prompt)
+    _edit_data_path(data, copy_data, data_path, no_prompt)
+
+    save_config(name, data)
+    if old_name != name:
+        save_config(old_name, {}, remove=True)
+
+
+def _edit_token(red, token, no_prompt):
     if token:
-        loop.run_until_complete(red.db.token.set(token))
+        red.loop.run_until_complete(red.db.token.set(token))
     elif not no_prompt and confirm("Would you like to change instance's token?", default=False):
         interactive_config(red, False, True, print_header=False)
+
+
+def _edit_owner(red, owner, no_prompt):
     if owner:
-        loop.run_until_complete(red.db.token.set(owner))
+        red.loop.run_until_complete(red.db.token.set(owner))
     elif not no_prompt and confirm("Would you like to change instance's owner?", default=False):
         print(
             "Remember:\n"
@@ -122,19 +136,18 @@ def edit_instance(red, cli_flags):
                     print("That doesn't look like a valid Discord user id.")
                     continue
                 owner_id = int(owner_id)
-                loop.run_until_complete(red.db.owner.set(owner))
+                red.loop.run_until_complete(red.db.owner.set(owner))
                 break
         else:
             print("Instance's owner will remain unchanged.")
-    loop.run_until_complete(driver_cls.teardown())
 
-    data = deepcopy(data_manager.basic_config)
 
+def _edit_instance_name(old_name, new_name, no_prompt):
     if new_name:
         name = new_name
     elif not no_prompt and confirm("Would you like to change the instance name?", default=False):
-        new_name = get_name()
-        if new_name in _get_instance_names():
+        name = get_name()
+        if name in _get_instance_names():
             print(
                 "WARNING: An instance already exists with this name. "
                 "Continuing will overwrite the existing instance config."
@@ -144,24 +157,39 @@ def edit_instance(red, cli_flags):
                 default=False,
             ):
                 print("Instance name will remain unchanged.")
+                name = old_name
     else:
         name = old_name
+    return name
 
-    if confirm("Would you like to change the data location?", default=False):
+
+def _edit_data_path(data, data_path, copy_data, no_prompt):
+    # This modifies the passed dict.
+    if data_path:
+        data["DATA_PATH"] = data_path
+        if copy_data:
+            if _copy_data(data):
+                return
+            print("Can't copy data to non-empty location. Data location will remain unchanged.")
+            data["DATA_PATH"] = data_manager.basic_config["DATA_PATH"]
+    elif not no_prompt and confirm("Would you like to change the data location?", default=False):
         data["DATA_PATH"] = get_data_dir()
         if confirm("Do you want to copy the data from old location?", default=True):
-            try:
-                os.rmdir(data["DATA_PATH"])
-            except OSError:
-                print("Can't copy the data to non-empty location.")
-                if not confirm("Do you still want to use the new data location?"):
-                    data["DATA_PATH"] = data_manager.basic_config["DATA_PATH"]
-            else:
-                shutil.copytree(data_manager.basic_config["DATA_PATH"], data["DATA_PATH"])
+            if _copy_data(data):
+                return
+            print("Can't copy the data to non-empty location.")
+            if not confirm("Do you still want to use the new data location?"):
+                data["DATA_PATH"] = data_manager.basic_config["DATA_PATH"]
+                print("Data location will remain unchanged.")
 
-    save_config(name, data)
-    if old_name != name:
-        save_config(old_name, {}, remove=True)
+
+def _copy_data(data):
+    try:
+        os.rmdir(data["DATA_PATH"])
+    except OSError:
+        return False
+    shutil.copytree(data_manager.basic_config["DATA_PATH"], data["DATA_PATH"])
+    return True
 
 
 async def sigterm_handler(red, log):
@@ -254,8 +282,7 @@ def main():
         log.critical("This token doesn't seem to be valid.")
         db_token = loop.run_until_complete(red._config.token())
         if db_token and not cli_flags.no_prompt:
-            print("")
-            if confirm("Do you want to reset the token?"):
+            if confirm("\nDo you want to reset the token?"):
                 loop.run_until_complete(red._config.token.set(""))
                 print("Token has been reset.")
     except KeyboardInterrupt:

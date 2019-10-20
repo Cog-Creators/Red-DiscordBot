@@ -264,8 +264,7 @@ async def reset_red():
         print("Cancelling...")
         return
 
-    print("")
-    if confirm("Do you want to create a backup for an instance?"):
+    if confirm("\nDo you want to create a backup for an instance?"):
         for index, instance in instances.items():
             print("\nRemoving {}...".format(index))
             await create_backup(index)
