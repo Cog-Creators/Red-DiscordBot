@@ -158,9 +158,7 @@ def basic_setup():
             "WARNING: An instance already exists with this name. "
             "Continuing will overwrite the existing instance config."
         )
-        if not click.confirm(
-            "Are you absolutely certain you want to continue?", default=False
-        ):
+        if not click.confirm("Are you absolutely certain you want to continue?", default=False):
             print("Not continuing")
             sys.exit(0)
     save_config(name, default_dirs)

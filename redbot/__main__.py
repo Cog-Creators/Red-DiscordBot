@@ -195,10 +195,9 @@ def _edit_data_path(data, data_path, copy_data, no_prompt):
             data["DATA_PATH"] = data_manager.basic_config["DATA_PATH"]
     elif not no_prompt and confirm("Would you like to change the data location?", default=False):
         data["DATA_PATH"] = get_data_dir()
-        if (
-            confirm("Do you want to copy the data from old location?", default=True)
-            and not _copy_data(data)
-        ):
+        if confirm(
+            "Do you want to copy the data from old location?", default=True
+        ) and not _copy_data(data):
             print("Can't copy the data to non-empty location.")
             if not confirm("Do you still want to use the new data location?"):
                 data["DATA_PATH"] = data_manager.basic_config["DATA_PATH"]
