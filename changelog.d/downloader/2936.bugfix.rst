@@ -1,0 +1,1 @@
+Catch errors if remote repository or branch is deleted, notify user which repository failed and continue updating others.

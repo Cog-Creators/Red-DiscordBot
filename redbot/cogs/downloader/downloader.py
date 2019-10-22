@@ -402,7 +402,7 @@ class Downloader(commands.Cog):
 
         async with ctx.typing():
             if cog_name is None:
-                updated = await self._repo_manager.update_all_repos()
+                updated = await self._repo_manager.update_all_repos(ctx)
 
             else:
                 try:
