@@ -287,7 +287,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         ----------
         guild : Optional[discord.Guild]
             The guild you want prefixes for. Omit (or pass None) for the DM prefixes
-        
+
         Returns
         -------
         List[str]
@@ -303,10 +303,12 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         Parameters
         ----------
         location : `discord.abc.Messageable`
-
+            Location to check embed color for.
+        
         Returns
         -------
         discord.Color
+            Embed color for the provided location.
         """
 
         guild = getattr(location, "guild", None)
@@ -493,6 +495,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         Parameters
         ----------
         service_name: str
+            The service to get tokens for.
 
         Returns
         -------
