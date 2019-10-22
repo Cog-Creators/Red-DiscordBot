@@ -1,0 +1,1 @@
+Add a `.dev` postfix to the bot version for users running a non stable release version.
