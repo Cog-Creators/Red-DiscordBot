@@ -117,6 +117,12 @@ def parse_cli_flags(args):
         action="store_true",
         help="Enables the built-in RPC server. Please read the docs prior to enabling this!",
     )
+    parser.add_argument(
+        "--rpc-port",
+        type=int,
+        default=6133,
+        help="The port of the built-in RPC server to use. Default to 6133.",
+    )
     parser.add_argument("--token", type=str, help="Run Red with the given token.")
     parser.add_argument(
         "--no-instance",

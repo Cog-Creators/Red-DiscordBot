@@ -45,6 +45,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         self._config = Config.get_core_conf(force_registration=False)
         self._co_owners = cli_flags.co_owner
         self.rpc_enabled = cli_flags.rpc
+        self.rpc_port = cli_flags.rpc_port
         self._last_exception = None
         self._config.register_global(
             token=None,
