@@ -402,8 +402,19 @@ class Downloader(commands.Cog):
 
         async with ctx.typing():
             if cog_name is None:
-                updated = await self._repo_manager.update_all_repos(ctx)
+                updated, failed = await self._repo_manager.update_all_repos()
 
+                for failed_repo in failed:
+                    await ctx.send(
+                        _(
+                            "Repository `{repo_name}` {repo_url} on branch:`{branch}`"
+                            " Failed to update, check if it wasn't deleted."
+                        ).format(
+                            repo_name=failed_repo.name,
+                            repo_url=failed_repo.url,
+                            branch=failed_repo.branch,
+                        )
+                    )
             else:
                 try:
                     updated = await self._repo_manager.update_repo(cog_name.repo_name)

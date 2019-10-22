@@ -647,32 +647,31 @@ class RepoManager:
         old, new = await repo.update()
         return {repo: (old, new)}
 
-    async def update_all_repos(self, ctx) -> MutableMapping[Repo, Tuple[str, str]]:
+    async def update_all_repos(self) -> Tuple[MutableMapping[Repo, Tuple[str, str]], List]:
         """Call `Repo.update` on all repositories.
 
         Returns
         -------
-        dict
-            A mapping of `Repo` objects that received new commits to a `tuple`
+        tuple of Mapping and `list`
+            Mapping of `Repo` objects that received new commits to a `tuple`
             of `str` containing old and new commit hashes.
-
+            
+            `list` of failed `Repo` objects
         """
+
+        failed = []
         ret = {}
         for repo_name, repo_class in self._repos.items():
             try:
                 repo, (old, new) = (await self.update_repo(repo_name)).popitem()
             except errors.UpdateError as err:
-                await ctx.send(
-                    _(
-                        "Failed to update `{repo_name}` {url} branch:`{branch}`, check if the repository or branch wasn't deleted."
-                    ).format(repo_name=repo_name, url=repo_class.url, branch=repo_class.branch)
-                )
-                log.error("Repository %s update failed.", repo_class.url, exc_info=err)
+                log.error("Repository %s has failed update.", repo_class.url, exc_info=err)
+                failed.append(repo_class)
                 continue
 
             if old != new:
                 ret[repo] = (old, new)
-        return ret
+        return ret, failed
 
     async def _load_repos(self, set=False) -> MutableMapping[str, Repo]:
         ret = {}
