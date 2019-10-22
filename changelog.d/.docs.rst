@@ -1,0 +1,1 @@
+Word using dev during install more strongly, to try and avoid "normal" users using dev.
