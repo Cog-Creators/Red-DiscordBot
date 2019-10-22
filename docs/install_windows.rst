@@ -91,7 +91,8 @@ Installing Red
   .. note::
 
       To install the development version, replace ``Red-DiscordBot`` in the above commands with the
-      following link:
+      link below. **Please note that dev is experimental not intended for end users. We will not
+      support anyone using the development version in any support channels.**
 
       .. code-block:: none
 
