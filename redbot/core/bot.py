@@ -405,7 +405,10 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             for package in packages:
                 try:
                     spec = await self._cog_mgr.find_cog(package)
-                    await self.load_extension(spec)
+                    await asyncio.wait_for(self.load_extension(spec), 30)
+                except asyncio.TimeoutError:
+                    log.exception("Failed to load package %s (timeout)", package)
+                    to_remove.append(package)
                 except Exception as e:
                     log.exception("Failed to load package {}".format(package), exc_info=e)
                     await self.remove_loaded_package(package)
