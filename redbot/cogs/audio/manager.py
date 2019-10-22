@@ -59,7 +59,7 @@ class ServerManager:
         if self._proc is not None:
             if self._proc.returncode is None:
                 raise RuntimeError("Internal Lavalink server is already running")
-            else:
+            elif self._shutdown:
                 raise RuntimeError("Server manager has already been used - create another one")
 
         await self.maybe_download_jar()
