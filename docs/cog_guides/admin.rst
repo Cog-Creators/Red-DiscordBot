@@ -357,3 +357,24 @@ announce cancel
 **Description**
 
 Cancels an active announcement.
+
+.. _admin-command-serverlock:
+
+^^^^^^^^^^
+serverlock
+^^^^^^^^^^
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]serverlock
+
+**Description**
+
+Lock a bot to its current servers only.
+
+This means that, once you enable this, the bot will instantly leave all servers
+he will be invited in.
