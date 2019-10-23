@@ -25,7 +25,7 @@ It can add or remove a role to a member, edit one, make some available
 for members so they can self-assign them as they wish.
 
 It also provides tools for the bot owner such as server locking (once enabled,
-the bot will instantly leave new servers he joins) and announcements, which
+the bot will instantly leave new servers she joins) and announcements, which
 will tell something in all the servers of the bot.
 
 .. _admin-commands:
@@ -115,7 +115,7 @@ Add a role to the list of selfroles.
 
 .. warning:: Members will be able to assign themselves the role.
     Make sure it doesn't give extra perms or anything that can break
-    your servers' security.
+    your server's security.
 
 **Arguments**
 
@@ -167,7 +167,7 @@ as yourself, the command author.
 
 * ``<role>``: The role to add to the member. |role-input|
 
-* ``[user=ctx]``: The member you want to add the role to. Default to the
+* ``[user=ctx]``: The member you want to add the role to. Defaults to the
   command author. |member-input|
 
 .. _admin-command-removerole:
@@ -193,7 +193,7 @@ as yourself, the command author.
 
 * ``<role>``: The role to remove. |role-input|
 
-* ``[user=ctx]``: The member to remove the role from. |member-input| Default to
+* ``[user=ctx]``: The member to remove the role from. |member-input| Defaults to
   the command author.
 
 .. _admin-command-editrole:
@@ -212,7 +212,7 @@ editrole
 
 **Description**
 
-Edits a setting of a role.
+Edits settings of a role.
 
 .. _admin-command-editrole-name:
 
@@ -283,7 +283,7 @@ announce
 Announce your message to all of the servers the bot is in.
 
 The bot will announce the message in the guild's announcements channel
-if set, else he will try the system channel (where the new members are
+if set, else she will try the system channel (where the new members are
 welcomed with the Discord announcer). If none of these channels are found,
 the bot will use the first one.
 
@@ -307,12 +307,12 @@ announce channel
 
 **Description**
 
-Sets the channel where the bot owner announcements will be done.
+Sets the channel where the bot owner announcements will be sent.
 
 **Arguments**
 
 * ``[channel=ctx]``: The channel that will be used for bot announcements.
-  |channel-input| Default to where you typed the command.
+  |channel-input| Defaults to where you typed the command.
 
 .. _admin-command-announce-ignore:
 
@@ -330,7 +330,7 @@ announce ignore
 
 **Description**
 
-Enables or disables the announcements on the selected guild.
+Enables or disables announcements on the selected guild.
 
 **Arguments**
 
@@ -377,4 +377,4 @@ serverlock
 Lock a bot to its current servers only.
 
 This means that, once you enable this, the bot will instantly leave all servers
-he will be invited in.
+she will be invited in.
