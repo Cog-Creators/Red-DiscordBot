@@ -22,7 +22,7 @@ Next, you need to decide if you want to develop against the Stable or Develop ve
 Depending on what your goal is should help determine which version you need.
 
 .. attention:: 
-    The Develop version may have changes on it that break compatibility with the Stable version and other cogs.
+    The Develop version may have changes on it which break compatibility with the Stable version and other cogs.
     If your goal is to support both versions, make sure you build compatibility layers or use separate branches to keep compatibility until the next Red release
 
 Open a terminal or command prompt and type one of the following
@@ -133,6 +133,8 @@ have successfully created a cog!
     You would then use :code:`[p]addpath D:\red-cogs` to add the path
     and then you can use :code:`[p]load mycog` or :code:`[p]load coolcog`
     to load them
+    
+    You can also take a look at `our cookiecutter <https://github.com/Cog-Creators/cog-cookiecutter>`_, for help creating the right structure.
 
 --------------------
 Additional resources
