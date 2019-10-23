@@ -1,1 +1,1 @@
-Update Cog Creation guide to use the Stable install instead of the Dev install
+Update Cog Creation guide with a note regarding the Develop version as well as folder layout for local cogs
