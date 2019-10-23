@@ -98,6 +98,9 @@ default_role = "any"
 with open("prolog.txt", "r") as file:
     rst_prolog = file.read()
 
+# Adds d.py version to available substitutions in all files
+rst_prolog += f"\n.. |DPY_VERSION| replace:: {dpy_version}"
+
 # -- Options for HTML output ----------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for

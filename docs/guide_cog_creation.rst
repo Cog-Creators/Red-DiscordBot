@@ -18,9 +18,19 @@ Getting started
 ---------------
 
 To start off, be sure that you have installed Python 3.7.
-Open a terminal or command prompt and type :code:`pip install -U git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=redbot[test]`
-(note that if you get an error with this, try again but put :code:`python -m` in front of the command
-This will install the latest version of V3.
+Next, you need to decide if you want to develop against the Stable or Develop version of Red.
+Depending on what your goal is should help determine which version you need.
+
+.. attention:: 
+    The Develop version may have changes on it which break compatibility with the Stable version and other cogs.
+    If your goal is to support both versions, make sure you build compatibility layers or use separate branches to keep compatibility until the next Red release
+
+Open a terminal or command prompt and type one of the following
+    Stable Version: :code:`python3.7 -m pip install -U Red-DiscordBot`
+    
+    Develop Version: :code:`python3.7 -m pip install -U git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=Red-DiscordBot`
+
+(Windows users may need to use :code:`py -3.7` or :code:`python` instead of :code:`python3.7`)
 
 --------------------
 Setting up a package
@@ -88,7 +98,7 @@ To test your cog, you will need a running instance of V3.
 Assuming you installed V3 as outlined above, run :code:`redbot-setup`
 and provide the requested information. Once that's done, run Red
 by doing :code:`redbot <instance name> --dev` to start Red.
-Complete the inital setup by providing a valid token and setting a
+Complete the initial setup by providing a valid token and setting a
 prefix. Once the bot has started up, use the link provided in the
 console to add it to a server (note that you must have the
 :code:`Manage Server` (or :code:`Administrator`) permission to add bots
@@ -98,6 +108,33 @@ to the directory where your cog package is located. In Discord, do
 :code:`[p]load mycog`. Once the cog is loaded, do :code:`[p]mycom`
 The bot should respond with :code:`I can do stuff!`. If it did, you
 have successfully created a cog!
+
+.. note:: **Package/Folder layout**
+
+    You must make sure you structure your local path correctly or 
+    you get an error about missing the setup function. As cogs are 
+    considered packages, they are each contained within separate folders.
+    The folder you need to add using :code:`[p]addpath` is the parent
+    folder of these package folders. Below is an example
+
+    .. code-block:: none
+
+        - D:\
+        -- red-env
+        -- red-data
+        -- red-cogs
+        ---- mycog
+        ------ __init__.py
+        ------ mycog.py
+        ---- coolcog
+        ------ __init__.py
+        ------ coolcog.py
+    
+    You would then use :code:`[p]addpath D:\red-cogs` to add the path
+    and then you can use :code:`[p]load mycog` or :code:`[p]load coolcog`
+    to load them
+    
+    You can also take a look at `our cookiecutter <https://github.com/Cog-Creators/cog-cookiecutter>`_, for help creating the right structure.
 
 --------------------
 Additional resources
