@@ -7,7 +7,7 @@ from typing import cast, Optional, Union
 
 import discord
 from redbot.core import commands, i18n, checks, modlog
-from redbot.core.utils.chat_formatting import pagify
+from redbot.core.utils.chat_formatting import pagify, humanize_number
 from redbot.core.utils.mod import is_allowed_by_hierarchy, get_audit_reason
 from .abc import MixinMeta
 from .converters import RawUserIds
@@ -127,16 +127,20 @@ class KickBanMixin(MixinMeta):
                         unban_time = datetime.utcfromtimestamp(
                             await self.settings.member(member(uid, guild)).banned_until()
                         )
-                        now = datetime.utcnow()
-                        if now > unban_time:  # Time to unban the user
+                        if datetime.utcnow() > unban_time:  # Time to unban the user
                             user = await self.bot.fetch_user(uid)
                             queue_entry = (guild.id, user.id)
                             try:
                                 await guild.unban(user, reason=_("Tempban finished"))
                                 guild_tempbans.remove(uid)
-                            except discord.Forbidden:
-                                log.info("Failed to unban member due to permissions")
                             except discord.HTTPException as e:
+                                # 50013: Missing permissions error code or 403: Forbidden status
+                                if e.code == 50013 or e.status == 403:
+                                    log.info(
+                                        f"Failed to unban {user}({user.id}) user from "
+                                        f"{guild.name}({guild.id}) guild due to permissions"
+                                    )
+                                    break  # skip the rest of this guild
                                 log.info(f"Failed to unban member: error code: {e.code}")
             await asyncio.sleep(60)
 
@@ -244,7 +248,9 @@ class KickBanMixin(MixinMeta):
         errors = {}
 
         async def show_results():
-            text = _("Banned {num} users from the server.").format(num=len(banned))
+            text = _("Banned {num} users from the server.").format(
+                num=humanize_number(len(banned))
+            )
             if errors:
                 text += _("\nErrors:\n")
                 text += "\n".join(errors.values())

@@ -28,7 +28,13 @@ __all__ = [
     "GroupMixin",
     "command",
     "group",
+    "RESERVED_COMMAND_NAMES",
 ]
+
+#: The following names are reserved for various reasons
+RESERVED_COMMAND_NAMES = (
+    "cancel",  # reserved due to use in ``redbot.core.utils.MessagePredicate``
+)
 
 _ = Translator("commands.commands", __file__)
 
@@ -155,6 +161,12 @@ class Command(CogCommandMixin, commands.Command):
         super().__init__(*args, **kwargs)
         self._help_override = kwargs.pop("help_override", None)
         self.translator = kwargs.pop("i18n", None)
+        if self.parent is None:
+            for name in (self.name, *self.aliases):
+                if name in RESERVED_COMMAND_NAMES:
+                    raise RuntimeError(
+                        f"The name `{name}` cannot be set as a command name. It is reserved for internal use."
+                    )
 
     def _ensure_assignment_on_copy(self, other):
         super()._ensure_assignment_on_copy(other)
@@ -574,6 +586,14 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
     """Mixin class for a cog, intended for use with discord.py's cog class"""
 
     @property
+    def all_commands(self) -> Dict[str, Command]:
+        """
+        This does not have identical behavior to 
+        Group.all_commands but should return what you expect
+        """
+        return {cmd.name: cmd for cmd in self.__cog_commands__}
+
+    @property
     def help(self):
         doc = self.__doc__
         translator = getattr(self, "__translator__", lambda s: s)
@@ -651,12 +671,12 @@ def command(name=None, cls=Command, **attrs):
     return commands.command(name, cls, **attrs)
 
 
-def group(name=None, **attrs):
+def group(name=None, cls=Group, **attrs):
     """A decorator which transforms an async function into a `Group`.
 
     Same interface as `discord.ext.commands.group`.
     """
-    return command(name, cls=Group, **attrs)
+    return command(name, cls, **attrs)
 
 
 __command_disablers = weakref.WeakValueDictionary()

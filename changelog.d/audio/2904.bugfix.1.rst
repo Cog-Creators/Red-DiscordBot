@@ -1,0 +1,1 @@
+``[p]audioset settings`` no longer shows lavalink JAR version.

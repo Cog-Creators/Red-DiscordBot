@@ -1,0 +1,1 @@
+Make embedset user only affect DM's

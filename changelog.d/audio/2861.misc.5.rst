@@ -1,0 +1,1 @@
+:method:`Audio.can_manage_playlist` is now used to check users permissions when managing playlists.

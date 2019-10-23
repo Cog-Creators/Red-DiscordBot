@@ -1,0 +1,1 @@
+Always append 3rd-party lib folder to the end of ``sys.path`` to avoid shadowing Red's dependencies.

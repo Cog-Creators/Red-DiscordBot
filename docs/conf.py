@@ -36,6 +36,7 @@ os.environ["BUILDING_DOCS"] = "1"
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.extlinks",
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
@@ -65,6 +66,7 @@ author = "Cog Creators"
 # built documents.
 #
 from redbot.core import __version__
+from discord import __version__ as dpy_version
 
 # The short X.Y version.
 version = __version__
@@ -209,9 +211,14 @@ linkcheck_ignore = [r"https://java.com*", r"https://chocolatey.org*"]
 # Intersphinx
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "dpy": ("https://discordpy.readthedocs.io/en/v1.0.1/", None),
+    "dpy": (f"https://discordpy.readthedocs.io/en/v{dpy_version}/", None),
     "motor": ("https://motor.readthedocs.io/en/stable/", None),
 }
+
+# Extlinks
+# This allows to create links to d.py docs with
+# :dpy_docs:`link text <site_name.html>`
+extlinks = {"dpy_docs": (f"https://discordpy.readthedocs.io/en/v{dpy_version}/%s", None)}
 
 # Doctest
 # If this string is non-empty, all blocks with ``>>>`` in them will be

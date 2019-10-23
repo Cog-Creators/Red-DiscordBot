@@ -19,17 +19,31 @@ GENERIC_FORBIDDEN = _(
     " Your command failed to successfully complete."
 )
 
-HIERARCHY_ISSUE = _(
-    "I tried to {verb} {role.name} to {member.display_name} but that role"
+HIERARCHY_ISSUE_ADD = _(
+    "I tried to add {role.name} to {member.display_name} but that role"
     " is higher than my highest role in the Discord hierarchy so I was"
     " unable to successfully add it. Please give me a higher role and "
     "try again."
 )
 
-USER_HIERARCHY_ISSUE = _(
-    "I tried to {verb} {role.name} to {member.display_name} but that role"
+HIERARCHY_ISSUE_REMOVE = _(
+    "I tried to remove {role.name} from {member.display_name} but that role"
+    " is higher than my highest role in the Discord hierarchy so I was"
+    " unable to successfully remove it. Please give me a higher role and "
+    "try again."
+)
+
+USER_HIERARCHY_ISSUE_ADD = _(
+    "I tried to add {role.name} to {member.display_name} but that role"
     " is higher than your highest role in the Discord hierarchy so I was"
     " unable to successfully add it. Please get a higher role and "
+    "try again."
+)
+
+USER_HIERARCHY_ISSUE_REMOVE = _(
+    "I tried to remove {role.name} from {member.display_name} but that role"
+    " is higher than your highest role in the Discord hierarchy so I was"
+    " unable to successfully remove it. Please get a higher role and "
     "try again."
 )
 
@@ -111,9 +125,7 @@ class Admin(commands.Cog):
             await member.add_roles(role)
         except discord.Forbidden:
             if not self.pass_hierarchy_check(ctx, role):
-                await self.complain(
-                    ctx, T_(HIERARCHY_ISSUE), role=role, member=member, verb=_("add")
-                )
+                await self.complain(ctx, T_(HIERARCHY_ISSUE_ADD), role=role, member=member)
             else:
                 await self.complain(ctx, T_(GENERIC_FORBIDDEN))
         else:
@@ -128,9 +140,7 @@ class Admin(commands.Cog):
             await member.remove_roles(role)
         except discord.Forbidden:
             if not self.pass_hierarchy_check(ctx, role):
-                await self.complain(
-                    ctx, T_(HIERARCHY_ISSUE), role=role, member=member, verb=_("remove")
-                )
+                await self.complain(ctx, T_(HIERARCHY_ISSUE_REMOVE), role=role, member=member)
             else:
                 await self.complain(ctx, T_(GENERIC_FORBIDDEN))
         else:
@@ -156,9 +166,7 @@ class Admin(commands.Cog):
             # noinspection PyTypeChecker
             await self._addrole(ctx, user, rolename)
         else:
-            await self.complain(
-                ctx, T_(USER_HIERARCHY_ISSUE), member=user, role=rolename, verb=_("add")
-            )
+            await self.complain(ctx, T_(USER_HIERARCHY_ISSUE_ADD), member=user, role=rolename)
 
     @commands.command()
     @commands.guild_only()
@@ -176,9 +184,7 @@ class Admin(commands.Cog):
             # noinspection PyTypeChecker
             await self._removerole(ctx, user, rolename)
         else:
-            await self.complain(
-                ctx, T_(USER_HIERARCHY_ISSUE), member=user, role=rolename, verb=_("remove")
-            )
+            await self.complain(ctx, T_(USER_HIERARCHY_ISSUE_REMOVE), member=user, role=rolename)
 
     @commands.group()
     @commands.guild_only()

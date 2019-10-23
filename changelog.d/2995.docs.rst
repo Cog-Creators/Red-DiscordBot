@@ -1,0 +1,1 @@
+Add direct link to "Installing Red" section in "Installing using powershell and chocolatey"

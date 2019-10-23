@@ -1,0 +1,1 @@
+`[p]bankset maxbal` can be used to set the maximum bank balance.
