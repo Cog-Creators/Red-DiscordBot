@@ -1,0 +1,1 @@
+Playlist are now stored in a dataclass and new APIs were added to interact with them see :module:`redbot.cogs.audio.playlist` for more details.

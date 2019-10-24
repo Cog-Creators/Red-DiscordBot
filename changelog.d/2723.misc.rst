@@ -1,0 +1,32 @@
+Changes to the ``redbot.core.drivers`` package:
+
+- The modules inside the ``redbot.core.drivers`` package no longer have the ``red_`` prefix in front of their names.
+- All driver classes are now directly accessible as attributes to the ``redbot.core.drivers`` package.
+- :func:`get_driver`'s signature has been changed.
+- :func:`get_driver` can now use data manager to infer the backend type if it is not supplied as an argument.
+- :func:`get_driver_class` has been added.
+
+Changes to the :class:`BaseDriver` and :class:`JsonDriver` classes class:
+
+- :meth:`BaseDriver.get_config_details` is an now abstract staticmethod.
+- :meth:`BaseDriver.initialize` and :meth:`BaseDriver.teardown` are two new abstract coroutine classmethods.
+- :meth:`BaseDriver.delete_all_data` is a new concrete (but overrideable) coroutine instance method.
+- :meth:`BaseDriver.aiter_cogs` is a new abstract asynchronous iterator method.
+- :meth:`BaseDriver.migrate_to` is a new concrete coroutine classmethod.
+- :class:`JsonDriver` no longer requires the data path when constructed and will infer the data path from data manager.
+
+Changes to the :class:`IdentifierData` class and :class:`ConfigCategory` enum:
+
+- ``IdentifierData.custom_group_data`` has been replaced by :attr:`IdentifierData.primary_key_len`.
+- :meth:`ConfigCategory.get_pkey_info` is a new classmethod.
+
+Changes to the migration and backup system:
+
+- All code in the ``redbot.setup`` script, excluding that regarding MongoV1, is now virtually backend-agnostic.
+- All code in the ``[p]backup`` is now backend-agnostic.
+- :func:`redbot.core.config.migrate` is a new coroutine function.
+- All a new driver needs to do now to be compatible with migrations and backups is to implement the :class:`BaseDriver` ABC.
+
+Enhancements to unit tests:
+
+- New tox recipes have been added for testing against Mongo and Postgres backends. See the ``tox.ini`` file for clues on how to run them.

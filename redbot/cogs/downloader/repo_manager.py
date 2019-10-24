@@ -612,7 +612,7 @@ class RepoManager:
         Returns
         -------
         `tuple` of `str`
-
+            Repo names.
         """
         # noinspection PyTypeChecker
         return tuple(self._repos.keys())
