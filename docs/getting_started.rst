@@ -162,7 +162,7 @@ there are hundreds of cogs available!
 
 .. 26-cogs not available, let's use my repo :3
 
-Cogs comes in repositories. A repository is a container of cogs
+Cogs come in repositories. A repository is a container of cogs
 that you can install. Let's suppose you want to install the ``say``
 cog from the repository ``Laggrons-Dumb-Cogs``. You'll first need
 to add the repository.
