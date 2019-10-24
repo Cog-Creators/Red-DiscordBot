@@ -18,9 +18,11 @@ _ = Translator("Mutes", __file__)
 
 __all__ = ("ChannelMuteResults", "ServerMuteResults")
 
+
 @dataclass()
 class ChannelMuteResults:
     """ Results of a channel mute """
+
     target: discord.Member
     expiry: Optional[datetime]
     channel: discord.abc.GuildChannel
@@ -43,6 +45,7 @@ class ServerMuteResults:
     """
     Results of a server mute.
     """
+
     target: discord.Member
     expiry: Optional[datetime]
     guild: discord.Guild

@@ -21,13 +21,11 @@ _ = Translator("Mutes", __file__)
 log = logging.getLogger("red.mutes")
 
 
-
-
 @cog_i18n(_)
 class Mutes(commands.Cog):
     """
     A cog to mute users with.
-    """ # Could use some help on this
+    """  # Could use some help on this
 
     def __init__(self, bot):
         self.bot = bot
@@ -416,7 +414,6 @@ class Mutes(commands.Cog):
         This allows easier delegation of command group objects.
         """
         pass
-
 
     @checks.admin_or_permissions(manage_guild=True)
     @commands.group()
