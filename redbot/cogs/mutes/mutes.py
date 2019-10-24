@@ -124,16 +124,20 @@ class Mutes(commands.Cog):
                     if delay < schedule_by_seconds:
                         self._server_unmute_tasks[(guild_id, mem_id)] = asyncio.create_task(
                             self._cancel_server_mute_delayed(
-                                delay=delay, guild_id=guild_id, member_id=member_id, record=record
+                                delay=delay, guild_id=guild_id, member_id=member_id
                             )
                         )
+        # TODO: schedule unmuting channels
 
-    async def _cancel_server_mute_delayed(
-        self, *, delay: float, guild_id: int, member_id: int, record: dict
-    ):
+    async def _cancel_channel_mute_delayed(self, *, delay: float, channel_id: int, member_id: int):
         """
-        This might need a lock on the custom groups during unmute. 
-        TODO Look into above, finish func, document it.
+        After a delay, attempt to unmute someone
+        """
+        raise NotImplemented  # TODO
+
+    async def _cancel_server_mute_delayed(self, *, delay: float, guild_id: int, member_id: int):
+        """
+        After a delay, attempt to unmute someone.
         """
         await asyncio.sleep(delay)
 
@@ -143,11 +147,60 @@ class Mutes(commands.Cog):
 
         member = guild.get_member(member_id)
 
-        if not member:  # Still clear this to avoid re-muting them after expiration.
+        if not member:  # Still clear this to avoid re-muting on-join after expiration.
             await self.config.custom("SERVER_MUTE", guild_id, member_id).clear()
             return
 
-        # TODO
+        async with self.config.custom("SERVER_MUTE", guild_id, member_id).get_lock():
+            record = await self.config.custom("SERVER_MUTE", guild_id, member_id).all(
+                acquire_lock=False
+            )
+            if not record["muted"]:
+                return
+
+            # Channel overwrites
+            channel_ids = list(record["perm_diffs"].keys())
+            for channel_id in channel_ids:
+
+                channel = guild.get_channel(int(channel_id))
+                if not channel:
+                    record["perm_diffs"].pop(channel_id, None)
+                    continue
+
+                if not channel.permissions_for(guild.me).manage_roles:
+                    continue
+
+                diff = OverwriteDiff.from_dict(record["perm_diffs"][channel_id])
+                try:
+                    await self.channel_unmute_from_diff(
+                        channel=channel,
+                        target=member,
+                        diff=diff,
+                        reason="Server tempmute expiration",
+                    )
+                except NoChangeError:  # already unmuted by something/someone else
+                    record["perm_diffs"].pop(channel_id, None)
+                except discord.HTTPException:
+                    continue
+
+            # Role update
+            role_id = record["role_used"]
+            role = guild.get_role(role_id)
+            if not role or role not in member.roles:
+                record["role_used"] = None
+            elif role < guild.me.top_role and guild.me.guild_permissions.manage_roles:
+                try:
+                    await member.remove_roles(role, reason="Server tempmute expiration")
+                except discord.HTTPException:
+                    pass
+                else:
+                    record["role_used"] = None
+
+            # Data writing
+            if not record["perm_diffs"] and not record["role_used"]:
+                await self.config.custom("SERVER_MUTE", guild_id, member_id).clear()
+            else:
+                await self.config.custom("SERVER_MUTE", guild_id, member_id).set(record)
 
     @staticmethod
     async def channel_mute_with_diff(
