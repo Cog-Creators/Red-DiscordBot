@@ -1,0 +1,1 @@
+``[p]playlist upload`` will now load playlists generated via ``[p]playlist download`` much faster if the playlist use the new scheme.

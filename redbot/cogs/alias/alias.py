@@ -89,8 +89,12 @@ class Alias(commands.Cog):
         return False, None
 
     def is_command(self, alias_name: str) -> bool:
+        """
+        The logic here is that if this returns true, the name shouldnt be used for an alias
+        The function name can be changed when alias is reworked
+        """
         command = self.bot.get_command(alias_name)
-        return command is not None
+        return command is not None or alias_name in commands.RESERVED_COMMAND_NAMES
 
     @staticmethod
     def is_valid_alias_name(alias_name: str) -> bool:
@@ -375,7 +379,7 @@ class Alias(commands.Cog):
             await ctx.send(_("There is no alias with the name `{name}`").format(name=alias_name))
 
     @checks.mod_or_permissions(manage_guild=True)
-    @alias.command(name="del")
+    @alias.command(name="delete", aliases=["del", "remove"])
     @commands.guild_only()
     async def _del_alias(self, ctx: commands.Context, alias_name: str):
         """Delete an existing alias on this server."""
@@ -394,7 +398,7 @@ class Alias(commands.Cog):
             await ctx.send(_("Alias with name `{name}` was not found.").format(name=alias_name))
 
     @checks.is_owner()
-    @global_.command(name="del")
+    @global_.command(name="delete", aliases=["del", "remove"])
     async def _del_global_alias(self, ctx: commands.Context, alias_name: str):
         """Delete an existing global alias."""
         aliases = await self.unloaded_global_aliases()

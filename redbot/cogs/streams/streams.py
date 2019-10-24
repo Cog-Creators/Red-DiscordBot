@@ -82,27 +82,27 @@ class Streams(commands.Cog):
     async def move_api_keys(self):
         """Move the API keys from cog stored config to core bot config if they exist."""
         tokens = await self.db.tokens()
-        youtube = await self.bot.db.api_tokens.get_raw("youtube", default={})
-        twitch = await self.bot.db.api_tokens.get_raw("twitch", default={})
+        youtube = await self.bot.get_shared_api_tokens("youtube")
+        twitch = await self.bot.get_shared_api_tokens("twitch")
         for token_type, token in tokens.items():
             if token_type == "YoutubeStream" and "api_key" not in youtube:
-                await self.bot.db.api_tokens.set_raw("youtube", value={"api_key": token})
+                await self.bot.set_shared_api_tokens("youtube", api_key=token)
             if token_type == "TwitchStream" and "client_id" not in twitch:
                 # Don't need to check Community since they're set the same
-                await self.bot.db.api_tokens.set_raw("twitch", value={"client_id": token})
+                await self.bot.set_shared_api_tokens("twitch", client_id=token)
         await self.db.tokens.clear()
 
     @commands.command()
     async def twitchstream(self, ctx: commands.Context, channel_name: str):
         """Check if a Twitch channel is live."""
-        token = await self.bot.db.api_tokens.get_raw("twitch", default={"client_id": None})
+        token = (await self.bot.get_shared_api_tokens("twitch")).get("client_id")
         stream = TwitchStream(name=channel_name, token=token)
         await self.check_online(ctx, stream)
 
     @commands.command()
     async def youtubestream(self, ctx: commands.Context, channel_id_or_name: str):
         """Check if a YouTube channel is live."""
-        apikey = await self.bot.db.api_tokens.get_raw("youtube", default={"api_key": None})
+        apikey = await self.bot.get_shared_api_tokens("youtube")
         is_name = self.check_name_or_id(channel_id_or_name)
         if is_name:
             stream = YoutubeStream(name=channel_id_or_name, token=apikey)
@@ -183,7 +183,9 @@ class Streams(commands.Cog):
     async def twitch_alert_channel(self, ctx: commands.Context, channel_name: str):
         """Toggle alerts in this channel for a Twitch stream."""
         if re.fullmatch(r"<#\d+>", channel_name):
-            await ctx.send("Please supply the name of a *Twitch* channel, not a Discord channel.")
+            await ctx.send(
+                _("Please supply the name of a *Twitch* channel, not a Discord channel.")
+            )
             return
         await self.stream_alert(ctx, TwitchStream, channel_name.lower())
 
@@ -271,7 +273,7 @@ class Streams(commands.Cog):
     async def stream_alert(self, ctx: commands.Context, _class, channel_name):
         stream = self.get_stream(_class, channel_name)
         if not stream:
-            token = await self.bot.db.api_tokens.get_raw(_class.token_name, default=None)
+            token = await self.bot.get_shared_api_tokens(_class.token_name)
             is_yt = _class.__name__ == "YoutubeStream"
             if is_yt and not self.check_name_or_id(channel_name):
                 stream = _class(id=channel_name, token=token)
@@ -316,18 +318,19 @@ class Streams(commands.Cog):
     @streamset.command()
     @checks.is_owner()
     async def twitchtoken(self, ctx: commands.Context):
-        """Explain how to set the twitch token"""
+        """Explain how to set the twitch token."""
 
         message = _(
             "To set the twitch API tokens, follow these steps:\n"
             "1. Go to this page: https://dev.twitch.tv/dashboard/apps.\n"
-            "2. Click *Register Your Application*\n"
-            "3. Enter a name, set the OAuth Redirect URI to `http://localhost`, and \n"
-            "select an Application Category of your choosing."
-            "4. Click *Register*, and on the following page, copy the Client ID.\n"
-            "5. do `{prefix}set api twitch client_id,your_client_id`\n\n"
+            "2. Click *Register Your Application*.\n"
+            "3. Enter a name, set the OAuth Redirect URI to `http://localhost`, and "
+            "select an Application Category of your choosing.\n"
+            "4. Click *Register*.\n"
+            "5. On the following page, copy the Client ID.\n"
+            "6. Run the command `{prefix}set api twitch client_id <your_client_id_here>`\n\n"
             "Note: These tokens are sensitive and should only be used in a private channel\n"
-            "or in DM with the bot.)\n"
+            "or in DM with the bot.\n"
         ).format(prefix=ctx.prefix)
 
         await ctx.maybe_send_embed(message)
@@ -335,17 +338,18 @@ class Streams(commands.Cog):
     @streamset.command()
     @checks.is_owner()
     async def youtubekey(self, ctx: commands.Context):
-        """Explain how to set the YouTube token"""
+        """Explain how to set the YouTube token."""
 
         message = _(
             "To get one, do the following:\n"
             "1. Create a project\n"
             "(see https://support.google.com/googleapi/answer/6251787 for details)\n"
             "2. Enable the YouTube Data API v3 \n"
-            "(see https://support.google.com/googleapi/answer/6158841for instructions)\n"
+            "(see https://support.google.com/googleapi/answer/6158841 for instructions)\n"
             "3. Set up your API key \n"
             "(see https://support.google.com/googleapi/answer/6158862 for instructions)\n"
-            "4. Copy your API key and do `{prefix}set api youtube api_key,your_api_key`\n\n"
+            "4. Copy your API key and run the command "
+            "`{prefix}set api youtube api_key <your_api_key_here>`\n\n"
             "Note: These tokens are sensitive and should only be used in a private channel\n"
             "or in DM with the bot.\n"
         ).format(prefix=ctx.prefix)
@@ -372,7 +376,7 @@ class Streams(commands.Cog):
         if message is not None:
             guild = ctx.guild
             await self.db.guild(guild).live_message_mention.set(message)
-            await ctx.send(_("stream alert message set!"))
+            await ctx.send(_("Stream alert message set!"))
         else:
             await ctx.send_help()
 
@@ -388,7 +392,7 @@ class Streams(commands.Cog):
         if message is not None:
             guild = ctx.guild
             await self.db.guild(guild).live_message_nomention.set(message)
-            await ctx.send(_("stream alert message set!"))
+            await ctx.send(_("Stream alert message set!"))
         else:
             await ctx.send_help()
 
@@ -545,7 +549,11 @@ class Streams(commands.Cog):
         for stream in self.streams:
             with contextlib.suppress(Exception):
                 try:
-                    embed, is_rerun = await stream.is_online()
+                    if stream.__class__.__name__ == "TwitchStream":
+                        embed, is_rerun = await stream.is_online()
+                    else:
+                        embed = await stream.is_online()
+                        is_rerun = False
                 except OfflineStream:
                     if not stream._messages_cache:
                         continue
@@ -643,8 +651,8 @@ class Streams(commands.Cog):
                         pass
                     else:
                         raw_stream["_messages_cache"].append(msg)
-            token = await self.bot.db.api_tokens.get_raw(_class.token_name, default=None)
-            if token is not None:
+            token = await self.bot.get_shared_api_tokens(_class.token_name)
+            if token:
                 raw_stream["token"] = token
             streams.append(_class(**raw_stream))
 

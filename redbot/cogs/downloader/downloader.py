@@ -1,6 +1,7 @@
 import asyncio
 import contextlib
 import os
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -42,14 +43,10 @@ class Downloader(commands.Cog):
         self.SHAREDLIB_PATH = self.LIB_PATH / "cog_shared"
         self.SHAREDLIB_INIT = self.SHAREDLIB_PATH / "__init__.py"
 
-        self.LIB_PATH.mkdir(parents=True, exist_ok=True)
         self.SHAREDLIB_PATH.mkdir(parents=True, exist_ok=True)
         if not self.SHAREDLIB_INIT.exists():
             with self.SHAREDLIB_INIT.open(mode="w", encoding="utf-8") as _:
                 pass
-
-        if str(self.LIB_PATH) not in syspath:
-            syspath.insert(1, str(self.LIB_PATH))
 
         self._repo_manager = RepoManager()
 
@@ -65,7 +62,7 @@ class Downloader(commands.Cog):
             The default cog install path.
 
         """
-        return await self.bot.cog_mgr.install_path()
+        return await self.bot._cog_mgr.install_path()
 
     async def installed_cogs(self) -> Tuple[Installable]:
         """Get info on installed cogs.
@@ -222,11 +219,16 @@ class Downloader(commands.Cog):
     async def _repo_add(self, ctx, name: str, repo_url: str, branch: str = None):
         """Add a new repo.
 
-        The name can only contain characters A-z, numbers and underscores.
+        Repo names can only contain characters A-z, numbers, underscores, and hyphens.
         The branch will be the default branch if not specified.
         """
         agreed = await do_install_agreement(ctx)
         if not agreed:
+            return
+        if re.match("^[a-zA-Z0-9_\-]*$", name) is None:
+            await ctx.send(
+                _("Repo names can only contain characters A-z, numbers, underscores, and hyphens.")
+            )
             return
         try:
             # noinspection PyTypeChecker
@@ -241,12 +243,18 @@ class Downloader(commands.Cog):
                 branch,
                 exc_info=err,
             )
+        except OSError:
+            await ctx.send(
+                _(
+                    "Something went wrong trying to add that repo. Your repo name might have an invalid character."
+                )
+            )
         else:
             await ctx.send(_("Repo `{name}` successfully added.").format(name=name))
             if repo.install_msg is not None:
                 await ctx.send(repo.install_msg.replace("[p]", ctx.prefix))
 
-    @repo.command(name="delete", aliases=["remove"], usage="<repo_name>")
+    @repo.command(name="delete", aliases=["remove", "del"], usage="<repo_name>")
     async def _repo_del(self, ctx, repo: Repo):
         """Remove a repo and its files."""
         await self._repo_manager.delete_repo(repo.name)
@@ -345,7 +353,7 @@ class Downloader(commands.Cog):
                 "Cog `{cog_name}` successfully installed. You can load it with `{prefix}load {cog_name}`"
             ).format(cog_name=cog_name, prefix=ctx.prefix)
         )
-        if cog.install_msg is not None:
+        if cog.install_msg:
             await ctx.send(cog.install_msg.replace("[p]", ctx.prefix))
 
     @cog.command(name="uninstall", usage="<cogs>")
@@ -424,35 +432,39 @@ class Downloader(commands.Cog):
             return await ctx.send(
                 _("None of the updated cogs were previously loaded. Update complete.")
             )
-        message = _("Would you like to reload the updated cogs?")
-        can_react = ctx.channel.permissions_for(ctx.me).add_reactions
-        if not can_react:
-            message += " (y/n)"
-        query: discord.Message = await ctx.send(message)
-        if can_react:
-            # noinspection PyAsyncCall
-            start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS, ctx.bot.loop)
-            pred = ReactionPredicate.yes_or_no(query, ctx.author)
-            event = "reaction_add"
-        else:
-            pred = MessagePredicate.yes_or_no(ctx)
-            event = "message"
-        try:
-            await ctx.bot.wait_for(event, check=pred, timeout=30)
-        except asyncio.TimeoutError:
-            await query.delete()
-            return
 
-        if pred.result is True:
+        if not ctx.assume_yes:
+            message = _("Would you like to reload the updated cogs?")
+            can_react = ctx.channel.permissions_for(ctx.me).add_reactions
+            if not can_react:
+                message += " (y/n)"
+            query: discord.Message = await ctx.send(message)
             if can_react:
-                with contextlib.suppress(discord.Forbidden):
-                    await query.clear_reactions()
-            await ctx.invoke(ctx.bot.get_cog("Core").reload, *cognames)
-        else:
-            if can_react:
-                await query.delete()
+                # noinspection PyAsyncCall
+                start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS, ctx.bot.loop)
+                pred = ReactionPredicate.yes_or_no(query, ctx.author)
+                event = "reaction_add"
             else:
-                await ctx.send(_("OK then."))
+                pred = MessagePredicate.yes_or_no(ctx)
+                event = "message"
+            try:
+                await ctx.bot.wait_for(event, check=pred, timeout=30)
+            except asyncio.TimeoutError:
+                await query.delete()
+                return
+
+            if not pred.result:
+                if can_react:
+                    await query.delete()
+                else:
+                    await ctx.send(_("OK then."))
+                return
+            else:
+                if can_react:
+                    with contextlib.suppress(discord.Forbidden):
+                        await query.clear_reactions()
+
+        await ctx.invoke(ctx.bot.get_cog("Core").reload, *cognames)
 
     @cog.command(name="list", usage="<repo_name>")
     async def _cog_list(self, ctx, repo: Repo):
@@ -586,12 +598,16 @@ class Downloader(commands.Cog):
             return
 
         # Check if in installed cogs
-        cog_name = self.cog_name_from_instance(command.cog)
-        installed, cog_installable = await self.is_installed(cog_name)
-        if installed:
-            msg = self.format_findcog_info(command_name, cog_installable)
+        cog = command.cog
+        if cog:
+            cog_name = self.cog_name_from_instance(cog)
+            installed, cog_installable = await self.is_installed(cog_name)
+            if installed:
+                msg = self.format_findcog_info(command_name, cog_installable)
+            else:
+                # Assume it's in a base cog
+                msg = self.format_findcog_info(command_name, cog)
         else:
-            # Assume it's in a base cog
-            msg = self.format_findcog_info(command_name, command.cog)
+            msg = _("This command is not provided by a cog.")
 
         await ctx.send(box(msg))

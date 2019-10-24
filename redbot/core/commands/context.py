@@ -1,6 +1,6 @@
 import asyncio
 import contextlib
-from typing import Iterable, List
+from typing import Iterable, List, Union
 import discord
 from discord.ext import commands
 
@@ -23,6 +23,7 @@ class Context(commands.Context):
     """
 
     def __init__(self, **attrs):
+        self.assume_yes = attrs.pop("assume_yes", False)
         super().__init__(**attrs)
         self.permission_state: PermState = PermState.NORMAL
 
@@ -80,6 +81,22 @@ class Context(commands.Context):
         """
         try:
             await self.message.add_reaction(TICK)
+        except discord.HTTPException:
+            return False
+        else:
+            return True
+
+    async def react_quietly(
+        self, reaction: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]
+    ) -> bool:
+        """Adds a reaction to to the command message.
+        Returns
+        -------
+        bool
+            :code:`True` if adding the reaction succeeded.
+        """
+        try:
+            await self.message.add_reaction(reaction)
         except discord.HTTPException:
             return False
         else:
@@ -158,10 +175,7 @@ class Context(commands.Context):
         discord.Colour:
             The colour to be used
         """
-        if self.guild and await self.bot.db.guild(self.guild).use_bot_color():
-            return self.guild.me.color
-        else:
-            return self.bot.color
+        return await self.bot.get_embed_color(self)
 
     @property
     def embed_color(self):

@@ -21,7 +21,7 @@ def interactive_config(red, token_set, prefix_set):
                 print("That doesn't look like a valid token.")
                 token = ""
             if token:
-                loop.run_until_complete(red.db.token.set(token))
+                loop.run_until_complete(red._config.token.set(token))
 
     if not prefix_set:
         prefix = ""
@@ -39,7 +39,7 @@ def interactive_config(red, token_set, prefix_set):
                 if not confirm("> "):
                     prefix = ""
             if prefix:
-                loop.run_until_complete(red.db.prefix.set([prefix]))
+                loop.run_until_complete(red._config.prefix.set([prefix]))
 
     return token
 
@@ -116,6 +116,12 @@ def parse_cli_flags(args):
         "--rpc",
         action="store_true",
         help="Enables the built-in RPC server. Please read the docs prior to enabling this!",
+    )
+    parser.add_argument(
+        "--rpc-port",
+        type=int,
+        default=6133,
+        help="The port of the built-in RPC server to use. Default to 6133.",
     )
     parser.add_argument("--token", type=str, help="Run Red with the given token.")
     parser.add_argument(

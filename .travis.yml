@@ -5,14 +5,10 @@ notifications:
   email: false
 
 python:
-- 3.7.2
+- 3.7.3
 env:
   global:
     - PIPENV_IGNORE_VIRTUALENVS=1
-  matrix:
-    - TOXENV=py
-    - TOXENV=docs
-    - TOXENV=style
 
 install:
 - pip install --upgrade pip tox
@@ -22,6 +18,19 @@ script:
 
 jobs:
   include:
+    - env: TOXENV=py
+    - env: TOXENV=docs
+    - env: TOXENV=style
+    - env: TOXENV=postgres
+      services: postgresql
+      addons:
+        postgresql: "10"
+      before_script:
+        - psql -c 'create database red_db;' -U postgres
+    - env: TOXENV=mongo
+      services: mongodb
+      before_script:
+        - mongo red_db --eval 'db.createUser({user:"red",pwd:"red",roles:["readWrite"]});'
     # These jobs only occur on tag creation if the prior ones succeed
     - stage: PyPi Deployment
       if: tag IS present
@@ -50,7 +59,7 @@ jobs:
       - echo "deb https://artifacts.crowdin.com/repo/deb/ /" | sudo tee -a /etc/apt/sources.list
       - sudo apt-get update -qq
       - sudo apt-get install -y crowdin
-      - pip install redgettext==2.2
+      - pip install redgettext==3.1
       deploy:
       - provider: script
         script: make upload_translations

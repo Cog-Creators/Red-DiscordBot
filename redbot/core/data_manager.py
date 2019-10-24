@@ -1,16 +1,17 @@
 import inspect
+import json
 import logging
 import os
 import sys
 import tempfile
 from copy import deepcopy
 from pathlib import Path
+from typing import Any, Dict
 
 import appdirs
 from discord.utils import deprecated
 
 from . import commands
-from .json_io import JsonIO
 
 __all__ = [
     "create_temp_config",
@@ -25,17 +26,20 @@ __all__ = [
 
 log = logging.getLogger("red.data_manager")
 
-jsonio = None
 basic_config = None
 
 instance_name = None
 
-basic_config_default = {"DATA_PATH": None, "COG_PATH_APPEND": "cogs", "CORE_PATH_APPEND": "core"}
+basic_config_default: Dict[str, Any] = {
+    "DATA_PATH": None,
+    "COG_PATH_APPEND": "cogs",
+    "CORE_PATH_APPEND": "core",
+}
 
 config_dir = None
 appdir = appdirs.AppDirs("Red-DiscordBot")
 if sys.platform == "linux":
-    if 0 < os.getuid() < 1000:
+    if 0 < os.getuid() < 1000:  # pylint: disable=no-member
         config_dir = Path(appdir.site_data_dir)
 if not config_dir:
     config_dir = Path(appdir.user_config_dir)
@@ -57,9 +61,13 @@ def create_temp_config():
     default_dirs["STORAGE_TYPE"] = "JSON"
     default_dirs["STORAGE_DETAILS"] = {}
 
-    config = JsonIO(config_file)._load_json()
+    with config_file.open("r", encoding="utf-8") as fs:
+        config = json.load(fs)
+
     config[name] = default_dirs
-    JsonIO(config_file)._save_json(config)
+
+    with config_file.open("w", encoding="utf-8") as fs:
+        json.dump(config, fs, indent=4)
 
 
 def load_basic_configuration(instance_name_: str):
@@ -76,21 +84,25 @@ def load_basic_configuration(instance_name_: str):
         The instance name given by CLI argument and created during
         redbot setup.
     """
-    global jsonio
     global basic_config
     global instance_name
-
-    jsonio = JsonIO(config_file)
-
     instance_name = instance_name_
 
     try:
-        config = jsonio._load_json()
-        basic_config = config[instance_name]
-    except (FileNotFoundError, KeyError):
+        with config_file.open(encoding="utf-8") as fs:
+            config = json.load(fs)
+    except FileNotFoundError:
         print(
             "You need to configure the bot instance using `redbot-setup`"
             " prior to running the bot."
+        )
+        sys.exit(1)
+    try:
+        basic_config = config[instance_name]
+    except KeyError:
+        print(
+            "Instance with this name doesn't exist."
+            " You can create new instance using `redbot-setup` prior to running the bot."
         )
         sys.exit(1)
 
@@ -202,6 +214,7 @@ def storage_type() -> str:
     Returns
     -------
     str
+        Storage type.
     """
     try:
         return basic_config["STORAGE_TYPE"]
@@ -217,8 +230,6 @@ def storage_details() -> dict:
     Returns
     -------
     dict
+        Storage details.
     """
-    try:
-        return basic_config["STORAGE_DETAILS"]
-    except KeyError as e:
-        raise RuntimeError("Bot basic config has not been loaded yet.") from e
+    return basic_config.get("STORAGE_DETAILS", {})

@@ -21,7 +21,7 @@
   <a href="https://crowdin.com/project/red-discordbot">
     <img src="https://d322cqt584bo4o.cloudfront.net/red-discordbot/localized.svg" alt="Localized with Crowdin">
   </a>
-  <a href="https://github.com/Rapptz/discord.py/tree/rewrite">
+  <a href="https://github.com/Rapptz/discord.py/">
       <img src="https://img.shields.io/badge/discord-py-blue.svg" alt="discord.py">
   </a>
 </p>
@@ -29,8 +29,8 @@
   <a href="https://travis-ci.com/Cog-Creators/Red-DiscordBot">
     <img src="https://api.travis-ci.com/Cog-Creators/Red-DiscordBot.svg?branch=V3/develop" alt="Travis CI">
   </a>
-  <a href="http://red-discordbot.readthedocs.io/en/v3-develop/?badge=v3-develop">
-    <img src="https://readthedocs.org/projects/red-discordbot/badge/?version=v3-develop" alt="Red on readthedocs.org">
+  <a href="http://red-discordbot.readthedocs.io/en/stable/?badge=stable">
+    <img src="https://readthedocs.org/projects/red-discordbot/badge/?version=stable" alt="Red on readthedocs.org">
   </a>
   <a href="https://github.com/ambv/black">
     <img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code Style: Black">
@@ -45,7 +45,7 @@
   •
   <a href="#installation">Installation</a>
   •
-  <a href="http://red-discordbot.readthedocs.io/en/v3-develop/index.html">Documentation</a>
+  <a href="http://red-discordbot.readthedocs.io/en/stable/index.html">Documentation</a>
   •
   <a href="#plugins">Plugins</a>
   •
@@ -83,14 +83,9 @@ community of cog repositories.**
 
 **The following platforms are officially supported:** 
 
-- [Windows](https://red-discordbot.readthedocs.io/en/v3-develop/install_windows.html)
-- [MacOS](https://red-discordbot.readthedocs.io/en/v3-develop/install_linux_mac.html)
-- [Ubuntu](https://red-discordbot.readthedocs.io/en/v3-develop/install_linux_mac.html)
-- [Debian Stretch](https://red-discordbot.readthedocs.io/en/v3-develop/install_linux_mac.html)
-- [CentOS 7](https://red-discordbot.readthedocs.io/en/v3-develop/install_linux_mac.html)
-- [Arch Linux](https://red-discordbot.readthedocs.io/en/v3-develop/install_linux_mac.html)
-- [Raspbian Stretch](https://red-discordbot.readthedocs.io/en/v3-develop/install_linux_mac.html)
-
+- [Windows](https://red-discordbot.readthedocs.io/en/stable/install_windows.html)
+- [MacOS](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html)
+- [Most major linux distributions](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html)
 
 If after reading the guide you are still experiencing issues, feel free to join the
 [Official Discord Server](https://discord.gg/red) and ask in the **#support** channel for help.
@@ -106,7 +101,7 @@ plugins directly from Discord! A few examples are:
 - Casino
 - Reaction roles
 - Slow Mode
-- Anilist
+- AniList
 - And much, much more!
 
 Feel free to take a [peek](https://cogboard.red/t/approved-repositories/210) at a list of
@@ -117,7 +112,7 @@ available 3rd party cogs!
 **Red** is in continuous development, and it’s supported by an active community which produces new
 content (cogs/plugins) for everyone to enjoy. New features are constantly added. If you can’t
 [find](https://cogboard.red/t/approved-repositories/210) the cog you’re looking for,
-consult our [guide](https://red-discordbot.readthedocs.io/en/v3-develop/guide_cog_creation.html) on
+consult our [guide](https://red-discordbot.readthedocs.io/en/stable/guide_cog_creation.html) on
 building your own cogs!
 
 Join us on our [Official Discord Server](https://discord.gg/red)!

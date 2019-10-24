@@ -3,7 +3,6 @@ import sys as _sys
 import warnings as _warnings
 from math import inf as _inf
 from typing import (
-    Any as _Any,
     ClassVar as _ClassVar,
     Dict as _Dict,
     List as _List,
@@ -174,7 +173,7 @@ class VersionInfo:
         )
 
 
-__version__ = "3.1.1"
+__version__ = "3.1.6"
 version_info = VersionInfo.from_str(__version__)
 
 # Filter fuzzywuzzy slow sequence matcher warning

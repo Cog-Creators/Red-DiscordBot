@@ -1,7 +1,9 @@
 import asyncio
+import json
 import logging
 import os
 import shutil
+import tarfile
 from asyncio import AbstractEventLoop, as_completed, Semaphore
 from asyncio.futures import isfuture
 from itertools import chain
@@ -19,13 +21,19 @@ from typing import (
     Tuple,
     TypeVar,
     Union,
+    Set,
+    TYPE_CHECKING,
 )
 
 import discord
+from datetime import datetime
 from fuzzywuzzy import fuzz, process
-from redbot.core import commands
 
+from .. import commands, data_manager
 from .chat_formatting import box
+
+if TYPE_CHECKING:
+    from ..commands import Command, Context
 
 __all__ = [
     "bounded_gather",
@@ -33,6 +41,7 @@ __all__ = [
     "fuzzy_command_search",
     "format_fuzzy_results",
     "deduplicate_iterables",
+    "create_backup",
 ]
 
 _T = TypeVar("_T")
@@ -58,18 +67,19 @@ logging.getLogger().addFilter(_fuzzy_log_filter)
 def safe_delete(pth: Path):
     if pth.exists():
         for root, dirs, files in os.walk(str(pth)):
-            os.chmod(root, 0o755)
+            os.chmod(root, 0o700)
 
             for d in dirs:
-                os.chmod(os.path.join(root, d), 0o755)
+                os.chmod(os.path.join(root, d), 0o700)
 
             for f in files:
-                os.chmod(os.path.join(root, f), 0o755)
+                os.chmod(os.path.join(root, f), 0o700)
 
         shutil.rmtree(str(pth), ignore_errors=True)
 
 
-class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):
+# https://github.com/PyCQA/pylint/issues/2717
+class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=duplicate-bases
     """Class returned by `async_filter`. See that function for details.
 
     We don't recommend instantiating this class directly.
@@ -111,6 +121,9 @@ class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):
 
     async def __flatten(self) -> List[_T]:
         return [item async for item in self]
+
+    def __aiter__(self):
+        return self
 
     def __await__(self):
         # Simply return the generator filled into a list
@@ -176,12 +189,12 @@ async def async_enumerate(
 
 
 async def fuzzy_command_search(
-    ctx: commands.Context,
+    ctx: "Context",
     term: Optional[str] = None,
     *,
-    commands: Optional[list] = None,
+    commands: Optional[Set["Command"]] = None,
     min_score: int = 80,
-) -> Optional[List[commands.Command]]:
+) -> Optional[List["Command"]]:
     """Search for commands which are similar in name to the one invoked.
 
     Returns a maximum of 5 commands which must all be at least matched
@@ -192,8 +205,11 @@ async def fuzzy_command_search(
     ctx : `commands.Context <redbot.core.commands.Context>`
         The command invocation context.
     term : Optional[str]
-        The name of the invoked command. If ``None``, `Context.invoked_with`
-        will be used instead.
+        The name of the invoked command. If ``None``,
+        `Context.invoked_with` will be used instead.
+    commands : Optional[Set[commands.Command]]
+        The commands available to choose from when doing a fuzzy match.
+        When omitted, `Bot.walk_commands` will be used instead.
     min_score : int
         The minimum score for matched commands to reach. Defaults to 80.
 
@@ -205,9 +221,9 @@ async def fuzzy_command_search(
 
     """
     if ctx.guild is not None:
-        enabled = await ctx.bot.db.guild(ctx.guild).fuzzy()
+        enabled = await ctx.bot._config.guild(ctx.guild).fuzzy()
     else:
-        enabled = await ctx.bot.db.fuzzy()
+        enabled = await ctx.bot._config.fuzzy()
 
     if not enabled:
         return
@@ -235,7 +251,7 @@ async def fuzzy_command_search(
 
     # Do the scoring. `extracted` is a list of tuples in the form `(command, score)`
     extracted = process.extract(
-        term, (commands or ctx.bot.walk_commands()), limit=5, scorer=fuzz.QRatio
+        term, (commands or set(ctx.bot.walk_commands())), limit=5, scorer=fuzz.QRatio
     )
     if not extracted:
         return
@@ -253,10 +269,7 @@ async def fuzzy_command_search(
 
 
 async def format_fuzzy_results(
-    ctx: commands.Context,
-    matched_commands: List[commands.Command],
-    *,
-    embed: Optional[bool] = None,
+    ctx: "Context", matched_commands: List["Command"], *, embed: Optional[bool] = None
 ) -> Union[str, discord.Embed]:
     """Format the result of a fuzzy command search.
 
@@ -389,3 +402,45 @@ def bounded_gather(
     tasks = (_sem_wrapper(semaphore, task) for task in coros_or_futures)
 
     return asyncio.gather(*tasks, loop=loop, return_exceptions=return_exceptions)
+
+
+async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
+    data_path = Path(data_manager.core_data_path().parent)
+    if not data_path.exists():
+        return
+
+    dest.mkdir(parents=True, exist_ok=True)
+    timestr = datetime.utcnow().strftime("%Y-%m-%dT%H-%M-%S")
+    backup_fpath = dest / f"redv3_{data_manager.instance_name}_{timestr}.tar.gz"
+
+    to_backup = []
+    exclusions = [
+        "__pycache__",
+        "Lavalink.jar",
+        os.path.join("Downloader", "lib"),
+        os.path.join("CogManager", "cogs"),
+        os.path.join("RepoManager", "repos"),
+    ]
+
+    # Avoiding circular imports
+    from ...cogs.downloader.repo_manager import RepoManager
+
+    repo_mgr = RepoManager()
+    await repo_mgr.initialize()
+    repo_output = []
+    for _, repo in repo_mgr._repos:
+        repo_output.append({"url": repo.url, "name": repo.name, "branch": repo.branch})
+    repos_file = data_path / "cogs" / "RepoManager" / "repos.json"
+    with repos_file.open("w") as fs:
+        json.dump(repo_output, fs, indent=4)
+    instance_file = data_path / "instance.json"
+    with instance_file.open("w") as fs:
+        json.dump({data_manager.instance_name: data_manager.basic_config}, fs, indent=4)
+    for f in data_path.glob("**/*"):
+        if not any(ex in str(f) for ex in exclusions) and f.is_file():
+            to_backup.append(f)
+
+    with tarfile.open(str(backup_fpath), "w:gz") as tar:
+        for f in to_backup:
+            tar.add(str(f), arcname=f.relative_to(data_path), recursive=False)
+    return backup_fpath

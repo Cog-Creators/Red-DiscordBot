@@ -1,3 +1,4 @@
+import logging
 import re
 from datetime import datetime, timedelta
 from typing import Union, List, Callable, Set
@@ -7,12 +8,14 @@ import discord
 from redbot.core import checks, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils.chat_formatting import humanize_number
 from redbot.core.utils.mod import slow_deletion, mass_purge
-from redbot.cogs.mod.log import log
 from redbot.core.utils.predicates import MessagePredicate
 from .converters import RawMessageIds
 
 _ = Translator("Cleanup", __file__)
+
+log = logging.getLogger("red.cleanup")
 
 
 @cog_i18n(_)
@@ -33,8 +36,13 @@ class Cleanup(commands.Cog):
         Tries its best to cleanup after itself if the response is positive.
         """
 
+        if ctx.assume_yes:
+            return True
+
         prompt = await ctx.send(
-            _("Are you sure you want to delete {number} messages? (y/n)").format(number=number)
+            _("Are you sure you want to delete {number} messages? (y/n)").format(
+                number=humanize_number(number)
+            )
         )
         response = await ctx.bot.wait_for("message", check=MessagePredicate.same_context(ctx))
 
@@ -147,7 +155,11 @@ class Cleanup(commands.Cog):
         to_delete.append(ctx.message)
 
         reason = "{}({}) deleted {} messages containing '{}' in channel {}.".format(
-            author.name, author.id, len(to_delete), text, channel.id
+            author.name,
+            author.id,
+            humanize_number(len(to_delete), override_locale="en_us"),
+            text,
+            channel.id,
         )
         log.info(reason)
 
@@ -203,7 +215,14 @@ class Cleanup(commands.Cog):
         reason = (
             "{}({}) deleted {} messages "
             " made by {}({}) in channel {}."
-            "".format(author.name, author.id, len(to_delete), member or "???", _id, channel.name)
+            "".format(
+                author.name,
+                author.id,
+                humanize_number(len(to_delete), override_locale="en_US"),
+                member or "???",
+                _id,
+                channel.name,
+            )
         )
         log.info(reason)
 
@@ -235,7 +254,10 @@ class Cleanup(commands.Cog):
         )
 
         reason = "{}({}) deleted {} messages in channel {}.".format(
-            author.name, author.id, len(to_delete), channel.name
+            author.name,
+            author.id,
+            humanize_number(len(to_delete), override_locale="en_US"),
+            channel.name,
         )
         log.info(reason)
 
@@ -272,7 +294,10 @@ class Cleanup(commands.Cog):
         to_delete.append(ctx.message)
 
         reason = "{}({}) deleted {} messages in channel {}.".format(
-            author.name, author.id, len(to_delete), channel.name
+            author.name,
+            author.id,
+            humanize_number(len(to_delete), override_locale="en_US"),
+            channel.name,
         )
         log.info(reason)
 
@@ -299,13 +324,13 @@ class Cleanup(commands.Cog):
         author = ctx.author
         try:
             mone = await channel.fetch_message(one)
-        except discord.errors.Notfound:
+        except discord.errors.NotFound:
             return await ctx.send(
                 _("Could not find a message with the ID of {id}.".format(id=one))
             )
         try:
             mtwo = await channel.fetch_message(two)
-        except discord.errors.Notfound:
+        except discord.errors.NotFound:
             return await ctx.send(
                 _("Could not find a message with the ID of {id}.".format(id=two))
             )
@@ -314,7 +339,10 @@ class Cleanup(commands.Cog):
         )
         to_delete.append(ctx.message)
         reason = "{}({}) deleted {} messages in channel {}.".format(
-            author.name, author.id, len(to_delete), channel.name
+            author.name,
+            author.id,
+            humanize_number(len(to_delete), override_locale="en_US"),
+            channel.name,
         )
         log.info(reason)
 
@@ -415,7 +443,12 @@ class Cleanup(commands.Cog):
         reason = (
             "{}({}) deleted {} "
             " command messages in channel {}."
-            "".format(author.name, author.id, len(to_delete), channel.name)
+            "".format(
+                author.name,
+                author.id,
+                humanize_number(len(to_delete), override_locale="en_US"),
+                channel.name,
+            )
         )
         log.info(reason)
 
@@ -495,7 +528,12 @@ class Cleanup(commands.Cog):
         reason = (
             "{}({}) deleted {} messages "
             "sent by the bot in {}."
-            "".format(author.name, author.id, len(to_delete), channel_name)
+            "".format(
+                author.name,
+                author.id,
+                humanize_number(len(to_delete), override_locale="en_US"),
+                channel_name,
+            )
         )
         log.info(reason)
 

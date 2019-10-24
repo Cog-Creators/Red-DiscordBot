@@ -36,11 +36,12 @@ os.environ["BUILDING_DOCS"] = "1"
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.extlinks",
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx.ext.doctest",
-    "sphinxcontrib.asyncio",
+    "sphinxcontrib_trio",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -65,6 +66,7 @@ author = "Cog Creators"
 # built documents.
 #
 from redbot.core import __version__
+from discord import __version__ as dpy_version
 
 # The short X.Y version.
 version = __version__
@@ -92,6 +94,12 @@ todo_include_todos = False
 # Role which is assigned when you make a simple reference within backticks
 default_role = "any"
 
+# Includes substitutions for all files
+with open("prolog.txt", "r") as file:
+    rst_prolog = file.read()
+
+# Adds d.py version to available substitutions in all files
+rst_prolog += f"\n.. |DPY_VERSION| replace:: {dpy_version}"
 
 # -- Options for HTML output ----------------------------------------------
 
@@ -99,6 +107,9 @@ default_role = "any"
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
+
+# This will be needed until sphinx_rtd_theme supports the html5 writer
+html4_writer = True
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -203,11 +214,20 @@ linkcheck_ignore = [r"https://java.com*", r"https://chocolatey.org*"]
 # Intersphinx
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "dpy": ("https://discordpy.readthedocs.io/en/v1.0.1/", None),
+    "dpy": (f"https://discordpy.readthedocs.io/en/v{dpy_version}/", None),
     "motor": ("https://motor.readthedocs.io/en/stable/", None),
 }
+
+# Extlinks
+# This allows to create links to d.py docs with
+# :dpy_docs:`link text <site_name.html>`
+extlinks = {"dpy_docs": (f"https://discordpy.readthedocs.io/en/v{dpy_version}/%s", None)}
 
 # Doctest
 # If this string is non-empty, all blocks with ``>>>`` in them will be
 # tested, not just the ones explicitly marked with ``.. doctest::``
 doctest_test_doctest_blocks = ""
+
+# Autodoc options
+autodoc_default_flags = ["show-inheritance"]
+autodoc_typehints = "none"

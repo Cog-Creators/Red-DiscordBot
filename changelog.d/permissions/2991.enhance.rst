@@ -1,0 +1,1 @@
+Clear out usage of commands with ``<who_or_what>`` argument.
