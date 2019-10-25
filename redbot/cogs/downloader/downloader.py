@@ -220,9 +220,9 @@ class Downloader(commands.Cog):
             if cog.commit:
                 modules.add(cog)
                 continue
-            last_cog_occurence = await cog.repo.get_last_module_occurrence(cog.name)
-            if last_cog_occurence is not None:
-                cogs_to_update.add(last_cog_occurence)
+            last_cog_occurrence = await cog.repo.get_last_module_occurrence(cog.name)
+            if last_cog_occurrence is not None:
+                cogs_to_update.add(last_cog_occurrence)
 
         # Reduces diff requests to a single dict with no repeats
         hashes: Dict[Tuple[Repo, str], Set[InstalledModule]] = defaultdict(set)
@@ -416,7 +416,7 @@ class Downloader(commands.Cog):
         agreed = await do_install_agreement(ctx)
         if not agreed:
             return
-        if re.match("^[a-zA-Z0-9_\-]*$", name) is None:
+        if re.match(r"^[a-zA-Z0-9_\-]*$", name) is None:
             await ctx.send(
                 _("Repo names can only contain characters A-z, numbers, underscores, and hyphens.")
             )

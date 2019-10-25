@@ -100,11 +100,12 @@ class Repo(RepoJSONMixin):
     GIT_LOG = "git -C {path} log --relative-date --reverse {old_rev}.. {relative_file_path}"
     GIT_DISCOVER_REMOTE_URL = "git -C {path} config --get remote.origin.url"
     GIT_CHECKOUT = "git -C {path} checkout {rev}"
-    GIT_GET_FULL_SHA1 = "git -C {path} rev-parse --verify {rev}"
+    GIT_GET_FULL_SHA1 = "git -C {path} rev-parse --verify {rev}^{{commit}}"
     GIT_IS_ANCESTOR = (
         "git -C {path} merge-base --is-ancestor {maybe_ancestor_rev} {descendant_rev}"
     )
     GIT_CHECK_IF_MODULE_EXISTS = "git -C {path} cat-file -e {rev}:{module_name}/__init__.py"
+    # ↓ this gives a commit after last occurrence
     GIT_GET_LAST_MODULE_OCCURRENCE_COMMIT = (
         "git -C {path} log --diff-filter=D --pretty=format:%H -n 1 {descendant_rev}"
         " -- {module_name}/__init__.py"
@@ -215,7 +216,7 @@ class Repo(RepoJSONMixin):
 
     async def _get_file_update_statuses(
         self, old_rev: str, new_rev: Optional[str] = None
-    ) -> MutableMapping[str, str]:
+    ) -> Dict[str, str]:
         """
         Gets the file update status letters for each changed file between the two revisions.
 
@@ -228,7 +229,7 @@ class Repo(RepoJSONMixin):
 
         Returns
         -------
-        dict
+        Dict[str, str]
             Mapping of filename -> status_letter
 
         """
@@ -362,14 +363,17 @@ class Repo(RepoJSONMixin):
         if new_rev is None:
             new_rev = self.branch
         modified_modules = set()
+        # check differences
         for status in await self._get_file_update_statuses(old_rev, new_rev):
             match = self.MODULE_FOLDER_REGEX.match(status)
             if match is not None:
                 modified_modules.add(match.group(1))
 
         async with self.checkout(old_rev):
+            # save old modules
             old_hash = self.commit
             old_modules = self.available_modules
+            # save new modules
             await self.checkout(new_rev)
             modules = []
             new_modules = self.available_modules
@@ -379,6 +383,7 @@ class Repo(RepoJSONMixin):
                 try:
                     index = new_modules.index(old_module)
                 except ValueError:
+                    # module doesn't exist in this revision, try finding previous occurrence
                     module = await self.get_last_module_occurrence(old_module.name, new_rev)
                     if module is not None and await self._is_module_modified(module, old_hash):
                         modules.append(module)
@@ -512,6 +517,11 @@ class Repo(RepoJSONMixin):
                     log.error(stderr)
             return p
 
+    async def _setup_repo(self) -> None:
+        self.commit = await self.current_commit()
+        self._read_info_file()
+        self._update_available_modules()
+
     async def _checkout(self, rev: Optional[str] = None, force_checkout: bool = False) -> None:
         if rev is None:
             return
@@ -532,9 +542,7 @@ class Repo(RepoJSONMixin):
                 "Could not checkout to {}. This revision may not exist".format(rev)
             )
 
-        self.commit = await self.current_commit()
-        self._update_available_modules()
-        self._read_info_file()
+        await self._setup_repo()
 
     def checkout(
         self,
@@ -609,10 +617,9 @@ class Repo(RepoJSONMixin):
         if self.branch is None:
             self.branch = await self.current_branch()
 
-        self.commit = await self.latest_commit()
-        self._read_info_file()
+        await self._setup_repo()
 
-        return self._update_available_modules()
+        return self.available_modules
 
     async def current_branch(self) -> str:
         """Determine the current branch using git commands.
@@ -777,13 +784,9 @@ class Repo(RepoJSONMixin):
                 " for the repo located at path: {}".format(self.folder_path)
             )
 
-        new_commit = await self.latest_commit()
+        await self._setup_repo()
 
-        self.commit = new_commit
-        self._update_available_modules()
-        self._read_info_file()
-
-        return old_commit, new_commit
+        return old_commit, self.commit
 
     async def install_cog(self, cog: Installable, target_dir: Path) -> InstalledModule:
         """Install a cog to the target directory.
@@ -950,13 +953,13 @@ class Repo(RepoJSONMixin):
 
     @classmethod
     async def from_folder(cls, folder: Path, branch: str = "") -> Repo:
-        repo = cls(name=folder.stem, branch=branch, commit="", url="", folder_path=folder)
+        repo = cls(name=folder.stem, url="", branch=branch, commit="", folder_path=folder)
         repo.url = await repo.current_url()
         if branch == "":
             repo.branch = await repo.current_branch()
+            repo._update_available_modules()
         else:
             await repo.checkout(repo.branch, force_checkout=True)
-        repo._update_available_modules()
         return repo
 
 
@@ -1094,18 +1097,32 @@ class RepoManager:
             pass
 
     async def update_repo(self, repo_name: str) -> Tuple[Repo, Tuple[str, str]]:
+        """Update repo with provided name.
+
+        Parameters
+        ----------
+        name : str
+            The name of the repository to update.
+
+        Returns
+        -------
+        Tuple[Repo, Tuple[str, str]]
+            A 2-`tuple` with Repo object and a 2-`tuple` of `str`
+            containing old and new commit hashes.
+
+        """
         repo = self._repos[repo_name]
         old, new = await repo.update()
         return (repo, (old, new))
 
-    async def update_all_repos(self) -> MutableMapping[Repo, Tuple[str, str]]:
+    async def update_all_repos(self) -> Dict[Repo, Tuple[str, str]]:
         """Call `Repo.update` on all repositories.
 
         Returns
         -------
-        dict
-            A mapping of `Repo` objects that received new commits to a `tuple`
-            of `str` containing old and new commit hashes.
+        Dict[Repo, Tuple[str, str]]
+            A mapping of `Repo` objects that received new commits to
+            a 2-`tuple` of `str` containing old and new commit hashes.
 
         """
         ret = {}
@@ -1115,7 +1132,7 @@ class RepoManager:
                 ret[repo] = (old, new)
         return ret
 
-    async def _load_repos(self, set_repos: bool = False) -> MutableMapping[str, Repo]:
+    async def _load_repos(self, set_repos: bool = False) -> Dict[str, Repo]:
         ret = {}
         self.repos_folder.mkdir(parents=True, exist_ok=True)
         for folder in self.repos_folder.iterdir():
