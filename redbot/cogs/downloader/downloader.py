@@ -36,7 +36,7 @@ class Downloader(commands.Cog):
 
         self.conf = Config.get_conf(self, identifier=998240343, force_registration=True)
 
-        self.conf.register_global(installed_cogs={}, installed_libraries={})
+        self.conf.register_global(schema_version=0, installed_cogs={}, installed_libraries={})
 
         self.already_agreed = False
 
@@ -53,10 +53,21 @@ class Downloader(commands.Cog):
 
     async def initialize(self) -> None:
         await self._repo_manager.initialize()
-        await self._maybe_update_conf_format()
+        await self._maybe_update_config()
 
-    async def _maybe_update_conf_format(self) -> None:
-        # backwards compatibility conf format update
+    async def _maybe_update_config(self) -> None:
+        schema_version = await self.conf.schema_version()
+
+        if schema_version == 0:
+            await self._schema_0_to_1()
+            schema_version += 1
+            await self.conf.schema_version.set(schema_version)
+
+    async def _schema_0_to_1(self):
+        """
+        This contains migration to allow saving state
+        of both installed cogs and shared libraries.
+        """
         old_conf = await self.conf.get_raw("installed", default=[])
         if not old_conf:
             return
