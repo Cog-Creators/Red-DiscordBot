@@ -5,8 +5,7 @@ import re
 import shutil
 import sys
 from pathlib import Path
-from sys import path as syspath
-from typing import Tuple, Union, Iterable, Optional, Dict, Set, List
+from typing import Tuple, Union, Iterable, Optional, Dict, Set, List, cast
 from collections import defaultdict
 
 import discord
@@ -214,9 +213,12 @@ class Downloader(commands.Cog):
         repos = {cog.repo for cog in cogs if cog.repo is not None}
         installed_libraries = await self.installed_libraries()
 
-        modules: Set[Installable] = set()
+        modules: Set[InstalledModule] = set()
         cogs_to_update: Set[Installable] = set()
         libraries_to_update: Set[Installable] = set()
+        # split libraries and cogs into 2 categories:
+        # 1. `cogs_to_update`, `libraries_to_update` - module needs update, skip diffs
+        # 2. `modules` - module MAY need update, check diffs
         for repo in repos:
             for lib in repo.available_libraries:
                 try:
@@ -227,10 +229,12 @@ class Downloader(commands.Cog):
                     modules.add(installed_libraries[index])
         for cog in cogs:
             if cog.repo is None:
+                # cog had its repo removed, can't check for updates
                 continue
             if cog.commit:
                 modules.add(cog)
                 continue
+            # marking cog for update if there's no commit data saved (back-compat, see GH-2571)
             last_cog_occurrence = await cog.repo.get_last_module_occurrence(cog.name)
             if last_cog_occurrence is not None:
                 cogs_to_update.add(last_cog_occurrence)
@@ -238,6 +242,7 @@ class Downloader(commands.Cog):
         # Reduces diff requests to a single dict with no repeats
         hashes: Dict[Tuple[Repo, str], Set[InstalledModule]] = defaultdict(set)
         for module in modules:
+            module.repo = cast(Repo, module.repo)
             if module.repo.commit != module.commit and await module.repo.is_ancestor(
                 module.commit, module.repo.commit
             ):
@@ -250,6 +255,7 @@ class Downloader(commands.Cog):
                 try:
                     index = modified.index(module)
                 except ValueError:
+                    # module wasn't modified - we just need to update its commit
                     module.commit = repo.commit
                     update_commits.append(module)
                 else:
@@ -282,6 +288,7 @@ class Downloader(commands.Cog):
             try:
                 repo_by_commit = repos[cog.repo_name]
             except KeyError:
+                cog.repo = cast(Repo, cog.repo)  # docstring specifies this already
                 repo_by_commit = repos[cog.repo_name] = (cog.repo, defaultdict(list))
             cogs_by_commit = repo_by_commit[1]
             cogs_by_commit[cog.commit].append(cog)
@@ -320,6 +327,7 @@ class Downloader(commands.Cog):
             try:
                 repo_by_commit = repos[lib.repo_name]
             except KeyError:
+                lib.repo = cast(Repo, lib.repo)  # docstring specifies this already
                 repo_by_commit = repos[lib.repo_name] = (lib.repo, defaultdict(set))
             libs_by_commit = repo_by_commit[1]
             libs_by_commit[lib.commit].add(lib)
@@ -449,7 +457,8 @@ class Downloader(commands.Cog):
         except OSError:
             await ctx.send(
                 _(
-                    "Something went wrong trying to add that repo. Your repo name might have an invalid character."
+                    "Something went wrong trying to add that repo."
+                    " Your repo name might have an invalid character."
                 )
             )
         else:
@@ -773,6 +782,7 @@ class Downloader(commands.Cog):
         async with ctx.typing():
             # this is enough to be sure that `rev` is not None (based on calls to this method)
             if repo is not None:
+                rev = cast(str, rev)
                 await repo.update()
                 try:
                     commit = await repo.get_full_sha1(rev)
@@ -983,6 +993,7 @@ class Downloader(commands.Cog):
         else:
             # this is enough to be sure that `cogs` is not None (based on if above)
             if not repos:
+                cogs = cast(Iterable[InstalledModule], cogs)
                 repos = {cog.repo for cog in cogs if cog.repo is not None}
 
             for repo in repos:

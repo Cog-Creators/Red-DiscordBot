@@ -5,7 +5,7 @@ import distutils.dir_util
 import shutil
 from enum import Enum
 from pathlib import Path
-from typing import MutableMapping, Any, TYPE_CHECKING, Optional, Dict, Union, Callable, Tuple
+from typing import MutableMapping, Any, TYPE_CHECKING, Optional, Dict, Union, Callable, Tuple, cast
 
 from .log import log
 from .json_mixins import RepoJSONMixin
@@ -259,10 +259,10 @@ class InstalledModule(Installable):
     def from_json(
         cls, data: Dict[str, Union[str, bool]], repo_mgr: RepoManager
     ) -> InstalledModule:
-        repo_name = data["repo_name"]
-        cog_name = data["module_name"]
-        commit = data.get("commit", "")
-        pinned = data.get("pinned", False)
+        repo_name = cast(str, data["repo_name"])
+        cog_name = cast(str, data["module_name"])
+        commit = cast(str, data.get("commit", ""))
+        pinned = cast(bool, data.get("pinned", False))
 
         # TypedDict, where are you :/
         repo = repo_mgr.get_repo(repo_name)

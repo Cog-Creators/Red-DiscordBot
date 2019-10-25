@@ -122,7 +122,7 @@ class Repo(RepoJSONMixin):
         self,
         name: str,
         url: str,
-        branch: str,
+        branch: Optional[str],
         commit: str,
         folder_path: Path,
         available_modules: Tuple[Installable, ...] = (),
