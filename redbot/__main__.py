@@ -13,17 +13,9 @@ import discord
 # Set the event loop policies here so any subsequent `get_event_loop()`
 # calls, in particular those as a result of the following imports,
 # return the correct loop object.
-if sys.platform == "win32":
-    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
-elif sys.implementation.name == "cpython":
-    # Let's not force this dependency, uvloop is much faster on cpython
-    try:
-        import uvloop
-    except ImportError:
-        uvloop = None
-        pass
-    else:
-        asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+from redbot import _update_event_loop_policy
+
+_update_event_loop_policy()
 
 import redbot.logging
 from redbot.core.bot import Red, ExitCodes
