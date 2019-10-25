@@ -570,7 +570,7 @@ class Downloader(commands.Cog):
             cog_names = set(cog_names)
 
             async with repo.checkout(commit, exit_to_rev=repo.branch):
-                cogs, message = await self._filter_incorrect_cogs(repo, cog_names)
+                cogs, message = await self._filter_incorrect_cogs_by_names(repo, cog_names)
                 if not cogs:
                     await ctx.send(message)
                     return
@@ -803,6 +803,7 @@ class Downloader(commands.Cog):
             cogs_to_update, libs_to_update = await self._available_updates(cogs_to_check)
 
             updates_available = cogs_to_update or libs_to_update
+            cogs_to_update, filter_message = self._filter_incorrect_cogs(cogs_to_update)
             message = ""
             if updates_available:
                 updated_cognames, message = await self._update_cogs_and_libs(
@@ -830,6 +831,7 @@ class Downloader(commands.Cog):
                 message += _(
                     "\nThese cogs are pinned and therefore weren't checked: "
                 ) + humanize_list(tuple(map(inline, cognames)))
+            message += filter_message
         await ctx.send(message)
         if updates_available:
             await self._ask_for_cog_reload(ctx, updated_cognames)
@@ -901,7 +903,7 @@ class Downloader(commands.Cog):
                 return True, installed_cog
         return False, None
 
-    async def _filter_incorrect_cogs(
+    async def _filter_incorrect_cogs_by_names(
         self, repo: Repo, cog_names: Iterable[str]
     ) -> Tuple[Tuple[Installable, ...], str]:
         """Filter out incorrect cogs from list.
@@ -921,8 +923,6 @@ class Downloader(commands.Cog):
         cogs: List[Installable] = []
         unavailable_cogs: List[str] = []
         already_installed: List[str] = []
-        outdated_python_version: List[str] = []
-        outdated_bot_version: List[str] = []
 
         for cog_name in cog_names:
             cog: Installable = discord.utils.get(repo.available_cogs, name=cog_name)
@@ -931,31 +931,6 @@ class Downloader(commands.Cog):
                 continue
             if cog in installed_cogs:
                 already_installed.append(inline(cog_name))
-                continue
-            if cog.min_python_version > sys.version_info:
-                outdated_python_version.append(
-                    inline(cog_name)
-                    + _(" (Minimum: {min_version})").format(
-                        min_version=".".join([str(n) for n in cog.min_python_version])
-                    )
-                )
-                continue
-            ignore_max = cog.min_bot_version > cog.max_bot_version
-            if (
-                cog.min_bot_version > red_version_info
-                or not ignore_max
-                and cog.max_bot_version < red_version_info
-            ):
-                outdated_bot_version.append(
-                    inline(cog_name)
-                    + _(" (Minimum: {min_version}").format(min_version=cog.min_bot_version)
-                    + (
-                        ""
-                        if ignore_max
-                        else _(", at most: {max_version}").format(max_version=cog.max_bot_version)
-                    )
-                    + ")"
-                )
                 continue
             cogs.append(cog)
 
@@ -969,9 +944,48 @@ class Downloader(commands.Cog):
             message += _("\nThese cogs were already installed: ") + humanize_list(
                 already_installed
             )
+        correct_cogs, add_to_message = self._filter_incorrect_cogs(cogs)
+        if add_to_message:
+            return correct_cogs, f"{message}\n{add_to_message}"
+        return correct_cogs, message
+
+    def _filter_incorrect_cogs(
+        self, cogs: Iterable[Installable]
+    ) -> Tuple[Tuple[Installable, ...], str]:
+        correct_cogs: List[Installable] = []
+        outdated_python_version: List[str] = []
+        outdated_bot_version: List[str] = []
+        for cog in cogs:
+            if cog.min_python_version > sys.version_info:
+                outdated_python_version.append(
+                    inline(cog.name)
+                    + _(" (Minimum: {min_version})").format(
+                        min_version=".".join([str(n) for n in cog.min_python_version])
+                    )
+                )
+                continue
+            ignore_max = cog.min_bot_version > cog.max_bot_version
+            if (
+                cog.min_bot_version > red_version_info
+                or not ignore_max
+                and cog.max_bot_version < red_version_info
+            ):
+                outdated_bot_version.append(
+                    inline(cog.name)
+                    + _(" (Minimum: {min_version}").format(min_version=cog.min_bot_version)
+                    + (
+                        ""
+                        if ignore_max
+                        else _(", at most: {max_version}").format(max_version=cog.max_bot_version)
+                    )
+                    + ")"
+                )
+                continue
+            correct_cogs.append(cog)
+        message = ""
         if outdated_python_version:
             message += _(
-                "\nThese cogs require higher python version than you have: "
+                "These cogs require higher python version than you have: "
             ) + humanize_list(outdated_python_version)
         if outdated_bot_version:
             message += _(
@@ -979,7 +993,7 @@ class Downloader(commands.Cog):
                 " than you currently have ({current_version}): "
             ).format(current_version=red_version_info) + humanize_list(outdated_bot_version)
 
-        return (tuple(cogs), message)
+        return tuple(correct_cogs), message
 
     async def _get_cogs_to_check(
         self,
