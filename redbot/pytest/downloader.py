@@ -6,14 +6,13 @@ import shutil
 
 import pytest
 
-from redbot.cogs.downloader.repo_manager import RepoManager, Repo
+from redbot.cogs.downloader.repo_manager import RepoManager, Repo, ProcessFormatter
 from redbot.cogs.downloader.installable import Installable, InstalledModule
 
 __all__ = [
     "patch_relative_to",
     "repo_manager",
     "repo",
-    "repo_norun",
     "bot_repo",
     "INFO_JSON",
     "LIBRARY_INFO_JSON",
@@ -21,19 +20,12 @@ __all__ = [
     "installed_cog",
     "library_installable",
     "fake_run_noprint",
-    "fake_latest_commit",
+    "fake_current_commit",
     "_session_git_repo",
     "git_repo",
     "cloned_git_repo",
     "git_repo_with_remote",
 ]
-
-
-async def fake_run(*args, **kwargs):
-    fake_result_tuple = namedtuple("fake_result", "returncode result")
-    res = fake_result_tuple(0, (args, kwargs))
-    print(args[0])
-    return res
 
 
 async def fake_run_noprint(*args, **kwargs):
@@ -42,7 +34,7 @@ async def fake_run_noprint(*args, **kwargs):
     return res
 
 
-async def fake_latest_commit(*args, **kwargs):
+async def fake_current_commit(*args, **kwargs):
     return "fake_result"
 
 
@@ -62,8 +54,8 @@ def repo_manager(tmpdir_factory):
 
 
 @pytest.fixture
-def repo(tmpdir):
-    repo_folder = Path(str(tmpdir)) / "repos" / "squid"
+def repo(tmp_path):
+    repo_folder = tmp_path / "repos" / "squid"
     repo_folder.mkdir(parents=True, exist_ok=True)
 
     return Repo(
@@ -73,12 +65,6 @@ def repo(tmpdir):
         commit="6acb5decbb717932e5dc0cda7fca0eff452c47dd",
         folder_path=repo_folder,
     )
-
-
-@pytest.fixture
-def repo_norun(repo):
-    repo._run = fake_run
-    return repo
 
 
 @pytest.fixture
