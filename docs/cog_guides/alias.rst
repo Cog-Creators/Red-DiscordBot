@@ -86,7 +86,7 @@ alias add
 **Description**
 
 Creates an alias. It will be used like this ``[p]alias_name <arguments>``
-and will be equal to this ``[p]commannd <arguments>``.
+and will be equal to this ``[p]command <arguments>``.
 
 Click :ref:`here <alias-usage>` for examples.
 
@@ -96,11 +96,11 @@ Click :ref:`here <alias-usage>` for examples.
 
 * ``<command>``: The command to execute when ``[p]alias_name`` is invoked.
 
-.. _alias-command-alias-del:
+.. _alias-command-alias-delete:
 
-"""""""""
-alias del
-"""""""""
+""""""""""""
+alias delete
+""""""""""""
 
 .. note:: |mod-lock|
 
@@ -108,7 +108,7 @@ alias del
 
 .. code-block:: none
 
-    [p]alias del <alias_name>
+    [p]alias [delete|remove|del] <alias_name>
 
 **Description**
 
