@@ -1,0 +1,1 @@
+Reworded virtual environment guide to make it sound less scary.

@@ -5,13 +5,15 @@ from functools import wraps
 
 import discord
 
+from redbot.core.utils.chat_formatting import humanize_number
 from . import Config, errors, commands
 from .i18n import Translator
+from .bot import Red
+from .errors import BankPruneError
 
 _ = Translator("Bank API", __file__)
 
 __all__ = [
-    "MAX_BALANCE",
     "Account",
     "get_balance",
     "set_balance",
@@ -29,20 +31,29 @@ __all__ = [
     "set_currency_name",
     "get_default_balance",
     "set_default_balance",
+    "get_max_balance",
+    "set_max_balance",
     "cost",
     "AbortPurchase",
+    "bank_prune",
 ]
 
-MAX_BALANCE = 2 ** 63 - 1
+_MAX_BALANCE = 2 ** 63 - 1
 
 _DEFAULT_GLOBAL = {
     "is_global": False,
     "bank_name": "Twentysix bank",
     "currency": "credits",
     "default_balance": 100,
+    "max_balance": _MAX_BALANCE,
 }
 
-_DEFAULT_GUILD = {"bank_name": "Twentysix bank", "currency": "credits", "default_balance": 100}
+_DEFAULT_GUILD = {
+    "bank_name": "Twentysix bank",
+    "currency": "credits",
+    "default_balance": 100,
+    "max_balance": _MAX_BALANCE,
+}
 
 _DEFAULT_MEMBER = {"name": "", "balance": 0, "created_at": 0}
 
@@ -159,12 +170,12 @@ async def can_spend(member: discord.Member, amount: int) -> bool:
     return await get_balance(member) >= amount
 
 
-async def set_balance(member: discord.Member, amount: int) -> int:
+async def set_balance(member: Union[discord.Member, discord.User], amount: int) -> int:
     """Set an account balance.
 
     Parameters
     ----------
-    member : discord.Member
+    member : Union[discord.Member, discord.User]
         The member whose balance to set.
     amount : int
         The amount to set the balance to.
@@ -178,21 +189,21 @@ async def set_balance(member: discord.Member, amount: int) -> int:
     ------
     ValueError
         If attempting to set the balance to a negative number.
+    RuntimeError
+        If the bank is guild-specific and a discord.User object is provided.
     BalanceTooHigh
         If attempting to set the balance to a value greater than
-        ``bank.MAX_BALANCE``
+        ``bank._MAX_BALANCE``.
 
     """
     if amount < 0:
         raise ValueError("Not allowed to have negative balance.")
-    if amount > MAX_BALANCE:
-        currency = (
-            await get_currency_name()
-            if await is_global()
-            else await get_currency_name(member.guild)
-        )
+    guild = getattr(member, "guild", None)
+    max_bal = await get_max_balance(guild)
+    if amount > max_bal:
+        currency = await get_currency_name(guild)
         raise errors.BalanceTooHigh(
-            user=member.display_name, max_balance=MAX_BALANCE, currency_name=currency
+            user=member.display_name, max_balance=max_bal, currency_name=currency
         )
     if await is_global():
         group = _conf.user(member)
@@ -241,11 +252,20 @@ async def withdraw_credits(member: discord.Member, amount: int) -> int:
     if not isinstance(amount, int):
         raise TypeError("Withdrawal amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
-        raise ValueError("Invalid withdrawal amount {} < 0".format(amount))
+        raise ValueError(
+            "Invalid withdrawal amount {} < 0".format(
+                humanize_number(amount, override_locale="en_US")
+            )
+        )
 
     bal = await get_balance(member)
     if amount > bal:
-        raise ValueError("Insufficient funds {} > {}".format(amount, bal))
+        raise ValueError(
+            "Insufficient funds {} > {}".format(
+                humanize_number(amount, override_locale="en_US"),
+                humanize_number(bal, override_locale="en_US"),
+            )
+        )
 
     return await set_balance(member, bal - amount)
 
@@ -276,20 +296,28 @@ async def deposit_credits(member: discord.Member, amount: int) -> int:
     if not isinstance(amount, int):
         raise TypeError("Deposit amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
-        raise ValueError("Invalid deposit amount {} <= 0".format(amount))
+        raise ValueError(
+            "Invalid deposit amount {} <= 0".format(
+                humanize_number(amount, override_locale="en_US")
+            )
+        )
 
     bal = await get_balance(member)
     return await set_balance(member, amount + bal)
 
 
-async def transfer_credits(from_: discord.Member, to: discord.Member, amount: int):
+async def transfer_credits(
+    from_: Union[discord.Member, discord.User],
+    to: Union[discord.Member, discord.User],
+    amount: int,
+):
     """Transfer a given amount of credits from one account to another.
 
     Parameters
     ----------
-    from_: discord.Member
+    from_: Union[discord.Member, discord.User]
         The member to transfer from.
-    to : discord.Member
+    to : Union[discord.Member, discord.User]
         The member to transfer to.
     amount : int
         The amount to transfer.
@@ -305,12 +333,28 @@ async def transfer_credits(from_: discord.Member, to: discord.Member, amount: in
         If the amount is invalid or if ``from_`` has insufficient funds.
     TypeError
         If the amount is not an `int`.
-
+    RuntimeError
+        If the bank is guild-specific and a discord.User object is provided.
+    BalanceTooHigh
+        If the balance after the transfer would be greater than
+        ``bank._MAX_BALANCE``.
     """
     if not isinstance(amount, int):
         raise TypeError("Transfer amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
-        raise ValueError("Invalid transfer amount {} <= 0".format(amount))
+        raise ValueError(
+            "Invalid transfer amount {} <= 0".format(
+                humanize_number(amount, override_locale="en_US")
+            )
+        )
+    guild = getattr(to, "guild", None)
+    max_bal = await get_max_balance(guild)
+
+    if await get_balance(to) + amount > max_bal:
+        currency = await get_currency_name(guild)
+        raise errors.BalanceTooHigh(
+            user=to.display_name, max_balance=max_bal, currency_name=currency
+        )
 
     await withdraw_credits(from_, amount)
     return await deposit_credits(to, amount)
@@ -330,6 +374,59 @@ async def wipe_bank(guild: Optional[discord.Guild] = None) -> None:
         await _conf.clear_all_users()
     else:
         await _conf.clear_all_members(guild)
+
+
+async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: int = None) -> None:
+    """Prune bank accounts from the bank.
+
+    Parameters
+    ----------
+    bot : Red
+        The bot.
+    guild : discord.Guild
+        The guild to prune. This is required if the bank is set to local.
+    user_id : int
+        The id of the user whose account will be pruned.
+        If supplied this will prune only this user's bank account
+        otherwise it will prune all invalid users from the bank.
+
+    Raises
+    ------
+    BankPruneError
+        If guild is :code:`None` and the bank is Local.
+
+    """
+
+    global_bank = await is_global()
+
+    if global_bank:
+        _guilds = [g for g in bot.guilds if not g.unavailable and g.large and not g.chunked]
+        _uguilds = [g for g in bot.guilds if g.unavailable]
+        group = _conf._get_base_group(_conf.USER)
+
+    else:
+        if guild is None:
+            raise BankPruneError("'guild' can't be None when pruning a local bank")
+        _guilds = [guild] if not guild.unavailable and guild.large else []
+        _uguilds = [guild] if guild.unavailable else []
+        group = _conf._get_base_group(_conf.MEMBER, str(guild.id))
+
+    if user_id is None:
+        await bot.request_offline_members(*_guilds)
+        accounts = await group.all()
+        tmp = accounts.copy()
+        members = bot.get_all_members() if global_bank else guild.members
+        user_list = {str(m.id) for m in members if m.guild not in _uguilds}
+
+    async with group.all() as bank_data:  # FIXME: use-config-bulk-update
+        if user_id is None:
+            for acc in tmp:
+                if acc not in user_list:
+                    del bank_data[acc]
+        else:
+            user_id = str(user_id)
+            if user_id in bank_data:
+                del bank_data[user_id]
 
 
 async def get_leaderboard(positions: int = None, guild: discord.Guild = None) -> List[tuple]:
@@ -612,6 +709,75 @@ async def set_currency_name(name: str, guild: discord.Guild = None) -> str:
     return name
 
 
+async def get_max_balance(guild: discord.Guild = None) -> int:
+    """Get the max balance for the bank.
+
+    Parameters
+    ----------
+    guild : `discord.Guild`, optional
+        The guild to get the max balance for (required if bank is
+        guild-specific).
+
+    Returns
+    -------
+    int
+        The maximum allowed balance.
+
+    Raises
+    ------
+    RuntimeError
+        If the bank is guild-specific and guild was not provided.
+
+    """
+    if await is_global():
+        return await _conf.max_balance()
+    elif guild is not None:
+        return await _conf.guild(guild).max_balance()
+    else:
+        raise RuntimeError("Guild must be provided.")
+
+
+async def set_max_balance(amount: int, guild: discord.Guild = None) -> int:
+    """Set the maximum balance for the bank.
+
+    Parameters
+    ----------
+    amount : int
+        The new maximum balance.
+    guild : `discord.Guild`, optional
+        The guild to set the max balance for (required if bank is
+        guild-specific).
+
+    Returns
+    -------
+    int
+        The new maximum balance.
+
+    Raises
+    ------
+    RuntimeError
+        If the bank is guild-specific and guild was not provided.
+    ValueError
+        If the amount is less than 0 or higher than 2 ** 63 - 1.
+    """
+    if not (0 < amount <= _MAX_BALANCE):
+        raise ValueError(
+            "Amount must be greater than zero and less than {max}.".format(
+                max=humanize_number(_MAX_BALANCE, override_locale="en_US")
+            )
+        )
+
+    if await is_global():
+        await _conf.max_balance.set(amount)
+    elif guild is not None:
+        await _conf.guild(guild).max_balance.set(amount)
+    else:
+        raise RuntimeError(
+            "Guild must be provided if setting the maximum balance of a guild-specific bank."
+        )
+    return amount
+
+
 async def get_default_balance(guild: discord.Guild = None) -> int:
     """Get the current default balance amount.
 
@@ -661,12 +827,18 @@ async def set_default_balance(amount: int, guild: discord.Guild = None) -> int:
     RuntimeError
         If the bank is guild-specific and guild was not provided.
     ValueError
-        If the amount is invalid.
+        If the amount is less than 0 or higher than the max allowed balance.
 
     """
     amount = int(amount)
-    if amount < 0:
-        raise ValueError("Amount must be greater than zero.")
+    max_bal = await get_max_balance(guild)
+
+    if not (0 < amount <= max_bal):
+        raise ValueError(
+            "Amount must be greater than zero and less than {max}.".format(
+                max=humanize_number(max_bal, override_locale="en_US")
+            )
+        )
 
     if await is_global():
         await _conf.default_balance.set(amount)
@@ -691,7 +863,7 @@ def cost(amount: int):
     You can intentionally refund by raising `AbortPurchase`
     (this error will be consumed and not show to users)
 
-    Other exceptions will propogate and will be handled by Red's (and/or
+    Other exceptions will propagate and will be handled by Red's (and/or
     any other configured) error handling.
     """
     if not isinstance(amount, int) or amount < 0:
@@ -722,7 +894,7 @@ def cost(amount: int):
                 credits_name = await get_currency_name(context.guild)
                 raise commands.UserFeedbackCheckFailure(
                     _("You need at least {cost} {currency} to use this command.").format(
-                        cost=amount, currency=credits_name
+                        cost=humanize_number(amount), currency=credits_name
                     )
                 )
             else:

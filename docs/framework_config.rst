@@ -421,15 +421,15 @@ Driver Reference
 
 Base Driver
 ^^^^^^^^^^^
-.. autoclass:: redbot.core.drivers.red_base.BaseDriver
+.. autoclass:: redbot.core.drivers.BaseDriver
     :members:
 
 JSON Driver
 ^^^^^^^^^^^
-.. autoclass:: redbot.core.drivers.red_json.JSON
+.. autoclass:: redbot.core.drivers.JsonDriver
     :members:
 
 Mongo Driver
 ^^^^^^^^^^^^
-.. autoclass:: redbot.core.drivers.red_mongo.Mongo
+.. autoclass:: redbot.core.drivers.MongoDriver
     :members:

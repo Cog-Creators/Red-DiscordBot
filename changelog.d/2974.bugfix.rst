@@ -1,0 +1,1 @@
+Fixed the help text and response of `[p]set usebotcolor` to accurately reflect what the command is doing.

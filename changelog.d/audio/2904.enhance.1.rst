@@ -1,0 +1,2 @@
+``[p]audioset localpath`` can set a path anywhere in your machine now.
+ - Note: This path needs to be visible by :code:`Lavalink.jar`.
