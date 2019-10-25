@@ -113,7 +113,7 @@ alias delete
 **Description**
 
 Removes an alias from the list. Check the list with
-:ref:`<alias-command-alias-list>`.
+the :ref:`alias list <alias-command-alias-list>` command.
 
 **Arguments**
 
@@ -193,7 +193,7 @@ alias global
 
 Another group command which contains the :ref:`add
 <alias-command-alias-add>`, :ref:`del
-<alias-command-alias-del>` and :ref:`list
+<alias-command-alias-delete>` and :ref:`list
 <alias-command-alias-list>` commands.
 
 They work the same, except the created aliases will be
