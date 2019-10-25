@@ -13,16 +13,16 @@ from subprocess import run as sp_run, PIPE, CompletedProcess
 from string import Formatter
 from sys import executable
 from typing import (
-    Tuple,
-    Iterable,
-    MutableMapping,
-    Optional,
-    Awaitable,
-    AsyncContextManager,
-    Generator,
     Any,
+    AsyncContextManager,
+    Awaitable,
     Dict,
+    Generator,
+    Iterable,
     List,
+    NamedTuple,
+    Optional,
+    Tuple,
 )
 
 import discord
@@ -36,6 +36,12 @@ from .json_mixins import RepoJSONMixin
 from .log import log
 
 _ = Translator("RepoManager", __file__)
+
+
+class Candidate(NamedTuple):
+    rev: str
+    object_type: str
+    description: str
 
 
 class _RepoCheckoutCtxManager(
@@ -107,6 +113,9 @@ class Repo(RepoJSONMixin):
     PIP_INSTALL = "{python} -m pip install -U -t {target_dir} {reqs}"
 
     MODULE_FOLDER_REGEX = re.compile(r"(\w+)\/")
+    AMBIGUOUS_ERROR_REGEX = re.compile(
+        r"^hint: {3}(?P<rev>[A-Za-z0-9]+) (?P<type>commit|tag) (?P<desc>.+)$", re.MULTILINE
+    )
 
     def __init__(
         self,
@@ -416,6 +425,8 @@ class Repo(RepoJSONMixin):
         ------
         .UnknownRevision
             When git cannot find provided revision.
+        .AmbiguousRevision
+            When git cannot resolve provided short sha1 to one commit.
 
         Returns
         -------
@@ -428,7 +439,16 @@ class Repo(RepoJSONMixin):
         )
 
         if p.returncode != 0:
-            raise errors.UnknownRevision("Revision {} cannot be found".format(rev))
+            stderr = p.stderr.decode().strip()
+            ambiguous_error = f"error: short SHA1 {rev} is ambiguous\nhint: The candidates are:\n"
+            if not stderr.startswith(ambiguous_error):
+                raise errors.UnknownRevision(f"Revision {rev} cannot be found.")
+            candidates = []
+            for match in self.AMBIGUOUS_ERROR_REGEX.finditer(stderr, len(ambiguous_error)):
+                candidates.append(Candidate(match["rev"], match["type"], match["desc"]))
+            if candidates:
+                raise errors.AmbiguousRevision(f"Short SHA1 {rev} is ambiguous.", candidates)
+            raise errors.UnknownRevision(f"Revision {rev} cannot be found.")
 
         return p.stdout.decode().strip()
 

@@ -1,7 +1,16 @@
+from __future__ import annotations
+
+from typing import List, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .repo_manager import Candidate
+
+
 __all__ = [
     "DownloaderException",
     "GitException",
     "InvalidRepoName",
+    "CopyingError",
     "ExistingGitRepo",
     "MissingGitRepo",
     "CloningError",
@@ -10,6 +19,8 @@ __all__ = [
     "UpdateError",
     "GitDiffError",
     "NoRemoteURL",
+    "UnknownRevision",
+    "AmbiguousRevision",
     "PipError",
 ]
 
@@ -120,6 +131,16 @@ class UnknownRevision(GitException):
     """
 
     pass
+
+
+class AmbiguousRevision(GitException):
+    """
+    Thrown when specified revision is ambiguous.
+    """
+
+    def __init__(self, message: str, candidates: List[Candidate]) -> None:
+        super().__init__(message)
+        self.candidates = candidates
 
 
 class PipError(DownloaderException):

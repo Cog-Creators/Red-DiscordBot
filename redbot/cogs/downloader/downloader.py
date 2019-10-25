@@ -528,6 +528,18 @@ class Downloader(commands.Cog):
             if rev is not None:
                 try:
                     commit = await repo.get_full_sha1(rev)
+                except errors.AmbiguousRevision as e:
+                    msg = _(
+                        "Error: short sha1 `{rev}` is ambiguous. Possible candidates:\n"
+                    ).format(rev=rev)
+                    for candidate in e.candidates:
+                        msg += (
+                            f"**{candidate.object_type} {candidate.rev}**"
+                            f" - {candidate.description}\n"
+                        )
+                    for page in pagify(msg):
+                        await ctx.send(msg)
+                    return
                 except errors.UnknownRevision:
                     await ctx.send(
                         _("Error: there is no revision `{rev}` in repo `{repo.name}`").format(
