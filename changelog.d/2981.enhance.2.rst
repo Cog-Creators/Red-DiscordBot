@@ -1,3 +1,6 @@
-docstrings for command help handle whitespace slightly differently to accommodate ease of writing good help.
+docstrings for command help can optionally handle whitespace
+slightly differently to accommodate ease of writing good help.
+You can enable this using the `adjust_help_whitespace` kwarg in the command constructor
+or by passing that as a kwarg to cogs. When enabled:
   - Singular newlines will be treated as line continuations
   - groups of newlines will have their last newline removed.

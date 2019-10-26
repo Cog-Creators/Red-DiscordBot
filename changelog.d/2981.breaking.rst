@@ -1,0 +1,3 @@
+The following names are now used for methods or attributes on cogs, commands, and groups:
+  - format_help_for_context
+  - adjust_help_whitespace

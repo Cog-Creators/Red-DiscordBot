@@ -143,11 +143,8 @@ class Filter(commands.Cog):
 
         Use double quotes to add sentences.
 
-        
         Examples:
-        
         - `[p]filter channel add word1 word2 word3`
-        
         - `[p]filter channel add "This is a sentence"`
         """
         channel = ctx.channel

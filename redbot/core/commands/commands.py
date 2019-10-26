@@ -41,7 +41,7 @@ RESERVED_COMMAND_NAMES = (
 HELP_NEWLINE_ADJUSTER = re.compile(r"(?P<NL>\n)?\n(?!\n)")
 
 
-def adjust_help_whitespace(help_str: str) -> str:
+def adjust_whitespace(help_str: str) -> str:
     """
     Adjusts whitespace
     
@@ -65,6 +65,7 @@ class CogCommandMixin:
     """A mixin for cogs and commands."""
 
     def __init__(self, *args, **kwargs):
+        self.adjust_help_whitespace = kwargs.pop("adjust_help_whitespace", False)
         super().__init__(*args, **kwargs)
         if isinstance(self, Command):
             decorated = self.callback
@@ -107,7 +108,8 @@ class CogCommandMixin:
             # Short circuit out on an empty help string
             return help_str
 
-        line_adjusted = adjust_help_whitespace(help_str)
+        if self.adjust_help_whitespace:
+            help_str = adjust_whitespace(help_str)
 
         formatting_pattern = re.compile(r"\[p\]|\[botname\]")
 
@@ -120,7 +122,7 @@ class CogCommandMixin:
             # We shouldnt get here:
             return s
 
-        return formatting_pattern.sub(replacement, line_adjusted)
+        return formatting_pattern.sub(replacement, help_str)
 
     def allow_for(self, model_id: Union[int, str], guild_id: int) -> None:
         """Actively allow this command for the given model.
@@ -238,6 +240,7 @@ class Command(CogCommandMixin, commands.Command):
 
         # Red specific
         other.requires = self.requires
+        other.adjust_help_whitespace = self.adjust_help_whitespace
         return other
 
     @property

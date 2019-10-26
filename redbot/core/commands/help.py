@@ -627,11 +627,8 @@ class RedHelpFormatter:
 async def red_help(ctx: Context, *, thing_to_get_help_for: str = None):
     """
     I need somebody
-
     (Help) not just anybody
-
     (Help) you know I need someone
-
     (Help!)
     """
     await ctx.bot.send_help_for(ctx, thing_to_get_help_for)

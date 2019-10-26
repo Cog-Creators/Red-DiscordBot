@@ -124,12 +124,9 @@ class Cleanup(commands.Cog):
     ):
         """Delete the last X messages matching the specified text.
 
-        
         Example:
-        
             `[p]cleanup text "test" 5`
 
-        
         Remember to use double quotes.
         """
 
