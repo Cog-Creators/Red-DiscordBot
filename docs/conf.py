@@ -99,7 +99,7 @@ with open("prolog.txt", "r") as file:
     rst_prolog = file.read()
 
 # Adds d.py version to available substitutions in all files
-rst_prolog = f"\n.. |DPY_VERSION| replace:: {dpy_version}"
+rst_prolog += f"\n.. |DPY_VERSION| replace:: {dpy_version}"
 
 # -- Options for HTML output ----------------------------------------------
 

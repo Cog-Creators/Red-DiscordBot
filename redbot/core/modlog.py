@@ -561,7 +561,7 @@ class CaseType:
         Returns
         -------
         CaseType
-
+            The case type object created from given data.
         """
         data_copy = data.copy()
         data_copy.pop("name", None)
@@ -808,6 +808,7 @@ async def get_casetype(name: str, guild: Optional[discord.Guild] = None) -> Opti
     Returns
     -------
     Optional[CaseType]
+        Case type with provided name. If such case type doesn't exist this will be `None`.
     """
     data = await _conf.custom(_CASETYPES, name).all()
     if not data:
