@@ -12,7 +12,7 @@ from redbot.cogs.warnings.helpers import (
 from redbot.core import Config, checks, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.mod import is_admin_or_superior
+from redbot.core.utils.mod import is_admin_or_superior, is_mod_or_superior
 from redbot.core.utils.chat_formatting import warning, pagify
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 
@@ -355,7 +355,7 @@ class Warnings(commands.Cog):
         if user is None:
             user = ctx.author
         else:
-            if not await is_admin_or_superior(self.bot, ctx.author):
+            if not await is_mod_or_superior(self.bot, ctx.author):
                 return await ctx.send(
                     warning(_("You are not allowed to check warnings for other users!"))
                 )
