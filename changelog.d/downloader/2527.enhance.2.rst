@@ -1,0 +1,1 @@
+When passing cogs to ``[p]cog update`` command, it will now only update those cogs, not all cogs from the repo these cogs are from.
