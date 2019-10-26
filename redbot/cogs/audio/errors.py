@@ -53,6 +53,10 @@ class TooManyMatches(PlayListError):
     """Too many playlist match user input."""
 
 
+class NoMachesFound(PlayListError):
+    """No entries found for this input."""
+
+
 class NotAllowed(PlayListError):
     """Too many playlist match user input."""
 
