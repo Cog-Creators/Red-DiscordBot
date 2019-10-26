@@ -348,15 +348,17 @@ class Warnings(commands.Cog):
         """Check your own warnings."""
         if user is None:
             user = ctx.author
-        else: #TODO: remove this else statement in a release after 3.3.0 (will allow users time start using [p]warncheck)
+        else:  # TODO: remove this else statement in a release after 3.3.0 (will allow users time start using [p]warncheck)
             if not await is_admin_or_superior(self.bot, ctx.author):
                 return await ctx.send(
                     warning(_("You are not allowed to check warnings for other users!"))
                 )
             else:
-                return await ctx.send(_(
-                    "Checking other user's warnings has moved to `{prefix}warncheck`."
-                ).format(prefix=ctx.prefix))
+                return await ctx.send(
+                    _("Checking other user's warnings has moved to `{prefix}warncheck`.").format(
+                        prefix=ctx.prefix
+                    )
+                )
 
         msg = ""
         member_settings = self.config.member(user)
@@ -387,9 +389,7 @@ class Warnings(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    async def warncheck(
-        self, ctx: commands.Context, user: discord.Member
-    ):
+    async def warncheck(self, ctx: commands.Context, user: discord.Member):
         """Check other user's warnings."""
         msg = ""
         member_settings = self.config.member(user)
