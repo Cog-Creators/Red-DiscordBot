@@ -496,9 +496,7 @@ class Downloader(commands.Cog):
         await ctx.send(box(msg))
 
     @repo.command(name="update")
-    async def _repo_update(
-        self, ctx: commands.Context, repos: commands.Greedy[Repo] = None
-    ) -> None:
+    async def _repo_update(self, ctx: commands.Context, *repos: Repo) -> None:
         """Update all repos, or ones of your choosing."""
         async with ctx.typing():
             updated: Set[str]
@@ -543,6 +541,9 @@ class Downloader(commands.Cog):
     async def _cog_installrev(
         self, ctx: commands.Context, repo: Repo, rev: Optional[str], cog_names: Iterable[str]
     ) -> None:
+        if not cog_names:
+            await ctx.send_help()
+            return
         commit = None
         async with ctx.typing():
             if rev is not None:
@@ -628,9 +629,7 @@ class Downloader(commands.Cog):
                 await ctx.send(cog.install_msg.replace("[p]", ctx.prefix))
 
     @cog.command(name="uninstall", usage="<cogs>")
-    async def _cog_uninstall(
-        self, ctx: commands.Context, cogs: commands.Greedy[InstalledCog]
-    ) -> None:
+    async def _cog_uninstall(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
         """Uninstall cogs.
 
         You may only uninstall cogs which were previously installed
@@ -670,7 +669,7 @@ class Downloader(commands.Cog):
         await ctx.send(message)
 
     @cog.command(name="pin", usage="<cogs>")
-    async def _cog_pin(self, ctx: commands.Context, cogs: commands.Greedy[InstalledCog]) -> None:
+    async def _cog_pin(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
         """Pin cogs - this will lock cogs on their current version."""
         if not cogs:
             await ctx.send_help()
@@ -693,7 +692,7 @@ class Downloader(commands.Cog):
         await ctx.send(message)
 
     @cog.command(name="unpin", usage="<cogs>")
-    async def _cog_unpin(self, ctx: commands.Context, cogs: commands.Greedy[InstalledCog]) -> None:
+    async def _cog_unpin(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
         """Unpin cogs - this will remove update lock from cogs."""
         if not cogs:
             await ctx.send_help()
@@ -743,16 +742,12 @@ class Downloader(commands.Cog):
                 await ctx.send(_("All installed cogs are up to date."))
 
     @cog.command(name="update")
-    async def _cog_update(
-        self, ctx: commands.Context, cogs: commands.Greedy[InstalledCog] = None
-    ) -> None:
+    async def _cog_update(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
         """Update all cogs, or ones of your choosing."""
         await self._cog_update_logic(ctx, cogs=cogs)
 
-    @cog.command(name="updateallfromrepos")
-    async def _cog_updateallfromrepos(
-        self, ctx: commands.Context, repos: commands.Greedy[Repo]
-    ) -> None:
+    @cog.command(name="updateallfromrepos", usage="<repos>")
+    async def _cog_updateallfromrepos(self, ctx: commands.Context, *repos: Repo) -> None:
         """Update all cogs from repos of your choosing."""
         if not repos:
             await ctx.send_help()
@@ -761,11 +756,7 @@ class Downloader(commands.Cog):
 
     @cog.command(name="updatetoversion", usage="<repo_name> <revision> [cogs]")
     async def _cog_updatetoversion(
-        self,
-        ctx: commands.Context,
-        repo: Repo,
-        rev: str,
-        cogs: commands.Greedy[InstalledCog] = None,
+        self, ctx: commands.Context, repo: Repo, rev: str, *cogs: InstalledCog
     ) -> None:
         """Update all cogs, or ones of your choosing from chosen revision of one repo."""
         await self._cog_update_logic(ctx, repo=repo, rev=rev, cogs=cogs)
