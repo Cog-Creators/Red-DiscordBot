@@ -40,6 +40,7 @@ RESERVED_COMMAND_NAMES = (
 #: Regex for adjusting newlines in help to make use of docstrings more intelligently
 HELP_NEWLINE_ADJUSTER = re.compile(r"(?P<NL>\n)?\n(?!\n)")
 
+
 def adjust_help_whitespace(help_str: str) -> str:
     """
     Adjusts whitespace
@@ -53,8 +54,9 @@ def adjust_help_whitespace(help_str: str) -> str:
         if "NL" in m.groupdict():
             return ""
         return " "
+
     return HELP_NEWLINE_ADJUSTER.sub(repl, help_str)
-    
+
 
 _ = Translator("commands.commands", __file__)
 
