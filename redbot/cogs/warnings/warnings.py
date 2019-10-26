@@ -12,7 +12,7 @@ from redbot.cogs.warnings.helpers import (
 from redbot.core import Config, checks, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.mod import is_admin_or_superior, is_mod_or_superior
+from redbot.core.utils.mod import is_admin_or_superior
 from redbot.core.utils.chat_formatting import warning, pagify
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 
@@ -340,33 +340,57 @@ class Warnings(commands.Cog):
             pass
         await ctx.send(_("User {user} has been warned.").format(user=user))
 
-    @commands.command()
+    @commands.command(usage="")
     @commands.guild_only()
     async def warnings(
         self, ctx: commands.Context, user: Optional[Union[discord.Member, int]] = None
     ):
-        """List the warnings for the specified user.
-
-        Omit `<user>` to see your own warnings.
-
-        Note that showing warnings for users other than yourself requires
-        appropriate permissions.
-        """
+        """Check your own warnings."""
         if user is None:
             user = ctx.author
-        else:
-            if not await is_mod_or_superior(self.bot, ctx.author):
+        else: #TODO: remove this else statement in a release after 3.3.0 (will allow users time start using [p]warncheck)
+            if not await is_admin_or_superior(self.bot, ctx.author):
                 return await ctx.send(
                     warning(_("You are not allowed to check warnings for other users!"))
                 )
+            else:
+                return await ctx.send(_(
+                    "Checking other user's warnings has moved to `{prefix}warncheck`."
+                ).format(prefix=ctx.prefix))
 
-            try:
-                userid: int = user.id
-            except AttributeError:
-                userid: int = user
-                user = ctx.guild.get_member(userid)
-                user = user or namedtuple("Member", "id guild")(userid, ctx.guild)
+        msg = ""
+        member_settings = self.config.member(user)
+        async with member_settings.warnings() as user_warnings:
+            if not user_warnings.keys():  # no warnings for the user
+                await ctx.send(_("You have no warnings! Well done!"))
+            else:
+                for key in user_warnings.keys():
+                    mod = ctx.guild.get_member(user_warnings[key]["mod"])
+                    if mod is None:
+                        mod = discord.utils.get(
+                            self.bot.get_all_members(), id=user_warnings[key]["mod"]
+                        )
+                        if mod is None:
+                            mod = await self.bot.fetch_user(user_warnings[key]["mod"])
+                    msg += _(
+                        "{num_points} point warning {reason_name} issued by {user} for "
+                        "{description}\n"
+                    ).format(
+                        num_points=user_warnings[key]["points"],
+                        reason_name=key,
+                        user=mod,
+                        description=user_warnings[key]["description"],
+                    )
+                await ctx.send_interactive(
+                    pagify(msg, shorten_by=58), box_lang=_("Warnings for {user}").format(user=user)
+                )
 
+    @commands.command()
+    @commands.guild_only()
+    async def warncheck(
+        self, ctx: commands.Context, user: discord.Member
+    ):
+        """Check other user's warnings."""
         msg = ""
         member_settings = self.config.member(user)
         async with member_settings.warnings() as user_warnings:
