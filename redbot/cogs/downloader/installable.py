@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import distutils.dir_util
 import shutil
-from enum import Enum
+from enum import IntEnum
 from pathlib import Path
 from typing import MutableMapping, Any, TYPE_CHECKING, Optional, Dict, Union, Callable, Tuple, cast
 
@@ -16,7 +16,8 @@ if TYPE_CHECKING:
     from .repo_manager import RepoManager, Repo
 
 
-class InstallableType(Enum):
+class InstallableType(IntEnum):
+    # using IntEnum, because hot-reload breaks its identity
     UNKNOWN = 0
     COG = 1
     SHARED_LIBRARY = 2

@@ -161,9 +161,8 @@ class Downloader(commands.Cog):
             else:
                 continue
             module_json = module.to_json()
-            if module.repo_name not in installed:
-                installed[module.repo_name] = {}
-            installed[module.repo_name][module.name] = module_json
+            repo_json = installed.setdefault(module.repo_name, {})
+            repo_json[module.name] = module_json
 
         await self.conf.installed_cogs.set(installed_cogs)
         await self.conf.installed_libraries.set(installed_libraries)
