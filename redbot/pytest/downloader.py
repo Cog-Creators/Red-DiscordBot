@@ -1,6 +1,8 @@
 from collections import namedtuple
 from pathlib import Path
 import json
+import subprocess as sp
+import shutil
 
 import pytest
 
@@ -20,6 +22,10 @@ __all__ = [
     "library_installable",
     "fake_run_noprint",
     "fake_latest_commit",
+    "_session_git_repo",
+    "git_repo",
+    "cloned_git_repo",
+    "git_repo_with_remote",
 ]
 
 
@@ -146,3 +152,93 @@ def library_installable(tmpdir):
 
     cog_info = Installable(Path(str(lib_path)))
     return cog_info
+
+
+# Git
+TEST_REPO_EXPORT_PTH: Path = Path(__file__).parent / "downloader_testrepo.export"
+
+
+def _init_test_repo(destination: Path):
+    # copied from tools/edit_testrepo.py
+    git_dirparams = ("git", "-C", str(destination))
+    init_commands = (
+        (*git_dirparams, "init"),
+        (*git_dirparams, "config", "--local", "user.name", "Cog-Creators"),
+        (*git_dirparams, "config", "--local", "user.email", "cog-creators@example.org"),
+        (*git_dirparams, "config", "--local", "commit.gpgSign", "false"),
+    )
+
+    for args in init_commands:
+        sp.run(args, check=True)
+    return git_dirparams
+
+
+@pytest.fixture(scope="session")
+async def _session_git_repo(tmp_path_factory, event_loop):
+    # we will import repo only once once per session and duplicate the repo folder
+    repo_path = tmp_path_factory.mktemp("session_git_repo")
+    repo = Repo(
+        name="redbot-testrepo",
+        url="",
+        branch="master",
+        commit="",
+        folder_path=repo_path,
+        loop=event_loop,
+    )
+    git_dirparams = _init_test_repo(repo_path)
+    fast_import = sp.Popen((*git_dirparams, "fast-import", "--quiet"), stdin=sp.PIPE)
+    with TEST_REPO_EXPORT_PTH.open(mode="rb") as f:
+        fast_import.communicate(f.read())
+    return_code = fast_import.wait()
+    if return_code:
+        raise Exception(f"git fast-import failed with code {return_code}")
+    sp.run((*git_dirparams, "reset", "--hard"))
+    return repo
+
+
+@pytest.fixture
+async def git_repo(_session_git_repo, tmp_path, event_loop):
+    # fixture only copies repo that was imported in _session_git_repo
+    repo_path = tmp_path / "redbot-testrepo"
+    shutil.copytree(_session_git_repo.folder_path, repo_path)
+    repo = Repo(
+        name="redbot-testrepo",
+        url=_session_git_repo.url,
+        branch=_session_git_repo.branch,
+        commit=_session_git_repo.commit,
+        folder_path=repo_path,
+        loop=event_loop,
+    )
+    return repo
+
+
+@pytest.fixture
+async def cloned_git_repo(_session_git_repo, tmp_path, event_loop):
+    # don't use this if you want to edit origin repo
+    repo_path = tmp_path / "redbot-cloned_testrepo"
+    repo = Repo(
+        name="redbot-testrepo",
+        url=str(_session_git_repo.folder_path),
+        branch=_session_git_repo.branch,
+        commit=_session_git_repo.commit,
+        folder_path=repo_path,
+        loop=event_loop,
+    )
+    sp.run(("git", "clone", str(_session_git_repo.folder_path), str(repo_path)), check=True)
+    return repo
+
+
+@pytest.fixture
+async def git_repo_with_remote(git_repo, tmp_path, event_loop):
+    # this can safely be used when you want to do changes to origin repo
+    repo_path = tmp_path / "redbot-testrepo_with_remote"
+    repo = Repo(
+        name="redbot-testrepo",
+        url=str(git_repo.folder_path),
+        branch=git_repo.branch,
+        commit=git_repo.commit,
+        folder_path=repo_path,
+        loop=event_loop,
+    )
+    sp.run(("git", "clone", str(git_repo.folder_path), str(repo_path)), check=True)
+    return repo
