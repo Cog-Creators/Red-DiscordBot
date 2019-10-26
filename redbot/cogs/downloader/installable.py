@@ -240,10 +240,17 @@ class InstalledModule(Installable):
     """
 
     def __init__(
-        self, location: Path, repo: Optional[Repo] = None, commit: str = "", pinned: bool = False
+        self,
+        location: Path,
+        repo: Optional[Repo] = None,
+        commit: str = "",
+        pinned: bool = False,
+        json_repo_name: str = "",
     ):
         super().__init__(location=location, repo=repo, commit=commit)
         self.pinned: bool = pinned if self.type == InstallableType.COG else False
+        # this is here so that Downloader could use real repo name instead of "MISSING_REPO"
+        self._json_repo_name = json_repo_name
 
     def to_json(self) -> Dict[str, Union[str, bool]]:
         module_json: Dict[str, Union[str, bool]] = {
@@ -273,7 +280,9 @@ class InstalledModule(Installable):
 
         location = repo_folder / cog_name
 
-        return cls(location=location, repo=repo, commit=commit, pinned=pinned)
+        return cls(
+            location=location, repo=repo, commit=commit, pinned=pinned, json_repo_name=repo_name
+        )
 
     @classmethod
     def from_installable(cls, module: Installable, *, pinned: bool = False) -> InstalledModule:

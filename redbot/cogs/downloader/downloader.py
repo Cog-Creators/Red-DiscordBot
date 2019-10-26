@@ -188,7 +188,7 @@ class Downloader(commands.Cog):
             else:
                 continue
             with contextlib.suppress(KeyError):
-                installed[module.repo_name].pop(module.name)
+                installed[module._json_repo_name].pop(module.name)
 
         await self.conf.installed_cogs.set(installed_cogs)
         await self.conf.installed_libraries.set(installed_libraries)
@@ -923,14 +923,18 @@ class Downloader(commands.Cog):
         cogs: List[Installable] = []
         unavailable_cogs: List[str] = []
         already_installed: List[str] = []
+        name_already_used: List[str] = []
 
         for cog_name in cog_names:
-            cog: Installable = discord.utils.get(repo.available_cogs, name=cog_name)
+            cog: Optional[Installable] = discord.utils.get(repo.available_cogs, name=cog_name)
             if cog is None:
                 unavailable_cogs.append(inline(cog_name))
                 continue
             if cog in installed_cogs:
                 already_installed.append(inline(cog_name))
+                continue
+            if discord.utils.get(installed_cogs, name=cog.name):
+                name_already_used.append(inline(cog_name))
                 continue
             cogs.append(cog)
 
@@ -944,6 +948,10 @@ class Downloader(commands.Cog):
             message += _("\nThese cogs were already installed: ") + humanize_list(
                 already_installed
             )
+        if name_already_used:
+            message += _(
+                "\nSome cogs with these names are already installed from different repos: "
+            ) + humanize_list(already_installed)
         correct_cogs, add_to_message = self._filter_incorrect_cogs(cogs)
         if add_to_message:
             return correct_cogs, f"{message}\n{add_to_message}"
