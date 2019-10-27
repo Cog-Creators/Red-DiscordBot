@@ -2215,3 +2215,23 @@ class Core(commands.Cog, CoreLogic):
     async def rpc_reload(self, request):
         await self.rpc_unload(request)
         await self.rpc_load(request)
+
+
+# Removing this command from forks is a violation of the GPLv3 under which it is licensed.
+# Otherwise interfering with the ability for this command to be accessible is also a violation.
+@commands.command(cls=commands.commands._AlwaysAvailableCommand, name="licenseinfo", i18n=_)
+async def license_info_command(ctx):
+    """
+    Get info about Red's licenses
+    """
+
+    message = (
+        "This bot is an instance of Red-DiscordBot (hereafter refered to as Red)\n"
+        "Red is a free and open source application made available to the public and "
+        "licensed under the GNU GPLv3. The full text of this license is available to you at "
+        "<https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/LICENSE>\n\n"
+        "Red also makes use of several other open source tools. We are incredibly greatful to "
+        "each of these projects and their maintainers for donating their time and work to the public.\n"
+        "The full details of the licenses of these projects is available online <TBD>"
+    )
+    # This is intentionally unfinished until deciding how to handle
