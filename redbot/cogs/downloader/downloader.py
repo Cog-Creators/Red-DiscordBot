@@ -621,8 +621,8 @@ class Downloader(commands.Cog):
                     )
                     + message
                 )
-
-        await ctx.send(message)
+        # "---" added to separate cog install messages from Downloader's message
+        await ctx.send(f"{message}\n---")
         for cog in installed_cogs:
             if cog.install_msg:
                 await ctx.send(cog.install_msg.replace("[p]", ctx.prefix))
@@ -757,7 +757,12 @@ class Downloader(commands.Cog):
     async def _cog_updatetoversion(
         self, ctx: commands.Context, repo: Repo, rev: str, *cogs: InstalledCog
     ) -> None:
-        """Update all cogs, or ones of your choosing from chosen revision of one repo."""
+        """Update all cogs, or ones of your choosing to chosen revision of one repo.
+
+        Note that update doesn't mean downgrade and therefore revision
+        has to be newer than the one that cog currently has. If you want to
+        downgrade the cog, uninstall and install it again.
+        """
         await self._cog_update_logic(ctx, repo=repo, rev=rev, cogs=cogs)
 
     async def _cog_update_logic(
@@ -776,6 +781,18 @@ class Downloader(commands.Cog):
                 await repo.update()
                 try:
                     commit = await repo.get_full_sha1(rev)
+                except errors.AmbiguousRevision as e:
+                    msg = _(
+                        "Error: short sha1 `{rev}` is ambiguous. Possible candidates:\n"
+                    ).format(rev=rev)
+                    for candidate in e.candidates:
+                        msg += (
+                            f"**{candidate.object_type} {candidate.rev}**"
+                            f" - {candidate.description}\n"
+                        )
+                    for page in pagify(msg):
+                        await ctx.send(msg)
+                    return
                 except errors.UnknownRevision:
                     await ctx.send(
                         _("Error: there is no revision `{rev}` in repo `{repo.name}`").format(
@@ -790,6 +807,15 @@ class Downloader(commands.Cog):
 
             pinned_cogs = {cog for cog in cogs_to_check if cog.pinned}
             cogs_to_check -= pinned_cogs
+            if not cogs_to_check:
+                message = _("There were no cogs to check.")
+                if pinned_cogs:
+                    cognames = [cog.name for cog in pinned_cogs]
+                    message += _(
+                        "\nThese cogs are pinned and therefore weren't checked: "
+                    ) + humanize_list(tuple(map(inline, cognames)))
+                    await ctx.send(message)
+                    return
             cogs_to_update, libs_to_update = await self._available_updates(cogs_to_check)
 
             updates_available = cogs_to_update or libs_to_update
@@ -801,19 +827,19 @@ class Downloader(commands.Cog):
                 )
             else:
                 if repos:
-                    message += _("Cogs from provided repos are already up to date.")
+                    message = _("Cogs from provided repos are already up to date.")
                 elif repo:
                     if cogs:
-                        message += _("Provided cogs are already up to date with this revision.")
+                        message = _("Provided cogs are already up to date with this revision.")
                     else:
-                        message += _(
+                        message = _(
                             "Cogs from provided repo are already up to date with this revision."
                         )
                 else:
                     if cogs:
-                        message += _("Provided cogs are already up to date.")
+                        message = _("Provided cogs are already up to date.")
                     else:
-                        message += _("All installed cogs are already up to date.")
+                        message = _("All installed cogs are already up to date.")
             if repo is not None:
                 await repo.checkout(repo.branch)
             if pinned_cogs:
@@ -823,7 +849,7 @@ class Downloader(commands.Cog):
                 ) + humanize_list(tuple(map(inline, cognames)))
             message += filter_message
         await ctx.send(message)
-        if updates_available:
+        if updates_available and updated_cognames:
             await self._ask_for_cog_reload(ctx, updated_cognames)
 
     @cog.command(name="list", usage="<repo_name>")
@@ -944,7 +970,7 @@ class Downloader(commands.Cog):
             ) + humanize_list(already_installed)
         correct_cogs, add_to_message = self._filter_incorrect_cogs(cogs)
         if add_to_message:
-            return correct_cogs, f"{message}\n{add_to_message}"
+            return correct_cogs, f"{message}{add_to_message}"
         return correct_cogs, message
 
     def _filter_incorrect_cogs(
@@ -983,7 +1009,7 @@ class Downloader(commands.Cog):
         message = ""
         if outdated_python_version:
             message += _(
-                "These cogs require higher python version than you have: "
+                "\nThese cogs require higher python version than you have: "
             ) + humanize_list(outdated_python_version)
         if outdated_bot_version:
             message += _(
@@ -1049,15 +1075,15 @@ class Downloader(commands.Cog):
             cognames = [cog.name for cog in failed_cogs]
             message += _("\nFailed to update cogs: ") + humanize_list(tuple(map(inline, cognames)))
         if not cogs_to_update:
-            message += _("\nNo cogs were updated, but some shared libraries were.")
+            message = _("No cogs were updated.")
         if installed_libs:
             message += _(
                 "\nSome shared libraries were updated, you should restart the bot "
-                "to bring the changes into effect"
+                "to bring the changes into effect."
             )
         if failed_libs:
             libnames = [lib.name for lib in failed_libs]
-            message += _("Failed to install shared libraries: ") + humanize_list(
+            message += _("\nFailed to install shared libraries: ") + humanize_list(
                 tuple(map(inline, libnames))
             )
         return (updated_cognames, message)
