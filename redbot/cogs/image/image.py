@@ -148,7 +148,7 @@ class Image(commands.Cog):
             "5. Set the authorization callback URL to `https://localhost`.\n"
             "6. Leave the app website blank.\n"
             "7. Enter a valid email address and a description.\n"
-            "8. Check the captcha box and click next.\n"
+            "8. Check the captcha box and click submit.\n"
             "9. Your Client ID will be on the next page.\n"
             "10. Run the command `{prefix}set api imgur client_id <your_client_id_here>`.\n"
         ).format(prefix=ctx.prefix)
