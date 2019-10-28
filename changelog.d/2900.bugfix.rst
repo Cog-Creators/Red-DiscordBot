@@ -1,2 +1,3 @@
-Add in ``[p]mywarnings`` to remove a ``is_admin_or_superior`` check so the permissions cog can change who can check other user's warnings
-Also makes ``[p]warnings`` not be able to check user's own warnings.
+Remove a ``is_admin_or_superior`` check so the permissions cog can change who can check other user's warnings.
+- Changes ``[p]warnings`` to be admin or higher, and now ``[p]warnings`` is **only** used for other user's warnings.
+- Adds in ``[p]mwarnings`` as a substitute for ``[p]warnings`` not allowing users to check their own warnings.
