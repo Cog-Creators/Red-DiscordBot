@@ -340,31 +340,16 @@ class Warnings(commands.Cog):
             pass
         await ctx.send(_("User {user} has been warned.").format(user=user))
 
-    @commands.command(usage="")
+    @commands.command()
     @commands.guild_only()
-    async def warnings(
-        self, ctx: commands.Context, user: Optional[Union[discord.Member, int]] = None
-    ):
-        """Check your own warnings."""
-        if user is None:
-            user = ctx.author
-        else:  # TODO: remove this else statement in a release after 3.3.0 (will allow users time start using [p]warncheck)
-            if not await is_admin_or_superior(self.bot, ctx.author):
-                return await ctx.send(
-                    warning(_("You are not allowed to check warnings for other users!"))
-                )
-            else:
-                return await ctx.send(
-                    _("Checking other user's warnings has moved to `{prefix}warncheck`.").format(
-                        prefix=ctx.prefix
-                    )
-                )
-
+    @checks.admin_or_permissions(ban_members=True)
+    async def warnings(self, ctx: commands.Context, user: Union[discord.Member, int] = None):
+        """List the warnings for the specified user."""
         msg = ""
         member_settings = self.config.member(user)
         async with member_settings.warnings() as user_warnings:
             if not user_warnings.keys():  # no warnings for the user
-                await ctx.send(_("You have no warnings! Well done!"))
+                await ctx.send(_("That user has no warnings!"))
             else:
                 for key in user_warnings.keys():
                     mod = ctx.guild.get_member(user_warnings[key]["mod"])
@@ -389,13 +374,20 @@ class Warnings(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    async def warncheck(self, ctx: commands.Context, user: discord.Member):
-        """Check other user's warnings."""
+    async def mywarnings(self, ctx: commands.Context):
+        """Check your own warnings."""
+        user = ctx.author
+        try:
+            userid: int = user.id
+        except AttributeError:
+            userid: int = user
+            user = ctx.guild.get_member(userid)
+            user = user or namedtuple("Member", "id guild")(userid, ctx.guild)
         msg = ""
         member_settings = self.config.member(user)
         async with member_settings.warnings() as user_warnings:
             if not user_warnings.keys():  # no warnings for the user
-                await ctx.send(_("That user has no warnings!"))
+                await ctx.send(_("You have no warnings. Well done!"))
             else:
                 for key in user_warnings.keys():
                     mod = ctx.guild.get_member(user_warnings[key]["mod"])
