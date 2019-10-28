@@ -1,1 +1,1 @@
-Only send one image from image searches.
+Only send one image from Imgur searches.
