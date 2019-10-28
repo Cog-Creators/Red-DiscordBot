@@ -68,9 +68,8 @@ class Image(commands.Cog):
                 return
             shuffle(results)
             msg = _("Search results...\n")
-            for r in results[:3]:
+            for r in results[:1]:
                 msg += r["gifv"] if "gifv" in r else r["link"]
-                msg += "\n"
             await ctx.send(msg)
         else:
             await ctx.send(
