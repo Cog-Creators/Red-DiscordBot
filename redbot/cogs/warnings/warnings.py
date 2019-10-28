@@ -343,7 +343,7 @@ class Warnings(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
-    async def warnings(self, ctx: commands.Context, user: Union[discord.Member, int] = None):
+    async def warnings(self, ctx: commands.Context, user: discord.Member):
         """List the warnings for the specified user."""
         msg = ""
         member_settings = self.config.member(user)
@@ -357,8 +357,6 @@ class Warnings(commands.Cog):
                         mod = discord.utils.get(
                             self.bot.get_all_members(), id=user_warnings[key]["mod"]
                         )
-                        if mod is None:
-                            mod = await self.bot.fetch_user(user_warnings[key]["mod"])
                     msg += _(
                         "{num_points} point warning {reason_name} issued by {user} for "
                         "{description}\n"
@@ -395,8 +393,6 @@ class Warnings(commands.Cog):
                         mod = discord.utils.get(
                             self.bot.get_all_members(), id=user_warnings[key]["mod"]
                         )
-                        if mod is None:
-                            mod = await self.bot.fetch_user(user_warnings[key]["mod"])
                     msg += _(
                         "{num_points} point warning {reason_name} issued by {user} for "
                         "{description}\n"
