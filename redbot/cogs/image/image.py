@@ -232,8 +232,10 @@ class Image(commands.Cog):
             "3. Press *Create an App*.\n"
             "4. Write an app name, example: *Red Bot*.\n"
             "5. Write an app description, example: *Used for Red Bot*.\n"
-            "6. Copy the API key shown.\n"
-            "7. Run the command `{prefix}set api GIPHY api_key <your_api_key_here>`.\n"
+            "6. Select *I only want to use the GIPHY API*."
+            "7. Click *Create New App*"
+            "8. Copy the API key shown.\n"
+            "9. Run the command `{prefix}set api GIPHY api_key <your_api_key_here>`.\n"
         ).format(prefix=ctx.prefix)
 
         await ctx.maybe_send_embed(message)
