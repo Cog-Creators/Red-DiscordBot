@@ -665,7 +665,7 @@ class RepoManager:
             try:
                 repo, (old, new) = (await self.update_repo(repo_name)).popitem()
             except errors.UpdateError as err:
-                log.error("Repository %s has failed update.", repo_class.url, exc_info=err)
+                log.error("Repository %s has failed to update.", repo_class.url, exc_info=err)
                 failed.append(repo_class)
                 continue
 
