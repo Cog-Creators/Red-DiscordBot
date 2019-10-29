@@ -286,9 +286,9 @@ Or, to install with PostgreSQL support:
 .. note::
 
   To install the development version, replace ``Red-DiscordBot`` in the above commands with the
-  link below. **Please note that dev is experimental not intended for end users. We will not
+  link below. Please note that **dev is experimental and not intended for end users.** We will not
   support anyone using the development version in any support channels. Downgrading after an
-  accidental install of dev is not possible without data loss.**
+  accidental install of dev is not possible without data loss.
       
   .. code-block:: none
 
