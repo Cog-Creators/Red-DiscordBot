@@ -399,28 +399,56 @@ class Downloader(commands.Cog):
     async def _cog_update(self, ctx, cog_name: InstalledCog = None):
         """Update all cogs, or one of your choosing."""
         installed_cogs = set(await self.installed_cogs())
+        failed = []
+        updated = {}
 
         async with ctx.typing():
             if cog_name is None:
                 updated, failed = await self._repo_manager.update_all_repos()
-
-                for failed_repo in failed:
-                    await ctx.send(
-                        _(
-                            "Repository `{repo_name}` {repo_url} on branch:`{branch}`"
-                            " Failed to update, check if it wasn't deleted."
-                        ).format(
-                            repo_name=failed_repo.name,
-                            repo_url=failed_repo.url,
-                            branch=failed_repo.branch,
-                        )
-                    )
             else:
                 try:
                     updated = await self._repo_manager.update_repo(cog_name.repo_name)
+                except errors.UpdateError as err:
+                    # Remote repository missing or broken
+                    repo_class = self._repo_manager._repos[cog_name.repo_name]
+                    log.error("Repository %s has failed to update.", repo_class.url, exc_info=err)
+                    failed.append(repo_class)
+
                 except KeyError:
                     # Thrown if the repo no longer exists
-                    updated = {}
+                    pass
+
+            if failed:
+                failed_row = "{repo_name:^20} | {branch:^25} | {repo_url}"
+                failed_table_messages = [
+                    "```",
+                    # header and separator
+                    _("Failed repositories (name | branch | url):"),
+                    "-" * 40,
+                ]
+
+                failed_table_messages.extend(
+                    (
+                        failed_row.format(
+                            repo_name=f_repo.name, branch=f_repo.branch, repo_url=f_repo.url
+                        )
+                        for f_repo in failed
+                    )
+                )
+
+                failed_table_messages.append("```")
+
+                await ctx.send(
+                    "\n".join(
+                        (
+                            _(
+                                ":x: Some repositories failed to update."
+                                " Check if the repository or branch wasn't deleted, moved or made private."
+                            ),
+                            *failed_table_messages,
+                        )
+                    )
+                )
 
             updated_cogs = set(cog for repo in updated for cog in repo.available_cogs)
             installed_and_updated = updated_cogs & installed_cogs
