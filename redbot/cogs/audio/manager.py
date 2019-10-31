@@ -122,8 +122,8 @@ class ServerManager:
         """
         This assumes we've already checked that java exists.
         """
-        _proc: asyncio.subprocess.Process = (
-            await asyncio.create_subprocess_exec(  # pylint:disable=no-member
+        _proc: asyncio.subprocess.Process = (  # pylint:disable=no-member
+            await asyncio.create_subprocess_exec(
                 "java", "-version", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
             )
         )
