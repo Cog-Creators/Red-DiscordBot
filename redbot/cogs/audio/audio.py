@@ -36,7 +36,7 @@ from redbot.core.utils.menus import (
 )
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from . import dataclasses
-from .apis import MusicCache, HAS_SQL
+from .apis import MusicCache, HAS_SQL, _ERROR
 from .checks import can_have_caching
 from .config import pass_config_to_dependencies
 from .converters import ComplexScopeParser, ScopeParser, get_lazy_converter, get_playlist_converter
@@ -209,16 +209,16 @@ class Audio(commands.Cog):
         lavalink.register_event_listener(self.event_handler)
         if not HAS_SQL:
             error_message = (
-                "Audio version: {version}\nThis version requires SQL to "
+                "Audio version: {version}\nThis version requires some SQL dependencies to "
                 "access the caching features, "
-                "your Python install is missing the module sqlite3.\n\n"
+                "your Python install is missing some of them.\n\n"
                 "For instructions on how to fix it Google "
-                "`ModuleNotFoundError: No module named '_sqlite3'`\n"
-                "You will need to reinstall "
-                "Python with SQL dependencies installed.\n\n"
+                f"`{_ERROR}`.\n"
+                "You will need to install the missing SQL dependency.\n\n"
             ).format(version=__version__)
             with contextlib.suppress(discord.HTTPException):
-                await self.bot.send_to_owners(error_message)
+                for page in pagify(error_message):
+                    await self.bot.send_to_owners(page)
             log.critical(error_message)
 
     async def _migrate_config(self, from_version: int, to_version: int):
@@ -6465,7 +6465,6 @@ class Audio(commands.Cog):
                 search_choice = tracks[4 + (page * 5)]
             else:
                 search_choice = tracks[0 + (page * 5)]
-                # TODO: verify this does not break exit and arrows
         except IndexError:
             search_choice = tracks[-1]
         try:

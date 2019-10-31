@@ -662,7 +662,7 @@ class Permissions(commands.Cog):
 
     @staticmethod
     def _get_updated_schema(
-        old_config: _OldConfigSchema
+        old_config: _OldConfigSchema,
     ) -> Tuple[_NewConfigSchema, _NewConfigSchema]:
         # Prior to 1.0.0, the schema was in this form for both global
         # and guild-based rules:

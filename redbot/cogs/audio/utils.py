@@ -12,9 +12,11 @@ from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import bold, box
 from . import dataclasses
+
 from .playlists import humanize_scope
 
 __all__ = [
+    "_pass_config_to_utils",
     "track_limit",
     "queue_duration",
     "draw_time",

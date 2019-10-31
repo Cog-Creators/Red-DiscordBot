@@ -61,7 +61,7 @@ class ServerManager:
         if self._proc is not None:
             if self._proc.returncode is None:
                 raise RuntimeError("Internal Lavalink server is already running")
-            else:
+            elif self._shutdown:
                 raise RuntimeError("Server manager has already been used - create another one")
 
         await self.maybe_download_jar()
@@ -122,8 +122,10 @@ class ServerManager:
         """
         This assumes we've already checked that java exists.
         """
-        _proc: asyncio.subprocess.Process = await asyncio.create_subprocess_exec(  # pylint:disable=no-member
-            "java", "-version", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+        _proc: asyncio.subprocess.Process = (
+            await asyncio.create_subprocess_exec(  # pylint:disable=no-member
+                "java", "-version", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+            )
         )
         # java -version outputs to stderr
         _, err = await _proc.communicate()

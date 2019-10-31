@@ -7,6 +7,7 @@ import logging
 import os
 import random
 import time
+import traceback
 from collections import namedtuple
 from typing import Callable, Dict, List, Mapping, NoReturn, Optional, Tuple, Union
 
@@ -15,10 +16,13 @@ try:
     from databases import Database
 
     HAS_SQL = True
-except ModuleNotFoundError:
+    _ERROR = None
+except ImportError as err:
+    _ERROR = "".join(traceback.format_exception_only(type(err), err)).strip()
     HAS_SQL = False
-    SQLError = ModuleNotFoundError
+    SQLError = err.__class__
     Database = None
+
 
 import aiohttp
 import discord
