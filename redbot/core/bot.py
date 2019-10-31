@@ -305,6 +305,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         ----------
         location : `discord.abc.Messageable`
             Location to check embed color for.
+
         Returns
         -------
         discord.Color

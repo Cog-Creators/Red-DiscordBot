@@ -21,6 +21,7 @@ To start off, be sure that you have installed Python 3.7.
 Next, you need to decide if you want to develop against the Stable or Develop version of Red.
 Depending on what your goal is should help determine which version you need.
 
+.. attention::
     The Develop version may have changes on it which break compatibility with the Stable version and other cogs.
     If your goal is to support both versions, make sure you build compatibility layers or use separate branches to keep compatibility until the next Red release
 
