@@ -32,7 +32,7 @@ from lavalink.rest_api import LoadResult
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from . import dataclasses
+from . import audio_dataclasses
 from .errors import InvalidTableError, SpotifyFetchError, YouTubeApiError
 from .playlists import get_playlist
 from .utils import CacheLevel, Notifier, is_allowed, queue_duration, track_limit
@@ -746,7 +746,7 @@ class MusicCache:
                 if val:
                     try:
                         result, called_api = await self.lavalink_query(
-                            ctx, player, dataclasses.Query.process_input(val)
+                            ctx, player, audio_dataclasses.Query.process_input(val)
                         )
                     except (RuntimeError, aiohttp.ServerDisconnectedError):
                         lock(ctx, False)
@@ -805,7 +805,7 @@ class MusicCache:
                     ctx.guild,
                     (
                         f"{single_track.title} {single_track.author} {single_track.uri} "
-                        f"{str(dataclasses.Query.process_input(single_track))}"
+                        f"{str(audio_dataclasses.Query.process_input(single_track))}"
                     ),
                 ):
                     has_not_allowed = True
@@ -911,7 +911,7 @@ class MusicCache:
         self,
         ctx: commands.Context,
         player: lavalink.Player,
-        query: dataclasses.Query,
+        query: audio_dataclasses.Query,
         forced: bool = False,
     ) -> Tuple[LoadResult, bool]:
         """
@@ -925,7 +925,7 @@ class MusicCache:
             The context this method is being called under.
         player : lavalink.Player
             The player who's requesting the query.
-        query: dataclasses.Query
+        query: audio_dataclasses.Query
             The Query object for the query in question.
         forced:bool
             Whether or not to skip cache and call API first..
@@ -939,7 +939,7 @@ class MusicCache:
         )
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         val = None
-        _raw_query = dataclasses.Query.process_input(query)
+        _raw_query = audio_dataclasses.Query.process_input(query)
         query = str(_raw_query)
         if cache_enabled and not forced and not _raw_query.is_local:
             update = True
@@ -1096,7 +1096,9 @@ class MusicCache:
             if not tracks:
                 ctx = namedtuple("Context", "message")
                 results, called_api = await self.lavalink_query(
-                    ctx(player.channel.guild), player, dataclasses.Query.process_input(_TOP_100_US)
+                    ctx(player.channel.guild),
+                    player,
+                    audio_dataclasses.Query.process_input(_TOP_100_US),
                 )
                 tracks = list(results.tracks)
         if tracks:
@@ -1107,7 +1109,7 @@ class MusicCache:
 
             while valid is False and multiple:
                 track = random.choice(tracks)
-                query = dataclasses.Query.process_input(track)
+                query = audio_dataclasses.Query.process_input(track)
                 if not query.valid:
                     continue
                 if query.is_local and not query.track.exists():
@@ -1116,7 +1118,7 @@ class MusicCache:
                     player.channel.guild,
                     (
                         f"{track.title} {track.author} {track.uri} "
-                        f"{str(dataclasses.Query.process_input(track))}"
+                        f"{str(audio_dataclasses.Query.process_input(track))}"
                     ),
                 ):
                     log.debug(

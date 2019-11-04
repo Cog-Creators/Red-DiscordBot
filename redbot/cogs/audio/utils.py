@@ -11,7 +11,7 @@ import lavalink
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
-from . import dataclasses
+from . import audio_dataclasses
 
 from .converters import _pass_config_to_converters
 
@@ -51,7 +51,7 @@ def pass_config_to_dependencies(config: Config, bot: Red, localtracks_folder: st
     _config = config
     _pass_config_to_playlist(config, bot)
     _pass_config_to_converters(config, bot)
-    dataclasses._pass_config_to_dataclasses(config, bot, localtracks_folder)
+    audio_dataclasses._pass_config_to_dataclasses(config, bot, localtracks_folder)
 
 
 def track_limit(track, maxlength):
@@ -168,7 +168,7 @@ async def clear_react(bot: Red, message: discord.Message, emoji: dict = None):
 
 async def get_description(track):
     if any(x in track.uri for x in [f"{os.sep}localtracks", f"localtracks{os.sep}"]):
-        local_track = dataclasses.LocalPath(track.uri)
+        local_track = audio_dataclasses.LocalPath(track.uri)
         if track.title != "Unknown title":
             return "**{} - {}**\n{}".format(
                 track.author, track.title, local_track.to_string_hidden()
