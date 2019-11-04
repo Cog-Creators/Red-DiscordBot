@@ -544,7 +544,7 @@ class Permissions(commands.Cog):
 
         Handles config.
         """
-        self.bot.clear_permission_rules(guild_id)
+        self.bot.clear_permission_rules(guild_id, preserve_default_rule=False)
         for category in (COG, COMMAND):
             async with self.config.custom(category).all() as all_rules:
                 for name, rules in all_rules.items():
