@@ -196,13 +196,12 @@ class Audio(commands.Cog):
 
     async def initialize(self):
         await self.bot.wait_until_ready()
+        await self._migrate_config(
+            from_version=await self.config.schema_version(), to_version=_SCHEMA_VERSION
+        )
         pass_config_to_dependencies(self.config, self.bot, await self.config.localpath())
         await self.music_cache.initialize(self.config)
-        asyncio.ensure_future(
-            self._migrate_config(
-                from_version=await self.config.schema_version(), to_version=_SCHEMA_VERSION
-            )
-        )
+        
         self._restart_connect()
         self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
         lavalink.register_event_listener(self.event_handler)
