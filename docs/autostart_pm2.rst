@@ -37,6 +37,6 @@ You can add additional Red based arguments after the instance, such as :code:`--
 Ensuring that PM2 stays online
 ------------------------------
 
-To make sure that PM2 stays online and persistance between machine restarts, run the following commands:
+To make sure that PM2 stays online and persistence between machine restarts, run the following commands:
 
 :code:`pm2 save` & :code:`pm2 startup`
