@@ -6901,6 +6901,7 @@ class Audio(commands.Cog):
     async def on_voice_state_update(
         self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState
     ):
+        await self._ready_event.wait()
         if after.channel != before.channel:
             try:
                 self.skip_votes[before.channel.guild].remove(member.id)
