@@ -10,7 +10,7 @@ Setting up auto-restart using pm2 on Linux
 Installing PM2
 --------------
 
-Start by installing Node.JS and NPM via your favorite package distributor. From there run the following command.
+Start by installing Node.JS and NPM via your favorite package distributor. From there run the following command:
 
 :code:`npm install pm2 -g`
 
