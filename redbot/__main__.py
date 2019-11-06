@@ -118,6 +118,12 @@ def edit_instance(red, cli_flags):
 
 def _edit_token(red, token, no_prompt):
     if token:
+        if not len(token) >= 50:
+            print(
+                "The provided token doesn't look a valid Discord bot token."
+                " Instance's token will remain unchanged.\n"
+            )
+            return
         red.loop.run_until_complete(red._config.token.set(token))
     elif not no_prompt and confirm("Would you like to change instance's token?", default=False):
         interactive_config(red, False, True, print_header=False)
@@ -149,6 +155,7 @@ def _edit_owner(red, owner, no_prompt):
                     continue
                 owner_id = int(owner_id)
                 red.loop.run_until_complete(red._config.owner.set(owner_id))
+                print("Owner updated.")
                 break
         else:
             print("Instance's owner will remain unchanged.")
@@ -161,10 +168,8 @@ def _edit_instance_name(old_name, new_name, confirm_overwrite, no_prompt):
         if name in _get_instance_names() and not confirm_overwrite:
             name = old_name
             print(
-                "An instance already exists with this name."
-                " Continuing would overwrite the existing instance config.\n"
-                "Instance name will remain unchanged.\n"
-                "If you want to replace existing instance,"
+                "An instance with this name already exists.\n"
+                "If you want to remove the existing instance and replace it with this one,"
                 " run this command with --overwrite-existing-instance flag."
             )
     elif not no_prompt and confirm("Would you like to change the instance name?", default=False):
@@ -180,6 +185,8 @@ def _edit_instance_name(old_name, new_name, confirm_overwrite, no_prompt):
             ):
                 print("Instance name will remain unchanged.")
                 name = old_name
+            else:
+                print("Instance name updated.")
             print()
     else:
         name = old_name
@@ -202,6 +209,8 @@ def _edit_data_path(data, data_path, copy_data, no_prompt):
             if not confirm("Do you still want to use the new data location?"):
                 data["DATA_PATH"] = data_manager.basic_config["DATA_PATH"]
                 print("Data location will remain unchanged.")
+            else:
+                print("Data location updated.")
 
 
 def _copy_data(data):
