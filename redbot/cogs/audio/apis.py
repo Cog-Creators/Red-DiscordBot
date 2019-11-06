@@ -1003,12 +1003,10 @@ class MusicCache:
                     tasks = self._tasks[ctx.message.id]
                     del self._tasks[ctx.message.id]
                     await asyncio.gather(
-                        *[self.insert(*a) for a in tasks["insert"]],
-                        return_exceptions=True,
+                        *[self.insert(*a) for a in tasks["insert"]], return_exceptions=True
                     )
                     await asyncio.gather(
-                        *[self.update(*a) for a in tasks["update"]],
-                        return_exceptions=True,
+                        *[self.update(*a) for a in tasks["update"]], return_exceptions=True
                     )
                 log.debug(f"Completed database writes for {lock_id} " f"({lock_author})")
 
@@ -1023,12 +1021,10 @@ class MusicCache:
                 self._tasks = {}
 
                 await asyncio.gather(
-                    *[self.insert(*a) for a in tasks["insert"]],
-                    return_exceptions=True,
+                    *[self.insert(*a) for a in tasks["insert"]], return_exceptions=True
                 )
                 await asyncio.gather(
-                    *[self.update(*a) for a in tasks["update"]],
-                    return_exceptions=True,
+                    *[self.update(*a) for a in tasks["update"]], return_exceptions=True
                 )
             log.debug("Completed pending writes to database have finished")
 
