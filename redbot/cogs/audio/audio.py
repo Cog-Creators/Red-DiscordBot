@@ -2835,6 +2835,8 @@ class Audio(commands.Cog):
             if not tracks:
                 self._play_lock(ctx, False)
                 embed = discord.Embed(title=_("Nothing found."), colour=await ctx.embed_colour())
+                if result.exception_message:
+                    embed.set_footer(text=result.exception_message)
                 if await self.config.use_external_lavalink() and query.is_local:
                     embed.description = _(
                         "Local tracks will not work "
