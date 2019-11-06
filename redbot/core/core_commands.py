@@ -1136,7 +1136,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.is_owner()
     async def api(self, ctx: commands.Context, service: str, *, tokens: TokenConverter):
         """Set various external API tokens.
-        
+
         This setting will be asked for by some 3rd party cogs and some core cogs.
 
         To add the keys provide the service name and the tokens as a comma separated
@@ -1162,7 +1162,7 @@ class Core(commands.Cog, CoreLogic):
         Allows the help command to be sent as a paginated menu instead of seperate
         messages.
 
-        This defaults to False. 
+        This defaults to False.
         Using this without a setting will toggle.
         """
         if use_menus is None:
@@ -2229,9 +2229,7 @@ async def license_info_command(ctx):
         "This bot is an instance of Red-DiscordBot (hereafter refered to as Red)\n"
         "Red is a free and open source application made available to the public and "
         "licensed under the GNU GPLv3. The full text of this license is available to you at "
-        "<https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/LICENSE>\n\n"
-        "Red also makes use of several other open source tools. We are incredibly greatful to "
-        "each of these projects and their maintainers for donating their time and work to the public.\n"
-        "The full details of the licenses of these projects is available online <TBD>"
+        "<https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/LICENSE>"
     )
-    # This is intentionally unfinished until deciding how to handle
+    await ctx.send(message)
+    # We need a link which contains a thank you to other projects which we use at some point.
