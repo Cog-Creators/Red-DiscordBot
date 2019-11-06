@@ -1,0 +1,6 @@
+adds a few methods and classes replacing direct config access (which is no longer supported)
+
+ - ``redbot.core.Red.allowed_by_whitelist_blacklist``
+ - ``redbot.core.Red.get_valid_prefixes``
+ - ``redbot.core.Red.clear_shared_api_tokens``
+ - ``redbot.core.commands.help.HelpSettings``

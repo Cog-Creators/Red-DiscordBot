@@ -1,0 +1,1 @@
+Do not overwrite the docs/prolog.txt file in conf.py.

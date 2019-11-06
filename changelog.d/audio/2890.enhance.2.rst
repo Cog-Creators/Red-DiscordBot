@@ -1,0 +1,1 @@
+Playlist will now start playing as soon as first track is loaded.

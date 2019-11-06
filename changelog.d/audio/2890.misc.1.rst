@@ -1,0 +1,1 @@
+Spotify and Youtube API functions have been moved to :module:`redbot.cogs.audio.api` under :class:`SpotifyAPI` and :class:`YouTubeAPI`.
