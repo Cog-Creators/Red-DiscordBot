@@ -1,0 +1,1 @@
+Bot no longer types infinitely when command with cooldown is called within last second of cooldown.

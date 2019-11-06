@@ -1,0 +1,1 @@
+```redbot-setup delete`` now has the option to leave Red's data untouched on database backends.

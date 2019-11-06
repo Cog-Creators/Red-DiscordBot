@@ -1,0 +1,1 @@
+Auto pause queue when room is empty.

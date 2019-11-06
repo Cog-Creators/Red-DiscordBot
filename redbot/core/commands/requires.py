@@ -125,7 +125,7 @@ class PrivilegeLevel(enum.IntEnum):
 
         # The following is simply an optimised way to check if the user has the
         # admin or mod role.
-        guild_settings = ctx.bot.db.guild(ctx.guild)
+        guild_settings = ctx.bot._config.guild(ctx.guild)
 
         member_snowflakes = ctx.author._roles  # DEP-WARN
         for snowflake in await guild_settings.admin_role():
@@ -398,10 +398,8 @@ class Requires:
         else:
             rules[model_id] = rule
 
-    def clear_all_rules(self, guild_id: int) -> None:
+    def clear_all_rules(self, guild_id: int, *, preserve_default_rule: bool = True) -> None:
         """Clear all rules of a particular scope.
-
-        This will preserve the default rule, if set.
 
         Parameters
         ----------
@@ -410,6 +408,12 @@ class Requires:
             `Requires.GLOBAL`, this will clear all global rules and
             leave all guild rules untouched.
 
+        Other Parameters
+        ----------------
+        preserve_default_rule : bool
+            Whether to preserve the default rule or not.
+            This defaults to being preserved
+
         """
         if guild_id:
             rules = self._guild_rules.setdefault(guild_id, _RulesDict())
@@ -417,7 +421,7 @@ class Requires:
             rules = self._global_rules
         default = rules.get(self.DEFAULT, None)
         rules.clear()
-        if default is not None:
+        if default is not None and preserve_default_rule:
             rules[self.DEFAULT] = default
 
     def reset(self) -> None:
@@ -719,7 +723,7 @@ def mod():
 
 
 class _IntKeyDict(Dict[int, _T]):
-    """Dict subclass which throws KeyError when a non-int key is used."""
+    """Dict subclass which throws TypeError when a non-int key is used."""
 
     get: Callable
     setdefault: Callable
@@ -736,7 +740,7 @@ class _IntKeyDict(Dict[int, _T]):
 
 
 class _RulesDict(Dict[Union[int, str], PermState]):
-    """Dict subclass which throws a KeyError when an invalid key is used."""
+    """Dict subclass which throws a TypeError when an invalid key is used."""
 
     get: Callable
     setdefault: Callable

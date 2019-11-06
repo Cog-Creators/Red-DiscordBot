@@ -1,14 +1,15 @@
-import itertools
-import pathlib
-import platform
-import shutil
 import asyncio
 import asyncio.subprocess  # disables for # https://github.com/PyCQA/pylint/issues/1469
+import itertools
 import logging
+import pathlib
+import platform
 import re
+import shutil
 import sys
 import tempfile
-from typing import Optional, Tuple, ClassVar, List
+import time
+from typing import ClassVar, List, Optional, Tuple
 
 import aiohttp
 from tqdm import tqdm
@@ -17,7 +18,7 @@ from redbot.core import data_manager
 from .errors import LavalinkDownloadFailed
 
 JAR_VERSION = "3.2.1"
-JAR_BUILD = 823
+JAR_BUILD = 846
 LAVALINK_DOWNLOAD_URL = (
     f"https://github.com/Cog-Creators/Lavalink-Jars/releases/download/{JAR_VERSION}_{JAR_BUILD}/"
     f"Lavalink.jar"
@@ -39,7 +40,6 @@ class ServerManager:
     _java_available: ClassVar[Optional[bool]] = None
     _java_version: ClassVar[Optional[Tuple[int, int]]] = None
     _up_to_date: ClassVar[Optional[bool]] = None
-
     _blacklisted_archs = []
 
     def __init__(self) -> None:
@@ -59,7 +59,7 @@ class ServerManager:
         if self._proc is not None:
             if self._proc.returncode is None:
                 raise RuntimeError("Internal Lavalink server is already running")
-            else:
+            elif self._shutdown:
                 raise RuntimeError("Server manager has already been used - create another one")
 
         await self.maybe_download_jar()
@@ -154,12 +154,15 @@ class ServerManager:
 
     async def _wait_for_launcher(self) -> None:
         log.debug("Waiting for Lavalink server to be ready")
+        lastmessage = 0
         for i in itertools.cycle(range(50)):
             line = await self._proc.stdout.readline()
             if READY_LINE_RE.search(line):
                 self.ready.set()
                 break
-            if self._proc.returncode is not None:
+            if self._proc.returncode is not None and lastmessage + 2 < time.time():
+                # Avoid Console spam only print once every 2 seconds
+                lastmessage = time.time()
                 log.critical("Internal lavalink server exited early")
             if i == 49:
                 # Sleep after 50 lines to prevent busylooping
