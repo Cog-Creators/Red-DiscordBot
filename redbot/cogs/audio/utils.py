@@ -3,7 +3,6 @@ import contextlib
 import os
 import re
 import time
-from typing import NoReturn
 from urllib.parse import urlparse
 
 import discord
@@ -389,7 +388,7 @@ class Notifier:
         key: str = None,
         seconds_key: str = None,
         seconds: str = None,
-    ) -> NoReturn:
+    ):
         """
         This updates an existing message.
         Based on the message found in :variable:`Notifier.updates` as per the `key` param
@@ -410,14 +409,14 @@ class Notifier:
         except discord.errors.NotFound:
             pass
 
-    async def update_text(self, text: str) -> NoReturn:
+    async def update_text(self, text: str):
         embed2 = discord.Embed(colour=self.color, title=text)
         try:
             await self.message.edit(embed=embed2)
         except discord.errors.NotFound:
             pass
 
-    async def update_embed(self, embed: discord.Embed) -> NoReturn:
+    async def update_embed(self, embed: discord.Embed):
         try:
             await self.message.edit(embed=embed)
             self.last_msg_time = time.time()

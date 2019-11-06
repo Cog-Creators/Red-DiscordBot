@@ -9,7 +9,7 @@ import random
 import time
 import traceback
 from collections import namedtuple
-from typing import Callable, Dict, List, Mapping, NoReturn, Optional, Tuple, Union
+from typing import Callable, Dict, List, Mapping, Optional, Tuple, Union
 
 try:
     from sqlite3 import Error as SQLError
@@ -331,7 +331,7 @@ class MusicCache:
         self._lock: asyncio.Lock = asyncio.Lock()
         self.config: Optional[Config] = None
 
-    async def initialize(self, config: Config) -> NoReturn:
+    async def initialize(self, config: Config):
         if HAS_SQL:
             await self.database.connect()
 
@@ -348,12 +348,12 @@ class MusicCache:
             await self.database.execute(query=_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE)
         self.config = config
 
-    async def close(self) -> NoReturn:
+    async def close(self):
         if HAS_SQL:
             await self.database.execute(query="PRAGMA optimize;")
             await self.database.disconnect()
 
-    async def insert(self, table: str, values: List[dict]) -> NoReturn:
+    async def insert(self, table: str, values: List[dict]):
         # if table == "spotify":
         #     return
         if HAS_SQL:
@@ -363,7 +363,7 @@ class MusicCache:
 
             await self.database.execute_many(query=query, values=values)
 
-    async def update(self, table: str, values: Dict[str, str]) -> NoReturn:
+    async def update(self, table: str, values: Dict[str, str]):
         # if table == "spotify":
         #     return
         if HAS_SQL:
