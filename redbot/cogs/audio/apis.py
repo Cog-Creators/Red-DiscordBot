@@ -193,7 +193,7 @@ class SpotifyAPI:
                 )
             return await r.json()
 
-    async def _get_auth(self) -> NoReturn:
+    async def _get_auth(self):
         if self.client_id is None or self.client_secret is None:
             tokens = await self.bot.get_shared_api_tokens("spotify")
             self.client_id = tokens.get("client_id", "")
@@ -1003,13 +1003,11 @@ class MusicCache:
                     tasks = self._tasks[ctx.message.id]
                     del self._tasks[ctx.message.id]
                     await asyncio.gather(
-                        *[asyncio.ensure_future(self.insert(*a)) for a in tasks["insert"]],
-                        loop=self.bot.loop,
+                        *[self.insert(*a) for a in tasks["insert"]],
                         return_exceptions=True,
                     )
                     await asyncio.gather(
-                        *[asyncio.ensure_future(self.update(*a)) for a in tasks["update"]],
-                        loop=self.bot.loop,
+                        *[self.update(*a) for a in tasks["update"]],
                         return_exceptions=True,
                     )
                 log.debug(f"Completed database writes for {lock_id} " f"({lock_author})")
@@ -1025,13 +1023,11 @@ class MusicCache:
                 self._tasks = {}
 
                 await asyncio.gather(
-                    *[asyncio.ensure_future(self.insert(*a)) for a in tasks["insert"]],
-                    loop=self.bot.loop,
+                    *[self.insert(*a) for a in tasks["insert"]],
                     return_exceptions=True,
                 )
                 await asyncio.gather(
-                    *[asyncio.ensure_future(self.update(*a)) for a in tasks["update"]],
-                    loop=self.bot.loop,
+                    *[self.update(*a) for a in tasks["update"]],
                     return_exceptions=True,
                 )
             log.debug("Completed pending writes to database have finished")
