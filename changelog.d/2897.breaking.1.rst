@@ -1,0 +1,1 @@
+Modlog casetypes no longer have an attribute for auditlog action type.

@@ -3,7 +3,12 @@ import inspect
 import discord
 from discord.ext import commands
 
-__all__ = ["ConversionFailure", "BotMissingPermissions", "UserFeedbackCheckFailure"]
+__all__ = [
+    "ConversionFailure",
+    "BotMissingPermissions",
+    "UserFeedbackCheckFailure",
+    "ArgParserFailure",
+]
 
 
 class ConversionFailure(commands.BadArgument):
@@ -30,3 +35,16 @@ class UserFeedbackCheckFailure(commands.CheckFailure):
     def __init__(self, message=None, *args):
         self.message = message
         super().__init__(message, *args)
+
+
+class ArgParserFailure(UserFeedbackCheckFailure):
+    """Raised when parsing an argument fails."""
+
+    def __init__(
+        self, cmd: str, user_input: str, custom_help: str = None, ctx_send_help: bool = False
+    ):
+        self.cmd = cmd
+        self.user_input = user_input
+        self.send_cmd_help = ctx_send_help
+        self.custom_help_msg = custom_help
+        super().__init__()

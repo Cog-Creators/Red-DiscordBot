@@ -1,7 +1,11 @@
+# Warning: The implementation below touches several private attributes.
+# While this implementation will be updated, and public interfaces maintained, derived classes
+# should not assume these private attributes are version safe, and use the provided HelpSettings
+# class for these settings.
+
 # This is a full replacement of discord.py's help command
-# Signatures are not guaranteed to be unchanging in this file.
-# At a later date when this is more set in stone, this warning will be removed.
-# At said later date, there should also be things added to support extra formatter
+#
+# At a later date, there should be things added to support extra formatter
 # registration from 3rd party cogs.
 #
 # This exists due to deficiencies in discord.py which conflict
@@ -26,8 +30,11 @@
 # Additionally, this gives our users a bit more customization options including by
 # 3rd party cogs down the road.
 
+# Note: 3rd party help must not remove the copyright notice
+
 import asyncio
 from collections import namedtuple
+from dataclasses import dataclass
 from typing import Union, List, AsyncIterator, Iterable, cast
 
 import discord
@@ -39,7 +46,7 @@ from ..i18n import Translator
 from ..utils import menus, fuzzy_command_search, format_fuzzy_results
 from ..utils.chat_formatting import box, pagify
 
-__all__ = ["red_help", "RedHelpFormatter"]
+__all__ = ["red_help", "RedHelpFormatter", "HelpSettings"]
 
 T_ = Translator("Help", __file__)
 
@@ -50,6 +57,36 @@ SupportsCanSee = Union[commands.Command, commands.Group, dpy_commands.bot.BotBas
 
 EmbedField = namedtuple("EmbedField", "name value inline")
 EMPTY_STRING = "\N{ZERO WIDTH SPACE}"
+
+
+@dataclass(frozen=True)
+class HelpSettings:
+    """
+    A representation of help settings.
+    """
+
+    page_char_limit: int = 1000
+    max_pages_in_guild: int = 2
+    use_menus: bool = False
+    show_hidden: bool = False
+    verify_checks: bool = True
+    verify_exists: bool = False
+    tagline: str = ""
+
+    # Contrib Note: This is intentional to not accept the bot object
+    # There are plans to allow guild and user specific help settings
+    # Adding a non-context based method now would involve a breaking change later.
+    # At a later date, more methods should be exposed for non-context based creation.
+    #
+    # This is also why we aren't just caching the
+    # current state of these settings on the bot object.
+    @classmethod
+    async def from_context(cls, context: Context):
+        """
+        Get the HelpSettings for the current context
+        """
+        settings = await context.bot._config.help.all()
+        return cls(**settings)
 
 
 class NoCommand(Exception):
@@ -95,7 +132,7 @@ class RedHelpFormatter:
                 await self.command_not_found(ctx, help_for)
                 return
             except NoSubCommand as exc:
-                if await ctx.bot.db.help.verify_exists():
+                if await ctx.bot._config.help.verify_exists():
                     await self.subcommand_not_found(ctx, exc.last, exc.not_found)
                     return
                 help_for = exc.last
@@ -131,7 +168,7 @@ class RedHelpFormatter:
 
     async def format_command_help(self, ctx: Context, obj: commands.Command):
 
-        send = await ctx.bot.db.help.verify_exists()
+        send = await ctx.bot._config.help.verify_exists()
         if not send:
             async for _ in self.help_filter_func(ctx, (obj,), bypass_hidden=True):
                 # This is a really lazy option for not
@@ -148,7 +185,7 @@ class RedHelpFormatter:
         command = obj
 
         description = command.description or ""
-        tagline = (await ctx.bot.db.help.tagline()) or self.get_default_tagline(ctx)
+        tagline = (await ctx.bot._config.help.tagline()) or self.get_default_tagline(ctx)
         signature = f"`Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
         subcommands = None
 
@@ -251,7 +288,7 @@ class RedHelpFormatter:
 
         pages = []
 
-        page_char_limit = await ctx.bot.db.help.page_char_limit()
+        page_char_limit = await ctx.bot._config.help.page_char_limit()
         field_groups = self.group_embed_fields(embed_dict["fields"], page_char_limit)
 
         color = await ctx.embed_color()
@@ -286,11 +323,11 @@ class RedHelpFormatter:
     async def format_cog_help(self, ctx: Context, obj: commands.Cog):
 
         coms = await self.get_cog_help_mapping(ctx, obj)
-        if not (coms or await ctx.bot.db.help.verify_exists()):
+        if not (coms or await ctx.bot._config.help.verify_exists()):
             return
 
         description = obj.help
-        tagline = (await ctx.bot.db.help.tagline()) or self.get_default_tagline(ctx)
+        tagline = (await ctx.bot._config.help.tagline()) or self.get_default_tagline(ctx)
 
         if await ctx.embed_requested():
             emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
@@ -357,7 +394,7 @@ class RedHelpFormatter:
             return
 
         description = ctx.bot.description or ""
-        tagline = (await ctx.bot.db.help.tagline()) or self.get_default_tagline(ctx)
+        tagline = (await ctx.bot._config.help.tagline()) or self.get_default_tagline(ctx)
 
         if await ctx.embed_requested():
 
@@ -434,21 +471,21 @@ class RedHelpFormatter:
         This does most of actual filtering.
         """
 
-        show_hidden = bypass_hidden or await ctx.bot.db.help.show_hidden()
-        verify_checks = await ctx.bot.db.help.verify_checks()
+        show_hidden = bypass_hidden or await ctx.bot._config.help.show_hidden()
+        verify_checks = await ctx.bot._config.help.verify_checks()
 
         # TODO: Settings for this in core bot db
         for obj in objects:
             if verify_checks and not show_hidden:
                 # Default Red behavior, can_see includes a can_run check.
-                if await obj.can_see(ctx):
+                if await obj.can_see(ctx) and getattr(obj, "enabled", True):
                     yield obj
             elif verify_checks:
                 try:
                     can_run = await obj.can_run(ctx)
                 except discord.DiscordException:
                     can_run = False
-                if can_run:
+                if can_run and getattr(obj, "enabled", True):
                     yield obj
             elif not show_hidden:
                 if not getattr(obj, "hidden", False):  # Cog compatibility
@@ -467,17 +504,17 @@ class RedHelpFormatter:
             ret = await format_fuzzy_results(ctx, fuzzy_commands, embed=use_embeds)
             if use_embeds:
                 ret.set_author(name=f"{ctx.me.display_name} Help Menu", icon_url=ctx.me.avatar_url)
-                tagline = (await ctx.bot.db.help.tagline()) or self.get_default_tagline(ctx)
+                tagline = (await ctx.bot._config.help.tagline()) or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
                 await ctx.send(embed=ret)
             else:
                 await ctx.send(ret)
-        elif await ctx.bot.db.help.verify_exists():
+        elif await ctx.bot._config.help.verify_exists():
             ret = T_("Help topic for *{command_name}* not found.").format(command_name=help_for)
             if use_embeds:
                 ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
                 ret.set_author(name=f"{ctx.me.display_name} Help Menu", icon_url=ctx.me.avatar_url)
-                tagline = (await ctx.bot.db.help.tagline()) or self.get_default_tagline(ctx)
+                tagline = (await ctx.bot._config.help.tagline()) or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
                 await ctx.send(embed=ret)
             else:
@@ -493,7 +530,7 @@ class RedHelpFormatter:
         if await ctx.embed_requested():
             ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
             ret.set_author(name=f"{ctx.me.display_name} Help Menu", icon_url=ctx.me.avatar_url)
-            tagline = (await ctx.bot.db.help.tagline()) or self.get_default_tagline(ctx)
+            tagline = (await ctx.bot._config.help.tagline()) or self.get_default_tagline(ctx)
             ret.set_footer(text=tagline)
             await ctx.send(embed=ret)
         else:
@@ -537,10 +574,11 @@ class RedHelpFormatter:
         """
 
         if not (
-            ctx.channel.permissions_for(ctx.me).add_reactions and await ctx.bot.db.help.use_menus()
+            ctx.channel.permissions_for(ctx.me).add_reactions
+            and await ctx.bot._config.help.use_menus()
         ):
 
-            max_pages_in_guild = await ctx.bot.db.help.max_pages_in_guild()
+            max_pages_in_guild = await ctx.bot._config.help.max_pages_in_guild()
             destination = ctx.author if len(pages) > max_pages_in_guild else ctx
 
             if embed:

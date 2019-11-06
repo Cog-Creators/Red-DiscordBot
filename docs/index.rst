@@ -3,6 +3,8 @@
     You can adapt this file completely to your liking, but it should at least
     contain the root `toctree` directive.
 
+.. _main:
+
 Welcome to Red - Discord Bot's documentation!
 =============================================
 
@@ -14,6 +16,7 @@ Welcome to Red - Discord Bot's documentation!
     install_linux_mac
     venv_guide
     autostart_systemd
+    autostart_pm2
 
 .. toctree::
     :maxdepth: 2
@@ -22,6 +25,12 @@ Welcome to Red - Discord Bot's documentation!
     cog_customcom
     cog_downloader
     cog_permissions
+
+.. toctree::
+    :maxdepth: 2
+    :caption: User guides:
+
+    getting_started
 
 .. toctree::
     :maxdepth: 2
@@ -43,12 +52,19 @@ Welcome to Red - Discord Bot's documentation!
     framework_modlog
     framework_rpc
     framework_utils
+    version_guarantees
 
 .. toctree::
     :maxdepth: 2
     :caption: Changelogs:
 
     changelog_3_1_0
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Others
+
+    host-list
 
 
 Indices and tables

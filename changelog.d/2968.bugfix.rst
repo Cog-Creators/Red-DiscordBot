@@ -1,0 +1,1 @@
+Give friendly error when provided instance name doesn't exist.

@@ -7,7 +7,7 @@ from typing import cast, Optional, Union
 
 import discord
 from redbot.core import commands, i18n, checks, modlog
-from redbot.core.utils.chat_formatting import pagify
+from redbot.core.utils.chat_formatting import pagify, humanize_number
 from redbot.core.utils.mod import is_allowed_by_hierarchy, get_audit_reason
 from .abc import MixinMeta
 from .converters import RawUserIds
@@ -85,7 +85,6 @@ class KickBanMixin(MixinMeta):
         audit_reason = get_audit_reason(author, reason)
 
         queue_entry = (guild.id, user.id)
-        self.ban_queue.append(queue_entry)
         try:
             await guild.ban(user, reason=audit_reason, delete_message_days=days)
             log.info(
@@ -94,10 +93,8 @@ class KickBanMixin(MixinMeta):
                 )
             )
         except discord.Forbidden:
-            self.ban_queue.remove(queue_entry)
             return _("I'm not allowed to do that.")
         except Exception as e:
-            self.ban_queue.remove(queue_entry)
             return e  # TODO: impproper return type? Is this intended to be re-raised?
 
         if create_modlog_case:
@@ -130,19 +127,21 @@ class KickBanMixin(MixinMeta):
                         unban_time = datetime.utcfromtimestamp(
                             await self.settings.member(member(uid, guild)).banned_until()
                         )
-                        now = datetime.utcnow()
-                        if now > unban_time:  # Time to unban the user
+                        if datetime.utcnow() > unban_time:  # Time to unban the user
                             user = await self.bot.fetch_user(uid)
                             queue_entry = (guild.id, user.id)
-                            self.unban_queue.append(queue_entry)
                             try:
                                 await guild.unban(user, reason=_("Tempban finished"))
                                 guild_tempbans.remove(uid)
-                            except discord.Forbidden:
-                                self.unban_queue.remove(queue_entry)
-                                log.info("Failed to unban member due to permissions")
-                            except discord.HTTPException:
-                                self.unban_queue.remove(queue_entry)
+                            except discord.HTTPException as e:
+                                # 50013: Missing permissions error code or 403: Forbidden status
+                                if e.code == 50013 or e.status == 403:
+                                    log.info(
+                                        f"Failed to unban {user}({user.id}) user from "
+                                        f"{guild.name}({guild.id}) guild due to permissions"
+                                    )
+                                    break  # skip the rest of this guild
+                                log.info(f"Failed to unban member: error code: {e.code}")
             await asyncio.sleep(60)
 
     @commands.command()
@@ -249,7 +248,9 @@ class KickBanMixin(MixinMeta):
         errors = {}
 
         async def show_results():
-            text = _("Banned {num} users from the server.").format(num=len(banned))
+            text = _("Banned {num} users from the server.").format(
+                num=humanize_number(len(banned))
+            )
             if errors:
                 text += _("\nErrors:\n")
                 text += "\n".join(errors.values())
@@ -319,16 +320,13 @@ class KickBanMixin(MixinMeta):
             user = discord.Object(id=user_id)
             audit_reason = get_audit_reason(author, reason)
             queue_entry = (guild.id, user_id)
-            self.ban_queue.append(queue_entry)
             try:
                 await guild.ban(user, reason=audit_reason, delete_message_days=days)
                 log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
             except discord.NotFound:
-                self.ban_queue.remove(queue_entry)
                 errors[user_id] = _("User {user_id} does not exist.").format(user_id=user_id)
                 continue
             except discord.Forbidden:
-                self.ban_queue.remove(queue_entry)
                 errors[user_id] = _("Could not ban {user_id}: missing permissions.").format(
                     user_id=user_id
                 )
@@ -389,7 +387,6 @@ class KickBanMixin(MixinMeta):
                     invite_link=invite,
                 )
             )
-        self.ban_queue.append(queue_entry)
         try:
             await guild.ban(user)
         except discord.Forbidden:
@@ -455,24 +452,19 @@ class KickBanMixin(MixinMeta):
             )
         except discord.HTTPException:
             msg = None
-        self.ban_queue.append(queue_entry)
         try:
             await guild.ban(user, reason=audit_reason, delete_message_days=1)
         except discord.errors.Forbidden:
-            self.ban_queue.remove(queue_entry)
             await ctx.send(_("My role is not high enough to softban that user."))
             if msg is not None:
                 await msg.delete()
             return
         except discord.HTTPException as e:
-            self.ban_queue.remove(queue_entry)
             print(e)
             return
-        self.unban_queue.append(queue_entry)
         try:
             await guild.unban(user)
         except discord.HTTPException as e:
-            self.unban_queue.remove(queue_entry)
             print(e)
             return
         else:
@@ -571,11 +563,9 @@ class KickBanMixin(MixinMeta):
             await ctx.send(_("It seems that user isn't banned!"))
             return
         queue_entry = (guild.id, user.id)
-        self.unban_queue.append(queue_entry)
         try:
             await guild.unban(user, reason=audit_reason)
         except discord.HTTPException:
-            self.unban_queue.remove(queue_entry)
             await ctx.send(_("Something went wrong while attempting to unban that user"))
             return
         else:

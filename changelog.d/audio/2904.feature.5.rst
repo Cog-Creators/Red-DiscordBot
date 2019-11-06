@@ -1,0 +1,1 @@
+``[p]queue shuffle`` can be used to shuffle the queue manually.

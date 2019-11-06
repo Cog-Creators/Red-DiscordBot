@@ -40,7 +40,7 @@ class Filter(commands.Cog):
     async def register_filterban():
         try:
             await modlog.register_casetype(
-                "filterban", False, ":filing_cabinet: :hammer:", "Filter ban", "ban"
+                "filterban", False, ":filing_cabinet: :hammer:", "Filter ban"
             )
         except RuntimeError:
             pass
