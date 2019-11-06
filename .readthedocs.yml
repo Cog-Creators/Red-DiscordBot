@@ -14,4 +14,3 @@ python:
       path: .
       extra_requirements:
         - docs
-        - mongo

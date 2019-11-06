@@ -67,9 +67,6 @@ def parse_cli_args():
         "--style", help="Installs extra 'style' when updating", action="store_true"
     )
     parser.add_argument(
-        "--mongo", help="Installs extra 'mongo' when updating", action="store_true"
-    )
-    parser.add_argument(
         "--debuginfo",
         help="Prints basic debug info that would be useful for support",
         action="store_true",
@@ -77,7 +74,7 @@ def parse_cli_args():
     return parser.parse_known_args()
 
 
-def update_red(dev=False, style=False, mongo=False, docs=False, test=False):
+def update_red(dev=False, style=False, docs=False, test=False):
     interpreter = sys.executable
     print("Updating Red...")
     # If the user ran redbot-launcher.exe, updating with pip will fail
@@ -96,8 +93,6 @@ def update_red(dev=False, style=False, mongo=False, docs=False, test=False):
     egg_l = []
     if style:
         egg_l.append("style")
-    if mongo:
-        egg_l.append("mongo")
     if docs:
         egg_l.append("docs")
     if test:
@@ -293,7 +288,7 @@ def user_choice():
 
 def extras_selector():
     print("Enter any extra requirements you want installed\n")
-    print("Options are: style, docs, test, mongo\n")
+    print("Options are: style, docs, test\n")
     selected = user_choice()
     selected = selected.split()
     return selected
@@ -318,7 +313,6 @@ def development_choice(can_go_back=True):
                 style=True if "style" in selected else False,
                 docs=True if "docs" in selected else False,
                 test=True if "test" in selected else False,
-                mongo=True if "mongo" in selected else False,
             )
             break
         elif choice == "2":
@@ -328,7 +322,6 @@ def development_choice(can_go_back=True):
                 style=True if "style" in selected else False,
                 docs=True if "docs" in selected else False,
                 test=True if "test" in selected else False,
-                mongo=True if "mongo" in selected else False,
             )
             break
         elif choice == "0" and can_go_back:
@@ -464,9 +457,9 @@ def main():
             "Please try again using only one of --update or --update-dev"
         )
     if args.update:
-        update_red(style=args.style, docs=args.docs, test=args.test, mongo=args.mongo)
+        update_red(style=args.style, docs=args.docs, test=args.test)
     elif args.update_dev:
-        update_red(dev=True, style=args.style, docs=args.docs, test=args.test, mongo=args.mongo)
+        update_red(dev=True, style=args.style, docs=args.docs, test=args.test)
 
     if INTERACTIVE_MODE:
         main_menu()
