@@ -19,7 +19,7 @@ from .errors import LavalinkDownloadFailed
 
 log = logging.getLogger("red.audio.manager")
 JAR_VERSION = "3.2.1"
-JAR_BUILD = 823
+JAR_BUILD = 846
 LAVALINK_DOWNLOAD_URL = (
     f"https://github.com/Cog-Creators/Lavalink-Jars/releases/download/{JAR_VERSION}_{JAR_BUILD}/"
     "Lavalink.jar"

@@ -779,7 +779,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             for subcommand in set(command.walk_commands()):
                 subcommand.requires.reset()
 
-    def clear_permission_rules(self, guild_id: Optional[int]) -> None:
+    def clear_permission_rules(self, guild_id: Optional[int], **kwargs) -> None:
         """Clear all permission overrides in a scope.
 
         Parameters
@@ -789,11 +789,15 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             ``None``, this will clear all global rules and leave all
             guild rules untouched.
 
+        **kwargs
+            Keyword arguments to be passed to each required call of
+            ``commands.Requires.clear_all_rules``
+
         """
         for cog in self.cogs.values():
-            cog.requires.clear_all_rules(guild_id)
+            cog.requires.clear_all_rules(guild_id, **kwargs)
         for command in self.walk_commands():
-            command.requires.clear_all_rules(guild_id)
+            command.requires.clear_all_rules(guild_id, **kwargs)
 
     def add_permissions_hook(self, hook: commands.CheckPredicate) -> None:
         """Add a permissions hook.
