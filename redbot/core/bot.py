@@ -653,7 +653,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             ``True`` if immune
 
         """
-        guild = to_check.guild
+        guild = getattr(to_check, "guild", None)
         if not guild:
             return False
 
