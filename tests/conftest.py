@@ -20,8 +20,6 @@ def event_loop(request):
 def _get_backend_type():
     if os.getenv("RED_STORAGE_TYPE") == "postgres":
         return drivers.BackendType.POSTGRES
-    elif os.getenv("RED_STORAGE_TYPE") == "mongo":
-        return drivers.BackendType.MONGO
     else:
         return drivers.BackendType.JSON
 
@@ -29,17 +27,7 @@ def _get_backend_type():
 @pytest.fixture(scope="session", autouse=True)
 async def _setup_driver():
     backend_type = _get_backend_type()
-    if backend_type == drivers.BackendType.MONGO:
-        storage_details = {
-            "URI": os.getenv("RED_MONGO_URI", "mongodb"),
-            "HOST": os.getenv("RED_MONGO_HOST", "localhost"),
-            "PORT": int(os.getenv("RED_MONGO_PORT", "27017")),
-            "USERNAME": os.getenv("RED_MONGO_USER", "red"),
-            "PASSWORD": os.getenv("RED_MONGO_PASSWORD", "red"),
-            "DB_NAME": os.getenv("RED_MONGO_DATABASE", "red_db"),
-        }
-    else:
-        storage_details = {}
+    storage_details = {}
     data_manager.storage_type = lambda: backend_type.value
     data_manager.storage_details = lambda: storage_details
     driver_cls = drivers.get_driver_class(backend_type)
