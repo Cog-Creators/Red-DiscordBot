@@ -1,0 +1,1 @@
+Downloader will now check if Python and bot version match requirements in ``info.json`` during update.
