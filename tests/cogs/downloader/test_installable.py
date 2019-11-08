@@ -51,8 +51,8 @@ def test_repo_name(installable):
     assert installable.repo_name == "test_repo"
 
 
-def test_serialization(installable):
-    data = installable.to_json()
-    cog_name = data["cog_name"]
+def test_serialization(installed_cog):
+    data = installed_cog.to_json()
+    cog_name = data["module_name"]
 
-    assert cog_name == "test_cog"
+    assert cog_name == "test_installed_cog"

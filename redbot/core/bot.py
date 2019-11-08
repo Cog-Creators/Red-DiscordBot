@@ -653,7 +653,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             ``True`` if immune
 
         """
-        guild = to_check.guild
+        guild = getattr(to_check, "guild", None)
         if not guild:
             return False
 
@@ -666,7 +666,8 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             except AttributeError:
                 # webhook messages are a user not member,
                 # cheaper than isinstance
-                return True  # webhooks require significant permissions to enable.
+                if author.bot and author.discriminator == "0000":
+                    return True  # webhooks require significant permissions to enable.
             else:
                 ids_to_check.append(author.id)
 
@@ -779,7 +780,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             for subcommand in set(command.walk_commands()):
                 subcommand.requires.reset()
 
-    def clear_permission_rules(self, guild_id: Optional[int]) -> None:
+    def clear_permission_rules(self, guild_id: Optional[int], **kwargs) -> None:
         """Clear all permission overrides in a scope.
 
         Parameters
@@ -789,11 +790,15 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             ``None``, this will clear all global rules and leave all
             guild rules untouched.
 
+        **kwargs
+            Keyword arguments to be passed to each required call of
+            ``commands.Requires.clear_all_rules``
+
         """
         for cog in self.cogs.values():
-            cog.requires.clear_all_rules(guild_id)
+            cog.requires.clear_all_rules(guild_id, **kwargs)
         for command in self.walk_commands():
-            command.requires.clear_all_rules(guild_id)
+            command.requires.clear_all_rules(guild_id, **kwargs)
 
     def add_permissions_hook(self, hook: commands.CheckPredicate) -> None:
         """Add a permissions hook.

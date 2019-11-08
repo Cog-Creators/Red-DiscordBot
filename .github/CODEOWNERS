@@ -33,7 +33,7 @@ redbot/cogs/audio/*                 @aikaterna
 redbot/cogs/bank/*                  @tekulvw
 redbot/cogs/cleanup/*               @palmtree5
 redbot/cogs/customcom/*             @palmtree5
-redbot/cogs/downloader/*            @tekulvw
+redbot/cogs/downloader/*            @tekulvw @jack1142
 redbot/cogs/economy/*               @palmtree5
 redbot/cogs/filter/*                @palmtree5
 redbot/cogs/general/*               @palmtree5
@@ -48,6 +48,9 @@ redbot/cogs/warnings/*              @palmtree5
 
 # Docs
 docs/*                              @tekulvw @palmtree5
+
+# Tests
+tests/cogs/downloader/*             @jack1142
 
 # Setup, instance setup, and running the bot
 setup.py                            @tekulvw

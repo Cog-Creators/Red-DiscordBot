@@ -1,0 +1,1 @@
+Added :func:`redbot.cogs.downloader.repo_manager.InstalledModule` to Downloader's framework docs.
