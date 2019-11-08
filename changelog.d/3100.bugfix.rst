@@ -1,1 +1,1 @@
-change is_autmod_immune handling of guild check and support for checking webhooks
+fix ``is_automod_immune`` handling of guild check and support for checking webhooks
