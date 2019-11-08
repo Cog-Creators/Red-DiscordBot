@@ -18,6 +18,7 @@ Welcome to Red - Discord Bot's documentation!
     autostart_systemd
     autostart_mac
     autostart_win
+    autostart_pm2
 
 .. toctree::
     :maxdepth: 2

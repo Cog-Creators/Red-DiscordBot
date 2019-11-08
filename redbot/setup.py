@@ -301,11 +301,17 @@ async def create_backup(instance: str) -> None:
 async def remove_instance(
     instance,
     interactive: bool = False,
+    delete_data: Optional[bool] = None,
     _create_backup: Optional[bool] = None,
     drop_db: Optional[bool] = None,
     remove_datapath: Optional[bool] = None,
 ):
     data_manager.load_basic_configuration(instance)
+
+    if interactive is True and delete_data is None:
+        delete_data = click.confirm(
+            "Would you like to delete this instance's data?", default=False
+        )
 
     if interactive is True and _create_backup is None:
         _create_backup = click.confirm(
@@ -321,7 +327,8 @@ async def remove_instance(
     else:
         driver_cls = drivers.get_driver_class(backend)
 
-    await driver_cls.delete_all_data(interactive=interactive, drop_db=drop_db)
+    if delete_data is True:
+        await driver_cls.delete_all_data(interactive=interactive, drop_db=drop_db)
 
     if interactive is True and remove_datapath is None:
         remove_datapath = click.confirm(
@@ -377,6 +384,16 @@ def cli(ctx, debug):
     help="Don't ask for user input during the process.",
 )
 @click.option(
+    "--delete-data/--no-delete-data",
+    "delete_data",
+    is_flag=True,
+    default=None,
+    help=(
+        "Delete this instance's data. "
+        "If these options and --no-prompt are omitted, you will be asked about this."
+    ),
+)
+@click.option(
     "--backup/--no-backup",
     "_create_backup",
     is_flag=True,
@@ -392,7 +409,8 @@ def cli(ctx, debug):
     default=None,
     help=(
         "Drop the entire database constaining this instance's data. Has no effect on JSON "
-        "instances. If these options and --no-prompt are omitted, you will be asked about this."
+        "instances, or if --no-delete-data is set. If these options and --no-prompt are omitted,"
+        "you will be asked about this."
     ),
 )
 @click.option(
@@ -401,19 +419,23 @@ def cli(ctx, debug):
     default=None,
     help=(
         "Remove this entire instance's datapath. If these options and --no-prompt are omitted, "
-        "you will be asked about this."
+        "you will be asked about this. NOTE: --remove-datapath will override --no-delete-data "
+        "for JSON instances."
     ),
 )
 def delete(
     instance: str,
     interactive: bool,
+    delete_data: Optional[bool],
     _create_backup: Optional[bool],
     drop_db: Optional[bool],
     remove_datapath: Optional[bool],
 ):
     loop = asyncio.get_event_loop()
     loop.run_until_complete(
-        remove_instance(instance, interactive, _create_backup, drop_db, remove_datapath)
+        remove_instance(
+            instance, interactive, delete_data, _create_backup, drop_db, remove_datapath
+        )
     )
 
 
