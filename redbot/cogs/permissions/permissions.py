@@ -299,7 +299,7 @@ class Permissions(commands.Cog):
         if not who_or_what:
             await ctx.send_help()
             return
-        if isinstance(cog_or_command, commands.commands._AlwaysAvailableCommand):
+        if isinstance(cog_or_command.obj, commands.commands._AlwaysAvailableCommand):
             await ctx.send(
                 _(
                     "This command is designated as being always available and "
@@ -342,7 +342,7 @@ class Permissions(commands.Cog):
         if not who_or_what:
             await ctx.send_help()
             return
-        if isinstance(cog_or_command, commands.commands._AlwaysAvailableCommand):
+        if isinstance(cog_or_command.obj, commands.commands._AlwaysAvailableCommand):
             await ctx.send(
                 _(
                     "This command is designated as being always available and "
