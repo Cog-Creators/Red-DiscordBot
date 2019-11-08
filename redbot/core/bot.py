@@ -653,7 +653,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             ``True`` if immune
 
         """
-        guild = to_check.guild
+        guild = getattr(to_check, "guild", None)
         if not guild:
             return False
 
@@ -666,7 +666,8 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             except AttributeError:
                 # webhook messages are a user not member,
                 # cheaper than isinstance
-                return True  # webhooks require significant permissions to enable.
+                if author.bot and author.discriminator == "0000":
+                    return True  # webhooks require significant permissions to enable.
             else:
                 ids_to_check.append(author.id)
 
