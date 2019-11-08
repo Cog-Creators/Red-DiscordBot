@@ -1907,6 +1907,12 @@ class Core(commands.Cog, CoreLogic):
             )
             return
 
+        if isinstance(command_obj, commands.commands._AlwaysAvailableCommand):
+            await ctx.send(
+                _("This command is designated as being always available and cannot be disabled.")
+            )
+            return
+
         async with ctx.bot._config.disabled_commands() as disabled_commands:
             if command not in disabled_commands:
                 disabled_commands.append(command_obj.qualified_name)
@@ -1932,6 +1938,12 @@ class Core(commands.Cog, CoreLogic):
         if self.command_manager in command_obj.parents or self.command_manager == command_obj:
             await ctx.send(
                 _("The command to disable cannot be `command` or any of its subcommands.")
+            )
+            return
+
+        if isinstance(command_obj, commands.commands._AlwaysAvailableCommand):
+            await ctx.send(
+                _("This command is designated as being always available and cannot be disabled.")
             )
             return
 

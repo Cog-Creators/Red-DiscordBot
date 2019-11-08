@@ -299,6 +299,14 @@ class Permissions(commands.Cog):
         if not who_or_what:
             await ctx.send_help()
             return
+        if isinstance(cog_or_command, commands.commands._AlwaysAvailableCommand):
+            await ctx.send(
+                _(
+                    "This command is designated as being always available and "
+                    "cannot be modified by permission rules."
+                )
+            )
+            return
         for w in who_or_what:
             await self._add_rule(
                 rule=cast(bool, allow_or_deny),
@@ -333,6 +341,14 @@ class Permissions(commands.Cog):
         """
         if not who_or_what:
             await ctx.send_help()
+            return
+        if isinstance(cog_or_command, commands.commands._AlwaysAvailableCommand):
+            await ctx.send(
+                _(
+                    "This command is designated as being always available and "
+                    "cannot be modified by permission rules."
+                )
+            )
             return
         for w in who_or_what:
             await self._add_rule(
