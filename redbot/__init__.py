@@ -1,3 +1,4 @@
+import asyncio as _asyncio
 import re as _re
 import sys as _sys
 import warnings as _warnings
@@ -15,8 +16,13 @@ from typing import (
 
 MIN_PYTHON_VERSION = (3, 7, 0)
 
-__all__ = ["MIN_PYTHON_VERSION", "__version__", "version_info", "VersionInfo"]
-
+__all__ = [
+    "MIN_PYTHON_VERSION",
+    "__version__",
+    "version_info",
+    "VersionInfo",
+    "_update_event_loop_policy",
+]
 if _sys.version_info < MIN_PYTHON_VERSION:
     print(
         f"Python {'.'.join(map(str, MIN_PYTHON_VERSION))} is required to run Red, but you have "
@@ -171,6 +177,19 @@ class VersionInfo:
             "releaselevel={releaselevel}, serial={serial}, post={post_release}, "
             "dev={dev_release})".format(**self.to_json())
         )
+
+
+def _update_event_loop_policy():
+    if _sys.platform == "win32":
+        _asyncio.set_event_loop_policy(_asyncio.WindowsProactorEventLoopPolicy())
+    elif _sys.implementation.name == "cpython":
+        # Let's not force this dependency, uvloop is much faster on cpython
+        try:
+            import uvloop as _uvloop
+        except ImportError:
+            pass
+        else:
+            _asyncio.set_event_loop_policy(_uvloop.EventLoopPolicy())
 
 
 __version__ = "3.1.7"

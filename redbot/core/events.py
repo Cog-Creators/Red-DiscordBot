@@ -128,7 +128,6 @@ def init_events(bot, cli_flags):
                 )
         INFO2 = []
 
-        mongo_enabled = storage_type() != "JSON"
         reqs_installed = {"docs": None, "test": None}
         for key in reqs_installed.keys():
             reqs = [x.name for x in red_pkg._dep_map[key]]
@@ -140,7 +139,6 @@ def init_events(bot, cli_flags):
                 reqs_installed[key] = True
 
         options = (
-            ("MongoDB", mongo_enabled),
             ("Voice", True),
             ("Docs", reqs_installed["docs"]),
             ("Tests", reqs_installed["test"]),
