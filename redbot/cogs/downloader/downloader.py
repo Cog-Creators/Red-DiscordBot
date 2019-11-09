@@ -199,6 +199,16 @@ class Downloader(commands.Cog):
         await self.conf.installed_cogs.set(installed_cogs)
         await self.conf.installed_libraries.set(installed_libraries)
 
+    async def _shared_lib_load_check(self, cog_name: str) -> Optional[Repo]:
+        # remove in Red 3.3
+        is_installed, cog = await self.is_installed(cog_name)
+        # it's not gonna be None when `is_installed` is True
+        # if we'll use typing_extensions in future, `Literal` can solve this
+        cog = cast(InstalledModule, cog)
+        if is_installed and cog.repo is not None and cog.repo.available_libraries:
+            return cog.repo
+        return None
+
     async def _available_updates(
         self, cogs: Iterable[InstalledModule]
     ) -> Tuple[Tuple[Installable, ...], Tuple[Installable, ...]]:
