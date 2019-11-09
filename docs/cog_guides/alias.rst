@@ -19,7 +19,7 @@ find detailed docs about the usage and the commands.
 Usage
 -----
 
-This cog allows to create shortcuts for commands.
+This cog is used to create shortcuts for commands.
 
 You can do things like this:
 
@@ -41,7 +41,7 @@ In the first example, we made an alias named ``clean`` that will
 invoke the ``cleanup messages`` command.
 
 In the second example, we made an alias called ``soundcloud`` that will
-invoke the ``search sc`` command (search a song to play on SoundCloud. As you
+invoke the ``search sc`` command (search a song to play on SoundCloud). As you
 can see, you can also add arguments to your alias. Then you can add the
 arguments you want after your alias.
 
@@ -53,7 +53,7 @@ Let's suppose you want to make an alias to ban someone, delete 7 days of
 messages and set the reason to "Spam bot.", that cannot be done with a classic
 alias since the required member argument is the first one. If you create the
 alias "spamban" using arguments like this ``ban {0} 7 Spam bot.``, ``{0}`` will
-be considered as the first argument of your alias:
+be replaced by the first argument of your alias:
 
 .. code-block:: none
 
@@ -105,9 +105,9 @@ alias add
 Creates an alias. It will be used like this ``[p]alias_name <arguments>``
 and will be equal to this ``[p]command <arguments>``.
 
-Let's develop a bit more the examples given :ref:`earlier <alias-usage>`,
-the left part of the command is the alias (blue), and the right part (orange)
-is the parameters members have to give for the command.
+Let's develop the examples given :ref:`earlier <alias-usage>` a bit more,
+the left part of the command is the alias (blue), and the right part is the
+parameters members have to give for the command (orange).
 
 .. image:: ../.resources/alias/example-1.png
 
@@ -134,7 +134,7 @@ doesn't need to be given, the orange part is the arguments given at the end of
 the command, just like a classic alias, and the green part is the positional
 argument we defined: the first argument of the alias will be the green part.
 
-You can add as much arguments as you want, they can start at ``{0}`` or ``{1}``
+You can add as many arguments as you want, they can start at ``{0}`` or ``{1}``
 and must be in order: ``{1}`` will be the first argument, ``{2}`` will be the
 second one...
 
@@ -262,9 +262,9 @@ Another group command which contains the :ref:`add
 <alias-command-alias-list>` commands.
 
 They work the same, except the created aliases will be
-global instead of being server-wide.
+global instead of being only server-wide.
 
-Please refer to these commands for the docs, they work with the
+Please refer to these docs for the commands, they work with the
 same arguments. For example, if you want to add a global alias,
 instead of doing ``[p]alias add <arguments>``, do ``[p]alias
 global add <arguments>``.
