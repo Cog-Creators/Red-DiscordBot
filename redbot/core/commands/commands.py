@@ -699,3 +699,29 @@ def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitabl
 
         __command_disablers[guild] = disabler
         return disabler
+
+
+# This is intentionally left out of `__all__` as it is not intended for general use
+class _AlwaysAvailableCommand(Command):
+    """
+    This should be used only for informational commands
+    which should not be disabled or removed
+
+    These commands cannot belong to a cog.
+
+    These commands do not respect most forms of checks, and
+    should only be used with that in mind.
+
+    This particular class is not supported for 3rd party use
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.cog is not None:
+            raise TypeError("This command may not be added to a cog")
+
+    async def can_run(self, ctx, *args, **kwargs) -> bool:
+        return not ctx.author.bot
+
+    async def _verify_checks(self, ctx) -> bool:
+        return not ctx.author.bot
