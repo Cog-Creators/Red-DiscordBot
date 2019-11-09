@@ -27,6 +27,13 @@ from .repo_manager import RepoManager, Repo
 _ = Translator("Downloader", __file__)
 
 
+DEPRECATION_NOTICE = _(
+    "\n**WARNING:** The following repos are using shared libraries"
+    " which are marked for removal in Red 3.3: {repo_list}.\n"
+    " You should inform maintainers of these repos about this message."
+)
+
+
 @cog_i18n(_)
 class Downloader(commands.Cog):
     def __init__(self, bot: Red):
@@ -584,6 +591,9 @@ class Downloader(commands.Cog):
 
                 installed_cogs, failed_cogs = await self._install_cogs(cogs)
 
+            deprecation_notice = ""
+            if repo.available_libraries:
+                deprecation_notice = DEPRECATION_NOTICE.format(repo_list=inline(repo.name))
             installed_libs, failed_libs = await repo.install_libraries(
                 target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH
             )
@@ -622,7 +632,7 @@ class Downloader(commands.Cog):
                     + message
                 )
         # "---" added to separate cog install messages from Downloader's message
-        await ctx.send(f"{message}\n---")
+        await ctx.send(f"{message}{deprecation_notice}\n---")
         for cog in installed_cogs:
             if cog.install_msg:
                 await ctx.send(cog.install_msg.replace("[p]", ctx.prefix))
@@ -873,6 +883,14 @@ class Downloader(commands.Cog):
 
         if failed_repos:
             message += "\n" + self.format_failed_repos(failed_repos)
+
+        repos_with_libs = {
+            inline(module.repo.name)
+            for module in cogs_to_update + libs_to_update
+            if module.repo.available_libraries
+        }
+        if repos_with_libs:
+            message += DEPRECATION_NOTICE.format(repo_list=humanize_list(repos_with_libs))
 
         await ctx.send(message)
 
