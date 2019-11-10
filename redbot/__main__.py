@@ -26,8 +26,8 @@ from redbot.core.cog_manager import CogManagerUI
 from redbot.core.global_checks import init_global_checks
 from redbot.core.events import init_events
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags
+from redbot.core.core_commands import Core, license_info_command
 from redbot.setup import get_data_dir, get_name, save_config
-from redbot.core.core_commands import Core
 from redbot.core.dev_commands import Dev
 from redbot.core import __version__, modlog, bank, data_manager, drivers
 from signal import SIGTERM
@@ -223,7 +223,7 @@ async def sigterm_handler(red, log):
 
 
 def main():
-    description = "Red V3 (c) Cog Creators"
+    description = "Red V3"
     cli_flags = parse_cli_flags(sys.argv[1:])
     if cli_flags.list_instances:
         list_instances()
@@ -282,6 +282,7 @@ def main():
 
     red.add_cog(Core(red))
     red.add_cog(CogManagerUI())
+    red.add_command(license_info_command)
     if cli_flags.dev:
         red.add_cog(Dev())
     # noinspection PyProtectedMember
@@ -311,7 +312,7 @@ def main():
         loop.run_until_complete(red.http.close())
         sys.exit(0)
     try:
-        loop.run_until_complete(red.start(token, bot=True))
+        loop.run_until_complete(red.start(token, bot=True, cli_flags=cli_flags))
     except discord.LoginFailure:
         log.critical("This token doesn't seem to be valid.")
         db_token = loop.run_until_complete(red._config.token())

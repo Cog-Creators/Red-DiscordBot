@@ -46,40 +46,6 @@ def init_events(bot, cli_flags):
             return
 
         bot._uptime = datetime.datetime.utcnow()
-        packages = []
-
-        if cli_flags.no_cogs is False:
-            packages.extend(await bot._config.packages())
-
-        if cli_flags.load_cogs:
-            packages.extend(cli_flags.load_cogs)
-
-        if packages:
-            # Load permissions first, for security reasons
-            try:
-                packages.remove("permissions")
-            except ValueError:
-                pass
-            else:
-                packages.insert(0, "permissions")
-
-            to_remove = []
-            print("Loading packages...")
-            for package in packages:
-                try:
-                    spec = await bot._cog_mgr.find_cog(package)
-                    await bot.load_extension(spec)
-                except Exception as e:
-                    log.exception("Failed to load package {}".format(package), exc_info=e)
-                    await bot.remove_loaded_package(package)
-                    to_remove.append(package)
-            for package in to_remove:
-                packages.remove(package)
-            if packages:
-                print("Loaded packages: " + ", ".join(packages))
-
-        if bot.rpc_enabled:
-            await bot.rpc.initialize(bot.rpc_port)
 
         guilds = len(bot.guilds)
         users = len(set([m for m in bot.get_all_members()]))
