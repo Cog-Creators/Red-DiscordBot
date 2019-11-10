@@ -885,17 +885,17 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
         ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
 
-        Scope is one of the following:
-        ​ ​ ​ ​ Global
+        **Scope** is one of the following:
+            ​Global
         ​ ​ ​ ​ Guild
         ​ ​ ​ ​ User
 
-        Author can be one of the following:
+        **Author** can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
         ​ ​ ​ ​ User Name#123
 
-        Guild can be one of the following:
+        **Guild** can be one of the following:
         ​ ​ ​ ​ Guild ID
         ​ ​ ​ ​ Exact guild name
 
@@ -3649,11 +3649,17 @@ class Audio(commands.Cog):
     async def playlist(self, ctx: commands.Context):
         """Playlist configuration options.
 
-        Scope info: ​ ​ ​ ​ **Global**: ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users of this bot. ​ ​ ​ ​ ​
-        ​ ​ ​ Only editable by bot owner. ​ ​ ​ ​ **Guild**: ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users
-        in this guild. ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner, guild owner, guild admins, ​ ​ ​ ​ ​
-        ​ ​ ​ guild mods, DJ role and playlist creator. ​ ​ ​ ​ **User**: ​ ​ ​ ​ ​ ​ ​ ​ Visible
-        to all bot users, if --author is passed. ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner and creator.
+        Scope info:​ ​
+        ​​ ​ ​ ​ ​**Global**: ​ ​ ​ ​ ​ ​ ​ ​
+        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users of this bot. ​ ​ ​ ​ ​
+        ​​ ​ ​ ​ ​ ​ ​ ​ Only editable by bot owner. ​ ​ ​ ​
+        ​ ​ ​ ​ **Guild**: ​ ​ ​ ​ ​ ​ ​ ​
+        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users in this guild. ​ ​ ​ ​ ​ ​ ​ ​
+        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner, guild owner, guild admins,
+        ​ ​ ​ ​ ​ ​ ​ ​ guild mods, DJ role and playlist creator.
+       ​ ​ ​ ​  **User**: ​ ​ ​ ​ ​ ​ ​ ​
+       ​ ​ ​ ​ ​ ​ ​ ​ Visible to all bot users, if --author is passed. ​ ​ ​ ​ ​ ​ ​ ​
+       ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner and creator.
         """
 
     @playlist.command(name="append", usage="<playlist_name_OR_id> <track_name_OR_url> [args]")
@@ -3678,17 +3684,17 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
         ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
 
-        Scope is one of the following:
+        **Scope** is one of the following:
         ​ ​ ​ ​ Global
         ​ ​ ​ ​ Guild
         ​ ​ ​ ​ User
 
-        Author can be one of the following:
+        **Author** can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
         ​ ​ ​ ​ User Name#123
 
-        Guild can be one of the following:
+        **Guild** can be one of the following:
         ​ ​ ​ ​ Guild ID
         ​ ​ ​ ​ Exact guild name
 
@@ -3823,17 +3829,17 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ ​ ​ ​ ​ --to-author [user]
         ​ ​ ​ ​ ​ ​ ​ ​ --to-guild [guild] **Only the bot owner can use this**
 
-        Scope is one of the following:
+        **Scope** is one of the following:
         ​ ​ ​ ​ Global
         ​ ​ ​ ​ Guild
         ​ ​ ​ ​ User
 
-        Author can be one of the following:
+        **Author** can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
         ​ ​ ​ ​ User Name#123
 
-        Guild can be one of the following:
+        **Guild** can be one of the following:
         ​ ​ ​ ​ Guild ID
         ​ ​ ​ ​ Exact guild name
 
@@ -3954,17 +3960,17 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
         ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
 
-        Scope is one of the following:
+        **Scope** is one of the following:
         ​ ​ ​ ​ Global
         ​ ​ ​ ​ Guild
         ​ ​ ​ ​ User
 
-        Author can be one of the following:
+        **Author** can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
         ​ ​ ​ ​ User Name#123
 
-        Guild can be one of the following:
+        **Guild** can be one of the following:
         ​ ​ ​ ​ Guild ID
         ​ ​ ​ ​ Exact guild name
 
@@ -4021,17 +4027,17 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
         ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
 
-        Scope is one of the following:
+        **Scope** is one of the following:
         ​ ​ ​ ​ Global
         ​ ​ ​ ​ Guild
         ​ ​ ​ ​ User
 
-        Author can be one of the following:
+        **Author** can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
         ​ ​ ​ ​ User Name#123
 
-        Guild can be one of the following:
+        **Guild** can be one of the following:
         ​ ​ ​ ​ Guild ID
         ​ ​ ​ ​ Exact guild name
 
@@ -4105,17 +4111,17 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
         ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
 
-        Scope is one of the following:
+        **Scope** is one of the following:
         ​ ​ ​ ​ Global
         ​ ​ ​ ​ Guild
         ​ ​ ​ ​ User
 
-        Author can be one of the following:
+        **Author** can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
         ​ ​ ​ ​ User Name#123
 
-        Guild can be one of the following:
+        **Guild** can be one of the following:
         ​ ​ ​ ​ Guild ID
         ​ ​ ​ ​ Exact guild name
 
@@ -4241,17 +4247,17 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
         ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
 
-        Scope is one of the following:
+        **Scope** is one of the following:
         ​ ​ ​ ​ Global
         ​ ​ ​ ​ Guild
         ​ ​ ​ ​ User
 
-        Author can be one of the following:
+        **Author** can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
         ​ ​ ​ ​ User Name#123
 
-        Guild can be one of the following:
+        **Guild** can be one of the following:
         ​ ​ ​ ​ Guild ID
         ​ ​ ​ ​ Exact guild name
 
@@ -4355,17 +4361,17 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
         ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
 
-        Scope is one of the following:
+        **Scope** is one of the following:
         ​ ​ ​ ​ Global
         ​ ​ ​ ​ Guild
         ​ ​ ​ ​ User
 
-        Author can be one of the following:
+        **Author** can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
         ​ ​ ​ ​ User Name#123
 
-        Guild can be one of the following:
+        **Guild** can be one of the following:
         ​ ​ ​ ​ Guild ID
         ​ ​ ​ ​ Exact guild name
 
@@ -4479,17 +4485,17 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
         ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
 
-        Scope is one of the following:
+        **Scope** is one of the following:
         ​ ​ ​ ​ Global
         ​ ​ ​ ​ Guild
         ​ ​ ​ ​ User
 
-        Author can be one of the following:
+        **Author** can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
         ​ ​ ​ ​ User Name#123
 
-        Guild can be one of the following:
+        **Guild** can be one of the following:
         ​ ​ ​ ​ Guild ID
         ​ ​ ​ ​ Exact guild name
 
@@ -4594,17 +4600,17 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
         ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
 
-        Scope is one of the following:
+        **Scope** is one of the following:
         ​ ​ ​ ​ Global
         ​ ​ ​ ​ Guild
         ​ ​ ​ ​ User
 
-        Author can be one of the following:
+        **Author** can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
         ​ ​ ​ ​ User Name#123
 
-        Guild can be one of the following:
+        **Guild** can be one of the following:
         ​ ​ ​ ​ Guild ID
         ​ ​ ​ ​ Exact guild name
 
@@ -4682,17 +4688,17 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
         ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
 
-        Scope is one of the following:
+        **Scope** is one of the following:
         ​ ​ ​ ​ Global
         ​ ​ ​ ​ Guild
         ​ ​ ​ ​ User
 
-        Author can be one of the following:
+        **Author** can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
         ​ ​ ​ ​ User Name#123
 
-        Guild can be one of the following:
+        **Guild** can be one of the following:
         ​ ​ ​ ​ Guild ID
         ​ ​ ​ ​ Exact guild name
 
@@ -4795,17 +4801,17 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
         ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
 
-        Scope is one of the following:
+        **Scope** is one of the following:
         ​ ​ ​ ​ Global
         ​ ​ ​ ​ Guild
         ​ ​ ​ ​ User
 
-        Author can be one of the following:
+        **Author** can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
         ​ ​ ​ ​ User Name#123
 
-        Guild can be one of the following:
+        **Guild** can be one of the following:
         ​ ​ ​ ​ Guild ID
         ​ ​ ​ ​ Exact guild name
 
@@ -4874,17 +4880,17 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
         ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
 
-        Scope is one of the following:
+        **Scope** is one of the following:
         ​ ​ ​ ​ Global
         ​ ​ ​ ​ Guild
         ​ ​ ​ ​ User
 
-        Author can be one of the following:
+        **Author** can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
         ​ ​ ​ ​ User Name#123
 
-        Guild can be one of the following:
+        **Guild** can be one of the following:
         ​ ​ ​ ​ Guild ID
         ​ ​ ​ ​ Exact guild name
 
@@ -5030,17 +5036,17 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
         ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
 
-        Scope is one of the following:
+        **Scope** is one of the following:
         ​ ​ ​ ​ Global
         ​ ​ ​ ​ Guild
         ​ ​ ​ ​ User
 
-        Author can be one of the following:
+        **Author** can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
         ​ ​ ​ ​ User Name#123
 
-        Guild can be one of the following:
+        **Guild** can be one of the following:
         ​ ​ ​ ​ Guild ID
         ​ ​ ​ ​ Exact guild name
 
@@ -5176,17 +5182,17 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
         ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
 
-        Scope is one of the following:
+        **Scope** is one of the following:
         ​ ​ ​ ​ Global
         ​ ​ ​ ​ Guild
         ​ ​ ​ ​ User
 
-        Author can be one of the following:
+        **Author** can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
         ​ ​ ​ ​ User Name#123
 
-        Guild can be one of the following:
+        **Guild** can be one of the following:
         ​ ​ ​ ​ Guild ID
         ​ ​ ​ ​ Exact guild name
 
@@ -5301,17 +5307,17 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
         ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
 
-        Scope is one of the following:
+        **Scope** is one of the following:
         ​ ​ ​ ​ Global
         ​ ​ ​ ​ Guild
         ​ ​ ​ ​ User
 
-        Author can be one of the following:
+        **Author** can be one of the following:
         ​ ​ ​ ​ User ID
         ​ ​ ​ ​ User Mention
         ​ ​ ​ ​ User Name#123
 
-        Guild can be one of the following:
+        **Guild** can be one of the following:
         ​ ​ ​ ​ Guild ID
         ​ ​ ​ ​ Exact guild name
 
