@@ -5,7 +5,7 @@ from typing import Optional, Tuple, Union
 
 import discord
 
-from redbot.cogs.audio.errors import TooManyMatches, NoMachesFound
+from redbot.cogs.audio.errors import TooManyMatches, NoMatchesFound
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
@@ -77,7 +77,7 @@ async def global_unique_guild_finder(ctx: commands.Context, arg: str) -> discord
             maybe_matches.append(obj)
 
     if not maybe_matches:
-        raise NoMachesFound(
+        raise NoMatchesFound(
             _(
                 '"{arg}" was not found. It must be the ID or'
                 "name of a server which the bot can see."
@@ -119,7 +119,7 @@ async def global_unique_user_finder(
                 maybe_matches.append(member)
 
     if not maybe_matches:
-        raise NoMachesFound(
+        raise NoMatchesFound(
             _(
                 '"{arg}" was not found. It must be the ID or'
                 "name or mention a user which the bot can see."
@@ -235,7 +235,7 @@ class ScopeParser(commands.Converter):
                 target_guild = await global_unique_guild_finder(ctx, guild_raw)
             except TooManyMatches as err:
                 server_error = f"{err}\n"
-            except NoMachesFound as err:
+            except NoMatchesFound as err:
                 server_error = f"{err}\n"
             if target_guild is None:
                 raise commands.ArgParserFailure(
@@ -257,7 +257,7 @@ class ScopeParser(commands.Converter):
                 specified_user = True
             except TooManyMatches as err:
                 user_error = f"{err}\n"
-            except NoMachesFound as err:
+            except NoMatchesFound as err:
                 user_error = f"{err}\n"
             if target_guild is None:
                 raise commands.ArgParserFailure(
@@ -368,7 +368,7 @@ class ComplexScopeParser(commands.Converter):
                 target_guild = await global_unique_guild_finder(ctx, to_guild_raw)
             except TooManyMatches as err:
                 target_server_error = f"{err}\n"
-            except NoMachesFound as err:
+            except NoMatchesFound as err:
                 target_server_error = f"{err}\n"
             if target_guild is None:
                 raise commands.ArgParserFailure(
@@ -390,7 +390,7 @@ class ComplexScopeParser(commands.Converter):
                 source_guild = await global_unique_guild_finder(ctx, from_guild_raw)
             except TooManyMatches as err:
                 source_server_error = f"{err}\n"
-            except NoMachesFound as err:
+            except NoMatchesFound as err:
                 source_server_error = f"{err}\n"
             if source_guild is None:
                 raise commands.ArgParserFailure(
@@ -417,7 +417,7 @@ class ComplexScopeParser(commands.Converter):
                 specified_target_user = True
             except TooManyMatches as err:
                 target_user_error = f"{err}\n"
-            except NoMachesFound as err:
+            except NoMatchesFound as err:
                 target_user_error = f"{err}\n"
             if target_user is None:
                 raise commands.ArgParserFailure(
@@ -442,7 +442,7 @@ class ComplexScopeParser(commands.Converter):
                 specified_target_user = True
             except TooManyMatches as err:
                 source_user_error = f"{err}\n"
-            except NoMachesFound as err:
+            except NoMatchesFound as err:
                 source_user_error = f"{err}\n"
             if source_user is None:
                 raise commands.ArgParserFailure(

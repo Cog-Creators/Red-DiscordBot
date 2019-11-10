@@ -53,7 +53,7 @@ class TooManyMatches(PlayListError):
     """Too many playlist match user input."""
 
 
-class NoMachesFound(PlayListError):
+class NoMatchesFound(PlayListError):
     """No entries found for this input."""
 
 
