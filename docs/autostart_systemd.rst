@@ -8,11 +8,23 @@ Setting up auto-restart using systemd on Linux
 Creating the service file
 -------------------------
 
-Create the new service file:
+In order to create the service file, you will first need the location of your :code:`redbot` binary.
+
+.. code-block:: bash
+
+    # If redbot is installed in a virtualenv
+    source redenv/bin/activate
+
+    # If you are using pyenv
+    pyenv shell <name>
+
+    which redbot
+
+Then create the new service file:
 
 :code:`sudo -e /etc/systemd/system/red@.service`
 
-Paste the following and replace all instances of :code:`username` with the username your bot is running under (hopefully not root):
+Paste the following and replace all instances of :code:`username` with the username, and :code:`path` with the location you obtained above:
 
 .. code-block:: none
 
@@ -21,7 +33,7 @@ Paste the following and replace all instances of :code:`username` with the usern
     After=multi-user.target
 
     [Service]
-    ExecStart=/home/username/.local/bin/redbot %I --no-prompt
+    ExecStart=path %I --no-prompt
     User=username
     Group=username
     Type=idle

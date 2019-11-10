@@ -2,7 +2,6 @@ import asyncio
 import contextlib
 import re
 import time
-from typing import NoReturn
 from urllib.parse import urlparse
 
 import discord
@@ -11,7 +10,7 @@ import lavalink
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import bold, box
-from . import dataclasses
+from . import audio_dataclasses
 
 from .playlists import humanize_scope
 
@@ -178,7 +177,7 @@ async def clear_react(bot: Red, message: discord.Message, emoji: dict = None):
 
 def get_track_description(track):
     if track and hasattr(track, "uri"):
-        query = dataclasses.Query.process_input(track.uri)
+        query = audio_dataclasses.Query.process_input(track.uri)
         if query.is_local:
             if track.title != "Unknown title":
                 return "**{} - {}**\n{} ".format(track.author, track.title, query.to_string_user())
@@ -400,7 +399,7 @@ class Notifier:
         key: str = None,
         seconds_key: str = None,
         seconds: str = None,
-    ) -> NoReturn:
+    ):
         """
         This updates an existing message.
         Based on the message found in :variable:`Notifier.updates` as per the `key` param
@@ -421,14 +420,14 @@ class Notifier:
         except discord.errors.NotFound:
             pass
 
-    async def update_text(self, text: str) -> NoReturn:
+    async def update_text(self, text: str):
         embed2 = discord.Embed(colour=self.color, title=text)
         try:
             await self.message.edit(embed=embed2)
         except discord.errors.NotFound:
             pass
 
-    async def update_embed(self, embed: discord.Embed) -> NoReturn:
+    async def update_embed(self, embed: discord.Embed):
         try:
             await self.message.edit(embed=embed)
             self.last_msg_time = time.time()
