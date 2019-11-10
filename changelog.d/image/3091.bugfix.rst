@@ -1,1 +1,1 @@
-Update setting Imgur and GIPHY API keys.
+Update wording for setting Imgur and GIPHY API keys to match the website.
