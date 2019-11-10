@@ -317,6 +317,7 @@ class Query:
         self.local_name: Optional[str] = kwargs.get("name", None)
         self.search_subfolders: bool = kwargs.get("search_subfolders", False)
         self.spotify_uri: Optional[str] = kwargs.get("uri", None)
+        self.uri: Optional[str] = kwargs.get("url", None)
 
         self.start_time: int = kwargs.get("start_time", 0)
         self.track_index: Optional[int] = kwargs.get("track_index", None)
@@ -350,6 +351,7 @@ class Query:
                 self.spotify_uri,
                 self.start_time,
                 self.track_index,
+                self.uri,
             )
         )
 
@@ -446,6 +448,7 @@ class Query:
             try:
                 query_url = urlparse(track)
                 if all([query_url.scheme, query_url.netloc, query_url.path]):
+                    returning["url"] = track
                     url_domain = ".".join(query_url.netloc.split(".")[-2:])
                     if not query_url.netloc:
                         url_domain = ".".join(query_url.path.split("/")[0].split(".")[-2:])
@@ -600,6 +603,7 @@ class Query:
                     self.spotify_uri,
                     self.start_time,
                     self.track_index,
+                    self.uri,
                 )
             )
             return self._hash

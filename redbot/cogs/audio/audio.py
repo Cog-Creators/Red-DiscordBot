@@ -2959,7 +2959,6 @@ class Audio(commands.Cog):
                 search_choice = options[4 + (page * 5)]
             else:
                 search_choice = options[0 + (page * 5)]
-                # TODO: Verify this doesn't break exit and arrows
         except IndexError:
             search_choice = options[-1]
         if not playlist:
@@ -6534,18 +6533,7 @@ class Audio(commands.Cog):
         except IndexError:
             search_choice = tracks[-1]
         try:
-            query = audio_dataclasses.Query.process_input(search_choice.uri)
-            if query.is_local:
-
-                localtrack = audio_dataclasses.LocalPath(search_choice.uri)
-                if search_choice.title != "Unknown title":
-                    description = "**{} - {}**\n{}".format(
-                        search_choice.author, search_choice.title, localtrack.to_string_hidden()
-                    )
-                else:
-                    description = localtrack.to_string_hidden()
-            else:
-                description = "**[{}]({})**".format(search_choice.title, search_choice.uri)
+            description = get_track_description(search_choice)
 
         except AttributeError:
             search_choice = audio_dataclasses.Query.process_input(search_choice)
