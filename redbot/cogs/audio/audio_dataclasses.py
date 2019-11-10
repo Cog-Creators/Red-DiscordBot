@@ -215,7 +215,7 @@ class LocalPath:
         for track in self.multirglob(*[f"*{ext}" for ext in self._all_music_ext]):
             if track.exists() and track.is_file() and track.parent != self.localtrack_folder:
                 tracks.append(Query.process_input(LocalPath(str(track.absolute()))))
-        return sorted(tracks)
+        return sorted(tracks, key=lambda x:x.to_string_user().swapcase())
 
     def subfolders_in_tree(self):
         files = list(self.multirglob(*[f"*{ext}" for ext in self._all_music_ext]))
@@ -227,14 +227,14 @@ class LocalPath:
         for folder in folders:
             if folder.exists() and folder.is_dir():
                 return_folders.append(LocalPath(str(folder.absolute())))
-        return sorted(return_folders)
+        return sorted(return_folders, key=lambda x: x.to_string_hidden().swapcase())
 
     def tracks_in_folder(self):
         tracks = []
         for track in self.multiglob(*[f"*{ext}" for ext in self._all_music_ext]):
             if track.exists() and track.is_file() and track.parent != self.localtrack_folder:
                 tracks.append(Query.process_input(LocalPath(str(track.absolute()))))
-        return sorted(tracks)
+        return sorted(tracks, key=lambda x: x.to_string_user().swapcase())
 
     def subfolders(self):
         files = list(self.multiglob(*[f"*{ext}" for ext in self._all_music_ext]))
@@ -246,7 +246,7 @@ class LocalPath:
         for folder in folders:
             if folder.exists() and folder.is_dir():
                 return_folders.append(LocalPath(str(folder.absolute())))
-        return sorted(return_folders)
+        return sorted(return_folders, key=lambda x: x.to_string_hidden().swapcase())
 
     def __eq__(self, other):
         if not isinstance(other, LocalPath):

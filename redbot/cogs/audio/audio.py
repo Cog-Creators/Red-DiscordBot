@@ -6533,8 +6533,17 @@ class Audio(commands.Cog):
         except IndexError:
             search_choice = tracks[-1]
         try:
-            description = get_track_description(search_choice)
-
+            query = audio_dataclasses.Query.process_input(search_choice.uri)
+            if query.is_local:
+                localtrack = audio_dataclasses.LocalPath(search_choice.uri)
+                if search_choice.title != "Unknown title":
+                    description = "**{} - {}**\n{}".format(
+                        search_choice.author, search_choice.title, localtrack.to_string_hidden()
+                    )
+                else:
+                    description = localtrack.to_string_hidden()
+            else:
+                description = "**[{}]({})**".format(search_choice.title, search_choice.uri)
         except AttributeError:
             search_choice = audio_dataclasses.Query.process_input(search_choice)
             if search_choice.track.exists() and search_choice.track.is_dir():
