@@ -80,29 +80,7 @@ def _pass_config_to_dataclasses(config: Config, bot: Red, folder: str):
     _localtrack_folder = folder
 
 
-class ChdirClean(object):
-    def __init__(self, directory):
-        self.old_dir = os.getcwd()
-        self.new_dir = directory
-        self.cwd = None
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, _type, value, traceback):
-        self.chdir_out()
-        return isinstance(value, OSError)
-
-    def chdir_in(self):
-        self.cwd = Path(self.new_dir)
-        os.chdir(self.new_dir)
-
-    def chdir_out(self):
-        self.cwd = Path(self.old_dir)
-        os.chdir(self.old_dir)
-
-
-class LocalPath(ChdirClean):
+class LocalPath:
     """Local tracks class.
 
     Used to handle system dir trees in a cross system manner. The only use of this class is for
@@ -148,13 +126,9 @@ class LocalPath(ChdirClean):
                 parent = self.path.parent
             else:
                 parent = self.path
-            super().__init__(str(parent.absolute()))
-
             self.parent = Path(parent)
         except OSError:
             self.parent = None
-
-        self.cwd = Path.cwd()
 
     @property
     def name(self):
@@ -241,7 +215,7 @@ class LocalPath(ChdirClean):
         for track in self.multirglob(*[f"*{ext}" for ext in self._all_music_ext]):
             if track.exists() and track.is_file() and track.parent != self.localtrack_folder:
                 tracks.append(Query.process_input(LocalPath(str(track.absolute()))))
-        return tracks
+        return sorted(tracks)
 
     def subfolders_in_tree(self):
         files = list(self.multirglob(*[f"*{ext}" for ext in self._all_music_ext]))
@@ -253,14 +227,14 @@ class LocalPath(ChdirClean):
         for folder in folders:
             if folder.exists() and folder.is_dir():
                 return_folders.append(LocalPath(str(folder.absolute())))
-        return return_folders
+        return sorted(return_folders)
 
     def tracks_in_folder(self):
         tracks = []
         for track in self.multiglob(*[f"*{ext}" for ext in self._all_music_ext]):
             if track.exists() and track.is_file() and track.parent != self.localtrack_folder:
                 tracks.append(Query.process_input(LocalPath(str(track.absolute()))))
-        return tracks
+        return sorted(tracks)
 
     def subfolders(self):
         files = list(self.multiglob(*[f"*{ext}" for ext in self._all_music_ext]))
@@ -272,7 +246,39 @@ class LocalPath(ChdirClean):
         for folder in folders:
             if folder.exists() and folder.is_dir():
                 return_folders.append(LocalPath(str(folder.absolute())))
-        return return_folders
+        return sorted(return_folders)
+
+    def __eq__(self, other):
+        if not isinstance(other, LocalPath):
+            return NotImplemented
+        return self.path._cparts == other.path._cparts
+
+    def __hash__(self):
+        try:
+            return self._hash
+        except AttributeError:
+            self._hash = hash(tuple(self.path._cparts))
+            return self._hash
+
+    def __lt__(self, other):
+        if not isinstance(other, LocalPath):
+            return NotImplemented
+        return self.path._cparts < other.path._cparts
+
+    def __le__(self, other):
+        if not isinstance(other, LocalPath):
+            return NotImplemented
+        return self.path._cparts <= other.path._cparts
+
+    def __gt__(self, other):
+        if not isinstance(other, LocalPath):
+            return NotImplemented
+        return self.path._cparts > other.path._cparts
+
+    def __ge__(self, other):
+        if not isinstance(other, LocalPath):
+            return NotImplemented
+        return self.path._cparts >= other.path._cparts
 
 
 class Query:
@@ -323,6 +329,29 @@ class Query:
 
         if self.is_playlist or self.is_album:
             self.single_track = False
+        self._hash = hash(
+            (
+                self.valid,
+                self.is_local,
+                self.is_spotify,
+                self.is_youtube,
+                self.is_soundcloud,
+                self.is_bandcamp,
+                self.is_vimeo,
+                self.is_mixer,
+                self.is_twitch,
+                self.is_other,
+                self.is_playlist,
+                self.is_album,
+                self.is_search,
+                self.is_stream,
+                self.single_track,
+                self.id,
+                self.spotify_uri,
+                self.start_time,
+                self.track_index,
+            )
+        )
 
     def __str__(self):
         return str(self.lavalink_query)
@@ -540,3 +569,57 @@ class Query:
         if self.is_local:
             return self.track.suffix
         return None
+
+    def __eq__(self, other):
+        if not isinstance(other, Query):
+            return NotImplemented
+        return self.to_string_user() == other.to_string_user()
+
+    def __hash__(self):
+        try:
+            return self._hash
+        except AttributeError:
+            self._hash = hash(
+                (
+                    self.valid,
+                    self.is_local,
+                    self.is_spotify,
+                    self.is_youtube,
+                    self.is_soundcloud,
+                    self.is_bandcamp,
+                    self.is_vimeo,
+                    self.is_mixer,
+                    self.is_twitch,
+                    self.is_other,
+                    self.is_playlist,
+                    self.is_album,
+                    self.is_search,
+                    self.is_stream,
+                    self.single_track,
+                    self.id,
+                    self.spotify_uri,
+                    self.start_time,
+                    self.track_index,
+                )
+            )
+            return self._hash
+
+    def __lt__(self, other):
+        if not isinstance(other, Query):
+            return NotImplemented
+        return self.to_string_user() < other.to_string_user()
+
+    def __le__(self, other):
+        if not isinstance(other, Query):
+            return NotImplemented
+        return self.to_string_user() <= other.to_string_user()
+
+    def __gt__(self, other):
+        if not isinstance(other, Query):
+            return NotImplemented
+        return self.to_string_user() > other.to_string_user()
+
+    def __ge__(self, other):
+        if not isinstance(other, Query):
+            return NotImplemented
+        return self.to_string_user() >= other.to_string_user()
