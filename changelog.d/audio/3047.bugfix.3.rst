@@ -1,0 +1,1 @@
+Fix an issue in ``[p]audioset restrictions blacklist list`` where it would call the list a `Whitelist`.

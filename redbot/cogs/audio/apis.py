@@ -202,10 +202,9 @@ class SpotifyAPI:
             return await r.json()
 
     async def _get_auth(self):
-        if self.client_id is None or self.client_secret is None:
-            tokens = await self.bot.get_shared_api_tokens("spotify")
-            self.client_id = tokens.get("client_id", "")
-            self.client_secret = tokens.get("client_secret", "")
+        tokens = await self.bot.get_shared_api_tokens("spotify")
+        self.client_id = tokens.get("client_id", "")
+        self.client_secret = tokens.get("client_secret", "")
 
     async def _request_token(self) -> dict:
         await self._get_auth()
@@ -286,10 +285,9 @@ class YouTubeAPI:
         self.session = session
         self.api_key = None
 
-    async def _get_api_key(self,) -> Optional[str]:
-        if self.api_key is None:
-            tokens = await self.bot.get_shared_api_tokens("youtube")
-            self.api_key = tokens.get("api_key", "")
+    async def _get_api_key(self,) -> str:
+        tokens = await self.bot.get_shared_api_tokens("youtube")
+        self.api_key = tokens.get("api_key", "")
         return self.api_key
 
     async def get_call(self, query: str) -> Optional[str]:

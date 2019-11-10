@@ -1,0 +1,1 @@
+Fix an issue where updating your Spotify and YouTube Data API tokens did not refresh them.
