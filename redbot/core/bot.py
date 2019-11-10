@@ -132,7 +132,6 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
-
         super().__init__(*args, help_command=None, **kwargs)
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
@@ -325,6 +324,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
     get_embed_colour = get_embed_color
 
+    # start config migrations
     async def _maybe_update_config(self):
         """
         This should be run prior to loading cogs or connecting to discord.
@@ -374,6 +374,57 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                 admin_roles.append(maybe_admin_role_id)
                 await self._config.guild(guild_obj).admin_role.set(admin_roles)
         log.info("Done updating guild configs to support multiple mod/admin roles")
+
+    # end Config migrations
+
+    async def pre_flight(self, cli_flags):
+        """
+        This should only be run once, prior to connecting to discord.
+        """
+        await self._maybe_update_config()
+
+        packages = []
+
+        if cli_flags.no_cogs is False:
+            packages.extend(await self._config.packages())
+
+        if cli_flags.load_cogs:
+            packages.extend(cli_flags.load_cogs)
+
+        if packages:
+            # Load permissions first, for security reasons
+            try:
+                packages.remove("permissions")
+            except ValueError:
+                pass
+            else:
+                packages.insert(0, "permissions")
+
+            to_remove = []
+            print("Loading packages...")
+            for package in packages:
+                try:
+                    spec = await self._cog_mgr.find_cog(package)
+                    await asyncio.wait_for(self.load_extension(spec), 30)
+                except asyncio.TimeoutError:
+                    log.exception("Failed to load package %s (timeout)", package)
+                    to_remove.append(package)
+                except Exception as e:
+                    log.exception("Failed to load package {}".format(package), exc_info=e)
+                    await self.remove_loaded_package(package)
+                    to_remove.append(package)
+            for package in to_remove:
+                packages.remove(package)
+            if packages:
+                print("Loaded packages: " + ", ".join(packages))
+
+        if self.rpc_enabled:
+            await self.rpc.initialize(self.rpc_port)
+
+    async def start(self, *args, **kwargs):
+        cli_flags = kwargs.pop("cli_flags")
+        await self.pre_flight(cli_flags=cli_flags)
+        return await super().start(*args, **kwargs)
 
     async def send_help_for(
         self, ctx: commands.Context, help_for: Union[commands.Command, commands.GroupMixin, str]
@@ -653,7 +704,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             ``True`` if immune
 
         """
-        guild = to_check.guild
+        guild = getattr(to_check, "guild", None)
         if not guild:
             return False
 
@@ -666,7 +717,8 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             except AttributeError:
                 # webhook messages are a user not member,
                 # cheaper than isinstance
-                return True  # webhooks require significant permissions to enable.
+                if author.bot and author.discriminator == "0000":
+                    return True  # webhooks require significant permissions to enable.
             else:
                 ids_to_check.append(author.id)
 
