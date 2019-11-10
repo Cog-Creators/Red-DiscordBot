@@ -1,27 +1,32 @@
 # -*- coding: utf-8 -*-
+# Standard Library
 import asyncio
 import contextlib
 import datetime
 import heapq
 import json
 import logging
-import os
+import math
 import random
 import re
 import time
 import traceback
+
 from collections import namedtuple
 from io import StringIO
 from typing import List, Optional, Tuple, Union, cast
 
+# Red Dependencies
 import aiohttp
 import discord
 import lavalink
-import math
+
 from discord.embeds import EmptyEmbed
 from fuzzywuzzy import process
 
+# Red Imports
 import redbot.core
+
 from redbot.core import Config, bank, checks, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
@@ -35,8 +40,10 @@ from redbot.core.utils.menus import (
     start_adding_reactions,
 )
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
+
+# Red Relative Imports
 from . import audio_dataclasses
-from .apis import MusicCache, HAS_SQL, _ERROR
+from .apis import HAS_SQL, _ERROR, MusicCache
 from .checks import can_have_caching
 from .config import pass_config_to_dependencies
 from .converters import ComplexScopeParser, ScopeParser, get_lazy_converter, get_playlist_converter
@@ -205,7 +212,7 @@ class Audio(commands.Cog):
                 self._dj_role_cache[ctx.guild.id] = None
                 await self._embed_msg(ctx, title=_("No DJ role found. Disabling DJ mode."))
 
-    async def initialize(self):
+    async def initialize(self) -> None:
         await self.bot.wait_until_ready()
         # Unlike most cases, we want the cache to exit before migration.
         await self.music_cache.initialize(self.config)
@@ -233,7 +240,7 @@ class Audio(commands.Cog):
         self._ready_event.set()
         self.bot.dispatch("red_audio_initialized", self)
 
-    async def _migrate_config(self, from_version: int, to_version: int):
+    async def _migrate_config(self, from_version: int, to_version: int) -> None:
         database_entries = []
         time_now = str(datetime.datetime.now(datetime.timezone.utc))
         if from_version == to_version:
@@ -621,7 +628,6 @@ class Audio(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     async def audioset(self, ctx: commands.Context):
         """Music configuration options."""
-        pass
 
     @audioset.command()
     @checks.mod_or_permissions(manage_messages=True)
@@ -650,17 +656,14 @@ class Audio(commands.Cog):
     @checks.mod_or_permissions(manage_messages=True)
     async def _perms(self, ctx: commands.Context):
         """Manages the keyword whitelist and blacklist."""
-        pass
 
     @_perms.group(name="whitelist")
     async def _perms_whitelist(self, ctx: commands.Context):
         """Manages the keyword whitelist."""
-        pass
 
     @_perms.group(name="blacklist")
     async def _perms_blacklist(self, ctx: commands.Context):
         """Manages the keyword blacklist."""
-        pass
 
     @_perms_blacklist.command(name="add")
     async def _perms_blacklist_add(self, ctx: commands.Context, *, keyword: str):
@@ -1008,7 +1011,10 @@ class Audio(commands.Cog):
     @audioset.command()
     @checks.mod_or_permissions(administrator=True)
     async def emptydisconnect(self, ctx: commands.Context, seconds: int):
-        """Auto-disconnection after x seconds while stopped. 0 to disable."""
+        """Auto-disconnection after x seconds while stopped.
+
+        0 to disable.
+        """
         if seconds < 0:
             return await self._embed_msg(
                 ctx, title=_("Invalid Time"), description=_("Seconds can't be less than zero.")
@@ -1036,7 +1042,10 @@ class Audio(commands.Cog):
     @audioset.command()
     @checks.mod_or_permissions(administrator=True)
     async def emptypause(self, ctx: commands.Context, seconds: int):
-        """Auto-pause after x seconds when room is empty. 0 to disable."""
+        """Auto-pause after x seconds when room is empty.
+
+        0 to disable.
+        """
         if seconds < 0:
             return await self._embed_msg(
                 ctx, title=_("Invalid Time"), description=_("Seconds can't be less than zero.")
@@ -1063,7 +1072,10 @@ class Audio(commands.Cog):
     @audioset.command()
     @checks.mod_or_permissions(administrator=True)
     async def jukebox(self, ctx: commands.Context, price: int):
-        """Set a price for queueing tracks for non-mods. 0 to disable."""
+        """Set a price for queueing tracks for non-mods.
+
+        0 to disable.
+        """
         if price < 0:
             return await self._embed_msg(
                 ctx, title=_("Invalid Price"), description=_("Price can't be less than zero.")
@@ -1170,8 +1182,9 @@ class Audio(commands.Cog):
     async def maxlength(self, ctx: commands.Context, seconds: Union[int, str]):
         """Max length of a track to queue in seconds. 0 to disable.
 
-        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).
-        Invalid input will turn the max length setting off."""
+        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`). Invalid
+        input will turn the max length setting off.
+        """
         if not isinstance(seconds, int):
             seconds = time_convert(seconds)
         if seconds < 0:
@@ -1212,8 +1225,9 @@ class Audio(commands.Cog):
         """Toggle the domain restriction on Audio.
 
         When toggled off, users will be able to play songs from non-commercial websites and links.
-        When toggled on, users are restricted to YouTube, SoundCloud,
-        Mixer, Vimeo, Twitch, and Bandcamp links."""
+        When toggled on, users are restricted to YouTube, SoundCloud, Mixer, Vimeo, Twitch, and
+        Bandcamp links.
+        """
         restrict = await self.config.restrict()
         await self.config.restrict.set(not restrict)
         await self._embed_msg(
@@ -1427,7 +1441,10 @@ class Audio(commands.Cog):
     @audioset.command()
     @checks.mod_or_permissions(administrator=True)
     async def vote(self, ctx: commands.Context, percent: int):
-        """Percentage needed for non-mods to skip tracks. 0 to disable."""
+        """Percentage needed for non-mods to skip tracks.
+
+        0 to disable.
+        """
         if percent < 0:
             return await self._embed_msg(
                 ctx, title=_("Invalid Time"), description=_("Seconds can't be less than zero.")
@@ -1486,7 +1503,6 @@ class Audio(commands.Cog):
         5: Enables all Caches
 
         If you wish to disable a specific cache use a negative number.
-
         """
         current_level = CacheLevel(await self.config.cache_level())
         spotify_cache = CacheLevel.set_spotify()
@@ -1562,8 +1578,8 @@ class Audio(commands.Cog):
     async def _cacheage(self, ctx: commands.Context, age: int):
         """Sets the cache max age.
 
-        This commands allows you to set the max number of days
-        before an entry in the cache becomes invalid.
+        This commands allows you to set the max number of days before an entry in the cache becomes
+        invalid.
         """
         msg = ""
         if age < 7:
@@ -1810,7 +1826,7 @@ class Audio(commands.Cog):
             preset_list += msg
 
         page_list = []
-        colour = await ctx.embed_colour()
+        await ctx.embed_colour()
         for page in pagify(preset_list, delims=[", "], page_length=1000):
             formatted_page = box(page, lang="ini")
             embed = discord.Embed(
@@ -2182,7 +2198,9 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, title=_("No matches."))
         return await ctx.invoke(self.search, query=search_list)
 
-    async def _localtracks_folders(self, ctx: commands.Context, search_subfolders=False):
+    async def _localtracks_folders(
+        self, ctx: commands.Context, search_subfolders=False
+    ) -> Optional[List[Union[Path, audio_dataclasses.LocalPath]]]:
         audio_data = audio_dataclasses.LocalPath(
             audio_dataclasses.LocalPath(None).localtrack_folder.absolute()
         )
@@ -2191,7 +2209,9 @@ class Audio(commands.Cog):
 
         return audio_data.subfolders_in_tree() if search_subfolders else audio_data.subfolders()
 
-    async def _folder_list(self, ctx: commands.Context, query: audio_dataclasses.Query):
+    async def _folder_list(
+        self, ctx: commands.Context, query: audio_dataclasses.Query
+    ) -> Optional[List[audio_dataclasses.Query]]:
         if not await self._localtracks_check(ctx):
             return
         query = audio_dataclasses.Query.process_input(query)
@@ -2205,7 +2225,7 @@ class Audio(commands.Cog):
 
     async def _folder_tracks(
         self, ctx, player: lavalink.player_manager.Player, query: audio_dataclasses.Query
-    ):
+    ) -> Optional[List[lavalink.rest_api.Track]]:
         if not await self._localtracks_check(ctx):
             return
 
@@ -2223,7 +2243,7 @@ class Audio(commands.Cog):
 
     async def _local_play_all(
         self, ctx: commands.Context, query: audio_dataclasses.Query, from_search=False
-    ):
+    ) -> None:
         if not await self._localtracks_check(ctx):
             return
         if from_search:
@@ -2232,7 +2252,9 @@ class Audio(commands.Cog):
             )
         await ctx.invoke(self.search, query=query)
 
-    async def _all_folder_tracks(self, ctx: commands.Context, query: audio_dataclasses.Query):
+    async def _all_folder_tracks(
+        self, ctx: commands.Context, query: audio_dataclasses.Query
+    ) -> Optional[List[audio_dataclasses.Query]]:
         if not await self._localtracks_check(ctx):
             return
 
@@ -2242,7 +2264,7 @@ class Audio(commands.Cog):
             else query.track.tracks_in_folder()
         )
 
-    async def _localtracks_check(self, ctx: commands.Context):
+    async def _localtracks_check(self, ctx: commands.Context) -> bool:
         folder = audio_dataclasses.LocalPath(None)
         if folder.localtrack_folder.exists():
             return True
@@ -2563,7 +2585,7 @@ class Audio(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     async def bumpplay(
-            self, ctx: commands.Context, play_now: Optional[bool] = False, *, query: str
+        self, ctx: commands.Context, play_now: Optional[bool] = False, *, query: str
     ):
         """Force play a URL or search for a track."""
         query = audio_dataclasses.Query.process_input(query)
@@ -2592,9 +2614,9 @@ class Audio(commands.Cog):
                 return await self._embed_msg(ctx, title=msg, description=desc)
             try:
                 if (
-                        not ctx.author.voice.channel.permissions_for(ctx.me).connect
-                        or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                        and userlimit(ctx.author.voice.channel)
+                    not ctx.author.voice.channel.permissions_for(ctx.me).connect
+                    or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
+                    and userlimit(ctx.author.voice.channel)
                 ):
                     return await self._embed_msg(
                         ctx,
@@ -2630,7 +2652,7 @@ class Audio(commands.Cog):
         await self._eq_check(ctx, player)
         await self._data_check(ctx)
         if (
-                not ctx.author.voice or ctx.author.voice.channel != player.channel
+            not ctx.author.voice or ctx.author.voice.channel != player.channel
         ) and not await self._can_instaskip(ctx, ctx.author):
             return await self._embed_msg(
                 ctx,
@@ -2663,7 +2685,9 @@ class Audio(commands.Cog):
                     "This may be due to permissions or because Lavalink.jar is being run "
                     "in a different machine than the local tracks."
                 )
-            elif query.is_local and query.suffix in audio_dataclasses._partially_supported_music_ext:
+            elif (
+                query.is_local and query.suffix in audio_dataclasses._partially_supported_music_ext
+            ):
                 title = _("Track is not playable.")
                 embed = discord.Embed(title=title)
                 embed.description = _(
@@ -2673,8 +2697,8 @@ class Audio(commands.Cog):
         elif isinstance(tracks, discord.Message):
             return
         queue_dur = await queue_duration(ctx)
-        queue_total_duration = lavalink.utils.format_time(queue_dur)
-        before_queue_length = len(player.queue)
+        lavalink.utils.format_time(queue_dur)
+        len(player.queue)
         index = query.track_index
         seek = 0
         if query.start_time:
@@ -2683,11 +2707,11 @@ class Audio(commands.Cog):
         if seek and seek > 0:
             single_track.start_timestamp = seek * 1000
         if not await is_allowed(
-                ctx.guild,
-                (
-                        f"{single_track.title} {single_track.author} {single_track.uri} "
-                        f"{str(audio_dataclasses.Query.process_input(single_track))}"
-                ),
+            ctx.guild,
+            (
+                f"{single_track.title} {single_track.author} {single_track.uri} "
+                f"{str(audio_dataclasses.Query.process_input(single_track))}"
+            ),
         ):
             log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
             self._play_lock(ctx, False)
@@ -3100,7 +3124,7 @@ class Audio(commands.Cog):
                     embed = discord.Embed(title=title)
                     if (
                         query.is_local
-                        and query.suffix in dataclasses._partially_supported_music_ext
+                        and query.suffix in audio_dataclasses._partially_supported_music_ext
                     ):
                         title = _("Track is not playable.")
                         description = _(
@@ -3166,7 +3190,10 @@ class Audio(commands.Cog):
             )
 
     async def _enqueue_tracks(
-        self, ctx: commands.Context, query: Union[audio_dataclasses.Query, list], enqueue: bool = True
+        self,
+        ctx: commands.Context,
+        query: Union[audio_dataclasses.Query, list],
+        enqueue: bool = True,
     ):
         player = lavalink.get_player(ctx.guild.id)
         try:
@@ -3208,7 +3235,10 @@ class Audio(commands.Cog):
                         "This may be due to permissions or because Lavalink.jar is being run "
                         "in a different machine than the local tracks."
                     )
-                elif query.is_local and query.suffix in audio_dataclasses._partially_supported_music_ext:
+                elif (
+                    query.is_local
+                    and query.suffix in audio_dataclasses._partially_supported_music_ext
+                ):
                     title = _("Track is not playable.")
                     embed = discord.Embed(title=title, colour=colour)
                     embed.description = _(
@@ -3617,20 +3647,12 @@ class Audio(commands.Cog):
     async def playlist(self, ctx: commands.Context):
         """Playlist configuration options.
 
-        Scope info:
-        ​ ​ ​ ​ **Global**:
-        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users of this bot.
-        ​ ​ ​ ​ ​ ​ ​ ​ Only editable by bot owner.
-        ​ ​ ​ ​ **Guild**:
-        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users in this guild.
-        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner, guild owner, guild admins,
-        ​ ​ ​ ​ ​ ​ ​ ​ guild mods, DJ role and playlist creator.
-        ​ ​ ​ ​ **User**:
-        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all bot users, if --author is passed.
-        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner and creator.
-
+        Scope info: ​ ​ ​ ​ **Global**: ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users of this bot. ​ ​ ​ ​ ​
+        ​ ​ ​ Only editable by bot owner. ​ ​ ​ ​ **Guild**: ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users
+        in this guild. ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner, guild owner, guild admins, ​ ​ ​ ​ ​
+        ​ ​ ​ guild mods, DJ role and playlist creator. ​ ​ ​ ​ **User**: ​ ​ ​ ​ ​ ​ ​ ​ Visible
+        to all bot users, if --author is passed. ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner and creator.
         """
-        pass
 
     @playlist.command(name="append", usage="<playlist_name_OR_id> <track_name_OR_url> [args]")
     async def _playlist_append(
@@ -3819,7 +3841,6 @@ class Audio(commands.Cog):
         --to-scope User
         ​ ​ ​ ​ [p]playlist copy MyPersonalPlaylist --from-scope user --to-author Draper#6666
         --to-scope Guild --to-guild Red - Discord Bot
-
         """
 
         if scope_data is None:
@@ -5588,7 +5609,10 @@ class Audio(commands.Cog):
             if not tracks:
                 colour = await ctx.embed_colour()
                 embed = discord.Embed(title=_("Nothing found."), colour=colour)
-                if query.is_local and query.suffix in audio_dataclasses._partially_supported_music_ext:
+                if (
+                    query.is_local
+                    and query.suffix in audio_dataclasses._partially_supported_music_ext
+                ):
                     embed = discord.Embed(title=_("Track is not playable."), colour=colour)
                     embed.description = _(
                         "**{suffix}** is not a fully supported format and some "
@@ -5605,7 +5629,10 @@ class Audio(commands.Cog):
             if not tracks:
                 colour = await ctx.embed_colour()
                 embed = discord.Embed(title=_("Nothing found."), colour=colour)
-                if query.is_local and query.suffix in audio_dataclasses._partially_supported_music_ext:
+                if (
+                    query.is_local
+                    and query.suffix in audio_dataclasses._partially_supported_music_ext
+                ):
                     embed = discord.Embed(title=_("Track is not playable."), colour=colour)
                     embed.description = _(
                         "**{suffix}** is not a fully supported format and some "
@@ -6255,9 +6282,8 @@ class Audio(commands.Cog):
     async def search(self, ctx: commands.Context, *, query: str):
         """Pick a track with a search.
 
-        Use `[p]search list <search term>` to queue all tracks found
-        on YouTube. `[p]search sc <search term>` will search SoundCloud
-        instead of YouTube.
+        Use `[p]search list <search term>` to queue all tracks found on YouTube. `[p]search sc
+        <search term>` will search SoundCloud instead of YouTube.
         """
 
         async def _search_menu(
@@ -6434,7 +6460,10 @@ class Audio(commands.Cog):
                         "This may be due to permissions or because Lavalink.jar is being run "
                         "in a different machine than the local tracks."
                     )
-                elif query.is_local and query.suffix in audio_dataclasses._partially_supported_music_ext:
+                elif (
+                    query.is_local
+                    and query.suffix in audio_dataclasses._partially_supported_music_ext
+                ):
                     embed = discord.Embed(title=_("Track is not playable."), colour=colour)
                     embed.description = _(
                         "**{suffix}** is not a fully supported format and some "
@@ -6639,7 +6668,8 @@ class Audio(commands.Cog):
     async def seek(self, ctx: commands.Context, seconds: Union[int, str]):
         """Seek ahead or behind on a track by seconds or a to a specific time.
 
-        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`)."""
+        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).
+        """
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
@@ -6725,8 +6755,8 @@ class Audio(commands.Cog):
     async def shuffle(self, ctx: commands.Context, *, shuffle_bumped: Optional[bool] = True):
         """Toggle shuffle.
 
-        shuffle_bumped tracks defaults to True,
-        set to False if you wish to avoid bumped songs being shuffled.
+        shuffle_bumped tracks defaults to True, set to False if you wish to avoid bumped songs
+        being shuffled.
         """
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
@@ -7179,7 +7209,6 @@ class Audio(commands.Cog):
     @checks.is_owner()
     async def llsetup(self, ctx: commands.Context):
         """Lavalink server configuration options."""
-        pass
 
     @llsetup.command()
     async def external(self, ctx: commands.Context):
@@ -7346,7 +7375,7 @@ class Audio(commands.Cog):
             return False
 
     async def _clear_react(self, message: discord.Message, emoji: dict = None):
-        """Non blocking version of clear_react"""
+        """Non blocking version of clear_react."""
         return self.bot.loop.create_task(clear_react(self.bot, message, emoji))
 
     async def _currency_check(self, ctx: commands.Context, jukebox_price: int):
@@ -7420,7 +7449,6 @@ class Audio(commands.Cog):
                             await lavalink.get_player(sid).disconnect()
                         except Exception:
                             log.error("Exception raised in Audio's emptydc_timer.", exc_info=True)
-                            pass
                 elif (
                     sid in pause_times and await self.config.guild(server_obj).emptypause_enabled()
                 ):

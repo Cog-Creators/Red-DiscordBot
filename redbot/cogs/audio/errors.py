@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+
+# Red Dependencies
 import aiohttp
 
 
@@ -14,7 +17,6 @@ class LavalinkDownloadFailed(AudioError, RuntimeError):
         The response from the server to the failed GET request.
     should_retry : bool
         Whether or not the Audio cog should retry downloading the jar.
-
     """
 
     def __init__(self, *args, response: aiohttp.ClientResponse, should_retry: bool = False):

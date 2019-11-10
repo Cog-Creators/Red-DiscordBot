@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import asyncio
 import base64
 import contextlib
@@ -8,8 +10,27 @@ import os
 import random
 import time
 import traceback
+
 from collections import namedtuple
 from typing import Callable, Dict, List, Mapping, Optional, Tuple, Union
+
+# Red Dependencies
+import aiohttp
+import discord
+import lavalink
+
+from lavalink.rest_api import LoadResult
+
+# Red Imports
+from redbot.core import Config, commands
+from redbot.core.bot import Red
+from redbot.core.i18n import Translator, cog_i18n
+
+# Red Relative Imports
+from . import audio_dataclasses
+from .errors import InvalidTableError, SpotifyFetchError, YouTubeApiError
+from .playlists import get_playlist
+from .utils import CacheLevel, Notifier, is_allowed, queue_duration, track_limit
 
 try:
     from sqlite3 import Error as SQLError
@@ -23,19 +44,6 @@ except ImportError as err:
     SQLError = err.__class__
     Database = None
 
-
-import aiohttp
-import discord
-import lavalink
-from lavalink.rest_api import LoadResult
-
-from redbot.core import Config, commands
-from redbot.core.bot import Red
-from redbot.core.i18n import Translator, cog_i18n
-from . import audio_dataclasses
-from .errors import InvalidTableError, SpotifyFetchError, YouTubeApiError
-from .playlists import get_playlist
-from .utils import CacheLevel, Notifier, is_allowed, queue_duration, track_limit
 
 log = logging.getLogger("red.audio.cache")
 _ = Translator("Audio", __file__)
@@ -57,13 +65,13 @@ _CREATE_UNIQUE_INDEX_YOUTUBE_TABLE = (
 )
 
 _INSERT_YOUTUBE_TABLE = """
-        INSERT OR REPLACE INTO 
-        youtube(track_info, youtube_url, last_updated, last_fetched) 
+        INSERT OR REPLACE INTO
+        youtube(track_info, youtube_url, last_updated, last_fetched)
         VALUES (:track_info, :track_url, :last_updated, :last_fetched);
     """
 _QUERY_YOUTUBE_TABLE = "SELECT * FROM youtube WHERE track_info=:track;"
 _UPDATE_YOUTUBE_TABLE = """UPDATE youtube
-              SET last_fetched=:last_fetched 
+              SET last_fetched=:last_fetched
               WHERE track_info=:track;"""
 
 _DROP_SPOTIFY_TABLE = "DROP TABLE spotify;"
@@ -78,7 +86,7 @@ _CREATE_SPOTIFY_TABLE = """
                             type TEXT,
                             uri TEXT,
                             track_name TEXT,
-                            artist_name TEXT, 
+                            artist_name TEXT,
                             song_url TEXT,
                             track_info TEXT,
                             last_updated TEXT,
@@ -87,15 +95,15 @@ _CREATE_SPOTIFY_TABLE = """
                     """
 
 _INSERT_SPOTIFY_TABLE = """
-        INSERT OR REPLACE INTO 
-        spotify(id, type, uri, track_name, artist_name, 
-        song_url, track_info, last_updated, last_fetched) 
-        VALUES (:id, :type, :uri, :track_name, :artist_name, 
+        INSERT OR REPLACE INTO
+        spotify(id, type, uri, track_name, artist_name,
+        song_url, track_info, last_updated, last_fetched)
+        VALUES (:id, :type, :uri, :track_name, :artist_name,
         :song_url, :track_info, :last_updated, :last_fetched);
     """
 _QUERY_SPOTIFY_TABLE = "SELECT * FROM spotify WHERE uri=:uri;"
 _UPDATE_SPOTIFY_TABLE = """UPDATE spotify
-              SET last_fetched=:last_fetched 
+              SET last_fetched=:last_fetched
               WHERE uri=:uri;"""
 
 _DROP_LAVALINK_TABLE = "DROP TABLE lavalink;"
@@ -115,8 +123,8 @@ _CREATE_UNIQUE_INDEX_LAVALINK_TABLE = (
 )
 
 _INSERT_LAVALINK_TABLE = """
-        INSERT OR REPLACE INTO 
-        lavalink(query,  data, last_updated, last_fetched) 
+        INSERT OR REPLACE INTO
+        lavalink(query,  data, last_updated, last_fetched)
         VALUES (:query, :data, :last_updated, :last_fetched);
     """
 _QUERY_LAVALINK_TABLE = "SELECT * FROM lavalink WHERE query=:query;"
@@ -131,7 +139,7 @@ _QUERY_LAST_FETCHED_LAVALINK_TABLE = (
     " OR last_fetched LIKE :day7;"
 )
 _UPDATE_LAVALINK_TABLE = """UPDATE lavalink
-              SET last_fetched=:last_fetched 
+              SET last_fetched=:last_fetched
               WHERE query=:query;"""
 
 _PARSER = {
@@ -310,8 +318,8 @@ class YouTubeAPI:
 
 @cog_i18n(_)
 class MusicCache:
-    """
-    Handles music queries to the Spotify and Youtube Data API.
+    """Handles music queries to the Spotify and Youtube Data API.
+
     Always tries the Cache first.
     """
 
@@ -608,8 +616,7 @@ class MusicCache:
         skip_youtube: bool = False,
         notifier: Optional[Notifier] = None,
     ) -> List[str]:
-        """
-        Queries the Database then falls back to Spotify and YouTube APIs.
+        """Queries the Database then falls back to Spotify and YouTube APIs.
 
         Parameters
         ----------
@@ -914,10 +921,8 @@ class MusicCache:
         query: audio_dataclasses.Query,
         forced: bool = False,
     ) -> Tuple[LoadResult, bool]:
-        """
-        A replacement for :code:`lavalink.Player.load_tracks`.
-        This will try to get a valid cached entry first if not found or if in valid
-        it will then call the lavalink API.
+        """A replacement for :code:`lavalink.Player.load_tracks`. This will try to get a valid
+        cached entry first if not found or if in valid it will then call the lavalink API.
 
         Parameters
         ----------

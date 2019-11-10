@@ -1,17 +1,24 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import asyncio
 import contextlib
 import re
 import time
+
+from typing import Mapping
 from urllib.parse import urlparse
 
+# Red Dependencies
 import discord
 import lavalink
 
+# Red Imports
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import bold, box
-from . import audio_dataclasses
 
+# Red Relative Imports
+from . import audio_dataclasses
 from .playlists import humanize_scope
 
 __all__ = [
@@ -43,7 +50,7 @@ _config = None
 _bot = None
 
 
-def _pass_config_to_utils(config: Config, bot: Red):
+def _pass_config_to_utils(config: Config, bot: Red) -> None:
     global _config, _bot
     if _config is None:
         _config = config
@@ -51,7 +58,7 @@ def _pass_config_to_utils(config: Config, bot: Red):
         _bot = bot
 
 
-def track_limit(track, maxlength):
+def track_limit(track, maxlength) -> bool:
     try:
         length = round(track.length / 1000)
     except AttributeError:
@@ -62,7 +69,7 @@ def track_limit(track, maxlength):
     return True
 
 
-async def is_allowed(guild: discord.Guild, query: str):
+async def is_allowed(guild: discord.Guild, query: str) -> bool:
     query = query.lower().strip()
     whitelist = set(await _config.guild(guild).url_keyword_whitelist())
     if whitelist:
@@ -71,7 +78,7 @@ async def is_allowed(guild: discord.Guild, query: str):
     return not any(i in query for i in blacklist)
 
 
-async def queue_duration(ctx):
+async def queue_duration(ctx) -> int:
     player = lavalink.get_player(ctx.guild.id)
     duration = []
     for i in range(len(player.queue)):
@@ -91,7 +98,7 @@ async def queue_duration(ctx):
     return queue_total_duration
 
 
-async def draw_time(ctx):
+async def draw_time(ctx) -> str:
     player = lavalink.get_player(ctx.guild.id)
     paused = player.paused
     pos = player.position
@@ -112,7 +119,7 @@ async def draw_time(ctx):
     return msg
 
 
-def dynamic_time(seconds):
+def dynamic_time(seconds) -> str:
     m, s = divmod(seconds, 60)
     h, m = divmod(m, 60)
     d, h = divmod(h, 24)
@@ -130,7 +137,7 @@ def dynamic_time(seconds):
     return msg.format(d, h, m, s)
 
 
-def format_playlist_picker_data(pid, pname, ptracks, pauthor, scope):
+def format_playlist_picker_data(pid, pname, ptracks, pauthor, scope) -> str:
     author = _bot.get_user(pauthor) or "Unknown"
     line = (
         f" - Name:   <{pname}>\n"
@@ -142,7 +149,7 @@ def format_playlist_picker_data(pid, pname, ptracks, pauthor, scope):
     return box(line, lang="md")
 
 
-def match_url(url):
+def match_url(url) -> bool:
     try:
         query_url = urlparse(url)
         return all([query_url.scheme, query_url.netloc, query_url.path])
@@ -150,18 +157,18 @@ def match_url(url):
         return False
 
 
-def match_yt_playlist(url):
+def match_yt_playlist(url) -> bool:
     if _RE_YT_LIST_PLAYLIST.match(url):
         return True
     return False
 
 
-async def remove_react(message, react_emoji, react_user):
+async def remove_react(message, react_emoji, react_user) -> None:
     with contextlib.suppress(discord.HTTPException):
         await message.remove_reaction(react_emoji, react_user)
 
 
-async def clear_react(bot: Red, message: discord.Message, emoji: dict = None):
+async def clear_react(bot: Red, message: discord.Message, emoji: dict = None) -> None:
     try:
         await message.clear_reactions()
     except discord.Forbidden:
@@ -175,7 +182,7 @@ async def clear_react(bot: Red, message: discord.Message, emoji: dict = None):
         return
 
 
-def get_track_description(track):
+def get_track_description(track) -> str:
     if track and hasattr(track, "uri"):
         query = audio_dataclasses.Query.process_input(track.uri)
         if query.is_local:
@@ -189,7 +196,7 @@ def get_track_description(track):
         return track.to_string_user() + " "
 
 
-def track_creator(player, position=None, other_track=None):
+def track_creator(player, position=None, other_track=None) -> Mapping:
     if position == "np":
         queued_track = player.current
     elif position is None:
@@ -210,7 +217,7 @@ def track_creator(player, position=None, other_track=None):
     return track_obj
 
 
-def time_convert(length):
+def time_convert(length) -> int:
     match = _RE_TIME_CONVERTER.match(length)
     if match is not None:
         hr = int(match.group(1)) if match.group(1) else 0
@@ -225,7 +232,7 @@ def time_convert(length):
             return 0
 
 
-def url_check(url):
+def url_check(url) -> bool:
     valid_tld = [
         "youtube.com",
         "youtu.be",
@@ -245,7 +252,7 @@ def url_check(url):
     return True if url_domain in valid_tld else False
 
 
-def userlimit(channel):
+def userlimit(channel) -> bool:
     if channel.user_limit == 0 or channel.user_limit > len(channel.members) + 1:
         return False
     return True
@@ -309,8 +316,8 @@ class CacheLevel:
         return self.is_subset(other) and self != other
 
     def is_strict_superset(self, other):
-        """Returns ``True`` if the caching level on
-        other are a strict superset of those on self."""
+        """Returns ``True`` if the caching level on other are a strict superset of those on
+        self."""
         return self.is_superset(other) and self != other
 
     __le__ = is_subset
@@ -400,8 +407,8 @@ class Notifier:
         seconds_key: str = None,
         seconds: str = None,
     ):
-        """
-        This updates an existing message.
+        """This updates an existing message.
+
         Based on the message found in :variable:`Notifier.updates` as per the `key` param
         """
         if self.last_msg_time + self.cooldown > time.time() and not current == total:

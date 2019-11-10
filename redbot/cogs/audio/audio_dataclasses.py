@@ -1,11 +1,16 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import os
 import re
+
 from pathlib import Path, PosixPath, WindowsPath
 from typing import List, Optional, Union
 from urllib.parse import urlparse
 
+# Red Dependencies
 import lavalink
 
+# Red Imports
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
@@ -98,10 +103,10 @@ class ChdirClean(object):
 
 
 class LocalPath(ChdirClean):
-    """
-    Local tracks class.
-    Used to handle system dir trees in a cross system manner.
-    The only use of this class is for `localtracks`.
+    """Local tracks class.
+
+    Used to handle system dir trees in a cross system manner. The only use of this class is for
+    `localtracks`.
     """
 
     _all_music_ext = _fully_supported_music_ext + _partially_supported_music_ext
@@ -271,8 +276,8 @@ class LocalPath(ChdirClean):
 
 
 class Query:
-    """
-    Query data class.
+    """Query data class.
+
     Use: Query.process_input(query) to generate the Query object.
     """
 
@@ -324,10 +329,8 @@ class Query:
 
     @classmethod
     def process_input(cls, query: Union[LocalPath, lavalink.Track, "Query", str], **kwargs):
-        """
-        A replacement for :code:`lavalink.Player.load_tracks`.
-        This will try to get a valid cached entry first if not found or if in valid
-        it will then call the lavalink API.
+        """A replacement for :code:`lavalink.Player.load_tracks`. This will try to get a valid
+        cached entry first if not found or if in valid it will then call the lavalink API.
 
         Parameters
         ----------
@@ -340,7 +343,7 @@ class Query:
         """
         if not query:
             query = "InvalidQueryPlaceHolderName"
-        possible_values = dict()
+        possible_values = {}
 
         if isinstance(query, str):
             query = query.strip("<>")
