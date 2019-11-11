@@ -205,9 +205,14 @@ class CoreLogic:
     ) -> Tuple[List[str], List[str], List[str], List[str], List[Tuple[str, str]], Set[str]]:
         await self._unload(cog_names)
 
-        loaded, load_failed, not_found, already_loaded, load_failed_with_reason, repos_with_shared_libs = await self._load(
-            cog_names
-        )
+        (
+            loaded,
+            load_failed,
+            not_found,
+            already_loaded,
+            load_failed_with_reason,
+            repos_with_shared_libs,
+        ) = await self._load(cog_names)
 
         return (
             loaded,
@@ -603,9 +608,14 @@ class Core(commands.Cog, CoreLogic):
             return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
-            loaded, failed, not_found, already_loaded, failed_with_reason, repos_with_shared_libs = await self._load(
-                cogs
-            )
+            (
+                loaded,
+                failed,
+                not_found,
+                already_loaded,
+                failed_with_reason,
+                repos_with_shared_libs,
+            ) = await self._load(cogs)
 
         output = []
 
@@ -727,9 +737,14 @@ class Core(commands.Cog, CoreLogic):
             return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
-            loaded, failed, not_found, already_loaded, failed_with_reason, repos_with_shared_libs = await self._reload(
-                cogs
-            )
+            (
+                loaded,
+                failed,
+                not_found,
+                already_loaded,
+                failed_with_reason,
+                repos_with_shared_libs,
+            ) = await self._reload(cogs)
 
         output = []
 
