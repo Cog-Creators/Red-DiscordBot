@@ -417,6 +417,7 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
     exclusions = [
         "__pycache__",
         "Lavalink.jar",
+        "cache.db",
         os.path.join("Downloader", "lib"),
         os.path.join("CogManager", "cogs"),
         os.path.join("RepoManager", "repos"),

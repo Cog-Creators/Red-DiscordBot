@@ -1,0 +1,1 @@
+Add `cache.db` to the list of items not included in a backup.
