@@ -121,7 +121,7 @@ async def global_unique_user_finder(
     if not maybe_matches:
         raise NoMatchesFound(
             _(
-                '"{arg}" was not found. It must be the ID or'
+                '"{arg}" was not found. It must be the ID or '
                 "name or mention a user which the bot can see."
             ).format(arg=arg)
         )
@@ -259,7 +259,8 @@ class ScopeParser(commands.Converter):
                 user_error = f"{err}\n"
             except NoMatchesFound as err:
                 user_error = f"{err}\n"
-            if target_guild is None:
+
+            if target_user is None:
                 raise commands.ArgParserFailure(
                     "--author", user_raw, custom_help=f"{user_error}{_USER_HELP}"
                 )
@@ -458,12 +459,10 @@ class ComplexScopeParser(commands.Converter):
         target_scope: str = target_scope or PlaylistScope.GUILD.value
         target_user: Union[discord.Member, discord.User] = target_user or ctx.author
         target_guild: discord.Guild = target_guild or ctx.guild
-        specified_target_user = False
 
         source_scope: str = source_scope or PlaylistScope.GUILD.value
         source_user: Union[discord.Member, discord.User] = source_user or ctx.author
         source_guild: discord.Guild = source_guild or ctx.guild
-        specified_source_user = False
 
         return (
             source_scope,
