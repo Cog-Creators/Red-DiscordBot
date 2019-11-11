@@ -178,9 +178,10 @@ class ScopeParser(commands.Converter):
     async def convert(
         self, ctx: commands.Context, argument: str
     ) -> Tuple[str, discord.User, Optional[discord.Guild], bool]:
-        target_scope: str = PlaylistScope.GUILD.value
-        target_user: Optional[Union[discord.Member, discord.User]] = ctx.author
-        target_guild: Optional[discord.Guild] = ctx.guild
+
+        target_scope: Optional[str] = None
+        target_user: Optional[Union[discord.Member, discord.User]] = None
+        target_guild: Optional[discord.Guild] = None
         specified_user = False
 
         argument = argument.replace("—", "--")
@@ -288,14 +289,14 @@ class ComplexScopeParser(commands.Converter):
         bool,
     ]:
 
-        target_scope: str = PlaylistScope.GUILD.value
-        target_user: Optional[Union[discord.Member, discord.User]] = ctx.author
-        target_guild: Optional[discord.Guild] = ctx.guild
+        target_scope: Optional[str] = None
+        target_user: Optional[Union[discord.Member, discord.User]] = None
+        target_guild: Optional[discord.Guild] = None
         specified_target_user = False
 
-        source_scope: str = PlaylistScope.GUILD.value
-        source_user: Optional[Union[discord.Member, discord.User]] = ctx.author
-        source_guild: Optional[discord.Guild] = ctx.guild
+        source_scope: Optional[str] = None
+        source_user: Optional[Union[discord.Member, discord.User]] = None
+        source_guild: Optional[discord.Guild] = None
         specified_source_user = False
 
         argument = argument.replace("—", "--")
