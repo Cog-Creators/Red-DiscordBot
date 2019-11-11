@@ -35,6 +35,14 @@ class LavalinkDownloadFailed(AudioError, RuntimeError):
         return f"[{self.response.status} {self.response.reason}]"
 
 
+class QueryUnauthorized(AudioError):
+    """Provided an unauthorized query to audio."""
+
+    def __init__(self, message, *args):
+        self.message = message
+        super().__init__(*args)
+
+
 class PlayListError(AudioError):
     """Base exception for errors related to playlists."""
 

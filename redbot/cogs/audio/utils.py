@@ -69,9 +69,15 @@ def track_limit(track, maxlength) -> bool:
     return True
 
 
-async def is_allowed(guild: discord.Guild, query: str) -> bool:
+async def is_allowed(
+    guild: discord.Guild, query: str, query_obj: audio_dataclasses.Query = None
+) -> bool:
 
     query = query.lower().strip()
+    if query_obj is not None:
+        query = query_obj.lavalink_query.replace("ytsearch:", "youtubesearch").replace(
+            "scsearch:", "soundcloudsearch"
+        )
     global_whitelist = set(await _config.url_keyword_whitelist())
     global_whitelist = [i.lower() for i in global_whitelist]
     if global_whitelist:

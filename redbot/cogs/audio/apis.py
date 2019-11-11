@@ -776,16 +776,6 @@ class MusicCache:
                     key = "lavalink"
                     seconds = "???"
                     second_key = None
-                    # if track_count == 2:
-                    #     five_time = int(time.time()) - now
-                    # if track_count >= 2:
-                    # remain_tracks = total_tracks - track_count
-                    # time_remain = (remain_tracks / 2) * five_time
-                    # if track_count < total_tracks:
-                    #     seconds = dynamic_time(int(time_remain))
-                    # if track_count == total_tracks:
-                    #     seconds = "0s"
-                    # second_key = "lavalink_time"
                     await notifier.notify_user(
                         current=track_count,
                         total=total_tracks,

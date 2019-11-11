@@ -50,7 +50,13 @@ from .checks import can_have_caching
 from .config import pass_config_to_dependencies
 from .converters import ComplexScopeParser, ScopeParser, get_lazy_converter, get_playlist_converter
 from .equalizer import Equalizer
-from .errors import LavalinkDownloadFailed, MissingGuild, SpotifyFetchError, TooManyMatches
+from .errors import (
+    LavalinkDownloadFailed,
+    MissingGuild,
+    SpotifyFetchError,
+    TooManyMatches,
+    QueryUnauthorized,
+)
 from .manager import ServerManager
 from .playlists import (
     FakePlaylist,
@@ -586,13 +592,20 @@ class Audio(commands.Cog):
                     f" while trying to connect to to {channel} in {guild}."
                 )
                 return
+        query = audio_dataclasses.Query.process_input(query)
+        restrict = await self.config.restrict()
+        if restrict and match_url(query):
+            valid_url = url_check(query)
+            if not valid_url:
+                raise QueryUnauthorized(f"{query} is not an allowed query.")
+        elif not await is_allowed(guild, f"{query}", query_obj=query):
+            raise QueryUnauthorized(f"{query} is not an allowed query.")
 
         player = lavalink.get_player(guild.id)
-
         player.store("channel", channel.id)
         player.store("guild", guild.id)
         await self._data_check(guild.me)
-        query = audio_dataclasses.Query.process_input(query)
+
         ctx = namedtuple("Context", "message")
         results, called_api = await self.music_cache.lavalink_query(ctx(guild), player, query)
 
@@ -2692,7 +2705,7 @@ class Audio(commands.Cog):
                     title=_("Unable To Play Tracks"),
                     description=_("That URL is not allowed."),
                 )
-        elif not await is_allowed(ctx.guild, f"{query}"):
+        elif not await is_allowed(ctx.guild, f"{query}", query_obj=query):
             return await self._embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("That track is not allowed.")
             )
@@ -2773,7 +2786,12 @@ class Audio(commands.Cog):
             return
         if query.is_spotify:
             return await self._get_spotify_tracks(ctx, query)
-        await self._enqueue_tracks(ctx, query)
+        try:
+            await self._enqueue_tracks(ctx, query)
+        except QueryUnauthorized as err:
+            return await self._embed_msg(
+                ctx, title=_("Unable To Play Tracks"), description=err.message
+            )
 
     @commands.command()
     @commands.guild_only()
@@ -2799,7 +2817,7 @@ class Audio(commands.Cog):
                     title=_("Unable To Play Tracks"),
                     description=_("That URL is not allowed."),
                 )
-        elif not await is_allowed(ctx.guild, f"{query}"):
+        elif not await is_allowed(ctx.guild, f"{query}", query_obj=query):
             return await self._embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("That track is not allowed.")
             )
@@ -2867,10 +2885,15 @@ class Audio(commands.Cog):
             )
         if not await self._currency_check(ctx, guild_data["jukebox_price"]):
             return
-        if query.is_spotify:
-            tracks = await self._get_spotify_tracks(ctx, query)
-        else:
-            tracks = await self._enqueue_tracks(ctx, query, enqueue=False)
+        try:
+            if query.is_spotify:
+                tracks = await self._get_spotify_tracks(ctx, query)
+            else:
+                tracks = await self._enqueue_tracks(ctx, query, enqueue=False)
+        except QueryUnauthorized as err:
+            return await self._embed_msg(
+                ctx, title=_("Unable To Play Tracks"), description=err.message
+            )
         if not tracks:
             self._play_lock(ctx, False)
             title = _("Unable To Play Tracks")
@@ -3408,6 +3431,10 @@ class Audio(commands.Cog):
         playlist_data = None
         seek = 0
         if type(query) is not list:
+            if not await is_allowed(ctx.guild, f"{query}", query_obj=query):
+                raise QueryUnauthorized(
+                    _("{query} is not an allowed query.").format(query=query.to_string_user())
+                )
             if query.single_track:
                 first_track_only = True
                 index = query.track_index
@@ -6567,6 +6594,21 @@ class Audio(commands.Cog):
 
         if not isinstance(query, list):
             query = audio_dataclasses.Query.process_input(query)
+            restrict = await self.config.restrict()
+            if restrict and match_url(query):
+                valid_url = url_check(query)
+                if not valid_url:
+                    return await self._embed_msg(
+                        ctx,
+                        title=_("Unable To Play Tracks"),
+                        description=_("That URL is not allowed."),
+                    )
+            elif not await is_allowed(ctx.guild, f"{query}", query_obj=query):
+                return await self._embed_msg(
+                    ctx,
+                    title=_("Unable To Play Tracks"),
+                    description=_("That track is not allowed."),
+                )
             if query.invoked_from == "search list" or query.invoked_from == "local folder":
                 if query.invoked_from == "search list" and not query.is_local:
                     result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
