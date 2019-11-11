@@ -266,6 +266,10 @@ class ScopeParser(commands.Converter):
         elif any(x in argument for x in ["--author", "--user", "--member"]):
             raise commands.ArgParserFailure("--scope", "Nothing", custom_help=_USER_HELP)
 
+        target_scope: str = target_scope or PlaylistScope.GUILD.value
+        target_user: Union[discord.Member, discord.User] = target_user or ctx.author
+        target_guild: discord.Guild = target_guild or ctx.guild
+
         return target_scope, target_user, target_guild, specified_user
 
 
@@ -450,6 +454,16 @@ class ComplexScopeParser(commands.Converter):
                 )
         elif any(x in argument for x in ["--from-author", "--from-user", "--from-member"]):
             raise commands.ArgParserFailure("--from-user", "Nothing", custom_help=_USER_HELP)
+
+        target_scope: str = target_scope or PlaylistScope.GUILD.value
+        target_user: Union[discord.Member, discord.User] = target_user or ctx.author
+        target_guild: discord.Guild = target_guild or ctx.guild
+        specified_target_user = False
+
+        source_scope: str = source_scope or PlaylistScope.GUILD.value
+        source_user: Union[discord.Member, discord.User] = source_user or ctx.author
+        source_guild: discord.Guild = source_guild or ctx.guild
+        specified_source_user = False
 
         return (
             source_scope,
