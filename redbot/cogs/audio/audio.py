@@ -840,7 +840,7 @@ class Audio(commands.Cog):
         blacklist = await self.config.url_keyword_blacklist()
         if not blacklist:
             return await self._embed_msg(ctx, title=_("Nothing in the blacklist."))
-        await self.confi.url_keyword_blacklist.clear()
+        await self.config.url_keyword_blacklist.clear()
         return await self._embed_msg(
             ctx,
             title=_("Blacklist Modified"),
