@@ -1,1 +1,1 @@
-adds a licenseinfo command
+Adds a licenseinfo command
