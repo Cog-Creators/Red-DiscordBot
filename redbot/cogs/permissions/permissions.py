@@ -1,25 +1,33 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import asyncio
 import io
 import textwrap
-from copy import copy
-from typing import Union, Optional, Dict, List, Tuple, Any, Iterator, ItemsView, cast
 
+from copy import copy
+from typing import Any, Dict, ItemsView, Iterator, List, Optional, Tuple, Union, cast
+
+# Red Dependencies
 import discord
 import yaml
-from schema import And, Or, Schema, SchemaError, Optional as UseOptional
+
+from schema import And, Optional as UseOptional, Or, Schema, SchemaError
+
+# Red Imports
 from redbot.core import checks, commands, config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.menus import start_adding_reactions
-from redbot.core.utils.predicates import ReactionPredicate, MessagePredicate
+from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
+# Red Relative Imports
 from .converters import (
-    CogOrCommand,
-    RuleType,
     ClearableRuleType,
-    GuildUniqueObjectFinder,
+    CogOrCommand,
     GlobalUniqueObjectFinder,
+    GuildUniqueObjectFinder,
+    RuleType,
 )
 
 _ = Translator("Permissions", __file__)

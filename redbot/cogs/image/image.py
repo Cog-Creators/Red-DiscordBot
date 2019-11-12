@@ -1,9 +1,13 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 from random import shuffle
 
+# Red Dependencies
 import aiohttp
 
+# Red Imports
+from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core import checks, Config, commands
 
 _ = Translator("Image", __file__)
 

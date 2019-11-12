@@ -1,7 +1,12 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 from abc import ABC, abstractmethod
-from typing import List, Tuple, Optional
+from typing import List, Optional, Tuple
 
+# Red Dependencies
 import discord
+
+# Red Imports
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 

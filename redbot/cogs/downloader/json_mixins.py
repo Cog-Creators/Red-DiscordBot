@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import json
+
 from pathlib import Path
-from typing import Optional, Tuple, Dict, Any
+from typing import Any, Dict, Optional, Tuple
 
 
 class RepoJSONMixin:

@@ -1,5 +1,10 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import asyncio
+
 from unittest.mock import patch
+
+# Red Dependencies
 import pytest
 
 

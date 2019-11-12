@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
 """Package for Trivia cog."""
-from .trivia import *
-from .session import *
+# Red Relative Imports
 from .log import *
+from .session import *
+from .trivia import *
 
 
 def setup(bot):

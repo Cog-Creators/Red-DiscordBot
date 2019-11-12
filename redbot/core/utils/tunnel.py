@@ -1,9 +1,18 @@
-import discord
-from datetime import datetime
-from redbot.core.utils.chat_formatting import pagify
+# -*- coding: utf-8 -*-
+# Standard Library
 import io
 import weakref
+
+from datetime import datetime
 from typing import List, Optional
+
+# Red Dependencies
+import discord
+
+# Red Imports
+from redbot.core.utils.chat_formatting import pagify
+
+# Red Relative Imports
 from .common_filters import filter_mass_mentions
 
 _instances = weakref.WeakValueDictionary({})

@@ -1,5 +1,7 @@
-import warnings
+# -*- coding: utf-8 -*-
+# Standard Library
 import functools
+import warnings
 
 
 def unsafe(f, message=None):

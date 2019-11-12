@@ -1,9 +1,13 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 from pathlib import Path
 
+# Red Dependencies
 import pytest
 
-from redbot.pytest.cog_manager import *
+# Red Imports
 from redbot.core import cog_manager
+from redbot.pytest.cog_manager import *
 
 
 @pytest.mark.skip

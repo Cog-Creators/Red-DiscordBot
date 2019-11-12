@@ -13,12 +13,23 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+# Standard Library
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
 import sys
+
+# Red Dependencies
+from discord import __version__ as dpy_version
+
+# Red Imports
+# The version info for the project you're documenting, acts as replacement for
+# |version| and |release|, also used in various other places throughout the
+# built documents.
+#
+from redbot.core import __version__
 
 sys.path.insert(0, os.path.abspath(".."))
 
@@ -61,12 +72,6 @@ project = "Red - Discord Bot"
 copyright = "2018-2019, Cog Creators"
 author = "Cog Creators"
 
-# The version info for the project you're documenting, acts as replacement for
-# |version| and |release|, also used in various other places throughout the
-# built documents.
-#
-from redbot.core import __version__
-from discord import __version__ as dpy_version
 
 # The short X.Y version.
 version = __version__

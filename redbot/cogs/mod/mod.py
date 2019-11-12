@@ -1,19 +1,26 @@
+# -*- coding: utf-8 -*-
+# Standard Library
+from abc import ABC
 from collections import defaultdict
 from typing import List, Tuple
-from abc import ABC
 
+# Red Dependencies
 import discord
-from redbot.core import Config, modlog, commands
+
+# Red Imports
+from redbot.core import Config, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+
+# Red Relative Imports
 from .casetypes import CASETYPES
 from .events import Events
 from .kickban import KickBanMixin
 from .movetocore import MoveToCore
 from .mutes import MuteMixin
 from .names import ModInfo
-from .slowmode import Slowmode
 from .settings import ModSettings
+from .slowmode import Slowmode
 
 _ = T_ = Translator("Mod", __file__)
 

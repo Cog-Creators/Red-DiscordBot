@@ -1,14 +1,21 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 from datetime import datetime
 from typing import cast
 
+# Red Dependencies
 import discord
-from redbot.core import commands, i18n, checks
+
+# Red Imports
+from redbot.core import checks, commands, i18n
 from redbot.core.utils.common_filters import (
+    escape_spoilers_and_mass_mentions,
     filter_invites,
     filter_various_mentions,
-    escape_spoilers_and_mass_mentions,
 )
 from redbot.core.utils.mod import get_audit_reason
+
+# Red Relative Imports
 from .abc import MixinMeta
 
 _ = i18n.Translator("Mod", __file__)

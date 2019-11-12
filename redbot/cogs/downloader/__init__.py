@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# Red Relative Imports
 from .downloader import Downloader
 
 

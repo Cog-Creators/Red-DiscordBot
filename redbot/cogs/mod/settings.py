@@ -1,8 +1,12 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 from collections import defaultdict, deque
 
-from redbot.core import commands, i18n, checks
+# Red Imports
+from redbot.core import checks, commands, i18n
 from redbot.core.utils.chat_formatting import box
 
+# Red Relative Imports
 from .abc import MixinMeta
 
 _ = i18n.Translator("Mod", __file__)

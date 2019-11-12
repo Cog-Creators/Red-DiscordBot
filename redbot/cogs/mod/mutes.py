@@ -1,10 +1,18 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import asyncio
-from typing import cast, Optional
 
+from typing import Optional, cast
+
+# Red Dependencies
 import discord
-from redbot.core import commands, checks, i18n, modlog
+
+# Red Imports
+from redbot.core import checks, commands, i18n, modlog
 from redbot.core.utils.chat_formatting import format_perms_list
 from redbot.core.utils.mod import get_audit_reason, is_allowed_by_hierarchy
+
+# Red Relative Imports
 from .abc import MixinMeta
 
 T_ = i18n.Translator("Mod", __file__)

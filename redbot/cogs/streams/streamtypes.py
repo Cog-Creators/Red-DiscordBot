@@ -1,17 +1,26 @@
-from .errors import (
-    StreamNotFound,
-    APIError,
-    OfflineStream,
-    InvalidYoutubeCredentials,
-    InvalidTwitchCredentials,
-)
-from redbot.core.i18n import Translator
+# -*- coding: utf-8 -*-
+# Standard Library
+import json
+
 from random import choice, sample
 from string import ascii_letters
 from typing import ClassVar, Optional
-import discord
+
+# Red Dependencies
 import aiohttp
-import json
+import discord
+
+# Red Imports
+from redbot.core.i18n import Translator
+
+# Red Relative Imports
+from .errors import (
+    APIError,
+    InvalidTwitchCredentials,
+    InvalidYoutubeCredentials,
+    OfflineStream,
+    StreamNotFound,
+)
 
 TWITCH_BASE_URL = "https://api.twitch.tv"
 TWITCH_ID_ENDPOINT = TWITCH_BASE_URL + "/kraken/users?login="

@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 from __future__ import annotations
 
-from typing import List, TYPE_CHECKING
+# Standard Library
+from typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:
     from .repo_manager import Candidate

@@ -1,14 +1,20 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 from collections import namedtuple
 from enum import Enum, unique
 from typing import List, Optional, Union
 
+# Red Dependencies
 import discord
 import lavalink
 
+# Red Imports
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_list
+
+# Red Relative Imports
 from .errors import InvalidPlaylistScope, MissingAuthor, MissingGuild, NotAllowed
 
 _config = None

@@ -1,13 +1,19 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import asyncio
-import pytest
 import random
 import textwrap
+
+# Red Dependencies
+import pytest
+
+# Red Imports
 from redbot.core.utils import (
-    chat_formatting,
     bounded_gather,
     bounded_gather_iter,
-    deduplicate_iterables,
+    chat_formatting,
     common_filters,
+    deduplicate_iterables,
 )
 
 
@@ -45,7 +51,7 @@ def test_bordered_asymmetrical_2():
     │one           │    │five         │
     │two           │    │six          │
     │three         │    └─────────────┘
-    │four          │                   
+    │four          │
     └──────────────┘                   """
     )
     col1, col2 = ["one", "two", "three", "four"], ["five", "six"]

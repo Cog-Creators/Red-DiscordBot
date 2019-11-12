@@ -1,22 +1,32 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import asyncio
 import pathlib
-from collections import namedtuple
-from typing import Any, NamedTuple
-from pathlib import Path
 
+from collections import namedtuple
+from pathlib import Path
+from typing import Any, NamedTuple
+
+# Red Dependencies
 import pytest
+
 from pytest_mock import MockFixture
 
-from redbot.pytest.downloader import *
-
-from redbot.cogs.downloader.repo_manager import Installable
-from redbot.cogs.downloader.repo_manager import Candidate, ProcessFormatter, RepoManager, Repo
+# Red Imports
 from redbot.cogs.downloader.errors import (
     AmbiguousRevision,
     ExistingGitRepo,
     GitException,
     UnknownRevision,
 )
+from redbot.cogs.downloader.repo_manager import (
+    Candidate,
+    Installable,
+    ProcessFormatter,
+    Repo,
+    RepoManager,
+)
+from redbot.pytest.downloader import *
 
 
 class FakeCompletedProcess(NamedTuple):

@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import asyncio
 
+# Red Imports
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils.predicates import MessagePredicate

@@ -1,10 +1,14 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import asyncio
 import os
 
+# Red Dependencies
 import pytest
 
+# Red Imports
 from redbot import _update_event_loop_policy
-from redbot.core import drivers, data_manager
+from redbot.core import data_manager, drivers
 
 _update_event_loop_policy()
 

@@ -1,19 +1,24 @@
-import logging
+# -*- coding: utf-8 -*-
+# Standard Library
 import asyncio
-from typing import Union, List
-from datetime import timedelta
-from copy import copy
 import contextlib
+import logging
+
+from copy import copy
+from datetime import timedelta
+from typing import List, Union
+
+# Red Dependencies
 import discord
 
+# Red Imports
 from redbot.core import Config, checks, commands
-from redbot.core.utils.chat_formatting import pagify, box
-from redbot.core.utils.antispam import AntiSpam
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils.antispam import AntiSpam
+from redbot.core.utils.chat_formatting import box, pagify
 from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils.tunnel import Tunnel
-
 
 _ = Translator("Reports", __file__)
 

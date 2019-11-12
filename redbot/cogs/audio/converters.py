@@ -1,13 +1,19 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import argparse
 import functools
+
 from typing import Optional, Tuple, Union
 
+# Red Dependencies
 import discord
 
+# Red Imports
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 
+# Red Relative Imports
 from .playlists import PlaylistScope, standardize_scope
 
 _ = Translator("Audio", __file__)
@@ -35,12 +41,12 @@ _USER_HELP = """
 Author must be a valid version of one of the following:
 ​ ​ ​ ​ User ID
 ​ ​ ​ ​ User Mention
-​ ​ ​ ​ User Name#123 
+​ ​ ​ ​ User Name#123
 """
 _GUILD_HELP = """
 Guild must be a valid version of one of the following:
 ​ ​ ​ ​ Guild ID
-​ ​ ​ ​ Exact guild name 
+​ ​ ​ ​ Exact guild name
 """
 
 

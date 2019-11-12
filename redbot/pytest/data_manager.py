@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
+# Red Dependencies
 import pytest
 
+# Red Imports
 from redbot.core import data_manager
 
 __all__ = ["cleanup_datamanager", "data_mgr_config", "cog_instance"]

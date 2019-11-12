@@ -1,15 +1,22 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import asyncio
 import datetime
-from typing import Union, List, Optional
-from functools import wraps
 
+from functools import wraps
+from typing import List, Optional, Union
+
+# Red Dependencies
 import discord
 
+# Red Imports
 from redbot.core.utils.chat_formatting import humanize_number
-from . import Config, errors, commands
-from .i18n import Translator
+
+# Red Relative Imports
+from . import Config, commands, errors
 from .bot import Red
 from .errors import BankPruneError
+from .i18n import Translator
 
 _ = Translator("Bank API", __file__)
 
@@ -84,7 +91,7 @@ class Account:
 
 def _encoded_current_time() -> int:
     """Get the current UTC time as a timestamp.
-    
+
     Returns
     -------
     int
@@ -97,12 +104,12 @@ def _encoded_current_time() -> int:
 
 def _encode_time(time: datetime.datetime) -> int:
     """Convert a datetime object to a serializable int.
-    
+
     Parameters
     ----------
     time : datetime.datetime
         The datetime to convert.
-        
+
     Returns
     -------
     int
@@ -115,12 +122,12 @@ def _encode_time(time: datetime.datetime) -> int:
 
 def _decode_time(time: int) -> datetime.datetime:
     """Convert a timestamp to a datetime object.
-    
+
     Parameters
     ----------
     time : int
         The timestamp to decode.
-        
+
     Returns
     -------
     datetime.datetime

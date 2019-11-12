@@ -119,4 +119,3 @@ msgstr "Anda tidak diizinkan untuk mengubah kasus tersebut!"
 #: redbot/cogs/modlog/modlog.py:190
 msgid "Reason has been updated."
 msgstr "Alasan telah di perbarui."
-

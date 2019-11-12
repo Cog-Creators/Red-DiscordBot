@@ -1,5 +1,9 @@
-from .cleanup import Cleanup
+# -*- coding: utf-8 -*-
+# Red Imports
 from redbot.core.bot import Red
+
+# Red Relative Imports
+from .cleanup import Cleanup
 
 
 def setup(bot: Red):

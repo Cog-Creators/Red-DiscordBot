@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 from unittest.mock import MagicMock
 
+# Red Dependencies
 import pytest
 
+# Red Imports
 from redbot.cogs.admin import Admin
 from redbot.cogs.admin.announcer import Announcer
 

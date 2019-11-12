@@ -1,8 +1,12 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import enum
+
 from typing import Optional, Type
 
+# Red Relative Imports
 from .. import data_manager
-from .base import IdentifierData, BaseDriver, ConfigCategory
+from .base import BaseDriver, ConfigCategory, IdentifierData
 from .json import JsonDriver
 from .postgres import PostgresDriver
 

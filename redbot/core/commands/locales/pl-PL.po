@@ -48,4 +48,3 @@ msgstr "Nieoczekiwany klucz: {key}"
 #, docstring
 msgid "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    "
 msgstr ""
-

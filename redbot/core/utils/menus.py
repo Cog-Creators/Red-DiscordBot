@@ -1,13 +1,19 @@
+# -*- coding: utf-8 -*-
 # Original source of reaction-based menu idea from
 # https://github.com/Lunar-Dust/Dusty-Cogs/blob/master/menu/menu.py
 #
 # Ported to Red V3 by Palm\_\_ (https://github.com/palmtree5)
+# Standard Library
 import asyncio
 import contextlib
 import functools
-from typing import Union, Iterable, Optional
+
+from typing import Iterable, Optional, Union
+
+# Red Dependencies
 import discord
 
+# Red Relative Imports
 from .. import commands
 from .predicates import ReactionPredicate
 

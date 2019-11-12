@@ -1,41 +1,45 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import asyncio
 import contextlib
 import datetime
+import getpass
 import importlib
 import itertools
 import logging
 import os
-import sys
 import platform
-import getpass
-import pip
+import sys
 import traceback
+
 from collections import namedtuple
 from pathlib import Path
 from random import SystemRandom
 from string import ascii_letters, digits
-from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequence, Dict
+from typing import TYPE_CHECKING, Dict, Iterable, List, Optional, Sequence, Tuple, Union
 
+# Red Dependencies
 import aiohttp
 import discord
+import pip
 import pkg_resources
 
+# Red Relative Imports
 from . import (
-    __version__,
-    version_info as red_version_info,
     VersionInfo,
+    __version__,
     checks,
     commands,
+    config,
     drivers,
     errors,
     i18n,
-    config,
+    version_info as red_version_info,
 )
-from .utils import create_backup
-from .utils.predicates import MessagePredicate
-from .utils.chat_formatting import humanize_timedelta, pagify, box, inline, humanize_list
 from .commands.requires import PrivilegeLevel
-
+from .utils import create_backup
+from .utils.chat_formatting import box, humanize_list, humanize_timedelta, inline, pagify
+from .utils.predicates import MessagePredicate
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red

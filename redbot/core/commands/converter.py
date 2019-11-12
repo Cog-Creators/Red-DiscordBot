@@ -1,14 +1,20 @@
-import re
+# -*- coding: utf-8 -*-
+# Standard Library
 import functools
-from datetime import timedelta
-from typing import TYPE_CHECKING, Optional, List, Dict
+import re
 
+from datetime import timedelta
+from typing import TYPE_CHECKING, Dict, List, Optional
+
+# Red Dependencies
 import discord
+
 from discord.ext import commands as dpy_commands
 
-from . import BadArgument
+# Red Relative Imports
 from ..i18n import Translator
 from ..utils.chat_formatting import humanize_timedelta
+from . import BadArgument
 
 if TYPE_CHECKING:
     from .context import Context
@@ -53,7 +59,7 @@ def parse_timedelta(
     """
     This converts a user provided string into a timedelta
 
-    The units should be in order from largest to smallest. 
+    The units should be in order from largest to smallest.
     This works with or without whitespace.
 
     Parameters
@@ -135,9 +141,9 @@ class GuildConverter(discord.Guild):
 class APIToken(discord.ext.commands.Converter):
     """Converts to a `dict` object.
 
-    This will parse the input argument separating the key value pairs into a 
+    This will parse the input argument separating the key value pairs into a
     format to be used for the core bots API token storage.
-    
+
     This will split the argument by either `;` ` `, or `,` and return a dict
     to be stored. Since all API's are different and have different naming convention,
     this leaves the onus on the cog creator to clearly define how to setup the correct
@@ -262,7 +268,7 @@ def get_timedelta_converter(
     """
     This creates a type suitable for typechecking which works with discord.py's
     commands.
-    
+
     See `parse_timedelta` for more information about how this functions.
 
     Parameters

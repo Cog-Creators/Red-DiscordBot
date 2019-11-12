@@ -1,4 +1,6 @@
-from redbot.cogs.permissions.permissions import Permissions, GLOBAL
+# -*- coding: utf-8 -*-
+# Red Imports
+from redbot.cogs.permissions.permissions import GLOBAL, Permissions
 
 
 def test_schema_update():

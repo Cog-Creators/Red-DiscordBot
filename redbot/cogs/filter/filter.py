@@ -1,8 +1,14 @@
-import discord
+# -*- coding: utf-8 -*-
+# Standard Library
 import re
-from typing import Union, Set
 
-from redbot.core import checks, Config, modlog, commands
+from typing import Set, Union
+
+# Red Dependencies
+import discord
+
+# Red Imports
+from redbot.core import Config, checks, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import pagify

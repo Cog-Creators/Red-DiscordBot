@@ -144,4 +144,3 @@ msgstr "Dieser Benutzer hat Direktnachrichten deaktiviert."
 #: redbot/cogs/reports/reports.py:374
 msgid "You have opened a 2-way communication about ticket number {ticket_number}."
 msgstr "Du hast eine zwei-wege Kommunikation bezüglich Ticket Nummer {ticket_number} gestartet."
-

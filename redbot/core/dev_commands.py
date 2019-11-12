@@ -1,19 +1,4 @@
-import asyncio
-import inspect
-import io
-import textwrap
-import traceback
-import re
-from contextlib import redirect_stdout
-from copy import copy
-
-import discord
-
-from . import checks, commands
-from .i18n import Translator
-from .utils.chat_formatting import box, pagify
-from .utils.predicates import MessagePredicate
-
+# -*- coding: utf-8 -*-
 """
 Notice:
 
@@ -21,6 +6,25 @@ Notice:
 
 https://github.com/Rapptz/RoboDanny/blob/master/cogs/repl.py
 """
+# Standard Library
+import asyncio
+import inspect
+import io
+import re
+import textwrap
+import traceback
+
+from contextlib import redirect_stdout
+from copy import copy
+
+# Red Dependencies
+import discord
+
+# Red Relative Imports
+from . import checks, commands
+from .i18n import Translator
+from .utils.chat_formatting import box, pagify
+from .utils.predicates import MessagePredicate
 
 _ = Translator("Dev", __file__)
 

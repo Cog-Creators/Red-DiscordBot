@@ -1,11 +1,18 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import logging
+
 from typing import Tuple
 
+# Red Dependencies
 import discord
 
+# Red Imports
 from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
+
+# Red Relative Imports
 from .announcer import Announcer
 from .converters import MemberDefaultAuthor, SelfRole
 

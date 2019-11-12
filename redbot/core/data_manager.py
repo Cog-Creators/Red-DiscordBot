@@ -1,16 +1,22 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import inspect
 import json
 import logging
 import os
 import sys
 import tempfile
+
 from copy import deepcopy
 from pathlib import Path
 from typing import Any, Dict
 
+# Red Dependencies
 import appdirs
+
 from discord.utils import deprecated
 
+# Red Relative Imports
 from . import commands
 
 __all__ = [
@@ -124,7 +130,7 @@ def cog_data_path(cog_instance=None, raw_name: str = None) -> Path:
     Parameters
     ----------
     cog_instance
-        The instance of the cog you wish to get a data path for. 
+        The instance of the cog you wish to get a data path for.
         If calling from a command or method of your cog, this should be ``self``.
     raw_name : str
         The name of the cog to get a data path for.

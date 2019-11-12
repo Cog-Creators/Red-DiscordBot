@@ -266,4 +266,3 @@ msgstr "<{permalink}>\\n {word} par {author}\\n\\n{description}\\n\\n{thumbs_dow
 #: redbot/cogs/general/general.py:320
 msgid "{definition}\\n\\n**Example:** {example}"
 msgstr "{definition}\\n\\n**Exemple :** {example}"
-

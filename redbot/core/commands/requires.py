@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 commands.requires
 =================
@@ -6,24 +7,28 @@ requirements. This includes rules which override those requirements,
 as well as custom checks which can be overriden, and some special
 checks like bot permissions checks.
 """
+# Standard Library
 import asyncio
 import enum
+
 from typing import (
-    Union,
-    Optional,
-    List,
-    Callable,
-    Awaitable,
-    Dict,
-    Any,
     TYPE_CHECKING,
-    TypeVar,
-    Tuple,
+    Any,
+    Awaitable,
+    Callable,
     ClassVar,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    TypeVar,
+    Union,
 )
 
+# Red Dependencies
 import discord
 
+# Red Relative Imports
 from .converter import GuildConverter
 from .errors import BotMissingPermissions
 

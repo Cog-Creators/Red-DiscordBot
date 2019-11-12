@@ -68,4 +68,3 @@ msgstr "Défini le nom de la devise de la banque."
 #: redbot/cogs/bank/bank.py:129
 msgid "Currency name has been set to: {name}"
 msgstr "Le nom de la devise est maintenant : {name}"
-

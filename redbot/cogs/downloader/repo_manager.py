@@ -1,16 +1,19 @@
+# -*- coding: utf-8 -*-
 from __future__ import annotations
 
+# Standard Library
 import asyncio
 import functools
 import os
 import pkgutil
+import re
 import shlex
 import shutil
-import re
+
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from subprocess import run as sp_run, PIPE, CompletedProcess
 from string import Formatter
+from subprocess import PIPE, CompletedProcess, run as sp_run
 from sys import executable
 from typing import (
     Any,
@@ -25,11 +28,15 @@ from typing import (
     Tuple,
 )
 
+# Red Dependencies
 import discord
-from redbot.core import data_manager, commands, Config
-from redbot.core.utils import safe_delete
-from redbot.core.i18n import Translator
 
+# Red Imports
+from redbot.core import Config, commands, data_manager
+from redbot.core.i18n import Translator
+from redbot.core.utils import safe_delete
+
+# Red Relative Imports
 from . import errors
 from .installable import Installable, InstallableType, InstalledModule
 from .json_mixins import RepoJSONMixin

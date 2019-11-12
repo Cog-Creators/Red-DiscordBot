@@ -183,4 +183,3 @@ msgstr "Модуль Admin не загружен."
 #: redbot/cogs/admin/converters.py:34
 msgid "The provided role is not a valid selfrole."
 msgstr "Предоставленная роль не является допустимой ролью."
-

@@ -1,13 +1,19 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import random
-from collections import namedtuple
-from pathlib import Path
 import weakref
 
+from collections import namedtuple
+from pathlib import Path
+
+# Red Dependencies
 import pytest
+
 from _pytest.monkeypatch import MonkeyPatch
-from redbot.core import Config
+
+# Red Imports
+from redbot.core import Config, config as config_module, drivers
 from redbot.core.bot import Red
-from redbot.core import config as config_module, drivers
 
 __all__ = [
     "monkeysession",

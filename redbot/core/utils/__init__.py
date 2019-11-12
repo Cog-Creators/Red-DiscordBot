@@ -1,34 +1,40 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import asyncio
 import json
 import logging
 import os
 import shutil
 import tarfile
-from asyncio import AbstractEventLoop, as_completed, Semaphore
+
+from asyncio import AbstractEventLoop, Semaphore, as_completed
 from asyncio.futures import isfuture
+from datetime import datetime
 from itertools import chain
 from pathlib import Path
 from typing import (
+    TYPE_CHECKING,
     Any,
-    AsyncIterator,
     AsyncIterable,
+    AsyncIterator,
     Awaitable,
     Callable,
     Iterable,
     Iterator,
     List,
     Optional,
+    Set,
     Tuple,
     TypeVar,
     Union,
-    Set,
-    TYPE_CHECKING,
 )
 
+# Red Dependencies
 import discord
-from datetime import datetime
+
 from fuzzywuzzy import fuzz, process
 
+# Red Relative Imports
 from .. import commands, data_manager
 from .chat_formatting import box
 

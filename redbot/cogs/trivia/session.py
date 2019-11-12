@@ -1,13 +1,22 @@
+# -*- coding: utf-8 -*-
 """Module to manage trivia sessions."""
+# Standard Library
 import asyncio
-import time
 import random
+import time
+
 from collections import Counter
+
+# Red Dependencies
 import discord
+
+# Red Imports
 from redbot.core import bank
 from redbot.core.i18n import Translator
-from redbot.core.utils.chat_formatting import box, bold, humanize_list, humanize_number
+from redbot.core.utils.chat_formatting import bold, box, humanize_list, humanize_number
 from redbot.core.utils.common_filters import normalize_smartquotes
+
+# Red Relative Imports
 from .log import LOG
 
 __all__ = ["TriviaSession"]

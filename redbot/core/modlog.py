@@ -1,21 +1,26 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import asyncio
-from datetime import datetime, timedelta
-from typing import List, Union, Optional, cast
 
+from datetime import datetime, timedelta
+from typing import List, Optional, Union, cast
+
+# Red Dependencies
 import discord
 
+# Red Imports
 from redbot.core import Config
 from redbot.core.bot import Red
 
+# Red Relative Imports
+from .generic_casetypes import all_generics
+from .i18n import Translator
 from .utils.common_filters import (
+    escape_spoilers,
     filter_invites,
     filter_mass_mentions,
     filter_urls,
-    escape_spoilers,
 )
-from .i18n import Translator
-
-from .generic_casetypes import all_generics
 
 __all__ = [
     "Case",

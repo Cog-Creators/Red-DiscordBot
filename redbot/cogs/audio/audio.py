@@ -1,26 +1,32 @@
 # -*- coding: utf-8 -*-
+# Standard Library
 import asyncio
 import contextlib
 import datetime
 import heapq
 import json
 import logging
+import math
 import os
 import random
 import re
 import time
 import traceback
+
 from collections import namedtuple
 from io import StringIO
 from typing import List, Optional, Tuple, Union, cast
 
+# Red Dependencies
 import aiohttp
 import discord
 import lavalink
-import math
+
 from fuzzywuzzy import process
 
+# Red Imports
 import redbot.core
+
 from redbot.core import Config, bank, checks, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
@@ -34,8 +40,10 @@ from redbot.core.utils.menus import (
     start_adding_reactions,
 )
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
+
+# Red Relative Imports
 from . import audio_dataclasses
-from .apis import MusicCache, HAS_SQL, _ERROR
+from .apis import HAS_SQL, _ERROR, MusicCache
 from .checks import can_have_caching
 from .converters import ComplexScopeParser, ScopeParser, get_lazy_converter, get_playlist_converter
 from .equalizer import Equalizer
@@ -52,7 +60,6 @@ from .playlists import (
     humanize_scope,
 )
 from .utils import *
-
 
 _ = Translator("Audio", __file__)
 

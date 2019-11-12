@@ -6,8 +6,8 @@ Downloader Framework
 Info.json
 *********
 
-The optional info.json file may exist inside every package folder in the repo, 
-as well as in the root of the repo. The following sections describe the valid 
+The optional info.json file may exist inside every package folder in the repo,
+as well as in the root of the repo. The following sections describe the valid
 keys within an info file (and maybe how the Downloader cog uses them).
 
 Keys common to both repo and cog info.json (case sensitive)
@@ -15,16 +15,16 @@ Keys common to both repo and cog info.json (case sensitive)
 
 - ``author`` (list of strings) - list of names of authors of the cog or repo.
 
-- ``description`` (string) - A long description of the cog or repo. For cogs, this 
+- ``description`` (string) - A long description of the cog or repo. For cogs, this
   is displayed when a user executes ``!cog info``.
 
-- ``install_msg`` (string) - The message that gets displayed when a cog 
+- ``install_msg`` (string) - The message that gets displayed when a cog
   is installed or a repo is added
-  
+
   .. tip:: You can use the ``[p]`` key in your string to use the prefix
       used for installing.
 
-- ``short`` (string) - A short description of the cog or repo. For cogs, this info 
+- ``short`` (string) - A short description of the cog or repo. For cogs, this info
   is displayed when a user executes ``!cog list``
 
 Keys specific to the cog info.json (case sensitive)
@@ -93,4 +93,3 @@ Exceptions
 
 .. automodule:: redbot.cogs.downloader.errors
     :members:
-

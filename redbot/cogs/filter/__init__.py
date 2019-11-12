@@ -1,5 +1,9 @@
-from .filter import Filter
+# -*- coding: utf-8 -*-
+# Red Imports
 from redbot.core.bot import Red
+
+# Red Relative Imports
+from .filter import Filter
 
 
 def setup(bot: Red):

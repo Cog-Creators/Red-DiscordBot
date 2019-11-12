@@ -294,4 +294,3 @@ msgstr "dakika"
 #: redbot/cogs/economy/economy.py:678
 msgid "seconds"
 msgstr "saniye"
-

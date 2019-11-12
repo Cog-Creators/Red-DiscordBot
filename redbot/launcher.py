@@ -1,23 +1,28 @@
+# -*- coding: utf-8 -*-
+# Standard Library
+import argparse
+import asyncio
 import getpass
 import os
 import platform
 import subprocess
 import sys
-import argparse
-import asyncio
-import aiohttp
 
+# Red Dependencies
+import aiohttp
 import pkg_resources
+
+# Red Imports
 from redbot import MIN_PYTHON_VERSION
+from redbot.core import VersionInfo, __version__, version_info as red_version_info
+from redbot.core.cli import confirm
 from redbot.setup import (
     basic_setup,
+    create_backup,
     load_existing_config,
     remove_instance,
     remove_instance_interaction,
-    create_backup,
 )
-from redbot.core import __version__, version_info as red_version_info, VersionInfo
-from redbot.core.cli import confirm
 
 if sys.platform == "linux":
     import distro  # pylint: disable=import-error

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Warning: The implementation below touches several private attributes.
 # While this implementation will be updated, and public interfaces maintained, derived classes
 # should not assume these private attributes are version safe, and use the provided HelpSettings
@@ -32,19 +33,24 @@
 
 # Note: 3rd party help must not remove the copyright notice
 
+# Standard Library
 import asyncio
+
 from collections import namedtuple
 from dataclasses import dataclass
-from typing import Union, List, AsyncIterator, Iterable, cast
+from typing import AsyncIterator, Iterable, List, Union, cast
 
+# Red Dependencies
 import discord
+
 from discord.ext import commands as dpy_commands
 
+# Red Relative Imports
+from ..i18n import Translator
+from ..utils import format_fuzzy_results, fuzzy_command_search, menus
+from ..utils.chat_formatting import box, pagify
 from . import commands
 from .context import Context
-from ..i18n import Translator
-from ..utils import menus, fuzzy_command_search, format_fuzzy_results
-from ..utils.chat_formatting import box, pagify
 
 __all__ = ["red_help", "RedHelpFormatter", "HelpSettings"]
 
@@ -108,7 +114,7 @@ class RedHelpFormatter:
     While currently, there is a global formatter, later plans include a context specific
     formatter selector as well as an API for cogs to register/un-register a formatter with the bot.
 
-    When implementing your own formatter, at minimum you must provide an implementation of 
+    When implementing your own formatter, at minimum you must provide an implementation of
     `send_help` with identical signature.
 
     While this exists as a class for easy partial overriding, most implementations
@@ -116,9 +122,9 @@ class RedHelpFormatter:
     """
 
     async def send_help(self, ctx: Context, help_for: HelpTarget = None):
-        """ 
-        This delegates to other functions. 
-        
+        """
+        This delegates to other functions.
+
         For most cases, you should use this and only this directly.
         """
         if help_for is None or isinstance(help_for, dpy_commands.bot.BotBase):

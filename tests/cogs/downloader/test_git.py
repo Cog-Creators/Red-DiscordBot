@@ -1,14 +1,19 @@
-from pathlib import Path
+# -*- coding: utf-8 -*-
+# Standard Library
 import subprocess as sp
 
+from pathlib import Path
+
+# Red Dependencies
 import pytest
 
+# Red Imports
 from redbot.cogs.downloader.repo_manager import ProcessFormatter, Repo
 from redbot.pytest.downloader import (
+    _session_git_repo,
     cloned_git_repo,
     git_repo,
     git_repo_with_remote,
-    _session_git_repo,
 )
 
 

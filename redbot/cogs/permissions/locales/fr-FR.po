@@ -241,4 +241,3 @@ msgstr "Êtes-vous sûr ? (y/n)"
 #: redbot/cogs/permissions/permissions.py:608
 msgid "Action cancelled."
 msgstr "Action annulée."
-

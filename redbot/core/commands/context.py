@@ -1,13 +1,20 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import asyncio
 import contextlib
+
 from typing import Iterable, List, Union
+
+# Red Dependencies
 import discord
+
 from discord.ext import commands
 
-from .requires import PermState
+# Red Relative Imports
+from ..utils import common_filters
 from ..utils.chat_formatting import box
 from ..utils.predicates import MessagePredicate
-from ..utils import common_filters
+from .requires import PermState
 
 TICK = "\N{WHITE HEAVY CHECK MARK}"
 

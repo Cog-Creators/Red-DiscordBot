@@ -1,13 +1,20 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import datetime
 import time
+
 from enum import Enum
-from random import randint, choice
+from random import choice, randint
+
+# Red Dependencies
 import aiohttp
 import discord
+
+# Red Imports
 from redbot.core import commands
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-from redbot.core.utils.chat_formatting import escape, italics, humanize_number
+from redbot.core.utils.chat_formatting import escape, humanize_number, italics
+from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 
 _ = T_ = Translator("General", __file__)
 

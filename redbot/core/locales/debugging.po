@@ -194,4 +194,3 @@ msgstr ""
 #: ../cog_manager.py:399
 msgid "The bot will install new cogs to the `{}` directory."
 msgstr ""
-

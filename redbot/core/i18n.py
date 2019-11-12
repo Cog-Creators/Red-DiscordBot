@@ -1,12 +1,23 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import contextlib
 import functools
 import io
 import os
-from pathlib import Path
-from typing import Callable, Union, Dict, Optional
 
+from pathlib import Path
+from typing import Callable, Dict, Optional, Union
+
+# Red Dependencies
 import babel.localedata
+
 from babel.core import Locale
+
+# Red Relative Imports
+# This import to be down here to avoid circular import issues.
+# This will be cleaned up at a later date
+# noinspection PyPep8
+from . import commands
 
 __all__ = [
     "get_locale",
@@ -207,12 +218,6 @@ def get_babel_locale(locale: Optional[str] = None) -> babel.core.Locale:
     if locale is None:
         locale = get_locale()
     return _get_babel_locale(locale)
-
-
-# This import to be down here to avoid circular import issues.
-# This will be cleaned up at a later date
-# noinspection PyPep8
-from . import commands
 
 
 def cog_i18n(translator: Translator):

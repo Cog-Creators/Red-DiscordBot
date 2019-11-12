@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import asyncio
 import asyncio.subprocess  # disables for # https://github.com/PyCQA/pylint/issues/1469
 import itertools
@@ -9,12 +11,18 @@ import shutil
 import sys
 import tempfile
 import time
+
 from typing import ClassVar, List, Optional, Tuple
 
+# Red Dependencies
 import aiohttp
+
 from tqdm import tqdm
 
+# Red Imports
 from redbot.core import data_manager
+
+# Red Relative Imports
 from .errors import LavalinkDownloadFailed
 
 JAR_VERSION = "3.2.1"

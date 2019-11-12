@@ -9,7 +9,7 @@ assignees: ''
 
 # Other bugs
 
-<!-- 
+<!--
 Did you find a bug with something other than a command? Fill out the following:
 -->
 

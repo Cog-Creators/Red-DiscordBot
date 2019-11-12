@@ -1287,4 +1287,3 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:3801
 msgid "Not enough {currency} ({required_credits} required)."
 msgstr ""
-

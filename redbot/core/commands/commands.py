@@ -1,19 +1,25 @@
+# -*- coding: utf-8 -*-
 """Module for command helpers and classes.
 
 This module contains extended classes and functions which are intended to
 replace those from the `discord.ext.commands` module.
 """
+# Standard Library
 import inspect
 import weakref
-from typing import Awaitable, Callable, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 
+from typing import TYPE_CHECKING, Awaitable, Callable, Dict, List, Optional, Tuple, Union
+
+# Red Dependencies
 import discord
+
 from discord.ext import commands
 
+# Red Relative Imports
+from ..i18n import Translator
 from . import converter as converters
 from .errors import ConversionFailure
 from .requires import PermState, PrivilegeLevel, Requires
-from ..i18n import Translator
 
 if TYPE_CHECKING:
     from .context import Context
@@ -588,7 +594,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
     @property
     def all_commands(self) -> Dict[str, Command]:
         """
-        This does not have identical behavior to 
+        This does not have identical behavior to
         Group.all_commands but should return what you expect
         """
         return {cmd.name: cmd for cmd in self.__cog_commands__}
@@ -604,7 +610,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         """
         This really just exists to allow easy use with other methods using can_run
         on commands and groups such as help formatters.
-        
+
         kwargs used in that won't apply here as they don't make sense to,
         but will be swallowed silently for a compatible signature for ease of use.
 

@@ -1,6 +1,9 @@
-import discord
-
+# -*- coding: utf-8 -*-
+# Standard Library
 import random
+
+# Red Dependencies
+import discord
 
 
 def randomize_colour(embed: discord.Embed) -> discord.Embed:

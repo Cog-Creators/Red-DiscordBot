@@ -1,20 +1,25 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import asyncio
 import inspect
 import logging
 import os
+
 from collections import namedtuple
 from datetime import datetime
 from enum import Enum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Optional, Union, List, Dict, NoReturn
+from typing import Dict, List, NoReturn, Optional, Union
 
+# Red Dependencies
 import discord
+
 from discord.ext.commands import when_mentioned_or
 
-from . import Config, i18n, commands, errors, drivers
+# Red Relative Imports
+from . import Config, commands, drivers, errors, i18n
 from .cog_manager import CogManager
-
 from .rpc import RPCMixin
 from .utils import common_filters
 
@@ -189,15 +194,15 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         """
         This checks if a user or member is allowed to run things,
         as considered by Red's whitelist and blacklist.
-        
+
         If given a user object, this function will check the global lists
-        
+
         If given a member, this will additionally check guild lists
-        
+
         If omiting a user or member, you must provide a value for ``who_id``
-        
+
         You may also provide a value for ``guild_id`` in this case
-        
+
         If providing a member by guild and member ids,
         you should supply ``role_ids`` as well
 
@@ -205,7 +210,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         ----------
         who : Optional[Union[discord.Member, discord.User]]
             The user or member object to check
-        
+
         Other Parameters
         ----------------
         who_id : Optional[int]
@@ -304,7 +309,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         ----------
         location : `discord.abc.Messageable`
             Location to check embed color for.
-        
+
         Returns
         -------
         discord.Color
@@ -561,9 +566,9 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         """
         Sets shared API tokens for a service
 
-        In most cases, this should not be used. Users should instead be using the 
+        In most cases, this should not be used. Users should instead be using the
         ``set api`` command
-    
+
         This will not clear existing values not specified.
 
         Parameters
@@ -746,7 +751,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         This should realistically only be used for responding using user provided
         input. (unfortunately, including usernames)
         Manually crafted messages which dont take any user input have no need of this
-        
+
         Returns
         -------
         discord.Message

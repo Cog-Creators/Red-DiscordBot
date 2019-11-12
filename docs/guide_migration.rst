@@ -15,7 +15,7 @@ Red as a package
 ----------------
 
 V3 makes Red a package that is installed with :code:`pip`. Please
-keep this in mind when writing cogs as this affects how imports 
+keep this in mind when writing cogs as this affects how imports
 should be done (for example, to import :code:`pagify` in V2, one
 would do :code:`from .utils.chat_formatting import pagify`; in
 V3, this becomes :code:`from redbot.core.utils.chat_formatting import pagify`)
@@ -53,4 +53,4 @@ Mod Log
 
 V3 introduces Mod Log as an API, thus allowing for cogs to add custom case
 types that will appear in a server's mod log channel. Be sure to checkout
-:doc:`/framework_modlog` for more on Mod Log` 
+:doc:`/framework_modlog` for more on Mod Log`

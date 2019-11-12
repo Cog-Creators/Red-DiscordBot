@@ -1,36 +1,41 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 # Discord Version check
 
+# Standard Library
 import asyncio
 import json
 import logging
 import os
 import shutil
 import sys
+
 from copy import deepcopy
 from pathlib import Path
+from signal import SIGTERM
 
+# Red Dependencies
 import discord
+
+# Red Imports
+import redbot.logging
 
 # Set the event loop policies here so any subsequent `get_event_loop()`
 # calls, in particular those as a result of the following imports,
 # return the correct loop object.
 from redbot import _update_event_loop_policy
+from redbot.core import __version__, bank, data_manager, drivers, modlog
+from redbot.core.bot import ExitCodes, Red
+from redbot.core.cli import confirm, interactive_config, parse_cli_flags
+from redbot.core.cog_manager import CogManagerUI
+from redbot.core.core_commands import Core, license_info_command
+from redbot.core.dev_commands import Dev
+from redbot.core.events import init_events
+from redbot.core.global_checks import init_global_checks
+from redbot.setup import get_data_dir, get_name, save_config
 
 _update_event_loop_policy()
-
-import redbot.logging
-from redbot.core.bot import Red, ExitCodes
-from redbot.core.cog_manager import CogManagerUI
-from redbot.core.global_checks import init_global_checks
-from redbot.core.events import init_events
-from redbot.core.cli import interactive_config, confirm, parse_cli_flags
-from redbot.core.core_commands import Core, license_info_command
-from redbot.setup import get_data_dir, get_name, save_config
-from redbot.core.dev_commands import Dev
-from redbot.core import __version__, modlog, bank, data_manager, drivers
-from signal import SIGTERM
 
 
 log = logging.getLogger("red.main")

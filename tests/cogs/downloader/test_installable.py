@@ -1,11 +1,16 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import json
+
 from pathlib import Path
 
+# Red Dependencies
 import pytest
 
-from redbot.pytest.downloader import *
+# Red Imports
 from redbot.cogs.downloader.installable import Installable, InstallableType
 from redbot.core import VersionInfo
+from redbot.pytest.downloader import *
 
 
 def test_process_info_file(installable):

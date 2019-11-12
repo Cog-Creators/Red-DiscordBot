@@ -241,4 +241,3 @@ msgstr "Biztos vagy benne? (y/n)"
 #: redbot/cogs/permissions/permissions.py:608
 msgid "Action cancelled."
 msgstr "Visszavonva."
-

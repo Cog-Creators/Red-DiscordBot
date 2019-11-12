@@ -1,13 +1,16 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 from typing import Optional, Union
 
+# Red Dependencies
 import discord
 
-from redbot.core import checks, modlog, commands
+# Red Imports
+from redbot.core import checks, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-
+from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 
 _ = Translator("ModLog", __file__)
 

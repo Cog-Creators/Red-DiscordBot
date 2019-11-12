@@ -1,21 +1,24 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 from collections import namedtuple
-from typing import Union, Optional
+from typing import Optional, Union
 
+# Red Dependencies
 import discord
 
+# Red Imports
 from redbot.cogs.warnings.helpers import (
-    warning_points_add_check,
-    get_command_for_exceeded_points,
     get_command_for_dropping_points,
+    get_command_for_exceeded_points,
+    warning_points_add_check,
     warning_points_remove_check,
 )
 from redbot.core import Config, checks, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils.chat_formatting import pagify, warning
+from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 from redbot.core.utils.mod import is_admin_or_superior
-from redbot.core.utils.chat_formatting import warning, pagify
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-
 
 _ = Translator("Warnings", __file__)
 

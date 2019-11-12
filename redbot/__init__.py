@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 import asyncio as _asyncio
 import re as _re
 import sys as _sys
 import warnings as _warnings
+
 from math import inf as _inf
 from typing import (
     ClassVar as _ClassVar,
@@ -12,7 +15,6 @@ from typing import (
     Tuple as _Tuple,
     Union as _Union,
 )
-
 
 MIN_PYTHON_VERSION = (3, 7, 0)
 

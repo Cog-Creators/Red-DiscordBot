@@ -1,13 +1,15 @@
+# -*- coding: utf-8 -*-
 """The checks in this module run on every command."""
+# Red Relative Imports
 from . import commands
 
 
 def init_global_checks(bot):
     @bot.check_once
     def actually_up(ctx):
-        """ 
+        """
         Uptime is set during the initial startup process.
-        If this hasn't been set, we should assume the bot isn't ready yet. 
+        If this hasn't been set, we should assume the bot isn't ready yet.
         """
         return ctx.bot.uptime is not None
 

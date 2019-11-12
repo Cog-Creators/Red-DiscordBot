@@ -1,25 +1,33 @@
-import contextlib
-import sys
+# -*- coding: utf-8 -*-
+# Standard Library
+import asyncio
 import codecs
+import contextlib
 import datetime
 import logging
+import sys
 import traceback
-import asyncio
+
 from datetime import timedelta
 
+# Red Dependencies
 import aiohttp
 import discord
 import pkg_resources
+
 from colorama import Fore, Style, init
 from pkg_resources import DistributionNotFound
 
+# Red Imports
 from redbot.core.commands import RedHelpFormatter
-from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
+
+# Red Relative Imports
+from .. import VersionInfo, __version__ as red_version, version_info as red_version_info
 from . import commands
 from .config import get_latest_confs
 from .data_manager import storage_type
-from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
-from .utils import fuzzy_command_search, format_fuzzy_results
+from .utils import format_fuzzy_results, fuzzy_command_search
+from .utils.chat_formatting import bordered, format_perms_list, humanize_timedelta, inline
 
 log = logging.getLogger("red")
 init()

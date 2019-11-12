@@ -119,4 +119,3 @@ msgstr "Du saknar behörighet för att modifiera detta ärende!"
 #: redbot/cogs/modlog/modlog.py:190
 msgid "Reason has been updated."
 msgstr "Anledningen har blivit uppdaterad."
-

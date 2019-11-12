@@ -1,16 +1,21 @@
+# -*- coding: utf-8 -*-
 from __future__ import annotations
 
-import json
+# Standard Library
 import distutils.dir_util
+import json
 import shutil
+
 from enum import IntEnum
 from pathlib import Path
-from typing import MutableMapping, Any, TYPE_CHECKING, Optional, Dict, Union, Callable, Tuple, cast
+from typing import TYPE_CHECKING, Any, Callable, Dict, MutableMapping, Optional, Tuple, Union, cast
 
-from .log import log
+# Red Imports
+from redbot.core import VersionInfo, __version__, version_info as red_version_info
+
+# Red Relative Imports
 from .json_mixins import RepoJSONMixin
-
-from redbot.core import __version__, version_info as red_version_info, VersionInfo
+from .log import log
 
 if TYPE_CHECKING:
     from .repo_manager import RepoManager, Repo

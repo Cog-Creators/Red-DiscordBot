@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# Red Relative Imports
 from .customcom import CustomCommands
 
 

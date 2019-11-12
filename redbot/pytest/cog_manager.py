@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# Red Dependencies
 import pytest
 
 __all__ = ["cog_mgr", "default_dir"]

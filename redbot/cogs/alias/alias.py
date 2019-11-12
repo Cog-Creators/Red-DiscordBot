@@ -1,15 +1,22 @@
+# -*- coding: utf-8 -*-
+# Standard Library
 from copy import copy
 from re import findall, search
 from string import Formatter
-from typing import Generator, Tuple, Iterable, Optional
+from typing import Generator, Iterable, Optional, Tuple
 
+# Red Dependencies
 import discord
+
 from discord.ext.commands.view import StringView
-from redbot.core import Config, commands, checks
+
+# Red Imports
+from redbot.core import Config, checks, commands
+from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
 
-from redbot.core.bot import Red
+# Red Relative Imports
 from .alias_entry import AliasEntry
 
 _ = Translator("Alias", __file__)
@@ -174,10 +181,10 @@ class Alias(commands.Cog):
         When an alias is executed by a user in chat this function tries
             to get any extra arguments passed in with the call.
             Whitespace will be trimmed from both ends.
-        :param message: 
-        :param prefix: 
-        :param alias: 
-        :return: 
+        :param message:
+        :param prefix:
+        :param alias:
+        :return:
         """
         known_content_length = len(prefix) + len(alias.name)
         extra = message.content[known_content_length:]

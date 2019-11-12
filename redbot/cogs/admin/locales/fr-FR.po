@@ -183,4 +183,3 @@ msgstr "Le cog Admin n'est pas chargé."
 #: redbot/cogs/admin/converters.py:34
 msgid "The provided role is not a valid selfrole."
 msgstr "Le rôle fourni n'est pas un auto-rôle valide."
-
