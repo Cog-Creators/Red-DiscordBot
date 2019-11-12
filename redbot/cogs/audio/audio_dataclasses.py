@@ -386,14 +386,17 @@ class Query:
                             match = re.search(_re_youtube_index, track)
                             if match:
                                 returning["track_index"] = int(match.group(1)) - 1
-
                         if all(k in track for k in ["&list=", "watch?"]):
                             returning["track_index"] = 0
                             returning["playlist"] = True
                             returning["single"] = False
                         elif all(x in track for x in ["playlist?"]):
-                            returning["playlist"] = True if not _has_index else False
-                            returning["single"] = True if _has_index else False
+                            returning["playlist"] = not _has_index
+                            returning["single"] = _has_index
+                        elif any(k in track for k in ["list="]):
+                            returning["track_index"] = 0
+                            returning["playlist"] = True
+                            returning["single"] = False
                         else:
                             returning["single"] = True
                     elif url_domain == "spotify.com":
