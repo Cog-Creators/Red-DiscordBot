@@ -2,10 +2,10 @@ PYTHON ?= python3.7
 
 # Python Code Style
 reformat:
-    $(PYTHON) -m isort **/*.py
+	$(PYTHON) -m isort `git ls-files "*.py"`
 	$(PYTHON) -m black -l 99 --target-version py37 `git ls-files "*.py"`
 stylecheck:
-    $(PYTHON) -m isort **/*.py --check-only
+	$(PYTHON) -m isort --check-only `git ls-files "*.py"`
 	$(PYTHON) -m black --check -l 99 --target-version py37 `git ls-files "*.py"`
 
 # Translations

@@ -51,7 +51,7 @@ def test_bordered_asymmetrical_2():
     │one           │    │five         │
     │two           │    │six          │
     │three         │    └─────────────┘
-    │four          │
+    │four          │                   
     └──────────────┘                   """
     )
     col1, col2 = ["one", "two", "three", "four"], ["five", "six"]

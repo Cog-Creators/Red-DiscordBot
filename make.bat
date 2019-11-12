@@ -14,12 +14,12 @@ for /F "tokens=* USEBACKQ" %%A in (`git ls-files "*.py"`) do (
 goto %1
 
 :reformat
-isort **/*.py
+isort !PYFILES!
 black -l 99 --target-version py37 !PYFILES!
 exit /B %ERRORLEVEL%
 
 :stylecheck
-isort **/*.py --check-only
+isort --check-only !PYFILES!
 black -l 99 --check --target-version py37 !PYFILES!
 exit /B %ERRORLEVEL%
 
