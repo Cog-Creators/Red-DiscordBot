@@ -176,7 +176,7 @@ class RedHelpFormatter:
 
         send = await ctx.bot._config.help.verify_exists()
         if not send:
-            async for _ in self.help_filter_func(ctx, (obj,), bypass_hidden=True):
+            async for _loop_counter in self.help_filter_func(ctx, (obj,), bypass_hidden=True):
                 # This is a really lazy option for not
                 # creating a separate single case version.
                 # It is efficient though
@@ -573,9 +573,7 @@ class RedHelpFormatter:
         return com
 
     @staticmethod
-    async def send_pages(
-            ctx: Context, pages: List[Union[str, discord.Embed]], embed: bool = True
-    ):
+    async def send_pages(ctx: Context, pages: List[Union[str, discord.Embed]], embed: bool = True):
         """
         Sends pages based on settings.
         """

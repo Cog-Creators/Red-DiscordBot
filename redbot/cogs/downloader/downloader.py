@@ -980,9 +980,7 @@ class Downloader(commands.Cog):
         return correct_cogs, message
 
     @staticmethod
-    def _filter_incorrect_cogs(
-            cogs: Iterable[Installable]
-    ) -> Tuple[Tuple[Installable, ...], str]:
+    def _filter_incorrect_cogs(cogs: Iterable[Installable]) -> Tuple[Tuple[Installable, ...], str]:
         correct_cogs: List[Installable] = []
         outdated_python_version: List[str] = []
         outdated_bot_version: List[str] = []
@@ -1137,7 +1135,7 @@ class Downloader(commands.Cog):
 
     @staticmethod
     def format_findcog_info(
-            command_name: str, cog_installable: Union[Installable, object] = None
+        command_name: str, cog_installable: Union[Installable, object] = None
     ) -> str:
         """Format a cog's info for output to discord.
 
