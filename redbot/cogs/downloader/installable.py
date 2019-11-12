@@ -166,7 +166,7 @@ class Installable(RepoJSONMixin):
         if info_file_path is None or not info_file_path.is_file():
             raise ValueError("No valid information file path was found.")
 
-        info: Dict[str, Any] = {}
+        info: Dict[str, Any]
         with info_file_path.open(encoding="utf-8") as f:
             try:
                 info = json.load(f)

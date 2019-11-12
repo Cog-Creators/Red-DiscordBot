@@ -1,1 +1,1 @@
-remove f-string usage in launcher to prevent our error handling from cauing an error.
+remove f-string usage in launcher to prevent our error handling from causing an error.

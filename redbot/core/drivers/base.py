@@ -266,7 +266,7 @@ class BaseDriver(abc.ABC):
 
         The driver must be initialized before this operation.
 
-        The BaseDriver provides a generic method which may be overriden
+        The BaseDriver provides a generic method which may be overridden
         by subclasses.
 
         Parameters

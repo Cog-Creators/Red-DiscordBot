@@ -42,7 +42,7 @@ except ImportError as err:
     _ERROR = "".join(traceback.format_exception_only(type(err), err)).strip()
     HAS_SQL = False
     SQLError = err.__class__
-    Database = None
+    Database: Callable = None
 
 
 log = logging.getLogger("red.audio.cache")

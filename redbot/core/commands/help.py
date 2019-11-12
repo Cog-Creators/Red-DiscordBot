@@ -572,8 +572,9 @@ class RedHelpFormatter:
 
         return com
 
+    @staticmethod
     async def send_pages(
-        self, ctx: Context, pages: List[Union[str, discord.Embed]], embed: bool = True
+            ctx: Context, pages: List[Union[str, discord.Embed]], embed: bool = True
     ):
         """
         Sends pages based on settings.

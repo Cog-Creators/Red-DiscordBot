@@ -94,7 +94,7 @@ INFO_JSON = {
     "hidden": False,
     "install_msg": "A post-installation message",
     "required_cogs": {},
-    "requirements": ("tabulate"),
+    "requirements": "tabulate",
     "short": "A short description",
     "tags": ("tag1", "tag2"),
     "type": "COG",
@@ -108,7 +108,7 @@ LIBRARY_INFO_JSON = {
     "hidden": False,  # libraries are always hidden, this tests it will be flipped
     "install_msg": "A library install message",
     "required_cogs": {},
-    "requirements": ("tabulate"),
+    "requirements": "tabulate",
     "short": "A short library description",
     "tags": ("libtag1", "libtag2"),
     "type": "SHARED_LIBRARY",

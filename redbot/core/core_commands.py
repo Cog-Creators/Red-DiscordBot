@@ -497,7 +497,7 @@ class Core(commands.Cog, CoreLogic):
         For that, you need to provide a valid permissions level.
         You can generate one here: https://discordapi.com/permissions.html
 
-        Please note that you might need two factor authentification for\
+        Please note that you might need two factor authentication for\
         some permissions.
         """
         await self.bot._config.invite_perm.set(level)
@@ -1163,7 +1163,7 @@ class Core(commands.Cog, CoreLogic):
     @helpset.command(name="usemenus")
     async def helpset_usemenus(self, ctx: commands.Context, use_menus: bool = None):
         """
-        Allows the help command to be sent as a paginated menu instead of seperate
+        Allows the help command to be sent as a paginated menu instead of separate
         messages.
 
         This defaults to False.
@@ -1421,8 +1421,6 @@ class Core(commands.Cog, CoreLogic):
         for destination in destinations:
 
             is_dm = isinstance(destination, discord.User)
-            send_embed = None
-
             if is_dm:
                 send_embed = await ctx.bot._config.user(destination).embeds()
             else:
@@ -2071,7 +2069,7 @@ class Core(commands.Cog, CoreLogic):
             output += ", ".join(members)
 
         if not output:
-            output = _("No immunty settings here.")
+            output = _("No immunity settings here.")
 
         for page in pagify(output):
             await ctx.send(page)
@@ -2126,7 +2124,7 @@ class Core(commands.Cog, CoreLogic):
     @ownernotifications.command()
     async def optin(self, ctx: commands.Context):
         """
-        Opt-in on recieving owner notifications.
+        Opt-in on receiving owner notifications.
 
         This is the default state.
         """
@@ -2139,7 +2137,7 @@ class Core(commands.Cog, CoreLogic):
     @ownernotifications.command()
     async def optout(self, ctx: commands.Context):
         """
-        Opt-out of recieving owner notifications.
+        Opt-out of receiving owner notifications.
         """
         async with ctx.bot._config.owner_opt_out_list() as opt_outs:
             if ctx.author.id not in opt_outs:
@@ -2152,7 +2150,7 @@ class Core(commands.Cog, CoreLogic):
         self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
     ):
         """
-        Adds a destination text channel to recieve owner notifications
+        Adds a destination text channel to receive owner notifications
         """
 
         try:
@@ -2171,7 +2169,7 @@ class Core(commands.Cog, CoreLogic):
         self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
     ):
         """
-        Removes a destination text channel from recieving owner notifications.
+        Removes a destination text channel from receiving owner notifications.
         """
 
         try:
@@ -2242,7 +2240,7 @@ async def license_info_command(ctx):
     """
 
     message = (
-        "This bot is an instance of Red-DiscordBot (hereafter refered to as Red)\n"
+        "This bot is an instance of Red-DiscordBot (hereafter referred to as Red)\n"
         "Red is a free and open source application made available to the public and "
         "licensed under the GNU GPLv3. The full text of this license is available to you at "
         "<https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/LICENSE>"

@@ -320,7 +320,7 @@ class Cleanup(commands.Cog):
         two: RawMessageIds,
         delete_pinned: bool = False,
     ):
-        """Delete the messages between Messsage One and Message Two, providing the messages IDs.
+        """Delete the messages between Message One and Message Two, providing the messages IDs.
 
         The first message ID should be the older message and the second one the newer.
 

@@ -405,7 +405,8 @@ async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: int = None)
     """
 
     global_bank = await is_global()
-
+    tmp = []
+    user_list = []
     if global_bank:
         _guilds = [g for g in bot.guilds if not g.unavailable and g.large and not g.chunked]
         _uguilds = [g for g in bot.guilds if g.unavailable]

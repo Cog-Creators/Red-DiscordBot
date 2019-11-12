@@ -342,7 +342,7 @@ class Case:
             emb.timestamp = datetime.fromtimestamp(self.created_at)
             return emb
         else:
-            user = filter_mass_mentions(filter_urls(user))  # Further sanitization outside embeds
+            user = filter_mass_mentions(filter_urls(user))  # Further sanitation outside embeds
             case_text = ""
             case_text += "{}\n".format(title)
             case_text += _("**User:** {}\n").format(user)

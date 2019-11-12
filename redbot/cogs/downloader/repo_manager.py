@@ -120,7 +120,7 @@ class Repo(RepoJSONMixin):
 
     PIP_INSTALL = "{python} -m pip install -U -t {target_dir} {reqs}"
 
-    MODULE_FOLDER_REGEX = re.compile(r"(\w+)\/")
+    MODULE_FOLDER_REGEX = re.compile(r"(\w+)/")
     AMBIGUOUS_ERROR_REGEX = re.compile(
         r"^hint: {3}(?P<rev>[A-Za-z0-9]+) (?P<type>commit|tag) (?P<desc>.+)$", re.MULTILINE
     )
@@ -871,8 +871,8 @@ class Repo(RepoJSONMixin):
                     failed.append(lib)
                 else:
                     installed.append(InstalledModule.from_installable(lib))
-            return (tuple(installed), tuple(failed))
-        return ((), ())
+            return tuple(installed), tuple(failed)
+        return (), ()
 
     async def install_requirements(self, cog: Installable, target_dir: Path) -> bool:
         """Install a cog's requirements.
@@ -1108,7 +1108,7 @@ class RepoManager:
 
         Parameters
         ----------
-        name : str
+        repo_name : str
             The name of the repository to update.
 
         Returns
@@ -1120,7 +1120,7 @@ class RepoManager:
         """
         repo = self._repos[repo_name]
         old, new = await repo.update()
-        return (repo, (old, new))
+        return repo, (old, new)
 
     async def update_all_repos(self) -> Dict[Repo, Tuple[str, str]]:
         """Call `Repo.update` on all repositories.

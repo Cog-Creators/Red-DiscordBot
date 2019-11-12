@@ -399,7 +399,7 @@ class CustomCommands(commands.Cog):
 
     @customcom.command(name="show")
     async def cc_show(self, ctx, command_name: str):
-        """Shows a custom command's reponses and its settings."""
+        """Shows a custom command's responses and its settings."""
 
         try:
             cmd = await self.commandobj.get_full(ctx.message, command_name)

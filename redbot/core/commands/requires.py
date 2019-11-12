@@ -620,7 +620,7 @@ class Requires:
 
 
 def permissions_check(predicate: CheckPredicate):
-    """An overwriteable version of `discord.ext.commands.check`.
+    """An overrideable version of `discord.ext.commands.check`.
 
     This has the same behaviour as `discord.ext.commands.check`,
     however this check can be ignored if the command is allowed

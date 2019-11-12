@@ -36,7 +36,7 @@ There are a few built-in RPC methods to note:
 * ``GET_TOPIC`` - Returns a list of available RPC message topics.
 * ``GET_SUBSCRIPTIONS`` - Returns a list of RPC subscriptions.
 * ``SUBSCRIBE`` - Subscribes to an available RPC message topic.
-* ``UNSUBSCRIBE`` - Unsubscribes from an RPC message topic.
+* ``UNSUBSCRIBE`` - Unsubscribe from an RPC message topic.
 
 All RPC methods accept a list of parameters.
 The built-in methods above expect their parameters to be in list format.

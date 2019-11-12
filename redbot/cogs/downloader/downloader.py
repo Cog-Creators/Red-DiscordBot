@@ -273,7 +273,7 @@ class Downloader(commands.Cog):
 
         await self._save_to_installed(update_commits)
 
-        return (tuple(cogs_to_update), tuple(libraries_to_update))
+        return tuple(cogs_to_update), tuple(libraries_to_update)
 
     async def _install_cogs(
         self, cogs: Iterable[Installable]
@@ -312,7 +312,7 @@ class Downloader(commands.Cog):
             await repo.checkout(exit_to_commit)
 
         # noinspection PyTypeChecker
-        return (tuple(installed), tuple(failed))
+        return tuple(installed), tuple(failed)
 
     async def _reinstall_libraries(
         self, libraries: Iterable[Installable]
@@ -352,7 +352,7 @@ class Downloader(commands.Cog):
             await repo.checkout(exit_to_commit)
 
         # noinspection PyTypeChecker
-        return (tuple(all_installed), tuple(all_failed))
+        return tuple(all_installed), tuple(all_failed)
 
     async def _install_requirements(self, cogs: Iterable[Installable]) -> Tuple[str, ...]:
         """
@@ -565,7 +565,7 @@ class Downloader(commands.Cog):
                             f" - {candidate.description}\n"
                         )
                     for page in pagify(msg):
-                        await ctx.send(msg)
+                        await ctx.send(page)
                     return
                 except errors.UnknownRevision:
                     await ctx.send(
@@ -798,7 +798,7 @@ class Downloader(commands.Cog):
                             f" - {candidate.description}\n"
                         )
                     for page in pagify(msg):
-                        await ctx.send(msg)
+                        await ctx.send(page)
                     return
                 except errors.UnknownRevision:
                     await ctx.send(
@@ -827,7 +827,6 @@ class Downloader(commands.Cog):
 
             updates_available = cogs_to_update or libs_to_update
             cogs_to_update, filter_message = self._filter_incorrect_cogs(cogs_to_update)
-            message = ""
             if updates_available:
                 updated_cognames, message = await self._update_cogs_and_libs(
                     cogs_to_update, libs_to_update
@@ -980,8 +979,9 @@ class Downloader(commands.Cog):
             return correct_cogs, f"{message}{add_to_message}"
         return correct_cogs, message
 
+    @staticmethod
     def _filter_incorrect_cogs(
-        self, cogs: Iterable[Installable]
+            cogs: Iterable[Installable]
     ) -> Tuple[Tuple[Installable, ...], str]:
         correct_cogs: List[Installable] = []
         outdated_python_version: List[str] = []
@@ -1093,9 +1093,10 @@ class Downloader(commands.Cog):
             message += _("\nFailed to install shared libraries: ") + humanize_list(
                 tuple(map(inline, libnames))
             )
-        return (updated_cognames, message)
+        return updated_cognames, message
 
-    async def _ask_for_cog_reload(self, ctx: commands.Context, updated_cognames: Set[str]) -> None:
+    @staticmethod
+    async def _ask_for_cog_reload(ctx: commands.Context, updated_cognames: Set[str]) -> None:
         updated_cognames &= ctx.bot.extensions.keys()  # only reload loaded cogs
         if not updated_cognames:
             await ctx.send(_("None of the updated cogs were previously loaded. Update complete."))
@@ -1134,8 +1135,9 @@ class Downloader(commands.Cog):
 
         await ctx.invoke(ctx.bot.get_cog("Core").reload, *updated_cognames)
 
+    @staticmethod
     def format_findcog_info(
-        self, command_name: str, cog_installable: Union[Installable, object] = None
+            command_name: str, cog_installable: Union[Installable, object] = None
     ) -> str:
         """Format a cog's info for output to discord.
 
@@ -1169,7 +1171,8 @@ class Downloader(commands.Cog):
 
         return msg.format(command=command_name, author=made_by, repo_url=repo_url, cog=cog_name)
 
-    def cog_name_from_instance(self, instance: object) -> str:
+    @staticmethod
+    def cog_name_from_instance(instance: object) -> str:
         """Determines the cog name that Downloader knows from the cog instance.
 
         Probably.

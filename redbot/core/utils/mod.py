@@ -236,7 +236,7 @@ async def check_permissions(ctx: "Context", perms: Dict[str, bool]) -> bool:
     Parameters
     ----------
     ctx : Context
-        The command invokation context to check.
+        The command invocation context to check.
     perms : Dict[str, bool]
         A dictionary mapping permissions to their required states.
         Valid permission names are those listed as properties of

@@ -11,7 +11,7 @@ def unsafe(f, message=None):
     This form may not get used much, but there are a few cases
     we may want to add something unsafe generally, but safe in specific uses.
 
-    The warning can be supressed in the safe context with warnings.catch_warnings
+    The warning can be suppressed in the safe context with warnings.catch_warnings
     This should be used sparingly at most.
     """
 

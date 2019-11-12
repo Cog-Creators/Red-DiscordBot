@@ -155,9 +155,8 @@ class APIToken(discord.ext.commands.Converter):
     """
 
     async def convert(self, ctx, argument) -> dict:
-        bot = ctx.bot
         result = {}
-        match = re.split(r";|,| ", argument)
+        match = re.split(r"[;, ]", argument)
         # provide two options to split incase for whatever reason one is part of the api key we're using
         if len(match) > 1:
             result[match[0]] = "".join(r for r in match[1:])

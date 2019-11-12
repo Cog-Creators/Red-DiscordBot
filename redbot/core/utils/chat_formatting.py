@@ -208,7 +208,7 @@ def bordered(*columns: Sequence[str], ascii_border: bool = False) -> str:
 
 def pagify(
     text: str,
-    delims: Sequence[str] = ["\n"],
+    delims: Sequence[str] = None,
     *,
     priority: bool = False,
     escape_mass_mentions: bool = True,
@@ -250,6 +250,8 @@ def pagify(
         Pages of the given text.
 
     """
+    if delims is None:
+        delims = ["\n"]
     in_text = text
     page_length -= shorten_by
     while len(in_text) > page_length:
@@ -325,7 +327,7 @@ def escape(text: str, *, mass_mentions: bool = False, formatting: bool = False) 
     mass_mentions : `bool`, optional
         Set to :code:`True` to escape mass mentions in the text.
     formatting : `bool`, optional
-        Set to :code:`True` to escpae any markdown formatting in the text.
+        Set to :code:`True` to escape any markdown formatting in the text.
 
     Returns
     -------
@@ -342,7 +344,7 @@ def escape(text: str, *, mass_mentions: bool = False, formatting: bool = False) 
 
 
 def humanize_list(items: Sequence[str]) -> str:
-    """Get comma-separted list, with the last element joined with *and*.
+    """Get comma-separated list, with the last element joined with *and*.
 
     This uses an Oxford comma, because without one, items containing
     the word *and* would make the output difficult to interpret.

@@ -37,7 +37,7 @@ _ = Translator("Streams", __file__)
 
 def rnd(url):
     """Appends a random parameter to the url to avoid Discord's caching"""
-    return url + "?rnd=" + "".join([choice(ascii_letters) for i in range(6)])
+    return url + "?rnd=" + "".join([choice(ascii_letters) for _loop_counter in range(6)])
 
 
 class Stream:
@@ -54,7 +54,7 @@ class Stream:
     async def is_online(self):
         raise NotImplementedError()
 
-    def make_embed(self):
+    def make_embed(self, data):
         raise NotImplementedError()
 
     def export(self):
@@ -310,7 +310,7 @@ class MixerStream(Stream):
         default_avatar = "https://mixer.com/_latest/assets/images/main/avatars/default.jpg"
         user = data["user"]
         url = "https://mixer.com/" + data["token"]
-        embed = discord.Embed(title=data["name"], url=url)
+        embed = discord.Embed(title=data["name"], url=url, color=0x4C90F3)
         embed.set_author(name=user["username"])
         embed.add_field(name=_("Followers"), value=data["numFollowers"])
         embed.add_field(name=_("Total views"), value=data["viewersTotal"])
@@ -320,7 +320,7 @@ class MixerStream(Stream):
             embed.set_thumbnail(url=default_avatar)
         if data["thumbnail"]:
             embed.set_image(url=rnd(data["thumbnail"]["url"]))
-        embed.color = 0x4C90F3  # pylint: disable=assigning-non-slot
+
         if data["type"] is not None:
             embed.set_footer(text=_("Playing: ") + data["type"]["name"])
         return embed

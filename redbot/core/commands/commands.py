@@ -579,7 +579,7 @@ class Group(GroupMixin, Command, CogGroupMixin, commands.Group):
                 await ctx.send_help()
         elif self.invoke_without_command:
             # So invoke_without_command when a subcommand of this group is invoked
-            # will skip the the invokation of *this* command. However, because of
+            # will skip the the invocation of *this* command. However, because of
             # how our permissions system works, we don't want it to skip the checks
             # as well.
             await self._verify_checks(ctx)
@@ -663,8 +663,8 @@ class Cog(CogMixin, commands.Cog):
     This includes a metaclass from discord.py
     """
 
-    # NB: Do not move the inheritcance of this. Keeping the mix of that metaclass
-    # seperate gives us more freedoms in several places.
+    # NB: Do not move the inheritance of this. Keeping the mix of that metaclass
+    # separate gives us more freedoms in several places.
     pass
 
 

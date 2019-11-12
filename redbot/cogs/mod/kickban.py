@@ -103,7 +103,7 @@ class KickBanMixin(MixinMeta):
         except discord.Forbidden:
             return _("I'm not allowed to do that.")
         except Exception as e:
-            return e  # TODO: impproper return type? Is this intended to be re-raised?
+            return e  # TODO: improper return type? Is this intended to be re-raised?
 
         if create_modlog_case:
             try:

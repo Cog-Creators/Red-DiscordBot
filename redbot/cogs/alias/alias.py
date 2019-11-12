@@ -97,7 +97,7 @@ class Alias(commands.Cog):
 
     def is_command(self, alias_name: str) -> bool:
         """
-        The logic here is that if this returns true, the name shouldnt be used for an alias
+        The logic here is that if this returns true, the name shouldn't be used for an alias
         The function name can be changed when alias is reworked
         """
         command = self.bot.get_command(alias_name)
@@ -174,8 +174,9 @@ class Alias(commands.Cog):
                 return p
         raise ValueError(_("No prefix found."))
 
+    @staticmethod
     def get_extra_args_from_alias(
-        self, message: discord.Message, prefix: str, alias: AliasEntry
+            message: discord.Message, prefix: str, alias: AliasEntry
     ) -> str:
         """
         When an alias is executed by a user in chat this function tries
@@ -224,15 +225,15 @@ class Alias(commands.Cog):
         new_message = copy(message)
         try:
             args = self.get_extra_args_from_alias(message, prefix, alias)
-        except commands.BadArgument as bae:
+        except commands.BadArgument:
             return
 
-        trackform = _TrackingFormatter()
-        command = trackform.format(alias.command, *args)
+        track_form = _TrackingFormatter()
+        command = track_form.format(alias.command, *args)
 
         # noinspection PyDunderSlots
         new_message.content = "{}{} {}".format(
-            prefix, command, " ".join(args[trackform.max + 1 :])
+            prefix, command, " ".join(args[track_form.max + 1 :])
         )
         await self.bot.process_commands(new_message)
 

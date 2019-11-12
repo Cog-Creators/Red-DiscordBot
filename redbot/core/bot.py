@@ -199,7 +199,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         If given a member, this will additionally check guild lists
 
-        If omiting a user or member, you must provide a value for ``who_id``
+        If omitting a user or member, you must provide a value for ``who_id``
 
         You may also provide a value for ``guild_id`` in this case
 
@@ -662,7 +662,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                 await lib.setup(self)
             else:
                 lib.setup(self)
-        except Exception as e:
+        except Exception:
             self._remove_module_references(lib.__name__)
             self._call_module_finalizers(lib, name)
             raise
@@ -710,6 +710,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         """
         guild = getattr(to_check, "guild", None)
+        ids_to_check = []
         if not guild:
             return False
 
@@ -750,7 +751,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         This should realistically only be used for responding using user provided
         input. (unfortunately, including usernames)
-        Manually crafted messages which dont take any user input have no need of this
+        Manually crafted messages which don't take any user input have no need of this
 
         Returns
         -------
