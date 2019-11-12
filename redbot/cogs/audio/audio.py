@@ -3921,18 +3921,13 @@ class Audio(commands.Cog):
             }
             file_name = playlist.name
         else:
+            # TODO: Keep new playlists backwards compatible, Remove me in a few releases
             playlist_data = playlist.to_json()
             playlist_songs_backwards_compatible = [
                 track["info"]["uri"] for track in playlist.tracks
             ]
-            playlist_data[
-                "playlist"
-            ] = playlist_songs_backwards_compatible  # TODO: Keep new playlists backwards compatible, Remove me in a few releases
-            playlist_data[
-                "link"
-            ] = (
-                playlist.url
-            )  # TODO: Keep new playlists backwards compatible, Remove me in a few releases
+            playlist_data["playlist"] = playlist_songs_backwards_compatible
+            playlist_data["link"] = playlist.url
             file_name = playlist.id
         playlist_data.update({"schema": schema, "version": version})
         playlist_data = json.dumps(playlist_data)
