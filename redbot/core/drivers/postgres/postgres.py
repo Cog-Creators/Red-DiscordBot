@@ -27,7 +27,7 @@ DROP_DDL_SCRIPT_PATH = _PKG_PATH / "drop_ddl.sql"
 
 
 def encode_identifier_data(
-    id_data: IdentifierData
+    id_data: IdentifierData,
 ) -> Tuple[str, str, str, List[str], List[str], int, bool]:
     return (
         id_data.cog_name,
