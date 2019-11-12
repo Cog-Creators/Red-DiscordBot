@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 from collections import namedtuple
 from datetime import datetime, timedelta
@@ -12,7 +13,7 @@ class AntiSpam:
     Custom class which is more flexible than using discord.py's
     `commands.cooldown()`
 
-    Can be initialized with a custom set of intervals
+    Can be intialized with a custom set of intervals
     These should be provided as a list of tuples in the form
     (timedelta, quantity)
 
@@ -22,7 +23,7 @@ class AntiSpam:
 
     # TODO : Decorator interface for command check using `spammy`
     # with insertion of the antispam element into context
-    # for manual stamping on successful command completion
+    # for manual stamping on succesful command completion
 
     default_intervals = [
         (timedelta(seconds=5), 3),

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import asyncio
 import codecs
@@ -31,7 +32,7 @@ from .utils.chat_formatting import bordered, format_perms_list, humanize_timedel
 log = logging.getLogger("red")
 init()
 
-INTRO = r"""
+INTRO = """
 ______         _           ______ _                       _  ______       _
 | ___ \       | |          |  _  (_)                     | | | ___ \     | |
 | |_/ /___  __| |  ______  | | | |_ ___  ___ ___  _ __ __| | | |_/ / ___ | |_
@@ -53,40 +54,6 @@ def init_events(bot, cli_flags):
             return
 
         bot._uptime = datetime.datetime.utcnow()
-        packages = []
-
-        if cli_flags.no_cogs is False:
-            packages.extend(await bot._config.packages())
-
-        if cli_flags.load_cogs:
-            packages.extend(cli_flags.load_cogs)
-
-        if packages:
-            # Load permissions first, for security reasons
-            try:
-                packages.remove("permissions")
-            except ValueError:
-                pass
-            else:
-                packages.insert(0, "permissions")
-
-            to_remove = []
-            print("Loading packages...")
-            for package in packages:
-                try:
-                    spec = await bot.cog_mgr.find_cog(package)
-                    await bot.load_extension(spec)
-                except Exception as e:
-                    log.exception("Failed to load package {}".format(package), exc_info=e)
-                    await bot.remove_loaded_package(package)
-                    to_remove.append(package)
-            for package in to_remove:
-                packages.remove(package)
-            if packages:
-                print("Loaded packages: " + ", ".join(packages))
-
-        if bot.rpc_enabled:
-            await bot.rpc.initialize()
 
         guilds = len(bot.guilds)
         users = len(set([m for m in bot.get_all_members()]))
@@ -94,7 +61,7 @@ def init_events(bot, cli_flags):
         try:
             data = await bot.application_info()
             invite_url = discord.utils.oauth_url(data.id)
-        except Exception:
+        except:
             invite_url = "Could not fetch invite url"
 
         prefixes = cli_flags.prefix or (await bot._config.prefix())
@@ -102,7 +69,7 @@ def init_events(bot, cli_flags):
         red_pkg = pkg_resources.get_distribution("Red-DiscordBot")
         dpy_version = discord.__version__
 
-        info1 = [
+        INFO = [
             str(bot.user),
             "Prefixes: {}".format(", ".join(prefixes)),
             "Language: {}".format(lang),
@@ -112,18 +79,18 @@ def init_events(bot, cli_flags):
         ]
 
         if guilds:
-            info1.extend(("Servers: {}".format(guilds), "Users: {}".format(users)))
+            INFO.extend(("Servers: {}".format(guilds), "Users: {}".format(users)))
         else:
             print("Ready. I'm not in any server yet!")
 
-        info1.append("{} cogs with {} commands".format(len(bot.cogs), len(bot.commands)))
+        INFO.append("{} cogs with {} commands".format(len(bot.cogs), len(bot.commands)))
 
         with contextlib.suppress(aiohttp.ClientError, discord.HTTPException):
             async with aiohttp.ClientSession() as session:
                 async with session.get("https://pypi.python.org/pypi/red-discordbot/json") as r:
                     data = await r.json()
             if VersionInfo.from_str(data["info"]["version"]) > red_version_info:
-                info1.append(
+                INFO.append(
                     "Outdated version! {} is available "
                     "but you're using {}".format(data["info"]["version"], red_version)
                 )
@@ -134,9 +101,8 @@ def init_events(bot, cli_flags):
                         data["info"]["version"], red_version
                     )
                 )
-        info2 = []
+        INFO2 = []
 
-        mongo_enabled = storage_type() != "JSON"
         reqs_installed = {"docs": None, "test": None}
         for key in reqs_installed.keys():
             reqs = [x.name for x in red_pkg._dep_map[key]]
@@ -148,7 +114,6 @@ def init_events(bot, cli_flags):
                 reqs_installed[key] = True
 
         options = (
-            ("MongoDB", mongo_enabled),
             ("Voice", True),
             ("Docs", reqs_installed["docs"]),
             ("Tests", reqs_installed["test"]),
@@ -158,11 +123,11 @@ def init_events(bot, cli_flags):
 
         for option, enabled in options:
             enabled = on_symbol if enabled else off_symbol
-            info2.append("{} {}".format(enabled, option))
+            INFO2.append("{} {}".format(enabled, option))
 
         print(Fore.RED + INTRO)
         print(Style.RESET_ALL)
-        print(bordered(info1, info2, ascii_border=ascii_border))
+        print(bordered(INFO, INFO2, ascii_border=ascii_border))
 
         if invite_url:
             print("\nInvite URL: {}\n".format(invite_url))
@@ -182,6 +147,13 @@ def init_events(bot, cli_flags):
 
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help()
+        elif isinstance(error, commands.ArgParserFailure):
+            msg = f"`{error.user_input}` is not a valid value for `{error.cmd}`"
+            if error.custom_help_msg:
+                msg += f"\n{error.custom_help_msg}"
+            await ctx.send(msg)
+            if error.send_cmd_help:
+                await ctx.send_help()
         elif isinstance(error, commands.ConversionFailure):
             if error.args:
                 await ctx.send(error.args[0])
@@ -234,26 +206,16 @@ def init_events(bot, cli_flags):
         elif isinstance(error, commands.UserFeedbackCheckFailure):
             if error.message:
                 await ctx.send(error.message)
-        elif isinstance(error, commands.CheckFailure):
-            pass
         elif isinstance(error, commands.NoPrivateMessage):
             await ctx.send("That command is not available in DMs.")
+        elif isinstance(error, commands.PrivateMessageOnly):
+            await ctx.send("That command is only available in DMs.")
+        elif isinstance(error, commands.CheckFailure):
+            pass
         elif isinstance(error, commands.CommandOnCooldown):
-            if error.retry_after < 1:
-                async with ctx.typing():
-                    # the sleep here is so that commands using this for ratelimit purposes
-                    # are not made more lenient than intended, while still being
-                    # more convenient for the user than redoing it less than a second later.
-                    await asyncio.sleep(error.retry_after)
-                    await ctx.bot.invoke(ctx)
-                    # done this way so checks still occur if there are other
-                    # failures possible than just cooldown.
-                    # do not change to ctx.reinvoke()
-                    return
-
             await ctx.send(
                 "This command is on cooldown. Try again in {}.".format(
-                    humanize_timedelta(seconds=error.retry_after)
+                    humanize_timedelta(seconds=error.retry_after) or "1 second"
                 ),
                 delete_after=error.retry_after,
             )
@@ -262,7 +224,6 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_message(message):
-        bot._counter["messages_read"] += 1
         await bot.process_commands(message)
         discord_now = message.created_at
         if (
@@ -278,14 +239,6 @@ def init_events(bot, cli_flags):
                     diff,
                 )
             bot._checked_time_accuracy = discord_now
-
-    @bot.event
-    async def on_resumed():
-        bot._counter["sessions_resumed"] += 1
-
-    @bot.event
-    async def on_command(command):
-        bot._counter["processed_commands"] += 1
 
     @bot.event
     async def on_command_add(command: commands.Command):

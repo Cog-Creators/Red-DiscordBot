@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import calendar
 import logging
@@ -41,8 +42,6 @@ class SMReel(Enum):
 
 
 _ = lambda s: s
-
-
 PAYOUTS = {
     (SMReel.two, SMReel.two, SMReel.six): {
         "payout": lambda x: x * 50,
@@ -609,8 +608,7 @@ class Economy(commands.Cog):
                 await channel.send(
                     _(
                         "You've reached the maximum amount of {currency}! "
-                        "Please spend some more \N{GRIMACING FACE}\n"
-                        "{old_balance} -> {new_balance}!"
+                        "Please spend some more \N{GRIMACING FACE}\n{old_balance} -> {new_balance}!"
                     ).format(
                         currency=await bank.get_currency_name(getattr(channel, "guild", None)),
                         old_balance=humanize_number(then),

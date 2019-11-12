@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import functools
 import re
@@ -58,7 +59,7 @@ def parse_timedelta(
     """
     This converts a user provided string into a timedelta
 
-    The units should be in order from largest to smallest. 
+    The units should be in order from largest to smallest.
     This works with or without whitespace.
 
     Parameters
@@ -140,9 +141,9 @@ class GuildConverter(discord.Guild):
 class APIToken(discord.ext.commands.Converter):
     """Converts to a `dict` object.
 
-    This will parse the input argument separating the key value pairs into a 
+    This will parse the input argument separating the key value pairs into a
     format to be used for the core bots API token storage.
-    
+
     This will split the argument by either `;` ` `, or `,` and return a dict
     to be stored. Since all API's are different and have different naming convention,
     this leaves the onus on the cog creator to clearly define how to setup the correct
@@ -154,10 +155,10 @@ class APIToken(discord.ext.commands.Converter):
     """
 
     async def convert(self, ctx, argument) -> dict:
+        bot = ctx.bot
         result = {}
-        match = re.split(r"[;, ]", argument)
-        # Provide two options to split incase for
-        # whatever reason one is part of the api key we're using
+        match = re.split(r";|,| ", argument)
+        # provide two options to split incase for whatever reason one is part of the api key we're using
         if len(match) > 1:
             result[match[0]] = "".join(r for r in match[1:])
         else:
@@ -169,7 +170,7 @@ class APIToken(discord.ext.commands.Converter):
 
 class DictConverter(dpy_commands.Converter):
     """
-    Converts pairs of space separated values to a dict
+    Converts pairs of space seperated values to a dict
     """
 
     def __init__(self, *expected_keys: str, delims: Optional[List[str]] = None):
@@ -267,7 +268,7 @@ def get_timedelta_converter(
     """
     This creates a type suitable for typechecking which works with discord.py's
     commands.
-    
+
     See `parse_timedelta` for more information about how this functions.
 
     Parameters

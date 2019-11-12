@@ -1,7 +1,18 @@
+# -*- coding: utf-8 -*-
+from __future__ import annotations
+
+# Standard Library
+from typing import TYPE_CHECKING, List
+
+if TYPE_CHECKING:
+    from .repo_manager import Candidate
+
+
 __all__ = [
     "DownloaderException",
     "GitException",
     "InvalidRepoName",
+    "CopyingError",
     "ExistingGitRepo",
     "MissingGitRepo",
     "CloningError",
@@ -10,6 +21,8 @@ __all__ = [
     "UpdateError",
     "GitDiffError",
     "NoRemoteURL",
+    "UnknownRevision",
+    "AmbiguousRevision",
     "PipError",
 ]
 
@@ -32,6 +45,15 @@ class InvalidRepoName(DownloaderException):
     """
     Throw when a repo name is invalid. Check
     the message for a more detailed reason.
+    """
+
+    pass
+
+
+class CopyingError(DownloaderException):
+    """
+    Throw when there was an issue
+    during copying of module's files.
     """
 
     pass
@@ -103,6 +125,24 @@ class NoRemoteURL(GitException):
     """
 
     pass
+
+
+class UnknownRevision(GitException):
+    """
+    Thrown when specified revision cannot be found.
+    """
+
+    pass
+
+
+class AmbiguousRevision(GitException):
+    """
+    Thrown when specified revision is ambiguous.
+    """
+
+    def __init__(self, message: str, candidates: List[Candidate]) -> None:
+        super().__init__(message)
+        self.candidates = candidates
 
 
 class PipError(DownloaderException):

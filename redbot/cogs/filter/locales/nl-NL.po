@@ -146,4 +146,3 @@ msgstr "Gefilterde bijnaam"
 #: redbot/cogs/filter/filter.py:458
 msgid "Filtered name"
 msgstr "Gefilterde naam"
-

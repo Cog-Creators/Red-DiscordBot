@@ -230,4 +230,3 @@ msgstr "Vous ne pouvez pas supprimer les avertissements de vous-même."
 #: redbot/cogs/warnings/warnings.py:421
 msgid "That warning doesn't exist!"
 msgstr "Cet avertissement n'existe pas !"
-

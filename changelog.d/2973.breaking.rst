@@ -1,0 +1,1 @@
+Reserves some command names for internal Red use. These are available programatically as ``redbot.core.commands.RESERVED_COMMAND_NAMES``

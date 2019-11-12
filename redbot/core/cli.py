@@ -1,18 +1,45 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import argparse
 import asyncio
 import logging
+import sys
+
+from typing import Optional
 
 
-def confirm(m=""):
-    return input(m).lower().strip() in ("y", "yes")
+def confirm(text: str, default: Optional[bool] = None) -> bool:
+    if default is None:
+        options = "y/n"
+    elif default is True:
+        options = "Y/n"
+    elif default is False:
+        options = "y/N"
+    else:
+        raise TypeError(f"expected bool, not {type(default)}")
+
+    while True:
+        try:
+            value = input(f"{text}: [{options}] ").lower().strip()
+        except (KeyboardInterrupt, EOFError):
+            print("\nAborted!")
+            sys.exit(1)
+        if value in ("y", "yes"):
+            return True
+        if value in ("n", "no"):
+            return False
+        if value == "":
+            if default is not None:
+                return default
+        print("Error: invalid input")
 
 
-def interactive_config(red, token_set, prefix_set):
+def interactive_config(red, token_set, prefix_set, *, print_header=True):
     loop = asyncio.get_event_loop()
     token = ""
 
-    print("Red - Discord Bot | Configuration process\n")
+    if print_header:
+        print("Red - Discord Bot | Configuration process\n")
 
     if not token_set:
         print("Please enter a valid token:")
@@ -22,7 +49,7 @@ def interactive_config(red, token_set, prefix_set):
                 print("That doesn't look like a valid token.")
                 token = ""
             if token:
-                loop.run_until_complete(red.db.token.set(token))
+                loop.run_until_complete(red._config.token.set(token))
 
     if not prefix_set:
         prefix = ""
@@ -36,11 +63,10 @@ def interactive_config(red, token_set, prefix_set):
         while not prefix:
             prefix = input("Prefix> ")
             if len(prefix) > 10:
-                print("Your prefix seems overly long. Are you sure that it's correct? (y/n)")
-                if not confirm("> "):
+                if not confirm("Your prefix seems overly long. Are you sure that it's correct?"):
                     prefix = ""
             if prefix:
-                loop.run_until_complete(red.db.prefix.set([prefix]))
+                loop.run_until_complete(red._config.prefix.set([prefix]))
 
     return token
 
@@ -56,6 +82,37 @@ def parse_cli_flags(args):
         help="List all instance names setup with 'redbot-setup'",
     )
     parser.add_argument(
+        "--edit",
+        action="store_true",
+        help="Edit the instance. This can be done without console interaction "
+        "by passing --no-prompt and arguments that you want to change (available arguments: "
+        "--edit-instance-name, --edit-data-path, --copy-data, --owner, --token).",
+    )
+    parser.add_argument(
+        "--edit-instance-name",
+        type=str,
+        help="New name for the instance. This argument only works with --edit argument passed.",
+    )
+    parser.add_argument(
+        "--overwrite-existing-instance",
+        action="store_true",
+        help="Confirm overwriting of existing instance when changing name."
+        " This argument only works with --edit argument passed.",
+    )
+    parser.add_argument(
+        "--edit-data-path",
+        type=str,
+        help=(
+            "New data path for the instance. This argument only works with --edit argument passed."
+        ),
+    )
+    parser.add_argument(
+        "--copy-data",
+        action="store_true",
+        help="Copy data from old location. This argument only works "
+        "with --edit and --edit-data-path arguments passed.",
+    )
+    parser.add_argument(
         "--owner",
         type=int,
         help="ID of the owner. Only who hosts "
@@ -66,7 +123,7 @@ def parse_cli_flags(args):
         "--co-owner",
         type=int,
         default=[],
-        nargs="*",
+        nargs="+",
         help="ID of a co-owner. Only people who have access "
         "to the system that is hosting Red should be  "
         "co-owners, as this gives them complete access "
@@ -88,7 +145,7 @@ def parse_cli_flags(args):
     parser.add_argument(
         "--load-cogs",
         type=str,
-        nargs="*",
+        nargs="+",
         help="Force loading specified cogs from the installed packages. "
         "Can be used with the --no-cogs flag to load these cogs exclusively.",
     )
@@ -117,6 +174,12 @@ def parse_cli_flags(args):
         "--rpc",
         action="store_true",
         help="Enables the built-in RPC server. Please read the docs prior to enabling this!",
+    )
+    parser.add_argument(
+        "--rpc-port",
+        type=int,
+        default=6133,
+        help="The port of the built-in RPC server to use. Default to 6133.",
     )
     parser.add_argument("--token", type=str, help="Run Red with the given token.")
     parser.add_argument(

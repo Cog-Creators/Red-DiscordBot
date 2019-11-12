@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import asyncio
 import io
@@ -42,8 +43,6 @@ _NewConfigSchema = Dict[str, Dict[int, Dict[str, Dict[int, bool]]]]
 # runtime.
 translate = _
 _ = lambda s: s
-
-
 YAML_SCHEMA = Schema(
     Or(
         {
@@ -286,7 +285,9 @@ class Permissions(commands.Cog):
         await self._permissions_acl_set(ctx, guild_id=ctx.guild.id, update=True)
 
     @checks.is_owner()
-    @permissions.command(name="addglobalrule")
+    @permissions.command(
+        name="addglobalrule", usage="<allow_or_deny> <cog_or_command> <who_or_what>..."
+    )
     async def permissions_addglobalrule(
         self,
         ctx: commands.Context,
@@ -306,6 +307,14 @@ class Permissions(commands.Cog):
         if not who_or_what:
             await ctx.send_help()
             return
+        if isinstance(cog_or_command.obj, commands.commands._AlwaysAvailableCommand):
+            await ctx.send(
+                _(
+                    "This command is designated as being always available and "
+                    "cannot be modified by permission rules."
+                )
+            )
+            return
         for w in who_or_what:
             await self._add_rule(
                 rule=cast(bool, allow_or_deny),
@@ -317,7 +326,11 @@ class Permissions(commands.Cog):
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    @permissions.command(name="addserverrule", aliases=["addguildrule"])
+    @permissions.command(
+        name="addserverrule",
+        usage="<allow_or_deny> <cog_or_command> <who_or_what>...",
+        aliases=["addguildrule"],
+    )
     async def permissions_addguildrule(
         self,
         ctx: commands.Context,
@@ -337,6 +350,14 @@ class Permissions(commands.Cog):
         if not who_or_what:
             await ctx.send_help()
             return
+        if isinstance(cog_or_command.obj, commands.commands._AlwaysAvailableCommand):
+            await ctx.send(
+                _(
+                    "This command is designated as being always available and "
+                    "cannot be modified by permission rules."
+                )
+            )
+            return
         for w in who_or_what:
             await self._add_rule(
                 rule=cast(bool, allow_or_deny),
@@ -347,7 +368,7 @@ class Permissions(commands.Cog):
         await ctx.send(_("Rule added."))
 
     @checks.is_owner()
-    @permissions.command(name="removeglobalrule")
+    @permissions.command(name="removeglobalrule", usage="<cog_or_command> <who_or_what>...")
     async def permissions_removeglobalrule(
         self,
         ctx: commands.Context,
@@ -370,7 +391,11 @@ class Permissions(commands.Cog):
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    @permissions.command(name="removeserverrule", aliases=["removeguildrule"])
+    @permissions.command(
+        name="removeserverrule",
+        usage="<cog_or_command> <who_or_what>...",
+        aliases=["removeguildrule"],
+    )
     async def permissions_removeguildrule(
         self,
         ctx: commands.Context,
@@ -543,7 +568,7 @@ class Permissions(commands.Cog):
 
         Handles config.
         """
-        self.bot.clear_permission_rules(guild_id)
+        self.bot.clear_permission_rules(guild_id, preserve_default_rule=False)
         for category in (COG, COMMAND):
             async with self.config.custom(category).all() as all_rules:
                 for name, rules in all_rules.items():

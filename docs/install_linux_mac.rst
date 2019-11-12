@@ -18,8 +18,8 @@ Please install the pre-requirements using the commands listed for your operating
 
 The pre-requirements are:
  - Python 3.7.0 or greater
- - pip 9.0 or greater
- - git
+ - Pip 9.0 or greater
+ - Git
  - Java Runtime Environment 8 or later (for audio support)
 
 We also recommend installing some basic compiler tools, in case our dependencies don't provide
@@ -265,17 +265,11 @@ Choose one of the following commands to install Red.
 
         python3.7 -m pip install --user -U Red-DiscordBot
 
-To install without MongoDB support:
+To install without additional config backend support:
 
 .. code-block:: none
 
     python3.7 -m pip install -U Red-DiscordBot
-
-Or, to install with MongoDB support:
-
-.. code-block:: none
-
-    python3.7 -m pip install -U Red-DiscordBot[mongo]
 
 Or, to install with PostgreSQL support:
 
@@ -314,14 +308,9 @@ Once done setting up the instance, run the following command to run Red:
 
 It will walk through the initial setup, asking for your token and a prefix.
 You can find out how to obtain a token with
-`this guide <https://discordpy.readthedocs.io/en/v1.0.1/discord.html#creating-a-bot-account>`_,
+:dpy_docs:`this guide <discord.html#creating-a-bot-account>`,
 section "Creating a Bot Account".
 
-You may also run Red via the launcher, which allows you to restart the bot
-from discord, and enable auto-restart. You may also update the bot from the
-launcher menu. Use the following command to run the launcher:
-
-.. code-block:: none
-
-    redbot-launcher
-
+.. tip::
+   If it's the first time you're using Red, you should check our `getting-started` guide
+   that will walk you through all essential information on how to interact with Red.

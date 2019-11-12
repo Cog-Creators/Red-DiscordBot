@@ -81,4 +81,3 @@ msgstr ""
 #: redbot/cogs/cleanup/converters.py:12
 msgid "{} doesn't look like a valid message ID."
 msgstr "{} sieht nicht wie eine gültige Nachrichten ID aus."
-

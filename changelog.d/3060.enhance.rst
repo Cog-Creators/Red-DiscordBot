@@ -1,0 +1,1 @@
+All ``y/n`` confirmations in cli commands are now unified.

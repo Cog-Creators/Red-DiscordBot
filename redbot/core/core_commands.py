@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import asyncio
 import contextlib
@@ -13,6 +14,8 @@ import traceback
 
 from collections import namedtuple
 from pathlib import Path
+from random import SystemRandom
+from string import ascii_letters, digits
 from typing import TYPE_CHECKING, Dict, Iterable, List, Optional, Sequence, Tuple, Union
 
 # Red Dependencies
@@ -88,7 +91,7 @@ class CoreLogic:
 
         for name in cog_names:
             try:
-                spec = await bot.cog_mgr.find_cog(name)
+                spec = await bot._cog_mgr.find_cog(name)
                 if spec:
                     cogspecs.append((spec, name))
                 else:
@@ -130,7 +133,7 @@ class CoreLogic:
 
     @staticmethod
     def _cleanup_and_refresh_modules(module_name: str) -> None:
-        """Integrally reloads modules so that changes are detected"""
+        """Interally reloads modules so that changes are detected"""
         splitted = module_name.split(".")
 
         def maybe_reload(new_name):
@@ -299,6 +302,7 @@ class Core(commands.Cog, CoreLogic):
             "Red is backed by a passionate community who contributes and "
             "creates content for everyone to enjoy. [Join us today]({}) "
             "and help us improve!\n\n"
+            "(c) Cog Creators"
         ).format(red_repo, author_repo, org_repo, support_server_url)
 
         embed = discord.Embed(color=(await ctx.embed_colour()))
@@ -327,9 +331,10 @@ class Core(commands.Cog, CoreLogic):
         """Shows Red's uptime"""
         since = ctx.bot.uptime.strftime("%Y-%m-%d %H:%M:%S")
         delta = datetime.datetime.utcnow() - self.bot.uptime
+        uptime_str = humanize_timedelta(timedelta=delta) or _("Less than one second")
         await ctx.send(
-            _("Been up for: **{}** (since {} UTC)").format(
-                humanize_timedelta(timedelta=delta), since
+            _("Been up for: **{time_quantity}** (since {timestamp} UTC)").format(
+                time_quantity=uptime_str, timestamp=since
             )
         )
 
@@ -492,7 +497,7 @@ class Core(commands.Cog, CoreLogic):
         For that, you need to provide a valid permissions level.
         You can generate one here: https://discordapi.com/permissions.html
 
-        Please note that you might need two factor authentication for\
+        Please note that you might need two factor authentification for\
         some permissions.
         """
         await self.bot._config.invite_perm.set(level)
@@ -1135,7 +1140,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.is_owner()
     async def api(self, ctx: commands.Context, service: str, *, tokens: TokenConverter):
         """Set various external API tokens.
-        
+
         This setting will be asked for by some 3rd party cogs and some core cogs.
 
         To add the keys provide the service name and the tokens as a comma separated
@@ -1146,7 +1151,7 @@ class Core(commands.Cog, CoreLogic):
         """
         if ctx.channel.permissions_for(ctx.me).manage_messages:
             await ctx.message.delete()
-        await ctx.bot._config.api_tokens.set_raw(service, value=tokens)
+        await ctx.bot.set_shared_api_tokens(service, **tokens)
         await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
 
     @commands.group()
@@ -1161,7 +1166,7 @@ class Core(commands.Cog, CoreLogic):
         Allows the help command to be sent as a paginated menu instead of seperate
         messages.
 
-        This defaults to False. 
+        This defaults to False.
         Using this without a setting will toggle.
         """
         if use_menus is None:
@@ -1289,7 +1294,7 @@ class Core(commands.Cog, CoreLogic):
             return
 
         await ctx.bot._config.help.tagline.set(tagline)
-        await ctx.send(_("The tagline has been set to {}.").format(tagline[:1900]))
+        await ctx.send(_("The tagline has been set."))
 
     @commands.command()
     @checks.is_owner()
@@ -1552,21 +1557,21 @@ class Core(commands.Cog, CoreLogic):
         if sys.platform == "linux":
             import distro  # pylint: disable=import-error
 
-        is_windows = os.name == "nt"
-        is_mac = sys.platform == "darwin"
-        is_linux = sys.platform == "linux"
+        IS_WINDOWS = os.name == "nt"
+        IS_MAC = sys.platform == "darwin"
+        IS_LINUX = sys.platform == "linux"
 
         pyver = "{}.{}.{} ({})".format(*sys.version_info[:3], platform.architecture()[0])
         pipver = pip.__version__
         redver = red_version_info
         dpy_version = discord.__version__
-        if is_windows:
+        if IS_WINDOWS:
             os_info = platform.uname()
             osver = "{} {} (version {})".format(os_info.system, os_info.release, os_info.version)
-        elif is_mac:
+        elif IS_MAC:
             os_info = platform.mac_ver()
             osver = "Mac OSX {} {}".format(os_info[0], os_info[2])
-        elif is_linux:
+        elif IS_LINUX:
             os_info = distro.linux_distribution()
             osver = "{} {}".format(os_info[0], os_info[1]).strip()
         else:
@@ -1906,6 +1911,12 @@ class Core(commands.Cog, CoreLogic):
             )
             return
 
+        if isinstance(command_obj, commands.commands._AlwaysAvailableCommand):
+            await ctx.send(
+                _("This command is designated as being always available and cannot be disabled.")
+            )
+            return
+
         async with ctx.bot._config.disabled_commands() as disabled_commands:
             if command not in disabled_commands:
                 disabled_commands.append(command_obj.qualified_name)
@@ -1931,6 +1942,12 @@ class Core(commands.Cog, CoreLogic):
         if self.command_manager in command_obj.parents or self.command_manager == command_obj:
             await ctx.send(
                 _("The command to disable cannot be `command` or any of its subcommands.")
+            )
+            return
+
+        if isinstance(command_obj, commands.commands._AlwaysAvailableCommand):
+            await ctx.send(
+                _("This command is designated as being always available and cannot be disabled.")
             )
             return
 
@@ -2054,7 +2071,7 @@ class Core(commands.Cog, CoreLogic):
             output += ", ".join(members)
 
         if not output:
-            output = _("No immunity settings here.")
+            output = _("No immunty settings here.")
 
         for page in pagify(output):
             await ctx.send(page)
@@ -2109,7 +2126,7 @@ class Core(commands.Cog, CoreLogic):
     @ownernotifications.command()
     async def optin(self, ctx: commands.Context):
         """
-        Opt-in on receiving owner notifications.
+        Opt-in on recieving owner notifications.
 
         This is the default state.
         """
@@ -2122,7 +2139,7 @@ class Core(commands.Cog, CoreLogic):
     @ownernotifications.command()
     async def optout(self, ctx: commands.Context):
         """
-        Opt-out of receiving owner notifications.
+        Opt-out of recieving owner notifications.
         """
         async with ctx.bot._config.owner_opt_out_list() as opt_outs:
             if ctx.author.id not in opt_outs:
@@ -2135,7 +2152,7 @@ class Core(commands.Cog, CoreLogic):
         self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
     ):
         """
-        Adds a destination text channel to receive owner notifications
+        Adds a destination text channel to recieve owner notifications
         """
 
         try:
@@ -2154,7 +2171,7 @@ class Core(commands.Cog, CoreLogic):
         self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
     ):
         """
-        Removes a destination text channel from receiving owner notifications.
+        Removes a destination text channel from recieving owner notifications.
         """
 
         try:
@@ -2198,7 +2215,7 @@ class Core(commands.Cog, CoreLogic):
     async def rpc_load(self, request):
         cog_name = request.params[0]
 
-        spec = await self.bot.cog_mgr.find_cog(cog_name)
+        spec = await self.bot._cog_mgr.find_cog(cog_name)
         if spec is None:
             raise LookupError("No such cog found.")
 
@@ -2214,3 +2231,21 @@ class Core(commands.Cog, CoreLogic):
     async def rpc_reload(self, request):
         await self.rpc_unload(request)
         await self.rpc_load(request)
+
+
+# Removing this command from forks is a violation of the GPLv3 under which it is licensed.
+# Otherwise interfering with the ability for this command to be accessible is also a violation.
+@commands.command(cls=commands.commands._AlwaysAvailableCommand, name="licenseinfo", i18n=_)
+async def license_info_command(ctx):
+    """
+    Get info about Red's licenses
+    """
+
+    message = (
+        "This bot is an instance of Red-DiscordBot (hereafter refered to as Red)\n"
+        "Red is a free and open source application made available to the public and "
+        "licensed under the GNU GPLv3. The full text of this license is available to you at "
+        "<https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/LICENSE>"
+    )
+    await ctx.send(message)
+    # We need a link which contains a thank you to other projects which we use at some point.

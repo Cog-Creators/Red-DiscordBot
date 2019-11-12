@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Red Dependencies
 import colorama as _colorama
 import discord as _discord

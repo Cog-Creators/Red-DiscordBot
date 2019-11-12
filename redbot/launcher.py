@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import argparse
 import asyncio
@@ -71,9 +72,6 @@ def parse_cli_args():
         "--style", help="Installs extra 'style' when updating", action="store_true"
     )
     parser.add_argument(
-        "--mongo", help="Installs extra 'mongo' when updating", action="store_true"
-    )
-    parser.add_argument(
         "--debuginfo",
         help="Prints basic debug info that would be useful for support",
         action="store_true",
@@ -81,7 +79,7 @@ def parse_cli_args():
     return parser.parse_known_args()
 
 
-def update_red(dev=False, style=False, mongo=False, docs=False, test=False):
+def update_red(dev=False, style=False, docs=False, test=False):
     interpreter = sys.executable
     print("Updating Red...")
     # If the user ran redbot-launcher.exe, updating with pip will fail
@@ -100,8 +98,6 @@ def update_red(dev=False, style=False, mongo=False, docs=False, test=False):
     egg_l = []
     if style:
         egg_l.append("style")
-    if mongo:
-        egg_l.append("mongo")
     if docs:
         egg_l.append("docs")
     if test:
@@ -268,7 +264,7 @@ async def reset_red():
         print("Cancelling...")
         return
 
-    if confirm("\nDo you want to create a backup for an instance? (y/n) "):
+    if confirm("\nDo you want to create a backup for an instance?"):
         for index, instance in instances.items():
             print("\nRemoving {}...".format(index))
             await create_backup(index)
@@ -297,7 +293,7 @@ def user_choice():
 
 def extras_selector():
     print("Enter any extra requirements you want installed\n")
-    print("Options are: style, docs, test, mongo\n")
+    print("Options are: style, docs, test\n")
     selected = user_choice()
     selected = selected.split()
     return selected
@@ -322,7 +318,6 @@ def development_choice(can_go_back=True):
                 style=True if "style" in selected else False,
                 docs=True if "docs" in selected else False,
                 test=True if "test" in selected else False,
-                mongo=True if "mongo" in selected else False,
             )
             break
         elif choice == "2":
@@ -332,7 +327,6 @@ def development_choice(can_go_back=True):
                 style=True if "style" in selected else False,
                 docs=True if "docs" in selected else False,
                 test=True if "test" in selected else False,
-                mongo=True if "mongo" in selected else False,
             )
             break
         elif choice == "0" and can_go_back:
@@ -426,8 +420,7 @@ def main_menu():
                 clear_screen()
                 print("==== Reinstall Red ====")
                 print(
-                    "1. Reinstall Red requirements "
-                    "(discard code changes, keep data and 3rd party cogs)"
+                    "1. Reinstall Red requirements (discard code changes, keep data and 3rd party cogs)"
                 )
                 print("2. Reset all data")
                 print("3. Factory reset (discard code changes, reset all data)")
@@ -455,9 +448,10 @@ def main():
     args, flags_to_pass = parse_cli_args()
     if not PYTHON_OK:
         print(
-            f"Python {'.'.join(map(str, MIN_PYTHON_VERSION))} is required to run Red, but you "
-            f"have {sys.version}! Please update Python."
-        )
+            "Python {req_ver} is required to run Red, but you have {sys_ver}!".format(
+                req_ver=".".join(map(str, MIN_PYTHON_VERSION)), sys_ver=sys.version
+            )
+        )  # Don't make an f-string, these may not exist on the python version being rejected!
         sys.exit(1)
     if args.debuginfo:  # Check first since the function triggers an exit
         debug_info()
@@ -468,9 +462,9 @@ def main():
             "Please try again using only one of --update or --update-dev"
         )
     if args.update:
-        update_red(style=args.style, docs=args.docs, test=args.test, mongo=args.mongo)
+        update_red(style=args.style, docs=args.docs, test=args.test)
     elif args.update_dev:
-        update_red(dev=True, style=args.style, docs=args.docs, test=args.test, mongo=args.mongo)
+        update_red(dev=True, style=args.style, docs=args.docs, test=args.test)
 
     if INTERACTIVE_MODE:
         main_menu()

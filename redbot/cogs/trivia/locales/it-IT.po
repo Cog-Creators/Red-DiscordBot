@@ -278,4 +278,3 @@ msgstr "Punteggio Totale"
 #: redbot/cogs/trivia/trivia.py:420
 msgid "Average Score"
 msgstr "Punteggio Medio"
-

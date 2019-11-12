@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import asyncio
 
@@ -15,9 +16,8 @@ from redbot.core.utils.mod import get_audit_reason, is_allowed_by_hierarchy
 from .abc import MixinMeta
 
 T_ = i18n.Translator("Mod", __file__)
+
 _ = lambda s: s
-
-
 mute_unmute_issues = {
     "already_muted": _("That user can't send messages in this channel."),
     "already_unmuted": _("That user isn't muted in this channel."),

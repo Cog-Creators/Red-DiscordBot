@@ -146,4 +146,3 @@ msgstr "Filtre adı"
 #: redbot/cogs/filter/filter.py:458
 msgid "Filtered name"
 msgstr "Filtre adı"
-

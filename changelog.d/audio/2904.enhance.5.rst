@@ -1,0 +1,1 @@
+When shuffle is on queue now shows correct play order.

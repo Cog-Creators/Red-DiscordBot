@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import asyncio
 import contextlib
@@ -72,7 +73,7 @@ class KickBanMixin(MixinMeta):
         days: int = 0,
         reason: str = None,
         create_modlog_case=False,
-    ) -> Union[str, bool, Exception]:
+    ) -> Union[str, bool]:
         author = ctx.author
         guild = ctx.guild
 
@@ -91,6 +92,7 @@ class KickBanMixin(MixinMeta):
 
         audit_reason = get_audit_reason(author, reason)
 
+        queue_entry = (guild.id, user.id)
         try:
             await guild.ban(user, reason=audit_reason, delete_message_days=days)
             log.info(
@@ -101,7 +103,7 @@ class KickBanMixin(MixinMeta):
         except discord.Forbidden:
             return _("I'm not allowed to do that.")
         except Exception as e:
-            return e  # FIXME: improper return type? Is this intended to be re-raised?
+            return e  # TODO: impproper return type? Is this intended to be re-raised?
 
         if create_modlog_case:
             try:
@@ -133,15 +135,20 @@ class KickBanMixin(MixinMeta):
                         unban_time = datetime.utcfromtimestamp(
                             await self.settings.member(member(uid, guild)).banned_until()
                         )
-                        now = datetime.utcnow()
-                        if now > unban_time:  # Time to unban the user
+                        if datetime.utcnow() > unban_time:  # Time to unban the user
                             user = await self.bot.fetch_user(uid)
+                            queue_entry = (guild.id, user.id)
                             try:
                                 await guild.unban(user, reason=_("Tempban finished"))
                                 guild_tempbans.remove(uid)
-                            except discord.Forbidden:
-                                log.info("Failed to unban member due to permissions")
                             except discord.HTTPException as e:
+                                # 50013: Missing permissions error code or 403: Forbidden status
+                                if e.code == 50013 or e.status == 403:
+                                    log.info(
+                                        f"Failed to unban {user}({user.id}) user from "
+                                        f"{guild.name}({guild.id}) guild due to permissions"
+                                    )
+                                    break  # skip the rest of this guild
                                 log.info(f"Failed to unban member: error code: {e.code}")
             await asyncio.sleep(60)
 
@@ -320,6 +327,7 @@ class KickBanMixin(MixinMeta):
         for user_id in user_ids:
             user = discord.Object(id=user_id)
             audit_reason = get_audit_reason(author, reason)
+            queue_entry = (guild.id, user_id)
             try:
                 await guild.ban(user, reason=audit_reason, delete_message_days=days)
                 log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
@@ -369,6 +377,7 @@ class KickBanMixin(MixinMeta):
         if invite is None:
             invite = ""
 
+        queue_entry = (guild.id, user.id)
         await self.settings.member(user).banned_until.set(unban_time.timestamp())
         cur_tbans = await self.settings.guild(guild).current_tempbans()
         cur_tbans.append(user.id)
@@ -440,6 +449,7 @@ class KickBanMixin(MixinMeta):
         if invite is None:
             invite = ""
 
+        queue_entry = (guild.id, user.id)
         try:  # We don't want blocked DMs preventing us from banning
             msg = await user.send(
                 _(
@@ -560,6 +570,7 @@ class KickBanMixin(MixinMeta):
         if user not in bans:
             await ctx.send(_("It seems that user isn't banned!"))
             return
+        queue_entry = (guild.id, user.id)
         try:
             await guild.unban(user, reason=audit_reason)
         except discord.HTTPException:

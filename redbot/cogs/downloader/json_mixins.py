@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import json
 
 from pathlib import Path
+from typing import Any, Dict, Optional, Tuple
 
 
 class RepoJSONMixin:
@@ -10,18 +12,18 @@ class RepoJSONMixin:
     def __init__(self, repo_folder: Path):
         self._repo_folder = repo_folder
 
-        self.author = None
-        self.install_msg = None
-        self.short = None
-        self.description = None
+        self.author: Optional[Tuple[str, ...]] = None
+        self.install_msg: Optional[str] = None
+        self.short: Optional[str] = None
+        self.description: Optional[str] = None
 
         self._info_file = repo_folder / self.INFO_FILE_NAME
         if self._info_file.exists():
             self._read_info_file()
 
-        self._info = {}
+        self._info: Dict[str, Any] = {}
 
-    def _read_info_file(self):
+    def _read_info_file(self) -> None:
         if not (self._info_file.exists() or self._info_file.is_file()):
             return
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import logging
 import re
@@ -412,7 +413,6 @@ class Cleanup(commands.Cog):
             is_cc = lambda name: name in command_names
         else:
             is_cc = lambda name: False
-
         alias_cog = self.bot.get_cog("Alias")
         if alias_cog is not None:
             alias_names: Set[str] = (

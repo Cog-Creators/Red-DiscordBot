@@ -1,0 +1,1 @@
+Playlists are now stored in 3 different scopes ``GLOBALPLAYLIST``, ``GUILDPLAYLIST``, ``USERPLAYLIST``.

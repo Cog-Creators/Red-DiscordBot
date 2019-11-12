@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import asyncio
 import json
@@ -34,7 +35,7 @@ import discord
 from fuzzywuzzy import fuzz, process
 
 # Red Relative Imports
-from .. import data_manager
+from .. import commands, data_manager
 from .chat_formatting import box
 
 if TYPE_CHECKING:
@@ -249,7 +250,7 @@ async def fuzzy_command_search(
 
         try:
             await cmd_obj.get(ctx.message, term)
-        except Exception:
+        except:
             pass
         else:
             return

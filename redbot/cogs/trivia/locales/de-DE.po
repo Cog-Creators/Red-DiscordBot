@@ -278,4 +278,3 @@ msgstr "Gesamtpunktzahl"
 #: redbot/cogs/trivia/trivia.py:420
 msgid "Average Score"
 msgstr "Durchschnittliche Punktzahl"
-

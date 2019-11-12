@@ -293,4 +293,3 @@ msgstr "minutter"
 #: redbot/cogs/economy/economy.py:678
 msgid "seconds"
 msgstr "sekunder"
-

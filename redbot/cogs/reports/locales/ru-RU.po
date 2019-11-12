@@ -144,4 +144,3 @@ msgstr "У этого пользователя отключены личные �
 #: redbot/cogs/reports/reports.py:374
 msgid "You have opened a 2-way communication about ticket number {ticket_number}."
 msgstr "Вы открыли двустороннее сообщение о номере тикета {ticket_number}."
-

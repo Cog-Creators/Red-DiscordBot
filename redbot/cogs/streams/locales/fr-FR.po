@@ -297,4 +297,3 @@ msgstr "NSFW | "
 #: redbot/cogs/streams/streamtypes.py:365
 msgid "{adult}Category: {category} | Tags: {tags}"
 msgstr "{adult}Catégorie : {category} | Tags : {tags}"
-

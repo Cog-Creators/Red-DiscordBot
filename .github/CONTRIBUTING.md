@@ -57,7 +57,7 @@ The following requirements must be installed prior to setting up:
  - Python 3.7.0 or greater
  - git
  - pip
- 
+
 If you're not on Windows, you should also have GNU make installed, and you can optionally install [pyenv](https://github.com/pyenv/pyenv), which can help you run tests for different python versions.
 
 1. Fork and clone the repository to a directory on your local machine.
@@ -76,7 +76,7 @@ If you're not on Windows, you should also have GNU make installed, and you can o
         .venv\Scripts\activate
         ```
     Each time you open a new command line, you should execute this command first. From here onwards, we will assume you are executing commands from within this activated virtual environment.
- 
+
 **Note:** If you're comfortable with setting up virtual environments yourself and would rather do it manually, just run `pip install -Ur tools/dev-requirements.txt` after setting it up.
 
 ### 4.2 Testing

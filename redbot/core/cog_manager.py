@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import contextlib
 import pkgutil
@@ -323,7 +324,7 @@ class CogManagerUI(commands.Cog):
         """
         Lists current cog paths in order of priority.
         """
-        cog_mgr = ctx.bot.cog_mgr
+        cog_mgr = ctx.bot._cog_mgr
         install_path = await cog_mgr.install_path()
         core_path = cog_mgr.CORE_PATH
         cog_paths = await cog_mgr.user_defined_paths()
@@ -350,9 +351,9 @@ class CogManagerUI(commands.Cog):
             return
 
         try:
-            await ctx.bot.cog_mgr.add_path(path)
+            await ctx.bot._cog_mgr.add_path(path)
         except ValueError as e:
-            await ctx.send(e)
+            await ctx.send(str(e))
         else:
             await ctx.send(_("Path successfully added."))
 
@@ -368,14 +369,14 @@ class CogManagerUI(commands.Cog):
             await ctx.send(_("Path numbers must be positive."))
             return
 
-        cog_paths = await ctx.bot.cog_mgr.user_defined_paths()
+        cog_paths = await ctx.bot._cog_mgr.user_defined_paths()
         try:
             to_remove = cog_paths.pop(path_number)
         except IndexError:
             await ctx.send(_("That is an invalid path number."))
             return
 
-        await ctx.bot.cog_mgr.remove_path(to_remove)
+        await ctx.bot._cog_mgr.remove_path(to_remove)
         await ctx.send(_("Path successfully removed."))
 
     @commands.command()
@@ -391,7 +392,7 @@ class CogManagerUI(commands.Cog):
             await ctx.send(_("Path numbers must be positive."))
             return
 
-        all_paths = await ctx.bot.cog_mgr.user_defined_paths()
+        all_paths = await ctx.bot._cog_mgr.user_defined_paths()
         try:
             to_move = all_paths.pop(from_)
         except IndexError:
@@ -404,7 +405,7 @@ class CogManagerUI(commands.Cog):
             await ctx.send(_("Invalid 'to' index."))
             return
 
-        await ctx.bot.cog_mgr.set_paths(all_paths)
+        await ctx.bot._cog_mgr.set_paths(all_paths)
         await ctx.send(_("Paths reordered."))
 
     @commands.command()
@@ -419,14 +420,14 @@ class CogManagerUI(commands.Cog):
         """
         if path:
             if not path.is_absolute():
-                path = (ctx.bot.main_dir / path).resolve()
+                path = (ctx.bot._main_dir / path).resolve()
             try:
-                await ctx.bot.cog_mgr.set_install_path(path)
+                await ctx.bot._cog_mgr.set_install_path(path)
             except ValueError:
                 await ctx.send(_("That path does not exist."))
                 return
 
-        install_path = await ctx.bot.cog_mgr.install_path()
+        install_path = await ctx.bot._cog_mgr.install_path()
         await ctx.send(
             _("The bot will install new cogs to the `{}` directory.").format(install_path)
         )
@@ -439,7 +440,7 @@ class CogManagerUI(commands.Cog):
         """
         loaded = set(ctx.bot.extensions.keys())
 
-        all_cogs = set(await ctx.bot.cog_mgr.available_modules())
+        all_cogs = set(await ctx.bot._cog_mgr.available_modules())
 
         unloaded = all_cogs - loaded
 

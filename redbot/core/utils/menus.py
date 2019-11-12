@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Original source of reaction-based menu idea from
 # https://github.com/Lunar-Dust/Dusty-Cogs/blob/master/menu/menu.py
 #

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Red Imports
 from redbot import core
 from redbot.core import VersionInfo

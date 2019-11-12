@@ -151,4 +151,3 @@ msgstr "등록된 별칭 리스트 :"
 #, docstring
 msgid "List the available global aliases on this bot."
 msgstr ""
-

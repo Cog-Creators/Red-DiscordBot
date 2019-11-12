@@ -1,0 +1,1 @@
+Add ``|DPY_VERSION|`` substitution that will automatically get replaced by current discord.py version.

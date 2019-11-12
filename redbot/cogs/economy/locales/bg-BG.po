@@ -293,4 +293,3 @@ msgstr "минути"
 #: redbot/cogs/economy/economy.py:678
 msgid "seconds"
 msgstr "секунди"
-

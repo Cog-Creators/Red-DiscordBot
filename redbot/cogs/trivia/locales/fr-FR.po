@@ -278,4 +278,3 @@ msgstr "Score Total"
 #: redbot/cogs/trivia/trivia.py:420
 msgid "Average Score"
 msgstr "Score moyen"
-

@@ -233,4 +233,3 @@ msgstr "Cette commande ne semble pas exister."
 #: redbot/cogs/downloader/repo_manager.py:91
 msgid "Repo by the name \\\"{repo_name}\\\" does not exist."
 msgstr "Le repo avec le nom \\\"{repo_name}\\\" n'existe pas."
-

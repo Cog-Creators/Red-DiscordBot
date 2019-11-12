@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import asyncio
 
@@ -9,9 +10,8 @@ from redbot.core.utils.predicates import MessagePredicate
 __all__ = ["do_install_agreement"]
 
 T_ = Translator("DownloaderChecks", __file__)
+
 _ = lambda s: s
-
-
 REPO_INSTALL_MSG = _(
     "You're about to add a 3rd party repository. The creator of Red"
     " and its community have no responsibility for any potential "
@@ -24,7 +24,7 @@ REPO_INSTALL_MSG = _(
 _ = T_
 
 
-async def do_install_agreement(ctx: commands.Context):
+async def do_install_agreement(ctx: commands.Context) -> bool:
     downloader = ctx.cog
     if downloader is None or downloader.already_agreed:
         return True

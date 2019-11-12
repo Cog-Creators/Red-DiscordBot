@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Red Dependencies
 from discord.ext.commands import *
 

@@ -1410,4 +1410,3 @@ msgstr ""
 #: redbot/core/modlog.py:249
 msgid "**Last modified at:** {}\\n"
 msgstr ""
-

@@ -183,4 +183,3 @@ msgstr "De admin cog is niet geladen."
 #: redbot/cogs/admin/converters.py:34
 msgid "The provided role is not a valid selfrole."
 msgstr "De ingevulde rol is geen beschikbare selfrole."
-

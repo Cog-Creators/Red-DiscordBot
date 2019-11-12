@@ -13,14 +13,23 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+# Standard Library
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-
-# Standard Library
 import os
 import sys
+
+# Red Dependencies
+from discord import __version__ as dpy_version
+
+# Red Imports
+# The version info for the project you're documenting, acts as replacement for
+# |version| and |release|, also used in various other places throughout the
+# built documents.
+#
+from redbot.core import __version__
 
 sys.path.insert(0, os.path.abspath(".."))
 
@@ -38,6 +47,7 @@ os.environ["BUILDING_DOCS"] = "1"
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.extlinks",
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
@@ -59,14 +69,9 @@ master_doc = "index"
 
 # General information about the project.
 project = "Red - Discord Bot"
-copyright = "2018, Cog Creators"
+copyright = "2018-2019, Cog Creators"
 author = "Cog Creators"
 
-# The version info for the project you're documenting, acts as replacement for
-# |version| and |release|, also used in various other places throughout the
-# built documents.
-#
-from redbot.core import __version__  # isort:skip
 
 # The short X.Y version.
 version = __version__
@@ -94,6 +99,12 @@ todo_include_todos = False
 # Role which is assigned when you make a simple reference within backticks
 default_role = "any"
 
+# Includes substitutions for all files
+with open("prolog.txt", "r") as file:
+    rst_prolog = file.read()
+
+# Adds d.py version to available substitutions in all files
+rst_prolog += f"\n.. |DPY_VERSION| replace:: {dpy_version}"
 
 # -- Options for HTML output ----------------------------------------------
 
@@ -208,9 +219,14 @@ linkcheck_ignore = [r"https://java.com*", r"https://chocolatey.org*"]
 # Intersphinx
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "dpy": ("https://discordpy.readthedocs.io/en/v1.0.1/", None),
+    "dpy": (f"https://discordpy.readthedocs.io/en/v{dpy_version}/", None),
     "motor": ("https://motor.readthedocs.io/en/stable/", None),
 }
+
+# Extlinks
+# This allows to create links to d.py docs with
+# :dpy_docs:`link text <site_name.html>`
+extlinks = {"dpy_docs": (f"https://discordpy.readthedocs.io/en/v{dpy_version}/%s", None)}
 
 # Doctest
 # If this string is non-empty, all blocks with ``>>>`` in them will be

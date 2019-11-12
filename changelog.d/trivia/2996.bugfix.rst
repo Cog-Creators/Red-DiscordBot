@@ -1,0 +1,1 @@
+Fixed a question in Overwatch accepting blank responses.

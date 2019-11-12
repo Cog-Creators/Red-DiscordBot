@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 from collections import namedtuple
 from typing import Optional, Union
@@ -362,7 +363,9 @@ class Warnings(commands.Cog):
                     warning(_("You are not allowed to check warnings for other users!"))
                 )
 
-            if not hasattr(user, "id"):
+            try:
+                userid: int = user.id
+            except AttributeError:
                 userid: int = user
                 user = ctx.guild.get_member(userid)
                 user = user or namedtuple("Member", "id guild")(userid, ctx.guild)

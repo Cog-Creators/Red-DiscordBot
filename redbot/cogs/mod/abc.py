@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import List, Optional, Tuple
 
 # Red Dependencies
 import discord

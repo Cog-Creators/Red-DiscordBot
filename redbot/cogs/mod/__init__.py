@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Red Imports
 from redbot.core.bot import Red
 

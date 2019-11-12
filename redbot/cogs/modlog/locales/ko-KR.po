@@ -119,4 +119,3 @@ msgstr "사용자님은 해당 사례를 수정할 권한이 없어요!"
 #: redbot/cogs/modlog/modlog.py:190
 msgid "Reason has been updated."
 msgstr "이유가 업데이트됐어요."
-

@@ -230,4 +230,3 @@ msgstr "Du kannst keine Verwarnungen von dir selbst entfernen."
 #: redbot/cogs/warnings/warnings.py:421
 msgid "That warning doesn't exist!"
 msgstr "Diese Warnung existiert nicht!"
-

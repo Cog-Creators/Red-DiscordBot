@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Module for command helpers and classes.
 
 This module contains extended classes and functions which are intended to
@@ -16,6 +17,7 @@ from discord.ext import commands
 
 # Red Relative Imports
 from ..i18n import Translator
+from . import converter as converters
 from .errors import ConversionFailure
 from .requires import PermState, PrivilegeLevel, Requires
 
@@ -32,7 +34,13 @@ __all__ = [
     "GroupMixin",
     "command",
     "group",
+    "RESERVED_COMMAND_NAMES",
 ]
+
+#: The following names are reserved for various reasons
+RESERVED_COMMAND_NAMES = (
+    "cancel",  # reserved due to use in ``redbot.core.utils.MessagePredicate``
+)
 
 _ = Translator("commands.commands", __file__)
 
@@ -159,6 +167,12 @@ class Command(CogCommandMixin, commands.Command):
         super().__init__(*args, **kwargs)
         self._help_override = kwargs.pop("help_override", None)
         self.translator = kwargs.pop("i18n", None)
+        if self.parent is None:
+            for name in (self.name, *self.aliases):
+                if name in RESERVED_COMMAND_NAMES:
+                    raise RuntimeError(
+                        f"The name `{name}` cannot be set as a command name. It is reserved for internal use."
+                    )
 
     def _ensure_assignment_on_copy(self, other):
         super()._ensure_assignment_on_copy(other)
@@ -435,7 +449,7 @@ class Command(CogCommandMixin, commands.Command):
                 @a_command.error
                 async def a_command_error_handler(self, ctx, error):
 
-                    if isinstance(error.original, MyErrorType):
+                    if isinstance(error.original, MyErrrorType):
                         self.log_exception(error.original)
                     else:
                         await ctx.bot.on_command_error(ctx, error.original, unhandled_by_cog=True)
@@ -565,7 +579,7 @@ class Group(GroupMixin, Command, CogGroupMixin, commands.Group):
                 await ctx.send_help()
         elif self.invoke_without_command:
             # So invoke_without_command when a subcommand of this group is invoked
-            # will skip the the invocation of *this* command. However, because of
+            # will skip the the invokation of *this* command. However, because of
             # how our permissions system works, we don't want it to skip the checks
             # as well.
             await self._verify_checks(ctx)
@@ -578,6 +592,14 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
     """Mixin class for a cog, intended for use with discord.py's cog class"""
 
     @property
+    def all_commands(self) -> Dict[str, Command]:
+        """
+        This does not have identical behavior to
+        Group.all_commands but should return what you expect
+        """
+        return {cmd.name: cmd for cmd in self.__cog_commands__}
+
+    @property
     def help(self):
         doc = self.__doc__
         translator = getattr(self, "__translator__", lambda s: s)
@@ -588,7 +610,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         """
         This really just exists to allow easy use with other methods using can_run
         on commands and groups such as help formatters.
-        
+
         kwargs used in that won't apply here as they don't make sense to,
         but will be swallowed silently for a compatible signature for ease of use.
 
@@ -641,7 +663,7 @@ class Cog(CogMixin, commands.Cog):
     This includes a metaclass from discord.py
     """
 
-    # NB: Do not move the inheritance of this. Keeping the mix of that metaclass
+    # NB: Do not move the inheritcance of this. Keeping the mix of that metaclass
     # seperate gives us more freedoms in several places.
     pass
 
@@ -655,12 +677,12 @@ def command(name=None, cls=Command, **attrs):
     return commands.command(name, cls, **attrs)
 
 
-def group(name=None, **attrs):
+def group(name=None, cls=Group, **attrs):
     """A decorator which transforms an async function into a `Group`.
 
     Same interface as `discord.ext.commands.group`.
     """
-    return command(name, cls=Group, **attrs)
+    return command(name, cls, **attrs)
 
 
 __command_disablers = weakref.WeakValueDictionary()
@@ -683,3 +705,29 @@ def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitabl
 
         __command_disablers[guild] = disabler
         return disabler
+
+
+# This is intentionally left out of `__all__` as it is not intended for general use
+class _AlwaysAvailableCommand(Command):
+    """
+    This should be used only for informational commands
+    which should not be disabled or removed
+
+    These commands cannot belong to a cog.
+
+    These commands do not respect most forms of checks, and
+    should only be used with that in mind.
+
+    This particular class is not supported for 3rd party use
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.cog is not None:
+            raise TypeError("This command may not be added to a cog")
+
+    async def can_run(self, ctx, *args, **kwargs) -> bool:
+        return not ctx.author.bot
+
+    async def _verify_checks(self, ctx) -> bool:
+        return not ctx.author.bot

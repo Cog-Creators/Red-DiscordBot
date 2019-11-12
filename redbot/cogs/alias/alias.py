@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 from copy import copy
 from re import findall, search
 from string import Formatter
-from typing import Generator, Iterable, List, Optional, Tuple
+from typing import Generator, Iterable, Optional, Tuple
 
 # Red Dependencies
 import discord
@@ -95,8 +96,12 @@ class Alias(commands.Cog):
         return False, None
 
     def is_command(self, alias_name: str) -> bool:
+        """
+        The logic here is that if this returns true, the name shouldnt be used for an alias
+        The function name can be changed when alias is reworked
+        """
         command = self.bot.get_command(alias_name)
-        return command is not None
+        return command is not None or alias_name in commands.RESERVED_COMMAND_NAMES
 
     @staticmethod
     def is_valid_alias_name(alias_name: str) -> bool:
@@ -169,18 +174,17 @@ class Alias(commands.Cog):
                 return p
         raise ValueError(_("No prefix found."))
 
-    @staticmethod
     def get_extra_args_from_alias(
-        message: discord.Message, prefix: str, alias: AliasEntry
-    ) -> List[str]:
+        self, message: discord.Message, prefix: str, alias: AliasEntry
+    ) -> str:
         """
         When an alias is executed by a user in chat this function tries
             to get any extra arguments passed in with the call.
             Whitespace will be trimmed from both ends.
-        :param message: 
-        :param prefix: 
-        :param alias: 
-        :return: 
+        :param message:
+        :param prefix:
+        :param alias:
+        :return:
         """
         known_content_length = len(prefix) + len(alias.name)
         extra = message.content[known_content_length:]
@@ -220,7 +224,7 @@ class Alias(commands.Cog):
         new_message = copy(message)
         try:
             args = self.get_extra_args_from_alias(message, prefix, alias)
-        except commands.BadArgument:
+        except commands.BadArgument as bae:
             return
 
         trackform = _TrackingFormatter()

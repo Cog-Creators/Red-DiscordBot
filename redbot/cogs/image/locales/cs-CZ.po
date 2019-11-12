@@ -100,4 +100,3 @@ msgstr ""
 #: redbot/cogs/image/image.py:228
 msgid "To get a Giphy API Key:\\n1. Login to a Giphy account.\\n2. Visit [this](https://developers.giphy.com/dashboard) page\\n3. Press `Create an App`\\n4. Write an app name, example: `Red Bot`\\n5. Write an app description, example: `Used for Red Bot`\\n6. Copy the API key shown.\\n7. Do `{prefix}set api GIPHY api_key,your_api_key`\\n"
 msgstr ""
-

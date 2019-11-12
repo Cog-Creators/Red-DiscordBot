@@ -1,0 +1,1 @@
+``[p]audioset restrictions`` can be used to add or remove keywords which songs must have or are not allowed to have.

@@ -1,0 +1,1 @@
+Add 3rd-party lib folder to ``sys.path`` before loading cogs. This prevents issues with 3rd-party cogs failing to load without loaded Downloader due to unavailable requirements.

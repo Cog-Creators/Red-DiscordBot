@@ -119,4 +119,3 @@ msgstr "Du bist nicht berechtigt diesen Fall zu ändern!"
 #: redbot/cogs/modlog/modlog.py:190
 msgid "Reason has been updated."
 msgstr "Der Grund wurde aktualisiert."
-

@@ -183,4 +183,3 @@ msgstr "O cog 'Admin' não está carregado."
 #: redbot/cogs/admin/converters.py:34
 msgid "The provided role is not a valid selfrole."
 msgstr "O cargo indicado não é um cargo definível válido."
-

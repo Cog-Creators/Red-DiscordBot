@@ -168,7 +168,7 @@ If you're looking to clear data for a single guild/member/channel/role/user,
 you want to use :py:meth:`Group.clear` as that will clear the data only for the
 specified thing.
 
-If using :py:meth:`Config.clear_all`, it will reset all data everywhere. 
+If using :py:meth:`Config.clear_all`, it will reset all data everywhere.
 
 There are other methods provided to reset data from a particular scope. For
 example, :py:meth:`Config.clear_all_guilds` resets all guild data. For member
@@ -427,9 +427,4 @@ Base Driver
 JSON Driver
 ^^^^^^^^^^^
 .. autoclass:: redbot.core.drivers.JsonDriver
-    :members:
-
-Mongo Driver
-^^^^^^^^^^^^
-.. autoclass:: redbot.core.drivers.MongoDriver
     :members:

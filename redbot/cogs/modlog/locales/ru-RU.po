@@ -119,4 +119,3 @@ msgstr "Вы не уполномочены изменять этот случа�
 #: redbot/cogs/modlog/modlog.py:190
 msgid "Reason has been updated."
 msgstr "Причина была обновлена."
-

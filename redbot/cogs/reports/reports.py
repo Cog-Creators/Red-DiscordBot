@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import asyncio
 import contextlib
@@ -31,7 +32,7 @@ class Reports(commands.Cog):
 
     default_report = {"report": {}}
 
-    # This can be made configurable later if it
+    # This can be made configureable later if it
     # becomes an issue.
     # Intervals should be a list of tuples in the form
     # (period: timedelta, max_frequency: int)
@@ -331,7 +332,7 @@ class Reports(commands.Cog):
         """
 
         guild = ctx.guild
-        rec = await self.config.custom("REPORT", guild.id, str(ticket_number)).report()
+        rec = await self.config.custom("REPORT", guild.id, ticket_number).report()
 
         try:
             user = guild.get_member(rec.get("user_id"))
@@ -356,8 +357,8 @@ class Reports(commands.Cog):
             "(8MB file size limitation on uploads) "
             "will be forwarded to them until the communication is closed.\n"
             "You can close a communication at any point by reacting with "
-            "the \N{NEGATIVE SQUARED CROSS MARK} to the last message received.\n"
-            "Any message successfully forwarded will be marked with "
+            "the \N{NEGATIVE SQUARED CROSS MARK} to the last message recieved.\n"
+            "Any message succesfully forwarded will be marked with "
             "\N{WHITE HEAVY CHECK MARK}.\n"
             "Tunnels are not persistent across bot restarts."
         )

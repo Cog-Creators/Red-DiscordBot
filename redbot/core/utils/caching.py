@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import collections
 
@@ -43,8 +44,7 @@ class LRUDict:
     def pop(self, key):
         return self._dict.pop(key)
 
-    # All of the below access all of the items, and
-    # therefore shouldn't modify the ordering for eviction
+    # all of the below access all of the items, and therefore shouldnt modify the ordering for eviction
     def keys(self):
         return self._dict.keys()
 

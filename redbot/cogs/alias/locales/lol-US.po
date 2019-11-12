@@ -151,4 +151,3 @@ msgstr "Aliazes:"
 #, docstring
 msgid "List the available global aliases on this bot."
 msgstr ""
-

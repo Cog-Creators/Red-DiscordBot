@@ -83,4 +83,3 @@ msgstr "Supprimer les messages appartenant au bot.\\n\\n        Par défaut, tou
 #: redbot/cogs/cleanup/converters.py:12
 msgid "{} doesn't look like a valid message ID."
 msgstr "{} ne ressemble pas à un ID de message valide."
-

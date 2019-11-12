@@ -151,4 +151,3 @@ msgstr "Takma adlar:"
 #, docstring
 msgid "List the available global aliases on this bot."
 msgstr "Bu botta mevcut küresel takma adları listeleyiniz."
-

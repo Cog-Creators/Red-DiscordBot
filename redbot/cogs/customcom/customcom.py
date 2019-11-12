@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import random
 import re
@@ -182,7 +183,7 @@ class CommandObj:
         await self.db(ctx.guild).commands.set_raw(command, value=ccinfo)
 
     async def delete(self, ctx: commands.Context, command: str):
-        """Delete an already existing custom command"""
+        """Delete an already exisiting custom command"""
         # Check if this command is registered
         if not await self.db(ctx.guild).commands.get_raw(command, default=None):
             raise NotFound()
@@ -208,15 +209,16 @@ class CustomCommands(commands.Cog):
         """Custom commands management."""
         pass
 
-    @customcom.group(name="create", aliases=["add"])
+    @customcom.group(name="create", aliases=["add"], invoke_without_command=True)
     @checks.mod_or_permissions(administrator=True)
-    async def cc_create(self, ctx: commands.Context):
+    async def cc_create(self, ctx: commands.Context, command: str.lower, *, text: str):
         """Create custom commands.
 
+        If a type is not specified, a simple CC will be created.
         CCs can be enhanced with arguments, see the guide
         [here](https://red-discordbot.readthedocs.io/en/v3-develop/cog_customcom.html).
         """
-        pass
+        await ctx.invoke(self.cc_create_simple, command=command, text=text)
 
     @cc_create.command(name="random")
     @checks.mod_or_permissions(administrator=True)
@@ -225,6 +227,9 @@ class CustomCommands(commands.Cog):
 
         Note: This command is interactive.
         """
+        if command in (*self.bot.all_commands, *commands.RESERVED_COMMAND_NAMES):
+            await ctx.send(_("There already exists a bot command with the same name."))
+            return
         responses = await self.commandobj.get_responses(ctx=ctx)
         try:
             await self.commandobj.create(ctx=ctx, command=command, response=responses)
@@ -244,7 +249,7 @@ class CustomCommands(commands.Cog):
         Example:
         - `[p]customcom create simple yourcommand Text you want`
         """
-        if command in self.bot.all_commands:
+        if command in (*self.bot.all_commands, *commands.RESERVED_COMMAND_NAMES):
             await ctx.send(_("There already exists a bot command with the same name."))
             return
         try:
@@ -394,7 +399,7 @@ class CustomCommands(commands.Cog):
 
     @customcom.command(name="show")
     async def cc_show(self, ctx, command_name: str):
-        """Shows a custom command's responses and its settings."""
+        """Shows a custom command's reponses and its settings."""
 
         try:
             cmd = await self.commandobj.get_full(ctx.message, command_name)

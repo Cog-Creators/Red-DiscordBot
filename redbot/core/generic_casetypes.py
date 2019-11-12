@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Contains generic mod action casetypes for use in Red and 3rd party cogs.
 These do not need to be registered to the modlog, as it is done for you.

@@ -68,4 +68,3 @@ msgstr "Bankası'nın para birimi için ayarlayın."
 #: redbot/cogs/bank/bank.py:129
 msgid "Currency name has been set to: {name}"
 msgstr "Para birimi adı ayarla: {name}"
-

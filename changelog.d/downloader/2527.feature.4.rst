@@ -1,0 +1,1 @@
+Added ``[p]cog checkforupdates`` command that will tell which cogs can be updated (including pinned cog) without updating them.

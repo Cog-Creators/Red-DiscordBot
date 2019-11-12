@@ -266,4 +266,3 @@ msgstr ""
 #: redbot/cogs/general/general.py:320
 msgid "{definition}\\n\\n**Example:** {example}"
 msgstr ""
-

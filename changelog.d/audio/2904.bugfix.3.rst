@@ -1,0 +1,1 @@
+``[p]audioset settings`` now uses :code:`ctx.is_owner()` to check if context author is the bot owner.

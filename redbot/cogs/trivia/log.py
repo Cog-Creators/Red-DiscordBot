@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Log for Trivia cog."""
 
 # Standard Library

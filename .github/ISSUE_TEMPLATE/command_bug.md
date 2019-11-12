@@ -1,12 +1,15 @@
 ---
 name: Bug reports for commands
 about: For bugs that involve commands found within Red
+title: ''
+labels: 'Type: Bug'
+assignees: ''
 
 ---
 
 # Command bugs
 
-<!-- 
+<!--
 Did you find a bug with a command? Fill out the following:
 -->
 

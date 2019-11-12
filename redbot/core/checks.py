@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import warnings
 
 from typing import TYPE_CHECKING, Awaitable, Dict
+
+# Red Dependencies
+import discord
 
 # Red Relative Imports
 from .commands import (
@@ -23,6 +27,7 @@ from .utils.mod import (
 )
 
 if TYPE_CHECKING:
+    from .bot import Red
     from .commands import Context
 
 __all__ = [

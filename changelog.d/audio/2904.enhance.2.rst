@@ -1,0 +1,1 @@
+``[p]queue`` now works where there are no tracks in the queue (it shows the current track playing).

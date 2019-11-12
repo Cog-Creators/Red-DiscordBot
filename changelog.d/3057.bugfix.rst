@@ -1,0 +1,1 @@
+Bot will now properly send a message when the invoked command is guild-only.

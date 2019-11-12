@@ -1,0 +1,1 @@
+Fixed a crash seen when calling economy commands in DM with a global bank.

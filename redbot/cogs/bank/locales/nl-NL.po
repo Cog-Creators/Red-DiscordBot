@@ -68,4 +68,3 @@ msgstr "Stel de valuta in."
 #: redbot/cogs/bank/bank.py:129
 msgid "Currency name has been set to: {name}"
 msgstr "Valutanaam is ingesteld op: {name}"
-

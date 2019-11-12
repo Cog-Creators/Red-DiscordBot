@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import abc
 import enum
@@ -265,7 +266,7 @@ class BaseDriver(abc.ABC):
 
         The driver must be initialized before this operation.
 
-        The BaseDriver provides a generic method which may be overridden
+        The BaseDriver provides a generic method which may be overriden
         by subclasses.
 
         Parameters

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import inspect
 import json
@@ -96,14 +97,20 @@ def load_basic_configuration(instance_name_: str):
     try:
         with config_file.open(encoding="utf-8") as fs:
             config = json.load(fs)
-    except (FileNotFoundError, KeyError):
+    except FileNotFoundError:
         print(
             "You need to configure the bot instance using `redbot-setup`"
             " prior to running the bot."
         )
         sys.exit(1)
-    else:
+    try:
         basic_config = config[instance_name]
+    except KeyError:
+        print(
+            "Instance with this name doesn't exist."
+            " You can create new instance using `redbot-setup` prior to running the bot."
+        )
+        sys.exit(1)
 
 
 def _base_data_path() -> Path:
@@ -123,7 +130,7 @@ def cog_data_path(cog_instance=None, raw_name: str = None) -> Path:
     Parameters
     ----------
     cog_instance
-        The instance of the cog you wish to get a data path for. 
+        The instance of the cog you wish to get a data path for.
         If calling from a command or method of your cog, this should be ``self``.
     raw_name : str
         The name of the cog to get a data path for.
@@ -213,6 +220,7 @@ def storage_type() -> str:
     Returns
     -------
     str
+        Storage type.
     """
     try:
         return basic_config["STORAGE_TYPE"]
@@ -228,5 +236,6 @@ def storage_details() -> dict:
     Returns
     -------
     dict
+        Storage details.
     """
     return basic_config.get("STORAGE_DETAILS", {})

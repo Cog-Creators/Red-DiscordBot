@@ -190,4 +190,3 @@ msgstr "Argumente müssen sequentiell sein. Fehlende Argumente: "
 #: redbot/cogs/customcom/customcom.py:555
 msgid "Conflicting colon notation for argument {index}: \\\"{name1}\\\" and \\\"{name2}\\\"."
 msgstr ""
-

@@ -1,0 +1,4 @@
+Added :func:`redbot.cogs.downloader.installable.InstalledModule` which is used instead of :func:`redbot.cogs.downloader.installable.Installable` when we refer to installed cog or shared library.
+Therefore:
+    - ``to_json`` and ``from_json`` methods were moved from :func:`redbot.cogs.downloader.installable.Installable` to :func:`redbot.cogs.downloader.installable.InstalledModule`
+    - return types changed for :func:`redbot.cogs.converter.InstalledCog.convert`, :func:`redbot.cogs.downloader.Downloader.installed_cogs`, :func:`redbot.cogs.downloader.Repo.install_cog` to use :func:`redbot.cogs.downloader.installable.InstalledModule`.

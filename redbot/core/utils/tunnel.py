@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import io
 import weakref
@@ -44,7 +45,7 @@ class TunnelMeta(type):
                     temp = super(TunnelMeta, cls).__call__(*args, **kwargs)
                     _instances[lockout_tuple] = temp
                     return temp
-            except Exception:  # NOQA: E722
+            except:  # NOQA: E722
                 # Am I really supposed to except a runtime error flake >.>
                 continue
             else:
@@ -140,7 +141,9 @@ class Tunnel(metaclass=TunnelMeta):
         return rets
 
     @staticmethod
-    async def files_from_attach(m: discord.Message) -> List[discord.File]:
+    async def files_from_attach(
+        m: discord.Message, *, use_cached: bool = False, images_only: bool = False
+    ) -> List[discord.File]:
         """
         makes a list of file objects from a message
         returns an empty list if none, or if the sum of file sizes
@@ -150,6 +153,10 @@ class Tunnel(metaclass=TunnelMeta):
         ---------
         m: `discord.Message`
             A message to get attachments from
+        use_cached: `bool`
+            Whether to use ``proxy_url`` rather than ``url`` when downloading the attachment
+        images_only: `bool`
+            Whether only image attachments should be added to returned list
 
         Returns
         -------
@@ -161,8 +168,16 @@ class Tunnel(metaclass=TunnelMeta):
         max_size = 8 * 1000 * 1000
         if m.attachments and sum(a.size for a in m.attachments) <= max_size:
             for a in m.attachments:
+                if images_only and a.height is None:
+                    # if this is None, it's not an image
+                    continue
                 _fp = io.BytesIO()
-                await a.save(_fp)
+                try:
+                    await a.save(_fp, use_cached=use_cached)
+                except discord.HTTPException as e:
+                    # this is required, because animated webp files aren't cached
+                    if not (e.status == 415 and images_only and use_cached):
+                        raise
                 files.append(discord.File(_fp, filename=a.filename))
         return files
 

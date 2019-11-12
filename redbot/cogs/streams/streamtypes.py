@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import json
 
-from random import choice
+from random import choice, sample
 from string import ascii_letters
 from typing import ClassVar, Optional
 
@@ -36,7 +37,7 @@ _ = Translator("Streams", __file__)
 
 def rnd(url):
     """Appends a random parameter to the url to avoid Discord's caching"""
-    return url + "?rnd=" + "".join([choice(ascii_letters) for _loop_counter in range(6)])
+    return url + "?rnd=" + "".join([choice(ascii_letters) for i in range(6)])
 
 
 class Stream:

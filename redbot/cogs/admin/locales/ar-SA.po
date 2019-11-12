@@ -183,4 +183,3 @@ msgstr "لم يتم تحميل وحدة الأدمن cog."
 #: redbot/cogs/admin/converters.py:34
 msgid "The provided role is not a valid selfrole."
 msgstr "الرتبة المذكورة ليست على قائمة الرتب الذاتية."
-

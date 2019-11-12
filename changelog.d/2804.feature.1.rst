@@ -1,0 +1,9 @@
+Adds methods to Config for accessing things by id without mocked objects
+
+  - Config.guild_from_id
+  - Config.user_from_id
+  - Config.role_from_id
+  - Config.channel_from_id
+  - Config.member_from_ids
+    - This one requires multiple ids, one for the guild, one for the user
+    - Consequence of discord's object model

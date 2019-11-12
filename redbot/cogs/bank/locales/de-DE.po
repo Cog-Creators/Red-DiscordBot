@@ -68,4 +68,3 @@ msgstr "Lege den Namen für die Währung der Bank fest."
 #: redbot/cogs/bank/bank.py:129
 msgid "Currency name has been set to: {name}"
 msgstr "Währungs Name wurde gesetzt auf: {name}"
-

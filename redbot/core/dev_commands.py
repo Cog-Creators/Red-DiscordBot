@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+"""
+Notice:
+
+95% of the below code came from R.Danny which can be found here:
+
+https://github.com/Rapptz/RoboDanny/blob/master/cogs/repl.py
+"""
 # Standard Library
 import asyncio
 import inspect
@@ -17,14 +25,6 @@ from . import checks, commands
 from .i18n import Translator
 from .utils.chat_formatting import box, pagify
 from .utils.predicates import MessagePredicate
-
-"""
-Notice:
-
-95% of the below code came from R.Danny which can be found here:
-
-https://github.com/Rapptz/RoboDanny/blob/master/cogs/repl.py
-"""
 
 _ = Translator("Dev", __file__)
 
@@ -65,19 +65,10 @@ class Dev(commands.Cog):
         return pagify(msg, delims=["\n", " "], priority=True, shorten_by=10)
 
     @staticmethod
-    def sanitize_output(ctx: commands.Context, keys: dict, input_: str) -> str:
+    def sanitize_output(ctx: commands.Context, input_: str) -> str:
         """Hides the bot's token from a string."""
         token = ctx.bot.http.token
-        r = "[EXPUNGED]"
-        result = input_.replace(token, r)
-        result = result.replace(token.lower(), r)
-        result = result.replace(token.upper(), r)
-        for provider, data in keys.items():
-            for name, key in data.items():
-                result = result.replace(key, r)
-                result = result.replace(key.upper(), r)
-                result = result.replace(key.lower(), r)
-        return result
+        return re.sub(re.escape(token), "[EXPUNGED]", input_, re.I)
 
     @commands.command()
     @checks.is_owner()
@@ -93,7 +84,7 @@ class Dev(commands.Cog):
         lines or asynchronous code, see [p]repl or [p]eval.
 
         Environment Variables:
-            ctx      - command invocation context
+            ctx      - command invokation context
             bot      - bot object
             channel  - the current channel object
             author   - command author's member object
@@ -129,9 +120,7 @@ class Dev(commands.Cog):
             result = await result
 
         self._last_result = result
-
-        api_keys = await ctx.bot._config.api_tokens()
-        result = self.sanitize_output(ctx, api_keys, str(result))
+        result = self.sanitize_output(ctx, str(result))
 
         await ctx.send_interactive(self.get_pages(result), box_lang="py")
 
@@ -148,7 +137,7 @@ class Dev(commands.Cog):
         as they are not mixed and they are formatted correctly.
 
         Environment Variables:
-            ctx      - command invocation context
+            ctx      - command invokation context
             bot      - bot object
             channel  - the current channel object
             author   - command author's member object
@@ -184,7 +173,7 @@ class Dev(commands.Cog):
         try:
             with redirect_stdout(stdout):
                 result = await func()
-        except Exception:
+        except:
             printed = "{}{}".format(stdout.getvalue(), traceback.format_exc())
         else:
             printed = stdout.getvalue()
@@ -195,8 +184,7 @@ class Dev(commands.Cog):
             msg = "{}{}".format(printed, result)
         else:
             msg = printed
-        api_keys = await ctx.bot._config.api_tokens()
-        msg = self.sanitize_output(ctx, api_keys, msg)
+        msg = self.sanitize_output(ctx, msg)
 
         await ctx.send_interactive(self.get_pages(msg), box_lang="py")
 
@@ -269,7 +257,7 @@ class Dev(commands.Cog):
                     result = executor(code, variables)
                     if inspect.isawaitable(result):
                         result = await result
-            except Exception:
+            except:
                 value = stdout.getvalue()
                 msg = "{}{}".format(value, traceback.format_exc())
             else:
@@ -280,8 +268,7 @@ class Dev(commands.Cog):
                 elif value:
                     msg = "{}".format(value)
 
-            api_keys = await ctx.bot._config.api_tokens()
-            msg = self.sanitize_output(ctx, api_keys, msg)
+            msg = self.sanitize_output(ctx, msg)
 
             try:
                 await ctx.send_interactive(self.get_pages(msg), box_lang="py")

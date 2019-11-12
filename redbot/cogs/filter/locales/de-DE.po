@@ -146,4 +146,3 @@ msgstr "Gefilterter Nickname"
 #: redbot/cogs/filter/filter.py:458
 msgid "Filtered name"
 msgstr "Gefilterter Name"
-

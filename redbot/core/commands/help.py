@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+# Warning: The implementation below touches several private attributes.
+# While this implementation will be updated, and public interfaces maintained, derived classes
+# should not assume these private attributes are version safe, and use the provided HelpSettings
+# class for these settings.
+
 # This is a full replacement of discord.py's help command
 #
 # At a later date, there should be things added to support extra formatter
@@ -25,10 +31,13 @@
 # Additionally, this gives our users a bit more customization options including by
 # 3rd party cogs down the road.
 
+# Note: 3rd party help must not remove the copyright notice
+
 # Standard Library
 import asyncio
 
 from collections import namedtuple
+from dataclasses import dataclass
 from typing import AsyncIterator, Iterable, List, Union, cast
 
 # Red Dependencies
@@ -43,7 +52,7 @@ from ..utils.chat_formatting import box, pagify
 from . import commands
 from .context import Context
 
-__all__ = ["red_help", "RedHelpFormatter"]
+__all__ = ["red_help", "RedHelpFormatter", "HelpSettings"]
 
 T_ = Translator("Help", __file__)
 
@@ -54,6 +63,36 @@ SupportsCanSee = Union[commands.Command, commands.Group, dpy_commands.bot.BotBas
 
 EmbedField = namedtuple("EmbedField", "name value inline")
 EMPTY_STRING = "\N{ZERO WIDTH SPACE}"
+
+
+@dataclass(frozen=True)
+class HelpSettings:
+    """
+    A representation of help settings.
+    """
+
+    page_char_limit: int = 1000
+    max_pages_in_guild: int = 2
+    use_menus: bool = False
+    show_hidden: bool = False
+    verify_checks: bool = True
+    verify_exists: bool = False
+    tagline: str = ""
+
+    # Contrib Note: This is intentional to not accept the bot object
+    # There are plans to allow guild and user specific help settings
+    # Adding a non-context based method now would involve a breaking change later.
+    # At a later date, more methods should be exposed for non-context based creation.
+    #
+    # This is also why we aren't just caching the
+    # current state of these settings on the bot object.
+    @classmethod
+    async def from_context(cls, context: Context):
+        """
+        Get the HelpSettings for the current context
+        """
+        settings = await context.bot._config.help.all()
+        return cls(**settings)
 
 
 class NoCommand(Exception):
@@ -75,7 +114,7 @@ class RedHelpFormatter:
     While currently, there is a global formatter, later plans include a context specific
     formatter selector as well as an API for cogs to register/un-register a formatter with the bot.
 
-    When implementing your own formatter, at minimum you must provide an implementation of 
+    When implementing your own formatter, at minimum you must provide an implementation of
     `send_help` with identical signature.
 
     While this exists as a class for easy partial overriding, most implementations
@@ -83,9 +122,9 @@ class RedHelpFormatter:
     """
 
     async def send_help(self, ctx: Context, help_for: HelpTarget = None):
-        """ 
-        This delegates to other functions. 
-        
+        """
+        This delegates to other functions.
+
         For most cases, you should use this and only this directly.
         """
         if help_for is None or isinstance(help_for, dpy_commands.bot.BotBase):
@@ -533,8 +572,9 @@ class RedHelpFormatter:
 
         return com
 
-    @staticmethod
-    async def send_pages(ctx: Context, pages: List[Union[str, discord.Embed]], embed: bool = True):
+    async def send_pages(
+        self, ctx: Context, pages: List[Union[str, discord.Embed]], embed: bool = True
+    ):
         """
         Sends pages based on settings.
         """
@@ -575,7 +615,7 @@ class RedHelpFormatter:
             c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
             # Allow other things to happen during menu timeout/interaction.
             asyncio.create_task(menus.menu(ctx, pages, c, message=m))
-            # menu needs reactions added manually since we fed it a message
+            # menu needs reactions added manually since we fed it a messsage
             menus.start_adding_reactions(m, c.keys())
 
 

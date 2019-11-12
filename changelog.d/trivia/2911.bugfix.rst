@@ -1,0 +1,1 @@
+Fixes a bug where ``[p]trivia leaderboard`` failed to run.

@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
 # Standard Library
+import re
+
 from datetime import timedelta
 
 # Red Imports

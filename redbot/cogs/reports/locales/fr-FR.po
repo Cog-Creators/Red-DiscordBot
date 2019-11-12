@@ -144,4 +144,3 @@ msgstr "Cet utilisateur a ses MP désactivés."
 #: redbot/cogs/reports/reports.py:374
 msgid "You have opened a 2-way communication about ticket number {ticket_number}."
 msgstr "Vous avez ouvert une communication à deux sens sur le numéro de ticket {ticket_number}."
-

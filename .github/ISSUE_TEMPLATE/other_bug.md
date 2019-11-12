@@ -1,12 +1,15 @@
 ---
 name: Bug report
 about: For bugs that don't involve a command.
+title: ''
+labels: 'Type: Bug'
+assignees: ''
 
 ---
 
 # Other bugs
 
-<!-- 
+<!--
 Did you find a bug with something other than a command? Fill out the following:
 -->
 

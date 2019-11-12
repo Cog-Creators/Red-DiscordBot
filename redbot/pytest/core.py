@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import random
 import weakref
@@ -95,8 +96,7 @@ def guild_factory():
     mock_guild = namedtuple("Guild", "id members")
 
     class GuildFactory:
-        @staticmethod
-        def get():
+        def get(self):
             return mock_guild(random.randint(1, 999999999), [])
 
     return GuildFactory()
@@ -124,8 +124,7 @@ def member_factory(guild_factory):
     mock_member = namedtuple("Member", "id guild display_name")
 
     class MemberFactory:
-        @staticmethod
-        def get():
+        def get(self):
             return mock_member(random.randint(1, 999999999), guild_factory.get(), "Testing_Name")
 
     return MemberFactory()
@@ -141,8 +140,7 @@ def user_factory():
     mock_user = namedtuple("User", "id")
 
     class UserFactory:
-        @staticmethod
-        def get():
+        def get(self):
             return mock_user(random.randint(1, 999999999))
 
     return UserFactory()

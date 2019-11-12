@@ -1,16 +1,19 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 from abc import ABC
 from collections import defaultdict
+from typing import List, Tuple
 
 # Red Dependencies
 import discord
 
 # Red Imports
-from redbot.core import Config, commands
+from redbot.core import Config, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 
 # Red Relative Imports
+from .casetypes import CASETYPES
 from .events import Events
 from .kickban import KickBanMixin
 from .movetocore import MoveToCore

@@ -1,0 +1,1 @@
+``[p]autoplay`` can be used to play a song.

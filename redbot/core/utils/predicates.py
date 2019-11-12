@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import re
 
@@ -77,7 +78,7 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         Parameters
         ----------
         ctx : Optional[Context]
-            The current invocation context.
+            The current invokation context.
         channel : Optional[discord.TextChannel]
             The channel we expect a message in. If unspecified,
             defaults to ``ctx.channel``. If ``ctx`` is unspecified
@@ -578,7 +579,7 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         """
         valid_int = cls.valid_int(ctx, channel, user)
         valid_float = cls.valid_float(ctx, channel, user)
-        return cls(lambda self, m: valid_int(m) or valid_float(m) and float(m.content) < value)
+        return cls(lambda self, m: (valid_int(m) or valid_float(m)) and float(m.content) < value)
 
     @classmethod
     def greater(
@@ -609,7 +610,7 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         """
         valid_int = cls.valid_int(ctx, channel, user)
         valid_float = cls.valid_float(ctx, channel, user)
-        return cls(lambda self, m: valid_int(m) or valid_float(m) and float(m.content) > value)
+        return cls(lambda self, m: (valid_int(m) or valid_float(m)) and float(m.content) > value)
 
     @classmethod
     def length_less(

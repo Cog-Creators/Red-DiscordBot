@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 # Standard Library
 import datetime
 import itertools
 
 from io import BytesIO
-from typing import Iterator, List, Optional, Sequence, Union
+from typing import Iterator, List, Optional, Sequence, SupportsInt, Union
 
 # Red Dependencies
 import discord
@@ -207,7 +208,7 @@ def bordered(*columns: Sequence[str], ascii_border: bool = False) -> str:
 
 def pagify(
     text: str,
-    delims: Sequence[str] = None,
+    delims: Sequence[str] = ["\n"],
     *,
     priority: bool = False,
     escape_mass_mentions: bool = True,
@@ -249,8 +250,6 @@ def pagify(
         Pages of the given text.
 
     """
-    if delims is None:
-        delims = ["\n"]
     in_text = text
     page_length -= shorten_by
     while len(in_text) > page_length:
@@ -407,10 +406,32 @@ def format_perms_list(perms: discord.Permissions) -> str:
 
 
 def humanize_timedelta(
-    *, timedelta: Optional[datetime.timedelta] = None, seconds: Optional[int] = None
+    *, timedelta: Optional[datetime.timedelta] = None, seconds: Optional[SupportsInt] = None
 ) -> str:
     """
-    Get a human timedelta representation
+    Get a locale aware human timedelta representation.
+
+    This works with either a timedelta object or a number of seconds.
+
+    Fractional values will be omitted, and values less than 1 second
+    an empty string.
+
+    Parameters
+    ----------
+    timedelta: Optional[datetime.timedelta]
+        A timedelta object
+    seconds: Optional[SupportsInt]
+        A number of seconds
+
+    Returns
+    -------
+    str
+        A locale aware representation of the timedelta or seconds.
+
+    Raises
+    ------
+    ValueError
+        The function was called with neither a number of seconds nor a timedelta object
     """
 
     try:
@@ -475,8 +496,6 @@ def text_to_file(
         The name of the file sent. Defaults to ``file.txt``.
     spoiler: bool
         Whether the attachment is a spoiler. Defaults to ``False``.
-    encoding : str
-        The encoding to save the file as, defaults to UTF-8.
 
     Returns
     -------
