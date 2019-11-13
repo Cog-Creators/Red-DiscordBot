@@ -197,7 +197,7 @@ class LocalPath:
         except OSError:
             return str(self._path)
 
-    def to_string_hidden(self, arg: str = None):
+    def to_string_user(self, arg: str = None):
         string = str(self.absolute()).replace(
             (str(self.localtrack_folder.absolute()) + os.sep) if arg is None else arg, ""
         )
@@ -227,7 +227,7 @@ class LocalPath:
         for folder in folders:
             if folder.exists() and folder.is_dir():
                 return_folders.append(LocalPath(str(folder.absolute())))
-        return sorted(return_folders, key=lambda x: x.to_string_hidden().lower())
+        return sorted(return_folders, key=lambda x: x.to_string_user().lower())
 
     def tracks_in_folder(self):
         tracks = []
@@ -246,7 +246,7 @@ class LocalPath:
         for folder in folders:
             if folder.exists() and folder.is_dir():
                 return_folders.append(LocalPath(str(folder.absolute())))
-        return sorted(return_folders, key=lambda x: x.to_string_hidden().lower())
+        return sorted(return_folders, key=lambda x: x.to_string_user().lower())
 
     def __eq__(self, other):
         if not isinstance(other, LocalPath):
@@ -567,7 +567,7 @@ class Query:
 
     def to_string_user(self):
         if self.is_local:
-            return str(self.track.to_string_hidden())
+            return str(self.track.to_string_user())
         return str(self._raw)
 
     @property

@@ -1814,7 +1814,7 @@ class Audio(commands.Cog):
                 query = audio_dataclasses.Query.process_input(p.current.uri)
                 if query.is_local:
                     if p.current.title == "Unknown title":
-                        current_title = localtracks.LocalPath(p.current.uri).to_string_hidden()
+                        current_title = localtracks.LocalPath(p.current.uri).to_string_user()
                         msg += "{} [`{}`]: **{}**\n".format(
                             p.channel.guild.name, connect_dur, current_title
                         )
@@ -2485,7 +2485,7 @@ class Audio(commands.Cog):
         for track_match, percent_match in search_results:
             if percent_match > 60:
                 search_list.extend(
-                    [i.track.to_string_hidden() for i in to_search if i.track.name == track_match]
+                    [i.track.to_string_user() for i in to_search if i.track.name == track_match]
                 )
         return search_list
 
@@ -6084,7 +6084,7 @@ class Audio(commands.Cog):
                     (
                         _("Playing: ")
                         + "**{current.author} - {current.title}**".format(current=player.current),
-                        audio_dataclasses.LocalPath(player.current.uri).to_string_hidden(),
+                        audio_dataclasses.LocalPath(player.current.uri).to_string_user(),
                         _("Requested by: **{user}**\n").format(user=player.current.requester),
                         f"{arrow}`{pos}`/`{dur}`\n\n",
                     )
@@ -6093,7 +6093,7 @@ class Audio(commands.Cog):
                 queue_list += "\n".join(
                     (
                         _("Playing: ")
-                        + audio_dataclasses.LocalPath(player.current.uri).to_string_hidden(),
+                        + audio_dataclasses.LocalPath(player.current.uri).to_string_user(),
                         _("Requested by: **{user}**\n").format(user=player.current.requester),
                         f"{arrow}`{pos}`/`{dur}`\n\n",
                     )
@@ -6120,7 +6120,7 @@ class Audio(commands.Cog):
                 if track.title == "Unknown title":
                     queue_list += f"`{track_idx}.` " + ", ".join(
                         (
-                            bold(audio_dataclasses.LocalPath(track.uri).to_string_hidden()),
+                            bold(audio_dataclasses.LocalPath(track.uri).to_string_user()),
                             _("requested by **{user}**\n").format(user=req_user),
                         )
                     )
@@ -6179,7 +6179,7 @@ class Audio(commands.Cog):
             if not match_url(track.uri):
                 query = audio_dataclasses.Query.process_input(track)
                 if track.title == "Unknown title":
-                    track_title = query.track.to_string_hidden()
+                    track_title = query.track.to_string_user()
                 else:
                     track_title = "{} - {}".format(track.author, track.title)
             else:
@@ -6206,7 +6206,7 @@ class Audio(commands.Cog):
         ):
             track_idx = i + 1
             if type(track) is str:
-                track_location = audio_dataclasses.LocalPath(track).to_string_hidden()
+                track_location = audio_dataclasses.LocalPath(track).to_string_user()
                 track_match += "`{}.` **{}**\n".format(track_idx, track_location)
             else:
                 track_match += "`{}.` **{}**\n".format(track[0], track[1])
@@ -6776,10 +6776,10 @@ class Audio(commands.Cog):
                 localtrack = audio_dataclasses.LocalPath(search_choice.uri)
                 if search_choice.title != "Unknown title":
                     description = "**{} - {}**\n{}".format(
-                        search_choice.author, search_choice.title, localtrack.to_string_hidden()
+                        search_choice.author, search_choice.title, localtrack.to_string_user()
                     )
                 else:
-                    description = localtrack.to_string_hidden()
+                    description = localtrack.to_string_user()
             else:
                 description = "**[{}]({})**".format(search_choice.title, search_choice.uri)
         except AttributeError:
@@ -6861,7 +6861,7 @@ class Audio(commands.Cog):
                     search_list += "`{0}.` **{1}**\n[{2}]\n".format(
                         search_track_num,
                         track.title,
-                        audio_dataclasses.LocalPath(track.uri).to_string_hidden(),
+                        audio_dataclasses.LocalPath(track.uri).to_string_user(),
                     )
                 else:
                     search_list += "`{0}.` **[{1}]({2})**\n".format(
