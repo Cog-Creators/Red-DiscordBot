@@ -1877,6 +1877,28 @@ class Core(commands.Cog, CoreLogic):
         """Manage the bot's commands."""
         pass
 
+    @command_manager.command()
+    async def listdisabled(self, ctx: commands.Context, guild: bool = False):
+        """
+        List disabled commands.
+
+        guild: Set to `True` to see disabled commands in the current guild.
+        """
+        disabled_list = (
+            await self.bot._config.disabled_commands()
+            if not guild
+            else await self.bot._config.guild(ctx.guild).disabled_commands()
+        )
+        msg = _("{num:,} command{plural} {are} disabled {type}.\n").format(
+            num=len(disabled_list),
+            plural=_("s") if len(disabled_list) > 1 else "",
+            are=_("are") if len(disabled_list) > 1 else _("is"),
+            type=_("globally") if not guild else _("in {}").format(ctx.guild),
+        )
+        msg += box(", ".join(disabled_list))
+        for page in pagify(msg):
+            await ctx.send(page)
+
     @command_manager.group(name="disable", invoke_without_command=True)
     async def command_disable(self, ctx: commands.Context, *, command: str):
         """Disable a command.
