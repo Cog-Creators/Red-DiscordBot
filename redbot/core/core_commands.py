@@ -287,19 +287,20 @@ class Core(commands.Cog, CoreLogic):
         app_info = await self.bot.application_info()
         owner = app_info.owner
         custom_info = await self.bot._config.custom_info()
+        bot_nick = ctx.bot.user.name
 
         async with aiohttp.ClientSession() as session:
             async with session.get("{}/json".format(red_pypi)) as r:
                 data = await r.json()
         outdated = VersionInfo.from_str(data["info"]["version"]) > red_version_info
         about = _(
-            "This is an instance of [Red, an open source Discord bot]({}) "
+            "{} is an instance of [Red, an open source Discord bot]({}) "
             "created by [Twentysix]({}) and [improved by many]({}).\n\n"
             "Red is backed by a passionate community who contributes and "
             "creates content for everyone to enjoy. [Join us today]({}) "
             "and help us improve!\n\n"
             "(c) Cog Creators"
-        ).format(red_repo, author_repo, org_repo, support_server_url)
+        ).format(bot_name, red_repo, author_repo, org_repo, support_server_url)
 
         embed = discord.Embed(color=(await ctx.embed_colour()))
         embed.add_field(name=_("Instance owned by"), value=str(owner))
