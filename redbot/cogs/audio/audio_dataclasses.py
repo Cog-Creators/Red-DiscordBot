@@ -189,7 +189,7 @@ class LocalPath(ChdirClean):
         for track in self.multirglob(*[f"*{ext}" for ext in self._supported_music_ext]):
             if track.exists() and track.is_file() and track.parent != self.localtrack_folder:
                 tracks.append(Query.process_input(LocalPath(str(track.absolute()))))
-        return tracks
+        return sorted(tracks, key=lambda s: str(s).casefold())
 
     def subfolders_in_tree(self):
         files = list(self.multirglob(*[f"*{ext}" for ext in self._supported_music_ext]))
@@ -201,14 +201,14 @@ class LocalPath(ChdirClean):
         for folder in folders:
             if folder.exists() and folder.is_dir():
                 return_folders.append(LocalPath(str(folder.absolute())))
-        return return_folders
+        return sorted(return_folders, key=lambda s: str(s).casefold())
 
     def tracks_in_folder(self):
         tracks = []
         for track in self.multiglob(*[f"*{ext}" for ext in self._supported_music_ext]):
             if track.exists() and track.is_file() and track.parent != self.localtrack_folder:
                 tracks.append(Query.process_input(LocalPath(str(track.absolute()))))
-        return tracks
+        return sorted(tracks, key=lambda s: str(s).casefold())
 
     def subfolders(self):
         files = list(self.multiglob(*[f"*{ext}" for ext in self._supported_music_ext]))
@@ -220,7 +220,7 @@ class LocalPath(ChdirClean):
         for folder in folders:
             if folder.exists() and folder.is_dir():
                 return_folders.append(LocalPath(str(folder.absolute())))
-        return return_folders
+        return sorted(return_folders, key=lambda s: str(s).casefold())
 
 
 class Query:
