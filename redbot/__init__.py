@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio as _asyncio
 import re as _re
 import sys as _sys
@@ -115,7 +113,7 @@ class VersionInfo:
         else:
             return cls(**data)
 
-    def to_json(self) -> _Dict[str, _Union[int, str]]:
+    def to_json(self,) -> _Dict[str, _Union[int, str]]:
         return {
             "major": self.major,
             "minor": self.minor,

@@ -1,11 +1,8 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 
 from datetime import timedelta
 from typing import TYPE_CHECKING, Dict, Iterable, List, Union
 
-# Red Dependencies
 import discord
 
 if TYPE_CHECKING:
@@ -51,7 +48,7 @@ async def mass_purge(messages: List[discord.Message], channel: discord.TextChann
         await asyncio.sleep(1.5)
 
 
-async def slow_deletion(messages: Iterable[discord.Message]):
+async def slow_deletion(messages: Iterable[discord.Message],):
     """Delete a list of messages one at a time.
 
     Any exceptions raised when trying to delete the message will be silenced.

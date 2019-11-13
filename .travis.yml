@@ -30,10 +30,10 @@ jobs:
     # These jobs only occur on tag creation if the prior ones succeed
     - stage: PyPi Deployment
       if: tag IS present
-      python: 3.7.5
+      python: 3.7.2
       env:
         - DEPLOYING=true
-        - TOXENV=py37
+        - TOXENV=py36
       deploy:
         - provider: pypi
           distributions: sdist bdist_wheel
@@ -46,10 +46,10 @@ jobs:
             tags: true
     - stage: Crowdin Deployment
       if: tag IS present
-      python: 3.7.5
+      python: 3.7.2
       env:
         - DEPLOYING=true
-        - TOXENV=py37
+        - TOXENV=py36
       before_deploy:
       - curl https://artifacts.crowdin.com/repo/GPG-KEY-crowdin | sudo apt-key add -
       - echo "deb https://artifacts.crowdin.com/repo/deb/ /" | sudo tee -a /etc/apt/sources.list

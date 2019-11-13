@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import re
 
 from typing import Callable, ClassVar, List, Optional, Pattern, Sequence, Tuple, Union, cast
 
-# Red Dependencies
 import discord
 
-# Red Imports
 from redbot.core import commands
 
 _ID_RE = re.compile(r"([0-9]{15,21})$")

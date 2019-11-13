@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
 from __future__ import annotations
 
-# Standard Library
 import asyncio
 import functools
 import os
@@ -28,15 +26,12 @@ from typing import (
     Tuple,
 )
 
-# Red Dependencies
 import discord
 
-# Red Imports
 from redbot.core import Config, commands, data_manager
 from redbot.core.i18n import Translator
 from redbot.core.utils import safe_delete
 
-# Red Relative Imports
 from . import errors
 from .installable import Installable, InstallableType, InstalledModule
 from .json_mixins import RepoJSONMixin
@@ -70,7 +65,7 @@ class _RepoCheckoutCtxManager(
         self.force_checkout = force_checkout
         self.coro = repo._checkout(self.rev, force_checkout=self.force_checkout)
 
-    def __await__(self) -> Generator[Any, None, None]:
+    def __await__(self,) -> Generator[Any, None, None]:
         return self.coro.__await__()
 
     async def __aenter__(self) -> None:
@@ -169,7 +164,7 @@ class Repo(RepoJSONMixin):
             )
         return poss_repo
 
-    def _existing_git_repo(self) -> Tuple[bool, Path]:
+    def _existing_git_repo(self,) -> Tuple[bool, Path]:
         git_path = self.folder_path / ".git"
         return git_path.exists(), git_path
 
@@ -257,7 +252,7 @@ class Repo(RepoJSONMixin):
         ret = {}
 
         for filename in stdout:
-            status, __, filepath = filename.partition("\x00")  # NUL character
+            (status, __, filepath) = filename.partition("\x00")  # NUL character
             ret[filepath] = status
 
         return ret
@@ -464,7 +459,7 @@ class Repo(RepoJSONMixin):
 
         return p.stdout.decode().strip()
 
-    def _update_available_modules(self) -> Tuple[Installable, ...]:
+    def _update_available_modules(self,) -> Tuple[Installable, ...]:
         """
         Updates the available modules attribute for this repo.
         :return: List of available modules.
@@ -481,7 +476,7 @@ class Repo(RepoJSONMixin):
                         Installable(location=name)
                     )
         """
-        for file_finder, name, is_pkg in pkgutil.iter_modules(path=[str(self.folder_path)]):
+        for (file_finder, name, is_pkg) in pkgutil.iter_modules(path=[str(self.folder_path)]):
             if is_pkg:
                 curr_modules.append(
                     Installable(location=self.folder_path / name, repo=self, commit=self.commit)
@@ -590,7 +585,7 @@ class Repo(RepoJSONMixin):
 
         return _RepoCheckoutCtxManager(self, rev, exit_to_rev, force_checkout)
 
-    async def clone(self) -> Tuple[Installable, ...]:
+    async def clone(self,) -> Tuple[Installable, ...]:
         """Clone a new repo.
 
         Returns
@@ -938,7 +933,7 @@ class Repo(RepoJSONMixin):
         return True
 
     @property
-    def available_cogs(self) -> Tuple[Installable, ...]:
+    def available_cogs(self,) -> Tuple[Installable, ...]:
         """`tuple` of `installable` : All available cogs in this Repo.
 
         This excludes hidden or shared packages.
@@ -949,7 +944,7 @@ class Repo(RepoJSONMixin):
         )
 
     @property
-    def available_libraries(self) -> Tuple[Installable, ...]:
+    def available_libraries(self,) -> Tuple[Installable, ...]:
         """`tuple` of `installable` : All available shared libraries in this
         Repo.
         """
@@ -992,7 +987,7 @@ class RepoManager:
         return name in self._repos
 
     @staticmethod
-    def validate_and_normalize_repo_name(name: str) -> str:
+    def validate_and_normalize_repo_name(name: str,) -> str:
         if not name.isidentifier():
             raise errors.InvalidRepoName("Not a valid Python variable name.")
         return name.lower()
@@ -1053,7 +1048,7 @@ class RepoManager:
     def repos(self) -> Tuple[Repo, ...]:
         return tuple(self._repos.values())
 
-    def get_all_repo_names(self) -> Tuple[str, ...]:
+    def get_all_repo_names(self,) -> Tuple[str, ...]:
         """Get all repo names.
 
         Returns
@@ -1064,7 +1059,7 @@ class RepoManager:
         # noinspection PyTypeChecker
         return tuple(self._repos.keys())
 
-    def get_all_cogs(self) -> Tuple[Installable, ...]:
+    def get_all_cogs(self,) -> Tuple[Installable, ...]:
         """Get all cogs.
 
         Returns
@@ -1122,7 +1117,7 @@ class RepoManager:
         old, new = await repo.update()
         return repo, (old, new)
 
-    async def update_all_repos(self) -> Dict[Repo, Tuple[str, str]]:
+    async def update_all_repos(self,) -> Dict[Repo, Tuple[str, str]]:
         """Call `Repo.update` on all repositories.
 
         Returns
@@ -1134,7 +1129,7 @@ class RepoManager:
         """
         ret = {}
         for repo_name, __ in self._repos.items():
-            repo, (old, new) = await self.update_repo(repo_name)
+            (repo, (old, new)) = await self.update_repo(repo_name)
             if old != new:
                 ret[repo] = (old, new)
         return ret

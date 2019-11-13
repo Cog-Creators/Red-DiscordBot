@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
 from __future__ import annotations
 
-# Standard Library
 import distutils.dir_util
 import json
 import shutil
@@ -10,10 +8,8 @@ from enum import IntEnum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Dict, MutableMapping, Optional, Tuple, Union, cast
 
-# Red Imports
 from redbot.core import VersionInfo, __version__, version_info as red_version_info
 
-# Red Relative Imports
 from .json_mixins import RepoJSONMixin
 from .log import log
 
@@ -258,7 +254,7 @@ class InstalledModule(Installable):
         # this is here so that Downloader could use real repo name instead of "MISSING_REPO"
         self._json_repo_name = json_repo_name
 
-    def to_json(self) -> Dict[str, Union[str, bool]]:
+    def to_json(self,) -> Dict[str, Union[str, bool]]:
         module_json: Dict[str, Union[str, bool]] = {
             "repo_name": self.repo_name,
             "module_name": self.name,

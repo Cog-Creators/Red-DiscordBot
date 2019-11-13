@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 import json
 import logging
@@ -29,12 +27,10 @@ from typing import (
     Union,
 )
 
-# Red Dependencies
 import discord
 
 from fuzzywuzzy import fuzz, process
 
-# Red Relative Imports
 from .. import commands, data_manager
 from .chat_formatting import box
 
@@ -110,17 +106,17 @@ class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=du
         else:
             raise TypeError("Must be either an async predicate, an async iterable, or both.")
 
-    async def __sync_generator_async_pred(self) -> AsyncIterator[_T]:
+    async def __sync_generator_async_pred(self,) -> AsyncIterator[_T]:
         for item in self.__iterable:
             if await self.__func(item):
                 yield item
 
-    async def __async_generator_sync_pred(self) -> AsyncIterator[_T]:
+    async def __async_generator_sync_pred(self,) -> AsyncIterator[_T]:
         async for item in self.__iterable:
             if self.__func(item):
                 yield item
 
-    async def __async_generator_async_pred(self) -> AsyncIterator[_T]:
+    async def __async_generator_async_pred(self,) -> AsyncIterator[_T]:
         async for item in self.__iterable:
             if await self.__func(item):
                 yield item
@@ -240,7 +236,7 @@ async def fuzzy_command_search(
     # If the term is an alias or CC, we don't want to send a supplementary fuzzy search.
     alias_cog = ctx.bot.get_cog("Alias")
     if alias_cog is not None:
-        is_alias, alias = await alias_cog.is_alias(ctx.guild, term)
+        (is_alias, alias) = await alias_cog.is_alias(ctx.guild, term)
 
         if is_alias:
             return
@@ -410,7 +406,7 @@ def bounded_gather(
     return asyncio.gather(*tasks, loop=loop, return_exceptions=return_exceptions)
 
 
-async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
+async def create_backup(dest: Path = Path.home(),) -> Optional[Path]:
     data_path = Path(data_manager.core_data_path().parent)
     if not data_path.exists():
         return

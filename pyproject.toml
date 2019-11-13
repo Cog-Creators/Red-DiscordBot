@@ -123,3 +123,22 @@
         directory = "docs"
         name = "Documentation Changes"
         showcontent = true
+[tool.black]
+line-length = 99
+target-version = ["py37"]
+
+#[tool.isort]
+#line_length = 99
+#use_parentheses = true
+#include_trailing_comma = false
+#multi_line_output=  3
+#indent = '    '
+#combine_as_imports = true
+#case_sensitive = true
+#order_by_type = true
+#lines_between_types = 1
+#force_grid_wrap = 0
+#sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+#default_section = ["THIRDPARTY"]
+#known_first_party = ["redbot"]
+#known_third_party = ["_pytest", "aiohttp", "aiohttp_json_rpc", "appdirs", "babel", "click", "colorama", "discord", "fuzzywuzzy", "lavalink", "packaging", "pip", "pkg_resources", "pytest", "pytest_mock", "schema", "setuptools", "tqdm", "yaml"]

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 import base64
 import contextlib
@@ -14,19 +12,16 @@ import traceback
 from collections import namedtuple
 from typing import Callable, Dict, List, Mapping, Optional, Tuple, Union
 
-# Red Dependencies
 import aiohttp
 import discord
 import lavalink
 
 from lavalink.rest_api import LoadResult
 
-# Red Imports
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 
-# Red Relative Imports
 from . import audio_dataclasses
 from .errors import InvalidTableError, SpotifyFetchError, YouTubeApiError
 from .playlists import get_playlist
@@ -217,7 +212,7 @@ class SpotifyAPI:
         )
         return r
 
-    async def _get_spotify_token(self) -> Optional[str]:
+    async def _get_spotify_token(self,) -> Optional[str]:
         if self.spotify_token and not await self._check_token(self.spotify_token):
             return self.spotify_token["access_token"]
         token = await self._request_token()
@@ -247,7 +242,7 @@ class SpotifyAPI:
             url, params=params, headers={"Authorization": "Bearer {0}".format(token)}
         )
 
-    async def get_categories(self) -> List[Dict[str, str]]:
+    async def get_categories(self,) -> List[Dict[str, str]]:
         url = "https://api.spotify.com/v1/browse/categories"
         params = {}
         result = await self.get_call(url, params=params)
@@ -404,7 +399,7 @@ class MusicCache:
 
                     need_update = last_update < datetime.datetime.now(datetime.timezone.utc)
 
-            return getattr(row, query, None), need_update if table != "spotify" else True
+            return (getattr(row, query, None), need_update if table != "spotify" else True)
         else:
             return None, True
 
@@ -433,7 +428,7 @@ class MusicCache:
         return query, params
 
     @staticmethod
-    def _get_spotify_track_info(track_data: dict) -> Tuple[str, ...]:
+    def _get_spotify_track_info(track_data: dict,) -> Tuple[str, ...]:
         artist_name = track_data["artists"][0]["name"]
         track_name = track_data["name"]
         track_info = f"{track_name} {artist_name}"
@@ -442,7 +437,7 @@ class MusicCache:
         _id = track_data["id"]
         _type = track_data["type"]
 
-        return song_url, track_info, uri, artist_name, track_name, _id, _type
+        return (song_url, track_info, uri, artist_name, track_name, _id, _type)
 
     async def _spotify_first_time_query(
         self,
@@ -492,7 +487,7 @@ class MusicCache:
                 if youtube_cache:
                     update = True
                     with contextlib.suppress(SQLError):
-                        val, update = await self.fetch_one(
+                        (val, update) = await self.fetch_one(
                             "youtube", "youtube_url", {"track": track_info}
                         )
                     if update:
@@ -553,7 +548,7 @@ class MusicCache:
     ) -> Union[dict, List[str]]:
 
         if recursive is False:
-            call, params = self._spotify_format_call(query_type, uri)
+            (call, params) = self._spotify_format_call(query_type, uri)
             results = await self.spotify_api.get_call(call, params)
         else:
             results = await self.spotify_api.get_call(recursive, params)
@@ -643,7 +638,7 @@ class MusicCache:
         if query_type == "track" and cache_enabled:
             update = True
             with contextlib.suppress(SQLError):
-                val, update = await self.fetch_one(
+                (val, update) = await self.fetch_one(
                     "spotify", "track_info", {"uri": f"spotify:track:{uri}"}
                 )
             if update:
@@ -738,7 +733,7 @@ class MusicCache:
                 if youtube_cache:
                     update = True
                     with contextlib.suppress(SQLError):
-                        val, update = await self.fetch_one(
+                        (val, update) = await self.fetch_one(
                             "youtube", "youtube_url", {"track": track_info}
                         )
                     if update:
@@ -753,7 +748,7 @@ class MusicCache:
 
                 if val:
                     try:
-                        result, called_api = await self.lavalink_query(
+                        (result, called_api) = await self.lavalink_query(
                             ctx, player, audio_dataclasses.Query.process_input(val)
                         )
                     except (RuntimeError, aiohttp.ServerDisconnectedError):
@@ -901,7 +896,9 @@ class MusicCache:
         if cache_enabled:
             update = True
             with contextlib.suppress(SQLError):
-                val, update = await self.fetch_one("youtube", "youtube_url", {"track": track_info})
+                (val, update) = await self.fetch_one(
+                    "youtube", "youtube_url", {"track": track_info}
+                )
             if update:
                 val = None
         if val is None:
@@ -952,7 +949,7 @@ class MusicCache:
         if cache_enabled and not forced and not _raw_query.is_local:
             update = True
             with contextlib.suppress(SQLError):
-                val, update = await self.fetch_one("lavalink", "data", {"query": query})
+                (val, update) = await self.fetch_one("lavalink", "data", {"query": query})
             if update:
                 val = None
             if val:
@@ -1023,7 +1020,7 @@ class MusicCache:
             log.debug("Running pending writes to database")
             with contextlib.suppress(Exception):
                 tasks = {"update": [], "insert": []}
-                for k, task in self._tasks.items():
+                for (k, task) in self._tasks.items():
                     for t, args in task.items():
                         tasks[t].append(args)
                 self._tasks = {}
@@ -1095,7 +1092,7 @@ class MusicCache:
                 tracks = await self.play_random()
             if not tracks:
                 ctx = namedtuple("Context", "message")
-                results, called_api = await self.lavalink_query(
+                (results, called_api) = await self.lavalink_query(
                     ctx(player.channel.guild),
                     player,
                     audio_dataclasses.Query.process_input(_TOP_100_US),

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Red Imports
 from redbot.cogs.permissions.permissions import GLOBAL, Permissions
 
 

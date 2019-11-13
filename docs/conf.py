@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-#
 # Red - Discord Bot documentation build configuration file, created by
 # sphinx-quickstart on Thu Aug 10 23:18:25 2017.
 #
@@ -13,7 +11,6 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-# Standard Library
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -21,10 +18,8 @@
 import os
 import sys
 
-# Red Dependencies
 from discord import __version__ as dpy_version
 
-# Red Imports
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.

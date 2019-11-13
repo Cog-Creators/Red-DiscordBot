@@ -1,23 +1,20 @@
-# -*- coding: utf-8 -*-
 """Module for Trivia cog."""
-# Standard Library
+
+
 import pathlib
 
 from collections import Counter
 from typing import List
 
-# Red Dependencies
 import discord
 import yaml
 
-# Red Imports
 from redbot.cogs.bank import check_global_setting_admin
 from redbot.core import Config, checks, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import bold, box, pagify
 
-# Red Relative Imports
 from .log import LOG
 from .session import TriviaSession
 
@@ -348,12 +345,12 @@ class Trivia(commands.Cog):
             guild = ctx.bot.get_guild(guild_id)
             if guild is None:
                 continue
-            for member_id, member_data in guild_data.items():
+            for (member_id, member_data) in guild_data.items():
                 member = guild.get_member(member_id)
                 if member is None:
                     continue
                 collated_member_data = collated_data.get(member, Counter())
-                for v_key, value in member_data.items():
+                for (v_key, value) in member_data.items():
                     collated_member_data[v_key] += value
                 collated_data[member] = collated_member_data
         await self.send_leaderboard(ctx, collated_data, key, top)
@@ -483,7 +480,7 @@ class Trivia(commands.Cog):
 
         """
         max_score = session.settings["max_score"]
-        for member, score in session.scores.items():
+        for (member, score) in session.scores.items():
             if member.id == session.ctx.bot.user.id:
                 continue
             stats = await self.conf.member(member).all()

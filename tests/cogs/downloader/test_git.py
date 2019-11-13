@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import subprocess as sp
 
 from pathlib import Path
 
-# Red Dependencies
 import pytest
 
-# Red Imports
 from redbot.cogs.downloader.repo_manager import ProcessFormatter, Repo
 from redbot.pytest.downloader import (
     _session_git_repo,
@@ -67,7 +63,7 @@ async def test_git_clone_notgit_repo(git_repo, tmp_path):
 
 
 @pytest.mark.asyncio
-async def test_git_current_branch_master(git_repo):
+async def test_git_current_branch_master(git_repo,):
     p = await git_repo._run(
         ProcessFormatter().format(git_repo.GIT_CURRENT_BRANCH, path=git_repo.folder_path)
     )
@@ -76,7 +72,7 @@ async def test_git_current_branch_master(git_repo):
 
 
 @pytest.mark.asyncio
-async def test_git_current_branch_detached(git_repo):
+async def test_git_current_branch_detached(git_repo,):
     await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_CHECKOUT,
@@ -92,7 +88,7 @@ async def test_git_current_branch_detached(git_repo):
 
 
 @pytest.mark.asyncio
-async def test_git_current_commit_on_branch(git_repo):
+async def test_git_current_commit_on_branch(git_repo,):
     # HEAD on dont_add_commits (a0ccc2390883c85a361f5a90c72e1b07958939fa)
     # setup
     p = await git_repo._run(
@@ -110,7 +106,7 @@ async def test_git_current_commit_on_branch(git_repo):
 
 
 @pytest.mark.asyncio
-async def test_git_current_commit_detached(git_repo):
+async def test_git_current_commit_detached(git_repo,):
     # detached HEAD state (c950fc05a540dd76b944719c2a3302da2e2f3090)
     await git_repo._run(
         ProcessFormatter().format(
@@ -211,7 +207,7 @@ async def test_git_discover_remote_url(cloned_git_repo, tmp_path):
 
 
 @pytest.mark.asyncio
-async def test_git_checkout_detached_head(git_repo):
+async def test_git_checkout_detached_head(git_repo,):
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_CHECKOUT,
@@ -233,7 +229,7 @@ async def test_git_checkout_branch(git_repo):
 
 
 @pytest.mark.asyncio
-async def test_git_checkout_non_existent_branch(git_repo):
+async def test_git_checkout_non_existent_branch(git_repo,):
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_CHECKOUT, path=git_repo.folder_path, rev="non-existent-branch"
@@ -243,7 +239,7 @@ async def test_git_checkout_non_existent_branch(git_repo):
 
 
 @pytest.mark.asyncio
-async def test_git_get_full_sha1_from_branch_name(git_repo):
+async def test_git_get_full_sha1_from_branch_name(git_repo,):
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_GET_FULL_SHA1, path=git_repo.folder_path, rev="dont_add_commits"
@@ -254,7 +250,7 @@ async def test_git_get_full_sha1_from_branch_name(git_repo):
 
 
 @pytest.mark.asyncio
-async def test_git_get_full_sha1_from_full_hash(git_repo):
+async def test_git_get_full_sha1_from_full_hash(git_repo,):
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_GET_FULL_SHA1,
@@ -267,7 +263,7 @@ async def test_git_get_full_sha1_from_full_hash(git_repo):
 
 
 @pytest.mark.asyncio
-async def test_git_get_full_sha1_from_short_hash(git_repo):
+async def test_git_get_full_sha1_from_short_hash(git_repo,):
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_GET_FULL_SHA1, path=git_repo.folder_path, rev="c950"
@@ -278,7 +274,7 @@ async def test_git_get_full_sha1_from_short_hash(git_repo):
 
 
 @pytest.mark.asyncio
-async def test_git_get_full_sha1_from_too_short_hash(git_repo):
+async def test_git_get_full_sha1_from_too_short_hash(git_repo,):
     p = await git_repo._run(
         ProcessFormatter().format(git_repo.GIT_GET_FULL_SHA1, path=git_repo.folder_path, rev="c95")
     )
@@ -287,7 +283,7 @@ async def test_git_get_full_sha1_from_too_short_hash(git_repo):
 
 
 @pytest.mark.asyncio
-async def test_git_get_full_sha1_from_lightweight_tag(git_repo):
+async def test_git_get_full_sha1_from_lightweight_tag(git_repo,):
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_GET_FULL_SHA1, path=git_repo.folder_path, rev="lightweight"
@@ -298,7 +294,7 @@ async def test_git_get_full_sha1_from_lightweight_tag(git_repo):
 
 
 @pytest.mark.asyncio
-async def test_git_get_full_sha1_from_annotated_tag(git_repo):
+async def test_git_get_full_sha1_from_annotated_tag(git_repo,):
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_GET_FULL_SHA1, path=git_repo.folder_path, rev="annotated"
@@ -309,7 +305,7 @@ async def test_git_get_full_sha1_from_annotated_tag(git_repo):
 
 
 @pytest.mark.asyncio
-async def test_git_get_full_sha1_from_invalid_ref(git_repo):
+async def test_git_get_full_sha1_from_invalid_ref(git_repo,):
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_GET_FULL_SHA1, path=git_repo.folder_path, rev="invalid"
@@ -320,7 +316,7 @@ async def test_git_get_full_sha1_from_invalid_ref(git_repo):
 
 
 @pytest.mark.asyncio
-async def test_git_get_full_sha1_from_ambiguous_commits(git_repo):
+async def test_git_get_full_sha1_from_ambiguous_commits(git_repo,):
     # 2 ambiguous refs:
     # branch ambiguous_1 - 95da0b576271cb5bee5f3e075074c03ee05fed05
     # branch ambiguous_2 - 95da0b57a416d9c8ce950554228d1fc195c30b43
@@ -340,7 +336,7 @@ async def test_git_get_full_sha1_from_ambiguous_commits(git_repo):
 
 
 @pytest.mark.asyncio
-async def test_git_get_full_sha1_from_ambiguous_tag_and_commit(git_repo):
+async def test_git_get_full_sha1_from_ambiguous_tag_and_commit(git_repo,):
     # 2 ambiguous refs:
     # branch ambiguous_with_tag - c6f0e5ec04d99bdf8c6c78ff20d66d286eecb3ea
     # tag ambiguous_tag_66387 - c6f0e5ec04d99bdf8c6c78ff20d66d286eecb3ea
@@ -386,7 +382,7 @@ async def test_git_is_ancestor_false(git_repo):
 
 
 @pytest.mark.asyncio
-async def test_git_is_ancestor_invalid_ref(git_repo):
+async def test_git_is_ancestor_invalid_ref(git_repo,):
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_IS_ANCESTOR,
@@ -400,7 +396,7 @@ async def test_git_is_ancestor_invalid_ref(git_repo):
 
 
 @pytest.mark.asyncio
-async def test_git_check_if_module_exists_true(git_repo):
+async def test_git_check_if_module_exists_true(git_repo,):
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_CHECK_IF_MODULE_EXISTS,
@@ -413,7 +409,7 @@ async def test_git_check_if_module_exists_true(git_repo):
 
 
 @pytest.mark.asyncio
-async def test_git_check_if_module_exists_false(git_repo):
+async def test_git_check_if_module_exists_false(git_repo,):
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_CHECK_IF_MODULE_EXISTS,
@@ -429,7 +425,7 @@ async def test_git_check_if_module_exists_false(git_repo):
 
 
 @pytest.mark.asyncio
-async def test_git_find_last_occurrence_existent(git_repo):
+async def test_git_find_last_occurrence_existent(git_repo,):
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_GET_LAST_MODULE_OCCURRENCE_COMMIT,
@@ -444,7 +440,7 @@ async def test_git_find_last_occurrence_existent(git_repo):
 
 
 @pytest.mark.asyncio
-async def test_git_find_last_occurrence_non_existent(git_repo):
+async def test_git_find_last_occurrence_non_existent(git_repo,):
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_GET_LAST_MODULE_OCCURRENCE_COMMIT,

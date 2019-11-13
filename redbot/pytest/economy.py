@@ -1,8 +1,5 @@
-# -*- coding: utf-8 -*-
-# Red Dependencies
 import pytest
 
-# Red Imports
 from redbot.core import bank as bank_module
 
 __all__ = ["bank"]

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import contextlib
 import functools
 import io
@@ -8,12 +6,10 @@ import os
 from pathlib import Path
 from typing import Callable, Dict, Optional, Union
 
-# Red Dependencies
 import babel.localedata
 
 from babel.core import Locale
 
-# Red Relative Imports
 # This import to be down here to avoid circular import issues.
 # This will be cleaned up at a later date
 # noinspection PyPep8
@@ -56,7 +52,7 @@ def reload_locales():
         translator.load_translations()
 
 
-def _parse(translation_file: io.TextIOWrapper) -> Dict[str, str]:
+def _parse(translation_file: io.TextIOWrapper,) -> Dict[str, str]:
     """
     Custom gettext parsing of translation files.
 
@@ -183,7 +179,7 @@ class Translator(Callable[[str], str]):
 
 
 @functools.lru_cache()
-def _get_babel_locale(red_locale: str) -> babel.core.Locale:
+def _get_babel_locale(red_locale: str,) -> babel.core.Locale:
     supported_locales = babel.localedata.locale_identifiers()
     try:  # Handles cases where red_locale is already Babel supported
         babel_locale = Locale(*babel.parse_locale(red_locale))
@@ -202,7 +198,7 @@ def _get_babel_locale(red_locale: str) -> babel.core.Locale:
     return babel_locale
 
 
-def get_babel_locale(locale: Optional[str] = None) -> babel.core.Locale:
+def get_babel_locale(locale: Optional[str] = None,) -> babel.core.Locale:
     """Function to convert a locale to a ``babel.core.Locale``.
 
     Parameters
@@ -225,7 +221,7 @@ def cog_i18n(translator: Translator):
 
     def decorator(cog_class: type):
         cog_class.__translator__ = translator
-        for name, attr in cog_class.__dict__.items():
+        for (name, attr) in cog_class.__dict__.items():
             if isinstance(attr, (commands.Group, commands.Command)):
                 attr.translator = translator
                 setattr(cog_class, name, attr)

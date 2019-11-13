@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 import pathlib
 
@@ -7,12 +5,10 @@ from collections import namedtuple
 from pathlib import Path
 from typing import Any, NamedTuple
 
-# Red Dependencies
 import pytest
 
 from pytest_mock import MockFixture
 
-# Red Imports
 from redbot.cogs.downloader.errors import (
     AmbiguousRevision,
     ExistingGitRepo,
@@ -357,7 +353,7 @@ async def test_lib_install_requirements(monkeypatch, library_installable, repo, 
     sharedlib_path = lib_path / "cog_shared"
     sharedlib_path.mkdir(parents=True, exist_ok=True)
 
-    installed, failed = await repo.install_libraries(
+    (installed, failed) = await repo.install_libraries(
         target_dir=sharedlib_path, req_target_dir=lib_path
     )
 

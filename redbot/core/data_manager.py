@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import inspect
 import json
 import logging
@@ -11,12 +9,10 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any, Dict
 
-# Red Dependencies
 import appdirs
 
 from discord.utils import deprecated
 
-# Red Relative Imports
 from . import commands
 
 __all__ = [
@@ -178,7 +174,7 @@ def load_bundled_data(cog_instance, init_location: str):
     pass
 
 
-def bundled_data_path(cog_instance: commands.Cog) -> Path:
+def bundled_data_path(cog_instance: commands.Cog,) -> Path:
     """
     Get the path to the "data" directory bundled with this cog.
 

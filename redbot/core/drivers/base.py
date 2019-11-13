@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import abc
 import enum
 
@@ -27,9 +25,9 @@ class ConfigCategory(str, enum.Enum):
             # noinspection PyArgumentList
             category_obj = cls(category)
         except ValueError:
-            return custom_group_data[category], True
+            return (custom_group_data[category], True)
         else:
-            return _CATEGORY_PKEY_COUNTS[category_obj], False
+            return (_CATEGORY_PKEY_COUNTS[category_obj], False)
 
 
 _CATEGORY_PKEY_COUNTS = {
@@ -219,7 +217,7 @@ class BaseDriver(abc.ABC):
 
     @classmethod
     @abc.abstractmethod
-    def aiter_cogs(cls) -> AsyncIterator[Tuple[str, str]]:
+    def aiter_cogs(cls,) -> AsyncIterator[Tuple[str, str]]:
         """Get info for cogs which have data stored on this backend.
 
         Yields

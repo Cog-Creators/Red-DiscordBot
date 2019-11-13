@@ -1,10 +1,7 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import enum
 
 from typing import Optional, Type
 
-# Red Relative Imports
 from .. import data_manager
 from .base import BaseDriver, ConfigCategory, IdentifierData
 from .json import JsonDriver
@@ -32,7 +29,7 @@ class BackendType(enum.Enum):
 _DRIVER_CLASSES = {BackendType.JSON: JsonDriver, BackendType.POSTGRES: PostgresDriver}
 
 
-def get_driver_class(storage_type: Optional[BackendType] = None) -> Type[BaseDriver]:
+def get_driver_class(storage_type: Optional[BackendType] = None,) -> Type[BaseDriver]:
     """Get the driver class for the given storage type.
 
     Parameters

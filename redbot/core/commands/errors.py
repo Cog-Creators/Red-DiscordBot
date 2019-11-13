@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 """Errors module for the commands package."""
-# Standard Library
+
+
 import inspect
 
-# Red Dependencies
 import discord
 
 from discord.ext import commands

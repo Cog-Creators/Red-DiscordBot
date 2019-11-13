@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 import collections
 import logging
@@ -19,10 +17,8 @@ from typing import (
     Union,
 )
 
-# Red Dependencies
 import discord
 
-# Red Relative Imports
 from .drivers import BaseDriver, ConfigCategory, IdentifierData, get_driver
 
 __all__ = ["Config", "get_latest_confs", "migrate"]
@@ -894,7 +890,7 @@ class Config:
             this is not a safe operation. Using this could end up corrupting your config file.
         """
         # noinspection PyTypeChecker
-        pkey_len, is_custom = ConfigCategory.get_pkey_info(category, self.custom_groups)
+        (pkey_len, is_custom) = ConfigCategory.get_pkey_info(category, self.custom_groups)
         identifier_data = IdentifierData(
             cog_name=self.cog_name,
             uuid=self.unique_identifier,
@@ -1203,7 +1199,7 @@ class Config:
     def _all_members_from_guild(self, guild_data: dict) -> dict:
         ret = {}
         defaults = self.defaults.get(self.MEMBER, {})
-        for member_id, member_data in guild_data.items():
+        for (member_id, member_data) in guild_data.items():
             new_member_data = pickle.loads(pickle.dumps(defaults, -1))
             new_member_data.update(member_data)
             ret[int(member_id)] = new_member_data
@@ -1242,7 +1238,7 @@ class Config:
             except KeyError:
                 pass
             else:
-                for guild_id, guild_data in dict_.items():
+                for (guild_id, guild_data) in dict_.items():
                     ret[int(guild_id)] = self._all_members_from_guild(guild_data)
         else:
             group = self._get_base_group(self.MEMBER, str(guild.id))
@@ -1441,7 +1437,7 @@ class Config:
             A lock for all data in a custom scope with given group identifier.
         """
         try:
-            pkey_len, is_custom = ConfigCategory.get_pkey_info(
+            (pkey_len, is_custom) = ConfigCategory.get_pkey_info(
                 group_identifier, self.custom_groups
             )
         except KeyError:

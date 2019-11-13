@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 commands.requires
 =================
@@ -7,7 +6,8 @@ requirements. This includes rules which override those requirements,
 as well as custom checks which can be overridden, and some special
 checks like bot permissions checks.
 """
-# Standard Library
+
+
 import asyncio
 import enum
 
@@ -25,10 +25,8 @@ from typing import (
     Union,
 )
 
-# Red Dependencies
 import discord
 
-# Red Relative Imports
 from .converter import GuildConverter
 from .errors import BotMissingPermissions
 
@@ -336,7 +334,7 @@ class Requires:
         if not user_perms:
             user_perms = None
 
-        def decorator(func: "_CommandOrCoro") -> "_CommandOrCoro":
+        def decorator(func: "_CommandOrCoro",) -> "_CommandOrCoro":
             if asyncio.iscoroutinefunction(func):
                 func.__requires_privilege_level__ = privilege_level
                 func.__requires_user_perms__ = user_perms
@@ -493,7 +491,7 @@ class Requires:
     async def _transition_state(self, ctx: "Context") -> bool:
         prev_state = ctx.permission_state
         cur_state = self._get_rule_from_ctx(ctx)
-        should_invoke, next_state = prev_state.transition_to(cur_state)
+        (should_invoke, next_state) = prev_state.transition_to(cur_state)
         if should_invoke is None:
             # NORMAL invocation, we simply follow standard procedure
             should_invoke = await self._verify_user(ctx)
@@ -603,7 +601,7 @@ class Requires:
         return discord.Permissions(relative_complement)
 
     @staticmethod
-    def _member_as_user(member: discord.abc.User) -> discord.User:
+    def _member_as_user(member: discord.abc.User,) -> discord.User:
         if isinstance(member, discord.Member):
             # noinspection PyProtectedMember
             return member._user
@@ -627,7 +625,7 @@ def permissions_check(predicate: CheckPredicate):
     through a permissions cog.
     """
 
-    def decorator(func: "_CommandOrCoro") -> "_CommandOrCoro":
+    def decorator(func: "_CommandOrCoro",) -> "_CommandOrCoro":
         if hasattr(func, "requires"):
             func.requires.checks.append(predicate)
         else:
@@ -650,7 +648,7 @@ def bot_has_permissions(**perms: bool):
     This check cannot be overridden by rules.
     """
 
-    def decorator(func: "_CommandOrCoro") -> "_CommandOrCoro":
+    def decorator(func: "_CommandOrCoro",) -> "_CommandOrCoro":
         if asyncio.iscoroutinefunction(func):
             func.__requires_bot_perms__ = perms
         else:

@@ -1,12 +1,8 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 from datetime import datetime
 from typing import cast
 
-# Red Dependencies
 import discord
 
-# Red Imports
 from redbot.core import checks, commands, i18n
 from redbot.core.utils.common_filters import (
     escape_spoilers_and_mass_mentions,
@@ -15,7 +11,6 @@ from redbot.core.utils.common_filters import (
 )
 from redbot.core.utils.mod import get_audit_reason
 
-# Red Relative Imports
 from .abc import MixinMeta
 
 _ = i18n.Translator("Mod", __file__)
@@ -99,7 +94,7 @@ class ModInfo(MixinMeta):
         is_special = user.id == 96130341705637888 and guild.id == 133049272517001216
 
         roles = user.roles[-1:0:-1]
-        names, nicks = await self.get_names_and_nicks(user)
+        (names, nicks) = await self.get_names_and_nicks(user)
 
         joined_at = user.joined_at if not is_special else special_date
         since_created = (ctx.message.created_at - user.created_at).days
@@ -204,7 +199,7 @@ class ModInfo(MixinMeta):
     @commands.command()
     async def names(self, ctx: commands.Context, *, user: discord.Member):
         """Show previous names and nicknames of a user."""
-        names, nicks = await self.get_names_and_nicks(user)
+        (names, nicks) = await self.get_names_and_nicks(user)
         msg = ""
         if names:
             msg += _("**Past 20 names**:")

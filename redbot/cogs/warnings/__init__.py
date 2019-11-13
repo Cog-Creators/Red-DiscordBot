@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Red Relative Imports
 from .warnings import Warnings
 
 

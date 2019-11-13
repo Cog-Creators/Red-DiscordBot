@@ -1,5 +1,4 @@
 #!/usr/bin/env python3.7
-# -*- coding: utf-8 -*-
 """Script to edit test repo used by Downloader git integration tests.
 
 This script aims to help update the human-readable version of repo
@@ -34,14 +33,13 @@ Known limitations
 ``git fast-export`` exports commits without GPG signs so this script disables it in repo's config.
 This also means devs shouldn't use ``--gpg-sign`` flag in ``git commit`` within the test repo.
 """
-# Standard Library
+
 import shlex
 import subprocess as sp
 
 from pathlib import Path
 from typing import Tuple
 
-# Red Dependencies
 import click
 
 MAIN_DIRECTORY = Path(__file__).absolute().parent.parent

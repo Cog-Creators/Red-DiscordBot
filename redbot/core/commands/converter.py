@@ -1,17 +1,13 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import functools
 import re
 
 from datetime import timedelta
 from typing import TYPE_CHECKING, Dict, List, Optional
 
-# Red Dependencies
 import discord
 
 from discord.ext import commands as dpy_commands
 
-# Red Relative Imports
 from ..i18n import Translator
 from ..utils.chat_formatting import humanize_timedelta
 from . import BadArgument

@@ -1,14 +1,10 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 import inspect
 
 from copy import copy
 
-# Red Dependencies
 import discord
 
-# Red Imports
 from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator
 from redbot.core.utils.predicates import MessagePredicate
@@ -73,7 +69,7 @@ def get_command_from_input(bot, userinput: str):
         if len(userinput) == 0:
             break
     if com is None:
-        return None, _("I could not find a command from that input!")
+        return (None, _("I could not find a command from that input!"))
 
     check_str = inspect.getsource(checks.is_owner)
     if any(inspect.getsource(x) in check_str for x in com.checks):
@@ -85,7 +81,7 @@ def get_command_from_input(bot, userinput: str):
     return "{prefix}" + orig, None
 
 
-async def get_command_for_exceeded_points(ctx: commands.Context):
+async def get_command_for_exceeded_points(ctx: commands.Context,):
     """Gets the command to be executed when the user is at or exceeding
     the points threshold for the action"""
     await ctx.send(
@@ -122,7 +118,7 @@ async def get_command_for_exceeded_points(ctx: commands.Context):
     return command
 
 
-async def get_command_for_dropping_points(ctx: commands.Context):
+async def get_command_for_dropping_points(ctx: commands.Context,):
     """
     Gets the command to be executed when the user drops below the points
     threshold

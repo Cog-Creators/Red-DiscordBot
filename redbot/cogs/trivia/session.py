@@ -1,22 +1,19 @@
-# -*- coding: utf-8 -*-
 """Module to manage trivia sessions."""
-# Standard Library
+
+
 import asyncio
 import random
 import time
 
 from collections import Counter
 
-# Red Dependencies
 import discord
 
-# Red Imports
 from redbot.core import bank
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import bold, box, humanize_list, humanize_number
 from redbot.core.utils.common_filters import normalize_smartquotes
 
-# Red Relative Imports
 from .log import LOG
 
 __all__ = ["TriviaSession"]
@@ -119,7 +116,7 @@ class TriviaSession:
         max_score = self.settings["max_score"]
         delay = self.settings["delay"]
         timeout = self.settings["timeout"]
-        for question, answers in self._iter_questions():
+        for (question, answers) in self._iter_questions():
             async with self.ctx.typing():
                 await asyncio.sleep(3)
             self.count += 1
@@ -158,7 +155,7 @@ class TriviaSession:
             `str`).
 
         """
-        for question, answers in self.question_list:
+        for (question, answers) in self.question_list:
             answers = _parse_answers(answers)
             yield question, answers
 
@@ -258,7 +255,7 @@ class TriviaSession:
     async def send_table(self):
         """Send a table of scores to the session's channel."""
         table = "+ Results: \n\n"
-        for user, score in self.scores.most_common():
+        for (user, score) in self.scores.most_common():
             table += "+ {}\t{}\n".format(user, score)
         await self.ctx.send(box(table, lang="diff"))
 

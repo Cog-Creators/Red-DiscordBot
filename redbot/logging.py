@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import logging.handlers
 import pathlib
 import re

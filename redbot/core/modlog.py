@@ -1,18 +1,13 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 
 from datetime import datetime, timedelta
 from typing import List, Optional, Union, cast
 
-# Red Dependencies
 import discord
 
-# Red Imports
 from redbot.core import Config
 from redbot.core.bot import Red
 
-# Red Relative Imports
 from .generic_casetypes import all_generics
 from .i18n import Translator
 from .utils.common_filters import (
@@ -94,7 +89,7 @@ async def _init(bot: Red):
                 if entry:
                     if entry.user.id != guild.me.id:
                         # Don't create modlog entires for the bot's own bans, cogs do this.
-                        mod, reason, date = entry.user, entry.reason, entry.created_at
+                        mod, reason, date = (entry.user, entry.reason, entry.created_at)
                         await create_case(_bot_ref, guild, date, "ban", member, mod, reason)
                     return
 
@@ -130,7 +125,7 @@ async def _init(bot: Red):
                 if entry:
                     if entry.user.id != guild.me.id:
                         # Don't create modlog entires for the bot's own unbans, cogs do this.
-                        mod, reason, date = entry.user, entry.reason, entry.created_at
+                        mod, reason, date = (entry.user, entry.reason, entry.created_at)
                         await create_case(_bot_ref, guild, date, "unban", user, mod, reason)
                     return
 
@@ -153,7 +148,7 @@ async def _migrate_config(from_version: int, to_version: int):
         # cases go from GUILD -> guild_id -> cases to CASES -> guild_id -> cases
         all_guild_data = await _conf.all_guilds()
         all_cases = {}
-        for guild_id, guild_data in all_guild_data.items():
+        for (guild_id, guild_data) in all_guild_data.items():
             guild_cases = guild_data.pop("cases", None)
             if guild_cases:
                 all_cases[str(guild_id)] = guild_cases
@@ -823,7 +818,7 @@ async def get_casetype(name: str, guild: Optional[discord.Guild] = None) -> Opti
     return casetype
 
 
-async def get_all_casetypes(guild: discord.Guild = None) -> List[CaseType]:
+async def get_all_casetypes(guild: discord.Guild = None,) -> List[CaseType]:
     """
     Get all currently registered case types
 
@@ -909,7 +904,7 @@ async def register_casetype(
             raise RuntimeError("That case type is already registered!")
 
 
-async def register_casetypes(new_types: List[dict]) -> List[CaseType]:
+async def register_casetypes(new_types: List[dict],) -> List[CaseType]:
     """
     Registers multiple case types
 
@@ -948,7 +943,7 @@ async def register_casetypes(new_types: List[dict]) -> List[CaseType]:
         return type_list
 
 
-async def get_modlog_channel(guild: discord.Guild) -> discord.TextChannel:
+async def get_modlog_channel(guild: discord.Guild,) -> discord.TextChannel:
     """
     Get the current modlog channel.
 
@@ -1001,7 +996,7 @@ async def set_modlog_channel(
     return True
 
 
-async def reset_cases(guild: discord.Guild) -> None:
+async def reset_cases(guild: discord.Guild,) -> None:
     """
     Wipes all modlog cases for the specified guild.
 

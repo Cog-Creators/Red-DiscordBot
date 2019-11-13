@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 import contextlib
 import logging
@@ -8,10 +6,8 @@ from copy import copy
 from datetime import timedelta
 from typing import List, Union
 
-# Red Dependencies
 import discord
 
-# Red Imports
 from redbot.core import Config, checks, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n

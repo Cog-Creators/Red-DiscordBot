@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 import contextlib
 import os
@@ -11,10 +9,8 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Set, Tuple, Union, cast
 
-# Red Dependencies
 import discord
 
-# Red Imports
 from redbot.core import Config, checks, commands, version_info as red_version_info
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
@@ -23,7 +19,6 @@ from redbot.core.utils.chat_formatting import box, humanize_list, inline, pagify
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
-# Red Relative Imports
 from . import errors
 from .checks import do_install_agreement
 from .converters import InstalledCog
@@ -104,7 +99,7 @@ class Downloader(commands.Cog):
         """
         return await self.bot._cog_mgr.install_path()
 
-    async def installed_cogs(self) -> Tuple[InstalledModule, ...]:
+    async def installed_cogs(self,) -> Tuple[InstalledModule, ...]:
         """Get info on installed cogs.
 
         Returns
@@ -121,7 +116,7 @@ class Downloader(commands.Cog):
             for cog_json in repo_json.values()
         )
 
-    async def installed_libraries(self) -> Tuple[InstalledModule, ...]:
+    async def installed_libraries(self,) -> Tuple[InstalledModule, ...]:
         """Get info on installed shared libraries.
 
         Returns
@@ -138,7 +133,7 @@ class Downloader(commands.Cog):
             for lib_json in repo_json.values()
         )
 
-    async def installed_modules(self) -> Tuple[InstalledModule, ...]:
+    async def installed_modules(self,) -> Tuple[InstalledModule, ...]:
         """Get info on installed cogs and shared libraries.
 
         Returns
@@ -255,7 +250,7 @@ class Downloader(commands.Cog):
                 hashes[(module.repo, module.commit)].add(module)
 
         update_commits = []
-        for (repo, old_hash), modules_to_check in hashes.items():
+        for ((repo, old_hash), modules_to_check) in hashes.items():
             modified = await repo.get_modified_modules(old_hash, repo.commit)
             for module in modules_to_check:
                 try:
@@ -273,7 +268,7 @@ class Downloader(commands.Cog):
 
         await self._save_to_installed(update_commits)
 
-        return tuple(cogs_to_update), tuple(libraries_to_update)
+        return (tuple(cogs_to_update), tuple(libraries_to_update))
 
     async def _install_cogs(
         self, cogs: Iterable[Installable]
@@ -300,9 +295,9 @@ class Downloader(commands.Cog):
             cogs_by_commit[cog.commit].append(cog)
         installed = []
         failed = []
-        for repo, cogs_by_commit in repos.values():
+        for (repo, cogs_by_commit) in repos.values():
             exit_to_commit = repo.commit
-            for commit, cogs_to_install in cogs_by_commit.items():
+            for (commit, cogs_to_install) in cogs_by_commit.items():
                 await repo.checkout(commit)
                 for cog in cogs_to_install:
                     if await cog.copy_to(await self.cog_install_path()):
@@ -340,11 +335,11 @@ class Downloader(commands.Cog):
 
         all_installed: List[InstalledModule] = []
         all_failed: List[Installable] = []
-        for repo, libs_by_commit in repos.values():
+        for (repo, libs_by_commit) in repos.values():
             exit_to_commit = repo.commit
-            for commit, libs in libs_by_commit.items():
+            for (commit, libs) in libs_by_commit.items():
                 await repo.checkout(commit)
-                installed, failed = await repo.install_libraries(
+                (installed, failed) = await repo.install_libraries(
                     target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH, libraries=libs
                 )
                 all_installed += installed
@@ -352,7 +347,7 @@ class Downloader(commands.Cog):
             await repo.checkout(exit_to_commit)
 
         # noinspection PyTypeChecker
-        return tuple(all_installed), tuple(all_failed)
+        return (tuple(all_installed), tuple(all_failed))
 
     async def _install_requirements(self, cogs: Iterable[Installable]) -> Tuple[str, ...]:
         """
@@ -577,7 +572,7 @@ class Downloader(commands.Cog):
             cog_names = set(cog_names)
 
             async with repo.checkout(commit, exit_to_rev=repo.branch):
-                cogs, message = await self._filter_incorrect_cogs_by_names(repo, cog_names)
+                (cogs, message) = await self._filter_incorrect_cogs_by_names(repo, cog_names)
                 if not cogs:
                     await ctx.send(message)
                     return
@@ -589,9 +584,9 @@ class Downloader(commands.Cog):
                     await ctx.send(message)
                     return
 
-                installed_cogs, failed_cogs = await self._install_cogs(cogs)
+                (installed_cogs, failed_cogs) = await self._install_cogs(cogs)
 
-            installed_libs, failed_libs = await repo.install_libraries(
+            (installed_libs, failed_libs) = await repo.install_libraries(
                 target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH
             )
             if rev is not None:
@@ -730,7 +725,7 @@ class Downloader(commands.Cog):
         """
         async with ctx.typing():
             cogs_to_check = await self._get_cogs_to_check()
-            cogs_to_update, libs_to_update = await self._available_updates(cogs_to_check)
+            (cogs_to_update, libs_to_update) = await self._available_updates(cogs_to_check)
             message = ""
             if cogs_to_update:
                 cognames = [cog.name for cog in cogs_to_update]
@@ -823,12 +818,12 @@ class Downloader(commands.Cog):
                     ) + humanize_list(tuple(map(inline, cognames)))
                     await ctx.send(message)
                     return
-            cogs_to_update, libs_to_update = await self._available_updates(cogs_to_check)
+            (cogs_to_update, libs_to_update) = await self._available_updates(cogs_to_check)
 
             updates_available = cogs_to_update or libs_to_update
-            cogs_to_update, filter_message = self._filter_incorrect_cogs(cogs_to_update)
+            (cogs_to_update, filter_message) = self._filter_incorrect_cogs(cogs_to_update)
             if updates_available:
-                updated_cognames, message = await self._update_cogs_and_libs(
+                (updated_cognames, message) = await self._update_cogs_and_libs(
                     cogs_to_update, libs_to_update
                 )
             else:
@@ -974,13 +969,15 @@ class Downloader(commands.Cog):
             message += _(
                 "\nSome cogs with these names are already installed from different repos: "
             ) + humanize_list(already_installed)
-        correct_cogs, add_to_message = self._filter_incorrect_cogs(cogs)
+        (correct_cogs, add_to_message) = self._filter_incorrect_cogs(cogs)
         if add_to_message:
-            return correct_cogs, f"{message}{add_to_message}"
+            return (correct_cogs, f"{message}{add_to_message}")
         return correct_cogs, message
 
     @staticmethod
-    def _filter_incorrect_cogs(cogs: Iterable[Installable]) -> Tuple[Tuple[Installable, ...], str]:
+    def _filter_incorrect_cogs(
+        cogs: Iterable[Installable],
+    ) -> Tuple[Tuple[Installable, ...], str]:
         correct_cogs: List[Installable] = []
         outdated_python_version: List[str] = []
         outdated_bot_version: List[str] = []
@@ -1067,8 +1064,8 @@ class Downloader(commands.Cog):
                 _("Failed to install requirements: ")
                 + humanize_list(tuple(map(inline, failed_reqs))),
             )
-        installed_cogs, failed_cogs = await self._install_cogs(cogs_to_update)
-        installed_libs, failed_libs = await self._reinstall_libraries(libs_to_update)
+        (installed_cogs, failed_cogs) = await self._install_cogs(cogs_to_update)
+        (installed_libs, failed_libs) = await self._reinstall_libraries(libs_to_update)
         await self._save_to_installed(installed_cogs + installed_libs)
         message = _("Cog update completed successfully.")
 
@@ -1170,7 +1167,7 @@ class Downloader(commands.Cog):
         return msg.format(command=command_name, author=made_by, repo_url=repo_url, cog=cog_name)
 
     @staticmethod
-    def cog_name_from_instance(instance: object) -> str:
+    def cog_name_from_instance(instance: object,) -> str:
         """Determines the cog name that Downloader knows from the cog instance.
 
         Probably.
@@ -1205,7 +1202,7 @@ class Downloader(commands.Cog):
         cog = command.cog
         if cog:
             cog_name = self.cog_name_from_instance(cog)
-            installed, cog_installable = await self.is_installed(cog_name)
+            (installed, cog_installable) = await self.is_installed(cog_name)
             if installed:
                 msg = self.format_findcog_info(command_name, cog_installable)
             else:

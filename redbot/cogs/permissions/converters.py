@@ -1,14 +1,10 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import itertools
 import re
 
 from typing import NamedTuple, Optional, Union
 
-# Red Dependencies
 import discord
 
-# Red Imports
 from redbot.core import commands
 from redbot.core.i18n import Translator
 

@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 from typing import Optional, Union
 
-# Red Dependencies
 import discord
 
-# Red Imports
 from redbot.core import checks, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n

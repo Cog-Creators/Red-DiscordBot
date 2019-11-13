@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 import codecs
 import contextlib
@@ -10,7 +8,6 @@ import traceback
 
 from datetime import timedelta
 
-# Red Dependencies
 import aiohttp
 import discord
 import pkg_resources
@@ -18,10 +15,8 @@ import pkg_resources
 from colorama import Fore, Style, init
 from pkg_resources import DistributionNotFound
 
-# Red Imports
 from redbot.core.commands import RedHelpFormatter
 
-# Red Relative Imports
 from .. import VersionInfo, __version__ as red_version, version_info as red_version_info
 from . import commands
 from .config import get_latest_confs
@@ -119,7 +114,7 @@ def init_events(bot, cli_flags):
             ("Tests", reqs_installed["test"]),
         )
 
-        on_symbol, off_symbol, ascii_border = _get_startup_screen_specs()
+        (on_symbol, off_symbol, ascii_border) = _get_startup_screen_specs()
 
         for option, enabled in options:
             enabled = on_symbol if enabled else off_symbol
@@ -241,7 +236,7 @@ def init_events(bot, cli_flags):
             bot._checked_time_accuracy = discord_now
 
     @bot.event
-    async def on_command_add(command: commands.Command):
+    async def on_command_add(command: commands.Command,):
         disabled_commands = await bot._config.disabled_commands()
         if command.qualified_name in disabled_commands:
             command.enabled = False
@@ -262,13 +257,13 @@ def init_events(bot, cli_flags):
         await _guild_added(guild)
 
     @bot.event
-    async def on_guild_available(guild: discord.Guild):
+    async def on_guild_available(guild: discord.Guild,):
         # We need to check guild-disabled commands here since some cogs
         # are loaded prior to `on_ready`.
         await _guild_added(guild)
 
     @bot.event
-    async def on_guild_leave(guild: discord.Guild):
+    async def on_guild_leave(guild: discord.Guild,):
         # Clean up any unneeded checks
         disabled_commands = await bot._config.guild(guild).disabled_commands()
         for command_name in disabled_commands:

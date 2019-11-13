@@ -1,16 +1,12 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import datetime
 import time
 
 from enum import Enum
 from random import choice, randint
 
-# Red Dependencies
 import aiohttp
 import discord
 
-# Red Imports
 from redbot.core import commands
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import escape, humanize_number, italics

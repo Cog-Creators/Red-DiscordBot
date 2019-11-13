@@ -1,8 +1,5 @@
-# -*- coding: utf-8 -*-
-# Red Dependencies
 import discord
 
-# Red Imports
 from redbot.core import bank, checks, commands
 from redbot.core.bot import Red  # Only used for type hints
 from redbot.core.i18n import Translator, cog_i18n

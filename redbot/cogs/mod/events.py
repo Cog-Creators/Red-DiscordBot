@@ -1,18 +1,13 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import logging
 
 from collections import defaultdict, deque
 from datetime import datetime
 
-# Red Dependencies
 import discord
 
-# Red Imports
 from redbot.core import commands, i18n, modlog
 from redbot.core.utils.mod import is_mod_or_superior
 
-# Red Relative Imports
 from .abc import MixinMeta
 
 _ = i18n.Translator("Mod", __file__)

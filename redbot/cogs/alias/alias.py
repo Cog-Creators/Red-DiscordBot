@@ -1,22 +1,17 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 from copy import copy
 from re import findall, search
 from string import Formatter
 from typing import Generator, Iterable, Optional, Tuple
 
-# Red Dependencies
 import discord
 
 from discord.ext.commands.view import StringView
 
-# Red Imports
 from redbot.core import Config, checks, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
 
-# Red Relative Imports
 from .alias_entry import AliasEntry
 
 _ = Translator("Alias", __file__)
@@ -64,7 +59,7 @@ class Alias(commands.Cog):
     async def unloaded_aliases(self, guild: discord.Guild) -> Generator[AliasEntry, None, None]:
         return (AliasEntry.from_json(d) for d in (await self._aliases.guild(guild).entries()))
 
-    async def unloaded_global_aliases(self) -> Generator[AliasEntry, None, None]:
+    async def unloaded_global_aliases(self,) -> Generator[AliasEntry, None, None]:
         return (AliasEntry.from_json(d) for d in (await self._aliases.entries()))
 
     async def loaded_aliases(self, guild: discord.Guild) -> Generator[AliasEntry, None, None]:
@@ -73,7 +68,7 @@ class Alias(commands.Cog):
             for d in (await self._aliases.guild(guild).entries())
         )
 
-    async def loaded_global_aliases(self) -> Generator[AliasEntry, None, None]:
+    async def loaded_global_aliases(self,) -> Generator[AliasEntry, None, None]:
         return (AliasEntry.from_json(d, bot=self.bot) for d in (await self._aliases.entries()))
 
     async def is_alias(
@@ -104,7 +99,7 @@ class Alias(commands.Cog):
         return command is not None or alias_name in commands.RESERVED_COMMAND_NAMES
 
     @staticmethod
-    def is_valid_alias_name(alias_name: str) -> bool:
+    def is_valid_alias_name(alias_name: str,) -> bool:
         return not bool(search(r"\s", alias_name)) and alias_name.isprintable()
 
     async def add_alias(
@@ -263,7 +258,7 @@ class Alias(commands.Cog):
             )
             return
 
-        is_alias, something_useless = await self.is_alias(ctx.guild, alias_name)
+        (is_alias, something_useless) = await self.is_alias(ctx.guild, alias_name)
         if is_alias:
             await ctx.send(
                 _(
@@ -315,7 +310,7 @@ class Alias(commands.Cog):
             )
             return
 
-        is_alias, something_useless = await self.is_alias(ctx.guild, alias_name)
+        (is_alias, something_useless) = await self.is_alias(ctx.guild, alias_name)
         if is_alias:
             await ctx.send(
                 _(

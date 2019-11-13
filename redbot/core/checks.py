@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import warnings
 
 from typing import TYPE_CHECKING, Awaitable, Dict
 
-# Red Dependencies
 import discord
 
-# Red Relative Imports
 from .commands import (
     admin,
     admin_or_permissions,
@@ -56,7 +52,7 @@ def bot_in_a_guild():
     return _check_decorator(predicate)
 
 
-def is_mod_or_superior(ctx: "Context") -> Awaitable[bool]:
+def is_mod_or_superior(ctx: "Context",) -> Awaitable[bool]:
     warnings.warn(
         "`redbot.core.checks.is_mod_or_superior` is deprecated and will be removed in a future "
         "release, please use `redbot.core.utils.mod.is_mod_or_superior` instead.",
@@ -65,7 +61,7 @@ def is_mod_or_superior(ctx: "Context") -> Awaitable[bool]:
     return _is_mod_or_superior(ctx.bot, ctx.author)
 
 
-def is_admin_or_superior(ctx: "Context") -> Awaitable[bool]:
+def is_admin_or_superior(ctx: "Context",) -> Awaitable[bool]:
     warnings.warn(
         "`redbot.core.checks.is_admin_or_superior` is deprecated and will be removed in a future "
         "release, please use `redbot.core.utils.mod.is_admin_or_superior` instead.",

@@ -1,18 +1,13 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 import datetime
 
 from functools import wraps
 from typing import List, Optional, Union
 
-# Red Dependencies
 import discord
 
-# Red Imports
 from redbot.core.utils.chat_formatting import humanize_number
 
-# Red Relative Imports
 from . import Config, commands, errors
 from .bot import Red
 from .errors import BankPruneError
@@ -137,7 +132,7 @@ def _decode_time(time: int) -> datetime.datetime:
     return datetime.datetime.utcfromtimestamp(time)
 
 
-async def get_balance(member: discord.Member) -> int:
+async def get_balance(member: discord.Member,) -> int:
     """Get the current balance of a member.
 
     Parameters
@@ -367,7 +362,7 @@ async def transfer_credits(
     return await deposit_credits(to, amount)
 
 
-async def wipe_bank(guild: Optional[discord.Guild] = None) -> None:
+async def wipe_bank(guild: Optional[discord.Guild] = None,) -> None:
     """Delete all accounts from the bank.
 
     Parameters
@@ -597,7 +592,7 @@ async def set_global(global_: bool) -> bool:
     return global_
 
 
-async def get_bank_name(guild: discord.Guild = None) -> str:
+async def get_bank_name(guild: discord.Guild = None,) -> str:
     """Get the current bank name.
 
     Parameters
@@ -656,7 +651,7 @@ async def set_bank_name(name: str, guild: discord.Guild = None) -> str:
     return name
 
 
-async def get_currency_name(guild: discord.Guild = None) -> str:
+async def get_currency_name(guild: discord.Guild = None,) -> str:
     """Get the currency name of the bank.
 
     Parameters
@@ -717,7 +712,7 @@ async def set_currency_name(name: str, guild: discord.Guild = None) -> str:
     return name
 
 
-async def get_max_balance(guild: discord.Guild = None) -> int:
+async def get_max_balance(guild: discord.Guild = None,) -> int:
     """Get the max balance for the bank.
 
     Parameters
@@ -786,7 +781,7 @@ async def set_max_balance(amount: int, guild: discord.Guild = None) -> int:
     return amount
 
 
-async def get_default_balance(guild: discord.Guild = None) -> int:
+async def get_default_balance(guild: discord.Guild = None,) -> int:
     """Get the current default balance amount.
 
     Parameters

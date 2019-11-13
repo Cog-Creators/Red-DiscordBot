@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
 from __future__ import annotations
 
-# Standard Library
 from typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:

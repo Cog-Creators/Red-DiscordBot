@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# Standard Library
+
+
 import asyncio
 import json
 import logging
@@ -11,11 +11,9 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-# Red Dependencies
 import appdirs
 import click
 
-# Red Imports
 import redbot.logging
 
 from redbot.core import config, data_manager, drivers

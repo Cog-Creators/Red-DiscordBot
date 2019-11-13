@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 import contextlib
 import datetime
@@ -17,14 +15,12 @@ from collections import namedtuple
 from io import StringIO
 from typing import List, Optional, Tuple, Union, cast
 
-# Red Dependencies
 import aiohttp
 import discord
 import lavalink
 
 from fuzzywuzzy import process
 
-# Red Imports
 import redbot.core
 
 from redbot.core import Config, bank, checks, commands
@@ -41,7 +37,6 @@ from redbot.core.utils.menus import (
 )
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
-# Red Relative Imports
 from . import audio_dataclasses
 from .apis import HAS_SQL, _ERROR, MusicCache
 from .checks import can_have_caching
@@ -237,11 +232,11 @@ class Audio(commands.Cog):
         elif from_version < to_version:
             all_guild_data = await self.config.all_guilds()
             all_playlist = {}
-            for guild_id, guild_data in all_guild_data.items():
+            for (guild_id, guild_data) in all_guild_data.items():
                 temp_guild_playlist = guild_data.pop("playlists", None)
                 if temp_guild_playlist:
                     guild_playlist = {}
-                    for count, (name, data) in enumerate(temp_guild_playlist.items(), 1):
+                    for (count, (name, data)) in enumerate(temp_guild_playlist.items(), 1):
                         if not data or not name:
                             continue
                         playlist = {"id": count, "name": name, "guild": int(guild_id)}
@@ -404,7 +399,7 @@ class Audio(commands.Cog):
             except IndexError:
                 get_single_title = None
                 playing_servers = 0
-            return get_single_title, playing_servers
+            return (get_single_title, playing_servers)
 
         async def _status_check(playing_servers):
             if playing_servers == 0:
@@ -614,7 +609,7 @@ class Audio(commands.Cog):
         await self._data_check(guild.me)
         query = audio_dataclasses.Query.process_input(query)
         ctx = namedtuple("Context", "message")
-        results, called_api = await self.music_cache.lavalink_query(ctx(guild), player, query)
+        (results, called_api) = await self.music_cache.lavalink_query(ctx(guild), player, query)
 
         if not results.tracks:
             log.debug(f"Query returned no tracks.")
@@ -925,9 +920,9 @@ class Audio(commands.Cog):
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
 
-        scope, author, guild, specified_user = scope_data
+        (scope, author, guild, specified_user) = scope_data
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            (playlist_id, playlist_arg) = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -1689,13 +1684,24 @@ class Audio(commands.Cog):
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         player = lavalink.get_player(ctx.guild.id)
         eq = player.fetch("eq", Equalizer())
-        reactions = ["◀", "⬅", "⏫", "🔼", "🔽", "⏬", "➡", "▶", "⏺", "ℹ"]
+        reactions = [
+            "\N{BLACK LEFT-POINTING TRIANGLE}",
+            "\N{LEFTWARDS BLACK ARROW}",
+            "\N{BLACK UP-POINTING DOUBLE TRIANGLE}",
+            "\N{UP-POINTING SMALL RED TRIANGLE}",
+            "\N{DOWN-POINTING SMALL RED TRIANGLE}",
+            "\N{BLACK DOWN-POINTING DOUBLE TRIANGLE}",
+            "\N{BLACK RIGHTWARDS ARROW}",
+            "\N{BLACK RIGHT-POINTING TRIANGLE}",
+            "\N{BLACK CIRCLE FOR RECORD}",
+            "\N{INFORMATION SOURCE}",
+        ]
         await self._eq_msg_clear(player.fetch("eq_message"))
         eq_message = await ctx.send(box(eq.visualise(), lang="ini"))
 
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             try:
-                await eq_message.add_reaction("ℹ")
+                await eq_message.add_reaction("\N{INFORMATION SOURCE}")
             except discord.errors.NotFound:
                 pass
         else:
@@ -2065,9 +2071,9 @@ class Audio(commands.Cog):
             "3⃣": _local_folder_menu,
             "4⃣": _local_folder_menu,
             "5⃣": _local_folder_menu,
-            "⬅": prev_page,
-            "❌": close_menu,
-            "➡": next_page,
+            "\N{LEFTWARDS BLACK ARROW}": prev_page,
+            "\N{CROSS MARK}": close_menu,
+            "\N{BLACK RIGHTWARDS ARROW}": next_page,
         }
 
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -2136,7 +2142,9 @@ class Audio(commands.Cog):
             return
         local_tracks = []
         for local_file in await self._all_folder_tracks(ctx, query):
-            trackdata, called_api = await self.music_cache.lavalink_query(ctx, player, local_file)
+            (trackdata, called_api) = await self.music_cache.lavalink_query(
+                ctx, player, local_file
+            )
             with contextlib.suppress(IndexError):
                 local_tracks.append(trackdata.tracks[0])
         return local_tracks
@@ -2175,7 +2183,7 @@ class Audio(commands.Cog):
         to_search_string = {i.track.name for i in to_search}
         search_results = process.extract(search_words, to_search_string, limit=50)
         search_list = []
-        for track_match, percent_match in search_results:
+        for (track_match, percent_match) in search_results:
             if percent_match > 60:
                 search_list.extend(
                     [i.track.to_string_hidden() for i in to_search if i.track.name == track_match]
@@ -2509,9 +2517,9 @@ class Audio(commands.Cog):
             "3⃣": _category_search_menu,
             "4⃣": _category_search_menu,
             "5⃣": _category_search_menu,
-            "⬅": prev_page,
-            "❌": close_menu,
-            "➡": next_page,
+            "\N{LEFTWARDS BLACK ARROW}": prev_page,
+            "\N{CROSS MARK}": close_menu,
+            "\N{BLACK RIGHTWARDS ARROW}": next_page,
         }
         playlist_search_controls = {
             "1⃣": _playlist_search_menu,
@@ -2519,9 +2527,9 @@ class Audio(commands.Cog):
             "3⃣": _playlist_search_menu,
             "4⃣": _playlist_search_menu,
             "5⃣": _playlist_search_menu,
-            "⬅": prev_page,
-            "❌": close_menu,
-            "➡": next_page,
+            "\N{LEFTWARDS BLACK ARROW}": prev_page,
+            "\N{CROSS MARK}": close_menu,
+            "\N{BLACK RIGHTWARDS ARROW}": next_page,
         }
 
         api_data = await self._check_api_tokens()
@@ -2597,7 +2605,7 @@ class Audio(commands.Cog):
         cat_menu_output = await menu(ctx, category_search_page_list, category_search_controls)
         if not cat_menu_output:
             return await self._embed_msg(ctx, _("No categories selected, try again later."))
-        category_name, category_pick = cat_menu_output
+        (category_name, category_pick) = cat_menu_output
         playlists_list = await self.music_cache.spotify_api.get_playlist_from_category(
             category_pick
         )
@@ -2797,7 +2805,7 @@ class Audio(commands.Cog):
                     new_query.start_time = query.start_time
                     return await self._enqueue_tracks(ctx, new_query)
                 else:
-                    result, called_api = await self.music_cache.lavalink_query(
+                    (result, called_api) = await self.music_cache.lavalink_query(
                         ctx, player, audio_dataclasses.Query.process_input(res[0])
                     )
                     tracks = result.tracks
@@ -2853,7 +2861,7 @@ class Audio(commands.Cog):
                 index = query.track_index
                 if query.start_time:
                     seek = query.start_time
-            result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
+            (result, called_api) = await self.music_cache.lavalink_query(ctx, player, query)
             tracks = result.tracks
             playlist_data = result.playlist_info
             if not tracks:
@@ -3221,7 +3229,7 @@ class Audio(commands.Cog):
                     f"Please try to be more specific, or use the playlist ID."
                 )
         elif match_count == 1:
-            return correct_scope_matches[0][0], original_input
+            return (correct_scope_matches[0][0], original_input)
         elif match_count == 0:
             return None, original_input
 
@@ -3229,7 +3237,7 @@ class Audio(commands.Cog):
         pos_len = 3
         playlists = f"{'#':{pos_len}}\n"
 
-        for number, (pid, pname, ptracks, pauthor) in enumerate(correct_scope_matches, 1):
+        for (number, (pid, pname, ptracks, pauthor)) in enumerate(correct_scope_matches, 1):
             author = self.bot.get_user(pauthor) or "Unknown"
             line = (
                 f"{number}."
@@ -3250,7 +3258,7 @@ class Audio(commands.Cog):
         avaliable_emojis = ReactionPredicate.NUMBER_EMOJIS[1:]
         avaliable_emojis.append("🔟")
         emojis = avaliable_emojis[: len(correct_scope_matches)]
-        emojis.append("❌")
+        emojis.append("\N{CROSS MARK}")
         start_adding_reactions(msg, emojis)
         pred = ReactionPredicate.with_emojis(emojis, msg, user=context.author)
         try:
@@ -3261,7 +3269,7 @@ class Audio(commands.Cog):
             raise TooManyMatches(
                 "Too many matches found and you did not select which one you wanted."
             )
-        if emojis[pred.result] == "❌":
+        if emojis[pred.result] == "\N{CROSS MARK}":
             with contextlib.suppress(discord.HTTPException):
                 await msg.delete()
             raise TooManyMatches(
@@ -3269,7 +3277,7 @@ class Audio(commands.Cog):
             )
         with contextlib.suppress(discord.HTTPException):
             await msg.delete()
-        return correct_scope_matches[pred.result][0], original_input
+        return (correct_scope_matches[pred.result][0], original_input)
 
     @commands.group()
     @commands.guild_only()
@@ -3336,11 +3344,11 @@ class Audio(commands.Cog):
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
-        scope, author, guild, specified_user = scope_data
+        (scope, author, guild, specified_user) = scope_data
         if not await self._playlist_check(ctx):
             return
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            (playlist_id, playlist_arg) = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -3497,7 +3505,7 @@ class Audio(commands.Cog):
         ) = scope_data
 
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            (playlist_id, playlist_arg) = await self._get_correct_playlist_id(
                 ctx, playlist_matches, from_scope, from_author, from_guild, specified_from_user
             )
         except TooManyMatches as e:
@@ -3600,7 +3608,7 @@ class Audio(commands.Cog):
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
-        scope, author, guild, specified_user = scope_data
+        (scope, author, guild, specified_user) = scope_data
 
         temp_playlist = FakePlaylist(author.id, scope)
         scope_name = humanize_scope(
@@ -3665,10 +3673,10 @@ class Audio(commands.Cog):
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
-        scope, author, guild, specified_user = scope_data
+        (scope, author, guild, specified_user) = scope_data
 
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            (playlist_id, playlist_arg) = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -3746,13 +3754,13 @@ class Audio(commands.Cog):
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
-        scope, author, guild, specified_user = scope_data
+        (scope, author, guild, specified_user) = scope_data
         scope_name = humanize_scope(
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
 
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            (playlist_id, playlist_arg) = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -3875,10 +3883,10 @@ class Audio(commands.Cog):
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
-        scope, author, guild, specified_user = scope_data
+        (scope, author, guild, specified_user) = scope_data
 
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            (playlist_id, playlist_arg) = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -3977,13 +3985,13 @@ class Audio(commands.Cog):
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
-        scope, author, guild, specified_user = scope_data
+        (scope, author, guild, specified_user) = scope_data
         scope_name = humanize_scope(
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
 
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            (playlist_id, playlist_arg) = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -4096,7 +4104,7 @@ class Audio(commands.Cog):
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
-        scope, author, guild, specified_user = scope_data
+        (scope, author, guild, specified_user) = scope_data
 
         try:
             playlists = await get_all_playlist(scope, self.bot, guild, author, specified_user)
@@ -4206,7 +4214,7 @@ class Audio(commands.Cog):
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
-        scope, author, guild, specified_user = scope_data
+        (scope, author, guild, specified_user) = scope_data
         scope_name = humanize_scope(
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
@@ -4290,13 +4298,13 @@ class Audio(commands.Cog):
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
-        scope, author, guild, specified_user = scope_data
+        (scope, author, guild, specified_user) = scope_data
         scope_name = humanize_scope(
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
 
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            (playlist_id, playlist_arg) = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -4398,7 +4406,7 @@ class Audio(commands.Cog):
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
-        scope, author, guild, specified_user = scope_data
+        (scope, author, guild, specified_user) = scope_data
         scope_name = humanize_scope(
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
@@ -4472,7 +4480,7 @@ class Audio(commands.Cog):
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
-        scope, author, guild, specified_user = scope_data
+        (scope, author, guild, specified_user) = scope_data
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
@@ -4480,7 +4488,7 @@ class Audio(commands.Cog):
                 return False
 
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            (playlist_id, playlist_arg) = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -4618,9 +4626,9 @@ class Audio(commands.Cog):
 
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
-        scope, author, guild, specified_user = scope_data
+        (scope, author, guild, specified_user) = scope_data
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            (playlist_id, playlist_arg) = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -4639,7 +4647,9 @@ class Audio(commands.Cog):
                 return
             if playlist.url:
                 player = lavalink.get_player(ctx.guild.id)
-                added, removed, playlist = await self._maybe_update_playlist(ctx, player, playlist)
+                (added, removed, playlist) = await self._maybe_update_playlist(
+                    ctx, player, playlist
+                )
             else:
                 return await self._embed_msg(ctx, _("Custom playlists cannot be updated."))
         except RuntimeError:
@@ -4751,7 +4761,7 @@ class Audio(commands.Cog):
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
-        scope, author, guild, specified_user = scope_data
+        (scope, author, guild, specified_user) = scope_data
         temp_playlist = FakePlaylist(author.id, scope)
         if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
             return
@@ -4874,7 +4884,7 @@ class Audio(commands.Cog):
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
-        scope, author, guild, specified_user = scope_data
+        (scope, author, guild, specified_user) = scope_data
 
         new_name = new_name.split(" ")[0].strip('"')[:32]
         if new_name.isnumeric():
@@ -4887,7 +4897,7 @@ class Audio(commands.Cog):
             )
 
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            (playlist_id, playlist_arg) = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -5013,7 +5023,7 @@ class Audio(commands.Cog):
         for song_url in uploaded_track_list:
             track_count += 1
             try:
-                result, called_api = await self.music_cache.lavalink_query(
+                (result, called_api) = await self.music_cache.lavalink_query(
                     ctx, player, audio_dataclasses.Query.process_input(song_url)
                 )
                 track = result.tracks
@@ -5148,12 +5158,12 @@ class Audio(commands.Cog):
                 tracklist.append(track_obj)
             self._play_lock(ctx, False)
         elif query.is_search:
-            result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
+            (result, called_api) = await self.music_cache.lavalink_query(ctx, player, query)
             tracks = result.tracks
             if not tracks:
                 return await self._embed_msg(ctx, _("Nothing found."))
         else:
-            result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
+            (result, called_api) = await self.music_cache.lavalink_query(ctx, player, query)
             tracks = result.tracks
 
         if not search and len(tracklist) == 0:
@@ -5234,7 +5244,12 @@ class Audio(commands.Cog):
                     await message.delete()
                 return None
 
-        queue_controls = {"⬅": prev_page, "❌": close_menu, "➡": next_page, "ℹ": _queue_menu}
+        queue_controls = {
+            "\N{LEFTWARDS BLACK ARROW}": prev_page,
+            "\N{CROSS MARK}": close_menu,
+            "\N{BLACK RIGHTWARDS ARROW}": next_page,
+            "\N{INFORMATION SOURCE}": _queue_menu,
+        }
 
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("There's nothing in the queue."))
@@ -5453,8 +5468,8 @@ class Audio(commands.Cog):
             track_list.append(song_info)
         search_results = process.extract(search_words, track_list, limit=50)
         search_list = []
-        for search, percent_match in search_results:
-            for queue_position, title in search.items():
+        for (search, percent_match) in search_results:
+            for (queue_position, title) in search.items():
                 if percent_match > 89:
                     search_list.append([queue_position, title])
         return search_list
@@ -5740,9 +5755,9 @@ class Audio(commands.Cog):
             "3⃣": _search_menu,
             "4⃣": _search_menu,
             "5⃣": _search_menu,
-            "⬅": prev_page,
-            "❌": close_menu,
-            "➡": next_page,
+            "\N{LEFTWARDS BLACK ARROW}": prev_page,
+            "\N{CROSS MARK}": close_menu,
+            "\N{BLACK RIGHTWARDS ARROW}": next_page,
         }
 
         if not self._player_check(ctx):
@@ -5786,7 +5801,9 @@ class Audio(commands.Cog):
             query = audio_dataclasses.Query.process_input(query)
             if query.invoked_from == "search list" or query.invoked_from == "local folder":
                 if query.invoked_from == "search list":
-                    result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
+                    (result, called_api) = await self.music_cache.lavalink_query(
+                        ctx, player, query
+                    )
                     tracks = result.tracks
                 else:
                     tracks = await self._folder_tracks(ctx, player, query)
@@ -5860,7 +5877,7 @@ class Audio(commands.Cog):
                 else:
                     tracks = await self._folder_list(ctx, query)
             else:
-                result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
+                (result, called_api) = await self.music_cache.lavalink_query(ctx, player, query)
                 tracks = result.tracks
             if not tracks:
                 embed = discord.Embed(title=_("Nothing found."), colour=await ctx.embed_colour())
@@ -6312,7 +6329,7 @@ class Audio(commands.Cog):
         autoplay = await self.config.guild(player.channel.guild).auto_play() or self.owns_autoplay
         if not player.current or (not player.queue and not autoplay):
             try:
-                pos, dur = player.position, player.current.length
+                pos, dur = (player.position, player.current.length)
             except AttributeError:
                 return await self._embed_msg(ctx, _("There's nothing in the queue."))
             time_remain = lavalink.utils.format_time(dur - pos)
@@ -6786,16 +6803,16 @@ class Audio(commands.Cog):
     ):
         player.store("eq", eq)
         emoji = {
-            "far_left": "◀",
-            "one_left": "⬅",
-            "max_output": "⏫",
-            "output_up": "🔼",
-            "output_down": "🔽",
-            "min_output": "⏬",
-            "one_right": "➡",
-            "far_right": "▶",
-            "reset": "⏺",
-            "info": "ℹ",
+            "far_left": "\N{BLACK LEFT-POINTING TRIANGLE}",
+            "one_left": "\N{LEFTWARDS BLACK ARROW}",
+            "max_output": "\N{BLACK UP-POINTING DOUBLE TRIANGLE}",
+            "output_up": "N{UP-POINTING SMALL RED TRIANGLE}",
+            "output_down": "N{DOWN-POINTING SMALL RED TRIANGLE}",
+            "min_output": "N{BLACK DOWN-POINTING DOUBLE TRIANGLE}",
+            "one_right": "\N{BLACK RIGHTWARDS ARROW}",
+            "far_right": "N{BLACK RIGHT-POINTING TRIANGLE}",
+            "reset": "N{BLACK CIRCLE FOR RECORD}",
+            "info": "\N{INFORMATION SOURCE}",
         }
         selector = f'{" " * 8}{"   " * selected}^^'
         try:
@@ -6803,7 +6820,7 @@ class Audio(commands.Cog):
         except discord.errors.NotFound:
             return
         try:
-            react_emoji, react_user = await self._get_eq_reaction(ctx, message, emoji)
+            (react_emoji, react_user) = await self._get_eq_reaction(ctx, message, emoji)
         except TypeError:
             return
 
@@ -6811,73 +6828,73 @@ class Audio(commands.Cog):
             await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
             await self._clear_react(message, emoji)
 
-        if react_emoji == "⬅":
+        if react_emoji == "\N{LEFTWARDS BLACK ARROW}":
             await remove_react(message, react_emoji, react_user)
             await self._eq_interact(ctx, player, eq, message, max(selected - 1, 0))
 
-        if react_emoji == "➡":
+        if react_emoji == "\N{BLACK RIGHTWARDS ARROW}":
             await remove_react(message, react_emoji, react_user)
             await self._eq_interact(ctx, player, eq, message, min(selected + 1, 14))
 
-        if react_emoji == "🔼":
+        if react_emoji == "N{UP-POINTING SMALL RED TRIANGLE}":
             await remove_react(message, react_emoji, react_user)
             _max = "{:.2f}".format(min(eq.get_gain(selected) + 0.1, 1.0))
             eq.set_gain(selected, float(_max))
             await self._apply_gain(ctx.guild.id, selected, _max)
             await self._eq_interact(ctx, player, eq, message, selected)
 
-        if react_emoji == "🔽":
+        if react_emoji == "N{DOWN-POINTING SMALL RED TRIANGLE}":
             await remove_react(message, react_emoji, react_user)
             _min = "{:.2f}".format(max(eq.get_gain(selected) - 0.1, -0.25))
             eq.set_gain(selected, float(_min))
             await self._apply_gain(ctx.guild.id, selected, _min)
             await self._eq_interact(ctx, player, eq, message, selected)
 
-        if react_emoji == "⏫":
+        if react_emoji == "\N{BLACK UP-POINTING DOUBLE TRIANGLE}":
             await remove_react(message, react_emoji, react_user)
             _max = 1.0
             eq.set_gain(selected, _max)
             await self._apply_gain(ctx.guild.id, selected, _max)
             await self._eq_interact(ctx, player, eq, message, selected)
 
-        if react_emoji == "⏬":
+        if react_emoji == "N{BLACK DOWN-POINTING DOUBLE TRIANGLE}":
             await remove_react(message, react_emoji, react_user)
             _min = -0.25
             eq.set_gain(selected, _min)
             await self._apply_gain(ctx.guild.id, selected, _min)
             await self._eq_interact(ctx, player, eq, message, selected)
 
-        if react_emoji == "◀":
+        if react_emoji == "\N{BLACK LEFT-POINTING TRIANGLE}":
             await remove_react(message, react_emoji, react_user)
             selected = 0
             await self._eq_interact(ctx, player, eq, message, selected)
 
-        if react_emoji == "▶":
+        if react_emoji == "N{BLACK RIGHT-POINTING TRIANGLE}":
             await remove_react(message, react_emoji, react_user)
             selected = 14
             await self._eq_interact(ctx, player, eq, message, selected)
 
-        if react_emoji == "⏺":
+        if react_emoji == "N{BLACK CIRCLE FOR RECORD}":
             await remove_react(message, react_emoji, react_user)
             for band in range(eq._band_count):
                 eq.set_gain(band, 0.0)
             await self._apply_gains(ctx.guild.id, eq.bands)
             await self._eq_interact(ctx, player, eq, message, selected)
 
-        if react_emoji == "ℹ":
+        if react_emoji == "\N{INFORMATION SOURCE}":
             await remove_react(message, react_emoji, react_user)
             await ctx.send_help(self.eq)
             await self._eq_interact(ctx, player, eq, message, selected)
 
     @staticmethod
-    async def _eq_msg_clear(eq_message: discord.Message):
+    async def _eq_msg_clear(eq_message: discord.Message,):
         if eq_message is not None:
             with contextlib.suppress(discord.HTTPException):
                 await eq_message.delete()
 
     async def _get_eq_reaction(self, ctx: commands.Context, message: discord.Message, emoji):
         try:
-            reaction, user = await self.bot.wait_for(
+            (reaction, user) = await self.bot.wait_for(
                 "reaction_add",
                 check=lambda r, u: r.message.id == message.id
                 and u.id == ctx.author.id

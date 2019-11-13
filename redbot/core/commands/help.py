@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Warning: The implementation below touches several private attributes.
 # While this implementation will be updated, and public interfaces maintained, derived classes
 # should not assume these private attributes are version safe, and use the provided HelpSettings
@@ -33,19 +32,17 @@
 
 # Note: 3rd party help must not remove the copyright notice
 
-# Standard Library
+
 import asyncio
 
 from collections import namedtuple
 from dataclasses import dataclass
 from typing import AsyncIterator, Iterable, List, Union, cast
 
-# Red Dependencies
 import discord
 
 from discord.ext import commands as dpy_commands
 
-# Red Relative Imports
 from ..i18n import Translator
 from ..utils import format_fuzzy_results, fuzzy_command_search, menus
 from ..utils.chat_formatting import box, pagify
@@ -219,7 +216,7 @@ class RedHelpFormatter:
 
             if subcommands:
 
-                def shorten_line(a_line: str) -> str:
+                def shorten_line(a_line: str,) -> str:
                     if len(a_line) < 70:  # embed max width needs to be lower
                         return a_line
                     return a_line[:67] + "..."
@@ -350,7 +347,7 @@ class RedHelpFormatter:
 
             if coms:
 
-                def shorten_line(a_line: str) -> str:
+                def shorten_line(a_line: str,) -> str:
                     if len(a_line) < 70:  # embed max width needs to be lower
                         return a_line
                     return a_line[:67] + "..."
@@ -417,7 +414,7 @@ class RedHelpFormatter:
                 else:
                     title = f"**__No Category:__**"
 
-                def shorten_line(a_line: str) -> str:
+                def shorten_line(a_line: str,) -> str:
                     if len(a_line) < 70:  # embed max width needs to be lower
                         return a_line
                     return a_line[:67] + "..."
@@ -461,7 +458,7 @@ class RedHelpFormatter:
                 title = f"{cog_name}:" if cog_name else "No Category:"
                 to_join.append(title)
 
-                for name, doc, width in width_maker(sorted(data.items())):
+                for (name, doc, width) in width_maker(sorted(data.items())):
                     to_join.append(f"  {name:<{width}} {doc}")
 
             to_join.append(f"\n{tagline}")

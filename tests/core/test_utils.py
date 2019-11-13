@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 import random
 import textwrap
 
-# Red Dependencies
 import pytest
 
-# Red Imports
 from redbot.core.utils import (
     bounded_gather,
     bounded_gather_iter,
@@ -26,7 +22,7 @@ def test_bordered_symmetrical():
     │three         │    │six          │
     └──────────────┘    └─────────────┘"""
     )
-    col1, col2 = ["one", "two", "three"], ["four", "five", "six"]
+    col1, col2 = (["one", "two", "three"], ["four", "five", "six"])
     assert chat_formatting.bordered(col1, col2) == expected
 
 
@@ -40,7 +36,7 @@ def test_bordered_asymmetrical():
     └──────────────┘    │seven         │
                         └──────────────┘"""
     )
-    col1, col2 = ["one", "two", "three"], ["four", "five", "six", "seven"]
+    col1, col2 = (["one", "two", "three"], ["four", "five", "six", "seven"])
     assert chat_formatting.bordered(col1, col2) == expected
 
 
@@ -54,7 +50,7 @@ def test_bordered_asymmetrical_2():
     │four          │                   
     └──────────────┘                   """
     )
-    col1, col2 = ["one", "two", "three", "four"], ["five", "six"]
+    col1, col2 = (["one", "two", "three", "four"], ["five", "six"])
     assert chat_formatting.bordered(col1, col2) == expected
 
 
@@ -67,7 +63,7 @@ def test_bordered_ascii():
     |three         |    |six          |
     ----------------    ---------------"""
     )
-    col1, col2 = ["one", "two", "three"], ["four", "five", "six"]
+    col1, col2 = (["one", "two", "three"], ["four", "five", "six"])
     assert chat_formatting.bordered(col1, col2, ascii_border=True) == expected
 
 

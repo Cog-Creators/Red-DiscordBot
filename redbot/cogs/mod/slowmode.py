@@ -1,14 +1,10 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import re
 
 from datetime import timedelta
 
-# Red Imports
 from redbot.core import checks, commands, i18n
 from redbot.core.utils.chat_formatting import humanize_timedelta
 
-# Red Relative Imports
 from .abc import MixinMeta
 
 _ = i18n.Translator("Mod", __file__)

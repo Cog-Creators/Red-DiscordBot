@@ -1,8 +1,5 @@
-# -*- coding: utf-8 -*-
-# Red Dependencies
 import pytest
 
-# Red Imports
 from redbot.cogs.alias import Alias
 from redbot.core import Config
 

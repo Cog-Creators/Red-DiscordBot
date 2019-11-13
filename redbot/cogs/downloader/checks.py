@@ -1,8 +1,5 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 
-# Red Imports
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils.predicates import MessagePredicate
@@ -24,7 +21,7 @@ REPO_INSTALL_MSG = _(
 _ = T_
 
 
-async def do_install_agreement(ctx: commands.Context) -> bool:
+async def do_install_agreement(ctx: commands.Context,) -> bool:
     downloader = ctx.cog
     if downloader is None or downloader.already_agreed:
         return True

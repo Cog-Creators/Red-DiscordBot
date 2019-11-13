@@ -1,17 +1,13 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import datetime
 import itertools
 
 from io import BytesIO
 from typing import Iterator, List, Optional, Sequence, SupportsInt, Union
 
-# Red Dependencies
 import discord
 
 from babel.numbers import format_decimal
 
-# Red Imports
 from redbot.core.i18n import Translator, get_babel_locale
 
 _ = Translator("UtilsChatFormatting", __file__)
@@ -381,7 +377,7 @@ def humanize_list(items: Sequence[str]) -> str:
         raise IndexError("Cannot humanize empty sequence") from None
 
 
-def format_perms_list(perms: discord.Permissions) -> str:
+def format_perms_list(perms: discord.Permissions,) -> str:
     """Format a list of permission names.
 
     This will return a humanized list of the names of all enabled
@@ -452,7 +448,7 @@ def humanize_timedelta(
     ]
 
     strings = []
-    for period_name, plural_period_name, period_seconds in periods:
+    for (period_name, plural_period_name, period_seconds) in periods:
         if seconds >= period_seconds:
             period_value, seconds = divmod(seconds, period_seconds)
             if period_value == 0:

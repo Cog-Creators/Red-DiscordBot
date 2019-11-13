@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 import contextlib
 import datetime
@@ -14,17 +12,13 @@ import traceback
 
 from collections import namedtuple
 from pathlib import Path
-from random import SystemRandom
-from string import ascii_letters, digits
 from typing import TYPE_CHECKING, Dict, Iterable, List, Optional, Sequence, Tuple, Union
 
-# Red Dependencies
 import aiohttp
 import discord
 import pip
 import pkg_resources
 
-# Red Relative Imports
 from . import (
     VersionInfo,
     __version__,
@@ -132,7 +126,7 @@ class CoreLogic:
         )
 
     @staticmethod
-    def _cleanup_and_refresh_modules(module_name: str) -> None:
+    def _cleanup_and_refresh_modules(module_name: str,) -> None:
         """Interally reloads modules so that changes are detected"""
         splitted = module_name.split(".")
 
@@ -186,11 +180,15 @@ class CoreLogic:
     ) -> Tuple[List[str], List[str], List[str], List[str], List[Tuple[str, str]]]:
         await self._unload(cog_names)
 
-        loaded, load_failed, not_found, already_loaded, load_failed_with_reason = await self._load(
-            cog_names
-        )
+        (
+            loaded,
+            load_failed,
+            not_found,
+            already_loaded,
+            load_failed_with_reason,
+        ) = await self._load(cog_names)
 
-        return loaded, load_failed, not_found, already_loaded, load_failed_with_reason
+        return (loaded, load_failed, not_found, already_loaded, load_failed_with_reason)
 
     async def _name(self, name: Optional[str] = None) -> str:
         """
@@ -232,7 +230,7 @@ class CoreLogic:
         return await self.bot._config.prefix()
 
     @classmethod
-    async def _version_info(cls) -> Dict[str, str]:
+    async def _version_info(cls,) -> Dict[str, str]:
         """
         Version information for Red and discord.py
 
@@ -577,7 +575,9 @@ class Core(commands.Cog, CoreLogic):
             return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
-            loaded, failed, not_found, already_loaded, failed_with_reason = await self._load(cogs)
+            (loaded, failed, not_found, already_loaded, failed_with_reason) = await self._load(
+                cogs
+            )
 
         output = []
 
@@ -684,7 +684,7 @@ class Core(commands.Cog, CoreLogic):
             return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
-            loaded, failed, not_found, already_loaded, failed_with_reason = await self._reload(
+            (loaded, failed, not_found, already_loaded, failed_with_reason) = await self._reload(
                 cogs
             )
 

@@ -1,15 +1,11 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import logging
 import re
 
 from datetime import datetime, timedelta
 from typing import Callable, List, Set, Union
 
-# Red Dependencies
 import discord
 
-# Red Imports
 from redbot.core import checks, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
@@ -17,7 +13,6 @@ from redbot.core.utils.chat_formatting import humanize_number
 from redbot.core.utils.mod import mass_purge, slow_deletion
 from redbot.core.utils.predicates import MessagePredicate
 
-# Red Relative Imports
 from .converters import RawMessageIds
 
 _ = Translator("Cleanup", __file__)

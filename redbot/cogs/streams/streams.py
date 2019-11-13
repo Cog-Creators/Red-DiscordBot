@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 import contextlib
 import re
@@ -7,16 +5,13 @@ import re
 from collections import defaultdict
 from typing import List, Optional, Tuple
 
-# Red Dependencies
 import discord
 
-# Red Imports
 from redbot.core import Config, checks, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import pagify
 
-# Red Relative Imports
 from . import streamtypes as _streamtypes
 from .errors import (
     APIError,
@@ -271,7 +266,7 @@ class Streams(commands.Cog):
             await ctx.send(_("There are no active alerts in this server."))
             return
 
-        for channel_id, streams in streams_list.items():
+        for (channel_id, streams) in streams_list.items():
             channel = ctx.guild.get_channel(channel_id)
             msg += "** - #{}**\n{}\n".format(channel, ", ".join(streams))
 
@@ -558,7 +553,7 @@ class Streams(commands.Cog):
             with contextlib.suppress(Exception):
                 try:
                     if stream.__class__.__name__ == "TwitchStream":
-                        embed, is_rerun = await stream.is_online()
+                        (embed, is_rerun) = await stream.is_online()
                     else:
                         embed = await stream.is_online()
                         is_rerun = False
@@ -580,7 +575,7 @@ class Streams(commands.Cog):
                         ignore_reruns = await self.db.guild(channel.guild).ignore_reruns()
                         if ignore_reruns and is_rerun:
                             continue
-                        mention_str, edited_roles = await self._get_mention_str(channel.guild)
+                        (mention_str, edited_roles) = await self._get_mention_str(channel.guild)
 
                         if mention_str:
                             alert_msg = await self.db.guild(channel.guild).live_message_mention()

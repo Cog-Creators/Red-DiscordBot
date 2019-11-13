@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 import io
 import textwrap
@@ -7,13 +5,11 @@ import textwrap
 from copy import copy
 from typing import Any, Dict, ItemsView, Iterator, List, Optional, Tuple, Union, cast
 
-# Red Dependencies
 import discord
 import yaml
 
 from schema import And, Optional as UseOptional, Or, Schema, SchemaError
 
-# Red Imports
 from redbot.core import checks, commands, config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
@@ -21,7 +17,6 @@ from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
-# Red Relative Imports
 from .converters import (
     ClearableRuleType,
     CogOrCommand,
@@ -543,7 +538,7 @@ class Permissions(commands.Cog):
         Handles config.
         """
         cog_or_cmd.obj.clear_rule_for(model_id, guild_id=guild_id)
-        guild_id, model_id = str(guild_id), str(model_id)
+        guild_id, model_id = (str(guild_id), str(model_id))
         async with self.config.custom(cog_or_cmd.type, cog_or_cmd.name).all() as rules:
             if guild_id in rules and rules[guild_id]:
                 del rules[guild_id][model_id]
@@ -571,7 +566,7 @@ class Permissions(commands.Cog):
         self.bot.clear_permission_rules(guild_id, preserve_default_rule=False)
         for category in (COG, COMMAND):
             async with self.config.custom(category).all() as all_rules:
-                for name, rules in all_rules.items():
+                for (name, rules) in all_rules.items():
                     rules.pop(str(guild_id), None)
 
     async def _permissions_acl_set(
@@ -610,7 +605,7 @@ class Permissions(commands.Cog):
             if not rules_dict:
                 continue
             conf = self.config.custom(category)
-            for cmd_name, cmd_rules in rules_dict.items():
+            for (cmd_name, cmd_rules) in rules_dict.items():
                 cmd_rules = {str(model_id): rule for model_id, rule in cmd_rules.items()}
                 await conf.set_raw(cmd_name, str(guild_id), value=cmd_rules)
                 cmd_obj = getter(cmd_name)
@@ -623,7 +618,7 @@ class Permissions(commands.Cog):
         for category in (COG, COMMAND):
             guild_rules.setdefault(category, {})
             rules_dict = await self.config.custom(category).all()
-            for cmd_name, cmd_rules in rules_dict.items():
+            for (cmd_name, cmd_rules) in rules_dict.items():
                 model_rules = cmd_rules.get(str(guild_id))
                 if model_rules is not None:
                     guild_rules[category][cmd_name] = dict(_int_key_map(model_rules.items()))
@@ -632,7 +627,7 @@ class Permissions(commands.Cog):
         return discord.File(fp, filename="acl.yaml")
 
     @staticmethod
-    async def _confirm(ctx: commands.Context) -> bool:
+    async def _confirm(ctx: commands.Context,) -> bool:
         """Ask "Are you sure?" and get the response as a bool."""
         if ctx.guild is None or ctx.guild.me.permissions_in(ctx.channel).add_reactions:
             msg = await ctx.send(_("Are you sure?"))
@@ -679,7 +674,7 @@ class Permissions(commands.Cog):
             return
         old_config = await self.config.all_guilds()
         old_config[GLOBAL] = await self.config.all()
-        new_cog_rules, new_cmd_rules = self._get_updated_schema(old_config)
+        (new_cog_rules, new_cmd_rules) = self._get_updated_schema(old_config)
         await self.config.custom(COG).set(new_cog_rules)
         await self.config.custom(COMMAND).set(new_cmd_rules)
         await self.config.version.set(__version__)
@@ -710,7 +705,7 @@ class Permissions(commands.Cog):
 
         new_cog_rules = {}
         new_cmd_rules = {}
-        for guild_id, old_rules in old_config.items():
+        for (guild_id, old_rules) in old_config.items():
             if "owner_models" not in old_rules:
                 continue
             old_rules = old_rules["owner_models"]

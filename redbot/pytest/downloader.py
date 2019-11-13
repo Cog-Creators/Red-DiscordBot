@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import json
 import shutil
 import subprocess as sp
@@ -7,10 +5,8 @@ import subprocess as sp
 from collections import namedtuple
 from pathlib import Path
 
-# Red Dependencies
 import pytest
 
-# Red Imports
 from redbot.cogs.downloader.installable import Installable, InstalledModule
 from redbot.cogs.downloader.repo_manager import ProcessFormatter, Repo, RepoManager
 

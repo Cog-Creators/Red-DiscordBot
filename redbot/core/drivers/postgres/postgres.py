@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import getpass
 import json
 import sys
@@ -7,7 +5,6 @@ import sys
 from pathlib import Path
 from typing import Any, AsyncIterator, Callable, List, Optional, Tuple, Union
 
-# Red Relative Imports
 from ... import data_manager, errors
 from ..base import BaseDriver, ConfigCategory, IdentifierData
 from ..log import log
@@ -201,7 +198,7 @@ class PostgresDriver(BaseDriver):
             raise errors.StoredTypeError(*exc.args)
 
     @classmethod
-    async def aiter_cogs(cls) -> AsyncIterator[Tuple[str, str]]:
+    async def aiter_cogs(cls,) -> AsyncIterator[Tuple[str, str]]:
         query = "SELECT cog_name, cog_id FROM red_config.red_cogs"
         log.invisible(query)
         async with cls._pool.acquire() as conn, conn.transaction():

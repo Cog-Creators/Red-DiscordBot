@@ -1,8 +1,5 @@
-# -*- coding: utf-8 -*-
-# Red Dependencies
 import pytest
 
-# Red Imports
 from redbot.core.rpc import get_name
 from redbot.pytest.rpc import *
 

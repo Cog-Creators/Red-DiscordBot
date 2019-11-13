@@ -1,8 +1,5 @@
-# -*- coding: utf-8 -*-
-# Red Imports
 from redbot.core import Config, commands
 
-# Red Relative Imports
 from .apis import HAS_SQL
 
 _config = None

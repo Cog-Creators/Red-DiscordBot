@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.7
-# -*- coding: utf-8 -*-
+
+
 """Script to bump pinned dependencies in setup.cfg.
 
 This script aims to help update our list of pinned primary and
@@ -67,7 +68,8 @@ the output. So for example, if a dependency has the environment marker
 this dependency will be ignored, and must be added to ``setup.cfg``
 manually.
 """
-# Standard Library
+
+
 import shlex
 import subprocess as sp
 import sys
@@ -78,7 +80,6 @@ import venv
 from pathlib import Path
 from typing import Dict, Iterable, Sequence
 
-# Red Dependencies
 import packaging.requirements
 import setuptools.config
 
@@ -104,7 +105,7 @@ def main() -> int:
     print()
 
     print("[options.extras_require]")
-    for extra, extra_primary_deps in primary_reqs_cfg["options"]["extras_require"].items():
+    for (extra, extra_primary_deps) in primary_reqs_cfg["options"]["extras_require"].items():
         print(extra, "=")
         full_extra_reqs = get_all_reqs(
             extra_primary_deps, all_core_deps={r.name.lower(): r for r in full_core_reqs}

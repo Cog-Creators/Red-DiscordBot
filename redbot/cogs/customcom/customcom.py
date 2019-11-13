@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import random
 import re
 
@@ -8,10 +6,8 @@ from datetime import datetime, timedelta
 from inspect import Parameter
 from typing import Dict, Mapping, Set, Tuple
 
-# Red Dependencies
 import discord
 
-# Red Imports
 from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import menus
@@ -95,7 +91,7 @@ class CommandObj:
         if not ccinfo:
             raise NotFound()
         else:
-            return ccinfo["response"], ccinfo.get("cooldowns", {})
+            return (ccinfo["response"], ccinfo.get("cooldowns", {}))
 
     async def get_full(self, message: discord.Message, command: str) -> Dict:
         ccinfo = await self.db(message.guild).commands.get_raw(command, default=None)
@@ -285,7 +281,7 @@ class CustomCommands(commands.Cog):
                 return await ctx.send(_("That command doesn't exist."))
             if cooldowns:
                 cooldown = []
-                for per, rate in cooldowns.items():
+                for (per, rate) in cooldowns.items():
                     cooldown.append(
                         _("A {} may call this command every {} seconds").format(per, rate)
                     )
@@ -462,7 +458,7 @@ class CustomCommands(commands.Cog):
             return
 
         try:
-            raw_response, cooldowns = await self.commandobj.get(
+            (raw_response, cooldowns) = await self.commandobj.get(
                 message=message, command=ctx.invoked_with
             )
             if isinstance(raw_response, list):
@@ -511,7 +507,7 @@ class CustomCommands(commands.Cog):
         await ctx.send(raw_response)
 
     @staticmethod
-    def prepare_args(raw_response) -> Mapping[str, Parameter]:
+    def prepare_args(raw_response,) -> Mapping[str, Parameter]:
         args = re.findall(r"{(\d+)[^:}]*(:[^.}]*)?[^}]*\}", raw_response)
         default = [("ctx", Parameter("ctx", Parameter.POSITIONAL_OR_KEYWORD))]
         if not args:

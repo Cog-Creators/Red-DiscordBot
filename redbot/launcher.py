@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import argparse
 import asyncio
 import getpass
@@ -8,11 +6,9 @@ import platform
 import subprocess
 import sys
 
-# Red Dependencies
 import aiohttp
 import pkg_resources
 
-# Red Imports
 from redbot import MIN_PYTHON_VERSION
 from redbot.core import VersionInfo, __version__, version_info as red_version_info
 from redbot.core.cli import confirm
@@ -368,7 +364,7 @@ async def is_outdated():
         async with session.get("{}/json".format(red_pypi)) as r:
             data = await r.json()
             new_version = data["info"]["version"]
-    return VersionInfo.from_str(new_version) > red_version_info, new_version
+    return (VersionInfo.from_str(new_version) > red_version_info, new_version)
 
 
 def main_menu():
@@ -376,7 +372,7 @@ def main_menu():
         os.system("TITLE Red - Discord Bot V3 Launcher")
     clear_screen()
     loop = asyncio.get_event_loop()
-    outdated, new_version = loop.run_until_complete(is_outdated())
+    (outdated, new_version) = loop.run_until_complete(is_outdated())
     while True:
         print(INTRO)
         print("\033[4mCurrent version:\033[0m {}".format(__version__))

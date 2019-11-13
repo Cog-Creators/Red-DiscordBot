@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 import asyncio.subprocess  # disables for # https://github.com/PyCQA/pylint/issues/1469
 import itertools
@@ -14,15 +12,12 @@ import time
 
 from typing import ClassVar, List, Optional, Tuple
 
-# Red Dependencies
 import aiohttp
 
 from tqdm import tqdm
 
-# Red Imports
 from redbot.core import data_manager
 
-# Red Relative Imports
 from .errors import LavalinkDownloadFailed
 
 JAR_VERSION = "3.2.1"
@@ -96,7 +91,7 @@ class ServerManager:
 
     @classmethod
     async def _get_jar_args(cls) -> List[str]:
-        java_available, java_version = await cls._has_java()
+        (java_available, java_version) = await cls._has_java()
         if not java_available:
             raise RuntimeError("You must install Java 1.8+ for Lavalink to run.")
 
@@ -110,10 +105,10 @@ class ServerManager:
         return ["java", *extra_flags, "-jar", str(LAVALINK_JAR_FILE)]
 
     @classmethod
-    async def _has_java(cls) -> Tuple[bool, Optional[Tuple[int, int]]]:
+    async def _has_java(cls,) -> Tuple[bool, Optional[Tuple[int, int]]]:
         if cls._java_available is not None:
             # Return cached value if we've checked this before
-            return cls._java_available, cls._java_version
+            return (cls._java_available, cls._java_version)
         java_available = shutil.which("java") is not None
         if not java_available:
             cls.java_available = False
@@ -121,7 +116,7 @@ class ServerManager:
         else:
             cls._java_version = version = await cls._get_java_version()
             cls._java_available = (2, 0) > version >= (1, 8) or version >= (8, 0)
-        return cls._java_available, cls._java_version
+        return (cls._java_available, cls._java_version)
 
     @staticmethod
     async def _get_java_version() -> Tuple[int, int]:
@@ -151,9 +146,9 @@ class ServerManager:
             match = version_line_re.search(line)
             short_match = short_version_re.search(line)
             if match:
-                return int(match["major"]), int(match["minor"])
+                return (int(match["major"]), int(match["minor"]))
             elif short_match:
-                return int(short_match["major"]), 0
+                return (int(short_match["major"]), 0)
 
         raise RuntimeError(
             "The output of `java -version` was unexpected. Please report this issue on Red's "

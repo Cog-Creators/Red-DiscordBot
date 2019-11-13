@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import json
 
 from pathlib import Path
 
-# Red Dependencies
 import pytest
 
-# Red Imports
 from redbot.cogs.downloader.installable import Installable, InstallableType
 from redbot.core import VersionInfo
 from redbot.pytest.downloader import *
@@ -23,7 +19,7 @@ def test_process_info_file(installable):
             assert getattr(installable, k) == v
 
 
-def test_process_lib_info_file(library_installable):
+def test_process_lib_info_file(library_installable,):
     for k, v in LIBRARY_INFO_JSON.items():
         if k == "type":
             assert library_installable.type == InstallableType.SHARED_LIBRARY

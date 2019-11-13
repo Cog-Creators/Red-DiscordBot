@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+
 
 # Discord Version check
 
-# Standard Library
+
 import asyncio
 import json
 import logging
@@ -15,10 +15,8 @@ from copy import deepcopy
 from pathlib import Path
 from signal import SIGTERM
 
-# Red Dependencies
 import discord
 
-# Red Imports
 import redbot.logging
 
 # Set the event loop policies here so any subsequent `get_event_loop()`

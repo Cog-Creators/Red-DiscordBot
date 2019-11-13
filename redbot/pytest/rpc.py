@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 from unittest.mock import MagicMock
 
-# Red Dependencies
 import pytest
 
-# Red Imports
 from redbot.core.rpc import RPC, RPCMixin
 
 __all__ = ["rpc", "rpcmixin", "cog", "existing_func", "existing_multi_func"]

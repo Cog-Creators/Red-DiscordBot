@@ -1,10 +1,7 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 
 from unittest.mock import patch
 
-# Red Dependencies
 import pytest
 
 
@@ -62,7 +59,7 @@ async def test_config_register_user(config, empty_user):
 
 
 @pytest.mark.asyncio
-async def test_config_force_register_global(config_fr):
+async def test_config_force_register_global(config_fr,):
     with pytest.raises(AttributeError):
         await config_fr.enabled()
 
@@ -89,7 +86,7 @@ async def test_nested_registration_asdict(config):
 
 
 @pytest.mark.asyncio
-async def test_nested_registration_and_changing(config):
+async def test_nested_registration_and_changing(config,):
     defaults = {"bar": {"baz": False}}
     config.register_global(foo=defaults)
 
@@ -108,7 +105,7 @@ async def test_doubleset_default(config):
 
 
 @pytest.mark.asyncio
-async def test_nested_registration_multidict(config):
+async def test_nested_registration_multidict(config,):
     defaults = {"foo": {"bar": {"baz": True}}, "blah": True}
     config.register_global(**defaults)
 
@@ -416,7 +413,7 @@ async def test_ctxmgr_no_shared_default(config, member_factory):
 
 
 @pytest.mark.asyncio
-async def test_ctxmgr_no_unnecessary_write(config):
+async def test_ctxmgr_no_unnecessary_write(config,):
     config.register_global(foo=[])
     foo_value_obj = config.foo
     with patch.object(foo_value_obj, "set") as set_method:

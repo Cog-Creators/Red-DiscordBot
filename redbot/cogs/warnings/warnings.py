@@ -1,12 +1,8 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 from collections import namedtuple
 from typing import Optional, Union
 
-# Red Dependencies
 import discord
 
-# Red Imports
 from redbot.cogs.warnings.helpers import (
     get_command_for_dropping_points,
     get_command_for_exceeded_points,
@@ -199,7 +195,7 @@ class Warnings(commands.Cog):
         guild_settings = self.config.guild(guild)
         msg_list = []
         async with guild_settings.reasons() as registered_reasons:
-            for r, v in registered_reasons.items():
+            for (r, v) in registered_reasons.items():
                 if await ctx.embed_requested():
                     em = discord.Embed(
                         title=_("Reason: {name}").format(name=r), description=v["description"]

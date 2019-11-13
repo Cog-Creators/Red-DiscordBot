@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 import json
 import logging
@@ -11,7 +9,6 @@ from pathlib import Path
 from typing import Any, AsyncIterator, Dict, Optional, Tuple
 from uuid import uuid4
 
-# Red Relative Imports
 from .. import data_manager, errors
 from .base import BaseDriver, ConfigCategory, IdentifierData
 
@@ -172,7 +169,7 @@ class JsonDriver(BaseDriver):
                     await self._save()
 
     @classmethod
-    async def aiter_cogs(cls) -> AsyncIterator[Tuple[str, str]]:
+    async def aiter_cogs(cls,) -> AsyncIterator[Tuple[str, str]]:
         yield "Core", "0"
         for _dir in data_manager.cog_data_path().iterdir():
             fpath = _dir / "settings.json"

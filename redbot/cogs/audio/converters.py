@@ -1,19 +1,14 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import argparse
 import functools
 
 from typing import Optional, Tuple, Union
 
-# Red Dependencies
 import discord
 
-# Red Imports
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 
-# Red Relative Imports
 from .playlists import PlaylistScope, standardize_scope
 
 _ = Translator("Audio", __file__)
@@ -210,7 +205,7 @@ class ScopeParser(commands.Converter):
         elif any(x in argument for x in ["--author", "--user", "--member"]):
             raise commands.ArgParserFailure("--scope", "Nothing", custom_help=_USER_HELP)
 
-        return target_scope, target_user, target_guild, specified_user
+        return (target_scope, target_user, target_guild, specified_user)
 
 
 class ComplexScopeParser(commands.Converter):

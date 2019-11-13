@@ -1,19 +1,14 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import json
 
 from random import choice, sample
 from string import ascii_letters
 from typing import ClassVar, Optional
 
-# Red Dependencies
 import aiohttp
 import discord
 
-# Red Imports
 from redbot.core.i18n import Translator
 
-# Red Relative Imports
 from .errors import (
     APIError,
     InvalidTwitchCredentials,

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 import contextlib
 import os
@@ -8,15 +6,12 @@ import time
 
 from urllib.parse import urlparse
 
-# Red Dependencies
 import discord
 import lavalink
 
-# Red Imports
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 
-# Red Relative Imports
 from . import audio_dataclasses
 from .converters import _pass_config_to_converters
 from .playlists import _pass_config_to_playlist

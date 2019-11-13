@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 import inspect
 import logging
@@ -12,12 +10,10 @@ from importlib.machinery import ModuleSpec
 from pathlib import Path
 from typing import Dict, List, NoReturn, Optional, Union
 
-# Red Dependencies
 import discord
 
 from discord.ext.commands import when_mentioned_or
 
-# Red Relative Imports
 from . import Config, commands, drivers, errors, i18n
 from .cog_manager import CogManager
 from .rpc import RPCMixin
@@ -352,7 +348,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         log.info("Moving shared API tokens to a custom group")
         all_shared_api_tokens = await self._config.get_raw("api_tokens", default={})
-        for service_name, token_mapping in all_shared_api_tokens.items():
+        for (service_name, token_mapping) in all_shared_api_tokens.items():
             service_partial = self._config.custom(SHARED_API_TOKENS, service_name)
             async with service_partial.all() as basically_bulk_update:
                 basically_bulk_update.update(token_mapping)
@@ -366,7 +362,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         log.info("Begin updating guild configs to support multiple mod/admin roles")
         all_guild_data = await self._config.all_guilds()
-        for guild_id, guild_data in all_guild_data.items():
+        for (guild_id, guild_data) in all_guild_data.items():
             guild_obj = discord.Object(id=guild_id)
             mod_roles, admin_roles = [], []
             maybe_mod_role_id = guild_data["mod_role"]
@@ -916,7 +912,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                 ctx.permission_state = commands.PermState.DENIED_BY_HOOK
                 return False
 
-    async def get_owner_notification_destinations(self) -> List[discord.abc.Messageable]:
+    async def get_owner_notification_destinations(self,) -> List[discord.abc.Messageable]:
         """
         Gets the users and channels to send to
         """

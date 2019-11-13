@@ -1,16 +1,12 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 import contextlib
 
 from typing import Iterable, List, Union
 
-# Red Dependencies
 import discord
 
 from discord.ext import commands
 
-# Red Relative Imports
 from ..utils import common_filters
 from ..utils.chat_formatting import box
 from ..utils.predicates import MessagePredicate

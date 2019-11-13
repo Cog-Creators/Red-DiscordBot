@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import re
 
 __all__ = [
@@ -102,7 +100,7 @@ def filter_mass_mentions(to_filter: str) -> str:
     return MASS_MENTION_RE.sub("@\u200b", to_filter)
 
 
-def filter_various_mentions(to_filter: str) -> str:
+def filter_various_mentions(to_filter: str,) -> str:
     """
     Get a string with role, user, and channel mentions sanitized.
 
@@ -122,7 +120,7 @@ def filter_various_mentions(to_filter: str) -> str:
     return OTHER_MENTION_RE.sub(r"\1\\\2\3", to_filter)
 
 
-def normalize_smartquotes(to_normalize: str) -> str:
+def normalize_smartquotes(to_normalize: str,) -> str:
     """
     Get a string with smart quotes replaced with normal ones
 
@@ -160,7 +158,7 @@ def escape_spoilers(content: str) -> str:
     return SPOILER_CONTENT_RE.sub(r"\\\g<OPEN>\g<SPOILERED>\\\g<CLOSE>", content)
 
 
-def escape_spoilers_and_mass_mentions(content: str) -> str:
+def escape_spoilers_and_mass_mentions(content: str,) -> str:
     """
     Get a string with spoiler syntax and mass mentions escaped
 

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import contextlib
 import pkgutil
 
@@ -8,15 +6,12 @@ from importlib.machinery import ModuleSpec
 from pathlib import Path
 from typing import List, Optional, Union
 
-# Red Dependencies
 import discord
 
-# Red Imports
 import redbot.cogs
 
 from redbot.core.utils import deduplicate_iterables
 
-# Red Relative Imports
 from . import checks, commands
 from .config import Config
 from .data_manager import cog_data_path
@@ -77,7 +72,7 @@ class CogManager:
         """
         return Path(await self.conf.install_path()).resolve()
 
-    async def user_defined_paths(self) -> List[Path]:
+    async def user_defined_paths(self,) -> List[Path]:
         """Get a list of user-defined cog paths.
 
         All paths will be absolute and unique, in order of priority.
@@ -223,7 +218,7 @@ class CogManager:
         """
         real_paths = list(map(str, [await self.install_path()] + await self.user_defined_paths()))
 
-        for finder, module_name, _ in pkgutil.iter_modules(real_paths):
+        for (finder, module_name, _) in pkgutil.iter_modules(real_paths):
             if name == module_name:
                 spec = finder.find_spec(name)
                 if spec:
@@ -237,7 +232,7 @@ class CogManager:
         )
 
     @staticmethod
-    async def _find_core_cog(name: str) -> ModuleSpec:
+    async def _find_core_cog(name: str,) -> ModuleSpec:
         """
         Attempts to find a spec for a core cog.
 
@@ -292,12 +287,12 @@ class CogManager:
         with contextlib.suppress(NoSuchCog):
             return await self._find_core_cog(name)
 
-    async def available_modules(self) -> List[str]:
+    async def available_modules(self,) -> List[str]:
         """Finds the names of all available modules to load."""
         paths = list(map(str, await self.paths()))
 
         ret = []
-        for finder, module_name, _ in pkgutil.iter_modules(paths):
+        for (finder, module_name, _) in pkgutil.iter_modules(paths):
             ret.append(module_name)
         return ret
 

@@ -1,21 +1,19 @@
-# -*- coding: utf-8 -*-
 """Module for command helpers and classes.
 
 This module contains extended classes and functions which are intended to
 replace those from the `discord.ext.commands` module.
 """
-# Standard Library
+
+
 import inspect
 import weakref
 
 from typing import TYPE_CHECKING, Awaitable, Callable, Dict, List, Optional, Tuple, Union
 
-# Red Dependencies
 import discord
 
 from discord.ext import commands
 
-# Red Relative Imports
 from ..i18n import Translator
 from . import converter as converters
 from .errors import ConversionFailure
@@ -412,7 +410,7 @@ class Command(CogCommandMixin, commands.Command):
     def clear_rule_for(
         self, model_id: Union[int, str], guild_id: int
     ) -> Tuple[PermState, PermState]:
-        old_rule, new_rule = super().clear_rule_for(model_id, guild_id=guild_id)
+        (old_rule, new_rule) = super().clear_rule_for(model_id, guild_id=guild_id)
         if old_rule is PermState.ACTIVE_ALLOW:
             parents = self.parents
             if self.cog is not None:
@@ -688,7 +686,7 @@ def group(name=None, cls=Group, **attrs):
 __command_disablers = weakref.WeakValueDictionary()
 
 
-def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitable[bool]]:
+def get_command_disabler(guild: discord.Guild,) -> Callable[["Context"], Awaitable[bool]]:
     """Get the command disabler for a guild.
 
     A command disabler is a simple check predicate which returns
@@ -698,7 +696,7 @@ def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitabl
         return __command_disablers[guild]
     except KeyError:
 
-        async def disabler(ctx: "Context") -> bool:
+        async def disabler(ctx: "Context",) -> bool:
             if ctx.guild == guild:
                 raise commands.DisabledCommand()
             return True
