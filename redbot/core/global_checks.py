@@ -1,9 +1,6 @@
 """The checks in this module run on every command."""
 
 
-from . import commands
-
-
 def init_global_checks(bot):
     @bot.check_once
     def actually_up(ctx):

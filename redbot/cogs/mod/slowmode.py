@@ -1,5 +1,3 @@
-import re
-
 from datetime import timedelta
 
 from redbot.core import checks, commands, i18n

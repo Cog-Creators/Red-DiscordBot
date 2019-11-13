@@ -1,14 +1,12 @@
 from abc import ABC
 from collections import defaultdict
-from typing import List, Tuple
 
 import discord
 
-from redbot.core import Config, commands, modlog
+from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 
-from .casetypes import CASETYPES
 from .events import Events
 from .kickban import KickBanMixin
 from .movetocore import MoveToCore

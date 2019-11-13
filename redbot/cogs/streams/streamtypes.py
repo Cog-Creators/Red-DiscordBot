@@ -1,6 +1,6 @@
 import json
 
-from random import choice, sample
+from random import choice
 from string import ascii_letters
 from typing import ClassVar, Optional
 

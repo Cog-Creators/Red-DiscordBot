@@ -1,4 +1,3 @@
-import asyncio
 import codecs
 import contextlib
 import datetime
@@ -20,7 +19,6 @@ from redbot.core.commands import RedHelpFormatter
 from .. import VersionInfo, __version__ as red_version, version_info as red_version_info
 from . import commands
 from .config import get_latest_confs
-from .data_manager import storage_type
 from .utils import format_fuzzy_results, fuzzy_command_search
 from .utils.chat_formatting import bordered, format_perms_list, humanize_timedelta, inline
 

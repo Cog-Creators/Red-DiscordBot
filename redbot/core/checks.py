@@ -2,8 +2,6 @@ import warnings
 
 from typing import TYPE_CHECKING, Awaitable, Dict
 
-import discord
-
 from .commands import (
     admin,
     admin_or_permissions,
@@ -23,7 +21,6 @@ from .utils.mod import (
 )
 
 if TYPE_CHECKING:
-    from .bot import Red
     from .commands import Context
 
 __all__ = [
