@@ -912,7 +912,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                 ctx.permission_state = commands.PermState.DENIED_BY_HOOK
                 return False
 
-    async def get_owner_notification_destinations(self,) -> List[discord.abc.Messageable]:
+    async def get_owner_notification_destinations(self) -> List[discord.abc.Messageable]:
         """
         Gets the users and channels to send to
         """

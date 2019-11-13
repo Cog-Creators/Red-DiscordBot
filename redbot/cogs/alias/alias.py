@@ -59,7 +59,7 @@ class Alias(commands.Cog):
     async def unloaded_aliases(self, guild: discord.Guild) -> Generator[AliasEntry, None, None]:
         return (AliasEntry.from_json(d) for d in (await self._aliases.guild(guild).entries()))
 
-    async def unloaded_global_aliases(self,) -> Generator[AliasEntry, None, None]:
+    async def unloaded_global_aliases(self) -> Generator[AliasEntry, None, None]:
         return (AliasEntry.from_json(d) for d in (await self._aliases.entries()))
 
     async def loaded_aliases(self, guild: discord.Guild) -> Generator[AliasEntry, None, None]:
@@ -68,7 +68,7 @@ class Alias(commands.Cog):
             for d in (await self._aliases.guild(guild).entries())
         )
 
-    async def loaded_global_aliases(self,) -> Generator[AliasEntry, None, None]:
+    async def loaded_global_aliases(self) -> Generator[AliasEntry, None, None]:
         return (AliasEntry.from_json(d, bot=self.bot) for d in (await self._aliases.entries()))
 
     async def is_alias(

@@ -99,7 +99,7 @@ class Downloader(commands.Cog):
         """
         return await self.bot._cog_mgr.install_path()
 
-    async def installed_cogs(self,) -> Tuple[InstalledModule, ...]:
+    async def installed_cogs(self) -> Tuple[InstalledModule, ...]:
         """Get info on installed cogs.
 
         Returns
@@ -116,7 +116,7 @@ class Downloader(commands.Cog):
             for cog_json in repo_json.values()
         )
 
-    async def installed_libraries(self,) -> Tuple[InstalledModule, ...]:
+    async def installed_libraries(self) -> Tuple[InstalledModule, ...]:
         """Get info on installed shared libraries.
 
         Returns
@@ -133,7 +133,7 @@ class Downloader(commands.Cog):
             for lib_json in repo_json.values()
         )
 
-    async def installed_modules(self,) -> Tuple[InstalledModule, ...]:
+    async def installed_modules(self) -> Tuple[InstalledModule, ...]:
         """Get info on installed cogs and shared libraries.
 
         Returns

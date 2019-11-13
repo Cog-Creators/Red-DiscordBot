@@ -72,7 +72,7 @@ class CogManager:
         """
         return Path(await self.conf.install_path()).resolve()
 
-    async def user_defined_paths(self,) -> List[Path]:
+    async def user_defined_paths(self) -> List[Path]:
         """Get a list of user-defined cog paths.
 
         All paths will be absolute and unique, in order of priority.
@@ -287,7 +287,7 @@ class CogManager:
         with contextlib.suppress(NoSuchCog):
             return await self._find_core_cog(name)
 
-    async def available_modules(self,) -> List[str]:
+    async def available_modules(self) -> List[str]:
         """Finds the names of all available modules to load."""
         paths = list(map(str, await self.paths()))
 

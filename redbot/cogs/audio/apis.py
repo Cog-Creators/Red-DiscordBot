@@ -212,7 +212,7 @@ class SpotifyAPI:
         )
         return r
 
-    async def _get_spotify_token(self,) -> Optional[str]:
+    async def _get_spotify_token(self) -> Optional[str]:
         if self.spotify_token and not await self._check_token(self.spotify_token):
             return self.spotify_token["access_token"]
         token = await self._request_token()
@@ -242,7 +242,7 @@ class SpotifyAPI:
             url, params=params, headers={"Authorization": "Bearer {0}".format(token)}
         )
 
-    async def get_categories(self,) -> List[Dict[str, str]]:
+    async def get_categories(self) -> List[Dict[str, str]]:
         url = "https://api.spotify.com/v1/browse/categories"
         params = {}
         result = await self.get_call(url, params=params)
@@ -281,7 +281,7 @@ class YouTubeAPI:
         self.session = session
         self.api_key = None
 
-    async def _get_api_key(self,) -> Optional[str]:
+    async def _get_api_key(self) -> Optional[str]:
         if self.api_key is None:
             tokens = await self.bot.get_shared_api_tokens("youtube")
             self.api_key = tokens.get("api_key", "")

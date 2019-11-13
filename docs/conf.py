@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
 # Red - Discord Bot documentation build configuration file, created by
 # sphinx-quickstart on Thu Aug 10 23:18:25 2017.
 #

@@ -22,18 +22,19 @@ import redbot.logging
 # Set the event loop policies here so any subsequent `get_event_loop()`
 # calls, in particular those as a result of the following imports,
 # return the correct loop object.
-from redbot import _update_event_loop_policy
-from redbot.core import __version__, bank, data_manager, drivers, modlog
-from redbot.core.bot import ExitCodes, Red
-from redbot.core.cli import confirm, interactive_config, parse_cli_flags
-from redbot.core.cog_manager import CogManagerUI
-from redbot.core.core_commands import Core, license_info_command
-from redbot.core.dev_commands import Dev
-from redbot.core.events import init_events
-from redbot.core.global_checks import init_global_checks
-from redbot.setup import get_data_dir, get_name, save_config
+from redbot import _update_event_loop_policy  # isort:skip
 
 _update_event_loop_policy()
+
+from redbot.core import __version__, bank, data_manager, drivers, modlog  # isort:skip
+from redbot.core.bot import ExitCodes, Red  # isort:skip
+from redbot.core.cli import confirm, interactive_config, parse_cli_flags  # isort:skip
+from redbot.core.cog_manager import CogManagerUI  # isort:skip
+from redbot.core.core_commands import Core, license_info_command  # isort:skip
+from redbot.core.dev_commands import Dev  # isort:skip
+from redbot.core.events import init_events  # isort:skip
+from redbot.core.global_checks import init_global_checks  # isort:skip
+from redbot.setup import get_data_dir, get_name, save_config  # isort:skip
 
 
 log = logging.getLogger("red.main")

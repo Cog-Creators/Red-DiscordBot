@@ -5,7 +5,6 @@ import heapq
 import json
 import logging
 import math
-import os
 import random
 import re
 import time
@@ -2066,11 +2065,11 @@ class Audio(commands.Cog):
                 return None
 
         local_folder_controls = {
-            "1⃣": _local_folder_menu,
-            "2⃣": _local_folder_menu,
-            "3⃣": _local_folder_menu,
-            "4⃣": _local_folder_menu,
-            "5⃣": _local_folder_menu,
+            "\N{DIGIT ONE}\N{COMBINING ENCLOSING KEYCAP}": _local_folder_menu,
+            "\N{DIGIT TWO}\N{COMBINING ENCLOSING KEYCAP}": _local_folder_menu,
+            "\N{DIGIT THREE}\N{COMBINING ENCLOSING KEYCAP}": _local_folder_menu,
+            "\N{DIGIT FOUR}\N{COMBINING ENCLOSING KEYCAP}": _local_folder_menu,
+            "\N{DIGIT FIVE}\N{COMBINING ENCLOSING KEYCAP}": _local_folder_menu,
             "\N{LEFTWARDS BLACK ARROW}": prev_page,
             "\N{CROSS MARK}": close_menu,
             "\N{BLACK RIGHTWARDS ARROW}": next_page,
@@ -2512,21 +2511,21 @@ class Audio(commands.Cog):
                 return output
 
         category_search_controls = {
-            "1⃣": _category_search_menu,
-            "2⃣": _category_search_menu,
-            "3⃣": _category_search_menu,
-            "4⃣": _category_search_menu,
-            "5⃣": _category_search_menu,
+            "\N{DIGIT ONE}\N{COMBINING ENCLOSING KEYCAP}": _category_search_menu,
+            "\N{DIGIT TWO}\N{COMBINING ENCLOSING KEYCAP}": _category_search_menu,
+            "\N{DIGIT THREE}\N{COMBINING ENCLOSING KEYCAP}": _category_search_menu,
+            "\N{DIGIT FOUR}\N{COMBINING ENCLOSING KEYCAP}": _category_search_menu,
+            "\N{DIGIT FIVE}\N{COMBINING ENCLOSING KEYCAP}": _category_search_menu,
             "\N{LEFTWARDS BLACK ARROW}": prev_page,
             "\N{CROSS MARK}": close_menu,
             "\N{BLACK RIGHTWARDS ARROW}": next_page,
         }
         playlist_search_controls = {
-            "1⃣": _playlist_search_menu,
-            "2⃣": _playlist_search_menu,
-            "3⃣": _playlist_search_menu,
-            "4⃣": _playlist_search_menu,
-            "5⃣": _playlist_search_menu,
+            "\N{DIGIT ONE}\N{COMBINING ENCLOSING KEYCAP}": _playlist_search_menu,
+            "\N{DIGIT TWO}\N{COMBINING ENCLOSING KEYCAP}": _playlist_search_menu,
+            "\N{DIGIT THREE}\N{COMBINING ENCLOSING KEYCAP}": _playlist_search_menu,
+            "\N{DIGIT FOUR}\N{COMBINING ENCLOSING KEYCAP}": _playlist_search_menu,
+            "\N{DIGIT FIVE}\N{COMBINING ENCLOSING KEYCAP}": _playlist_search_menu,
             "\N{LEFTWARDS BLACK ARROW}": prev_page,
             "\N{CROSS MARK}": close_menu,
             "\N{BLACK RIGHTWARDS ARROW}": next_page,
@@ -2637,15 +2636,15 @@ class Audio(commands.Cog):
         ctx: commands.Context, options, emoji, page, playlist=False
     ):
         try:
-            if emoji == "1⃣":
+            if emoji == "\N{DIGIT ONE}\N{COMBINING ENCLOSING KEYCAP}":
                 search_choice = options[0 + (page * 5)]
-            elif emoji == "2⃣":
+            elif emoji == "\N{DIGIT TWO}\N{COMBINING ENCLOSING KEYCAP}":
                 search_choice = options[1 + (page * 5)]
-            elif emoji == "3⃣":
+            elif emoji == "\N{DIGIT THREE}\N{COMBINING ENCLOSING KEYCAP}":
                 search_choice = options[2 + (page * 5)]
-            elif emoji == "4⃣":
+            elif emoji == "\N{DIGIT FOUR}\N{COMBINING ENCLOSING KEYCAP}":
                 search_choice = options[3 + (page * 5)]
-            elif emoji == "5⃣":
+            elif emoji == "\N{DIGIT FIVE}\N{COMBINING ENCLOSING KEYCAP}":
                 search_choice = options[4 + (page * 5)]
             else:
                 search_choice = options[0 + (page * 5)]
@@ -5750,11 +5749,11 @@ class Audio(commands.Cog):
                 return None
 
         search_controls = {
-            "1⃣": _search_menu,
-            "2⃣": _search_menu,
-            "3⃣": _search_menu,
-            "4⃣": _search_menu,
-            "5⃣": _search_menu,
+            "\N{DIGIT ONE}\N{COMBINING ENCLOSING KEYCAP}": _search_menu,
+            "\N{DIGIT TWO}\N{COMBINING ENCLOSING KEYCAP}": _search_menu,
+            "\N{DIGIT THREE}\N{COMBINING ENCLOSING KEYCAP}": _search_menu,
+            "\N{DIGIT FOUR}\N{COMBINING ENCLOSING KEYCAP}": _search_menu,
+            "\N{DIGIT FIVE}\N{COMBINING ENCLOSING KEYCAP}": _search_menu,
             "\N{LEFTWARDS BLACK ARROW}": prev_page,
             "\N{CROSS MARK}": close_menu,
             "\N{BLACK RIGHTWARDS ARROW}": next_page,
@@ -5927,15 +5926,15 @@ class Audio(commands.Cog):
         if not await self._currency_check(ctx, guild_data["jukebox_price"]):
             return
         try:
-            if emoji == "1⃣":
+            if emoji == "\N{DIGIT ONE}\N{COMBINING ENCLOSING KEYCAP}":
                 search_choice = tracks[0 + (page * 5)]
-            elif emoji == "2⃣":
+            elif emoji == "\N{DIGIT TWO}\N{COMBINING ENCLOSING KEYCAP}":
                 search_choice = tracks[1 + (page * 5)]
-            elif emoji == "3⃣":
+            elif emoji == "\N{DIGIT THREE}\N{COMBINING ENCLOSING KEYCAP}":
                 search_choice = tracks[2 + (page * 5)]
-            elif emoji == "4⃣":
+            elif emoji == "\N{DIGIT FOUR}\N{COMBINING ENCLOSING KEYCAP}":
                 search_choice = tracks[3 + (page * 5)]
-            elif emoji == "5⃣":
+            elif emoji == "\N{DIGIT FIVE}\N{COMBINING ENCLOSING KEYCAP}":
                 search_choice = tracks[4 + (page * 5)]
             else:
                 search_choice = tracks[0 + (page * 5)]

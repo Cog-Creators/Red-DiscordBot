@@ -113,7 +113,7 @@ class VersionInfo:
         else:
             return cls(**data)
 
-    def to_json(self,) -> _Dict[str, _Union[int, str]]:
+    def to_json(self) -> _Dict[str, _Union[int, str]]:
         return {
             "major": self.major,
             "minor": self.minor,

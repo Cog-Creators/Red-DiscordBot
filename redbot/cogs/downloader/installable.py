@@ -254,7 +254,7 @@ class InstalledModule(Installable):
         # this is here so that Downloader could use real repo name instead of "MISSING_REPO"
         self._json_repo_name = json_repo_name
 
-    def to_json(self,) -> Dict[str, Union[str, bool]]:
+    def to_json(self) -> Dict[str, Union[str, bool]]:
         module_json: Dict[str, Union[str, bool]] = {
             "repo_name": self.repo_name,
             "module_name": self.name,

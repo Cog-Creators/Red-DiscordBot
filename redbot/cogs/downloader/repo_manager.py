@@ -65,7 +65,7 @@ class _RepoCheckoutCtxManager(
         self.force_checkout = force_checkout
         self.coro = repo._checkout(self.rev, force_checkout=self.force_checkout)
 
-    def __await__(self,) -> Generator[Any, None, None]:
+    def __await__(self) -> Generator[Any, None, None]:
         return self.coro.__await__()
 
     async def __aenter__(self) -> None:
@@ -164,7 +164,7 @@ class Repo(RepoJSONMixin):
             )
         return poss_repo
 
-    def _existing_git_repo(self,) -> Tuple[bool, Path]:
+    def _existing_git_repo(self) -> Tuple[bool, Path]:
         git_path = self.folder_path / ".git"
         return git_path.exists(), git_path
 
@@ -459,7 +459,7 @@ class Repo(RepoJSONMixin):
 
         return p.stdout.decode().strip()
 
-    def _update_available_modules(self,) -> Tuple[Installable, ...]:
+    def _update_available_modules(self) -> Tuple[Installable, ...]:
         """
         Updates the available modules attribute for this repo.
         :return: List of available modules.
@@ -585,7 +585,7 @@ class Repo(RepoJSONMixin):
 
         return _RepoCheckoutCtxManager(self, rev, exit_to_rev, force_checkout)
 
-    async def clone(self,) -> Tuple[Installable, ...]:
+    async def clone(self) -> Tuple[Installable, ...]:
         """Clone a new repo.
 
         Returns
@@ -933,7 +933,7 @@ class Repo(RepoJSONMixin):
         return True
 
     @property
-    def available_cogs(self,) -> Tuple[Installable, ...]:
+    def available_cogs(self) -> Tuple[Installable, ...]:
         """`tuple` of `installable` : All available cogs in this Repo.
 
         This excludes hidden or shared packages.
@@ -944,7 +944,7 @@ class Repo(RepoJSONMixin):
         )
 
     @property
-    def available_libraries(self,) -> Tuple[Installable, ...]:
+    def available_libraries(self) -> Tuple[Installable, ...]:
         """`tuple` of `installable` : All available shared libraries in this
         Repo.
         """
@@ -1048,7 +1048,7 @@ class RepoManager:
     def repos(self) -> Tuple[Repo, ...]:
         return tuple(self._repos.values())
 
-    def get_all_repo_names(self,) -> Tuple[str, ...]:
+    def get_all_repo_names(self) -> Tuple[str, ...]:
         """Get all repo names.
 
         Returns
@@ -1059,7 +1059,7 @@ class RepoManager:
         # noinspection PyTypeChecker
         return tuple(self._repos.keys())
 
-    def get_all_cogs(self,) -> Tuple[Installable, ...]:
+    def get_all_cogs(self) -> Tuple[Installable, ...]:
         """Get all cogs.
 
         Returns
@@ -1117,7 +1117,7 @@ class RepoManager:
         old, new = await repo.update()
         return repo, (old, new)
 
-    async def update_all_repos(self,) -> Dict[Repo, Tuple[str, str]]:
+    async def update_all_repos(self) -> Dict[Repo, Tuple[str, str]]:
         """Call `Repo.update` on all repositories.
 
         Returns
