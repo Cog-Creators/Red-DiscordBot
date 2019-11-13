@@ -20,14 +20,6 @@
 import os
 import sys
 
-from discord import __version__ as dpy_version
-
-# The version info for the project you're documenting, acts as replacement for
-# |version| and |release|, also used in various other places throughout the
-# built documents.
-#
-from redbot.core import __version__
-
 sys.path.insert(0, os.path.abspath(".."))
 
 os.environ["BUILDING_DOCS"] = "1"
@@ -69,6 +61,12 @@ project = "Red - Discord Bot"
 copyright = "2018-2019, Cog Creators"
 author = "Cog Creators"
 
+# The version info for the project you're documenting, acts as replacement for
+# |version| and |release|, also used in various other places throughout the
+# built documents.
+#
+from redbot.core import __version__  # isort:skip
+from discord import __version__ as dpy_version  # isort:skip
 
 # The short X.Y version.
 version = __version__
