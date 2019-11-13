@@ -189,7 +189,7 @@ class LocalPath:
                 yield p
 
     def __str__(self):
-        return str(self.path.absolute())
+        return self.to_string()
 
     def to_string(self):
         try:
