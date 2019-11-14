@@ -6740,7 +6740,9 @@ class Audio(commands.Cog):
                     if (time.time() - stop_times[sid]) >= emptydc_timer:
                         stop_times.pop(sid)
                         try:
-                            await lavalink.get_player(sid).disconnect()
+                            player = lavalink.get_player(sid)
+                            await player.stop()
+                            await player.disconnect()
                         except Exception as err:
                             log.error("Exception raised in Audio's emptydc_timer.", exc_info=True)
                             if "No such player for that guild" in str(err):
