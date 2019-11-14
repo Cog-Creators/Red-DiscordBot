@@ -404,17 +404,16 @@ class Audio(commands.Cog):
                 playing_servers = 0
             return get_single_title, playing_servers
 
-        async def _status_check(playing_servers):
+        async def _status_check(track, playing_servers):
             if playing_servers == 0:
                 await self.bot.change_presence(activity=None)
-            if playing_servers == 1:
-                single_title = await _players_check()
+            elif playing_servers == 1:
                 await self.bot.change_presence(
                     activity=discord.Activity(
-                        name=single_title[0], type=discord.ActivityType.listening
+                        name=track, type=discord.ActivityType.listening
                     )
                 )
-            if playing_servers > 1:
+            elif playing_servers > 1:
                 await self.bot.change_presence(
                     activity=discord.Activity(
                         name=_("music in {} servers").format(playing_servers),
@@ -510,13 +509,13 @@ class Audio(commands.Cog):
 
         if event_type == lavalink.LavalinkEvents.TRACK_START and status:
             player_check = await _players_check()
-            await _status_check(player_check[1])
+            await _status_check(*player_check)
 
         if event_type == lavalink.LavalinkEvents.TRACK_END and status:
             await asyncio.sleep(1)
             if not player.is_playing:
                 player_check = await _players_check()
-                await _status_check(player_check[1])
+                await _status_check(*player_check)
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END and notify and not autoplay:
             notify_channel = player.fetch("channel")
@@ -530,7 +529,7 @@ class Audio(commands.Cog):
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END and status:
             player_check = await _players_check()
-            await _status_check(player_check[1])
+            await _status_check(*player_check)
 
         if event_type in [
             lavalink.LavalinkEvents.TRACK_EXCEPTION,
