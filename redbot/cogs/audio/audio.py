@@ -6741,8 +6741,10 @@ class Audio(commands.Cog):
                         stop_times.pop(sid)
                         try:
                             await lavalink.get_player(sid).disconnect()
-                        except Exception:
+                        except Exception as err:
                             log.error("Exception raised in Audio's emptydc_timer.", exc_info=True)
+                            if "No such player for that guild" in str(err):
+                                stop_times.pop(sid, None)
                             pass
                 elif (
                     sid in pause_times and await self.config.guild(server_obj).emptypause_enabled()
@@ -6751,7 +6753,9 @@ class Audio(commands.Cog):
                     if (time.time() - pause_times.get(sid)) >= emptypause_timer:
                         try:
                             await lavalink.get_player(sid).pause()
-                        except Exception:
+                        except Exception as err:
+                            if "No such player for that guild" in str(err):
+                                pause_times.pop(sid, None)
                             log.error(
                                 "Exception raised in Audio's emptypause_timer.", exc_info=True
                             )
