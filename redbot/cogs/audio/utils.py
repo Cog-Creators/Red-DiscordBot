@@ -1,23 +1,17 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 import contextlib
 import re
 import time
-
 from typing import Mapping, Optional
 from urllib.parse import urlparse
 
-# Red Dependencies
 import discord
 import lavalink
 
-# Red Imports
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import bold, box
 
-# Red Relative Imports
 from . import audio_dataclasses
 from .playlists import humanize_scope
 
@@ -206,11 +200,11 @@ def get_track_description(track) -> str:
         query = audio_dataclasses.Query.process_input(track.uri)
         if query.is_local:
             if track.title != "Unknown title":
-                return "**{} - {}**\n{} ".format(track.author, track.title, query.to_string_user())
+                return f"**{track.author} - {track.title}**\n{query.to_string_user()} "
             else:
                 return query.to_string_user()
         else:
-            return bold("[{}]({}) ").format(track.title, track.uri)
+            return bold(f"[{track.title}]({track.uri}) ")
     elif hasattr(track, "to_string_user") and track.is_local:
         return track.to_string_user() + " "
 

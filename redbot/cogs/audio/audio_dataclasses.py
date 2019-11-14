@@ -1,16 +1,11 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import os
 import re
-
 from pathlib import Path, PosixPath, WindowsPath
 from typing import List, Optional, Union
 from urllib.parse import urlparse
 
-# Red Dependencies
 import lavalink
 
-# Red Imports
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator

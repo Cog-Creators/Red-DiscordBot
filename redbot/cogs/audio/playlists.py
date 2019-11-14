@@ -1,20 +1,15 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 from collections import namedtuple
 from enum import Enum, unique
 from typing import List, Optional, Union
 
-# Red Dependencies
 import discord
 import lavalink
 
-# Red Imports
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_list
 
-# Red Relative Imports
 from .errors import InvalidPlaylistScope, MissingAuthor, MissingGuild, NotAllowed
 
 _config = None
@@ -330,7 +325,8 @@ async def create_playlist(
     author: Optional[discord.User] = None,
     guild: Optional[discord.Guild] = None,
 ) -> Optional[Playlist]:
-    """Creates a new Playlist.
+    """
+    Creates a new Playlist.
 
     Parameters
     ----------
@@ -377,7 +373,8 @@ async def reset_playlist(
     guild: Union[discord.Guild, int] = None,
     author: Union[discord.abc.User, int] = None,
 ) -> None:
-    """Wipes all playlists for the specified scope.
+    """
+    Wipes all playlists for the specified scope.
 
     Parameters
     ----------
@@ -406,7 +403,8 @@ async def delete_playlist(
     guild: discord.Guild,
     author: Union[discord.abc.User, int] = None,
 ) -> None:
-    """Deletes the specified playlist.
+    """
+    Deletes the specified playlist.
 
     Parameters
     ----------

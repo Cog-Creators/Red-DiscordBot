@@ -1,34 +1,26 @@
-# -*- coding: utf-8 -*-
-# Standard Library
 import asyncio
 import contextlib
 import datetime
 import heapq
 import json
 import logging
-from pathlib import Path
-
 import math
 import random
 import re
 import time
 import traceback
-
 from collections import namedtuple
 from io import StringIO
+from pathlib import Path
 from typing import List, Optional, Tuple, Union, cast
 
-# Red Dependencies
 import aiohttp
 import discord
 import lavalink
-
 from discord.embeds import EmptyEmbed
 from fuzzywuzzy import process
 
-# Red Imports
 import redbot.core
-
 from redbot.core import Config, bank, checks, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
@@ -43,9 +35,8 @@ from redbot.core.utils.menus import (
 )
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
-# Red Relative Imports
 from . import audio_dataclasses
-from .apis import HAS_SQL, _ERROR, MusicCache
+from .apis import _ERROR, HAS_SQL, MusicCache
 from .checks import can_have_caching
 from .config import pass_config_to_dependencies
 from .converters import ComplexScopeParser, ScopeParser, get_lazy_converter, get_playlist_converter
@@ -53,9 +44,9 @@ from .equalizer import Equalizer
 from .errors import (
     LavalinkDownloadFailed,
     MissingGuild,
+    QueryUnauthorized,
     SpotifyFetchError,
     TooManyMatches,
-    QueryUnauthorized,
 )
 from .manager import ServerManager
 from .playlists import (
@@ -258,11 +249,11 @@ class Audio(commands.Cog):
         elif from_version < to_version:
             all_guild_data = await self.config.all_guilds()
             all_playlist = {}
-            for guild_id, guild_data in all_guild_data.items():
+            for (guild_id, guild_data) in all_guild_data.items():
                 temp_guild_playlist = guild_data.pop("playlists", None)
                 if temp_guild_playlist:
                     guild_playlist = {}
-                    for count, (name, data) in enumerate(temp_guild_playlist.items(), 1):
+                    for (count, (name, data)) in enumerate(temp_guild_playlist.items(), 1):
                         if not data or not name:
                             continue
                         playlist = {"id": count, "name": name, "guild": int(guild_id)}
@@ -607,7 +598,7 @@ class Audio(commands.Cog):
         await self._data_check(guild.me)
 
         ctx = namedtuple("Context", "message")
-        results, called_api = await self.music_cache.lavalink_query(ctx(guild), player, query)
+        (results, called_api) = await self.music_cache.lavalink_query(ctx(guild), player, query)
 
         if not results.tracks:
             log.debug(f"Query returned no tracks.")
@@ -645,6 +636,7 @@ class Audio(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     async def audioset(self, ctx: commands.Context):
         """Music configuration options."""
+        pass
 
     @audioset.command()
     @checks.mod_or_permissions(manage_messages=True)
@@ -863,10 +855,12 @@ class Audio(commands.Cog):
     @_perms.group(name="whitelist")
     async def _perms_whitelist(self, ctx: commands.Context):
         """Manages the keyword whitelist."""
+        pass
 
     @_perms.group(name="blacklist")
     async def _perms_blacklist(self, ctx: commands.Context):
         """Manages the keyword blacklist."""
+        pass
 
     @_perms_blacklist.command(name="add")
     async def _perms_blacklist_add(self, ctx: commands.Context, *, keyword: str):
@@ -1950,13 +1944,24 @@ class Audio(commands.Cog):
         )
         player = lavalink.get_player(ctx.guild.id)
         eq = player.fetch("eq", Equalizer())
-        reactions = ["◀", "⬅", "⏫", "🔼", "🔽", "⏬", "➡", "▶", "⏺", "ℹ"]
+        reactions = [
+            "\N{BLACK LEFT-POINTING TRIANGLE}",
+            "\N{LEFTWARDS BLACK ARROW}",
+            "\N{BLACK UP-POINTING DOUBLE TRIANGLE}",
+            "\N{UP-POINTING SMALL RED TRIANGLE}",
+            "\N{DOWN-POINTING SMALL RED TRIANGLE}",
+            "\N{BLACK DOWN-POINTING DOUBLE TRIANGLE}",
+            "\N{BLACK RIGHTWARDS ARROW}",
+            "\N{BLACK RIGHT-POINTING TRIANGLE}",
+            "\N{BLACK CIRCLE FOR RECORD}",
+            "\N{INFORMATION SOURCE}",
+        ]
         await self._eq_msg_clear(player.fetch("eq_message"))
         eq_message = await ctx.send(box(eq.visualise(), lang="ini"))
 
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             with contextlib.suppress(discord.HTTPException):
-                await eq_message.add_reaction("ℹ")
+                await eq_message.add_reaction("\N{INFORMATION SOURCE}")
         else:
             start_adding_reactions(eq_message, reactions, self.bot.loop)
 
@@ -2359,14 +2364,14 @@ class Audio(commands.Cog):
                 return None
 
         local_folder_controls = {
-            "1⃣": _local_folder_menu,
-            "2⃣": _local_folder_menu,
-            "3⃣": _local_folder_menu,
-            "4⃣": _local_folder_menu,
-            "5⃣": _local_folder_menu,
-            "⬅": prev_page,
-            "❌": close_menu,
-            "➡": next_page,
+            "\N{DIGIT ONE}\N{COMBINING ENCLOSING KEYCAP}": _local_folder_menu,
+            "\N{DIGIT TWO}\N{COMBINING ENCLOSING KEYCAP}": _local_folder_menu,
+            "\N{DIGIT THREE}\N{COMBINING ENCLOSING KEYCAP}": _local_folder_menu,
+            "\N{DIGIT FOUR}\N{COMBINING ENCLOSING KEYCAP}": _local_folder_menu,
+            "\N{DIGIT FIVE}\N{COMBINING ENCLOSING KEYCAP}": _local_folder_menu,
+            "\N{LEFTWARDS BLACK ARROW}": prev_page,
+            "\N{CROSS MARK}": close_menu,
+            "\N{BLACK RIGHTWARDS ARROW}": next_page,
         }
 
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -3019,24 +3024,24 @@ class Audio(commands.Cog):
                 return output
 
         category_search_controls = {
-            "1⃣": _category_search_menu,
-            "2⃣": _category_search_menu,
-            "3⃣": _category_search_menu,
-            "4⃣": _category_search_menu,
-            "5⃣": _category_search_menu,
-            "⬅": prev_page,
-            "❌": close_menu,
-            "➡": next_page,
+            "\N{DIGIT ONE}\N{COMBINING ENCLOSING KEYCAP}": _category_search_menu,
+            "\N{DIGIT TWO}\N{COMBINING ENCLOSING KEYCAP}": _category_search_menu,
+            "\N{DIGIT THREE}\N{COMBINING ENCLOSING KEYCAP}": _category_search_menu,
+            "\N{DIGIT FOUR}\N{COMBINING ENCLOSING KEYCAP}": _category_search_menu,
+            "\N{DIGIT FIVE}\N{COMBINING ENCLOSING KEYCAP}": _category_search_menu,
+            "\N{LEFTWARDS BLACK ARROW}": prev_page,
+            "\N{CROSS MARK}": close_menu,
+            "\N{BLACK RIGHTWARDS ARROW}": next_page,
         }
         playlist_search_controls = {
-            "1⃣": _playlist_search_menu,
-            "2⃣": _playlist_search_menu,
-            "3⃣": _playlist_search_menu,
-            "4⃣": _playlist_search_menu,
-            "5⃣": _playlist_search_menu,
-            "⬅": prev_page,
-            "❌": close_menu,
-            "➡": next_page,
+            "\N{DIGIT ONE}\N{COMBINING ENCLOSING KEYCAP}": _playlist_search_menu,
+            "\N{DIGIT TWO}\N{COMBINING ENCLOSING KEYCAP}": _playlist_search_menu,
+            "\N{DIGIT THREE}\N{COMBINING ENCLOSING KEYCAP}": _playlist_search_menu,
+            "\N{DIGIT FOUR}\N{COMBINING ENCLOSING KEYCAP}": _playlist_search_menu,
+            "\N{DIGIT FIVE}\N{COMBINING ENCLOSING KEYCAP}": _playlist_search_menu,
+            "\N{LEFTWARDS BLACK ARROW}": prev_page,
+            "\N{CROSS MARK}": close_menu,
+            "\N{BLACK RIGHTWARDS ARROW}": next_page,
         }
 
         api_data = await self._check_api_tokens()
@@ -3166,15 +3171,15 @@ class Audio(commands.Cog):
         ctx: commands.Context, options, emoji, page, playlist=False
     ):
         try:
-            if emoji == "1⃣":
+            if emoji == "\N{DIGIT ONE}\N{COMBINING ENCLOSING KEYCAP}":
                 search_choice = options[0 + (page * 5)]
-            elif emoji == "2⃣":
+            elif emoji == "\N{DIGIT TWO}\N{COMBINING ENCLOSING KEYCAP}":
                 search_choice = options[1 + (page * 5)]
-            elif emoji == "3⃣":
+            elif emoji == "\N{DIGIT THREE}\N{COMBINING ENCLOSING KEYCAP}":
                 search_choice = options[2 + (page * 5)]
-            elif emoji == "4⃣":
+            elif emoji == "\N{DIGIT FOUR}\N{COMBINING ENCLOSING KEYCAP}":
                 search_choice = options[3 + (page * 5)]
-            elif emoji == "5⃣":
+            elif emoji == "\N{DIGIT FIVE}\N{COMBINING ENCLOSING KEYCAP}":
                 search_choice = options[4 + (page * 5)]
             else:
                 search_choice = options[0 + (page * 5)]
@@ -3844,7 +3849,7 @@ class Audio(commands.Cog):
         avaliable_emojis = ReactionPredicate.NUMBER_EMOJIS[1:]
         avaliable_emojis.append("🔟")
         emojis = avaliable_emojis[: len(correct_scope_matches)]
-        emojis.append("❌")
+        emojis.append("\N{CROSS MARK}")
         start_adding_reactions(msg, emojis)
         pred = ReactionPredicate.with_emojis(emojis, msg, user=context.author)
         try:
@@ -3855,7 +3860,7 @@ class Audio(commands.Cog):
             raise TooManyMatches(
                 "Too many matches found and you did not select which one you wanted."
             )
-        if emojis[pred.result] == "❌":
+        if emojis[pred.result] == "\N{CROSS MARK}":
             with contextlib.suppress(discord.HTTPException):
                 await msg.delete()
             raise TooManyMatches(
@@ -3871,17 +3876,18 @@ class Audio(commands.Cog):
     async def playlist(self, ctx: commands.Context):
         """Playlist configuration options.
 
-        Scope info:​ ​
-        ​​ ​ ​ ​ ​**Global**: ​ ​ ​ ​ ​ ​ ​ ​
-        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users of this bot. ​ ​ ​ ​ ​
-        ​​ ​ ​ ​ ​ ​ ​ ​ Only editable by bot owner. ​ ​ ​ ​
-        ​ ​ ​ ​ **Guild**: ​ ​ ​ ​ ​ ​ ​ ​
-        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users in this guild. ​ ​ ​ ​ ​ ​ ​ ​
-        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner, guild owner, guild admins,
-        ​ ​ ​ ​ ​ ​ ​ ​ guild mods, DJ role and playlist creator.
-       ​ ​ ​ ​  **User**: ​ ​ ​ ​ ​ ​ ​ ​
-       ​ ​ ​ ​ ​ ​ ​ ​ Visible to all bot users, if --author is passed. ​ ​ ​ ​ ​ ​ ​ ​
-       ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner and creator.
+        Scope info:
+        ​ ​ ​ ​ **Global**:
+        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users of this bot.
+        ​ ​ ​ ​ ​ ​ ​ ​ Only editable by bot owner.
+        ​ ​ ​ ​ **Guild**:
+        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users in this guild.
+        ​ ​ ​ ​ ​ ​ ​ ​ Editable By Bot Owner, Guild Owner, Guild Admins,
+        ​ ​ ​ ​ ​ ​ ​ ​ Guild Mods, DJ Role and playlist creator.
+        ​ ​ ​ ​ **User**:
+        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all bot users, if --author is passed.
+        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner and creator.
+
         """
 
     @playlist.command(name="append", usage="<playlist_name_OR_id> <track_name_OR_url> [args]")
@@ -3928,11 +3934,11 @@ class Audio(commands.Cog):
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
-        scope, author, guild, specified_user = scope_data
+        (scope, author, guild, specified_user) = scope_data
         if not await self._playlist_check(ctx):
             return
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            (playlist_id, playlist_arg) = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -4547,9 +4553,7 @@ class Audio(commands.Cog):
             ]
             playlist_data[
                 "playlist"
-            ] = (
-                playlist_songs_backwards_compatible
-            )  # TODO: Keep new playlists backwards compatible, Remove me in a few releases
+            ] = playlist_songs_backwards_compatible  # TODO: Keep new playlists backwards compatible, Remove me in a few releases
             playlist_data[
                 "link"
             ] = (
@@ -5952,7 +5956,12 @@ class Audio(commands.Cog):
                     await message.delete()
                 return None
 
-        queue_controls = {"⬅": prev_page, "❌": close_menu, "➡": next_page, "ℹ": _queue_menu}
+        queue_controls = {
+            "\N{LEFTWARDS BLACK ARROW}": prev_page,
+            "\N{CROSS MARK}": close_menu,
+            "\N{BLACK RIGHTWARDS ARROW}": next_page,
+            "\N{INFORMATION SOURCE}": _queue_menu,
+        }
 
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
@@ -6532,14 +6541,14 @@ class Audio(commands.Cog):
                 return None
 
         search_controls = {
-            "1⃣": _search_menu,
-            "2⃣": _search_menu,
-            "3⃣": _search_menu,
-            "4⃣": _search_menu,
-            "5⃣": _search_menu,
-            "⬅": prev_page,
-            "❌": close_menu,
-            "➡": next_page,
+            "\N{DIGIT ONE}\N{COMBINING ENCLOSING KEYCAP}": _search_menu,
+            "\N{DIGIT TWO}\N{COMBINING ENCLOSING KEYCAP}": _search_menu,
+            "\N{DIGIT THREE}\N{COMBINING ENCLOSING KEYCAP}": _search_menu,
+            "\N{DIGIT FOUR}\N{COMBINING ENCLOSING KEYCAP}": _search_menu,
+            "\N{DIGIT FIVE}\N{COMBINING ENCLOSING KEYCAP}": _search_menu,
+            "\N{LEFTWARDS BLACK ARROW}": prev_page,
+            "\N{CROSS MARK}": close_menu,
+            "\N{BLACK RIGHTWARDS ARROW}": next_page,
         }
 
         if not self._player_check(ctx):
@@ -6756,15 +6765,15 @@ class Audio(commands.Cog):
         if not await self._currency_check(ctx, guild_data["jukebox_price"]):
             return
         try:
-            if emoji == "1⃣":
+            if emoji == "\N{DIGIT ONE}\N{COMBINING ENCLOSING KEYCAP}":
                 search_choice = tracks[0 + (page * 5)]
-            elif emoji == "2⃣":
+            elif emoji == "\N{DIGIT TWO}\N{COMBINING ENCLOSING KEYCAP}":
                 search_choice = tracks[1 + (page * 5)]
-            elif emoji == "3⃣":
+            elif emoji == "\N{DIGIT THREE}\N{COMBINING ENCLOSING KEYCAP}":
                 search_choice = tracks[2 + (page * 5)]
-            elif emoji == "4⃣":
+            elif emoji == "\N{DIGIT FOUR}\N{COMBINING ENCLOSING KEYCAP}":
                 search_choice = tracks[3 + (page * 5)]
-            elif emoji == "5⃣":
+            elif emoji == "\N{DIGIT FIVE}\N{COMBINING ENCLOSING KEYCAP}":
                 search_choice = tracks[4 + (page * 5)]
             else:
                 search_choice = tracks[0 + (page * 5)]
@@ -7749,16 +7758,16 @@ class Audio(commands.Cog):
     ):
         player.store("eq", eq)
         emoji = {
-            "far_left": "◀",
-            "one_left": "⬅",
-            "max_output": "⏫",
-            "output_up": "🔼",
-            "output_down": "🔽",
-            "min_output": "⏬",
-            "one_right": "➡",
-            "far_right": "▶",
-            "reset": "⏺",
-            "info": "ℹ",
+            "far_left": "\N{BLACK LEFT-POINTING TRIANGLE}",
+            "one_left": "\N{LEFTWARDS BLACK ARROW}",
+            "max_output": "\N{BLACK UP-POINTING DOUBLE TRIANGLE}",
+            "output_up": "\N{UP-POINTING SMALL RED TRIANGLE}",
+            "output_down": "\N{DOWN-POINTING SMALL RED TRIANGLE}",
+            "min_output": "\N{BLACK DOWN-POINTING DOUBLE TRIANGLE}",
+            "one_right": "\N{BLACK RIGHTWARDS ARROW}",
+            "far_right": "\N{BLACK RIGHT-POINTING TRIANGLE}",
+            "reset": "\N{BLACK CIRCLE FOR RECORD}",
+            "info": "\N{INFORMATION SOURCE}",
         }
         selector = f'{" " * 8}{"   " * selected}^^'
         try:
@@ -7766,7 +7775,7 @@ class Audio(commands.Cog):
         except discord.errors.NotFound:
             return
         try:
-            react_emoji, react_user = await self._get_eq_reaction(ctx, message, emoji)
+            (react_emoji, react_user) = await self._get_eq_reaction(ctx, message, emoji)
         except TypeError:
             return
 
@@ -7774,60 +7783,60 @@ class Audio(commands.Cog):
             await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
             await self._clear_react(message, emoji)
 
-        if react_emoji == "⬅":
+        if react_emoji == "\N{LEFTWARDS BLACK ARROW}":
             await remove_react(message, react_emoji, react_user)
             await self._eq_interact(ctx, player, eq, message, max(selected - 1, 0))
 
-        if react_emoji == "➡":
+        if react_emoji == "\N{BLACK RIGHTWARDS ARROW}":
             await remove_react(message, react_emoji, react_user)
             await self._eq_interact(ctx, player, eq, message, min(selected + 1, 14))
 
-        if react_emoji == "🔼":
+        if react_emoji == "\N{UP-POINTING SMALL RED TRIANGLE}":
             await remove_react(message, react_emoji, react_user)
             _max = "{:.2f}".format(min(eq.get_gain(selected) + 0.1, 1.0))
             eq.set_gain(selected, float(_max))
             await self._apply_gain(ctx.guild.id, selected, _max)
             await self._eq_interact(ctx, player, eq, message, selected)
 
-        if react_emoji == "🔽":
+        if react_emoji == "\N{DOWN-POINTING SMALL RED TRIANGLE}":
             await remove_react(message, react_emoji, react_user)
             _min = "{:.2f}".format(max(eq.get_gain(selected) - 0.1, -0.25))
             eq.set_gain(selected, float(_min))
             await self._apply_gain(ctx.guild.id, selected, _min)
             await self._eq_interact(ctx, player, eq, message, selected)
 
-        if react_emoji == "⏫":
+        if react_emoji == "\N{BLACK UP-POINTING DOUBLE TRIANGLE}":
             await remove_react(message, react_emoji, react_user)
             _max = 1.0
             eq.set_gain(selected, _max)
             await self._apply_gain(ctx.guild.id, selected, _max)
             await self._eq_interact(ctx, player, eq, message, selected)
 
-        if react_emoji == "⏬":
+        if react_emoji == "\N{BLACK DOWN-POINTING DOUBLE TRIANGLE}":
             await remove_react(message, react_emoji, react_user)
             _min = -0.25
             eq.set_gain(selected, _min)
             await self._apply_gain(ctx.guild.id, selected, _min)
             await self._eq_interact(ctx, player, eq, message, selected)
 
-        if react_emoji == "◀":
+        if react_emoji == "\N{BLACK LEFT-POINTING TRIANGLE}":
             await remove_react(message, react_emoji, react_user)
             selected = 0
             await self._eq_interact(ctx, player, eq, message, selected)
 
-        if react_emoji == "▶":
+        if react_emoji == "\N{BLACK RIGHT-POINTING TRIANGLE}":
             await remove_react(message, react_emoji, react_user)
             selected = 14
             await self._eq_interact(ctx, player, eq, message, selected)
 
-        if react_emoji == "⏺":
+        if react_emoji == "\N{BLACK CIRCLE FOR RECORD}":
             await remove_react(message, react_emoji, react_user)
             for band in range(eq._band_count):
                 eq.set_gain(band, 0.0)
             await self._apply_gains(ctx.guild.id, eq.bands)
             await self._eq_interact(ctx, player, eq, message, selected)
 
-        if react_emoji == "ℹ":
+        if react_emoji == "\N{INFORMATION SOURCE}":
             await remove_react(message, react_emoji, react_user)
             await ctx.send_help(self.eq)
             await self._eq_interact(ctx, player, eq, message, selected)

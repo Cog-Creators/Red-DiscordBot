@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
-
-# Red Imports
 from redbot.core import Config
 from redbot.core.bot import Red
 
-# Red Relative Imports
 from .audio_dataclasses import _pass_config_to_dataclasses
 from .converters import _pass_config_to_converters
 from .playlists import _pass_config_to_playlist
