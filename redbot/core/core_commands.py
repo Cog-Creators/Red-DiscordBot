@@ -1889,13 +1889,20 @@ class Core(commands.Cog, CoreLogic):
             if not guild
             else await self.bot._config.guild(ctx.guild).disabled_commands()
         )
-        msg = _("{num:,} command{plural} {are} disabled {type}.\n").format(
-            num=len(disabled_list),
-            plural=_("s") if len(disabled_list) > 1 else "",
-            are=_("are") if len(disabled_list) > 1 else _("is"),
-            type=_("globally") if not guild else _("in {}").format(ctx.guild),
-        )
-        msg += box(", ".join(disabled_list))
+        if disabled_list:
+            msg = _("{num:,} command{plural} {are} disabled {type}.\n").format(
+                num=len(disabled_list),
+                plural=_("s") if len(disabled_list) > 1 else "",
+                are=_("are") if len(disabled_list) > 1 else _("is"),
+                type=_("globally") if not guild else _("in {}").format(ctx.guild),
+            )
+            msg += box(", ".join(disabled_list))
+        else:
+            msg = _("There aren't any {}.").format(
+                _("globally disabled commands")
+                if not guild
+                else _("disabled commands in {}").format(ctx.guild)
+            )
         for page in pagify(msg):
             await ctx.send(page)
 
