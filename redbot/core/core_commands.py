@@ -287,7 +287,7 @@ class Core(commands.Cog, CoreLogic):
         app_info = await self.bot.application_info()
         owner = app_info.owner
         custom_info = await self.bot._config.custom_info()
-        bot_nick = ctx.bot.user.name
+        bot_name = ctx.bot.user.name
 
         async with aiohttp.ClientSession() as session:
             async with session.get("{}/json".format(red_pypi)) as r:
