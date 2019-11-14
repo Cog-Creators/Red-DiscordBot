@@ -1,3 +1,1 @@
-Use the bot's username in ``[p]info`` instead of "This"
-- Before: "This is an..."
-- Now: "Bot's Username is an..."
+Change ``[p]info`` to say "This bot is an..." instead of "This is an..." for clarity.
