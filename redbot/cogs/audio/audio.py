@@ -264,7 +264,7 @@ class Audio(commands.Cog):
                         for t in tracks_in_playlist:
                             uri = t.get("info", {}).get("uri")
                             if uri:
-                                t = {"loadType": "V2_COMPAT", "tracks": [t], "query": uri}
+                                t = {"loadType": "V2_COMPACT", "tracks": [t], "query": uri}
                                 database_entries.append(
                                     {
                                         "query": uri,
@@ -3483,7 +3483,7 @@ class Audio(commands.Cog):
 
         if not first_track_only and len(tracks) > 1:
             # a list of Tracks where all should be enqueued
-            # this is a Spotify playlist aleady made into a list of Tracks or a
+            # this is a Spotify playlist already made into a list of Tracks or a
             # url where Lavalink handles providing all Track objects to use, like a
             # YouTube or Soundcloud playlist
             track_len = 0
@@ -4547,18 +4547,13 @@ class Audio(commands.Cog):
             }
             file_name = playlist.name
         else:
+            # TODO: Keep new playlists backwards compatible, Remove me in a few releases
             playlist_data = playlist.to_json()
             playlist_songs_backwards_compatible = [
                 track["info"]["uri"] for track in playlist.tracks
             ]
-            playlist_data[
-                "playlist"
-            ] = playlist_songs_backwards_compatible  # TODO: Keep new playlists backwards compatible, Remove me in a few releases
-            playlist_data[
-                "link"
-            ] = (
-                playlist.url
-            )  # TODO: Keep new playlists backwards compatible, Remove me in a few releases
+            playlist_data["playlist"] = playlist_songs_backwards_compatible
+            playlist_data["link"] = playlist.url
             file_name = playlist.id
         playlist_data.update({"schema": schema, "version": version})
         playlist_data = json.dumps(playlist_data)
@@ -5663,7 +5658,7 @@ class Audio(commands.Cog):
         for t in track_list:
             uri = t.get("info", {}).get("uri")
             if uri:
-                t = {"loadType": "V2_COMPAT", "tracks": [t], "query": uri}
+                t = {"loadType": "V2_COMPACT", "tracks": [t], "query": uri}
                 database_entries.append(
                     {
                         "query": uri,
@@ -6294,8 +6289,8 @@ class Audio(commands.Cog):
                 ctx,
                 title=_("Removed racks from the queue"),
                 description=_(
-                    "Removed {removed_tracks} tracks queued by members o"
-                    "utside of the voice channel."
+                    "Removed {removed_tracks} tracks queued by members "
+                    "outside of the voice channel."
                 ).format(removed_tracks=removed_tracks),
             )
 

@@ -2,7 +2,7 @@ import asyncio
 import contextlib
 import re
 import time
-from typing import Mapping, Optional
+from typing import Mapping
 from urllib.parse import urlparse
 
 import discord

@@ -1,6 +1,6 @@
 from collections import namedtuple
 from enum import Enum, unique
-from typing import List, Optional, Union
+from typing import List, Mapping, Optional, Union
 
 import discord
 import lavalink
@@ -116,7 +116,7 @@ class Playlist:
         playlist_id: int,
         name: str,
         playlist_url: Optional[str] = None,
-        tracks: Optional[List[dict]] = None,
+        tracks: Optional[List[Mapping]] = None,
         guild: Union[discord.Guild, int, None] = None,
     ):
         self.bot = bot
@@ -321,7 +321,7 @@ async def create_playlist(
     scope: str,
     playlist_name: str,
     playlist_url: Optional[str] = None,
-    tracks: Optional[List[dict]] = None,
+    tracks: Optional[List[Mapping]] = None,
     author: Optional[discord.User] = None,
     guild: Optional[discord.Guild] = None,
 ) -> Optional[Playlist]:
@@ -338,7 +338,7 @@ async def create_playlist(
         The name of the new playlist.
     playlist_url:str
         the url of the new playlist.
-    tracks: List[dict]
+    tracks: List[Mapping]
         A list of tracks to add to the playlist.
     author: discord.User
         The Author of the playlist.

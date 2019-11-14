@@ -352,7 +352,7 @@ class MusicCache:
             await self.database.execute(query="PRAGMA optimize;")
             await self.database.disconnect()
 
-    async def insert(self, table: str, values: List[dict]):
+    async def insert(self, table: str, values: List[Mapping]):
         # if table == "spotify":
         #     return
         if HAS_SQL:
@@ -413,7 +413,7 @@ class MusicCache:
         return []
 
     @staticmethod
-    def _spotify_format_call(qtype: str, key: str) -> Tuple[str, dict]:
+    def _spotify_format_call(qtype: str, key: str) -> Tuple[str, Mapping]:
         params = {}
         if qtype == "album":
             query = "https://api.spotify.com/v1/albums/{0}/tracks".format(key)
