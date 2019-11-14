@@ -91,7 +91,7 @@ class CommandObj:
         if not ccinfo:
             raise NotFound()
         else:
-            return (ccinfo["response"], ccinfo.get("cooldowns", {}))
+            return ccinfo["response"], ccinfo.get("cooldowns", {})
 
     async def get_full(self, message: discord.Message, command: str) -> Dict:
         ccinfo = await self.db(message.guild).commands.get_raw(command, default=None)

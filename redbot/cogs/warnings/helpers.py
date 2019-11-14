@@ -69,7 +69,7 @@ def get_command_from_input(bot, userinput: str):
         if len(userinput) == 0:
             break
     if com is None:
-        return (None, _("I could not find a command from that input!"))
+        return None, _("I could not find a command from that input!")
 
     check_str = inspect.getsource(checks.is_owner)
     if any(inspect.getsource(x) in check_str for x in com.checks):

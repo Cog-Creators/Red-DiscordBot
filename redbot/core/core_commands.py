@@ -188,7 +188,7 @@ class CoreLogic:
             load_failed_with_reason,
         ) = await self._load(cog_names)
 
-        return (loaded, load_failed, not_found, already_loaded, load_failed_with_reason)
+        return loaded, load_failed, not_found, already_loaded, load_failed_with_reason
 
     async def _name(self, name: Optional[str] = None) -> str:
         """

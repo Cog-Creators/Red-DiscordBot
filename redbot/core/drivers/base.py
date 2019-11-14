@@ -25,9 +25,9 @@ class ConfigCategory(str, enum.Enum):
             # noinspection PyArgumentList
             category_obj = cls(category)
         except ValueError:
-            return (custom_group_data[category], True)
+            return custom_group_data[category], True
         else:
-            return (_CATEGORY_PKEY_COUNTS[category_obj], False)
+            return _CATEGORY_PKEY_COUNTS[category_obj], False
 
 
 _CATEGORY_PKEY_COUNTS = {

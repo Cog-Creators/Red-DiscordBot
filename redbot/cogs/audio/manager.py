@@ -108,7 +108,7 @@ class ServerManager:
     async def _has_java(cls,) -> Tuple[bool, Optional[Tuple[int, int]]]:
         if cls._java_available is not None:
             # Return cached value if we've checked this before
-            return (cls._java_available, cls._java_version)
+            return cls._java_available, cls._java_version
         java_available = shutil.which("java") is not None
         if not java_available:
             cls.java_available = False
@@ -116,7 +116,7 @@ class ServerManager:
         else:
             cls._java_version = version = await cls._get_java_version()
             cls._java_available = (2, 0) > version >= (1, 8) or version >= (8, 0)
-        return (cls._java_available, cls._java_version)
+        return cls._java_available, cls._java_version
 
     @staticmethod
     async def _get_java_version() -> Tuple[int, int]:
@@ -146,9 +146,9 @@ class ServerManager:
             match = version_line_re.search(line)
             short_match = short_version_re.search(line)
             if match:
-                return (int(match["major"]), int(match["minor"]))
+                return int(match["major"]), int(match["minor"])
             elif short_match:
-                return (int(short_match["major"]), 0)
+                return int(short_match["major"]), 0
 
         raise RuntimeError(
             "The output of `java -version` was unexpected. Please report this issue on Red's "

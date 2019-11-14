@@ -364,7 +364,7 @@ async def is_outdated():
         async with session.get("{}/json".format(red_pypi)) as r:
             data = await r.json()
             new_version = data["info"]["version"]
-    return (VersionInfo.from_str(new_version) > red_version_info, new_version)
+    return VersionInfo.from_str(new_version) > red_version_info, new_version
 
 
 def main_menu():

@@ -268,7 +268,7 @@ class Downloader(commands.Cog):
 
         await self._save_to_installed(update_commits)
 
-        return (tuple(cogs_to_update), tuple(libraries_to_update))
+        return tuple(cogs_to_update), tuple(libraries_to_update)
 
     async def _install_cogs(
         self, cogs: Iterable[Installable]
@@ -347,7 +347,7 @@ class Downloader(commands.Cog):
             await repo.checkout(exit_to_commit)
 
         # noinspection PyTypeChecker
-        return (tuple(all_installed), tuple(all_failed))
+        return tuple(all_installed), tuple(all_failed)
 
     async def _install_requirements(self, cogs: Iterable[Installable]) -> Tuple[str, ...]:
         """
@@ -971,7 +971,7 @@ class Downloader(commands.Cog):
             ) + humanize_list(already_installed)
         (correct_cogs, add_to_message) = self._filter_incorrect_cogs(cogs)
         if add_to_message:
-            return (correct_cogs, f"{message}{add_to_message}")
+            return correct_cogs, f"{message}{add_to_message}"
         return correct_cogs, message
 
     @staticmethod

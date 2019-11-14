@@ -205,7 +205,7 @@ class ScopeParser(commands.Converter):
         elif any(x in argument for x in ["--author", "--user", "--member"]):
             raise commands.ArgParserFailure("--scope", "Nothing", custom_help=_USER_HELP)
 
-        return (target_scope, target_user, target_guild, specified_user)
+        return target_scope, target_user, target_guild, specified_user
 
 
 class ComplexScopeParser(commands.Converter):

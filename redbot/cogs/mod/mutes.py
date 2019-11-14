@@ -405,7 +405,7 @@ class MuteMixin(MixinMeta):
         permissions = channel.permissions_for(user)
 
         if permissions.administrator:
-            return (False, _(mute_unmute_issues["is_admin"]))
+            return False, _(mute_unmute_issues["is_admin"])
 
         new_overs = {}
         if not isinstance(channel, discord.TextChannel):
@@ -414,17 +414,17 @@ class MuteMixin(MixinMeta):
             new_overs.update(send_messages=False, add_reactions=False)
 
         if all(getattr(permissions, p) is False for p in new_overs.keys()):
-            return (False, _(mute_unmute_issues["already_muted"]))
+            return False, _(mute_unmute_issues["already_muted"])
 
         elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
-            return (False, _(mute_unmute_issues["hierarchy_problem"]))
+            return False, _(mute_unmute_issues["hierarchy_problem"])
 
         old_overs = {k: getattr(overwrites, k) for k in new_overs}
         overwrites.update(**new_overs)
         try:
             await channel.set_permissions(user, overwrite=overwrites, reason=reason)
         except discord.Forbidden:
-            return (False, _(mute_unmute_issues["permissions_issue"]))
+            return False, _(mute_unmute_issues["permissions_issue"])
         else:
             await self.settings.member(user).set_raw(
                 "perms_cache", str(channel.id), value=old_overs
@@ -448,10 +448,10 @@ class MuteMixin(MixinMeta):
             old_values = {"send_messages": None, "add_reactions": None, "speak": None}
 
         if all(getattr(overwrites, k) == v for k, v in old_values.items()):
-            return (False, _(mute_unmute_issues["already_unmuted"]))
+            return False, _(mute_unmute_issues["already_unmuted"])
 
         elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
-            return (False, _(mute_unmute_issues["hierarchy_problem"]))
+            return False, _(mute_unmute_issues["hierarchy_problem"])
 
         overwrites.update(**old_values)
         try:
@@ -462,7 +462,7 @@ class MuteMixin(MixinMeta):
             else:
                 await channel.set_permissions(user, overwrite=overwrites, reason=reason)
         except discord.Forbidden:
-            return (False, _(mute_unmute_issues["permissions_issue"]))
+            return False, _(mute_unmute_issues["permissions_issue"])
         else:
             await self.settings.member(user).clear_raw("perms_cache", str(channel.id))
             return True, None

@@ -398,7 +398,7 @@ class Audio(commands.Cog):
             except IndexError:
                 get_single_title = None
                 playing_servers = 0
-            return (get_single_title, playing_servers)
+            return get_single_title, playing_servers
 
         async def _status_check(playing_servers):
             if playing_servers == 0:
@@ -3228,7 +3228,7 @@ class Audio(commands.Cog):
                     f"Please try to be more specific, or use the playlist ID."
                 )
         elif match_count == 1:
-            return (correct_scope_matches[0][0], original_input)
+            return correct_scope_matches[0][0], original_input
         elif match_count == 0:
             return None, original_input
 
@@ -3276,7 +3276,7 @@ class Audio(commands.Cog):
             )
         with contextlib.suppress(discord.HTTPException):
             await msg.delete()
-        return (correct_scope_matches[pred.result][0], original_input)
+        return correct_scope_matches[pred.result][0], original_input
 
     @commands.group()
     @commands.guild_only()

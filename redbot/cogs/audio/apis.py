@@ -399,7 +399,7 @@ class MusicCache:
 
                     need_update = last_update < datetime.datetime.now(datetime.timezone.utc)
 
-            return (getattr(row, query, None), need_update if table != "spotify" else True)
+            return getattr(row, query, None), need_update if table != "spotify" else True
         else:
             return None, True
 
@@ -437,7 +437,7 @@ class MusicCache:
         _id = track_data["id"]
         _type = track_data["type"]
 
-        return (song_url, track_info, uri, artist_name, track_name, _id, _type)
+        return song_url, track_info, uri, artist_name, track_name, _id, _type
 
     async def _spotify_first_time_query(
         self,

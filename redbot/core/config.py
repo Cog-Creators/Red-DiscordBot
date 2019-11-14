@@ -914,12 +914,12 @@ class Config:
             config=self,
         )
 
-    def guild_from_id(self, guild_id: int) -> Group:
+    def guild_from_id(self, guild_id: Union[int, str]) -> Group:
         """Returns a `Group` for the given guild id.
 
         Parameters
         ----------
-        guild_id : int
+        guild_id : Union[int, str]
             A guild id.
 
         Returns
@@ -946,14 +946,14 @@ class Config:
         """
         return self._get_base_group(self.GUILD, str(guild.id))
 
-    def channel_from_id(self, channel_id: int) -> Group:
+    def channel_from_id(self, channel_id: Union[int, str]) -> Group:
         """Returns a `Group` for the given channel id.
 
         This does not discriminate between text and voice channels.
 
         Parameters
         ----------
-        channel_id : int
+        channel_id : Union[int, str]
             A channel id.
 
         Returns
@@ -982,12 +982,12 @@ class Config:
         """
         return self._get_base_group(self.CHANNEL, str(channel.id))
 
-    def role_from_id(self, role_id: int) -> Group:
+    def role_from_id(self, role_id: Union[int, str]) -> Group:
         """Returns a `Group` for the given role id.
 
         Parameters
         ----------
-        role_id : int
+        role_id : Union[int, str]
             A role id.
 
         Returns
@@ -1014,12 +1014,12 @@ class Config:
         """
         return self._get_base_group(self.ROLE, str(role.id))
 
-    def user_from_id(self, user_id: int) -> Group:
+    def user_from_id(self, user_id: Union[int, str]) -> Group:
         """Returns a `Group` for the given user id.
 
         Parameters
         ----------
-        user_id : int
+        user_id : Union[int, str]
             The user's id
 
         Returns
@@ -1046,14 +1046,14 @@ class Config:
         """
         return self._get_base_group(self.USER, str(user.id))
 
-    def member_from_ids(self, guild_id: int, member_id: int) -> Group:
+    def member_from_ids(self, guild_id: Union[int, str], member_id: Union[int, str]) -> Group:
         """Returns a `Group` for the ids which represent a member.
 
         Parameters
         ----------
-        guild_id : int
+        guild_id : Union[int, str]
             The id of the guild of the member
-        member_id : int
+        member_id : Union[int, str]
             The id of the member
 
         Returns
