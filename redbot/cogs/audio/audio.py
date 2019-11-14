@@ -409,9 +409,7 @@ class Audio(commands.Cog):
                 await self.bot.change_presence(activity=None)
             elif playing_servers == 1:
                 await self.bot.change_presence(
-                    activity=discord.Activity(
-                        name=track, type=discord.ActivityType.listening
-                    )
+                    activity=discord.Activity(name=track, type=discord.ActivityType.listening)
                 )
             elif playing_servers > 1:
                 await self.bot.change_presence(
