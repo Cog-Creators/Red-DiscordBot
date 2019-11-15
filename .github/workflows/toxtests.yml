@@ -1,16 +1,14 @@
 name: Tests
-
-on: [push]
+on: [push, pull_request]
 
 jobs:
-
   tox-py:
     runs-on: [ubuntu-latest]
     strategy:
       matrix:
         python-version: ['3.7', '3.8']
       fail-fast: false
-    name: Tox tests - Python ${{ matrix.python-version }}
+    name: Tox Tests - Python ${{ matrix.python-version }}
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python ${{ matrix.python-version }}
