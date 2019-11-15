@@ -18,7 +18,7 @@ Examples of acceptable vulnerabilities:
 If you're reporting a vulnerability for a 3rd party add-on/cog please try to get in contact with its creator. To help you find the creator you can use the bot command ``findcog``.
 
 We will investigate the reported vulnerability and report back on its status when we're able to do so. If the vulnerability is accepted we will open a new security advisory on GitHub.
-We may invite you as the reporter to collaberate on a fix with us if its deemed necessary. 
+We may invite you as the reporter to collaborate on a fix with us if its deemed necessary. 
 Once the advisory is published and a fix has been deployed we will announce the advisory over our usual update channels.
 
 Thank you.
