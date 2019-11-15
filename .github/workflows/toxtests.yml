@@ -28,6 +28,13 @@ jobs:
     needs: [build]
     runs-on: [ubuntu-latest]
     steps:
+    - name: Cache
+      uses: actions/cache@v1.0.0
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/tox.ini') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
     - name: Tox test - Py
       env:
         TOXENV: py
@@ -36,6 +43,13 @@ jobs:
     needs: [build]
     runs-on: [ubuntu-latest]
     steps:
+    - name: Cache
+      uses: actions/cache@v1.0.0
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/tox.ini') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
     - name: Tox test - Style
       env:
         TOXENV: style
@@ -44,6 +58,13 @@ jobs:
     needs: [build]
     runs-on: [ubuntu-latest]
     steps:
+    - name: Cache
+      uses: actions/cache@v1.0.0
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/tox.ini') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
     - name: Tox test - Docs
       env:
         TOXENV: docs
