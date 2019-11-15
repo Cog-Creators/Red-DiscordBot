@@ -1877,32 +1877,49 @@ class Core(commands.Cog, CoreLogic):
         """Manage the bot's commands."""
         pass
 
-    @command_manager.command()
-    async def listdisabled(self, ctx: commands.Context, guild: bool = False):
+    @command_manager.group(name="listdisabled", invoke_without_command=True)
+    async def list_disabled(self, ctx: commands.Context):
         """
         List disabled commands.
 
-        guild: Set to `True` to see disabled commands in the current guild.
+        If you're the bot owner, this will show global disabled commands by default.
         """
-        disabled_list = (
-            await self.bot._config.disabled_commands()
-            if not guild
-            else await self.bot._config.guild(ctx.guild).disabled_commands()
-        )
+        # Select the scope based on the author's privileges
+        if await ctx.bot.is_owner(ctx.author):
+            await ctx.invoke(self.list_disabled_global)
+        else:
+            await ctx.invoke(self.list_disabled_guild)
+
+    @list_disabled.command(name="global")
+    async def list_disabled_global(self, ctx: commands.Context):
+        """List disabled commands globally."""
+        disabled_list = await self.bot._config.disabled_commands()
         if disabled_list:
-            msg = _("{num:,} command{plural} {are} disabled {type}.\n").format(
+            msg = _("{num:,} command{plural} {are} disabled globally.\n").format(
                 num=len(disabled_list),
                 plural=_("s") if len(disabled_list) > 1 else "",
                 are=_("are") if len(disabled_list) > 1 else _("is"),
-                type=_("globally") if not guild else _("in {}").format(ctx.guild),
             )
             msg += box(", ".join(disabled_list))
         else:
-            msg = _("There aren't any {}.").format(
-                _("globally disabled commands")
-                if not guild
-                else _("disabled commands in {}").format(ctx.guild)
+            msg = _("There aren't any globally disabled commands.")
+        for page in pagify(msg):
+            await ctx.send(page)
+
+    @list_disabled.command(name="guild")
+    async def list_disabled_guild(self, ctx: commands.Context):
+        """List disabled commands in this server."""
+        disabled_list = await self.bot._config.guild(ctx.guild).disabled_commands()
+        if disabled_list:
+            msg = _("{num:,} command{plural} {are} disabled in {guild}.\n").format(
+                num=len(disabled_list),
+                plural=_("s") if len(disabled_list) > 1 else "",
+                are=_("are") if len(disabled_list) > 1 else _("is"),
+                guild=ctx.guild,
             )
+            msg += box(", ".join(disabled_list))
+        else:
+            msg = _("There aren't any disabled commands in {}.").format(ctx.guild)
         for page in pagify(msg):
             await ctx.send(page)
 
