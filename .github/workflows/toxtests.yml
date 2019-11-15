@@ -5,7 +5,7 @@ on: [push]
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: [ubuntu-latest]
 
     steps:
     - uses: actions/checkout@v1
@@ -24,14 +24,26 @@ jobs:
         key: ${{ runner.os }}-pip-${{ hashFiles('**/tox.ini') }}
         restore-keys: |
           ${{ runner.os }}-pip-
+  toxpy:
+    needs: [build]
+    runs-on: [ubuntu-latest]
+    steps:
     - name: Tox test - Py
       env:
         TOXENV: py
       run: tox
+  toxstyle:
+    needs: [build]
+    runs-on: [ubuntu-latest]
+    steps:
     - name: Tox test - Style
       env:
         TOXENV: style
       run: tox
+  toxdocs:
+    needs: [build]
+    runs-on: [ubuntu-latest]
+    steps:
     - name: Tox test - Docs
       env:
         TOXENV: docs
