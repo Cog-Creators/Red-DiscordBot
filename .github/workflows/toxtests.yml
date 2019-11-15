@@ -3,10 +3,30 @@ name: Tests
 on: [push]
 
 jobs:
-  build:
 
+  tox-py:
     runs-on: [ubuntu-latest]
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.8']
+    name: Python ${{ matrix.python-version }}
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install tox
+      run: |
+        python -m pip install --upgrade pip
+        pip install tox
+    - name: Tox test - Py
+      env:
+        TOXENV: py
+      run: tox
 
+  tox-style:
+    runs-on: [ubuntu-latest]
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python 3.7
@@ -17,55 +37,12 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install tox
-    - name: Cache
-      uses: actions/cache@v1.0.0
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/tox.ini') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-  toxpy:
-    needs: [build]
-    runs-on: [ubuntu-latest]
-    steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.7
-    - name: Cache
-      uses: actions/cache@v1.0.0
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/tox.ini') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-    - name: Tox test - Py
-      env:
-        TOXENV: py
-      run: tox
-  toxstyle:
-    needs: [build]
-    runs-on: [ubuntu-latest]
-    steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.7
-    - name: Cache
-      uses: actions/cache@v1.0.0
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/tox.ini') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
     - name: Tox test - Style
       env:
         TOXENV: style
       run: tox
-  toxdocs:
-    needs: [build]
+
+  tox-docs:
     runs-on: [ubuntu-latest]
     steps:
     - uses: actions/checkout@v1
@@ -73,13 +50,6 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: 3.7
-    - name: Cache
-      uses: actions/cache@v1.0.0
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/tox.ini') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
     - name: Tox test - Docs
       env:
         TOXENV: docs
