@@ -1,4 +1,4 @@
-name: Python application
+name: Tests
 
 on: [push]
 
@@ -17,7 +17,22 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install tox
-    - name: Run Tox... Duh..
+    - name: Cache
+      uses: actions/cache@v1.0.0
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/tox.ini') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Tox test - Py
       env:
-        TOXENV: py,docs,style
+        TOXENV: py
+      run: tox
+    - name: Tox test - Style
+      env:
+        TOXENV: style
+      run: tox
+    - name: Tox test - Docs
+      env:
+        TOXENV: docs
       run: tox
