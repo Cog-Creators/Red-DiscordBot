@@ -4,6 +4,12 @@
 
 Supported versions include Red v3 and higher. Red v2 and lower are end of life. And will not receive security updates of any kind. If you are using v2 we recommend you upgrade to v3.
 
+| Version    	| Branch     	| Supported?         	|
+|------------	|------------	|--------------------	|
+| >3.0       	| v3/develop 	| :white_check_mark: 	|
+| >2.0, <3.0 	| develop    	| :x:                	|
+| <2.0       	| master     	| :x:                	|
+
 ## Reporting a Vulnerability
 
 We ask that you report vulnerabilities over at **[TBD]**
