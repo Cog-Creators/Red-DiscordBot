@@ -59,3 +59,25 @@ jobs:
       env:
         TOXENV: docs
       run: tox
+
+  tox-postgres:
+    runs-on: [ubuntu-latest]
+    name: Tox Postgres
+    steps:
+    - uses: harmon758/postgresql-action@v1
+      with:
+        postgresql version: '11'
+        postgresql db: 'red_db'
+    - uses: actions/checkout@v1
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - name: Install tox
+      run: |
+        python -m pip install --upgrade pip
+        pip install tox
+    - name: Tox test
+      env:
+        TOXENV: postgres
+      run: tox
