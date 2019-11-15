@@ -79,8 +79,8 @@ async def global_unique_guild_finder(ctx: commands.Context, arg: str) -> discord
     if not maybe_matches:
         raise NoMatchesFound(
             _(
-                '"{arg}" was not found. It must be the ID or'
-                "name of a server which the bot can see."
+                '"{arg}" was not found. It must be the ID or '
+                "complete name of a server which the bot can see."
             ).format(arg=arg)
         )
     elif len(maybe_matches) == 1:
@@ -121,8 +121,8 @@ async def global_unique_user_finder(
     if not maybe_matches:
         raise NoMatchesFound(
             _(
-                '"{arg}" was not found. It must be the ID or '
-                "name or mention a user which the bot can see."
+                '"{arg}" was not found. It must be the ID or name or '
+                "mention a user which the bot can see."
             ).format(arg=arg)
         )
     elif len(maybe_matches) == 1:
