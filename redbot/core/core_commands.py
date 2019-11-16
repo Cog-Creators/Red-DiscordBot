@@ -1895,10 +1895,10 @@ class Core(commands.Cog, CoreLogic):
         """List disabled commands globally."""
         disabled_list = await self.bot._config.disabled_commands()
         if disabled_list:
-            msg = _("{num:,} command{plural} {are} disabled globally.\n").format(
+            msg = _("{num:,} {cmd} {plur} disabled globally.\n").format(
                 num=len(disabled_list),
-                plural=_("s") if len(disabled_list) > 1 else "",
-                are=_("are") if len(disabled_list) > 1 else _("is"),
+                cmd=_("commands") if len(disabled_list) > 1 else _("command"),
+                plur=_("are") if len(disabled_list) > 1 else _("is"),
             )
             msg += box(", ".join(disabled_list))
         else:
@@ -1911,10 +1911,10 @@ class Core(commands.Cog, CoreLogic):
         """List disabled commands in this server."""
         disabled_list = await self.bot._config.guild(ctx.guild).disabled_commands()
         if disabled_list:
-            msg = _("{num:,} command{plural} {are} disabled in {guild}.\n").format(
+            msg = _("{num:,} {cmd} {plur} disabled in {guild}.\n").format(
                 num=len(disabled_list),
-                plural=_("s") if len(disabled_list) > 1 else "",
-                are=_("are") if len(disabled_list) > 1 else _("is"),
+                cmd=_("commands") if len(disabled_list) > 1 else _("command"),
+                plur=_("are") if len(disabled_list) > 1 else _("is"),
                 guild=ctx.guild,
             )
             msg += box(", ".join(disabled_list))
