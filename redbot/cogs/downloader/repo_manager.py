@@ -7,6 +7,7 @@ import pkgutil
 import shlex
 import shutil
 import re
+import yarl
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from subprocess import run as sp_run, PIPE, CompletedProcess
@@ -146,6 +147,13 @@ class Repo(RepoJSONMixin):
         self._repo_lock = asyncio.Lock()
 
         self._loop = loop if loop is not None else asyncio.get_event_loop()
+
+    @property
+    def clean_url(self):
+        """Sanitized repo URL (with removed HTTP Basic Auth)"""
+        url = yarl.URL(self.url)
+        clean_url = url.with_user(None)
+        return clean_url
 
     @classmethod
     async def convert(cls, ctx: commands.Context, argument: str) -> Repo:
