@@ -16,6 +16,7 @@ checks:
       threshold: 5
   method-count:
     enabled: false  # I would set this lower if not for cogs as command containers.
+    config:
       threshold: 20
   method-lines:
     enabled: false
