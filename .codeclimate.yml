@@ -1,0 +1,43 @@
+version: "2"  # required to adjust maintainability checks
+checks:
+  argument-count:
+    config:
+      threshold: 6
+  complex-logic:
+    enabled: false  # Disabled in favor of using Radon for this
+    config:
+      threshold: 4
+  file-lines:
+    config:
+      threshold: 1000  # I would set this lower if not for cogs as command containers.
+  method-complexity:
+    enabled: false  # Disabled in favor of using Radon for this
+    config:
+      threshold: 5
+  method-count:
+    enabled: false  # I would set this lower if not for cogs as command containers.
+      threshold: 20
+  method-lines:
+    enabled: false
+    config:
+      threshold: 25  # I'm fine with long methods, cautious about the complexity of a single method.
+  nested-control-flow:
+    config:
+      threshold: 4
+  return-statements:
+    config:
+      threshold: 6
+  similar-code:
+    enabled: false
+    config:
+      threshold: # language-specific defaults. an override will affect all languages.
+  identical-code:
+    config:
+      threshold: # language-specific defaults. an override will affect all languages.
+plugins:
+  bandit:
+    enabled: true
+  radon: 
+    enabled: true
+    config: 
+      threshold: "D"
