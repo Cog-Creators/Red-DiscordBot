@@ -2970,7 +2970,9 @@ class Audio(commands.Cog):
         description = get_track_description(single_track)
         footer = None
         if not play_now and not guild_data["shuffle"] and queue_dur > 0:
-            footer = _("{time} until track playback: #1 in queue")
+            footer = _("{time} until track playback: #1 in queue").format(
+                time=lavalink.utils.format_time(queue_dur)
+            )
         await self._embed_msg(
             ctx, title=_("Track Enqueued"), description=description, footer=footer
         )
@@ -3969,6 +3971,10 @@ class Audio(commands.Cog):
         to_append = await self._playlist_tracks(
             ctx, player, audio_dataclasses.Query.process_input(query)
         )
+
+        if isinstance(to_append, discord.Message):
+            return None
+
         if not to_append:
             return await self._embed_msg(
                 ctx, title=_("Could not find a track matching your query.")
@@ -4802,8 +4808,8 @@ class Audio(commands.Cog):
         )
         return embed
 
-    @commands.cooldown(1, 15, commands.BucketType.guild)
     @playlist.command(name="queue", usage="<name> [args]")
+    @commands.cooldown(1, 15, commands.BucketType.guild)
     async def _playlist_queue(
         self, ctx: commands.Context, playlist_name: str, *, scope_data: ScopeParser = None
     ):
@@ -5000,6 +5006,7 @@ class Audio(commands.Cog):
             )
 
     @playlist.command(name="save", usage="<name> <url> [args]")
+    @commands.cooldown(1, 15, commands.BucketType.guild)
     async def _playlist_save(
         self,
         ctx: commands.Context,
@@ -5050,9 +5057,10 @@ class Audio(commands.Cog):
 
         temp_playlist = FakePlaylist(author.id, scope)
         if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
-            return
+            return ctx.command.reset_cooldown(ctx)
         playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
         if playlist_name.isnumeric():
+            ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(
                 ctx,
                 title=_("Invalid Playlist Name"),
@@ -5062,11 +5070,14 @@ class Audio(commands.Cog):
                 ),
             )
         if not await self._playlist_check(ctx):
+            ctx.command.reset_cooldown(ctx)
             return
         player = lavalink.get_player(ctx.guild.id)
         tracklist = await self._playlist_tracks(
             ctx, player, audio_dataclasses.Query.process_input(playlist_url)
         )
+        if isinstance(tracklist, discord.Message):
+            return None
         if tracklist is not None:
             playlist = await create_playlist(
                 ctx, scope, playlist_name, playlist_url, tracklist, author, guild
@@ -5742,6 +5753,8 @@ class Audio(commands.Cog):
         updated_tracks = await self._playlist_tracks(
             ctx, player, audio_dataclasses.Query.process_input(playlist.url)
         )
+        if isinstance(updated_tracks, discord.Message):
+            return [], [], playlist
         if not updated_tracks:
             # No Tracks available on url Lets set it to none to avoid repeated calls here
             results["url"] = None
@@ -5832,6 +5845,10 @@ class Audio(commands.Cog):
             except KeyError:
                 pass
             tracks = await self._get_spotify_tracks(ctx, query)
+
+            if isinstance(tracks, discord.Message):
+                return None
+
             if not tracks:
                 colour = await ctx.embed_colour()
                 embed = discord.Embed(title=_("Nothing found."), colour=colour)
@@ -6996,11 +7013,11 @@ class Audio(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def shuffle(self, ctx: commands.Context, *, shuffle_bumped: Optional[bool] = True):
+    async def shuffle(self, ctx: commands.Context, *, bumped: Optional[bool] = True):
         """Toggle shuffle.
 
-        shuffle_bumped tracks defaults to True, set to False if you wish to avoid bumped songs
-        being shuffled.
+        bumped tracks defaults to True.
+        Set to False if you wish to avoid bumped songs being shuffled.
         """
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
@@ -7026,7 +7043,7 @@ class Audio(commands.Cog):
 
         shuffle = await self.config.guild(ctx.guild).shuffle()
         await self.config.guild(ctx.guild).shuffle.set(not shuffle)
-        await self.config.guild(ctx.guild).shuffle_bumped.set(shuffle_bumped)
+        await self.config.guild(ctx.guild).shuffle_bumped.set(bumped)
         await self._embed_msg(
             ctx,
             title=_("Setting Changed"),
