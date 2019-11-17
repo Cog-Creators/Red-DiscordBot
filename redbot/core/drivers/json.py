@@ -221,7 +221,7 @@ def _save_json(path: Path, data: Dict[str, Any]) -> None:
 
     On windows, it is not available in entirety.
     If a windows user ends up with tons of temp files, they should consider hosting on
-    something POSIX compatible, or using the mongo backend instead.
+    something POSIX compatible, or using a different backend.
 
     Most users wont encounter this issue, but with high write volumes,
     without the fsync on both the temp file, and after the replace on the directory,

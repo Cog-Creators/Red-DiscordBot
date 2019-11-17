@@ -95,14 +95,13 @@ def get_data_dir():
 
 
 def get_storage_type():
-    storage_dict = {1: "JSON", 2: "MongoDB", 3: "PostgreSQL"}
+    storage_dict = {1: "JSON", 2: "PostgreSQL"}
     storage = None
     while storage is None:
         print()
         print("Please choose your storage backend (if you're unsure, choose 1).")
         print("1. JSON (file storage, requires no database).")
-        print("2. MongoDB")
-        print("3. PostgreSQL")
+        print("2. PostgreSQL")
         storage = input("> ")
         try:
             storage = int(storage)
@@ -146,7 +145,7 @@ def basic_setup():
 
     storage = get_storage_type()
 
-    storage_dict = {1: BackendType.JSON, 2: BackendType.MONGO, 3: BackendType.POSTGRES}
+    storage_dict = {1: BackendType.JSON, 2: BackendType.POSTGRES}
     storage_type: BackendType = storage_dict.get(storage, BackendType.JSON)
     default_dirs["STORAGE_TYPE"] = storage_type.value
     driver_cls = drivers.get_driver_class(storage_type)
@@ -394,7 +393,7 @@ def delete(
 
 @cli.command()
 @click.argument("instance", type=click.Choice(instance_list))
-@click.argument("backend", type=click.Choice(["json", "mongo", "postgres"]))
+@click.argument("backend", type=click.Choice(["json", "postgres"]))
 def convert(instance, backend):
     current_backend = get_current_backend(instance)
     target = get_target_backend(backend)
@@ -409,9 +408,7 @@ def convert(instance, backend):
         if target == BackendType.JSON:
             new_storage_details = loop.run_until_complete(mongov1_to_json())
         else:
-            raise RuntimeError(
-                "Please see conversion docs for updating to the latest mongo version."
-            )
+            raise RuntimeError("Please convert to json *before* migrating this data")
     else:
         new_storage_details = loop.run_until_complete(do_migration(current_backend, target))
 

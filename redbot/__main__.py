@@ -246,7 +246,11 @@ def main():
     loop = asyncio.get_event_loop()
 
     data_manager.load_basic_configuration(cli_flags.instance_name)
-    driver_cls = drivers.get_driver_class()
+    try:
+        driver_cls = drivers.get_driver_class(error_if_excluded=True)
+    except TypeError:
+        print("Please convert to a different backend before launching the bot.")
+        sys.exit(0)
     loop.run_until_complete(driver_cls.initialize(**data_manager.storage_details()))
     redbot.logging.init_logging(
         level=cli_flags.logging_level, location=data_manager.core_data_path() / "logs"

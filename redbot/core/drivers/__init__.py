@@ -28,12 +28,14 @@ class BackendType(enum.Enum):
 
 _DRIVER_CLASSES = {
     BackendType.JSON: JsonDriver,
-    BackendType.MONGO: MongoDriver,
     BackendType.POSTGRES: PostgresDriver,
+    BackendType.MONGO: MongoDriver,  # Do not use for config beyond migrating away.
 }
 
 
-def get_driver_class(storage_type: Optional[BackendType] = None) -> Type[BaseDriver]:
+def get_driver_class(
+    storage_type: Optional[BackendType] = None, *, error_if_excluded: bool = False
+) -> Type[BaseDriver]:
     """Get the driver class for the given storage type.
 
     Parameters
@@ -41,6 +43,12 @@ def get_driver_class(storage_type: Optional[BackendType] = None) -> Type[BaseDri
     storage_type : Optional[BackendType]
         The backend you want a driver class for. Omit to try to obtain
         the backend from data manager.
+
+    Other Parameters
+    ----------------
+    error_if_excluded: bool
+        sets to raise an errpr if attempting to get a driver
+        which has been retained only for purposes of converting away from the driver
 
     Returns
     -------
@@ -51,10 +59,13 @@ def get_driver_class(storage_type: Optional[BackendType] = None) -> Type[BaseDri
     ------
     ValueError
         If there is no driver for the given storage type.
-
+    TypeError
+        If this would return a driver no longer valid.
     """
     if storage_type is None:
         storage_type = BackendType(data_manager.storage_type())
+    if error_if_excluded and storage_type in (BackendType.MONGO, BackendType.MONGOV1):
+        raise TypeError()
     try:
         return _DRIVER_CLASSES[storage_type]
     except KeyError:
