@@ -1,0 +1,1 @@
+Use sanitized url (without HTTP Basic Auth fragments) in `[p]findcog` command.
