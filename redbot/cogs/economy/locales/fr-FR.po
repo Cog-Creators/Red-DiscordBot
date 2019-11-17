@@ -1,0 +1,296 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2019-07-05 22:33+0200\n"
+"PO-Revision-Date: 2019-07-06 16:11\n"
+"Last-Translator: Robert Jansen (Kowlin)\n"
+"Language-Team: French\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.0\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: fr\n"
+"X-Crowdin-File: /cogs/economy/locales/messages.pot\n"
+"Language: fr_FR\n"
+
+#: redbot/cogs/economy/economy.py:42
+msgid "JACKPOT! 226! Your bid has been multiplied * 2500!"
+msgstr "JACKPOT ! 226 ! Votre mise a été multipliée par 2500 !"
+
+#: redbot/cogs/economy/economy.py:46
+msgid "4LC! +1000!"
+msgstr "Trèfle à quatre feuilles ! + 1000 !"
+
+#: redbot/cogs/economy/economy.py:50
+msgid "Three cherries! +800!"
+msgstr "Trois cerises ! + 800 !"
+
+#: redbot/cogs/economy/economy.py:54
+msgid "2 6! Your bid has been multiplied * 4!"
+msgstr "26 ! Votre mise a été multipliée par 4 !"
+
+#: redbot/cogs/economy/economy.py:58
+msgid "Two cherries! Your bid has been multiplied * 3!"
+msgstr "Deux cerises ! Votre mise a été multipliée par 3 !"
+
+#: redbot/cogs/economy/economy.py:60
+msgid "Three symbols! +500!"
+msgstr "Trois symboles ! + 500 !"
+
+#: redbot/cogs/economy/economy.py:63
+msgid "Two consecutive symbols! Your bid has been multiplied * 2!"
+msgstr "Deux symboles consécutifs ! Votre mise a été multipliée par 2 !"
+
+#: redbot/cogs/economy/economy.py:67
+msgid "Slot machine payouts:\\n{two.value} {two.value} {six.value} Bet * 2500\\n{flc.value} {flc.value} {flc.value} +1000\\n{cherries.value} {cherries.value} {cherries.value} +800\\n{two.value} {six.value} Bet * 4\\n{cherries.value} {cherries.value} Bet * 3\\n\\nThree symbols: +500\\nTwo symbols: Bet * 2"
+msgstr "Gains de la machine à sous :\\n{two.value} {two.value} {six.value} Mise x 2500\\n{flc.value} {flc.value} {flc.value} + 1000\\n{cherries.value} {cherries.value} {cherries.value} + 800\\n{two.value} {six.value} Mise x 4\\n{cherries.value} {cherries.value} Mise x 3\\n\\nTrois symboles : + 500\\nDeux symboles : Mise x 2"
+
+#: redbot/cogs/economy/economy.py:112
+#, docstring
+msgid "Get rich and have fun with imaginary currency!"
+msgstr "Devenez riche et amusez-vous avec des devises imaginaires !"
+
+#: redbot/cogs/economy/economy.py:146
+#, docstring
+msgid "Manage the bank."
+msgstr "Gérer la banque."
+
+#: redbot/cogs/economy/economy.py:151
+#, docstring
+msgid "Show the user's account balance.\\n\\n        Defaults to yours."
+msgstr "Afficher le solde du compte de l'utilisateur.\\n\\n        Par défaut sur le votre."
+
+#: redbot/cogs/economy/economy.py:161
+msgid "{user}'s balance is {num} {currency}"
+msgstr "Le solde de {user} est {num} {currency}"
+
+#: redbot/cogs/economy/economy.py:168
+#, docstring
+msgid "Transfer currency to other users."
+msgstr "Transférer des devises à d'autres utilisateurs."
+
+#: redbot/cogs/economy/economy.py:178
+msgid "{user} transferred {num} {currency} to {other_user}"
+msgstr "{user} a transféré {num} {currency} à {other_user}"
+
+#: redbot/cogs/economy/economy.py:186
+#, docstring
+msgid "Set the balance of user's bank account.\\n\\n        Passing positive and negative values will add/remove currency instead.\\n\\n        Examples:\\n        - `[p]bank set @Twentysix 26` - Sets balance to 26\\n        - `[p]bank set @Twentysix +2` - Increases balance by 2\\n        - `[p]bank set @Twentysix -6` - Decreases balance by 6\\n        "
+msgstr "Définissez le solde du compte bancaire de l'utilisateur.\\n\\n        Le passage de valeurs positives et négatives ajoutera/supprimera de la monnaie à la place.\\n\\n        Exemples :\\n        - `[p]bank set @Twentysix 26` - Définit la balance à 26\\n        - `[p]bank set @Twentysix +2` - Augmente le solde de 2\\n        - `[p]bank set @Twentysix -6` - Diminue le solde de 6\\n        "
+
+#: redbot/cogs/economy/economy.py:201
+msgid "{author} added {num} {currency} to {user}'s account."
+msgstr "{author} a ajouté {num} {currency} au compte de {user}."
+
+#: redbot/cogs/economy/economy.py:209
+msgid "{author} removed {num} {currency} from {user}'s account."
+msgstr "{author} a retiré {num} {currency} du compte de {user}."
+
+#: redbot/cogs/economy/economy.py:217
+msgid "{author} set {user}'s account balance to {num} {currency}."
+msgstr "{author} définit le solde du compte de {user} à {num} {currency}."
+
+#: redbot/cogs/economy/economy.py:231
+#, docstring
+msgid "Delete all bank accounts."
+msgstr "Supprimer tous les comptes bancaires."
+
+#: redbot/cogs/economy/economy.py:234
+msgid "This will delete all bank accounts for {scope}.\\nIf you're sure, type `{prefix}bank reset yes`"
+msgstr "Ceci supprimera tous les comptes bancaires pour {scope}.\\nSi vous êtes sûr, tapez `{prefix}bank reset yes`"
+
+#: redbot/cogs/economy/economy.py:238 redbot/cogs/economy/economy.py:246
+msgid "this server"
+msgstr "ce serveur"
+
+#: redbot/cogs/economy/economy.py:245
+msgid "All bank accounts for {scope} have been deleted."
+msgstr "Tous les comptes bancaires pour {scope} ont été supprimés."
+
+#: redbot/cogs/economy/economy.py:253
+#, docstring
+msgid "Get some free currency."
+msgstr "Obtenez quelques devises gratuites."
+
+#: redbot/cogs/economy/economy.py:267
+msgid "You've reached the maximum amount of {currency}!Please spend some more 😬\\n\\nYou currently have {new_balance} {currency}."
+msgstr "Vous avez atteint le montant maximum de {currency} ! Veuillez dépenser plus 😬\\n\\nVous avez actuellement {new_balance} {currency}."
+
+#: redbot/cogs/economy/economy.py:279
+msgid "{author.mention} Here, take some {currency}. Enjoy! (+{amount} {currency}!)\\n\\nYou currently have {new_balance} {currency}.\\n\\nYou are currently #{pos} on the global leaderboard!"
+msgstr "{author.mention} Tenez, voici un peu de {currency}. Amusez-vous bien ! (+{amount} {currency} !)\\n\\nVous avez actuellement {new_balance} {currency}.\\n\\nVous êtes actuellement #{pos} sur le classement global !"
+
+#: redbot/cogs/economy/economy.py:296 redbot/cogs/economy/economy.py:342
+msgid "{author.mention} Too soon. For your next payday you have to wait {time}."
+msgstr "{author.mention} Trop tôt. Pour le prochain payday, vous devez attendre {time}."
+
+#: redbot/cogs/economy/economy.py:315
+msgid "You've reached the maximum amount of {currency}! Please spend some more 😬\\n\\nYou currently have {new_balance} {currency}."
+msgstr "Vous avez atteint le montant maximum de {currency} ! Veuillez dépenser plus 😬\\n\\nVous avez actuellement {new_balance} {currency}."
+
+#: redbot/cogs/economy/economy.py:326
+msgid "{author.mention} Here, take some {currency}. Enjoy! (+{amount} {currency}!)\\n\\nYou currently have {new_balance} {currency}.\\n\\nYou are currently #{pos} on the global leaderboard!"
+msgstr "{author.mention} Tenez, voici un peu de {currency}. Amusez-vous bien ! (+{amount} {currency} !)\\n\\nVous avez actuellement {new_balance} {currency}.\\n\\nVous êtes actuellement #{pos} sur le classement global !"
+
+#: redbot/cogs/economy/economy.py:350
+#, docstring
+msgid "Print the leaderboard.\\n\\n        Defaults to top 10.\\n        "
+msgstr "Envoie le classement.\\n\\n        Par défaut au top 10.\\n        "
+
+#: redbot/cogs/economy/economy.py:367
+msgid "There are no accounts in the bank."
+msgstr "Il n'y a pas de comptes dans cette banque."
+
+#: redbot/cogs/economy/economy.py:371
+msgid "Name"
+msgstr "Nom"
+
+#: redbot/cogs/economy/economy.py:372
+msgid "Score"
+msgstr "Score"
+
+#: redbot/cogs/economy/economy.py:412
+#, docstring
+msgid "Show the payouts for the slot machine."
+msgstr "Montrer les gains de la machine à sous."
+
+#: redbot/cogs/economy/economy.py:418
+#, docstring
+msgid "Use the slot machine."
+msgstr "Utiliser la machine à sous."
+
+#: redbot/cogs/economy/economy.py:437
+msgid "You're on cooldown, try again in a bit."
+msgstr "Vous devez attendre, réessayez dans un moment."
+
+#: redbot/cogs/economy/economy.py:440
+msgid "That's an invalid bid amount, sorry :/"
+msgstr "C'est un montant invalide pour une mise, désolé :/"
+
+#: redbot/cogs/economy/economy.py:443
+msgid "You ain't got enough money, friend."
+msgstr "Vous n'avez pas assez d'argent, l'ami."
+
+#: redbot/cogs/economy/economy.py:497
+msgid "You've reached the maximum amount of {currency}! Please spend some more 😬\\n{old_balance} -> {new_balance}!"
+msgstr "Vous avez atteint le montant maximum de {currency} ! Veuillez dépenser plus 😬\\n{old_balance} -> {new_balance}!"
+
+#: redbot/cogs/economy/economy.py:512
+msgid "Nothing!"
+msgstr "Rien !"
+
+#: redbot/cogs/economy/economy.py:516
+msgid "Your bid: {amount}"
+msgstr "Votre mise : {amount}"
+
+#: redbot/cogs/economy/economy.py:532
+#, docstring
+msgid "Manage Economy settings."
+msgstr "Gérer les paramètres de l'economie."
+
+#: redbot/cogs/economy/economy.py:541
+msgid "----Economy Settings---\\nMinimum slot bid: {slot_min}\\nMaximum slot bid: {slot_max}\\nSlot cooldown: {slot_time}\\nPayday amount: {payday_amount}\\nPayday cooldown: {payday_time}\\nAmount given at account registration: {register_amount}"
+msgstr "----Paramètres de l'économie----\\nMise minimale de la machine à sous : {slot_min}\\nMise maximale de la machine à sous : {slot_max}\\nCooldown de la machine à sous : {slot_time}\\nMontant du payday : {payday_amount}\\nCooldown du payday : {payday_time}\\nMontant donné lors de l'ouverture du compte : {register_amount}"
+
+#: redbot/cogs/economy/economy.py:562
+#, docstring
+msgid "Set the minimum slot machine bid."
+msgstr "Définir le montant minimum de la machine à sous."
+
+#: redbot/cogs/economy/economy.py:564
+msgid "Invalid min bid amount."
+msgstr "Le montant minimum de la mise est invalide."
+
+#: redbot/cogs/economy/economy.py:573
+msgid "Minimum bid is now {bid} {currency}."
+msgstr "La mise minimum est maintenant de {bid} {currency}."
+
+#: redbot/cogs/economy/economy.py:578
+#, docstring
+msgid "Set the maximum slot machine bid."
+msgstr "Définir le montant maximum de la machine à sous."
+
+#: redbot/cogs/economy/economy.py:582
+msgid "Invalid maximum bid amount. Must be greater than the minimum amount."
+msgstr "Montant de mise maximum invalide. Il doit être supérieur au montant minimum."
+
+#: redbot/cogs/economy/economy.py:592
+msgid "Maximum bid is now {bid} {currency}."
+msgstr "La mise maximum est maintenant de {bid} {currency}."
+
+#: redbot/cogs/economy/economy.py:597
+#, docstring
+msgid "Set the cooldown for the slot machine."
+msgstr "Définir le cooldown de la machine à sous."
+
+#: redbot/cogs/economy/economy.py:603
+msgid "Cooldown is now {num} seconds."
+msgstr "Le cooldown est maintenant de {num} secondes."
+
+#: redbot/cogs/economy/economy.py:607
+#, docstring
+msgid "Set the cooldown for payday."
+msgstr "Définir le cooldown du payday."
+
+#: redbot/cogs/economy/economy.py:614
+msgid "Value modified. At least {num} seconds must pass between each payday."
+msgstr "Valeur modifiée. Au moins {num} secondes doivent passer entre chaque payday."
+
+#: redbot/cogs/economy/economy.py:621
+#, docstring
+msgid "Set the amount earned each payday."
+msgstr "Définir le montant gagné à chaque payday."
+
+#: redbot/cogs/economy/economy.py:624 redbot/cogs/economy/economy.py:642
+msgid "Har har so funny."
+msgstr "Ha ha trop drôle."
+
+#: redbot/cogs/economy/economy.py:632
+msgid "Every payday will now give {num} {currency}."
+msgstr "Chaque payday donnera désormais {num} {currency}."
+
+#: redbot/cogs/economy/economy.py:639
+#, docstring
+msgid "Set the amount earned each payday for a role."
+msgstr "Définir le montant gagné chaque payday pour un rôle."
+
+#: redbot/cogs/economy/economy.py:646
+msgid "The bank must be per-server for per-role paydays to work."
+msgstr "La banque doit être par serveur pour que les paydays par rôle fonctionnent."
+
+#: redbot/cogs/economy/economy.py:650
+msgid "Every payday will now give {num} {currency} to people with the role {role_name}."
+msgstr "Chaque payday donnera désormais {num} {currency} aux personnes ayant le rôle {role_name}."
+
+#: redbot/cogs/economy/economy.py:658
+#, docstring
+msgid "Set the initial balance for new bank accounts."
+msgstr "Définir le solde initial des nouveaux comptes bancaires."
+
+#: redbot/cogs/economy/economy.py:665
+msgid "Registering an account will now give {num} {currency}."
+msgstr "L'enregistrement d'un compte donnera maintenant {num} {currency}."
+
+#: redbot/cogs/economy/economy.py:674
+msgid "weeks"
+msgstr "semaines"
+
+#: redbot/cogs/economy/economy.py:675
+msgid "days"
+msgstr "jours"
+
+#: redbot/cogs/economy/economy.py:676
+msgid "hours"
+msgstr "heures"
+
+#: redbot/cogs/economy/economy.py:677
+msgid "minutes"
+msgstr "minutes"
+
+#: redbot/cogs/economy/economy.py:678
+msgid "seconds"
+msgstr "secondes"
+

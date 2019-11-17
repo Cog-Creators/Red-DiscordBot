@@ -1,0 +1,122 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2019-07-05 22:33+0200\n"
+"PO-Revision-Date: 2019-07-06 16:12\n"
+"Last-Translator: Robert Jansen (Kowlin)\n"
+"Language-Team: German\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.0\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: de\n"
+"X-Crowdin-File: /cogs/modlog/locales/messages.pot\n"
+"Language: de_DE\n"
+
+#: redbot/cogs/modlog/modlog.py:17
+#, docstring
+msgid "Manage log channels for moderation actions."
+msgstr "Verwalte Protokollkanäle für Moderationsaktionen."
+
+#: redbot/cogs/modlog/modlog.py:26
+#, docstring
+msgid "Manage modlog settings."
+msgstr "Verwalte modlog Einstellungen."
+
+#: redbot/cogs/modlog/modlog.py:32
+#, docstring
+msgid "Set a channel as the modlog.\\n\\n        Omit `<channel>` to disable the modlog.\\n        "
+msgstr ""
+
+#: redbot/cogs/modlog/modlog.py:41
+msgid "Mod events will be sent to {channel}"
+msgstr "Mod Ereignisse werden gesendet an {channel}"
+
+#: redbot/cogs/modlog/modlog.py:45
+msgid "I do not have permissions to send messages in {channel}!"
+msgstr "Ich habe nicht die Berechtigungen um Nachrichten in {channel} zu senden!"
+
+#: redbot/cogs/modlog/modlog.py:56
+msgid "Mod log deactivated."
+msgstr "Mod log deaktiviert."
+
+#: redbot/cogs/modlog/modlog.py:61
+#, docstring
+msgid "Enable or disable case creation for a mod action."
+msgstr "Aktiviere oder deaktiviere Fallerstellung für eine Mod Aktion."
+
+#: redbot/cogs/modlog/modlog.py:69 redbot/cogs/modlog/modlog.py:83
+msgid "enabled"
+msgstr "aktiviert"
+
+#: redbot/cogs/modlog/modlog.py:69 redbot/cogs/modlog/modlog.py:83
+msgid "disabled"
+msgstr "deaktiviert"
+
+#: redbot/cogs/modlog/modlog.py:72
+msgid "Current settings:\\n"
+msgstr ""
+
+#: redbot/cogs/modlog/modlog.py:77
+msgid "That action is not registered"
+msgstr "Diese Aktion ist nicht registriert"
+
+#: redbot/cogs/modlog/modlog.py:82
+msgid "Case creation for {action_name} actions is now {enabled}."
+msgstr "Fallerstellung für {action_name} ist jetzt {enabled}."
+
+#: redbot/cogs/modlog/modlog.py:90
+#, docstring
+msgid "Reset all modlog cases in this server."
+msgstr "Setze alle modlog Fälle auf diesem Server zurück."
+
+#: redbot/cogs/modlog/modlog.py:93
+msgid "Cases have been reset."
+msgstr "Fälle wurden zurückgesetzt."
+
+#: redbot/cogs/modlog/modlog.py:98
+#, docstring
+msgid "Show the specified case."
+msgstr "Zeige die angegebenen Fälle."
+
+#: redbot/cogs/modlog/modlog.py:102
+msgid "That case does not exist for that server"
+msgstr "Dieser Fall existiert nicht für diesen Server"
+
+#: redbot/cogs/modlog/modlog.py:113
+#, docstring
+msgid "Display cases for the specified member."
+msgstr ""
+
+#: redbot/cogs/modlog/modlog.py:124
+msgid "That user does not exist."
+msgstr ""
+
+#: redbot/cogs/modlog/modlog.py:127
+msgid "Something unexpected went wrong while fetching that user by ID."
+msgstr ""
+
+#: redbot/cogs/modlog/modlog.py:131
+msgid "That user does not have any cases."
+msgstr ""
+
+#: redbot/cogs/modlog/modlog.py:142
+#, docstring
+msgid "Specify a reason for a modlog case.\\n\\n        Please note that you can only edit cases you are\\n        the owner of unless you are a mod, admin or server owner.\\n\\n        If no case number is specified, the latest case will be used.\\n        "
+msgstr ""
+
+#: redbot/cogs/modlog/modlog.py:157
+msgid "That case does not exist!"
+msgstr "Dieser Fall existiert nicht!"
+
+#: redbot/cogs/modlog/modlog.py:183
+msgid "You are not authorized to modify that case!"
+msgstr "Du bist nicht berechtigt diesen Fall zu ändern!"
+
+#: redbot/cogs/modlog/modlog.py:190
+msgid "Reason has been updated."
+msgstr "Der Grund wurde aktualisiert."
+

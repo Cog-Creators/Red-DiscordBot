@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2019-07-05 22:33+0200\n"
+"PO-Revision-Date: 2019-07-06 16:11\n"
+"Last-Translator: Robert Jansen (Kowlin)\n"
+"Language-Team: French\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.0\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: fr\n"
+"X-Crowdin-File: /core/utils/locales/messages.pot\n"
+"Language: fr_FR\n"
+
+#: redbot/core/utils/chat_formatting.py:369
+msgid ", and "
+msgstr ", et "
+
+#: redbot/core/utils/chat_formatting.py:414
+msgid "year"
+msgstr "an"
+
+#: redbot/core/utils/chat_formatting.py:414
+msgid "years"
+msgstr "ans"
+
+#: redbot/core/utils/chat_formatting.py:415
+msgid "month"
+msgstr "mois"
+
+#: redbot/core/utils/chat_formatting.py:415
+msgid "months"
+msgstr "mois"
+
+#: redbot/core/utils/chat_formatting.py:416
+msgid "day"
+msgstr "jour"
+
+#: redbot/core/utils/chat_formatting.py:416
+msgid "days"
+msgstr "jours"
+
+#: redbot/core/utils/chat_formatting.py:417
+msgid "hour"
+msgstr "heure"
+
+#: redbot/core/utils/chat_formatting.py:417
+msgid "hours"
+msgstr "heures"
+
+#: redbot/core/utils/chat_formatting.py:418
+msgid "minute"
+msgstr "minute"
+
+#: redbot/core/utils/chat_formatting.py:418
+msgid "minutes"
+msgstr "minutes"
+
+#: redbot/core/utils/chat_formatting.py:419
+msgid "second"
+msgstr "seconde"
+
+#: redbot/core/utils/chat_formatting.py:419
+msgid "seconds"
+msgstr "secondes"
+

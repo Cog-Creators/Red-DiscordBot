@@ -1,0 +1,281 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2019-07-05 22:33+0200\n"
+"PO-Revision-Date: 2019-07-06 16:13\n"
+"Last-Translator: Robert Jansen (Kowlin)\n"
+"Language-Team: Russian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.0\n"
+"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: ru\n"
+"X-Crowdin-File: /cogs/trivia/locales/messages.pot\n"
+"Language: ru_RU\n"
+
+#: redbot/cogs/trivia/session.py:20
+msgid "I know this one! {answer}!"
+msgstr "Я знаю это! {answer}!"
+
+#: redbot/cogs/trivia/session.py:21
+msgid "Easy: {answer}."
+msgstr "Легко: {answer}."
+
+#: redbot/cogs/trivia/session.py:22
+msgid "Oh really? It's {answer} of course."
+msgstr "Да неужели? Конечно же это {answer}."
+
+#: redbot/cogs/trivia/session.py:25
+msgid "To the next one I guess..."
+msgstr "Думаю, в следующий раз повезет..."
+
+#: redbot/cogs/trivia/session.py:26
+msgid "Moving on..."
+msgstr "Двигаемся дальше..."
+
+#: redbot/cogs/trivia/session.py:27
+msgid "I'm sure you'll know the answer of the next one."
+msgstr "Я уверена, что вы знаете следующее."
+
+#: redbot/cogs/trivia/session.py:28
+msgid "😔 Next one."
+msgstr "😔 Следующий."
+
+#: redbot/cogs/trivia/session.py:117
+msgid "Question number {num}!"
+msgstr "Вопрос №{num}!"
+
+#: redbot/cogs/trivia/session.py:126
+msgid "There are no more questions!"
+msgstr "Больше нет вопросов!"
+
+#: redbot/cogs/trivia/session.py:134
+msgid "{trivia_list} (by {author})"
+msgstr "{trivia_list} (автор: {author})"
+
+#: redbot/cogs/trivia/session.py:139
+msgid "Starting Trivia: {list_names}"
+msgstr "Запуск викторины: {list_names}"
+
+#: redbot/cogs/trivia/session.py:185
+msgid "Guys...? Well, I guess I'll stop then."
+msgstr "Ребята...? Ну, я думаю, я остановлюсь тогда."
+
+#: redbot/cogs/trivia/session.py:193
+msgid " **+1** for me!"
+msgstr " **+1** для меня!"
+
+#: redbot/cogs/trivia/session.py:198
+msgid "You got it {user}! **+1** to you!"
+msgstr "{user}, тебе удалось! **+1** для тебя!"
+
+#: redbot/cogs/trivia/session.py:290
+msgid "Congratulations, {user}, you have received {num} {currency} for coming first."
+msgstr "Поздравляю, {user}, вы получили {num} {currency} за то, что пришли первыми."
+
+#: redbot/cogs/trivia/trivia.py:31
+#, docstring
+msgid "Play trivia with friends!"
+msgstr "Играть в викторину с друзьями!"
+
+#: redbot/cogs/trivia/trivia.py:54
+#, docstring
+msgid "Manage Trivia settings."
+msgstr "Управление настройками викторины."
+
+#: redbot/cogs/trivia/trivia.py:59
+msgid "Current settings\\nBot gains points: {bot_plays}\\nAnswer time limit: {delay} seconds\\nLack of response timeout: {timeout} seconds\\nPoints to win: {max_score}\\nReveal answer on timeout: {reveal_answer}\\nPayout multiplier: {payout_multiplier}\\nAllow lists to override settings: {allow_override}"
+msgstr ""
+
+#: redbot/cogs/trivia/trivia.py:75
+#, docstring
+msgid "Set the total points required to win."
+msgstr "Установить общее количество очков, необходимое для победы."
+
+#: redbot/cogs/trivia/trivia.py:77
+msgid "Score must be greater than 0."
+msgstr "Счет должен быть больше 0."
+
+#: redbot/cogs/trivia/trivia.py:81
+msgid "Done. Points required to win set to {num}."
+msgstr "Готово. Очки, необходимые для победы, равны {num}."
+
+#: redbot/cogs/trivia/trivia.py:85
+#, docstring
+msgid "Set the maximum seconds permitted to answer a question."
+msgstr "Установить максимально разрешенное количество секунд для ответа на вопрос."
+
+#: redbot/cogs/trivia/trivia.py:87
+msgid "Must be at least 4 seconds."
+msgstr "Должно быть не менее 4 секунд."
+
+#: redbot/cogs/trivia/trivia.py:91
+msgid "Done. Maximum seconds to answer set to {num}."
+msgstr "Готово. Максимальное количество секунд на ответ - {num}."
+
+#: redbot/cogs/trivia/trivia.py:95
+#, docstring
+msgid "Set how long until trivia stops due to no response."
+msgstr "Установить, через какое время викторина остановится из-за отсутствия ответа."
+
+#: redbot/cogs/trivia/trivia.py:98
+msgid "Must be larger than the answer time limit."
+msgstr "Должно быть больше, чем время ответа."
+
+#: redbot/cogs/trivia/trivia.py:102
+msgid "Done. Trivia sessions will now time out after {num} seconds of no responses."
+msgstr "Готово. Сеансы викторины теперь будут иметь время ожидания после {num} секунд отсутствия ответов."
+
+#: redbot/cogs/trivia/trivia.py:109
+#, docstring
+msgid "Allow/disallow trivia lists to override settings."
+msgstr "Разрешить/запретить спискам викторины переопределять настройки."
+
+#: redbot/cogs/trivia/trivia.py:114
+msgid "Done. Trivia lists can now override the trivia settings for this server."
+msgstr "Готово. Списки викторины теперь могут переопределять настройки викторины для этого сервера."
+
+#: redbot/cogs/trivia/trivia.py:118
+msgid "Done. Trivia lists can no longer override the trivia settings for this server."
+msgstr "Готово. Списки викторины больше не могут переопределять настройки викторины для этого сервера."
+
+#: redbot/cogs/trivia/trivia.py:126
+#, docstring
+msgid "Set whether or not the bot gains points.\\n\\n        If enabled, the bot will gain a point if no one guesses correctly.\\n        "
+msgstr ""
+
+#: redbot/cogs/trivia/trivia.py:133
+msgid "Done. I'll now gain a point if users don't answer in time."
+msgstr "Готово. Теперь я получу очко, если пользователи не ответят вовремя."
+
+#: redbot/cogs/trivia/trivia.py:135
+msgid "Alright, I won't embarass you at trivia anymore."
+msgstr "Хорошо, я не буду больше смущать вас в викторине."
+
+#: redbot/cogs/trivia/trivia.py:139
+#, docstring
+msgid "Set whether or not the answer is revealed.\\n\\n        If enabled, the bot will reveal the answer if no one guesses correctly\\n        in time.\\n        "
+msgstr ""
+
+#: redbot/cogs/trivia/trivia.py:147
+msgid "Done. I'll reveal the answer if no one knows it."
+msgstr "Готово. Я раскрою ответ, если никто не знает его."
+
+#: redbot/cogs/trivia/trivia.py:149
+msgid "Alright, I won't reveal the answer to the questions anymore."
+msgstr "Хорошо, я больше не буду раскрывать ответ на вопросы."
+
+#: redbot/cogs/trivia/trivia.py:154
+#, docstring
+msgid "Set the payout multiplier.\\n\\n        This can be any positive decimal number. If a user wins trivia when at\\n        least 3 members are playing, they will receive credits. Set to 0 to\\n        disable.\\n\\n        The number of credits is determined by multiplying their total score by\\n        this multiplier.\\n        "
+msgstr ""
+
+#: redbot/cogs/trivia/trivia.py:165
+msgid "Multiplier must be at least 0."
+msgstr "Множитель должен быть не менее 0."
+
+#: redbot/cogs/trivia/trivia.py:169
+msgid "Done. Payout multiplier set to {num}."
+msgstr "Готово. Множитель выплат установлен на {num}."
+
+#: redbot/cogs/trivia/trivia.py:171
+msgid "Done. I will no longer reward the winner with a payout."
+msgstr "Готово. Я больше не буду награждать победителя выплатой."
+
+#: redbot/cogs/trivia/trivia.py:176
+#, docstring
+msgid "Start trivia session on the specified category.\\n\\n        You may list multiple categories, in which case the trivia will involve\\n        questions from all of them.\\n        "
+msgstr ""
+
+#: redbot/cogs/trivia/trivia.py:187
+msgid "There is already an ongoing trivia session in this channel."
+msgstr "На этом канале уже идет сессия викторины."
+
+#: redbot/cogs/trivia/trivia.py:198
+msgid "Invalid category `{name}`. See `{prefix}trivia list` for a list of trivia categories."
+msgstr "Неверная категория `{name}`. См. `{prefix}trivia list` для списка категорий."
+
+#: redbot/cogs/trivia/trivia.py:205
+msgid "There was an error parsing the trivia list for the `{name}` category. It may be formatted incorrectly."
+msgstr "При анализе списка викторины для категории `{name}` произошла ошибка. Возможно, он отформатирован неправильно."
+
+#: redbot/cogs/trivia/trivia.py:217
+msgid "The trivia list was parsed successfully, however it appears to be empty!"
+msgstr "Список викторины был успешно проанализирован, однако он, кажется, пустой!"
+
+#: redbot/cogs/trivia/trivia.py:231
+#, docstring
+msgid "Stop an ongoing trivia session."
+msgstr "Остановить текущий сеанс викторины."
+
+#: redbot/cogs/trivia/trivia.py:234
+msgid "There is no ongoing trivia session in this channel."
+msgstr "На этом канале нет текущей сессии викторины."
+
+#: redbot/cogs/trivia/trivia.py:247
+msgid "Trivia stopped."
+msgstr "Викторина остановлена."
+
+#: redbot/cogs/trivia/trivia.py:249
+msgid "You are not allowed to do that."
+msgstr "Вам не разрешено это делать."
+
+#: redbot/cogs/trivia/trivia.py:253
+#, docstring
+msgid "List available trivia categories."
+msgstr "Список доступных категорий викторины."
+
+#: redbot/cogs/trivia/trivia.py:258 redbot/cogs/trivia/trivia.py:264
+msgid "Available trivia lists"
+msgstr "Доступные списки викторины"
+
+#: redbot/cogs/trivia/trivia.py:272
+#, docstring
+msgid "Leaderboard for trivia.\\n\\n        Defaults to the top 10 of this server, sorted by total wins. Use\\n        subcommands for a more customised leaderboard.\\n        "
+msgstr ""
+
+#: redbot/cogs/trivia/trivia.py:288
+#, docstring
+msgid "Leaderboard for this server.\\n\\n        `<sort_by>` can be any of the following fields:\\n         - `wins`  : total wins\\n         - `avg`   : average score\\n         - `total` : total correct answers\\n         - `games` : total games played\\n\\n        `<top>` is the number of ranks to show on the leaderboard.\\n        "
+msgstr ""
+
+#: redbot/cogs/trivia/trivia.py:301 redbot/cogs/trivia/trivia.py:330
+msgid "Unknown field `{field_name}`, see `{prefix}help trivia leaderboard server` for valid fields to sort by."
+msgstr "Неизвестное поле `{field_name}`, см. `{prefix}help trivia leaderboard server` действительные поля для сортировки."
+
+#: redbot/cogs/trivia/trivia.py:317
+#, docstring
+msgid "Global trivia leaderboard.\\n\\n        `<sort_by>` can be any of the following fields:\\n         - `wins`  : total wins\\n         - `avg`   : average score\\n         - `total` : total correct answers from all sessions\\n         - `games` : total games played\\n\\n        `<top>` is the number of ranks to show on the leaderboard.\\n        "
+msgstr ""
+
+#: redbot/cogs/trivia/trivia.py:385
+msgid "There are no scores on record!"
+msgstr "Нет счетов в записи!"
+
+#: redbot/cogs/trivia/trivia.py:415
+msgid "Rank"
+msgstr "Ранг"
+
+#: redbot/cogs/trivia/trivia.py:416
+msgid "Member"
+msgstr "Участник"
+
+#: redbot/cogs/trivia/trivia.py:417
+msgid "Wins"
+msgstr "Побед"
+
+#: redbot/cogs/trivia/trivia.py:418
+msgid "Games Played"
+msgstr "Игр сыграно"
+
+#: redbot/cogs/trivia/trivia.py:419
+msgid "Total Score"
+msgstr "Общий счет"
+
+#: redbot/cogs/trivia/trivia.py:420
+msgid "Average Score"
+msgstr "Средний счет"
+
