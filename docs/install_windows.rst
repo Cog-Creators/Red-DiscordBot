@@ -76,6 +76,12 @@ Installing Red
 
         python -m pip install -U Red-DiscordBot
 
+  * With MongoDB support:
+
+    .. code-block:: none
+
+        python -m pip install -U Red-DiscordBot[mongo]
+
   * With PostgreSQL support:
 
     .. code-block:: none

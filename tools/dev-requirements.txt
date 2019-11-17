@@ -1,3 +1,3 @@
 packaging
 tox
--e .[docs,postgres,style,test]
+-e .[docs,mongo,postgres,style,test]

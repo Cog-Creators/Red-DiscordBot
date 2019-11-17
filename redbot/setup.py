@@ -95,13 +95,14 @@ def get_data_dir():
 
 
 def get_storage_type():
-    storage_dict = {1: "JSON", 2: "PostgreSQL"}
+    storage_dict = {1: "JSON", 2: "MongoDB", 3: "PostgreSQL"}
     storage = None
     while storage is None:
         print()
         print("Please choose your storage backend (if you're unsure, choose 1).")
         print("1. JSON (file storage, requires no database).")
-        print("2. PostgreSQL")
+        print("2. MongoDB")
+        print("3. PostgreSQL")
         storage = input("> ")
         try:
             storage = int(storage)
@@ -145,7 +146,7 @@ def basic_setup():
 
     storage = get_storage_type()
 
-    storage_dict = {1: BackendType.JSON, 2: BackendType.POSTGRES}
+    storage_dict = {1: BackendType.JSON, 2: BackendType.MONGO, 3: BackendType.POSTGRES}
     storage_type: BackendType = storage_dict.get(storage, BackendType.JSON)
     default_dirs["STORAGE_TYPE"] = storage_type.value
     driver_cls = drivers.get_driver_class(storage_type)
@@ -176,6 +177,8 @@ def get_current_backend(instance) -> BackendType:
 def get_target_backend(backend) -> BackendType:
     if backend == "json":
         return BackendType.JSON
+    elif backend == "mongo":
+        return BackendType.MONGO
     elif backend == "postgres":
         return BackendType.POSTGRES
 
@@ -199,10 +202,46 @@ async def do_migration(
     return new_storage_details
 
 
+async def mongov1_to_json() -> Dict[str, Any]:
+    await drivers.MongoDriver.initialize(**data_manager.storage_details())
+    m = drivers.MongoDriver("Core", "0")
+    db = m.db
+    collection_names = await db.list_collection_names()
+    for collection_name in collection_names:
+        if "." in collection_name:
+            # Fix for one of Zeph's problems
+            continue
+        # Every cog name has its own collection
+        collection = db[collection_name]
+        async for document in collection.find():
+            # Every cog has its own document.
+            # This means if two cogs have the same name but different identifiers, they will
+            # be two separate documents in the same collection
+            cog_id = document.pop("_id")
+            if not isinstance(cog_id, str):
+                # Another garbage data check
+                continue
+            elif not str(cog_id).isdigit():
+                continue
+            driver = drivers.JsonDriver(collection_name, cog_id)
+            for category, value in document.items():
+                ident_data = IdentifierData(
+                    str(collection_name), str(cog_id), category, tuple(), tuple(), 0
+                )
+                await driver.set(ident_data, value=value)
+
+    conversion_log.info("Cog conversion complete.")
+    await drivers.MongoDriver.teardown()
+
+    return {}
+
+
 async def create_backup(instance: str) -> None:
     data_manager.load_basic_configuration(instance)
     backend_type = get_current_backend(instance)
-    if backend_type != BackendType.JSON:
+    if backend_type == BackendType.MONGOV1:
+        await mongov1_to_json()
+    elif backend_type != BackendType.JSON:
         await do_migration(backend_type, BackendType.JSON)
     print("Backing up the instance's data...")
     backup_fpath = await red_create_backup()
@@ -236,7 +275,10 @@ async def remove_instance(
         await create_backup(instance)
 
     backend = get_current_backend(instance)
-    driver_cls = drivers.get_driver_class(backend)
+    if backend == BackendType.MONGOV1:
+        driver_cls = drivers.MongoDriver
+    else:
+        driver_cls = drivers.get_driver_class(backend)
 
     if delete_data is True:
         await driver_cls.delete_all_data(interactive=interactive, drop_db=drop_db)
@@ -352,7 +394,7 @@ def delete(
 
 @cli.command()
 @click.argument("instance", type=click.Choice(instance_list))
-@click.argument("backend", type=click.Choice(["json", "postgres"]))
+@click.argument("backend", type=click.Choice(["json", "mongo", "postgres"]))
 def convert(instance, backend):
     current_backend = get_current_backend(instance)
     target = get_target_backend(backend)
@@ -363,8 +405,13 @@ def convert(instance, backend):
 
     loop = asyncio.get_event_loop()
 
-    if current_backend in (BackendType.MONGOV1, BackendType.MONGO):
-        raise RuntimeError("Please see the 3.2 release notes for upgrading a bot using mongo.")
+    if current_backend == BackendType.MONGOV1:
+        if target == BackendType.JSON:
+            new_storage_details = loop.run_until_complete(mongov1_to_json())
+        else:
+            raise RuntimeError(
+                "Please see conversion docs for updating to the latest mongo version."
+            )
     else:
         new_storage_details = loop.run_until_complete(do_migration(current_backend, target))
 

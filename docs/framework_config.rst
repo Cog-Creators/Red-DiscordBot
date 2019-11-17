@@ -429,3 +429,7 @@ JSON Driver
 .. autoclass:: redbot.core.drivers.JsonDriver
     :members:
 
+Mongo Driver
+^^^^^^^^^^^^
+.. autoclass:: redbot.core.drivers.MongoDriver
+    :members:

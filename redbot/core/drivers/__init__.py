@@ -4,6 +4,7 @@ from typing import Optional, Type
 from .. import data_manager
 from .base import IdentifierData, BaseDriver, ConfigCategory
 from .json import JsonDriver
+from .mongo import MongoDriver
 from .postgres import PostgresDriver
 
 __all__ = [
@@ -12,6 +13,7 @@ __all__ = [
     "IdentifierData",
     "BaseDriver",
     "JsonDriver",
+    "MongoDriver",
     "PostgresDriver",
     "BackendType",
 ]
@@ -19,13 +21,16 @@ __all__ = [
 
 class BackendType(enum.Enum):
     JSON = "JSON"
-    POSTGRES = "Postgres"
-    # Dead drivrs below retained for error handling.
-    MONGOV1 = "MongoDB"
     MONGO = "MongoDBV2"
+    MONGOV1 = "MongoDB"
+    POSTGRES = "Postgres"
 
 
-_DRIVER_CLASSES = {BackendType.JSON: JsonDriver, BackendType.POSTGRES: PostgresDriver}
+_DRIVER_CLASSES = {
+    BackendType.JSON: JsonDriver,
+    BackendType.MONGO: MongoDriver,
+    BackendType.POSTGRES: PostgresDriver,
+}
 
 
 def get_driver_class(storage_type: Optional[BackendType] = None) -> Type[BaseDriver]:
@@ -81,7 +86,7 @@ def get_driver(
     Raises
     ------
     RuntimeError
-        If the storage type is MongoV1, Mongo, or invalid.
+        If the storage type is MongoV1 or invalid.
 
     """
     if storage_type is None:
@@ -93,10 +98,12 @@ def get_driver(
     try:
         driver_cls: Type[BaseDriver] = get_driver_class(storage_type)
     except ValueError:
-        if storage_type in (BackendType.MONGOV1, BackendType.MONGO):
+        if storage_type == BackendType.MONGOV1:
             raise RuntimeError(
                 "Please convert to JSON first to continue using the bot."
-                "Mongo support was removed in 3.2."
+                " This is a required conversion prior to using the new Mongo driver."
+                " This message will be updated with a link to the update docs once those"
+                " docs have been created."
             ) from None
         else:
             raise RuntimeError(f"Invalid driver type: '{storage_type}'") from None

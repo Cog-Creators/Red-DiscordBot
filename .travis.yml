@@ -27,6 +27,10 @@ jobs:
         postgresql: "10"
       before_script:
         - psql -c 'create database red_db;' -U postgres
+    - env: TOXENV=mongo
+      services: mongodb
+      before_script:
+        - mongo red_db --eval 'db.createUser({user:"red",pwd:"red",roles:["readWrite"]});'
     # These jobs only occur on tag creation if the prior ones succeed
     - stage: PyPi Deployment
       if: tag IS present

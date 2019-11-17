@@ -265,11 +265,17 @@ Choose one of the following commands to install Red.
 
         python3.7 -m pip install --user -U Red-DiscordBot
 
-To install without additional config backend support:
+To install without MongoDB support:
 
 .. code-block:: none
 
     python3.7 -m pip install -U Red-DiscordBot
+
+Or, to install with MongoDB support:
+
+.. code-block:: none
+
+    python3.7 -m pip install -U Red-DiscordBot[mongo]
 
 Or, to install with PostgreSQL support:
 
