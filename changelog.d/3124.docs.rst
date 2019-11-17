@@ -1,0 +1,1 @@
+Add information about ``info.json``'s ``min_python_version`` key in Downloader Framework docs.
