@@ -30,6 +30,33 @@ _config_cache = weakref.WeakValueDictionary()
 _retrieved = weakref.WeakSet()
 
 
+class ConfigMeta(type):
+    """
+    We want to prevent re-initializing existing config instances while having a singleton
+    """
+
+    def __call__(
+        cls,
+        cog_name: str,
+        unique_identifier: str,
+        driver: BaseDriver,
+        force_registration: bool = False,
+        defaults: dict = None,
+    ):
+        if cog_name is None:
+            raise ValueError("You must provide either the cog instance or a cog name.")
+
+        key = (cog_name, unique_identifier)
+        if key in _config_cache:
+            return _config_cache[key]
+
+        instance = super(ConfigMeta, cls).__call__(
+            cog_name, unique_identifier, driver, force_registration, defaults
+        )
+        _config_cache[key] = instance
+        return instance
+
+
 def get_latest_confs() -> Tuple["Config"]:
     global _retrieved
     ret = set(_config_cache.values()) - set(_retrieved)
@@ -562,7 +589,7 @@ class Group(Value):
         await self.driver.set(identifier_data, value=value)
 
 
-class Config:
+class Config(metaclass=ConfigMeta):
     """Configuration manager for cogs and Red.
 
     You should always use `get_conf` to instantiate a Config object. Use
@@ -604,19 +631,6 @@ class Config:
     ROLE = "ROLE"
     USER = "USER"
     MEMBER = "MEMBER"
-
-    def __new__(cls, cog_name, unique_identifier, *args, **kwargs):
-        key = (cog_name, unique_identifier)
-
-        if key[0] is None:
-            raise ValueError("You must provide either the cog instance or a cog name.")
-
-        if key in _config_cache:
-            conf = _config_cache[key]
-        else:
-            conf = object.__new__(cls)
-            _config_cache[key] = conf
-        return conf
 
     def __init__(
         self,
