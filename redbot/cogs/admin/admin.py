@@ -34,24 +34,21 @@ HIERARCHY_ISSUE_REMOVE = _(
 )
 
 USER_HIERARCHY_ISSUE_ADD = _(
-    "I tried to add {role.name} to {member.display_name} but that role"
-    " is higher than your highest role in the Discord hierarchy so I was"
-    " unable to successfully add it. Please get a higher role and "
-    "try again."
+    "I can not let you give {role.name} to {member.display_name}"
+    " because that role is higher than your highest role
+    " in the Discord hierarchy."
 )
 
 USER_HIERARCHY_ISSUE_REMOVE = _(
-    "I tried to remove {role.name} from {member.display_name} but that role"
-    " is higher than your highest role in the Discord hierarchy so I was"
-    " unable to successfully remove it. Please get a higher role and "
-    "try again."
+    "I can not let you remove {role.name} from {member.display_name}"
+    " because that role is higher than your highest role
+    " in the Discord hierarchy."
 )
 
 ROLE_USER_HIERARCHY_ISSUE = _(
-    "I tried to edit {role.name} but that role"
-    " is higher than your highest role in the Discord hierarchy so I was"
-    " unable to successfully add it. Please get a higher role and "
-    "try again."
+    "I can not let you edit {role.name}"
+    " because that role is higher than your highest role
+    " in the Discord hierarchy."
 )
 
 RUNNING_ANNOUNCEMENT = _(
