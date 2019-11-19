@@ -1,0 +1,2 @@
+Improves the clairty of user facing messages in the admin cog when the user is not allowed
+to do something due to Discord hierarchy rules.
