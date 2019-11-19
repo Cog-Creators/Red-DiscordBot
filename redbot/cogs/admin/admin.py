@@ -35,19 +35,19 @@ HIERARCHY_ISSUE_REMOVE = _(
 
 USER_HIERARCHY_ISSUE_ADD = _(
     "I can not let you give {role.name} to {member.display_name}"
-    " because that role is higher than your highest role
+    " because that role is higher than your highest role"
     " in the Discord hierarchy."
 )
 
 USER_HIERARCHY_ISSUE_REMOVE = _(
     "I can not let you remove {role.name} from {member.display_name}"
-    " because that role is higher than your highest role
+    " because that role is higher than your highest role"
     " in the Discord hierarchy."
 )
 
 ROLE_USER_HIERARCHY_ISSUE = _(
     "I can not let you edit {role.name}"
-    " because that role is higher than your highest role
+    " because that role is higher than your highest role"
     " in the Discord hierarchy."
 )
 
