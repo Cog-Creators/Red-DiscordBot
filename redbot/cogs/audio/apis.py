@@ -9,7 +9,7 @@ import random
 import time
 import traceback
 from collections import namedtuple
-from typing import Callable, Dict, List, Mapping, NoReturn, Optional, Tuple, Union
+from typing import Callable, Dict, List, Mapping, Optional, Tuple, Union
 
 try:
     from sqlite3 import Error as SQLError
@@ -32,7 +32,7 @@ from lavalink.rest_api import LoadResult
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from . import dataclasses
+from . import audio_dataclasses
 from .errors import InvalidTableError, SpotifyFetchError, YouTubeApiError
 from .playlists import get_playlist
 from .utils import CacheLevel, Notifier, is_allowed, queue_duration, track_limit
@@ -193,7 +193,7 @@ class SpotifyAPI:
                 )
             return await r.json()
 
-    async def _get_auth(self) -> NoReturn:
+    async def _get_auth(self):
         if self.client_id is None or self.client_secret is None:
             tokens = await self.bot.get_shared_api_tokens("spotify")
             self.client_id = tokens.get("client_id", "")
@@ -331,7 +331,7 @@ class MusicCache:
         self._lock: asyncio.Lock = asyncio.Lock()
         self.config: Optional[Config] = None
 
-    async def initialize(self, config: Config) -> NoReturn:
+    async def initialize(self, config: Config):
         if HAS_SQL:
             await self.database.connect()
 
@@ -348,12 +348,12 @@ class MusicCache:
             await self.database.execute(query=_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE)
         self.config = config
 
-    async def close(self) -> NoReturn:
+    async def close(self):
         if HAS_SQL:
             await self.database.execute(query="PRAGMA optimize;")
             await self.database.disconnect()
 
-    async def insert(self, table: str, values: List[dict]) -> NoReturn:
+    async def insert(self, table: str, values: List[dict]):
         # if table == "spotify":
         #     return
         if HAS_SQL:
@@ -363,7 +363,7 @@ class MusicCache:
 
             await self.database.execute_many(query=query, values=values)
 
-    async def update(self, table: str, values: Dict[str, str]) -> NoReturn:
+    async def update(self, table: str, values: Dict[str, str]):
         # if table == "spotify":
         #     return
         if HAS_SQL:
@@ -746,7 +746,7 @@ class MusicCache:
                 if val:
                     try:
                         result, called_api = await self.lavalink_query(
-                            ctx, player, dataclasses.Query.process_input(val)
+                            ctx, player, audio_dataclasses.Query.process_input(val)
                         )
                     except (RuntimeError, aiohttp.ServerDisconnectedError):
                         lock(ctx, False)
@@ -805,7 +805,7 @@ class MusicCache:
                     ctx.guild,
                     (
                         f"{single_track.title} {single_track.author} {single_track.uri} "
-                        f"{str(dataclasses.Query.process_input(single_track))}"
+                        f"{str(audio_dataclasses.Query.process_input(single_track))}"
                     ),
                 ):
                     has_not_allowed = True
@@ -911,7 +911,7 @@ class MusicCache:
         self,
         ctx: commands.Context,
         player: lavalink.Player,
-        query: dataclasses.Query,
+        query: audio_dataclasses.Query,
         forced: bool = False,
     ) -> Tuple[LoadResult, bool]:
         """
@@ -925,7 +925,7 @@ class MusicCache:
             The context this method is being called under.
         player : lavalink.Player
             The player who's requesting the query.
-        query: dataclasses.Query
+        query: audio_dataclasses.Query
             The Query object for the query in question.
         forced:bool
             Whether or not to skip cache and call API first..
@@ -939,7 +939,7 @@ class MusicCache:
         )
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         val = None
-        _raw_query = dataclasses.Query.process_input(query)
+        _raw_query = audio_dataclasses.Query.process_input(query)
         query = str(_raw_query)
         if cache_enabled and not forced and not _raw_query.is_local:
             update = True
@@ -1003,14 +1003,10 @@ class MusicCache:
                     tasks = self._tasks[ctx.message.id]
                     del self._tasks[ctx.message.id]
                     await asyncio.gather(
-                        *[asyncio.ensure_future(self.insert(*a)) for a in tasks["insert"]],
-                        loop=self.bot.loop,
-                        return_exceptions=True,
+                        *[self.insert(*a) for a in tasks["insert"]], return_exceptions=True
                     )
                     await asyncio.gather(
-                        *[asyncio.ensure_future(self.update(*a)) for a in tasks["update"]],
-                        loop=self.bot.loop,
-                        return_exceptions=True,
+                        *[self.update(*a) for a in tasks["update"]], return_exceptions=True
                     )
                 log.debug(f"Completed database writes for {lock_id} " f"({lock_author})")
 
@@ -1025,14 +1021,10 @@ class MusicCache:
                 self._tasks = {}
 
                 await asyncio.gather(
-                    *[asyncio.ensure_future(self.insert(*a)) for a in tasks["insert"]],
-                    loop=self.bot.loop,
-                    return_exceptions=True,
+                    *[self.insert(*a) for a in tasks["insert"]], return_exceptions=True
                 )
                 await asyncio.gather(
-                    *[asyncio.ensure_future(self.update(*a)) for a in tasks["update"]],
-                    loop=self.bot.loop,
-                    return_exceptions=True,
+                    *[self.update(*a) for a in tasks["update"]], return_exceptions=True
                 )
             log.debug("Completed pending writes to database have finished")
 
@@ -1096,7 +1088,9 @@ class MusicCache:
             if not tracks:
                 ctx = namedtuple("Context", "message")
                 results, called_api = await self.lavalink_query(
-                    ctx(player.channel.guild), player, dataclasses.Query.process_input(_TOP_100_US)
+                    ctx(player.channel.guild),
+                    player,
+                    audio_dataclasses.Query.process_input(_TOP_100_US),
                 )
                 tracks = list(results.tracks)
         if tracks:
@@ -1107,7 +1101,7 @@ class MusicCache:
 
             while valid is False and multiple:
                 track = random.choice(tracks)
-                query = dataclasses.Query.process_input(track)
+                query = audio_dataclasses.Query.process_input(track)
                 if not query.valid:
                     continue
                 if query.is_local and not query.track.exists():
@@ -1116,7 +1110,7 @@ class MusicCache:
                     player.channel.guild,
                     (
                         f"{track.title} {track.author} {track.uri} "
-                        f"{str(dataclasses.Query.process_input(track))}"
+                        f"{str(audio_dataclasses.Query.process_input(track))}"
                     ),
                 ):
                     log.debug(

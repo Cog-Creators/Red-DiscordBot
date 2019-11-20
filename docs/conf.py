@@ -58,7 +58,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "Red - Discord Bot"
-copyright = "2018, Cog Creators"
+copyright = "2018-2019, Cog Creators"
 author = "Cog Creators"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -99,7 +99,7 @@ with open("prolog.txt", "r") as file:
     rst_prolog = file.read()
 
 # Adds d.py version to available substitutions in all files
-rst_prolog = f"\n.. |DPY_VERSION| replace:: {dpy_version}"
+rst_prolog += f"\n.. |DPY_VERSION| replace:: {dpy_version}"
 
 # -- Options for HTML output ----------------------------------------------
 

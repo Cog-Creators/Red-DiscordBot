@@ -1,0 +1,1 @@
+Added ``[p]cog updateallfromrepos <repos>`` command that will update all cogs from given repos.

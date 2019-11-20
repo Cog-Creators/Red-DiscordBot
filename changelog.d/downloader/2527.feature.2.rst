@@ -1,0 +1,1 @@
+Added ``[p]cog installversion <repo_name> <revision> <cogs>`` command that allows you to install cogs from specified revision (commit, tag, branch) of given repo. When using this command, cog will automatically be pinned.

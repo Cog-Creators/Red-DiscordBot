@@ -1,0 +1,1 @@
+Added :func:`redbot.cogs.downloader.installable.InstalledModule` to Downloader's framework docs.

@@ -18,7 +18,7 @@ and when accessed in the code it should be done by
 
 .. code-block:: python
 
-    await self.bot.get_shared_api_keys("twitch")
+    await self.bot.get_shared_api_tokens("twitch")
 
 Each service has its own dict of key, value pairs for each required key type. If there's only one key required then a name for the key is still required for storing and accessing.
 
@@ -30,7 +30,7 @@ and when accessed in the code it should be done by
 
 .. code-block:: python
 
-    await self.bot.get_shared_api_keys("youtube")
+    await self.bot.get_shared_api_tokens("youtube")
 
 
 ***********
@@ -42,7 +42,7 @@ Basic Usage
     class MyCog:
         @commands.command()
         async def youtube(self, ctx, user: str):
-            youtube_keys = await self.bot.get_shared_api_keys("youtube")
+            youtube_keys = await self.bot.get_shared_api_tokens("youtube")
             if youtube_keys.get("api_key") is None:
                 return await ctx.send("The YouTube API key has not been set.")
             # Use the API key to access content as you normally would

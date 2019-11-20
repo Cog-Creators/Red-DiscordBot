@@ -1,0 +1,134 @@
+# THIS FILE SHOULDN'T BE EDITED MANUALLY. USE `edit_testrepo.py` TOOL TO UPDATE THE REPO.
+blob
+mark :1
+original-oid cfd75093008a560c1f2a09e5068e0dd1517eaa1c
+data 14
+Sample file 1.
+reset refs/heads/ambiguous_with_tag
+commit refs/heads/ambiguous_with_tag
+mark :2
+original-oid c6f0e5ec04d99bdf8c6c78ff20d66d286eecb3ea
+author Cog-Creators <cog-creators@example.org> 1571921830 +0200
+committer Cog-Creators <cog-creators@example.org> 1571919491 +0200
+data 27
+Commit ambiguous with tag.
+M 100644 :1 sample_file1.txt
+
+reset refs/heads/ambiguous_1
+commit refs/heads/ambiguous_1
+mark :3
+original-oid 95da0b576271cb5bee5f3e075074c03ee05fed05
+author Cog-Creators <cog-creators@example.org> 1571777704 +0200
+committer Cog-Creators <cog-creators@example.org> 1571777704 +0200
+data 23
+Ambiguous commit 16955
+M 100644 :1 sample_file1.txt
+
+reset refs/heads/ambiguous_2
+commit refs/heads/ambiguous_2
+mark :4
+original-oid 95da0b57a416d9c8ce950554228d1fc195c30b43
+author Cog-Creators <cog-creators@example.org> 1571777704 +0200
+committer Cog-Creators <cog-creators@example.org> 1571777704 +0200
+data 23
+Ambiguous commit 44414
+M 100644 :1 sample_file1.txt
+
+blob
+mark :5
+original-oid f1a18139c84a82addbded8a7b5738c36fb02fce1
+data 22
+print("Hello world!")
+
+blob
+mark :6
+original-oid 1abb7a2470722faee2175980ee202717b4158057
+data 14
+Sample file 2.
+reset refs/tags/lightweight
+commit refs/tags/lightweight
+mark :7
+original-oid c950fc05a540dd76b944719c2a3302da2e2f3090
+author Cog-Creators <cog-creators@example.org> 1571776887 +0200
+committer Cog-Creators <cog-creators@example.org> 1571777047 +0200
+data 31
+Initial commit, prepare files.
+M 100644 :5 mycog/__init__.py
+M 100644 :1 sample_file1.txt
+M 100644 :6 sample_file2.txt
+
+blob
+mark :8
+original-oid 10ec5813415b6d7c902eee95cc13dc38c6f50917
+data 11
+Added file.
+blob
+mark :9
+original-oid 5ed17bf7914989db85f2e66045e62b35eed10f3b
+data 42
+def setup(bot):
+    print("Hello world!")
+
+commit refs/tags/lightweight
+mark :10
+original-oid fb99eb7d2d5bed514efc98fe6686b368f8425745
+author Cog-Creators <cog-creators@example.org> 1571777140 +0200
+committer Cog-Creators <cog-creators@example.org> 1571777140 +0200
+data 39
+Add, modify, rename and remove a file.
+from :7
+M 100644 :8 added_file.txt
+M 100644 :9 mycog/__init__.py
+D sample_file1.txt
+D sample_file2.txt
+M 100644 :6 sample_file3.txt
+
+commit refs/tags/annotated
+mark :11
+original-oid a7120330cc179396914e0d6af80cfa282adc124b
+author Cog-Creators <cog-creators@example.org> 1571777209 +0200
+committer Cog-Creators <cog-creators@example.org> 1571777209 +0200
+data 14
+Remove mycog.
+from :10
+D mycog/__init__.py
+
+blob
+mark :12
+original-oid 1ba9a868ae2f65571c75681ec47d40595bea4882
+data 14
+Sample file 4.
+commit refs/heads/master
+mark :13
+original-oid 2db662c1d341b1db7d225ccc1af4019ba5228c70
+author Cog-Creators <cog-creators@example.org> 1571777704 +0200
+committer Cog-Creators <cog-creators@example.org> 1571777704 +0200
+data 32
+One commit after mycog removal.
+from :11
+M 100644 :12 sample_file4.txt
+
+reset refs/heads/dont_add_commits
+commit refs/heads/dont_add_commits
+mark :14
+original-oid a0ccc2390883c85a361f5a90c72e1b07958939fa
+author Cog-Creators <cog-creators@example.org> 1571777548 +0200
+committer Cog-Creators <cog-creators@example.org> 1571777548 +0200
+data 103
+Don't edit this, this is used for tests for current commit, latest commit, full sha1 from branch name.
+M 100644 :1 sample_file1.txt
+
+tag annotated
+from :11
+original-oid 41f6cf3b58e774d2b3414ced3ee9f2541f1c682f
+tagger Cog-Creators <cog-creators@example.org> 1571777367 +0200
+data 15
+Annotated tag.
+
+tag ambiguous_tag_66387
+from :2
+original-oid c6f028f843389c850e2c20d8dd1f5fa498252764
+tagger Cog-Creators <cog-creators@example.org> 1571919491 +0200
+data 37
+Annotated tag ambiguous with commit.
+
