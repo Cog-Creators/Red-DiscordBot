@@ -499,24 +499,31 @@ class Downloader(commands.Cog):
         """Update all repos, or ones of your choosing."""
         async with ctx.typing():
             updated: Set[str]
-            if not repos:
-                updated = {repo.name for repo in await self._repo_manager.update_all_repos()}
-            else:
-                updated = set()
-                for repo in repos:
-                    old, new = await repo.update()
-                    if old != new:
-                        updated.add(repo.name)
+            failed = []
+
+            updated_repos, failed = await self._repo_manager.update_repos(repos)
+            updated = {repo.name for repo in updated_repos}
+
+            if failed:
+                await ctx.send(
+                    _(
+                        "Some repositories failed to update. See logs for more information"
+                        " and check if the remote repository or branch wasn't deleted or moved."
+                    )
+                    + _("\nFailed: ")
+                    + humanize_list(tuple(map(inline, failed)))
+                )
 
             if updated:
                 message = _("Repo update completed successfully.")
                 message += _("\nUpdated: ") + humanize_list(tuple(map(inline, updated)))
-            elif repos is None:
+            elif not repos:
                 await ctx.send(_("All installed repos are already up to date."))
                 return
             else:
                 await ctx.send(_("These repos are already up to date."))
                 return
+
         await ctx.send(message)
 
     @commands.group()
@@ -1026,7 +1033,7 @@ class Downloader(commands.Cog):
         cogs: Optional[Iterable[InstalledModule]] = None,
     ) -> Set[InstalledModule]:
         if not (cogs or repos):
-            await self._repo_manager.update_all_repos()
+            await self._repo_manager.update_repos()
             cogs_to_check = {cog for cog in await self.installed_cogs() if cog.repo is not None}
         else:
             # this is enough to be sure that `cogs` is not None (based on if above)

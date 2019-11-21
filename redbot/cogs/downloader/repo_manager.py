@@ -1125,8 +1125,16 @@ class RepoManager:
         old, new = await repo.update()
         return (repo, (old, new))
 
-    async def update_all_repos(self) ->  Tuple[Dict[Repo, Tuple[str, str]], List[str]]:
-        """Call `Repo.update` on all repositories.
+    async def update_repos(
+        self, upd_repo_names: List[Repo] = []
+    ) -> Tuple[Dict[Repo, Tuple[str, str]], List[str]]:
+        """Call `Repo.update` on selected repositories
+        or all if called without selection
+
+        Parameters
+        ----------
+        repo_names: List
+            List of Repos, None to update all
 
         Returns
         -------
@@ -1136,19 +1144,31 @@ class RepoManager:
             
             `list` of failed `Repo` names
         """
-
         failed = []
         ret = {}
-        for repo_name, repo_class in self._repos.items():
+
+        # select all repos if not specified
+        if not upd_repo_names:
+            upd_repo_names = self.repos
+
+        for repo in upd_repo_names:
             try:
-                updated_repo_name, (old, new) = await self.update_repo(repo_name)
+                updated_repo, (old, new) = await self.update_repo(repo.name)
             except errors.UpdateError as err:
-                log.error("Repository %s on branch %s has failed to update.", repo_class.url, repo_class.branch, exc_info=err)
-                failed.append(repo_name)
+                log.error(
+                    "Repository %s failed to update; URL: '%s' on branch '%s'",
+                    repo.name,
+                    repo.url,
+                    repo.branch,
+                    exc_info=err,
+                )
+
+                failed.append(repo.name)
                 continue
-            
+
             if old != new:
-                ret[updated_repo_name] = (old, new)
+                ret[updated_repo] = (old, new)
+
         return ret, failed
 
     async def _load_repos(self, set_repos: bool = False) -> Dict[str, Repo]:
