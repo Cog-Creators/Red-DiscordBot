@@ -1152,7 +1152,7 @@ class RepoManager:
         ret = {}
 
         # select all repos if not specified
-        if upd_repos is None:
+        if not upd_repos:
             upd_repos = self.repos
 
         for repo in upd_repos:
