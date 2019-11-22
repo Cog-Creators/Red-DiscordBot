@@ -780,7 +780,10 @@ class Repo(RepoJSONMixin):
         -------
         `tuple` of `str`
             :py:code`(old commit hash, new commit hash)`
-
+        
+        Raises
+        -------
+        `UpdateError` - if git pull results with non-zero exit code
         """
         old_commit = await self.latest_commit()
 
@@ -1119,21 +1122,22 @@ class RepoManager:
         Tuple[Repo, Tuple[str, str]]
             A 2-`tuple` with Repo object and a 2-`tuple` of `str`
             containing old and new commit hashes.
-
         """
         repo = self._repos[repo_name]
         old, new = await repo.update()
         return (repo, (old, new))
 
     async def update_repos(
-        self, upd_repo_names: List[Repo] = []
+        self, upd_repos: List[Repo] = []
     ) -> Tuple[Dict[Repo, Tuple[str, str]], List[str]]:
-        """Call `Repo.update` on selected repositories
-        or all if called without selection
-
+        """Calls `Repo.update` on passed repositories and 
+        catches failing ones.
+        
+        Calling without params updates all currently installed repos.
+        
         Parameters
         ----------
-        repo_names: List
+        upd_repos: List
             List of Repos, None to update all
 
         Returns
@@ -1148,10 +1152,10 @@ class RepoManager:
         ret = {}
 
         # select all repos if not specified
-        if not upd_repo_names:
-            upd_repo_names = self.repos
+        if not upd_repos:
+            upd_repos = self.repos
 
-        for repo in upd_repo_names:
+        for repo in upd_repos:
             try:
                 updated_repo, (old, new) = await self.update_repo(repo.name)
             except errors.UpdateError as err:
