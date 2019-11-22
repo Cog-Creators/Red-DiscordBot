@@ -504,25 +504,16 @@ class Downloader(commands.Cog):
             updated_repos, failed = await self._repo_manager.update_repos(repos)
             updated = {repo.name for repo in updated_repos}
 
-            if failed:
-                await ctx.send(
-                    _(
-                        "Some repositories failed to update. See logs for more information"
-                        " and check if the remote repository or branch wasn't deleted or moved."
-                    )
-                    + _("\nFailed: ")
-                    + humanize_list(tuple(map(inline, failed)))
-                )
-
             if updated:
                 message = _("Repo update completed successfully.")
                 message += _("\nUpdated: ") + humanize_list(tuple(map(inline, updated)))
-            elif not repos:
-                await ctx.send(_("All installed repos are already up to date."))
-                return
+            elif repos is None:
+                message = _("All installed repos are already up to date.")
             else:
-                await ctx.send(_("These repos are already up to date."))
-                return
+                message = _("These repos are already up to date.")
+
+            if failed:
+                message += "\n" + self.format_failed_repos(failed)
 
         await ctx.send(message)
 
@@ -1214,3 +1205,16 @@ class Downloader(commands.Cog):
             msg = _("This command is not provided by a cog.")
 
         await ctx.send(box(msg))
+
+    @staticmethod
+    def format_failed_repos(failed: Iterable[str]) -> str:
+        """Format iterable of `Repo.names` into failed message"""
+
+        message = _("Failed to update following")
+        message += _(" repositories: ") if len(failed) > 1 else _(" repository: ")
+        message += humanize_list(tuple(map(inline, failed))) + "\n"
+        message += _(
+            "Repository's branch might have been removed or"
+            " it's no longer accessible at set url. See logs for more information."
+        )
+        return message
