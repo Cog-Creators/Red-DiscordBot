@@ -1160,7 +1160,7 @@ class RepoManager:
                 updated_repo, (old, new) = await self.update_repo(repo.name)
             except errors.UpdateError as err:
                 log.error(
-                    "Repository %s failed to update; URL: '%s' on branch '%s'",
+                    "Repository '%s' failed to update. URL: '%s' on branch '%s'",
                     repo.name,
                     repo.url,
                     repo.branch,
