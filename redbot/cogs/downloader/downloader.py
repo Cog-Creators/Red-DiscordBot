@@ -1024,21 +1024,30 @@ class Downloader(commands.Cog):
         cogs: Optional[Iterable[InstalledModule]] = None,
     ) -> Set[InstalledModule]:
         if not (cogs or repos):
-            await self._repo_manager.update_repos()
-            cogs_to_check = {cog for cog in await self.installed_cogs() if cog.repo is not None}
+            __, failed = await self._repo_manager.update_repos()
+
+            cogs_to_check = {
+                cog
+                for cog in await self.installed_cogs()
+                if cog.repo is not None and cog.repo.name not in failed
+            }
         else:
             # this is enough to be sure that `cogs` is not None (based on if above)
             if not repos:
                 cogs = cast(Iterable[InstalledModule], cogs)
                 repos = {cog.repo for cog in cogs if cog.repo is not None}
 
+            __, failed = self._repo_manager.update_repos(repos)
+            # remove failed repos
+            repos = [repo for repo in repos if repo.name not in failed]
+
             for repo in repos:
                 if await repo.is_on_branch():
                     exit_to_commit = None
                 else:
                     exit_to_commit = repo.commit
-                await repo.update()
                 await repo.checkout(exit_to_commit)
+
             if cogs:
                 cogs_to_check = {cog for cog in cogs if cog.repo is not None and cog.repo in repos}
             else:
