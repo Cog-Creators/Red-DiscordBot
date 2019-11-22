@@ -33,7 +33,14 @@ from . import (
 )
 from .utils import create_backup
 from .utils.predicates import MessagePredicate
-from .utils.chat_formatting import humanize_timedelta, pagify, box, inline, humanize_list
+from .utils.chat_formatting import (
+    box,
+    humanize_list,
+    humanize_number,
+    humanize_timedelta,
+    inline,
+    pagify,
+)
 from .commands.requires import PrivilegeLevel
 
 
@@ -1894,34 +1901,35 @@ class Core(commands.Cog, CoreLogic):
     async def list_disabled_global(self, ctx: commands.Context):
         """List disabled commands globally."""
         disabled_list = await self.bot._config.disabled_commands()
-        if disabled_list:
-            msg = _("{num:,} {cmd} {plur} disabled globally.\n").format(
-                num=len(disabled_list),
-                cmd=_("commands") if len(disabled_list) > 1 else _("command"),
-                plur=_("are") if len(disabled_list) > 1 else _("is"),
+        if not disabled_list:
+            return await ctx.send(_("There aren't any globally disabled commands."))
+
+        if len(disabled_list) > 1:
+            header = _("{} commands are disabled globally.\n").format(
+                humanize_number(len(disabled_list))
             )
-            msg += box(", ".join(disabled_list))
         else:
-            msg = _("There aren't any globally disabled commands.")
-        for page in pagify(msg):
-            await ctx.send(page)
+            header = _("1 command is disabled globally.\n")
+        paged = [box(x) for x in pagify(humanize_list(disabled_list), page_length=1000)]
+        paged[0] = header + paged[0]
+        await ctx.send_interactive(paged)
 
     @list_disabled.command(name="guild")
     async def list_disabled_guild(self, ctx: commands.Context):
         """List disabled commands in this server."""
         disabled_list = await self.bot._config.guild(ctx.guild).disabled_commands()
-        if disabled_list:
-            msg = _("{num:,} {cmd} {plur} disabled in {guild}.\n").format(
-                num=len(disabled_list),
-                cmd=_("commands") if len(disabled_list) > 1 else _("command"),
-                plur=_("are") if len(disabled_list) > 1 else _("is"),
-                guild=ctx.guild,
+        if not disabled_list:
+            return await ctx.send(_("There aren't any disabled commands in {}.").format(ctx.guild))
+
+        if len(disabled_list) > 1:
+            header = _("{} commands are disabled in {}.\n").format(
+                humanize_number(len(disabled_list)), ctx.guild
             )
-            msg += box(", ".join(disabled_list))
         else:
-            msg = _("There aren't any disabled commands in {}.").format(ctx.guild)
-        for page in pagify(msg):
-            await ctx.send(page)
+            header = _("1 command is disabled in {}.\n").format(ctx.guild)
+        paged = [box(x) for x in pagify(humanize_list(disabled_list), page_length=1000)]
+        paged[0] = header + paged[0]
+        await ctx.send_interactive(paged)
 
     @command_manager.group(name="disable", invoke_without_command=True)
     async def command_disable(self, ctx: commands.Context, *, command: str):
