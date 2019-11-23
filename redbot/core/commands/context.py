@@ -20,6 +20,16 @@ class Context(commands.Context):
     All context passed into commands will be of this type.
 
     This class inherits from `discord.ext.commands.Context`.
+
+    Attributes
+    ----------
+    assume_yes: bool
+        Whether or not interactive checks should be assumed to be yes.
+        This is intended for allowing automation of tasks.
+        Depending on the potential impact of a command,
+        it may still be appropriate not to use this setting.
+    permission_state: PermState
+        The permission state the current context is in.
     """
 
     def __init__(self, **attrs):
