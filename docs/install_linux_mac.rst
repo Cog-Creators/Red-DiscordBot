@@ -289,8 +289,8 @@ Or, to install with PostgreSQL support:
   link below. **The development version of the bot contains experimental changes. It is not
   intended for normal users.** We will not support anyone using the development version in any
   support channels. Using the develepment version may break third party cogs and not all core
-  commands may work. Downgrading after an accidental install of dev is not always possible
-  without data loss.
+  commands may work. Downgrading after an accidental install of dev may cause data loss, crashes
+  or worse.
 
   .. code-block:: none
 
