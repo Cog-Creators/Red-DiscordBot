@@ -1,0 +1,1 @@
+Add event reference for ``on_red_api_tokens_update`` event in Shared API Keys docs.
