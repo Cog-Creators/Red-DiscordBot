@@ -286,10 +286,12 @@ Or, to install with PostgreSQL support:
 .. note::
 
   To install the development version, replace ``Red-DiscordBot`` in the above commands with the
-  link below. Please note that **dev is experimental and not intended for end users.** We will not
-  support anyone using the development version in any support channels. Downgrading after an
-  accidental install of dev is not possible without data loss.
-      
+  link below. **The development version of the bot contains experimental changes. It is not
+  intended for normal users.** We will not support anyone using the development version in any
+  support channels. Using the develepment version may break third party cogs and not all core
+  commands may work. Downgrading after an accidental install of dev is not always possible
+  without data loss.
+
   .. code-block:: none
 
       git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=Red-DiscordBot

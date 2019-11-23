@@ -1,1 +1,1 @@
-Word using dev during install more strongly, to try and avoid end users using dev.
+Word using dev during install more strongly, to try to avoid end users using dev.
