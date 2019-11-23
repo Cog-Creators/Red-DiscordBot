@@ -59,4 +59,4 @@ Event Reference
     :param service_name: Name of the service.
     :type service_name: :class:`str`
     :param api_tokens: New Mapping of token names to tokens. This contains api tokens that weren't changed too.
-    :type api_tokens: Dict[:class:`str`, :class:`str`]
+    :type api_tokens: Mapping[:class:`str`, :class:`str`]
