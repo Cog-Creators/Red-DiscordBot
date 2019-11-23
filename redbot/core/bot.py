@@ -582,6 +582,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         async with self._config.custom(SHARED_API_TOKENS, service_name).all() as group:
             group.update(tokens)
+        self.dispatch("red_api_tokens_update", service_name, group)
 
     async def remove_shared_api_tokens(self, service_name: str, *token_names: str):
         """
