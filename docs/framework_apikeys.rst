@@ -46,3 +46,17 @@ Basic Usage
             if youtube_keys.get("api_key") is None:
                 return await ctx.send("The YouTube API key has not been set.")
             # Use the API key to access content as you normally would
+
+
+***************
+Event Reference
+***************
+
+.. function:: on_red_api_tokens_update(service_name, api_tokens)
+
+    Dispatched when service's api keys are updated.
+
+    :param service_name: Name of the service.
+    :type service_name: :class:`str`
+    :param api_tokens: New Mapping of token names to tokens. This contains api tokens that weren't changed too.
+    :type api_tokens: Dict[:class:`str`, :class:`str`]
