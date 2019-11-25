@@ -1,0 +1,1 @@
+Fixed an error on repo add from empty string values for the `install_msg` info.json field.
