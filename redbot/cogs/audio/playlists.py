@@ -644,7 +644,7 @@ async def delete_playlist(
     author: int
         The ID of the user to get the playlist from if scope is USERPLAYLIST.
 
-     Raises
+    Raises
     ------
     `InvalidPlaylistScope`
         Passing a scope that is not supported.
