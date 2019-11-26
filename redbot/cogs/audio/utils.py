@@ -2,7 +2,7 @@ import asyncio
 import contextlib
 import re
 import time
-from typing import Mapping
+from typing import Mapping, Optional
 from urllib.parse import urlparse
 
 import discord
@@ -33,6 +33,7 @@ __all__ = [
     "is_allowed",
     "CacheLevel",
     "format_playlist_picker_data",
+    "get_track_description_unformatted",
     "Notifier",
 ]
 _RE_TIME_CONVERTER = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
@@ -195,7 +196,7 @@ async def clear_react(bot: Red, message: discord.Message, emoji: dict = None) ->
         return
 
 
-def get_track_description(track) -> str:
+def get_track_description(track) -> Optional[str]:
     if track and hasattr(track, "uri"):
         query = audio_dataclasses.Query.process_input(track.uri)
         if query.is_local:
@@ -205,6 +206,20 @@ def get_track_description(track) -> str:
                 return query.to_string_user()
         else:
             return bold(f"[{track.title}]({track.uri}) ")
+    elif hasattr(track, "to_string_user") and track.is_local:
+        return track.to_string_user() + " "
+
+
+def get_track_description_unformatted(track) -> Optional[str]:
+    if track and hasattr(track, "uri"):
+        query = audio_dataclasses.Query.process_input(track.uri)
+        if query.is_local:
+            if track.title != "Unknown title":
+                return f"{track.author} - {track.title}"
+            else:
+                return query.to_string_user()
+        else:
+            return f"{track.title}"
     elif hasattr(track, "to_string_user") and track.is_local:
         return track.to_string_user() + " "
 

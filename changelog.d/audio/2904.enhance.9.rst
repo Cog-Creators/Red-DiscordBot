@@ -1,0 +1,5 @@
+When playing a localtrack ``[p]play`` and ``[p]bumpplay`` no longer require the use of "localtracks\\" prefix.
+
+Before: ``[p]bumpplay localtracks\\ENM\\501 - Inside The Machine.mp3``
+Now: ``[p]bumpplay ENM\\501 - Inside The Machine.mp3``
+Now nested folders: ``[p]bumpplay Parent Folder\\Nested Folder\\track.mp3``

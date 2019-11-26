@@ -397,7 +397,9 @@ class Audio(commands.Cog):
 
         async def _players_check():
             try:
-                get_single_title = get_track_description(lavalink.active_players()[0].current)
+                get_single_title = get_track_description_unformatted(
+                    lavalink.active_players()[0].current
+                )
                 playing_servers = len(lavalink.active_players())
             except IndexError:
                 get_single_title = None
@@ -1205,10 +1207,7 @@ class Audio(commands.Cog):
     @audioset.command()
     @checks.mod_or_permissions(administrator=True)
     async def emptydisconnect(self, ctx: commands.Context, seconds: int):
-        """Auto-disconnection after x seconds while stopped.
-
-        0 to disable.
-        """
+        """Auto-disconnection after x seconds while stopped, 0 to disable."""
         if seconds < 0:
             return await self._embed_msg(
                 ctx, title=_("Invalid Time"), description=_("Seconds can't be less than zero.")
@@ -1236,10 +1235,7 @@ class Audio(commands.Cog):
     @audioset.command()
     @checks.mod_or_permissions(administrator=True)
     async def emptypause(self, ctx: commands.Context, seconds: int):
-        """Auto-pause after x seconds when room is empty.
-
-        0 to disable.
-        """
+        """Auto-pause after x seconds when room is empty, 0 to disable."""
         if seconds < 0:
             return await self._embed_msg(
                 ctx, title=_("Invalid Time"), description=_("Seconds can't be less than zero.")
@@ -1266,10 +1262,7 @@ class Audio(commands.Cog):
     @audioset.command()
     @checks.mod_or_permissions(administrator=True)
     async def jukebox(self, ctx: commands.Context, price: int):
-        """Set a price for queueing tracks for non-mods.
-
-        0 to disable.
-        """
+        """Set a price for queueing tracks for non-mods, 0 to disable."""
         if price < 0:
             return await self._embed_msg(
                 ctx, title=_("Invalid Price"), description=_("Price can't be less than zero.")
@@ -1374,7 +1367,7 @@ class Audio(commands.Cog):
     @audioset.command()
     @checks.mod_or_permissions(administrator=True)
     async def maxlength(self, ctx: commands.Context, seconds: Union[int, str]):
-        """Max length of a track to queue in seconds. 0 to disable.
+        """Max length of a track to queue in seconds, 0 to disable.
 
         Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`). Invalid
         input will turn the max length setting off.
@@ -1470,6 +1463,7 @@ class Audio(commands.Cog):
         current_level = CacheLevel(global_data["cache_level"])
         song_repeat = _("Enabled") if data["repeat"] else _("Disabled")
         song_shuffle = _("Enabled") if data["shuffle"] else _("Disabled")
+        bumpped_shuffle = _("Enabled") if data["shuffle_bumped"] else _("Disabled")
         song_notify = _("Enabled") if data["notify"] else _("Disabled")
         song_status = _("Enabled") if global_data["status"] else _("Disabled")
 
@@ -1508,9 +1502,16 @@ class Audio(commands.Cog):
         msg += _(
             "Repeat:           [{repeat}]\n"
             "Shuffle:          [{shuffle}]\n"
+            "Shuffle bumped:   [{bumpped_shuffle}]\n"
             "Song notify msgs: [{notify}]\n"
             "Songs as status:  [{status}]\n"
-        ).format(repeat=song_repeat, shuffle=song_shuffle, notify=song_notify, status=song_status)
+        ).format(
+            repeat=song_repeat,
+            shuffle=song_shuffle,
+            notify=song_notify,
+            status=song_status,
+            bumpped_shuffle=bumpped_shuffle,
+        )
         if thumbnail:
             msg += _("Thumbnails:       [{0}]\n").format(
                 _("Enabled") if thumbnail else _("Disabled")
@@ -1635,10 +1636,7 @@ class Audio(commands.Cog):
     @audioset.command()
     @checks.mod_or_permissions(administrator=True)
     async def vote(self, ctx: commands.Context, percent: int):
-        """Percentage needed for non-mods to skip tracks.
-
-        0 to disable.
-        """
+        """Percentage needed for non-mods to skip tracks, 0 to disable."""
         if percent < 0:
             return await self._embed_msg(
                 ctx, title=_("Invalid Time"), description=_("Seconds can't be less than zero.")
@@ -2031,12 +2029,10 @@ class Audio(commands.Cog):
             preset_list += msg
 
         page_list = []
-        await ctx.embed_colour()
+        colour = await ctx.embed_colour()
         for page in pagify(preset_list, delims=[", "], page_length=1000):
             formatted_page = box(page, lang="ini")
-            embed = discord.Embed(
-                colour=await ctx.embed_colour(), description=f"{header}\n{formatted_page}"
-            )
+            embed = discord.Embed(colour=colour, description=f"{header}\n{formatted_page}")
             embed.set_footer(
                 text=_("{num} preset(s)").format(num=humanize_number(len(list(eq_presets.keys()))))
             )
@@ -2612,7 +2608,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
-                description=_("You must be in the voice channel pause or resume."),
+                description=_("You must be in the voice channel to pause or resume."),
             )
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
@@ -6160,8 +6156,7 @@ class Audio(commands.Cog):
         queue_dur = await queue_duration(ctx)
         queue_total_duration = lavalink.utils.format_time(queue_dur)
         text = _(
-            "Page {page_num}/{total_pages} | {num_tracks} "
-            "tracks, {num_remaining} remaining  |  \n\n"
+            "Page {page_num}/{total_pages} | {num_tracks} " "tracks, {num_remaining} remaining\n"
         ).format(
             page_num=page_num,
             total_pages=queue_num_pages,
@@ -6901,7 +6896,7 @@ class Audio(commands.Cog):
                     search_list += "`{}.` **{}**\n".format(
                         search_track_num, track.to_string_user()
                     )
-        if hasattr(tracks[0], "uri"):
+        if hasattr(tracks[0], "uri") and hasattr(tracks[0], "track_identifier"):
             title = _("Tracks Found:")
             footer = _("search results")
         elif folder:
@@ -7010,14 +7005,58 @@ class Audio(commands.Cog):
         else:
             await self._embed_msg(ctx, title=_("Nothing playing."))
 
-    @commands.command()
+    @commands.group()
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def shuffle(self, ctx: commands.Context, *, bumped: Optional[bool] = True):
+    async def shuffle(self, ctx: commands.Context):
         """Toggle shuffle.
 
-        bumped tracks defaults to True.
-        Set to False if you wish to avoid bumped songs being shuffled.
+        Bumped tracks default to True.
+        Set this to False if you wish to avoid bumped songs being shuffled.
+        """
+        if ctx.invoked_subcommand is None:
+            dj_enabled = self._dj_status_cache.setdefault(
+                ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+            )
+            if dj_enabled:
+                if not await self._can_instaskip(ctx, ctx.author):
+                    return await self._embed_msg(
+                        ctx,
+                        title=_("Unable To Toggle Shuffle"),
+                        description=_("You need the DJ role to toggle shuffle."),
+                    )
+            if self._player_check(ctx):
+                await self._data_check(ctx)
+                player = lavalink.get_player(ctx.guild.id)
+                if (
+                    not ctx.author.voice or ctx.author.voice.channel != player.channel
+                ) and not await self._can_instaskip(ctx, ctx.author):
+                    return await self._embed_msg(
+                        ctx,
+                        title=_("Unable To Toggle Shuffle"),
+                        description=_("You must be in the voice channel to toggle shuffle."),
+                    )
+
+            shuffle = await self.config.guild(ctx.guild).shuffle()
+            await self.config.guild(ctx.guild).shuffle.set(not shuffle)
+            await self._embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_("Shuffle tracks: {true_or_false}.").format(
+                    true_or_false=_("Enabled") if not shuffle else _("Disabled")
+                ),
+            )
+            if self._player_check(ctx):
+                await self._data_check(ctx)
+
+    @shuffle.command(name="bumped")
+    @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
+    async def _shuffle_bumpped(self, ctx: commands.Context):
+        """Toggle bumped track shuffle.
+
+        Set this to disabled if you wish to avoid bumped songs being shuffled.
+        This takes priority over `[p]shuffle`.
         """
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
@@ -7041,14 +7080,13 @@ class Audio(commands.Cog):
                     description=_("You must be in the voice channel to toggle shuffle."),
                 )
 
-        shuffle = await self.config.guild(ctx.guild).shuffle()
-        await self.config.guild(ctx.guild).shuffle.set(not shuffle)
-        await self.config.guild(ctx.guild).shuffle_bumped.set(bumped)
+        bumped = await self.config.guild(ctx.guild).shuffle_bumped()
+        await self.config.guild(ctx.guild).shuffle_bumped.set(not bumped)
         await self._embed_msg(
             ctx,
             title=_("Setting Changed"),
-            description=_("Shuffle tracks: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not shuffle else _("Disabled")
+            description=_("Shuffle bumped tracks: {true_or_false}.").format(
+                true_or_false=_("Enabled") if not bumped else _("Disabled")
             ),
         )
         if self._player_check(ctx):
