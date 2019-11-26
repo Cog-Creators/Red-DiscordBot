@@ -89,8 +89,6 @@ class Audio(commands.Cog):
         self._connection_aborted = False
         self.play_lock = {}
         self._manager: Optional[ServerManager] = None
-        self._cog_name = None
-        self._cog_id = None
         default_global = dict(
             schema_version=1,
             cache_level=0,
@@ -148,27 +146,6 @@ class Audio(commands.Cog):
         self._init_task = self.bot.loop.create_task(self.initialize())
         self._ready_event = asyncio.Event()
 
-    @property
-    def owns_autoplay(self):
-        c = self.bot.get_cog(self._cog_name)
-        if c and id(c) == self._cog_id:
-            return c
-
-    @owns_autoplay.setter
-    def owns_autoplay(self, value: commands.Cog):
-        if self.owns_autoplay:
-            raise RuntimeError(
-                f"`{self._cog_name}` already has ownership of autoplay, "
-                f"please unload it if you wish to load `{value.qualified_name}`."
-            )
-        self._cog_name = value.qualified_name
-        self._cog_id = id(value)
-
-    @owns_autoplay.deleter
-    def owns_autoplay(self):
-        self._cog_name = None
-        self._cog_id = None
-
     async def cog_before_invoke(self, ctx: commands.Context):
         await self._ready_event.wait()
         # check for unsupported arch
@@ -220,7 +197,6 @@ class Audio(commands.Cog):
             log.critical(error_message)
 
         self._ready_event.set()
-        self.bot.dispatch("red_audio_initialized", self)
 
     async def _migrate_config(self, from_version: int, to_version: int):
         database_entries = []
@@ -371,7 +347,7 @@ class Audio(commands.Cog):
         self, player: lavalink.Player, event_type: lavalink.LavalinkEvents, extra
     ):
         disconnect = await self.config.guild(player.channel.guild).disconnect()
-        autoplay = await self.config.guild(player.channel.guild).auto_play() or self.owns_autoplay
+        autoplay = await self.config.guild(player.channel.guild).auto_play()
         notify = await self.config.guild(player.channel.guild).notify()
         status = await self.config.status()
         repeat = await self.config.guild(player.channel.guild).repeat()
@@ -447,16 +423,7 @@ class Audio(commands.Cog):
                 "red_audio_queue_end", player.channel.guild, prev_song, prev_requester
             )
             if autoplay and not player.queue and player.fetch("playing_song") is not None:
-                if self.owns_autoplay is None:
-                    await self.music_cache.autoplay(player)
-                else:
-                    self.bot.dispatch(
-                        "red_audio_should_auto_play",
-                        player,
-                        player.channel.guild,
-                        player.channel,
-                        self.play_query,
-                    )
+                await self.music_cache.autoplay(player)
 
         if event_type == lavalink.LavalinkEvents.TRACK_START and notify:
             notify_channel = player.fetch("channel")
@@ -626,19 +593,6 @@ class Audio(commands.Cog):
         )
         if not player.current:
             await player.play()
-
-    async def delegate_autoplay(self, cog: commands.Cog = None):
-        """
-        Parameters
-        ----------
-        cog: Optional[commands.Cog]
-            The Cog who is taking ownership of Audio's autoplay.
-            If :code:`None` gives ownership back to Audio
-        """
-        if isinstance(cog, commands.Cog):
-            self.owns_autoplay = cog
-        else:
-            del self.owns_autoplay
 
     @commands.group()
     @commands.guild_only()
@@ -1270,14 +1224,7 @@ class Audio(commands.Cog):
                 vote_enabled=_("Enabled") if vote_enabled else _("Disabled"),
             )
 
-        if self.owns_autoplay is not None:
-            msg += (
-                "\n---"
-                + _("Auto-play Settings")
-                + "---        \n"
-                + _("Owning Cog:       [{name}]\n").format(name=self._cog_name)
-            )
-        elif autoplay or autoplaylist["enabled"]:
+        if autoplay or autoplaylist["enabled"]:
             if autoplaylist["enabled"]:
                 pname = autoplaylist["name"]
                 pid = autoplaylist["id"]
@@ -2227,7 +2174,7 @@ class Audio(commands.Cog):
 
         shuffle = await self.config.guild(ctx.guild).shuffle()
         repeat = await self.config.guild(ctx.guild).repeat()
-        autoplay = await self.config.guild(ctx.guild).auto_play() or self.owns_autoplay
+        autoplay = await self.config.guild(ctx.guild).auto_play()
         text = ""
         text += (
             _("Auto-Play")
@@ -2724,16 +2671,9 @@ class Audio(commands.Cog):
             )
         if not await self._currency_check(ctx, guild_data["jukebox_price"]):
             return
-        if self.owns_autoplay is None:
-            await self.music_cache.autoplay(player)
-        else:
-            self.bot.dispatch(
-                "red_audio_should_auto_play",
-                player,
-                player.channel.guild,
-                player.channel,
-                self.play_query,
-            )
+
+        await self.music_cache.autoplay(player)
+
         if not guild_data["auto_play"]:
             await ctx.invoke(self._autoplay_toggle)
         if not guild_data["notify"] and (
@@ -5281,7 +5221,7 @@ class Audio(commands.Cog):
 
                 shuffle = await self.config.guild(ctx.guild).shuffle()
                 repeat = await self.config.guild(ctx.guild).repeat()
-                autoplay = await self.config.guild(ctx.guild).auto_play() or self.owns_autoplay
+                autoplay = await self.config.guild(ctx.guild).auto_play()
                 text = ""
                 text += (
                     _("Auto-Play")
@@ -5320,7 +5260,7 @@ class Audio(commands.Cog):
     ):
         shuffle = await self.config.guild(ctx.guild).shuffle()
         repeat = await self.config.guild(ctx.guild).repeat()
-        autoplay = await self.config.guild(ctx.guild).auto_play() or self.owns_autoplay
+        autoplay = await self.config.guild(ctx.guild).auto_play()
 
         queue_num_pages = math.ceil(len(player.queue) / 10)
         queue_idx_start = (page_num - 1) * 10
@@ -6312,7 +6252,7 @@ class Audio(commands.Cog):
 
     async def _skip_action(self, ctx: commands.Context, skip_to_track: int = None):
         player = lavalink.get_player(ctx.guild.id)
-        autoplay = await self.config.guild(player.channel.guild).auto_play() or self.owns_autoplay
+        autoplay = await self.config.guild(player.channel.guild).auto_play()
         if not player.current or (not player.queue and not autoplay):
             try:
                 pos, dur = player.position, player.current.length
@@ -6925,7 +6865,6 @@ class Audio(commands.Cog):
 
     def cog_unload(self):
         if not self._cleaned_up:
-            self.bot.dispatch("red_audio_unload", self)
             self.session.detach()
             self.bot.loop.create_task(self._close_database())
             if self._disconnect_task:
