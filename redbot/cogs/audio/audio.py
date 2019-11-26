@@ -2905,7 +2905,7 @@ class Audio(commands.Cog):
                     "in a different machine than the local tracks."
                 )
             elif (
-                query.is_local and query.suffix in audio_dataclasses._partially_supported_music_ext
+                query.is_local and query.suffix in audio_dataclasses._PARTIALLY_SUPPORTED_MUSIC_EXT
             ):
                 title = _("Track is not playable.")
                 embed = discord.Embed(title=title)
@@ -3344,7 +3344,7 @@ class Audio(commands.Cog):
                     embed = discord.Embed(title=title)
                     if (
                         query.is_local
-                        and query.suffix in audio_dataclasses._partially_supported_music_ext
+                        and query.suffix in audio_dataclasses._PARTIALLY_SUPPORTED_MUSIC_EXT
                     ):
                         title = _("Track is not playable.")
                         description = _(
@@ -3371,7 +3371,7 @@ class Audio(commands.Cog):
                         embed = discord.Embed(title=_("Nothing found."), colour=colour)
                         if (
                             query.is_local
-                            and query.suffix in audio_dataclasses._partially_supported_music_ext
+                            and query.suffix in audio_dataclasses._PARTIALLY_SUPPORTED_MUSIC_EXT
                         ):
                             embed = discord.Embed(title=_("Track is not playable."), colour=colour)
                             embed.description = _(
@@ -3461,7 +3461,7 @@ class Audio(commands.Cog):
                     )
                 elif (
                     query.is_local
-                    and query.suffix in audio_dataclasses._partially_supported_music_ext
+                    and query.suffix in audio_dataclasses._PARTIALLY_SUPPORTED_MUSIC_EXT
                 ):
                     title = _("Track is not playable.")
                     embed = discord.Embed(title=title, colour=colour)
@@ -5848,7 +5848,7 @@ class Audio(commands.Cog):
                 embed = discord.Embed(title=_("Nothing found."), colour=colour)
                 if (
                     query.is_local
-                    and query.suffix in audio_dataclasses._partially_supported_music_ext
+                    and query.suffix in audio_dataclasses._PARTIALLY_SUPPORTED_MUSIC_EXT
                 ):
                     embed = discord.Embed(title=_("Track is not playable."), colour=colour)
                     embed.description = _(
@@ -5868,7 +5868,7 @@ class Audio(commands.Cog):
                 embed = discord.Embed(title=_("Nothing found."), colour=colour)
                 if (
                     query.is_local
-                    and query.suffix in audio_dataclasses._partially_supported_music_ext
+                    and query.suffix in audio_dataclasses._PARTIALLY_SUPPORTED_MUSIC_EXT
                 ):
                     embed = discord.Embed(title=_("Track is not playable."), colour=colour)
                     embed.description = _(
@@ -6638,7 +6638,7 @@ class Audio(commands.Cog):
                         )
                     elif (
                         query.is_local
-                        and query.suffix in audio_dataclasses._partially_supported_music_ext
+                        and query.suffix in audio_dataclasses._PARTIALLY_SUPPORTED_MUSIC_EXT
                     ):
                         embed = discord.Embed(title=_("Track is not playable."), colour=colour)
                         embed.description = _(
@@ -6718,7 +6718,7 @@ class Audio(commands.Cog):
                     )
                 elif (
                     query.is_local
-                    and query.suffix in audio_dataclasses._partially_supported_music_ext
+                    and query.suffix in audio_dataclasses._PARTIALLY_SUPPORTED_MUSIC_EXT
                 ):
                     embed = discord.Embed(title=_("Track is not playable."), colour=colour)
                     embed.description = _(

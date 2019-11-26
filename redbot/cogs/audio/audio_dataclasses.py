@@ -1,4 +1,6 @@
+import ntpath
 import os
+import posixpath
 import re
 from pathlib import Path, PosixPath, WindowsPath
 from typing import List, Optional, Union
@@ -22,9 +24,10 @@ _RE_SPOTIFY_URL = re.compile(r"(http[s]?://)?(open.spotify.com)/")
 _RE_SPOTIFY_TIMESTAMP = re.compile(r"#(\d+):(\d+)")
 _RE_SOUNDCLOUD_TIMESTAMP = re.compile(r"#t=(\d+):(\d+)s?")
 _RE_TWITCH_TIMESTAMP = re.compile(r"\?t=(\d+)h(\d+)m(\d+)s")
+_PATH_SEPS = [posixpath.sep, ntpath.sep]
 
-_fully_supported_music_ext = (".mp3", ".flac", ".ogg")
-_partially_supported_music_ext = (
+_FULLY_SUPPORTED_MUSIC_EXT = (".mp3", ".flac", ".ogg")
+_PARTIALLY_SUPPORTED_MUSIC_EXT = (
     ".m3u",
     ".m4a",
     ".aac",
@@ -43,7 +46,7 @@ _partially_supported_music_ext = (
     # ".voc",
     # ".dsf",
 )
-_partially_supported_video_ext = (
+_PARTIALLY_SUPPORTED_VIDEO_EXT = (
     ".mp4",
     ".mov",
     ".flv",
@@ -63,7 +66,7 @@ _partially_supported_video_ext = (
     # ".mpeg",
     # ".swf",
 )
-_partially_supported_music_ext += _partially_supported_video_ext
+_PARTIALLY_SUPPORTED_MUSIC_EXT += _PARTIALLY_SUPPORTED_VIDEO_EXT
 
 
 def _pass_config_to_dataclasses(config: Config, bot: Red, folder: str):
@@ -82,7 +85,7 @@ class LocalPath:
     `localtracks`.
     """
 
-    _all_music_ext = _fully_supported_music_ext + _partially_supported_music_ext
+    _all_music_ext = _FULLY_SUPPORTED_MUSIC_EXT + _PARTIALLY_SUPPORTED_MUSIC_EXT
 
     def __init__(self, path, **kwargs):
         self._path = path
@@ -110,10 +113,11 @@ class LocalPath:
             _path.relative_to(self.localtrack_folder)
             self.path = _path
         except (ValueError, TypeError):
-            if path and path.startswith("localtracks//"):
-                path = path.replace("localtracks//", "", 1)
-            elif path and path.startswith("localtracks/"):
-                path = path.replace("localtracks/", "", 1)
+            for sep in _PATH_SEPS:
+                if path and path.startswith(f"localtracks{sep}{sep}"):
+                    path = path.replace(f"localtracks{sep}{sep}", "", 1)
+                elif path and path.startswith(f"localtracks{sep}"):
+                    path = path.replace(f"localtracks{sep}", "", 1)
             self.path = self.localtrack_folder.joinpath(path) if path else self.localtrack_folder
 
         try:
