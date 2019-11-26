@@ -4396,20 +4396,6 @@ class Audio(commands.Cog):
                     title=_("Missing Arguments"),
                     description=_("You need to specify the Guild ID for the guild to lookup."),
                 )
-            try:
-                playlist = await get_playlist(playlist_id, scope, self.bot, guild, author)
-            except RuntimeError:
-                return await self._embed_msg(
-                    ctx,
-                    _("Playlist {id} does not exist in {scope} scope.").format(
-                        id=playlist_id, scope=humanize_scope(scope, the=True)
-                    ),
-                )
-            except MissingGuild:
-                return await self._embed_msg(
-                    ctx, _("You need to specify the Guild ID for the guild to lookup.")
-                )
-
             if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
                 return
 
