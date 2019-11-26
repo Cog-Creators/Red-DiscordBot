@@ -4375,7 +4375,9 @@ class Audio(commands.Cog):
                 return await self._embed_msg(
                     ctx,
                     title=_("Playlist Not Found"),
-                    description=_("Could not match '{arg}' to a playlist.").format(arg=playlist_arg),
+                    description=_("Could not match '{arg}' to a playlist.").format(
+                        arg=playlist_arg
+                    ),
                 )
 
             try:
@@ -4393,7 +4395,7 @@ class Audio(commands.Cog):
                     ctx,
                     title=_("Missing Arguments"),
                     description=_("You need to specify the Guild ID for the guild to lookup."),
-            )
+                )
             try:
                 playlist = await get_playlist(playlist_id, scope, self.bot, guild, author)
             except RuntimeError:
@@ -4434,29 +4436,29 @@ class Audio(commands.Cog):
                     track_obj[key] = value
                 tracklist.append(track_obj)
 
-          final_count = len(tracklist)
-          if original_count - final_count != 0:
-              await self._embed_msg(
-                  ctx,
-                  title=_("Playlist Modified"),
-                  description=_(
-                      "Removed {track_diff} duplicated "
-                      "tracks from {name} (`{id}`) [**{scope}**] playlist."
-                  ).format(
-                      name=playlist.name,
-                      id=playlist.id,
-                      track_diff=original_count - final_count,
-                      scope=scope_name,
-                  ),
-              )
-          else:
-              await self._embed_msg(
-                  ctx,
-                  title=_("Playlist Has Not Been Modified"),
-                  description=_(
-                      "{name} (`{id}`) [**{scope}**] playlist has no duplicate tracks."
-                  ).format(name=playlist.name, id=playlist.id, scope=scope_name),
-              )
+        final_count = len(tracklist)
+        if original_count - final_count != 0:
+            await self._embed_msg(
+                ctx,
+                title=_("Playlist Modified"),
+                description=_(
+                    "Removed {track_diff} duplicated "
+                    "tracks from {name} (`{id}`) [**{scope}**] playlist."
+                ).format(
+                    name=playlist.name,
+                    id=playlist.id,
+                    track_diff=original_count - final_count,
+                    scope=scope_name,
+                ),
+            )
+        else:
+            await self._embed_msg(
+                ctx,
+                title=_("Playlist Has Not Been Modified"),
+                description=_(
+                    "{name} (`{id}`) [**{scope}**] playlist has no duplicate tracks."
+                ).format(name=playlist.name, id=playlist.id, scope=scope_name),
+            )
 
     @checks.is_owner()
     @playlist.command(name="download", usage="<playlist_name_OR_id> [v2=False] [args]")
