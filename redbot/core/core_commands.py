@@ -33,7 +33,14 @@ from . import (
 )
 from .utils import create_backup
 from .utils.predicates import MessagePredicate
-from .utils.chat_formatting import humanize_timedelta, pagify, box, inline, humanize_list
+from .utils.chat_formatting import (
+    box,
+    humanize_list,
+    humanize_number,
+    humanize_timedelta,
+    inline,
+    pagify,
+)
 from .commands.requires import PrivilegeLevel
 
 
@@ -293,7 +300,7 @@ class Core(commands.Cog, CoreLogic):
                 data = await r.json()
         outdated = VersionInfo.from_str(data["info"]["version"]) > red_version_info
         about = _(
-            "This is an instance of [Red, an open source Discord bot]({}) "
+            "This bot is an instance of [Red, an open source Discord bot]({}) "
             "created by [Twentysix]({}) and [improved by many]({}).\n\n"
             "Red is backed by a passionate community who contributes and "
             "creates content for everyone to enjoy. [Join us today]({}) "
@@ -1876,6 +1883,53 @@ class Core(commands.Cog, CoreLogic):
     async def command_manager(self, ctx: commands.Context):
         """Manage the bot's commands."""
         pass
+
+    @command_manager.group(name="listdisabled", invoke_without_command=True)
+    async def list_disabled(self, ctx: commands.Context):
+        """
+        List disabled commands.
+
+        If you're the bot owner, this will show global disabled commands by default.
+        """
+        # Select the scope based on the author's privileges
+        if await ctx.bot.is_owner(ctx.author):
+            await ctx.invoke(self.list_disabled_global)
+        else:
+            await ctx.invoke(self.list_disabled_guild)
+
+    @list_disabled.command(name="global")
+    async def list_disabled_global(self, ctx: commands.Context):
+        """List disabled commands globally."""
+        disabled_list = await self.bot._config.disabled_commands()
+        if not disabled_list:
+            return await ctx.send(_("There aren't any globally disabled commands."))
+
+        if len(disabled_list) > 1:
+            header = _("{} commands are disabled globally.\n").format(
+                humanize_number(len(disabled_list))
+            )
+        else:
+            header = _("1 command is disabled globally.\n")
+        paged = [box(x) for x in pagify(humanize_list(disabled_list), page_length=1000)]
+        paged[0] = header + paged[0]
+        await ctx.send_interactive(paged)
+
+    @list_disabled.command(name="guild")
+    async def list_disabled_guild(self, ctx: commands.Context):
+        """List disabled commands in this server."""
+        disabled_list = await self.bot._config.guild(ctx.guild).disabled_commands()
+        if not disabled_list:
+            return await ctx.send(_("There aren't any disabled commands in {}.").format(ctx.guild))
+
+        if len(disabled_list) > 1:
+            header = _("{} commands are disabled in {}.\n").format(
+                humanize_number(len(disabled_list)), ctx.guild
+            )
+        else:
+            header = _("1 command is disabled in {}.\n").format(ctx.guild)
+        paged = [box(x) for x in pagify(humanize_list(disabled_list), page_length=1000)]
+        paged[0] = header + paged[0]
+        await ctx.send_interactive(paged)
 
     @command_manager.group(name="disable", invoke_without_command=True)
     async def command_disable(self, ctx: commands.Context, *, command: str):

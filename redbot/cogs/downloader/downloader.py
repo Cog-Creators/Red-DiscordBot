@@ -1150,7 +1150,7 @@ class Downloader(commands.Cog):
             repo_url = (
                 _("Missing from installed repos")
                 if cog_installable.repo is None
-                else cog_installable.repo.url
+                else cog_installable.repo.clean_url
             )
             cog_name = cog_installable.name
         else:
