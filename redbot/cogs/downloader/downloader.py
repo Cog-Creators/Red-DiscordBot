@@ -719,6 +719,8 @@ class Downloader(commands.Cog):
         This command doesn't update cogs, it only checks for updates.
         Use `[p]cog update` to update cogs.
         """
+        message = ""
+
         async with ctx.typing():
             cogs_to_check, failed = await self._get_cogs_to_check()
             cogs_to_update, libs_to_update = await self._available_updates(cogs_to_check)
@@ -733,10 +735,14 @@ class Downloader(commands.Cog):
                 message += _("\nThese shared libraries can be updated: ") + humanize_list(
                     tuple(map(inline, libnames))
                 )
-            if message:
-                await ctx.send(message)
-            else:
-                await ctx.send(_("All installed cogs are up to date."))
+
+            if not message:
+                message = _("All installed cogs are up to date.")
+
+            if failed:
+                message += "\n" + self.format_failed_repos(failed)
+
+            await ctx.send(message)
 
     @cog.command(name="update")
     async def _cog_update(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
@@ -1251,9 +1257,12 @@ class Downloader(commands.Cog):
             formatted message
         """
 
-        message = _("Failed to update following")
-        message += _(" repositories: ") if len(failed) > 1 else _(" repository: ")
-        message += humanize_list(tuple(map(inline, failed))) + "\n"
+        message = (
+            _("Failed to update following repositories:")
+            if len(failed) > 1
+            else _("Failed to update following repository:")
+        )
+        message += " " + humanize_list(tuple(map(inline, failed))) + "\n"
         message += _(
             "Repository's branch might have been removed or"
             " it's no longer accessible at set url. See logs for more information."
