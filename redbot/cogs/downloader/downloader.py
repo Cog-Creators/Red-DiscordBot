@@ -720,7 +720,7 @@ class Downloader(commands.Cog):
         Use `[p]cog update` to update cogs.
         """
         async with ctx.typing():
-            cogs_to_check = await self._get_cogs_to_check()
+            cogs_to_check, failed = await self._get_cogs_to_check()
             cogs_to_update, libs_to_update = await self._available_updates(cogs_to_check)
             message = ""
             if cogs_to_update:
@@ -772,13 +772,31 @@ class Downloader(commands.Cog):
         rev: Optional[str] = None,
         cogs: Optional[List[InstalledModule]] = None,
     ) -> None:
+        message = ""
+        failed_repos = set()
+
+        cogs_to_check = set()
+
+        updates_available = set()
+        cogs_to_check = set()
+
         async with ctx.typing():
             # this is enough to be sure that `rev` is not None (based on calls to this method)
             if repo is not None:
-                rev = cast(str, rev)
-                await repo.update()
                 try:
+                    rev = cast(str, rev)
+
+                    await repo.update()
+
                     commit = await repo.get_full_sha1(rev)
+
+                    await repo.checkout(commit)
+                    cogs_to_check, __ = await self._get_cogs_to_check(repos=[repo], cogs=cogs)
+
+                except errors.UpdateError:
+                    # Updating single repo failed
+                    failed_repos.add(repo.name)
+
                 except errors.AmbiguousRevision as e:
                     msg = _(
                         "Error: short sha1 `{rev}` is ambiguous. Possible candidates:\n"
@@ -790,63 +808,66 @@ class Downloader(commands.Cog):
                         )
                     for page in pagify(msg):
                         await ctx.send(msg)
-                    return
+
                 except errors.UnknownRevision:
-                    await ctx.send(
-                        _("Error: there is no revision `{rev}` in repo `{repo.name}`").format(
-                            rev=rev, repo=repo
-                        )
-                    )
-                    return
-                await repo.checkout(commit)
-                cogs_to_check = await self._get_cogs_to_check(repos=[repo], cogs=cogs)
+                    message += _(
+                        "Error: there is no revision `{rev}` in repo `{repo.name}`"
+                    ).format(rev=rev, repo=repo)
+
             else:
-                cogs_to_check = await self._get_cogs_to_check(repos=repos, cogs=cogs)
+                cogs_to_check, check_failed = await self._get_cogs_to_check(repos=repos, cogs=cogs)
+                failed_repos.update(check_failed)
 
             pinned_cogs = {cog for cog in cogs_to_check if cog.pinned}
             cogs_to_check -= pinned_cogs
             if not cogs_to_check:
-                message = _("There were no cogs to check.")
+                message += _("There were no cogs to check.")
                 if pinned_cogs:
                     cognames = [cog.name for cog in pinned_cogs]
                     message += _(
                         "\nThese cogs are pinned and therefore weren't checked: "
                     ) + humanize_list(tuple(map(inline, cognames)))
-                    await ctx.send(message)
-                    return
-            cogs_to_update, libs_to_update = await self._available_updates(cogs_to_check)
-
-            updates_available = cogs_to_update or libs_to_update
-            cogs_to_update, filter_message = self._filter_incorrect_cogs(cogs_to_update)
-            message = ""
-            if updates_available:
-                updated_cognames, message = await self._update_cogs_and_libs(
-                    cogs_to_update, libs_to_update
-                )
             else:
-                if repos:
-                    message = _("Cogs from provided repos are already up to date.")
-                elif repo:
-                    if cogs:
-                        message = _("Provided cogs are already up to date with this revision.")
-                    else:
-                        message = _(
-                            "Cogs from provided repo are already up to date with this revision."
-                        )
+                cogs_to_update, libs_to_update = await self._available_updates(cogs_to_check)
+
+                updates_available = cogs_to_update or libs_to_update
+                cogs_to_update, filter_message = self._filter_incorrect_cogs(cogs_to_update)
+                message = ""
+                if updates_available:
+                    updated_cognames, message = await self._update_cogs_and_libs(
+                        cogs_to_update, libs_to_update
+                    )
                 else:
-                    if cogs:
-                        message = _("Provided cogs are already up to date.")
+                    if repos:
+                        message += _("Cogs from provided repos are already up to date.")
+                    elif repo:
+                        if cogs:
+                            message += _(
+                                "Provided cogs are already up to date with this revision."
+                            )
+                        else:
+                            message += _(
+                                "Cogs from provided repo are already up to date with this revision."
+                            )
                     else:
-                        message = _("All installed cogs are already up to date.")
-            if repo is not None:
-                await repo.checkout(repo.branch)
-            if pinned_cogs:
-                cognames = [cog.name for cog in pinned_cogs]
-                message += _(
-                    "\nThese cogs are pinned and therefore weren't checked: "
-                ) + humanize_list(tuple(map(inline, cognames)))
-            message += filter_message
+                        if cogs:
+                            message += _("Provided cogs are already up to date.")
+                        else:
+                            message += _("All installed cogs are already up to date.")
+                if repo is not None:
+                    await repo.checkout(repo.branch)
+                if pinned_cogs:
+                    cognames = [cog.name for cog in pinned_cogs]
+                    message += _(
+                        "\nThese cogs are pinned and therefore weren't checked: "
+                    ) + humanize_list(tuple(map(inline, cognames)))
+                message += filter_message
+
+        if failed_repos:
+            message += "\n" + self.format_failed_repos(failed_repos)
+
         await ctx.send(message)
+
         if updates_available and updated_cognames:
             await self._ask_for_cog_reload(ctx, updated_cognames)
 
@@ -1022,7 +1043,7 @@ class Downloader(commands.Cog):
         *,
         repos: Optional[Iterable[Repo]] = None,
         cogs: Optional[Iterable[InstalledModule]] = None,
-    ) -> Set[InstalledModule]:
+    ) -> Tuple[Set[InstalledModule], List[str]]:
         if not (cogs or repos):
             __, failed = await self._repo_manager.update_repos()
 
@@ -1037,7 +1058,7 @@ class Downloader(commands.Cog):
                 cogs = cast(Iterable[InstalledModule], cogs)
                 repos = {cog.repo for cog in cogs if cog.repo is not None}
 
-            __, failed = self._repo_manager.update_repos(repos)
+            __, failed = await self._repo_manager.update_repos(repos)
             # remove failed repos
             repos = [repo for repo in repos if repo.name not in failed]
 
@@ -1057,7 +1078,7 @@ class Downloader(commands.Cog):
                     if cog.repo is not None and cog.repo in repos
                 }
 
-        return cogs_to_check
+        return (cogs_to_check, failed)
 
     async def _update_cogs_and_libs(
         self, cogs_to_update: Iterable[Installable], libs_to_update: Iterable[Installable]
