@@ -1128,7 +1128,7 @@ class RepoManager:
         return (repo, (old, new))
 
     async def update_repos(
-        self, upd_repos: Optional[List[Repo]] = None
+        self, repos: Optional[List[Repo]] = None
     ) -> Tuple[Dict[Repo, Tuple[str, str]], List[str]]:
         """Calls `Repo.update` on passed repositories and 
         catches failing ones.
@@ -1137,7 +1137,7 @@ class RepoManager:
         
         Parameters
         ----------
-        upd_repos: List
+        repos: List
             List of Repos, None to update all
 
         Returns
@@ -1152,10 +1152,10 @@ class RepoManager:
         ret = {}
 
         # select all repos if not specified
-        if not upd_repos:
-            upd_repos = self.repos
+        if not repos:
+            repos = self.repos
 
-        for repo in upd_repos:
+        for repo in repos:
             try:
                 updated_repo, (old, new) = await self.update_repo(repo.name)
             except errors.UpdateError as err:
