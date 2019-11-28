@@ -814,11 +814,13 @@ class Downloader(commands.Cog):
                         )
                     for page in pagify(msg):
                         await ctx.send(msg)
+                        return
 
                 except errors.UnknownRevision:
                     message += _(
                         "Error: there is no revision `{rev}` in repo `{repo.name}`"
                     ).format(rev=rev, repo=repo)
+                    return
 
             else:
                 cogs_to_check, check_failed = await self._get_cogs_to_check(repos=repos, cogs=cogs)
