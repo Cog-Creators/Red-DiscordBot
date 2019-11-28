@@ -788,20 +788,17 @@ class Downloader(commands.Cog):
         async with ctx.typing():
             # this is enough to be sure that `rev` is not None (based on calls to this method)
             if repo is not None:
+                rev = cast(str, rev)
+
                 try:
-                    rev = cast(str, rev)
-
                     await repo.update()
-
-                    commit = await repo.get_full_sha1(rev)
-
-                    await repo.checkout(commit)
-                    cogs_to_check, __ = await self._get_cogs_to_check(repos=[repo], cogs=cogs)
-
                 except errors.UpdateError:
-                    # Updating single repo failed
-                    failed_repos.add(repo.name)
+                    message = self.format_failed_repos([repo.name])
+                    await ctx.send(message)
+                    return
 
+                try:
+                    commit = await repo.get_full_sha1(rev)
                 except errors.AmbiguousRevision as e:
                     msg = _(
                         "Error: short sha1 `{rev}` is ambiguous. Possible candidates:\n"
@@ -813,13 +810,15 @@ class Downloader(commands.Cog):
                         )
                     for page in pagify(msg):
                         await ctx.send(msg)
-                        return
-
+                    return
                 except errors.UnknownRevision:
                     message += _(
                         "Error: there is no revision `{rev}` in repo `{repo.name}`"
                     ).format(rev=rev, repo=repo)
                     return
+
+                await repo.checkout(commit)
+                cogs_to_check, __ = await self._get_cogs_to_check(repos=[repo], cogs=cogs)
 
             else:
                 cogs_to_check, check_failed = await self._get_cogs_to_check(repos=repos, cogs=cogs)
