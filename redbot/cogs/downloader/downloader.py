@@ -1238,7 +1238,18 @@ class Downloader(commands.Cog):
 
     @staticmethod
     def format_failed_repos(failed: Iterable[str]) -> str:
-        """Format iterable of `Repo.name`s into failed message"""
+        """Format iterable of ``Repo.name`` into failed message.
+
+        Parameters
+        ----------
+        failed : Iterable
+            Iterable of ``Repo.name``
+
+        Returns
+        -------
+        str
+            formatted message
+        """
 
         message = _("Failed to update following")
         message += _(" repositories: ") if len(failed) > 1 else _(" repository: ")
