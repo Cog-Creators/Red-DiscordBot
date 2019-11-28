@@ -779,11 +779,7 @@ class Downloader(commands.Cog):
     ) -> None:
         message = ""
         failed_repos = set()
-
-        cogs_to_check = set()
-
         updates_available = set()
-        cogs_to_check = set()
 
         async with ctx.typing():
             # this is enough to be sure that `rev` is not None (based on calls to this method)
