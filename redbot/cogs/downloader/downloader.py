@@ -499,7 +499,6 @@ class Downloader(commands.Cog):
         """Update all repos, or ones of your choosing."""
         async with ctx.typing():
             updated: Set[str]
-            failed = []
 
             updated_repos, failed = await self._repo_manager.update_repos(repos)
             updated = {repo.name for repo in updated_repos}
