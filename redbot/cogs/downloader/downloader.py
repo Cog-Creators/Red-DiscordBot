@@ -718,7 +718,6 @@ class Downloader(commands.Cog):
         This command doesn't update cogs, it only checks for updates.
         Use `[p]cog update` to update cogs.
         """
-        message = ""
 
         async with ctx.typing():
             cogs_to_check, failed = await self._get_cogs_to_check()
