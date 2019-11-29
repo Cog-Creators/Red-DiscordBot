@@ -810,6 +810,7 @@ class Downloader(commands.Cog):
                     message += _(
                         "Error: there is no revision `{rev}` in repo `{repo.name}`"
                     ).format(rev=rev, repo=repo)
+                    await ctx.send(message)
                     return
 
                 await repo.checkout(commit)
