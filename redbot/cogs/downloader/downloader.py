@@ -1254,13 +1254,14 @@ class Downloader(commands.Cog):
         """
 
         message = (
-            _("Failed to update following repositories:")
+            _("Failed to update the following repositories:")
             if len(failed) > 1
-            else _("Failed to update following repository:")
+            else _("Failed to update the following repository:")
         )
         message += " " + humanize_list(tuple(map(inline, failed))) + "\n"
         message += _(
-            "Repository's branch might have been removed or"
-            " it's no longer accessible at set url. See logs for more information."
+            "The repository's branch might have been removed or"
+            " the repository is no logner accessible at set url."
+            " See logs for more information."
         )
         return message
