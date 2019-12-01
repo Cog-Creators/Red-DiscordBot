@@ -1128,7 +1128,7 @@ class RepoManager:
         return (repo, (old, new))
 
     async def update_repos(
-        self, repos: Optional[List[Repo]] = None
+        self, repos: Optional[Iterable[Repo]] = None
     ) -> Tuple[Dict[Repo, Tuple[str, str]], List[str]]:
         """Calls `Repo.update` on passed repositories and 
         catches failing ones.
@@ -1137,8 +1137,8 @@ class RepoManager:
         
         Parameters
         ----------
-        repos: List
-            List of Repos, None to update all
+        repos: Iterable
+            Iterable of Repos, None to update all
 
         Returns
         -------
