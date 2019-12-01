@@ -5,7 +5,7 @@ import re
 import shutil
 import sys
 from pathlib import Path
-from typing import Tuple, Union, Iterable, Optional, Dict, Set, List, cast
+from typing import Tuple, Union, Iterable, Collection, Optional, Dict, Set, List, cast
 from collections import defaultdict
 
 import discord
@@ -814,7 +814,9 @@ class Downloader(commands.Cog):
                     return
 
                 await repo.checkout(commit)
-                cogs_to_check, __ = await self._get_cogs_to_check(repos=[repo], cogs=cogs)
+                cogs_to_check, __ = await self._get_cogs_to_check(
+                    repos=[repo], cogs=cogs, update_repos=False
+                )
 
             else:
                 cogs_to_check, check_failed = await self._get_cogs_to_check(repos=repos, cogs=cogs)
@@ -1045,9 +1047,12 @@ class Downloader(commands.Cog):
         *,
         repos: Optional[Iterable[Repo]] = None,
         cogs: Optional[Iterable[InstalledModule]] = None,
+        update_repos: bool = True,
     ) -> Tuple[Set[InstalledModule], List[str]]:
+        failed = []
         if not (cogs or repos):
-            __, failed = await self._repo_manager.update_repos()
+            if update_repos:
+                __, failed = await self._repo_manager.update_repos()
 
             cogs_to_check = {
                 cog
@@ -1060,16 +1065,12 @@ class Downloader(commands.Cog):
                 cogs = cast(Iterable[InstalledModule], cogs)
                 repos = {cog.repo for cog in cogs if cog.repo is not None}
 
-            __, failed = await self._repo_manager.update_repos(repos)
-            # remove failed repos
-            repos = [repo for repo in repos if repo.name not in failed]
+            if update_repos:
+                __, failed = await self._repo_manager.update_repos(repos)
 
-            for repo in repos:
-                if await repo.is_on_branch():
-                    exit_to_commit = None
-                else:
-                    exit_to_commit = repo.commit
-                await repo.checkout(exit_to_commit)
+            if failed:
+                # remove failed repos
+                repos = [repo for repo in repos if repo.name not in failed]
 
             if cogs:
                 cogs_to_check = {cog for cog in cogs if cog.repo is not None and cog.repo in repos}
