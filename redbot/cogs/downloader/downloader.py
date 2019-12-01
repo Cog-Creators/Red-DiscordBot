@@ -1239,13 +1239,13 @@ class Downloader(commands.Cog):
         await ctx.send(box(msg))
 
     @staticmethod
-    def format_failed_repos(failed: Iterable[str]) -> str:
-        """Format iterable of ``Repo.name`` into failed message.
+    def format_failed_repos(failed: Collection[str]) -> str:
+        """Format collection of ``Repo.name``'s into failed message.
 
         Parameters
         ----------
-        failed : Iterable
-            Iterable of ``Repo.name``
+        failed : Collection
+            Collection of ``Repo.name``
 
         Returns
         -------
