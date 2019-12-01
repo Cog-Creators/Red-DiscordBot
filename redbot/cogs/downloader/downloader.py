@@ -506,7 +506,7 @@ class Downloader(commands.Cog):
             if updated:
                 message = _("Repo update completed successfully.")
                 message += _("\nUpdated: ") + humanize_list(tuple(map(inline, updated)))
-            elif repos is None:
+            elif not repos:
                 message = _("All installed repos are already up to date.")
             else:
                 message = _("These repos are already up to date.")
