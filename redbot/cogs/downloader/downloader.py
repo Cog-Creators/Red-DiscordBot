@@ -1070,7 +1070,7 @@ class Downloader(commands.Cog):
 
             if failed:
                 # remove failed repos
-                repos = [repo for repo in repos if repo.name not in failed]
+                repos = {repo for repo in repos if repo.name not in failed}
 
             if cogs:
                 cogs_to_check = {cog for cog in cogs if cog.repo is not None and cog.repo in repos}
