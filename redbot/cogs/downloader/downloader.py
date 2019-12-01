@@ -834,7 +834,7 @@ class Downloader(commands.Cog):
 
                 updates_available = cogs_to_update or libs_to_update
                 cogs_to_update, filter_message = self._filter_incorrect_cogs(cogs_to_update)
-                message = ""
+
                 if updates_available:
                     updated_cognames, message = await self._update_cogs_and_libs(
                         cogs_to_update, libs_to_update
