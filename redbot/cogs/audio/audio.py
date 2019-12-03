@@ -5,12 +5,11 @@ import datetime
 import heapq
 import json
 import logging
-import os
 import random
 import re
 import time
 import traceback
-from collections import namedtuple
+from collections import namedtuple, Counter
 from io import StringIO
 from typing import List, Optional, Tuple, Union, cast
 
@@ -98,7 +97,7 @@ class Audio(commands.Cog):
             status=False,
             use_external_lavalink=False,
             restrict=True,
-            current_version=redbot.core.VersionInfo.from_str("3.0.0a0").to_json(),
+            current_version=redbot.core.VersionInfo.from_str(__version__).to_json(),
             localpath=str(cog_data_path(raw_name="Audio")),
             **self._default_lavalink_settings,
         )
@@ -139,6 +138,9 @@ class Audio(commands.Cog):
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)
         self.music_cache = MusicCache(bot, self.session, path=str(cog_data_path(raw_name="Audio")))
+        self._error_counter = Counter()
+        self._error_timer = {}
+        self._disconnected_players = {}
         self.play_lock = {}
 
         self._manager: Optional[ServerManager] = None
@@ -367,6 +369,23 @@ class Audio(commands.Cog):
                 "tracebacks for details."
             )
 
+    def disconnect_cache_handler(self, player: lavalink.Player):
+        guild = player.channel.guild
+        now = time.time()
+        seconds_allowed = 10
+        last_error = self._error_timer.setdefault(guild.id, now)
+        if now - seconds_allowed > last_error:
+            self._error_timer[guild.id] = 0
+            self._error_counter[guild.id] = 0
+        return now
+
+    def error_handler(self, now: float, player: lavalink.Player) -> bool:
+        guild = player.channel.guild
+        if self._error_timer[guild.id] == 0:
+            self._error_timer[guild.id] = now
+        self._error_counter[guild.id] = self._error_counter[guild.id] + 1
+        return self._error_counter[guild.id] > 5
+
     async def event_handler(
         self, player: lavalink.Player, event_type: lavalink.LavalinkEvents, extra
     ):
@@ -416,6 +435,42 @@ class Audio(commands.Cog):
                         type=discord.ActivityType.playing,
                     )
                 )
+
+        time_now = self.disconnect_cache_handler(player)
+        if event_type == lavalink.LavalinkEvents.TRACK_EXCEPTION:
+            self._error_counter.setdefault(player.channel.guild.id, 0)
+            if player.channel.guild.id not in self._error_counter:
+                self._error_counter[player.channel.guild.id] = 0
+            early_exit = self.error_handler(time_now, player)
+            if early_exit:
+                self._disconnected_players[player.channel.guild.id] = True
+                self.bot.dispatch("red_audio_audio_disconnect", player.channel.guild)
+                self.play_lock[player.channel.guild.id] = False
+                message_channel = player.fetch("channel")
+                eq = player.fetch("eq")
+                player.queue = []
+                player.store("playing_song", None)
+                if eq:
+                    await self.config.custom("EQUALIZER", player.channel.guild.id).eq_bands.set(
+                        eq.bands
+                    )
+                if message_channel:
+                    message_channel = self.bot.get_channel(message_channel)
+                    embed = discord.Embed(
+                        colour=(await self.bot.get_embed_color(message_channel)),
+                        title=_("Multiple errors detected"),
+                        description=_(
+                            "Closing the audio player "
+                            "due to multiple errors being detected. "
+                            "If this persists, please inform the bot owner "
+                            "as the Audio cog may be temporally unavailable."
+                        ),
+                    )
+                    await message_channel.send(embed=embed)
+                await player.stop()
+                await player.disconnect()
+            if self._disconnected_players.get(player.channel.guild.id):
+                return
 
         if event_type == lavalink.LavalinkEvents.TRACK_START:
             self.skip_votes[player.channel.guild] = []
@@ -984,7 +1039,7 @@ class Audio(commands.Cog):
             try:
                 pred = MessagePredicate.valid_role(ctx)
                 await ctx.bot.wait_for("message", timeout=15.0, check=pred)
-                await ctx.invoke(self.role, pred.result)
+                await ctx.invoke(self.role, role_name=pred.result)
             except asyncio.TimeoutError:
                 return await self._embed_msg(ctx, _("Response timed out, try again later."))
 
@@ -6020,7 +6075,6 @@ class Audio(commands.Cog):
                         search_track_num, track.title, track.uri
                     )
             except AttributeError:
-                # query = Query.process_input(track)
                 track = audio_dataclasses.Query.process_input(track)
                 if track.is_local and command != "search":
                     search_list += "`{}.` **{}**\n".format(
