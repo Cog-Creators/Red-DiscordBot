@@ -140,7 +140,6 @@ class Audio(commands.Cog):
         self.music_cache = MusicCache(bot, self.session, path=str(cog_data_path(raw_name="Audio")))
         self._error_counter = Counter()
         self._error_timer = {}
-        self._disconnected_players = {}
         self.play_lock = {}
 
         self._manager: Optional[ServerManager] = None
@@ -372,7 +371,7 @@ class Audio(commands.Cog):
     def disconnect_cache_handler(self, player: lavalink.Player):
         guild = player.channel.guild
         now = time.time()
-        seconds_allowed = 10
+        seconds_allowed = 5
         last_error = self._error_timer.setdefault(guild.id, now)
         if now - seconds_allowed > last_error:
             self._error_timer[guild.id] = 0
@@ -443,7 +442,6 @@ class Audio(commands.Cog):
                 self._error_counter[player.channel.guild.id] = 0
             early_exit = self.error_handler(time_now, player)
             if early_exit:
-                self._disconnected_players[player.channel.guild.id] = True
                 self.bot.dispatch("red_audio_audio_disconnect", player.channel.guild)
                 self.play_lock[player.channel.guild.id] = False
                 message_channel = player.fetch("channel")
@@ -469,8 +467,6 @@ class Audio(commands.Cog):
                     await message_channel.send(embed=embed)
                 await player.stop()
                 await player.disconnect()
-            if self._disconnected_players.get(player.channel.guild.id):
-                return
 
         if event_type == lavalink.LavalinkEvents.TRACK_START:
             self.skip_votes[player.channel.guild] = []
