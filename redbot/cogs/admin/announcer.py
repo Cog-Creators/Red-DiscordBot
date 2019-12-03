@@ -53,7 +53,6 @@ class Announcer:
 
     async def announcer(self):
         guild_list = self.ctx.bot.guilds
-        bot_owner = (await self.ctx.bot.application_info()).owner
         for g in guild_list:
             if not self.active:
                 return
@@ -66,7 +65,7 @@ class Announcer:
             try:
                 await channel.send(self.message)
             except discord.Forbidden:
-                await bot_owner.send(
+                await self.ctx.bot.send_to_owners(
                     _("I could not announce to server: {server.id}").format(server=g)
                 )
             await asyncio.sleep(0.5)
