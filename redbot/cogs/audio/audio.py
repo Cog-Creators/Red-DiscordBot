@@ -590,38 +590,38 @@ class Audio(commands.Cog):
                     break
             if repeat:
                 player.current = None
-            self._error_counter.setdefault(player.channel.guild.id, 0)
-            if player.channel.guild.id not in self._error_counter:
-                self._error_counter[player.channel.guild.id] = 0
+            with contextlib.suppress(Exception):
+                self._error_counter.setdefault(player.channel.guild.id, 0)
+                if player.channel.guild.id not in self._error_counter:
+                    self._error_counter[player.channel.guild.id] = 0
 
-            early_exit = await self.error_handler(player)
-            if early_exit:
-                self._disconnected_players[player.channel.guild.id] = True
-                self.bot.dispatch("red_audio_audio_disconnect", player.channel.guild)
-                self.play_lock[player.channel.guild.id] = False
-                eq = player.fetch("eq")
-                player.queue = []
-                player.store("playing_song", None)
-                if eq:
-                    await self.config.custom("EQUALIZER", player.channel.guild.id).eq_bands.set(
-                        eq.bands
-                    )
-                if message_channel:
-                    message_channel = self.bot.get_channel(message_channel)
-                    embed = discord.Embed(
-                        colour=(await self.bot.get_embed_color(message_channel)),
-                        title=_("Multiple errors detected"),
-                        description=_(
-                            "Closing the audio player "
-                            "due to multiple errors being detected. "
-                            "If this persists, please inform the bot owner "
-                            "as the Audio cog may be temporally unavailable."
-                        ),
-                    )
-                    await message_channel.send(embed=embed)
-                await player.stop()
-                await player.disconnect()
-                if self._disconnected_players.get(player.channel.guild.id):
+                early_exit = await self.error_handler(player)
+                if early_exit:
+                    self._disconnected_players[player.channel.guild.id] = True
+                    self.bot.dispatch("red_audio_audio_disconnect", player.channel.guild)
+                    self.play_lock[player.channel.guild.id] = False
+                    eq = player.fetch("eq")
+                    player.queue = []
+                    player.store("playing_song", None)
+                    if eq:
+                        await self.config.custom("EQUALIZER", player.channel.guild.id).eq_bands.set(
+                            eq.bands
+                        )
+                    if message_channel:
+                        message_channel = self.bot.get_channel(message_channel)
+                        embed = discord.Embed(
+                            colour=(await self.bot.get_embed_color(message_channel)),
+                            title=_("Multiple errors detected"),
+                            description=_(
+                                "Closing the audio player "
+                                "due to multiple errors being detected. "
+                                "If this persists, please inform the bot owner "
+                                "as the Audio cog may be temporally unavailable."
+                            ),
+                        )
+                        await message_channel.send(embed=embed)
+                    await player.stop()
+                    await player.disconnect()
                     return
             await player.skip()
 
