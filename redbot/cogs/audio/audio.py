@@ -621,8 +621,8 @@ class Audio(commands.Cog):
                     await message_channel.send(embed=embed)
                 await player.stop()
                 await player.disconnect()
-            if self._disconnected_players.get(player.channel.guild.id):
-                return
+                if self._disconnected_players.get(player.channel.guild.id):
+                    return
             await player.skip()
 
     async def play_query(
