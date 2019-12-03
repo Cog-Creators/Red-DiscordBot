@@ -369,22 +369,19 @@ class Audio(commands.Cog):
                 "tracebacks for details."
             )
 
-    def disconnect_cache_handler(self, player: lavalink.Player):
+    async def error_reset(self, player: lavalink.Player):
         guild = player.channel.guild
         now = time.time()
-        seconds_allowed = 5
+        seconds_allowed = 10
         last_error = self._error_timer.setdefault(guild.id, now)
         if now - seconds_allowed > last_error:
             self._error_timer[guild.id] = 0
             self._error_counter[guild.id] = 0
-        return now
 
-    def error_handler(self, now: float, player: lavalink.Player) -> bool:
+    async def error_handler(self, player: lavalink.Player) -> bool:
         guild = player.channel.guild
-        if self._error_timer[guild.id] == 0:
-            self._error_timer[guild.id] = now
-        self._error_counter[guild.id] = self._error_counter[guild.id] + 1
-        return self._error_counter[guild.id] > 5
+        self._error_counter[guild.id] += 1
+        return self._error_counter[guild.id] >= 5
 
     async def event_handler(
         self, player: lavalink.Player, event_type: lavalink.LavalinkEvents, extra
@@ -436,13 +433,15 @@ class Audio(commands.Cog):
                     )
                 )
 
-        time_now = self.disconnect_cache_handler(player)
+        await self.error_reset(player)
         if event_type == lavalink.LavalinkEvents.TRACK_EXCEPTION:
             self._error_counter.setdefault(player.channel.guild.id, 0)
             if player.channel.guild.id not in self._error_counter:
                 self._error_counter[player.channel.guild.id] = 0
-            early_exit = self.error_handler(time_now, player)
+
+            early_exit = await self.error_handler(player)
             if early_exit:
+                self._disconnected_players[player.channel.guild.id] = True
                 self.bot.dispatch("red_audio_audio_disconnect", player.channel.guild)
                 self.play_lock[player.channel.guild.id] = False
                 message_channel = player.fetch("channel")
@@ -468,8 +467,8 @@ class Audio(commands.Cog):
                     await message_channel.send(embed=embed)
                 await player.stop()
                 await player.disconnect()
-                if self._disconnected_players.get(player.channel.guild.id):
-                    return
+            if self._disconnected_players.get(player.channel.guild.id):
+                return
 
         if event_type == lavalink.LavalinkEvents.TRACK_START:
             self.skip_votes[player.channel.guild] = []
