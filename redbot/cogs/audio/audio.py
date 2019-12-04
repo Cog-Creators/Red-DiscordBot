@@ -510,13 +510,13 @@ class Audio(commands.Cog):
                     notify_message = await notify_channel.send(embed=embed)
                     player.store("notify_message", notify_message)
         if event_type == lavalink.LavalinkEvents.TRACK_START and status:
-            player_check = await _players_check()
-            await _status_check(player_check[1])
+            player_check = await self._players_check()
+            await self._status_check(player_check[1])
         if event_type == lavalink.LavalinkEvents.TRACK_END and status:
             await asyncio.sleep(1)
             if not player.is_playing:
-                player_check = await _players_check()
-                await _status_check(player_check[1])
+                player_check = await self._players_check()
+                await self._status_check(player_check[1])
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END and notify and not autoplay:
             notify_channel = player.fetch("channel")
@@ -531,8 +531,8 @@ class Audio(commands.Cog):
             self.bot.dispatch("red_audio_audio_disconnect", guild)
             await player.disconnect()
         if event_type == lavalink.LavalinkEvents.QUEUE_END and status:
-            player_check = await _players_check()
-            await _status_check(player_check[1])
+            player_check = await self._players_check()
+            await self._status_check(player_check[1])
 
         if event_type == lavalink.LavalinkEvents.TRACK_EXCEPTION:
             message_channel = player.fetch("channel")
