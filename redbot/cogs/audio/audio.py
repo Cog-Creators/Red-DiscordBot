@@ -603,9 +603,6 @@ class Audio(commands.Cog):
                     )
                     await message_channel.send(embed=embed)
                 else:
-                    if player.fetch("error_message") is not None:
-                        with contextlib.suppress(discord.HTTPException):
-                            await player.fetch("error_message").delete()
                     query = audio_dataclasses.Query.process_input(player.current.uri)
                     if player.current and query.is_local:
                         query = audio_dataclasses.Query.process_input(player.current.uri)
@@ -627,8 +624,7 @@ class Audio(commands.Cog):
                         description="{}\n{}".format(extra, description),
                     )
                     embed.set_footer(text=_("Skipping..."))
-                    error_message = await message_channel.send(embed=embed)
-                    player.store("error_message", error_message)
+                    await message_channel.send(embed=embed)
                     await player.skip()
 
     async def play_query(
