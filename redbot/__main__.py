@@ -101,7 +101,7 @@ def edit_instance(red, cli_flags):
 
     data = deepcopy(data_manager.basic_config)
     name = _edit_instance_name(old_name, new_name, confirm_overwrite, no_prompt)
-    _edit_data_path(data, data_path, copy_data, no_prompt)
+    _edit_data_path(data, name, data_path, copy_data, no_prompt)
 
     save_config(name, data)
     if old_name != name:
@@ -179,30 +179,50 @@ def _edit_instance_name(old_name, new_name, confirm_overwrite, no_prompt):
                 name = old_name
             else:
                 print("Instance name updated.")
-            print()
+        else:
+            print("Instance name updated.")
+        print()
     else:
         name = old_name
     return name
 
 
-def _edit_data_path(data, data_path, copy_data, no_prompt):
+def _edit_data_path(data, instance_name, data_path, copy_data, no_prompt):
     # This modifies the passed dict.
     if data_path:
+        new_path = Path(data_path)
+        try:
+            exists = new_path.exists()
+        except OSError:
+            print(
+                "We were unable to check your chosen directory."
+                " Provided path may contain an invalid character."
+                " Data location will remain unchanged."
+            )
+
+        if not exists:
+            try:
+                new_path.mkdir(parents=True, exist_ok=True)
+            except OSError:
+                print(
+                    "We were unable to create your chosen directory."
+                    " Data location will remain unchanged."
+                )
         data["DATA_PATH"] = data_path
         if copy_data and not _copy_data(data):
             print("Can't copy data to non-empty location. Data location will remain unchanged.")
             data["DATA_PATH"] = data_manager.basic_config["DATA_PATH"]
     elif not no_prompt and confirm("Would you like to change the data location?", default=False):
-        data["DATA_PATH"] = get_data_dir()
-        if confirm(
-            "Do you want to copy the data from old location?", default=True
-        ) and not _copy_data(data):
-            print("Can't copy the data to non-empty location.")
-            if not confirm("Do you still want to use the new data location?"):
-                data["DATA_PATH"] = data_manager.basic_config["DATA_PATH"]
-                print("Data location will remain unchanged.")
-            else:
-                print("Data location updated.")
+        data["DATA_PATH"] = get_data_dir(instance_name)
+        if confirm("Do you want to copy the data from old location?", default=True):
+            if not _copy_data(data):
+                print("Can't copy the data to non-empty location.")
+                if not confirm("Do you still want to use the new data location?"):
+                    data["DATA_PATH"] = data_manager.basic_config["DATA_PATH"]
+                    print("Data location will remain unchanged.")
+                    return
+            print("Old data has been copied over to the new location.")
+        print("Data location updated.")
 
 
 def _copy_data(data):
