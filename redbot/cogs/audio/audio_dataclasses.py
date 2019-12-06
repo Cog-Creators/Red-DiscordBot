@@ -317,6 +317,7 @@ class Query:
         self.search_subfolders: bool = kwargs.get("search_subfolders", False)
         self.spotify_uri: Optional[str] = kwargs.get("uri", None)
         self.uri: Optional[str] = kwargs.get("url", None)
+        self.is_url: bool = kwargs.get("is_url", False)
 
         self.start_time: int = kwargs.get("start_time", 0)
         self.track_index: Optional[int] = kwargs.get("track_index", None)
@@ -448,6 +449,7 @@ class Query:
                 query_url = urlparse(track)
                 if all([query_url.scheme, query_url.netloc, query_url.path]):
                     returning["url"] = track
+                    returning["is_url"] = True
                     url_domain = ".".join(query_url.netloc.split(".")[-2:])
                     if not query_url.netloc:
                         url_domain = ".".join(query_url.path.split("/")[0].split(".")[-2:])
