@@ -1323,8 +1323,9 @@ class Core(commands.Cog, CoreLogic):
     @commands.command()
     @checks.is_owner()
     async def backup(self, ctx: commands.Context, *, backup_dir: str = None):
-        """Creates a backup of all data for the instance.
+        """Creates a backup of all data for this bot instance.
 
+        This backs up the bot's data and settings.
         You may provide a path to a directory for the backup archive to
         be placed in. If the directory does not exist, the bot will
         attempt to create it.
