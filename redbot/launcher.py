@@ -201,7 +201,7 @@ def cli_flag_getter():
         choice = user_choice()
         if choice == "y":
             print("Done selecting cli flags")
-            return flags
+            return [flag for flag_with_spaces in flags for flag in flag_with_spaces.split()]
         else:
             print("Starting over")
             return cli_flag_getter()
