@@ -151,8 +151,7 @@ def cli_flag_getter():
         if choice == "y":
             print("Enter the user id for the owner")
             owner_id = user_choice()
-            flags.append("--owner")
-            flags.append(owner_id)
+            flags.append("--owner {}".format(owner_id))
         print("Would you like to specify any prefixes? (y/n)")
         choice = user_choice()
         if choice == "y":
@@ -162,8 +161,7 @@ def cli_flag_getter():
             )
             prefixes = user_choice().split()
             for p in prefixes:
-                flags.append("-p")
-                flags.append(p)
+                flags.append("-p {}".format(p))
         print("Would you like mentioning the bot to be a prefix? (y/n)")
         choice = user_choice()
         if choice == "y":
