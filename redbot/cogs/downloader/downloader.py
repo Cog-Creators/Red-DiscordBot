@@ -509,7 +509,10 @@ class Downloader(commands.Cog):
             elif not repos:
                 message = _("All installed repos are already up to date.")
             else:
-                message = _("These repos are already up to date.")
+                if len(updated_repos) > 1:
+                    message = _("These repos are already up to date.")
+                else:
+                    message = _("This repo is already up to date.")
 
             if failed:
                 message += "\n" + self.format_failed_repos(failed)
