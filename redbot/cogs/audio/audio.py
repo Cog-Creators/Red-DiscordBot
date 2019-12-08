@@ -40,7 +40,11 @@ from .checks import can_have_caching
 from .converters import ComplexScopeParser, ScopeParser, get_lazy_converter, get_playlist_converter
 from .equalizer import Equalizer
 from .errors import (
-    DatabaseError, LavalinkDownloadFailed, MissingGuild, SpotifyFetchError, TooManyMatches,
+    DatabaseError,
+    LavalinkDownloadFailed,
+    MissingGuild,
+    SpotifyFetchError,
+    TooManyMatches,
 )
 from .manager import ServerManager
 from .playlists import (
@@ -457,8 +461,7 @@ class Audio(commands.Cog):
                         if notify_channel:
                             notify_channel = self.bot.get_channel(notify_channel)
                             return await self._embed_msg(
-                                notify_channel,
-                                _("Autoplay: Couldn't get a valid track."),
+                                notify_channel, _("Autoplay: Couldn't get a valid track.")
                             )
                 else:
                     self.bot.dispatch(
@@ -2743,8 +2746,7 @@ class Audio(commands.Cog):
                 if notify_channel:
                     notify_channel = self.bot.get_channel(notify_channel)
                     return await self._embed_msg(
-                        notify_channel,
-                        _("Autoplay: Couldn't get a valid track."),
+                        notify_channel, _("Autoplay: Couldn't get a valid track.")
                     )
         else:
             self.bot.dispatch(
