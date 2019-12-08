@@ -513,6 +513,12 @@ class Repo(RepoJSONMixin):
         """
         env = os.environ.copy()
         env["GIT_TERMINAL_PROMPT"] = "0"
+        # attempt to force all output to plain ascii english
+        # some methods that parse output may expect it
+        # according to gettext manual both variables have to be set:
+        # https://www.gnu.org/software/gettext/manual/gettext.html#Locale-Environment-Variables
+        env["LC_ALL"] = "C"
+        env["LANGUAGE"] = "C"
         kwargs["env"] = env
         async with self._repo_lock:
             p: CompletedProcess = await self._loop.run_in_executor(
