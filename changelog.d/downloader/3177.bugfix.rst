@@ -1,0 +1,1 @@
+``[p]findcog`` now properly works for cogs with less typical folder structure.
