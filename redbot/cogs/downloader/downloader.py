@@ -1262,7 +1262,7 @@ class Downloader(commands.Cog):
         message += " " + humanize_list(tuple(map(inline, failed))) + "\n"
         message += _(
             "The repository's branch might have been removed or"
-            " the repository is no logner accessible at set url."
+            " the repository is no longer accessible at set url."
             " See logs for more information."
         )
         return message
