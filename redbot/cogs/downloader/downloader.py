@@ -1179,7 +1179,7 @@ class Downloader(commands.Cog):
 
         """
         splitted = instance.__module__.split(".")
-        return splitted[-2]
+        return splitted[0]
 
     @commands.command()
     async def findcog(self, ctx: commands.Context, command_name: str) -> None:
