@@ -1,0 +1,1 @@
+`RepoManager.update_all_repos` replaced by new method `update_repos` which additionally handles failing repositories.

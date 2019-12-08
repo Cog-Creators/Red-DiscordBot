@@ -5,7 +5,7 @@ import re
 import shutil
 import sys
 from pathlib import Path
-from typing import Tuple, Union, Iterable, Optional, Dict, Set, List, cast
+from typing import Tuple, Union, Iterable, Collection, Optional, Dict, Set, List, cast
 from collections import defaultdict
 
 import discord
@@ -499,24 +499,24 @@ class Downloader(commands.Cog):
         """Update all repos, or ones of your choosing."""
         async with ctx.typing():
             updated: Set[str]
-            if not repos:
-                updated = {repo.name for repo in await self._repo_manager.update_all_repos()}
-            else:
-                updated = set()
-                for repo in repos:
-                    old, new = await repo.update()
-                    if old != new:
-                        updated.add(repo.name)
+
+            updated_repos, failed = await self._repo_manager.update_repos(repos)
+            updated = {repo.name for repo in updated_repos}
 
             if updated:
                 message = _("Repo update completed successfully.")
                 message += _("\nUpdated: ") + humanize_list(tuple(map(inline, updated)))
-            elif repos is None:
-                await ctx.send(_("All installed repos are already up to date."))
-                return
+            elif not repos:
+                message = _("All installed repos are already up to date.")
             else:
-                await ctx.send(_("These repos are already up to date."))
-                return
+                if len(updated_repos) > 1:
+                    message = _("These repos are already up to date.")
+                else:
+                    message = _("This repo is already up to date.")
+
+            if failed:
+                message += "\n" + self.format_failed_repos(failed)
+
         await ctx.send(message)
 
     @commands.group()
@@ -721,8 +721,9 @@ class Downloader(commands.Cog):
         This command doesn't update cogs, it only checks for updates.
         Use `[p]cog update` to update cogs.
         """
+
         async with ctx.typing():
-            cogs_to_check = await self._get_cogs_to_check()
+            cogs_to_check, failed = await self._get_cogs_to_check()
             cogs_to_update, libs_to_update = await self._available_updates(cogs_to_check)
             message = ""
             if cogs_to_update:
@@ -735,10 +736,14 @@ class Downloader(commands.Cog):
                 message += _("\nThese shared libraries can be updated: ") + humanize_list(
                     tuple(map(inline, libnames))
                 )
-            if message:
-                await ctx.send(message)
-            else:
-                await ctx.send(_("All installed cogs are up to date."))
+
+            if not message:
+                message = _("All installed cogs are up to date.")
+
+            if failed:
+                message += "\n" + self.format_failed_repos(failed)
+
+            await ctx.send(message)
 
     @cog.command(name="update")
     async def _cog_update(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
@@ -774,11 +779,22 @@ class Downloader(commands.Cog):
         rev: Optional[str] = None,
         cogs: Optional[List[InstalledModule]] = None,
     ) -> None:
+        message = ""
+        failed_repos = set()
+        updates_available = set()
+
         async with ctx.typing():
             # this is enough to be sure that `rev` is not None (based on calls to this method)
             if repo is not None:
                 rev = cast(str, rev)
-                await repo.update()
+
+                try:
+                    await repo.update()
+                except errors.UpdateError:
+                    message = self.format_failed_repos([repo.name])
+                    await ctx.send(message)
+                    return
+
                 try:
                     commit = await repo.get_full_sha1(rev)
                 except errors.AmbiguousRevision as e:
@@ -794,61 +810,71 @@ class Downloader(commands.Cog):
                         await ctx.send(msg)
                     return
                 except errors.UnknownRevision:
-                    await ctx.send(
-                        _("Error: there is no revision `{rev}` in repo `{repo.name}`").format(
-                            rev=rev, repo=repo
-                        )
-                    )
+                    message += _(
+                        "Error: there is no revision `{rev}` in repo `{repo.name}`"
+                    ).format(rev=rev, repo=repo)
+                    await ctx.send(message)
                     return
+
                 await repo.checkout(commit)
-                cogs_to_check = await self._get_cogs_to_check(repos=[repo], cogs=cogs)
+                cogs_to_check, __ = await self._get_cogs_to_check(
+                    repos=[repo], cogs=cogs, update_repos=False
+                )
+
             else:
-                cogs_to_check = await self._get_cogs_to_check(repos=repos, cogs=cogs)
+                cogs_to_check, check_failed = await self._get_cogs_to_check(repos=repos, cogs=cogs)
+                failed_repos.update(check_failed)
 
             pinned_cogs = {cog for cog in cogs_to_check if cog.pinned}
             cogs_to_check -= pinned_cogs
             if not cogs_to_check:
-                message = _("There were no cogs to check.")
+                message += _("There were no cogs to check.")
                 if pinned_cogs:
                     cognames = [cog.name for cog in pinned_cogs]
                     message += _(
                         "\nThese cogs are pinned and therefore weren't checked: "
                     ) + humanize_list(tuple(map(inline, cognames)))
-                    await ctx.send(message)
-                    return
-            cogs_to_update, libs_to_update = await self._available_updates(cogs_to_check)
-
-            updates_available = cogs_to_update or libs_to_update
-            cogs_to_update, filter_message = self._filter_incorrect_cogs(cogs_to_update)
-            message = ""
-            if updates_available:
-                updated_cognames, message = await self._update_cogs_and_libs(
-                    cogs_to_update, libs_to_update
-                )
             else:
-                if repos:
-                    message = _("Cogs from provided repos are already up to date.")
-                elif repo:
-                    if cogs:
-                        message = _("Provided cogs are already up to date with this revision.")
-                    else:
-                        message = _(
-                            "Cogs from provided repo are already up to date with this revision."
-                        )
+                cogs_to_update, libs_to_update = await self._available_updates(cogs_to_check)
+
+                updates_available = cogs_to_update or libs_to_update
+                cogs_to_update, filter_message = self._filter_incorrect_cogs(cogs_to_update)
+
+                if updates_available:
+                    updated_cognames, message = await self._update_cogs_and_libs(
+                        cogs_to_update, libs_to_update
+                    )
                 else:
-                    if cogs:
-                        message = _("Provided cogs are already up to date.")
+                    if repos:
+                        message += _("Cogs from provided repos are already up to date.")
+                    elif repo:
+                        if cogs:
+                            message += _(
+                                "Provided cogs are already up to date with this revision."
+                            )
+                        else:
+                            message += _(
+                                "Cogs from provided repo are already up to date with this revision."
+                            )
                     else:
-                        message = _("All installed cogs are already up to date.")
-            if repo is not None:
-                await repo.checkout(repo.branch)
-            if pinned_cogs:
-                cognames = [cog.name for cog in pinned_cogs]
-                message += _(
-                    "\nThese cogs are pinned and therefore weren't checked: "
-                ) + humanize_list(tuple(map(inline, cognames)))
-            message += filter_message
+                        if cogs:
+                            message += _("Provided cogs are already up to date.")
+                        else:
+                            message += _("All installed cogs are already up to date.")
+                if repo is not None:
+                    await repo.checkout(repo.branch)
+                if pinned_cogs:
+                    cognames = [cog.name for cog in pinned_cogs]
+                    message += _(
+                        "\nThese cogs are pinned and therefore weren't checked: "
+                    ) + humanize_list(tuple(map(inline, cognames)))
+                message += filter_message
+
+        if failed_repos:
+            message += "\n" + self.format_failed_repos(failed_repos)
+
         await ctx.send(message)
+
         if updates_available and updated_cognames:
             await self._ask_for_cog_reload(ctx, updated_cognames)
 
@@ -1024,23 +1050,31 @@ class Downloader(commands.Cog):
         *,
         repos: Optional[Iterable[Repo]] = None,
         cogs: Optional[Iterable[InstalledModule]] = None,
-    ) -> Set[InstalledModule]:
+        update_repos: bool = True,
+    ) -> Tuple[Set[InstalledModule], List[str]]:
+        failed = []
         if not (cogs or repos):
-            await self._repo_manager.update_all_repos()
-            cogs_to_check = {cog for cog in await self.installed_cogs() if cog.repo is not None}
+            if update_repos:
+                __, failed = await self._repo_manager.update_repos()
+
+            cogs_to_check = {
+                cog
+                for cog in await self.installed_cogs()
+                if cog.repo is not None and cog.repo.name not in failed
+            }
         else:
             # this is enough to be sure that `cogs` is not None (based on if above)
             if not repos:
                 cogs = cast(Iterable[InstalledModule], cogs)
                 repos = {cog.repo for cog in cogs if cog.repo is not None}
 
-            for repo in repos:
-                if await repo.is_on_branch():
-                    exit_to_commit = None
-                else:
-                    exit_to_commit = repo.commit
-                await repo.update()
-                await repo.checkout(exit_to_commit)
+            if update_repos:
+                __, failed = await self._repo_manager.update_repos(repos)
+
+            if failed:
+                # remove failed repos
+                repos = {repo for repo in repos if repo.name not in failed}
+
             if cogs:
                 cogs_to_check = {cog for cog in cogs if cog.repo is not None and cog.repo in repos}
             else:
@@ -1050,7 +1084,7 @@ class Downloader(commands.Cog):
                     if cog.repo is not None and cog.repo in repos
                 }
 
-        return cogs_to_check
+        return (cogs_to_check, failed)
 
     async def _update_cogs_and_libs(
         self, cogs_to_update: Iterable[Installable], libs_to_update: Iterable[Installable]
@@ -1207,3 +1241,31 @@ class Downloader(commands.Cog):
             msg = _("This command is not provided by a cog.")
 
         await ctx.send(box(msg))
+
+    @staticmethod
+    def format_failed_repos(failed: Collection[str]) -> str:
+        """Format collection of ``Repo.name``'s into failed message.
+
+        Parameters
+        ----------
+        failed : Collection
+            Collection of ``Repo.name``
+
+        Returns
+        -------
+        str
+            formatted message
+        """
+
+        message = (
+            _("Failed to update the following repositories:")
+            if len(failed) > 1
+            else _("Failed to update the following repository:")
+        )
+        message += " " + humanize_list(tuple(map(inline, failed))) + "\n"
+        message += _(
+            "The repository's branch might have been removed or"
+            " the repository is no longer accessible at set url."
+            " See logs for more information."
+        )
+        return message

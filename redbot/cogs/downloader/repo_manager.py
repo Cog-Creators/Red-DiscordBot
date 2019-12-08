@@ -795,7 +795,10 @@ class Repo(RepoJSONMixin):
         -------
         `tuple` of `str`
             :py:code`(old commit hash, new commit hash)`
-
+        
+        Raises
+        -------
+        `UpdateError` - if git pull results with non-zero exit code
         """
         old_commit = await self.latest_commit()
 
@@ -1134,28 +1137,58 @@ class RepoManager:
         Tuple[Repo, Tuple[str, str]]
             A 2-`tuple` with Repo object and a 2-`tuple` of `str`
             containing old and new commit hashes.
-
         """
         repo = self._repos[repo_name]
         old, new = await repo.update()
         return (repo, (old, new))
 
-    async def update_all_repos(self) -> Dict[Repo, Tuple[str, str]]:
-        """Call `Repo.update` on all repositories.
+    async def update_repos(
+        self, repos: Optional[Iterable[Repo]] = None
+    ) -> Tuple[Dict[Repo, Tuple[str, str]], List[str]]:
+        """Calls `Repo.update` on passed repositories and 
+        catches failing ones.
+        
+        Calling without params updates all currently installed repos.
+        
+        Parameters
+        ----------
+        repos: Iterable
+            Iterable of Repos, None to update all
 
         Returns
         -------
-        Dict[Repo, Tuple[str, str]]
+        tuple of Dict and list
             A mapping of `Repo` objects that received new commits to
             a 2-`tuple` of `str` containing old and new commit hashes.
-
+            
+            `list` of failed `Repo` names
         """
+        failed = []
         ret = {}
-        for repo_name, __ in self._repos.items():
-            repo, (old, new) = await self.update_repo(repo_name)
+
+        # select all repos if not specified
+        if not repos:
+            repos = self.repos
+
+        for repo in repos:
+            try:
+                updated_repo, (old, new) = await self.update_repo(repo.name)
+            except errors.UpdateError as err:
+                log.error(
+                    "Repository '%s' failed to update. URL: '%s' on branch '%s'",
+                    repo.name,
+                    repo.url,
+                    repo.branch,
+                    exc_info=err,
+                )
+
+                failed.append(repo.name)
+                continue
+
             if old != new:
-                ret[repo] = (old, new)
-        return ret
+                ret[updated_repo] = (old, new)
+
+        return ret, failed
 
     async def _load_repos(self, set_repos: bool = False) -> Dict[str, Repo]:
         ret = {}
