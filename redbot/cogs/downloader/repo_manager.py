@@ -87,13 +87,21 @@ class ProcessFormatter(Formatter):
 
 
 class Repo(RepoJSONMixin):
-    GIT_CLONE = "git clone --recurse-submodules -b {branch} {url} {folder}"
-    GIT_CLONE_NO_BRANCH = "git clone --recurse-submodules {url} {folder}"
+    GIT_CLONE = (
+        "git clone -c credential.helper= -c core.askpass="
+        " --recurse-submodules -b {branch} {url} {folder}"
+    )
+    GIT_CLONE_NO_BRANCH = (
+        "git -c credential.helper= -c core.askpass= clone --recurse-submodules {url} {folder}"
+    )
     GIT_CURRENT_BRANCH = "git -C {path} symbolic-ref --short HEAD"
     GIT_CURRENT_COMMIT = "git -C {path} rev-parse HEAD"
     GIT_LATEST_COMMIT = "git -C {path} rev-parse {branch}"
     GIT_HARD_RESET = "git -C {path} reset --hard origin/{branch} -q"
-    GIT_PULL = "git -C {path} pull --recurse-submodules -q --ff-only"
+    GIT_PULL = (
+        "git -c credential.helper= -c core.askpass= -C {path}"
+        " pull --recurse-submodules -q --ff-only"
+    )
     GIT_DIFF_FILE_STATUS = (
         "git -C {path} diff-tree --no-commit-id --name-status"
         " -r -z --line-prefix='\t' {old_rev} {new_rev}"
@@ -513,6 +521,7 @@ class Repo(RepoJSONMixin):
         """
         env = os.environ.copy()
         env["GIT_TERMINAL_PROMPT"] = "0"
+        env.pop("GIT_ASKPASS", None)
         # attempt to force all output to plain ascii english
         # some methods that parse output may expect it
         # according to gettext manual both variables have to be set:
