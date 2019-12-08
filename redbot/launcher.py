@@ -201,7 +201,12 @@ def cli_flag_getter():
         choice = user_choice()
         if choice == "y":
             print("Done selecting cli flags")
-            return flags
+            # this is safe only because arguments like prefix and owner id can't have spaces
+            cli_flags = []
+            for flag_with_spaces in flags:
+                for flag in flag_with_spaces.split():
+                    cli_flags.append(flag)
+            return cli_flags
         else:
             print("Starting over")
             return cli_flag_getter()

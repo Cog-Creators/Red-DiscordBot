@@ -462,7 +462,7 @@ class Downloader(commands.Cog):
             )
         else:
             await ctx.send(_("Repo `{name}` successfully added.").format(name=name))
-            if repo.install_msg is not None:
+            if repo.install_msg:
                 await ctx.send(repo.install_msg.replace("[p]", ctx.prefix))
 
     @repo.command(name="delete", aliases=["remove", "del"], usage="<repo_name>")
