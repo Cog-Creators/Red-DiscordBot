@@ -1,0 +1,1 @@
+User can now pass multiple cog names to ``[p]cog install``.

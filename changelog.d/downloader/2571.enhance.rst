@@ -1,0 +1,1 @@
+Added error messages for failures during installing/reinstalling requirements and copying cogs and shared libraries.

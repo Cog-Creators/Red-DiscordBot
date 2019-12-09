@@ -1,0 +1,1 @@
+Ensure consistent output from git commands for purpose of parsing.

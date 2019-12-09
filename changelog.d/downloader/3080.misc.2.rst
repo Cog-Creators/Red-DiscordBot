@@ -1,0 +1,1 @@
+Added `Downloader.format_failed_repos` for formatting error message of repos failing to update.

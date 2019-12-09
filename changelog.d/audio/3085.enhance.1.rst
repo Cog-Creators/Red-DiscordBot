@@ -1,0 +1,1 @@
+Expose FriendlyExceptions to users on the play command.

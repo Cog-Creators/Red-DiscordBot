@@ -1,0 +1,1 @@
+Downloader will no longer allow to install cog with same name as other that is installed.

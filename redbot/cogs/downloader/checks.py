@@ -21,7 +21,7 @@ REPO_INSTALL_MSG = _(
 _ = T_
 
 
-async def do_install_agreement(ctx: commands.Context):
+async def do_install_agreement(ctx: commands.Context) -> bool:
     downloader = ctx.cog
     if downloader is None or downloader.already_agreed:
         return True

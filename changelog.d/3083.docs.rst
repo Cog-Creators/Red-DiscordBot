@@ -1,0 +1,1 @@
+Fix some typos and wording, add MS Azure to host list

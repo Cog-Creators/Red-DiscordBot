@@ -1,0 +1,1 @@
+defaults are cleared properly when clearing all rules

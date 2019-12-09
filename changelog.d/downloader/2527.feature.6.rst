@@ -1,0 +1,1 @@
+Added ``[p]cog updatetoversion <repo_name> <revision> [cogs]`` command that updates all cogs or ones of user's choosing to chosen revision of given repo.

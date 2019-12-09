@@ -1,0 +1,1 @@
+Bot's status is now properly cleared on emptydisconnect.

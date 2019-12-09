@@ -115,8 +115,8 @@ to use one, do it like this: ``[p]cleanup messages 10``
 Cogs
 ----
 
-Red is built with cogs, fancy term for plugins. They are
-modules that enhance the Red functionalities. They contain
+Red is built with cogs, a fancy term for plugins. They are
+modules that add functionality to Red. They contain
 commands to use.
 
 Red comes with 19 cogs containing the basic features, such
@@ -162,10 +162,10 @@ there are hundreds of cogs available!
 
 .. 26-cogs not available, let's use my repo :3
 
-Cogs comes with repositories. A repository is a container of cogs
+Cogs come in repositories. A repository is a container of cogs
 that you can install. Let's suppose you want to install the ``say``
 cog from the repository ``Laggrons-Dumb-Cogs``. You'll first need
-to install the repository.
+to add the repository.
 
 .. code-block:: none
 
@@ -173,7 +173,7 @@ to install the repository.
 
 .. note:: You may need to specify a branch. If so, add its name after the link.
 
-Then you can add the cog
+Then you can install the cog
 
 .. code-block:: none
 
@@ -195,7 +195,7 @@ the level of permission needed for a command.
 Bot owner
 ~~~~~~~~~
 
-The bot owner can access all commands on every guild. He can also use
+The bot owner can access all commands on every guild. They can also use
 exclusive commands that can interact with the global settings
 or system files.
 
@@ -214,7 +214,7 @@ Administrator
 ~~~~~~~~~~~~~
 
 The administrator is defined by its roles. You can set multiple admin roles
-with the ``[p]addadminrole`` and ``[p]removeadminrole`` commands.
+with the ``[p]set addadminrole`` and ``[p]set removeadminrole`` commands.
 
 For example, in the mod cog, an admin can use the ``[p]modset`` command
 which defines the cog settings.
@@ -224,7 +224,7 @@ Moderator
 ~~~~~~~~~
 
 A moderator is a step above the average users. You can set multiple moderator
-roles with the ``[p]addmodrole`` and ``[p]removemodrole`` commands.
+roles with the ``[p]set addmodrole`` and ``[p]set removemodrole`` commands.
 
 For example, in the mod cog (again), a mod will be able to mute, kick and ban;
 but he won't be able to modify the cog settings with the ``[p]modset`` command.
