@@ -3299,9 +3299,7 @@ class Audio(commands.Cog):
                 notify_channel = player.fetch("channel")
                 if notify_channel:
                     notify_channel = self.bot.get_channel(notify_channel)
-                    await self._embed_msg(
-                        notify_channel, title=_("Couldn't get a valid track.")
-                    )
+                    await self._embed_msg(notify_channel, title=_("Couldn't get a valid track."))
                 return
         else:
             self.bot.dispatch(
