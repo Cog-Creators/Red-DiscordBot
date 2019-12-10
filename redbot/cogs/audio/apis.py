@@ -21,7 +21,7 @@ from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 
 from . import audio_dataclasses
-from .errors import InvalidTableError, SpotifyFetchError, YouTubeApiError
+from .errors import InvalidTableError, SpotifyFetchError, YouTubeApiError, DatabaseError
 from .playlists import get_playlist
 from .utils import CacheLevel, Notifier, is_allowed, queue_duration, track_limit
 
@@ -1086,10 +1086,14 @@ class MusicCache:
             track = tracks[0]
 
             valid = not multiple
-
+            tries = len(tracks)
             while valid is False and multiple:
+                tries -= 1
+                if tries <= 0:
+                    raise DatabaseError("No valid entry found")
                 track = random.choice(tracks)
                 query = audio_dataclasses.Query.process_input(track)
+                await asyncio.sleep(0.001)
                 if not query.valid:
                     continue
                 if query.is_local and not query.track.exists():

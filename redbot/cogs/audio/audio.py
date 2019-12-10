@@ -42,6 +42,7 @@ from .config import pass_config_to_dependencies
 from .converters import ComplexScopeParser, ScopeParser, get_lazy_converter, get_playlist_converter
 from .equalizer import Equalizer
 from .errors import (
+    DatabaseError,
     LavalinkDownloadFailed,
     MissingGuild,
     QueryUnauthorized,
@@ -452,7 +453,16 @@ class Audio(commands.Cog):
             )
             if autoplay and not player.queue and player.fetch("playing_song") is not None:
                 if self.owns_autoplay is None:
-                    await self.music_cache.autoplay(player)
+                    try:
+                        await self.music_cache.autoplay(player)
+                    except DatabaseError:
+                        notify_channel = player.fetch("channel")
+                        if notify_channel:
+                            notify_channel = self.bot.get_channel(notify_channel)
+                            await self._embed_msg(
+                                notify_channel, title=_("Couldn't get a valid track.")
+                            )
+                        return
                 else:
                     self.bot.dispatch(
                         "red_audio_should_auto_play",
@@ -3283,7 +3293,16 @@ class Audio(commands.Cog):
         if not await self._currency_check(ctx, guild_data["jukebox_price"]):
             return
         if self.owns_autoplay is None:
-            await self.music_cache.autoplay(player)
+            try:
+                await self.music_cache.autoplay(player)
+            except DatabaseError:
+                notify_channel = player.fetch("channel")
+                if notify_channel:
+                    notify_channel = self.bot.get_channel(notify_channel)
+                    await self._embed_msg(
+                        notify_channel, title=_("Couldn't get a valid track.")
+                    )
+                return
         else:
             self.bot.dispatch(
                 "red_audio_should_auto_play",

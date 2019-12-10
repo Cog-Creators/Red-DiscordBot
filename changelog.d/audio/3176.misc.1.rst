@@ -1,0 +1,1 @@
+Added an early exist to the `while` loop  in the autoplay method, this is to that if a service is blacklisted it doesn't infinitely loop causing heartbeats.
