@@ -1,0 +1,1 @@
+Clarified that ``[p]backup`` saves the **bot's** data in the help text.

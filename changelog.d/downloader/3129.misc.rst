@@ -1,0 +1,1 @@
+Add `clean_url` property to :class:`redbot.cogs.downloader.repo_manager.Repo` which contains sanitized repo URL (without HTTP Basic Auth).

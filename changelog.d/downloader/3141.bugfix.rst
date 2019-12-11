@@ -1,0 +1,1 @@
+Make :attr:`redbot.cogs.downloader.repo_manager.Repo.clean_url` work with relative urls. This property uses `str` type now.

@@ -35,6 +35,9 @@ Keys specific to the cog info.json (case sensitive)
 - ``max_bot_version`` (string) - Max version number of Red in the format ``MAJOR.MINOR.MICRO``,
   if ``min_bot_version`` is newer than ``max_bot_version``, ``max_bot_version`` will be ignored
 
+- ``min_python_version`` (list of integers) - Min version number of Python
+  in the format ``[MAJOR, MINOR, PATCH]``
+
 - ``hidden`` (bool) - Determines if a cog is visible in the cog list for a repo.
 
 - ``disabled`` (bool) - Determines if a cog is available for install.

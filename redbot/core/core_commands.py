@@ -33,7 +33,14 @@ from . import (
 )
 from .utils import create_backup
 from .utils.predicates import MessagePredicate
-from .utils.chat_formatting import humanize_timedelta, pagify, box, inline, humanize_list
+from .utils.chat_formatting import (
+    box,
+    humanize_list,
+    humanize_number,
+    humanize_timedelta,
+    inline,
+    pagify,
+)
 from .commands.requires import PrivilegeLevel
 
 
@@ -293,7 +300,7 @@ class Core(commands.Cog, CoreLogic):
                 data = await r.json()
         outdated = VersionInfo.from_str(data["info"]["version"]) > red_version_info
         about = _(
-            "This is an instance of [Red, an open source Discord bot]({}) "
+            "This bot is an instance of [Red, an open source Discord bot]({}) "
             "created by [Twentysix]({}) and [improved by many]({}).\n\n"
             "Red is backed by a passionate community who contributes and "
             "creates content for everyone to enjoy. [Join us today]({}) "
@@ -1136,7 +1143,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.is_owner()
     async def api(self, ctx: commands.Context, service: str, *, tokens: TokenConverter):
         """Set various external API tokens.
-        
+
         This setting will be asked for by some 3rd party cogs and some core cogs.
 
         To add the keys provide the service name and the tokens as a comma separated
@@ -1162,7 +1169,7 @@ class Core(commands.Cog, CoreLogic):
         Allows the help command to be sent as a paginated menu instead of seperate
         messages.
 
-        This defaults to False. 
+        This defaults to False.
         Using this without a setting will toggle.
         """
         if use_menus is None:
@@ -1316,8 +1323,9 @@ class Core(commands.Cog, CoreLogic):
     @commands.command()
     @checks.is_owner()
     async def backup(self, ctx: commands.Context, *, backup_dir: str = None):
-        """Creates a backup of all data for the instance.
+        """Creates a backup of all data for this bot instance.
 
+        This backs up the bot's data and settings.
         You may provide a path to a directory for the backup archive to
         be placed in. If the directory does not exist, the bot will
         attempt to create it.
@@ -1877,6 +1885,53 @@ class Core(commands.Cog, CoreLogic):
         """Manage the bot's commands."""
         pass
 
+    @command_manager.group(name="listdisabled", invoke_without_command=True)
+    async def list_disabled(self, ctx: commands.Context):
+        """
+        List disabled commands.
+
+        If you're the bot owner, this will show global disabled commands by default.
+        """
+        # Select the scope based on the author's privileges
+        if await ctx.bot.is_owner(ctx.author):
+            await ctx.invoke(self.list_disabled_global)
+        else:
+            await ctx.invoke(self.list_disabled_guild)
+
+    @list_disabled.command(name="global")
+    async def list_disabled_global(self, ctx: commands.Context):
+        """List disabled commands globally."""
+        disabled_list = await self.bot._config.disabled_commands()
+        if not disabled_list:
+            return await ctx.send(_("There aren't any globally disabled commands."))
+
+        if len(disabled_list) > 1:
+            header = _("{} commands are disabled globally.\n").format(
+                humanize_number(len(disabled_list))
+            )
+        else:
+            header = _("1 command is disabled globally.\n")
+        paged = [box(x) for x in pagify(humanize_list(disabled_list), page_length=1000)]
+        paged[0] = header + paged[0]
+        await ctx.send_interactive(paged)
+
+    @list_disabled.command(name="guild")
+    async def list_disabled_guild(self, ctx: commands.Context):
+        """List disabled commands in this server."""
+        disabled_list = await self.bot._config.guild(ctx.guild).disabled_commands()
+        if not disabled_list:
+            return await ctx.send(_("There aren't any disabled commands in {}.").format(ctx.guild))
+
+        if len(disabled_list) > 1:
+            header = _("{} commands are disabled in {}.\n").format(
+                humanize_number(len(disabled_list)), ctx.guild
+            )
+        else:
+            header = _("1 command is disabled in {}.\n").format(ctx.guild)
+        paged = [box(x) for x in pagify(humanize_list(disabled_list), page_length=1000)]
+        paged[0] = header + paged[0]
+        await ctx.send_interactive(paged)
+
     @command_manager.group(name="disable", invoke_without_command=True)
     async def command_disable(self, ctx: commands.Context, *, command: str):
         """Disable a command.
@@ -1907,6 +1962,12 @@ class Core(commands.Cog, CoreLogic):
             )
             return
 
+        if isinstance(command_obj, commands.commands._AlwaysAvailableCommand):
+            await ctx.send(
+                _("This command is designated as being always available and cannot be disabled.")
+            )
+            return
+
         async with ctx.bot._config.disabled_commands() as disabled_commands:
             if command not in disabled_commands:
                 disabled_commands.append(command_obj.qualified_name)
@@ -1932,6 +1993,12 @@ class Core(commands.Cog, CoreLogic):
         if self.command_manager in command_obj.parents or self.command_manager == command_obj:
             await ctx.send(
                 _("The command to disable cannot be `command` or any of its subcommands.")
+            )
+            return
+
+        if isinstance(command_obj, commands.commands._AlwaysAvailableCommand):
+            await ctx.send(
+                _("This command is designated as being always available and cannot be disabled.")
             )
             return
 
@@ -2215,3 +2282,21 @@ class Core(commands.Cog, CoreLogic):
     async def rpc_reload(self, request):
         await self.rpc_unload(request)
         await self.rpc_load(request)
+
+
+# Removing this command from forks is a violation of the GPLv3 under which it is licensed.
+# Otherwise interfering with the ability for this command to be accessible is also a violation.
+@commands.command(cls=commands.commands._AlwaysAvailableCommand, name="licenseinfo", i18n=_)
+async def license_info_command(ctx):
+    """
+    Get info about Red's licenses
+    """
+
+    message = (
+        "This bot is an instance of Red-DiscordBot (hereafter refered to as Red)\n"
+        "Red is a free and open source application made available to the public and "
+        "licensed under the GNU GPLv3. The full text of this license is available to you at "
+        "<https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/LICENSE>"
+    )
+    await ctx.send(message)
+    # We need a link which contains a thank you to other projects which we use at some point.
