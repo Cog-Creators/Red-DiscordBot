@@ -80,11 +80,11 @@ def debug_info():
     """Shows debug information useful for debugging."""
     if sys.platform == "linux":
         import distro  # pylint: disable=import-error
-    
+
     IS_WINDOWS = os.name == "nt"
     IS_MAC = sys.platform == "darwin"
     IS_LINUX = sys.platform == "linux"
-    
+
     pyver = sys.version
     pipver = pip.__version__
     redver = __version__
@@ -111,6 +111,7 @@ def debug_info():
     )
     print(info)
     sys.exit(0)
+
 
 def edit_instance(red, cli_flags):
     no_prompt = cli_flags.no_prompt
