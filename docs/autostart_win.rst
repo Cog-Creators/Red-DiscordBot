@@ -29,8 +29,16 @@ is finished, open File Explorer, navigate to the drive Windows is installed on, 
 create a folder called :code:`nssm`. Then navigate to your Downloads folder, and move 
 :code:`nssm.exe` to :code:`C:\nssm`.
 
-Then 
+Then open Powershell as administrator (search "powershell" in the start menu, then right-click and 
+click "Run as administrator") and run the following commands to add NSSM to your path.
 
+.. code-block:: none
+
+    $oldPath = (Get-Itemproperty -path 'hklm:\system\currentcontrolset\control\session manager\environment' -Name Path).Path
+    $newPath = $oldPath + ";C:\nssm"
+    Set-ItemProperty -path 'hklm:\system\currentcontrolset\control\session manager\environment' -Name Path -Value $newPath
+
+Once finished, log out and back in to ensure the changes take effect.
 
 ----------------------
 Setting up the service
