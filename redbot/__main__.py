@@ -103,6 +103,7 @@ def debug_info():
         "Debug Info for Red\n\n"
         + "Red version: {}\n".format(redver)
         + "Python version: {}\n".format(pyver)
+        + "Python executable: {}\n".format(sys.executable)
         + "Discord.py version: {}\n".format(dpy_version)
         + "Pip version: {}\n".format(pipver)
         + "OS version: {}\n".format(osver)
