@@ -9,7 +9,7 @@ Downloading NSSM via Chocolatey
 -------------------------------
 
 .. note:: This assumes you already have chocolatey installed. 
-          If not, you may install it or follow the manual instructions for getting NSSM
+          If not, you may install it or follow the manual instructions for getting NSSM.
 
 To install via Chocolatey, search "powershell" in the start menu,
 right-click on it and then click "Run as administrator"
@@ -46,6 +46,8 @@ Setting up the service
 
 To create the service, run the following command:
 
+.. note:: If Red was installed in a venv, please activate it before running this command
+
 .. code-block:: none
 
     nssm install redbot $(Get-Command redbot).Definition <instance name> --no-prompt
@@ -64,10 +66,15 @@ Then run the following set of commands one at a time:
     nssm set redbot AppNoConsole 1
 
 The above commands change a number of settings for the service including:
+
 - Ensuring that when ``[p]shutdown`` is run, the service doesn't attempt to restart
+
 - Ensuring that if Control-C is pressed for the process, nssm waits 10 seconds
+
 - Setting a 15 second delay for service restart
+
 - Setting a couple of log files for the service
+
 - Disabling the console window
 
 Now that the service has been configured, run the following command:
