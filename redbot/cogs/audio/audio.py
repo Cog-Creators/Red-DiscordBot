@@ -3714,7 +3714,7 @@ class Audio(commands.Cog):
         if has_perms is False:
             if hasattr(playlist, "name"):
                 msg = _(
-                    "You do not have the permissions to manage {name} " "(`{id}`) [**{scope}**]."
+                    "You do not have the permissions to manage {name} (`{id}`) [**{scope}**]."
                 ).format(
                     user=playlist_author,
                     name=playlist.name,
