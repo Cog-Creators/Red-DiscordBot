@@ -27,14 +27,14 @@ Then run each of the following commands:
     Set-ExecutionPolicy Bypass -Scope Process -Force
     iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     choco install git --params "/GitOnlyOnPath /WindowsTerminal" -y
-    choco install visualstudio2019buildtools --package-parameters "--allWorkloads --includeRecommended --includeOptional --passive --locale en-US"
-    choco install python3 --version=3.7.5
+    choco install choco install visualstudio2019-workload-vctools -y
+    choco install python3 --version=3.7.5 -y
 
 For Audio support, you should also run the following command before exiting:
 
 .. code-block:: none
 
-    choco install choco install adoptopenjdk11jre --installarguments "ADDLOCAL=FeatureMain,FeatureJarFileRunWith,FeatureEnvironment,FeatureJavaHome,FeatureOracleJavaSoft INSTALLDIR=%ProgramFiles%\AdoptOpenJDK\"
+    choco install choco install adoptopenjdk11jre --installarguments "ADDLOCAL=FeatureMain,FeatureJarFileRunWith,FeatureEnvironment,FeatureJavaHome,FeatureOracleJavaSoft INSTALLDIR=%ProgramFiles%\AdoptOpenJDK\" -y
 
 
 From here, continue onto `installing Red <installing-red-windows>`.
