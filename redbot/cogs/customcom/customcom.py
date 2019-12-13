@@ -211,7 +211,7 @@ class CustomCommands(commands.Cog):
 
         If a type is not specified, a simple CC will be created.
         CCs can be enhanced with arguments, see the guide
-        [here](https://red-discordbot.readthedocs.io/en/v3-develop/cog_customcom.html).
+        [here](https://docs.discord.red/en/stable/cog_customcom.html).
         """
         await ctx.invoke(self.cc_create_simple, command=command, text=text)
 
