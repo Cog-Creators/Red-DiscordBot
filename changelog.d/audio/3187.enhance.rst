@@ -1,0 +1,1 @@
+Add the ``[p]audioset audiodb`` command group, by default the Global DB access is disable, see the command group for more information.
