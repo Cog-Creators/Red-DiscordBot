@@ -1,0 +1,1 @@
+update windows docs with up to date dependency instructions
