@@ -24,7 +24,7 @@ import redbot.core
 from redbot.core import Config, bank, checks, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import bold, box, humanize_number, inline, pagify
+from redbot.core.utils.chat_formatting import bold, box, humanize_number, inline, pagify, escape
 from redbot.core.utils.menus import (
     DEFAULT_CONTROLS,
     close_menu,
@@ -3446,6 +3446,7 @@ class Audio(commands.Cog):
         first_track_only = False
         index = None
         playlist_data = None
+        playlist_url = None
         seek = 0
         if type(query) is not list:
             if not await is_allowed(ctx.guild, f"{query}", query_obj=query):
@@ -3460,6 +3461,7 @@ class Audio(commands.Cog):
             result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
             tracks = result.tracks
             playlist_data = result.playlist_info
+            playlist_url = query._raw
             if not enqueue:
                 return tracks
             if not tracks:
@@ -3532,11 +3534,14 @@ class Audio(commands.Cog):
                 )
             else:
                 maxlength_msg = ""
+            playlist_name = escape(
+                playlist_data.name if playlist_data else _("No Title"), formatting=True
+            )
             embed = discord.Embed(
                 colour=await ctx.embed_colour(),
-                description="{name}".format(
-                    name=playlist_data.name if playlist_data else _("No Title")
-                ),
+                description=f"[{playlist_name}]({playlist_url})"
+                if playlist_url
+                else playlist_name,
                 title=_("Playlist Enqueued"),
             )
             embed.set_footer(
