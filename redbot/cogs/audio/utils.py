@@ -10,7 +10,7 @@ import lavalink
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
-from redbot.core.utils.chat_formatting import bold, box
+from redbot.core.utils.chat_formatting import escape, box, bold
 
 from . import audio_dataclasses
 from .playlists import humanize_scope
@@ -201,13 +201,15 @@ def get_track_description(track) -> Optional[str]:
         query = audio_dataclasses.Query.process_input(track.uri)
         if query.is_local:
             if track.title != "Unknown title":
-                return f"**{track.author} - {track.title}**\n{query.to_string_user()} "
+                return bold(escape(f"{track.author} - {track.title}", formatting=True)) + escape(
+                    f"\n{query.to_string_user()} ", formatting=True
+                )
             else:
-                return query.to_string_user()
+                return escape(query.to_string_user(), formatting=True)
         else:
-            return bold(f"[{track.title}]({track.uri}) ")
+            return bold(escape(f"[{track.title}]({track.uri}) ", formatting=True))
     elif hasattr(track, "to_string_user") and track.is_local:
-        return track.to_string_user() + " "
+        return escape(track.to_string_user() + " ", formatting=True)
 
 
 def get_track_description_unformatted(track) -> Optional[str]:
@@ -215,13 +217,13 @@ def get_track_description_unformatted(track) -> Optional[str]:
         query = audio_dataclasses.Query.process_input(track.uri)
         if query.is_local:
             if track.title != "Unknown title":
-                return f"{track.author} - {track.title}"
+                return escape(f"{track.author} - {track.title}", formatting=True)
             else:
-                return query.to_string_user()
+                return escape(query.to_string_user(), formatting=True)
         else:
-            return f"{track.title}"
+            return escape(f"{track.title}", formatting=True)
     elif hasattr(track, "to_string_user") and track.is_local:
-        return track.to_string_user() + " "
+        return escape(track.to_string_user() + " ", formatting=True)
 
 
 def track_creator(player, position=None, other_track=None) -> Mapping:

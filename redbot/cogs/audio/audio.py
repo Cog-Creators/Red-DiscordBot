@@ -6902,7 +6902,8 @@ class Audio(commands.Cog):
                     search_list += "`{}.` **{}**\n".format(
                         search_track_num, track.to_string_user()
                     )
-                    folder = True
+                    if track.is_album:
+                        folder = True
                 elif command == "search":
                     search_list += "`{}.` **{}**\n".format(
                         search_track_num, track.to_string_user()
@@ -7020,15 +7021,11 @@ class Audio(commands.Cog):
         else:
             await self._embed_msg(ctx, title=_("Nothing playing."))
 
-    @commands.group()
+    @commands.group(autohelp=False)
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     async def shuffle(self, ctx: commands.Context):
-        """Toggle shuffle.
-
-        Bumped tracks default to True.
-        Set this to False if you wish to avoid bumped songs being shuffled.
-        """
+        """Toggle shuffle."""
         if ctx.invoked_subcommand is None:
             dj_enabled = self._dj_status_cache.setdefault(
                 ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
