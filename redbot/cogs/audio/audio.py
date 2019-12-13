@@ -3539,7 +3539,7 @@ class Audio(commands.Cog):
             )
             embed = discord.Embed(
                 colour=await ctx.embed_colour(),
-                description=f"[{playlist_name}]({playlist_url})"
+                description=bold(f"[{playlist_name}]({playlist_url})")
                 if playlist_url
                 else playlist_name,
                 title=_("Playlist Enqueued"),
