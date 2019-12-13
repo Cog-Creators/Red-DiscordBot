@@ -43,18 +43,19 @@ From here, continue onto `installing Red <installing-red-windows>`.
 Manually installing dependencies
 ********************************
 
-* `Python <https://www.python.org/downloads/>`_ - Red needs Python 3.7.0 or greater
+.. attention:: There are additional configuration steps required which are
+               not documented for installing dependencies manually.
+               These dependencies are only listed seperately here for
+               reference purposes.
 
-.. attention:: Please make sure that the box to add Python to PATH is CHECKED, otherwise
-               you may run into issues when trying to run Red.
+* `MSVC Build tools <https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2019>`_
+
+* `Python <https://www.python.org/downloads/>`_ - Red needs Python 3.7.2 or greater
 
 * `Git <https://git-scm.com/download/win>`_
 
-.. attention:: Please choose the option to "Git from the command line and also from 3rd-party software" in Git's setup.
+* `Java <https://adoptopenjdk.net/?variant=openjdk11&jvmVariant=hotspot>`_ - needed for Audio
 
-* `Java <https://java.com/en/download/manual.jsp>`_ - needed for Audio
-
-.. attention:: Please choose the "Windows Online" installer.
 
 .. _installing-red-windows:
 
