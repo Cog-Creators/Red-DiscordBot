@@ -3470,7 +3470,7 @@ class Audio(commands.Cog):
                 colour = await ctx.embed_colour()
                 embed = discord.Embed(title=title, colour=colour)
                 if result.exception_message:
-                    embed.set_footer(text=result.exception_message)
+                    embed.set_footer(text=result.exception_message.replace("\n", ""))
                 if await self.config.use_external_lavalink() and query.is_local:
                     embed.description = _(
                         "Local tracks will not work "
