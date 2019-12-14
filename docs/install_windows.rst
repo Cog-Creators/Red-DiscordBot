@@ -52,7 +52,12 @@ Manually installing dependencies
 
 * `Python <https://www.python.org/downloads/>`_ - Red needs Python 3.7.2 or greater
 
+.. attention:: Please make sure that the box to add Python to PATH is CHECKED, otherwise
+               you may run into issues when trying to run Red.
+
 * `Git <https://git-scm.com/download/win>`_
+
+.. attention:: Please choose the option to "Git from the command line and also from 3rd-party software" in Git's setup.
 
 * `Java <https://adoptopenjdk.net/?variant=openjdk11&jvmVariant=hotspot>`_ - needed for Audio
 
