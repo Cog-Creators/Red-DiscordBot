@@ -37,7 +37,7 @@ For Audio support, you should also run the following command before exiting:
     choco install choco install adoptopenjdk11jre --installarguments "ADDLOCAL=FeatureMain,FeatureJarFileRunWith,FeatureEnvironment,FeatureJavaHome,FeatureOracleJavaSoft INSTALLDIR=%ProgramFiles%\AdoptOpenJDK\" -y
 
 
-From here, continue onto `installing Red <installing-red-windows>`.
+From here, exit the prompt then continue onto `installing Red <installing-red-windows>`.
 
 ********************************
 Manually installing dependencies
