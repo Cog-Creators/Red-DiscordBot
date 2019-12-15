@@ -13,8 +13,9 @@
     <img src="https://discordapp.com/api/guilds/133049272517001216/widget.png?style=shield" alt="Discord Server">
   </a>
   <a href="https://www.patreon.com/Red_Devs">
-    <img src="https://img.shields.io/badge/Support-Red!-yellow.svg" alt="Support Red on Patreon!">
+     <img src="https://img.shields.io/badge/Support-Red!-yellow.svg" alt="Support Red on Patreon!">
   </a>
+  <a href="https://opencollective.com/cog-creators" alt="Financial Contributors on Open Collective"><img src="https://opencollective.com/cog-creators/all/badge.svg?label=financial+contributors" /></a>
   <a href="https://www.python.org/downloads/">
     <img src="https://img.shields.io/badge/Made%20With-Python%203.7-blue.svg?style=for-the-badge" alt="Made with Python 3.7">
   </a>
@@ -116,6 +117,36 @@ consult our [guide](https://red-discordbot.readthedocs.io/en/stable/guide_cog_cr
 building your own cogs!
 
 Join us on our [Official Discord Server](https://discord.gg/red)!
+
+## Contributors
+
+### Code Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="https://github.com/Cog-Creators/Red-DiscordBot/graphs/contributors"><img src="https://opencollective.com/cog-creators/contributors.svg?width=890&button=false" /></a>
+
+### Financial Contributors
+
+Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/cog-creators/contribute)]
+
+#### Individuals
+
+<a href="https://opencollective.com/cog-creators"><img src="https://opencollective.com/cog-creators/individuals.svg?width=890"></a>
+
+#### Organizations
+
+Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/cog-creators/contribute)]
+
+<a href="https://opencollective.com/cog-creators/organization/0/website"><img src="https://opencollective.com/cog-creators/organization/0/avatar.svg"></a>
+<a href="https://opencollective.com/cog-creators/organization/1/website"><img src="https://opencollective.com/cog-creators/organization/1/avatar.svg"></a>
+<a href="https://opencollective.com/cog-creators/organization/2/website"><img src="https://opencollective.com/cog-creators/organization/2/avatar.svg"></a>
+<a href="https://opencollective.com/cog-creators/organization/3/website"><img src="https://opencollective.com/cog-creators/organization/3/avatar.svg"></a>
+<a href="https://opencollective.com/cog-creators/organization/4/website"><img src="https://opencollective.com/cog-creators/organization/4/avatar.svg"></a>
+<a href="https://opencollective.com/cog-creators/organization/5/website"><img src="https://opencollective.com/cog-creators/organization/5/avatar.svg"></a>
+<a href="https://opencollective.com/cog-creators/organization/6/website"><img src="https://opencollective.com/cog-creators/organization/6/avatar.svg"></a>
+<a href="https://opencollective.com/cog-creators/organization/7/website"><img src="https://opencollective.com/cog-creators/organization/7/avatar.svg"></a>
+<a href="https://opencollective.com/cog-creators/organization/8/website"><img src="https://opencollective.com/cog-creators/organization/8/avatar.svg"></a>
+<a href="https://opencollective.com/cog-creators/organization/9/website"><img src="https://opencollective.com/cog-creators/organization/9/avatar.svg"></a>
 
 # License
 
