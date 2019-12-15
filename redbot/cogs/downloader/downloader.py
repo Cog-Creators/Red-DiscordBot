@@ -647,6 +647,7 @@ class Downloader(commands.Cog):
                 if poss_installed_path.exists():
                     with contextlib.suppress(commands.ExtensionNotLoaded):
                         ctx.bot.unload_extension(real_name)
+                        await ctx.bot.remove_loaded_package(real_name)
                     await self._delete_cog(poss_installed_path)
                     uninstalled_cogs.append(inline(real_name))
                 else:

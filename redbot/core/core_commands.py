@@ -1592,12 +1592,14 @@ class Core(commands.Cog, CoreLogic):
             e.add_field(name="System arch", value=platform.machine(), inline=True)
             e.add_field(name="User", value=user_who_ran, inline=True)
             e.add_field(name="OS version", value=osver, inline=False)
+            e.add_field(name="Python executable", value=sys.executable, inline=False)
             await ctx.send(embed=e)
         else:
             info = (
                 "Debug Info for Red\n\n"
                 + "Red version: {}\n".format(redver)
                 + "Python version: {}\n".format(pyver)
+                + "Python executable: {}\n".format(sys.executable)
                 + "Discord.py version: {}\n".format(dpy_version)
                 + "Pip version: {}\n".format(pipver)
                 + "System arch: {}\n".format(platform.machine())
