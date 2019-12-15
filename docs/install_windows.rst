@@ -27,15 +27,30 @@ Then run each of the following commands:
     Set-ExecutionPolicy Bypass -Scope Process -Force
     iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     choco install git --params "/GitOnlyOnPath /WindowsTerminal" -y
-    choco install jre8 python -y; exit
+    choco install visualstudio2019-workload-vctools -y
+    choco install python3 --version=3.7.5 -y
 
-From here, continue onto `installing Red <installing-red-windows>`.
+For Audio support, you should also run the following command before exiting:
+
+.. code-block:: none
+
+    choco install adoptopenjdk11jre -y
+
+
+From here, exit the prompt then continue onto `installing Red <installing-red-windows>`.
 
 ********************************
 Manually installing dependencies
 ********************************
 
-* `Python <https://www.python.org/downloads/>`_ - Red needs Python 3.7.0 or greater
+.. attention:: There are additional configuration steps required which are
+               not documented for installing dependencies manually.
+               These dependencies are only listed seperately here for
+               reference purposes.
+
+* `MSVC Build tools <https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2019>`_
+
+* `Python <https://www.python.org/downloads/>`_ - Red needs Python 3.7.2 or greater
 
 .. attention:: Please make sure that the box to add Python to PATH is CHECKED, otherwise
                you may run into issues when trying to run Red.
@@ -44,9 +59,8 @@ Manually installing dependencies
 
 .. attention:: Please choose the option to "Git from the command line and also from 3rd-party software" in Git's setup.
 
-* `Java <https://java.com/en/download/manual.jsp>`_ - needed for Audio
+* `Java <https://adoptopenjdk.net/?variant=openjdk11&jvmVariant=hotspot>`_ - needed for Audio
 
-.. attention:: Please choose the "Windows Online" installer.
 
 .. _installing-red-windows:
 
