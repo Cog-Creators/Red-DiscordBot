@@ -385,7 +385,7 @@ develop using config
 
 * While config is a great general use option, it may not always be the right one for you. 
   As a cog developer, even though config doesn't require one,
-  you can choose to require a database or store to something such as sqlite
+  you can choose to require a database or store to something such as an sqlite
   database stored within your cog's datapath.
 
 
