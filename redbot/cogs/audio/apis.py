@@ -14,6 +14,7 @@ from typing import Callable, Dict, List, Mapping, Optional, Tuple, Union
 try:
     import apsw
 
+    SQLError = apsw.ExecutionCompleteError
     HAS_SQL = True
     _ERROR = None
 except ImportError as err:
@@ -151,13 +152,22 @@ _PARSER = {
     },
 }
 
-_PRAGMA_UPDATE = """
+_PRAGMA_UPDATE_temp_store = """
 PRAGMA temp_store = 2;
+"""
+_PRAGMA_UPDATE_journal_mode = """
 PRAGMA journal_mode = wal;
+"""
+_PRAGMA_UPDATE_wal_autocheckpoint = """
 PRAGMA wal_autocheckpoint;
+"""
+_PRAGMA_UPDATE_read_uncommitted = """
 PRAGMA read_uncommitted = 1;
 """
-_TABLES_GENERATION = "".join([_CREATE_LAVALINK_TABLE,_CREATE_UNIQUE_INDEX_LAVALINK_TABLE,_CREATE_YOUTUBE_TABLE,_CREATE_UNIQUE_INDEX_YOUTUBE_TABLE,_CREATE_SPOTIFY_TABLE,_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE])
+_PRAGMA_UPDATE_optimize = """
+PRAGMA optimize = 1;
+"""
+
 
 _TOP_100_GLOBALS = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn6puJdseH2Rt9sMvt9E2M4i"
 _TOP_100_US = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn5rWitrRWFKdm-ulaFiIyoK"
@@ -339,15 +349,23 @@ class MusicCache:
 
     async def initialize(self, config: Config):
         if HAS_SQL:
-            self.database.execute(_PRAGMA_UPDATE)
-            self.database.execute(_TABLES_GENERATION)
+            self.database.execute(_PRAGMA_UPDATE_temp_store)
+            self.database.execute(_PRAGMA_UPDATE_journal_mode)
+            self.database.execute(_PRAGMA_UPDATE_wal_autocheckpoint)
+            self.database.execute(_PRAGMA_UPDATE_read_uncommitted)
+
+            self.database.execute(_CREATE_LAVALINK_TABLE)
+            self.database.execute(_CREATE_UNIQUE_INDEX_LAVALINK_TABLE)
+            self.database.execute(_CREATE_YOUTUBE_TABLE)
+            self.database.execute(_CREATE_UNIQUE_INDEX_YOUTUBE_TABLE)
+            self.database.execute(_CREATE_SPOTIFY_TABLE)
+            self.database.execute(_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE)
 
         self.config = config
 
     async def close(self):
         if HAS_SQL:
-            self.database.execute("PRAGMA optimize;")
-            self.database.disconnect()
+            self.database.execute(_PRAGMA_UPDATE_optimize)
 
     async def insert(self, table: str, values: List[dict]):
         if HAS_SQL:
@@ -376,7 +394,9 @@ class MusicCache:
             if not table:
                 raise InvalidTableError(f"{table} is not a valid table in the database.")
 
-            row = self.database.fetchone(sql_query, values)
+            for row in self.database.execute(sql_query, values):
+                if row:
+                    break
             last_updated = getattr(row, "last_updated", None)
             need_update = True
             with contextlib.suppress(TypeError):
@@ -388,7 +408,7 @@ class MusicCache:
 
                     need_update = last_update < datetime.datetime.now(datetime.timezone.utc)
 
-            return getattr(row, query, None), need_update if table != "spotify" else True
+            return row[-1] if row else None, need_update if table != "spotify" else True
         else:
             return None, True
 
@@ -402,7 +422,7 @@ class MusicCache:
             if not table:
                 raise InvalidTableError(f"{table} is not a valid table in the database.")
 
-            return list(self.database.fetchall(sql_query, values))
+            return list(self.database.execute(sql_query, values))
         return []
 
     @staticmethod
