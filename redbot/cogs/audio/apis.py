@@ -12,8 +12,7 @@ from collections import namedtuple
 from typing import Callable, Dict, List, Mapping, Optional, Tuple, Union
 
 try:
-    from sqlite3 import Error as SQLError
-    from databases import Database
+    import apsw
 
     HAS_SQL = True
     _ERROR = None
@@ -21,7 +20,7 @@ except ImportError as err:
     _ERROR = "".join(traceback.format_exception_only(type(err), err)).strip()
     HAS_SQL = False
     SQLError = err.__class__
-    Database = None
+    apsw = None
 
 
 import aiohttp
@@ -151,6 +150,14 @@ _PARSER = {
         "update": _UPDATE_LAVALINK_TABLE,
     },
 }
+
+_PRAGMA_UPDATE = """
+PRAGMA temp_store = 2;
+PRAGMA journal_mode = wal;
+PRAGMA wal_autocheckpoint;
+PRAGMA read_uncommitted = 1;
+"""
+_TABLES_GENERATION = "".join([_CREATE_LAVALINK_TABLE,_CREATE_UNIQUE_INDEX_LAVALINK_TABLE,_CREATE_YOUTUBE_TABLE,_CREATE_UNIQUE_INDEX_YOUTUBE_TABLE,_CREATE_SPOTIFY_TABLE,_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE])
 
 _TOP_100_GLOBALS = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn6puJdseH2Rt9sMvt9E2M4i"
 _TOP_100_US = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn5rWitrRWFKdm-ulaFiIyoK"
@@ -321,9 +328,8 @@ class MusicCache:
         self.youtube_api: YouTubeAPI = YouTubeAPI(bot, session)
         self._session: aiohttp.ClientSession = session
         if HAS_SQL:
-            self.database: Database = Database(
-                f'sqlite:///{os.path.abspath(str(os.path.join(path, "cache.db")))}'
-            )
+            self._database = apsw.Connection(os.path.abspath(str(os.path.join(path, "cache.db"))))
+            self.database = self._database.cursor()
         else:
             self.database = None
 
@@ -333,39 +339,25 @@ class MusicCache:
 
     async def initialize(self, config: Config):
         if HAS_SQL:
-            await self.database.connect()
+            self.database.execute(_PRAGMA_UPDATE)
+            self.database.execute(_TABLES_GENERATION)
 
-            await self.database.execute(query="PRAGMA temp_store = 2;")
-            await self.database.execute(query="PRAGMA journal_mode = wal;")
-            await self.database.execute(query="PRAGMA wal_autocheckpoint;")
-            await self.database.execute(query="PRAGMA read_uncommitted = 1;")
-
-            await self.database.execute(query=_CREATE_LAVALINK_TABLE)
-            await self.database.execute(query=_CREATE_UNIQUE_INDEX_LAVALINK_TABLE)
-            await self.database.execute(query=_CREATE_YOUTUBE_TABLE)
-            await self.database.execute(query=_CREATE_UNIQUE_INDEX_YOUTUBE_TABLE)
-            await self.database.execute(query=_CREATE_SPOTIFY_TABLE)
-            await self.database.execute(query=_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE)
         self.config = config
 
     async def close(self):
         if HAS_SQL:
-            await self.database.execute(query="PRAGMA optimize;")
-            await self.database.disconnect()
+            self.database.execute("PRAGMA optimize;")
+            self.database.disconnect()
 
     async def insert(self, table: str, values: List[dict]):
-        # if table == "spotify":
-        #     return
         if HAS_SQL:
             query = _PARSER.get(table, {}).get("insert")
             if query is None:
                 raise InvalidTableError(f"{table} is not a valid table in the database.")
 
-            await self.database.execute_many(query=query, values=values)
+            self.database.executemany(query, values)
 
     async def update(self, table: str, values: Dict[str, str]):
-        # if table == "spotify":
-        #     return
         if HAS_SQL:
             table = _PARSER.get(table, {})
             sql_query = table.get("update")
@@ -373,7 +365,7 @@ class MusicCache:
             values["last_fetched"] = time_now
             if not table:
                 raise InvalidTableError(f"{table} is not a valid table in the database.")
-            await self.database.fetch_one(query=sql_query, values=values)
+            self.database.execute(sql_query, values)
 
     async def fetch_one(
         self, table: str, query: str, values: Dict[str, str]
@@ -384,7 +376,7 @@ class MusicCache:
             if not table:
                 raise InvalidTableError(f"{table} is not a valid table in the database.")
 
-            row = await self.database.fetch_one(query=sql_query, values=values)
+            row = self.database.fetchone(sql_query, values)
             last_updated = getattr(row, "last_updated", None)
             need_update = True
             with contextlib.suppress(TypeError):
@@ -410,7 +402,7 @@ class MusicCache:
             if not table:
                 raise InvalidTableError(f"{table} is not a valid table in the database.")
 
-            return await self.database.fetch_all(query=sql_query, values=values)
+            return list(self.database.fetchall(sql_query, values))
         return []
 
     @staticmethod
