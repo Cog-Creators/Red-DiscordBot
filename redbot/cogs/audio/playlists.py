@@ -1,23 +1,18 @@
-import json
-import os
 from collections import namedtuple
 from enum import Enum, unique
-from typing import List, Optional, Union, Tuple
+from typing import List, Optional, Union
 
-import apsw
 import discord
 import lavalink
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
-from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_list
 from .errors import InvalidPlaylistScope, MissingAuthor, MissingGuild, NotAllowed
 
-_config: Config = None
-_bot: Red = None
-_database: "Database" = None
+_config = None
+_bot = None
 
 __all__ = [
     "Playlist",
@@ -36,105 +31,6 @@ FakePlaylist = namedtuple("Playlist", "author scope")
 
 _ = Translator("Audio", __file__)
 
-_PRAGMA_UPDATE_temp_store = """
-PRAGMA temp_store = 2;
-"""
-_PRAGMA_UPDATE_journal_mode = """
-PRAGMA journal_mode = wal;
-"""
-_PRAGMA_UPDATE_wal_autocheckpoint = """
-PRAGMA wal_autocheckpoint;
-"""
-_PRAGMA_UPDATE_read_uncommitted = """
-PRAGMA read_uncommitted = 1;
-"""
-_PRAGMA_UPDATE_optimize = """
-PRAGMA optimize = 1;
-"""
-
-_CREATE_TABLE = """
-CREATE TABLE IF NOT EXISTS GLOBAL (
-playlist_id INTEGER PRIMARY KEY,
-playlist_name TEXT NOT NULL,
-scope_id INTEGER NOT NULL,
-author_id INTEGER NOT NULL,
-playlist_url TEXT,
-tracks BLOB);
-"""
-
-_DROP = """
-DROP TABLE {table};
-"""
-_DELETE = """
-DELETE FROM {table}
-WHERE 
-    (
-      playlist_id = :playlist_id
-    AND
-      scope_id = :scope_id
-    )
-;
-"""
-_FETCH_ALL = """
-SELECT
-playlist_id,
-playlist_name,
-scope_id,
-author_id,
-playlist_url,
-tracks
-FROM {table};
-"""
-
-_FETCH = """
-SELECT
-playlist_id,
-playlist_name,
-scope_id,
-author_id,
-playlist_url,
-tracks
-FROM {table}
-WHERE 
-    (
-      playlist_id = :playlist_id
-    AND
-      scope_id = :scope_id
-    )
-"""
-
-_UPSET = """INSERT INTO 
-{table} 
-  (
-    playlist_id,
-    playlist_name,
-    scope_id,
-    author_id,
-    playlist_url,
-    tracks
-  ) 
-VALUES 
-  (
-    :playlist_id,
-    :playlist_name,
-    :scope_id,
-    :author_id,
-    :playlist_url,
-    :tracks
-  )
-ON CONFLICT
-  (
-  playlist_id, 
-  scope_id
-  )
-DO UPDATE 
-  SET 
-    playlist_name = :playlist_name,
-    playlist_url = :playlist_url,
-    tracks = :tracks
-;
-"""
-
 
 @unique
 class PlaylistScope(Enum):
@@ -150,89 +46,12 @@ class PlaylistScope(Enum):
         return list(map(lambda c: c.value, PlaylistScope))
 
 
-class Database:
-    def __init__(self):
-        self._database = apsw.Connection(
-            str(cog_data_path(_bot.get_cog("Audio")) / "playlists.db")
-        )
-        self.cursor = self._database.cursor()
-        self.cursor.execute(_PRAGMA_UPDATE_temp_store)
-        self.cursor.execute(_PRAGMA_UPDATE_journal_mode)
-        self.cursor.execute(_PRAGMA_UPDATE_wal_autocheckpoint)
-        self.cursor.execute(_PRAGMA_UPDATE_read_uncommitted)
-        for t in ["GLOBAL", "GUILD", "USER"]:
-            self.cursor.execute(_CREATE_TABLE.format(table=t))
-
-    @staticmethod
-    def parse_query(scope: PlaylistScope, query: str):
-        if scope == PlaylistScope.GLOBAL.value:
-            table = "GLOBAL"
-        elif scope == PlaylistScope.GUILD.value:
-            table = "GUILD"
-        elif scope == PlaylistScope.USER.value:
-            table = "USER"
-        else:
-            raise
-        return query.format(table=table)
-
-    def fetch(
-        self, scope: PlaylistScope, playlist_id: int, scope_id: int
-    ) -> Tuple[int, str, int, int, str, str]:
-        query = self.parse_query(scope, _FETCH)
-        return self.cursor.execute(
-            query, ({"playlist_id": playlist_id, "scope_id": scope_id})
-        ).fetchone()
-
-    def delete(self, scope: PlaylistScope, playlist_id: int, scope_id: int):
-        query = self.parse_query(scope, _DELETE)
-        return self.cursor.execute(query, ({"playlist_id": playlist_id, "scope_id": scope_id}))
-
-    def fetch_all(self, scope: PlaylistScope) -> List[Tuple[int, str, int, int, str, str]]:
-        query = self.parse_query(scope, _FETCH_ALL)
-        return self.cursor.execute(query).fetchall()
-
-    def drop(self, scope: PlaylistScope):
-        query = self.parse_query(scope, _DROP)
-        return self.cursor.execute(query)
-
-    def create_table(self, scope: PlaylistScope):
-        query = self.parse_query(scope, _CREATE_TABLE)
-        return self.cursor.execute(query)
-
-    def upsert(
-        self,
-        scope: PlaylistScope,
-        playlist_id: int,
-        playlist_name: str,
-        scope_id: int,
-        author_id: int,
-        playlist_url: str,
-        tracks: List[dict],
-    ):
-        query = self.parse_query(scope, _UPSET)
-        self.cursor.execute(
-            query,
-            (
-                {
-                    "playlist_id": playlist_id,
-                    "playlist_name": playlist_name,
-                    "scope_id": scope_id,
-                    "author_id": author_id,
-                    "playlist_url": playlist_url,
-                    "tracks": json.dumps(tracks),
-                }
-            ),
-        )
-
-
 def _pass_config_to_playlist(config: Config, bot: Red):
-    global _config, _bot, _database
+    global _config, _bot
     if _config is None:
         _config = config
     if _bot is None:
         _bot = bot
-    if _database is None:
-        _database = Database()
 
 
 def standardize_scope(scope) -> str:
@@ -273,15 +92,15 @@ def _prepare_config_scope(
     scope = standardize_scope(scope)
 
     if scope == PlaylistScope.GLOBAL.value:
-        config_scope = [PlaylistScope.GLOBAL.value, _bot.user.id]
+        config_scope = [PlaylistScope.GLOBAL.value]
     elif scope == PlaylistScope.USER.value:
         if author is None:
             raise MissingAuthor("Invalid author for user scope.")
-        config_scope = [PlaylistScope.USER.value, getattr(author, "id", author)]
+        config_scope = [PlaylistScope.USER.value, str(getattr(author, "id", author))]
     else:
         if guild is None:
             raise MissingGuild("Invalid guild for guild scope.")
-        config_scope = [PlaylistScope.GUILD.value, getattr(guild, "id", guild)]
+        config_scope = [PlaylistScope.GUILD.value, str(getattr(guild, "id", guild))]
     return config_scope
 
 
@@ -313,14 +132,6 @@ class Playlist:
         self.tracks = tracks or []
         self.tracks_obj = [lavalink.Track(data=track) for track in self.tracks]
 
-    def _get_scope_id(self):
-        if self.scope == PlaylistScope.GLOBAL.value:
-            return self.bot.user.id
-        elif self.scope == PlaylistScope.USER.value:
-            return self.author
-        else:
-            return self.guild.id
-
     async def edit(self, data: dict):
         """
         Edits a Playlist.
@@ -335,22 +146,8 @@ class Playlist:
 
         for item in list(data.keys()):
             setattr(self, item, data[item])
-        await self.save()
 
-    async def save(self):
-        """
-        Saves a Playlist.
-        """
-        scope, scope_id = self.config_scope
-        _database.upsert(
-            scope,
-            playlist_id=int(self.id),
-            playlist_name=self.name,
-            scope_id=scope_id,
-            author_id=self.author,
-            playlist_url=self.url,
-            tracks=self.tracks,
-        )
+        await _config.custom(*self.config_scope, str(self.id)).set(self.to_json())
 
     def to_json(self) -> dict:
         """Transform the object to a dict.
@@ -419,7 +216,7 @@ class Playlist:
         )
 
 
-async def get_playlist( # TODO: convert to SQL
+async def get_playlist(
     playlist_number: int,
     scope: str,
     bot: Red,
@@ -465,7 +262,7 @@ async def get_playlist( # TODO: convert to SQL
     )
 
 
-async def get_all_playlist( # TODO: convert to SQL
+async def get_all_playlist(
     scope: str,
     bot: Red,
     guild: Union[discord.Guild, int] = None,
@@ -563,7 +360,10 @@ async def create_playlist(
     playlist = Playlist(
         ctx.bot, scope, author.id, ctx.message.id, playlist_name, playlist_url, tracks, ctx.guild
     )
-    await playlist.save()
+
+    await _config.custom(*_prepare_config_scope(scope, author, guild), str(ctx.message.id)).set(
+        playlist.to_json()
+    )
     return playlist
 
 
@@ -593,9 +393,7 @@ async def reset_playlist(
     `MissingAuthor`
         Trying to access the User scope without an user id.
     """
-    scope, scope_id = _prepare_config_scope(scope, author, guild)
-    _database.drop(scope)
-    _database.create_table(scope)
+    await _config.custom(*_prepare_config_scope(scope, author, guild)).clear()
 
 
 async def delete_playlist(
@@ -627,5 +425,4 @@ async def delete_playlist(
         `MissingAuthor`
             Trying to access the User scope without an user id.
         """
-    scope, scope_id = _prepare_config_scope(scope, author, guild)
-    _database.delete(scope, int(playlist_id), scope_id)
+    await _config.custom(*_prepare_config_scope(scope, author, guild), str(playlist_id)).clear()
