@@ -9,7 +9,7 @@ import random
 import time
 import traceback
 from collections import namedtuple
-from typing import Callable, Dict, List, Mapping, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 try:
     import apsw
@@ -40,99 +40,181 @@ from .utils import CacheLevel, Notifier, is_allowed, queue_duration, track_limit
 log = logging.getLogger("red.audio.cache")
 _ = Translator("Audio", __file__)
 
-_DROP_YOUTUBE_TABLE = "DROP TABLE youtube;"
-
+_DROP_YOUTUBE_TABLE = """
+DROP TABLE youtube;
+"""
 _CREATE_YOUTUBE_TABLE = """
-                CREATE TABLE IF NOT EXISTS youtube(
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    track_info TEXT,
-                    youtube_url TEXT,
-                    last_updated TEXT,
-                    last_fetched TEXT
-                );
-            """
+CREATE TABLE IF NOT EXISTS youtube(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    track_info TEXT,
+    youtube_url TEXT,
+    last_updated TEXT,
+    last_fetched TEXT
+);
+"""
+_CREATE_UNIQUE_INDEX_YOUTUBE_TABLE = """
+CREATE UNIQUE INDEX IF NOT EXISTS idx_youtube_url 
+ON youtube (track_info, youtube_url);
+"""
+_INSERT_YOUTUBE_TABLE = """INSERT INTO 
+youtube 
+  (
+    track_info,  
+    youtube_url,
+    last_updated,
+    last_fetched
+  ) 
+VALUES 
+  (
+   :youtube_url, 
+   :track_info,
+   :last_updated,
+   :last_fetched
+  )
+ON CONFLICT
+  (
+    track_info
+  ) 
+DO UPDATE 
+  SET 
+    track_info = :track_info,
+    last_updated = :last_updated;
+"""
+_UPDATE_YOUTUBE_TABLE = """
+UPDATE youtube
+SET last_fetched=:last_fetched 
+WHERE track_info=:track;
+"""
+_QUERY_YOUTUBE_TABLE = """
+SELECT track_info, last_updated
+FROM youtube 
+WHERE track_info=:track;
+"""
 
-_CREATE_UNIQUE_INDEX_YOUTUBE_TABLE = (
-    "CREATE UNIQUE INDEX IF NOT EXISTS idx_youtube_url ON youtube (track_info, youtube_url);"
-)
-
-_INSERT_YOUTUBE_TABLE = """
-        INSERT OR REPLACE INTO 
-        youtube(track_info, youtube_url, last_updated, last_fetched) 
-        VALUES (:track_info, :track_url, :last_updated, :last_fetched);
-    """
-_QUERY_YOUTUBE_TABLE = "SELECT * FROM youtube WHERE track_info=:track;"
-_UPDATE_YOUTUBE_TABLE = """UPDATE youtube
-              SET last_fetched=:last_fetched 
-              WHERE track_info=:track;"""
-
-_DROP_SPOTIFY_TABLE = "DROP TABLE spotify;"
-
-_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE = (
-    "CREATE UNIQUE INDEX IF NOT EXISTS idx_spotify_uri ON spotify (id, type, uri);"
-)
-
+_DROP_SPOTIFY_TABLE = """
+DROP TABLE spotify;
+"""
+_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE = """
+CREATE UNIQUE INDEX IF NOT EXISTS idx_spotify_uri 
+ON spotify (id, type, uri);
+"""
 _CREATE_SPOTIFY_TABLE = """
-                        CREATE TABLE IF NOT EXISTS spotify(
-                            id TEXT,
-                            type TEXT,
-                            uri TEXT,
-                            track_name TEXT,
-                            artist_name TEXT, 
-                            song_url TEXT,
-                            track_info TEXT,
-                            last_updated TEXT,
-                            last_fetched TEXT
-                        );
-                    """
+CREATE TABLE IF NOT EXISTS spotify(
+    id TEXT,
+    type TEXT,
+    uri TEXT,
+    track_name TEXT,
+    artist_name TEXT, 
+    song_url TEXT,
+    track_info TEXT,
+    last_updated TEXT,
+    last_fetched TEXT
+);
+"""
+_INSERT_SPOTIFY_TABLE = """INSERT INTO 
+youtube 
+  (
+    id, type, uri, track_name, artist_name, 
+    song_url, track_info, last_updated, last_fetched
+  ) 
+VALUES 
+  (
+    :id, :type, :uri, :track_name, :artist_name, 
+    :song_url, :track_info, :last_updated, :last_fetched
+  )
+ON CONFLICT
+  (
+    id,
+    type,
+    uri
+  ) 
+DO UPDATE 
+  SET 
+    track_name = :track_name,
+    artist_name = :artist_name,
+    song_url = :song_url,
+    track_info = :track_info,
+    last_updated = :last_updated;
+"""
+_QUERY_SPOTIFY_TABLE = """
+SELECT track_info, last_updated
+FROM spotify 
+WHERE uri=:uri;
+"""
+_UPDATE_SPOTIFY_TABLE = """
+UPDATE spotify
+SET last_fetched=:last_fetched 
+WHERE uri=:uri;
+"""
 
-_INSERT_SPOTIFY_TABLE = """
-        INSERT OR REPLACE INTO 
-        spotify(id, type, uri, track_name, artist_name, 
-        song_url, track_info, last_updated, last_fetched) 
-        VALUES (:id, :type, :uri, :track_name, :artist_name, 
-        :song_url, :track_info, :last_updated, :last_fetched);
-    """
-_QUERY_SPOTIFY_TABLE = "SELECT * FROM spotify WHERE uri=:uri;"
-_UPDATE_SPOTIFY_TABLE = """UPDATE spotify
-              SET last_fetched=:last_fetched 
-              WHERE uri=:uri;"""
-
-_DROP_LAVALINK_TABLE = "DROP TABLE lavalink;"
-
+_DROP_LAVALINK_TABLE = """
+DROP TABLE lavalink;
+"""
 _CREATE_LAVALINK_TABLE = """
-                CREATE TABLE IF NOT EXISTS lavalink(
-                    query TEXT,
-                    data BLOB,
-                    last_updated TEXT,
-                    last_fetched TEXT
+CREATE TABLE IF NOT EXISTS lavalink(
+    query TEXT,
+    data BLOB,
+    last_updated TEXT,
+    last_fetched TEXT
 
-                );
-            """
-
-_CREATE_UNIQUE_INDEX_LAVALINK_TABLE = (
-    "CREATE UNIQUE INDEX IF NOT EXISTS idx_lavalink_query ON lavalink (query);"
-)
-
-_INSERT_LAVALINK_TABLE = """
-        INSERT OR REPLACE INTO 
-        lavalink(query,  data, last_updated, last_fetched) 
-        VALUES (:query, :data, :last_updated, :last_fetched);
-    """
-_QUERY_LAVALINK_TABLE = "SELECT * FROM lavalink WHERE query=:query;"
-_QUERY_LAST_FETCHED_LAVALINK_TABLE = (
-    "SELECT * FROM lavalink "
-    "WHERE last_fetched LIKE :day1"
-    " OR last_fetched LIKE :day2"
-    " OR last_fetched LIKE :day3"
-    " OR last_fetched LIKE :day4"
-    " OR last_fetched LIKE :day5"
-    " OR last_fetched LIKE :day6"
-    " OR last_fetched LIKE :day7;"
-)
-_UPDATE_LAVALINK_TABLE = """UPDATE lavalink
-              SET last_fetched=:last_fetched 
-              WHERE query=:query;"""
+);
+"""
+_CREATE_UNIQUE_INDEX_LAVALINK_TABLE = """
+CREATE UNIQUE INDEX IF NOT EXISTS idx_lavalink_query 
+ON lavalink (query);
+"""
+_INSERT_LAVALINK_TABLE = """INSERT INTO 
+youtube 
+  (
+    query,  
+    data, 
+    last_updated, 
+    last_fetched
+  ) 
+VALUES 
+  (
+   :query, 
+   :data,
+   :last_updated, 
+   :last_fetched
+  )
+ON CONFLICT
+  (
+    query
+  ) 
+DO UPDATE 
+  SET 
+    data = :data,
+    last_updated = :last_updated;
+"""
+_UPDATE_LAVALINK_TABLE = """
+UPDATE lavalink
+SET last_fetched=:last_fetched 
+WHERE query=:query;
+"""
+_QUERY_LAVALINK_TABLE = """
+SELECT data, last_updated
+FROM lavalink 
+WHERE query=:query;
+"""
+_QUERY_LAST_FETCHED_LAVALINK_TABLE = """
+SELECT data
+FROM lavalink 
+WHERE last_fetched 
+    LIKE :day1
+  OR last_fetched 
+    LIKE :day2
+  OR last_fetched 
+    LIKE :day3
+  OR last_fetched 
+    LIKE :day4
+  OR last_fetched 
+    LIKE :day5
+  OR last_fetched 
+    LIKE :day6
+  OR last_fetched 
+    LIKE :day7;
+"""
 
 _PARSER = {
     "youtube": {
@@ -394,10 +476,7 @@ class MusicCache:
             if not table:
                 raise InvalidTableError(f"{table} is not a valid table in the database.")
 
-            for row in self.database.execute(sql_query, values):
-                if row:
-                    break
-            last_updated = getattr(row, "last_updated", None)
+            query, last_updated = self.database.execute(sql_query, values).fetchone()
             need_update = True
             with contextlib.suppress(TypeError):
                 if last_updated:
@@ -408,21 +487,20 @@ class MusicCache:
 
                     need_update = last_update < datetime.datetime.now(datetime.timezone.utc)
 
-            return row[-1] if row else None, need_update if table != "spotify" else True
+            return query or None, need_update if table != "spotify" else True
         else:
             return None, True
 
-        # TODO: Create a task to remove entries
-        #  from DB that haven't been fetched in x days ... customizable by Owner
-
-    async def fetch_all(self, table: str, query: str, values: Dict[str, str]) -> List[Mapping]:
+    async def fetch_all(
+        self, table: str, query: str, values: Dict[str, str]
+    ) -> List[Tuple[str, str]]:
         if HAS_SQL:
             table = _PARSER.get(table, {})
             sql_query = table.get(query, {}).get("played")
             if not table:
                 raise InvalidTableError(f"{table} is not a valid table in the database.")
 
-            return list(self.database.execute(sql_query, values))
+            return self.database.execute(sql_query, values).fetchall()
         return []
 
     @staticmethod
@@ -1064,7 +1142,7 @@ class MusicCache:
                 query_data[f"day{i}"] = date
 
             vals = await self.fetch_all("lavalink", "data", query_data)
-            recently_played = [r.data for r in vals if r]
+            recently_played = [r[0] for r in vals if r]
 
             if recently_played:
                 track = random.choice(recently_played)
