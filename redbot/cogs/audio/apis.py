@@ -66,20 +66,22 @@ youtube
   ) 
 VALUES 
   (
-   :youtube_url, 
-   :track_info,
+   :track_info, 
+   :track_url,
    :last_updated,
    :last_fetched
   )
 ON CONFLICT
   (
-    track_info
-  ) 
+  track_info, 
+  youtube_url
+  )
 DO UPDATE 
   SET 
     track_info = :track_info,
     last_updated = :last_updated;
 """
+
 _UPDATE_YOUTUBE_TABLE = """
 UPDATE youtube
 SET last_fetched=:last_fetched 
@@ -112,7 +114,7 @@ CREATE TABLE IF NOT EXISTS spotify(
 );
 """
 _INSERT_SPOTIFY_TABLE = """INSERT INTO 
-youtube 
+spotify 
   (
     id, type, uri, track_name, artist_name, 
     song_url, track_info, last_updated, last_fetched
@@ -164,7 +166,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_lavalink_query
 ON lavalink (query);
 """
 _INSERT_LAVALINK_TABLE = """INSERT INTO 
-youtube 
+lavalink 
   (
     query,  
     data, 
@@ -448,13 +450,13 @@ class MusicCache:
     async def close(self):
         if HAS_SQL:
             self.database.execute(_PRAGMA_UPDATE_optimize)
+            self._database.close()
 
     async def insert(self, table: str, values: List[dict]):
         if HAS_SQL:
             query = _PARSER.get(table, {}).get("insert")
             if query is None:
                 raise InvalidTableError(f"{table} is not a valid table in the database.")
-
             self.database.executemany(query, values)
 
     async def update(self, table: str, values: Dict[str, str]):
@@ -476,7 +478,10 @@ class MusicCache:
             if not table:
                 raise InvalidTableError(f"{table} is not a valid table in the database.")
 
-            query, last_updated = self.database.execute(sql_query, values).fetchone()
+            query, last_updated = self.database.execute(sql_query, values).fetchone() or (
+                None,
+                None,
+            )
             need_update = True
             with contextlib.suppress(TypeError):
                 if last_updated:
