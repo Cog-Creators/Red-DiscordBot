@@ -55,121 +55,99 @@ PRAGMA optimize = 1;
 """
 
 _CREATE_TABLE = """
-CREATE TABLE IF NOT EXISTS playlists (
-  scope_type INTEGER NOT NULL,
-  playlist_id INTEGER NOT NULL,
-  playlist_name TEXT NOT NULL,
-  scope_id INTEGER NOT NULL,
-  author_id INTEGER NOT NULL,
-  playlist_url TEXT,
-  tracks BLOB,
-  PRIMARY KEY (playlist_id, scope_id, scope_type)
+CREATE TABLE IF NOT EXISTS playlists ( 
+    scope_type INTEGER NOT NULL, 
+    playlist_id INTEGER NOT NULL, 
+    playlist_name TEXT NOT NULL, 
+    scope_id INTEGER NOT NULL, 
+    author_id INTEGER NOT NULL, 
+    playlist_url TEXT, 
+    tracks BLOB, 
+    PRIMARY KEY (playlist_id, scope_id, scope_type)
 );
 """
 
 _DELETE = """
-DELETE FROM playlists
-WHERE 
-  (
-    scope_type = :scope_type
-  AND
-    playlist_id = :playlist_id
-  AND
-    scope_id = :scope_id
-  )
+DELETE
+FROM
+    playlists 
+WHERE
+    (
+        scope_type = :scope_type 
+        AND playlist_id = :playlist_id 
+        AND scope_id = :scope_id 
+    )
 ;
 """
 _DELETE_SCOPE = """
-DELETE FROM playlists
-WHERE 
-  scope_type = :scope_type
-;
+DELETE
+FROM
+    playlists 
+WHERE
+    scope_type = :scope_type ;
 """
 
 _FETCH_ALL = """
 SELECT
-playlist_id,
-playlist_name,
-scope_id,
-author_id,
-playlist_url,
-tracks
-FROM playlists
-WHERE
-  scope_type = :scope_type
-;
-"""
-
-_FETCH_ALL_WITH_FILTER = """
-SELECT
-playlist_id,
-playlist_name,
-scope_id,
-author_id,
-playlist_url,
-tracks
-FROM playlists
-WHERE
-  (
-    scope_type = :scope_type
-  AND
-    author_id = :author_id
-  )
-;
-"""
-
-_FETCH = """
-SELECT
-playlist_id,
-playlist_name,
-scope_id,
-author_id,
-playlist_url,
-tracks
-FROM playlists
-WHERE 
-  (
-    scope_type = :scope_type
-  AND
-    playlist_id = :playlist_id
-  AND
-    scope_id = :scope_id
-  )
-"""
-
-_UPSET = """INSERT INTO 
-playlists 
-  (
-    scope_type
     playlist_id,
     playlist_name,
     scope_id,
     author_id,
     playlist_url,
-    tracks
-  ) 
-VALUES 
-  (
-    :scope_type,
-    :playlist_id,
-    :playlist_name,
-    :scope_id,
-    :author_id,
-    :playlist_url,
-    :tracks
-  )
-ON CONFLICT
-  (
-  scope_type,
-  playlist_id, 
-  scope_id
-  )
-DO UPDATE 
-  SET 
-    playlist_name = excluded.playlist_name, 
-    playlist_url = excluded.playlist_url, 
-    tracks = excluded.tracks
+    tracks 
+FROM
+    playlists 
+WHERE
+    scope_type = :scope_type ;
+"""
+
+_FETCH_ALL_WITH_FILTER = """
+SELECT
+    playlist_id,
+    playlist_name,
+    scope_id,
+    author_id,
+    playlist_url,
+    tracks 
+FROM
+    playlists 
+WHERE
+    (
+        scope_type = :scope_type 
+        AND author_id = :author_id 
+    )
 ;
+"""
+
+_FETCH = """
+SELECT
+    playlist_id,
+    playlist_name,
+    scope_id,
+    author_id,
+    playlist_url,
+    tracks 
+FROM
+    playlists 
+WHERE
+    (
+        scope_type = :scope_type 
+        AND playlist_id = :playlist_id 
+        AND scope_id = :scope_id 
+    )
+"""
+
+_UPSET = """
+INSERT INTO
+    playlists ( scope_type, playlist_id, playlist_name, scope_id, author_id, playlist_url, tracks ) 
+VALUES
+    (
+        :scope_type, :playlist_id, :playlist_name, :scope_id, :author_id, :playlist_url, :tracks 
+    )
+    ON CONFLICT (scope_type, playlist_id, scope_id) DO 
+    UPDATE
+    SET
+        playlist_name = excluded.playlist_name, playlist_url = excluded.playlist_url, tracks = excluded.tracks;
 """
 
 
