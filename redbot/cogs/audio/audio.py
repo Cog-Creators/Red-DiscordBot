@@ -3229,9 +3229,21 @@ class Audio(commands.Cog):
                 ]
             else:
                 correct_scope_matches = [p for p in correct_scope_matches]
+
+        match_count = len(correct_scope_matches)
+        if match_count > 1:
+            correct_scope_matches2 = [
+                p for p in correct_scope_matches if p.name == str(original_input).strip()
+            ]
+            if correct_scope_matches2:
+                correct_scope_matches = correct_scope_matches2
+            elif original_input.isnumeric():
+                arg = int(original_input)
+                correct_scope_matches3 = [p for p in correct_scope_matches if p.id == arg]
+                if correct_scope_matches3:
+                    correct_scope_matches = correct_scope_matches3
         match_count = len(correct_scope_matches)
         # We done all the trimming we can with the info available time to ask the user
-        print("correct_scope_matches", correct_scope_matches)
         if match_count > 10:
             if original_input.isnumeric():
                 arg = int(original_input)
@@ -3950,16 +3962,8 @@ class Audio(commands.Cog):
                 track["info"]["uri"] for track in playlist.tracks
             ]
             # TODO: Keep new playlists backwards compatible, Remove me in a few releases
-            playlist_data[
-                "playlist"
-            ] = (
-                playlist_songs_backwards_compatible
-            )
-            playlist_data[
-                "link"
-            ] = (
-                playlist.url
-            )
+            playlist_data["playlist"] = playlist_songs_backwards_compatible
+            playlist_data["link"] = playlist.url
             file_name = playlist.id
         playlist_data.update({"schema": schema, "version": version})
         playlist_data = json.dumps(playlist_data)
