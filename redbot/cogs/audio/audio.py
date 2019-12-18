@@ -3947,9 +3947,7 @@ class Audio(commands.Cog):
             ]
             playlist_data[
                 "playlist"
-            ] = (
-                playlist_songs_backwards_compatible
-            )  # TODO: Keep new playlists backwards compatible, Remove me in a few releases
+            ] = playlist_songs_backwards_compatible  # TODO: Keep new playlists backwards compatible, Remove me in a few releases
             playlist_data[
                 "link"
             ] = (
