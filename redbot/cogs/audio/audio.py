@@ -5,7 +5,6 @@ import datetime
 import heapq
 import json
 import logging
-import os
 import random
 import re
 import time
@@ -56,7 +55,8 @@ from .playlists import (
     get_all_playlist,
     get_playlist,
     humanize_scope,
-)
+    database,
+    get_all_playlist_for_migration23)
 from .utils import *
 
 
@@ -67,7 +67,7 @@ __author__ = ["aikaterna", "Draper"]
 
 log = logging.getLogger("red.audio")
 
-_SCHEMA_VERSION = 2
+_SCHEMA_VERSION = 3
 LazyGreedyConverter = get_lazy_converter("--")
 PlaylistConverter = get_playlist_converter()
 
@@ -204,10 +204,10 @@ class Audio(commands.Cog):
         await self.bot.wait_until_ready()
         # Unlike most cases, we want the cache to exit before migration.
         await self.music_cache.initialize(self.config)
+        pass_config_to_dependencies(self.config, self.bot, await self.config.localpath())
         await self._migrate_config(
             from_version=await self.config.schema_version(), to_version=_SCHEMA_VERSION
         )
-        pass_config_to_dependencies(self.config, self.bot, await self.config.localpath())
         self._restart_connect()
         self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
         lavalink.register_event_listener(self.event_handler)
@@ -233,7 +233,7 @@ class Audio(commands.Cog):
         time_now = str(datetime.datetime.now(datetime.timezone.utc))
         if from_version == to_version:
             return
-        elif from_version < to_version:
+        if from_version < 2 <= to_version:
             all_guild_data = await self.config.all_guilds()
             all_playlist = {}
             for guild_id, guild_data in all_guild_data.items():
@@ -271,6 +271,14 @@ class Audio(commands.Cog):
                 await self.config.guild(
                     cast(discord.Guild, discord.Object(id=guild_id))
                 ).clear_raw("playlists")
+        if from_version < 3 <= to_version:
+            for scope in PlaylistScope.list():
+                scope_playlist = await get_all_playlist_for_migration23(scope)
+                for p in scope_playlist:
+                    await p.save()
+                await self.config.custom(scope).clear()
+            await self.config.schema_version.set(_SCHEMA_VERSION)
+
         if database_entries and HAS_SQL:
             await self.music_cache.insert("lavalink", database_entries)
 
@@ -3947,9 +3955,7 @@ class Audio(commands.Cog):
             ]
             playlist_data[
                 "playlist"
-            ] = (
-                playlist_songs_backwards_compatible
-            )  # TODO: Keep new playlists backwards compatible, Remove me in a few releases
+            ] = playlist_songs_backwards_compatible  # TODO: Keep new playlists backwards compatible, Remove me in a few releases
             playlist_data[
                 "link"
             ] = (
@@ -7020,5 +7026,7 @@ class Audio(commands.Cog):
     async def _close_database(self):
         await self.music_cache.run_all_pending_tasks()
         await self.music_cache.close()
+        if database:
+            database.close()
 
     __del__ = cog_unload
