@@ -230,7 +230,7 @@ class Audio(commands.Cog):
 
     async def _migrate_config(self, from_version: int, to_version: int):
         database_entries = []
-        time_now = str(datetime.datetime.now(datetime.timezone.utc))
+        time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
         if from_version == to_version:
             return
         elif from_version < to_version:
@@ -4998,7 +4998,7 @@ class Audio(commands.Cog):
         )
         await playlist_msg.edit(embed=embed3)
         database_entries = []
-        time_now = str(datetime.datetime.now(datetime.timezone.utc))
+        time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
         for t in track_list:
             uri = t.get("info", {}).get("uri")
             if uri:

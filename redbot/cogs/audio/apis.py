@@ -48,8 +48,8 @@ CREATE TABLE IF NOT EXISTS youtube(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     track_info TEXT,
     youtube_url TEXT,
-    last_updated TEXT,
-    last_fetched TEXT
+    last_updated INTEGER,
+    last_fetched INTEGER
 );
 """
 _CREATE_UNIQUE_INDEX_YOUTUBE_TABLE = """
@@ -78,8 +78,8 @@ ON CONFLICT
   )
 DO UPDATE 
   SET 
-    track_info = :track_info,
-    last_updated = :last_updated;
+    track_info = excluded.track_info, 
+    last_updated = excluded.last_updated
 """
 
 _UPDATE_YOUTUBE_TABLE = """
@@ -109,8 +109,8 @@ CREATE TABLE IF NOT EXISTS spotify(
     artist_name TEXT, 
     song_url TEXT,
     track_info TEXT,
-    last_updated TEXT,
-    last_fetched TEXT
+    last_updated INTEGER,
+    last_fetched INTEGER
 );
 """
 _INSERT_SPOTIFY_TABLE = """INSERT INTO 
@@ -132,11 +132,11 @@ ON CONFLICT
   ) 
 DO UPDATE 
   SET 
-    track_name = :track_name,
-    artist_name = :artist_name,
-    song_url = :song_url,
-    track_info = :track_info,
-    last_updated = :last_updated;
+    track_name = excluded.track_name,
+    artist_name = excluded.artist_name,
+    song_url = excluded.song_url,
+    track_info = excluded.track_info,
+    last_updated = excluded.last_updated;
 """
 _QUERY_SPOTIFY_TABLE = """
 SELECT track_info, last_updated
@@ -156,8 +156,8 @@ _CREATE_LAVALINK_TABLE = """
 CREATE TABLE IF NOT EXISTS lavalink(
     query TEXT,
     data BLOB,
-    last_updated TEXT,
-    last_fetched TEXT
+    last_updated INTEGER,
+    last_fetched INTEGER
 
 );
 """
@@ -186,8 +186,8 @@ ON CONFLICT
   ) 
 DO UPDATE 
   SET 
-    data = :data,
-    last_updated = :last_updated;
+    data = excluded.data,
+    last_updated = excluded.last_updated;
 """
 _UPDATE_LAVALINK_TABLE = """
 UPDATE lavalink
@@ -202,20 +202,7 @@ WHERE query=:query;
 _QUERY_LAST_FETCHED_LAVALINK_TABLE = """
 SELECT data
 FROM lavalink 
-WHERE last_fetched 
-    LIKE :day1
-  OR last_fetched 
-    LIKE :day2
-  OR last_fetched 
-    LIKE :day3
-  OR last_fetched 
-    LIKE :day4
-  OR last_fetched 
-    LIKE :day5
-  OR last_fetched 
-    LIKE :day6
-  OR last_fetched 
-    LIKE :day7;
+WHERE last_fetched > :day;
 """
 
 _PARSER = {
@@ -463,7 +450,7 @@ class MusicCache:
         if HAS_SQL:
             table = _PARSER.get(table, {})
             sql_query = table.get("update")
-            time_now = str(datetime.datetime.now(datetime.timezone.utc))
+            time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
             values["last_fetched"] = time_now
             if not table:
                 raise InvalidTableError(f"{table} is not a valid table in the database.")
@@ -485,7 +472,7 @@ class MusicCache:
             need_update = True
             with contextlib.suppress(TypeError):
                 if last_updated:
-                    last_update = datetime.datetime.fromisoformat(
+                    last_update = datetime.datetime.fromtimestamp(
                         last_updated
                     ) + datetime.timedelta(days=await self.config.cache_age())
                     last_update.replace(tzinfo=datetime.timezone.utc)
@@ -546,7 +533,7 @@ class MusicCache:
         total_tracks = len(tracks)
         database_entries = []
         track_count = 0
-        time_now = str(datetime.datetime.now(datetime.timezone.utc))
+        time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
         youtube_cache = CacheLevel.set_youtube().is_subset(current_cache_level)
         for track in tracks:
             if track.get("error", {}).get("message") == "invalid id":
@@ -612,7 +599,7 @@ class MusicCache:
     ) -> str:
         track_url = await self.youtube_api.get_call(track_info)
         if CacheLevel.set_youtube().is_subset(current_cache_level) and track_url:
-            time_now = str(datetime.datetime.now(datetime.timezone.utc))
+            time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
             task = (
                 "insert",
                 (
@@ -793,7 +780,7 @@ class MusicCache:
 
                 return track_list
             database_entries = []
-            time_now = str(datetime.datetime.now(datetime.timezone.utc))
+            time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
 
             youtube_cache = CacheLevel.set_youtube().is_subset(current_cache_level)
             spotify_cache = CacheLevel.set_spotify().is_subset(current_cache_level)
@@ -1070,7 +1057,7 @@ class MusicCache:
                 and results.tracks
             ):
                 with contextlib.suppress(SQLError):
-                    time_now = str(datetime.datetime.now(datetime.timezone.utc))
+                    time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
                     task = (
                         "insert",
                         (
@@ -1133,18 +1120,9 @@ class MusicCache:
         tracks = []
         try:
             query_data = {}
-            for i in range(1, 8):
-                date = (
-                    "%"
-                    + str(
-                        (
-                            datetime.datetime.now(datetime.timezone.utc)
-                            - datetime.timedelta(days=i)
-                        ).date()
-                    )
-                    + "%"
-                )
-                query_data[f"day{i}"] = date
+            date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=7)
+            date = int(date.timestamp(date))
+            query_data["day"] = date
 
             vals = await self.fetch_all("lavalink", "data", query_data)
             recently_played = [r[0] for r in vals if r]
