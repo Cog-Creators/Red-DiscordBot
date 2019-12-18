@@ -56,7 +56,8 @@ from .playlists import (
     get_playlist,
     humanize_scope,
     database,
-    get_all_playlist_for_migration23)
+    get_all_playlist_for_migration23,
+)
 from .utils import *
 
 
