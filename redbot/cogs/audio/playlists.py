@@ -139,7 +139,7 @@ WHERE
         (
         playlist_id = :playlist_id
         OR
-        playlist_name = :playlist_name
+        LOWER(playlist_name) LIKE "%" || COALESCE(LOWER(:playlist_name), "") || "%"
         )
     )
 ;
