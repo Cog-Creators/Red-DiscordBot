@@ -258,11 +258,11 @@ class Database:
             _UPSET,
             (
                 {
-                    "scope_type": scope_type,
-                    "playlist_id": playlist_id,
-                    "playlist_name": playlist_name,
-                    "scope_id": scope_id,
-                    "author_id": author_id,
+                    "scope_type": str(scope_type),
+                    "playlist_id": int(playlist_id),
+                    "playlist_name": str(playlist_name),
+                    "scope_id": int(scope_id),
+                    "author_id": int(author_id),
                     "playlist_url": playlist_url,
                     "tracks": json.dumps(tracks),
                 }
@@ -353,7 +353,6 @@ class PlaylistMigration23:  # TODO: remove me in a future version ?
 
     def __init__(
         self,
-        bot: Red,
         scope: str,
         author: int,
         playlist_id: int,
@@ -362,57 +361,17 @@ class PlaylistMigration23:  # TODO: remove me in a future version ?
         tracks: Optional[List[dict]] = None,
         guild: Union[discord.Guild, int, None] = None,
     ):
-        self.bot = bot
         self.guild = guild
         self.scope = standardize_scope(scope)
-        self.config_scope = _prepare_config_scope_for_migration23(self.scope, author, guild)
         self.author = author
-        self.guild_id = (
-            getattr(guild, "id", guild) if self.scope == PlaylistScope.GLOBAL.value else None
-        )
         self.id = playlist_id
         self.name = name
         self.url = playlist_url
         self.tracks = tracks or []
-        self.tracks_obj = [lavalink.Track(data=track) for track in self.tracks]
 
-    async def edit(self, data: dict):
-        """
-        Edits a Playlist.
-        Parameters
-        ----------
-        data: dict
-            The attributes to change.
-        """
-        # Disallow ID editing
-        if "id" in data:
-            raise NotAllowed("Playlist ID cannot be edited.")
-
-        for item in list(data.keys()):
-            setattr(self, item, data[item])
-
-        await _config.custom(*self.config_scope, str(self.id)).set(self.to_json())
-
-    def to_json(self) -> dict:
-        """Transform the object to a dict.
-        Returns
-        -------
-        dict
-            The playlist in the form of a dict.
-        """
-        data = dict(
-            id=self.id,
-            author=self.author,
-            guild=self.guild_id,
-            name=self.name,
-            playlist_url=self.url,
-            tracks=self.tracks,
-        )
-
-        return data
 
     @classmethod
-    async def from_json(cls, bot: Red, scope: str, playlist_number: int, data: dict, **kwargs):
+    async def from_json(cls, scope: str, playlist_number: int, data: dict, **kwargs):
         """Get a Playlist object from the provided information.
         Parameters
         ----------
@@ -446,10 +405,9 @@ class PlaylistMigration23:  # TODO: remove me in a future version ?
         playlist_id = data.get("id") or playlist_number
         name = data.get("name", "Unnamed")
         playlist_url = data.get("playlist_url", None)
-        tracks = data.get("tracks", [])
+        tracks = json.loads(data.get("tracks", "[]"))
 
         return cls(
-            bot=bot,
             guild=guild,
             scope=scope,
             author=author,
@@ -477,7 +435,6 @@ class PlaylistMigration23:  # TODO: remove me in a future version ?
 
 async def get_all_playlist_for_migration23(  # TODO: remove me in a future version ?
     scope: str,
-    bot: Red,
     guild: Union[discord.Guild, int] = None,
     author: Union[discord.abc.User, int] = None,
 ) -> List[PlaylistMigration23]:
@@ -512,14 +469,14 @@ async def get_all_playlist_for_migration23(  # TODO: remove me in a future versi
     if scope == PlaylistScope.GLOBAL.value:
         return [
             await PlaylistMigration23.from_json(
-                bot, scope, playlist_number, playlist_data, guild=guild, author=author
+                scope, playlist_number, playlist_data, guild=guild, author=int(playlist_data.get("author", 0))
             )
             for playlist_number, playlist_data in playlists.items()
         ]
     elif scope == PlaylistScope.USER.value:
         return [
             await PlaylistMigration23.from_json(
-                bot, scope, playlist_number, playlist_data, guild=guild, author=author
+                scope, playlist_number, playlist_data, guild=guild, author=int(user_id)
             )
             for user_id, scopedata in playlists.items()
             for playlist_number, playlist_data in scopedata.items()
@@ -527,7 +484,7 @@ async def get_all_playlist_for_migration23(  # TODO: remove me in a future versi
     else:
         return [
             await PlaylistMigration23.from_json(
-                bot, scope, playlist_number, playlist_data, guild=guild, author=author
+                scope, playlist_number, playlist_data, guild=int(guild_id), author=int(playlist_data.get("author", 0))
             )
             for guild_id, scopedata in playlists.items()
             for playlist_number, playlist_data in scopedata.items()
@@ -850,27 +807,27 @@ async def delete_playlist(
     author: Union[discord.abc.User, int] = None,
 ) -> None:
     """
-        Deletes the specified playlist.
+    Deletes the specified playlist.
 
-        Parameters
-        ----------
-        scope: str
-            The custom config scope. One of 'GLOBALPLAYLIST', 'GUILDPLAYLIST' or 'USERPLAYLIST'.
-        playlist_id: Union[str, int]
-            The ID of the playlist.
-        guild: discord.Guild
-            The guild to get the playlist from if scope is GUILDPLAYLIST.
-        author: int
-            The ID of the user to get the playlist from if scope is USERPLAYLIST.
+    Parameters
+    ----------
+    scope: str
+        The custom config scope. One of 'GLOBALPLAYLIST', 'GUILDPLAYLIST' or 'USERPLAYLIST'.
+    playlist_id: Union[str, int]
+        The ID of the playlist.
+    guild: discord.Guild
+        The guild to get the playlist from if scope is GUILDPLAYLIST.
+    author: int
+        The ID of the user to get the playlist from if scope is USERPLAYLIST.
 
-         Raises
-        ------
-        `InvalidPlaylistScope`
-            Passing a scope that is not supported.
-        `MissingGuild`
-            Trying to access the Guild scope without a guild.
-        `MissingAuthor`
-            Trying to access the User scope without an user id.
-        """
+     Raises
+    ------
+    `InvalidPlaylistScope`
+        Passing a scope that is not supported.
+    `MissingGuild`
+        Trying to access the Guild scope without a guild.
+    `MissingAuthor`
+        Trying to access the User scope without an user id.
+    """
     scope, scope_id = _prepare_config_scope(scope, author, guild)
     database.delete(scope, int(playlist_id), scope_id)
