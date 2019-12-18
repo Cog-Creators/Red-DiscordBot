@@ -63,7 +63,6 @@ class PlaylistConverter(commands.Converter):
         user_matches = await get_all_playlist_converter(
             PlaylistScope.USER.value, _bot, arg, guild=ctx.guild, author=ctx.author
         )
-
         if not user_matches and not guild_matches and not global_matches:
             raise commands.BadArgument(_("Could not match '{}' to a playlist.").format(arg))
         return {
