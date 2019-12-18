@@ -98,7 +98,9 @@ SELECT
 FROM
     playlists 
 WHERE
-    scope_type = :scope_type ;
+    scope_type = :scope_type 
+    AND scope_id = :scope_id
+    ;
 """
 
 _FETCH_ALL_WITH_FILTER = """
@@ -114,7 +116,31 @@ FROM
 WHERE
     (
         scope_type = :scope_type 
+        AND scope_id = :scope_id
         AND author_id = :author_id 
+    )
+;
+"""
+
+_FETCH_ALL_CONVERTER = """
+SELECT
+    playlist_id,
+    playlist_name,
+    scope_id,
+    author_id,
+    playlist_url,
+    tracks 
+FROM
+    playlists 
+WHERE
+    (
+        scope_type = :scope_type 
+        AND
+        (
+        playlist_id = :playlist_id
+        OR
+        playlist_name = :playlist_name
+        )
     )
 ;
 """
@@ -211,22 +237,38 @@ class Database:
 
         return SQLFetchResult(*row) if row else None
 
-    def fetch_all(self, scope: str, author_id=None) -> List[SQLFetchResult]:
+    def fetch_all(self, scope: str, scope_id: int, author_id=None) -> List[SQLFetchResult]:
         scope_type = self.get_scope_type(scope)
         if author_id is not None:
-            output = (
-                self.cursor.execute(
-                    _FETCH_ALL, ({"scope_type": scope_type, "author_id": author_id})
-                ).fetchall()
-                or []
-            )
+            output = self.cursor.execute(
+                _FETCH_ALL_WITH_FILTER,
+                ({"scope_type": scope_type, "scope_id": scope_id, "author_id": author_id}),
+            ).fetchall()
         else:
-            output = (
-                self.cursor.execute(
-                    _FETCH_ALL_WITH_FILTER, ({"scope_type": scope_type})
-                ).fetchall()
-                or []
-            )
+            output = self.cursor.execute(
+                _FETCH_ALL, ({"scope_type": scope_type, "scope_id": scope_id})
+            ).fetchall()
+        return [SQLFetchResult(*row) for row in output] if output else []
+
+    def fetch_all_converter(self, scope: str, playlist_name, playlist_id) -> List[SQLFetchResult]:
+        scope_type = self.get_scope_type(scope)
+        try:
+            playlist_id = int(playlist_id)
+        except:
+            playlist_id = -1
+        output = (
+            self.cursor.execute(
+                _FETCH_ALL_CONVERTER,
+                (
+                    {
+                        "scope_type": scope_type,
+                        "playlist_name": playlist_name,
+                        "playlist_id": playlist_id,
+                    }
+                ),
+            ).fetchall()
+            or []
+        )
         return [SQLFetchResult(*row) for row in output] if output else []
 
     def delete(self, scope: str, playlist_id: int, scope_id: int):
@@ -369,9 +411,10 @@ class PlaylistMigration23:  # TODO: remove me in a future version ?
         self.url = playlist_url
         self.tracks = tracks or []
 
-
     @classmethod
-    async def from_json(cls, scope: str, playlist_number: int, data: dict, **kwargs):
+    async def from_json(
+        cls, scope: str, playlist_number: int, data: dict, **kwargs
+    ) -> "PlaylistMigration23":
         """Get a Playlist object from the provided information.
         Parameters
         ----------
@@ -405,7 +448,7 @@ class PlaylistMigration23:  # TODO: remove me in a future version ?
         playlist_id = data.get("id") or playlist_number
         name = data.get("name", "Unnamed")
         playlist_url = data.get("playlist_url", None)
-        tracks = json.loads(data.get("tracks", "[]"))
+        tracks = data.get("tracks", [])
 
         return cls(
             guild=guild,
@@ -469,7 +512,11 @@ async def get_all_playlist_for_migration23(  # TODO: remove me in a future versi
     if scope == PlaylistScope.GLOBAL.value:
         return [
             await PlaylistMigration23.from_json(
-                scope, playlist_number, playlist_data, guild=guild, author=int(playlist_data.get("author", 0))
+                scope,
+                playlist_number,
+                playlist_data,
+                guild=guild,
+                author=int(playlist_data.get("author", 0)),
             )
             for playlist_number, playlist_data in playlists.items()
         ]
@@ -484,7 +531,11 @@ async def get_all_playlist_for_migration23(  # TODO: remove me in a future versi
     else:
         return [
             await PlaylistMigration23.from_json(
-                scope, playlist_number, playlist_data, guild=int(guild_id), author=int(playlist_data.get("author", 0))
+                scope,
+                playlist_number,
+                playlist_data,
+                guild=int(guild_id),
+                author=int(playlist_data.get("author", 0)),
             )
             for guild_id, scopedata in playlists.items()
             for playlist_number, playlist_data in scopedata.items()
@@ -509,6 +560,7 @@ class Playlist:
         self.guild = guild
         self.scope = standardize_scope(scope)
         self.config_scope = _prepare_config_scope(self.scope, author, guild)
+        self.scope_id = self.config_scope[-1]
         self.author = author
         self.guild_id = (
             getattr(guild, "id", guild) if self.scope == PlaylistScope.GLOBAL.value else None
@@ -569,7 +621,9 @@ class Playlist:
         return data
 
     @classmethod
-    async def from_json(cls, bot: Red, scope: str, playlist_number: int, data: dict, **kwargs):
+    async def from_json(
+        cls, bot: Red, scope: str, playlist_number: int, data: SQLFetchResult, **kwargs
+    ):
         """Get a Playlist object from the provided information.
         Parameters
         ----------
@@ -701,10 +755,53 @@ async def get_all_playlist(
 
     if specified_user:
         user_id = getattr(author, "id", author)
-        playlists = database.fetch_all(scope_standard, author_id=user_id)
+        playlists = database.fetch_all(scope_standard, scope_id, author_id=user_id)
     else:
-        playlists = database.fetch_all(scope_standard)
+        playlists = database.fetch_all(scope_standard, scope_id)
+    return [
+        await Playlist.from_json(
+            bot, scope, playlist.playlist_id, playlist, guild=guild, author=author
+        )
+        for playlist in playlists
+    ]
 
+
+async def get_all_playlist_converter(
+    scope: str,
+    bot: Red,
+    arg: str,
+    guild: Union[discord.Guild, int] = None,
+    author: Union[discord.abc.User, int] = None,
+) -> List[Playlist]:
+    """
+    Gets all playlist for the specified scope.
+    Parameters
+    ----------
+    scope: str
+        The custom config scope. One of 'GLOBALPLAYLIST', 'GUILDPLAYLIST' or 'USERPLAYLIST'.
+    guild: discord.Guild
+        The guild to get the playlist from if scope is GUILDPLAYLIST.
+    author: int
+        The ID of the user to get the playlist from if scope is USERPLAYLIST.
+    bot: Red
+        The bot's instance
+    specified_user:bool
+        Whether or not user ID was passed as an argparse.
+    Returns
+    -------
+    list
+        A list of all playlists for the specified scope
+     Raises
+    ------
+    `InvalidPlaylistScope`
+        Passing a scope that is not supported.
+    `MissingGuild`
+        Trying to access the Guild scope without a guild.
+    `MissingAuthor`
+        Trying to access the User scope without an user id.
+    """
+    scope_standard, scope_id = _prepare_config_scope(scope, author, guild)
+    playlists = database.fetch_all_converter(scope_standard, playlist_name=arg, playlist_id=arg)
     return [
         await Playlist.from_json(
             bot, scope, playlist.playlist_id, playlist, guild=guild, author=author

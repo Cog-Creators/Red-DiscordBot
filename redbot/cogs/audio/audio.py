@@ -202,29 +202,33 @@ class Audio(commands.Cog):
                 await self._embed_msg(ctx, _("No DJ role found. Disabling DJ mode."))
 
     async def initialize(self):
-        await self.bot.wait_until_ready()
-        # Unlike most cases, we want the cache to exit before migration.
-        await self.music_cache.initialize(self.config)
-        pass_config_to_dependencies(self.config, self.bot, await self.config.localpath())
-        await self._migrate_config(
-            from_version=await self.config.schema_version(), to_version=_SCHEMA_VERSION
-        )
-        self._restart_connect()
-        self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
-        lavalink.register_event_listener(self.event_handler)
-        if not HAS_SQL:
-            error_message = (
-                "Audio version: {version}\nThis version requires some SQL dependencies to "
-                "access the caching features, "
-                "your Python install is missing some of them.\n\n"
-                "For instructions on how to fix it Google "
-                f"`{_ERROR}`.\n"
-                "You will need to install the missing SQL dependency.\n\n"
-            ).format(version=__version__)
-            with contextlib.suppress(discord.HTTPException):
-                for page in pagify(error_message):
-                    await self.bot.send_to_owners(page)
-            log.critical(error_message)
+        try:
+            await self.bot.wait_until_ready()
+            # Unlike most cases, we want the cache to exit before migration.
+            await self.music_cache.initialize(self.config)
+            pass_config_to_dependencies(self.config, self.bot, await self.config.localpath())
+            await self._migrate_config(
+                from_version=await self.config.schema_version(), to_version=_SCHEMA_VERSION
+            )
+            self._restart_connect()
+            self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
+            lavalink.register_event_listener(self.event_handler)
+            if not HAS_SQL:
+                error_message = (
+                    "Audio version: {version}\nThis version requires some SQL dependencies to "
+                    "access the caching features, "
+                    "your Python install is missing some of them.\n\n"
+                    "For instructions on how to fix it Google "
+                    f"`{_ERROR}`.\n"
+                    "You will need to install the missing SQL dependency.\n\n"
+                ).format(version=__version__)
+                with contextlib.suppress(discord.HTTPException):
+                    for page in pagify(error_message):
+                        await self.bot.send_to_owners(page)
+                log.critical(error_message)
+        except Exception as e:
+            log.exception("Error on audio init", exc_info=e)
+            raise e
 
         self._ready_event.set()
         self.bot.dispatch("red_audio_initialized", self)
@@ -3196,6 +3200,7 @@ class Audio(commands.Cog):
             When multiple matches are found but none is selected.
 
         """
+        correct_scope_matches: List[Playlist]
         original_input = matches.get("arg")
         correct_scope_matches = matches.get(scope)
         guild_to_query = guild.id
@@ -3204,50 +3209,40 @@ class Audio(commands.Cog):
             return None, original_input
         if scope == PlaylistScope.USER.value:
             correct_scope_matches = [
-                (i[2]["id"], i[2]["name"], len(i[2]["tracks"]), i[2]["author"])
-                for i in correct_scope_matches
-                if str(user_to_query) == i[0]
+                p for p in correct_scope_matches if user_to_query == p.scope_id
             ]
         elif scope == PlaylistScope.GUILD.value:
             if specified_user:
                 correct_scope_matches = [
-                    (i[2]["id"], i[2]["name"], len(i[2]["tracks"]), i[2]["author"])
-                    for i in correct_scope_matches
-                    if str(guild_to_query) == i[0] and i[2]["author"] == user_to_query
+                    p
+                    for p in correct_scope_matches
+                    if guild_to_query == p.scope_id and p.author == user_to_query
                 ]
             else:
                 correct_scope_matches = [
-                    (i[2]["id"], i[2]["name"], len(i[2]["tracks"]), i[2]["author"])
-                    for i in correct_scope_matches
-                    if str(guild_to_query) == i[0]
+                    p for p in correct_scope_matches if guild_to_query == p.scope_id
                 ]
         else:
             if specified_user:
                 correct_scope_matches = [
-                    (i[2]["id"], i[2]["name"], len(i[2]["tracks"]), i[2]["author"])
-                    for i in correct_scope_matches
-                    if i[2]["author"] == user_to_query
+                    p for p in correct_scope_matches if p.author == user_to_query
                 ]
             else:
-                correct_scope_matches = [
-                    (i[2]["id"], i[2]["name"], len(i[2]["tracks"]), i[2]["author"])
-                    for i in correct_scope_matches
-                ]
+                correct_scope_matches = [p for p in correct_scope_matches]
         match_count = len(correct_scope_matches)
         # We done all the trimming we can with the info available time to ask the user
+        print("correct_scope_matches", correct_scope_matches)
         if match_count > 10:
             if original_input.isnumeric():
                 arg = int(original_input)
-                correct_scope_matches = [
-                    (i, n, t, a) for i, n, t, a in correct_scope_matches if i == arg
-                ]
+                correct_scope_matches = [p for p in correct_scope_matches if p.id == arg]
             if match_count > 10:
                 raise TooManyMatches(
                     f"{match_count} playlists match {original_input}: "
                     f"Please try to be more specific, or use the playlist ID."
                 )
         elif match_count == 1:
-            return correct_scope_matches[0][0], original_input
+            return correct_scope_matches[0].id, original_input
         elif match_count == 0:
             return None, original_input
 
@@ -3255,14 +3250,14 @@ class Audio(commands.Cog):
         pos_len = 3
         playlists = f"{'#':{pos_len}}\n"
 
-        for number, (pid, pname, ptracks, pauthor) in enumerate(correct_scope_matches, 1):
-            author = self.bot.get_user(pauthor) or "Unknown"
+        for number, playlist in enumerate(correct_scope_matches, 1):
+            author = self.bot.get_user(playlist.author) or "Unknown"
             line = (
                 f"{number}."
-                f"    <{pname}>\n"
+                f"    <{playlist.name}>\n"
                 f" - Scope:  < {humanize_scope(scope)} >\n"
-                f" - ID:     < {pid} >\n"
-                f" - Tracks: < {ptracks} >\n"
+                f" - ID:     < {playlist.id} >\n"
+                f" - Tracks: < {len(playlist.tracks)} >\n"
                 f" - Author: < {author} >\n\n"
             )
             playlists += line
@@ -3295,7 +3290,7 @@ class Audio(commands.Cog):
             )
         with contextlib.suppress(discord.HTTPException):
             await msg.delete()
-        return correct_scope_matches[pred.result][0], original_input
+        return correct_scope_matches[pred.result].id, original_input
 
     @commands.group()
     @commands.guild_only()
@@ -3954,14 +3949,17 @@ class Audio(commands.Cog):
             playlist_songs_backwards_compatible = [
                 track["info"]["uri"] for track in playlist.tracks
             ]
+            # TODO: Keep new playlists backwards compatible, Remove me in a few releases
             playlist_data[
                 "playlist"
-            ] = playlist_songs_backwards_compatible  # TODO: Keep new playlists backwards compatible, Remove me in a few releases
+            ] = (
+                playlist_songs_backwards_compatible
+            )
             playlist_data[
                 "link"
             ] = (
                 playlist.url
-            )  # TODO: Keep new playlists backwards compatible, Remove me in a few releases
+            )
             file_name = playlist.id
         playlist_data.update({"schema": schema, "version": version})
         playlist_data = json.dumps(playlist_data)
