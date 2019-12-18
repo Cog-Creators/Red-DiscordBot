@@ -274,7 +274,7 @@ class Audio(commands.Cog):
                 ).clear_raw("playlists")
         if from_version < 3 <= to_version:
             for scope in PlaylistScope.list():
-                scope_playlist = await get_all_playlist_for_migration23(scope)
+                scope_playlist = await get_all_playlist_for_migration23(scope, self.bot)
                 for p in scope_playlist:
                     await p.save()
                 await self.config.custom(scope).clear()
