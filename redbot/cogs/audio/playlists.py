@@ -215,12 +215,10 @@ class Database:
     def get_scope_type(scope: str) -> int:
         if scope == PlaylistScope.GLOBAL.value:
             table = 1
-        elif scope == PlaylistScope.GUILD.value:
-            table = 2
         elif scope == PlaylistScope.USER.value:
             table = 3
         else:
-            raise
+            table = 2
         return table
 
     def fetch(self, scope: str, playlist_id: int, scope_id: int) -> SQLFetchResult:
