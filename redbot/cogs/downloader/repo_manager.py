@@ -102,6 +102,10 @@ class Repo(RepoJSONMixin):
         "git -c credential.helper= -c core.askpass= -C {path}"
         " pull --recurse-submodules -q --ff-only"
     )
+    GIT_FETCH = "git -c credential.helper= -c core.askpass= -C {path} fetch -q"
+    GIT_SUBMODULE_UPDATE = (
+        "git -c credential.helper= -c core.askpass= -C {path} submodule update --init -q"
+    )
     GIT_DIFF_FILE_STATUS = (
         "git -C {path} diff-tree --no-commit-id --name-status"
         " -r -z --line-prefix='\t' {old_rev} {new_rev}"
@@ -795,20 +799,30 @@ class Repo(RepoJSONMixin):
         -------
         `tuple` of `str`
             :py:code`(old commit hash, new commit hash)`
-        
+
         Raises
         -------
         `UpdateError` - if git pull results with non-zero exit code
         """
         old_commit = await self.latest_commit()
 
-        await self.hard_reset()
-
-        p = await self._run(ProcessFormatter().format(self.GIT_PULL, path=self.folder_path))
+        p = await self._run(ProcessFormatter().format(self.GIT_FETCH, path=self.folder_path))
 
         if p.returncode != 0:
             raise errors.UpdateError(
-                "Git pull returned a non zero exit code"
+                "Git fetch returned a non zero exit code"
+                " for the repo located at path: {}".format(self.folder_path)
+            )
+
+        await self.hard_reset()
+
+        p = await self._run(
+            ProcessFormatter().format(self.GIT_SUBMODULE_UPDATE, path=self.folder_path)
+        )
+
+        if p.returncode != 0:
+            raise errors.UpdateError(
+                "Git submodule update returned a non zero exit code"
                 " for the repo located at path: {}".format(self.folder_path)
             )
 
