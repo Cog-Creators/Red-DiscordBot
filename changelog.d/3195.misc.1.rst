@@ -1,1 +1,0 @@
-Migrate all playlist data from Config to its own SQL table to reduce settings.json file.
