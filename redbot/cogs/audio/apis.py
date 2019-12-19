@@ -229,14 +229,8 @@ PRAGMA temp_store = 2;
 _PRAGMA_UPDATE_journal_mode = """
 PRAGMA journal_mode = wal;
 """
-_PRAGMA_UPDATE_wal_autocheckpoint = """
-PRAGMA wal_autocheckpoint;
-"""
 _PRAGMA_UPDATE_read_uncommitted = """
 PRAGMA read_uncommitted = 1;
-"""
-_PRAGMA_UPDATE_optimize = """
-PRAGMA optimize = 1;
 """
 
 
@@ -422,7 +416,6 @@ class MusicCache:
         if HAS_SQL:
             self.database.execute(_PRAGMA_UPDATE_temp_store)
             self.database.execute(_PRAGMA_UPDATE_journal_mode)
-            self.database.execute(_PRAGMA_UPDATE_wal_autocheckpoint)
             self.database.execute(_PRAGMA_UPDATE_read_uncommitted)
 
             self.database.execute(_CREATE_LAVALINK_TABLE)
@@ -436,7 +429,6 @@ class MusicCache:
 
     async def close(self):
         if HAS_SQL:
-            self.database.execute(_PRAGMA_UPDATE_optimize)
             self._database.close()
 
     async def insert(self, table: str, values: List[dict]):
