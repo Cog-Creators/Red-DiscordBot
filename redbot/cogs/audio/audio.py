@@ -6946,6 +6946,51 @@ class Audio(commands.Cog):
             return False
 
     @commands.Cog.listener()
+    async def on_red_audio_track_start(
+        self, guild: discord.Guild, track: lavalink.Track, requester: discord.Member
+    ):
+        scope = PlaylistScope.GUILD.value
+        today = datetime.date.today()
+        midnight = datetime.datetime.combine(today, datetime.datetime.min.time())
+        name = f"Daily playlist - {today}"
+        today_id = int(time.mktime(today.timetuple()))
+        track = track_to_json(track)
+
+        try:
+            playlist = await get_playlist(
+                playlist_number=today_id,
+                scope=PlaylistScope.GUILD.value,
+                bot=self.bot,
+                guild=guild,
+                author=self.bot.user,
+            )
+        except RuntimeError:
+            playlist = None
+
+        if playlist:
+            tracks = playlist.tracks
+            tracks.append(track)
+            await playlist.edit({"tracks": tracks})
+        else:
+            playlist = Playlist(
+                bot=self.bot,
+                scope=scope,
+                author=self.bot.user.id,
+                playlist_id=today_id,
+                name=name,
+                playlist_url=None,
+                tracks=[track],
+                guild=guild,
+            )
+            await playlist.save()
+        with contextlib.suppress(Exception):
+            too_old = midnight - datetime.timedelta(days=8)
+            too_old_id = int(time.mktime(too_old.timetuple()))
+            await delete_playlist(
+                scope=scope, playlist_id=too_old_id, guild=guild, author=self.bot.user
+            )
+
+    @commands.Cog.listener()
     async def on_voice_state_update(
         self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState
     ):

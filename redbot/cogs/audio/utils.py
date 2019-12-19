@@ -32,6 +32,7 @@ __all__ = [
     "url_check",
     "userlimit",
     "is_allowed",
+    "track_to_json",
     "CacheLevel",
     "Notifier",
 ]
@@ -188,6 +189,21 @@ def track_creator(player, position=None, other_track=None):
     track_keys = queued_track._info.keys()
     track_values = queued_track._info.values()
     track_id = queued_track.track_identifier
+    track_info = {}
+    for k, v in zip(track_keys, track_values):
+        track_info[k] = v
+    keys = ["track", "info"]
+    values = [track_id, track_info]
+    track_obj = {}
+    for key, value in zip(keys, values):
+        track_obj[key] = value
+    return track_obj
+
+
+def track_to_json(track: lavalink.Track):
+    track_keys = track._info.keys()
+    track_values = track._info.values()
+    track_id = track.track_identifier
     track_info = {}
     for k, v in zip(track_keys, track_values):
         track_info[k] = v
