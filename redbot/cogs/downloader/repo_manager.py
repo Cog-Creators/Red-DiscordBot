@@ -104,7 +104,8 @@ class Repo(RepoJSONMixin):
     )
     GIT_FETCH = "git -c credential.helper= -c core.askpass= -C {path} fetch -q"
     GIT_SUBMODULE_UPDATE = (
-        "git -c credential.helper= -c core.askpass= -C {path} submodule update --init -q --force"
+        "git -c credential.helper= -c core.askpass= -C {path}"
+        " submodule update --init --recursive --force -q"
     )
     GIT_DIFF_FILE_STATUS = (
         "git -C {path} diff-tree --no-commit-id --name-status"
