@@ -560,6 +560,7 @@ class Playlist:
         self.config_scope = _prepare_config_scope(self.scope, author, guild)
         self.scope_id = self.config_scope[-1]
         self.author = author
+        self.author_id = getattr(self.author, "id", self.author)
         self.guild_id = (
             getattr(guild, "id", guild) if self.scope == PlaylistScope.GLOBAL.value else None
         )
@@ -584,6 +585,7 @@ class Playlist:
         for item in list(data.keys()):
             setattr(self, item, data[item])
         await self.save()
+        return self
 
     async def save(self):
         """
@@ -595,7 +597,7 @@ class Playlist:
             playlist_id=int(self.id),
             playlist_name=self.name,
             scope_id=scope_id,
-            author_id=self.author,
+            author_id=self.author_id,
             playlist_url=self.url,
             tracks=self.tracks,
         )
@@ -609,7 +611,7 @@ class Playlist:
         """
         data = dict(
             id=self.id,
-            author=self.author,
+            author=self.author_id,
             guild=self.guild_id,
             name=self.name,
             playlist_url=self.url,
@@ -708,7 +710,7 @@ async def get_playlist(
     scope_standard, scope_id = _prepare_config_scope(scope, author, guild)
     playlist_data = database.fetch(scope_standard, playlist_number, scope_id)
 
-    if not playlist_data.playlist_id:
+    if not (playlist_data and playlist_data.playlist_id):
         raise RuntimeError(f"That playlist does not exist for the following scope: {scope}")
     return await Playlist.from_json(
         bot, scope_standard, playlist_number, playlist_data, guild=guild, author=author
