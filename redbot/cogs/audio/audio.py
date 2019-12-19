@@ -116,6 +116,10 @@ class Audio(commands.Cog):
             **self._default_lavalink_settings,
         )
 
+        external_hostname = os.environ.get("LAVALINK_DEFAULT_HOST")
+        if external_hostname:
+            default_global.update(host=external_hostname, use_external_lavalink=True)
+
         default_guild: Mapping = dict(
             auto_play=False,
             autoplaylist=dict(enabled=False, id=None, name=None, scope=None),

@@ -1,12 +1,9 @@
-server:
-  port: 2333 # REST server
+server: # REST and WS server
+  port: 2333
   address: 0.0.0.0
 lavalink:
   server:
     password: "youshallnotpass"
-    ws:
-      host: 0.0.0.0
-      port: 2332
     sources:
       youtube: true
       bandcamp: true
@@ -16,6 +13,29 @@ lavalink:
       mixer: true
       http: true
       local: false
-    sentryDsn: ""
     bufferDurationMs: 400
-    youtubePlaylistLoadLimit: 10000
+    youtubePlaylistLoadLimit: 6 # Number of pages at 100 each
+    youtubeSearchEnabled: true
+    soundcloudSearchEnabled: true
+    gc-warnings: true
+
+metrics:
+  prometheus:
+    enabled: false
+    endpoint: /metrics
+
+sentry:
+  dsn: ""
+#  tags:
+#    some_key: some_value
+#    another_key: another_value
+
+logging:
+  file:
+    max-history: 30
+    max-size: 1GB
+  path: ./logs/
+
+  level:
+    root: INFO
+    lavalink: INFO

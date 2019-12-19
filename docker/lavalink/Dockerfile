@@ -3,6 +3,7 @@ FROM openjdk:10-jre-slim
 WORKDIR /opt/Lavalink
 
 COPY Lavalink.jar .
+EXPOSE 2333
 
 # For regular use, doesn't override lib search path
 ENTRYPOINT ["java", "-Xmx1G", "-jar", "Lavalink.jar"]

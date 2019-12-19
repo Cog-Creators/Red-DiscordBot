@@ -9,7 +9,6 @@ services:
     volumes:
       - ../lavalink/application.yml:/opt/Lavalink/application.yml:ro
     expose:
-     - "2332"
      - "2333"
 
   red:
