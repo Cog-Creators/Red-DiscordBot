@@ -1,1 +1,0 @@
-Add self managed daily playlists in the GUILD scope, these are called "Daily playlist - YYYY-MM-DD" and auto delete after 7 days.
