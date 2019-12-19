@@ -112,7 +112,7 @@ class Repo(RepoJSONMixin):
     )
     GIT_LOG = "git -C {path} log --relative-date --reverse {old_rev}.. {relative_file_path}"
     GIT_DISCOVER_REMOTE_URL = "git -C {path} config --get remote.origin.url"
-    GIT_CHECKOUT = "git -C {path} checkout {rev}"
+    GIT_CHECKOUT = "git -C {path} checkout --force {rev}"
     GIT_GET_FULL_SHA1 = "git -C {path} rev-parse --verify {rev}^{{commit}}"
     GIT_IS_ANCESTOR = (
         "git -C {path} merge-base --is-ancestor {maybe_ancestor_rev} {descendant_rev}"
