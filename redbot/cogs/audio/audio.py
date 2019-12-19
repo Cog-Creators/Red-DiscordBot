@@ -5699,8 +5699,8 @@ class Audio(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def remove(self, ctx: commands.Context, index: int):
-        """Remove a specific track number from the queue."""
+    async def remove(self, ctx: commands.Context, index_or_url: Union[int, str]):
+        """Remove a specific track number or url from the queue."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, _("Nothing playing."))
@@ -5711,29 +5711,48 @@ class Audio(commands.Cog):
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(ctx, _("You need the DJ role to remove tracks."))
         if (
-            not ctx.author.voice or ctx.author.voice.channel != player.channel
+                not ctx.author.voice or ctx.author.voice.channel != player.channel
         ) and not await self._can_instaskip(ctx, ctx.author):
             return await self._embed_msg(
                 ctx, _("You must be in the voice channel to manage the queue.")
             )
-        if index > len(player.queue) or index < 1:
-            return await self._embed_msg(
-                ctx, _("Song number must be greater than 1 and within the queue limit.")
-            )
-        index -= 1
-        removed = player.queue.pop(index)
-        query = audio_dataclasses.Query.process_input(removed.uri)
-        if query.is_local:
-            local_path = audio_dataclasses.LocalPath(removed.uri).to_string_hidden()
-            if removed.title == "Unknown title":
-                removed_title = local_path
+        if isinstance(index_or_url, int):
+            if index_or_url > len(player.queue) or index_or_url < 1:
+                return await self._embed_msg(
+                    ctx, _("Song number must be greater than 1 and within the queue limit.")
+                )
+            index_or_url -= 1
+            removed = player.queue.pop(index_or_url)
+            query = audio_dataclasses.Query.process_input(removed.uri)
+            if query.is_local:
+                local_path = audio_dataclasses.LocalPath(removed.uri).to_string_hidden()
+                if removed.title == "Unknown title":
+                    removed_title = local_path
+                else:
+                    removed_title = "{} - {}\n{}".format(removed.author, removed.title, local_path)
             else:
-                removed_title = "{} - {}\n{}".format(removed.author, removed.title, local_path)
+                removed_title = removed.title
+            await self._embed_msg(
+                ctx, _("Removed {track} from the queue.").format(track=removed_title)
+            )
         else:
-            removed_title = removed.title
-        await self._embed_msg(
-            ctx, _("Removed {track} from the queue.").format(track=removed_title)
-        )
+            clean_tracks = []
+            removed_tracks = 0
+            for track in player.queue:
+                if track.uri != index_or_url:
+                    clean_tracks.append(track)
+                else:
+                    removed_tracks += 1
+            player.queue = clean_tracks
+            if removed_tracks == 0:
+                await self._embed_msg(ctx, _("Removed 0 tracks."))
+            else:
+                await self._embed_msg(
+                    ctx,
+                    _("Removed {removed_tracks} tracks from queue.").format(
+                        removed_tracks=removed_tracks, member=ctx.author
+                    ),
+                )
 
     @commands.command()
     @commands.guild_only()
