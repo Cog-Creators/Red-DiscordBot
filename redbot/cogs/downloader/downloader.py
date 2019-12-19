@@ -900,7 +900,7 @@ class Downloader(commands.Cog):
             if module.repo.available_libraries
         }
         if repos_with_libs:
-            message += DEPRECATION_NOTICE.format(repo_list=humanize_list(repos_with_libs))
+            message += DEPRECATION_NOTICE.format(repo_list=humanize_list(list(repos_with_libs)))
 
         await ctx.send(message)
 
