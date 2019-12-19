@@ -226,9 +226,9 @@ class Audio(commands.Cog):
                     for page in pagify(error_message):
                         await self.bot.send_to_owners(page)
                 log.critical(error_message)
-        except Exception as e:
-            log.exception("Error on audio init", exc_info=e)
-            raise e
+        except Exception as err:
+            log.exception("Audio failed to start up, please report this issue.", exc_info=err)
+            raise err
 
         self._ready_event.set()
         self.bot.dispatch("red_audio_initialized", self)
