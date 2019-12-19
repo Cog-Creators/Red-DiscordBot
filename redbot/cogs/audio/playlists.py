@@ -171,6 +171,9 @@ VALUES
         playlist_url = excluded.playlist_url, 
         tracks = excluded.tracks;
 """
+_CREATE_INDEX = """
+CREATE INDEX IF NOT EXISTS name_index ON playlists (scope_type, playlist_id, playlist_name, scope_id);
+"""
 
 
 @dataclass
@@ -205,6 +208,7 @@ class Database:
         self.cursor.execute(_PRAGMA_UPDATE_journal_mode)
         self.cursor.execute(_PRAGMA_UPDATE_read_uncommitted)
         self.cursor.execute(_CREATE_TABLE)
+        self.cursor.execute(_CREATE_INDEX)
 
     def close(self):
         self._database.close()
