@@ -5711,7 +5711,7 @@ class Audio(commands.Cog):
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(ctx, _("You need the DJ role to remove tracks."))
         if (
-                not ctx.author.voice or ctx.author.voice.channel != player.channel
+            not ctx.author.voice or ctx.author.voice.channel != player.channel
         ) and not await self._can_instaskip(ctx, ctx.author):
             return await self._embed_msg(
                 ctx, _("You must be in the voice channel to manage the queue.")
@@ -5745,13 +5745,16 @@ class Audio(commands.Cog):
                     removed_tracks += 1
             player.queue = clean_tracks
             if removed_tracks == 0:
-                await self._embed_msg(ctx, _("Removed 0 tracks."))
+                await self._embed_msg(
+                    ctx, _("Removed 0 tracks, nothing matches the URL provided.")
+                )
             else:
                 await self._embed_msg(
                     ctx,
-                    _("Removed {removed_tracks} tracks from queue.").format(
-                        removed_tracks=removed_tracks, member=ctx.author
-                    ),
+                    _(
+                        "Removed {removed_tracks} tracks from queue "
+                        "which matched the URL provided."
+                    ).format(removed_tracks=removed_tracks, member=ctx.author),
                 )
 
     @commands.command()
