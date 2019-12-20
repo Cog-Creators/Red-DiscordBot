@@ -1,5 +1,6 @@
+import json
 from dataclasses import dataclass, field
-from typing import List, Optional, Mapping
+from typing import List, Optional
 
 import apsw
 
@@ -174,7 +175,11 @@ class SQLFetchResult:
     scope_id: int
     author_id: int
     playlist_url: Optional[str] = None
-    tracks: List[Mapping] = field(default_factory=lambda: [])
+    tracks: List[dict] = field(default_factory=lambda: [])
+
+    def __post_init__(self):
+        if isinstance(self.tracks, str):
+            self.tracks = json.loads(self.tracks)
 
 
 def _pass_config_to_databases(config: Config, bot: Red):
@@ -292,7 +297,7 @@ class PlaylistInterface:
                     "scope_id": int(scope_id),
                     "author_id": int(author_id),
                     "playlist_url": playlist_url,
-                    "tracks": tracks,
+                    "tracks": json.dumps(tracks),
                 }
             ),
         )
