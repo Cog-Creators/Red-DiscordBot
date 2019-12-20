@@ -16,6 +16,7 @@ from typing import List, Optional, Tuple, Union, cast
 import aiohttp
 import discord
 import lavalink
+import math
 from fuzzywuzzy import process
 
 import redbot.core
@@ -6351,7 +6352,8 @@ class Audio(commands.Cog):
 
         return False
 
-    async def _is_alone(self, ctx: commands.Context):
+    @staticmethod
+    async def _is_alone(ctx: commands.Context):
         channel_members = rgetattr(ctx, "guild.me.voice.channel.members", [])
         nonbots = sum(m.id != ctx.author.id for m in channel_members if not m.bot)
         return nonbots < 1
