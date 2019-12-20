@@ -39,7 +39,7 @@ from .apis import MusicCache
 from .checks import can_have_caching
 from .config import pass_config_to_dependencies
 from .converters import ComplexScopeParser, ScopeParser, get_lazy_converter, get_playlist_converter
-from .databases import database_connection, HAS_SQL, _ERROR
+from .databases import HAS_SQL, _ERROR
 from .equalizer import Equalizer
 from .errors import (
     DatabaseError,
@@ -163,7 +163,7 @@ class Audio(commands.Cog):
         self.config.register_custom(PlaylistScope.USER.value, **_playlist)
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)
-        self.music_cache = MusicCache(bot, self.session)
+        self.music_cache: MusicCache = None
         self.play_lock = {}
 
         self._manager: Optional[ServerManager] = None
@@ -224,6 +224,7 @@ class Audio(commands.Cog):
         # Unlike most cases, we want the cache to exit before migration.
         try:
             pass_config_to_dependencies(self.config, self.bot, await self.config.localpath())
+            self.music_cache = MusicCache(self.bot, self.session)
             await self.music_cache.initialize(self.config)
             await self._migrate_config(
                 from_version=await self.config.schema_version(), to_version=_SCHEMA_VERSION
@@ -7000,7 +7001,9 @@ class Audio(commands.Cog):
         await self.music_cache.run_tasks(ctx)
 
     async def _close_database(self):
-        await self.music_cache.database.run_all_pending_tasks()
-        database_connection.close()
+        import redbot.cogs.audio.databases
+
+        await self.music_cache.run_all_pending_tasks()
+        redbot.cogs.audio.databases.database_connection.close()
 
     __del__ = cog_unload

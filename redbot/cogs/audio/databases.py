@@ -1,11 +1,11 @@
 import datetime
 import json
+import logging
 import time
 import traceback
 from dataclasses import dataclass, field
 from typing import List, Dict, Union, Optional, Tuple
 
-from redbot.cogs.audio.errors import InvalidTableError
 
 try:
     import apsw
@@ -23,6 +23,10 @@ except ImportError as err:
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
+
+from .errors import InvalidTableError
+
+log = logging.getLogger("red.audio.database")
 
 _DROP_YOUTUBE_TABLE = """
 DROP TABLE IF EXISTS youtube;
@@ -71,7 +75,7 @@ SET last_fetched=:last_fetched
 WHERE track_info=:track;
 """
 _QUERY_YOUTUBE_TABLE = """
-SELECT track_info, last_updated
+SELECT youtube_url, last_updated
 FROM youtube 
 WHERE 
     track_info=:track
@@ -226,8 +230,10 @@ PRAGMA read_uncommitted = 1;
 _PRAGMA_FETCH_user_version = """
 pragma user_version;
 """
-_PRAGMA_SET_user_version = """
-pragma user_version = :version;
+
+SCHEMA_VERSION = 3
+_PRAGMA_SET_user_version = f"""
+pragma user_version=3;
 """
 _DELETE_LAVALINK_OLD = """
 DELETE FROM lavalink 
@@ -248,7 +254,6 @@ WHERE
 _config: Config = None
 _bot: Red = None
 database_connection: apsw.Connection = None
-SCHEMA_VERSION = 3
 
 
 def _pass_config_to_databases(config: Config, bot: Red):
@@ -265,14 +270,16 @@ def _pass_config_to_databases(config: Config, bot: Red):
 
 @dataclass
 class CacheFetchResult:
-    query = Union[str, dict]
-    last_updated = int
+    query: Optional[Union[str, dict]]
+    last_updated: int
 
     def __post_init__(self):
         if isinstance(self.last_updated, int):
             self.updated_on: datetime.datetime = datetime.datetime.fromtimestamp(self.last_updated)
-        if all(k in self.query for k in ["loadType", "playlistInfo", "isSeekable", "isStream"]):
-            self.query: json.loads(self.query)
+        if isinstance(self.query, str) and all(
+            k in self.query for k in ["loadType", "playlistInfo", "isSeekable", "isStream"]
+        ):
+            self.query = json.loads(self.query)
 
 
 @dataclass
@@ -315,6 +322,8 @@ class CacheInterface:
 
     def maybe_migrate(self):
         current_version = self.database.execute(_PRAGMA_FETCH_user_version).fetchone()
+        if isinstance(current_version, tuple):
+            current_version = current_version[0]
         if not current_version:
             current_version = 1
         if current_version == SCHEMA_VERSION:
@@ -327,28 +336,35 @@ class CacheInterface:
         self.database.execute(_PRAGMA_SET_user_version, {"version": SCHEMA_VERSION})
 
     async def insert(self, table: str, values: List[dict]):
-        if HAS_SQL:
-            query = _PARSER.get(table, {}).get("insert")
-            if query is None:
-                raise InvalidTableError(f"{table} is not a valid table in the database.")
-            self.database.executemany(query, values)
+        try:
+            if HAS_SQL:
+                query = _PARSER.get(table, {}).get("insert")
+                if query is None:
+                    raise InvalidTableError(f"{table} is not a valid table in the database.")
+                self.database.execute("BEGIN;")
+                self.database.executemany(query, values)
+                self.database.execute("COMMIT;")
+        except Exception as err:
+            log.debug("Error during audio db insert", exc_info=err)
 
     async def update(self, table: str, values: Dict[str, Union[str, int]]):
-        if HAS_SQL:
-            table = _PARSER.get(table, {})
-            sql_query = table.get("update")
-            time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
-            values["last_fetched"] = time_now
-            if not table:
-                raise InvalidTableError(f"{table} is not a valid table in the database.")
-            self.database.execute(sql_query, values)
+        try:
+            if HAS_SQL:
+                table = _PARSER.get(table, {})
+                sql_query = table.get("update")
+                time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
+                values["last_fetched"] = time_now
+                if not table:
+                    raise InvalidTableError(f"{table} is not a valid table in the database.")
+                self.database.execute(sql_query, values)
+        except Exception as err:
+            log.debug("Error during audio db update", exc_info=err)
 
     async def fetch_one(
         self, table: str, query: str, values: Dict[str, Union[str, int]]
-    ) -> Tuple[Optional[Union[str, dict]], bool]:
+    ) -> Tuple[Optional[str], bool]:
         table = _PARSER.get(table, {})
         sql_query = table.get(query, {}).get("query")
-        need_update = False
         if HAS_SQL:
             if not table:
                 raise InvalidTableError(f"{table} is not a valid table in the database.")
@@ -358,9 +374,9 @@ class CacheInterface:
             )
             maxage_int = int(time.mktime(maxage.timetuple()))
             values.update({"maxage": maxage_int})
-            output = self.database.execute(sql_query, values).fetchone()
+            output = self.database.execute(sql_query, values).fetchone() or (None, 0)
             result = CacheFetchResult(*output)
-            return result.query or None, need_update if table != "spotify" else True
+            return result.query, False
         else:
             return None, True
 

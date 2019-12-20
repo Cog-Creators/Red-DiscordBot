@@ -5,6 +5,7 @@ import datetime
 import logging
 import random
 import time
+import json
 from collections import namedtuple
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
@@ -30,10 +31,16 @@ _TOP_100_GLOBALS = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn6puJdseH2R
 _TOP_100_US = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn5rWitrRWFKdm-ulaFiIyoK"
 
 _database: CacheInterface = None
+_bot: Red = None
+_config: Config = None
 
 
 def _pass_config_to_apis(config: Config, bot: Red):
-    global _database
+    global _database, _config, _bot
+    if _config is None:
+        _config = config
+    if _bot is None:
+        _bot = bot
     if _database is None:
         _database = CacheInterface()
 
@@ -202,7 +209,7 @@ class MusicCache:
         self.spotify_api: SpotifyAPI = SpotifyAPI(bot, session)
         self.youtube_api: YouTubeAPI = YouTubeAPI(bot, session)
         self._session: aiohttp.ClientSession = session
-        self.database = _database.database
+        self.database = _database
 
         self._tasks: dict = {}
         self._lock: asyncio.Lock = asyncio.Lock()
@@ -784,7 +791,7 @@ class MusicCache:
                             [
                                 {
                                     "query": query,
-                                    "data": results._raw,
+                                    "data": json.dumps(results._raw),
                                     "last_updated": time_now,
                                     "last_fetched": time_now,
                                 }
