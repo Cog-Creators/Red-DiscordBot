@@ -14,7 +14,7 @@ from collections import namedtuple
 from pathlib import Path
 from random import SystemRandom
 from string import ascii_letters, digits
-from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequence, Dict
+from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequence, Dict, Set
 
 import aiohttp
 import discord
@@ -70,7 +70,7 @@ class CoreLogic:
 
     async def _load(
         self, cog_names: Iterable[str]
-    ) -> Tuple[List[str], List[str], List[str], List[str], List[Tuple[str, str]]]:
+    ) -> Tuple[List[str], List[str], List[str], List[str], List[Tuple[str, str]], Set[str]]:
         """
         Loads cogs by name.
         Parameters
@@ -87,6 +87,7 @@ class CoreLogic:
         notfound_packages = []
         alreadyloaded_packages = []
         failed_with_reason_packages = []
+        repos_with_shared_libs = set()
 
         bot = self.bot
 
@@ -125,6 +126,20 @@ class CoreLogic:
             else:
                 await bot.add_loaded_package(name)
                 loaded_packages.append(name)
+                # remove in Red 3.3
+                downloader = bot.get_cog("Downloader")
+                if downloader is None:
+                    continue
+                try:
+                    maybe_repo = await downloader._shared_lib_load_check(name)
+                except Exception:
+                    log.exception(
+                        "Shared library check failed,"
+                        " if you're not using modified Downloader, report this issue."
+                    )
+                    maybe_repo = None
+                if maybe_repo is not None:
+                    repos_with_shared_libs.add(maybe_repo.name)
 
         return (
             loaded_packages,
@@ -132,6 +147,7 @@ class CoreLogic:
             notfound_packages,
             alreadyloaded_packages,
             failed_with_reason_packages,
+            repos_with_shared_libs,
         )
 
     @staticmethod
@@ -186,14 +202,26 @@ class CoreLogic:
 
     async def _reload(
         self, cog_names: Sequence[str]
-    ) -> Tuple[List[str], List[str], List[str], List[str], List[Tuple[str, str]]]:
+    ) -> Tuple[List[str], List[str], List[str], List[str], List[Tuple[str, str]], Set[str]]:
         await self._unload(cog_names)
 
-        loaded, load_failed, not_found, already_loaded, load_failed_with_reason = await self._load(
-            cog_names
-        )
+        (
+            loaded,
+            load_failed,
+            not_found,
+            already_loaded,
+            load_failed_with_reason,
+            repos_with_shared_libs,
+        ) = await self._load(cog_names)
 
-        return loaded, load_failed, not_found, already_loaded, load_failed_with_reason
+        return (
+            loaded,
+            load_failed,
+            not_found,
+            already_loaded,
+            load_failed_with_reason,
+            repos_with_shared_libs,
+        )
 
     async def _name(self, name: Optional[str] = None) -> str:
         """
@@ -580,7 +608,14 @@ class Core(commands.Cog, CoreLogic):
             return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
-            loaded, failed, not_found, already_loaded, failed_with_reason = await self._load(cogs)
+            (
+                loaded,
+                failed,
+                not_found,
+                already_loaded,
+                failed_with_reason,
+                repos_with_shared_libs,
+            ) = await self._load(cogs)
 
         output = []
 
@@ -636,6 +671,21 @@ class Core(commands.Cog, CoreLogic):
                 ).format(reasons=reasons)
             output.append(formed)
 
+        if repos_with_shared_libs:
+            if len(repos_with_shared_libs) == 1:
+                formed = _(
+                    "**WARNING**: The following repo is using shared libs"
+                    " which are marked for removal in Red 3.3: {repo}.\n"
+                    "You should inform maintainer of the repo about this message."
+                ).format(repo=inline(repos_with_shared_libs.pop()))
+            else:
+                formed = _(
+                    "**WARNING**: The following repos are using shared libs"
+                    " which are marked for removal in Red 3.3: {repos}.\n"
+                    "You should inform maintainers of these repos about this message."
+                ).format(repos=humanize_list([inline(repo) for repo in repos_with_shared_libs]))
+            output.append(formed)
+
         if output:
             total_message = "\n\n".join(output)
             for page in pagify(total_message):
@@ -687,9 +737,14 @@ class Core(commands.Cog, CoreLogic):
             return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
-            loaded, failed, not_found, already_loaded, failed_with_reason = await self._reload(
-                cogs
-            )
+            (
+                loaded,
+                failed,
+                not_found,
+                already_loaded,
+                failed_with_reason,
+                repos_with_shared_libs,
+            ) = await self._reload(cogs)
 
         output = []
 
@@ -732,6 +787,21 @@ class Core(commands.Cog, CoreLogic):
                 formed = _(
                     "These packages could not be reloaded for the following reasons:\n\n{reasons}"
                 ).format(reasons=reasons)
+            output.append(formed)
+
+        if repos_with_shared_libs:
+            if len(repos_with_shared_libs) == 1:
+                formed = _(
+                    "**WARNING**: The following repo is using shared libs"
+                    " which are marked for removal in Red 3.3: {repo}.\n"
+                    "You should inform maintainers of these repos about this message."
+                ).format(repo=inline(repos_with_shared_libs.pop()))
+            else:
+                formed = _(
+                    "**WARNING**: The following repos are using shared libs"
+                    " which are marked for removal in Red 3.3: {repos}.\n"
+                    "You should inform maintainers of these repos about this message."
+                ).format(repos=humanize_list([inline(repo) for repo in repos_with_shared_libs]))
             output.append(formed)
 
         if output:

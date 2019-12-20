@@ -1,0 +1,1 @@
+Add deprecation note about shared libraries in Downloader Framework docs.
