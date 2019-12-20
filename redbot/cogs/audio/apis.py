@@ -91,7 +91,10 @@ WHERE track_info=:track;
 _QUERY_YOUTUBE_TABLE = """
 SELECT track_info, last_updated
 FROM youtube 
-WHERE track_info=:track;
+WHERE 
+    track_info=:track
+    AND last_updated > :maxage
+;
 """
 
 _DROP_SPOTIFY_TABLE = """
@@ -142,7 +145,9 @@ DO UPDATE
 _QUERY_SPOTIFY_TABLE = """
 SELECT track_info, last_updated
 FROM spotify 
-WHERE uri=:uri;
+WHERE 
+    uri=:uri
+    AND last_updated > :maxage;
 """
 _UPDATE_SPOTIFY_TABLE = """
 UPDATE spotify
@@ -198,12 +203,17 @@ WHERE query=:query;
 _QUERY_LAVALINK_TABLE = """
 SELECT data, last_updated
 FROM lavalink 
-WHERE query=:query;
+WHERE 
+    query=:query
+    AND last_updated > :maxage;
 """
 _QUERY_LAST_FETCHED_LAVALINK_TABLE = """
 SELECT data
 FROM lavalink 
-WHERE last_fetched > :day;
+WHERE 
+    last_fetched > :day
+    AND last_updated > :maxage
+;
 """
 
 _PARSER = {
@@ -238,6 +248,22 @@ pragma user_version;
 """
 _PRAGMA_SET_user_version = """
 pragma user_version = :version;
+"""
+
+_DELETE_LAVALINK_OLD = """
+DELETE FROM lavalink 
+WHERE 
+    last_updated > :maxage;
+"""
+_DELETE_YOUTUBE_OLD = """
+DELETE FROM youtube 
+WHERE 
+    last_updated > :maxage;
+"""
+_DELETE_SPOTIFY_OLD = """
+DELETE FROM spotify 
+WHERE 
+    last_updated > :maxage;
 """
 
 
@@ -424,6 +450,7 @@ class MusicCache:
         self.config: Optional[Config] = None
 
     async def initialize(self, config: Config):
+        self.config = config
         if HAS_SQL:
             self.database.execute(_PRAGMA_UPDATE_temp_store)
             self.database.execute(_PRAGMA_UPDATE_journal_mode)
@@ -438,7 +465,16 @@ class MusicCache:
             self.database.execute(_CREATE_SPOTIFY_TABLE)
             self.database.execute(_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE)
 
-        self.config = config
+            self.clean_up_old_entries()
+
+    def clean_up_old_entries(self):
+        max_age = await self.config.cache_age()
+        maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=max_age)
+        maxage_int = int(time.mktime(maxage.timetuple()))
+        values = {"maxage": maxage_int}
+        self.database.execute(_DELETE_LAVALINK_OLD, values)
+        self.database.execute(_DELETE_YOUTUBE_OLD, values)
+        self.database.execute(_DELETE_SPOTIFY_OLD, values)
 
     def maybe_migrate(self):
         current_version = self.database.execute(_PRAGMA_FETCH_user_version).fetchone()
@@ -450,7 +486,8 @@ class MusicCache:
             self.database.execute(_DROP_SPOTIFY_TABLE)
             self.database.execute(_DROP_YOUTUBE_TABLE)
             self.database.execute(_DROP_LAVALINK_TABLE)
-            self.database.execute(_PRAGMA_SET_user_version, {"version": SCHEMA_VERSION})
+
+        self.database.execute(_PRAGMA_SET_user_version, {"version": SCHEMA_VERSION})
 
     async def close(self):
         if HAS_SQL:
@@ -474,34 +511,30 @@ class MusicCache:
             self.database.execute(sql_query, values)
 
     async def fetch_one(
-        self, table: str, query: str, values: Dict[str, str]
+        self, table: str, query: str, values: Dict[str, Union[str, int]]
     ) -> Tuple[Optional[str], bool]:
         table = _PARSER.get(table, {})
         sql_query = table.get(query, {}).get("query")
+        need_update = False
         if HAS_SQL:
             if not table:
                 raise InvalidTableError(f"{table} is not a valid table in the database.")
-
+            max_age = await self.config.cache_age()
+            maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(
+                days=max_age
+            )
+            maxage_int = int(time.mktime(maxage.timetuple()))
+            values.update({"maxage": maxage_int})
             query, last_updated = self.database.execute(sql_query, values).fetchone() or (
                 None,
                 None,
             )
-            need_update = True
-            with contextlib.suppress(TypeError):
-                if last_updated:
-                    last_update = datetime.datetime.fromtimestamp(
-                        last_updated
-                    ) + datetime.timedelta(days=await self.config.cache_age())
-                    last_update.replace(tzinfo=datetime.timezone.utc)
-
-                    need_update = last_update < datetime.datetime.now(datetime.timezone.utc)
-
             return query or None, need_update if table != "spotify" else True
         else:
             return None, True
 
     async def fetch_all(
-        self, table: str, query: str, values: Dict[str, str]
+        self, table: str, query: str, values: Dict[str, Union[str, int]]
     ) -> List[Tuple[str, str]]:
         if HAS_SQL:
             table = _PARSER.get(table, {})
@@ -1140,6 +1173,12 @@ class MusicCache:
             date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=7)
             date = int(date.timestamp(date))
             query_data["day"] = date
+            max_age = await self.config.cache_age()
+            maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(
+                days=max_age
+            )
+            maxage_int = int(time.mktime(maxage.timetuple()))
+            query_data["maxage"] = maxage_int
 
             vals = await self.fetch_all("lavalink", "data", query_data)
             recently_played = [r[0] for r in vals if r]
