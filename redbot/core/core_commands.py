@@ -1687,10 +1687,11 @@ class Core(commands.Cog, CoreLogic):
         pass
 
     @whitelist.command(name="add")
-    async def whitelist_add(self, ctx, user: discord.User):
+    async def whitelist_add(self, ctx, *, user: Union[discord.Member, int]):
         """
         Adds a user to the whitelist.
         """
+        uid = getattr(user, "id", user)
         async with ctx.bot._config.whitelist() as curr_list:
             if user.id not in curr_list:
                 curr_list.append(user.id)
@@ -1712,12 +1713,12 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(box(page))
 
     @whitelist.command(name="remove")
-    async def whitelist_remove(self, ctx: commands.Context, *, user: discord.User):
+    async def whitelist_remove(self, ctx: commands.Context, *, user: Union[discord.Member, int]):
         """
         Removes user from whitelist.
         """
         removed = False
-
+        uid = getattr(user, "id", user)
         async with ctx.bot._config.whitelist() as curr_list:
             if user.id in curr_list:
                 removed = True
