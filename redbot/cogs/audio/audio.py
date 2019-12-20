@@ -1918,7 +1918,7 @@ class Audio(commands.Cog):
                         description=_("You need the DJ role to disconnect."),
                     )
             if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
-                ctx, ctx.author
+                ctx
             ):
                 return await self._embed_msg(
                     ctx, title=_("There are other people listening to music.")
@@ -2563,9 +2563,7 @@ class Audio(commands.Cog):
         )
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
         if dj_enabled or vote_enabled:
-            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
-                ctx, ctx.author
-            ):
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(ctx):
                 return
 
         if not player.queue:
@@ -2621,9 +2619,7 @@ class Audio(commands.Cog):
                 description=_("You must be in the voice channel to pause or resume."),
             )
         if dj_enabled:
-            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
-                ctx, ctx.author
-            ):
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(ctx):
                 return await self._embed_msg(
                     ctx,
                     title=_("Unable To Manage Tracks"),
@@ -5924,7 +5920,7 @@ class Audio(commands.Cog):
         player = lavalink.get_player(ctx.guild.id)
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
-                ctx, ctx.author
+                ctx
             ):
                 return await self._embed_msg(
                     ctx,
@@ -6039,7 +6035,7 @@ class Audio(commands.Cog):
                 vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
                 if dj_enabled or vote_enabled:
                     if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
-                        ctx, ctx.author
+                        ctx
                     ):
                         return
 
@@ -6268,7 +6264,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
-                ctx, ctx.author
+                ctx
             ):
                 return await self._embed_msg(
                     ctx,
@@ -6295,7 +6291,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
-                ctx, ctx.author
+                ctx
             ):
                 return await self._embed_msg(
                     ctx,
@@ -6386,7 +6382,7 @@ class Audio(commands.Cog):
         )
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
-                ctx, ctx.author
+                ctx
             ):
                 ctx.command.reset_cooldown(ctx)
                 return await self._embed_msg(
@@ -6951,7 +6947,7 @@ class Audio(commands.Cog):
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
-        is_alone = await self._is_alone(ctx, ctx.author)
+        is_alone = await self._is_alone(ctx)
         is_requester = await self.is_requester(ctx, ctx.author)
         can_skip = await self._can_instaskip(ctx, ctx.author)
 
@@ -7147,10 +7143,9 @@ class Audio(commands.Cog):
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
-        is_alone = await self._is_alone(ctx, ctx.author)
+        is_alone = await self._is_alone(ctx)
         is_requester = await self.is_requester(ctx, ctx.author)
         can_skip = await self._can_instaskip(ctx, ctx.author)
-
         if dj_enabled and not vote_enabled:
             if not (can_skip or is_requester) and not is_alone:
                 return await self._embed_msg(
@@ -7245,43 +7240,23 @@ class Audio(commands.Cog):
 
         return False
 
-    async def _is_alone(self, ctx: commands.Context, member: discord.Member):
-        try:
-            user_voice = ctx.guild.get_member(member.id).voice
-            bot_voice = ctx.guild.get_member(self.bot.user.id).voice
-            nonbots = sum(not m.bot for m in user_voice.channel.members)
-            if user_voice.channel != bot_voice.channel:
-                nonbots = nonbots + 1
-        except AttributeError:
-            if ctx.guild.get_member(self.bot.user.id).voice is not None:
-                nonbots = sum(
-                    not m.bot for m in ctx.guild.get_member(self.bot.user.id).voice.channel.members
-                )
-                if nonbots == 1:
-                    nonbots = 2
-            elif ctx.guild.get_member(member.id).voice.channel.members == 1:
-                nonbots = 1
-            else:
-                nonbots = 0
-        return nonbots <= 1
+    async def _is_alone(self, ctx: commands.Context):
+        channel_members = rgetattr(ctx, "guild.me.voice.channel.members", [])
+        nonbots = sum(m.id != ctx.author.id for m in channel_members if not m.bot)
+        return nonbots < 1
 
     async def _has_dj_role(self, ctx: commands.Context, member: discord.Member):
         dj_role = self._dj_role_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_role()
         )
-        dj_role_obj = ctx.guild.get_role(dj_role)
-        if dj_role_obj in ctx.guild.get_member(member.id).roles:
-            return True
-        return False
+        return dj_role_obj in ctx.guild.get_member(member.id).roles
 
     @staticmethod
     async def is_requester(ctx: commands.Context, member: discord.Member):
         try:
             player = lavalink.get_player(ctx.guild.id)
             log.debug(f"Current requester is {player.current}")
-            if player.current.requester.id == member.id:
-                return True
-            return False
+            return player.current.requester.id == member.id
         except Exception as e:
             log.error(e)
         return False
@@ -7378,9 +7353,7 @@ class Audio(commands.Cog):
                 description=_("You must be in the voice channel to stop the music."),
             )
         if vote_enabled or vote_enabled and dj_enabled:
-            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
-                ctx, ctx.author
-            ):
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(ctx):
                 return await self._embed_msg(
                     ctx,
                     title=_("Unable To Stop Player"),
@@ -7749,10 +7722,7 @@ class Audio(commands.Cog):
                             log.error(
                                 "Exception raised in Audio's emptypause_timer.", exc_info=True
                             )
-                        finally:
-                            pause_times.pop(server.id, None)
-                    else:
-                        pause_times.pop(server.id, None)
+                    pause_times.pop(server.id, None)
             servers = stop_times.copy()
             servers.update(pause_times)
             for sid in servers:
@@ -7765,8 +7735,11 @@ class Audio(commands.Cog):
                             player = lavalink.get_player(sid)
                             await player.stop()
                             await player.disconnect()
-                        except Exception:
+                        except Exception as err:
                             log.error("Exception raised in Audio's emptydc_timer.", exc_info=True)
+                            if "No such player for that guild" in str(err):
+                                stop_times.pop(sid, None)
+                            pass
                 elif (
                     sid in pause_times and await self.config.guild(server_obj).emptypause_enabled()
                 ):
@@ -7774,7 +7747,9 @@ class Audio(commands.Cog):
                     if (time.time() - pause_times.get(sid)) >= emptypause_timer:
                         try:
                             await lavalink.get_player(sid).pause()
-                        except Exception:
+                        except Exception as err:
+                            if "No such player for that guild" in str(err):
+                                pause_times.pop(sid, None)
                             log.error(
                                 "Exception raised in Audio's emptypause_timer.", exc_info=True
                             )

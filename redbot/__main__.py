@@ -3,9 +3,12 @@
 # Discord Version check
 
 import asyncio
+import getpass
 import json
 import logging
 import os
+import pip
+import platform
 import shutil
 import sys
 from copy import deepcopy
@@ -16,7 +19,7 @@ import discord
 # Set the event loop policies here so any subsequent `get_event_loop()`
 # calls, in particular those as a result of the following imports,
 # return the correct loop object.
-from redbot import _update_event_loop_policy
+from redbot import _update_event_loop_policy, __version__
 
 _update_event_loop_policy()
 
@@ -30,6 +33,7 @@ from redbot.core.core_commands import Core, license_info_command
 from redbot.setup import get_data_dir, get_name, save_config
 from redbot.core.dev_commands import Dev
 from redbot.core import __version__, modlog, bank, data_manager, drivers
+from redbot.core._sharedlibdeprecation import SharedLibImportWarner
 from signal import SIGTERM
 
 
@@ -71,6 +75,44 @@ def list_instances():
             text += "{}\n".format(instance_name)
         print(text)
         sys.exit(0)
+
+
+def debug_info():
+    """Shows debug information useful for debugging."""
+    if sys.platform == "linux":
+        import distro  # pylint: disable=import-error
+
+    IS_WINDOWS = os.name == "nt"
+    IS_MAC = sys.platform == "darwin"
+    IS_LINUX = sys.platform == "linux"
+
+    pyver = sys.version
+    pipver = pip.__version__
+    redver = __version__
+    dpy_version = discord.__version__
+    if IS_WINDOWS:
+        os_info = platform.uname()
+        osver = "{} {} (version {})".format(os_info.system, os_info.release, os_info.version)
+    elif IS_MAC:
+        os_info = platform.mac_ver()
+        osver = "Mac OSX {} {}".format(os_info[0], os_info[2])
+    else:
+        os_info = distro.linux_distribution()
+        osver = "{} {}".format(os_info[0], os_info[1]).strip()
+    user_who_ran = getpass.getuser()
+    info = (
+        "Debug Info for Red\n\n"
+        + "Red version: {}\n".format(redver)
+        + "Python version: {}\n".format(pyver)
+        + "Python executable: {}\n".format(sys.executable)
+        + "Discord.py version: {}\n".format(dpy_version)
+        + "Pip version: {}\n".format(pipver)
+        + "OS version: {}\n".format(osver)
+        + "System arch: {}\n".format(platform.machine())
+        + "User: {}\n".format(user_who_ran)
+    )
+    print(info)
+    sys.exit(0)
 
 
 def edit_instance(red, cli_flags):
@@ -231,6 +273,8 @@ def main():
         print(description)
         print("Current Version: {}".format(__version__))
         sys.exit(0)
+    elif cli_flags.debuginfo:
+        debug_info()
     elif not cli_flags.instance_name and (not cli_flags.no_instance or cli_flags.edit):
         print("Error: No instance name was provided!")
         sys.exit(1)
@@ -279,6 +323,7 @@ def main():
     LIB_PATH.mkdir(parents=True, exist_ok=True)
     if str(LIB_PATH) not in sys.path:
         sys.path.append(str(LIB_PATH))
+    sys.meta_path.insert(0, SharedLibImportWarner())
 
     red.add_cog(Core(red))
     red.add_cog(CogManagerUI())
