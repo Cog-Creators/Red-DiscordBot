@@ -325,7 +325,7 @@ class Database:
                     "scope_id": int(scope_id),
                     "author_id": int(author_id),
                     "playlist_url": playlist_url,
-                    "tracks": json.dumps(tracks),
+                    "tracks": tracks,
                 }
             ),
         )
