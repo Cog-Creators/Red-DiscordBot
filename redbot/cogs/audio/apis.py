@@ -202,7 +202,7 @@ class MusicCache:
         self.spotify_api: SpotifyAPI = SpotifyAPI(bot, session)
         self.youtube_api: YouTubeAPI = YouTubeAPI(bot, session)
         self._session: aiohttp.ClientSession = session
-        self.database = self._database.cursor()
+        self.database = _database.database
 
         self._tasks: dict = {}
         self._lock: asyncio.Lock = asyncio.Lock()
@@ -283,7 +283,7 @@ class MusicCache:
                 if youtube_cache:
                     update = True
                     with contextlib.suppress(SQLError):
-                        val, update = await self.fetch_one(
+                        val, update = await self.database.fetch_one(
                             "youtube", "youtube_url", {"track": track_info}
                         )
                     if update:
@@ -434,7 +434,7 @@ class MusicCache:
         if query_type == "track" and cache_enabled:
             update = True
             with contextlib.suppress(SQLError):
-                val, update = await self.fetch_one(
+                val, update = await self.database.fetch_one(
                     "spotify", "track_info", {"uri": f"spotify:track:{uri}"}
                 )
             if update:
@@ -529,7 +529,7 @@ class MusicCache:
                 if youtube_cache:
                     update = True
                     with contextlib.suppress(SQLError):
-                        val, update = await self.fetch_one(
+                        val, update = await self.database.fetch_one(
                             "youtube", "youtube_url", {"track": track_info}
                         )
                     if update:
@@ -692,7 +692,9 @@ class MusicCache:
         if cache_enabled:
             update = True
             with contextlib.suppress(SQLError):
-                val, update = await self.fetch_one("youtube", "youtube_url", {"track": track_info})
+                val, update = await self.database.fetch_one(
+                    "youtube", "youtube_url", {"track": track_info}
+                )
             if update:
                 val = None
         if val is None:
@@ -743,7 +745,7 @@ class MusicCache:
         if cache_enabled and not forced and not _raw_query.is_local:
             update = True
             with contextlib.suppress(SQLError):
-                val, update = await self.fetch_one("lavalink", "data", {"query": query})
+                val, update = await self.database.fetch_one("lavalink", "data", {"query": query})
             if update:
                 val = None
             if val:
@@ -802,10 +804,12 @@ class MusicCache:
                     tasks = self._tasks[ctx.message.id]
                     del self._tasks[ctx.message.id]
                     await asyncio.gather(
-                        *[self.insert(*a) for a in tasks["insert"]], return_exceptions=True
+                        *[self.database.insert(*a) for a in tasks["insert"]],
+                        return_exceptions=True,
                     )
                     await asyncio.gather(
-                        *[self.update(*a) for a in tasks["update"]], return_exceptions=True
+                        *[self.database.update(*a) for a in tasks["update"]],
+                        return_exceptions=True,
                     )
                 log.debug(f"Completed database writes for {lock_id} " f"({lock_author})")
 
@@ -820,10 +824,10 @@ class MusicCache:
                 self._tasks = {}
 
                 await asyncio.gather(
-                    *[self.insert(*a) for a in tasks["insert"]], return_exceptions=True
+                    *[self.database.insert(*a) for a in tasks["insert"]], return_exceptions=True
                 )
                 await asyncio.gather(
-                    *[self.update(*a) for a in tasks["update"]], return_exceptions=True
+                    *[self.database.update(*a) for a in tasks["update"]], return_exceptions=True
                 )
             log.debug("Completed pending writes to database have finished")
 
@@ -847,7 +851,7 @@ class MusicCache:
             maxage_int = int(time.mktime(maxage.timetuple()))
             query_data["maxage"] = maxage_int
 
-            vals = await self.fetch_all("lavalink", "data", query_data)
+            vals = await self.database.fetch_all("lavalink", "data", query_data)
             recently_played = [r[0] for r in vals if r]
 
             if recently_played:

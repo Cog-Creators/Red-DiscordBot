@@ -295,7 +295,7 @@ class Audio(commands.Cog):
                     cast(discord.Guild, discord.Object(id=guild_id))
                 ).clear_raw("playlists")
         if database_entries and HAS_SQL:
-            await self.music_cache.insert("lavalink", database_entries)
+            await self.music_cache.database.insert("lavalink", database_entries)
 
     def _restart_connect(self):
         if self._connect_task:
@@ -5029,7 +5029,7 @@ class Audio(commands.Cog):
                     }
                 )
         if database_entries and HAS_SQL:
-            await self.music_cache.insert("lavalink", database_entries)
+            await self.music_cache.database.insert("lavalink", database_entries)
 
     async def _load_v2_playlist(
         self,
@@ -6302,7 +6302,8 @@ class Audio(commands.Cog):
 
         return False
 
-    async def _is_alone(self, ctx: commands.Context):
+    @staticmethod
+    async def _is_alone(ctx: commands.Context):
         channel_members = rgetattr(ctx, "guild.me.voice.channel.members", [])
         nonbots = sum(m.id != ctx.author.id for m in channel_members if not m.bot)
         return nonbots < 1
@@ -7004,7 +7005,7 @@ class Audio(commands.Cog):
         await self.music_cache.run_tasks(ctx)
 
     async def _close_database(self):
-        await self.music_cache.run_all_pending_tasks()
+        await self.music_cache.database.run_all_pending_tasks()
         database_connection.close()
 
     __del__ = cog_unload
