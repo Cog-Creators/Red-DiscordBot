@@ -1,8 +1,8 @@
 import json
 from collections import namedtuple
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum, unique
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Mapping
 
 import apsw
 import discord
@@ -38,6 +38,9 @@ FakePlaylist = namedtuple("Playlist", "author scope")
 
 _ = Translator("Audio", __file__)
 
+# TODO: https://github.com/Cog-Creators/Red-DiscordBot/pull/3195#issuecomment-567821701
+# Thanks a lot Sinbad!
+
 _PRAGMA_UPDATE_temp_store = """
 PRAGMA temp_store = 2;
 """
@@ -55,16 +58,17 @@ CREATE TABLE IF NOT EXISTS playlists (
     playlist_name TEXT NOT NULL, 
     scope_id INTEGER NOT NULL, 
     author_id INTEGER NOT NULL, 
+    deleted BOOLEAN DEFAULT false,
     playlist_url TEXT, 
-    tracks BLOB, 
+    tracks JSON, 
     PRIMARY KEY (playlist_id, scope_id, scope_type)
 );
 """
 
 _DELETE = """
-DELETE
-FROM
-    playlists 
+UPDATE playlists
+    SET
+        deleted = true
 WHERE
     (
         scope_type = :scope_type 
@@ -81,6 +85,14 @@ WHERE
     scope_type = :scope_type ;
 """
 
+_DELETE_SCHEDULED = """
+DELETE
+FROM
+    playlists 
+WHERE
+    deleted = true;
+"""
+
 _FETCH_ALL = """
 SELECT
     playlist_id,
@@ -94,6 +106,7 @@ FROM
 WHERE
     scope_type = :scope_type 
     AND scope_id = :scope_id
+    AND deleted = false
     ;
 """
 
@@ -112,6 +125,7 @@ WHERE
         scope_type = :scope_type 
         AND scope_id = :scope_id
         AND author_id = :author_id 
+        AND deleted = false
     )
 ;
 """
@@ -135,6 +149,7 @@ WHERE
         OR
         LOWER(playlist_name) LIKE "%" || COALESCE(LOWER(:playlist_name), "") || "%"
         )
+        AND deleted = false
     )
 ;
 """
@@ -154,6 +169,7 @@ WHERE
         scope_type = :scope_type 
         AND playlist_id = :playlist_id 
         AND scope_id = :scope_id 
+        AND deleted = false
     )
 """
 
@@ -183,7 +199,7 @@ class SQLFetchResult:
     scope_id: int
     author_id: int
     playlist_url: Optional[str] = None
-    tracks: str = "[]"
+    tracks: List[Mapping] = field(default_factory=lambda: [])
 
 
 @unique
@@ -273,6 +289,11 @@ class Database:
         scope_type = self.get_scope_type(scope)
         return self.cursor.execute(
             _DELETE, ({"playlist_id": playlist_id, "scope_id": scope_id, "scope_type": scope_type})
+        )
+
+    def delete_scheduled(self):
+        return self.cursor.execute(
+            _DELETE_SCHEDULED
         )
 
     def drop(self, scope: str):
@@ -657,7 +678,7 @@ class Playlist:
         playlist_id = data.playlist_id or playlist_number
         name = data.playlist_name
         playlist_url = data.playlist_url
-        tracks = json.loads(data.tracks)
+        tracks = data.tracks
 
         return cls(
             bot=bot,
