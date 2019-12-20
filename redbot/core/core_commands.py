@@ -1323,8 +1323,9 @@ class Core(commands.Cog, CoreLogic):
     @commands.command()
     @checks.is_owner()
     async def backup(self, ctx: commands.Context, *, backup_dir: str = None):
-        """Creates a backup of all data for the instance.
+        """Creates a backup of all data for this bot instance.
 
+        This backs up the bot's data and settings.
         You may provide a path to a directory for the backup archive to
         be placed in. If the directory does not exist, the bot will
         attempt to create it.
@@ -1591,12 +1592,14 @@ class Core(commands.Cog, CoreLogic):
             e.add_field(name="System arch", value=platform.machine(), inline=True)
             e.add_field(name="User", value=user_who_ran, inline=True)
             e.add_field(name="OS version", value=osver, inline=False)
+            e.add_field(name="Python executable", value=sys.executable, inline=False)
             await ctx.send(embed=e)
         else:
             info = (
                 "Debug Info for Red\n\n"
                 + "Red version: {}\n".format(redver)
                 + "Python version: {}\n".format(pyver)
+                + "Python executable: {}\n".format(sys.executable)
                 + "Discord.py version: {}\n".format(dpy_version)
                 + "Pip version: {}\n".format(pipver)
                 + "System arch: {}\n".format(platform.machine())

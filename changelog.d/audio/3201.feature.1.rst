@@ -1,0 +1,1 @@
+``[p]remove`` command now accepts an URL or Index, if an URL is used it will remove all tracks in the queue with that URL.
