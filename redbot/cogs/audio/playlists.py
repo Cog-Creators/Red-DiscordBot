@@ -1,5 +1,4 @@
 from collections import namedtuple
-from enum import Enum, unique
 from typing import List, Optional, Union
 
 import discord
@@ -10,13 +9,13 @@ from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_list
 from .errors import InvalidPlaylistScope, MissingAuthor, MissingGuild, NotAllowed
+from .utils import PlaylistScope
 
 _config = None
 _bot = None
 
 __all__ = [
     "Playlist",
-    "PlaylistScope",
     "get_playlist",
     "get_all_playlist",
     "create_playlist",
@@ -30,20 +29,6 @@ __all__ = [
 FakePlaylist = namedtuple("Playlist", "author scope")
 
 _ = Translator("Audio", __file__)
-
-
-@unique
-class PlaylistScope(Enum):
-    GLOBAL = "GLOBALPLAYLIST"
-    GUILD = "GUILDPLAYLIST"
-    USER = "USERPLAYLIST"
-
-    def __str__(self):
-        return "{0}".format(self.value)
-
-    @staticmethod
-    def list():
-        return list(map(lambda c: c.value, PlaylistScope))
 
 
 def _pass_config_to_playlist(config: Config, bot: Red):

@@ -35,9 +35,11 @@ from redbot.core.utils.menus import (
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from . import audio_dataclasses
-from .apis import _ERROR, HAS_SQL, MusicCache
+from .apis import MusicCache
 from .checks import can_have_caching
+from .config import pass_config_to_dependencies
 from .converters import ComplexScopeParser, ScopeParser, get_lazy_converter, get_playlist_converter
+from .databases import database_connection, HAS_SQL, _ERROR
 from .equalizer import Equalizer
 from .errors import (
     DatabaseError,
@@ -50,7 +52,6 @@ from .manager import ServerManager
 from .playlists import (
     FakePlaylist,
     Playlist,
-    PlaylistScope,
     create_playlist,
     delete_playlist,
     get_all_playlist,
@@ -67,7 +68,6 @@ from .utils import (
     is_allowed,
     match_url,
     match_yt_playlist,
-    pass_config_to_dependencies,
     queue_duration,
     remove_react,
     rgetattr,
@@ -76,6 +76,7 @@ from .utils import (
     track_limit,
     url_check,
     userlimit,
+    PlaylistScope,
 )
 
 _ = Translator("Audio", __file__)
@@ -222,11 +223,11 @@ class Audio(commands.Cog):
         await self.bot.wait_until_ready()
         # Unlike most cases, we want the cache to exit before migration.
         try:
+            pass_config_to_dependencies(self.config, self.bot, await self.config.localpath())
             await self.music_cache.initialize(self.config)
             await self._migrate_config(
                 from_version=await self.config.schema_version(), to_version=_SCHEMA_VERSION
             )
-            pass_config_to_dependencies(self.config, self.bot, await self.config.localpath())
             self._restart_connect()
             self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
             lavalink.register_event_listener(self.event_handler)
@@ -7004,6 +7005,6 @@ class Audio(commands.Cog):
 
     async def _close_database(self):
         await self.music_cache.run_all_pending_tasks()
-        await self.music_cache.close()
+        database_connection.close()
 
     __del__ = cog_unload
