@@ -200,8 +200,7 @@ class PlaylistMigration23:  # TODO: remove me in a future version ?
 
 
 async def get_all_playlist_for_migration23(  # TODO: remove me in a future version ?
-    scope: str,
-    guild: Union[discord.Guild, int] = None,
+    scope: str, guild: Union[discord.Guild, int] = None,
 ) -> List[PlaylistMigration23]:
     """
     Gets all playlist for the specified scope.
