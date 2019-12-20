@@ -1,5 +1,6 @@
 import asyncio
 import contextlib
+import functools
 import os
 import re
 import time
@@ -10,10 +11,9 @@ import lavalink
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
+
 from . import audio_dataclasses
-
 from .converters import _pass_config_to_converters
-
 from .playlists import _pass_config_to_playlist
 
 __all__ = [
@@ -32,6 +32,7 @@ __all__ = [
     "url_check",
     "userlimit",
     "is_allowed",
+    "rgetattr",
     "CacheLevel",
     "Notifier",
 ]
@@ -238,6 +239,18 @@ def userlimit(channel):
     if channel.user_limit == 0 or channel.user_limit > len(channel.members) + 1:
         return False
     return True
+
+
+def rsetattr(obj, attr, val):
+    pre, _, post = attr.rpartition(".")
+    return setattr(rgetattr(obj, pre) if pre else obj, post, val)
+
+
+def rgetattr(obj, attr, *args):
+    def _getattr(obj2, attr2):
+        return getattr(obj2, attr2, *args)
+
+    return functools.reduce(_getattr, [obj] + attr.split("."))
 
 
 class CacheLevel:
