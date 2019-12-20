@@ -4,12 +4,12 @@ import contextlib
 import datetime
 import json
 import logging
-import os
 import random
 import time
 import traceback
 from collections import namedtuple
 from typing import Callable, Dict, List, Optional, Tuple, Union
+
 
 try:
     import apsw
@@ -31,6 +31,7 @@ from lavalink.rest_api import LoadResult
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
+from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from . import audio_dataclasses
 from .errors import InvalidTableError, SpotifyFetchError, YouTubeApiError, DatabaseError
@@ -397,13 +398,13 @@ class MusicCache:
     Always tries the Cache first.
     """
 
-    def __init__(self, bot: Red, session: aiohttp.ClientSession, path: str):
+    def __init__(self, bot: Red, session: aiohttp.ClientSession):
         self.bot = bot
         self.spotify_api: SpotifyAPI = SpotifyAPI(bot, session)
         self.youtube_api: YouTubeAPI = YouTubeAPI(bot, session)
         self._session: aiohttp.ClientSession = session
         if HAS_SQL:
-            self._database = apsw.Connection(os.path.abspath(str(os.path.join(path, "cache.db"))))
+            self._database = apsw.Connection(str((cog_data_path(None, raw_name="Audio") / "cache.db").absolute()))
             self.database = self._database.cursor()
         else:
             self.database = None

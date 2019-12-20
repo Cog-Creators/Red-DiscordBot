@@ -144,7 +144,7 @@ class Audio(commands.Cog):
         self.config.register_custom(PlaylistScope.USER.value, **_playlist)
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)
-        self.music_cache = MusicCache(bot, self.session, path=str(cog_data_path(raw_name="Audio")))
+        self.music_cache = MusicCache(bot, self.session)
         self.play_lock = {}
 
         self._manager: Optional[ServerManager] = None
