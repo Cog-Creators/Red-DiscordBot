@@ -4,20 +4,19 @@ import functools
 import os
 import re
 import time
+from enum import unique, Enum
 from urllib.parse import urlparse
 
 import discord
 import lavalink
 
-from redbot.core import Config, commands
+from redbot.core import commands, Config
 from redbot.core.bot import Red
 
 from . import audio_dataclasses
-from .converters import _pass_config_to_converters
-from .playlists import _pass_config_to_playlist
 
 __all__ = [
-    "pass_config_to_dependencies",
+    "_pass_config_to_utils",
     "track_limit",
     "queue_duration",
     "draw_time",
@@ -35,6 +34,7 @@ __all__ = [
     "rgetattr",
     "CacheLevel",
     "Notifier",
+    "PlaylistScope",
 ]
 _re_time_converter = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
 re_yt_list_playlist = re.compile(
@@ -45,13 +45,12 @@ _config = None
 _bot = None
 
 
-def pass_config_to_dependencies(config: Config, bot: Red, localtracks_folder: str):
-    global _bot, _config
-    _bot = bot
-    _config = config
-    _pass_config_to_playlist(config, bot)
-    _pass_config_to_converters(config, bot)
-    audio_dataclasses._pass_config_to_dataclasses(config, bot, localtracks_folder)
+def _pass_config_to_utils(config: Config, bot: Red):
+    global _config, _bot
+    if _config is None:
+        _config = config
+    if _bot is None:
+        _bot = bot
 
 
 def track_limit(track, maxlength):
@@ -435,3 +434,17 @@ class Notifier:
             self.last_msg_time = time.time()
         except discord.errors.NotFound:
             pass
+
+
+@unique
+class PlaylistScope(Enum):
+    GLOBAL = "GLOBALPLAYLIST"
+    GUILD = "GUILDPLAYLIST"
+    USER = "USERPLAYLIST"
+
+    def __str__(self):
+        return "{0}".format(self.value)
+
+    @staticmethod
+    def list():
+        return list(map(lambda c: c.value, PlaylistScope))

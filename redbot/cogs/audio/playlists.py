@@ -1,27 +1,23 @@
-import json
 from collections import namedtuple
-from dataclasses import dataclass, field
-from enum import Enum, unique
-from typing import List, Optional, Union, Mapping
+from typing import List, Optional, Union
 
-import apsw
 import discord
 import lavalink
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
-from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_list
+from .databases import Playlist_Interface, SQLFetchResult
 from .errors import InvalidPlaylistScope, MissingAuthor, MissingGuild, NotAllowed
+from .utils import PlaylistScope
 
 _config: Config = None
 _bot: Red = None
-database: "Database" = None
+database: Playlist_Interface = None
 
 __all__ = [
     "Playlist",
-    "PlaylistScope",
     "get_playlist",
     "get_all_playlist",
     "create_playlist",
@@ -38,298 +34,6 @@ FakePlaylist = namedtuple("Playlist", "author scope")
 
 _ = Translator("Audio", __file__)
 
-# TODO: https://github.com/Cog-Creators/Red-DiscordBot/pull/3195#issuecomment-567821701
-# Thanks a lot Sinbad!
-
-_PRAGMA_UPDATE_temp_store = """
-PRAGMA temp_store = 2;
-"""
-_PRAGMA_UPDATE_journal_mode = """
-PRAGMA journal_mode = wal;
-"""
-_PRAGMA_UPDATE_read_uncommitted = """
-PRAGMA read_uncommitted = 1;
-"""
-
-_CREATE_TABLE = """
-CREATE TABLE IF NOT EXISTS playlists ( 
-    scope_type INTEGER NOT NULL, 
-    playlist_id INTEGER NOT NULL, 
-    playlist_name TEXT NOT NULL, 
-    scope_id INTEGER NOT NULL, 
-    author_id INTEGER NOT NULL, 
-    deleted BOOLEAN DEFAULT false,
-    playlist_url TEXT, 
-    tracks JSON, 
-    PRIMARY KEY (playlist_id, scope_id, scope_type)
-);
-"""
-
-_DELETE = """
-UPDATE playlists
-    SET
-        deleted = true
-WHERE
-    (
-        scope_type = :scope_type 
-        AND playlist_id = :playlist_id 
-        AND scope_id = :scope_id 
-    )
-;
-"""
-_DELETE_SCOPE = """
-DELETE
-FROM
-    playlists 
-WHERE
-    scope_type = :scope_type ;
-"""
-
-_DELETE_SCHEDULED = """
-DELETE
-FROM
-    playlists 
-WHERE
-    deleted = true;
-"""
-
-_FETCH_ALL = """
-SELECT
-    playlist_id,
-    playlist_name,
-    scope_id,
-    author_id,
-    playlist_url,
-    tracks 
-FROM
-    playlists 
-WHERE
-    scope_type = :scope_type 
-    AND scope_id = :scope_id
-    AND deleted = false
-    ;
-"""
-
-_FETCH_ALL_WITH_FILTER = """
-SELECT
-    playlist_id,
-    playlist_name,
-    scope_id,
-    author_id,
-    playlist_url,
-    tracks 
-FROM
-    playlists 
-WHERE
-    (
-        scope_type = :scope_type 
-        AND scope_id = :scope_id
-        AND author_id = :author_id 
-        AND deleted = false
-    )
-;
-"""
-
-_FETCH_ALL_CONVERTER = """
-SELECT
-    playlist_id,
-    playlist_name,
-    scope_id,
-    author_id,
-    playlist_url,
-    tracks 
-FROM
-    playlists 
-WHERE
-    (
-        scope_type = :scope_type 
-        AND
-        (
-        playlist_id = :playlist_id
-        OR
-        LOWER(playlist_name) LIKE "%" || COALESCE(LOWER(:playlist_name), "") || "%"
-        )
-        AND deleted = false
-    )
-;
-"""
-
-_FETCH = """
-SELECT
-    playlist_id,
-    playlist_name,
-    scope_id,
-    author_id,
-    playlist_url,
-    tracks 
-FROM
-    playlists 
-WHERE
-    (
-        scope_type = :scope_type 
-        AND playlist_id = :playlist_id 
-        AND scope_id = :scope_id 
-        AND deleted = false
-    )
-"""
-
-_UPSET = """
-INSERT INTO
-    playlists ( scope_type, playlist_id, playlist_name, scope_id, author_id, playlist_url, tracks ) 
-VALUES
-    (
-        :scope_type, :playlist_id, :playlist_name, :scope_id, :author_id, :playlist_url, :tracks 
-    )
-    ON CONFLICT (scope_type, playlist_id, scope_id) DO 
-    UPDATE
-    SET
-        playlist_name = excluded.playlist_name, 
-        playlist_url = excluded.playlist_url, 
-        tracks = excluded.tracks;
-"""
-_CREATE_INDEX = """
-CREATE INDEX IF NOT EXISTS name_index ON playlists (scope_type, playlist_id, playlist_name, scope_id);
-"""
-
-
-@dataclass
-class SQLFetchResult:
-    playlist_id: int
-    playlist_name: str
-    scope_id: int
-    author_id: int
-    playlist_url: Optional[str] = None
-    tracks: List[Mapping] = field(default_factory=lambda: [])
-
-
-@unique
-class PlaylistScope(Enum):
-    GLOBAL = "GLOBALPLAYLIST"
-    GUILD = "GUILDPLAYLIST"
-    USER = "USERPLAYLIST"
-
-    def __str__(self):
-        return "{0}".format(self.value)
-
-    @staticmethod
-    def list():
-        return list(map(lambda c: c.value, PlaylistScope))
-
-
-class Database:
-    def __init__(self):
-        self._database = apsw.Connection(str(cog_data_path(_bot.get_cog("Audio")) / "Audio.db"))
-        self.cursor = self._database.cursor()
-        self.cursor.execute(_PRAGMA_UPDATE_temp_store)
-        self.cursor.execute(_PRAGMA_UPDATE_journal_mode)
-        self.cursor.execute(_PRAGMA_UPDATE_read_uncommitted)
-        self.cursor.execute(_CREATE_TABLE)
-        self.cursor.execute(_CREATE_INDEX)
-
-    def close(self):
-        self._database.close()
-
-    @staticmethod
-    def get_scope_type(scope: str) -> int:
-        if scope == PlaylistScope.GLOBAL.value:
-            table = 1
-        elif scope == PlaylistScope.USER.value:
-            table = 3
-        else:
-            table = 2
-        return table
-
-    def fetch(self, scope: str, playlist_id: int, scope_id: int) -> SQLFetchResult:
-        scope_type = self.get_scope_type(scope)
-        row = (
-            self.cursor.execute(
-                _FETCH,
-                ({"playlist_id": playlist_id, "scope_id": scope_id, "scope_type": scope_type}),
-            ).fetchone()
-            or []
-        )
-
-        return SQLFetchResult(*row) if row else None
-
-    def fetch_all(self, scope: str, scope_id: int, author_id=None) -> List[SQLFetchResult]:
-        scope_type = self.get_scope_type(scope)
-        if author_id is not None:
-            output = self.cursor.execute(
-                _FETCH_ALL_WITH_FILTER,
-                ({"scope_type": scope_type, "scope_id": scope_id, "author_id": author_id}),
-            ).fetchall()
-        else:
-            output = self.cursor.execute(
-                _FETCH_ALL, ({"scope_type": scope_type, "scope_id": scope_id})
-            ).fetchall()
-        return [SQLFetchResult(*row) for row in output] if output else []
-
-    def fetch_all_converter(self, scope: str, playlist_name, playlist_id) -> List[SQLFetchResult]:
-        scope_type = self.get_scope_type(scope)
-        try:
-            playlist_id = int(playlist_id)
-        except:
-            playlist_id = -1
-        output = (
-            self.cursor.execute(
-                _FETCH_ALL_CONVERTER,
-                (
-                    {
-                        "scope_type": scope_type,
-                        "playlist_name": playlist_name,
-                        "playlist_id": playlist_id,
-                    }
-                ),
-            ).fetchall()
-            or []
-        )
-        return [SQLFetchResult(*row) for row in output] if output else []
-
-    def delete(self, scope: str, playlist_id: int, scope_id: int):
-        scope_type = self.get_scope_type(scope)
-        return self.cursor.execute(
-            _DELETE, ({"playlist_id": playlist_id, "scope_id": scope_id, "scope_type": scope_type})
-        )
-
-    def delete_scheduled(self):
-        return self.cursor.execute(
-            _DELETE_SCHEDULED
-        )
-
-    def drop(self, scope: str):
-        scope_type = self.get_scope_type(scope)
-        return self.cursor.execute(_DELETE_SCOPE, ({"scope_type": scope_type}))
-
-    def create_table(self, scope: str):
-        scope_type = self.get_scope_type(scope)
-        return self.cursor.execute(_CREATE_TABLE, ({"scope_type": scope_type}))
-
-    def upsert(
-        self,
-        scope: str,
-        playlist_id: int,
-        playlist_name: str,
-        scope_id: int,
-        author_id: int,
-        playlist_url: str,
-        tracks: List[dict],
-    ):
-        scope_type = self.get_scope_type(scope)
-        self.cursor.execute(
-            _UPSET,
-            (
-                {
-                    "scope_type": str(scope_type),
-                    "playlist_id": int(playlist_id),
-                    "playlist_name": str(playlist_name),
-                    "scope_id": int(scope_id),
-                    "author_id": int(author_id),
-                    "playlist_url": playlist_url,
-                    "tracks": tracks,
-                }
-            ),
-        )
-
 
 def _pass_config_to_playlist(config: Config, bot: Red):
     global _config, _bot, database
@@ -338,7 +42,7 @@ def _pass_config_to_playlist(config: Config, bot: Red):
     if _bot is None:
         _bot = bot
     if database is None:
-        database = Database()
+        database = Playlist_Interface()
 
 
 def standardize_scope(scope) -> str:

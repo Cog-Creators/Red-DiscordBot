@@ -50,7 +50,6 @@ from .manager import ServerManager
 from .playlists import (
     FakePlaylist,
     Playlist,
-    PlaylistScope,
     create_playlist,
     delete_playlist,
     get_all_playlist,
@@ -69,7 +68,6 @@ from .utils import (
     is_allowed,
     match_url,
     match_yt_playlist,
-    pass_config_to_dependencies,
     queue_duration,
     remove_react,
     rgetattr,
@@ -78,7 +76,9 @@ from .utils import (
     track_limit,
     url_check,
     userlimit,
+    PlaylistScope,
 )
+from .config import pass_config_to_dependencies
 
 _ = Translator("Audio", __file__)
 
@@ -224,8 +224,8 @@ class Audio(commands.Cog):
         try:
             await self.bot.wait_until_ready()
             # Unlike most cases, we want the cache to exit before migration.
-            await self.music_cache.initialize(self.config)
             pass_config_to_dependencies(self.config, self.bot, await self.config.localpath())
+            await self.music_cache.initialize(self.config)
             await self._migrate_config(
                 from_version=await self.config.schema_version(), to_version=_SCHEMA_VERSION
             )

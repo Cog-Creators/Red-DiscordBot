@@ -10,7 +10,8 @@ from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 
-from .playlists import PlaylistScope, standardize_scope, get_all_playlist_converter
+from .playlists import standardize_scope, get_all_playlist_converter
+from .utils import PlaylistScope
 
 _ = Translator("Audio", __file__)
 
