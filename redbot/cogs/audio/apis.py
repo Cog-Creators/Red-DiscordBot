@@ -161,7 +161,7 @@ DROP TABLE IF EXISTS lavalink ;
 _CREATE_LAVALINK_TABLE = """
 CREATE TABLE IF NOT EXISTS lavalink(
     query TEXT,
-    data BLOB,
+    data JSON,
     last_updated INTEGER,
     last_fetched INTEGER
 
@@ -213,6 +213,8 @@ FROM lavalink
 WHERE 
     last_fetched > :day
     AND last_updated > :maxage
+ORDER BY RANDOM()
+LIMIT 10
 ;
 """
 
@@ -1083,7 +1085,7 @@ class MusicCache:
                 task = ("update", ("lavalink", {"query": query}))
                 self.append_task(ctx, *task)
         if val and not forced:
-            data = json.loads(val)
+            data = val
             data["query"] = query
             results = LoadResult(data)
             called_api = False
@@ -1115,7 +1117,7 @@ class MusicCache:
                             [
                                 {
                                     "query": query,
-                                    "data": json.dumps(results._raw),
+                                    "data": results._raw,
                                     "last_updated": time_now,
                                     "last_fetched": time_now,
                                 }
@@ -1166,7 +1168,7 @@ class MusicCache:
             self._tasks[lock_id] = {"update": [], "insert": []}
         self._tasks[lock_id][event].append(task)
 
-    async def play_random(self):
+    async def get_random_from_db(self):
         tracks = []
         try:
             query_data = {}
@@ -1185,7 +1187,7 @@ class MusicCache:
 
             if recently_played:
                 track = random.choice(recently_played)
-                results = LoadResult(json.loads(track))
+                results = LoadResult(track)
                 tracks = list(results.tracks)
         except Exception:
             tracks = []
@@ -1213,7 +1215,7 @@ class MusicCache:
 
         if not tracks or not getattr(playlist, "tracks", None):
             if cache_enabled:
-                tracks = await self.play_random()
+                tracks = await self.get_random_from_db()
             if not tracks:
                 ctx = namedtuple("Context", "message")
                 results, called_api = await self.lavalink_query(
@@ -1253,7 +1255,7 @@ class MusicCache:
                     continue
                 valid = True
 
-            track.extras = {"autoplay": True}
+            track.extras["autoplay"] = True
             player.add(player.channel.guild.me, track)
             self.bot.dispatch(
                 "red_audio_track_auto_play", player.channel.guild, track, player.channel.guild.me

@@ -656,7 +656,7 @@ class Audio(commands.Cog):
         ):
             log.debug(f"Query is not allowed in {guild} ({guild.id})")
             return
-        track.extras = {"autoplay": is_autoplay}
+        track.extras["autoplay"] = is_autoplay
         player.add(player.channel.guild.me, track)
         self.bot.dispatch(
             "red_audio_track_auto_play", player.channel.guild, track, player.channel.guild.me
