@@ -34,11 +34,11 @@ from redbot.core.utils.menus import (
 )
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
+import redbot.cogs.audio.databases
 from . import audio_dataclasses
 from .apis import _ERROR, HAS_SQL, MusicCache
 from .checks import can_have_caching
 from .converters import ComplexScopeParser, ScopeParser, get_lazy_converter, get_playlist_converter
-from .databases import database_connection
 from .equalizer import Equalizer
 from .errors import (
     DatabaseError,
@@ -56,7 +56,6 @@ from .playlists import (
     get_all_playlist,
     get_playlist,
     humanize_scope,
-    database,
     get_all_playlist_for_migration23,
 )
 from .utils import (
@@ -230,7 +229,9 @@ class Audio(commands.Cog):
             await self._migrate_config(
                 from_version=await self.config.schema_version(), to_version=_SCHEMA_VERSION
             )
-            database.delete_scheduled()
+            import redbot.cogs.audio.playlists
+
+            redbot.cogs.audio.playlists.database.delete_scheduled()
             self._restart_connect()
             self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
             lavalink.register_event_listener(self.event_handler)
@@ -7015,6 +7016,6 @@ class Audio(commands.Cog):
     async def _close_database(self):
         await self.music_cache.run_all_pending_tasks()
         await self.music_cache.close()
-        database_connection.close()
+        redbot.cogs.audio.databases.database_connection.close()
 
     __del__ = cog_unload
