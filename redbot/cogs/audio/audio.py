@@ -1917,9 +1917,7 @@ class Audio(commands.Cog):
                         title=_("Unable to disconnect"),
                         description=_("You need the DJ role to disconnect."),
                     )
-            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
-                ctx
-            ):
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(ctx):
                 return await self._embed_msg(
                     ctx, title=_("There are other people listening to music.")
                 )
@@ -5919,9 +5917,7 @@ class Audio(commands.Cog):
         )
         player = lavalink.get_player(ctx.guild.id)
         if dj_enabled:
-            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
-                ctx
-            ):
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(ctx):
                 return await self._embed_msg(
                     ctx,
                     title=_("Unable To Play Tracks"),
@@ -6263,9 +6259,7 @@ class Audio(commands.Cog):
         if not self._player_check(ctx) or not player.queue:
             return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
         if dj_enabled:
-            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
-                ctx
-            ):
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(ctx):
                 return await self._embed_msg(
                     ctx,
                     title=_("Unable To Clear Queue"),
@@ -6290,9 +6284,7 @@ class Audio(commands.Cog):
         if not self._player_check(ctx) or not player.queue:
             return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
         if dj_enabled:
-            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
-                ctx
-            ):
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(ctx):
                 return await self._embed_msg(
                     ctx,
                     title=_("Unable To Clean Queue"),
@@ -6381,9 +6373,7 @@ class Audio(commands.Cog):
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         if dj_enabled:
-            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
-                ctx
-            ):
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(ctx):
                 ctx.command.reset_cooldown(ctx)
                 return await self._embed_msg(
                     ctx,
@@ -7249,6 +7239,7 @@ class Audio(commands.Cog):
         dj_role = self._dj_role_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_role()
         )
+        dj_role_obj = ctx.guild.get_role(dj_role)
         return dj_role_obj in ctx.guild.get_member(member.id).roles
 
     @staticmethod
