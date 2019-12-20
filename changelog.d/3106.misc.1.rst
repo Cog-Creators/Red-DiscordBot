@@ -1,0 +1,1 @@
+Send deprecation warning when using `[p]load` and `[p]reload` commands if the repos loaded cogs are from have shared libraries.

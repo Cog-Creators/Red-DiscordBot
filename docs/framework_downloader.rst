@@ -55,6 +55,9 @@ Keys specific to the cog info.json (case sensitive)
 - ``type`` (string) - Optional, defaults to ``COG``. Must be either ``COG`` or
   ``SHARED_LIBRARY``. If ``SHARED_LIBRARY`` then ``hidden`` will be ``True``.
 
+.. warning::
+    Shared libraries are deprecated since version 3.2 and are marked for removal in version 3.3.
+
 API Reference
 *************
 
