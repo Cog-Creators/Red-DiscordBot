@@ -852,7 +852,7 @@ class MusicCache:
             query_data["maxage"] = maxage_int
 
             vals = await self.database.fetch_all("lavalink", "data", query_data)
-            recently_played = [r[0] for r in vals if r]
+            recently_played = [r.tracks for r in vals if r]
 
             if recently_played:
                 track = random.choice(recently_played)

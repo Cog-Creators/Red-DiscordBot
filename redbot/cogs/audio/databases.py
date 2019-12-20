@@ -1,6 +1,8 @@
 import datetime
+import json
 import time
 import traceback
+from dataclasses import dataclass, field
 from typing import List, Dict, Union, Optional, Tuple
 
 from redbot.cogs.audio.errors import InvalidTableError
@@ -261,6 +263,27 @@ def _pass_config_to_databases(config: Config, bot: Red):
         )
 
 
+@dataclass
+class CacheFetchResult:
+    query = Union[str, dict]
+    last_updated = int
+
+    def __post_init__(self):
+        if isinstance(self.last_updated, int):
+            self.updated_on: datetime.datetime = datetime.datetime.fromtimestamp(self.last_updated)
+        if all(k in self.query for k in ["loadType", "playlistInfo", "isSeekable", "isStream"]):
+            self.query: json.loads(self.query)
+
+
+@dataclass
+class CacheLastFetchResult:
+    tracks: List[dict] = field(default_factory=lambda: {})
+
+    def __post_init__(self):
+        if isinstance(self.tracks, str):
+            self.tracks = json.loads(self.tracks)
+
+
 class CacheInterface:
     def __init__(self):
         self.database = database_connection.cursor()
@@ -322,7 +345,7 @@ class CacheInterface:
 
     async def fetch_one(
         self, table: str, query: str, values: Dict[str, Union[str, int]]
-    ) -> Tuple[Optional[str], bool]:
+    ) -> Tuple[Optional[Union[str, dict]], bool]:
         table = _PARSER.get(table, {})
         sql_query = table.get(query, {}).get("query")
         need_update = False
@@ -335,22 +358,23 @@ class CacheInterface:
             )
             maxage_int = int(time.mktime(maxage.timetuple()))
             values.update({"maxage": maxage_int})
-            query, last_updated = self.database.execute(sql_query, values).fetchone() or (
-                None,
-                None,
-            )
-            return query or None, need_update if table != "spotify" else True
+            output = self.database.execute(sql_query, values).fetchone()
+            result = CacheFetchResult(*output)
+            return result.query or None, need_update if table != "spotify" else True
         else:
             return None, True
 
     async def fetch_all(
         self, table: str, query: str, values: Dict[str, Union[str, int]]
-    ) -> List[Tuple[str, str]]:
+    ) -> List[CacheLastFetchResult]:
         if HAS_SQL:
             table = _PARSER.get(table, {})
             sql_query = table.get(query, {}).get("played")
             if not table:
                 raise InvalidTableError(f"{table} is not a valid table in the database.")
 
-            return self.database.execute(sql_query, values).fetchall()
+            return [
+                CacheLastFetchResult(*row)
+                for row in self.database.execute(sql_query, values).fetchall()
+            ]
         return []
