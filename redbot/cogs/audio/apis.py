@@ -412,7 +412,9 @@ class MusicCache:
         self.youtube_api: YouTubeAPI = YouTubeAPI(bot, session)
         self._session: aiohttp.ClientSession = session
         if HAS_SQL:
-            self._database = apsw.Connection(str((cog_data_path(None, raw_name="Audio") / "cache.db").absolute()))
+            self._database = apsw.Connection(
+                str((cog_data_path(None, raw_name="Audio") / "cache.db").absolute())
+            )
             self.database = self._database.cursor()
         else:
             self.database = None
