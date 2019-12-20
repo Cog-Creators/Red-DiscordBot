@@ -202,7 +202,6 @@ class PlaylistMigration23:  # TODO: remove me in a future version ?
 async def get_all_playlist_for_migration23(  # TODO: remove me in a future version ?
     scope: str,
     guild: Union[discord.Guild, int] = None,
-    author: Union[discord.abc.User, int] = None,
 ) -> List[PlaylistMigration23]:
     """
     Gets all playlist for the specified scope.
@@ -212,12 +211,6 @@ async def get_all_playlist_for_migration23(  # TODO: remove me in a future versi
         The custom config scope. One of 'GLOBALPLAYLIST', 'GUILDPLAYLIST' or 'USERPLAYLIST'.
     guild: discord.Guild
         The guild to get the playlist from if scope is GUILDPLAYLIST.
-    author: int
-        The ID of the user to get the playlist from if scope is USERPLAYLIST.
-    bot: Red
-        The bot's instance
-    specified_user:bool
-        Whether or not user ID was passed as an argparse.
     Returns
     -------
     list
