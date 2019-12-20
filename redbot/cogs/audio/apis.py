@@ -210,7 +210,7 @@ class MusicCache:
 
     async def initialize(self, config: Config):
         self.config = config
-        _database.init()
+        await _database.init()
 
     @staticmethod
     def _spotify_format_call(qtype: str, key: str) -> Tuple[str, dict]:

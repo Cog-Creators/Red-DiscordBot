@@ -265,7 +265,7 @@ class CacheInterface:
     def __init__(self):
         self.database = database_connection.cursor()
 
-    def init(self):
+    async def init(self):
         self.database.execute(_PRAGMA_UPDATE_temp_store)
         self.database.execute(_PRAGMA_UPDATE_journal_mode)
         self.database.execute(_PRAGMA_UPDATE_read_uncommitted)
@@ -279,9 +279,9 @@ class CacheInterface:
         self.database.execute(_CREATE_SPOTIFY_TABLE)
         self.database.execute(_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE)
 
-        self.clean_up_old_entries()
+        await self.clean_up_old_entries()
 
-    def clean_up_old_entries(self):
+    async def clean_up_old_entries(self):
         max_age = await _config.cache_age()
         maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=max_age)
         maxage_int = int(time.mktime(maxage.timetuple()))
