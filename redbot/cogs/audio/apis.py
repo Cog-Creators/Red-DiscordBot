@@ -42,7 +42,7 @@ log = logging.getLogger("red.audio.cache")
 _ = Translator("Audio", __file__)
 
 _DROP_YOUTUBE_TABLE = """
-DROP TABLE youtube;
+DROP TABLE IF EXISTS youtube;
 """
 _CREATE_YOUTUBE_TABLE = """
 CREATE TABLE IF NOT EXISTS youtube(
@@ -95,7 +95,7 @@ WHERE track_info=:track;
 """
 
 _DROP_SPOTIFY_TABLE = """
-DROP TABLE spotify;
+DROP TABLE IF EXISTS spotify;
 """
 _CREATE_UNIQUE_INDEX_SPOTIFY_TABLE = """
 CREATE UNIQUE INDEX IF NOT EXISTS idx_spotify_uri 
@@ -151,7 +151,7 @@ WHERE uri=:uri;
 """
 
 _DROP_LAVALINK_TABLE = """
-DROP TABLE lavalink;
+DROP TABLE IF EXISTS lavalink ;
 """
 _CREATE_LAVALINK_TABLE = """
 CREATE TABLE IF NOT EXISTS lavalink(
@@ -233,10 +233,18 @@ PRAGMA journal_mode = wal;
 _PRAGMA_UPDATE_read_uncommitted = """
 PRAGMA read_uncommitted = 1;
 """
+_PRAGMA_FETCH_user_version = """
+pragma user_version;
+"""
+_PRAGMA_SET_user_version = """
+pragma user_version = :version;
+"""
 
 
 _TOP_100_GLOBALS = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn6puJdseH2Rt9sMvt9E2M4i"
 _TOP_100_US = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn5rWitrRWFKdm-ulaFiIyoK"
+
+SCHEMA_VERSION = 3
 
 
 class SpotifyAPI:
@@ -419,6 +427,8 @@ class MusicCache:
             self.database.execute(_PRAGMA_UPDATE_journal_mode)
             self.database.execute(_PRAGMA_UPDATE_read_uncommitted)
 
+            self.maybe_migrate()
+
             self.database.execute(_CREATE_LAVALINK_TABLE)
             self.database.execute(_CREATE_UNIQUE_INDEX_LAVALINK_TABLE)
             self.database.execute(_CREATE_YOUTUBE_TABLE)
@@ -427,6 +437,18 @@ class MusicCache:
             self.database.execute(_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE)
 
         self.config = config
+
+    def maybe_migrate(self):
+        current_version = self.database.execute(_PRAGMA_FETCH_user_version).fetchone()
+        if not current_version:
+            current_version = 1
+        if current_version == SCHEMA_VERSION:
+            return
+        if current_version < 3 <= SCHEMA_VERSION:
+            self.database.execute(_DROP_SPOTIFY_TABLE)
+            self.database.execute(_DROP_YOUTUBE_TABLE)
+            self.database.execute(_DROP_LAVALINK_TABLE)
+            self.database.execute(_PRAGMA_SET_user_version, {"version": SCHEMA_VERSION})
 
     async def close(self):
         if HAS_SQL:
