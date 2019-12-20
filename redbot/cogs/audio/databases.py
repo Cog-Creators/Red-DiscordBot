@@ -162,7 +162,7 @@ _CREATE_INDEX = """
 CREATE INDEX IF NOT EXISTS name_index ON playlists (scope_type, playlist_id, playlist_name, scope_id);
 """
 
-_con: apsw.Connection = None
+database_connection: apsw.Connection = None
 _config: Config = None
 _bot: Red = None
 
@@ -178,26 +178,25 @@ class SQLFetchResult:
 
 
 def _pass_config_to_databases(config: Config, bot: Red):
-    global _config, _bot, _con
+    global _config, _bot, database_connection
     if _config is None:
         _config = config
     if _bot is None:
         _bot = bot
-    if _con is None:
-        _con = apsw.Connection(str(cog_data_path(_bot.get_cog("Audio")) / "Audio.db"))
+    if database_connection is None:
+        database_connection = apsw.Connection(
+            str(cog_data_path(_bot.get_cog("Audio")) / "Audio.db")
+        )
 
 
-class Playlist_Interface:
+class PlaylistInterface:
     def __init__(self):
-        self.cursor = _con.cursor()
+        self.cursor = database_connection.cursor()
         self.cursor.execute(_PRAGMA_UPDATE_temp_store)
         self.cursor.execute(_PRAGMA_UPDATE_journal_mode)
         self.cursor.execute(_PRAGMA_UPDATE_read_uncommitted)
         self.cursor.execute(_CREATE_TABLE)
         self.cursor.execute(_CREATE_INDEX)
-
-    def close(self):
-        self._database.close()
 
     @staticmethod
     def get_scope_type(scope: str) -> int:

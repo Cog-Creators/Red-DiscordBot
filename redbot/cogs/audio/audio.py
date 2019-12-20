@@ -38,6 +38,7 @@ from . import audio_dataclasses
 from .apis import _ERROR, HAS_SQL, MusicCache
 from .checks import can_have_caching
 from .converters import ComplexScopeParser, ScopeParser, get_lazy_converter, get_playlist_converter
+from .databases import database_connection
 from .equalizer import Equalizer
 from .errors import (
     DatabaseError,
@@ -7014,7 +7015,6 @@ class Audio(commands.Cog):
     async def _close_database(self):
         await self.music_cache.run_all_pending_tasks()
         await self.music_cache.close()
-        if database:
-            database.close()
+        database_connection.close()
 
     __del__ = cog_unload

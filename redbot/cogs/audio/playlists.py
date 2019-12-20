@@ -8,13 +8,13 @@ from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_list
-from .databases import Playlist_Interface, SQLFetchResult
+from .databases import PlaylistInterface, SQLFetchResult
 from .errors import InvalidPlaylistScope, MissingAuthor, MissingGuild, NotAllowed
 from .utils import PlaylistScope
 
 _config: Config = None
 _bot: Red = None
-database: Playlist_Interface = None
+database: PlaylistInterface = None
 
 __all__ = [
     "Playlist",
@@ -42,7 +42,7 @@ def _pass_config_to_playlist(config: Config, bot: Red):
     if _bot is None:
         _bot = bot
     if database is None:
-        database = Playlist_Interface()
+        database = PlaylistInterface()
 
 
 def standardize_scope(scope) -> str:
