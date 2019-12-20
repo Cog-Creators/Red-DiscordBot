@@ -99,8 +99,6 @@ class Audio(commands.Cog):
         self._cleaned_up = False
         self._connection_aborted = False
         self._manager: Optional[ServerManager] = None
-        self._cog_name = None
-        self._cog_id = None
         default_global = dict(
             schema_version=1,
             cache_level=0,
@@ -159,27 +157,6 @@ class Audio(commands.Cog):
         # as initial load happens before the bot can ever be ready.
         self._init_task = self.bot.loop.create_task(self.initialize())
         self._ready_event = asyncio.Event()
-
-    @property
-    def owns_autoplay(self):
-        c = self.bot.get_cog(self._cog_name)
-        if c and id(c) == self._cog_id:
-            return c
-
-    @owns_autoplay.setter
-    def owns_autoplay(self, value: commands.Cog):
-        if self.owns_autoplay:
-            raise RuntimeError(
-                f"`{self._cog_name}` already has ownership of autoplay, "
-                f"please unload it if you wish to load `{value.qualified_name}`."
-            )
-        self._cog_name = value.qualified_name
-        self._cog_id = id(value)
-
-    @owns_autoplay.deleter
-    def owns_autoplay(self):
-        self._cog_name = None
-        self._cog_id = None
 
     async def cog_before_invoke(self, ctx: commands.Context):
         await self._ready_event.wait()
@@ -240,7 +217,6 @@ class Audio(commands.Cog):
             log.critical(error_message)
 
         self._ready_event.set()
-        self.bot.dispatch("red_audio_initialized", self)
 
     async def _migrate_config(self, from_version: int, to_version: int) -> None:
         database_entries = []
@@ -391,7 +367,7 @@ class Audio(commands.Cog):
         self, player: lavalink.Player, event_type: lavalink.LavalinkEvents, extra
     ):
         disconnect = await self.config.guild(player.channel.guild).disconnect()
-        autoplay = await self.config.guild(player.channel.guild).auto_play() or self.owns_autoplay
+        autoplay = await self.config.guild(player.channel.guild).auto_play()
         notify = await self.config.guild(player.channel.guild).notify()
         status = await self.config.status()
         repeat = await self.config.guild(player.channel.guild).repeat()
@@ -452,25 +428,16 @@ class Audio(commands.Cog):
                 "red_audio_queue_end", player.channel.guild, prev_song, prev_requester
             )
             if autoplay and not player.queue and player.fetch("playing_song") is not None:
-                if self.owns_autoplay is None:
-                    try:
-                        await self.music_cache.autoplay(player)
-                    except DatabaseError:
-                        notify_channel = player.fetch("channel")
-                        if notify_channel:
-                            notify_channel = self.bot.get_channel(notify_channel)
-                            await self._embed_msg(
-                                notify_channel, title=_("Couldn't get a valid track.")
-                            )
-                        return
-                else:
-                    self.bot.dispatch(
-                        "red_audio_should_auto_play",
-                        player,
-                        player.channel.guild,
-                        player.channel,
-                        self.play_query,
-                    )
+                try:
+                    await self.music_cache.autoplay(player)
+                except DatabaseError:
+                    notify_channel = player.fetch("channel")
+                    if notify_channel:
+                        notify_channel = self.bot.get_channel(notify_channel)
+                        await self._embed_msg(
+                            notify_channel, title=_("Couldn't get a valid track.")
+                        )
+                    return
 
         if event_type == lavalink.LavalinkEvents.TRACK_START and notify:
             notify_channel = player.fetch("channel")
@@ -3286,23 +3253,16 @@ class Audio(commands.Cog):
             )
         if not await self._currency_check(ctx, guild_data["jukebox_price"]):
             return
-        if self.owns_autoplay is None:
-            try:
-                await self.music_cache.autoplay(player)
-            except DatabaseError:
-                notify_channel = player.fetch("channel")
-                if notify_channel:
-                    notify_channel = self.bot.get_channel(notify_channel)
-                    await self._embed_msg(notify_channel, title=_("Couldn't get a valid track."))
-                return
-        else:
-            self.bot.dispatch(
-                "red_audio_should_auto_play",
-                player,
-                player.channel.guild,
-                player.channel,
-                self.play_query,
-            )
+
+        try:
+            await self.music_cache.autoplay(player)
+        except DatabaseError:
+            notify_channel = player.fetch("channel")
+            if notify_channel:
+                notify_channel = self.bot.get_channel(notify_channel)
+                await self._embed_msg(notify_channel, title=_("Couldn't get a valid track."))
+            return
+
         if not guild_data["auto_play"]:
             await ctx.invoke(self._autoplay_toggle)
         if not guild_data["notify"] and (
