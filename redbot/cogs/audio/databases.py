@@ -22,10 +22,6 @@ from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 
-database_connection: apsw.Connection = None
-_config: Config = None
-_bot: Red = None
-
 _DROP_YOUTUBE_TABLE = """
 DROP TABLE IF EXISTS youtube;
 """
@@ -247,6 +243,9 @@ WHERE
     last_updated > :maxage;
 """
 
+_config: Config = None
+_bot: Red = None
+database_connection: apsw.Connection = None
 SCHEMA_VERSION = 3
 
 
