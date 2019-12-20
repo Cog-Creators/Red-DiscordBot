@@ -1,0 +1,1 @@
+Fix a console spam caused sometimes when auto disconnect and auto pause are used.
