@@ -40,6 +40,9 @@ from .utils import CacheLevel, Notifier, is_allowed, queue_duration, track_limit
 log = logging.getLogger("red.audio.cache")
 _ = Translator("Audio", __file__)
 
+# TODO: https://github.com/Cog-Creators/Red-DiscordBot/pull/3195#issuecomment-567821701
+# Thanks a lot Sinbad!
+
 _DROP_YOUTUBE_TABLE = "DROP TABLE youtube;"
 
 _CREATE_YOUTUBE_TABLE = """
