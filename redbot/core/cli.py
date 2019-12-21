@@ -4,6 +4,8 @@ import logging
 import sys
 from typing import Optional
 
+from discord import __version__ as discord_version
+
 
 def confirm(text: str, default: Optional[bool] = None) -> bool:
     if default is None:
@@ -39,7 +41,12 @@ def interactive_config(red, token_set, prefix_set, *, print_header=True):
         print("Red - Discord Bot | Configuration process\n")
 
     if not token_set:
-        print("Please enter a valid token:")
+        print(
+            "Please enter a valid token.\n"
+            "You can find out how to obtain a token with this guide"
+            ' (section "Creating a Bot Account"):\n'
+            f"https://discordpy.readthedocs.io/en/v{discord_version}/discord.html#creating-a-bot-account"
+        )
         while not token:
             token = input("> ")
             if not len(token) >= 50:

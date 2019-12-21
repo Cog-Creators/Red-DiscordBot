@@ -1,0 +1,1 @@
+Red takes less time to fetch cases, unban members, and list warnings.

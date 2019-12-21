@@ -428,7 +428,7 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
     repo_mgr = RepoManager()
     await repo_mgr.initialize()
     repo_output = []
-    for _, repo in repo_mgr._repos:
+    for repo in repo_mgr.repos:
         repo_output.append({"url": repo.url, "name": repo.name, "branch": repo.branch})
     repos_file = data_path / "cogs" / "RepoManager" / "repos.json"
     with repos_file.open("w") as fs:

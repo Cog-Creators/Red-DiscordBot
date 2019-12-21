@@ -33,6 +33,7 @@ from redbot.core.core_commands import Core, license_info_command
 from redbot.setup import get_data_dir, get_name, save_config
 from redbot.core.dev_commands import Dev
 from redbot.core import __version__, modlog, bank, data_manager, drivers
+from redbot.core._sharedlibdeprecation import SharedLibImportWarner
 from signal import SIGTERM
 
 
@@ -322,6 +323,7 @@ def main():
     LIB_PATH.mkdir(parents=True, exist_ok=True)
     if str(LIB_PATH) not in sys.path:
         sys.path.append(str(LIB_PATH))
+    sys.meta_path.insert(0, SharedLibImportWarner())
 
     red.add_cog(Core(red))
     red.add_cog(CogManagerUI())
