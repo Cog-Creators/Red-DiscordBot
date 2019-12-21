@@ -1,4 +1,6 @@
+import ntpath
 import os
+import posixpath
 import re
 from pathlib import Path, PosixPath, WindowsPath
 from typing import List, Optional, Union
@@ -14,13 +16,57 @@ _config: Optional[Config] = None
 _bot: Optional[Red] = None
 _localtrack_folder: Optional[str] = None
 _ = Translator("Audio", __file__)
-_remove_start = re.compile(r"^(sc|list) ")
-_re_youtube_timestamp = re.compile(r"&t=(\d+)s?")
-_re_youtube_index = re.compile(r"&index=(\d+)")
-_re_spotify_url = re.compile(r"(http[s]?://)?(open.spotify.com)/")
-_re_spotify_timestamp = re.compile(r"#(\d+):(\d+)")
-_re_soundcloud_timestamp = re.compile(r"#t=(\d+):(\d+)s?")
-_re_twitch_timestamp = re.compile(r"\?t=(\d+)h(\d+)m(\d+)s")
+
+_RE_REMOVE_START = re.compile(r"^(sc|list) ")
+_RE_YOUTUBE_TIMESTAMP = re.compile(r"&t=(\d+)s?")
+_RE_YOUTUBE_INDEX = re.compile(r"&index=(\d+)")
+_RE_SPOTIFY_URL = re.compile(r"(http[s]?://)?(open.spotify.com)/")
+_RE_SPOTIFY_TIMESTAMP = re.compile(r"#(\d+):(\d+)")
+_RE_SOUNDCLOUD_TIMESTAMP = re.compile(r"#t=(\d+):(\d+)s?")
+_RE_TWITCH_TIMESTAMP = re.compile(r"\?t=(\d+)h(\d+)m(\d+)s")
+_PATH_SEPS = [posixpath.sep, ntpath.sep]
+
+_FULLY_SUPPORTED_MUSIC_EXT = (".mp3", ".flac", ".ogg")
+_PARTIALLY_SUPPORTED_MUSIC_EXT = (
+    ".m3u",
+    ".m4a",
+    ".aac",
+    ".ra",
+    ".wav",
+    ".opus",
+    ".wma",
+    ".ts",
+    ".au",
+    # These do not work
+    # ".mid",
+    # ".mka",
+    # ".amr",
+    # ".aiff",
+    # ".ac3",
+    # ".voc",
+    # ".dsf",
+)
+_PARTIALLY_SUPPORTED_VIDEO_EXT = (
+    ".mp4",
+    ".mov",
+    ".flv",
+    ".webm",
+    ".mkv",
+    ".wmv",
+    ".3gp",
+    ".m4v",
+    ".mk3d",  # https://github.com/Devoxin/lavaplayer
+    ".mka",  # https://github.com/Devoxin/lavaplayer
+    ".mks",  # https://github.com/Devoxin/lavaplayer
+    # These do not work
+    # ".vob",
+    # ".mts",
+    # ".avi",
+    # ".mpg",
+    # ".mpeg",
+    # ".swf",
+)
+_PARTIALLY_SUPPORTED_MUSIC_EXT += _PARTIALLY_SUPPORTED_VIDEO_EXT
 
 
 def _pass_config_to_dataclasses(config: Config, bot: Red, folder: str):
@@ -32,36 +78,14 @@ def _pass_config_to_dataclasses(config: Config, bot: Red, folder: str):
     _localtrack_folder = folder
 
 
-class ChdirClean(object):
-    def __init__(self, directory):
-        self.old_dir = os.getcwd()
-        self.new_dir = directory
-        self.cwd = None
+class LocalPath:
+    """Local tracks class.
 
-    def __enter__(self):
-        return self
-
-    def __exit__(self, _type, value, traceback):
-        self.chdir_out()
-        return isinstance(value, OSError)
-
-    def chdir_in(self):
-        self.cwd = Path(self.new_dir)
-        os.chdir(self.new_dir)
-
-    def chdir_out(self):
-        self.cwd = Path(self.old_dir)
-        os.chdir(self.old_dir)
-
-
-class LocalPath(ChdirClean):
-    """
-    Local tracks class.
-    Used to handle system dir trees in a cross system manner.
-    The only use of this class is for `localtracks`.
+    Used to handle system dir trees in a cross system manner. The only use of this class is for
+    `localtracks`.
     """
 
-    _supported_music_ext = (".mp3", ".flac", ".ogg")
+    _all_music_ext = _FULLY_SUPPORTED_MUSIC_EXT + _PARTIALLY_SUPPORTED_MUSIC_EXT
 
     def __init__(self, path, **kwargs):
         self._path = path
@@ -89,10 +113,11 @@ class LocalPath(ChdirClean):
             _path.relative_to(self.localtrack_folder)
             self.path = _path
         except (ValueError, TypeError):
-            if path and path.startswith("localtracks//"):
-                path = path.replace("localtracks//", "", 1)
-            elif path and path.startswith("localtracks/"):
-                path = path.replace("localtracks/", "", 1)
+            for sep in _PATH_SEPS:
+                if path and path.startswith(f"localtracks{sep}{sep}"):
+                    path = path.replace(f"localtracks{sep}{sep}", "", 1)
+                elif path and path.startswith(f"localtracks{sep}"):
+                    path = path.replace(f"localtracks{sep}", "", 1)
             self.path = self.localtrack_folder.joinpath(path) if path else self.localtrack_folder
 
         try:
@@ -100,17 +125,17 @@ class LocalPath(ChdirClean):
                 parent = self.path.parent
             else:
                 parent = self.path
-            super().__init__(str(parent.absolute()))
-
             self.parent = Path(parent)
         except OSError:
             self.parent = None
 
-        self.cwd = Path.cwd()
-
     @property
     def name(self):
         return str(self.path.name)
+
+    @property
+    def suffix(self):
+        return str(self.path.suffix)
 
     def is_dir(self):
         try:
@@ -159,11 +184,11 @@ class LocalPath(ChdirClean):
 
     def _filtered(self, paths: List[Path]):
         for p in paths:
-            if p.suffix in self._supported_music_ext:
+            if p.suffix in self._all_music_ext:
                 yield p
 
     def __str__(self):
-        return str(self.path.absolute())
+        return self.to_string()
 
     def to_string(self):
         try:
@@ -171,7 +196,7 @@ class LocalPath(ChdirClean):
         except OSError:
             return str(self._path)
 
-    def to_string_hidden(self, arg: str = None):
+    def to_string_user(self, arg: str = None):
         string = str(self.absolute()).replace(
             (str(self.localtrack_folder.absolute()) + os.sep) if arg is None else arg, ""
         )
@@ -186,13 +211,13 @@ class LocalPath(ChdirClean):
 
     def tracks_in_tree(self):
         tracks = []
-        for track in self.multirglob(*[f"*{ext}" for ext in self._supported_music_ext]):
+        for track in self.multirglob(*[f"*{ext}" for ext in self._all_music_ext]):
             if track.exists() and track.is_file() and track.parent != self.localtrack_folder:
                 tracks.append(Query.process_input(LocalPath(str(track.absolute()))))
-        return tracks
+        return sorted(tracks, key=lambda x: x.to_string_user().lower())
 
     def subfolders_in_tree(self):
-        files = list(self.multirglob(*[f"*{ext}" for ext in self._supported_music_ext]))
+        files = list(self.multirglob(*[f"*{ext}" for ext in self._all_music_ext]))
         folders = []
         for f in files:
             if f.exists() and f.parent not in folders and f.parent != self.localtrack_folder:
@@ -201,17 +226,17 @@ class LocalPath(ChdirClean):
         for folder in folders:
             if folder.exists() and folder.is_dir():
                 return_folders.append(LocalPath(str(folder.absolute())))
-        return return_folders
+        return sorted(return_folders, key=lambda x: x.to_string_user().lower())
 
     def tracks_in_folder(self):
         tracks = []
-        for track in self.multiglob(*[f"*{ext}" for ext in self._supported_music_ext]):
+        for track in self.multiglob(*[f"*{ext}" for ext in self._all_music_ext]):
             if track.exists() and track.is_file() and track.parent != self.localtrack_folder:
                 tracks.append(Query.process_input(LocalPath(str(track.absolute()))))
-        return tracks
+        return sorted(tracks, key=lambda x: x.to_string_user().lower())
 
     def subfolders(self):
-        files = list(self.multiglob(*[f"*{ext}" for ext in self._supported_music_ext]))
+        files = list(self.multiglob(*[f"*{ext}" for ext in self._all_music_ext]))
         folders = []
         for f in files:
             if f.exists() and f.parent not in folders and f.parent != self.localtrack_folder:
@@ -220,12 +245,44 @@ class LocalPath(ChdirClean):
         for folder in folders:
             if folder.exists() and folder.is_dir():
                 return_folders.append(LocalPath(str(folder.absolute())))
-        return return_folders
+        return sorted(return_folders, key=lambda x: x.to_string_user().lower())
+
+    def __eq__(self, other):
+        if not isinstance(other, LocalPath):
+            return NotImplemented
+        return self.path._cparts == other.path._cparts
+
+    def __hash__(self):
+        try:
+            return self._hash
+        except AttributeError:
+            self._hash = hash(tuple(self.path._cparts))
+            return self._hash
+
+    def __lt__(self, other):
+        if not isinstance(other, LocalPath):
+            return NotImplemented
+        return self.path._cparts < other.path._cparts
+
+    def __le__(self, other):
+        if not isinstance(other, LocalPath):
+            return NotImplemented
+        return self.path._cparts <= other.path._cparts
+
+    def __gt__(self, other):
+        if not isinstance(other, LocalPath):
+            return NotImplemented
+        return self.path._cparts > other.path._cparts
+
+    def __ge__(self, other):
+        if not isinstance(other, LocalPath):
+            return NotImplemented
+        return self.path._cparts >= other.path._cparts
 
 
 class Query:
-    """
-    Query data class.
+    """Query data class.
+
     Use: Query.process_input(query) to generate the Query object.
     """
 
@@ -259,6 +316,8 @@ class Query:
         self.local_name: Optional[str] = kwargs.get("name", None)
         self.search_subfolders: bool = kwargs.get("search_subfolders", False)
         self.spotify_uri: Optional[str] = kwargs.get("uri", None)
+        self.uri: Optional[str] = kwargs.get("url", None)
+        self.is_url: bool = kwargs.get("is_url", False)
 
         self.start_time: int = kwargs.get("start_time", 0)
         self.track_index: Optional[int] = kwargs.get("track_index", None)
@@ -271,16 +330,38 @@ class Query:
 
         if self.is_playlist or self.is_album:
             self.single_track = False
+        self._hash = hash(
+            (
+                self.valid,
+                self.is_local,
+                self.is_spotify,
+                self.is_youtube,
+                self.is_soundcloud,
+                self.is_bandcamp,
+                self.is_vimeo,
+                self.is_mixer,
+                self.is_twitch,
+                self.is_other,
+                self.is_playlist,
+                self.is_album,
+                self.is_search,
+                self.is_stream,
+                self.single_track,
+                self.id,
+                self.spotify_uri,
+                self.start_time,
+                self.track_index,
+                self.uri,
+            )
+        )
 
     def __str__(self):
         return str(self.lavalink_query)
 
     @classmethod
     def process_input(cls, query: Union[LocalPath, lavalink.Track, "Query", str], **kwargs):
-        """
-        A replacement for :code:`lavalink.Player.load_tracks`.
-        This will try to get a valid cached entry first if not found or if in valid
-        it will then call the lavalink API.
+        """A replacement for :code:`lavalink.Player.load_tracks`. This will try to get a valid
+        cached entry first if not found or if in valid it will then call the lavalink API.
 
         Parameters
         ----------
@@ -293,7 +374,7 @@ class Query:
         """
         if not query:
             query = "InvalidQueryPlaceHolderName"
-        possible_values = dict()
+        possible_values = {}
 
         if isinstance(query, str):
             query = query.strip("<>")
@@ -338,7 +419,7 @@ class Query:
                 _id = _id.split("?")[0]
                 returning["id"] = _id
                 if "#" in _id:
-                    match = re.search(_re_spotify_timestamp, track)
+                    match = re.search(_RE_SPOTIFY_TIMESTAMP, track)
                     if match:
                         returning["start_time"] = (int(match.group(1)) * 60) + int(match.group(2))
                 returning["uri"] = track
@@ -349,7 +430,7 @@ class Query:
                     returning["soundcloud"] = True
                 elif track.startswith("list "):
                     returning["invoked_from"] = "search list"
-                track = _remove_start.sub("", track, 1)
+                track = _RE_REMOVE_START.sub("", track, 1)
                 returning["queryforced"] = track
 
             _localtrack = LocalPath(track)
@@ -367,6 +448,8 @@ class Query:
             try:
                 query_url = urlparse(track)
                 if all([query_url.scheme, query_url.netloc, query_url.path]):
+                    returning["url"] = track
+                    returning["is_url"] = True
                     url_domain = ".".join(query_url.netloc.split(".")[-2:])
                     if not query_url.netloc:
                         url_domain = ".".join(query_url.path.split("/")[0].split(".")[-2:])
@@ -374,11 +457,11 @@ class Query:
                         returning["youtube"] = True
                         _has_index = "&index=" in track
                         if "&t=" in track:
-                            match = re.search(_re_youtube_timestamp, track)
+                            match = re.search(_RE_YOUTUBE_TIMESTAMP, track)
                             if match:
                                 returning["start_time"] = int(match.group(1))
                         if _has_index:
-                            match = re.search(_re_youtube_index, track)
+                            match = re.search(_RE_YOUTUBE_INDEX, track)
                             if match:
                                 returning["track_index"] = int(match.group(1)) - 1
                         if all(k in track for k in ["&list=", "watch?"]):
@@ -402,7 +485,7 @@ class Query:
                             returning["album"] = True
                         elif "/track/" in track:
                             returning["single"] = True
-                        val = re.sub(_re_spotify_url, "", track).replace("/", ":")
+                        val = re.sub(_RE_SPOTIFY_URL, "", track).replace("/", ":")
                         if "user:" in val:
                             val = val.split(":", 2)[-1]
                         _id = val.split(":", 1)[-1]
@@ -410,7 +493,7 @@ class Query:
 
                         if "#" in _id:
                             _id = _id.split("#")[0]
-                            match = re.search(_re_spotify_timestamp, track)
+                            match = re.search(_RE_SPOTIFY_TIMESTAMP, track)
                             if match:
                                 returning["start_time"] = (int(match.group(1)) * 60) + int(
                                     match.group(2)
@@ -421,7 +504,7 @@ class Query:
                     elif url_domain == "soundcloud.com":
                         returning["soundcloud"] = True
                         if "#t=" in track:
-                            match = re.search(_re_soundcloud_timestamp, track)
+                            match = re.search(_RE_SOUNDCLOUD_TIMESTAMP, track)
                             if match:
                                 returning["start_time"] = (int(match.group(1)) * 60) + int(
                                     match.group(2)
@@ -446,7 +529,7 @@ class Query:
                     elif url_domain == "twitch.tv":
                         returning["twitch"] = True
                         if "?t=" in track:
-                            match = re.search(_re_twitch_timestamp, track)
+                            match = re.search(_RE_TWITCH_TIMESTAMP, track)
                             if match:
                                 returning["start_time"] = (
                                     (int(match.group(1)) * 60 * 60)
@@ -485,5 +568,66 @@ class Query:
 
     def to_string_user(self):
         if self.is_local:
-            return str(self.track.to_string_hidden())
+            return str(self.track.to_string_user())
         return str(self._raw)
+
+    @property
+    def suffix(self):
+        if self.is_local:
+            return self.track.suffix
+        return None
+
+    def __eq__(self, other):
+        if not isinstance(other, Query):
+            return NotImplemented
+        return self.to_string_user() == other.to_string_user()
+
+    def __hash__(self):
+        try:
+            return self._hash
+        except AttributeError:
+            self._hash = hash(
+                (
+                    self.valid,
+                    self.is_local,
+                    self.is_spotify,
+                    self.is_youtube,
+                    self.is_soundcloud,
+                    self.is_bandcamp,
+                    self.is_vimeo,
+                    self.is_mixer,
+                    self.is_twitch,
+                    self.is_other,
+                    self.is_playlist,
+                    self.is_album,
+                    self.is_search,
+                    self.is_stream,
+                    self.single_track,
+                    self.id,
+                    self.spotify_uri,
+                    self.start_time,
+                    self.track_index,
+                    self.uri,
+                )
+            )
+            return self._hash
+
+    def __lt__(self, other):
+        if not isinstance(other, Query):
+            return NotImplemented
+        return self.to_string_user() < other.to_string_user()
+
+    def __le__(self, other):
+        if not isinstance(other, Query):
+            return NotImplemented
+        return self.to_string_user() <= other.to_string_user()
+
+    def __gt__(self, other):
+        if not isinstance(other, Query):
+            return NotImplemented
+        return self.to_string_user() > other.to_string_user()
+
+    def __ge__(self, other):
+        if not isinstance(other, Query):
+            return NotImplemented
+        return self.to_string_user() >= other.to_string_user()

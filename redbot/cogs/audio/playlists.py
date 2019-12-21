@@ -1,5 +1,5 @@
 from collections import namedtuple
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Mapping
 
 import discord
 import lavalink
@@ -531,7 +531,7 @@ async def create_playlist(
     scope: str,
     playlist_name: str,
     playlist_url: Optional[str] = None,
-    tracks: Optional[List[dict]] = None,
+    tracks: Optional[List[Mapping]] = None,
     author: Optional[discord.User] = None,
     guild: Optional[discord.Guild] = None,
 ) -> Optional[Playlist]:
@@ -548,7 +548,7 @@ async def create_playlist(
         The name of the new playlist.
     playlist_url:str
         the url of the new playlist.
-    tracks: List[dict]
+    tracks: List[Mapping]
         A list of tracks to add to the playlist.
     author: discord.User
         The Author of the playlist.

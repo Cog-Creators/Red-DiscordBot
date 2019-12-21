@@ -259,7 +259,7 @@ class PlaylistInterface:
         scope_type = self.get_scope_type(scope)
         try:
             playlist_id = int(playlist_id)
-        except:
+        except Exception:
             playlist_id = -1
         output = (
             self.cursor.execute(

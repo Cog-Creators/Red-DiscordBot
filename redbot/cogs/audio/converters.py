@@ -43,7 +43,7 @@ Author must be a valid version of one of the following:
 _GUILD_HELP = """
 Guild must be a valid version of one of the following:
 ​ ​ ​ ​ Guild ID
-​ ​ ​ ​ Exact guild name 
+​ ​ ​ ​ Exact guild name
 """
 
 MENTION_RE = re.compile(r"^<?(?:(?:@[!&]?)?|#)(\d{15,21})>?$")

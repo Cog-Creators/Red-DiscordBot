@@ -1,0 +1,1 @@
+remove an undocumented API from audio

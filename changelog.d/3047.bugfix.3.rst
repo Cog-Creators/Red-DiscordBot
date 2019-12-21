@@ -1,0 +1,1 @@
+Escape track descriptions so that they do not break markdown.
