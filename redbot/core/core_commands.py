@@ -1693,8 +1693,8 @@ class Core(commands.Cog, CoreLogic):
         """
         uid = getattr(user, "id", user)
         async with ctx.bot._config.whitelist() as curr_list:
-            if user.id not in curr_list:
-                curr_list.append(user.id)
+            if uid not in curr_list:
+                curr_list.append(uid)
 
         await ctx.send(_("User added to whitelist."))
 
@@ -1720,9 +1720,9 @@ class Core(commands.Cog, CoreLogic):
         removed = False
         uid = getattr(user, "id", user)
         async with ctx.bot._config.whitelist() as curr_list:
-            if user.id in curr_list:
+            if uid in curr_list:
                 removed = True
-                curr_list.remove(user.id)
+                curr_list.remove(uid)
 
         if removed:
             await ctx.send(_("User has been removed from whitelist."))
@@ -1746,7 +1746,7 @@ class Core(commands.Cog, CoreLogic):
         pass
 
     @blacklist.command(name="add")
-    async def blacklist_add(self, ctx: commands.Context, *, user: discord.User):
+    async def blacklist_add(self, ctx: commands.Context, *, user: Union[discord.Member, int]):
         """
         Adds a user to the blacklist.
         """
@@ -1754,9 +1754,10 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("You cannot blacklist an owner!"))
             return
 
+        uid = getattr(user, "id", user)
         async with ctx.bot._config.blacklist() as curr_list:
-            if user.id not in curr_list:
-                curr_list.append(user.id)
+            if uid not in curr_list:
+                curr_list.append(uid)
 
         await ctx.send(_("User added to blacklist."))
 
@@ -1775,16 +1776,17 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(box(page))
 
     @blacklist.command(name="remove")
-    async def blacklist_remove(self, ctx: commands.Context, *, user: discord.User):
+    async def blacklist_remove(self, ctx: commands.Context, *, user: Union[discord.Member, int]):
         """
         Removes user from blacklist.
         """
         removed = False
 
+        uid = getattr(user, "id", user)
         async with ctx.bot._config.blacklist() as curr_list:
-            if user.id in curr_list:
+            if uid in curr_list:
                 removed = True
-                curr_list.remove(user.id)
+                curr_list.remove(uid)
 
         if removed:
             await ctx.send(_("User has been removed from blacklist."))
@@ -1810,12 +1812,16 @@ class Core(commands.Cog, CoreLogic):
 
     @localwhitelist.command(name="add")
     async def localwhitelist_add(
-        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
+        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role, int]
     ):
         """
         Adds a user or role to the whitelist.
         """
         user = isinstance(user_or_role, discord.Member)
+        if isinstance(user_or_role, int):
+            user_or_role = discord.Object(id=user_or_role)
+            user = True
+
         async with ctx.bot._config.guild(ctx.guild).whitelist() as curr_list:
             if user_or_role.id not in curr_list:
                 curr_list.append(user_or_role.id)
@@ -1841,12 +1847,15 @@ class Core(commands.Cog, CoreLogic):
 
     @localwhitelist.command(name="remove")
     async def localwhitelist_remove(
-        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
+        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role, int]
     ):
         """
         Removes user or role from whitelist.
         """
         user = isinstance(user_or_role, discord.Member)
+        if isinstance(user_or_role, int):
+            user_or_role = discord.Object(id=user_or_role)
+            user = True
 
         removed = False
         async with ctx.bot._config.guild(ctx.guild).whitelist() as curr_list:
@@ -1884,12 +1893,15 @@ class Core(commands.Cog, CoreLogic):
 
     @localblacklist.command(name="add")
     async def localblacklist_add(
-        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
+        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role, int]
     ):
         """
         Adds a user or role to the blacklist.
         """
         user = isinstance(user_or_role, discord.Member)
+        if isinstance(user_or_role, int):
+            user_or_role = discord.Object(id=user_or_role)
+            user = True
 
         if user and await ctx.bot.is_owner(user_or_role):
             await ctx.send(_("You cannot blacklist an owner!"))
@@ -1920,13 +1932,16 @@ class Core(commands.Cog, CoreLogic):
 
     @localblacklist.command(name="remove")
     async def localblacklist_remove(
-        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
+        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role, int]
     ):
         """
         Removes user or role from blacklist.
         """
         removed = False
         user = isinstance(user_or_role, discord.Member)
+        if isinstance(user_or_role, int):
+            user_or_role = discord.Object(id=user_or_role)
+            user = True
 
         async with ctx.bot._config.guild(ctx.guild).blacklist() as curr_list:
             if user_or_role.id in curr_list:
