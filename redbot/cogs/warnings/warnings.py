@@ -374,13 +374,8 @@ class Warnings(commands.Cog):
                 await ctx.send(_("That user has no warnings!"))
             else:
                 for key in user_warnings.keys():
-                    mod = ctx.guild.get_member(user_warnings[key]["mod"])
-                    if mod is None:
-                        mod = discord.utils.get(
-                            self.bot.get_all_members(), id=user_warnings[key]["mod"]
-                        )
-                        if mod is None:
-                            mod = await self.bot.fetch_user(user_warnings[key]["mod"])
+                    mod_id = user_warnings[key]["mod"]
+                    mod = ctx.bot.get_user(mod_id) or _("Unknown Moderator ({})").format(mod_id)
                     msg += _(
                         "{num_points} point warning {reason_name} issued by {user} for "
                         "{description}\n"
