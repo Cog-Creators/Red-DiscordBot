@@ -24,7 +24,6 @@ __all__ = [
     "create_playlist",
     "reset_playlist",
     "delete_playlist",
-    "humanize_scope",
     "standardize_scope",
     "FakePlaylist",
     "get_all_playlist_for_migration23",
@@ -67,16 +66,6 @@ def standardize_scope(scope) -> str:
         scope = PlaylistScope.USER.value
 
     return scope
-
-
-def humanize_scope(scope, ctx=None, the=None):
-
-    if scope == PlaylistScope.GLOBAL.value:
-        return ctx or _("the ") if the else "" + _("Global")
-    elif scope == PlaylistScope.GUILD.value:
-        return ctx.name if ctx else _("the ") if the else "" + _("Server")
-    elif scope == PlaylistScope.USER.value:
-        return str(ctx) if ctx else _("the ") if the else "" + _("User")
 
 
 def _prepare_config_scope(

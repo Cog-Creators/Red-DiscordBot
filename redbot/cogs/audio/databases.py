@@ -1,3 +1,4 @@
+import contextlib
 import datetime
 import json
 import logging
@@ -107,6 +108,10 @@ class CacheInterface:
     def __init__(self):
         self.database = database_connection.cursor()
 
+    def close(self):
+        with contextlib.suppress(Exception):
+            database_connection.close()
+
     async def init(self):
         self.database.execute(PRAGMA_SET_temp_store)
         self.database.execute(PRAGMA_SET_journal_mode)
@@ -140,7 +145,7 @@ class CacheInterface:
             current_version = 1
         if current_version == SCHEMA_VERSION:
             return
-        if current_version < 3 <= SCHEMA_VERSION:
+        if current_version <= 2 < SCHEMA_VERSION:
             self.database.execute(SPOTIFY_DROP_TABLE)
             self.database.execute(YOUTUBE_DROP_TABLE)
             self.database.execute(LAVALINK_DROP_TABLE)
@@ -216,6 +221,10 @@ class PlaylistInterface:
         self.cursor.execute(PRAGMA_SET_read_uncommitted)
         self.cursor.execute(PLAYLIST_CREATE_TABLE)
         self.cursor.execute(PLAYLIST_CREATE_INDEX)
+
+    def close(self):
+        with contextlib.suppress(Exception):
+            database_connection.close()
 
     @staticmethod
     def get_scope_type(scope: str) -> int:

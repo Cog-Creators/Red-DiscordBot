@@ -12,10 +12,10 @@ import lavalink
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
+from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import bold, box, escape
 
-from . import audio_dataclasses
-from .playlists import humanize_scope
+from .audio_dataclasses import Query
 
 __all__ = [
     "_pass_config_to_utils",
@@ -34,6 +34,7 @@ __all__ = [
     "userlimit",
     "is_allowed",
     "rgetattr",
+    "humanize_scope",
     "CacheLevel",
     "format_playlist_picker_data",
     "get_track_description_unformatted",
@@ -47,6 +48,7 @@ _RE_YT_LIST_PLAYLIST = re.compile(
 
 _config = None
 _bot = None
+_ = Translator("Audio", __file__)
 
 
 def _pass_config_to_utils(config: Config, bot: Red) -> None:
@@ -68,9 +70,7 @@ def track_limit(track, maxlength) -> bool:
     return True
 
 
-async def is_allowed(
-    guild: discord.Guild, query: str, query_obj: audio_dataclasses.Query = None
-) -> bool:
+async def is_allowed(guild: discord.Guild, query: str, query_obj: Query = None) -> bool:
 
     query = query.lower().strip()
     if query_obj is not None:
@@ -202,7 +202,7 @@ async def clear_react(bot: Red, message: discord.Message, emoji: dict = None) ->
 
 def get_track_description(track) -> Optional[str]:
     if track and hasattr(track, "uri"):
-        query = audio_dataclasses.Query.process_input(track.uri)
+        query = Query.process_input(track.uri)
         if query.is_local:
             if track.title != "Unknown title":
                 return bold(escape(f"{track.author} - {track.title}", formatting=True)) + escape(
@@ -218,7 +218,7 @@ def get_track_description(track) -> Optional[str]:
 
 def get_track_description_unformatted(track) -> Optional[str]:
     if track and hasattr(track, "uri"):
-        query = audio_dataclasses.Query.process_input(track.uri)
+        query = Query.process_input(track.uri)
         if query.is_local:
             if track.title != "Unknown title":
                 return escape(f"{track.author} - {track.title}", formatting=True)
@@ -500,3 +500,13 @@ class PlaylistScope(Enum):
     @staticmethod
     def list():
         return list(map(lambda c: c.value, PlaylistScope))
+
+
+def humanize_scope(scope, ctx=None, the=None):
+
+    if scope == PlaylistScope.GLOBAL.value:
+        return ctx or _("the ") if the else "" + _("Global")
+    elif scope == PlaylistScope.GUILD.value:
+        return ctx.name if ctx else _("the ") if the else "" + _("Server")
+    elif scope == PlaylistScope.USER.value:
+        return str(ctx) if ctx else _("the ") if the else "" + _("User")
