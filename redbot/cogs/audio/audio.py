@@ -9,7 +9,7 @@ import random
 import re
 import time
 import traceback
-from collections import namedtuple, Counter
+from collections import Counter, namedtuple
 from io import StringIO
 from pathlib import Path
 from typing import List, Optional, Tuple, Union, cast
@@ -24,7 +24,7 @@ import redbot.core
 from redbot.core import Config, bank, checks, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import bold, box, humanize_number, inline, pagify, escape
+from redbot.core.utils.chat_formatting import bold, box, escape, humanize_number, inline, pagify
 from redbot.core.utils.menus import (
     DEFAULT_CONTROLS,
     close_menu,
@@ -41,7 +41,7 @@ from .apis import MusicCache
 from .checks import can_have_caching
 from .config import pass_config_to_dependencies
 from .converters import ComplexScopeParser, ScopeParser, get_lazy_converter, get_playlist_converter
-from .databases import HAS_SQL, _ERROR
+from .databases import _ERROR, HAS_SQL
 from .equalizer import Equalizer
 from .errors import (
     DatabaseError,
@@ -58,9 +58,9 @@ from .playlists import (
     create_playlist,
     delete_playlist,
     get_all_playlist,
+    get_all_playlist_for_migration23,
     get_playlist,
     humanize_scope,
-    get_all_playlist_for_migration23,
 )
 from .utils import *
 
@@ -669,7 +669,6 @@ class Audio(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     async def audioset(self, ctx: commands.Context):
         """Music configuration options."""
-        pass
 
     @audioset.command()
     @checks.mod_or_permissions(manage_messages=True)
@@ -888,12 +887,10 @@ class Audio(commands.Cog):
     @_perms.group(name="whitelist")
     async def _perms_whitelist(self, ctx: commands.Context):
         """Manages the keyword whitelist."""
-        pass
 
     @_perms.group(name="blacklist")
     async def _perms_blacklist(self, ctx: commands.Context):
         """Manages the keyword blacklist."""
-        pass
 
     @_perms_blacklist.command(name="add")
     async def _perms_blacklist_add(self, ctx: commands.Context, *, keyword: str):
@@ -7070,8 +7067,8 @@ class Audio(commands.Cog):
     async def _shuffle_bumpped(self, ctx: commands.Context):
         """Toggle bumped track shuffle.
 
-        Set this to disabled if you wish to avoid bumped songs being shuffled.
-        This takes priority over `[p]shuffle`.
+        Set this to disabled if you wish to avoid bumped songs being shuffled. This takes priority
+        over `[p]shuffle`.
         """
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
@@ -7743,7 +7740,6 @@ class Audio(commands.Cog):
                             log.error("Exception raised in Audio's emptydc_timer.", exc_info=True)
                             if "No such player for that guild" in str(err):
                                 stop_times.pop(sid, None)
-                            pass
                 elif (
                     sid in pause_times and await self.config.guild(server_obj).emptypause_enabled()
                 ):

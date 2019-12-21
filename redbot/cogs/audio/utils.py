@@ -10,9 +10,9 @@ from urllib.parse import urlparse
 import discord
 import lavalink
 
-from redbot.core import commands, Config
+from redbot.core import Config, commands
 from redbot.core.bot import Red
-from redbot.core.utils.chat_formatting import escape, box, bold
+from redbot.core.utils.chat_formatting import bold, box, escape
 
 from . import audio_dataclasses
 from .playlists import humanize_scope

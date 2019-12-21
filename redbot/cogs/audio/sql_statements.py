@@ -65,15 +65,15 @@ pragma user_version=3;
 
 # Playlist table statements
 PLAYLIST_CREATE_TABLE = """
-CREATE TABLE IF NOT EXISTS playlists ( 
-    scope_type INTEGER NOT NULL, 
-    playlist_id INTEGER NOT NULL, 
-    playlist_name TEXT NOT NULL, 
-    scope_id INTEGER NOT NULL, 
-    author_id INTEGER NOT NULL, 
+CREATE TABLE IF NOT EXISTS playlists (
+    scope_type INTEGER NOT NULL,
+    playlist_id INTEGER NOT NULL,
+    playlist_name TEXT NOT NULL,
+    scope_id INTEGER NOT NULL,
+    author_id INTEGER NOT NULL,
     deleted BOOLEAN DEFAULT false,
-    playlist_url TEXT, 
-    tracks JSON, 
+    playlist_url TEXT,
+    tracks JSON,
     PRIMARY KEY (playlist_id, scope_id, scope_type)
 );
 """
@@ -83,23 +83,23 @@ UPDATE playlists
         deleted = true
 WHERE
     (
-        scope_type = :scope_type 
-        AND playlist_id = :playlist_id 
-        AND scope_id = :scope_id 
+        scope_type = :scope_type
+        AND playlist_id = :playlist_id
+        AND scope_id = :scope_id
     )
 ;
 """
 PLAYLIST_DELETE_SCOPE = """
 DELETE
 FROM
-    playlists 
+    playlists
 WHERE
     scope_type = :scope_type ;
 """
 PLAYLIST_DELETE_SCHEDULED = """
 DELETE
 FROM
-    playlists 
+    playlists
 WHERE
     deleted = true;
 """
@@ -110,11 +110,11 @@ SELECT
     scope_id,
     author_id,
     playlist_url,
-    tracks 
+    tracks
 FROM
-    playlists 
+    playlists
 WHERE
-    scope_type = :scope_type 
+    scope_type = :scope_type
     AND scope_id = :scope_id
     AND deleted = false
     ;
@@ -126,14 +126,14 @@ SELECT
     scope_id,
     author_id,
     playlist_url,
-    tracks 
+    tracks
 FROM
-    playlists 
+    playlists
 WHERE
     (
-        scope_type = :scope_type 
+        scope_type = :scope_type
         AND scope_id = :scope_id
-        AND author_id = :author_id 
+        AND author_id = :author_id
         AND deleted = false
     )
 ;
@@ -145,12 +145,12 @@ SELECT
     scope_id,
     author_id,
     playlist_url,
-    tracks 
+    tracks
 FROM
-    playlists 
+    playlists
 WHERE
     (
-        scope_type = :scope_type 
+        scope_type = :scope_type
         AND
         (
         playlist_id = :playlist_id
@@ -168,29 +168,29 @@ SELECT
     scope_id,
     author_id,
     playlist_url,
-    tracks 
+    tracks
 FROM
-    playlists 
+    playlists
 WHERE
     (
-        scope_type = :scope_type 
-        AND playlist_id = :playlist_id 
-        AND scope_id = :scope_id 
+        scope_type = :scope_type
+        AND playlist_id = :playlist_id
+        AND scope_id = :scope_id
         AND deleted = false
     )
 """
 PLAYLIST_UPSERT = """
 INSERT INTO
-    playlists ( scope_type, playlist_id, playlist_name, scope_id, author_id, playlist_url, tracks ) 
+    playlists ( scope_type, playlist_id, playlist_name, scope_id, author_id, playlist_url, tracks )
 VALUES
     (
-        :scope_type, :playlist_id, :playlist_name, :scope_id, :author_id, :playlist_url, :tracks 
+        :scope_type, :playlist_id, :playlist_name, :scope_id, :author_id, :playlist_url, :tracks
     )
-    ON CONFLICT (scope_type, playlist_id, scope_id) DO 
+    ON CONFLICT (scope_type, playlist_id, scope_id) DO
     UPDATE
     SET
-        playlist_name = excluded.playlist_name, 
-        playlist_url = excluded.playlist_url, 
+        playlist_name = excluded.playlist_name,
+        playlist_url = excluded.playlist_url,
         tracks = excluded.tracks;
 """
 PLAYLIST_CREATE_INDEX = """
@@ -211,50 +211,50 @@ CREATE TABLE IF NOT EXISTS youtube(
 );
 """
 YOUTUBE_CREATE_INDEX = """
-CREATE UNIQUE INDEX IF NOT EXISTS idx_youtube_url 
+CREATE UNIQUE INDEX IF NOT EXISTS idx_youtube_url
 ON youtube (track_info, youtube_url);
 """
-YOUTUBE_UPSERT = """INSERT INTO 
-youtube 
+YOUTUBE_UPSERT = """INSERT INTO
+youtube
   (
-    track_info,  
+    track_info,
     youtube_url,
     last_updated,
     last_fetched
-  ) 
-VALUES 
+  )
+VALUES
   (
-   :track_info, 
+   :track_info,
    :track_url,
    :last_updated,
    :last_fetched
   )
 ON CONFLICT
   (
-  track_info, 
+  track_info,
   youtube_url
   )
-DO UPDATE 
-  SET 
-    track_info = excluded.track_info, 
+DO UPDATE
+  SET
+    track_info = excluded.track_info,
     last_updated = excluded.last_updated
 """
 YOUTUBE_UPDATE = """
 UPDATE youtube
-SET last_fetched=:last_fetched 
+SET last_fetched=:last_fetched
 WHERE track_info=:track;
 """
 YOUTUBE_QUERY = """
 SELECT youtube_url, last_updated
-FROM youtube 
-WHERE 
+FROM youtube
+WHERE
     track_info=:track
     AND last_updated > :maxage
 ;
 """
 YOUTUBE_DELETE_OLD_ENTRIES = """
-DELETE FROM youtube 
-WHERE 
+DELETE FROM youtube
+WHERE
     last_updated > :maxage;
 """
 
@@ -268,7 +268,7 @@ CREATE TABLE IF NOT EXISTS spotify(
     type TEXT,
     uri TEXT,
     track_name TEXT,
-    artist_name TEXT, 
+    artist_name TEXT,
     song_url TEXT,
     track_info TEXT,
     last_updated INTEGER,
@@ -276,18 +276,18 @@ CREATE TABLE IF NOT EXISTS spotify(
 );
 """
 SPOTIFY_CREATE_INDEX = """
-CREATE UNIQUE INDEX IF NOT EXISTS idx_spotify_uri 
+CREATE UNIQUE INDEX IF NOT EXISTS idx_spotify_uri
 ON spotify (id, type, uri);
 """
-SPOTIFY_UPSERT = """INSERT INTO 
-spotify 
+SPOTIFY_UPSERT = """INSERT INTO
+spotify
   (
-    id, type, uri, track_name, artist_name, 
+    id, type, uri, track_name, artist_name,
     song_url, track_info, last_updated, last_fetched
-  ) 
-VALUES 
+  )
+VALUES
   (
-    :id, :type, :uri, :track_name, :artist_name, 
+    :id, :type, :uri, :track_name, :artist_name,
     :song_url, :track_info, :last_updated, :last_fetched
   )
 ON CONFLICT
@@ -295,9 +295,9 @@ ON CONFLICT
     id,
     type,
     uri
-  ) 
-DO UPDATE 
-  SET 
+  )
+DO UPDATE
+  SET
     track_name = excluded.track_name,
     artist_name = excluded.artist_name,
     song_url = excluded.song_url,
@@ -306,19 +306,19 @@ DO UPDATE
 """
 SPOTIFY_UPDATE = """
 UPDATE spotify
-SET last_fetched=:last_fetched 
+SET last_fetched=:last_fetched
 WHERE uri=:uri;
 """
 SPOTIFY_QUERY = """
 SELECT track_info, last_updated
-FROM spotify 
-WHERE 
+FROM spotify
+WHERE
     uri=:uri
     AND last_updated > :maxage;
 """
 SPOTIFY_DELETE_OLD_ENTRIES = """
-DELETE FROM spotify 
-WHERE 
+DELETE FROM spotify
+WHERE
     last_updated > :maxage;
 """
 
@@ -336,49 +336,49 @@ CREATE TABLE IF NOT EXISTS lavalink(
 );
 """
 LAVALINK_CREATE_INDEX = """
-CREATE UNIQUE INDEX IF NOT EXISTS idx_lavalink_query 
+CREATE UNIQUE INDEX IF NOT EXISTS idx_lavalink_query
 ON lavalink (query);
 """
-LAVALINK_UPSERT = """INSERT INTO 
-lavalink 
+LAVALINK_UPSERT = """INSERT INTO
+lavalink
   (
-    query,  
-    data, 
-    last_updated, 
+    query,
+    data,
+    last_updated,
     last_fetched
-  ) 
-VALUES 
+  )
+VALUES
   (
-   :query, 
+   :query,
    :data,
-   :last_updated, 
+   :last_updated,
    :last_fetched
   )
 ON CONFLICT
   (
     query
-  ) 
-DO UPDATE 
-  SET 
+  )
+DO UPDATE
+  SET
     data = excluded.data,
     last_updated = excluded.last_updated;
 """
 LAVALINK_UPDATE = """
 UPDATE lavalink
-SET last_fetched=:last_fetched 
+SET last_fetched=:last_fetched
 WHERE query=:query;
 """
 LAVALINK_QUERY = """
 SELECT data, last_updated
-FROM lavalink 
-WHERE 
+FROM lavalink
+WHERE
     query=:query
     AND last_updated > :maxage;
 """
 LAVALINK_QUERY_LAST_FETCHED_RANDOM = """
 SELECT data
-FROM lavalink 
-WHERE 
+FROM lavalink
+WHERE
     last_fetched > :day
     AND last_updated > :maxage
 ORDER BY RANDOM()
@@ -386,7 +386,7 @@ LIMIT 10
 ;
 """
 LAVALINK_DELETE_OLD_ENTRIES = """
-DELETE FROM lavalink 
-WHERE 
+DELETE FROM lavalink
+WHERE
     last_updated > :maxage;
 """

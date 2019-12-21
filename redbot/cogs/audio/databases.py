@@ -4,8 +4,15 @@ import logging
 import time
 import traceback
 from dataclasses import dataclass, field
-from typing import List, Dict, Union, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
+from redbot.core import Config
+from redbot.core.bot import Red
+from redbot.core.data_manager import cog_data_path
+
+from .errors import InvalidTableError
+from .sql_statements import *
+from .utils import PlaylistScope
 
 try:
     import apsw
@@ -19,14 +26,6 @@ except ImportError as err:
     SQLError = err.__class__
     apsw = None
 
-
-from redbot.core import Config
-from redbot.core.bot import Red
-from redbot.core.data_manager import cog_data_path
-
-from .errors import InvalidTableError
-from .utils import PlaylistScope
-from .sql_statements import *
 
 log = logging.getLogger("red.audio.database")
 

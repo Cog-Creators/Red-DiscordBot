@@ -1,5 +1,5 @@
 from collections import namedtuple
-from typing import List, Optional, Union, Mapping
+from typing import List, Mapping, Optional, Union
 
 import discord
 import lavalink
@@ -8,7 +8,8 @@ from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_list
-from .databases import PlaylistInterface, PlaylistFetchResult
+
+from .databases import PlaylistFetchResult, PlaylistInterface
 from .errors import InvalidPlaylistScope, MissingAuthor, MissingGuild, NotAllowed
 from .utils import PlaylistScope
 
@@ -183,9 +184,7 @@ class PlaylistMigration23:  # TODO: remove me in a future version ?
         )
 
     async def save(self):
-        """
-        Saves a Playlist to SQL.
-        """
+        """Saves a Playlist to SQL."""
         scope, scope_id = _prepare_config_scope(self.scope, self.author, self.guild)
         database.upsert(
             scope,
@@ -304,9 +303,7 @@ class Playlist:
         return self
 
     async def save(self):
-        """
-        Saves a Playlist.
-        """
+        """Saves a Playlist."""
         scope, scope_id = self.config_scope
         database.upsert(
             scope,
@@ -535,8 +532,7 @@ async def create_playlist(
     author: Optional[discord.User] = None,
     guild: Optional[discord.Guild] = None,
 ) -> Optional[Playlist]:
-    """
-    Creates a new Playlist.
+    """Creates a new Playlist.
 
     Parameters
     ----------
@@ -590,8 +586,7 @@ async def reset_playlist(
     guild: Union[discord.Guild, int] = None,
     author: Union[discord.abc.User, int] = None,
 ) -> None:
-    """
-    Wipes all playlists for the specified scope.
+    """Wipes all playlists for the specified scope.
 
     Parameters
     ----------
@@ -622,8 +617,7 @@ async def delete_playlist(
     guild: discord.Guild,
     author: Union[discord.abc.User, int] = None,
 ) -> None:
-    """
-    Deletes the specified playlist.
+    """Deletes the specified playlist.
 
     Parameters
     ----------
