@@ -34,6 +34,7 @@ from redbot.core.utils.menus import (
 )
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
+import redbot.cogs.audio.databases
 from . import audio_dataclasses
 from .apis import MusicCache
 from .checks import can_have_caching
@@ -57,6 +58,7 @@ from .playlists import (
     get_all_playlist,
     get_playlist,
     humanize_scope,
+    get_all_playlist_for_migration23,
 )
 from .utils import (
     CacheLevel,
@@ -86,7 +88,7 @@ __author__ = ["aikaterna", "Draper"]
 
 log = logging.getLogger("red.audio")
 
-_SCHEMA_VERSION = 2
+_SCHEMA_VERSION = 3
 LazyGreedyConverter = get_lazy_converter("--")
 PlaylistConverter = get_playlist_converter()
 
@@ -163,7 +165,7 @@ class Audio(commands.Cog):
         self.config.register_custom(PlaylistScope.USER.value, **_playlist)
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)
-        self.music_cache = MusicCache = None
+        self.music_cache: MusicCache = None
         self._error_counter = Counter()
         self._error_timer = {}
         self._disconnected_players = {}
@@ -232,6 +234,9 @@ class Audio(commands.Cog):
             await self._migrate_config(
                 from_version=await self.config.schema_version(), to_version=_SCHEMA_VERSION
             )
+            import redbot.cogs.audio.playlists
+
+            redbot.cogs.audio.playlists.database.delete_scheduled()
             self._restart_connect()
             self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
             lavalink.register_event_listener(self.event_handler)
@@ -260,7 +265,7 @@ class Audio(commands.Cog):
         time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
         if from_version == to_version:
             return
-        elif from_version < to_version:
+        if from_version < 2 <= to_version:
             all_guild_data = await self.config.all_guilds()
             all_playlist = {}
             for guild_id, guild_data in all_guild_data.items():
@@ -298,6 +303,14 @@ class Audio(commands.Cog):
                 await self.config.guild(
                     cast(discord.Guild, discord.Object(id=guild_id))
                 ).clear_raw("playlists")
+        if from_version < 3 <= to_version:
+            for scope in PlaylistScope.list():
+                scope_playlist = await get_all_playlist_for_migration23(scope)
+                for p in scope_playlist:
+                    await p.save()
+                await self.config.custom(scope).clear()
+            await self.config.schema_version.set(_SCHEMA_VERSION)
+
         if database_entries and HAS_SQL:
             await self.music_cache.database.insert("lavalink", database_entries)
 
@@ -642,14 +655,10 @@ class Audio(commands.Cog):
                             if player.current.title == "Unknown title":
                                 description = "{}".format(query.to_string_user())
                             else:
-                                song = bold("{} - {}").format(
-                                    current_author, current_uri
-                                )
+                                song = bold("{} - {}").format(current_author, current_uri)
                                 description = "{}\n{}".format(song, query.to_string_user())
                         else:
-                            description = bold("[{}]({})").format(
-                                current_title, current_uri
-                            )
+                            description = bold("[{}]({})").format(current_title, current_uri)
 
                         embed = discord.Embed(
                             colour=(await self.bot.get_embed_color(message_channel)),
@@ -3252,6 +3261,7 @@ class Audio(commands.Cog):
             When multiple matches are found but none is selected.
 
         """
+        correct_scope_matches: List[Playlist]
         original_input = matches.get("arg")
         correct_scope_matches = matches.get(scope)
         guild_to_query = guild.id
@@ -3260,50 +3270,52 @@ class Audio(commands.Cog):
             return None, original_input
         if scope == PlaylistScope.USER.value:
             correct_scope_matches = [
-                (i[2]["id"], i[2]["name"], len(i[2]["tracks"]), i[2]["author"])
-                for i in correct_scope_matches
-                if str(user_to_query) == i[0]
+                p for p in correct_scope_matches if user_to_query == p.scope_id
             ]
         elif scope == PlaylistScope.GUILD.value:
             if specified_user:
                 correct_scope_matches = [
-                    (i[2]["id"], i[2]["name"], len(i[2]["tracks"]), i[2]["author"])
-                    for i in correct_scope_matches
-                    if str(guild_to_query) == i[0] and i[2]["author"] == user_to_query
+                    p
+                    for p in correct_scope_matches
+                    if guild_to_query == p.scope_id and p.author == user_to_query
                 ]
             else:
                 correct_scope_matches = [
-                    (i[2]["id"], i[2]["name"], len(i[2]["tracks"]), i[2]["author"])
-                    for i in correct_scope_matches
-                    if str(guild_to_query) == i[0]
+                    p for p in correct_scope_matches if guild_to_query == p.scope_id
                 ]
         else:
             if specified_user:
                 correct_scope_matches = [
-                    (i[2]["id"], i[2]["name"], len(i[2]["tracks"]), i[2]["author"])
-                    for i in correct_scope_matches
-                    if i[2]["author"] == user_to_query
+                    p for p in correct_scope_matches if p.author == user_to_query
                 ]
             else:
-                correct_scope_matches = [
-                    (i[2]["id"], i[2]["name"], len(i[2]["tracks"]), i[2]["author"])
-                    for i in correct_scope_matches
-                ]
+                correct_scope_matches = [p for p in correct_scope_matches]
+
+        match_count = len(correct_scope_matches)
+        if match_count > 1:
+            correct_scope_matches2 = [
+                p for p in correct_scope_matches if p.name == str(original_input).strip()
+            ]
+            if correct_scope_matches2:
+                correct_scope_matches = correct_scope_matches2
+            elif original_input.isnumeric():
+                arg = int(original_input)
+                correct_scope_matches3 = [p for p in correct_scope_matches if p.id == arg]
+                if correct_scope_matches3:
+                    correct_scope_matches = correct_scope_matches3
         match_count = len(correct_scope_matches)
         # We done all the trimming we can with the info available time to ask the user
         if match_count > 10:
             if original_input.isnumeric():
                 arg = int(original_input)
-                correct_scope_matches = [
-                    (i, n, t, a) for i, n, t, a in correct_scope_matches if i == arg
-                ]
+                correct_scope_matches = [p for p in correct_scope_matches if p.id == arg]
             if match_count > 10:
                 raise TooManyMatches(
                     f"{match_count} playlists match {original_input}: "
                     f"Please try to be more specific, or use the playlist ID."
                 )
         elif match_count == 1:
-            return correct_scope_matches[0][0], original_input
+            return correct_scope_matches[0].id, original_input
         elif match_count == 0:
             return None, original_input
 
@@ -3311,14 +3323,14 @@ class Audio(commands.Cog):
         pos_len = 3
         playlists = f"{'#':{pos_len}}\n"
 
-        for number, (pid, pname, ptracks, pauthor) in enumerate(correct_scope_matches, 1):
-            author = self.bot.get_user(pauthor) or "Unknown"
+        for number, playlist in enumerate(correct_scope_matches, 1):
+            author = self.bot.get_user(playlist.author) or "Unknown"
             line = (
                 f"{number}."
-                f"    <{pname}>\n"
+                f"    <{playlist.name}>\n"
                 f" - Scope:  < {humanize_scope(scope)} >\n"
-                f" - ID:     < {pid} >\n"
-                f" - Tracks: < {ptracks} >\n"
+                f" - ID:     < {playlist.id} >\n"
+                f" - Tracks: < {len(playlist.tracks)} >\n"
                 f" - Author: < {author} >\n\n"
             )
             playlists += line
@@ -3351,7 +3363,7 @@ class Audio(commands.Cog):
             )
         with contextlib.suppress(discord.HTTPException):
             await msg.delete()
-        return correct_scope_matches[pred.result][0], original_input
+        return correct_scope_matches[pred.result].id, original_input
 
     @commands.group()
     @commands.guild_only()

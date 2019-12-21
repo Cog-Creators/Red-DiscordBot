@@ -10,11 +10,10 @@ from urllib.parse import urlparse
 import discord
 import lavalink
 
-from redbot.core import Config, commands
+from redbot.core import commands, Config
 from redbot.core.bot import Red
 
 from . import audio_dataclasses
-
 
 __all__ = [
     "_pass_config_to_utils",

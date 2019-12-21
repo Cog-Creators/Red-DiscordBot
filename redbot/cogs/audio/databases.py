@@ -25,235 +25,34 @@ from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 
 from .errors import InvalidTableError
+from .utils import PlaylistScope
+from .sql_statements import *
 
 log = logging.getLogger("red.audio.database")
-
-_DROP_YOUTUBE_TABLE = """
-DROP TABLE IF EXISTS youtube;
-"""
-_CREATE_YOUTUBE_TABLE = """
-CREATE TABLE IF NOT EXISTS youtube(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    track_info TEXT,
-    youtube_url TEXT,
-    last_updated INTEGER,
-    last_fetched INTEGER
-);
-"""
-_CREATE_UNIQUE_INDEX_YOUTUBE_TABLE = """
-CREATE UNIQUE INDEX IF NOT EXISTS idx_youtube_url 
-ON youtube (track_info, youtube_url);
-"""
-_INSERT_YOUTUBE_TABLE = """INSERT INTO 
-youtube 
-  (
-    track_info,  
-    youtube_url,
-    last_updated,
-    last_fetched
-  ) 
-VALUES 
-  (
-   :track_info, 
-   :track_url,
-   :last_updated,
-   :last_fetched
-  )
-ON CONFLICT
-  (
-  track_info, 
-  youtube_url
-  )
-DO UPDATE 
-  SET 
-    track_info = excluded.track_info, 
-    last_updated = excluded.last_updated
-"""
-_UPDATE_YOUTUBE_TABLE = """
-UPDATE youtube
-SET last_fetched=:last_fetched 
-WHERE track_info=:track;
-"""
-_QUERY_YOUTUBE_TABLE = """
-SELECT youtube_url, last_updated
-FROM youtube 
-WHERE 
-    track_info=:track
-    AND last_updated > :maxage
-;
-"""
-_DROP_SPOTIFY_TABLE = """
-DROP TABLE IF EXISTS spotify;
-"""
-_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE = """
-CREATE UNIQUE INDEX IF NOT EXISTS idx_spotify_uri 
-ON spotify (id, type, uri);
-"""
-_CREATE_SPOTIFY_TABLE = """
-CREATE TABLE IF NOT EXISTS spotify(
-    id TEXT,
-    type TEXT,
-    uri TEXT,
-    track_name TEXT,
-    artist_name TEXT, 
-    song_url TEXT,
-    track_info TEXT,
-    last_updated INTEGER,
-    last_fetched INTEGER
-);
-"""
-_INSERT_SPOTIFY_TABLE = """INSERT INTO 
-spotify 
-  (
-    id, type, uri, track_name, artist_name, 
-    song_url, track_info, last_updated, last_fetched
-  ) 
-VALUES 
-  (
-    :id, :type, :uri, :track_name, :artist_name, 
-    :song_url, :track_info, :last_updated, :last_fetched
-  )
-ON CONFLICT
-  (
-    id,
-    type,
-    uri
-  ) 
-DO UPDATE 
-  SET 
-    track_name = excluded.track_name,
-    artist_name = excluded.artist_name,
-    song_url = excluded.song_url,
-    track_info = excluded.track_info,
-    last_updated = excluded.last_updated;
-"""
-_QUERY_SPOTIFY_TABLE = """
-SELECT track_info, last_updated
-FROM spotify 
-WHERE 
-    uri=:uri
-    AND last_updated > :maxage;
-"""
-_UPDATE_SPOTIFY_TABLE = """
-UPDATE spotify
-SET last_fetched=:last_fetched 
-WHERE uri=:uri;
-"""
-_DROP_LAVALINK_TABLE = """
-DROP TABLE IF EXISTS lavalink ;
-"""
-_CREATE_LAVALINK_TABLE = """
-CREATE TABLE IF NOT EXISTS lavalink(
-    query TEXT,
-    data JSON,
-    last_updated INTEGER,
-    last_fetched INTEGER
-
-);
-"""
-_CREATE_UNIQUE_INDEX_LAVALINK_TABLE = """
-CREATE UNIQUE INDEX IF NOT EXISTS idx_lavalink_query 
-ON lavalink (query);
-"""
-_INSERT_LAVALINK_TABLE = """INSERT INTO 
-lavalink 
-  (
-    query,  
-    data, 
-    last_updated, 
-    last_fetched
-  ) 
-VALUES 
-  (
-   :query, 
-   :data,
-   :last_updated, 
-   :last_fetched
-  )
-ON CONFLICT
-  (
-    query
-  ) 
-DO UPDATE 
-  SET 
-    data = excluded.data,
-    last_updated = excluded.last_updated;
-"""
-_UPDATE_LAVALINK_TABLE = """
-UPDATE lavalink
-SET last_fetched=:last_fetched 
-WHERE query=:query;
-"""
-_QUERY_LAVALINK_TABLE = """
-SELECT data, last_updated
-FROM lavalink 
-WHERE 
-    query=:query
-    AND last_updated > :maxage;
-"""
-_QUERY_LAST_FETCHED_LAVALINK_TABLE = """
-SELECT data
-FROM lavalink 
-WHERE 
-    last_fetched > :day
-    AND last_updated > :maxage
-ORDER BY RANDOM()
-LIMIT 10
-;
-"""
-_PARSER = {
-    "youtube": {
-        "insert": _INSERT_YOUTUBE_TABLE,
-        "youtube_url": {"query": _QUERY_YOUTUBE_TABLE},
-        "update": _UPDATE_YOUTUBE_TABLE,
-    },
-    "spotify": {
-        "insert": _INSERT_SPOTIFY_TABLE,
-        "track_info": {"query": _QUERY_SPOTIFY_TABLE},
-        "update": _UPDATE_SPOTIFY_TABLE,
-    },
-    "lavalink": {
-        "insert": _INSERT_LAVALINK_TABLE,
-        "data": {"query": _QUERY_LAVALINK_TABLE, "played": _QUERY_LAST_FETCHED_LAVALINK_TABLE},
-        "update": _UPDATE_LAVALINK_TABLE,
-    },
-}
-_PRAGMA_UPDATE_temp_store = """
-PRAGMA temp_store = 2;
-"""
-_PRAGMA_UPDATE_journal_mode = """
-PRAGMA journal_mode = wal;
-"""
-_PRAGMA_UPDATE_read_uncommitted = """
-PRAGMA read_uncommitted = 1;
-"""
-_PRAGMA_FETCH_user_version = """
-pragma user_version;
-"""
-
-SCHEMA_VERSION = 3
-_PRAGMA_SET_user_version = f"""
-pragma user_version=3;
-"""
-_DELETE_LAVALINK_OLD = """
-DELETE FROM lavalink 
-WHERE 
-    last_updated > :maxage;
-"""
-_DELETE_YOUTUBE_OLD = """
-DELETE FROM youtube 
-WHERE 
-    last_updated > :maxage;
-"""
-_DELETE_SPOTIFY_OLD = """
-DELETE FROM spotify 
-WHERE 
-    last_updated > :maxage;
-"""
 
 _config: Config = None
 _bot: Red = None
 database_connection: apsw.Connection = None
+SCHEMA_VERSION = 3
+
+
+_PARSER = {
+    "youtube": {
+        "insert": YOUTUBE_UPSERT,
+        "youtube_url": {"query": YOUTUBE_QUERY},
+        "update": YOUTUBE_UPDATE,
+    },
+    "spotify": {
+        "insert": SPOTIFY_UPSERT,
+        "track_info": {"query": SPOTIFY_QUERY},
+        "update": SPOTIFY_UPDATE,
+    },
+    "lavalink": {
+        "insert": LAVALINK_UPSERT,
+        "data": {"query": LAVALINK_QUERY, "played": LAVALINK_QUERY_LAST_FETCHED_RANDOM},
+        "update": LAVALINK_UPDATE,
+    },
+}
 
 
 def _pass_config_to_databases(config: Config, bot: Red):
@@ -266,6 +65,20 @@ def _pass_config_to_databases(config: Config, bot: Red):
         database_connection = apsw.Connection(
             str(cog_data_path(_bot.get_cog("Audio")) / "Audio.db")
         )
+
+
+@dataclass
+class PlaylistFetchResult:
+    playlist_id: int
+    playlist_name: str
+    scope_id: int
+    author_id: int
+    playlist_url: Optional[str] = None
+    tracks: List[dict] = field(default_factory=lambda: [])
+
+    def __post_init__(self):
+        if isinstance(self.tracks, str):
+            self.tracks = json.loads(self.tracks)
 
 
 @dataclass
@@ -284,7 +97,7 @@ class CacheFetchResult:
 
 @dataclass
 class CacheLastFetchResult:
-    tracks: List[dict] = field(default_factory=lambda: {})
+    tracks: List[dict] = field(default_factory=lambda: [])
 
     def __post_init__(self):
         if isinstance(self.tracks, str):
@@ -296,18 +109,18 @@ class CacheInterface:
         self.database = database_connection.cursor()
 
     async def init(self):
-        self.database.execute(_PRAGMA_UPDATE_temp_store)
-        self.database.execute(_PRAGMA_UPDATE_journal_mode)
-        self.database.execute(_PRAGMA_UPDATE_read_uncommitted)
+        self.database.execute(PRAGMA_SET_temp_store)
+        self.database.execute(PRAGMA_SET_journal_mode)
+        self.database.execute(PRAGMA_SET_read_uncommitted)
 
         self.maybe_migrate()
 
-        self.database.execute(_CREATE_LAVALINK_TABLE)
-        self.database.execute(_CREATE_UNIQUE_INDEX_LAVALINK_TABLE)
-        self.database.execute(_CREATE_YOUTUBE_TABLE)
-        self.database.execute(_CREATE_UNIQUE_INDEX_YOUTUBE_TABLE)
-        self.database.execute(_CREATE_SPOTIFY_TABLE)
-        self.database.execute(_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE)
+        self.database.execute(LAVALINK_CREATE_TABLE)
+        self.database.execute(LAVALINK_CREATE_INDEX)
+        self.database.execute(YOUTUBE_CREATE_TABLE)
+        self.database.execute(YOUTUBE_CREATE_INDEX)
+        self.database.execute(SPOTIFY_CREATE_TABLE)
+        self.database.execute(SPOTIFY_CREATE_INDEX)
 
         await self.clean_up_old_entries()
 
@@ -316,12 +129,12 @@ class CacheInterface:
         maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=max_age)
         maxage_int = int(time.mktime(maxage.timetuple()))
         values = {"maxage": maxage_int}
-        self.database.execute(_DELETE_LAVALINK_OLD, values)
-        self.database.execute(_DELETE_YOUTUBE_OLD, values)
-        self.database.execute(_DELETE_SPOTIFY_OLD, values)
+        self.database.execute(LAVALINK_DELETE_OLD_ENTRIES, values)
+        self.database.execute(YOUTUBE_DELETE_OLD_ENTRIES, values)
+        self.database.execute(SPOTIFY_DELETE_OLD_ENTRIES, values)
 
     def maybe_migrate(self):
-        current_version = self.database.execute(_PRAGMA_FETCH_user_version).fetchone()
+        current_version = self.database.execute(PRAGMA_FETCH_user_version).fetchone()
         if isinstance(current_version, tuple):
             current_version = current_version[0]
         if not current_version:
@@ -329,11 +142,11 @@ class CacheInterface:
         if current_version == SCHEMA_VERSION:
             return
         if current_version < 3 <= SCHEMA_VERSION:
-            self.database.execute(_DROP_SPOTIFY_TABLE)
-            self.database.execute(_DROP_YOUTUBE_TABLE)
-            self.database.execute(_DROP_LAVALINK_TABLE)
+            self.database.execute(SPOTIFY_DROP_TABLE)
+            self.database.execute(YOUTUBE_DROP_TABLE)
+            self.database.execute(LAVALINK_DROP_TABLE)
 
-        self.database.execute(_PRAGMA_SET_user_version, {"version": SCHEMA_VERSION})
+        self.database.execute(PRAGMA_SET_user_version, {"version": SCHEMA_VERSION})
 
     async def insert(self, table: str, values: List[dict]):
         try:
@@ -394,3 +207,115 @@ class CacheInterface:
                 for row in self.database.execute(sql_query, values).fetchall()
             ]
         return []
+
+
+class PlaylistInterface:
+    def __init__(self):
+        self.cursor = database_connection.cursor()
+        self.cursor.execute(PRAGMA_SET_temp_store)
+        self.cursor.execute(PRAGMA_SET_journal_mode)
+        self.cursor.execute(PRAGMA_SET_read_uncommitted)
+        self.cursor.execute(PLAYLIST_CREATE_TABLE)
+        self.cursor.execute(PLAYLIST_CREATE_INDEX)
+
+    @staticmethod
+    def get_scope_type(scope: str) -> int:
+        if scope == PlaylistScope.GLOBAL.value:
+            table = 1
+        elif scope == PlaylistScope.USER.value:
+            table = 3
+        else:
+            table = 2
+        return table
+
+    def fetch(self, scope: str, playlist_id: int, scope_id: int) -> PlaylistFetchResult:
+        scope_type = self.get_scope_type(scope)
+        row = (
+            self.cursor.execute(
+                PLAYLIST_FETCH,
+                ({"playlist_id": playlist_id, "scope_id": scope_id, "scope_type": scope_type}),
+            ).fetchone()
+            or []
+        )
+
+        return PlaylistFetchResult(*row) if row else None
+
+    def fetch_all(self, scope: str, scope_id: int, author_id=None) -> List[PlaylistFetchResult]:
+        scope_type = self.get_scope_type(scope)
+        if author_id is not None:
+            output = self.cursor.execute(
+                PLAYLIST_FETCH_ALL_WITH_FILTER,
+                ({"scope_type": scope_type, "scope_id": scope_id, "author_id": author_id}),
+            ).fetchall()
+        else:
+            output = self.cursor.execute(
+                PLAYLIST_FETCH_ALL, ({"scope_type": scope_type, "scope_id": scope_id})
+            ).fetchall()
+        return [PlaylistFetchResult(*row) for row in output] if output else []
+
+    def fetch_all_converter(
+        self, scope: str, playlist_name, playlist_id
+    ) -> List[PlaylistFetchResult]:
+        scope_type = self.get_scope_type(scope)
+        try:
+            playlist_id = int(playlist_id)
+        except:
+            playlist_id = -1
+        output = (
+            self.cursor.execute(
+                PLAYLIST_FETCH_ALL_CONVERTER,
+                (
+                    {
+                        "scope_type": scope_type,
+                        "playlist_name": playlist_name,
+                        "playlist_id": playlist_id,
+                    }
+                ),
+            ).fetchall()
+            or []
+        )
+        return [PlaylistFetchResult(*row) for row in output] if output else []
+
+    def delete(self, scope: str, playlist_id: int, scope_id: int):
+        scope_type = self.get_scope_type(scope)
+        return self.cursor.execute(
+            PLAYLIST_DELETE,
+            ({"playlist_id": playlist_id, "scope_id": scope_id, "scope_type": scope_type}),
+        )
+
+    def delete_scheduled(self):
+        return self.cursor.execute(PLAYLIST_DELETE_SCHEDULED)
+
+    def drop(self, scope: str):
+        scope_type = self.get_scope_type(scope)
+        return self.cursor.execute(PLAYLIST_DELETE_SCOPE, ({"scope_type": scope_type}))
+
+    def create_table(self, scope: str):
+        scope_type = self.get_scope_type(scope)
+        return self.cursor.execute(PLAYLIST_CREATE_TABLE, ({"scope_type": scope_type}))
+
+    def upsert(
+        self,
+        scope: str,
+        playlist_id: int,
+        playlist_name: str,
+        scope_id: int,
+        author_id: int,
+        playlist_url: str,
+        tracks: List[dict],
+    ):
+        scope_type = self.get_scope_type(scope)
+        self.cursor.execute(
+            PLAYLIST_UPSERT,
+            (
+                {
+                    "scope_type": str(scope_type),
+                    "playlist_id": int(playlist_id),
+                    "playlist_name": str(playlist_name),
+                    "scope_id": int(scope_id),
+                    "author_id": int(author_id),
+                    "playlist_url": playlist_url,
+                    "tracks": json.dumps(tracks),
+                }
+            ),
+        )
