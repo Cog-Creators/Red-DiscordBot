@@ -1,7 +1,5 @@
 from redbot.core import Config, commands
 
-from .apis import HAS_SQL
-
 _config = None
 
 
@@ -24,14 +22,5 @@ def roomlocked():
         if room_id is None or ctx.channel.id == room_id:
             return True
         return False
-
-    return commands.check(predicate)
-
-
-def can_have_caching():
-    """Check to disable Caching commands if SQLite is not available."""
-
-    async def predicate(ctx: commands.Context):
-        return HAS_SQL
 
     return commands.check(predicate)

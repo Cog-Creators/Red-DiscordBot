@@ -36,10 +36,8 @@ from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from . import audio_dataclasses
 from .apis import MusicCache
-from .checks import can_have_caching
 from .config import pass_config_to_dependencies
 from .converters import ComplexScopeParser, ScopeParser, get_lazy_converter, get_playlist_converter
-from .databases import HAS_SQL, _ERROR
 from .equalizer import Equalizer
 from .errors import (
     DatabaseError,
@@ -206,19 +204,6 @@ class Audio(commands.Cog):
             self._restart_connect()
             self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
             lavalink.register_event_listener(self.event_handler)
-            if not HAS_SQL:
-                error_message = (
-                    "Audio version: {version}\nThis version requires some SQL dependencies to "
-                    "access the caching features, "
-                    "your Python install is missing some of them.\n\n"
-                    "For instructions on how to fix it Google "
-                    f"`{_ERROR}`.\n"
-                    "You will need to install the missing SQL dependency.\n\n"
-                ).format(version=__version__)
-                with contextlib.suppress(discord.HTTPException):
-                    for page in pagify(error_message):
-                        await self.bot.send_to_owners(page)
-                log.critical(error_message)
         except Exception as err:
             log.exception("Audio failed to start up, please report this issue.", exc_info=err)
             raise err
@@ -268,7 +253,7 @@ class Audio(commands.Cog):
                 await self.config.guild(
                     cast(discord.Guild, discord.Object(id=guild_id))
                 ).clear_raw("playlists")
-        if database_entries and HAS_SQL:
+        if database_entries:
             await self.music_cache.database.insert("lavalink", database_entries)
 
     def _restart_connect(self):
@@ -1700,7 +1685,6 @@ class Audio(commands.Cog):
 
     @audioset.command(name="cache", usage="level=[5, 3, 2, 1, 0, -1, -2, -3]")
     @checks.is_owner()
-    @can_have_caching()
     async def _storage(self, ctx: commands.Context, *, level: int = None):
         """Sets the caching level.
 
@@ -1784,7 +1768,6 @@ class Audio(commands.Cog):
 
     @audioset.command(name="cacheage")
     @checks.is_owner()
-    @can_have_caching()
     async def _cacheage(self, ctx: commands.Context, age: int):
         """Sets the cache max age.
 
@@ -5686,7 +5669,7 @@ class Audio(commands.Cog):
                         "last_fetched": time_now,
                     }
                 )
-        if database_entries and HAS_SQL:
+        if database_entries:
             await self.music_cache.database.insert("lavalink", database_entries)
 
     async def _load_v2_playlist(
