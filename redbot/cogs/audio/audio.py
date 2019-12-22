@@ -7994,9 +7994,7 @@ class Audio(commands.Cog):
         await self.music_cache.run_tasks(ctx)
 
     async def _close_database(self):
-        import redbot.cogs.audio.databases
-
         await self.music_cache.run_all_pending_tasks()
-        redbot.cogs.audio.databases.database_connection.close()
+        self.music_cache.database.close()
 
     __del__ = cog_unload

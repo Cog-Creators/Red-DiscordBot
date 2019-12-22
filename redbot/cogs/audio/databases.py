@@ -1,24 +1,12 @@
+import contextlib
 import datetime
 import json
 import logging
 import time
-import traceback
 from dataclasses import dataclass, field
 from typing import List, Dict, Union, Optional, Tuple
 
-
-try:
-    import apsw
-
-    SQLError = apsw.ExecutionCompleteError
-    HAS_SQL = True
-    _ERROR = None
-except ImportError as err:
-    _ERROR = "".join(traceback.format_exception_only(type(err), err)).strip()
-    HAS_SQL = False
-    SQLError = err.__class__
-    apsw = None
-
+import apsw
 
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -27,6 +15,11 @@ from redbot.core.data_manager import cog_data_path
 from .errors import InvalidTableError
 
 log = logging.getLogger("red.audio.database")
+_config: Config = None
+_bot: Red = None
+database_connection: apsw.Connection = None
+SCHEMA_VERSION = 3
+SQLError = apsw.ExecutionCompleteError
 
 _DROP_YOUTUBE_TABLE = """
 DROP TABLE IF EXISTS youtube;
@@ -251,10 +244,6 @@ WHERE
     last_updated > :maxage;
 """
 
-_config: Config = None
-_bot: Red = None
-database_connection: apsw.Connection = None
-
 
 def _pass_config_to_databases(config: Config, bot: Red):
     global _config, _bot, database_connection
@@ -284,7 +273,7 @@ class CacheFetchResult:
 
 @dataclass
 class CacheLastFetchResult:
-    tracks: List[dict] = field(default_factory=lambda: {})
+    tracks: List[dict] = field(default_factory=lambda: [])
 
     def __post_init__(self):
         if isinstance(self.tracks, str):
@@ -294,6 +283,10 @@ class CacheLastFetchResult:
 class CacheInterface:
     def __init__(self):
         self.database = database_connection.cursor()
+
+    def close(self):
+        with contextlib.suppress(Exception):
+            database_connection.close()
 
     async def init(self):
         self.database.execute(_PRAGMA_UPDATE_temp_store)
@@ -328,7 +321,7 @@ class CacheInterface:
             current_version = 1
         if current_version == SCHEMA_VERSION:
             return
-        if current_version < 3 <= SCHEMA_VERSION:
+        if current_version <= 2 < SCHEMA_VERSION:
             self.database.execute(_DROP_SPOTIFY_TABLE)
             self.database.execute(_DROP_YOUTUBE_TABLE)
             self.database.execute(_DROP_LAVALINK_TABLE)
@@ -337,26 +330,24 @@ class CacheInterface:
 
     async def insert(self, table: str, values: List[dict]):
         try:
-            if HAS_SQL:
-                query = _PARSER.get(table, {}).get("insert")
-                if query is None:
-                    raise InvalidTableError(f"{table} is not a valid table in the database.")
-                self.database.execute("BEGIN;")
-                self.database.executemany(query, values)
-                self.database.execute("COMMIT;")
+            query = _PARSER.get(table, {}).get("insert")
+            if query is None:
+                raise InvalidTableError(f"{table} is not a valid table in the database.")
+            self.database.execute("BEGIN;")
+            self.database.executemany(query, values)
+            self.database.execute("COMMIT;")
         except Exception as err:
             log.debug("Error during audio db insert", exc_info=err)
 
     async def update(self, table: str, values: Dict[str, Union[str, int]]):
         try:
-            if HAS_SQL:
-                table = _PARSER.get(table, {})
-                sql_query = table.get("update")
-                time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
-                values["last_fetched"] = time_now
-                if not table:
-                    raise InvalidTableError(f"{table} is not a valid table in the database.")
-                self.database.execute(sql_query, values)
+            table = _PARSER.get(table, {})
+            sql_query = table.get("update")
+            time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
+            values["last_fetched"] = time_now
+            if not table:
+                raise InvalidTableError(f"{table} is not a valid table in the database.")
+            self.database.execute(sql_query, values)
         except Exception as err:
             log.debug("Error during audio db update", exc_info=err)
 
@@ -365,32 +356,25 @@ class CacheInterface:
     ) -> Tuple[Optional[str], bool]:
         table = _PARSER.get(table, {})
         sql_query = table.get(query, {}).get("query")
-        if HAS_SQL:
-            if not table:
-                raise InvalidTableError(f"{table} is not a valid table in the database.")
-            max_age = await _config.cache_age()
-            maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(
-                days=max_age
-            )
-            maxage_int = int(time.mktime(maxage.timetuple()))
-            values.update({"maxage": maxage_int})
-            output = self.database.execute(sql_query, values).fetchone() or (None, 0)
-            result = CacheFetchResult(*output)
-            return result.query, False
-        else:
-            return None, True
+        if not table:
+            raise InvalidTableError(f"{table} is not a valid table in the database.")
+        max_age = await _config.cache_age()
+        maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=max_age)
+        maxage_int = int(time.mktime(maxage.timetuple()))
+        values.update({"maxage": maxage_int})
+        output = self.database.execute(sql_query, values).fetchone() or (None, 0)
+        result = CacheFetchResult(*output)
+        return result.query, False
 
     async def fetch_all(
         self, table: str, query: str, values: Dict[str, Union[str, int]]
     ) -> List[CacheLastFetchResult]:
-        if HAS_SQL:
-            table = _PARSER.get(table, {})
-            sql_query = table.get(query, {}).get("played")
-            if not table:
-                raise InvalidTableError(f"{table} is not a valid table in the database.")
+        table = _PARSER.get(table, {})
+        sql_query = table.get(query, {}).get("played")
+        if not table:
+            raise InvalidTableError(f"{table} is not a valid table in the database.")
 
-            return [
-                CacheLastFetchResult(*row)
-                for row in self.database.execute(sql_query, values).fetchall()
-            ]
-        return []
+        return [
+            CacheLastFetchResult(*row)
+            for row in self.database.execute(sql_query, values).fetchall()
+        ]
