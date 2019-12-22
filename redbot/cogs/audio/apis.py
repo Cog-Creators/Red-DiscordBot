@@ -2,14 +2,14 @@ import asyncio
 import base64
 import contextlib
 import datetime
-import json
 import logging
-import os
 import random
 import time
+import json
 import traceback
 from collections import namedtuple
 from typing import Callable, Dict, List, Mapping, Optional, Tuple, Union
+
 
 import aiohttp
 import discord
@@ -21,7 +21,8 @@ from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 
 from . import audio_dataclasses
-from .errors import InvalidTableError, SpotifyFetchError, YouTubeApiError, DatabaseError
+from .databases import CacheInterface, HAS_SQL, SQLError
+from .errors import SpotifyFetchError, YouTubeApiError, DatabaseError
 from .playlists import get_playlist
 from .utils import CacheLevel, Notifier, is_allowed, queue_duration, track_limit
 
@@ -155,6 +156,20 @@ _PARSER = {
 
 _TOP_100_GLOBALS = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn6puJdseH2Rt9sMvt9E2M4i"
 _TOP_100_US = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn5rWitrRWFKdm-ulaFiIyoK"
+
+_database: CacheInterface = None
+_bot: Red = None
+_config: Config = None
+
+
+def _pass_config_to_apis(config: Config, bot: Red):
+    global _database, _config, _bot
+    if _config is None:
+        _config = config
+    if _bot is None:
+        _bot = bot
+    if _database is None:
+        _database = CacheInterface()
 
 
 class SpotifyAPI:
@@ -314,37 +329,18 @@ class MusicCache:
     Always tries the Cache first.
     """
 
-    def __init__(self, bot: Red, session: aiohttp.ClientSession, path: str):
+    def __init__(self, bot: Red, session: aiohttp.ClientSession):
         self.bot = bot
         self.spotify_api: SpotifyAPI = SpotifyAPI(bot, session)
         self.youtube_api: YouTubeAPI = YouTubeAPI(bot, session)
         self._session: aiohttp.ClientSession = session
-        if HAS_SQL:
-            self.database: Database = Database(
-                f'sqlite:///{os.path.abspath(str(os.path.join(path, "cache.db")))}'
-            )
-        else:
-            self.database = None
+        self.database = _database
 
         self._tasks: dict = {}
         self._lock: asyncio.Lock = asyncio.Lock()
         self.config: Optional[Config] = None
 
     async def initialize(self, config: Config):
-        if HAS_SQL:
-            await self.database.connect()
-
-            await self.database.execute(query="PRAGMA temp_store = 2;")
-            await self.database.execute(query="PRAGMA journal_mode = wal;")
-            await self.database.execute(query="PRAGMA wal_autocheckpoint;")
-            await self.database.execute(query="PRAGMA read_uncommitted = 1;")
-
-            await self.database.execute(query=_CREATE_LAVALINK_TABLE)
-            await self.database.execute(query=_CREATE_UNIQUE_INDEX_LAVALINK_TABLE)
-            await self.database.execute(query=_CREATE_YOUTUBE_TABLE)
-            await self.database.execute(query=_CREATE_UNIQUE_INDEX_YOUTUBE_TABLE)
-            await self.database.execute(query=_CREATE_SPOTIFY_TABLE)
-            await self.database.execute(query=_CREATE_UNIQUE_INDEX_SPOTIFY_TABLE)
         self.config = config
 
     async def close(self):
@@ -411,6 +407,7 @@ class MusicCache:
 
             return await self.database.fetch_all(query=sql_query, values=values)
         return []
+        await _database.init()
 
     @staticmethod
     def _spotify_format_call(qtype: str, key: str) -> Tuple[str, Mapping]:
@@ -450,7 +447,7 @@ class MusicCache:
         total_tracks = len(tracks)
         database_entries = []
         track_count = 0
-        time_now = str(datetime.datetime.now(datetime.timezone.utc))
+        time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
         youtube_cache = CacheLevel.set_youtube().is_subset(current_cache_level)
         for track in tracks:
             if track.get("error", {}).get("message") == "invalid id":
@@ -483,7 +480,7 @@ class MusicCache:
                 if youtube_cache:
                     update = True
                     with contextlib.suppress(SQLError):
-                        (val, update) = await self.fetch_one(
+                        (val, update) = await self.database.fetch_one(
                             "youtube", "youtube_url", {"track": track_info}
                         )
                     if update:
@@ -516,7 +513,7 @@ class MusicCache:
     ) -> str:
         track_url = await self.youtube_api.get_call(track_info)
         if CacheLevel.set_youtube().is_subset(current_cache_level) and track_url:
-            time_now = str(datetime.datetime.now(datetime.timezone.utc))
+            time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
             task = (
                 "insert",
                 (
@@ -633,7 +630,7 @@ class MusicCache:
         if query_type == "track" and cache_enabled:
             update = True
             with contextlib.suppress(SQLError):
-                (val, update) = await self.fetch_one(
+                (val, update) = await self.database.fetch_one(
                     "spotify", "track_info", {"uri": f"spotify:track:{uri}"}
                 )
             if update:
@@ -696,7 +693,7 @@ class MusicCache:
 
                 return track_list
             database_entries = []
-            time_now = str(datetime.datetime.now(datetime.timezone.utc))
+            time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
 
             youtube_cache = CacheLevel.set_youtube().is_subset(current_cache_level)
             spotify_cache = CacheLevel.set_spotify().is_subset(current_cache_level)
@@ -728,7 +725,7 @@ class MusicCache:
                 if youtube_cache:
                     update = True
                     with contextlib.suppress(SQLError):
-                        (val, update) = await self.fetch_one(
+                        (val, update) = await self.database.fetch_one(
                             "youtube", "youtube_url", {"track": track_info}
                         )
                     if update:
@@ -881,7 +878,7 @@ class MusicCache:
         if cache_enabled:
             update = True
             with contextlib.suppress(SQLError):
-                (val, update) = await self.fetch_one(
+                (val, update) = await self.database.fetch_one(
                     "youtube", "youtube_url", {"track": track_info}
                 )
             if update:
@@ -932,7 +929,7 @@ class MusicCache:
         if cache_enabled and not forced and not _raw_query.is_local:
             update = True
             with contextlib.suppress(SQLError):
-                (val, update) = await self.fetch_one("lavalink", "data", {"query": query})
+                (val, update) = await self.database.fetch_one("lavalink", "data", {"query": query})
             if update:
                 val = None
             if val:
@@ -963,7 +960,7 @@ class MusicCache:
                 and results.tracks
             ):
                 with contextlib.suppress(SQLError):
-                    time_now = str(datetime.datetime.now(datetime.timezone.utc))
+                    time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
                     task = (
                         "insert",
                         (
@@ -991,10 +988,12 @@ class MusicCache:
                     tasks = self._tasks[ctx.message.id]
                     del self._tasks[ctx.message.id]
                     await asyncio.gather(
-                        *[self.insert(*a) for a in tasks["insert"]], return_exceptions=True
+                        *[self.database.insert(*a) for a in tasks["insert"]],
+                        return_exceptions=True,
                     )
                     await asyncio.gather(
-                        *[self.update(*a) for a in tasks["update"]], return_exceptions=True
+                        *[self.database.update(*a) for a in tasks["update"]],
+                        return_exceptions=True,
                     )
                 log.debug(f"Completed database writes for {lock_id} " f"({lock_author})")
 
@@ -1009,10 +1008,10 @@ class MusicCache:
                 self._tasks = {}
 
                 await asyncio.gather(
-                    *[self.insert(*a) for a in tasks["insert"]], return_exceptions=True
+                    *[self.database.insert(*a) for a in tasks["insert"]], return_exceptions=True
                 )
                 await asyncio.gather(
-                    *[self.update(*a) for a in tasks["update"]], return_exceptions=True
+                    *[self.database.update(*a) for a in tasks["update"]], return_exceptions=True
                 )
             log.debug("Completed pending writes to database have finished")
 
@@ -1022,29 +1021,26 @@ class MusicCache:
             self._tasks[lock_id] = {"update": [], "insert": []}
         self._tasks[lock_id][event].append(task)
 
-    async def play_random(self):
+    async def get_random_from_db(self):
         tracks = []
         try:
             query_data = {}
-            for i in range(1, 8):
-                date = (
-                    "%"
-                    + str(
-                        (
-                            datetime.datetime.now(datetime.timezone.utc)
-                            - datetime.timedelta(days=i)
-                        ).date()
-                    )
-                    + "%"
-                )
-                query_data[f"day{i}"] = date
+            date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=7)
+            date = int(date.timestamp())
+            query_data["day"] = date
+            max_age = await self.config.cache_age()
+            maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(
+                days=max_age
+            )
+            maxage_int = int(time.mktime(maxage.timetuple()))
+            query_data["maxage"] = maxage_int
 
-            vals = await self.fetch_all("lavalink", "data", query_data)
-            recently_played = [r.data for r in vals if r]
+            vals = await self.database.fetch_all("lavalink", "data", query_data)
+            recently_played = [r.tracks for r in vals if r]
 
             if recently_played:
                 track = random.choice(recently_played)
-                results = LoadResult(json.loads(track))
+                results = LoadResult(track)
                 tracks = list(results.tracks)
         except Exception:
             tracks = []
@@ -1072,7 +1068,7 @@ class MusicCache:
 
         if not tracks or not getattr(playlist, "tracks", None):
             if cache_enabled:
-                tracks = await self.play_random()
+                tracks = await self.get_random_from_db()
             if not tracks:
                 ctx = namedtuple("Context", "message")
                 (results, called_api) = await self.lavalink_query(

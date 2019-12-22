@@ -4,6 +4,7 @@ import functools
 import re
 import time
 from typing import Mapping, Optional
+from enum import Enum, unique
 from urllib.parse import urlparse
 
 import discord
@@ -37,6 +38,7 @@ __all__ = [
     "format_playlist_picker_data",
     "get_track_description_unformatted",
     "Notifier",
+    "PlaylistScope",
 ]
 _RE_TIME_CONVERTER = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
 _RE_YT_LIST_PLAYLIST = re.compile(
@@ -484,3 +486,17 @@ class Notifier:
             self.last_msg_time = time.time()
         except discord.errors.NotFound:
             pass
+
+
+@unique
+class PlaylistScope(Enum):
+    GLOBAL = "GLOBALPLAYLIST"
+    GUILD = "GUILDPLAYLIST"
+    USER = "USERPLAYLIST"
+
+    def __str__(self):
+        return "{0}".format(self.value)
+
+    @staticmethod
+    def list():
+        return list(map(lambda c: c.value, PlaylistScope))

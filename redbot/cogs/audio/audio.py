@@ -35,10 +35,11 @@ from redbot.core.utils.menus import (
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from . import audio_dataclasses
-from .apis import _ERROR, HAS_SQL, MusicCache
+from .apis import MusicCache
 from .checks import can_have_caching
 from .config import pass_config_to_dependencies
 from .converters import ComplexScopeParser, ScopeParser, get_lazy_converter, get_playlist_converter
+from .databases import HAS_SQL, _ERROR
 from .equalizer import Equalizer
 from .errors import (
     DatabaseError,
@@ -52,7 +53,6 @@ from .manager import ServerManager
 from .playlists import (
     FakePlaylist,
     Playlist,
-    PlaylistScope,
     create_playlist,
     delete_playlist,
     get_all_playlist,
@@ -147,7 +147,7 @@ class Audio(commands.Cog):
         self.config.register_custom(PlaylistScope.USER.value, **_playlist)
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)
-        self.music_cache = MusicCache(bot, self.session, path=str(cog_data_path(raw_name="Audio")))
+        self.music_cache: MusicCache = None
         self._error_counter = Counter()
         self._error_timer = {}
         self._disconnected_players = {}
@@ -196,33 +196,38 @@ class Audio(commands.Cog):
     async def initialize(self) -> None:
         await self.bot.wait_until_ready()
         # Unlike most cases, we want the cache to exit before migration.
-        await self.music_cache.initialize(self.config)
-        await self._migrate_config(
-            from_version=await self.config.schema_version(), to_version=_SCHEMA_VERSION
-        )
-        pass_config_to_dependencies(self.config, self.bot, await self.config.localpath())
-        self._restart_connect()
-        self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
-        lavalink.register_event_listener(self.event_handler)
-        if not HAS_SQL:
-            error_message = (
-                "Audio version: {version}\nThis version requires some SQL dependencies to "
-                "access the caching features, "
-                "your Python install is missing some of them.\n\n"
-                "For instructions on how to fix it Google "
-                f"`{_ERROR}`.\n"
-                "You will need to install the missing SQL dependency.\n\n"
-            ).format(version=__version__)
-            with contextlib.suppress(discord.HTTPException):
-                for page in pagify(error_message):
-                    await self.bot.send_to_owners(page)
-            log.critical(error_message)
+        try:
+            pass_config_to_dependencies(self.config, self.bot, await self.config.localpath())
+            self.music_cache = MusicCache(self.bot, self.session)
+            await self.music_cache.initialize(self.config)
+            await self._migrate_config(
+                from_version=await self.config.schema_version(), to_version=_SCHEMA_VERSION
+            )
+            self._restart_connect()
+            self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
+            lavalink.register_event_listener(self.event_handler)
+            if not HAS_SQL:
+                error_message = (
+                    "Audio version: {version}\nThis version requires some SQL dependencies to "
+                    "access the caching features, "
+                    "your Python install is missing some of them.\n\n"
+                    "For instructions on how to fix it Google "
+                    f"`{_ERROR}`.\n"
+                    "You will need to install the missing SQL dependency.\n\n"
+                ).format(version=__version__)
+                with contextlib.suppress(discord.HTTPException):
+                    for page in pagify(error_message):
+                        await self.bot.send_to_owners(page)
+                log.critical(error_message)
+        except Exception as err:
+            log.exception("Audio failed to start up, please report this issue.", exc_info=err)
+            raise err
 
         self._ready_event.set()
 
     async def _migrate_config(self, from_version: int, to_version: int) -> None:
         database_entries = []
-        time_now = str(datetime.datetime.now(datetime.timezone.utc))
+        time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
         if from_version == to_version:
             return
         elif from_version < to_version:
@@ -264,7 +269,7 @@ class Audio(commands.Cog):
                     cast(discord.Guild, discord.Object(id=guild_id))
                 ).clear_raw("playlists")
         if database_entries and HAS_SQL:
-            await self.music_cache.insert("lavalink", database_entries)
+            await self.music_cache.database.insert("lavalink", database_entries)
 
     def _restart_connect(self):
         if self._connect_task:
@@ -5668,7 +5673,7 @@ class Audio(commands.Cog):
         )
         await playlist_msg.edit(embed=embed3)
         database_entries = []
-        time_now = str(datetime.datetime.now(datetime.timezone.utc))
+        time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
         for t in track_list:
             uri = t.get("info", {}).get("uri")
             if uri:
@@ -5682,7 +5687,7 @@ class Audio(commands.Cog):
                     }
                 )
         if database_entries and HAS_SQL:
-            await self.music_cache.insert("lavalink", database_entries)
+            await self.music_cache.database.insert("lavalink", database_entries)
 
     async def _load_v2_playlist(
         self,
@@ -7989,7 +7994,9 @@ class Audio(commands.Cog):
         await self.music_cache.run_tasks(ctx)
 
     async def _close_database(self):
+        import redbot.cogs.audio.databases
+
         await self.music_cache.run_all_pending_tasks()
-        await self.music_cache.close()
+        redbot.cogs.audio.databases.database_connection.close()
 
     __del__ = cog_unload
