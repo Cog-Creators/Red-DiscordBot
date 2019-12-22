@@ -456,6 +456,9 @@ class Audio(commands.Cog):
         current_thumbnail = rgetattr(current_track, "thumbnail", None)
         current_extras = rgetattr(current_track, "extras", {})
 
+        if guild is None:
+            return
+
         await self.error_reset(player)
 
         if event_type == lavalink.LavalinkEvents.TRACK_START:
@@ -502,7 +505,7 @@ class Audio(commands.Cog):
                 ):
                     await self._embed_msg(notify_channel, title=_("Auto Play Started."))
 
-                description = get_track_description(player.current)
+                description = get_track_description(current_track)
                 if not description:
                     return
 
@@ -554,28 +557,26 @@ class Audio(commands.Cog):
             message_channel = player.fetch("channel")
             while True:
                 if player.current in player.queue:
-                    player.queue.remove(player.current)
+                    player.queue.remove(current_track)
                 else:
                     break
             if repeat:
                 player.current = None
-            self._error_counter.setdefault(player.channel.guild.id, 0)
-            if player.channel.guild.id not in self._error_counter:
-                self._error_counter[player.channel.guild.id] = 0
+            self._error_counter.setdefault(guild.id, 0)
+            if guild.id not in self._error_counter:
+                self._error_counter[guild.id] = 0
             early_exit = await self.increase_error_counter(player)
             if early_exit:
-                self._disconnected_players[player.channel.guild.id] = True
-                self.play_lock[player.channel.guild.id] = False
+                self._disconnected_players[guild.id] = True
+                self.play_lock[guild.id] = False
                 eq = player.fetch("eq")
                 player.queue = []
                 player.store("playing_song", None)
                 if eq:
-                    await self.config.custom("EQUALIZER", player.channel.guild.id).eq_bands.set(
-                        eq.bands
-                    )
+                    await self.config.custom("EQUALIZER", guild.id).eq_bands.set(eq.bands)
                 await player.stop()
                 await player.disconnect()
-                self.bot.dispatch("red_audio_audio_disconnect", player.channel.guild)
+                self.bot.dispatch("red_audio_audio_disconnect", guild)
             if message_channel:
                 message_channel = self.bot.get_channel(message_channel)
                 if early_exit:
@@ -591,7 +592,7 @@ class Audio(commands.Cog):
                     )
                     await message_channel.send(embed=embed)
                 else:
-                    description = get_track_description(player.current)
+                    description = get_track_description(current_track)
                     if event_type == lavalink.LavalinkEvents.TRACK_STUCK:
                         embed = discord.Embed(
                             title=_("Track Is Stuck"), description="{}".format(description)
