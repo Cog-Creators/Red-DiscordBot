@@ -69,7 +69,7 @@ def standardize_scope(scope) -> str:
 
 
 def _prepare_config_scope(
-    scope, author: Union[discord.abc.User, int] = None, guild: discord.Guild = None
+    scope, author: Union[discord.abc.User, int] = None, guild: Union[discord.Guild, int] = None
 ):
     scope = standardize_scope(scope)
 
@@ -78,11 +78,11 @@ def _prepare_config_scope(
     elif scope == PlaylistScope.USER.value:
         if author is None:
             raise MissingAuthor("Invalid author for user scope.")
-        config_scope = [PlaylistScope.USER.value, str(getattr(author, "id", author))]
+        config_scope = [PlaylistScope.USER.value, getattr(author, "id", int(author))]
     else:
         if guild is None:
             raise MissingGuild("Invalid guild for guild scope.")
-        config_scope = [PlaylistScope.GUILD.value, str(getattr(guild, "id", guild))]
+        config_scope = [PlaylistScope.GUILD.value, getattr(guild, "id", int(guild))]
     return config_scope
 
 
@@ -273,6 +273,13 @@ class Playlist:
         self.url = playlist_url
         self.tracks = tracks or []
         self.tracks_obj = [lavalink.Track(data=track) for track in self.tracks]
+
+    def __repr__(self):
+        return (
+            f"Playlist(name={self.name}, id={self.id}, scope={self.scope}, "
+            f"scope_id={self.scope_id}, author={self.author_id}, "
+            f"tracks={len(self.tracks)}, url={self.url})"
+        )
 
     async def edit(self, data: dict):
         """
