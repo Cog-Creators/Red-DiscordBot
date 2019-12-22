@@ -304,7 +304,7 @@ class Case:
             )
 
         if isinstance(self.user, int):
-            user = f"Deleted User#0000 ({self.user})"
+            user = f"[Unknown or Deleted User] ({self.user})"
             avatar_url = None
         else:
             user = escape_spoilers(
@@ -448,12 +448,7 @@ class Case:
                 if user_id is None:
                     user_object = None
                 else:
-                    user_object = bot.get_user(user_id)
-                    if user_object is None:
-                        try:
-                            user_object = await bot.fetch_user(user_id)
-                        except discord.NotFound:
-                            user_object = user_id
+                    user_object = bot.get_user(user_id) or user_id
             user_objects[user_key] = user_object
 
         channel = kwargs.get("channel") or guild.get_channel(data["channel"]) or data["channel"]
@@ -687,12 +682,7 @@ async def get_cases_for_member(
         member_id = member.id
 
     if not member:
-        member = bot.get_user(member_id)
-        if not member:
-            try:
-                member = await bot.fetch_user(member_id)
-            except discord.NotFound:
-                member = member_id
+        member = bot.get_user(member_id) or member_id
 
     try:
         modlog_channel = await get_modlog_channel(guild)
