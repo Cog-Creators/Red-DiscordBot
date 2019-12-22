@@ -122,7 +122,6 @@ class Audio(commands.Cog):
             status=False,
             use_external_lavalink=False,
             restrict=True,
-            current_version=redbot.core.VersionInfo.from_str(__version__).to_json(),
             localpath=str(cog_data_path(raw_name="Audio")),
             **self._default_lavalink_settings,
         )
