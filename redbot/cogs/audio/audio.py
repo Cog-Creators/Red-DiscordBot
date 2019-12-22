@@ -107,7 +107,6 @@ class Audio(commands.Cog):
             status=False,
             use_external_lavalink=False,
             restrict=True,
-            current_version=redbot.core.VersionInfo.from_str(__version__).to_json(),
             localpath=str(cog_data_path(raw_name="Audio")),
             url_keyword_blacklist=[],
             url_keyword_whitelist=[],
@@ -592,7 +591,7 @@ class Audio(commands.Cog):
                     )
                     await message_channel.send(embed=embed)
                 else:
-                    description = get_track_description(current_track)
+                    description = get_track_description(current_track) or ""
                     if event_type == lavalink.LavalinkEvents.TRACK_STUCK:
                         embed = discord.Embed(
                             title=_("Track Is Stuck"), description="{}".format(description)
