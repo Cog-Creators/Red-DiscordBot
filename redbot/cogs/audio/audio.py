@@ -9,7 +9,7 @@ import random
 import re
 import time
 import traceback
-from collections import namedtuple
+from collections import namedtuple, Counter
 from io import StringIO
 from pathlib import Path
 from typing import List, Optional, Tuple, Union, cast
@@ -20,7 +20,6 @@ import lavalink
 from discord.embeds import EmptyEmbed
 from fuzzywuzzy import process
 
-import redbot.core
 from redbot.core import Config, bank, checks, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
@@ -106,7 +105,6 @@ class Audio(commands.Cog):
             status=False,
             use_external_lavalink=False,
             restrict=True,
-            current_version=redbot.core.VersionInfo.from_str("3.0.0a0").to_json(),
             localpath=str(cog_data_path(raw_name="Audio")),
             url_keyword_blacklist=[],
             url_keyword_whitelist=[],
@@ -150,6 +148,10 @@ class Audio(commands.Cog):
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)
         self.music_cache = MusicCache(bot, self.session, path=str(cog_data_path(raw_name="Audio")))
+        self._error_counter = Counter()
+        self._error_timer = {}
+        self._disconnected_players = {}
+        self.play_lock = {}
 
         self._manager: Optional[ServerManager] = None
         # These has to be a task since this requires the bot to be ready
@@ -363,6 +365,51 @@ class Audio(commands.Cog):
                 "tracebacks for details."
             )
 
+    async def error_reset(self, player: lavalink.Player):
+        guild = rgetattr(player, "channel.guild", None)
+        if not guild:
+            return
+        now = time.time()
+        seconds_allowed = 10
+        last_error = self._error_timer.setdefault(guild.id, now)
+        if now - seconds_allowed > last_error:
+            self._error_timer[guild.id] = 0
+            self._error_counter[guild.id] = 0
+
+    async def increase_error_counter(self, player: lavalink.Player) -> bool:
+        guild = player.channel.guild
+        now = time.time()
+        self._error_counter[guild.id] += 1
+        self._error_timer[guild.id] = now
+        return self._error_counter[guild.id] >= 5
+
+    @staticmethod
+    async def _players_check():
+        try:
+            get_single_title = get_track_description_unformatted(
+                lavalink.active_players()[0].current
+            )
+            playing_servers = len(lavalink.active_players())
+        except IndexError:
+            get_single_title = None
+            playing_servers = 0
+        return get_single_title, playing_servers
+
+    async def _status_check(self, track, playing_servers):
+        if playing_servers == 0:
+            await self.bot.change_presence(activity=None)
+        elif playing_servers == 1:
+            await self.bot.change_presence(
+                activity=discord.Activity(name=track, type=discord.ActivityType.listening)
+            )
+        elif playing_servers > 1:
+            await self.bot.change_presence(
+                activity=discord.Activity(
+                    name=_("music in {} servers").format(playing_servers),
+                    type=discord.ActivityType.playing,
+                )
+            )
+
     async def event_handler(
         self, player: lavalink.Player, event_type: lavalink.LavalinkEvents, extra
     ):
@@ -372,31 +419,7 @@ class Audio(commands.Cog):
         status = await self.config.status()
         repeat = await self.config.guild(player.channel.guild).repeat()
 
-        async def _players_check():
-            try:
-                get_single_title = get_track_description_unformatted(
-                    lavalink.active_players()[0].current
-                )
-                playing_servers = len(lavalink.active_players())
-            except IndexError:
-                get_single_title = None
-                playing_servers = 0
-            return get_single_title, playing_servers
-
-        async def _status_check(track, playing_servers):
-            if playing_servers == 0:
-                await self.bot.change_presence(activity=None)
-            elif playing_servers == 1:
-                await self.bot.change_presence(
-                    activity=discord.Activity(name=track, type=discord.ActivityType.listening)
-                )
-            elif playing_servers > 1:
-                await self.bot.change_presence(
-                    activity=discord.Activity(
-                        name=_("music in {} servers").format(playing_servers),
-                        type=discord.ActivityType.playing,
-                    )
-                )
+        await self.error_reset(player)
 
         if event_type == lavalink.LavalinkEvents.TRACK_START:
             self.skip_votes[player.channel.guild] = []
@@ -485,46 +508,34 @@ class Audio(commands.Cog):
                 player.store("notify_message", notify_message)
 
         if event_type == lavalink.LavalinkEvents.TRACK_START and status:
-            player_check = await _players_check()
-            await _status_check(*player_check)
+            player_check = await self._players_check()
+            await self._status_check(*player_check)
 
         if event_type == lavalink.LavalinkEvents.TRACK_END and status:
             await asyncio.sleep(1)
             if not player.is_playing:
-                player_check = await _players_check()
-                await _status_check(*player_check)
+                player_check = await self._players_check()
+                await self._status_check(*player_check)
 
-        if event_type == lavalink.LavalinkEvents.QUEUE_END and notify and not autoplay:
+        if not autoplay and event_type == lavalink.LavalinkEvents.QUEUE_END and notify:
             notify_channel = player.fetch("channel")
             if notify_channel:
                 notify_channel = self.bot.get_channel(notify_channel)
                 await self._embed_msg(notify_channel, title=_("Queue Ended."))
 
-        elif event_type == lavalink.LavalinkEvents.QUEUE_END and disconnect and not autoplay:
+        elif not autoplay and event_type == lavalink.LavalinkEvents.QUEUE_END and disconnect:
             self.bot.dispatch("red_audio_audio_disconnect", player.channel.guild)
             await player.disconnect()
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END and status:
-            player_check = await _players_check()
-            await _status_check(*player_check)
+            player_check = await self._players_check()
+            await self._status_check(*player_check)
 
         if event_type in [
             lavalink.LavalinkEvents.TRACK_EXCEPTION,
             lavalink.LavalinkEvents.TRACK_STUCK,
         ]:
             message_channel = player.fetch("channel")
-            if message_channel:
-                message_channel = self.bot.get_channel(message_channel)
-                description = get_track_description(player.current)
-                if event_type == lavalink.LavalinkEvents.TRACK_STUCK:
-                    embed = discord.Embed(
-                        title=_("Track Is Stuck"), description="{}".format(description)
-                    )
-                else:
-                    embed = discord.Embed(
-                        title=_("Track Error"), description="{}\n{}".format(extra, description)
-                    )
-                await self._embed_msg(message_channel, embed=embed, footer=_("Skipping..."))
             while True:
                 if player.current in player.queue:
                     player.queue.remove(player.current)
@@ -532,6 +543,48 @@ class Audio(commands.Cog):
                     break
             if repeat:
                 player.current = None
+            self._error_counter.setdefault(player.channel.guild.id, 0)
+            if player.channel.guild.id not in self._error_counter:
+                self._error_counter[player.channel.guild.id] = 0
+            early_exit = await self.increase_error_counter(player)
+            if early_exit:
+                self._disconnected_players[player.channel.guild.id] = True
+                self.play_lock[player.channel.guild.id] = False
+                eq = player.fetch("eq")
+                player.queue = []
+                player.store("playing_song", None)
+                if eq:
+                    await self.config.custom("EQUALIZER", player.channel.guild.id).eq_bands.set(
+                        eq.bands
+                    )
+                await player.stop()
+                await player.disconnect()
+                self.bot.dispatch("red_audio_audio_disconnect", player.channel.guild)
+            if message_channel:
+                message_channel = self.bot.get_channel(message_channel)
+                if early_exit:
+                    embed = discord.Embed(
+                        colour=(await self.bot.get_embed_color(message_channel)),
+                        title=_("Multiple errors detected"),
+                        description=_(
+                            "Closing the audio player "
+                            "due to multiple errors being detected. "
+                            "If this persists, please inform the bot owner "
+                            "as the Audio cog may be temporally unavailable."
+                        ),
+                    )
+                    return await message_channel.send(embed=embed)
+                else:
+                    description = get_track_description(player.current) or ""
+                    if event_type == lavalink.LavalinkEvents.TRACK_STUCK:
+                        embed = discord.Embed(
+                            title=_("Track Stuck"), description="{}".format(description)
+                        )
+                    else:
+                        embed = discord.Embed(
+                            title=_("Track Error"), description="{}\n{}".format(extra, description)
+                        )
+                    await message_channel.send(embed=embed)
             await player.skip()
 
     async def play_query(
@@ -1152,7 +1205,7 @@ class Audio(commands.Cog):
             try:
                 pred = MessagePredicate.valid_role(ctx)
                 await ctx.bot.wait_for("message", timeout=15.0, check=pred)
-                await ctx.invoke(self.role, pred.result)
+                await ctx.invoke(self.role, role_name=pred.result)
             except asyncio.TimeoutError:
                 return await self._embed_msg(ctx, title=_("Response timed out, try again later."))
         dj_enabled = self._dj_status_cache.setdefault(
@@ -6827,7 +6880,6 @@ class Audio(commands.Cog):
                         search_track_num, track.title, track.uri
                     )
             except AttributeError:
-                # query = Query.process_input(track)
                 track = audio_dataclasses.Query.process_input(track)
                 if track.is_local and command != "search":
                     search_list += "`{}.` **{}**\n".format(
@@ -7170,7 +7222,8 @@ class Audio(commands.Cog):
 
         return False
 
-    async def _is_alone(self, ctx: commands.Context):
+    @staticmethod
+    async def _is_alone(ctx: commands.Context):
         channel_members = rgetattr(ctx, "guild.me.voice.channel.members", [])
         nonbots = sum(m.id != ctx.author.id for m in channel_members if not m.bot)
         return nonbots < 1
