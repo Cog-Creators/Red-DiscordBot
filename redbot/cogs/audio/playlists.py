@@ -74,7 +74,7 @@ def _prepare_config_scope(
     scope = standardize_scope(scope)
 
     if scope == PlaylistScope.GLOBAL.value:
-        config_scope = [PlaylistScope.GLOBAL.value]
+        config_scope = [PlaylistScope.GLOBAL.value, _bot.user.id]
     elif scope == PlaylistScope.USER.value:
         if author is None:
             raise MissingAuthor("Invalid author for user scope.")
