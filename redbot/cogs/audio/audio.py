@@ -601,7 +601,7 @@ class Audio(commands.Cog):
                             title=_("Track Error"), description="{}\n{}".format(extra, description)
                         )
                     await self._embed_msg(message_channel, embed=embed, footer=_("Skipping..."))
-            await player.skip()
+                    await player.skip()
 
     async def play_query(
         self,
