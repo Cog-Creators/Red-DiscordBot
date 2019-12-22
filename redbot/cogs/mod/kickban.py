@@ -122,14 +122,23 @@ class KickBanMixin(MixinMeta):
         member = namedtuple("Member", "id guild")
         while self == self.bot.get_cog("Mod"):
             for guild in self.bot.guilds:
+                if not guild.me.guild_permissions.ban_members:
+                    continue
+                try:
+                    banned_users = {b.user.id: b.user for b in (await guild.bans())}
+                except discord.HTTPException:
+                    continue
+
                 async with self.settings.guild(guild).current_tempbans() as guild_tempbans:
                     for uid in guild_tempbans.copy():
+                        user = banned_users.get(uid, None)
+                        if not user:
+                            continue
                         unban_time = datetime.utcfromtimestamp(
                             await self.settings.member(member(uid, guild)).banned_until()
                         )
                         if datetime.utcnow() > unban_time:  # Time to unban the user
-                            user = await self.bot.fetch_user(uid)
-                            queue_entry = (guild.id, user.id)
+                            queue_entry = (guild.id, uid)
                             try:
                                 await guild.unban(user, reason=_("Tempban finished"))
                                 guild_tempbans.remove(uid)
@@ -137,7 +146,7 @@ class KickBanMixin(MixinMeta):
                                 # 50013: Missing permissions error code or 403: Forbidden status
                                 if e.code == 50013 or e.status == 403:
                                     log.info(
-                                        f"Failed to unban {user}({user.id}) user from "
+                                        f"Failed to unban ({uid}) user from "
                                         f"{guild.name}({guild.id}) guild due to permissions"
                                     )
                                     break  # skip the rest of this guild
@@ -334,15 +343,13 @@ class KickBanMixin(MixinMeta):
             else:
                 banned.append(user_id)
 
-            user_info = await self.bot.fetch_user(user_id)
-
             try:
                 await modlog.create_case(
                     self.bot,
                     guild,
                     ctx.message.created_at,
                     "hackban",
-                    user_info,
+                    user_id,
                     author,
                     reason,
                     until=None,
@@ -551,18 +558,14 @@ class KickBanMixin(MixinMeta):
         click the user and select 'Copy ID'."""
         guild = ctx.guild
         author = ctx.author
-        try:
-            user = await self.bot.fetch_user(user_id)
-        except discord.errors.NotFound:
-            await ctx.send(_("Couldn't find a user with that ID!"))
-            return
         audit_reason = get_audit_reason(ctx.author, reason)
         bans = await guild.bans()
         bans = [be.user for be in bans]
-        if user not in bans:
+        user = discord.utils.get(bans, id=user_id)
+        if not user:
             await ctx.send(_("It seems that user isn't banned!"))
             return
-        queue_entry = (guild.id, user.id)
+        queue_entry = (guild.id, user_id)
         try:
             await guild.unban(user, reason=audit_reason)
         except discord.HTTPException:
@@ -586,6 +589,13 @@ class KickBanMixin(MixinMeta):
             await ctx.send(_("Unbanned that user from this server"))
 
         if await self.settings.guild(guild).reinvite_on_unban():
+            user = ctx.bot.get_user(user_id)
+            if not user:
+                await ctx.send(
+                    _("I don't share another server with this user. I can't reinvite them.")
+                )
+                return
+
             invite = await self.get_invite_for_reinvite(ctx)
             if invite:
                 try:

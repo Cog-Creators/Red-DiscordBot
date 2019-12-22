@@ -1,0 +1,1 @@
+Fix track index being off by 1 on ``[p]search`` command.

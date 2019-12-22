@@ -1,0 +1,1 @@
+Better error handling the player is unable to play multiple tracks in sequence.

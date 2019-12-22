@@ -5,12 +5,13 @@ from typing import Optional, Tuple, Union
 
 import discord
 
-from redbot.cogs.audio.errors import TooManyMatches, NoMatchesFound
+from redbot.cogs.audio.errors import NoMatchesFound, TooManyMatches
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 
-from .playlists import PlaylistScope, standardize_scope, get_all_playlist_converter
+from .playlists import get_all_playlist_converter, standardize_scope
+from .utils import PlaylistScope
 
 _ = Translator("Audio", __file__)
 
@@ -42,7 +43,7 @@ Author must be a valid version of one of the following:
 _GUILD_HELP = """
 Guild must be a valid version of one of the following:
 ​ ​ ​ ​ Guild ID
-​ ​ ​ ​ Exact guild name 
+​ ​ ​ ​ Exact guild name
 """
 
 MENTION_RE = re.compile(r"^<?(?:(?:@[!&]?)?|#)(\d{15,21})>?$")
@@ -486,9 +487,7 @@ class LazyGreedyConverter(commands.Converter):
 
 
 def get_lazy_converter(splitter: str) -> type:
-    """
-    Returns a typechecking safe `LazyGreedyConverter` suitable for use with discord.py.
-    """
+    """Returns a typechecking safe `LazyGreedyConverter` suitable for use with discord.py."""
 
     class PartialMeta(type(LazyGreedyConverter)):
         __call__ = functools.partialmethod(type(LazyGreedyConverter).__call__, splitter)
@@ -500,9 +499,7 @@ def get_lazy_converter(splitter: str) -> type:
 
 
 def get_playlist_converter() -> type:
-    """
-    Returns a typechecking safe `PlaylistConverter` suitable for use with discord.py.
-    """
+    """Returns a typechecking safe `PlaylistConverter` suitable for use with discord.py."""
 
     class PartialMeta(type(PlaylistConverter)):
         __call__ = functools.partialmethod(type(PlaylistConverter).__call__)

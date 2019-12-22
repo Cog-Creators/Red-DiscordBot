@@ -1,0 +1,1 @@
+When Red prompts for token, it will now print a link to the guide explaining how to obtain a token.

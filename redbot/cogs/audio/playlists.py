@@ -1,313 +1,39 @@
-import json
 from collections import namedtuple
-from dataclasses import dataclass
-from enum import Enum, unique
-from typing import List, Optional, Union
+from typing import List, Mapping, Optional, Union
 
-import apsw
 import discord
 import lavalink
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
-from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_list
+
+from .databases import PlaylistFetchResult, PlaylistInterface
 from .errors import InvalidPlaylistScope, MissingAuthor, MissingGuild, NotAllowed
+from .utils import PlaylistScope
 
 _config: Config = None
 _bot: Red = None
-database: "Database" = None
+database: PlaylistInterface = None
 
 __all__ = [
     "Playlist",
-    "PlaylistScope",
     "get_playlist",
     "get_all_playlist",
     "create_playlist",
     "reset_playlist",
     "delete_playlist",
-    "humanize_scope",
     "standardize_scope",
     "FakePlaylist",
     "get_all_playlist_for_migration23",
     "database",
+    "get_all_playlist_converter",
 ]
 
 FakePlaylist = namedtuple("Playlist", "author scope")
 
 _ = Translator("Audio", __file__)
-
-_PRAGMA_UPDATE_temp_store = """
-PRAGMA temp_store = 2;
-"""
-_PRAGMA_UPDATE_journal_mode = """
-PRAGMA journal_mode = wal;
-"""
-_PRAGMA_UPDATE_read_uncommitted = """
-PRAGMA read_uncommitted = 1;
-"""
-
-_CREATE_TABLE = """
-CREATE TABLE IF NOT EXISTS playlists ( 
-    scope_type INTEGER NOT NULL, 
-    playlist_id INTEGER NOT NULL, 
-    playlist_name TEXT NOT NULL, 
-    scope_id INTEGER NOT NULL, 
-    author_id INTEGER NOT NULL, 
-    playlist_url TEXT, 
-    tracks BLOB, 
-    PRIMARY KEY (playlist_id, scope_id, scope_type)
-);
-"""
-
-_DELETE = """
-DELETE
-FROM
-    playlists 
-WHERE
-    (
-        scope_type = :scope_type 
-        AND playlist_id = :playlist_id 
-        AND scope_id = :scope_id 
-    )
-;
-"""
-_DELETE_SCOPE = """
-DELETE
-FROM
-    playlists 
-WHERE
-    scope_type = :scope_type ;
-"""
-
-_FETCH_ALL = """
-SELECT
-    playlist_id,
-    playlist_name,
-    scope_id,
-    author_id,
-    playlist_url,
-    tracks 
-FROM
-    playlists 
-WHERE
-    scope_type = :scope_type 
-    AND scope_id = :scope_id
-    ;
-"""
-
-_FETCH_ALL_WITH_FILTER = """
-SELECT
-    playlist_id,
-    playlist_name,
-    scope_id,
-    author_id,
-    playlist_url,
-    tracks 
-FROM
-    playlists 
-WHERE
-    (
-        scope_type = :scope_type 
-        AND scope_id = :scope_id
-        AND author_id = :author_id 
-    )
-;
-"""
-
-_FETCH_ALL_CONVERTER = """
-SELECT
-    playlist_id,
-    playlist_name,
-    scope_id,
-    author_id,
-    playlist_url,
-    tracks 
-FROM
-    playlists 
-WHERE
-    (
-        scope_type = :scope_type 
-        AND
-        (
-        playlist_id = :playlist_id
-        OR
-        LOWER(playlist_name) LIKE "%" || COALESCE(LOWER(:playlist_name), "") || "%"
-        )
-    )
-;
-"""
-
-_FETCH = """
-SELECT
-    playlist_id,
-    playlist_name,
-    scope_id,
-    author_id,
-    playlist_url,
-    tracks 
-FROM
-    playlists 
-WHERE
-    (
-        scope_type = :scope_type 
-        AND playlist_id = :playlist_id 
-        AND scope_id = :scope_id 
-    )
-"""
-
-_UPSET = """
-INSERT INTO
-    playlists ( scope_type, playlist_id, playlist_name, scope_id, author_id, playlist_url, tracks ) 
-VALUES
-    (
-        :scope_type, :playlist_id, :playlist_name, :scope_id, :author_id, :playlist_url, :tracks 
-    )
-    ON CONFLICT (scope_type, playlist_id, scope_id) DO 
-    UPDATE
-    SET
-        playlist_name = excluded.playlist_name, 
-        playlist_url = excluded.playlist_url, 
-        tracks = excluded.tracks;
-"""
-_CREATE_INDEX = """
-CREATE INDEX IF NOT EXISTS name_index ON playlists (scope_type, playlist_id, playlist_name, scope_id);
-"""
-
-
-@dataclass
-class SQLFetchResult:
-    playlist_id: int
-    playlist_name: str
-    scope_id: int
-    author_id: int
-    playlist_url: Optional[str] = None
-    tracks: str = "[]"
-
-
-@unique
-class PlaylistScope(Enum):
-    GLOBAL = "GLOBALPLAYLIST"
-    GUILD = "GUILDPLAYLIST"
-    USER = "USERPLAYLIST"
-
-    def __str__(self):
-        return "{0}".format(self.value)
-
-    @staticmethod
-    def list():
-        return list(map(lambda c: c.value, PlaylistScope))
-
-
-class Database:
-    def __init__(self):
-        self._database = apsw.Connection(str(cog_data_path(_bot.get_cog("Audio")) / "Audio.db"))
-        self.cursor = self._database.cursor()
-        self.cursor.execute(_PRAGMA_UPDATE_temp_store)
-        self.cursor.execute(_PRAGMA_UPDATE_journal_mode)
-        self.cursor.execute(_PRAGMA_UPDATE_read_uncommitted)
-        self.cursor.execute(_CREATE_TABLE)
-        self.cursor.execute(_CREATE_INDEX)
-
-    def close(self):
-        self._database.close()
-
-    @staticmethod
-    def get_scope_type(scope: str) -> int:
-        if scope == PlaylistScope.GLOBAL.value:
-            table = 1
-        elif scope == PlaylistScope.USER.value:
-            table = 3
-        else:
-            table = 2
-        return table
-
-    def fetch(self, scope: str, playlist_id: int, scope_id: int) -> SQLFetchResult:
-        scope_type = self.get_scope_type(scope)
-        row = (
-            self.cursor.execute(
-                _FETCH,
-                ({"playlist_id": playlist_id, "scope_id": scope_id, "scope_type": scope_type}),
-            ).fetchone()
-            or []
-        )
-
-        return SQLFetchResult(*row) if row else None
-
-    def fetch_all(self, scope: str, scope_id: int, author_id=None) -> List[SQLFetchResult]:
-        scope_type = self.get_scope_type(scope)
-        if author_id is not None:
-            output = self.cursor.execute(
-                _FETCH_ALL_WITH_FILTER,
-                ({"scope_type": scope_type, "scope_id": scope_id, "author_id": author_id}),
-            ).fetchall()
-        else:
-            output = self.cursor.execute(
-                _FETCH_ALL, ({"scope_type": scope_type, "scope_id": scope_id})
-            ).fetchall()
-        return [SQLFetchResult(*row) for row in output] if output else []
-
-    def fetch_all_converter(self, scope: str, playlist_name, playlist_id) -> List[SQLFetchResult]:
-        scope_type = self.get_scope_type(scope)
-        try:
-            playlist_id = int(playlist_id)
-        except:
-            playlist_id = -1
-        output = (
-            self.cursor.execute(
-                _FETCH_ALL_CONVERTER,
-                (
-                    {
-                        "scope_type": scope_type,
-                        "playlist_name": playlist_name,
-                        "playlist_id": playlist_id,
-                    }
-                ),
-            ).fetchall()
-            or []
-        )
-        return [SQLFetchResult(*row) for row in output] if output else []
-
-    def delete(self, scope: str, playlist_id: int, scope_id: int):
-        scope_type = self.get_scope_type(scope)
-        return self.cursor.execute(
-            _DELETE, ({"playlist_id": playlist_id, "scope_id": scope_id, "scope_type": scope_type})
-        )
-
-    def drop(self, scope: str):
-        scope_type = self.get_scope_type(scope)
-        return self.cursor.execute(_DELETE_SCOPE, ({"scope_type": scope_type}))
-
-    def create_table(self, scope: str):
-        scope_type = self.get_scope_type(scope)
-        return self.cursor.execute(_CREATE_TABLE, ({"scope_type": scope_type}))
-
-    def upsert(
-        self,
-        scope: str,
-        playlist_id: int,
-        playlist_name: str,
-        scope_id: int,
-        author_id: int,
-        playlist_url: str,
-        tracks: List[dict],
-    ):
-        scope_type = self.get_scope_type(scope)
-        self.cursor.execute(
-            _UPSET,
-            (
-                {
-                    "scope_type": str(scope_type),
-                    "playlist_id": int(playlist_id),
-                    "playlist_name": str(playlist_name),
-                    "scope_id": int(scope_id),
-                    "author_id": int(author_id),
-                    "playlist_url": playlist_url,
-                    "tracks": json.dumps(tracks),
-                }
-            ),
-        )
 
 
 def _pass_config_to_playlist(config: Config, bot: Red):
@@ -317,7 +43,7 @@ def _pass_config_to_playlist(config: Config, bot: Red):
     if _bot is None:
         _bot = bot
     if database is None:
-        database = Database()
+        database = PlaylistInterface()
 
 
 def standardize_scope(scope) -> str:
@@ -342,18 +68,8 @@ def standardize_scope(scope) -> str:
     return scope
 
 
-def humanize_scope(scope, ctx=None, the=None):
-
-    if scope == PlaylistScope.GLOBAL.value:
-        return ctx or _("the ") if the else "" + _("Global")
-    elif scope == PlaylistScope.GUILD.value:
-        return ctx.name if ctx else _("the ") if the else "" + _("Server")
-    elif scope == PlaylistScope.USER.value:
-        return str(ctx) if ctx else _("the ") if the else "" + _("User")
-
-
 def _prepare_config_scope(
-    scope, author: Union[discord.abc.User, int] = None, guild: discord.Guild = None
+    scope, author: Union[discord.abc.User, int] = None, guild: Union[discord.Guild, int] = None
 ):
     scope = standardize_scope(scope)
 
@@ -362,11 +78,11 @@ def _prepare_config_scope(
     elif scope == PlaylistScope.USER.value:
         if author is None:
             raise MissingAuthor("Invalid author for user scope.")
-        config_scope = [PlaylistScope.USER.value, getattr(author, "id", author)]
+        config_scope = [PlaylistScope.USER.value, int(getattr(author, "id", author))]
     else:
         if guild is None:
             raise MissingGuild("Invalid guild for guild scope.")
-        config_scope = [PlaylistScope.GUILD.value, getattr(guild, "id", guild)]
+        config_scope = [PlaylistScope.GUILD.value, int(getattr(guild, "id", guild))]
     return config_scope
 
 
@@ -416,8 +132,6 @@ class PlaylistMigration23:  # TODO: remove me in a future version ?
         """Get a Playlist object from the provided information.
         Parameters
         ----------
-        bot: Red
-            The bot's instance. Needed to get the target user.
         scope:str
             The custom config scope. One of 'GLOBALPLAYLIST', 'GUILDPLAYLIST' or 'USERPLAYLIST'.
         playlist_number: int
@@ -459,9 +173,7 @@ class PlaylistMigration23:  # TODO: remove me in a future version ?
         )
 
     async def save(self):
-        """
-        Saves a Playlist to SQL.
-        """
+        """Saves a Playlist to SQL."""
         scope, scope_id = _prepare_config_scope(self.scope, self.author, self.guild)
         database.upsert(
             scope,
@@ -475,9 +187,7 @@ class PlaylistMigration23:  # TODO: remove me in a future version ?
 
 
 async def get_all_playlist_for_migration23(  # TODO: remove me in a future version ?
-    scope: str,
-    guild: Union[discord.Guild, int] = None,
-    author: Union[discord.abc.User, int] = None,
+    scope: str, guild: Union[discord.Guild, int] = None
 ) -> List[PlaylistMigration23]:
     """
     Gets all playlist for the specified scope.
@@ -487,12 +197,6 @@ async def get_all_playlist_for_migration23(  # TODO: remove me in a future versi
         The custom config scope. One of 'GLOBALPLAYLIST', 'GUILDPLAYLIST' or 'USERPLAYLIST'.
     guild: discord.Guild
         The guild to get the playlist from if scope is GUILDPLAYLIST.
-    author: int
-        The ID of the user to get the playlist from if scope is USERPLAYLIST.
-    bot: Red
-        The bot's instance
-    specified_user:bool
-        Whether or not user ID was passed as an argparse.
     Returns
     -------
     list
@@ -570,6 +274,13 @@ class Playlist:
         self.tracks = tracks or []
         self.tracks_obj = [lavalink.Track(data=track) for track in self.tracks]
 
+    def __repr__(self):
+        return (
+            f"Playlist(name={self.name}, id={self.id}, scope={self.scope}, "
+            f"scope_id={self.scope_id}, author={self.author_id}, "
+            f"tracks={len(self.tracks)}, url={self.url})"
+        )
+
     async def edit(self, data: dict):
         """
         Edits a Playlist.
@@ -588,9 +299,7 @@ class Playlist:
         return self
 
     async def save(self):
-        """
-        Saves a Playlist.
-        """
+        """Saves a Playlist."""
         scope, scope_id = self.config_scope
         database.upsert(
             scope,
@@ -622,7 +331,7 @@ class Playlist:
 
     @classmethod
     async def from_json(
-        cls, bot: Red, scope: str, playlist_number: int, data: SQLFetchResult, **kwargs
+        cls, bot: Red, scope: str, playlist_number: int, data: PlaylistFetchResult, **kwargs
     ):
         """Get a Playlist object from the provided information.
         Parameters
@@ -657,7 +366,7 @@ class Playlist:
         playlist_id = data.playlist_id or playlist_number
         name = data.playlist_name
         playlist_url = data.playlist_url
-        tracks = json.loads(data.tracks)
+        tracks = data.tracks
 
         return cls(
             bot=bot,
@@ -785,8 +494,8 @@ async def get_all_playlist_converter(
         The ID of the user to get the playlist from if scope is USERPLAYLIST.
     bot: Red
         The bot's instance
-    specified_user:bool
-        Whether or not user ID was passed as an argparse.
+    arg:str
+        The value to lookup.
     Returns
     -------
     list
@@ -815,12 +524,11 @@ async def create_playlist(
     scope: str,
     playlist_name: str,
     playlist_url: Optional[str] = None,
-    tracks: Optional[List[dict]] = None,
+    tracks: Optional[List[Mapping]] = None,
     author: Optional[discord.User] = None,
     guild: Optional[discord.Guild] = None,
 ) -> Optional[Playlist]:
-    """
-    Creates a new Playlist.
+    """Creates a new Playlist.
 
     Parameters
     ----------
@@ -832,7 +540,7 @@ async def create_playlist(
         The name of the new playlist.
     playlist_url:str
         the url of the new playlist.
-    tracks: List[dict]
+    tracks: List[Mapping]
         A list of tracks to add to the playlist.
     author: discord.User
         The Author of the playlist.
@@ -871,8 +579,7 @@ async def reset_playlist(
     guild: Union[discord.Guild, int] = None,
     author: Union[discord.abc.User, int] = None,
 ) -> None:
-    """
-    Wipes all playlists for the specified scope.
+    """Wipes all playlists for the specified scope.
 
     Parameters
     ----------
@@ -903,8 +610,7 @@ async def delete_playlist(
     guild: discord.Guild,
     author: Union[discord.abc.User, int] = None,
 ) -> None:
-    """
-    Deletes the specified playlist.
+    """Deletes the specified playlist.
 
     Parameters
     ----------
