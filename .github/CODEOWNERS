@@ -25,6 +25,7 @@ redbot/core/utils/antispam.py            @mikeshardmind
 redbot/core/utils/tunnel.py              @mikeshardmind
 redbot/core/utils/caching.py             @mikeshardmind
 redbot/core/utils/common_filters.py      @mikeshardmind
+redbot/core/utils/dbtools.py             @mikeshardmind
 
 # Cogs
 redbot/cogs/admin/*                 @tekulvw
