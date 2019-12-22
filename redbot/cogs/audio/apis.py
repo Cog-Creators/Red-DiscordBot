@@ -19,7 +19,7 @@ from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 
 from . import audio_dataclasses
-from .databases import HAS_SQL, CacheInterface, SQLError
+from .databases import CacheInterface, SQLError
 from .errors import DatabaseError, SpotifyFetchError, YouTubeApiError
 from .playlists import get_playlist
 from .utils import CacheLevel, Notifier, is_allowed, queue_duration, track_limit
@@ -431,9 +431,7 @@ class MusicCache:
         List[str]
             List of Youtube URLs.
         """
-        current_cache_level = (
-            CacheLevel(await self.config.cache_level()) if HAS_SQL else CacheLevel.none()
-        )
+        current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_spotify().is_subset(current_cache_level)
         if query_type == "track" and cache_enabled:
             update = True
@@ -476,9 +474,7 @@ class MusicCache:
         track_list = []
         has_not_allowed = False
         try:
-            current_cache_level = (
-                CacheLevel(await self.config.cache_level()) if HAS_SQL else CacheLevel.none()
-            )
+            current_cache_level = CacheLevel(await self.config.cache_level())
             guild_data = await self.config.guild(ctx.guild).all()
 
             # now = int(time.time())
@@ -678,9 +674,7 @@ class MusicCache:
         return track_list
 
     async def youtube_query(self, ctx: commands.Context, track_info: str) -> str:
-        current_cache_level = (
-            CacheLevel(await self.config.cache_level()) if HAS_SQL else CacheLevel.none()
-        )
+        current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_youtube().is_subset(current_cache_level)
         val = None
         if cache_enabled:
@@ -727,9 +721,7 @@ class MusicCache:
         Tuple[lavalink.LoadResult, bool]
             Tuple with the Load result and whether or not the API was called.
         """
-        current_cache_level = (
-            CacheLevel(await self.config.cache_level()) if HAS_SQL else CacheLevel.none()
-        )
+        current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         val = None
         _raw_query = audio_dataclasses.Query.process_input(query)
@@ -857,9 +849,7 @@ class MusicCache:
 
     async def autoplay(self, player: lavalink.Player):
         autoplaylist = await self.config.guild(player.channel.guild).autoplaylist()
-        current_cache_level = (
-            CacheLevel(await self.config.cache_level()) if HAS_SQL else CacheLevel.none()
-        )
+        current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         playlist = None
         tracks = None
