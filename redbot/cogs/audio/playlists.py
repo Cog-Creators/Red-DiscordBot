@@ -78,11 +78,11 @@ def _prepare_config_scope(
     elif scope == PlaylistScope.USER.value:
         if author is None:
             raise MissingAuthor("Invalid author for user scope.")
-        config_scope = [PlaylistScope.USER.value, getattr(author, "id", int(author))]
+        config_scope = [PlaylistScope.USER.value, int(getattr(author, "id", author))]
     else:
         if guild is None:
             raise MissingGuild("Invalid guild for guild scope.")
-        config_scope = [PlaylistScope.GUILD.value, getattr(guild, "id", int(guild))]
+        config_scope = [PlaylistScope.GUILD.value, int(getattr(guild, "id", guild))]
     return config_scope
 
 
@@ -570,10 +570,7 @@ async def create_playlist(
         tracks,
         guild or ctx.guild,
     )
-
-    await _config.custom(*_prepare_config_scope(scope, author, guild), str(ctx.message.id)).set(
-        playlist.to_json()
-    )
+    await playlist.save()
     return playlist
 
 

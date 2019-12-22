@@ -233,7 +233,7 @@ class Audio(commands.Cog):
 
     async def _migrate_config(self, from_version: int, to_version: int) -> None:
         database_entries = []
-        time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
+        time_now = str(datetime.datetime.now(datetime.timezone.utc))
         if from_version == to_version:
             return
         if from_version < 2 <= to_version:
