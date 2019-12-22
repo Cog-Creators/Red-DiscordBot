@@ -5,12 +5,13 @@ from typing import Optional, Tuple, Union
 
 import discord
 
-from redbot.cogs.audio.errors import TooManyMatches, NoMatchesFound
+from redbot.cogs.audio.errors import NoMatchesFound, TooManyMatches
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 
-from .playlists import PlaylistScope, standardize_scope
+from .playlists import get_all_playlist_converter, standardize_scope
+from .utils import PlaylistScope
 
 _ = Translator("Audio", __file__)
 
@@ -24,8 +25,8 @@ __all__ = [
     "get_playlist_converter",
 ]
 
-_config = None
-_bot = None
+_config: Config = None
+_bot: Red = None
 
 _SCOPE_HELP = """
 Scope must be a valid version of one of the following:
@@ -138,29 +139,17 @@ async def global_unique_user_finder(
 
 class PlaylistConverter(commands.Converter):
     async def convert(self, ctx: commands.Context, arg: str) -> dict:
-        global_scope = await _config.custom(PlaylistScope.GLOBAL.value).all()
-        guild_scope = await _config.custom(PlaylistScope.GUILD.value).all()
-        user_scope = await _config.custom(PlaylistScope.USER.value).all()
-        user_matches = [
-            (uid, pid, pdata)
-            for uid, data in user_scope.items()
-            for pid, pdata in data.items()
-            if arg == pid or arg.lower() in pdata.get("name", "").lower()
-        ]
-        guild_matches = [
-            (gid, pid, pdata)
-            for gid, data in guild_scope.items()
-            for pid, pdata in data.items()
-            if arg == pid or arg.lower() in pdata.get("name", "").lower()
-        ]
-        global_matches = [
-            (None, pid, pdata)
-            for pid, pdata in global_scope.items()
-            if arg == pid or arg.lower() in pdata.get("name", "").lower()
-        ]
+        global_matches = await get_all_playlist_converter(
+            PlaylistScope.GLOBAL.value, _bot, arg, guild=ctx.guild, author=ctx.author
+        )
+        guild_matches = await get_all_playlist_converter(
+            PlaylistScope.GUILD.value, _bot, arg, guild=ctx.guild, author=ctx.author
+        )
+        user_matches = await get_all_playlist_converter(
+            PlaylistScope.USER.value, _bot, arg, guild=ctx.guild, author=ctx.author
+        )
         if not user_matches and not guild_matches and not global_matches:
             raise commands.BadArgument(_("Could not match '{}' to a playlist.").format(arg))
-
         return {
             PlaylistScope.GLOBAL.value: global_matches,
             PlaylistScope.GUILD.value: guild_matches,
@@ -498,9 +487,7 @@ class LazyGreedyConverter(commands.Converter):
 
 
 def get_lazy_converter(splitter: str) -> type:
-    """
-    Returns a typechecking safe `LazyGreedyConverter` suitable for use with discord.py.
-    """
+    """Returns a typechecking safe `LazyGreedyConverter` suitable for use with discord.py."""
 
     class PartialMeta(type(LazyGreedyConverter)):
         __call__ = functools.partialmethod(type(LazyGreedyConverter).__call__, splitter)
@@ -512,9 +499,7 @@ def get_lazy_converter(splitter: str) -> type:
 
 
 def get_playlist_converter() -> type:
-    """
-    Returns a typechecking safe `PlaylistConverter` suitable for use with discord.py.
-    """
+    """Returns a typechecking safe `PlaylistConverter` suitable for use with discord.py."""
 
     class PartialMeta(type(PlaylistConverter)):
         __call__ = functools.partialmethod(type(PlaylistConverter).__call__)

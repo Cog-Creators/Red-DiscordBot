@@ -1,0 +1,1 @@
+Migrate Playlists to its dedicated playlist table and remove them from the Config driver.

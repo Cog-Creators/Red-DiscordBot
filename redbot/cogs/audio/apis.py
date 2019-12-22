@@ -20,7 +20,7 @@ from redbot.core.i18n import Translator, cog_i18n
 
 from . import audio_dataclasses
 from .databases import CacheInterface, SQLError
-from .errors import SpotifyFetchError, YouTubeApiError, DatabaseError
+from .errors import DatabaseError, SpotifyFetchError, YouTubeApiError
 from .playlists import get_playlist
 from .utils import CacheLevel, Notifier, is_allowed, queue_duration, track_limit
 
@@ -736,7 +736,7 @@ class MusicCache:
                 task = ("update", ("lavalink", {"query": query}))
                 self.append_task(ctx, *task)
         if val and not forced:
-            data = json.loads(val)
+            data = val
             data["query"] = query
             results = LoadResult(data)
             called_api = False
