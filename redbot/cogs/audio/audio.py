@@ -1441,7 +1441,7 @@ class Audio(commands.Cog):
 
     @audioset.command()
     @checks.admin_or_permissions(manage_roles=True)
-    async def role(self, ctx: commands.Context, role_name: discord.Role):
+    async def role(self, ctx: commands.Context, *, role_name: discord.Role):
         """Set the role to use for DJ mode."""
         await self.config.guild(ctx.guild).dj_role.set(role_name.id)
         self._dj_role_cache[ctx.guild.id] = role_name.id
@@ -2518,9 +2518,7 @@ class Audio(commands.Cog):
             with contextlib.suppress(discord.HTTPException):
                 await player.fetch("np_message").delete()
 
-        embed = discord.Embed(
-            colour=await ctx.embed_colour(), title=_("Now Playing"), description=song
-        )
+        embed = discord.Embed(title=_("Now Playing"), description=song)
         if await self.config.guild(ctx.guild).thumbnail() and player.current:
             if player.current.thumbnail:
                 embed.set_thumbnail(url=player.current.thumbnail)
@@ -2891,7 +2889,9 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=err.message
             )
-        if not tracks:
+        if isinstance(tracks, discord.Message):
+            return
+        elif not tracks:
             self._play_lock(ctx, False)
             title = _("Unable To Play Tracks")
             desc = _("No tracks found for `{query}`.").format(query=query.to_string_user())
@@ -2916,12 +2916,17 @@ class Audio(commands.Cog):
             return
         queue_dur = await queue_duration(ctx)
         lavalink.utils.format_time(queue_dur)
-        len(player.queue)
         index = query.track_index
         seek = 0
         if query.start_time:
             seek = query.start_time
-        single_track = tracks[index] if index else tracks[0]
+        single_track = (
+            tracks
+            if isinstance(tracks, lavalink.rest_api.Track)
+            else tracks[index]
+            if index
+            else tracks[0]
+        )
         if seek and seek > 0:
             single_track.start_timestamp = seek * 1000
         if not await is_allowed(
@@ -3366,13 +3371,12 @@ class Audio(commands.Cog):
                     result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
                     tracks = result.tracks
                     if not tracks:
-                        colour = await ctx.embed_colour()
-                        embed = discord.Embed(title=_("Nothing found."), colour=colour)
+                        embed = discord.Embed(title=_("Nothing found."))
                         if (
                             query.is_local
                             and query.suffix in audio_dataclasses._PARTIALLY_SUPPORTED_MUSIC_EXT
                         ):
-                            embed = discord.Embed(title=_("Track is not playable."), colour=colour)
+                            embed = discord.Embed(title=_("Track is not playable."))
                             embed.description = _(
                                 "**{suffix}** is not a fully supported format and some "
                                 "tracks may not play."
@@ -3443,16 +3447,14 @@ class Audio(commands.Cog):
             result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
             tracks = result.tracks
             playlist_data = result.playlist_info
-            playlist_url = query._raw
             if not enqueue:
                 return tracks
             if not tracks:
                 self._play_lock(ctx, False)
                 title = _("Nothing found.")
-                colour = await ctx.embed_colour()
-                embed = discord.Embed(title=title, colour=colour)
+                embed = discord.Embed(title=title)
                 if result.exception_message:
-                    embed.set_footer(text=result.exception_message.replace("\n", ""))
+                    embed.set_footer(text=result.exception_message[:2000].replace("\n", ""))
                 if await self.config.use_external_lavalink() and query.is_local:
                     embed.description = _(
                         "Local tracks will not work "
@@ -3465,7 +3467,7 @@ class Audio(commands.Cog):
                     and query.suffix in audio_dataclasses._PARTIALLY_SUPPORTED_MUSIC_EXT
                 ):
                     title = _("Track is not playable.")
-                    embed = discord.Embed(title=title, colour=colour)
+                    embed = discord.Embed(title=title)
                     embed.description = _(
                         "**{suffix}** is not a fully supported format and some "
                         "tracks may not play."
@@ -3520,7 +3522,6 @@ class Audio(commands.Cog):
                 playlist_data.name if playlist_data else _("No Title"), formatting=True
             )
             embed = discord.Embed(
-                colour=await ctx.embed_colour(),
                 description=bold(f"[{playlist_name}]({playlist_url})")
                 if playlist_url
                 else playlist_name,
@@ -3539,13 +3540,22 @@ class Audio(commands.Cog):
                 )
             if not player.current:
                 await player.play()
+            self._play_lock(ctx, False)
+            message = await self._embed_msg(ctx, embed=embed)
+            return tracks or message
         else:
+            single_track = None
             # a ytsearch: prefixed item where we only need the first Track returned
             # this is in the case of [p]play <query>, a single Spotify url/code
             # or this is a localtrack item
             try:
-
-                single_track = tracks[index] if index else tracks[0]
+                single_track = (
+                    tracks
+                    if isinstance(tracks, lavalink.rest_api.Track)
+                    else tracks[index]
+                    if index
+                    else tracks[0]
+                )
                 if seek and seek > 0:
                     single_track.start_timestamp = seek * 1000
                 if not await is_allowed(
@@ -3588,9 +3598,7 @@ class Audio(commands.Cog):
                     desc = _("Please check your console or logs for details.")
                 return await self._embed_msg(ctx, title=title, description=desc)
             description = get_track_description(single_track)
-            embed = discord.Embed(
-                colour=await ctx.embed_colour(), title=_("Track Enqueued"), description=description
-            )
+            embed = discord.Embed(title=_("Track Enqueued"), description=description)
             if not guild_data["shuffle"] and queue_dur > 0:
                 embed.set_footer(
                     text=_("{time} until track playback: #{position} in queue").format(
@@ -3598,11 +3606,11 @@ class Audio(commands.Cog):
                     )
                 )
 
-        await self._embed_msg(ctx, embed=embed)
         if not player.current:
             await player.play()
-
         self._play_lock(ctx, False)
+        message = await self._embed_msg(ctx, embed=embed)
+        return single_track or message
 
     async def _spotify_playlist(
         self,
@@ -3645,8 +3653,7 @@ class Audio(commands.Cog):
         except (RuntimeError, aiohttp.ServerDisconnectedError):
             self._play_lock(ctx, False)
             error_embed = discord.Embed(
-                colour=await ctx.embed_colour(),
-                title=_("The connection was reset while loading the playlist."),
+                title=_("The connection was reset while loading the playlist.")
             )
             await self._embed_msg(ctx, embed=error_embed)
             return None
@@ -5212,7 +5219,6 @@ class Audio(commands.Cog):
                 scope_name = "the global scope"
 
             embed = discord.Embed(
-                colour=await ctx.embed_colour(),
                 title=_("Playlist Enqueued"),
                 description=_(
                     "{name} - (`{id}`) [**{scope}**]\nAdded {num} "
@@ -5624,9 +5630,7 @@ class Audio(commands.Cog):
         author: Union[discord.User, discord.Member],
         guild: Union[discord.Guild],
     ):
-        embed1 = discord.Embed(
-            colour=await ctx.embed_colour(), title=_("Please wait, adding tracks...")
-        )
+        embed1 = discord.Embed(title=_("Please wait, adding tracks..."))
         playlist_msg = await self._embed_msg(ctx, embed=embed1)
         track_count = len(track_list)
         uploaded_track_count = len(track_list)
@@ -5695,9 +5699,7 @@ class Audio(commands.Cog):
         successful_count = 0
         uploaded_track_count = len(uploaded_track_list)
 
-        embed1 = discord.Embed(
-            colour=await ctx.embed_colour(), title=_("Please wait, adding tracks...")
-        )
+        embed1 = discord.Embed(title=_("Please wait, adding tracks..."))
         playlist_msg = await self._embed_msg(ctx, embed=embed1)
         notifier = Notifier(ctx, playlist_msg, {"playlist": _("Loading track {num}/{total}...")})
         for song_url in uploaded_track_list:
@@ -5851,13 +5853,12 @@ class Audio(commands.Cog):
                 return None
 
             if not tracks:
-                colour = await ctx.embed_colour()
-                embed = discord.Embed(title=_("Nothing found."), colour=colour)
+                embed = discord.Embed(title=_("Nothing found."))
                 if (
                     query.is_local
                     and query.suffix in audio_dataclasses._PARTIALLY_SUPPORTED_MUSIC_EXT
                 ):
-                    embed = discord.Embed(title=_("Track is not playable."), colour=colour)
+                    embed = discord.Embed(title=_("Track is not playable."))
                     embed.description = _(
                         "**{suffix}** is not a fully supported format and some "
                         "tracks may not play."
@@ -5871,13 +5872,12 @@ class Audio(commands.Cog):
             result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
             tracks = result.tracks
             if not tracks:
-                colour = await ctx.embed_colour()
-                embed = discord.Embed(title=_("Nothing found."), colour=colour)
+                embed = discord.Embed(title=_("Nothing found."))
                 if (
                     query.is_local
                     and query.suffix in audio_dataclasses._PARTIALLY_SUPPORTED_MUSIC_EXT
                 ):
-                    embed = discord.Embed(title=_("Track is not playable."), colour=colour)
+                    embed = discord.Embed(title=_("Track is not playable."))
                     embed.description = _(
                         "**{suffix}** is not a fully supported format and some "
                         "tracks may not play."
@@ -5936,11 +5936,7 @@ class Audio(commands.Cog):
             player.queue.pop(queue_len)
             await player.skip()
             description = get_track_description(player.current)
-            embed = discord.Embed(
-                colour=await ctx.embed_colour(),
-                title=_("Replaying Track"),
-                description=description,
-            )
+            embed = discord.Embed(title=_("Replaying Track"), description=description)
             await self._embed_msg(ctx, embed=embed)
 
     @commands.group(invoke_without_command=True)
@@ -5986,9 +5982,7 @@ class Audio(commands.Cog):
                 song += _("\n Requested by: **{track.requester}**")
                 song += "\n\n{arrow}`{pos}`/`{dur}`"
                 song = song.format(track=player.current, arrow=arrow, pos=pos, dur=dur)
-                embed = discord.Embed(
-                    colour=await ctx.embed_colour(), title=_("Now Playing"), description=song
-                )
+                embed = discord.Embed(title=_("Now Playing"), description=song)
                 if await self.config.guild(ctx.guild).thumbnail() and player.current:
                     if player.current.thumbnail:
                         embed.set_thumbnail(url=player.current.thumbnail)
@@ -6151,7 +6145,7 @@ class Audio(commands.Cog):
 
         embed = discord.Embed(
             colour=await ctx.embed_colour(),
-            title="Queue for " + ctx.guild.name,
+            title="Queue for __{guild.name}__".format(guild=ctx.guild),
             description=queue_list,
         )
         if await self.config.guild(ctx.guild).thumbnail() and player.current.thumbnail:
@@ -6159,7 +6153,7 @@ class Audio(commands.Cog):
         queue_dur = await queue_duration(ctx)
         queue_total_duration = lavalink.utils.format_time(queue_dur)
         text = _(
-            "Page {page_num}/{total_pages} | {num_tracks} " "tracks, {num_remaining} remaining\n"
+            "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining\n"
         ).format(
             page_num=page_num,
             total_pages=queue_num_pages,
@@ -6466,9 +6460,7 @@ class Audio(commands.Cog):
             msg += _("\nAuto-play has been disabled.")
             await self.config.guild(ctx.guild).auto_play.set(False)
 
-        embed = discord.Embed(
-            title=_("Setting Changed"), description=msg, colour=await ctx.embed_colour()
-        )
+        embed = discord.Embed(title=_("Setting Changed"), description=msg)
         await self._embed_msg(ctx, embed=embed)
         if self._player_check(ctx):
             await self._data_check(ctx)
@@ -6626,8 +6618,7 @@ class Audio(commands.Cog):
                 else:
                     tracks = await self._folder_tracks(ctx, player, query)
                 if not tracks:
-                    colour = await ctx.embed_colour()
-                    embed = discord.Embed(title=_("Nothing found."), colour=colour)
+                    embed = discord.Embed(title=_("Nothing found."))
                     if await self.config.use_external_lavalink() and query.is_local:
                         embed.description = _(
                             "Local tracks will not work "
@@ -6639,7 +6630,7 @@ class Audio(commands.Cog):
                         query.is_local
                         and query.suffix in audio_dataclasses._PARTIALLY_SUPPORTED_MUSIC_EXT
                     ):
-                        embed = discord.Embed(title=_("Track is not playable."), colour=colour)
+                        embed = discord.Embed(title=_("Track is not playable."))
                         embed.description = _(
                             "**{suffix}** is not a fully supported format and some "
                             "tracks may not play."
@@ -6683,10 +6674,9 @@ class Audio(commands.Cog):
                 else:
                     maxlength_msg = ""
                 songembed = discord.Embed(
-                    colour=await ctx.embed_colour(),
                     title=_("Queued {num} track(s).{maxlength_msg}").format(
                         num=track_len, maxlength_msg=maxlength_msg
-                    ),
+                    )
                 )
                 if not guild_data["shuffle"] and queue_dur > 0:
                     songembed.set_footer(
@@ -6706,8 +6696,7 @@ class Audio(commands.Cog):
                 result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
                 tracks = result.tracks
             if not tracks:
-                colour = await ctx.embed_colour()
-                embed = discord.Embed(title=_("Nothing found."), colour=colour)
+                embed = discord.Embed(title=_("Nothing found."))
                 if await self.config.use_external_lavalink() and query.is_local:
                     embed.description = _(
                         "Local tracks will not work "
@@ -6719,7 +6708,7 @@ class Audio(commands.Cog):
                     query.is_local
                     and query.suffix in audio_dataclasses._PARTIALLY_SUPPORTED_MUSIC_EXT
                 ):
-                    embed = discord.Embed(title=_("Track is not playable."), colour=colour)
+                    embed = discord.Embed(title=_("Track is not playable."))
                     embed.description = _(
                         "**{suffix}** is not a fully supported format and some "
                         "tracks may not play."
@@ -6748,9 +6737,10 @@ class Audio(commands.Cog):
         if not self._player_check(ctx):
             if self._connection_aborted:
                 msg = _("Connection to Lavalink has failed.")
+                description = EmptyEmbed
                 if await ctx.bot.is_owner(ctx.author):
-                    msg += " " + _("Please check your console or logs for details.")
-                return await self._embed_msg(ctx, title=msg)
+                    description = _("Please check your console or logs for details.")
+                return await self._embed_msg(ctx, title=msg, description=description)
             try:
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
@@ -6780,19 +6770,9 @@ class Audio(commands.Cog):
                 search_choice = tracks[0 + (page * 5)]
         except IndexError:
             search_choice = tracks[-1]
-        try:
-            query = audio_dataclasses.Query.process_input(search_choice.uri)
-            if query.is_local:
-                localtrack = audio_dataclasses.LocalPath(search_choice.uri)
-                if search_choice.title != "Unknown title":
-                    description = "**{} - {}**\n{}".format(
-                        search_choice.author, search_choice.title, localtrack.to_string_user()
-                    )
-                else:
-                    description = localtrack.to_string_user()
-            else:
-                description = "**[{}]({})**".format(search_choice.title, search_choice.uri)
-        except AttributeError:
+        if hasattr(search_choice, "uri"):
+            description = get_track_description(search_choice)
+        else:
             search_choice = audio_dataclasses.Query.process_input(search_choice)
             if search_choice.track.exists() and search_choice.track.is_dir():
                 return await ctx.invoke(self.search, query=search_choice)
@@ -6800,9 +6780,7 @@ class Audio(commands.Cog):
                 search_choice.invoked_from = "localtrack"
             return await ctx.invoke(self.play, query=search_choice)
 
-        songembed = discord.Embed(
-            colour=await ctx.embed_colour(), title=_("Track Enqueued"), description=description
-        )
+        songembed = discord.Embed(title=_("Track Enqueued"), description=description)
         queue_dur = await queue_duration(ctx)
         queue_total_duration = lavalink.utils.format_time(queue_dur)
         before_queue_length = len(player.queue)
@@ -7253,16 +7231,12 @@ class Audio(commands.Cog):
                 return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
             time_remain = lavalink.utils.format_time(dur - pos)
             if player.current.is_stream:
-                embed = discord.Embed(
-                    colour=await ctx.embed_colour(), title=_("There's nothing in the queue.")
-                )
+                embed = discord.Embed(title=_("There's nothing in the queue."))
                 embed.set_footer(
                     text=_("Currently livestreaming {track}").format(track=player.current.title)
                 )
             else:
-                embed = discord.Embed(
-                    colour=await ctx.embed_colour(), title=_("There's nothing in the queue.")
-                )
+                embed = discord.Embed(title=_("There's nothing in the queue."))
                 embed.set_footer(
                     text=_("{time} left on {track}").format(
                         time=time_remain, track=player.current.title
@@ -7271,9 +7245,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, embed=embed)
         elif autoplay and not player.queue:
             embed = discord.Embed(
-                colour=await ctx.embed_colour(),
-                title=_("Track Skipped"),
-                description=get_track_description(player.current),
+                title=_("Track Skipped"), description=get_track_description(player.current)
             )
             await self._embed_msg(ctx, embed=embed)
             return await player.skip()
@@ -7294,8 +7266,7 @@ class Audio(commands.Cog):
                     ),
                 )
             embed = discord.Embed(
-                colour=await ctx.embed_colour(),
-                title=_("{skip_to_track} Tracks Skipped".format(skip_to_track=skip_to_track)),
+                title=_("{skip_to_track} Tracks Skipped".format(skip_to_track=skip_to_track))
             )
             await self._embed_msg(ctx, embed=embed)
             if player.repeat:
@@ -7305,9 +7276,7 @@ class Audio(commands.Cog):
             ]
         else:
             embed = discord.Embed(
-                colour=await ctx.embed_colour(),
-                title=_("Track Skipped"),
-                description=get_track_description(player.current),
+                title=_("Track Skipped"), description=get_track_description(player.current)
             )
             await self._embed_msg(ctx, embed=embed)
         self.bot.dispatch("red_audio_skip_track", player.channel.guild, player.current, ctx.author)
@@ -7429,11 +7398,7 @@ class Audio(commands.Cog):
         )
         if not vol:
             vol = await self.config.guild(ctx.guild).volume()
-            embed = discord.Embed(
-                colour=await ctx.embed_colour(),
-                title=_("Current Volume:"),
-                description=str(vol) + "%",
-            )
+            embed = discord.Embed(title=_("Current Volume:"), description=str(vol) + "%")
             if not self._player_check(ctx):
                 embed.set_footer(text=_("Nothing playing."))
             return await self._embed_msg(ctx, embed=embed)
@@ -7467,9 +7432,7 @@ class Audio(commands.Cog):
             await self.config.guild(ctx.guild).volume.set(vol)
             if self._player_check(ctx):
                 await lavalink.get_player(ctx.guild.id).set_volume(vol)
-        embed = discord.Embed(
-            colour=await ctx.embed_colour(), title=_("Volume:"), description=str(vol) + "%"
-        )
+        embed = discord.Embed(title=_("Volume:"), description=str(vol) + "%")
         if not self._player_check(ctx):
             embed.set_footer(text=_("Nothing playing."))
         await self._embed_msg(ctx, embed=embed)
@@ -7737,7 +7700,9 @@ class Audio(commands.Cog):
             await asyncio.sleep(5)
 
     async def _embed_msg(self, ctx: commands.Context, **kwargs):
-        colour = await self.bot.get_embed_color(ctx)
+        colour = kwargs.get("colour") or kwargs.get("color") or await self.bot.get_embed_color(ctx)
+        error = kwargs.get("error", False)
+        success = kwargs.get("success", False)
         title = kwargs.get("title", EmptyEmbed) or EmptyEmbed
         _type = kwargs.get("type", "rich") or "rich"
         url = kwargs.get("url", EmptyEmbed) or EmptyEmbed
@@ -7746,9 +7711,12 @@ class Audio(commands.Cog):
         footer = kwargs.get("footer")
         thumbnail = kwargs.get("thumbnail")
         contents = dict(title=title, type=_type, url=url, description=description)
+        embed = kwargs.get("embed").to_dict() if hasattr(kwargs.get("embed"), "to_dict") else {}
+        colour = embed.get("color") if embed.get("color") else colour
+        contents.update(embed)
         if timestamp and isinstance(timestamp, datetime.datetime):
             contents["timestamp"] = timestamp
-        embed = kwargs.get("embed") or discord.Embed(**contents)
+        embed = discord.Embed.from_dict(contents)
         embed.color = colour
         if footer:
             embed.set_footer(text=footer)

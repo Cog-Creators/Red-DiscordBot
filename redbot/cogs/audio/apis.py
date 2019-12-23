@@ -7,7 +7,7 @@ import logging
 import random
 import time
 from collections import namedtuple
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Callable, List, Optional, Tuple, Union, Mapping
 
 import aiohttp
 import discord
@@ -56,12 +56,12 @@ class SpotifyAPI:
         self.client_secret = None
 
     @staticmethod
-    async def _check_token(token: dict):
+    async def _check_token(token: Mapping):
         now = int(time.time())
         return token["expires_at"] - now < 60
 
     @staticmethod
-    def _make_token_auth(client_id: Optional[str], client_secret: Optional[str]) -> dict:
+    def _make_token_auth(client_id: Optional[str], client_secret: Optional[str]) -> Mapping:
         if client_id is None:
             client_id = ""
         if client_secret is None:
@@ -70,7 +70,9 @@ class SpotifyAPI:
         auth_header = base64.b64encode((client_id + ":" + client_secret).encode("ascii"))
         return {"Authorization": "Basic %s" % auth_header.decode("ascii")}
 
-    async def _make_get(self, url: str, headers: dict = None, params: dict = None) -> dict:
+    async def _make_get(
+        self, url: str, headers: Mapping = None, params: Mapping = None
+    ) -> Mapping:
         if params is None:
             params = {}
         async with self.session.request("GET", url, params=params, headers=headers) as r:
@@ -87,7 +89,7 @@ class SpotifyAPI:
         self.client_id = tokens.get("client_id", "")
         self.client_secret = tokens.get("client_secret", "")
 
-    async def _request_token(self) -> dict:
+    async def _request_token(self) -> Mapping:
         await self._get_auth()
 
         payload = {"grant_type": "client_credentials"}
@@ -111,7 +113,7 @@ class SpotifyAPI:
         log.debug("Created a new access token for Spotify: {0}".format(token))
         return self.spotify_token["access_token"]
 
-    async def post_call(self, url: str, payload: dict, headers: dict = None) -> dict:
+    async def post_call(self, url: str, payload: Mapping, headers: Mapping = None) -> Mapping:
         async with self.session.post(url, data=payload, headers=headers) as r:
             if r.status != 200:
                 log.debug(
@@ -121,13 +123,13 @@ class SpotifyAPI:
                 )
             return await r.json()
 
-    async def get_call(self, url: str, params: dict) -> dict:
+    async def get_call(self, url: str, params: Mapping) -> Mapping:
         token = await self._get_spotify_token()
         return await self._make_get(
             url, params=params, headers={"Authorization": "Bearer {0}".format(token)}
         )
 
-    async def get_categories(self) -> List[Dict[str, str]]:
+    async def get_categories(self) -> List[Mapping]:
         url = "https://api.spotify.com/v1/browse/categories"
         params = {}
         result = await self.get_call(url, params=params)
@@ -209,7 +211,7 @@ class MusicCache:
         self._session: aiohttp.ClientSession = session
         self.database = _database
 
-        self._tasks: dict = {}
+        self._tasks: Mapping = {}
         self._lock: asyncio.Lock = asyncio.Lock()
         self.config: Optional[Config] = None
 
@@ -218,18 +220,18 @@ class MusicCache:
         await _database.init()
 
     @staticmethod
-    def _spotify_format_call(qtype: str, key: str) -> Tuple[str, dict]:
+    def _spotify_format_call(qtype: str, key: str) -> Tuple[str, Mapping]:
         params = {}
         if qtype == "album":
-            query = "https://api.spotify.com/v1/albums/{0}/tracks".format(key)
+            query = f"https://api.spotify.com/v1/albums/{key}/tracks"
         elif qtype == "track":
-            query = "https://api.spotify.com/v1/tracks/{0}".format(key)
+            query = f"https://api.spotify.com/v1/tracks/{key}"
         else:
-            query = "https://api.spotify.com/v1/playlists/{0}/tracks".format(key)
+            query = f"https://api.spotify.com/v1/playlists/{key}/tracks"
         return query, params
 
     @staticmethod
-    def _get_spotify_track_info(track_data: dict) -> Tuple[str, ...]:
+    def _get_spotify_track_info(track_data: Mapping) -> Tuple[str, ...]:
         artist_name = track_data["artists"][0]["name"]
         track_name = track_data["name"]
         track_info = f"{track_name} {artist_name}"
@@ -344,9 +346,9 @@ class MusicCache:
         query_type: str,
         uri: str,
         recursive: Union[str, bool] = False,
-        params=None,
+        params: Mapping = None,
         notifier: Optional[Notifier] = None,
-    ) -> Union[dict, List[str]]:
+    ) -> Union[Mapping, List[str]]:
 
         if recursive is False:
             (call, params) = self._spotify_format_call(query_type, uri)

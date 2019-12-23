@@ -252,7 +252,7 @@ def track_creator(player, position=None, other_track=None) -> Mapping:
     return track_obj
 
 
-def track_to_json(track: lavalink.Track):
+def track_to_json(track: lavalink.Track) -> Mapping:
     track_keys = track._info.keys()
     track_values = track._info.values()
     track_id = track.track_identifier
