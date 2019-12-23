@@ -317,15 +317,8 @@ class CacheInterface:
         current_version = self.database.execute(_PRAGMA_FETCH_user_version).fetchone()
         if isinstance(current_version, tuple):
             current_version = current_version[0]
-        if not current_version:
-            current_version = 1
         if current_version == SCHEMA_VERSION:
             return
-        if current_version <= 2 < SCHEMA_VERSION:
-            self.database.execute(_DROP_SPOTIFY_TABLE)
-            self.database.execute(_DROP_YOUTUBE_TABLE)
-            self.database.execute(_DROP_LAVALINK_TABLE)
-
         self.database.execute(_PRAGMA_SET_user_version, {"version": SCHEMA_VERSION})
 
     async def insert(self, table: str, values: List[dict]):
