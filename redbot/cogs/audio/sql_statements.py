@@ -44,6 +44,7 @@ __all__ = [
     "LAVALINK_QUERY",
     "LAVALINK_QUERY_LAST_FETCHED_RANDOM",
     "LAVALINK_DELETE_OLD_ENTRIES",
+    "LAVALINK_FETCH_ALL_ENTRIES_GLOBAL",
 ]
 
 # PRAGMA Statements
@@ -389,4 +390,8 @@ LAVALINK_DELETE_OLD_ENTRIES = """
 DELETE FROM lavalink
 WHERE
     last_updated > :maxage;
+"""
+LAVALINK_FETCH_ALL_ENTRIES_GLOBAL = """
+SELECT query, data 
+FROM lavalink
 """

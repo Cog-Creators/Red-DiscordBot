@@ -5,11 +5,11 @@ from typing import Optional, Tuple, Union
 
 import discord
 
-from redbot.cogs.audio.errors import NoMatchesFound, TooManyMatches
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 
+from .errors import NoMatchesFound, TooManyMatches
 from .playlists import get_all_playlist_converter, standardize_scope
 from .utils import PlaylistScope
 

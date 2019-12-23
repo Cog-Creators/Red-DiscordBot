@@ -92,6 +92,16 @@ class CacheLastFetchResult:
             self.tracks = json.loads(self.tracks)
 
 
+@dataclass
+class CacheGetAllLavalink:
+    query: str
+    data: List[dict] = field(default_factory=lambda: [])
+
+    def __post_init__(self):
+        if isinstance(self.data, str):
+            self.data = json.loads(self.data)
+
+
 class CacheInterface:
     def __init__(self):
         self.database = database_connection.cursor()
