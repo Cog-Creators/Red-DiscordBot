@@ -157,14 +157,14 @@ def dynamic_time(seconds) -> str:
 
 
 def format_playlist_picker_data(pid, pname, ptracks, pauthor, scope) -> str:
-    author = _bot.get_user(pauthor) or "Unknown"
-    line = (
-        f" - Name:   <{pname}>\n"
-        f" - Scope:  < {humanize_scope(scope)} >\n"
-        f" - ID:     < {pid} >\n"
-        f" - Tracks: < {ptracks} >\n"
-        f" - Author: < {author} >\n\n"
-    )
+    author = _bot.get_user(pauthor) or pauthor or _("Unknown")
+    line = _(
+        " - Name:   <{pname}>\n"
+        " - Scope:  < {scope} >\n"
+        " - ID:     < {pid} >\n"
+        " - Tracks: < {ptracks} >\n"
+        " - Author: < {author} >\n\n"
+    ).format(pname=pname, scope=humanize_scope(scope), pid=pid, ptracks=ptracks, author=author)
     return box(line, lang="md")
 
 
