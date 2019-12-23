@@ -4702,7 +4702,7 @@ class Audio(commands.Cog):
             embed = discord.Embed(
                 colour=await ctx.embed_colour(), title=embed_title, description=page
             )
-            author_obj = self.bot.get_user(playlist.author)
+            author_obj = self.bot.get_user(playlist.author) or playlist.author or _("Unknown")
             embed.set_footer(
                 text=_("Page {page}/{pages} | Author: {author_name} | {num} track(s)").format(
                     author_name=author_obj, num=track_len, pages=total_pages, page=numb
