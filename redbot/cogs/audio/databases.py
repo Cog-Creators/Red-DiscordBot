@@ -142,7 +142,7 @@ class CacheInterface:
             current_version = current_version[0]
         if current_version == SCHEMA_VERSION:
             return
-        self.database.execute(_PRAGMA_SET_user_version, {"version": SCHEMA_VERSION})
+        self.database.execute(PRAGMA_SET_user_version, {"version": SCHEMA_VERSION})
 
     async def insert(self, table: str, values: List[dict]):
         try:
