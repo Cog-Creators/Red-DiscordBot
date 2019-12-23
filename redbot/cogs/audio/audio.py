@@ -582,7 +582,7 @@ class Audio(commands.Cog):
                         )
                     else:
                         embed = discord.Embed(
-                            title=_("Track Error"), description="{}\n{}".format(extra, description)
+                            title=_("Track Error"), description="{}\n{}".format(extra.replace("\n", ""), description)
                         )
                     await message_channel.send(embed=embed)
             await player.skip()
