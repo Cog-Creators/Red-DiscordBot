@@ -95,7 +95,10 @@ def filter_mass_mentions(to_filter: str) -> str:
     If you are unsure, consider if requiring sending in an embed is acceptable.
 
     There are out of the box solutions available for this sort of normalization.
-    One such pure python solution is python-ftfy
+    One such pure python solution is ftfy (python-ftfy).
+    However, most out of the box solutions are also not enough.
+    ftfy leaves useful control characters, only removing misplaced ones,
+    or ones not suitable for plain text.
 
     While this appears to be an accurate enough description of the undocumented
     behavior, we cannot be 100% certain that this is enough handling of the issue.
@@ -193,7 +196,10 @@ def escape_spoilers_and_mass_mentions(content: str) -> str:
     If you are unsure, consider if requiring sending in an embed is acceptable.
 
     There are out of the box solutions available for this sort of normalization.
-    One such pure python solution is python-ftfy
+    One such pure python solution is ftfy (python-ftfy).
+    However, most out of the box solutions are also not enough.
+    ftfy leaves useful control characters, only removing misplaced ones,
+    or ones not suitable for plain text.
 
     While this appears to be an accurate enough description of the undocumented
     behavior, we cannot be 100% certain that this is enough handling of the issue.
