@@ -748,7 +748,27 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         This should realistically only be used for responding using user provided
         input. (unfortunately, including usernames)
         Manually crafted messages which dont take any user input have no need of this
-        
+
+        WARNING: If you take in web content, not just input from discord messages,
+        this may not be sufficient for filtering output.
+
+        Messages comprised entirely of NFC normalized Unicode
+        which does not contain Unicode control characters
+
+        There are out of the box solutions available for this sort of normalization.
+        One such pure python solution is python-ftfy
+
+        While this appears to be an accurate enough description of the undocumented
+        behavior, we cannot be 100% certain that this is enough handling of the issue.
+
+        This is a known unknown, and Discord has refused to be specific when asked.
+        The below links are (some of) prior issue discussion.
+
+        https://github.com/discordapp/discord-api-docs/issues/1276
+        https://github.com/discordapp/discord-api-docs/issues/1241
+        https://github.com/discordapp/discord-api-docs/issues/1189
+        https://github.com/discordapp/discord-api-docs/issues/1193
+
         Returns
         -------
         discord.Message

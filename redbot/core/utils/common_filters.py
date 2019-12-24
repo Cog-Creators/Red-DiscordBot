@@ -86,6 +86,26 @@ def filter_mass_mentions(to_filter: str) -> str:
 
     Will match any *here* and/or *everyone* mentions.
 
+    WARNING: If you take in web content, not just input from discord messages,
+    this may not be sufficient for filtering output.
+
+    Messages comprised entirely of NFC normalized Unicode
+    which does not contain Unicode control characters
+
+    There are out of the box solutions available for this sort of normalization.
+    One such pure python solution is python-ftfy
+
+    While this appears to be an accurate enough description of the undocumented
+    behavior, we cannot be 100% certain that this is enough handling of the issue.
+
+    This is a known unknown, and Discord has refused to be specific when asked.
+    The below links are (some of) prior issue discussion.
+
+    https://github.com/discordapp/discord-api-docs/issues/1276
+    https://github.com/discordapp/discord-api-docs/issues/1241
+    https://github.com/discordapp/discord-api-docs/issues/1189
+    https://github.com/discordapp/discord-api-docs/issues/1193
+
     Parameters
     ----------
     to_filter : str
@@ -161,6 +181,26 @@ def escape_spoilers(content: str) -> str:
 def escape_spoilers_and_mass_mentions(content: str) -> str:
     """
     Get a string with spoiler syntax and mass mentions escaped
+
+    WARNING: If you take in web content, not just input from discord messages,
+    this may not be sufficient for filtering output.
+
+    Messages comprised entirely of NFC normalized Unicode
+    which does not contain Unicode control characters
+
+    There are out of the box solutions available for this sort of normalization.
+    One such pure python solution is python-ftfy
+
+    While this appears to be an accurate enough description of the undocumented
+    behavior, we cannot be 100% certain that this is enough handling of the issue.
+
+    This is a known unknown, and Discord has refused to be specific when asked.
+    The below links are (some of) prior issue discussion.
+
+    https://github.com/discordapp/discord-api-docs/issues/1276
+    https://github.com/discordapp/discord-api-docs/issues/1241
+    https://github.com/discordapp/discord-api-docs/issues/1189
+    https://github.com/discordapp/discord-api-docs/issues/1193
 
     Parameters
     ----------
