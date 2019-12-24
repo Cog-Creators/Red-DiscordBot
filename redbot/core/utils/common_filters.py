@@ -90,7 +90,9 @@ def filter_mass_mentions(to_filter: str) -> str:
     this may not be sufficient for filtering output.
 
     Messages comprised entirely of NFC normalized Unicode
-    which does not contain Unicode control characters
+    which do not contain Unicode control characters appear
+    to be safe when combined with this filter.
+    If you are unsure, consider if requiring sending in an embed is acceptable.
 
     There are out of the box solutions available for this sort of normalization.
     One such pure python solution is python-ftfy
@@ -186,7 +188,9 @@ def escape_spoilers_and_mass_mentions(content: str) -> str:
     this may not be sufficient for filtering output.
 
     Messages comprised entirely of NFC normalized Unicode
-    which does not contain Unicode control characters
+    which do not contain Unicode control characters appear
+    to be safe when combined with this filter.
+    If you are unsure, consider if requiring sending in an embed is acceptable.
 
     There are out of the box solutions available for this sort of normalization.
     One such pure python solution is python-ftfy
