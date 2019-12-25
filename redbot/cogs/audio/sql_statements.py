@@ -45,6 +45,15 @@ __all__ = [
     "LAVALINK_QUERY_LAST_FETCHED_RANDOM",
     "LAVALINK_DELETE_OLD_ENTRIES",
     "LAVALINK_FETCH_ALL_ENTRIES_GLOBAL",
+    # Persisting Queue statements
+    "PERSIST_QUEUE_DROP_TABLE",
+    "PERSIST_QUEUE_CREATE_TABLE",
+    "PERSIST_QUEUE_CREATE_INDEX",
+    "PERSIST_QUEUE_PLAYED",
+    "PERSIST_QUEUE_DELETE_SCHEDULED",
+    "PERSIST_QUEUE_FETCH_ALL",
+    "PERSIST_QUEUE_UPSERT",
+    "PERSIST_QUEUE_BULK_PLAYED",
 ]
 
 # PRAGMA Statements
@@ -401,4 +410,65 @@ FROM lavalink
 LAVALINK_FETCH_ALL_ENTRIES_GLOBAL = """
 SELECT query, data 
 FROM lavalink
+"""
+
+# Persisting Queue statements
+PERSIST_QUEUE_DROP_TABLE = """
+DROP TABLE IF EXISTS persist_queue ;
+"""
+PERSIST_QUEUE_CREATE_TABLE = """
+CREATE TABLE IF NOT EXISTS persist_queue(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    guild_id INTEGER NOT NULL,
+    room_id INTEGER NOT NULL,
+    track JSON NOT NULL,
+    played BOOLEAN DEFAULT false,
+    time INTEGER NOT NULL
+);
+"""
+PERSIST_QUEUE_CREATE_INDEX = """
+CREATE INDEX IF NOT EXISTS track_index ON persist_queue (guild_id);
+"""
+PERSIST_QUEUE_PLAYED = """
+UPDATE persist_queue
+    SET
+        played = true
+WHERE
+    (
+        guild_id = :guild_id
+        AND time = :time
+    )
+;
+"""
+PERSIST_QUEUE_BULK_PLAYED = """
+UPDATE persist_queue
+    SET
+        played = true
+WHERE guild_id = :guild_id
+;
+"""
+PERSIST_QUEUE_DELETE_SCHEDULED = """
+DELETE
+FROM
+    persist_queue
+WHERE
+    played = true;
+"""
+PERSIST_QUEUE_FETCH_ALL = """
+SELECT
+    guild_id, room_id, track
+FROM
+    persist_queue
+WHERE played = false
+ORDER BY time ASC;
+"""
+PERSIST_QUEUE_UPSERT = """
+INSERT INTO
+    persist_queue (guild_id, room_id, track, played, time)
+VALUES
+    (
+        :guild_id, :room_id, :track, :played, :time
+    )
+ON CONFLICT (guild_id, room_id, time) DO
+NOTHING
 """
