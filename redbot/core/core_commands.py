@@ -1903,7 +1903,7 @@ class Core(commands.Cog, CoreLogic):
             user_or_role = discord.Object(id=user_or_role)
             user = True
 
-        if user and await ctx.bot.is_owner(user_or_role):
+        if user and (user_or_role.id == ctx.author.id or await ctx.bot.is_owner(user_or_role)):
             await ctx.send(_("You cannot blacklist an owner!"))
             return
 
