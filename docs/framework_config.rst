@@ -372,14 +372,16 @@ Best practices and performance notes
 ************************************
 
 Config prioritizes being a safe data store without developers needing to
-know how end users have configured their bot, or require a database setup.
+know how end users have configured their bot. 
+
 This does come with some performance costs, so keep the following in mind when choosing to
 develop using config
 
 * Config use in events should be kept minimal and should only occur
   after confirming the event needs to interact with config
 
-* Caching frequently used things, especially things used by events, results in faster code.
+* Caching frequently used things, especially things used by events, 
+  results in faster and less event loop blocking code.
 
 * Only use config's context managers when you intend to modify data.
 
