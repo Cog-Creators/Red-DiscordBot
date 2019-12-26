@@ -1907,7 +1907,7 @@ class Core(commands.Cog, CoreLogic):
             if user_or_role.id == ctx.author.id:
                 await ctx.send(_("You cannot blacklist yourself!"))
                 return
-            if user_or_role.id == ctx.guild.owner_id:
+            if user_or_role.id == ctx.guild.owner_id and not await ctx.bot.is_owner(ctx.author):
                 await ctx.send(_("You cannot blacklist the guild owner!"))
                 return
             if await ctx.bot.is_owner(user_or_role):
