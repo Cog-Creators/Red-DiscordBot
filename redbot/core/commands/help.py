@@ -108,7 +108,7 @@ class RedHelpFormatter:
     While currently, there is a global formatter, later plans include a context specific
     formatter selector as well as an API for cogs to register/un-register a formatter with the bot.
 
-    When implementing your own formatter, at minimum you must provide an implementation of 
+    When implementing your own formatter, at minimum you must provide an implementation of
     `send_help` with identical signature.
 
     While this exists as a class for easy partial overriding, most implementations
@@ -116,9 +116,9 @@ class RedHelpFormatter:
     """
 
     async def send_help(self, ctx: Context, help_for: HelpTarget = None):
-        """ 
-        This delegates to other functions. 
-        
+        """
+        This delegates to other functions.
+
         For most cases, you should use this and only this directly.
         """
         if help_for is None or isinstance(help_for, dpy_commands.bot.BotBase):
@@ -271,16 +271,23 @@ class RedHelpFormatter:
 
     @staticmethod
     def group_embed_fields(fields: List[EmbedField], max_chars=1000):
+
         curr_group = []
         ret = []
+        current_count = 0
+
         for f in fields:
-            curr_group.append(f)
-            if sum(len(f.value) for f in curr_group) > max_chars:
+            f_len = len(f.value) + len(f.name)
+            if curr_group and (f_len + current_count > max_chars):
                 ret.append(curr_group)
                 curr_group = []
-
-        if len(curr_group) > 0:
-            ret.append(curr_group)
+                current_count = 0
+            curr_group.append(f)
+            current_count += f_len
+        else:
+            # Loop cleanup here
+            if curr_group:
+                ret.append(curr_group)
 
         return ret
 
@@ -289,12 +296,42 @@ class RedHelpFormatter:
         pages = []
 
         page_char_limit = await ctx.bot._config.help.page_char_limit()
+        page_char_limit = min(page_char_limit, 5990)  # Just in case someone was manually...
+
+        author_info = {"name": f"{ctx.me.display_name} Help Menu", "icon_url": ctx.me.avatar_url}
+
+        # Offset calculation here is for total embed size limit
+        # 20 accounts for# *Page {i} of {page_count}*
+        offset = len(author_info["name"]) + 20
+        foot_text = embed_dict["footer"]["text"]
+        if foot_text:
+            offset += len(foot_text)
+        offset += len(embed_dict["embed"]["description"])
+        offset += len(embed_dict["embed"]["title"])
+
+        # In order to only change the size of embeds when neccessary for this rather
+        # than change the existing behavior for people uneffected by this
+        # we're only modifying the page char limit should they be impacted.
+        # We could consider changing this to always just subtract the offset,
+        # But based on when this is being handled (very end of 3.2 release)
+        # I'd rather not stick a major visual behavior change in at the last moment.
+        if page_char_limit + offset > 5990:
+            # This is still neccessary with the max interaction above
+            # While we could subtract 100% of the time the offset from page_char_limit
+            # the intent here is to shorten again
+            # *only* when neccessary, by the exact neccessary amount
+            # To retain a visual match with prior behavior.
+            page_char_limit = 5990 - offset
+        elif page_char_limit < 250:
+            # Prevents an edge case where a combination of long cog help and low limit
+            # Could prevent anything from ever showing up.
+            # This lower bound is safe based on parts of embed in use.
+            page_char_limit = 250
+
         field_groups = self.group_embed_fields(embed_dict["fields"], page_char_limit)
 
         color = await ctx.embed_color()
         page_count = len(field_groups)
-
-        author_info = {"name": f"{ctx.me.display_name} Help Menu", "icon_url": ctx.me.avatar_url}
 
         if not field_groups:  # This can happen on single command without a docstring
             embed = discord.Embed(color=color, **embed_dict["embed"])
