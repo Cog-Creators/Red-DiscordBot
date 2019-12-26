@@ -1319,7 +1319,7 @@ class Core(commands.Cog, CoreLogic):
         Please note that setting a relatively small character limit may
         mean some pages will exceed this limit.
         """
-        if limit = 500:
+        if limit < 500:
             await ctx.send(_("You must give a value of at least 500 characters."))
             return
 
