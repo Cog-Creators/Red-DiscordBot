@@ -316,6 +316,11 @@ class RedHelpFormatter:
         # But based on when this is being handled (very end of 3.2 release)
         # I'd rather not stick a major visual behavior change in at the last moment.
         if page_char_limit + offset > 5990:
+            # This is still neccessary with the max interaction above
+            # While we could subtract 100% of the time the offset from page_char_limit
+            # the intent here is to shorten again
+            # *only* when neccessary, by the exact neccessary amount
+            # To retain a visual match with prior behavior.
             page_char_limit = 5990 - offset
         elif page_char_limit < 250:
             # Prevents an edge case where a combination of long cog help and low limit
