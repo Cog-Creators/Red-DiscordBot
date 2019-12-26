@@ -24,8 +24,15 @@ class Context(commands.Context):
     Attributes
     ----------
     assume_yes: bool
-        Whether or not interactive checks should be assumed to be yes.
+        Whether or not interactive checks should
+        be skipped and assumed to be confirmed.
+
         This is intended for allowing automation of tasks.
+
+        An example of this would be scheduled commands
+        not requiring interaction if the cog developer
+        checks this value prior to confirming something interactively.
+
         Depending on the potential impact of a command,
         it may still be appropriate not to use this setting.
     permission_state: PermState
