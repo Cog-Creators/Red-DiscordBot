@@ -11,6 +11,9 @@ Config was introduced in V3 as a way to make data storage easier and safer for a
 It will take some getting used to as the syntax is entirely different from what Red has used before, but we believe
 Config will be extremely beneficial to both cog developers and end users in the long run.
 
+.. note:: While config is great for storing data safely, there are some caveats to writing performant code which uses it.
+          Make sure to read the section on best practices for more of these details.
+
 ***********
 Basic Usage
 ***********
@@ -363,6 +366,30 @@ much the same way they would in V2. The following examples will demonstrate how 
         cog = ExampleCog()
         await cog.load_data()
         bot.add_cog(cog)
+
+************************************
+Best practices and performance notes
+************************************
+
+Config prioritizes being a safe data store without developers needing to
+know how end users have configured their bot. 
+
+This does come with some performance costs, so keep the following in mind when choosing to
+develop using config
+
+* Config use in events should be kept minimal and should only occur
+  after confirming the event needs to interact with config
+
+* Caching frequently used things, especially things used by events, 
+  results in faster and less event loop blocking code.
+
+* Only use config's context managers when you intend to modify data.
+
+* While config is a great general use option, it may not always be the right one for you. 
+  As a cog developer, even though config doesn't require one,
+  you can choose to require a database or store to something such as an sqlite
+  database stored within your cog's datapath.
+
 
 *************
 API Reference
