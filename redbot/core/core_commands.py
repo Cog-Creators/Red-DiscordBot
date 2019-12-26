@@ -1317,10 +1317,12 @@ class Core(commands.Cog, CoreLogic):
         mean some pages will exceed this limit. This is because categories
         are never spread across multiple pages in the help message.
 
-        The default value is 1000 characters.
+        The default value is 1000 characters. The minimum value is 500.
+        The maximum is based on the lower of what you provide and what discord allows.
+        In some rare cases, the limit provided may be exceeded by up to 250 characters.
         """
-        if limit <= 0:
-            await ctx.send(_("You must give a positive value!"))
+        if limit <= 500:
+            await ctx.send(_("You must give a value of at least 500 characters."))
             return
 
         await ctx.bot._config.help.page_char_limit.set(limit)

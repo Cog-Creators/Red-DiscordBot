@@ -271,17 +271,22 @@ class RedHelpFormatter:
 
     @staticmethod
     def group_embed_fields(fields: List[EmbedField], max_chars=1000):
+
         curr_group = []
         ret = []
+        current_count = 0
 
         for f in fields:
-            curr_group.append(f)
-            if sum(len(f.value) for f in curr_group) > max_chars:
+            f_len = len(f.value) + len(f.name)
+            if f_len + current_count > max_chars:
                 ret.append(curr_group)
                 curr_group = []
-
-        if len(curr_group) > 0:
-            ret.append(curr_group)
+                current_count = 0
+            curr_group.append(f)
+            current_count += f_len
+        else:
+            if curr_group:
+                ret.append(curr_group)
 
         return ret
 
@@ -311,6 +316,11 @@ class RedHelpFormatter:
         # I'd rather not stick a major visual behavior change in at the last moment.
         if page_char_limit + offset > 5990:
             page_char_limit = 5990 - offset
+        elif page_char_limit < 250:
+            # Prevents an edge case where a combination of long cog help and low limit
+            # Could prevent anything from ever showing up.
+            # This lower bound is safe based on parts of embed in use.
+            page_char_limit = 250
 
         field_groups = self.group_embed_fields(embed_dict["fields"], page_char_limit)
 
