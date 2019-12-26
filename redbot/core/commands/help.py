@@ -300,7 +300,7 @@ class RedHelpFormatter:
         foot_text = embed_dict["footer"]["text"]
         if foot_text:
             offset += len(foot_text)
-        offset += len(embed_dict["description"])
+        offset += len(embed_dict["embed"]["description"])
 
         # In order to only change the size of embeds when neccessary for this rather
         # than change the existing behavior for people uneffected by this
