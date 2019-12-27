@@ -1,0 +1,1 @@
+``[p]cog info`` will now show cog authors.
