@@ -147,6 +147,9 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         self._permissions_hooks: List[commands.CheckPredicate] = []
 
+        self._close_queue: Optional[asyncio.Queue] = None
+        self._queue_worker: Optional[asyncio.Task] = None
+
     @property
     def cog_mgr(self) -> NoReturn:
         raise AttributeError("Please don't mess with the cog manager internals.")
@@ -392,10 +395,20 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
     # end Config migrations
 
+    async def _queue_loop(self):
+        while True:
+            to_close = await self._close_queue.get()
+            try:
+                await to_close.close()
+            except Exception as exc:
+                log.exception("Failed to a close object %r", to_close, exc_info=exc)
+
     async def pre_flight(self, cli_flags):
         """
         This should only be run once, prior to connecting to discord.
         """
+        self._close_queue = asyncio.Queue()
+        self._queue_worker = asyncio.create_task(self._queue_loop())
         await self._maybe_update_config()
 
         init_global_checks(self)
@@ -452,6 +465,17 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         cli_flags = kwargs.pop("cli_flags")
         await self.pre_flight(cli_flags=cli_flags)
         return await super().start(*args, **kwargs)
+
+    def submit_for_close(self, obj):
+        """
+        Put an object in a queue for closing.
+        The object must implement a coroutine ``close`` taking no arguments.
+
+        Examples
+        --------
+        >>> bot.submit_for_close(asyncio_client_session)  # in cog_unload
+        """
+        self._close_queue.put_nowait(obj)
 
     async def send_help_for(
         self, ctx: commands.Context, help_for: Union[commands.Command, commands.GroupMixin, str]
@@ -993,6 +1017,8 @@ class Red(RedBase, discord.AutoShardedClient):
             await self.rpc.close()
         except AttributeError:
             pass
+        await self._close_queue.join()
+        self._queue_worker.cancel()
 
     async def shutdown(self, *, restart: bool = False):
         """Gracefully quit Red.
