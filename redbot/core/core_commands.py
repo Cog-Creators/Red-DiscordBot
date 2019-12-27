@@ -1911,7 +1911,7 @@ class Core(commands.Cog, CoreLogic):
                 await ctx.send(_("You cannot blacklist the guild owner!"))
                 return
             if await ctx.bot.is_owner(user_or_role):
-                await ctx.send(_("You cannot blacklist an owner!"))
+                await ctx.send(_("You cannot blacklist a bot owner!"))
                 return
 
         async with ctx.bot._config.guild(ctx.guild).blacklist() as curr_list:
