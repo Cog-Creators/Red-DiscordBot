@@ -1705,6 +1705,10 @@ class Core(commands.Cog, CoreLogic):
         """
         curr_list = await ctx.bot._config.whitelist()
 
+        if not curr_list:
+            await ctx.send("Whitelist is empty.")
+            return
+
         msg = _("Whitelisted Users:")
         for user in curr_list:
             msg += "\n\t- {}".format(user)
@@ -1767,6 +1771,10 @@ class Core(commands.Cog, CoreLogic):
         Lists blacklisted users.
         """
         curr_list = await ctx.bot._config.blacklist()
+
+        if not curr_list:
+            await ctx.send("Blacklist is empty.")
+            return
 
         msg = _("Blacklisted Users:")
         for user in curr_list:
@@ -1837,6 +1845,10 @@ class Core(commands.Cog, CoreLogic):
         Lists whitelisted users and roles.
         """
         curr_list = await ctx.bot._config.guild(ctx.guild).whitelist()
+
+        if not curr_list:
+            await ctx.send("Local whitelist is empty.")
+            return
 
         msg = _("Whitelisted Users and roles:")
         for obj in curr_list:
@@ -1922,6 +1934,10 @@ class Core(commands.Cog, CoreLogic):
         Lists blacklisted users and roles.
         """
         curr_list = await ctx.bot._config.guild(ctx.guild).blacklist()
+
+        if not curr_list:
+            await ctx.send("Local blacklist is empty.")
+            return
 
         msg = _("Blacklisted Users and Roles:")
         for obj in curr_list:
