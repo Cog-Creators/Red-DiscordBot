@@ -1,0 +1,2 @@
+New method: ``bot.submit_for_close``.
+Can pass an object with a coroutine method ``close`` to be closed by the bot asynchronously from synchronous cleanup code (such as ``cog_unload``)
