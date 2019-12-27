@@ -223,6 +223,11 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         ------
         TypeError
             Did not provide ``who`` or ``who_id``
+            
+        Returns
+        -------
+        bool
+            `True` if user is allowed to run things, `False` otherwise
         """
         # Contributor Note:
         # All config calls are delayed until needed in this section
@@ -254,6 +259,9 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                 return False
 
         if guild:
+            if guild.owner_id == who.id:
+                return True
+            
             # The delayed expansion of ids to check saves time in the DM case.
             # Converting to a set reduces the total lookup time in section
             if mocked:
