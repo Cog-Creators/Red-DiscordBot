@@ -1237,9 +1237,9 @@ class Downloader(commands.Cog):
             "Command: {command}\nCog name: {cog}\nMade by: {author}\nRepo: {repo_url}\n"
         ).format(command=command_name, author=made_by, repo_url=repo_url, cog=cog_name)
         if cog_installable.repo is not None and cog_installable.repo.branch:
-            msg += _(
-                "Repo branch: {branch_name}\n"
-            ).format(branch_name=cog_installable.repo.branch)
+            msg += _("Repo branch: {branch_name}\n").format(
+                branch_name=cog_installable.repo.branch
+            )
 
         return msg
 
