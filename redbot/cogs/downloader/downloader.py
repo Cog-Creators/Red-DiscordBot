@@ -506,10 +506,20 @@ class Downloader(commands.Cog):
     @repo.command(name="info", usage="<repo_name>")
     async def _repo_info(self, ctx: commands.Context, repo: Repo) -> None:
         """Show information about a repo."""
-        msg = _("Information on {repo.name}:\n{description}").format(
-            repo=repo, description=repo.description or ""
+        made_by = ", ".join(repo.author) or _("Missing from info.json")
+
+        information = _("Repo url: {repo_url}\n").format(repo_url=repo.clean_url)
+        if repo.branch:
+            information += _("Branch: {branch_name}\n").format(branch_name=repo.branch)
+        information += _("Made by: {author}\nDescription:\n{description}").format(
+            author=made_by, description=repo.description or ""
         )
-        await ctx.send(box(msg))
+
+        msg = _("Information on {repo_name} repo:{information}").format(
+            repo_name=inline(repo.name), information=box(information)
+        )
+
+        await ctx.send(msg)
 
     @repo.command(name="update")
     async def _repo_update(self, ctx: commands.Context, *repos: Repo) -> None:
@@ -944,10 +954,12 @@ class Downloader(commands.Cog):
             return
 
         msg = _(
-            "Information on {cog_name}:\n{description}\n\nRequirements: {requirements}"
+            "Information on {cog_name}:\n{description}\n\n"
+            "Made by: {author}\nRequirements: {requirements}"
         ).format(
             cog_name=cog.name,
             description=cog.description or "",
+            author=", ".join(cog.author) or _("Missing from info.json")
             requirements=", ".join(cog.requirements) or "None",
         )
         await ctx.send(box(msg))
@@ -1221,7 +1233,10 @@ class Downloader(commands.Cog):
             repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
             cog_name = cog_installable.__class__.__name__
 
-        msg = _("Command: {command}\nMade by: {author}\nRepo: {repo_url}\nCog name: {cog}")
+        msg = _("Command: {command}\n")
+        if cog_installable.repo is not None and cog_installable.repo.branch:
+            msg += _("Branch: {branch_name}\n").format(branch_name=repo.branch)
+        msg += _("Made by: {author}\nRepo: {repo_url}\nCog name: {cog}")
 
         return msg.format(command=command_name, author=made_by, repo_url=repo_url, cog=cog_name)
 
