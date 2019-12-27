@@ -401,7 +401,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             try:
                 await to_close.close()
             except Exception as exc:
-                log.exception("Failed to a close object %r", to_close, exc_info=exc)
+                log.exception("Failed to close object %r", to_close, exc_info=exc)
 
     async def pre_flight(self, cli_flags):
         """
