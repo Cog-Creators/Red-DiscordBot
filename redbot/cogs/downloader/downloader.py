@@ -859,6 +859,7 @@ class Downloader(commands.Cog):
             pinned_cogs = {cog for cog in cogs_to_check if cog.pinned}
             cogs_to_check -= pinned_cogs
             if not cogs_to_check:
+                cogs_to_update = libs_to_update = ()
                 message += _("There were no cogs to check.")
                 if pinned_cogs:
                     cognames = [cog.name for cog in pinned_cogs]
