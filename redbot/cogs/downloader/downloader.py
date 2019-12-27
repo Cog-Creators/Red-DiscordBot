@@ -959,7 +959,7 @@ class Downloader(commands.Cog):
         ).format(
             cog_name=cog.name,
             description=cog.description or "",
-            author=", ".join(cog.author) or _("Missing from info.json")
+            author=", ".join(cog.author) or _("Missing from info.json"),
             requirements=", ".join(cog.requirements) or "None",
         )
         await ctx.send(box(msg))
@@ -1235,7 +1235,7 @@ class Downloader(commands.Cog):
 
         msg = _("Command: {command}\n")
         if cog_installable.repo is not None and cog_installable.repo.branch:
-            msg += _("Branch: {branch_name}\n").format(branch_name=repo.branch)
+            msg += _("Branch: {branch_name}\n").format(branch_name=cog_installable.repo.branch)
         msg += _("Made by: {author}\nRepo: {repo_url}\nCog name: {cog}")
 
         return msg.format(command=command_name, author=made_by, repo_url=repo_url, cog=cog_name)
