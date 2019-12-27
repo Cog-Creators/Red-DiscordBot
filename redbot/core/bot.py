@@ -261,7 +261,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         if guild:
             if guild.owner_id == who.id:
                 return True
-            
+
             # The delayed expansion of ids to check saves time in the DM case.
             # Converting to a set reduces the total lookup time in section
             if mocked:
