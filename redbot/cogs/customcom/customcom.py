@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from inspect import Parameter
 from collections import OrderedDict
 from typing import Mapping, Tuple, Dict, Set
+from urllib.parse import quote_plus
 
 import discord
 
@@ -521,6 +522,7 @@ class CustomCommands(commands.Cog):
             "set": set,
             "str": str,
             "tuple": tuple,
+            "query": quote_plus,
         }
         indices = [int(a[0]) for a in args]
         low = min(indices)
