@@ -473,7 +473,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         Examples
         --------
-        >>> bot.submit_for_close(asyncio_client_session)  # in cog_unload
+        >>> bot.submit_for_close(aiohttp_client_session)  # in cog_unload
         """
         self._close_queue.put_nowait(obj)
 
