@@ -1915,9 +1915,16 @@ class Core(commands.Cog, CoreLogic):
             user_or_role = discord.Object(id=user_or_role)
             user = True
 
-        if user and await ctx.bot.is_owner(user_or_role):
-            await ctx.send(_("You cannot blacklist an owner!"))
-            return
+        if user:
+            if user_or_role.id == ctx.author.id:
+                await ctx.send(_("You cannot blacklist yourself!"))
+                return
+            if user_or_role.id == ctx.guild.owner_id and not await ctx.bot.is_owner(ctx.author):
+                await ctx.send(_("You cannot blacklist the guild owner!"))
+                return
+            if await ctx.bot.is_owner(user_or_role):
+                await ctx.send(_("You cannot blacklist a bot owner!"))
+                return
 
         async with ctx.bot._config.guild(ctx.guild).blacklist() as curr_list:
             if user_or_role.id not in curr_list:
