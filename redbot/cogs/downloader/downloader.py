@@ -1233,14 +1233,15 @@ class Downloader(commands.Cog):
             repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
             cog_name = cog_installable.__class__.__name__
 
-        msg = _("Command: {command}\nMade by: {author}\nRepo: {repo_url}\n")
+        msg = _(
+            "Command: {command}\nCog name: {cog}\nMade by: {author}\nRepo: {repo_url}\n"
+        ).format(command=command_name, author=made_by, repo_url=repo_url, cog=cog_name)
         if cog_installable.repo is not None and cog_installable.repo.branch:
             msg += _(
                 "Repo branch: {branch_name}\n"
             ).format(branch_name=cog_installable.repo.branch)
-        msg += _("Cog name: {cog}")
 
-        return msg.format(command=command_name, author=made_by, repo_url=repo_url, cog=cog_name)
+        return msg
 
     def cog_name_from_instance(self, instance: object) -> str:
         """Determines the cog name that Downloader knows from the cog instance.
