@@ -12,7 +12,7 @@ import traceback
 from collections import namedtuple, Counter
 from io import StringIO
 from pathlib import Path
-from typing import List, Optional, Tuple, Union, cast
+from typing import List, Optional, Tuple, Union, cast, TYPE_CHECKING
 
 import aiohttp
 import discord
@@ -145,7 +145,10 @@ class Audio(commands.Cog):
         self.config.register_custom(PlaylistScope.USER.value, **_playlist)
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)
-        self.music_cache: MusicCache = None
+        if TYPE_CHECKING:
+            self.music_cache: MusicCache
+        else:
+            self.music_cache = None
         self._error_counter = Counter()
         self._error_timer = {}
         self._disconnected_players = {}

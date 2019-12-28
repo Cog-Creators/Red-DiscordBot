@@ -7,7 +7,7 @@ import logging
 import random
 import time
 from collections import namedtuple
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 
 import aiohttp
 import discord
@@ -30,9 +30,14 @@ _ = Translator("Audio", __file__)
 _TOP_100_GLOBALS = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn6puJdseH2Rt9sMvt9E2M4i"
 _TOP_100_US = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn5rWitrRWFKdm-ulaFiIyoK"
 
-_database: CacheInterface = None
-_bot: Red = None
-_config: Config = None
+if TYPE_CHECKING:
+    _database: CacheInterface
+    _bot: Red
+    _config: Config
+else:
+    _database = None
+    _bot = None
+    _config = None
 
 
 def _pass_config_to_apis(config: Config, bot: Red):

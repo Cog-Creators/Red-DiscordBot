@@ -4,7 +4,7 @@ import json
 import logging
 import time
 from dataclasses import dataclass, field
-from typing import List, Dict, Union, Optional, Tuple
+from typing import List, Dict, Union, Optional, Tuple, TYPE_CHECKING
 
 import apsw
 
@@ -15,9 +15,17 @@ from redbot.core.data_manager import cog_data_path
 from .errors import InvalidTableError
 
 log = logging.getLogger("red.audio.database")
-_config: Config = None
-_bot: Red = None
-database_connection: apsw.Connection = None
+
+if TYPE_CHECKING:
+    database_connection: apsw.Connection
+    _bot: Red
+    _config: Config
+else:
+    _database = None
+    _bot = None
+    database_connection = None
+
+
 SCHEMA_VERSION = 3
 SQLError = apsw.ExecutionCompleteError
 
