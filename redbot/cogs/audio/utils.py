@@ -4,7 +4,7 @@ import functools
 import re
 import time
 from enum import Enum, unique
-from typing import Mapping, Optional
+from typing import MutableMapping, Optional, TYPE_CHECKING
 from urllib.parse import urlparse
 
 import discord
@@ -47,8 +47,13 @@ _RE_YT_LIST_PLAYLIST = re.compile(
     r"^(https?://)?(www\.)?(youtube\.com|youtu\.?be)(/playlist\?).*(list=)(.*)(&|$)"
 )
 
-_config = None
-_bot = None
+if TYPE_CHECKING:
+    _config: Config
+    _bot: Red
+else:
+    _config = None
+    _bot = None
+
 _ = Translator("Audio", __file__)
 
 
@@ -187,7 +192,7 @@ async def remove_react(message, react_emoji, react_user) -> None:
         await message.remove_reaction(react_emoji, react_user)
 
 
-async def clear_react(bot: Red, message: discord.Message, emoji: dict = None) -> None:
+async def clear_react(bot: Red, message: discord.Message, emoji: MutableMapping = None) -> None:
     try:
         await message.clear_reactions()
     except discord.Forbidden:
@@ -231,28 +236,17 @@ def get_track_description_unformatted(track) -> Optional[str]:
         return escape(track.to_string_user() + " ", formatting=True)
 
 
-def track_creator(player, position=None, other_track=None) -> Mapping:
+def track_creator(player, position=None, other_track=None) -> MutableMapping:
     if position == "np":
         queued_track = player.current
     elif position is None:
         queued_track = other_track
     else:
         queued_track = player.queue[position]
-    track_keys = queued_track._info.keys()
-    track_values = queued_track._info.values()
-    track_id = queued_track.track_identifier
-    track_info = {}
-    for k, v in zip(track_keys, track_values):
-        track_info[k] = v
-    keys = ["track", "info"]
-    values = [track_id, track_info]
-    track_obj = {}
-    for key, value in zip(keys, values):
-        track_obj[key] = value
-    return track_obj
+    return track_to_json(queued_track)
 
 
-def track_to_json(track: lavalink.Track) -> Mapping:
+def track_to_json(track: lavalink.Track) -> MutableMapping:
     track_keys = track._info.keys()
     track_values = track._info.values()
     track_id = track.track_identifier
@@ -453,7 +447,9 @@ class CacheLevel:
 
 
 class Notifier:
-    def __init__(self, ctx: commands.Context, message: discord.Message, updates: dict, **kwargs):
+    def __init__(
+        self, ctx: commands.Context, message: discord.Message, updates: MutableMapping, **kwargs
+    ):
         self.context = ctx
         self.message = message
         self.updates = updates

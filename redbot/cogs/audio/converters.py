@@ -1,7 +1,7 @@
 import argparse
 import functools
 import re
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple, Union, MutableMapping, TYPE_CHECKING
 
 import discord
 
@@ -25,8 +25,12 @@ __all__ = [
     "get_playlist_converter",
 ]
 
-_config: Config = None
-_bot: Red = None
+if TYPE_CHECKING:
+    _bot: Red
+    _config: Config
+else:
+    _bot = None
+    _config = None
 
 _SCOPE_HELP = """
 Scope must be a valid version of one of the following:
@@ -138,7 +142,7 @@ async def global_unique_user_finder(
 
 
 class PlaylistConverter(commands.Converter):
-    async def convert(self, ctx: commands.Context, arg: str) -> dict:
+    async def convert(self, ctx: commands.Context, arg: str) -> MutableMapping:
         global_matches = await get_all_playlist_converter(
             PlaylistScope.GLOBAL.value, _bot, arg, guild=ctx.guild, author=ctx.author
         )
