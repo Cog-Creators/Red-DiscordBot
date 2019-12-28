@@ -430,7 +430,7 @@ def humanize_timedelta(
     """
 
     try:
-        obj = seconds or timedelta.total_seconds()
+        obj = seconds if seconds is not None else timedelta.totalseconds()
     except AttributeError:
         raise ValueError("You must provide either a timedelta or a number of seconds")
 
