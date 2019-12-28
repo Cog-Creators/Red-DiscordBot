@@ -43,10 +43,10 @@ class ServerManager:
     _java_available: ClassVar[Optional[bool]] = None
     _java_version: ClassVar[Optional[Tuple[int, int]]] = None
     _up_to_date: ClassVar[Optional[bool]] = None
-    _blacklisted_archs = []
+    _blacklisted_archs: List[str] = []
 
     def __init__(self) -> None:
-        self.ready = asyncio.Event()
+        self.ready: asyncio.Event = asyncio.Event()
 
         self._proc: Optional[asyncio.subprocess.Process] = None  # pylint:disable=no-member
         self._monitor_task: Optional[asyncio.Task] = None

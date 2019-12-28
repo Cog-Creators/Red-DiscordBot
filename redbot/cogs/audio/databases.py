@@ -4,7 +4,7 @@ import json
 import logging
 import time
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Tuple, Union, MutableMapping, Mapping
 
 import apsw
 
@@ -17,14 +17,22 @@ from .sql_statements import *
 from .utils import PlaylistScope
 
 log = logging.getLogger("red.audio.database")
-_config: Config = None
-_bot: Red = None
-database_connection: apsw.Connection = None
+
+if TYPE_CHECKING:
+    database_connection: apsw.Connection
+    _bot: Red
+    _config: Config
+else:
+    _database = None
+    _bot = None
+    database_connection = None
+
+
 SCHEMA_VERSION = 3
 SQLError = apsw.ExecutionCompleteError
 
 
-_PARSER = {
+_PARSER: Mapping = {
     "youtube": {
         "insert": YOUTUBE_UPSERT,
         "youtube_url": {"query": YOUTUBE_QUERY},
@@ -62,7 +70,7 @@ class PlaylistFetchResult:
     scope_id: int
     author_id: int
     playlist_url: Optional[str] = None
-    tracks: List[dict] = field(default_factory=lambda: [])
+    tracks: List[MutableMapping] = field(default_factory=lambda: [])
 
     def __post_init__(self):
         if isinstance(self.tracks, str):
@@ -71,7 +79,7 @@ class PlaylistFetchResult:
 
 @dataclass
 class CacheFetchResult:
-    query: Optional[Union[str, dict]]
+    query: Optional[Union[str, MutableMapping]]
     last_updated: int
 
     def __post_init__(self):
@@ -85,7 +93,7 @@ class CacheFetchResult:
 
 @dataclass
 class CacheLastFetchResult:
-    tracks: List[dict] = field(default_factory=lambda: [])
+    tracks: List[MutableMapping] = field(default_factory=lambda: [])
 
     def __post_init__(self):
         if isinstance(self.tracks, str):
@@ -95,7 +103,7 @@ class CacheLastFetchResult:
 @dataclass
 class CacheGetAllLavalink:
     query: str
-    data: List[dict] = field(default_factory=lambda: [])
+    data: List[MutableMapping] = field(default_factory=lambda: [])
 
     def __post_init__(self):
         if isinstance(self.data, str):
@@ -144,7 +152,7 @@ class CacheInterface:
             return
         self.database.execute(PRAGMA_SET_user_version, {"version": SCHEMA_VERSION})
 
-    async def insert(self, table: str, values: List[dict]):
+    async def insert(self, table: str, values: List[MutableMapping]):
         try:
             query = _PARSER.get(table, {}).get("insert")
             if query is None:
@@ -293,8 +301,8 @@ class PlaylistInterface:
         playlist_name: str,
         scope_id: int,
         author_id: int,
-        playlist_url: str,
-        tracks: List[dict],
+        playlist_url: Optional[str],
+        tracks: List[MutableMapping],
     ):
         scope_type = self.get_scope_type(scope)
         self.cursor.execute(
