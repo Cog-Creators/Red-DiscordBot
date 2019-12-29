@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     _bot: Red
     _config: Config
 else:
-    _database = None
+    _config = None
     _bot = None
     database_connection = None
 
