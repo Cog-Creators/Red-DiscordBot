@@ -417,7 +417,7 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
     exclusions = [
         "__pycache__",
         "Lavalink.jar",
-        "cache.db",
+        "Audio.db",  # TODO: Remove this once backup is made offline only
         os.path.join("Downloader", "lib"),
         os.path.join("CogManager", "cogs"),
         os.path.join("RepoManager", "repos"),
