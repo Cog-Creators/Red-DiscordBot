@@ -6,7 +6,7 @@ import os
 import sys
 from copy import deepcopy
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, Union
 
 import appdirs
 import click
@@ -199,13 +199,13 @@ async def do_migration(
     return new_storage_details
 
 
-async def create_backup(instance: str) -> None:
+async def create_backup(instance: str, destination_folder: Path = Path.home()) -> None:
     data_manager.load_basic_configuration(instance)
     backend_type = get_current_backend(instance)
     if backend_type != BackendType.JSON:
         await do_migration(backend_type, BackendType.JSON)
     print("Backing up the instance's data...")
-    backup_fpath = await red_create_backup()
+    backup_fpath = await red_create_backup(destination_folder)
     if backup_fpath is not None:
         print(f"A backup of {instance} has been made. It is at {backup_fpath}")
     else:
@@ -279,6 +279,7 @@ async def remove_instance_interaction():
 @click.option("--debug", type=bool)
 @click.pass_context
 def cli(ctx, debug):
+    """Create a new instance."""
     level = logging.DEBUG if debug else logging.INFO
     redbot.logging.init_logging(level=level, location=Path.cwd() / "red_setup_logs")
     if ctx.invoked_subcommand is None:
@@ -342,6 +343,7 @@ def delete(
     drop_db: Optional[bool],
     remove_datapath: Optional[bool],
 ):
+    """Removes an instance."""
     loop = asyncio.get_event_loop()
     loop.run_until_complete(
         remove_instance(
@@ -354,6 +356,7 @@ def delete(
 @click.argument("instance", type=click.Choice(instance_list))
 @click.argument("backend", type=click.Choice(["json", "postgres"]))
 def convert(instance, backend):
+    """Convert data backend of an instance."""
     current_backend = get_current_backend(instance)
     target = get_target_backend(backend)
     data_manager.load_basic_configuration(instance)
@@ -377,6 +380,21 @@ def convert(instance, backend):
         conversion_log.info(
             f"Cannot convert {current_backend.value} to {target.value} at this time."
         )
+
+
+@cli.command()
+@click.argument("instance", type=click.Choice(instance_list))
+@click.argument(
+    "destination_folder",
+    type=click.Path(
+        exists=False, dir_okay=True, file_okay=False, resolve_path=True, writable=True
+    ),
+    default=Path.home(),
+)
+def backup(instance: str, destination_folder: Union[str, Path]) -> None:
+    """Backup instance's data."""
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(create_backup(instance, Path(destination_folder)))
 
 
 if __name__ == "__main__":

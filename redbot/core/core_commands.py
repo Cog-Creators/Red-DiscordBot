@@ -31,7 +31,6 @@ from . import (
     i18n,
     config,
 )
-from .utils import create_backup
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import (
     box,
@@ -1389,75 +1388,6 @@ class Core(commands.Cog, CoreLogic):
             pages = pagify("\n".join(locale_list), shorten_by=26)
 
         await ctx.send_interactive(pages, box_lang="Available Locales:")
-
-    @commands.command()
-    @checks.is_owner()
-    async def backup(self, ctx: commands.Context, *, backup_dir: str = None):
-        """Creates a backup of all data for this bot instance.
-
-        This backs up the bot's data and settings.
-        You may provide a path to a directory for the backup archive to
-        be placed in. If the directory does not exist, the bot will
-        attempt to create it.
-        """
-        if backup_dir is None:
-            dest = Path.home()
-        else:
-            dest = Path(backup_dir)
-
-        driver_cls = drivers.get_driver_class()
-        if driver_cls != drivers.JsonDriver:
-            await ctx.send(_("Converting data to JSON for backup..."))
-            async with ctx.typing():
-                await config.migrate(driver_cls, drivers.JsonDriver)
-
-        log.info("Creating backup for this instance...")
-        try:
-            backup_fpath = await create_backup(dest)
-        except OSError as exc:
-            await ctx.send(
-                _(
-                    "Creating the backup archive failed! Please check your console or logs for "
-                    "details."
-                )
-            )
-            log.exception("Failed to create backup archive", exc_info=exc)
-            return
-
-        if backup_fpath is None:
-            await ctx.send(_("Your datapath appears to be empty."))
-            return
-
-        log.info("Backup archive created successfully at '%s'", backup_fpath)
-        await ctx.send(
-            _("A backup has been made of this instance. It is located at `{path}`.").format(
-                path=backup_fpath
-            )
-        )
-        if backup_fpath.stat().st_size > 8_000_000:
-            await ctx.send(_("This backup is too large to send via DM."))
-            return
-        await ctx.send(_("Would you like to receive a copy via DM? (y/n)"))
-
-        pred = MessagePredicate.yes_or_no(ctx)
-        try:
-            await ctx.bot.wait_for("message", check=pred, timeout=60)
-        except asyncio.TimeoutError:
-            await ctx.send(_("Response timed out."))
-        else:
-            if pred.result is True:
-                await ctx.send(_("OK, it's on its way!"))
-                try:
-                    async with ctx.author.typing():
-                        await ctx.author.send(
-                            _("Here's a copy of the backup"), file=discord.File(str(backup_fpath))
-                        )
-                except discord.Forbidden:
-                    await ctx.send(_("I don't seem to be able to DM you. Do you have closed DMs?"))
-                except discord.HTTPException:
-                    await ctx.send(_("I could not send the backup file."))
-            else:
-                await ctx.send(_("OK then."))
 
     @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)
