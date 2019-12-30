@@ -31,7 +31,7 @@ from . import (
     i18n,
     config,
 )
-from .utils import create_backup
+from .utils._internal_utils import create_backup
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import (
     box,
