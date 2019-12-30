@@ -135,15 +135,16 @@ class YoutubeStream(Stream):
         log.critical(f"not_livestreams: {self.not_livestreams}")
         if not self.livestreams:
             raise OfflineStream()
-
-        for livestream_id in self.livestreams:  # This is technically redundant since we have the
-            # info from the RSS ... but incase you dont wanna deal with fully rewritting the
-            # code for this part, as this is only a 2 quota query.
-            params = {"key": self._token["api_key"], "id": livestream_id, "part": "snippet"}
+        # This is technically redundant since we have the
+        # info from the RSS ... but incase you dont wanna deal with fully rewritting the
+        # code for this part, as this is only a 2 quota query.
+        if self.livestreams:
+            params = {"key": self._token["api_key"], "id": self.livestreams[-1], "part": "snippet"}
             async with aiohttp.ClientSession() as session:
                 async with session.get(YOUTUBE_VIDEOS_ENDPOINT, params=params) as r:
                     data = await r.json()
             return self.make_embed(data)
+        raise OfflineStream()
 
     def make_embed(self, data):
         vid_data = data["items"][0]
