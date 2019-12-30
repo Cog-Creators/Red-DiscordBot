@@ -110,9 +110,9 @@ class YoutubeStream(Stream):
 
         for video_id in get_video_ids_from_feed(rssdata):
             if video_id in self.not_livestreams:
-                log.critical(f"video_id in not_livestreams: {video_id}")
+                log.debug(f"video_id in not_livestreams: {video_id}")
                 continue
-            log.critical(f"video_id not in not_livestreams: {video_id}")
+            log.debug(f"video_id not in not_livestreams: {video_id}")
             params = {
                 "key": self._token["api_key"],
                 "id": video_id,
