@@ -121,9 +121,12 @@ class YoutubeStream(Stream):
             async with aiohttp.ClientSession() as session:
                 async with session.get(YOUTUBE_VIDEOS_ENDPOINT, params=params) as r:
                     data = await r.json()
+                    stream_data = data.get("items", [{}])[0].get("liveStreamingDetails", {})
+                    log.debug(f"stream_data for {video_id}: {stream_data}")
                     if (
-                        data.get("liveStreamingDetails")
-                        and data.get("liveStreamingDetails") != "None"
+                        stream_data
+                        and stream_data != "None"
+                        and stream_data.get("actualEndTime", None) is None
                     ):
                         if video_id not in self.livestreams:
                             self.livestreams.append(data["items"][0]["id"])
@@ -131,10 +134,8 @@ class YoutubeStream(Stream):
                         self.not_livestreams.append(data["items"][0]["id"])
                         if video_id in self.livestreams:
                             self.livestreams.remove(video_id)
-        log.critical(f"livestreams: {self.livestreams}")
-        log.critical(f"not_livestreams: {self.not_livestreams}")
-        if not self.livestreams:
-            raise OfflineStream()
+        log.debug(f"livestreams for {self.name}: {self.livestreams}")
+        log.debug(f"not_livestreams for {self.name}: {self.not_livestreams}")
         # This is technically redundant since we have the
         # info from the RSS ... but incase you dont wanna deal with fully rewritting the
         # code for this part, as this is only a 2 quota query.

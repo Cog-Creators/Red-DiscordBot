@@ -328,16 +328,16 @@ class Streams(commands.Cog):
         """Set tokens for accessing streams."""
         pass
 
-    @streamset.command()
+    @streamset.command(name="timer")
     @checks.is_owner()
     async def _streamset_refresh_timer(self, ctx: commands.Context, refresh_time: int):
         """Set stream check refresh time."""
         if refresh_time < 60:
-            await ctx.send(_("You cannot set the refresh timer to less than 60 seconds"))
+            return await ctx.send(_("You cannot set the refresh timer to less than 60 seconds"))
 
         await self.db.refresh_timer.set(refresh_time)
         await ctx.send(
-            _("Refresh timer set to {refresh_time} second".format(refresh_time=refresh_time))
+            _("Refresh timer set to {refresh_time} seconds".format(refresh_time=refresh_time))
         )
 
     @streamset.command()
