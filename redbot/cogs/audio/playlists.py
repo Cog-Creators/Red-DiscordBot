@@ -34,6 +34,7 @@ __all__ = [
     "get_all_playlist_for_migration23",
     "database",
     "get_all_playlist_converter",
+    "get_playlist_database",
 ]
 
 FakePlaylist = namedtuple("Playlist", "author scope")
@@ -49,6 +50,11 @@ def _pass_config_to_playlist(config: Config, bot: Red):
         _bot = bot
     if database is None:
         database = PlaylistInterface()
+
+
+def get_playlist_database() -> Optional[PlaylistInterface]:
+    global database
+    return database
 
 
 def standardize_scope(scope: str) -> str:

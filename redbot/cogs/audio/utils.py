@@ -207,7 +207,7 @@ async def clear_react(bot: Red, message: discord.Message, emoji: MutableMapping 
 
 
 def get_track_description(track) -> Optional[str]:
-    if track and hasattr(track, "uri"):
+    if track and getattr(track, "uri", None):
         query = Query.process_input(track.uri)
         if query.is_local:
             if track.title != "Unknown title":
