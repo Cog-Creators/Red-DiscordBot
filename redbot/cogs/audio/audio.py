@@ -7763,7 +7763,7 @@ class Audio(commands.Cog):
     async def _currency_check(self, ctx: commands.Context, jukebox_price: int):
         jukebox = await self.config.guild(ctx.guild).jukebox()
         if jukebox and not await self._can_instaskip(ctx, ctx.author):
-            can_spend = bank.can_spend(ctx.author, jukebox_price)
+            can_spend = await bank.can_spend(ctx.author, jukebox_price)
             if can_spend:
                 await bank.withdraw_credits(ctx.author, jukebox_price)
             else:
