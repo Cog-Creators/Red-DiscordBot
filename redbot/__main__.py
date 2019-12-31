@@ -303,7 +303,6 @@ def main():  # TODO: 3.2.1 async def main, cleanup logic within.
     red = Red(
         cli_flags=cli_flags, description=description, dm_help=None, fetch_offline_members=True
     )
-    loop.run_until_complete(red._maybe_update_config())
 
     if cli_flags.edit:
         try:
