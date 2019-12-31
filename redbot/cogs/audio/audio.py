@@ -8029,6 +8029,12 @@ class Audio(commands.Cog):
             except (ValueError, KeyError, AttributeError):
                 pass
 
+    @commands.Cog.listener()
+    async def on_red_audio_queue_end(
+            self, guild: discord.Guild, track: lavalink.Track, requester: discord.Member
+    ):
+        self.music_cache.database.clean_up_old_entries()
+
     def cog_unload(self):
         if not self._cleaned_up:
             self.bot.dispatch("red_audio_unload", self)
