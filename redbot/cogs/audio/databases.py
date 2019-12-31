@@ -239,17 +239,17 @@ pragma user_version=3;
 _DELETE_LAVALINK_OLD = """
 DELETE FROM lavalink 
 WHERE 
-    last_updated > :maxage;
+    last_updated < :maxage;
 """
 _DELETE_YOUTUBE_OLD = """
 DELETE FROM youtube 
 WHERE 
-    last_updated > :maxage;
+    last_updated < :maxage;
 """
 _DELETE_SPOTIFY_OLD = """
 DELETE FROM spotify 
 WHERE 
-    last_updated > :maxage;
+    last_updated < :maxage;
 """
 
 
