@@ -624,8 +624,8 @@ class MusicCache:
                             single_track.extras.update(
                                 {
                                     "enqueue_time": int(time.time()),
-                                    "vc":           player.channel.id,
-                                    "requester":    ctx.author.id,
+                                    "vc": player.channel.id,
+                                    "requester": ctx.author.id,
                                 }
                             )
                             player.add(ctx.author, single_track)
@@ -640,8 +640,8 @@ class MusicCache:
                         single_track.extras.update(
                             {
                                 "enqueue_time": int(time.time()),
-                                "vc":           player.channel.id,
-                                "requester":    ctx.author.id,
+                                "vc": player.channel.id,
+                                "requester": ctx.author.id,
                             }
                         )
                         player.add(ctx.author, single_track)
@@ -943,8 +943,8 @@ class MusicCache:
             track.extras.update(
                 {
                     "enqueue_time": int(time.time()),
-                    "vc":           player.channel.id,
-                    "requester":    player.channel.guild.me.id,
+                    "vc": player.channel.id,
+                    "requester": player.channel.guild.me.id,
                 }
             )
             player.add(player.channel.guild.me, track)
