@@ -418,16 +418,17 @@ DROP TABLE IF EXISTS persist_queue ;
 """
 PERSIST_QUEUE_CREATE_TABLE = """
 CREATE TABLE IF NOT EXISTS persist_queue(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
     guild_id INTEGER NOT NULL,
     room_id INTEGER NOT NULL,
     track JSON NOT NULL,
     played BOOLEAN DEFAULT false,
-    time INTEGER NOT NULL
+    track_id TEXT NOT NULL,
+    time INTEGER NOT NULL,
+    PRIMARY KEY (guild_id, room_id, track_id)
 );
 """
 PERSIST_QUEUE_CREATE_INDEX = """
-CREATE INDEX IF NOT EXISTS track_index ON persist_queue (guild_id);
+CREATE INDEX IF NOT EXISTS track_index ON persist_queue (guild_id, track_id);
 """
 PERSIST_QUEUE_PLAYED = """
 UPDATE persist_queue
@@ -436,7 +437,7 @@ UPDATE persist_queue
 WHERE
     (
         guild_id = :guild_id
-        AND time = :time
+        AND track_id = :track_id
     )
 ;
 """
@@ -464,11 +465,13 @@ ORDER BY time ASC;
 """
 PERSIST_QUEUE_UPSERT = """
 INSERT INTO
-    persist_queue (guild_id, room_id, track, played, time)
+    persist_queue (guild_id, room_id, track, played, track_id, time)
 VALUES
     (
-        :guild_id, :room_id, :track, :played, :time
+        :guild_id, :room_id, :track, :played, :track_id, :time
     )
-ON CONFLICT (guild_id, room_id, time) DO
-NOTHING
+ON CONFLICT (guild_id, room_id, track_id) DO
+UPDATE
+    SET
+        time = excluded.time
 """
