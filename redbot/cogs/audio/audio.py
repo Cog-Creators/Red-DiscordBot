@@ -57,6 +57,7 @@ from .playlists import (
     get_all_playlist,
     get_all_playlist_for_migration23,
     get_playlist,
+    get_playlist_database,
 )
 from .utils import *
 
@@ -200,9 +201,9 @@ class Audio(commands.Cog):
             await self._migrate_config(
                 from_version=await self.config.schema_version(), to_version=_SCHEMA_VERSION
             )
-            import redbot.cogs.audio.playlists
-
-            redbot.cogs.audio.playlists.database.delete_scheduled()
+            dat = get_playlist_database()
+            if dat:
+                dat.delete_scheduled()
             self._restart_connect()
             self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
             lavalink.register_event_listener(self.event_handler)
@@ -5110,7 +5111,7 @@ class Audio(commands.Cog):
                 ).format(name=playlist.name, num=len(tracklist), id=playlist.id, scope=scope_name),
             )
 
-    @playlist.command(name="start", usage="<playlist_name_OR_id> [args]")
+    @playlist.command(name="start", aliases=["play"], usage="<playlist_name_OR_id> [args]")
     async def _playlist_start(
         self,
         ctx: commands.Context,
@@ -6782,7 +6783,7 @@ class Audio(commands.Cog):
                 search_choice = tracks[0 + (page * 5)]
         except IndexError:
             search_choice = tracks[-1]
-        if hasattr(search_choice, "uri"):
+        if getattr(search_choice, "uri", None):
             description = get_track_description(search_choice)
         else:
             search_choice = audio_dataclasses.Query.process_input(search_choice)
