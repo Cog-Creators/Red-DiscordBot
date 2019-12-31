@@ -13,7 +13,8 @@ import lavalink
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
-from redbot.core.utils.chat_formatting import bold, box, escape
+from redbot.core.utils.chat_formatting import bold, box
+from discord.utils import escape_markdown as escape
 
 from .audio_dataclasses import Query
 
@@ -211,15 +212,15 @@ def get_track_description(track) -> Optional[str]:
         query = Query.process_input(track.uri)
         if query.is_local:
             if track.title != "Unknown title":
-                return bold(escape(f"{track.author} - {track.title}", formatting=True)) + escape(
-                    f"\n{query.to_string_user()} ", formatting=True
+                return bold(escape(f"{track.author} - {track.title}")) + escape(
+                    f"\n{query.to_string_user()} "
                 )
             else:
-                return escape(query.to_string_user(), formatting=True)
+                return escape(query.to_string_user())
         else:
-            return bold(escape(f"[{track.title}]({track.uri}) ", formatting=True))
+            return bold(escape(f"[{track.title}]({track.uri}) "))
     elif hasattr(track, "to_string_user") and track.is_local:
-        return escape(track.to_string_user() + " ", formatting=True)
+        return escape(track.to_string_user() + " ")
 
 
 def get_track_description_unformatted(track) -> Optional[str]:
@@ -227,13 +228,13 @@ def get_track_description_unformatted(track) -> Optional[str]:
         query = Query.process_input(track.uri)
         if query.is_local:
             if track.title != "Unknown title":
-                return escape(f"{track.author} - {track.title}", formatting=True)
+                return escape(f"{track.author} - {track.title}")
             else:
-                return escape(query.to_string_user(), formatting=True)
+                return escape(query.to_string_user())
         else:
-            return escape(f"{track.title}", formatting=True)
+            return escape(f"{track.title}")
     elif hasattr(track, "to_string_user") and track.is_local:
-        return escape(track.to_string_user() + " ", formatting=True)
+        return escape(track.to_string_user() + " ")
 
 
 def track_creator(player, position=None, other_track=None) -> MutableMapping:
