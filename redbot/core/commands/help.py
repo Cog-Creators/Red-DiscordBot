@@ -278,14 +278,15 @@ class RedHelpFormatter:
 
         for f in fields:
             f_len = len(f.value) + len(f.name)
-            if curr_group and (f_len + current_count > max_chars):
+
+            if not current_count or f_len + current_count > max_chars:
+                current_count += f_len
+                curr_group.append(f)
+            elif curr_group:
                 ret.append(curr_group)
-                curr_group = []
                 current_count = 0
-            curr_group.append(f)
-            current_count += f_len
+                curr_group = [f]
         else:
-            # Loop cleanup here
             if curr_group:
                 ret.append(curr_group)
 
