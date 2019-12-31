@@ -5988,7 +5988,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(
                 ctx,
                 title=_("Unable To Skip Tracks"),
-                description=_("You must be in the voice channel to stop the music."),
+                description=_("You must be in the voice channel to skip the track."),
             )
         if vote_enabled or vote_enabled and dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(ctx):
