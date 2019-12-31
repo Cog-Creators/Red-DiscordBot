@@ -129,7 +129,8 @@ def get_name() -> str:
         print(
             "Please enter a name for your instance,"
             " it will be used to run your bot from here on out.\n"
-            "This name can only include characters A-z, numbers, underscores, and hyphens."
+            "This name is case-sensitive and can only include characters"
+            " A-z, numbers, underscores, and hyphens."
         )
         name = input("> ")
         if re.fullmatch(r"[a-zA-Z0-9_\-]*", name) is None:
