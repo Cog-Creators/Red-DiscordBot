@@ -18,13 +18,14 @@ import aiohttp
 import discord
 import lavalink
 from discord.embeds import EmptyEmbed
+from discord.utils import escape_markdown as escape
 from fuzzywuzzy import process
 
 from redbot.core import Config, bank, checks, commands
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import bold, box, escape, humanize_number, inline, pagify
+from redbot.core.utils.chat_formatting import bold, box, humanize_number, inline, pagify
 from redbot.core.utils.menus import (
     DEFAULT_CONTROLS,
     close_menu,
@@ -3520,7 +3521,7 @@ class Audio(commands.Cog):
             else:
                 maxlength_msg = ""
             playlist_name = escape(
-                playlist_data.name if playlist_data else _("No Title"), formatting=True
+                playlist_data.name if playlist_data else _("No Title")
             )
             embed = discord.Embed(
                 description=bold(f"[{playlist_name}]({playlist_url})")
