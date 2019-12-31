@@ -5133,7 +5133,7 @@ class Audio(commands.Cog):
                 ).format(name=playlist.name, num=len(tracklist), id=playlist.id, scope=scope_name),
             )
 
-    @playlist.command(name="start", usage="<playlist_name_OR_id> [args]")
+    @playlist.command(name="start", aliases=["play"], usage="<playlist_name_OR_id> [args]")
     async def _playlist_start(
         self,
         ctx: commands.Context,
