@@ -47,6 +47,7 @@ from .errors import (
     QueryUnauthorized,
     SpotifyFetchError,
     TooManyMatches,
+    TrackEnqueueError,
 )
 from .manager import ServerManager
 from .playlists import (
@@ -3368,7 +3369,19 @@ class Audio(commands.Cog):
                     return await self._enqueue_tracks(ctx, new_query)
                 else:
                     query = audio_dataclasses.Query.process_input(res[0])
-                    result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
+                    try:
+                        result, called_api = await self.music_cache.lavalink_query(
+                            ctx, player, query
+                        )
+                    except TrackEnqueueError:
+                        self._play_lock(ctx, False)
+                        return await self._embed_msg(
+                            ctx,
+                            title=_("Unable to Get Track"),
+                            description=_(
+                                "I'm unable get a track from Lavalink at the moment, try again in a few minutes."
+                            ),
+                        )
                     tracks = result.tracks
                     if not tracks:
                         embed = discord.Embed(title=_("Nothing found."))
@@ -3444,7 +3457,17 @@ class Audio(commands.Cog):
                 index = query.track_index
                 if query.start_time:
                     seek = query.start_time
-            result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
+            try:
+                result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
+            except TrackEnqueueError:
+                self._play_lock(ctx, False)
+                return self._embed_msg(
+                    ctx,
+                    title=_("Unable to Get Track"),
+                    description=_(
+                        "I'm unable get a track from Lavalink at the moment, try again in a few minutes."
+                    ),
+                )
             tracks = result.tracks
             playlist_data = result.playlist_info
             if not enqueue:
@@ -5717,9 +5740,21 @@ class Audio(commands.Cog):
         for song_url in uploaded_track_list:
             track_count += 1
             try:
-                result, called_api = await self.music_cache.lavalink_query(
-                    ctx, player, audio_dataclasses.Query.process_input(song_url)
-                )
+                try:
+                    result, called_api = await self.music_cache.lavalink_query(
+                        ctx, player, audio_dataclasses.Query.process_input(song_url)
+                    )
+                except TrackEnqueueError:
+                    self._play_lock(ctx, False)
+                    return await self._embed_msg(
+                        ctx,
+                        title=_("Unable to Get Track"),
+                        description=_(
+                            "I'm unable get a track from Lavalink at the moment, try again in a few "
+                            "minutes."
+                        ),
+                    )
+
                 track = result.tracks
             except Exception:
                 continue
@@ -5881,7 +5916,19 @@ class Audio(commands.Cog):
                 tracklist.append(track_obj)
             self._play_lock(ctx, False)
         elif query.is_search:
-            result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
+            try:
+                result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
+            except TrackEnqueueError:
+                self._play_lock(ctx, False)
+                return self._embed_msg(
+                    ctx,
+                    title=_("Unable to Get Track"),
+                    description=_(
+                        "I'm unable get a track from Lavalink at the moment, try again in a few "
+                        "minutes."
+                    ),
+                )
+
             tracks = result.tracks
             if not tracks:
                 embed = discord.Embed(title=_("Nothing found."))
@@ -5896,7 +5943,19 @@ class Audio(commands.Cog):
                     ).format(suffix=query.suffix)
                 return await self._embed_msg(ctx, embed=embed)
         else:
-            result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
+            try:
+                result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
+            except TrackEnqueueError:
+                self._play_lock(ctx, False)
+                return self._embed_msg(
+                    ctx,
+                    title=_("Unable to Get Track"),
+                    description=_(
+                        "I'm unable get a track from Lavalink at the moment, try again in a few "
+                        "minutes."
+                    ),
+                )
+
             tracks = result.tracks
 
         if not search and len(tracklist) == 0:
@@ -6625,10 +6684,37 @@ class Audio(commands.Cog):
                 )
             if query.invoked_from == "search list" or query.invoked_from == "local folder":
                 if query.invoked_from == "search list" and not query.is_local:
-                    result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
+                    try:
+                        result, called_api = await self.music_cache.lavalink_query(
+                            ctx, player, query
+                        )
+                    except TrackEnqueueError:
+                        self._play_lock(ctx, False)
+                        return self._embed_msg(
+                            ctx,
+                            title=_("Unable to Get Track"),
+                            description=_(
+                                "I'm unable get a track from Lavalink at the moment, try again in a "
+                                "few "
+                                "minutes."
+                            ),
+                        )
+
                     tracks = result.tracks
                 else:
-                    tracks = await self._folder_tracks(ctx, player, query)
+                    try:
+                        tracks = await self._folder_tracks(ctx, player, query)
+                    except TrackEnqueueError:
+                        self._play_lock(ctx, False)
+                        return self._embed_msg(
+                            ctx,
+                            title=_("Unable to Get Track"),
+                            description=_(
+                                "I'm unable get a track from Lavalink at the moment, try again in a "
+                                "few "
+                                "minutes."
+                            ),
+                        )
                 if not tracks:
                     embed = discord.Embed(title=_("Nothing found."))
                     if await self.config.use_external_lavalink() and query.is_local:
@@ -6705,7 +6791,17 @@ class Audio(commands.Cog):
                 else:
                     tracks = await self._folder_list(ctx, query)
             else:
-                result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
+                try:
+                    result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
+                except TrackEnqueueError:
+                    self._play_lock(ctx, False)
+                    return await self._embed_msg(
+                        ctx,
+                        title=_("Unable to Get Track"),
+                        description=_(
+                            "I'm unable get a track from Lavalink at the moment, try again in a few minutes."
+                        ),
+                    )
                 tracks = result.tracks
             if not tracks:
                 embed = discord.Embed(title=_("Nothing found."))

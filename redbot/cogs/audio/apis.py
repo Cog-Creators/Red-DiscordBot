@@ -20,7 +20,7 @@ from redbot.core.i18n import Translator, cog_i18n
 
 from . import audio_dataclasses
 from .databases import CacheInterface, SQLError
-from .errors import DatabaseError, SpotifyFetchError, YouTubeApiError
+from .errors import DatabaseError, SpotifyFetchError, YouTubeApiError, TrackEnqueueError
 from .playlists import get_playlist
 from .utils import CacheLevel, Notifier, is_allowed, queue_duration, track_limit
 
@@ -763,6 +763,8 @@ class MusicCache:
                 results = await player.load_tracks(query)
             except KeyError:
                 results = None
+            except RuntimeError:
+                raise TrackEnqueueError
             if results is None:
                 results = LoadResult({"loadType": "LOAD_FAILED", "playlistInfo": {}, "tracks": []})
             if (
