@@ -3839,7 +3839,7 @@ class Audio(commands.Cog):
         # TODO : Convert this section to a new paged reaction menu when Toby Menus are Merged
         pos_len = 3
         playlists = f"{'#':{pos_len}}\n"
-
+        number = 0
         for number, playlist in enumerate(correct_scope_matches, 1):
             author = self.bot.get_user(playlist.author) or playlist.author or _("Unknown")
             line = _(
@@ -3859,7 +3859,7 @@ class Audio(commands.Cog):
             playlists += line
 
         embed = discord.Embed(
-            title=_("Playlists found, which one would you like?"),
+            title=_("{playlists} playlists found, which one would you like?").format(playlists=number),
             description=box(playlists, lang="md"),
             colour=await context.embed_colour(),
         )
