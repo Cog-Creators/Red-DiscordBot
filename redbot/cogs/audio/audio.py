@@ -3900,8 +3900,7 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ ​ ​ ​ ​ Only editable by bot owner.
         ​ ​ ​ ​ **Guild**:
         ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users in this guild.
-        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner, guild owner, guild admins,
-        ​ ​ ​ ​ ​ ​ ​ ​ guild mods, DJ role and playlist creator.
+        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner, guild owner, guild admins, guild mods, DJ role and playlist creator.
         ​ ​ ​ ​ **User**:
         ​ ​ ​ ​ ​ ​ ​ ​ Visible to all bot users, if --author is passed.
         ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner and creator.
