@@ -4785,7 +4785,7 @@ class Audio(commands.Cog):
         elif scope == PlaylistScope.USER.value:
             name = f"{author}"
         else:
-            name = "the global scope"
+            name = "Global"
 
         if not playlists and specified_user:
             return await self._embed_msg(
@@ -5251,7 +5251,7 @@ class Audio(commands.Cog):
             elif scope == PlaylistScope.USER.value:
                 scope_name = f"{author}"
             else:
-                scope_name = "the global scope"
+                scope_name = "Global"
 
             embed = discord.Embed(
                 title=_("Playlist Enqueued"),
