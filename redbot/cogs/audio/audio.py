@@ -5977,22 +5977,37 @@ class Audio(commands.Cog):
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
+        vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
+        is_alone = await self._is_alone(ctx)
+        is_requester = await self.is_requester(ctx, ctx.author)
+        can_skip = await self._can_instaskip(ctx, ctx.author)
         player = lavalink.get_player(ctx.guild.id)
-        if dj_enabled:
+        if (
+            not ctx.author.voice or ctx.author.voice.channel != player.channel
+        ) and not can_skip:
+            return await self._embed_msg(
+                ctx,
+                title=_("Unable To Skip Tracks"),
+                description=_("You must be in the voice channel to stop the music."),
+            )
+        if vote_enabled or vote_enabled and dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(ctx):
                 return await self._embed_msg(
                     ctx,
-                    title=_("Unable To Play Tracks"),
-                    description=_("You need the DJ role to skip tracks."),
+                    title=_("Unable To Skip Tracks"),
+                    description=_("There are other people listening - vote to skip instead."),
                 )
-        if (
-            not ctx.author.voice or ctx.author.voice.channel != player.channel
-        ) and not await self._can_instaskip(ctx, ctx.author):
-            return await self._embed_msg(
-                ctx,
-                title=_("Unable To Play Tracks"),
-                description=_("You must be in the voice channel to skip the music."),
-            )
+        if dj_enabled and not vote_enabled:
+            if not (can_skip or is_requester) and not is_alone:
+                return await self._embed_msg(
+                    ctx,
+                    title=_("Unable To Skip Tracks"),
+                    description=_(
+                        "You need the DJ role or be the track requester "
+                        "to enqueue the previous song tracks."
+                    ),
+                )
+
         if player.fetch("prev_song") is None:
             return await self._embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("No previous track.")
@@ -6676,7 +6691,7 @@ class Audio(commands.Cog):
                         title=_("Unable To Play Tracks"),
                         description=_("That URL is not allowed."),
                     )
-            elif not await is_allowed(ctx.guild, f"{query}", query_obj=query):
+            if not await is_allowed(ctx.guild, f"{query}", query_obj=query):
                 return await self._embed_msg(
                     ctx,
                     title=_("Unable To Play Tracks"),
@@ -6736,7 +6751,13 @@ class Audio(commands.Cog):
                     return await self._embed_msg(ctx, embed=embed)
                 queue_dur = await queue_duration(ctx)
                 queue_total_duration = lavalink.utils.format_time(queue_dur)
-
+                if guild_data["dj_enabled"]:
+                    if not await self._can_instaskip(ctx, ctx.author):
+                        return await self._embed_msg(
+                            ctx,
+                            title=_("Unable To Play Tracks"),
+                            description=_("You need the DJ role to queue tracks."),
+                        )
                 track_len = 0
                 empty_queue = not player.queue
                 for track in tracks:
@@ -6835,9 +6856,8 @@ class Audio(commands.Cog):
             embed = await self._build_search_page(ctx, tracks, page_num)
             search_page_list.append(embed)
 
-        if dj_enabled:
-            if not await self._can_instaskip(ctx, ctx.author):
-                return await menu(ctx, search_page_list, DEFAULT_CONTROLS)
+        if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
+            return await menu(ctx, search_page_list, DEFAULT_CONTROLS)
 
         await menu(ctx, search_page_list, search_controls)
 
@@ -7451,14 +7471,34 @@ class Audio(commands.Cog):
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
-        if dj_enabled:
-            if not await self._can_instaskip(ctx, ctx.author):
-                ctx.command.reset_cooldown(ctx)
+        vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
+        is_alone = await self._is_alone(ctx)
+        is_requester = await self.is_requester(ctx, ctx.author)
+        can_skip = await self._can_instaskip(ctx, ctx.author)
+        player = lavalink.get_player(ctx.guild.id)
+        if (
+                not ctx.author.voice or ctx.author.voice.channel != player.channel
+        ) and not can_skip:
+            return await self._embed_msg(
+                ctx,
+                title=_("Unable To Join Voice Channel"),
+                description=_("You must be in the voice channel to summon the bot."),
+            )
+        if vote_enabled or (vote_enabled and dj_enabled):
+            if not can_skip and not is_alone:
+                return await self._embed_msg(
+                    ctx,
+                    title=_("Unable To Join Voice Channel"),
+                    description=_("There are other people listening."),
+                )
+        if dj_enabled and not vote_enabled:
+            if not (can_skip or is_requester) and not is_alone:
                 return await self._embed_msg(
                     ctx,
                     title=_("Unable To Join Voice Channel"),
                     description=_("You need the DJ role to summon the bot."),
                 )
+
         try:
             if (
                 not ctx.author.voice.channel.permissions_for(ctx.me).connect
