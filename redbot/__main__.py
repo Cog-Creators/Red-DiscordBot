@@ -264,7 +264,7 @@ async def sigterm_handler(red, log):
     await red.shutdown(restart=False)
 
 
-def main():
+def main():  # TODO: 3.2.1 async def main, cleanup logic within.
     description = "Red V3"
     cli_flags = parse_cli_flags(sys.argv[1:])
     if cli_flags.list_instances:
@@ -365,24 +365,25 @@ def main():
             if confirm("\nDo you want to reset the token?"):
                 loop.run_until_complete(red._config.token.set(""))
                 print("Token has been reset.")
-    except KeyboardInterrupt:
+    except KeyboardInterrupt:  # TODO 3.2.1: loop signal handling instead
         log.info("Keyboard interrupt detected. Quitting...")
         loop.run_until_complete(red.logout())
         red._shutdown_mode = ExitCodes.SHUTDOWN
-    except Exception as e:
+    except Exception as e:  # TODO 3.2.1: loop signal handling instead
         log.critical("Fatal exception", exc_info=e)
         loop.run_until_complete(red.logout())
     finally:
-        pending = asyncio.Task.all_tasks(loop=red.loop)
+        # Warning can be removed after we make main() an async function
+        log.warning("Logging after this may not be an error.")
+        loop.shutdown_asyncgens()
+        pending = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
+        # canceling below is needed to avoid gather spewing noise.
+        [task.cancel() for task in pending]
         gathered = asyncio.gather(*pending, loop=red.loop, return_exceptions=True)
-        gathered.cancel()
-        try:
-            loop.run_until_complete(red.rpc.close())
-        except AttributeError:
-            pass
-
+        loop.run_until_complete(gathered)
+        # TODO: Above 3 lines can be much cleaner with main rewrite for 3.2.1
         sys.exit(red._shutdown_mode.value)
 
 
 if __name__ == "__main__":
-    main()
+    main()  # TODO: 3.2.1 asyncio.run(main()), see note on main

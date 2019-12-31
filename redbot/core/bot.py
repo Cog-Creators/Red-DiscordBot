@@ -971,6 +971,11 @@ class Red(RedBase, discord.AutoShardedClient):
         """Logs out of Discord and closes all connections."""
         await super().logout()
         await drivers.get_driver_class().teardown()
+        try:
+            await self.rpc.close()
+        except AttributeError:
+            pass
+
 
     async def shutdown(self, *, restart: bool = False):
         """Gracefully quit Red.
