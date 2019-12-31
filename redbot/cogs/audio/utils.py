@@ -212,13 +212,13 @@ def get_track_description(track) -> Optional[str]:
         query = Query.process_input(track.uri)
         if query.is_local:
             if track.title != "Unknown title":
-                return bold(escape(f"{track.author} - {track.title}")) + escape(
+                return f'**{escape(f"{track.author} - {track.title}")}**' + escape(
                     f"\n{query.to_string_user()} "
                 )
             else:
                 return escape(query.to_string_user())
         else:
-            return bold(escape(f"[{track.title}]({track.uri}) "))
+            return f'**{escape(f"[{track.title}]({track.uri}) ")}**'
     elif hasattr(track, "to_string_user") and track.is_local:
         return escape(track.to_string_user() + " ")
 
