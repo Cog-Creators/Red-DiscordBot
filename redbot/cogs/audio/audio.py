@@ -10,9 +10,9 @@ import re
 import time
 import traceback
 from collections import Counter, namedtuple
-from io import StringIO
+from io import BytesIO
 from pathlib import Path
-from typing import List, Optional, Tuple, Union, cast, TYPE_CHECKING, MutableMapping, Mapping
+from typing import List, Optional, Tuple, Union, cast, MutableMapping, Mapping
 
 import aiohttp
 import discord
@@ -4576,8 +4576,8 @@ class Audio(commands.Cog):
             playlist_data["link"] = playlist.url
             file_name = playlist.id
         playlist_data.update({"schema": schema, "version": version})
-        playlist_data = json.dumps(playlist_data)
-        to_write = StringIO()
+        playlist_data = json.dumps(playlist_data).encode("utf-8")
+        to_write = BytesIO()
         to_write.write(playlist_data)
         to_write.seek(0)
         await ctx.send(file=discord.File(to_write, filename=f"{file_name}.txt"))
@@ -5483,7 +5483,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, title=_("Only Red playlist files can be uploaded."))
         try:
             async with self.session.request("GET", file_url) as r:
-                uploaded_playlist = await r.json(content_type="text/plain")
+                uploaded_playlist = await r.json(content_type="text/plain", encoding="utf-8")
         except UnicodeDecodeError:
             return await self._embed_msg(ctx, title=_("Not a valid playlist file."))
 
