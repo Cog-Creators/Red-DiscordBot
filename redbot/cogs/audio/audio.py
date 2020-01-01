@@ -8094,7 +8094,7 @@ class Audio(commands.Cog):
     ):
         self.music_cache.persist_queue.drop(guild.id)
         await asyncio.sleep(5)
-        self.music_cache.database.clean_up_old_entries()
+        await self.music_cache.database.clean_up_old_entries()
         await asyncio.sleep(5)
         dat = get_playlist_database()
         if dat:
