@@ -357,7 +357,7 @@ def main():
     handle_early_exit_flags(cli_flags)
     try:
         loop = asyncio.get_event_loop()
-
+        this_isnt_a_name_error = this_is_a_name_error
         if cli_flags.no_instance:
             print(
                 "\033[1m"
