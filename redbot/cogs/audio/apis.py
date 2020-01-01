@@ -639,12 +639,14 @@ class MusicCache:
                         await player.play()
             if len(track_list) == 0:
                 if not has_not_allowed:
-                    raise SpotifyFetchError(message=_(
+                    raise SpotifyFetchError(
+                        message=_(
                             "Nothing found.\nThe YouTube API key may be invalid "
                             "or you may be rate limited on YouTube's search service.\n"
                             "Check the YouTube API key again and follow the instructions "
                             "at `{prefix}audioset youtubeapi`."
-                        ).format(prefix=ctx.prefix))
+                        ).format(prefix=ctx.prefix)
+                    )
             player.maybe_shuffle()
             if enqueue and tracks_from_spotify:
                 if total_tracks > enqueued_tracks:

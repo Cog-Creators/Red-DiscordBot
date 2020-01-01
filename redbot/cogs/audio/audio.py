@@ -3520,9 +3520,7 @@ class Audio(commands.Cog):
                 )
             else:
                 maxlength_msg = ""
-            playlist_name = escape(
-                playlist_data.name if playlist_data else _("No Title")
-            )
+            playlist_name = escape(playlist_data.name if playlist_data else _("No Title"))
             embed = discord.Embed(
                 description=bold(f"[{playlist_name}]({playlist_url})")
                 if playlist_url
@@ -3860,7 +3858,9 @@ class Audio(commands.Cog):
             playlists += line
 
         embed = discord.Embed(
-            title=_("{playlists} playlists found, which one would you like?").format(playlists=number),
+            title=_("{playlists} playlists found, which one would you like?").format(
+                playlists=number
+            ),
             description=box(playlists, lang="md"),
             colour=await context.embed_colour(),
         )
@@ -5924,9 +5924,7 @@ class Audio(commands.Cog):
         is_requester = await self.is_requester(ctx, ctx.author)
         can_skip = await self._can_instaskip(ctx, ctx.author)
         player = lavalink.get_player(ctx.guild.id)
-        if (
-            not ctx.author.voice or ctx.author.voice.channel != player.channel
-        ) and not can_skip:
+        if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
             return await self._embed_msg(
                 ctx,
                 title=_("Unable To Skip Tracks"),
