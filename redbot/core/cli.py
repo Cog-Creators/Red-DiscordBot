@@ -34,7 +34,7 @@ def confirm(text: str, default: Optional[bool] = None) -> bool:
 
 
 async def interactive_config(red, token_set, prefix_set, *, print_header=True):
-    token = ""
+    token = None
 
     if print_header:
         print("Red - Discord Bot | Configuration process\n")
@@ -50,7 +50,7 @@ async def interactive_config(red, token_set, prefix_set, *, print_header=True):
             token = input("> ")
             if not len(token) >= 50:
                 print("That doesn't look like a valid token.")
-                token = ""
+                token = None
             if token:
                 await red._config.token.set(token)
 
