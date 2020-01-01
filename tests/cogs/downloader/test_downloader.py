@@ -25,10 +25,6 @@ class FakeCompletedProcess(NamedTuple):
     stderr: bytes = b""
 
 
-async def async_return(ret: Any):
-    return ret
-
-
 def _mock_run(
     mocker: MockFixture, repo: Repo, returncode: int, stdout: bytes = b"", stderr: bytes = b""
 ):
@@ -36,7 +32,7 @@ def _mock_run(
         repo,
         "_run",
         autospec=True,
-        return_value=async_return(FakeCompletedProcess(returncode, stdout, stderr)),
+        return_value=FakeCompletedProcess(returncode, stdout, stderr),
     )
 
 
@@ -50,7 +46,7 @@ def _mock_setup_repo(mocker: MockFixture, repo: Repo, commit: str):
         "_setup_repo",
         autospec=True,
         side_effect=update_commit,
-        return_value=async_return(None),
+        return_value=None,
     )
 
 
@@ -153,15 +149,13 @@ async def test_is_module_modified(mocker, repo):
         repo,
         "_get_file_update_statuses",
         autospec=True,
-        return_value=async_return(
-            {
-                "added_file.txt": "A",
-                "mycog/__init__.py": "M",
-                "sample_file1.txt": "D",
-                "sample_file2.txt": "D",
-                "sample_file3.txt": "A",
-            }
-        ),
+        return_value={
+            "added_file.txt": "A",
+            "mycog/__init__.py": "M",
+            "sample_file1.txt": "D",
+            "sample_file2.txt": "D",
+            "sample_file3.txt": "A",
+        },
     )
     ret = await repo._is_module_modified(module, old_rev)
     m.assert_called_once_with(old_rev, new_rev)
@@ -249,11 +243,11 @@ async def test_checkout(mocker, repo):
 @pytest.mark.asyncio
 async def test_checkout_ctx_manager(mocker, repo):
     commit = "c950fc05a540dd76b944719c2a3302da2e2f3090"
-    m = mocker.patch.object(repo, "_checkout", autospec=True, return_value=async_return(None))
+    m = mocker.patch.object(repo, "_checkout", autospec=True, return_value=None)
     old_commit = repo.commit
     async with repo.checkout(commit):
         m.assert_called_with(commit, force_checkout=False)
-        m.return_value = async_return(None)
+        m.return_value = None
 
     m.assert_called_with(old_commit, force_checkout=False)
 
@@ -261,7 +255,7 @@ async def test_checkout_ctx_manager(mocker, repo):
 @pytest.mark.asyncio
 async def test_checkout_await(mocker, repo):
     commit = "c950fc05a540dd76b944719c2a3302da2e2f3090"
-    m = mocker.patch.object(repo, "_checkout", autospec=True, return_value=async_return(None))
+    m = mocker.patch.object(repo, "_checkout", autospec=True, return_value=None)
     await repo.checkout(commit)
 
     m.assert_called_once_with(commit, force_checkout=False)
@@ -293,7 +287,7 @@ async def test_clone_without_branch(mocker, repo):
     repo.commit = ""
     m = _mock_run(mocker, repo, 0)
     _mock_setup_repo(mocker, repo, commit)
-    mocker.patch.object(repo, "current_branch", autospec=True, return_value=async_return(branch))
+    mocker.patch.object(repo, "current_branch", autospec=True, return_value=branch)
 
     await repo.clone()
 
@@ -310,9 +304,9 @@ async def test_update(mocker, repo):
     m = _mock_run(mocker, repo, 0)
     _mock_setup_repo(mocker, repo, new_commit)
     mocker.patch.object(
-        repo, "latest_commit", autospec=True, return_value=async_return(old_commit)
+        repo, "latest_commit", autospec=True, return_value=old_commit
     )
-    mocker.patch.object(repo, "hard_reset", autospec=True, return_value=async_return(None))
+    mocker.patch.object(repo, "hard_reset", autospec=True, return_value=None)
     ret = await repo.update()
 
     assert ret == (old_commit, new_commit)
