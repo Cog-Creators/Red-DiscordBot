@@ -7380,15 +7380,6 @@ class Audio(commands.Cog):
         is_alone = await self._is_alone(ctx)
         is_requester = await self.is_requester(ctx, ctx.author)
         can_skip = await self._can_instaskip(ctx, ctx.author)
-        player = lavalink.get_player(ctx.guild.id)
-        if (
-                not ctx.author.voice or ctx.author.voice.channel != player.channel
-        ) and not can_skip:
-            return await self._embed_msg(
-                ctx,
-                title=_("Unable To Join Voice Channel"),
-                description=_("You must be in the voice channel to summon the bot."),
-            )
         if vote_enabled or (vote_enabled and dj_enabled):
             if not can_skip and not is_alone:
                 return await self._embed_msg(
