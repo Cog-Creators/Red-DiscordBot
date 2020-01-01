@@ -40,9 +40,8 @@ checks:
 plugins:
   bandit:
     enabled: true
-    checks:
-      skips:
-        - B322
+    skips:
+      - B322
   radon: 
     enabled: false
     config: 
