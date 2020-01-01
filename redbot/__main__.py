@@ -344,7 +344,7 @@ def exception_handler(red, loop, context):
     msg = context.get("exception", context["message"])
     if isinstance(msg, KeyboardInterrupt):
         # Windows support is ugly, I'm sorry
-        logging.error("Recieved KeyboardInterrupt, treating as interrupt")
+        logging.error("Received KeyboardInterrupt, treating as interrupt")
         signal_type = signal.SIGINT
     else:
         logging.critical("Caught fatal exception: %s", msg)
