@@ -1512,6 +1512,7 @@ class Audio(commands.Cog):
         bumpped_shuffle = _("Enabled") if data["shuffle_bumped"] else _("Disabled")
         song_notify = _("Enabled") if data["notify"] else _("Disabled")
         song_status = _("Enabled") if global_data["status"] else _("Disabled")
+        persist_queue = _("Enabled") if data["persist_queue"] else _("Disabled")
 
         spotify_cache = CacheLevel.set_spotify()
         youtube_cache = CacheLevel.set_youtube()
