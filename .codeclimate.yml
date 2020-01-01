@@ -39,7 +39,7 @@ checks:
       threshold: # language-specific defaults. an override will affect all languages.
 plugins:
   bandit:
-    enabled: true
+    enabled: false
   radon: 
     enabled: false
     config: 
