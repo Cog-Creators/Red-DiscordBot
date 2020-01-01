@@ -29,10 +29,7 @@ def _mock_run(
     mocker: MockFixture, repo: Repo, returncode: int, stdout: bytes = b"", stderr: bytes = b""
 ):
     return mocker.patch.object(
-        repo,
-        "_run",
-        autospec=True,
-        return_value=FakeCompletedProcess(returncode, stdout, stderr),
+        repo, "_run", autospec=True, return_value=FakeCompletedProcess(returncode, stdout, stderr)
     )
 
 
@@ -42,11 +39,7 @@ def _mock_setup_repo(mocker: MockFixture, repo: Repo, commit: str):
         return mocker.DEFAULT
 
     return mocker.patch.object(
-        repo,
-        "_setup_repo",
-        autospec=True,
-        side_effect=update_commit,
-        return_value=None,
+        repo, "_setup_repo", autospec=True, side_effect=update_commit, return_value=None
     )
 
 
@@ -303,9 +296,7 @@ async def test_update(mocker, repo):
     new_commit = "a0ccc2390883c85a361f5a90c72e1b07958939fa"
     m = _mock_run(mocker, repo, 0)
     _mock_setup_repo(mocker, repo, new_commit)
-    mocker.patch.object(
-        repo, "latest_commit", autospec=True, return_value=old_commit
-    )
+    mocker.patch.object(repo, "latest_commit", autospec=True, return_value=old_commit)
     mocker.patch.object(repo, "hard_reset", autospec=True, return_value=None)
     ret = await repo.update()
 
