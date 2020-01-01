@@ -1,5 +1,6 @@
 import asyncio
 import contextlib
+import re
 from typing import Iterable, List, Union
 import discord
 from discord.ext import commands
@@ -248,7 +249,8 @@ class Context(commands.Context):
     def clean_prefix(self) -> str:
         """str: The command prefix, but a mention prefix is displayed nicer."""
         me = self.me
-        return self.prefix.replace(me.mention, f"@{me.display_name}")
+        pattern = re.compile(rf"<@!?{me.id}>")
+        return pattern.sub(f"@{me.display_name}", self.prefix)
 
     @property
     def me(self) -> discord.abc.User:
