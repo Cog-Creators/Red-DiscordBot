@@ -2,6 +2,7 @@ import asyncio
 import inspect
 import logging
 import os
+import sys
 from collections import namedtuple
 from datetime import datetime
 from enum import Enum
@@ -47,6 +48,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
     def __init__(self, *args, cli_flags=None, bot_dir: Path = Path.cwd(), **kwargs):
         self._shutdown_mode = ExitCodes.CRITICAL
+        self._cli_flags = cli_flags
         self._config = Config.get_core_conf(force_registration=False)
         self._co_owners = cli_flags.co_owner
         self.rpc_enabled = cli_flags.rpc
@@ -1010,6 +1012,7 @@ class Red(RedBase, discord.AutoShardedClient):
             self._shutdown_mode = ExitCodes.RESTART
 
         await self.logout()
+        sys.exit(self._shutdown_mode)
 
 
 class ExitCodes(Enum):

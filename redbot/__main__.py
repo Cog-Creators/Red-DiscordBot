@@ -102,7 +102,7 @@ def debug_info():
     sys.exit(0)
 
 
-def edit_instance(red, cli_flags):
+async def edit_instance(red, cli_flags):
     no_prompt = cli_flags.no_prompt
     token = cli_flags.token
     owner = cli_flags.owner
@@ -125,8 +125,8 @@ def edit_instance(red, cli_flags):
         )
         sys.exit(1)
 
-    _edit_token(red, token, no_prompt)
-    _edit_owner(red, owner, no_prompt)
+    await _edit_token(red, token, no_prompt)
+    await _edit_owner(red, owner, no_prompt)
 
     data = deepcopy(data_manager.basic_config)
     name = _edit_instance_name(old_name, new_name, confirm_overwrite, no_prompt)
@@ -328,16 +328,16 @@ def handle_early_exit_flags(cli_flags: Namespace):
 async def shutdown_handler(red, signal_type=None):
     if signal_type:
         log.info("%s received. Quitting...", signal_type)
-        restart = False
+        exit_code = 0
     else:
         log.info("Shutting down from unhandled exception")
-        restart = True
+        exit_code = 1
+    await red.logout()
+    await red.loop.shutdown_asyncgens()
     pending = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
     [task.cancel() for task in pending]
     await asyncio.gather(*pending, loop=red.loop, return_exceptions=True)
-    await red.shutdown(restart=restart)
-    await red.loop.shutdown_asyncgens()
-    sys.exit(red._shutdown_mode.value)
+    sys.exit(exit_code)
 
 
 def exception_handler(red, loop, context):
@@ -349,7 +349,7 @@ def exception_handler(red, loop, context):
     else:
         logging.critical("Caught fatal exception: %s", msg)
         signal_type = None
-    asyncio.create_task(shutdown_handler(red, signal_type))
+    loop.create_task(shutdown_handler(red, signal_type))
 
 
 def main():
@@ -386,7 +386,8 @@ def main():
         exc_handler = functools.partial(exception_handler, red)
         loop.set_exception_handler(exc_handler)
         # We actually can't use asyncio.run and have graceful cleanup on Windows...
-        loop.run_until_complete(run_bot(red, cli_flags))
+        loop.create_task(run_bot(red, cli_flags))
+        loop.run_forever()
     finally:
         loop.close()
 
