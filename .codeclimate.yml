@@ -50,10 +50,3 @@ plugins:
       languages:
         python:
           python_version: 3
-  sonar-python:
-    enabled: true
-    config:
-      minimum_severity: critical
-      tests_patterns:
-        - tests/**
-        - redbot/pytest/**
