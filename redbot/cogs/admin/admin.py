@@ -239,7 +239,6 @@ class Admin(commands.Cog):
             await ctx.send(_("Done."))
 
     @editrole.command(name="name")
-    @checks.admin_or_permissions(administrator=True)
     async def edit_role_name(self, ctx: commands.Context, role: discord.Role, name: str):
         """
         Edit a role's name.
