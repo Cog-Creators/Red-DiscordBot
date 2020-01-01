@@ -42,10 +42,9 @@ plugins:
     enabled: true
     config: 
       threshold: "D"
-  plugins:
-    duplication:
-      enabled: true
-      config:
-        languages:
-          python:
-            python_version: 3
+  duplication:
+    enabled: false
+    config:
+      languages:
+        python:
+          python_version: 3
