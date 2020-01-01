@@ -8019,6 +8019,53 @@ class Audio(commands.Cog):
             return False
 
     @commands.Cog.listener()
+    async def on_red_audio_track_start(
+        self, guild: discord.Guild, track: lavalink.Track, requester: discord.Member
+    ):
+        scope = PlaylistScope.GUILD.value
+        today = datetime.date.today()
+        midnight = datetime.datetime.combine(today, datetime.datetime.min.time())
+        name = f"Daily playlist - {today}"
+        today_id = int(time.mktime(today.timetuple()))
+        track_identifier = track.track_identifier
+        track = track_to_json(track)
+
+        try:
+            playlist = await get_playlist(
+                playlist_number=today_id,
+                scope=PlaylistScope.GUILD.value,
+                bot=self.bot,
+                guild=guild,
+                author=self.bot.user,
+            )
+        except RuntimeError:
+            playlist = None
+
+        if playlist:
+            tracks = playlist.tracks
+            tracks.append(track)
+            await playlist.edit({"tracks": tracks})
+        else:
+            playlist = Playlist(
+                bot=self.bot,
+                scope=scope,
+                author=self.bot.user.id,
+                playlist_id=today_id,
+                name=name,
+                playlist_url=None,
+                tracks=[track],
+                guild=guild,
+            )
+            await playlist.save()
+        with contextlib.suppress(Exception):
+            too_old = midnight - datetime.timedelta(days=8)
+            too_old_id = int(time.mktime(too_old.timetuple()))
+            await delete_playlist(
+                scope=scope, playlist_id=too_old_id, guild=guild, author=self.bot.user
+            )
+        self.music_cache.persist_queue.played(guild_id=guild.id, track_id=track_identifier)
+
+    @commands.Cog.listener()
     async def on_voice_state_update(
         self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState
     ):
@@ -8030,10 +8077,30 @@ class Audio(commands.Cog):
                 pass
 
     @commands.Cog.listener()
+    async def on_red_audio_track_enqueue(
+        self, guild: discord.Guild, track: lavalink.Track, requester: discord.Member
+    ):
+        persist_cache = self._persist_queue_cache.setdefault(
+            guild.id, await self.config.guild(guild).persist_queue()
+        )
+        if persist_cache:
+            self.music_cache.persist_queue.enqueued(
+                guild_id=guild.id, room_id=track.extras["vc"], track=track
+            )
+
+    @commands.Cog.listener()
     async def on_red_audio_queue_end(
             self, guild: discord.Guild, track: lavalink.Track, requester: discord.Member
     ):
+        self.music_cache.persist_queue.drop(guild.id)
+        await asyncio.sleep(5)
         self.music_cache.database.clean_up_old_entries()
+        await asyncio.sleep(5)
+        dat = get_playlist_database()
+        if dat:
+            dat.delete_scheduled()
+            await asyncio.sleep(5)
+        self.music_cache.persist_queue.delete_scheduled()
 
     def cog_unload(self):
         if not self._cleaned_up:
