@@ -24,6 +24,7 @@ checks:
     config:
       threshold: 25  # I'm fine with long methods, cautious about the complexity of a single method.
   nested-control-flow:
+    enabled: false  # handle later
     config:
       threshold: 5
   return-statements:
