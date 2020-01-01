@@ -24,7 +24,7 @@ checks:
       threshold: 25  # I'm fine with long methods, cautious about the complexity of a single method.
   nested-control-flow:
     config:
-      threshold: 4
+      threshold: 5
   return-statements:
     config:
       threshold: 6
@@ -42,3 +42,10 @@ plugins:
     enabled: true
     config: 
       threshold: "D"
+  plugins:
+    duplication:
+      enabled: true
+      config:
+        languages:
+          python:
+            python_version: 3
