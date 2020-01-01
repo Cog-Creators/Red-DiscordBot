@@ -2,14 +2,15 @@ version: "2"  # required to adjust maintainability checks
 checks:
   argument-count:
     config:
-      threshold: 6
+      threshold: 8  # work on this later
   complex-logic:
     enabled: false  # Disabled in favor of using Radon for this
     config:
       threshold: 4
   file-lines:
+    enabled: false  # enable after audio stuff...
     config:
-      threshold: 1000  # I would set this lower if not for cogs as command containers.
+      threshold: 2000  # I would set this lower if not for cogs as command containers.
   method-complexity:
     enabled: false  # Disabled in favor of using Radon for this
     config:
@@ -33,13 +34,14 @@ checks:
     config:
       threshold: # language-specific defaults. an override will affect all languages.
   identical-code:
+    enabled: false
     config:
       threshold: # language-specific defaults. an override will affect all languages.
 plugins:
   bandit:
     enabled: true
   radon: 
-    enabled: true
+    enabled: false
     config: 
       threshold: "D"
   duplication:
