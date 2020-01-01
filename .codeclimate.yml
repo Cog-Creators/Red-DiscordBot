@@ -8,7 +8,7 @@ checks:
     config:
       threshold: 4
   file-lines:
-    enabled: false  # enable after audio stuff...
+    enabled: true
     config:
       threshold: 2000  # I would set this lower if not for cogs as command containers.
   method-complexity:
@@ -24,9 +24,9 @@ checks:
     config:
       threshold: 25  # I'm fine with long methods, cautious about the complexity of a single method.
   nested-control-flow:
-    enabled: false  # handle later
+    enabled: true
     config:
-      threshold: 5
+      threshold: 6
   return-statements:
     config:
       threshold: 6
