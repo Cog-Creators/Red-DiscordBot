@@ -225,7 +225,7 @@ class Admin(commands.Cog):
             await ctx.send(_(ROLE_USER_HIERARCHY_ISSUE).format(role=role))
             return
         if not self.pass_hierarchy_check(ctx, role):
-            await tx.send(_(ROLE_HIERARCHY_ISSUE).format(role=role))
+            await ctx.send(_(ROLE_HIERARCHY_ISSUE).format(role=role))
             return
         if not ctx.guild.me.guild_permissions.manage_roles:
             await ctx.send(_(NEED_MANAGE_ROLES))
