@@ -137,7 +137,7 @@ def edit_instance(red, cli_flags):
         save_config(old_name, {}, remove=True)
 
 
-def _edit_token(red, token, no_prompt):
+async def _edit_token(red, token, no_prompt):
     if token:
         if not len(token) >= 50:
             print(
@@ -145,13 +145,13 @@ def _edit_token(red, token, no_prompt):
                 " Instance's token will remain unchanged.\n"
             )
             return
-        red.loop.run_until_complete(red._config.token.set(token))
+        await red._config.token.set(token)
     elif not no_prompt and confirm("Would you like to change instance's token?", default=False):
-        interactive_config(red, False, True, print_header=False)
+        await interactive_config(red, False, True, print_header=False)
         print("Token updated.\n")
 
 
-def _edit_owner(red, owner, no_prompt):
+async def _edit_owner(red, owner, no_prompt):
     if owner:
         if not (15 <= len(str(owner)) <= 21):
             print(
@@ -159,7 +159,7 @@ def _edit_owner(red, owner, no_prompt):
                 " Instance's owner will remain unchanged."
             )
             return
-        red.loop.run_until_complete(red._config.owner.set(owner))
+        await red._config.owner.set(owner)
     elif not no_prompt and confirm("Would you like to change instance's owner?", default=False):
         print(
             "Remember:\n"
@@ -175,7 +175,7 @@ def _edit_owner(red, owner, no_prompt):
                     print("That doesn't look like a valid Discord user id.")
                     continue
                 owner_id = int(owner_id)
-                red.loop.run_until_complete(red._config.owner.set(owner_id))
+                await red._config.owner.set(owner_id)
                 print("Owner updated.")
                 break
         else:
@@ -247,17 +247,7 @@ def _copy_data(data):
 
 
 async def run_bot(red: Red, cli_flags: Namespace):
-    if cli_flags.no_instance:
-        print(
-            "\033[1m"
-            "Warning: The data will be placed in a temporary folder and removed on next system "
-            "reboot."
-            "\033[0m"
-        )
-        cli_flags.instance_name = "temporary_red"
-        data_manager.create_temp_config()
 
-    data_manager.load_basic_configuration(cli_flags.instance_name)
     driver_cls = drivers.get_driver_class()
 
     await driver_cls.initialize(**data_manager.storage_details())
@@ -298,7 +288,9 @@ async def run_bot(red: Red, cli_flags: Namespace):
 
     if not (token and prefix):
         if cli_flags.no_prompt is False:
-            new_token = interactive_config(red, token_set=bool(token), prefix_set=bool(prefix))
+            new_token = await interactive_config(
+                red, token_set=bool(token), prefix_set=bool(prefix)
+            )
             if new_token:
                 token = new_token
         else:
@@ -350,34 +342,51 @@ async def shutdown_handler(red, signal_type=None):
 
 def exception_handler(red, loop, context):
     msg = context.get("exception", context["message"])
-    logging.critical("Caught fatal exception: %s", msg)
-    asyncio.create_task(shutdown_handler(red))
+    if isinstance(msg, KeyboardInterrupt):
+        # Windows support is ugly, I'm sorry
+        logging.error("Recieved KeyboardInterrupt, treating as interrupt")
+        signal_type = signal.SIGINT
+    else:
+        logging.critical("Caught fatal exception: %s", msg)
+        signal_type = None
+    asyncio.create_task(shutdown_handler(red, signal_type))
 
 
 def main():
     cli_flags = parse_cli_flags(sys.argv[1:])
     handle_early_exit_flags(cli_flags)
-    red = Red(
-        cli_flags=cli_flags, description=description, dm_help=None, fetch_offline_members=True
-    )
-    loop = asyncio.get_event_loop()
-
-    # Windows doesn't have SIGHUP
-    signals = (
-        (signal.SIGTERM, signal.SIGINT)
-        if os.name == "nt"
-        else (signal.SIGHUP, signal.SIGTERM, signal.SIGINT)
-    )
-
-    for s in signals:
-        loop.add_signal_handler(s, lambda s=s: asyncio.create_task(shutdown_handler(red, s)))
-
-    exc_handler = functools.partial(exception_handler, red)
-    loop.set_exception_handler(exc_handler)
-
     try:
-        loop.create_task(run_bot(red, cli_flags))
-        loop.run_forever()
+        loop = asyncio.get_event_loop()
+
+        if cli_flags.no_instance:
+            print(
+                "\033[1m"
+                "Warning: The data will be placed in a temporary folder and removed on next system "
+                "reboot."
+                "\033[0m"
+            )
+            cli_flags.instance_name = "temporary_red"
+            data_manager.create_temp_config()
+
+        data_manager.load_basic_configuration(cli_flags.instance_name)
+
+        red = Red(
+            cli_flags=cli_flags, description=description, dm_help=None, fetch_offline_members=True
+        )
+
+        if os.name != "nt":
+            # None of this works on windows, and we have to catch KeyboardInterrupt in a global handler!
+            # At least it's not a redundant handler...
+            signals = (signal.SIGHUP, signal.SIGTERM, signal.SIGINT)
+            for s in signals:
+                loop.add_signal_handler(
+                    s, lambda s=s: asyncio.create_task(shutdown_handler(red, s))
+                )
+
+        exc_handler = functools.partial(exception_handler, red)
+        loop.set_exception_handler(exc_handler)
+        # We actually can't use asyncio.run and have graceful cleanup on Windows...
+        loop.run_until_complete(run_bot(red, cli_flags))
     finally:
         loop.close()
 

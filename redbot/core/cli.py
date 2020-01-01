@@ -33,8 +33,7 @@ def confirm(text: str, default: Optional[bool] = None) -> bool:
         print("Error: invalid input")
 
 
-def interactive_config(red, token_set, prefix_set, *, print_header=True):
-    loop = asyncio.get_event_loop()
+async def interactive_config(red, token_set, prefix_set, *, print_header=True):
     token = ""
 
     if print_header:
@@ -53,7 +52,7 @@ def interactive_config(red, token_set, prefix_set, *, print_header=True):
                 print("That doesn't look like a valid token.")
                 token = ""
             if token:
-                loop.run_until_complete(red._config.token.set(token))
+                await red._config.token.set(token)
 
     if not prefix_set:
         prefix = ""
@@ -70,7 +69,7 @@ def interactive_config(red, token_set, prefix_set, *, print_header=True):
                 if not confirm("Your prefix seems overly long. Are you sure that it's correct?"):
                     prefix = ""
             if prefix:
-                loop.run_until_complete(red._config.prefix.set([prefix]))
+                await red._config.prefix.set([prefix])
 
     return token
 
