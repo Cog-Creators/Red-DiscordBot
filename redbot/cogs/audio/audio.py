@@ -8052,7 +8052,6 @@ class Audio(commands.Cog):
             await delete_playlist(
                 scope=scope, playlist_id=too_old_id, guild=guild, author=self.bot.user
             )
-        self.music_cache.persist_queue.played(guild_id=guild.id, track_id=track_identifier)
 
     @commands.Cog.listener()
     async def on_voice_state_update(
@@ -8066,30 +8065,15 @@ class Audio(commands.Cog):
                 pass
 
     @commands.Cog.listener()
-    async def on_red_audio_track_enqueue(
-        self, guild: discord.Guild, track: lavalink.Track, requester: discord.Member
-    ):
-        persist_cache = self._persist_queue_cache.setdefault(
-            guild.id, await self.config.guild(guild).persist_queue()
-        )
-        if persist_cache:
-            self.music_cache.persist_queue.enqueued(
-                guild_id=guild.id, room_id=track.extras["vc"], track=track
-            )
-
-    @commands.Cog.listener()
     async def on_red_audio_queue_end(
         self, guild: discord.Guild, track: lavalink.Track, requester: discord.Member
     ):
-        self.music_cache.persist_queue.drop(guild.id)
-        await asyncio.sleep(5)
         await self.music_cache.database.clean_up_old_entries()
         await asyncio.sleep(5)
         dat = get_playlist_database()
         if dat:
             dat.delete_scheduled()
             await asyncio.sleep(5)
-        self.music_cache.persist_queue.delete_scheduled()
 
     def cog_unload(self):
         if not self._cleaned_up:
