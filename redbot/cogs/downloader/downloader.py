@@ -252,7 +252,7 @@ class Downloader(commands.Cog):
                 continue
             # marking cog for update if there's no commit data saved (back-compat, see GH-2571)
             last_cog_occurrence = await cog.repo.get_last_module_occurrence(cog.name)
-            if last_cog_occurrence is not None:
+            if last_cog_occurrence is not None and not last_cog_occurrence.disabled:
                 cogs_to_update.add(last_cog_occurrence)
 
         # Reduces diff requests to a single dict with no repeats
@@ -277,7 +277,8 @@ class Downloader(commands.Cog):
                 else:
                     modified_module = modified[index]
                     if modified_module.type == InstallableType.COG:
-                        cogs_to_update.add(modified_module)
+                        if not modified_module.disabled:
+                            cogs_to_update.add(modified_module)
                     elif modified_module.type == InstallableType.SHARED_LIBRARY:
                         libraries_to_update.add(modified_module)
 

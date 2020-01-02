@@ -16,8 +16,8 @@ from redbot.core.commands import RedHelpFormatter
 from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
 from . import commands
 from .config import get_latest_confs
+from .utils._internal_utils import fuzzy_command_search, format_fuzzy_results
 from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
-from .utils import fuzzy_command_search, format_fuzzy_results
 
 log = logging.getLogger("red")
 init()

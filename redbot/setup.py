@@ -12,7 +12,7 @@ import appdirs
 import click
 
 import redbot.logging
-from redbot.core.utils import safe_delete, create_backup as red_create_backup
+from redbot.core.utils._internal_utils import safe_delete, create_backup as red_create_backup
 from redbot.core import config, data_manager, drivers
 from redbot.core.drivers import BackendType, IdentifierData
 

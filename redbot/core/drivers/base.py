@@ -6,11 +6,19 @@ __all__ = ["BaseDriver", "IdentifierData", "ConfigCategory"]
 
 
 class ConfigCategory(str, enum.Enum):
+    """Represents config category."""
+
+    #: Global category.
     GLOBAL = "GLOBAL"
+    #: Guild category.
     GUILD = "GUILD"
+    #: Channel category.
     CHANNEL = "TEXTCHANNEL"
+    #: Role category.
     ROLE = "ROLE"
+    #: User category.
     USER = "USER"
+    #: Member category.
     MEMBER = "MEMBER"
 
     @classmethod

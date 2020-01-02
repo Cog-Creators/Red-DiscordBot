@@ -43,7 +43,8 @@ from discord.ext import commands as dpy_commands
 from . import commands
 from .context import Context
 from ..i18n import Translator
-from ..utils import menus, fuzzy_command_search, format_fuzzy_results
+from ..utils import menus
+from ..utils._internal_utils import fuzzy_command_search, format_fuzzy_results
 from ..utils.chat_formatting import box, pagify
 
 __all__ = ["red_help", "RedHelpFormatter", "HelpSettings"]
