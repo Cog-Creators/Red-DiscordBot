@@ -1,13 +1,7 @@
 import asyncio
-import json
-import logging
-import os
-import shutil
-import tarfile
 from asyncio import AbstractEventLoop, as_completed, Semaphore
 from asyncio.futures import isfuture
 from itertools import chain
-from pathlib import Path
 from typing import (
     Any,
     AsyncIterator,
@@ -25,24 +19,7 @@ from typing import (
     TYPE_CHECKING,
 )
 
-import discord
-from datetime import datetime
-from fuzzywuzzy import fuzz, process
-
-from .. import commands, data_manager
-from .chat_formatting import box
-
-if TYPE_CHECKING:
-    from ..commands import Command, Context
-
-__all__ = [
-    "bounded_gather",
-    "safe_delete",
-    "fuzzy_command_search",
-    "format_fuzzy_results",
-    "deduplicate_iterables",
-    "create_backup",
-]
+__all__ = ("bounded_gather", "deduplicate_iterables")
 
 _T = TypeVar("_T")
 
@@ -55,27 +32,6 @@ def deduplicate_iterables(*iterables):
     """
     # dict insertion order is guaranteed to be preserved in 3.6+
     return list(dict.fromkeys(chain.from_iterable(iterables)))
-
-
-def _fuzzy_log_filter(record):
-    return record.funcName != "extractWithoutOrder"
-
-
-logging.getLogger().addFilter(_fuzzy_log_filter)
-
-
-def safe_delete(pth: Path):
-    if pth.exists():
-        for root, dirs, files in os.walk(str(pth)):
-            os.chmod(root, 0o700)
-
-            for d in dirs:
-                os.chmod(os.path.join(root, d), 0o700)
-
-            for f in files:
-                os.chmod(os.path.join(root, f), 0o700)
-
-        shutil.rmtree(str(pth), ignore_errors=True)
 
 
 # https://github.com/PyCQA/pylint/issues/2717
@@ -188,124 +144,6 @@ async def async_enumerate(
         start += 1
 
 
-async def fuzzy_command_search(
-    ctx: "Context",
-    term: Optional[str] = None,
-    *,
-    commands: Optional[Set["Command"]] = None,
-    min_score: int = 80,
-) -> Optional[List["Command"]]:
-    """Search for commands which are similar in name to the one invoked.
-
-    Returns a maximum of 5 commands which must all be at least matched
-    greater than ``min_score``.
-
-    Parameters
-    ----------
-    ctx : `commands.Context <redbot.core.commands.Context>`
-        The command invocation context.
-    term : Optional[str]
-        The name of the invoked command. If ``None``,
-        `Context.invoked_with` will be used instead.
-    commands : Optional[Set[commands.Command]]
-        The commands available to choose from when doing a fuzzy match.
-        When omitted, `Bot.walk_commands` will be used instead.
-    min_score : int
-        The minimum score for matched commands to reach. Defaults to 80.
-
-    Returns
-    -------
-    Optional[List[`commands.Command <redbot.core.commands.Command>`]]
-        A list of commands which were fuzzily matched with the invoked
-        command.
-
-    """
-    if ctx.guild is not None:
-        enabled = await ctx.bot._config.guild(ctx.guild).fuzzy()
-    else:
-        enabled = await ctx.bot._config.fuzzy()
-
-    if not enabled:
-        return
-
-    if term is None:
-        term = ctx.invoked_with
-
-    # If the term is an alias or CC, we don't want to send a supplementary fuzzy search.
-    alias_cog = ctx.bot.get_cog("Alias")
-    if alias_cog is not None:
-        is_alias, alias = await alias_cog.is_alias(ctx.guild, term)
-
-        if is_alias:
-            return
-    customcom_cog = ctx.bot.get_cog("CustomCommands")
-    if customcom_cog is not None:
-        cmd_obj = customcom_cog.commandobj
-
-        try:
-            await cmd_obj.get(ctx.message, term)
-        except:
-            pass
-        else:
-            return
-
-    # Do the scoring. `extracted` is a list of tuples in the form `(command, score)`
-    extracted = process.extract(
-        term, (commands or set(ctx.bot.walk_commands())), limit=5, scorer=fuzz.QRatio
-    )
-    if not extracted:
-        return
-
-    # Filter through the fuzzy-matched commands.
-    matched_commands = []
-    for command, score in extracted:
-        if score < min_score:
-            # Since the list is in decreasing order of score, we can exit early.
-            break
-        if await command.can_see(ctx):
-            matched_commands.append(command)
-
-    return matched_commands
-
-
-async def format_fuzzy_results(
-    ctx: "Context", matched_commands: List["Command"], *, embed: Optional[bool] = None
-) -> Union[str, discord.Embed]:
-    """Format the result of a fuzzy command search.
-
-    Parameters
-    ----------
-    ctx : `commands.Context <redbot.core.commands.Context>`
-        The context in which this result is being displayed.
-    matched_commands : List[`commands.Command <redbot.core.commands.Command>`]
-        A list of commands which have been matched by the fuzzy search, sorted
-        in order of decreasing similarity.
-    embed : bool
-        Whether or not the result should be an embed. If set to ``None``, this
-        will default to the result of `ctx.embed_requested`.
-
-    Returns
-    -------
-    Union[str, discord.Embed]
-        The formatted results.
-
-    """
-    if embed is not False and (embed is True or await ctx.embed_requested()):
-        lines = []
-        for cmd in matched_commands:
-            lines.append(f"**{ctx.clean_prefix}{cmd.qualified_name}** {cmd.short_doc}")
-        return discord.Embed(
-            title="Perhaps you wanted one of these?",
-            colour=await ctx.embed_colour(),
-            description="\n".join(lines),
-        )
-    else:
-        lines = []
-        for cmd in matched_commands:
-            lines.append(f"{ctx.clean_prefix}{cmd.qualified_name} -- {cmd.short_doc}")
-        return "Perhaps you wanted one of these? " + box("\n".join(lines), lang="vhdl")
-
-
 async def _sem_wrapper(sem, task):
     async with sem:
         return await task
@@ -402,45 +240,3 @@ def bounded_gather(
     tasks = (_sem_wrapper(semaphore, task) for task in coros_or_futures)
 
     return asyncio.gather(*tasks, loop=loop, return_exceptions=return_exceptions)
-
-
-async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
-    data_path = Path(data_manager.core_data_path().parent)
-    if not data_path.exists():
-        return
-
-    dest.mkdir(parents=True, exist_ok=True)
-    timestr = datetime.utcnow().strftime("%Y-%m-%dT%H-%M-%S")
-    backup_fpath = dest / f"redv3_{data_manager.instance_name}_{timestr}.tar.gz"
-
-    to_backup = []
-    exclusions = [
-        "__pycache__",
-        "Lavalink.jar",
-        os.path.join("Downloader", "lib"),
-        os.path.join("CogManager", "cogs"),
-        os.path.join("RepoManager", "repos"),
-    ]
-
-    # Avoiding circular imports
-    from ...cogs.downloader.repo_manager import RepoManager
-
-    repo_mgr = RepoManager()
-    await repo_mgr.initialize()
-    repo_output = []
-    for repo in repo_mgr.repos:
-        repo_output.append({"url": repo.url, "name": repo.name, "branch": repo.branch})
-    repos_file = data_path / "cogs" / "RepoManager" / "repos.json"
-    with repos_file.open("w") as fs:
-        json.dump(repo_output, fs, indent=4)
-    instance_file = data_path / "instance.json"
-    with instance_file.open("w") as fs:
-        json.dump({data_manager.instance_name: data_manager.basic_config}, fs, indent=4)
-    for f in data_path.glob("**/*"):
-        if not any(ex in str(f) for ex in exclusions) and f.is_file():
-            to_backup.append(f)
-
-    with tarfile.open(str(backup_fpath), "w:gz") as tar:
-        for f in to_backup:
-            tar.add(str(f), arcname=f.relative_to(data_path), recursive=False)
-    return backup_fpath
