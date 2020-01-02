@@ -1,0 +1,1 @@
+Fixed ``[p]editrole`` commands not checking if roles to be edited are higher than the bot's highest role before trying to edit them.

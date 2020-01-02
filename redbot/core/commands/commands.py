@@ -167,6 +167,11 @@ class Command(CogCommandMixin, commands.Command):
                     raise RuntimeError(
                         f"The name `{name}` cannot be set as a command name. It is reserved for internal use."
                     )
+        if len(self.qualified_name) > 60:
+            raise RuntimeError(
+                f"This command ({self.qualified_name}) has an excessively long qualified name, "
+                "and will not be added to the bot to prevent breaking tools and menus. (limit 60)"
+            )
 
     def _ensure_assignment_on_copy(self, other):
         super()._ensure_assignment_on_copy(other)
