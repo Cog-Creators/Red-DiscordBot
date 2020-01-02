@@ -196,7 +196,7 @@ def get_target_backend(backend) -> BackendType:
 async def do_migration(
     current_backend: BackendType, target_backend: BackendType
 ) -> Dict[str, Any]:
-    cur_driver_cls = drivers.get_driver_class(current_backend)
+    cur_driver_cls = drivers._get_driver_class_include_old(current_backend)
     new_driver_cls = drivers.get_driver_class(target_backend)
     cur_storage_details = data_manager.storage_details()
     new_storage_details = new_driver_cls.get_config_details()
@@ -387,7 +387,7 @@ def convert(instance, backend):
 
     loop = asyncio.get_event_loop()
 
-    if current_backend in (BackendType.MONGOV1, BackendType.MONGO):
+    if current_backend == BackendType.MONGOV1:
         raise RuntimeError("Please see the 3.2 release notes for upgrading a bot using mongo.")
     else:
         new_storage_details = loop.run_until_complete(do_migration(current_backend, target))
