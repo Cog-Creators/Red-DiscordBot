@@ -1,0 +1,1 @@
+Replace links to ``v3-develop`` docs with links to ``stable`` docs in help of ``[p]cc create``.
