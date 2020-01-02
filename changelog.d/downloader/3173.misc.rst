@@ -1,0 +1,1 @@
+Downloader will no longer show update for a cog if the latest version is disabled through ``info.json`` file.
