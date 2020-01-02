@@ -1,0 +1,1 @@
+Tell user that the (local) whitelist/blacklist is empty when using commands that list whitelisted/blacklisted users/roles.

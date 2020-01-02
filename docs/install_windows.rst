@@ -28,7 +28,7 @@ Then run each of the following commands:
     iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     choco install git --params "/GitOnlyOnPath /WindowsTerminal" -y
     choco install visualstudio2019-workload-vctools -y
-    choco install python3 --version=3.7.5 -y
+    choco install python3 --version=3.8.1 -y
 
 For Audio support, you should also run the following command before exiting:
 
@@ -50,7 +50,7 @@ Manually installing dependencies
 
 * `MSVC Build tools <https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2019>`_
 
-* `Python <https://www.python.org/downloads/>`_ - Red needs Python 3.7.2 or greater
+* `Python <https://www.python.org/downloads/>`_ - Red needs Python 3.8.1 or greater
 
 .. attention:: Please make sure that the box to add Python to PATH is CHECKED, otherwise
                you may run into issues when trying to run Red.
@@ -77,12 +77,12 @@ Installing Red
 
   .. note::
 
-      If you're not inside an activated virtual environment, use ``py -3.7`` in place of
+      If you're not inside an activated virtual environment, use ``py -3.8`` in place of
       ``python``, and include the ``--user`` flag with all ``pip install`` commands, like this:
 
       .. code-block:: none
 
-          py -3.7 -m pip install --user -U Red-DiscordBot
+          py -3.8 -m pip install --user -U Red-DiscordBot
 
   * Normal installation:
 
@@ -94,7 +94,7 @@ Installing Red
 
     .. code-block:: none
 
-        python3.7 -m pip install -U Red-DiscordBot[postgres]
+        python3.8 -m pip install -U Red-DiscordBot[postgres]
 
   .. note::
 

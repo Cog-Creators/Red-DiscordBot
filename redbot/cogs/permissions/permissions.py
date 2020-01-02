@@ -135,7 +135,7 @@ class Permissions(commands.Cog):
             "used).\n"
             "  5. Rules about the server a user is in (Global rules only).\n\n"
             "For more details, please read the [official documentation]"
-            "(https://red-discordbot.readthedocs.io/en/v3-develop/cog_permissions.html)."
+            "(https://docs.discord.red/en/stable/cog_permissions.html)."
         )
 
         await ctx.maybe_send_embed(message)
