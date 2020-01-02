@@ -1,10 +1,35 @@
-.. downloader framework reference
+.. Publishing cogs for V3
 
-Downloader Framework
-====================
+Publishing cogs for Red V3
+==========================
 
-Info.json
-*********
+Users of Red install 3rd-party cogs using Downloader cog. To make your cog available
+to install for others, you will have to create a git repository
+and publish it on git repository hosting (for example `GitHub <https://github.com>`_)
+
+Repository Template
+-------------------
+
+We have standardized what a repository's structure should look like to better assist
+our Downloader system and provide essential information to the Red portal.
+
+The main repository should contain at a minimum:
+
+ - :ref:`An info.json file <info-json-format>`
+ - One folder for each cog package in the repository
+
+   - refer to :doc:`/guide_cog_creation` for information on how to create a valid cog package
+   - you should also put :ref:`info.json file <info-json-format>` inside each cog folder
+
+We also recommend adding a license and README file with general information about the repository.
+
+For a simple example of what this might look like when finished,
+take a look at `our example template <https://github.com/Cog-Creators/Applications>`_.
+
+.. _info-json-format:
+
+Info.json format
+----------------
 
 The optional info.json file may exist inside every package folder in the repo, 
 as well as in the root of the repo. The following sections describe the valid 
@@ -16,7 +41,7 @@ Keys common to both repo and cog info.json (case sensitive)
 - ``author`` (list of strings) - list of names of authors of the cog or repo.
 
 - ``description`` (string) - A long description of the cog or repo. For cogs, this 
-  is displayed when a user executes ``!cog info``.
+  is displayed when a user executes ``[p]cog info``.
 
 - ``install_msg`` (string) - The message that gets displayed when a cog 
   is installed or a repo is added
@@ -25,7 +50,7 @@ Keys common to both repo and cog info.json (case sensitive)
       used for installing.
 
 - ``short`` (string) - A short description of the cog or repo. For cogs, this info 
-  is displayed when a user executes ``!cog list``
+  is displayed when a user executes ``[p]cog list``
 
 Keys specific to the cog info.json (case sensitive)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -57,46 +82,4 @@ Keys specific to the cog info.json (case sensitive)
 
 .. warning::
     Shared libraries are deprecated since version 3.2 and are marked for removal in version 3.3.
-
-API Reference
-*************
-
-.. automodule:: redbot.cogs.downloader.json_mixins
-
-.. autoclass RepoJSONMixin
-    :members
-
-.. automodule:: redbot.cogs.downloader.installable
-
-Installable
-^^^^^^^^^^^
-
-.. autoclass:: Installable
-    :members:
-
-InstalledModule
-^^^^^^^^^^^^^^^
-
-.. autoclass:: InstalledModule
-    :members:
-
-.. automodule:: redbot.cogs.downloader.repo_manager
-
-Repo
-^^^^
-
-.. autoclass:: Repo
-    :members:
-
-Repo Manager
-^^^^^^^^^^^^
-
-.. autoclass:: RepoManager
-    :members:
-
-Exceptions
-^^^^^^^^^^
-
-.. automodule:: redbot.cogs.downloader.errors
-    :members:
 
