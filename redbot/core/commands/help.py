@@ -343,7 +343,7 @@ class RedHelpFormatter:
             embed = discord.Embed(color=color, **embed_dict["embed"])
 
             if page_count > 1:
-                description = f"{embed.description} *Page {i} of {page_count}*"
+                description = f"*Page {i} of {page_count}*\n{embed.description}"
                 embed.description = description
 
             embed.set_author(**author_info)

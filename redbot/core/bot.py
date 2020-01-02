@@ -2,6 +2,7 @@ import asyncio
 import inspect
 import logging
 import os
+import sys
 from collections import namedtuple
 from datetime import datetime
 from enum import Enum
@@ -13,8 +14,12 @@ from types import MappingProxyType
 import discord
 from discord.ext.commands import when_mentioned_or
 
-from . import Config, i18n, commands, errors, drivers
-from .cog_manager import CogManager
+from . import Config, i18n, commands, errors, drivers, modlog, bank
+from .cog_manager import CogManager, CogManagerUI
+from .core_commands import license_info_command, Core
+from .dev_commands import Dev
+from .events import init_events
+from .global_checks import init_global_checks
 
 from .rpc import RPCMixin
 from .utils import common_filters
@@ -43,6 +48,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
     def __init__(self, *args, cli_flags=None, bot_dir: Path = Path.cwd(), **kwargs):
         self._shutdown_mode = ExitCodes.CRITICAL
+        self._cli_flags = cli_flags
         self._config = Config.get_core_conf(force_registration=False)
         self._co_owners = cli_flags.co_owner
         self.rpc_enabled = cli_flags.rpc
@@ -391,6 +397,18 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         This should only be run once, prior to connecting to discord.
         """
         await self._maybe_update_config()
+
+        init_global_checks(self)
+        init_events(self, cli_flags)
+
+        self.add_cog(Core(self))
+        self.add_cog(CogManagerUI())
+        self.add_command(license_info_command)
+        if cli_flags.dev:
+            self.add_cog(Dev())
+
+        await modlog._init(self)
+        bank._init()
 
         packages = []
 
@@ -971,6 +989,10 @@ class Red(RedBase, discord.AutoShardedClient):
         """Logs out of Discord and closes all connections."""
         await super().logout()
         await drivers.get_driver_class().teardown()
+        try:
+            await self.rpc.close()
+        except AttributeError:
+            pass
 
     async def shutdown(self, *, restart: bool = False):
         """Gracefully quit Red.
@@ -990,6 +1012,7 @@ class Red(RedBase, discord.AutoShardedClient):
             self._shutdown_mode = ExitCodes.RESTART
 
         await self.logout()
+        sys.exit(self._shutdown_mode)
 
 
 class ExitCodes(Enum):

@@ -1,4 +1,4 @@
-PYTHON ?= python3.7
+PYTHON ?= python3.8
 
 # Python Code Style
 reformat:
