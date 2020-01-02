@@ -282,7 +282,7 @@ async def run_bot(red: Red, cli_flags: Namespace):
 
     if cli_flags.edit:
         try:
-            edit_instance(red, cli_flags)
+            await edit_instance(red, cli_flags)
         except (KeyboardInterrupt, EOFError):
             print("Aborted!")
         finally:
