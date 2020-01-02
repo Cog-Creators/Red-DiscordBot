@@ -1,0 +1,1 @@
+Fix missing ``await`` in code of ``redbot --edit``.
