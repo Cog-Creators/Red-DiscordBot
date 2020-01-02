@@ -145,7 +145,7 @@ class Admin(commands.Cog):
         if member is None:
             member = ctx.author
         if not self.pass_user_hierarchy_check(ctx, role):
-            await ctx.send(_(USER_HIERARCHY_ISSUE_REMOVE).foramt(role=role, member=member))
+            await ctx.send(_(USER_HIERARCHY_ISSUE_REMOVE).format(role=role, member=member))
             return
         if not self.pass_hierarchy_check(ctx, role):
             await ctx.send(_(HIERARCHY_ISSUE_REMOVE).format(role=role, member=member))
