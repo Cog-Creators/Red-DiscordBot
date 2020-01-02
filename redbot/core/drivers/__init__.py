@@ -38,6 +38,7 @@ def _get_driver_class_include_old(storage_type: Optional[BackendType] = None) ->
     """
     if storage_type and storage_type == BackendType.MONGO:
         from ._mongo import MongoDriver
+
         return MongoDriver
     else:
         return get_driver_class(storage_type)
