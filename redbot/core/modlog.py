@@ -1,11 +1,12 @@
+from __future__ import annotations
+
 import asyncio
 from datetime import datetime, timedelta
-from typing import List, Union, Optional, cast
+from typing import List, Union, Optional, cast, TYPE_CHECKING
 
 import discord
 
 from redbot.core import Config
-from redbot.core.bot import Red
 
 from .utils.common_filters import (
     filter_invites,
@@ -16,6 +17,9 @@ from .utils.common_filters import (
 from .i18n import Translator
 
 from .generic_casetypes import all_generics
+
+if TYPE_CHECKING:
+    from redbot.core.bot import Red
 
 __all__ = [
     "Case",
