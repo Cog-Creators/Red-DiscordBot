@@ -3,9 +3,9 @@
 .. role:: python(code)
     :language: python
 
-====================
-Creating cogs for V3
-====================
+========================
+Creating cogs for Red V3
+========================
 
 This guide serves as a tutorial on creating cogs for Red V3.
 It will cover the basics of setting up a package for your
@@ -135,6 +135,12 @@ have successfully created a cog!
     to load them
     
     You can also take a look at `our cookiecutter <https://github.com/Cog-Creators/cog-cookiecutter>`_, for help creating the right structure.
+
+-------------------
+Publishing your cog
+-------------------
+
+Go to :doc:`/guide_publish_cogs`
 
 --------------------
 Additional resources

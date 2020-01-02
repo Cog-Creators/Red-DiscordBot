@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3.8
 """Script to edit test repo used by Downloader git integration tests.
 
 This script aims to help update the human-readable version of repo

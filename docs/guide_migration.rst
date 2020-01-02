@@ -3,9 +3,9 @@
 .. role:: python(code)
     :language: python
 
-====================
-Migrating Cogs to V3
-====================
+==========================
+Migrating cogs from Red V2
+==========================
 
 First, be sure to read :dpy_docs:`discord.py's migration guide <migrating.html>`
 as that covers all of the changes to discord.py that will affect the migration process

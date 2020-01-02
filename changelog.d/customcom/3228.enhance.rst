@@ -1,0 +1,1 @@
+Add query option for CC typehints, for URL-based CCs.
