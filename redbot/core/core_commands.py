@@ -31,7 +31,6 @@ from . import (
     i18n,
     config,
 )
-from .utils import create_backup
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import (
     box,
@@ -1313,14 +1312,14 @@ class Core(commands.Cog, CoreLogic):
 
         This setting only applies to embedded help.
 
-        Please note that setting a relitavely small character limit may
-        mean some pages will exceed this limit. This is because categories
-        are never spread across multiple pages in the help message.
+        The default value is 1000 characters. The minimum value is 500.
+        The maximum is based on the lower of what you provide and what discord allows.
 
-        The default value is 1000 characters.
+        Please note that setting a relatively small character limit may
+        mean some pages will exceed this limit.
         """
-        if limit <= 0:
-            await ctx.send(_("You must give a positive value!"))
+        if limit < 500:
+            await ctx.send(_("You must give a value of at least 500 characters."))
             return
 
         await ctx.bot._config.help.page_char_limit.set(limit)
@@ -1389,75 +1388,6 @@ class Core(commands.Cog, CoreLogic):
             pages = pagify("\n".join(locale_list), shorten_by=26)
 
         await ctx.send_interactive(pages, box_lang="Available Locales:")
-
-    @commands.command()
-    @checks.is_owner()
-    async def backup(self, ctx: commands.Context, *, backup_dir: str = None):
-        """Creates a backup of all data for this bot instance.
-
-        This backs up the bot's data and settings.
-        You may provide a path to a directory for the backup archive to
-        be placed in. If the directory does not exist, the bot will
-        attempt to create it.
-        """
-        if backup_dir is None:
-            dest = Path.home()
-        else:
-            dest = Path(backup_dir)
-
-        driver_cls = drivers.get_driver_class()
-        if driver_cls != drivers.JsonDriver:
-            await ctx.send(_("Converting data to JSON for backup..."))
-            async with ctx.typing():
-                await config.migrate(driver_cls, drivers.JsonDriver)
-
-        log.info("Creating backup for this instance...")
-        try:
-            backup_fpath = await create_backup(dest)
-        except OSError as exc:
-            await ctx.send(
-                _(
-                    "Creating the backup archive failed! Please check your console or logs for "
-                    "details."
-                )
-            )
-            log.exception("Failed to create backup archive", exc_info=exc)
-            return
-
-        if backup_fpath is None:
-            await ctx.send(_("Your datapath appears to be empty."))
-            return
-
-        log.info("Backup archive created successfully at '%s'", backup_fpath)
-        await ctx.send(
-            _("A backup has been made of this instance. It is located at `{path}`.").format(
-                path=backup_fpath
-            )
-        )
-        if backup_fpath.stat().st_size > 8_000_000:
-            await ctx.send(_("This backup is too large to send via DM."))
-            return
-        await ctx.send(_("Would you like to receive a copy via DM? (y/n)"))
-
-        pred = MessagePredicate.yes_or_no(ctx)
-        try:
-            await ctx.bot.wait_for("message", check=pred, timeout=60)
-        except asyncio.TimeoutError:
-            await ctx.send(_("Response timed out."))
-        else:
-            if pred.result is True:
-                await ctx.send(_("OK, it's on its way!"))
-                try:
-                    async with ctx.author.typing():
-                        await ctx.author.send(
-                            _("Here's a copy of the backup"), file=discord.File(str(backup_fpath))
-                        )
-                except discord.Forbidden:
-                    await ctx.send(_("I don't seem to be able to DM you. Do you have closed DMs?"))
-                except discord.HTTPException:
-                    await ctx.send(_("I could not send the backup file."))
-            else:
-                await ctx.send(_("OK then."))
 
     @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)
@@ -1705,6 +1635,10 @@ class Core(commands.Cog, CoreLogic):
         """
         curr_list = await ctx.bot._config.whitelist()
 
+        if not curr_list:
+            await ctx.send("Whitelist is empty.")
+            return
+
         msg = _("Whitelisted Users:")
         for user in curr_list:
             msg += "\n\t- {}".format(user)
@@ -1767,6 +1701,10 @@ class Core(commands.Cog, CoreLogic):
         Lists blacklisted users.
         """
         curr_list = await ctx.bot._config.blacklist()
+
+        if not curr_list:
+            await ctx.send("Blacklist is empty.")
+            return
 
         msg = _("Blacklisted Users:")
         for user in curr_list:
@@ -1838,6 +1776,10 @@ class Core(commands.Cog, CoreLogic):
         """
         curr_list = await ctx.bot._config.guild(ctx.guild).whitelist()
 
+        if not curr_list:
+            await ctx.send("Local whitelist is empty.")
+            return
+
         msg = _("Whitelisted Users and roles:")
         for obj in curr_list:
             msg += "\n\t- {}".format(obj)
@@ -1903,9 +1845,16 @@ class Core(commands.Cog, CoreLogic):
             user_or_role = discord.Object(id=user_or_role)
             user = True
 
-        if user and await ctx.bot.is_owner(user_or_role):
-            await ctx.send(_("You cannot blacklist an owner!"))
-            return
+        if user:
+            if user_or_role.id == ctx.author.id:
+                await ctx.send(_("You cannot blacklist yourself!"))
+                return
+            if user_or_role.id == ctx.guild.owner_id and not await ctx.bot.is_owner(ctx.author):
+                await ctx.send(_("You cannot blacklist the guild owner!"))
+                return
+            if await ctx.bot.is_owner(user_or_role):
+                await ctx.send(_("You cannot blacklist a bot owner!"))
+                return
 
         async with ctx.bot._config.guild(ctx.guild).blacklist() as curr_list:
             if user_or_role.id not in curr_list:
@@ -1922,6 +1871,10 @@ class Core(commands.Cog, CoreLogic):
         Lists blacklisted users and roles.
         """
         curr_list = await ctx.bot._config.guild(ctx.guild).blacklist()
+
+        if not curr_list:
+            await ctx.send("Local blacklist is empty.")
+            return
 
         msg = _("Blacklisted Users and Roles:")
         for obj in curr_list:

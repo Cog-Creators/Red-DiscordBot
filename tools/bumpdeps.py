@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3.8
 """Script to bump pinned dependencies in setup.cfg.
 
 This script aims to help update our list of pinned primary and

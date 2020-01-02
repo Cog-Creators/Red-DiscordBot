@@ -28,7 +28,7 @@ from typing import (
 
 import discord
 from redbot.core import data_manager, commands, Config
-from redbot.core.utils import safe_delete
+from redbot.core.utils._internal_utils import safe_delete
 from redbot.core.i18n import Translator
 
 from . import errors

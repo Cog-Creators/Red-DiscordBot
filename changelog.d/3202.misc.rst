@@ -1,0 +1,1 @@
+Adds a not fully documented class for APSW interaction

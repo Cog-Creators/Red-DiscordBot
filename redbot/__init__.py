@@ -14,7 +14,7 @@ from typing import (
 )
 
 
-MIN_PYTHON_VERSION = (3, 7, 0)
+MIN_PYTHON_VERSION = (3, 8, 1)
 
 __all__ = [
     "MIN_PYTHON_VERSION",
