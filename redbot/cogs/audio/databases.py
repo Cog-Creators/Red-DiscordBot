@@ -359,14 +359,14 @@ class PlaylistInterface:
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             executor.submit(
                 self.cursor.execute,
-                    PLAYLIST_UPSERT,
-                    {
-                        "scope_type": str(scope_type),
-                        "playlist_id": int(playlist_id),
-                        "playlist_name": str(playlist_name),
-                        "scope_id": int(scope_id),
-                        "author_id": int(author_id),
-                        "playlist_url": playlist_url,
-                        "tracks": json.dumps(tracks),
-                    },
+                PLAYLIST_UPSERT,
+                {
+                    "scope_type": str(scope_type),
+                    "playlist_id": int(playlist_id),
+                    "playlist_name": str(playlist_name),
+                    "scope_id": int(scope_id),
+                    "author_id": int(author_id),
+                    "playlist_url": playlist_url,
+                    "tracks": json.dumps(tracks),
+                },
             )
