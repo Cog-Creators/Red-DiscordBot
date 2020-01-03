@@ -356,12 +356,14 @@ async def shutdown_handler(red, signal_type=None):
     await red.loop.shutdown_asyncgens()
     pending = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
     [task.cancel() for task in pending]
-    await asyncio.gather(*pending, loop=red.loop, return_exceptions=True)
+    await asyncio.gather(*pending, return_exceptions=True)
     sys.exit(exit_code)
 
 
 def exception_handler(red, loop, context):
     msg = context.get("exception", context["message"])
+    if isinstance(msg, SystemExit):
+        return
     if isinstance(msg, KeyboardInterrupt):
         # Windows support is ugly, I'm sorry
         logging.error("Received KeyboardInterrupt, treating as interrupt")
@@ -405,9 +407,14 @@ def main():
 
         exc_handler = functools.partial(exception_handler, red)
         loop.set_exception_handler(exc_handler)
-        # We actually can't use asyncio.run and have graceful cleanup on Windows...
+        # We actually can't (just) use asyncio.run here
         loop.create_task(run_bot(red, cli_flags))
         loop.run_forever()
+    except KeyboardInterrupt:
+        # We still have to catch this here too. (*joy*)
+        log.warning("Please do not use Ctrl+C to Shutdown Red! (attempting to die gracefully...)")
+        logging.error("Received KeyboardInterrupt, treating as interrupt")
+        loop.run_until_complete(shutdown_handler(red, signal.SIGINT))
     finally:
         loop.close()
 
