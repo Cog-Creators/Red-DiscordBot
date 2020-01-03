@@ -2771,17 +2771,6 @@ class Audio(commands.Cog):
             )
         if not await self._currency_check(ctx, guild_data["jukebox_price"]):
             return
-        query = audio_dataclasses.Query.process_input(query)
-        if not query.valid:
-            return await self._embed_msg(
-                ctx,
-                title=_("Unable To Play Tracks"),
-                description=_("No tracks found for `{query}`.").format(
-                    query=query.to_string_user()
-                ),
-            )
-        if not await self._currency_check(ctx, guild_data["jukebox_price"]):
-            return
         if query.is_spotify:
             return await self._get_spotify_tracks(ctx, query)
         try:
