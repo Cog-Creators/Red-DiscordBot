@@ -521,7 +521,9 @@ async def get_all_playlist_converter(
         Trying to access the User scope without an user id.
     """
     scope_standard, scope_id = _prepare_config_scope(scope, author, guild)
-    playlists = await database.fetch_all_converter(scope_standard, playlist_name=arg, playlist_id=arg)
+    playlists = await database.fetch_all_converter(
+        scope_standard, playlist_name=arg, playlist_id=arg
+    )
     return [
         await Playlist.from_json(
             bot, scope, playlist.playlist_id, playlist, guild=guild, author=author
