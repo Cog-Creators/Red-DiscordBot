@@ -366,10 +366,10 @@ def exception_handler(red, loop, context):
         return
     if isinstance(msg, KeyboardInterrupt):
         # Windows support is ugly, I'm sorry
-        logging.error("Received KeyboardInterrupt, treating as interrupt")
+        log.error("Received KeyboardInterrupt, treating as interrupt")
         signal_type = signal.SIGINT
     else:
-        logging.critical("Caught fatal exception: %s", msg)
+        log.critical("Caught fatal exception: %s", msg)
         signal_type = None
     loop.create_task(shutdown_handler(red, signal_type))
 
@@ -413,7 +413,7 @@ def main():
     except KeyboardInterrupt:
         # We still have to catch this here too. (*joy*)
         log.warning("Please do not use Ctrl+C to Shutdown Red! (attempting to die gracefully...)")
-        logging.error("Received KeyboardInterrupt, treating as interrupt")
+        log.error("Received KeyboardInterrupt, treating as interrupt")
         loop.run_until_complete(shutdown_handler(red, signal.SIGINT))
     finally:
         loop.close()
