@@ -275,8 +275,11 @@ class Streams(commands.Cog):
         if not stream:
             token = await self.bot.get_shared_api_tokens(_class.token_name)
             is_yt = _class.__name__ == "YoutubeStream"
+            is_twitch = _class.__name__ == "TwitchStream"
             if is_yt and not self.check_name_or_id(channel_name):
                 stream = _class(id=channel_name, token=token)
+            elif is_twitch:
+                stream = _class(name=channel_name, token=token.get("client_id"))
             else:
                 stream = _class(name=channel_name, token=token)
             try:
