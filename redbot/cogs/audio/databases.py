@@ -359,7 +359,6 @@ class PlaylistInterface:
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             executor.submit(
                 self.cursor.execute,
-                (
                     PLAYLIST_UPSERT,
                     {
                         "scope_type": str(scope_type),
@@ -370,5 +369,4 @@ class PlaylistInterface:
                         "playlist_url": playlist_url,
                         "tracks": json.dumps(tracks),
                     },
-                ),
             )
