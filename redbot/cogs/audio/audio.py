@@ -3452,7 +3452,7 @@ class Audio(commands.Cog):
                 result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
             except TrackEnqueueError:
                 self._play_lock(ctx, False)
-                return self._embed_msg(
+                return await self._embed_msg(
                     ctx,
                     title=_("Unable to Get Track"),
                     description=_(
@@ -5910,7 +5910,7 @@ class Audio(commands.Cog):
                 result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
             except TrackEnqueueError:
                 self._play_lock(ctx, False)
-                return self._embed_msg(
+                return await self._embed_msg(
                     ctx,
                     title=_("Unable to Get Track"),
                     description=_(
@@ -5937,7 +5937,7 @@ class Audio(commands.Cog):
                 result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
             except TrackEnqueueError:
                 self._play_lock(ctx, False)
-                return self._embed_msg(
+                return await self._embed_msg(
                     ctx,
                     title=_("Unable to Get Track"),
                     description=_(
@@ -6693,7 +6693,7 @@ class Audio(commands.Cog):
                         )
                     except TrackEnqueueError:
                         self._play_lock(ctx, False)
-                        return self._embed_msg(
+                        return await self._embed_msg(
                             ctx,
                             title=_("Unable to Get Track"),
                             description=_(
@@ -6709,7 +6709,7 @@ class Audio(commands.Cog):
                         tracks = await self._folder_tracks(ctx, player, query)
                     except TrackEnqueueError:
                         self._play_lock(ctx, False)
-                        return self._embed_msg(
+                        return await self._embed_msg(
                             ctx,
                             title=_("Unable to Get Track"),
                             description=_(
