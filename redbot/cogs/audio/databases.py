@@ -209,7 +209,7 @@ class CacheInterface:
         return output
 
     async def fetch_random(
-            self, table: str, query: str, values: Dict[str, Union[str, int]]
+        self, table: str, query: str, values: Dict[str, Union[str, int]]
     ) -> CacheLastFetchResult:
         table = _PARSER.get(table, {})
         sql_query = table.get(query, {}).get("played")
@@ -218,13 +218,15 @@ class CacheInterface:
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             for future in concurrent.futures.as_completed(
-                    [executor.submit(self.database.execute, sql_query, values)]):
+                [executor.submit(self.database.execute, sql_query, values)]
+            ):
                 try:
                     row = future.result()
                     row = row.fetchone()
                 except Exception as exc:
                     log.debug(f"Failed to completed random fetch from database", exc_info=exc)
         return CacheLastFetchResult(*row)
+
 
 class PlaylistInterface:
     def __init__(self):
@@ -262,17 +264,30 @@ class PlaylistInterface:
 
         return PlaylistFetchResult(*row) if row else None
 
-    async def fetch_all(self, scope: str, scope_id: int, author_id=None) -> List[PlaylistFetchResult]:
+    async def fetch_all(
+        self, scope: str, scope_id: int, author_id=None
+    ) -> List[PlaylistFetchResult]:
         scope_type = self.get_scope_type(scope)
         if author_id is not None:
             output = []
-            for index, row in enumerate(self.cursor.execute(PLAYLIST_FETCH_ALL_WITH_FILTER, ({"scope_type": scope_type, "scope_id": scope_id, "author_id": author_id})), start=1):
+            for index, row in enumerate(
+                self.cursor.execute(
+                    PLAYLIST_FETCH_ALL_WITH_FILTER,
+                    ({"scope_type": scope_type, "scope_id": scope_id, "author_id": author_id}),
+                ),
+                start=1,
+            ):
                 if index % 50 == 0:
                     await asyncio.sleep(0.01)
                 output.append(row)
         else:
             output = []
-            for index, row in enumerate(self.cursor.execute(PLAYLIST_FETCH_ALL, ({"scope_type": scope_type, "scope_id": scope_id})), start=1):
+            for index, row in enumerate(
+                self.cursor.execute(
+                    PLAYLIST_FETCH_ALL, ({"scope_type": scope_type, "scope_id": scope_id})
+                ),
+                start=1,
+            ):
                 if index % 50 == 0:
                     await asyncio.sleep(0.01)
                 output.append(row)
@@ -288,14 +303,19 @@ class PlaylistInterface:
             playlist_id = -1
 
         output = []
-        for index, row in enumerate(self.cursor.execute(PLAYLIST_FETCH_ALL_CONVERTER, (
+        for index, row in enumerate(
+            self.cursor.execute(
+                PLAYLIST_FETCH_ALL_CONVERTER,
+                (
                     {
                         "scope_type": scope_type,
                         "playlist_name": playlist_name,
                         "playlist_id": playlist_id,
                     }
-                )
-                                                        ), start=1):
+                ),
+            ),
+            start=1,
+        ):
             if index % 50 == 0:
                 await asyncio.sleep(0.01)
             output.append(row)
@@ -304,7 +324,11 @@ class PlaylistInterface:
     def delete(self, scope: str, playlist_id: int, scope_id: int):
         scope_type = self.get_scope_type(scope)
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            executor.submit(self.cursor.execute, PLAYLIST_DELETE, ({"playlist_id": playlist_id, "scope_id": scope_id, "scope_type": scope_type}))
+            executor.submit(
+                self.cursor.execute,
+                PLAYLIST_DELETE,
+                ({"playlist_id": playlist_id, "scope_id": scope_id, "scope_type": scope_type}),
+            )
 
     def delete_scheduled(self):
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
@@ -313,7 +337,9 @@ class PlaylistInterface:
     def drop(self, scope: str):
         scope_type = self.get_scope_type(scope)
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            executor.submit(self.cursor.execute, PLAYLIST_DELETE_SCOPE, ({"scope_type": scope_type}))
+            executor.submit(
+                self.cursor.execute, PLAYLIST_DELETE_SCOPE, ({"scope_type": scope_type})
+            )
 
     def create_table(self, scope: str):
         scope_type = self.get_scope_type(scope)
@@ -331,9 +357,10 @@ class PlaylistInterface:
     ):
         scope_type = self.get_scope_type(scope)
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            executor.submit(self.cursor.execute, (
-                PLAYLIST_UPSERT,
+            executor.submit(
+                self.cursor.execute,
                 (
+                    PLAYLIST_UPSERT,
                     {
                         "scope_type": str(scope_type),
                         "playlist_id": int(playlist_id),
@@ -342,6 +369,6 @@ class PlaylistInterface:
                         "author_id": int(author_id),
                         "playlist_url": playlist_url,
                         "tracks": json.dumps(tracks),
-                    }
+                    },
                 ),
-            ))
+            )
