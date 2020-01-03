@@ -417,7 +417,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             self.add_cog(Dev())
 
         await modlog._init(self)
-        bank._init()
+        await bank._init(self)
 
         packages = []
 

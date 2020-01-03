@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import datetime
+from dataclasses import dataclass
 from typing import Union, List, Optional, TYPE_CHECKING
 from functools import wraps
 
@@ -44,6 +45,7 @@ __all__ = [
 ]
 
 _MAX_BALANCE = 2 ** 63 - 1
+_SCHEMA = 2
 
 _DEFAULT_GLOBAL = {
     "is_global": False,
@@ -51,6 +53,7 @@ _DEFAULT_GLOBAL = {
     "currency": "credits",
     "default_balance": 100,
     "max_balance": _MAX_BALANCE,
+    "schema": 1,
 }
 
 _DEFAULT_GUILD = {
@@ -65,26 +68,40 @@ _DEFAULT_MEMBER = {"name": "", "balance": 0, "created_at": 0}
 _DEFAULT_USER = _DEFAULT_MEMBER
 
 _conf: Config = None
+_bot: Red = None
 
 
-def _init():
-    global _conf
+async def _init(bot):
+    global _conf, _bot
+    _bot = bot
     _conf = Config.get_conf(None, 384734293238749, cog_name="Bank", force_registration=True)
     _conf.register_global(**_DEFAULT_GLOBAL)
     _conf.register_guild(**_DEFAULT_GUILD)
     _conf.register_member(**_DEFAULT_MEMBER)
     _conf.register_user(**_DEFAULT_USER)
+    await remove_user_names()
 
 
+async def remove_user_names():
+    async with _conf._get_base_group(_conf.MEMBER) as guild_data:
+        for guild_id, member_data in guild_data.items():
+            for member_id, bank_data in guild_data[guild_id].items():
+                if "name" in guild_data[guild_id][member_id]:
+                    del guild_data[guild_id][member_id]["name"]
+
+    async with _conf._get_base_group(_conf.USER) as global_data:
+        for user_id, bank_data in global_data.items():
+            if "name" in global_data[user_id]:
+                del global_data[user_id]["name"]
+
+
+@dataclass
 class Account:
     """A single account.
-
     This class should ONLY be instantiated by the bank itself."""
 
-    def __init__(self, name: str, balance: int, created_at: datetime.datetime):
-        self.name = name
-        self.balance = balance
-        self.created_at = created_at
+    balance: int
+    created_at: datetime.datetime
 
 
 def _encoded_current_time() -> int:
@@ -219,9 +236,6 @@ async def set_balance(member: Union[discord.Member, discord.User], amount: int) 
     if await group.created_at() == 0:
         time = _encoded_current_time()
         await group.created_at.set(time)
-
-    if await group.name() == "":
-        await group.name.set(member.display_name)
 
     return amount
 
@@ -535,13 +549,15 @@ async def get_account(member: Union[discord.Member, discord.User]) -> Account:
         all_accounts = await _conf.all_members(member.guild)
 
     if member.id not in all_accounts:
-        acc_data = {"name": member.display_name, "created_at": _DEFAULT_MEMBER["created_at"]}
+        acc_data = {"created_at": _DEFAULT_MEMBER["created_at"]}
         try:
             acc_data["balance"] = await get_default_balance(member.guild)
         except AttributeError:
             acc_data["balance"] = await get_default_balance()
     else:
         acc_data = all_accounts[member.id]
+
+    acc_data.pop("name", None)
 
     acc_data["created_at"] = _decode_time(acc_data["created_at"])
     return Account(**acc_data)

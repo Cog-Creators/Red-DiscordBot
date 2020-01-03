@@ -455,8 +455,11 @@ class Economy(commands.Cog):
         if await bank.is_global() and show_global:
             # show_global is only applicable if bank is global
             bank_sorted = await bank.get_leaderboard(positions=top, guild=None)
+            get_member = self.bot.get_user
+
         else:
             bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
+            get_member = guild.get_member
         try:
             bal_len = len(humanize_number(bank_sorted[0][1]["balance"]))
             bal_len_max = len(humanize_number(max_bal))
@@ -476,14 +479,15 @@ class Economy(commands.Cog):
         highscores = []
         pos = 1
         temp_msg = header
+        is_owner = await ctx.bot.is_owner(ctx.author)
         for acc in bank_sorted:
             try:
-                name = guild.get_member(acc[0]).display_name
+                name = get_member(acc[0]).display_name
             except AttributeError:
                 user_id = ""
-                if await ctx.bot.is_owner(ctx.author):
+                if is_owner:
                     user_id = f"({str(acc[0])})"
-                name = f"{acc[1]['name']} {user_id}"
+                name = f"Unknown {user_id}"
 
             balance = acc[1]["balance"]
             if balance > max_bal:

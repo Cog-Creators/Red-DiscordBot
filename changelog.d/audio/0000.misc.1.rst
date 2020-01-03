@@ -1,0 +1,6 @@
+Removed the Name key conf the config database as its unnecessary EUD being stored.
+
+2 other minor improvements:
+  - ``await ctx.bot.is_owner`` isn't called for every member not found (it is now only called once)
+  - If ``show_global`` is True on ``[p]leaderboard`` and bank is global attempt to show User names for users not in current server, Before this was causing multiple calls to ``ctx.bot.is_owner`` and only the user IDs would be shown and the name saved to config thats saved at account creation time.
+
