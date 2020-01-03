@@ -79,20 +79,23 @@ async def _init(bot):
     _conf.register_guild(**_DEFAULT_GUILD)
     _conf.register_member(**_DEFAULT_MEMBER)
     _conf.register_user(**_DEFAULT_USER)
-    await remove_user_names()
+    await remove_user_names(current=await _conf.schema(), expected=_SCHEMA)
 
 
-async def remove_user_names():
-    async with _conf._get_base_group(_conf.MEMBER) as guild_data:
-        for guild_id, member_data in guild_data.items():
-            for member_id, bank_data in guild_data[guild_id].items():
-                if "name" in guild_data[guild_id][member_id]:
-                    del guild_data[guild_id][member_id]["name"]
+async def remove_user_names(current, expected):
+    if current == expected:
+        return
+    elif current < expected:
+        async with _conf._get_base_group(_conf.MEMBER) as guild_data:
+            for guild_id, member_data in guild_data.items():
+                for member_id, bank_data in guild_data[guild_id].items():
+                    if "name" in guild_data[guild_id][member_id]:
+                        del guild_data[guild_id][member_id]["name"]
 
-    async with _conf._get_base_group(_conf.USER) as global_data:
-        for user_id, bank_data in global_data.items():
-            if "name" in global_data[user_id]:
-                del global_data[user_id]["name"]
+        async with _conf._get_base_group(_conf.USER) as global_data:
+            for user_id, bank_data in global_data.items():
+                if "name" in global_data[user_id]:
+                    del global_data[user_id]["name"]
 
 
 @dataclass
