@@ -12,7 +12,6 @@ from typing import Dict, Any, Optional, Union
 import appdirs
 import click
 
-import redbot.logging
 from redbot.core.utils._internal_utils import safe_delete, create_backup as red_create_backup
 from redbot.core import config, data_manager, drivers
 from redbot.core.drivers import BackendType, IdentifierData
@@ -295,7 +294,15 @@ async def remove_instance_interaction():
 def cli(ctx, debug):
     """Create a new instance."""
     level = logging.DEBUG if debug else logging.INFO
-    redbot.logging.init_logging(level=level, location=Path.cwd() / "red_setup_logs")
+    base_logger = logging.getLogger("red")
+    base_logger.setLevel(level)
+    formatter = logging.Formatter(
+        "[{asctime}] [{levelname}] {name}: {message}", datefmt="%Y-%m-%d %H:%M:%S", style="{"
+    )
+    stdout_handler = logging.StreamHandler(sys.stdout)
+    stdout_handler.setFormatter(formatter)
+    base_logger.addHandler(stdout_handler)
+
     if ctx.invoked_subcommand is None:
         basic_setup()
 
