@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import asyncio
 import datetime
-from typing import Union, List, Optional
+from typing import Union, List, Optional, TYPE_CHECKING
 from functools import wraps
 
 import discord
@@ -8,8 +10,11 @@ import discord
 from redbot.core.utils.chat_formatting import humanize_number
 from . import Config, errors, commands
 from .i18n import Translator
-from .bot import Red
+
 from .errors import BankPruneError
+
+if TYPE_CHECKING:
+    from .bot import Red
 
 _ = Translator("Bank API", __file__)
 

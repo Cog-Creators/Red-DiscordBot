@@ -27,15 +27,30 @@ Then run each of the following commands:
     Set-ExecutionPolicy Bypass -Scope Process -Force
     iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     choco install git --params "/GitOnlyOnPath /WindowsTerminal" -y
-    choco install jre8 python -y; exit
+    choco install visualstudio2019-workload-vctools -y
+    choco install python3 --version=3.8.1 -y
 
-From here, continue onto `installing Red <installing-red-windows>`.
+For Audio support, you should also run the following command before exiting:
+
+.. code-block:: none
+
+    choco install adoptopenjdk11jre -y
+
+
+From here, exit the prompt then continue onto `installing Red <installing-red-windows>`.
 
 ********************************
 Manually installing dependencies
 ********************************
 
-* `Python <https://www.python.org/downloads/>`_ - Red needs Python 3.7.0 or greater
+.. attention:: There are additional configuration steps required which are
+               not documented for installing dependencies manually.
+               These dependencies are only listed seperately here for
+               reference purposes.
+
+* `MSVC Build tools <https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2019>`_
+
+* `Python <https://www.python.org/downloads/>`_ - Red needs Python 3.8.1 or greater
 
 .. attention:: Please make sure that the box to add Python to PATH is CHECKED, otherwise
                you may run into issues when trying to run Red.
@@ -44,9 +59,8 @@ Manually installing dependencies
 
 .. attention:: Please choose the option to "Git from the command line and also from 3rd-party software" in Git's setup.
 
-* `Java <https://java.com/en/download/manual.jsp>`_ - needed for Audio
+* `Java <https://adoptopenjdk.net/?variant=openjdk11&jvmVariant=hotspot>`_ - needed for Audio
 
-.. attention:: Please choose the "Windows Online" installer.
 
 .. _installing-red-windows:
 
@@ -63,12 +77,12 @@ Installing Red
 
   .. note::
 
-      If you're not inside an activated virtual environment, use ``py -3.7`` in place of
+      If you're not inside an activated virtual environment, use ``py -3.8`` in place of
       ``python``, and include the ``--user`` flag with all ``pip install`` commands, like this:
 
       .. code-block:: none
 
-          py -3.7 -m pip install --user -U Red-DiscordBot
+          py -3.8 -m pip install --user -U Red-DiscordBot
 
   * Normal installation:
 
@@ -76,22 +90,20 @@ Installing Red
 
         python -m pip install -U Red-DiscordBot
 
-  * With MongoDB support:
-
-    .. code-block:: none
-
-        python -m pip install -U Red-DiscordBot[mongo]
-
   * With PostgreSQL support:
 
     .. code-block:: none
 
-        python3.7 -m pip install -U Red-DiscordBot[postgres]
+        python3.8 -m pip install -U Red-DiscordBot[postgres]
 
   .. note::
 
       To install the development version, replace ``Red-DiscordBot`` in the above commands with the
-      following link:
+      link below. **The development version of the bot contains experimental changes. It is not
+      intended for normal users.** We will not support anyone using the development version in any
+      support channels. Using the development version may break third party cogs and not all core
+      commands may work. Downgrading to stable after installing the development version may cause
+      data loss, crashes or worse.
 
       .. code-block:: none
 

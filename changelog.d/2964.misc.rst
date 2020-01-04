@@ -1,0 +1,3 @@
+Red no longer uses bot.fetch_user in core
+    - This is a 1/1s global ratelimit
+    - It really really really should be avoided.

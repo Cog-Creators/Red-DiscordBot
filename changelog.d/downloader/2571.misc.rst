@@ -1,0 +1,1 @@
+Added more Downloader tests for Repo logic and git integration. New git tests use a test repo file that can be generated using new tool at ``tools/edit_testrepo.py``.

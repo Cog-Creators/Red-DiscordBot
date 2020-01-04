@@ -1,0 +1,1 @@
+Adds a command to list disabled commands globally or per guild.

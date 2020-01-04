@@ -167,6 +167,11 @@ class Command(CogCommandMixin, commands.Command):
                     raise RuntimeError(
                         f"The name `{name}` cannot be set as a command name. It is reserved for internal use."
                     )
+        if len(self.qualified_name) > 60:
+            raise RuntimeError(
+                f"This command ({self.qualified_name}) has an excessively long qualified name, "
+                "and will not be added to the bot to prevent breaking tools and menus. (limit 60)"
+            )
 
     def _ensure_assignment_on_copy(self, other):
         super()._ensure_assignment_on_copy(other)
@@ -699,3 +704,29 @@ def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitabl
 
         __command_disablers[guild] = disabler
         return disabler
+
+
+# This is intentionally left out of `__all__` as it is not intended for general use
+class _AlwaysAvailableCommand(Command):
+    """
+    This should be used only for informational commands
+    which should not be disabled or removed
+
+    These commands cannot belong to a cog.
+
+    These commands do not respect most forms of checks, and
+    should only be used with that in mind.
+
+    This particular class is not supported for 3rd party use
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.cog is not None:
+            raise TypeError("This command may not be added to a cog")
+
+    async def can_run(self, ctx, *args, **kwargs) -> bool:
+        return not ctx.author.bot
+
+    async def _verify_checks(self, ctx) -> bool:
+        return not ctx.author.bot

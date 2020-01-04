@@ -1,0 +1,1 @@
+Bot now handles more things prior to connecting to discord to reduce issues with initial load

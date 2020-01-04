@@ -1,0 +1,1 @@
+Removed ``safe_delete``, ``fuzzy_command_search``, ``format_fuzzy_results`` and ``create_backup`` functions from ``redbot.core.utils``.

@@ -17,10 +17,10 @@ Installing the pre-requirements
 Please install the pre-requirements using the commands listed for your operating system.
 
 The pre-requirements are:
- - Python 3.7.0 or greater
- - Pip 9.0 or greater
+ - Python 3.8.1 or greater
+ - Pip 18.1 or greater
  - Git
- - Java Runtime Environment 8 or later (for audio support)
+ - Java Runtime Environment 11 or later (for audio support)
 
 We also recommend installing some basic compiler tools, in case our dependencies don't provide
 pre-built "wheels" for your architecture.
@@ -47,7 +47,7 @@ CentOS and RHEL 7
     yum -y groupinstall development
     yum -y install https://centos7.iuscommunity.org/ius-release.rpm
     sudo yum install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel \
-      openssl-devel xz xz-devel libffi-devel findutils git2u java-1.8.0-openjdk
+      openssl-devel xz xz-devel libffi-devel findutils git2u java-11-openjdk
 
 Complete the rest of the installation by `installing Python 3.7 with pyenv <install-python-pyenv>`.
 
@@ -67,7 +67,7 @@ them with apt:
 .. code-block:: none
 
     sudo apt update
-    sudo apt install python3 python3-dev python3-venv python3-pip git default-jre-headless \
+    sudo apt install python3 python3-dev python3-venv python3-pip git openjdk-11-jre \
       build-essential
 
 Debian and Raspbian Stretch
@@ -81,9 +81,9 @@ Debian/Raspbian Stretch. This guide will tell you how. First, run the following 
     sudo apt update
     sudo apt install build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
       libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev \
-      liblzma-dev python3-openssl git default-jre-headless
+      liblzma-dev python3-openssl git openjdk-11-jre
 
-Complete the rest of the installation by `installing Python 3.7 with pyenv <install-python-pyenv>`.
+Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
 
 .. _install-fedora:
 
@@ -119,10 +119,10 @@ one-by-one:
     brew install python --with-brewed-openssl
     brew install git
     brew tap caskroom/versions
-    brew cask install homebrew/cask-versions/adoptopenjdk8
+    brew cask install homebrew/cask-versions/adoptopenjdk11
 
 It's possible you will have network issues. If so, go in your Applications folder, inside it, go in
-the Python 3.7 folder then double click ``Install certificates.command``.
+the Python 3.8 folder then double click ``Install certificates.command``.
 
 .. _install-opensuse:
 
@@ -133,7 +133,7 @@ openSUSE
 openSUSE Leap
 *************
 
-We recommend installing a community package to get Python 3.7 on openSUSE Leap. This package will
+We recommend installing a community package to get Python 3.8 on openSUSE Leap. This package will
 be installed to the ``/opt`` directory.
 
 First, add the Opt-Python community repository:
@@ -147,7 +147,7 @@ Now install the pre-requirements with zypper:
 
 .. code-block:: none
 
-    sudo zypper install opt-python37 opt-python37-setuptools git-core java-11-openjdk-headless
+    sudo zypper install opt-python38 opt-python38-setuptools git-core java-11-openjdk-headless
     sudo zypper install -t pattern devel_basis
 
 Since Python is now installed to ``/opt/python``, we should add it to PATH. You can add a file in
@@ -162,7 +162,7 @@ Now, install pip with easy_install:
 
 .. code-block:: none
 
-    sudo /opt/python/bin/easy_install-3.7 pip
+    sudo /opt/python/bin/easy_install-3.8 pip
 
 openSUSE Tumbleweed
 *******************
@@ -181,10 +181,9 @@ with zypper:
 Ubuntu
 ~~~~~~
 
-.. note:: **Ubuntu 16.04 Users**
+.. note:: **Ubuntu Python Availability**
 
-    You must add a 3rd-party repository to install Python 3.7 on Ubuntu 16.04 with apt. We
-    recommend the ``deadsnakes`` repository:
+   We recommend using the deadsnakes ppa to ensure up to date python availability.
 
     .. code-block:: none
 
@@ -196,7 +195,7 @@ Install the pre-requirements with apt:
 .. code-block:: none
 
     sudo apt update
-    sudo apt install python3.7 python3.7-dev python3.7-venv python3-pip git default-jre-headless \
+    sudo apt install python3.8 python3.8-dev python3.8-venv python3-pip git default-jre-headless \
       build-essential
 
 .. _install-python-pyenv:
@@ -210,7 +209,7 @@ Installing Python with pyenv
     If you followed one of the sections above, and weren't linked here afterwards, you should skip
     this section.
 
-On distributions where Python 3.7 needs to be compiled from source, we recommend the use of pyenv.
+On distributions where Python 3.8 needs to be compiled from source, we recommend the use of pyenv.
 This simplifies the compilation process and has the added bonus of simplifying setting up Red in a
 virtual environment.
 
@@ -225,7 +224,7 @@ Then run the following command:
 
 .. code-block:: none
 
-    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.7.4 -v
+    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.8.1 -v
 
 This may take a long time to complete, depending on your hardware. For some machines (such as
 Raspberry Pis and micro-tier VPSes), it may take over an hour; in this case, you may wish to remove
@@ -237,9 +236,9 @@ After that is finished, run:
 
 .. code-block:: none
 
-    pyenv global 3.7.4
+    pyenv global 3.8.1
 
-Pyenv is now installed and your system should be configured to run Python 3.7.
+Pyenv is now installed and your system should be configured to run Python 3.8.
 
 ------------------------------
 Creating a Virtual Environment
@@ -259,34 +258,32 @@ Choose one of the following commands to install Red.
 .. note::
 
     If you're not inside an activated virtual environment, include the ``--user`` flag with all
-    ``python3.7 -m pip install`` commands, like this:
+    ``python3.8 -m pip install`` commands, like this:
 
     .. code-block:: none
 
-        python3.7 -m pip install --user -U Red-DiscordBot
+        python3.8 -m pip install --user -U Red-DiscordBot
 
-To install without MongoDB support:
-
-.. code-block:: none
-
-    python3.7 -m pip install -U Red-DiscordBot
-
-Or, to install with MongoDB support:
+To install without additional config backend support:
 
 .. code-block:: none
 
-    python3.7 -m pip install -U Red-DiscordBot[mongo]
+    python3.8 -m pip install -U Red-DiscordBot
 
 Or, to install with PostgreSQL support:
 
 .. code-block:: none
 
-    python3.7 -m pip install -U Red-DiscordBot[postgres]
+    python3.8 -m pip install -U Red-DiscordBot[postgres]
 
 .. note::
 
   To install the development version, replace ``Red-DiscordBot`` in the above commands with the
-  following link:
+  link below. **The development version of the bot contains experimental changes. It is not
+  intended for normal users.** We will not support anyone using the development version in any
+  support channels. Using the development version may break third party cogs and not all core
+  commands may work. Downgrading to stable after installing the development version may cause
+  data loss, crashes or worse.
 
   .. code-block:: none
 

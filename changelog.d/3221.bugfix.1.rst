@@ -1,0 +1,1 @@
+Red will now prevent users from locking guild owner out with localblacklist (unless the command caller is bot owner).

@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from inspect import Parameter
 from collections import OrderedDict
 from typing import Mapping, Tuple, Dict, Set
+from urllib.parse import quote_plus
 
 import discord
 
@@ -211,7 +212,7 @@ class CustomCommands(commands.Cog):
 
         If a type is not specified, a simple CC will be created.
         CCs can be enhanced with arguments, see the guide
-        [here](https://red-discordbot.readthedocs.io/en/v3-develop/cog_customcom.html).
+        [here](https://docs.discord.red/en/stable/cog_customcom.html).
         """
         await ctx.invoke(self.cc_create_simple, command=command, text=text)
 
@@ -521,6 +522,7 @@ class CustomCommands(commands.Cog):
             "set": set,
             "str": str,
             "tuple": tuple,
+            "query": quote_plus,
         }
         indices = [int(a[0]) for a in args]
         low = min(indices)

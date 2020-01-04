@@ -1,0 +1,1 @@
+Added ``redbot --edit`` cli flag that can be used to edit instance name, token, owner and datapath.

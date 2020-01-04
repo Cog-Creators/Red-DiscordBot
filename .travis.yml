@@ -5,7 +5,7 @@ notifications:
   email: false
 
 python:
-- 3.7.3
+- 3.8.1
 env:
   global:
     - PIPENV_IGNORE_VIRTUALENVS=1
@@ -27,14 +27,10 @@ jobs:
         postgresql: "10"
       before_script:
         - psql -c 'create database red_db;' -U postgres
-    - env: TOXENV=mongo
-      services: mongodb
-      before_script:
-        - mongo red_db --eval 'db.createUser({user:"red",pwd:"red",roles:["readWrite"]});'
     # These jobs only occur on tag creation if the prior ones succeed
     - stage: PyPi Deployment
       if: tag IS present
-      python: 3.7.2
+      python: 3.8.1
       env:
         - DEPLOYING=true
         - TOXENV=py36
@@ -50,7 +46,7 @@ jobs:
             tags: true
     - stage: Crowdin Deployment
       if: tag IS present
-      python: 3.7.2
+      python: 3.8.1
       env:
         - DEPLOYING=true
         - TOXENV=py36

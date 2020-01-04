@@ -4,7 +4,6 @@ import codecs
 import datetime
 import logging
 import traceback
-import asyncio
 from datetime import timedelta
 
 import aiohttp
@@ -17,9 +16,8 @@ from redbot.core.commands import RedHelpFormatter
 from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
 from . import commands
 from .config import get_latest_confs
-from .data_manager import storage_type
+from .utils._internal_utils import fuzzy_command_search, format_fuzzy_results
 from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
-from .utils import fuzzy_command_search, format_fuzzy_results
 
 log = logging.getLogger("red")
 init()
@@ -46,40 +44,6 @@ def init_events(bot, cli_flags):
             return
 
         bot._uptime = datetime.datetime.utcnow()
-        packages = []
-
-        if cli_flags.no_cogs is False:
-            packages.extend(await bot._config.packages())
-
-        if cli_flags.load_cogs:
-            packages.extend(cli_flags.load_cogs)
-
-        if packages:
-            # Load permissions first, for security reasons
-            try:
-                packages.remove("permissions")
-            except ValueError:
-                pass
-            else:
-                packages.insert(0, "permissions")
-
-            to_remove = []
-            print("Loading packages...")
-            for package in packages:
-                try:
-                    spec = await bot._cog_mgr.find_cog(package)
-                    await bot.load_extension(spec)
-                except Exception as e:
-                    log.exception("Failed to load package {}".format(package), exc_info=e)
-                    await bot.remove_loaded_package(package)
-                    to_remove.append(package)
-            for package in to_remove:
-                packages.remove(package)
-            if packages:
-                print("Loaded packages: " + ", ".join(packages))
-
-        if bot.rpc_enabled:
-            await bot.rpc.initialize(bot.rpc_port)
 
         guilds = len(bot.guilds)
         users = len(set([m for m in bot.get_all_members()]))
@@ -129,7 +93,6 @@ def init_events(bot, cli_flags):
                 )
         INFO2 = []
 
-        mongo_enabled = storage_type() != "JSON"
         reqs_installed = {"docs": None, "test": None}
         for key in reqs_installed.keys():
             reqs = [x.name for x in red_pkg._dep_map[key]]
@@ -141,7 +104,6 @@ def init_events(bot, cli_flags):
                 reqs_installed[key] = True
 
         options = (
-            ("MongoDB", mongo_enabled),
             ("Voice", True),
             ("Docs", reqs_installed["docs"]),
             ("Tests", reqs_installed["test"]),

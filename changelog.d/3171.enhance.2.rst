@@ -1,0 +1,1 @@
+Instance names can now only include characters A-z, numbers, underscores, and hyphens. Old instances are unaffected by this change.

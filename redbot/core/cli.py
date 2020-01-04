@@ -1,27 +1,58 @@
 import argparse
 import asyncio
 import logging
+import sys
+from typing import Optional
+
+from discord import __version__ as discord_version
 
 
-def confirm(m=""):
-    return input(m).lower().strip() in ("y", "yes")
+def confirm(text: str, default: Optional[bool] = None) -> bool:
+    if default is None:
+        options = "y/n"
+    elif default is True:
+        options = "Y/n"
+    elif default is False:
+        options = "y/N"
+    else:
+        raise TypeError(f"expected bool, not {type(default)}")
+
+    while True:
+        try:
+            value = input(f"{text}: [{options}] ").lower().strip()
+        except (KeyboardInterrupt, EOFError):
+            print("\nAborted!")
+            sys.exit(1)
+        if value in ("y", "yes"):
+            return True
+        if value in ("n", "no"):
+            return False
+        if value == "":
+            if default is not None:
+                return default
+        print("Error: invalid input")
 
 
-def interactive_config(red, token_set, prefix_set):
-    loop = asyncio.get_event_loop()
-    token = ""
+async def interactive_config(red, token_set, prefix_set, *, print_header=True):
+    token = None
 
-    print("Red - Discord Bot | Configuration process\n")
+    if print_header:
+        print("Red - Discord Bot | Configuration process\n")
 
     if not token_set:
-        print("Please enter a valid token:")
+        print(
+            "Please enter a valid token.\n"
+            "You can find out how to obtain a token with this guide"
+            ' (section "Creating a Bot Account"):\n'
+            f"https://discordpy.readthedocs.io/en/v{discord_version}/discord.html#creating-a-bot-account"
+        )
         while not token:
             token = input("> ")
             if not len(token) >= 50:
                 print("That doesn't look like a valid token.")
-                token = ""
+                token = None
             if token:
-                loop.run_until_complete(red._config.token.set(token))
+                await red._config.token.set(token)
 
     if not prefix_set:
         prefix = ""
@@ -35,11 +66,10 @@ def interactive_config(red, token_set, prefix_set):
         while not prefix:
             prefix = input("Prefix> ")
             if len(prefix) > 10:
-                print("Your prefix seems overly long. Are you sure that it's correct? (y/n)")
-                if not confirm("> "):
+                if not confirm("Your prefix seems overly long. Are you sure that it's correct?"):
                     prefix = ""
             if prefix:
-                loop.run_until_complete(red._config.prefix.set([prefix]))
+                await red._config.prefix.set([prefix])
 
     return token
 
@@ -49,10 +79,42 @@ def parse_cli_flags(args):
         description="Red - Discord Bot", usage="redbot <instance_name> [arguments]"
     )
     parser.add_argument("--version", "-V", action="store_true", help="Show Red's current version")
+    parser.add_argument("--debuginfo", action="store_true", help="Show debug information.")
     parser.add_argument(
         "--list-instances",
         action="store_true",
         help="List all instance names setup with 'redbot-setup'",
+    )
+    parser.add_argument(
+        "--edit",
+        action="store_true",
+        help="Edit the instance. This can be done without console interaction "
+        "by passing --no-prompt and arguments that you want to change (available arguments: "
+        "--edit-instance-name, --edit-data-path, --copy-data, --owner, --token).",
+    )
+    parser.add_argument(
+        "--edit-instance-name",
+        type=str,
+        help="New name for the instance. This argument only works with --edit argument passed.",
+    )
+    parser.add_argument(
+        "--overwrite-existing-instance",
+        action="store_true",
+        help="Confirm overwriting of existing instance when changing name."
+        " This argument only works with --edit argument passed.",
+    )
+    parser.add_argument(
+        "--edit-data-path",
+        type=str,
+        help=(
+            "New data path for the instance. This argument only works with --edit argument passed."
+        ),
+    )
+    parser.add_argument(
+        "--copy-data",
+        action="store_true",
+        help="Copy data from old location. This argument only works "
+        "with --edit and --edit-data-path arguments passed.",
     )
     parser.add_argument(
         "--owner",
@@ -65,7 +127,7 @@ def parse_cli_flags(args):
         "--co-owner",
         type=int,
         default=[],
-        nargs="*",
+        nargs="+",
         help="ID of a co-owner. Only people who have access "
         "to the system that is hosting Red should be  "
         "co-owners, as this gives them complete access "
@@ -87,7 +149,7 @@ def parse_cli_flags(args):
     parser.add_argument(
         "--load-cogs",
         type=str,
-        nargs="*",
+        nargs="+",
         help="Force loading specified cogs from the installed packages. "
         "Can be used with the --no-cogs flag to load these cogs exclusively.",
     )

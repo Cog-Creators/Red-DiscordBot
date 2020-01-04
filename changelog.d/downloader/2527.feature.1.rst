@@ -1,0 +1,1 @@
+Added ``[p]repo update [repos]`` command that allows you to update repos without updating cogs from them.

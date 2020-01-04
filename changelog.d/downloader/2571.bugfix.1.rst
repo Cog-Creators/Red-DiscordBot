@@ -1,0 +1,1 @@
+Made regex for repo names use raw string to stop ``DeprecationWarning`` about invalid escape sequence.

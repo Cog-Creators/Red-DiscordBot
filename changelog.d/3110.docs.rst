@@ -1,0 +1,1 @@
+Update apikey framework documentation. Change bot.get_shared_api_keys() to bot.get_shared_api_tokens().
