@@ -1,0 +1,1 @@
+I'm perfectly fine with redbot-setup not logging to disk
