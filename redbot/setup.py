@@ -418,10 +418,15 @@ def backup(instance: str, destination_folder: Union[str, Path]) -> None:
     loop.run_until_complete(create_backup(instance, Path(destination_folder)))
 
 
-if __name__ == "__main__":
+def run_cli():
+    # Setuptools entry point script stuff...
     try:
         cli()  # pylint: disable=no-value-for-parameter  # click
     except KeyboardInterrupt:
         print("Exiting...")
     else:
         print("Exiting...")
+
+
+if __name__ == "__main__":
+    run_cli()
