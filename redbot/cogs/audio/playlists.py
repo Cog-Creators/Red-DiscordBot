@@ -353,8 +353,8 @@ class Playlist:
             The custom config scope. One of 'GLOBALPLAYLIST', 'GUILDPLAYLIST' or 'USERPLAYLIST'.
         playlist_number: int
             The playlist's number.
-        data: dict
-            The JSON representation of the playlist to be gotten.
+        data: PlaylistFetchResult
+            The PlaylistFetchResult representation of the playlist to be gotten.
         **kwargs
             Extra attributes for the Playlist instance which override values
             in the data dict. These should be complete objects and not
