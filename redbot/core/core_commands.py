@@ -34,6 +34,7 @@ from . import (
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import (
     box,
+    escape,
     humanize_list,
     humanize_number,
     humanize_timedelta,
