@@ -107,6 +107,7 @@ class Context(commands.Context):
         self, reaction: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]
     ) -> bool:
         """Adds a reaction to to the command message.
+
         Returns
         -------
         bool

@@ -1,0 +1,1 @@
+Fix broken docs for :func:`redbot.core.commands.Context.react_quietly`.
