@@ -1592,7 +1592,11 @@ class Core(commands.Cog, CoreLogic):
             e.add_field(name="System arch", value=platform.machine(), inline=True)
             e.add_field(name="User", value=user_who_ran, inline=True)
             e.add_field(name="OS version", value=osver, inline=False)
-            e.add_field(name="Python executable", value=sys.executable, inline=False)
+            e.add_field(
+                name="Python executable",
+                value=escape(sys.executable, formatting=True),
+                inline=False,
+            )
             await ctx.send(embed=e)
         else:
             info = (

@@ -1,0 +1,1 @@
+Escape markdown in python executable path in ``[p]debuginfo`` command.
