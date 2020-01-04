@@ -1,0 +1,1 @@
+Red will now prevent users from locking themselves out with localblacklist.

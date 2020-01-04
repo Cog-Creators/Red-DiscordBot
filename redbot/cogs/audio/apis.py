@@ -7,7 +7,7 @@ import logging
 import random
 import time
 from collections import namedtuple
-from typing import Callable, List, Optional, Tuple, Union, Mapping
+from typing import Callable, List, MutableMapping, Optional, TYPE_CHECKING, Tuple, Union, NoReturn
 
 import aiohttp
 import discord
@@ -20,7 +20,7 @@ from redbot.core.i18n import Translator, cog_i18n
 
 from . import audio_dataclasses
 from .databases import CacheInterface, SQLError
-from .errors import DatabaseError, SpotifyFetchError, YouTubeApiError
+from .errors import DatabaseError, SpotifyFetchError, YouTubeApiError, TrackEnqueueError
 from .playlists import get_playlist
 from .utils import CacheLevel, Notifier, is_allowed, queue_duration, track_limit
 
@@ -30,9 +30,14 @@ _ = Translator("Audio", __file__)
 _TOP_100_GLOBALS = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn6puJdseH2Rt9sMvt9E2M4i"
 _TOP_100_US = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn5rWitrRWFKdm-ulaFiIyoK"
 
-_database: CacheInterface = None
-_bot: Red = None
-_config: Config = None
+if TYPE_CHECKING:
+    _database: CacheInterface
+    _bot: Red
+    _config: Config
+else:
+    _database = None
+    _bot = None
+    _config = None
 
 
 def _pass_config_to_apis(config: Config, bot: Red):
@@ -51,17 +56,19 @@ class SpotifyAPI:
     def __init__(self, bot: Red, session: aiohttp.ClientSession):
         self.bot = bot
         self.session = session
-        self.spotify_token = None
+        self.spotify_token: Optional[MutableMapping[str, Union[str, int]]] = None
         self.client_id = None
         self.client_secret = None
 
     @staticmethod
-    async def _check_token(token: Mapping):
+    async def _check_token(token: MutableMapping):
         now = int(time.time())
         return token["expires_at"] - now < 60
 
     @staticmethod
-    def _make_token_auth(client_id: Optional[str], client_secret: Optional[str]) -> Mapping:
+    def _make_token_auth(
+        client_id: Optional[str], client_secret: Optional[str]
+    ) -> MutableMapping[str, Union[str, int]]:
         if client_id is None:
             client_id = ""
         if client_secret is None:
@@ -71,8 +78,8 @@ class SpotifyAPI:
         return {"Authorization": "Basic %s" % auth_header.decode("ascii")}
 
     async def _make_get(
-        self, url: str, headers: Mapping = None, params: Mapping = None
-    ) -> Mapping:
+        self, url: str, headers: MutableMapping = None, params: MutableMapping = None
+    ) -> MutableMapping[str, str]:
         if params is None:
             params = {}
         async with self.session.request("GET", url, params=params, headers=headers) as r:
@@ -84,12 +91,12 @@ class SpotifyAPI:
                 )
             return await r.json()
 
-    async def _get_auth(self):
+    async def _get_auth(self) -> NoReturn:
         tokens = await self.bot.get_shared_api_tokens("spotify")
         self.client_id = tokens.get("client_id", "")
         self.client_secret = tokens.get("client_secret", "")
 
-    async def _request_token(self) -> Mapping:
+    async def _request_token(self) -> MutableMapping[str, Union[str, int]]:
         await self._get_auth()
 
         payload = {"grant_type": "client_credentials"}
@@ -113,7 +120,9 @@ class SpotifyAPI:
         log.debug("Created a new access token for Spotify: {0}".format(token))
         return self.spotify_token["access_token"]
 
-    async def post_call(self, url: str, payload: Mapping, headers: Mapping = None) -> Mapping:
+    async def post_call(
+        self, url: str, payload: MutableMapping, headers: MutableMapping = None
+    ) -> MutableMapping[str, Union[str, int]]:
         async with self.session.post(url, data=payload, headers=headers) as r:
             if r.status != 200:
                 log.debug(
@@ -123,13 +132,15 @@ class SpotifyAPI:
                 )
             return await r.json()
 
-    async def get_call(self, url: str, params: Mapping) -> Mapping:
+    async def get_call(
+        self, url: str, params: MutableMapping
+    ) -> MutableMapping[str, Union[str, int]]:
         token = await self._get_spotify_token()
         return await self._make_get(
             url, params=params, headers={"Authorization": "Bearer {0}".format(token)}
         )
 
-    async def get_categories(self) -> List[Mapping]:
+    async def get_categories(self) -> List[MutableMapping]:
         url = "https://api.spotify.com/v1/browse/categories"
         params = {}
         result = await self.get_call(url, params=params)
@@ -211,7 +222,7 @@ class MusicCache:
         self._session: aiohttp.ClientSession = session
         self.database = _database
 
-        self._tasks: Mapping = {}
+        self._tasks: MutableMapping = {}
         self._lock: asyncio.Lock = asyncio.Lock()
         self.config: Optional[Config] = None
 
@@ -220,7 +231,7 @@ class MusicCache:
         await _database.init()
 
     @staticmethod
-    def _spotify_format_call(qtype: str, key: str) -> Tuple[str, Mapping]:
+    def _spotify_format_call(qtype: str, key: str) -> Tuple[str, MutableMapping]:
         params = {}
         if qtype == "album":
             query = f"https://api.spotify.com/v1/albums/{key}/tracks"
@@ -231,7 +242,7 @@ class MusicCache:
         return query, params
 
     @staticmethod
-    def _get_spotify_track_info(track_data: Mapping) -> Tuple[str, ...]:
+    def _get_spotify_track_info(track_data: MutableMapping) -> Tuple[str, ...]:
         artist_name = track_data["artists"][0]["name"]
         track_name = track_data["name"]
         track_info = f"{track_name} {artist_name}"
@@ -346,9 +357,9 @@ class MusicCache:
         query_type: str,
         uri: str,
         recursive: Union[str, bool] = False,
-        params: Mapping = None,
+        params: MutableMapping = None,
         notifier: Optional[Notifier] = None,
-    ) -> Union[Mapping, List[str]]:
+    ) -> Union[MutableMapping, List[str]]:
 
         if recursive is False:
             (call, params) = self._spotify_format_call(query_type, uri)
@@ -628,16 +639,14 @@ class MusicCache:
                         await player.play()
             if len(track_list) == 0:
                 if not has_not_allowed:
-                    embed3 = discord.Embed(
-                        colour=await ctx.embed_colour(),
-                        title=_(
+                    raise SpotifyFetchError(
+                        message=_(
                             "Nothing found.\nThe YouTube API key may be invalid "
                             "or you may be rate limited on YouTube's search service.\n"
                             "Check the YouTube API key again and follow the instructions "
                             "at `{prefix}audioset youtubeapi`."
-                        ).format(prefix=ctx.prefix),
+                        ).format(prefix=ctx.prefix)
                     )
-                    await ctx.send(embed=embed3)
             player.maybe_shuffle()
             if enqueue and tracks_from_spotify:
                 if total_tracks > enqueued_tracks:
@@ -734,7 +743,8 @@ class MusicCache:
                 (val, update) = await self.database.fetch_one("lavalink", "data", {"query": query})
             if update:
                 val = None
-            if val:
+            if val and not isinstance(val, str):
+                log.debug(f"Querying Local Database for {query}")
                 task = ("update", ("lavalink", {"query": query}))
                 self.append_task(ctx, *task)
         if val and not forced:
@@ -752,6 +762,8 @@ class MusicCache:
                 results = await player.load_tracks(query)
             except KeyError:
                 results = None
+            except RuntimeError:
+                raise TrackEnqueueError
             if results is None:
                 results = LoadResult({"loadType": "LOAD_FAILED", "playlistInfo": {}, "tracks": []})
             if (

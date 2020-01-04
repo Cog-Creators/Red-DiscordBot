@@ -40,6 +40,10 @@ class QueryUnauthorized(AudioError):
         super().__init__(*args)
 
 
+class TrackEnqueueError(AudioError):
+    """Unable to play track."""
+
+
 class PlayListError(AudioError):
     """Base exception for errors related to playlists."""
 

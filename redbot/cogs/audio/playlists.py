@@ -1,5 +1,5 @@
 from collections import namedtuple
-from typing import List, Mapping, Optional, Union
+from typing import List, MutableMapping, Optional, Union, TYPE_CHECKING
 
 import discord
 import lavalink
@@ -13,9 +13,14 @@ from .databases import PlaylistFetchResult, PlaylistInterface
 from .errors import InvalidPlaylistScope, MissingAuthor, MissingGuild, NotAllowed
 from .utils import PlaylistScope
 
-_config: Config = None
-_bot: Red = None
-database: PlaylistInterface = None
+if TYPE_CHECKING:
+    database: PlaylistInterface
+    _bot: Red
+    _config: Config
+else:
+    database = None
+    _bot = None
+    _config = None
 
 __all__ = [
     "Playlist",
@@ -29,6 +34,7 @@ __all__ = [
     "get_all_playlist_for_migration23",
     "database",
     "get_all_playlist_converter",
+    "get_playlist_database",
 ]
 
 FakePlaylist = namedtuple("Playlist", "author scope")
@@ -46,7 +52,12 @@ def _pass_config_to_playlist(config: Config, bot: Red):
         database = PlaylistInterface()
 
 
-def standardize_scope(scope) -> str:
+def get_playlist_database() -> Optional[PlaylistInterface]:
+    global database
+    return database
+
+
+def standardize_scope(scope: str) -> str:
     scope = scope.upper()
     valid_scopes = ["GLOBAL", "GUILD", "AUTHOR", "USER", "SERVER", "MEMBER", "BOT"]
 
@@ -114,7 +125,7 @@ class PlaylistMigration23:  # TODO: remove me in a future version ?
         playlist_id: int,
         name: str,
         playlist_url: Optional[str] = None,
-        tracks: Optional[List[dict]] = None,
+        tracks: Optional[List[MutableMapping]] = None,
         guild: Union[discord.Guild, int, None] = None,
     ):
         self.guild = guild
@@ -127,7 +138,7 @@ class PlaylistMigration23:  # TODO: remove me in a future version ?
 
     @classmethod
     async def from_json(
-        cls, scope: str, playlist_number: int, data: dict, **kwargs
+        cls, scope: str, playlist_number: int, data: MutableMapping, **kwargs
     ) -> "PlaylistMigration23":
         """Get a Playlist object from the provided information.
         Parameters
@@ -156,7 +167,7 @@ class PlaylistMigration23:  # TODO: remove me in a future version ?
             Trying to access the User scope without an user id.
         """
         guild = data.get("guild") or kwargs.get("guild")
-        author = data.get("author")
+        author: int = data.get("author") or 0
         playlist_id = data.get("id") or playlist_number
         name = data.get("name", "Unnamed")
         playlist_url = data.get("playlist_url", None)
@@ -255,7 +266,7 @@ class Playlist:
         playlist_id: int,
         name: str,
         playlist_url: Optional[str] = None,
-        tracks: Optional[List[dict]] = None,
+        tracks: Optional[List[MutableMapping]] = None,
         guild: Union[discord.Guild, int, None] = None,
     ):
         self.bot = bot
@@ -281,7 +292,7 @@ class Playlist:
             f"tracks={len(self.tracks)}, url={self.url})"
         )
 
-    async def edit(self, data: dict):
+    async def edit(self, data: MutableMapping):
         """
         Edits a Playlist.
         Parameters
@@ -311,7 +322,7 @@ class Playlist:
             tracks=self.tracks,
         )
 
-    def to_json(self) -> dict:
+    def to_json(self) -> MutableMapping:
         """Transform the object to a dict.
         Returns
         -------
@@ -332,7 +343,7 @@ class Playlist:
     @classmethod
     async def from_json(
         cls, bot: Red, scope: str, playlist_number: int, data: PlaylistFetchResult, **kwargs
-    ):
+    ) -> "Playlist":
         """Get a Playlist object from the provided information.
         Parameters
         ----------
@@ -342,8 +353,8 @@ class Playlist:
             The custom config scope. One of 'GLOBALPLAYLIST', 'GUILDPLAYLIST' or 'USERPLAYLIST'.
         playlist_number: int
             The playlist's number.
-        data: dict
-            The JSON representation of the playlist to be gotten.
+        data: PlaylistFetchResult
+            The PlaylistFetchResult representation of the playlist to be gotten.
         **kwargs
             Extra attributes for the Playlist instance which override values
             in the data dict. These should be complete objects and not
@@ -464,9 +475,9 @@ async def get_all_playlist(
 
     if specified_user:
         user_id = getattr(author, "id", author)
-        playlists = database.fetch_all(scope_standard, scope_id, author_id=user_id)
+        playlists = await database.fetch_all(scope_standard, scope_id, author_id=user_id)
     else:
-        playlists = database.fetch_all(scope_standard, scope_id)
+        playlists = await database.fetch_all(scope_standard, scope_id)
     return [
         await Playlist.from_json(
             bot, scope, playlist.playlist_id, playlist, guild=guild, author=author
@@ -510,7 +521,9 @@ async def get_all_playlist_converter(
         Trying to access the User scope without an user id.
     """
     scope_standard, scope_id = _prepare_config_scope(scope, author, guild)
-    playlists = database.fetch_all_converter(scope_standard, playlist_name=arg, playlist_id=arg)
+    playlists = await database.fetch_all_converter(
+        scope_standard, playlist_name=arg, playlist_id=arg
+    )
     return [
         await Playlist.from_json(
             bot, scope, playlist.playlist_id, playlist, guild=guild, author=author
@@ -524,7 +537,7 @@ async def create_playlist(
     scope: str,
     playlist_name: str,
     playlist_url: Optional[str] = None,
-    tracks: Optional[List[Mapping]] = None,
+    tracks: Optional[List[MutableMapping]] = None,
     author: Optional[discord.User] = None,
     guild: Optional[discord.Guild] = None,
 ) -> Optional[Playlist]:
@@ -540,7 +553,7 @@ async def create_playlist(
         The name of the new playlist.
     playlist_url:str
         the url of the new playlist.
-    tracks: List[Mapping]
+    tracks: List[MutableMapping]
         A list of tracks to add to the playlist.
     author: discord.User
         The Author of the playlist.
@@ -563,7 +576,7 @@ async def create_playlist(
     playlist = Playlist(
         ctx.bot,
         scope,
-        author.id,
+        author.id if author else None,
         ctx.message.id,
         playlist_name,
         playlist_url,

@@ -374,7 +374,7 @@ SELECT data, last_updated
 FROM lavalink
 WHERE
     query=:query
-    AND last_updated < :maxage;
+    AND last_updated > :maxage;
 """
 LAVALINK_QUERY_LAST_FETCHED_RANDOM = """
 SELECT data
@@ -389,7 +389,7 @@ LIMIT 10
 LAVALINK_DELETE_OLD_ENTRIES = """
 DELETE FROM lavalink
 WHERE
-    last_updated > :maxage;
+    last_updated < :maxage;
 """
 LAVALINK_FETCH_ALL_ENTRIES_GLOBAL = """
 SELECT query, data 

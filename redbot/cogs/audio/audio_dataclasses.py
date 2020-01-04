@@ -3,7 +3,7 @@ import os
 import posixpath
 import re
 from pathlib import Path, PosixPath, WindowsPath
-from typing import List, Optional, Union
+from typing import List, Optional, Union, MutableMapping
 from urllib.parse import urlparse
 
 import lavalink
@@ -392,7 +392,7 @@ class Query:
         return cls(query, **possible_values)
 
     @staticmethod
-    def _parse(track, **kwargs):
+    def _parse(track, **kwargs) -> MutableMapping:
         returning = {}
         if (
             type(track) == type(LocalPath)

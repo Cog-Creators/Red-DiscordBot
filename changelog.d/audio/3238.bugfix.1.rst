@@ -1,0 +1,1 @@
+Fixed a crash that could happen when the bot can't connect to the lavalink node,

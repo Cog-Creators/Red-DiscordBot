@@ -31,6 +31,7 @@ BUNDLED_APP_YML = pathlib.Path(__file__).parent / "data" / "application.yml"
 LAVALINK_APP_YML = LAVALINK_DOWNLOAD_DIR / "application.yml"
 
 _RE_READY_LINE = re.compile(rb"Started Launcher in \S+ seconds")
+_FAILED_TO_START = re.compile(rb"Web server failed to start. (.*)")
 _RE_BUILD_LINE = re.compile(rb"Build:\s+(?P<build>\d+)")
 _RE_JAVA_VERSION_LINE = re.compile(
     r'version "(?P<major>\d+).(?P<minor>\d+).\d+(?:_\d+)?(?:-[A-Za-z0-9]+)?"'
@@ -43,10 +44,10 @@ class ServerManager:
     _java_available: ClassVar[Optional[bool]] = None
     _java_version: ClassVar[Optional[Tuple[int, int]]] = None
     _up_to_date: ClassVar[Optional[bool]] = None
-    _blacklisted_archs = []
+    _blacklisted_archs: List[str] = []
 
     def __init__(self) -> None:
-        self.ready = asyncio.Event()
+        self.ready: asyncio.Event = asyncio.Event()
 
         self._proc: Optional[asyncio.subprocess.Process] = None  # pylint:disable=no-member
         self._monitor_task: Optional[asyncio.Task] = None
@@ -157,6 +158,8 @@ class ServerManager:
             if _RE_READY_LINE.search(line):
                 self.ready.set()
                 break
+            if _FAILED_TO_START.search(line):
+                raise RuntimeError(f"Lavalink failed to start: {line.decode().strip()}")
             if self._proc.returncode is not None and lastmessage + 2 < time.time():
                 # Avoid Console spam only print once every 2 seconds
                 lastmessage = time.time()

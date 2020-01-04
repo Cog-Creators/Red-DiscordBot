@@ -1,0 +1,1 @@
+Add notes about best practices with config.
