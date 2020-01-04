@@ -14,7 +14,6 @@ class LavalinkDownloadFailed(AudioError, RuntimeError):
         The response from the server to the failed GET request.
     should_retry : bool
         Whether or not the Audio cog should retry downloading the jar.
-
     """
 
     def __init__(self, *args, response: aiohttp.ClientResponse, should_retry: bool = False):
@@ -31,6 +30,18 @@ class LavalinkDownloadFailed(AudioError, RuntimeError):
 
     def _response_repr(self) -> str:
         return f"[{self.response.status} {self.response.reason}]"
+
+
+class QueryUnauthorized(AudioError):
+    """Provided an unauthorized query to audio."""
+
+    def __init__(self, message, *args):
+        self.message = message
+        super().__init__(*args)
+
+
+class TrackEnqueueError(AudioError):
+    """Unable to play track."""
 
 
 class PlayListError(AudioError):

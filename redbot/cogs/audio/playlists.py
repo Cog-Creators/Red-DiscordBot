@@ -1,6 +1,5 @@
 from collections import namedtuple
-from enum import Enum, unique
-from typing import List, Optional, Union
+from typing import List, MutableMapping, Optional, Union, TYPE_CHECKING
 
 import discord
 import lavalink
@@ -9,22 +8,33 @@ from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_list
-from .errors import InvalidPlaylistScope, MissingAuthor, MissingGuild, NotAllowed
 
-_config = None
-_bot = None
+from .databases import PlaylistFetchResult, PlaylistInterface
+from .errors import InvalidPlaylistScope, MissingAuthor, MissingGuild, NotAllowed
+from .utils import PlaylistScope
+
+if TYPE_CHECKING:
+    database: PlaylistInterface
+    _bot: Red
+    _config: Config
+else:
+    database = None
+    _bot = None
+    _config = None
 
 __all__ = [
     "Playlist",
-    "PlaylistScope",
     "get_playlist",
     "get_all_playlist",
     "create_playlist",
     "reset_playlist",
     "delete_playlist",
-    "humanize_scope",
     "standardize_scope",
     "FakePlaylist",
+    "get_all_playlist_for_migration23",
+    "database",
+    "get_all_playlist_converter",
+    "get_playlist_database",
 ]
 
 FakePlaylist = namedtuple("Playlist", "author scope")
@@ -32,29 +42,22 @@ FakePlaylist = namedtuple("Playlist", "author scope")
 _ = Translator("Audio", __file__)
 
 
-@unique
-class PlaylistScope(Enum):
-    GLOBAL = "GLOBALPLAYLIST"
-    GUILD = "GUILDPLAYLIST"
-    USER = "USERPLAYLIST"
-
-    def __str__(self):
-        return "{0}".format(self.value)
-
-    @staticmethod
-    def list():
-        return list(map(lambda c: c.value, PlaylistScope))
-
-
 def _pass_config_to_playlist(config: Config, bot: Red):
-    global _config, _bot
+    global _config, _bot, database
     if _config is None:
         _config = config
     if _bot is None:
         _bot = bot
+    if database is None:
+        database = PlaylistInterface()
 
 
-def standardize_scope(scope) -> str:
+def get_playlist_database() -> Optional[PlaylistInterface]:
+    global database
+    return database
+
+
+def standardize_scope(scope: str) -> str:
     scope = scope.upper()
     valid_scopes = ["GLOBAL", "GUILD", "AUTHOR", "USER", "SERVER", "MEMBER", "BOT"]
 
@@ -76,17 +79,25 @@ def standardize_scope(scope) -> str:
     return scope
 
 
-def humanize_scope(scope, ctx=None, the=None):
+def _prepare_config_scope(
+    scope, author: Union[discord.abc.User, int] = None, guild: Union[discord.Guild, int] = None
+):
+    scope = standardize_scope(scope)
 
     if scope == PlaylistScope.GLOBAL.value:
-        return ctx or _("the ") if the else "" + "Global"
-    elif scope == PlaylistScope.GUILD.value:
-        return ctx.name if ctx else _("the ") if the else "" + "Server"
+        config_scope = [PlaylistScope.GLOBAL.value, _bot.user.id]
     elif scope == PlaylistScope.USER.value:
-        return str(ctx) if ctx else _("the ") if the else "" + "User"
+        if author is None:
+            raise MissingAuthor("Invalid author for user scope.")
+        config_scope = [PlaylistScope.USER.value, int(getattr(author, "id", author))]
+    else:
+        if guild is None:
+            raise MissingGuild("Invalid guild for guild scope.")
+        config_scope = [PlaylistScope.GUILD.value, int(getattr(guild, "id", guild))]
+    return config_scope
 
 
-def _prepare_config_scope(
+def _prepare_config_scope_for_migration23(  # TODO: remove me in a future version ?
     scope, author: Union[discord.abc.User, int] = None, guild: discord.Guild = None
 ):
     scope = standardize_scope(scope)
@@ -104,6 +115,146 @@ def _prepare_config_scope(
     return config_scope
 
 
+class PlaylistMigration23:  # TODO: remove me in a future version ?
+    """A single playlist."""
+
+    def __init__(
+        self,
+        scope: str,
+        author: int,
+        playlist_id: int,
+        name: str,
+        playlist_url: Optional[str] = None,
+        tracks: Optional[List[MutableMapping]] = None,
+        guild: Union[discord.Guild, int, None] = None,
+    ):
+        self.guild = guild
+        self.scope = standardize_scope(scope)
+        self.author = author
+        self.id = playlist_id
+        self.name = name
+        self.url = playlist_url
+        self.tracks = tracks or []
+
+    @classmethod
+    async def from_json(
+        cls, scope: str, playlist_number: int, data: MutableMapping, **kwargs
+    ) -> "PlaylistMigration23":
+        """Get a Playlist object from the provided information.
+        Parameters
+        ----------
+        scope:str
+            The custom config scope. One of 'GLOBALPLAYLIST', 'GUILDPLAYLIST' or 'USERPLAYLIST'.
+        playlist_number: int
+            The playlist's number.
+        data: dict
+            The JSON representation of the playlist to be gotten.
+        **kwargs
+            Extra attributes for the Playlist instance which override values
+            in the data dict. These should be complete objects and not
+            IDs, where possible.
+        Returns
+        -------
+        Playlist
+            The playlist object for the requested playlist.
+        Raises
+        ------
+        `InvalidPlaylistScope`
+            Passing a scope that is not supported.
+        `MissingGuild`
+            Trying to access the Guild scope without a guild.
+        `MissingAuthor`
+            Trying to access the User scope without an user id.
+        """
+        guild = data.get("guild") or kwargs.get("guild")
+        author: int = data.get("author") or 0
+        playlist_id = data.get("id") or playlist_number
+        name = data.get("name", "Unnamed")
+        playlist_url = data.get("playlist_url", None)
+        tracks = data.get("tracks", [])
+
+        return cls(
+            guild=guild,
+            scope=scope,
+            author=author,
+            playlist_id=playlist_id,
+            name=name,
+            playlist_url=playlist_url,
+            tracks=tracks,
+        )
+
+    async def save(self):
+        """Saves a Playlist to SQL."""
+        scope, scope_id = _prepare_config_scope(self.scope, self.author, self.guild)
+        database.upsert(
+            scope,
+            playlist_id=int(self.id),
+            playlist_name=self.name,
+            scope_id=scope_id,
+            author_id=self.author,
+            playlist_url=self.url,
+            tracks=self.tracks,
+        )
+
+
+async def get_all_playlist_for_migration23(  # TODO: remove me in a future version ?
+    scope: str, guild: Union[discord.Guild, int] = None
+) -> List[PlaylistMigration23]:
+    """
+    Gets all playlist for the specified scope.
+    Parameters
+    ----------
+    scope: str
+        The custom config scope. One of 'GLOBALPLAYLIST', 'GUILDPLAYLIST' or 'USERPLAYLIST'.
+    guild: discord.Guild
+        The guild to get the playlist from if scope is GUILDPLAYLIST.
+    Returns
+    -------
+    list
+        A list of all playlists for the specified scope
+     Raises
+    ------
+    `InvalidPlaylistScope`
+        Passing a scope that is not supported.
+    `MissingGuild`
+        Trying to access the Guild scope without a guild.
+    `MissingAuthor`
+        Trying to access the User scope without an user id.
+    """
+    playlists = await _config.custom(scope).all()
+    if scope == PlaylistScope.GLOBAL.value:
+        return [
+            await PlaylistMigration23.from_json(
+                scope,
+                playlist_number,
+                playlist_data,
+                guild=guild,
+                author=int(playlist_data.get("author", 0)),
+            )
+            for playlist_number, playlist_data in playlists.items()
+        ]
+    elif scope == PlaylistScope.USER.value:
+        return [
+            await PlaylistMigration23.from_json(
+                scope, playlist_number, playlist_data, guild=guild, author=int(user_id)
+            )
+            for user_id, scopedata in playlists.items()
+            for playlist_number, playlist_data in scopedata.items()
+        ]
+    else:
+        return [
+            await PlaylistMigration23.from_json(
+                scope,
+                playlist_number,
+                playlist_data,
+                guild=int(guild_id),
+                author=int(playlist_data.get("author", 0)),
+            )
+            for guild_id, scopedata in playlists.items()
+            for playlist_number, playlist_data in scopedata.items()
+        ]
+
+
 class Playlist:
     """A single playlist."""
 
@@ -115,14 +266,16 @@ class Playlist:
         playlist_id: int,
         name: str,
         playlist_url: Optional[str] = None,
-        tracks: Optional[List[dict]] = None,
+        tracks: Optional[List[MutableMapping]] = None,
         guild: Union[discord.Guild, int, None] = None,
     ):
         self.bot = bot
         self.guild = guild
         self.scope = standardize_scope(scope)
         self.config_scope = _prepare_config_scope(self.scope, author, guild)
+        self.scope_id = self.config_scope[-1]
         self.author = author
+        self.author_id = getattr(self.author, "id", self.author)
         self.guild_id = (
             getattr(guild, "id", guild) if self.scope == PlaylistScope.GLOBAL.value else None
         )
@@ -132,7 +285,14 @@ class Playlist:
         self.tracks = tracks or []
         self.tracks_obj = [lavalink.Track(data=track) for track in self.tracks]
 
-    async def edit(self, data: dict):
+    def __repr__(self):
+        return (
+            f"Playlist(name={self.name}, id={self.id}, scope={self.scope}, "
+            f"scope_id={self.scope_id}, author={self.author_id}, "
+            f"tracks={len(self.tracks)}, url={self.url})"
+        )
+
+    async def edit(self, data: MutableMapping):
         """
         Edits a Playlist.
         Parameters
@@ -146,10 +306,23 @@ class Playlist:
 
         for item in list(data.keys()):
             setattr(self, item, data[item])
+        await self.save()
+        return self
 
-        await _config.custom(*self.config_scope, str(self.id)).set(self.to_json())
+    async def save(self):
+        """Saves a Playlist."""
+        scope, scope_id = self.config_scope
+        database.upsert(
+            scope,
+            playlist_id=int(self.id),
+            playlist_name=self.name,
+            scope_id=scope_id,
+            author_id=self.author_id,
+            playlist_url=self.url,
+            tracks=self.tracks,
+        )
 
-    def to_json(self) -> dict:
+    def to_json(self) -> MutableMapping:
         """Transform the object to a dict.
         Returns
         -------
@@ -158,7 +331,7 @@ class Playlist:
         """
         data = dict(
             id=self.id,
-            author=self.author,
+            author=self.author_id,
             guild=self.guild_id,
             name=self.name,
             playlist_url=self.url,
@@ -168,7 +341,9 @@ class Playlist:
         return data
 
     @classmethod
-    async def from_json(cls, bot: Red, scope: str, playlist_number: int, data: dict, **kwargs):
+    async def from_json(
+        cls, bot: Red, scope: str, playlist_number: int, data: PlaylistFetchResult, **kwargs
+    ) -> "Playlist":
         """Get a Playlist object from the provided information.
         Parameters
         ----------
@@ -197,12 +372,12 @@ class Playlist:
         `MissingAuthor`
             Trying to access the User scope without an user id.
         """
-        guild = data.get("guild") or kwargs.get("guild")
-        author = data.get("author")
-        playlist_id = data.get("id") or playlist_number
-        name = data.get("name", "Unnamed")
-        playlist_url = data.get("playlist_url", None)
-        tracks = data.get("tracks", [])
+        guild = data.scope_id if scope == PlaylistScope.GUILD.value else kwargs.get("guild")
+        author = data.author_id
+        playlist_id = data.playlist_id or playlist_number
+        name = data.playlist_name
+        playlist_url = data.playlist_url
+        tracks = data.tracks
 
         return cls(
             bot=bot,
@@ -252,13 +427,13 @@ async def get_playlist(
     `MissingAuthor`
         Trying to access the User scope without an user id.
     """
-    playlist_data = await _config.custom(
-        *_prepare_config_scope(scope, author, guild), str(playlist_number)
-    ).all()
-    if not playlist_data["id"]:
+    scope_standard, scope_id = _prepare_config_scope(scope, author, guild)
+    playlist_data = database.fetch(scope_standard, playlist_number, scope_id)
+
+    if not (playlist_data and playlist_data.playlist_id):
         raise RuntimeError(f"That playlist does not exist for the following scope: {scope}")
     return await Playlist.from_json(
-        bot, scope, playlist_number, playlist_data, guild=guild, author=author
+        bot, scope_standard, playlist_number, playlist_data, guild=guild, author=author
     )
 
 
@@ -296,23 +471,65 @@ async def get_all_playlist(
     `MissingAuthor`
         Trying to access the User scope without an user id.
     """
-    playlists = await _config.custom(*_prepare_config_scope(scope, author, guild)).all()
+    scope_standard, scope_id = _prepare_config_scope(scope, author, guild)
+
     if specified_user:
         user_id = getattr(author, "id", author)
-        return [
-            await Playlist.from_json(
-                bot, scope, playlist_number, playlist_data, guild=guild, author=author
-            )
-            for playlist_number, playlist_data in playlists.items()
-            if user_id == playlist_data.get("author")
-        ]
+        playlists = await database.fetch_all(scope_standard, scope_id, author_id=user_id)
     else:
-        return [
-            await Playlist.from_json(
-                bot, scope, playlist_number, playlist_data, guild=guild, author=author
-            )
-            for playlist_number, playlist_data in playlists.items()
-        ]
+        playlists = await database.fetch_all(scope_standard, scope_id)
+    return [
+        await Playlist.from_json(
+            bot, scope, playlist.playlist_id, playlist, guild=guild, author=author
+        )
+        for playlist in playlists
+    ]
+
+
+async def get_all_playlist_converter(
+    scope: str,
+    bot: Red,
+    arg: str,
+    guild: Union[discord.Guild, int] = None,
+    author: Union[discord.abc.User, int] = None,
+) -> List[Playlist]:
+    """
+    Gets all playlist for the specified scope.
+    Parameters
+    ----------
+    scope: str
+        The custom config scope. One of 'GLOBALPLAYLIST', 'GUILDPLAYLIST' or 'USERPLAYLIST'.
+    guild: discord.Guild
+        The guild to get the playlist from if scope is GUILDPLAYLIST.
+    author: int
+        The ID of the user to get the playlist from if scope is USERPLAYLIST.
+    bot: Red
+        The bot's instance
+    arg:str
+        The value to lookup.
+    Returns
+    -------
+    list
+        A list of all playlists for the specified scope
+     Raises
+    ------
+    `InvalidPlaylistScope`
+        Passing a scope that is not supported.
+    `MissingGuild`
+        Trying to access the Guild scope without a guild.
+    `MissingAuthor`
+        Trying to access the User scope without an user id.
+    """
+    scope_standard, scope_id = _prepare_config_scope(scope, author, guild)
+    playlists = await database.fetch_all_converter(
+        scope_standard, playlist_name=arg, playlist_id=arg
+    )
+    return [
+        await Playlist.from_json(
+            bot, scope, playlist.playlist_id, playlist, guild=guild, author=author
+        )
+        for playlist in playlists
+    ]
 
 
 async def create_playlist(
@@ -320,12 +537,11 @@ async def create_playlist(
     scope: str,
     playlist_name: str,
     playlist_url: Optional[str] = None,
-    tracks: Optional[List[dict]] = None,
+    tracks: Optional[List[MutableMapping]] = None,
     author: Optional[discord.User] = None,
     guild: Optional[discord.Guild] = None,
 ) -> Optional[Playlist]:
-    """
-    Creates a new Playlist.
+    """Creates a new Playlist.
 
     Parameters
     ----------
@@ -337,7 +553,7 @@ async def create_playlist(
         The name of the new playlist.
     playlist_url:str
         the url of the new playlist.
-    tracks: List[dict]
+    tracks: List[MutableMapping]
         A list of tracks to add to the playlist.
     author: discord.User
         The Author of the playlist.
@@ -358,12 +574,16 @@ async def create_playlist(
     """
 
     playlist = Playlist(
-        ctx.bot, scope, author.id, ctx.message.id, playlist_name, playlist_url, tracks, ctx.guild
+        ctx.bot,
+        scope,
+        author.id if author else None,
+        ctx.message.id,
+        playlist_name,
+        playlist_url,
+        tracks,
+        guild or ctx.guild,
     )
-
-    await _config.custom(*_prepare_config_scope(scope, author, guild), str(ctx.message.id)).set(
-        playlist.to_json()
-    )
+    await playlist.save()
     return playlist
 
 
@@ -372,8 +592,7 @@ async def reset_playlist(
     guild: Union[discord.Guild, int] = None,
     author: Union[discord.abc.User, int] = None,
 ) -> None:
-    """
-    Wipes all playlists for the specified scope.
+    """Wipes all playlists for the specified scope.
 
     Parameters
     ----------
@@ -393,7 +612,9 @@ async def reset_playlist(
     `MissingAuthor`
         Trying to access the User scope without an user id.
     """
-    await _config.custom(*_prepare_config_scope(scope, author, guild)).clear()
+    scope, scope_id = _prepare_config_scope(scope, author, guild)
+    database.drop(scope)
+    database.create_table(scope)
 
 
 async def delete_playlist(
@@ -402,27 +623,27 @@ async def delete_playlist(
     guild: discord.Guild,
     author: Union[discord.abc.User, int] = None,
 ) -> None:
+    """Deletes the specified playlist.
+
+    Parameters
+    ----------
+    scope: str
+        The custom config scope. One of 'GLOBALPLAYLIST', 'GUILDPLAYLIST' or 'USERPLAYLIST'.
+    playlist_id: Union[str, int]
+        The ID of the playlist.
+    guild: discord.Guild
+        The guild to get the playlist from if scope is GUILDPLAYLIST.
+    author: int
+        The ID of the user to get the playlist from if scope is USERPLAYLIST.
+
+     Raises
+    ------
+    `InvalidPlaylistScope`
+        Passing a scope that is not supported.
+    `MissingGuild`
+        Trying to access the Guild scope without a guild.
+    `MissingAuthor`
+        Trying to access the User scope without an user id.
     """
-        Deletes the specified playlist.
-
-        Parameters
-        ----------
-        scope: str
-            The custom config scope. One of 'GLOBALPLAYLIST', 'GUILDPLAYLIST' or 'USERPLAYLIST'.
-        playlist_id: Union[str, int]
-            The ID of the playlist.
-        guild: discord.Guild
-            The guild to get the playlist from if scope is GUILDPLAYLIST.
-        author: int
-            The ID of the user to get the playlist from if scope is USERPLAYLIST.
-
-         Raises
-        ------
-        `InvalidPlaylistScope`
-            Passing a scope that is not supported.
-        `MissingGuild`
-            Trying to access the Guild scope without a guild.
-        `MissingAuthor`
-            Trying to access the User scope without an user id.
-        """
-    await _config.custom(*_prepare_config_scope(scope, author, guild), str(playlist_id)).clear()
+    scope, scope_id = _prepare_config_scope(scope, author, guild)
+    database.delete(scope, int(playlist_id), scope_id)
