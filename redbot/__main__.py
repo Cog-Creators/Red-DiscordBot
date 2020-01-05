@@ -372,7 +372,7 @@ def global_exception_handler(red, loop, context):
     (to standard error, not logs, this applies to all tasks and futures)
     """
     msg = context.get("exception", context["message"])
-    if isinstance(msg, KeyboardInterrupt, SystemExit):
+    if isinstance(msg, (KeyboardInterrupt, SystemExit)):
         pass  # This will get handled later when it *also* kills loop.run_forever
     else:
         logging.critical("Caught unhandled exception: %s", msg)
