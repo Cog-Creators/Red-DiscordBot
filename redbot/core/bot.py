@@ -2,6 +2,7 @@ import asyncio
 import inspect
 import logging
 import os
+import platform
 import shutil
 import sys
 from collections import namedtuple
@@ -81,7 +82,9 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             disabled_command_msg="That command is disabled.",
             extra_owner_destinations=[],
             owner_opt_out_list=[],
-            last_python_version=[3, 7],
+            last_system_info__python_version=[3, 7],
+            last_system_info__machine=None,
+            last_system_info__system=None,
             schema_version=0,
         )
 
@@ -416,10 +419,13 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         packages = []
 
+        last_system_info = await self._config.last_system_info()
+
         ver_info = list(sys.version_info[:2])
+        python_version_changed = False
         LIB_PATH = cog_data_path(raw_name="Downloader") / "lib"
-        if ver_info != await self._config.last_python_version():
-            await self._config.last_python_version.set(ver_info)
+        if ver_info != last_system_info["python_version"]:
+            await self._config.last_system_info.python_version.set(ver_info)
             if any(LIB_PATH.iterdir()):
                 shutil.rmtree(str(LIB_PATH))
                 LIB_PATH.mkdir()
@@ -433,12 +439,38 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                         " all of your previously loaded cogs loaded again."
                     )
                 )
+                python_version_changed = True
         else:
             if cli_flags.no_cogs is False:
                 packages.extend(await self._config.packages())
 
             if cli_flags.load_cogs:
                 packages.extend(cli_flags.load_cogs)
+
+        system_changed = False
+        machine = platform.machine()
+        system = platform.system()
+        if last_system_info["machine"] is None:
+            await self._config.last_system_info.machine.set(machine)
+        elif last_system_info["machine"] != machine:
+            await self._config.last_system_info.machine.set(machine)
+            system_changed = True
+
+        if last_system_info["system"] is None:
+            await self._config.last_system_info.system.set(system)
+        elif last_system_info["system"] != system:
+            await self._config.last_system_info.system.set(system)
+            system_changed = True
+
+        if system_changed and not python_version_changed:
+            self.loop.create_task(
+                self.send_to_owners(
+                    "We detected a possible change in machine's operating system"
+                    " or architecture. You might need to regenerate your lib folder"
+                    " if 3rd-party cogs stop working properly.\n"
+                    "To regenerate lib folder, load Downloader and use `[p]cog reinstallreqs`."
+                )
+            )
 
         if packages:
             # Load permissions first, for security reasons

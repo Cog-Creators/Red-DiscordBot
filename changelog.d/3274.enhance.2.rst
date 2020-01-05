@@ -1,0 +1,1 @@
+If Red detects operating system or architecture change, it will warn owner about possible problem with lib folder.
