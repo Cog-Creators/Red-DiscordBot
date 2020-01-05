@@ -352,22 +352,52 @@ async def shutdown_handler(red, signal_type=None):
     else:
         log.info("Shutting down from unhandled exception")
         exit_code = 1
-    await red.logout()
-    await red.loop.shutdown_asyncgens()
-    pending = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
-    [task.cancel() for task in pending]
-    await asyncio.gather(*pending, return_exceptions=True)
-    sys.exit(exit_code)
+
+    try:
+        await red.logout()
+    finally:
+        # Allows transports to close properly, and prevent new ones from being opened.
+        await red.loop.shutdown_asyncgens()
+        # Then cancels all outstanding tasks other than ourselves
+        pending = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
+        [task.cancel() for task in pending]
+        await asyncio.gather(*pending, return_exceptions=True)
+        # And we're done!
+        sys.exit(exit_code)
 
 
-def exception_handler(red, loop, context):
+def global_exception_handler(red, loop, context):
+    """
+    Ensures if we get a KeyboarInterrupt, we cleanup and die.
+    Also logs unhandled exceptions in other tasks
+    (to standard error, not logs, this applies to all tasks and futures)
+    """
     msg = context.get("exception", context["message"])
     if isinstance(msg, KeyboardInterrupt):
         # Windows support is ugly, I'm sorry
         log.error("Received KeyboardInterrupt, treating as interrupt")
         loop.create_task(shutdown_handler(red, signal.SIGINT))
     else:
-        log.critical("Caught unhandled exception: %s", msg)
+        logging.critical("Caught unhandled exception: %s", msg)
+
+
+def red_exception_handler(red, red_task: asyncio.Future):
+    """
+    This is set as a done callback for Red
+
+    must be used with functools.partial
+
+    If the main bot.run dies for some reason,
+    we don't want to swallow the exception and hang.
+    """
+    try:
+        red_task.result()
+    except (SystemExit, KeyboardInterrupt, asyncio.CancelledError):
+        pass  # Handled by the global_exception_handler, or cancellation
+    except Exception as exc:
+        log.critical("The main bot task didn't handle an exception and has crashed", exc_info=exc)
+        log.warning("Attempting to die as gracefully as possible...")
+        red.loop.create_task(shutdown_handler(red))
 
 
 def main():
@@ -401,10 +431,12 @@ def main():
                     s, lambda s=s: asyncio.create_task(shutdown_handler(red, s))
                 )
 
-        exc_handler = functools.partial(exception_handler, red)
+        exc_handler = functools.partial(global_exception_handler, red)
         loop.set_exception_handler(exc_handler)
         # We actually can't (just) use asyncio.run here
-        loop.create_task(run_bot(red, cli_flags))
+        fut = loop.create_task(run_bot(red, cli_flags))
+        r_exc_handler = functools.partial(red_exception_handler, red)
+        fut.add_done_callback(r_exc_handler)
         loop.run_forever()
     except KeyboardInterrupt:
         # We still have to catch this here too. (*joy*)
