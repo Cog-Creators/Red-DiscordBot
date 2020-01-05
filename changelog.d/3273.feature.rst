@@ -1,1 +1,1 @@
-Add :meth:`redbot.core.bot.Bot.wait_until_red_ready()` method that waits until our post connection startup is done.
+Added :meth:`redbot.core.bot.Bot.wait_until_red_ready()` method that waits until our post connection startup is done.
