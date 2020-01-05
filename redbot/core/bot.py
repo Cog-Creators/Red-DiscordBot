@@ -421,6 +421,13 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         last_system_info = await self._config.last_system_info()
 
+        async def notify_owners(content: str) -> None:
+            destinations = await self.get_owner_notification_destinations()
+            for destination in destinations:
+                prefixes = await self.get_valid_prefixes(getattr(destination, "guild", None))
+                prefix = prefixes[0]
+                await self.send_to_owners(content.format(prefix=prefix))
+
         ver_info = list(sys.version_info[:2])
         python_version_changed = False
         LIB_PATH = cog_data_path(raw_name="Downloader") / "lib"
@@ -430,11 +437,11 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                 shutil.rmtree(str(LIB_PATH))
                 LIB_PATH.mkdir()
                 self.loop.create_task(
-                    self.send_to_owners(
+                    notify_owners(
                         "We detected a change in minor Python version"
                         " and cleared packages in lib folder.\n"
                         "The instance was started with no cogs, please load Downloader"
-                        " and use `[p]cog reinstallreqs` to regenerate lib folder."
+                        " and use `{prefix}cog reinstallreqs` to regenerate lib folder."
                         " After that, restart the bot to get"
                         " all of your previously loaded cogs loaded again."
                     )
@@ -464,11 +471,11 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         if system_changed and not python_version_changed:
             self.loop.create_task(
-                self.send_to_owners(
+                notify_owners(
                     "We detected a possible change in machine's operating system"
                     " or architecture. You might need to regenerate your lib folder"
                     " if 3rd-party cogs stop working properly.\n"
-                    "To regenerate lib folder, load Downloader and use `[p]cog reinstallreqs`."
+                    "To regenerate lib folder, load Downloader and use `{prefix}cog reinstallreqs`."
                 )
             )
 
