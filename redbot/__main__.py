@@ -345,11 +345,11 @@ def handle_early_exit_flags(cli_flags: Namespace):
         sys.exit(1)
 
 
-async def shutdown_handler(red, signal_type=None):
+async def shutdown_handler(red, signal_type=None, exit_code=None):
     if signal_type:
         log.info("%s received. Quitting...", signal_type)
         exit_code = 0
-    else:
+    elif exit_code is None:
         log.info("Shutting down from unhandled exception")
         exit_code = 1
 
@@ -377,6 +377,9 @@ def global_exception_handler(red, loop, context):
         # Windows support is ugly, I'm sorry
         log.error("Received KeyboardInterrupt, treating as interrupt")
         loop.create_task(shutdown_handler(red, signal.SIGINT))
+    elif isinstance(msg, SystemExit):
+        logging.info("Shutting down with exit code: %s", msg)
+        loop.create_task(shutdown_handler(red, None, msg.code))
     else:
         logging.critical("Caught unhandled exception: %s", msg)
 
