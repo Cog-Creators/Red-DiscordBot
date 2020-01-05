@@ -951,12 +951,24 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                 user = self.get_user(user_id)
                 if user:
                     destinations.append(user)
+                else:
+                    log.warning(
+                        "Owner with ID %s is missing in user cache,"
+                        " ignoring owner notification destination.",
+                        user_id,
+                    )
 
         channel_ids = await self._config.extra_owner_destinations()
         for channel_id in channel_ids:
             channel = self.get_channel(channel_id)
             if channel:
                 destinations.append(channel)
+            else:
+                log.warning(
+                    "Channel with ID %s is not available,"
+                    " ignoring owner notification destination.",
+                    channel_id,
+                )
 
         return destinations
 
