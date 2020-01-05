@@ -146,6 +146,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         self.add_command(commands.help.red_help)
 
         self._permissions_hooks: List[commands.CheckPredicate] = []
+        self._red_ready = asyncio.Event()
 
     @property
     def cog_mgr(self) -> NoReturn:
@@ -942,6 +943,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         """
         Gets the users and channels to send to
         """
+        await self.wait_until_red_ready()
         destinations = []
         opt_outs = await self._config.owner_opt_out_list()
         for user_id in (self.owner_id, *self._co_owners):
@@ -949,12 +951,24 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                 user = self.get_user(user_id)
                 if user:
                     destinations.append(user)
+                else:
+                    log.warning(
+                        "Owner with ID %s is missing in user cache,"
+                        " ignoring owner notification destination.",
+                        user_id,
+                    )
 
         channel_ids = await self._config.extra_owner_destinations()
         for channel_id in channel_ids:
             channel = self.get_channel(channel_id)
             if channel:
                 destinations.append(channel)
+            else:
+                log.warning(
+                    "Channel with ID %s is not available,"
+                    " ignoring owner notification destination.",
+                    channel_id,
+                )
 
         return destinations
 
@@ -978,6 +992,10 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         sends = [wrapped_send(d, content, **kwargs) for d in destinations]
         await asyncio.gather(*sends)
+
+    async def wait_until_red_ready(self):
+        """Wait until our post connection startup is done."""
+        await self._red_ready.wait()
 
 
 class Red(RedBase, discord.AutoShardedClient):
