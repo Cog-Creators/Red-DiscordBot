@@ -27,7 +27,7 @@ from redbot import _update_event_loop_policy, __version__
 _update_event_loop_policy()
 
 import redbot.logging
-from redbot.core.bot import Red
+from redbot.core.bot import Red, ExitCodes
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags
 from redbot.setup import get_data_dir, get_name, save_config
 from redbot.core import data_manager, drivers
@@ -348,10 +348,10 @@ def handle_early_exit_flags(cli_flags: Namespace):
 async def shutdown_handler(red, signal_type=None, exit_code=None):
     if signal_type:
         log.info("%s received. Quitting...", signal_type)
-        exit_code = 0
+        exit_code = ExitCodes.SHUTDOWN
     elif exit_code is None:
         log.info("Shutting down from unhandled exception")
-        exit_code = 1
+        red._shutdown_mode = ExitCodes.CRITICAL
 
     if exit_code is not None:
         red._shutdown_mode = exit_code
@@ -461,7 +461,7 @@ def main():
             loop.run_until_complete(asyncio.sleep(1))
         loop.stop()
         loop.close()
-        sys.exit(red._shutdown_mode)
+        sys.exit(red._shutdown_mode.value)
 
 
 if __name__ == "__main__":

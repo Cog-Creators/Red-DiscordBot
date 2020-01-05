@@ -7,7 +7,7 @@ import shutil
 import sys
 from collections import namedtuple
 from datetime import datetime
-from enum import Enum
+from enum import IntEnum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
 from typing import Optional, Union, List, Dict, NoReturn
@@ -1086,7 +1086,9 @@ class Red(RedBase, discord.AutoShardedClient):
         sys.exit(self._shutdown_mode)
 
 
-class ExitCodes(Enum):
+class ExitCodes(IntEnum):
+    # This needs to be an int enum to be used
+    # with sys.exit
     CRITICAL = 1
     SHUTDOWN = 0
     RESTART = 26
