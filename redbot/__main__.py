@@ -371,10 +371,11 @@ def global_exception_handler(red, loop, context):
     Ensures if we get a KeyboarInterrupt, we cleanup and die.
     Also logs unhandled exceptions in other tasks
     (to standard error, not logs, this applies to all tasks and futures)
+
+    This needs to exist in p
     """
     msg = context.get("exception", context["message"])
     if isinstance(msg, KeyboardInterrupt):
-        # Windows support is ugly, I'm sorry
         log.error("Received KeyboardInterrupt, treating as interrupt")
         loop.create_task(shutdown_handler(red, signal.SIGINT))
     elif isinstance(msg, SystemExit):
@@ -446,6 +447,12 @@ def main():
         log.warning("Please do not use Ctrl+C to Shutdown Red! (attempting to die gracefully...)")
         log.error("Received KeyboardInterrupt, treating as interrupt")
         loop.run_until_complete(shutdown_handler(red, signal.SIGINT))
+    except SystemExit as exc:
+        # We also have to catch this one here. Basically any exception which normally
+        # Kills the python interpreter (Base Exceptions minus asyncio.cancelled)
+        # We need to do something with prior to having the loop close
+        log.info("Shutting down with exit code: %s", exc.code)
+        loop.run_until_complete(shutdown_handler(red, None, exc.code))
     finally:
         loop.close()
 
