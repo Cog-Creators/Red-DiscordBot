@@ -368,13 +368,11 @@ async def shutdown_handler(red, signal_type=None, exit_code=None):
 def global_exception_handler(red, loop, context):
     """
     Logs unhandled exceptions in other tasks
-    (to standard error, not logs, this applies to all tasks and futures)
     """
     msg = context.get("exception", context["message"])
-    if isinstance(msg, (KeyboardInterrupt, SystemExit)):
-        pass  # This will get handled later when it *also* kills loop.run_forever
-    else:
-        logging.critical("Caught unhandled exception: %s", msg)
+    # These will get handled later when it *also* kills loop.run_forever
+    if not isinstance(msg, (KeyboardInterrupt, SystemExit)):
+        log.critical("Caught unhandled exception in task: %s", msg)
 
 
 def red_exception_handler(red, red_task: asyncio.Future):
