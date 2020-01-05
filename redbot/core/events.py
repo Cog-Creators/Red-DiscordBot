@@ -48,9 +48,12 @@ def init_events(bot, cli_flags):
         guilds = len(bot.guilds)
         users = len(set([m for m in bot.get_all_members()]))
 
+        app_info = await bot.application_info()
+        if bot.owner_id is None:
+            bot.owner_id = app_info.owner.id
+
         try:
-            data = await bot.application_info()
-            invite_url = discord.utils.oauth_url(data.id)
+            invite_url = discord.utils.oauth_url(app_info.id)
         except:
             invite_url = "Could not fetch invite url"
 
