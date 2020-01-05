@@ -146,6 +146,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         self.add_command(commands.help.red_help)
 
         self._permissions_hooks: List[commands.CheckPredicate] = []
+        self._red_ready = asyncio.Event()
 
     @property
     def cog_mgr(self) -> NoReturn:
@@ -942,6 +943,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         """
         Gets the users and channels to send to
         """
+        await self.wait_until_red_ready()
         destinations = []
         opt_outs = await self._config.owner_opt_out_list()
         for user_id in (self.owner_id, *self._co_owners):
@@ -978,6 +980,10 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         sends = [wrapped_send(d, content, **kwargs) for d in destinations]
         await asyncio.gather(*sends)
+
+    async def wait_until_red_ready(self):
+        """Wait until our post connection startup is done."""
+        await self._red_ready.wait()
 
 
 class Red(RedBase, discord.AutoShardedClient):
