@@ -353,17 +353,16 @@ async def shutdown_handler(red, signal_type=None, exit_code=None):
         log.info("Shutting down from unhandled exception")
         exit_code = 1
 
+    if exit_code is not None:
+        red._shutdown_mode = exit_code
+
     try:
         await red.logout()
     finally:
-        # Allows transports to close properly, and prevent new ones from being opened.
-        await red.loop.shutdown_asyncgens()
         # Then cancels all outstanding tasks other than ourselves
         pending = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
         [task.cancel() for task in pending]
         await asyncio.gather(*pending, return_exceptions=True)
-        # And we're done!
-        sys.exit(exit_code)
 
 
 def global_exception_handler(red, loop, context):
@@ -420,7 +419,7 @@ def main():
         )
 
         if os.name != "nt":
-            # None of this works on windows, and we have to catch KeyboardInterrupt in a global handler!
+            # None of this works on windows.
             # At least it's not a redundant handler...
             signals = (signal.SIGHUP, signal.SIGTERM, signal.SIGINT)
             for s in signals:
@@ -431,6 +430,8 @@ def main():
         exc_handler = functools.partial(global_exception_handler, red)
         loop.set_exception_handler(exc_handler)
         # We actually can't (just) use asyncio.run here
+        # We probably could if we didnt support windows, but we might run into
+        # a scenario where this isn't true if anyone works on RPC more in the future
         fut = loop.create_task(run_bot(red, cli_flags))
         r_exc_handler = functools.partial(red_exception_handler, red)
         fut.add_done_callback(r_exc_handler)
@@ -447,7 +448,20 @@ def main():
         log.info("Shutting down with exit code: %s", exc.code)
         loop.run_until_complete(shutdown_handler(red, None, exc.code))
     finally:
+        # Allows transports to close properly, and prevent new ones from being opened.
+        # Transports may still not be closed correcly on windows, see below
+        loop.run_until_complete(loop.shutdown_asyncgens())
+        if os.name == "nt":
+            # *we* aren't cleaning up more here, but it prevents
+            # a runtime error at the event loop on windows
+            # with resources which require longer to clean up.
+            # With other event loops, a failure to cleanup prior to here
+            # results in a resource warning instead and does not break us.
+            log.info("Please wait, cleaning up a bit more")
+            loop.run_until_complete(asyncio.sleep(1))
+        loop.stop()
         loop.close()
+        sys.exit(red._shutdown_mode)
 
 
 if __name__ == "__main__":

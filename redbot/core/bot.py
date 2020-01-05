@@ -132,10 +132,6 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         if cli_flags.owner and "owner_id" not in kwargs:
             kwargs["owner_id"] = cli_flags.owner
 
-        if "owner_id" not in kwargs:
-            loop = asyncio.get_event_loop()
-            loop.run_until_complete(self._dict_abuse(kwargs))
-
         if "command_not_found" not in kwargs:
             kwargs["command_not_found"] = "Command {} not found.\n{}"
 
@@ -408,6 +404,9 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         init_global_checks(self)
         init_events(self, cli_flags)
 
+        i18n_locale = await self._config.locale()
+        i18n.set_locale(i18n_locale)
+
         self.add_cog(Core(self))
         self.add_cog(CogManagerUI())
         self.add_command(license_info_command)
@@ -527,17 +526,6 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         """
         return await self._help_formatter.send_help(ctx, help_for)
 
-    async def _dict_abuse(self, indict):
-        """
-        Please blame <@269933075037814786> for this.
-
-        :param indict:
-        :return:
-        """
-
-        indict["owner_id"] = await self._config.owner()
-        i18n.set_locale(await self._config.locale())
-
     async def embed_requested(self, channel, user, command=None) -> bool:
         """
         Determine if an embed is requested for a response.
@@ -654,9 +642,9 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         """
         Sets shared API tokens for a service
 
-        In most cases, this should not be used. Users should instead be using the 
+        In most cases, this should not be used. Users should instead be using the
         ``set api`` command
-    
+
         This will not clear existing values not specified.
 
         Parameters
