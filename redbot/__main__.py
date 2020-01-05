@@ -368,23 +368,12 @@ async def shutdown_handler(red, signal_type=None, exit_code=None):
 
 def global_exception_handler(red, loop, context):
     """
-    Ensures if we get a KeyboarInterrupt, we cleanup and die.
-    Also logs unhandled exceptions in other tasks
+    Logs unhandled exceptions in other tasks
     (to standard error, not logs, this applies to all tasks and futures)
-
-    This needs to exist in part due to the ProactorEvent loop use in windows,
-    Otherwise we could handle it all when loop.run_forever dies.
-
-    However, it's also useful for people to know when they have tasks erroring
-    out from cogs.
     """
     msg = context.get("exception", context["message"])
-    if isinstance(msg, KeyboardInterrupt):
-        log.error("Received KeyboardInterrupt, treating as interrupt")
-        loop.create_task(shutdown_handler(red, signal.SIGINT))
-    elif isinstance(msg, SystemExit):
-        logging.info("Shutting down with exit code: %s", msg)
-        loop.create_task(shutdown_handler(red, None, msg.code))
+    if isinstance(msg, KeyboardInterrupt, SystemExit):
+        pass  # This will get handled later when it *also* kills loop.run_forever
     else:
         logging.critical("Caught unhandled exception: %s", msg)
 
