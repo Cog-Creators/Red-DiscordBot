@@ -1,0 +1,1 @@
+:meth:`redbot.core.bot.Bot.send_to_owners()` and :meth:`redbot.core.bot.Bot.get_owner_notification_destinations()` now log that they weren't able to find owner notification destination.
