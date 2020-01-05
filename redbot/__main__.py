@@ -362,16 +362,12 @@ async def shutdown_handler(red, signal_type=None):
 
 def exception_handler(red, loop, context):
     msg = context.get("exception", context["message"])
-    if isinstance(msg, SystemExit):
-        return
     if isinstance(msg, KeyboardInterrupt):
         # Windows support is ugly, I'm sorry
         log.error("Received KeyboardInterrupt, treating as interrupt")
-        signal_type = signal.SIGINT
+        loop.create_task(shutdown_handler(red, signal.SIGINT))
     else:
-        log.critical("Caught fatal exception: %s", msg)
-        signal_type = None
-    loop.create_task(shutdown_handler(red, signal_type))
+        log.critical("Caught unhandled exception: %s", msg)
 
 
 def main():
