@@ -2,6 +2,7 @@ import asyncio
 import inspect
 import logging
 import os
+import shutil
 import sys
 from collections import namedtuple
 from datetime import datetime
@@ -17,6 +18,7 @@ from discord.ext.commands import when_mentioned_or
 from . import Config, i18n, commands, errors, drivers, modlog, bank
 from .cog_manager import CogManager, CogManagerUI
 from .core_commands import license_info_command, Core
+from .data_manager import cog_data_path
 from .dev_commands import Dev
 from .events import init_events
 from .global_checks import init_global_checks
@@ -79,6 +81,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             disabled_command_msg="That command is disabled.",
             extra_owner_destinations=[],
             owner_opt_out_list=[],
+            last_python_version=[3, 7],
             schema_version=0,
         )
 
@@ -413,11 +416,29 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         packages = []
 
-        if cli_flags.no_cogs is False:
-            packages.extend(await self._config.packages())
+        ver_info = list(sys.version_info[:2])
+        LIB_PATH = cog_data_path(raw_name="Downloader") / "lib"
+        if ver_info != await self._config.last_python_version():
+            await self._config.last_python_version.set(ver_info)
+            if any(LIB_PATH.iterdir()):
+                shutil.rmtree(str(LIB_PATH))
+                LIB_PATH.mkdir()
+                self.loop.create_task(
+                    self.send_to_owners(
+                        "We detected a change in minor Python version"
+                        " and cleared packages in lib folder.\n"
+                        "The instance was started with no cogs, please load Downloader"
+                        " and use `[p]cog reinstallreqs` to regenerate lib folder."
+                        " After that, restart the bot to get"
+                        " all of your previously loaded cogs loaded again."
+                    )
+                )
+        else:
+            if cli_flags.no_cogs is False:
+                packages.extend(await self._config.packages())
 
-        if cli_flags.load_cogs:
-            packages.extend(cli_flags.load_cogs)
+            if cli_flags.load_cogs:
+                packages.extend(cli_flags.load_cogs)
 
         if packages:
             # Load permissions first, for security reasons
