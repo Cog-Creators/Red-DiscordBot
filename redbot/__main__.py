@@ -372,7 +372,11 @@ def global_exception_handler(red, loop, context):
     Also logs unhandled exceptions in other tasks
     (to standard error, not logs, this applies to all tasks and futures)
 
-    This needs to exist in p
+    This needs to exist in part due to the ProactorEvent loop use in windows,
+    Otherwise we could handle it all when loop.run_forever dies.
+
+    However, it's also useful for people to know when they have tasks erroring
+    out from cogs.
     """
     msg = context.get("exception", context["message"])
     if isinstance(msg, KeyboardInterrupt):
