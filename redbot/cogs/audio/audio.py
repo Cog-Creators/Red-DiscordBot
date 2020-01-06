@@ -8450,10 +8450,8 @@ class Audio(commands.Cog):
                 try:
                     await p.stop()
                     await p.disconnect()
-                except Exception as err:
-                    debug_exc_log(
-                        log,
-                        err,
+                except Exception:
+                    log.debug(
                         "".join[
                             "R" "a" "i" "s" "e" "d" " ",
                             "w" "h" "e" "n" " ",
