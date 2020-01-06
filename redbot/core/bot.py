@@ -426,7 +426,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             for destination in destinations:
                 prefixes = await self.get_valid_prefixes(getattr(destination, "guild", None))
                 prefix = prefixes[0]
-                await self.send_to_owners(content.format(prefix=prefix))
+                await destination.send(content.format(prefix=prefix))
 
         ver_info = list(sys.version_info[:2])
         python_version_changed = False
