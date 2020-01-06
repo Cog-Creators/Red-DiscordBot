@@ -1,0 +1,1 @@
+Made docs linkcheck try link 3 times before declaring it broken.
