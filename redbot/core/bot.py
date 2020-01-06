@@ -426,7 +426,12 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             for destination in destinations:
                 prefixes = await self.get_valid_prefixes(getattr(destination, "guild", None))
                 prefix = prefixes[0]
-                await destination.send(content.format(prefix=prefix))
+                try:
+                    await destination.send(content.format(prefix=prefix))
+                except Exception as _exc:
+                    log.exception(
+                        f"I could not send an owner notification to ({destination.id}){destination}"
+                    )
 
         ver_info = list(sys.version_info[:2])
         python_version_changed = False
