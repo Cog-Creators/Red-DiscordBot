@@ -16,7 +16,7 @@ import lavalink
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
-from redbot.core.utils.chat_formatting import bold, box
+from redbot.core.utils.chat_formatting import box
 from discord.utils import escape_markdown as escape
 
 from .audio_dataclasses import Query

@@ -16,6 +16,7 @@ from tqdm import tqdm
 
 from redbot.core import data_manager
 
+from .debug import is_debug
 from .errors import LavalinkDownloadFailed
 
 log = logging.getLogger("red.audio.manager")
@@ -37,6 +38,8 @@ _RE_JAVA_VERSION_LINE = re.compile(
     r'version "(?P<major>\d+).(?P<minor>\d+).\d+(?:_\d+)?(?:-[A-Za-z0-9]+)?"'
 )
 _RE_JAVA_SHORT_VERSION = re.compile(r'version "(?P<major>\d+)"')
+
+IS_DEBUG = is_debug()
 
 
 class ServerManager:
@@ -121,9 +124,7 @@ class ServerManager:
 
     @staticmethod
     async def _get_java_version() -> Tuple[int, int]:
-        """
-        This assumes we've already checked that java exists.
-        """
+        """This assumes we've already checked that java exists."""
         _proc: asyncio.subprocess.Process = await asyncio.create_subprocess_exec(  # pylint:disable=no-member
             "java", "-version", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
         )
@@ -153,7 +154,8 @@ class ServerManager:
         )
 
     async def _wait_for_launcher(self) -> None:
-        log.debug("Waiting for Lavalink server to be ready")
+        if IS_DEBUG:
+            log.debug("Waiting for Lavalink server to be ready")
         lastmessage = 0
         for i in itertools.cycle(range(50)):
             line = await self._proc.stdout.readline()
