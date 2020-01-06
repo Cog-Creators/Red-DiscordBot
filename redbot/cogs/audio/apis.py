@@ -22,7 +22,13 @@ from redbot.core.i18n import Translator, cog_i18n
 from . import audio_dataclasses
 from .databases import CacheGetAllLavalink, CacheInterface, SQLError
 from .debug import is_debug, debug_exc_log
-from .errors import DatabaseError, SpotifyFetchError, TrackEnqueueError, YouTubeApiError
+from .errors import (
+    DatabaseError,
+    SpotifyFetchError,
+    TrackEnqueueError,
+    YouTubeApiError,
+    FoundATeaPot,
+)
 from .playlists import get_playlist
 from .utils import CacheLevel, Notifier, is_allowed, queue_duration, track_limit
 
@@ -61,6 +67,8 @@ class AudioDBAPI:
         self.bot = bot
         self.session = session
         self.api_key = None
+        self._next_handshake = 0
+        self._handshake = None
 
     async def _get_api_key(self,) -> Optional[str]:
         global _WRITE_GLOBAL_API_ACCESS
@@ -68,6 +76,25 @@ class AudioDBAPI:
         self.api_key = tokens.get("api_key", None)
         _WRITE_GLOBAL_API_ACCESS = self.api_key is not None
         return self.api_key
+
+    async def handshake(self) -> Optional[dict]:
+        if self._handshake is None or self._next_handshake > time.time():
+            api_url = f"{_API_URL}api/dev/handshake"
+            owner_ids = [_bot.owner_id]
+            owner_ids.extend(_bot._co_owner)
+            users_ids = "|".join(owner_ids)
+            with contextlib.suppress(aiohttp.ContentTypeError, asyncio.TimeoutError):
+                async with self.session.get(
+                    api_url, params={"user_ids": users_ids}, timeout=aiohttp.ClientTimeout(total=2)
+                ) as r:
+                    if r.status == 418:
+                        self._handshake = False
+                    else:
+                        self._handshake = True
+                    self._next_handshake = time.time() + 3600
+        if self._handshake is False:
+            raise FoundATeaPot
+        return True
 
     async def get_call(self, query: Optional[audio_dataclasses.Query] = None) -> Optional[dict]:
         api_url = f"{_API_URL}api/v1/queries"
@@ -78,15 +105,11 @@ class AudioDBAPI:
             await self._get_api_key()
             search_response = "error"
             query = query.lavalink_query
-            users_id = [_bot.owner_id]
-            users_id.extend(_bot._co_owner)
-            headers = {"X-Token": "|".join(users_id)}
             with contextlib.suppress(aiohttp.ContentTypeError, asyncio.TimeoutError):
                 async with self.session.get(
                     api_url,
                     timeout=aiohttp.ClientTimeout(total=await _config.global_db_get_timeout()),
                     params={"query": urllib.parse.quote(query)},
-                    headers=headers,
                 ) as r:
                     search_response = await r.json()
                     if IS_DEBUG and "x-process-time" in r.headers:
@@ -105,16 +128,12 @@ class AudioDBAPI:
         try:
             search_response = "error"
             params = {"title": urllib.parse.quote(title), "author": urllib.parse.quote(author)}
-            users_id = [_bot.owner_id]
-            users_id.extend(_bot._co_owner)
-            headers = {"X-Token": "|".join(users_id)}
             await self._get_api_key()
             with contextlib.suppress(aiohttp.ContentTypeError, asyncio.TimeoutError):
                 async with self.session.get(
                     api_url,
                     timeout=aiohttp.ClientTimeout(total=await _config.global_db_get_timeout()),
                     params=params,
-                    headers=headers,
                 ) as r:
                     search_response = await r.json()
                     if IS_DEBUG and "x-process-time" in r.headers:
@@ -381,8 +400,8 @@ class MusicCache:
         skip_youtube: bool = False,
         current_cache_level: CacheLevel = CacheLevel.none(),
     ) -> List[str]:
+        await self.audio_api.handshake()
         youtube_urls = []
-
         tracks = await self._spotify_fetch_tracks(query_type, uri, params=None, notifier=notifier)
         total_tracks = len(tracks)
         database_entries = []
@@ -452,6 +471,7 @@ class MusicCache:
         track_info: str,
         current_cache_level: CacheLevel = CacheLevel.none(),
     ) -> str:
+        await self.audio_api.handshake()
         track_url = await self.youtube_api.get_call(track_info)
         if CacheLevel.set_youtube().is_subset(current_cache_level) and track_url:
             time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
@@ -480,7 +500,7 @@ class MusicCache:
         params: MutableMapping = None,
         notifier: Optional[Notifier] = None,
     ) -> Union[MutableMapping, List[str]]:
-
+        await self.audio_api.handshake()
         if recursive is False:
             (call, params) = self._spotify_format_call(query_type, uri)
             results = await self.spotify_api.get_call(call, params)
@@ -564,6 +584,7 @@ class MusicCache:
         List[str]
             List of Youtube URLs.
         """
+        await self.audio_api.handshake()
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_spotify().is_subset(current_cache_level)
         if query_type == "track" and cache_enabled:
@@ -605,6 +626,7 @@ class MusicCache:
         notifier: Optional[Notifier] = None,
         query_global=True,
     ) -> List[lavalink.Track]:
+        await self.audio_api.handshake()
         track_list = []
         has_not_allowed = False
         await self.audio_api._get_api_key()
@@ -879,6 +901,7 @@ class MusicCache:
         Tuple[lavalink.LoadResult, bool]
             Tuple with the Load result and whether or not the API was called.
         """
+        await self.audio_api.handshake()
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         val = None
@@ -1084,6 +1107,7 @@ class MusicCache:
         return tracks
 
     async def autoplay(self, player: lavalink.Player):
+        await self.audio_api.handshake()
         autoplaylist = await self.config.guild(player.channel.guild).autoplaylist()
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
