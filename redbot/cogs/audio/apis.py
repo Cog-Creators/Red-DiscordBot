@@ -2,10 +2,12 @@ import asyncio
 import base64
 import contextlib
 import datetime
+import hashlib
 import json
 import logging
 import random
 import time
+import uuid
 import urllib.parse
 from collections import namedtuple
 from typing import Callable, List, MutableMapping, Optional, TYPE_CHECKING, Tuple, Union, NoReturn
@@ -27,7 +29,6 @@ from .errors import (
     SpotifyFetchError,
     TrackEnqueueError,
     YouTubeApiError,
-    FoundATeaPot,
 )
 from .playlists import get_playlist
 from .utils import CacheLevel, Notifier, is_allowed, queue_duration, track_limit
@@ -70,6 +71,12 @@ class AudioDBAPI:
         self._next_handshake = 0
         self._handshake = None
 
+    @staticmethod
+    def uuid_from_id(seed: str) -> str:
+        m = hashlib.md5()
+        m.update(f"{seed}".encode('utf-8'))
+        return f"{uuid.UUID(m.hexdigest())}"
+
     async def _get_api_key(self,) -> Optional[str]:
         global _WRITE_GLOBAL_API_ACCESS
         tokens = await self.bot.get_shared_api_tokens("audiodb")
@@ -85,23 +92,22 @@ class AudioDBAPI:
     def version(self, value):
         return
 
-    async def handshake(self) -> Optional[dict]:
-        if self._handshake is None or self._next_handshake > time.time():
-            api_url = f"{_API_URL}api/dev/handshake"
-            owner_ids = [_bot.owner_id]
-            owner_ids.extend(_bot._co_owner)
-            users_ids = "|".join(owner_ids)
-            with contextlib.suppress(aiohttp.ContentTypeError, asyncio.TimeoutError):
-                async with self.session.get(
-                    api_url, params={"user_ids": users_ids}, timeout=aiohttp.ClientTimeout(total=2)
-                ) as r:
-                    if r.status == 418:
-                        self._handshake = False
-                    else:
-                        self._handshake = True
-                    self._next_handshake = time.time() + 3600
-        if self._handshake is False:
-            raise FoundATeaPot
+    async def handshake(self) -> bool:
+        with contextlib.suppress(Exception):
+            if self._handshake is None or self._next_handshake > time.time():
+                api_url = f"{_API_URL}api/dev/handshake"
+                owner_ids = [_bot.owner_id]
+                owner_ids.extend(_bot._co_owners)
+                users_ids = "||".join(map(self.uuid_from_id, owner_ids))
+                with contextlib.suppress(aiohttp.ContentTypeError, asyncio.TimeoutError):
+                    async with self.session.get(
+                        api_url, params={"user_ids": users_ids}, timeout=aiohttp.ClientTimeout(total=2)
+                    ) as r:
+                        if r.status == 418:
+                            self._handshake = False
+                        else:
+                            self._handshake = True
+                        self._next_handshake = time.time() + 3600
         return True
 
     async def get_call(self, query: Optional[audio_dataclasses.Query] = None) -> Optional[dict]:
@@ -1083,7 +1089,6 @@ class MusicCache:
                 log.debug("Completed pending writes to database have finished")
 
     def append_task(self, ctx: commands.Context, event: str, task: tuple, _id=None):
-        await self.audio_api.handshake()
         lock_id = _id or ctx.message.id
         if lock_id not in self._tasks:
             self._tasks[lock_id] = {"update": [], "insert": [], "global": []}
