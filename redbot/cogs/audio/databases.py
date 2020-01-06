@@ -14,11 +14,12 @@ from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 
+from .debug import is_debug, debug_exc_log
 from .errors import InvalidTableError
 from .sql_statements import *
 from .utils import PlaylistScope
 
-log = logging.getLogger("red.audio.database")
+log = logging.getLogger("red.cogs.Audio.database")
 
 if TYPE_CHECKING:
     database_connection: apsw.Connection
@@ -33,6 +34,7 @@ else:
 SCHEMA_VERSION = 3
 SQLError = apsw.ExecutionCompleteError
 
+IS_DEBUG = is_debug()
 
 _PARSER: Mapping = {
     "youtube": {
@@ -163,7 +165,7 @@ class CacheInterface:
             self.database.executemany(query, values)
             self.database.execute("COMMIT;")
         except Exception as err:
-            log.debug("Error during audio db insert", exc_info=err)
+            debug_exc_log(log, err, "Error during audio db insert")
 
     async def update(self, table: str, values: Dict[str, Union[str, int]]):
         try:
@@ -176,7 +178,7 @@ class CacheInterface:
             with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
                 executor.submit(self.database.execute, sql_query, values)
         except Exception as err:
-            log.debug("Error during audio db update", exc_info=err)
+            debug_exc_log(log, err, "Error during audio db update")
 
     async def fetch_one(
         self, table: str, query: str, values: Dict[str, Union[str, int]]
@@ -223,9 +225,19 @@ class CacheInterface:
                 try:
                     row = future.result()
                     row = row.fetchone()
-                except Exception as exc:
-                    log.debug(f"Failed to completed random fetch from database", exc_info=exc)
+                except Exception as err:
+                    debug_exc_log(log, err, "Failed to completed random fetch from database")
         return CacheLastFetchResult(*row)
+
+    async def fetch_all_for_global(self) -> List[CacheGetAllLavalink]:
+        output = []
+        for index, row in enumerate(
+            self.database.execute(LAVALINK_FETCH_ALL_ENTRIES_GLOBAL), start=1
+        ):
+            if index % 50 == 0:
+                await asyncio.sleep(0.01)
+            output.append(CacheGetAllLavalink(*row))
+        return output
 
 
 class PlaylistInterface:
