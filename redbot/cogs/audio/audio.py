@@ -1675,12 +1675,16 @@ class Audio(commands.Cog):
                 + _("Local Youtube cache:    [{youtube_status}]\n")
                 + _("Local Lavalink cache:   [{lavalink_status}]\n")
                 + _("Global cache status:    [{global_cache}]\n")
+                + _("Global cache version:   [{global_cache_version}]\n")
             ).format(
                 max_age=str(await self.config.cache_age()) + " " + _("days"),
                 spotify_status=_("Enabled") if has_spotify_cache else _("Disabled"),
                 youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
                 lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
                 global_cache=_("Enabled") if global_db else _("Disabled"),
+                global_cache_version=f"{__version__}.v"
+                if self.music_cache.audio_api.version
+                else f"{__version__}.b",
             )
 
         msg += _(
