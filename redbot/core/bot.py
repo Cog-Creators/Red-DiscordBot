@@ -2,6 +2,8 @@ import asyncio
 import inspect
 import logging
 import os
+import platform
+import shutil
 import sys
 from collections import namedtuple
 from datetime import datetime
@@ -17,6 +19,7 @@ from discord.ext.commands import when_mentioned_or
 from . import Config, i18n, commands, errors, drivers, modlog, bank
 from .cog_manager import CogManager, CogManagerUI
 from .core_commands import license_info_command, Core
+from .data_manager import cog_data_path
 from .dev_commands import Dev
 from .events import init_events
 from .global_checks import init_global_checks
@@ -79,6 +82,9 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             disabled_command_msg="That command is disabled.",
             extra_owner_destinations=[],
             owner_opt_out_list=[],
+            last_system_info__python_version=[3, 7],
+            last_system_info__machine=None,
+            last_system_info__system=None,
             schema_version=0,
         )
 
@@ -413,11 +419,70 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         packages = []
 
-        if cli_flags.no_cogs is False:
-            packages.extend(await self._config.packages())
+        last_system_info = await self._config.last_system_info()
 
-        if cli_flags.load_cogs:
-            packages.extend(cli_flags.load_cogs)
+        async def notify_owners(content: str) -> None:
+            destinations = await self.get_owner_notification_destinations()
+            for destination in destinations:
+                prefixes = await self.get_valid_prefixes(getattr(destination, "guild", None))
+                prefix = prefixes[0]
+                try:
+                    await destination.send(content.format(prefix=prefix))
+                except Exception as _exc:
+                    log.exception(
+                        f"I could not send an owner notification to ({destination.id}){destination}"
+                    )
+
+        ver_info = list(sys.version_info[:2])
+        python_version_changed = False
+        LIB_PATH = cog_data_path(raw_name="Downloader") / "lib"
+        if ver_info != last_system_info["python_version"]:
+            await self._config.last_system_info.python_version.set(ver_info)
+            if any(LIB_PATH.iterdir()):
+                shutil.rmtree(str(LIB_PATH))
+                LIB_PATH.mkdir()
+                self.loop.create_task(
+                    notify_owners(
+                        "We detected a change in minor Python version"
+                        " and cleared packages in lib folder.\n"
+                        "The instance was started with no cogs, please load Downloader"
+                        " and use `{prefix}cog reinstallreqs` to regenerate lib folder."
+                        " After that, restart the bot to get"
+                        " all of your previously loaded cogs loaded again."
+                    )
+                )
+                python_version_changed = True
+        else:
+            if cli_flags.no_cogs is False:
+                packages.extend(await self._config.packages())
+
+            if cli_flags.load_cogs:
+                packages.extend(cli_flags.load_cogs)
+
+        system_changed = False
+        machine = platform.machine()
+        system = platform.system()
+        if last_system_info["machine"] is None:
+            await self._config.last_system_info.machine.set(machine)
+        elif last_system_info["machine"] != machine:
+            await self._config.last_system_info.machine.set(machine)
+            system_changed = True
+
+        if last_system_info["system"] is None:
+            await self._config.last_system_info.system.set(system)
+        elif last_system_info["system"] != system:
+            await self._config.last_system_info.system.set(system)
+            system_changed = True
+
+        if system_changed and not python_version_changed:
+            self.loop.create_task(
+                notify_owners(
+                    "We detected a possible change in machine's operating system"
+                    " or architecture. You might need to regenerate your lib folder"
+                    " if 3rd-party cogs stop working properly.\n"
+                    "To regenerate lib folder, load Downloader and use `{prefix}cog reinstallreqs`."
+                )
+            )
 
         if packages:
             # Load permissions first, for security reasons

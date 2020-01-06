@@ -50,12 +50,17 @@ class Downloader(commands.Cog):
         self.SHAREDLIB_PATH = self.LIB_PATH / "cog_shared"
         self.SHAREDLIB_INIT = self.SHAREDLIB_PATH / "__init__.py"
 
+        self._create_lib_folder()
+
+        self._repo_manager = RepoManager()
+
+    def _create_lib_folder(self, *, remove_first: bool = False) -> None:
+        if remove_first:
+            shutil.rmtree(str(self.LIB_PATH))
         self.SHAREDLIB_PATH.mkdir(parents=True, exist_ok=True)
         if not self.SHAREDLIB_INIT.exists():
             with self.SHAREDLIB_INIT.open(mode="w", encoding="utf-8") as _:
                 pass
-
-        self._repo_manager = RepoManager()
 
     async def initialize(self) -> None:
         await self._repo_manager.initialize()
@@ -552,6 +557,59 @@ class Downloader(commands.Cog):
     async def cog(self, ctx: commands.Context) -> None:
         """Cog installation management commands."""
         pass
+
+    @cog.command(name="reinstallreqs")
+    async def _cog_reinstallreqs(self, ctx: commands.Context) -> None:
+        """
+        This command will reinstall cog requirements and shared libraries for all installed cogs.
+
+        Red might ask user to use this when it clears contents of lib folder
+        because of change in minor version of Python.
+        """
+        async with ctx.typing():
+            self._create_lib_folder(remove_first=True)
+            installed_cogs = await self.installed_cogs()
+            cogs = []
+            repos = set()
+            for cog in installed_cogs:
+                if cog.repo is None:
+                    continue
+                repos.add(cog.repo)
+                cogs.append(cog)
+            failed_reqs = await self._install_requirements(cogs)
+            all_installed_libs: List[InstalledModule] = []
+            all_failed_libs: List[Installable] = []
+            for repo in repos:
+                installed_libs, failed_libs = await repo.install_libraries(
+                    target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH
+                )
+                all_installed_libs += installed_libs
+                all_failed_libs += failed_libs
+        message = ""
+        if failed_reqs:
+            message += _("Failed to install requirements: ") + humanize_list(
+                tuple(map(inline, failed_reqs))
+            )
+        if all_failed_libs:
+            libnames = [lib.name for lib in failed_libs]
+            message += _("\nFailed to install shared libraries: ") + humanize_list(
+                tuple(map(inline, libnames))
+            )
+        if message:
+            await ctx.send(
+                _(
+                    "Cog requirements and shared libraries for all installed cogs"
+                    " have been reinstalled but there were some errors:\n"
+                )
+                + message
+            )
+        else:
+            await ctx.send(
+                _(
+                    "Cog requirements and shared libraries"
+                    " for all installed cogs have been reinstalled."
+                )
+            )
 
     @cog.command(name="install", usage="<repo_name> <cogs>")
     async def _cog_install(self, ctx: commands.Context, repo: Repo, *cog_names: str) -> None:
