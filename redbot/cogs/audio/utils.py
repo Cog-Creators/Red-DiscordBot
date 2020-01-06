@@ -262,21 +262,6 @@ def track_to_json(track: lavalink.Track) -> MutableMapping:
     return track_obj
 
 
-def track_to_json(track: lavalink.Track) -> Mapping:
-    track_keys = track._info.keys()
-    track_values = track._info.values()
-    track_id = track.track_identifier
-    track_info = {}
-    for k, v in zip(track_keys, track_values):
-        track_info[k] = v
-    keys = ["track", "info"]
-    values = [track_id, track_info]
-    track_obj = {}
-    for key, value in zip(keys, values):
-        track_obj[key] = value
-    return track_obj
-
-
 def time_convert(length) -> int:
     match = _RE_TIME_CONVERTER.match(length)
     if match is not None:
