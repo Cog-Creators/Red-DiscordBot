@@ -604,16 +604,16 @@ class CustomCommands(commands.Cog):
         # only update cooldowns if the command isn't on cooldown
         self.cooldowns.update(new_cooldowns)
 
-    @staticmethod
-    def transform_arg(result, attr, obj) -> str:
+    @classmethod
+    def transform_arg(cls, result, attr, obj) -> str:
         attr = attr[1:]  # strip initial dot
         if not attr:
-            return self.maybe_humanize_list(obj)
+            return cls.maybe_humanize_list(obj)
         raw_result = "{" + result + "}"
         # forbid private members and nested attr lookups
         if attr.startswith("_") or "." in attr:
             return raw_result
-        return self.maybe_humanize_list(getattr(obj, attr, raw_result))
+        return cls.maybe_humanize_list(getattr(obj, attr, raw_result))
 
     @staticmethod
     def maybe_humanize_list(thing) -> str:
