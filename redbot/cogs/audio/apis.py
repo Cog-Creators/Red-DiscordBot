@@ -77,6 +77,14 @@ class AudioDBAPI:
         _WRITE_GLOBAL_API_ACCESS = self.api_key is not None
         return self.api_key
 
+    @property
+    def version(self):
+        return self._handshake
+
+    @version.setter
+    def version(self, value):
+        return
+
     async def handshake(self) -> Optional[dict]:
         if self._handshake is None or self._next_handshake > time.time():
             api_url = f"{_API_URL}api/dev/handshake"
