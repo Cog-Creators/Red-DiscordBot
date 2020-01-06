@@ -1281,6 +1281,7 @@ class Downloader(commands.Cog):
 
         """
         if isinstance(cog_installable, Installable):
+            is_installable = True
             made_by = ", ".join(cog_installable.author) or _("Missing from info.json")
             repo_url = (
                 _("Missing from installed repos")
@@ -1289,6 +1290,7 @@ class Downloader(commands.Cog):
             )
             cog_name = cog_installable.name
         else:
+            is_installable = False
             made_by = "26 & co."
             repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
             cog_name = cog_installable.__class__.__name__
@@ -1296,7 +1298,7 @@ class Downloader(commands.Cog):
         msg = _(
             "Command: {command}\nCog name: {cog}\nMade by: {author}\nRepo: {repo_url}\n"
         ).format(command=command_name, author=made_by, repo_url=repo_url, cog=cog_name)
-        if cog_installable.repo is not None and cog_installable.repo.branch:
+        if is_installable and cog_installable.repo is not None and cog_installable.repo.branch:
             msg += _("Repo branch: {branch_name}\n").format(
                 branch_name=cog_installable.repo.branch
             )
