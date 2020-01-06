@@ -50,6 +50,7 @@ from .errors import (
     SpotifyFetchError,
     TooManyMatches,
     TrackEnqueueError,
+    FoundATeaPot,
 )
 from .manager import ServerManager
 from .playlists import (
@@ -8161,24 +8162,27 @@ class Audio(commands.Cog):
 
             self._cleaned_up = True
 
-    @bump.error
-    @disconnect.error
-    @genre.error
-    @local_folder.error
-    @local_play.error
-    @local_search.error
-    @play.error
-    @prev.error
-    @search.error
-    @_playlist_append.error
-    @_playlist_save.error
-    @_playlist_update.error
-    @_playlist_upload.error
-    async def _clear_lock_on_error(self, ctx: commands.Context, error):
-        # TODO: Change this in a future PR
-        # FIXME: This seems to be consuming tracebacks and not adding them to last traceback
-        # which is handled by on_command_error
-        # Make it so that this can be used to show user friendly errors
+    async def cog_command_error(self, ctx: commands.Context, error: Exception):
+        if isinstance(getattr(error, "original", error), FoundATeaPot):
+            for p in lavalink.all_players():
+                try:
+                    await p.stop()
+                    await p.disconnect()
+                except Exception as err:
+                    debug_exc_log(
+                        log,
+                        err,
+                        "".join[
+                            "R" "a" "i" "s" "e" "d" " ",
+                            "w" "h" "e" "n" " ",
+                            "d" "i" "s" "c" "o" "n" "n" "e" "c" "t" "i" "n" "g",
+                        ],
+                    )
+            await ctx.bot.on_command_error(
+                ctx, getattr(error, "original", error), unhandled_by_cog=False
+            )
+            return
+
         if not isinstance(
             getattr(error, "original", error),
             (

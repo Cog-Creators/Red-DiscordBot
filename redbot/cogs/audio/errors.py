@@ -41,6 +41,10 @@ class QueryUnauthorized(AudioError):
         super().__init__(*args)
 
 
+class FoundATeaPot(AudioError):
+    """Found a tea pot."""
+
+
 class TrackEnqueueError(AudioError):
     """Unable to play track."""
 
