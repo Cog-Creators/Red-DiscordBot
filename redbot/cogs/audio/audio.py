@@ -8181,7 +8181,7 @@ class Audio(commands.Cog):
             )
             return
 
-        if not isinstance(
+        elif not isinstance(
             getattr(error, "original", error),
             (
                 commands.CheckFailure,
