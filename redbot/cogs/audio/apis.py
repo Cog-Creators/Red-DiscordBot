@@ -105,6 +105,7 @@ class AudioDBAPI:
         return True
 
     async def get_call(self, query: Optional[audio_dataclasses.Query] = None) -> Optional[dict]:
+        await self.handshake()
         api_url = f"{_API_URL}api/v1/queries"
         try:
             query = audio_dataclasses.Query.process_input(query)
@@ -132,6 +133,7 @@ class AudioDBAPI:
         return {}
 
     async def get_spotify(self, title: str, author: Optional[str]) -> Optional[dict]:
+        await self.handshake()
         api_url = f"{_API_URL}api/v1/queries/spotify"
         try:
             search_response = "error"
@@ -158,6 +160,7 @@ class AudioDBAPI:
     async def post_call(
         self, llresponse: LoadResult, query: Optional[audio_dataclasses.Query]
     ) -> None:
+        await self.handshake()
         try:
             query = audio_dataclasses.Query.process_input(query)
             if llresponse.has_error or llresponse.load_type.value in ["NO_MATCHES", "LOAD_FAILED"]:
@@ -1068,12 +1071,14 @@ class MusicCache:
                 log.debug("Completed pending writes to database have finished")
 
     def append_task(self, ctx: commands.Context, event: str, task: tuple, _id=None):
+        await self.audio_api.handshake()
         lock_id = _id or ctx.message.id
         if lock_id not in self._tasks:
             self._tasks[lock_id] = {"update": [], "insert": [], "global": []}
         self._tasks[lock_id][event].append(task)
 
     async def get_random_from_db(self):
+        await self.audio_api.handshake()
         tracks = []
         try:
             query_data = {}
@@ -1172,6 +1177,7 @@ class MusicCache:
     async def _api_contributer(
         self, ctx: commands.Context, db_entries: List[CacheGetAllLavalink]
     ) -> None:
+        await self.audio_api.handshake()
         tasks = []
         for i, entry in enumerate(db_entries, start=1):
             query = entry.query
