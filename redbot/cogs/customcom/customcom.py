@@ -11,7 +11,7 @@ import discord
 from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import menus
-from redbot.core.utils.chat_formatting import box, pagify, escape
+from redbot.core.utils.chat_formatting import box, pagify, escape, humanize_list
 from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("CustomCommands", __file__)
@@ -608,12 +608,21 @@ class CustomCommands(commands.Cog):
     def transform_arg(result, attr, obj) -> str:
         attr = attr[1:]  # strip initial dot
         if not attr:
-            return str(obj)
+            return self.maybe_humanize_list(obj)
         raw_result = "{" + result + "}"
         # forbid private members and nested attr lookups
         if attr.startswith("_") or "." in attr:
             return raw_result
-        return str(getattr(obj, attr, raw_result))
+        return self.maybe_humanize_list(getattr(obj, attr, raw_result))
+
+    @staticmethod
+    def maybe_humanize_list(thing) -> str:
+        if isinstance(thing, str):
+            return thing
+        try:
+            return humanize_list(list(map(str, thing)))
+        except TypeError:
+            return str(thing)
 
     @staticmethod
     def transform_parameter(result, message) -> str:
