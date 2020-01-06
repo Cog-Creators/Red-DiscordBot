@@ -1648,8 +1648,7 @@ class Audio(commands.Cog):
                 lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
                 global_cache=_("Enabled") if global_db else _("Disabled"),
                 global_cache_version=f"{__version__}.v"
-                if self.music_cache.audio_api.version
-                else f"{__version__}.b",
+                if self.music_cache.audio_api.version is True else f"{__version__}.b" if self.music_cache.audio_api.version is False else f"{__version__}.u",
             )
 
         msg += _(
@@ -8167,25 +8166,7 @@ class Audio(commands.Cog):
             self._cleaned_up = True
 
     async def cog_command_error(self, ctx: commands.Context, error: Exception):
-        if isinstance(getattr(error, "original", error), FoundATeaPot):
-            for p in lavalink.all_players():
-                try:
-                    await p.stop()
-                    await p.disconnect()
-                except Exception:
-                    log.debug(
-                        "".join[
-                            "R" "a" "i" "s" "e" "d" " ",
-                            "w" "h" "e" "n" " ",
-                            "d" "i" "s" "c" "o" "n" "n" "e" "c" "t" "i" "n" "g",
-                        ],
-                    )
-            await ctx.bot.on_command_error(
-                ctx, getattr(error, "original", error), unhandled_by_cog=False
-            )
-            return
-
-        elif not isinstance(
+        if not isinstance(
             getattr(error, "original", error),
             (
                 commands.CheckFailure,
