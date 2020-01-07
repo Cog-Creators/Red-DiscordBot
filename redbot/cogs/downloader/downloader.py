@@ -1094,7 +1094,7 @@ class Downloader(commands.Cog):
         if name_already_used:
             message += _(
                 "\nSome cogs with these names are already installed from different repos: "
-            ) + humanize_list(already_installed)
+            ) + humanize_list(name_already_used)
         correct_cogs, add_to_message = self._filter_incorrect_cogs(cogs)
         if add_to_message:
             return correct_cogs, f"{message}{add_to_message}"
