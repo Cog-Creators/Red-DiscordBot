@@ -45,7 +45,7 @@ jobs:
             repo: Cog-Creators/Red-DiscordBot
             tags: true
     - stage: Crowdin Deployment
-      if: tag IS present
+      if: tag IS present OR ENV(BUILD_CROWDIN)
       python: 3.8.1
       env:
         - DEPLOYING=true
