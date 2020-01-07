@@ -6124,23 +6124,24 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
 
         async with ctx.typing():
-            len_queue_pages = math.ceil(len(player.queue) / 10)
+            limited_queue = player.queue[:500]  # TODO: Improve when Toby menu's are merged
+            len_queue_pages = math.ceil(len(limited_queue) / 10)
             queue_page_list = []
             for page_num in range(1, len_queue_pages + 1):
-                embed = await self._build_queue_page(ctx, player, page_num)
+                embed = await self._build_queue_page(ctx, limited_queue, player, page_num)
                 queue_page_list.append(embed)
             if page > len_queue_pages:
                 page = len_queue_pages
         return await menu(ctx, queue_page_list, queue_controls, page=(page - 1))
 
     async def _build_queue_page(
-        self, ctx: commands.Context, player: lavalink.player_manager.Player, page_num
+        self, ctx: commands.Context, queue: list, player: lavalink.player_manager.Player, page_num
     ):
         shuffle = await self.config.guild(ctx.guild).shuffle()
         repeat = await self.config.guild(ctx.guild).repeat()
         autoplay = await self.config.guild(ctx.guild).auto_play()
 
-        queue_num_pages = math.ceil(len(player.queue) / 10)
+        queue_num_pages = math.ceil(len(queue) / 10)
         queue_idx_start = (page_num - 1) * 10
         queue_idx_end = queue_idx_start + 10
         queue_list = ""
@@ -6189,9 +6190,10 @@ class Audio(commands.Cog):
             queue_list += _("Requested by: **{user}**").format(user=player.current.requester)
             queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
 
-        for i, track in enumerate(
-            player.queue[queue_idx_start:queue_idx_end], start=queue_idx_start
-        ):
+        for i, track in enumerate(queue[queue_idx_start:queue_idx_end], start=queue_idx_start):
+            if i % 100 == 0:  # TODO: Improve when Toby menu's are merged
+                await asyncio.sleep(0.1)
+
             if len(track.title) > 40:
                 track_title = str(track.title).replace("[", "")
                 track_title = "{}...".format((track_title[:40]).rstrip(" "))
@@ -6258,7 +6260,9 @@ class Audio(commands.Cog):
     async def _build_queue_search_list(queue_list, search_words):
         track_list = []
         queue_idx = 0
-        for track in queue_list:
+        for i, track in enumerate(queue_list, start=1):
+            if i % 100 == 0:  # TODO: Improve when Toby menu's are merged
+                await asyncio.sleep(0.1)
             queue_idx = queue_idx + 1
             if not match_url(track.uri):
                 query = audio_dataclasses.Query.process_input(track)
@@ -6288,6 +6292,8 @@ class Audio(commands.Cog):
         for i, track in enumerate(
             search_list[search_idx_start:search_idx_end], start=search_idx_start
         ):
+            if i % 100 == 0:  # TODO: Improve when Toby menu's are merged
+                await asyncio.sleep(0.1)
             track_idx = i + 1
             if type(track) is str:
                 track_location = audio_dataclasses.LocalPath(track).to_string_user()
