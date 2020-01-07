@@ -4606,13 +4606,16 @@ class Audio(commands.Cog):
                 tar.add(
                     str(temp_file), arcname=str(temp_file.relative_to(datapath)), recursive=False
                 )
-            if os.path.getsize(str(temp_tar)) > ctx.guild.filesize_limit - 10000:
-                await ctx.send(_("This playlist is too large to be send in this server."))
-            else:
-                await ctx.send(
-                    content=_("Playlist is too large, here is the compressed version."),
-                    file=discord.File(str(temp_tar)),
-                )
+            try:
+                if os.path.getsize(str(temp_tar)) > ctx.guild.filesize_limit - 10000:
+                    await ctx.send(_("This playlist is too large to be send in this server."))
+                else:
+                    await ctx.send(
+                        content=_("Playlist is too large, here is the compressed version."),
+                        file=discord.File(str(temp_tar)),
+                    )
+            except Exception:
+                pass
             temp_file.unlink()
             temp_tar.unlink()
         else:
