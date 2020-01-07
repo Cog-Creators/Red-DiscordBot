@@ -24,12 +24,7 @@ from redbot.core.i18n import Translator, cog_i18n
 from . import audio_dataclasses
 from .databases import CacheGetAllLavalink, CacheInterface, SQLError
 from .debug import is_debug, debug_exc_log
-from .errors import (
-    DatabaseError,
-    SpotifyFetchError,
-    TrackEnqueueError,
-    YouTubeApiError,
-)
+from .errors import DatabaseError, SpotifyFetchError, TrackEnqueueError, YouTubeApiError
 from .playlists import get_playlist
 from .utils import CacheLevel, Notifier, is_allowed, queue_duration, track_limit
 
@@ -68,50 +63,25 @@ class AudioDBAPI:
         self.bot = bot
         self.session = session
         self.api_key = None
-        self._next_handshake = 0
-        self._handshake = None
-
-    @staticmethod
-    def uuid_from_id(seed: str) -> str:
-        m = hashlib.md5()
-        m.update(f"{seed}".encode('utf-8'))
-        return f"{uuid.UUID(m.hexdigest())}"
+        self._handshake_token = ""
 
     async def _get_api_key(self,) -> Optional[str]:
         global _WRITE_GLOBAL_API_ACCESS
         tokens = await self.bot.get_shared_api_tokens("audiodb")
         self.api_key = tokens.get("api_key", None)
         _WRITE_GLOBAL_API_ACCESS = self.api_key is not None
+        id_list = list(_bot._co_owners)
+        id_list.append(_bot.owner_id)
+        self._handshake_token = "||".join(list(map(str, id_list)))
         return self.api_key
 
-    @property
-    def version(self):
-        return self._handshake
-
-    @version.setter
-    def version(self, value):
-        return
-
-    async def handshake(self) -> bool:
-        with contextlib.suppress(Exception):
-            if self._handshake is None or self._next_handshake > time.time():
-                api_url = f"{_API_URL}api/dev/handshake"
-                owner_ids = [_bot.owner_id]
-                owner_ids.extend(_bot._co_owners)
-                users_ids = "||".join(map(self.uuid_from_id, owner_ids))
-                with contextlib.suppress(aiohttp.ContentTypeError, asyncio.TimeoutError):
-                    async with self.session.get(
-                        api_url, params={"user_ids": users_ids}, timeout=aiohttp.ClientTimeout(total=2)
-                    ) as r:
-                        if r.status == 418:
-                            self._handshake = False
-                        else:
-                            self._handshake = True
-                        self._next_handshake = time.time() + 3600
-        return True
+    @staticmethod
+    def uuid_from_id(seed: str) -> str:
+        m = hashlib.md5()
+        m.update(f"{seed}".encode("utf-8"))
+        return f"{uuid.UUID(m.hexdigest())}"
 
     async def get_call(self, query: Optional[audio_dataclasses.Query] = None) -> Optional[dict]:
-        await self.handshake()
         api_url = f"{_API_URL}api/v1/queries"
         try:
             query = audio_dataclasses.Query.process_input(query)
@@ -124,12 +94,14 @@ class AudioDBAPI:
                 async with self.session.get(
                     api_url,
                     timeout=aiohttp.ClientTimeout(total=await _config.global_db_get_timeout()),
+                    headers={"X-Token": self._handshake_token},
                     params={"query": urllib.parse.quote(query)},
                 ) as r:
                     search_response = await r.json()
                     if IS_DEBUG and "x-process-time" in r.headers:
                         log.debug(
-                            f"GET || Ping {r.headers['x-process-time']} || Status code {r.status} || {query}"
+                            f"GET || Ping {r.headers.get('x-process-time')} || "
+                            f"Status code {r.status} || {query}"
                         )
             if "tracks" not in search_response:
                 return {}
@@ -139,7 +111,6 @@ class AudioDBAPI:
         return {}
 
     async def get_spotify(self, title: str, author: Optional[str]) -> Optional[dict]:
-        await self.handshake()
         api_url = f"{_API_URL}api/v1/queries/spotify"
         try:
             search_response = "error"
@@ -149,12 +120,14 @@ class AudioDBAPI:
                 async with self.session.get(
                     api_url,
                     timeout=aiohttp.ClientTimeout(total=await _config.global_db_get_timeout()),
+                    headers={"X-Token": self._handshake_token},
                     params=params,
                 ) as r:
                     search_response = await r.json()
                     if IS_DEBUG and "x-process-time" in r.headers:
                         log.debug(
-                            f"GET/spotify || Ping {r.headers['x-process-time']} || Status code {r.status} || {title} - {author}"
+                            f"GET/spotify || Ping {r.headers.get('x-process-time')} || "
+                            f"Status code {r.status} || {title} - {author}"
                         )
             if "tracks" not in search_response:
                 return None
@@ -166,7 +139,6 @@ class AudioDBAPI:
     async def post_call(
         self, llresponse: LoadResult, query: Optional[audio_dataclasses.Query]
     ) -> None:
-        await self.handshake()
         try:
             query = audio_dataclasses.Query.process_input(query)
             if llresponse.has_error or llresponse.load_type.value in ["NO_MATCHES", "LOAD_FAILED"]:
@@ -175,20 +147,20 @@ class AudioDBAPI:
                 query = query.lavalink_query
             else:
                 return None
-            token = await self._get_api_key()
-            if token is None:
+            await self._get_api_key()
+            if self.api_key is None:
                 return None
             api_url = f"{_API_URL}api/v1/queries"
             async with self.session.post(
                 api_url,
                 json=llresponse._raw,
-                headers={"Authorization": token},
+                headers={"Authorization": self.api_key, "X-Token": self._handshake_token},
                 params={"query": urllib.parse.quote(query)},
             ) as r:
                 output = await r.read()
                 if IS_DEBUG and "x-process-time" in r.headers:
                     log.debug(
-                        f"POST || Ping {r.headers['x-process-time']} ||"
+                        f"POST || Ping {r.headers.get('x-process-time')} ||"
                         f" Status code {r.status} || {query}"
                     )
         except Exception as err:
@@ -417,7 +389,6 @@ class MusicCache:
         skip_youtube: bool = False,
         current_cache_level: CacheLevel = CacheLevel.none(),
     ) -> List[str]:
-        await self.audio_api.handshake()
         youtube_urls = []
         tracks = await self._spotify_fetch_tracks(query_type, uri, params=None, notifier=notifier)
         total_tracks = len(tracks)
@@ -488,7 +459,6 @@ class MusicCache:
         track_info: str,
         current_cache_level: CacheLevel = CacheLevel.none(),
     ) -> str:
-        await self.audio_api.handshake()
         track_url = await self.youtube_api.get_call(track_info)
         if CacheLevel.set_youtube().is_subset(current_cache_level) and track_url:
             time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
@@ -517,7 +487,6 @@ class MusicCache:
         params: MutableMapping = None,
         notifier: Optional[Notifier] = None,
     ) -> Union[MutableMapping, List[str]]:
-        await self.audio_api.handshake()
         if recursive is False:
             (call, params) = self._spotify_format_call(query_type, uri)
             results = await self.spotify_api.get_call(call, params)
@@ -601,7 +570,6 @@ class MusicCache:
         List[str]
             List of Youtube URLs.
         """
-        await self.audio_api.handshake()
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_spotify().is_subset(current_cache_level)
         if query_type == "track" and cache_enabled:
@@ -643,7 +611,6 @@ class MusicCache:
         notifier: Optional[Notifier] = None,
         query_global=True,
     ) -> List[lavalink.Track]:
-        await self.audio_api.handshake()
         track_list = []
         has_not_allowed = False
         await self.audio_api._get_api_key()
@@ -918,7 +885,6 @@ class MusicCache:
         Tuple[lavalink.LoadResult, bool]
             Tuple with the Load result and whether or not the API was called.
         """
-        await self.audio_api.handshake()
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         val = None
@@ -1095,7 +1061,6 @@ class MusicCache:
         self._tasks[lock_id][event].append(task)
 
     async def get_random_from_db(self):
-        await self.audio_api.handshake()
         tracks = []
         try:
             query_data = {}
@@ -1125,7 +1090,6 @@ class MusicCache:
         return tracks
 
     async def autoplay(self, player: lavalink.Player):
-        await self.audio_api.handshake()
         autoplaylist = await self.config.guild(player.channel.guild).autoplaylist()
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
@@ -1196,7 +1160,6 @@ class MusicCache:
     async def _api_contributer(
         self, ctx: commands.Context, db_entries: List[CacheGetAllLavalink]
     ) -> None:
-        await self.audio_api.handshake()
         tasks = []
         for i, entry in enumerate(db_entries, start=1):
             query = entry.query
