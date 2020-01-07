@@ -4,9 +4,11 @@ import datetime
 import heapq
 import json
 import logging
+import tarfile
 import math
 import random
 import re
+import os.path
 import time
 import traceback
 from collections import Counter, namedtuple
@@ -4484,6 +4486,7 @@ class Audio(commands.Cog):
     @checks.is_owner()
     @playlist.command(name="download", usage="<playlist_name_OR_id> [v2=False] [args]")
     @commands.bot_has_permissions(attach_files=True)
+    @commands.cooldown(1, 60, commands.BucketType.guild)
     async def _playlist_download(
         self,
         ctx: commands.Context,
@@ -4592,7 +4595,28 @@ class Audio(commands.Cog):
         to_write = BytesIO()
         to_write.write(playlist_data)
         to_write.seek(0)
-        await ctx.send(file=discord.File(to_write, filename=f"{file_name}.txt"))
+        if to_write.getbuffer().nbytes > ctx.guild.filesize_limit - 10000:
+            datapath = cog_data_path(raw_name="Audio")
+            temp_file = datapath / f"{file_name}.txt"
+            temp_tar = datapath / f"{file_name}.tar.gz"
+            with temp_file.open("wb") as playlist_file:
+                playlist_file.write(to_write.read())
+
+            with tarfile.open(str(temp_tar), "w:gz") as tar:
+                tar.add(
+                    str(temp_file), arcname=str(temp_file.relative_to(datapath)), recursive=False
+                )
+            if os.path.getsize(str(temp_tar)) > ctx.guild.filesize_limit - 10000:
+                await ctx.send(_("This playlist is too large to be send in this server."))
+            else:
+                await ctx.send(
+                    content=_("Playlist is too large, here is the compressed version."),
+                    file=discord.File(str(temp_tar)),
+                )
+            temp_file.unlink()
+            temp_tar.unlink()
+        else:
+            await ctx.send(file=discord.File(to_write, filename=f"{file_name}.txt"))
         to_write.close()
 
     @playlist.command(name="info", usage="<playlist_name_OR_id> [args]")
@@ -4675,7 +4699,9 @@ class Audio(commands.Cog):
         track_idx = 0
         if track_len > 0:
             spaces = "\N{EN SPACE}" * (len(str(len(playlist.tracks))) + 2)
-            for track in playlist.tracks:
+            for i, track in enumerate(playlist.tracks, start=1):
+                if i % 500 == 0:  # TODO: Improve when Toby menu's are merged
+                    await asyncio.sleep(0.1)
                 track_idx = track_idx + 1
                 query = audio_dataclasses.Query.process_input(track["info"]["uri"])
                 if query.is_local:
@@ -4910,7 +4936,7 @@ class Audio(commands.Cog):
             np_song = track_creator(player, "np")
             tracklist.append(np_song)
             for i, track in enumerate(player.queue, start=1):
-                if i % 500 == 0:
+                if i % 500 == 0:  # TODO: Improve when Toby menu's are merged
                     await asyncio.sleep(0.02)
                 queue_idx = player.queue.index(track)
                 track_obj = track_creator(player, queue_idx)
@@ -5208,7 +5234,9 @@ class Audio(commands.Cog):
             player = lavalink.get_player(ctx.guild.id)
             tracks = playlist.tracks_obj
             empty_queue = not player.queue
-            for track in tracks:
+            for i, track in enumerate(tracks, start=1):
+                if i % 500 == 0:  # TODO: Improve when Toby menu's are merged
+                    await asyncio.sleep(0.02)
                 if not await is_allowed(
                     ctx.guild,
                     (
@@ -6240,8 +6268,8 @@ class Audio(commands.Cog):
         text = _(
             "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining\n"
         ).format(
-            page_num=page_num,
-            total_pages=queue_num_pages,
+            page_num=humanize_number(page_num),
+            total_pages=humanize_number(queue_num_pages),
             num_tracks=len(player.queue) + 1,
             num_remaining=queue_total_duration,
         )
@@ -6314,7 +6342,9 @@ class Audio(commands.Cog):
         )
         embed.set_footer(
             text=(_("Page {page_num}/{total_pages}") + " | {num_tracks} tracks").format(
-                page_num=page_num, total_pages=search_num_pages, num_tracks=len(search_list)
+                page_num=humanize_number(page_num),
+                total_pages=humanize_number(search_num_pages),
+                num_tracks=len(search_list),
             )
         )
         return embed
