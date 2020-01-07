@@ -1,19 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-05 22:33+0200\n"
-"PO-Revision-Date: 2019-07-06 16:11\n"
-"Last-Translator: Robert Jansen (Kowlin)\n"
+"POT-Creation-Date: 2019-07-14 04:24+0000\n"
+"PO-Revision-Date: 2020-01-07 21:47\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.0\n"
+"Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: fr\n"
-"X-Crowdin-File: /cogs/mod/locales/messages.pot\n"
+"X-Crowdin-File: /mod/locales/messages.pot\n"
 "Language: fr_FR\n"
 
 #: redbot/cogs/mod/converters.py:16
@@ -87,7 +86,7 @@ msgstr ""
 
 #: redbot/cogs/mod/kickban.py:254
 msgid "\\nErrors:\\n"
-msgstr ""
+msgstr "\\nErreurs:\\n"
 
 #: redbot/cogs/mod/kickban.py:277
 msgid "I lack the permissions to do this."
@@ -95,11 +94,11 @@ msgstr "Je n'ai pas les permissions pour le faire."
 
 #: redbot/cogs/mod/kickban.py:283
 msgid "User {user_id} is already banned."
-msgstr ""
+msgstr "L'utilisateur {user_id} est déjà banni."
 
 #: redbot/cogs/mod/kickban.py:304 redbot/cogs/mod/kickban.py:308
 msgid "Failed to ban user {user_id}: {reason}"
-msgstr ""
+msgstr "Impossible de bannir l'utilisateur {user_id}: {reason}"
 
 #: redbot/cogs/mod/kickban.py:328
 msgid "User {user_id} does not exist."
@@ -183,7 +182,7 @@ msgstr "Une erreur s'est produite lors de la tentative de dé-bannissement de ce
 
 #: redbot/cogs/mod/kickban.py:596
 msgid "Unbanned that user from this server"
-msgstr "Dé-bannir cet utilisateur de ce serveur"
+msgstr "Cet utilisateur à été débanni du serveur"
 
 #: redbot/cogs/mod/kickban.py:603
 msgid "You've been unbanned from {server}.\\nHere is an invite for that server: {invite_link}"
@@ -299,7 +298,7 @@ msgstr "Vous devez avoir la(les) permission(s) {perms} dans le salon de cet util
 #: redbot/cogs/mod/mutes.py:80
 #, docstring
 msgid "Unban a user from speaking and listening in the server's voice channels."
-msgstr "Dé-bannir un utilisateur de parler et d'écouter dans les salon vocaux du serveur."
+msgstr "Débannir un utilisateur de parler et d'écouter dans les salon vocaux du serveur."
 
 #: redbot/cogs/mod/mutes.py:99
 msgid "That user isn't muted or deafened by the server!"
@@ -417,7 +416,7 @@ msgstr "Une erreur inattendue est survenue."
 
 #: redbot/cogs/mod/names.py:70
 msgid "Done."
-msgstr "Fait."
+msgstr "Terminé."
 
 #: redbot/cogs/mod/names.py:76
 #, docstring
@@ -626,11 +625,11 @@ msgstr ""
 
 #: redbot/cogs/mod/settings.py:191
 msgid "Users unbanned with {command} will be reinvited."
-msgstr "Les utilisateurs dé-bannis avec la commande {command} seront réinvités."
+msgstr "Les utilisateurs débannis avec la commande {command} seront réinvités."
 
 #: redbot/cogs/mod/settings.py:198
 msgid "Users unbanned with {command} will not be reinvited."
-msgstr "Les utilisateur dé-bannis avec la commande {command} ne seront pas réinvités."
+msgstr "Les utilisateur débannis avec la commande {command} ne seront pas réinvités."
 
 #: redbot/cogs/mod/slowmode.py:27
 #, docstring

@@ -1,19 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-05 22:33+0200\n"
-"PO-Revision-Date: 2019-07-06 16:12\n"
-"Last-Translator: Robert Jansen (Kowlin)\n"
+"POT-Creation-Date: 2019-07-14 04:24+0000\n"
+"PO-Revision-Date: 2020-01-07 21:48\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.0\n"
+"Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: de\n"
-"X-Crowdin-File: /core/utils/locales/messages.pot\n"
+"X-Crowdin-File: /utils/locales/messages.pot\n"
 "Language: de_DE\n"
 
 #: redbot/core/utils/chat_formatting.py:369
@@ -22,23 +21,23 @@ msgstr ", und "
 
 #: redbot/core/utils/chat_formatting.py:414
 msgid "year"
-msgstr ""
+msgstr "Jahr"
 
 #: redbot/core/utils/chat_formatting.py:414
 msgid "years"
-msgstr ""
+msgstr "Jahre"
 
 #: redbot/core/utils/chat_formatting.py:415
 msgid "month"
-msgstr ""
+msgstr "Monat"
 
 #: redbot/core/utils/chat_formatting.py:415
 msgid "months"
-msgstr ""
+msgstr "Monate"
 
 #: redbot/core/utils/chat_formatting.py:416
 msgid "day"
-msgstr ""
+msgstr "Tag"
 
 #: redbot/core/utils/chat_formatting.py:416
 msgid "days"
@@ -46,7 +45,7 @@ msgstr "Tage"
 
 #: redbot/core/utils/chat_formatting.py:417
 msgid "hour"
-msgstr ""
+msgstr "Stunde"
 
 #: redbot/core/utils/chat_formatting.py:417
 msgid "hours"
@@ -54,7 +53,7 @@ msgstr "Stunden"
 
 #: redbot/core/utils/chat_formatting.py:418
 msgid "minute"
-msgstr ""
+msgstr "Minute"
 
 #: redbot/core/utils/chat_formatting.py:418
 msgid "minutes"
@@ -62,7 +61,7 @@ msgstr "Minuten"
 
 #: redbot/core/utils/chat_formatting.py:419
 msgid "second"
-msgstr ""
+msgstr "zweite"
 
 #: redbot/core/utils/chat_formatting.py:419
 msgid "seconds"

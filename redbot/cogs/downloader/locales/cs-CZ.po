@@ -1,236 +1,235 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-05 22:33+0200\n"
-"PO-Revision-Date: 2019-07-14 02:15\n"
-"Last-Translator: Robert Jansen (Kowlin)\n"
+"POT-Creation-Date: 2019-07-14 04:24+0000\n"
+"PO-Revision-Date: 2020-01-07 21:48\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.0\n"
+"Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: cs\n"
-"X-Crowdin-File: /cogs/downloader/locales/messages.pot\n"
+"X-Crowdin-File: /downloader/locales/messages.pot\n"
 "Language: cs_CZ\n"
 
 #: redbot/cogs/downloader/checks.py:12
 msgid "You're about to add a 3rd party repository. The creator of Red and its community have no responsibility for any potential damage that the content of 3rd party repositories might cause.\\n\\nBy typing '**I agree**' you declare that you have read and fully understand the above message. This message won't be shown again until the next reboot.\\n\\nYou have **30** seconds to reply to this message."
-msgstr ""
+msgstr "Chystáte se přidat repositář třetí strany. Tvůrce bota Red a jeho komunita nenesou žádnou zodpovědnost za případné škody, které by mohl způsobit obsah repozitářů třetích stran.\\n\\nZadáním '**I agree**' prohlásíš, že jsi četl/a a plně jsi porozuměl výše uvedené zprávě. Tato zpráva se znovu nezobrazí až do dalšího restartování.\\n\\nMáte **30** sekund pro odpověď na tuto zprávu."
 
 #: redbot/cogs/downloader/checks.py:36
 msgid "Your response has timed out, please try again."
-msgstr ""
+msgstr "Vypršel časový limit vaší odpovědi, opakujte akci."
 
 #: redbot/cogs/downloader/converters.py:14
 #: redbot/cogs/downloader/repo_manager.py:84
 msgid "No Downloader cog found."
-msgstr ""
+msgstr "Nenalezen Downloader cog."
 
 #: redbot/cogs/downloader/converters.py:18
 msgid "That cog is not installed"
-msgstr ""
+msgstr "Tento cog není nainstalován"
 
 #: redbot/cogs/downloader/downloader.py:198
 #, docstring
 msgid "Install a group of dependencies using pip."
-msgstr ""
+msgstr "Nainstalujte skupinu závislostí pomocí pip."
 
 #: redbot/cogs/downloader/downloader.py:206
 msgid "Libraries installed."
-msgstr ""
+msgstr "Nainstalované knihovny."
 
 #: redbot/cogs/downloader/downloader.py:209
 msgid "Some libraries failed to install. Please check your logs for a complete list."
-msgstr ""
+msgstr "Některé knihovny se nepodařilo nainstalovat. Prosím zkontrolujte logy pro kompletní seznam."
 
 #: redbot/cogs/downloader/downloader.py:218
 #, docstring
 msgid "Repo management commands."
-msgstr ""
+msgstr "Příkazy pro správu repozitářů."
 
 #: redbot/cogs/downloader/downloader.py:223
 #, docstring
 msgid "Add a new repo.\\n\\n        The name can only contain characters A-z, numbers and underscores.\\n        The branch will be the default branch if not specified.\\n        "
-msgstr ""
+msgstr "Přidá nový repozitář.\\n\\n        Název může obsahovat pouze znaky A-z, čísla a podtržítka.\\n        Pokud nespecifikuješ branch, bude zvolena  výchozí branch daného repozitáře.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:235
 msgid "That git repo has already been added under another name."
-msgstr ""
+msgstr "Tento git repozitář již byl přidán pod jiným názvem."
 
 #: redbot/cogs/downloader/downloader.py:237
 msgid "Something went wrong during the cloning process."
-msgstr ""
+msgstr "Během klonování repozitáře se něco pokazilo."
 
 #: redbot/cogs/downloader/downloader.py:245
 msgid "Repo `{name}` successfully added."
-msgstr ""
+msgstr "Repozitář `{name}` byl úspěšně přidán."
 
 #: redbot/cogs/downloader/downloader.py:251
 #, docstring
 msgid "Remove a repo and its files."
-msgstr ""
+msgstr "Odstranit repozitář a jeho soubory."
 
 #: redbot/cogs/downloader/downloader.py:255
 msgid "The repo `{repo.name}` has been deleted successfully."
-msgstr ""
+msgstr "Repozitář `{repo.name}` byl úspěšně smazán."
 
 #: redbot/cogs/downloader/downloader.py:260
 #, docstring
 msgid "List all installed repos."
-msgstr ""
+msgstr "Seznam všech nainstalovaných repozitářů."
 
 #: redbot/cogs/downloader/downloader.py:263
 msgid "Installed Repos:\\n\\n"
-msgstr ""
+msgstr "Nainstalované repozitáře:\\n\\n"
 
 #: redbot/cogs/downloader/downloader.py:273
 #, docstring
 msgid "Show information about a repo."
-msgstr ""
+msgstr "Zobrazí informace o repozitáři."
 
 #: redbot/cogs/downloader/downloader.py:275
 msgid "Repo `{repo.name}` not found."
-msgstr ""
+msgstr "Repozitář `{repo.name}` nebyl nalezen."
 
 #: redbot/cogs/downloader/downloader.py:278
 msgid "Information on {repo.name}:\\n{description}"
-msgstr ""
+msgstr "Informace o {repo.name}:\\n{description}"
 
 #: redbot/cogs/downloader/downloader.py:286
 #, docstring
 msgid "Cog installation management commands."
-msgstr ""
+msgstr "Příkazy pro správu instalace Cogů."
 
 #: redbot/cogs/downloader/downloader.py:291
 #, docstring
 msgid "Install a cog from the given repo."
-msgstr ""
+msgstr "Nainstaluje cog z daného repozitáře."
 
 #: redbot/cogs/downloader/downloader.py:295
 msgid "Error: there is no cog by the name of `{cog_name}` in the `{repo.name}` repo."
-msgstr ""
+msgstr "Chyba: v repozitáři `{repo.name}` není žádný cog s názvem \"{cog_name}\"."
 
 #: redbot/cogs/downloader/downloader.py:302
 msgid "This cog requires at least python version {version}, aborting install."
-msgstr ""
+msgstr "Tento cog vyžaduje verzi Pythonu alespoň {version}, přerušuji instalaci."
 
 #: redbot/cogs/downloader/downloader.py:314
 msgid "This cog requires at least Red version {min_version}"
-msgstr ""
+msgstr "Tento cog vyžaduje minimální verzi Red Bota {min_version}"
 
 #: redbot/cogs/downloader/downloader.py:320
 msgid " and at most {max_version}"
-msgstr ""
+msgstr " a až maximálně {max_version}"
 
 #: redbot/cogs/downloader/downloader.py:322
 msgid ", but you have {current_version}, aborting install."
-msgstr ""
+msgstr ", ale máte {current_version}, přerušuji instalaci."
 
 #: redbot/cogs/downloader/downloader.py:331
 msgid "Failed to install the required libraries for `{cog_name}`: {libraries}"
-msgstr ""
+msgstr "Nepodařilo se nainstalovat požadované knihovny pro `{cog_name}`: {libraries}"
 
 #: redbot/cogs/downloader/downloader.py:344
 msgid "Cog `{cog_name}` successfully installed. You can load it with `{prefix}load {cog_name}`"
-msgstr ""
+msgstr "Cog `{cog_name}` byl úspěšně nainstalován. Můžete jej načíst pomocí `{prefix}load {cog_name}`"
 
 #: redbot/cogs/downloader/downloader.py:353
 #, docstring
 msgid "Uninstall cogs.\\n\\n        You may only uninstall cogs which were previously installed\\n        by Downloader.\\n        "
-msgstr ""
+msgstr "Odinstalujte cogy.\\n\\n        Můžete odinstalovat pouze cogy, které byly dříve nainstalovány\\n        Downloaderem\\n        "
 
 #: redbot/cogs/downloader/downloader.py:378
 msgid "Successfully uninstalled cogs: "
-msgstr ""
+msgstr "Úspěšně odinstalované cogy: "
 
 #: redbot/cogs/downloader/downloader.py:381
 msgid "\\nThese cog were installed but can no longer be located: "
-msgstr ""
+msgstr "\\nTento cog byl dříve nainstalován, ale již nemůže být nalezen: "
 
 #: redbot/cogs/downloader/downloader.py:383
 msgid "\\nYou may need to remove their files manually if they are still usable. Also make sure you've unloaded those cogs with `{prefix}unload {cogs}`."
-msgstr ""
+msgstr "\\nBudete je muset odstranit ručně. Také se ujistěte, že tyto cogy nejsou nahrány pomocí `{prefix}unload {cogs}`."
 
 #: redbot/cogs/downloader/downloader.py:392
 #, docstring
 msgid "Update all cogs, or one of your choosing."
-msgstr ""
+msgstr "Aktualizuje všechny cogy, nebo jen některé dle výběru."
 
 #: redbot/cogs/downloader/downloader.py:413
 msgid "Cog update completed successfully."
-msgstr ""
+msgstr "Cog byl úspěšně aktualizován."
 
 #: redbot/cogs/downloader/downloader.py:416
 msgid "\\nUpdated: "
-msgstr ""
+msgstr "\\nAktualizováno: "
 
 #: redbot/cogs/downloader/downloader.py:418
 msgid "All installed cogs are already up to date."
-msgstr ""
+msgstr "Všechny nainstalované cogy jsou již aktuální."
 
 #: redbot/cogs/downloader/downloader.py:425
 msgid "None of the updated cogs were previously loaded. Update complete."
-msgstr ""
+msgstr "Žádný z aktualizovaných cogů nebyly dříve načteny. Aktualizace byla dokončena."
 
 #: redbot/cogs/downloader/downloader.py:429
 msgid "Would you like to reload the updated cogs?"
-msgstr ""
+msgstr "Chceš znovu načíst aktualizované cogy?"
 
 #: redbot/cogs/downloader/downloader.py:452
 msgid "OK then."
-msgstr ""
+msgstr "OK tedy."
 
 #: redbot/cogs/downloader/downloader.py:463
 #, docstring
 msgid "List all available cogs from a single repo."
-msgstr ""
+msgstr "Zobrazí všechny dostupné cogy z daného repozitáře."
 
 #: redbot/cogs/downloader/downloader.py:467
 msgid "Installed Cogs:\\n"
-msgstr ""
+msgstr "Nainstalované cogy:\\n"
 
 #: redbot/cogs/downloader/downloader.py:475
 msgid "Available Cogs:\\n"
-msgstr ""
+msgstr "Dostupné cogy:\\n"
 
 #: redbot/cogs/downloader/downloader.py:488
 #, docstring
 msgid "List information about a single cog."
-msgstr ""
+msgstr "Výpis informací o jednom cogu."
 
 #: redbot/cogs/downloader/downloader.py:492
 msgid "There is no cog `{cog_name}` in the repo `{repo.name}`"
-msgstr ""
+msgstr "V repozitáři `{repo.name} není žádné cog se jménem `{cog_name}`"
 
 #: redbot/cogs/downloader/downloader.py:498
 msgid "Information on {cog_name}:\\n{description}\\n\\nRequirements: {requirements}"
-msgstr ""
+msgstr "Informace o {cog_name}:\\n{description}\\n\\nPožadavky: {requirements}"
 
 #: redbot/cogs/downloader/downloader.py:548
 msgid "Missing from info.json"
-msgstr ""
+msgstr "Nenalezen v info.json"
 
 #: redbot/cogs/downloader/downloader.py:550
 msgid "Missing from installed repos"
-msgstr ""
+msgstr "Nenalezen v nainstalovaných repozitářích"
 
 #: redbot/cogs/downloader/downloader.py:557
 msgid "Command: {command}\\nMade by: {author}\\nRepo: {repo}\\nCog name: {cog}"
-msgstr ""
+msgstr "Příkaz: {command}\\nAutor: {author}\\nRepozitář: {repo}\\nNázev cogu: {cog}"
 
 #: redbot/cogs/downloader/downloader.py:582
 #, docstring
 msgid "Find which cog a command comes from.\\n\\n        This will only work with loaded cogs.\\n        "
-msgstr ""
+msgstr "Zjistí, ze kterého cogu příkaz pochází.\\n\\n        Funguje pouze s načtenými cogy\\n        "
 
 #: redbot/cogs/downloader/downloader.py:589
 msgid "That command doesn't seem to exist."
-msgstr ""
+msgstr "Zdá se, že tento příkaz neexistuje."
 
 #: redbot/cogs/downloader/repo_manager.py:91
 msgid "Repo by the name \\\"{repo_name}\\\" does not exist."
-msgstr ""
+msgstr "Repozitář s názvem \\\"{repo_name}\\\" neexistuje."
 
