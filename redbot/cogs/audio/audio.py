@@ -6144,7 +6144,11 @@ class Audio(commands.Cog):
         queue_num_pages = math.ceil(len(queue) / 10)
         queue_idx_start = (page_num - 1) * 10
         queue_idx_end = queue_idx_start + 10
-        queue_list = ""
+        if len(player.queue) > 500:
+            queue_list = "__Too many songs in the queue, only showing the first 500__.\n\n"
+        else:
+            queue_list = ""
+
         try:
             arrow = await draw_time(ctx)
         except AttributeError:
