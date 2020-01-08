@@ -348,7 +348,10 @@ def handle_early_exit_flags(cli_flags: Namespace):
 async def shutdown_handler(red, signal_type=None, exit_code=None):
     if signal_type:
         log.info("%s received. Quitting...", signal_type)
-        exit_code = ExitCodes.SHUTDOWN
+        # Do not collapse the below line into other logic
+        # We need to renter this function
+        # after it interrupts the event loop.
+        sys.exit(ExitCodes.SHUTDOWN)
     elif exit_code is None:
         log.info("Shutting down from unhandled exception")
         red._shutdown_mode = ExitCodes.CRITICAL
