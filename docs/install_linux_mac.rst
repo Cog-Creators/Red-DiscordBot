@@ -262,18 +262,21 @@ Choose one of the following commands to install Red.
 
     .. code-block:: none
 
+        python3.8 -m pip install --user -U setuptools wheel
         python3.8 -m pip install --user -U Red-DiscordBot
 
 To install without additional config backend support:
 
 .. code-block:: none
 
+    python3.8 -m pip install -U setuptools wheel
     python3.8 -m pip install -U Red-DiscordBot
 
 Or, to install with PostgreSQL support:
 
 .. code-block:: none
 
+    python3.8 -m pip install -U setuptools wheel
     python3.8 -m pip install -U Red-DiscordBot[postgres]
 
 .. note::
