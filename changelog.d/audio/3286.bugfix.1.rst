@@ -1,0 +1,1 @@
+Add more cooldown to playlist commands and restrict queue and playlist to 10k songs to avoid DOS attacks(User crashing your bot on purpose).
