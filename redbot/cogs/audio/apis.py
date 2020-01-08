@@ -33,7 +33,7 @@ _ = Translator("Audio", __file__)
 
 _TOP_100_GLOBALS = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn6puJdseH2Rt9sMvt9E2M4i"
 _TOP_100_US = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn5rWitrRWFKdm-ulaFiIyoK"
-_API_URL = "http://82.4.168.141:8000/"
+_API_URL = "https://redbot.app/"
 _WRITE_GLOBAL_API_ACCESS = None
 
 IS_DEBUG = is_debug()
