@@ -2391,7 +2391,7 @@ class Audio(commands.Cog):
                     if not self._track_limit(ctx, track["info"]["length"], maxlength):
                         continue
                 player.add(author_obj, lavalink.rest_api.Track(data=track))
-                await asyncio.sleep(1)
+                await asyncio.sleep(0)
                 track_len += 1
             if len(playlists[playlist_name]["tracks"]) > track_len:
                 maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
@@ -3072,7 +3072,7 @@ class Audio(commands.Cog):
                     else:
                         track_len += 1
                         player.add(ctx.author, track)
-                        await asyncio.sleep(1)
+                        await asyncio.sleep(0)
                     if not player.current:
                         await player.play()
                 if len(tracks) > track_len:
