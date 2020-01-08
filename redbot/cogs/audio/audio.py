@@ -2801,6 +2801,11 @@ class Audio(commands.Cog):
                     query=query.to_string_user()
                 ),
             )
+        if len(player.queue) >= 10000:
+            return await self._embed_msg(
+                ctx, title=_("Unable To Play Tracks"), description=_("Queue size limit reached.")
+            )
+
         if not await self._currency_check(ctx, guild_data["jukebox_price"]):
             return
         if query.is_spotify:
@@ -2902,6 +2907,11 @@ class Audio(commands.Cog):
                     query=query.to_string_user()
                 ),
             )
+        if len(player.queue) >= 10000:
+            return await self._embed_msg(
+                ctx, title=_("Unable To Play Tracks"), description=_("Queue size limit reached.")
+            )
+
         if not await self._currency_check(ctx, guild_data["jukebox_price"]):
             return
         try:
@@ -3534,7 +3544,9 @@ class Audio(commands.Cog):
             # url where Lavalink handles providing all Track objects to use, like a
             # YouTube or Soundcloud playlist
             if len(player.queue) >= 10000:
-                return await ctx.send(_("I can't add anything else to the queue."))
+                return await self._embed_msg(
+                    ctx, title=_("Queue size limit reached.")
+                )
             track_len = 0
             empty_queue = not player.queue
             for track in tracks:
@@ -3601,6 +3613,12 @@ class Audio(commands.Cog):
             # this is in the case of [p]play <query>, a single Spotify url/code
             # or this is a localtrack item
             try:
+                if len(player.queue) >= 10000:
+
+                    return await self._embed_msg(
+                        ctx, title=_("Queue size limit reached.")
+                    )
+
                 single_track = (
                     tracks
                     if isinstance(tracks, lavalink.rest_api.Track)
