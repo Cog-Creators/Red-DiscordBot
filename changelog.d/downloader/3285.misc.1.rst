@@ -1,0 +1,1 @@
+Fix `NameError` in :func:`redbot.cogs.downloader.downloader.Downloader._filter_incorrect_cogs_by_names()`.

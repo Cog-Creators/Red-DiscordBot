@@ -9,7 +9,7 @@ class RepoJSONMixin:
     def __init__(self, repo_folder: Path):
         self._repo_folder = repo_folder
 
-        self.author: Optional[Tuple[str, ...]] = None
+        self.author: Tuple[str, ...] = ()
         self.install_msg: Optional[str] = None
         self.short: Optional[str] = None
         self.description: Optional[str] = None
@@ -32,7 +32,12 @@ class RepoJSONMixin:
         else:
             self._info = info
 
-        self.author = info.get("author")
+        try:
+            author = tuple(info.get("author", []))
+        except ValueError:
+            author = ()
+        self.author = author
+
         self.install_msg = info.get("install_msg")
         self.short = info.get("short")
         self.description = info.get("description")
