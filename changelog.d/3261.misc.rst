@@ -1,0 +1,1 @@
+Be just a little less noisy in expected cases on shutdown/restart.
