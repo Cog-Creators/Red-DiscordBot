@@ -1,0 +1,1 @@
+Restrict the number of songs shown in the queue to first 500 to avoid heartbeats.

@@ -1,0 +1,17 @@
+name: Auto Labeler
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Apply Triage Label
+        uses: actions/github@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: 'label "Status: Needs Triage"'

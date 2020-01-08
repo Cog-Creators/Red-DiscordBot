@@ -1,0 +1,1 @@
+Fix `AttributeError` in ``[p]findcog`` for cogs that weren't installed through Downloader.

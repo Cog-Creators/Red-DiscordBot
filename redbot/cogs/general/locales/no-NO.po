@@ -1,19 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-05 22:33+0200\n"
-"PO-Revision-Date: 2019-07-06 16:13\n"
-"Last-Translator: Robert Jansen (Kowlin)\n"
+"POT-Creation-Date: 2019-07-14 04:24+0000\n"
+"PO-Revision-Date: 2020-01-07 21:48\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Norwegian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.0\n"
+"Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: no\n"
-"X-Crowdin-File: /cogs/general/locales/messages.pot\n"
+"X-Crowdin-File: /general/locales/messages.pot\n"
 "Language: no_NO\n"
 
 #: redbot/cogs/general/general.py:36
@@ -108,7 +107,7 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:77
 msgid "Not enough options to pick from."
-msgstr "Ikke nok valgmulighetene å plukke fra."
+msgstr "Har ikke nok valgmuligheter å velge mellom."
 
 #: redbot/cogs/general/general.py:83
 #, docstring
@@ -212,11 +211,11 @@ msgstr "Brukere"
 
 #: redbot/cogs/general/general.py:237
 msgid "Text Channels"
-msgstr "Tekst kanaler"
+msgstr "Tekstkanaler"
 
 #: redbot/cogs/general/general.py:238
 msgid "Voice Channels"
-msgstr "Stemme kanaler"
+msgstr "Talekanaler"
 
 #: redbot/cogs/general/general.py:239
 msgid "Roles"

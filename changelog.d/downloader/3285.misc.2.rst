@@ -1,0 +1,1 @@
+Move handling of ``author`` key in ``info.json`` to :func:`redbot.cogs.downloader.json_mixins.RepoJSONMixin`.
