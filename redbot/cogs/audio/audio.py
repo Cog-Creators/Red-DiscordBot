@@ -4988,29 +4988,29 @@ class Audio(commands.Cog):
                 ctx.command.reset_cooldown(ctx)
                 return await self._embed_msg(ctx, title=_("Nothing playing."))
 
-        player = lavalink.get_player(ctx.guild.id)
-        if not player.queue:
-            ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
-        tracklist = []
-        np_song = track_creator(player, "np")
-        tracklist.append(np_song)
-        queue_length = len(player.queue)
-        to_add = player.queue
-        not_added = 0
-        if queue_length > 10000:
-            to_add = player.queue[:10000]
-            not_added = queue_length - 10000
+            player = lavalink.get_player(ctx.guild.id)
+            if not player.queue:
+                ctx.command.reset_cooldown(ctx)
+                return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
+            tracklist = []
+            np_song = track_creator(player, "np")
+            tracklist.append(np_song)
+            queue_length = len(player.queue)
+            to_add = player.queue
+            not_added = 0
+            if queue_length > 10000:
+                to_add = player.queue[:10000]
+                not_added = queue_length - 10000
 
-        for i, track in enumerate(to_add, start=1):
-            if i % 500 == 0:  # TODO: Improve when Toby menu's are merged
-                await asyncio.sleep(0.02)
-            queue_idx = player.queue.index(track)
-            track_obj = track_creator(player, queue_idx)
-            tracklist.append(track_obj)
-            playlist = await create_playlist(
-                ctx, scope, playlist_name, None, tracklist, author, guild
-            )
+            for i, track in enumerate(to_add, start=1):
+                if i % 500 == 0:  # TODO: Improve when Toby menu's are merged
+                    await asyncio.sleep(0.02)
+                queue_idx = player.queue.index(track)
+                track_obj = track_creator(player, queue_idx)
+                tracklist.append(track_obj)
+                playlist = await create_playlist(
+                    ctx, scope, playlist_name, None, tracklist, author, guild
+                )
         await self._embed_msg(
             ctx,
             title=_("Playlist Created"),
