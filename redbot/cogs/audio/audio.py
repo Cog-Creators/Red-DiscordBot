@@ -1737,6 +1737,9 @@ class Audio(commands.Cog):
             # YouTube or Soundcloud playlist
             track_len = 0
             for track in tracks:
+                if len(player.queue) >= 10000:
+                    await ctx.send("I can't add anything else to the queue.")
+                    break
                 if guild_data["maxlength"] > 0:
                     if self._track_limit(ctx, track, guild_data["maxlength"]):
                         track_len += 1
@@ -1774,11 +1777,15 @@ class Audio(commands.Cog):
                 single_track = tracks[0]
                 if guild_data["maxlength"] > 0:
                     if self._track_limit(ctx, single_track, guild_data["maxlength"]):
+                        if len(player.queue) >= 10000:
+                            return await ctx.send("I can't add anything else to the queue.")
                         player.add(ctx.author, single_track)
                     else:
                         return await self._embed_msg(ctx, _("Track exceeds maximum length."))
 
                 else:
+                    if len(player.queue) >= 10000:
+                        return await ctx.send("I can't add anything else to the queue.")
                     player.add(ctx.author, single_track)
             except IndexError:
                 return await self._embed_msg(
@@ -1939,6 +1946,7 @@ class Audio(commands.Cog):
         """Playlist configuration options."""
         pass
 
+    @checks.is_owner()
     @playlist.command(name="append")
     async def _playlist_append(self, ctx, playlist_name, *, url):
         """Add a track URL, playlist link, or quick search to a playlist.
@@ -2066,6 +2074,7 @@ class Audio(commands.Cog):
                         ),
                     )
 
+    @checks.is_owner()
     @playlist.command(name="create")
     async def _playlist_create(self, ctx, playlist_name):
         """Create an empty playlist."""
@@ -2139,6 +2148,7 @@ class Audio(commands.Cog):
         await ctx.send(file=discord.File(to_write, filename=f"{playlist_name}.txt"))
         to_write.close()
 
+    @checks.is_owner()
     @playlist.command(name="info")
     async def _playlist_info(self, ctx, playlist_name):
         """Retrieve information from a saved playlist."""
@@ -2241,7 +2251,7 @@ class Audio(commands.Cog):
         )
         return embed
 
-    @commands.cooldown(1, 15, discord.ext.commands.BucketType.guild)
+    @checks.is_owner()
     @playlist.command(name="queue")
     async def _playlist_queue(self, ctx, playlist_name=None):
         """Save the queue to a playlist."""
@@ -2297,6 +2307,7 @@ class Audio(commands.Cog):
             ),
         )
 
+    @checks.is_owner()
     @playlist.command(name="remove")
     async def _playlist_remove(self, ctx, playlist_name, url):
         """Remove a track from a playlist by url."""
@@ -2336,6 +2347,7 @@ class Audio(commands.Cog):
                 ),
             )
 
+    @checks.is_owner()
     @playlist.command(name="save")
     async def _playlist_save(self, ctx, playlist_name, playlist_url):
         """Save a playlist from a url."""
@@ -2367,6 +2379,9 @@ class Audio(commands.Cog):
         try:
             player = lavalink.get_player(ctx.guild.id)
             for track in playlists[playlist_name]["tracks"]:
+                if len(player.queue) >= 10000:
+                    await ctx.send("I can't add anything else to the queue.")
+                    break
                 if track["info"]["uri"].startswith("localtracks/"):
                     if not await self._localtracks_check(ctx):
                         pass
@@ -2376,6 +2391,7 @@ class Audio(commands.Cog):
                     if not self._track_limit(ctx, track["info"]["length"], maxlength):
                         continue
                 player.add(author_obj, lavalink.rest_api.Track(data=track))
+                await asyncio.sleep(1)
                 track_len += 1
             if len(playlists[playlist_name]["tracks"]) > track_len:
                 maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
@@ -3046,6 +3062,9 @@ class Audio(commands.Cog):
 
                 track_len = 0
                 for track in tracks:
+                    if len(player.queue) >= 10000:
+                        await ctx.send("I can't add anything else to the queue.")
+                        break
                     if guild_data["maxlength"] > 0:
                         if self._track_limit(ctx, track, guild_data["maxlength"]):
                             track_len += 1
@@ -3053,6 +3072,7 @@ class Audio(commands.Cog):
                     else:
                         track_len += 1
                         player.add(ctx.author, track)
+                        await asyncio.sleep(1)
                     if not player.current:
                         await player.play()
                 if len(tracks) > track_len:
@@ -3189,10 +3209,14 @@ class Audio(commands.Cog):
 
         if guild_data["maxlength"] > 0:
             if self._track_limit(ctx, search_choice.length, guild_data["maxlength"]):
+                if len(player.queue) >= 10000:
+                    return await ctx.send("I can't add anything else to the queue.")
                 player.add(ctx.author, search_choice)
             else:
                 return await self._embed_msg(ctx, _("Track exceeds maximum length."))
         else:
+            if len(player.queue) >= 10000:
+                return await ctx.send("I can't add anything else to the queue.")
             player.add(ctx.author, search_choice)
         if not player.current:
             await player.play()
