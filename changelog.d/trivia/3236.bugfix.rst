@@ -1,1 +1,0 @@
-Fixed answers that were incorrect in the Clash Royale trivia list.

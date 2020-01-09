@@ -1,1 +1,0 @@
-Clarify usage intent of some chat formatting functions

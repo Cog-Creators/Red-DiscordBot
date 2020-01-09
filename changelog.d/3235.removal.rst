@@ -1,1 +1,0 @@
-Removed ``[p]backup`` command. Use ``redbot-setup backup`` cli command instead.

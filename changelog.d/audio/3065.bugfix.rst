@@ -1,1 +1,0 @@
-Correctly reports the import error when an SQL dependency is missing.

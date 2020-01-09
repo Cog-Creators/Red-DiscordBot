@@ -1,1 +1,0 @@
-Properly set owner from config during bot's pre-flight.

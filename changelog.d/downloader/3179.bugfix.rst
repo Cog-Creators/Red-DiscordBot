@@ -1,1 +1,0 @@
-``[p]cog uninstall`` now fully unloads cog - bot will not try to load it on next startup.

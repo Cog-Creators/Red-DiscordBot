@@ -1,1 +1,0 @@
-The group command `[p]cc` create can now be used to create simple CCs without specifying "simple".

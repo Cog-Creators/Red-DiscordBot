@@ -1,1 +1,0 @@
-Updated the typing of ``redbot.core.utils.humanize_timedelta`` to be more accurate.

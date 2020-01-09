@@ -1,1 +1,0 @@
-``redbot-setup`` will now use instance name in default data path to avoid creating second instance with same data path.

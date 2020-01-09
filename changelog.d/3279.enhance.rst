@@ -1,2 +1,0 @@
-``[p]playlist download`` will now compress playlists larger than
-the server attachment limit and attempt to send that.
