@@ -271,9 +271,7 @@ def handle_edit(cli_flags: Namespace):
     This one exists to not log all the things like it's a full run of the bot.
     """
     loop = asyncio.get_event_loop()
-    red = Red(
-        cli_flags=cli_flags, description="Red V3", dm_help=None, fetch_offline_members=True
-    )
+    red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None, fetch_offline_members=True)
     try:
         driver_cls = drivers.get_driver_class()
         loop.run_until_complete(driver_cls.initialize(**data_manager.storage_details()))
