@@ -404,6 +404,9 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         init_global_checks(self)
         init_events(self, cli_flags)
 
+        if self.owner_id is None:
+            self.owner_id = await self._config.owner()
+
         i18n_locale = await self._config.locale()
         i18n.set_locale(i18n_locale)
 
