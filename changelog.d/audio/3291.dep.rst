@@ -1,0 +1,3 @@
+Lavalink Jar update
+
+We still want more to be handled, but soundcloud is working again.
