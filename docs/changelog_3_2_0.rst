@@ -8,7 +8,7 @@ Breaking Changes
 
 - Modlog casetypes no longer have an attribute for auditlog action type. (`#2897 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2897>`_)
 - ``redbot.core.modlog.get_next_case_number()`` has been removed. (`#2908 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2908>`_)
-- Removed :cons:`bank.MAX_BALANCE`, use :meth:`bank.get_max_balance()` from now. (`#2926 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2926>`_)
+- Removed ``bank.MAX_BALANCE``, use :meth:`bank.get_max_balance()` from now. (`#2926 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2926>`_)
 - The main bot config is no longer directly accessible to cogs. New methods have been added for use where this is concerned.
   New methods for this include
 
@@ -33,16 +33,16 @@ Bug Fixes
 - Fixed remove_command error when trying to remove a non-existent command (`#2888 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2888>`_)
 - ``Command.can_see`` now works as intended for disabled commands (`#2892 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2892>`_)
 - Modlog entries now show up properly without the mod cog loaded (`#2897 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2897>`_)
-- Fixed error in `[p]reason` when setting the reason for a case without a moderator. (`#2908 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2908>`_)
+- Fixed error in ``[p]reason`` when setting the reason for a case without a moderator. (`#2908 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2908>`_)
 - Check the recipient balance before transferring and stop transfer if will go above the maximum allowed balance. (`#2923 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2923>`_)
 - The [p]invite command no longer errors when a user has the bot blocked or DMs disabled in the server. (`#2948 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2948>`_)
-- Stop using `:` character in backup's filename - Windows doesn't accept it (`#2954 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2954>`_)
+- Stop using ``:`` character in backup's filename - Windows doesn't accept it (`#2954 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2954>`_)
 - ``redbot-setup delete`` no longer errors about "unexpected keyword argument" (`#2955 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2955>`_)
 - ``redbot-setup delete`` no longer prompts about backup when user passes ``--no-prompt`` option (`#2956 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2956>`_)
 - [Core] Inviteset public and perms help string cleanup (`#2963 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2963>`_)
 - Make embedset user only affect DM's (`#2966 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2966>`_)
 - Give friendly error when provided instance name doesn't exist. (`#2968 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2968>`_)
-- Fixed the help text and response of `[p]set usebotcolor` to accurately reflect what the command is doing. (`#2974 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2974>`_)
+- Fixed the help text and response of ``[p]set usebotcolor`` to accurately reflect what the command is doing. (`#2974 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2974>`_)
 - Bot no longer types infinitely when command with cooldown is called within last second of cooldown. (`#2985 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2985>`_)
 - remove f-string usage in launcher to prevent our error handling from cauing an error. (`#3002 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3002>`_)
 - Fixed MessagePredicate.greater and MessagePredicate.less allowing any valid int instead of only valid ints/floats that are greater/less than the given value. (`#3004 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3004>`_)
@@ -56,7 +56,7 @@ Bug Fixes
 - Bot will now properly send a message when the invoked command is guild-only. (`#3057 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3057>`_)
 - Always append 3rd-party lib folder to the end of ``sys.path`` to avoid shadowing Red's dependencies. (`#3062 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3062>`_)
 - fix ``is_automod_immune`` handling of guild check and support for checking webhooks (`#3100 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3100>`_)
-- Fix generation of `repos.json` file in backup process. (`#3114 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3114>`_)
+- Fix generation of ``repos.json`` file in backup process. (`#3114 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3114>`_)
 - Fixed an issue when calling audio commands when not in a voice channel could result in a crash. (`#3120 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3120>`_)
 - Handle invalid folder names for data path gracefully in ``redbot-setup`` and ``redbot --edit``. (`#3171 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3171>`_)
 - ``--owner`` and ``-p`` cli flags now work when added from launcher. (`#3174 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3174>`_)
@@ -96,11 +96,11 @@ Enhancements
 - Instance names can now only include characters A-z, numbers, underscores, and hyphens. Old instances are unaffected by this change. (`#3171 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3171>`_)
 - Clarified that ``[p]backup`` saves the **bot's** data in the help text. (`#3172 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3172>`_)
 - Add ``redbot --debuginfo`` flag that shows useful information for debugging. (`#3183 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3183>`_)
-- Add Python executable field to `[p]debuginfo` command. (`#3184 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3184>`_)
+- Add Python executable field to ``[p]debuginfo`` command. (`#3184 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3184>`_)
 - When Red prompts for token, it will now print a link to the guide explaining how to obtain a token. (`#3204 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3204>`_)
 - ``redbot-setup`` will no longer log to disk. (`#3269 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3269>`_)
 - :meth:`redbot.core.bot.Bot.send_to_owners()` and :meth:`redbot.core.bot.Bot.get_owner_notification_destinations()` now log that they weren't able to find owner notification destination. (`#3273 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3273>`_)
-- Lib folder is now cleared on minor Python version change. `[p]cog reinstallreqs` command in Downloader cog can be used to regenerate lib folder for new Python version. (`#3274 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3274>`_)
+- Lib folder is now cleared on minor Python version change. ``[p]cog reinstallreqs`` command in Downloader cog can be used to regenerate lib folder for new Python version. (`#3274 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3274>`_)
 - If Red detects operating system or architecture change, it will warn owner about possible problem with lib folder. (`#3274 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3274>`_)
 - ``[p]playlist download`` will now compress playlists larger than
   the server attachment limit and attempt to send that. (`#3279 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3279>`_)
@@ -120,18 +120,18 @@ New Feature
     - Config.member_from_ids
       - This one requires multiple ids, one for the guild, one for the user
       - Consequence of discord's object model (`#2804 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2804>`_)
-- New :func:`humanize_number` in :module:`redbot.core.utils.chat_formatting` function to convert numbers into text which respect locale. (`#2836 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2836>`_)
+- New :func:`humanize_number` in ``redbot.core.utils.chat_formatting`` function to convert numbers into text which respect locale. (`#2836 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2836>`_)
 - Added New commands to Economy
 
   - ``[p]bank prune user`` - This will delete a user's bank account.
   - ``[p]bank prune local`` - This will prune the bank of accounts from users no longer in the server.
   - ``[p]bank prune global`` - This will prune the global bank of accounts from users who do not share any servers with the bot. (`#2845 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2845>`_)
-- Added :func:`bank_prune` to :module:`redbot.core.bank`
+- Added :func:`bank_prune` to ``redbot.core.bank``
 
   - :func:`bank_prune` can be used to delete a specific user's bank account or remove all invalid bank accounts (For users who are not in the guild if bank is local or share servers with the bot if bank is global). (`#2845 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2845>`_)
 - Red now uses towncrier for changelog generation (`#2872 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2872>`_)
 - Added :func:`redbot.core.modlog.get_latest_case` to fetch the case object for the most recent ModLog case. (`#2908 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2908>`_)
-- `[p]bankset maxbal` can be used to set the maximum bank balance. (`#2926 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2926>`_)
+- ``[p]bankset maxbal`` can be used to set the maximum bank balance. (`#2926 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2926>`_)
 - adds a few methods and classes replacing direct config access (which is no longer supported)
 
    - ``redbot.core.Red.allowed_by_whitelist_blacklist``
@@ -266,7 +266,7 @@ Bug Fixes
 - Fix track index being off by 1 on ``[p]search`` command. (`#2940 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2940>`_)
 - Fix an issue where updating your Spotify and YouTube Data API tokens did not refresh them. (`#3047 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3047>`_)
 - Fix an issue where the blacklist was not being applied correctly. (`#3047 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3047>`_)
-- Fix an issue in ``[p]audioset restrictions blacklist list`` where it would call the list a `Whitelist`. (`#3047 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3047>`_)
+- Fix an issue in ``[p]audioset restrictions blacklist list`` where it would call the list a ``Whitelist``. (`#3047 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3047>`_)
 - Unify capitalisation in ``[p]help playlist``. (`#3048 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3048>`_)
 - Bot's status is now properly cleared on emptydisconnect. (`#3050 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3050>`_)
 - Correctly reports the import error when an SQL dependency is missing. (`#3065 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3065>`_)
@@ -309,7 +309,7 @@ New Feature
 
 - Added support for nested folders in the localtrack folder. (`#270 <https://github.com/Cog-Creators/Red-DiscordBot/issues/270>`_)
 - Auto pause queue when room is empty. (`#721 <https://github.com/Cog-Creators/Red-DiscordBot/issues/721>`_)
-- Playlist are now stored in a dataclass and new APIs were added to interact with them see :module:`redbot.cogs.audio.playlist` for more details. (`#2861 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2861>`_)
+- Playlist are now stored in a dataclass and new APIs were added to interact with them see ``redbot.cogs.audio.playlist`` for more details. (`#2861 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2861>`_)
 - All Playlist commands now accept optional arguments, use ``[p]help playlist <subcommand>`` for more details. (`#2861 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2861>`_)
 - ``[p]playlist rename`` will now allow users to rename existing playlists. (`#2861 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2861>`_)
 - ``[p]playlist update`` will allow users to update non custom Playlists to the latest available tracks. (`#2861 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2861>`_)
@@ -391,7 +391,7 @@ CustomCom
 Enhancements
 ~~~~~~~~~~~~
 
-- The group command `[p]cc` create can now be used to create simple CCs without specifying "simple". (`#1767 <https://github.com/Cog-Creators/Red-DiscordBot/issues/1767>`_)
+- The group command ``[p]cc`` create can now be used to create simple CCs without specifying "simple". (`#1767 <https://github.com/Cog-Creators/Red-DiscordBot/issues/1767>`_)
 - Add query option for CC typehints, for URL-based CCs. (`#3228 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3228>`_)
 - Use humanize_list utility for iterable parameter results, e.g. :code:`{#:Role.members}`. (`#3277 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3277>`_)
 
@@ -415,7 +415,7 @@ Bug Fixes
 - Downloader will no longer allow to install cog with same name as other that is installed. (`#2927 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2927>`_)
 - Catch errors if remote repository or branch is deleted, notify user which repository failed and continue updating others. (`#2936 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2936>`_)
 - Make :attr:`redbot.cogs.downloader.repo_manager.Repo.clean_url` work with relative urls. This property uses `str` type now. (`#3141 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3141>`_)
-- Fixed an error on repo add from empty string values for the `install_msg` info.json field. (`#3153 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3153>`_)
+- Fixed an error on repo add from empty string values for the ``install_msg`` info.json field. (`#3153 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3153>`_)
 - Disable all git auth prompts when adding/updating repo with Downloader. (`#3159 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3159>`_)
 - ``[p]findcog`` now properly works for cogs with less typical folder structure. (`#3177 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3177>`_)
 - ``[p]cog uninstall`` now fully unloads cog - bot will not try to load it on next startup. (`#3179 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3179>`_)
@@ -428,7 +428,7 @@ Enhancements
 - User can now pass multiple cog names to ``[p]cog install``. (`#2527 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2527>`_)
 - When passing cogs to ``[p]cog update`` command, it will now only update those cogs, not all cogs from the repo these cogs are from. (`#2527 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2527>`_)
 - Added error messages for failures during installing/reinstalling requirements and copying cogs and shared libraries. (`#2571 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2571>`_)
-- Use sanitized url (without HTTP Basic Auth fragments) in `[p]findcog` command. (`#3129 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3129>`_)
+- Use sanitized url (without HTTP Basic Auth fragments) in ``[p]findcog`` command. (`#3129 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3129>`_)
 - ``[p]repo info`` will now show repo's url, branch and authors. (`#3225 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3225>`_)
 - ``[p]cog info`` will now show cog authors. (`#3225 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3225>`_)
 - ``[p]findcog`` will now show repo's branch. (`#3225 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3225>`_)
@@ -443,7 +443,7 @@ New Feature
 - Added ``[p]cog checkforupdates`` command that will tell which cogs can be updated (including pinned cog) without updating them. (`#2527 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2527>`_)
 - Added ``[p]cog updateallfromrepos <repos>`` command that will update all cogs from given repos. (`#2527 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2527>`_)
 - Added ``[p]cog updatetoversion <repo_name> <revision> [cogs]`` command that updates all cogs or ones of user's choosing to chosen revision of given repo. (`#2527 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2527>`_)
-- Added `[p]cog reinstallreqs` command that allows to reinstall cog requirements and shared libraries for all installed cogs. (`#3167 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3167>`_)
+- Added ``[p]cog reinstallreqs`` command that allows to reinstall cog requirements and shared libraries for all installed cogs. (`#3167 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3167>`_)
 
 
 Miscellaneous changes
@@ -576,7 +576,7 @@ Trivia
 Bug Fixes
 ~~~~~~~~~
 
-- Fixes a typo in `Ahsoka Tano`'s name in the starwars trivia (`#2909 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2909>`_)
+- Fixes a typo in ``Ahsoka Tano``'s name in the starwars trivia (`#2909 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2909>`_)
 - Fixes a bug where ``[p]trivia leaderboard`` failed to run. (`#2911 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2911>`_)
 - Fix typo in the Greek mythology trivia regarding Hermes' staff (`#2994 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2994>`_)
 - Fixed a question in Overwatch accepting blank responses. (`#2996 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2996>`_)
