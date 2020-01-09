@@ -409,6 +409,7 @@ def red_exception_handler(red, red_task: asyncio.Future):
 
 
 def main():
+    red = None  # Error handling for users misusing the bot
     cli_flags = parse_cli_flags(sys.argv[1:])
     handle_early_exit_flags(cli_flags)
     if cli_flags.edit:
@@ -455,13 +456,15 @@ def main():
         # We still have to catch this here too. (*joy*)
         log.warning("Please do not use Ctrl+C to Shutdown Red! (attempting to die gracefully...)")
         log.error("Received KeyboardInterrupt, treating as interrupt")
-        loop.run_until_complete(shutdown_handler(red, signal.SIGINT))
+        if red is not None:
+            loop.run_until_complete(shutdown_handler(red, signal.SIGINT))
     except SystemExit as exc:
         # We also have to catch this one here. Basically any exception which normally
         # Kills the python interpreter (Base Exceptions minus asyncio.cancelled)
         # We need to do something with prior to having the loop close
         log.info("Shutting down with exit code: %s", exc.code)
-        loop.run_until_complete(shutdown_handler(red, None, exc.code))
+        if red is not None:
+            loop.run_until_complete(shutdown_handler(red, None, exc.code))
     finally:
         # Allows transports to close properly, and prevent new ones from being opened.
         # Transports may still not be closed correcly on windows, see below
@@ -476,7 +479,8 @@ def main():
             loop.run_until_complete(asyncio.sleep(1))
         loop.stop()
         loop.close()
-        sys.exit(red._shutdown_mode)
+        exit_code = red._shutdown_mode if red is not None else 1
+        sys.exit(exit_code)
 
 
 if __name__ == "__main__":
