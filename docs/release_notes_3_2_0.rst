@@ -12,7 +12,7 @@ Please read the following prior to updating.
   the changes yet.
 
 
-- 3.2 Requires Python 3.8.1.
+- 3.2 requires Python 3.8.1.
   This was done so that we could better handle some behavior which was not fixed for Python 3.7.
   If you need help updating, our install docs will cover everything you need to know to update.
 
@@ -35,7 +35,7 @@ Please read the following prior to updating.
         redbot-setup convert [instancename] json
 
 
-- 3.2 Comes with many feature upgrades. A brief high level list.
+- 3.2 comes with many feature upgrades. A brief high level list of these is below.
 
   - A metric ton of bugfixes
   - Bot shutdown is handled significantly better
