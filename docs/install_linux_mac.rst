@@ -46,10 +46,10 @@ CentOS and RHEL 7
 
     yum -y groupinstall development
     yum -y install https://centos7.iuscommunity.org/ius-release.rpm
-    sudo yum install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel \
+    sudo yum -y install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel \
       openssl-devel xz xz-devel libffi-devel findutils git2u java-11-openjdk
 
-Complete the rest of the installation by `installing Python 3.7 with pyenv <install-python-pyenv>`.
+Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
 
 .. _install-debian:
 .. _install-raspbian:
@@ -58,30 +58,16 @@ Complete the rest of the installation by `installing Python 3.7 with pyenv <inst
 Debian and Raspbian
 ~~~~~~~~~~~~~~~~~~~
 
-Debian and Raspbian Buster
-**************************
-
-Debian and Raspbian Buster have all required packages available in official repositories. Install
-them with apt:
-
-.. code-block:: none
-
-    sudo apt update
-    sudo apt install python3 python3-dev python3-venv python3-pip git openjdk-11-jre \
-      build-essential
-
-Debian and Raspbian Stretch
-***************************
-
 We recommend installing pyenv as a method of installing non-native versions of python on
-Debian/Raspbian Stretch. This guide will tell you how. First, run the following commands:
+Debian/Raspbian. This guide will tell you how. First, run the following commands:
 
 .. code-block:: none
 
     sudo apt update
-    sudo apt install build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
-      libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev \
-      liblzma-dev python3-openssl git openjdk-11-jre
+    sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
+      libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev lixml2-dev \
+      libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre
+    CXX=/usr/bin/g++
 
 Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
 
@@ -91,12 +77,12 @@ Complete the rest of the installation by `installing Python 3.8 with pyenv <inst
 Fedora Linux
 ~~~~~~~~~~~~
 
-Fedora Linux 29 and above has all required packages available in official repositories. Install
+Fedora Linux 30 and above has all required packages available in official repositories. Install
 them with dnf:
 
 .. code-block:: none
 
-    sudo dnf install python3 python3-devel git java-latest-openjdk-headless @development-tools
+    sudo dnf -y install python38 git java-latest-openjdk-headless @development-tools
 
 .. _install-mac:
 
@@ -187,6 +173,7 @@ Ubuntu
 
     .. code-block:: none
 
+        sudo apt update
         sudo apt install software-properties-common
         sudo add-apt-repository ppa:deadsnakes/ppa
 
@@ -195,7 +182,7 @@ Install the pre-requirements with apt:
 .. code-block:: none
 
     sudo apt update
-    sudo apt install python3.8 python3.8-dev python3.8-venv python3-pip git default-jre-headless \
+    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git default-jre-headless \
       build-essential
 
 .. _install-python-pyenv:
