@@ -1,0 +1,1 @@
+bump red-lavalink version
