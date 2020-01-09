@@ -141,7 +141,7 @@ class CacheInterface:
         maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=max_age)
         maxage_int = int(time.mktime(maxage.timetuple()))
         values = {"maxage": maxage_int}
-        with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             executor.submit(self.database.execute, LAVALINK_DELETE_OLD_ENTRIES, values)
             executor.submit(self.database.execute, YOUTUBE_DELETE_OLD_ENTRIES, values)
             executor.submit(self.database.execute, SPOTIFY_DELETE_OLD_ENTRIES, values)
