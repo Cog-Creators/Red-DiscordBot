@@ -1,0 +1,1 @@
+Removes a lot of the launcher's handled behavior
