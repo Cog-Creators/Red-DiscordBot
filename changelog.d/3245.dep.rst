@@ -1,4 +1,0 @@
-Update python minimum requirement to 3.8.1
-
-Update JRE to Java 11
-

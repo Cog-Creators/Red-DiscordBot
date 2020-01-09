@@ -1,1 +1,0 @@
-Added "Publishing cogs for V3" document explaining how to make user's cogs work with Downloader.

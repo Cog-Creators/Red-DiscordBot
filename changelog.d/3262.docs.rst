@@ -1,1 +1,0 @@
-add line about setuptools and wheel

@@ -1,1 +1,0 @@
-Improved explanation in help string for ``[p]audioset emptydisconnect``.

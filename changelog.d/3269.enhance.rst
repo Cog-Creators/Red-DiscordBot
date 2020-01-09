@@ -1,1 +1,0 @@
-``redbot-setup`` will no longer log to disk.

@@ -1,1 +1,0 @@
-Disable all git auth prompts when adding/updating repo with Downloader.

@@ -1,1 +1,0 @@
-Fix an attribute error that can be raised in humanize_timedelta if seconds = 0.

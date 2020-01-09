@@ -1,1 +1,0 @@
-Bot will now send a message when the invoked command is DM-only.

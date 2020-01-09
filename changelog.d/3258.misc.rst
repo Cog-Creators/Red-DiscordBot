@@ -1,1 +1,0 @@
-Bump python version to 3.8 in RTD configuration.

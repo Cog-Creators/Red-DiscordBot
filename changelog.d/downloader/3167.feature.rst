@@ -1,1 +1,0 @@
-Added `[p]cog reinstallreqs` command that allows to reinstall cog requirements and shared libraries for all installed cogs.
