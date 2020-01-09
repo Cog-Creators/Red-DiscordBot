@@ -1,1 +1,0 @@
-Removed the ``MemberDefaultAuthor`` converter because its only purpose seemed to be catching ``""`` "members".

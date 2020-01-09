@@ -1,1 +1,0 @@
-Send deprecation warning when using install and update commands if the repos installed/updated cogs are from have shared libraries.

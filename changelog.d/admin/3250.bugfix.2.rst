@@ -1,1 +1,0 @@
-Fixed some role managing commands not properly checking if the bot had manage_roles perms before attempting to manage roles.

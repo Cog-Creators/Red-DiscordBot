@@ -86,7 +86,6 @@ class Installable(RepoJSONMixin):
         self.repo_name = self._location.parent.stem
         self.commit = commit
 
-        self.author: Tuple[str, ...] = ()
         self.min_bot_version = red_version_info
         self.max_bot_version = red_version_info
         self.min_python_version = (3, 5, 1)
@@ -170,12 +169,6 @@ class Installable(RepoJSONMixin):
                 log.exception("Invalid JSON information file at path: {}".format(info_file_path))
             else:
                 self._info = info
-
-        try:
-            author = tuple(info.get("author", []))
-        except ValueError:
-            author = ()
-        self.author = author
 
         try:
             min_bot_version = VersionInfo.from_str(str(info.get("min_bot_version", __version__)))

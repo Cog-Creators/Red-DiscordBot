@@ -1,1 +1,0 @@
-Updated copyright notices on License and RTD config to 2020

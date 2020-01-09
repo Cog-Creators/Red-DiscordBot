@@ -1,1 +1,0 @@
-The ``SelfRole`` converter now only makes a config get call when the role actually exists.

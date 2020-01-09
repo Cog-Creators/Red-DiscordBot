@@ -1,1 +1,0 @@
-Fixed ``[p]announce ignore`` and ``[p]announce channel`` not being able to be used by guild owners and administrators.

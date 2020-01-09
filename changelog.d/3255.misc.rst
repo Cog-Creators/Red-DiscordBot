@@ -1,1 +1,0 @@
-Fixes typo '.foramt()' to '.format()' in .redbot/cogs/admin/admin.py

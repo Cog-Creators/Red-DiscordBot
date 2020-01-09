@@ -1,1 +1,0 @@
-Guild owners are no longer affected by local whitelist and blacklist.

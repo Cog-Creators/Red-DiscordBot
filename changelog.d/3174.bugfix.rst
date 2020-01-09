@@ -1,1 +1,0 @@
-``--owner`` and ``-p`` cli flags now work when added from launcher.

@@ -57,6 +57,8 @@ Welcome to Red - Discord Bot's documentation!
     :maxdepth: 2
     :caption: Changelogs:
 
+    release_notes_3_2_0
+    changelog_3_2_0
     changelog_3_1_0
 
 .. toctree::

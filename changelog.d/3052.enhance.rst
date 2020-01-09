@@ -1,1 +1,0 @@
-``bot.send_filtered`` now returns the message that is sent.

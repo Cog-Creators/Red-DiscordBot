@@ -1,1 +1,0 @@
-``[p]audioset settings`` now reports lavalink lib version.

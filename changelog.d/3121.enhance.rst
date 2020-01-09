@@ -1,1 +1,0 @@
-Change ``[p]info`` to say "This bot is an..." instead of "This is an..." for clarity.

@@ -1,1 +1,0 @@
-Fixed an issue when calling audio commands when not in a voice channel could result in a crash.
