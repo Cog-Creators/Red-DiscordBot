@@ -1,0 +1,1 @@
+fix a buggy first page of paginated help
