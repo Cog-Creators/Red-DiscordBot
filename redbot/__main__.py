@@ -466,6 +466,10 @@ def main():
         log.info("Shutting down with exit code: %s", exc.code)
         if red is not None:
             loop.run_until_complete(shutdown_handler(red, None, exc.code))
+    except Exception as exc:  # Non standard case.
+        log.exception("Unexpected exception (%s): ", type(exc), exc_info=exc)
+        if red is not None:
+            loop.run_until_complete(shutdown_handler(red, None, ExitCodes.CRITICAL))
     finally:
         # Allows transports to close properly, and prevent new ones from being opened.
         # Transports may still not be closed correcly on windows, see below
