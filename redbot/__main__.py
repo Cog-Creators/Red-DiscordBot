@@ -467,7 +467,7 @@ def main():
         if red is not None:
             loop.run_until_complete(shutdown_handler(red, None, exc.code))
     except Exception as exc:  # Non standard case.
-        log.exception("Unexpected exception: %s", type(exc), exc_info=exc)
+        log.exception("Unexpected exception (%s): ", type(exc), exc_info=exc)
         if red is not None:
             loop.run_until_complete(shutdown_handler(red, None, ExitCodes.CRITICAL))
     finally:
