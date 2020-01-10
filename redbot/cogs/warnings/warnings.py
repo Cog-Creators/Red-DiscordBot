@@ -370,14 +370,14 @@ class Warnings(commands.Cog):
                 await ctx.send_interactive(
                     pagify(msg, shorten_by=58), box_lang=_("Warnings for {user}").format(user=user)
                 )
-                
+
     @commands.command()
     @commands.guild_only()
     async def mywarnings(self, ctx: commands.Context):
         """List warnings for yourself."""
-        
+
         user = ctx.author
-        
+
         msg = ""
         member_settings = self.config.member(user)
         async with member_settings.warnings() as user_warnings:
