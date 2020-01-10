@@ -1,3 +1,16 @@
+.. 3.2.x Changelogs
+
+Redbot 3.2.1 (2020-01-10)
+=========================
+
+Hotfixes
+--------
+
+- Fix Mongo conversion from being incorrectly blocked
+- Fix announcer not creating a message for success feedback
+- Log an error with creating case types rather than crash
+
+
 Redbot 3.2.0 (2020-01-09)
 =========================
 Core Bot Changes
