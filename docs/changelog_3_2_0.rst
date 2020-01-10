@@ -35,6 +35,7 @@ Bug Fixes
 - Modlog entries now show up properly without the mod cog loaded. (`#2897 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2897>`_)
 - Fixed an error in ``[p]reason`` when setting the reason for a case without a moderator. (`#2908 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2908>`_)
 - Bank functions now check the recipient balance before transferring and stop the transfer if the recipient's balance will go above the maximum allowed balance. (`#2923 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2923>`_)
+- Removed potential for additional bad API calls per ban/unban. (`#2945 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2945>`_)
 - The ``[p]invite`` command no longer errors when a user has the bot blocked or DMs disabled in the server. (`#2948 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2948>`_)
 - Stopped using the ``:`` character in backup's filename - Windows doesn't accept it. (`#2954 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2954>`_)
 - ``redbot-setup delete`` no longer errors with "unexpected keyword argument". (`#2955 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2955>`_)
@@ -53,6 +54,7 @@ Bug Fixes
 - Added a 3rd-party lib folder to ``sys.path`` before loading cogs. This prevents issues with 3rd-party cogs failing to load when Downloader is not loaded to install requirements. (`#3036 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3036>`_)
 - Escaped track descriptions so that they do not break markdown. (`#3047 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3047>`_)
 - Red will now properly send a message when the invoked command is guild-only. (`#3057 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3057>`_)
+- Arguments ``--co-owner`` and ``--load-cogs`` now properly require at least one argument to be passed. (`#3060 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3060>`_)
 - Now always appends the 3rd-party lib folder to the end of ``sys.path`` to avoid shadowing Red's dependencies. (`#3062 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3062>`_)
 - Fixed ``is_automod_immune``'s handling of the guild check and added support for checking webhooks. (`#3100 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3100>`_)
 - Fixed the generation of the ``repos.json`` file in the backup process. (`#3114 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3114>`_)
@@ -104,7 +106,7 @@ Enhancements
 
 
 New Features
-~~~~~~~~~~~
+~~~~~~~~~~~~
 
 - Added functions to acquire locks on Config groups and values. These locks are acquired by default when calling a value as a context manager. See ``Value.get_lock`` for details. (`#2654 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2654>`_)
 - Added a config driver for PostgreSQL. (`#2723 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2723>`_)
@@ -261,8 +263,7 @@ Enhancements
 - ``[p]playlist`` commands now can be used by everyone regardless of DJ settings, however it will respect DJ settings when creating/modifying playlists in the server scope. (`#2861 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2861>`_)
 - Spotify, Youtube Data, and Lavalink API calls can be cached to avoid repeated calls in the future, see ``[p]audioset cache``. (`#2890 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2890>`_)
 - Playlists will now start playing as soon as first track is loaded. (`#2890 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2890>`_)
-- ``[p]audioset localpath`` can set a path anywhere in your machine now.
-   - Note: This path needs to be visible by ``Lavalink.jar``. (`#2904 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2904>`_)
+- ``[p]audioset localpath`` can set a path anywhere in your machine now. Note: This path needs to be visible by ``Lavalink.jar``. (`#2904 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2904>`_)
 - ``[p]queue`` now works when there are no tracks in the queue, showing the track currently playing. (`#2904 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2904>`_)
 - ``[p]audioset settings`` now reports Red Lavalink version. (`#2904 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2904>`_)
 - Adding and removing reactions in Audio is no longer a blocking action. (`#2904 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2904>`_)
@@ -276,13 +277,16 @@ Enhancements
   Now: ``[p]bumpplay ENM\\501 - Inside The Machine.mp3``
   Now nested folders: ``[p]bumpplay Parent Folder\\Nested Folder\\track.mp3`` (`#2904 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2904>`_)
 - Removed commas in explanations about how to set API keys. (`#2905 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2905>`_)
+- Expanded local track support to all file formats (m3u, m4a, mp4, etc). (`#2940 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2940>`_)
+- Cooldowns are now reset upon failure of commands that have a cooldown timer. (`#2940 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2940>`_)
 - Improved the explanation in the help string for ``[p]audioset emptydisconnect``. (`#3051 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3051>`_)
+- Added a typing indicator to playlist dedupe. (`#3058 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3058>`_)
 - Exposed clearer errors to users in the play commands. (`#3085 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3085>`_)
 - Better error handling when the player is unable to play multiple tracks in the sequence. (`#3165 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3165>`_)
 
 
 New Features
-~~~~~~~~~~~
+~~~~~~~~~~~~
 
 - Added support for nested folders in the localtrack folder. (`#270 <https://github.com/Cog-Creators/Red-DiscordBot/issues/270>`_)
 - Now auto pauses the queue when the voice channel is empty. (`#721 <https://github.com/Cog-Creators/Red-DiscordBot/issues/721>`_)
@@ -346,7 +350,7 @@ Downloader
 Bug Fixes
 ~~~~~~~~~
 
-- Made regex for repo names use raw strings to stop ``DeprecationWarning``s for invalid escape sequences. (`#2571 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2571>`_)
+- Made the regex for repo names use raw strings to stop causing a ``DeprecationWarning`` for invalid escape sequences. (`#2571 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2571>`_)
 - Downloader will no longer attempt to install cogs that are already installed. (`#2571 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2571>`_)
 - Repo names can now only contain the characters listed in the help text (A-Z, 0-9, underscores, and hyphens). (`#2827 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2827>`_)
 - ``[p]findcog`` no longer attempts to find a cog for commands without a cog. (`#2902 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2902>`_)
@@ -373,8 +377,8 @@ Enhancements
 - ``[p]findcog`` will now show the repo's branch. (`#3225 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3225>`_)
 
 
-New Feature
-~~~~~~~~~~~
+New Features
+~~~~~~~~~~~~
 
 - Added ``[p]repo update [repos]`` which updates repos without updating the cogs from them. (`#2527 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2527>`_)
 - Added ``[p]cog installversion <repo_name> <revision> <cogs>`` which installs cogs from a specified revision (commit, tag) of the given repo. When using this command, the cog will automatically be pinned. (`#2527 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2527>`_)
@@ -410,6 +414,7 @@ Bug Fixes
 
 - ``[p]userinfo`` no longer breaks when a user has an absurd numbers of roles. (`#2910 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2910>`_)
 - Fixed Mod cog not recording username changes for ``[p]names`` and ``[p]userinfo`` commands. (`#2918 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2918>`_)
+- Fixed ``[p]modset deletedelay`` deleting non-command messages. (`#2924 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2924>`_)
 - Fixed an error when reloading Mod. (`#2932 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2932>`_)
 
 
