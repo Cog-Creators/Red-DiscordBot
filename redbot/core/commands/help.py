@@ -223,7 +223,7 @@ class RedHelpFormatter:
                     shorten_line(f"**{name}** {command.short_doc}")
                     for name, command in sorted(subcommands.items())
                 )
-                for i, page in enumerate(pagify(subtext, page_length=1000, shorten_by=0)):
+                for i, page in enumerate(pagify(subtext, page_length=500, shorten_by=0)):
                     if i == 0:
                         title = "**__Subcommands:__**"
                     else:
@@ -277,16 +277,18 @@ class RedHelpFormatter:
         ret = []
         current_count = 0
 
-        for f in fields:
+        for i, f in enumerate(fields):
             f_len = len(f.value) + len(f.name)
-            if curr_group and (f_len + current_count > max_chars):
+
+            # Commands start at the 1st index of fields, i < 2 is a hacky workaround for now
+            if not current_count or f_len + current_count < max_chars or i < 2:
+                current_count += f_len
+                curr_group.append(f)
+            elif curr_group:
                 ret.append(curr_group)
-                curr_group = []
-                current_count = 0
-            curr_group.append(f)
-            current_count += f_len
+                current_count = f_len
+                curr_group = [f]
         else:
-            # Loop cleanup here
             if curr_group:
                 ret.append(curr_group)
 
@@ -297,7 +299,7 @@ class RedHelpFormatter:
         pages = []
 
         page_char_limit = await ctx.bot._config.help.page_char_limit()
-        page_char_limit = min(page_char_limit, 5990)  # Just in case someone was manually...
+        page_char_limit = min(page_char_limit, 5500)  # Just in case someone was manually...
 
         author_info = {"name": f"{ctx.me.display_name} Help Menu", "icon_url": ctx.me.avatar_url}
 
@@ -316,13 +318,13 @@ class RedHelpFormatter:
         # We could consider changing this to always just subtract the offset,
         # But based on when this is being handled (very end of 3.2 release)
         # I'd rather not stick a major visual behavior change in at the last moment.
-        if page_char_limit + offset > 5990:
+        if page_char_limit + offset > 5500:
             # This is still neccessary with the max interaction above
             # While we could subtract 100% of the time the offset from page_char_limit
             # the intent here is to shorten again
             # *only* when neccessary, by the exact neccessary amount
             # To retain a visual match with prior behavior.
-            page_char_limit = 5990 - offset
+            page_char_limit = 5500 - offset
         elif page_char_limit < 250:
             # Prevents an edge case where a combination of long cog help and low limit
             # Could prevent anything from ever showing up.
@@ -391,7 +393,7 @@ class RedHelpFormatter:
                     shorten_line(f"**{name}** {command.short_doc}")
                     for name, command in sorted(coms.items())
                 )
-                for i, page in enumerate(pagify(command_text, page_length=1000, shorten_by=0)):
+                for i, page in enumerate(pagify(command_text, page_length=500, shorten_by=0)):
                     if i == 0:
                         title = "**__Commands:__**"
                     else:

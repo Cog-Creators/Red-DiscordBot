@@ -1,1 +1,0 @@
-Adds autostart documentation for Red users who installed it inside a virtual environment.

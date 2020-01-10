@@ -1,1 +1,0 @@
-Show actual bot's prefix in help message of ``[p]removepath`` command.

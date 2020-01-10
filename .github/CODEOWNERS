@@ -56,7 +56,7 @@ tests/cogs/downloader/*             @jack1142
 # Setup, instance setup, and running the bot
 setup.py                            @tekulvw
 redbot/__init__.py                  @tekulvw
-redbot/__main__.py                  @tekulvw
+redbot/__main__.py                  @tekulvw @mikeshardmind
 redbot/setup.py                     @tekulvw
 
 # Others

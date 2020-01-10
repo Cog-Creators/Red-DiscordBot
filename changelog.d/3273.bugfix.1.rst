@@ -1,1 +1,0 @@
-:attr:`redbot.core.bot.Bot.owner_id` is now set in our post connection startup.

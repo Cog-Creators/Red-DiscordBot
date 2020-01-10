@@ -33,7 +33,7 @@ jobs:
       python: 3.8.1
       env:
         - DEPLOYING=true
-        - TOXENV=py36
+        - TOXENV=py38
       deploy:
         - provider: pypi
           distributions: sdist bdist_wheel
@@ -45,11 +45,11 @@ jobs:
             repo: Cog-Creators/Red-DiscordBot
             tags: true
     - stage: Crowdin Deployment
-      if: tag IS present
+      if: tag IS present OR ENV(BUILD_CROWDIN)
       python: 3.8.1
       env:
         - DEPLOYING=true
-        - TOXENV=py36
+        - TOXENV=py38
       before_deploy:
       - curl https://artifacts.crowdin.com/repo/GPG-KEY-crowdin | sudo apt-key add -
       - echo "deb https://artifacts.crowdin.com/repo/deb/ /" | sudo tee -a /etc/apt/sources.list

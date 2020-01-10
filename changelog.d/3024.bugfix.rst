@@ -1,1 +1,0 @@
-cog install will no longer error if a cog creator has an empty install message

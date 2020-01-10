@@ -1,1 +1,0 @@
-qualified command names are limited to a maximum of 60 characters

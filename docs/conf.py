@@ -207,6 +207,7 @@ texinfo_documents = [
 # A list of regular expressions that match URIs that should not be
 # checked when doing a linkcheck build.
 linkcheck_ignore = [r"https://java.com*", r"https://chocolatey.org*"]
+linkcheck_retries = 3
 
 
 # -- Options for extensions -----------------------------------------------

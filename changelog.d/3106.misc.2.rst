@@ -1,1 +1,0 @@
-Print deprecation loading when some package tries importing from `cog_shared.*`.

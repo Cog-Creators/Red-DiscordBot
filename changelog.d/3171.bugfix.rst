@@ -1,1 +1,0 @@
-Handle invalid folder names for data path gracefully in ``redbot-setup`` and ``redbot --edit``.

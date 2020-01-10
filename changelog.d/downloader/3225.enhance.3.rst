@@ -1,1 +1,0 @@
-``[p]findcog`` will now show repo's branch.

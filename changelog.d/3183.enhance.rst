@@ -1,1 +1,0 @@
-Add ``redbot --debuginfo`` flag that shows useful information for debugging.
