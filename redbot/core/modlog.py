@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from datetime import datetime, timedelta
 from typing import List, Union, Optional, cast, TYPE_CHECKING
 
@@ -20,6 +21,8 @@ from .generic_casetypes import all_generics
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
+
+log = logging.getLogger("red.core.modlog")
 
 __all__ = [
     "Case",
@@ -497,12 +500,15 @@ class CaseType:
         image: str,
         case_str: str,
         guild: Optional[discord.Guild] = None,
+        **kwargs,
     ):
         self.name = name
         self.default_setting = default_setting
         self.image = image
         self.case_str = case_str
         self.guild = guild
+        if kwargs:
+            log.warning("Got unexpected keys in case %s", ",".join(kwargs.keys()))
 
     async def to_json(self):
         """Transforms the case type into a dict and saves it"""
