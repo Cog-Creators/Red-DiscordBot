@@ -1,5 +1,19 @@
 .. 3.2.x Changelogs
 
+Redbot 3.2.2 (2020-01-10)
+=========================
+
+Hotfixes
+--------
+
+- Fix Help Pagination issue
+
+Docs
+----
+
+- Correct venv docs
+
+
 Redbot 3.2.1 (2020-01-10)
 =========================
 
