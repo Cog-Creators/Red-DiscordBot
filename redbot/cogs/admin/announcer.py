@@ -75,6 +75,7 @@ class Announcer:
             if len(failed) == 1
             else _("I could not announce to the following servers: ")
         )
-        msg += humanize_list(tuple(map(inline, failed)))
+        if failed:
+            msg += humanize_list(tuple(map(inline, failed)))
         await self.ctx.bot.send_to_owners(msg)
         self.active = False
