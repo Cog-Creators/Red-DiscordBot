@@ -1,1 +1,0 @@
-Shared libraries are marked for removal in Red 3.3.

@@ -2,8 +2,11 @@ import asyncio
 import contextlib
 import functools
 import re
+import tarfile
 import time
+import zipfile
 from enum import Enum, unique
+from io import BytesIO
 from typing import MutableMapping, Optional, TYPE_CHECKING
 from urllib.parse import urlparse
 

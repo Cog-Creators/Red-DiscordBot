@@ -1,1 +1,0 @@
-Fix `UnboundLocalError` in cog update that happened when cogs were already up-to-date.

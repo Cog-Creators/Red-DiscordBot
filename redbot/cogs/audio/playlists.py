@@ -1,3 +1,4 @@
+import asyncio
 from collections import namedtuple
 from typing import List, MutableMapping, Optional, Union, TYPE_CHECKING
 
@@ -478,12 +479,16 @@ async def get_all_playlist(
         playlists = await database.fetch_all(scope_standard, scope_id, author_id=user_id)
     else:
         playlists = await database.fetch_all(scope_standard, scope_id)
-    return [
-        await Playlist.from_json(
-            bot, scope, playlist.playlist_id, playlist, guild=guild, author=author
+
+    playlist_list = []
+    for playlist in playlists:
+        playlist_list.append(
+            await Playlist.from_json(
+                bot, scope, playlist.playlist_id, playlist, guild=guild, author=author
+            )
         )
-        for playlist in playlists
-    ]
+        await asyncio.sleep(0)
+    return playlist_list
 
 
 async def get_all_playlist_converter(
@@ -524,12 +529,15 @@ async def get_all_playlist_converter(
     playlists = await database.fetch_all_converter(
         scope_standard, playlist_name=arg, playlist_id=arg
     )
-    return [
-        await Playlist.from_json(
-            bot, scope, playlist.playlist_id, playlist, guild=guild, author=author
+    playlist_list = []
+    for playlist in playlists:
+        playlist_list.append(
+            await Playlist.from_json(
+                bot, scope, playlist.playlist_id, playlist, guild=guild, author=author
+            )
         )
-        for playlist in playlists
-    ]
+        await asyncio.sleep(0)
+    return playlist_list
 
 
 async def create_playlist(

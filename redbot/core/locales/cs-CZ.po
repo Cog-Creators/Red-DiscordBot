@@ -1,28 +1,27 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-05 22:33+0200\n"
-"PO-Revision-Date: 2019-07-14 02:15\n"
-"Last-Translator: Robert Jansen (Kowlin)\n"
+"POT-Creation-Date: 2019-11-19 00:33+0000\n"
+"PO-Revision-Date: 2020-01-07 21:48\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.0\n"
+"Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: cs\n"
-"X-Crowdin-File: /core/locales/messages.pot\n"
+"X-Crowdin-File: /locales/messages.pot\n"
 "Language: cs_CZ\n"
 
 #: redbot/core/bank.py:717
 msgid "Can't pay for this command in DM without a global bank."
-msgstr ""
+msgstr "Nelze zaplatit za tento příkaz v DM bez globální banky."
 
 #: redbot/core/bank.py:724
 msgid "You need at least {cost} {currency} to use this command."
-msgstr ""
+msgstr "Potřebujete alespoň {cost} {currency} k použití tohoto příkazu."
 
 #: redbot/core/cog_manager.py:312
 #, docstring
@@ -32,16 +31,16 @@ msgstr "Příkazy pro rozhraní s Red cog manažerem."
 #: redbot/core/cog_manager.py:317
 #, docstring
 msgid "\\n        Lists current cog paths in order of priority.\\n        "
-msgstr ""
+msgstr "\\n        Vypíše aktuální cesty cogů v pořadí podle priority.\\n        "
 
 #: redbot/core/cog_manager.py:325
 msgid "Install Path: {install_path}\\nCore Path: {core_path}\\n\\n"
-msgstr ""
+msgstr "Instalační cesta: {install_path}\\n Umístění jádra bota: {core_path}\\n\\n"
 
 #: redbot/core/cog_manager.py:339
 #, docstring
 msgid "\\n        Add a path to the list of available cog paths.\\n        "
-msgstr ""
+msgstr "\\n        Přidat cestu k seznamu dostupných cest cogů\\n        "
 
 #: redbot/core/cog_manager.py:343
 msgid "That path does not exist or does not point to a valid directory."
@@ -54,7 +53,7 @@ msgstr "Cesta úspěšně přidána."
 #: redbot/core/cog_manager.py:356
 #, docstring
 msgid "\\n        Removes a path from the available cog paths given the path_number\\n            from !paths\\n        "
-msgstr ""
+msgstr "\\n        Odstraní cestu z dostupný cest cogů zadaných dle path_number\\n            z !paths\\n        "
 
 #: redbot/core/cog_manager.py:362 redbot/core/cog_manager.py:385
 msgid "Path numbers must be positive."
@@ -83,7 +82,7 @@ msgstr ""
 
 #: redbot/core/cog_manager.py:402
 msgid "Paths reordered."
-msgstr ""
+msgstr "Cesty byly uspořádány."
 
 #: redbot/core/cog_manager.py:407
 #, docstring
@@ -105,24 +104,24 @@ msgstr ""
 
 #: redbot/core/cog_manager.py:444
 msgid "**{} loaded:**\\n"
-msgstr ""
+msgstr "**{} načteno:**\\n"
 
 #: redbot/core/cog_manager.py:445
 msgid "**{} unloaded:**\\n"
-msgstr ""
+msgstr "**{} odnačteno:**\\n"
 
 #: redbot/core/cog_manager.py:455
 msgid "**{} loaded:**\\n"
-msgstr ""
+msgstr "**{} načteno:**\\n"
 
 #: redbot/core/cog_manager.py:457
 msgid "**{} unloaded:**\\n"
-msgstr ""
+msgstr "**{} odnačteno:**\\n"
 
 #: redbot/core/core_commands.py:264
 #, docstring
 msgid "Commands related to core functions"
-msgstr ""
+msgstr "Příkazy související s funkcemi jádra"
 
 #: redbot/core/core_commands.py:268
 #, docstring
@@ -140,44 +139,44 @@ msgstr ""
 
 #: redbot/core/core_commands.py:303
 msgid "Instance owned by"
-msgstr ""
+msgstr "Instanci Red bota vlastní"
 
 #: redbot/core/core_commands.py:306
 msgid "Red version"
-msgstr ""
+msgstr "Verze Red"
 
 #: redbot/core/core_commands.py:309
 msgid "Outdated"
-msgstr ""
+msgstr "Zastaralé"
 
 #: redbot/core/core_commands.py:309
 msgid "Yes, {} is available"
-msgstr ""
+msgstr "Ano, {} je k dispozici"
 
 #: redbot/core/core_commands.py:312
 msgid "About this instance"
-msgstr ""
+msgstr "O této instanci bota"
 
 #: redbot/core/core_commands.py:313
 msgid "About Red"
-msgstr ""
+msgstr "O Red"
 
 #: redbot/core/core_commands.py:316
 msgid "Bringing joy since 02 Jan 2016 (over {} days ago!)"
-msgstr ""
+msgstr "Přináší radost od 02 Ledna 2016 (již {} dní!)"
 
 #: redbot/core/core_commands.py:321
 msgid "I need the `Embed links` permission to send this"
-msgstr ""
+msgstr "Potřebuji oprávnění `Embed links` k tomu toto poslat"
 
 #: redbot/core/core_commands.py:325
 #, docstring
 msgid "Shows Red's uptime"
-msgstr ""
+msgstr "Zobrazí délku běhu bota"
 
 #: redbot/core/core_commands.py:329
 msgid "Been up for: **{}** (since {} UTC)"
-msgstr ""
+msgstr "Běžím již **{}** (od {} UTC)"
 
 #: redbot/core/core_commands.py:336
 #, docstring
@@ -190,15 +189,15 @@ msgstr ""
 
 #: redbot/core/core_commands.py:347
 msgid "Global default: {}\\n"
-msgstr ""
+msgstr "Globální výchozí: {}\\n"
 
 #: redbot/core/core_commands.py:350
 msgid "Guild setting: {}\\n"
-msgstr ""
+msgstr "Nastavení cechu: {}\\n"
 
 #: redbot/core/core_commands.py:352
 msgid "User setting: {}"
-msgstr ""
+msgstr "Uživatelské nastavení"
 
 #: redbot/core/core_commands.py:358
 #, docstring
@@ -213,13 +212,13 @@ msgstr ""
 #: redbot/core/core_commands.py:414 redbot/core/core_commands.py:874
 #: redbot/core/core_commands.py:890
 msgid "disabled"
-msgstr ""
+msgstr "zakázáno"
 
 #: redbot/core/core_commands.py:368 redbot/core/core_commands.py:392
 #: redbot/core/core_commands.py:414 redbot/core/core_commands.py:874
 #: redbot/core/core_commands.py:890
 msgid "enabled"
-msgstr ""
+msgstr "povoleno"
 
 #: redbot/core/core_commands.py:375
 #, docstring
@@ -241,7 +240,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:414
 msgid "Embeds are now {} for you."
-msgstr ""
+msgstr "Embedded zprávy jsou teď {} pro tebe."
 
 #: redbot/core/core_commands.py:420
 #, docstring
@@ -250,22 +249,22 @@ msgstr ""
 
 #: redbot/core/core_commands.py:432
 msgid "No exception has occurred yet"
-msgstr ""
+msgstr "Dosud nedošlo k žádné výjimce"
 
 #: redbot/core/core_commands.py:437
 #, docstring
 msgid "Show's Red's invite url"
-msgstr ""
+msgstr "Zobrazí pozvánku bota"
 
 #: redbot/core/core_commands.py:443
 #, docstring
 msgid "Setup the bot's invite"
-msgstr ""
+msgstr "Nastav botovu pozvánku"
 
 #: redbot/core/core_commands.py:448
 #, docstring
 msgid "\\n        Define if the command should be accessible        for the average users.\\n        "
-msgstr ""
+msgstr "\\n        Definujte, zda by měl být příkaz přístupný průměrným uživatelům\\n        "
 
 #: redbot/core/core_commands.py:478
 #, docstring
@@ -279,24 +278,24 @@ msgstr "Opustí server"
 
 #: redbot/core/core_commands.py:499
 msgid "Are you sure you want me to leave this server? (y/n)"
-msgstr ""
+msgstr "Opravdu chceš opustit tento server? (y/n)"
 
 #: redbot/core/core_commands.py:505 redbot/core/core_commands.py:558
 #: redbot/core/core_commands.py:1464
 msgid "Response timed out."
-msgstr ""
+msgstr "Vypršel časový limit odpovědi."
 
 #: redbot/core/core_commands.py:509
 msgid "Alright. Bye :wave:"
-msgstr ""
+msgstr "Dobře. Sbohem :wave:"
 
 #: redbot/core/core_commands.py:510
 msgid "Leaving guild '{}'"
-msgstr ""
+msgstr "Opouštím klan '{}'"
 
 #: redbot/core/core_commands.py:513
 msgid "Alright, I'll stay then :)"
-msgstr ""
+msgstr "Dobře, zůstanu tedy :)"
 
 #: redbot/core/core_commands.py:518
 #, docstring
@@ -305,7 +304,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:529
 msgid "To leave a server, just type its number."
-msgstr ""
+msgstr "Chcete-li opustit server, stačí zadat jeho číslo."
 
 #: redbot/core/core_commands.py:544
 msgid "I cannot leave a guild I am the owner of."
@@ -323,7 +322,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:556
 msgid "Alright then."
-msgstr ""
+msgstr "Dobře tedy."
 
 #: redbot/core/core_commands.py:563
 #, docstring
@@ -332,7 +331,7 @@ msgstr "Načte balíčky"
 
 #: redbot/core/core_commands.py:574
 msgid "Loaded {packs}."
-msgstr ""
+msgstr "Načteno {packs}."
 
 #: redbot/core/core_commands.py:579
 msgid "The following package is already loaded: {pack}"
@@ -394,7 +393,7 @@ msgstr "Znovu načte balíčky"
 
 #: redbot/core/core_commands.py:683
 msgid "Reloaded {packs}."
-msgstr ""
+msgstr "Znovu načteno {packs}."
 
 #: redbot/core/core_commands.py:688
 msgid "Failed to reload the following package: {pack}.\\nCheck your console or logs for details."
@@ -433,24 +432,24 @@ msgstr "Restartování..."
 #: redbot/core/core_commands.py:753
 #, docstring
 msgid "Changes Red's settings"
-msgstr ""
+msgstr "Změní nastavení Teď bota"
 
 #: redbot/core/core_commands.py:766
 msgid "Admin roles: {admin}\\nMod roles: {mod}\\n"
-msgstr ""
+msgstr "Admin role: {admin}\\nModerátorské role: {mod}\\n"
 
 #: redbot/core/core_commands.py:777
 msgid "{bot_name} Settings:\\n\\nPrefixes: {prefixes}\\n{guild_settings}Locale: {locale}"
-msgstr ""
+msgstr "Nastavení {bot_name}:\\n\\nPrefixy: {prefixes}\\n{guild_settings}Jazyk: {locale}"
 
 #: redbot/core/core_commands.py:795
 #, docstring
 msgid "\\n        Adds an admin role for this guild.\\n        "
-msgstr ""
+msgstr "\\n        Přidá admin roli pro tento cech\\n        "
 
 #: redbot/core/core_commands.py:800
 msgid "This role is already an admin role."
-msgstr ""
+msgstr "Tato role je již administrátorskou rolí."
 
 #: redbot/core/core_commands.py:802
 msgid "That role is now considered an admin role."
@@ -463,16 +462,16 @@ msgstr ""
 
 #: redbot/core/core_commands.py:813
 msgid "This role is already a mod role."
-msgstr ""
+msgstr "Tato role je již moderátorská role."
 
 #: redbot/core/core_commands.py:815
 msgid "That role is now considered a mod role."
-msgstr ""
+msgstr "Tato role je nyní považována za moderátorskou roli."
 
 #: redbot/core/core_commands.py:821
 #, docstring
 msgid "\\n        Removes an admin role for this guild.\\n        "
-msgstr ""
+msgstr "\\n        Přidá admin roli pro tento cech\\n        "
 
 #: redbot/core/core_commands.py:826
 msgid "That role was not an admin role to begin with."
@@ -480,7 +479,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:828
 msgid "That role is no longer considered an admin role."
-msgstr ""
+msgstr "Tato role již není považována za administrátorskou roli."
 
 #: redbot/core/core_commands.py:834
 #, docstring
@@ -493,7 +492,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:841
 msgid "That role is no longer considered a mod role."
-msgstr ""
+msgstr "Tato role již není považována za administrátorskou roli."
 
 #: redbot/core/core_commands.py:847
 #, docstring
@@ -506,11 +505,11 @@ msgstr ""
 
 #: redbot/core/core_commands.py:857
 msgid "will not"
-msgstr ""
+msgstr "nebude"
 
 #: redbot/core/core_commands.py:857
 msgid "will"
-msgstr ""
+msgstr "bude"
 
 #: redbot/core/core_commands.py:865
 #, docstring
@@ -537,16 +536,16 @@ msgstr ""
 
 #: redbot/core/core_commands.py:907
 msgid "The color has been reset."
-msgstr ""
+msgstr "Barva byla resetována."
 
 #: redbot/core/core_commands.py:910
 msgid "The color has been set."
-msgstr ""
+msgstr "Barva byla nastavena."
 
 #: redbot/core/core_commands.py:915
 #, docstring
 msgid "Sets Red's avatar"
-msgstr ""
+msgstr "Nastaví avatar Red bota"
 
 #: redbot/core/core_commands.py:924
 msgid "Failed. Remember that you can edit my avatar up to two times a hour. The URL must be a direct link to a JPG / PNG."
@@ -554,43 +553,43 @@ msgstr ""
 
 #: redbot/core/core_commands.py:931
 msgid "JPG / PNG format only."
-msgstr ""
+msgstr "Pouze formát JPG / PNG."
 
 #: redbot/core/core_commands.py:939
 #, docstring
 msgid "Sets Red's playing status"
-msgstr ""
+msgstr "Nastaví Redův stav hraní"
 
 #: redbot/core/core_commands.py:947
 msgid "Game set."
-msgstr ""
+msgstr "Hra nastavena."
 
 #: redbot/core/core_commands.py:953
 #, docstring
 msgid "Sets Red's listening status"
-msgstr ""
+msgstr "Nastaví stav poslechu Red bota"
 
 #: redbot/core/core_commands.py:961
 msgid "Listening set."
-msgstr ""
+msgstr "Poslech nastaven."
 
 #: redbot/core/core_commands.py:967
 #, docstring
 msgid "Sets Red's watching status"
-msgstr ""
+msgstr "Nastaví stav sledování Red bota"
 
 #: redbot/core/core_commands.py:975
 msgid "Watching set."
-msgstr ""
+msgstr "Sledování nastaveno."
 
 #: redbot/core/core_commands.py:981
 #, docstring
 msgid "Sets Red's status\\n\\n        Available statuses:\\n            online\\n            idle\\n            dnd\\n            invisible\\n        "
-msgstr ""
+msgstr "Nastaví Redův status\\n\\n        Dostupné stavy:\\n\\n            nečinný\\n            dnd\\n            neviditelný\\n        "
 
 #: redbot/core/core_commands.py:1004
 msgid "Status changed to {}."
-msgstr ""
+msgstr "Stav změněn na {}."
 
 #: redbot/core/core_commands.py:1010
 #, docstring
@@ -600,7 +599,7 @@ msgstr ""
 #: redbot/core/core_commands.py:1031
 #, docstring
 msgid "Sets Red's username"
-msgstr ""
+msgstr "Nastaví Redovu přezdívku"
 
 #: redbot/core/core_commands.py:1036
 msgid "Failed to change name. Remember that you can only do it up to 2 times an hour. Use nicknames if you need frequent changes. `{}set nickname`"
@@ -609,11 +608,11 @@ msgstr ""
 #: redbot/core/core_commands.py:1050
 #, docstring
 msgid "Sets Red's nickname"
-msgstr ""
+msgstr "Nastaví přezdívku bota"
 
 #: redbot/core/core_commands.py:1054
 msgid "I lack the permissions to change my own nickname."
-msgstr ""
+msgstr "Nemám oprávnění ke změně své přezdívky."
 
 #: redbot/core/core_commands.py:1061
 #, docstring
@@ -622,58 +621,58 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1066 redbot/core/core_commands.py:1079
 msgid "Prefix set."
-msgstr ""
+msgstr "Prefix příkazů nastaven."
 
 #: redbot/core/core_commands.py:1072
 #, docstring
 msgid "Sets Red's server prefix(es)"
-msgstr ""
+msgstr "Nastaví prefix příkazů"
 
 #: redbot/core/core_commands.py:1075
 msgid "Guild prefixes have been reset."
-msgstr ""
+msgstr "Příkazy serverů byly resetovány."
 
 #: redbot/core/core_commands.py:1084
 #, docstring
 msgid "Sets Red's main owner"
-msgstr ""
+msgstr "Nastaví hlavního vlastníka Reda"
 
 #: redbot/core/core_commands.py:1093
 msgid "{0} ({0.id}) requested to be set as owner."
-msgstr ""
+msgstr "{0} ({0.id}) žádá o nastavení jako vlastník."
 
 #: redbot/core/core_commands.py:1094
 msgid "\\nVerification token:"
-msgstr ""
+msgstr "\\nToken ověřování:"
 
 #: redbot/core/core_commands.py:1097
 msgid "⚠ **Only** the person who is hosting Red should be owner. **This has SERIOUS security implications. The owner can access any data that is present on the host system.** ⚠"
-msgstr ""
+msgstr "⚠ **Pouze** osoba která hostuje tuto instanci Red bota na serveru by měla být vlastník. **Toto je VELMI důležité kvůli bezpečnosti. Vlastník má úplný přístup ke všem datům umístěným na hostujícím serveru!** ⚠"
 
 #: redbot/core/core_commands.py:1103
 msgid "Remember:\\n"
-msgstr ""
+msgstr "Pamatujte:\\n"
 
 #: redbot/core/core_commands.py:1107
 msgid "I have printed a one-time token in the console. Copy and paste it here to confirm you are the owner."
-msgstr ""
+msgstr "Vypsal jsem jednorázový token do konzole. Zkopíruj a pošli ho sem pro ověření, že jsi majitel."
 
 #: redbot/core/core_commands.py:1120
 msgid "The `{prefix}set owner` request has timed out."
-msgstr ""
+msgstr "Vypršel časový limit příkazu `{prefix}set owner`."
 
 #: redbot/core/core_commands.py:1127
 msgid "You have been set as owner."
-msgstr ""
+msgstr "Byl jste nastaven jako vlastník."
 
 #: redbot/core/core_commands.py:1129
 msgid "Invalid token."
-msgstr ""
+msgstr "Neplatný token."
 
 #: redbot/core/core_commands.py:1134
 #, docstring
 msgid "Change bot token."
-msgstr ""
+msgstr "Změnit token bota."
 
 #: redbot/core/core_commands.py:1144
 msgid "Please use that command in DM. Since users probably saw your token, it is recommended to reset it right now. Go to the following link and select `Reveal Token` and `Generate a new token?`.\\n\\nhttps://discordapp.com/developers/applications/me/{}"
@@ -681,16 +680,16 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1154
 msgid "Token set. Restart me."
-msgstr ""
+msgstr "Token nastaven. Restartujte mě."
 
 #: redbot/core/core_commands.py:1159
 #, docstring
 msgid "\\n        Changes bot locale.\\n\\n        Use [p]listlocales to get a list of available locales.\\n\\n        To reset to English, use \\\"en-US\\\".\\n        "
-msgstr ""
+msgstr "\\n        Změní jazyk.\\n\\n        Pro získání seznamu dostupných jazyků použijte [p]listlocales.\\n\\n        Chcete-li obnovit angličtinu, použijte \\\"en-US\\\".\\n        "
 
 #: redbot/core/core_commands.py:1172
 msgid "Locale has been set."
-msgstr ""
+msgstr "Jazyk byl nastaven."
 
 #: redbot/core/core_commands.py:1175
 msgid "Invalid locale. Use `{prefix}listlocales` to get a list of available locales."
@@ -703,15 +702,15 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1193
 msgid "The custom text has been cleared."
-msgstr ""
+msgstr "Vlastní text byl vymazán."
 
 #: redbot/core/core_commands.py:1197
 msgid "The custom text has been set."
-msgstr ""
+msgstr "Vlastní text byl nastaven."
 
 #: redbot/core/core_commands.py:1200
 msgid "Characters must be fewer than 1024."
-msgstr ""
+msgstr "Znaky musí být kratší než 1024."
 
 #: redbot/core/core_commands.py:1205
 #, docstring
@@ -720,12 +719,12 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1218
 msgid "`{service}` API tokens have been set."
-msgstr ""
+msgstr "`{service} API tokeny byly nastaveny."
 
 #: redbot/core/core_commands.py:1223
 #, docstring
 msgid "Manage settings for the help command."
-msgstr ""
+msgstr "Správa nastavení příkazu nápovědy."
 
 #: redbot/core/core_commands.py:1228
 #, docstring
@@ -734,11 +733,11 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1239
 msgid "Help will use menus."
-msgstr ""
+msgstr "Pomoc bude používat menu."
 
 #: redbot/core/core_commands.py:1241
 msgid "Help will not use menus."
-msgstr ""
+msgstr "Help nebude používat stránkovaná menu."
 
 #: redbot/core/core_commands.py:1245
 #, docstring
@@ -786,7 +785,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1313
 msgid "You must give a positive value!"
-msgstr ""
+msgstr "Musíš napsat kladné číslo!"
 
 #: redbot/core/core_commands.py:1317
 msgid "Done. The character limit per page has been set to {}."
@@ -829,7 +828,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1377
 msgid "No languages found."
-msgstr ""
+msgstr "Nenalezeny žádné jazyky."
 
 #: redbot/core/core_commands.py:1386
 #, docstring
@@ -846,19 +845,19 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1456
 msgid "This backup is too large to send via DM."
-msgstr ""
+msgstr "Tato záloha je příliš velká pro odeslání přes PM."
 
 #: redbot/core/core_commands.py:1458
 msgid "Would you like to receive a copy via DM? (y/n)"
-msgstr ""
+msgstr "Chcete obdržet kopii přes PM? (/n)"
 
 #: redbot/core/core_commands.py:1467
 msgid "OK, it's on its way!"
-msgstr ""
+msgstr "Dobře, poslal jsem to!"
 
 #: redbot/core/core_commands.py:1471
 msgid "Here's a copy of the backup"
-msgstr ""
+msgstr "Tady je kopie zálohy"
 
 #: redbot/core/core_commands.py:1476
 msgid "I don't seem to be able to DM you. Do you have closed DMs?"
@@ -866,56 +865,56 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1479
 msgid "I could not send the backup file."
-msgstr ""
+msgstr "Soubor zálohy nelze odeslat."
 
 #: redbot/core/core_commands.py:1481
 msgid "OK then."
-msgstr ""
+msgstr "Dobře, tedy."
 
 #: redbot/core/core_commands.py:1483
 msgid "That directory doesn't seem to exist..."
-msgstr ""
+msgstr "Zdá se, že tento adresář neexistuje..."
 
 #: redbot/core/core_commands.py:1488
 #, docstring
 msgid "Sends a message to the owner"
-msgstr ""
+msgstr "Odešle zprávu vlastníkovi"
 
 #: redbot/core/core_commands.py:1491
 msgid "User ID: {}"
-msgstr ""
+msgstr "ID uživatele: {}"
 
 #: redbot/core/core_commands.py:1494
 msgid "through DM"
-msgstr ""
+msgstr "prostřednictvím DM"
 
 #: redbot/core/core_commands.py:1496
 msgid "from {}"
-msgstr ""
+msgstr "od {}"
 
 #: redbot/core/core_commands.py:1497
 msgid " | Server ID: {}"
-msgstr ""
+msgstr " | ID serveru: {}"
 
 #: redbot/core/core_commands.py:1506
 msgid "Use `{}dm {} <text>` to reply to this user"
-msgstr ""
+msgstr "Použijte `{}dm {} <text>` pro odpověď tomuto uživateli"
 
 #: redbot/core/core_commands.py:1508
 msgid "Sent by {} {}"
-msgstr ""
+msgstr "Odesláno od {} {}"
 
 #: redbot/core/core_commands.py:1513
 msgid "I've been configured not to send this anywhere."
-msgstr ""
+msgstr "Byl jsem nakonfigurován, abych ho nikam neodeslal."
 
 #: redbot/core/core_commands.py:1582
 msgid "Your message has been sent."
-msgstr ""
+msgstr "Vaše zpráva byla odeslána."
 
 #: redbot/core/core_commands.py:1584
 msgid "I'm unable to deliver your message. Sorry."
-msgstr ""
+msgstr "Nemohu doručit vaši zprávu. Omlouváme se."
 
 #: redbot/core/core_commands.py:1589
 #, docstring
@@ -928,28 +927,28 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1609
 msgid "Owner of {}"
-msgstr ""
+msgstr "Vlastník {}"
 
 #: redbot/core/core_commands.py:1610
 msgid "You can reply to this message with {}contact"
-msgstr ""
+msgstr "Na tuto zprávu můžete odpovědět {}contact"
 
 #: redbot/core/core_commands.py:1624 redbot/core/core_commands.py:1634
 msgid "Sorry, I couldn't deliver your message to {}"
-msgstr ""
+msgstr "Omlouvám se, ale nepodařilo se mi doručit vaši zprávu na {}"
 
 #: redbot/core/core_commands.py:1627 redbot/core/core_commands.py:1637
 msgid "Message delivered to {}"
-msgstr ""
+msgstr "Zpráva byla doručena uživateli {}"
 
 #: redbot/core/core_commands.py:1642
 #, docstring
 msgid "Prints the bot's data path."
-msgstr ""
+msgstr "Vypíše datovou cestu bota."
 
 #: redbot/core/core_commands.py:1646
 msgid "Data path: {path}"
-msgstr ""
+msgstr "Cesta k datům: {path}"
 
 #: redbot/core/core_commands.py:1652
 #, docstring
@@ -964,20 +963,20 @@ msgstr ""
 #: redbot/core/core_commands.py:1712
 #, docstring
 msgid "\\n        Adds a user to the whitelist.\\n        "
-msgstr ""
+msgstr "\\n        Přidá uživatele na bílou listinu\\n        "
 
 #: redbot/core/core_commands.py:1719 redbot/core/core_commands.py:1844
 msgid "User added to whitelist."
-msgstr ""
+msgstr "Uživatel byl přidán na bílou listinu."
 
 #: redbot/core/core_commands.py:1723
 #, docstring
 msgid "\\n        Lists whitelisted users.\\n        "
-msgstr ""
+msgstr "\\n        Seznam povolených uživatelů\\n        "
 
 #: redbot/core/core_commands.py:1728
 msgid "Whitelisted Users:"
-msgstr ""
+msgstr "Povolení uživatelé:"
 
 #: redbot/core/core_commands.py:1737
 #, docstring
@@ -986,20 +985,20 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1748 redbot/core/core_commands.py:1879
 msgid "User has been removed from whitelist."
-msgstr ""
+msgstr "Uživatel byl odebrán z bílé listiny."
 
 #: redbot/core/core_commands.py:1750 redbot/core/core_commands.py:1884
 msgid "User was not in the whitelist."
-msgstr ""
+msgstr "Uživatel nebyl na seznamu povolených hráčů."
 
 #: redbot/core/core_commands.py:1754
 #, docstring
 msgid "\\n        Clears the whitelist.\\n        "
-msgstr ""
+msgstr "\\n        Promaže bílou listinu.\\n        "
 
 #: redbot/core/core_commands.py:1758 redbot/core/core_commands.py:1894
 msgid "Whitelist has been cleared."
-msgstr ""
+msgstr "Bílá listina promazána."
 
 #: redbot/core/core_commands.py:1763
 #, docstring
@@ -1009,7 +1008,7 @@ msgstr ""
 #: redbot/core/core_commands.py:1770
 #, docstring
 msgid "\\n        Adds a user to the blacklist.\\n        "
-msgstr ""
+msgstr "\\n        Přidá uživatele na černou listinu\\n        "
 
 #: redbot/core/core_commands.py:1774 redbot/core/core_commands.py:1915
 msgid "You cannot blacklist an owner!"
@@ -1017,38 +1016,38 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1781 redbot/core/core_commands.py:1923
 msgid "User added to blacklist."
-msgstr ""
+msgstr "Uživatel přidán na černou listinu."
 
 #: redbot/core/core_commands.py:1785
 #, docstring
 msgid "\\n        Lists blacklisted users.\\n        "
-msgstr ""
+msgstr "\\n        Seznam uživatelů na černé listině\\n        "
 
 #: redbot/core/core_commands.py:1790
 msgid "Blacklisted Users:"
-msgstr ""
+msgstr "Uživatelé na černé listině:"
 
 #: redbot/core/core_commands.py:1799
 #, docstring
 msgid "\\n        Removes user from blacklist.\\n        "
-msgstr ""
+msgstr "\\n        Odstraní uživatele z černé listiny\\n        "
 
 #: redbot/core/core_commands.py:1810 redbot/core/core_commands.py:1958
 msgid "User has been removed from blacklist."
-msgstr ""
+msgstr "Uživatel byl odebrán z černé listiny."
 
 #: redbot/core/core_commands.py:1812 redbot/core/core_commands.py:1963
 msgid "User was not in the blacklist."
-msgstr ""
+msgstr "Uživatel nebyl na černé listině."
 
 #: redbot/core/core_commands.py:1816
 #, docstring
 msgid "\\n        Clears the blacklist.\\n        "
-msgstr ""
+msgstr "\\n        Vymaže černou listinu\\n        "
 
 #: redbot/core/core_commands.py:1820 redbot/core/core_commands.py:1973
 msgid "Blacklist has been cleared."
-msgstr ""
+msgstr "Černá listina byla vymazána."
 
 #: redbot/core/core_commands.py:1826
 #, docstring
@@ -1080,7 +1079,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1881
 msgid "Role has been removed from whitelist."
-msgstr ""
+msgstr "Role byla odebrán z bílé listiny."
 
 #: redbot/core/core_commands.py:1886
 msgid "Role was not in the whitelist."
@@ -1089,7 +1088,7 @@ msgstr ""
 #: redbot/core/core_commands.py:1890
 #, docstring
 msgid "\\n        Clears the whitelist.\\n        "
-msgstr ""
+msgstr "\\n        Promaže bílou listinu.\\n        "
 
 #: redbot/core/core_commands.py:1900
 #, docstring
@@ -1103,16 +1102,16 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1925
 msgid "Role added to blacklist."
-msgstr ""
+msgstr "Role byla přidána na černou listinu."
 
 #: redbot/core/core_commands.py:1929
 #, docstring
 msgid "\\n        Lists blacklisted users and roles.\\n        "
-msgstr ""
+msgstr "\\n        Seznam uživatelů a rolí na černé listině.\\n        "
 
 #: redbot/core/core_commands.py:1934
 msgid "Blacklisted Users and Roles:"
-msgstr ""
+msgstr "Uživatelé a role na černé listině:"
 
 #: redbot/core/core_commands.py:1945
 #, docstring
@@ -1121,36 +1120,36 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1960
 msgid "Role has been removed from blacklist."
-msgstr ""
+msgstr "Role byla odebrána z černé listiny."
 
 #: redbot/core/core_commands.py:1965
 msgid "Role was not in the blacklist."
-msgstr ""
+msgstr "Role nebyla v černé listině."
 
 #: redbot/core/core_commands.py:1969
 #, docstring
 msgid "\\n        Clears the blacklist.\\n        "
-msgstr ""
+msgstr "\\n        Vymaže černou listinu\\n        "
 
 #: redbot/core/core_commands.py:1978
 #, docstring
 msgid "Manage the bot's commands."
-msgstr ""
+msgstr "Správa příkazů bota."
 
 #: redbot/core/core_commands.py:1983
 #, docstring
 msgid "Disable a command.\\n\\n        If you're the bot owner, this will disable commands\\n        globally by default.\\n        "
-msgstr ""
+msgstr "Zakažte příkaz.\\n\\n        Pokud vlastníte bota, ve výchozím nastavení toto zakáže příkazy\\n        globálně\\n        "
 
 #: redbot/core/core_commands.py:1997
 #, docstring
 msgid "Disable a command globally."
-msgstr ""
+msgstr "Zakázat příkaz globálně."
 
 #: redbot/core/core_commands.py:2001 redbot/core/core_commands.py:2029
 #: redbot/core/core_commands.py:2073 redbot/core/core_commands.py:2095
 msgid "I couldn't find that command. Please note that it is case sensitive."
-msgstr ""
+msgstr "Nenašel jsem daný příkaz. Poznámka: Velká/malá písmena jsou důležitá."
 
 #: redbot/core/core_commands.py:2007 redbot/core/core_commands.py:2035
 msgid "The command to disable cannot be `command` or any of its subcommands."
@@ -1158,16 +1157,16 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2016
 msgid "That command is already disabled globally."
-msgstr ""
+msgstr "Tento příkaz je již globálně vypnutý."
 
 #: redbot/core/core_commands.py:2025
 #, docstring
 msgid "Disable a command in this server only."
-msgstr ""
+msgstr "Zakázat příkaz pouze na tomto serveru."
 
 #: redbot/core/core_commands.py:2040
 msgid "You are not allowed to disable that command."
-msgstr ""
+msgstr "Nemáš dovoleno tento příkaz zakázat."
 
 #: redbot/core/core_commands.py:2050
 msgid "That command is already disabled in this server."
@@ -1181,7 +1180,7 @@ msgstr ""
 #: redbot/core/core_commands.py:2069
 #, docstring
 msgid "Enable a command globally."
-msgstr ""
+msgstr "Povolte příkaz globálně."
 
 #: redbot/core/core_commands.py:2082
 msgid "That command is already enabled globally."
@@ -1234,7 +1233,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2173
 msgid "Already added."
-msgstr ""
+msgstr "Již přidáno."
 
 #: redbot/core/core_commands.py:2181
 #, docstring
@@ -1243,7 +1242,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2186
 msgid "Not in list."
-msgstr ""
+msgstr "Není v seznamu."
 
 #: redbot/core/core_commands.py:2194
 #, docstring
@@ -1252,11 +1251,11 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2199
 msgid "They are immune"
-msgstr ""
+msgstr "Jsou imunní"
 
 #: redbot/core/core_commands.py:2201
 msgid "They are not Immune"
-msgstr ""
+msgstr "Nejsou imunní"
 
 #: redbot/core/core_commands.py:2206
 #, docstring
@@ -1294,7 +1293,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2293
 msgid "Unknown channel with id: {id}"
-msgstr ""
+msgstr "Neznámý kanál s id: {id}"
 
 #: redbot/core/dev_commands.py:81
 #, docstring
@@ -1321,11 +1320,11 @@ msgstr ""
 
 #: redbot/core/dev_commands.py:236
 msgid "Exiting."
-msgstr ""
+msgstr "Ukončování."
 
 #: redbot/core/dev_commands.py:287
 msgid "Unexpected error: `{}`"
-msgstr ""
+msgstr "Neočekávaná chyba: '{0}'"
 
 #: redbot/core/dev_commands.py:292
 #, docstring
@@ -1339,73 +1338,73 @@ msgstr ""
 
 #: redbot/core/errors.py:49
 msgid "{user}'s balance cannot rise above {max:,} {currency}."
-msgstr ""
+msgstr "Zůstatek uživatele {user} nemůže překročit {max:,} {currency}."
 
-#: redbot/core/modlog.py:165
+#: redbot/core/modlog.py:152
 msgid "Case #{} | {} {}"
-msgstr ""
+msgstr "Případ #{} | {} {}"
 
-#: redbot/core/modlog.py:169
+#: redbot/core/modlog.py:156
 msgid "**Reason:** {}"
-msgstr ""
+msgstr "**Důvod:** {}"
 
-#: redbot/core/modlog.py:171
+#: redbot/core/modlog.py:158
 msgid "**Reason:** Use the `reason` command to add it"
-msgstr ""
+msgstr "**Důvod:** Použijte příkaz `reason` pro přidání"
 
-#: redbot/core/modlog.py:176
+#: redbot/core/modlog.py:163
 msgid "Unknown"
-msgstr ""
+msgstr "Neznámý"
 
-#: redbot/core/modlog.py:216
+#: redbot/core/modlog.py:203
 msgid "Moderator"
-msgstr ""
+msgstr "Moderátor"
 
-#: redbot/core/modlog.py:218
+#: redbot/core/modlog.py:205
 msgid "Until"
-msgstr ""
+msgstr "Až do"
+
+#: redbot/core/modlog.py:206
+msgid "Duration"
+msgstr "Doba trvání"
+
+#: redbot/core/modlog.py:210 redbot/core/modlog.py:215
+msgid "Channel"
+msgstr "Kanál"
+
+#: redbot/core/modlog.py:211
+msgid "{channel} (deleted)"
+msgstr "{channel} (odstraněn)"
+
+#: redbot/core/modlog.py:217
+msgid "Amended by"
+msgstr "Zmínil(a)"
 
 #: redbot/core/modlog.py:219
-msgid "Duration"
-msgstr ""
+msgid "Last modified at"
+msgstr "Naposledy upraveno"
 
-#: redbot/core/modlog.py:223 redbot/core/modlog.py:228
-msgid "Channel"
-msgstr ""
+#: redbot/core/modlog.py:226
+msgid "**User:** {}\\n"
+msgstr "**Uživatel:** {}\\n"
 
-#: redbot/core/modlog.py:224
-msgid "{channel} (deleted)"
-msgstr ""
+#: redbot/core/modlog.py:227
+msgid "**Moderator:** {}\\n"
+msgstr "**Moderátor:** {}\\n"
 
 #: redbot/core/modlog.py:230
-msgid "Amended by"
-msgstr ""
-
-#: redbot/core/modlog.py:232
-msgid "Last modified at"
-msgstr ""
-
-#: redbot/core/modlog.py:239
-msgid "**User:** {}\\n"
-msgstr ""
-
-#: redbot/core/modlog.py:240
-msgid "**Moderator:** {}\\n"
-msgstr ""
-
-#: redbot/core/modlog.py:243
 msgid "**Until:** {}\\n**Duration:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:245
+#: redbot/core/modlog.py:232
 msgid "**Channel**: {}\\n"
-msgstr ""
+msgstr "**Kanál**: {}\\n"
 
-#: redbot/core/modlog.py:247
+#: redbot/core/modlog.py:234
 msgid "**Amended by:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:249
+#: redbot/core/modlog.py:236
 msgid "**Last modified at:** {}\\n"
-msgstr ""
+msgstr "**Naposledy upraveno v:** {}\\n"
 

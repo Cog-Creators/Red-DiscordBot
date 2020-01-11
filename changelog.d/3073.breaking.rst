@@ -1,1 +1,0 @@
-``bot.wait_until_ready`` should no longer be used during extension setup

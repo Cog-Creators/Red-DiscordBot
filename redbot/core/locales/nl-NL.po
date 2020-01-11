@@ -1,19 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-05 22:33+0200\n"
-"PO-Revision-Date: 2019-07-06 16:13\n"
-"Last-Translator: Robert Jansen (Kowlin)\n"
+"POT-Creation-Date: 2019-11-19 00:33+0000\n"
+"PO-Revision-Date: 2020-01-07 21:48\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.0\n"
+"Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: nl\n"
-"X-Crowdin-File: /core/locales/messages.pot\n"
+"X-Crowdin-File: /locales/messages.pot\n"
 "Language: nl_NL\n"
 
 #: redbot/core/bank.py:717
@@ -22,7 +21,7 @@ msgstr ""
 
 #: redbot/core/bank.py:724
 msgid "You need at least {cost} {currency} to use this command."
-msgstr ""
+msgstr "Je moet minstens {cost} {currency} hebben om dit commando te gebruiken."
 
 #: redbot/core/cog_manager.py:312
 #, docstring
@@ -148,19 +147,19 @@ msgstr ""
 
 #: redbot/core/core_commands.py:309
 msgid "Outdated"
-msgstr ""
+msgstr "Verouderd"
 
 #: redbot/core/core_commands.py:309
 msgid "Yes, {} is available"
-msgstr ""
+msgstr "Ja, {} is beschikbaar"
 
 #: redbot/core/core_commands.py:312
 msgid "About this instance"
-msgstr ""
+msgstr "Over deze instantie"
 
 #: redbot/core/core_commands.py:313
 msgid "About Red"
-msgstr ""
+msgstr "Over Red"
 
 #: redbot/core/core_commands.py:316
 msgid "Bringing joy since 02 Jan 2016 (over {} days ago!)"
@@ -260,7 +259,7 @@ msgstr "Laat de uitnodigingsurl zien"
 #: redbot/core/core_commands.py:443
 #, docstring
 msgid "Setup the bot's invite"
-msgstr ""
+msgstr "Stel de uitnodiging van de bot in"
 
 #: redbot/core/core_commands.py:448
 #, docstring
@@ -284,11 +283,11 @@ msgstr ""
 #: redbot/core/core_commands.py:505 redbot/core/core_commands.py:558
 #: redbot/core/core_commands.py:1464
 msgid "Response timed out."
-msgstr ""
+msgstr "Reactie time-out."
 
 #: redbot/core/core_commands.py:509
 msgid "Alright. Bye :wave:"
-msgstr ""
+msgstr "Oké. Doei :wave:"
 
 #: redbot/core/core_commands.py:510
 msgid "Leaving guild '{}'"
@@ -296,7 +295,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:513
 msgid "Alright, I'll stay then :)"
-msgstr ""
+msgstr "Oké, ik blijf wel :)"
 
 #: redbot/core/core_commands.py:518
 #, docstring
@@ -305,7 +304,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:529
 msgid "To leave a server, just type its number."
-msgstr ""
+msgstr "Om een server te verlaten, typ je gewoon het nummer in."
 
 #: redbot/core/core_commands.py:544
 msgid "I cannot leave a guild I am the owner of."
@@ -313,7 +312,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:547
 msgid "Are you sure you want me to leave {}? (yes/no)"
-msgstr ""
+msgstr "Weet je zeker dat ik {} moet verlaten? (ja/nee)"
 
 #: redbot/core/core_commands.py:554 redbot/core/core_commands.py:933
 #: redbot/core/core_commands.py:1026 redbot/core/core_commands.py:1044
@@ -323,7 +322,7 @@ msgstr "Klaar."
 
 #: redbot/core/core_commands.py:556
 msgid "Alright then."
-msgstr ""
+msgstr "Oké dan."
 
 #: redbot/core/core_commands.py:563
 #, docstring
@@ -332,15 +331,15 @@ msgstr "Laad pakketten"
 
 #: redbot/core/core_commands.py:574
 msgid "Loaded {packs}."
-msgstr ""
+msgstr "{packs} geladen."
 
 #: redbot/core/core_commands.py:579
 msgid "The following package is already loaded: {pack}"
-msgstr ""
+msgstr "Dit pakket is al geladen: {pack}"
 
 #: redbot/core/core_commands.py:583
 msgid "The following packages are already loaded: {packs}"
-msgstr ""
+msgstr "Deze pakketten zijn al geladen: {packs}"
 
 #: redbot/core/core_commands.py:590
 msgid "Failed to load the following package: {pack}.\\nCheck your console or logs for details."
@@ -546,7 +545,7 @@ msgstr ""
 #: redbot/core/core_commands.py:915
 #, docstring
 msgid "Sets Red's avatar"
-msgstr ""
+msgstr "Stelt Red's avatar in"
 
 #: redbot/core/core_commands.py:924
 msgid "Failed. Remember that you can edit my avatar up to two times a hour. The URL must be a direct link to a JPG / PNG."
@@ -559,7 +558,7 @@ msgstr "Je kan alleen het JPG / PNG formaat gebruiken."
 #: redbot/core/core_commands.py:939
 #, docstring
 msgid "Sets Red's playing status"
-msgstr ""
+msgstr "Stelt Red's speelstatus in"
 
 #: redbot/core/core_commands.py:947
 msgid "Game set."
@@ -568,7 +567,7 @@ msgstr "Spel opgeslagen."
 #: redbot/core/core_commands.py:953
 #, docstring
 msgid "Sets Red's listening status"
-msgstr ""
+msgstr "Stelt Red's luisterstatus in"
 
 #: redbot/core/core_commands.py:961
 msgid "Listening set."
@@ -577,7 +576,7 @@ msgstr "Luisterstatus ingesteld."
 #: redbot/core/core_commands.py:967
 #, docstring
 msgid "Sets Red's watching status"
-msgstr ""
+msgstr "Stelt Red's kijkstatus in"
 
 #: redbot/core/core_commands.py:975
 msgid "Watching set."
@@ -586,7 +585,7 @@ msgstr "Kijkstatus ingesteld."
 #: redbot/core/core_commands.py:981
 #, docstring
 msgid "Sets Red's status\\n\\n        Available statuses:\\n            online\\n            idle\\n            dnd\\n            invisible\\n        "
-msgstr ""
+msgstr "Stelt Red's status in\\n\\n        Beschikbare statussen:\\n            online\\n            inactief\\n            niet storen\\n            onzichtbaar\\n        "
 
 #: redbot/core/core_commands.py:1004
 msgid "Status changed to {}."
@@ -595,12 +594,12 @@ msgstr "Status veranderd naar {}."
 #: redbot/core/core_commands.py:1010
 #, docstring
 msgid "Sets Red's streaming status\\n        Leaving both streamer and stream_title empty will clear it."
-msgstr ""
+msgstr "Stelt Red's steamstatus in\\n        Laat streamer en stream_title leeg om het te wissen."
 
 #: redbot/core/core_commands.py:1031
 #, docstring
 msgid "Sets Red's username"
-msgstr ""
+msgstr "Stelt Red's gebruikersnaam in"
 
 #: redbot/core/core_commands.py:1036
 msgid "Failed to change name. Remember that you can only do it up to 2 times an hour. Use nicknames if you need frequent changes. `{}set nickname`"
@@ -609,7 +608,7 @@ msgstr "Kon de gebruikersnaam niet veranderen. Je kunt maximaal twee keer per uu
 #: redbot/core/core_commands.py:1050
 #, docstring
 msgid "Sets Red's nickname"
-msgstr ""
+msgstr "Stelt Red's bijnaam in"
 
 #: redbot/core/core_commands.py:1054
 msgid "I lack the permissions to change my own nickname."
@@ -618,7 +617,7 @@ msgstr "Ik heb niet de juiste bevoegdheden om mijn nickname te veranderen."
 #: redbot/core/core_commands.py:1061
 #, docstring
 msgid "Sets Red's global prefix(es)"
-msgstr ""
+msgstr "Stelt Red's globale prefix(es) in"
 
 #: redbot/core/core_commands.py:1066 redbot/core/core_commands.py:1079
 msgid "Prefix set."
@@ -627,7 +626,7 @@ msgstr "Prefix opgeslagen."
 #: redbot/core/core_commands.py:1072
 #, docstring
 msgid "Sets Red's server prefix(es)"
-msgstr ""
+msgstr "Stelt Red's serverprefix(es) in"
 
 #: redbot/core/core_commands.py:1075
 msgid "Guild prefixes have been reset."
@@ -636,7 +635,7 @@ msgstr "Server prefixes zijn gereset."
 #: redbot/core/core_commands.py:1084
 #, docstring
 msgid "Sets Red's main owner"
-msgstr ""
+msgstr "Stelt Red's hoofdeigenaar in"
 
 #: redbot/core/core_commands.py:1093
 msgid "{0} ({0.id}) requested to be set as owner."
@@ -652,7 +651,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1103
 msgid "Remember:\\n"
-msgstr ""
+msgstr "Onthoud:\\n"
 
 #: redbot/core/core_commands.py:1107
 msgid "I have printed a one-time token in the console. Copy and paste it here to confirm you are the owner."
@@ -673,7 +672,7 @@ msgstr "Ongeldige token."
 #: redbot/core/core_commands.py:1134
 #, docstring
 msgid "Change bot token."
-msgstr ""
+msgstr "Verander bot token."
 
 #: redbot/core/core_commands.py:1144
 msgid "Please use that command in DM. Since users probably saw your token, it is recommended to reset it right now. Go to the following link and select `Reveal Token` and `Generate a new token?`.\\n\\nhttps://discordapp.com/developers/applications/me/{}"
@@ -681,7 +680,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1154
 msgid "Token set. Restart me."
-msgstr ""
+msgstr "Token ingesteld. Herstart me."
 
 #: redbot/core/core_commands.py:1159
 #, docstring
@@ -1341,71 +1340,71 @@ msgstr ""
 msgid "{user}'s balance cannot rise above {max:,} {currency}."
 msgstr ""
 
-#: redbot/core/modlog.py:165
+#: redbot/core/modlog.py:152
 msgid "Case #{} | {} {}"
 msgstr ""
 
-#: redbot/core/modlog.py:169
+#: redbot/core/modlog.py:156
 msgid "**Reason:** {}"
 msgstr ""
 
-#: redbot/core/modlog.py:171
+#: redbot/core/modlog.py:158
 msgid "**Reason:** Use the `reason` command to add it"
 msgstr ""
 
-#: redbot/core/modlog.py:176
+#: redbot/core/modlog.py:163
 msgid "Unknown"
 msgstr ""
 
-#: redbot/core/modlog.py:216
+#: redbot/core/modlog.py:203
 msgid "Moderator"
 msgstr ""
 
-#: redbot/core/modlog.py:218
+#: redbot/core/modlog.py:205
 msgid "Until"
 msgstr ""
 
-#: redbot/core/modlog.py:219
+#: redbot/core/modlog.py:206
 msgid "Duration"
 msgstr ""
 
-#: redbot/core/modlog.py:223 redbot/core/modlog.py:228
+#: redbot/core/modlog.py:210 redbot/core/modlog.py:215
 msgid "Channel"
 msgstr ""
 
-#: redbot/core/modlog.py:224
+#: redbot/core/modlog.py:211
 msgid "{channel} (deleted)"
 msgstr ""
 
-#: redbot/core/modlog.py:230
+#: redbot/core/modlog.py:217
 msgid "Amended by"
 msgstr ""
 
-#: redbot/core/modlog.py:232
+#: redbot/core/modlog.py:219
 msgid "Last modified at"
 msgstr ""
 
-#: redbot/core/modlog.py:239
+#: redbot/core/modlog.py:226
 msgid "**User:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:240
+#: redbot/core/modlog.py:227
 msgid "**Moderator:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:243
+#: redbot/core/modlog.py:230
 msgid "**Until:** {}\\n**Duration:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:245
+#: redbot/core/modlog.py:232
 msgid "**Channel**: {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:247
+#: redbot/core/modlog.py:234
 msgid "**Amended by:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:249
+#: redbot/core/modlog.py:236
 msgid "**Last modified at:** {}\\n"
 msgstr ""
 

@@ -1,1 +1,0 @@
-``[p]playlist update`` will allow users to update non custom Playlists to the latest available tracks.

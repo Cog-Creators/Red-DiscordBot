@@ -1,29 +1,28 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-05 22:33+0200\n"
-"PO-Revision-Date: 2019-07-14 02:15\n"
-"Last-Translator: Robert Jansen (Kowlin)\n"
+"POT-Creation-Date: 2019-07-14 04:24+0000\n"
+"PO-Revision-Date: 2020-01-07 21:48\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.0\n"
+"Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: cs\n"
-"X-Crowdin-File: /cogs/general/locales/messages.pot\n"
+"X-Crowdin-File: /general/locales/messages.pot\n"
 "Language: cs_CZ\n"
 
 #: redbot/cogs/general/general.py:36
 #, docstring
 msgid "General commands."
-msgstr ""
+msgstr "Obecné příkazy."
 
 #: redbot/cogs/general/general.py:41
 msgid "As I see it, yes"
-msgstr ""
+msgstr "Jak tak vidím, tak ano"
 
 #: redbot/cogs/general/general.py:42
 msgid "It is certain"
@@ -31,35 +30,35 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:43
 msgid "It is decidedly so"
-msgstr ""
+msgstr "Rozhodně"
 
 #: redbot/cogs/general/general.py:44
 msgid "Most likely"
-msgstr ""
+msgstr "Pravděpodobně"
 
 #: redbot/cogs/general/general.py:45
 msgid "Outlook good"
-msgstr ""
+msgstr "Vypadá to dobře"
 
 #: redbot/cogs/general/general.py:46
 msgid "Signs point to yes"
-msgstr ""
+msgstr "Znamení ukazují na ano"
 
 #: redbot/cogs/general/general.py:47
 msgid "Without a doubt"
-msgstr ""
+msgstr "Bez pochyb"
 
 #: redbot/cogs/general/general.py:48
 msgid "Yes"
-msgstr ""
+msgstr "Ano"
 
 #: redbot/cogs/general/general.py:49
 msgid "Yes – definitely"
-msgstr ""
+msgstr "Ano, určitě"
 
 #: redbot/cogs/general/general.py:50
 msgid "You may rely on it"
-msgstr ""
+msgstr "Na to se můžeš spolehnout"
 
 #: redbot/cogs/general/general.py:51
 msgid "Reply hazy, try again"
@@ -67,48 +66,48 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:52
 msgid "Ask again later"
-msgstr ""
+msgstr "Zeptej se později"
 
 #: redbot/cogs/general/general.py:53
 msgid "Better not tell you now"
-msgstr ""
+msgstr "Lépe teď nedokážu odpovědět"
 
 #: redbot/cogs/general/general.py:54
 msgid "Cannot predict now"
-msgstr ""
+msgstr "To teď nemohu předpovědět"
 
 #: redbot/cogs/general/general.py:55
 msgid "Concentrate and ask again"
-msgstr ""
+msgstr "Soustřeď se a zeptej se znovu"
 
 #: redbot/cogs/general/general.py:56
 msgid "Don't count on it"
-msgstr ""
+msgstr "S tím nepočítej"
 
 #: redbot/cogs/general/general.py:57
 msgid "My reply is no"
-msgstr ""
+msgstr "Moje odpověď je ne"
 
 #: redbot/cogs/general/general.py:58
 msgid "My sources say no"
-msgstr ""
+msgstr "Moje zdroje říkají, že ne"
 
 #: redbot/cogs/general/general.py:59
 msgid "Outlook not so good"
-msgstr ""
+msgstr "To nevypadá dobře"
 
 #: redbot/cogs/general/general.py:60
 msgid "Very doubtful"
-msgstr ""
+msgstr "Velmi pochybné"
 
 #: redbot/cogs/general/general.py:70
 #, docstring
 msgid "Choose between multiple options.\\n\\n        To denote options which include whitespace, you should use\\n        double quotes.\\n        "
-msgstr ""
+msgstr "Vyberte si mezi více možnostmi.\\n\\n        Pro zvýraznění možností, které obsahují mezery byste měli použít\\n        dvojité uvozovky.\\n        "
 
 #: redbot/cogs/general/general.py:77
 msgid "Not enough options to pick from."
-msgstr ""
+msgstr "Není k dispozici dostatek možností, ze kterých lze vybrat."
 
 #: redbot/cogs/general/general.py:83
 #, docstring
@@ -117,7 +116,7 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:94
 msgid "{author.mention} Maybe higher than 1? ;P"
-msgstr ""
+msgstr "{author.mention} Možná vyšší než 1? ;P"
 
 #: redbot/cogs/general/general.py:98
 #, docstring
@@ -126,11 +125,11 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:106
 msgid "Nice try. You think this is funny?\\n How about *this* instead:\\n\\n"
-msgstr ""
+msgstr "Dobrý pokus. Myslíš si, že je to vtipné?\\n Co tak zkusit:\\n\\n"
 
 #: redbot/cogs/general/general.py:117
 msgid "*flips a coin and... "
-msgstr ""
+msgstr "*hází minci a... "
 
 #: redbot/cogs/general/general.py:117
 msgid "HEADS!*"
@@ -143,23 +142,23 @@ msgstr ""
 #: redbot/cogs/general/general.py:121
 #, docstring
 msgid "Play Rock Paper Scissors."
-msgstr ""
+msgstr "Hrát kámen, nůžky, papír."
 
 #: redbot/cogs/general/general.py:126
 msgid "This isn't a valid option. Try {r}, {p}, or {s}."
-msgstr ""
+msgstr "Toto není platná možnost. Zkuste {r}, {p} nebo {s}."
 
 #: redbot/cogs/general/general.py:147
 msgid "{choice} You win {author.mention}!"
-msgstr ""
+msgstr "{choice} Vyhrál jsi, {author.mention}!"
 
 #: redbot/cogs/general/general.py:153
 msgid "{choice} You lose {author.mention}!"
-msgstr ""
+msgstr "{choice} Prohrál jsi, {author.mention}!"
 
 #: redbot/cogs/general/general.py:159
 msgid "{choice} We're square {author.mention}!"
-msgstr ""
+msgstr "{choice} Remíza, {author.mention}!"
 
 #: redbot/cogs/general/general.py:166
 #, docstring
@@ -168,25 +167,25 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:173
 msgid "That doesn't look like a question."
-msgstr ""
+msgstr "To nevypadá jako otázka."
 
 #: redbot/cogs/general/general.py:177
 #, docstring
 msgid "Start or stop the stopwatch."
-msgstr ""
+msgstr "Spustit nebo zastavit stopky."
 
 #: redbot/cogs/general/general.py:181
 msgid " Stopwatch started!"
-msgstr ""
+msgstr " Stopky byly spuštěny!"
 
 #: redbot/cogs/general/general.py:186
 msgid " Stopwatch stopped! Time: **{seconds}**"
-msgstr ""
+msgstr " Stopky byly zastaveny! Čas: **{seconds}**"
 
 #: redbot/cogs/general/general.py:192
 #, docstring
 msgid "Create a lmgtfy link."
-msgstr ""
+msgstr "Vytvořit odkaz lmgtfy."
 
 #: redbot/cogs/general/general.py:201
 #, docstring
@@ -196,39 +195,39 @@ msgstr ""
 #: redbot/cogs/general/general.py:224
 #, docstring
 msgid "Show server information."
-msgstr ""
+msgstr "Zobrazit informace serveru."
 
 #: redbot/cogs/general/general.py:231
 msgid "Since {date}. That's over {num} days ago!"
-msgstr ""
+msgstr "Od {date}. To je více než {num} dní!"
 
 #: redbot/cogs/general/general.py:235
 msgid "Region"
-msgstr ""
+msgstr "Oblast"
 
 #: redbot/cogs/general/general.py:236
 msgid "Users"
-msgstr ""
+msgstr "Uživatelé"
 
 #: redbot/cogs/general/general.py:237
 msgid "Text Channels"
-msgstr ""
+msgstr "Textové kanály"
 
 #: redbot/cogs/general/general.py:238
 msgid "Voice Channels"
-msgstr ""
+msgstr "Hlasové kanály"
 
 #: redbot/cogs/general/general.py:239
 msgid "Roles"
-msgstr ""
+msgstr "Role"
 
 #: redbot/cogs/general/general.py:240
 msgid "Owner"
-msgstr ""
+msgstr "Vlastník"
 
 #: redbot/cogs/general/general.py:241
 msgid "Server ID: "
-msgstr ""
+msgstr "ID serveru: "
 
 #: redbot/cogs/general/general.py:252
 msgid "I need the `Embed links` permission to send this."
@@ -249,11 +248,11 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:284
 msgid "{word} by {author}"
-msgstr ""
+msgstr "{word} od {author}"
 
 #: redbot/cogs/general/general.py:289
 msgid "{definition}\\n\\n**Example:** {example}"
-msgstr ""
+msgstr "{definition}\\n\\n**Příklad:** {example}"
 
 #: redbot/cogs/general/general.py:295
 msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
@@ -265,5 +264,5 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:320
 msgid "{definition}\\n\\n**Example:** {example}"
-msgstr ""
+msgstr "{definition}\\n\\n**Příklad:** {example}"
 

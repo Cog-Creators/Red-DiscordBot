@@ -179,6 +179,7 @@ WHERE
         AND scope_id = :scope_id
         AND deleted = false
     )
+LIMIT 1;
 """
 PLAYLIST_UPSERT = """
 INSERT INTO
@@ -251,7 +252,7 @@ FROM youtube
 WHERE
     track_info=:track
     AND last_updated > :maxage
-;
+LIMIT 1;
 """
 YOUTUBE_DELETE_OLD_ENTRIES = """
 DELETE FROM youtube
@@ -315,7 +316,8 @@ SELECT track_info, last_updated
 FROM spotify
 WHERE
     uri=:uri
-    AND last_updated > :maxage;
+    AND last_updated > :maxage
+LIMIT 1;
 """
 SPOTIFY_DELETE_OLD_ENTRIES = """
 DELETE FROM spotify
@@ -374,7 +376,8 @@ SELECT data, last_updated
 FROM lavalink
 WHERE
     query=:query
-    AND last_updated > :maxage;
+    AND last_updated > :maxage
+LIMIT 1;
 """
 LAVALINK_QUERY_LAST_FETCHED_RANDOM = """
 SELECT data

@@ -1,1 +1,0 @@
-Fixes a way for help to end up a little too large for discord limits

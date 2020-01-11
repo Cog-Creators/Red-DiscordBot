@@ -1,1 +1,0 @@
-``[p]repo info`` will now show repo's url, branch and authors.

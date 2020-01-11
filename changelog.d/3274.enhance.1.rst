@@ -1,1 +1,0 @@
-Lib folder is now cleared on minor Python version change. `[p]cog reinstallreqs` command in Downloader cog can be used to regenerate lib folder for new Python version.

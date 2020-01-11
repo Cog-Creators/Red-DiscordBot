@@ -1,19 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-05 22:33+0200\n"
-"PO-Revision-Date: 2019-07-06 16:12\n"
-"Last-Translator: Robert Jansen (Kowlin)\n"
+"POT-Creation-Date: 2019-07-14 04:24+0000\n"
+"PO-Revision-Date: 2020-01-07 21:48\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.0\n"
+"Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: de\n"
-"X-Crowdin-File: /cogs/economy/locales/messages.pot\n"
+"X-Crowdin-File: /economy/locales/messages.pot\n"
 "Language: de_DE\n"
 
 #: redbot/cogs/economy/economy.py:42
@@ -46,7 +45,7 @@ msgstr "Zwei aufeinanderfolgende Symbole! Dein Gebot wurde multipliziert * 2!"
 
 #: redbot/cogs/economy/economy.py:67
 msgid "Slot machine payouts:\\n{two.value} {two.value} {six.value} Bet * 2500\\n{flc.value} {flc.value} {flc.value} +1000\\n{cherries.value} {cherries.value} {cherries.value} +800\\n{two.value} {six.value} Bet * 4\\n{cherries.value} {cherries.value} Bet * 3\\n\\nThree symbols: +500\\nTwo symbols: Bet * 2"
-msgstr ""
+msgstr "Spielautomaten Auszahlungen:\\n{two.value} {two.value} {six.value} Gebot * 2500\\n{flc.value} {flc.value} {flc.value} +1000\\n{cherries.value} {cherries.value} {cherries.value} +800\\n{two.value} {six.value} Gebot * 4\\n{cherries.value}{cherries.value} Gebot * 3\\n\\nDrei Symbole: +500\\nZwei Symbole: Gebot * 2"
 
 #: redbot/cogs/economy/economy.py:112
 #, docstring
@@ -61,7 +60,7 @@ msgstr "Verwalte die Bank."
 #: redbot/cogs/economy/economy.py:151
 #, docstring
 msgid "Show the user's account balance.\\n\\n        Defaults to yours."
-msgstr ""
+msgstr "Zeigt den Kontostand des Benutzers an.\\n\\n        Standardmässig deinen eigenen."
 
 #: redbot/cogs/economy/economy.py:161
 msgid "{user}'s balance is {num} {currency}"
@@ -79,7 +78,7 @@ msgstr "{user} überwies {num} {currency} an {other_user}"
 #: redbot/cogs/economy/economy.py:186
 #, docstring
 msgid "Set the balance of user's bank account.\\n\\n        Passing positive and negative values will add/remove currency instead.\\n\\n        Examples:\\n        - `[p]bank set @Twentysix 26` - Sets balance to 26\\n        - `[p]bank set @Twentysix +2` - Increases balance by 2\\n        - `[p]bank set @Twentysix -6` - Decreases balance by 6\\n        "
-msgstr ""
+msgstr "Legt den Kontostand des Benutzers fest.\\n\\n        Addierende und subtrahierende Werte fügen Guthaben hinzu bzw. ziehen dieses ab.\\n\\n        Beispiele:\\n        - `[p]bank set @Twentysix 26` - setzt den Kontostand auf 26\\n        - `[p]bank set @Twentysix +2` - erhöht Kontostand um 2\\n        - `[p]bank set @Twentysix -6` - verringert Kontostand um 6\\n        "
 
 #: redbot/cogs/economy/economy.py:201
 msgid "{author} added {num} {currency} to {user}'s account."
@@ -100,7 +99,7 @@ msgstr "Alle Bankkonten löschen."
 
 #: redbot/cogs/economy/economy.py:234
 msgid "This will delete all bank accounts for {scope}.\\nIf you're sure, type `{prefix}bank reset yes`"
-msgstr ""
+msgstr "Dies löscht alle Bankkonten von {scope}.\\nWenn du sicher bist, tippe `{prefix}bank reset yes`"
 
 #: redbot/cogs/economy/economy.py:238 redbot/cogs/economy/economy.py:246
 msgid "this server"
@@ -117,11 +116,11 @@ msgstr "Hol dir kostenlose Währung."
 
 #: redbot/cogs/economy/economy.py:267
 msgid "You've reached the maximum amount of {currency}!Please spend some more 😬\\n\\nYou currently have {new_balance} {currency}."
-msgstr ""
+msgstr "Du hast die maximale Summe von {currency} erreicht! Bitte gib mal etwas mehr aus 😬\\n\\nDu hast derzeit {new_balance} {currency}."
 
 #: redbot/cogs/economy/economy.py:279
 msgid "{author.mention} Here, take some {currency}. Enjoy! (+{amount} {currency}!)\\n\\nYou currently have {new_balance} {currency}.\\n\\nYou are currently #{pos} on the global leaderboard!"
-msgstr ""
+msgstr "{author.mention} Hier, nimm etwas {currency}. Viel Spaß! (+{amount} {currency}!)\\n\\nDu hast derzeit {new_balance} {currency}.\\n\\nDu bist auf Platz #{pos} der globalen Bestenliste!"
 
 #: redbot/cogs/economy/economy.py:296 redbot/cogs/economy/economy.py:342
 msgid "{author.mention} Too soon. For your next payday you have to wait {time}."
@@ -129,16 +128,16 @@ msgstr "{author.mention} Zu früh. Bis zum nächsten Zahltag dauert es noch {tim
 
 #: redbot/cogs/economy/economy.py:315
 msgid "You've reached the maximum amount of {currency}! Please spend some more 😬\\n\\nYou currently have {new_balance} {currency}."
-msgstr ""
+msgstr "Du hast die maximale Summe von {currency} erreicht! Bitte gib mal etwas mehr aus 😬\\n\\nDu hast derzeit {new_balance} {currency}."
 
 #: redbot/cogs/economy/economy.py:326
 msgid "{author.mention} Here, take some {currency}. Enjoy! (+{amount} {currency}!)\\n\\nYou currently have {new_balance} {currency}.\\n\\nYou are currently #{pos} on the global leaderboard!"
-msgstr ""
+msgstr "{author.mention} Hier, nimm etwas {currency}. Viel Spaß! (+{amount} {currency}!)\\n\\nDu hast derzeit {new_balance} {currency}.\\n\\nDu bist auf Platz #{pos} der globalen Bestenliste!"
 
 #: redbot/cogs/economy/economy.py:350
 #, docstring
 msgid "Print the leaderboard.\\n\\n        Defaults to top 10.\\n        "
-msgstr ""
+msgstr "Zeige die Bestenliste an.\\n\\n        Standardmässig die Top 10.\\n        "
 
 #: redbot/cogs/economy/economy.py:367
 msgid "There are no accounts in the bank."
@@ -176,7 +175,7 @@ msgstr "Du hast nicht genug Geld, mein Freund."
 
 #: redbot/cogs/economy/economy.py:497
 msgid "You've reached the maximum amount of {currency}! Please spend some more 😬\\n{old_balance} -> {new_balance}!"
-msgstr ""
+msgstr "Du hast die maximale Summe von {currency} erreicht! Bitte gib mal etwas mehr aus 😬\\n{old_balance} -> {new_balance}!"
 
 #: redbot/cogs/economy/economy.py:512
 msgid "Nothing!"
@@ -193,7 +192,7 @@ msgstr "Verwalte Economy Einstellungen."
 
 #: redbot/cogs/economy/economy.py:541
 msgid "----Economy Settings---\\nMinimum slot bid: {slot_min}\\nMaximum slot bid: {slot_max}\\nSlot cooldown: {slot_time}\\nPayday amount: {payday_amount}\\nPayday cooldown: {payday_time}\\nAmount given at account registration: {register_amount}"
-msgstr ""
+msgstr "----Economy Einstellungen---\\nMindesteinsatz Spielautomat: {slot_min}\\nMaximaleinsatz Spielautomat: {slot_max}\\nSpielautomat Abklingzeit: {slot_time}\\nZahltag Summe: {payday_amount}\\nZahltag Abklingzeit: {payday_time}\\nAusgezahlte Summe bei Kontoeröffnung: {register_amount}"
 
 #: redbot/cogs/economy/economy.py:562
 #, docstring

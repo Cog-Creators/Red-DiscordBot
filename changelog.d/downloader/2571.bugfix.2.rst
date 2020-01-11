@@ -1,1 +1,0 @@
-Downloader will no longer allow to install cog that is already installed.

@@ -444,6 +444,7 @@ class MusicCache:
                     youtube_urls.append(val)
             else:
                 youtube_urls.append(track_info)
+            await asyncio.sleep(0)
             track_count += 1
             if notifier and ((track_count % 2 == 0) or (track_count == total_tracks)):
                 await notifier.notify_user(current=track_count, total=total_tracks, key="youtube")
@@ -758,6 +759,8 @@ class MusicCache:
                     continue
                 track_list.append(single_track)
                 if enqueue:
+                    if len(player.queue) >= 10000:
+                        continue
                     if guild_data["maxlength"] > 0:
                         if track_limit(single_track, guild_data["maxlength"]):
                             enqueued_tracks += 1

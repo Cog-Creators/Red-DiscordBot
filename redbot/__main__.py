@@ -27,7 +27,7 @@ from redbot import _update_event_loop_policy, __version__
 _update_event_loop_policy()
 
 import redbot.logging
-from redbot.core.bot import Red
+from redbot.core.bot import Red, ExitCodes
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags
 from redbot.setup import get_data_dir, get_name, save_config
 from redbot.core import data_manager, drivers
@@ -266,6 +266,27 @@ def _copy_data(data):
     return True
 
 
+def handle_edit(cli_flags: Namespace):
+    """
+    This one exists to not log all the things like it's a full run of the bot.
+    """
+    loop = asyncio.get_event_loop()
+    data_manager.load_basic_configuration(cli_flags.instance_name)
+    red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None, fetch_offline_members=True)
+    try:
+        driver_cls = drivers.get_driver_class()
+        loop.run_until_complete(driver_cls.initialize(**data_manager.storage_details()))
+        loop.run_until_complete(edit_instance(red, cli_flags))
+        loop.run_until_complete(driver_cls.teardown())
+    except (KeyboardInterrupt, EOFError):
+        print("Aborted!")
+    finally:
+        loop.run_until_complete(asyncio.sleep(1))
+        loop.stop()
+        loop.close()
+        sys.exit(0)
+
+
 async def run_bot(red: Red, cli_flags: Namespace):
 
     driver_cls = drivers.get_driver_class()
@@ -279,15 +300,6 @@ async def run_bot(red: Red, cli_flags: Namespace):
     log.debug("====Basic Config====")
     log.debug("Data Path: %s", data_manager._base_data_path())
     log.debug("Storage Type: %s", data_manager.storage_type())
-
-    if cli_flags.edit:
-        try:
-            await edit_instance(red, cli_flags)
-        except (KeyboardInterrupt, EOFError):
-            print("Aborted!")
-        finally:
-            await driver_cls.teardown()
-        sys.exit(0)
 
     # lib folder has to be in sys.path before trying to load any 3rd-party cog (GH-3061)
     # We might want to change handling of requirements in Downloader at later date
@@ -335,7 +347,7 @@ def handle_early_exit_flags(cli_flags: Namespace):
     if cli_flags.list_instances:
         list_instances()
     elif cli_flags.version:
-        print(description)
+        print("Red V3")
         print("Current Version: {}".format(__version__))
         sys.exit(0)
     elif cli_flags.debuginfo:
@@ -345,36 +357,65 @@ def handle_early_exit_flags(cli_flags: Namespace):
         sys.exit(1)
 
 
-async def shutdown_handler(red, signal_type=None):
+async def shutdown_handler(red, signal_type=None, exit_code=None):
     if signal_type:
         log.info("%s received. Quitting...", signal_type)
-        exit_code = 0
-    else:
+        # Do not collapse the below line into other logic
+        # We need to renter this function
+        # after it interrupts the event loop.
+        sys.exit(ExitCodes.SHUTDOWN)
+    elif exit_code is None:
         log.info("Shutting down from unhandled exception")
-        exit_code = 1
-    await red.logout()
-    await red.loop.shutdown_asyncgens()
-    pending = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
-    [task.cancel() for task in pending]
-    await asyncio.gather(*pending, loop=red.loop, return_exceptions=True)
-    sys.exit(exit_code)
+        red._shutdown_mode = ExitCodes.CRITICAL
+
+    if exit_code is not None:
+        red._shutdown_mode = exit_code
+
+    try:
+        await red.logout()
+    finally:
+        # Then cancels all outstanding tasks other than ourselves
+        pending = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
+        [task.cancel() for task in pending]
+        await asyncio.gather(*pending, return_exceptions=True)
 
 
-def exception_handler(red, loop, context):
+def global_exception_handler(red, loop, context):
+    """
+    Logs unhandled exceptions in other tasks
+    """
     msg = context.get("exception", context["message"])
-    if isinstance(msg, KeyboardInterrupt):
-        # Windows support is ugly, I'm sorry
-        logging.error("Received KeyboardInterrupt, treating as interrupt")
-        signal_type = signal.SIGINT
-    else:
-        logging.critical("Caught fatal exception: %s", msg)
-        signal_type = None
-    loop.create_task(shutdown_handler(red, signal_type))
+    # These will get handled later when it *also* kills loop.run_forever
+    if not isinstance(msg, (KeyboardInterrupt, SystemExit)):
+        log.critical("Caught unhandled exception in task: %s", msg)
+
+
+def red_exception_handler(red, red_task: asyncio.Future):
+    """
+    This is set as a done callback for Red
+
+    must be used with functools.partial
+
+    If the main bot.run dies for some reason,
+    we don't want to swallow the exception and hang.
+    """
+    try:
+        red_task.result()
+    except (SystemExit, KeyboardInterrupt, asyncio.CancelledError):
+        pass  # Handled by the global_exception_handler, or cancellation
+    except Exception as exc:
+        log.critical("The main bot task didn't handle an exception and has crashed", exc_info=exc)
+        log.warning("Attempting to die as gracefully as possible...")
+        red.loop.create_task(shutdown_handler(red))
 
 
 def main():
+    red = None  # Error handling for users misusing the bot
     cli_flags = parse_cli_flags(sys.argv[1:])
     handle_early_exit_flags(cli_flags)
+    if cli_flags.edit:
+        handle_edit(cli_flags)
+        return
     try:
         loop = asyncio.get_event_loop()
 
@@ -391,11 +432,11 @@ def main():
         data_manager.load_basic_configuration(cli_flags.instance_name)
 
         red = Red(
-            cli_flags=cli_flags, description=description, dm_help=None, fetch_offline_members=True
+            cli_flags=cli_flags, description="Red V3", dm_help=None, fetch_offline_members=True
         )
 
         if os.name != "nt":
-            # None of this works on windows, and we have to catch KeyboardInterrupt in a global handler!
+            # None of this works on windows.
             # At least it's not a redundant handler...
             signals = (signal.SIGHUP, signal.SIGTERM, signal.SIGINT)
             for s in signals:
@@ -403,15 +444,49 @@ def main():
                     s, lambda s=s: asyncio.create_task(shutdown_handler(red, s))
                 )
 
-        exc_handler = functools.partial(exception_handler, red)
+        exc_handler = functools.partial(global_exception_handler, red)
         loop.set_exception_handler(exc_handler)
-        # We actually can't use asyncio.run and have graceful cleanup on Windows...
-        loop.create_task(run_bot(red, cli_flags))
+        # We actually can't (just) use asyncio.run here
+        # We probably could if we didnt support windows, but we might run into
+        # a scenario where this isn't true if anyone works on RPC more in the future
+        fut = loop.create_task(run_bot(red, cli_flags))
+        r_exc_handler = functools.partial(red_exception_handler, red)
+        fut.add_done_callback(r_exc_handler)
         loop.run_forever()
+    except KeyboardInterrupt:
+        # We still have to catch this here too. (*joy*)
+        log.warning("Please do not use Ctrl+C to Shutdown Red! (attempting to die gracefully...)")
+        log.error("Received KeyboardInterrupt, treating as interrupt")
+        if red is not None:
+            loop.run_until_complete(shutdown_handler(red, signal.SIGINT))
+    except SystemExit as exc:
+        # We also have to catch this one here. Basically any exception which normally
+        # Kills the python interpreter (Base Exceptions minus asyncio.cancelled)
+        # We need to do something with prior to having the loop close
+        log.info("Shutting down with exit code: %s", exc.code)
+        if red is not None:
+            loop.run_until_complete(shutdown_handler(red, None, exc.code))
+    except Exception as exc:  # Non standard case.
+        log.exception("Unexpected exception (%s): ", type(exc), exc_info=exc)
+        if red is not None:
+            loop.run_until_complete(shutdown_handler(red, None, ExitCodes.CRITICAL))
     finally:
+        # Allows transports to close properly, and prevent new ones from being opened.
+        # Transports may still not be closed correcly on windows, see below
+        loop.run_until_complete(loop.shutdown_asyncgens())
+        if os.name == "nt":
+            # *we* aren't cleaning up more here, but it prevents
+            # a runtime error at the event loop on windows
+            # with resources which require longer to clean up.
+            # With other event loops, a failure to cleanup prior to here
+            # results in a resource warning instead and does not break us.
+            log.info("Please wait, cleaning up a bit more")
+            loop.run_until_complete(asyncio.sleep(1))
+        loop.stop()
         loop.close()
+        exit_code = red._shutdown_mode if red is not None else 1
+        sys.exit(exit_code)
 
 
 if __name__ == "__main__":
-    description = "Red V3"
     main()

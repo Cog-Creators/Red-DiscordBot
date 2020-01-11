@@ -1,1 +1,0 @@
-Added ``pytest-mock`` requirement to ``tests`` extra.

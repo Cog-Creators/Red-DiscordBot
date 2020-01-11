@@ -1,19 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-05 22:33+0200\n"
-"PO-Revision-Date: 2019-07-06 16:12\n"
-"Last-Translator: Robert Jansen (Kowlin)\n"
+"POT-Creation-Date: 2019-07-14 04:24+0000\n"
+"PO-Revision-Date: 2020-01-07 21:48\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.0\n"
+"Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: de\n"
-"X-Crowdin-File: /cogs/general/locales/messages.pot\n"
+"X-Crowdin-File: /general/locales/messages.pot\n"
 "Language: de_DE\n"
 
 #: redbot/cogs/general/general.py:36
@@ -104,7 +103,7 @@ msgstr "Sehr zweifelhaft"
 #: redbot/cogs/general/general.py:70
 #, docstring
 msgid "Choose between multiple options.\\n\\n        To denote options which include whitespace, you should use\\n        double quotes.\\n        "
-msgstr ""
+msgstr "Wähle zwischen mehreren Optionen.\\n\\n        Um Optionen zu wählen die Leerzeichen enthalten solltest\\n        du Anführungszeichen verwenden.\\n        "
 
 #: redbot/cogs/general/general.py:77
 msgid "Not enough options to pick from."
@@ -113,7 +112,7 @@ msgstr "Nicht genug Optionen zur Auswahl."
 #: redbot/cogs/general/general.py:83
 #, docstring
 msgid "Roll a random number.\\n\\n        The result will be between 1 and `<number>`.\\n\\n        `<number>` defaults to 100.\\n        "
-msgstr ""
+msgstr "Würfel eine zufällige Nummer.\\n\\n        Das Ergebnis wird zwischen 1 und `<number>` liegen.\\n\\n        `<number>`ist standardmässig 100.\\n        "
 
 #: redbot/cogs/general/general.py:94
 msgid "{author.mention} Maybe higher than 1? ;P"
@@ -122,11 +121,11 @@ msgstr "{author.mention} Wir wäre es mit mehr als 1? ;P"
 #: redbot/cogs/general/general.py:98
 #, docstring
 msgid "Flip a coin... or a user.\\n\\n        Defaults to a coin.\\n        "
-msgstr ""
+msgstr "Wirf eine Münze... oder einen Benutzer.\\n\\n        Standardmässig eine Münze.\\n        "
 
 #: redbot/cogs/general/general.py:106
 msgid "Nice try. You think this is funny?\\n How about *this* instead:\\n\\n"
-msgstr ""
+msgstr "Netter Versuch. Denkst du das wäre lustig?\\nNimm *das:*\\n\\n"
 
 #: redbot/cogs/general/general.py:117
 msgid "*flips a coin and... "
@@ -147,7 +146,7 @@ msgstr "Spiele Schere Stein Papier."
 
 #: redbot/cogs/general/general.py:126
 msgid "This isn't a valid option. Try {r}, {p}, or {s}."
-msgstr ""
+msgstr "Dies ist keine gültige Option. Versuchen Sie {r}, {p}, oder {s}."
 
 #: redbot/cogs/general/general.py:147
 msgid "{choice} You win {author.mention}!"
@@ -164,7 +163,7 @@ msgstr "{choice} Unentschieden, {author.mention}!"
 #: redbot/cogs/general/general.py:166
 #, docstring
 msgid "Ask 8 ball a question.\\n\\n        Question must end with a question mark.\\n        "
-msgstr ""
+msgstr "Stelle 8 Ball eine Frage.\\n\\n        Frage muss mit einem Fragezeichen abschließen.\\n        "
 
 #: redbot/cogs/general/general.py:173
 msgid "That doesn't look like a question."
@@ -191,7 +190,7 @@ msgstr "Erstelle einen Imgtfy Link."
 #: redbot/cogs/general/general.py:201
 #, docstring
 msgid "Because everyone likes hugs!\\n\\n        Up to 10 intensity levels.\\n        "
-msgstr ""
+msgstr "Weil jeder Umarmungen mag!\\n\\n        Bis zu 10 Intensitätsstufen.\\n        "
 
 #: redbot/cogs/general/general.py:224
 #, docstring
@@ -237,7 +236,7 @@ msgstr "Ich benötige die 'Embed links' Berechtigung, um dies zu senden."
 #: redbot/cogs/general/general.py:256
 #, docstring
 msgid "Search the Urban Dictionary.\\n\\n        This uses the unofficial Urban Dictionary API.\\n        "
-msgstr ""
+msgstr "Durchsuche das Urban Dictionary.\\n\\n        Dies verwendet die inoffizielle Urban Dictionary API.\\n        "
 
 #: redbot/cogs/general/general.py:272 redbot/cogs/general/general.py:338
 msgid "No Urban Dictionary entries were found, or there was an error in the process."
@@ -253,7 +252,7 @@ msgstr "{word} von {author}"
 
 #: redbot/cogs/general/general.py:289
 msgid "{definition}\\n\\n**Example:** {example}"
-msgstr ""
+msgstr "{definition}\\n\\n**Beispiel:** {example}"
 
 #: redbot/cogs/general/general.py:295
 msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
@@ -261,9 +260,9 @@ msgstr "{thumbs_down} Runter / {thumbs_up} Hoch, Powered by Urban Dictionary."
 
 #: redbot/cogs/general/general.py:314
 msgid "<{permalink}>\\n {word} by {author}\\n\\n{description}\\n\\n{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
-msgstr ""
+msgstr "<{permalink}>\\n{word} von {author}\\n\\n{description}\\n\\n{thumbs_down} Runter / {thumbs_up} Hoch, Powered by Urban Dictionary."
 
 #: redbot/cogs/general/general.py:320
 msgid "{definition}\\n\\n**Example:** {example}"
-msgstr ""
+msgstr "{definition}\\n\\n**Beispiel:** {example}"
 
