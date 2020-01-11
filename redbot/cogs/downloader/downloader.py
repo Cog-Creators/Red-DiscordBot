@@ -748,10 +748,13 @@ class Downloader(commands.Cog):
                 message += _("Successfully uninstalled cogs: ") + humanize_list(uninstalled_cogs)
             if failed_cogs:
                 message += (
-                    _("\nThese cog were installed but can no longer be located: ")
+                    _(
+                        "\nDownloader has removed these cogs from the installed cogs list"
+                        " but it wasn't able to find their files: "
+                    )
                     + humanize_list(tuple(map(inline, failed_cogs)))
                     + _(
-                        "\nYou may need to remove their files manually if they are still usable."
+                        "\nYou may need to remove those files manually if the cogs are still usable."
                         " Also make sure you've unloaded those cogs with `{prefix}unload {cogs}`."
                     ).format(prefix=ctx.prefix, cogs=" ".join(failed_cogs))
                 )
