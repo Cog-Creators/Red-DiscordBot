@@ -8313,22 +8313,22 @@ class Audio(commands.Cog):
             except RuntimeError:
                 playlist = None
 
-        if playlist:
-            tracks = playlist.tracks
-            tracks.append(track)
-            await playlist.edit({"tracks": tracks})
-        else:
-            playlist = Playlist(
-                bot=self.bot,
-                scope=scope,
-                author=self.bot.user.id,
-                playlist_id=today_id,
-                name=name,
-                playlist_url=None,
-                tracks=[track],
-                guild=guild,
-            )
-            await playlist.save()
+            if playlist:
+                tracks = playlist.tracks
+                tracks.append(track)
+                await playlist.edit({"tracks": tracks})
+            else:
+                playlist = Playlist(
+                    bot=self.bot,
+                    scope=scope,
+                    author=self.bot.user.id,
+                    playlist_id=today_id,
+                    name=name,
+                    playlist_url=None,
+                    tracks=[track],
+                    guild=guild,
+                )
+                await playlist.save()
         too_old = midnight - datetime.timedelta(days=8)
         too_old_id = int(time.mktime(too_old.timetuple()))
         try:
