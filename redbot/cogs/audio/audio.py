@@ -245,7 +245,7 @@ class Audio(commands.Cog):
                         for t in tracks_in_playlist:
                             uri = t.get("info", {}).get("uri")
                             if uri:
-                                t = {"loadType": "V2_COMPACT", "tracks": [t], "query": uri}
+                                t = {"loadType": "V2_COMPAT", "tracks": [t], "query": uri}
                                 database_entries.append(
                                     {
                                         "query": uri,
