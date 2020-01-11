@@ -8329,9 +8329,9 @@ class Audio(commands.Cog):
                 guild=guild,
             )
             await playlist.save()
+        too_old = midnight - datetime.timedelta(days=8)
+        too_old_id = int(time.mktime(too_old.timetuple()))
         try:
-            too_old = midnight - datetime.timedelta(days=8)
-            too_old_id = int(time.mktime(too_old.timetuple()))
             await delete_playlist(
                 scope=scope, playlist_id=too_old_id, guild=guild, author=self.bot.user
             )
