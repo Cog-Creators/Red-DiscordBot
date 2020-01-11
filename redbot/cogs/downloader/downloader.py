@@ -754,8 +754,9 @@ class Downloader(commands.Cog):
                     )
                     + humanize_list(tuple(map(inline, failed_cogs)))
                     + _(
-                        "\nYou may need to remove those files manually if the cogs are still usable."
-                        " Also make sure you've unloaded those cogs with `{prefix}unload {cogs}`."
+                        "\nThey were most likely removed without using `{prefix}cog uninstall`.\n"
+                        "You may need to remove those files manually if the cogs are still usable."
+                        " If so, ensure the cogs have been unloaded with `{prefix}unload {cogs}`."
                     ).format(prefix=ctx.prefix, cogs=" ".join(failed_cogs))
                 )
         await ctx.send(message)
