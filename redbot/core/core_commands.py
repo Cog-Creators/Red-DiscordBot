@@ -873,6 +873,25 @@ class Core(commands.Cog, CoreLogic):
             for page in pagify(settings):
                 await ctx.send(box(page))
 
+    @checks.is_owner()
+    @_set.command(name="description")
+    async def setdescription(self, ctx: commands.Context, *, description: str = ""):
+        """
+        Sets the bot's description.
+        Use without a description to reset.
+        This is shown in a few locations, including the help menu.
+
+        The default is "Red V3"
+        """
+        if not description:
+            await ctx.bot._config.description.clear()
+            ctx.bot.description = "Red V3"
+            await ctx.send(_("Description reset."))
+        else:
+            await ctx.bot._config.description.set(description)
+            ctx.bot.description = description
+            await ctx.tick()
+
     @_set.command()
     @checks.guildowner()
     @commands.guild_only()
