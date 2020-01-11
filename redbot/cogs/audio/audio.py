@@ -4438,7 +4438,9 @@ class Audio(commands.Cog):
         )
 
     @commands.cooldown(1, 30, commands.BucketType.member)
-    @playlist.command(name="dedupe", usage="<playlist_name_OR_id> [args]", cooldown_after_parsing=True)
+    @playlist.command(
+        name="dedupe", usage="<playlist_name_OR_id> [args]", cooldown_after_parsing=True
+    )
     async def _playlist_remdupe(
         self,
         ctx: commands.Context,
@@ -4571,7 +4573,11 @@ class Audio(commands.Cog):
             )
 
     @checks.is_owner()
-    @playlist.command(name="download", usage="<playlist_name_OR_id> [v2=False] [args]", cooldown_after_parsing=True)
+    @playlist.command(
+        name="download",
+        usage="<playlist_name_OR_id> [v2=False] [args]",
+        cooldown_after_parsing=True,
+    )
     @commands.bot_has_permissions(attach_files=True)
     @commands.cooldown(1, 30, commands.BucketType.guild)
     async def _playlist_download(
@@ -4716,7 +4722,9 @@ class Audio(commands.Cog):
         to_write.close()
 
     @commands.cooldown(1, 10, commands.BucketType.member)
-    @playlist.command(name="info", usage="<playlist_name_OR_id> [args]", cooldown_after_parsing=True)
+    @playlist.command(
+        name="info", usage="<playlist_name_OR_id> [args]", cooldown_after_parsing=True
+    )
     async def _playlist_info(
         self,
         ctx: commands.Context,
@@ -5283,7 +5291,12 @@ class Audio(commands.Cog):
             )
 
     @commands.cooldown(1, 30, commands.BucketType.member)
-    @playlist.command(name="start", aliases=["play"], usage="<playlist_name_OR_id> [args]", cooldown_after_parsing=True)
+    @playlist.command(
+        name="start",
+        aliases=["play"],
+        usage="<playlist_name_OR_id> [args]",
+        cooldown_after_parsing=True,
+    )
     async def _playlist_start(
         self,
         ctx: commands.Context,
@@ -5451,7 +5464,9 @@ class Audio(commands.Cog):
                 return await ctx.invoke(self.play, query=playlist.url)
 
     @commands.cooldown(1, 60, commands.BucketType.member)
-    @playlist.command(name="update", usage="<playlist_name_OR_id> [args]", cooldown_after_parsing=True)
+    @playlist.command(
+        name="update", usage="<playlist_name_OR_id> [args]", cooldown_after_parsing=True
+    )
     async def _playlist_update(
         self,
         ctx: commands.Context,
@@ -5728,7 +5743,9 @@ class Audio(commands.Cog):
         )
 
     @commands.cooldown(1, 60, commands.BucketType.member)
-    @playlist.command(name="rename", usage="<playlist_name_OR_id> <new_name> [args]", cooldown_after_parsing=True)
+    @playlist.command(
+        name="rename", usage="<playlist_name_OR_id> <new_name> [args]", cooldown_after_parsing=True
+    )
     async def _playlist_rename(
         self,
         ctx: commands.Context,
