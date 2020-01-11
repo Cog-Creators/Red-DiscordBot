@@ -440,12 +440,9 @@ class Admin(commands.Cog):
             )
             return
         async with self.conf.guild(ctx.guild).selfroles() as curr_selfroles:
-            if role.id in curr_selfroles:
-                curr_selfroles.remove(role.id)
-                await ctx.send(_("Removed."))
-                return
+            curr_selfroles.remove(role.id)
 
-        await ctx.send(_("That role is not a selfrole."))
+        await ctx.send(_("Removed."))
 
     @commands.command()
     @checks.is_owner()
