@@ -378,6 +378,10 @@ class Query:
 
         if isinstance(query, str):
             query = query.strip("<>")
+            while "ytsearch:" in query:
+                query = query.replace("ytsearch:", "")
+            while "scsearch:" in query:
+                query = query.replace("scsearch:", "")
 
         elif isinstance(query, Query):
             for key, val in kwargs.items():
