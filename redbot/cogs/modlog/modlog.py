@@ -26,6 +26,13 @@ class ModLog(commands.Cog):
         """Manage modlog settings."""
         pass
 
+    @checks.is_owner()
+    @modlogset.command(hidden=True, name="fixcasetypes")
+    async def reapply_audittype_migration(self, ctx: commands.Context):
+        """Command to fix misbehaving casetypes"""
+        await modlog.handle_auditype_key()
+        await ctx.tick()
+
     @modlogset.command()
     @commands.guild_only()
     async def modlog(self, ctx: commands.Context, channel: discord.TextChannel = None):
