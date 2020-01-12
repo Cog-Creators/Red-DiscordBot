@@ -231,7 +231,7 @@ Pyenv is now installed and your system should be configured to run Python 3.8.
 Creating a Virtual Environment
 ------------------------------
 
-We **strongly** recommend installing Red into a virtual environment. Don't be scared, it's very
+We require installing Red into a virtual environment. Don't be scared, it's very
 straightforward. See the section `installing-in-virtual-environment`.
 
 .. _installing-red-linux-mac:
@@ -242,29 +242,19 @@ Installing Red
 
 Choose one of the following commands to install Red.
 
-.. note::
-
-    If you're not inside an activated virtual environment, include the ``--user`` flag with all
-    ``python3.8 -m pip install`` commands, like this:
-
-    .. code-block:: none
-
-        python3.8 -m pip install --user -U setuptools wheel
-        python3.8 -m pip install --user -U Red-DiscordBot
-
 To install without additional config backend support:
 
 .. code-block:: none
 
-    python3.8 -m pip install -U setuptools wheel
-    python3.8 -m pip install -U Red-DiscordBot
+    python -m pip install -U setuptools wheel
+    python -m pip install -U Red-DiscordBot
 
 Or, to install with PostgreSQL support:
 
 .. code-block:: none
 
-    python3.8 -m pip install -U setuptools wheel
-    python3.8 -m pip install -U Red-DiscordBot[postgres]
+    python -m pip install -U setuptools wheel
+    python -m pip install -U Red-DiscordBot[postgres]
 
 
 --------------------------

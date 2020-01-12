@@ -7,16 +7,11 @@ Creating a virtual environment is really easy and usually prevents many common i
 problems. Firstly, simply choose how you'd like to create your virtual environment:
 
 * :ref:`using-venv` (quick and easy, involves two commands)
-* :ref:`using-pyenv-virtualenv` (recommended if you installed Python with pyenv)
-
-**Why Should I Use a Virtual Environment?**
-
-90% of the installation and setup issues raised in our support channels are resolved when the user
-creates a virtual environment.
+* :ref:`using-pyenv-virtualenv` (required if you installed Python with pyenv)
 
 **What Are Virtual Environments For?**
 
-Virtual environments allow you to isolate red's library dependencies, cog dependencies and python
+Virtual environments allow you to isolate Red's library dependencies, cog dependencies and python
 binaries from the rest of your system. It also makes sure Red and its dependencies are installed to
 a predictable location. It makes uninstalling Red as simple as removing a single folder, without
 worrying about losing your data or other things on your system becoming broken.
@@ -31,18 +26,18 @@ python.
 
 First, choose a directory where you would like to create your virtual environment. It's a good idea
 to keep it in a location which is easy to type out the path to. From now, we'll call it
-``redenv``.
+``redenv`` and it will be located in your home directory.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~
 ``venv`` on Linux or Mac
 ~~~~~~~~~~~~~~~~~~~~~~~~
 Create your virtual environment with the following command::
 
-    python3.8 -m venv redenv
+    python3.8 -m venv ~/redenv
 
 And activate it with the following command::
 
-    source redenv/bin/activate
+    source ~/redenv/bin/activate
 
 .. important::
 
@@ -56,11 +51,11 @@ Continue reading `below <after-activating-virtual-environment>`.
 ~~~~~~~~~~~~~~~~~~~
 Create your virtual environment with the following command::
 
-    py -3.8 -m venv redenv
+    py -3.8 -m venv %userprofile%\redenv
 
 And activate it with the following command::
 
-    redenv\Scripts\activate.bat
+    %userprofile%\redenv\Scripts\activate.bat
 
 .. important::
 
