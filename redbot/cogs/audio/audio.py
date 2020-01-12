@@ -4150,8 +4150,8 @@ class Audio(commands.Cog):
             else None,
         )
 
-    @commands.cooldown(1, 300, commands.BucketType.member)
-    @playlist.command(name="copy", usage="<id_or_name> [args]")
+    @commands.cooldown(1, 150, commands.BucketType.member)
+    @playlist.command(name="copy", usage="<id_or_name> [args]", cooldown_after_parsing=True)
     async def _playlist_copy(
         self,
         ctx: commands.Context,
@@ -4444,7 +4444,9 @@ class Audio(commands.Cog):
         )
 
     @commands.cooldown(1, 30, commands.BucketType.member)
-    @playlist.command(name="dedupe", usage="<playlist_name_OR_id> [args]")
+    @playlist.command(
+        name="dedupe", usage="<playlist_name_OR_id> [args]", cooldown_after_parsing=True
+    )
     async def _playlist_remdupe(
         self,
         ctx: commands.Context,
@@ -4577,9 +4579,13 @@ class Audio(commands.Cog):
             )
 
     @checks.is_owner()
-    @playlist.command(name="download", usage="<playlist_name_OR_id> [v2=False] [args]")
+    @playlist.command(
+        name="download",
+        usage="<playlist_name_OR_id> [v2=False] [args]",
+        cooldown_after_parsing=True,
+    )
     @commands.bot_has_permissions(attach_files=True)
-    @commands.cooldown(1, 60, commands.BucketType.guild)
+    @commands.cooldown(1, 30, commands.BucketType.guild)
     async def _playlist_download(
         self,
         ctx: commands.Context,
@@ -4721,8 +4727,10 @@ class Audio(commands.Cog):
             await ctx.send(file=discord.File(to_write, filename=f"{file_name}.txt"))
         to_write.close()
 
-    @commands.cooldown(1, 20, commands.BucketType.member)
-    @playlist.command(name="info", usage="<playlist_name_OR_id> [args]")
+    @commands.cooldown(1, 10, commands.BucketType.member)
+    @playlist.command(
+        name="info", usage="<playlist_name_OR_id> [args]", cooldown_after_parsing=True
+    )
     async def _playlist_info(
         self,
         ctx: commands.Context,
@@ -4858,8 +4866,8 @@ class Audio(commands.Cog):
             page_list.append(embed)
         await menu(ctx, page_list, DEFAULT_CONTROLS)
 
-    @commands.cooldown(1, 30, commands.BucketType.guild)
-    @playlist.command(name="list", usage="[args]")
+    @commands.cooldown(1, 15, commands.BucketType.guild)
+    @playlist.command(name="list", usage="[args]", cooldown_after_parsing=True)
     @commands.bot_has_permissions(add_reactions=True)
     async def _playlist_list(self, ctx: commands.Context, *, scope_data: ScopeParser = None):
         """List saved playlists.
@@ -4982,8 +4990,8 @@ class Audio(commands.Cog):
         )
         return embed
 
-    @playlist.command(name="queue", usage="<name> [args]")
-    @commands.cooldown(1, 600, commands.BucketType.member)
+    @playlist.command(name="queue", usage="<name> [args]", cooldown_after_parsing=True)
+    @commands.cooldown(1, 300, commands.BucketType.member)
     async def _playlist_queue(
         self, ctx: commands.Context, playlist_name: str, *, scope_data: ScopeParser = None
     ):
@@ -5194,8 +5202,8 @@ class Audio(commands.Cog):
                 ).format(playlist_name=playlist.name, id=playlist.id, scope=scope_name),
             )
 
-    @playlist.command(name="save", usage="<name> <url> [args]")
-    @commands.cooldown(1, 120, commands.BucketType.member)
+    @playlist.command(name="save", usage="<name> <url> [args]", cooldown_after_parsing=True)
+    @commands.cooldown(1, 60, commands.BucketType.member)
     async def _playlist_save(
         self,
         ctx: commands.Context,
@@ -5288,8 +5296,13 @@ class Audio(commands.Cog):
                 else None,
             )
 
-    @commands.cooldown(1, 60, commands.BucketType.member)
-    @playlist.command(name="start", aliases=["play"], usage="<playlist_name_OR_id> [args]")
+    @commands.cooldown(1, 30, commands.BucketType.member)
+    @playlist.command(
+        name="start",
+        aliases=["play"],
+        usage="<playlist_name_OR_id> [args]",
+        cooldown_after_parsing=True,
+    )
     async def _playlist_start(
         self,
         ctx: commands.Context,
@@ -5457,7 +5470,9 @@ class Audio(commands.Cog):
                 return await ctx.invoke(self.play, query=playlist.url)
 
     @commands.cooldown(1, 60, commands.BucketType.member)
-    @playlist.command(name="update", usage="<playlist_name_OR_id> [args]")
+    @playlist.command(
+        name="update", usage="<playlist_name_OR_id> [args]", cooldown_after_parsing=True
+    )
     async def _playlist_update(
         self,
         ctx: commands.Context,
@@ -5744,7 +5759,9 @@ class Audio(commands.Cog):
         )
 
     @commands.cooldown(1, 60, commands.BucketType.member)
-    @playlist.command(name="rename", usage="<playlist_name_OR_id> <new_name> [args]")
+    @playlist.command(
+        name="rename", usage="<playlist_name_OR_id> <new_name> [args]", cooldown_after_parsing=True
+    )
     async def _playlist_rename(
         self,
         ctx: commands.Context,
