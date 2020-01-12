@@ -23,6 +23,7 @@ from discord.embeds import EmptyEmbed
 from discord.utils import escape_markdown as escape
 from fuzzywuzzy import process
 
+from redbot import VersionInfo, version_info
 from redbot.core import Config, bank, checks, commands
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
@@ -67,8 +68,10 @@ from .playlists import (
 from .utils import *
 
 _ = Translator("Audio", __file__)
+red_extras = version_info.to_json()
+red_extras.update({"major": 1, "minor": 1, "micro": 0})
+__version__ = VersionInfo.from_json(red_extras)
 
-__version__ = "1.1.0.dev1" #FIXME: Change me before a release
 __author__ = ["aikaterna", "Draper"]
 
 log = logging.getLogger("red.cogs.Audio")
