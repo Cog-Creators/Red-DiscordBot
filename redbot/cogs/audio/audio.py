@@ -4290,8 +4290,8 @@ class Audio(commands.Cog):
             ).format(
                 name=from_playlist.name,
                 from_id=from_playlist.id,
-                from_scope=humanize_scope(from_scope, ctx=from_scope_name, the=True),
-                to_scope=humanize_scope(to_scope, ctx=to_scope_name, the=True),
+                from_scope=humanize_scope(from_scope, ctx=from_scope_name),
+                to_scope=humanize_scope(to_scope, ctx=to_scope_name),
                 to_id=to_playlist.id,
             ),
         )
