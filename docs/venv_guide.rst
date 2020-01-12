@@ -7,7 +7,7 @@ Creating a virtual environment is really easy and usually prevents many common i
 problems. Firstly, simply choose how you'd like to create your virtual environment:
 
 * :ref:`using-venv` (quick and easy, involves two commands)
-* :ref:`using-pyenv-virtualenv` (required if you installed Python with pyenv)
+* :ref:`using-pyenv-virtualenv` (recommended if you installed Python with pyenv)
 
 **What Are Virtual Environments For?**
 
