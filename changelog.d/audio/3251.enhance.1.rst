@@ -1,0 +1,1 @@
+``[p]playlist upload`` now accepts a playlist file that is uploaded with the command.
