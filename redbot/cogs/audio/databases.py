@@ -91,8 +91,6 @@ class CacheFetchResult:
             k in self.query for k in ["loadType", "playlistInfo", "isSeekable", "isStream"]
         ):
             self.query = json.loads(self.query)
-        else:
-            self.query = None
 
 
 @dataclass
