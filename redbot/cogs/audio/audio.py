@@ -5651,12 +5651,22 @@ class Audio(commands.Cog):
             return
         player = lavalink.get_player(ctx.guild.id)
 
-        await self._embed_msg(
-            ctx,
-            title=_(
-                "Please upload the playlist file. Any other message will cancel this operation."
-            ),
-        )
+        if not ctx.message.attachments:
+            await self._embed_msg(
+                ctx,
+                title=_(
+                    "Please upload the playlist file. Any other message will cancel this "
+                    "operation."
+                ),
+            )
+            try:
+                file_message = await ctx.bot.wait_for(
+                    "message", timeout=30.0, check=MessagePredicate.same_context(ctx)
+                )
+            except asyncio.TimeoutError:
+                return await self._embed_msg(ctx, title=_("No file detected, try again later."))
+        else:
+            file_message = ctx.message
 
         try:
             file_message = await ctx.bot.wait_for(
