@@ -752,7 +752,7 @@ class MusicCache:
                 self.append_task(ctx, *task)
             else:
                 val = None
-        if val and not forced:
+        if val and not forced and isinstance(val, dict):
             data = val
             data["query"] = query
             results = LoadResult(data)
