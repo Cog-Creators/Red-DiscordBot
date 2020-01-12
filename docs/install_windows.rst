@@ -79,7 +79,7 @@ Installing Red
                for the PATH changes to take effect.
 
 1. Open a command prompt (open Start, search for "command prompt", then click it)
-2. Run **one** of the following commands, depending on what extras you want installed
+2. Run **one** of the following set of commands, depending on what extras you want installed
 
   * Normal installation:
 
