@@ -51,7 +51,6 @@ CentOS and RHEL 7
 
 Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
 
-
 .. _install-debian-stretch:
 
 ~~~~~~~~~~~~~~
