@@ -188,27 +188,43 @@ with zypper:
 
 .. _install-ubuntu:
 
-~~~~~~
-Ubuntu
-~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Ubuntu LTS versions (18.04 and 16.04)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. note:: **Ubuntu Python Availability**
-
-   We recommend using the deadsnakes ppa to ensure up to date python availability.
-
-    .. code-block:: none
-
-        sudo apt update
-        sudo apt install software-properties-common
-        sudo add-apt-repository ppa:deadsnakes/ppa
-
-Install the pre-requirements with apt:
+We recommend adding the ``deadsnakes`` ppa to install Python 3.8.1 or greater:
 
 .. code-block:: none
 
     sudo apt update
+    sudo apt install software-properties-common
+    sudo add-apt-repository ppa:deadsnakes/ppa
+
+Now install the pre-requirements with apt:
+
+.. code-block:: none
+
     sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git default-jre-headless \
       build-essential
+
+.. _install-ubuntu-non-lts:
+
+~~~~~~~~~~~~~~~~~~~~~~~
+Ubuntu non-LTS versions
+~~~~~~~~~~~~~~~~~~~~~~~
+
+We recommend installing pyenv as a method of installing non-native versions of python on
+non-LTS versions of Ubuntu. This guide will tell you how. First, run the following commands:
+
+.. code-block:: none
+
+    sudo apt update
+    sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
+      libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev \
+      libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre
+    CXX=/usr/bin/g++
+
+Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
 
 .. _install-python-pyenv:
 
