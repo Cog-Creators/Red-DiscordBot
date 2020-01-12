@@ -246,14 +246,19 @@ class Audio(commands.Cog):
                             uri = t.get("info", {}).get("uri")
                             if uri:
                                 t = {"loadType": "V2_COMPACT", "tracks": [t], "query": uri}
-                                database_entries.append(
-                                    {
-                                        "query": uri,
-                                        "data": json.dumps(t),
-                                        "last_updated": time_now,
-                                        "last_fetched": time_now,
-                                    }
-                                )
+                                data = json.dumps(t)
+                                if all(
+                                    k in data
+                                    for k in ["loadType", "playlistInfo", "isSeekable", "isStream"]
+                                ):
+                                    database_entries.append(
+                                        {
+                                            "query": uri,
+                                            "data": data,
+                                            "last_updated": time_now,
+                                            "last_fetched": time_now,
+                                        }
+                                    )
                         await asyncio.sleep(0)
                     if guild_playlist:
                         all_playlist[str(guild_id)] = guild_playlist
@@ -5894,14 +5899,16 @@ class Audio(commands.Cog):
             uri = t.get("info", {}).get("uri")
             if uri:
                 t = {"loadType": "V2_COMPACT", "tracks": [t], "query": uri}
-                database_entries.append(
-                    {
-                        "query": uri,
-                        "data": json.dumps(t),
-                        "last_updated": time_now,
-                        "last_fetched": time_now,
-                    }
-                )
+                data = json.dumps(t)
+                if all(k in data for k in ["loadType", "playlistInfo", "isSeekable", "isStream"]):
+                    database_entries.append(
+                        {
+                            "query": uri,
+                            "data": data,
+                            "last_updated": time_now,
+                            "last_fetched": time_now,
+                        }
+                    )
         if database_entries:
             await self.music_cache.database.insert("lavalink", database_entries)
 
