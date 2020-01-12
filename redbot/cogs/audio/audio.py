@@ -530,17 +530,18 @@ class Audio(commands.Cog):
                 player_check = await self._players_check()
                 await self._status_check(*player_check)
 
-        if not autoplay and event_type == lavalink.LavalinkEvents.QUEUE_END and notify:
-            notify_channel = player.fetch("channel")
-            if notify_channel:
-                notify_channel = self.bot.get_channel(notify_channel)
-                await self._embed_msg(notify_channel, title=_("Queue Ended."))
-        elif not autoplay and event_type == lavalink.LavalinkEvents.QUEUE_END and disconnect:
-            self.bot.dispatch("red_audio_audio_disconnect", guild)
-            await player.disconnect()
-        if event_type == lavalink.LavalinkEvents.QUEUE_END and status:
-            player_check = await self._players_check()
-            await self._status_check(*player_check)
+        if event_type == lavalink.LavalinkEvents.QUEUE_END:
+            if not autoplay:
+                notify_channel = player.fetch("channel")
+                if notify_channel and notify:
+                    notify_channel = self.bot.get_channel(notify_channel)
+                    await self._embed_msg(notify_channel, title=_("Queue Ended."))
+                if disconnect:
+                    self.bot.dispatch("red_audio_audio_disconnect", guild)
+                    await player.disconnect()
+            if status:
+                player_check = await self._players_check()
+                await self._status_check(*player_check)
 
         if event_type in [
             lavalink.LavalinkEvents.TRACK_EXCEPTION,
