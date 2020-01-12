@@ -246,14 +246,14 @@ To install without additional config backend support:
 
 .. code-block:: none
 
-    python -m pip install -U setuptools wheel
+    python -m pip install -U pip setuptools wheel
     python -m pip install -U Red-DiscordBot
 
 Or, to install with PostgreSQL support:
 
 .. code-block:: none
 
-    python -m pip install -U setuptools wheel
+    python -m pip install -U pip setuptools wheel
     python -m pip install -U Red-DiscordBot[postgres]
 
 
