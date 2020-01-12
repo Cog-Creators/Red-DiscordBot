@@ -755,6 +755,8 @@ class MusicCache:
         if val and not forced and isinstance(val, dict):
             data = val
             data["query"] = query
+            if data.get("loadType") == "V2_COMPACT":
+                data["loadType"] = "V2_COMPAT"
             results = LoadResult(data)
             called_api = False
             if results.has_error:
@@ -863,6 +865,8 @@ class MusicCache:
 
             if recently_played:
                 track = random.choice(recently_played)
+                if track.get("loadType") == "V2_COMPACT":
+                    track["loadType"] = "V2_COMPAT"
                 results = LoadResult(track)
                 tracks = list(results.tracks)
         except Exception:
