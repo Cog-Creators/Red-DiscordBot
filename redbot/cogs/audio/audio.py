@@ -245,7 +245,7 @@ class Audio(commands.Cog):
                         for t in tracks_in_playlist:
                             uri = t.get("info", {}).get("uri")
                             if uri:
-                                t = {"loadType": "V2_COMPACT", "tracks": [t], "query": uri}
+                                t = {"loadType": "V2_COMPAT", "tracks": [t], "query": uri}
                                 data = json.dumps(t)
                                 if all(
                                     k in data
@@ -5915,7 +5915,7 @@ class Audio(commands.Cog):
         for t in track_list:
             uri = t.get("info", {}).get("uri")
             if uri:
-                t = {"loadType": "V2_COMPACT", "tracks": [t], "query": uri}
+                t = {"loadType": "V2_COMPAT", "tracks": [t], "query": uri}
                 data = json.dumps(t)
                 if all(k in data for k in ["loadType", "playlistInfo", "isSeekable", "isStream"]):
                     database_entries.append(
