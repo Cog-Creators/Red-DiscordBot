@@ -68,7 +68,7 @@ from .utils import *
 
 _ = Translator("Audio", __file__)
 
-__version__ = "1.1.0"
+__version__ = "1.1.0.dev1" #FIXME: Change me before a release
 __author__ = ["aikaterna", "Draper"]
 
 log = logging.getLogger("red.cogs.Audio")
