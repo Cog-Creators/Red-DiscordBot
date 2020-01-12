@@ -53,7 +53,6 @@ Complete the rest of the installation by `installing Python 3.8 with pyenv <inst
 
 
 .. _install-debian-stretch:
-.. _install-raspbian:
 
 ~~~~~~~~~~~~~~
 Debian Stretch
