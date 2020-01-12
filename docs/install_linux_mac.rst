@@ -51,15 +51,40 @@ CentOS and RHEL 7
 
 Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
 
+.. _install-debian-stretch:
+
+~~~~~~~~~~~~~~
+Debian Stretch
+~~~~~~~~~~~~~~
+
+.. note::
+
+    This guide is only for Debian Stretch users, these instructions won't work with
+    Raspbian Stretch. Raspbian Buster is the only version of Raspbian supported by Red.
+
+We recommend installing pyenv as a method of installing non-native versions of python on
+Debian Stretch. This guide will tell you how. First, run the following commands:
+
+.. code-block:: none
+
+    sudo echo "deb http://deb.debian.org/debian stretch-backports main" >> /etc/apt/sources.list.d/red-sources.list
+    sudo apt update
+    sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
+      libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev \
+      libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre
+    CXX=/usr/bin/g++
+
+Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
+
 .. _install-debian:
 .. _install-raspbian:
 
-~~~~~~~~~~~~~~~~~~~
-Debian and Raspbian
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+Debian and Raspbian Buster
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We recommend installing pyenv as a method of installing non-native versions of python on
-Debian/Raspbian. This guide will tell you how. First, run the following commands:
+Debian/Raspbian Buster. This guide will tell you how. First, run the following commands:
 
 .. code-block:: none
 
@@ -231,7 +256,7 @@ Pyenv is now installed and your system should be configured to run Python 3.8.
 Creating a Virtual Environment
 ------------------------------
 
-We **strongly** recommend installing Red into a virtual environment. Don't be scared, it's very
+We require installing Red into a virtual environment. Don't be scared, it's very
 straightforward. See the section `installing-in-virtual-environment`.
 
 .. _installing-red-linux-mac:
@@ -242,29 +267,19 @@ Installing Red
 
 Choose one of the following commands to install Red.
 
-.. note::
-
-    If you're not inside an activated virtual environment, include the ``--user`` flag with all
-    ``python3.8 -m pip install`` commands, like this:
-
-    .. code-block:: none
-
-        python3.8 -m pip install --user -U setuptools wheel
-        python3.8 -m pip install --user -U Red-DiscordBot
-
 To install without additional config backend support:
 
 .. code-block:: none
 
-    python3.8 -m pip install -U setuptools wheel
-    python3.8 -m pip install -U Red-DiscordBot
+    python -m pip install -U pip setuptools wheel
+    python -m pip install -U Red-DiscordBot
 
 Or, to install with PostgreSQL support:
 
 .. code-block:: none
 
-    python3.8 -m pip install -U setuptools wheel
-    python3.8 -m pip install -U Red-DiscordBot[postgres]
+    python -m pip install -U pip setuptools wheel
+    python -m pip install -U Red-DiscordBot[postgres]
 
 
 --------------------------

@@ -1,0 +1,1 @@
+Fix an issues with the formatting of non existing local tracks.
