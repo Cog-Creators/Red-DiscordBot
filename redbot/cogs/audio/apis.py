@@ -750,6 +750,8 @@ class MusicCache:
                 log.debug(f"Querying Local Database for {query}")
                 task = ("update", ("lavalink", {"query": query}))
                 self.append_task(ctx, *task)
+            else:
+                val = None
         if val and not forced:
             data = val
             data["query"] = query
