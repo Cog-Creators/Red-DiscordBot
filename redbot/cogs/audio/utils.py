@@ -213,7 +213,7 @@ async def clear_react(bot: Red, message: discord.Message, emoji: MutableMapping 
 def get_track_description(track) -> Optional[str]:
     if track and getattr(track, "uri", None):
         query = Query.process_input(track.uri)
-        if query.is_local:
+        if query.is_local or "localtracks/" in track.uri:
             if track.title != "Unknown title":
                 return f'**{escape(f"{track.author} - {track.title}")}**' + escape(
                     f"\n{query.to_string_user()} "
@@ -229,7 +229,7 @@ def get_track_description(track) -> Optional[str]:
 def get_track_description_unformatted(track) -> Optional[str]:
     if track and hasattr(track, "uri"):
         query = Query.process_input(track.uri)
-        if query.is_local:
+        if query.is_local or "localtracks/" in track.uri:
             if track.title != "Unknown title":
                 return escape(f"{track.author} - {track.title}")
             else:
