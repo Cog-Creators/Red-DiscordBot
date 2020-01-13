@@ -1,0 +1,2 @@
+``[p]warnings`` can now be used by users that have the permission to use it from the Permissions cog, in order to check another user's warnings.
+``[p]mywarnings`` can now be used by any user (instead of ``[p]warnings`` previously) to check their own warnings.
