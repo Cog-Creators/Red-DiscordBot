@@ -62,7 +62,7 @@ class CogCommandMixin:
         """
         This formats the help string based on values in context
 
-        The steps are (roughly) the following:
+        The steps are (currently, roughly) the following:
 
             - get the localized help
             - substitute ``[p]`` with ``ctx.clean_prefix``
@@ -70,8 +70,8 @@ class CogCommandMixin:
 
         More steps may be added at a later time.
 
-        Cog creators May override this in their own command classes
-        As long as the method signature stays the same
+        Cog creators may override this in their own command classes
+        as long as the method signature stays the same.
 
         Parameters
         ----------
