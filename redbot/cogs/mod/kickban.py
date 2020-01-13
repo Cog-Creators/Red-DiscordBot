@@ -7,7 +7,7 @@ from typing import cast, Optional, Union
 
 import discord
 from redbot.core import commands, i18n, checks, modlog
-from redbot.core.utils.chat_formatting import pagify, humanize_number
+from redbot.core.utils.chat_formatting import pagify, humanize_number, bold
 from redbot.core.utils.mod import is_allowed_by_hierarchy, get_audit_reason
 from .abc import MixinMeta
 from .converters import RawUserIds
@@ -180,7 +180,7 @@ class KickBanMixin(MixinMeta):
             if guild.me.top_role > user.top_role and user != guild.owner and author != user:
                 with contextlib.suppress(discord.HTTPException):
                     em = discord.Embed(
-                        title=_("**You have been kicked from {guild}.**").format(guild=guild)
+                        title=_(bold("**You have been kicked from {guild}.**")).format(guild=guild)
                     )
                     em.add_field(name=_("**Reason**"), value=reason, inline=False)
                     await user.send(embed=em)
@@ -234,7 +234,7 @@ class KickBanMixin(MixinMeta):
             if guild.me.top_role > user.top_role and user != guild.owner and author != user:
                 with contextlib.suppress(discord.HTTPException):
                     em = discord.Embed(
-                        title=_("**You have been banned from {guild}.**").format(guild=guild)
+                        title=_(bold("**You have been banned from {guild}.**").format(guild=guild))
                     )
                     em.add_field(name=_("**Reason**"), value=reason, inline=False)
                     await user.send(embed=em)
