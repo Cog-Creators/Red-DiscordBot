@@ -3,7 +3,7 @@ from . import commands
 
 
 def init_global_checks(bot):
-    @bot.check_one
+    @bot.check_once
     def minimum_bot_perms(ctx) -> bool:
         """
         Too many 403, 401, and 429 Errors can cause bots to get global'd
