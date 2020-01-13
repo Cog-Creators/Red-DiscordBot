@@ -29,7 +29,8 @@ class ModLog(commands.Cog):
     @checks.is_owner()
     @modlogset.command(hidden=True, name="fixcasetypes")
     async def reapply_audittype_migration(self, ctx: commands.Context):
-        """Command to fix misbehaving casetypes"""
+        """Command to fix misbehaving casetypes."""
+        await ctx.send(_("Fixing up the casetypes, this may take a moment."))
         await modlog.handle_auditype_key()
         await ctx.tick()
 
