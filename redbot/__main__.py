@@ -288,7 +288,16 @@ def handle_edit(cli_flags: Namespace):
         sys.exit(0)
 
 
-async def run_bot(red: Red, cli_flags: Namespace) -> NoReturn:
+async def run_bot(red: Red, cli_flags: Namespace) -> None:
+    """
+    This runs the bot.
+    
+    In abnormal shutdown cases, we need to raise SystemExit
+    to trigger our handlng of things.
+
+    In normal shutdown cases, SystemExit will be triggered as well,
+    though it won't propogate to this function.
+    """
 
     driver_cls = drivers.get_driver_class()
 
@@ -335,7 +344,6 @@ async def run_bot(red: Red, cli_flags: Namespace) -> NoReturn:
         sys.exit(0)
     try:
         await red.start(token, bot=True, cli_flags=cli_flags)
-        # This raises SystemExit in normal use at close
     except discord.LoginFailure:
         log.critical("This token doesn't seem to be valid.")
         db_token = await red._config.token()
@@ -344,7 +352,9 @@ async def run_bot(red: Red, cli_flags: Namespace) -> NoReturn:
                 await red._config.token.set("")
                 print("Token has been reset.")
                 sys.exit(0)
-    sys.exit(1)
+        sys.exit(1)
+
+    return None
 
 
 def handle_early_exit_flags(cli_flags: Namespace):
