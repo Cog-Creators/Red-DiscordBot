@@ -198,7 +198,7 @@ class RedHelpFormatter:
             emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
 
             if description:
-                emb["embed"]["title"] = f"*{description[:2044]}*"
+                emb["embed"]["title"] = f"*{description[:250]}*"
 
             emb["footer"]["text"] = tagline
             emb["embed"]["description"] = signature
@@ -209,7 +209,7 @@ class RedHelpFormatter:
                 value = "\n\n".join(splitted[1:]).replace("[p]", ctx.clean_prefix)
                 if not value:
                     value = EMPTY_STRING
-                field = EmbedField(name[:252], value[:1024], False)
+                field = EmbedField(name[:250], value[:1024], False)
                 emb["fields"].append(field)
 
             if subcommands:
@@ -442,7 +442,7 @@ class RedHelpFormatter:
 
             emb["footer"]["text"] = tagline
             if description:
-                emb["embed"]["title"] = f"*{description[:2044]}*"
+                emb["embed"]["title"] = f"*{description[:250]}*"
 
             for cog_name, data in coms:
 
