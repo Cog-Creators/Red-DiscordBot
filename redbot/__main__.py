@@ -292,11 +292,13 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
     """
     This runs the bot.
     
-    In abnormal shutdown cases, we need to raise SystemExit
-    to trigger our handlng of things.
+    Any shutdown which is a result of not being able to log in needs to raise
+    a SystemExit exception.
 
-    In normal shutdown cases, SystemExit will be triggered as well,
-    though it won't propogate to this function.
+    If the bot starts normally, the bot should be left to handle the exit case.
+    It will raise SystemExit in a task, which will reach the event loop and
+    interrupt running forever, then trigger our cleanup process, and does not
+    need additional handling in this function.
     """
 
     driver_cls = drivers.get_driver_class()
