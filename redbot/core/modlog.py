@@ -512,7 +512,7 @@ class CaseType:
         self.guild = guild
         if kwargs:
             log.warning(
-                "Fix this using the hidden command: `modlogset fixcasetypes`:  "
+                "Fix this using the hidden command: `modlogset fixcasetypes` in Discord: "
                 "Got unexpected key(s) in casetype %s",
                 ",".join(kwargs.keys()),
             )
