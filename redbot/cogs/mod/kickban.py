@@ -174,7 +174,7 @@ class KickBanMixin(MixinMeta):
             return
         audit_reason = get_audit_reason(author, reason)
         if reason is None:
-            reason = "No reason was given."
+            reason = _("No reason was given.")
         toggle = await self.settings.guild(guild).toggle_dm()
         if toggle:
             if guild.me.top_role > user.top_role and user != guild.owner and author != user:
