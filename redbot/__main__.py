@@ -341,6 +341,7 @@ async def run_bot(red: Red, cli_flags: Namespace):
             if confirm("\nDo you want to reset the token?"):
                 await red._config.token.set("")
                 print("Token has been reset.")
+                sys.exit(0)
 
 
 def handle_early_exit_flags(cli_flags: Namespace):
