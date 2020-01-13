@@ -345,6 +345,13 @@ class Warnings(commands.Cog):
     async def warnings(self, ctx: commands.Context, user: Union[discord.Member, int]):
         """List the warnings for the specified user."""
 
+        try:
+            userid: int = user.id
+        except AttributeError:
+            userid: int = user
+            user = ctx.guild.get_member(userid)
+            user = user or namedtuple("Member", "id guild")(userid, ctx.guild)
+
         msg = ""
         member_settings = self.config.member(user)
         async with member_settings.warnings() as user_warnings:
@@ -377,14 +384,6 @@ class Warnings(commands.Cog):
         msg = ""
         member_settings = self.config.member(user)
         async with member_settings.warnings() as user_warnings:
-
-            try:
-                userid: int = user.id
-            except AttributeError:
-                userid: int = user
-                user = ctx.guild.get_member(userid)
-                user = user or namedtuple("Member", "id guild")(userid, ctx.guild)
-
             if not user_warnings.keys():  # no warnings for the user
                 await ctx.send(_("You have no warnings!"))
             else:
