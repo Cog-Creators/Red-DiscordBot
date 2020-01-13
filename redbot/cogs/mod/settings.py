@@ -208,7 +208,8 @@ class ModSettings(MixinMeta):
     @modset.command()
     @commands.guild_only()
     async def toggledm(self, ctx: commands.Context, enabled: bool = None):
-        """Toggle whether to send a message to a user when they are kicked/banned.
+        """Toggle whether to send a message to a user when they are 
+         kicked/banned."""
         If this is True, the bot will attempt to DM the user with the guild name
         and reason as to why they were kicked/banned.
         """
@@ -217,6 +218,6 @@ class ModSettings(MixinMeta):
             enabled = not await self.settings.guild(guild).toggle_dm()
         await self.settings.guild(guild).toggle_dm.set(enabled)
         if enabled:
-            await ctx.send(_("Users will now be DM'd when they are kicked/banned."))
+            await ctx.send(_("Users will recieve a DM when they are kicked/banned."))
         else:
-            await ctx.send(_("Users will not be DM'd when they are kicked/banned"))
+            await ctx.send(_("User will not recieve a DM when they are kicked/banned."))
