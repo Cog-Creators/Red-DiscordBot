@@ -887,6 +887,13 @@ class Core(commands.Cog, CoreLogic):
             await ctx.bot._config.description.clear()
             ctx.bot.description = "Red V3"
             await ctx.send(_("Description reset."))
+        elif len(description) > 250:  # While the limit is 256, we bold it adding characters.
+            await ctx.send(
+                _(
+                    "This description is too long to properly display. "
+                    "Please try again with below 250 characters"
+                )
+            )
         else:
             await ctx.bot._config.description.set(description)
             ctx.bot.description = description
