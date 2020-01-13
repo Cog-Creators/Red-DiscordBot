@@ -908,7 +908,7 @@ class MusicCache:
                 self.append_task(ctx, *task)
             else:
                 val = None
-        if val and not forced and isinstance(val, dict):
+            if val and not forced and isinstance(val, dict):
                 valid_global_entry = False
                 called_api = False
             else:
@@ -987,9 +987,7 @@ class MusicCache:
             with contextlib.suppress(SQLError):
                 time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
                 data = json.dumps(results._raw)
-                if all(
-                        k in data for k in ["loadType", "playlistInfo", "isSeekable", "isStream"]
-                ):
+                if all(k in data for k in ["loadType", "playlistInfo", "isSeekable", "isStream"]):
                     task = (
                         "insert",
                         (
