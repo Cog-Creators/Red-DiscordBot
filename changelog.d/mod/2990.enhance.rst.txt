@@ -1,0 +1,1 @@
+Added a `modset toggledm` to toggle kick/bans sending an embed to the user detailing the reason for the kickban, the server they were kickedbanned and if it was a kick or a ban.
