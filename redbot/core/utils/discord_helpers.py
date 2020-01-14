@@ -18,8 +18,6 @@ class OverwriteDiff:
     allows_removed : int
     denies_added : int
     denies_removed : int
-
-    .. versionadded: 3.2.0
     """
 
     def __init__(self, **data: int):
