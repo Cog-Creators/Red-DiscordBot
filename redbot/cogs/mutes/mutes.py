@@ -35,7 +35,7 @@ class Mutes(commands.Cog):
         self.conn = Connection(cog_data_path(self) / "mutes.db")
         self.config = Config.get_conf(self, identifier=240961564503441410)
         self.config.register_guild(
-            mute_deny_text=2112, # send, react
+            mute_deny_text=2112,  # send, react
             mute_deny_voice=2097152,  # speak
             excluded_channel_ids=[],
         )
@@ -105,9 +105,7 @@ class Mutes(commands.Cog):
                 await self._schedule_unmutes(300)
             await asyncio.sleep(300)
 
-    async def _schedule_unmutes(
-        self, schedule_by_seconds: int = 300
-    ):
+    async def _schedule_unmutes(self, schedule_by_seconds: int = 300):
         """
         Schedules unmuting.
         Mutes get scheduled as tasks so that mute extensions or changes to make a mute
