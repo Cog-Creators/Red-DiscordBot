@@ -19,8 +19,8 @@ from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 
 from . import audio_dataclasses
-from .databases import CacheInterface, SQLError
-from .errors import DatabaseError, SpotifyFetchError, YouTubeApiError, TrackEnqueueError
+from .databases import CacheInterface, QueueInterface, SQLError
+from .errors import DatabaseError, SpotifyFetchError, TrackEnqueueError, YouTubeApiError
 from .playlists import get_playlist
 from .utils import CacheLevel, Notifier, is_allowed, queue_duration, track_limit
 
@@ -34,20 +34,24 @@ if TYPE_CHECKING:
     _database: CacheInterface
     _bot: Red
     _config: Config
+    _persist_queue: QueueInterface
 else:
     _database = None
     _bot = None
     _config = None
+    _persist_queue = None
 
 
 def _pass_config_to_apis(config: Config, bot: Red):
-    global _database, _config, _bot
+    global _database, _config, _bot, _persist_queue
     if _config is None:
         _config = config
     if _bot is None:
         _bot = bot
     if _database is None:
         _database = CacheInterface()
+    if _persist_queue is None:
+        _persist_queue = QueueInterface()
 
 
 class SpotifyAPI:
@@ -221,6 +225,7 @@ class MusicCache:
         self.youtube_api: YouTubeAPI = YouTubeAPI(bot, session)
         self._session: aiohttp.ClientSession = session
         self.database = _database
+        self.persist_queue = _persist_queue
 
         self._tasks: MutableMapping = {}
         self._lock: asyncio.Lock = asyncio.Lock()
@@ -361,7 +366,6 @@ class MusicCache:
         params: MutableMapping = None,
         notifier: Optional[Notifier] = None,
     ) -> Union[MutableMapping, List[str]]:
-
         if recursive is False:
             (call, params) = self._spotify_format_call(query_type, uri)
             results = await self.spotify_api.get_call(call, params)

@@ -257,7 +257,7 @@ def track_to_json(track: lavalink.Track) -> MutableMapping:
     track_info = {}
     for k, v in zip(track_keys, track_values):
         track_info[k] = v
-    keys = ["track", "info"]
+    keys = ["track", "info", "extras"]
     values = [track_id, track_info]
     track_obj = {}
     for key, value in zip(keys, values):

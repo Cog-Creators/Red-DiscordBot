@@ -479,7 +479,6 @@ async def get_all_playlist(
         playlists = await database.fetch_all(scope_standard, scope_id, author_id=user_id)
     else:
         playlists = await database.fetch_all(scope_standard, scope_id)
-
     playlist_list = []
     for playlist in playlists:
         playlist_list.append(
