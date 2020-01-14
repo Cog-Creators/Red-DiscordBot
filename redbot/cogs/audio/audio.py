@@ -254,14 +254,19 @@ class Audio(commands.Cog):
                             uri = t.get("info", {}).get("uri")
                             if uri:
                                 t = {"loadType": "V2_COMPAT", "tracks": [t], "query": uri}
-                                database_entries.append(
-                                    {
-                                        "query": uri,
-                                        "data": json.dumps(t),
-                                        "last_updated": time_now,
-                                        "last_fetched": time_now,
-                                    }
-                                )
+                                data = json.dumps(t)
+                                if all(
+                                    k in data
+                                    for k in ["loadType", "playlistInfo", "isSeekable", "isStream"]
+                                ):
+                                    database_entries.append(
+                                        {
+                                            "query": uri,
+                                            "data": data,
+                                            "last_updated": time_now,
+                                            "last_fetched": time_now,
+                                        }
+                                    )
                         await asyncio.sleep(0)
                     if guild_playlist:
                         all_playlist[str(guild_id)] = guild_playlist
@@ -538,17 +543,18 @@ class Audio(commands.Cog):
                 player_check = await self._players_check()
                 await self._status_check(*player_check)
 
-        if not autoplay and event_type == lavalink.LavalinkEvents.QUEUE_END and notify:
-            notify_channel = player.fetch("channel")
-            if notify_channel:
-                notify_channel = self.bot.get_channel(notify_channel)
-                await self._embed_msg(notify_channel, title=_("Queue Ended."))
-        elif not autoplay and event_type == lavalink.LavalinkEvents.QUEUE_END and disconnect:
-            self.bot.dispatch("red_audio_audio_disconnect", guild)
-            await player.disconnect()
-        if event_type == lavalink.LavalinkEvents.QUEUE_END and status:
-            player_check = await self._players_check()
-            await self._status_check(*player_check)
+        if event_type == lavalink.LavalinkEvents.QUEUE_END:
+            if not autoplay:
+                notify_channel = player.fetch("channel")
+                if notify_channel and notify:
+                    notify_channel = self.bot.get_channel(notify_channel)
+                    await self._embed_msg(notify_channel, title=_("Queue Ended."))
+                if disconnect:
+                    self.bot.dispatch("red_audio_audio_disconnect", guild)
+                    await player.disconnect()
+            if status:
+                player_check = await self._players_check()
+                await self._status_check(*player_check)
 
         if event_type in [
             lavalink.LavalinkEvents.TRACK_EXCEPTION,
@@ -4215,8 +4221,8 @@ class Audio(commands.Cog):
             else None,
         )
 
-    @commands.cooldown(1, 300, commands.BucketType.member)
-    @playlist.command(name="copy", usage="<id_or_name> [args]")
+    @commands.cooldown(1, 150, commands.BucketType.member)
+    @playlist.command(name="copy", usage="<id_or_name> [args]", cooldown_after_parsing=True)
     async def _playlist_copy(
         self,
         ctx: commands.Context,
@@ -4355,8 +4361,8 @@ class Audio(commands.Cog):
             ).format(
                 name=from_playlist.name,
                 from_id=from_playlist.id,
-                from_scope=humanize_scope(from_scope, ctx=from_scope_name, the=True),
-                to_scope=humanize_scope(to_scope, ctx=to_scope_name, the=True),
+                from_scope=humanize_scope(from_scope, ctx=from_scope_name),
+                to_scope=humanize_scope(to_scope, ctx=to_scope_name),
                 to_id=to_playlist.id,
             ),
         )
@@ -4509,7 +4515,9 @@ class Audio(commands.Cog):
         )
 
     @commands.cooldown(1, 30, commands.BucketType.member)
-    @playlist.command(name="dedupe", usage="<playlist_name_OR_id> [args]")
+    @playlist.command(
+        name="dedupe", usage="<playlist_name_OR_id> [args]", cooldown_after_parsing=True
+    )
     async def _playlist_remdupe(
         self,
         ctx: commands.Context,
@@ -4642,9 +4650,13 @@ class Audio(commands.Cog):
             )
 
     @checks.is_owner()
-    @playlist.command(name="download", usage="<playlist_name_OR_id> [v2=False] [args]")
+    @playlist.command(
+        name="download",
+        usage="<playlist_name_OR_id> [v2=False] [args]",
+        cooldown_after_parsing=True,
+    )
     @commands.bot_has_permissions(attach_files=True)
-    @commands.cooldown(1, 60, commands.BucketType.guild)
+    @commands.cooldown(1, 30, commands.BucketType.guild)
     async def _playlist_download(
         self,
         ctx: commands.Context,
@@ -4786,8 +4798,10 @@ class Audio(commands.Cog):
             await ctx.send(file=discord.File(to_write, filename=f"{file_name}.txt"))
         to_write.close()
 
-    @commands.cooldown(1, 20, commands.BucketType.member)
-    @playlist.command(name="info", usage="<playlist_name_OR_id> [args]")
+    @commands.cooldown(1, 10, commands.BucketType.member)
+    @playlist.command(
+        name="info", usage="<playlist_name_OR_id> [args]", cooldown_after_parsing=True
+    )
     async def _playlist_info(
         self,
         ctx: commands.Context,
@@ -4923,8 +4937,8 @@ class Audio(commands.Cog):
             page_list.append(embed)
         await menu(ctx, page_list, DEFAULT_CONTROLS)
 
-    @commands.cooldown(1, 30, commands.BucketType.guild)
-    @playlist.command(name="list", usage="[args]")
+    @commands.cooldown(1, 15, commands.BucketType.guild)
+    @playlist.command(name="list", usage="[args]", cooldown_after_parsing=True)
     @commands.bot_has_permissions(add_reactions=True)
     async def _playlist_list(self, ctx: commands.Context, *, scope_data: ScopeParser = None):
         """List saved playlists.
@@ -5047,8 +5061,8 @@ class Audio(commands.Cog):
         )
         return embed
 
-    @playlist.command(name="queue", usage="<name> [args]")
-    @commands.cooldown(1, 600, commands.BucketType.member)
+    @playlist.command(name="queue", usage="<name> [args]", cooldown_after_parsing=True)
+    @commands.cooldown(1, 300, commands.BucketType.member)
     async def _playlist_queue(
         self, ctx: commands.Context, playlist_name: str, *, scope_data: ScopeParser = None
     ):
@@ -5259,8 +5273,8 @@ class Audio(commands.Cog):
                 ).format(playlist_name=playlist.name, id=playlist.id, scope=scope_name),
             )
 
-    @playlist.command(name="save", usage="<name> <url> [args]")
-    @commands.cooldown(1, 120, commands.BucketType.member)
+    @playlist.command(name="save", usage="<name> <url> [args]", cooldown_after_parsing=True)
+    @commands.cooldown(1, 60, commands.BucketType.member)
     async def _playlist_save(
         self,
         ctx: commands.Context,
@@ -5353,8 +5367,13 @@ class Audio(commands.Cog):
                 else None,
             )
 
-    @commands.cooldown(1, 60, commands.BucketType.member)
-    @playlist.command(name="start", aliases=["play"], usage="<playlist_name_OR_id> [args]")
+    @commands.cooldown(1, 30, commands.BucketType.member)
+    @playlist.command(
+        name="start",
+        aliases=["play"],
+        usage="<playlist_name_OR_id> [args]",
+        cooldown_after_parsing=True,
+    )
     async def _playlist_start(
         self,
         ctx: commands.Context,
@@ -5523,7 +5542,9 @@ class Audio(commands.Cog):
                 return await ctx.invoke(self.play, query=playlist.url)
 
     @commands.cooldown(1, 60, commands.BucketType.member)
-    @playlist.command(name="update", usage="<playlist_name_OR_id> [args]")
+    @playlist.command(
+        name="update", usage="<playlist_name_OR_id> [args]", cooldown_after_parsing=True
+    )
     async def _playlist_update(
         self,
         ctx: commands.Context,
@@ -5723,12 +5744,22 @@ class Audio(commands.Cog):
             return
         player = lavalink.get_player(ctx.guild.id)
 
-        await self._embed_msg(
-            ctx,
-            title=_(
-                "Please upload the playlist file. Any other message will cancel this operation."
-            ),
-        )
+        if not ctx.message.attachments:
+            await self._embed_msg(
+                ctx,
+                title=_(
+                    "Please upload the playlist file. Any other message will cancel this "
+                    "operation."
+                ),
+            )
+            try:
+                file_message = await ctx.bot.wait_for(
+                    "message", timeout=30.0, check=MessagePredicate.same_context(ctx)
+                )
+            except asyncio.TimeoutError:
+                return await self._embed_msg(ctx, title=_("No file detected, try again later."))
+        else:
+            file_message = ctx.message
 
         try:
             file_message = await ctx.bot.wait_for(
@@ -5800,7 +5831,9 @@ class Audio(commands.Cog):
         )
 
     @commands.cooldown(1, 60, commands.BucketType.member)
-    @playlist.command(name="rename", usage="<playlist_name_OR_id> <new_name> [args]")
+    @playlist.command(
+        name="rename", usage="<playlist_name_OR_id> <new_name> [args]", cooldown_after_parsing=True
+    )
     async def _playlist_rename(
         self,
         ctx: commands.Context,
@@ -5955,14 +5988,16 @@ class Audio(commands.Cog):
             uri = t.get("info", {}).get("uri")
             if uri:
                 t = {"loadType": "V2_COMPAT", "tracks": [t], "query": uri}
-                database_entries.append(
-                    {
-                        "query": uri,
-                        "data": json.dumps(t),
-                        "last_updated": time_now,
-                        "last_fetched": time_now,
-                    }
-                )
+                data = json.dumps(t)
+                if all(k in data for k in ["loadType", "playlistInfo", "isSeekable", "isStream"]):
+                    database_entries.append(
+                        {
+                            "query": uri,
+                            "data": data,
+                            "last_updated": time_now,
+                            "last_fetched": time_now,
+                        }
+                    )
         if database_entries:
             await self.music_cache.database.insert("lavalink", database_entries)
 
@@ -6821,7 +6856,7 @@ class Audio(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def remove(self, ctx: commands.Context, index: int):
+    async def remove(self, ctx: commands.Context, index_or_url: Union[int, str]):
         """Remove a specific track number from the queue."""
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
@@ -6846,20 +6881,47 @@ class Audio(commands.Cog):
                 title=_("Unable To Modify Queue"),
                 description=_("You must be in the voice channel to manage the queue."),
             )
-        if index > len(player.queue) or index < 1:
-            return await self._embed_msg(
+        if isinstance(index_or_url, int):
+            if index_or_url > len(player.queue) or index_or_url < 1:
+                return await self._embed_msg(
+                    ctx,
+                    title=_("Unable To Modify Queue"),
+                    description=_(
+                        "Song number must be greater than 1 and within the queue limit."
+                    ),
+                )
+            index_or_url -= 1
+            removed = player.queue.pop(index_or_url)
+            removed_title = get_track_description(removed)
+            await self._embed_msg(
                 ctx,
-                title=_("Unable To Modify Queue"),
-                description=_("Song number must be greater than 1 and within the queue limit."),
+                title=_("Removed track from queue"),
+                description=_("Removed {track} from the queue.").format(track=removed_title),
             )
-        index -= 1
-        removed = player.queue.pop(index)
-        removed_title = get_track_description(removed)
-        await self._embed_msg(
-            ctx,
-            title=_("Removed track from queue"),
-            description=_("Removed {track} from the queue.").format(track=removed_title),
-        )
+        else:
+            clean_tracks = []
+            removed_tracks = 0
+            for track in player.queue:
+                if track.uri != index_or_url:
+                    clean_tracks.append(track)
+                else:
+                    removed_tracks += 1
+            player.queue = clean_tracks
+            if removed_tracks == 0:
+                await self._embed_msg(
+                    ctx,
+                    title=_("Unable To Modify Queue"),
+                    description=_("Removed 0 tracks, nothing matches the URL provided."),
+                )
+            else:
+                await self._embed_msg(
+                    ctx,
+                    title=_("Removed track from queue"),
+                    description=_(
+                        "Removed {removed_tracks} tracks from queue "
+                        "which matched the URL provided."
+                    ).format(removed_tracks=removed_tracks),
+                )
 
     @commands.command()
     @commands.guild_only()

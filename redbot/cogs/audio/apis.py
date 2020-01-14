@@ -901,11 +901,14 @@ class MusicCache:
                 (val, update) = await self.database.fetch_one("lavalink", "data", {"query": query})
             if update:
                 val = None
-            if val and not isinstance(val, str):
+            if val and isinstance(val, dict):
                 if IS_DEBUG:
                     log.debug(f"Querying Local Database for {query}")
                 task = ("update", ("lavalink", {"query": query}))
                 self.append_task(ctx, *task)
+            else:
+                val = None
+            if val and not forced and isinstance(val, dict):
                 valid_global_entry = False
                 called_api = False
             else:
@@ -983,21 +986,23 @@ class MusicCache:
         ):
             with contextlib.suppress(SQLError):
                 time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
-                task = (
-                    "insert",
-                    (
-                        "lavalink",
-                        [
-                            {
-                                "query": query,
-                                "data": json.dumps(results._raw),
-                                "last_updated": time_now,
-                                "last_fetched": time_now,
-                            }
-                        ],
-                    ),
-                )
-                self.append_task(ctx, *task)
+                data = json.dumps(results._raw)
+                if all(k in data for k in ["loadType", "playlistInfo", "isSeekable", "isStream"]):
+                    task = (
+                        "insert",
+                        (
+                            "lavalink",
+                            [
+                                {
+                                    "query": query,
+                                    "data": json.dumps(results._raw),
+                                    "last_updated": time_now,
+                                    "last_fetched": time_now,
+                                }
+                            ],
+                        ),
+                    )
+                    self.append_task(ctx, *task)
         return results, called_api
 
     async def run_tasks(self, ctx: Optional[commands.Context] = None, _id=None):
