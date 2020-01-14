@@ -645,7 +645,7 @@ class Audio(commands.Cog):
         await self._data_check(guild.me)
 
         ctx = namedtuple("Context", "message")
-        (results, called_api) = await self.music_cache.lavalink_query(ctx(guild), player, query)
+        (results, called_api) = await self.music_cache.fetch_track(ctx(guild), player, query)
 
         if not results.tracks:
             log.debug(f"Query returned no tracks.")
@@ -2478,7 +2478,7 @@ class Audio(commands.Cog):
             return
         local_tracks = []
         for local_file in await self._all_folder_tracks(ctx, query):
-            trackdata, called_api = await self.music_cache.lavalink_query(ctx, player, local_file)
+            trackdata, called_api = await self.music_cache.fetch_track(ctx, player, local_file)
             with contextlib.suppress(IndexError):
                 local_tracks.append(trackdata.tracks[0])
         return local_tracks
@@ -3419,9 +3419,7 @@ class Audio(commands.Cog):
                 else:
                     query = audio_dataclasses.Query.process_input(res[0])
                     try:
-                        result, called_api = await self.music_cache.lavalink_query(
-                            ctx, player, query
-                        )
+                        result, called_api = await self.music_cache.fetch_track(ctx, player, query)
                     except TrackEnqueueError:
                         self._play_lock(ctx, False)
                         return await self._embed_msg(
@@ -3508,7 +3506,7 @@ class Audio(commands.Cog):
                 if query.start_time:
                     seek = query.start_time
             try:
-                result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
+                result, called_api = await self.music_cache.fetch_track(ctx, player, query)
             except TrackEnqueueError:
                 self._play_lock(ctx, False)
                 return await self._embed_msg(
@@ -5716,7 +5714,7 @@ class Audio(commands.Cog):
             not uploaded_playlist_url
             or not match_yt_playlist(uploaded_playlist_url)
             or not (
-                await self.music_cache.lavalink_query(
+                await self.music_cache.fetch_track(
                     ctx, player, audio_dataclasses.Query.process_input(uploaded_playlist_url)
                 )
             )[0].tracks
@@ -5942,7 +5940,7 @@ class Audio(commands.Cog):
             track_count += 1
             try:
                 try:
-                    result, called_api = await self.music_cache.lavalink_query(
+                    result, called_api = await self.music_cache.fetch_track(
                         ctx, player, audio_dataclasses.Query.process_input(song_url)
                     )
                 except TrackEnqueueError:
@@ -6119,7 +6117,7 @@ class Audio(commands.Cog):
             self._play_lock(ctx, False)
         elif query.is_search:
             try:
-                result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
+                result, called_api = await self.music_cache.fetch_track(ctx, player, query)
             except TrackEnqueueError:
                 self._play_lock(ctx, False)
                 return await self._embed_msg(
@@ -6146,7 +6144,7 @@ class Audio(commands.Cog):
                 return await self._embed_msg(ctx, embed=embed)
         else:
             try:
-                result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
+                result, called_api = await self.music_cache.fetch_track(ctx, player, query)
             except TrackEnqueueError:
                 self._play_lock(ctx, False)
                 return await self._embed_msg(
@@ -6918,9 +6916,7 @@ class Audio(commands.Cog):
             if query.invoked_from == "search list" or query.invoked_from == "local folder":
                 if query.invoked_from == "search list" and not query.is_local:
                     try:
-                        result, called_api = await self.music_cache.lavalink_query(
-                            ctx, player, query
-                        )
+                        result, called_api = await self.music_cache.fetch_track(ctx, player, query)
                     except TrackEnqueueError:
                         self._play_lock(ctx, False)
                         return await self._embed_msg(
@@ -7034,7 +7030,7 @@ class Audio(commands.Cog):
                     tracks = await self._folder_list(ctx, query)
             else:
                 try:
-                    result, called_api = await self.music_cache.lavalink_query(ctx, player, query)
+                    result, called_api = await self.music_cache.fetch_track(ctx, player, query)
                 except TrackEnqueueError:
                     self._play_lock(ctx, False)
                     return await self._embed_msg(

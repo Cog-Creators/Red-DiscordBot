@@ -26,15 +26,19 @@ __all__ = [
     "YOUTUBE_UPSERT",
     "YOUTUBE_UPDATE",
     "YOUTUBE_QUERY",
+    "YOUTUBE_QUERY_ALL",
     "YOUTUBE_DELETE_OLD_ENTRIES",
+    "YOUTUBE_QUERY_LAST_FETCHED_RANDOM",
     # Spotify table statements
     "SPOTIFY_DROP_TABLE",
     "SPOTIFY_CREATE_INDEX",
     "SPOTIFY_CREATE_TABLE",
     "SPOTIFY_UPSERT",
     "SPOTIFY_QUERY",
+    "SPOTIFY_QUERY_ALL",
     "SPOTIFY_UPDATE",
     "SPOTIFY_DELETE_OLD_ENTRIES",
+    "SPOTIFY_QUERY_LAST_FETCHED_RANDOM",
     # Lavalink table statements
     "LAVALINK_DROP_TABLE",
     "LAVALINK_CREATE_TABLE",
@@ -42,6 +46,7 @@ __all__ = [
     "LAVALINK_UPSERT",
     "LAVALINK_UPDATE",
     "LAVALINK_QUERY",
+    "LAVALINK_QUERY_ALL",
     "LAVALINK_QUERY_LAST_FETCHED_RANDOM",
     "LAVALINK_DELETE_OLD_ENTRIES",
     "LAVALINK_FETCH_ALL_ENTRIES_GLOBAL",
@@ -254,10 +259,24 @@ WHERE
     AND last_updated > :maxage
 LIMIT 1;
 """
+YOUTUBE_QUERY_ALL = """
+SELECT youtube_url, last_updated
+FROM youtube
+"""
 YOUTUBE_DELETE_OLD_ENTRIES = """
 DELETE FROM youtube
 WHERE
     last_updated < :maxage;
+"""
+YOUTUBE_QUERY_LAST_FETCHED_RANDOM = """
+SELECT youtube_url, last_updated
+FROM youtube
+WHERE
+    last_fetched > :day
+    AND last_updated > :maxage
+ORDER BY RANDOM()
+LIMIT 1
+;
 """
 
 # Spotify table statements
@@ -319,10 +338,24 @@ WHERE
     AND last_updated > :maxage
 LIMIT 1;
 """
+SPOTIFY_QUERY_ALL = """
+SELECT track_info, last_updated
+FROM spotify
+"""
 SPOTIFY_DELETE_OLD_ENTRIES = """
 DELETE FROM spotify
 WHERE
     last_updated < :maxage;
+"""
+SPOTIFY_QUERY_LAST_FETCHED_RANDOM = """
+SELECT track_info, last_updated
+FROM spotify
+WHERE
+    last_fetched > :day
+    AND last_updated > :maxage
+ORDER BY RANDOM()
+LIMIT 1
+;
 """
 
 # Lavalink table statements
@@ -379,14 +412,18 @@ WHERE
     AND last_updated > :maxage
 LIMIT 1;
 """
+LAVALINK_QUERY_ALL = """
+SELECT data, last_updated
+FROM lavalink
+"""
 LAVALINK_QUERY_LAST_FETCHED_RANDOM = """
-SELECT data
+SELECT data, last_updated
 FROM lavalink
 WHERE
     last_fetched > :day
     AND last_updated > :maxage
 ORDER BY RANDOM()
-LIMIT 10
+LIMIT 1
 ;
 """
 LAVALINK_DELETE_OLD_ENTRIES = """
