@@ -10,7 +10,6 @@ from .casetypes import CASETYPES
 from .events import Events
 from .kickban import KickBanMixin
 from .movetocore import MoveToCore
-from .mutes import MuteMixin
 from .names import ModInfo
 from .slowmode import Slowmode
 from .settings import ModSettings
@@ -35,7 +34,6 @@ class Mod(
     Events,
     KickBanMixin,
     MoveToCore,
-    MuteMixin,
     ModInfo,
     Slowmode,
     commands.Cog,
