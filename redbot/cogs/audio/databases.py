@@ -237,6 +237,7 @@ class CacheInterface:
             if index % 50 == 0:
                 await asyncio.sleep(0.01)
             output.append(CacheGetAllLavalink(*row))
+            await asyncio.sleep(0)
         return output
 
 
