@@ -308,6 +308,8 @@ After that is finished, run:
 
 Pyenv is now installed and your system should be configured to run Python 3.8.
 
+Continue by `creating-venv-linux`.
+
 .. _creating-venv-linux:
 
 ------------------------------
