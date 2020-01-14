@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-import distutils.dir_util
+import functools
 import shutil
 from enum import IntEnum
 from pathlib import Path
@@ -127,15 +127,13 @@ class Installable(RepoJSONMixin):
         if self._location.is_file():
             copy_func = shutil.copy2
         else:
-            # clear copy_tree's cache to make sure missing directories are created (GH-2690)
-            distutils.dir_util._path_created = {}
-            copy_func = distutils.dir_util.copy_tree
+            copy_func = functools.partial(shutil.copytree, dirs_exist_ok=True)
 
         # noinspection PyBroadException
         try:
             copy_func(src=str(self._location), dst=str(target_dir / self._location.stem))
         except:  # noqa: E722
-            log.exception("Error occurred when copying path: {}".format(self._location))
+            log.exception("Error occurred when copying path: %s", self._location)
             return False
         return True
 

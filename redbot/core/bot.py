@@ -76,6 +76,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             help__verify_checks=True,
             help__verify_exists=False,
             help__tagline="",
+            description="Red V3",
             invite_public=False,
             invite_perm=0,
             disabled_commands=[],
@@ -400,6 +401,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         This should only be run once, prior to connecting to discord.
         """
         await self._maybe_update_config()
+        self.description = await self._config.description()
 
         init_global_checks(self)
         init_events(self, cli_flags)
