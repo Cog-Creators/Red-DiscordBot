@@ -838,9 +838,9 @@ async def set_default_balance(amount: int, guild: discord.Guild = None) -> int:
     amount = int(amount)
     max_bal = await get_max_balance(guild)
 
-    if not (0 < amount <= max_bal):
+    if not (0 <= amount <= max_bal):
         raise ValueError(
-            "Amount must be greater than zero and less than {max}.".format(
+            "Amount must be greater than or equal zero and less than or equal {max}.".format(
                 max=humanize_number(max_bal, override_locale="en_US")
             )
         )
