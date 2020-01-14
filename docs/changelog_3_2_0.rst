@@ -50,7 +50,7 @@ Breaking Changes
 - Reserved some command names for internal Red use. These are available programatically as ``redbot.core.commands.RESERVED_COMMAND_NAMES``. (`#2973 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2973>`_)
 - Removed ``bot._counter``, Made a few more attrs private (``cog_mgr``, ``main_dir``). (`#2976 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2976>`_)
 - Extension's ``setup()`` function should no longer assume that we are, or even will be connected to Discord.
-This also means that cog creators should no longer use ``bot.wait_until_ready()`` inside it. (`#3073 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3073>`_)
+  This also means that cog creators should no longer use ``bot.wait_until_ready()`` inside it. (`#3073 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3073>`_)
 - Removed the mongo driver. (`#3099 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3099>`_)
 
 
