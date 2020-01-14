@@ -159,7 +159,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
     @_before_invoke.setter
     def _before_invoke(self, val):
-        """ Prevent this from being overwriten in super().__init__ """
+        """Prevent this from being overwriten in super().__init__"""
         pass
 
     async def _red_before_invoke_method(self, ctx):
@@ -194,11 +194,12 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             then the hooks are not called.
         
         Parameters
-        -----------
+        ----------
         coro:
             The coroutine to register as the pre-invoke hook.
+        
         Raises
-        -------
+        ------
         TypeError
             The coroutine passed is not actually a coroutine.
         """
