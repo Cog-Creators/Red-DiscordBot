@@ -1,15 +1,13 @@
 import base64
 import contextlib
+import logging
 import time
-from typing import Optional, MutableMapping, Union, NoReturn, List, Tuple
+from typing import Optional, MutableMapping, Union, List, Tuple
 
 import aiohttp
 
-from redbot import logging
-
 from ..audio_globals import get_bot
 from ..errors import SpotifyFetchError
-
 
 log = logging.getLogger("red.cogs.Audio.api.Spotify")
 

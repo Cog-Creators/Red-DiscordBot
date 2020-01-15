@@ -2,17 +2,10 @@ import asyncio
 import concurrent
 import contextlib
 import datetime
+import logging
 import time
 from types import SimpleNamespace
-from typing import List, MutableMapping, Dict, Union, Optional, Tuple, NoReturn
-
-from redbot import logging
-from redbot.core import Config
-from redbot.core.utils.dbtools import APSWConnectionWrapper
-
-
-from ..audio_globals import get_local_cache_connection, get_config
-from ..audio_logging import debug_exc_log
+from typing import List, MutableMapping, Dict, Union, Optional, Tuple
 
 from .utils import (
     LavalinkCacheFetchResult,
@@ -20,6 +13,8 @@ from .utils import (
     YouTubeCacheFetchResult,
     LavalinkCacheFetchForGlobalResult,
 )
+from ..audio_globals import get_database_connection, get_config
+from ..audio_logging import debug_exc_log
 from ..sql_statements import *
 
 log = logging.getLogger("red.cogs.Audio.api.LocalDB")
@@ -28,15 +23,18 @@ SCHEMA_VERSION = 3
 
 
 class BaseWrapper:
-    def __int__(self, config: Config, conn: APSWConnectionWrapper):
-        self.database = conn
-        self.config = config
+    def __int__(self):
+        self.database = get_database_connection()
+        self.config = get_config()
         self.statement = SimpleNamespace()
         self.statement.pragma_temp_store = PRAGMA_SET_temp_store
         self.statement.pragma_journal_mode = PRAGMA_SET_journal_mode
         self.statement.pragma_read_uncommitted = PRAGMA_SET_read_uncommitted
         self.statement.set_user_version = PRAGMA_SET_user_version
         self.statement.get_user_version = PRAGMA_FETCH_user_version
+        self.fetch_result: Union[
+            YouTubeCacheFetchResult, SpotifyCacheFetchResult, LavalinkCacheFetchResult
+        ]
 
     async def init(self) -> None:
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
@@ -57,7 +55,7 @@ class BaseWrapper:
 
     def close(self) -> None:
         with contextlib.suppress(Exception):
-            self._db_con.close()
+            self.database.close()
 
     async def clean_up_old_entries(self) -> None:
         max_age = await self.config.cache_age()
@@ -82,7 +80,7 @@ class BaseWrapper:
                         current_version = row_result.fetchone()
                         break
                     except Exception as exc:
-                        debug_exc_log(log, exc, f"Failed to completed fetch from database")
+                        debug_exc_log(log, exc, "Failed to completed fetch from database")
                 if isinstance(current_version, tuple):
                     current_version = current_version[0]
                 if current_version == SCHEMA_VERSION:
@@ -98,7 +96,7 @@ class BaseWrapper:
         except Exception as exc:
             debug_exc_log(log, exc, "Error during table insert")
 
-    async def update(self, values: Dict[str, Union[str, int]]) -> None:
+    async def update(self, values: MutableMapping) -> None:
         try:
             time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
             values["last_fetched"] = time_now
@@ -127,7 +125,7 @@ class BaseWrapper:
                         row_result = future.result()
                         row = row_result.fetchone()
                     except Exception as exc:
-                        debug_exc_log(log, exc, f"Failed to completed fetch from database")
+                        debug_exc_log(log, exc, "Failed to completed fetch from database")
         if not row:
             return
         return self.fetch_result(*row)
@@ -145,7 +143,7 @@ class BaseWrapper:
                     try:
                         row_result = future.result()
                     except Exception as exc:
-                        debug_exc_log(log, exc, f"Failed to completed fetch from database")
+                        debug_exc_log(log, exc, "Failed to completed fetch from database")
         for index, row in enumerate(row_result, start=1):
             if index % 50 == 0:
                 await asyncio.sleep(0.01)
@@ -168,15 +166,15 @@ class BaseWrapper:
                         row_result = future.result()
                         row = row_result.fetchone()
                     except Exception as exc:
-                        debug_exc_log(log, exc, f"Failed to completed random fetch from database")
+                        debug_exc_log(log, exc, "Failed to completed random fetch from database")
         if not row:
             return
         return self.fetch_result(*row)
 
 
 class YouTubeTableWrapper(BaseWrapper):
-    def __int__(self, config: Config, conn: APSWConnectionWrapper):
-        super().__int__(config, conn)
+    def __int__(self):
+        super().__int__()
         self.statement.upsert = YOUTUBE_UPSERT
         self.statement.update = YOUTUBE_UPDATE
         self.statement.get_one = YOUTUBE_UPDATE
@@ -195,18 +193,16 @@ class YouTubeTableWrapper(BaseWrapper):
     async def fetch_all(self, values: Dict[str, Union[str, int]]) -> List[YouTubeCacheFetchResult]:
         return await self._fetch_all(values)
 
-    async def fetch_random(
-        self, values: Dict[str, Union[str, int]]
-    ) -> Tuple[Optional[str], Optional[datetime.datetime]]:
+    async def fetch_random(self, values: Dict[str, Union[str, int]]) -> Optional[str]:
         result = await self._fetch_random(values)
         if not result:
-            return None, None
-        return result.query, result.last_updated
+            return None
+        return result.query
 
 
 class SpotifyTableWrapper(BaseWrapper):
-    def __int__(self, config: Config, conn: APSWConnectionWrapper):
-        super().__int__(config, conn)
+    def __int__(self):
+        super().__int__()
         self.statement.upsert = SPOTIFY_UPSERT
         self.statement.update = SPOTIFY_UPDATE
         self.statement.get_one = SPOTIFY_QUERY
@@ -225,18 +221,16 @@ class SpotifyTableWrapper(BaseWrapper):
     async def fetch_all(self, values: Dict[str, Union[str, int]]) -> List[SpotifyCacheFetchResult]:
         return await self._fetch_all(values)
 
-    async def fetch_random(
-        self, values: Dict[str, Union[str, int]]
-    ) -> Tuple[Optional[str], Optional[datetime.datetime]]:
+    async def fetch_random(self, values: Dict[str, Union[str, int]]) -> Optional[str]:
         result = await self._fetch_random(values)
         if not result:
-            return None, None
-        return result.query, result.last_updated
+            return None
+        return result.query
 
 
 class LavalinkTableWrapper(BaseWrapper):
-    def __int__(self, config: Config, conn: APSWConnectionWrapper):
-        super().__int__(config, conn)
+    def __int__(self):
+        super().__int__()
         self.statement.upsert = LAVALINK_UPSERT
         self.statement.update = LAVALINK_UPDATE
         self.statement.get_one = LAVALINK_QUERY
@@ -259,13 +253,11 @@ class LavalinkTableWrapper(BaseWrapper):
     ) -> List[LavalinkCacheFetchResult]:
         return await self._fetch_all(values)
 
-    async def fetch_random(
-        self, values: Dict[str, Union[str, int]]
-    ) -> Tuple[Optional[str], Optional[datetime.datetime]]:
+    async def fetch_random(self, values: Dict[str, Union[str, int]]) -> Optional[MutableMapping]:
         result = await self._fetch_random(values)
         if not result:
-            return None, None
-        return result.query, result.last_updated
+            return None
+        return result.query
 
     async def fetch_all_for_global(self):
         output = []
@@ -278,7 +270,7 @@ class LavalinkTableWrapper(BaseWrapper):
                     try:
                         row_result = future.result()
                     except Exception as exc:
-                        debug_exc_log(log, exc, f"Failed to completed fetch from database")
+                        debug_exc_log(log, exc, "Failed to completed fetch from database")
         for index, row in enumerate(row_result, start=1):
             if index % 50 == 0:
                 await asyncio.sleep(0.01)
@@ -289,8 +281,6 @@ class LavalinkTableWrapper(BaseWrapper):
 
 class LocalCacheWrapper:
     def __init__(self):
-        self._db_con = get_local_cache_connection()
-        self.config = get_config()
-        self.lavalink: LavalinkTableWrapper = LavalinkTableWrapper(self.config, self._db_con)
-        self.spotify: SpotifyTableWrapper = SpotifyTableWrapper(self.config, self._db_con)
-        self.youtube: YouTubeTableWrapper = YouTubeTableWrapper(self.config, self._db_con)
+        self.lavalink: LavalinkTableWrapper = LavalinkTableWrapper()
+        self.spotify: SpotifyTableWrapper = SpotifyTableWrapper()
+        self.youtube: YouTubeTableWrapper = YouTubeTableWrapper()

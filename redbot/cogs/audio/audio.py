@@ -4,11 +4,10 @@ import datetime
 import heapq
 import json
 import logging
-import tarfile
-import math
+import os.path
 import random
 import re
-import os.path
+import tarfile
 import time
 import traceback
 from collections import Counter, namedtuple
@@ -19,6 +18,7 @@ from typing import List, Optional, Tuple, Union, cast, MutableMapping, Mapping
 import aiohttp
 import discord
 import lavalink
+import math
 from discord.embeds import EmptyEmbed
 from discord.utils import escape_markdown as escape
 from fuzzywuzzy import process
@@ -37,12 +37,19 @@ from redbot.core.utils.menus import (
     start_adding_reactions,
 )
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
-
-from . import audio_dataclasses
 from .apis.interface import AudioAPIInterface
-from .audio_globals import update_audio_globals
+from .apis.playlist_interface import (
+    get_all_playlist_for_migration23,
+    get_playlist,
+    Playlist,
+    create_playlist,
+    delete_playlist,
+    get_all_playlist,
+)
+from .apis.utils import FakePlaylist
+from .audio_dataclasses import Query, LocalPath, _PARTIALLY_SUPPORTED_MUSIC_EXT
+from .audio_globals import update_audio_globals, get_playlist_api_wrapper
 from .audio_logging import IS_DEBUG
-from .config import pass_config_to_dependencies
 from .converters import ComplexScopeParser, ScopeParser, get_lazy_converter, get_playlist_converter
 from .equalizer import Equalizer
 from .errors import (
@@ -55,16 +62,6 @@ from .errors import (
     TrackEnqueueError,
 )
 from .manager import ServerManager
-from .playlists import (
-    FakePlaylist,
-    Playlist,
-    create_playlist,
-    delete_playlist,
-    get_all_playlist,
-    get_all_playlist_for_migration23,
-    get_playlist,
-    get_playlist_database,
-)
 from .utils import *
 
 _ = Translator("Audio", __file__)
@@ -72,7 +69,7 @@ _ = Translator("Audio", __file__)
 __version__ = "1.1.0"
 __author__ = ["aikaterna", "Draper"]
 
-log = logging.getLogger("red.audio")
+log = logging.getLogger("red.cogs.Audio")
 
 _SCHEMA_VERSION = 3
 LazyGreedyConverter = get_lazy_converter("--")
@@ -205,19 +202,23 @@ class Audio(commands.Cog):
                 await self._embed_msg(ctx, title=_("No DJ role found. Disabling DJ mode."))
 
     async def initialize(self) -> None:
-        await self.bot.wait_until_ready()
+        await self.bot.wait_until_red_ready()
         # Unlike most cases, we want the cache to exit before migration.
         try:
-            update_audio_globals(self.config, self.bot, await self.config.localpath())
-            pass_config_to_dependencies(self.config, self.bot, await self.config.localpath())
+            (
+                _black_hole,
+                _black_hole,
+                _black_hole,
+                _black_hole,
+                _playlist_api,
+            ) = await update_audio_globals(self.config, self.bot, await self.config.localpath())
             self.api_interface = AudioAPIInterface(self.session)
             await self.api_interface.initialize()
             await self._migrate_config(
                 from_version=await self.config.schema_version(), to_version=_SCHEMA_VERSION
             )
-            dat = get_playlist_database()
-            if dat:
-                dat.delete_scheduled()
+            if _playlist_api:
+                await _playlist_api.delete_scheduled()
             self._restart_connect()
             self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
             lavalink.register_event_listener(self.event_handler)
@@ -631,11 +632,11 @@ class Audio(commands.Cog):
                 player.store("connect", datetime.datetime.utcnow())
             except IndexError:
                 log.debug(
-                    f"Connection to Lavalink has not yet been established"
+                    "Connection to Lavalink has not yet been established"
                     f" while trying to connect to to {channel} in {guild}."
                 )
                 return
-        query = audio_dataclasses.Query.process_input(query)
+        query = Query.process_input(query)
         restrict = await self.config.restrict()
         if restrict and match_url(query):
             valid_url = url_check(query)
@@ -653,7 +654,7 @@ class Audio(commands.Cog):
         (results, called_api) = await self.api_interface.fetch_track(ctx(guild), player, query)
 
         if not results.tracks:
-            log.debug(f"Query returned no tracks.")
+            log.debug("Query returned no tracks.")
             return
         track = results.tracks[0]
 
@@ -1407,9 +1408,7 @@ class Audio(commands.Cog):
 
         if not local_path:
             await self.config.localpath.set(str(cog_data_path(raw_name="Audio")))
-            pass_config_to_dependencies(
-                self.config, self.bot, str(cog_data_path(raw_name="Audio"))
-            )
+            await update_audio_globals(self.config, self.bot, str(cog_data_path(raw_name="Audio")))
             return await self._embed_msg(
                 ctx,
                 title=_("Setting Changed"),
@@ -1447,7 +1446,7 @@ class Audio(commands.Cog):
             with contextlib.suppress(discord.HTTPException):
                 await info.delete()
             return
-        temp = audio_dataclasses.LocalPath(local_path, forced=True)
+        temp = LocalPath(local_path, forced=True)
         if not temp.exists() or not temp.is_dir():
             return await self._embed_msg(
                 ctx,
@@ -1467,7 +1466,7 @@ class Audio(commands.Cog):
             await self._embed_msg(ctx, title=_("Invalid Environment"), description=warn_msg)
         local_path = str(temp.localtrack_folder.absolute())
         await self.config.localpath.set(local_path)
-        pass_config_to_dependencies(self.config, self.bot, local_path)
+        await update_audio_globals(self.config, self.bot, local_path)
         return await self._embed_msg(
             ctx,
             title=_("Setting Changed"),
@@ -1906,7 +1905,7 @@ class Audio(commands.Cog):
                 int((datetime.datetime.utcnow() - connect_start).total_seconds())
             )
             try:
-                query = audio_dataclasses.Query.process_input(p.current.uri)
+                query = Query.process_input(p.current.uri)
                 if query.is_local:
                     if p.current.title == "Unknown title":
                         current_title = localtracks.LocalPath(p.current.uri).to_string_user()
@@ -2416,7 +2415,7 @@ class Audio(commands.Cog):
             await ctx.invoke(self.local_play, play_subfolders=play_subfolders)
         else:
             folder = folder.strip()
-            _dir = audio_dataclasses.LocalPath.joinpath(folder)
+            _dir = LocalPath.joinpath(folder)
             if not _dir.exists():
                 return await self._embed_msg(
                     ctx,
@@ -2425,7 +2424,7 @@ class Audio(commands.Cog):
                         name=folder
                     ),
                 )
-            query = audio_dataclasses.Query.process_input(_dir, search_subfolders=play_subfolders)
+            query = Query.process_input(_dir, search_subfolders=play_subfolders)
             await self._local_play_all(ctx, query, from_search=False if not folder else True)
 
     @local.command(name="play")
@@ -2487,10 +2486,8 @@ class Audio(commands.Cog):
         all_tracks = await self._folder_list(
             ctx,
             (
-                audio_dataclasses.Query.process_input(
-                    audio_dataclasses.LocalPath(
-                        await self.config.localpath()
-                    ).localtrack_folder.absolute(),
+                Query.process_input(
+                    LocalPath(await self.config.localpath()).localtrack_folder.absolute(),
                     search_subfolders=search_subfolders,
                 )
             ),
@@ -2505,21 +2502,17 @@ class Audio(commands.Cog):
 
     async def _localtracks_folders(
         self, ctx: commands.Context, search_subfolders=False
-    ) -> Optional[List[Union[Path, audio_dataclasses.LocalPath]]]:
-        audio_data = audio_dataclasses.LocalPath(
-            audio_dataclasses.LocalPath(None).localtrack_folder.absolute()
-        )
+    ) -> Optional[List[Union[Path, LocalPath]]]:
+        audio_data = LocalPath(LocalPath(None).localtrack_folder.absolute())
         if not await self._localtracks_check(ctx):
             return
 
         return audio_data.subfolders_in_tree() if search_subfolders else audio_data.subfolders()
 
-    async def _folder_list(
-        self, ctx: commands.Context, query: audio_dataclasses.Query
-    ) -> Optional[List[audio_dataclasses.Query]]:
+    async def _folder_list(self, ctx: commands.Context, query: Query) -> Optional[List[Query]]:
         if not await self._localtracks_check(ctx):
             return
-        query = audio_dataclasses.Query.process_input(query)
+        query = Query.process_input(query)
         if not query.track.exists():
             return
         return (
@@ -2529,12 +2522,12 @@ class Audio(commands.Cog):
         )
 
     async def _folder_tracks(
-        self, ctx, player: lavalink.player_manager.Player, query: audio_dataclasses.Query
+        self, ctx, player: lavalink.player_manager.Player, query: Query
     ) -> Optional[List[lavalink.rest_api.Track]]:
         if not await self._localtracks_check(ctx):
             return
 
-        audio_data = audio_dataclasses.LocalPath(None)
+        audio_data = LocalPath(None)
         try:
             query.track.path.relative_to(audio_data.to_string())
         except ValueError:
@@ -2547,19 +2540,17 @@ class Audio(commands.Cog):
         return local_tracks
 
     async def _local_play_all(
-        self, ctx: commands.Context, query: audio_dataclasses.Query, from_search=False
+        self, ctx: commands.Context, query: Query, from_search=False
     ) -> None:
         if not await self._localtracks_check(ctx):
             return
         if from_search:
-            query = audio_dataclasses.Query.process_input(
-                query.track.to_string(), invoked_from="local folder"
-            )
+            query = Query.process_input(query.track.to_string(), invoked_from="local folder")
         await ctx.invoke(self.search, query=query)
 
     async def _all_folder_tracks(
-        self, ctx: commands.Context, query: audio_dataclasses.Query
-    ) -> Optional[List[audio_dataclasses.Query]]:
+        self, ctx: commands.Context, query: Query
+    ) -> Optional[List[Query]]:
         if not await self._localtracks_check(ctx):
             return
 
@@ -2570,7 +2561,7 @@ class Audio(commands.Cog):
         )
 
     async def _localtracks_check(self, ctx: commands.Context) -> bool:
-        folder = audio_dataclasses.LocalPath(None)
+        folder = LocalPath(None)
         if folder.localtrack_folder.exists():
             return True
         if ctx.invoked_with != "start":
@@ -2793,7 +2784,7 @@ class Audio(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     async def play(self, ctx: commands.Context, *, query: str):
         """Play a URL or search for a track."""
-        query = audio_dataclasses.Query.process_input(query)
+        query = Query.process_input(query)
         guild_data = await self.config.guild(ctx.guild).all()
         restrict = await self.config.restrict()
         if restrict and match_url(query):
@@ -2893,7 +2884,7 @@ class Audio(commands.Cog):
         self, ctx: commands.Context, play_now: Optional[bool] = False, *, query: str
     ):
         """Force play a URL or search for a track."""
-        query = audio_dataclasses.Query.process_input(query)
+        query = Query.process_input(query)
         if not query.single_track:
             return await self._embed_msg(
                 ctx,
@@ -3006,9 +2997,7 @@ class Audio(commands.Cog):
                     "This may be due to permissions or because Lavalink.jar is being run "
                     "in a different machine than the local tracks."
                 )
-            elif (
-                query.is_local and query.suffix in audio_dataclasses._PARTIALLY_SUPPORTED_MUSIC_EXT
-            ):
+            elif query.is_local and query.suffix in _PARTIALLY_SUPPORTED_MUSIC_EXT:
                 title = _("Track is not playable.")
                 embed = discord.Embed(title=title)
                 embed.description = _(
@@ -3036,7 +3025,7 @@ class Audio(commands.Cog):
             ctx.guild,
             (
                 f"{single_track.title} {single_track.author} {single_track.uri} "
-                f"{str(audio_dataclasses.Query.process_input(single_track))}"
+                f"{str(Query.process_input(single_track))}"
             ),
         ):
             if IS_DEBUG:
@@ -3260,7 +3249,7 @@ class Audio(commands.Cog):
             playlists_search_page_list.append(embed)
             await asyncio.sleep(0)
         playlists_pick = await menu(ctx, playlists_search_page_list, playlist_search_controls)
-        query = audio_dataclasses.Query.process_input(playlists_pick)
+        query = Query.process_input(playlists_pick)
         if not query.valid:
             return await self._embed_msg(ctx, title=_("No tracks to play."))
         if len(player.queue) >= 10000:
@@ -3419,7 +3408,7 @@ class Audio(commands.Cog):
         elif player.current:
             await self._embed_msg(ctx, title=_("Adding a track to queue."))
 
-    async def _get_spotify_tracks(self, ctx: commands.Context, query: audio_dataclasses.Query):
+    async def _get_spotify_tracks(self, ctx: commands.Context, query: Query):
         if ctx.invoked_with in ["play", "genre"]:
             enqueue_tracks = True
         else:
@@ -3460,10 +3449,7 @@ class Audio(commands.Cog):
                 if not res:
                     title = _("Nothing found.")
                     embed = discord.Embed(title=title)
-                    if (
-                        query.is_local
-                        and query.suffix in audio_dataclasses._PARTIALLY_SUPPORTED_MUSIC_EXT
-                    ):
+                    if query.is_local and query.suffix in _PARTIALLY_SUPPORTED_MUSIC_EXT:
                         title = _("Track is not playable.")
                         description = _(
                             "**{suffix}** is not a fully supported "
@@ -3477,11 +3463,11 @@ class Audio(commands.Cog):
             self._play_lock(ctx, False)
             try:
                 if enqueue_tracks:
-                    new_query = audio_dataclasses.Query.process_input(res[0])
+                    new_query = Query.process_input(res[0])
                     new_query.start_time = query.start_time
                     return await self._enqueue_tracks(ctx, new_query)
                 else:
-                    query = audio_dataclasses.Query.process_input(res[0])
+                    query = Query.process_input(res[0])
                     try:
                         result, called_api = await self.api_interface.fetch_track(
                             ctx, player, query
@@ -3498,10 +3484,7 @@ class Audio(commands.Cog):
                     tracks = result.tracks
                     if not tracks:
                         embed = discord.Embed(title=_("Nothing found."))
-                        if (
-                            query.is_local
-                            and query.suffix in audio_dataclasses._PARTIALLY_SUPPORTED_MUSIC_EXT
-                        ):
+                        if query.is_local and query.suffix in _PARTIALLY_SUPPORTED_MUSIC_EXT:
                             embed = discord.Embed(title=_("Track is not playable."))
                             embed.description = _(
                                 "**{suffix}** is not a fully supported format and some "
@@ -3539,10 +3522,7 @@ class Audio(commands.Cog):
             )
 
     async def _enqueue_tracks(
-        self,
-        ctx: commands.Context,
-        query: Union[audio_dataclasses.Query, list],
-        enqueue: bool = True,
+        self, ctx: commands.Context, query: Union[Query, list], enqueue: bool = True,
     ):
         player = lavalink.get_player(ctx.guild.id)
         try:
@@ -3599,10 +3579,7 @@ class Audio(commands.Cog):
                         "This may be due to permissions or because Lavalink.jar is being run "
                         "in a different machine than the local tracks."
                     )
-                elif (
-                    query.is_local
-                    and query.suffix in audio_dataclasses._PARTIALLY_SUPPORTED_MUSIC_EXT
-                ):
+                elif query.is_local and query.suffix in _PARTIALLY_SUPPORTED_MUSIC_EXT:
                     title = _("Track is not playable.")
                     embed = discord.Embed(title=title)
                     embed.description = _(
@@ -3632,7 +3609,7 @@ class Audio(commands.Cog):
                     ctx.guild,
                     (
                         f"{track.title} {track.author} {track.uri} "
-                        f"{str(audio_dataclasses.Query.process_input(track))}"
+                        f"{str(Query.process_input(track))}"
                     ),
                 ):
                     if IS_DEBUG:
@@ -3707,7 +3684,7 @@ class Audio(commands.Cog):
                     ctx.guild,
                     (
                         f"{single_track.title} {single_track.author} {single_track.uri} "
-                        f"{str(audio_dataclasses.Query.process_input(single_track))}"
+                        f"{str(Query.process_input(single_track))}"
                     ),
                 ):
                     if IS_DEBUG:
@@ -3759,11 +3736,7 @@ class Audio(commands.Cog):
         return single_track or message
 
     async def _spotify_playlist(
-        self,
-        ctx: commands.Context,
-        stype: str,
-        query: audio_dataclasses.Query,
-        enqueue: bool = False,
+        self, ctx: commands.Context, stype: str, query: Query, enqueue: bool = False,
     ):
 
         player = lavalink.get_player(ctx.guild.id)
@@ -4133,9 +4106,7 @@ class Audio(commands.Cog):
         if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
             return
         player = lavalink.get_player(ctx.guild.id)
-        to_append = await self._playlist_tracks(
-            ctx, player, audio_dataclasses.Query.process_input(query)
-        )
+        to_append = await self._playlist_tracks(ctx, player, Query.process_input(query))
 
         if isinstance(to_append, discord.Message):
             return None
@@ -4884,7 +4855,7 @@ class Audio(commands.Cog):
                 if i % 500 == 0:  # TODO: Improve when Toby menu's are merged
                     await asyncio.sleep(0.1)
                 track_idx = track_idx + 1
-                query = audio_dataclasses.Query.process_input(track["info"]["uri"])
+                query = Query.process_input(track["info"]["uri"])
                 if query.is_local:
                     if track["info"]["title"] != "Unknown title":
                         msg += "`{}.` **{} - {}**\n{}{}\n".format(
@@ -5336,9 +5307,7 @@ class Audio(commands.Cog):
             ctx.command.reset_cooldown(ctx)
             return
         player = lavalink.get_player(ctx.guild.id)
-        tracklist = await self._playlist_tracks(
-            ctx, player, audio_dataclasses.Query.process_input(playlist_url)
-        )
+        tracklist = await self._playlist_tracks(ctx, player, Query.process_input(playlist_url))
         if isinstance(tracklist, discord.Message):
             return None
         if tracklist is not None:
@@ -5462,15 +5431,15 @@ class Audio(commands.Cog):
                     ctx.guild,
                     (
                         f"{track.title} {track.author} {track.uri} "
-                        f"{str(audio_dataclasses.Query.process_input(track))}"
+                        f"{str(Query.process_input(track))}"
                     ),
                 ):
                     if IS_DEBUG:
                         log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
                     continue
-                query = audio_dataclasses.Query.process_input(track.uri)
+                query = Query.process_input(track.uri)
                 if query.is_local:
-                    local_path = audio_dataclasses.LocalPath(track.uri)
+                    local_path = LocalPath(track.uri)
                     if not await self._localtracks_check(ctx):
                         pass
                     if not local_path.exists() and not local_path.is_file():
@@ -5784,7 +5753,7 @@ class Audio(commands.Cog):
             or not match_yt_playlist(uploaded_playlist_url)
             or not (
                 await self.api_interface.fetch_track(
-                    ctx, player, audio_dataclasses.Query.process_input(uploaded_playlist_url)
+                    ctx, player, Query.process_input(uploaded_playlist_url)
                 )
             )[0].tracks
         ):
@@ -6010,7 +5979,7 @@ class Audio(commands.Cog):
             try:
                 try:
                     result, called_api = await self.api_interface.fetch_track(
-                        ctx, player, audio_dataclasses.Query.process_input(song_url)
+                        ctx, player, Query.process_input(song_url)
                     )
                 except TrackEnqueueError:
                     self._play_lock(ctx, False)
@@ -6069,7 +6038,7 @@ class Audio(commands.Cog):
             return [], [], playlist
         results = {}
         updated_tracks = await self._playlist_tracks(
-            ctx, player, audio_dataclasses.Query.process_input(playlist.url)
+            ctx, player, Query.process_input(playlist.url)
         )
         if isinstance(updated_tracks, discord.Message):
             return [], [], playlist
@@ -6144,10 +6113,7 @@ class Audio(commands.Cog):
         return True
 
     async def _playlist_tracks(
-        self,
-        ctx: commands.Context,
-        player: lavalink.player_manager.Player,
-        query: audio_dataclasses.Query,
+        self, ctx: commands.Context, player: lavalink.player_manager.Player, query: Query,
     ):
         search = query.is_search
         tracklist = []
@@ -6169,10 +6135,7 @@ class Audio(commands.Cog):
 
             if not tracks:
                 embed = discord.Embed(title=_("Nothing found."))
-                if (
-                    query.is_local
-                    and query.suffix in audio_dataclasses._PARTIALLY_SUPPORTED_MUSIC_EXT
-                ):
+                if query.is_local and query.suffix in _PARTIALLY_SUPPORTED_MUSIC_EXT:
                     embed = discord.Embed(title=_("Track is not playable."))
                     embed.description = _(
                         "**{suffix}** is not a fully supported format and some "
@@ -6201,10 +6164,7 @@ class Audio(commands.Cog):
             tracks = result.tracks
             if not tracks:
                 embed = discord.Embed(title=_("Nothing found."))
-                if (
-                    query.is_local
-                    and query.suffix in audio_dataclasses._PARTIALLY_SUPPORTED_MUSIC_EXT
-                ):
+                if query.is_local and query.suffix in _PARTIALLY_SUPPORTED_MUSIC_EXT:
                     embed = discord.Embed(title=_("Track is not playable."))
                     embed.description = _(
                         "**{suffix}** is not a fully supported format and some "
@@ -6442,7 +6402,7 @@ class Audio(commands.Cog):
         else:
             dur = lavalink.utils.format_time(player.current.length)
 
-        query = audio_dataclasses.Query.process_input(player.current)
+        query = Query.process_input(player.current)
 
         if query.is_stream:
             queue_list += _("**Currently livestreaming:**\n")
@@ -6456,7 +6416,7 @@ class Audio(commands.Cog):
                     (
                         _("Playing: ")
                         + "**{current.author} - {current.title}**".format(current=player.current),
-                        audio_dataclasses.LocalPath(player.current.uri).to_string_user(),
+                        LocalPath(player.current.uri).to_string_user(),
                         _("Requested by: **{user}**\n").format(user=player.current.requester),
                         f"{arrow}`{pos}`/`{dur}`\n\n",
                     )
@@ -6464,8 +6424,7 @@ class Audio(commands.Cog):
             else:
                 queue_list += "\n".join(
                     (
-                        _("Playing: ")
-                        + audio_dataclasses.LocalPath(player.current.uri).to_string_user(),
+                        _("Playing: ") + LocalPath(player.current.uri).to_string_user(),
                         _("Requested by: **{user}**\n").format(user=player.current.requester),
                         f"{arrow}`{pos}`/`{dur}`\n\n",
                     )
@@ -6487,13 +6446,13 @@ class Audio(commands.Cog):
                 track_title = track.title
             req_user = track.requester
             track_idx = i + 1
-            query = audio_dataclasses.Query.process_input(track)
+            query = Query.process_input(track)
 
             if query.is_local:
                 if track.title == "Unknown title":
                     queue_list += f"`{track_idx}.` " + ", ".join(
                         (
-                            bold(audio_dataclasses.LocalPath(track.uri).to_string_user()),
+                            bold(LocalPath(track.uri).to_string_user()),
                             _("requested by **{user}**\n").format(user=req_user),
                         )
                     )
@@ -6552,7 +6511,7 @@ class Audio(commands.Cog):
                 await asyncio.sleep(0.1)
             queue_idx = queue_idx + 1
             if not match_url(track.uri):
-                query = audio_dataclasses.Query.process_input(track)
+                query = Query.process_input(track)
                 if track.title == "Unknown title":
                     track_title = query.track.to_string_user()
                 else:
@@ -6584,7 +6543,7 @@ class Audio(commands.Cog):
                 await asyncio.sleep(0.1)
             track_idx = i + 1
             if type(track) is str:
-                track_location = audio_dataclasses.LocalPath(track).to_string_user()
+                track_location = LocalPath(track).to_string_user()
                 track_match += "`{}.` **{}**\n".format(track_idx, track_location)
             else:
                 track_match += "`{}.` **{}**\n".format(track[0], track[1])
@@ -6966,7 +6925,7 @@ class Audio(commands.Cog):
         before_queue_length = len(player.queue)
 
         if not isinstance(query, list):
-            query = audio_dataclasses.Query.process_input(query)
+            query = Query.process_input(query)
             restrict = await self.config.restrict()
             if restrict and match_url(query):
                 valid_url = url_check(query)
@@ -7024,10 +6983,7 @@ class Audio(commands.Cog):
                             "This may be due to permissions or because Lavalink.jar is being run "
                             "in a different machine than the local tracks."
                         )
-                    elif (
-                        query.is_local
-                        and query.suffix in audio_dataclasses._PARTIALLY_SUPPORTED_MUSIC_EXT
-                    ):
+                    elif query.is_local and query.suffix in _PARTIALLY_SUPPORTED_MUSIC_EXT:
                         embed = discord.Embed(title=_("Track is not playable."))
                         embed.description = _(
                             "**{suffix}** is not a fully supported format and some "
@@ -7052,7 +7008,7 @@ class Audio(commands.Cog):
                         ctx.guild,
                         (
                             f"{track.title} {track.author} {track.uri} "
-                            f"{str(audio_dataclasses.Query.process_input(track))}"
+                            f"{str(Query.process_input(track))}"
                         ),
                     ):
                         if IS_DEBUG:
@@ -7123,10 +7079,7 @@ class Audio(commands.Cog):
                         "This may be due to permissions or because Lavalink.jar is being run "
                         "in a different machine than the local tracks."
                     )
-                elif (
-                    query.is_local
-                    and query.suffix in audio_dataclasses._PARTIALLY_SUPPORTED_MUSIC_EXT
-                ):
+                elif query.is_local and query.suffix in _PARTIALLY_SUPPORTED_MUSIC_EXT:
                     embed = discord.Embed(title=_("Track is not playable."))
                     embed.description = _(
                         "**{suffix}** is not a fully supported format and some "
@@ -7196,7 +7149,7 @@ class Audio(commands.Cog):
         if getattr(search_choice, "uri", None):
             description = get_track_description(search_choice)
         else:
-            search_choice = audio_dataclasses.Query.process_input(search_choice)
+            search_choice = Query.process_input(search_choice)
             if search_choice.track.exists() and search_choice.track.is_dir():
                 return await ctx.invoke(self.search, query=search_choice)
             elif search_choice.track.exists() and search_choice.track.is_file():
@@ -7212,7 +7165,7 @@ class Audio(commands.Cog):
             ctx.guild,
             (
                 f"{search_choice.title} {search_choice.author} {search_choice.uri} "
-                f"{str(audio_dataclasses.Query.process_input(search_choice))}"
+                f"{str(Query.process_input(search_choice))}"
             ),
         ):
             if IS_DEBUG:
@@ -7249,7 +7202,7 @@ class Audio(commands.Cog):
 
     @staticmethod
     def _format_search_options(search_choice):
-        query = audio_dataclasses.Query.process_input(search_choice)
+        query = Query.process_input(search_choice)
         description = get_track_description(search_choice)
         return description, query
 
@@ -7268,19 +7221,17 @@ class Audio(commands.Cog):
             if search_track_num == 0:
                 search_track_num = 5
             try:
-                query = audio_dataclasses.Query.process_input(track.uri)
+                query = Query.process_input(track.uri)
                 if query.is_local:
                     search_list += "`{0}.` **{1}**\n[{2}]\n".format(
-                        search_track_num,
-                        track.title,
-                        audio_dataclasses.LocalPath(track.uri).to_string_user(),
+                        search_track_num, track.title, LocalPath(track.uri).to_string_user(),
                     )
                 else:
                     search_list += "`{0}.` **[{1}]({2})**\n".format(
                         search_track_num, track.title, track.uri
                     )
             except AttributeError:
-                track = audio_dataclasses.Query.process_input(track)
+                track = Query.process_input(track)
                 if track.is_local and command != "search":
                     search_list += "`{}.` **{}**\n".format(
                         search_track_num, track.to_string_user()
@@ -8374,9 +8325,9 @@ class Audio(commands.Cog):
     ):
         await self.api_interface.local_cache_api.youtube.clean_up_old_entries()
         await asyncio.sleep(5)
-        dat = get_playlist_database()
+        dat = get_playlist_api_wrapper()
         if dat:
-            dat.delete_scheduled()
+            await dat.delete_scheduled()
             await asyncio.sleep(5)
 
     def cog_unload(self):

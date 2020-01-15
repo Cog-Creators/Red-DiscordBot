@@ -8,9 +8,9 @@ import discord
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
-
+from .apis.playlist_interface import get_all_playlist_converter
+from .apis.utils import standardize_scope
 from .errors import NoMatchesFound, TooManyMatches
-from .playlists import get_all_playlist_converter, standardize_scope
 from .utils import PlaylistScope
 
 _ = Translator("Audio", __file__)
@@ -51,14 +51,6 @@ Guild must be a valid version of one of the following:
 """
 
 MENTION_RE = re.compile(r"^<?(?:(?:@[!&]?)?|#)(\d{15,21})>?$")
-
-
-def _pass_config_to_converters(config: Config, bot: Red):
-    global _config, _bot
-    if _config is None:
-        _config = config
-    if _bot is None:
-        _bot = bot
 
 
 def _match_id(arg: str) -> Optional[int]:

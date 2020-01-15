@@ -2,27 +2,22 @@ import asyncio
 import contextlib
 import functools
 import re
-import tarfile
 import time
-import zipfile
 from enum import Enum, unique
-from io import BytesIO
-from typing import MutableMapping, Optional, TYPE_CHECKING
+from typing import MutableMapping, Optional
 from urllib.parse import urlparse
 
 import discord
 import lavalink
-
-from redbot.core import Config, commands
-from redbot.core.bot import Red
-from redbot.core.i18n import Translator
-from redbot.core.utils.chat_formatting import bold, box
 from discord.utils import escape_markdown as escape
 
+from redbot.core import commands
+from redbot.core.bot import Red
+from redbot.core.i18n import Translator
+from redbot.core.utils.chat_formatting import box
 from .audio_dataclasses import Query
 
 __all__ = [
-    "_pass_config_to_utils",
     "track_limit",
     "queue_duration",
     "draw_time",
@@ -46,27 +41,15 @@ __all__ = [
     "Notifier",
     "PlaylistScope",
 ]
+
+from .audio_globals import get_config, get_bot
+
 _RE_TIME_CONVERTER = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
 _RE_YT_LIST_PLAYLIST = re.compile(
     r"^(https?://)?(www\.)?(youtube\.com|youtu\.?be)(/playlist\?).*(list=)(.*)(&|$)"
 )
 
-if TYPE_CHECKING:
-    _config: Config
-    _bot: Red
-else:
-    _config = None
-    _bot = None
-
 _ = Translator("Audio", __file__)
-
-
-def _pass_config_to_utils(config: Config, bot: Red) -> None:
-    global _config, _bot
-    if _config is None:
-        _config = config
-    if _bot is None:
-        _bot = bot
 
 
 def track_limit(track, maxlength) -> bool:
@@ -87,20 +70,20 @@ async def is_allowed(guild: discord.Guild, query: str, query_obj: Query = None) 
         query = query_obj.lavalink_query.replace("ytsearch:", "youtubesearch").replace(
             "scsearch:", "soundcloudsearch"
         )
-    global_whitelist = set(await _config.url_keyword_whitelist())
+    global_whitelist = set(await get_config().url_keyword_whitelist())
     global_whitelist = [i.lower() for i in global_whitelist]
     if global_whitelist:
         return any(i in query for i in global_whitelist)
-    global_blacklist = set(await _config.url_keyword_blacklist())
+    global_blacklist = set(await get_config().url_keyword_blacklist())
     global_blacklist = [i.lower() for i in global_blacklist]
     if any(i in query for i in global_blacklist):
         return False
     if guild is not None:
-        whitelist = set(await _config.guild(guild).url_keyword_whitelist())
+        whitelist = set(await get_config().guild(guild).url_keyword_whitelist())
         whitelist = [i.lower() for i in whitelist]
         if whitelist:
             return any(i in query for i in whitelist)
-        blacklist = set(await _config.guild(guild).url_keyword_blacklist())
+        blacklist = set(await get_config().guild(guild).url_keyword_blacklist())
         blacklist = [i.lower() for i in blacklist]
         return not any(i in query for i in blacklist)
     return True
@@ -166,7 +149,7 @@ def dynamic_time(seconds) -> str:
 
 
 def format_playlist_picker_data(pid, pname, ptracks, pauthor, scope) -> str:
-    author = _bot.get_user(pauthor) or pauthor or _("Unknown")
+    author = get_bot().get_user(pauthor) or pauthor or _("Unknown")
     line = _(
         " - Name:   <{pname}>\n"
         " - Scope:  < {scope} >\n"

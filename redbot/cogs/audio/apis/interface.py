@@ -3,6 +3,7 @@ import datetime
 import json
 import logging
 import random
+import time
 from collections import namedtuple
 from typing import MutableMapping, Optional, Union, Mapping, List, Callable, Tuple
 
@@ -15,8 +16,8 @@ from lavalink.rest_api import LoadResult
 from redbot.core import commands
 from redbot.core.i18n import cog_i18n, Translator
 from .global_db import GlobalCacheWrapper
-
 from .local_db import LocalCacheWrapper
+from .playlist_interface import get_playlist
 from .spotify import SpotifyWrapper
 from .utils import LavalinkCacheFetchForGlobalResult
 from .youtube import YouTubeWrapper
@@ -24,12 +25,12 @@ from ..audio_dataclasses import Query
 from ..audio_globals import get_config, get_bot
 from ..audio_logging import debug_exc_log, IS_DEBUG
 from ..errors import SpotifyFetchError, TrackEnqueueError, DatabaseError
-from ..playlists import get_playlist
 from ..utils import CacheLevel, Notifier, queue_duration, is_allowed, track_limit
 
 _ = Translator("Audio", __file__)
 log = logging.getLogger("red.cogs.Audio.api.AudioAPIInterface")
-_TOP_100_US = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn5rWitrRWFKdm-ulaFiIyoK"  # TODO: Get random from global Cache
+_TOP_100_US = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn5rWitrRWFKdm-ulaFiIyoK"
+# TODO: Get random from global Cache
 
 
 @cog_i18n(_)
@@ -57,7 +58,7 @@ class AudioAPIInterface:
         self.local_cache_api.lavalink.close()
 
     async def get_random_track_from_db(self) -> Optional[MutableMapping]:
-        tracks = {}
+        track = {}
         try:
             query_data = {}
             date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=7)
@@ -67,22 +68,22 @@ class AudioAPIInterface:
             maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(
                 days=max_age
             )
-            maxage_int = int(datetime.time.mktime(maxage.timetuple()))
+            maxage_int = int(time.mktime(maxage.timetuple()))
             query_data["maxage"] = maxage_int
             track = await self.local_cache_api.lavalink.fetch_random(query_data)
             if track:
                 if track.get("loadType") == "V2_COMPACT":
                     track["loadType"] = "V2_COMPAT"
                 results = LoadResult(track)
-                tracks = random.choice(list(results.tracks))
+                track = random.choice(list(results.tracks))
         except Exception as exc:
-            debug_exc_log(log, exc, f"Failed to fetch a random track from database")
-            tracks = {}
+            debug_exc_log(log, exc, "Failed to fetch a random track from database")
+            track = {}
 
         if not track:
             return None
 
-        return tracks
+        return track
 
     async def route_tasks(
         self, action_type: str, table: str, data: Union[List[Mapping], Mapping]
@@ -141,7 +142,7 @@ class AudioAPIInterface:
                 )
 
             except Exception as exc:
-                debug_exc_log(log, exc, f"Failed database writes")
+                debug_exc_log(log, exc, "Failed database writes")
             else:
                 if IS_DEBUG:
                     log.debug("Completed pending writes to database have finished")
@@ -325,6 +326,7 @@ class AudioAPIInterface:
                 debug_exc_log(
                     log, exc, f"Failed to fetch 'spotify:track:{uri}' from Spotify table"
                 )
+                val = None
         else:
             val = None
         youtube_urls = []
@@ -802,7 +804,7 @@ class AudioAPIInterface:
                 )
                 tracks = playlist.tracks_obj
             except Exception as exc:
-                debug_exc_log(log, exc, f"Failed to fetch playlist for autoplay")
+                debug_exc_log(log, exc, "Failed to fetch playlist for autoplay")
 
         if not tracks or not getattr(playlist, "tracks", None):
             if cache_enabled:

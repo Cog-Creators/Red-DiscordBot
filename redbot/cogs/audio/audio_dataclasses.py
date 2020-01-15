@@ -69,15 +69,6 @@ _PARTIALLY_SUPPORTED_VIDEO_EXT = (
 _PARTIALLY_SUPPORTED_MUSIC_EXT += _PARTIALLY_SUPPORTED_VIDEO_EXT
 
 
-def _pass_config_to_dataclasses(config: Config, bot: Red, folder: str):
-    global _config, _bot, _localtrack_folder
-    if _config is None:
-        _config = config
-    if _bot is None:
-        _bot = bot
-    _localtrack_folder = folder
-
-
 class LocalPath:
     """Local tracks class.
 

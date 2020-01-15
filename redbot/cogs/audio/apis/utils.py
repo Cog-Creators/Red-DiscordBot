@@ -1,7 +1,18 @@
 import datetime
 import json
+import logging
+from collections import namedtuple
 from dataclasses import dataclass, field
-from typing import Optional, MutableMapping, List
+from typing import Optional, MutableMapping, List, Union
+
+import discord
+
+from redbot.core.utils.chat_formatting import humanize_list
+from ..audio_globals import get_bot
+from ..errors import InvalidPlaylistScope, MissingAuthor, MissingGuild
+from ..utils import PlaylistScope
+
+log = logging.getLogger("red.cogs.Audio.api.utils")
 
 
 @dataclass
@@ -60,3 +71,64 @@ class PlaylistFetchResult:
     def __post_init__(self):
         if isinstance(self.tracks, str):
             self.tracks = json.loads(self.tracks)
+
+
+def standardize_scope(scope: str) -> str:
+    scope = scope.upper()
+    valid_scopes = ["GLOBAL", "GUILD", "AUTHOR", "USER", "SERVER", "MEMBER", "BOT"]
+
+    if scope in PlaylistScope.list():
+        return scope
+    elif scope not in valid_scopes:
+        raise InvalidPlaylistScope(
+            f'"{scope}" is not a valid playlist scope.'
+            f" Scope needs to be one of the following: {humanize_list(valid_scopes)}"
+        )
+
+    if scope in ["GLOBAL", "BOT"]:
+        scope = PlaylistScope.GLOBAL.value
+    elif scope in ["GUILD", "SERVER"]:
+        scope = PlaylistScope.GUILD.value
+    elif scope in ["USER", "MEMBER", "AUTHOR"]:
+        scope = PlaylistScope.USER.value
+
+    return scope
+
+
+def prepare_config_scope(
+    scope, author: Union[discord.abc.User, int] = None, guild: Union[discord.Guild, int] = None
+):
+    scope = standardize_scope(scope)
+
+    if scope == PlaylistScope.GLOBAL.value:
+        config_scope = [PlaylistScope.GLOBAL.value, get_bot().user.id]
+    elif scope == PlaylistScope.USER.value:
+        if author is None:
+            raise MissingAuthor("Invalid author for user scope.")
+        config_scope = [PlaylistScope.USER.value, int(getattr(author, "id", author))]
+    else:
+        if guild is None:
+            raise MissingGuild("Invalid guild for guild scope.")
+        config_scope = [PlaylistScope.GUILD.value, int(getattr(guild, "id", guild))]
+    return config_scope
+
+
+def prepare_config_scope_for_migration23(  # TODO: remove me in a future version ?
+    scope, author: Union[discord.abc.User, int] = None, guild: discord.Guild = None
+):
+    scope = standardize_scope(scope)
+
+    if scope == PlaylistScope.GLOBAL.value:
+        config_scope = [PlaylistScope.GLOBAL.value]
+    elif scope == PlaylistScope.USER.value:
+        if author is None:
+            raise MissingAuthor("Invalid author for user scope.")
+        config_scope = [PlaylistScope.USER.value, str(getattr(author, "id", author))]
+    else:
+        if guild is None:
+            raise MissingGuild("Invalid guild for guild scope.")
+        config_scope = [PlaylistScope.GUILD.value, str(getattr(guild, "id", guild))]
+    return config_scope
+
+
+FakePlaylist = namedtuple("Playlist", "author scope")
