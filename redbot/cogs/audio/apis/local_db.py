@@ -14,7 +14,12 @@ from redbot.core.utils.dbtools import APSWConnectionWrapper
 from ..audio_globals import get_local_cache_connection, get_config
 from ..audio_logging import debug_exc_log
 
-from .utils import LavalinkCacheFetchResult, SpotifyCacheFetchResult, YouTubeCacheFetchResult
+from .utils import (
+    LavalinkCacheFetchResult,
+    SpotifyCacheFetchResult,
+    YouTubeCacheFetchResult,
+    LavalinkCacheFetchForGlobalResult,
+)
 from ..sql_statements import *
 
 log = logging.getLogger("red.cogs.Audio.api.LocalDB")
@@ -33,7 +38,7 @@ class BaseWrapper:
         self.statement.set_user_version = PRAGMA_SET_user_version
         self.statement.get_user_version = PRAGMA_FETCH_user_version
 
-    async def init(self) -> NoReturn:
+    async def init(self) -> None:
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             with self.database.cursor() as cursor:
                 executor.submit(cursor.execute, self.statement.pragma_temp_store)
@@ -50,11 +55,11 @@ class BaseWrapper:
 
                 await self.clean_up_old_entries()
 
-    def close(self) -> NoReturn:
+    def close(self) -> None:
         with contextlib.suppress(Exception):
             self._db_con.close()
 
-    async def clean_up_old_entries(self) -> NoReturn:
+    async def clean_up_old_entries(self) -> None:
         max_age = await self.config.cache_age()
         maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=max_age)
         maxage_int = int(time.mktime(maxage.timetuple()))
@@ -65,7 +70,7 @@ class BaseWrapper:
                 executor.submit(cursor.execute, YOUTUBE_DELETE_OLD_ENTRIES, values)
                 executor.submit(cursor.execute, SPOTIFY_DELETE_OLD_ENTRIES, values)
 
-    def maybe_migrate(self) -> NoReturn:
+    def maybe_migrate(self) -> None:
         current_version = 0
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             with self.database.cursor() as cursor:
@@ -86,14 +91,14 @@ class BaseWrapper:
                     cursor.execute(self.statement.set_user_version, {"version": SCHEMA_VERSION})
                 )
 
-    async def insert(self, values: List[MutableMapping]) -> NoReturn:
+    async def insert(self, values: List[MutableMapping]) -> None:
         try:
             with self.database.transaction() as transaction:
                 transaction.executemany(self.statement.upsert, values)
         except Exception as exc:
             debug_exc_log(log, exc, "Error during table insert")
 
-    async def update(self, values: Dict[str, Union[str, int]]) -> NoReturn:
+    async def update(self, values: Dict[str, Union[str, int]]) -> None:
         try:
             time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
             values["last_fetched"] = time_now
@@ -239,6 +244,7 @@ class LavalinkTableWrapper(BaseWrapper):
         self.statement.get_random = LAVALINK_QUERY_LAST_FETCHED_RANDOM
         self.statement.get_all_global = LAVALINK_FETCH_ALL_ENTRIES_GLOBAL
         self.fetch_result = LavalinkCacheFetchResult
+        self.fetch_for_global = LavalinkCacheFetchForGlobalResult
 
     async def fetch_one(
         self, values: Dict[str, Union[str, int]]
@@ -276,7 +282,7 @@ class LavalinkTableWrapper(BaseWrapper):
         for index, row in enumerate(row_result, start=1):
             if index % 50 == 0:
                 await asyncio.sleep(0.01)
-            output.append(self.fetch_result(*row))
+            output.append(self.fetch_for_global(*row))
             await asyncio.sleep(0)
         return output
 

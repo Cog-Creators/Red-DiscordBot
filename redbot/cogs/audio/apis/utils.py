@@ -38,6 +38,17 @@ class LavalinkCacheFetchResult:
 
 
 @dataclass
+class LavalinkCacheFetchForGlobalResult:
+    query: str
+    data: MutableMapping
+
+    def __post_init__(self):
+        if isinstance(self.data, str):
+            self.data_string = str(self.data)
+            self.data = json.loads(self.data)
+
+
+@dataclass
 class PlaylistFetchResult:
     playlist_id: int
     playlist_name: str

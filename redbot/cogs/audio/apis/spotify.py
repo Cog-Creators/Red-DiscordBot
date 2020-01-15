@@ -80,7 +80,7 @@ class SpotifyWrapper:
                 log.debug(f"Issue making GET request to {url}: [{r.status}] {data}")
             return data
 
-    async def _get_auth(self) -> NoReturn:
+    async def _get_auth(self) -> None:
         tokens = await self.bot.get_shared_api_tokens("spotify")
         self.client_id = tokens.get("client_id", "")
         self.client_secret = tokens.get("client_secret", "")

@@ -39,7 +39,9 @@ from redbot.core.utils.menus import (
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from . import audio_dataclasses
-from .apis import MusicCache
+from .apis.interface import AudioAPIInterface
+from .audio_globals import update_audio_globals
+from .audio_logging import IS_DEBUG
 from .config import pass_config_to_dependencies
 from .converters import ComplexScopeParser, ScopeParser, get_lazy_converter, get_playlist_converter
 from .equalizer import Equalizer
@@ -107,6 +109,8 @@ class Audio(commands.Cog):
             schema_version=1,
             cache_level=0,
             cache_age=365,
+            global_db_enabled=False,
+            global_db_get_timeout=5,  # Here as a placeholder in case we want to enable the command
             status=False,
             use_external_lavalink=False,
             restrict=True,
@@ -153,7 +157,7 @@ class Audio(commands.Cog):
         self.config.register_custom(PlaylistScope.USER.value, **_playlist)
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)
-        self.music_cache: Optional[MusicCache] = None
+        self.api_interface: Optional[AudioAPIInterface] = None
         self._error_counter: Counter = Counter()
         self._error_timer: MutableMapping[int, int] = {}
         self._disconnected_players: MutableMapping[int, bool] = {}
@@ -204,9 +208,10 @@ class Audio(commands.Cog):
         await self.bot.wait_until_ready()
         # Unlike most cases, we want the cache to exit before migration.
         try:
+            update_audio_globals(self.config, self.bot, await self.config.localpath())
             pass_config_to_dependencies(self.config, self.bot, await self.config.localpath())
-            self.music_cache = MusicCache(self.bot, self.session)
-            await self.music_cache.initialize(self.config)
+            self.api_interface = AudioAPIInterface(self.session)
+            await self.api_interface.initialize()
             await self._migrate_config(
                 from_version=await self.config.schema_version(), to_version=_SCHEMA_VERSION
             )
@@ -281,7 +286,7 @@ class Audio(commands.Cog):
             await self.config.schema_version.set(_SCHEMA_VERSION)
 
         if database_entries:
-            await self.music_cache.database.insert("lavalink", database_entries)
+            await self.api_interface.local_cache_api.lavalink.insert(database_entries)
 
     def _restart_connect(self):
         if self._connect_task:
@@ -476,7 +481,7 @@ class Audio(commands.Cog):
             self.bot.dispatch("red_audio_queue_end", guild, prev_song, prev_requester)
             if autoplay and not player.queue and player.fetch("playing_song") is not None:
                 try:
-                    await self.music_cache.autoplay(player)
+                    await self.api_interface.autoplay(player)
                 except DatabaseError:
                     notify_channel = player.fetch("channel")
                     if notify_channel:
@@ -645,7 +650,7 @@ class Audio(commands.Cog):
         await self._data_check(guild.me)
 
         ctx = namedtuple("Context", "message")
-        (results, called_api) = await self.music_cache.fetch_track(ctx(guild), player, query)
+        (results, called_api) = await self.api_interface.fetch_track(ctx(guild), player, query)
 
         if not results.tracks:
             log.debug(f"Query returned no tracks.")
@@ -655,7 +660,8 @@ class Audio(commands.Cog):
         if not await is_allowed(
             guild, f"{track.title} {track.author} {track.uri} {str(query._raw)}"
         ):
-            log.debug(f"Query is not allowed in {guild} ({guild.id})")
+            if IS_DEBUG:
+                log.debug(f"Query is not allowed in {guild} ({guild.id})")
             return
         track.extras["autoplay"] = is_autoplay
         player.add(player.channel.guild.me, track)
@@ -670,6 +676,60 @@ class Audio(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     async def audioset(self, ctx: commands.Context):
         """Music configuration options."""
+
+    @checks.is_owner()
+    @audioset.group(name="audiodb")
+    async def _audiodb(self, ctx: commands.Context):
+        """Change audiodb settings."""
+
+    @_audiodb.command(name="toggle")
+    async def _audiodb_toggle(self, ctx: commands.Context):
+        """Toggle the server settings.
+        Default is ON
+        """
+        state = await self.config.global_db_enabled()
+        await self.config.global_db_enabled.set(not state)
+        await ctx.send(
+            _("Global DB is {status}").format(status=_("enabled") if not state else _("disabled"))
+        )
+
+    # @_audiodb.command(name="timeout")
+    # async def _audiodb_timeout(self, ctx: commands.Context, timeout: Union[float, int]):
+    #     """Set GET request timeout.
+    #
+    #     Example: 0.1 = 100ms 1 = 1 second
+    #     """
+    #
+    #     await self.config.global_db_get_timeout.set(timeout)
+    #     await ctx.send(_("Request timeout set to {time} second(s)").format(time=timeout))
+
+    @_audiodb.command(name="contribute")
+    async def contribute(self, ctx: commands.Context):
+        """Send your local DB upstream."""
+        tokens = await self.bot.get_shared_api_tokens("audiodb")
+        api_key = tokens.get("api_key", None)
+        if api_key is None:
+            return await ctx.send(
+                _(
+                    "Hey! Thanks for showing interest into contributing, "
+                    "currently you don't have access to this, "
+                    "if you wish to contribute please DM Draper#6666"
+                )
+            )
+        db_entries = await self.api_interface.fetch_all_contribute()
+        info = await ctx.send(
+            _(
+                "Sending {entries} entries to the global DB. "
+                "are you sure about this (It may take a very long time...)?"
+            ).format(entries=len(db_entries))
+        )
+        start_adding_reactions(info, ReactionPredicate.YES_OR_NO_EMOJIS)
+        pred = ReactionPredicate.yes_or_no(info, ctx.author)
+        await ctx.bot.wait_for("reaction_add", check=pred)
+        if not pred.result:
+            return await ctx.send(_("Cancelled!"))
+
+        await self.api_interface.post_to_global(ctx, db_entries)
 
     @audioset.command(name="dailyqueue")
     @checks.admin()
@@ -1601,19 +1661,22 @@ class Audio(commands.Cog):
             ).format(pname=pname, pid=pid, pscope=pscope)
 
         if is_owner:
+            global_db = await self.config.global_db_enabled()
             msg += (
                 "\n---"
                 + _("Cache Settings")
                 + "---        \n"
-                + _("Max age:          [{max_age}]\n")
-                + _("Spotify cache:    [{spotify_status}]\n")
-                + _("Youtube cache:    [{youtube_status}]\n")
-                + _("Lavalink cache:   [{lavalink_status}]\n")
+                + _("Max age:                [{max_age}]\n")
+                + _("Local Spotify cache:    [{spotify_status}]\n")
+                + _("Local Youtube cache:    [{youtube_status}]\n")
+                + _("Local Lavalink cache:   [{lavalink_status}]\n")
+                + _("Global cache status:    [{global_cache}]\n")
             ).format(
                 max_age=str(await self.config.cache_age()) + " " + _("days"),
                 spotify_status=_("Enabled") if has_spotify_cache else _("Disabled"),
                 youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
                 lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
+                global_cache=_("Enabled") if global_db else _("Disabled"),
             )
 
         msg += _(
@@ -2478,7 +2541,7 @@ class Audio(commands.Cog):
             return
         local_tracks = []
         for local_file in await self._all_folder_tracks(ctx, query):
-            trackdata, called_api = await self.music_cache.fetch_track(ctx, player, local_file)
+            trackdata, called_api = await self.api_interface.fetch_track(ctx, player, local_file)
             with contextlib.suppress(IndexError):
                 local_tracks.append(trackdata.tracks[0])
         return local_tracks
@@ -2976,7 +3039,8 @@ class Audio(commands.Cog):
                 f"{str(audio_dataclasses.Query.process_input(single_track))}"
             ),
         ):
-            log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+            if IS_DEBUG:
+                log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
             self._play_lock(ctx, False)
             return await self._embed_msg(
                 ctx,
@@ -3157,7 +3221,7 @@ class Audio(commands.Cog):
                 description=_("You must be in the voice channel to use the genre command."),
             )
         try:
-            category_list = await self.music_cache.spotify_api.get_categories()
+            category_list = await self.api_interface.spotify_api.get_categories()
         except SpotifyFetchError as error:
             return await self._embed_msg(
                 ctx,
@@ -3178,7 +3242,7 @@ class Audio(commands.Cog):
         if not cat_menu_output:
             return await self._embed_msg(ctx, title=_("No categories selected, try again later."))
         category_name, category_pick = cat_menu_output
-        playlists_list = await self.music_cache.spotify_api.get_playlist_from_category(
+        playlists_list = await self.api_interface.spotify_api.get_playlist_from_category(
             category_pick
         )
         if not playlists_list:
@@ -3338,7 +3402,7 @@ class Audio(commands.Cog):
         if not await self._currency_check(ctx, guild_data["jukebox_price"]):
             return
         try:
-            await self.music_cache.autoplay(player)
+            await self.api_interface.autoplay(player)
         except DatabaseError:
             notify_channel = player.fetch("channel")
             if notify_channel:
@@ -3390,7 +3454,7 @@ class Audio(commands.Cog):
 
         if query.single_track:
             try:
-                res = await self.music_cache.spotify_query(
+                res = await self.api_interface.spotify_query(
                     ctx, "track", query.id, skip_youtube=True, notifier=None
                 )
                 if not res:
@@ -3419,7 +3483,9 @@ class Audio(commands.Cog):
                 else:
                     query = audio_dataclasses.Query.process_input(res[0])
                     try:
-                        result, called_api = await self.music_cache.fetch_track(ctx, player, query)
+                        result, called_api = await self.api_interface.fetch_track(
+                            ctx, player, query
+                        )
                     except TrackEnqueueError:
                         self._play_lock(ctx, False)
                         return await self._embed_msg(
@@ -3506,7 +3572,7 @@ class Audio(commands.Cog):
                 if query.start_time:
                     seek = query.start_time
             try:
-                result, called_api = await self.music_cache.fetch_track(ctx, player, query)
+                result, called_api = await self.api_interface.fetch_track(ctx, player, query)
             except TrackEnqueueError:
                 self._play_lock(ctx, False)
                 return await self._embed_msg(
@@ -3569,7 +3635,8 @@ class Audio(commands.Cog):
                         f"{str(audio_dataclasses.Query.process_input(track))}"
                     ),
                 ):
-                    log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                    if IS_DEBUG:
+                        log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
                     continue
                 elif guild_data["maxlength"] > 0:
                     if track_limit(track, guild_data["maxlength"]):
@@ -3643,7 +3710,8 @@ class Audio(commands.Cog):
                         f"{str(audio_dataclasses.Query.process_input(single_track))}"
                     ),
                 ):
-                    log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                    if IS_DEBUG:
+                        log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
                     self._play_lock(ctx, False)
                     return await self._embed_msg(
                         ctx, title=_("This track is not allowed in this server.")
@@ -3712,7 +3780,7 @@ class Audio(commands.Cog):
                     "lavalink_time": _("Approximate time remaining: {seconds}"),
                 },
             )
-            track_list = await self.music_cache.spotify_enqueue(
+            track_list = await self.api_interface.spotify_enqueue(
                 ctx,
                 stype,
                 query.id,
@@ -5397,7 +5465,8 @@ class Audio(commands.Cog):
                         f"{str(audio_dataclasses.Query.process_input(track))}"
                     ),
                 ):
-                    log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                    if IS_DEBUG:
+                        log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
                     continue
                 query = audio_dataclasses.Query.process_input(track.uri)
                 if query.is_local:
@@ -5714,7 +5783,7 @@ class Audio(commands.Cog):
             not uploaded_playlist_url
             or not match_yt_playlist(uploaded_playlist_url)
             or not (
-                await self.music_cache.fetch_track(
+                await self.api_interface.fetch_track(
                     ctx, player, audio_dataclasses.Query.process_input(uploaded_playlist_url)
                 )
             )[0].tracks
@@ -5915,7 +5984,7 @@ class Audio(commands.Cog):
                         }
                     )
         if database_entries:
-            await self.music_cache.database.insert("lavalink", database_entries)
+            await self.api_interface.local_cache_api.lavalink.insert(database_entries)
 
     async def _load_v2_playlist(
         self,
@@ -5940,7 +6009,7 @@ class Audio(commands.Cog):
             track_count += 1
             try:
                 try:
-                    result, called_api = await self.music_cache.fetch_track(
+                    result, called_api = await self.api_interface.fetch_track(
                         ctx, player, audio_dataclasses.Query.process_input(song_url)
                     )
                 except TrackEnqueueError:
@@ -6117,7 +6186,7 @@ class Audio(commands.Cog):
             self._play_lock(ctx, False)
         elif query.is_search:
             try:
-                result, called_api = await self.music_cache.fetch_track(ctx, player, query)
+                result, called_api = await self.api_interface.fetch_track(ctx, player, query)
             except TrackEnqueueError:
                 self._play_lock(ctx, False)
                 return await self._embed_msg(
@@ -6144,7 +6213,7 @@ class Audio(commands.Cog):
                 return await self._embed_msg(ctx, embed=embed)
         else:
             try:
-                result, called_api = await self.music_cache.fetch_track(ctx, player, query)
+                result, called_api = await self.api_interface.fetch_track(ctx, player, query)
             except TrackEnqueueError:
                 self._play_lock(ctx, False)
                 return await self._embed_msg(
@@ -6916,7 +6985,9 @@ class Audio(commands.Cog):
             if query.invoked_from == "search list" or query.invoked_from == "local folder":
                 if query.invoked_from == "search list" and not query.is_local:
                     try:
-                        result, called_api = await self.music_cache.fetch_track(ctx, player, query)
+                        result, called_api = await self.api_interface.fetch_track(
+                            ctx, player, query
+                        )
                     except TrackEnqueueError:
                         self._play_lock(ctx, False)
                         return await self._embed_msg(
@@ -6984,7 +7055,8 @@ class Audio(commands.Cog):
                             f"{str(audio_dataclasses.Query.process_input(track))}"
                         ),
                     ):
-                        log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                        if IS_DEBUG:
+                            log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
                         continue
                     elif guild_data["maxlength"] > 0:
                         if track_limit(track, guild_data["maxlength"]):
@@ -7030,7 +7102,7 @@ class Audio(commands.Cog):
                     tracks = await self._folder_list(ctx, query)
             else:
                 try:
-                    result, called_api = await self.music_cache.fetch_track(ctx, player, query)
+                    result, called_api = await self.api_interface.fetch_track(ctx, player, query)
                 except TrackEnqueueError:
                     self._play_lock(ctx, False)
                     return await self._embed_msg(
@@ -7143,7 +7215,8 @@ class Audio(commands.Cog):
                 f"{str(audio_dataclasses.Query.process_input(search_choice))}"
             ),
         ):
-            log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+            if IS_DEBUG:
+                log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
             self._play_lock(ctx, False)
             return await self._embed_msg(ctx, title=_("This track is not allowed in this server."))
         elif guild_data["maxlength"] > 0:
@@ -8299,7 +8372,7 @@ class Audio(commands.Cog):
     async def on_red_audio_queue_end(
         self, guild: discord.Guild, track: lavalink.Track, requester: discord.Member
     ):
-        await self.music_cache.database.clean_up_old_entries()
+        await self.api_interface.local_cache_api.youtube.clean_up_old_entries()
         await asyncio.sleep(5)
         dat = get_playlist_database()
         if dat:
@@ -8355,7 +8428,7 @@ class Audio(commands.Cog):
             ),
         ):
             self._play_lock(ctx, False)
-            await self.music_cache.run_tasks(ctx)
+            await self.api_interface.run_tasks(ctx)
             message = "Error in command '{}'. Check your console or logs for details.".format(
                 ctx.command.qualified_name
             )
@@ -8374,10 +8447,10 @@ class Audio(commands.Cog):
         await self._process_db(ctx)
 
     async def _process_db(self, ctx: commands.Context):
-        await self.music_cache.run_tasks(ctx)
+        await self.api_interface.run_tasks(ctx)
 
     async def _close_database(self):
-        await self.music_cache.run_all_pending_tasks()
-        self.music_cache.database.close()
+        await self.api_interface.run_all_pending_tasks()
+        self.api_interface.close()
 
     __del__ = cog_unload
