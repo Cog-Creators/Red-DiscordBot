@@ -164,10 +164,10 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
     async def _red_before_invoke_method(self, ctx):
         await self.wait_until_red_ready()
-        exceptions_cancel = not isinstance(ctx.command, commands.commands._AlwaysAvailableCommand)
+        return_exceptions = not isinstance(ctx.command, commands.commands._AlwaysAvailableCommand)
         await asyncio.gather(
             *(coro(ctx) for coro in self._red_before_invoke_objs),
-            return_exceptions=exceptions_cancel,
+            return_exceptions=return_exceptions,
         )
 
     def remove_before_invoke_hook(self, coro: Coroutine):
