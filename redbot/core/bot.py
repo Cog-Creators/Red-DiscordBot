@@ -35,7 +35,7 @@ log = logging.getLogger("redbot")
 __all__ = ["RedBase", "Red", "ExitCodes"]
 
 NotMessage = namedtuple("NotMessage", "guild")
-T_BIC = TypeVar("T_BIC", Coroutine)
+T_BIC = TypeVar("T_BIC")
 
 
 def _is_submodule(parent, child):
