@@ -10,7 +10,19 @@ from datetime import datetime
 from enum import IntEnum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Optional, Union, List, Dict, NoReturn
+from typing import (
+    Optional,
+    Union,
+    List,
+    Dict,
+    NoReturn,
+    Set,
+    Coroutine,
+    TypeVar,
+    Callable,
+    Awaitable,
+    Any,
+)
 from types import MappingProxyType
 
 import discord
@@ -35,6 +47,9 @@ log = logging.getLogger("redbot")
 __all__ = ["RedBase", "Red", "ExitCodes"]
 
 NotMessage = namedtuple("NotMessage", "guild")
+
+PreInvokeCoroutine = Callable[[commands.Context], Awaitable[Any]]
+T_BIC = TypeVar("T_BIC", bound=PreInvokeCoroutine)
 
 
 def _is_submodule(parent, child):
@@ -150,6 +165,64 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         self._permissions_hooks: List[commands.CheckPredicate] = []
         self._red_ready = asyncio.Event()
+        self._red_before_invoke_objs: Set[PreInvokeCoroutine] = set()
+
+    @property
+    def _before_invoke(self):  # DEP-WARN
+        return self._red_before_invoke_method
+
+    @_before_invoke.setter
+    def _before_invoke(self, val):  # DEP-WARN
+        """Prevent this from being overwritten in super().__init__"""
+        pass
+
+    async def _red_before_invoke_method(self, ctx):
+        await self.wait_until_red_ready()
+        return_exceptions = isinstance(ctx.command, commands.commands._AlwaysAvailableCommand)
+        if self._red_before_invoke_objs:
+            await asyncio.gather(
+                *(coro(ctx) for coro in self._red_before_invoke_objs),
+                return_exceptions=return_exceptions,
+            )
+
+    def remove_before_invoke_hook(self, coro: PreInvokeCoroutine) -> None:
+        """
+        Functional method to remove a `before_invoke` hook.
+        """
+        self._red_before_invoke_objs.discard(coro)
+
+    def before_invoke(self, coro: T_BIC) -> T_BIC:
+        """
+        Overridden decorator method for Red's ``before_invoke`` behavior.
+        
+        This can safely be used purely functionally as well.
+        
+        3rd party cogs should remove any hooks which they register at unload
+        using `remove_before_invoke_hook`
+
+        Below behavior shared with discord.py:
+
+        .. note::
+            The ``before_invoke`` hooks are
+            only called if all checks and argument parsing procedures pass
+            without error. If any check or argument parsing procedures fail
+            then the hooks are not called.
+        
+        Parameters
+        ----------
+        coro: Callable[[commands.Context], Awaitable[Any]]
+            The coroutine to register as the pre-invoke hook.
+        
+        Raises
+        ------
+        TypeError
+            The coroutine passed is not actually a coroutine.
+        """
+        if not asyncio.iscoroutinefunction(coro):
+            raise TypeError("The pre-invoke hook must be a coroutine.")
+
+        self._red_before_invoke_objs.add(coro)
+        return coro
 
     @property
     def cog_mgr(self) -> NoReturn:
