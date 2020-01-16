@@ -10,7 +10,19 @@ from datetime import datetime
 from enum import IntEnum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Optional, Union, List, Dict, NoReturn, Set, Coroutine, TypeVar
+from typing import (
+    Optional,
+    Union,
+    List,
+    Dict,
+    NoReturn,
+    Set,
+    Coroutine,
+    TypeVar,
+    Callable,
+    Awaitable,
+    Any,
+)
 from types import MappingProxyType
 
 import discord
@@ -35,7 +47,9 @@ log = logging.getLogger("redbot")
 __all__ = ["RedBase", "Red", "ExitCodes"]
 
 NotMessage = namedtuple("NotMessage", "guild")
-T_BIC = TypeVar("T_BIC")
+
+PreInvokeCoroutine = Callable[[commands.Context], Awaitable[Any]]
+T_BIC = TypeVar("T_BIC", bound=PreInvokeCoroutine)
 
 
 def _is_submodule(parent, child):
@@ -151,7 +165,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         self._permissions_hooks: List[commands.CheckPredicate] = []
         self._red_ready = asyncio.Event()
-        self._red_before_invoke_objs: Set[Coroutine] = set()
+        self._red_before_invoke_objs: Set[PreInvokeCoroutine] = set()
 
     @property
     def _before_invoke(self):
@@ -171,7 +185,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                 return_exceptions=return_exceptions,
             )
 
-    def remove_before_invoke_hook(self, coro: Coroutine):
+    def remove_before_invoke_hook(self, coro: PreInvokeCoroutine):
         """
         Functional method to remove a before_invoke hooks
         """
