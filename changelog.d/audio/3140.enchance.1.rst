@@ -1,0 +1,1 @@
+Update the help strings for ``[p]audioset emptydisconnect``.
