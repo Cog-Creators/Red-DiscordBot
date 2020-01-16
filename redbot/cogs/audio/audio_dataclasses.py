@@ -1,4 +1,5 @@
 import contextlib
+import glob
 import ntpath
 import os
 import posixpath
@@ -169,7 +170,10 @@ class LocalPath:
         return modified
 
     def rglob(self, pattern, folder=False):
-        return list(glob.glob(f"{self.path}{os.sep}**{os.sep}{pattern}", recursive=True))
+        if folder:
+            return list(glob.glob(f"{self.path}{os.sep}**{os.sep}", recursive=True))
+        else:
+            return list(glob.glob(f"{self.path}{os.sep}**{os.sep}{pattern}", recursive=True))
 
     def glob(self, pattern, folder=False):
         if folder:
@@ -236,7 +240,7 @@ class LocalPath:
         tracks = []
         for track in self.multirglob(*[f"*{ext}" for ext in self._all_music_ext]):
             if track.exists() and track.is_file() and track.parent != self.localtrack_folder:
-                tracks.append(LocalPath(str(track.absolute())))
+                tracks.append(Query.process_input(LocalPath(str(track.absolute()))))
         return sorted(tracks, key=lambda x: x.to_string_user().lower())
 
     def subfolders_in_tree(self):
@@ -255,8 +259,13 @@ class LocalPath:
         tracks = []
         for track in self.multiglob(*[f"{ext}" for ext in self._all_music_ext]):
             with contextlib.suppress(ValueError):
-                if track.exists() and track.is_file() and track.parent != self.localtrack_folder and track.path.relative_to(self.path):
-                    tracks.append(LocalPath(str(track.absolute())))
+                if (
+                    track.exists()
+                    and track.is_file()
+                    and track.parent != self.localtrack_folder
+                    and track.path.relative_to(self.path)
+                ):
+                    tracks.append(Query.process_input(LocalPath(str(track.absolute()))))
         return sorted(tracks, key=lambda x: x.to_string_user().lower())
 
     def subfolders(self):
@@ -264,7 +273,12 @@ class LocalPath:
         folders = []
         for f in files:
             with contextlib.suppress(ValueError):
-                if f.exists() and f.parent not in folders and f.parent != self.localtrack_folder and f.path.relative_to(self.path):
+                if (
+                    f.exists()
+                    and f.parent not in folders
+                    and f.parent != self.localtrack_folder
+                    and f.path.relative_to(self.path)
+                ):
                     folders.append(f.parent)
         return_folders = []
         for folder in folders:
