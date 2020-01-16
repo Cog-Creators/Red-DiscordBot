@@ -622,9 +622,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         bool
             :code:`True` if an embed is requested
         """
-        if isinstance(channel, discord.abc.PrivateChannel) or (
-            command and command == self.get_command("help")
-        ):
+        if isinstance(channel, discord.abc.PrivateChannel):
             user_setting = await self._config.user(user).embeds()
             if user_setting is not None:
                 return user_setting
@@ -632,6 +630,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             guild_setting = await self._config.guild(channel.guild).embeds()
             if guild_setting is not None:
                 return guild_setting
+
         global_setting = await self._config.embeds()
         return global_setting
 
