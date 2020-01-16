@@ -244,7 +244,7 @@ class LocalPath:
         return sorted(tracks, key=lambda x: x.to_string_user().lower())
 
     def subfolders_in_tree(self):
-        files = list(self.multirglob(*[f"*{ext}" for ext in self._all_music_ext], folder=True))
+        files = list(self.multirglob(f"*{os.sep}", folder=True))
         folders = []
         for f in files:
             if f.exists() and f.parent not in folders and f.parent != self.localtrack_folder:
@@ -269,7 +269,7 @@ class LocalPath:
         return sorted(tracks, key=lambda x: x.to_string_user().lower())
 
     def subfolders(self):
-        files = list(self.multiglob(f"{os.sep}*", folder=True))
+        files = list(self.multiglob(f"*{os.sep}", folder=True))
         folders = []
         for f in files:
             with contextlib.suppress(ValueError):
