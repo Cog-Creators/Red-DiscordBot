@@ -16,7 +16,7 @@ from redbot.core.data_manager import cog_data_path
 
 from .errors import InvalidTableError
 from .sql_statements import *
-from .utils import PlaylistScope
+from .utils import PlaylistScope, run_in_executor
 
 log = logging.getLogger("red.audio.database")
 
@@ -141,10 +141,9 @@ class CacheInterface:
         maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=max_age)
         maxage_int = int(time.mktime(maxage.timetuple()))
         values = {"maxage": maxage_int}
-        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            executor.submit(self.database.execute, LAVALINK_DELETE_OLD_ENTRIES, values)
-            executor.submit(self.database.execute, YOUTUBE_DELETE_OLD_ENTRIES, values)
-            executor.submit(self.database.execute, SPOTIFY_DELETE_OLD_ENTRIES, values)
+        run_in_executor(self.database.execute, LAVALINK_DELETE_OLD_ENTRIES, values)
+        run_in_executor(self.database.execute, YOUTUBE_DELETE_OLD_ENTRIES, values)
+        run_in_executor(self.database.execute, SPOTIFY_DELETE_OLD_ENTRIES, values)
 
     def maybe_migrate(self):
         current_version = self.database.execute(PRAGMA_FETCH_user_version).fetchone()
@@ -189,8 +188,11 @@ class CacheInterface:
         maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=max_age)
         maxage_int = int(time.mktime(maxage.timetuple()))
         values.update({"maxage": maxage_int})
-        output = self.database.execute(sql_query, values).fetchone() or (None, 0)
-        result = CacheFetchResult(*output)
+        output = run_in_executor(self.database.execute, sql_query, values)
+        try:
+            result = CacheFetchResult(*output.fetchone())
+        except:
+            result = CacheFetchResult(None, 0)
         return result.query, False
 
     async def fetch_all(
@@ -200,9 +202,10 @@ class CacheInterface:
         sql_query = table.get(query, {}).get("played")
         if not table:
             raise InvalidTableError(f"{table} is not a valid table in the database.")
-
         output = []
-        for index, row in enumerate(self.database.execute(sql_query, values), start=1):
+        for index, row in enumerate(
+            run_in_executor(self.database.execute, sql_query, values), start=1
+        ):
             if index % 50 == 0:
                 await asyncio.sleep(0.01)
             output.append(CacheLastFetchResult(*row))
@@ -215,27 +218,19 @@ class CacheInterface:
         sql_query = table.get(query, {}).get("played")
         if not table:
             raise InvalidTableError(f"{table} is not a valid table in the database.")
-
-        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            for future in concurrent.futures.as_completed(
-                [executor.submit(self.database.execute, sql_query, values)]
-            ):
-                try:
-                    row = future.result()
-                    row = row.fetchone()
-                except Exception as exc:
-                    log.debug(f"Failed to completed random fetch from database", exc_info=exc)
+        row = run_in_executor(self.database.execute, sql_query, values)
+        row = row.fetchone()
         return CacheLastFetchResult(*row)
 
 
 class PlaylistInterface:
     def __init__(self):
         self.cursor = database_connection.cursor()
-        self.cursor.execute(PRAGMA_SET_temp_store)
-        self.cursor.execute(PRAGMA_SET_journal_mode)
-        self.cursor.execute(PRAGMA_SET_read_uncommitted)
-        self.cursor.execute(PLAYLIST_CREATE_TABLE)
-        self.cursor.execute(PLAYLIST_CREATE_INDEX)
+        run_in_executor(self.cursor.execute, PRAGMA_SET_temp_store)
+        run_in_executor(self.cursor.execute, PRAGMA_SET_journal_mode)
+        run_in_executor(self.cursor.execute, PRAGMA_SET_read_uncommitted)
+        run_in_executor(self.cursor.execute, PLAYLIST_CREATE_TABLE)
+        run_in_executor(self.cursor.execute, PLAYLIST_CREATE_INDEX)
 
     @staticmethod
     def close():
@@ -254,13 +249,14 @@ class PlaylistInterface:
 
     def fetch(self, scope: str, playlist_id: int, scope_id: int) -> PlaylistFetchResult:
         scope_type = self.get_scope_type(scope)
-        row = (
-            self.cursor.execute(
+        try:
+            row = run_in_executor(
+                self.cursor.execute,
                 PLAYLIST_FETCH,
                 ({"playlist_id": playlist_id, "scope_id": scope_id, "scope_type": scope_type}),
             ).fetchone()
-            or []
-        )
+        except:
+            row = None
 
         return PlaylistFetchResult(*row) if row else None
 
@@ -271,7 +267,8 @@ class PlaylistInterface:
         if author_id is not None:
             output = []
             for index, row in enumerate(
-                self.cursor.execute(
+                run_in_executor(
+                    self.cursor.execute,
                     PLAYLIST_FETCH_ALL_WITH_FILTER,
                     ({"scope_type": scope_type, "scope_id": scope_id, "author_id": author_id}),
                 ),
@@ -279,19 +276,21 @@ class PlaylistInterface:
             ):
                 if index % 50 == 0:
                     await asyncio.sleep(0.01)
-                output.append(row)
+                output.append(PlaylistFetchResult(*row))
         else:
             output = []
             for index, row in enumerate(
-                self.cursor.execute(
-                    PLAYLIST_FETCH_ALL, ({"scope_type": scope_type, "scope_id": scope_id})
+                run_in_executor(
+                    self.cursor.execute,
+                    PLAYLIST_FETCH_ALL,
+                    ({"scope_type": scope_type, "scope_id": scope_id}),
                 ),
                 start=1,
             ):
                 if index % 50 == 0:
                     await asyncio.sleep(0.01)
-                output.append(row)
-        return [PlaylistFetchResult(*row) for row in output] if output else []
+                output.append(PlaylistFetchResult(*row))
+        return output
 
     async def fetch_all_converter(
         self, scope: str, playlist_name, playlist_id
@@ -304,7 +303,8 @@ class PlaylistInterface:
 
         output = []
         for index, row in enumerate(
-            self.cursor.execute(
+            run_in_executor(
+                self.cursor.execute,
                 PLAYLIST_FETCH_ALL_CONVERTER,
                 (
                     {
@@ -318,32 +318,29 @@ class PlaylistInterface:
         ):
             if index % 50 == 0:
                 await asyncio.sleep(0.01)
-            output.append(row)
-        return [PlaylistFetchResult(*row) for row in output] if output else []
+            output.append(PlaylistFetchResult(*row))
+        return output
 
     def delete(self, scope: str, playlist_id: int, scope_id: int):
         scope_type = self.get_scope_type(scope)
-        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            executor.submit(
-                self.cursor.execute,
-                PLAYLIST_DELETE,
-                ({"playlist_id": playlist_id, "scope_id": scope_id, "scope_type": scope_type}),
-            )
+        run_in_executor(
+            self.cursor.execute,
+            PLAYLIST_DELETE,
+            ({"playlist_id": playlist_id, "scope_id": scope_id, "scope_type": scope_type}),
+        )
 
     def delete_scheduled(self):
-        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            executor.submit(self.cursor.execute, PLAYLIST_DELETE_SCHEDULED)
+        run_in_executor(self.cursor.execute, PLAYLIST_DELETE_SCHEDULED)
 
     def drop(self, scope: str):
         scope_type = self.get_scope_type(scope)
-        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            executor.submit(
-                self.cursor.execute, PLAYLIST_DELETE_SCOPE, ({"scope_type": scope_type})
-            )
+        run_in_executor(self.cursor.execute, PLAYLIST_DELETE_SCOPE, ({"scope_type": scope_type}))
 
     def create_table(self, scope: str):
         scope_type = self.get_scope_type(scope)
-        return self.cursor.execute(PLAYLIST_CREATE_TABLE, ({"scope_type": scope_type}))
+        run_in_executor(
+            self.cursor.execute, PLAYLIST_CREATE_TABLE, ({"scope_type": scope_type})
+        )
 
     def upsert(
         self,
@@ -356,17 +353,16 @@ class PlaylistInterface:
         tracks: List[MutableMapping],
     ):
         scope_type = self.get_scope_type(scope)
-        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            executor.submit(
-                self.cursor.execute,
-                PLAYLIST_UPSERT,
-                {
-                    "scope_type": str(scope_type),
-                    "playlist_id": int(playlist_id),
-                    "playlist_name": str(playlist_name),
-                    "scope_id": int(scope_id),
-                    "author_id": int(author_id),
-                    "playlist_url": playlist_url,
-                    "tracks": json.dumps(tracks),
-                },
-            )
+        run_in_executor(
+            self.cursor.execute,
+            PLAYLIST_UPSERT,
+            {
+                "scope_type": str(scope_type),
+                "playlist_id": int(playlist_id),
+                "playlist_name": str(playlist_name),
+                "scope_id": int(scope_id),
+                "author_id": int(author_id),
+                "playlist_url": playlist_url,
+                "tracks": json.dumps(tracks),
+            },
+        )

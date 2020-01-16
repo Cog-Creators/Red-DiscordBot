@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 
 import lavalink
 
+from redbot.cogs.audio.utils import run_in_executor
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
@@ -184,7 +185,7 @@ class LocalPath:
     def multiglob(self, *patterns, folder=False):
         paths = []
         for p in patterns:
-            paths.extend(self.glob(p, folder=folder))
+            paths.extend(run_in_executor(self.glob, p, folder, on_error_default=[]))
         if not folder:
             for p in self._filtered(paths):
                 yield p
@@ -196,7 +197,7 @@ class LocalPath:
     def multirglob(self, *patterns, folder=False):
         paths = []
         for p in patterns:
-            paths.extend(self.rglob(p, folder=folder))
+            paths.extend(run_in_executor(self.rglob, p, folder, on_error_default=[]))
         if not folder:
             for p in self._filtered(paths):
                 yield p

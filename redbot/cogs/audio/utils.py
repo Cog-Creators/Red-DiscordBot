@@ -1,13 +1,11 @@
 import asyncio
+import concurrent
 import contextlib
 import functools
 import re
-import tarfile
 import time
-import zipfile
 from enum import Enum, unique
-from io import BytesIO
-from typing import MutableMapping, Optional, TYPE_CHECKING
+from typing import MutableMapping, Optional, TYPE_CHECKING, Mapping, List
 from urllib.parse import urlparse
 
 import discord
@@ -45,6 +43,7 @@ __all__ = [
     "get_track_description_unformatted",
     "Notifier",
     "PlaylistScope",
+    "run_in_executor",
 ]
 _RE_TIME_CONVERTER = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
 _RE_YT_LIST_PLAYLIST = re.compile(
@@ -526,3 +525,46 @@ def humanize_scope(scope, ctx=None, the=None):
         return ctx.name if ctx else (_("the ") if the else "") + _("Server")
     elif scope == PlaylistScope.USER.value:
         return str(ctx) if ctx else (_("the ") if the else "") + _("User")
+
+
+def run_in_executor(function_to_run, *args, on_error_default=None, **kwargs):
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+        for future in concurrent.futures.as_completed(
+            [executor.submit(function_to_run, *args, **kwargs)]
+        ):
+            try:
+                data = future.result()
+            except Exception as exc:
+                yield on_error_default
+            else:
+                yield data
+
+
+def run_multiple_in_executor(mapping_list: List, max_workers: int = 1):
+    """
+    mapping_list: List
+
+    Example
+    [
+
+        {
+        func: function_to_run  # Function to run in executor
+        args: (arg1, arg2, arg3),   # Positional Arguments
+        kwarg: {kwarg1:True, kwarg2:False}  # Keyword Arguments
+        on_error_default: None  # What to yield back on error, default to None
+        },
+
+        ...
+    ]
+
+    """
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        data = {executor.submit(t["func"], *t["args"], **t["kwargs"]): t for t in mapping_list}
+        for future in concurrent.futures.as_completed(data):
+            entry = data[future]
+            try:
+                data = future.result()
+            except Exception as exc:
+                yield entry.get("on_error_default")
+            else:
+                yield data
