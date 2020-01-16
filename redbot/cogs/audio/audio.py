@@ -6821,8 +6821,9 @@ class Audio(commands.Cog):
     async def search(self, ctx: commands.Context, *, query: str):
         """Pick a track with a search.
 
-        Use `[p]search list <search term>` to queue all tracks found on YouTube. `[p]search sc
-        <search term>` will search SoundCloud instead of YouTube.
+        Use [p]search list <search term> to queue all tracks found on YouTube.
+
+        [p]search sc<search term> will search SoundCloud instead of YouTube.
         """
 
         async def _search_menu(
@@ -7385,8 +7386,7 @@ class Audio(commands.Cog):
     async def _shuffle_bumpped(self, ctx: commands.Context):
         """Toggle bumped track shuffle.
 
-        Set this to disabled if you wish to avoid bumped songs being shuffled. This takes priority
-        over `[p]shuffle`.
+        Set this to disabled if you wish to avoid bumped songs being shuffled. This takes priority over [p]shuffle.
         """
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
