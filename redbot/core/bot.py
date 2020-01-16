@@ -168,11 +168,11 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         self._red_before_invoke_objs: Set[PreInvokeCoroutine] = set()
 
     @property
-    def _before_invoke(self):
+    def _before_invoke(self):  # DEP-WARN
         return self._red_before_invoke_method
 
     @_before_invoke.setter
-    def _before_invoke(self, val):
+    def _before_invoke(self, val):  # DEP-WARN
         """Prevent this from being overwritten in super().__init__"""
         pass
 
