@@ -185,9 +185,9 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
                 return_exceptions=return_exceptions,
             )
 
-    def remove_before_invoke_hook(self, coro: PreInvokeCoroutine):
+    def remove_before_invoke_hook(self, coro: PreInvokeCoroutine) -> None:
         """
-        Functional method to remove a ``before_invoke`` hook.
+        Functional method to remove a `before_invoke` hook.
         """
         self._red_before_invoke_objs.discard(coro)
 
