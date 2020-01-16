@@ -541,7 +541,7 @@ class AudioSetCommands(MixinMeta):
         """Set a playlist to auto-play songs from.
 
         **Usage**:
-        ​ ​ ​ ​ `[p]audioset autoplay playlist_name_OR_id args
+        ​ ​ ​ ​ `[p]audioset autoplay playlist_name_OR_id args`
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
@@ -564,9 +564,9 @@ class AudioSetCommands(MixinMeta):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ [p]audioset autoplay MyGuildPlaylist
-        ​ ​ ​ ​ [p]audioset autoplay MyGlobalPlaylist --scope Global
-        ​ ​ ​ ​ [p]audioset autoplay PersonalPlaylist --scope User --author Draper
+        ​ ​ ​ ​ `[p]audioset autoplay MyGuildPlaylist`
+        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`
+        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
@@ -679,7 +679,7 @@ class AudioSetCommands(MixinMeta):
     async def _audioset_emptydisconnect(self, ctx: commands.Context, seconds: int):
         """Auto-disconnect from channel when bot is alone in it for x seconds, 0 to disable.
 
-        [p]audioset dc takes precedence over this setting.
+        `[p]audioset dc` takes precedence over this setting.
         """
         if seconds < 0:
             return await self._embed_msg(
