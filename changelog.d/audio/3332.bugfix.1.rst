@@ -1,1 +1,0 @@
-Fixed symbolic link folders not showing for local tracks.
