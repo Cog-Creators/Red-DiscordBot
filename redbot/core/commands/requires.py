@@ -758,14 +758,42 @@ class _RulesDict(Dict[Union[int, str], PermState]):
 
 def _validate_perms_dict(perms: Dict[str, bool]) -> None:
     for perm, value in perms.items():
-        try:
-            attr = getattr(discord.Permissions, perm)
-        except AttributeError:
-            attr = None
 
-        if attr is None or not isinstance(attr, property):
-            # We reject invalid permissions
-            raise TypeError(f"Unknown permission name '{perm}'")
+        # DEP-WARN: This one needs to be changed when formally updating to d.py 1.3
+        # This is to prevent users who upgrade now from breaking.
+        if perm not in (
+            "add_reactions",
+            "administrator",
+            "attach_files",
+            "ban_members",
+            "change_nickname",
+            "connect",
+            "create_instant_invite",
+            "deafen_members",
+            "embed_links",
+            "external_emojis",
+            "kick_members",
+            "manage_channels",
+            "manage_emojis",
+            "manage_guild",
+            "manage_messages",
+            "manage_nicknames",
+            "manage_roles",
+            "manage_webhooks",
+            "mention_everyone",
+            "move_members",
+            "mute_members",
+            "priority_speaker",
+            "read_message_history",
+            "read_messages",
+            "send_messages",
+            "send_tts_messages",
+            "speak",
+            "stream",
+            "use_voice_activation",
+            "view_audit_log",
+        ):
+            raise TypeError(f"Unknown perm {perm}")
 
         if value is not True:
             # We reject any permission not specified as 'True', since this is the only value which
