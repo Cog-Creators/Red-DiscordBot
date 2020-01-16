@@ -14,14 +14,6 @@ def init_global_checks(bot):
         return ctx.channel.permissions_for(ctx.me).send_messages
 
     @bot.check_once
-    def actually_up(ctx) -> bool:
-        """ 
-        Uptime is set during the initial startup process.
-        If this hasn't been set, we should assume the bot isn't ready yet. 
-        """
-        return ctx.bot.uptime is not None
-
-    @bot.check_once
     async def whiteblacklist_checks(ctx) -> bool:
         return await ctx.bot.allowed_by_whitelist_blacklist(ctx.author)
 
