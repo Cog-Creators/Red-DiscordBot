@@ -173,7 +173,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
     @_before_invoke.setter
     def _before_invoke(self, val):
-        """Prevent this from being overwriten in super().__init__"""
+        """Prevent this from being overwritten in super().__init__"""
         pass
 
     async def _red_before_invoke_method(self, ctx):
@@ -187,30 +187,30 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
     def remove_before_invoke_hook(self, coro: PreInvokeCoroutine):
         """
-        Functional method to remove a before_invoke hooks
+        Functional method to remove a ``before_invoke`` hook.
         """
         self._red_before_invoke_objs.discard(coro)
 
     def before_invoke(self, coro: T_BIC) -> T_BIC:
         """
-        Overriden Decorator method for Red's before_invoke behavior
+        Overridden decorator method for Red's ``before_invoke`` behavior.
         
         This can safely be used purely functionally as well.
         
         3rd party cogs should remove any hooks which they register at unload
-        Using `remove_before_invoke_hook`
+        using `remove_before_invoke_hook`
 
-        Below behavior shared with Discord.py:
+        Below behavior shared with discord.py:
 
         .. note::
-            The before_invoke hooks are
+            The ``before_invoke`` hooks are
             only called if all checks and argument parsing procedures pass
             without error. If any check or argument parsing procedures fail
             then the hooks are not called.
         
         Parameters
         ----------
-        coro:
+        coro: Callable[[commands.Context], Awaitable[Any]]
             The coroutine to register as the pre-invoke hook.
         
         Raises
