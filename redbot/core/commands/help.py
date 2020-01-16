@@ -45,7 +45,7 @@ from .context import Context
 from ..i18n import Translator
 from ..utils import menus
 from ..utils._internal_utils import fuzzy_command_search, format_fuzzy_results
-from ..utils.chat_formatting import box, pagify
+from ..utils.chat_formatting import box, pagify, remove_markdown
 
 __all__ = ["red_help", "RedHelpFormatter", "HelpSettings"]
 
@@ -270,6 +270,7 @@ class RedHelpFormatter:
                     ),
                 )
             )
+            to_page = remove_markdown(to_page)
             pages = [box(p) for p in pagify(to_page)]
             await self.send_pages(ctx, pages, embed=False)
 
@@ -432,6 +433,7 @@ class RedHelpFormatter:
                 )
 
             to_page = "\n\n".join(filter(None, (description, subtext_header, subtext)))
+            to_page = remove_markdown(to_page)
             pages = [box(p) for p in pagify(to_page)]
             await self.send_pages(ctx, pages, embed=False)
 

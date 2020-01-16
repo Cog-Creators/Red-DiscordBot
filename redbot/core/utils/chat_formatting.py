@@ -1,5 +1,6 @@
 import itertools
 import datetime
+import re
 from typing import Sequence, Iterator, List, Optional, Union, SupportsInt
 from io import BytesIO
 
@@ -10,6 +11,30 @@ from babel.numbers import format_decimal
 from redbot.core.i18n import Translator, get_babel_locale
 
 _ = Translator("UtilsChatFormatting", __file__)
+
+
+markdown_strip = {
+    re.compile(r"\n={2,}", re.I): "\n",  # Header
+    re.compile(r"~{3}.*\n", re.I): "",  # Fenced codeblocks
+    re.compile(r"~~", re.I): "",  # Strikethrough
+    re.compile(r"`{3}.*\n", re.I): "",  # Fenced codeblocks
+    re.compile(r"<[^>]*>", re.I): "",  # HTML tags
+    re.compile(r"^[=\-]{2,}\s*$", re.I): "",  #  setext-style headers
+    re.compile(r"\[\^.+?\](\: .*?$)?", re.I): "",  # footnotes
+    re.compile(r"\s{0,2}\[.*?\]: .*?$", re.I): "",
+    re.compile(r"\!\[(.*?)\][\[\(].*?[\]\)]", re.I): "",  # images
+    re.compile(r"\[(.*?)\][\[\(].*?[\]\)]", re.I): r"\g<1>",  # inline links
+    re.compile(r"^\s{0,3}>\s?", re.I): "",  # blockquotes
+    re.compile(r'^\s{1,2}\[(.*?)\]: (\S+)( ".*?")?\s*$', re.I): "",  # reference-style links
+    re.compile(
+        r"^(\n)?\s{0,}#{1,6}\s+| {0,}(\n)?\s{0,}#{0,} {0,}(\n)?\s{0,}$", re.I
+    ): r"\g<1>\g<2>\g<3>",  # atx-style headers
+    re.compile(r"([\*_]{1,3})(\S.*?\S{0,1})\1", re.I): r"\g<2>",  # emphasis
+    re.compile(r"([\*_]{1,3})(\S.*?\S{0,1})\1", re.I): r"\g<2>",
+    re.compile(r"(`{3,})(.*?)\1", re.I): r"\g<2>",  #  code blocks
+    re.compile(r"`(.+?)`", re.I): r"\g<1>",  # inline code
+    re.compile(r"\n{2,}", re.I): "\n\n",  # Multiple New lines with 2 new lines
+}
 
 
 def error(text: str) -> str:
@@ -508,3 +533,21 @@ def text_to_file(
     """
     file = BytesIO(text.encode(encoding))
     return discord.File(file, filename, spoiler=spoiler)
+
+
+def remove_markdown(text: str) -> str:
+    """Remove markdown from text.
+
+    Parameters
+    ----------
+    text : str
+        The text to have markdown stripped.
+
+    Returns
+    -------
+    str
+        The cleaned text.
+
+    """
+    #TODO : Complete me markdown_strip
+    return text
