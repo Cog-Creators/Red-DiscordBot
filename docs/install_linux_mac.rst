@@ -357,7 +357,7 @@ Or, to install with PostgreSQL support:
 
 .. note::
 
-    This command is also used for updating Red
+    These commands are also used for updating Red
 
 --------------------------
 Setting Up and Running Red

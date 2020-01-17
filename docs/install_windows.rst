@@ -98,7 +98,7 @@ Installing Red
 
 .. note::
 
-    This command is also used for updating Red
+    These commands are also used for updating Red
 
 --------------------------
 Setting Up and Running Red
