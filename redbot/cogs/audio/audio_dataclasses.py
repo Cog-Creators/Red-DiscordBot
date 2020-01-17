@@ -1,3 +1,4 @@
+import asyncio
 import contextlib
 import glob
 import ntpath
@@ -5,7 +6,7 @@ import os
 import posixpath
 import re
 from pathlib import Path, PosixPath, WindowsPath
-from typing import List, Optional, Union, MutableMapping
+from typing import List, Optional, Union, MutableMapping, Iterator, AsyncIterator
 from urllib.parse import urlparse
 
 import lavalink
@@ -169,47 +170,41 @@ class LocalPath:
         modified.path = modified.path.joinpath(*args)
         return modified
 
-    def rglob(self, pattern, folder=False):
+    def rglob(self, pattern, folder=False) -> Iterator[str]:
         if folder:
-            return list(glob.glob(f"{self.path}{os.sep}**{os.sep}", recursive=True))
+            return glob.iglob(f"{self.path}{os.sep}**{os.sep}", recursive=True)
         else:
-            return list(glob.glob(f"{self.path}{os.sep}**{os.sep}{pattern}", recursive=True))
+            return glob.iglob(f"{self.path}{os.sep}**{os.sep}{pattern}", recursive=True)
 
-    def glob(self, pattern, folder=False):
+    def glob(self, pattern, folder=False) -> Iterator[str]:
         if folder:
-            return list(glob.glob(f"{self.path}{os.sep}*{os.sep}", recursive=False))
+            return glob.iglob(f"{self.path}{os.sep}*{os.sep}", recursive=False)
         else:
-            return list(glob.glob(f"{self.path}{os.sep}*{pattern}", recursive=False))
+            return glob.iglob(f"{self.path}{os.sep}*{pattern}", recursive=False)
 
-    def multiglob(self, *patterns, folder=False):
-        paths = []
+    async def multiglob(self, *patterns, folder=False) -> AsyncIterator["LocalPath"]:
         for p in patterns:
-            paths.extend(self.glob(p, folder=folder))
-        if not folder:
-            for p in self._filtered(paths):
-                yield p
-        else:
-            for p in paths:
-                p = LocalPath(p) if not isinstance(p, LocalPath) else p
-                yield p
+            for rp in self.glob(p):
+                rp = LocalPath(rp)
+                if folder and rp.is_dir() and rp.exists():
+                    yield rp
+                    await asyncio.sleep(0)
+                else:
+                    if rp.suffix in self._all_music_ext and rp.is_file() and rp.exists():
+                        yield rp
+                        await asyncio.sleep(0)
 
-    def multirglob(self, *patterns, folder=False):
-        paths = []
+    async def multirglob(self, *patterns, folder=False) -> AsyncIterator["LocalPath"]:
         for p in patterns:
-            paths.extend(self.rglob(p, folder=folder))
-        if not folder:
-            for p in self._filtered(paths):
-                yield p
-        else:
-            for p in paths:
-                p = LocalPath(p) if not isinstance(p, LocalPath) else p
-                yield p
-
-    def _filtered(self, paths: List[Path]):
-        for p in paths:
-            p = LocalPath(p) if not isinstance(p, LocalPath) else p
-            if p.suffix in self._all_music_ext:
-                yield p
+            for rp in self.rglob(p):
+                rp = LocalPath(rp)
+                if folder and rp.is_dir() and rp.exists():
+                    yield rp
+                    await asyncio.sleep(0)
+                else:
+                    if rp.suffix in self._all_music_ext and rp.is_file() and rp.exists():
+                        yield rp
+                        await asyncio.sleep(0)
 
     def __str__(self):
         return self.to_string()
@@ -236,54 +231,44 @@ class LocalPath:
             string = f"...{os.sep}{string}"
         return string
 
-    def tracks_in_tree(self):
+    async def tracks_in_tree(self):
         tracks = []
-        for track in self.multirglob(*[f"{ext}" for ext in self._all_music_ext]):
-            if track.exists() and track.is_file() and track.parent != self.localtrack_folder:
-                tracks.append(Query.process_input(LocalPath(str(track.absolute()))))
+        async for track in self.multirglob(*[f"{ext}" for ext in self._all_music_ext]):
+            with contextlib.suppress(ValueError):
+                if track.parent != self.localtrack_folder and track.path.relative_to(self.path):
+                    tracks.append(Query.process_input(track))
         return sorted(tracks, key=lambda x: x.to_string_user().lower())
 
-    def subfolders_in_tree(self):
-        files = list(self.multirglob(f"{os.sep}", folder=True))
-        folders = []
-        for f in files:
-            if f.exists() and f.parent not in folders and f.parent != self.localtrack_folder:
-                folders.append(f.parent)
+    async def subfolders_in_tree(self):
         return_folders = []
-        for folder in folders:
-            if folder.exists() and folder.is_dir():
-                return_folders.append(LocalPath(str(folder.absolute())))
+        async for f in self.multirglob(f"{os.sep}", folder=True):
+            with contextlib.suppress(ValueError):
+                if (
+                        f not in return_folders
+                        and f != self.localtrack_folder
+                        and f.path.relative_to(self.path)
+                ):
+                    return_folders.append(f)
         return sorted(return_folders, key=lambda x: x.to_string_user().lower())
 
     def tracks_in_folder(self):
         tracks = []
-        for track in self.multiglob(*[f"{ext}" for ext in self._all_music_ext]):
+        async for track in self.multiglob(*[f"{ext}" for ext in self._all_music_ext]):
             with contextlib.suppress(ValueError):
-                if (
-                    track.exists()
-                    and track.is_file()
-                    and track.parent != self.localtrack_folder
-                    and track.path.relative_to(self.path)
-                ):
-                    tracks.append(Query.process_input(LocalPath(str(track.absolute()))))
+                if track.parent != self.localtrack_folder and track.path.relative_to(self.path):
+                    tracks.append(Query.process_input(track))
         return sorted(tracks, key=lambda x: x.to_string_user().lower())
 
     def subfolders(self):
-        files = list(self.multiglob(f"{os.sep}", folder=True))
-        folders = []
-        for f in files:
+        return_folders = []
+        async for f in self.multiglob(f"{os.sep}", folder=True):
             with contextlib.suppress(ValueError):
                 if (
-                    f.exists()
-                    and f.parent not in folders
-                    and f.parent != self.localtrack_folder
-                    and f.path.relative_to(self.path)
+                        f not in return_folders
+                        and f != self.localtrack_folder
+                        and f.path.relative_to(self.path)
                 ):
-                    folders.append(f.parent)
-        return_folders = []
-        for folder in folders:
-            if folder.exists() and folder.is_dir():
-                return_folders.append(LocalPath(str(folder.absolute())))
+                    return_folders.append(f)
         return sorted(return_folders, key=lambda x: x.to_string_user().lower())
 
     def __eq__(self, other):
