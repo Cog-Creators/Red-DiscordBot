@@ -232,12 +232,12 @@ class LocalPath:
 
     async def subfolders_in_tree(self):
         return_folders = []
-        async for f in self.multirglob(f"{os.sep}", folder=True):
+        async for f in self.multirglob("", folder=True):
             with contextlib.suppress(ValueError):
                 if (
-                        f not in return_folders
-                        and f != self.localtrack_folder
-                        and f.path.relative_to(self.path)
+                    f not in return_folders
+                    and f != self.localtrack_folder
+                    and f.path.relative_to(self.path)
                 ):
                     return_folders.append(f)
         return sorted(return_folders, key=lambda x: x.to_string_user().lower())
@@ -250,14 +250,14 @@ class LocalPath:
                     tracks.append(Query.process_input(track))
         return sorted(tracks, key=lambda x: x.to_string_user().lower())
 
-    def subfolders(self):
+    async def subfolders(self):
         return_folders = []
-        async for f in self.multiglob(f"{os.sep}", folder=True):
+        async for f in self.multiglob("", folder=True):
             with contextlib.suppress(ValueError):
                 if (
-                        f not in return_folders
-                        and f != self.localtrack_folder
-                        and f.path.relative_to(self.path)
+                    f not in return_folders
+                    and f != self.localtrack_folder
+                    and f.path.relative_to(self.path)
                 ):
                     return_folders.append(f)
         return sorted(return_folders, key=lambda x: x.to_string_user().lower())
