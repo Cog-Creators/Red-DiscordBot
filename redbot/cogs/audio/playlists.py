@@ -54,7 +54,6 @@ def _pass_config_to_playlist(config: Config, bot: Red):
 
 
 def get_playlist_database() -> Optional[PlaylistInterface]:
-    global database
     return database
 
 

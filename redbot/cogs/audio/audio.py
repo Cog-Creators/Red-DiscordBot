@@ -157,6 +157,7 @@ class Audio(commands.Cog):
         self._error_counter: Counter = Counter()
         self._error_timer: MutableMapping[int, int] = {}
         self._disconnected_players: MutableMapping[int, bool] = {}
+        self._is_ready = False
 
         # These has to be a task since this requires the bot to be ready
         # If it waits for ready in startup, we cause a deadlock during initial load
@@ -164,8 +165,11 @@ class Audio(commands.Cog):
         self._init_task: asyncio.Task = self.bot.loop.create_task(self.initialize())
         self._ready_event: asyncio.Event = asyncio.Event()
 
+    async def cog_check(self, ctx: commands.Context):
+        return self._is_ready  # Fuck it a global cog check it is ....
+
     async def cog_before_invoke(self, ctx: commands.Context):
-        await self._ready_event.wait()
+        await self.wait_until_audio_ready()
         # check for unsupported arch
         # Check on this needs refactoring at a later date
         # so that we have a better way to handle the tasks
@@ -200,8 +204,12 @@ class Audio(commands.Cog):
                 self._dj_role_cache[ctx.guild.id] = None
                 await self._embed_msg(ctx, title=_("No DJ role found. Disabling DJ mode."))
 
+    async def wait_until_audio_ready(self):
+        """Wait until our startup is done."""
+        await self._ready_event.wait()
+
     async def initialize(self) -> None:
-        await self.bot.wait_until_ready()
+        await self.bot.wait_until_red_ready()
         # Unlike most cases, we want the cache to exit before migration.
         try:
             pass_config_to_dependencies(self.config, self.bot, await self.config.localpath())
@@ -216,11 +224,11 @@ class Audio(commands.Cog):
             self._restart_connect()
             self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
             lavalink.register_event_listener(self.event_handler)
+            self._is_ready = True
         except Exception as err:
             log.exception("Audio failed to start up, please report this issue.", exc_info=err)
-            raise err
-
-        self._ready_event.set()
+        else:
+            self._ready_event.set()
 
     async def _migrate_config(self, from_version: int, to_version: int) -> None:
         database_entries = []
@@ -8248,10 +8256,10 @@ class Audio(commands.Cog):
         scope = PlaylistScope.GUILD.value
         today = datetime.date.today()
         midnight = datetime.datetime.combine(today, datetime.datetime.min.time())
+        track_identifier = track.track_identifier
         if daily_cache:
             name = f"Daily playlist - {today}"
             today_id = int(time.mktime(today.timetuple()))
-            track_identifier = track.track_identifier
             track = track_to_json(track)
             try:
                 playlist = await get_playlist(
@@ -8292,7 +8300,7 @@ class Audio(commands.Cog):
     async def on_voice_state_update(
         self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState
     ):
-        await self._ready_event.wait()
+        await self.wait_until_audio_ready()
         if after.channel != before.channel:
             try:
                 self.skip_votes[before.channel.guild].remove(member.id)
