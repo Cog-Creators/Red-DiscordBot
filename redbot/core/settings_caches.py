@@ -41,6 +41,8 @@ class PrefixManager:
             raise TypeError("Prefixes must be a list of strings")
         prefixes = sorted(prefixes, reverse=True)
         if guild is None:
+            if not prefixes:
+                raise ValueError("You must have at least one prefix.")
             self._cached.clear()
             await self._config.prefix.set(prefixes)
             self._cached[guild] = self._global_prefix_overide or prefixes
