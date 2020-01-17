@@ -1,6 +1,7 @@
 import asyncio
 import contextlib
 import datetime
+import logging
 import time
 import traceback
 
@@ -9,13 +10,15 @@ import lavalink
 
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import inline
-
 from ..abc import MixinMeta
 from ..utils import CompositeMetaClass, _
 from ...apis.playlist_interface import get_playlist, Playlist, delete_playlist
 from ...audio_globals import get_playlist_api_wrapper
+from ...audio_logging import debug_exc_log
 from ...errors import DatabaseError
-from ...utils import rgetattr, get_track_description, PlaylistScope, track_to_json
+from ...utils import PlaylistScope
+
+log = logging.getLogger("red.cogs.Audio.cog.listeners")
 
 
 class Listeners(MixinMeta, metaclass=CompositeMetaClass):
@@ -58,7 +61,7 @@ class Listeners(MixinMeta, metaclass=CompositeMetaClass):
     async def cog_after_invoke(self, ctx: commands.Context):
         await self._process_db(ctx)
 
-    async def cog_command_error(self, ctx: commands.Context, error):
+    async def cog_command_error(self, ctx: commands.Context, error: Exception):
         if not isinstance(
             getattr(error, "original", error),
             (
@@ -121,19 +124,19 @@ class Listeners(MixinMeta, metaclass=CompositeMetaClass):
     ):
         current_track = player.current
         current_channel = player.channel
-        guild = rgetattr(current_channel, "guild", None)
-        guild_id = rgetattr(guild, "id", None)
-        current_requester = rgetattr(current_track, "requester", None)
-        current_stream = rgetattr(current_track, "is_stream", None)
-        current_length = rgetattr(current_track, "length", None)
-        current_thumbnail = rgetattr(current_track, "thumbnail", None)
-        current_extras = rgetattr(current_track, "extras", {})
+        guild = self.rgetattr(current_channel, "guild", None)
+        guild_id = self.rgetattr(guild, "id", None)
+        current_requester = self.rgetattr(current_track, "requester", None)
+        current_stream = self.rgetattr(current_track, "is_stream", None)
+        current_length = self.rgetattr(current_track, "length", None)
+        current_thumbnail = self.rgetattr(current_track, "thumbnail", None)
+        current_extras = self.rgetattr(current_track, "extras", {})
         guild_data = await self.config.guild(guild).all()
         repeat = guild_data["repeat"]
         notify = guild_data["notify"]
         disconnect = guild_data["disconnect"]
         autoplay = guild_data["auto_play"]
-        description = get_track_description(current_track)
+        description = self.get_track_description(current_track)
         status = await self.config.status()
 
         await self.error_reset(player)
@@ -300,7 +303,7 @@ class Listeners(MixinMeta, metaclass=CompositeMetaClass):
         if daily_cache:
             name = f"Daily playlist - {today}"
             today_id = int(time.mktime(today.timetuple()))
-            track = track_to_json(track)
+            track = self.track_to_json(track)
             try:
                 playlist = await get_playlist(
                     playlist_number=today_id,
@@ -329,12 +332,14 @@ class Listeners(MixinMeta, metaclass=CompositeMetaClass):
                 )
                 await playlist.save()
 
-        with contextlib.suppress(Exception):
-            too_old = midnight - datetime.timedelta(days=8)
-            too_old_id = int(time.mktime(too_old.timetuple()))
+        too_old = midnight - datetime.timedelta(days=8)
+        too_old_id = int(time.mktime(too_old.timetuple()))
+        try:
             await delete_playlist(
                 scope=scope, playlist_id=too_old_id, guild=guild, author=self.bot.user
             )
+        except Exception as err:
+            debug_exc_log(log, err, f"Failed to delete daily playlist ID: {too_old_id}")
 
     @commands.Cog.listener()
     async def on_red_audio_queue_end(

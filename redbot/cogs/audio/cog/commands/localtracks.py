@@ -6,9 +6,8 @@ import discord
 import math
 
 from redbot.cogs.audio.cog import MixinMeta
-from redbot.core import commands, checks
+from redbot.core import commands
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu, prev_page, close_menu, next_page
-
 from ..utils import _
 from ...audio_dataclasses import LocalPath, Query
 

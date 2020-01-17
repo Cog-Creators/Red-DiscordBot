@@ -11,7 +11,6 @@ from redbot.core import commands
 from redbot.core.utils.chat_formatting import box, pagify, humanize_number
 from redbot.core.utils.menus import start_adding_reactions, DEFAULT_CONTROLS, menu
 from redbot.core.utils.predicates import ReactionPredicate, MessagePredicate
-
 from ..utils import _
 from ...equalizer import Equalizer
 

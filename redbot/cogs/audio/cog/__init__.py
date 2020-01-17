@@ -4,6 +4,7 @@ from collections import Counter
 import aiohttp
 
 from redbot.core import Config
+from redbot.core.commands import Cog
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import cog_i18n
 from .abc import MixinMeta
@@ -17,7 +18,7 @@ from ..utils import PlaylistScope
 
 
 @cog_i18n(_)
-class Audio(MixinMeta, Commands, Events, Listeners, Tasks, Utilities, commands.Cog):
+class Audio(MixinMeta, Commands, Events, Listeners, Tasks, Utilities, Cog):
     """Play audio through voice channels."""
 
     _default_lavalink_settings = {

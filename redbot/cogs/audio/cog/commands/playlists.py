@@ -15,9 +15,8 @@ from redbot.core.data_manager import cog_data_path
 from redbot.core.utils.chat_formatting import pagify, bold
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 from redbot.core.utils.predicates import MessagePredicate
-
 from ..abc import MixinMeta
-from ..utils import _
+from ..utils import _, LazyGreedyConverter, PlaylistConverter
 from ...apis.playlist_interface import (
     get_playlist,
     create_playlist,
@@ -25,12 +24,11 @@ from ...apis.playlist_interface import (
     get_all_playlist,
 )
 from ...apis.utils import FakePlaylist
-from ...audio import PlaylistConverter, PlaylistScope, LazyGreedyConverter
 from ...audio_dataclasses import LocalPath, Query
 from ...audio_logging import IS_DEBUG
 from ...converters import ScopeParser, ComplexScopeParser
 from ...errors import TooManyMatches, MissingGuild
-from ...utils import humanize_scope, track_creator, is_allowed, track_limit, match_yt_playlist
+from ...utils import PlaylistScope
 
 log = logging.getLogger("red.cogs.Audio.cog.commands.Playlist")
 
@@ -125,7 +123,7 @@ class PlayListCommands(MixinMeta):
             return await self._embed_msg(
                 ctx,
                 title=_("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=humanize_scope(scope, the=True)
+                    id=playlist_id, scope=self.humanize_scope(scope, the=True)
                 ),
             )
         except MissingGuild:
@@ -156,7 +154,7 @@ class PlayListCommands(MixinMeta):
             to_append = to_append[: 10000 - current_count]
             not_added = to_append_count - len(to_append)
             to_append_count = len(to_append)
-        scope_name = humanize_scope(
+        scope_name = self.humanize_scope(
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
         appended = 0
@@ -319,7 +317,7 @@ class PlayListCommands(MixinMeta):
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=humanize_scope(to_scope, the=True)
+                    id=playlist_id, scope=self.humanize_scope(to_scope, the=True)
                 ),
             )
         except MissingGuild:
@@ -359,8 +357,8 @@ class PlayListCommands(MixinMeta):
             ).format(
                 name=from_playlist.name,
                 from_id=from_playlist.id,
-                from_scope=humanize_scope(from_scope, ctx=from_scope_name),
-                to_scope=humanize_scope(to_scope, ctx=to_scope_name),
+                from_scope=self.humanize_scope(from_scope, ctx=from_scope_name),
+                to_scope=self.humanize_scope(to_scope, ctx=to_scope_name),
                 to_id=to_playlist.id,
             ),
         )
@@ -404,7 +402,7 @@ class PlayListCommands(MixinMeta):
         scope, author, guild, specified_user = scope_data
 
         temp_playlist = FakePlaylist(author.id, scope)
-        scope_name = humanize_scope(
+        scope_name = self.humanize_scope(
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
         if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
@@ -489,7 +487,7 @@ class PlayListCommands(MixinMeta):
             return await self._embed_msg(
                 ctx,
                 title=_("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=humanize_scope(scope, the=True)
+                    id=playlist_id, scope=self.humanize_scope(scope, the=True)
                 ),
             )
         except MissingGuild:
@@ -499,7 +497,7 @@ class PlayListCommands(MixinMeta):
 
         if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
             return
-        scope_name = humanize_scope(
+        scope_name = self.humanize_scope(
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
         await delete_playlist(scope, playlist.id, guild or ctx.guild, author or ctx.author)
@@ -557,7 +555,7 @@ class PlayListCommands(MixinMeta):
             if scope_data is None:
                 scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
             scope, author, guild, specified_user = scope_data
-            scope_name = humanize_scope(
+            scope_name = self.humanize_scope(
                 scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
             )
 
@@ -586,7 +584,7 @@ class PlayListCommands(MixinMeta):
                     ctx,
                     title=_("Playlist Not Found"),
                     description=_("Playlist {id} does not exist in {scope} scope.").format(
-                        id=playlist_id, scope=humanize_scope(scope, the=True)
+                        id=playlist_id, scope=self.humanize_scope(scope, the=True)
                     ),
                 )
             except MissingGuild:
@@ -724,7 +722,7 @@ class PlayListCommands(MixinMeta):
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=humanize_scope(scope, the=True)
+                    id=playlist_id, scope=self.humanize_scope(scope, the=True)
                 ),
             )
         except MissingGuild:
@@ -840,7 +838,7 @@ class PlayListCommands(MixinMeta):
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
-        scope_name = humanize_scope(
+        scope_name = self.humanize_scope(
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
 
@@ -867,7 +865,7 @@ class PlayListCommands(MixinMeta):
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=humanize_scope(scope, the=True)
+                    id=playlist_id, scope=self.humanize_scope(scope, the=True)
                 ),
             )
         except MissingGuild:
@@ -1074,7 +1072,7 @@ class PlayListCommands(MixinMeta):
             if scope_data is None:
                 scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
             scope, author, guild, specified_user = scope_data
-            scope_name = humanize_scope(
+            scope_name = self.humanize_scope(
                 scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
             )
             temp_playlist = FakePlaylist(author.id, scope)
@@ -1101,7 +1099,7 @@ class PlayListCommands(MixinMeta):
                 ctx.command.reset_cooldown(ctx)
                 return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
             tracklist = []
-            np_song = track_creator(player, "np")
+            np_song = self.track_creator(player, "np")
             tracklist.append(np_song)
             queue_length = len(player.queue)
             to_add = player.queue
@@ -1114,7 +1112,7 @@ class PlayListCommands(MixinMeta):
                 if i % 500 == 0:  # TODO: Improve when Toby menu's are merged
                     await asyncio.sleep(0.02)
                 queue_idx = player.queue.index(track)
-                track_obj = track_creator(player, queue_idx)
+                track_obj = self.track_creator(player, queue_idx)
                 tracklist.append(track_obj)
                 playlist = await create_playlist(
                     ctx, scope, playlist_name, None, tracklist, author, guild
@@ -1178,7 +1176,7 @@ class PlayListCommands(MixinMeta):
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
-        scope_name = humanize_scope(
+        scope_name = self.humanize_scope(
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
 
@@ -1201,7 +1199,7 @@ class PlayListCommands(MixinMeta):
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=humanize_scope(scope, the=True)
+                    id=playlist_id, scope=self.humanize_scope(scope, the=True)
                 ),
             )
         except MissingGuild:
@@ -1293,7 +1291,7 @@ class PlayListCommands(MixinMeta):
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
-        scope_name = humanize_scope(
+        scope_name = self.humanize_scope(
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
 
@@ -1435,7 +1433,7 @@ class PlayListCommands(MixinMeta):
                     await asyncio.sleep(0.02)
                 if len(player.queue) >= 10000:
                     continue
-                if not await is_allowed(
+                if not await self.is_allowed(
                     ctx.guild,
                     (
                         f"{track.title} {track.author} {track.uri} "
@@ -1453,7 +1451,7 @@ class PlayListCommands(MixinMeta):
                     if not local_path.exists() and not local_path.is_file():
                         continue
                 if maxlength > 0:
-                    if not track_limit(track.length, maxlength):
+                    if not self.track_limit(track.length, maxlength):
                         continue
 
                 player.add(author_obj, track)
@@ -1499,7 +1497,7 @@ class PlayListCommands(MixinMeta):
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=humanize_scope(scope, the=True)
+                    id=playlist_id, scope=self.humanize_scope(scope, the=True)
                 ),
             )
         except MissingGuild:
@@ -1597,7 +1595,7 @@ class PlayListCommands(MixinMeta):
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=humanize_scope(scope, the=True)
+                    id=playlist_id, scope=self.humanize_scope(scope, the=True)
                 ),
             )
         except MissingGuild:
@@ -1607,7 +1605,7 @@ class PlayListCommands(MixinMeta):
                 description=_("You need to specify the Guild ID for the guild to lookup."),
             )
         else:
-            scope_name = humanize_scope(
+            scope_name = self.humanize_scope(
                 scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
             )
             if added or removed:
@@ -1716,19 +1714,22 @@ class PlayListCommands(MixinMeta):
             return
         player = lavalink.get_player(ctx.guild.id)
 
-        await self._embed_msg(
-            ctx,
-            title=_(
-                "Please upload the playlist file. Any other message will cancel this operation."
-            ),
-        )
-
-        try:
-            file_message = await ctx.bot.wait_for(
-                "message", timeout=30.0, check=MessagePredicate.same_context(ctx)
+        if not ctx.message.attachments:
+            await self._embed_msg(
+                ctx,
+                title=_(
+                    "Please upload the playlist file. Any other message will cancel this "
+                    "operation."
+                ),
             )
-        except asyncio.TimeoutError:
-            return await self._embed_msg(ctx, title=_("No file detected, try again later."))
+            try:
+                file_message = await ctx.bot.wait_for(
+                    "message", timeout=30.0, check=MessagePredicate.same_context(ctx)
+                )
+            except asyncio.TimeoutError:
+                return await self._embed_msg(ctx, title=_("No file detected, try again later."))
+        else:
+            file_message = ctx.message
         try:
             file_url = file_message.attachments[0].url
         except IndexError:
@@ -1758,7 +1759,7 @@ class PlayListCommands(MixinMeta):
         )
         if (
             not uploaded_playlist_url
-            or not match_yt_playlist(uploaded_playlist_url)
+            or not self.match_yt_playlist(uploaded_playlist_url)
             or not (
                 await self.api_interface.fetch_track(
                     ctx, player, Query.process_input(uploaded_playlist_url)
@@ -1873,7 +1874,7 @@ class PlayListCommands(MixinMeta):
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Playlist does not exist in {scope} scope.").format(
-                    scope=humanize_scope(scope, the=True)
+                    scope=self.humanize_scope(scope, the=True)
                 ),
             )
         except MissingGuild:
@@ -1887,7 +1888,7 @@ class PlayListCommands(MixinMeta):
         if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
             ctx.command.reset_cooldown(ctx)
             return
-        scope_name = humanize_scope(
+        scope_name = self.humanize_scope(
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
         old_name = playlist.name

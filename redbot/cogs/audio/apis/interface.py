@@ -889,7 +889,7 @@ class AudioAPIInterface:
                     )
                     tasks = []
                     if IS_DEBUG:
-                        log.debug("Pending writes to gobal database have finished")
+                        log.debug("Pending writes to global database have finished")
             except Exception as exc:
                 debug_exc_log(log, exc, "Failed to POST local track to Global Cache")
             if i % 1000 == 0:

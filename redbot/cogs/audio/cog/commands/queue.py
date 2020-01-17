@@ -9,7 +9,7 @@ import lavalink
 import math
 
 from redbot.cogs.audio.cog import MixinMeta
-from redbot.core import commands, checks
+from redbot.core import commands
 from redbot.core.utils.menus import (
     prev_page,
     close_menu,
@@ -19,9 +19,7 @@ from redbot.core.utils.menus import (
     DEFAULT_CONTROLS,
 )
 from redbot.core.utils.predicates import ReactionPredicate
-
 from ..utils import _
-from ...utils import draw_time, get_track_description, userlimit
 
 log = logging.getLogger("red.cogs.Audio.cog.commands.Queue")
 
@@ -64,13 +62,13 @@ class QueueCommands(MixinMeta):
         player = lavalink.get_player(ctx.guild.id)
 
         if player.current and not player.queue:
-            arrow = await draw_time(ctx)
+            arrow = await self.draw_time(ctx)
             pos = lavalink.utils.format_time(player.position)
             if player.current.is_stream:
                 dur = "LIVE"
             else:
                 dur = lavalink.utils.format_time(player.current.length)
-            song = get_track_description(player.current)
+            song = self.get_track_description(player.current)
             song += _("\n Requested by: **{track.requester}**")
             song += "\n\n{arrow}`{pos}`/`{dur}`"
             song = song.format(track=player.current, arrow=arrow, pos=pos, dur=dur)
@@ -300,7 +298,7 @@ class QueueCommands(MixinMeta):
             if (
                 not ctx.author.voice.channel.permissions_for(ctx.me).connect
                 or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                and userlimit(ctx.author.voice.channel)
+                and self.userlimit(ctx.author.voice.channel)
             ):
                 ctx.command.reset_cooldown(ctx)
                 return await self._embed_msg(

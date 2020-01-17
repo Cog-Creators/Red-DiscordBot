@@ -4,7 +4,6 @@ import discord
 
 from redbot.cogs.audio.cog import MixinMeta
 from redbot.core import commands, checks
-
 from ..utils import _
 
 log = logging.getLogger("red.cogs.Audio.cog.commands.LavalinkSet")

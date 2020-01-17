@@ -11,17 +11,14 @@ from redbot.core.data_manager import cog_data_path
 from redbot.core.utils.chat_formatting import box, humanize_number
 from redbot.core.utils.menus import start_adding_reactions, DEFAULT_CONTROLS, menu
 from redbot.core.utils.predicates import ReactionPredicate, MessagePredicate
-
 from ..abc import MixinMeta
-from ..utils import _
+from ..utils import _, __version__
 from ...apis.playlist_interface import get_playlist
-from ...audio import PlaylistConverter, PlaylistScope, __version__
 from ...audio_dataclasses import LocalPath
 from ...audio_globals import update_audio_globals
-from ...converters import ScopeParser
+from ...converters import ScopeParser, PlaylistConverter
 from ...errors import TooManyMatches, MissingGuild
-from ...utils import humanize_scope, CacheLevel, dynamic_time, time_convert
-
+from ...utils import CacheLevel, PlaylistScope
 
 log = logging.getLogger("red.cogs.Audio.cog.commands.AudioSet")
 
@@ -114,7 +111,7 @@ class AudioSetCommands(MixinMeta):
     async def _audioset_dc(self, ctx: commands.Context):
         """Toggle the bot auto-disconnecting when done playing.
 
-        This setting takes precedence over [p]audioset emptydisconnect.
+        This setting takes precedence over `[p]audioset emptydisconnect`.
         """
         disconnect = await self.config.guild(ctx.guild).disconnect()
         autoplay = await self.config.guild(ctx.guild).auto_play()
@@ -544,7 +541,7 @@ class AudioSetCommands(MixinMeta):
         """Set a playlist to auto-play songs from.
 
         **Usage**:
-        ​ ​ ​ ​ [p]audioset autoplay playlist_name_OR_id args
+        ​ ​ ​ ​ `[p]audioset autoplay playlist_name_OR_id args
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
@@ -603,7 +600,7 @@ class AudioSetCommands(MixinMeta):
                 ctx,
                 title=_("No Playlist Found"),
                 description=_("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=humanize_scope(scope, the=True)
+                    id=playlist_id, scope=self.humanize_scope(scope, the=True)
                 ),
             )
         except MissingGuild:
@@ -621,7 +618,7 @@ class AudioSetCommands(MixinMeta):
                 ).format(
                     name=playlist.name,
                     id=playlist.id,
-                    scope=humanize_scope(
+                    scope=self.humanize_scope(
                         scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
                     ),
                 ),
@@ -701,7 +698,7 @@ class AudioSetCommands(MixinMeta):
                 ctx,
                 title=_("Setting Changed"),
                 description=_("Empty disconnect timer set to {num_seconds}.").format(
-                    num_seconds=dynamic_time(seconds)
+                    num_seconds=self.dynamic_time(seconds)
                 ),
             )
 
@@ -729,7 +726,7 @@ class AudioSetCommands(MixinMeta):
                 ctx,
                 title=_("Setting Changed"),
                 description=_("Empty pause timer set to {num_seconds}.").format(
-                    num_seconds=dynamic_time(seconds)
+                    num_seconds=self.dynamic_time(seconds)
                 ),
             )
         await self.config.guild(ctx.guild).emptypause_timer.set(seconds)
@@ -847,7 +844,7 @@ class AudioSetCommands(MixinMeta):
         input will turn the max length setting off.
         """
         if not isinstance(seconds, int):
-            seconds = time_convert(seconds)
+            seconds = self.time_convert(seconds)
         if seconds < 0:
             return await self._embed_msg(
                 ctx, title=_("Invalid length"), description=_("Length can't be less than zero.")
@@ -861,7 +858,7 @@ class AudioSetCommands(MixinMeta):
                 ctx,
                 title=_("Setting Changed"),
                 description=_("Track max length set to {seconds}.").format(
-                    seconds=dynamic_time(seconds)
+                    seconds=self.dynamic_time(seconds)
                 ),
             )
         await self.config.guild(ctx.guild).maxlength.set(seconds)
@@ -956,11 +953,11 @@ class AudioSetCommands(MixinMeta):
         )
         if emptydc_enabled:
             msg += _("Disconnect timer: [{num_seconds}]\n").format(
-                num_seconds=dynamic_time(emptydc_timer)
+                num_seconds=self.dynamic_time(emptydc_timer)
             )
         if emptypause_enabled:
             msg += _("Auto Pause timer: [{num_seconds}]\n").format(
-                num_seconds=dynamic_time(emptypause_timer)
+                num_seconds=self.dynamic_time(emptypause_timer)
             )
         if dj_enabled and dj_role_obj:
             msg += _("DJ Role:          [{role.name}]\n").format(role=dj_role_obj)
@@ -971,7 +968,7 @@ class AudioSetCommands(MixinMeta):
             )
         if maxlength > 0:
             msg += _("Max track length: [{tracklength}]\n").format(
-                tracklength=dynamic_time(maxlength)
+                tracklength=self.dynamic_time(maxlength)
             )
         msg += _(
             "Repeat:           [{repeat}]\n"
