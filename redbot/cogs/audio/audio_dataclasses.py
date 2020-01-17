@@ -228,7 +228,7 @@ class LocalPath:
 
     async def subfolders_in_tree(self):
         return_folders = []
-        async for f in self.multirglob(f"{os.sep}", folder=True):
+        async for f in self.multirglob("", folder=True):
             if f not in return_folders and f != self.localtrack_folder:
                 return_folders.append(f)
 
@@ -244,7 +244,7 @@ class LocalPath:
 
     async def subfolders(self):
         return_folders = []
-        async for f in self.multiglob(f"{os.sep}", folder=True):
+        async for f in self.multiglob("", folder=True):
             with contextlib.suppress(ValueError):
                 if (
                     f not in return_folders
