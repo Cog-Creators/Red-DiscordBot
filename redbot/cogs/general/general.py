@@ -95,15 +95,14 @@ class General(commands.Cog):
                     author=author, n=humanize_number(n)
                 )
             )
-        else:
-            if number <= 1:
-                await ctx.send(_("{author.mention} Maybe higher than 1? ;P").format(author=author))
-            elif number > maxint:
-                await ctx.send(
-                    _("{author.mention} Max allowed number is {maxamount}.").format(
-                        author=author, maxamount=maxint
-                    )
+        elif number <= 1:
+            await ctx.send(_("{author.mention} Maybe higher than 1? ;P").format(author=author))
+        elif number > maxint:
+            await ctx.send(
+                _("{author.mention} Max allowed number is {maxamount}.").format(
+                    author=author, maxamount=maxint
                 )
+            )
 
     @commands.command()
     async def flip(self, ctx, user: discord.Member = None):
