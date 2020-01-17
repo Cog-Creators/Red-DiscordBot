@@ -66,8 +66,10 @@ Event Reference
 Additional References
 *********************
 
-.. autofunction:: redbot.core.bot.RedBase.get_shared_api_tokens
+.. py:currentmodule:: redbot.core.bot
 
-.. autofunction:: redbot.core.bot.RedBase.set_shared_api_tokens
+.. automethod:: Red.get_shared_api_tokens
 
-.. autofunction:: redbot.core.bot.RedBase.remove_shared_api_tokens
+.. automethod:: Red.set_shared_api_tokens
+
+.. automethod:: Red.remove_shared_api_tokens
