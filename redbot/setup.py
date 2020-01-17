@@ -253,20 +253,23 @@ async def remove_instance(
 
     backend = get_current_backend(instance)
     driver_cls = drivers.get_driver_class(backend)
+    await driver_cls.initialize(**data_manager.storage_details())
+    try:
+        if delete_data is True:
+            await driver_cls.delete_all_data(interactive=interactive, drop_db=drop_db)
 
-    if delete_data is True:
-        await driver_cls.delete_all_data(interactive=interactive, drop_db=drop_db)
+        if interactive is True and remove_datapath is None:
+            remove_datapath = click.confirm(
+                "Would you like to delete the instance's entire datapath?", default=False
+            )
 
-    if interactive is True and remove_datapath is None:
-        remove_datapath = click.confirm(
-            "Would you like to delete the instance's entire datapath?", default=False
-        )
+        if remove_datapath is True:
+            data_path = data_manager.core_data_path().parent
+            safe_delete(data_path)
 
-    if remove_datapath is True:
-        data_path = data_manager.core_data_path().parent
-        safe_delete(data_path)
-
-    save_config(instance, {}, remove=True)
+        save_config(instance, {}, remove=True)
+    finally:
+        await driver_cls.teardown()
     print("The instance {} has been removed\n".format(instance))
 
 

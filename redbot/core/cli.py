@@ -135,7 +135,9 @@ def parse_cli_flags(args):
         "security implications if misused. Can be "
         "multiple.",
     )
-    parser.add_argument("--prefix", "-p", action="append", help="Global prefix. Can be multiple")
+    parser.add_argument(
+        "--prefix", "-p", action="append", help="Global prefix. Can be multiple", default=[]
+    )
     parser.add_argument(
         "--no-prompt",
         action="store_true",
