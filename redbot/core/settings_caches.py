@@ -14,37 +14,40 @@ class PrefixManager:
         self._global_prefix_overide: Optional[List[str]] = sorted(
             cli_flags.prefix, reverse=True
         ) or None
-        self._cached: Dict[Optional[discord.Guild], List[str]] = {}
+        self._cached: Dict[Optional[int], List[str]] = {}
 
     async def get_prefixes(self, guild: Optional[discord.Guild] = None) -> List[str]:
         ret: List[str]
 
-        if guild in self._cached:
-            ret = self._cached[guild].copy()
+        gid: Optional[int] = guild.id if guild else None
+
+        if gid in self._cached:
+            ret = self._cached[gid].copy()
         else:
-            if guild:
-                ret = await self._config.guild(guild).prefix()
+            if gid is not None:
+                ret = await self._config.guild_from_id(gid).prefix()
                 if not ret:
                     ret = await self.get_prefixes(None)
             else:
                 ret = self._global_prefix_overide or (await self._config.prefix())
 
-            self._cached[guild] = ret.copy()
+            self._cached[gid] = ret.copy()
 
         return ret
 
     async def set_prefixes(
         self, guild: Optional[discord.Guild] = None, prefixes: Optional[List[str]] = None
     ):
+        gid: Optional[int] = guild.id if guild else None
         prefixes = prefixes or []
         if not isinstance(prefixes, list) and not all(isinstance(pfx, str) for pfx in prefixes):
             raise TypeError("Prefixes must be a list of strings")
         prefixes = sorted(prefixes, reverse=True)
-        if guild is None:
+        if gid is None:
             if not prefixes:
                 raise ValueError("You must have at least one prefix.")
             self._cached.clear()
             await self._config.prefix.set(prefixes)
         else:
-            del self._cached[guild]
-            await self._config.guild(guild).prefix.set(prefixes)
+            del self._cached[gid]
+            await self._config.guild_from_id(gid).prefix.set(prefixes)
