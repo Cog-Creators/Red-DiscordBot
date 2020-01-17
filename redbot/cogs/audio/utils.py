@@ -5,9 +5,6 @@ from typing import MutableMapping
 import discord
 
 from redbot.core import commands
-from redbot.core.i18n import Translator
-
-_ = Translator("Audio", __file__)
 
 
 class CacheLevel:

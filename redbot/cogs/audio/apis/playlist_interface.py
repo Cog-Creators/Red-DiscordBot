@@ -1,24 +1,21 @@
 import asyncio
 import logging
 from collections import MutableMapping
-from typing import Optional, List, Union
+from typing import List, Optional, Union
 
 import discord
 import lavalink
 
 from redbot.cogs.audio.apis.utils import (
-    standardize_scope,
-    prepare_config_scope,
     PlaylistFetchResult,
+    prepare_config_scope,
+    standardize_scope,
 )
-from redbot.cogs.audio.audio_globals import get_playlist_api_wrapper, get_bot, get_config
+from redbot.cogs.audio.audio_globals import get_bot, get_config, get_playlist_api_wrapper
 from redbot.cogs.audio.errors import NotAllowed
 from redbot.cogs.audio.utils import PlaylistScope
 from redbot.core import commands
 from redbot.core.bot import Red
-from redbot.core.i18n import Translator
-
-_ = Translator("Audio", __file__)
 
 log = logging.getLogger("red.cogs.Audio.api.PlaylistsInterface")
 

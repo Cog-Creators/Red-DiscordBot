@@ -9,7 +9,7 @@ from lavalink.rest_api import LoadResult
 
 from ..audio_dataclasses import Query
 from ..audio_globals import get_bot, get_config
-from ..audio_logging import debug_exc_log, IS_DEBUG
+from ..audio_logging import IS_DEBUG, debug_exc_log
 
 _API_URL = "https://redbot.app/"
 _WRITE_GLOBAL_API_ACCESS = None

@@ -1,12 +1,11 @@
 import argparse
 import functools
 import re
-from typing import Optional, Tuple, Union, MutableMapping, TYPE_CHECKING
+from typing import MutableMapping, Optional, Tuple, Union
 
 import discord
 
-from redbot.core import Config, commands
-from redbot.core.bot import Red
+from redbot.core import commands
 from redbot.core.i18n import Translator
 from .apis.playlist_interface import get_all_playlist_converter
 from .apis.utils import standardize_scope
@@ -24,13 +23,6 @@ __all__ = [
     "get_lazy_converter",
     "get_playlist_converter",
 ]
-
-if TYPE_CHECKING:
-    _bot: Red
-    _config: Config
-else:
-    _bot = None
-    _config = None
 
 _SCOPE_HELP = """
 Scope must be a valid version of one of the following:
@@ -136,13 +128,13 @@ async def global_unique_user_finder(
 class PlaylistConverter(commands.Converter):
     async def convert(self, ctx: commands.Context, arg: str) -> MutableMapping:
         global_matches = await get_all_playlist_converter(
-            PlaylistScope.GLOBAL.value, _bot, arg, guild=ctx.guild, author=ctx.author
+            PlaylistScope.GLOBAL.value, ctx.bot, arg, guild=ctx.guild, author=ctx.author
         )
         guild_matches = await get_all_playlist_converter(
-            PlaylistScope.GUILD.value, _bot, arg, guild=ctx.guild, author=ctx.author
+            PlaylistScope.GUILD.value, ctx.bot, arg, guild=ctx.guild, author=ctx.author
         )
         user_matches = await get_all_playlist_converter(
-            PlaylistScope.USER.value, _bot, arg, guild=ctx.guild, author=ctx.author
+            PlaylistScope.USER.value, ctx.bot, arg, guild=ctx.guild, author=ctx.author
         )
         if not user_matches and not guild_matches and not global_matches:
             raise commands.BadArgument(_("Could not match '{}' to a playlist.").format(arg))

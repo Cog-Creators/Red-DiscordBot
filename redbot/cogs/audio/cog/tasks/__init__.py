@@ -20,9 +20,7 @@ from redbot.cogs.audio.utils import PlaylistScope
 log = logging.getLogger("red.cogs.Audio.cog.Tasks")
 
 
-class Tasks(
-    MixinMeta, metaclass=CompositeMetaClass,
-):
+class Tasks(MixinMeta, metaclass=CompositeMetaClass):
     async def initialize(self) -> None:
         await self.bot.wait_until_red_ready()
         # Unlike most cases, we want the cache to exit before migration.
@@ -145,7 +143,8 @@ class Tasks(
                         continue
                     else:
                         log.exception(
-                            "Fatal exception whilst starting internal Lavalink server, aborting...",
+                            "Fatal exception whilst starting internal Lavalink server, "
+                            "aborting...",
                             exc_info=exc,
                         )
                         self._connection_aborted = True
@@ -171,7 +170,8 @@ class Tasks(
                 break
         else:
             log.critical(
-                "Setting up the Lavalink server failed after multiple attempts. See above tracebacks for details."
+                "Setting up the Lavalink server failed after multiple attempts. "
+                "See above tracebacks for details."
             )
             self._connection_aborted = True
             return
@@ -204,7 +204,8 @@ class Tasks(
         else:
             self._connection_aborted = True
             log.critical(
-                "Connecting to the Lavalink server failed after multiple attempts. See above tracebacks for details."
+                "Connecting to the Lavalink server failed after multiple attempts. "
+                "See above tracebacks for details."
             )
 
     async def disconnect_timer(self):

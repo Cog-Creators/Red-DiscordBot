@@ -201,7 +201,9 @@ VALUES
         tracks = excluded.tracks;
 """
 PLAYLIST_CREATE_INDEX = """
-CREATE INDEX IF NOT EXISTS name_index ON playlists (scope_type, playlist_id, playlist_name, scope_id);
+CREATE INDEX IF NOT EXISTS name_index ON playlists (
+scope_type, playlist_id, playlist_name, scope_id
+);
 """
 
 # YouTube table statements

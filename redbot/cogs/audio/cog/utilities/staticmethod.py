@@ -11,7 +11,7 @@ import lavalink
 import math
 from fuzzywuzzy import process
 
-from redbot.cogs.audio.audio_dataclasses import Query, LocalPath
+from redbot.cogs.audio.audio_dataclasses import LocalPath, Query
 from redbot.cogs.audio.cog import MixinMeta
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import escape
@@ -49,7 +49,7 @@ class StaticMethodUtilities(MixinMeta):
                 query = Query.process_input(track.uri)
                 if query.is_local:
                     search_list += "`{0}.` **{1}**\n[{2}]\n".format(
-                        search_track_num, track.title, LocalPath(track.uri).to_string_user(),
+                        search_track_num, track.title, LocalPath(track.uri).to_string_user()
                     )
                 else:
                     search_list += "`{0}.` **[{1}]({2})**\n".format(

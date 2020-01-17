@@ -10,10 +10,10 @@ from discord.embeds import EmptyEmbed
 from redbot.cogs.audio.audio_dataclasses import Query, _PARTIALLY_SUPPORTED_MUSIC_EXT
 from redbot.cogs.audio.cog import MixinMeta
 from redbot.core import commands
-from redbot.core.utils.chat_formatting import escape, bold
+from redbot.core.utils.chat_formatting import bold, escape
 from ..utils import _
 from ...audio_logging import IS_DEBUG
-from ...errors import TrackEnqueueError, QueryUnauthorized, SpotifyFetchError
+from ...errors import QueryUnauthorized, SpotifyFetchError, TrackEnqueueError
 from ...utils import Notifier
 
 log = logging.getLogger("red.cogs.Audio.cog.commands.utilities.Player")
@@ -25,7 +25,7 @@ class PlayerUtilities(MixinMeta):
     """
 
     async def _enqueue_tracks(
-        self, ctx: commands.Context, query: Union[Query, list], enqueue: bool = True,
+        self, ctx: commands.Context, query: Union[Query, list], enqueue: bool = True
     ):
         player = lavalink.get_player(ctx.guild.id)
         try:
@@ -62,7 +62,8 @@ class PlayerUtilities(MixinMeta):
                     ctx,
                     title=_("Unable to Get Track"),
                     description=_(
-                        "I'm unable get a track from Lavalink at the moment, try again in a few minutes."
+                        "I'm unable get a track from Lavalink at the moment, "
+                        "try again in a few minutes."
                     ),
                 )
             tracks = result.tracks
@@ -239,7 +240,7 @@ class PlayerUtilities(MixinMeta):
         return single_track or message
 
     async def _spotify_playlist(
-        self, ctx: commands.Context, stype: str, query: Query, enqueue: bool = False,
+        self, ctx: commands.Context, stype: str, query: Query, enqueue: bool = False
     ):
 
         player = lavalink.get_player(ctx.guild.id)
@@ -309,9 +310,8 @@ class PlayerUtilities(MixinMeta):
                 ctx,
                 title=_("Invalid Environment"),
                 description=_(
-                    "The owner needs to set the YouTube API key before Spotify URLs or codes can be used. "
-                    "\nSee `{prefix}audioset youtubeapi`"
-                    "for instructions."
+                    "The owner needs to set the YouTube API key before Spotify URLs or codes "
+                    "can be used. \nSee `{prefix}audioset youtubeapi`for instructions."
                 ).format(prefix=ctx.prefix),
             )
         try:
@@ -361,7 +361,8 @@ class PlayerUtilities(MixinMeta):
                             ctx,
                             title=_("Unable to Get Track"),
                             description=_(
-                                "I'm unable get a track from Lavalink at the moment, try again in a few minutes."
+                                "I'm unable get a track from Lavalink at the moment, "
+                                "try again in a few minutes."
                             ),
                         )
                     tracks = result.tracks

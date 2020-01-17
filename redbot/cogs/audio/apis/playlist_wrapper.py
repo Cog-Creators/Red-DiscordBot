@@ -3,28 +3,28 @@ import concurrent
 import json
 import logging
 from types import SimpleNamespace
-from typing import Optional, List, MutableMapping
+from typing import List, MutableMapping, Optional
 
 from redbot.core import Config
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 from .utils import PlaylistFetchResult
 from ..audio_logging import debug_exc_log
 from ..sql_statements import (
-    PRAGMA_FETCH_user_version,
-    PRAGMA_SET_user_version,
-    PRAGMA_SET_read_uncommitted,
-    PRAGMA_SET_journal_mode,
-    PRAGMA_SET_temp_store,
-    PLAYLIST_CREATE_TABLE,
     PLAYLIST_CREATE_INDEX,
-    PLAYLIST_FETCH_ALL_WITH_FILTER,
+    PLAYLIST_CREATE_TABLE,
+    PLAYLIST_DELETE,
+    PLAYLIST_DELETE_SCHEDULED,
+    PLAYLIST_DELETE_SCOPE,
     PLAYLIST_FETCH,
     PLAYLIST_FETCH_ALL,
     PLAYLIST_FETCH_ALL_CONVERTER,
+    PLAYLIST_FETCH_ALL_WITH_FILTER,
     PLAYLIST_UPSERT,
-    PLAYLIST_DELETE,
-    PLAYLIST_DELETE_SCOPE,
-    PLAYLIST_DELETE_SCHEDULED,
+    PRAGMA_FETCH_user_version,
+    PRAGMA_SET_journal_mode,
+    PRAGMA_SET_read_uncommitted,
+    PRAGMA_SET_temp_store,
+    PRAGMA_SET_user_version,
 )
 from ..utils import PlaylistScope
 

@@ -3,7 +3,7 @@ import contextlib
 import datetime
 import json
 import logging
-from typing import MutableMapping, Optional, Tuple, List, Union
+from typing import List, MutableMapping, Optional, Tuple, Union
 
 import discord
 import lavalink
@@ -18,7 +18,7 @@ from redbot.core.utils.predicates import ReactionPredicate
 from ..utils import _
 from ...apis.playlist_interface import Playlist, create_playlist
 from ...errors import TooManyMatches, TrackEnqueueError
-from ...utils import PlaylistScope, Notifier
+from ...utils import Notifier, PlaylistScope
 
 log = logging.getLogger("red.cogs.Audio.cog.commands.utilities.Playlists")
 
@@ -353,8 +353,8 @@ class PlaylistUtilities(MixinMeta):
                         ctx,
                         title=_("Unable to Get Track"),
                         description=_(
-                            "I'm unable get a track from Lavalink at the moment, try again in a few "
-                            "minutes."
+                            "I'm unable get a track from Lavalink at the moment, "
+                            "try again in a few minutes."
                         ),
                     )
 
@@ -479,7 +479,7 @@ class PlaylistUtilities(MixinMeta):
         return True
 
     async def _playlist_tracks(
-        self, ctx: commands.Context, player: lavalink.player_manager.Player, query: Query,
+        self, ctx: commands.Context, player: lavalink.player_manager.Player, query: Query
     ):
         search = query.is_search
         tracklist = []

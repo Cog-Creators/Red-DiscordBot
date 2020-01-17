@@ -1,7 +1,7 @@
 import asyncio
 from abc import ABC, abstractmethod
 from collections import Counter
-from typing import Optional, MutableMapping, List, Mapping
+from typing import List, Mapping, MutableMapping, Optional
 
 import aiohttp
 import discord
@@ -35,7 +35,7 @@ class MixinMeta(ABC):
     _manager: Optional[ServerManager]
     api_interface: Optional[AudioAPIInterface]
     _error_counter: Counter
-    _error_timer: MutableMapping[int, int]
+    _error_timer: MutableMapping[int, float]
     _disconnected_players: MutableMapping[int, bool]
     _init_task: asyncio.Task
     _ready_event: asyncio.Event

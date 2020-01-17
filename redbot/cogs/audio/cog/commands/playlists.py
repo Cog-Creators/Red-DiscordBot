@@ -10,24 +10,24 @@ import discord
 import lavalink
 import math
 
-from redbot.core import commands, checks
+from redbot.core import checks, commands
 from redbot.core.data_manager import cog_data_path
-from redbot.core.utils.chat_formatting import pagify, bold
+from redbot.core.utils.chat_formatting import bold, pagify
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 from redbot.core.utils.predicates import MessagePredicate
 from ..abc import MixinMeta
-from ..utils import _, LazyGreedyConverter, PlaylistConverter
+from ..utils import LazyGreedyConverter, PlaylistConverter, _
 from ...apis.playlist_interface import (
-    get_playlist,
     create_playlist,
     delete_playlist,
     get_all_playlist,
+    get_playlist,
 )
 from ...apis.utils import FakePlaylist
 from ...audio_dataclasses import LocalPath, Query
 from ...audio_logging import IS_DEBUG
-from ...converters import ScopeParser, ComplexScopeParser
-from ...errors import TooManyMatches, MissingGuild
+from ...converters import ComplexScopeParser, ScopeParser
+from ...errors import MissingGuild, TooManyMatches
 from ...utils import PlaylistScope
 
 log = logging.getLogger("red.cogs.Audio.cog.commands.Playlist")

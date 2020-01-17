@@ -1,13 +1,13 @@
 import contextlib
 import logging
-from typing import Optional, MutableMapping
+from typing import MutableMapping, Optional
 
 import discord
 import math
 
 from redbot.cogs.audio.cog import MixinMeta
 from redbot.core import commands
-from redbot.core.utils.menus import DEFAULT_CONTROLS, menu, prev_page, close_menu, next_page
+from redbot.core.utils.menus import DEFAULT_CONTROLS, close_menu, menu, next_page, prev_page
 from ..utils import _
 from ...audio_dataclasses import LocalPath, Query
 

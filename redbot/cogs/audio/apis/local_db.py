@@ -4,22 +4,22 @@ import contextlib
 import datetime
 import logging
 import time
+from dataclasses import dataclass
 from types import SimpleNamespace
-from typing import List, MutableMapping, Dict, Union, Optional, Tuple
+from typing import Dict, List, MutableMapping, Optional, Tuple, Union, Callable
 
 from .utils import (
+    LavalinkCacheFetchForGlobalResult,
     LavalinkCacheFetchResult,
     SpotifyCacheFetchResult,
     YouTubeCacheFetchResult,
-    LavalinkCacheFetchForGlobalResult,
 )
-from ..audio_globals import get_database_connection, get_config
+from ..audio_globals import get_config, get_database_connection
 from ..audio_logging import debug_exc_log
+from ..cog.utils import _SCHEMA_VERSION
 from ..sql_statements import *
 
 log = logging.getLogger("red.cogs.Audio.api.LocalDB")
-
-SCHEMA_VERSION = 3
 
 
 class BaseWrapper:
@@ -32,9 +32,7 @@ class BaseWrapper:
         self.statement.pragma_read_uncommitted = PRAGMA_SET_read_uncommitted
         self.statement.set_user_version = PRAGMA_SET_user_version
         self.statement.get_user_version = PRAGMA_FETCH_user_version
-        self.fetch_result: Union[
-            YouTubeCacheFetchResult, SpotifyCacheFetchResult, LavalinkCacheFetchResult
-        ]
+        self.fetch_result: dataclass
 
     async def init(self) -> None:
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
@@ -83,10 +81,10 @@ class BaseWrapper:
                         debug_exc_log(log, exc, "Failed to completed fetch from database")
                 if isinstance(current_version, tuple):
                     current_version = current_version[0]
-                if current_version == SCHEMA_VERSION:
+                if current_version == _SCHEMA_VERSION:
                     return
                 executor.submit(
-                    cursor.execute(self.statement.set_user_version, {"version": SCHEMA_VERSION})
+                    cursor.execute(self.statement.set_user_version, {"version": _SCHEMA_VERSION})
                 )
 
     async def insert(self, values: List[MutableMapping]) -> None:

@@ -6,18 +6,18 @@ from typing import Union
 import discord
 import lavalink
 
-from redbot.core import commands, checks, bank
+from redbot.core import bank, checks, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.utils.chat_formatting import box, humanize_number
-from redbot.core.utils.menus import start_adding_reactions, DEFAULT_CONTROLS, menu
-from redbot.core.utils.predicates import ReactionPredicate, MessagePredicate
+from redbot.core.utils.menus import DEFAULT_CONTROLS, menu, start_adding_reactions
+from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from ..abc import MixinMeta
 from ..utils import _, __version__
 from ...apis.playlist_interface import get_playlist
 from ...audio_dataclasses import LocalPath
 from ...audio_globals import update_audio_globals
-from ...converters import ScopeParser, PlaylistConverter
-from ...errors import TooManyMatches, MissingGuild
+from ...converters import PlaylistConverter, ScopeParser
+from ...errors import MissingGuild, TooManyMatches
 from ...utils import CacheLevel, PlaylistScope
 
 log = logging.getLogger("red.cogs.Audio.cog.commands.AudioSet")
@@ -49,7 +49,8 @@ class AudioSetCommands(MixinMeta):
         )
 
     # @_audioset_globaldb.command(name="timeout")
-    # async def _audioset_globaldb_timeout(self, ctx: commands.Context, timeout: Union[float, int]):
+    # async def _audioset_globaldb_timeout(
+    # self, ctx: commands.Context, timeout: Union[float, int]):
     #     """Set GET request timeout.
     #
     #     Example: 0.1 = 100ms 1 = 1 second
@@ -768,7 +769,7 @@ class AudioSetCommands(MixinMeta):
 
         if not local_path:
             await self.config.localpath.set(str(cog_data_path(raw_name="Audio")))
-            await update_audio_globals(self.config, self.bot, str(cog_data_path(raw_name="Audio")))
+            await update_audio_globals(self.config, self.bot, cog_data_path(raw_name="Audio"))
             return await self._embed_msg(
                 ctx,
                 title=_("Setting Changed"),
@@ -826,7 +827,7 @@ class AudioSetCommands(MixinMeta):
             await self._embed_msg(ctx, title=_("Invalid Environment"), description=warn_msg)
         local_path = str(temp.localtrack_folder.absolute())
         await self.config.localpath.set(local_path)
-        await update_audio_globals(self.config, self.bot, local_path)
+        await update_audio_globals(self.config, self.bot, temp.localtrack_folder.absolute())
         return await self._embed_msg(
             ctx,
             title=_("Setting Changed"),

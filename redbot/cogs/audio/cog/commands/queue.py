@@ -11,12 +11,12 @@ import math
 from redbot.cogs.audio.cog import MixinMeta
 from redbot.core import commands
 from redbot.core.utils.menus import (
-    prev_page,
-    close_menu,
-    next_page,
-    start_adding_reactions,
-    menu,
     DEFAULT_CONTROLS,
+    close_menu,
+    menu,
+    next_page,
+    prev_page,
+    start_adding_reactions,
 )
 from redbot.core.utils.predicates import ReactionPredicate
 from ..utils import _

@@ -2,7 +2,7 @@ import base64
 import contextlib
 import logging
 import time
-from typing import Optional, MutableMapping, Union, List, Tuple
+from typing import List, MutableMapping, Optional, Tuple, Union
 
 import aiohttp
 
@@ -115,7 +115,7 @@ class SpotifyWrapper:
 
     async def get_call(
         self, url: str, params: MutableMapping
-    ) -> MutableMapping[str, Union[str, int]]:
+    ) -> MutableMapping[str, Union[str, int, MutableMapping]]:
         token = await self._get_spotify_token()
         return await self._make_get(
             url, params=params, headers={"Authorization": f"Bearer {token}"}

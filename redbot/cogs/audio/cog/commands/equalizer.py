@@ -8,9 +8,9 @@ import lavalink
 
 from redbot.cogs.audio.cog import MixinMeta
 from redbot.core import commands
-from redbot.core.utils.chat_formatting import box, pagify, humanize_number
-from redbot.core.utils.menus import start_adding_reactions, DEFAULT_CONTROLS, menu
-from redbot.core.utils.predicates import ReactionPredicate, MessagePredicate
+from redbot.core.utils.chat_formatting import box, humanize_number, pagify
+from redbot.core.utils.menus import DEFAULT_CONTROLS, menu, start_adding_reactions
+from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from ..utils import _
 from ...equalizer import Equalizer
 

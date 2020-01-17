@@ -6,20 +6,14 @@ import os
 import posixpath
 import re
 from pathlib import Path, PosixPath, WindowsPath
-from typing import List, Optional, Union, MutableMapping, AsyncIterator, Iterator
+from typing import AsyncIterator, Iterator, MutableMapping, Optional, Union
 from urllib.parse import urlparse
 
 import lavalink
 
-from redbot.core import Config
-from redbot.core.bot import Red
-from redbot.core.i18n import Translator
+from redbot.cogs.audio.audio_globals import get_localtrack_path
 
-_config: Optional[Config] = None
-_bot: Optional[Red] = None
 _localtrack_folder: Optional[str] = None
-_ = Translator("Audio", __file__)
-
 _RE_REMOVE_START = re.compile(r"^(sc|list) ")
 _RE_YOUTUBE_TIMESTAMP = re.compile(r"&t=(\d+)s?")
 _RE_YOUTUBE_INDEX = re.compile(r"&index=(\d+)")
@@ -82,6 +76,7 @@ class LocalPath:
     _all_music_ext = _FULLY_SUPPORTED_MUSIC_EXT + _PARTIALLY_SUPPORTED_MUSIC_EXT
 
     def __init__(self, path, **kwargs):
+        _localtrack_folder = get_localtrack_path()
         self._path = path
         if isinstance(path, (Path, WindowsPath, PosixPath, LocalPath)):
             path = str(path.absolute())

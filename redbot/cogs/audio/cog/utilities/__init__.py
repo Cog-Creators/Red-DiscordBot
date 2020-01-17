@@ -4,7 +4,7 @@ import datetime
 import logging
 import time
 from pathlib import Path
-from typing import List, Optional, Union, MutableMapping
+from typing import List, MutableMapping, Optional, Union
 
 import discord
 import lavalink
@@ -19,14 +19,14 @@ from redbot.cogs.audio.cog.utilities.playlists import PlaylistUtilities
 from redbot.cogs.audio.cog.utilities.staticmethod import StaticMethodUtilities
 from redbot.cogs.audio.cog.utils import CompositeMetaClass, _
 from redbot.cogs.audio.equalizer import Equalizer
-from redbot.core import commands, bank
-from redbot.core.utils.chat_formatting import box, humanize_number, bold
+from redbot.core import bank, commands
+from redbot.core.utils.chat_formatting import bold, box, humanize_number
 
 log = logging.getLogger("red.cogs.Audio.cog.utilities")
 
 
 class Utilities(
-    StaticMethodUtilities, PlayerUtilities, PlaylistUtilities, metaclass=CompositeMetaClass,
+    StaticMethodUtilities, PlayerUtilities, PlaylistUtilities, metaclass=CompositeMetaClass
 ):
     def format_playlist_picker_data(self, pid, pname, ptracks, pauthor, scope) -> str:
         author = self.bot.get_user(pauthor) or pauthor or _("Unknown")
@@ -384,7 +384,7 @@ class Utilities(
 
     async def _clear_react(self, message: discord.Message, emoji: MutableMapping = None):
         """Non blocking version of clear_react."""
-        return self.bot.loop.create_task(self.clear_react(self.bot, message, emoji))
+        return self.bot.loop.create_task(self.clear_react(message, emoji))
 
     async def _currency_check(self, ctx: commands.Context, jukebox_price: int):
         jukebox = await self.config.guild(ctx.guild).jukebox()

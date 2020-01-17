@@ -10,7 +10,7 @@ import math
 
 from redbot.cogs.audio.cog import MixinMeta
 from redbot.core import commands
-from redbot.core.utils.chat_formatting import pagify, humanize_number
+from redbot.core.utils.chat_formatting import humanize_number, pagify
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 from ..utils import _
 from ...audio_dataclasses import Query

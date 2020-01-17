@@ -12,7 +12,7 @@ from redbot.core import commands
 from redbot.core.utils.chat_formatting import inline
 from ..abc import MixinMeta
 from ..utils import CompositeMetaClass, _
-from ...apis.playlist_interface import get_playlist, Playlist, delete_playlist
+from ...apis.playlist_interface import Playlist, delete_playlist, get_playlist
 from ...audio_globals import get_playlist_api_wrapper
 from ...audio_logging import debug_exc_log
 from ...errors import DatabaseError
@@ -160,7 +160,7 @@ class Listeners(MixinMeta, metaclass=CompositeMetaClass):
             self.bot.dispatch("red_audio_queue_end", guild, prev_song, prev_requester)
             if autoplay and not player.queue and player.fetch("playing_song") is not None:
                 try:
-                    await self.api_interface.autoplay(player)
+                    await self.api_interface.autoplay(player, self.bot)
                 except DatabaseError:
                     notify_channel = player.fetch("channel")
                     if notify_channel:

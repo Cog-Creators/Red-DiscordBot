@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING, Tuple, Union
 
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -23,7 +23,7 @@ else:
 
 
 async def update_audio_globals(
-    config: Config, bot: Red, localtracks_folder: Path
+    config: Config, bot: Red, localtracks_folder: Union[Path, str]
 ) -> Tuple[APSWConnectionWrapper, Config, Red, Path, "PlaylistWrapper"]:
     global _database_connection, _config, _bot, _localtracks_folder, _playlist_api
 
@@ -33,7 +33,7 @@ async def update_audio_globals(
         _bot = bot
 
     if _localtracks_folder is None:
-        _localtracks_folder = localtracks_folder
+        _localtracks_folder = Path(localtracks_folder)
 
     if _database_connection is None:
         _database_connection = APSWConnectionWrapper(

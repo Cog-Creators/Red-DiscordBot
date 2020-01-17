@@ -11,12 +11,12 @@ import math
 from discord.embeds import EmptyEmbed
 
 from redbot.cogs.audio.cog import MixinMeta
-from redbot.core import commands, checks
-from redbot.core.utils.menus import prev_page, close_menu, next_page, DEFAULT_CONTROLS, menu
+from redbot.core import checks, commands
+from redbot.core.utils.menus import DEFAULT_CONTROLS, close_menu, menu, next_page, prev_page
 from ..utils import _
 from ...audio_dataclasses import Query, _PARTIALLY_SUPPORTED_MUSIC_EXT
 from ...audio_logging import IS_DEBUG
-from ...errors import TrackEnqueueError, DatabaseError, SpotifyFetchError, QueryUnauthorized
+from ...errors import DatabaseError, QueryUnauthorized, SpotifyFetchError, TrackEnqueueError
 
 log = logging.getLogger("red.cogs.Audio.cog.commands.Player")
 
@@ -577,7 +577,7 @@ class PlayerCommands(MixinMeta):
         if not await self._currency_check(ctx, guild_data["jukebox_price"]):
             return
         try:
-            await self.api_interface.autoplay(player)
+            await self.api_interface.autoplay(player, self.bot)
         except DatabaseError:
             notify_channel = player.fetch("channel")
             if notify_channel:
@@ -586,7 +586,7 @@ class PlayerCommands(MixinMeta):
             return
 
         if not guild_data["auto_play"]:
-            await ctx.invoke(self._autoplay_toggle)
+            await ctx.invoke(self._audioset_autoplay_toggle)
         if not guild_data["notify"] and (
             (player.current and not player.current.extras.get("autoplay")) or not player.current
         ):
@@ -709,9 +709,8 @@ class PlayerCommands(MixinMeta):
                             ctx,
                             title=_("Unable to Get Track"),
                             description=_(
-                                "I'm unable get a track from Lavalink at the moment, try again in a "
-                                "few "
-                                "minutes."
+                                "I'm unable get a track from Lavalink at the moment, "
+                                "try again in a few minutes."
                             ),
                         )
 
@@ -725,9 +724,8 @@ class PlayerCommands(MixinMeta):
                             ctx,
                             title=_("Unable to Get Track"),
                             description=_(
-                                "I'm unable get a track from Lavalink at the moment, try again in a "
-                                "few "
-                                "minutes."
+                                "I'm unable get a track from Lavalink at the moment, "
+                                "try again in a few minutes."
                             ),
                         )
                 if not tracks:

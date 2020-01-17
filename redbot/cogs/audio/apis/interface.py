@@ -5,7 +5,7 @@ import logging
 import random
 import time
 from collections import namedtuple
-from typing import MutableMapping, Optional, Union, Mapping, List, Callable, Tuple
+from typing import Callable, List, Mapping, MutableMapping, Optional, Tuple, Union
 
 import aiohttp
 import discord
@@ -14,7 +14,7 @@ from lavalink.enums import LoadType
 from lavalink.rest_api import LoadResult
 
 from redbot.core import commands
-from redbot.core.i18n import cog_i18n, Translator
+from redbot.core.bot import Red
 from .global_db import GlobalCacheWrapper
 from .local_db import LocalCacheWrapper
 from .playlist_interface import get_playlist
@@ -22,18 +22,17 @@ from .spotify import SpotifyWrapper
 from .utils import LavalinkCacheFetchForGlobalResult
 from .youtube import YouTubeWrapper
 from ..audio_dataclasses import Query
-from ..audio_globals import get_config, get_bot
-from ..audio_logging import debug_exc_log, IS_DEBUG
-from ..errors import SpotifyFetchError, TrackEnqueueError, DatabaseError
-from ..utils import CacheLevel, Notifier, queue_duration, is_allowed, track_limit
+from ..audio_globals import get_bot, get_config
+from ..audio_logging import IS_DEBUG, debug_exc_log
+from ..cog.utils import _
+from ..errors import DatabaseError, SpotifyFetchError, TrackEnqueueError
+from ..utils import CacheLevel, Notifier
 
-_ = Translator("Audio", __file__)
 log = logging.getLogger("red.cogs.Audio.api.AudioAPIInterface")
 _TOP_100_US = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn5rWitrRWFKdm-ulaFiIyoK"
 # TODO: Get random from global Cache
 
 
-@cog_i18n(_)
 class AudioAPIInterface:
     """Handles music queries.
 
@@ -117,7 +116,7 @@ class AudioAPIInterface:
                     tasks = self._tasks[ctx.message.id]
                     del self._tasks[ctx.message.id]
                     await asyncio.gather(
-                        *[self.route_tasks(*a) for a in tasks], return_exceptions=True,
+                        *[self.route_tasks(*a) for a in tasks], return_exceptions=True
                     )
                 except Exception as exc:
                     debug_exc_log(
@@ -180,7 +179,7 @@ class AudioAPIInterface:
                 track_name,
                 _id,
                 _type,
-            ) = self._get_spotify_track_info(track)
+            ) = self.spotify_api.get_spotify_track_info(track)
 
             database_entries.append(
                 {
@@ -235,7 +234,7 @@ class AudioAPIInterface:
     ) -> Union[MutableMapping, List[str]]:
 
         if recursive is False:
-            (call, params) = self._spotify_format_call(query_type, uri)
+            (call, params) = self.spotify_api.spotify_format_call(query_type, uri)
             results = await self.spotify_api.get_call(call, params)
         else:
             results = await self.spotify_api.get_call(recursive, params)
@@ -363,10 +362,11 @@ class AudioAPIInterface:
         has_not_allowed = False
         try:
             current_cache_level = CacheLevel(await self.config.cache_level())
+            audio_cog = ctx.bot.get_cog("Audio")
             guild_data = await self.config.guild(ctx.guild).all()
             enqueued_tracks = 0
             consecutive_fails = 0
-            queue_dur = await queue_duration(ctx)
+            queue_dur = await audio_cog.queue_duration(ctx)
             queue_total_duration = lavalink.utils.format_time(queue_dur)
             before_queue_length = len(player.queue)
             tracks_from_spotify = await self._spotify_fetch_tracks(
@@ -396,7 +396,7 @@ class AudioAPIInterface:
                     track_name,
                     _id,
                     _type,
-                ) = self._get_spotify_track_info(track)
+                ) = self.spotify_api.get_spotify_track_info(track)
 
                 database_entries.append(
                     {
@@ -488,7 +488,7 @@ class AudioAPIInterface:
                     continue
                 consecutive_fails = 0
                 single_track = track_object[0]
-                if not await is_allowed(
+                if not await audio_cog.is_allowed(
                     ctx.guild,
                     (
                         f"{single_track.title} {single_track.author} {single_track.uri} "
@@ -504,7 +504,7 @@ class AudioAPIInterface:
                     if len(player.queue) >= 10000:
                         continue
                     if guild_data["maxlength"] > 0:
-                        if track_limit(single_track, guild_data["maxlength"]):
+                        if audio_cog.track_limit(single_track, guild_data["maxlength"]):
                             enqueued_tracks += 1
                             player.add(ctx.author, single_track)
                             self.bot.dispatch(
@@ -663,7 +663,7 @@ class AudioAPIInterface:
         if cache_enabled and not forced and not _raw_query.is_local:
             update = True
             try:
-                (val, update) = await self.database.fetch_one("lavalink", "data", {"query": query})
+                (val, update) = await self.local_cache_api.lavalink.fetch_one({"query": query})
             except Exception as exc:
                 debug_exc_log(log, exc, f"Failed to fetch '{query}' from Lavalink table")
 
@@ -690,7 +690,7 @@ class AudioAPIInterface:
         ):
             valid_global_entry = False
             try:
-                global_entry = await self.audio_api.get_call(query=_raw_query)
+                global_entry = await self.global_cache_api.get_call(query=_raw_query)
                 if global_entry.get("loadType") == "V2_COMPACT":
                     global_entry["loadType"] = "V2_COMPAT"
                 results = LoadResult(global_entry)
@@ -748,10 +748,7 @@ class AudioAPIInterface:
         ):
             data = json.dumps(results._raw)
             if all(k in data for k in ["loadType", "playlistInfo", "isSeekable", "isStream"]):
-                global_task = (
-                    "insert",
-                    ("global", {"query": _raw_query, "llresponse": results}),
-                )
+                global_task = ("insert", ("global", {"query": _raw_query, "llresponse": results}))
 
                 self.append_task(ctx, *global_task)
 
@@ -787,12 +784,13 @@ class AudioAPIInterface:
                 )
         return results, called_api
 
-    async def autoplay(self, player: lavalink.Player):
+    async def autoplay(self, player: lavalink.Player, bot: Red):
         autoplaylist = await self.config.guild(player.channel.guild).autoplaylist()
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         playlist = None
         tracks = None
+        bot = bot.get_cog("Audio")
         if autoplaylist["enabled"]:
             try:
                 playlist = await get_playlist(
@@ -808,11 +806,11 @@ class AudioAPIInterface:
 
         if not tracks or not getattr(playlist, "tracks", None):
             if cache_enabled:
-                tracks = await self.get_random_from_db()
+                tracks = await self.get_random_track_from_db()
             if not tracks:
                 ctx = namedtuple("Context", "message")
                 (results, called_api) = await self.fetch_track(
-                    ctx(player.channel.guild), player, Query.process_input(_TOP_100_US),
+                    ctx(player.channel.guild), player, Query.process_input(_TOP_100_US)
                 )
                 tracks = list(results.tracks)
         if tracks:
@@ -832,7 +830,7 @@ class AudioAPIInterface:
                     continue
                 if query.is_local and not query.track.exists():
                     continue
-                if not await is_allowed(
+                if not await bot.is_allowed(
                     player.channel.guild,
                     (
                         f"{track.title} {track.author} {track.uri} "
