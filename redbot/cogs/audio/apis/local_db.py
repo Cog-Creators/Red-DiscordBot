@@ -36,7 +36,7 @@ class BaseWrapper:
 
     async def init(self) -> None:
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            with self.database.cursor() as cursor:
+            with self.database.with_cursor() as cursor:
                 executor.submit(cursor.execute, self.statement.pragma_temp_store)
                 executor.submit(cursor.execute, self.statement.pragma_journal_mode)
                 executor.submit(cursor.execute, self.statement.pragma_read_uncommitted)
@@ -61,7 +61,7 @@ class BaseWrapper:
         maxage_int = int(time.mktime(maxage.timetuple()))
         values = {"maxage": maxage_int}
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            with self.database.cursor() as cursor:
+            with self.database.with_cursor() as cursor:
                 executor.submit(cursor.execute, LAVALINK_DELETE_OLD_ENTRIES, values)
                 executor.submit(cursor.execute, YOUTUBE_DELETE_OLD_ENTRIES, values)
                 executor.submit(cursor.execute, SPOTIFY_DELETE_OLD_ENTRIES, values)
@@ -69,7 +69,7 @@ class BaseWrapper:
     def maybe_migrate(self) -> None:
         current_version = 0
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            with self.database.cursor() as cursor:
+            with self.database.with_cursor() as cursor:
                 for future in concurrent.futures.as_completed(
                     [executor.submit(cursor.execute, self.statement.get_user_version)]
                 ):
@@ -99,7 +99,7 @@ class BaseWrapper:
             time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
             values["last_fetched"] = time_now
             with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-                with self.database.cursor() as cursor:
+                with self.database.with_cursor() as cursor:
                     executor.submit(cursor.execute, self.statement.update, values)
         except Exception as exc:
             debug_exc_log(log, exc, "Error during table update")
@@ -115,7 +115,7 @@ class BaseWrapper:
         values.update({"maxage": maxage_int})
         row = None
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            with self.database.cursor() as cursor:
+            with self.database.with_cursor() as cursor:
                 for future in concurrent.futures.as_completed(
                     [executor.submit(cursor.execute, self.statement.get_one, values)]
                 ):
@@ -134,7 +134,7 @@ class BaseWrapper:
         output = []
         row_result = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            with self.database.cursor() as cursor:
+            with self.database.with_cursor() as cursor:
                 for future in concurrent.futures.as_completed(
                     [executor.submit(cursor.execute, self.statement.get_all, values)]
                 ):
@@ -156,7 +156,7 @@ class BaseWrapper:
     ]:
         row = None
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            with self.database.cursor() as cursor:
+            with self.database.with_cursor() as cursor:
                 for future in concurrent.futures.as_completed(
                     [executor.submit(cursor.execute, self.statement.get_random, values)]
                 ):
@@ -261,7 +261,7 @@ class LavalinkTableWrapper(BaseWrapper):
         output = []
         row_result = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            with self.database.cursor() as cursor:
+            with self.database.with_cursor() as cursor:
                 for future in concurrent.futures.as_completed(
                     [executor.submit(cursor.execute, self.statement.get_all_global)]
                 ):

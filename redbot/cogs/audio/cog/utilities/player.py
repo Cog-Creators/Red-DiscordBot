@@ -467,8 +467,8 @@ class PlayerUtilities(MixinMeta):
         await player.play()
         player.queue += queue_to_append
 
-    def _play_lock(self, ctx: commands.Context, tf):
-        if tf:
+    def _play_lock(self, ctx: commands.Context, true_or_false: bool):
+        if true_or_false:
             self.play_lock[ctx.message.guild.id] = True
         else:
             self.play_lock[ctx.message.guild.id] = False

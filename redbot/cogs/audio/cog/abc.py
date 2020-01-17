@@ -42,7 +42,7 @@ class MixinMeta(ABC):
     _default_lavalink_settings: Mapping
 
     @abstractmethod
-    async def llsetup(self, ctx: commands.Context):
+    async def _llsetup(self, ctx: commands.Context):
         raise NotImplementedError()
 
     @abstractmethod

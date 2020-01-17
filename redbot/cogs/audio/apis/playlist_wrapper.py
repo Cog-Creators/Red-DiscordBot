@@ -56,7 +56,7 @@ class PlaylistWrapper:
 
     async def init(self) -> None:
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            with self.database.cursor() as cursor:
+            with self.database.with_cursor() as cursor:
                 executor.submit(cursor.execute, self.statement.pragma_temp_store)
                 executor.submit(cursor.execute, self.statement.pragma_journal_mode)
                 executor.submit(cursor.execute, self.statement.pragma_read_uncommitted)
@@ -77,7 +77,7 @@ class PlaylistWrapper:
         scope_type = self.get_scope_type(scope)
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            with self.database.cursor() as cursor:
+            with self.database.with_cursor() as cursor:
                 for future in concurrent.futures.as_completed(
                     [
                         executor.submit(
@@ -108,7 +108,7 @@ class PlaylistWrapper:
         scope_type = self.get_scope_type(scope)
         output = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            with self.database.cursor() as cursor:
+            with self.database.with_cursor() as cursor:
 
                 if author_id is not None:
                     for future in concurrent.futures.as_completed(
@@ -176,7 +176,7 @@ class PlaylistWrapper:
 
         output = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            with self.database.cursor() as cursor:
+            with self.database.with_cursor() as cursor:
                 for future in concurrent.futures.as_completed(
                     [
                         executor.submit(
@@ -208,7 +208,7 @@ class PlaylistWrapper:
     async def delete(self, scope: str, playlist_id: int, scope_id: int):
         scope_type = self.get_scope_type(scope)
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            with self.database.cursor() as cursor:
+            with self.database.with_cursor() as cursor:
                 executor.submit(
                     cursor.execute,
                     self.statement.delete,
@@ -217,13 +217,13 @@ class PlaylistWrapper:
 
     async def delete_scheduled(self):
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            with self.database.cursor() as cursor:
+            with self.database.with_cursor() as cursor:
                 executor.submit(cursor.execute, self.statement.delete_scheduled)
 
     async def drop(self, scope: str):
         scope_type = self.get_scope_type(scope)
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            with self.database.cursor() as cursor:
+            with self.database.with_cursor() as cursor:
                 executor.submit(
                     cursor.execute, self.statement.delete_scope, ({"scope_type": scope_type})
                 )
@@ -231,7 +231,7 @@ class PlaylistWrapper:
     async def create_table(self, scope: str):
         scope_type = self.get_scope_type(scope)
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            with self.database.cursor() as cursor:
+            with self.database.with_cursor() as cursor:
                 executor.submit(
                     cursor.execute, PLAYLIST_CREATE_TABLE, ({"scope_type": scope_type})
                 )
@@ -248,7 +248,7 @@ class PlaylistWrapper:
     ):
         scope_type = self.get_scope_type(scope)
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            with self.database.cursor() as cursor:
+            with self.database.with_cursor() as cursor:
                 executor.submit(
                     cursor.execute,
                     self.statement.upsert,
