@@ -235,7 +235,9 @@ class LocalPath:
         tracks = []
         async for track in self.multirglob(*[f"{ext}" for ext in self._all_music_ext]):
             with contextlib.suppress(ValueError):
-                if track.parent != self.localtrack_folder and track.path.relative_to(self.path):
+                if track.path.parent != self.localtrack_folder and track.path.relative_to(
+                    self.path
+                ):
                     tracks.append(Query.process_input(track))
         return sorted(tracks, key=lambda x: x.to_string_user().lower())
 
@@ -245,7 +247,7 @@ class LocalPath:
             with contextlib.suppress(ValueError):
                 if (
                     f not in return_folders
-                    and f != self.localtrack_folder
+                    and f.path != self.localtrack_folder
                     and f.path.relative_to(self.path)
                 ):
                     return_folders.append(f)
@@ -255,7 +257,9 @@ class LocalPath:
         tracks = []
         async for track in self.multiglob(*[f"{ext}" for ext in self._all_music_ext]):
             with contextlib.suppress(ValueError):
-                if track.parent != self.localtrack_folder and track.path.relative_to(self.path):
+                if track.path.parent != self.localtrack_folder and track.path.relative_to(
+                    self.path
+                ):
                     tracks.append(Query.process_input(track))
         return sorted(tracks, key=lambda x: x.to_string_user().lower())
 
@@ -265,16 +269,18 @@ class LocalPath:
             with contextlib.suppress(ValueError):
                 if (
                     f not in return_folders
-                    and f != self.localtrack_folder
+                    and f.path != self.localtrack_folder
                     and f.path.relative_to(self.path)
                 ):
                     return_folders.append(f)
         return sorted(return_folders, key=lambda x: x.to_string_user().lower())
 
     def __eq__(self, other):
-        if not isinstance(other, LocalPath):
-            return NotImplemented
-        return self.path._cparts == other.path._cparts
+        if isinstance(other, LocalPath):
+            return self.path._cparts == other.path._cparts
+        elif isinstance(other, Path):
+            return self.path._cparts == other._cpart
+        return NotImplemented
 
     def __hash__(self):
         try:
@@ -284,24 +290,32 @@ class LocalPath:
             return self._hash
 
     def __lt__(self, other):
-        if not isinstance(other, LocalPath):
-            return NotImplemented
-        return self.path._cparts < other.path._cparts
+        if isinstance(other, LocalPath):
+            return self.path._cparts < other.path._cparts
+        elif isinstance(other, Path):
+            return self.path._cparts < other._cpart
+        return NotImplemented
 
     def __le__(self, other):
-        if not isinstance(other, LocalPath):
-            return NotImplemented
-        return self.path._cparts <= other.path._cparts
+        if isinstance(other, LocalPath):
+            return self.path._cparts <= other.path._cparts
+        elif isinstance(other, Path):
+            return self.path._cparts <= other._cpart
+        return NotImplemented
 
     def __gt__(self, other):
-        if not isinstance(other, LocalPath):
-            return NotImplemented
-        return self.path._cparts > other.path._cparts
+        if isinstance(other, LocalPath):
+            return self.path._cparts > other.path._cparts
+        elif isinstance(other, Path):
+            return self.path._cparts > other._cpart
+        return NotImplemented
 
     def __ge__(self, other):
-        if not isinstance(other, LocalPath):
-            return NotImplemented
-        return self.path._cparts >= other.path._cparts
+        if isinstance(other, LocalPath):
+            return self.path._cparts >= other.path._cparts
+        elif isinstance(other, Path):
+            return self.path._cparts >= other._cpart
+        return NotImplemented
 
 
 class Query:

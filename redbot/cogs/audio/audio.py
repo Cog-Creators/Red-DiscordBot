@@ -2449,7 +2449,11 @@ class Audio(commands.Cog):
         if not await self._localtracks_check(ctx):
             return
 
-        return await audio_data.subfolders_in_tree() if search_subfolders else await audio_data.subfolders()
+        return (
+            await audio_data.subfolders_in_tree()
+            if search_subfolders
+            else await audio_data.subfolders()
+        )
 
     async def _folder_list(
         self, ctx: commands.Context, query: audio_dataclasses.Query
