@@ -60,3 +60,14 @@ Event Reference
     :type service_name: :class:`str`
     :param api_tokens: New Mapping of token names to tokens. This contains api tokens that weren't changed too.
     :type api_tokens: Mapping[:class:`str`, :class:`str`]
+
+
+*********************
+Additional References
+*********************
+
+.. autofunction:: redbot.core.bot.RedBase.get_shared_api_tokens
+
+.. autofunction:: redbot.core.bot.RedBase.set_shared_api_tokens
+
+.. autofunction:: redbot.core.bot.RedBase.remove_shared_api_tokens
