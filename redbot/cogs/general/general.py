@@ -87,7 +87,8 @@ class General(commands.Cog):
         `<number>` defaults to 100.
         """
         author = ctx.author
-        if number > 1:
+        maxint = 2 ** 64 - 1
+        if 1 < number <= maxint:
             n = randint(1, number)
             await ctx.send(
                 "{author.mention} :game_die: {n} :game_die:".format(
@@ -95,7 +96,14 @@ class General(commands.Cog):
                 )
             )
         else:
-            await ctx.send(_("{author.mention} Maybe higher than 1? ;P").format(author=author))
+            if number <= 1:
+                await ctx.send(_("{author.mention} Maybe higher than 1? ;P").format(author=author))
+            elif number > maxint:
+                await ctx.send(
+                    _("{author.mention} Max allowed number is {maxamount}.").format(
+                        author=author, maxamount=maxint
+                    )
+                )
 
     @commands.command()
     async def flip(self, ctx, user: discord.Member = None):

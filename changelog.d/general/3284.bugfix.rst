@@ -1,0 +1,1 @@
+[General] Adds a maximum amount to roll command.
