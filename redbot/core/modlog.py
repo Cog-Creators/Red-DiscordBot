@@ -142,6 +142,18 @@ async def _init(bot: Red):
     bot.add_listener(on_member_unban)
 
 
+async def handle_auditype_key():
+    all_casetypes = {
+        casetype_name: {
+            inner_key: inner_value
+            for inner_key, inner_value in casetype_data.items()
+            if inner_key != "audit_type"
+        }
+        for casetype_name, casetype_data in (await _conf.custom(_CASETYPES).all()).items()
+    }
+    await _conf.custom(_CASETYPES).set(all_casetypes)
+
+
 async def _migrate_config(from_version: int, to_version: int):
     if from_version == to_version:
         return
@@ -170,16 +182,7 @@ async def _migrate_config(from_version: int, to_version: int):
             await _conf.guild(cast(discord.Guild, discord.Object(id=guild_id))).clear_raw("cases")
 
     if from_version < 3 <= to_version:
-        all_casetypes = {
-            casetype_name: {
-                inner_key: inner_value
-                for inner_key, inner_value in casetype_data.items()
-                if inner_key != "audit_type"
-            }
-            for casetype_name, casetype_data in (await _conf.custom(_CASETYPES).all()).items()
-        }
-
-        await _conf.custom(_CASETYPES).set(all_casetypes)
+        await handle_auditype_key()
         await _conf.schema_version.set(3)
 
     if from_version < 4 <= to_version:
@@ -507,8 +510,15 @@ class CaseType:
         self.image = image
         self.case_str = case_str
         self.guild = guild
+
+        if "audit_type" in kwargs:
+            kwargs.pop("audit_type", None)
+            log.warning(
+                "Fix this using the hidden command: `modlogset fixcasetypes` in Discord: "
+                "Got outdated key in casetype: audit_type"
+            )
         if kwargs:
-            log.warning("Got unexpected keys in case %s", ",".join(kwargs.keys()))
+            log.warning("Got unexpected key(s) in casetype: %s", ",".join(kwargs.keys()))
 
     async def to_json(self):
         """Transforms the case type into a dict and saves it"""
