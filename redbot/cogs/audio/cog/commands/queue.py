@@ -153,7 +153,6 @@ class QueueCommands(MixinMeta):
         return await menu(ctx, queue_page_list, queue_controls, page=(page - 1))
 
     @queue.command(name="clear")
-    @commands.guild_only()
     async def _queue_clear(self, ctx: commands.Context):
         """Clears the queue."""
         try:
@@ -178,7 +177,6 @@ class QueueCommands(MixinMeta):
         )
 
     @queue.command(name="clean")
-    @commands.guild_only()
     async def _queue_clean(self, ctx: commands.Context):
         """Removes songs from the queue if the requester is not in the voice channel."""
         try:
@@ -219,7 +217,6 @@ class QueueCommands(MixinMeta):
             )
 
     @queue.command(name="cleanself")
-    @commands.guild_only()
     async def _queue_cleanself(self, ctx: commands.Context):
         """Removes all tracks you requested from the queue."""
 
@@ -250,7 +247,6 @@ class QueueCommands(MixinMeta):
             )
 
     @queue.command(name="search")
-    @commands.guild_only()
     async def _queue_search(self, ctx: commands.Context, *, search_words: str):
         """Search the queue."""
         try:
@@ -271,8 +267,7 @@ class QueueCommands(MixinMeta):
             search_page_list.append(embed)
         await menu(ctx, search_page_list, DEFAULT_CONTROLS)
 
-    @queue.command(name="shuffle")
-    @commands.guild_only()
+    @queue.command(name="shuffle", cooldown_after_parsing=True)
     @commands.cooldown(1, 30, commands.BucketType.guild)
     async def _queue_shuffle(self, ctx: commands.Context):
         """Shuffles the queue."""

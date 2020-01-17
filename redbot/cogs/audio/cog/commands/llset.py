@@ -14,15 +14,15 @@ class LavalinkSetCommands(MixinMeta):
     All LavalinkSet commands.
     """
 
-    @commands.group(aliases=["llset"])
+    @commands.group(name="llsetup", aliases=["llset"])
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     @checks.is_owner()
-    async def llsetup(self, ctx: commands.Context):
+    async def _llsetup(self, ctx: commands.Context):
         """Lavalink server configuration options."""
 
-    @llsetup.command()
-    async def external(self, ctx: commands.Context):
+    @_llsetup.command(name="external")
+    async def _llsetup_external(self, ctx: commands.Context):
         """Toggle using external lavalink servers."""
         external = await self.config.use_external_lavalink()
         await self.config.use_external_lavalink.set(not external)
@@ -48,8 +48,8 @@ class LavalinkSetCommands(MixinMeta):
 
         self._restart_connect()
 
-    @llsetup.command()
-    async def host(self, ctx: commands.Context, host: str):
+    @_llsetup.command(name="host")
+    async def _llsetup_host(self, ctx: commands.Context, host: str):
         """Set the lavalink server host."""
         await self.config.host.set(host)
         footer = None
@@ -63,8 +63,8 @@ class LavalinkSetCommands(MixinMeta):
         )
         self._restart_connect()
 
-    @llsetup.command()
-    async def password(self, ctx: commands.Context, password: str):
+    @_llsetup.command(name="password")
+    async def _llsetup_password(self, ctx: commands.Context, password: str):
         """Set the lavalink server password."""
         await self.config.password.set(str(password))
         footer = None
@@ -79,8 +79,8 @@ class LavalinkSetCommands(MixinMeta):
 
         self._restart_connect()
 
-    @llsetup.command()
-    async def restport(self, ctx: commands.Context, rest_port: int):
+    @_llsetup.command(name="restport")
+    async def _llsetup_restport(self, ctx: commands.Context, rest_port: int):
         """Set the lavalink REST server port."""
         await self.config.rest_port.set(rest_port)
         footer = None
@@ -95,8 +95,8 @@ class LavalinkSetCommands(MixinMeta):
 
         self._restart_connect()
 
-    @llsetup.command()
-    async def wsport(self, ctx: commands.Context, ws_port: int):
+    @_llsetup.command(name="wsport")
+    async def _llsetup_wsport(self, ctx: commands.Context, ws_port: int):
         """Set the lavalink websocket server port."""
         await self.config.ws_port.set(ws_port)
         footer = None

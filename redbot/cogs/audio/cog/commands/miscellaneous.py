@@ -23,10 +23,10 @@ class MiscellaneousCommands(MixinMeta):
     All Miscellaneous commands.
     """
 
-    @commands.command()
+    @commands.command(name="sing")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def sing(self, ctx: commands.Context):
+    async def _sing(self, ctx: commands.Context):
         """Make Red sing one of her songs."""
         ids = (
             "zGTkAVsrfg8",
@@ -39,10 +39,10 @@ class MiscellaneousCommands(MixinMeta):
         url = f"https://www.youtube.com/watch?v={random.choice(ids)}"
         await ctx.invoke(self.play, query=url)
 
-    @commands.command()
+    @commands.command(name="percent")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def percent(self, ctx: commands.Context):
+    async def _percent(self, ctx: commands.Context):
         """Queue percentage."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, title=_("Nothing playing."))
@@ -95,10 +95,10 @@ class MiscellaneousCommands(MixinMeta):
             ctx, title=_("Queued and playing tracks:"), description=queue_user_list
         )
 
-    @commands.command()
+    @commands.command(name="audiostats")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
-    async def audiostats(self, ctx: commands.Context):
+    async def _audiostats(self, ctx: commands.Context):
         """Audio stats."""
         server_num = len(lavalink.active_players())
         total_num = len(lavalink.all_players())
@@ -154,11 +154,11 @@ class MiscellaneousCommands(MixinMeta):
 
         await menu(ctx, servers_embed, DEFAULT_CONTROLS)
 
-    @commands.command()
+    @commands.command(name="summon", cooldown_after_parsing=True)
     @commands.guild_only()
     @commands.cooldown(1, 15, commands.BucketType.guild)
     @commands.bot_has_permissions(embed_links=True)
-    async def summon(self, ctx: commands.Context):
+    async def _summon(self, ctx: commands.Context):
         """Summon the bot to a voice channel."""
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()

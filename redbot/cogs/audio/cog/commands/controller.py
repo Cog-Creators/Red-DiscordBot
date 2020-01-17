@@ -21,10 +21,10 @@ class ControllerCommands(MixinMeta):
     All Controller commands.
     """
 
-    @commands.command()
+    @commands.command(name="disconnect")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def disconnect(self, ctx: commands.Context):
+    async def _disconnect(self, ctx: commands.Context):
         """Disconnect from the voice channel."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, title=_("Nothing playing."))
@@ -57,10 +57,10 @@ class ControllerCommands(MixinMeta):
                 await player.stop()
                 await player.disconnect()
 
-    @commands.command()
+    @commands.command(name="now")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
-    async def now(self, ctx: commands.Context):
+    async def _now(self, ctx: commands.Context):
         """Now playing."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, title=_("Nothing playing."))
@@ -157,10 +157,10 @@ class ControllerCommands(MixinMeta):
             await self._clear_react(message, emoji)
             await ctx.invoke(self.skip)
 
-    @commands.command()
+    @commands.command(name="pause")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def pause(self, ctx: commands.Context):
+    async def _pause(self, ctx: commands.Context):
         """Pause or resume a playing track."""
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
@@ -197,10 +197,10 @@ class ControllerCommands(MixinMeta):
 
         await self._embed_msg(ctx, title=_("Nothing playing."))
 
-    @commands.command()
+    @commands.command(name="prev")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def prev(self, ctx: commands.Context):
+    async def _prev(self, ctx: commands.Context):
         """Skip to the start of the previously played track."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, title=_("Nothing playing."))
@@ -253,10 +253,10 @@ class ControllerCommands(MixinMeta):
             embed = discord.Embed(title=_("Replaying Track"), description=description)
             await self._embed_msg(ctx, embed=embed)
 
-    @commands.command()
+    @commands.command(name="repeat")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def repeat(self, ctx: commands.Context):
+    async def _repeat(self, ctx: commands.Context):
         """Toggle repeat."""
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
@@ -298,10 +298,10 @@ class ControllerCommands(MixinMeta):
         if self._player_check(ctx):
             await self._data_check(ctx)
 
-    @commands.command()
+    @commands.command(name="seek")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def seek(self, ctx: commands.Context, seconds: Union[int, str]):
+    async def _seek(self, ctx: commands.Context, seconds: Union[int, str]):
         """Seek ahead or behind on a track by seconds or a to a specific time.
 
         Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).
@@ -385,10 +385,10 @@ class ControllerCommands(MixinMeta):
         else:
             await self._embed_msg(ctx, title=_("Nothing playing."))
 
-    @commands.command()
+    @commands.command(name="skip")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def skip(self, ctx: commands.Context, skip_to_track: int = None):
+    async def _skip(self, ctx: commands.Context, skip_to_track: int = None):
         """Skip to the next track, or to a given track number."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, title=_("Nothing playing."))
@@ -477,10 +477,10 @@ class ControllerCommands(MixinMeta):
         else:
             return await self._skip_action(ctx, skip_to_track)
 
-    @commands.command()
+    @commands.command(name="stop")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def stop(self, ctx: commands.Context):
+    async def _stop(self, ctx: commands.Context):
         """Stop playback and clear the queue."""
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
@@ -528,10 +528,10 @@ class ControllerCommands(MixinMeta):
             await player.stop()
             await self._embed_msg(ctx, title=_("Stopping..."))
 
-    @commands.command()
+    @commands.command(name="volume")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def volume(self, ctx: commands.Context, vol: int = None):
+    async def _volume(self, ctx: commands.Context, vol: int = None):
         """Set the volume, 1% - 150%."""
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
@@ -577,10 +577,10 @@ class ControllerCommands(MixinMeta):
             embed.set_footer(text=_("Nothing playing."))
         await self._embed_msg(ctx, embed=embed)
 
-    @commands.group(autohelp=False)
+    @commands.group(name="shuffle", autohelp=False)
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def shuffle(self, ctx: commands.Context):
+    async def _shuffle(self, ctx: commands.Context):
         """Toggle shuffle."""
         if ctx.invoked_subcommand is None:
             dj_enabled = self._dj_status_cache.setdefault(
@@ -617,7 +617,7 @@ class ControllerCommands(MixinMeta):
             if self._player_check(ctx):
                 await self._data_check(ctx)
 
-    @shuffle.command(name="bumped")
+    @_shuffle.command(name="bumped")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     async def _shuffle_bumpped(self, ctx: commands.Context):
@@ -660,10 +660,10 @@ class ControllerCommands(MixinMeta):
         if self._player_check(ctx):
             await self._data_check(ctx)
 
-    @commands.command()
+    @commands.command(name="bump")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def bump(self, ctx: commands.Context, index: int):
+    async def _bump(self, ctx: commands.Context, index: int):
         """Bump a track number to the top of the queue."""
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
@@ -704,10 +704,10 @@ class ControllerCommands(MixinMeta):
             ctx, title=_("Moved track to the top of the queue."), description=description
         )
 
-    @commands.command()
+    @commands.command(name="remove")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def remove(self, ctx: commands.Context, index_or_url: Union[int, str]):
+    async def _remove(self, ctx: commands.Context, index_or_url: Union[int, str]):
         """Remove a specific track number or URL from the queue."""
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()

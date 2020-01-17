@@ -22,11 +22,11 @@ class EqualizerCommands(MixinMeta):
     All Equalizer commands.
     """
 
-    @commands.group(invoke_without_command=True)
+    @commands.group(name="eq", invoke_without_command=True, cooldown_after_parsing=True)
     @commands.guild_only()
     @commands.cooldown(1, 15, commands.BucketType.guild)
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
-    async def eq(self, ctx: commands.Context):
+    async def _eq(self, ctx: commands.Context):
         """Equalizer management."""
         if not self._player_check(ctx):
             ctx.command.reset_cooldown(ctx)
@@ -61,7 +61,7 @@ class EqualizerCommands(MixinMeta):
         player.store("eq_message", eq_msg_with_reacts)
         await self._eq_interact(ctx, player, eq, eq_msg_with_reacts, 0)
 
-    @eq.command(name="delete", aliases=["del", "remove"])
+    @_eq.command(name="delete", aliases=["del", "remove"])
     async def _eq_delete(self, ctx: commands.Context, eq_preset: str):
         """Delete a saved eq preset."""
         async with self.config.custom("EQUALIZER", ctx.guild.id).eq_presets() as eq_presets:
@@ -100,7 +100,7 @@ class EqualizerCommands(MixinMeta):
             ctx, title=_("The {preset_name} preset was deleted.".format(preset_name=eq_preset))
         )
 
-    @eq.command(name="list")
+    @_eq.command(name="list")
     async def _eq_list(self, ctx: commands.Context):
         """List saved eq presets."""
         eq_presets = await self.config.custom("EQUALIZER", ctx.guild.id).eq_presets()
@@ -136,7 +136,7 @@ class EqualizerCommands(MixinMeta):
             page_list.append(embed)
         await menu(ctx, page_list, DEFAULT_CONTROLS)
 
-    @eq.command(name="load")
+    @_eq.command(name="load")
     async def _eq_load(self, ctx: commands.Context, eq_preset: str):
         """Load a saved eq preset."""
         eq_preset = eq_preset.lower()
@@ -182,7 +182,7 @@ class EqualizerCommands(MixinMeta):
         )
         player.store("eq_message", message)
 
-    @eq.command(name="reset")
+    @_eq.command(name="reset")
     async def _eq_reset(self, ctx: commands.Context):
         """Reset the eq to 0 across all bands."""
         if not self._player_check(ctx):
@@ -215,7 +215,7 @@ class EqualizerCommands(MixinMeta):
         )
         player.store("eq_message", message)
 
-    @eq.command(name="save")
+    @_eq.command(name="save", cooldown_after_parsing=True)
     @commands.cooldown(1, 15, commands.BucketType.guild)
     async def _eq_save(self, ctx: commands.Context, eq_preset: str = None):
         """Save the current eq settings to a preset."""
@@ -297,7 +297,7 @@ class EqualizerCommands(MixinMeta):
         else:
             await self._embed_msg(ctx, embed=embed3)
 
-    @eq.command(name="set")
+    @_eq.command(name="set")
     async def _eq_set(self, ctx: commands.Context, band_name_or_position, band_value: float):
         """Set an eq band with a band number or name and value.
 

@@ -18,7 +18,7 @@ from ..utils import PlaylistScope
 
 
 @cog_i18n(_)
-class Audio(MixinMeta, Commands, Events, Listeners, Tasks, Utilities, Cog):
+class Audio(Commands, Events, Listeners, Tasks, Utilities, Cog):
     """Play audio through voice channels."""
 
     _default_lavalink_settings = {

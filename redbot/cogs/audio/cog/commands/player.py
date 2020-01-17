@@ -26,10 +26,10 @@ class PlayerCommands(MixinMeta):
     All LavalinkSet commands.
     """
 
-    @commands.command()
+    @commands.command(name="play")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def play(self, ctx: commands.Context, *, query: str):
+    async def _play(self, ctx: commands.Context, *, query: str):
         """Play a URL or search for a track."""
         query = Query.process_input(query)
         guild_data = await self.config.guild(ctx.guild).all()
@@ -124,10 +124,10 @@ class PlayerCommands(MixinMeta):
                 ctx, title=_("Unable To Play Tracks"), description=err.message
             )
 
-    @commands.command()
+    @commands.command(name="bumpplay")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def bumpplay(
+    async def _bumpplay(
         self, ctx: commands.Context, play_now: Optional[bool] = False, *, query: str
     ):
         """Force play a URL or search for a track."""
@@ -322,10 +322,10 @@ class PlayerCommands(MixinMeta):
 
         self._play_lock(ctx, False)
 
-    @commands.command()
+    @commands.command(name="genre")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def genre(self, ctx: commands.Context):
+    async def _genre(self, ctx: commands.Context):
         """Pick a Spotify playlist from a list of categories to start playing."""
 
         async def _category_search_menu(
@@ -509,11 +509,11 @@ class PlayerCommands(MixinMeta):
             ctx, title=_("Couldn't find tracks for the selected playlist.")
         )
 
-    @commands.command()
+    @commands.command(name="autoplay")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     @checks.mod_or_permissions(manage_messages=True)
-    async def autoplay(self, ctx: commands.Context):
+    async def _autoplay(self, ctx: commands.Context):
         """Starts auto play."""
         if not self._player_check(ctx):
             if self._connection_aborted:
@@ -594,10 +594,10 @@ class PlayerCommands(MixinMeta):
         elif player.current:
             await self._embed_msg(ctx, title=_("Adding a track to queue."))
 
-    @commands.command()
+    @commands.command(name="search")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
-    async def search(self, ctx: commands.Context, *, query: str):
+    async def _search(self, ctx: commands.Context, *, query: str):
         """Pick a track with a search.
 
         Use `[p]search list <search term>` to queue all tracks found on YouTube.

@@ -19,14 +19,14 @@ class LocalTracksCommands(MixinMeta):
     All Local Track commands.
     """
 
-    @commands.group()
+    @commands.group(name="local")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
-    async def local(self, ctx: commands.Context):
+    async def _local(self, ctx: commands.Context):
         """Local playback commands."""
 
-    @local.command(name="folder", aliases=["start"])
-    async def local_folder(
+    @_local.command(name="folder", aliases=["start"])
+    async def _local_folder(
         self, ctx: commands.Context, play_subfolders: Optional[bool] = True, *, folder: str = None
     ):
         """Play all songs in a localtracks folder."""
@@ -49,8 +49,8 @@ class LocalTracksCommands(MixinMeta):
             query = Query.process_input(_dir, search_subfolders=play_subfolders)
             await self._local_play_all(ctx, query, from_search=False if not folder else True)
 
-    @local.command(name="play")
-    async def local_play(self, ctx: commands.Context, play_subfolders: Optional[bool] = True):
+    @_local.command(name="play")
+    async def _local_play(self, ctx: commands.Context, play_subfolders: Optional[bool] = True):
         """Play a local track."""
         if not await self._localtracks_check(ctx):
             return
@@ -98,8 +98,8 @@ class LocalTracksCommands(MixinMeta):
         else:
             await menu(ctx, folder_page_list, local_folder_controls)
 
-    @local.command(name="search")
-    async def local_search(
+    @_local.command(name="search")
+    async def _local_search(
         self, ctx: commands.Context, search_subfolders: Optional[bool] = True, *, search_words
     ):
         """Search for songs across all localtracks folders."""

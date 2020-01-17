@@ -38,10 +38,10 @@ class PlayListCommands(MixinMeta):
     All Playlists commands.
     """
 
-    @commands.group()
+    @commands.group(name="playlist")
     @commands.guild_only()
-    @commands.bot_has_permissions(embed_links=True)
-    async def playlist(self, ctx: commands.Context):
+    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
+    async def _playlist(self, ctx: commands.Context):
         """Playlist configuration options.
 
         Scope info:
@@ -57,7 +57,7 @@ class PlayListCommands(MixinMeta):
 
         """
 
-    @playlist.command(name="append", usage="<playlist_name_OR_id> <track_name_OR_url> [args]")
+    @_playlist.command(name="append", usage="<playlist_name_OR_id> <track_name_OR_url> [args]")
     async def _playlist_append(
         self,
         ctx: commands.Context,
@@ -218,7 +218,7 @@ class PlayListCommands(MixinMeta):
         )
 
     @commands.cooldown(1, 150, commands.BucketType.member)
-    @playlist.command(name="copy", usage="<id_or_name> [args]", cooldown_after_parsing=True)
+    @_playlist.command(name="copy", usage="<id_or_name> [args]", cooldown_after_parsing=True)
     async def _playlist_copy(
         self,
         ctx: commands.Context,
@@ -361,7 +361,7 @@ class PlayListCommands(MixinMeta):
             ),
         )
 
-    @playlist.command(name="create", usage="<name> [args]")
+    @_playlist.command(name="create", usage="<name> [args]")
     async def _playlist_create(
         self, ctx: commands.Context, playlist_name: str, *, scope_data: ScopeParser = None
     ):
@@ -424,7 +424,7 @@ class PlayListCommands(MixinMeta):
             ),
         )
 
-    @playlist.command(name="delete", aliases=["del"], usage="<playlist_name_OR_id> [args]")
+    @_playlist.command(name="delete", aliases=["del"], usage="<playlist_name_OR_id> [args]")
     async def _playlist_delete(
         self,
         ctx: commands.Context,
@@ -509,7 +509,7 @@ class PlayListCommands(MixinMeta):
         )
 
     @commands.cooldown(1, 30, commands.BucketType.member)
-    @playlist.command(
+    @_playlist.command(
         name="dedupe", usage="<playlist_name_OR_id> [args]", cooldown_after_parsing=True
     )
     async def _playlist_remdupe(
@@ -644,7 +644,7 @@ class PlayListCommands(MixinMeta):
             )
 
     @checks.is_owner()
-    @playlist.command(
+    @_playlist.command(
         name="download",
         usage="<playlist_name_OR_id> [v2=False] [args]",
         cooldown_after_parsing=True,
@@ -793,7 +793,7 @@ class PlayListCommands(MixinMeta):
         to_write.close()
 
     @commands.cooldown(1, 10, commands.BucketType.member)
-    @playlist.command(
+    @_playlist.command(
         name="info", usage="<playlist_name_OR_id> [args]", cooldown_after_parsing=True
     )
     async def _playlist_info(
@@ -932,7 +932,7 @@ class PlayListCommands(MixinMeta):
         await menu(ctx, page_list, DEFAULT_CONTROLS)
 
     @commands.cooldown(1, 15, commands.BucketType.guild)
-    @playlist.command(name="list", usage="[args]", cooldown_after_parsing=True)
+    @_playlist.command(name="list", usage="[args]", cooldown_after_parsing=True)
     @commands.bot_has_permissions(add_reactions=True)
     async def _playlist_list(self, ctx: commands.Context, *, scope_data: ScopeParser = None):
         """List saved playlists.
@@ -1031,7 +1031,7 @@ class PlayListCommands(MixinMeta):
             await asyncio.sleep(0)
         await menu(ctx, playlist_embeds, DEFAULT_CONTROLS)
 
-    @playlist.command(name="queue", usage="<name> [args]", cooldown_after_parsing=True)
+    @_playlist.command(name="queue", usage="<name> [args]", cooldown_after_parsing=True)
     @commands.cooldown(1, 300, commands.BucketType.member)
     async def _playlist_queue(
         self, ctx: commands.Context, playlist_name: str, *, scope_data: ScopeParser = None
@@ -1130,7 +1130,7 @@ class PlayListCommands(MixinMeta):
             else None,
         )
 
-    @playlist.command(name="remove", usage="<playlist_name_OR_id> <url> [args]")
+    @_playlist.command(name="remove", usage="<playlist_name_OR_id> <url> [args]")
     async def _playlist_remove(
         self,
         ctx: commands.Context,
@@ -1241,7 +1241,7 @@ class PlayListCommands(MixinMeta):
                 ).format(playlist_name=playlist.name, id=playlist.id, scope=scope_name),
             )
 
-    @playlist.command(name="save", usage="<name> <url> [args]", cooldown_after_parsing=True)
+    @_playlist.command(name="save", usage="<name> <url> [args]", cooldown_after_parsing=True)
     @commands.cooldown(1, 60, commands.BucketType.member)
     async def _playlist_save(
         self,
@@ -1331,7 +1331,7 @@ class PlayListCommands(MixinMeta):
             )
 
     @commands.cooldown(1, 30, commands.BucketType.member)
-    @playlist.command(
+    @_playlist.command(
         name="start",
         aliases=["play"],
         usage="<playlist_name_OR_id> [args]",
@@ -1505,7 +1505,7 @@ class PlayListCommands(MixinMeta):
                 return await ctx.invoke(self.play, query=playlist.url)
 
     @commands.cooldown(1, 60, commands.BucketType.member)
-    @playlist.command(
+    @_playlist.command(
         name="update", usage="<playlist_name_OR_id> [args]", cooldown_after_parsing=True
     )
     async def _playlist_update(
@@ -1661,7 +1661,7 @@ class PlayListCommands(MixinMeta):
                 )
 
     @checks.is_owner()
-    @playlist.command(name="upload", usage="[args]")
+    @_playlist.command(name="upload", usage="[args]")
     async def _playlist_upload(self, ctx: commands.Context, *, scope_data: ScopeParser = None):
         """Uploads a playlist file as a playlist for the bot.
 
@@ -1787,7 +1787,7 @@ class PlayListCommands(MixinMeta):
         )
 
     @commands.cooldown(1, 60, commands.BucketType.member)
-    @playlist.command(
+    @_playlist.command(
         name="rename", usage="<playlist_name_OR_id> <new_name> [args]", cooldown_after_parsing=True
     )
     async def _playlist_rename(
