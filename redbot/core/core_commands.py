@@ -563,7 +563,7 @@ class Core(commands.Cog, CoreLogic):
         msg = ""
         responses = []
         for i, server in enumerate(guilds, 1):
-            msg += "{}: {}\n".format(i, server.name)
+            msg += "{}: {} (`{}`)\n".format(i, server.name, server.id)
             responses.append(str(i))
 
         for page in pagify(msg, ["\n"]):
