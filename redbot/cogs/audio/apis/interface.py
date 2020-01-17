@@ -639,7 +639,7 @@ class AudioAPIInterface:
         query: audio_dataclasses.Query
             The Query object for the query in question.
         forced:bool
-            Whether or not to skip cache and call API first..
+            Whether or not to skip cache and call API first.
         lazy:bool
             If set to True, it will not call the api if a track is not found.
         should_query_global:bool

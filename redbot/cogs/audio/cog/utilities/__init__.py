@@ -94,7 +94,11 @@ class Utilities(
         if not await self._localtracks_check(ctx):
             return
 
-        return audio_data.subfolders_in_tree() if search_subfolders else audio_data.subfolders()
+        return (
+            await audio_data.subfolders_in_tree()
+            if search_subfolders
+            else await audio_data.subfolders()
+        )
 
     async def _folder_list(self, ctx: commands.Context, query: Query) -> Optional[List[Query]]:
         if not await self._localtracks_check(ctx):
@@ -103,9 +107,9 @@ class Utilities(
         if not query.track.exists():
             return
         return (
-            query.track.tracks_in_tree()
+            await query.track.tracks_in_tree()
             if query.search_subfolders
-            else query.track.tracks_in_folder()
+            else await query.track.tracks_in_folder()
         )
 
     async def _folder_tracks(
@@ -142,9 +146,9 @@ class Utilities(
             return
 
         return (
-            query.track.tracks_in_tree()
+            await query.track.tracks_in_tree()
             if query.search_subfolders
-            else query.track.tracks_in_folder()
+            else await query.track.tracks_in_folder()
         )
 
     async def _localtracks_check(self, ctx: commands.Context) -> bool:

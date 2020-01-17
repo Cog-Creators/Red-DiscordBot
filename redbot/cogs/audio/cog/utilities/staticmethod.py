@@ -305,11 +305,11 @@ class StaticMethodUtilities(MixinMeta):
     def humanize_scope(scope, ctx=None, the=None):
 
         if scope == PlaylistScope.GLOBAL.value:
-            return (_("the ") if the else "") + _("Global")
+            return _("the Global") if the else _("Global")
         elif scope == PlaylistScope.GUILD.value:
-            return ctx.name if ctx else (_("the ") if the else "") + _("Server")
+            return ctx.name if ctx else _("the Server") if the else _("Server")
         elif scope == PlaylistScope.USER.value:
-            return str(ctx) if ctx else (_("the ") if the else "") + _("User")
+            return str(ctx) if ctx else _("the User") if the else _("User")
 
     @staticmethod
     async def is_requester(ctx: commands.Context, member: discord.Member):
