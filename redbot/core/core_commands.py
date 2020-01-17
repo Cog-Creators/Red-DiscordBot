@@ -257,10 +257,9 @@ class CoreLogic:
             The current (or new) list of prefixes.
         """
         if prefixes:
-            prefixes = sorted(prefixes, reverse=True)
-            await self.bot._config.prefix.set(prefixes)
+            await self.bot._prefix_cache.set_prefixes(guild=None, prefixes=prefixes)
             return prefixes
-        return await self.bot._config.prefix()
+        return await self.bot._prefix_cache.get_prefixes(guild=None)
 
     @classmethod
     async def _version_info(cls) -> Dict[str, str]:
@@ -847,15 +846,13 @@ class Core(commands.Cog, CoreLogic):
                 mod_role_ids = await ctx.bot._config.guild(ctx.guild).mod_role()
                 mod_role_names = [r.name for r in guild.roles if r.id in mod_role_ids]
                 mod_roles_str = humanize_list(mod_role_names) if mod_role_names else "Not Set."
-                prefixes = await ctx.bot._config.guild(ctx.guild).prefix()
                 guild_settings = _("Admin roles: {admin}\nMod roles: {mod}\n").format(
                     admin=admin_roles_str, mod=mod_roles_str
                 )
             else:
                 guild_settings = ""
-                prefixes = None  # This is correct. The below can happen in a guild.
-            if not prefixes:
-                prefixes = await ctx.bot._config.prefix()
+
+            prefixes = await ctx.bot._prefix_cache.get_prefixes(ctx.guild)
             locale = await ctx.bot._config.locale()
 
             prefix_string = " ".join(prefixes)
@@ -1182,11 +1179,11 @@ class Core(commands.Cog, CoreLogic):
     async def serverprefix(self, ctx: commands.Context, *prefixes: str):
         """Sets Red's server prefix(es)"""
         if not prefixes:
-            await ctx.bot._config.guild(ctx.guild).prefix.set([])
+            await ctx.bot._prefix_cache.set_prefixes(guild=ctx.guild, prefixes=[])
             await ctx.send(_("Guild prefixes have been reset."))
             return
         prefixes = sorted(prefixes, reverse=True)
-        await ctx.bot._config.guild(ctx.guild).prefix.set(prefixes)
+        await ctx.bot._prefix_cache.set_prefixes(guild=ctx.guild, prefixes=prefixes)
         await ctx.send(_("Prefix set."))
 
     @_set.command()
