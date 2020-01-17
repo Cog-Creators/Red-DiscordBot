@@ -209,7 +209,7 @@ class TwitchStream(Stream):
             self.id = await self.fetch_id()
 
         url = TWITCH_STREAMS_ENDPOINT + self.id
-        header = {"Client-ID": str(self._token), "Accept": "application/vnd.twitchtv.v5+json"}
+        header = {"Client-ID": str(self._token)}
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=header) as r:

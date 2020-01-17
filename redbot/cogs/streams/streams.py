@@ -678,7 +678,10 @@ class Streams(commands.Cog):
                         raw_stream["_messages_cache"].append(msg)
             token = await self.bot.get_shared_api_tokens(_class.token_name)
             if token:
-                raw_stream["token"] = token
+                if _class.__name__ == "TwitchStream":
+                    raw_stream["token"] = token.get("client_id")
+                else:
+                    raw_stream["token"] = token
             streams.append(_class(**raw_stream))
 
         return streams
