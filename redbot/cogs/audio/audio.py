@@ -2957,8 +2957,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, embed=embed)
         elif isinstance(tracks, discord.Message):
             return
-        queue_dur = await queue_duration(ctx)
-        lavalink.utils.format_time(queue_dur)
+        queue_dur = await track_remaining_duration(ctx)
         index = query.track_index
         seek = 0
         if query.start_time:
