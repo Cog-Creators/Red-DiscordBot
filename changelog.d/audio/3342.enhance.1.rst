@@ -1,2 +1,0 @@
-Reduce some cooldowns on playlist commands and stop them triggering before command parsing.
-

@@ -1,1 +1,0 @@
-Cache prefixes rather than lookup from config each time

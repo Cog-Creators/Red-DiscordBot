@@ -1,1 +1,0 @@
-Fixed an attribute error that can be raised on play commands for spotify tracks.

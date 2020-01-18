@@ -1,1 +1,0 @@
-Fixed a bug where ``[p]audioset dc`` didn't disconnect the bot.

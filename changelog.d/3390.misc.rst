@@ -1,1 +1,0 @@
-Fixes a typo in redbot/core/commands/requires.py.

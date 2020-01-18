@@ -1,1 +1,0 @@
-Update modlog documentation example to show "action_type" instead of "action".
