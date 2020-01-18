@@ -257,10 +257,9 @@ class CoreLogic:
             The current (or new) list of prefixes.
         """
         if prefixes:
-            prefixes = sorted(prefixes, reverse=True)
-            await self.bot._config.prefix.set(prefixes)
+            await self.bot._prefix_cache.set_prefixes(guild=None, prefixes=prefixes)
             return prefixes
-        return await self.bot._config.prefix()
+        return await self.bot._prefix_cache.get_prefixes(guild=None)
 
     @classmethod
     async def _version_info(cls) -> Dict[str, str]:
@@ -563,7 +562,7 @@ class Core(commands.Cog, CoreLogic):
         msg = ""
         responses = []
         for i, server in enumerate(guilds, 1):
-            msg += "{}: {}\n".format(i, server.name)
+            msg += "{}: {} (`{}`)\n".format(i, server.name, server.id)
             responses.append(str(i))
 
         for page in pagify(msg, ["\n"]):
@@ -847,15 +846,13 @@ class Core(commands.Cog, CoreLogic):
                 mod_role_ids = await ctx.bot._config.guild(ctx.guild).mod_role()
                 mod_role_names = [r.name for r in guild.roles if r.id in mod_role_ids]
                 mod_roles_str = humanize_list(mod_role_names) if mod_role_names else "Not Set."
-                prefixes = await ctx.bot._config.guild(ctx.guild).prefix()
                 guild_settings = _("Admin roles: {admin}\nMod roles: {mod}\n").format(
                     admin=admin_roles_str, mod=mod_roles_str
                 )
             else:
                 guild_settings = ""
-                prefixes = None  # This is correct. The below can happen in a guild.
-            if not prefixes:
-                prefixes = await ctx.bot._config.prefix()
+
+            prefixes = await ctx.bot._prefix_cache.get_prefixes(ctx.guild)
             locale = await ctx.bot._config.locale()
 
             prefix_string = " ".join(prefixes)
@@ -872,6 +869,32 @@ class Core(commands.Cog, CoreLogic):
             )
             for page in pagify(settings):
                 await ctx.send(box(page))
+
+    @checks.is_owner()
+    @_set.command(name="description")
+    async def setdescription(self, ctx: commands.Context, *, description: str = ""):
+        """
+        Sets the bot's description.
+        Use without a description to reset.
+        This is shown in a few locations, including the help menu.
+
+        The default is "Red V3"
+        """
+        if not description:
+            await ctx.bot._config.description.clear()
+            ctx.bot.description = "Red V3"
+            await ctx.send(_("Description reset."))
+        elif len(description) > 250:  # While the limit is 256, we bold it adding characters.
+            await ctx.send(
+                _(
+                    "This description is too long to properly display. "
+                    "Please try again with below 250 characters"
+                )
+            )
+        else:
+            await ctx.bot._config.description.set(description)
+            ctx.bot.description = description
+            await ctx.tick()
 
     @_set.command()
     @checks.guildowner()
@@ -1156,11 +1179,11 @@ class Core(commands.Cog, CoreLogic):
     async def serverprefix(self, ctx: commands.Context, *prefixes: str):
         """Sets Red's server prefix(es)"""
         if not prefixes:
-            await ctx.bot._config.guild(ctx.guild).prefix.set([])
+            await ctx.bot._prefix_cache.set_prefixes(guild=ctx.guild, prefixes=[])
             await ctx.send(_("Guild prefixes have been reset."))
             return
         prefixes = sorted(prefixes, reverse=True)
-        await ctx.bot._config.guild(ctx.guild).prefix.set(prefixes)
+        await ctx.bot._prefix_cache.set_prefixes(guild=ctx.guild, prefixes=prefixes)
         await ctx.send(_("Prefix set."))
 
     @_set.command()

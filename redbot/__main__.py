@@ -16,6 +16,7 @@ import sys
 from argparse import Namespace
 from copy import deepcopy
 from pathlib import Path
+from typing import NoReturn
 
 import discord
 
@@ -287,7 +288,18 @@ def handle_edit(cli_flags: Namespace):
         sys.exit(0)
 
 
-async def run_bot(red: Red, cli_flags: Namespace):
+async def run_bot(red: Red, cli_flags: Namespace) -> None:
+    """
+    This runs the bot.
+    
+    Any shutdown which is a result of not being able to log in needs to raise
+    a SystemExit exception.
+
+    If the bot starts normally, the bot should be left to handle the exit case.
+    It will raise SystemExit in a task, which will reach the event loop and
+    interrupt running forever, then trigger our cleanup process, and does not
+    need additional handling in this function.
+    """
 
     driver_cls = drivers.get_driver_class()
 
@@ -341,6 +353,10 @@ async def run_bot(red: Red, cli_flags: Namespace):
             if confirm("\nDo you want to reset the token?"):
                 await red._config.token.set("")
                 print("Token has been reset.")
+                sys.exit(0)
+        sys.exit(1)
+
+    return None
 
 
 def handle_early_exit_flags(cli_flags: Namespace):
@@ -474,14 +490,13 @@ def main():
         # Allows transports to close properly, and prevent new ones from being opened.
         # Transports may still not be closed correcly on windows, see below
         loop.run_until_complete(loop.shutdown_asyncgens())
-        if os.name == "nt":
-            # *we* aren't cleaning up more here, but it prevents
-            # a runtime error at the event loop on windows
-            # with resources which require longer to clean up.
-            # With other event loops, a failure to cleanup prior to here
-            # results in a resource warning instead and does not break us.
-            log.info("Please wait, cleaning up a bit more")
-            loop.run_until_complete(asyncio.sleep(1))
+        # *we* aren't cleaning up more here, but it prevents
+        # a runtime error at the event loop on windows
+        # with resources which require longer to clean up.
+        # With other event loops, a failure to cleanup prior to here
+        # results in a resource warning instead
+        log.info("Please wait, cleaning up a bit more")
+        loop.run_until_complete(asyncio.sleep(2))
         loop.stop()
         loop.close()
         exit_code = red._shutdown_mode if red is not None else 1

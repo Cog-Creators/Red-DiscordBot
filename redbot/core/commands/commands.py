@@ -4,6 +4,7 @@ This module contains extended classes and functions which are intended to
 replace those from the `discord.ext.commands` module.
 """
 import inspect
+import re
 import weakref
 from typing import Awaitable, Callable, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 
@@ -56,6 +57,49 @@ class CogCommandMixin:
             bot_perms=getattr(decorated, "__requires_bot_perms__", {}),
             checks=getattr(decorated, "__requires_checks__", []),
         )
+
+    def format_help_for_context(self, ctx: "Context") -> str:
+        """
+        This formats the help string based on values in context
+
+        The steps are (currently, roughly) the following:
+
+            - get the localized help
+            - substitute ``[p]`` with ``ctx.clean_prefix``
+            - substitute ``[botname]`` with ``ctx.me.display_name``
+
+        More steps may be added at a later time.
+
+        Cog creators may override this in their own command classes
+        as long as the method signature stays the same.
+
+        Parameters
+        ----------
+        ctx: Context
+
+        Returns
+        -------
+        str
+            Localized help with some formatting
+        """
+
+        help_str = self.help
+        if not help_str:
+            # Short circuit out on an empty help string
+            return help_str
+
+        formatting_pattern = re.compile(r"\[p\]|\[botname\]")
+
+        def replacement(m: re.Match) -> str:
+            s = m.group(0)
+            if s == "[p]":
+                return ctx.clean_prefix
+            if s == "[botname]":
+                return ctx.me.display_name
+            # We shouldnt get here:
+            return s
+
+        return formatting_pattern.sub(replacement, help_str)
 
     def allow_for(self, model_id: Union[int, str], guild_id: int) -> None:
         """Actively allow this command for the given model.

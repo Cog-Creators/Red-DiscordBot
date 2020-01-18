@@ -746,15 +746,17 @@ class MusicCache:
                 (val, update) = await self.database.fetch_one("lavalink", "data", {"query": query})
             if update:
                 val = None
-            if val and not isinstance(val, str):
+            if val and isinstance(val, dict):
                 log.debug(f"Querying Local Database for {query}")
                 task = ("update", ("lavalink", {"query": query}))
                 self.append_task(ctx, *task)
             else:
                 val = None
-        if val and not forced:
+        if val and not forced and isinstance(val, dict):
             data = val
             data["query"] = query
+            if data.get("loadType") == "V2_COMPACT":
+                data["loadType"] = "V2_COMPAT"
             results = LoadResult(data)
             called_api = False
             if results.has_error:
@@ -780,21 +782,25 @@ class MusicCache:
             ):
                 with contextlib.suppress(SQLError):
                     time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
-                    task = (
-                        "insert",
-                        (
-                            "lavalink",
-                            [
-                                {
-                                    "query": query,
-                                    "data": json.dumps(results._raw),
-                                    "last_updated": time_now,
-                                    "last_fetched": time_now,
-                                }
-                            ],
-                        ),
-                    )
-                    self.append_task(ctx, *task)
+                    data = json.dumps(results._raw)
+                    if all(
+                        k in data for k in ["loadType", "playlistInfo", "isSeekable", "isStream"]
+                    ):
+                        task = (
+                            "insert",
+                            (
+                                "lavalink",
+                                [
+                                    {
+                                        "query": query,
+                                        "data": data,
+                                        "last_updated": time_now,
+                                        "last_fetched": time_now,
+                                    }
+                                ],
+                            ),
+                        )
+                        self.append_task(ctx, *task)
         return results, called_api
 
     async def run_tasks(self, ctx: Optional[commands.Context] = None, _id=None):
@@ -855,10 +861,12 @@ class MusicCache:
             query_data["maxage"] = maxage_int
 
             vals = await self.database.fetch_all("lavalink", "data", query_data)
-            recently_played = [r.tracks for r in vals if r]
+            recently_played = [r.tracks for r in vals if r if isinstance(tracks, dict)]
 
             if recently_played:
                 track = random.choice(recently_played)
+                if track.get("loadType") == "V2_COMPACT":
+                    track["loadType"] = "V2_COMPAT"
                 results = LoadResult(track)
                 tracks = list(results.tracks)
         except Exception:

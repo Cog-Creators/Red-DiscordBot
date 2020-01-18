@@ -10,7 +10,19 @@ from datetime import datetime
 from enum import IntEnum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Optional, Union, List, Dict, NoReturn
+from typing import (
+    Optional,
+    Union,
+    List,
+    Dict,
+    NoReturn,
+    Set,
+    Coroutine,
+    TypeVar,
+    Callable,
+    Awaitable,
+    Any,
+)
 from types import MappingProxyType
 
 import discord
@@ -24,6 +36,8 @@ from .dev_commands import Dev
 from .events import init_events
 from .global_checks import init_global_checks
 
+from .settings_caches import PrefixManager
+
 from .rpc import RPCMixin
 from .utils import common_filters
 
@@ -35,6 +49,9 @@ log = logging.getLogger("redbot")
 __all__ = ["RedBase", "Red", "ExitCodes"]
 
 NotMessage = namedtuple("NotMessage", "guild")
+
+PreInvokeCoroutine = Callable[[commands.Context], Awaitable[Any]]
+T_BIC = TypeVar("T_BIC", bound=PreInvokeCoroutine)
 
 
 def _is_submodule(parent, child):
@@ -76,6 +93,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             help__verify_checks=True,
             help__verify_exists=False,
             help__tagline="",
+            description="Red V3",
             invite_public=False,
             invite_perm=0,
             disabled_commands=[],
@@ -108,23 +126,13 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         self._config.init_custom(SHARED_API_TOKENS, 2)
         self._config.register_custom(SHARED_API_TOKENS)
+        self._prefix_cache = PrefixManager(self._config, cli_flags)
 
-        async def prefix_manager(bot, message):
-            if not cli_flags.prefix:
-                global_prefix = await bot._config.prefix()
-            else:
-                global_prefix = cli_flags.prefix
-            if message.guild is None:
-                return global_prefix
-            server_prefix = await bot._config.guild(message.guild).prefix()
+        async def prefix_manager(bot, message) -> List[str]:
+            prefixes = await self._prefix_cache.get_prefixes(message.guild)
             if cli_flags.mentionable:
-                return (
-                    when_mentioned_or(*server_prefix)(bot, message)
-                    if server_prefix
-                    else when_mentioned_or(*global_prefix)(bot, message)
-                )
-            else:
-                return server_prefix if server_prefix else global_prefix
+                return when_mentioned_or(*prefixes)(bot, message)
+            return prefixes
 
         if "command_prefix" not in kwargs:
             kwargs["command_prefix"] = prefix_manager
@@ -149,6 +157,64 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         self._permissions_hooks: List[commands.CheckPredicate] = []
         self._red_ready = asyncio.Event()
+        self._red_before_invoke_objs: Set[PreInvokeCoroutine] = set()
+
+    @property
+    def _before_invoke(self):  # DEP-WARN
+        return self._red_before_invoke_method
+
+    @_before_invoke.setter
+    def _before_invoke(self, val):  # DEP-WARN
+        """Prevent this from being overwritten in super().__init__"""
+        pass
+
+    async def _red_before_invoke_method(self, ctx):
+        await self.wait_until_red_ready()
+        return_exceptions = isinstance(ctx.command, commands.commands._AlwaysAvailableCommand)
+        if self._red_before_invoke_objs:
+            await asyncio.gather(
+                *(coro(ctx) for coro in self._red_before_invoke_objs),
+                return_exceptions=return_exceptions,
+            )
+
+    def remove_before_invoke_hook(self, coro: PreInvokeCoroutine) -> None:
+        """
+        Functional method to remove a `before_invoke` hook.
+        """
+        self._red_before_invoke_objs.discard(coro)
+
+    def before_invoke(self, coro: T_BIC) -> T_BIC:
+        """
+        Overridden decorator method for Red's ``before_invoke`` behavior.
+        
+        This can safely be used purely functionally as well.
+        
+        3rd party cogs should remove any hooks which they register at unload
+        using `remove_before_invoke_hook`
+
+        Below behavior shared with discord.py:
+
+        .. note::
+            The ``before_invoke`` hooks are
+            only called if all checks and argument parsing procedures pass
+            without error. If any check or argument parsing procedures fail
+            then the hooks are not called.
+        
+        Parameters
+        ----------
+        coro: Callable[[commands.Context], Awaitable[Any]]
+            The coroutine to register as the pre-invoke hook.
+        
+        Raises
+        ------
+        TypeError
+            The coroutine passed is not actually a coroutine.
+        """
+        if not asyncio.iscoroutinefunction(coro):
+            raise TypeError("The pre-invoke hook must be a coroutine.")
+
+        self._red_before_invoke_objs.add(coro)
+        return coro
 
     @property
     def cog_mgr(self) -> NoReturn:
@@ -199,15 +265,15 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         """
         This checks if a user or member is allowed to run things,
         as considered by Red's whitelist and blacklist.
-        
+
         If given a user object, this function will check the global lists
-        
+
         If given a member, this will additionally check guild lists
-        
+
         If omiting a user or member, you must provide a value for ``who_id``
-        
+
         You may also provide a value for ``guild_id`` in this case
-        
+
         If providing a member by guild and member ids,
         you should supply ``role_ids`` as well
 
@@ -215,7 +281,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         ----------
         who : Optional[Union[discord.Member, discord.User]]
             The user or member object to check
-        
+
         Other Parameters
         ----------------
         who_id : Optional[int]
@@ -400,6 +466,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         This should only be run once, prior to connecting to discord.
         """
         await self._maybe_update_config()
+        self.description = await self._config.description()
 
         init_global_checks(self)
         init_events(self, cli_flags)
@@ -547,9 +614,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         bool
             :code:`True` if an embed is requested
         """
-        if isinstance(channel, discord.abc.PrivateChannel) or (
-            command and command == self.get_command("help")
-        ):
+        if isinstance(channel, discord.abc.PrivateChannel):
             user_setting = await self._config.user(user).embeds()
             if user_setting is not None:
                 return user_setting
@@ -557,6 +622,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             guild_setting = await self._config.guild(channel.guild).embeds()
             if guild_setting is not None:
                 return guild_setting
+
         global_setting = await self._config.embeds()
         return global_setting
 
@@ -831,7 +897,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         This should realistically only be used for responding using user provided
         input. (unfortunately, including usernames)
         Manually crafted messages which dont take any user input have no need of this
-        
+
         Returns
         -------
         discord.Message

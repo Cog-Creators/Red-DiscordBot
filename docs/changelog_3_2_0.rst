@@ -1,5 +1,68 @@
 .. 3.2.x Changelogs
 
+Redbot 3.2.3 (2020-01-17)
+=========================
+
+Core Bot Changes
+----------------
+
+- Further improvements have been made to bot startup and shutdown.
+- Prefixes are now cached for performance.
+- Added the means for cog creators to use a global preinvoke hook.
+- The bot now ensures it has at least the bare neccessary permissions before running commands.
+- Deleting instances works as intended again.
+- Sinbad stopped fighting it and embraced the entrypoint madness.
+
+Core Commands
+-------------
+
+- The servers command now also shows the ids.
+
+Admin Cog
+---------
+
+- The selfrole command now has reasonable expectations about hierarchy.
+
+Help Formatter
+--------------
+
+- ``[botname]`` is now replaced with the bot's display name in help text.
+- New features added for cog creators to further customize help behavior.
+  
+  - Check out our command reference for details on new ``format_help_for_context`` method.
+- Embed settings are now consistent.
+
+Downloader
+----------
+
+- Improved a few user facing messages.
+- Added pagination of output on cog update.
+- Added logging of failures.
+
+Docs
+----
+
+There's more detail to the below changes, so go read the docs.
+For some reason, documenting documentation changes is hard.
+
+- Added instructions about git version.
+- Clarified instructions for installation and update.
+- Added more details to the API key reference.
+- Fixed some typos and versioning mistakes.
+
+
+Audio
+-----
+
+Draper did things.
+
+- No seriously, Draper did things.
+- Wait you wanted details? Ok, I guess we can share those.
+- Audio properly disconnects with autodisconnect, even if notify is being used.
+- Symbolic links now work as intended for local tracks.
+- Bump play now shows the correct time till next track.
+- Multiple user facing messages have been made more correct.
+
 Redbot 3.2.2 (2020-01-10)
 =========================
 
@@ -49,7 +112,8 @@ Breaking Changes
     - ``bot.get_mod_role_ids`` (`#2967 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2967>`_)
 - Reserved some command names for internal Red use. These are available programatically as ``redbot.core.commands.RESERVED_COMMAND_NAMES``. (`#2973 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2973>`_)
 - Removed ``bot._counter``, Made a few more attrs private (``cog_mgr``, ``main_dir``). (`#2976 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2976>`_)
-- ``bot.wait_until_ready`` should no longer be used during extension setup. (`#3073 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3073>`_)
+- Extension's ``setup()`` function should no longer assume that we are, or even will be connected to Discord.
+  This also means that cog creators should no longer use ``bot.wait_until_ready()`` inside it. (`#3073 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3073>`_)
 - Removed the mongo driver. (`#3099 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3099>`_)
 
 
