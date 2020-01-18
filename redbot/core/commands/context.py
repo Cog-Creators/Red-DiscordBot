@@ -1,5 +1,6 @@
 import asyncio
 import contextlib
+import re
 from typing import Iterable, List, Union
 import discord
 from discord.ext import commands
@@ -20,6 +21,23 @@ class Context(commands.Context):
     All context passed into commands will be of this type.
 
     This class inherits from `discord.ext.commands.Context`.
+
+    Attributes
+    ----------
+    assume_yes: bool
+        Whether or not interactive checks should
+        be skipped and assumed to be confirmed.
+
+        This is intended for allowing automation of tasks.
+
+        An example of this would be scheduled commands
+        not requiring interaction if the cog developer
+        checks this value prior to confirming something interactively.
+
+        Depending on the potential impact of a command,
+        it may still be appropriate not to use this setting.
+    permission_state: PermState
+        The permission state the current context is in.
     """
 
     def __init__(self, **attrs):
@@ -90,6 +108,7 @@ class Context(commands.Context):
         self, reaction: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]
     ) -> bool:
         """Adds a reaction to to the command message.
+
         Returns
         -------
         bool
@@ -231,7 +250,8 @@ class Context(commands.Context):
     def clean_prefix(self) -> str:
         """str: The command prefix, but a mention prefix is displayed nicer."""
         me = self.me
-        return self.prefix.replace(me.mention, f"@{me.display_name}")
+        pattern = re.compile(rf"<@!?{me.id}>")
+        return pattern.sub(f"@{me.display_name}", self.prefix)
 
     @property
     def me(self) -> discord.abc.User:

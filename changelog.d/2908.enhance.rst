@@ -1,1 +1,0 @@
-ModLog is now much faster at creating cases, especially in large servers.

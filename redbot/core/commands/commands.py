@@ -4,6 +4,7 @@ This module contains extended classes and functions which are intended to
 replace those from the `discord.ext.commands` module.
 """
 import inspect
+import re
 import weakref
 from typing import Awaitable, Callable, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 
@@ -28,7 +29,13 @@ __all__ = [
     "GroupMixin",
     "command",
     "group",
+    "RESERVED_COMMAND_NAMES",
 ]
+
+#: The following names are reserved for various reasons
+RESERVED_COMMAND_NAMES = (
+    "cancel",  # reserved due to use in ``redbot.core.utils.MessagePredicate``
+)
 
 _ = Translator("commands.commands", __file__)
 
@@ -50,6 +57,49 @@ class CogCommandMixin:
             bot_perms=getattr(decorated, "__requires_bot_perms__", {}),
             checks=getattr(decorated, "__requires_checks__", []),
         )
+
+    def format_help_for_context(self, ctx: "Context") -> str:
+        """
+        This formats the help string based on values in context
+
+        The steps are (currently, roughly) the following:
+
+            - get the localized help
+            - substitute ``[p]`` with ``ctx.clean_prefix``
+            - substitute ``[botname]`` with ``ctx.me.display_name``
+
+        More steps may be added at a later time.
+
+        Cog creators may override this in their own command classes
+        as long as the method signature stays the same.
+
+        Parameters
+        ----------
+        ctx: Context
+
+        Returns
+        -------
+        str
+            Localized help with some formatting
+        """
+
+        help_str = self.help
+        if not help_str:
+            # Short circuit out on an empty help string
+            return help_str
+
+        formatting_pattern = re.compile(r"\[p\]|\[botname\]")
+
+        def replacement(m: re.Match) -> str:
+            s = m.group(0)
+            if s == "[p]":
+                return ctx.clean_prefix
+            if s == "[botname]":
+                return ctx.me.display_name
+            # We shouldnt get here:
+            return s
+
+        return formatting_pattern.sub(replacement, help_str)
 
     def allow_for(self, model_id: Union[int, str], guild_id: int) -> None:
         """Actively allow this command for the given model.
@@ -155,6 +205,17 @@ class Command(CogCommandMixin, commands.Command):
         super().__init__(*args, **kwargs)
         self._help_override = kwargs.pop("help_override", None)
         self.translator = kwargs.pop("i18n", None)
+        if self.parent is None:
+            for name in (self.name, *self.aliases):
+                if name in RESERVED_COMMAND_NAMES:
+                    raise RuntimeError(
+                        f"The name `{name}` cannot be set as a command name. It is reserved for internal use."
+                    )
+        if len(self.qualified_name) > 60:
+            raise RuntimeError(
+                f"This command ({self.qualified_name}) has an excessively long qualified name, "
+                "and will not be added to the bot to prevent breaking tools and menus. (limit 60)"
+            )
 
     def _ensure_assignment_on_copy(self, other):
         super()._ensure_assignment_on_copy(other)
@@ -574,6 +635,14 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
     """Mixin class for a cog, intended for use with discord.py's cog class"""
 
     @property
+    def all_commands(self) -> Dict[str, Command]:
+        """
+        This does not have identical behavior to 
+        Group.all_commands but should return what you expect
+        """
+        return {cmd.name: cmd for cmd in self.__cog_commands__}
+
+    @property
     def help(self):
         doc = self.__doc__
         translator = getattr(self, "__translator__", lambda s: s)
@@ -651,12 +720,12 @@ def command(name=None, cls=Command, **attrs):
     return commands.command(name, cls, **attrs)
 
 
-def group(name=None, **attrs):
+def group(name=None, cls=Group, **attrs):
     """A decorator which transforms an async function into a `Group`.
 
     Same interface as `discord.ext.commands.group`.
     """
-    return command(name, cls=Group, **attrs)
+    return command(name, cls, **attrs)
 
 
 __command_disablers = weakref.WeakValueDictionary()
@@ -679,3 +748,29 @@ def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitabl
 
         __command_disablers[guild] = disabler
         return disabler
+
+
+# This is intentionally left out of `__all__` as it is not intended for general use
+class _AlwaysAvailableCommand(Command):
+    """
+    This should be used only for informational commands
+    which should not be disabled or removed
+
+    These commands cannot belong to a cog.
+
+    These commands do not respect most forms of checks, and
+    should only be used with that in mind.
+
+    This particular class is not supported for 3rd party use
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.cog is not None:
+            raise TypeError("This command may not be added to a cog")
+
+    async def can_run(self, ctx, *args, **kwargs) -> bool:
+        return not ctx.author.bot
+
+    async def _verify_checks(self, ctx) -> bool:
+        return not ctx.author.bot

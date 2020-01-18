@@ -4,15 +4,15 @@ import json
 import logging
 import os
 import sys
+import re
 from copy import deepcopy
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, Union
 
 import appdirs
 import click
 
-import redbot.logging
-from redbot.core.utils import safe_delete, create_backup as red_create_backup
+from redbot.core.utils._internal_utils import safe_delete, create_backup as red_create_backup
 from redbot.core import config, data_manager, drivers
 from redbot.core.drivers import BackendType, IdentifierData
 
@@ -53,45 +53,41 @@ def save_config(name, data, remove=False):
     if remove and name in _config:
         _config.pop(name)
     else:
-        if name in _config:
-            print(
-                "WARNING: An instance already exists with this name. "
-                "Continuing will overwrite the existing instance config."
-            )
-            if not click.confirm(
-                "Are you absolutely certain you want to continue?", default=False
-            ):
-                print("Not continuing")
-                sys.exit(0)
         _config[name] = data
 
     with config_file.open("w", encoding="utf-8") as fs:
         json.dump(_config, fs, indent=4)
 
 
-def get_data_dir():
-    default_data_dir = Path(appdir.user_data_dir)
+def get_data_dir(instance_name: str):
+    data_path = Path(appdir.user_data_dir) / "data" / instance_name
 
+    print()
     print(
-        "Hello! Before we begin the full configuration process we need to"
-        " gather some initial information about where you'd like us"
-        " to store your bot's data. We've attempted to figure out a"
-        " sane default data location which is printed below. If you don't"
-        " want to change this default please press [ENTER], otherwise"
-        " input your desired data location."
+        "We've attempted to figure out a sane default data location which is printed below."
+        " If you don't want to change this default please press [ENTER],"
+        " otherwise input your desired data location."
     )
     print()
-    print("Default: {}".format(default_data_dir))
+    print("Default: {}".format(data_path))
 
-    new_path = input("> ")
+    data_path_input = input("> ")
 
-    if new_path != "":
-        new_path = Path(new_path)
-        default_data_dir = new_path
+    if data_path_input != "":
+        data_path = Path(data_path_input)
 
-    if not default_data_dir.exists():
+    try:
+        exists = data_path.exists()
+    except OSError:
+        print(
+            "We were unable to check your chosen directory."
+            " Provided path may contain an invalid character."
+        )
+        sys.exit(1)
+
+    if not exists:
         try:
-            default_data_dir.mkdir(parents=True, exist_ok=True)
+            data_path.mkdir(parents=True, exist_ok=True)
         except OSError:
             print(
                 "We were unable to create your chosen directory."
@@ -100,22 +96,24 @@ def get_data_dir():
             )
             sys.exit(1)
 
-    print("You have chosen {} to be your data directory.".format(default_data_dir))
+    print("You have chosen {} to be your data directory.".format(data_path))
     if not click.confirm("Please confirm", default=True):
         print("Please start the process over.")
         sys.exit(0)
-    return default_data_dir
+    return str(data_path.resolve())
 
 
 def get_storage_type():
-    storage_dict = {1: "JSON", 2: "MongoDB", 3: "PostgreSQL"}
+    storage_dict = {1: "JSON", 2: "PostgreSQL"}
     storage = None
     while storage is None:
         print()
         print("Please choose your storage backend (if you're unsure, choose 1).")
         print("1. JSON (file storage, requires no database).")
-        print("2. MongoDB")
-        print("3. PostgreSQL")
+        print(
+            "2. PostgreSQL (Requires a database server)"
+            "\n(Warning: You cannot convert postgres instances to other backends yet)"
+        )
         storage = input("> ")
         try:
             storage = int(storage)
@@ -127,16 +125,21 @@ def get_storage_type():
     return storage
 
 
-def get_name():
+def get_name() -> str:
     name = ""
     while len(name) == 0:
-        print()
         print(
-            "Please enter a name for your instance, this name cannot include spaces"
-            " and it will be used to run your bot from here on out."
+            "Please enter a name for your instance,"
+            " it will be used to run your bot from here on out.\n"
+            "This name is case-sensitive and can only include characters"
+            " A-z, numbers, underscores, and hyphens."
         )
         name = input("> ")
-        if " " in name:
+        if re.fullmatch(r"[a-zA-Z0-9_\-]*", name) is None:
+            print(
+                "ERROR: Instance name can only include"
+                " characters A-z, numbers, underscores, and hyphens!"
+            )
             name = ""
     return name
 
@@ -147,20 +150,32 @@ def basic_setup():
     :return:
     """
 
-    default_data_dir = get_data_dir()
+    print(
+        "Hello! Before we begin, we need to gather some initial information for the new instance."
+    )
+    name = get_name()
+
+    default_data_dir = get_data_dir(name)
 
     default_dirs = deepcopy(data_manager.basic_config_default)
-    default_dirs["DATA_PATH"] = str(default_data_dir.resolve())
+    default_dirs["DATA_PATH"] = default_data_dir
 
     storage = get_storage_type()
 
-    storage_dict = {1: BackendType.JSON, 2: BackendType.MONGO, 3: BackendType.POSTGRES}
+    storage_dict = {1: BackendType.JSON, 2: BackendType.POSTGRES}
     storage_type: BackendType = storage_dict.get(storage, BackendType.JSON)
     default_dirs["STORAGE_TYPE"] = storage_type.value
     driver_cls = drivers.get_driver_class(storage_type)
     default_dirs["STORAGE_DETAILS"] = driver_cls.get_config_details()
 
-    name = get_name()
+    if name in instance_data:
+        print(
+            "WARNING: An instance already exists with this name. "
+            "Continuing will overwrite the existing instance config."
+        )
+        if not click.confirm("Are you absolutely certain you want to continue?", default=False):
+            print("Not continuing")
+            sys.exit(0)
     save_config(name, default_dirs)
 
     print()
@@ -177,8 +192,6 @@ def get_current_backend(instance) -> BackendType:
 def get_target_backend(backend) -> BackendType:
     if backend == "json":
         return BackendType.JSON
-    elif backend == "mongo":
-        return BackendType.MONGO
     elif backend == "postgres":
         return BackendType.POSTGRES
 
@@ -186,7 +199,7 @@ def get_target_backend(backend) -> BackendType:
 async def do_migration(
     current_backend: BackendType, target_backend: BackendType
 ) -> Dict[str, Any]:
-    cur_driver_cls = drivers.get_driver_class(current_backend)
+    cur_driver_cls = drivers._get_driver_class_include_old(current_backend)
     new_driver_cls = drivers.get_driver_class(target_backend)
     cur_storage_details = data_manager.storage_details()
     new_storage_details = new_driver_cls.get_config_details()
@@ -202,96 +215,13 @@ async def do_migration(
     return new_storage_details
 
 
-async def mongov1_to_json() -> Dict[str, Any]:
-    await drivers.MongoDriver.initialize(**data_manager.storage_details())
-    m = drivers.MongoDriver("Core", "0")
-    db = m.db
-    collection_names = await db.list_collection_names()
-    for collection_name in collection_names:
-        if "." in collection_name:
-            # Fix for one of Zeph's problems
-            continue
-        # Every cog name has its own collection
-        collection = db[collection_name]
-        async for document in collection.find():
-            # Every cog has its own document.
-            # This means if two cogs have the same name but different identifiers, they will
-            # be two separate documents in the same collection
-            cog_id = document.pop("_id")
-            if not isinstance(cog_id, str):
-                # Another garbage data check
-                continue
-            elif not str(cog_id).isdigit():
-                continue
-            driver = drivers.JsonDriver(collection_name, cog_id)
-            for category, value in document.items():
-                ident_data = IdentifierData(
-                    str(collection_name), str(cog_id), category, tuple(), tuple(), 0
-                )
-                await driver.set(ident_data, value=value)
-
-    conversion_log.info("Cog conversion complete.")
-    await drivers.MongoDriver.teardown()
-
-    return {}
-
-
-async def edit_instance():
-    _instance_list = load_existing_config()
-    if not _instance_list:
-        print("No instances have been set up!")
-        return
-
-    print(
-        "You have chosen to edit an instance. The following "
-        "is a list of instances that currently exist:\n"
-    )
-    for instance in _instance_list.keys():
-        print("{}\n".format(instance))
-    print("Please select one of the above by entering its name")
-    selected = input("> ")
-
-    if selected not in _instance_list.keys():
-        print("That isn't a valid instance!")
-        return
-    _instance_data = _instance_list[selected]
-    default_dirs = deepcopy(data_manager.basic_config_default)
-
-    current_data_dir = Path(_instance_data["DATA_PATH"])
-    print("You have selected '{}' as the instance to modify.".format(selected))
-    if not click.confirm("Please confirm", default=True):
-        print("Ok, we will not continue then.")
-        return
-
-    print("Ok, we will continue on.")
-    print()
-    if click.confirm("Would you like to change the instance name?", default=False):
-        name = get_name()
-    else:
-        name = selected
-
-    if click.confirm("Would you like to change the data location?", default=False):
-        default_data_dir = get_data_dir()
-        default_dirs["DATA_PATH"] = str(default_data_dir.resolve())
-    else:
-        default_dirs["DATA_PATH"] = str(current_data_dir.resolve())
-
-    if name != selected:
-        save_config(selected, {}, remove=True)
-    save_config(name, default_dirs)
-
-    print("Your basic configuration has been edited")
-
-
-async def create_backup(instance: str) -> None:
+async def create_backup(instance: str, destination_folder: Path = Path.home()) -> None:
     data_manager.load_basic_configuration(instance)
     backend_type = get_current_backend(instance)
-    if backend_type == BackendType.MONGOV1:
-        await mongov1_to_json()
-    elif backend_type != BackendType.JSON:
+    if backend_type != BackendType.JSON:
         await do_migration(backend_type, BackendType.JSON)
     print("Backing up the instance's data...")
-    backup_fpath = await red_create_backup()
+    backup_fpath = await red_create_backup(destination_folder)
     if backup_fpath is not None:
         print(f"A backup of {instance} has been made. It is at {backup_fpath}")
     else:
@@ -301,11 +231,17 @@ async def create_backup(instance: str) -> None:
 async def remove_instance(
     instance,
     interactive: bool = False,
+    delete_data: Optional[bool] = None,
     _create_backup: Optional[bool] = None,
     drop_db: Optional[bool] = None,
     remove_datapath: Optional[bool] = None,
 ):
     data_manager.load_basic_configuration(instance)
+
+    if interactive is True and delete_data is None:
+        delete_data = click.confirm(
+            "Would you like to delete this instance's data?", default=False
+        )
 
     if interactive is True and _create_backup is None:
         _create_backup = click.confirm(
@@ -316,23 +252,24 @@ async def remove_instance(
         await create_backup(instance)
 
     backend = get_current_backend(instance)
-    if backend == BackendType.MONGOV1:
-        driver_cls = drivers.MongoDriver
-    else:
-        driver_cls = drivers.get_driver_class(backend)
+    driver_cls = drivers.get_driver_class(backend)
+    await driver_cls.initialize(**data_manager.storage_details())
+    try:
+        if delete_data is True:
+            await driver_cls.delete_all_data(interactive=interactive, drop_db=drop_db)
 
-    await driver_cls.delete_all_data(interactive=interactive, drop_db=drop_db)
+        if interactive is True and remove_datapath is None:
+            remove_datapath = click.confirm(
+                "Would you like to delete the instance's entire datapath?", default=False
+            )
 
-    if interactive is True and remove_datapath is None:
-        remove_datapath = click.confirm(
-            "Would you like to delete the instance's entire datapath?", default=False
-        )
+        if remove_datapath is True:
+            data_path = data_manager.core_data_path().parent
+            safe_delete(data_path)
 
-    if remove_datapath is True:
-        data_path = data_manager.core_data_path().parent
-        safe_delete(data_path)
-
-    save_config(instance, {}, remove=True)
+        save_config(instance, {}, remove=True)
+    finally:
+        await driver_cls.teardown()
     print("The instance {} has been removed\n".format(instance))
 
 
@@ -361,8 +298,17 @@ async def remove_instance_interaction():
 @click.option("--debug", type=bool)
 @click.pass_context
 def cli(ctx, debug):
+    """Create a new instance."""
     level = logging.DEBUG if debug else logging.INFO
-    redbot.logging.init_logging(level=level, location=Path.cwd() / "red_setup_logs")
+    base_logger = logging.getLogger("red")
+    base_logger.setLevel(level)
+    formatter = logging.Formatter(
+        "[{asctime}] [{levelname}] {name}: {message}", datefmt="%Y-%m-%d %H:%M:%S", style="{"
+    )
+    stdout_handler = logging.StreamHandler(sys.stdout)
+    stdout_handler.setFormatter(formatter)
+    base_logger.addHandler(stdout_handler)
+
     if ctx.invoked_subcommand is None:
         basic_setup()
 
@@ -375,6 +321,16 @@ def cli(ctx, debug):
     is_flag=True,
     default=True,
     help="Don't ask for user input during the process.",
+)
+@click.option(
+    "--delete-data/--no-delete-data",
+    "delete_data",
+    is_flag=True,
+    default=None,
+    help=(
+        "Delete this instance's data. "
+        "If these options and --no-prompt are omitted, you will be asked about this."
+    ),
 )
 @click.option(
     "--backup/--no-backup",
@@ -392,7 +348,8 @@ def cli(ctx, debug):
     default=None,
     help=(
         "Drop the entire database constaining this instance's data. Has no effect on JSON "
-        "instances. If these options and --no-prompt are omitted, you will be asked about this."
+        "instances, or if --no-delete-data is set. If these options and --no-prompt are omitted,"
+        "you will be asked about this."
     ),
 )
 @click.option(
@@ -401,26 +358,32 @@ def cli(ctx, debug):
     default=None,
     help=(
         "Remove this entire instance's datapath. If these options and --no-prompt are omitted, "
-        "you will be asked about this."
+        "you will be asked about this. NOTE: --remove-datapath will override --no-delete-data "
+        "for JSON instances."
     ),
 )
 def delete(
     instance: str,
     interactive: bool,
+    delete_data: Optional[bool],
     _create_backup: Optional[bool],
     drop_db: Optional[bool],
     remove_datapath: Optional[bool],
 ):
+    """Removes an instance."""
     loop = asyncio.get_event_loop()
     loop.run_until_complete(
-        remove_instance(instance, interactive, _create_backup, drop_db, remove_datapath)
+        remove_instance(
+            instance, interactive, delete_data, _create_backup, drop_db, remove_datapath
+        )
     )
 
 
 @cli.command()
 @click.argument("instance", type=click.Choice(instance_list))
-@click.argument("backend", type=click.Choice(["json", "mongo", "postgres"]))
+@click.argument("backend", type=click.Choice(["json"]))  # TODO: GH-3115
 def convert(instance, backend):
+    """Convert data backend of an instance."""
     current_backend = get_current_backend(instance)
     target = get_target_backend(backend)
     data_manager.load_basic_configuration(instance)
@@ -431,12 +394,9 @@ def convert(instance, backend):
     loop = asyncio.get_event_loop()
 
     if current_backend == BackendType.MONGOV1:
-        if target == BackendType.JSON:
-            new_storage_details = loop.run_until_complete(mongov1_to_json())
-        else:
-            raise RuntimeError(
-                "Please see conversion docs for updating to the latest mongo version."
-            )
+        raise RuntimeError("Please see the 3.2 release notes for upgrading a bot using mongo.")
+    elif current_backend == BackendType.POSTGRES:  # TODO: GH-3115
+        raise RuntimeError("Converting away from postgres isn't currently supported")
     else:
         new_storage_details = loop.run_until_complete(do_migration(current_backend, target))
 
@@ -451,10 +411,30 @@ def convert(instance, backend):
         )
 
 
-if __name__ == "__main__":
+@cli.command()
+@click.argument("instance", type=click.Choice(instance_list))
+@click.argument(
+    "destination_folder",
+    type=click.Path(
+        exists=False, dir_okay=True, file_okay=False, resolve_path=True, writable=True
+    ),
+    default=Path.home(),
+)
+def backup(instance: str, destination_folder: Union[str, Path]) -> None:
+    """Backup instance's data."""
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(create_backup(instance, Path(destination_folder)))
+
+
+def run_cli():
+    # Setuptools entry point script stuff...
     try:
         cli()  # pylint: disable=no-value-for-parameter  # click
     except KeyboardInterrupt:
         print("Exiting...")
     else:
         print("Exiting...")
+
+
+if __name__ == "__main__":
+    run_cli()

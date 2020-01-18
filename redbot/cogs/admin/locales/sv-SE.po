@@ -1,19 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-05 22:33+0200\n"
-"PO-Revision-Date: 2019-07-06 16:14\n"
-"Last-Translator: Robert Jansen (Kowlin)\n"
+"POT-Creation-Date: 2019-07-14 04:24+0000\n"
+"PO-Revision-Date: 2020-01-07 21:48\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.0\n"
+"Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: sv-SE\n"
-"X-Crowdin-File: /cogs/admin/locales/messages.pot\n"
+"X-Crowdin-File: /admin/locales/messages.pot\n"
 "Language: sv_SE\n"
 
 #: redbot/cogs/admin/admin.py:17
@@ -22,19 +21,19 @@ msgstr "Jag försökte göra något som Discord nekade mig behörighet till. Dit
 
 #: redbot/cogs/admin/admin.py:22
 msgid "I tried to {verb} {role.name} to {member.display_name} but that role is higher than my highest role in the Discord hierarchy so I was unable to successfully add it. Please give me a higher role and try again."
-msgstr ""
+msgstr "Jag försökte att {verb} {role.name} till {member.display_name} men den rollen är högre än min högsta roll i Discords hierarki så jag kunde inte göra det med lyckat resultat. Var god att ge mig en högre roll och försök igen."
 
 #: redbot/cogs/admin/admin.py:29
 msgid "I tried to {verb} {role.name} to {member.display_name} but that role is higher than your highest role in the Discord hierarchy so I was unable to successfully add it. Please get a higher role and try again."
-msgstr ""
+msgstr "Jag försökte att {verb} {role.name} till {member.display_name} men den rollen är högre än din högsta roll i Discords hierarki så jag kunde inte göra det med lyckat resultat. Var god och införskaffa en högre roll och försök igen."
 
 #: redbot/cogs/admin/admin.py:36
 msgid "I tried to edit {role.name} but that role is higher than your highest role in the Discord hierarchy so I was unable to successfully add it. Please get a higher role and try again."
-msgstr ""
+msgstr "Jag försökte redigera {role.name} men den rollen är högre än din högsta roll i Discords hierarki så jag kunde inte göra det med lyckat resultat. Var god införskaffa en högre roll och försök igen."
 
 #: redbot/cogs/admin/admin.py:43
 msgid "I am already announcing something. If you would like to make a different announcement please use `{prefix}announce cancel` first."
-msgstr ""
+msgstr "Jag tillkännager redan något. Om du vill göra ett annat tillkännagivande, vänligen använd `{prefix}announce cancel` först."
 
 #: redbot/cogs/admin/admin.py:53
 #, docstring
@@ -43,29 +42,29 @@ msgstr "En samling administrationsverktyg för servern."
 
 #: redbot/cogs/admin/admin.py:115 redbot/cogs/admin/admin.py:160
 msgid "add"
-msgstr ""
+msgstr "lägg till"
 
 #: redbot/cogs/admin/admin.py:121
 msgid "I successfully added {role.name} to {member.display_name}"
-msgstr ""
+msgstr "Jag lyckades lägga till {role.name} till {member.display_name}"
 
 #: redbot/cogs/admin/admin.py:132 redbot/cogs/admin/admin.py:180
 msgid "remove"
-msgstr ""
+msgstr "ta bort"
 
 #: redbot/cogs/admin/admin.py:138
 msgid "I successfully removed {role.name} from {member.display_name}"
-msgstr ""
+msgstr "Jag lyckades ta bort {role.name} från {member.display_name}"
 
 #: redbot/cogs/admin/admin.py:149
 #, docstring
 msgid "Add a role to a user.\\n\\n        If user is left blank it defaults to the author of the command.\\n        "
-msgstr ""
+msgstr "Lägg till en roll till en användare.\\n\\n        Om användaren lämnas tomt så är det standardinställningen för skaparen av kommandot.\\n        "
 
 #: redbot/cogs/admin/admin.py:169
 #, docstring
 msgid "Remove a role from a user.\\n\\n        If user is left blank it defaults to the author of the command.\\n        "
-msgstr ""
+msgstr "Ta bort en roll till en användare.\\n\\n        Om användaren lämnas tomt så är det standardinställningen för skaparen av kommandot.\\n        "
 
 #: redbot/cogs/admin/admin.py:187
 #, docstring
@@ -75,7 +74,7 @@ msgstr "Redigera rollinställningar."
 #: redbot/cogs/admin/admin.py:194
 #, docstring
 msgid "Edit a role's colour.\\n\\n        Use double quotes if the role contains spaces.\\n        Colour must be in hexadecimal format.\\n        [Online colour picker](http://www.w3schools.com/colors/colors_picker.asp)\\n\\n        Examples:\\n            `[p]editrole colour \\\"The Transistor\\\" #ff0000`\\n            `[p]editrole colour Test #ff9900`\\n        "
-msgstr ""
+msgstr "Redigera en rolls färg.\\n\\n        Använd dubbla citat om rollen innehåller mellanslag.\\n        Färgen måste vara i hexadecimalt format.\\n        [Online färgväljare] (http://www.w3schools. om/colors/colors_picker. sp)\\n\\n        Exempel:\\n            `[p]editrole färg \\\"The Transistor\\\" #ff0000`\\n            `[p]editrole colour Test #ff9900`\\n        "
 
 #: redbot/cogs/admin/admin.py:217 redbot/cogs/admin/admin.py:245
 msgid "Done."
@@ -84,103 +83,103 @@ msgstr "Klart."
 #: redbot/cogs/admin/admin.py:222
 #, docstring
 msgid "Edit a role's name.\\n\\n        Use double quotes if the role or the name contain spaces.\\n\\n        Examples:\\n            `[p]editrole name \\\"The Transistor\\\" Test`\\n        "
-msgstr ""
+msgstr "Redigera en rolls namn.\\n\\n        Använd dubbla citat om rollen eller namnet innehåller mellanslag.\\n\\n        Exempel:\\n            `[p]editrole name \\\"The Transistor\\\" Test`\\n        "
 
 #: redbot/cogs/admin/admin.py:250
 #, docstring
 msgid "Announce a message to all servers the bot is in."
-msgstr ""
+msgstr "Meddela ett meddelande till alla servrar som botten är i."
 
 #: redbot/cogs/admin/admin.py:257
 msgid "The announcement has begun."
-msgstr ""
+msgstr "Tillkännagivandet har börjat."
 
 #: redbot/cogs/admin/admin.py:265
 #, docstring
 msgid "Cancel a running announce."
-msgstr ""
+msgstr "Avbryt en löpande avisering."
 
 #: redbot/cogs/admin/admin.py:271
 msgid "The current announcement has been cancelled."
-msgstr ""
+msgstr "Det aktuella meddelandet har avbrutits."
 
 #: redbot/cogs/admin/admin.py:277
 #, docstring
 msgid "Change the channel to which the bot makes announcements."
-msgstr ""
+msgstr "Ändra den kanal till vilken botten gör tillkännagivanden."
 
 #: redbot/cogs/admin/admin.py:283
 msgid "The announcement channel has been set to {channel.mention}"
-msgstr ""
+msgstr "Tillkännagivandekanalen har satts till {channel.mention}"
 
 #: redbot/cogs/admin/admin.py:290
 #, docstring
 msgid "Toggle announcements being enabled this server."
-msgstr ""
+msgstr "Växla tillkännagivanden som aktiveras den här servern."
 
 #: redbot/cogs/admin/admin.py:296
 msgid "The server {guild.name} will receive announcements."
-msgstr ""
+msgstr "Servern {guild.name} kommer att få tillkännagivanden."
 
 #: redbot/cogs/admin/admin.py:300
 msgid "The server {guild.name} will not receive announcements."
-msgstr ""
+msgstr "Servern {guild.name} kommer inte att få tillkännagivanden."
 
 #: redbot/cogs/admin/admin.py:326
 #, docstring
 msgid "Add a role to yourself.\\n\\n        Server admins must have configured the role as user settable.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr ""
+msgstr "Lägg till en roll för dig själv.\\n\\n        Serveradministratörer måste ha konfigurerat rollen som användarinställning.\\n\\n        OBS: Rollen är skiftlägeskänslig!\\n        "
 
 #: redbot/cogs/admin/admin.py:337
 #, docstring
 msgid "Remove a selfrole from yourself.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr ""
+msgstr "Ta bort en självroll från dig själv.\\n\\n        OBS: Rollen är skiftlägeskänslig!\\n        "
 
 #: redbot/cogs/admin/admin.py:347
 #, docstring
 msgid "Add a role to the list of available selfroles.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr ""
+msgstr "Lägg till en roll i listan över tillgängliga självroller.\\n\\n        OBS: Rollen är skiftlägeskänslig!\\n        "
 
 #: redbot/cogs/admin/admin.py:355 redbot/cogs/admin/admin.py:367
 msgid "The selfroles list has been successfully modified."
-msgstr ""
+msgstr "Listan över självroller har ändrats framgångsrikt."
 
 #: redbot/cogs/admin/admin.py:360
 #, docstring
 msgid "Remove a role from the list of available selfroles.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr ""
+msgstr "Ta bort en roll från listan över tillgängliga självroller.\\n\\n        OBS: Rollen är skiftlägeskänslig!\\n        "
 
 #: redbot/cogs/admin/admin.py:371
 #, docstring
 msgid "\\n        Lists all available selfroles.\\n        "
-msgstr ""
+msgstr "\\n        Listar alla tillgängliga självroller.\\n        "
 
 #: redbot/cogs/admin/admin.py:377
 msgid "Available Selfroles:\\n{selfroles}"
-msgstr ""
+msgstr "Tillgängliga Selfroles:\\n{selfroles}"
 
 #: redbot/cogs/admin/admin.py:394
 #, docstring
 msgid "Lock a bot to its current servers only."
-msgstr ""
+msgstr "Lås en bot till sina nuvarande servrar."
 
 #: redbot/cogs/admin/admin.py:399
 msgid "The bot is no longer serverlocked."
-msgstr ""
+msgstr "Botten är inte längre serverlåst."
 
 #: redbot/cogs/admin/admin.py:401
 msgid "The bot is now serverlocked."
-msgstr ""
+msgstr "Botten är nu serverlåst."
 
 #: redbot/cogs/admin/announcer.py:70
 msgid "I could not announce to server: {server.id}"
-msgstr ""
+msgstr "Jag kunde inte göra ett tillkännagivande till servern: {server.id}"
 
 #: redbot/cogs/admin/converters.py:25
 msgid "The Admin cog is not loaded."
-msgstr ""
+msgstr "Admin cog är inte laddad."
 
 #: redbot/cogs/admin/converters.py:34
 msgid "The provided role is not a valid selfrole."
-msgstr ""
+msgstr "Den angivna rollen är inte en giltig självroll."
 

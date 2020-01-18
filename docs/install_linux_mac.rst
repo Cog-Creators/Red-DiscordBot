@@ -17,13 +17,23 @@ Installing the pre-requirements
 Please install the pre-requirements using the commands listed for your operating system.
 
 The pre-requirements are:
- - Python 3.7.0 or greater
- - pip 9.0 or greater
- - git
- - Java Runtime Environment 8 or later (for audio support)
+ - Python 3.8.1 or greater
+ - Pip 18.1 or greater
+ - Git 2.11+
+ - Java Runtime Environment 11 or later (for audio support)
 
 We also recommend installing some basic compiler tools, in case our dependencies don't provide
 pre-built "wheels" for your architecture.
+
+
+*****************
+Operating systems
+*****************
+
+.. contents::
+    :local:
+
+----
 
 .. _install-arch:
 
@@ -34,6 +44,10 @@ Arch Linux
 .. code-block:: none
 
     sudo pacman -Syu python python-pip git jre-openjdk-headless base-devel
+
+Continue by `creating-venv-linux`.
+
+----
 
 .. _install-centos:
 .. _install-rhel:
@@ -46,44 +60,61 @@ CentOS and RHEL 7
 
     yum -y groupinstall development
     yum -y install https://centos7.iuscommunity.org/ius-release.rpm
-    sudo yum install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel \
-      openssl-devel xz xz-devel libffi-devel findutils git2u java-1.8.0-openjdk
+    sudo yum -y install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel \
+      openssl-devel xz xz-devel libffi-devel findutils git2u java-11-openjdk
 
-Complete the rest of the installation by `installing Python 3.7 with pyenv <install-python-pyenv>`.
+Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
+
+----
+
+.. _install-debian-stretch:
+
+~~~~~~~~~~~~~~
+Debian Stretch
+~~~~~~~~~~~~~~
+
+.. note::
+
+    This guide is only for Debian Stretch users, these instructions won't work with
+    Raspbian Stretch. Raspbian Buster is the only version of Raspbian supported by Red.
+
+We recommend installing pyenv as a method of installing non-native versions of python on
+Debian Stretch. This guide will tell you how. First, run the following commands:
+
+.. code-block:: none
+
+    sudo echo "deb http://deb.debian.org/debian stretch-backports main" >> /etc/apt/sources.list.d/red-sources.list
+    sudo apt update
+    sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
+      libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev \
+      libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre
+    CXX=/usr/bin/g++
+
+Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
+
+----
 
 .. _install-debian:
 .. _install-raspbian:
 
-~~~~~~~~~~~~~~~~~~~
-Debian and Raspbian
-~~~~~~~~~~~~~~~~~~~
-
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 Debian and Raspbian Buster
-**************************
-
-Debian and Raspbian Buster have all required packages available in official repositories. Install
-them with apt:
-
-.. code-block:: none
-
-    sudo apt update
-    sudo apt install python3 python3-dev python3-venv python3-pip git default-jre-headless \
-      build-essential
-
-Debian and Raspbian Stretch
-***************************
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We recommend installing pyenv as a method of installing non-native versions of python on
-Debian/Raspbian Stretch. This guide will tell you how. First, run the following commands:
+Debian/Raspbian Buster. This guide will tell you how. First, run the following commands:
 
 .. code-block:: none
 
     sudo apt update
-    sudo apt install build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
-      libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev \
-      liblzma-dev python3-openssl git default-jre-headless
+    sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
+      libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev \
+      libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre
+    CXX=/usr/bin/g++
 
-Complete the rest of the installation by `installing Python 3.7 with pyenv <install-python-pyenv>`.
+Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
+
+----
 
 .. _install-fedora:
 
@@ -91,12 +122,16 @@ Complete the rest of the installation by `installing Python 3.7 with pyenv <inst
 Fedora Linux
 ~~~~~~~~~~~~
 
-Fedora Linux 29 and above has all required packages available in official repositories. Install
+Fedora Linux 30 and above has all required packages available in official repositories. Install
 them with dnf:
 
 .. code-block:: none
 
-    sudo dnf install python3 python3-devel git java-latest-openjdk-headless @development-tools
+    sudo dnf -y install python38 git java-latest-openjdk-headless @development-tools
+
+Continue by `creating-venv-linux`.
+
+----
 
 .. _install-mac:
 
@@ -119,10 +154,14 @@ one-by-one:
     brew install python --with-brewed-openssl
     brew install git
     brew tap caskroom/versions
-    brew cask install homebrew/cask-versions/adoptopenjdk8
+    brew cask install homebrew/cask-versions/adoptopenjdk11
 
 It's possible you will have network issues. If so, go in your Applications folder, inside it, go in
-the Python 3.7 folder then double click ``Install certificates.command``.
+the Python 3.8 folder then double click ``Install certificates.command``.
+
+Continue by `creating-venv-linux`.
+
+----
 
 .. _install-opensuse:
 
@@ -133,7 +172,7 @@ openSUSE
 openSUSE Leap
 *************
 
-We recommend installing a community package to get Python 3.7 on openSUSE Leap. This package will
+We recommend installing a community package to get Python 3.8 on openSUSE Leap. This package will
 be installed to the ``/opt`` directory.
 
 First, add the Opt-Python community repository:
@@ -147,7 +186,7 @@ Now install the pre-requirements with zypper:
 
 .. code-block:: none
 
-    sudo zypper install opt-python37 opt-python37-setuptools git-core java-11-openjdk-headless
+    sudo zypper install opt-python38 opt-python38-setuptools git-core java-11-openjdk-headless
     sudo zypper install -t pattern devel_basis
 
 Since Python is now installed to ``/opt/python``, we should add it to PATH. You can add a file in
@@ -162,7 +201,9 @@ Now, install pip with easy_install:
 
 .. code-block:: none
 
-    sudo /opt/python/bin/easy_install-3.7 pip
+    sudo /opt/python/bin/easy_install-3.8 pip
+
+Continue by `creating-venv-linux`.
 
 openSUSE Tumbleweed
 *******************
@@ -175,42 +216,81 @@ with zypper:
     sudo zypper install python3-base python3-pip git-core java-12-openjdk-headless
     sudo zypper install -t pattern devel_basis
 
+Continue by `creating-venv-linux`.
+
+----
+
 .. _install-ubuntu:
 
-~~~~~~
-Ubuntu
-~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Ubuntu LTS versions (18.04 and 16.04)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. note:: **Ubuntu 16.04 Users**
-
-    You must add a 3rd-party repository to install Python 3.7 on Ubuntu 16.04 with apt. We
-    recommend the ``deadsnakes`` repository:
-
-    .. code-block:: none
-
-        sudo apt install software-properties-common
-        sudo add-apt-repository ppa:deadsnakes/ppa
-
-Install the pre-requirements with apt:
+We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
 
 .. code-block:: none
 
     sudo apt update
-    sudo apt install python3.7 python3.7-dev python3.7-venv python3-pip git default-jre-headless \
+    sudo apt install software-properties-common
+    sudo add-apt-repository ppa:git-core/ppa
+
+We recommend adding the ``deadsnakes`` ppa to install Python 3.8.1 or greater:
+
+.. code-block:: none
+
+    sudo add-apt-repository ppa:deadsnakes/ppa
+
+Now install the pre-requirements with apt:
+
+.. code-block:: none
+
+    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git default-jre-headless \
       build-essential
+
+Continue by `creating-venv-linux`.
+
+----
+
+.. _install-ubuntu-non-lts:
+
+~~~~~~~~~~~~~~~~~~~~~~~
+Ubuntu non-LTS versions
+~~~~~~~~~~~~~~~~~~~~~~~
+
+We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
+
+.. code-block:: none
+
+    sudo apt update
+    sudo apt install software-properties-common
+    sudo add-apt-repository ppa:git-core/ppa
+
+Now, to install non-native version of python on non-LTS versions of Ubuntu, we recommend
+installing pyenv. To do this, first run the following commands:
+
+.. code-block:: none
+
+    sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
+      libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev \
+      libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre
+    CXX=/usr/bin/g++
+
+And then complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
+
+----
 
 .. _install-python-pyenv:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+****************************
 Installing Python with pyenv
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+****************************
 
 .. note::
 
     If you followed one of the sections above, and weren't linked here afterwards, you should skip
     this section.
 
-On distributions where Python 3.7 needs to be compiled from source, we recommend the use of pyenv.
+On distributions where Python 3.8 needs to be compiled from source, we recommend the use of pyenv.
 This simplifies the compilation process and has the added bonus of simplifying setting up Red in a
 virtual environment.
 
@@ -225,7 +305,7 @@ Then run the following command:
 
 .. code-block:: none
 
-    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.7.4 -v
+    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.8.1 -v
 
 This may take a long time to complete, depending on your hardware. For some machines (such as
 Raspberry Pis and micro-tier VPSes), it may take over an hour; in this case, you may wish to remove
@@ -237,15 +317,19 @@ After that is finished, run:
 
 .. code-block:: none
 
-    pyenv global 3.7.4
+    pyenv global 3.8.1
 
-Pyenv is now installed and your system should be configured to run Python 3.7.
+Pyenv is now installed and your system should be configured to run Python 3.8.
+
+Continue by `creating-venv-linux`.
+
+.. _creating-venv-linux:
 
 ------------------------------
 Creating a Virtual Environment
 ------------------------------
 
-We **strongly** recommend installing Red into a virtual environment. Don't be scared, it's very
+We require installing Red into a virtual environment. Don't be scared, it's very
 straightforward. See the section `installing-in-virtual-environment`.
 
 .. _installing-red-linux-mac:
@@ -256,41 +340,24 @@ Installing Red
 
 Choose one of the following commands to install Red.
 
-.. note::
-
-    If you're not inside an activated virtual environment, include the ``--user`` flag with all
-    ``python3.7 -m pip install`` commands, like this:
-
-    .. code-block:: none
-
-        python3.7 -m pip install --user -U Red-DiscordBot
-
-To install without MongoDB support:
+To install without additional config backend support:
 
 .. code-block:: none
 
-    python3.7 -m pip install -U Red-DiscordBot
-
-Or, to install with MongoDB support:
-
-.. code-block:: none
-
-    python3.7 -m pip install -U Red-DiscordBot[mongo]
+    python -m pip install -U pip setuptools wheel
+    python -m pip install -U Red-DiscordBot
 
 Or, to install with PostgreSQL support:
 
 .. code-block:: none
 
-    python3.7 -m pip install -U Red-DiscordBot[postgres]
+    python -m pip install -U pip setuptools wheel
+    python -m pip install -U Red-DiscordBot[postgres]
+
 
 .. note::
 
-  To install the development version, replace ``Red-DiscordBot`` in the above commands with the
-  following link:
-
-  .. code-block:: none
-
-      git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=Red-DiscordBot
+    These commands are also used for updating Red
 
 --------------------------
 Setting Up and Running Red
@@ -314,14 +381,9 @@ Once done setting up the instance, run the following command to run Red:
 
 It will walk through the initial setup, asking for your token and a prefix.
 You can find out how to obtain a token with
-`this guide <https://discordpy.readthedocs.io/en/v1.0.1/discord.html#creating-a-bot-account>`_,
+:dpy_docs:`this guide <discord.html#creating-a-bot-account>`,
 section "Creating a Bot Account".
 
-You may also run Red via the launcher, which allows you to restart the bot
-from discord, and enable auto-restart. You may also update the bot from the
-launcher menu. Use the following command to run the launcher:
-
-.. code-block:: none
-
-    redbot-launcher
-
+.. tip::
+   If it's the first time you're using Red, you should check our `getting-started` guide
+   that will walk you through all essential information on how to interact with Red.

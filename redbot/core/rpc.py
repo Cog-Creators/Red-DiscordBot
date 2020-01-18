@@ -69,15 +69,15 @@ class RPC:
         self._runner = web.AppRunner(self.app)
         self._site: Optional[web.TCPSite] = None
 
-    async def initialize(self):
+    async def initialize(self, port: int):
         """
         Finalizes the initialization of the RPC server and allows it to begin
         accepting queries.
         """
         await self._runner.setup()
-        self._site = web.TCPSite(self._runner, host="127.0.0.1", port=6133)
+        self._site = web.TCPSite(self._runner, host="127.0.0.1", port=port)
         await self._site.start()
-        log.debug("Created RPC server listener.")
+        log.debug("Created RPC server listener on port %s", port)
 
     async def close(self):
         """

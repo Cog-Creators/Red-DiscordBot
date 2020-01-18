@@ -4,13 +4,14 @@ from datetime import datetime, timedelta
 from inspect import Parameter
 from collections import OrderedDict
 from typing import Mapping, Tuple, Dict, Set
+from urllib.parse import quote_plus
 
 import discord
 
 from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import menus
-from redbot.core.utils.chat_formatting import box, pagify, escape
+from redbot.core.utils.chat_formatting import box, pagify, escape, humanize_list
 from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("CustomCommands", __file__)
@@ -204,15 +205,16 @@ class CustomCommands(commands.Cog):
         """Custom commands management."""
         pass
 
-    @customcom.group(name="create", aliases=["add"])
+    @customcom.group(name="create", aliases=["add"], invoke_without_command=True)
     @checks.mod_or_permissions(administrator=True)
-    async def cc_create(self, ctx: commands.Context):
+    async def cc_create(self, ctx: commands.Context, command: str.lower, *, text: str):
         """Create custom commands.
 
+        If a type is not specified, a simple CC will be created.
         CCs can be enhanced with arguments, see the guide
-        [here](https://red-discordbot.readthedocs.io/en/v3-develop/cog_customcom.html).
+        [here](https://docs.discord.red/en/stable/cog_customcom.html).
         """
-        pass
+        await ctx.invoke(self.cc_create_simple, command=command, text=text)
 
     @cc_create.command(name="random")
     @checks.mod_or_permissions(administrator=True)
@@ -221,6 +223,9 @@ class CustomCommands(commands.Cog):
 
         Note: This command is interactive.
         """
+        if command in (*self.bot.all_commands, *commands.RESERVED_COMMAND_NAMES):
+            await ctx.send(_("There already exists a bot command with the same name."))
+            return
         responses = await self.commandobj.get_responses(ctx=ctx)
         try:
             await self.commandobj.create(ctx=ctx, command=command, response=responses)
@@ -240,7 +245,7 @@ class CustomCommands(commands.Cog):
         Example:
         - `[p]customcom create simple yourcommand Text you want`
         """
-        if command in self.bot.all_commands:
+        if command in (*self.bot.all_commands, *commands.RESERVED_COMMAND_NAMES):
             await ctx.send(_("There already exists a bot command with the same name."))
             return
         try:
@@ -517,6 +522,7 @@ class CustomCommands(commands.Cog):
             "set": set,
             "str": str,
             "tuple": tuple,
+            "query": quote_plus,
         }
         indices = [int(a[0]) for a in args]
         low = min(indices)
@@ -598,16 +604,25 @@ class CustomCommands(commands.Cog):
         # only update cooldowns if the command isn't on cooldown
         self.cooldowns.update(new_cooldowns)
 
-    @staticmethod
-    def transform_arg(result, attr, obj) -> str:
+    @classmethod
+    def transform_arg(cls, result, attr, obj) -> str:
         attr = attr[1:]  # strip initial dot
         if not attr:
-            return str(obj)
+            return cls.maybe_humanize_list(obj)
         raw_result = "{" + result + "}"
         # forbid private members and nested attr lookups
         if attr.startswith("_") or "." in attr:
             return raw_result
-        return str(getattr(obj, attr, raw_result))
+        return cls.maybe_humanize_list(getattr(obj, attr, raw_result))
+
+    @staticmethod
+    def maybe_humanize_list(thing) -> str:
+        if isinstance(thing, str):
+            return thing
+        try:
+            return humanize_list(list(map(str, thing)))
+        except TypeError:
+            return str(thing)
 
     @staticmethod
     def transform_parameter(result, message) -> str:

@@ -14,15 +14,15 @@ for /F "tokens=* USEBACKQ" %%A in (`git ls-files "*.py"`) do (
 goto %1
 
 :reformat
-black -l 99 --target-version py37 !PYFILES!
+black -l 99 --target-version py38 !PYFILES!
 exit /B %ERRORLEVEL%
 
 :stylecheck
-black -l 99 --check --target-version py37 !PYFILES!
+black -l 99 --check --target-version py38 !PYFILES!
 exit /B %ERRORLEVEL%
 
 :newenv
-py -3.7 -m venv --clear .venv
+py -3.8 -m venv --clear .venv
 .\.venv\Scripts\python -m pip install -U pip setuptools
 goto syncenv
 
