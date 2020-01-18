@@ -8,8 +8,8 @@ Core Bot Changes
 
 - Further improvements have been made to bot startup and shutdown.
 - Prefixes are now cached for performance.
-- Added a means for cog creators to use a global preinvoke hook.
-- The bot now ensures it has at least the bare neccessary permissions before commands.
+- Added the means for cog creators to use a global preinvoke hook.
+- The bot now ensures it has at least the bare neccessary permissions before running commands.
 - Deleting instances works as intended again.
 - Sinbad stopped fighting it and embraced the entrypoint madness.
 
@@ -29,7 +29,7 @@ Help Formatter
 - ``[botname]`` is now replaced with the bot's display name in help text.
 - New features added for cog creators to further customize help behavior.
   
-  - Check out our command reference for details.
+  - Check out our command reference for details on new ``format_help_for_context`` method.
 - Embed settings are now consistent.
 
 Downloader
@@ -45,9 +45,9 @@ Docs
 There's more detail to the below changes, so go read the docs.
 For some reason, documenting documentation changes is hard.
 
-- Added instructions about git version
+- Added instructions about git version.
 - Clarified instructions for installation and update.
-- Added more detail to the API key reference.
+- Added more details to the API key reference.
 - Fixed some typos and versioning mistakes.
 
 
