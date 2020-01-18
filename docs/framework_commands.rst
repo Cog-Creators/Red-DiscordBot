@@ -15,6 +15,7 @@ extend functionlities used throughout the bot, as outlined below.
 
 .. autoclass:: redbot.core.commands.Command
     :members:
+    :inherited-members: format_help_for_context
 
 .. autoclass:: redbot.core.commands.Group
     :members:
