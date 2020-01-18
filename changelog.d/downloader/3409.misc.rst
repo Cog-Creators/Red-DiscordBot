@@ -1,0 +1,1 @@
+Improve error message when user passes cog that isn't installed to a command that only accepts installed cogs.
