@@ -245,15 +245,20 @@ class Audio(commands.Cog):
                         for t in tracks_in_playlist:
                             uri = t.get("info", {}).get("uri")
                             if uri:
-                                t = {"loadType": "V2_COMPACT", "tracks": [t], "query": uri}
-                                database_entries.append(
-                                    {
-                                        "query": uri,
-                                        "data": json.dumps(t),
-                                        "last_updated": time_now,
-                                        "last_fetched": time_now,
-                                    }
-                                )
+                                t = {"loadType": "V2_COMPAT", "tracks": [t], "query": uri}
+                                data = json.dumps(t)
+                                if all(
+                                    k in data
+                                    for k in ["loadType", "playlistInfo", "isSeekable", "isStream"]
+                                ):
+                                    database_entries.append(
+                                        {
+                                            "query": uri,
+                                            "data": data,
+                                            "last_updated": time_now,
+                                            "last_fetched": time_now,
+                                        }
+                                    )
                         await asyncio.sleep(0)
                     if guild_playlist:
                         all_playlist[str(guild_id)] = guild_playlist
@@ -530,17 +535,18 @@ class Audio(commands.Cog):
                 player_check = await self._players_check()
                 await self._status_check(*player_check)
 
-        if not autoplay and event_type == lavalink.LavalinkEvents.QUEUE_END and notify:
-            notify_channel = player.fetch("channel")
-            if notify_channel:
-                notify_channel = self.bot.get_channel(notify_channel)
-                await self._embed_msg(notify_channel, title=_("Queue Ended."))
-        elif not autoplay and event_type == lavalink.LavalinkEvents.QUEUE_END and disconnect:
-            self.bot.dispatch("red_audio_audio_disconnect", guild)
-            await player.disconnect()
-        if event_type == lavalink.LavalinkEvents.QUEUE_END and status:
-            player_check = await self._players_check()
-            await self._status_check(*player_check)
+        if event_type == lavalink.LavalinkEvents.QUEUE_END:
+            if not autoplay:
+                notify_channel = player.fetch("channel")
+                if notify_channel and notify:
+                    notify_channel = self.bot.get_channel(notify_channel)
+                    await self._embed_msg(notify_channel, title=_("Queue Ended."))
+                if disconnect:
+                    self.bot.dispatch("red_audio_audio_disconnect", guild)
+                    await player.disconnect()
+            if status:
+                player_check = await self._players_check()
+                await self._status_check(*player_check)
 
         if event_type in [
             lavalink.LavalinkEvents.TRACK_EXCEPTION,
@@ -690,7 +696,7 @@ class Audio(commands.Cog):
     async def dc(self, ctx: commands.Context):
         """Toggle the bot auto-disconnecting when done playing.
 
-        This setting takes precedence over [p]audioset emptydisconnect.
+        This setting takes precedence over `[p]audioset emptydisconnect`.
         """
 
         disconnect = await self.config.guild(ctx.guild).disconnect()
@@ -1117,7 +1123,7 @@ class Audio(commands.Cog):
         """Set a playlist to auto-play songs from.
 
         **Usage**:
-        ​ ​ ​ ​ [p]audioset autoplay playlist_name_OR_id args
+        ​ ​ ​ ​ `[p]audioset autoplay playlist_name_OR_id [args]`
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
@@ -1140,9 +1146,9 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ [p]audioset autoplay MyGuildPlaylist
-        ​ ​ ​ ​ [p]audioset autoplay MyGlobalPlaylist --scope Global
-        ​ ​ ​ ​ [p]audioset autoplay PersonalPlaylist --scope User --author Draper
+        ​ ​ ​ ​ `[p]audioset autoplay MyGuildPlaylist`
+        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`
+        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
@@ -1253,7 +1259,10 @@ class Audio(commands.Cog):
     @audioset.command()
     @checks.mod_or_permissions(administrator=True)
     async def emptydisconnect(self, ctx: commands.Context, seconds: int):
-        """Auto-disconnect from channel when bot is alone in it for x seconds, 0 to disable."""
+        """Auto-disconnect from channel when bot is alone in it for x seconds, 0 to disable.
+
+        `[p]audioset dc` takes precedence over this setting.
+        """
         if seconds < 0:
             return await self._embed_msg(
                 ctx, title=_("Invalid Time"), description=_("Seconds can't be less than zero.")
@@ -2443,7 +2452,11 @@ class Audio(commands.Cog):
         if not await self._localtracks_check(ctx):
             return
 
-        return audio_data.subfolders_in_tree() if search_subfolders else audio_data.subfolders()
+        return (
+            await audio_data.subfolders_in_tree()
+            if search_subfolders
+            else await audio_data.subfolders()
+        )
 
     async def _folder_list(
         self, ctx: commands.Context, query: audio_dataclasses.Query
@@ -2454,9 +2467,9 @@ class Audio(commands.Cog):
         if not query.track.exists():
             return
         return (
-            query.track.tracks_in_tree()
+            await query.track.tracks_in_tree()
             if query.search_subfolders
-            else query.track.tracks_in_folder()
+            else await query.track.tracks_in_folder()
         )
 
     async def _folder_tracks(
@@ -2495,9 +2508,9 @@ class Audio(commands.Cog):
             return
 
         return (
-            query.track.tracks_in_tree()
+            await query.track.tracks_in_tree()
             if query.search_subfolders
-            else query.track.tracks_in_folder()
+            else await query.track.tracks_in_folder()
         )
 
     async def _localtracks_check(self, ctx: commands.Context) -> bool:
@@ -2948,8 +2961,7 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, embed=embed)
         elif isinstance(tracks, discord.Message):
             return
-        queue_dur = await queue_duration(ctx)
-        lavalink.utils.format_time(queue_dur)
+        queue_dur = await track_remaining_duration(ctx)
         index = query.track_index
         seek = 0
         if query.start_time:
@@ -3996,7 +4008,7 @@ class Audio(commands.Cog):
         The track(s) will be appended to the end of the playlist.
 
         **Usage**:
-        ​ ​ ​ ​ [p]playlist append playlist_name_OR_id track_name_OR_url args
+        ​ ​ ​ ​ `[p]playlist append playlist_name_OR_id track_name_OR_url [args]`
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
@@ -4019,10 +4031,9 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ [p]playlist append MyGuildPlaylist Hello by Adele
-        ​ ​ ​ ​ [p]playlist append MyGlobalPlaylist Hello by Adele --scope Global
-        ​ ​ ​ ​ [p]playlist append MyGlobalPlaylist Hello by Adele --scope Global
-        --Author Draper#6666
+        ​ ​ ​ ​ `[p]playlist append MyGuildPlaylist Hello by Adele`
+        ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global`
+        ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global --Author Draper#6666`
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
@@ -4144,8 +4155,8 @@ class Audio(commands.Cog):
             else None,
         )
 
-    @commands.cooldown(1, 300, commands.BucketType.member)
-    @playlist.command(name="copy", usage="<id_or_name> [args]")
+    @commands.cooldown(1, 150, commands.BucketType.member)
+    @playlist.command(name="copy", usage="<id_or_name> [args]", cooldown_after_parsing=True)
     async def _playlist_copy(
         self,
         ctx: commands.Context,
@@ -4157,7 +4168,7 @@ class Audio(commands.Cog):
         """Copy a playlist from one scope to another.
 
         **Usage**:
-        ​ ​ ​ ​ [p]playlist copy playlist_name_OR_id args
+        ​ ​ ​ ​ `[p]playlist copy playlist_name_OR_id [args]`
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
@@ -4184,11 +4195,9 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ [p]playlist copy MyGuildPlaylist --from-scope Guild --to-scope Global
-        ​ ​ ​ ​ [p]playlist copy MyGlobalPlaylist --from-scope Global --to-author Draper#6666
-        --to-scope User
-        ​ ​ ​ ​ [p]playlist copy MyPersonalPlaylist --from-scope user --to-author Draper#6666
-        --to-scope Guild --to-guild Red - Discord Bot
+        ​ ​ ​ ​ `[p]playlist copy MyGuildPlaylist --from-scope Guild --to-scope Global`
+        ​ ​ ​ ​ `[p]playlist copy MyGlobalPlaylist --from-scope Global --to-author Draper#6666 --to-scope User`
+        ​ ​ ​ ​ `[p]playlist copy MyPersonalPlaylist --from-scope user --to-author Draper#6666 --to-scope Guild --to-guild Red - Discord Bot`
         """
 
         if scope_data is None:
@@ -4284,8 +4293,8 @@ class Audio(commands.Cog):
             ).format(
                 name=from_playlist.name,
                 from_id=from_playlist.id,
-                from_scope=humanize_scope(from_scope, ctx=from_scope_name, the=True),
-                to_scope=humanize_scope(to_scope, ctx=to_scope_name, the=True),
+                from_scope=humanize_scope(from_scope, ctx=from_scope_name),
+                to_scope=humanize_scope(to_scope, ctx=to_scope_name),
                 to_id=to_playlist.id,
             ),
         )
@@ -4297,7 +4306,7 @@ class Audio(commands.Cog):
         """Create an empty playlist.
 
         **Usage**:
-        ​ ​ ​ ​ [p]playlist create playlist_name args
+        ​ ​ ​ ​ `[p]playlist create playlist_name [args]`
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
@@ -4320,9 +4329,9 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ [p]playlist create MyGuildPlaylist
-        ​ ​ ​ ​ [p]playlist create MyGlobalPlaylist --scope Global
-        ​ ​ ​ ​ [p]playlist create MyPersonalPlaylist --scope User
+        ​ ​ ​ ​ `[p]playlist create MyGuildPlaylist`
+        ​ ​ ​ ​ `[p]playlist create MyGlobalPlaylist --scope Global`
+        ​ ​ ​ ​ `[p]playlist create MyPersonalPlaylist --scope User`
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
@@ -4364,7 +4373,7 @@ class Audio(commands.Cog):
         """Delete a saved playlist.
 
         **Usage**:
-        ​ ​ ​ ​ [p]playlist delete playlist_name_OR_id args
+        ​ ​ ​ ​ `[p]playlist delete playlist_name_OR_id [args]`
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
@@ -4387,9 +4396,9 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ [p]playlist delete MyGuildPlaylist
-        ​ ​ ​ ​ [p]playlist delete MyGlobalPlaylist --scope Global
-        ​ ​ ​ ​ [p]playlist delete MyPersonalPlaylist --scope User
+        ​ ​ ​ ​ `[p]playlist delete MyGuildPlaylist`
+        ​ ​ ​ ​ `[p]playlist delete MyGlobalPlaylist --scope Global`
+        ​ ​ ​ ​ `[p]playlist delete MyPersonalPlaylist --scope User`
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
@@ -4438,7 +4447,9 @@ class Audio(commands.Cog):
         )
 
     @commands.cooldown(1, 30, commands.BucketType.member)
-    @playlist.command(name="dedupe", usage="<playlist_name_OR_id> [args]")
+    @playlist.command(
+        name="dedupe", usage="<playlist_name_OR_id> [args]", cooldown_after_parsing=True
+    )
     async def _playlist_remdupe(
         self,
         ctx: commands.Context,
@@ -4449,7 +4460,7 @@ class Audio(commands.Cog):
         """Remove duplicate tracks from a saved playlist.
 
         **Usage**:
-        ​ ​ ​ ​ [p]playlist dedupe playlist_name_OR_id args
+        ​ ​ ​ ​ `[p]playlist dedupe playlist_name_OR_id [args]`
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
@@ -4472,9 +4483,9 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ [p]playlist dedupe MyGuildPlaylist
-        ​ ​ ​ ​ [p]playlist dedupe MyGlobalPlaylist --scope Global
-        ​ ​ ​ ​ [p]playlist dedupe MyPersonalPlaylist --scope User
+        ​ ​ ​ ​ `[p]playlist dedupe MyGuildPlaylist`
+        ​ ​ ​ ​ `[p]playlist dedupe MyGlobalPlaylist --scope Global`
+        ​ ​ ​ ​ `[p]playlist dedupe MyPersonalPlaylist --scope User`
         """
         async with ctx.typing():
             if scope_data is None:
@@ -4571,9 +4582,13 @@ class Audio(commands.Cog):
             )
 
     @checks.is_owner()
-    @playlist.command(name="download", usage="<playlist_name_OR_id> [v2=False] [args]")
+    @playlist.command(
+        name="download",
+        usage="<playlist_name_OR_id> [v2=False] [args]",
+        cooldown_after_parsing=True,
+    )
     @commands.bot_has_permissions(attach_files=True)
-    @commands.cooldown(1, 60, commands.BucketType.guild)
+    @commands.cooldown(1, 30, commands.BucketType.guild)
     async def _playlist_download(
         self,
         ctx: commands.Context,
@@ -4584,12 +4599,12 @@ class Audio(commands.Cog):
     ):
         """Download a copy of a playlist.
 
-        These files can be used with the [p]playlist upload command.
+        These files can be used with the `[p]playlist upload` command.
         Red v2-compatible playlists can be generated by passing True
         for the v2 variable.
 
         **Usage**:
-        ​ ​ ​ ​ [p]playlist download playlist_name_OR_id [v2=True_OR_False] args
+        ​ ​ ​ ​ `[p]playlist download playlist_name_OR_id [v2=True_OR_False] [args]`
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
@@ -4612,9 +4627,9 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ [p]playlist download MyGuildPlaylist True
-        ​ ​ ​ ​ [p]playlist download MyGlobalPlaylist False --scope Global
-        ​ ​ ​ ​ [p]playlist download MyPersonalPlaylist --scope User
+        ​ ​ ​ ​ `[p]playlist download MyGuildPlaylist True`
+        ​ ​ ​ ​ `[p]playlist download MyGlobalPlaylist False --scope Global`
+        ​ ​ ​ ​ `[p]playlist download MyPersonalPlaylist --scope User`
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
@@ -4715,8 +4730,10 @@ class Audio(commands.Cog):
             await ctx.send(file=discord.File(to_write, filename=f"{file_name}.txt"))
         to_write.close()
 
-    @commands.cooldown(1, 20, commands.BucketType.member)
-    @playlist.command(name="info", usage="<playlist_name_OR_id> [args]")
+    @commands.cooldown(1, 10, commands.BucketType.member)
+    @playlist.command(
+        name="info", usage="<playlist_name_OR_id> [args]", cooldown_after_parsing=True
+    )
     async def _playlist_info(
         self,
         ctx: commands.Context,
@@ -4727,7 +4744,7 @@ class Audio(commands.Cog):
         """Retrieve information from a saved playlist.
 
         **Usage**:
-        ​ ​ ​ ​ [p]playlist info playlist_name_OR_id args
+        ​ ​ ​ ​ `[p]playlist info playlist_name_OR_id [args]`
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
@@ -4750,9 +4767,9 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ [p]playlist info MyGuildPlaylist
-        ​ ​ ​ ​ [p]playlist info MyGlobalPlaylist --scope Global
-        ​ ​ ​ ​ [p]playlist info MyPersonalPlaylist --scope User
+        ​ ​ ​ ​ `[p]playlist info MyGuildPlaylist`
+        ​ ​ ​ ​ `[p]playlist info MyGlobalPlaylist --scope Global`
+        ​ ​ ​ ​ `[p]playlist info MyPersonalPlaylist --scope User`
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
@@ -4852,14 +4869,14 @@ class Audio(commands.Cog):
             page_list.append(embed)
         await menu(ctx, page_list, DEFAULT_CONTROLS)
 
-    @commands.cooldown(1, 30, commands.BucketType.guild)
-    @playlist.command(name="list", usage="[args]")
+    @commands.cooldown(1, 15, commands.BucketType.guild)
+    @playlist.command(name="list", usage="[args]", cooldown_after_parsing=True)
     @commands.bot_has_permissions(add_reactions=True)
     async def _playlist_list(self, ctx: commands.Context, *, scope_data: ScopeParser = None):
         """List saved playlists.
 
         **Usage**:
-        ​ ​ ​ ​ [p]playlist list args
+        ​ ​ ​ ​ `[p]playlist list [args]`
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
@@ -4882,9 +4899,9 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ [p]playlist list
-        ​ ​ ​ ​ [p]playlist list --scope Global
-        ​ ​ ​ ​ [p]playlist list --scope User
+        ​ ​ ​ ​ `[p]playlist list`
+        ​ ​ ​ ​ `[p]playlist list --scope Global`
+        ​ ​ ​ ​ `[p]playlist list --scope User`
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
@@ -4976,15 +4993,15 @@ class Audio(commands.Cog):
         )
         return embed
 
-    @playlist.command(name="queue", usage="<name> [args]")
-    @commands.cooldown(1, 600, commands.BucketType.member)
+    @playlist.command(name="queue", usage="<name> [args]", cooldown_after_parsing=True)
+    @commands.cooldown(1, 300, commands.BucketType.member)
     async def _playlist_queue(
         self, ctx: commands.Context, playlist_name: str, *, scope_data: ScopeParser = None
     ):
         """Save the queue to a playlist.
 
         **Usage**:
-        ​ ​ ​ ​ [p]playlist queue playlist_name
+        ​ ​ ​ ​ `[p]playlist queue playlist_name [args]`
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
@@ -5007,9 +5024,9 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ [p]playlist queue MyGuildPlaylist
-        ​ ​ ​ ​ [p]playlist queue MyGlobalPlaylist --scope Global
-        ​ ​ ​ ​ [p]playlist queue MyPersonalPlaylist --scope User
+        ​ ​ ​ ​ `[p]playlist queue MyGuildPlaylist`
+        ​ ​ ​ ​ `[p]playlist queue MyGlobalPlaylist --scope Global`
+        ​ ​ ​ ​ `[p]playlist queue MyPersonalPlaylist --scope User`
         """
         async with ctx.typing():
             if scope_data is None:
@@ -5087,7 +5104,7 @@ class Audio(commands.Cog):
         """Remove a track from a playlist by url.
 
          **Usage**:
-        ​ ​ ​ ​ [p]playlist remove playlist_name_OR_id url args
+        ​ ​ ​ ​ `[p]playlist remove playlist_name_OR_id url [args]`
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
@@ -5110,11 +5127,9 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ [p]playlist remove MyGuildPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU
-        ​ ​ ​ ​ [p]playlist remove MyGlobalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU
-        --scope Global
-        ​ ​ ​ ​ [p]playlist remove MyPersonalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU
-        --scope User
+        ​ ​ ​ ​ `[p]playlist remove MyGuildPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU`
+        ​ ​ ​ ​ `[p]playlist remove MyGlobalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope Global`
+        ​ ​ ​ ​ `[p]playlist remove MyPersonalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope User`
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
@@ -5188,8 +5203,8 @@ class Audio(commands.Cog):
                 ).format(playlist_name=playlist.name, id=playlist.id, scope=scope_name),
             )
 
-    @playlist.command(name="save", usage="<name> <url> [args]")
-    @commands.cooldown(1, 120, commands.BucketType.member)
+    @playlist.command(name="save", usage="<name> <url> [args]", cooldown_after_parsing=True)
+    @commands.cooldown(1, 60, commands.BucketType.member)
     async def _playlist_save(
         self,
         ctx: commands.Context,
@@ -5201,7 +5216,7 @@ class Audio(commands.Cog):
         """Save a playlist from a url.
 
         **Usage**:
-        ​ ​ ​ ​ [p]playlist save name url args
+        ​ ​ ​ ​ `[p]playlist save name url [args]`
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
@@ -5224,12 +5239,9 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ [p]playlist save MyGuildPlaylist
-        https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM
-        ​ ​ ​ ​ [p]playlist save MyGlobalPlaylist
-        https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM --scope Global
-        ​ ​ ​ ​ [p]playlist save MyPersonalPlaylist
-        https://open.spotify.com/playlist/1RyeIbyFeIJVnNzlGr5KkR --scope User
+        ​ ​ ​ ​ `[p]playlist save MyGuildPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM`
+        ​ ​ ​ ​ `[p]playlist save MyGlobalPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM --scope Global`
+        ​ ​ ​ ​ `[p]playlist save MyPersonalPlaylist https://open.spotify.com/playlist/1RyeIbyFeIJVnNzlGr5KkR --scope User`
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
@@ -5282,8 +5294,13 @@ class Audio(commands.Cog):
                 else None,
             )
 
-    @commands.cooldown(1, 60, commands.BucketType.member)
-    @playlist.command(name="start", aliases=["play"], usage="<playlist_name_OR_id> [args]")
+    @commands.cooldown(1, 30, commands.BucketType.member)
+    @playlist.command(
+        name="start",
+        aliases=["play"],
+        usage="<playlist_name_OR_id> [args]",
+        cooldown_after_parsing=True,
+    )
     async def _playlist_start(
         self,
         ctx: commands.Context,
@@ -5294,7 +5311,7 @@ class Audio(commands.Cog):
         """Load a playlist into the queue.
 
         **Usage**:
-        ​ ​ ​ ​ [p]playlist start playlist_name_OR_id args
+        ​ ​ ​ ​` [p]playlist start playlist_name_OR_id [args]`
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
@@ -5317,9 +5334,9 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ [p]playlist start MyGuildPlaylist
-        ​ ​ ​ ​ [p]playlist start MyGlobalPlaylist --scope Global
-        ​ ​ ​ ​ [p]playlist start MyPersonalPlaylist --scope User
+        ​ ​ ​ ​ `[p]playlist start MyGuildPlaylist`
+        ​ ​ ​ ​ `[p]playlist start MyGlobalPlaylist --scope Global`
+        ​ ​ ​ ​ `[p]playlist start MyPersonalPlaylist --scope User`
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
@@ -5451,7 +5468,9 @@ class Audio(commands.Cog):
                 return await ctx.invoke(self.play, query=playlist.url)
 
     @commands.cooldown(1, 60, commands.BucketType.member)
-    @playlist.command(name="update", usage="<playlist_name_OR_id> [args]")
+    @playlist.command(
+        name="update", usage="<playlist_name_OR_id> [args]", cooldown_after_parsing=True
+    )
     async def _playlist_update(
         self,
         ctx: commands.Context,
@@ -5462,7 +5481,7 @@ class Audio(commands.Cog):
         """Updates all tracks in a playlist.
 
         **Usage**:
-        ​ ​ ​ ​ [p]playlist update playlist_name_OR_id args
+        ​ ​ ​ ​ `[p]playlist update playlist_name_OR_id [args]`
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
@@ -5485,9 +5504,9 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ [p]playlist update MyGuildPlaylist
-        ​ ​ ​ ​ [p]playlist update MyGlobalPlaylist --scope Global
-        ​ ​ ​ ​ [p]playlist update MyPersonalPlaylist --scope User
+        ​ ​ ​ ​ `[p]playlist update MyGuildPlaylist`
+        ​ ​ ​ ​ `[p]playlist update MyGlobalPlaylist --scope Global`
+        ​ ​ ​ ​ `[p]playlist update MyPersonalPlaylist --scope User`
         """
 
         if scope_data is None:
@@ -5610,10 +5629,10 @@ class Audio(commands.Cog):
         """Uploads a playlist file as a playlist for the bot.
 
         V2 and old V3 playlist will be slow.
-        V3 Playlist made with [p]playlist download will load a lot faster.
+        V3 Playlist made with `[p]playlist download` will load a lot faster.
 
         **Usage**:
-        ​ ​ ​ ​ [p]playlist upload args
+        ​ ​ ​ ​ `[p]playlist upload [args]`
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
@@ -5636,9 +5655,9 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ [p]playlist upload
-        ​ ​ ​ ​ [p]playlist upload --scope Global
-        ​ ​ ​ ​ [p]playlist upload --scope User
+        ​ ​ ​ ​ `[p]playlist upload`
+        ​ ​ ​ ​ `[p]playlist upload --scope Global`
+        ​ ​ ​ ​ `[p]playlist upload --scope User`
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
@@ -5728,7 +5747,9 @@ class Audio(commands.Cog):
         )
 
     @commands.cooldown(1, 60, commands.BucketType.member)
-    @playlist.command(name="rename", usage="<playlist_name_OR_id> <new_name> [args]")
+    @playlist.command(
+        name="rename", usage="<playlist_name_OR_id> <new_name> [args]", cooldown_after_parsing=True
+    )
     async def _playlist_rename(
         self,
         ctx: commands.Context,
@@ -5740,7 +5761,7 @@ class Audio(commands.Cog):
         """Rename an existing playlist.
 
         **Usage**:
-        ​ ​ ​ ​ [p]playlist rename playlist_name_OR_id new_name args
+        ​ ​ ​ ​ `[p]playlist rename playlist_name_OR_id new_name [args]`
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
@@ -5763,9 +5784,9 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ [p]playlist rename MyGuildPlaylist RenamedGuildPlaylist
-        ​ ​ ​ ​ [p]playlist rename MyGlobalPlaylist RenamedGlobalPlaylist --scope Global
-        ​ ​ ​ ​ [p]playlist rename MyPersonalPlaylist RenamedPersonalPlaylist --scope User
+        ​ ​ ​ ​ `[p]playlist rename MyGuildPlaylist RenamedGuildPlaylist`
+        ​ ​ ​ ​ `[p]playlist rename MyGlobalPlaylist RenamedGlobalPlaylist --scope Global`
+        ​ ​ ​ ​ `[p]playlist rename MyPersonalPlaylist RenamedPersonalPlaylist --scope User`
         """
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
@@ -5882,15 +5903,17 @@ class Audio(commands.Cog):
         for t in track_list:
             uri = t.get("info", {}).get("uri")
             if uri:
-                t = {"loadType": "V2_COMPACT", "tracks": [t], "query": uri}
-                database_entries.append(
-                    {
-                        "query": uri,
-                        "data": json.dumps(t),
-                        "last_updated": time_now,
-                        "last_fetched": time_now,
-                    }
-                )
+                t = {"loadType": "V2_COMPAT", "tracks": [t], "query": uri}
+                data = json.dumps(t)
+                if all(k in data for k in ["loadType", "playlistInfo", "isSeekable", "isStream"]):
+                    database_entries.append(
+                        {
+                            "query": uri,
+                            "data": data,
+                            "last_updated": time_now,
+                            "last_fetched": time_now,
+                        }
+                    )
         if database_entries:
             await self.music_cache.database.insert("lavalink", database_entries)
 
@@ -6793,8 +6816,8 @@ class Audio(commands.Cog):
     async def search(self, ctx: commands.Context, *, query: str):
         """Pick a track with a search.
 
-        Use `[p]search list <search term>` to queue all tracks found on YouTube. `[p]search sc
-        <search term>` will search SoundCloud instead of YouTube.
+        Use `[p]search list <search term>` to queue all tracks found on YouTube.
+        `[p]search sc<search term>` will search SoundCloud instead of YouTube.
         """
 
         async def _search_menu(
@@ -7357,8 +7380,8 @@ class Audio(commands.Cog):
     async def _shuffle_bumpped(self, ctx: commands.Context):
         """Toggle bumped track shuffle.
 
-        Set this to disabled if you wish to avoid bumped songs being shuffled. This takes priority
-        over `[p]shuffle`.
+        Set this to disabled if you wish to avoid bumped songs being shuffled.
+        This takes priority over `[p]shuffle`.
         """
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()

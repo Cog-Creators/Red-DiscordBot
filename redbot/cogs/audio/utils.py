@@ -43,6 +43,7 @@ __all__ = [
     "CacheLevel",
     "format_playlist_picker_data",
     "get_track_description_unformatted",
+    "track_remaining_duration",
     "Notifier",
     "PlaylistScope",
 ]
@@ -124,6 +125,20 @@ async def queue_duration(ctx) -> int:
         remain = 0
     queue_total_duration = remain + queue_dur
     return queue_total_duration
+
+
+async def track_remaining_duration(ctx) -> int:
+    player = lavalink.get_player(ctx.guild.id)
+    if not player.current:
+        return 0
+    try:
+        if not player.current.is_stream:
+            remain = player.current.length - player.position
+        else:
+            remain = 0
+    except AttributeError:
+        remain = 0
+    return remain
 
 
 async def draw_time(ctx) -> str:
@@ -213,7 +228,7 @@ async def clear_react(bot: Red, message: discord.Message, emoji: MutableMapping 
 def get_track_description(track) -> Optional[str]:
     if track and getattr(track, "uri", None):
         query = Query.process_input(track.uri)
-        if query.is_local:
+        if query.is_local or "localtracks/" in track.uri:
             if track.title != "Unknown title":
                 return f'**{escape(f"{track.author} - {track.title}")}**' + escape(
                     f"\n{query.to_string_user()} "
@@ -229,7 +244,7 @@ def get_track_description(track) -> Optional[str]:
 def get_track_description_unformatted(track) -> Optional[str]:
     if track and hasattr(track, "uri"):
         query = Query.process_input(track.uri)
-        if query.is_local:
+        if query.is_local or "localtracks/" in track.uri:
             if track.title != "Unknown title":
                 return escape(f"{track.author} - {track.title}")
             else:
@@ -521,8 +536,8 @@ class PlaylistScope(Enum):
 def humanize_scope(scope, ctx=None, the=None):
 
     if scope == PlaylistScope.GLOBAL.value:
-        return _("the ") if the else "" + _("Global")
+        return (_("the ") if the else "") + _("Global")
     elif scope == PlaylistScope.GUILD.value:
-        return ctx.name if ctx else _("the ") if the else "" + _("Server")
+        return ctx.name if ctx else (_("the ") if the else "") + _("Server")
     elif scope == PlaylistScope.USER.value:
-        return str(ctx) if ctx else _("the ") if the else "" + _("User")
+        return str(ctx) if ctx else (_("the ") if the else "") + _("User")
