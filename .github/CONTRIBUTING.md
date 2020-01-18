@@ -30,7 +30,6 @@ Red is an open source project. This means that each and every one of the develop
 We love receiving contributions from our community. Any assistance you can provide with regards to bug fixes, feature enhancements, and documentation is more than welcome.
 
 # 2. Ground Rules
-We've made a point to use [ZenHub](https://www.zenhub.com/) (a plugin for GitHub) as our main source of collaboration and coordination. Your experience contributing to Red will be greatly improved if you go get that plugin.
 1. Ensure cross compatibility for Windows, Mac OS and Linux.
 2. Ensure all Python features used in contributions exist and work in Python 3.8.1 and above.
 3. Create new tests for code you add or bugs you fix. It helps us help you by making sure we don't accidentally break anything :grinning:
