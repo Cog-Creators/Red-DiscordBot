@@ -29,7 +29,7 @@ _ = Translator("Downloader", __file__)
 
 DEPRECATION_NOTICE = _(
     "\n**WARNING:** The following repos are using shared libraries"
-    " which are marked for removal in Red 3.3: {repo_list}.\n"
+    " which are marked for removal in Red 3.4: {repo_list}.\n"
     " You should inform maintainers of these repos about this message."
 )
 
@@ -53,6 +53,9 @@ class Downloader(commands.Cog):
         self._create_lib_folder()
 
         self._repo_manager = RepoManager()
+        self._ready = asyncio.Event()
+        self._init_task = None
+        self._ready_raised = False
 
     def _create_lib_folder(self, *, remove_first: bool = False) -> None:
         if remove_first:
@@ -62,9 +65,38 @@ class Downloader(commands.Cog):
             with self.SHAREDLIB_INIT.open(mode="w", encoding="utf-8") as _:
                 pass
 
+    async def cog_before_invoke(self, ctx: commands.Context) -> None:
+        async with ctx.typing():
+            await self._ready.wait()
+        if self._ready_raised:
+            await ctx.send(
+                "There was an error during Downloader's initialization."
+                " Check logs for more information."
+            )
+            raise commands.CheckFailure()
+
+    def cog_unload(self):
+        if self._init_task is not None:
+            self._init_task.cancel()
+
+    def create_init_task(self):
+        def _done_callback(task: asyncio.Task) -> None:
+            exc = task.exception()
+            if exc is not None:
+                log.error(
+                    "An unexpected error occurred during Downloader's initialization.",
+                    exc_info=exc,
+                )
+                self._ready_raised = True
+                self._ready.set()
+
+        self._init_task = asyncio.create_task(self.initialize())
+        self._init_task.add_done_callback(_done_callback)
+
     async def initialize(self) -> None:
         await self._repo_manager.initialize()
         await self._maybe_update_config()
+        self._ready.set()
 
     async def _maybe_update_config(self) -> None:
         schema_version = await self.conf.schema_version()
@@ -205,7 +237,7 @@ class Downloader(commands.Cog):
         await self.conf.installed_libraries.set(installed_libraries)
 
     async def _shared_lib_load_check(self, cog_name: str) -> Optional[Repo]:
-        # remove in Red 3.3
+        # remove in Red 3.4
         is_installed, cog = await self.is_installed(cog_name)
         # it's not gonna be None when `is_installed` is True
         # if we'll use typing_extensions in future, `Literal` can solve this
@@ -418,6 +450,11 @@ class Downloader(commands.Cog):
         elif target.is_file():
             os.remove(str(target))
 
+    @staticmethod
+    async def send_pagified(target: discord.abc.Messageable, content: str) -> None:
+        for page in pagify(content):
+            await target.send(page)
+
     @commands.command()
     @checks.is_owner()
     async def pipinstall(self, ctx: commands.Context, *deps: str) -> None:
@@ -425,7 +462,7 @@ class Downloader(commands.Cog):
         if not deps:
             await ctx.send_help()
             return
-        repo = Repo("", "", "", "", Path.cwd(), loop=ctx.bot.loop)
+        repo = Repo("", "", "", "", Path.cwd())
         async with ctx.typing():
             success = await repo.install_raw_requirements(deps, self.LIB_PATH)
 
@@ -550,7 +587,7 @@ class Downloader(commands.Cog):
             if failed:
                 message += "\n" + self.format_failed_repos(failed)
 
-        await ctx.send(message)
+        await self.send_pagified(ctx, message)
 
     @commands.group()
     @checks.is_owner()
@@ -596,12 +633,13 @@ class Downloader(commands.Cog):
                 tuple(map(inline, libnames))
             )
         if message:
-            await ctx.send(
+            await self.send_pagified(
+                ctx,
                 _(
                     "Cog requirements and shared libraries for all installed cogs"
                     " have been reinstalled but there were some errors:\n"
                 )
-                + message
+                + message,
             )
         else:
             await ctx.send(
@@ -643,8 +681,7 @@ class Downloader(commands.Cog):
                             f"**{candidate.object_type} {candidate.rev}**"
                             f" - {candidate.description}\n"
                         )
-                    for page in pagify(msg):
-                        await ctx.send(msg)
+                    await self.send_pagified(ctx, msg)
                     return
                 except errors.UnknownRevision:
                     await ctx.send(
@@ -658,14 +695,14 @@ class Downloader(commands.Cog):
             async with repo.checkout(commit, exit_to_rev=repo.branch):
                 cogs, message = await self._filter_incorrect_cogs_by_names(repo, cog_names)
                 if not cogs:
-                    await ctx.send(message)
+                    await self.send_pagified(ctx, message)
                     return
                 failed_reqs = await self._install_requirements(cogs)
                 if failed_reqs:
                     message += _("\nFailed to install requirements: ") + humanize_list(
                         tuple(map(inline, failed_reqs))
                     )
-                    await ctx.send(message)
+                    await self.send_pagified(ctx, message)
                     return
 
                 installed_cogs, failed_cogs = await self._install_cogs(cogs)
@@ -711,7 +748,7 @@ class Downloader(commands.Cog):
                     + message
                 )
         # "---" added to separate cog install messages from Downloader's message
-        await ctx.send(f"{message}{deprecation_notice}\n---")
+        await self.send_pagified(ctx, f"{message}{deprecation_notice}\n---")
         for cog in installed_cogs:
             if cog.install_msg:
                 await ctx.send(cog.install_msg.replace("[p]", ctx.prefix))
@@ -748,14 +785,18 @@ class Downloader(commands.Cog):
                 message += _("Successfully uninstalled cogs: ") + humanize_list(uninstalled_cogs)
             if failed_cogs:
                 message += (
-                    _("\nThese cog were installed but can no longer be located: ")
+                    _(
+                        "\nDownloader has removed these cogs from the installed cogs list"
+                        " but it wasn't able to find their files: "
+                    )
                     + humanize_list(tuple(map(inline, failed_cogs)))
                     + _(
-                        "\nYou may need to remove their files manually if they are still usable."
-                        " Also make sure you've unloaded those cogs with `{prefix}unload {cogs}`."
+                        "\nThey were most likely removed without using `{prefix}cog uninstall`.\n"
+                        "You may need to remove those files manually if the cogs are still usable."
+                        " If so, ensure the cogs have been unloaded with `{prefix}unload {cogs}`."
                     ).format(prefix=ctx.prefix, cogs=" ".join(failed_cogs))
                 )
-        await ctx.send(message)
+        await self.send_pagified(ctx, message)
 
     @cog.command(name="pin", usage="<cogs>")
     async def _cog_pin(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
@@ -778,7 +819,7 @@ class Downloader(commands.Cog):
             message += _("Pinned cogs: ") + humanize_list(cognames)
         if already_pinned:
             message += _("\nThese cogs were already pinned: ") + humanize_list(already_pinned)
-        await ctx.send(message)
+        await self.send_pagified(ctx, message)
 
     @cog.command(name="unpin", usage="<cogs>")
     async def _cog_unpin(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
@@ -801,7 +842,7 @@ class Downloader(commands.Cog):
             message += _("Unpinned cogs: ") + humanize_list(cognames)
         if not_pinned:
             message += _("\nThese cogs weren't pinned: ") + humanize_list(not_pinned)
-        await ctx.send(message)
+        await self.send_pagified(ctx, message)
 
     @cog.command(name="checkforupdates")
     async def _cog_checkforupdates(self, ctx: commands.Context) -> None:
@@ -833,7 +874,7 @@ class Downloader(commands.Cog):
             if failed:
                 message += "\n" + self.format_failed_repos(failed)
 
-            await ctx.send(message)
+        await self.send_pagified(ctx, message)
 
     @cog.command(name="update")
     async def _cog_update(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
@@ -869,7 +910,6 @@ class Downloader(commands.Cog):
         rev: Optional[str] = None,
         cogs: Optional[List[InstalledModule]] = None,
     ) -> None:
-        message = ""
         failed_repos = set()
         updates_available = set()
 
@@ -882,7 +922,7 @@ class Downloader(commands.Cog):
                     await repo.update()
                 except errors.UpdateError:
                     message = self.format_failed_repos([repo.name])
-                    await ctx.send(message)
+                    await self.send_pagified(ctx, message)
                     return
 
                 try:
@@ -896,11 +936,10 @@ class Downloader(commands.Cog):
                             f"**{candidate.object_type} {candidate.rev}**"
                             f" - {candidate.description}\n"
                         )
-                    for page in pagify(msg):
-                        await ctx.send(msg)
+                    await self.send_pagified(ctx, msg)
                     return
                 except errors.UnknownRevision:
-                    message += _(
+                    message = _(
                         "Error: there is no revision `{rev}` in repo `{repo.name}`"
                     ).format(rev=rev, repo=repo)
                     await ctx.send(message)
@@ -917,6 +956,8 @@ class Downloader(commands.Cog):
 
             pinned_cogs = {cog for cog in cogs_to_check if cog.pinned}
             cogs_to_check -= pinned_cogs
+
+            message = ""
             if not cogs_to_check:
                 cogs_to_update = libs_to_update = ()
                 message += _("There were no cogs to check.")
@@ -972,7 +1013,7 @@ class Downloader(commands.Cog):
         if repos_with_libs:
             message += DEPRECATION_NOTICE.format(repo_list=humanize_list(list(repos_with_libs)))
 
-        await ctx.send(message)
+        await self.send_pagified(ctx, message)
 
         if updates_available and updated_cognames:
             await self._ask_for_cog_reload(ctx, updated_cognames)

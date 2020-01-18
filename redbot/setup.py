@@ -253,20 +253,23 @@ async def remove_instance(
 
     backend = get_current_backend(instance)
     driver_cls = drivers.get_driver_class(backend)
+    await driver_cls.initialize(**data_manager.storage_details())
+    try:
+        if delete_data is True:
+            await driver_cls.delete_all_data(interactive=interactive, drop_db=drop_db)
 
-    if delete_data is True:
-        await driver_cls.delete_all_data(interactive=interactive, drop_db=drop_db)
+        if interactive is True and remove_datapath is None:
+            remove_datapath = click.confirm(
+                "Would you like to delete the instance's entire datapath?", default=False
+            )
 
-    if interactive is True and remove_datapath is None:
-        remove_datapath = click.confirm(
-            "Would you like to delete the instance's entire datapath?", default=False
-        )
+        if remove_datapath is True:
+            data_path = data_manager.core_data_path().parent
+            safe_delete(data_path)
 
-    if remove_datapath is True:
-        data_path = data_manager.core_data_path().parent
-        safe_delete(data_path)
-
-    save_config(instance, {}, remove=True)
+        save_config(instance, {}, remove=True)
+    finally:
+        await driver_cls.teardown()
     print("The instance {} has been removed\n".format(instance))
 
 
@@ -368,8 +371,7 @@ def delete(
     remove_datapath: Optional[bool],
 ):
     """Removes an instance."""
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(
+    asyncio.run(
         remove_instance(
             instance, interactive, delete_data, _create_backup, drop_db, remove_datapath
         )
@@ -388,14 +390,12 @@ def convert(instance, backend):
     default_dirs = deepcopy(data_manager.basic_config_default)
     default_dirs["DATA_PATH"] = str(Path(instance_data[instance]["DATA_PATH"]))
 
-    loop = asyncio.get_event_loop()
-
     if current_backend == BackendType.MONGOV1:
         raise RuntimeError("Please see the 3.2 release notes for upgrading a bot using mongo.")
     elif current_backend == BackendType.POSTGRES:  # TODO: GH-3115
         raise RuntimeError("Converting away from postgres isn't currently supported")
     else:
-        new_storage_details = loop.run_until_complete(do_migration(current_backend, target))
+        new_storage_details = asyncio.run(do_migration(current_backend, target))
 
     if new_storage_details is not None:
         default_dirs["STORAGE_TYPE"] = target.value
@@ -419,8 +419,7 @@ def convert(instance, backend):
 )
 def backup(instance: str, destination_folder: Union[str, Path]) -> None:
     """Backup instance's data."""
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(create_backup(instance, Path(destination_folder)))
+    asyncio.run(create_backup(instance, Path(destination_folder)))
 
 
 def run_cli():

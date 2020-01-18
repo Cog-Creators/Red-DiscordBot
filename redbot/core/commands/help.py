@@ -44,6 +44,7 @@ from . import commands
 from .context import Context
 from ..i18n import Translator
 from ..utils import menus
+from ..utils.mod import mass_purge
 from ..utils._internal_utils import fuzzy_command_search, format_fuzzy_results
 from ..utils.chat_formatting import box, pagify
 
@@ -162,10 +163,10 @@ class RedHelpFormatter:
 
     @staticmethod
     def get_default_tagline(ctx: Context):
-        return (
-            f"Type {ctx.clean_prefix}help <command> for more info on a command. "
-            f"You can also type {ctx.clean_prefix}help <category> for more info on a category."
-        )
+        return T_(
+            "Type {ctx.clean_prefix}help <command> for more info on a command. "
+            "You can also type {ctx.clean_prefix}help <category> for more info on a category."
+        ).format(ctx=ctx)
 
     async def format_command_help(self, ctx: Context, obj: commands.Command):
 
@@ -187,7 +188,9 @@ class RedHelpFormatter:
 
         description = command.description or ""
         tagline = (await ctx.bot._config.help.tagline()) or self.get_default_tagline(ctx)
-        signature = f"`Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
+        signature = (
+            f"`{T_('Syntax')}: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
+        )
         subcommands = None
 
         if hasattr(command, "all_commands"):
@@ -198,18 +201,19 @@ class RedHelpFormatter:
             emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
 
             if description:
-                emb["embed"]["title"] = f"*{description[:2044]}*"
+                emb["embed"]["title"] = f"*{description[:250]}*"
 
             emb["footer"]["text"] = tagline
             emb["embed"]["description"] = signature
 
-            if command.help:
-                splitted = command.help.split("\n\n")
+            command_help = command.format_help_for_context(ctx)
+            if command_help:
+                splitted = command_help.split("\n\n")
                 name = splitted[0]
-                value = "\n\n".join(splitted[1:]).replace("[p]", ctx.clean_prefix)
+                value = "\n\n".join(splitted[1:])
                 if not value:
                     value = EMPTY_STRING
-                field = EmbedField(name[:252], value[:1024], False)
+                field = EmbedField(name[:250], value[:1024], False)
                 emb["fields"].append(field)
 
             if subcommands:
@@ -220,14 +224,14 @@ class RedHelpFormatter:
                     return a_line[:67] + "..."
 
                 subtext = "\n".join(
-                    shorten_line(f"**{name}** {command.short_doc}")
+                    shorten_line(f"**{name}** {command.format_shortdoc_for_context(ctx)}")
                     for name, command in sorted(subcommands.items())
                 )
                 for i, page in enumerate(pagify(subtext, page_length=500, shorten_by=0)):
                     if i == 0:
-                        title = "**__Subcommands:__**"
+                        title = T_("**__Subcommands:__**")
                     else:
-                        title = "**__Subcommands:__** (continued)"
+                        title = T_("**__Subcommands:__** (continued)")
                     field = EmbedField(title, page, False)
                     emb["fields"].append(field)
 
@@ -238,14 +242,14 @@ class RedHelpFormatter:
             subtext = None
             subtext_header = None
             if subcommands:
-                subtext_header = "Subcommands:"
+                subtext_header = T_("Subcommands:")
                 max_width = max(discord.utils._string_width(name) for name in subcommands.keys())
 
                 def width_maker(cmds):
                     doc_max_width = 80 - max_width
                     for nm, com in sorted(cmds):
                         width_gap = discord.utils._string_width(nm) - len(nm)
-                        doc = com.short_doc
+                        doc = com.format_shortdoc_for_context(ctx)
                         if len(doc) > doc_max_width:
                             doc = doc[: doc_max_width - 3] + "..."
                         yield nm, doc, max_width - width_gap
@@ -261,7 +265,7 @@ class RedHelpFormatter:
                     (
                         description,
                         signature[1:-1],
-                        command.help.replace("[p]", ctx.clean_prefix),
+                        command.format_help_for_context(ctx),
                         subtext_header,
                         subtext,
                     ),
@@ -301,7 +305,10 @@ class RedHelpFormatter:
         page_char_limit = await ctx.bot._config.help.page_char_limit()
         page_char_limit = min(page_char_limit, 5500)  # Just in case someone was manually...
 
-        author_info = {"name": f"{ctx.me.display_name} Help Menu", "icon_url": ctx.me.avatar_url}
+        author_info = {
+            "name": f"{ctx.me.display_name} {T_('Help Menu')}",
+            "icon_url": ctx.me.avatar_url,
+        }
 
         # Offset calculation here is for total embed size limit
         # 20 accounts for# *Page {i} of {page_count}*
@@ -346,7 +353,9 @@ class RedHelpFormatter:
             embed = discord.Embed(color=color, **embed_dict["embed"])
 
             if page_count > 1:
-                description = f"*Page {i} of {page_count}*\n{embed.description}"
+                description = T_(
+                    "*Page {page_num} of {page_count}*\n{content_description}"
+                ).format(content_description=embed.description, page_num=i, page_count=page_count)
                 embed.description = description
 
             embed.set_author(**author_info)
@@ -366,7 +375,7 @@ class RedHelpFormatter:
         if not (coms or await ctx.bot._config.help.verify_exists()):
             return
 
-        description = obj.help
+        description = obj.format_help_for_context(ctx)
         tagline = (await ctx.bot._config.help.tagline()) or self.get_default_tagline(ctx)
 
         if await ctx.embed_requested():
@@ -376,7 +385,7 @@ class RedHelpFormatter:
             if description:
                 splitted = description.split("\n\n")
                 name = splitted[0]
-                value = "\n\n".join(splitted[1:]).replace("[p]", ctx.clean_prefix)
+                value = "\n\n".join(splitted[1:])
                 if not value:
                     value = EMPTY_STRING
                 field = EmbedField(name[:252], value[:1024], False)
@@ -390,14 +399,14 @@ class RedHelpFormatter:
                     return a_line[:67] + "..."
 
                 command_text = "\n".join(
-                    shorten_line(f"**{name}** {command.short_doc}")
+                    shorten_line(f"**{name}** {command.format_shortdoc_for_context(ctx)}")
                     for name, command in sorted(coms.items())
                 )
                 for i, page in enumerate(pagify(command_text, page_length=500, shorten_by=0)):
                     if i == 0:
-                        title = "**__Commands:__**"
+                        title = T_("**__Commands:__**")
                     else:
-                        title = "**__Commands:__** (continued)"
+                        title = T_("**__Commands:__** (continued)")
                     field = EmbedField(title, page, False)
                     emb["fields"].append(field)
 
@@ -407,14 +416,14 @@ class RedHelpFormatter:
             subtext = None
             subtext_header = None
             if coms:
-                subtext_header = "Commands:"
+                subtext_header = T_("Commands:")
                 max_width = max(discord.utils._string_width(name) for name in coms.keys())
 
                 def width_maker(cmds):
                     doc_max_width = 80 - max_width
                     for nm, com in sorted(cmds):
                         width_gap = discord.utils._string_width(nm) - len(nm)
-                        doc = com.short_doc
+                        doc = com.format_shortdoc_for_context(ctx)
                         if len(doc) > doc_max_width:
                             doc = doc[: doc_max_width - 3] + "..."
                         yield nm, doc, max_width - width_gap
@@ -442,14 +451,14 @@ class RedHelpFormatter:
 
             emb["footer"]["text"] = tagline
             if description:
-                emb["embed"]["title"] = f"*{description[:2044]}*"
+                emb["embed"]["title"] = f"*{description[:250]}*"
 
             for cog_name, data in coms:
 
                 if cog_name:
                     title = f"**__{cog_name}:__**"
                 else:
-                    title = f"**__No Category:__**"
+                    title = f"**__{T_('No Category')}:__**"
 
                 def shorten_line(a_line: str) -> str:
                     if len(a_line) < 70:  # embed max width needs to be lower
@@ -457,12 +466,12 @@ class RedHelpFormatter:
                     return a_line[:67] + "..."
 
                 cog_text = "\n".join(
-                    shorten_line(f"**{name}** {command.short_doc}")
+                    shorten_line(f"**{name}** {command.format_shortdoc_for_context(ctx)}")
                     for name, command in sorted(data.items())
                 )
 
                 for i, page in enumerate(pagify(cog_text, page_length=1000, shorten_by=0)):
-                    title = title if i < 1 else f"{title} (continued)"
+                    title = title if i < 1 else f"{title} {T_('(continued)')}"
                     field = EmbedField(title, page, False)
                     emb["fields"].append(field)
 
@@ -478,21 +487,21 @@ class RedHelpFormatter:
                 names.extend(list(v.name for v in v.values()))
 
             max_width = max(
-                discord.utils._string_width((name or "No Category:")) for name in names
+                discord.utils._string_width((name or T_("No Category:"))) for name in names
             )
 
             def width_maker(cmds):
                 doc_max_width = 80 - max_width
                 for nm, com in cmds:
                     width_gap = discord.utils._string_width(nm) - len(nm)
-                    doc = com.short_doc
+                    doc = com.format_shortdoc_for_context(ctx)
                     if len(doc) > doc_max_width:
                         doc = doc[: doc_max_width - 3] + "..."
                     yield nm, doc, max_width - width_gap
 
             for cog_name, data in coms:
 
-                title = f"{cog_name}:" if cog_name else "No Category:"
+                title = f"{cog_name}:" if cog_name else T_("No Category:")
                 to_join.append(title)
 
                 for name, doc, width in width_maker(sorted(data.items())):
@@ -543,7 +552,9 @@ class RedHelpFormatter:
         if fuzzy_commands:
             ret = await format_fuzzy_results(ctx, fuzzy_commands, embed=use_embeds)
             if use_embeds:
-                ret.set_author(name=f"{ctx.me.display_name} Help Menu", icon_url=ctx.me.avatar_url)
+                ret.set_author(
+                    name=f"{ctx.me.display_name} {T_('Help Menu')}", icon_url=ctx.me.avatar_url
+                )
                 tagline = (await ctx.bot._config.help.tagline()) or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
                 await ctx.send(embed=ret)
@@ -553,7 +564,9 @@ class RedHelpFormatter:
             ret = T_("Help topic for *{command_name}* not found.").format(command_name=help_for)
             if use_embeds:
                 ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
-                ret.set_author(name=f"{ctx.me.display_name} Help Menu", icon_url=ctx.me.avatar_url)
+                ret.set_author(
+                    name=f"{ctx.me.display_name} {T_('Help Menu')}", icon_url=ctx.me.avatar_url
+                )
                 tagline = (await ctx.bot._config.help.tagline()) or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
                 await ctx.send(embed=ret)
@@ -569,7 +582,9 @@ class RedHelpFormatter:
         )
         if await ctx.embed_requested():
             ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
-            ret.set_author(name=f"{ctx.me.display_name} Help Menu", icon_url=ctx.me.avatar_url)
+            ret.set_author(
+                name=f"{ctx.me.display_name} {T_('Help Menu')}", icon_url=ctx.me.avatar_url
+            )
             tagline = (await ctx.bot._config.help.tagline()) or self.get_default_tagline(ctx)
             ret.set_footer(text=tagline)
             await ctx.send(embed=ret)
@@ -613,36 +628,52 @@ class RedHelpFormatter:
         Sends pages based on settings.
         """
 
-        if not (
-            ctx.channel.permissions_for(ctx.me).add_reactions
-            and await ctx.bot._config.help.use_menus()
-        ):
+        # save on config calls
+        config_help = await ctx.bot._config.help()
+        channel_permissions = ctx.channel.permissions_for(ctx.me)
 
-            max_pages_in_guild = await ctx.bot._config.help.max_pages_in_guild()
-            destination = ctx.author if len(pages) > max_pages_in_guild else ctx
+        if not (channel_permissions.add_reactions and config_help["use_menus"]):
 
-            if embed:
-                for page in pages:
-                    try:
-                        await destination.send(embed=page)
-                    except discord.Forbidden:
-                        return await ctx.send(
-                            T_(
-                                "I couldn't send the help message to you in DM. "
-                                "Either you blocked me or you disabled DMs in this server."
-                            )
+            max_pages_in_guild = config_help["max_pages_in_guild"]
+            use_DMs = len(pages) > max_pages_in_guild
+            destination = ctx.author if use_DMs else ctx.channel
+            delete_delay = config_help["delete_delay"]
+
+            messages: List[discord.Message] = []
+            for page in pages:
+                try:
+                    if embed:
+                        msg = await destination.send(embed=page)
+                    else:
+                        msg = await destination.send(page)
+                except discord.Forbidden:
+                    return await ctx.send(
+                        T_(
+                            "I couldn't send the help message to you in DM. "
+                            "Either you blocked me or you disabled DMs in this server."
                         )
-            else:
-                for page in pages:
-                    try:
-                        await destination.send(page)
-                    except discord.Forbidden:
-                        return await ctx.send(
-                            T_(
-                                "I couldn't send the help message to you in DM. "
-                                "Either you blocked me or you disabled DMs in this server."
-                            )
-                        )
+                    )
+                else:
+                    messages.append(msg)
+
+            # The if statement takes into account that 'destination' will be
+            # the context channel in non-DM context, reusing 'channel_permissions' to avoid
+            # computing the permissions twice.
+            if (
+                not use_DMs  # we're not in DMs
+                and delete_delay > 0  # delete delay is enabled
+                and channel_permissions.manage_messages  # we can manage messages here
+            ):
+
+                # We need to wrap this in a task to not block after-sending-help interactions.
+                # The channel has to be TextChannel as we can't bulk-delete from DMs
+                async def _delete_delay_help(
+                    channel: discord.TextChannel, messages: List[discord.Message], delay: int
+                ):
+                    await asyncio.sleep(delay)
+                    await mass_purge(messages, channel)
+
+                asyncio.create_task(_delete_delay_help(destination, messages, delete_delay))
         else:
             # Specifically ensuring the menu's message is sent prior to returning
             m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))

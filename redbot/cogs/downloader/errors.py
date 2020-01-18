@@ -38,6 +38,10 @@ class GitException(DownloaderException):
     Generic class for git exceptions.
     """
 
+    def __init__(self, message: str, git_command: str) -> None:
+        self.git_command = git_command
+        super().__init__(f"Git command failed: {git_command}\nError message: {message}")
+
 
 class InvalidRepoName(DownloaderException):
     """
@@ -138,8 +142,8 @@ class AmbiguousRevision(GitException):
     Thrown when specified revision is ambiguous.
     """
 
-    def __init__(self, message: str, candidates: List[Candidate]) -> None:
-        super().__init__(message)
+    def __init__(self, message: str, git_command: str, candidates: List[Candidate]) -> None:
+        super().__init__(message, git_command)
         self.candidates = candidates
 
 

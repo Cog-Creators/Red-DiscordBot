@@ -116,12 +116,19 @@ class Admin(commands.Cog):
         :param role:
         :return:
         """
-        return ctx.author.top_role > role
+        return ctx.author.top_role > role or ctx.author == ctx.guild.owner
 
-    async def _addrole(self, ctx: commands.Context, member: discord.Member, role: discord.Role):
-        if member is None:
-            member = ctx.author
-        if not self.pass_user_hierarchy_check(ctx, role):
+    async def _addrole(
+        self, ctx: commands.Context, member: discord.Member, role: discord.Role, *, check_user=True
+    ):
+        if role in member.roles:
+            await ctx.send(
+                _("{member.display_name} already has the role {role.name}.").format(
+                    role=role, member=member
+                )
+            )
+            return
+        if check_user and not self.pass_user_hierarchy_check(ctx, role):
             await ctx.send(_(USER_HIERARCHY_ISSUE_ADD).format(role=role, member=member))
             return
         if not self.pass_hierarchy_check(ctx, role):
@@ -141,10 +148,17 @@ class Admin(commands.Cog):
                 )
             )
 
-    async def _removerole(self, ctx: commands.Context, member: discord.Member, role: discord.Role):
-        if member is None:
-            member = ctx.author
-        if not self.pass_user_hierarchy_check(ctx, role):
+    async def _removerole(
+        self, ctx: commands.Context, member: discord.Member, role: discord.Role, *, check_user=True
+    ):
+        if role not in member.roles:
+            await ctx.send(
+                _("{member.display_name} does not have the role {role.name}.").format(
+                    role=role, member=member
+                )
+            )
+            return
+        if check_user and not self.pass_user_hierarchy_check(ctx, role):
             await ctx.send(_(USER_HIERARCHY_ISSUE_REMOVE).format(role=role, member=member))
             return
         if not self.pass_hierarchy_check(ctx, role):
@@ -365,7 +379,7 @@ class Admin(commands.Cog):
         NOTE: The role is case sensitive!
         """
         # noinspection PyTypeChecker
-        await self._addrole(ctx, ctx.author, selfrole)
+        await self._addrole(ctx, ctx.author, selfrole, check_user=False)
 
     @selfrole.command(name="remove")
     async def selfrole_remove(self, ctx: commands.Context, *, selfrole: SelfRole):
@@ -376,7 +390,7 @@ class Admin(commands.Cog):
         NOTE: The role is case sensitive!
         """
         # noinspection PyTypeChecker
-        await self._removerole(ctx, ctx.author, selfrole)
+        await self._removerole(ctx, ctx.author, selfrole, check_user=False)
 
     @selfrole.command(name="list")
     async def selfrole_list(self, ctx: commands.Context):
@@ -406,6 +420,13 @@ class Admin(commands.Cog):
 
         NOTE: The role is case sensitive!
         """
+        if not self.pass_user_hierarchy_check(ctx, role):
+            await ctx.send(
+                _(
+                    "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
+                ).format(role=role)
+            )
+            return
         async with self.conf.guild(ctx.guild).selfroles() as curr_selfroles:
             if role.id not in curr_selfroles:
                 curr_selfroles.append(role.id)
@@ -421,6 +442,13 @@ class Admin(commands.Cog):
 
         NOTE: The role is case sensitive!
         """
+        if not self.pass_user_hierarchy_check(ctx, role):
+            await ctx.send(
+                _(
+                    "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
+                ).format(role=role)
+            )
+            return
         async with self.conf.guild(ctx.guild).selfroles() as curr_selfroles:
             curr_selfroles.remove(role.id)
 

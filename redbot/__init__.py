@@ -181,9 +181,7 @@ class VersionInfo:
 
 
 def _update_event_loop_policy():
-    if _sys.platform == "win32":
-        _asyncio.set_event_loop_policy(_asyncio.WindowsProactorEventLoopPolicy())
-    elif _sys.implementation.name == "cpython":
+    if _sys.implementation.name == "cpython":
         # Let's not force this dependency, uvloop is much faster on cpython
         try:
             import uvloop as _uvloop
@@ -193,7 +191,7 @@ def _update_event_loop_policy():
             _asyncio.set_event_loop_policy(_uvloop.EventLoopPolicy())
 
 
-__version__ = "3.2.3.dev1"
+__version__ = "3.3.2.dev1"
 version_info = VersionInfo.from_str(__version__)
 
 # Filter fuzzywuzzy slow sequence matcher warning

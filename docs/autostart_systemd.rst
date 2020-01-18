@@ -14,11 +14,11 @@ In order to create the service file, you will first need the location of your :c
 
     # If redbot is installed in a virtualenv
     source redenv/bin/activate
+    which python
 
     # If you are using pyenv
     pyenv shell <name>
-
-    which redbot
+    pyenv which python
 
 Then create the new service file:
 
@@ -33,7 +33,7 @@ Paste the following and replace all instances of :code:`username` with the usern
     After=multi-user.target
 
     [Service]
-    ExecStart=path %I --no-prompt
+    ExecStart=path -O -m redbot %I --no-prompt
     User=username
     Group=username
     Type=idle
@@ -71,4 +71,4 @@ type the following command in the terminal, still by adding the instance name af
 
 To view Red’s log, you can acccess through journalctl:
 
-:code:`sudo journalctl -u red@instancename`
+:code:`sudo journalctl -eu red@instancename`
