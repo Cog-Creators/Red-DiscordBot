@@ -1483,7 +1483,9 @@ class Core(commands.Cog, CoreLogic):
                 if not destination.permissions_for(destination.guild.me).send_messages:
                     continue
                 if destination.permissions_for(destination.guild.me).embed_links:
-                    send_embed = await ctx.bot._config.guild(destination.guild).embeds()
+                    send_embed = await ctx.bot._config.channel(destination).embeds()
+                    if send_embed is None:
+                        send_embed = await ctx.bot._config.guild(destination.guild).embeds()
                 else:
                     send_embed = False
 
