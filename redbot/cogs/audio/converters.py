@@ -1,16 +1,15 @@
 import argparse
 import functools
 import re
-from typing import Optional, Tuple, Union, MutableMapping, TYPE_CHECKING
+from typing import MutableMapping, Optional, Tuple, Union
 
 import discord
 
-from redbot.core import Config, commands
-from redbot.core.bot import Red
+from redbot.core import commands
 from redbot.core.i18n import Translator
-
+from .apis.playlist_interface import get_all_playlist_converter
+from .apis.utils import standardize_scope
 from .errors import NoMatchesFound, TooManyMatches
-from .playlists import get_all_playlist_converter, standardize_scope
 from .utils import PlaylistScope
 
 _ = Translator("Audio", __file__)
@@ -24,13 +23,6 @@ __all__ = [
     "get_lazy_converter",
     "get_playlist_converter",
 ]
-
-if TYPE_CHECKING:
-    _bot: Red
-    _config: Config
-else:
-    _bot = None
-    _config = None
 
 _SCOPE_HELP = """
 Scope must be a valid version of one of the following:
@@ -51,14 +43,6 @@ Guild must be a valid version of one of the following:
 """
 
 MENTION_RE = re.compile(r"^<?(?:(?:@[!&]?)?|#)(\d{15,21})>?$")
-
-
-def _pass_config_to_converters(config: Config, bot: Red):
-    global _config, _bot
-    if _config is None:
-        _config = config
-    if _bot is None:
-        _bot = bot
 
 
 def _match_id(arg: str) -> Optional[int]:
@@ -143,15 +127,36 @@ async def global_unique_user_finder(
 
 class PlaylistConverter(commands.Converter):
     async def convert(self, ctx: commands.Context, arg: str) -> MutableMapping:
-        global_matches = await get_all_playlist_converter(
-            PlaylistScope.GLOBAL.value, _bot, arg, guild=ctx.guild, author=ctx.author
-        )
-        guild_matches = await get_all_playlist_converter(
-            PlaylistScope.GUILD.value, _bot, arg, guild=ctx.guild, author=ctx.author
-        )
-        user_matches = await get_all_playlist_converter(
-            PlaylistScope.USER.value, _bot, arg, guild=ctx.guild, author=ctx.author
-        )
+        """Get playlist for all scopes that match the argument user provided"""
+        cog = ctx.bot.get_cog("Audio")
+        user_matches = []
+        guild_matches = []
+        global_matches = []
+        if cog:
+            global_matches = await get_all_playlist_converter(
+                PlaylistScope.GLOBAL.value,
+                ctx.bot,
+                cog._playlist_api,
+                arg,
+                guild=ctx.guild,
+                author=ctx.author,
+            )
+            guild_matches = await get_all_playlist_converter(
+                PlaylistScope.GUILD.value,
+                ctx.bot,
+                cog._playlist_api,
+                arg,
+                guild=ctx.guild,
+                author=ctx.author,
+            )
+            user_matches = await get_all_playlist_converter(
+                PlaylistScope.USER.value,
+                ctx.bot,
+                cog._playlist_api,
+                arg,
+                guild=ctx.guild,
+                author=ctx.author,
+            )
         if not user_matches and not guild_matches and not global_matches:
             raise commands.BadArgument(_("Could not match '{}' to a playlist.").format(arg))
         return {

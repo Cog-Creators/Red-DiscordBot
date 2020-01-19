@@ -2,27 +2,22 @@ import asyncio
 import contextlib
 import functools
 import re
-import tarfile
 import time
-import zipfile
 from enum import Enum, unique
-from io import BytesIO
-from typing import MutableMapping, Optional, TYPE_CHECKING
+from typing import MutableMapping, Optional
 from urllib.parse import urlparse
 
 import discord
 import lavalink
-
-from redbot.core import Config, commands
-from redbot.core.bot import Red
-from redbot.core.i18n import Translator
-from redbot.core.utils.chat_formatting import bold, box
 from discord.utils import escape_markdown as escape
 
+from redbot.core import commands, Config
+from redbot.core.bot import Red
+from redbot.core.i18n import Translator
+from redbot.core.utils.chat_formatting import box
 from .audio_dataclasses import Query
 
 __all__ = [
-    "_pass_config_to_utils",
     "track_limit",
     "queue_duration",
     "draw_time",
@@ -47,27 +42,13 @@ __all__ = [
     "Notifier",
     "PlaylistScope",
 ]
+
 _RE_TIME_CONVERTER = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
 _RE_YT_LIST_PLAYLIST = re.compile(
     r"^(https?://)?(www\.)?(youtube\.com|youtu\.?be)(/playlist\?).*(list=)(.*)(&|$)"
 )
 
-if TYPE_CHECKING:
-    _config: Config
-    _bot: Red
-else:
-    _config = None
-    _bot = None
-
 _ = Translator("Audio", __file__)
-
-
-def _pass_config_to_utils(config: Config, bot: Red) -> None:
-    global _config, _bot
-    if _config is None:
-        _config = config
-    if _bot is None:
-        _bot = bot
 
 
 def track_limit(track, maxlength) -> bool:
@@ -81,27 +62,30 @@ def track_limit(track, maxlength) -> bool:
     return True
 
 
-async def is_allowed(guild: discord.Guild, query: str, query_obj: Query = None) -> bool:
+async def is_allowed(
+    config: Config, guild: discord.Guild, query: str, query_obj: Query = None
+) -> bool:
+    """Checks if the query is allowed in this server or globally"""
 
     query = query.lower().strip()
     if query_obj is not None:
         query = query_obj.lavalink_query.replace("ytsearch:", "youtubesearch").replace(
             "scsearch:", "soundcloudsearch"
         )
-    global_whitelist = set(await _config.url_keyword_whitelist())
+    global_whitelist = set(await config.url_keyword_whitelist())
     global_whitelist = [i.lower() for i in global_whitelist]
     if global_whitelist:
         return any(i in query for i in global_whitelist)
-    global_blacklist = set(await _config.url_keyword_blacklist())
+    global_blacklist = set(await config.url_keyword_blacklist())
     global_blacklist = [i.lower() for i in global_blacklist]
     if any(i in query for i in global_blacklist):
         return False
     if guild is not None:
-        whitelist = set(await _config.guild(guild).url_keyword_whitelist())
+        whitelist = set(await config.guild(guild).url_keyword_whitelist())
         whitelist = [i.lower() for i in whitelist]
         if whitelist:
             return any(i in query for i in whitelist)
-        blacklist = set(await _config.guild(guild).url_keyword_blacklist())
+        blacklist = set(await config.guild(guild).url_keyword_blacklist())
         blacklist = [i.lower() for i in blacklist]
         return not any(i in query for i in blacklist)
     return True
@@ -180,8 +164,9 @@ def dynamic_time(seconds) -> str:
     return msg.format(d, h, m, s)
 
 
-def format_playlist_picker_data(pid, pname, ptracks, pauthor, scope) -> str:
-    author = _bot.get_user(pauthor) or pauthor or _("Unknown")
+def format_playlist_picker_data(bot: Red, pid, pname, ptracks, pauthor, scope) -> str:
+    """Format the values into a pretified codeblock"""
+    author = bot.get_user(pauthor) or pauthor or _("Unknown")
     line = _(
         " - Name:   <{pname}>\n"
         " - Scope:  < {scope} >\n"
@@ -225,9 +210,10 @@ async def clear_react(bot: Red, message: discord.Message, emoji: MutableMapping 
         return
 
 
-def get_track_description(track) -> Optional[str]:
+def get_track_description(track, local_folder_current_path) -> Optional[str]:
+    """Get the user facing formated track name"""
     if track and getattr(track, "uri", None):
-        query = Query.process_input(track.uri)
+        query = Query.process_input(track.uri, local_folder_current_path)
         if query.is_local or "localtracks/" in track.uri:
             if track.title != "Unknown title":
                 return f'**{escape(f"{track.author} - {track.title}")}**' + escape(
@@ -241,9 +227,10 @@ def get_track_description(track) -> Optional[str]:
         return escape(track.to_string_user() + " ")
 
 
-def get_track_description_unformatted(track) -> Optional[str]:
+def get_track_description_unformatted(track, local_folder_current_path) -> Optional[str]:
+    """Get the user facing unformated track name"""
     if track and hasattr(track, "uri"):
-        query = Query.process_input(track.uri)
+        query = Query.process_input(track.uri, local_folder_current_path)
         if query.is_local or "localtracks/" in track.uri:
             if track.title != "Unknown title":
                 return escape(f"{track.author} - {track.title}")
@@ -536,8 +523,8 @@ class PlaylistScope(Enum):
 def humanize_scope(scope, ctx=None, the=None):
 
     if scope == PlaylistScope.GLOBAL.value:
-        return (_("the ") if the else "") + _("Global")
+        return _("the Global") if the else _("Global")
     elif scope == PlaylistScope.GUILD.value:
-        return ctx.name if ctx else (_("the ") if the else "") + _("Server")
+        return ctx.name if ctx else _("the Server") if the else _("Server")
     elif scope == PlaylistScope.USER.value:
-        return str(ctx) if ctx else (_("the ") if the else "") + _("User")
+        return str(ctx) if ctx else _("the User") if the else _("User")
