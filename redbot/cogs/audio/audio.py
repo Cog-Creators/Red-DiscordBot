@@ -6780,7 +6780,7 @@ class Audio(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def remove(self, ctx: commands.Context, index_or_url: Union[int, str]):
+    async def remove(self, ctx: commands.Context, index: int):
         """Remove a specific track number from the queue."""
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
@@ -6805,47 +6805,20 @@ class Audio(commands.Cog):
                 title=_("Unable To Modify Queue"),
                 description=_("You must be in the voice channel to manage the queue."),
             )
-        if isinstance(index_or_url, int):
-            if index_or_url > len(player.queue) or index_or_url < 1:
-                return await self._embed_msg(
-                    ctx,
-                    title=_("Unable To Modify Queue"),
-                    description=_(
-                        "Song number must be greater than 1 and within the queue limit."
-                    ),
-                )
-            index_or_url -= 1
-            removed = player.queue.pop(index_or_url)
-            removed_title = get_track_description(removed)
-            await self._embed_msg(
+        if index > len(player.queue) or index < 1:
+            return await self._embed_msg(
                 ctx,
-                title=_("Removed track from queue"),
-                description=_("Removed {track} from the queue.").format(track=removed_title),
+                title=_("Unable To Modify Queue"),
+                description=_("Song number must be greater than 1 and within the queue limit."),
             )
-        else:
-            clean_tracks = []
-            removed_tracks = 0
-            for track in player.queue:
-                if track.uri != index_or_url:
-                    clean_tracks.append(track)
-                else:
-                    removed_tracks += 1
-            player.queue = clean_tracks
-            if removed_tracks == 0:
-                await self._embed_msg(
-                    ctx,
-                    title=_("Unable To Modify Queue"),
-                    description=_("Removed 0 tracks, nothing matches the URL provided."),
-                )
-            else:
-                await self._embed_msg(
-                    ctx,
-                    title=_("Removed track from queue"),
-                    description=_(
-                        "Removed {removed_tracks} tracks from queue "
-                        "which matched the URL provided."
-                    ).format(removed_tracks=removed_tracks),
-                )
+        index -= 1
+        removed = player.queue.pop(index)
+        removed_title = get_track_description(removed)
+        await self._embed_msg(
+            ctx,
+            title=_("Removed track from queue"),
+            description=_("Removed {track} from the queue.").format(track=removed_title),
+        )
 
     @commands.command()
     @commands.guild_only()
