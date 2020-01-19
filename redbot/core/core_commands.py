@@ -446,7 +446,7 @@ class Core(commands.Cog, CoreLogic):
         used for all commands done in a channel except
         for help commands.
         """
-        await self.bot._config.channel(ctx.ctx.channel).embeds.set(enabled)
+        await self.bot._config.channel(ctx.channel).embeds.set(enabled)
         if enabled is None:
             await ctx.send(_("Embeds will now fall back to the global setting."))
         else:
