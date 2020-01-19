@@ -119,6 +119,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             autoimmune_ids=[],
         )
 
+        self._config.register_channel(embeds=None)
         self._config.register_user(embeds=None)
 
         self._config.init_custom(CUSTOM_GROUPS, 2)
@@ -619,6 +620,9 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             if user_setting is not None:
                 return user_setting
         else:
+            channel_setting = await self._config.channel(channel).embeds()
+            if channel_setting is not None:
+                return channel_setting
             guild_setting = await self._config.guild(channel.guild).embeds()
             if guild_setting is not None:
                 return guild_setting

@@ -385,6 +385,9 @@ class Core(commands.Cog, CoreLogic):
             if ctx.guild:
                 guild_setting = await self.bot._config.guild(ctx.guild).embeds()
                 text += _("Guild setting: {}\n").format(guild_setting)
+            if ctx.channel:
+                channel_setting = await self.bot._config.channel(ctx.channel).embeds()
+                text += _("Channel setting: {}\n").format(channel_setting)
             user_setting = await self.bot._config.user(ctx.author).embeds()
             text += _("User setting: {}").format(user_setting)
             await ctx.send(box(text))
@@ -426,6 +429,29 @@ class Core(commands.Cog, CoreLogic):
         else:
             await ctx.send(
                 _("Embeds are now {} for this guild.").format(
+                    _("enabled") if enabled else _("disabled")
+                )
+            )
+
+    @embedset.command(name="channel")
+    async def embedset_channel(self, ctx: commands.Context, enabled: bool = None):
+        """
+        Toggle the channel's embed setting.
+
+        If enabled is None, the setting will be unset and
+        the guild default will be used instead.
+
+        If set, this is used instead of the guild default
+        to determine whether or not to use embeds. This is
+        used for all commands done in a channel except
+        for help commands.
+        """
+        await self.bot._config.channel(ctx.ctx.channel).embeds.set(enabled)
+        if enabled is None:
+            await ctx.send(_("Embeds will now fall back to the global setting."))
+        else:
+            await ctx.send(
+                _("Embeds are now {} for this channel.").format(
                     _("enabled") if enabled else _("disabled")
                 )
             )
