@@ -15,7 +15,6 @@ import aiohttp
 from tqdm import tqdm
 
 from redbot.core import data_manager
-
 from .errors import LavalinkDownloadFailed
 
 log = logging.getLogger("red.audio.manager")
