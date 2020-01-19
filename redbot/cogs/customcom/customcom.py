@@ -227,6 +227,9 @@ class CustomCommands(commands.Cog):
             await ctx.send(_("There already exists a bot command with the same name."))
             return
         responses = await self.commandobj.get_responses(ctx=ctx)
+        if not responses:
+            await ctx.send(_("Custom command process cancelled."))
+            return
         try:
             await self.commandobj.create(ctx=ctx, command=command, response=responses)
             await ctx.send(_("Custom command successfully added."))
