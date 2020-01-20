@@ -11,7 +11,7 @@ from typing import Dict, List, MutableMapping, Optional, Tuple, Union
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.utils.dbtools import APSWConnectionWrapper
-from .utils import (
+from .api_utils import (
     LavalinkCacheFetchForGlobalResult,
     LavalinkCacheFetchResult,
     SpotifyCacheFetchResult,

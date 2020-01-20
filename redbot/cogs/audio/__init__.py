@@ -1,6 +1,6 @@
 from redbot.core.bot import Red
 
-from .audio import Audio
+from .cog import Audio
 
 
 def setup(bot: Red):

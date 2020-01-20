@@ -1,0 +1,604 @@
+import asyncio
+import contextlib
+import datetime
+import json
+import logging
+import math
+from typing import List, MutableMapping, Optional, Tuple, Union
+
+import discord
+import lavalink
+from discord.embeds import EmptyEmbed
+
+from redbot.core import commands
+from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.menus import start_adding_reactions
+from redbot.core.utils.predicates import ReactionPredicate
+from ..abc import MixinMeta
+from ..cog_utils import CompositeMetaClass, _
+from ...apis.playlist_interface import Playlist, create_playlist
+from ...audio_dataclasses import Query, _PARTIALLY_SUPPORTED_MUSIC_EXT
+from ...errors import TooManyMatches, TrackEnqueueError
+from ...utils import Notifier, PlaylistScope
+
+log = logging.getLogger("red.cogs.Audio.cog.Utilities.playlists")
+
+
+class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
+    async def can_manage_playlist(
+        self, scope: str, playlist: Playlist, ctx: commands.Context, user, guild
+    ):
+        is_owner = await ctx.bot.is_owner(ctx.author)
+        has_perms = False
+        user_to_query = user
+        guild_to_query = guild
+        dj_enabled = None
+        playlist_author = (
+            guild.get_member(playlist.author)
+            if guild
+            else self.bot.get_user(playlist.author) or user
+        )
+
+        is_different_user = len({playlist.author, user_to_query.id, ctx.author.id}) != 1
+        is_different_guild = True if guild_to_query is None else ctx.guild.id != guild_to_query.id
+
+        if is_owner:
+            has_perms = True
+        elif playlist.scope == PlaylistScope.USER.value:
+            if not is_different_user:
+                has_perms = True
+        elif playlist.scope == PlaylistScope.GUILD.value and not is_different_guild:
+            dj_enabled = self._dj_status_cache.setdefault(
+                ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+            )
+            if (
+                guild.owner_id == ctx.author.id
+                or (dj_enabled and await self._has_dj_role(ctx, ctx.author))
+                or (await ctx.bot.is_mod(ctx.author))
+                or (not dj_enabled and not is_different_user)
+            ):
+                has_perms = True
+
+        if has_perms is False:
+            if hasattr(playlist, "name"):
+                msg = _(
+                    "You do not have the permissions to manage {name} (`{id}`) [**{scope}**]."
+                ).format(
+                    user=playlist_author,
+                    name=playlist.name,
+                    id=playlist.id,
+                    scope=self.humanize_scope(
+                        playlist.scope,
+                        ctx=guild_to_query
+                        if playlist.scope == PlaylistScope.GUILD.value
+                        else playlist_author
+                        if playlist.scope == PlaylistScope.USER.value
+                        else None,
+                    ),
+                )
+            elif playlist.scope == PlaylistScope.GUILD.value and (
+                is_different_guild or dj_enabled
+            ):
+                msg = _(
+                    "You do not have the permissions to manage that playlist in {guild}."
+                ).format(guild=guild_to_query)
+            elif (
+                playlist.scope in [PlaylistScope.GUILD.value, PlaylistScope.USER.value]
+                and is_different_user
+            ):
+                msg = _(
+                    "You do not have the permissions to manage playlist owned by {user}."
+                ).format(user=playlist_author)
+            else:
+                msg = _(
+                    "You do not have the permissions to manage "
+                    "playlists in {scope} scope.".format(
+                        scope=self.humanize_scope(scope, the=True)
+                    )
+                )
+
+            await self._embed_msg(ctx, title=_("No access to playlist."), description=msg)
+            return False
+        return True
+
+    async def _get_correct_playlist_id(
+        self,
+        context: commands.Context,
+        matches: MutableMapping,
+        scope: str,
+        author: discord.User,
+        guild: discord.Guild,
+        specified_user: bool = False,
+    ) -> Tuple[Optional[int], str]:
+        """
+        Parameters
+        ----------
+        context: commands.Context
+            The context in which this is being called.
+        matches: dict
+            A dict of the matches found where key is scope and value is matches.
+        scope:str
+            The custom config scope. A value from :code:`PlaylistScope`.
+        author: discord.User
+            The user.
+        guild: discord.Guild
+            The guild.
+        specified_user: bool
+            Whether or not a user ID was specified via argparse.
+        Returns
+        -------
+        Tuple[Optional[int], str]
+            Tuple of Playlist ID or None if none found and original user input.
+        Raises
+        ------
+        `TooManyMatches`
+            When more than 10 matches are found or
+            When multiple matches are found but none is selected.
+
+        """
+        correct_scope_matches: List[Playlist]
+        original_input = matches.get("arg")
+        correct_scope_matches_temp: MutableMapping = matches.get(scope)
+        guild_to_query = guild.id
+        user_to_query = author.id
+        if not correct_scope_matches_temp:
+            return None, original_input
+        if scope == PlaylistScope.USER.value:
+            correct_scope_matches = [
+                p for p in correct_scope_matches_temp if user_to_query == p.scope_id
+            ]
+        elif scope == PlaylistScope.GUILD.value:
+            if specified_user:
+                correct_scope_matches = [
+                    p
+                    for p in correct_scope_matches_temp
+                    if guild_to_query == p.scope_id and p.author == user_to_query
+                ]
+            else:
+                correct_scope_matches = [
+                    p for p in correct_scope_matches_temp if guild_to_query == p.scope_id
+                ]
+        else:
+            if specified_user:
+                correct_scope_matches = [
+                    p for p in correct_scope_matches_temp if p.author == user_to_query
+                ]
+            else:
+                correct_scope_matches = [p for p in correct_scope_matches_temp]
+
+        match_count = len(correct_scope_matches)
+        if match_count > 1:
+            correct_scope_matches2 = [
+                p for p in correct_scope_matches if p.name == str(original_input).strip()
+            ]
+            if correct_scope_matches2:
+                correct_scope_matches = correct_scope_matches2
+            elif original_input.isnumeric():
+                arg = int(original_input)
+                correct_scope_matches3 = [p for p in correct_scope_matches if p.id == arg]
+                if correct_scope_matches3:
+                    correct_scope_matches = correct_scope_matches3
+        match_count = len(correct_scope_matches)
+        # We done all the trimming we can with the info available time to ask the user
+        if match_count > 10:
+            if original_input.isnumeric():
+                arg = int(original_input)
+                correct_scope_matches = [p for p in correct_scope_matches if p.id == arg]
+            if match_count > 10:
+                raise TooManyMatches(
+                    _(
+                        "{match_count} playlists match {original_input}: "
+                        "Please try to be more specific, or use the playlist ID."
+                    ).format(match_count=match_count, original_input=original_input)
+                )
+        elif match_count == 1:
+            return correct_scope_matches[0].id, original_input
+        elif match_count == 0:
+            return None, original_input
+
+        # TODO : Convert this section to a new paged reaction menu when Toby Menus are Merged
+        pos_len = 3
+        playlists = f"{'#':{pos_len}}\n"
+        number = 0
+        for number, playlist in enumerate(correct_scope_matches, 1):
+            author = self.bot.get_user(playlist.author) or playlist.author or _("Unknown")
+            line = _(
+                "{number}."
+                "    <{playlist.name}>\n"
+                " - Scope:  < {scope} >\n"
+                " - ID:     < {playlist.id} >\n"
+                " - Tracks: < {tracks} >\n"
+                " - Author: < {author} >\n\n"
+            ).format(
+                number=number,
+                playlist=playlist,
+                scope=self.humanize_scope(scope),
+                tracks=len(playlist.tracks),
+                author=author,
+            )
+            playlists += line
+
+        embed = discord.Embed(
+            title=_("{playlists} playlists found, which one would you like?").format(
+                playlists=number
+            ),
+            description=box(playlists, lang="md"),
+            colour=await context.embed_colour(),
+        )
+        msg = await context.send(embed=embed)
+        avaliable_emojis = ReactionPredicate.NUMBER_EMOJIS[1:]
+        avaliable_emojis.append("🔟")
+        emojis = avaliable_emojis[: len(correct_scope_matches)]
+        emojis.append("\N{CROSS MARK}")
+        start_adding_reactions(msg, emojis)
+        pred = ReactionPredicate.with_emojis(emojis, msg, user=context.author)
+        try:
+            await context.bot.wait_for("reaction_add", check=pred, timeout=60)
+        except asyncio.TimeoutError:
+            with contextlib.suppress(discord.HTTPException):
+                await msg.delete()
+            raise TooManyMatches(
+                _("Too many matches found and you did not select which one you wanted.")
+            )
+        if emojis[pred.result] == "\N{CROSS MARK}":
+            with contextlib.suppress(discord.HTTPException):
+                await msg.delete()
+            raise TooManyMatches(
+                _("Too many matches found and you did not select which one you wanted.")
+            )
+        with contextlib.suppress(discord.HTTPException):
+            await msg.delete()
+        return correct_scope_matches[pred.result].id, original_input
+
+    async def _build_playlist_list_page(self, ctx: commands.Context, page_num, abc_names, scope):
+        plist_num_pages = math.ceil(len(abc_names) / 5)
+        plist_idx_start = (page_num - 1) * 5
+        plist_idx_end = plist_idx_start + 5
+        plist = ""
+        for i, playlist_info in enumerate(
+            abc_names[plist_idx_start:plist_idx_end], start=plist_idx_start
+        ):
+            item_idx = i + 1
+            plist += "`{}.` {}".format(item_idx, playlist_info)
+            await asyncio.sleep(0)
+        embed = discord.Embed(
+            colour=await ctx.embed_colour(),
+            title=_("Playlists for {scope}:").format(scope=scope),
+            description=plist,
+        )
+        embed.set_footer(
+            text=_("Page {page_num}/{total_pages} | {num} playlists.").format(
+                page_num=page_num, total_pages=plist_num_pages, num=len(abc_names)
+            )
+        )
+        return embed
+
+    async def _load_v3_playlist(
+        self,
+        ctx: commands.Context,
+        scope: str,
+        uploaded_playlist_name: str,
+        uploaded_playlist_url: str,
+        track_list,
+        author: Union[discord.User, discord.Member],
+        guild: Union[discord.Guild],
+    ):
+        embed1 = discord.Embed(title=_("Please wait, adding tracks..."))
+        playlist_msg = await self._embed_msg(ctx, embed=embed1)
+        track_count = len(track_list)
+        uploaded_track_count = len(track_list)
+        await asyncio.sleep(1)
+        embed2 = discord.Embed(
+            colour=await ctx.embed_colour(),
+            title=_("Loading track {num}/{total}...").format(
+                num=track_count, total=uploaded_track_count
+            ),
+        )
+        await playlist_msg.edit(embed=embed2)
+        playlist = await create_playlist(
+            ctx,
+            self.playlist_api,
+            scope,
+            uploaded_playlist_name,
+            uploaded_playlist_url,
+            track_list,
+            author,
+            guild,
+        )
+        scope_name = self.humanize_scope(
+            scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
+        )
+        if not track_count:
+            msg = _("Empty playlist {name} (`{id}`) [**{scope}**] created.").format(
+                name=playlist.name, id=playlist.id, scope=scope_name
+            )
+        elif uploaded_track_count != track_count:
+            bad_tracks = uploaded_track_count - track_count
+            msg = _(
+                "Added {num} tracks from the {playlist_name} playlist. {num_bad} track(s) "
+                "could not be loaded."
+            ).format(num=track_count, playlist_name=playlist.name, num_bad=bad_tracks)
+        else:
+            msg = _("Added {num} tracks from the {playlist_name} playlist.").format(
+                num=track_count, playlist_name=playlist.name
+            )
+        embed3 = discord.Embed(
+            colour=await ctx.embed_colour(), title=_("Playlist Saved"), description=msg
+        )
+        await playlist_msg.edit(embed=embed3)
+        database_entries = []
+        time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
+        for t in track_list:
+            uri = t.get("info", {}).get("uri")
+            if uri:
+                t = {"loadType": "V2_COMPAT", "tracks": [t], "query": uri}
+                data = json.dumps(t)
+                if all(k in data for k in ["loadType", "playlistInfo", "isSeekable", "isStream"]):
+                    database_entries.append(
+                        {
+                            "query": uri,
+                            "data": data,
+                            "last_updated": time_now,
+                            "last_fetched": time_now,
+                        }
+                    )
+        if database_entries:
+            await self.api_interface.local_cache_api.lavalink.insert(database_entries)
+
+    async def _load_v2_playlist(
+        self,
+        ctx: commands.Context,
+        uploaded_track_list,
+        player: lavalink.player_manager.Player,
+        playlist_url: str,
+        uploaded_playlist_name: str,
+        scope: str,
+        author: Union[discord.User, discord.Member],
+        guild: Union[discord.Guild],
+    ):
+        track_list = []
+        track_count = 0
+        successful_count = 0
+        uploaded_track_count = len(uploaded_track_list)
+
+        embed1 = discord.Embed(title=_("Please wait, adding tracks..."))
+        playlist_msg = await self._embed_msg(ctx, embed=embed1)
+        notifier = Notifier(ctx, playlist_msg, {"playlist": _("Loading track {num}/{total}...")})
+        for song_url in uploaded_track_list:
+            track_count += 1
+            try:
+                try:
+                    result, called_api = await self.api_interface.fetch_track(
+                        ctx, player, Query.process_input(song_url, self.local_folder_current_path)
+                    )
+                except TrackEnqueueError:
+                    self._play_lock(ctx, False)
+                    return await self._embed_msg(
+                        ctx,
+                        title=_("Unable to Get Track"),
+                        description=_(
+                            "I'm unable get a track from Lavalink at the moment, try again in a few "
+                            "minutes."
+                        ),
+                    )
+
+                track = result.tracks
+            except Exception:
+                continue
+            try:
+                track_obj = self.track_creator(player, other_track=track[0])
+                track_list.append(track_obj)
+                successful_count += 1
+            except Exception:
+                continue
+            if (track_count % 2 == 0) or (track_count == len(uploaded_track_list)):
+                await notifier.notify_user(
+                    current=track_count, total=len(uploaded_track_list), key="playlist"
+                )
+
+        playlist = await create_playlist(
+            ctx,
+            self.playlist_api,
+            scope,
+            uploaded_playlist_name,
+            playlist_url,
+            track_list,
+            author,
+            guild,
+        )
+        scope_name = self.humanize_scope(
+            scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
+        )
+        if not successful_count:
+            msg = _("Empty playlist {name} (`{id}`) [**{scope}**] created.").format(
+                name=playlist.name, id=playlist.id, scope=scope_name
+            )
+        elif uploaded_track_count != successful_count:
+            bad_tracks = uploaded_track_count - successful_count
+            msg = _(
+                "Added {num} tracks from the {playlist_name} playlist. {num_bad} track(s) "
+                "could not be loaded."
+            ).format(num=successful_count, playlist_name=playlist.name, num_bad=bad_tracks)
+        else:
+            msg = _("Added {num} tracks from the {playlist_name} playlist.").format(
+                num=successful_count, playlist_name=playlist.name
+            )
+        embed3 = discord.Embed(
+            colour=await ctx.embed_colour(), title=_("Playlist Saved"), description=msg
+        )
+        await playlist_msg.edit(embed=embed3)
+
+    async def _maybe_update_playlist(
+        self, ctx: commands.Context, player: lavalink.player_manager.Player, playlist: Playlist
+    ) -> Tuple[List[lavalink.Track], List[lavalink.Track], Playlist]:
+        if playlist.url is None:
+            return [], [], playlist
+        results = {}
+        updated_tracks = await self._playlist_tracks(
+            ctx, player, Query.process_input(playlist.url, self.local_folder_current_path)
+        )
+        if isinstance(updated_tracks, discord.Message):
+            return [], [], playlist
+        if not updated_tracks:
+            # No Tracks available on url Lets set it to none to avoid repeated calls here
+            results["url"] = None
+        if updated_tracks:  # Tracks have been updated
+            results["tracks"] = updated_tracks
+
+        old_tracks = playlist.tracks_obj
+        new_tracks = [lavalink.Track(data=track) for track in updated_tracks]
+        removed = list(set(old_tracks) - set(new_tracks))
+        added = list(set(new_tracks) - set(old_tracks))
+        if removed or added:
+            await playlist.edit(results)
+
+        return added, removed, playlist
+
+    async def _playlist_check(self, ctx: commands.Context):
+        if not self._player_check(ctx):
+            if self.lavalink_connection_aborted:
+                msg = _("Connection to Lavalink has failed")
+                desc = EmptyEmbed
+                if await ctx.bot.is_owner(ctx.author):
+                    desc = _("Please check your console or logs for details.")
+                await self._embed_msg(ctx, title=msg, description=desc)
+                return False
+            try:
+                if (
+                    not ctx.author.voice.channel.permissions_for(ctx.me).connect
+                    or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
+                    and self.userlimit(ctx.author.voice.channel)
+                ):
+                    await self._embed_msg(
+                        ctx,
+                        title=_("Unable To Get Playlists"),
+                        description=_("I don't have permission to connect to your channel."),
+                    )
+                    return False
+                await lavalink.connect(ctx.author.voice.channel)
+                player = lavalink.get_player(ctx.guild.id)
+                player.store("connect", datetime.datetime.utcnow())
+            except IndexError:
+                await self._embed_msg(
+                    ctx,
+                    title=_("Unable To Get Playlists"),
+                    description=_("Connection to Lavalink has not yet been established."),
+                )
+                return False
+            except AttributeError:
+                await self._embed_msg(
+                    ctx,
+                    title=_("Unable To Get Playlists"),
+                    description=_("Connect to a voice channel first."),
+                )
+                return False
+
+        player = lavalink.get_player(ctx.guild.id)
+        player.store("channel", ctx.channel.id)
+        player.store("guild", ctx.guild.id)
+        if (
+            not ctx.author.voice or ctx.author.voice.channel != player.channel
+        ) and not await self._can_instaskip(ctx, ctx.author):
+            await self._embed_msg(
+                ctx,
+                title=_("Unable To Get Playlists"),
+                description=_("You must be in the voice channel to use the playlist command."),
+            )
+            return False
+        await self._eq_check(ctx, player)
+        await self._data_check(ctx)
+        return True
+
+    async def _playlist_tracks(
+        self, ctx: commands.Context, player: lavalink.player_manager.Player, query: Query
+    ):
+        search = query.is_search
+        tracklist = []
+
+        if query.is_spotify:
+            try:
+                if self.play_lock[ctx.message.guild.id]:
+                    return await self._embed_msg(
+                        ctx,
+                        title=_("Unable To Get Tracks"),
+                        description=_("Wait until the playlist has finished loading."),
+                    )
+            except KeyError:
+                pass
+            tracks = await self._get_spotify_tracks(ctx, query)
+
+            if isinstance(tracks, discord.Message):
+                return None
+
+            if not tracks:
+                embed = discord.Embed(title=_("Nothing found."))
+                if query.is_local and query.suffix in _PARTIALLY_SUPPORTED_MUSIC_EXT:
+                    embed = discord.Embed(title=_("Track is not playable."))
+                    embed.description = _(
+                        "**{suffix}** is not a fully supported format and some "
+                        "tracks may not play."
+                    ).format(suffix=query.suffix)
+                return await self._embed_msg(ctx, embed=embed)
+            for track in tracks:
+                track_obj = self.track_creator(player, other_track=track)
+                tracklist.append(track_obj)
+                await asyncio.sleep(0)
+            self._play_lock(ctx, False)
+        elif query.is_search:
+            try:
+                result, called_api = await self.api_interface.fetch_track(ctx, player, query)
+            except TrackEnqueueError:
+                self._play_lock(ctx, False)
+                return await self._embed_msg(
+                    ctx,
+                    title=_("Unable to Get Track"),
+                    description=_(
+                        "I'm unable get a track from Lavalink at the moment, try again in a few "
+                        "minutes."
+                    ),
+                )
+
+            tracks = result.tracks
+            if not tracks:
+                embed = discord.Embed(title=_("Nothing found."))
+                if query.is_local and query.suffix in _PARTIALLY_SUPPORTED_MUSIC_EXT:
+                    embed = discord.Embed(title=_("Track is not playable."))
+                    embed.description = _(
+                        "**{suffix}** is not a fully supported format and some "
+                        "tracks may not play."
+                    ).format(suffix=query.suffix)
+                return await self._embed_msg(ctx, embed=embed)
+        else:
+            try:
+                result, called_api = await self.api_interface.fetch_track(ctx, player, query)
+            except TrackEnqueueError:
+                self._play_lock(ctx, False)
+                return await self._embed_msg(
+                    ctx,
+                    title=_("Unable to Get Track"),
+                    description=_(
+                        "I'm unable get a track from Lavalink at the moment, try again in a few "
+                        "minutes."
+                    ),
+                )
+
+            tracks = result.tracks
+
+        if not search and len(tracklist) == 0:
+            for track in tracks:
+                track_obj = self.track_creator(player, other_track=track)
+                tracklist.append(track_obj)
+                await asyncio.sleep(0)
+        elif len(tracklist) == 0:
+            track_obj = self.track_creator(player, other_track=tracks[0])
+            tracklist.append(track_obj)
+        return tracklist
+
+    def humanize_scope(self, scope, ctx=None, the=None):
+
+        if scope == PlaylistScope.GLOBAL.value:
+            return _("the Global") if the else _("Global")
+        elif scope == PlaylistScope.GUILD.value:
+            return ctx.name if ctx else _("the Server") if the else _("Server")
+        elif scope == PlaylistScope.USER.value:
+            return str(ctx) if ctx else _("the User") if the else _("User")

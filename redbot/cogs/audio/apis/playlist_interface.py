@@ -6,16 +6,16 @@ from typing import List, Optional, Union
 import discord
 import lavalink
 
-from redbot.cogs.audio.apis.playlist_wrapper import PlaylistWrapper
-from redbot.cogs.audio.apis.utils import (
+from redbot.core import Config, commands
+from redbot.core.bot import Red
+from .api_utils import (
     PlaylistFetchResult,
     prepare_config_scope,
     standardize_scope,
 )
-from redbot.cogs.audio.errors import NotAllowed
-from redbot.cogs.audio.utils import PlaylistScope
-from redbot.core import commands, Config
-from redbot.core.bot import Red
+from .playlist_wrapper import PlaylistWrapper
+from ..errors import NotAllowed
+from ..utils import PlaylistScope
 
 log = logging.getLogger("red.cogs.Audio.api.PlaylistsInterface")
 
