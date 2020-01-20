@@ -4,7 +4,7 @@ import datetime
 import functools
 import logging
 import re
-from typing import MutableMapping, Union, Any
+from typing import MutableMapping, Union, Any, Final
 
 import discord
 import lavalink
@@ -17,7 +17,7 @@ from ..cog_utils import CompositeMetaClass, _
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.miscellaneous")
 
-_RE_TIME_CONVERTER = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
+_RE_TIME_CONVERTER: Final[re.Pattern] = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
 
 
 class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
@@ -61,7 +61,10 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         footer = kwargs.get("footer")
         thumbnail = kwargs.get("thumbnail")
         contents = dict(title=title, type=_type, url=url, description=description)
-        embed = kwargs.get("embed").to_dict() if hasattr(kwargs.get("embed"), "to_dict") else {}
+        if hasattr(kwargs.get("embed"), "to_dict"):
+            embed = kwargs.get("embed").to_dict()
+        else:
+            embed = {}
         colour = embed.get("color") if embed.get("color") else colour
         contents.update(embed)
         if timestamp and isinstance(timestamp, datetime.datetime):
@@ -75,11 +78,13 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return await ctx.send(embed=embed)
 
     async def _process_db(self, ctx: commands.Context) -> None:
-        await self.api_interface.run_tasks(ctx)
+        if self.api_interface is not None:
+            await self.api_interface.run_tasks(ctx)
 
     async def _close_database(self) -> None:
-        await self.api_interface.run_all_pending_tasks()
-        self.api_interface.close()
+        if self.api_interface is not None:
+            await self.api_interface.run_all_pending_tasks()
+            self.api_interface.close()
 
     async def _check_api_tokens(self) -> MutableMapping:
         spotify = await self.bot.get_shared_api_tokens("spotify")
@@ -135,7 +140,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
     def track_creator(
         self,
         player: lavalink.Player,
-        position: Union[int, int] = None,
+        position: Union[int, str] = None,
         other_track: lavalink.Track = None,
     ) -> MutableMapping:
         if position == "np":
@@ -153,7 +158,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         track_info = {}
         for k, v in zip(track_keys, track_values):
             track_info[k] = v
-        keys = ["track", "info"]
+        keys = ["track", "info", "extras"]
         values = [track_id, track_info]
         track_obj = {}
         for key, value in zip(keys, values):
@@ -161,6 +166,9 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return track_obj
 
     def time_convert(self, length: Union[int, str]) -> int:
+        if isinstance(length, int):
+            return length
+
         match = _RE_TIME_CONVERTER.match(length)
         if match is not None:
             hr = int(match.group(1)) if match.group(1) else 0

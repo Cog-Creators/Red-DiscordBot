@@ -17,7 +17,7 @@ log = logging.getLogger("red.cogs.Audio.cog.Utilities.local_tracks")
 
 class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def get_localtracks_folders(
-        self, ctx: commands.Context, search_subfolders=False
+        self, ctx: commands.Context, search_subfolders: bool = False
     ) -> List[Union[Path, LocalPath]]:
         audio_data = LocalPath(None, self.local_folder_current_path).localtrack_folder.absolute()
         if not await self.has_localtracks_check(ctx):
@@ -34,7 +34,7 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if not await self.has_localtracks_check(ctx):
             return []
         query = Query.process_input(query, self.local_folder_current_path)
-        if not query.is_local:
+        if not query.is_local or query.local_track_path is None:
             return []
         if not query.local_track_path.exists():
             return []
@@ -48,7 +48,7 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
         self, ctx, player: lavalink.player_manager.Player, query: Query
     ) -> List[lavalink.rest_api.Track]:
         """Return a list of tracks per the provided query"""
-        if not await self.has_localtracks_check(ctx):
+        if not await self.has_localtracks_check(ctx) or self.api_interface is None:
             return []
 
         audio_data = LocalPath(None, self.local_folder_current_path)
@@ -64,9 +64,9 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return local_tracks
 
     async def _local_play_all(
-        self, ctx: commands.Context, query: Query, from_search=False
+        self, ctx: commands.Context, query: Query, from_search: bool = False
     ) -> None:
-        if not await self.has_localtracks_check(ctx):
+        if not await self.has_localtracks_check(ctx) or query.local_track_path is None:
             return None
         if from_search:
             query = Query.process_input(
@@ -74,12 +74,12 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 self.local_folder_current_path,
                 invoked_from="local folder",
             )
-        await ctx.invoke(self._search, query=query)
+        await ctx.invoke(self.search, query=query)
 
     async def get_all_localtrack_folder_tracks(
         self, ctx: commands.Context, query: Query
     ) -> List[Query]:
-        if not await self.has_localtracks_check(ctx):
+        if not await self.has_localtracks_check(ctx) or query.local_track_path is None:
             return []
 
         return (
@@ -90,6 +90,8 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     async def has_localtracks_check(self, ctx: commands.Context) -> bool:
         folder = LocalPath(None, self.local_folder_current_path)
+        if folder.localtrack_folder is None:
+            return False
         if folder.localtrack_folder.exists():
             return True
         if ctx.invoked_with != "start":
@@ -98,14 +100,22 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
         return False
 
-    async def _build_local_search_list(self, to_search, search_words) -> List[str]:
-        to_search_string = {i.track.name for i in to_search}
+    async def _build_local_search_list(
+        self, to_search: List[Query], search_words: str
+    ) -> List[str]:
+        to_search_string = {
+            i.local_track_path.name for i in to_search if i.local_track_path is not None
+        }
         search_results = process.extract(search_words, to_search_string, limit=50)
         search_list = []
         for track_match, percent_match in search_results:
             if percent_match > 60:
                 search_list.extend(
-                    [i.track.to_string_user() for i in to_search if i.track.name == track_match]
+                    [
+                        i.local_track_path.to_string_user()
+                        for i in to_search
+                        if i.local_track_path.name == track_match
+                    ]
                 )
             await asyncio.sleep(0)
         return search_list

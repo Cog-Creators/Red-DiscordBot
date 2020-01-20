@@ -94,6 +94,15 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global`
         ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global --Author Draper#6666`
         """
+        if self.playlist_api is None:
+            return await self._embed_msg(
+                ctx,
+                title=_("Playlist are not available"),
+                description=_("The playlist section of Audio is currently un available"),
+                footer=discord.Embed.Empty
+                if not await ctx.bot.is_owner(ctx.author)
+                else _("Check your logs."),
+            )
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         (scope, author, guild, specified_user) = scope_data
@@ -260,6 +269,15 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist copy MyGlobalPlaylist --from-scope Global --to-author Draper#6666 --to-scope User`
         ​ ​ ​ ​ `[p]playlist copy MyPersonalPlaylist --from-scope user --to-author Draper#6666 --to-scope Guild --to-guild Red - Discord Bot`
         """
+        if self.playlist_api is None:
+            return await self._embed_msg(
+                ctx,
+                title=_("Playlist are not available"),
+                description=_("The playlist section of Audio is currently un available"),
+                footer=discord.Embed.Empty
+                if not await ctx.bot.is_owner(ctx.author)
+                else _("Check your logs."),
+            )
 
         if scope_data is None:
             scope_data = [
@@ -395,6 +413,15 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist create MyGlobalPlaylist --scope Global`
         ​ ​ ​ ​ `[p]playlist create MyPersonalPlaylist --scope User`
         """
+        if self.playlist_api is None:
+            return await self._embed_msg(
+                ctx,
+                title=_("Playlist are not available"),
+                description=_("The playlist section of Audio is currently un available"),
+                footer=discord.Embed.Empty
+                if not await ctx.bot.is_owner(ctx.author)
+                else _("Check your logs."),
+            )
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
@@ -464,6 +491,15 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist delete MyGlobalPlaylist --scope Global`
         ​ ​ ​ ​ `[p]playlist delete MyPersonalPlaylist --scope User`
         """
+        if self.playlist_api is None:
+            return await self._embed_msg(
+                ctx,
+                title=_("Playlist are not available"),
+                description=_("The playlist section of Audio is currently un available"),
+                footer=discord.Embed.Empty
+                if not await ctx.bot.is_owner(ctx.author)
+                else _("Check your logs."),
+            )
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
@@ -560,6 +596,15 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist dedupe MyGlobalPlaylist --scope Global`
         ​ ​ ​ ​ `[p]playlist dedupe MyPersonalPlaylist --scope User`
         """
+        if self.playlist_api is None:
+            return await self._embed_msg(
+                ctx,
+                title=_("Playlist are not available"),
+                description=_("The playlist section of Audio is currently un available"),
+                footer=discord.Embed.Empty
+                if not await ctx.bot.is_owner(ctx.author)
+                else _("Check your logs."),
+            )
         async with ctx.typing():
             if scope_data is None:
                 scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
@@ -706,6 +751,15 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist download MyGlobalPlaylist False --scope Global`
         ​ ​ ​ ​ `[p]playlist download MyPersonalPlaylist --scope User`
         """
+        if self.playlist_api is None:
+            return await self._embed_msg(
+                ctx,
+                title=_("Playlist are not available"),
+                description=_("The playlist section of Audio is currently un available"),
+                footer=discord.Embed.Empty
+                if not await ctx.bot.is_owner(ctx.author)
+                else _("Check your logs."),
+            )
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
@@ -848,6 +902,15 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist info MyGlobalPlaylist --scope Global`
         ​ ​ ​ ​ `[p]playlist info MyPersonalPlaylist --scope User`
         """
+        if self.playlist_api is None:
+            return await self._embed_msg(
+                ctx,
+                title=_("Playlist are not available"),
+                description=_("The playlist section of Audio is currently un available"),
+                footer=discord.Embed.Empty
+                if not await ctx.bot.is_owner(ctx.author)
+                else _("Check your logs."),
+            )
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
@@ -981,6 +1044,15 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist list --scope Global`
         ​ ​ ​ ​ `[p]playlist list --scope User`
         """
+        if self.playlist_api is None:
+            return await self._embed_msg(
+                ctx,
+                title=_("Playlist are not available"),
+                description=_("The playlist section of Audio is currently un available"),
+                footer=discord.Embed.Empty
+                if not await ctx.bot.is_owner(ctx.author)
+                else _("Check your logs."),
+            )
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
@@ -1084,6 +1156,15 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist queue MyGlobalPlaylist --scope Global`
         ​ ​ ​ ​ `[p]playlist queue MyPersonalPlaylist --scope User`
         """
+        if self.playlist_api is None:
+            return await self._embed_msg(
+                ctx,
+                title=_("Playlist are not available"),
+                description=_("The playlist section of Audio is currently un available"),
+                footer=discord.Embed.Empty
+                if not await ctx.bot.is_owner(ctx.author)
+                else _("Check your logs."),
+            )
         async with ctx.typing():
             if scope_data is None:
                 scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
@@ -1187,6 +1268,15 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist remove MyGlobalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope Global`
         ​ ​ ​ ​ `[p]playlist remove MyPersonalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope User`
         """
+        if self.playlist_api is None:
+            return await self._embed_msg(
+                ctx,
+                title=_("Playlist are not available"),
+                description=_("The playlist section of Audio is currently un available"),
+                footer=discord.Embed.Empty
+                if not await ctx.bot.is_owner(ctx.author)
+                else _("Check your logs."),
+            )
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
@@ -1306,6 +1396,15 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist save MyGlobalPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM --scope Global`
         ​ ​ ​ ​ `[p]playlist save MyPersonalPlaylist https://open.spotify.com/playlist/1RyeIbyFeIJVnNzlGr5KkR --scope User`
         """
+        if self.playlist_api is None:
+            return await self._embed_msg(
+                ctx,
+                title=_("Playlist are not available"),
+                description=_("The playlist section of Audio is currently un available"),
+                footer=discord.Embed.Empty
+                if not await ctx.bot.is_owner(ctx.author)
+                else _("Check your logs."),
+            )
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
@@ -1353,16 +1452,25 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 author,
                 guild,
             )
-            return await self._embed_msg(
-                ctx,
-                title=_("Playlist Created"),
-                description=_(
-                    "Playlist {name} (`{id}`) [**{scope}**] saved: {num} tracks added."
-                ).format(name=playlist.name, num=len(tracklist), id=playlist.id, scope=scope_name),
-                footer=_("Playlist limit reached: Could not add {} tracks.").format(not_added)
-                if not_added > 0
-                else None,
-            )
+            if playlist is not None:
+                return await self._embed_msg(
+                    ctx,
+                    title=_("Playlist Created"),
+                    description=_(
+                        "Playlist {name} (`{id}`) [**{scope}**] saved: {num} tracks added."
+                    ).format(
+                        name=playlist.name, num=len(tracklist), id=playlist.id, scope=scope_name
+                    ),
+                    footer=_("Playlist limit reached: Could not add {} tracks.").format(not_added)
+                    if not_added > 0
+                    else None,
+                )
+            else:
+                return await self._embed_msg(
+                    ctx,
+                    title=_("Playlist Couldn't be created"),
+                    description=_("Unable to create your playlist."),
+                )
 
     @commands.cooldown(1, 30, commands.BucketType.member)
     @_playlist.command(
@@ -1408,6 +1516,15 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist start MyGlobalPlaylist --scope Global`
         ​ ​ ​ ​ `[p]playlist start MyPersonalPlaylist --scope User`
         """
+        if self.playlist_api is None:
+            return await self._embed_msg(
+                ctx,
+                title=_("Playlist are not available"),
+                description=_("The playlist section of Audio is currently un available"),
+                footer=discord.Embed.Empty
+                if not await ctx.bot.is_owner(ctx.author)
+                else _("Check your logs."),
+            )
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
@@ -1580,7 +1697,15 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist update MyGlobalPlaylist --scope Global`
         ​ ​ ​ ​ `[p]playlist update MyPersonalPlaylist --scope User`
         """
-
+        if self.playlist_api is None:
+            return await self._embed_msg(
+                ctx,
+                title=_("Playlist are not available"),
+                description=_("The playlist section of Audio is currently un available"),
+                footer=discord.Embed.Empty
+                if not await ctx.bot.is_owner(ctx.author)
+                else _("Check your logs."),
+            )
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
@@ -1733,6 +1858,15 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist upload --scope Global`
         ​ ​ ​ ​ `[p]playlist upload --scope User`
         """
+        if self.playlist_api is None:
+            return await self._embed_msg(
+                ctx,
+                title=_("Playlist are not available"),
+                description=_("The playlist section of Audio is currently un available"),
+                footer=discord.Embed.Empty
+                if not await ctx.bot.is_owner(ctx.author)
+                else _("Check your logs."),
+            )
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
@@ -1794,7 +1928,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         uploaded_playlist_name = uploaded_playlist.get(
             "name", (file_url.split("/")[6]).split(".")[0]
         )
-        if (
+        if self.api_interface is not None and (
             not uploaded_playlist_url
             or not self.match_yt_playlist(uploaded_playlist_url)
             or not (
@@ -1874,6 +2008,15 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist rename MyGlobalPlaylist RenamedGlobalPlaylist --scope Global`
         ​ ​ ​ ​ `[p]playlist rename MyPersonalPlaylist RenamedPersonalPlaylist --scope User`
         """
+        if self.playlist_api is None:
+            return await self._embed_msg(
+                ctx,
+                title=_("Playlist are not available"),
+                description=_("The playlist section of Audio is currently un available"),
+                footer=discord.Embed.Empty
+                if not await ctx.bot.is_owner(ctx.author)
+                else _("Check your logs."),
+            )
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data

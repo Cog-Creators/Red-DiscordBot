@@ -250,7 +250,9 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             await msg.delete()
         return correct_scope_matches[pred.result].id, original_input
 
-    async def _build_playlist_list_page(self, ctx: commands.Context, page_num, abc_names, scope):
+    async def _build_playlist_list_page(
+        self, ctx: commands.Context, page_num: int, abc_names: List, scope: str
+    ) -> discord.Embed:
         plist_num_pages = math.ceil(len(abc_names) / 5)
         plist_idx_start = (page_num - 1) * 5
         plist_idx_end = plist_idx_start + 5
@@ -279,10 +281,10 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         scope: str,
         uploaded_playlist_name: str,
         uploaded_playlist_url: str,
-        track_list,
+        track_list: List,
         author: Union[discord.User, discord.Member],
         guild: Union[discord.Guild],
-    ):
+    ) -> None:
         embed1 = discord.Embed(title=_("Please wait, adding tracks..."))
         playlist_msg = await self._embed_msg(ctx, embed=embed1)
         track_count = len(track_list)
@@ -511,7 +513,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     async def _playlist_tracks(
         self, ctx: commands.Context, player: lavalink.player_manager.Player, query: Query
-    ):
+    ) -> Union[discord.Message, None, List[MutableMapping]]:
         search = query.is_search
         tracklist = []
 

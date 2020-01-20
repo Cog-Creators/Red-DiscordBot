@@ -11,7 +11,6 @@ from discord.embeds import EmptyEmbed
 
 from redbot.core import commands, checks
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS, prev_page, close_menu, next_page
-
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, _
 from ...audio_dataclasses import Query, _PARTIALLY_SUPPORTED_MUSIC_EXT
@@ -35,8 +34,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         query = Query.process_input(query, self.local_folder_current_path)
         guild_data = await self.config.guild(ctx.guild).all()
         restrict = await self.config.restrict()
-        if restrict and self.match_url(query):
-            valid_url = self.url_check(query)
+        if restrict and self.match_url(str(query)):
+            valid_url = self.url_check(str(query))
             if not valid_url:
                 return await self._embed_msg(
                     ctx,
@@ -140,8 +139,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
         guild_data = await self.config.guild(ctx.guild).all()
         restrict = await self.config.restrict()
-        if restrict and self.match_url(query):
-            valid_url = self.url_check(query)
+        if restrict and self.match_url(str(query)):
+            valid_url = self.url_check(str(query))
             if not valid_url:
                 return await self._embed_msg(
                     ctx,
@@ -585,7 +584,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             return
 
         if not guild_data["auto_play"]:
-            await ctx.invoke(self._autoplay_toggle)
+            await ctx.invoke(self._audioset_autoplay_toggle)
         if not guild_data["notify"] and (
             (player.current and not player.current.extras.get("autoplay")) or not player.current
         ):
@@ -682,8 +681,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not isinstance(query, list):
             query = Query.process_input(query, self.local_folder_current_path)
             restrict = await self.config.restrict()
-            if restrict and self.match_url(query):
-                valid_url = self.url_check(query)
+            if restrict and self.match_url(str(query)):
+                valid_url = self.url_check(str(query))
                 if not valid_url:
                     return await self._embed_msg(
                         ctx,

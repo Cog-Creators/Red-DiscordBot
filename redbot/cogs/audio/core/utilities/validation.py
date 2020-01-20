@@ -1,6 +1,6 @@
 import logging
 import re
-from typing import List, Set
+from typing import List, Set, Final
 from urllib.parse import urlparse
 
 import discord
@@ -12,7 +12,7 @@ from ...audio_dataclasses import Query
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.validation")
 
-_RE_YT_LIST_PLAYLIST = re.compile(
+_RE_YT_LIST_PLAYLIST: Final[re.Pattern] = re.compile(
     r"^(https?://)?(www\.)?(youtube\.com|youtu\.?be)(/playlist\?).*(list=)(.*)(&|$)"
 )
 
@@ -25,7 +25,7 @@ class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
         except Exception:
             return False
 
-    def match_yt_playlist(self, url) -> bool:
+    def match_yt_playlist(self, url: str) -> bool:
         if _RE_YT_LIST_PLAYLIST.match(url):
             return True
         return False

@@ -1,5 +1,6 @@
 from abc import ABC
 from pathlib import Path
+from typing import Final
 
 from redbot import VersionInfo, version_info
 from redbot.core import commands
@@ -13,7 +14,7 @@ __version__ = VersionInfo.from_json(_red_extras)
 __author__ = ["aikaterna", "Draper"]
 
 _ = Translator("Audio", Path(__file__).parent)
-_SCHEMA_VERSION = 3
+_SCHEMA_VERSION: Final[int] = 3
 
 LazyGreedyConverter = get_lazy_converter("--")
 PlaylistConverter = get_playlist_converter()

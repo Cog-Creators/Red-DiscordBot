@@ -1,6 +1,7 @@
 import asyncio
 import contextlib
 import logging
+from typing import List
 
 import discord
 import lavalink
@@ -15,7 +16,7 @@ log = logging.getLogger("red.cogs.Audio.cog.Utilities.equalizer")
 
 
 class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
-    async def _apply_gain(self, guild_id: int, band, gain):
+    async def _apply_gain(self, guild_id: int, band: int, gain: float) -> None:
         const = {
             "op": "equalizer",
             "guildId": str(guild_id),
@@ -27,7 +28,7 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         except (KeyError, IndexError):
             pass
 
-    async def _apply_gains(self, guild_id: int, gains):
+    async def _apply_gains(self, guild_id: int, gains: List[float]) -> None:
         const = {
             "op": "equalizer",
             "guildId": str(guild_id),
@@ -59,8 +60,13 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             await self._apply_gains(ctx.guild.id, config_bands)
 
     async def _eq_interact(
-        self, ctx: commands.Context, player: lavalink.Player, eq, message, selected
-    ):
+        self,
+        ctx: commands.Context,
+        player: lavalink.Player,
+        eq: Equalizer,
+        message: discord.Message,
+        selected: int,
+    ) -> None:
         player.store("eq", eq)
         emoji = {
             "far_left": "\N{BLACK LEFT-POINTING TRIANGLE}",

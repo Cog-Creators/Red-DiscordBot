@@ -61,7 +61,8 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             ),
         ):
             self._play_lock(ctx, False)
-            await self.api_interface.run_tasks(ctx)
+            if self.api_interface is not None:
+                await self.api_interface.run_tasks(ctx)
 
         await ctx.bot.on_command_error(
             ctx, getattr(error, "original", error), unhandled_by_cog=True

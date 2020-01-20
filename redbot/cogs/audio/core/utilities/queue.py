@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import math
+from typing import Tuple, List
 
 import discord
 import lavalink
@@ -17,8 +18,12 @@ log = logging.getLogger("red.cogs.Audio.cog.Utilities.queue")
 
 class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def _build_queue_page(
-        self, ctx: commands.Context, queue: list, player: lavalink.player_manager.Player, page_num
-    ):
+        self,
+        ctx: commands.Context,
+        queue: list,
+        player: lavalink.player_manager.Player,
+        page_num: int,
+    ) -> discord.Embed:
         shuffle = await self.config.guild(ctx.guild).shuffle()
         repeat = await self.config.guild(ctx.guild).repeat()
         autoplay = await self.config.guild(ctx.guild).auto_play()
@@ -31,10 +36,7 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
         else:
             queue_list = ""
 
-        try:
-            arrow = await self.draw_time(ctx)
-        except AttributeError:
-            return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
+        arrow = await self.draw_time(ctx)
         pos = lavalink.utils.format_time(player.position)
 
         if player.current.is_stream:
@@ -151,7 +153,9 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
         embed.set_footer(text=text)
         return embed
 
-    async def _build_queue_search_list(self, queue_list, search_words):
+    async def _build_queue_search_list(
+        self, queue_list: List[lavalink.Track], search_words: str
+    ) -> List[Tuple[int, str]]:
         track_list = []
         queue_idx = 0
         for i, track in enumerate(queue_list, start=1):
@@ -175,10 +179,12 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
         for search, percent_match in search_results:
             for queue_position, title in search.items():
                 if percent_match > 89:
-                    search_list.append([queue_position, title])
+                    search_list.append((queue_position, title))
         return search_list
 
-    async def _build_queue_search_page(self, ctx: commands.Context, page_num, search_list):
+    async def _build_queue_search_page(
+        self, ctx: commands.Context, page_num: int, search_list: List[Tuple[int, str]]
+    ) -> discord.Embed:
         search_num_pages = math.ceil(len(search_list) / 10)
         search_idx_start = (page_num - 1) * 10
         search_idx_end = search_idx_start + 10

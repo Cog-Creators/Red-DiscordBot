@@ -53,7 +53,13 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             prev_song = player.fetch("prev_song")
             prev_requester = player.fetch("prev_requester")
             self.bot.dispatch("red_audio_queue_end", guild, prev_song, prev_requester)
-            if autoplay and not player.queue and player.fetch("playing_song") is not None:
+            if (
+                autoplay
+                and not player.queue
+                and player.fetch("playing_song") is not None
+                and await self.api_interface is not None
+                and self.playlist_api is not None
+            ):
                 try:
                     await self.api_interface.autoplay(player, self.playlist_api)
                 except DatabaseError:

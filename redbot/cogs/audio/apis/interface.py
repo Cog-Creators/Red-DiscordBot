@@ -6,7 +6,7 @@ import random
 import time
 from collections import namedtuple
 from pathlib import Path
-from typing import Callable, List, Mapping, MutableMapping, Optional, Tuple, Union
+from typing import Callable, List, MutableMapping, Optional, Tuple, Union, cast
 
 import aiohttp
 import discord
@@ -27,6 +27,7 @@ from ..audio_dataclasses import Query
 from ..audio_logging import IS_DEBUG, debug_exc_log
 from ..errors import DatabaseError, SpotifyFetchError, TrackEnqueueError
 from ..utils import CacheLevel, Notifier
+from ...mod.abc import MixinMeta
 
 _ = Translator("Audio", __file__)
 log = logging.getLogger("red.cogs.Audio.api.AudioAPIInterface")
@@ -53,9 +54,11 @@ class AudioAPIInterface:
         self._session: aiohttp.ClientSession = session
         self._tasks: MutableMapping = {}
         self._lock: asyncio.Lock = asyncio.Lock()
+        self.cog: MixinMeta
 
     async def initialize(self) -> None:
         """Initialises the Local Cache connection"""
+        self.cog = self.bot.get_cog("Audio")
         await self.local_cache_api.lavalink.init()
 
     def close(self) -> None:
@@ -406,7 +409,7 @@ class AudioAPIInterface:
             guild_data = await self.config.guild(ctx.guild).all()
             enqueued_tracks = 0
             consecutive_fails = 0
-            queue_dur = await self.queue_duration(ctx)
+            queue_dur = await self.cog.queue_duration(ctx)
             queue_total_duration = lavalink.utils.format_time(queue_dur)
             before_queue_length = len(player.queue)
             tracks_from_spotify = await self._spotify_fetch_tracks(
@@ -523,7 +526,7 @@ class AudioAPIInterface:
                     continue
                 consecutive_fails = 0
                 single_track = track_object[0]
-                if not await self.is_allowed(
+                if not await self.cog.is_allowed(
                     self.config,
                     ctx.guild,
                     (
@@ -540,7 +543,7 @@ class AudioAPIInterface:
                     if len(player.queue) >= 10000:
                         continue
                     if guild_data["maxlength"] > 0:
-                        if self.track_limit(single_track, guild_data["maxlength"]):
+                        if self.cog.track_limit(single_track, guild_data["maxlength"]):
                             enqueued_tracks += 1
                             player.add(ctx.author, single_track)
                             self.bot.dispatch(
@@ -812,7 +815,7 @@ class AudioAPIInterface:
             if not tracks:
                 ctx = namedtuple("Context", "message")
                 (results, called_api) = await self.fetch_track(
-                    ctx(player.channel.guild),
+                    cast(commands.Context, ctx(player.channel.guild)),
                     player,
                     Query.process_input(
                         _TOP_100_US, Path(await self.config.localpath()).absolute()
@@ -836,7 +839,7 @@ class AudioAPIInterface:
                     continue
                 if query.is_local and not query.local_track_path.exists():
                     continue
-                if not await self.is_allowed(
+                if not await self.cog.is_allowed(
                     self.config,
                     player.channel.guild,
                     (

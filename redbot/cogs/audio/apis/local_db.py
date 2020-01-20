@@ -4,9 +4,8 @@ import contextlib
 import datetime
 import logging
 import time
-from dataclasses import dataclass
 from types import SimpleNamespace
-from typing import Dict, List, MutableMapping, Optional, Tuple, Union
+from typing import Dict, List, MutableMapping, Optional, Tuple, Union, Callable
 
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -36,7 +35,7 @@ class BaseWrapper:
         self.statement.pragma_read_uncommitted = PRAGMA_SET_read_uncommitted
         self.statement.set_user_version = PRAGMA_SET_user_version
         self.statement.get_user_version = PRAGMA_FETCH_user_version
-        self.fetch_result: dataclass
+        self.fetch_result: Callable
 
     async def init(self) -> None:
         """Initialize the local cache"""
@@ -253,7 +252,7 @@ class LavalinkTableWrapper(BaseWrapper):
         self.statement.get_random = LAVALINK_QUERY_LAST_FETCHED_RANDOM
         self.statement.get_all_global = LAVALINK_FETCH_ALL_ENTRIES_GLOBAL
         self.fetch_result = LavalinkCacheFetchResult
-        self.fetch_for_global = LavalinkCacheFetchForGlobalResult
+        self.fetch_for_global: Callable = LavalinkCacheFetchForGlobalResult
 
     async def fetch_one(
         self, values: Dict[str, Union[str, int]]

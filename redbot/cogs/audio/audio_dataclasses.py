@@ -6,21 +6,21 @@ import os
 import posixpath
 import re
 from pathlib import Path, PosixPath, WindowsPath
-from typing import AsyncIterator, Iterator, MutableMapping, Optional, Union, Tuple
+from typing import AsyncIterator, Iterator, MutableMapping, Optional, Union, Tuple, Final
 from urllib.parse import urlparse
 
 import lavalink
 
-_RE_REMOVE_START = re.compile(r"^(sc|list) ")
-_RE_YOUTUBE_TIMESTAMP = re.compile(r"&t=(\d+)s?")
-_RE_YOUTUBE_INDEX = re.compile(r"&index=(\d+)")
-_RE_SPOTIFY_URL = re.compile(r"(http[s]?://)?(open.spotify.com)/")
-_RE_SPOTIFY_TIMESTAMP = re.compile(r"#(\d+):(\d+)")
-_RE_SOUNDCLOUD_TIMESTAMP = re.compile(r"#t=(\d+):(\d+)s?")
-_RE_TWITCH_TIMESTAMP = re.compile(r"\?t=(\d+)h(\d+)m(\d+)s")
-_PATH_SEPS = [posixpath.sep, ntpath.sep]
+_RE_REMOVE_START: Final[re.Pattern] = re.compile(r"^(sc|list) ")
+_RE_YOUTUBE_TIMESTAMP: Final[re.Pattern] = re.compile(r"&t=(\d+)s?")
+_RE_YOUTUBE_INDEX: Final[re.Pattern] = re.compile(r"&index=(\d+)")
+_RE_SPOTIFY_URL: Final[re.Pattern] = re.compile(r"(http[s]?://)?(open.spotify.com)/")
+_RE_SPOTIFY_TIMESTAMP: Final[re.Pattern] = re.compile(r"#(\d+):(\d+)")
+_RE_SOUNDCLOUD_TIMESTAMP: Final[re.Pattern] = re.compile(r"#t=(\d+):(\d+)s?")
+_RE_TWITCH_TIMESTAMP: Final[re.Pattern] = re.compile(r"\?t=(\d+)h(\d+)m(\d+)s")
+_PATH_SEPS: Final[Tuple[str, str]] = (posixpath.sep, ntpath.sep)
 
-_FULLY_SUPPORTED_MUSIC_EXT: Tuple[str, ...] = (".mp3", ".flac", ".ogg")
+_FULLY_SUPPORTED_MUSIC_EXT: Final[Tuple[str, ...]] = (".mp3", ".flac", ".ogg")
 _PARTIALLY_SUPPORTED_MUSIC_EXT: Tuple[str, ...] = (
     ".m3u",
     ".m4a",
