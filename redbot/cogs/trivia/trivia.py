@@ -278,10 +278,12 @@ class Trivia(commands.Cog):
                         + "\n"
                         + ", ".join(default_lists)
                         + "\n\n"
-                        + (bold(_("Custom lists"))
-                        + "\n"
-                        + ", ".join(personal_lists) if personal_lists else ''
-                           )),
+                        + (
+                            bold(_("Custom lists")) + "\n" + ", ".join(personal_lists)
+                            if personal_lists
+                            else ""
+                        )
+                    ),
                 )
             )
         else:
@@ -291,10 +293,11 @@ class Trivia(commands.Cog):
                 + "- Default lists"
                 + "\n"
                 + ", ".join(default_lists)
-                + ("\n\n"
-                + "- Custom lists"
-                + "\n"
-                + ", ".join(personal_lists) if personal_lists else '')
+                + (
+                    "\n\n" + "- Custom lists" + "\n" + ", ".join(personal_lists)
+                    if personal_lists
+                    else ""
+                )
             )
             if len(msg) > 1000:
                 await ctx.author.send(msg)
