@@ -97,10 +97,10 @@ class General(commands.Cog):
             )
         elif number <= 1:
             await ctx.send(_("{author.mention} Maybe higher than 1? ;P").format(author=author))
-        elif number > maxint:
+        else:
             await ctx.send(
                 _("{author.mention} Max allowed number is {maxamount}.").format(
-                    author=author, maxamount=maxint
+                    author=author, maxamount=humanize_number(maxint)
                 )
             )
 
