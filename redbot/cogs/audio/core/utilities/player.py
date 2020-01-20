@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import time
-from typing import Union, Any, List, Tuple
+from typing import Union, List, Tuple
 
 import aiohttp
 import discord
@@ -211,7 +211,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         except KeyError:
             return False
 
-    async def _get_spotify_tracks(self, ctx: commands.Context, query: Query):
+    async def _get_spotify_tracks(
+        self, ctx: commands.Context, query: Query
+    ) -> Union[discord.Message, List[lavalink.Track], lavalink.Track]:
         if ctx.invoked_with in ["play", "genre"]:
             enqueue_tracks = True
         else:

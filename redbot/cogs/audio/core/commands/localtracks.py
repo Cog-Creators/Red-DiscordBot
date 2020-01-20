@@ -31,7 +31,7 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
             return
 
         if not folder:
-            await ctx.invoke(self.local_play, play_subfolders=play_subfolders)
+            await ctx.invoke(self._local_folder, play_subfolders=play_subfolders)
         else:
             folder = folder.strip()
             _dir = LocalPath.joinpath(self.local_folder_current_path, folder)

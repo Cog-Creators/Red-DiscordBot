@@ -57,7 +57,7 @@ class SpotifyWrapper:
         return song_url, track_info, uri, artist_name, track_name, _id, _type
 
     @staticmethod
-    async def _check_token(token: MutableMapping):
+    async def _check_token(token: MutableMapping) -> bool:
         """Check if current token is not too old"""
         return (token["expires_at"] - int(time.time())) < 60
 

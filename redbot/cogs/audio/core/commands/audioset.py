@@ -480,6 +480,15 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`
         ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`
         """
+        if self.playlist_api is None:
+            return await self._embed_msg(
+                ctx,
+                title=_("Playlist are not available"),
+                description=_("The playlist section of Audio is currently un available"),
+                footer=discord.Embed.Empty
+                if not await ctx.bot.is_owner(ctx.author)
+                else _("Check your logs."),
+            )
         if scope_data is None:
             scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
 

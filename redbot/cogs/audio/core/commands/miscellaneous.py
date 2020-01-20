@@ -11,7 +11,6 @@ import lavalink
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import humanize_number, pagify
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, _
 from ...audio_dataclasses import Query, LocalPath

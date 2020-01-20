@@ -2,7 +2,7 @@ import asyncio
 import datetime
 import logging
 import math
-from typing import Optional
+from typing import Optional, List
 
 import discord
 import lavalink
@@ -20,8 +20,8 @@ log = logging.getLogger("red.cogs.Audio.cog.Utilities.formatting")
 
 class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def _genre_search_button_action(
-        self, ctx: commands.Context, options, emoji, page, playlist=False
-    ):
+        self, ctx: commands.Context, options: List, emoji: str, page: int, playlist: bool = False
+    ) -> str:
         try:
             if emoji == "\N{DIGIT ONE}\N{COMBINING ENCLOSING KEYCAP}":
                 search_choice = options[0 + (page * 5)]
@@ -43,8 +43,13 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return search_choice.get("uri")
 
     async def _build_genre_search_page(
-        self, ctx: commands.Context, tracks, page_num, title, playlist=False
-    ):
+        self,
+        ctx: commands.Context,
+        tracks: List,
+        page_num: int,
+        title: str,
+        playlist: bool = False,
+    ) -> discord.Embed:
         search_num_pages = math.ceil(len(tracks) / 5)
         search_idx_start = (page_num - 1) * 5
         search_idx_end = search_idx_start + 5
@@ -76,7 +81,9 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         )
         return embed
 
-    async def _search_button_action(self, ctx: commands.Context, tracks, emoji, page):
+    async def _search_button_action(
+        self, ctx: commands.Context, tracks: List, emoji: str, page: int
+    ):
         if not self._player_check(ctx):
             if self.lavalink_connection_aborted:
                 msg = _("Connection to Lavalink has failed.")
@@ -184,7 +191,9 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         description = self.get_track_description(search_choice, self.local_folder_current_path)
         return description, query
 
-    async def _build_search_page(self, ctx: commands.Context, tracks, page_num):
+    async def _build_search_page(
+        self, ctx: commands.Context, tracks: List, page_num: int
+    ) -> discord.Embed:
         search_num_pages = math.ceil(len(tracks) / 5)
         search_idx_start = (page_num - 1) * 5
         search_idx_end = search_idx_start + 5
@@ -259,6 +268,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 return f'**{escape(f"[{track.title}]({track.uri}) ")}**'
         elif hasattr(track, "to_string_user") and track.is_local:
             return escape(track.to_string_user() + " ")
+        return
 
     def get_track_description_unformatted(self, track, local_folder_current_path) -> Optional[str]:
         """Get the user facing unformated track name"""
@@ -273,6 +283,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 return escape(f"{track.title}")
         elif hasattr(track, "to_string_user") and track.is_local:
             return escape(track.to_string_user() + " ")
+        return
 
     def format_playlist_picker_data(self, pid, pname, ptracks, pauthor, scope) -> str:
         """Format the values into a pretified codeblock"""

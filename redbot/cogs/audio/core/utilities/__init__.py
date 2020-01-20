@@ -3,6 +3,7 @@ from .formatting import FormattingUtilities
 from .local_tracks import LocalTrackUtilities
 from .miscellaneous import MiscellaneousUtilities
 from .player import PlayerUtilities
+from .playlists import PlaylistUtilities
 from .queue import QueueUtilities
 from .validation import ValidationUtilities
 from ..cog_utils import CompositeMetaClass
@@ -14,6 +15,7 @@ class Utilities(
     LocalTrackUtilities,
     MiscellaneousUtilities,
     PlayerUtilities,
+    PlaylistUtilities,
     QueueUtilities,
     ValidationUtilities,
     metaclass=CompositeMetaClass,

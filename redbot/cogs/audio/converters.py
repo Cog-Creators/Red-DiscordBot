@@ -1,7 +1,7 @@
 import argparse
 import functools
 import re
-from typing import MutableMapping, Optional, Tuple, Union
+from typing import MutableMapping, Optional, Tuple, Union, Final
 
 import discord
 
@@ -24,25 +24,31 @@ __all__ = [
     "get_playlist_converter",
 ]
 
-_SCOPE_HELP = """
+_SCOPE_HELP: Final[
+    str
+] = """
 Scope must be a valid version of one of the following:
 ​ ​ ​ ​ Global
 ​ ​ ​ ​ Guild
 ​ ​ ​ ​ User
 """
-_USER_HELP = """
+_USER_HELP: Final[
+    str
+] = """
 Author must be a valid version of one of the following:
 ​ ​ ​ ​ User ID
 ​ ​ ​ ​ User Mention
 ​ ​ ​ ​ User Name#123
 """
-_GUILD_HELP = """
+_GUILD_HELP: Final[
+    str
+] = """
 Guild must be a valid version of one of the following:
 ​ ​ ​ ​ Guild ID
 ​ ​ ​ ​ Exact guild name
 """
 
-MENTION_RE = re.compile(r"^<?(?:(?:@[!&]?)?|#)(\d{15,21})>?$")
+MENTION_RE: Final[re.Pattern] = re.compile(r"^<?(?:(?:@[!&]?)?|#)(\d{15,21})>?$")
 
 
 def _match_id(arg: str) -> Optional[int]:

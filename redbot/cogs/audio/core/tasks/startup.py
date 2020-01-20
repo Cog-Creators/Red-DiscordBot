@@ -9,7 +9,7 @@ from ..cog_utils import CompositeMetaClass, _SCHEMA_VERSION
 from ...apis.interface import AudioAPIInterface
 from ...apis.playlist_wrapper import PlaylistWrapper
 
-log = logging.getLogger("red.cogs.Audio.cog.Tasks.player")
+log = logging.getLogger("red.cogs.Audio.cog.Tasks.startup")
 
 
 class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):

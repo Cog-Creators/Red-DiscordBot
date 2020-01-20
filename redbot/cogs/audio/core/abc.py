@@ -14,7 +14,8 @@ from redbot.core.utils.dbtools import APSWConnectionWrapper
 from ..apis.interface import AudioAPIInterface
 from ..apis.playlist_interface import Playlist
 from ..apis.playlist_wrapper import PlaylistWrapper
-from ..audio_dataclasses import Query
+from ..audio_dataclasses import Query, LocalPath
+from ..equalizer import Equalizer
 from ..manager import ServerManager
 
 
@@ -30,7 +31,7 @@ class MixinMeta(ABC):
     api_interface: Optional[AudioAPIInterface]
     player_manager: Optional[ServerManager]
     playlist_api: Optional[PlaylistWrapper]
-    local_folder_current_path: Optional[Path]
+    local_folder_current_path: Path
     db_conn: Optional[APSWConnectionWrapper]
     session: aiohttp.ClientSession
 
@@ -99,7 +100,7 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def lavalink_attempt_connect_task(self, timeout: int = 50) -> None:
+    async def lavalink_attempt_connect(self, timeout: int = 50) -> None:
         raise NotImplementedError()
 
     @abstractmethod
@@ -207,7 +208,7 @@ class MixinMeta(ABC):
     def track_creator(
         self,
         player: lavalink.Player,
-        position: Union[int, int] = None,
+        position: Union[int, str] = None,
         other_track: lavalink.Track = None,
     ) -> MutableMapping:
         raise NotImplementedError()
@@ -300,4 +301,171 @@ class MixinMeta(ABC):
     async def _enqueue_tracks(
         self, ctx: commands.Context, query: Union[Query, list], enqueue: bool = True
     ) -> Union[discord.Message, List[lavalink.Track], lavalink.Track]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _eq_interact(
+        self,
+        ctx: commands.Context,
+        player: lavalink.Player,
+        eq: Equalizer,
+        message: discord.Message,
+        selected: int,
+    ) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _apply_gains(self, guild_id: int, gains: List[float]) -> None:
+        NotImplementedError()
+
+    @abstractmethod
+    async def _apply_gain(self, guild_id: int, band: int, gain: float) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _get_spotify_tracks(
+        self, ctx: commands.Context, query: Query
+    ) -> Union[discord.Message, List[lavalink.Track], lavalink.Track]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _genre_search_button_action(
+        self, ctx: commands.Context, options: List, emoji: str, page: int, playlist: bool = False
+    ) -> str:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _build_genre_search_page(
+        self,
+        ctx: commands.Context,
+        tracks: List,
+        page_num: int,
+        title: str,
+        playlist: bool = False,
+    ) -> discord.Embed:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _audioset_autoplay_toggle(self, ctx: commands.Context):
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _search_button_action(
+        self, ctx: commands.Context, tracks: List, emoji: str, page: int
+    ):
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def get_localtrack_folder_tracks(
+        self, ctx, player: lavalink.player_manager.Player, query: Query
+    ) -> List[lavalink.rest_api.Track]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def get_localtrack_folder_list(self, ctx: commands.Context, query: Query) -> List[Query]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _local_play_all(
+        self, ctx: commands.Context, query: Query, from_search: bool = False
+    ) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _build_search_page(
+        self, ctx: commands.Context, tracks: List, page_num: int
+    ) -> discord.Embed:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def play(self, ctx: commands.Context, *, query: str):
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def has_localtracks_check(self, ctx: commands.Context) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def get_localtracks_folders(
+        self, ctx: commands.Context, search_subfolders: bool = False
+    ) -> List[Union[Path, LocalPath]]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _build_local_search_list(
+        self, to_search: List[Query], search_words: str
+    ) -> List[str]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def stop(self, ctx: commands.Context):
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _build_queue_page(
+        self,
+        ctx: commands.Context,
+        queue: list,
+        player: lavalink.player_manager.Player,
+        page_num: int,
+    ) -> discord.Embed:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def pause(self, ctx: commands.Context):
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _build_queue_search_list(
+        self, queue_list: List[lavalink.Track], search_words: str
+    ) -> List[Tuple[int, str]]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _build_queue_search_page(
+        self, ctx: commands.Context, page_num: int, search_list: List[Tuple[int, str]]
+    ) -> discord.Embed:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _playlist_tracks(
+        self, ctx: commands.Context, player: lavalink.player_manager.Player, query: Query
+    ) -> Union[discord.Message, None, List[MutableMapping]]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _build_playlist_list_page(
+        self, ctx: commands.Context, page_num: int, abc_names: List, scope: str
+    ) -> discord.Embed:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def match_yt_playlist(self, url: str) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _load_v3_playlist(
+        self,
+        ctx: commands.Context,
+        scope: str,
+        uploaded_playlist_name: str,
+        uploaded_playlist_url: str,
+        track_list: List,
+        author: Union[discord.User, discord.Member],
+        guild: Union[discord.Guild],
+    ) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _load_v2_playlist(
+        self,
+        ctx: commands.Context,
+        uploaded_track_list,
+        player: lavalink.player_manager.Player,
+        playlist_url: str,
+        uploaded_playlist_name: str,
+        scope: str,
+        author: Union[discord.User, discord.Member],
+        guild: Union[discord.Guild],
+    ):
         raise NotImplementedError()

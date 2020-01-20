@@ -2,7 +2,7 @@ import asyncio
 import contextlib
 import datetime
 import logging
-from typing import Union
+from typing import Union, Optional
 
 import discord
 import lavalink
@@ -70,7 +70,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 dur = "LIVE"
             else:
                 dur = lavalink.utils.format_time(player.current.length)
-            song = self.get_track_description(player.current, self.local_folder_current_path)
+            song = self.get_track_description(player.current, self.local_folder_current_path) or ""
             song += _("\n Requested by: **{track.requester}**")
             song += "\n\n{arrow}`{pos}`/`{dur}`"
             song = song.format(track=player.current, arrow=arrow, pos=pos, dur=dur)
@@ -80,7 +80,6 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if player.fetch("np_message") is not None:
             with contextlib.suppress(discord.HTTPException):
                 await player.fetch("np_message").delete()
-
         embed = discord.Embed(title=_("Now Playing"), description=song)
         if (
             await self.config.guild(ctx.guild).thumbnail()
@@ -128,6 +127,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         if not player.queue:
             expected = ("⏹", "⏯")
+        task: Optional[asyncio.Task]
         if player.current:
             task = start_adding_reactions(message, expected[:4], ctx.bot.loop)
         else:
@@ -774,7 +774,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
             index_or_url -= 1
             removed = player.queue.pop(index_or_url)
-            removed_title = self.get_track_description(removed)
+            removed_title = self.get_track_description(removed, self.local_folder_current_path)
             await self._embed_msg(
                 ctx,
                 title=_("Removed track from queue"),
