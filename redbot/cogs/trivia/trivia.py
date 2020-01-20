@@ -588,8 +588,7 @@ class Trivia(commands.Cog):
         -------
         None
         """
-        filename = file.filename.split(".", 1)[0]
-        filesuffix = file.filename.split(".", 1)[0]
+        filename = file.filename.rsplit(".", 1)[0]
 
         filepath = cog_data_path(self) / f"{filename}.yaml"
 
@@ -601,7 +600,7 @@ class Trivia(commands.Cog):
         basefileexists = None
 
         for item in get_core_lists():
-            if filesuffix in [item.stem, "upload", "delete"]:
+            if filename in [item.stem, "upload", "delete"]:
                 basefileexists = True
                 break
             else:
