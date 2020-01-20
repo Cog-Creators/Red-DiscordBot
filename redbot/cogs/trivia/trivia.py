@@ -556,8 +556,8 @@ class Trivia(commands.Cog):
                 await ctx.send(_('Ahh replacing the file aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'))
             else:
                 await ctx.send(_('I am not replacing the file aaaaaa'))
-
-        await file.save(filepath)
+        else:
+            await file.save(filepath)
 
         # fp = io.BytesIO(file)
         # fileobject = await file.save(fp)
