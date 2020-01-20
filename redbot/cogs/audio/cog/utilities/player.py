@@ -112,8 +112,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         dj_role_obj = ctx.guild.get_role(dj_role)
         return dj_role_obj in ctx.guild.get_member(member.id).roles
 
-    @staticmethod
-    async def is_requester(ctx: commands.Context, member: discord.Member):
+    async def is_requester(self, ctx: commands.Context, member: discord.Member):
         try:
             player = lavalink.get_player(ctx.guild.id)
             log.debug(f"Current requester is {player.current}")
