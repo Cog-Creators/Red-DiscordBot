@@ -286,11 +286,16 @@ class Trivia(commands.Cog):
     async def trivia_upload(self, ctx: commands.Context):
         """Upload a trivia file."""
         if not ctx.message.attachments:
-            await ctx.send(_("You must upload a file."))
-            return
-
+            await ctx.send(_("Supply a file with next message or type anything to cancel."))
+            message = await ctx.bot.wait_for("message", check=MessagePredicate.same_context(ctx))
+            if not message.attachments:
+                await ctx.send(_("You have canelled the upload process."))
+                return
+            parsedfile = message.attachments[0]
+        else:
+            parsedfile = ctx.message.attachments[0]
         try:
-            file = await self._save_trivia_list(ctx.message.attachments[0], ctx)
+            await self._save_trivia_list(parsedfile, ctx)
         except yaml.error.YAMLError as exc:
             await ctx.send(_("Invalid list uploaded."))
             LOG.debug(f"File failed to upload: {exc}")
@@ -562,7 +567,7 @@ class Trivia(commands.Cog):
         basefileexists = None
 
         for item in get_core_lists():
-            if file.filename.rsplit('.', 1)[0] in item.stem:
+            if file.filename.rsplit('.', 1)[0] == item.stem or file.filename.rsplit('.', 1)[0] == 'upload':
                 basefileexists = True
                 break
             else:
@@ -570,7 +575,7 @@ class Trivia(commands.Cog):
 
         if filepath.exists() or basefileexists:
             if basefileexists:
-                await ctx.send(_('{filename} already exists as a default trivia file and cannot be replaced.\n'
+                await ctx.send(_('{filename} is a reserved trivia name and cannot be replaced.\n'
                                  'Choose another name'.format(filename=file.filename)))
                 return
             else:
