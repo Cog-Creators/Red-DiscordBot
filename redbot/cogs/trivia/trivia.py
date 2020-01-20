@@ -6,7 +6,7 @@ from typing import List
 import io
 import yaml
 import discord
-
+from pathlib import Path
 from redbot.core import commands
 from redbot.core import Config, checks
 from redbot.core.data_manager import cog_data_path
@@ -551,10 +551,17 @@ class Trivia(commands.Cog):
         -------
         None
         """
-        with io.BytesIO() as fp:
-            await file.save(fp)
-            trivia_file = yaml.safe_load(fp)
+        filepath = (str(cog_data_path(self)) + '/' + file.filename)
 
+        async with io.BytesIO as fp:
+            await file.save(fp)
+            yaml.safe_load(fp)
+            await file.save(filepath)
+
+        #fp = io.BytesIO(file)
+        #fileobject = await file.save(fp)
+        #filepath = Path(cog_data_path() / file.filename)
+        #filepath.write(fileobject)
 
     def _get_trivia_session(self, channel: discord.TextChannel) -> TriviaSession:
         return next(
