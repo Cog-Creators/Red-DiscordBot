@@ -280,7 +280,7 @@ class Trivia(commands.Cog):
         try:
             file = await self._save_trivia_list(ctx.message.attachments[0])
         except yaml.error.YAMLError as exc:
-            await ctx.send(_('Invalid list uploaded.'))
+            await ctx.send(_("Invalid list uploaded."))
             LOG.debug(f"File failed to upload: {exc}")
 
     @trivia.group(
@@ -540,17 +540,17 @@ class Trivia(commands.Cog):
         -------
         None
         """
-        filepath = (str(cog_data_path(self)) + '/' + file.filename)
+        filepath = str(cog_data_path(self)) + "/" + file.filename
 
         async with io.BytesIO as fp:
             await file.save(fp)
             yaml.safe_load(fp)
             await file.save(filepath)
 
-        #fp = io.BytesIO(file)
-        #fileobject = await file.save(fp)
-        #filepath = Path(cog_data_path() / file.filename)
-        #filepath.write(fileobject)
+        # fp = io.BytesIO(file)
+        # fileobject = await file.save(fp)
+        # filepath = Path(cog_data_path() / file.filename)
+        # filepath.write(fileobject)
 
     def _get_trivia_session(self, channel: discord.TextChannel) -> TriviaSession:
         return next(
