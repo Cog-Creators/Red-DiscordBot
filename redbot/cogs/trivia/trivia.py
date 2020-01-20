@@ -629,9 +629,7 @@ class Trivia(commands.Cog):
                 with file.open("wb") as fp:
                     fp.write(buffer.read())
                 await ctx.send(
-                    _("Success, trivia list uploaded as {filename}.").format(
-                        filename=filename
-                    )
+                    _("Success, trivia list uploaded as {filename}.").format(filename=filename)
                 )
             else:
                 await ctx.send(_("I am not replacing the existing file"))
