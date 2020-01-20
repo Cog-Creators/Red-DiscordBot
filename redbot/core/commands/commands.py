@@ -201,6 +201,13 @@ class Command(CogCommandMixin, commands.Command):
 
     """
 
+    def __call__(self, *args, **kwargs):
+        if self.cog:
+            # We need to inject cog as self here
+            return self.callback(self.cog, *args, **kwargs)
+        else:
+            return self.callback(*args, **kwargs)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._help_override = kwargs.pop("help_override", None)
@@ -637,7 +644,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
     @property
     def all_commands(self) -> Dict[str, Command]:
         """
-        This does not have identical behavior to 
+        This does not have identical behavior to
         Group.all_commands but should return what you expect
         """
         return {cmd.name: cmd for cmd in self.__cog_commands__}
@@ -653,7 +660,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         """
         This really just exists to allow easy use with other methods using can_run
         on commands and groups such as help formatters.
-        
+
         kwargs used in that won't apply here as they don't make sense to,
         but will be swallowed silently for a compatible signature for ease of use.
 
