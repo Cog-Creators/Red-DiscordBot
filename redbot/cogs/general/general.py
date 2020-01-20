@@ -2,6 +2,7 @@ import datetime
 import time
 from enum import Enum
 from random import randint, choice
+from typing import Final
 import aiohttp
 import discord
 from redbot.core import commands
@@ -29,6 +30,9 @@ class RPSParser:
             self.choice = RPS.scissors
         else:
             self.choice = None
+
+
+MAX_ROLL: Final[int] = 2 ** 64 - 1
 
 
 @cog_i18n(_)
@@ -87,8 +91,7 @@ class General(commands.Cog):
         `<number>` defaults to 100.
         """
         author = ctx.author
-        maxint = 2 ** 64 - 1
-        if 1 < number <= maxint:
+        if 1 < number <= MAX_ROLL:
             n = randint(1, number)
             await ctx.send(
                 "{author.mention} :game_die: {n} :game_die:".format(
@@ -100,7 +103,7 @@ class General(commands.Cog):
         else:
             await ctx.send(
                 _("{author.mention} Max allowed number is {maxamount}.").format(
-                    author=author, maxamount=humanize_number(maxint)
+                    author=author, maxamount=humanize_number(MAX_ROLL)
                 )
             )
 
