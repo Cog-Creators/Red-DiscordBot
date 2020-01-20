@@ -434,6 +434,8 @@ class Core(commands.Cog, CoreLogic):
             )
 
     @embedset.command(name="channel")
+    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guild_only()
     async def embedset_channel(self, ctx: commands.Context, enabled: bool = None):
         """
         Toggle the channel's embed setting.
