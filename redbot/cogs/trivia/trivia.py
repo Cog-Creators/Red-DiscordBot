@@ -559,11 +559,22 @@ class Trivia(commands.Cog):
         await file.save(fp)
         yaml.safe_load(fp)
 
-        #TODO Check if existing bundled trivia file exists as same name
-        #TODO Warn if existing list
+        basefileexists = None
 
-        if filepath.exists():
-            await ctx.send(_('{filename} already exists. Do you wish to overwrite?'.format(filename=file.filename)))
+        for item in get_core_lists():
+            if file.filename.rsplit('.', 1)[0] in item.stem:
+                basefileexists = True
+                break
+            else:
+                break
+
+        if filepath.exists() or basefileexists:
+            if basefileexists:
+                await ctx.send(_('{filename} already exists as a default trivia file and cannot be replaced.\n'
+                                 'Choose another name'.format(filename=file.filename)))
+                return
+            else:
+                await ctx.send(_('{filename} already exists. Do you wish to overwrite?'.format(filename=file.filename)))
             pred = MessagePredicate.yes_or_no(ctx)
             await ctx.bot.wait_for("message", check=pred)
             if pred.result is True:
