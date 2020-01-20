@@ -559,21 +559,20 @@ class Trivia(commands.Cog):
         await file.save(fp)
         yaml.safe_load(fp)
 
+        #TODO Check if existing bundled trivia file exists as same name
+        #TODO Warn if existing list
+
         if filepath.exists():
             await ctx.send(_('{filename} already exists. Do you wish to overwrite?'.format(filename=file.filename)))
             pred = MessagePredicate.yes_or_no(ctx)
             await ctx.bot.wait_for("message", check=pred)
             if pred.result is True:
-                await ctx.send(_('Ahh replacing the file aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'))
+                await file.save(filepath)
+                await ctx.send(_('Success, trivia list uploaded as {filename}.').format(filename=file.filename.rsplit('.', 1)[0]))
             else:
-                await ctx.send(_('I am not replacing the file aaaaaa'))
+                await ctx.send(_('I am not replacing the existing file'))
         else:
             await file.save(filepath)
-
-        # fp = io.BytesIO(file)
-        # fileobject = await file.save(fp)
-        # filepath = Path(cog_data_path() / file.filename)
-        # filepath.write(fileobject)
 
     def _get_trivia_session(self, channel: discord.TextChannel) -> TriviaSession:
         return next(
