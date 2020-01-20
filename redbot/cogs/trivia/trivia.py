@@ -556,7 +556,10 @@ class Trivia(commands.Cog):
         basefileexists = None
 
         for item in get_core_lists():
-            if file.filename.rsplit('.', 1)[0] == item.stem or file.filename.rsplit('.', 1)[0] == 'upload':
+            if (
+                file.filename.rsplit(".", 1)[0] == item.stem
+                or file.filename.rsplit(".", 1)[0] == "upload"
+            ):
                 basefileexists = True
                 break
             else:
@@ -564,21 +567,35 @@ class Trivia(commands.Cog):
 
         if filepath.exists() or basefileexists:
             if basefileexists:
-                await ctx.send(_('{filename} is a reserved trivia name and cannot be replaced.\n'
-                                 'Choose another name'.format(filename=file.filename)))
+                await ctx.send(
+                    _(
+                        "{filename} is a reserved trivia name and cannot be replaced.\n"
+                        "Choose another name".format(filename=file.filename)
+                    )
+                )
                 return
             else:
-                await ctx.send(_('{filename} already exists. Do you wish to overwrite?'.format(filename=file.filename)))
+                await ctx.send(
+                    _(
+                        "{filename} already exists. Do you wish to overwrite?".format(
+                            filename=file.filename
+                        )
+                    )
+                )
             pred = MessagePredicate.yes_or_no(ctx)
             await ctx.bot.wait_for("message", check=pred)
             if pred.result is True:
                 await file.save(filepath)
-                await ctx.send(_('Success, trivia list uploaded as {filename}.').format(filename=file.filename.rsplit('.', 1)[0]))
+                await ctx.send(
+                    _("Success, trivia list uploaded as {filename}.").format(
+                        filename=file.filename.rsplit(".", 1)[0]
+                    )
+                )
             else:
-                await ctx.send(_('I am not replacing the existing file'))
+                await ctx.send(_("I am not replacing the existing file"))
         else:
             await file.save(filepath)
-            LOG.debug('Saved file as'.format(filepath))
+            LOG.debug("Saved file as".format(filepath))
 
     def _get_trivia_session(self, channel: discord.TextChannel) -> TriviaSession:
         return next(
