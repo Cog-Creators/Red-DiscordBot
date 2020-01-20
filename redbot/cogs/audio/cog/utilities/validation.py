@@ -18,7 +18,7 @@ _RE_YT_LIST_PLAYLIST = re.compile(
 
 
 class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
-    def match_url(self, url) -> bool:
+    def match_url(self, url: str) -> bool:
         try:
             query_url = urlparse(url)
             return all([query_url.scheme, query_url.netloc, query_url.path])
@@ -30,7 +30,7 @@ class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return True
         return False
 
-    def url_check(self, url) -> bool:
+    def url_check(self, url: str) -> bool:
         valid_tld = [
             "youtube.com",
             "youtu.be",
@@ -49,7 +49,7 @@ class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
             url_domain = ".".join(query_url.path.split("/")[0].split(".")[-2:])
         return True if url_domain in valid_tld else False
 
-    def userlimit(self, channel) -> bool:
+    def userlimit(self, channel: discord.VoiceChannel) -> bool:
         if channel.user_limit == 0 or channel.user_limit > len(channel.members) + 1:
             return False
         return True

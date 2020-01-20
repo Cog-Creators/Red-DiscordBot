@@ -4,7 +4,7 @@ import datetime
 import functools
 import logging
 import re
-from typing import MutableMapping
+from typing import MutableMapping, Union, Any
 
 import discord
 import lavalink
@@ -21,11 +21,13 @@ _RE_TIME_CONVERTER = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
 
 
 class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
-    async def _clear_react(self, message: discord.Message, emoji: MutableMapping = None):
+    async def _clear_react(
+        self, message: discord.Message, emoji: MutableMapping = None
+    ) -> asyncio.Task:
         """Non blocking version of clear_react."""
         return self.bot.loop.create_task(self.clear_react(message, emoji))
 
-    async def _currency_check(self, ctx: commands.Context, jukebox_price: int):
+    async def _currency_check(self, ctx: commands.Context, jukebox_price: int) -> bool:
         jukebox = await self.config.guild(ctx.guild).jukebox()
         if jukebox and not await self._can_instaskip(ctx, ctx.author):
             can_spend = await bank.can_spend(ctx.author, jukebox_price)
@@ -49,7 +51,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         else:
             return True
 
-    async def _embed_msg(self, ctx: commands.Context, **kwargs):
+    async def _embed_msg(self, ctx: commands.Context, **kwargs) -> discord.Message:
         colour = kwargs.get("colour") or kwargs.get("color") or await self.bot.get_embed_color(ctx)
         title = kwargs.get("title", EmptyEmbed) or EmptyEmbed
         _type = kwargs.get("type", "rich") or "rich"
@@ -72,14 +74,14 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             embed.set_thumbnail(url=thumbnail)
         return await ctx.send(embed=embed)
 
-    async def _process_db(self, ctx: commands.Context):
+    async def _process_db(self, ctx: commands.Context) -> None:
         await self.api_interface.run_tasks(ctx)
 
-    async def _close_database(self):
+    async def _close_database(self) -> None:
         await self.api_interface.run_all_pending_tasks()
         self.api_interface.close()
 
-    async def _check_api_tokens(self):
+    async def _check_api_tokens(self) -> MutableMapping:
         spotify = await self.bot.get_shared_api_tokens("spotify")
         youtube = await self.bot.get_shared_api_tokens("youtube")
         return {
@@ -88,7 +90,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             "youtube_api": youtube.get("api_key", ""),
         }
 
-    async def _check_external(self):
+    async def _check_external(self) -> bool:
         external = await self.config.use_external_lavalink()
         if not external:
             if self.player_manager is not None:
@@ -98,17 +100,22 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         else:
             return False
 
-    def rsetattr(self, obj, attr, val):
+    def rsetattr(self, obj, attr, val) -> None:
         pre, _, post = attr.rpartition(".")
-        return setattr(self.rgetattr(obj, pre) if pre else obj, post, val)
+        setattr(self.rgetattr(obj, pre) if pre else obj, post, val)
 
-    def rgetattr(self, obj, attr, *args):
+    def rgetattr(self, obj, attr, *args) -> Any:
         def _getattr(obj2, attr2):
             return getattr(obj2, attr2, *args)
 
         return functools.reduce(_getattr, [obj] + attr.split("."))
 
-    async def remove_react(self, message, react_emoji, react_user) -> None:
+    async def remove_react(
+        self,
+        message: discord.Message,
+        react_emoji: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str],
+        react_user: discord.abc.User,
+    ) -> None:
         with contextlib.suppress(discord.HTTPException):
             await message.remove_reaction(react_emoji, react_user)
 
@@ -125,7 +132,12 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         except discord.HTTPException:
             return
 
-    def track_creator(self, player, position=None, other_track=None) -> MutableMapping:
+    def track_creator(
+        self,
+        player: lavalink.Player,
+        position: Union[int, int] = None,
+        other_track: lavalink.Track = None,
+    ) -> MutableMapping:
         if position == "np":
             queued_track = player.current
         elif position is None:
@@ -148,7 +160,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             track_obj[key] = value
         return track_obj
 
-    def time_convert(self, length) -> int:
+    def time_convert(self, length: Union[int, str]) -> int:
         match = _RE_TIME_CONVERTER.match(length)
         if match is not None:
             hr = int(match.group(1)) if match.group(1) else 0
@@ -162,7 +174,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             except ValueError:
                 return 0
 
-    async def queue_duration(self, ctx) -> int:
+    async def queue_duration(self, ctx: commands.Context) -> int:
         player = lavalink.get_player(ctx.guild.id)
         duration = []
         for i in range(len(player.queue)):
@@ -181,7 +193,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         queue_total_duration = remain + queue_dur
         return queue_total_duration
 
-    async def track_remaining_duration(self, ctx) -> int:
+    async def track_remaining_duration(self, ctx: commands.Context) -> int:
         player = lavalink.get_player(ctx.guild.id)
         if not player.current:
             return 0
@@ -194,7 +206,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             remain = 0
         return remain
 
-    def dynamic_time(self, seconds) -> str:
+    def dynamic_time(self, seconds: int) -> str:
         m, s = divmod(seconds, 60)
         h, m = divmod(m, 60)
         d, h = divmod(h, 24)

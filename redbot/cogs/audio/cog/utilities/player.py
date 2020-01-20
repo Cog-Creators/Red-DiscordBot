@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import time
-from typing import Union
+from typing import Union, Any, List, Tuple
 
 import aiohttp
 import discord
@@ -21,7 +21,7 @@ log = logging.getLogger("red.cogs.Audio.cog.Utilities.player")
 
 
 class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
-    async def error_reset(self, player: lavalink.Player):
+    async def error_reset(self, player: lavalink.Player) -> None:
         guild = self.rgetattr(player, "channel.guild.id", None)
         if not guild:
             return
@@ -41,7 +41,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         self._error_timer[guild] = now
         return self._error_counter[guild] >= 5
 
-    async def _players_check(self):
+    async def _players_check(self) -> Tuple[str, int]:
         try:
             current = next(
                 (
@@ -60,7 +60,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             playing_servers = 0
         return get_single_title, playing_servers
 
-    async def _status_check(self, track, playing_servers):
+    async def _status_check(self, track: lavalink.Track, playing_servers: int) -> None:
         if playing_servers == 0:
             await self.bot.change_presence(activity=None)
         elif playing_servers == 1:
@@ -75,7 +75,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 )
             )
 
-    async def _can_instaskip(self, ctx: commands.Context, member: discord.Member):
+    async def _can_instaskip(self, ctx: commands.Context, member: discord.Member) -> bool:
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
@@ -100,19 +100,19 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         return False
 
-    async def _is_alone(self, ctx: commands.Context):
+    async def _is_alone(self, ctx: commands.Context) -> bool:
         channel_members = self.rgetattr(ctx, "guild.me.voice.channel.members", [])
         nonbots = sum(m.id != ctx.author.id for m in channel_members if not m.bot)
         return nonbots < 1
 
-    async def _has_dj_role(self, ctx: commands.Context, member: discord.Member):
+    async def _has_dj_role(self, ctx: commands.Context, member: discord.Member) -> bool:
         dj_role = self._dj_role_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_role()
         )
         dj_role_obj = ctx.guild.get_role(dj_role)
         return dj_role_obj in ctx.guild.get_member(member.id).roles
 
-    async def is_requester(self, ctx: commands.Context, member: discord.Member):
+    async def is_requester(self, ctx: commands.Context, member: discord.Member) -> bool:
         try:
             player = lavalink.get_player(ctx.guild.id)
             log.debug(f"Current requester is {player.current}")
@@ -121,14 +121,15 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             log.error(e)
         return False
 
-    async def _skip_action(self, ctx: commands.Context, skip_to_track: int = None):
+    async def _skip_action(self, ctx: commands.Context, skip_to_track: int = None) -> None:
         player = lavalink.get_player(ctx.guild.id)
         autoplay = await self.config.guild(player.channel.guild).auto_play()
         if not player.current or (not player.queue and not autoplay):
             try:
                 pos, dur = player.position, player.current.length
             except AttributeError:
-                return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
+                await self._embed_msg(ctx, title=_("There's nothing in the queue."))
+                return
             time_remain = lavalink.utils.format_time(dur - pos)
             if player.current.is_stream:
                 embed = discord.Embed(title=_("There's nothing in the queue."))
@@ -142,7 +143,8 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         time=time_remain, track=player.current.title
                     )
                 )
-            return await self._embed_msg(ctx, embed=embed)
+            await self._embed_msg(ctx, embed=embed)
+            return
         elif autoplay and not player.queue:
             embed = discord.Embed(
                 title=_("Track Skipped"),
@@ -151,16 +153,18 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
             await self._embed_msg(ctx, embed=embed)
-            return await player.skip()
+            await player.skip()
+            return
 
         queue_to_append = []
         if skip_to_track is not None and skip_to_track != 1:
             if skip_to_track < 1:
-                return await self._embed_msg(
+                await self._embed_msg(
                     ctx, title=_("Track number must be equal to or greater than 1.")
                 )
+                return
             elif skip_to_track > len(player.queue):
-                return await self._embed_msg(
+                await self._embed_msg(
                     ctx,
                     title=_(
                         "There are only {queuelen} songs currently queued.".format(
@@ -168,6 +172,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         )
                     ),
                 )
+                return
             embed = discord.Embed(
                 title=_("{skip_to_track} Tracks Skipped".format(skip_to_track=skip_to_track))
             )
@@ -189,13 +194,13 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         await player.play()
         player.queue += queue_to_append
 
-    def _play_lock(self, ctx: commands.Context, tf):
-        if tf:
+    def _play_lock(self, ctx: commands.Context, true_or_false: bool) -> None:
+        if true_or_false:
             self.play_lock[ctx.message.guild.id] = True
         else:
             self.play_lock[ctx.message.guild.id] = False
 
-    def _player_check(self, ctx: commands.Context):
+    def _player_check(self, ctx: commands.Context) -> bool:
         if self.lavalink_connection_aborted:
             return False
         try:
@@ -325,7 +330,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     async def _enqueue_tracks(
         self, ctx: commands.Context, query: Union[Query, list], enqueue: bool = True
-    ):
+    ) -> Union[discord.Message, List[lavalink.Track], lavalink.Track]:
         player = lavalink.get_player(ctx.guild.id)
         try:
             if self.play_lock[ctx.message.guild.id]:
@@ -584,7 +589,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         self._play_lock(ctx, False)
         return track_list
 
-    async def _data_check(self, ctx: commands.Context):
+    async def _data_check(self, ctx: commands.Context) -> None:
         player = lavalink.get_player(ctx.guild.id)
         shuffle = await self.config.guild(ctx.guild).shuffle()
         repeat = await self.config.guild(ctx.guild).repeat()
@@ -625,7 +630,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         else:
             return False
 
-    def track_limit(self, track, maxlength) -> bool:
+    def track_limit(self, track: Union[lavalink.Track, int], maxlength: int) -> bool:
         try:
             length = round(track.length / 1000)
         except AttributeError:

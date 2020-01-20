@@ -16,7 +16,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
         # check for unsupported arch
         # Check on this needs refactoring at a later date
         # so that we have a better way to handle the tasks
-        if self.llsetup in [ctx.command, ctx.command.root_parent]:
+        if self._llsetup in [ctx.command, ctx.command.root_parent]:
             pass
 
         elif self.lavalink_connect_task and self.lavalink_connect_task.cancelled():
