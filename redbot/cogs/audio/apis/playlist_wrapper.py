@@ -8,7 +8,7 @@ from typing import List, MutableMapping, Optional
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.utils.dbtools import APSWConnectionWrapper
-from .utils import PlaylistFetchResult
+from .api_utils import PlaylistFetchResult
 from ..audio_logging import debug_exc_log
 from ..sql_statements import (
     PLAYLIST_CREATE_INDEX,

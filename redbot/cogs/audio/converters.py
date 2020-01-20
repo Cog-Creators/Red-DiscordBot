@@ -7,8 +7,8 @@ import discord
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
+from .apis.api_utils import standardize_scope
 from .apis.playlist_interface import get_all_playlist_converter
-from .apis.utils import standardize_scope
 from .errors import NoMatchesFound, TooManyMatches
 from .utils import PlaylistScope
 
@@ -136,7 +136,7 @@ class PlaylistConverter(commands.Converter):
             global_matches = await get_all_playlist_converter(
                 PlaylistScope.GLOBAL.value,
                 ctx.bot,
-                cog._playlist_api,
+                cog.playlist_api,
                 arg,
                 guild=ctx.guild,
                 author=ctx.author,
@@ -144,7 +144,7 @@ class PlaylistConverter(commands.Converter):
             guild_matches = await get_all_playlist_converter(
                 PlaylistScope.GUILD.value,
                 ctx.bot,
-                cog._playlist_api,
+                cog.playlist_api,
                 arg,
                 guild=ctx.guild,
                 author=ctx.author,
@@ -152,7 +152,7 @@ class PlaylistConverter(commands.Converter):
             user_matches = await get_all_playlist_converter(
                 PlaylistScope.USER.value,
                 ctx.bot,
-                cog._playlist_api,
+                cog.playlist_api,
                 arg,
                 guild=ctx.guild,
                 author=ctx.author,

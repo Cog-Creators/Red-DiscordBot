@@ -1,17 +1,9 @@
-import hashlib
 import logging
-import urllib.parse
-import uuid
-from pathlib import Path
-from typing import Optional
 
 import aiohttp
-from lavalink.rest_api import LoadResult
 
 from redbot.core import Config
 from redbot.core.bot import Red
-from ..audio_dataclasses import Query
-from ..audio_logging import IS_DEBUG, debug_exc_log
 
 _API_URL = "https://redbot.app/"
 

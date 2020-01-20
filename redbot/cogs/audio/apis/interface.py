@@ -11,11 +11,10 @@ from typing import Callable, List, Mapping, MutableMapping, Optional, Tuple, Uni
 import aiohttp
 import discord
 import lavalink
-from lavalink.enums import LoadType
 from lavalink.rest_api import LoadResult
 
 from redbot.cogs.audio.apis.playlist_wrapper import PlaylistWrapper
-from redbot.core import commands, Config
+from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 from redbot.core.utils.dbtools import APSWConnectionWrapper
@@ -23,12 +22,11 @@ from .global_db import GlobalCacheWrapper
 from .local_db import LocalCacheWrapper
 from .playlist_interface import get_playlist
 from .spotify import SpotifyWrapper
-from .utils import LavalinkCacheFetchForGlobalResult
 from .youtube import YouTubeWrapper
 from ..audio_dataclasses import Query
 from ..audio_logging import IS_DEBUG, debug_exc_log
 from ..errors import DatabaseError, SpotifyFetchError, TrackEnqueueError
-from ..utils import CacheLevel, Notifier, queue_duration, is_allowed, track_limit
+from ..utils import CacheLevel, Notifier
 
 _ = Translator("Audio", __file__)
 log = logging.getLogger("red.cogs.Audio.api.AudioAPIInterface")
@@ -97,11 +95,13 @@ class AudioAPIInterface:
         self,
         action_type: str = None,
         table: str = None,
-        data: Union[List[Mapping], Mapping] = None,
+        data: Union[List[MutableMapping], MutableMapping] = None,
     ) -> None:
         """Separate the tasks and run them in the appropriate functions"""
 
-        if action_type == "insert":
+        if not data:
+            return
+        if action_type == "insert" and isinstance(data, list):
             if table == "lavalink":
                 await self.local_cache_api.lavalink.insert(data)
             elif table == "youtube":
@@ -116,9 +116,9 @@ class AudioAPIInterface:
             elif table == "spotify":
                 await self.local_cache_api.spotify.update(data)
 
-    async def run_tasks(self, ctx: Optional[commands.Context] = None, _id=None) -> None:
+    async def run_tasks(self, ctx: Optional[commands.Context] = None, message_id=None) -> None:
         """Run tasks for a specific context"""
-        lock_id = _id or ctx.message.id
+        lock_id = message_id if message_id is not None else ctx.message.id
         lock_author = ctx.author if ctx else None
         async with self._lock:
             if lock_id in self._tasks:
@@ -406,7 +406,7 @@ class AudioAPIInterface:
             guild_data = await self.config.guild(ctx.guild).all()
             enqueued_tracks = 0
             consecutive_fails = 0
-            queue_dur = await queue_duration(ctx)
+            queue_dur = await self.queue_duration(ctx)
             queue_total_duration = lavalink.utils.format_time(queue_dur)
             before_queue_length = len(player.queue)
             tracks_from_spotify = await self._spotify_fetch_tracks(
@@ -523,7 +523,7 @@ class AudioAPIInterface:
                     continue
                 consecutive_fails = 0
                 single_track = track_object[0]
-                if not await is_allowed(
+                if not await self.is_allowed(
                     self.config,
                     ctx.guild,
                     (
@@ -540,7 +540,7 @@ class AudioAPIInterface:
                     if len(player.queue) >= 10000:
                         continue
                     if guild_data["maxlength"] > 0:
-                        if track_limit(single_track, guild_data["maxlength"]):
+                        if self.track_limit(single_track, guild_data["maxlength"]):
                             enqueued_tracks += 1
                             player.add(ctx.author, single_track)
                             self.bot.dispatch(
@@ -834,9 +834,9 @@ class AudioAPIInterface:
                 await asyncio.sleep(0.001)
                 if not query.valid:
                     continue
-                if query.is_local and not query.track.exists():
+                if query.is_local and not query.local_track_path.exists():
                     continue
-                if not await is_allowed(
+                if not await self.is_allowed(
                     self.config,
                     player.channel.guild,
                     (
