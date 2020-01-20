@@ -274,15 +274,23 @@ class Trivia(commands.Cog):
                     title=_("Available trivia lists"),
                     colour=await ctx.embed_colour(),
                     description=(
-                            "**Default lists**:\n" + ", ".join(default_lists) + '\n\n'
-                            "**Custom lists**:\n" + ", ".join(personal_lists)
-                ),
+                        "**Default lists**:\n" + ", ".join(default_lists) + "\n\n"
+                        "**Custom lists**:\n" + ", ".join(personal_lists)
+                    ),
                 )
             )
         else:
-            msg = box(bold(_("Available trivia lists")) + "\n\n"
-                      + '- Default lists' + '\n' + ", ".join(default_lists)
-                      + "\n\n" + '- Custom lists' + '\n' + ", ".join(personal_lists))
+            msg = box(
+                bold(_("Available trivia lists"))
+                + "\n\n"
+                + "- Default lists"
+                + "\n"
+                + ", ".join(default_lists)
+                + "\n\n"
+                + "- Custom lists"
+                + "\n"
+                + ", ".join(personal_lists)
+            )
             if len(msg) > 1000:
                 await ctx.author.send(msg)
             else:
@@ -311,12 +319,12 @@ class Trivia(commands.Cog):
     @trivia.command(name="delete")
     async def trivia_delete(self, ctx: commands.Context, name: str):
         """Delete a trivia file."""
-        filepath = Path(str(cog_data_path(self)) + "/" + name + '.yaml')
+        filepath = Path(str(cog_data_path(self)) + "/" + name + ".yaml")
         print(filepath)
         if filepath.exists():
-            await ctx.send(_('Trivia {filename} was deleted.').format(filename=filepath.stem))
+            await ctx.send(_("Trivia {filename} was deleted.").format(filename=filepath.stem))
         else:
-            await ctx.send(_('Trivia file was not found.'))
+            await ctx.send(_("Trivia file was not found."))
 
     @trivia.group(
         name="leaderboard", aliases=["lboard"], autohelp=False, invoke_without_command=True
