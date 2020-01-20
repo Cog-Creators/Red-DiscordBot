@@ -312,7 +312,7 @@ class Trivia(commands.Cog):
             await ctx.send(_("Supply a file with next message or type anything to cancel."))
             message = await ctx.bot.wait_for("message", check=MessagePredicate.same_context(ctx))
             if not message.attachments:
-                await ctx.send(_("You have canelled the upload process."))
+                await ctx.send(_("You have cancelled the upload process."))
                 return
             parsedfile = message.attachments[0]
         else:
