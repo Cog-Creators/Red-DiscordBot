@@ -11,6 +11,7 @@ from redbot.core import Config, checks
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, pagify, bold
+from redbot.core.utils.predicates import MessagePredicate
 from redbot.cogs.bank import check_global_setting_admin
 from .log import LOG
 from .session import TriviaSession
@@ -278,7 +279,7 @@ class Trivia(commands.Cog):
             return
 
         try:
-            file = await self._save_trivia_list(ctx.message.attachments[0])
+            file = await self._save_trivia_list(ctx.message.attachments[0], ctx)
         except yaml.error.YAMLError as exc:
             await ctx.send(_("Invalid list uploaded."))
             LOG.debug(f"File failed to upload: {exc}")
@@ -528,7 +529,7 @@ class Trivia(commands.Cog):
             else:
                 return dict_
 
-    async def _save_trivia_list(self, file: discord.Attachment):
+    async def _save_trivia_list(self, file: discord.Attachment, ctx: commands.Context):
         """Checks and saves a trivia list to data folder.
 
         Parameters
@@ -540,12 +541,23 @@ class Trivia(commands.Cog):
         -------
         None
         """
-        filepath = str(cog_data_path(self)) + "/" + file.filename
+        filepath = Path(str(cog_data_path(self)) + "/" + file.filename)
 
-        async with io.BytesIO as fp:
-            await file.save(fp)
-            yaml.safe_load(fp)
-            await file.save(filepath)
+        fp = io.BytesIO()
+
+        await file.save(fp)
+        yaml.safe_load(fp)
+
+        if filepath.exists():
+            await ctx.send(_('{filename} already exists. Do you wish to overwrite?'.format(filename=file.filename)))
+            pred = MessagePredicate.yes_or_no(ctx)
+            await ctx.bot.wait_for("message", check=pred)
+            if pred.result is True:
+                await ctx.send(_('Ahh replacing the file aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'))
+            else:
+                await ctx.send(_('I am not replacing the file aaaaaa'))
+
+        await file.save(filepath)
 
         # fp = io.BytesIO(file)
         # fileobject = await file.save(fp)
