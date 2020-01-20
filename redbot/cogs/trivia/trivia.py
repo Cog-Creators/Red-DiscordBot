@@ -320,8 +320,8 @@ class Trivia(commands.Cog):
     async def trivia_delete(self, ctx: commands.Context, name: str):
         """Delete a trivia file."""
         filepath = Path(str(cog_data_path(self)) + "/" + name + ".yaml")
-        print(filepath)
         if filepath.exists():
+            filepath.unlink()
             await ctx.send(_("Trivia {filename} was deleted.").format(filename=filepath.stem))
         else:
             await ctx.send(_("Trivia file was not found."))
