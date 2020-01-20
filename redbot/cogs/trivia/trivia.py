@@ -278,10 +278,10 @@ class Trivia(commands.Cog):
                         + "\n"
                         + ", ".join(default_lists)
                         + "\n\n"
-                        + bold(_("Custom lists"))
+                        + (bold(_("Custom lists"))
                         + "\n"
-                        + ", ".join(personal_lists)
-                    ),
+                        + ", ".join(personal_lists) if personal_lists else ''
+                           )),
                 )
             )
         else:
@@ -291,10 +291,10 @@ class Trivia(commands.Cog):
                 + "- Default lists"
                 + "\n"
                 + ", ".join(default_lists)
-                + "\n\n"
+                + ("\n\n"
                 + "- Custom lists"
                 + "\n"
-                + ", ".join(personal_lists)
+                + ", ".join(personal_lists) if personal_lists else '')
             )
             if len(msg) > 1000:
                 await ctx.author.send(msg)
@@ -315,7 +315,7 @@ class Trivia(commands.Cog):
         else:
             parsedfile = ctx.message.attachments[0]
         try:
-            await self._save_trivia_list(parsedfile, ctx)
+            await self._save_trivia_list(ctx=ctx, file=parsedfile)
         except yaml.error.YAMLError as exc:
             await ctx.send(_("Invalid list uploaded."))
             LOG.debug(f"File failed to upload: {exc}")
@@ -576,7 +576,7 @@ class Trivia(commands.Cog):
             else:
                 return dict_
 
-    async def _save_trivia_list(self, file: discord.Attachment, ctx: commands.Context):
+    async def _save_trivia_list(self, ctx: commands.Context, file: discord.Attachment):
         """Checks and saves a trivia list to data folder.
 
         Parameters
