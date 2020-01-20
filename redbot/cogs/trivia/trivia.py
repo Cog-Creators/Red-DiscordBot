@@ -274,8 +274,13 @@ class Trivia(commands.Cog):
                     title=_("Available trivia lists"),
                     colour=await ctx.embed_colour(),
                     description=(
-                        bold(_('Default lists')) + '\n' + ", ".join(default_lists) + "\n\n"
-                        + bold(_('Custom lists')) + '\n' + ", ".join(personal_lists)
+                        bold(_("Default lists"))
+                        + "\n"
+                        + ", ".join(default_lists)
+                        + "\n\n"
+                        + bold(_("Custom lists"))
+                        + "\n"
+                        + ", ".join(personal_lists)
                     ),
                 )
             )
@@ -595,9 +600,8 @@ class Trivia(commands.Cog):
 
         basefileexists = None
 
-
         for item in get_core_lists():
-            if filesuffix in [item.stem, 'upload', 'delete']:
+            if filesuffix in [item.stem, "upload", "delete"]:
                 basefileexists = True
                 break
             else:
