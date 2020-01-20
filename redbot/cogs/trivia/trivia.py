@@ -256,7 +256,6 @@ class Trivia(commands.Cog):
         """List available trivia categories."""
         default_lists = sorted([p.resolve().stem for p in get_core_lists()])
         personal_lists = sorted([p.resolve().stem for p in cog_data_path(self).glob("*.yaml")])
-        sorted_list = [*default_lists, *personal_lists]
 
         if await ctx.embed_requested():
             await ctx.send(
@@ -264,14 +263,15 @@ class Trivia(commands.Cog):
                     title=_("Available trivia lists"),
                     colour=await ctx.embed_colour(),
                     description=(
-                            "**Default**:\n" + ", ".join(default_lists) + '\n\n'
-                            "**Custom**:\n" + ", ".join(personal_lists)
+                            "**Default lists**:\n" + ", ".join(default_lists) + '\n\n'
+                            "**Custom lists**:\n" + ", ".join(personal_lists)
                 ),
                 )
             )
         else:
             msg = box(bold(_("Available trivia lists")) + "\n\n"
-                      + 'Default lists' + '\n' + ", ".join(sorted_list))
+                      + '- Default lists' + '\n' + ", ".join(default_lists)
+                      + "\n\n" + '- Custom lists' + '\n' + ", ".join(personal_lists))
             if len(msg) > 1000:
                 await ctx.author.send(msg)
             else:
