@@ -638,8 +638,9 @@ class Trivia(commands.Cog):
             else:
                 await ctx.send(_("I am not replacing the existing file"))
         else:
-            await fp.write(filepath)
-            LOG.debug("Saved file as {filepath}".format(filepath=filepath))
+            with Path.open(filepath, 'w') as yamlfile:
+                yamlfile.write(fp)
+                LOG.debug("Saved file as {filepath}".format(filepath=filepath))
 
     def _get_trivia_session(self, channel: discord.TextChannel) -> TriviaSession:
         return next(
