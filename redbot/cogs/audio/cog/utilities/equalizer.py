@@ -27,8 +27,7 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         except (KeyError, IndexError):
             pass
 
-    @staticmethod
-    async def _apply_gains(guild_id: int, gains):
+    async def _apply_gains(self, guild_id: int, gains):
         const = {
             "op": "equalizer",
             "guildId": str(guild_id),

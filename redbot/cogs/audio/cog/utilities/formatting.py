@@ -42,9 +42,8 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         else:
             return search_choice.get("uri")
 
-    @staticmethod
     async def _build_genre_search_page(
-        ctx: commands.Context, tracks, page_num, title, playlist=False
+        self, ctx: commands.Context, tracks, page_num, title, playlist=False
     ):
         search_num_pages = math.ceil(len(tracks) / 5)
         search_idx_start = (page_num - 1) * 5
