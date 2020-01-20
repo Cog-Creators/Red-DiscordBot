@@ -1,0 +1,3 @@
+Adds Trivia upload command.
+See custom lists in list separately.
+Adds command to delete custom Trivia lists.
