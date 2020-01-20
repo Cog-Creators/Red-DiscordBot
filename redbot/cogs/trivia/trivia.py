@@ -593,28 +593,25 @@ class Trivia(commands.Cog):
         """
         filename = file.filename.rsplit(".", 1)[0]
 
-        filepath = cog_data_path(self) / f"{filename}.yaml"
+        buffer = io.BytesIO(await file.read())
+        yaml.safe_load(buffer)
+        buffer.seek(0)
 
-        fp = io.BytesIO()
-
-        await file.save(fp)
-        yaml.safe_load(fp)
+        file = cog_data_path(self) / f"{filename}.yaml"
 
         basefileexists = None
 
-        for item in get_core_lists():
-            if filename in [item.stem, "upload", "delete"]:
-                basefileexists = True
-                break
-            else:
-                break
+        if filename in ("upload", "delete"):
+            basefilexists = True
+        elif any(filename == item.stem for item in get_core_lists()):
+            basefileexists = True
 
-        if filepath.exists() or basefileexists:
+        if file.exists() or basefileexists:
             if basefileexists:
                 await ctx.send(
                     _(
                         "{filename} is a reserved trivia name and cannot be replaced.\n"
-                        "Choose another name".format(filename=file.filename)
+                        "Choose another name".format(filename=filename)
                     )
                 )
                 return
@@ -622,25 +619,27 @@ class Trivia(commands.Cog):
                 await ctx.send(
                     _(
                         "{filename} already exists. Do you wish to overwrite?".format(
-                            filename=file.filename
+                            filename=filename
                         )
                     )
                 )
             pred = MessagePredicate.yes_or_no(ctx)
             await ctx.bot.wait_for("message", check=pred)
             if pred.result is True:
-                await file.save(filepath)
+                with file.open("wb") as fp:
+                    fp.write(buffer.read())
                 await ctx.send(
                     _("Success, trivia list uploaded as {filename}.").format(
-                        filename=file.filename.rsplit(".", 1)[0]
+                        filename=filename
                     )
                 )
             else:
                 await ctx.send(_("I am not replacing the existing file"))
         else:
-            with Path.open(filepath, 'w') as yamlfile:
-                yamlfile.write(fp)
-                LOG.debug("Saved file as {filepath}".format(filepath=filepath))
+            with file.open("wb") as fp:
+                fp.write(buffer.read())
+            LOG.debug("Saved file as {filepath}".format(filepath=file))
+            await ctx.send("Saved Trivia list as {filename}".format(filename=filename))
 
     def _get_trivia_session(self, channel: discord.TextChannel) -> TriviaSession:
         return next(
