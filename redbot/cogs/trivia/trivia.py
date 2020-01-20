@@ -254,26 +254,24 @@ class Trivia(commands.Cog):
     @trivia.command(name="list")
     async def trivia_list(self, ctx: commands.Context):
         """List available trivia categories."""
-        # lists = set(p.stem for p in self._all_lists())
-        full_list = []
-        full_list.append('Default lists')
-        full_list.append('\n')
-        full_list.append(get_core_lists())
-        full_list.append('Custom lists')
-        full_list.append('\n')
-        personal_lists = [p.resolve() for p in cog_data_path(self).glob("*.yaml")]
-
+        default_lists = sorted([p.resolve().stem for p in get_core_lists()])
+        personal_lists = sorted([p.resolve().stem for p in cog_data_path(self).glob("*.yaml")])
+        sorted_list = [*default_lists, *personal_lists]
 
         if await ctx.embed_requested():
             await ctx.send(
                 embed=discord.Embed(
                     title=_("Available trivia lists"),
                     colour=await ctx.embed_colour(),
-                    description=", ".join(sorted(lists)),
+                    description=(
+                            "**Default**:\n" + ", ".join(default_lists) + '\n\n'
+                            "**Custom**:\n" + ", ".join(personal_lists)
+                ),
                 )
             )
         else:
-            msg = box(bold(_("Available trivia lists")) + "\n\n" + ", ".join(sorted(lists)))
+            msg = box(bold(_("Available trivia lists")) + "\n\n"
+                      + 'Default lists' + '\n' + ", ".join(sorted_list))
             if len(msg) > 1000:
                 await ctx.author.send(msg)
             else:
