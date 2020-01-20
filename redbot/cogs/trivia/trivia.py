@@ -274,8 +274,8 @@ class Trivia(commands.Cog):
                     title=_("Available trivia lists"),
                     colour=await ctx.embed_colour(),
                     description=(
-                        "**Default lists**:\n" + ", ".join(default_lists) + "\n\n"
-                        "**Custom lists**:\n" + ", ".join(personal_lists)
+                        bold(_('Default lists')) + '\n' + ", ".join(default_lists) + "\n\n"
+                        + bold(_('Custom lists')) + '\n' + ", ".join(personal_lists)
                     ),
                 )
             )
