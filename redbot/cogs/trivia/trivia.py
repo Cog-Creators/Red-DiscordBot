@@ -3,7 +3,7 @@ import math
 import pathlib
 from collections import Counter
 from typing import List
-
+import io
 import yaml
 import discord
 
@@ -280,6 +280,20 @@ class Trivia(commands.Cog):
             else:
                 await ctx.send(msg)
 
+    @commands.is_owner()
+    @trivia.command(name="upload")
+    async def trivia_upload(self, ctx: commands.Context):
+        """Upload a trivia file."""
+        if not ctx.message.attachments:
+            await ctx.send(_("You must upload a file."))
+            return
+
+        try:
+            file = await self._save_trivia_list(ctx.message.attachments[0])
+        except yaml.error.YAMLError as exc:
+            await ctx.send(_('Invalid list uploaded.'))
+            LOG.debug(f"File failed to upload: {exc}")
+
     @trivia.group(
         name="leaderboard", aliases=["lboard"], autohelp=False, invoke_without_command=True
     )
@@ -524,6 +538,23 @@ class Trivia(commands.Cog):
                 raise InvalidListError("YAML parsing failed.") from exc
             else:
                 return dict_
+
+    async def _save_trivia_list(self, file: discord.Attachment):
+        """Checks and saves a trivia list to data folder.
+
+        Parameters
+        ----------
+        file : discord.Attachment
+            A discord message attachment.
+
+        Returns
+        -------
+        None
+        """
+        with io.BytesIO() as fp:
+            await file.save(fp)
+            trivia_file = yaml.safe_load(fp)
+
 
     def _get_trivia_session(self, channel: discord.TextChannel) -> TriviaSession:
         return next(
