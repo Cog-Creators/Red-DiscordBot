@@ -254,7 +254,16 @@ class Trivia(commands.Cog):
     @trivia.command(name="list")
     async def trivia_list(self, ctx: commands.Context):
         """List available trivia categories."""
-        lists = set(p.stem for p in self._all_lists())
+        # lists = set(p.stem for p in self._all_lists())
+        full_list = []
+        full_list.append('Default lists')
+        full_list.append('\n')
+        full_list.append(get_core_lists())
+        full_list.append('Custom lists')
+        full_list.append('\n')
+        personal_lists = [p.resolve() for p in cog_data_path(self).glob("*.yaml")]
+
+
         if await ctx.embed_requested():
             await ctx.send(
                 embed=discord.Embed(
@@ -288,6 +297,17 @@ class Trivia(commands.Cog):
         except yaml.error.YAMLError as exc:
             await ctx.send(_("Invalid list uploaded."))
             LOG.debug(f"File failed to upload: {exc}")
+
+    @commands.is_owner()
+    @trivia.command(name="delete")
+    async def trivia_delete(self, ctx: commands.Context, name: str):
+        """Delete a trivia file."""
+        filepath = Path(str(cog_data_path(self)) + "/" + name + '.yaml')
+        print(filepath)
+        if filepath.exists():
+            await ctx.send(_('Trivia {filename} was deleted.').format(filename=filepath.stem))
+        else:
+            await ctx.send(_('Trivia file was not found.'))
 
     @trivia.group(
         name="leaderboard", aliases=["lboard"], autohelp=False, invoke_without_command=True
@@ -559,6 +579,7 @@ class Trivia(commands.Cog):
             if (
                 file.filename.rsplit(".", 1)[0] == item.stem
                 or file.filename.rsplit(".", 1)[0] == "upload"
+                or file.filename.rsplit(".", 1)[0] == "delete"
             ):
                 basefileexists = True
                 break
