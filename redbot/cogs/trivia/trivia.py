@@ -606,7 +606,7 @@ class Trivia(commands.Cog):
                 await ctx.send(_("I am not replacing the existing file"))
         else:
             await file.save(filepath)
-            LOG.debug("Saved file as".format(filepath))
+            LOG.debug("Saved file as {filepath}".format(filepath=filepath))
 
     def _get_trivia_session(self, channel: discord.TextChannel) -> TriviaSession:
         return next(
