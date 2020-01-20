@@ -27,7 +27,7 @@ log = logging.getLogger("red.cogs.Audio.cog.Utilities.playlists")
 class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def can_manage_playlist(
         self, scope: str, playlist: Playlist, ctx: commands.Context, user, guild
-    ):
+    ) -> bool:
         is_owner = await ctx.bot.is_owner(ctx.author)
         has_perms = False
         user_to_query = user
@@ -454,7 +454,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         return added, removed, playlist
 
-    async def _playlist_check(self, ctx: commands.Context):
+    async def _playlist_check(self, ctx: commands.Context) -> bool:
         if not self._player_check(ctx):
             if self.lavalink_connection_aborted:
                 msg = _("Connection to Lavalink has failed")
@@ -594,7 +594,9 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             tracklist.append(track_obj)
         return tracklist
 
-    def humanize_scope(self, scope, ctx=None, the=None):
+    def humanize_scope(
+        self, scope: str, ctx: Union[discord.Guild, discord.abc.User] = None, the: bool = None
+    ) -> Optional[str]:
 
         if scope == PlaylistScope.GLOBAL.value:
             return _("the Global") if the else _("Global")

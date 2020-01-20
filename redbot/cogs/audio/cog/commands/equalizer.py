@@ -194,7 +194,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         player = lavalink.get_player(ctx.guild.id)
         eq = player.fetch("eq", Equalizer())
 
-        for band in range(eq._band_count):
+        for band in range(eq.band_count):
             eq.set_gain(band, 0.0)
 
         await self._apply_gains(ctx.guild.id, eq.bands)
@@ -332,7 +332,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         ]
 
         eq = player.fetch("eq", Equalizer())
-        bands_num = eq._band_count
+        bands_num = eq.band_count
         if band_value > 1:
             band_value = 1
         elif band_value <= -0.25:

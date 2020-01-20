@@ -132,7 +132,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     and search_choice.local_track_path.is_file()
                 ):
                     search_choice.invoked_from = "localtrack"
-            return await ctx.invoke(self._play, query=search_choice)
+            return await ctx.invoke(self.play, query=search_choice)
 
         songembed = discord.Embed(title=_("Track Enqueued"), description=description)
         queue_dur = await self.queue_duration(ctx)

@@ -2,7 +2,7 @@ import asyncio
 from abc import ABC, abstractmethod
 from collections import Counter
 from pathlib import Path
-from typing import List, Mapping, MutableMapping, Optional
+from typing import List, Mapping, MutableMapping, Optional, Union, Any, Tuple
 
 import aiohttp
 import discord
@@ -12,7 +12,9 @@ from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 from ..apis.interface import AudioAPIInterface
+from ..apis.playlist_interface import Playlist
 from ..apis.playlist_wrapper import PlaylistWrapper
+from ..audio_dataclasses import Query
 from ..manager import ServerManager
 
 
@@ -57,19 +59,15 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def _embed_msg(self, ctx: commands.Context, **kwargs):
+    async def error_reset(self, player: lavalink.Player) -> None:
         raise NotImplementedError()
 
     @abstractmethod
-    async def error_reset(self, player: lavalink.Player):
+    async def _status_check(self, track: lavalink.Track, playing_servers: int) -> None:
         raise NotImplementedError()
 
     @abstractmethod
-    async def _status_check(self, track, playing_servers):
-        raise NotImplementedError()
-
-    @abstractmethod
-    async def _players_check(self):
+    async def _players_check(self) -> Tuple[str, int]:
         raise NotImplementedError()
 
     @abstractmethod
@@ -77,11 +75,11 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def _close_database(self):
+    async def _close_database(self) -> None:
         raise NotImplementedError()
 
     @abstractmethod
-    async def _process_db(self, ctx: commands.Context):
+    async def _process_db(self, ctx: commands.Context) -> None:
         raise NotImplementedError()
 
     @abstractmethod
@@ -112,4 +110,194 @@ class MixinMeta(ABC):
     async def lavalink_event_handler(
         self, player: lavalink.Player, event_type: lavalink.LavalinkEvents, extra
     ) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _clear_react(
+        self, message: discord.Message, emoji: MutableMapping = None
+    ) -> asyncio.Task:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def remove_react(
+        self,
+        message: discord.Message,
+        react_emoji: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str],
+        react_user: discord.abc.User,
+    ) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _equalizer(self, ctx: commands.Context):
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _eq_msg_clear(self, eq_message: discord.Message) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def _player_check(self, ctx: commands.Context) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _currency_check(self, ctx: commands.Context, jukebox_price: int) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _can_instaskip(self, ctx: commands.Context, member: discord.Member) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def search(self, ctx: commands.Context, *, query: str):
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def is_allowed(
+        self, config: Config, guild: discord.Guild, query: str, query_obj: Query = None
+    ) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def track_limit(self, track: Union[lavalink.Track, int], maxlength: int) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def get_track_description(
+        self, track: Union[lavalink.rest_api.Track, Query], local_folder_current_path: Path
+    ) -> Optional[str]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def get_track_description_unformatted(
+        self, track: Union[lavalink.rest_api.Track, Query], local_folder_current_path: Path
+    ) -> Optional[str]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def humanize_scope(
+        self, scope: str, ctx: commands.Context = None, the: bool = None
+    ) -> Optional[str]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def draw_time(self, ctx) -> str:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def rsetattr(self, obj, attr, val) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def rgetattr(self, obj, attr, *args) -> Any:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _check_api_tokens(self) -> MutableMapping:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _embed_msg(self, ctx: commands.Context, **kwargs) -> discord.Message:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _check_external(self) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def track_creator(
+        self,
+        player: lavalink.Player,
+        position: Union[int, int] = None,
+        other_track: lavalink.Track = None,
+    ) -> MutableMapping:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def track_to_json(self, track: lavalink.Track) -> MutableMapping:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def time_convert(self, length: Union[int, str]) -> int:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def queue_duration(self, ctx: commands.Context) -> int:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def track_remaining_duration(self, ctx: commands.Context) -> int:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def dynamic_time(self, seconds: int) -> str:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _data_check(self, ctx: commands.Context) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _get_correct_playlist_id(
+        self,
+        context: commands.Context,
+        matches: MutableMapping,
+        scope: str,
+        author: discord.User,
+        guild: discord.Guild,
+        specified_user: bool = False,
+    ) -> Tuple[Optional[int], str]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _is_alone(self, ctx: commands.Context) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def is_requester(self, ctx: commands.Context, member: discord.Member) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _skip_action(self, ctx: commands.Context, skip_to_track: int = None) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def userlimit(self, channel: discord.VoiceChannel) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _has_dj_role(self, ctx: commands.Context, member: discord.Member) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def match_url(self, url: str) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _playlist_check(self, ctx: commands.Context) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def can_manage_playlist(
+        self, scope: str, playlist: Playlist, ctx: commands.Context, user, guild
+    ) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _maybe_update_playlist(
+        self, ctx: commands.Context, player: lavalink.player_manager.Player, playlist: Playlist
+    ) -> Tuple[List[lavalink.Track], List[lavalink.Track], Playlist]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def url_check(self, url: str) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _eq_check(self, ctx: commands.Context, player: lavalink.Player) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _enqueue_tracks(
+        self, ctx: commands.Context, query: Union[Query, list], enqueue: bool = True
+    ) -> Union[discord.Message, List[lavalink.Track], lavalink.Track]:
         raise NotImplementedError()

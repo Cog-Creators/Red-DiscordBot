@@ -39,7 +39,7 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         except (KeyError, IndexError):
             pass
 
-    async def _eq_check(self, ctx: commands.Context, player: lavalink.Player):
+    async def _eq_check(self, ctx: commands.Context, player: lavalink.Player) -> None:
         eq = player.fetch("eq", Equalizer())
 
         config_bands = await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands()
@@ -48,7 +48,7 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
 
         if eq.bands != config_bands:
-            band_num = list(range(0, eq._band_count))
+            band_num = list(range(0, eq.band_count))
             band_value = config_bands
             eq_dict = {}
             for k, v in zip(band_num, band_value):
@@ -98,15 +98,15 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         if react_emoji == "\N{UP-POINTING SMALL RED TRIANGLE}":
             await self.remove_react(message, react_emoji, react_user)
-            _max = "{:.2f}".format(min(eq.get_gain(selected) + 0.1, 1.0))
-            eq.set_gain(selected, float(_max))
+            _max = float("{:.2f}".format(min(eq.get_gain(selected) + 0.1, 1.0)))
+            eq.set_gain(selected, _max)
             await self._apply_gain(ctx.guild.id, selected, _max)
             await self._eq_interact(ctx, player, eq, message, selected)
 
         if react_emoji == "\N{DOWN-POINTING SMALL RED TRIANGLE}":
             await self.remove_react(message, react_emoji, react_user)
-            _min = "{:.2f}".format(max(eq.get_gain(selected) - 0.1, -0.25))
-            eq.set_gain(selected, float(_min))
+            _min = float("{:.2f}".format(max(eq.get_gain(selected) - 0.1, -0.25)))
+            eq.set_gain(selected, _min)
             await self._apply_gain(ctx.guild.id, selected, _min)
             await self._eq_interact(ctx, player, eq, message, selected)
 
@@ -136,14 +136,14 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         if react_emoji == "\N{BLACK CIRCLE FOR RECORD}":
             await self.remove_react(message, react_emoji, react_user)
-            for band in range(eq._band_count):
+            for band in range(eq.band_count):
                 eq.set_gain(band, 0.0)
             await self._apply_gains(ctx.guild.id, eq.bands)
             await self._eq_interact(ctx, player, eq, message, selected)
 
         if react_emoji == "\N{INFORMATION SOURCE}":
             await self.remove_react(message, react_emoji, react_user)
-            await ctx.send_help(self._eq)
+            await ctx.send_help(self._equalizer)
             await self._eq_interact(ctx, player, eq, message, selected)
 
     async def _eq_msg_clear(self, eq_message: discord.Message):
