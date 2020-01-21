@@ -1,14 +1,15 @@
 import logging
 import re
-from typing import List, Set, Final
+from typing import Final, List, Set
 from urllib.parse import urlparse
 
 import discord
 
 from redbot.core import Config
+
+from ...audio_dataclasses import Query
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
-from ...audio_dataclasses import Query
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.validation")
 

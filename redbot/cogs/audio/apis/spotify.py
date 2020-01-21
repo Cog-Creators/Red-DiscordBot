@@ -8,6 +8,7 @@ import aiohttp
 
 from redbot.core import Config
 from redbot.core.bot import Red
+
 from ..errors import SpotifyFetchError
 
 log = logging.getLogger("red.cogs.Audio.api.Spotify")

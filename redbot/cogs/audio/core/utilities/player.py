@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import time
-from typing import Union, List, Tuple, Optional
+from typing import List, Optional, Tuple, Union
 
 import aiohttp
 import discord
@@ -10,12 +10,13 @@ from discord.embeds import EmptyEmbed
 
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import bold, escape
+
+from ...audio_dataclasses import _PARTIALLY_SUPPORTED_MUSIC_EXT, Query
+from ...audio_logging import IS_DEBUG
+from ...errors import QueryUnauthorized, SpotifyFetchError, TrackEnqueueError
+from ...utils import Notifier
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, _
-from ...audio_dataclasses import Query, _PARTIALLY_SUPPORTED_MUSIC_EXT
-from ...audio_logging import IS_DEBUG
-from ...errors import TrackEnqueueError, QueryUnauthorized, SpotifyFetchError
-from ...utils import Notifier
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.player")
 

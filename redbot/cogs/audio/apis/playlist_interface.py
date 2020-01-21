@@ -8,14 +8,11 @@ import lavalink
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
-from .api_utils import (
-    PlaylistFetchResult,
-    prepare_config_scope,
-    standardize_scope,
-)
-from .playlist_wrapper import PlaylistWrapper
+
 from ..errors import NotAllowed
 from ..utils import PlaylistScope
+from .api_utils import PlaylistFetchResult, prepare_config_scope, standardize_scope
+from .playlist_wrapper import PlaylistWrapper
 
 log = logging.getLogger("red.cogs.Audio.api.PlaylistsInterface")
 

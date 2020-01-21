@@ -5,6 +5,7 @@ from typing import Final
 from redbot import VersionInfo, version_info
 from redbot.core import commands
 from redbot.core.i18n import Translator
+
 from ..converters import get_lazy_converter, get_playlist_converter
 
 _red_extras = version_info.to_json()

@@ -5,9 +5,9 @@ import logging
 import discord
 import lavalink
 
+from ...errors import DatabaseError
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, _
-from ...errors import DatabaseError
 
 log = logging.getLogger("red.cogs.Audio.cog.Events.lavalink")
 

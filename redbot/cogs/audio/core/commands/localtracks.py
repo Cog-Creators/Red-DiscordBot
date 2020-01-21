@@ -8,9 +8,10 @@ import discord
 
 from redbot.core import commands
 from redbot.core.utils.menus import DEFAULT_CONTROLS, close_menu, menu, next_page, prev_page
+
+from ...audio_dataclasses import LocalPath, Query
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, _
-from ...audio_dataclasses import LocalPath, Query
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.local_track")
 
@@ -19,11 +20,11 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.group(name="local")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
-    async def _local(self, ctx: commands.Context):
+    async def command_local(self, ctx: commands.Context):
         """Local playback commands."""
 
-    @_local.command(name="folder", aliases=["start"])
-    async def _local_folder(
+    @command_local.command(name="folder", aliases=["start"])
+    async def command_local_folder(
         self, ctx: commands.Context, play_subfolders: Optional[bool] = True, *, folder: str = None
     ):
         """Play all songs in a localtracks folder."""
@@ -31,7 +32,7 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
             return
 
         if not folder:
-            await ctx.invoke(self._local_folder, play_subfolders=play_subfolders)
+            await ctx.invoke(self.command_local_folder, play_subfolders=play_subfolders)
         else:
             folder = folder.strip()
             _dir = LocalPath.joinpath(self.local_folder_current_path, folder)
@@ -48,8 +49,10 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
             await self._local_play_all(ctx, query, from_search=False if not folder else True)
 
-    @_local.command(name="play")
-    async def _local_play(self, ctx: commands.Context, play_subfolders: Optional[bool] = True):
+    @command_local.command(name="play")
+    async def command_local_play(
+        self, ctx: commands.Context, play_subfolders: Optional[bool] = True
+    ):
         """Play a local track."""
         if not await self.has_localtracks_check(ctx):
             return
@@ -97,8 +100,8 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
         else:
             await menu(ctx, folder_page_list, local_folder_controls)
 
-    @_local.command(name="search")
-    async def _local_search(
+    @command_local.command(name="search")
+    async def command_local_search(
         self, ctx: commands.Context, search_subfolders: Optional[bool] = True, *, search_words
     ):
         """Search for songs across all localtracks folders."""
@@ -120,4 +123,4 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
             search_list = await self._build_local_search_list(all_tracks, search_words)
         if not search_list:
             return await self._embed_msg(ctx, title=_("No matches."))
-        return await ctx.invoke(self.search, query=search_list)
+        return await ctx.invoke(self.command_search, query=search_list)

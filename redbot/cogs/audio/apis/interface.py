@@ -18,16 +18,17 @@ from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 from redbot.core.utils.dbtools import APSWConnectionWrapper
+
+from ...mod.abc import MixinMeta
+from ..audio_dataclasses import Query
+from ..audio_logging import IS_DEBUG, debug_exc_log
+from ..errors import DatabaseError, SpotifyFetchError, TrackEnqueueError
+from ..utils import CacheLevel, Notifier
 from .global_db import GlobalCacheWrapper
 from .local_db import LocalCacheWrapper
 from .playlist_interface import get_playlist
 from .spotify import SpotifyWrapper
 from .youtube import YouTubeWrapper
-from ..audio_dataclasses import Query
-from ..audio_logging import IS_DEBUG, debug_exc_log
-from ..errors import DatabaseError, SpotifyFetchError, TrackEnqueueError
-from ..utils import CacheLevel, Notifier
-from ...mod.abc import MixinMeta
 
 _ = Translator("Audio", __file__)
 log = logging.getLogger("red.cogs.Audio.api.AudioAPIInterface")

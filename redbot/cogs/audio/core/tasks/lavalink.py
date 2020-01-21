@@ -3,10 +3,10 @@ import logging
 
 import lavalink
 
-from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass
 from ...errors import LavalinkDownloadFailed
 from ...manager import ServerManager
+from ..abc import MixinMeta
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Tasks.lavalink")
 

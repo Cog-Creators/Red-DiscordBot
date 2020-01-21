@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import time
-from typing import MutableMapping, Dict
+from typing import Dict
 
 import lavalink
 

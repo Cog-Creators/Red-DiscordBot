@@ -9,27 +9,23 @@ import discord
 import lavalink
 from discord.embeds import EmptyEmbed
 
-from redbot.core import commands, checks
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS, prev_page, close_menu, next_page
+from redbot.core import checks, commands
+from redbot.core.utils.menus import DEFAULT_CONTROLS, close_menu, menu, next_page, prev_page
+
+from ...audio_dataclasses import _PARTIALLY_SUPPORTED_MUSIC_EXT, Query
+from ...audio_logging import IS_DEBUG
+from ...errors import DatabaseError, QueryUnauthorized, SpotifyFetchError, TrackEnqueueError
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, _
-from ...audio_dataclasses import Query, _PARTIALLY_SUPPORTED_MUSIC_EXT
-from ...audio_logging import IS_DEBUG
-from ...errors import (
-    QueryUnauthorized,
-    SpotifyFetchError,
-    DatabaseError,
-    TrackEnqueueError,
-)
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.player")
 
 
 class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
-    @commands.command()
+    @commands.command(name="play")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def play(self, ctx: commands.Context, *, query: str):
+    async def command_play(self, ctx: commands.Context, *, query: str):
         """Play a URL or search for a track."""
         query = Query.process_input(query, self.local_folder_current_path)
         guild_data = await self.config.guild(ctx.guild).all()
@@ -123,10 +119,10 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx, title=_("Unable To Play Tracks"), description=err.message
             )
 
-    @commands.command()
+    @commands.command(name="bumpplay")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def bumpplay(
+    async def command_bumpplay(
         self, ctx: commands.Context, play_now: Optional[bool] = False, *, query: str
     ):
         """Force play a URL or search for a track."""
@@ -320,10 +316,10 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         self._play_lock(ctx, False)
 
-    @commands.command()
+    @commands.command(name="genre")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def genre(self, ctx: commands.Context):
+    async def command_genre(self, ctx: commands.Context):
         """Pick a Spotify playlist from a list of categories to start playing."""
 
         async def _category_search_menu(
@@ -508,11 +504,11 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx, title=_("Couldn't find tracks for the selected playlist.")
         )
 
-    @commands.command()
+    @commands.command(name="autoplay")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     @checks.mod_or_permissions(manage_messages=True)
-    async def autoplay(self, ctx: commands.Context):
+    async def command_autoplay(self, ctx: commands.Context):
         """Starts auto play."""
         if not self._player_check(ctx):
             if self.lavalink_connection_aborted:
@@ -584,7 +580,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             return
 
         if not guild_data["auto_play"]:
-            await ctx.invoke(self._audioset_autoplay_toggle)
+            await ctx.invoke(self.command_audioset_autoplay_toggle)
         if not guild_data["notify"] and (
             (player.current and not player.current.extras.get("autoplay")) or not player.current
         ):
@@ -592,10 +588,10 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         elif player.current:
             await self._embed_msg(ctx, title=_("Adding a track to queue."))
 
-    @commands.command()
+    @commands.command(name="search")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
-    async def search(self, ctx: commands.Context, *, query: str):
+    async def command_search(self, ctx: commands.Context, *, query: str):
         """Pick a track with a search.
 
         Use `[p]search list <search term>` to queue all tracks found on YouTube.

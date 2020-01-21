@@ -18,6 +18,7 @@ from redbot.core.utils.menus import (
     start_adding_reactions,
 )
 from redbot.core.utils.predicates import ReactionPredicate
+
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, _
 
@@ -28,7 +29,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.group(name="queue", invoke_without_command=True)
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
-    async def _queue(self, ctx: commands.Context, *, page: int = 1):
+    async def command_queue(self, ctx: commands.Context, *, page: int = 1):
         """List the songs in the queue."""
 
         async def _queue_menu(
@@ -41,7 +42,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             emoji: str,
         ):
             if message:
-                await ctx.send_help(self._queue)
+                await ctx.send_help(self.command_queue)
                 with contextlib.suppress(discord.HTTPException):
                     await message.delete()
                 return None
@@ -134,10 +135,10 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             react = reacts[r.emoji]
             if react == "stop":
                 await self._clear_react(message, emoji)
-                return await ctx.invoke(self.stop)
+                return await ctx.invoke(self.command_stop)
             elif react == "pause":
                 await self._clear_react(message, emoji)
-                return await ctx.invoke(self.pause)
+                return await ctx.invoke(self.command_pause)
             return
         elif not player.current and not player.queue:
             return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
@@ -154,8 +155,8 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 page = len_queue_pages
         return await menu(ctx, queue_page_list, queue_controls, page=(page - 1))
 
-    @_queue.command(name="clear")
-    async def _queue_clear(self, ctx: commands.Context):
+    @command_queue.command(name="clear")
+    async def command_queue_clear(self, ctx: commands.Context):
         """Clears the queue."""
         try:
             player = lavalink.get_player(ctx.guild.id)
@@ -181,8 +182,8 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx, title=_("Queue Modified"), description=_("The queue has been cleared.")
         )
 
-    @_queue.command(name="clean")
-    async def _queue_clean(self, ctx: commands.Context):
+    @command_queue.command(name="clean")
+    async def command_queue_clean(self, ctx: commands.Context):
         """Removes songs from the queue if the requester is not in the voice channel."""
         try:
             player = lavalink.get_player(ctx.guild.id)
@@ -224,8 +225,8 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ).format(removed_tracks=removed_tracks),
             )
 
-    @_queue.command(name="cleanself")
-    async def _queue_cleanself(self, ctx: commands.Context):
+    @command_queue.command(name="cleanself")
+    async def command_queue_cleanself(self, ctx: commands.Context):
         """Removes all tracks you requested from the queue."""
 
         try:
@@ -254,8 +255,8 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ).format(removed_tracks=removed_tracks, member=ctx.author),
             )
 
-    @_queue.command(name="search")
-    async def _queue_search(self, ctx: commands.Context, *, search_words: str):
+    @command_queue.command(name="search")
+    async def command_queue_search(self, ctx: commands.Context, *, search_words: str):
         """Search the queue."""
         try:
             player = lavalink.get_player(ctx.guild.id)
@@ -275,9 +276,9 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             search_page_list.append(embed)
         await menu(ctx, search_page_list, DEFAULT_CONTROLS)
 
-    @_queue.command(name="shuffle")
+    @command_queue.command(name="shuffle")
     @commands.cooldown(1, 30, commands.BucketType.guild)
-    async def _queue_shuffle(self, ctx: commands.Context):
+    async def command_queue_shuffle(self, ctx: commands.Context):
         """Shuffles the queue."""
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()

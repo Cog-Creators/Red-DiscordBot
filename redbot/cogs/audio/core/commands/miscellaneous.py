@@ -10,10 +10,11 @@ import lavalink
 
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import humanize_number, pagify
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
+from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
+
+from ...audio_dataclasses import LocalPath, Query
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, _
-from ...audio_dataclasses import Query, LocalPath
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.miscellaneous")
 
@@ -22,7 +23,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.command(name="sing")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def _sing(self, ctx: commands.Context):
+    async def command_sing(self, ctx: commands.Context):
         """Make Red sing one of her songs."""
         ids = (
             "zGTkAVsrfg8",
@@ -33,12 +34,12 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
             "f9O2Rjn1azc",
         )
         url = f"https://www.youtube.com/watch?v={random.choice(ids)}"
-        await ctx.invoke(self.play, query=url)
+        await ctx.invoke(self.command_play, query=url)
 
     @commands.command(name="audiostats")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
-    async def _audiostats(self, ctx: commands.Context):
+    async def command_audiostats(self, ctx: commands.Context):
         """Audio stats."""
         server_num = len(lavalink.active_players())
         total_num = len(lavalink.all_players())
@@ -95,10 +96,10 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         await menu(ctx, servers_embed, DEFAULT_CONTROLS)
 
-    @commands.command()
+    @commands.command(name="percent")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def percent(self, ctx: commands.Context):
+    async def command_percent(self, ctx: commands.Context):
         """Queue percentage."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, title=_("Nothing playing."))

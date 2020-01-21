@@ -11,13 +11,14 @@ from redbot.core.data_manager import cog_data_path
 from redbot.core.utils.chat_formatting import box, humanize_number
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu, start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
-from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, PlaylistConverter, _, __version__
+
 from ...apis.playlist_interface import get_playlist
 from ...audio_dataclasses import LocalPath
 from ...converters import ScopeParser
 from ...errors import MissingGuild, TooManyMatches
 from ...utils import CacheLevel, PlaylistScope
+from ..abc import MixinMeta
+from ..cog_utils import CompositeMetaClass, PlaylistConverter, _, __version__
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.audioset")
 
@@ -25,25 +26,27 @@ log = logging.getLogger("red.cogs.Audio.cog.Commands.audioset")
 class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.group(name="audioset")
     @commands.bot_has_permissions(embed_links=True)
-    async def _audioset(self, ctx: commands.Context):
+    async def command_audioset(self, ctx: commands.Context):
         """Music configuration options."""
 
-    @_audioset.group(name="restrictions")
+    @command_audioset.group(name="restrictions")
     @checks.mod_or_permissions(manage_messages=True)
-    async def _audioset_perms(self, ctx: commands.Context):
+    async def command_audioset_perms(self, ctx: commands.Context):
         """Manages the keyword whitelist and blacklist."""
 
     @checks.is_owner()
-    @_audioset_perms.group(name="global")
-    async def _audioset_perms_global(self, ctx: commands.Context):
+    @command_audioset_perms.group(name="global")
+    async def command_audioset_perms_global(self, ctx: commands.Context):
         """Manages the global keyword whitelist/blacklist."""
 
-    @_audioset_perms_global.group(name="whitelist")
-    async def _audioset_perms_global_whitelist(self, ctx: commands.Context):
+    @command_audioset_perms_global.group(name="whitelist")
+    async def command_audioset_perms_global_whitelist(self, ctx: commands.Context):
         """Manages the global keyword whitelist."""
 
-    @_audioset_perms_global_whitelist.command(name="add")
-    async def _audioset_perms_global_whitelist_add(self, ctx: commands.Context, *, keyword: str):
+    @command_audioset_perms_global_whitelist.command(name="add")
+    async def command_audioset_perms_global_whitelist_add(
+        self, ctx: commands.Context, *, keyword: str
+    ):
         """Adds a keyword to the whitelist.
 
         If anything is added to whitelist, it will blacklist everything else.
@@ -68,9 +71,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
 
-    @_audioset_perms_global_whitelist.command(name="list")
+    @command_audioset_perms_global_whitelist.command(name="list")
     @commands.bot_has_permissions(add_reactions=True)
-    async def _audioset_perms_global_whitelist_list(self, ctx: commands.Context):
+    async def command_audioset_perms_global_whitelist_list(self, ctx: commands.Context):
         """List all keywords added to the whitelist."""
         whitelist = await self.config.url_keyword_whitelist()
         if not whitelist:
@@ -95,8 +98,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
         await menu(ctx, pages, DEFAULT_CONTROLS)
 
-    @_audioset_perms_global_whitelist.command(name="clear")
-    async def _audioset_perms_global_whitelist_clear(self, ctx: commands.Context):
+    @command_audioset_perms_global_whitelist.command(name="clear")
+    async def command_audioset_perms_global_whitelist_clear(self, ctx: commands.Context):
         """Clear all keywords from the whitelist."""
         whitelist = await self.config.url_keyword_whitelist()
         if not whitelist:
@@ -108,8 +111,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             description=_("All entries have been removed from the whitelist."),
         )
 
-    @_audioset_perms_global_whitelist.command(name="delete", aliases=["del", "remove"])
-    async def _audioset_perms_global_whitelist_delete(
+    @command_audioset_perms_global_whitelist.command(name="delete", aliases=["del", "remove"])
+    async def command_audioset_perms_global_whitelist_delete(
         self, ctx: commands.Context, *, keyword: str
     ):
         """Removes a keyword from the whitelist."""
@@ -133,12 +136,14 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
 
-    @_audioset_perms_global.group(name="blacklist")
-    async def _audioset_perms_global_blacklist(self, ctx: commands.Context):
+    @command_audioset_perms_global.group(name="blacklist")
+    async def command_audioset_perms_global_blacklist(self, ctx: commands.Context):
         """Manages the global keyword blacklist."""
 
-    @_audioset_perms_global_blacklist.command(name="add")
-    async def _audioset_perms_global_blacklist_add(self, ctx: commands.Context, *, keyword: str):
+    @command_audioset_perms_global_blacklist.command(name="add")
+    async def command_audioset_perms_global_blacklist_add(
+        self, ctx: commands.Context, *, keyword: str
+    ):
         """Adds a keyword to the blacklist."""
         keyword = keyword.lower().strip()
         if not keyword:
@@ -160,9 +165,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
 
-    @_audioset_perms_global_blacklist.command(name="list")
+    @command_audioset_perms_global_blacklist.command(name="list")
     @commands.bot_has_permissions(add_reactions=True)
-    async def _audioset_perms_global_blacklist_list(self, ctx: commands.Context):
+    async def command_audioset_perms_global_blacklist_list(self, ctx: commands.Context):
         """List all keywords added to the blacklist."""
         blacklist = await self.config.url_keyword_blacklist()
         if not blacklist:
@@ -187,8 +192,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
         await menu(ctx, pages, DEFAULT_CONTROLS)
 
-    @_audioset_perms_global_blacklist.command(name="clear")
-    async def _audioset_perms_global_blacklist_clear(self, ctx: commands.Context):
+    @command_audioset_perms_global_blacklist.command(name="clear")
+    async def command_audioset_perms_global_blacklist_clear(self, ctx: commands.Context):
         """Clear all keywords added to the blacklist."""
         blacklist = await self.config.url_keyword_blacklist()
         if not blacklist:
@@ -200,8 +205,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             description=_("All entries have been removed from the blacklist."),
         )
 
-    @_audioset_perms_global_blacklist.command(name="delete", aliases=["del", "remove"])
-    async def _audioset_perms_global_blacklist_delete(
+    @command_audioset_perms_global_blacklist.command(name="delete", aliases=["del", "remove"])
+    async def command_audioset_perms_global_blacklist_delete(
         self, ctx: commands.Context, *, keyword: str
     ):
         """Removes a keyword from the blacklist."""
@@ -225,13 +230,13 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
 
-    @_audioset_perms.group(name="whitelist")
+    @command_audioset_perms.group(name="whitelist")
     @commands.guild_only()
-    async def _audioset_perms_whitelist(self, ctx: commands.Context):
+    async def command_audioset_perms_whitelist(self, ctx: commands.Context):
         """Manages the keyword whitelist."""
 
-    @_audioset_perms_whitelist.command(name="add")
-    async def _audioset_perms_whitelist_add(self, ctx: commands.Context, *, keyword: str):
+    @command_audioset_perms_whitelist.command(name="add")
+    async def command_audioset_perms_whitelist_add(self, ctx: commands.Context, *, keyword: str):
         """Adds a keyword to the whitelist.
 
         If anything is added to whitelist, it will blacklist everything else.
@@ -256,9 +261,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
 
-    @_audioset_perms_whitelist.command(name="list")
+    @command_audioset_perms_whitelist.command(name="list")
     @commands.bot_has_permissions(add_reactions=True)
-    async def _audioset_perms_whitelist_list(self, ctx: commands.Context):
+    async def command_audioset_perms_whitelist_list(self, ctx: commands.Context):
         """List all keywords added to the whitelist."""
         whitelist = await self.config.guild(ctx.guild).url_keyword_whitelist()
         if not whitelist:
@@ -283,8 +288,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
         await menu(ctx, pages, DEFAULT_CONTROLS)
 
-    @_audioset_perms_whitelist.command(name="clear")
-    async def _audioset_perms_whitelist_clear(self, ctx: commands.Context):
+    @command_audioset_perms_whitelist.command(name="clear")
+    async def command_audioset_perms_whitelist_clear(self, ctx: commands.Context):
         """Clear all keywords from the whitelist."""
         whitelist = await self.config.guild(ctx.guild).url_keyword_whitelist()
         if not whitelist:
@@ -296,8 +301,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             description=_("All entries have been removed from the whitelist."),
         )
 
-    @_audioset_perms_whitelist.command(name="delete", aliases=["del", "remove"])
-    async def _audioset_perms_whitelist_delete(self, ctx: commands.Context, *, keyword: str):
+    @command_audioset_perms_whitelist.command(name="delete", aliases=["del", "remove"])
+    async def command_audioset_perms_whitelist_delete(
+        self, ctx: commands.Context, *, keyword: str
+    ):
         """Removes a keyword from the whitelist."""
         keyword = keyword.lower().strip()
         if not keyword:
@@ -319,13 +326,13 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
 
-    @_audioset_perms.group(name="blacklist")
+    @command_audioset_perms.group(name="blacklist")
     @commands.guild_only()
-    async def _audioset_perms_blacklist(self, ctx: commands.Context):
+    async def command_audioset_perms_blacklist(self, ctx: commands.Context):
         """Manages the keyword blacklist."""
 
-    @_audioset_perms_blacklist.command(name="add")
-    async def _audioset_perms_blacklist_add(self, ctx: commands.Context, *, keyword: str):
+    @command_audioset_perms_blacklist.command(name="add")
+    async def command_audioset_perms_blacklist_add(self, ctx: commands.Context, *, keyword: str):
         """Adds a keyword to the blacklist."""
         keyword = keyword.lower().strip()
         if not keyword:
@@ -347,9 +354,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
 
-    @_audioset_perms_blacklist.command(name="list")
+    @command_audioset_perms_blacklist.command(name="list")
     @commands.bot_has_permissions(add_reactions=True)
-    async def _audioset_perms_blacklist_list(self, ctx: commands.Context):
+    async def command_audioset_perms_blacklist_list(self, ctx: commands.Context):
         """List all keywords added to the blacklist."""
         blacklist = await self.config.guild(ctx.guild).url_keyword_blacklist()
         if not blacklist:
@@ -374,8 +381,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
         await menu(ctx, pages, DEFAULT_CONTROLS)
 
-    @_audioset_perms_blacklist.command(name="clear")
-    async def _audioset_perms_blacklist_clear(self, ctx: commands.Context):
+    @command_audioset_perms_blacklist.command(name="clear")
+    async def command_audioset_perms_blacklist_clear(self, ctx: commands.Context):
         """Clear all keywords added to the blacklist."""
         blacklist = await self.config.guild(ctx.guild).url_keyword_blacklist()
         if not blacklist:
@@ -387,8 +394,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             description=_("All entries have been removed from the blacklist."),
         )
 
-    @_audioset_perms_blacklist.command(name="delete", aliases=["del", "remove"])
-    async def _audioset_perms_blacklist_delete(self, ctx: commands.Context, *, keyword: str):
+    @command_audioset_perms_blacklist.command(name="delete", aliases=["del", "remove"])
+    async def command_audioset_perms_blacklist_delete(
+        self, ctx: commands.Context, *, keyword: str
+    ):
         """Removes a keyword from the blacklist."""
         keyword = keyword.lower().strip()
         if not keyword:
@@ -410,18 +419,18 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
 
-    @_audioset.group(name="globaldb", enabled=False, hidden=True)
+    @command_audioset.group(name="globaldb", enabled=False, hidden=True)
     @checks.is_owner()
-    async def _audioset_audiodb(self, ctx: commands.Context):
+    async def command_audioset_audiodb(self, ctx: commands.Context):
         """Change global db settings."""
 
-    @_audioset.group(name="autoplay")
+    @command_audioset.group(name="autoplay")
     @checks.mod_or_permissions(manage_messages=True)
-    async def _audioset_autoplay(self, ctx: commands.Context):
+    async def command_audioset_autoplay(self, ctx: commands.Context):
         """Change auto-play setting."""
 
-    @_audioset_autoplay.command(name="toggle")
-    async def _audioset_autoplay_toggle(self, ctx: commands.Context):
+    @command_audioset_autoplay.command(name="toggle")
+    async def command_audioset_autoplay_toggle(self, ctx: commands.Context):
         """Toggle auto-play when there no songs in queue."""
         autoplay = await self.config.guild(ctx.guild).auto_play()
         repeat = await self.config.guild(ctx.guild).repeat()
@@ -441,9 +450,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self._player_check(ctx):
             await self._data_check(ctx)
 
-    @_audioset_autoplay.command(name="playlist", usage="<playlist_name_OR_id> [args]")
+    @command_audioset_autoplay.command(name="playlist", usage="<playlist_name_OR_id> [args]")
     @commands.bot_has_permissions(add_reactions=True)
-    async def _audioset_autoplay_playlist(
+    async def command_audioset_autoplay_playlist(
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
@@ -547,8 +556,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
 
-    @_audioset_autoplay.command(name="reset")
-    async def _audioset_autoplay_reset(self, ctx: commands.Context):
+    @command_audioset_autoplay.command(name="reset")
+    async def command_audioset_autoplay_reset(self, ctx: commands.Context):
         """Resets auto-play to the default playlist."""
         playlist_data = dict(enabled=False, id=None, name=None, scope=None)
         await self.config.guild(ctx.guild).autoplaylist.set(playlist_data)
@@ -558,10 +567,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             description=_("Set auto-play playlist to default value."),
         )
 
-    @_audioset.command(name="dailyqueue")
+    @command_audioset.command(name="dailyqueue")
     @commands.guild_only()
     @checks.admin()
-    async def _audioset_historical_queue(self, ctx: commands.Context):
+    async def command_audioset_historical_queue(self, ctx: commands.Context):
         """Toggle daily queues.
 
         Daily queues creates a playlist for all tracks played today.
@@ -579,10 +588,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @_audioset.command(name="dc")
+    @command_audioset.command(name="dc")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_messages=True)
-    async def _audioset_dc(self, ctx: commands.Context):
+    async def command_audioset_dc(self, ctx: commands.Context):
         """Toggle the bot auto-disconnecting when done playing.
 
         This setting takes precedence over `[p]audioset emptydisconnect`.
@@ -602,10 +611,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         await self._embed_msg(ctx, title=_("Setting Changed"), description=msg)
 
-    @_audioset.command(name="dj")
+    @command_audioset.command(name="dj")
     @commands.guild_only()
     @checks.admin_or_permissions(manage_roles=True)
-    async def _audioset_dj(self, ctx: commands.Context):
+    async def command_audioset_dj(self, ctx: commands.Context):
         """Toggle DJ mode.
 
         DJ mode allows users with the DJ role to use audio commands.
@@ -626,7 +635,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             try:
                 pred = MessagePredicate.valid_role(ctx)
                 await ctx.bot.wait_for("message", timeout=15.0, check=pred)
-                await ctx.invoke(self._audioset_role, role_name=pred.result)
+                await ctx.invoke(self.command_audioset_role, role_name=pred.result)
             except asyncio.TimeoutError:
                 return await self._embed_msg(ctx, title=_("Response timed out, try again later."))
         dj_enabled = self._dj_status_cache.setdefault(
@@ -642,10 +651,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @_audioset.command(name="emptydisconnect")
+    @command_audioset.command(name="emptydisconnect")
     @commands.guild_only()
     @checks.mod_or_permissions(administrator=True)
-    async def _audioset_emptydisconnect(self, ctx: commands.Context, seconds: int):
+    async def command_audioset_emptydisconnect(self, ctx: commands.Context, seconds: int):
         """Auto-disconnect from channel when bot is alone in it for x seconds, 0 to disable.
 
         `[p]audioset dc` takes precedence over this setting.
@@ -674,10 +683,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         await self.config.guild(ctx.guild).emptydc_timer.set(seconds)
         await self.config.guild(ctx.guild).emptydc_enabled.set(enabled)
 
-    @_audioset.command(name="emptypause")
+    @command_audioset.command(name="emptypause")
     @commands.guild_only()
     @checks.mod_or_permissions(administrator=True)
-    async def _audioset_emptypause(self, ctx: commands.Context, seconds: int):
+    async def command_audioset_emptypause(self, ctx: commands.Context, seconds: int):
         """Auto-pause after x seconds when room is empty, 0 to disable."""
         if seconds < 0:
             return await self._embed_msg(
@@ -702,10 +711,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         await self.config.guild(ctx.guild).emptypause_timer.set(seconds)
         await self.config.guild(ctx.guild).emptypause_enabled.set(enabled)
 
-    @_audioset.command(name="jukebox")
+    @command_audioset.command(name="jukebox")
     @commands.guild_only()
     @checks.mod_or_permissions(administrator=True)
-    async def _audioset_jukebox(self, ctx: commands.Context, price: int):
+    async def command_audioset_jukebox(self, ctx: commands.Context, price: int):
         """Set a price for queueing tracks for non-mods, 0 to disable."""
         if price < 0:
             return await self._embed_msg(
@@ -729,10 +738,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         await self.config.guild(ctx.guild).jukebox_price.set(price)
         await self.config.guild(ctx.guild).jukebox.set(jukebox)
 
-    @_audioset.command(name="localpath")
+    @command_audioset.command(name="localpath")
     @checks.is_owner()
     @commands.bot_has_permissions(add_reactions=True)
-    async def _audioset_localpath(self, ctx: commands.Context, *, local_path=None):
+    async def command_audioset_localpath(self, ctx: commands.Context, *, local_path=None):
         """Set the localtracks path if the Lavalink.jar is not run from the Audio data folder.
 
         Leave the path blank to reset the path to the default, the Audio data directory.
@@ -807,10 +816,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @_audioset.command(name="maxlength")
+    @command_audioset.command(name="maxlength")
     @commands.guild_only()
     @checks.mod_or_permissions(administrator=True)
-    async def _audioset_maxlength(self, ctx: commands.Context, seconds: Union[int, str]):
+    async def command_audioset_maxlength(self, ctx: commands.Context, seconds: Union[int, str]):
         """Max length of a track to queue in seconds, 0 to disable.
 
         Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`). Invalid
@@ -836,10 +845,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
         await self.config.guild(ctx.guild).maxlength.set(seconds)
 
-    @_audioset.command(name="notify")
+    @command_audioset.command(name="notify")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_messages=True)
-    async def _audioset_notify(self, ctx: commands.Context):
+    async def command_audioset_notify(self, ctx: commands.Context):
         """Toggle track announcement and other bot messages."""
         notify = await self.config.guild(ctx.guild).notify()
         await self.config.guild(ctx.guild).notify.set(not notify)
@@ -851,10 +860,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @_audioset.command(name="restrict")
+    @command_audioset.command(name="restrict")
     @checks.is_owner()
     @commands.guild_only()
-    async def _audioset_restrict(self, ctx: commands.Context):
+    async def command_audioset_restrict(self, ctx: commands.Context):
         """Toggle the domain restriction on Audio.
 
         When toggled off, users will be able to play songs from non-commercial websites and links.
@@ -871,10 +880,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @_audioset.command(name="role")
+    @command_audioset.command(name="role")
     @commands.guild_only()
     @checks.admin_or_permissions(manage_roles=True)
-    async def _audioset_role(self, ctx: commands.Context, *, role_name: discord.Role):
+    async def command_audioset_role(self, ctx: commands.Context, *, role_name: discord.Role):
         """Set the role to use for DJ mode."""
         await self.config.guild(ctx.guild).dj_role.set(role_name.id)
         self._dj_role_cache[ctx.guild.id] = role_name.id
@@ -888,9 +897,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             description=_("DJ role set to: {role.name}.").format(role=dj_role_obj),
         )
 
-    @_audioset.command(name="settings")
+    @command_audioset.command(name="settings")
     @commands.guild_only()
-    async def _audioset_settings(self, ctx: commands.Context):
+    async def command_audioset_settings(self, ctx: commands.Context):
         """Show the current settings."""
         is_owner = await ctx.bot.is_owner(ctx.author)
         global_data = await self.config.all()
@@ -1032,10 +1041,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         await self._embed_msg(ctx, description=box(msg, lang="ini"))
 
-    @_audioset.command(name="status")
+    @command_audioset.command(name="status")
     @checks.is_owner()
     @commands.guild_only()
-    async def _audioset_status(self, ctx: commands.Context):
+    async def command_audioset_status(self, ctx: commands.Context):
         """Enable/disable tracks' titles as status."""
         status = await self.config.status()
         await self.config.status.set(not status)
@@ -1047,10 +1056,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @_audioset.command(name="thumbnail")
+    @command_audioset.command(name="thumbnail")
     @commands.guild_only()
     @checks.mod_or_permissions(administrator=True)
-    async def _audioset_thumbnail(self, ctx: commands.Context):
+    async def command_audioset_thumbnail(self, ctx: commands.Context):
         """Toggle displaying a thumbnail on audio messages."""
         thumbnail = await self.config.guild(ctx.guild).thumbnail()
         await self.config.guild(ctx.guild).thumbnail.set(not thumbnail)
@@ -1062,10 +1071,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @_audioset.command(name="vote")
+    @command_audioset.command(name="vote")
     @commands.guild_only()
     @checks.mod_or_permissions(administrator=True)
-    async def _audioset_vote(self, ctx: commands.Context, percent: int):
+    async def command_audioset_vote(self, ctx: commands.Context, percent: int):
         """Percentage needed for non-mods to skip tracks, 0 to disable."""
         if percent < 0:
             return await self._embed_msg(
@@ -1091,9 +1100,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         await self.config.guild(ctx.guild).vote_percent.set(percent)
         await self.config.guild(ctx.guild).vote_enabled.set(enabled)
 
-    @_audioset.command(name="youtubeapi")
+    @command_audioset.command(name="youtubeapi")
     @checks.is_owner()
-    async def _audioset_youtubeapi(self, ctx: commands.Context):
+    async def command_audioset_youtubeapi(self, ctx: commands.Context):
         """Instructions to set the YouTube API key."""
         message = _(
             f"1. Go to Google Developers Console and log in with your Google account.\n"
@@ -1110,9 +1119,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         ).format(prefix=ctx.prefix)
         await ctx.maybe_send_embed(message)
 
-    @_audioset.command(name="spotifyapi")
+    @command_audioset.command(name="spotifyapi")
     @checks.is_owner()
-    async def _audioset_spotifyapi(self, ctx: commands.Context):
+    async def command_audioset_spotifyapi(self, ctx: commands.Context):
         """Instructions to set the Spotify API tokens."""
         message = _(
             "1. Go to Spotify developers and log in with your Spotify account.\n"
@@ -1127,9 +1136,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         ).format(prefix=ctx.prefix)
         await ctx.maybe_send_embed(message)
 
-    @_audioset.command(name="cache", usage="level=[5, 3, 2, 1, 0, -1, -2, -3]")
+    @command_audioset.command(name="cache", usage="level=[5, 3, 2, 1, 0, -1, -2, -3]")
     @checks.is_owner()
-    async def _audioset_cache(self, ctx: commands.Context, *, level: int = None):
+    async def command_audioset_cache(self, ctx: commands.Context, *, level: int = None):
         """Sets the caching level.
 
         Level can be one of the following:
@@ -1210,9 +1219,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         await self.config.cache_level.set(newcache.value)
 
-    @_audioset.command(name="cacheage")
+    @command_audioset.command(name="cacheage")
     @checks.is_owner()
-    async def _audioset_cacheage(self, ctx: commands.Context, age: int):
+    async def command_audioset_cacheage(self, ctx: commands.Context, age: int):
         """Sets the cache max age.
 
         This commands allows you to set the max number of days before an entry in the cache becomes

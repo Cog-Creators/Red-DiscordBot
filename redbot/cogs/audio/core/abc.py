@@ -2,7 +2,7 @@ import asyncio
 from abc import ABC, abstractmethod
 from collections import Counter
 from pathlib import Path
-from typing import List, Mapping, MutableMapping, Optional, Union, Any, Tuple
+from typing import Any, List, Mapping, MutableMapping, Optional, Tuple, Union
 
 import aiohttp
 import discord
@@ -11,10 +11,11 @@ import lavalink
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.utils.dbtools import APSWConnectionWrapper
+
 from ..apis.interface import AudioAPIInterface
 from ..apis.playlist_interface import Playlist
 from ..apis.playlist_wrapper import PlaylistWrapper
-from ..audio_dataclasses import Query, LocalPath
+from ..audio_dataclasses import LocalPath, Query
 from ..equalizer import Equalizer
 from ..manager import ServerManager
 
@@ -56,7 +57,7 @@ class MixinMeta(ABC):
     _default_lavalink_settings: Mapping
 
     @abstractmethod
-    async def _llsetup(self, ctx: commands.Context):
+    async def command_llsetup(self, ctx: commands.Context):
         raise NotImplementedError()
 
     @abstractmethod
@@ -129,7 +130,7 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def _equalizer(self, ctx: commands.Context):
+    async def command_equalizer(self, ctx: commands.Context):
         raise NotImplementedError()
 
     @abstractmethod
@@ -149,7 +150,7 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def search(self, ctx: commands.Context, *, query: str):
+    async def command_search(self, ctx: commands.Context, *, query: str):
         raise NotImplementedError()
 
     @abstractmethod
@@ -346,7 +347,7 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def _audioset_autoplay_toggle(self, ctx: commands.Context):
+    async def command_audioset_autoplay_toggle(self, ctx: commands.Context):
         raise NotImplementedError()
 
     @abstractmethod
@@ -378,7 +379,7 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def play(self, ctx: commands.Context, *, query: str):
+    async def command_play(self, ctx: commands.Context, *, query: str):
         raise NotImplementedError()
 
     @abstractmethod
@@ -398,7 +399,7 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def stop(self, ctx: commands.Context):
+    async def command_stop(self, ctx: commands.Context):
         raise NotImplementedError()
 
     @abstractmethod
@@ -412,7 +413,7 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def pause(self, ctx: commands.Context):
+    async def command_pause(self, ctx: commands.Context):
         raise NotImplementedError()
 
     @abstractmethod

@@ -10,9 +10,10 @@ from redbot.core import commands
 from redbot.core.utils.chat_formatting import box, humanize_number, pagify
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu, start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
+
+from ...equalizer import Equalizer
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, _
-from ...equalizer import Equalizer
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.equalizer")
 
@@ -22,7 +23,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.guild_only()
     @commands.cooldown(1, 15, commands.BucketType.guild)
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
-    async def _equalizer(self, ctx: commands.Context):
+    async def command_equalizer(self, ctx: commands.Context):
         """Equalizer management."""
         if not self._player_check(ctx):
             ctx.command.reset_cooldown(ctx)
@@ -57,8 +58,8 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         player.store("eq_message", eq_msg_with_reacts)
         await self._eq_interact(ctx, player, eq, eq_msg_with_reacts, 0)
 
-    @_equalizer.command(name="delete", aliases=["del", "remove"])
-    async def _eq_delete(self, ctx: commands.Context, eq_preset: str):
+    @command_equalizer.command(name="delete", aliases=["del", "remove"])
+    async def command_equalizer_delete(self, ctx: commands.Context, eq_preset: str):
         """Delete a saved eq preset."""
         async with self.config.custom("EQUALIZER", ctx.guild.id).eq_presets() as eq_presets:
             eq_preset = eq_preset.lower()
@@ -96,8 +97,8 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx, title=_("The {preset_name} preset was deleted.".format(preset_name=eq_preset))
         )
 
-    @_equalizer.command(name="list")
-    async def _eq_list(self, ctx: commands.Context):
+    @command_equalizer.command(name="list")
+    async def command_equalizer_list(self, ctx: commands.Context):
         """List saved eq presets."""
         eq_presets = await self.config.custom("EQUALIZER", ctx.guild.id).eq_presets()
         if not eq_presets.keys():
@@ -132,8 +133,8 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             page_list.append(embed)
         await menu(ctx, page_list, DEFAULT_CONTROLS)
 
-    @_equalizer.command(name="load")
-    async def _eq_load(self, ctx: commands.Context, eq_preset: str):
+    @command_equalizer.command(name="load")
+    async def command_equalizer_load(self, ctx: commands.Context, eq_preset: str):
         """Load a saved eq preset."""
         eq_preset = eq_preset.lower()
         eq_presets = await self.config.custom("EQUALIZER", ctx.guild.id).eq_presets()
@@ -177,8 +178,8 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
         player.store("eq_message", message)
 
-    @_equalizer.command(name="reset")
-    async def _eq_reset(self, ctx: commands.Context):
+    @command_equalizer.command(name="reset")
+    async def command_equalizer_reset(self, ctx: commands.Context):
         """Reset the eq to 0 across all bands."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, title=_("Nothing playing."))
@@ -209,9 +210,9 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
         player.store("eq_message", message)
 
-    @_equalizer.command(name="save")
+    @command_equalizer.command(name="save")
     @commands.cooldown(1, 15, commands.BucketType.guild)
-    async def _eq_save(self, ctx: commands.Context, eq_preset: str = None):
+    async def command_equalizer_save(self, ctx: commands.Context, eq_preset: str = None):
         """Save the current eq settings to a preset."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, title=_("Nothing playing."))
@@ -290,8 +291,10 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         else:
             await self._embed_msg(ctx, embed=embed3)
 
-    @_equalizer.command(name="set")
-    async def _eq_set(self, ctx: commands.Context, band_name_or_position, band_value: float):
+    @command_equalizer.command(name="set")
+    async def command_equalizer_set(
+        self, ctx: commands.Context, band_name_or_position, band_value: float
+    ):
         """Set an eq band with a band number or name and value.
 
         Band positions are 1-15 and values have a range of -0.25 to 1.0.
