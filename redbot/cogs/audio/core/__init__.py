@@ -1,5 +1,6 @@
 import asyncio
 from collections import Counter
+from typing import Mapping
 
 import aiohttp
 
@@ -38,7 +39,7 @@ class Audio(
         self.api_interface = None
         self.player_manager = None
         self.playlist_api = None
-        self.local_folder_current_path: cog_data_path(raw_name="Audio") / "localtracks"
+        self.local_folder_current_path = cog_data_path(raw_name="Audio") / "localtracks"
         self.db_conn = None
         self.session = aiohttp.ClientSession()
 
@@ -100,7 +101,7 @@ class Audio(
             url_keyword_blacklist=[],
             url_keyword_whitelist=[],
         )
-        _playlist = dict(id=None, author=None, name=None, playlist_url=None, tracks=[])
+        _playlist: Mapping = dict(id=None, author=None, name=None, playlist_url=None, tracks=[])
 
         self.config.init_custom("EQUALIZER", 1)
         self.config.register_custom("EQUALIZER", eq_bands=[], eq_presets={})

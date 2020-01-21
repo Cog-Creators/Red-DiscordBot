@@ -50,9 +50,7 @@ class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return True if url_domain in valid_tld else False
 
     def userlimit(self, channel: discord.VoiceChannel) -> bool:
-        if channel.user_limit == 0 or channel.user_limit > len(channel.members) + 1:
-            return False
-        return True
+        return not (channel.user_limit == 0 or channel.user_limit > len(channel.members) + 1)
 
     async def is_allowed(
         self, config: Config, guild: discord.Guild, query: str, query_obj: Query = None
@@ -77,7 +75,7 @@ class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
             whitelist: List[str] = [i.lower() for i in whitelist_unique]
             if whitelist:
                 return any(i in query for i in whitelist)
-            blacklist = set(await config.guild(guild).url_keyword_blacklist())
-            blacklist = [i.lower() for i in blacklist]
+            blacklist_unique: Set[str] = set(await config.guild(guild).url_keyword_blacklist())
+            blacklist: List[str] = [i.lower() for i in blacklist_unique]
             return not any(i in query for i in blacklist)
         return True

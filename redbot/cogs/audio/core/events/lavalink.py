@@ -57,8 +57,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 autoplay
                 and not player.queue
                 and player.fetch("playing_song") is not None
-                and await self.api_interface is not None
                 and self.playlist_api is not None
+                and self.api_interface is not None
             ):
                 try:
                     await self.api_interface.autoplay(player, self.playlist_api)

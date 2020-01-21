@@ -62,7 +62,9 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         thumbnail = kwargs.get("thumbnail")
         contents = dict(title=title, type=_type, url=url, description=description)
         if hasattr(kwargs.get("embed"), "to_dict"):
-            embed = kwargs.get("embed").to_dict()
+            embed = kwargs.get("embed")
+            if embed is not None:
+                embed = embed.to_dict()
         else:
             embed = {}
         colour = embed.get("color") if embed.get("color") else colour

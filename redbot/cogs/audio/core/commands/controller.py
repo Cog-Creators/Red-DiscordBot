@@ -2,7 +2,7 @@ import asyncio
 import contextlib
 import datetime
 import logging
-from typing import Union, Optional
+from typing import Union, Optional, Tuple
 
 import discord
 import lavalink
@@ -60,7 +60,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Now playing."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, title=_("Nothing playing."))
-        expected = ("⏮", "⏹", "⏯", "⏭")
+        expected: Union[Tuple[str, ...]] = ("⏮", "⏹", "⏯", "⏭")
         emoji = {"prev": "⏮", "stop": "⏹", "pause": "⏯", "next": "⏭"}
         player = lavalink.get_player(ctx.guild.id)
         if player.current:

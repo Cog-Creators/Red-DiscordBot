@@ -6,6 +6,7 @@ from typing import MutableMapping, Optional, Tuple, Union, Final
 import discord
 
 from redbot.core import commands
+from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 from .apis.api_utils import standardize_scope
 from .apis.playlist_interface import get_all_playlist_converter
@@ -55,10 +56,11 @@ def _match_id(arg: str) -> Optional[int]:
     m = MENTION_RE.match(arg)
     if m:
         return int(m.group(1))
+    return None
 
 
 async def global_unique_guild_finder(ctx: commands.Context, arg: str) -> discord.Guild:
-    bot: commands.Bot = ctx.bot
+    bot: Red = ctx.bot
     _id = _match_id(arg)
 
     if _id is not None:
@@ -92,7 +94,7 @@ async def global_unique_guild_finder(ctx: commands.Context, arg: str) -> discord
 async def global_unique_user_finder(
     ctx: commands.Context, arg: str, guild: discord.guild = None
 ) -> discord.abc.User:
-    bot: commands.Bot = ctx.bot
+    bot: Red = ctx.bot
     guild = guild or ctx.guild
     _id = _match_id(arg)
 
@@ -195,7 +197,7 @@ class ScopeParser(commands.Converter):
         if arguments:
             argument = " -- ".join(arguments)
         else:
-            command = None
+            command = ""
 
         parser = NoExitParser(description="Playlist Scope Parsing.", add_help=False)
         parser.add_argument("--scope", nargs="*", dest="scope", default=[])
@@ -310,7 +312,7 @@ class ComplexScopeParser(commands.Converter):
         if arguments:
             argument = " -- ".join(arguments)
         else:
-            command = None
+            command = ""
 
         parser = NoExitParser(description="Playlist Scope Parsing.", add_help=False)
 
@@ -462,13 +464,13 @@ class ComplexScopeParser(commands.Converter):
         elif any(x in argument for x in ["--from-author", "--from-user", "--from-member"]):
             raise commands.ArgParserFailure("--from-user", "Nothing", custom_help=_USER_HELP)
 
-        target_scope: str = target_scope or PlaylistScope.GUILD.value
-        target_user: Union[discord.Member, discord.User] = target_user or ctx.author
-        target_guild: discord.Guild = target_guild or ctx.guild
+        target_scope = target_scope or PlaylistScope.GUILD.value
+        target_user = target_user or ctx.author
+        target_guild = target_guild or ctx.guild
 
-        source_scope: str = source_scope or PlaylistScope.GUILD.value
-        source_user: Union[discord.Member, discord.User] = source_user or ctx.author
-        source_guild: discord.Guild = source_guild or ctx.guild
+        source_scope = source_scope or PlaylistScope.GUILD.value
+        source_user = source_user or ctx.author
+        source_guild = source_guild or ctx.guild
 
         return (
             source_scope,

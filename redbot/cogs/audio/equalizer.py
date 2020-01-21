@@ -1,10 +1,11 @@
 # The equalizer class and some audio eq functions are derived from
 # 180093157554388993's work, with his permission
+from typing import Final
 
 
 class Equalizer:
     def __init__(self):
-        self.band_count = 15
+        self.band_count: Final[int] = 15
         self.bands = [0.0 for _loop_counter in range(self.band_count)]
 
     def set_gain(self, band: int, gain: float):

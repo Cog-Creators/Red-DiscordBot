@@ -243,7 +243,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         "No equalizer preset name entered, try the command again later."
                     ),
                 )
-
+        eq_preset = eq_preset or ""
         eq_exists_msg = None
         eq_preset = eq_preset.lower().lstrip(ctx.prefix)
         eq_presets = await self.config.custom("EQUALIZER", ctx.guild.id).eq_presets()
@@ -343,7 +343,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         try:
             band_number = int(band_name_or_position) - 1
         except ValueError:
-            band_number = None
+            band_number = 1000
 
         if band_number not in range(0, bands_num) and band_name_or_position not in band_names:
             return await self._embed_msg(
