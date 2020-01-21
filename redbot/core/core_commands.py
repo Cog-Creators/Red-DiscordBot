@@ -2358,7 +2358,7 @@ class Core(commands.Cog, CoreLogic):
 @commands.command(cls=commands.commands._AlwaysAvailableCommand, name="licenseinfo", i18n=_)
 async def license_info_command(ctx):
     """
-    Get info about Red's licenses
+    Get info about [botname]'s licenses
     """
 
     message = (
