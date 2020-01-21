@@ -67,7 +67,7 @@ from .utils import *
 
 _ = Translator("Audio", __file__)
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 __author__ = ["aikaterna", "Draper"]
 
 log = logging.getLogger("red.audio")
@@ -1151,11 +1151,11 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`
         """
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope_data = [None, ctx.author, ctx.guild, False]
 
         scope, author, guild, specified_user = scope_data
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -3834,7 +3834,7 @@ class Audio(commands.Cog):
         author: discord.User,
         guild: discord.Guild,
         specified_user: bool = False,
-    ) -> Tuple[Optional[int], str]:
+    ) -> Tuple[Optional[int], str, str]:
         """
         Parameters
         ----------
@@ -3863,34 +3863,57 @@ class Audio(commands.Cog):
         """
         correct_scope_matches: List[Playlist]
         original_input = matches.get("arg")
-        correct_scope_matches_temp: MutableMapping = matches.get(scope)
+        lazy_match = False
+        if scope is None:
+            correct_scope_matches_temp: MutableMapping = matches.get("all")
+            lazy_match = True
+        else:
+            correct_scope_matches_temp: MutableMapping = matches.get(scope)
+
         guild_to_query = guild.id
         user_to_query = author.id
+        correct_scope_matches_user = []
+        correct_scope_matches_guild = []
+        correct_scope_matches_global = []
+
         if not correct_scope_matches_temp:
-            return None, original_input
-        if scope == PlaylistScope.USER.value:
-            correct_scope_matches = [
-                p for p in correct_scope_matches_temp if user_to_query == p.scope_id
+            return None, original_input, scope or PlaylistScope.GUILD.value
+        if lazy_match or (scope == PlaylistScope.USER.value):
+            correct_scope_matches_user = [
+                p for p in matches.get(PlaylistScope.USER.value) if user_to_query == p.scope_id
             ]
-        elif scope == PlaylistScope.GUILD.value:
+        if lazy_match or (scope == PlaylistScope.GUILD.value and not correct_scope_matches_user):
             if specified_user:
-                correct_scope_matches = [
+                correct_scope_matches_guild = [
                     p
-                    for p in correct_scope_matches_temp
+                    for p in matches.get(PlaylistScope.GUILD.value)
                     if guild_to_query == p.scope_id and p.author == user_to_query
                 ]
             else:
-                correct_scope_matches = [
-                    p for p in correct_scope_matches_temp if guild_to_query == p.scope_id
+                correct_scope_matches_guild = [
+                    p
+                    for p in matches.get(PlaylistScope.GUILD.value)
+                    if guild_to_query == p.scope_id
                 ]
-        else:
+        if lazy_match or (
+            scope == PlaylistScope.GLOBAL.value
+            and not correct_scope_matches_user
+            and not correct_scope_matches_guild
+        ):
             if specified_user:
-                correct_scope_matches = [
-                    p for p in correct_scope_matches_temp if p.author == user_to_query
+                correct_scope_matches_global = [
+                    p
+                    for p in matches.get(PlaylistScope.USGLOBALER.value)
+                    if p.author == user_to_query
                 ]
             else:
-                correct_scope_matches = [p for p in correct_scope_matches_temp]
+                correct_scope_matches_global = [p for p in matches.get(PlaylistScope.GLOBAL.value)]
 
+        correct_scope_matches = [
+            *correct_scope_matches_global,
+            *correct_scope_matches_guild,
+            *correct_scope_matches_user,
+        ]
         match_count = len(correct_scope_matches)
         if match_count > 1:
             correct_scope_matches2 = [
@@ -3917,14 +3940,15 @@ class Audio(commands.Cog):
                     ).format(match_count=match_count, original_input=original_input)
                 )
         elif match_count == 1:
-            return correct_scope_matches[0].id, original_input
+            return correct_scope_matches[0].id, original_input, correct_scope_matches[0].scope
         elif match_count == 0:
-            return None, original_input
+            return None, original_input, scope
 
         # TODO : Convert this section to a new paged reaction menu when Toby Menus are Merged
         pos_len = 3
         playlists = f"{'#':{pos_len}}\n"
         number = 0
+        correct_scope_matches = sorted(correct_scope_matches, key=lambda x: x.name.lower())
         for number, playlist in enumerate(correct_scope_matches, 1):
             author = self.bot.get_user(playlist.author) or playlist.author or _("Unknown")
             line = _(
@@ -3937,7 +3961,7 @@ class Audio(commands.Cog):
             ).format(
                 number=number,
                 playlist=playlist,
-                scope=humanize_scope(scope),
+                scope=humanize_scope(playlist.scope),
                 tracks=len(playlist.tracks),
                 author=author,
             )
@@ -3973,7 +3997,11 @@ class Audio(commands.Cog):
             )
         with contextlib.suppress(discord.HTTPException):
             await msg.delete()
-        return correct_scope_matches[pred.result].id, original_input
+        return (
+            correct_scope_matches[pred.result].id,
+            original_input,
+            correct_scope_matches[pred.result].scope,
+        )
 
     @commands.group()
     @commands.guild_only()
@@ -4036,12 +4064,12 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global --Author Draper#6666`
         """
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope_data = [None, ctx.author, ctx.guild, False]
         (scope, author, guild, specified_user) = scope_data
         if not await self._playlist_check(ctx):
             return
         try:
-            (playlist_id, playlist_arg) = await self._get_correct_playlist_id(
+            (playlist_id, playlist_arg, scope) = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -4223,7 +4251,7 @@ class Audio(commands.Cog):
         ) = scope_data
 
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, from_scope, from_author, from_guild, specified_from_user
             )
         except TooManyMatches as e:
@@ -4401,11 +4429,11 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ `[p]playlist delete MyPersonalPlaylist --scope User`
         """
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
 
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -4489,19 +4517,18 @@ class Audio(commands.Cog):
         """
         async with ctx.typing():
             if scope_data is None:
-                scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+                scope_data = [None, ctx.author, ctx.guild, False]
             scope, author, guild, specified_user = scope_data
-            scope_name = humanize_scope(
-                scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
-            )
-
             try:
-                playlist_id, playlist_arg = await self._get_correct_playlist_id(
+                playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
                     ctx, playlist_matches, scope, author, guild, specified_user
                 )
             except TooManyMatches as e:
                 ctx.command.reset_cooldown(ctx)
                 return await self._embed_msg(ctx, title=str(e))
+            scope_name = humanize_scope(
+                scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
+            )
             if playlist_id is None:
                 ctx.command.reset_cooldown(ctx)
                 return await self._embed_msg(
@@ -4632,11 +4659,11 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ `[p]playlist download MyPersonalPlaylist --scope User`
         """
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
 
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -4772,19 +4799,19 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ `[p]playlist info MyPersonalPlaylist --scope User`
         """
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
-        scope_name = humanize_scope(
-            scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
-        )
-
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
             ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(ctx, title=str(e))
+        scope_name = humanize_scope(
+            scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
+        )
+
         if playlist_id is None:
             ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(
@@ -5132,18 +5159,18 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ `[p]playlist remove MyPersonalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope User`
         """
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
-        scope_name = humanize_scope(
-            scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
-        )
 
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
             return await self._embed_msg(ctx, title=str(e))
+        scope_name = humanize_scope(
+            scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
+        )
         if playlist_id is None:
             return await self._embed_msg(
                 ctx,
@@ -5339,7 +5366,7 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ `[p]playlist start MyPersonalPlaylist --scope User`
         """
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
@@ -5355,7 +5382,7 @@ class Audio(commands.Cog):
                 return False
 
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -5510,10 +5537,10 @@ class Audio(commands.Cog):
         """
 
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -5789,7 +5816,7 @@ class Audio(commands.Cog):
         ​ ​ ​ ​ `[p]playlist rename MyPersonalPlaylist RenamedPersonalPlaylist --scope User`
         """
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
 
         new_name = new_name.split(" ")[0].strip('"')[:32]
@@ -5805,7 +5832,7 @@ class Audio(commands.Cog):
             )
 
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
