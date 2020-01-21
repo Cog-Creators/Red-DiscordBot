@@ -8,9 +8,10 @@ import lavalink
 
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import box
+
+from ...equalizer import Equalizer
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
-from ...equalizer import Equalizer
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.equalizer")
 
@@ -149,7 +150,7 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         if react_emoji == "\N{INFORMATION SOURCE}":
             await self.remove_react(message, react_emoji, react_user)
-            await ctx.send_help(self._equalizer)
+            await ctx.send_help(self.command_equalizer)
             await self._eq_interact(ctx, player, eq, message, selected)
 
     async def _eq_msg_clear(self, eq_message: discord.Message):

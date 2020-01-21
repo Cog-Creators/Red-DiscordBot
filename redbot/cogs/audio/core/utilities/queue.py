@@ -1,17 +1,18 @@
 import asyncio
 import logging
 import math
-from typing import Tuple, List
+from typing import List, Tuple
 
 import discord
 import lavalink
 from fuzzywuzzy import process
 
 from redbot.core import commands
-from redbot.core.utils.chat_formatting import humanize_number, bold
+from redbot.core.utils.chat_formatting import bold, humanize_number
+
+from ...audio_dataclasses import LocalPath, Query
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, _
-from ...audio_dataclasses import Query, LocalPath
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.queue")
 

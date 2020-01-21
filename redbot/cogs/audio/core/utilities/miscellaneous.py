@@ -4,7 +4,7 @@ import datetime
 import functools
 import logging
 import re
-from typing import MutableMapping, Union, Any, Final
+from typing import Any, Final, MutableMapping, Union
 
 import discord
 import lavalink
@@ -12,6 +12,7 @@ from discord.embeds import EmptyEmbed
 
 from redbot.core import bank, commands
 from redbot.core.utils.chat_formatting import humanize_number
+
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, _
 

@@ -2,7 +2,7 @@ import asyncio
 import datetime
 import logging
 import math
-from typing import Optional, List
+from typing import List, Optional
 
 import discord
 import lavalink
@@ -10,10 +10,11 @@ from discord.embeds import EmptyEmbed
 
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import box, escape
+
+from ...audio_dataclasses import LocalPath, Query
+from ...audio_logging import IS_DEBUG
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, _
-from ...audio_dataclasses import Query, LocalPath
-from ...audio_logging import IS_DEBUG
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.formatting")
 
@@ -133,13 +134,13 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     search_choice.local_track_path.exists()
                     and search_choice.local_track_path.is_dir()
                 ):
-                    return await ctx.invoke(self.search, query=search_choice)
+                    return await ctx.invoke(self.command_search, query=search_choice)
                 elif (
                     search_choice.local_track_path.exists()
                     and search_choice.local_track_path.is_file()
                 ):
                     search_choice.invoked_from = "localtrack"
-            return await ctx.invoke(self.play, query=search_choice)
+            return await ctx.invoke(self.command_play, query=search_choice)
 
         songembed = discord.Embed(title=_("Track Enqueued"), description=description)
         queue_dur = await self.queue_duration(ctx)

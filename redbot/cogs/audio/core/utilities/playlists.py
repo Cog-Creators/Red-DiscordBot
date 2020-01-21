@@ -14,12 +14,13 @@ from redbot.core import commands
 from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import ReactionPredicate
-from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+
 from ...apis.playlist_interface import Playlist, create_playlist
-from ...audio_dataclasses import Query, _PARTIALLY_SUPPORTED_MUSIC_EXT
+from ...audio_dataclasses import _PARTIALLY_SUPPORTED_MUSIC_EXT, Query
 from ...errors import TooManyMatches, TrackEnqueueError
 from ...utils import Notifier, PlaylistScope
+from ..abc import MixinMeta
+from ..cog_utils import CompositeMetaClass, _
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.playlists")
 

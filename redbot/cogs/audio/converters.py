@@ -1,13 +1,14 @@
 import argparse
 import functools
 import re
-from typing import MutableMapping, Optional, Tuple, Union, Final
+from typing import Final, MutableMapping, Optional, Tuple, Union
 
 import discord
 
 from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
+
 from .apis.api_utils import standardize_scope
 from .apis.playlist_interface import get_all_playlist_converter
 from .errors import NoMatchesFound, TooManyMatches

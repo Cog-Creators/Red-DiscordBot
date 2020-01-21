@@ -4,10 +4,11 @@ import lavalink
 
 from redbot.core.data_manager import cog_data_path
 from redbot.core.utils.dbtools import APSWConnectionWrapper
-from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _SCHEMA_VERSION
+
 from ...apis.interface import AudioAPIInterface
 from ...apis.playlist_wrapper import PlaylistWrapper
+from ..abc import MixinMeta
+from ..cog_utils import _SCHEMA_VERSION, CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Tasks.startup")
 

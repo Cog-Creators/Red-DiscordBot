@@ -1,9 +1,9 @@
 import logging
 
+from ..cog_utils import CompositeMetaClass
 from .lavalink import LavalinkTasks
 from .player import PlayerTasks
 from .startup import StartUpTasks
-from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Tasks")
 

@@ -9,9 +9,9 @@ from redbot.core.bot import Red
 from redbot.core.commands import Cog
 from redbot.core.data_manager import cog_data_path
 
+from ..utils import PlaylistScope
 from . import abc, cog_utils, commands, events, tasks, utilities
 from .cog_utils import CompositeMetaClass
-from ..utils import PlaylistScope
 
 
 class Audio(

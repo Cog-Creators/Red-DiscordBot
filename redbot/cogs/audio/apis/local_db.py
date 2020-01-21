@@ -5,49 +5,50 @@ import datetime
 import logging
 import time
 from types import SimpleNamespace
-from typing import Dict, List, MutableMapping, Optional, Tuple, Union, Callable
+from typing import Callable, List, MutableMapping, Optional, Tuple, Union
 
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.utils.dbtools import APSWConnectionWrapper
+
+from ..audio_logging import debug_exc_log
+from ..sql_statements import (
+    LAVALINK_CREATE_INDEX,
+    LAVALINK_CREATE_TABLE,
+    LAVALINK_DELETE_OLD_ENTRIES,
+    LAVALINK_FETCH_ALL_ENTRIES_GLOBAL,
+    LAVALINK_QUERY,
+    LAVALINK_QUERY_ALL,
+    LAVALINK_QUERY_LAST_FETCHED_RANDOM,
+    LAVALINK_UPDATE,
+    LAVALINK_UPSERT,
+    SPOTIFY_CREATE_INDEX,
+    SPOTIFY_CREATE_TABLE,
+    SPOTIFY_DELETE_OLD_ENTRIES,
+    SPOTIFY_QUERY,
+    SPOTIFY_QUERY_ALL,
+    SPOTIFY_QUERY_LAST_FETCHED_RANDOM,
+    SPOTIFY_UPDATE,
+    SPOTIFY_UPSERT,
+    YOUTUBE_CREATE_INDEX,
+    YOUTUBE_CREATE_TABLE,
+    YOUTUBE_DELETE_OLD_ENTRIES,
+    YOUTUBE_QUERY,
+    YOUTUBE_QUERY_ALL,
+    YOUTUBE_QUERY_LAST_FETCHED_RANDOM,
+    YOUTUBE_UPDATE,
+    YOUTUBE_UPSERT,
+    PRAGMA_FETCH_user_version,
+    PRAGMA_SET_journal_mode,
+    PRAGMA_SET_read_uncommitted,
+    PRAGMA_SET_temp_store,
+    PRAGMA_SET_user_version,
+)
 from .api_utils import (
     LavalinkCacheFetchForGlobalResult,
     LavalinkCacheFetchResult,
     SpotifyCacheFetchResult,
     YouTubeCacheFetchResult,
-)
-from ..audio_logging import debug_exc_log
-from ..sql_statements import (
-    PRAGMA_SET_temp_store,
-    PRAGMA_SET_journal_mode,
-    PRAGMA_SET_read_uncommitted,
-    PRAGMA_SET_user_version,
-    PRAGMA_FETCH_user_version,
-    LAVALINK_CREATE_TABLE,
-    LAVALINK_CREATE_INDEX,
-    YOUTUBE_CREATE_TABLE,
-    YOUTUBE_CREATE_INDEX,
-    SPOTIFY_CREATE_TABLE,
-    SPOTIFY_CREATE_INDEX,
-    LAVALINK_DELETE_OLD_ENTRIES,
-    YOUTUBE_DELETE_OLD_ENTRIES,
-    SPOTIFY_DELETE_OLD_ENTRIES,
-    YOUTUBE_UPSERT,
-    YOUTUBE_UPDATE,
-    YOUTUBE_QUERY_ALL,
-    YOUTUBE_QUERY_LAST_FETCHED_RANDOM,
-    YOUTUBE_QUERY,
-    SPOTIFY_UPSERT,
-    SPOTIFY_UPDATE,
-    SPOTIFY_QUERY,
-    SPOTIFY_QUERY_ALL,
-    SPOTIFY_QUERY_LAST_FETCHED_RANDOM,
-    LAVALINK_UPSERT,
-    LAVALINK_UPDATE,
-    LAVALINK_QUERY,
-    LAVALINK_QUERY_ALL,
-    LAVALINK_QUERY_LAST_FETCHED_RANDOM,
-    LAVALINK_FETCH_ALL_ENTRIES_GLOBAL,
 )
 
 log = logging.getLogger("red.cogs.Audio.api.LocalDB")

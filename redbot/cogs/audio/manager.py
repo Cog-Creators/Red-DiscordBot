@@ -9,12 +9,13 @@ import shutil
 import sys
 import tempfile
 import time
-from typing import ClassVar, List, Optional, Tuple, Final
+from typing import ClassVar, Final, List, Optional, Tuple
 
 import aiohttp
 from tqdm import tqdm
 
 from redbot.core import data_manager
+
 from .errors import LavalinkDownloadFailed
 
 log = logging.getLogger("red.audio.manager")

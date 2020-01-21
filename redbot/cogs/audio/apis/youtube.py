@@ -5,6 +5,7 @@ import aiohttp
 
 from redbot.core import Config
 from redbot.core.bot import Red
+
 from ..errors import YouTubeApiError
 
 log = logging.getLogger("red.cogs.Audio.api.YouTube")

@@ -4,6 +4,7 @@ import discord
 import lavalink
 
 from redbot.core import commands
+
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, _
 
@@ -16,7 +17,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
         # check for unsupported arch
         # Check on this needs refactoring at a later date
         # so that we have a better way to handle the tasks
-        if self._llsetup in [ctx.command, ctx.command.root_parent]:
+        if self.command_llsetup in [ctx.command, ctx.command.root_parent]:
             pass
 
         elif self.lavalink_connect_task and self.lavalink_connect_task.cancelled():

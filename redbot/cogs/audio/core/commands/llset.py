@@ -3,6 +3,7 @@ import logging
 import discord
 
 from redbot.core import checks, commands
+
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, _
 
@@ -14,11 +15,11 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     @checks.is_owner()
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def _llsetup(self, ctx: commands.Context):
+    async def command_llsetup(self, ctx: commands.Context):
         """Lavalink server configuration options."""
 
-    @_llsetup.command(name="external")
-    async def _llsetup_external(self, ctx: commands.Context):
+    @command_llsetup.command(name="external")
+    async def command_llsetup_external(self, ctx: commands.Context):
         """Toggle using external lavalink servers."""
         external = await self.config.use_external_lavalink()
         await self.config.use_external_lavalink.set(not external)
@@ -44,8 +45,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         self.lavalink_restart_connect()
 
-    @_llsetup.command(name="host")
-    async def _llsetup_host(self, ctx: commands.Context, host: str):
+    @command_llsetup.command(name="host")
+    async def command_llsetup_host(self, ctx: commands.Context, host: str):
         """Set the lavalink server host."""
         await self.config.host.set(host)
         footer = None
@@ -59,8 +60,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
         self.lavalink_restart_connect()
 
-    @_llsetup.command(name="password")
-    async def _llsetup_password(self, ctx: commands.Context, password: str):
+    @command_llsetup.command(name="password")
+    async def command_llsetup_password(self, ctx: commands.Context, password: str):
         """Set the lavalink server password."""
         await self.config.password.set(str(password))
         footer = None
@@ -75,8 +76,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         self.lavalink_restart_connect()
 
-    @_llsetup.command(name="restport")
-    async def _llsetup_restport(self, ctx: commands.Context, rest_port: int):
+    @command_llsetup.command(name="restport")
+    async def command_llsetup_restport(self, ctx: commands.Context, rest_port: int):
         """Set the lavalink REST server port."""
         await self.config.rest_port.set(rest_port)
         footer = None
@@ -91,8 +92,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         self.lavalink_restart_connect()
 
-    @_llsetup.command(name="wsport")
-    async def _llsetup_wsport(self, ctx: commands.Context, ws_port: int):
+    @command_llsetup.command(name="wsport")
+    async def command_llsetup_wsport(self, ctx: commands.Context, ws_port: int):
         """Set the lavalink websocket server port."""
         await self.config.ws_port.set(ws_port)
         footer = None

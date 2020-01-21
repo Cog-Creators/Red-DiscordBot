@@ -8,9 +8,10 @@ import lavalink
 from fuzzywuzzy import process
 
 from redbot.core import commands
+
+from ...audio_dataclasses import LocalPath, Query
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, _
-from ...audio_dataclasses import LocalPath, Query
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.local_tracks")
 
@@ -77,7 +78,7 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 self.local_folder_current_path,
                 invoked_from="local folder",
             )
-        await ctx.invoke(self.search, query=query)
+        await ctx.invoke(self.command_search, query=query)
 
     async def get_all_localtrack_folder_tracks(
         self, ctx: commands.Context, query: Query

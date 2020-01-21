@@ -9,10 +9,11 @@ import discord
 import lavalink
 
 from redbot.core import commands
-from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass
+
 from ...apis.playlist_interface import Playlist, delete_playlist, get_playlist
 from ...utils import PlaylistScope
+from ..abc import MixinMeta
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Events.audio")
 

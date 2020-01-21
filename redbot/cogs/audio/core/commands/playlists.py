@@ -15,8 +15,7 @@ from redbot.core.data_manager import cog_data_path
 from redbot.core.utils.chat_formatting import bold, pagify
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 from redbot.core.utils.predicates import MessagePredicate
-from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, LazyGreedyConverter, PlaylistConverter, _
+
 from ...apis.api_utils import FakePlaylist
 from ...apis.playlist_interface import (
     create_playlist,
@@ -29,6 +28,8 @@ from ...audio_logging import IS_DEBUG
 from ...converters import ComplexScopeParser, ScopeParser
 from ...errors import MissingGuild, TooManyMatches
 from ...utils import PlaylistScope
+from ..abc import MixinMeta
+from ..cog_utils import CompositeMetaClass, LazyGreedyConverter, PlaylistConverter, _
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.playlist")
 
@@ -37,7 +38,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.group(name="playlist")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
-    async def _playlist(self, ctx: commands.Context):
+    async def command_playlist(self, ctx: commands.Context):
         """Playlist configuration options.
 
         Scope info:
@@ -53,8 +54,10 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         """
 
-    @_playlist.command(name="append", usage="<playlist_name_OR_id> <track_name_OR_url> [args]")
-    async def _playlist_append(
+    @command_playlist.command(
+        name="append", usage="<playlist_name_OR_id> <track_name_OR_url> [args]"
+    )
+    async def command_playlist_append(
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
@@ -226,8 +229,10 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
 
     @commands.cooldown(1, 150, commands.BucketType.member)
-    @_playlist.command(name="copy", usage="<id_or_name> [args]", cooldown_after_parsing=True)
-    async def _playlist_copy(
+    @command_playlist.command(
+        name="copy", usage="<id_or_name> [args]", cooldown_after_parsing=True
+    )
+    async def command_playlist_copy(
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
@@ -379,8 +384,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @_playlist.command(name="create", usage="<name> [args]")
-    async def _playlist_create(
+    @command_playlist.command(name="create", usage="<name> [args]")
+    async def command_playlist_create(
         self, ctx: commands.Context, playlist_name: str, *, scope_data: ScopeParser = None
     ):
         """Create an empty playlist.
@@ -453,8 +458,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @_playlist.command(name="delete", aliases=["del"], usage="<playlist_name_OR_id> [args]")
-    async def _playlist_delete(
+    @command_playlist.command(name="delete", aliases=["del"], usage="<playlist_name_OR_id> [args]")
+    async def command_playlist_delete(
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
@@ -556,10 +561,10 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
 
     @commands.cooldown(1, 30, commands.BucketType.member)
-    @_playlist.command(
+    @command_playlist.command(
         name="dedupe", usage="<playlist_name_OR_id> [args]", cooldown_after_parsing=True
     )
-    async def _playlist_remdupe(
+    async def command_playlist_remdupe(
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
@@ -701,7 +706,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ).format(name=playlist.name, id=playlist.id, scope=scope_name),
             )
 
-    @_playlist.command(
+    @command_playlist.command(
         name="download",
         usage="<playlist_name_OR_id> [v2=False] [args]",
         cooldown_after_parsing=True,
@@ -709,7 +714,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
     @checks.is_owner()
     @commands.bot_has_permissions(attach_files=True)
     @commands.cooldown(1, 30, commands.BucketType.guild)
-    async def _playlist_download(
+    async def command_playlist_download(
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
@@ -862,10 +867,10 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         to_write.close()
 
     @commands.cooldown(1, 10, commands.BucketType.member)
-    @_playlist.command(
+    @command_playlist.command(
         name="info", usage="<playlist_name_OR_id> [args]", cooldown_after_parsing=True
     )
-    async def _playlist_info(
+    async def command_playlist_info(
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
@@ -1012,8 +1017,10 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         await menu(ctx, page_list, DEFAULT_CONTROLS)
 
     @commands.cooldown(1, 15, commands.BucketType.guild)
-    @_playlist.command(name="list", usage="[args]", cooldown_after_parsing=True)
-    async def _playlist_list(self, ctx: commands.Context, *, scope_data: ScopeParser = None):
+    @command_playlist.command(name="list", usage="[args]", cooldown_after_parsing=True)
+    async def command_playlist_list(
+        self, ctx: commands.Context, *, scope_data: ScopeParser = None
+    ):
         """List saved playlists.
 
         **Usage**:
@@ -1121,9 +1128,9 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             await asyncio.sleep(0)
         await menu(ctx, playlist_embeds, DEFAULT_CONTROLS)
 
-    @_playlist.command(name="queue", usage="<name> [args]", cooldown_after_parsing=True)
+    @command_playlist.command(name="queue", usage="<name> [args]", cooldown_after_parsing=True)
     @commands.cooldown(1, 300, commands.BucketType.member)
-    async def _playlist_queue(
+    async def command_playlist_queue(
         self, ctx: commands.Context, playlist_name: str, *, scope_data: ScopeParser = None
     ):
         """Save the queue to a playlist.
@@ -1229,8 +1236,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             else None,
         )
 
-    @_playlist.command(name="remove", usage="<playlist_name_OR_id> <url> [args]")
-    async def _playlist_remove(
+    @command_playlist.command(name="remove", usage="<playlist_name_OR_id> <url> [args]")
+    async def command_playlist_remove(
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
@@ -1356,9 +1363,11 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ).format(playlist_name=playlist.name, id=playlist.id, scope=scope_name),
             )
 
-    @_playlist.command(name="save", usage="<name> <url> [args]", cooldown_after_parsing=True)
+    @command_playlist.command(
+        name="save", usage="<name> <url> [args]", cooldown_after_parsing=True
+    )
     @commands.cooldown(1, 60, commands.BucketType.member)
-    async def _playlist_save(
+    async def command_playlist_save(
         self,
         ctx: commands.Context,
         playlist_name: str,
@@ -1473,13 +1482,13 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
 
     @commands.cooldown(1, 30, commands.BucketType.member)
-    @_playlist.command(
+    @command_playlist.command(
         name="start",
         aliases=["play"],
         usage="<playlist_name_OR_id> [args]",
         cooldown_after_parsing=True,
     )
-    async def _playlist_start(
+    async def command_playlist_start(
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
@@ -1654,13 +1663,13 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
         except TypeError:
             if playlist:
-                return await ctx.invoke(self.play, query=playlist.url)
+                return await ctx.invoke(self.command_play, query=playlist.url)
 
     @commands.cooldown(1, 60, commands.BucketType.member)
-    @_playlist.command(
+    @command_playlist.command(
         name="update", usage="<playlist_name_OR_id> [args]", cooldown_after_parsing=True
     )
-    async def _playlist_update(
+    async def command_playlist_update(
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
@@ -1822,9 +1831,11 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                     ),
                 )
 
-    @_playlist.command(name="upload", usage="[args]")
+    @command_playlist.command(name="upload", usage="[args]")
     @checks.is_owner()
-    async def _playlist_upload(self, ctx: commands.Context, *, scope_data: ScopeParser = None):
+    async def command_playlist_upload(
+        self, ctx: commands.Context, *, scope_data: ScopeParser = None
+    ):
         """Uploads a playlist file as a playlist for the bot.
 
         V2 and old V3 playlist will be slow.
@@ -1960,17 +1971,17 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 guild,
             )
         return await ctx.invoke(
-            self._playlist_save,
+            self.command_playlist_save,
             playlist_name=uploaded_playlist_name,
             playlist_url=uploaded_playlist_url,
             scope_data=(scope, author, guild, specified_user),
         )
 
     @commands.cooldown(1, 60, commands.BucketType.member)
-    @_playlist.command(
+    @command_playlist.command(
         name="rename", usage="<playlist_name_OR_id> <new_name> [args]", cooldown_after_parsing=True
     )
-    async def _playlist_rename(
+    async def command_playlist_rename(
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
