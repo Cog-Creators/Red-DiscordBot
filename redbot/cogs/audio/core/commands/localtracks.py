@@ -54,7 +54,7 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not await self.has_localtracks_check(ctx):
             return
         localtracks_folders = await self.get_localtracks_folders(
-            ctx, search_subfolders=play_subfolders
+            ctx, search_subfolders=bool(play_subfolders)
         )
         if not localtracks_folders:
             return await self._embed_msg(ctx, title=_("No album folders found."))

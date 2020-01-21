@@ -53,7 +53,10 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         audio_data = LocalPath(None, self.local_folder_current_path)
         try:
-            query.local_track_path.path.relative_to(audio_data.to_string())
+            if query.local_track_path is not None:
+                query.local_track_path.path.relative_to(audio_data.to_string())
+            else:
+                return []
         except ValueError:
             return []
         local_tracks = []
@@ -114,7 +117,8 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     [
                         i.local_track_path.to_string_user()
                         for i in to_search
-                        if i.local_track_path.name == track_match
+                        if i.local_track_path is not None
+                        and i.local_track_path.name == track_match
                     ]
                 )
             await asyncio.sleep(0)

@@ -268,7 +268,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 return f'**{escape(f"[{track.title}]({track.uri}) ")}**'
         elif hasattr(track, "to_string_user") and track.is_local:
             return escape(track.to_string_user() + " ")
-        return
+        return None
 
     def get_track_description_unformatted(self, track, local_folder_current_path) -> Optional[str]:
         """Get the user facing unformated track name"""
@@ -283,7 +283,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 return escape(f"{track.title}")
         elif hasattr(track, "to_string_user") and track.is_local:
             return escape(track.to_string_user() + " ")
-        return
+        return None
 
     def format_playlist_picker_data(self, pid, pname, ptracks, pauthor, scope) -> str:
         """Format the values into a pretified codeblock"""

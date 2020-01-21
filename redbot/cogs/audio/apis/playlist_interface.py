@@ -167,7 +167,7 @@ class Playlist:
         )
 
 
-class PlaylistCompat23(Playlist):
+class PlaylistCompat23:
     """A single playlist, migrating from Schema 2 to Schema 3"""
 
     def __init__(
@@ -182,9 +182,7 @@ class PlaylistCompat23(Playlist):
         tracks: Optional[List[MutableMapping]] = None,
         guild: Union[discord.Guild, int, None] = None,
     ):
-        super().__init__(
-            bot, playlist_api, scope, author, playlist_id, name, playlist_url, tracks, guild
-        )
+
         self.bot = bot
         self.guild = guild
         self.scope = standardize_scope(scope)

@@ -429,7 +429,7 @@ class Query:
     @staticmethod
     def _parse(track, _local_folder_current_path: Path, **kwargs) -> MutableMapping:
         """Parse a track into all the relevant metadata"""
-        returning = {}
+        returning: MutableMapping = {}
         if (
             type(track) == type(LocalPath)
             and (track.is_file() or track.is_dir())

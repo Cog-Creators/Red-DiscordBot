@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import time
+from typing import MutableMapping, Dict
 
 import lavalink
 
@@ -12,8 +13,8 @@ log = logging.getLogger("red.cogs.Audio.cog.Tasks.player")
 
 class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
     async def player_automated_timer(self) -> None:
-        stop_times = {}
-        pause_times = {}
+        stop_times: Dict = {}
+        pause_times: Dict = {}
         while True:
             for p in lavalink.all_players():
                 server = p.channel.guild
@@ -51,7 +52,7 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                     sid in pause_times and await self.config.guild(server_obj).emptypause_enabled()
                 ):
                     emptypause_timer = await self.config.guild(server_obj).emptypause_timer()
-                    if (time.time() - pause_times.get(sid)) >= emptypause_timer:
+                    if (time.time() - pause_times.get(sid, 0)) >= emptypause_timer:
                         try:
                             await lavalink.get_player(sid).pause()
                         except Exception as err:

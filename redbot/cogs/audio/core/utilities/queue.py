@@ -164,7 +164,11 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
             queue_idx = queue_idx + 1
             if not self.match_url(track.uri):
                 query = Query.process_input(track, self.local_folder_current_path)
-                if query.is_local and track.title == "Unknown title":
+                if (
+                    query.is_local
+                    and query.local_track_path is not None
+                    and track.title == "Unknown title"
+                ):
                     track_title = query.local_track_path.to_string_user()
                 else:
                     track_title = "{} - {}".format(track.author, track.title)

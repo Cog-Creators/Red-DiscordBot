@@ -3,7 +3,7 @@ import contextlib
 import datetime
 import logging
 import math
-from typing import MutableMapping
+from typing import MutableMapping, Optional
 
 import discord
 import lavalink
@@ -64,7 +64,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 dur = "LIVE"
             else:
                 dur = lavalink.utils.format_time(player.current.length)
-            song = self.get_track_description(player.current, self.local_folder_current_path)
+            song = self.get_track_description(player.current, self.local_folder_current_path) or ""
             song += _("\n Requested by: **{track.requester}**")
             song += "\n\n{arrow}`{pos}`/`{dur}`"
             song = song.format(track=player.current, arrow=arrow, pos=pos, dur=dur)
@@ -113,9 +113,11 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             expected = ("⏹", "⏯")
             emoji = {"stop": "⏹", "pause": "⏯"}
             if player.current:
-                task = start_adding_reactions(message, expected[:4], ctx.bot.loop)
+                task: Optional[asyncio.Task] = start_adding_reactions(
+                    message, expected[:4], ctx.bot.loop
+                )
             else:
-                task = None
+                task: Optional[asyncio.Task] = None
 
             try:
                 (r, u) = await self.bot.wait_for(

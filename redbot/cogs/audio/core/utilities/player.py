@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import time
-from typing import Union, List, Tuple
+from typing import Union, List, Tuple, Optional
 
 import aiohttp
 import discord
@@ -41,7 +41,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         self._error_timer[guild] = now
         return self._error_counter[guild] >= 5
 
-    async def _players_check(self) -> Tuple[str, int]:
+    async def _players_check(self) -> Tuple[Optional[str], int]:
         try:
             current = next(
                 (
@@ -60,7 +60,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             playing_servers = 0
         return get_single_title, playing_servers
 
-    async def _status_check(self, track: lavalink.Track, playing_servers: int) -> None:
+    async def _status_check(self, track: Optional[str], playing_servers: int) -> None:
         if playing_servers == 0:
             await self.bot.change_presence(activity=None)
         elif playing_servers == 1:
