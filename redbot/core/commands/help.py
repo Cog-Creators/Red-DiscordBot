@@ -662,7 +662,7 @@ class RedHelpFormatter:
                 not use_DMs  # we're not in DMs
                 and delete_delay > 0  # delete delay is enabled
                 and channel_permissions.manage_messages  # we can manage messages here
-                and len(pages) < 100  # there's less than 100 pages to delete
+                and len(messages) <= 100  # there's no more than 100 messages to delete
             ):
 
                 # We need to wrap this in a task to not block after-sending-help interactions.
