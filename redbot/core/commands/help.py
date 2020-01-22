@@ -634,7 +634,7 @@ class RedHelpFormatter:
 
             max_pages_in_guild = await ctx.bot._config.help.max_pages_in_guild()
             use_DMs = len(pages) > max_pages_in_guild
-            destination = ctx.author if use_DMs else ctx
+            destination = ctx.author if use_DMs else ctx.channel
             delete_delay = await ctx.bot._config.help.delete_delay()
             if delete_delay == 0 or use_DMs:
                 # This feature is disabled when we're sending to DMs or setting is 0
