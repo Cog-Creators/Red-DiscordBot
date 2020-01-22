@@ -88,6 +88,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             custom_info=None,
             help__page_char_limit=1000,
             help__max_pages_in_guild=2,
+            help__delete_delay=0,
             help__use_menus=False,
             help__show_hidden=False,
             help__verify_checks=True,
@@ -186,9 +187,9 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
     def before_invoke(self, coro: T_BIC) -> T_BIC:
         """
         Overridden decorator method for Red's ``before_invoke`` behavior.
-        
+
         This can safely be used purely functionally as well.
-        
+
         3rd party cogs should remove any hooks which they register at unload
         using `remove_before_invoke_hook`
 
@@ -199,12 +200,12 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             only called if all checks and argument parsing procedures pass
             without error. If any check or argument parsing procedures fail
             then the hooks are not called.
-        
+
         Parameters
         ----------
         coro: Callable[[commands.Context], Awaitable[Any]]
             The coroutine to register as the pre-invoke hook.
-        
+
         Raises
         ------
         TypeError
@@ -298,7 +299,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         ------
         TypeError
             Did not provide ``who`` or ``who_id``
-            
+
         Returns
         -------
         bool

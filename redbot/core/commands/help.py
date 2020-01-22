@@ -633,30 +633,38 @@ class RedHelpFormatter:
         ):
 
             max_pages_in_guild = await ctx.bot._config.help.max_pages_in_guild()
-            destination = ctx.author if len(pages) > max_pages_in_guild else ctx
+            use_DMs = len(pages) > max_pages_in_guild
+            destination = ctx.author if use_DMs else ctx
+            delete_delay = await ctx.bot._config.help.delete_delay()
+            if delete_delay == 0 or use_DMs:
+                # This feature is disabled when we're sending to DMs or setting is 0
+                delete_delay = None
 
-            if embed:
-                for page in pages:
-                    try:
-                        await destination.send(embed=page)
-                    except discord.Forbidden:
-                        return await ctx.send(
-                            T_(
-                                "I couldn't send the help message to you in DM. "
-                                "Either you blocked me or you disabled DMs in this server."
-                            )
+            messages: List[discord.Message] = []
+            for page in pages:
+                try:
+                    if embed:
+                        msg = await destination.send(embed=page)
+                    else:
+                        msg = await destination.send(page)
+                except discord.Forbidden:
+                    return await ctx.send(
+                        T_(
+                            "I couldn't send the help message to you in DM. "
+                            "Either you blocked me or you disabled DMs in this server."
                         )
-            else:
-                for page in pages:
-                    try:
-                        await destination.send(page)
-                    except discord.Forbidden:
-                        return await ctx.send(
-                            T_(
-                                "I couldn't send the help message to you in DM. "
-                                "Either you blocked me or you disabled DMs in this server."
-                            )
-                        )
+                    )
+                else:
+                    messages.append(msg)
+
+            if delete_delay is not None:
+
+                # We need to wrap this in a task to not block after-sending-help interactions.
+                async def _delete_delay_help(bot, messages: List[discord.Message], delay: int):
+                    await asyncio.sleep(delay)
+                    await bot.delete_messages(messages)
+
+                asyncio.create_task(_delete_delay_help(ctx.bot, messages, delete_delay))
         else:
             # Specifically ensuring the menu's message is sent prior to returning
             m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
