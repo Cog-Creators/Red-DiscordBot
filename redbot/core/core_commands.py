@@ -1372,8 +1372,11 @@ class Core(commands.Cog, CoreLogic):
     async def helpset_deletedelay(self, ctx: commands.Context, seconds: int):
         """Set the delay after which help pages will be deleted.
 
-        The setting is disabled by default, and only applies to non-menu help.
+        The setting is disabled by default, and only applies to non-menu help,
+        sent in server text channels.
         Setting the delay to 0 disables this feature.
+
+        The bot has to have MANAGE_MESSAGES permission for this to work.
         """
         if seconds < 0:
             await ctx.send(_("You must give a value of zero or greater!"))
