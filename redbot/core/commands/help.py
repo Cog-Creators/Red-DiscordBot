@@ -660,11 +660,14 @@ class RedHelpFormatter:
             if delete_delay is not None:
 
                 # We need to wrap this in a task to not block after-sending-help interactions.
-                async def _delete_delay_help(bot, messages: List[discord.Message], delay: int):
+                # The channel has to be TextChannel as we can't bulk-delete from DMs
+                async def _delete_delay_help(
+                    channel: discord.TextChannel, messages: List[discord.Message], delay: int
+                ):
                     await asyncio.sleep(delay)
-                    await bot.delete_messages(messages)
+                    await channel.delete_messages(messages)
 
-                asyncio.create_task(_delete_delay_help(ctx.bot, messages, delete_delay))
+                asyncio.create_task(_delete_delay_help(destination, messages, delete_delay))
         else:
             # Specifically ensuring the menu's message is sent prior to returning
             m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
