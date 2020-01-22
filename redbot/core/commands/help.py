@@ -627,18 +627,16 @@ class RedHelpFormatter:
         Sends pages based on settings.
         """
 
-        if not (
-            ctx.channel.permissions_for(ctx.me).add_reactions
-            and await ctx.bot._config.help.use_menus()
-        ):
+        # save on config calls
+        config_help = await ctx.bot._config.help()
+        channel_permissions = ctx.channel.permissions_for(ctx.me)
 
-            max_pages_in_guild = await ctx.bot._config.help.max_pages_in_guild()
+        if not (channel_permissions.add_reactions and config_help["use_menus"]):
+
+            max_pages_in_guild = config_help["max_pages_in_guild"]
             use_DMs = len(pages) > max_pages_in_guild
             destination = ctx.author if use_DMs else ctx.channel
-            delete_delay = await ctx.bot._config.help.delete_delay()
-            if delete_delay == 0 or use_DMs:
-                # This feature is disabled when we're sending to DMs or setting is 0
-                delete_delay = None
+            delete_delay = config_help["delete_delay"]
 
             messages: List[discord.Message] = []
             for page in pages:
@@ -657,7 +655,15 @@ class RedHelpFormatter:
                 else:
                     messages.append(msg)
 
-            if delete_delay is not None:
+            # The if statement takes into account that 'destination' will be
+            # the context channel in non-DM context, reusing 'channel_permissions' to avoid
+            # computing the permissions twice.
+            if (
+                not use_DMs  # we're not in DMs
+                and delete_delay > 0  # delete delay is enabled
+                and channel_permissions.manage_messages  # we can manage messages here
+                and len(pages) < 100  # there's less than 100 pages to delete
+            ):
 
                 # We need to wrap this in a task to not block after-sending-help interactions.
                 # The channel has to be TextChannel as we can't bulk-delete from DMs
