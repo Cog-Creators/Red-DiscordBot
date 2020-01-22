@@ -1378,6 +1378,9 @@ class Core(commands.Cog, CoreLogic):
         if seconds < 0:
             await ctx.send(_("You must give a value of zero or greater!"))
             return
+        if seconds > 60 * 60 * 24 * 14:  # 14 days
+            await ctx.send(_("The delay cannot be longer than 14 days!"))
+            return
 
         await ctx.bot._config.help.delete_delay.set(seconds)
         if seconds == 0:
