@@ -1369,6 +1369,7 @@ class Core(commands.Cog, CoreLogic):
         await ctx.send(_("Done. The page limit has been set to {}.").format(pages))
 
     @helpset.command(name="deletedelay")
+    @commands.bot_has_permissions(manage_messages=True)
     async def helpset_deletedelay(self, ctx: commands.Context, seconds: int):
         """Set the delay after which help pages will be deleted.
 

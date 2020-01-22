@@ -44,6 +44,7 @@ from . import commands
 from .context import Context
 from ..i18n import Translator
 from ..utils import menus
+from ..utils.mod import mass_purge
 from ..utils._internal_utils import fuzzy_command_search, format_fuzzy_results
 from ..utils.chat_formatting import box, pagify
 
@@ -662,7 +663,6 @@ class RedHelpFormatter:
                 not use_DMs  # we're not in DMs
                 and delete_delay > 0  # delete delay is enabled
                 and channel_permissions.manage_messages  # we can manage messages here
-                and len(messages) <= 100  # there's no more than 100 messages to delete
             ):
 
                 # We need to wrap this in a task to not block after-sending-help interactions.
@@ -671,7 +671,7 @@ class RedHelpFormatter:
                     channel: discord.TextChannel, messages: List[discord.Message], delay: int
                 ):
                     await asyncio.sleep(delay)
-                    await channel.delete_messages(messages)
+                    await mass_purge(messages, channel)
 
                 asyncio.create_task(_delete_delay_help(destination, messages, delete_delay))
         else:
