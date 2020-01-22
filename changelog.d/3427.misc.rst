@@ -1,2 +1,1 @@
 Typo fixes in doc strings.
-Trivia list typo fixes.
