@@ -1380,7 +1380,10 @@ class Core(commands.Cog, CoreLogic):
             return
 
         await ctx.bot._config.help.delete_delay.set(seconds)
-        await ctx.send(_("Done. The delete delay has been set to {} seconds.").format(seconds))
+        if seconds == 0:
+            await ctx.send(_("Done. Help messages will not be deleted now."))
+        else:
+            await ctx.send(_("Done. The delete delay has been set to {} seconds.").format(seconds))
 
     @helpset.command(name="tagline")
     async def helpset_tagline(self, ctx: commands.Context, *, tagline: str = None):
