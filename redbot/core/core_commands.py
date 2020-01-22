@@ -1368,6 +1368,30 @@ class Core(commands.Cog, CoreLogic):
         await ctx.bot._config.help.max_pages_in_guild.set(pages)
         await ctx.send(_("Done. The page limit has been set to {}.").format(pages))
 
+    @helpset.command(name="deletedelay")
+    @commands.bot_has_permissions(manage_messages=True)
+    async def helpset_deletedelay(self, ctx: commands.Context, seconds: int):
+        """Set the delay after which help pages will be deleted.
+
+        The setting is disabled by default, and only applies to non-menu help,
+        sent in server text channels.
+        Setting the delay to 0 disables this feature.
+
+        The bot has to have MANAGE_MESSAGES permission for this to work.
+        """
+        if seconds < 0:
+            await ctx.send(_("You must give a value of zero or greater!"))
+            return
+        if seconds > 60 * 60 * 24 * 14:  # 14 days
+            await ctx.send(_("The delay cannot be longer than 14 days!"))
+            return
+
+        await ctx.bot._config.help.delete_delay.set(seconds)
+        if seconds == 0:
+            await ctx.send(_("Done. Help messages will not be deleted now."))
+        else:
+            await ctx.send(_("Done. The delete delay has been set to {} seconds.").format(seconds))
+
     @helpset.command(name="tagline")
     async def helpset_tagline(self, ctx: commands.Context, *, tagline: str = None):
         """
