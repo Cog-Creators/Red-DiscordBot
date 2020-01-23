@@ -376,6 +376,7 @@ class Warnings(commands.Cog):
             warn_channel = self.bot.get_channel(await self.config.guild(guild).warn_channel())
             if warn_channel:
                 channel = warn_channel
+                await ctx.tick()
             else:
                 channel = ctx.channel
             await channel.send(_("{user} has been warned.").format(user=user.mention), embed=em)
