@@ -87,7 +87,7 @@ class Warnings(commands.Cog):
     @warningset.command()
     @commands.guild_only()
     async def toggledm(self, ctx: commands.Context):
-        """Toggle warns being sent to the users DM's"""
+        """Toggle whether warnings should be sent to users in DMs."""
         guild = ctx.guild
         toggle = not await self.config.guild(guild).toggle_dm()
         await self.config.guild(guild).toggle_dm.set(toggle)
