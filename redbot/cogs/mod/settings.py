@@ -221,4 +221,4 @@ class ModSettings(MixinMeta):
         if enabled:
             await ctx.send(_("Users will receive a DM when they are kicked or banned."))
         else:
-            await ctx.send(_("User will not recieve a DM when they are kicked/banned."))
+            await ctx.send(_("User will not receive a DM when they are kicked or banned."))
