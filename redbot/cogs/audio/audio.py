@@ -705,7 +705,6 @@ class Audio(commands.Cog):
         msg += _("Auto-disconnection at queue end: {true_or_false}.").format(
             true_or_false=_("Enabled") if not disconnect else _("Disabled")
         )
-        await self.config.guild(ctx.guild).repeat.set(not disconnect)
         if disconnect is not True and autoplay is True:
             msg += _("\nAuto-play has been disabled.")
             await self.config.guild(ctx.guild).auto_play.set(False)
