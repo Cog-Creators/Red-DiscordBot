@@ -94,7 +94,7 @@ class Warnings(commands.Cog):
         if toggle:
             await ctx.send(_("Warns will now be sent to users DM's"))
         else:
-            await ctx.send(_("Warns will not be sent to users DM's"))
+            await ctx.send(_("Warnings will no longer be sent to users in DMs."))
 
     @warningset.command()
     @commands.guild_only()
