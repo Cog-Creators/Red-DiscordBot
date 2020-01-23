@@ -111,7 +111,7 @@ class Warnings(commands.Cog):
             )
         else:
             await self.config.guild(guild).warn_channel.set(channel)
-            await ctx.send(_("The warn channel has been reset."))
+            await ctx.send(_("Warnings will now be sent in the channel command was used in."))
 
     @warningset.command()
     @commands.guild_only()
