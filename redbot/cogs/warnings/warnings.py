@@ -92,7 +92,7 @@ class Warnings(commands.Cog):
         toggle = not await self.config.guild(guild).toggle_dm()
         await self.config.guild(guild).toggle_dm.set(toggle)
         if toggle:
-            await ctx.send(_("Warns will now be sent to users DM's"))
+            await ctx.send(_("Warnings will now be sent to users in DMs."))
         else:
             await ctx.send(_("Warnings will no longer be sent to users in DMs."))
 
