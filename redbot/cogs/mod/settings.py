@@ -219,6 +219,6 @@ class ModSettings(MixinMeta):
             enabled = not await self.settings.guild(guild).toggle_dm()
         await self.settings.guild(guild).toggle_dm.set(enabled)
         if enabled:
-            await ctx.send(_("Users will recieve a DM when they are kicked/banned."))
+            await ctx.send(_("Users will receive a DM when they are kicked or banned."))
         else:
             await ctx.send(_("User will not recieve a DM when they are kicked/banned."))
