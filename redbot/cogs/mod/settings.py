@@ -217,7 +217,7 @@ class ModSettings(MixinMeta):
         """
         guild = ctx.guild
         if not (0 <= days <= 7):
-            return await ctx.send(_("Invalid days. Must be between 0 and 7."))
+            return await ctx.send(_("Invalid number of days. Must be between 0 and 7."))
         await self.settings.guild(guild).default_days.set(days)
         await ctx.send(
             _("{days} days worth of messages will be deleted when a user is banned.").format(
