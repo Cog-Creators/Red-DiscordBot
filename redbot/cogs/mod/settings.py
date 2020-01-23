@@ -50,7 +50,12 @@ class ModSettings(MixinMeta):
             msg += _("Reinvite on unban: {yes_or_no}\n").format(
                 yes_or_no=_("Yes") if reinvite_on_unban else _("No")
             )
-            msg += _("Default days: {num_days} days\n").format(num_days=default_days)
+            if default_days:
+                msg += _(
+                    "Default message history delete on ban: Previous {num_days} days\n"
+                ).format(num_days=default_days)
+            else:
+                msg += _("Default message history delete on ban: Don't delete any\n")
             await ctx.send(box(msg))
 
     @modset.command()
