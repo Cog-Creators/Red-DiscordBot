@@ -116,7 +116,9 @@ class Warnings(commands.Cog):
     @warningset.command()
     @commands.guild_only()
     async def togglechannel(self, ctx: commands.Context):
-        """Toggle if the warn should be sent to a channel"""
+        """
+        Toggle if warnings should be sent to a channel set with `[p]warningset warnchannel`
+        """
         guild = ctx.guild
         toggle = await self.config.guild(guild).toggle_channel()
         await self.config.guild(guild).toggle_channel.set(not toggle)
