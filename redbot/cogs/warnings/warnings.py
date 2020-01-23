@@ -125,7 +125,7 @@ class Warnings(commands.Cog):
         if not toggle:
             await ctx.send(_("Warns will now be sent to channels"))
         else:
-            await ctx.send(_("Warns will not be sent to channels"))
+            await ctx.send(_("Warns will no longer be sent in the channel."))
 
     @commands.group()
     @commands.guild_only()
