@@ -206,7 +206,7 @@ class ModSettings(MixinMeta):
     @modset.command()
     @commands.guild_only()
     async def defaultdays(self, ctx: commands.Context, days: int = 0):
-        """Set the default days worth of messages to be deleted when a user is banned.
+        """Set the default number of days worth of messages to be deleted when a user is banned.
 
         The number of days must be between 0 and 7.
         """
