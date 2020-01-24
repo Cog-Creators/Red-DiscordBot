@@ -300,7 +300,7 @@ class KickBanMixin(MixinMeta):
         if not user_ids:
             await show_results()
             return
-        
+
         if days is None:
             days = await self.settings.guild(guild).default_days()
 
