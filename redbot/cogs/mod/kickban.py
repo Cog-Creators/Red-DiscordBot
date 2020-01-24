@@ -246,7 +246,7 @@ class KickBanMixin(MixinMeta):
         self,
         ctx: commands.Context,
         user_ids: commands.Greedy[RawUserIds],
-        days: Optional[int] = 0,
+        days: Optional[int] = None,
         *,
         reason: str = None,
     ):
@@ -254,7 +254,6 @@ class KickBanMixin(MixinMeta):
 
         User IDs need to be provided in order to ban
         using this command"""
-        days = cast(int, days)
         banned = []
         errors = {}
 
@@ -301,6 +300,9 @@ class KickBanMixin(MixinMeta):
         if not user_ids:
             await show_results()
             return
+
+        if days is None:
+            days = await self.settings.guild(guild).default_days()
 
         for user_id in user_ids:
             user = guild.get_member(user_id)
