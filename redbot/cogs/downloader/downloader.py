@@ -54,7 +54,7 @@ class Downloader(commands.Cog):
 
         self._repo_manager = RepoManager()
         self._ready = asyncio.Event()
-        self._init_task = bot.loop.create_task(self.initialize())
+        self._init_task = None
 
     def _create_lib_folder(self, *, remove_first: bool = False) -> None:
         if remove_first:
@@ -69,7 +69,11 @@ class Downloader(commands.Cog):
             await self._ready.wait()
 
     def cog_unload(self):
-        self._init_task.cancel()
+        if self._init_task is not None:
+            self._init_task.cancel()
+
+    def create_init_task(self):
+        self._init_task = asyncio.create_task(self.initialize())
 
     async def initialize(self) -> None:
         await self._repo_manager.initialize()
