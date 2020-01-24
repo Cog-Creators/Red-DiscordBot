@@ -431,7 +431,7 @@ class Warnings(commands.Cog):
             if reason.lower() not in registered_reasons:
                 msg = _("That is not a registered reason!")
                 if custom_allowed:
-                    reason_type = {"description": reason, "points": points}
+                    reason_type = {"description": reason}
                 elif (
                     ctx.guild.owner == ctx.author
                     or ctx.channel.permissions_for(ctx.author).administrator
