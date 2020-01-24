@@ -53,6 +53,8 @@ class Downloader(commands.Cog):
         self._create_lib_folder()
 
         self._repo_manager = RepoManager()
+        self._ready = asyncio.Event()
+        self._init_task = None
 
     def _create_lib_folder(self, *, remove_first: bool = False) -> None:
         if remove_first:
@@ -62,9 +64,21 @@ class Downloader(commands.Cog):
             with self.SHAREDLIB_INIT.open(mode="w", encoding="utf-8") as _:
                 pass
 
+    async def cog_before_invoke(self, ctx: commands.Context) -> None:
+        async with ctx.typing():
+            await self._ready.wait()
+
+    def cog_unload(self):
+        if self._init_task is not None:
+            self._init_task.cancel()
+
+    def create_init_task(self):
+        self._init_task = asyncio.create_task(self.initialize())
+
     async def initialize(self) -> None:
         await self._repo_manager.initialize()
         await self._maybe_update_config()
+        self._ready.set()
 
     async def _maybe_update_config(self) -> None:
         schema_version = await self.conf.schema_version()
