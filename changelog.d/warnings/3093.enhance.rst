@@ -1,0 +1,1 @@
+Added the possibility to directly add a reason when using ``[p]unwarn``.
