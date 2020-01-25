@@ -27,6 +27,7 @@ from types import MappingProxyType
 
 import discord
 from discord.ext.commands import when_mentioned_or
+from discord.ext.commands.bot import BotBase
 
 from . import Config, i18n, commands, errors, drivers, modlog, bank
 from .cog_manager import CogManager, CogManagerUI
@@ -59,7 +60,7 @@ def _is_submodule(parent, child):
 
 
 # barely spurious warning caused by our intentional shadowing
-class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: disable=no-member
+class RedBase(commands.GroupMixin, BotBase, RPCMixin):  # pylint: disable=no-member
     """Mixin for the main bot class.
 
     This exists because `Red` inherits from `discord.AutoShardedClient`, which
@@ -150,6 +151,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
+        self._use_team_features = kwargs.pop("use_team_features", False)
         super().__init__(*args, help_command=None, **kwargs)
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
@@ -627,10 +629,42 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         global_setting = await self._config.embeds()
         return global_setting
 
-    async def is_owner(self, user) -> bool:
+    async def is_owner(self, user: Union[discord.User, discord.Member]) -> bool:
+        """
+        Determines if the user should be considered a bot owner.
+
+        This takes into account CLI flags and application ownership.
+
+        By default,
+        application team members are not considered owners,
+        while individual application owners are.
+
+        Parameters
+        ----------
+        user: Union[discord.User, discord.Member]
+
+        Returns
+        -------
+        bool
+        """
         if user.id in self._co_owners:
             return True
-        return await super().is_owner(user)
+
+        if self.owner_id:
+            return self.owner_id == user.id
+        elif self.owner_ids:
+            return user.id in self.owner_ids
+        else:
+            app = await self.application_info()
+            if app.team:
+                if self._use_team_features:
+                    self.owner_ids = ids = {m.id for m in app.team.members}
+                    return user.id in ids
+            else:
+                self.owner_id = owner_id = app.owner.id
+                return user.id == owner_id
+
+        return False
 
     async def is_admin(self, member: discord.Member) -> bool:
         """Checks if a member is an admin of their guild."""
