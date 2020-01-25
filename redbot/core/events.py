@@ -218,6 +218,12 @@ def init_events(bot, cli_flags):
                 ),
                 delete_after=error.retry_after,
             )
+        elif isinstance(error, commands.MaxConcurrencyReached):
+            await ctx.send(
+                "Too many people using this command. It can only be used {} time(s) per {} concurrently.".format(
+                    error.number, error.per.name
+                )
+            )
         else:
             log.exception(type(error).__name__, exc_info=error)
 
