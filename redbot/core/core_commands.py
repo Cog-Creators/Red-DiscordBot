@@ -319,7 +319,10 @@ class Core(commands.Cog, CoreLogic):
         python_version = "[{}.{}.{}]({})".format(*sys.version_info[:3], python_url)
         red_version = "[{}]({})".format(__version__, red_pypi)
         app_info = await self.bot.application_info()
-        owner = app_info.owner
+        if app_info.team:
+            owner = app_info.team.name
+        else:
+            owner = app_info.owner
         custom_info = await self.bot._config.custom_info()
 
         async with aiohttp.ClientSession() as session:

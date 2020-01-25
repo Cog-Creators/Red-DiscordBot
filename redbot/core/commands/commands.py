@@ -330,14 +330,26 @@ class Command(CogCommandMixin, commands.Command):
             if not change_permission_state:
                 ctx.permission_state = original_state
 
-    async def _verify_checks(self, ctx):
+    async def prepare(self, ctx):
+        ctx.command = self
+
         if not self.enabled:
             raise commands.DisabledCommand(f"{self.name} command is disabled")
 
-        if not (await self.can_run(ctx, change_permission_state=True)):
+        if not await self.can_run(ctx, change_permission_state=True):
             raise commands.CheckFailure(
                 f"The check functions for command {self.qualified_name} failed."
             )
+
+        if self.cooldown_after_parsing:
+            await self._parse_arguments(ctx)
+            self._prepare_cooldowns(ctx)
+        else:
+            self._prepare_cooldowns(ctx)
+            await self._parse_arguments(ctx)
+        if self._max_concurrency is not None:
+            await self._max_concurrency.acquire(ctx)
+        await self.call_before_hooks(ctx)
 
     async def do_conversion(
         self, ctx: "Context", converter, argument: str, param: inspect.Parameter
@@ -625,14 +637,14 @@ class Group(GroupMixin, Command, CogGroupMixin, commands.Group):
 
         if ctx.invoked_subcommand is None or self == ctx.invoked_subcommand:
             if self.autohelp and not self.invoke_without_command:
-                await self._verify_checks(ctx)
+                await self.can_run(ctx, change_permission_state=True)
                 await ctx.send_help()
         elif self.invoke_without_command:
             # So invoke_without_command when a subcommand of this group is invoked
             # will skip the the invokation of *this* command. However, because of
             # how our permissions system works, we don't want it to skip the checks
             # as well.
-            await self._verify_checks(ctx)
+            await self.can_run(ctx, change_permission_state=True)
             # this is actually why we don't prepare earlier.
 
         await super().invoke(ctx)
@@ -777,7 +789,4 @@ class _AlwaysAvailableCommand(Command):
             raise TypeError("This command may not be added to a cog")
 
     async def can_run(self, ctx, *args, **kwargs) -> bool:
-        return not ctx.author.bot
-
-    async def _verify_checks(self, ctx) -> bool:
         return not ctx.author.bot
