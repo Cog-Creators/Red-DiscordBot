@@ -757,16 +757,10 @@ class _RulesDict(Dict[Union[int, str], PermState]):
 
 
 def _validate_perms_dict(perms: Dict[str, bool]) -> None:
+    invalid_keys = set(perms.keys()) - set(discord.Permissions.VALID_FLAGS)
+    if invalid_keys:
+        raise TypeError(f"Invalid perm name(s): {', '.join(invalid_keys)}")
     for perm, value in perms.items():
-        try:
-            attr = getattr(discord.Permissions, perm)
-        except AttributeError:
-            attr = None
-
-        if attr is None or not isinstance(attr, property):
-            # We reject invalid permissions
-            raise TypeError(f"Unknown permission name '{perm}'")
-
         if value is not True:
             # We reject any permission not specified as 'True', since this is the only value which
             # makes practical sense.
