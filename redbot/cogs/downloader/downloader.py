@@ -68,12 +68,12 @@ class Downloader(commands.Cog):
     async def cog_before_invoke(self, ctx: commands.Context) -> None:
         async with ctx.typing():
             await self._ready.wait()
-            if self._ready_raised:
-                await ctx.send(
-                    "There was an error during Downloader's initialization."
-                    " Check logs for more information."
-                )
-                raise commands.CheckFailure()
+        if self._ready_raised:
+            await ctx.send(
+                "There was an error during Downloader's initialization."
+                " Check logs for more information."
+            )
+            raise commands.CheckFailure()
 
     def cog_unload(self):
         if self._init_task is not None:
