@@ -1,0 +1,1 @@
+ Log errors that may happen in initialization task.
