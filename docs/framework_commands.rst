@@ -23,5 +23,14 @@ extend functionalities used throughout the bot, as outlined below.
 .. autoclass:: redbot.core.commands.Context
     :members:
 
+.. autoclass:: redbot.core.commands.GuildContext
+
+.. autoclass:: redbot.core.commands.DMContext
+
 .. automodule:: redbot.core.commands.requires
     :members: PrivilegeLevel, PermState, Requires
+
+.. automodule:: redbot.core.commands.converter
+    :members:
+    :exclude-members: convert
+    :no-undoc-members:

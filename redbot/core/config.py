@@ -979,7 +979,7 @@ class Config:
         """
         return self._get_base_group(self.CHANNEL, str(channel_id))
 
-    def channel(self, channel: discord.TextChannel) -> Group:
+    def channel(self, channel: discord.abc.GuildChannel) -> Group:
         """Returns a `Group` for the given channel.
 
         This does not discriminate between text and voice channels.
