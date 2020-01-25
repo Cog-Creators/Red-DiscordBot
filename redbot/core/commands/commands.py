@@ -347,7 +347,8 @@ class Command(CogCommandMixin, commands.Command):
         else:
             self._prepare_cooldowns(ctx)
             await self._parse_arguments(ctx)
-
+        if self._max_concurrency is not None:
+            await self._max_concurrency.acquire(ctx)
         await self.call_before_hooks(ctx)
 
     async def do_conversion(
