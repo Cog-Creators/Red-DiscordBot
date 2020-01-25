@@ -89,7 +89,6 @@ class Downloader(commands.Cog):
                 )
                 self._ready_raised = True
                 self._ready.set()
-                
 
         self._init_task = asyncio.create_task(self.initialize())
         self._init_task.add_done_callback(_done_callback)
