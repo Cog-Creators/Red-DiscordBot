@@ -1104,7 +1104,7 @@ class RedBase(commands.GroupMixin, BotBase, RPCMixin):  # pylint: disable=no-mem
         destinations = []
         opt_outs = await self._config.owner_opt_out_list()
         team_ids = () if not self._use_team_features else self.owner_ids
-        for user_id in set(self.owner_id, *self._co_owners, *team_ids):
+        for user_id in set((self.owner_id, *self._co_owners, *team_ids)):
             if user_id not in opt_outs:
                 user = self.get_user(user_id)
                 if user and not user.bot:  # user.bot is possible with flags and teams
