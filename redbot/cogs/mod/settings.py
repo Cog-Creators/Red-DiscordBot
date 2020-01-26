@@ -27,7 +27,7 @@ class ModSettings(MixinMeta):
             respect_hierarchy = data["respect_hierarchy"]
             delete_delay = data["delete_delay"]
             reinvite_on_unban = data["reinvite_on_unban"]
-            toggle_dm = data["toggle_dm"]
+            dm_on_kickban = data["dm_on_kickban"]
             msg = ""
             msg += _("Delete repeats: {num_repeats}\n").format(
                 num_repeats=_("after {num} repeats").format(num=delete_repeats)
@@ -51,7 +51,7 @@ class ModSettings(MixinMeta):
                 yes_or_no=_("Yes") if reinvite_on_unban else _("No")
             )
             msg += _("Send message to users on kick/ban: {yes_or_no}\n").format(
-                yes_or_no=_("Yes") if toggle_dm else _("No")
+                yes_or_no=_("Yes") if dm_on_kickban else _("No")
             )
             await ctx.send(box(msg))
 
@@ -216,9 +216,9 @@ class ModSettings(MixinMeta):
         """
         guild = ctx.guild
         if enabled is None:
-            toggledm = await self.settings.guild(guild).toggle_dm()
+            toggledm = await self.settings.guild(guild).dm_on_kickban()
             await ctx.send(_"DM when kicked/banned is currently set to: {toggledm}")
-        await self.settings.guild(guild).toggle_dm.set(enabled)
+        await self.settings.guild(guild).dm_on_kickban.set(enabled)
         if enabled:
             await ctx.send(_("Users will receive a DM when they are kicked or banned."))
         else:
