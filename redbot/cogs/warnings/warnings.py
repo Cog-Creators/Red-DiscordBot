@@ -124,9 +124,13 @@ class Warnings(commands.Cog):
         await self.config.guild(guild).toggle_channel.set(not toggle)
         channel = await self.config.guild(guild).warn_channel()
         if not toggle:
-            await ctx.send(_("Warnings will now be sent to {channel}.").format(channel=channel.mention))
+            await ctx.send(
+                _("Warnings will now be sent to {channel}.").format(channel=channel.mention)
+            )
         else:
-            await ctx.send(_("Warns will no longer be sent to {channel}.").format(channel=channel.mention))
+            await ctx.send(
+                _("Warns will no longer be sent to {channel}.").format(channel=channel.mention)
+            )
 
     @commands.group()
     @commands.guild_only()
