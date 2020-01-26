@@ -82,7 +82,7 @@ class KickBanMixin(MixinMeta):
         elif not (0 <= days <= 7):
             return _("Invalid days. Must be between 0 and 7.")
 
-        toggle = await self.settings.guild(guild).toggle_dm()
+        toggle = await self.settings.guild(guild).dm_on_kickban()
         if toggle:
             with contextlib.suppress(discord.HTTPException):
                 em = discord.Embed(
@@ -184,7 +184,7 @@ class KickBanMixin(MixinMeta):
         audit_reason = get_audit_reason(author, reason)
         if reason is None:
             reason = _("No reason was given.")
-        toggle = await self.settings.guild(guild).toggle_dm()
+        toggle = await self.settings.guild(guild).dm_on_kickban()
         if toggle:
             with contextlib.suppress(discord.HTTPException):
                 em = discord.Embed(
