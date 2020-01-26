@@ -84,13 +84,12 @@ class KickBanMixin(MixinMeta):
 
         toggle = await self.settings.guild(guild).toggle_dm()
         if toggle:
-            if guild.me.top_role > user.top_role and user != guild.owner and author != user:
-                with contextlib.suppress(discord.HTTPException):
-                    em = discord.Embed(
-                        title=_(bold("You have been banned from {guild}.").format(guild=guild))
-                    )
-                    em.add_field(name=_("**Reason**"), value=reason, inline=False)
-                    await user.send(embed=em)
+            with contextlib.suppress(discord.HTTPException):
+                em = discord.Embed(
+                    title=_(bold("You have been banned from {guild}.").format(guild=guild))
+                )
+                em.add_field(name=_("**Reason**"), value=reason, inline=False)
+                await user.send(embed=em)
 
         audit_reason = get_audit_reason(author, reason)
 
