@@ -1,0 +1,1 @@
+Fixed an error when ``redbot.core.utils.mod.mass_purge`` is passed ``COUNT % 100 == 1`` messages AND the last message in the list does not exist.

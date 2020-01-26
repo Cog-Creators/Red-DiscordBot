@@ -1,19 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-05 22:33+0200\n"
-"PO-Revision-Date: 2019-07-06 16:14\n"
-"Last-Translator: Robert Jansen (Kowlin)\n"
+"POT-Creation-Date: 2019-07-14 04:24+0000\n"
+"PO-Revision-Date: 2020-01-07 21:49\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.0\n"
+"Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: zh-CN\n"
-"X-Crowdin-File: /cogs/alias/locales/messages.pot\n"
+"X-Crowdin-File: /alias/locales/messages.pot\n"
 "Language: zh_CN\n"
 
 #: redbot/cogs/alias/alias.py:35
@@ -75,15 +74,15 @@ msgstr ""
 
 #: redbot/cogs/alias/alias.py:311
 msgid "You attempted to create a new global alias with the name {name} but that alias already exists on this server."
-msgstr ""
+msgstr "您尝试使用名称{name}创建新的全局别名，但该别名已经存在于此服务器上。"
 
 #: redbot/cogs/alias/alias.py:322
 msgid "You attempted to create a new global alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
-msgstr ""
+msgstr "您试图使用名称{name}创建新的全局别名，但该名称是无效的别名。别名不能包含空格。"
 
 #: redbot/cogs/alias/alias.py:338
 msgid "A new global alias with the trigger `{name}` has been created."
-msgstr ""
+msgstr "已经创建一个包含触发器`{name}`的全局别名。"
 
 #: redbot/cogs/alias/alias.py:346
 #, docstring
@@ -105,11 +104,11 @@ msgstr ""
 
 #: redbot/cogs/alias/alias.py:370
 msgid "The `{alias_name}` alias will execute the command `{command}`"
-msgstr ""
+msgstr "`{alias_name}`别要名将执行命令`{command}`"
 
 #: redbot/cogs/alias/alias.py:375
 msgid "There is no alias with the name `{name}`"
-msgstr ""
+msgstr "没有名为`{name}`的别名"
 
 #: redbot/cogs/alias/alias.py:381
 #, docstring
@@ -123,11 +122,11 @@ msgstr "在这个服务器上没有别名。"
 
 #: redbot/cogs/alias/alias.py:391 redbot/cogs/alias/alias.py:409
 msgid "Alias with the name `{name}` was successfully deleted."
-msgstr ""
+msgstr "已经成功删除名为`{name}`的别名。"
 
 #: redbot/cogs/alias/alias.py:394 redbot/cogs/alias/alias.py:412
 msgid "Alias with name `{name}` was not found."
-msgstr ""
+msgstr "找不到名为`{name}`的别名。"
 
 #: redbot/cogs/alias/alias.py:399
 #, docstring

@@ -30,9 +30,8 @@ Red is an open source project. This means that each and every one of the develop
 We love receiving contributions from our community. Any assistance you can provide with regards to bug fixes, feature enhancements, and documentation is more than welcome.
 
 # 2. Ground Rules
-We've made a point to use [ZenHub](https://www.zenhub.com/) (a plugin for GitHub) as our main source of collaboration and coordination. Your experience contributing to Red will be greatly improved if you go get that plugin.
 1. Ensure cross compatibility for Windows, Mac OS and Linux.
-2. Ensure all Python features used in contributions exist and work in Python 3.7 and above.
+2. Ensure all Python features used in contributions exist and work in Python 3.8.1 and above.
 3. Create new tests for code you add or bugs you fix. It helps us help you by making sure we don't accidentally break anything :grinning:
 4. Create any issues for new features you'd like to implement and explain why this feature is useful to everyone and not just you personally.
 5. Don't add new cogs unless specifically given approval in an issue discussing said cog idea.
@@ -54,7 +53,7 @@ Red's repository is configured to follow a particular development workflow, usin
 
 ### 4.1 Setting up your development environment
 The following requirements must be installed prior to setting up:
- - Python 3.7.0 or greater
+ - Python 3.8.1 or greater
  - git
  - pip
  
@@ -83,7 +82,7 @@ If you're not on Windows, you should also have GNU make installed, and you can o
 We've recently started using [tox](https://github.com/tox-dev/tox) to run all of our tests. It's extremely simple to use, and if you followed the previous section correctly, it is already installed to your virtual environment.
 
 Currently, tox does the following, creating its own virtual environments for each stage:
-- Runs all of our unit tests with [pytest](https://github.com/pytest-dev/pytest) on python 3.7 (test environment `py37`)
+- Runs all of our unit tests with [pytest](https://github.com/pytest-dev/pytest) on python 3.8 (test environment `py38`)
 - Ensures documentation builds without warnings, and all hyperlinks have a valid destination (test environment `docs`)
 - Ensures that the code meets our style guide with [black](https://github.com/ambv/black) (test environment `style`)
 
@@ -107,7 +106,7 @@ You may have noticed we have a `Makefile` and a `make.bat` in the top-level dire
 
 The other make recipes are most likely for project maintainers rather than contributors.
 
-You can specify the Python executable used in the make recipes with the `PYTHON` environment variable, e.g. `make PYTHON=/usr/bin/python3.7 newenv`.
+You can specify the Python executable used in the make recipes with the `PYTHON` environment variable, e.g. `make PYTHON=/usr/bin/python3.8 newenv`.
 
 ### 4.5 Keeping your dependencies up to date
 Whenever you pull from upstream (V3/develop on the main repository) and you notice either of the files `setup.cfg` or `tools/dev-requirements.txt` have been changed, it can often mean some package dependencies have been updated, added or removed. To make sure you're testing and formatting with the most up-to-date versions of our dependencies, run `make syncenv`. You could also simply do `make newenv` to install them to a clean new virtual environment.

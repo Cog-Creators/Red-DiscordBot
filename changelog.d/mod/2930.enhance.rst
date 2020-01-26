@@ -1,0 +1,1 @@
+Added a defaultdays command to set the amount of days for the ban commands to use for days of messages deleted when days isn't used in the command itself.

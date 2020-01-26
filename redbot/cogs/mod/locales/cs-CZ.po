@@ -1,24 +1,23 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-05 22:33+0200\n"
-"PO-Revision-Date: 2019-07-14 02:15\n"
-"Last-Translator: Robert Jansen (Kowlin)\n"
+"POT-Creation-Date: 2019-07-14 04:24+0000\n"
+"PO-Revision-Date: 2020-01-07 21:48\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.0\n"
+"Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: cs\n"
-"X-Crowdin-File: /cogs/mod/locales/messages.pot\n"
+"X-Crowdin-File: /mod/locales/messages.pot\n"
 "Language: cs_CZ\n"
 
 #: redbot/cogs/mod/converters.py:16
 msgid "{} doesn't look like a valid user ID."
-msgstr ""
+msgstr "{} nevypadá jako platné ID uživatele."
 
 #: redbot/cogs/mod/events.py:53 redbot/cogs/mod/events.py:67
 msgid "Mention spam (Autoban)"
@@ -40,11 +39,11 @@ msgstr ""
 
 #: redbot/cogs/mod/kickban.py:83 redbot/cogs/mod/kickban.py:273
 msgid "Invalid days. Must be between 0 and 7."
-msgstr ""
+msgstr "Neplatné dny. Musí být mezi 0 a 7."
 
 #: redbot/cogs/mod/kickban.py:98 redbot/cogs/mod/kickban.py:185
 msgid "I'm not allowed to do that."
-msgstr ""
+msgstr "Na tuto akci nemám práva."
 
 #: redbot/cogs/mod/kickban.py:117
 msgid "The user was banned but an error occurred when trying to create the modlog entry: {reason}"
@@ -74,7 +73,7 @@ msgstr ""
 
 #: redbot/cogs/mod/kickban.py:227
 msgid "Done. It was about time."
-msgstr ""
+msgstr "Hotovo. Nylo načase."
 
 #: redbot/cogs/mod/kickban.py:243
 #, docstring
@@ -87,7 +86,7 @@ msgstr ""
 
 #: redbot/cogs/mod/kickban.py:254
 msgid "\\nErrors:\\n"
-msgstr ""
+msgstr "\\nChyby:\\n"
 
 #: redbot/cogs/mod/kickban.py:277
 msgid "I lack the permissions to do this."
@@ -103,7 +102,7 @@ msgstr ""
 
 #: redbot/cogs/mod/kickban.py:328
 msgid "User {user_id} does not exist."
-msgstr ""
+msgstr "Uživatel {user_id} neexistuje."
 
 #: redbot/cogs/mod/kickban.py:332
 msgid "Could not ban {user_id}: missing permissions."
@@ -124,7 +123,7 @@ msgstr ""
 
 #: redbot/cogs/mod/kickban.py:396
 msgid "I can't do that for some reason."
-msgstr ""
+msgstr "Z nějakého důvodu to udělat nemůžu."
 
 #: redbot/cogs/mod/kickban.py:398
 msgid "Something went wrong while banning"
@@ -175,11 +174,11 @@ msgstr ""
 
 #: redbot/cogs/mod/kickban.py:571
 msgid "It seems that user isn't banned!"
-msgstr ""
+msgstr "Zdá se, že uživatel není zabanován!"
 
 #: redbot/cogs/mod/kickban.py:579
 msgid "Something went wrong while attempting to unban that user"
-msgstr ""
+msgstr "Při pokusu o odbanování tohoto uživatele nastala chyba"
 
 #: redbot/cogs/mod/kickban.py:596
 msgid "Unbanned that user from this server"
@@ -187,7 +186,7 @@ msgstr ""
 
 #: redbot/cogs/mod/kickban.py:603
 msgid "You've been unbanned from {server}.\\nHere is an invite for that server: {invite_link}"
-msgstr ""
+msgstr "Byl jsi odbanován z {server}.\\nZde je pozvánka pro tento server: {invite_link}"
 
 #: redbot/cogs/mod/kickban.py:610
 msgid "I failed to send an invite to that user. Perhaps you may be able to send it for me?\\nHere's the invite link: {invite_link}"
@@ -205,7 +204,7 @@ msgstr ""
 #: redbot/cogs/mod/movetocore.py:54
 #, docstring
 msgid "Add servers or channels to the ignore list."
-msgstr ""
+msgstr "Přidat servery nebo kanály do ignorovaného seznamu."
 
 #: redbot/cogs/mod/movetocore.py:60
 #, docstring
@@ -214,29 +213,29 @@ msgstr ""
 
 #: redbot/cogs/mod/movetocore.py:68
 msgid "Channel added to ignore list."
-msgstr ""
+msgstr "Kanál přidán do seznamu ignorovaných."
 
 #: redbot/cogs/mod/movetocore.py:70
 msgid "Channel already in ignore list."
-msgstr ""
+msgstr "Kanál je již v seznamu ignorovaný."
 
 #: redbot/cogs/mod/movetocore.py:75
 #, docstring
 msgid "Ignore commands in this server."
-msgstr ""
+msgstr "Ignorovat příkazy na tomto serveru."
 
 #: redbot/cogs/mod/movetocore.py:79
 msgid "This server has been added to the ignore list."
-msgstr ""
+msgstr "Tento server byl přidán do ignorovaného seznamu."
 
 #: redbot/cogs/mod/movetocore.py:81
 msgid "This server is already being ignored."
-msgstr ""
+msgstr "Tento server je již ignorován."
 
 #: redbot/cogs/mod/movetocore.py:87
 #, docstring
 msgid "Remove servers or channels from the ignore list."
-msgstr ""
+msgstr "Odeberte servery nebo kanály z ignorovaného seznamu."
 
 #: redbot/cogs/mod/movetocore.py:93
 #, docstring
@@ -245,36 +244,36 @@ msgstr ""
 
 #: redbot/cogs/mod/movetocore.py:102
 msgid "Channel removed from ignore list."
-msgstr ""
+msgstr "Kanál byl odebrán ze seznamu ignorovaných."
 
 #: redbot/cogs/mod/movetocore.py:104
 msgid "That channel is not in the ignore list."
-msgstr ""
+msgstr "Tento kanál není v seznamu ignorovaných."
 
 #: redbot/cogs/mod/movetocore.py:109
 #, docstring
 msgid "Remove this server from the ignore list."
-msgstr ""
+msgstr "Odstranit server ze seznamu ignorovaných."
 
 #: redbot/cogs/mod/movetocore.py:113
 msgid "This server has been removed from the ignore list."
-msgstr ""
+msgstr "Tento server byl odebrán z ignorovaného seznamu."
 
 #: redbot/cogs/mod/movetocore.py:115
 msgid "This server is not in the ignore list."
-msgstr ""
+msgstr "Tento server není v seznamu ignorovaných."
 
 #: redbot/cogs/mod/movetocore.py:127
 msgid "Currently ignoring:\\n{} channels\\n{} guilds\\n"
-msgstr ""
+msgstr "V současné době ignoruje:\\n{} kanálů\\n{} klanů\\n"
 
 #: redbot/cogs/mod/mutes.py:14
 msgid "That user can't send messages in this channel."
-msgstr ""
+msgstr "Tento uživatel nemůže odesílat zprávy v tomto kanále."
 
 #: redbot/cogs/mod/mutes.py:15
 msgid "That user isn't muted in this channel."
-msgstr ""
+msgstr "Tento uživatel není v tomto kanálu umlčen."
 
 #: redbot/cogs/mod/mutes.py:19
 msgid "That user cannot be muted, as they have the Administrator permission."
@@ -286,7 +285,7 @@ msgstr ""
 
 #: redbot/cogs/mod/mutes.py:51
 msgid "That user is not in a voice channel."
-msgstr ""
+msgstr "Tento uživatel není v hlasovém kanálu."
 
 #: redbot/cogs/mod/mutes.py:58
 msgid "I require the {perms} permission(s) in that user's channel to do that."
@@ -316,7 +315,7 @@ msgstr ""
 
 #: redbot/cogs/mod/mutes.py:145
 msgid "That user is already muted and deafened server-wide!"
-msgstr ""
+msgstr "Tento uživatel je již umlčen a ztlumen na serveru!"
 
 #: redbot/cogs/mod/mutes.py:162
 msgid "User has been banned from speaking or listening in voice channels"
@@ -325,7 +324,7 @@ msgstr ""
 #: redbot/cogs/mod/mutes.py:168
 #, docstring
 msgid "Mute users."
-msgstr ""
+msgstr "Umlčet uživatele."
 
 #: redbot/cogs/mod/mutes.py:174
 #, docstring
@@ -348,16 +347,16 @@ msgstr ""
 #: redbot/cogs/mod/mutes.py:250
 #, docstring
 msgid "Mutes user in the server"
-msgstr ""
+msgstr "Umlčí uživatele na serveru"
 
 #: redbot/cogs/mod/mutes.py:274
 msgid "User has been muted in this server."
-msgstr ""
+msgstr "Uživatel byl umlčen na tomto serveru."
 
 #: redbot/cogs/mod/mutes.py:281
 #, docstring
 msgid "Unmute users."
-msgstr ""
+msgstr "Odmlčet uživatele."
 
 #: redbot/cogs/mod/mutes.py:289
 #, docstring
@@ -370,7 +369,7 @@ msgstr ""
 
 #: redbot/cogs/mod/mutes.py:324 redbot/cogs/mod/mutes.py:358
 msgid "Unmute failed. Reason: {}"
-msgstr ""
+msgstr "Odmlčení se nezdařilo. Důvod: {}"
 
 #: redbot/cogs/mod/mutes.py:333
 #, docstring
@@ -379,7 +378,7 @@ msgstr ""
 
 #: redbot/cogs/mod/mutes.py:356
 msgid "User unmuted in this channel."
-msgstr ""
+msgstr "Uživatel byl v tomto kanále odmlčen."
 
 #: redbot/cogs/mod/mutes.py:367
 #, docstring
@@ -397,7 +396,7 @@ msgstr ""
 
 #: redbot/cogs/mod/names.py:45
 msgid "Nicknames must be between 2 and 32 characters long."
-msgstr ""
+msgstr "Přezdívka musí být dlouhá 2 až 32 znaků."
 
 #: redbot/cogs/mod/names.py:53
 msgid "I do not have permission to rename that member. They may be higher than or equal to me in the role hierarchy."
@@ -409,11 +408,11 @@ msgstr ""
 
 #: redbot/cogs/mod/names.py:66
 msgid "That nickname is invalid."
-msgstr ""
+msgstr "Tato přezdívka je neplatná."
 
 #: redbot/cogs/mod/names.py:68
 msgid "An unexpected error has occured."
-msgstr ""
+msgstr "Došlo k neočekávané chybě."
 
 #: redbot/cogs/mod/names.py:70
 msgid "Done."
@@ -422,19 +421,19 @@ msgstr ""
 #: redbot/cogs/mod/names.py:76
 #, docstring
 msgid "Show information about a user.\\n\\n        This includes fields for status, discord join date, server\\n        join date, voice state and previous names/nicknames.\\n\\n        If the user has no roles, previous names or previous nicknames,\\n        these fields will be omitted.\\n        "
-msgstr ""
+msgstr "Zobrazit informace o uživateli.\\n\\n        To zahrnuje pole pro stav, datum registrace na discordu, datum připojení\\n        na server, stavy hlasu a předchozích jmen / přezdívky.\\n\\n        Pokud uživatel nemá žádné role, předchozí jména nebo předchozí přezdívky,\\n        tato pole budou vynechány.\\n        "
 
 #: redbot/cogs/mod/names.py:104
 msgid "Unknown"
-msgstr ""
+msgstr "Neznámý"
 
 #: redbot/cogs/mod/names.py:112
 msgid "{}\\n({} days ago)"
-msgstr ""
+msgstr "{}\\n(před {} dny {)"
 
 #: redbot/cogs/mod/names.py:113
 msgid "{}\\n({} days ago)"
-msgstr ""
+msgstr "{}\\n(před {} dny {)"
 
 #: redbot/cogs/mod/names.py:115
 msgid "Chilling in {} status"
@@ -442,60 +441,60 @@ msgstr ""
 
 #: redbot/cogs/mod/names.py:119
 msgid "Playing {}"
-msgstr ""
+msgstr "Hraje {}"
 
 #: redbot/cogs/mod/names.py:121
 msgid "Streaming [{}]({})"
-msgstr ""
+msgstr "Streamuje [{}]({})"
 
 #: redbot/cogs/mod/names.py:123
 msgid "Listening to {}"
-msgstr ""
+msgstr "Poslouchá {}"
 
 #: redbot/cogs/mod/names.py:125
 msgid "Watching {}"
-msgstr ""
+msgstr "Sleduje {}"
 
 #: redbot/cogs/mod/names.py:133
 msgid "Joined Discord on"
-msgstr ""
+msgstr "Přidal/a se na Discord"
 
 #: redbot/cogs/mod/names.py:134
 msgid "Joined this server on"
-msgstr ""
+msgstr "Přidal/a se na tento server"
 
 #: redbot/cogs/mod/names.py:136
 msgid "Roles"
-msgstr ""
+msgstr "Role"
 
 #: redbot/cogs/mod/names.py:140
 msgid "Previous Names"
-msgstr ""
+msgstr "Předchozí jména"
 
 #: redbot/cogs/mod/names.py:144
 msgid "Previous Nicknames"
-msgstr ""
+msgstr "Předchozí přezdívky"
 
 #: redbot/cogs/mod/names.py:147
 msgid "Current voice channel"
-msgstr ""
+msgstr "Aktuální hlasový kanál"
 
 #: redbot/cogs/mod/names.py:151
 msgid "Member #{} | User ID: {}"
-msgstr ""
+msgstr "Člen #{} | ID uživatele: {}"
 
 #: redbot/cogs/mod/names.py:168
 #, docstring
 msgid "Show previous names and nicknames of a user."
-msgstr ""
+msgstr "Zobrazit předchozí jména a přezdívky uživatele."
 
 #: redbot/cogs/mod/names.py:172
 msgid "**Past 20 names**:"
-msgstr ""
+msgstr "**Posledních 20 jmen**:"
 
 #: redbot/cogs/mod/names.py:178
 msgid "**Past 20 nicknames**:"
-msgstr ""
+msgstr "**Posledních 20 přezdívek**:"
 
 #: redbot/cogs/mod/names.py:185
 msgid "That user doesn't have any recorded name or nickname change."
@@ -504,20 +503,20 @@ msgstr ""
 #: redbot/cogs/mod/settings.py:20
 #, docstring
 msgid "Manage server administration settings."
-msgstr ""
+msgstr "Spravovat nastavení správy serveru."
 
 #: redbot/cogs/mod/settings.py:30
 msgid "Delete repeats: {num_repeats}\\n"
-msgstr ""
+msgstr "Odstranit opakování: {num_repeats}\\n"
 
 #: redbot/cogs/mod/settings.py:31
 msgid "after {num} repeats"
-msgstr ""
+msgstr "po {num} opakování"
 
 #: redbot/cogs/mod/settings.py:33 redbot/cogs/mod/settings.py:38
 #: redbot/cogs/mod/settings.py:41 redbot/cogs/mod/settings.py:49
 msgid "No"
-msgstr ""
+msgstr "Ne"
 
 #: redbot/cogs/mod/settings.py:35
 msgid "Ban mention spam: {num_mentions}\\n"
@@ -525,7 +524,7 @@ msgstr ""
 
 #: redbot/cogs/mod/settings.py:36
 msgid "{num} mentions"
-msgstr ""
+msgstr "{num} zmínění"
 
 #: redbot/cogs/mod/settings.py:40
 msgid "Respects hierarchy: {yes_or_no}\\n"
@@ -533,7 +532,7 @@ msgstr ""
 
 #: redbot/cogs/mod/settings.py:41 redbot/cogs/mod/settings.py:49
 msgid "Yes"
-msgstr ""
+msgstr "Ano"
 
 #: redbot/cogs/mod/settings.py:43
 msgid "Delete delay: {num_seconds}\\n"
@@ -541,11 +540,11 @@ msgstr ""
 
 #: redbot/cogs/mod/settings.py:44
 msgid "{num} seconds"
-msgstr ""
+msgstr "{num} sekund"
 
 #: redbot/cogs/mod/settings.py:46
 msgid "None"
-msgstr ""
+msgstr "Žádný"
 
 #: redbot/cogs/mod/settings.py:48
 msgid "Reinvite on unban: {yes_or_no}\\n"
@@ -584,7 +583,7 @@ msgstr ""
 
 #: redbot/cogs/mod/settings.py:120 redbot/cogs/mod/settings.py:146
 msgid "Repeated messages will be ignored."
-msgstr ""
+msgstr "Opakované zprávy budou ignorovány."
 
 #: redbot/cogs/mod/settings.py:126
 msgid "Messages repeated up to {num} times will be deleted."
@@ -639,9 +638,9 @@ msgstr ""
 
 #: redbot/cogs/mod/slowmode.py:36
 msgid "Slowmode interval is now {interval}."
-msgstr ""
+msgstr "Interval pomalého režimu nyní je {interval}."
 
 #: redbot/cogs/mod/slowmode.py:41
 msgid "Slowmode has been disabled."
-msgstr ""
+msgstr "Pomalý režim byl vypnut."
 

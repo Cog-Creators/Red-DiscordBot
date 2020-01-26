@@ -1,19 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-05 22:33+0200\n"
-"PO-Revision-Date: 2019-07-06 16:13\n"
-"Last-Translator: Robert Jansen (Kowlin)\n"
+"POT-Creation-Date: 2019-11-19 00:33+0000\n"
+"PO-Revision-Date: 2020-01-07 21:48\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.0\n"
+"Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: pl\n"
-"X-Crowdin-File: /core/locales/messages.pot\n"
+"X-Crowdin-File: /locales/messages.pot\n"
 "Language: pl_PL\n"
 
 #: redbot/core/bank.py:717
@@ -136,31 +135,31 @@ msgstr "Pokazuje informacje o Redzie"
 
 #: redbot/core/core_commands.py:294
 msgid "This is an instance of [Red, an open source Discord bot]({}) created by [Twentysix]({}) and [improved by many]({}).\\n\\nRed is backed by a passionate community who contributes and creates content for everyone to enjoy. [Join us today]({}) and help us improve!\\n\\n"
-msgstr ""
+msgstr "Jest to instancja [Red, open source bot]({}) stworzona przez [Twentysix]({}) i [ulepszana przez wielu]({}).\\n\\nRed jest wspierana przez pasjonującą społeczność, która tworzy treści dla użytku przez wszystkich. [Dołącz do nas dzisiaj]({}) i pomóż nam ulepszać!\\n\\n"
 
 #: redbot/core/core_commands.py:303
 msgid "Instance owned by"
-msgstr ""
+msgstr "Właścicielem instancji jest"
 
 #: redbot/core/core_commands.py:306
 msgid "Red version"
-msgstr ""
+msgstr "Wersja Red"
 
 #: redbot/core/core_commands.py:309
 msgid "Outdated"
-msgstr ""
+msgstr "Nieaktualna"
 
 #: redbot/core/core_commands.py:309
 msgid "Yes, {} is available"
-msgstr ""
+msgstr "Tak, {} jest dostępna"
 
 #: redbot/core/core_commands.py:312
 msgid "About this instance"
-msgstr ""
+msgstr "O tej instancji"
 
 #: redbot/core/core_commands.py:313
 msgid "About Red"
-msgstr ""
+msgstr "Więcej o Red"
 
 #: redbot/core/core_commands.py:316
 msgid "Bringing joy since 02 Jan 2016 (over {} days ago!)"
@@ -190,15 +189,15 @@ msgstr ""
 
 #: redbot/core/core_commands.py:347
 msgid "Global default: {}\\n"
-msgstr ""
+msgstr "Globalna wartość domyślna: {}\\n"
 
 #: redbot/core/core_commands.py:350
 msgid "Guild setting: {}\\n"
-msgstr ""
+msgstr "Ustawienia serwera: {}\\n"
 
 #: redbot/core/core_commands.py:352
 msgid "User setting: {}"
-msgstr ""
+msgstr "Ustawienia użytkownika: {}"
 
 #: redbot/core/core_commands.py:358
 #, docstring
@@ -1341,71 +1340,71 @@ msgstr ""
 msgid "{user}'s balance cannot rise above {max:,} {currency}."
 msgstr ""
 
-#: redbot/core/modlog.py:165
+#: redbot/core/modlog.py:152
 msgid "Case #{} | {} {}"
 msgstr ""
 
-#: redbot/core/modlog.py:169
+#: redbot/core/modlog.py:156
 msgid "**Reason:** {}"
 msgstr ""
 
-#: redbot/core/modlog.py:171
+#: redbot/core/modlog.py:158
 msgid "**Reason:** Use the `reason` command to add it"
 msgstr ""
 
-#: redbot/core/modlog.py:176
+#: redbot/core/modlog.py:163
 msgid "Unknown"
 msgstr ""
 
-#: redbot/core/modlog.py:216
+#: redbot/core/modlog.py:203
 msgid "Moderator"
 msgstr ""
 
-#: redbot/core/modlog.py:218
+#: redbot/core/modlog.py:205
 msgid "Until"
 msgstr ""
 
-#: redbot/core/modlog.py:219
+#: redbot/core/modlog.py:206
 msgid "Duration"
 msgstr ""
 
-#: redbot/core/modlog.py:223 redbot/core/modlog.py:228
+#: redbot/core/modlog.py:210 redbot/core/modlog.py:215
 msgid "Channel"
 msgstr ""
 
-#: redbot/core/modlog.py:224
+#: redbot/core/modlog.py:211
 msgid "{channel} (deleted)"
 msgstr ""
 
-#: redbot/core/modlog.py:230
+#: redbot/core/modlog.py:217
 msgid "Amended by"
 msgstr ""
 
-#: redbot/core/modlog.py:232
+#: redbot/core/modlog.py:219
 msgid "Last modified at"
 msgstr ""
 
-#: redbot/core/modlog.py:239
+#: redbot/core/modlog.py:226
 msgid "**User:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:240
+#: redbot/core/modlog.py:227
 msgid "**Moderator:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:243
+#: redbot/core/modlog.py:230
 msgid "**Until:** {}\\n**Duration:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:245
+#: redbot/core/modlog.py:232
 msgid "**Channel**: {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:247
+#: redbot/core/modlog.py:234
 msgid "**Amended by:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:249
+#: redbot/core/modlog.py:236
 msgid "**Last modified at:** {}\\n"
 msgstr ""
 

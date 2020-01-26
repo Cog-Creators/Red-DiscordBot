@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import asyncio
 import datetime
-from typing import Union, List, Optional
+from typing import Union, List, Optional, TYPE_CHECKING
 from functools import wraps
 
 import discord
@@ -8,8 +10,11 @@ import discord
 from redbot.core.utils.chat_formatting import humanize_number
 from . import Config, errors, commands
 from .i18n import Translator
-from .bot import Red
+
 from .errors import BankPruneError
+
+if TYPE_CHECKING:
+    from .bot import Red
 
 _ = Translator("Bank API", __file__)
 
@@ -170,12 +175,12 @@ async def can_spend(member: discord.Member, amount: int) -> bool:
     return await get_balance(member) >= amount
 
 
-async def set_balance(member: discord.Member, amount: int) -> int:
+async def set_balance(member: Union[discord.Member, discord.User], amount: int) -> int:
     """Set an account balance.
 
     Parameters
     ----------
-    member : discord.Member
+    member : Union[discord.Member, discord.User]
         The member whose balance to set.
     amount : int
         The amount to set the balance to.
@@ -189,16 +194,19 @@ async def set_balance(member: discord.Member, amount: int) -> int:
     ------
     ValueError
         If attempting to set the balance to a negative number.
+    RuntimeError
+        If the bank is guild-specific and a discord.User object is provided.
     BalanceTooHigh
         If attempting to set the balance to a value greater than
-        ``bank.MAX_BALANCE``
+        ``bank._MAX_BALANCE``.
 
     """
     if amount < 0:
         raise ValueError("Not allowed to have negative balance.")
-    max_bal = await get_max_balance(member.guild)
+    guild = getattr(member, "guild", None)
+    max_bal = await get_max_balance(guild)
     if amount > max_bal:
-        currency = await get_currency_name(member.guild)
+        currency = await get_currency_name(guild)
         raise errors.BalanceTooHigh(
             user=member.display_name, max_balance=max_bal, currency_name=currency
         )
@@ -303,14 +311,18 @@ async def deposit_credits(member: discord.Member, amount: int) -> int:
     return await set_balance(member, amount + bal)
 
 
-async def transfer_credits(from_: discord.Member, to: discord.Member, amount: int):
+async def transfer_credits(
+    from_: Union[discord.Member, discord.User],
+    to: Union[discord.Member, discord.User],
+    amount: int,
+):
     """Transfer a given amount of credits from one account to another.
 
     Parameters
     ----------
-    from_: discord.Member
+    from_: Union[discord.Member, discord.User]
         The member to transfer from.
-    to : discord.Member
+    to : Union[discord.Member, discord.User]
         The member to transfer to.
     amount : int
         The amount to transfer.
@@ -326,10 +338,11 @@ async def transfer_credits(from_: discord.Member, to: discord.Member, amount: in
         If the amount is invalid or if ``from_`` has insufficient funds.
     TypeError
         If the amount is not an `int`.
+    RuntimeError
+        If the bank is guild-specific and a discord.User object is provided.
     BalanceTooHigh
         If the balance after the transfer would be greater than
-        ``bank.MAX_BALANCE``
-
+        ``bank._MAX_BALANCE``.
     """
     if not isinstance(amount, int):
         raise TypeError("Transfer amount must be of type int, not {}.".format(type(amount)))
@@ -339,11 +352,11 @@ async def transfer_credits(from_: discord.Member, to: discord.Member, amount: in
                 humanize_number(amount, override_locale="en_US")
             )
         )
-
-    max_bal = await get_max_balance(to.guild)
+    guild = getattr(to, "guild", None)
+    max_bal = await get_max_balance(guild)
 
     if await get_balance(to) + amount > max_bal:
-        currency = await get_currency_name(to.guild)
+        currency = await get_currency_name(guild)
         raise errors.BalanceTooHigh(
             user=to.display_name, max_balance=max_bal, currency_name=currency
         )
@@ -825,9 +838,9 @@ async def set_default_balance(amount: int, guild: discord.Guild = None) -> int:
     amount = int(amount)
     max_bal = await get_max_balance(guild)
 
-    if not (0 < amount <= max_bal):
+    if not (0 <= amount <= max_bal):
         raise ValueError(
-            "Amount must be greater than zero and less than {max}.".format(
+            "Amount must be greater than or equal zero and less than or equal {max}.".format(
                 max=humanize_number(max_bal, override_locale="en_US")
             )
         )

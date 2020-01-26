@@ -7,7 +7,7 @@ Commands Package
 This package acts almost identically to :doc:`discord.ext.commands <dpy:ext/commands/api>`; i.e.
 all of the attributes from discord.py's are also in ours. 
 Some of these attributes, however, have been slightly modified, while others have been added to
-extend functionlities used throughout the bot, as outlined below.
+extend functionalities used throughout the bot, as outlined below.
 
 .. autofunction:: redbot.core.commands.command
 
@@ -15,6 +15,7 @@ extend functionlities used throughout the bot, as outlined below.
 
 .. autoclass:: redbot.core.commands.Command
     :members:
+    :inherited-members: format_help_for_context
 
 .. autoclass:: redbot.core.commands.Group
     :members:

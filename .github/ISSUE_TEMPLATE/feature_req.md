@@ -1,6 +1,9 @@
 ---
 name: Feature request
 about: For feature requests regarding Red itself.
+title: ''
+labels: 'Type: Feature'
+assignees: ''
 
 ---
 

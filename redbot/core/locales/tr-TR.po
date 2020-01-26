@@ -1,24 +1,23 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-05 22:33+0200\n"
-"PO-Revision-Date: 2019-07-06 16:14\n"
-"Last-Translator: Robert Jansen (Kowlin)\n"
+"POT-Creation-Date: 2019-11-19 00:33+0000\n"
+"PO-Revision-Date: 2020-01-07 21:49\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.0\n"
+"Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: tr\n"
-"X-Crowdin-File: /core/locales/messages.pot\n"
+"X-Crowdin-File: /locales/messages.pot\n"
 "Language: tr_TR\n"
 
 #: redbot/core/bank.py:717
 msgid "Can't pay for this command in DM without a global bank."
-msgstr ""
+msgstr "Can't pay for this command in DM without a global bank."
 
 #: redbot/core/bank.py:724
 msgid "You need at least {cost} {currency} to use this command."
@@ -105,19 +104,19 @@ msgstr ""
 
 #: redbot/core/cog_manager.py:444
 msgid "**{} loaded:**\\n"
-msgstr ""
+msgstr "**{} yüklendi:**\\n"
 
 #: redbot/core/cog_manager.py:445
 msgid "**{} unloaded:**\\n"
-msgstr ""
+msgstr "**{} yüklenmesi kaldırıldı:**\\n"
 
 #: redbot/core/cog_manager.py:455
 msgid "**{} loaded:**\\n"
-msgstr ""
+msgstr "**{} yüklendi:**\\n"
 
 #: redbot/core/cog_manager.py:457
 msgid "**{} unloaded:**\\n"
-msgstr ""
+msgstr "**{} yüklenmesi kaldırıldı:**\\n"
 
 #: redbot/core/core_commands.py:264
 #, docstring
@@ -144,15 +143,15 @@ msgstr ""
 
 #: redbot/core/core_commands.py:306
 msgid "Red version"
-msgstr ""
+msgstr "Red Sürümü"
 
 #: redbot/core/core_commands.py:309
 msgid "Outdated"
-msgstr ""
+msgstr "Güncel Değil"
 
 #: redbot/core/core_commands.py:309
 msgid "Yes, {} is available"
-msgstr ""
+msgstr "Evet, {} mevcut"
 
 #: redbot/core/core_commands.py:312
 msgid "About this instance"
@@ -160,7 +159,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:313
 msgid "About Red"
-msgstr ""
+msgstr "Red Hakkında"
 
 #: redbot/core/core_commands.py:316
 msgid "Bringing joy since 02 Jan 2016 (over {} days ago!)"
@@ -186,7 +185,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:345
 msgid "Embed settings:\\n\\n"
-msgstr ""
+msgstr "Embed ayarları:\\n\\n"
 
 #: redbot/core/core_commands.py:347
 msgid "Global default: {}\\n"
@@ -288,15 +287,15 @@ msgstr "Yanıt yok, zaman aşımı oluştu."
 
 #: redbot/core/core_commands.py:509
 msgid "Alright. Bye :wave:"
-msgstr ""
+msgstr "Pekala, görüşürüz :wave:"
 
 #: redbot/core/core_commands.py:510
 msgid "Leaving guild '{}'"
-msgstr ""
+msgstr "'{}' sunucudan ayrılıyor"
 
 #: redbot/core/core_commands.py:513
 msgid "Alright, I'll stay then :)"
-msgstr ""
+msgstr "Tamam, kalayım öyleyse :)"
 
 #: redbot/core/core_commands.py:518
 #, docstring
@@ -305,11 +304,11 @@ msgstr "Listeler ve sunucuları gitmek verir"
 
 #: redbot/core/core_commands.py:529
 msgid "To leave a server, just type its number."
-msgstr ""
+msgstr "Bir sunucudan ayrılmak için sadece numara yazın."
 
 #: redbot/core/core_commands.py:544
 msgid "I cannot leave a guild I am the owner of."
-msgstr ""
+msgstr "Sunucudan ayrılamıyorum sunucu sahibiyim."
 
 #: redbot/core/core_commands.py:547
 msgid "Are you sure you want me to leave {}? (yes/no)"
@@ -323,7 +322,7 @@ msgstr "Tamamdır."
 
 #: redbot/core/core_commands.py:556
 msgid "Alright then."
-msgstr ""
+msgstr "Peki öyleyse."
 
 #: redbot/core/core_commands.py:563
 #, docstring
@@ -441,7 +440,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:777
 msgid "{bot_name} Settings:\\n\\nPrefixes: {prefixes}\\n{guild_settings}Locale: {locale}"
-msgstr ""
+msgstr "{bot_name} Ayarları:\\n\\nÖn-ekler: {prefixes}\\n{guild_settings} Dili: {locale}"
 
 #: redbot/core/core_commands.py:795
 #, docstring
@@ -829,7 +828,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1377
 msgid "No languages found."
-msgstr ""
+msgstr "Hiç dil bulunamadı."
 
 #: redbot/core/core_commands.py:1386
 #, docstring
@@ -1341,71 +1340,71 @@ msgstr ""
 msgid "{user}'s balance cannot rise above {max:,} {currency}."
 msgstr "{user}' ın denge değil artış yukarıda {max:,} {currency}."
 
-#: redbot/core/modlog.py:165
+#: redbot/core/modlog.py:152
 msgid "Case #{} | {} {}"
 msgstr ""
 
-#: redbot/core/modlog.py:169
+#: redbot/core/modlog.py:156
 msgid "**Reason:** {}"
 msgstr ""
 
-#: redbot/core/modlog.py:171
+#: redbot/core/modlog.py:158
 msgid "**Reason:** Use the `reason` command to add it"
 msgstr ""
 
-#: redbot/core/modlog.py:176
+#: redbot/core/modlog.py:163
 msgid "Unknown"
 msgstr ""
 
-#: redbot/core/modlog.py:216
+#: redbot/core/modlog.py:203
 msgid "Moderator"
 msgstr ""
 
-#: redbot/core/modlog.py:218
+#: redbot/core/modlog.py:205
 msgid "Until"
 msgstr ""
 
-#: redbot/core/modlog.py:219
+#: redbot/core/modlog.py:206
 msgid "Duration"
 msgstr ""
 
-#: redbot/core/modlog.py:223 redbot/core/modlog.py:228
+#: redbot/core/modlog.py:210 redbot/core/modlog.py:215
 msgid "Channel"
 msgstr ""
 
-#: redbot/core/modlog.py:224
+#: redbot/core/modlog.py:211
 msgid "{channel} (deleted)"
 msgstr ""
 
-#: redbot/core/modlog.py:230
+#: redbot/core/modlog.py:217
 msgid "Amended by"
 msgstr ""
 
-#: redbot/core/modlog.py:232
+#: redbot/core/modlog.py:219
 msgid "Last modified at"
 msgstr ""
 
-#: redbot/core/modlog.py:239
+#: redbot/core/modlog.py:226
 msgid "**User:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:240
+#: redbot/core/modlog.py:227
 msgid "**Moderator:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:243
+#: redbot/core/modlog.py:230
 msgid "**Until:** {}\\n**Duration:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:245
+#: redbot/core/modlog.py:232
 msgid "**Channel**: {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:247
+#: redbot/core/modlog.py:234
 msgid "**Amended by:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:249
+#: redbot/core/modlog.py:236
 msgid "**Last modified at:** {}\\n"
 msgstr ""
 

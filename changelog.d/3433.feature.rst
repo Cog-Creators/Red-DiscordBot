@@ -1,0 +1,1 @@
+Added a ``[p]helpset deletedelay`` command, that lets you set a delay (in seconds) after which help messages / pages will be deleted.

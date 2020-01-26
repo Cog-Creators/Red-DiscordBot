@@ -28,6 +28,7 @@ class ModSettings(MixinMeta):
             delete_delay = data["delete_delay"]
             reinvite_on_unban = data["reinvite_on_unban"]
             dm_on_kickban = data["dm_on_kickban"]
+            default_days = data["default_days"]
             msg = ""
             msg += _("Delete repeats: {num_repeats}\n").format(
                 num_repeats=_("after {num} repeats").format(num=delete_repeats)
@@ -53,6 +54,12 @@ class ModSettings(MixinMeta):
             msg += _("Send message to users on kick/ban: {yes_or_no}\n").format(
                 yes_or_no=_("Yes") if dm_on_kickban else _("No")
             )
+            if default_days:
+                msg += _(
+                    "Default message history delete on ban: Previous {num_days} days\n"
+                ).format(num_days=default_days)
+            else:
+                msg += _("Default message history delete on ban: Don't delete any\n")
             await ctx.send(box(msg))
 
     @modset.command()
@@ -220,6 +227,27 @@ class ModSettings(MixinMeta):
             await ctx.send(_"DM when kicked/banned is currently set to: {toggledm}")
         await self.settings.guild(guild).dm_on_kickban.set(enabled)
         if enabled:
-            await ctx.send(_("Users will receive a DM when they are kicked or banned."))
+            await ctx.send(
+                _("Bot will now attempt to send a DM to user before kick and ban.")
+            )
         else:
-            await ctx.send(_("User will not receive a DM when they are kicked or banned."))
+            await ctx.send(
+                _("Bot will no longer attempt to send a DM to user before kick and ban.")
+            )
+
+    @modset.command()
+    @commands.guild_only()
+    async def defaultdays(self, ctx: commands.Context, days: int = 0):
+        """Set the default number of days worth of messages to be deleted when a user is banned.
+
+        The number of days must be between 0 and 7.
+        """
+        guild = ctx.guild
+        if not (0 <= days <= 7):
+            return await ctx.send(_("Invalid number of days. Must be between 0 and 7."))
+        await self.settings.guild(guild).default_days.set(days)
+        await ctx.send(
+            _("{days} days worth of messages will be deleted when a user is banned.").format(
+                days=days
+            )
+        )

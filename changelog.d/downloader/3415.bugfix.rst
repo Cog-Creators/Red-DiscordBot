@@ -1,0 +1,1 @@
+Downloader will now do the initialization in background to avoid timeout issues during bot startup.
