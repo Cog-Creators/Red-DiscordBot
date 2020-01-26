@@ -63,7 +63,7 @@ from .requires import (
     mod_or_permissions as mod_or_permissions,
 )
 
-from .dpy_reimplements import (
+from ._dpy_reimplements import (
     check as check,
     guild_only as guild_only,
     cooldown as cooldown,
