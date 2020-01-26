@@ -46,6 +46,7 @@ __all__ = [
     "permissions_check",
     "bot_has_permissions",
     "has_permissions",
+    "has_guild_permissions",
     "is_owner",
     "guildowner",
     "guildowner_or_permissions",
@@ -643,6 +644,18 @@ def permissions_check(predicate: CheckPredicate):
         return func
 
     return decorator
+
+
+def has_guild_permissions(**perms):
+    """Restrict the command to users with these guild permissions.
+
+    This check can be overridden by rules.
+    """
+
+    def predicate(ctx):
+        return ctx.guild and ctx.author.guild_permissions > discord.Permissions(**perms)
+
+    return permissions_check(predicate)
 
 
 def bot_has_permissions(**perms: bool):

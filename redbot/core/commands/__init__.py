@@ -53,6 +53,7 @@ from .requires import (
     permissions_check as permissions_check,
     bot_has_permissions as bot_has_permissions,
     has_permissions as has_permissions,
+    has_guild_permissions as has_guild_permissions,
     is_owner as is_owner,
     guildowner as guildowner,
     guildowner_or_permissions as guildowner_or_permissions,
@@ -137,4 +138,8 @@ from discord.ext.commands import (
     PartialEmojiConverter as PartialEmojiConverter,
     check_any as check_any,
     max_concurrency as max_concurrency,
+    CheckAnyFailure as CheckAnyFailure,
+    MaxConcurrency as MaxConcurrency,
+    MaxConcurrencyReached as MaxConcurrencyReached,
+    bot_has_guild_permissions as bot_has_guild_permissions,
 )
