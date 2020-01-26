@@ -199,15 +199,17 @@ class KickBanMixin(MixinMeta):
             await ctx.send(_("I cannot do that due to discord hierarchy rules"))
             return
         audit_reason = get_audit_reason(author, reason)
-        if reason is None:
-            reason = _("No reason was given.")
         toggle = await self.settings.guild(guild).dm_on_kickban()
         if toggle:
             with contextlib.suppress(discord.HTTPException):
                 em = discord.Embed(
                     title=bold(_("You have been kicked from {guild}.").format(guild=guild))
                 )
-                em.add_field(name=_("**Reason**"), value=reason, inline=False)
+                em.add_field(
+                    name=_("**Reason**"),
+                    value=reason if reason is not None else _("No reason was given."),
+                    inline=False,
+                )
                 await user.send(embed=em)
         try:
             await guild.kick(user, reason=audit_reason)
