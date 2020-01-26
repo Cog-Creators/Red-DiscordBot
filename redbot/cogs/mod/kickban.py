@@ -178,18 +178,20 @@ class KickBanMixin(MixinMeta):
                 )
             )
             return
+        elif ctx.guild.me.top_role <= user.top_role or user == ctx.guild.owner:
+            await ctx.send(_("I cannot do that due to discord hierarchy rules"))
+            return
         audit_reason = get_audit_reason(author, reason)
         if reason is None:
             reason = _("No reason was given.")
         toggle = await self.settings.guild(guild).toggle_dm()
         if toggle:
-            if guild.me.top_role > user.top_role and user != guild.owner and author != user:
-                with contextlib.suppress(discord.HTTPException):
-                    em = discord.Embed(
-                        title=bold(_("You have been kicked from {guild}.").format(guild=guild))
-                    )
-                    em.add_field(name=_("**Reason**"), value=reason, inline=False)
-                    await user.send(embed=em)
+            with contextlib.suppress(discord.HTTPException):
+                em = discord.Embed(
+                    title=bold(_("You have been kicked from {guild}.").format(guild=guild))
+                )
+                em.add_field(name=_("**Reason**"), value=reason, inline=False)
+                await user.send(embed=em)
         try:
             await guild.kick(user, reason=audit_reason)
             log.info("{}({}) kicked {}({})".format(author.name, author.id, user.name, user.id))
