@@ -652,8 +652,10 @@ def has_guild_permissions(**perms):
     This check can be overridden by rules.
     """
 
+    _validate_perms_dict(perms)
+
     def predicate(ctx):
-        return ctx.guild and ctx.author.guild_permissions > discord.Permissions(**perms)
+        return ctx.guild and ctx.author.guild_permissions >= discord.Permissions(**perms)
 
     return permissions_check(predicate)
 
