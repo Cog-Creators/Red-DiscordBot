@@ -388,6 +388,9 @@ class Core(commands.Cog, CoreLogic):
             if ctx.guild:
                 guild_setting = await self.bot._config.guild(ctx.guild).embeds()
                 text += _("Guild setting: {}\n").format(guild_setting)
+            if ctx.channel:
+                channel_setting = await self.bot._config.channel(ctx.channel).embeds()
+                text += _("Channel setting: {}\n").format(channel_setting)
             user_setting = await self.bot._config.user(ctx.author).embeds()
             text += _("User setting: {}").format(user_setting)
             await ctx.send(box(text))
@@ -429,6 +432,31 @@ class Core(commands.Cog, CoreLogic):
         else:
             await ctx.send(
                 _("Embeds are now {} for this guild.").format(
+                    _("enabled") if enabled else _("disabled")
+                )
+            )
+
+    @embedset.command(name="channel")
+    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guild_only()
+    async def embedset_channel(self, ctx: commands.Context, enabled: bool = None):
+        """
+        Toggle the channel's embed setting.
+
+        If enabled is None, the setting will be unset and
+        the guild default will be used instead.
+
+        If set, this is used instead of the guild default
+        to determine whether or not to use embeds. This is
+        used for all commands done in a channel except
+        for help commands.
+        """
+        await self.bot._config.channel(ctx.channel).embeds.set(enabled)
+        if enabled is None:
+            await ctx.send(_("Embeds will now fall back to the global setting."))
+        else:
+            await ctx.send(
+                _("Embeds are now {} for this channel.").format(
                     _("enabled") if enabled else _("disabled")
                 )
             )
@@ -1484,7 +1512,9 @@ class Core(commands.Cog, CoreLogic):
                 if not destination.permissions_for(destination.guild.me).send_messages:
                     continue
                 if destination.permissions_for(destination.guild.me).embed_links:
-                    send_embed = await ctx.bot._config.guild(destination.guild).embeds()
+                    send_embed = await ctx.bot._config.channel(destination).embeds()
+                    if send_embed is None:
+                        send_embed = await ctx.bot._config.guild(destination.guild).embeds()
                 else:
                     send_embed = False
 
