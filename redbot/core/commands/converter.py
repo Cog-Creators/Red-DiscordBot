@@ -1,14 +1,33 @@
+"""
+commands.converter
+==================
+This module contains useful functions and classes for command argument conversion.
+
+Some of the converters within are included provisionaly and are marked as such.
+"""
+import os
 import re
 import functools
 from datetime import timedelta
-from typing import TYPE_CHECKING, Optional, List, Dict
+from typing import (
+    TYPE_CHECKING,
+    Generic,
+    Optional,
+    Optional as NoParseOptional,
+    Tuple,
+    List,
+    Dict,
+    Type,
+    TypeVar,
+    Literal as Literal,
+)
 
 import discord
 from discord.ext import commands as dpy_commands
+from discord.ext.commands import BadArgument
 
-from . import BadArgument
 from ..i18n import Translator
-from ..utils.chat_formatting import humanize_timedelta
+from ..utils.chat_formatting import humanize_timedelta, humanize_list
 
 if TYPE_CHECKING:
     from .context import Context
@@ -17,10 +36,13 @@ __all__ = [
     "APIToken",
     "DictConverter",
     "GuildConverter",
+    "UserInputOptional",
+    "NoParseOptional",
     "TimedeltaConverter",
     "get_dict_converter",
     "get_timedelta_converter",
     "parse_timedelta",
+    "Literal",
 ]
 
 _ = Translator("commands.converter", __file__)
@@ -67,7 +89,7 @@ def parse_timedelta(
     allowed_units : Optional[List[str]]
         If provided, you can constrain a user to expressing the amount of time
         in specific units. The units you can chose to provide are the same as the
-        parser understands. `weeks` `days` `hours` `minutes` `seconds`
+        parser understands. (``weeks``, ``days``, ``hours``, ``minutes``, ``seconds``)
 
     Returns
     -------
@@ -138,17 +160,18 @@ class APIToken(discord.ext.commands.Converter):
     This will parse the input argument separating the key value pairs into a 
     format to be used for the core bots API token storage.
     
-    This will split the argument by either `;` ` `, or `,` and return a dict
+    This will split the argument by a space, comma, or semicolon and return a dict
     to be stored. Since all API's are different and have different naming convention,
     this leaves the onus on the cog creator to clearly define how to setup the correct
     credential names for their cogs.
 
-    Note: Core usage of this has been replaced with DictConverter use instead.
+    Note: Core usage of this has been replaced with `DictConverter` use instead.
 
-    This may be removed at a later date (with warning)
+    .. warning::
+        This will be removed in version 3.4.
     """
 
-    async def convert(self, ctx, argument) -> dict:
+    async def convert(self, ctx: "Context", argument) -> dict:
         bot = ctx.bot
         result = {}
         match = re.split(r";|,| ", argument)
@@ -162,140 +185,262 @@ class APIToken(discord.ext.commands.Converter):
         return result
 
 
-class DictConverter(dpy_commands.Converter):
-    """
-    Converts pairs of space seperated values to a dict
-    """
+# Below this line are a lot of lies for mypy about things that *end up* correct when
+# These are used for command conversion purposes. Please refer to the portion
+# which is *not* for type checking for the actual implementation
+# and ensure the lies stay correct for how the object should look as a typehint
 
-    def __init__(self, *expected_keys: str, delims: Optional[List[str]] = None):
-        self.expected_keys = expected_keys
-        self.delims = delims or [" "]
-        self.pattern = re.compile(r"|".join(re.escape(d) for d in self.delims))
+if TYPE_CHECKING:
+    DictConverter = Dict[str, str]
+else:
 
-    async def convert(self, ctx: "Context", argument: str) -> Dict[str, str]:
+    class DictConverter(dpy_commands.Converter):
+        """
+        Converts pairs of space seperated values to a dict
+        """
 
-        ret: Dict[str, str] = {}
-        args = self.pattern.split(argument)
+        def __init__(self, *expected_keys: str, delims: Optional[List[str]] = None):
+            self.expected_keys = expected_keys
+            self.delims = delims or [" "]
+            self.pattern = re.compile(r"|".join(re.escape(d) for d in self.delims))
 
-        if len(args) % 2 != 0:
-            raise BadArgument()
+        async def convert(self, ctx: "Context", argument: str) -> Dict[str, str]:
+            ret: Dict[str, str] = {}
+            args = self.pattern.split(argument)
 
-        iterator = iter(args)
+            if len(args) % 2 != 0:
+                raise BadArgument()
 
-        for key in iterator:
-            if self.expected_keys and key not in self.expected_keys:
-                raise BadArgument(_("Unexpected key {key}").format(key=key))
+            iterator = iter(args)
 
-            ret[key] = next(iterator)
+            for key in iterator:
+                if self.expected_keys and key not in self.expected_keys:
+                    raise BadArgument(_("Unexpected key {key}").format(key=key))
 
-        return ret
+                ret[key] = next(iterator)
 
-
-def get_dict_converter(*expected_keys: str, delims: Optional[List[str]] = None) -> type:
-    """
-    Returns a typechecking safe `DictConverter` suitable for use with discord.py
-    """
-
-    class PartialMeta(type(DictConverter)):
-        __call__ = functools.partialmethod(
-            type(DictConverter).__call__, *expected_keys, delims=delims
-        )
-
-    class ValidatedConverter(DictConverter, metaclass=PartialMeta):
-        pass
-
-    return ValidatedConverter
+            return ret
 
 
-class TimedeltaConverter(dpy_commands.Converter):
-    """
-    This is a converter for timedeltas.
-    The units should be in order from largest to smallest.
-    This works with or without whitespace.
+if TYPE_CHECKING:
 
-    See `parse_timedelta` for more information about how this functions.
+    def get_dict_converter(*expected_keys: str, delims: Optional[List[str]] = None) -> Type[dict]:
+        ...
 
-    Attributes
-    ----------
-    maximum : Optional[timedelta]
-        If provided, any parsed value higher than this will raise an exception
-    minimum : Optional[timedelta]
-        If provided, any parsed value lower than this will raise an exception
-    allowed_units : Optional[List[str]]
-        If provided, you can constrain a user to expressing the amount of time
-        in specific units. The units you can chose to provide are the same as the
-        parser understands: `weeks` `days` `hours` `minutes` `seconds`
-    default_unit : Optional[str]
-        If provided, it will additionally try to match integer-only input into
-        a timedelta, using the unit specified. Same units as in `allowed_units`
-        apply.
-    """
 
-    def __init__(self, *, minimum=None, maximum=None, allowed_units=None, default_unit=None):
-        self.allowed_units = allowed_units
-        self.default_unit = default_unit
-        self.minimum = minimum
-        self.maximum = maximum
+else:
 
-    async def convert(self, ctx: "Context", argument: str) -> timedelta:
-        if self.default_unit and argument.isdecimal():
-            delta = timedelta(**{self.default_unit: int(argument)})
-        else:
-            delta = parse_timedelta(
-                argument,
-                minimum=self.minimum,
-                maximum=self.maximum,
-                allowed_units=self.allowed_units,
+    def get_dict_converter(*expected_keys: str, delims: Optional[List[str]] = None) -> Type[dict]:
+        """
+        Returns a typechecking safe `DictConverter` suitable for use with discord.py
+        """
+
+        class PartialMeta(type):
+            __call__ = functools.partialmethod(
+                type(DictConverter).__call__, *expected_keys, delims=delims
             )
-        if delta is not None:
-            return delta
-        raise BadArgument()  # This allows this to be a required argument.
+
+        class ValidatedConverter(DictConverter, metaclass=PartialMeta):
+            pass
+
+        return ValidatedConverter
 
 
-def get_timedelta_converter(
-    *,
-    default_unit: Optional[str] = None,
-    maximum: Optional[timedelta] = None,
-    minimum: Optional[timedelta] = None,
-    allowed_units: Optional[List[str]] = None,
-) -> type:
-    """
-    This creates a type suitable for typechecking which works with discord.py's
-    commands.
-    
-    See `parse_timedelta` for more information about how this functions.
+if TYPE_CHECKING:
+    TimedeltaConverter = timedelta
+else:
 
-    Parameters
-    ----------
-    maximum : Optional[timedelta]
-        If provided, any parsed value higher than this will raise an exception
-    minimum : Optional[timedelta]
-        If provided, any parsed value lower than this will raise an exception
-    allowed_units : Optional[List[str]]
-        If provided, you can constrain a user to expressing the amount of time
-        in specific units. The units you can chose to provide are the same as the
-        parser understands: `weeks` `days` `hours` `minutes` `seconds`
-    default_unit : Optional[str]
-        If provided, it will additionally try to match integer-only input into
-        a timedelta, using the unit specified. Same units as in `allowed_units`
-        apply.
+    class TimedeltaConverter(dpy_commands.Converter):
+        """
+        This is a converter for timedeltas.
+        The units should be in order from largest to smallest.
+        This works with or without whitespace.
 
-    Returns
-    -------
-    type
-        The converter class, which will be a subclass of `TimedeltaConverter`
-    """
+        See `parse_timedelta` for more information about how this functions.
 
-    class PartialMeta(type(TimedeltaConverter)):
-        __call__ = functools.partialmethod(
-            type(DictConverter).__call__,
-            allowed_units=allowed_units,
-            default_unit=default_unit,
-            minimum=minimum,
-            maximum=maximum,
-        )
+        Attributes
+        ----------
+        maximum : Optional[timedelta]
+            If provided, any parsed value higher than this will raise an exception
+        minimum : Optional[timedelta]
+            If provided, any parsed value lower than this will raise an exception
+        allowed_units : Optional[List[str]]
+            If provided, you can constrain a user to expressing the amount of time
+            in specific units. The units you can choose to provide are the same as the
+            parser understands: (``weeks``, ``days``, ``hours``, ``minutes``, ``seconds``)
+        default_unit : Optional[str]
+            If provided, it will additionally try to match integer-only input into
+            a timedelta, using the unit specified. Same units as in ``allowed_units``
+            apply.
+        """
 
-    class ValidatedConverter(TimedeltaConverter, metaclass=PartialMeta):
-        pass
+        def __init__(self, *, minimum=None, maximum=None, allowed_units=None, default_unit=None):
+            self.allowed_units = allowed_units
+            self.default_unit = default_unit
+            self.minimum = minimum
+            self.maximum = maximum
 
-    return ValidatedConverter
+        async def convert(self, ctx: "Context", argument: str) -> timedelta:
+            if self.default_unit and argument.isdecimal():
+                delta = timedelta(**{self.default_unit: int(argument)})
+            else:
+                delta = parse_timedelta(
+                    argument,
+                    minimum=self.minimum,
+                    maximum=self.maximum,
+                    allowed_units=self.allowed_units,
+                )
+            if delta is not None:
+                return delta
+            raise BadArgument()  # This allows this to be a required argument.
+
+
+if TYPE_CHECKING:
+
+    def get_timedelta_converter(
+        *,
+        default_unit: Optional[str] = None,
+        maximum: Optional[timedelta] = None,
+        minimum: Optional[timedelta] = None,
+        allowed_units: Optional[List[str]] = None,
+    ) -> Type[timedelta]:
+        ...
+
+
+else:
+
+    def get_timedelta_converter(
+        *,
+        default_unit: Optional[str] = None,
+        maximum: Optional[timedelta] = None,
+        minimum: Optional[timedelta] = None,
+        allowed_units: Optional[List[str]] = None,
+    ) -> Type[timedelta]:
+        """
+        This creates a type suitable for typechecking which works with discord.py's
+        commands.
+
+        See `parse_timedelta` for more information about how this functions.
+
+        Parameters
+        ----------
+        maximum : Optional[timedelta]
+            If provided, any parsed value higher than this will raise an exception
+        minimum : Optional[timedelta]
+            If provided, any parsed value lower than this will raise an exception
+        allowed_units : Optional[List[str]]
+            If provided, you can constrain a user to expressing the amount of time
+            in specific units. The units you can choose to provide are the same as the
+            parser understands: (``weeks``, ``days``, ``hours``, ``minutes``, ``seconds``)
+        default_unit : Optional[str]
+            If provided, it will additionally try to match integer-only input into
+            a timedelta, using the unit specified. Same units as in ``allowed_units``
+            apply.
+
+        Returns
+        -------
+        type
+            The converter class, which will be a subclass of `TimedeltaConverter`
+        """
+
+        class PartialMeta(type):
+            __call__ = functools.partialmethod(
+                type(DictConverter).__call__,
+                allowed_units=allowed_units,
+                default_unit=default_unit,
+                minimum=minimum,
+                maximum=maximum,
+            )
+
+        class ValidatedConverter(TimedeltaConverter, metaclass=PartialMeta):
+            pass
+
+        return ValidatedConverter
+
+
+if not TYPE_CHECKING:
+
+    class NoParseOptional:
+        """
+        This can be used instead of `typing.Optional`
+        to avoid discord.py special casing the conversion behavior.
+
+        .. warning::
+            This converter class is still provisional.
+
+        .. seealso::
+            The `ignore_optional_for_conversion` option of commands.
+        """
+
+        def __class_getitem__(cls, key):
+            if isinstance(key, tuple):
+                raise TypeError("Must only provide a single type to Optional")
+            return key
+
+
+_T_OPT = TypeVar("_T_OPT", bound=Type)
+
+if TYPE_CHECKING or os.getenv("BUILDING_DOCS", False):
+
+    class UserInputOptional(Generic[_T_OPT]):
+        """
+        This can be used when user input should be converted as discord.py
+        treats `typing.Optional`, but the type should not be equivalent to
+        ``typing.Union[DesiredType, None]`` for type checking.
+
+
+        .. warning::
+            This converter class is still provisional.
+
+            This class may not play well with mypy yet
+            and may still require you guard this in a
+            type checking conditional import vs the desired types
+
+            We're aware and looking into improving this.
+        """
+
+        def __class_getitem__(cls, key: _T_OPT) -> _T_OPT:
+            if isinstance(key, tuple):
+                raise TypeError("Must only provide a single type to Optional")
+            return key
+
+
+else:
+    UserInputOptional = Optional
+
+
+if not TYPE_CHECKING:
+
+    class Literal(dpy_commands.Converter):
+        """
+        This can be used as a converter for `typing.Literal`.
+
+        In a type checking context it is `typing.Literal`.
+        In a runtime context, it's a converter which only matches the literals it was given.
+
+
+        .. warning::
+            This converter class is still provisional.
+        """
+
+        def __init__(self, valid_names: Tuple[str]):
+            self.valid_names = valid_names
+
+        def __call__(self, ctx, arg):
+            # Callable's are treated as valid types:
+            # https://github.com/python/cpython/blob/3.8/Lib/typing.py#L148
+            # Without this, ``typing.Union[Literal["clear"], bool]`` would fail
+            return self.convert(ctx, arg)
+
+        async def convert(self, ctx, arg):
+            if arg in self.valid_names:
+                return arg
+            raise BadArgument(_("Expected one of: {}").format(humanize_list(self.valid_names)))
+
+        def __class_getitem__(cls, k):
+            if not k:
+                raise ValueError("Need at least one value for Literal")
+            if isinstance(k, tuple):
+                return cls(k)
+            else:
+                return cls((k,))

@@ -8,6 +8,7 @@ checks like bot permissions checks.
 """
 import asyncio
 import enum
+import inspect
 from typing import (
     Union,
     Optional,
@@ -45,6 +46,7 @@ __all__ = [
     "permissions_check",
     "bot_has_permissions",
     "has_permissions",
+    "has_guild_permissions",
     "is_owner",
     "guildowner",
     "guildowner_or_permissions",
@@ -52,6 +54,9 @@ __all__ = [
     "admin_or_permissions",
     "mod",
     "mod_or_permissions",
+    "transition_permstate_to",
+    "PermStateTransitions",
+    "PermStateAllowedStates",
 ]
 
 _T = TypeVar("_T")
@@ -182,11 +187,6 @@ class PermState(enum.Enum):
     """This command has been actively denied by a permission hook
     check validation doesn't need this, but is useful to developers"""
 
-    def transition_to(
-        self, next_state: "PermState"
-    ) -> Tuple[Optional[bool], Union["PermState", Dict[bool, "PermState"]]]:
-        return self.TRANSITIONS[self][next_state]
-
     @classmethod
     def from_bool(cls, value: Optional[bool]) -> "PermState":
         """Get a PermState from a bool or ``NoneType``."""
@@ -211,7 +211,11 @@ class PermState(enum.Enum):
 # result of the default permission checks - the transition from NORMAL
 # to PASSIVE_ALLOW. In this case "next state" is a dict mapping the
 # permission check results to the actual next state.
-PermState.TRANSITIONS = {
+
+TransitionResult = Tuple[Optional[bool], Union[PermState, Dict[bool, PermState]]]
+TransitionDict = Dict[PermState, Dict[PermState, TransitionResult]]
+
+PermStateTransitions: TransitionDict = {
     PermState.ACTIVE_ALLOW: {
         PermState.ACTIVE_ALLOW: (True, PermState.ACTIVE_ALLOW),
         PermState.NORMAL: (True, PermState.ACTIVE_ALLOW),
@@ -248,11 +252,16 @@ PermState.TRANSITIONS = {
         PermState.ACTIVE_DENY: (False, PermState.ACTIVE_DENY),
     },
 }
-PermState.ALLOWED_STATES = (
+
+PermStateAllowedStates = (
     PermState.ACTIVE_ALLOW,
     PermState.PASSIVE_ALLOW,
     PermState.CAUTIOUS_ALLOW,
 )
+
+
+def transition_permstate_to(prev: PermState, next_state: PermState) -> TransitionResult:
+    return PermStateTransitions[prev][next_state]
 
 
 class Requires:
@@ -326,13 +335,13 @@ class Requires:
 
     @staticmethod
     def get_decorator(
-        privilege_level: Optional[PrivilegeLevel], user_perms: Dict[str, bool]
+        privilege_level: Optional[PrivilegeLevel], user_perms: Optional[Dict[str, bool]]
     ) -> Callable[["_CommandOrCoro"], "_CommandOrCoro"]:
         if not user_perms:
             user_perms = None
 
         def decorator(func: "_CommandOrCoro") -> "_CommandOrCoro":
-            if asyncio.iscoroutinefunction(func):
+            if inspect.iscoroutinefunction(func):
                 func.__requires_privilege_level__ = privilege_level
                 func.__requires_user_perms__ = user_perms
             else:
@@ -341,6 +350,7 @@ class Requires:
                     func.requires.user_perms = None
                 else:
                     _validate_perms_dict(user_perms)
+                    assert func.requires.user_perms is not None
                     func.requires.user_perms.update(**user_perms)
             return func
 
@@ -488,7 +498,7 @@ class Requires:
     async def _transition_state(self, ctx: "Context") -> bool:
         prev_state = ctx.permission_state
         cur_state = self._get_rule_from_ctx(ctx)
-        should_invoke, next_state = prev_state.transition_to(cur_state)
+        should_invoke, next_state = transition_permstate_to(prev_state, cur_state)
         if should_invoke is None:
             # NORMAL invokation, we simply follow standard procedure
             should_invoke = await self._verify_user(ctx)
@@ -509,6 +519,7 @@ class Requires:
                 would_invoke = await self._verify_user(ctx)
             next_state = next_state[would_invoke]
 
+        assert isinstance(next_state, PermState)
         ctx.permission_state = next_state
         return should_invoke
 
@@ -633,6 +644,20 @@ def permissions_check(predicate: CheckPredicate):
         return func
 
     return decorator
+
+
+def has_guild_permissions(**perms):
+    """Restrict the command to users with these guild permissions.
+
+    This check can be overridden by rules.
+    """
+
+    _validate_perms_dict(perms)
+
+    def predicate(ctx):
+        return ctx.guild and ctx.author.guild_permissions >= discord.Permissions(**perms)
+
+    return permissions_check(predicate)
 
 
 def bot_has_permissions(**perms: bool):

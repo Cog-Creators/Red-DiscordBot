@@ -26,6 +26,7 @@ from typing import (
 from types import MappingProxyType
 
 import discord
+from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
 from discord.ext.commands.bot import BotBase
 
@@ -60,7 +61,9 @@ def _is_submodule(parent, child):
 
 
 # barely spurious warning caused by our intentional shadowing
-class RedBase(commands.GroupMixin, BotBase, RPCMixin):  # pylint: disable=no-member
+class RedBase(
+    commands.GroupMixin, dpy_commands.bot.BotBase, RPCMixin
+):  # pylint: disable=no-member
     """Mixin for the main bot class.
 
     This exists because `Red` inherits from `discord.AutoShardedClient`, which
@@ -162,6 +165,16 @@ class RedBase(commands.GroupMixin, BotBase, RPCMixin):  # pylint: disable=no-mem
         self._permissions_hooks: List[commands.CheckPredicate] = []
         self._red_ready = asyncio.Event()
         self._red_before_invoke_objs: Set[PreInvokeCoroutine] = set()
+
+    def get_command(self, name: str) -> Optional[commands.Command]:
+        com = super().get_command(name)
+        assert com is None or isinstance(com, commands.Command)
+        return com
+
+    def get_cog(self, name: str) -> Optional[commands.Cog]:
+        cog = super().get_cog(name)
+        assert cog is None or isinstance(cog, commands.Cog)
+        return cog
 
     @property
     def _before_invoke(self):  # DEP-WARN

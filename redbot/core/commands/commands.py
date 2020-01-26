@@ -1,23 +1,52 @@
 """Module for command helpers and classes.
 
 This module contains extended classes and functions which are intended to
-replace those from the `discord.ext.commands` module.
+be used instead of those from the `discord.ext.commands` module.
 """
+from __future__ import annotations
+
 import inspect
 import re
 import weakref
-from typing import Awaitable, Callable, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
+from typing import (
+    Awaitable,
+    Callable,
+    Coroutine,
+    TypeVar,
+    Type,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    Union,
+    MutableMapping,
+    TYPE_CHECKING,
+    cast,
+)
 
 import discord
-from discord.ext import commands
+from discord.ext.commands import (
+    BadArgument,
+    CommandError,
+    CheckFailure,
+    DisabledCommand,
+    command as dpy_command_deco,
+    Command as DPYCommand,
+    Cog as DPYCog,
+    CogMeta as DPYCogMeta,
+    Group as DPYGroup,
+    Greedy,
+)
 
 from . import converter as converters
 from .errors import ConversionFailure
-from .requires import PermState, PrivilegeLevel, Requires
+from .requires import PermState, PrivilegeLevel, Requires, PermStateAllowedStates
 from ..i18n import Translator
 
 if TYPE_CHECKING:
+    # circular import avoidance
     from .context import Context
+
 
 __all__ = [
     "Cog",
@@ -38,10 +67,16 @@ RESERVED_COMMAND_NAMES = (
 )
 
 _ = Translator("commands.commands", __file__)
+DisablerDictType = MutableMapping[discord.Guild, Callable[["Context"], Awaitable[bool]]]
 
 
 class CogCommandMixin:
     """A mixin for cogs and commands."""
+
+    @property
+    def help(self) -> str:
+        """To be defined by subclasses"""
+        ...
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -182,7 +217,7 @@ class CogCommandMixin:
             self.deny_to(Requires.DEFAULT, guild_id=guild_id)
 
 
-class Command(CogCommandMixin, commands.Command):
+class Command(CogCommandMixin, DPYCommand):
     """Command class for Red.
 
     This should not be created directly, and instead via the decorator.
@@ -198,7 +233,10 @@ class Command(CogCommandMixin, commands.Command):
         `Requires.checks`.
     translator : Translator
         A translator for this command's help docstring.
-
+    ignore_optional_for_conversion : bool
+        A value which can be set to not have discord.py's
+        argument parsing behavior for ``typing.Optional``
+        (type used will be of the inner type instead)
     """
 
     def __call__(self, *args, **kwargs):
@@ -209,6 +247,7 @@ class Command(CogCommandMixin, commands.Command):
             return self.callback(*args, **kwargs)
 
     def __init__(self, *args, **kwargs):
+        self.ignore_optional_for_conversion = kwargs.pop("ignore_optional_for_conversion", False)
         super().__init__(*args, **kwargs)
         self._help_override = kwargs.pop("help_override", None)
         self.translator = kwargs.pop("i18n", None)
@@ -229,7 +268,61 @@ class Command(CogCommandMixin, commands.Command):
 
         # Red specific
         other.requires = self.requires
+        other.ignore_optional_for_conversion = self.ignore_optional_for_conversion
         return other
+
+    @property
+    def callback(self):
+        return self._callback
+
+    @callback.setter
+    def callback(self, function):
+        """
+        Below should be mostly the same as discord.py
+        The only (current) change is to filter out typing.Optional
+        if a user has specified the desire for this behavior
+        """
+        self._callback = function
+        self.module = function.__module__
+
+        signature = inspect.signature(function)
+        self.params = signature.parameters.copy()
+
+        # PEP-563 allows postponing evaluation of annotations with a __future__
+        # import. When postponed, Parameter.annotation will be a string and must
+        # be replaced with the real value for the converters to work later on
+        for key, value in self.params.items():
+            if isinstance(value.annotation, str):
+                self.params[key] = value = value.replace(
+                    annotation=eval(value.annotation, function.__globals__)
+                )
+
+            # fail early for when someone passes an unparameterized Greedy type
+            if value.annotation is Greedy:
+                raise TypeError("Unparameterized Greedy[...] is disallowed in signature.")
+
+            if not self.ignore_optional_for_conversion:
+                continue  # reduces indentation compared to alternative
+
+            try:
+                vtype = value.annotation.__origin__
+                if vtype is Union:
+                    _NoneType = type if TYPE_CHECKING else type(None)
+                    args = value.annotation.__args__
+                    if _NoneType in args:
+                        args = tuple(a for a in args if a is not _NoneType)
+                        if len(args) == 1:
+                            # can't have a union of 1 or 0 items
+                            # 1 prevents this from becoming 0
+                            # we need to prevent 2 become 1
+                            # (Don't change that to becoming, it's intentional :musical_note:)
+                            self.params[key] = value = value.replace(annotation=args[0])
+                        else:
+                            # and mypy wretches at the correct Union[args]
+                            temp_type = type if TYPE_CHECKING else Union[args]
+                            self.params[key] = value = value.replace(annotation=temp_type)
+            except AttributeError:
+                continue
 
     @property
     def help(self):
@@ -311,7 +404,7 @@ class Command(CogCommandMixin, commands.Command):
             for parent in reversed(self.parents):
                 try:
                     result = await parent.can_run(ctx, change_permission_state=True)
-                except commands.CommandError:
+                except CommandError:
                     result = False
 
                 if result is False:
@@ -334,12 +427,10 @@ class Command(CogCommandMixin, commands.Command):
         ctx.command = self
 
         if not self.enabled:
-            raise commands.DisabledCommand(f"{self.name} command is disabled")
+            raise DisabledCommand(f"{self.name} command is disabled")
 
         if not await self.can_run(ctx, change_permission_state=True):
-            raise commands.CheckFailure(
-                f"The check functions for command {self.qualified_name} failed."
-            )
+            raise CheckFailure(f"The check functions for command {self.qualified_name} failed.")
 
         if self.cooldown_after_parsing:
             await self._parse_arguments(ctx)
@@ -373,7 +464,7 @@ class Command(CogCommandMixin, commands.Command):
 
         try:
             return await super().do_conversion(ctx, converter, argument, param)
-        except commands.BadArgument as exc:
+        except BadArgument as exc:
             raise ConversionFailure(converter, argument, param, *exc.args) from exc
         except ValueError as exc:
             # Some common converters need special treatment...
@@ -408,7 +499,7 @@ class Command(CogCommandMixin, commands.Command):
                 can_run = await self.can_run(
                     ctx, check_all_parents=True, change_permission_state=False
                 )
-            except (commands.CheckFailure, commands.errors.DisabledCommand):
+            except (CheckFailure, DisabledCommand):
                 return False
             else:
                 if can_run is False:
@@ -564,10 +655,9 @@ class GroupMixin(discord.ext.commands.GroupMixin):
 
 class CogGroupMixin:
     requires: Requires
-    all_commands: Dict[str, Command]
 
     def reevaluate_rules_for(
-        self, model_id: Union[str, int], guild_id: Optional[int]
+        self, model_id: Union[str, int], guild_id: int = 0
     ) -> Tuple[PermState, bool]:
         """Re-evaluate a rule by checking subcommand rules.
 
@@ -590,15 +680,16 @@ class CogGroupMixin:
 
         """
         cur_rule = self.requires.get_rule(model_id, guild_id=guild_id)
-        if cur_rule in (PermState.NORMAL, PermState.ACTIVE_ALLOW, PermState.ACTIVE_DENY):
-            # These three states are unaffected by subcommand rules
-            return cur_rule, False
-        else:
+        if cur_rule not in (PermState.NORMAL, PermState.ACTIVE_ALLOW, PermState.ACTIVE_DENY):
+            # The above three states are unaffected by subcommand rules
             # Remaining states can be changed if there exists no actively-allowed
             # subcommand (this includes subcommands multiple levels below)
+
+            all_commands: Dict[str, Command] = getattr(self, "all_commands", {})
+
             if any(
-                cmd.requires.get_rule(model_id, guild_id=guild_id) in PermState.ALLOWED_STATES
-                for cmd in self.all_commands.values()
+                cmd.requires.get_rule(model_id, guild_id=guild_id) in PermStateAllowedStates
+                for cmd in all_commands.values()
             ):
                 return cur_rule, False
             elif cur_rule is PermState.PASSIVE_ALLOW:
@@ -608,8 +699,11 @@ class CogGroupMixin:
                 self.requires.set_rule(model_id, PermState.ACTIVE_DENY, guild_id=guild_id)
                 return PermState.ACTIVE_DENY, True
 
+        # Default return value
+        return cur_rule, False
 
-class Group(GroupMixin, Command, CogGroupMixin, commands.Group):
+
+class Group(GroupMixin, Command, CogGroupMixin, DPYGroup):
     """Group command class for Red.
 
     This class inherits from `Command`, with :class:`GroupMixin` and
@@ -654,14 +748,6 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
     """Mixin class for a cog, intended for use with discord.py's cog class"""
 
     @property
-    def all_commands(self) -> Dict[str, Command]:
-        """
-        This does not have identical behavior to
-        Group.all_commands but should return what you expect
-        """
-        return {cmd.name: cmd for cmd in self.__cog_commands__}
-
-    @property
     def help(self):
         doc = self.__doc__
         translator = getattr(self, "__translator__", lambda s: s)
@@ -689,7 +775,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
 
         try:
             can_run = await self.requires.verify(ctx)
-        except commands.CommandError:
+        except CommandError:
             return False
 
         return can_run
@@ -718,16 +804,22 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         return await self.can_run(ctx)
 
 
-class Cog(CogMixin, commands.Cog):
+class Cog(CogMixin, DPYCog, metaclass=DPYCogMeta):
     """
     Red's Cog base class
 
     This includes a metaclass from discord.py
     """
 
-    # NB: Do not move the inheritcance of this. Keeping the mix of that metaclass
-    # seperate gives us more freedoms in several places.
-    pass
+    __cog_commands__: Tuple[Command]
+
+    @property
+    def all_commands(self) -> Dict[str, Command]:
+        """
+        This does not have identical behavior to
+        Group.all_commands but should return what you expect
+        """
+        return {cmd.name: cmd for cmd in self.__cog_commands__}
 
 
 def command(name=None, cls=Command, **attrs):
@@ -736,7 +828,8 @@ def command(name=None, cls=Command, **attrs):
     Same interface as `discord.ext.commands.command`.
     """
     attrs["help_override"] = attrs.pop("help", None)
-    return commands.command(name, cls, **attrs)
+
+    return dpy_command_deco(name, cls, **attrs)
 
 
 def group(name=None, cls=Group, **attrs):
@@ -744,10 +837,10 @@ def group(name=None, cls=Group, **attrs):
 
     Same interface as `discord.ext.commands.group`.
     """
-    return command(name, cls, **attrs)
+    return dpy_command_deco(name, cls, **attrs)
 
 
-__command_disablers = weakref.WeakValueDictionary()
+__command_disablers: DisablerDictType = weakref.WeakValueDictionary()
 
 
 def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitable[bool]]:
@@ -762,7 +855,7 @@ def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitabl
 
         async def disabler(ctx: "Context") -> bool:
             if ctx.guild == guild:
-                raise commands.DisabledCommand()
+                raise DisabledCommand()
             return True
 
         __command_disablers[guild] = disabler
