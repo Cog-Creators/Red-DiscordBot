@@ -1,7 +1,7 @@
+import contextlib
 from collections import namedtuple
 from typing import Union, Optional
 
-import contextlib
 import discord
 
 from redbot.cogs.warnings.helpers import (
@@ -92,9 +92,9 @@ class Warnings(commands.Cog):
         toggle = not await self.config.guild(guild).toggle_dm()
         await self.config.guild(guild).toggle_dm.set(toggle)
         if toggle:
-            await ctx.send(_("Warnings will now be sent to users in DMs."))
+            await ctx.send(_("I will now try to send warnings to users DMs."))
         else:
-            await ctx.send(_("Warnings will no longer be sent to users in DMs."))
+            await ctx.send(_("Warnings will no longer be sent to users DMs."))
 
     @warningset.command()
     @commands.guild_only()
@@ -122,10 +122,11 @@ class Warnings(commands.Cog):
         guild = ctx.guild
         toggle = await self.config.guild(guild).toggle_channel()
         await self.config.guild(guild).toggle_channel.set(not toggle)
+        channel = await self.config.guild(guild).warn_channel()
         if not toggle:
-            await ctx.send(_("Warnings will now be sent to set warn channel."))
+            await ctx.send(_("Warnings will now be sent to {channel}.").format(channel=channel.mention))
         else:
-            await ctx.send(_("Warns will no longer be sent in the channel."))
+            await ctx.send(_("Warns will no longer be sent to {channel}.").format(channel=channel.mention))
 
     @commands.group()
     @commands.guild_only()
