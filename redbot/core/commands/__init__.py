@@ -135,4 +135,6 @@ from discord.ext.commands import (
     AutoShardedBot as AutoShardedBot,
     ExtensionAlreadyLoaded as ExtensionAlreadyLoaded,
     PartialEmojiConverter as PartialEmojiConverter,
+    check_any as check_any,
+    max_concurrency as max_concurrency,
 )
