@@ -69,7 +69,7 @@ CoroLike = Callable[..., Union[Awaitable[_T], Generator[Any, None, _T]]]
 
 
 class CheckDecorator(Protocol):
-    # 1.3 addition # predicate: Coroutine[Any, Any, bool]
+    predicate: Coroutine[Any, Any, bool]
 
     @overload
     def __call__(self, func: _CT) -> _CT:
