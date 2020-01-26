@@ -381,7 +381,11 @@ class Warnings(commands.Cog):
                 await ctx.tick()
             else:
                 channel = ctx.channel
-            await channel.send(_("{user} has been warned.").format(user=user.mention), embed=em)
+            if channel.permissions_for(guild.me).send_messages:
+                with contextlib.suppress(discord.HTTPException):
+                    await channel.send(
+                        _("{user} has been warned.").format(user=user.mention), embed=em
+                    )
         else:
             await ctx.tick()
         try:
