@@ -224,7 +224,7 @@ class ModSettings(MixinMeta):
         guild = ctx.guild
         if enabled is None:
             toggledm = await self.settings.guild(guild).dm_on_kickban()
-            await ctx.send(_"DM when kicked/banned is currently set to: {toggledm}")
+            await ctx.send(_("DM when kicked/banned is currently set to: {toggledm}"))
         await self.settings.guild(guild).dm_on_kickban.set(enabled)
         if enabled:
             await ctx.send(
