@@ -27,6 +27,7 @@ class ModSettings(MixinMeta):
             respect_hierarchy = data["respect_hierarchy"]
             delete_delay = data["delete_delay"]
             reinvite_on_unban = data["reinvite_on_unban"]
+            dm_on_kickban = data["dm_on_kickban"]
             default_days = data["default_days"]
             msg = ""
             msg += _("Delete repeats: {num_repeats}\n").format(
@@ -49,6 +50,9 @@ class ModSettings(MixinMeta):
             )
             msg += _("Reinvite on unban: {yes_or_no}\n").format(
                 yes_or_no=_("Yes") if reinvite_on_unban else _("No")
+            )
+            msg += _("Send message to users on kick/ban: {yes_or_no}\n").format(
+                yes_or_no=_("Yes") if dm_on_kickban else _("No")
             )
             if default_days:
                 msg += _(
@@ -206,6 +210,30 @@ class ModSettings(MixinMeta):
                 _("Users unbanned with {command} will not be reinvited.").format(
                     command=f"{ctx.prefix}unban"
                 )
+            )
+
+    @modset.command()
+    @commands.guild_only()
+    async def dm(self, ctx: commands.Context, enabled: bool = None):
+        """Toggle whether to send a message to a user when they are 
+        kicked/banned.
+
+        If this option is enabled, the bot will attempt to DM the user with the guild name
+        and reason as to why they were kicked/banned.
+        """
+        guild = ctx.guild
+        if enabled is None:
+            setting = await self.settings.guild(guild).dm_on_kickban()
+            await ctx.send(
+                _("DM when kicked/banned is currently set to: {setting}").format(setting=setting)
+            )
+            return
+        await self.settings.guild(guild).dm_on_kickban.set(enabled)
+        if enabled:
+            await ctx.send(_("Bot will now attempt to send a DM to user before kick and ban."))
+        else:
+            await ctx.send(
+                _("Bot will no longer attempt to send a DM to user before kick and ban.")
             )
 
     @modset.command()
