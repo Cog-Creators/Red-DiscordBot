@@ -58,6 +58,45 @@ class CogCommandMixin:
             checks=getattr(decorated, "__requires_checks__", []),
         )
 
+    def format_text_for_context(self, ctx: "Context", text: str) -> str:
+        """
+        This formats text based on values in context
+
+        The steps are (currently, roughly) the following:
+
+            - substitute ``[p]`` with ``ctx.clean_prefix``
+            - substitute ``[botname]`` with ``ctx.me.display_name``
+
+        More steps may be added at a later time.
+
+        Cog creators should only override this if they want
+        help text to be modified, and may also want to
+        look at `format_help_for_context` and (for commands only)
+        ``format_shortdoc_for_context``
+
+        Parameters
+        ----------
+        ctx: Context
+        text: str
+
+        Returns
+        -------
+        str
+            text which has had some portions replaced based on context
+        """
+        formatting_pattern = re.compile(r"\[p\]|\[botname\]")
+
+        def replacement(m: re.Match) -> str:
+            s = m.group(0)
+            if s == "[p]":
+                return ctx.clean_prefix
+            if s == "[botname]":
+                return ctx.me.display_name
+            # We shouldnt get here:
+            return s
+
+        return formatting_pattern.sub(replacement, text)
+
     def format_help_for_context(self, ctx: "Context") -> str:
         """
         This formats the help string based on values in context
@@ -88,18 +127,7 @@ class CogCommandMixin:
             # Short circuit out on an empty help string
             return help_str
 
-        formatting_pattern = re.compile(r"\[p\]|\[botname\]")
-
-        def replacement(m: re.Match) -> str:
-            s = m.group(0)
-            if s == "[p]":
-                return ctx.clean_prefix
-            if s == "[botname]":
-                return ctx.me.display_name
-            # We shouldnt get here:
-            return s
-
-        return formatting_pattern.sub(replacement, help_str)
+        return self.format_text_for_context(ctx, help_str)
 
     def allow_for(self, model_id: Union[int, str], guild_id: int) -> None:
         """Actively allow this command for the given model.
@@ -527,6 +555,28 @@ class Command(CogCommandMixin, commands.Command):
             The coroutine is not actually a coroutine.
         """
         return super().error(coro)
+
+    def format_shortdoc_for_context(self, ctx: "Context") -> str:
+        """
+        This formats the short version of the help 
+        tring based on values in context
+
+        See ``format_text_for_context`` for the actual implementation details
+
+        Cog creators may override this in their own command classes
+        as long as the method signature stays the same.
+
+        Parameters
+        ----------
+        ctx: Context
+
+        Returns
+        -------
+        str
+            Localized help with some formatting
+        """
+        sh = self.short_doc
+        return self.format_text_for_context(ctx, sh) if sh else sh
 
 
 class GroupMixin(discord.ext.commands.GroupMixin):
