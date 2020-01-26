@@ -107,7 +107,7 @@ class Warnings(commands.Cog):
         if channel:
             await self.config.guild(guild).warn_channel.set(channel.id)
             await ctx.send(
-                _("The warn channel has been set to {channel}").format(channel=channel.mention)
+                _("The warn channel has been set to {channel}.").format(channel=channel.mention)
             )
         else:
             await self.config.guild(guild).warn_channel.set(channel)
