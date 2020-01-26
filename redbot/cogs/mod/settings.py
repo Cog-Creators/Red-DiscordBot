@@ -230,9 +230,7 @@ class ModSettings(MixinMeta):
             return
         await self.settings.guild(guild).dm_on_kickban.set(enabled)
         if enabled:
-            await ctx.send(
-                _("Bot will now attempt to send a DM to user before kick and ban.")
-            )
+            await ctx.send(_("Bot will now attempt to send a DM to user before kick and ban."))
         else:
             await ctx.send(
                 _("Bot will no longer attempt to send a DM to user before kick and ban.")
