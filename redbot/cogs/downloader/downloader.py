@@ -55,6 +55,7 @@ class Downloader(commands.Cog):
         self._repo_manager = RepoManager()
         self._ready = asyncio.Event()
         self._init_task = None
+        self._ready_raised = False
 
     def _create_lib_folder(self, *, remove_first: bool = False) -> None:
         if remove_first:
@@ -67,13 +68,30 @@ class Downloader(commands.Cog):
     async def cog_before_invoke(self, ctx: commands.Context) -> None:
         async with ctx.typing():
             await self._ready.wait()
+        if self._ready_raised:
+            await ctx.send(
+                "There was an error during Downloader's initialization."
+                " Check logs for more information."
+            )
+            raise commands.CheckFailure()
 
     def cog_unload(self):
         if self._init_task is not None:
             self._init_task.cancel()
 
     def create_init_task(self):
+        def _done_callback(task: asyncio.Task) -> None:
+            exc = task.exception()
+            if exc is not None:
+                log.error(
+                    "An unexpected error occurred during Downloader's initialization.",
+                    exc_info=exc,
+                )
+                self._ready_raised = True
+                self._ready.set()
+
         self._init_task = asyncio.create_task(self.initialize())
+        self._init_task.add_done_callback(_done_callback)
 
     async def initialize(self) -> None:
         await self._repo_manager.initialize()
