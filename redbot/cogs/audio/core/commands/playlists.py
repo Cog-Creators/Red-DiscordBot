@@ -107,12 +107,12 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 else _("Check your logs."),
             )
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope_data = [None, ctx.author, ctx.guild, False]
         (scope, author, guild, specified_user) = scope_data
         if not await self._playlist_check(ctx):
             return
         try:
-            (playlist_id, playlist_arg) = await self._get_correct_playlist_id(
+            (playlist_id, playlist_arg, scope) = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -307,7 +307,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ) = scope_data
 
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            playlist_id, playlist_arg, from_scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, from_scope, from_author, from_guild, specified_from_user
             )
         except TooManyMatches as e:
@@ -428,9 +428,9 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 else _("Check your logs."),
             )
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
-
+        scope = scope or PlaylistScope.GUILD.value
         temp_playlist = FakePlaylist(author.id, scope)
         scope_name = self.humanize_scope(
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
@@ -506,11 +506,11 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 else _("Check your logs."),
             )
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
 
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -612,19 +612,19 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
         async with ctx.typing():
             if scope_data is None:
-                scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+                scope_data = [None, ctx.author, ctx.guild, False]
             scope, author, guild, specified_user = scope_data
-            scope_name = self.humanize_scope(
-                scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
-            )
 
             try:
-                playlist_id, playlist_arg = await self._get_correct_playlist_id(
+                playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
                     ctx, playlist_matches, scope, author, guild, specified_user
                 )
             except TooManyMatches as e:
                 ctx.command.reset_cooldown(ctx)
                 return await self._embed_msg(ctx, title=str(e))
+            scope_name = self.humanize_scope(
+                scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
+            )
             if playlist_id is None:
                 ctx.command.reset_cooldown(ctx)
                 return await self._embed_msg(
@@ -766,11 +766,11 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 else _("Check your logs."),
             )
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
 
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -917,19 +917,19 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 else _("Check your logs."),
             )
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
-        scope_name = self.humanize_scope(
-            scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
-        )
-
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
             ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(ctx, title=str(e))
+        scope_name = self.humanize_scope(
+            scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
+        )
+
         if playlist_id is None:
             ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(
@@ -1061,7 +1061,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 else _("Check your logs."),
             )
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
 
         try:
@@ -1174,8 +1174,9 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
         async with ctx.typing():
             if scope_data is None:
-                scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+                scope_data = [None, ctx.author, ctx.guild, False]
             scope, author, guild, specified_user = scope_data
+            scope = scope or PlaylistScope.GUILD.value
             scope_name = self.humanize_scope(
                 scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
             )
@@ -1285,18 +1286,17 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 else _("Check your logs."),
             )
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
-        scope_name = self.humanize_scope(
-            scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
-        )
-
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
             return await self._embed_msg(ctx, title=str(e))
+        scope_name = self.humanize_scope(
+            scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
+        )
         if playlist_id is None:
             return await self._embed_msg(
                 ctx,
@@ -1415,12 +1415,12 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 else _("Check your logs."),
             )
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
+        scope = scope or PlaylistScope.GUILD.value
         scope_name = self.humanize_scope(
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
-
         temp_playlist = FakePlaylist(author.id, scope)
         if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
             return ctx.command.reset_cooldown(ctx)
@@ -1535,7 +1535,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 else _("Check your logs."),
             )
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
@@ -1550,7 +1550,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             return False
 
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -1716,10 +1716,10 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 else _("Check your logs."),
             )
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -1879,7 +1879,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 else _("Check your logs."),
             )
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
         temp_playlist = FakePlaylist(author.id, scope)
         if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
@@ -2029,7 +2029,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 else _("Check your logs."),
             )
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
 
         new_name = new_name.split(" ")[0].strip('"')[:32]
@@ -2045,7 +2045,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:

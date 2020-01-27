@@ -247,7 +247,7 @@ class MixinMeta(ABC):
         author: discord.User,
         guild: discord.Guild,
         specified_user: bool = False,
-    ) -> Tuple[Optional[int], str]:
+    ) -> Tuple[Optional[int], str, str]:
         raise NotImplementedError()
 
     @abstractmethod
