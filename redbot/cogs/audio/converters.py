@@ -172,6 +172,7 @@ class PlaylistConverter(commands.Converter):
             PlaylistScope.GLOBAL.value: global_matches,
             PlaylistScope.GUILD.value: guild_matches,
             PlaylistScope.USER.value: user_matches,
+            "all": [*global_matches, *guild_matches, *user_matches],
             "arg": arg,
         }
 
@@ -184,7 +185,8 @@ class NoExitParser(argparse.ArgumentParser):
 class ScopeParser(commands.Converter):
     async def convert(
         self, ctx: commands.Context, argument: str
-    ) -> Tuple[str, discord.User, Optional[discord.Guild], bool]:
+    ) -> Tuple[Optional[str], discord.User, Optional[discord.Guild], bool]:
+
         target_scope: Optional[str] = None
         target_user: Optional[Union[discord.Member, discord.User]] = None
         target_guild: Optional[discord.Guild] = None
@@ -274,9 +276,9 @@ class ScopeParser(commands.Converter):
         elif any(x in argument for x in ["--author", "--user", "--member"]):
             raise commands.ArgParserFailure("--scope", "Nothing", custom_help=_USER_HELP)
 
-        target_scope = target_scope or PlaylistScope.GUILD.value
-        target_user = target_user or ctx.author
-        target_guild = target_guild or ctx.guild
+        target_scope: Optional[str] = target_scope or None
+        target_user: Union[discord.Member, discord.User] = target_user or ctx.author
+        target_guild: discord.Guild = target_guild or ctx.guild
 
         return target_scope, target_user, target_guild, specified_user
 

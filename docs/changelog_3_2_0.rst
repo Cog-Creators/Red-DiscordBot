@@ -238,7 +238,7 @@ Removals
 ~~~~~~~~
 
 - ``[p]set owner`` and ``[p]set token`` have been removed in favor of managing server side. (`#2928 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2928>`_)
-- Shared libraries are marked for removal in Red 3.3. (`#3106 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3106>`_)
+- Shared libraries are marked for removal in Red 3.4. (`#3106 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3106>`_)
 - Removed ``[p]backup``. Use the cli command ``redbot-setup backup`` instead. (`#3235 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3235>`_)
 - Removed the functions ``safe_delete``, ``fuzzy_command_search``, ``format_fuzzy_results`` and ``create_backup`` from ``redbot.core.utils``. (`#3240 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3240>`_)
 - Removed a lot of the launcher's handled behavior. (`#3289 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3289>`_)

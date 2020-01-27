@@ -29,7 +29,7 @@ _ = Translator("Downloader", __file__)
 
 DEPRECATION_NOTICE = _(
     "\n**WARNING:** The following repos are using shared libraries"
-    " which are marked for removal in Red 3.3: {repo_list}.\n"
+    " which are marked for removal in Red 3.4: {repo_list}.\n"
     " You should inform maintainers of these repos about this message."
 )
 
@@ -53,6 +53,9 @@ class Downloader(commands.Cog):
         self._create_lib_folder()
 
         self._repo_manager = RepoManager()
+        self._ready = asyncio.Event()
+        self._init_task = None
+        self._ready_raised = False
 
     def _create_lib_folder(self, *, remove_first: bool = False) -> None:
         if remove_first:
@@ -62,9 +65,38 @@ class Downloader(commands.Cog):
             with self.SHAREDLIB_INIT.open(mode="w", encoding="utf-8") as _:
                 pass
 
+    async def cog_before_invoke(self, ctx: commands.Context) -> None:
+        async with ctx.typing():
+            await self._ready.wait()
+        if self._ready_raised:
+            await ctx.send(
+                "There was an error during Downloader's initialization."
+                " Check logs for more information."
+            )
+            raise commands.CheckFailure()
+
+    def cog_unload(self):
+        if self._init_task is not None:
+            self._init_task.cancel()
+
+    def create_init_task(self):
+        def _done_callback(task: asyncio.Task) -> None:
+            exc = task.exception()
+            if exc is not None:
+                log.error(
+                    "An unexpected error occurred during Downloader's initialization.",
+                    exc_info=exc,
+                )
+                self._ready_raised = True
+                self._ready.set()
+
+        self._init_task = asyncio.create_task(self.initialize())
+        self._init_task.add_done_callback(_done_callback)
+
     async def initialize(self) -> None:
         await self._repo_manager.initialize()
         await self._maybe_update_config()
+        self._ready.set()
 
     async def _maybe_update_config(self) -> None:
         schema_version = await self.conf.schema_version()
@@ -205,7 +237,7 @@ class Downloader(commands.Cog):
         await self.conf.installed_libraries.set(installed_libraries)
 
     async def _shared_lib_load_check(self, cog_name: str) -> Optional[Repo]:
-        # remove in Red 3.3
+        # remove in Red 3.4
         is_installed, cog = await self.is_installed(cog_name)
         # it's not gonna be None when `is_installed` is True
         # if we'll use typing_extensions in future, `Literal` can solve this

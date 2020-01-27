@@ -15,6 +15,8 @@ class InstalledCog(InstalledModule):
 
         cog = discord.utils.get(await downloader.installed_cogs(), name=arg)
         if cog is None:
-            raise commands.BadArgument(_("That cog is not installed"))
+            raise commands.BadArgument(
+                _("Cog `{cog_name}` is not installed.").format(cog_name=arg)
+            )
 
         return cog

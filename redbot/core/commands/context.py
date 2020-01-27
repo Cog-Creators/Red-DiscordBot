@@ -1,21 +1,28 @@
+from __future__ import annotations
+
 import asyncio
 import contextlib
+import os
 import re
-from typing import Iterable, List, Union
+from typing import Iterable, List, Union, Optional, TYPE_CHECKING
 import discord
-from discord.ext import commands
+from discord.ext.commands import Context as DPYContext
 
 from .requires import PermState
 from ..utils.chat_formatting import box
 from ..utils.predicates import MessagePredicate
 from ..utils import common_filters
 
+if TYPE_CHECKING:
+    from .commands import Command
+    from ..bot import Red
+
 TICK = "\N{WHITE HEAVY CHECK MARK}"
 
-__all__ = ["Context"]
+__all__ = ["Context", "GuildContext", "DMContext"]
 
 
-class Context(commands.Context):
+class Context(DPYContext):
     """Command invocation context for Red.
 
     All context passed into commands will be of this type.
@@ -39,6 +46,10 @@ class Context(commands.Context):
     permission_state: PermState
         The permission state the current context is in.
     """
+
+    command: "Command"
+    invoked_subcommand: "Optional[Command]"
+    bot: "Red"
 
     def __init__(self, **attrs):
         self.assume_yes = attrs.pop("assume_yes", False)
@@ -254,7 +265,7 @@ class Context(commands.Context):
         return pattern.sub(f"@{me.display_name}", self.prefix)
 
     @property
-    def me(self) -> discord.abc.User:
+    def me(self) -> Union[discord.ClientUser, discord.Member]:
         """discord.abc.User: The bot member or user object.
 
         If the context is DM, this will be a `discord.User` object.
@@ -263,3 +274,63 @@ class Context(commands.Context):
             return self.guild.me
         else:
             return self.bot.user
+
+
+if TYPE_CHECKING or os.getenv("BUILDING_DOCS", False):
+
+    class DMContext(Context):
+        """
+        At runtime, this will still be a normal context object.
+
+        This lies about some type narrowing for type analysis in commands
+        using a dm_only decorator.
+
+        It is only correct to use when those types are already narrowed
+        """
+
+        @property
+        def author(self) -> discord.User:
+            ...
+
+        @property
+        def channel(self) -> discord.DMChannel:
+            ...
+
+        @property
+        def guild(self) -> None:
+            ...
+
+        @property
+        def me(self) -> discord.ClientUser:
+            ...
+
+    class GuildContext(Context):
+        """
+        At runtime, this will still be a normal context object.
+
+        This lies about some type narrowing for type analysis in commands
+        using a guild_only decorator.
+
+        It is only correct to use when those types are already narrowed
+        """
+
+        @property
+        def author(self) -> discord.Member:
+            ...
+
+        @property
+        def channel(self) -> discord.TextChannel:
+            ...
+
+        @property
+        def guild(self) -> discord.Guild:
+            ...
+
+        @property
+        def me(self) -> discord.Member:
+            ...
+
+
+else:
+    GuildContext = Context
+    DMContext = Context
