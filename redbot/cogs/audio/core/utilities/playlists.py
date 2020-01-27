@@ -110,7 +110,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         author: discord.User,
         guild: discord.Guild,
         specified_user: bool = False,
-    ) -> Tuple[Optional[int], str]:
+    ) -> Tuple[Optional[int], str, str]:
         """
         Parameters
         ----------
@@ -139,34 +139,55 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         """
         correct_scope_matches: List[Playlist]
         original_input = matches.get("arg")
-        correct_scope_matches_temp: MutableMapping = matches.get(scope)
+        lazy_match = False
+        if scope is None:
+            correct_scope_matches_temp: MutableMapping = matches.get("all")
+            lazy_match = True
+        else:
+            correct_scope_matches_temp: MutableMapping = matches.get(scope)
         guild_to_query = guild.id
         user_to_query = author.id
+        correct_scope_matches_user = []
+        correct_scope_matches_guild = []
+        correct_scope_matches_global = []
         if not correct_scope_matches_temp:
-            return None, original_input
-        if scope == PlaylistScope.USER.value:
-            correct_scope_matches = [
-                p for p in correct_scope_matches_temp if user_to_query == p.scope_id
+            return None, original_input, scope or PlaylistScope.GUILD.value
+        if lazy_match or (scope == PlaylistScope.USER.value):
+            correct_scope_matches_user = [
+                p for p in matches.get(PlaylistScope.USER.value) if user_to_query == p.scope_id
             ]
-        elif scope == PlaylistScope.GUILD.value:
+        if lazy_match or (scope == PlaylistScope.GUILD.value and not correct_scope_matches_user):
             if specified_user:
-                correct_scope_matches = [
+                correct_scope_matches_guild = [
                     p
-                    for p in correct_scope_matches_temp
+                    for p in matches.get(PlaylistScope.GUILD.value)
                     if guild_to_query == p.scope_id and p.author == user_to_query
                 ]
             else:
-                correct_scope_matches = [
-                    p for p in correct_scope_matches_temp if guild_to_query == p.scope_id
+                correct_scope_matches_guild = [
+                    p
+                    for p in matches.get(PlaylistScope.GUILD.value)
+                    if guild_to_query == p.scope_id
                 ]
-        else:
+        if lazy_match or (
+            scope == PlaylistScope.GLOBAL.value
+            and not correct_scope_matches_user
+            and not correct_scope_matches_guild
+        ):
             if specified_user:
-                correct_scope_matches = [
-                    p for p in correct_scope_matches_temp if p.author == user_to_query
+                correct_scope_matches_global = [
+                    p
+                    for p in matches.get(PlaylistScope.USGLOBALER.value)
+                    if p.author == user_to_query
                 ]
             else:
-                correct_scope_matches = [p for p in correct_scope_matches_temp]
+                correct_scope_matches_global = [p for p in matches.get(PlaylistScope.GLOBAL.value)]
 
+        correct_scope_matches = [
+            *correct_scope_matches_global,
+            *correct_scope_matches_guild,
+            *correct_scope_matches_user,
+        ]
         match_count = len(correct_scope_matches)
         if match_count > 1:
             correct_scope_matches2 = [
@@ -193,14 +214,15 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ).format(match_count=match_count, original_input=original_input)
                 )
         elif match_count == 1:
-            return correct_scope_matches[0].id, original_input
+            return correct_scope_matches[0].id, original_input, correct_scope_matches[0].scope
         elif match_count == 0:
-            return None, original_input
+            return None, original_input, scope or PlaylistScope.GUILD.value
 
         # TODO : Convert this section to a new paged reaction menu when Toby Menus are Merged
         pos_len = 3
         playlists = f"{'#':{pos_len}}\n"
         number = 0
+        correct_scope_matches = sorted(correct_scope_matches, key=lambda x: x.name.lower())
         for number, playlist in enumerate(correct_scope_matches, 1):
             author = self.bot.get_user(playlist.author) or playlist.author or _("Unknown")
             line = _(
@@ -213,7 +235,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             ).format(
                 number=number,
                 playlist=playlist,
-                scope=self.humanize_scope(scope),
+                scope=self.humanize_scope(playlist.scope),
                 tracks=len(playlist.tracks),
                 author=author,
             )
@@ -249,7 +271,11 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
         with contextlib.suppress(discord.HTTPException):
             await msg.delete()
-        return correct_scope_matches[pred.result].id, original_input
+        return (
+            correct_scope_matches[pred.result].id,
+            original_input,
+            correct_scope_matches[pred.result].scope,
+        )
 
     async def _build_playlist_list_page(
         self, ctx: commands.Context, page_num: int, abc_names: List, scope: str
@@ -298,6 +324,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
         await playlist_msg.edit(embed=embed2)
+
         playlist = await create_playlist(
             ctx,
             self.playlist_api,

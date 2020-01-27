@@ -499,11 +499,11 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 else _("Check your logs."),
             )
         if scope_data is None:
-            scope_data = [PlaylistScope.GUILD.value, ctx.author, ctx.guild, False]
+            scope_data = [None, ctx.author, ctx.guild, False]
 
         scope, author, guild, specified_user = scope_data
         try:
-            playlist_id, playlist_arg = await self._get_correct_playlist_id(
+            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
