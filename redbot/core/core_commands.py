@@ -2412,7 +2412,7 @@ class Core(commands.Cog, CoreLogic):
 
 # Removing this command from forks is a violation of the GPLv3 under which it is licensed.
 # Otherwise interfering with the ability for this command to be accessible is also a violation.
-@commands.command(cls=commands.commands._AlwaysAvailableCommand, name="licenseinfo", i18n=_)
+@commands.command(cls=commands.commands._AlwaysAvailableCommand, name="licenceinfo", aliases=["licenseinfo"], i18n=_)
 async def license_info_command(ctx):
     """
     Get info about Red's licenses
