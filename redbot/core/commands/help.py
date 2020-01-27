@@ -224,7 +224,7 @@ class RedHelpFormatter:
                     return a_line[:67] + "..."
 
                 subtext = "\n".join(
-                    shorten_line(f"**{name}** {command.short_doc}")
+                    shorten_line(f"**{name}** {command.format_shortdoc_for_context(ctx)}")
                     for name, command in sorted(subcommands.items())
                 )
                 for i, page in enumerate(pagify(subtext, page_length=500, shorten_by=0)):
@@ -249,7 +249,7 @@ class RedHelpFormatter:
                     doc_max_width = 80 - max_width
                     for nm, com in sorted(cmds):
                         width_gap = discord.utils._string_width(nm) - len(nm)
-                        doc = com.short_doc
+                        doc = com.format_shortdoc_for_context(ctx)
                         if len(doc) > doc_max_width:
                             doc = doc[: doc_max_width - 3] + "..."
                         yield nm, doc, max_width - width_gap
@@ -399,7 +399,7 @@ class RedHelpFormatter:
                     return a_line[:67] + "..."
 
                 command_text = "\n".join(
-                    shorten_line(f"**{name}** {command.short_doc}")
+                    shorten_line(f"**{name}** {command.format_shortdoc_for_context(ctx)}")
                     for name, command in sorted(coms.items())
                 )
                 for i, page in enumerate(pagify(command_text, page_length=500, shorten_by=0)):
@@ -423,7 +423,7 @@ class RedHelpFormatter:
                     doc_max_width = 80 - max_width
                     for nm, com in sorted(cmds):
                         width_gap = discord.utils._string_width(nm) - len(nm)
-                        doc = com.short_doc
+                        doc = com.format_shortdoc_for_context(ctx)
                         if len(doc) > doc_max_width:
                             doc = doc[: doc_max_width - 3] + "..."
                         yield nm, doc, max_width - width_gap
@@ -466,7 +466,7 @@ class RedHelpFormatter:
                     return a_line[:67] + "..."
 
                 cog_text = "\n".join(
-                    shorten_line(f"**{name}** {command.short_doc}")
+                    shorten_line(f"**{name}** {command.format_shortdoc_for_context(ctx)}")
                     for name, command in sorted(data.items())
                 )
 
@@ -494,7 +494,7 @@ class RedHelpFormatter:
                 doc_max_width = 80 - max_width
                 for nm, com in cmds:
                     width_gap = discord.utils._string_width(nm) - len(nm)
-                    doc = com.short_doc
+                    doc = com.format_shortdoc_for_context(ctx)
                     if len(doc) > doc_max_width:
                         doc = doc[: doc_max_width - 3] + "..."
                     yield nm, doc, max_width - width_gap
