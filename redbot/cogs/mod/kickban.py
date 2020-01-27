@@ -7,7 +7,7 @@ from typing import cast, Optional, Union
 
 import discord
 from redbot.core import commands, i18n, checks, modlog
-from redbot.core.utils.chat_formatting import pagify, humanize_number
+from redbot.core.utils.chat_formatting import pagify, humanize_number, bold
 from redbot.core.utils.mod import is_allowed_by_hierarchy, get_audit_reason
 from .abc import MixinMeta
 from .converters import RawUserIds
@@ -82,6 +82,19 @@ class KickBanMixin(MixinMeta):
         elif not (0 <= days <= 7):
             return _("Invalid days. Must be between 0 and 7.")
 
+        toggle = await self.settings.guild(guild).dm_on_kickban()
+        if toggle:
+            with contextlib.suppress(discord.HTTPException):
+                em = discord.Embed(
+                    title=bold(_("You have been banned from {guild}.").format(guild=guild))
+                )
+                em.add_field(
+                    name=_("**Reason**"),
+                    value=reason if reason is not None else _("No reason was given."),
+                    inline=False,
+                )
+                await user.send(embed=em)
+
         audit_reason = get_audit_reason(author, reason)
 
         queue_entry = (guild.id, user.id)
@@ -95,7 +108,7 @@ class KickBanMixin(MixinMeta):
         except discord.Forbidden:
             return _("I'm not allowed to do that.")
         except Exception as e:
-            return e  # TODO: impproper return type? Is this intended to be re-raised?
+            return e  # TODO: improper return type? Is this intended to be re-raised?
 
         if create_modlog_case:
             try:
@@ -186,6 +199,18 @@ class KickBanMixin(MixinMeta):
             await ctx.send(_("I cannot do that due to discord hierarchy rules"))
             return
         audit_reason = get_audit_reason(author, reason)
+        toggle = await self.settings.guild(guild).dm_on_kickban()
+        if toggle:
+            with contextlib.suppress(discord.HTTPException):
+                em = discord.Embed(
+                    title=bold(_("You have been kicked from {guild}.").format(guild=guild))
+                )
+                em.add_field(
+                    name=_("**Reason**"),
+                    value=reason if reason is not None else _("No reason was given."),
+                    inline=False,
+                )
+                await user.send(embed=em)
         try:
             await guild.kick(user, reason=audit_reason)
             log.info("{}({}) kicked {}({})".format(author.name, author.id, user.name, user.id))
@@ -218,14 +243,19 @@ class KickBanMixin(MixinMeta):
         self,
         ctx: commands.Context,
         user: discord.Member,
-        days: Optional[int] = 0,
+        days: Optional[int] = None,
         *,
         reason: str = None,
     ):
         """Ban a user from this server and optionally delete days of messages.
 
         If days is not a number, it's treated as the first word of the reason.
-        Minimum 0 days, maximum 7. Defaults to 0."""
+
+        Minimum 0 days, maximum 7. If not specified, defaultdays setting will be used instead."""
+        author = ctx.author
+        guild = ctx.guild
+        if days is None:
+            days = await self.settings.guild(guild).default_days()
 
         result = await self.ban_user(
             user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
@@ -244,7 +274,7 @@ class KickBanMixin(MixinMeta):
         self,
         ctx: commands.Context,
         user_ids: commands.Greedy[RawUserIds],
-        days: Optional[int] = 0,
+        days: Optional[int] = None,
         *,
         reason: str = None,
     ):
@@ -252,7 +282,6 @@ class KickBanMixin(MixinMeta):
 
         User IDs need to be provided in order to ban
         using this command"""
-        days = cast(int, days)
         banned = []
         errors = {}
 
@@ -299,6 +328,9 @@ class KickBanMixin(MixinMeta):
         if not user_ids:
             await show_results()
             return
+
+        if days is None:
+            days = await self.settings.guild(guild).default_days()
 
         for user_id in user_ids:
             user = guild.get_member(user_id)

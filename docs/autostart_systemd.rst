@@ -14,11 +14,11 @@ In order to create the service file, you will first need the location of your :c
 
     # If redbot is installed in a virtualenv
     source redenv/bin/activate
+    which python
 
     # If you are using pyenv
     pyenv shell <name>
-
-    which python
+    pyenv which python
 
 Then create the new service file:
 
