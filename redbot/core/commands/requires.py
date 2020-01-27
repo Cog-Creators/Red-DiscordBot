@@ -9,6 +9,7 @@ checks like bot permissions checks.
 import asyncio
 import enum
 import inspect
+from collections import ChainMap
 from typing import (
     Union,
     Optional,
@@ -21,6 +22,7 @@ from typing import (
     TypeVar,
     Tuple,
     ClassVar,
+    Mapping,
 )
 
 import discord
@@ -367,6 +369,8 @@ class Requires:
         guild_id : int
             The ID of the guild for the rule's scope. Set to
             `Requires.GLOBAL` for a global rule.
+            If a global rule is set for a model,
+            it will be prefered over the guild rule.
 
         Returns
         -------
@@ -377,8 +381,9 @@ class Requires:
         """
         if not isinstance(model, (str, int)):
             model = model.id
+        rules: Mapping[Union[int, str], PermState]
         if guild_id:
-            rules = self._guild_rules.get(guild_id, _RulesDict())
+            rules = ChainMap(self._global_rules, self._guild_rules.get(guild_id, _RulesDict()))
         else:
             rules = self._global_rules
         return rules.get(model, PermState.NORMAL)
