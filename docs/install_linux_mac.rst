@@ -67,6 +67,25 @@ Complete the rest of the installation by `installing Python 3.8 with pyenv <inst
 
 ----
 
+.. _install-centos8:
+.. _install-rhel8:
+
+~~~~~~~~~~~~~~~~~
+CentOS and RHEL 8
+~~~~~~~~~~~~~~~~~
+
+.. code-block:: none
+
+    yum -y install epel-release
+    yum update -y
+    yum -y groupinstall development
+    yum -y install git zlib-devel bzip2 bzip2-devel readline-devel sqlite \
+     sqlite-devel openssl-devel xz xz-devel libffi-devel findutils java-11-openjdk
+     
+Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
+
+----
+
 .. _install-debian-stretch:
 
 ~~~~~~~~~~~~~~
