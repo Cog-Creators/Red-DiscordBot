@@ -282,14 +282,15 @@ else:
 
         async def convert(self, ctx: "Context", argument: str) -> timedelta:
             if self.default_unit and argument.isdecimal():
-                delta = timedelta(**{self.default_unit: int(argument)})
-            else:
-                delta = parse_timedelta(
-                    argument,
-                    minimum=self.minimum,
-                    maximum=self.maximum,
-                    allowed_units=self.allowed_units,
-                )
+                argument = argument + self.default_unit
+
+            delta = parse_timedelta(
+                argument,
+                minimum=self.minimum,
+                maximum=self.maximum,
+                allowed_units=self.allowed_units,
+            )
+
             if delta is not None:
                 return delta
             raise BadArgument()  # This allows this to be a required argument.
