@@ -1,1 +1,0 @@
-Adds toggle for channels for embedset.

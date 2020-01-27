@@ -1,1 +1,0 @@
-Role granting/removing commands will now notify when the user already has/doesn't have a role when attempting to add/remove it.
