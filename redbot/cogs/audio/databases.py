@@ -13,6 +13,7 @@ import apsw
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
+from redbot.core.utils.dbtools import APSWConnectionWrapper
 
 from .debug import is_debug, debug_exc_log
 from .errors import InvalidTableError
@@ -22,7 +23,7 @@ from .utils import PlaylistScope
 log = logging.getLogger("red.cogs.Audio.database")
 
 if TYPE_CHECKING:
-    database_connection: apsw.Connection
+    database_connection: APSWConnectionWrapper
     _bot: Red
     _config: Config
 else:
@@ -62,7 +63,7 @@ def _pass_config_to_databases(config: Config, bot: Red):
     if _bot is None:
         _bot = bot
     if database_connection is None:
-        database_connection = apsw.Connection(
+        database_connection = APSWConnectionWrapper(
             str(cog_data_path(_bot.get_cog("Audio")) / "Audio.db")
         )
 
@@ -116,7 +117,8 @@ class CacheGetAllLavalink:
 
 class CacheInterface:
     def __init__(self):
-        self.database = database_connection.cursor()
+        self.database_cursor = database_connection.cursor()
+        self._database = database_connection
 
     @staticmethod
     def close():
@@ -124,17 +126,17 @@ class CacheInterface:
             database_connection.close()
 
     async def init(self):
-        self.database.execute(PRAGMA_SET_temp_store)
-        self.database.execute(PRAGMA_SET_journal_mode)
-        self.database.execute(PRAGMA_SET_read_uncommitted)
+        self._database.cursor().execute(PRAGMA_SET_temp_store)
+        self._database.cursor().execute(PRAGMA_SET_journal_mode)
+        self._database.cursor().execute(PRAGMA_SET_read_uncommitted)
         self.maybe_migrate()
 
-        self.database.execute(LAVALINK_CREATE_TABLE)
-        self.database.execute(LAVALINK_CREATE_INDEX)
-        self.database.execute(YOUTUBE_CREATE_TABLE)
-        self.database.execute(YOUTUBE_CREATE_INDEX)
-        self.database.execute(SPOTIFY_CREATE_TABLE)
-        self.database.execute(SPOTIFY_CREATE_INDEX)
+        self._database.cursor().execute(LAVALINK_CREATE_TABLE)
+        self._database.cursor().execute(LAVALINK_CREATE_INDEX)
+        self._database.cursor().execute(YOUTUBE_CREATE_TABLE)
+        self._database.cursor().execute(YOUTUBE_CREATE_INDEX)
+        self._database.cursor().execute(SPOTIFY_CREATE_TABLE)
+        self._database.cursor().execute(SPOTIFY_CREATE_INDEX)
 
         await self.clean_up_old_entries()
 
@@ -144,26 +146,25 @@ class CacheInterface:
         maxage_int = int(time.mktime(maxage.timetuple()))
         values = {"maxage": maxage_int}
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            executor.submit(self.database.execute, LAVALINK_DELETE_OLD_ENTRIES, values)
-            executor.submit(self.database.execute, YOUTUBE_DELETE_OLD_ENTRIES, values)
-            executor.submit(self.database.execute, SPOTIFY_DELETE_OLD_ENTRIES, values)
+            executor.submit(self._database.cursor().execute, LAVALINK_DELETE_OLD_ENTRIES, values)
+            executor.submit(self._database.cursor().execute, YOUTUBE_DELETE_OLD_ENTRIES, values)
+            executor.submit(self._database.cursor().execute, SPOTIFY_DELETE_OLD_ENTRIES, values)
 
     def maybe_migrate(self):
-        current_version = self.database.execute(PRAGMA_FETCH_user_version).fetchone()
+        current_version = self._database.cursor().execute(PRAGMA_FETCH_user_version).fetchone()
         if isinstance(current_version, tuple):
             current_version = current_version[0]
         if current_version == SCHEMA_VERSION:
             return
-        self.database.execute(PRAGMA_SET_user_version, {"version": SCHEMA_VERSION})
+        self._database.cursor().execute(PRAGMA_SET_user_version, {"version": SCHEMA_VERSION})
 
     async def insert(self, table: str, values: List[MutableMapping]):
         try:
             query = _PARSER.get(table, {}).get("insert")
             if query is None:
                 raise InvalidTableError(f"{table} is not a valid table in the database.")
-            self.database.execute("BEGIN;")
-            self.database.executemany(query, values)
-            self.database.execute("COMMIT;")
+            with self._database.transaction() as transaction:
+                transaction.executemany(query, values)
         except Exception as err:
             debug_exc_log(log, err, "Error during audio db insert")
 
@@ -176,7 +177,7 @@ class CacheInterface:
             if not table:
                 raise InvalidTableError(f"{table} is not a valid table in the database.")
             with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-                executor.submit(self.database.execute, sql_query, values)
+                executor.submit(self._database.cursor().execute, sql_query, values)
         except Exception as err:
             debug_exc_log(log, err, "Error during audio db update")
 
@@ -191,9 +192,19 @@ class CacheInterface:
         maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=max_age)
         maxage_int = int(time.mktime(maxage.timetuple()))
         values.update({"maxage": maxage_int})
-        output = self.database.execute(sql_query, values).fetchone() or (None, 0)
-        result = CacheFetchResult(*output)
-        return result.query, False
+        row = None
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            for future in concurrent.futures.as_completed(
+                [executor.submit(self._database.cursor().execute, sql_query, values)]
+            ):
+                try:
+                    row_result = future.result()
+                    row = row_result.fetchone()
+                except Exception as exc:
+                    debug_exc_log(log, exc, "Failed to completed fetch from database")
+        if not row:
+            return None, False
+        return CacheFetchResult(*row).query, False
 
     async def fetch_all(
         self, table: str, query: str, values: Dict[str, Union[str, int]]
@@ -202,12 +213,21 @@ class CacheInterface:
         sql_query = table.get(query, {}).get("played")
         if not table:
             raise InvalidTableError(f"{table} is not a valid table in the database.")
-
         output = []
-        for index, row in enumerate(self.database.execute(sql_query, values), start=1):
+        row_result = []
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            for future in concurrent.futures.as_completed(
+                [executor.submit(self._database.cursor().execute, sql_query, values)]
+            ):
+                try:
+                    row_result = future.result()
+                except Exception as exc:
+                    debug_exc_log(log, exc, "Failed to completed random fetch from database")
+        for index, row in enumerate(row_result, start=1):
             if index % 50 == 0:
                 await asyncio.sleep(0.01)
             output.append(CacheLastFetchResult(*row))
+            await asyncio.sleep(0)
         return output
 
     async def fetch_random(
@@ -220,7 +240,7 @@ class CacheInterface:
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             for future in concurrent.futures.as_completed(
-                [executor.submit(self.database.execute, sql_query, values)]
+                [executor.submit(self._database.cursor().execute, sql_query, values)]
             ):
                 try:
                     row = future.result()
@@ -231,9 +251,20 @@ class CacheInterface:
 
     async def fetch_all_for_global(self) -> List[CacheGetAllLavalink]:
         output = []
-        for index, row in enumerate(
-            self.database.execute(LAVALINK_FETCH_ALL_ENTRIES_GLOBAL), start=1
-        ):
+        row_result = []
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            for future in concurrent.futures.as_completed(
+                [
+                    executor.submit(
+                        self._database.cursor().execute, LAVALINK_FETCH_ALL_ENTRIES_GLOBAL
+                    )
+                ]
+            ):
+                try:
+                    row_result = future.result()
+                except Exception as exc:
+                    debug_exc_log(log, exc, "Failed to completed random fetch from database")
+        for index, row in enumerate(row_result, start=1):
             if index % 50 == 0:
                 await asyncio.sleep(0.01)
             output.append(CacheGetAllLavalink(*row))
@@ -243,6 +274,7 @@ class CacheInterface:
 
 class PlaylistInterface:
     def __init__(self):
+        self.database = database_connection
         self.cursor = database_connection.cursor()
         self.cursor.execute(PRAGMA_SET_temp_store)
         self.cursor.execute(PRAGMA_SET_journal_mode)
@@ -281,30 +313,51 @@ class PlaylistInterface:
         self, scope: str, scope_id: int, author_id=None
     ) -> List[PlaylistFetchResult]:
         scope_type = self.get_scope_type(scope)
-        if author_id is not None:
-            output = []
-            for index, row in enumerate(
-                self.cursor.execute(
-                    PLAYLIST_FETCH_ALL_WITH_FILTER,
-                    ({"scope_type": scope_type, "scope_id": scope_id, "author_id": author_id}),
-                ),
-                start=1,
-            ):
-                if index % 50 == 0:
-                    await asyncio.sleep(0.01)
-                output.append(row)
-        else:
-            output = []
-            for index, row in enumerate(
-                self.cursor.execute(
-                    PLAYLIST_FETCH_ALL, ({"scope_type": scope_type, "scope_id": scope_id})
-                ),
-                start=1,
-            ):
-                if index % 50 == 0:
-                    await asyncio.sleep(0.01)
-                output.append(row)
-        return [PlaylistFetchResult(*row) for row in output] if output else []
+        output = []
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            if author_id is not None:
+                for future in concurrent.futures.as_completed(
+                    [
+                        executor.submit(
+                            self.database.cursor().execute,
+                            PLAYLIST_FETCH_ALL_WITH_FILTER,
+                            (
+                                {
+                                    "scope_type": scope_type,
+                                    "scope_id": scope_id,
+                                    "author_id": author_id,
+                                }
+                            ),
+                        )
+                    ]
+                ):
+                    try:
+                        row_result = future.result()
+                    except Exception as exc:
+                        debug_exc_log(log, exc, "Failed to completed playlist fetch from database")
+                        return []
+            else:
+                for future in concurrent.futures.as_completed(
+                    [
+                        executor.submit(
+                            self.database.cursor().execute,
+                            PLAYLIST_FETCH_ALL,
+                            ({"scope_type": scope_type, "scope_id": scope_id}),
+                        )
+                    ]
+                ):
+                    try:
+                        row_result = future.result()
+                    except Exception as exc:
+                        debug_exc_log(log, exc, "Failed to completed playlist fetch from database")
+                        return []
+
+        for index, row in enumerate(row_result, start=1):
+            if index % 50 == 0:
+                await asyncio.sleep(0.01)
+            output.append(PlaylistFetchResult(*row))
+            await asyncio.sleep(0)
+        return output
 
     async def fetch_all_converter(
         self, scope: str, playlist_name, playlist_id
@@ -312,27 +365,38 @@ class PlaylistInterface:
         scope_type = self.get_scope_type(scope)
         try:
             playlist_id = int(playlist_id)
-        except Exception:
+        except Exception as exc:
+            debug_exc_log(log, exc, "Failed converting playlist_id to int")
             playlist_id = -1
 
         output = []
-        for index, row in enumerate(
-            self.cursor.execute(
-                PLAYLIST_FETCH_ALL_CONVERTER,
-                (
-                    {
-                        "scope_type": scope_type,
-                        "playlist_name": playlist_name,
-                        "playlist_id": playlist_id,
-                    }
-                ),
-            ),
-            start=1,
-        ):
-            if index % 50 == 0:
-                await asyncio.sleep(0.01)
-            output.append(row)
-        return [PlaylistFetchResult(*row) for row in output] if output else []
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            for future in concurrent.futures.as_completed(
+                [
+                    executor.submit(
+                        self.database.cursor().execute,
+                        PLAYLIST_FETCH_ALL_CONVERTER,
+                        (
+                            {
+                                "scope_type": scope_type,
+                                "playlist_name": playlist_name,
+                                "playlist_id": playlist_id,
+                            }
+                        ),
+                    )
+                ]
+            ):
+                try:
+                    row_result = future.result()
+                except Exception as exc:
+                    debug_exc_log(log, exc, "Failed to completed fetch from database")
+
+            for index, row in enumerate(row_result, start=1):
+                if index % 50 == 0:
+                    await asyncio.sleep(0.01)
+                output.append(PlaylistFetchResult(*row))
+                await asyncio.sleep(0)
+        return output
 
     def delete(self, scope: str, playlist_id: int, scope_id: int):
         scope_type = self.get_scope_type(scope)
