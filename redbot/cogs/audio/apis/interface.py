@@ -483,7 +483,7 @@ class AudioAPIInterface:
                     task = ("update", ("youtube", {"track": track_info}))
                     self.append_task(ctx, *task)
 
-                if llresponse:
+                if llresponse is not None:
                     track_object = llresponse.tracks
                 elif val:
                     try:
