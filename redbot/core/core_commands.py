@@ -1707,7 +1707,7 @@ class Core(commands.Cog, CoreLogic):
         Adds a user to the whitelist.
         """
         uids = [getattr(user, "id", user) for user in users]
-        await self._whiteblacklist_cache.add_to_whitelist(None, uids)
+        await self.bot._whiteblacklist_cache.add_to_whitelist(None, uids)
 
         await ctx.send(_("Users added to whitelist."))
 
@@ -1737,7 +1737,7 @@ class Core(commands.Cog, CoreLogic):
         Removes user from whitelist.
         """
         uids = [getattr(user, "id", user) for user in users]
-        await self._whiteblacklist_cache.remove_from_whitelist(None, uids)
+        await self.bot._whiteblacklist_cache.remove_from_whitelist(None, uids)
 
         await ctx.send(_("Users have been removed from whitelist."))
 
@@ -1746,7 +1746,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Clears the whitelist.
         """
-        await self._whiteblacklist_cache.clear_whitelist()
+        await self.bot._whiteblacklist_cache.clear_whitelist()
         await ctx.send(_("Whitelist has been cleared."))
 
     @commands.group()
@@ -1772,7 +1772,7 @@ class Core(commands.Cog, CoreLogic):
                 return
 
         uids = [getattr(user, "id", user) for user in users]
-        await self._whiteblacklist_cache.add_to_blacklist(None, uids)
+        await self.bot._whiteblacklist_cache.add_to_blacklist(None, uids)
 
         await ctx.send(_("User added to blacklist."))
 
@@ -1781,7 +1781,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Lists blacklisted users.
         """
-        curr_list = await self._whiteblacklist_cache.get_blacklist(None)
+        curr_list = await self.bot._whiteblacklist_cache.get_blacklist(None)
 
         if not curr_list:
             await ctx.send("Blacklist is empty.")
@@ -1803,7 +1803,7 @@ class Core(commands.Cog, CoreLogic):
         """
 
         uids = [getattr(user, "id", user) for user in users]
-        await self._whiteblacklist_cache.remove_from_blacklist(None, uids)
+        await self.bot._whiteblacklist_cache.remove_from_blacklist(None, uids)
 
         await ctx.send(_("Users have been removed from blacklist."))
 
@@ -1812,7 +1812,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Clears the blacklist.
         """
-        await self._whiteblacklist_cache.clear_blacklist()
+        await self.bot._whiteblacklist_cache.clear_blacklist()
         await ctx.send(_("Blacklist has been cleared."))
 
     @commands.group()
@@ -1835,7 +1835,7 @@ class Core(commands.Cog, CoreLogic):
         """
         names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
         uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
-        await self._whiteblacklist_cache.add_to_whitelist(ctx.guild, uids)
+        await self.bot._whiteblacklist_cache.add_to_whitelist(ctx.guild, uids)
 
         await ctx.send(_("{names} added to whitelist.").format(names=humanize_list(names)))
 
@@ -1844,7 +1844,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Lists whitelisted users and roles.
         """
-        curr_list = await self._whiteblacklist_cache.get_whitelist(ctx.guild)
+        curr_list = await self.bot._whiteblacklist_cache.get_whitelist(ctx.guild)
 
         if not curr_list:
             await ctx.send("Local whitelist is empty.")
@@ -1868,7 +1868,7 @@ class Core(commands.Cog, CoreLogic):
         """
         names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
         uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
-        await self._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
+        await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
 
         await ctx.send(
             _("{names} removed from the local whitelist.").format(names=humanize_list(names))
@@ -1879,7 +1879,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Clears the whitelist.
         """
-        await self._whiteblacklist_cache.clear_whitelist(ctx.guild)
+        await self.bot._whiteblacklist_cache.clear_whitelist(ctx.guild)
         await ctx.send(_("Local whitelist has been cleared."))
 
     @commands.group()
@@ -1913,7 +1913,7 @@ class Core(commands.Cog, CoreLogic):
                 return
         names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
         uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
-        await self._whiteblacklist_cache.add_to_blacklist(ctx.guild, uids)
+        await self.bot._whiteblacklist_cache.add_to_blacklist(ctx.guild, uids)
 
         await ctx.send(
             _("{names} added to the local blacklist.").format(names=humanize_list(names))
@@ -1924,7 +1924,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Lists blacklisted users and roles.
         """
-        curr_list = await self._whiteblacklist_cache.get_blacklist(ctx.guild)
+        curr_list = await self.bot._whiteblacklist_cache.get_blacklist(ctx.guild)
 
         if not curr_list:
             await ctx.send("Local blacklist is empty.")
@@ -1946,7 +1946,7 @@ class Core(commands.Cog, CoreLogic):
         """
         names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
         uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
-        await self._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
+        await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
 
         await ctx.send(
             _("{names} removed from the local blacklist.").format(names=humanize_list(names))
@@ -2370,18 +2370,23 @@ class Core(commands.Cog, CoreLogic):
     async def ignore(self, ctx: commands.Context):
         """Add servers or channels to the ignore list."""
         if ctx.invoked_subcommand is None:
-            await ctx.send(await self.count_ignored())
+            for page in pagify(await self.count_ignored(ctx)):
+                await ctx.maybe_send_embed(page)
 
     @ignore.command(name="channel")
-    async def ignore_channel(self, ctx: commands.Context, channel: discord.TextChannel = None):
-        """Ignore commands in the channel.
+    async def ignore_channel(
+        self,
+        ctx: commands.Context,
+        channel: Optional[Union[discord.TextChannel, discord.CategoryChannel]] = None,
+    ):
+        """Ignore commands in the channel or category.
 
         Defaults to the current channel.
         """
         if not channel:
             channel = ctx.channel
         if not await self.bot._ignored_cache.get_ignored_channel(channel):
-            await self.bot._ignored_cache.set_ignored_channel(channel)
+            await self.bot._ignored_cache.set_ignored_channel(channel, True)
             await ctx.send(_("Channel added to ignore list."))
         else:
             await ctx.send(_("Channel already in ignore list."))
@@ -2392,7 +2397,7 @@ class Core(commands.Cog, CoreLogic):
         """Ignore commands in this server."""
         guild = ctx.guild
         if not await self.bot._ignored_cache.get_ignored_guild(guild):
-            await self.bot._ignored_cache.set_ignored_guild(guild)
+            await self.bot._ignored_cache.set_ignored_guild(guild, True)
             await ctx.send(_("This server has been added to the ignore list."))
         else:
             await ctx.send(_("This server is already being ignored."))
@@ -2403,11 +2408,16 @@ class Core(commands.Cog, CoreLogic):
     async def unignore(self, ctx: commands.Context):
         """Remove servers or channels from the ignore list."""
         if ctx.invoked_subcommand is None:
-            await ctx.send(await self.count_ignored())
+            for page in pagify(await self.count_ignored(ctx)):
+                await ctx.maybe_send_embed(page)
 
     @unignore.command(name="channel")
-    async def unignore_channel(self, ctx: commands.Context, channel: discord.TextChannel = None):
-        """Remove a channel from ignore the list.
+    async def unignore_channel(
+        self,
+        ctx: commands.Context,
+        channel: Optional[Union[discord.TextChannel, discord.CategoryChannel]] = None,
+    ):
+        """Remove a channel or category from ignore the list.
 
         Defaults to the current channel.
         """
@@ -2415,7 +2425,7 @@ class Core(commands.Cog, CoreLogic):
             channel = ctx.channel
 
         if await self.bot._ignored_cache.get_ignored_channel(channel):
-            await self.bot._ignored_cache.set_ignored_channel(channel)
+            await self.bot._ignored_cache.set_ignored_channel(channel, False)
             await ctx.send(_("Channel removed from ignore list."))
         else:
             await ctx.send(_("That channel is not in the ignore list."))
@@ -2426,23 +2436,33 @@ class Core(commands.Cog, CoreLogic):
         """Remove this server from the ignore list."""
         guild = ctx.message.guild
         if await self.bot._ignored_cache.get_ignored_guild(guild):
-            await self.bot._ignored_cache.set_ignored_guild(guild)
+            await self.bot._ignored_cache.set_ignored_guild(guild, False)
             await ctx.send(_("This server has been removed from the ignore list."))
         else:
             await ctx.send(_("This server is not in the ignore list."))
 
-    async def count_ignored(self):
-        ch_count = 0
-        svr_count = 0
-        for guild in self.bot.guilds:
-            if not await self.bot._ignored_cache.get_ignored_guild(guild):
-                for channel in guild.text_channels:
-                    if await self.bot._ignored_cache.get_ignored_channel(channel):
-                        ch_count += 1
+    async def count_ignored(self, ctx: commands.Context):
+        category_channels: List[discord.CategoryChannel] = []
+        text_channels: List[discord.TextChannel] = []
+        if await self.bot._ignored_cache.get_ignored_guild(ctx.guild):
+            return _("This server is currently being ignored.")
+        for channel in ctx.guild.text_channels:
+            if channel.category and channel.category not in category_channels:
+                if await self.bot._ignored_cache.get_ignored_channel(channel.category):
+                    category_channels.append(channel.category)
+                continue
             else:
-                svr_count += 1
-        msg = _("Currently ignoring:\n{} channels\n{} guilds\n").format(ch_count, svr_count)
-        return box(msg)
+                continue
+            if await self.bot._ignored_cache.get_ignored_channel(channel):
+                text_channels.append(channel)
+
+        cat_str = humanize_list([c.name for c in category_channels]) if category_channels else "None"
+        chan_str = humanize_list([c.mention for c in text_channels]) if text_channels else "None"
+        msg = _("Currently ignored categories: {categories}\nChannels:{channels}").format(
+            categories=cat_str,
+            channels=chan_str
+        )
+        return msg
 
 
 # Removing this command from forks is a violation of the GPLv3 under which it is licensed.

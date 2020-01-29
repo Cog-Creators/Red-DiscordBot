@@ -63,23 +63,33 @@ class IgnoreManager:
         ret: bool
 
         cid: int = channel.id
-
+        cat_id: Optional[int] = channel.category.id if channel.category else None
         if cid in self._cached_channels:
-            ret = self._cached_channels[cid]
+            chan_ret = self._cached_channels[cid]
         else:
-            ret = await self._config.channel_from_id(cid).ignored()
-            self._cached_channels[cid] = ret
+            chan_ret = await self._config.channel_from_id(cid).ignored()
+            self._cached_channels[cid] = chan_ret
+        if cat_id and cat_id in self._cached_channels:
+            cat_ret = self._cached_channels[cat_id]
+        else:
+            if cat_id:
+                cat_ret = await self._config.channel_from_id(cat_id).ignored()
+                self._cached_channels[cat_id] = cat_ret
+            else:
+                cat_ret = False
+        ret = chan_ret or cat_ret
 
         return ret
 
-    async def set_ignored_channel(self, channel: discord.TextChannel):
+    async def set_ignored_channel(
+        self, channel: Union[discord.TextChannel, discord.CategoryChannel], set_to: bool
+    ):
 
         cid: int = channel.id
-        if cid not in self._cached_channels:
-            self._cached_channels[cid] = True
-            await self._config.channel_from_id(cid).ignored.set(True)
+        self._cached_channels[cid] = set_to
+        if set_to:
+            await self._config.channel_from_id(cid).ignored.set(set_to)
         else:
-            del self._cached_channels[cid]
             await self._config.channel_from_id(cid).ignored.clear()
 
     async def get_ignored_guild(self, guild: discord.Guild) -> bool:
@@ -95,14 +105,13 @@ class IgnoreManager:
 
         return ret
 
-    async def set_ignored_guild(self, guild: discord.Guild):
+    async def set_ignored_guild(self, guild: discord.Guild, set_to: bool):
 
         gid: int = guild.id
-        if gid not in self._cached_channels:
-            self._cached_guilds[gid] = True
-            await self._config.channel_from_id(gid).ignored.set(True)
+        self._cached_guilds[gid] = set_to
+        if set_to:
+            await self._config.guild_from_id(gid).ignored.set(set_to)
         else:
-            del self._cached_guilds[gid]
             await self._config.guild_from_id(gid).ignored.clear()
 
 
@@ -159,9 +168,7 @@ class WhitelistBlacklistManager:
         else:
             await self._config.guild_from_id(gid).whitelist.clear()
 
-    async def remove_from_whitelist(
-        self, guild: Optional[discord.Guild], role_or_user: List[int]
-    ):
+    async def remove_from_whitelist(self, guild: Optional[discord.Guild], role_or_user: List[int]):
         gid: Optional[int] = guild.id if guild else None
         role_or_user = role_or_user or []
         if not isinstance(role_or_user, list) and not all(
@@ -228,9 +235,7 @@ class WhitelistBlacklistManager:
         else:
             await self._config.guild_from_id(gid).blacklist.clear()
 
-    async def remove_from_blacklist(
-        self, guild: Optional[discord.Guild], role_or_user: List[int]
-    ):
+    async def remove_from_blacklist(self, guild: Optional[discord.Guild], role_or_user: List[int]):
         gid: Optional[int] = guild.id if guild else None
         role_or_user = role_or_user or []
         if not isinstance(role_or_user, list) and not all(

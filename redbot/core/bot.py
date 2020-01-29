@@ -125,7 +125,7 @@ class RedBase(
             autoimmune_ids=[],
         )
 
-        self._config.register_channel(embeds=None, ignored=[])
+        self._config.register_channel(embeds=None, ignored=False)
         self._config.register_user(embeds=None)
 
         self._config.init_custom(CUSTOM_GROUPS, 2)
@@ -412,7 +412,7 @@ class RedBase(
         )
         if surpass_ignore:
             return True
-        guild_ignored = await self._ignored_cache.get_ignored_guilds(ctx.guild)
+        guild_ignored = await self._ignored_cache.get_ignored_guild(ctx.guild)
         chann_ignored = await self._ignored_cache.get_ignored_channel(ctx.channel)
         return not (guild_ignored or chann_ignored and not perms.manage_channels)
 
