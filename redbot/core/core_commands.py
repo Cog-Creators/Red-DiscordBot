@@ -2456,11 +2456,12 @@ class Core(commands.Cog, CoreLogic):
             if await self.bot._ignored_cache.get_ignored_channel(channel):
                 text_channels.append(channel)
 
-        cat_str = humanize_list([c.name for c in category_channels]) if category_channels else "None"
+        cat_str = (
+            humanize_list([c.name for c in category_channels]) if category_channels else "None"
+        )
         chan_str = humanize_list([c.mention for c in text_channels]) if text_channels else "None"
         msg = _("Currently ignored categories: {categories}\nChannels:{channels}").format(
-            categories=cat_str,
-            channels=chan_str
+            categories=cat_str, channels=chan_str
         )
         return msg
 
