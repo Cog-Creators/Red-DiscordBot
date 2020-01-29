@@ -94,8 +94,8 @@ class AudioDBAPI:
                 async with self.session.get(
                     api_url,
                     timeout=aiohttp.ClientTimeout(total=await _config.global_db_get_timeout()),
-                        headers={"Authorization": self.api_key, "X-Token": self._handshake_token},
-                        params={"query": urllib.parse.quote(query)},
+                    headers={"Authorization": self.api_key, "X-Token": self._handshake_token},
+                    params={"query": urllib.parse.quote(query)},
                 ) as r:
                     search_response = await r.json()
                     if IS_DEBUG and "x-process-time" in r.headers:
@@ -120,8 +120,8 @@ class AudioDBAPI:
                 async with self.session.get(
                     api_url,
                     timeout=aiohttp.ClientTimeout(total=await _config.global_db_get_timeout()),
-                        headers={"Authorization": self.api_key, "X-Token": self._handshake_token},
-                        params=params,
+                    headers={"Authorization": self.api_key, "X-Token": self._handshake_token},
+                    params=params,
                 ) as r:
                     search_response = await r.json()
                     if IS_DEBUG and "x-process-time" in r.headers:
