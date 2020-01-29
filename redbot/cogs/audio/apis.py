@@ -70,7 +70,7 @@ class AudioDBAPI:
         _WRITE_GLOBAL_API_ACCESS = self.api_key is not None
         id_list = list(_bot._co_owners)
         id_list.append(_bot.owner_id)
-        self._handshake_token = "||".join(id_list)
+        self._handshake_token = "||".join(map(str, id_list))
         return self.api_key
 
     async def get_call(self, query: Optional[audio_dataclasses.Query] = None) -> dict:
