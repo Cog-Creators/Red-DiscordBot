@@ -490,14 +490,13 @@ def main():
         # Allows transports to close properly, and prevent new ones from being opened.
         # Transports may still not be closed correcly on windows, see below
         loop.run_until_complete(loop.shutdown_asyncgens())
-        if os.name == "nt":
-            # *we* aren't cleaning up more here, but it prevents
-            # a runtime error at the event loop on windows
-            # with resources which require longer to clean up.
-            # With other event loops, a failure to cleanup prior to here
-            # results in a resource warning instead and does not break us.
-            log.info("Please wait, cleaning up a bit more")
-            loop.run_until_complete(asyncio.sleep(1))
+        # *we* aren't cleaning up more here, but it prevents
+        # a runtime error at the event loop on windows
+        # with resources which require longer to clean up.
+        # With other event loops, a failure to cleanup prior to here
+        # results in a resource warning instead
+        log.info("Please wait, cleaning up a bit more")
+        loop.run_until_complete(asyncio.sleep(2))
         loop.stop()
         loop.close()
         exit_code = red._shutdown_mode if red is not None else 1

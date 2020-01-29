@@ -19,7 +19,7 @@ Please install the pre-requirements using the commands listed for your operating
 The pre-requirements are:
  - Python 3.8.1 or greater
  - Pip 18.1 or greater
- - Git
+ - Git 2.11+
  - Java Runtime Environment 11 or later (for audio support)
 
 We also recommend installing some basic compiler tools, in case our dependencies don't provide
@@ -226,12 +226,18 @@ Continue by `creating-venv-linux`.
 Ubuntu LTS versions (18.04 and 16.04)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We recommend adding the ``deadsnakes`` ppa to install Python 3.8.1 or greater:
+We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
 
 .. code-block:: none
 
     sudo apt update
     sudo apt install software-properties-common
+    sudo add-apt-repository ppa:git-core/ppa
+
+We recommend adding the ``deadsnakes`` ppa to install Python 3.8.1 or greater:
+
+.. code-block:: none
+
     sudo add-apt-repository ppa:deadsnakes/ppa
 
 Now install the pre-requirements with apt:
@@ -251,18 +257,25 @@ Continue by `creating-venv-linux`.
 Ubuntu non-LTS versions
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-We recommend installing pyenv as a method of installing non-native versions of python on
-non-LTS versions of Ubuntu. This guide will tell you how. First, run the following commands:
+We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
 
 .. code-block:: none
 
     sudo apt update
+    sudo apt install software-properties-common
+    sudo add-apt-repository ppa:git-core/ppa
+
+Now, to install non-native version of python on non-LTS versions of Ubuntu, we recommend
+installing pyenv. To do this, first run the following commands:
+
+.. code-block:: none
+
     sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
       libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev \
       libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre
     CXX=/usr/bin/g++
 
-Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
+And then complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
 
 ----
 
@@ -341,6 +354,10 @@ Or, to install with PostgreSQL support:
     python -m pip install -U pip setuptools wheel
     python -m pip install -U Red-DiscordBot[postgres]
 
+
+.. note::
+
+    These commands are also used for updating Red
 
 --------------------------
 Setting Up and Running Red

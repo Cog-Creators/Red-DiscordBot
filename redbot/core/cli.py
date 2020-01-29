@@ -135,7 +135,9 @@ def parse_cli_flags(args):
         "security implications if misused. Can be "
         "multiple.",
     )
-    parser.add_argument("--prefix", "-p", action="append", help="Global prefix. Can be multiple")
+    parser.add_argument(
+        "--prefix", "-p", action="append", help="Global prefix. Can be multiple", default=[]
+    )
     parser.add_argument(
         "--no-prompt",
         action="store_true",
@@ -197,6 +199,18 @@ def parse_cli_flags(args):
     )
     parser.add_argument(
         "instance_name", nargs="?", help="Name of the bot instance created during `redbot-setup`."
+    )
+    parser.add_argument(
+        "--team-members-are-owners",
+        action="store_true",
+        dest="use_team_features",
+        default=False,
+        help=(
+            "Treat application team members as owners. "
+            "This is off by default. Owners can load and run arbitrary code. "
+            "Do not enable if you would not trust all of your team members with "
+            "all of the data on the host machine."
+        ),
     )
 
     args = parser.parse_args(args)

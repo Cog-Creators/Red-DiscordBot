@@ -1,1 +1,0 @@
-Check data before it is inserted into the database to avoid corruption.

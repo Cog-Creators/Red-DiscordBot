@@ -10,11 +10,25 @@ from datetime import datetime
 from enum import IntEnum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Optional, Union, List, Dict, NoReturn
+from typing import (
+    Optional,
+    Union,
+    List,
+    Dict,
+    NoReturn,
+    Set,
+    Coroutine,
+    TypeVar,
+    Callable,
+    Awaitable,
+    Any,
+)
 from types import MappingProxyType
 
 import discord
+from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
+from discord.ext.commands.bot import BotBase
 
 from . import Config, i18n, commands, errors, drivers, modlog, bank
 from .cog_manager import CogManager, CogManagerUI
@@ -23,6 +37,8 @@ from .data_manager import cog_data_path
 from .dev_commands import Dev
 from .events import init_events
 from .global_checks import init_global_checks
+
+from .settings_caches import PrefixManager
 
 from .rpc import RPCMixin
 from .utils import common_filters
@@ -36,13 +52,18 @@ __all__ = ["RedBase", "Red", "ExitCodes"]
 
 NotMessage = namedtuple("NotMessage", "guild")
 
+PreInvokeCoroutine = Callable[[commands.Context], Awaitable[Any]]
+T_BIC = TypeVar("T_BIC", bound=PreInvokeCoroutine)
+
 
 def _is_submodule(parent, child):
     return parent == child or child.startswith(parent + ".")
 
 
 # barely spurious warning caused by our intentional shadowing
-class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: disable=no-member
+class RedBase(
+    commands.GroupMixin, dpy_commands.bot.BotBase, RPCMixin
+):  # pylint: disable=no-member
     """Mixin for the main bot class.
 
     This exists because `Red` inherits from `discord.AutoShardedClient`, which
@@ -71,6 +92,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             custom_info=None,
             help__page_char_limit=1000,
             help__max_pages_in_guild=2,
+            help__delete_delay=0,
             help__use_menus=False,
             help__show_hidden=False,
             help__verify_checks=True,
@@ -102,6 +124,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
             autoimmune_ids=[],
         )
 
+        self._config.register_channel(embeds=None)
         self._config.register_user(embeds=None)
 
         self._config.init_custom(CUSTOM_GROUPS, 2)
@@ -109,23 +132,13 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         self._config.init_custom(SHARED_API_TOKENS, 2)
         self._config.register_custom(SHARED_API_TOKENS)
+        self._prefix_cache = PrefixManager(self._config, cli_flags)
 
-        async def prefix_manager(bot, message):
-            if not cli_flags.prefix:
-                global_prefix = await bot._config.prefix()
-            else:
-                global_prefix = cli_flags.prefix
-            if message.guild is None:
-                return global_prefix
-            server_prefix = await bot._config.guild(message.guild).prefix()
+        async def prefix_manager(bot, message) -> List[str]:
+            prefixes = await self._prefix_cache.get_prefixes(message.guild)
             if cli_flags.mentionable:
-                return (
-                    when_mentioned_or(*server_prefix)(bot, message)
-                    if server_prefix
-                    else when_mentioned_or(*global_prefix)(bot, message)
-                )
-            else:
-                return server_prefix if server_prefix else global_prefix
+                return when_mentioned_or(*prefixes)(bot, message)
+            return prefixes
 
         if "command_prefix" not in kwargs:
             kwargs["command_prefix"] = prefix_manager
@@ -142,6 +155,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
+        self._use_team_features = cli_flags.use_team_features
         super().__init__(*args, help_command=None, **kwargs)
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
@@ -150,6 +164,74 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
 
         self._permissions_hooks: List[commands.CheckPredicate] = []
         self._red_ready = asyncio.Event()
+        self._red_before_invoke_objs: Set[PreInvokeCoroutine] = set()
+
+    def get_command(self, name: str) -> Optional[commands.Command]:
+        com = super().get_command(name)
+        assert com is None or isinstance(com, commands.Command)
+        return com
+
+    def get_cog(self, name: str) -> Optional[commands.Cog]:
+        cog = super().get_cog(name)
+        assert cog is None or isinstance(cog, commands.Cog)
+        return cog
+
+    @property
+    def _before_invoke(self):  # DEP-WARN
+        return self._red_before_invoke_method
+
+    @_before_invoke.setter
+    def _before_invoke(self, val):  # DEP-WARN
+        """Prevent this from being overwritten in super().__init__"""
+        pass
+
+    async def _red_before_invoke_method(self, ctx):
+        await self.wait_until_red_ready()
+        return_exceptions = isinstance(ctx.command, commands.commands._AlwaysAvailableCommand)
+        if self._red_before_invoke_objs:
+            await asyncio.gather(
+                *(coro(ctx) for coro in self._red_before_invoke_objs),
+                return_exceptions=return_exceptions,
+            )
+
+    def remove_before_invoke_hook(self, coro: PreInvokeCoroutine) -> None:
+        """
+        Functional method to remove a `before_invoke` hook.
+        """
+        self._red_before_invoke_objs.discard(coro)
+
+    def before_invoke(self, coro: T_BIC) -> T_BIC:
+        """
+        Overridden decorator method for Red's ``before_invoke`` behavior.
+
+        This can safely be used purely functionally as well.
+
+        3rd party cogs should remove any hooks which they register at unload
+        using `remove_before_invoke_hook`
+
+        Below behavior shared with discord.py:
+
+        .. note::
+            The ``before_invoke`` hooks are
+            only called if all checks and argument parsing procedures pass
+            without error. If any check or argument parsing procedures fail
+            then the hooks are not called.
+
+        Parameters
+        ----------
+        coro: Callable[[commands.Context], Awaitable[Any]]
+            The coroutine to register as the pre-invoke hook.
+
+        Raises
+        ------
+        TypeError
+            The coroutine passed is not actually a coroutine.
+        """
+        if not asyncio.iscoroutinefunction(coro):
+            raise TypeError("The pre-invoke hook must be a coroutine.")
+
+        self._red_before_invoke_objs.add(coro)
+        return coro
 
     @property
     def cog_mgr(self) -> NoReturn:
@@ -200,15 +282,15 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         """
         This checks if a user or member is allowed to run things,
         as considered by Red's whitelist and blacklist.
-        
+
         If given a user object, this function will check the global lists
-        
+
         If given a member, this will additionally check guild lists
-        
+
         If omiting a user or member, you must provide a value for ``who_id``
-        
+
         You may also provide a value for ``guild_id`` in this case
-        
+
         If providing a member by guild and member ids,
         you should supply ``role_ids`` as well
 
@@ -216,7 +298,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         ----------
         who : Optional[Union[discord.Member, discord.User]]
             The user or member object to check
-        
+
         Other Parameters
         ----------------
         who_id : Optional[int]
@@ -233,7 +315,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         ------
         TypeError
             Did not provide ``who`` or ``who_id``
-            
+
         Returns
         -------
         bool
@@ -549,23 +631,57 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         bool
             :code:`True` if an embed is requested
         """
-        if isinstance(channel, discord.abc.PrivateChannel) or (
-            command and command == self.get_command("help")
-        ):
+        if isinstance(channel, discord.abc.PrivateChannel):
             user_setting = await self._config.user(user).embeds()
             if user_setting is not None:
                 return user_setting
         else:
+            channel_setting = await self._config.channel(channel).embeds()
+            if channel_setting is not None:
+                return channel_setting
             guild_setting = await self._config.guild(channel.guild).embeds()
             if guild_setting is not None:
                 return guild_setting
+
         global_setting = await self._config.embeds()
         return global_setting
 
-    async def is_owner(self, user) -> bool:
+    async def is_owner(self, user: Union[discord.User, discord.Member]) -> bool:
+        """
+        Determines if the user should be considered a bot owner.
+
+        This takes into account CLI flags and application ownership.
+
+        By default,
+        application team members are not considered owners,
+        while individual application owners are.
+
+        Parameters
+        ----------
+        user: Union[discord.User, discord.Member]
+
+        Returns
+        -------
+        bool
+        """
         if user.id in self._co_owners:
             return True
-        return await super().is_owner(user)
+
+        if self.owner_id:
+            return self.owner_id == user.id
+        elif self.owner_ids:
+            return user.id in self.owner_ids
+        else:
+            app = await self.application_info()
+            if app.team:
+                if self._use_team_features:
+                    self.owner_ids = ids = {m.id for m in app.team.members}
+                    return user.id in ids
+            else:
+                self.owner_id = owner_id = app.owner.id
+                return user.id == owner_id
+
+        return False
 
     async def is_admin(self, member: discord.Member) -> bool:
         """Checks if a member is an admin of their guild."""
@@ -833,7 +949,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         This should realistically only be used for responding using user provided
         input. (unfortunately, including usernames)
         Manually crafted messages which dont take any user input have no need of this
-        
+
         Returns
         -------
         discord.Message
@@ -1004,10 +1120,11 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):  # pylint: d
         await self.wait_until_red_ready()
         destinations = []
         opt_outs = await self._config.owner_opt_out_list()
-        for user_id in (self.owner_id, *self._co_owners):
+        team_ids = () if not self._use_team_features else self.owner_ids
+        for user_id in set((self.owner_id, *self._co_owners, *team_ids)):
             if user_id not in opt_outs:
                 user = self.get_user(user_id)
-                if user:
+                if user and not user.bot:  # user.bot is possible with flags and teams
                     destinations.append(user)
                 else:
                     log.warning(

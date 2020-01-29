@@ -121,8 +121,13 @@ class Admin(commands.Cog):
     async def _addrole(
         self, ctx: commands.Context, member: discord.Member, role: discord.Role, *, check_user=True
     ):
-        if member is None:
-            member = ctx.author
+        if role in member.roles:
+            await ctx.send(
+                _("{member.display_name} already has the role {role.name}.").format(
+                    role=role, member=member
+                )
+            )
+            return
         if check_user and not self.pass_user_hierarchy_check(ctx, role):
             await ctx.send(_(USER_HIERARCHY_ISSUE_ADD).format(role=role, member=member))
             return
@@ -146,8 +151,13 @@ class Admin(commands.Cog):
     async def _removerole(
         self, ctx: commands.Context, member: discord.Member, role: discord.Role, *, check_user=True
     ):
-        if member is None:
-            member = ctx.author
+        if role not in member.roles:
+            await ctx.send(
+                _("{member.display_name} does not have the role {role.name}.").format(
+                    role=role, member=member
+                )
+            )
+            return
         if check_user and not self.pass_user_hierarchy_check(ctx, role):
             await ctx.send(_(USER_HIERARCHY_ISSUE_REMOVE).format(role=role, member=member))
             return

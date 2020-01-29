@@ -43,6 +43,7 @@ __all__ = [
     "CacheLevel",
     "format_playlist_picker_data",
     "get_track_description_unformatted",
+    "track_remaining_duration",
     "Notifier",
     "PlaylistScope",
 ]
@@ -124,6 +125,20 @@ async def queue_duration(ctx) -> int:
         remain = 0
     queue_total_duration = remain + queue_dur
     return queue_total_duration
+
+
+async def track_remaining_duration(ctx) -> int:
+    player = lavalink.get_player(ctx.guild.id)
+    if not player.current:
+        return 0
+    try:
+        if not player.current.is_stream:
+            remain = player.current.length - player.position
+        else:
+            remain = 0
+    except AttributeError:
+        remain = 0
+    return remain
 
 
 async def draw_time(ctx) -> str:

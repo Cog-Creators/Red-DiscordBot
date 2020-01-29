@@ -49,8 +49,13 @@ def init_events(bot, cli_flags):
         users = len(set([m for m in bot.get_all_members()]))
 
         app_info = await bot.application_info()
-        if bot.owner_id is None:
-            bot.owner_id = app_info.owner.id
+
+        if app_info.team:
+            if bot._use_team_features:
+                bot.owner_ids = {m.id for m in app_info.team.members}
+        else:
+            if bot.owner_id is None:
+                bot.owner_id = app_info.owner.id
 
         try:
             invite_url = discord.utils.oauth_url(app_info.id)
@@ -212,6 +217,12 @@ def init_events(bot, cli_flags):
                     humanize_timedelta(seconds=error.retry_after) or "1 second"
                 ),
                 delete_after=error.retry_after,
+            )
+        elif isinstance(error, commands.MaxConcurrencyReached):
+            await ctx.send(
+                "Too many people using this command. It can only be used {} time(s) per {} concurrently.".format(
+                    error.number, error.per.name
+                )
             )
         else:
             log.exception(type(error).__name__, exc_info=error)
