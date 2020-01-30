@@ -1581,7 +1581,7 @@ class Core(commands.Cog, CoreLogic):
         settings, 'appearance' tab. Then right click a user
         and copy their id"""
         destination = discord.utils.get(ctx.bot.get_all_members(), id=user_id)
-        if destination is None:
+        if destination is None or user_id == ctx.bot.user.id:
             await ctx.send(
                 _(
                     "Invalid ID or user not found. You can only "
