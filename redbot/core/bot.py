@@ -149,6 +149,9 @@ class RedBase(
         if "command_not_found" not in kwargs:
             kwargs["command_not_found"] = "Command {} not found.\n{}"
 
+        kwargs["max_messages"] = cli_flags.message_cache_size
+        self._max_messages = cli_flags.message_cache_size
+
         self._uptime = None
         self._checked_time_accuracy = None
         self._color = discord.Embed.Empty  # This is needed or color ends up 0x000000
