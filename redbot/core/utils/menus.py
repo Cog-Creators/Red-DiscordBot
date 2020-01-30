@@ -5,6 +5,7 @@
 import asyncio
 import contextlib
 import functools
+import warnings
 from typing import Union, Iterable, Optional
 import discord
 
@@ -200,7 +201,9 @@ def start_adding_reactions(
                 await message.add_reaction(emoji)
 
     if loop is None:
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
+    else:
+        warnings.warn("Explicitly passing the loop will not work in Red 3.4+", DeprecationWarning)
 
     return loop.create_task(task())
 
