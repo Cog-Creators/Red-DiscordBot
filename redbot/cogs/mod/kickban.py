@@ -308,6 +308,9 @@ class KickBanMixin(MixinMeta):
             await ctx.send_help()
             return
 
+        if days is None:
+            days = await self.settings.guild(guild).default_days()
+
         if not (0 <= days <= 7):
             await ctx.send(_("Invalid days. Must be between 0 and 7."))
             return
@@ -328,9 +331,6 @@ class KickBanMixin(MixinMeta):
         if not user_ids:
             await show_results()
             return
-
-        if days is None:
-            days = await self.settings.guild(guild).default_days()
 
         for user_id in user_ids:
             user = guild.get_member(user_id)

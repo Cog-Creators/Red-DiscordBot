@@ -26,8 +26,8 @@
   </a>
 </p>
 <p align="center">
-  <a href="https://travis-ci.com/Cog-Creators/Red-DiscordBot">
-    <img src="https://api.travis-ci.com/Cog-Creators/Red-DiscordBot.svg?branch=V3/develop" alt="Travis CI">
+  <a href="https://github.com/Cog-Creators/Red-DiscordBot/actions">
+    <img src="https://github.com/Cog-Creators/Red-DiscordBot/workflows/Tests/badge.svg" alt="GitHub Actions">
   </a>
   <a href="http://red-discordbot.readthedocs.io/en/stable/?badge=stable">
     <img src="https://readthedocs.org/projects/red-discordbot/badge/?version=stable" alt="Red on readthedocs.org">

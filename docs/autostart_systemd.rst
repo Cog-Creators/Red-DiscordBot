@@ -71,4 +71,4 @@ type the following command in the terminal, still by adding the instance name af
 
 To view Red’s log, you can acccess through journalctl:
 
-:code:`sudo journalctl -u red@instancename`
+:code:`sudo journalctl -eu red@instancename`
