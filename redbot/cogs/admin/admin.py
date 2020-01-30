@@ -297,7 +297,7 @@ class Admin(commands.Cog):
 
             await ctx.send(_("The announcement has begun."))
         else:
-            prefix = ctx.prefix
+            prefix = ctx.clean_prefix
             await ctx.send(_(RUNNING_ANNOUNCEMENT).format(prefix=prefix))
 
     @announce.command(name="cancel")

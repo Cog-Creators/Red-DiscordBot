@@ -1,0 +1,1 @@
+Use new Twitch API and Bearer tokens. Escape markdown and mass mentions for "streamer_name is live!" messages, and use humanize_number for every numbers.
