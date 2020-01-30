@@ -236,7 +236,7 @@ class CustomCommands(commands.Cog):
         except AlreadyExists:
             await ctx.send(
                 _("This command already exists. Use `{command}` to edit it.").format(
-                    command="{}customcom edit".format(ctx.prefix)
+                    command=f"{ctx.clean_prefix}customcom edit"
                 )
             )
 
@@ -257,7 +257,7 @@ class CustomCommands(commands.Cog):
         except AlreadyExists:
             await ctx.send(
                 _("This command already exists. Use `{command}` to edit it.").format(
-                    command="{}customcom edit".format(ctx.prefix)
+                    command=f"{ctx.clean_prefix}customcom edit"
                 )
             )
         except ArgParseError as e:
@@ -302,7 +302,7 @@ class CustomCommands(commands.Cog):
         except NotFound:
             await ctx.send(
                 _("That command doesn't exist. Use `{command}` to add it.").format(
-                    command="{}customcom create".format(ctx.prefix)
+                    command=f"{ctx.clean_prefix}customcom create"
                 )
             )
 
@@ -334,7 +334,7 @@ class CustomCommands(commands.Cog):
         except NotFound:
             await ctx.send(
                 _("That command doesn't exist. Use `{command}` to add it.").format(
-                    command="{}customcom create".format(ctx.prefix)
+                    command=f"{ctx.clean_prefix}customcom create"
                 )
             )
         except ArgParseError as e:
@@ -355,7 +355,7 @@ class CustomCommands(commands.Cog):
                 _(
                     "There are no custom commands in this server."
                     " Use `{command}` to start adding some."
-                ).format(command="{}customcom create".format(ctx.prefix))
+                ).format(command=f"{ctx.clean_prefix}customcom create")
             )
             return
 

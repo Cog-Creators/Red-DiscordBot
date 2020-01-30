@@ -1,8 +1,7 @@
-from redbot.core import commands
+from redbot.core.bot import Red
 
 from .audio import Audio
 
 
-def setup(bot: commands.Bot):
-    cog = Audio(bot)
-    bot.add_cog(cog)
+def setup(bot: Red):
+    bot.add_cog(Audio(bot))
