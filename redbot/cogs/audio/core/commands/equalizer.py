@@ -52,7 +52,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             with contextlib.suppress(discord.HTTPException):
                 await eq_message.add_reaction("\N{INFORMATION SOURCE}")
         else:
-            start_adding_reactions(eq_message, reactions, self.bot.loop)
+            start_adding_reactions(eq_message, reactions)
 
         eq_msg_with_reacts = await ctx.fetch_message(eq_message.id)
         player.store("eq_message", eq_msg_with_reacts)

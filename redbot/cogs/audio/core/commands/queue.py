@@ -114,9 +114,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             expected = ("⏹", "⏯")
             emoji = {"stop": "⏹", "pause": "⏯"}
             if player.current:
-                task: Optional[asyncio.Task] = start_adding_reactions(
-                    message, expected[:4], ctx.bot.loop
-                )
+                task: Optional[asyncio.Task] = start_adding_reactions(message, expected[:4])
             else:
                 task: Optional[asyncio.Task] = None
 
