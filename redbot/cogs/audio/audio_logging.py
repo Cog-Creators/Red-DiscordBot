@@ -1,7 +1,8 @@
 import logging
 import sys
+from typing import Final
 
-IS_DEBUG = "--debug" in sys.argv
+IS_DEBUG: Final[bool] = "--debug" in sys.argv
 
 
 def is_debug() -> bool:

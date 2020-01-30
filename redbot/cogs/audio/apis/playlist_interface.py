@@ -6,16 +6,13 @@ from typing import List, Optional, Union
 import discord
 import lavalink
 
-from redbot.cogs.audio.apis.playlist_wrapper import PlaylistWrapper
-from redbot.cogs.audio.apis.utils import (
-    PlaylistFetchResult,
-    prepare_config_scope,
-    standardize_scope,
-)
-from redbot.cogs.audio.errors import NotAllowed
-from redbot.cogs.audio.utils import PlaylistScope
-from redbot.core import commands, Config
+from redbot.core import Config, commands
 from redbot.core.bot import Red
+
+from ..errors import NotAllowed
+from ..utils import PlaylistScope
+from .api_utils import PlaylistFetchResult, prepare_config_scope, standardize_scope
+from .playlist_wrapper import PlaylistWrapper
 
 log = logging.getLogger("red.cogs.Audio.api.PlaylistsInterface")
 
@@ -167,7 +164,7 @@ class Playlist:
         )
 
 
-class PlaylistCompat23(Playlist):
+class PlaylistCompat23:
     """A single playlist, migrating from Schema 2 to Schema 3"""
 
     def __init__(
@@ -182,9 +179,7 @@ class PlaylistCompat23(Playlist):
         tracks: Optional[List[MutableMapping]] = None,
         guild: Union[discord.Guild, int, None] = None,
     ):
-        super().__init__(
-            bot, playlist_api, scope, author, playlist_id, name, playlist_url, tracks, guild
-        )
+
         self.bot = bot
         self.guild = guild
         self.scope = standardize_scope(scope)
