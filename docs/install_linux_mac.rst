@@ -231,14 +231,14 @@ We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
 .. code-block:: none
 
     sudo apt update
-    sudo apt install software-properties-common
-    sudo add-apt-repository ppa:git-core/ppa
+    sudo apt -y install software-properties-common
+    sudo add-apt-repository -yu ppa:git-core/ppa
 
 We recommend adding the ``deadsnakes`` ppa to install Python 3.8.1 or greater:
 
 .. code-block:: none
 
-    sudo add-apt-repository ppa:deadsnakes/ppa
+    sudo add-apt-repository -yu ppa:deadsnakes/ppa
 
 Now install the pre-requirements with apt:
 
@@ -262,8 +262,8 @@ We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
 .. code-block:: none
 
     sudo apt update
-    sudo apt install software-properties-common
-    sudo add-apt-repository ppa:git-core/ppa
+    sudo apt -y install software-properties-common
+    sudo add-apt-repository -yu ppa:git-core/ppa
 
 Now, to install non-native version of python on non-LTS versions of Ubuntu, we recommend
 installing pyenv. To do this, first run the following commands:
