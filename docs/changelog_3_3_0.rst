@@ -1,5 +1,39 @@
 .. 3.3.x Changelogs
 
+Redbot 3.3.1 (2020-02-05)
+=========================
+
+
+Core Bot
+--------
+
+- Add a cli flag for setting a max size of message cache
+- Allow to edit prefix from command line using ``redbot --edit``.
+- Some functions have been changed to no longer use deprecated asyncio functions
+
+Core Commands
+-------------
+
+- The short help text for dm has been made more useful
+- dm no longer allows owners to have the bot attempt to DM itself
+
+Utils
+-----
+
+- Passing the event loop explicitly in utils is deprecated (Removal in 3.4)
+
+Mod Cog
+-------
+
+- Hackban now works properly without being provided a number of days
+
+Documentation Changes
+---------------------
+
+- Add ``-e`` flag to ``journalctl`` command in systemd guide so that it takes the user to the end of logs automatically.
+- Added section to install docs for CentOS 8
+- Improve usage of apt update in docs
+
 Redbot 3.3.0 (2020-01-26)
 =========================
 
