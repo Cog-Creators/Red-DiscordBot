@@ -398,7 +398,7 @@ class AudioAPIInterface:
         List[str]
             List of Youtube URLs.
         """
-        # globaldb_toggle = await self.config.global_db_enabled()
+        ## globaldb_toggle = await self.config.global_db_enabled()
         track_list = []
         has_not_allowed = False
         try:
