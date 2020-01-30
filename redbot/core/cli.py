@@ -212,6 +212,13 @@ def parse_cli_flags(args):
             "all of the data on the host machine."
         ),
     )
+    parser.add_argument(
+        "--message-cache-size",
+        type=int,
+        default=1000,
+        dest="message_cache_size",
+        help="Set the maximum number of messages to store in the internal message cache.",
+    )
 
     args = parser.parse_args(args)
 
