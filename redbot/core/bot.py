@@ -149,8 +149,13 @@ class RedBase(
         if "command_not_found" not in kwargs:
             kwargs["command_not_found"] = "Command {} not found.\n{}"
 
-        kwargs["max_messages"] = cli_flags.message_cache_size
-        self._max_messages = cli_flags.message_cache_size
+        message_cache_size = cli_flags.message_cache_size
+        if message_cache_size == "None":
+            message_cache_size = None
+        else:
+            message_cache_size = int(message_cache_size)
+        kwargs["max_messages"] = message_cache_size
+        self._max_messages = message_cache_size
 
         self._uptime = None
         self._checked_time_accuracy = None
