@@ -1,14 +1,16 @@
 import argparse
 import functools
 import re
-from typing import MutableMapping, Optional, Tuple, Union
+from typing import Final, MutableMapping, Optional, Tuple, Union
 
 import discord
 
 from redbot.core import commands
+from redbot.core.bot import Red
 from redbot.core.i18n import Translator
+
+from .apis.api_utils import standardize_scope
 from .apis.playlist_interface import get_all_playlist_converter
-from .apis.utils import standardize_scope
 from .errors import NoMatchesFound, TooManyMatches
 from .utils import PlaylistScope
 
@@ -24,35 +26,42 @@ __all__ = [
     "get_playlist_converter",
 ]
 
-_SCOPE_HELP = """
+_SCOPE_HELP: Final[
+    str
+] = """
 Scope must be a valid version of one of the following:
 ​ ​ ​ ​ Global
 ​ ​ ​ ​ Guild
 ​ ​ ​ ​ User
 """
-_USER_HELP = """
+_USER_HELP: Final[
+    str
+] = """
 Author must be a valid version of one of the following:
 ​ ​ ​ ​ User ID
 ​ ​ ​ ​ User Mention
 ​ ​ ​ ​ User Name#123
 """
-_GUILD_HELP = """
+_GUILD_HELP: Final[
+    str
+] = """
 Guild must be a valid version of one of the following:
 ​ ​ ​ ​ Guild ID
 ​ ​ ​ ​ Exact guild name
 """
 
-MENTION_RE = re.compile(r"^<?(?:(?:@[!&]?)?|#)(\d{15,21})>?$")
+MENTION_RE: Final[re.Pattern] = re.compile(r"^<?(?:(?:@[!&]?)?|#)(\d{15,21})>?$")
 
 
 def _match_id(arg: str) -> Optional[int]:
     m = MENTION_RE.match(arg)
     if m:
         return int(m.group(1))
+    return None
 
 
 async def global_unique_guild_finder(ctx: commands.Context, arg: str) -> discord.Guild:
-    bot: commands.Bot = ctx.bot
+    bot: Red = ctx.bot
     _id = _match_id(arg)
 
     if _id is not None:
@@ -86,7 +95,7 @@ async def global_unique_guild_finder(ctx: commands.Context, arg: str) -> discord
 async def global_unique_user_finder(
     ctx: commands.Context, arg: str, guild: discord.guild = None
 ) -> discord.abc.User:
-    bot: commands.Bot = ctx.bot
+    bot: Red = ctx.bot
     guild = guild or ctx.guild
     _id = _match_id(arg)
 
@@ -136,7 +145,7 @@ class PlaylistConverter(commands.Converter):
             global_matches = await get_all_playlist_converter(
                 PlaylistScope.GLOBAL.value,
                 ctx.bot,
-                cog._playlist_api,
+                cog.playlist_api,
                 arg,
                 guild=ctx.guild,
                 author=ctx.author,
@@ -144,7 +153,7 @@ class PlaylistConverter(commands.Converter):
             guild_matches = await get_all_playlist_converter(
                 PlaylistScope.GUILD.value,
                 ctx.bot,
-                cog._playlist_api,
+                cog.playlist_api,
                 arg,
                 guild=ctx.guild,
                 author=ctx.author,
@@ -152,7 +161,7 @@ class PlaylistConverter(commands.Converter):
             user_matches = await get_all_playlist_converter(
                 PlaylistScope.USER.value,
                 ctx.bot,
-                cog._playlist_api,
+                cog.playlist_api,
                 arg,
                 guild=ctx.guild,
                 author=ctx.author,
@@ -189,7 +198,7 @@ class ScopeParser(commands.Converter):
         if arguments:
             argument = " -- ".join(arguments)
         else:
-            command = None
+            command = ""
 
         parser = NoExitParser(description="Playlist Scope Parsing.", add_help=False)
         parser.add_argument("--scope", nargs="*", dest="scope", default=[])
@@ -267,7 +276,7 @@ class ScopeParser(commands.Converter):
         elif any(x in argument for x in ["--author", "--user", "--member"]):
             raise commands.ArgParserFailure("--scope", "Nothing", custom_help=_USER_HELP)
 
-        target_scope: str = target_scope or None
+        target_scope: Optional[str] = target_scope or None
         target_user: Union[discord.Member, discord.User] = target_user or ctx.author
         target_guild: discord.Guild = target_guild or ctx.guild
 
@@ -304,7 +313,7 @@ class ComplexScopeParser(commands.Converter):
         if arguments:
             argument = " -- ".join(arguments)
         else:
-            command = None
+            command = ""
 
         parser = NoExitParser(description="Playlist Scope Parsing.", add_help=False)
 
@@ -456,13 +465,13 @@ class ComplexScopeParser(commands.Converter):
         elif any(x in argument for x in ["--from-author", "--from-user", "--from-member"]):
             raise commands.ArgParserFailure("--from-user", "Nothing", custom_help=_USER_HELP)
 
-        target_scope: str = target_scope or PlaylistScope.GUILD.value
-        target_user: Union[discord.Member, discord.User] = target_user or ctx.author
-        target_guild: discord.Guild = target_guild or ctx.guild
+        target_scope = target_scope or PlaylistScope.GUILD.value
+        target_user = target_user or ctx.author
+        target_guild = target_guild or ctx.guild
 
-        source_scope: str = source_scope or PlaylistScope.GUILD.value
-        source_user: Union[discord.Member, discord.User] = source_user or ctx.author
-        source_guild: discord.Guild = source_guild or ctx.guild
+        source_scope = source_scope or PlaylistScope.GUILD.value
+        source_user = source_user or ctx.author
+        source_guild = source_guild or ctx.guild
 
         return (
             source_scope,

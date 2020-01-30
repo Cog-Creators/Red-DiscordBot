@@ -9,6 +9,7 @@ import discord
 
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_list
+
 from ..errors import InvalidPlaylistScope, MissingAuthor, MissingGuild
 from ..utils import PlaylistScope
 

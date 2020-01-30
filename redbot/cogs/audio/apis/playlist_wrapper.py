@@ -8,7 +8,7 @@ from typing import List, MutableMapping, Optional
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.utils.dbtools import APSWConnectionWrapper
-from .utils import PlaylistFetchResult
+
 from ..audio_logging import debug_exc_log
 from ..sql_statements import (
     PLAYLIST_CREATE_INDEX,
@@ -28,6 +28,7 @@ from ..sql_statements import (
     PRAGMA_SET_user_version,
 )
 from ..utils import PlaylistScope
+from .api_utils import PlaylistFetchResult
 
 log = logging.getLogger("red.cogs.Audio.api.Playlists")
 

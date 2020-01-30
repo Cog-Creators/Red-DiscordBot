@@ -6,22 +6,22 @@ import os
 import posixpath
 import re
 from pathlib import Path, PosixPath, WindowsPath
-from typing import AsyncIterator, Iterator, MutableMapping, Optional, Union
+from typing import AsyncIterator, Final, Iterator, MutableMapping, Optional, Tuple, Union
 from urllib.parse import urlparse
 
 import lavalink
 
-_RE_REMOVE_START = re.compile(r"^(sc|list) ")
-_RE_YOUTUBE_TIMESTAMP = re.compile(r"&t=(\d+)s?")
-_RE_YOUTUBE_INDEX = re.compile(r"&index=(\d+)")
-_RE_SPOTIFY_URL = re.compile(r"(http[s]?://)?(open.spotify.com)/")
-_RE_SPOTIFY_TIMESTAMP = re.compile(r"#(\d+):(\d+)")
-_RE_SOUNDCLOUD_TIMESTAMP = re.compile(r"#t=(\d+):(\d+)s?")
-_RE_TWITCH_TIMESTAMP = re.compile(r"\?t=(\d+)h(\d+)m(\d+)s")
-_PATH_SEPS = [posixpath.sep, ntpath.sep]
+_RE_REMOVE_START: Final[re.Pattern] = re.compile(r"^(sc|list) ")
+_RE_YOUTUBE_TIMESTAMP: Final[re.Pattern] = re.compile(r"&t=(\d+)s?")
+_RE_YOUTUBE_INDEX: Final[re.Pattern] = re.compile(r"&index=(\d+)")
+_RE_SPOTIFY_URL: Final[re.Pattern] = re.compile(r"(http[s]?://)?(open.spotify.com)/")
+_RE_SPOTIFY_TIMESTAMP: Final[re.Pattern] = re.compile(r"#(\d+):(\d+)")
+_RE_SOUNDCLOUD_TIMESTAMP: Final[re.Pattern] = re.compile(r"#t=(\d+):(\d+)s?")
+_RE_TWITCH_TIMESTAMP: Final[re.Pattern] = re.compile(r"\?t=(\d+)h(\d+)m(\d+)s")
+_PATH_SEPS: Final[Tuple[str, str]] = (posixpath.sep, ntpath.sep)
 
-_FULLY_SUPPORTED_MUSIC_EXT = (".mp3", ".flac", ".ogg")
-_PARTIALLY_SUPPORTED_MUSIC_EXT = (
+_FULLY_SUPPORTED_MUSIC_EXT: Final[Tuple[str, ...]] = (".mp3", ".flac", ".ogg")
+_PARTIALLY_SUPPORTED_MUSIC_EXT: Tuple[str, ...] = (
     ".m3u",
     ".m4a",
     ".aac",
@@ -40,7 +40,7 @@ _PARTIALLY_SUPPORTED_MUSIC_EXT = (
     # ".voc",
     # ".dsf",
 )
-_PARTIALLY_SUPPORTED_VIDEO_EXT = (
+_PARTIALLY_SUPPORTED_VIDEO_EXT: Tuple[str, ...] = (
     ".mp4",
     ".mov",
     ".flv",
@@ -167,21 +167,25 @@ class LocalPath:
     async def multiglob(self, *patterns, folder=False) -> AsyncIterator["LocalPath"]:
         for p in patterns:
             for rp in self.glob(p):
-                rp = LocalPath(rp, self._localtrack_folder)
-                if (folder and rp.is_dir() and rp.exists()) or (
-                    rp.suffix in self._all_music_ext and rp.is_file() and rp.exists()
+                rp_local = LocalPath(rp, self._localtrack_folder)
+                if (folder and rp_local.is_dir() and rp_local.exists()) or (
+                    rp_local.suffix in self._all_music_ext
+                    and rp_local.is_file()
+                    and rp_local.exists()
                 ):
-                    yield rp
+                    yield rp_local
                     await asyncio.sleep(0)
 
     async def multirglob(self, *patterns, folder=False) -> AsyncIterator["LocalPath"]:
         for p in patterns:
             for rp in self.rglob(p):
-                rp = LocalPath(rp, self._localtrack_folder)
-                if (folder and rp.is_dir() and rp.exists()) or (
-                    rp.suffix in self._all_music_ext and rp.is_file() and rp.exists()
+                rp_local = LocalPath(rp, self._localtrack_folder)
+                if (folder and rp_local.is_dir() and rp_local.exists()) or (
+                    rp_local.suffix in self._all_music_ext
+                    and rp_local.is_file()
+                    and rp_local.exists()
                 ):
-                    yield rp
+                    yield rp_local
                     await asyncio.sleep(0)
 
     def __str__(self):
@@ -308,10 +312,6 @@ class Query:
         self._local_folder_current_path = local_folder_current_path
         _localtrack: LocalPath = LocalPath(query, local_folder_current_path)
 
-        self.track: Union[LocalPath, str] = _localtrack if (
-            (_localtrack.is_file() or _localtrack.is_dir()) and _localtrack.exists()
-        ) else query
-
         self.valid: bool = query != "InvalidQueryPlaceHolderName"
         self.is_local: bool = kwargs.get("local", False)
         self.is_spotify: bool = kwargs.get("spotify", False)
@@ -341,6 +341,14 @@ class Query:
         if self.invoked_from == "sc search":
             self.is_youtube = False
             self.is_soundcloud = True
+
+        if (_localtrack.is_file() or _localtrack.is_dir()) and _localtrack.exists():
+            self.local_track_path: Optional[LocalPath] = _localtrack
+            self.track: str = str(_localtrack.absolute())
+            self.is_local: bool = True
+        else:
+            self.local_track_path: Optional[LocalPath] = None
+            self.track: str = str(query)
 
         self.lavalink_query: str = self._get_query()
 
@@ -380,7 +388,7 @@ class Query:
         query: Union[LocalPath, lavalink.Track, "Query", str],
         _local_folder_current_path: Path,
         **kwargs,
-    ):
+    ) -> "Query":
         """
         Process the input query into its type
 
@@ -421,7 +429,7 @@ class Query:
     @staticmethod
     def _parse(track, _local_folder_current_path: Path, **kwargs) -> MutableMapping:
         """Parse a track into all the relevant metadata"""
-        returning = {}
+        returning: MutableMapping = {}
         if (
             type(track) == type(LocalPath)
             and (track.is_file() or track.is_dir())
@@ -585,7 +593,7 @@ class Query:
 
     def _get_query(self):
         if self.is_local:
-            return self.track.to_string()
+            return self.local_track_path.to_string()
         elif self.is_spotify:
             return self.spotify_uri
         elif self.is_search and self.is_youtube:
@@ -596,13 +604,13 @@ class Query:
 
     def to_string_user(self):
         if self.is_local:
-            return str(self.track.to_string_user())
+            return str(self.local_track_path.to_string_user())
         return str(self._raw)
 
     @property
     def suffix(self):
         if self.is_local:
-            return self.track.suffix
+            return self.local_track_path.suffix
         return None
 
     def __eq__(self, other):
