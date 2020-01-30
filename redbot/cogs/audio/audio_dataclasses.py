@@ -6,19 +6,10 @@ import os
 import posixpath
 import re
 from pathlib import Path, PosixPath, WindowsPath
-from typing import List, Optional, Union, MutableMapping, Iterator, AsyncIterator
+from typing import AsyncIterator, Iterator, MutableMapping, Optional, Union
 from urllib.parse import urlparse
 
 import lavalink
-
-from redbot.core import Config
-from redbot.core.bot import Red
-from redbot.core.i18n import Translator
-
-_config: Optional[Config] = None
-_bot: Optional[Red] = None
-_localtrack_folder: Optional[str] = None
-_ = Translator("Audio", __file__)
 
 _RE_REMOVE_START = re.compile(r"^(sc|list) ")
 _RE_YOUTUBE_TIMESTAMP = re.compile(r"&t=(\d+)s?")
@@ -72,25 +63,16 @@ _PARTIALLY_SUPPORTED_VIDEO_EXT = (
 _PARTIALLY_SUPPORTED_MUSIC_EXT += _PARTIALLY_SUPPORTED_VIDEO_EXT
 
 
-def _pass_config_to_dataclasses(config: Config, bot: Red, folder: str):
-    global _config, _bot, _localtrack_folder
-    if _config is None:
-        _config = config
-    if _bot is None:
-        _bot = bot
-    _localtrack_folder = folder
-
-
 class LocalPath:
     """Local tracks class.
 
-    Used to handle system dir trees in a cross system manner. The only use of this class is for
-    `localtracks`.
+    Used to handle system dir trees in a cross system manner. The only use of this class is for `localtracks`.
     """
 
     _all_music_ext = _FULLY_SUPPORTED_MUSIC_EXT + _PARTIALLY_SUPPORTED_MUSIC_EXT
 
-    def __init__(self, path, **kwargs):
+    def __init__(self, path, localtrack_folder, **kwargs):
+        self._localtrack_folder = localtrack_folder
         self._path = path
         if isinstance(path, (Path, WindowsPath, PosixPath, LocalPath)):
             path = str(path.absolute())
@@ -98,7 +80,7 @@ class LocalPath:
             path = str(path)
 
         self.cwd = Path.cwd()
-        _lt_folder = Path(_localtrack_folder) if _localtrack_folder else self.cwd
+        _lt_folder = Path(self._localtrack_folder) if self._localtrack_folder else self.cwd
         _path = Path(path) if path else self.cwd
 
         if _lt_folder.parts[-1].lower() == "localtracks" and not kwargs.get("forced"):
@@ -165,8 +147,8 @@ class LocalPath:
             return self._path
 
     @classmethod
-    def joinpath(cls, *args):
-        modified = cls(None)
+    def joinpath(cls, localpath, *args):
+        modified = cls(None, localpath)
         modified.path = modified.path.joinpath(*args)
         return modified
 
@@ -185,26 +167,22 @@ class LocalPath:
     async def multiglob(self, *patterns, folder=False) -> AsyncIterator["LocalPath"]:
         for p in patterns:
             for rp in self.glob(p):
-                rp = LocalPath(rp)
-                if folder and rp.is_dir() and rp.exists():
+                rp = LocalPath(rp, self._localtrack_folder)
+                if (folder and rp.is_dir() and rp.exists()) or (
+                    rp.suffix in self._all_music_ext and rp.is_file() and rp.exists()
+                ):
                     yield rp
                     await asyncio.sleep(0)
-                else:
-                    if rp.suffix in self._all_music_ext and rp.is_file() and rp.exists():
-                        yield rp
-                        await asyncio.sleep(0)
 
     async def multirglob(self, *patterns, folder=False) -> AsyncIterator["LocalPath"]:
         for p in patterns:
             for rp in self.rglob(p):
-                rp = LocalPath(rp)
-                if folder and rp.is_dir() and rp.exists():
+                rp = LocalPath(rp, self._localtrack_folder)
+                if (folder and rp.is_dir() and rp.exists()) or (
+                    rp.suffix in self._all_music_ext and rp.is_file() and rp.exists()
+                ):
                     yield rp
                     await asyncio.sleep(0)
-                else:
-                    if rp.suffix in self._all_music_ext and rp.is_file() and rp.exists():
-                        yield rp
-                        await asyncio.sleep(0)
 
     def __str__(self):
         return self.to_string()
@@ -238,7 +216,7 @@ class LocalPath:
                 if track.path.parent != self.localtrack_folder and track.path.relative_to(
                     self.path
                 ):
-                    tracks.append(Query.process_input(track))
+                    tracks.append(Query.process_input(track, self._localtrack_folder))
         return sorted(tracks, key=lambda x: x.to_string_user().lower())
 
     async def subfolders_in_tree(self):
@@ -260,7 +238,7 @@ class LocalPath:
                 if track.path.parent != self.localtrack_folder and track.path.relative_to(
                     self.path
                 ):
-                    tracks.append(Query.process_input(track))
+                    tracks.append(Query.process_input(track, self._localtrack_folder))
         return sorted(tracks, key=lambda x: x.to_string_user().lower())
 
     async def subfolders(self):
@@ -321,14 +299,14 @@ class LocalPath:
 class Query:
     """Query data class.
 
-    Use: Query.process_input(query) to generate the Query object.
+    Use: Query.process_input(query, localtrack_folder) to generate the Query object.
     """
 
-    def __init__(self, query: Union[LocalPath, str], **kwargs):
+    def __init__(self, query: Union[LocalPath, str], local_folder_current_path: Path, **kwargs):
         query = kwargs.get("queryforced", query)
         self._raw: Union[LocalPath, str] = query
-
-        _localtrack: LocalPath = LocalPath(query)
+        self._local_folder_current_path = local_folder_current_path
+        _localtrack: LocalPath = LocalPath(query, local_folder_current_path)
 
         self.track: Union[LocalPath, str] = _localtrack if (
             (_localtrack.is_file() or _localtrack.is_dir()) and _localtrack.exists()
@@ -397,14 +375,21 @@ class Query:
         return str(self.lavalink_query)
 
     @classmethod
-    def process_input(cls, query: Union[LocalPath, lavalink.Track, "Query", str], **kwargs):
-        """A replacement for :code:`lavalink.Player.load_tracks`. This will try to get a valid
-        cached entry first if not found or if in valid it will then call the lavalink API.
+    def process_input(
+        cls,
+        query: Union[LocalPath, lavalink.Track, "Query", str],
+        _local_folder_current_path: Path,
+        **kwargs,
+    ):
+        """
+        Process the input query into its type
 
         Parameters
         ----------
         query : Union[Query, LocalPath, lavalink.Track, str]
             The query string or LocalPath object.
+        _local_folder_current_path: Path
+            The Current Local Track folder
         Returns
         -------
         Query
@@ -430,11 +415,12 @@ class Query:
             query = query.uri
 
         possible_values.update(dict(**kwargs))
-        possible_values.update(cls._parse(query, **kwargs))
-        return cls(query, **possible_values)
+        possible_values.update(cls._parse(query, _local_folder_current_path, **kwargs))
+        return cls(query, _local_folder_current_path, **possible_values)
 
     @staticmethod
-    def _parse(track, **kwargs) -> MutableMapping:
+    def _parse(track, _local_folder_current_path: Path, **kwargs) -> MutableMapping:
+        """Parse a track into all the relevant metadata"""
         returning = {}
         if (
             type(track) == type(LocalPath)
@@ -475,7 +461,7 @@ class Query:
                 track = _RE_REMOVE_START.sub("", track, 1)
                 returning["queryforced"] = track
 
-            _localtrack = LocalPath(track)
+            _localtrack = LocalPath(track, _local_folder_current_path)
             if _localtrack.exists():
                 if _localtrack.is_file():
                     returning["local"] = True

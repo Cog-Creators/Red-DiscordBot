@@ -1,1 +1,0 @@
-``[p]remove`` now also accepts an URL in addition to an index.

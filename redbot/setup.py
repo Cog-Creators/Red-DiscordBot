@@ -371,8 +371,7 @@ def delete(
     remove_datapath: Optional[bool],
 ):
     """Removes an instance."""
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(
+    asyncio.run(
         remove_instance(
             instance, interactive, delete_data, _create_backup, drop_db, remove_datapath
         )
@@ -391,14 +390,12 @@ def convert(instance, backend):
     default_dirs = deepcopy(data_manager.basic_config_default)
     default_dirs["DATA_PATH"] = str(Path(instance_data[instance]["DATA_PATH"]))
 
-    loop = asyncio.get_event_loop()
-
     if current_backend == BackendType.MONGOV1:
         raise RuntimeError("Please see the 3.2 release notes for upgrading a bot using mongo.")
     elif current_backend == BackendType.POSTGRES:  # TODO: GH-3115
         raise RuntimeError("Converting away from postgres isn't currently supported")
     else:
-        new_storage_details = loop.run_until_complete(do_migration(current_backend, target))
+        new_storage_details = asyncio.run(do_migration(current_backend, target))
 
     if new_storage_details is not None:
         default_dirs["STORAGE_TYPE"] = target.value
@@ -422,8 +419,7 @@ def convert(instance, backend):
 )
 def backup(instance: str, destination_folder: Union[str, Path]) -> None:
     """Backup instance's data."""
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(create_backup(instance, Path(destination_folder)))
+    asyncio.run(create_backup(instance, Path(destination_folder)))
 
 
 def run_cli():
