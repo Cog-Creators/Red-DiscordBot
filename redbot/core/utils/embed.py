@@ -24,6 +24,7 @@ def randomize_colour(embed: discord.Embed) -> discord.Embed:
 
 
 def randomize_color(embed: discord.Embed) -> discord.Embed:
+
     """  
     Gives the provided embed a random color.  
     There is an alias for this called randomize_colour  
@@ -41,5 +42,6 @@ def randomize_color(embed: discord.Embed) -> discord.Embed:
         The embed with the color set to a random color  
 
   
-   """
+    """
+
    return randomize_colour(embed)
