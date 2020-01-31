@@ -470,3 +470,7 @@ class MixinMeta(ABC):
         guild: Union[discord.Guild],
     ):
         raise NotImplementedError()
+
+    @abstractmethod
+    def format_time(self, time: int) -> str:
+        raise NotImplementedError()

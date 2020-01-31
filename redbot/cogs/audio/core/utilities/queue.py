@@ -38,12 +38,12 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
             queue_list = ""
 
         arrow = await self.draw_time(ctx)
-        pos = lavalink.utils.format_time(player.position)
+        pos = self.format_time(player.position)
 
         if player.current.is_stream:
             dur = "LIVE"
         else:
-            dur = lavalink.utils.format_time(player.current.length)
+            dur = self.format_time(player.current.length)
 
         query = Query.process_input(player.current, self.local_folder_current_path)
 
@@ -125,7 +125,7 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if await self.config.guild(ctx.guild).thumbnail() and player.current.thumbnail:
             embed.set_thumbnail(url=player.current.thumbnail)
         queue_dur = await self.queue_duration(ctx)
-        queue_total_duration = lavalink.utils.format_time(queue_dur)
+        queue_total_duration = self.format_time(queue_dur)
         text = _(
             "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining\n"
         ).format(

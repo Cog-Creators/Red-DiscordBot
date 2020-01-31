@@ -144,7 +144,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         songembed = discord.Embed(title=_("Track Enqueued"), description=description)
         queue_dur = await self.queue_duration(ctx)
-        queue_total_duration = lavalink.utils.format_time(queue_dur)
+        queue_total_duration = self.format_time(queue_dur)
         before_queue_length = len(player.queue)
 
         if not await self.is_allowed(
