@@ -131,7 +131,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             except AttributeError:
                 await self._embed_msg(ctx, title=_("There's nothing in the queue."))
                 return
-            time_remain = lavalink.utils.format_time(dur - pos)
+            time_remain = self.format_time(dur - pos)
             if player.current.is_stream:
                 embed = discord.Embed(title=_("There's nothing in the queue."))
                 embed.set_footer(
@@ -288,7 +288,8 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                             ctx,
                             title=_("Unable to Get Track"),
                             description=_(
-                                "I'm unable get a track from Lavalink at the moment, try again in a few minutes."
+                                "I'm unable get a track from Lavalink at the moment, "
+                                "try again in a few minutes."
                             ),
                         )
                     tracks = result.tracks
@@ -369,7 +370,8 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ctx,
                     title=_("Unable to Get Track"),
                     description=_(
-                        "I'm unable get a track from Lavalink at the moment, try again in a few minutes."
+                        "I'm unable get a track from Lavalink at the moment, "
+                        "try again in a few minutes."
                     ),
                 )
             tracks = result.tracks
@@ -400,7 +402,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         else:
             tracks = query
         queue_dur = await self.queue_duration(ctx)
-        queue_total_duration = lavalink.utils.format_time(queue_dur)
+        queue_total_duration = self.format_time(queue_dur)
         before_queue_length = len(player.queue)
 
         if not first_track_only and len(tracks) > 1:

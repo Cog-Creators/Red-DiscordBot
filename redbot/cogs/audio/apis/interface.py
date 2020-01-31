@@ -16,12 +16,13 @@ from lavalink.rest_api import LoadResult
 from redbot.cogs.audio.apis.playlist_wrapper import PlaylistWrapper
 from redbot.core import Config, commands
 from redbot.core.bot import Red
+from redbot.core.commands import Cog
 from redbot.core.i18n import Translator
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 
-from ...mod.abc import MixinMeta
 from ..audio_dataclasses import Query
 from ..audio_logging import IS_DEBUG, debug_exc_log
+from ..core.abc import MixinMeta
 from ..errors import DatabaseError, SpotifyFetchError, TrackEnqueueError
 from ..utils import CacheLevel, Notifier
 from .global_db import GlobalCacheWrapper
@@ -55,11 +56,9 @@ class AudioAPIInterface:
         self._session: aiohttp.ClientSession = session
         self._tasks: MutableMapping = {}
         self._lock: asyncio.Lock = asyncio.Lock()
-        self.cog: MixinMeta
 
     async def initialize(self) -> None:
         """Initialises the Local Cache connection"""
-        self.cog = self.bot.get_cog("Audio")
         await self.local_cache_api.lavalink.init()
 
     def close(self) -> None:
@@ -257,7 +256,7 @@ class AudioAPIInterface:
         recursive: Union[str, bool] = False,
         params: MutableMapping = None,
         notifier: Optional[Notifier] = None,
-    ) -> Union[MutableMapping, List[str]]:
+    ) -> Union[List[MutableMapping], List[str]]:
         """Gets track info from spotify API"""
 
         if recursive is False:
@@ -420,8 +419,8 @@ class AudioAPIInterface:
             guild_data = await self.config.guild(ctx.guild).all()
             enqueued_tracks = 0
             consecutive_fails = 0
-            queue_dur = await self.cog.queue_duration(ctx)
-            queue_total_duration = lavalink.utils.format_time(queue_dur)
+            queue_dur = await ctx.cog.queue_duration(ctx)
+            queue_total_duration = ctx.cog.format_time(queue_dur)
             before_queue_length = len(player.queue)
             tracks_from_spotify = await self._spotify_fetch_tracks(
                 query_type, uri, params=None, notifier=notifier
@@ -541,7 +540,7 @@ class AudioAPIInterface:
                     continue
                 consecutive_fails = 0
                 single_track = track_object[0]
-                if not await self.cog.is_allowed(
+                if not await ctx.cog.is_allowed(
                     self.config,
                     ctx.guild,
                     (
@@ -558,7 +557,7 @@ class AudioAPIInterface:
                     if len(player.queue) >= 10000:
                         continue
                     if guild_data["maxlength"] > 0:
-                        if self.cog.track_limit(single_track, guild_data["maxlength"]):
+                        if ctx.cog.track_limit(single_track, guild_data["maxlength"]):
                             enqueued_tracks += 1
                             player.add(ctx.author, single_track)
                             self.bot.dispatch(
@@ -802,7 +801,9 @@ class AudioAPIInterface:
                 )
         return results, called_api
 
-    async def autoplay(self, player: lavalink.Player, playlist_api: PlaylistWrapper):
+    async def autoplay(
+        self, player: lavalink.Player, playlist_api: PlaylistWrapper, cog: MixinMeta
+    ):
         """
         Enqueue a random track
         """
@@ -859,7 +860,7 @@ class AudioAPIInterface:
                     and not query.local_track_path.exists()
                 ):
                     continue
-                if not await self.cog.is_allowed(
+                if not await cog.is_allowed(
                     self.config,
                     player.channel.guild,
                     (

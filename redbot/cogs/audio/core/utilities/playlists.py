@@ -407,8 +407,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         ctx,
                         title=_("Unable to Get Track"),
                         description=_(
-                            "I'm unable get a track from Lavalink at the moment, try again in a few "
-                            "minutes."
+                            "I'm unable get a track from Lavalink at the moment, "
+                            "try again in a few minutes."
                         ),
                     )
 
@@ -425,7 +425,6 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 await notifier.notify_user(
                     current=track_count, total=len(uploaded_track_list), key="playlist"
                 )
-
         playlist = await create_playlist(
             ctx,
             self.playlist_api,

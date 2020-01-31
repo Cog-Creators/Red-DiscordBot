@@ -33,12 +33,12 @@ class SpotifyWrapper:
         self.client_secret: Optional[str] = None
 
     @staticmethod
-    def spotify_format_call(qtype: str, key: str) -> Tuple[str, MutableMapping]:
+    def spotify_format_call(query_type: str, key: str) -> Tuple[str, MutableMapping]:
         """Format the spotify endpoint"""
         params: MutableMapping = {}
-        if qtype == "album":
+        if query_type == "album":
             query = f"{ALBUMS_ENDPOINT}/{key}/tracks"
-        elif qtype == "track":
+        elif query_type == "track":
             query = f"{TRACKS_ENDPOINT}/{key}"
         else:
             query = f"{PLAYLISTS_ENDPOINT}/{key}/tracks"
