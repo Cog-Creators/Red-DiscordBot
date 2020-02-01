@@ -107,6 +107,7 @@ async def edit_instance(red, cli_flags):
     no_prompt = cli_flags.no_prompt
     token = cli_flags.token
     owner = cli_flags.owner
+    prefix = cli_flags.prefix
     old_name = cli_flags.instance_name
     new_name = cli_flags.edit_instance_name
     data_path = cli_flags.edit_data_path
@@ -119,14 +120,20 @@ async def edit_instance(red, cli_flags):
     if new_name is None and confirm_overwrite:
         print("--overwrite-existing-instance can't be used without --edit-instance-name argument")
         sys.exit(1)
-    if no_prompt and all(to_change is None for to_change in (token, owner, new_name, data_path)):
+    if (
+        no_prompt
+        and all(to_change is None for to_change in (token, owner, new_name, data_path))
+        and not prefix
+    ):
         print(
-            "No arguments to edit were provided. Available arguments (check help for more "
-            "information): --edit-instance-name, --edit-data-path, --copy-data, --owner, --token"
+            "No arguments to edit were provided."
+            " Available arguments (check help for more information):"
+            " --edit-instance-name, --edit-data-path, --copy-data, --owner, --token, --prefix"
         )
         sys.exit(1)
 
     await _edit_token(red, token, no_prompt)
+    await _edit_prefix(red, prefix, no_prompt)
     await _edit_owner(red, owner, no_prompt)
 
     data = deepcopy(data_manager.basic_config)
@@ -149,6 +156,15 @@ async def _edit_token(red, token, no_prompt):
         await red._config.token.set(token)
     elif not no_prompt and confirm("Would you like to change instance's token?", default=False):
         await interactive_config(red, False, True, print_header=False)
+        print("Token updated.\n")
+
+
+async def _edit_prefix(red, prefix, no_prompt):
+    if prefix:
+        await red._config.token.set(prefix)
+    elif not no_prompt and confirm("Would you like to change instance's prefixes?", default=False):
+        # TODO: Allow to setup multiple prefixes, similarly to what was in launcher before 3.2
+        await interactive_config(red, True, False, print_header=False)
         print("Token updated.\n")
 
 
