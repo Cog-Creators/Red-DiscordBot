@@ -163,9 +163,17 @@ async def _edit_prefix(red, prefix, no_prompt):
     if prefix:
         await red._config.token.set(prefix)
     elif not no_prompt and confirm("Would you like to change instance's prefixes?", default=False):
-        # TODO: Allow to setup multiple prefixes, similarly to what was in launcher before 3.2
-        await interactive_config(red, True, False, print_header=False)
-        print("Token updated.\n")
+        print(
+            "Enter the prefixes, separated by a space (please note "
+            "that prefixes containing a space will need to be added with [p]set prefix)"
+        )
+        while True:
+            prefixes = input("> ").strip().split()
+            if not prefixes:
+                print("You need to pass at least one prefix!")
+                continue
+        await red._config.prefix.set(prefixes)
+        print("Prefixes updated.\n")
 
 
 async def _edit_owner(red, owner, no_prompt):
