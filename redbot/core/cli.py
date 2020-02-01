@@ -80,9 +80,13 @@ def positive_int(arg: str) -> int:
     except ValueError:
         raise argparse.ArgumentTypeError("Message cache size has to be a number.")
     if x < 1000:
-        raise argparse.ArgumentTypeError("Message cache size has to be greater than or equal to 1000.")
+        raise argparse.ArgumentTypeError(
+            "Message cache size has to be greater than or equal to 1000."
+        )
     if x > sys.maxsize:
-        raise argparse.ArgumentTypeError(f"Message cache size has to be lower than or equal to {sys.maxsize}.")
+        raise argparse.ArgumentTypeError(
+            f"Message cache size has to be lower than or equal to {sys.maxsize}."
+        )
     return x
 
 
