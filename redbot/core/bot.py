@@ -277,6 +277,10 @@ class RedBase(
     def colour(self) -> NoReturn:
         raise AttributeError("Please fetch the embed colour with `get_embed_colour`")
 
+    @property
+    def max_messages(self) -> Optional[int]:
+        return self._max_messages
+
     async def allowed_by_whitelist_blacklist(
         self,
         who: Optional[Union[discord.Member, discord.User]] = None,
