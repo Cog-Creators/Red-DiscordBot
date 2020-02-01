@@ -150,10 +150,8 @@ class RedBase(
             kwargs["command_not_found"] = "Command {} not found.\n{}"
 
         message_cache_size = cli_flags.message_cache_size
-        if message_cache_size == "None":
+        if cli_flags.no_message_cache:
             message_cache_size = None
-        else:
-            message_cache_size = int(message_cache_size)
         kwargs["max_messages"] = message_cache_size
         self._max_messages = message_cache_size
 
