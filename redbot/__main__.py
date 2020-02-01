@@ -172,6 +172,7 @@ async def _edit_prefix(red, prefix, no_prompt):
             if not prefixes:
                 print("You need to pass at least one prefix!")
                 continue
+            prefixes = sorted(prefixes, reverse=True)
             await red._config.prefix.set(prefixes)
             print("Prefixes updated.\n")
             break
