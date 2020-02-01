@@ -216,7 +216,6 @@ def parse_cli_flags(args):
         "--message-cache-size",
         type=str,
         default=1000,
-        dest="message_cache_size",
         help="Set the maximum number of messages to store in the internal message cache.",
     )
     parser.add_argument(
