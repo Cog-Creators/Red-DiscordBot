@@ -161,7 +161,8 @@ async def _edit_token(red, token, no_prompt):
 
 async def _edit_prefix(red, prefix, no_prompt):
     if prefix:
-        await red._config.prefix.set(prefix)
+        prefixes = sorted(prefix, reverse=True)
+        await red._config.prefix.set(prefixes)
     elif not no_prompt and confirm("Would you like to change instance's prefixes?", default=False):
         print(
             "Enter the prefixes, separated by a space (please note "
