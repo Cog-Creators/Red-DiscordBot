@@ -1,0 +1,1 @@
+Add `-e` flag to `journalctl` command in systemd guide so that it takes the user to the end of logs automatically.
