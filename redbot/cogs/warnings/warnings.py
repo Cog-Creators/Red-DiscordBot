@@ -406,7 +406,9 @@ class Warnings(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
-    async def unwarn(self, ctx: commands.Context, user: Union[discord.Member, int], warn_id: str, reason: str):
+    async def unwarn(
+        self, ctx: commands.Context, user: Union[discord.Member, int], warn_id: str, reason: str
+    ):
         """Remove a warning from a user."""
 
         guild = ctx.guild
