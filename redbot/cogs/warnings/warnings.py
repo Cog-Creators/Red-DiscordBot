@@ -406,7 +406,7 @@ class Warnings(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
-    async def unwarn(self, ctx: commands.Context, user: Union[discord.Member, int], warn_id: str):
+    async def unwarn(self, ctx: commands.Context, user: Union[discord.Member, int], warn_id: str, reason: str):
         """Remove a warning from a user."""
 
         guild = ctx.guild
@@ -422,6 +422,29 @@ class Warnings(commands.Cog):
         if user_id == ctx.author.id:
             return await ctx.send(_("You cannot remove warnings from yourself."))
 
+        custom_allowed = await self.config.guild(ctx.guild).allow_custom_reasons()
+        guild_settings = self.config.guild(ctx.guild)
+        reason_type = None
+        async with guild_settings.reasons() as registered_reasons:
+            if reason.lower() not in registered_reasons:
+                msg = _("That is not a registered reason!")
+                if custom_allowed:
+                    reason_type = {"description": reason}
+                elif (
+                    ctx.guild.owner == ctx.author
+                    or ctx.channel.permissions_for(ctx.author).administrator
+                    or await ctx.bot.is_owner(ctx.author)
+                ):
+                    msg += " " + _(
+                        "Do `{prefix}warningset allowcustomreasons true` to enable custom "
+                        "reasons."
+                    ).format(prefix=ctx.prefix)
+                    return await ctx.send(msg)
+            else:
+                reason_type = registered_reasons[reason.lower()]
+        if reason_type is None:
+            return
+
         member_settings = self.config.member(member)
         current_point_count = await member_settings.total_points()
         await warning_points_remove_check(self.config, ctx, member, current_point_count)
@@ -433,6 +456,10 @@ class Warnings(commands.Cog):
                 await member_settings.total_points.set(current_point_count)
                 user_warnings.pop(warn_id)
         try:
+            reason_msg = (_("{description}").format(description=reason_type["description"]),)
+            prefix = (ctx.prefix,)
+            user = (user.id,)
+            message = ctx.message.id
             await modlog.create_case(
                 self.bot,
                 ctx.guild,
@@ -440,7 +467,7 @@ class Warnings(commands.Cog):
                 "unwarned",
                 member,
                 ctx.message.author,
-                None,
+                reason_msg,
                 until=None,
                 channel=None,
             )
