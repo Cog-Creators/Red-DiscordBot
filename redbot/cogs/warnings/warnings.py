@@ -140,7 +140,9 @@ class Warnings(commands.Cog):
                 registered_actions.remove(to_remove)
                 await ctx.tick()
             else:
-                await ctx.send(_("No action named {name} exists!").format(name=action_name))
+                await ctx.send(
+                    _("No action named {name} exists!").format(name=action_name)
+                )
 
     @commands.group()
     @commands.guild_only()
@@ -198,7 +200,8 @@ class Warnings(commands.Cog):
             for r, v in registered_reasons.items():
                 if await ctx.embed_requested():
                     em = discord.Embed(
-                        title=_("Reason: {name}").format(name=r), description=v["description"]
+                        title=_("Reason: {name}").format(name=r),
+                        description=v["description"],
                     )
                     em.add_field(name=_("Points"), value=str(v["points"]))
                     msg_list.append(em)
@@ -224,10 +227,20 @@ class Warnings(commands.Cog):
         async with guild_settings.actions() as registered_actions:
             for r in registered_actions:
                 if await ctx.embed_requested():
-                    em = discord.Embed(title=_("Action: {name}").format(name=r["action_name"]))
-                    em.add_field(name=_("Points"), value="{}".format(r["points"]), inline=False)
-                    em.add_field(name=_("Exceed command"), value=r["exceed_command"], inline=False)
-                    em.add_field(name=_("Drop command"), value=r["drop_command"], inline=False)
+                    em = discord.Embed(
+                        title=_("Action: {name}").format(name=r["action_name"])
+                    )
+                    em.add_field(
+                        name=_("Points"), value="{}".format(r["points"]), inline=False
+                    )
+                    em.add_field(
+                        name=_("Exceed command"),
+                        value=r["exceed_command"],
+                        inline=False,
+                    )
+                    em.add_field(
+                        name=_("Drop command"), value=r["drop_command"], inline=False
+                    )
                     msg_list.append(em)
                 else:
                     msg_list.append(
@@ -360,7 +373,9 @@ class Warnings(commands.Cog):
             else:
                 for key in user_warnings.keys():
                     mod_id = user_warnings[key]["mod"]
-                    mod = ctx.bot.get_user(mod_id) or _("Unknown Moderator ({})").format(mod_id)
+                    mod = ctx.bot.get_user(mod_id) or _(
+                        "Unknown Moderator ({})"
+                    ).format(mod_id)
                     msg += _(
                         "{num_points} point warning {reason_name} issued by {user} for "
                         "{description}\n"
@@ -371,7 +386,8 @@ class Warnings(commands.Cog):
                         description=user_warnings[key]["description"],
                     )
                 await ctx.send_interactive(
-                    pagify(msg, shorten_by=58), box_lang=_("Warnings for {user}").format(user=user)
+                    pagify(msg, shorten_by=58),
+                    box_lang=_("Warnings for {user}").format(user=user),
                 )
 
     @commands.command()
@@ -389,7 +405,9 @@ class Warnings(commands.Cog):
             else:
                 for key in user_warnings.keys():
                     mod_id = user_warnings[key]["mod"]
-                    mod = ctx.bot.get_user(mod_id) or _("Unknown Moderator ({})").format(mod_id)
+                    mod = ctx.bot.get_user(mod_id) or _(
+                        "Unknown Moderator ({})"
+                    ).format(mod_id)
                     msg += _(
                         "{num_points} point warning {reason_name} issued by {user} for "
                         "{description}\n"
@@ -400,14 +418,19 @@ class Warnings(commands.Cog):
                         description=user_warnings[key]["description"],
                     )
                 await ctx.send_interactive(
-                    pagify(msg, shorten_by=58), box_lang=_("Warnings for {user}").format(user=user)
+                    pagify(msg, shorten_by=58),
+                    box_lang=_("Warnings for {user}").format(user=user),
                 )
 
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
     async def unwarn(
-        self, ctx: commands.Context, user: Union[discord.Member, int], warn_id: str, reason: str
+        self,
+        ctx: commands.Context,
+        user: Union[discord.Member, int],
+        warn_id: str,
+        reason: str,
     ):
         """Remove a warning from a user."""
 
@@ -458,10 +481,7 @@ class Warnings(commands.Cog):
                 await member_settings.total_points.set(current_point_count)
                 user_warnings.pop(warn_id)
         try:
-            reason_msg = (_("{description}").format(description=reason_type["description"]),)
-            prefix = (ctx.prefix,)
-            user = (user.id,)
-            message = ctx.message.id
+            reason_msg = "{description}".format(description=reason_type["description"])
             await modlog.create_case(
                 self.bot,
                 ctx.guild,
