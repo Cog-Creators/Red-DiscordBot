@@ -438,7 +438,7 @@ class Warnings(commands.Cog):
                     or await ctx.bot.is_owner(ctx.author)
                 ):
                     msg += " " + _(
-                        "Do `{prefix}warningset allowcustomreasons true` to enable custom "
+                        "Run `{prefix}warningset allowcustomreasons true` to enable custom "
                         "reasons."
                     ).format(prefix=ctx.prefix)
                     return await ctx.send(msg)
