@@ -81,6 +81,10 @@ to keep it in a location which is easy to type out the path to. From now, we'll 
 
 Start with opening a command prompt (open Start, search for "command prompt", then click it)
 
+.. warning::
+
+    These commands will not work in PowerShell - you have to use command prompt as said above.
+
 Then create your virtual environment with the following command::
 
     py -3.8 -m venv "%userprofile%\redenv"
