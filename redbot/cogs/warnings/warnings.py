@@ -429,7 +429,7 @@ class Warnings(commands.Cog):
         reason_type = None
         async with guild_settings.reasons() as registered_reasons:
             if reason.lower() not in registered_reasons:
-                msg = _("That is not a registered reason!")
+                msg = _("That is not a registered reason.")
                 if custom_allowed:
                     reason_type = {"description": reason}
                 elif (
