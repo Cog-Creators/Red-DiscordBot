@@ -127,7 +127,7 @@ class Economy(commands.Cog):
 
     default_global_settings = default_guild_settings
 
-    default_member_settings = {"next_payday": 0, "last_slot": 0}
+    default_member_settings = {"last_payday": 0, "last_slot": 0}
 
     default_role_settings = {"PAYDAY_CREDITS": 0}
 
@@ -349,7 +349,11 @@ class Economy(commands.Cog):
         cur_time = calendar.timegm(ctx.message.created_at.utctimetuple())
         credits_name = await bank.get_currency_name(ctx.guild)
         if await bank.is_global():  # Role payouts will not be used
-            next_payday = await self.config.user(author).next_payday()
+
+			# next_payday = await self.config.user(author).next_payday()
+
+			# Gets the latest time the user used the command successfully and adds the global payday time
+            next_payday = await self.config.user(author).last_payday() + await self.config.PAYDAY_TIME()
             if cur_time >= next_payday:
                 try:
                     await bank.deposit_credits(author, await self.config.PAYDAY_CREDITS())
@@ -365,8 +369,9 @@ class Economy(commands.Cog):
                         )
                     )
                     return
-                next_payday = cur_time + await self.config.PAYDAY_TIME()
-                await self.config.user(author).next_payday.set(next_payday)
+                # next_payday = cur_time + await self.config.PAYDAY_TIME()
+				# Sets the current time as the latest payday
+                await self.config.user(author).last_payday.set(cur_time)
 
                 pos = await bank.get_leaderboard_position(author)
                 await ctx.send(
@@ -392,7 +397,10 @@ class Economy(commands.Cog):
                     ).format(author=author, time=dtime)
                 )
         else:
-            next_payday = await self.config.member(author).next_payday()
+			# next_payday = await self.config.member(author).next_payday()
+
+			# Gets the users latest successfully payday and adds the guilds payday time
+            next_payday = await self.config.member(author).last_payday() + self.config.guild(guild).PAYDAY_TIME()
             if cur_time >= next_payday:
                 credit_amount = await self.config.guild(guild).PAYDAY_CREDITS()
                 for role in author.roles:
@@ -415,8 +423,13 @@ class Economy(commands.Cog):
                         )
                     )
                     return
-                next_payday = cur_time + await self.config.guild(guild).PAYDAY_TIME()
-                await self.config.member(author).next_payday.set(next_payday)
+				# next_payday = cur_time + await self.config.guild(guild).PAYDAY_TIME()
+
+				# Sets the latest payday time to the current time
+                last_payday = cur_time
+
+				# await self.config.member(author).next_payday.set(next_payday)
+                await self.config.member(author).last_payday.set(last_payday)
                 pos = await bank.get_leaderboard_position(author)
                 await ctx.send(
                     _(
