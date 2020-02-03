@@ -68,8 +68,31 @@ Manually installing dependencies
 Creating a Virtual Environment
 ------------------------------
 
+.. tip::
+
+    If you want to learn more about virtual environments, see page: `about-venvs`
+
 We require installing Red into a virtual environment. Don't be scared, it's very
-straightforward. See the section `installing-in-virtual-environment`.
+straightforward.
+
+First, choose a directory where you would like to create your virtual environment. It's a good idea
+to keep it in a location which is easy to type out the path to. From now, we'll call it
+``redenv`` and it will be located in your home directory.
+
+Start with opening a command prompt (open Start, search for "command prompt", then click it)
+
+Then create your virtual environment with the following command::
+
+    py -3.8 -m venv "%userprofile%\redenv"
+
+And activate it with the following command::
+
+    "%userprofile%\redenv\Scripts\activate.bat"
+
+.. important::
+
+    You must activate the virtual environment with the above command every time you open a new
+    Command Prompt to run, install or update Red.
 
 --------------
 Installing Red
@@ -78,8 +101,7 @@ Installing Red
 .. attention:: You may need to restart your computer after installing dependencies
                for the PATH changes to take effect.
 
-1. Open a command prompt (open Start, search for "command prompt", then click it)
-2. Run **one** of the following set of commands, depending on what extras you want installed
+Run **one** of the following set of commands, depending on what extras you want installed
 
   * Normal installation:
 
