@@ -1,0 +1,1 @@
+Allow to edit prefix from command line using ``redbot --edit``.

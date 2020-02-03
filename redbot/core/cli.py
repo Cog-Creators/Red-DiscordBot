@@ -90,7 +90,7 @@ def parse_cli_flags(args):
         action="store_true",
         help="Edit the instance. This can be done without console interaction "
         "by passing --no-prompt and arguments that you want to change (available arguments: "
-        "--edit-instance-name, --edit-data-path, --copy-data, --owner, --token).",
+        "--edit-instance-name, --edit-data-path, --copy-data, --owner, --token, --prefix).",
     )
     parser.add_argument(
         "--edit-instance-name",
