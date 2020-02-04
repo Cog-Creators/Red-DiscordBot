@@ -177,7 +177,7 @@ class MixinMeta(ABC):
 
     @abstractmethod
     def humanize_scope(
-        self, scope: str, ctx: commands.Context = None, the: bool = None
+        self, scope: str, ctx: Union[discord.Guild, discord.abc.User, str] = None, the: bool = None
     ) -> Optional[str]:
         raise NotImplementedError()
 
@@ -247,7 +247,7 @@ class MixinMeta(ABC):
         author: discord.User,
         guild: discord.Guild,
         specified_user: bool = False,
-    ) -> Tuple[Optional[int], str, str]:
+    ) -> Tuple[Optional[Playlist], str, str]:
         raise NotImplementedError()
 
     @abstractmethod

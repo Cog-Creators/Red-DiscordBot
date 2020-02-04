@@ -21,7 +21,6 @@ from ...apis.playlist_interface import (
     create_playlist,
     delete_playlist,
     get_all_playlist,
-    get_playlist,
 )
 from ...audio_dataclasses import LocalPath, Query
 from ...audio_logging import IS_DEBUG
@@ -100,11 +99,9 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist are not available"),
-                description=_("The playlist section of Audio is currently un available"),
-                footer=discord.Embed.Empty
-                if not await ctx.bot.is_owner(ctx.author)
-                else _("Check your logs."),
+                title=_("Playlist Are Not Available"),
+                description=_("The playlist section of Audio is currently unavailable"),
+                footer=None if not await ctx.bot.is_owner(ctx.author) else _("Check your logs."),
             )
         if scope_data is None:
             scope_data = [None, ctx.author, ctx.guild, False]
@@ -112,36 +109,17 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not await self._playlist_check(ctx):
             return
         try:
-            (playlist_id, playlist_arg, scope) = await self._get_correct_playlist_id(
+            (playlist, playlist_arg, scope) = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
             return await self._embed_msg(ctx, title=str(e))
-        if playlist_id is None:
+        if playlist is None:
             return await self._embed_msg(
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Could not match '{arg}' to a playlist").format(arg=playlist_arg),
             )
-
-        try:
-            playlist = await get_playlist(
-                playlist_id, scope, self.bot, self.playlist_api, guild, author
-            )
-        except RuntimeError:
-            return await self._embed_msg(
-                ctx,
-                title=_("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=self.humanize_scope(scope, the=True)
-                ),
-            )
-        except MissingGuild:
-            return await self._embed_msg(
-                ctx,
-                title=_("Missing Arguments"),
-                description=_("You need to specify the Guild ID for the guild to lookup."),
-            )
-
         if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
             return
         player = lavalink.get_player(ctx.guild.id)
@@ -277,8 +255,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist are not available"),
-                description=_("The playlist section of Audio is currently un available"),
+                title=_("Playlist Are Not Available"),
+                description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
                 else _("Check your logs."),
@@ -306,15 +284,17 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             specified_to_user,
         ) = scope_data
 
+        from_scope = from_scope or PlaylistScope.GUILD.value
+        to_scope = to_scope or PlaylistScope.GUILD.value
         try:
-            playlist_id, playlist_arg, from_scope = await self._get_correct_playlist_id(
+            from_playlist, playlist_arg, from_scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, from_scope, from_author, from_guild, specified_from_user
             )
         except TooManyMatches as e:
             ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(ctx, title=str(e))
 
-        if playlist_id is None:
+        if from_playlist is None:
             ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(
                 ctx,
@@ -326,25 +306,6 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not await self.can_manage_playlist(to_scope, temp_playlist, ctx, to_author, to_guild):
             ctx.command.reset_cooldown(ctx)
             return
-
-        try:
-            from_playlist = await get_playlist(
-                playlist_id, from_scope, self.bot, self.playlist_api, from_guild, from_author.id
-            )
-        except RuntimeError:
-            ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
-                ctx,
-                title=_("Playlist Not Found"),
-                description=_("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=self.humanize_scope(to_scope, the=True)
-                ),
-            )
-        except MissingGuild:
-            ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
-                ctx, title=_("You need to specify the Guild ID for the guild to lookup.")
-            )
 
         to_playlist = await create_playlist(
             ctx,
@@ -421,8 +382,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist are not available"),
-                description=_("The playlist section of Audio is currently un available"),
+                title=_("Playlist Are Not Available"),
+                description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
                 else _("Check your logs."),
@@ -499,8 +460,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist are not available"),
-                description=_("The playlist section of Audio is currently un available"),
+                title=_("Playlist Are Not Available"),
+                description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
                 else _("Check your logs."),
@@ -510,34 +471,17 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         scope, author, guild, specified_user = scope_data
 
         try:
-            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
+            playlist, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
             return await self._embed_msg(ctx, title=str(e))
-        if playlist_id is None:
+        if playlist is None:
             return await self._embed_msg(
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Could not match '{arg}' to a playlist.").format(arg=playlist_arg),
             )
-
-        try:
-            playlist = await get_playlist(
-                playlist_id, scope, self.bot, self.playlist_api, guild, author
-            )
-        except RuntimeError:
-            return await self._embed_msg(
-                ctx,
-                title=_("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=self.humanize_scope(scope, the=True)
-                ),
-            )
-        except MissingGuild:
-            return await self._embed_msg(
-                ctx, title=_("You need to specify the Guild ID for the guild to lookup.")
-            )
-
         if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
             return
         scope_name = self.humanize_scope(
@@ -604,8 +548,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist are not available"),
-                description=_("The playlist section of Audio is currently un available"),
+                title=_("Playlist Are Not Available"),
+                description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
                 else _("Check your logs."),
@@ -616,7 +560,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             scope, author, guild, specified_user = scope_data
 
             try:
-                playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
+                playlist, playlist_arg, scope = await self._get_correct_playlist_id(
                     ctx, playlist_matches, scope, author, guild, specified_user
                 )
             except TooManyMatches as e:
@@ -625,7 +569,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             scope_name = self.humanize_scope(
                 scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
             )
-            if playlist_id is None:
+            if playlist is None:
                 ctx.command.reset_cooldown(ctx)
                 return await self._embed_msg(
                     ctx,
@@ -633,27 +577,6 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                     description=_("Could not match '{arg}' to a playlist.").format(
                         arg=playlist_arg
                     ),
-                )
-
-            try:
-                playlist = await get_playlist(
-                    playlist_id, scope, self.bot, self.playlist_api, guild, author
-                )
-            except RuntimeError:
-                ctx.command.reset_cooldown(ctx)
-                return await self._embed_msg(
-                    ctx,
-                    title=_("Playlist Not Found"),
-                    description=_("Playlist {id} does not exist in {scope} scope.").format(
-                        id=playlist_id, scope=self.humanize_scope(scope, the=True)
-                    ),
-                )
-            except MissingGuild:
-                ctx.command.reset_cooldown(ctx)
-                return await self._embed_msg(
-                    ctx,
-                    title=_("Missing Arguments"),
-                    description=_("You need to specify the Guild ID for the guild to lookup."),
                 )
             if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
                 ctx.command.reset_cooldown(ctx)
@@ -759,8 +682,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist are not available"),
-                description=_("The playlist section of Audio is currently un available"),
+                title=_("Playlist Are Not Available"),
+                description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
                 else _("Check your logs."),
@@ -770,39 +693,18 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         scope, author, guild, specified_user = scope_data
 
         try:
-            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
+            playlist, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
             ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(ctx, title=str(e))
-        if playlist_id is None:
+        if playlist is None:
             ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Could not match '{arg}' to a playlist.").format(arg=playlist_arg),
-            )
-
-        try:
-            playlist = await get_playlist(
-                playlist_id, scope, self.bot, self.playlist_api, guild, author
-            )
-        except RuntimeError:
-            ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
-                ctx,
-                title=_("Playlist Not Found"),
-                description=_("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=self.humanize_scope(scope, the=True)
-                ),
-            )
-        except MissingGuild:
-            ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
-                ctx,
-                title=_("Missing Arguments"),
-                description=_("You need to specify the Guild ID for the guild to lookup."),
             )
 
         schema = 2
@@ -910,8 +812,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist are not available"),
-                description=_("The playlist section of Audio is currently un available"),
+                title=_("Playlist Are Not Available"),
+                description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
                 else _("Check your logs."),
@@ -920,7 +822,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
         try:
-            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
+            playlist, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -930,33 +832,12 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
 
-        if playlist_id is None:
+        if playlist is None:
             ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Could not match '{arg}' to a playlist.").format(arg=playlist_arg),
-            )
-
-        try:
-            playlist = await get_playlist(
-                playlist_id, scope, self.bot, self.playlist_api, guild, author
-            )
-        except RuntimeError:
-            ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
-                ctx,
-                title=_("Playlist Not Found"),
-                description=_("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=self.humanize_scope(scope, the=True)
-                ),
-            )
-        except MissingGuild:
-            ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
-                ctx,
-                title=_("Missing Arguments"),
-                description=_("You need to specify the Guild ID for the guild to lookup."),
             )
         track_len = len(playlist.tracks)
 
@@ -1054,8 +935,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist are not available"),
-                description=_("The playlist section of Audio is currently un available"),
+                title=_("Playlist Are Not Available"),
+                description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
                 else _("Check your logs."),
@@ -1166,8 +1047,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist are not available"),
-                description=_("The playlist section of Audio is currently un available"),
+                title=_("Playlist Are Not Available"),
+                description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
                 else _("Check your logs."),
@@ -1279,8 +1160,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist are not available"),
-                description=_("The playlist section of Audio is currently un available"),
+                title=_("Playlist Are Not Available"),
+                description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
                 else _("Check your logs."),
@@ -1289,7 +1170,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
         try:
-            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
+            playlist, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
@@ -1297,31 +1178,12 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         scope_name = self.humanize_scope(
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
-        if playlist_id is None:
+        if playlist is None:
             return await self._embed_msg(
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Could not match '{arg}' to a playlist.").format(arg=playlist_arg),
             )
-        try:
-            playlist = await get_playlist(
-                playlist_id, scope, self.bot, self.playlist_api, guild, author
-            )
-        except RuntimeError:
-            return await self._embed_msg(
-                ctx,
-                title=_("Playlist Not Found"),
-                description=_("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=self.humanize_scope(scope, the=True)
-                ),
-            )
-        except MissingGuild:
-            return await self._embed_msg(
-                ctx,
-                title=_("Missing Arguments"),
-                description=_("You need to specify the Guild ID for the guild to lookup."),
-            )
-
         if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
             return
 
@@ -1408,8 +1270,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist are not available"),
-                description=_("The playlist section of Audio is currently un available"),
+                title=_("Playlist Are Not Available"),
+                description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
                 else _("Check your logs."),
@@ -1528,8 +1390,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist are not available"),
-                description=_("The playlist section of Audio is currently un available"),
+                title=_("Playlist Are Not Available"),
+                description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
                 else _("Check your logs."),
@@ -1537,6 +1399,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if scope_data is None:
             scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
+        scope = scope or PlaylistScope.Guild.value
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
@@ -1550,13 +1413,13 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             return False
 
         try:
-            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
+            playlist, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
             ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(ctx, title=str(e))
-        if playlist_id is None:
+        if playlist is None:
             ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(
                 ctx,
@@ -1576,9 +1439,6 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         track_len = 0
         playlist = None
         try:
-            playlist = await get_playlist(
-                playlist_id, scope, self.bot, self.playlist_api, guild, author
-            )
             player = lavalink.get_player(ctx.guild.id)
             tracks = playlist.tracks_obj
             empty_queue = not player.queue
@@ -1651,7 +1511,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=self.humanize_scope(scope, the=True)
+                    id=playlist_arg, scope=self.humanize_scope(scope, the=True)
                 ),
             )
         except MissingGuild:
@@ -1709,8 +1569,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist are not available"),
-                description=_("The playlist section of Audio is currently un available"),
+                title=_("Playlist Are Not Available"),
+                description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
                 else _("Check your logs."),
@@ -1719,14 +1579,14 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
         try:
-            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
+            playlist, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
             ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(ctx, title=str(e))
 
-        if playlist_id is None:
+        if playlist is None:
             ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(
                 ctx,
@@ -1738,9 +1598,6 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx.command.reset_cooldown(ctx)
             return
         try:
-            playlist = await get_playlist(
-                playlist_id, scope, self.bot, self.playlist_api, guild, author
-            )
             if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
                 return
             if playlist.url:
@@ -1759,7 +1616,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=self.humanize_scope(scope, the=True)
+                    id=playlist_arg, scope=self.humanize_scope(scope, the=True)
                 ),
             )
         except MissingGuild:
@@ -1872,8 +1729,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist are not available"),
-                description=_("The playlist section of Audio is currently un available"),
+                title=_("Playlist Are Not Available"),
+                description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
                 else _("Check your logs."),
@@ -1881,6 +1738,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if scope_data is None:
             scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
+        scope = scope or PlaylistScope.GUILD.value
         temp_playlist = FakePlaylist(author.id, scope)
         if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
             return
@@ -2022,8 +1880,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist are not available"),
-                description=_("The playlist section of Audio is currently un available"),
+                title=_("Playlist Are Not Available"),
+                description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
                 else _("Check your logs."),
@@ -2045,41 +1903,19 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
         try:
-            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
+            playlist, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
             ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(ctx, title=str(e))
-        if playlist_id is None:
+        if playlist is None:
             ctx.command.reset_cooldown(ctx)
             return await self._embed_msg(
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Could not match '{arg}' to a playlist.").format(arg=playlist_arg),
             )
-
-        try:
-            playlist = await get_playlist(
-                playlist_id, scope, self.bot, self.playlist_api, guild, author
-            )
-        except RuntimeError:
-            ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
-                ctx,
-                title=_("Playlist Not Found"),
-                description=_("Playlist does not exist in {scope} scope.").format(
-                    scope=self.humanize_scope(scope, the=True)
-                ),
-            )
-        except MissingGuild:
-            ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
-                ctx,
-                title=_("Missing Arguments"),
-                description=_("You need to specify the Guild ID for the guild to lookup."),
-            )
-
         if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
             ctx.command.reset_cooldown(ctx)
             return

@@ -492,8 +492,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlist are not available"),
-                description=_("The playlist section of Audio is currently un available"),
+                title=_("Playlist Are Not Available"),
+                description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
                 else _("Check your logs."),
@@ -503,21 +503,18 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         scope, author, guild, specified_user = scope_data
         try:
-            playlist_id, playlist_arg, scope = await self._get_correct_playlist_id(
+            playlist, playlist_arg, scope = await self._get_correct_playlist_id(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
             return await self._embed_msg(ctx, title=str(e))
-        if playlist_id is None:
+        if playlist is None:
             return await self._embed_msg(
                 ctx,
                 title=_("No Playlist Found"),
                 description=_("Could not match '{arg}' to a playlist").format(arg=playlist_arg),
             )
         try:
-            playlist = await get_playlist(
-                playlist_id, scope, self.bot, self.playlist_api, guild, author
-            )
             tracks = playlist.tracks
             if not tracks:
                 return await self._embed_msg(
@@ -532,7 +529,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 title=_("No Playlist Found"),
                 description=_("Playlist {id} does not exist in {scope} scope.").format(
-                    id=playlist_id, scope=self.humanize_scope(scope, the=True)
+                    id=playlist_arg, scope=self.humanize_scope(scope, the=True)
                 ),
             )
         except MissingGuild:
