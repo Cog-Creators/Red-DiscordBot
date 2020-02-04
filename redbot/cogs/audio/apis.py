@@ -918,7 +918,7 @@ class MusicCache:
             ctx.guild.id, await self.config.guild(ctx.guild).prefer_lyrics()
         )
         _raw_query = audio_dataclasses.Query.process_input(query)
-        if prefer_lyrics and _raw_query.is_youtube:
+        if prefer_lyrics and _raw_query.is_youtube and _raw_query.is_search:
             query = f"{query} - lyrics"
         _raw_query = audio_dataclasses.Query.process_input(query)
         query = str(_raw_query)
@@ -1138,9 +1138,9 @@ class MusicCache:
             if cache_enabled:
                 tracks = await self.get_random_from_db()
             if not tracks:
-                ctx = namedtuple("Context", "message")
+                ctx = namedtuple("Context", "message, guild")
                 (results, called_api) = await self.lavalink_query(
-                    ctx(player.channel.guild),
+                    ctx(player.channel.guild, player.channel.guild),
                     player,
                     audio_dataclasses.Query.process_input(_TOP_100_US),
                 )

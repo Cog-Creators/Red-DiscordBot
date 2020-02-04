@@ -663,8 +663,8 @@ class Audio(commands.Cog):
         player.store("guild", guild.id)
         await self._data_check(guild.me)
 
-        ctx = namedtuple("Context", "message")
-        (results, called_api) = await self.music_cache.lavalink_query(ctx(guild), player, query)
+        ctx = namedtuple("Context", "message guild")
+        (results, called_api) = await self.music_cache.lavalink_query(ctx(guild, guild), player, query)
 
         if not results.tracks:
             if IS_DEBUG:
