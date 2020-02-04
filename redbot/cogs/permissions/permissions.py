@@ -427,6 +427,14 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to set the default
         rule for. This is case sensitive.
         """
+        if isinstance(cog_or_command.obj, commands.commands._AlwaysAvailableCommand):
+            await ctx.send(
+                _(
+                    "This command is designated as being always available and "
+                    "cannot be modified by permission rules."
+                )
+            )
+            return
         await self._set_default_rule(
             rule=cast(Optional[bool], allow_or_deny),
             cog_or_cmd=cog_or_command,
@@ -450,6 +458,14 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to set the default
         rule for. This is case sensitive.
         """
+        if isinstance(cog_or_command.obj, commands.commands._AlwaysAvailableCommand):
+            await ctx.send(
+                _(
+                    "This command is designated as being always available and "
+                    "cannot be modified by permission rules."
+                )
+            )
+            return
         await self._set_default_rule(
             rule=cast(Optional[bool], allow_or_deny), cog_or_cmd=cog_or_command, guild_id=GLOBAL
         )
