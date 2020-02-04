@@ -16,7 +16,7 @@ import lavalink
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
-from redbot.core.utils.chat_formatting import bold, box
+from redbot.core.utils.chat_formatting import box
 from discord.utils import escape_markdown as escape
 
 from .audio_dataclasses import Query
@@ -236,7 +236,11 @@ def get_track_description(track) -> Optional[str]:
             else:
                 return escape(query.to_string_user())
         else:
-            return f'**{escape(f"[{track.title}]({track.uri}) ")}**'
+            if track.author.lower() not in track.title.lower():
+                title = f"{track.title} - {track.author}"
+            else:
+                title = track.title
+            return f'**{escape(f"[{title}]({track.uri}) ")}**'
     elif hasattr(track, "to_string_user") and track.is_local:
         return escape(track.to_string_user() + " ")
 
@@ -250,7 +254,11 @@ def get_track_description_unformatted(track) -> Optional[str]:
             else:
                 return escape(query.to_string_user())
         else:
-            return escape(f"{track.title}")
+            if track.author.lower() not in track.title.lower():
+                title = f"{track.title} - {track.author}"
+            else:
+                title = track.title
+            return escape(f"{title}")
     elif hasattr(track, "to_string_user") and track.is_local:
         return escape(track.to_string_user() + " ")
 
@@ -272,7 +280,7 @@ def track_to_json(track: lavalink.Track) -> MutableMapping:
     track_info = {}
     for k, v in zip(track_keys, track_values):
         track_info[k] = v
-    keys = ["track", "info"]
+    keys = ["track", "info", "extras"]
     values = [track_id, track_info]
     track_obj = {}
     for key, value in zip(keys, values):
