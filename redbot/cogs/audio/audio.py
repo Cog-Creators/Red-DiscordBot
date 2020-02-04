@@ -664,7 +664,9 @@ class Audio(commands.Cog):
         await self._data_check(guild.me)
 
         ctx = namedtuple("Context", "message guild")
-        (results, called_api) = await self.music_cache.lavalink_query(ctx(guild, guild), player, query)
+        (results, called_api) = await self.music_cache.lavalink_query(
+            ctx(guild, guild), player, query
+        )
 
         if not results.tracks:
             if IS_DEBUG:
@@ -1671,7 +1673,6 @@ class Audio(commands.Cog):
             status=song_status,
             bumpped_shuffle=bumpped_shuffle,
             persist_queue=persist_queue,
-
         )
         if thumbnail:
             msg += _("Thumbnails:       [{0}]\n").format(
@@ -6755,9 +6756,7 @@ class Audio(commands.Cog):
                     description=_("You need the DJ role to clear the queue."),
                 )
         for track in player.queue:
-            self.music_cache.persist_queue.played(
-                    ctx.guild.id, track.extras.get("enqueue_time")
-                )
+            self.music_cache.persist_queue.played(ctx.guild.id, track.extras.get("enqueue_time"))
             await asyncio.sleep(0)
         player.queue.clear()
         await self._embed_msg(

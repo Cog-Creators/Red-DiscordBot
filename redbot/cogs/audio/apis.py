@@ -90,8 +90,8 @@ class AudioDBAPI:
                 async with self.session.get(
                     api_url,
                     timeout=aiohttp.ClientTimeout(total=await _config.global_db_get_timeout()),
-                        headers={"Authorization": self.api_key, "X-Token": self._handshake_token},
-                        params={"query": urllib.parse.quote(query)},
+                    headers={"Authorization": self.api_key, "X-Token": self._handshake_token},
+                    params={"query": urllib.parse.quote(query)},
                 ) as r:
                     search_response = await r.json()
                     if IS_DEBUG and "x-process-time" in r.headers:
@@ -116,8 +116,8 @@ class AudioDBAPI:
                 async with self.session.get(
                     api_url,
                     timeout=aiohttp.ClientTimeout(total=await _config.global_db_get_timeout()),
-                        headers={"Authorization": self.api_key, "X-Token": self._handshake_token},
-                        params=params,
+                    headers={"Authorization": self.api_key, "X-Token": self._handshake_token},
+                    params=params,
                 ) as r:
                     search_response = await r.json()
                     if IS_DEBUG and "x-process-time" in r.headers:
@@ -370,7 +370,9 @@ class MusicCache:
             query = f"https://api.spotify.com/v1/playlists/{key}/tracks"
         return query, params
 
-    async def _get_spotify_track_info(self, track_data: MutableMapping, ctx:commands.Context) -> Tuple[str, ...]:
+    async def _get_spotify_track_info(
+        self, track_data: MutableMapping, ctx: commands.Context
+    ) -> Tuple[str, ...]:
         artist_name = track_data["artists"][0]["name"]
         track_name = track_data["name"]
         prefer_lyrics = self._prefer_lyrics_cache.setdefault(
@@ -684,9 +686,7 @@ class MusicCache:
                         )
                     except Exception as exc:
                         debug_exc_log(log, exc, f"Failed to fetch {track_info} from YouTube table")
-                should_query_global = (
-                        globaldb_toggle and query_global and val is None
-                )
+                should_query_global = globaldb_toggle and query_global and val is None
                 if should_query_global:
                     llresponse = await self.audio_api.get_spotify(track_name, artist_name)
                     if llresponse:
@@ -742,7 +742,9 @@ class MusicCache:
                         seconds=seconds,
                     )
 
-                if (consecutive_fails >= 10 and global_entry is False) or (consecutive_fails >= 100 and global_entry is True):
+                if (consecutive_fails >= 10 and global_entry is False) or (
+                    consecutive_fails >= 100 and global_entry is True
+                ):
                     error_embed = discord.Embed(
                         colour=await ctx.embed_colour(),
                         title=_("Failing to get tracks, skipping remaining."),
@@ -1053,9 +1055,7 @@ class MusicCache:
                         *[self.database.update(*a) for a in tasks["update"]],
                         return_exceptions=True,
                     )
-                    await asyncio.gather(
-                        *[self.update_global(**a) for a in tasks["global"]],
-                    )
+                    await asyncio.gather(*[self.update_global(**a) for a in tasks["global"]],)
                 if IS_DEBUG:
                     log.debug(f"Completed database writes for {lock_id} " f"({lock_author})")
 
@@ -1070,15 +1070,9 @@ class MusicCache:
                         tasks[t].append(args)
                 self._tasks = {}
 
-                await asyncio.gather(
-                    *[self.database.insert(*a) for a in tasks["insert"]],
-                )
-                await asyncio.gather(
-                    *[self.database.update(*a) for a in tasks["update"]],
-                )
-                await asyncio.gather(
-                    *[self.update_global(**a) for a in tasks["global"]],
-                )
+                await asyncio.gather(*[self.database.insert(*a) for a in tasks["insert"]],)
+                await asyncio.gather(*[self.database.update(*a) for a in tasks["update"]],)
+                await asyncio.gather(*[self.update_global(**a) for a in tasks["global"]],)
             if IS_DEBUG:
                 log.debug("Completed pending writes to database have finished")
 
