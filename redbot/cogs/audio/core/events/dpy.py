@@ -53,8 +53,8 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
 
     async def cog_command_error(self, ctx: commands.Context, error: Exception) -> None:
         error = getattr(error, "original", error)
-        if not isinstance(error
-           ,
+        if not isinstance(
+            error,
             (
                 commands.CheckFailure,
                 commands.UserInputError,
@@ -71,9 +71,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Invalid Environment"),
                 description=_("Connection to Lavalink has been lost."),
             )
-        await ctx.bot.on_command_error(
-            ctx, error, unhandled_by_cog=True
-        )
+        await ctx.bot.on_command_error(ctx, error, unhandled_by_cog=True)
 
     def cog_unload(self) -> None:
         if not self.cog_cleaned_up:
