@@ -75,7 +75,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     title=_("Unable To Play Tracks"),
                     description=_("Connection to Lavalink has not yet been established."),
                 )
-        if guild_data["dj_enabled"] and not await self._can_instaskip(ctx, ctx.author):
+        can_skip = await self._can_instaskip(ctx, ctx.author)
+        if guild_data["dj_enabled"] and not can_skip:
             return await self._embed_msg(
                 ctx,
                 title=_("Unable To Play Tracks"),
@@ -87,9 +88,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         player.store("guild", ctx.guild.id)
         await self._eq_check(ctx, player)
         await self._data_check(ctx)
-        if (
-            not ctx.author.voice or ctx.author.voice.channel != player.channel
-        ) and not await self._can_instaskip(ctx, ctx.author):
+        if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
             return await self._embed_msg(
                 ctx,
                 title=_("Unable To Play Tracks"),
@@ -180,7 +179,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     title=_("Unable To Play Tracks"),
                     description=_("Connection to Lavalink has not yet been established."),
                 )
-        if guild_data["dj_enabled"] and not await self._can_instaskip(ctx, ctx.author):
+        can_skip = await self._can_instaskip(ctx, ctx.author)
+        if guild_data["dj_enabled"] and not can_skip:
             return await self._embed_msg(
                 ctx,
                 title=_("Unable To Play Tracks"),
@@ -192,9 +192,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         player.store("guild", ctx.guild.id)
         await self._eq_check(ctx, player)
         await self._data_check(ctx)
-        if (
-            not ctx.author.voice or ctx.author.voice.channel != player.channel
-        ) and not await self._can_instaskip(ctx, ctx.author):
+        if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
             return await self._embed_msg(
                 ctx,
                 title=_("Unable To Play Tracks"),
@@ -661,9 +659,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         guild_data = await self.config.guild(ctx.guild).all()
         player.store("channel", ctx.channel.id)
         player.store("guild", ctx.guild.id)
-        if (
-            not ctx.author.voice or ctx.author.voice.channel != player.channel
-        ) and not await self._can_instaskip(ctx, ctx.author):
+        can_skip = await self._can_instaskip(ctx, ctx.author)
+        if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
             return await self._embed_msg(
                 ctx,
                 title=_("Unable To Search For Tracks"),
@@ -740,7 +737,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     return await self._embed_msg(ctx, embed=embed)
                 queue_dur = await self.queue_duration(ctx)
                 queue_total_duration = self.format_time(queue_dur)
-                if guild_data["dj_enabled"] and not await self._can_instaskip(ctx, ctx.author):
+                if guild_data["dj_enabled"] and not can_skip:
                     return await self._embed_msg(
                         ctx,
                         title=_("Unable To Play Tracks"),
@@ -848,7 +845,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             search_page_list.append(embed)
             await asyncio.sleep(0)
 
-        if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
+        if dj_enabled and not can_skip:
             return await menu(ctx, search_page_list, DEFAULT_CONTROLS)
 
         await menu(ctx, search_page_list, search_controls)
