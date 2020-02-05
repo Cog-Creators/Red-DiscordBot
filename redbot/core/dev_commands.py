@@ -1,5 +1,6 @@
 import ast
 import asyncio
+import aiohttp
 import inspect
 import io
 import textwrap
@@ -103,6 +104,8 @@ class Dev(commands.Cog):
             "author": ctx.author,
             "guild": ctx.guild,
             "message": ctx.message,
+            "asyncio": asyncio,
+            "aiohttp": aiohttp,
             "discord": discord,
             "commands": commands,
             "_": self._last_result,
@@ -157,6 +160,8 @@ class Dev(commands.Cog):
             "author": ctx.author,
             "guild": ctx.guild,
             "message": ctx.message,
+            "asyncio": asyncio,
+            "aiohttp": aiohttp,
             "discord": discord,
             "commands": commands,
             "_": self._last_result,
