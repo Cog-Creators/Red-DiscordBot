@@ -162,7 +162,7 @@ def _init_test_repo(destination: Path):
 async def _session_git_repo(tmp_path_factory, event_loop):
     # we will import repo only once once per session and duplicate the repo folder
     repo_path = tmp_path_factory.mktemp("session_git_repo")
-    repo = Repo(name="redbot-testrepo", url="", branch="master", commit="", folder_path=repo_path,)
+    repo = Repo(name="redbot-testrepo", url="", branch="master", commit="", folder_path=repo_path)
     git_dirparams = _init_test_repo(repo_path)
     fast_import = sp.Popen((*git_dirparams, "fast-import", "--quiet"), stdin=sp.PIPE)
     with TEST_REPO_EXPORT_PTH.open(mode="rb") as f:
