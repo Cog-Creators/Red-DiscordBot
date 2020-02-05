@@ -30,7 +30,7 @@ Mod Cog
 Documentation Changes
 ---------------------
 
-- Add `-e` flag to `journalctl` command in systemd guide so that it takes the user to the end of logs automatically.
+- Add ``-e`` flag to ``journalctl`` command in systemd guide so that it takes the user to the end of logs automatically.
 - Added section to install docs for CentOS 8
 - Improve usage of apt update in docs
 
