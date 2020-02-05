@@ -12,7 +12,6 @@ jobs:
             - py
             - style
             - docs
-            - postgres
           include:
             - tox_env: py
               friendly_name: Tests
