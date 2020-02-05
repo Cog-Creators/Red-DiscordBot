@@ -36,8 +36,8 @@ class Dev(commands.Cog):
         self._last_result = None
         self.sessions = set()
 
-    @classmethod
-    def async_compile(cls, source, filename, mode):
+    @staticmethod
+    def async_compile(source, filename, mode):
         return compile(source, filename, mode, flags=ast.PyCF_ALLOW_TOP_LEVEL_AWAIT, optimize=0)
 
     @staticmethod
