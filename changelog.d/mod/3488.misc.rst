@@ -1,1 +1,0 @@
-Fix incomplete short help of ``[p]modset dm`` command.

@@ -1,1 +1,0 @@
-Add a cli flag for setting a max size of message cache
