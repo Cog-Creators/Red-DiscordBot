@@ -1,4 +1,5 @@
 import asyncio
+import warnings
 from asyncio import AbstractEventLoop, as_completed, Semaphore
 from asyncio.futures import isfuture
 from itertools import chain
