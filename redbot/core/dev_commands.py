@@ -5,6 +5,7 @@ import inspect
 import io
 import textwrap
 import traceback
+import types
 import re
 from contextlib import redirect_stdout
 from copy import copy
@@ -213,6 +214,7 @@ class Dev(commands.Cog):
             "guild": ctx.guild,
             "channel": ctx.channel,
             "author": ctx.author,
+            "asyncio": asyncio,
             "_": None,
         }
 
@@ -235,7 +237,7 @@ class Dev(commands.Cog):
                 self.sessions.remove(ctx.channel.id)
                 return
 
-            executor = exec
+            executor = None
             if cleaned.count("\n") == 0:
                 # single statement, potentially 'eval'
                 try:
@@ -245,7 +247,7 @@ class Dev(commands.Cog):
                 else:
                     executor = eval
 
-            if executor is exec:
+            if executor is None:
                 try:
                     code = self.async_compile(cleaned, "<repl session>", "exec")
                 except SyntaxError as e:
@@ -260,9 +262,15 @@ class Dev(commands.Cog):
 
             try:
                 with redirect_stdout(stdout):
-                    result = await executor(code, variables)
-                    if inspect.isawaitable(result):
-                        result = await result
+                    if executor is None:
+                        result = types.FunctionType(code, variables)()
+                    else:
+                        result = executor(code, variables)
+                    for i in range(2):
+                        if inspect.isawaitable(result):
+                            result = await result
+                        else:
+                            break
             except:
                 value = stdout.getvalue()
                 msg = "{}{}".format(value, traceback.format_exc())
