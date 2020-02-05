@@ -1,15 +1,15 @@
 name: Tests
 on: [push, pull_request]
 env:
-  python_version: |
-    ["3.8"]
+  python_version: &python_version
+    - "3.8"
 
 jobs:
     tox:
       runs-on: ubuntu-latest
       strategy:
         matrix:
-          python_version: ${{ env.python_version }}
+          python_version: *python_version
           tox_env:
             - py
             - style
@@ -42,7 +42,7 @@ jobs:
       runs-on: ubuntu-latest
       strategy:
         matrix:
-          python_version: ${{ env.python_version }}
+          python_version: *python_version
       name: Tox - Postgres
       services:
         postgresql:
