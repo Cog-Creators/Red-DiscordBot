@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-# Discord Version check
-
 import asyncio
 import functools
 import getpass
@@ -20,7 +18,7 @@ from typing import NoReturn
 
 import discord
 
-# Set the event loop policies here so any subsequent `get_event_loop()`
+# Set the event loop policies here so any subsequent `new_event_loop()`
 # calls, in particular those as a result of the following imports,
 # return the correct loop object.
 from redbot import _update_event_loop_policy, __version__
@@ -298,7 +296,8 @@ def handle_edit(cli_flags: Namespace):
     """
     This one exists to not log all the things like it's a full run of the bot.
     """
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
     data_manager.load_basic_configuration(cli_flags.instance_name)
     red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None, fetch_offline_members=True)
     try:
@@ -310,6 +309,7 @@ def handle_edit(cli_flags: Namespace):
         print("Aborted!")
     finally:
         loop.run_until_complete(asyncio.sleep(1))
+        asyncio.set_event_loop(None)
         loop.stop()
         loop.close()
         sys.exit(0)
@@ -460,7 +460,8 @@ def main():
         handle_edit(cli_flags)
         return
     try:
-        loop = asyncio.get_event_loop()
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
 
         if cli_flags.no_instance:
             print(
@@ -524,6 +525,7 @@ def main():
         # results in a resource warning instead
         log.info("Please wait, cleaning up a bit more")
         loop.run_until_complete(asyncio.sleep(2))
+        asyncio.set_event_loop(None)
         loop.stop()
         loop.close()
         exit_code = red._shutdown_mode if red is not None else 1
