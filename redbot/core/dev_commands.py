@@ -1,3 +1,4 @@
+import ast
 import asyncio
 import inspect
 import io
@@ -35,6 +36,10 @@ class Dev(commands.Cog):
         self._last_result = None
         self.sessions = set()
 
+    @classmethod
+    def async_compile(cls, source, filename, mode):
+        return compile(source, filename, mode, flags=ast.PyCF_ALLOW_TOP_LEVEL_AWAIT, optimize=0)
+
     @staticmethod
     def cleanup_code(content):
         """Automatically removes code blocks from the code."""
@@ -53,7 +58,7 @@ class Dev(commands.Cog):
         """
         if e.text is None:
             return box("{0.__class__.__name__}: {0}".format(e), lang="py")
-        return box("{0.text}{1:>{0.offset}}\n{2}: {0}".format(e, "^", type(e).__name__), lang="py")
+        return box("{0.text}\n{1:>{0.offset}}\n{2}: {0}".format(e, "^", type(e).__name__), lang="py")
 
     @staticmethod
     def get_pages(msg: str):
@@ -75,8 +80,8 @@ class Dev(commands.Cog):
         If the return value of the code is a coroutine, it will be awaited,
         and the result of that will be the bot's response.
 
-        Note: Only one statement may be evaluated. Using await, yield or
-        similar restricted keywords will result in a syntax error. For multiple
+        Note: Only one statement may be evaluated. Using certain restricted
+        keywords, e.g. yield, will result in a syntax error. For multiple
         lines or asynchronous code, see [p]repl or [p]eval.
 
         Environment Variables:
@@ -104,7 +109,8 @@ class Dev(commands.Cog):
         code = self.cleanup_code(code)
 
         try:
-            result = eval(code, env)
+            compiled = self.async_compile(code, "<string>", "eval")
+            result = await eval(compiled, env)
         except SyntaxError as e:
             await ctx.send(self.get_syntax_error(e))
             return
@@ -192,9 +198,6 @@ class Dev(commands.Cog):
         The REPL will only recognise code as messages which start with a
         backtick. This includes codeblocks, and as such multiple lines can be
         evaluated.
-
-        You may not await any code in this REPL unless you define it inside an
-        async function.
         """
         variables = {
             "ctx": ctx,
@@ -229,7 +232,7 @@ class Dev(commands.Cog):
             if cleaned.count("\n") == 0:
                 # single statement, potentially 'eval'
                 try:
-                    code = compile(cleaned, "<repl session>", "eval")
+                    code = self.async_compile(cleaned, "<repl session>", "eval")
                 except SyntaxError:
                     pass
                 else:
@@ -237,7 +240,7 @@ class Dev(commands.Cog):
 
             if executor is exec:
                 try:
-                    code = compile(cleaned, "<repl session>", "exec")
+                    code = self.async_compile(cleaned, "<repl session>", "exec")
                 except SyntaxError as e:
                     await ctx.send(self.get_syntax_error(e))
                     continue
@@ -250,7 +253,7 @@ class Dev(commands.Cog):
 
             try:
                 with redirect_stdout(stdout):
-                    result = executor(code, variables)
+                    result = await executor(code, variables)
                     if inspect.isawaitable(result):
                         result = await result
             except:
