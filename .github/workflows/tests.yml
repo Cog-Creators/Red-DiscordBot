@@ -1,15 +1,13 @@
 name: Tests
 on: [push, pull_request]
-env:
-  python_version: &python_version
-    - "3.8"
 
 jobs:
     tox:
       runs-on: ubuntu-latest
       strategy:
         matrix:
-          python_version: *python_version
+          python_version:
+            - "3.8"
           tox_env:
             - py
             - style
@@ -42,7 +40,8 @@ jobs:
       runs-on: ubuntu-latest
       strategy:
         matrix:
-          python_version: *python_version
+          python_version:
+            - "3.8"
       name: Tox - Postgres
       services:
         postgresql:
