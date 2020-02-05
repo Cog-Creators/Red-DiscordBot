@@ -154,7 +154,9 @@ class Repo(RepoJSONMixin):
 
         self._repo_lock = asyncio.Lock()
 
-        self._loop = loop if loop is not None else asyncio.get_event_loop()
+        # This probably shouldn't be passed an event loop, but I don't trust removing it
+        # due to how we currently have tests written. This should be looked at more later.
+        self._loop = loop if loop is not None else asyncio.get_running_loop()
 
     @property
     def clean_url(self) -> str:
