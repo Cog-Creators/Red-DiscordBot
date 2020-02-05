@@ -6,7 +6,7 @@ jobs:
       runs-on: ubuntu-latest
       strategy:
         matrix:
-          python-version: ['3.8.1']
+          python-version: ['3.8']
         fail-fast: false
       name: Tox Tests - Python ${{ matrix.python-version }}
       steps:
@@ -32,7 +32,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v1
         with:
-          python-version: 3.8.1
+          python-version: 3.8
       - name: Install tox
         run: |
           python -m pip install --upgrade pip
@@ -50,7 +50,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v1
         with:
-          python-version: 3.8.1
+          python-version: 3.8
       - name: Install tox
         run: |
           python -m pip install --upgrade pip
@@ -77,7 +77,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v1
         with:
-          python-version: 3.8.1
+          python-version: 3.8
       - name: Install tox
         run: |
           python -m pip install --upgrade pip
