@@ -1,13 +1,15 @@
 name: Tests
 on: [push, pull_request]
+env:
+  python_version: |
+    ["3.8"]
 
 jobs:
     tox:
       runs-on: ubuntu-latest
       strategy:
         matrix:
-          python_version:
-            - "3.8"
+          python_version: ${{ env.python_version }}
           tox_env:
             - py
             - style
@@ -38,6 +40,9 @@ jobs:
 
     tox-postgres:
       runs-on: ubuntu-latest
+      strategy:
+        matrix:
+          python_version: ${{ env.python_version }}
       name: Tox - Postgres
       services:
         postgresql:
@@ -53,7 +58,7 @@ jobs:
         - name: Set up Python
           uses: actions/setup-python@v1
           with:
-            python-version: "3.8"
+            python-version: ${{ matrix.python_version }}
         - name: Install tox
           run: |
             python -m pip install --upgrade pip
