@@ -216,6 +216,7 @@ class Dev(commands.Cog):
             "author": ctx.author,
             "asyncio": asyncio,
             "_": None,
+            "__builtins__": __builtins__
         }
 
         if ctx.channel.id in self.sessions:
