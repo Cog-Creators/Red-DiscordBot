@@ -58,7 +58,9 @@ class Dev(commands.Cog):
         """
         if e.text is None:
             return box("{0.__class__.__name__}: {0}".format(e), lang="py")
-        return box("{0.text}\n{1:>{0.offset}}\n{2}: {0}".format(e, "^", type(e).__name__), lang="py")
+        return box(
+            "{0.text}\n{1:>{0.offset}}\n{2}: {0}".format(e, "^", type(e).__name__), lang="py"
+        )
 
     @staticmethod
     def get_pages(msg: str):
