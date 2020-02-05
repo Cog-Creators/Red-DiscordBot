@@ -153,8 +153,6 @@ class Repo(RepoJSONMixin):
 
         self._repo_lock = asyncio.Lock()
 
-        self._loop = asyncio.get_running_loop()
-
     @property
     def clean_url(self) -> str:
         """Sanitized repo URL (with removed HTTP Basic Auth)"""
@@ -528,7 +526,7 @@ class Repo(RepoJSONMixin):
         env["LANGUAGE"] = "C"
         kwargs["env"] = env
         async with self._repo_lock:
-            p: CompletedProcess = await self._loop.run_in_executor(
+            p: CompletedProcess = await asyncio.get_running_loop().run_in_executor(
                 self._executor,
                 functools.partial(sp_run, *args, stdout=PIPE, stderr=PIPE, **kwargs),
             )
