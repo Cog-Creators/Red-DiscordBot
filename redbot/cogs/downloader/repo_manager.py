@@ -135,7 +135,6 @@ class Repo(RepoJSONMixin):
         commit: str,
         folder_path: Path,
         available_modules: Tuple[Installable, ...] = (),
-        loop: Optional[asyncio.AbstractEventLoop] = None,
     ):
         self.url = url
         self.branch = branch
@@ -154,9 +153,7 @@ class Repo(RepoJSONMixin):
 
         self._repo_lock = asyncio.Lock()
 
-        # This probably shouldn't be passed an event loop, but I don't trust removing it
-        # due to how we currently have tests written. This should be looked at more later.
-        self._loop = loop if loop is not None else asyncio.get_running_loop()
+        self._loop = asyncio.get_running_loop()
 
     @property
     def clean_url(self) -> str:

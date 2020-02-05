@@ -297,6 +297,7 @@ def handle_edit(cli_flags: Namespace):
     This one exists to not log all the things like it's a full run of the bot.
     """
     loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
     data_manager.load_basic_configuration(cli_flags.instance_name)
     red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None, fetch_offline_members=True)
     try:
@@ -460,6 +461,7 @@ def main():
         return
     try:
         loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
 
         if cli_flags.no_instance:
             print(
