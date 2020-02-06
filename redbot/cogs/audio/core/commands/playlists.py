@@ -99,7 +99,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlists Are Not Available"),
+                title=_("Playlist Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
                 footer=None if not await ctx.bot.is_owner(ctx.author) else _("Check your logs."),
             )
@@ -255,7 +255,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlists Are Not Available"),
+                title=_("Playlist Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
@@ -382,7 +382,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlists Are Not Available"),
+                title=_("Playlist Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
@@ -460,7 +460,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlists Are Not Available"),
+                title=_("Playlist Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
@@ -548,7 +548,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlists Are Not Available"),
+                title=_("Playlist Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
@@ -682,7 +682,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlists Are Not Available"),
+                title=_("Playlist Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
@@ -812,7 +812,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlists Are Not Available"),
+                title=_("Playlist Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
@@ -935,7 +935,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlists Are Not Available"),
+                title=_("Playlist Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
@@ -1047,7 +1047,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlists Are Not Available"),
+                title=_("Playlist Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
@@ -1160,7 +1160,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlists Are Not Available"),
+                title=_("Playlist Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
@@ -1270,7 +1270,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlists Are Not Available"),
+                title=_("Playlist Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
@@ -1390,7 +1390,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlists Are Not Available"),
+                title=_("Playlist Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
@@ -1569,7 +1569,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlists Are Not Available"),
+                title=_("Playlist Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
@@ -1729,7 +1729,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlists Are Not Available"),
+                title=_("Playlist Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
@@ -1880,7 +1880,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self.playlist_api is None:
             return await self._embed_msg(
                 ctx,
-                title=_("Playlists Are Not Available"),
+                title=_("Playlist Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await ctx.bot.is_owner(ctx.author)
