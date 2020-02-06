@@ -67,7 +67,7 @@ class BaseWrapper:
         self.statement.pragma_read_uncommitted = PRAGMA_SET_read_uncommitted
         self.statement.set_user_version = PRAGMA_SET_user_version
         self.statement.get_user_version = PRAGMA_FETCH_user_version
-        self.fetch_result: Callable
+        self.fetch_result: Optional[Callable] = None
 
     async def init(self) -> None:
         """Initialize the local cache"""
@@ -164,6 +164,8 @@ class BaseWrapper:
                     debug_exc_log(log, exc, "Failed to completed fetch from database")
         if not row:
             return None
+        if self.fetch_result is None:
+            return None
         return self.fetch_result(*row)
 
     async def _fetch_all(
@@ -172,6 +174,8 @@ class BaseWrapper:
         """Get all entries from the local cache"""
         output = []
         row_result = []
+        if self.fetch_result is None:
+            return []
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             for future in concurrent.futures.as_completed(
                 [executor.submit(self.database.cursor().execute, self.statement.get_all, values)]
@@ -208,6 +212,8 @@ class BaseWrapper:
                 except Exception as exc:
                     debug_exc_log(log, exc, "Failed to completed random fetch from database")
         if not row:
+            return None
+        if self.fetch_result is None:
             return None
         return self.fetch_result(*row)
 
@@ -290,7 +296,7 @@ class LavalinkTableWrapper(BaseWrapper):
         self.statement.get_random = LAVALINK_QUERY_LAST_FETCHED_RANDOM
         self.statement.get_all_global = LAVALINK_FETCH_ALL_ENTRIES_GLOBAL
         self.fetch_result = LavalinkCacheFetchResult
-        self.fetch_for_global: Callable = LavalinkCacheFetchForGlobalResult
+        self.fetch_for_global: Optional[Callable] = None
 
     async def fetch_one(
         self, values: MutableMapping
@@ -319,6 +325,8 @@ class LavalinkTableWrapper(BaseWrapper):
         """Get all entries from the Lavalink table"""
         output: List[LavalinkCacheFetchForGlobalResult] = []
         row_result = []
+        if self.fetch_for_global is None:
+            return []
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             for future in concurrent.futures.as_completed(
                 [executor.submit(self.database.cursor().execute, self.statement.get_all_global)]

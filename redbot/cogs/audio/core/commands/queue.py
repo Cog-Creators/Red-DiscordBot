@@ -60,11 +60,11 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         if player.current and not player.queue:
             arrow = await self.draw_time(ctx)
-            pos = lavalink.utils.format_time(player.position)
+            pos = self.format_time(player.position)
             if player.current.is_stream:
                 dur = "LIVE"
             else:
-                dur = lavalink.utils.format_time(player.current.length)
+                dur = self.format_time(player.current.length)
             song = self.get_track_description(player.current, self.local_folder_current_path) or ""
             song += _("\n Requested by: **{track.requester}**")
             song += "\n\n{arrow}`{pos}`/`{dur}`"

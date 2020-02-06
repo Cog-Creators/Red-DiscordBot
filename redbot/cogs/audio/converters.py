@@ -137,7 +137,7 @@ async def global_unique_user_finder(
 class PlaylistConverter(commands.Converter):
     async def convert(self, ctx: commands.Context, arg: str) -> MutableMapping:
         """Get playlist for all scopes that match the argument user provided"""
-        cog = ctx.bot.get_cog("Audio")
+        cog = ctx.cog
         user_matches = []
         guild_matches = []
         global_matches = []
