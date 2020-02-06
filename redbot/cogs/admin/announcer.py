@@ -77,5 +77,5 @@ class Announcer:
         )
         if failed:
             msg += humanize_list(tuple(map(inline, failed)))
-        await self.ctx.bot.send_to_owners(msg)
+            await self.ctx.bot.send_to_owners(msg)
         self.active = False
