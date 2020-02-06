@@ -222,7 +222,11 @@ intersphinx_mapping = {
 # Extlinks
 # This allows to create links to d.py docs with
 # :dpy_docs:`link text <site_name.html>`
-extlinks = {"dpy_docs": (f"https://discordpy.readthedocs.io/en/v{dpy_version}/%s", None)}
+extlinks = {
+    "dpy_docs": (f"https://discordpy.readthedocs.io/en/v{dpy_version}/%s", None),
+    "issue": ("https://github.com/Cog-Creators/Red-DiscordBot/issues/%s", "#"),
+    "ghuser": ("https://github.com/%s", "@"),
+}
 
 # Doctest
 # If this string is non-empty, all blocks with ``>>>`` in them will be
@@ -230,5 +234,5 @@ extlinks = {"dpy_docs": (f"https://discordpy.readthedocs.io/en/v{dpy_version}/%s
 doctest_test_doctest_blocks = ""
 
 # Autodoc options
-autodoc_default_flags = ["show-inheritance"]
+autodoc_default_options = {"show-inheritance": True}
 autodoc_typehints = "none"

@@ -76,7 +76,6 @@ def bot_repo(event_loop):
         commit="",
         url="https://empty.com/something.git",
         folder_path=cwd,
-        loop=event_loop,
     )
 
 
@@ -89,7 +88,7 @@ INFO_JSON = {
     "hidden": False,
     "install_msg": "A post-installation message",
     "required_cogs": {},
-    "requirements": ("tabulate"),
+    "requirements": ("tabulate",),
     "short": "A short description",
     "tags": ("tag1", "tag2"),
     "type": "COG",
@@ -103,7 +102,7 @@ LIBRARY_INFO_JSON = {
     "hidden": False,  # libraries are always hidden, this tests it will be flipped
     "install_msg": "A library install message",
     "required_cogs": {},
-    "requirements": ("tabulate"),
+    "requirements": ("tabulate",),
     "short": "A short library description",
     "tags": ("libtag1", "libtag2"),
     "type": "SHARED_LIBRARY",
@@ -163,14 +162,7 @@ def _init_test_repo(destination: Path):
 async def _session_git_repo(tmp_path_factory, event_loop):
     # we will import repo only once once per session and duplicate the repo folder
     repo_path = tmp_path_factory.mktemp("session_git_repo")
-    repo = Repo(
-        name="redbot-testrepo",
-        url="",
-        branch="master",
-        commit="",
-        folder_path=repo_path,
-        loop=event_loop,
-    )
+    repo = Repo(name="redbot-testrepo", url="", branch="master", commit="", folder_path=repo_path)
     git_dirparams = _init_test_repo(repo_path)
     fast_import = sp.Popen((*git_dirparams, "fast-import", "--quiet"), stdin=sp.PIPE)
     with TEST_REPO_EXPORT_PTH.open(mode="rb") as f:
@@ -193,7 +185,6 @@ async def git_repo(_session_git_repo, tmp_path, event_loop):
         branch=_session_git_repo.branch,
         commit=_session_git_repo.commit,
         folder_path=repo_path,
-        loop=event_loop,
     )
     return repo
 
@@ -208,7 +199,6 @@ async def cloned_git_repo(_session_git_repo, tmp_path, event_loop):
         branch=_session_git_repo.branch,
         commit=_session_git_repo.commit,
         folder_path=repo_path,
-        loop=event_loop,
     )
     sp.run(("git", "clone", str(_session_git_repo.folder_path), str(repo_path)), check=True)
     return repo
@@ -224,7 +214,6 @@ async def git_repo_with_remote(git_repo, tmp_path, event_loop):
         branch=git_repo.branch,
         commit=git_repo.commit,
         folder_path=repo_path,
-        loop=event_loop,
     )
     sp.run(("git", "clone", str(git_repo.folder_path), str(repo_path)), check=True)
     return repo
