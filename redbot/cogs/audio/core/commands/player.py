@@ -303,7 +303,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         footer = None
         if not play_now and not guild_data["shuffle"] and queue_dur > 0:
             footer = _("{time} until track playback: #1 in queue").format(
-                time=lavalink.utils.format_time(queue_dur)
+                time=self.format_time(queue_dur)
             )
         await self._embed_msg(
             ctx, title=_("Track Enqueued"), description=description, footer=footer
@@ -571,7 +571,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not await self._currency_check(ctx, guild_data["jukebox_price"]):
             return
         try:
-            await self.api_interface.autoplay(player, self.playlist_api)
+            await self.api_interface.autoplay(player, self.playlist_api, self)
         except DatabaseError:
             notify_channel = player.fetch("channel")
             if notify_channel:
@@ -703,9 +703,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                             ctx,
                             title=_("Unable to Get Track"),
                             description=_(
-                                "I'm unable get a track from Lavalink at the moment, try again in a "
-                                "few "
-                                "minutes."
+                                "I'm unable get a track from Lavalink at the moment, "
+                                "try again in a few minutes."
                             ),
                         )
 
@@ -719,9 +718,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                             ctx,
                             title=_("Unable to Get Track"),
                             description=_(
-                                "I'm unable get a track from Lavalink at the moment, try again in a "
-                                "few "
-                                "minutes."
+                                "I'm unable get a track from Lavalink at the moment, "
+                                "try again in a few minutes."
                             ),
                         )
                 if not tracks:
@@ -741,7 +739,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         ).format(suffix=query.suffix)
                     return await self._embed_msg(ctx, embed=embed)
                 queue_dur = await self.queue_duration(ctx)
-                queue_total_duration = lavalink.utils.format_time(queue_dur)
+                queue_total_duration = self.format_time(queue_dur)
                 if guild_data["dj_enabled"] and not await self._can_instaskip(ctx, ctx.author):
                     return await self._embed_msg(
                         ctx,

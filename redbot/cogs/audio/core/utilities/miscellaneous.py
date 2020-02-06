@@ -233,3 +233,19 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         else:
             msg = ""
         return msg.format(d, h, m, s)
+
+    def format_time(self, time: int) -> str:
+        """ Formats the given time into DD:HH:MM:SS """
+        seconds = time / 1000
+        days, seconds = divmod(seconds, 24 * 60 * 60)
+        hours, seconds = divmod(seconds, 60 * 60)
+        minutes, seconds = divmod(seconds, 60)
+        day = ""
+        hour = ""
+        if days:
+            day = "%02d:" % days
+        if hours or day:
+            hour = "%02d:" % hours
+        min = "%02d:" % minutes
+        sec = "%02d" % seconds
+        return f"{day}{hour}{min}{sec}"

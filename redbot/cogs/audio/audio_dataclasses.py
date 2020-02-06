@@ -6,7 +6,7 @@ import os
 import posixpath
 import re
 from pathlib import Path, PosixPath, WindowsPath
-from typing import AsyncIterator, Final, Iterator, MutableMapping, Optional, Tuple, Union
+from typing import AsyncIterator, Final, Iterator, MutableMapping, Optional, Tuple, Union, Callable
 from urllib.parse import urlparse
 
 import lavalink
@@ -66,7 +66,8 @@ _PARTIALLY_SUPPORTED_MUSIC_EXT += _PARTIALLY_SUPPORTED_VIDEO_EXT
 class LocalPath:
     """Local tracks class.
 
-    Used to handle system dir trees in a cross system manner. The only use of this class is for `localtracks`.
+    Used to handle system dir trees in a cross system manner.
+    The only use of this class is for `localtracks`.
     """
 
     _all_music_ext = _FULLY_SUPPORTED_MUSIC_EXT + _PARTIALLY_SUPPORTED_MUSIC_EXT
@@ -164,29 +165,24 @@ class LocalPath:
         else:
             return glob.iglob(f"{self.path}{os.sep}*{pattern}", recursive=False)
 
+    async def _multiglob(self, pattern: str, folder: bool, callable: Callable):
+        for rp in callable(pattern):
+            rp_local = LocalPath(rp, self._localtrack_folder)
+            if (folder and rp_local.is_dir() and rp_local.exists()) or (
+                rp_local.suffix in self._all_music_ext and rp_local.is_file() and rp_local.exists()
+            ):
+                yield rp_local
+                await asyncio.sleep(0)
+
     async def multiglob(self, *patterns, folder=False) -> AsyncIterator["LocalPath"]:
         for p in patterns:
-            for rp in self.glob(p):
-                rp_local = LocalPath(rp, self._localtrack_folder)
-                if (folder and rp_local.is_dir() and rp_local.exists()) or (
-                    rp_local.suffix in self._all_music_ext
-                    and rp_local.is_file()
-                    and rp_local.exists()
-                ):
-                    yield rp_local
-                    await asyncio.sleep(0)
+            async for path in self._multiglob(p, folder, self.glob):
+                yield path
 
     async def multirglob(self, *patterns, folder=False) -> AsyncIterator["LocalPath"]:
         for p in patterns:
-            for rp in self.rglob(p):
-                rp_local = LocalPath(rp, self._localtrack_folder)
-                if (folder and rp_local.is_dir() and rp_local.exists()) or (
-                    rp_local.suffix in self._all_music_ext
-                    and rp_local.is_file()
-                    and rp_local.exists()
-                ):
-                    yield rp_local
-                    await asyncio.sleep(0)
+            async for path in self._multiglob(p, folder, self.rglob):
+                yield path
 
     def __str__(self):
         return self.to_string()

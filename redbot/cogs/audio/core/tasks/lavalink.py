@@ -46,7 +46,8 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                         continue
                     else:
                         log.exception(
-                            "Fatal exception whilst starting internal Lavalink server, aborting...",
+                            "Fatal exception whilst starting internal Lavalink server, "
+                            "aborting...",
                             exc_info=exc,
                         )
                         self.lavalink_connection_aborted = True
@@ -56,7 +57,8 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     raise
                 except Exception as exc:
                     log.exception(
-                        "Unhandled exception whilst starting internal Lavalink server, aborting...",
+                        "Unhandled exception whilst starting internal Lavalink server, "
+                        "aborting...",
                         exc_info=exc,
                     )
                     self.lavalink_connection_aborted = True

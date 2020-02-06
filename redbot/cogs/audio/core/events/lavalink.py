@@ -33,7 +33,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         description = self.get_track_description(current_track, self.local_folder_current_path)
         status = await self.config.status()
         log.debug(f"Received a new lavalink event for {guild_id}: {event_type}: {extra}")
-
+        prev_song: lavalink.Track = player.fetch("prev_song")
         await self.error_reset(player)
 
         if event_type == lavalink.LavalinkEvents.TRACK_START:
@@ -46,11 +46,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             player.store("requester", current_requester)
             self.bot.dispatch("red_audio_track_start", guild, current_track, current_requester)
         if event_type == lavalink.LavalinkEvents.TRACK_END:
-            prev_song = player.fetch("prev_song")
             prev_requester = player.fetch("prev_requester")
             self.bot.dispatch("red_audio_track_end", guild, prev_song, prev_requester)
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
-            prev_song = player.fetch("prev_song")
             prev_requester = player.fetch("prev_requester")
             self.bot.dispatch("red_audio_queue_end", guild, prev_song, prev_requester)
             if (
@@ -61,7 +59,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 and self.api_interface is not None
             ):
                 try:
-                    await self.api_interface.autoplay(player, self.playlist_api)
+                    await self.api_interface.autoplay(player, self.playlist_api, self)
                 except DatabaseError:
                     notify_channel = player.fetch("channel")
                     if notify_channel:
@@ -72,7 +70,6 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     return
         if event_type == lavalink.LavalinkEvents.TRACK_START and notify:
             notify_channel = player.fetch("channel")
-            prev_song = player.fetch("prev_song")
             if notify_channel:
                 notify_channel = self.bot.get_channel(notify_channel)
                 if player.fetch("notify_message") is not None:
@@ -94,7 +91,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 if current_stream:
                     dur = "LIVE"
                 else:
-                    dur = lavalink.utils.format_time(current_length)
+                    dur = self.format_time(current_length)
 
                 thumb = None
                 if await self.config.guild(guild).thumbnail() and current_thumbnail:
