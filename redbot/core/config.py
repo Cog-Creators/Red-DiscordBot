@@ -1,5 +1,5 @@
 import asyncio
-import collections
+import collections.abc
 import logging
 import pickle
 import weakref
@@ -28,6 +28,33 @@ _T = TypeVar("_T")
 
 _config_cache = weakref.WeakValueDictionary()
 _retrieved = weakref.WeakSet()
+
+
+class ConfigMeta(type):
+    """
+    We want to prevent re-initializing existing config instances while having a singleton
+    """
+
+    def __call__(
+        cls,
+        cog_name: str,
+        unique_identifier: str,
+        driver: BaseDriver,
+        force_registration: bool = False,
+        defaults: dict = None,
+    ):
+        if cog_name is None:
+            raise ValueError("You must provide either the cog instance or a cog name.")
+
+        key = (cog_name, unique_identifier)
+        if key in _config_cache:
+            return _config_cache[key]
+
+        instance = super(ConfigMeta, cls).__call__(
+            cog_name, unique_identifier, driver, force_registration, defaults
+        )
+        _config_cache[key] = instance
+        return instance
 
 
 def get_latest_confs() -> Tuple["Config"]:
@@ -510,7 +537,7 @@ class Group(Value):
         return self(acquire_lock=acquire_lock)
 
     def nested_update(
-        self, current: collections.Mapping, defaults: Dict[str, Any] = ...
+        self, current: collections.abc.Mapping, defaults: Dict[str, Any] = ...
     ) -> Dict[str, Any]:
         """Robust updater for nested dictionaries
 
@@ -521,7 +548,7 @@ class Group(Value):
             defaults = self.defaults
 
         for key, value in current.items():
-            if isinstance(value, collections.Mapping):
+            if isinstance(value, collections.abc.Mapping):
                 result = self.nested_update(value, defaults.get(key, {}))
                 defaults[key] = result
             else:
@@ -562,7 +589,7 @@ class Group(Value):
         await self.driver.set(identifier_data, value=value)
 
 
-class Config:
+class Config(metaclass=ConfigMeta):
     """Configuration manager for cogs and Red.
 
     You should always use `get_conf` to instantiate a Config object. Use
@@ -604,19 +631,6 @@ class Config:
     ROLE = "ROLE"
     USER = "USER"
     MEMBER = "MEMBER"
-
-    def __new__(cls, cog_name, unique_identifier, *args, **kwargs):
-        key = (cog_name, unique_identifier)
-
-        if key[0] is None:
-            raise ValueError("You must provide either the cog instance or a cog name.")
-
-        if key in _config_cache:
-            conf = _config_cache[key]
-        else:
-            conf = object.__new__(cls)
-            _config_cache[key] = conf
-        return conf
 
     def __init__(
         self,
@@ -893,10 +907,10 @@ class Config:
         """
         Initializes a custom group for usage. This method must be called first!
         """
-        if group_identifier in self.custom_groups:
-            raise ValueError(f"Group identifier already registered: {group_identifier}")
-
-        self.custom_groups[group_identifier] = identifier_count
+        if identifier_count != self.custom_groups.setdefault(group_identifier, identifier_count):
+            raise ValueError(
+                f"Cannot change identifier count of already registered group: {group_identifier}"
+            )
 
     def _get_base_group(self, category: str, *primary_keys: str) -> Group:
         """

@@ -75,7 +75,7 @@ class Context(DPYContext):
             :func:`~redbot.core.utils.common_filters.filter_mass_mentions`.
             This must take a single `str` as an argument, and return
             the sanitized `str`.
-        \*\*kwargs
+        **kwargs
             See `discord.ext.commands.Context.send`.
 
         Returns
