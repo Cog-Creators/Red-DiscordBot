@@ -43,6 +43,15 @@ class Dev(commands.Cog):
         return compile(source, filename, mode, flags=ast.PyCF_ALLOW_TOP_LEVEL_AWAIT, optimize=0)
 
     @staticmethod
+    async def maybe_await(coro):
+        for i in range(2):
+            if inspect.isawaitable(coro):
+                coro = await coro
+            else:
+                return coro
+        return coro
+
+    @staticmethod
     def cleanup_code(content):
         """Automatically removes code blocks from the code."""
         # remove ```py\n```
@@ -116,16 +125,13 @@ class Dev(commands.Cog):
 
         try:
             compiled = self.async_compile(code, "<string>", "eval")
-            result = await eval(compiled, env)
+            result = await self.maybe_await(eval(compiled, env))
         except SyntaxError as e:
             await ctx.send(self.get_syntax_error(e))
             return
         except Exception as e:
             await ctx.send(box("{}: {!s}".format(type(e).__name__, e), lang="py"))
             return
-
-        if inspect.isawaitable(result):
-            result = await result
 
         self._last_result = result
         result = self.sanitize_output(ctx, str(result))
@@ -267,11 +273,7 @@ class Dev(commands.Cog):
                         result = types.FunctionType(code, variables)()
                     else:
                         result = executor(code, variables)
-                    for i in range(2):
-                        if inspect.isawaitable(result):
-                            result = await result
-                        else:
-                            break
+                    result = await self.maybe_await(result)
             except:
                 value = stdout.getvalue()
                 msg = "{}{}".format(value, traceback.format_exc())
