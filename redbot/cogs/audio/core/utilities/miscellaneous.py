@@ -235,7 +235,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return msg.format(d, h, m, s)
 
     def format_time(self, time: int) -> str:
-        """ Formats the given time into WW:DD:HH:MM:SS """
+        """ Formats the given time into DD:HH:MM:SS """
         seconds = time / 1000
         days, seconds = divmod(seconds, 24 * 60 * 60)
         hours, seconds = divmod(seconds, 60 * 60)
