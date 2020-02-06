@@ -52,8 +52,9 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
         await self._process_db(ctx)
 
     async def cog_command_error(self, ctx: commands.Context, error: Exception) -> None:
+        error = getattr(error, "original", error)
         if not isinstance(
-            getattr(error, "original", error),
+            error,
             (
                 commands.CheckFailure,
                 commands.UserInputError,
@@ -64,10 +65,13 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             self._play_lock(ctx, False)
             if self.api_interface is not None:
                 await self.api_interface.run_tasks(ctx)
-
-        await ctx.bot.on_command_error(
-            ctx, getattr(error, "original", error), unhandled_by_cog=True
-        )
+        elif isinstance(error, IndexError) and "No nodes found." in str(error):
+            await self._embed_msg(
+                ctx,
+                title=_("Invalid Environment"),
+                description=_("Connection to Lavalink has been lost."),
+            )
+        await ctx.bot.on_command_error(ctx, error, unhandled_by_cog=True)
 
     def cog_unload(self) -> None:
         if not self.cog_cleaned_up:
