@@ -1,9 +1,9 @@
 from copy import copy
 import asyncio
-import inspect
 import discord
 
 from redbot.core import Config, checks, commands
+from redbot.core.commands.requires import PrivilegeLevel
 from redbot.core.i18n import Translator
 from redbot.core.utils.predicates import MessagePredicate
 
@@ -69,9 +69,7 @@ def get_command_from_input(bot, userinput: str):
     if com is None:
         return None, _("I could not find a command from that input!")
 
-    check_str = inspect.getsource(checks.is_owner)
-    if any(inspect.getsource(x) in check_str for x in com.checks):
-        # command the user specified has the is_owner check
+    if com.requires.privilege_level >= PrivilegeLevel.BOT_OWNER:
         return (
             None,
             _("That command requires bot owner. I can't allow you to use that for an action"),
