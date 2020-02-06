@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-# Discord Version check
-
 import asyncio
 import functools
 import getpass
@@ -20,7 +18,7 @@ from typing import NoReturn
 
 import discord
 
-# Set the event loop policies here so any subsequent `get_event_loop()`
+# Set the event loop policies here so any subsequent `new_event_loop()`
 # calls, in particular those as a result of the following imports,
 # return the correct loop object.
 from redbot import _update_event_loop_policy, __version__
@@ -107,6 +105,7 @@ async def edit_instance(red, cli_flags):
     no_prompt = cli_flags.no_prompt
     token = cli_flags.token
     owner = cli_flags.owner
+    prefix = cli_flags.prefix
     old_name = cli_flags.instance_name
     new_name = cli_flags.edit_instance_name
     data_path = cli_flags.edit_data_path
@@ -119,14 +118,20 @@ async def edit_instance(red, cli_flags):
     if new_name is None and confirm_overwrite:
         print("--overwrite-existing-instance can't be used without --edit-instance-name argument")
         sys.exit(1)
-    if no_prompt and all(to_change is None for to_change in (token, owner, new_name, data_path)):
+    if (
+        no_prompt
+        and all(to_change is None for to_change in (token, owner, new_name, data_path))
+        and not prefix
+    ):
         print(
-            "No arguments to edit were provided. Available arguments (check help for more "
-            "information): --edit-instance-name, --edit-data-path, --copy-data, --owner, --token"
+            "No arguments to edit were provided."
+            " Available arguments (check help for more information):"
+            " --edit-instance-name, --edit-data-path, --copy-data, --owner, --token, --prefix"
         )
         sys.exit(1)
 
     await _edit_token(red, token, no_prompt)
+    await _edit_prefix(red, prefix, no_prompt)
     await _edit_owner(red, owner, no_prompt)
 
     data = deepcopy(data_manager.basic_config)
@@ -150,6 +155,26 @@ async def _edit_token(red, token, no_prompt):
     elif not no_prompt and confirm("Would you like to change instance's token?", default=False):
         await interactive_config(red, False, True, print_header=False)
         print("Token updated.\n")
+
+
+async def _edit_prefix(red, prefix, no_prompt):
+    if prefix:
+        prefixes = sorted(prefix, reverse=True)
+        await red._config.prefix.set(prefixes)
+    elif not no_prompt and confirm("Would you like to change instance's prefixes?", default=False):
+        print(
+            "Enter the prefixes, separated by a space (please note "
+            "that prefixes containing a space will need to be added with [p]set prefix)"
+        )
+        while True:
+            prefixes = input("> ").strip().split()
+            if not prefixes:
+                print("You need to pass at least one prefix!")
+                continue
+            prefixes = sorted(prefixes, reverse=True)
+            await red._config.prefix.set(prefixes)
+            print("Prefixes updated.\n")
+            break
 
 
 async def _edit_owner(red, owner, no_prompt):
@@ -271,7 +296,8 @@ def handle_edit(cli_flags: Namespace):
     """
     This one exists to not log all the things like it's a full run of the bot.
     """
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
     data_manager.load_basic_configuration(cli_flags.instance_name)
     red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None, fetch_offline_members=True)
     try:
@@ -283,6 +309,7 @@ def handle_edit(cli_flags: Namespace):
         print("Aborted!")
     finally:
         loop.run_until_complete(asyncio.sleep(1))
+        asyncio.set_event_loop(None)
         loop.stop()
         loop.close()
         sys.exit(0)
@@ -433,7 +460,8 @@ def main():
         handle_edit(cli_flags)
         return
     try:
-        loop = asyncio.get_event_loop()
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
 
         if cli_flags.no_instance:
             print(
@@ -497,6 +525,7 @@ def main():
         # results in a resource warning instead
         log.info("Please wait, cleaning up a bit more")
         loop.run_until_complete(asyncio.sleep(2))
+        asyncio.set_event_loop(None)
         loop.stop()
         loop.close()
         exit_code = red._shutdown_mode if red is not None else 1
