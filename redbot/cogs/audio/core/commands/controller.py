@@ -66,11 +66,11 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         player = lavalink.get_player(ctx.guild.id)
         if player.current:
             arrow = await self.draw_time(ctx)
-            pos = lavalink.utils.format_time(player.position)
+            pos = self.format_time(player.position)
             if player.current.is_stream:
                 dur = "LIVE"
             else:
-                dur = lavalink.utils.format_time(player.current.length)
+                dur = self.format_time(player.current.length)
             song = self.get_track_description(player.current, self.local_folder_current_path) or ""
             song += _("\n Requested by: **{track.requester}**")
             song += "\n\n{arrow}`{pos}`/`{dur}`"
@@ -335,16 +335,14 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         await self._embed_msg(
                             ctx,
                             title=_("Moved {num_seconds}s to {time}").format(
-                                num_seconds=seconds, time=lavalink.utils.format_time(seek)
+                                num_seconds=seconds, time=self.format_time(seek)
                             ),
                         )
                     await player.seek(seek)
                 else:
                     await self._embed_msg(
                         ctx,
-                        title=_("Moved to {time}").format(
-                            time=lavalink.utils.format_time(seconds * 1000)
-                        ),
+                        title=_("Moved to {time}").format(time=self.format_time(seconds * 1000)),
                     )
                     await player.seek(seconds * 1000)
         else:

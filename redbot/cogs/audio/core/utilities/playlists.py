@@ -110,7 +110,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         author: discord.User,
         guild: discord.Guild,
         specified_user: bool = False,
-    ) -> Tuple[Optional[int], str, str]:
+    ) -> Tuple[Optional[Playlist], str, str]:
         """
         Parameters
         ----------
@@ -128,8 +128,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             Whether or not a user ID was specified via argparse.
         Returns
         -------
-        Tuple[Optional[int], str]
-            Tuple of Playlist ID or None if none found and original user input.
+        Tuple[Optional[Playlist], str, str]
+            Tuple of Playlist or None if none found, original user input and scope.
         Raises
         ------
         `TooManyMatches`
@@ -214,7 +214,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ).format(match_count=match_count, original_input=original_input)
                 )
         elif match_count == 1:
-            return correct_scope_matches[0].id, original_input, correct_scope_matches[0].scope
+            return correct_scope_matches[0], original_input, correct_scope_matches[0].scope
         elif match_count == 0:
             return None, original_input, scope or PlaylistScope.GUILD.value
 
@@ -272,7 +272,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         with contextlib.suppress(discord.HTTPException):
             await msg.delete()
         return (
-            correct_scope_matches[pred.result].id,
+            correct_scope_matches[pred.result],
             original_input,
             correct_scope_matches[pred.result].scope,
         )
@@ -407,8 +407,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         ctx,
                         title=_("Unable to Get Track"),
                         description=_(
-                            "I'm unable get a track from Lavalink at the moment, try again in a few "
-                            "minutes."
+                            "I'm unable get a track from Lavalink at the moment, "
+                            "try again in a few minutes."
                         ),
                     )
 
@@ -425,7 +425,6 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 await notifier.notify_user(
                     current=track_count, total=len(uploaded_track_list), key="playlist"
                 )
-
         playlist = await create_playlist(
             ctx,
             self.playlist_api,
@@ -625,7 +624,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return tracklist
 
     def humanize_scope(
-        self, scope: str, ctx: Union[discord.Guild, discord.abc.User] = None, the: bool = None
+        self, scope: str, ctx: Union[discord.Guild, discord.abc.User, str] = None, the: bool = None
     ) -> Optional[str]:
 
         if scope == PlaylistScope.GLOBAL.value:
