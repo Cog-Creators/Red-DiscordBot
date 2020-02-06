@@ -1,4 +1,5 @@
 import asyncio
+import warnings
 from asyncio import AbstractEventLoop, as_completed, Semaphore
 from asyncio.futures import isfuture
 from itertools import chain
@@ -177,14 +178,20 @@ def bounded_gather_iter(
     TypeError
         When invalid parameters are passed
     """
-    if loop is None:
-        loop = asyncio.get_event_loop()
+    if loop is not None:
+        warnings.warn(
+            "Explicitly passing the loop will not work in Red 3.4+ and is currently ignored."
+            "Call this from the related event loop.",
+            DeprecationWarning,
+        )
+
+    loop = asyncio.get_running_loop()
 
     if semaphore is None:
         if not isinstance(limit, int) or limit <= 0:
             raise TypeError("limit must be an int > 0")
 
-        semaphore = Semaphore(limit, loop=loop)
+        semaphore = Semaphore(limit)
 
     pending = []
 
@@ -195,7 +202,7 @@ def bounded_gather_iter(
         cof = _sem_wrapper(semaphore, cof)
         pending.append(cof)
 
-    return as_completed(pending, loop=loop)
+    return as_completed(pending)
 
 
 def bounded_gather(
@@ -228,15 +235,21 @@ def bounded_gather(
     TypeError
         When invalid parameters are passed
     """
-    if loop is None:
-        loop = asyncio.get_event_loop()
+    if loop is not None:
+        warnings.warn(
+            "Explicitly passing the loop will not work in Red 3.4+ and is currently ignored."
+            "Call this from the related event loop.",
+            DeprecationWarning,
+        )
+
+    loop = asyncio.get_running_loop()
 
     if semaphore is None:
         if not isinstance(limit, int) or limit <= 0:
             raise TypeError("limit must be an int > 0")
 
-        semaphore = Semaphore(limit, loop=loop)
+        semaphore = Semaphore(limit)
 
     tasks = (_sem_wrapper(semaphore, task) for task in coros_or_futures)
 
-    return asyncio.gather(*tasks, loop=loop, return_exceptions=return_exceptions)
+    return asyncio.gather(*tasks, return_exceptions=return_exceptions)
