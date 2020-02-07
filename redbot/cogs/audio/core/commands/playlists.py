@@ -5,7 +5,7 @@ import math
 import os
 import tarfile
 from io import BytesIO
-from typing import Optional
+from typing import Optional, cast
 
 import discord
 import lavalink
@@ -17,11 +17,7 @@ from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 from redbot.core.utils.predicates import MessagePredicate
 
 from ...apis.api_utils import FakePlaylist
-from ...apis.playlist_interface import (
-    create_playlist,
-    delete_playlist,
-    get_all_playlist,
-)
+from ...apis.playlist_interface import create_playlist, delete_playlist, get_all_playlist, Playlist
 from ...audio_dataclasses import LocalPath, Query
 from ...audio_logging import IS_DEBUG
 from ...converters import ComplexScopeParser, ScopeParser
@@ -302,7 +298,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("Could not match '{arg}' to a playlist.").format(arg=playlist_arg),
             )
 
-        temp_playlist = FakePlaylist(to_author.id, to_scope)
+        temp_playlist = cast(Playlist, FakePlaylist(to_author.id, to_scope))
         if not await self.can_manage_playlist(to_scope, temp_playlist, ctx, to_author, to_guild):
             ctx.command.reset_cooldown(ctx)
             return
@@ -392,7 +388,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
         scope = scope or PlaylistScope.GUILD.value
-        temp_playlist = FakePlaylist(author.id, scope)
+        temp_playlist = cast(Playlist, FakePlaylist(author.id, scope))
         scope_name = self.humanize_scope(
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
@@ -1083,7 +1079,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             scope_name = self.humanize_scope(
                 scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
             )
-            temp_playlist = FakePlaylist(author.id, scope)
+            temp_playlist = cast(Playlist, FakePlaylist(author.id, scope))
             if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
                 ctx.command.reset_cooldown(ctx)
                 return
@@ -1305,7 +1301,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         scope_name = self.humanize_scope(
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
-        temp_playlist = FakePlaylist(author.id, scope)
+        temp_playlist = cast(Playlist, FakePlaylist(author.id, scope))
         if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
             return ctx.command.reset_cooldown(ctx)
         playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
@@ -1761,7 +1757,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
         scope = scope or PlaylistScope.GUILD.value
-        temp_playlist = FakePlaylist(author.id, scope)
+        temp_playlist = cast(Playlist, FakePlaylist(author.id, scope))
         if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
             return
 

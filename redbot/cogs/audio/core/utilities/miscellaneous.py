@@ -10,7 +10,8 @@ import discord
 import lavalink
 from discord.embeds import EmptyEmbed
 
-from redbot.core import bank, commands
+from redbot.core import bank, commands, Config
+from redbot.core.commands import Context
 from redbot.core.utils.chat_formatting import humanize_number
 
 from ..abc import MixinMeta
@@ -19,6 +20,7 @@ from ..cog_utils import CompositeMetaClass, _
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.miscellaneous")
 
 _RE_TIME_CONVERTER: Final[re.Pattern] = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
+_prefer_lyrics_cache = {}
 
 
 class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
@@ -235,8 +237,24 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return msg.format(d, h, m, s)
 
     def format_time(self, time: int) -> str:
-        """ Formats the given time into HH:MM:SS """
-        h, r = divmod(time / 1000, 3600)
-        m, s = divmod(r, 60)
+        """ Formats the given time into DD:HH:MM:SS """
+        seconds = time / 1000
+        days, seconds = divmod(seconds, 24 * 60 * 60)
+        hours, seconds = divmod(seconds, 60 * 60)
+        minutes, seconds = divmod(seconds, 60)
+        day = ""
+        hour = ""
+        if days:
+            day = "%02d:" % days
+        if hours or day:
+            hour = "%02d:" % hours
+        min = "%02d:" % minutes
+        sec = "%02d" % seconds
+        return f"{day}{hour}{min}{sec}"
 
-        return "%02d:%02d:%02d" % (h, m, s)
+    async def get_lyrics_status(self, ctx: Context) -> bool:
+        global _prefer_lyrics_cache
+        prefer_lyrics = _prefer_lyrics_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).prefer_lyrics()
+        )
+        return prefer_lyrics
