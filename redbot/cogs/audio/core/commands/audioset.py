@@ -728,6 +728,21 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         await self.config.guild(ctx.guild).emptypause_timer.set(seconds)
         await self.config.guild(ctx.guild).emptypause_enabled.set(enabled)
 
+    @command_audioset.command(name="lyrics")
+    @commands.guild_only()
+    @checks.mod_or_permissions(administrator=True)
+    async def command_audioset_lryics(self, ctx: commands.Context):
+        """Prioritise tracks with lyrics."""
+        prefer_lyrics = await self.config.guild(ctx.guild).prefer_lyrics()
+        await self.config.guild(ctx.guild).prefer_lyrics.set(not prefer_lyrics)
+        await self._embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_("Prefer tracks with lryics: {true_or_false}.").format(
+                true_or_false=_("Enabled") if not prefer_lyrics else _("Disabled")
+            ),
+        )
+
     @command_audioset.command(name="jukebox")
     @commands.guild_only()
     @checks.mod_or_permissions(administrator=True)
