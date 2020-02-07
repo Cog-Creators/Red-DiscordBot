@@ -40,3 +40,4 @@ def randomize_color(embed: discord.Embed) -> discord.Embed:
 
     """
     return randomize_colour(embed)
+
