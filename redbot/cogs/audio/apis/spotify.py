@@ -45,7 +45,7 @@ class SpotifyWrapper:
         return query, params
 
     @staticmethod
-    def get_spotify_track_info(track_data: MutableMapping) -> Tuple[str, ...]:
+    async def get_spotify_track_info(track_data: MutableMapping) -> Tuple[str, ...]:
         """Extract track info from spotify response"""
         artist_name = track_data["artists"][0]["name"]
         track_name = track_data["name"]
