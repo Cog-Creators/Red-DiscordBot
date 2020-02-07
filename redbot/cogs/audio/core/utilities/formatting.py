@@ -255,7 +255,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return embed
 
     def get_track_description(self, track, local_folder_current_path) -> Optional[str]:
-        """Get the user facing formated track name"""
+        """Get the user facing formatted track name"""
         if track and getattr(track, "uri", None):
             query = Query.process_input(track.uri, local_folder_current_path)
             if query.is_local or "localtracks/" in track.uri:
@@ -266,13 +266,17 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 else:
                     return escape(query.to_string_user())
             else:
-                return f'**{escape(f"[{track.title}]({track.uri}) ")}**'
+                if track.author.lower() not in track.title.lower():
+                    title = f"{track.title} - {track.author}"
+                else:
+                    title = track.title
+                return f'**{escape(f"[{title}]({track.uri}) ")}**'
         elif hasattr(track, "to_string_user") and track.is_local:
             return escape(track.to_string_user() + " ")
         return None
 
     def get_track_description_unformatted(self, track, local_folder_current_path) -> Optional[str]:
-        """Get the user facing unformated track name"""
+        """Get the user facing unformatted track name"""
         if track and hasattr(track, "uri"):
             query = Query.process_input(track.uri, local_folder_current_path)
             if query.is_local or "localtracks/" in track.uri:
@@ -281,7 +285,11 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 else:
                     return escape(query.to_string_user())
             else:
-                return escape(f"{track.title}")
+                if track.author.lower() not in track.title.lower():
+                    title = f"{track.title} - {track.author}"
+                else:
+                    title = track.title
+                return escape(f"{title}")
         elif hasattr(track, "to_string_user") and track.is_local:
             return escape(track.to_string_user() + " ")
         return None

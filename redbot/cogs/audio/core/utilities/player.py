@@ -12,7 +12,7 @@ from redbot.core import commands
 from redbot.core.utils.chat_formatting import bold, escape
 
 from ...audio_dataclasses import _PARTIALLY_SUPPORTED_MUSIC_EXT, Query
-from ...audio_logging import IS_DEBUG
+from ...audio_logging import IS_DEBUG, debug_exc_log
 from ...errors import QueryUnauthorized, SpotifyFetchError, TrackEnqueueError
 from ...utils import Notifier
 from ..abc import MixinMeta
@@ -118,8 +118,8 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             player = lavalink.get_player(ctx.guild.id)
             log.debug(f"Current requester is {player.current}")
             return player.current.requester.id == member.id
-        except Exception as e:
-            log.error(e)
+        except Exception as err:
+            debug_exc_log(log, err, "Caught error in `is_requester`")
         return False
 
     async def _skip_action(self, ctx: commands.Context, skip_to_track: int = None) -> None:

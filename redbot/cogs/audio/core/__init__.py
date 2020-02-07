@@ -49,6 +49,7 @@ class Audio(
         self.skip_votes = {}
         self.play_lock = {}
         self._daily_playlist_cache = {}
+        self._daily_global_playlist_cache = {}
         self._dj_status_cache = {}
         self._dj_role_cache = {}
 
@@ -64,6 +65,7 @@ class Audio(
             schema_version=1,
             cache_level=0,
             cache_age=365,
+            daily_playlists=True,
             global_db_enabled=False,
             global_db_get_timeout=5,  # Here as a placeholder in case we want to enable the command
             status=False,

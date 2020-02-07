@@ -780,6 +780,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     clean_tracks.append(track)
                 else:
                     removed_tracks += 1
+                await asyncio.sleep(0)
             player.queue = clean_tracks
             if removed_tracks == 0:
                 await self._embed_msg(
