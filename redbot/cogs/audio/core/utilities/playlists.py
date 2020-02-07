@@ -17,6 +17,7 @@ from redbot.core.utils.predicates import ReactionPredicate
 
 from ...apis.playlist_interface import Playlist, create_playlist
 from ...audio_dataclasses import _PARTIALLY_SUPPORTED_MUSIC_EXT, Query
+from ...audio_logging import debug_exc_log
 from ...errors import TooManyMatches, TrackEnqueueError
 from ...utils import Notifier, PlaylistScope
 from ..abc import MixinMeta
@@ -176,9 +177,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         ):
             if specified_user:
                 correct_scope_matches_global = [
-                    p
-                    for p in matches.get(PlaylistScope.USGLOBALER.value)
-                    if p.author == user_to_query
+                    p for p in matches.get(PlaylistScope.GLOBAL.value) if p.author == user_to_query
                 ]
             else:
                 correct_scope_matches_global = [p for p in matches.get(PlaylistScope.GLOBAL.value)]
@@ -278,7 +277,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         )
 
     async def _build_playlist_list_page(
-        self, ctx: commands.Context, page_num: int, abc_names: List, scope: str
+        self, ctx: commands.Context, page_num: int, abc_names: List, scope: Optional[str]
     ) -> discord.Embed:
         plist_num_pages = math.ceil(len(abc_names) / 5)
         plist_idx_start = (page_num - 1) * 5
@@ -290,11 +289,18 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             item_idx = i + 1
             plist += "`{}.` {}".format(item_idx, playlist_info)
             await asyncio.sleep(0)
-        embed = discord.Embed(
-            colour=await ctx.embed_colour(),
-            title=_("Playlists for {scope}:").format(scope=scope),
-            description=plist,
-        )
+        if scope is None:
+            embed = discord.Embed(
+                colour=await ctx.embed_colour(),
+                title=_("Playlists you can access in this server:"),
+                description=plist,
+            )
+        else:
+            embed = discord.Embed(
+                colour=await ctx.embed_colour(),
+                title=_("Playlists for {scope}:").format(scope=scope),
+                description=plist,
+            )
         embed.set_footer(
             text=_("Page {page_num}/{total_pages} | {num} playlists.").format(
                 page_num=page_num, total_pages=plist_num_pages, num=len(abc_names)
@@ -412,14 +418,16 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         ),
                     )
 
-                track = result.tracks
-            except Exception:
+                track = result.tracks[0]
+            except Exception as err:
+                debug_exc_log(log, err, f"Failed to get track for {song_url}")
                 continue
             try:
-                track_obj = self.track_creator(player, other_track=track[0])
+                track_obj = self.track_creator(player, other_track=track)
                 track_list.append(track_obj)
                 successful_count += 1
-            except Exception:
+            except Exception as err:
+                debug_exc_log(log, err, f"Failed to create track for {track}")
                 continue
             if (track_count % 2 == 0) or (track_count == len(uploaded_track_list)):
                 await notifier.notify_user(

@@ -289,7 +289,7 @@ async def get_all_playlist_for_migration23(
     -------
     list
         A list of all playlists for the specified scope
-     Raises
+    Raises
     ------
     `InvalidPlaylistScope`
         Passing a scope that is not supported.
@@ -425,7 +425,7 @@ async def get_all_playlist(
     -------
     list
         A list of all playlists for the specified scope
-     Raises
+    Raises
     ------
     `InvalidPlaylistScope`
         Passing a scope that is not supported.
@@ -487,7 +487,7 @@ async def get_all_playlist_converter(
     -------
     list
         A list of all playlists for the specified scope
-     Raises
+    Raises
     ------
     `InvalidPlaylistScope`
         Passing a scope that is not supported.
@@ -598,7 +598,7 @@ async def reset_playlist(
     playlist_api: PlaylistWrapper
         The Playlist API interface.
 
-     Raises
+    Raises
     ------
     `InvalidPlaylistScope`
         Passing a scope that is not supported.
@@ -637,7 +637,7 @@ async def delete_playlist(
     playlist_api: PlaylistWrapper
         The Playlist API interface.
 
-     Raises
+    Raises
     ------
     `InvalidPlaylistScope`
         Passing a scope that is not supported.

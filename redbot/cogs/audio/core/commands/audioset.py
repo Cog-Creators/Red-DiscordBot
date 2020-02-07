@@ -564,6 +564,26 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             description=_("Set auto-play playlist to default value."),
         )
 
+    @command_audioset.command(name="globaldailyqueue")
+    @commands.is_owner()
+    async def command_audioset_global_historical_queue(self, ctx: commands.Context):
+        """Toggle global daily queues.
+
+        Global daily queues creates a playlist for all tracks played today.
+        """
+        daily_playlists = self._daily_global_playlist_cache.setdefault(
+            self.bot.user.id, await self.config.daily_playlists()
+        )
+        await self.config.daily_playlists.set(not daily_playlists)
+        self._daily_global_playlist_cache[self.bot.user.id] = not daily_playlists
+        await self._embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_("Global daily queues: {true_or_false}.").format(
+                true_or_false=_("Enabled") if not daily_playlists else _("Disabled")
+            ),
+        )
+
     @command_audioset.command(name="dailyqueue")
     @commands.guild_only()
     @checks.admin()
