@@ -10,6 +10,7 @@ import lavalink
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
+from redbot.core.commands import Context
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 
 from ..apis.interface import AudioAPIInterface
@@ -474,4 +475,8 @@ class MixinMeta(ABC):
 
     @abstractmethod
     def format_time(self, time: int) -> str:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def get_lyrics_status(self, ctx: Context) -> bool:
         raise NotImplementedError()

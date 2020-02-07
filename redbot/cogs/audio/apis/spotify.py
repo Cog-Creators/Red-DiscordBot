@@ -8,6 +8,7 @@ import aiohttp
 
 from redbot.core import Config
 from redbot.core.bot import Red
+from redbot.core.commands import Context
 
 from ..errors import SpotifyFetchError
 
@@ -44,11 +45,15 @@ class SpotifyWrapper:
             query = f"{PLAYLISTS_ENDPOINT}/{key}/tracks"
         return query, params
 
-    @staticmethod
-    async def get_spotify_track_info(track_data: MutableMapping) -> Tuple[str, ...]:
+    async def get_spotify_track_info(
+        self, track_data: MutableMapping, ctx: Context
+    ) -> Tuple[str, ...]:
         """Extract track info from spotify response"""
-        artist_name = track_data["artists"][0]["name"]
+        prefer_lyrics = await ctx.cog.get_lyrics_status(ctx)
         track_name = track_data["name"]
+        if prefer_lyrics:
+            track_name = f"{track_name} - lyrics"
+        artist_name = track_data["artists"][0]["name"]
         track_info = f"{track_name} {artist_name}"
         song_url = track_data.get("external_urls", {}).get("spotify")
         uri = track_data["uri"]

@@ -65,7 +65,7 @@ class Audio(
             schema_version=1,
             cache_level=0,
             cache_age=365,
-            daily_playlists=True,
+            daily_playlists=False,
             global_db_enabled=False,
             global_db_get_timeout=5,  # Here as a placeholder in case we want to enable the command
             status=False,
@@ -92,6 +92,7 @@ class Audio(
             jukebox_price=0,
             maxlength=0,
             notify=False,
+            prefer_lyrics=False,
             repeat=False,
             shuffle=False,
             shuffle_bumped=True,
