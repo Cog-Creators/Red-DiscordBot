@@ -5,6 +5,7 @@ from typing import Dict
 
 import lavalink
 
+from ...audio_logging import debug_exc_log
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
@@ -27,9 +28,11 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                     if p.paused and server.id in pause_times:
                         try:
                             await p.pause(False)
-                        except Exception:
-                            log.error(
-                                "Exception raised in Audio's emptypause_timer.", exc_info=True
+                        except Exception as err:
+                            debug_exc_log(
+                                log,
+                                err,
+                                f"Exception raised in Audio's unpausing player for {server.id}.",
                             )
                     pause_times.pop(server.id, None)
             servers = stop_times.copy()
@@ -45,9 +48,11 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                             await player.stop()
                             await player.disconnect()
                         except Exception as err:
-                            log.error("Exception raised in Audio's emptydc_timer.", exc_info=True)
                             if "No such player for that guild" in str(err):
                                 stop_times.pop(sid, None)
+                            debug_exc_log(
+                                log, err, f"Exception raised in Audio's emptydc_timer for {sid}."
+                            )
                 elif (
                     sid in pause_times and await self.config.guild(server_obj).emptypause_enabled()
                 ):
@@ -58,7 +63,7 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                         except Exception as err:
                             if "No such player for that guild" in str(err):
                                 pause_times.pop(sid, None)
-                            log.error(
-                                "Exception raised in Audio's emptypause_timer.", exc_info=True
+                            debug_exc_log(
+                                log, err, f"Exception raised in Audio's pausing for {sid}."
                             )
             await asyncio.sleep(5)

@@ -204,7 +204,7 @@ class AudioAPIInterface:
                 track_name,
                 _id,
                 _type,
-            ) = self.spotify_api.get_spotify_track_info(track)
+            ) = await self.spotify_api.get_spotify_track_info(track)
 
             database_entries.append(
                 {
@@ -449,7 +449,7 @@ class AudioAPIInterface:
                     track_name,
                     _id,
                     _type,
-                ) = self.spotify_api.get_spotify_track_info(track)
+                ) = await self.spotify_api.get_spotify_track_info(track)
 
                 database_entries.append(
                     {
