@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import asyncio
 from abc import ABC, abstractmethod
 from collections import Counter
 from pathlib import Path
-from typing import Any, List, Mapping, MutableMapping, Optional, Tuple, Union
+from typing import Any, List, Mapping, MutableMapping, Optional, Tuple, Union, TYPE_CHECKING
 
 import aiohttp
 import discord
@@ -13,12 +15,13 @@ from redbot.core.bot import Red
 from redbot.core.commands import Context
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 
-from ..apis.interface import AudioAPIInterface
-from ..apis.playlist_interface import Playlist
-from ..apis.playlist_wrapper import PlaylistWrapper
-from ..audio_dataclasses import LocalPath, Query
-from ..equalizer import Equalizer
-from ..manager import ServerManager
+if TYPE_CHECKING:
+    from ..apis.interface import AudioAPIInterface
+    from ..apis.playlist_interface import Playlist
+    from ..apis.playlist_wrapper import PlaylistWrapper
+    from ..audio_dataclasses import LocalPath, Query
+    from ..equalizer import Equalizer
+    from ..manager import ServerManager
 
 
 class MixinMeta(ABC):
@@ -30,9 +33,9 @@ class MixinMeta(ABC):
 
     bot: Red
     config: Config
-    api_interface: Optional[AudioAPIInterface]
-    player_manager: Optional[ServerManager]
-    playlist_api: Optional[PlaylistWrapper]
+    api_interface: Optional["AudioAPIInterface"]
+    player_manager: Optional["ServerManager"]
+    playlist_api: Optional["PlaylistWrapper"]
     local_folder_current_path: Path
     db_conn: Optional[APSWConnectionWrapper]
     session: aiohttp.ClientSession
@@ -157,7 +160,7 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def is_allowed(
-        self, config: Config, guild: discord.Guild, query: str, query_obj: Query = None
+        self, config: Config, guild: discord.Guild, query: str, query_obj: "Query" = None
     ) -> bool:
         raise NotImplementedError()
 
@@ -167,13 +170,13 @@ class MixinMeta(ABC):
 
     @abstractmethod
     def get_track_description(
-        self, track: Union[lavalink.rest_api.Track, Query], local_folder_current_path: Path
+        self, track: Union[lavalink.rest_api.Track, "Query"], local_folder_current_path: Path
     ) -> Optional[str]:
         raise NotImplementedError()
 
     @abstractmethod
     def get_track_description_unformatted(
-        self, track: Union[lavalink.rest_api.Track, Query], local_folder_current_path: Path
+        self, track: Union[lavalink.rest_api.Track, "Query"], local_folder_current_path: Path
     ) -> Optional[str]:
         raise NotImplementedError()
 
@@ -249,7 +252,7 @@ class MixinMeta(ABC):
         author: discord.User,
         guild: discord.Guild,
         specified_user: bool = False,
-    ) -> Tuple[Optional[Playlist], str, str]:
+    ) -> Tuple[Optional["Playlist"], str, str]:
         raise NotImplementedError()
 
     @abstractmethod
@@ -282,14 +285,14 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def can_manage_playlist(
-        self, scope: str, playlist: Playlist, ctx: commands.Context, user, guild
+        self, scope: str, playlist: "Playlist", ctx: commands.Context, user, guild
     ) -> bool:
         raise NotImplementedError()
 
     @abstractmethod
     async def _maybe_update_playlist(
-        self, ctx: commands.Context, player: lavalink.player_manager.Player, playlist: Playlist
-    ) -> Tuple[List[lavalink.Track], List[lavalink.Track], Playlist]:
+        self, ctx: commands.Context, player: lavalink.player_manager.Player, playlist: "Playlist"
+    ) -> Tuple[List[lavalink.Track], List[lavalink.Track], "Playlist"]:
         raise NotImplementedError()
 
     @abstractmethod
@@ -302,7 +305,7 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def _enqueue_tracks(
-        self, ctx: commands.Context, query: Union[Query, list], enqueue: bool = True
+        self, ctx: commands.Context, query: Union["Query", list], enqueue: bool = True
     ) -> Union[discord.Message, List[lavalink.Track], lavalink.Track]:
         raise NotImplementedError()
 
@@ -311,7 +314,7 @@ class MixinMeta(ABC):
         self,
         ctx: commands.Context,
         player: lavalink.Player,
-        eq: Equalizer,
+        eq: "Equalizer",
         message: discord.Message,
         selected: int,
     ) -> None:
@@ -327,7 +330,7 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def _get_spotify_tracks(
-        self, ctx: commands.Context, query: Query
+        self, ctx: commands.Context, query: "Query", forced: bool = False
     ) -> Union[discord.Message, List[lavalink.Track], lavalink.Track]:
         raise NotImplementedError()
 
@@ -360,17 +363,19 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def get_localtrack_folder_tracks(
-        self, ctx, player: lavalink.player_manager.Player, query: Query
+        self, ctx, player: lavalink.player_manager.Player, query: "Query"
     ) -> List[lavalink.rest_api.Track]:
         raise NotImplementedError()
 
     @abstractmethod
-    async def get_localtrack_folder_list(self, ctx: commands.Context, query: Query) -> List[Query]:
+    async def get_localtrack_folder_list(
+        self, ctx: commands.Context, query: "Query"
+    ) -> List["Query"]:
         raise NotImplementedError()
 
     @abstractmethod
     async def _local_play_all(
-        self, ctx: commands.Context, query: Query, from_search: bool = False
+        self, ctx: commands.Context, query: "Query", from_search: bool = False
     ) -> None:
         raise NotImplementedError()
 
@@ -391,12 +396,12 @@ class MixinMeta(ABC):
     @abstractmethod
     async def get_localtracks_folders(
         self, ctx: commands.Context, search_subfolders: bool = False
-    ) -> List[Union[Path, LocalPath]]:
+    ) -> List[Union[Path, "LocalPath"]]:
         raise NotImplementedError()
 
     @abstractmethod
     async def _build_local_search_list(
-        self, to_search: List[Query], search_words: str
+        self, to_search: List["Query"], search_words: str
     ) -> List[str]:
         raise NotImplementedError()
 
@@ -432,7 +437,11 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def _playlist_tracks(
-        self, ctx: commands.Context, player: lavalink.player_manager.Player, query: Query
+        self,
+        ctx: commands.Context,
+        player: lavalink.player_manager.Player,
+        query: "Query",
+        skip_cache: bool = False,
     ) -> Union[discord.Message, None, List[MutableMapping]]:
         raise NotImplementedError()
 

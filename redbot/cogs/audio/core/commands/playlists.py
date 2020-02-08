@@ -943,14 +943,30 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         scope, author, guild, specified_user = scope_data
 
         if scope is None:
+
             global_matches = await get_all_playlist(
-                PlaylistScope.GLOBAL.value, self.bot, guild, author, specified_user
+                scope=PlaylistScope.GLOBAL.value,
+                bot=self.bot,
+                guild=guild,
+                author=author,
+                specified_user=specified_user,
+                playlist_api=self.playlist_api,
             )
             guild_matches = await get_all_playlist(
-                PlaylistScope.GUILD.value, self.bot, guild, author, specified_user
+                scope=PlaylistScope.GUILD.value,
+                bot=self.bot,
+                guild=guild,
+                author=author,
+                specified_user=specified_user,
+                playlist_api=self.playlist_api,
             )
             user_matches = await get_all_playlist(
-                PlaylistScope.USER.value, self.bot, guild, author, specified_user
+                scope=PlaylistScope.USER.value,
+                bot=self.bot,
+                guild=guild,
+                author=author,
+                specified_user=specified_user,
+                playlist_api=self.playlist_api,
             )
             playlists = [*global_matches, *guild_matches, *user_matches]
             name = None
@@ -965,7 +981,14 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
         else:
             try:
-                playlists = await get_all_playlist(scope, self.bot, guild, author, specified_user)
+                playlists = await get_all_playlist(
+                    scope=scope,
+                    bot=self.bot,
+                    guild=guild,
+                    author=author,
+                    specified_user=specified_user,
+                    playlist_api=self.playlist_api,
+                )
             except MissingGuild:
                 ctx.command.reset_cooldown(ctx)
                 return await self._embed_msg(

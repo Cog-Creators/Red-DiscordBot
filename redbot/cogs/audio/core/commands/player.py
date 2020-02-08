@@ -708,6 +708,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     tracks = result.tracks
                 else:
                     try:
+                        query.search_subfolders = True
                         tracks = await self.get_localtrack_folder_tracks(ctx, player, query)
                     except TrackEnqueueError:
                         self._play_lock(ctx, False)

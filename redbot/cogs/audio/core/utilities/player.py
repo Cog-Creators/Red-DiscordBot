@@ -213,7 +213,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return False
 
     async def _get_spotify_tracks(
-        self, ctx: commands.Context, query: Query
+        self, ctx: commands.Context, query: Query, forced: bool = False
     ) -> Union[discord.Message, List[lavalink.Track], lavalink.Track]:
         if ctx.invoked_with in ["play", "genre"]:
             enqueue_tracks = True
@@ -221,7 +221,6 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             enqueue_tracks = False
         player = lavalink.get_player(ctx.guild.id)
         api_data = await self._check_api_tokens()
-
         if any([not api_data["spotify_client_id"], not api_data["spotify_client_secret"]]):
             return await self._embed_msg(
                 ctx,
@@ -321,7 +320,11 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         elif query.is_album or query.is_playlist:
             self._play_lock(ctx, True)
             track_list = await self._spotify_playlist(
-                ctx, "album" if query.is_album else "playlist", query, enqueue_tracks
+                ctx,
+                "album" if query.is_album else "playlist",
+                query,
+                enqueue_tracks,
+                forced=forced,
             )
             self._play_lock(ctx, False)
             return track_list
@@ -549,7 +552,12 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return single_track or message
 
     async def _spotify_playlist(
-        self, ctx: commands.Context, stype: str, query: Query, enqueue: bool = False
+        self,
+        ctx: commands.Context,
+        stype: str,
+        query: Query,
+        enqueue: bool = False,
+        forced: bool = False,
     ):
         player = lavalink.get_player(ctx.guild.id)
         try:
@@ -573,6 +581,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 player=player,
                 lock=self._play_lock,
                 notifier=notifier,
+                forced=forced,
             )
         except SpotifyFetchError as error:
             self._play_lock(ctx, False)

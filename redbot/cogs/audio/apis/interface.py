@@ -13,7 +13,6 @@ import discord
 import lavalink
 from lavalink.rest_api import LoadResult
 
-from redbot.cogs.audio.apis.playlist_wrapper import PlaylistWrapper
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.commands import Cog
@@ -28,6 +27,7 @@ from ..utils import CacheLevel, Notifier
 from .global_db import GlobalCacheWrapper
 from .local_db import LocalCacheWrapper
 from .playlist_interface import get_playlist
+from .playlist_wrapper import PlaylistWrapper
 from .spotify import SpotifyWrapper
 from .youtube import YouTubeWrapper
 
@@ -384,6 +384,7 @@ class AudioAPIInterface:
         player: lavalink.Player,
         lock: Callable,
         notifier: Optional[Notifier] = None,
+        forced: bool = False,
         query_global: bool = True,
     ) -> List[lavalink.Track]:
         """Queries the Database then falls back to Spotify and YouTube APIs then Enqueued matched tracks.
@@ -492,6 +493,7 @@ class AudioAPIInterface:
                             Query.process_input(
                                 val, Path(await self.config.localpath()).absolute()
                             ),
+                            forced=forced,
                         )
                     except (RuntimeError, aiohttp.ServerDisconnectedError):
                         lock(ctx, False)

@@ -79,6 +79,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
                         bot=self.bot,
                         guild=guild,
                         author=self.bot.user,
+                        playlist_api=self.playlist_api,
                     )
                 except RuntimeError:
                     playlist = None
@@ -106,6 +107,8 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
                     playlist_id=too_old_id,
                     guild=guild,
                     author=self.bot.user,
+                    playlist_api=self.playlist_api,
+                    bot=self.bot,
                 )
             except Exception as err:
                 debug_exc_log(log, err, f"Failed to delete daily playlist ID: {too_old_id}")
@@ -115,6 +118,8 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
                     playlist_id=too_old_id,
                     guild=guild,
                     author=self.bot.user,
+                    playlist_api=self.playlist_api,
+                    bot=self.bot,
                 )
             except Exception as err:
                 debug_exc_log(log, err, f"Failed to delete global daily playlist ID: {too_old_id}")
