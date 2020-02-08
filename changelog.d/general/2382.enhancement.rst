@@ -1,0 +1,1 @@
+Enhancement of [p]serverinfo command when using a toggle that shows more details about the guild.
