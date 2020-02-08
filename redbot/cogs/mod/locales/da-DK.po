@@ -1,18 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-14 04:24+0000\n"
-"PO-Revision-Date: 2020-01-07 21:48\n"
+"POT-Creation-Date: 2019-07-05 22:33+0200\n"
+"PO-Revision-Date: 2020-02-07 10:36\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.0\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: da\n"
-"X-Crowdin-File: /mod/locales/messages.pot\n"
+"X-Crowdin-File: /cogs/mod/locales/messages.pot\n"
 "Language: da_DK\n"
 
 #: redbot/cogs/mod/converters.py:16
@@ -465,7 +465,7 @@ msgstr ""
 
 #: redbot/cogs/mod/names.py:136
 msgid "Roles"
-msgstr ""
+msgstr "Roller"
 
 #: redbot/cogs/mod/names.py:140
 msgid "Previous Names"
@@ -532,7 +532,7 @@ msgstr ""
 
 #: redbot/cogs/mod/settings.py:41 redbot/cogs/mod/settings.py:49
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 #: redbot/cogs/mod/settings.py:43
 msgid "Delete delay: {num_seconds}\\n"

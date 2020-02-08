@@ -1,18 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-14 04:24+0000\n"
-"PO-Revision-Date: 2020-01-07 21:48\n"
+"POT-Creation-Date: 2019-07-05 22:33+0200\n"
+"PO-Revision-Date: 2020-02-08 03:24\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.0\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: ru\n"
-"X-Crowdin-File: /economy/locales/messages.pot\n"
+"X-Crowdin-File: /cogs/economy/locales/messages.pot\n"
 "Language: ru_RU\n"
 
 #: redbot/cogs/economy/economy.py:42
@@ -116,7 +116,7 @@ msgstr "Получить немного бесплатной валюты."
 
 #: redbot/cogs/economy/economy.py:267
 msgid "You've reached the maximum amount of {currency}!Please spend some more 😬\\n\\nYou currently have {new_balance} {currency}."
-msgstr ""
+msgstr "Вы достигли максимума {currency}. Пожалуйста потратьте ещё не много. \\n\\n У вас сейчас есть{new_balance} {currency}."
 
 #: redbot/cogs/economy/economy.py:279
 msgid "{author.mention} Here, take some {currency}. Enjoy! (+{amount} {currency}!)\\n\\nYou currently have {new_balance} {currency}.\\n\\nYou are currently #{pos} on the global leaderboard!"

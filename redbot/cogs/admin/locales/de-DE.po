@@ -1,23 +1,23 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-14 04:24+0000\n"
-"PO-Revision-Date: 2020-01-07 21:48\n"
+"POT-Creation-Date: 2019-07-05 22:33+0200\n"
+"PO-Revision-Date: 2020-02-07 10:36\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.0\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: de\n"
-"X-Crowdin-File: /admin/locales/messages.pot\n"
+"X-Crowdin-File: /cogs/admin/locales/messages.pot\n"
 "Language: de_DE\n"
 
 #: redbot/cogs/admin/admin.py:17
 msgid "I attempted to do something that Discord denied me permissions for. Your command failed to successfully complete."
-msgstr "Ich habe versucht etwas zu tun, für das ich vermutlich keine Berechtigungen habe. Dein Befehl konnte nicht erfolgreich ausgeführt werden."
+msgstr "Ich habe versucht etwas zu tun, für das mir Discord die Befugnis verweigerte. Dein Befehl konnte nicht erfolgreich ausgeführt werden."
 
 #: redbot/cogs/admin/admin.py:22
 msgid "I tried to {verb} {role.name} to {member.display_name} but that role is higher than my highest role in the Discord hierarchy so I was unable to successfully add it. Please give me a higher role and try again."
@@ -38,7 +38,7 @@ msgstr "Ich kündige bereits etwas an. Wenn du eine andere Ankündigung machen w
 #: redbot/cogs/admin/admin.py:53
 #, docstring
 msgid "A collection of server administration utilities."
-msgstr "Eine Sammlung von Serververwaltungstools."
+msgstr "Eine Sammlung von administrativen Server-Verwaltungsprogramme."
 
 #: redbot/cogs/admin/admin.py:115 redbot/cogs/admin/admin.py:160
 msgid "add"
@@ -54,17 +54,17 @@ msgstr "entfernen"
 
 #: redbot/cogs/admin/admin.py:138
 msgid "I successfully removed {role.name} from {member.display_name}"
-msgstr "Ich habe {role.name} erfolgreich von {member.display_name} entfernt"
+msgstr "Ich habe erfolgreich {role.name} von {member.display_name} entfernt"
 
 #: redbot/cogs/admin/admin.py:149
 #, docstring
 msgid "Add a role to a user.\\n\\n        If user is left blank it defaults to the author of the command.\\n        "
-msgstr "Füge einem Benutzer eine Rolle hinzu.\\n\\n       Wenn kein Benutzer angegeben wird, wird standardmäßig der Autor des Befehls gewählt.\\n        "
+msgstr "Füge eine Rolle einem Benutzer hinzu.\\n\\n        Wenn der Benutzer leer gelassen wird, wird er standardmäßig dem Autor des Befehls übergeben.\\n        "
 
 #: redbot/cogs/admin/admin.py:169
 #, docstring
 msgid "Remove a role from a user.\\n\\n        If user is left blank it defaults to the author of the command.\\n        "
-msgstr "Entferne eine Rolle von einem Benutzer.\\n\\n        Wenn kein Benutzer angegeben wird, wird standardmäßig der Autor des Befehls gewählt.\\n        "
+msgstr "Eine Rolle von einem Benutzer entfernen.\\n\\n        Wenn der Benutzer leer gelassen wird, wird diese standardmäßig an den Autor des Befehls übergeben.\\n        "
 
 #: redbot/cogs/admin/admin.py:187
 #, docstring
@@ -74,7 +74,7 @@ msgstr "Bearbeiten der Rollen Einstellungen."
 #: redbot/cogs/admin/admin.py:194
 #, docstring
 msgid "Edit a role's colour.\\n\\n        Use double quotes if the role contains spaces.\\n        Colour must be in hexadecimal format.\\n        [Online colour picker](http://www.w3schools.com/colors/colors_picker.asp)\\n\\n        Examples:\\n            `[p]editrole colour \\\"The Transistor\\\" #ff0000`\\n            `[p]editrole colour Test #ff9900`\\n        "
-msgstr "Bearbeite die Farbe einer Rolle.\\n\\n        Benutze Anführungszeichen wenn die Rolle ein Leerzeichen enthält.\\n        Die Farbe muss im Hexadezimal Format angegeben werden.\\n        [Online Farbwähler](<http://www.w3schools.com/colors/colors_picker.asp>)\\n\\n        Beispiele:\\n            `[p]editrole colour \\\"The Transistor\\\" #ff0000`\\n            `[p]editrole colour Test #ff9900`\\n        "
+msgstr "Rollen Farbe bearbeiten.\\n\\n        Verwenden Sie doppelte Anführungszeichen, wenn die Rolle Leerzeichen enthält.\\n        Farbe muss im hexadezimalen Format sein.\\n        [Online-Farbauswahl](http://www.w3schools.com/colors/colors_picker.asp)\\n\\n        Beispiele:\\n            `[p]Editrollenfarbe \\\"Der Transistor\\\" #ff0000`\\n            `[p]Editrole colour Test #ff9900`\\n        "
 
 #: redbot/cogs/admin/admin.py:217 redbot/cogs/admin/admin.py:245
 msgid "Done."
@@ -83,12 +83,12 @@ msgstr "Erledigt."
 #: redbot/cogs/admin/admin.py:222
 #, docstring
 msgid "Edit a role's name.\\n\\n        Use double quotes if the role or the name contain spaces.\\n\\n        Examples:\\n            `[p]editrole name \\\"The Transistor\\\" Test`\\n        "
-msgstr "Bearbeite den Namen einer Rolle.\\n\\n        Benutze Anführungszeichen wenn die Rolle Leerzeichen enthält.\\n\\n        Beispiele:\\n            `[p]editrole name \\\"The Transistor\\\" Test`\\n        "
+msgstr "Bearbeiten Sie den Namen einer Rolle.\\n\\n        Verwenden Sie doppelte Anführungszeichen, wenn die Rolle oder der Name Leerzeichen enthält.\\n\\n        Beispiele:\\n            `[p]Editrollenname \\\"Der Transistor\\\" Test`\\n        "
 
 #: redbot/cogs/admin/admin.py:250
 #, docstring
 msgid "Announce a message to all servers the bot is in."
-msgstr "Sende eine Ankündigung in allen Servern auf denen der Bot ist."
+msgstr "Mache eine Ankündigung auf allen Servern auf denen der Bot ist."
 
 #: redbot/cogs/admin/admin.py:257
 msgid "The announcement has begun."
@@ -97,7 +97,7 @@ msgstr "Die Ankündigung hat begonnen."
 #: redbot/cogs/admin/admin.py:265
 #, docstring
 msgid "Cancel a running announce."
-msgstr "Brich eine laufende Ankündigung ab."
+msgstr "Breche eine laufende Ankündigung ab."
 
 #: redbot/cogs/admin/admin.py:271
 msgid "The current announcement has been cancelled."
@@ -106,11 +106,11 @@ msgstr "Die aktuelle Ankündigung wurde abgebrochen."
 #: redbot/cogs/admin/admin.py:277
 #, docstring
 msgid "Change the channel to which the bot makes announcements."
-msgstr "Ändere den Channel, in dem der Bot Ankündigungen macht."
+msgstr "Ändere den Kanal in dem der Bot Ankündigungen macht."
 
 #: redbot/cogs/admin/admin.py:283
 msgid "The announcement channel has been set to {channel.mention}"
-msgstr "Ankündigungen werden nun in {channel.mention} gesendet."
+msgstr "Der für Ankündigungen gewählte Kanal wurde festgelegt auf {channel.mention}"
 
 #: redbot/cogs/admin/admin.py:290
 #, docstring
@@ -128,52 +128,52 @@ msgstr "Der Server {guild.name} wird keine Ankündigunen erhalten."
 #: redbot/cogs/admin/admin.py:326
 #, docstring
 msgid "Add a role to yourself.\\n\\n        Server admins must have configured the role as user settable.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "Gib dir selbst eine Rolle.\\n\\n        Server Admins müssen die Rolle für Nutzer freigeben.\\n\\n        HINWEIS: Beachte Groß- und Kleinschreibung!\\n        "
+msgstr "Füge eine Rolle hinzu.\\n\\n        Server-Administratoren müssen die Rolle als Benutzer-Einstellbar konfiguriert haben.\\n\\n        HINWEIS: Die Rolle ist Groß-sensibel!\\n        "
 
 #: redbot/cogs/admin/admin.py:337
 #, docstring
 msgid "Remove a selfrole from yourself.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "Entferne eine Rolle von dir selbst.\\n\\n        HINWEIS: Beachte Groß- und Kleinschreibung!\\n        "
+msgstr "Entferne ein selfrole von dir.\\n\\n        HINWEIS: Die Rolle ist Groß- und Kleinschreibung!\\n        "
 
 #: redbot/cogs/admin/admin.py:347
 #, docstring
 msgid "Add a role to the list of available selfroles.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "Füge eine Rolle zur Liste der selbst auswählbaren Rollen hinzu.\\n\\n        HINWEIS: Beachte Groß- und Kleinschreibung!\\n        "
+msgstr "Füge eine Rolle zur Liste der verfügbaren Selfroles hinzu.\\n\\n        HINWEIS: Die Rolle ist Groß- und Kleinschreibung!\\n        "
 
 #: redbot/cogs/admin/admin.py:355 redbot/cogs/admin/admin.py:367
 msgid "The selfroles list has been successfully modified."
-msgstr "Die Liste der selbst auswählbarer Rollen wurde erfolgreich bearbeitet."
+msgstr "Die Liste selbst auswählbarer Rollen wurde erfolgreich bearbeitet."
 
 #: redbot/cogs/admin/admin.py:360
 #, docstring
 msgid "Remove a role from the list of available selfroles.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "Entferne eine selbst auswählbare Rolle von der Liste der verfügbaren Rollen.\\n\\n        HINWEIS: Beachte Groß- und Kleinschreibung!\\n        "
+msgstr "Entferne eine Rolle aus der Liste der verfügbaren Selfroles.\\n\\n        HINWEIS: Die Rolle ist Groß- und Kleinschreibung!\\n        "
 
 #: redbot/cogs/admin/admin.py:371
 #, docstring
 msgid "\\n        Lists all available selfroles.\\n        "
-msgstr "\\nGibt eine Liste verfügbarer selbst auswählbarer Rollen aus.\\n        "
+msgstr "\\n        Listet alle verfügbaren Selfroles.\\n        "
 
 #: redbot/cogs/admin/admin.py:377
 msgid "Available Selfroles:\\n{selfroles}"
-msgstr "Verfügbare, selbst auswählbare Rollen:\\n{selfroles}"
+msgstr "Verfügbare Selfroles:\\n{selfroles}"
 
 #: redbot/cogs/admin/admin.py:394
 #, docstring
 msgid "Lock a bot to its current servers only."
-msgstr "Beschränkt den Bot auf die aktuellen Server."
+msgstr "Sperrt den Bot neuen Servern beizutreten."
 
 #: redbot/cogs/admin/admin.py:399
 msgid "The bot is no longer serverlocked."
-msgstr "Der Bot kann jetzt wieder anderen Servern beitreten."
+msgstr "Der Bot ist nicht länger gesperrt neuen Servern beizutreten."
 
 #: redbot/cogs/admin/admin.py:401
 msgid "The bot is now serverlocked."
-msgstr "Der Bot kann jetzt keinen weiteren Servern mehr beitreten."
+msgstr "Der Bot ist jetzt gesperrt neuen Servern beizutreten."
 
 #: redbot/cogs/admin/announcer.py:70
 msgid "I could not announce to server: {server.id}"
-msgstr "Ich konnte keine Ankündigung an diesen Server senden: {server.id}"
+msgstr "Ich konnte keine Ankündigung auf diesem Server machen: {server.id}"
 
 #: redbot/cogs/admin/converters.py:25
 msgid "The Admin cog is not loaded."
@@ -181,5 +181,5 @@ msgstr "Das Admin-Cog ist nicht geladen."
 
 #: redbot/cogs/admin/converters.py:34
 msgid "The provided role is not a valid selfrole."
-msgstr "Die angegebene Rolle ist keine selbst hinzufügbare Rolle."
+msgstr "Die vorausgesetzte Rolle ist keine berechtigte selbst auswählbare Rolle."
 

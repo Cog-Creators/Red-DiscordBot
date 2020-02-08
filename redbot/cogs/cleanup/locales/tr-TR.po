@@ -1,18 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-14 04:24+0000\n"
+"POT-Creation-Date: 2019-07-05 22:33+0200\n"
 "PO-Revision-Date: 2020-01-07 21:49\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.0\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: tr\n"
-"X-Crowdin-File: /cleanup/locales/messages.pot\n"
+"X-Crowdin-File: /cogs/cleanup/locales/messages.pot\n"
 "Language: tr_TR\n"
 
 #: redbot/cogs/cleanup/cleanup.py:22
@@ -22,11 +22,11 @@ msgstr "Mesajları silmek için komutlar."
 
 #: redbot/cogs/cleanup/cleanup.py:42
 msgid "Are you sure you want to delete {number} messages? (y/n)"
-msgstr "{number} iletileri silmek istediğinizden emin misiniz? (y/n)"
+msgstr "{number} iletileri silmek istediğinizden emin misiniz? (e/h)"
 
 #: redbot/cogs/cleanup/cleanup.py:54
 msgid "Cancelled."
-msgstr "İptal edildi"
+msgstr "İptal."
 
 #: redbot/cogs/cleanup/cleanup.py:113
 #, docstring
@@ -70,7 +70,7 @@ msgstr "X sayı da son mesajları siler.\\n\\n        Örneğin:\\n            `
 #: redbot/cogs/cleanup/cleanup.py:362
 #, docstring
 msgid "Clean up command messages and messages from the bot."
-msgstr "Komut mesajlarını ve botun mesajlarını temizleyin."
+msgstr "Komut mesajlarını ve mesajları bottan temizleyin."
 
 #: redbot/cogs/cleanup/cleanup.py:437
 #, docstring

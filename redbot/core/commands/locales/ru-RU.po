@@ -1,18 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-14 04:24+0000\n"
-"PO-Revision-Date: 2020-01-07 21:48\n"
+"POT-Creation-Date: 2019-07-05 22:33+0200\n"
+"PO-Revision-Date: 2020-02-08 03:24\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.0\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: ru\n"
-"X-Crowdin-File: /commands/locales/messages.pot\n"
+"X-Crowdin-File: /core/commands/locales/messages.pot\n"
 "Language: ru_RU\n"
 
 #: redbot/core/commands/commands.py:301
@@ -33,17 +33,17 @@ msgstr "Это количество времени слишком маленьк
 
 #: redbot/core/commands/converter.py:130
 msgid "Server \\\"{name}\\\" not found."
-msgstr "Сервер \\\"{name}\\\" не найден."
+msgstr "Сервер \\\"{name}\\\" не найдено."
 
 #: redbot/core/commands/converter.py:159 redbot/core/commands/converter.py:161
 msgid "The provided tokens are not in a valid format."
-msgstr "Указанные токены в неправильном формате."
+msgstr "Указанные токены не в правильном формате."
 
 #: redbot/core/commands/converter.py:187
 msgid "Unexpected key {key}"
 msgstr "Неожиданный ключ {key}"
 
-#: redbot/core/commands/help.py:580
+#: redbot/core/commands/help.py:571
 #, docstring
 msgid "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    "
 msgstr "\\n    Мне нужен кто-то\\n    (Помощь) не только\\n    (Помощь), что вам нужно,\\n    (Помощь!)\\n    "

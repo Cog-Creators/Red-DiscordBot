@@ -1,18 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-11-19 00:33+0000\n"
-"PO-Revision-Date: 2020-01-07 21:48\n"
+"POT-Creation-Date: 2019-07-05 22:33+0200\n"
+"PO-Revision-Date: 2020-02-08 03:24\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.0\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: ru\n"
-"X-Crowdin-File: /locales/messages.pot\n"
+"X-Crowdin-File: /core/locales/messages.pot\n"
 "Language: ru_RU\n"
 
 #: redbot/core/bank.py:717
@@ -485,25 +485,25 @@ msgstr "Эта роль не была ролью администратора, �
 
 #: redbot/core/core_commands.py:828
 msgid "That role is no longer considered an admin role."
-msgstr ""
+msgstr "Эта роль больше не рассматривается как роль администратора."
 
 #: redbot/core/core_commands.py:834
 #, docstring
 msgid "\\n        Removes a mod role for this guild.\\n        "
-msgstr ""
+msgstr "\\n        Удаляет роль модератора для этого сервера.\\n        "
 
 #: redbot/core/core_commands.py:839
 msgid "That role was not a mod role to begin with."
-msgstr ""
+msgstr "Эта роль не была модераторской ролью для начала."
 
 #: redbot/core/core_commands.py:841
 msgid "That role is no longer considered a mod role."
-msgstr ""
+msgstr "Эта роль больше не рассматривается как роль модератора."
 
 #: redbot/core/core_commands.py:847
 #, docstring
 msgid "\\n        Toggle whether to use the bot owner-configured colour for embeds.\\n\\n        Default is to not use the bot's configured colour, in which case the\\n        colour used will be the colour of the bot's top role.\\n        "
-msgstr ""
+msgstr "\\n       Переключить, использовать ли цвет встраиваемых сообщений, настроенный владельцем.\\n\\n        По умолчанию не используется настроенный ботом цвет, в этом случае\\n        используемый цвет будет цветом верхней роли бота.\\n        "
 
 #: redbot/core/core_commands.py:856
 msgid "The bot {} use its configured color for embeds."
@@ -520,7 +520,7 @@ msgstr "будет"
 #: redbot/core/core_commands.py:865
 #, docstring
 msgid "\\n        Toggle whether to enable fuzzy command search for the server.\\n\\n        Default is for fuzzy command search to be disabled.\\n        "
-msgstr ""
+msgstr "\\n        Переключить поиск неопределенных команд на сервере.\\n\\n        По умолчанию поиск неопределенных команд отключен.\\n        "
 
 #: redbot/core/core_commands.py:873
 msgid "Fuzzy command search has been {} for this server."
@@ -529,7 +529,7 @@ msgstr "Поиск неопределенной команды был {} для 
 #: redbot/core/core_commands.py:881
 #, docstring
 msgid "\\n        Toggle whether to enable fuzzy command search in DMs.\\n\\n        Default is for fuzzy command search to be disabled.\\n        "
-msgstr ""
+msgstr "\\n        Переключить поиск неопределенных команд в личных сообщениях.\\n\\n        По умолчанию поиск неопределенных команд отключен.\\n        "
 
 #: redbot/core/core_commands.py:889
 msgid "Fuzzy command search has been {} in DMs."
@@ -538,7 +538,7 @@ msgstr "Поиск неопределенных команд был {} в лич
 #: redbot/core/core_commands.py:897
 #, docstring
 msgid "\\n        Sets a default colour to be used for the bot's embeds.\\n\\n        Acceptable values for the colour parameter can be found at:\\n\\n        https://discordpy.readthedocs.io/en/stable/ext/commands/api.html#discord.ext.commands.ColourConverter\\n        "
-msgstr ""
+msgstr "\\n        Устанавливает цвет по умолчанию, который будет использоваться для встраиваемых сообщений бота.\\n\\n        Приемлемые значения для параметра цвета можно найти по адресу:\\n\\n        https://discordpy.readthedocs.io/en/stable/ext/commands/api.html#discord.ext.commands.ColourConverter\\n        "
 
 #: redbot/core/core_commands.py:907
 msgid "The color has been reset."
@@ -591,7 +591,7 @@ msgstr "Просмотр установлен."
 #: redbot/core/core_commands.py:981
 #, docstring
 msgid "Sets Red's status\\n\\n        Available statuses:\\n            online\\n            idle\\n            dnd\\n            invisible\\n        "
-msgstr ""
+msgstr "Устанавливает статус Red\\n\\n        Доступные статусы:\\n            online - в сети\\n            idle - не активен\\n            dnd - не беспокоить\\n            invisible - невидимый\\n        "
 
 #: redbot/core/core_commands.py:1004
 msgid "Status changed to {}."
@@ -600,7 +600,7 @@ msgstr "Статус изменён на {}."
 #: redbot/core/core_commands.py:1010
 #, docstring
 msgid "Sets Red's streaming status\\n        Leaving both streamer and stream_title empty will clear it."
-msgstr ""
+msgstr "Устанавливает статус стрима Red\\n        Если оставить как streamer, так и stream_title пустыми, это очистит его."
 
 #: redbot/core/core_commands.py:1031
 #, docstring
@@ -649,11 +649,11 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1094
 msgid "\\nVerification token:"
-msgstr ""
+msgstr "\\nКод верификации:"
 
 #: redbot/core/core_commands.py:1097
 msgid "⚠ **Only** the person who is hosting Red should be owner. **This has SERIOUS security implications. The owner can access any data that is present on the host system.** ⚠"
-msgstr ""
+msgstr "⚠ Владельцем должен быть **только** тот, кто размещает сервер. **Это имеет СЕРЬЕЗНЫЕ последствия для безопасности.. Владелец может получить доступ к любым данным, находящимся в системе хоста.** ⚠"
 
 #: redbot/core/core_commands.py:1103
 msgid "Remember:\\n"
@@ -708,20 +708,20 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1193
 msgid "The custom text has been cleared."
-msgstr ""
+msgstr "Пользовательский текст был очищен."
 
 #: redbot/core/core_commands.py:1197
 msgid "The custom text has been set."
-msgstr ""
+msgstr "Пользовательский текст установлен."
 
 #: redbot/core/core_commands.py:1200
 msgid "Characters must be fewer than 1024."
-msgstr ""
+msgstr "Символов должно быть меньше 1024."
 
 #: redbot/core/core_commands.py:1205
 #, docstring
 msgid "Set various external API tokens.\\n        \\n        This setting will be asked for by some 3rd party cogs and some core cogs.\\n\\n        To add the keys provide the service name and the tokens as a comma separated\\n        list of key,values as described by the cog requesting this command.\\n\\n        Note: API tokens are sensitive and should only be used in a private channel\\n        or in DM with the bot.\\n        "
-msgstr ""
+msgstr "Установить различные API токены.\\n        \\n        Эта настройка будет запрашиваться некоторыми сторонними и некоторыми основными плагинами.\\n\\n        Чтобы добавить ключи, укажите имя службы и токены в виде разделенных запятыми\\n        списке ключей,значении как описано в плагине, запрашивающем эту команду.\\n\\n        Примечание: API токены чувствительны и должны использоваться только в частном канале\\n        или в ЛС с ботом.\\n        "
 
 #: redbot/core/core_commands.py:1218
 msgid "`{service}` API tokens have been set."
@@ -1346,71 +1346,71 @@ msgstr ""
 msgid "{user}'s balance cannot rise above {max:,} {currency}."
 msgstr "{user}'s баланс не может подняться выше {max:,} {currency}."
 
-#: redbot/core/modlog.py:152
+#: redbot/core/modlog.py:165
 msgid "Case #{} | {} {}"
 msgstr ""
 
-#: redbot/core/modlog.py:156
+#: redbot/core/modlog.py:169
 msgid "**Reason:** {}"
 msgstr ""
 
-#: redbot/core/modlog.py:158
+#: redbot/core/modlog.py:171
 msgid "**Reason:** Use the `reason` command to add it"
 msgstr ""
 
-#: redbot/core/modlog.py:163
+#: redbot/core/modlog.py:176
 msgid "Unknown"
 msgstr ""
 
-#: redbot/core/modlog.py:203
+#: redbot/core/modlog.py:216
 msgid "Moderator"
 msgstr ""
 
-#: redbot/core/modlog.py:205
+#: redbot/core/modlog.py:218
 msgid "Until"
 msgstr ""
 
-#: redbot/core/modlog.py:206
+#: redbot/core/modlog.py:219
 msgid "Duration"
 msgstr ""
 
-#: redbot/core/modlog.py:210 redbot/core/modlog.py:215
+#: redbot/core/modlog.py:223 redbot/core/modlog.py:228
 msgid "Channel"
 msgstr ""
 
-#: redbot/core/modlog.py:211
+#: redbot/core/modlog.py:224
 msgid "{channel} (deleted)"
 msgstr ""
 
-#: redbot/core/modlog.py:217
+#: redbot/core/modlog.py:230
 msgid "Amended by"
 msgstr ""
 
-#: redbot/core/modlog.py:219
+#: redbot/core/modlog.py:232
 msgid "Last modified at"
 msgstr ""
 
-#: redbot/core/modlog.py:226
+#: redbot/core/modlog.py:239
 msgid "**User:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:227
+#: redbot/core/modlog.py:240
 msgid "**Moderator:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:230
+#: redbot/core/modlog.py:243
 msgid "**Until:** {}\\n**Duration:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:232
+#: redbot/core/modlog.py:245
 msgid "**Channel**: {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:234
+#: redbot/core/modlog.py:247
 msgid "**Amended by:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:236
+#: redbot/core/modlog.py:249
 msgid "**Last modified at:** {}\\n"
 msgstr ""
 

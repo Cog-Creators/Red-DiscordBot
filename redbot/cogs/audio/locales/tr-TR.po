@@ -1,18 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-14 04:24+0000\n"
+"POT-Creation-Date: 2019-07-05 22:33+0200\n"
 "PO-Revision-Date: 2020-01-07 21:49\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.0\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: tr\n"
-"X-Crowdin-File: /audio/locales/messages.pot\n"
+"X-Crowdin-File: /cogs/audio/locales/messages.pot\n"
 "Language: tr_TR\n"
 
 #: redbot/cogs/audio/audio.py:47
@@ -24,7 +24,7 @@ msgstr "Ses kanallarında müzik çal"
 msgid "music in {} servers"
 msgstr "{} sunucu da şarkı"
 
-#: redbot/cogs/audio/audio.py:300 redbot/cogs/audio/audio.py:1385
+#: redbot/cogs/audio/audio.py:300 redbot/cogs/audio/audio.py:1317
 msgid "Now Playing"
 msgstr "Şimdi oynatılıyor"
 
@@ -275,16 +275,16 @@ msgid "Audio stats."
 msgstr "Ses istatistikleri"
 
 #: redbot/cogs/audio/audio.py:754 redbot/cogs/audio/audio.py:782
-#: redbot/cogs/audio/audio.py:819 redbot/cogs/audio/audio.py:846
-#: redbot/cogs/audio/audio.py:957 redbot/cogs/audio/audio.py:984
-#: redbot/cogs/audio/audio.py:1014 redbot/cogs/audio/audio.py:1086
-#: redbot/cogs/audio/audio.py:1348 redbot/cogs/audio/audio.py:1439
-#: redbot/cogs/audio/audio.py:1456 redbot/cogs/audio/audio.py:1479
-#: redbot/cogs/audio/audio.py:1487 redbot/cogs/audio/audio.py:2258
-#: redbot/cogs/audio/audio.py:2595 redbot/cogs/audio/audio.py:2929
-#: redbot/cogs/audio/audio.py:3270 redbot/cogs/audio/audio.py:3324
-#: redbot/cogs/audio/audio.py:3375 redbot/cogs/audio/audio.py:3567
-#: redbot/cogs/audio/audio.py:3645 redbot/cogs/audio/audio.py:3675
+#: redbot/cogs/audio/audio.py:819 redbot/cogs/audio/audio.py:847
+#: redbot/cogs/audio/audio.py:914 redbot/cogs/audio/audio.py:932
+#: redbot/cogs/audio/audio.py:956 redbot/cogs/audio/audio.py:1026
+#: redbot/cogs/audio/audio.py:1280 redbot/cogs/audio/audio.py:1371
+#: redbot/cogs/audio/audio.py:1388 redbot/cogs/audio/audio.py:1411
+#: redbot/cogs/audio/audio.py:1419 redbot/cogs/audio/audio.py:2190
+#: redbot/cogs/audio/audio.py:2527 redbot/cogs/audio/audio.py:2860
+#: redbot/cogs/audio/audio.py:3201 redbot/cogs/audio/audio.py:3255
+#: redbot/cogs/audio/audio.py:3305 redbot/cogs/audio/audio.py:3497
+#: redbot/cogs/audio/audio.py:3575 redbot/cogs/audio/audio.py:3605
 msgid "Nothing playing."
 msgstr "Hiçbir şey çalınmıyor."
 
@@ -309,7 +309,7 @@ msgstr "Şarkıyı en başa almak için kanal da olmanız gerekli."
 msgid "You need the DJ role to bump tracks."
 msgstr "Şarkıyı sıra başına almak için DJ rolü gerekli."
 
-#: redbot/cogs/audio/audio.py:795 redbot/cogs/audio/audio.py:2944
+#: redbot/cogs/audio/audio.py:795 redbot/cogs/audio/audio.py:2875
 msgid "Song number must be greater than 1 and within the queue limit."
 msgstr "Şarkı sıra numarası 1'den daha büyük ve sıradaki toplam şarkı sayısından düşük olmalıdır."
 
@@ -330,989 +330,961 @@ msgstr "Ses kanalından ayırmak için DJ rolüne ihtiyacınız var."
 msgid "There are other people listening to music."
 msgstr "Şarkı dinleyen başka insanlar da var."
 
-#: redbot/cogs/audio/audio.py:844
+#: redbot/cogs/audio/audio.py:845
 #, docstring
 msgid "Equalizer management."
 msgstr "Equalizer yönetimi"
 
-#: redbot/cogs/audio/audio.py:872
+#: redbot/cogs/audio/audio.py:865
 #, docstring
 msgid "Delete a saved eq preset."
 msgstr "Hazır EQ presetini kaldır"
 
-#: redbot/cogs/audio/audio.py:880 redbot/cogs/audio/audio.py:897
-msgid "You are not the author of that preset setting."
-msgstr "Bu preset'in sahibi siz değilsiniz."
-
-#: redbot/cogs/audio/audio.py:906
+#: redbot/cogs/audio/audio.py:887
 #, docstring
 msgid "List saved eq presets."
 msgstr "Kaydedilmiş EQ preset'lerini listeler"
 
-#: redbot/cogs/audio/audio.py:909
+#: redbot/cogs/audio/audio.py:890
 msgid "No saved equalizer presets."
 msgstr "Kaydedilmiş EQ preset'i bulunamadı"
 
-#: redbot/cogs/audio/audio.py:912
-msgid "Preset Name"
-msgstr "Preset ismi"
-
-#: redbot/cogs/audio/audio.py:913
-msgid "Author"
-msgstr "Sahibi"
-
-#: redbot/cogs/audio/audio.py:936
+#: redbot/cogs/audio/audio.py:897
 msgid "{num} preset(s)"
 msgstr "{num} preset'ler"
 
-#: redbot/cogs/audio/audio.py:944
+#: redbot/cogs/audio/audio.py:903
 #, docstring
 msgid "Load a saved eq preset."
 msgstr "Kaydedilmiş EQ Preset'ini yükle"
 
-#: redbot/cogs/audio/audio.py:964
-msgid "You need the DJ role to load equalizer presets."
-msgstr "Kaydedilmiş preset'i yüklemek için DJ rolüne ihtiyacınız var"
-
-#: redbot/cogs/audio/audio.py:982
+#: redbot/cogs/audio/audio.py:930
 #, docstring
 msgid "Reset the eq to 0 across all bands."
 msgstr "EQ'daki tüm ayarları sıfırlar"
 
-#: redbot/cogs/audio/audio.py:989
-msgid "You need the DJ role to reset the equalizer."
-msgstr "EQ'yı resetlemek için DJ rolüne ihtiyacın var"
-
-#: redbot/cogs/audio/audio.py:1004
+#: redbot/cogs/audio/audio.py:946
 msgid "Equalizer values have been reset."
 msgstr "EQ sıfırlandı."
 
-#: redbot/cogs/audio/audio.py:1012
+#: redbot/cogs/audio/audio.py:954
 #, docstring
 msgid "Save the current eq settings to a preset."
 msgstr "EQ'deki şuan ki ayarları preset olarak kaydet"
 
-#: redbot/cogs/audio/audio.py:1019
-msgid "You need the DJ role to save equalizer presets."
-msgstr "Preset kaydedebilmek için DJ rolüne ihtiyacınız var"
-
-#: redbot/cogs/audio/audio.py:1022
+#: redbot/cogs/audio/audio.py:958
 msgid "Please enter a name for this equalizer preset."
 msgstr "Lütfen bu EQ Preset'i için bir isim girin"
 
-#: redbot/cogs/audio/audio.py:1032
+#: redbot/cogs/audio/audio.py:972
 msgid "No equalizer preset name entered, try the command again later."
 msgstr "EQ Preset ismi girilmedi, komutu tekrar deneyin."
 
-#: redbot/cogs/audio/audio.py:1041 redbot/cogs/audio/audio.py:2281
+#: redbot/cogs/audio/audio.py:981 redbot/cogs/audio/audio.py:2213
 msgid "Try the command again with a shorter name."
 msgstr "Daha kısa bir isimle tekrar deneyin."
 
-#: redbot/cogs/audio/audio.py:1045
+#: redbot/cogs/audio/audio.py:985
 msgid "Preset name already exists, do you want to replace it?"
 msgstr "EQ preset ismi zaten mevcut; var olan dosyayı değiştirmek istiyor musunuz?"
 
-#: redbot/cogs/audio/audio.py:1054
+#: redbot/cogs/audio/audio.py:994
 msgid "Not saving preset."
 msgstr "Kaydedilmiyor"
 
-#: redbot/cogs/audio/audio.py:1079
+#: redbot/cogs/audio/audio.py:1019
 #, docstring
 msgid "Set an eq band with a band number or name and value.\\n\\n        Band positions are 1-15 and values have a range of -0.25 to 1.0.\\n        Band names are 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k, 6.3k, 10k, and 16k Hz.\\n        Setting a band value to -0.25 nullifies it while +0.25 is double.\\n        "
 msgstr "EQ bant genişliği sayısı ya da isim ve değer girin. Bant pozisyonları 1-15 ve aralığı -0.25 ile 1.0 arası değişmektedir. Bant isimleri 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k, 6.3k, 10k, ve 16k Hz'dir. Bir bant değerini -0,25'e ayarlamak geçersiz kılarken +0,25 iki katına çıkartır."
 
-#: redbot/cogs/audio/audio.py:1092
-msgid "You need the DJ role to set equalizer presets."
-msgstr "Preset kaydedebilmek için DJ rolüne ihtiyacınız var"
-
-#: redbot/cogs/audio/audio.py:1131
+#: redbot/cogs/audio/audio.py:1063
 msgid "Valid band numbers are 1-15 or the band names listed in the help for this command."
 msgstr "Geçerli bant sayıları 1-15 veya bu komutla beraber listelenmiş olan isimlerdir."
 
-#: redbot/cogs/audio/audio.py:1167
+#: redbot/cogs/audio/audio.py:1099
 #, docstring
 msgid "Local playback commands."
 msgstr "Yerel çalma komutları"
 
-#: redbot/cogs/audio/audio.py:1172
+#: redbot/cogs/audio/audio.py:1104
 #, docstring
 msgid "Play all songs in a localtracks folder."
 msgstr "Yerel dosyalarda bulunan tüm şarkıları çalar"
 
-#: redbot/cogs/audio/audio.py:1183
+#: redbot/cogs/audio/audio.py:1115
 msgid "No localtracks folder named {name}."
 msgstr "{name} isimli yerel şarkı dizini bulunamadı."
 
-#: redbot/cogs/audio/audio.py:1189
+#: redbot/cogs/audio/audio.py:1121
 #, docstring
 msgid "Play a local track."
 msgstr "Yerel dosyalardan bir şarkı çalar"
 
-#: redbot/cogs/audio/audio.py:1194
+#: redbot/cogs/audio/audio.py:1126
 msgid "No local track folders found."
 msgstr "Yerel şarkı dizini bulunamadı."
 
-#: redbot/cogs/audio/audio.py:1237
+#: redbot/cogs/audio/audio.py:1169
 #, docstring
 msgid "Search for songs across all localtracks folders."
 msgstr "Bütün yerel şarkı dizinleri arasında şarkı arar"
 
-#: redbot/cogs/audio/audio.py:1242
+#: redbot/cogs/audio/audio.py:1174
 msgid "No album folders found."
 msgstr "Albüm klasörü bulunamadı"
 
-#: redbot/cogs/audio/audio.py:1249 redbot/cogs/audio/audio.py:2884
+#: redbot/cogs/audio/audio.py:1181 redbot/cogs/audio/audio.py:2816
 msgid "No matches."
 msgstr "Eşleşme yok."
 
-#: redbot/cogs/audio/audio.py:1337
+#: redbot/cogs/audio/audio.py:1269
 msgid "No localtracks folder."
 msgstr "Yerel şarkı dizini bulunamadı."
 
-#: redbot/cogs/audio/audio.py:1346
+#: redbot/cogs/audio/audio.py:1278
 #, docstring
 msgid "Now playing."
 msgstr "Şimdi oynatılıyor."
 
-#: redbot/cogs/audio/audio.py:1366
+#: redbot/cogs/audio/audio.py:1298
 msgid "Requested by: **{track.requester}**"
 msgstr "**{track.requester}** tarafından sıraya eklendi."
 
-#: redbot/cogs/audio/audio.py:1376
+#: redbot/cogs/audio/audio.py:1308
 msgid "Nothing."
 msgstr "Hiçbir şey"
 
-#: redbot/cogs/audio/audio.py:1436
+#: redbot/cogs/audio/audio.py:1368
 #, docstring
 msgid "Pause or resume a playing track."
 msgstr "Çalmakta olan şarkıyı duraklat veya devam ettir"
 
-#: redbot/cogs/audio/audio.py:1445
+#: redbot/cogs/audio/audio.py:1377
 msgid "You must be in the voice channel pause or resume."
 msgstr "Başlatıp durdurabilmek için bir kanal da olmanız gerekli."
 
-#: redbot/cogs/audio/audio.py:1452
+#: redbot/cogs/audio/audio.py:1384
 msgid "You need the DJ role to pause or resume tracks."
 msgstr "Başlatıp durdurabilmek için DJ rolüne sahip olmanız gerekli."
 
-#: redbot/cogs/audio/audio.py:1469
+#: redbot/cogs/audio/audio.py:1401
 msgid "Track Paused"
 msgstr "Şarkı duraklatıldı."
 
-#: redbot/cogs/audio/audio.py:1475
+#: redbot/cogs/audio/audio.py:1407
 msgid "Track Resumed"
 msgstr "Şarkıya devam ediliyor."
 
-#: redbot/cogs/audio/audio.py:1485
+#: redbot/cogs/audio/audio.py:1417
 #, docstring
 msgid "Queue percentage."
 msgstr "Sıra yüzdesi"
 
-#: redbot/cogs/audio/audio.py:1511
+#: redbot/cogs/audio/audio.py:1443
 msgid "Nothing in the queue."
 msgstr "Sıra da hiçbir şarkı yok."
 
-#: redbot/cogs/audio/audio.py:1533
+#: redbot/cogs/audio/audio.py:1465
 msgid "Queued and playing tracks:"
 msgstr "Sıraya alınıp oynatılan şarkılar:"
 
-#: redbot/cogs/audio/audio.py:1542
+#: redbot/cogs/audio/audio.py:1474
 #, docstring
 msgid "Play a URL or search for a track."
 msgstr "URL veya arama yaparak şarkı açabilirsiniz."
 
-#: redbot/cogs/audio/audio.py:1549
+#: redbot/cogs/audio/audio.py:1481
 msgid "That URL is not allowed."
 msgstr "Bu URL'e izin verilmiyor."
 
-#: redbot/cogs/audio/audio.py:1552 redbot/cogs/audio/audio.py:2505
-#: redbot/cogs/audio/audio.py:2997 redbot/cogs/audio/audio.py:3116
+#: redbot/cogs/audio/audio.py:1484 redbot/cogs/audio/audio.py:2437
+#: redbot/cogs/audio/audio.py:2928 redbot/cogs/audio/audio.py:3047
 msgid "Connection to Lavalink has failed."
 msgstr "Lavalink bağlantısı başarısız."
 
-#: redbot/cogs/audio/audio.py:1554 redbot/cogs/audio/audio.py:2507
-#: redbot/cogs/audio/audio.py:2999 redbot/cogs/audio/audio.py:3118
+#: redbot/cogs/audio/audio.py:1486 redbot/cogs/audio/audio.py:2439
+#: redbot/cogs/audio/audio.py:2930 redbot/cogs/audio/audio.py:3049
 msgid "Please check your console or logs for details."
 msgstr "Console veya loglarınızı kontrol edin."
 
-#: redbot/cogs/audio/audio.py:1563 redbot/cogs/audio/audio.py:2517
-#: redbot/cogs/audio/audio.py:3008 redbot/cogs/audio/audio.py:3613
+#: redbot/cogs/audio/audio.py:1495 redbot/cogs/audio/audio.py:2449
+#: redbot/cogs/audio/audio.py:2939 redbot/cogs/audio/audio.py:3543
 msgid "I don't have permission to connect to your channel."
 msgstr "Bulunduğun kanala katılabilmem için yetkim yok."
 
-#: redbot/cogs/audio/audio.py:1569 redbot/cogs/audio/audio.py:2529
-#: redbot/cogs/audio/audio.py:3014 redbot/cogs/audio/audio.py:3125
-#: redbot/cogs/audio/audio.py:3625
+#: redbot/cogs/audio/audio.py:1501 redbot/cogs/audio/audio.py:2461
+#: redbot/cogs/audio/audio.py:2945 redbot/cogs/audio/audio.py:3056
+#: redbot/cogs/audio/audio.py:3555
 msgid "Connect to a voice channel first."
 msgstr "Önce bir sesli bir kanala katılın."
 
-#: redbot/cogs/audio/audio.py:1572 redbot/cogs/audio/audio.py:2525
-#: redbot/cogs/audio/audio.py:3017 redbot/cogs/audio/audio.py:3128
-#: redbot/cogs/audio/audio.py:3628
+#: redbot/cogs/audio/audio.py:1504 redbot/cogs/audio/audio.py:2457
+#: redbot/cogs/audio/audio.py:2948 redbot/cogs/audio/audio.py:3059
+#: redbot/cogs/audio/audio.py:3558
 msgid "Connection to Lavalink has not yet been established."
 msgstr "Lavalink ile bağlantı henüz sağlanmadı."
 
-#: redbot/cogs/audio/audio.py:1576
+#: redbot/cogs/audio/audio.py:1508
 msgid "You need the DJ role to queue tracks."
 msgstr "Sıraya şarkı ekleyebilmek için DJ rolüne ihtiyacınız var."
 
-#: redbot/cogs/audio/audio.py:1587
+#: redbot/cogs/audio/audio.py:1519
 msgid "You must be in the voice channel to use the play command."
 msgstr "Şarkıyı başlatabilmek için bir kanal da olmanız gerekli."
 
-#: redbot/cogs/audio/audio.py:1593
+#: redbot/cogs/audio/audio.py:1525
 msgid "No tracks to play."
 msgstr "Başlatılabilecek şarkı bulunamadı."
 
-#: redbot/cogs/audio/audio.py:1633
+#: redbot/cogs/audio/audio.py:1565
 msgid "The owner needs to set the Spotify client ID, Spotify client secret, and YouTube API key before Spotify URLs or codes can be used. \\nSee `{prefix}audioset youtubeapi` and `{prefix}audioset spotifyapi` for instructions."
 msgstr "Spotify URL'si ile şarkı çalmak için bot sahibinin Spotify client ID, secret ve YouTube API key'ini ayarlaması gerekmekte.\\n `{prefix}audioset youtubeapi` ve `{prefix}audioset spotifyapi` komutlarından bilgi alabilirsiniz."
 
-#: redbot/cogs/audio/audio.py:1643 redbot/cogs/audio/audio.py:2561
+#: redbot/cogs/audio/audio.py:1575 redbot/cogs/audio/audio.py:2493
 msgid "Wait until the playlist has finished loading."
 msgstr "Playlist yüklenmesi bitene kadar bekleyin."
 
-#: redbot/cogs/audio/audio.py:1660 redbot/cogs/audio/audio.py:1725
-#: redbot/cogs/audio/audio.py:2567 redbot/cogs/audio/audio.py:2577
-#: redbot/cogs/audio/audio.py:3042 redbot/cogs/audio/audio.py:3096
+#: redbot/cogs/audio/audio.py:1592 redbot/cogs/audio/audio.py:1657
+#: redbot/cogs/audio/audio.py:2499 redbot/cogs/audio/audio.py:2509
+#: redbot/cogs/audio/audio.py:2973 redbot/cogs/audio/audio.py:3027
 msgid "Nothing found."
 msgstr "Hiçbir şey bulunamadı."
 
-#: redbot/cogs/audio/audio.py:1668
+#: redbot/cogs/audio/audio.py:1600
 msgid "The Spotify API key or client secret has not been set properly. \\nUse `{prefix}audioset spotifyapi` for instructions."
 msgstr "Spotify API veya client secret'ı düzgün bir şekilde ayarlanmamış. \\n `{prefix}audioset spotifyapi` komutundan bilgi alabilirsiniz."
 
-#: redbot/cogs/audio/audio.py:1707 redbot/cogs/audio/audio.py:1844
+#: redbot/cogs/audio/audio.py:1639 redbot/cogs/audio/audio.py:1776
 msgid "This doesn't seem to be a valid Spotify URL or code."
 msgstr "Bu geçerli bir Spotify URL'si gibi gözükmüyor."
 
-#: redbot/cogs/audio/audio.py:1756 redbot/cogs/audio/audio.py:2388
+#: redbot/cogs/audio/audio.py:1688 redbot/cogs/audio/audio.py:2320
 msgid "Playlist Enqueued"
 msgstr "Playlist sıraya alındı."
 
-#: redbot/cogs/audio/audio.py:1757 redbot/cogs/audio/audio.py:2389
+#: redbot/cogs/audio/audio.py:1689 redbot/cogs/audio/audio.py:2321
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
 msgstr "{num} adet şarkı sıraya eklendi.{maxlength_msg}"
 
-#: redbot/cogs/audio/audio.py:1763
+#: redbot/cogs/audio/audio.py:1695
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
 msgstr "Playlistin başlamasına {time} süre var:  #{position} sırasında başlar."
 
-#: redbot/cogs/audio/audio.py:1779 redbot/cogs/audio/audio.py:3194
+#: redbot/cogs/audio/audio.py:1711 redbot/cogs/audio/audio.py:3125
 msgid "Track exceeds maximum length."
 msgstr "Şarkı izin verilen uzunluğu aşıyor."
 
-#: redbot/cogs/audio/audio.py:1785
+#: redbot/cogs/audio/audio.py:1717
 msgid "Nothing found. Check your Lavalink logs for details."
 msgstr "Hiçbir şey bulunamadı. Lavalink log'larını kontrol edin."
 
-#: redbot/cogs/audio/audio.py:1800 redbot/cogs/audio/audio.py:3177
+#: redbot/cogs/audio/audio.py:1732 redbot/cogs/audio/audio.py:3108
 msgid "Track Enqueued"
 msgstr "Şarkı sıraya eklendi."
 
-#: redbot/cogs/audio/audio.py:1804 redbot/cogs/audio/audio.py:3183
+#: redbot/cogs/audio/audio.py:1736 redbot/cogs/audio/audio.py:3114
 msgid "{time} until track playback: #{position} in queue"
 msgstr "Şarkının başlamasına {time} kadar süre var. #{position} sırada."
 
-#: redbot/cogs/audio/audio.py:1809 redbot/cogs/audio/audio.py:3188
+#: redbot/cogs/audio/audio.py:1741 redbot/cogs/audio/audio.py:3119
 msgid "#{position} in queue"
 msgstr "#{position} sırada."
 
-#: redbot/cogs/audio/audio.py:1829
+#: redbot/cogs/audio/audio.py:1761
 msgid "The Spotify API key or client secret has not been set properly. \\nUse `{prefix}audioset spotifyapi` for instructions."
 msgstr "Spotify API veya client secret'ı düzgün bir şekilde ayarlanmamış. \\n `{prefix}audioset spotifyapi` komutundan bilgi alabilirsiniz."
 
-#: redbot/cogs/audio/audio.py:1861 redbot/cogs/audio/audio.py:2452
+#: redbot/cogs/audio/audio.py:1793 redbot/cogs/audio/audio.py:2384
 msgid "Please wait, adding tracks..."
 msgstr "Lütfen bekleyin, şarkılar ekleniyor."
 
-#: redbot/cogs/audio/audio.py:1877
+#: redbot/cogs/audio/audio.py:1809
 msgid "The connection was reset while loading the playlist."
 msgstr "Playlist yüklenirken bağlantı yenilendi."
 
-#: redbot/cogs/audio/audio.py:1894 redbot/cogs/audio/audio.py:2469
+#: redbot/cogs/audio/audio.py:1826 redbot/cogs/audio/audio.py:2401
 msgid "Loading track {num}/{total}..."
 msgstr " {num}/{total} şarkı yükleniyor."
 
-#: redbot/cogs/audio/audio.py:1908
+#: redbot/cogs/audio/audio.py:1840
 msgid "Approximate time remaining: {seconds}"
 msgstr "Tahmini kalan süre: {seconds}"
 
-#: redbot/cogs/audio/audio.py:1918
+#: redbot/cogs/audio/audio.py:1850
 msgid "Nothing found.\\nThe YouTube API key may be invalid or you may be rate limited on YouTube's search service.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
 msgstr "Hiçbir şey bulunamadı.\\nYouTube API keyi yanlış ya da API kullanımınız sınırlandırılmış.\\nYouTube API keyinizi kontrol edin ve `{prefix}audioset youtubeapi`'de ki yönlendirmeleri takip edin."
 
-#: redbot/cogs/audio/audio.py:1939
+#: redbot/cogs/audio/audio.py:1871
 #, docstring
 msgid "Playlist configuration options."
 msgstr "Playlist yapılandırma seçenekleri."
 
-#: redbot/cogs/audio/audio.py:1944
+#: redbot/cogs/audio/audio.py:1876
 #, docstring
 msgid "Add a track URL, playlist link, or quick search to a playlist.\\n\\n        The track(s) will be appended to the end of the playlist.\\n        "
 msgstr "Şarkı URL'si, playlist linki ya da arama yaparak şarkı ekleyin..\\n\\n        Şarkı veya şarkılar playlistin sonuna eklenecek.\\n        "
 
-#: redbot/cogs/audio/audio.py:1956 redbot/cogs/audio/audio.py:2096
-#: redbot/cogs/audio/audio.py:2309
+#: redbot/cogs/audio/audio.py:1888 redbot/cogs/audio/audio.py:2028
+#: redbot/cogs/audio/audio.py:2241
 msgid "You are not the author of that playlist."
 msgstr "Playlist'in sahibi siz değilsiniz."
 
-#: redbot/cogs/audio/audio.py:1966
+#: redbot/cogs/audio/audio.py:1898
 msgid "{track} is already in {playlist}."
 msgstr "{track} şarkısı zaten {playlist} playlistinin içerisinde."
 
-#: redbot/cogs/audio/audio.py:1975 redbot/cogs/audio/audio.py:2100
-#: redbot/cogs/audio/audio.py:2149 redbot/cogs/audio/audio.py:2312
+#: redbot/cogs/audio/audio.py:1907 redbot/cogs/audio/audio.py:2032
+#: redbot/cogs/audio/audio.py:2081 redbot/cogs/audio/audio.py:2244
 msgid "No playlist with that name."
 msgstr "Bu isim de bir playlist bulunamadı."
 
-#: redbot/cogs/audio/audio.py:1982
+#: redbot/cogs/audio/audio.py:1914
 msgid "{track} appended to {playlist}."
 msgstr "{track}, {playlist} listesine eklendi."
 
-#: redbot/cogs/audio/audio.py:1988
+#: redbot/cogs/audio/audio.py:1920
 msgid "{num} tracks appended to {playlist}."
 msgstr "{num} sayıdaki şarkı {playlist} listesine eklendi."
 
-#: redbot/cogs/audio/audio.py:1996
+#: redbot/cogs/audio/audio.py:1928
 #, docstring
 msgid "Copy a playlist from one server to another."
 msgstr "Sunuculardan playlist kopyalayın."
 
-#: redbot/cogs/audio/audio.py:2000
+#: redbot/cogs/audio/audio.py:1932
 msgid "Invalid server ID for source server."
 msgstr "Kaynak sunucu ID'si geçersiz."
 
-#: redbot/cogs/audio/audio.py:2002
+#: redbot/cogs/audio/audio.py:1934
 msgid "Invalid server ID for target server."
 msgstr "Hedef sunucu ID'si geçersiz."
 
-#: redbot/cogs/audio/audio.py:2007
+#: redbot/cogs/audio/audio.py:1939
 msgid "No playlist with that name in {from_guild_name}."
 msgstr "{from_guild_name} sunusunda bu isimle bir playlist bulunmuyor."
 
-#: redbot/cogs/audio/audio.py:2018
+#: redbot/cogs/audio/audio.py:1950
 msgid "Playlist {name} copied from {from_guild_name} to {to_guild_name}."
 msgstr "{name} listesi {from_guild_name} sunucusundan {to_guild_name} sunucusuna kopyalanmıştır."
 
-#: redbot/cogs/audio/audio.py:2030
+#: redbot/cogs/audio/audio.py:1962
 msgid "A playlist with that name already exists in {to_guild_name}.\\nPlease enter a new name for this playlist."
 msgstr "Bu isimle bir playlist {to_guild_name} sunucusunda zaten bulunmakta.\\nBu playlist için başka bir isim yazın."
 
-#: redbot/cogs/audio/audio.py:2043
+#: redbot/cogs/audio/audio.py:1975
 msgid "Try the playlist copy command again with a shorter name."
 msgstr "Daha kısa bir isimle tekrar deneyin."
 
-#: redbot/cogs/audio/audio.py:2048
+#: redbot/cogs/audio/audio.py:1980
 msgid "Playlist name already exists in {to_guild_name}, try the playlist copy command again with a different name."
 msgstr "Playlist ismi {to_guild_name} sunusunda zaten bulunuyor, farklı bir isimle tekrar deneyin."
 
-#: redbot/cogs/audio/audio.py:2054 redbot/cogs/audio/audio.py:2288
+#: redbot/cogs/audio/audio.py:1986 redbot/cogs/audio/audio.py:2220
 msgid "No playlist name entered, try again later."
 msgstr "Hiçbir playlist ismi girilmedi, tekrar deneyin."
 
-#: redbot/cogs/audio/audio.py:2059
+#: redbot/cogs/audio/audio.py:1991
 msgid "Playlist {name} copied from {from_guild_name} to {to_guild_name}.\\nNew playlist name on {to_guild_name}: {new_name}"
 msgstr "{name} playlisti {from_guild_name} sunucusundan {to_guild_name} sunucusuna aktarıldı. {to_guild_name} sunucusunda playlist ismi {new_name} olarak ayarlandı."
 
-#: redbot/cogs/audio/audio.py:2071
+#: redbot/cogs/audio/audio.py:2003
 #, docstring
 msgid "Create an empty playlist."
 msgstr "Yeni Çalma Listesi Oluştur"
 
-#: redbot/cogs/audio/audio.py:2075 redbot/cogs/audio/audio.py:2251
+#: redbot/cogs/audio/audio.py:2007 redbot/cogs/audio/audio.py:2183
 msgid "You need the DJ role to save playlists."
 msgstr "Playlist kaydedebilmek için DJ rolüne ihtiyacınız var"
 
-#: redbot/cogs/audio/audio.py:2079 redbot/cogs/audio/audio.py:2255
-#: redbot/cogs/audio/audio.py:2285
+#: redbot/cogs/audio/audio.py:2011 redbot/cogs/audio/audio.py:2187
+#: redbot/cogs/audio/audio.py:2217
 msgid "Playlist name already exists, try again with a different name."
 msgstr "Bu ad zaten var, lütfen farklı bir ad girin."
 
-#: redbot/cogs/audio/audio.py:2085
+#: redbot/cogs/audio/audio.py:2017
 msgid "Empty playlist {name} created."
 msgstr "{name} playlisti oluşturuldu."
 
-#: redbot/cogs/audio/audio.py:2089
+#: redbot/cogs/audio/audio.py:2021
 #, docstring
 msgid "Delete a saved playlist."
 msgstr "Kaydedilmiş playlist'i kaldır"
 
-#: redbot/cogs/audio/audio.py:2101
+#: redbot/cogs/audio/audio.py:2033
 msgid "{name} playlist deleted."
 msgstr "{name} playlisti kaldırıldı."
 
-#: redbot/cogs/audio/audio.py:2107
+#: redbot/cogs/audio/audio.py:2039
 #, docstring
 msgid "Download a copy of a playlist.\\n\\n        These files can be used with the [p]playlist upload command.\\n        Red v2-compatible playlists can be generated by passing True\\n        for the v2 variable."
 msgstr "Playlist'in bir kopyasını indir.\\n\\n        Bu dosyalar [p]playlist upload komutuyla kullanılabilir.\\n        Red v2 ile uyumlu playlistler  v2 değişkeni \n"
 "geçilirse oluşturulabilir."
 
-#: redbot/cogs/audio/audio.py:2129
+#: redbot/cogs/audio/audio.py:2061
 msgid "That playlist has no tracks."
 msgstr "Playlist hiçbir şarkı içermiyor."
 
-#: redbot/cogs/audio/audio.py:2131 redbot/cogs/audio/audio.py:2399
+#: redbot/cogs/audio/audio.py:2063 redbot/cogs/audio/audio.py:2331
 msgid "That playlist doesn't exist."
 msgstr "Böyle bir playlist yok."
 
-#: redbot/cogs/audio/audio.py:2144
+#: redbot/cogs/audio/audio.py:2076
 #, docstring
 msgid "Retrieve information from a saved playlist."
 msgstr "Kaydedilmiş bir playlist'ten bilgi al"
 
-#: redbot/cogs/audio/audio.py:2169
+#: redbot/cogs/audio/audio.py:2101
 msgid "Playlist info for {playlist_name}:\\n"
 msgstr "{playlist_name} için playlist bilgileri"
 
-#: redbot/cogs/audio/audio.py:2173
+#: redbot/cogs/audio/audio.py:2105
 msgid "Playlist info for {playlist_name}:\\nURL: {url}"
 msgstr "{playlist_name} için playlist bilgileri, URL {url}"
 
-#: redbot/cogs/audio/audio.py:2184
+#: redbot/cogs/audio/audio.py:2116
 msgid "Author: {author_name} | {num} track(s)"
 msgstr "Sahip: {author_name} | {num} şarkı"
 
-#: redbot/cogs/audio/audio.py:2194
+#: redbot/cogs/audio/audio.py:2126
 #, docstring
 msgid "List saved playlists."
 msgstr "Kaydedilmiş playlist'lerin listesi"
 
-#: redbot/cogs/audio/audio.py:2197
+#: redbot/cogs/audio/audio.py:2129
 msgid "No saved playlists."
 msgstr "Kaydedilmiş liste yok"
 
-#: redbot/cogs/audio/audio.py:2209
+#: redbot/cogs/audio/audio.py:2141
 msgid "Tracks: {num}"
 msgstr "Şarkı: {num}"
 
-#: redbot/cogs/audio/audio.py:2210
+#: redbot/cogs/audio/audio.py:2142
 msgid "Author: {name}\\n"
 msgstr "Sahip: {name}"
 
-#: redbot/cogs/audio/audio.py:2234
+#: redbot/cogs/audio/audio.py:2166
 msgid "Playlists for {server_name}:"
 msgstr "{server_name} sunucusunun playlist'leri"
 
-#: redbot/cogs/audio/audio.py:2238
+#: redbot/cogs/audio/audio.py:2170
 msgid "Page {page_num}/{total_pages} | {num} playlists"
 msgstr "{page_num}/{total_pages} | {num} playlist"
 
-#: redbot/cogs/audio/audio.py:2247
+#: redbot/cogs/audio/audio.py:2179
 #, docstring
 msgid "Save the queue to a playlist."
 msgstr "Sırayı playlist olarak kaydet"
 
-#: redbot/cogs/audio/audio.py:2261 redbot/cogs/audio/audio.py:2658
-#: redbot/cogs/audio/audio.py:2661 redbot/cogs/audio/audio.py:2681
-#: redbot/cogs/audio/audio.py:2824 redbot/cogs/audio/audio.py:2827
-#: redbot/cogs/audio/audio.py:2843 redbot/cogs/audio/audio.py:2846
-#: redbot/cogs/audio/audio.py:2878 redbot/cogs/audio/audio.py:2880
-#: redbot/cogs/audio/audio.py:3488 redbot/cogs/audio/audio.py:3492
-#: redbot/cogs/audio/audio.py:3499
+#: redbot/cogs/audio/audio.py:2193 redbot/cogs/audio/audio.py:2590
+#: redbot/cogs/audio/audio.py:2593 redbot/cogs/audio/audio.py:2613
+#: redbot/cogs/audio/audio.py:2756 redbot/cogs/audio/audio.py:2759
+#: redbot/cogs/audio/audio.py:2775 redbot/cogs/audio/audio.py:2778
+#: redbot/cogs/audio/audio.py:2810 redbot/cogs/audio/audio.py:2812
+#: redbot/cogs/audio/audio.py:3418 redbot/cogs/audio/audio.py:3422
+#: redbot/cogs/audio/audio.py:3429
 msgid "There's nothing in the queue."
 msgstr "Henüz burada bir şey yok."
 
-#: redbot/cogs/audio/audio.py:2270
+#: redbot/cogs/audio/audio.py:2202
 msgid "Please enter a name for this playlist."
 msgstr "Bu playlist için bir isim girin"
 
-#: redbot/cogs/audio/audio.py:2295
+#: redbot/cogs/audio/audio.py:2227
 msgid "Playlist {name} saved from current queue: {num} tracks added."
 msgstr "{name} playlist'i şuanki sıradan eklendi. {num} şarkı eklendi."
 
-#: redbot/cogs/audio/audio.py:2302
+#: redbot/cogs/audio/audio.py:2234
 #, docstring
 msgid "Remove a track from a playlist by url."
 msgstr "Playlist'ten URL'si verilen şarkıyı çıkarın"
 
-#: redbot/cogs/audio/audio.py:2316
+#: redbot/cogs/audio/audio.py:2248
 msgid "URL not in playlist."
 msgstr "URL liste de değil"
 
-#: redbot/cogs/audio/audio.py:2320
+#: redbot/cogs/audio/audio.py:2252
 msgid "No tracks left, removing playlist."
 msgstr "Hiç şarkı kalmadı, playlist kaldırılıyor."
 
-#: redbot/cogs/audio/audio.py:2327
+#: redbot/cogs/audio/audio.py:2259
 msgid "{num} entries have been removed from the {playlist_name} playlist."
 msgstr "{num} sayı da şarkı {playlist_name} playlist'inden kaldırıldı."
 
-#: redbot/cogs/audio/audio.py:2334
+#: redbot/cogs/audio/audio.py:2266
 msgid "The track has been removed from the {playlist_name} playlist."
 msgstr "{playlist_name} playlist'inden şarkı kaldırıldı."
 
-#: redbot/cogs/audio/audio.py:2341
+#: redbot/cogs/audio/audio.py:2273
 #, docstring
 msgid "Save a playlist from a url."
 msgstr "Bir URL'den playlist kaydedin."
 
-#: redbot/cogs/audio/audio.py:2353
+#: redbot/cogs/audio/audio.py:2285
 msgid "Playlist {name} saved: {num} tracks added."
 msgstr "{name} playlist'i kaydedildi: {num} şarkı eklendi."
 
-#: redbot/cogs/audio/audio.py:2360
+#: redbot/cogs/audio/audio.py:2292
 #, docstring
 msgid "Load a playlist into the queue."
 msgstr "Sıraya bir playlist ekleyin."
 
-#: redbot/cogs/audio/audio.py:2404
+#: redbot/cogs/audio/audio.py:2336
 #, docstring
 msgid "Convert a Red v2 playlist file to a playlist."
 msgstr "Red v2 playlist'lerini çevirin"
 
-#: redbot/cogs/audio/audio.py:2410
+#: redbot/cogs/audio/audio.py:2342
 msgid "Please upload the playlist file. Any other message will cancel this operation."
 msgstr "Lütfen playlist dosyasını yükleyin. Diğer herhangi bir mesaj bu işlemi iptal edecektir."
 
-#: redbot/cogs/audio/audio.py:2418
+#: redbot/cogs/audio/audio.py:2350
 msgid "No file detected, try again later."
 msgstr "Hiçbir dosya gönderilmedi, lütfen tekrar deneyin."
 
-#: redbot/cogs/audio/audio.py:2422
+#: redbot/cogs/audio/audio.py:2354
 msgid "Upload cancelled."
 msgstr "Yükleme iptal edildi"
 
-#: redbot/cogs/audio/audio.py:2426
+#: redbot/cogs/audio/audio.py:2358
 msgid "Only playlist files can be uploaded."
 msgstr "Sadece playlist dosyaları yüklenebilir."
 
-#: redbot/cogs/audio/audio.py:2431
+#: redbot/cogs/audio/audio.py:2363
 msgid "Not a valid playlist file."
 msgstr "Geçersiz bir playlist dosyası"
 
-#: redbot/cogs/audio/audio.py:2447
+#: redbot/cogs/audio/audio.py:2379
 msgid "A playlist already exists with this name."
 msgstr "Bu adı taşıyan bir playlist zaten var"
 
-#: redbot/cogs/audio/audio.py:2475
+#: redbot/cogs/audio/audio.py:2407
 msgid "No tracks found."
 msgstr "Hiçbir parça bulunamadı"
 
-#: redbot/cogs/audio/audio.py:2481
+#: redbot/cogs/audio/audio.py:2413
 msgid "Added {num} tracks from the {playlist_name} playlist. {num_bad} track(s) could not be loaded."
 msgstr "{num} sayıda şarkı {playlist_name} playlistinden sıraya eklendi. {num_bad} şarkı eklenemedi."
 
-#: redbot/cogs/audio/audio.py:2486
+#: redbot/cogs/audio/audio.py:2418
 msgid "Added {num} tracks from the {playlist_name} playlist."
 msgstr "{num} sayıda şarkı {playlist_name} playlistinden sıraya eklendi. "
 
-#: redbot/cogs/audio/audio.py:2490
+#: redbot/cogs/audio/audio.py:2422
 msgid "Playlist Saved"
 msgstr "Çalma listesi kaydedildi"
 
-#: redbot/cogs/audio/audio.py:2501
+#: redbot/cogs/audio/audio.py:2433
 msgid "You need the DJ role to use playlists."
 msgstr "Playlist kullanabilmek için DJ rolüne ihtiyacınız var"
 
-#: redbot/cogs/audio/audio.py:2539
+#: redbot/cogs/audio/audio.py:2471
 msgid "You must be in the voice channel to use the playlist command."
 msgstr "Playlist başlatabilmek için bir kanal da olmanız gerekli."
 
-#: redbot/cogs/audio/audio.py:2593
+#: redbot/cogs/audio/audio.py:2525
 #, docstring
 msgid "Skip to the start of the previously played track."
 msgstr "Bir önceki çalınan şarkının en başına geri döner"
 
-#: redbot/cogs/audio/audio.py:2603 redbot/cogs/audio/audio.py:3387
+#: redbot/cogs/audio/audio.py:2535 redbot/cogs/audio/audio.py:3317
 msgid "You need the DJ role to skip tracks."
 msgstr "Şarkı geçebilmek için DJ rolüne ihtiyacınız var"
 
-#: redbot/cogs/audio/audio.py:2608 redbot/cogs/audio/audio.py:3381
+#: redbot/cogs/audio/audio.py:2540 redbot/cogs/audio/audio.py:3311
 msgid "You must be in the voice channel to skip the music."
 msgstr "Şarkıyı geçebilmek için kanal da olmanız gerekli."
 
-#: redbot/cogs/audio/audio.py:2611
+#: redbot/cogs/audio/audio.py:2543
 msgid "Turn shuffle off to use this command."
 msgstr "Bu komutu kullanabilmek için karıştırmayı kapatın."
 
-#: redbot/cogs/audio/audio.py:2613
+#: redbot/cogs/audio/audio.py:2545
 msgid "No previous track."
 msgstr "Önceki parça bulunamadı."
 
-#: redbot/cogs/audio/audio.py:2630
+#: redbot/cogs/audio/audio.py:2562
 msgid "Replaying Track"
 msgstr "Şarkı tekrar oynatılıyor"
 
-#: redbot/cogs/audio/audio.py:2639
+#: redbot/cogs/audio/audio.py:2571
 #, docstring
 msgid "List the songs in the queue."
 msgstr "Sıradaki şarkıları listeler."
 
-#: redbot/cogs/audio/audio.py:2690
+#: redbot/cogs/audio/audio.py:2622
 msgid "**Currently livestreaming:**"
-msgstr "**Şuan da canlı yayında**"
+msgstr "**Şuan canlı yayınlanıyor:**"
 
-#: redbot/cogs/audio/audio.py:2696 redbot/cogs/audio/audio.py:2706
-#: redbot/cogs/audio/audio.py:2712
+#: redbot/cogs/audio/audio.py:2628 redbot/cogs/audio/audio.py:2638
+#: redbot/cogs/audio/audio.py:2644
 msgid "Playing: "
-msgstr "Çalıyor:"
+msgstr "Oynatılıyor"
 
-#: redbot/cogs/audio/audio.py:2699
+#: redbot/cogs/audio/audio.py:2631
 msgid "Requested by: **{user}**\\n"
 msgstr "**{user}**\\n tarafından sıraya eklendi."
 
-#: redbot/cogs/audio/audio.py:2707
+#: redbot/cogs/audio/audio.py:2639
 msgid "Requested by: **{user}**\\n"
 msgstr "**{user}**\\n tarafından sıraya eklendi."
 
-#: redbot/cogs/audio/audio.py:2714
+#: redbot/cogs/audio/audio.py:2646
 msgid "Requested by: **{user}**"
 msgstr "**{user}** tarafından sıraya eklendi."
 
-#: redbot/cogs/audio/audio.py:2732
+#: redbot/cogs/audio/audio.py:2664
 msgid "requested by **{user}**\\n"
 msgstr "**{user}**\\n tarafından sıraya eklendi."
 
-#: redbot/cogs/audio/audio.py:2736
+#: redbot/cogs/audio/audio.py:2668
 msgid "requested by **{user}**\\n"
 msgstr "**{user}**\\n tarafından sıraya eklendi."
 
-#: redbot/cogs/audio/audio.py:2741
+#: redbot/cogs/audio/audio.py:2673
 msgid "requested by **{user}**\\n"
 msgstr "**{user}**\\n tarafından sıraya eklendi."
 
-#: redbot/cogs/audio/audio.py:2752
+#: redbot/cogs/audio/audio.py:2684
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining"
 msgstr "{page_num}/{total_pages} sayfa | {num_tracks} şarkı, {num_remaining} şarkı kaldı"
 
-#: redbot/cogs/audio/audio.py:2761
+#: redbot/cogs/audio/audio.py:2693
 msgid "Repeat"
 msgstr "Tekrarla"
 
-#: redbot/cogs/audio/audio.py:2763
+#: redbot/cogs/audio/audio.py:2695
 msgid "Shuffle"
 msgstr "Karışık Oynat"
 
-#: redbot/cogs/audio/audio.py:2808
+#: redbot/cogs/audio/audio.py:2740
 msgid "Matching Tracks:"
 msgstr "Eşleşen şarkılar:"
 
-#: redbot/cogs/audio/audio.py:2811 redbot/cogs/audio/audio.py:3251
+#: redbot/cogs/audio/audio.py:2743 redbot/cogs/audio/audio.py:3182
 msgid "Page {page_num}/{total_pages}"
 msgstr "{page_num}/{total_pages} sayfa"
 
-#: redbot/cogs/audio/audio.py:2820
+#: redbot/cogs/audio/audio.py:2752
 #, docstring
 msgid "Clears the queue."
 msgstr "Sırayı temizler"
 
-#: redbot/cogs/audio/audio.py:2832
+#: redbot/cogs/audio/audio.py:2764
 msgid "You need the DJ role to clear the queue."
 msgstr "Sırayı temizleyebilmek için DJ rolüne ihtiyacın var"
 
-#: redbot/cogs/audio/audio.py:2834
+#: redbot/cogs/audio/audio.py:2766
 msgid "The queue has been cleared."
 msgstr "Şarkı sırası temizlendi."
 
-#: redbot/cogs/audio/audio.py:2839
+#: redbot/cogs/audio/audio.py:2771
 #, docstring
 msgid "Removes songs from the queue if the requester is not in the voice channel."
 msgstr "Eğer sıraya ekleyen kanal da değilse şarkıyı sıradan çıkarır."
 
-#: redbot/cogs/audio/audio.py:2851
+#: redbot/cogs/audio/audio.py:2783
 msgid "You need the DJ role to clean the queue."
 msgstr "Sırayı temizleyebilmek için DJ rolüne ihtiyacın var"
 
-#: redbot/cogs/audio/audio.py:2862
+#: redbot/cogs/audio/audio.py:2794
 msgid "Removed 0 tracks."
 msgstr "0 şarkı temizlendi."
 
-#: redbot/cogs/audio/audio.py:2866
+#: redbot/cogs/audio/audio.py:2798
 msgid "Removed {removed_tracks} tracks queued by members outside of the voice channel."
 msgstr "{removed_tracks} şarkıları oda da bulunmayan kişi tarafından eklendiği için temizlendi."
 
-#: redbot/cogs/audio/audio.py:2874
+#: redbot/cogs/audio/audio.py:2806
 #, docstring
 msgid "Search the queue."
 msgstr "Sıra da ara"
 
-#: redbot/cogs/audio/audio.py:2897
+#: redbot/cogs/audio/audio.py:2829
 #, docstring
 msgid "Toggle repeat."
 msgstr "Tekrarlamayı aç/kapa"
 
-#: redbot/cogs/audio/audio.py:2903
+#: redbot/cogs/audio/audio.py:2835
 msgid "You need the DJ role to toggle repeat."
 msgstr "Tekrarlamayı açıp kapatabilmek için DJ rolüne ihtiyacın var."
 
-#: redbot/cogs/audio/audio.py:2911
+#: redbot/cogs/audio/audio.py:2843
 msgid "You must be in the voice channel to toggle repeat."
 msgstr "Tekrarlamayı değiştirebilmek için kanal da olman gerekli."
 
-#: redbot/cogs/audio/audio.py:2917
+#: redbot/cogs/audio/audio.py:2849
 msgid "Repeat tracks: {true_or_false}."
 msgstr "Şarkıları tekrarla: {true_or_false}."
 
-#: redbot/cogs/audio/audio.py:2926
+#: redbot/cogs/audio/audio.py:2857
 #, docstring
 msgid "Remove a specific track number from the queue."
 msgstr "Belirlediğin bir şarkıyı sıradan çıkarır."
 
-#: redbot/cogs/audio/audio.py:2932
+#: redbot/cogs/audio/audio.py:2863
 msgid "Nothing queued."
 msgstr "Hiçbir şey bulunamadı."
 
-#: redbot/cogs/audio/audio.py:2935
+#: redbot/cogs/audio/audio.py:2866
 msgid "You need the DJ role to remove tracks."
 msgstr "Şarkı çıkarabilmek için DJ rolüne ihtiyacın var."
 
-#: redbot/cogs/audio/audio.py:2940
+#: redbot/cogs/audio/audio.py:2871
 msgid "You must be in the voice channel to manage the queue."
 msgstr "Sırayı düzenleyebilmek için kanal da olman gerekli."
 
-#: redbot/cogs/audio/audio.py:2956
+#: redbot/cogs/audio/audio.py:2887
 msgid "Removed {track} from the queue."
 msgstr "{track} şarkısı sıradan çıkarıldı."
 
-#: redbot/cogs/audio/audio.py:2963
+#: redbot/cogs/audio/audio.py:2894
 #, docstring
 msgid "Pick a track with a search.\\n\\n        Use `[p]search list <search term>` to queue all tracks found\\n        on YouTube. `[p]search sc <search term>` will search SoundCloud\\n        instead of YouTube.\\n        "
 msgstr "Arama ile bir şarkı seçin.\\n\\n         `[p]search list <search term>` komutunu YouTube sırasında arama yapmak için kullanın\\n         `[p]search sc <search term>` komutu sadece SoundCloud'ı arayacaktır. "
 
-#: redbot/cogs/audio/audio.py:3027
+#: redbot/cogs/audio/audio.py:2958
 msgid "You must be in the voice channel to enqueue tracks."
 msgstr "Sıraya şarkı ekleyebilmek için kanal da olmanız gerekmektedir."
 
-#: redbot/cogs/audio/audio.py:3066
+#: redbot/cogs/audio/audio.py:2997
 msgid "Queued {num} track(s).{maxlength_msg}"
 msgstr "{num} sayı da şarkı eklendi.{maxlength_msg}"
 
-#: redbot/cogs/audio/audio.py:3072
+#: redbot/cogs/audio/audio.py:3003
 msgid "{time} until start of search playback: starts at #{position} in queue"
 msgstr "{time} süre sonra başlayacak: #{position}. sırada."
 
-#: redbot/cogs/audio/audio.py:3238
+#: redbot/cogs/audio/audio.py:3169
 msgid "Tracks Found:"
 msgstr "Bulunan şarkılar:"
 
-#: redbot/cogs/audio/audio.py:3239
+#: redbot/cogs/audio/audio.py:3170
 msgid "search results"
 msgstr "arama sonuçları"
 
-#: redbot/cogs/audio/audio.py:3242
+#: redbot/cogs/audio/audio.py:3173
 msgid "Folders Found:"
 msgstr "Bulunan klasörler:"
 
-#: redbot/cogs/audio/audio.py:3243
+#: redbot/cogs/audio/audio.py:3174
 msgid "local folders"
 msgstr "Yerel Klasörler"
 
-#: redbot/cogs/audio/audio.py:3245
+#: redbot/cogs/audio/audio.py:3176
 msgid "Files Found:"
 msgstr "Bulunan klasörler:"
 
-#: redbot/cogs/audio/audio.py:3246
+#: redbot/cogs/audio/audio.py:3177
 msgid "local tracks"
 msgstr "Yerel şarkılar"
 
-#: redbot/cogs/audio/audio.py:3264
+#: redbot/cogs/audio/audio.py:3195
 #, docstring
 msgid "Seek ahead or behind on a track by seconds or a to a specific time.\\n\\n        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`)."
 msgstr "Belirli bir süreye veya ileri sarar.\\n\\n        Belirtilen süre formatları kabul edilir 00:00:00 (`ss:dd:ss`) veya 00:00 (`dd:ss`)."
 
-#: redbot/cogs/audio/audio.py:3275
+#: redbot/cogs/audio/audio.py:3206
 msgid "You must be in the voice channel to use seek."
 msgstr "İleri sarmayı kullanabilmek için kanal da olmanız gerekmektedir."
 
-#: redbot/cogs/audio/audio.py:3280
+#: redbot/cogs/audio/audio.py:3211
 msgid "You need the DJ role to use seek."
 msgstr "İleri sarmayı kullanabilmek için DJ rolüne ihtiyacınız var."
 
-#: redbot/cogs/audio/audio.py:3286 redbot/cogs/audio/audio.py:3580
+#: redbot/cogs/audio/audio.py:3217 redbot/cogs/audio/audio.py:3510
 msgid "There are other people listening - vote to skip instead."
 msgstr "Dinleyen başka kişiler var. Geçmek için oylayın."
 
-#: redbot/cogs/audio/audio.py:3290
+#: redbot/cogs/audio/audio.py:3221
 msgid "Can't seek on a stream."
 msgstr "Yayında ileri sarılma yapılamaz."
 
-#: redbot/cogs/audio/audio.py:3299
+#: redbot/cogs/audio/audio.py:3230
 msgid "Invalid input for the time to seek."
 msgstr "İleri sarılacak süre veya zaman geçersiz."
 
-#: redbot/cogs/audio/audio.py:3305
+#: redbot/cogs/audio/audio.py:3236
 msgid "Moved {num_seconds}s to 00:00:00"
 msgstr "{num_seconds} 00:00:00 ilerletildi"
 
-#: redbot/cogs/audio/audio.py:3310
+#: redbot/cogs/audio/audio.py:3241
 msgid "Moved {num_seconds}s to {time}"
 msgstr "{num_seconds} kadar süre {time} 'e ulaşmak için ilerletildi."
 
-#: redbot/cogs/audio/audio.py:3318
+#: redbot/cogs/audio/audio.py:3249
 msgid "Moved to {time}"
 msgstr "{time} süresine ilerletildi"
 
-#: redbot/cogs/audio/audio.py:3330
+#: redbot/cogs/audio/audio.py:3261
 #, docstring
 msgid "Toggle shuffle."
 msgstr "Karıştırmayı aç/kapat"
 
-#: redbot/cogs/audio/audio.py:3334
+#: redbot/cogs/audio/audio.py:3265
 msgid "You need the DJ role to toggle shuffle."
 msgstr "Tekrarlamayı açıp kapatabilmek için DJ rolüne ihtiyacın var."
 
-#: redbot/cogs/audio/audio.py:3342
+#: redbot/cogs/audio/audio.py:3273
 msgid "You must be in the voice channel to toggle shuffle."
 msgstr "Tekrarlamayı değiştirebilmek için kanal da olman gerekli."
 
-#: redbot/cogs/audio/audio.py:3348
+#: redbot/cogs/audio/audio.py:3279
 msgid "Shuffle tracks: {true_or_false}."
 msgstr "Şarkıları tekrarla: {true_or_false}."
 
-#: redbot/cogs/audio/audio.py:3357
+#: redbot/cogs/audio/audio.py:3287
 #, docstring
 msgid "Make Red sing one of her songs."
 msgstr "Qua'nın kendi şarkılarından birisini söylemesini sağlar"
 
-#: redbot/cogs/audio/audio.py:3373
+#: redbot/cogs/audio/audio.py:3303
 #, docstring
 msgid "Skip to the next track, or to a given track number."
 msgstr "Sonraki şarkıya ya da belirtilen şarkı numarasına ilerler"
 
-#: redbot/cogs/audio/audio.py:3392
+#: redbot/cogs/audio/audio.py:3322
 msgid "Can't skip to a specific track in vote mode without the DJ role."
 msgstr "DJ rolü olmadan belirli bir şarkıya oylama modunda geçilemez."
 
-#: redbot/cogs/audio/audio.py:3396
+#: redbot/cogs/audio/audio.py:3326
 msgid "I removed your vote to skip."
 msgstr "Geçmek için verilen oyunu kaldırdım."
 
-#: redbot/cogs/audio/audio.py:3399
+#: redbot/cogs/audio/audio.py:3329
 msgid "You voted to skip."
 msgstr "Geçmek için oy kullandın."
 
-#: redbot/cogs/audio/audio.py:3412
+#: redbot/cogs/audio/audio.py:3342
 msgid "Vote threshold met."
 msgstr "Yeterli oy sayısına ulaşıldı."
 
-#: redbot/cogs/audio/audio.py:3415
+#: redbot/cogs/audio/audio.py:3345
 msgid " Votes: {num_votes}/{num_members} ({cur_percent}% out of {required_percent}% needed)"
 msgstr "  {num_votes}/{num_members} sayı da oy kullanıldı. %{required_percent} gerekli oydan {cur_percent} oy toplandı. "
 
-#: redbot/cogs/audio/audio.py:3495
+#: redbot/cogs/audio/audio.py:3425
 msgid "Currently livestreaming {track}"
 msgstr "Şuan canlı yayınlanıyor {track}"
 
-#: redbot/cogs/audio/audio.py:3502
+#: redbot/cogs/audio/audio.py:3432
 msgid "{time} left on {track}"
 msgstr "{track} şarkısının bitmesine kalan süre {time}"
 
-#: redbot/cogs/audio/audio.py:3511
+#: redbot/cogs/audio/audio.py:3441
 msgid "Track number must be equal to or greater than 1."
 msgstr "Şarkı numarası 1'e eşit veya 1'den büyük olmalı"
 
-#: redbot/cogs/audio/audio.py:3524
+#: redbot/cogs/audio/audio.py:3454
 msgid "Can't skip to a track while shuffle is enabled."
 msgstr "Karıştır açıkken şarkı geçilemez."
 
-#: redbot/cogs/audio/audio.py:3540
+#: redbot/cogs/audio/audio.py:3470
 msgid "Track Skipped"
 msgstr "Şarkı Geçildi"
 
-#: redbot/cogs/audio/audio.py:3563
+#: redbot/cogs/audio/audio.py:3493
 #, docstring
 msgid "Stop playback and clear the queue."
 msgstr "Şarkı durduruldu ve sıra temizlendi."
 
-#: redbot/cogs/audio/audio.py:3573
+#: redbot/cogs/audio/audio.py:3503
 msgid "You must be in the voice channel to stop the music."
 msgstr "Şarkıyı durdurabilmek için aynı kanal da olman gerekli."
 
-#: redbot/cogs/audio/audio.py:3584
+#: redbot/cogs/audio/audio.py:3514
 msgid "You need the DJ role to stop the music."
 msgstr "Şarkıyı durdurabilmek için DJ rolüne sahip olman gerekli."
 
-#: redbot/cogs/audio/audio.py:3586
+#: redbot/cogs/audio/audio.py:3516
 msgid "Stopping..."
 msgstr "Şarkı durduruluyor"
 
-#: redbot/cogs/audio/audio.py:3601
+#: redbot/cogs/audio/audio.py:3531
 #, docstring
 msgid "Summon the bot to a voice channel."
 msgstr "Botu kanala çağırır"
 
-#: redbot/cogs/audio/audio.py:3605
+#: redbot/cogs/audio/audio.py:3535
 msgid "You need the DJ role to summon the bot."
 msgstr "Botu çağırabilmek için DJ rolüne ihtiyacın var"
 
-#: redbot/cogs/audio/audio.py:3635
+#: redbot/cogs/audio/audio.py:3565
 #, docstring
 msgid "Set the volume, 1% - 150%."
 msgstr "Ses düzeyini ayarlar, %1 - %150 "
 
-#: redbot/cogs/audio/audio.py:3641
+#: redbot/cogs/audio/audio.py:3571
 msgid "Current Volume:"
 msgstr "Ses seviyesi:"
 
-#: redbot/cogs/audio/audio.py:3653
+#: redbot/cogs/audio/audio.py:3583
 msgid "You must be in the voice channel to change the volume."
 msgstr "Ses seviyesini değiştirebilmek için aynı kanal da olmalısın"
 
-#: redbot/cogs/audio/audio.py:3659
+#: redbot/cogs/audio/audio.py:3589
 msgid "You need the DJ role to change the volume."
 msgstr "Ses seviyesini değiştirebilmek için DJ rolüne ihtiyacın var"
 
-#: redbot/cogs/audio/audio.py:3672
+#: redbot/cogs/audio/audio.py:3602
 msgid "Volume:"
 msgstr "Ses:"
 
-#: redbot/cogs/audio/audio.py:3683
+#: redbot/cogs/audio/audio.py:3613
 #, docstring
 msgid "Lavalink server configuration options."
 msgstr "Lavalink sunucu ayarlamaları"
 
-#: redbot/cogs/audio/audio.py:3688
+#: redbot/cogs/audio/audio.py:3618
 #, docstring
 msgid "Toggle using external lavalink servers."
 msgstr "Lavalink dış sunucularını kullan/kullanma"
 
-#: redbot/cogs/audio/audio.py:3695 redbot/cogs/audio/audio.py:3705
+#: redbot/cogs/audio/audio.py:3625 redbot/cogs/audio/audio.py:3635
 msgid "External lavalink server: {true_or_false}."
 msgstr "Harici lavalink sunucusu: {true_or_false}."
 
-#: redbot/cogs/audio/audio.py:3712
+#: redbot/cogs/audio/audio.py:3642
 #, docstring
 msgid "Set the lavalink server host."
 msgstr "Lavalink sunucu host'u ayarla"
 
-#: redbot/cogs/audio/audio.py:3716 redbot/cogs/audio/audio.py:3721
+#: redbot/cogs/audio/audio.py:3646 redbot/cogs/audio/audio.py:3651
 msgid "Host set to {host}."
 msgstr "{host} host olarak ayarlandı."
 
-#: redbot/cogs/audio/audio.py:3718 redbot/cogs/audio/audio.py:3734
-#: redbot/cogs/audio/audio.py:3752 redbot/cogs/audio/audio.py:3768
+#: redbot/cogs/audio/audio.py:3648 redbot/cogs/audio/audio.py:3664
+#: redbot/cogs/audio/audio.py:3682 redbot/cogs/audio/audio.py:3698
 msgid "External lavalink server set to True."
 msgstr "Harici Lavalink sunucu ayarı açıldı."
 
-#: redbot/cogs/audio/audio.py:3727
+#: redbot/cogs/audio/audio.py:3657
 #, docstring
 msgid "Set the lavalink server password."
 msgstr "Lavalink sunucu şifresi ayarla"
 
-#: redbot/cogs/audio/audio.py:3732 redbot/cogs/audio/audio.py:3738
+#: redbot/cogs/audio/audio.py:3662 redbot/cogs/audio/audio.py:3668
 msgid "Server password set to {password}."
 msgstr "{password} sunucu şifresi olarak ayarlandı."
 
-#: redbot/cogs/audio/audio.py:3745
+#: redbot/cogs/audio/audio.py:3675
 #, docstring
 msgid "Set the lavalink REST server port."
 msgstr "Lavalink REST sunucu port'unu ayarla"
 
-#: redbot/cogs/audio/audio.py:3750 redbot/cogs/audio/audio.py:3755
+#: redbot/cogs/audio/audio.py:3680 redbot/cogs/audio/audio.py:3685
 msgid "REST port set to {port}."
 msgstr "{port} REST port olarak ayarlandı"
 
-#: redbot/cogs/audio/audio.py:3761
+#: redbot/cogs/audio/audio.py:3691
 #, docstring
 msgid "Set the lavalink websocket server port."
 msgstr "Lavalink websocket server port'unu ayarla"
 
-#: redbot/cogs/audio/audio.py:3766 redbot/cogs/audio/audio.py:3771
+#: redbot/cogs/audio/audio.py:3696 redbot/cogs/audio/audio.py:3701
 msgid "Websocket port set to {port}."
 msgstr "{port} Websocket port'u olarak ayarlandı"
 
-#: redbot/cogs/audio/audio.py:3871
+#: redbot/cogs/audio/audio.py:3801
 msgid "Not enough {currency} ({required_credits} required)."
 msgstr "{currency} yetersiz bakiye. ({required_credits} gerekli)"
 

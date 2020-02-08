@@ -1,18 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-14 04:24+0000\n"
+"POT-Creation-Date: 2019-07-05 22:33+0200\n"
 "PO-Revision-Date: 2020-01-07 21:47\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Arabic\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.0\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: ar\n"
-"X-Crowdin-File: /admin/locales/messages.pot\n"
+"X-Crowdin-File: /cogs/admin/locales/messages.pot\n"
 "Language: ar_SA\n"
 
 #: redbot/cogs/admin/admin.py:17
@@ -21,15 +21,15 @@ msgstr "حاولت القيام بشيء لا أملك تصريح من ديسك�
 
 #: redbot/cogs/admin/admin.py:22
 msgid "I tried to {verb} {role.name} to {member.display_name} but that role is higher than my highest role in the Discord hierarchy so I was unable to successfully add it. Please give me a higher role and try again."
-msgstr "حاولت إضافة {role.name} إلى {member.display_name} ولكن هذه الرتبة هي أعلى من رتبتي في قائمة الرتب في السيرفر, لذلك فشل الأمر. حاول رفع رتبتي والمحاولة مجدداً."
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:29
 msgid "I tried to {verb} {role.name} to {member.display_name} but that role is higher than your highest role in the Discord hierarchy so I was unable to successfully add it. Please get a higher role and try again."
-msgstr "لقد حاولت إضافة {role.name} إلى {member.display_name} ولكن هذه الرتبة هي أعلى من رتبتك في قائمة الرتب في السيرفر, لذلك فشل الأمر. حاول رفع رتبتي والمحاولة مجدداً."
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:36
 msgid "I tried to edit {role.name} but that role is higher than your highest role in the Discord hierarchy so I was unable to successfully add it. Please get a higher role and try again."
-msgstr "لقد حاولت تعديل {role.name} لكن هذه الرتبة أعلى من أعلى رتبة في قائمة الرتبة, لذلك فشل الأمر. المرجو الحصول على رتبة أعلى أو رفع ترتيب الرتبة الحالية والمحاولة مجدداً."
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:43
 msgid "I am already announcing something. If you would like to make a different announcement please use `{prefix}announce cancel` first."
@@ -42,7 +42,7 @@ msgstr "مجموعة من أدوات إدارة السيرفر."
 
 #: redbot/cogs/admin/admin.py:115 redbot/cogs/admin/admin.py:160
 msgid "add"
-msgstr "إضافة"
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:121
 msgid "I successfully added {role.name} to {member.display_name}"
@@ -50,7 +50,7 @@ msgstr "لقد قمت بنجاح بإضافة {role.name} إلى {member.display
 
 #: redbot/cogs/admin/admin.py:132 redbot/cogs/admin/admin.py:180
 msgid "remove"
-msgstr "إزالة"
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:138
 msgid "I successfully removed {role.name} from {member.display_name}"
@@ -59,12 +59,12 @@ msgstr "لقد قمت بنجاح بإزالة {role.name} من {member.display_n
 #: redbot/cogs/admin/admin.py:149
 #, docstring
 msgid "Add a role to a user.\\n\\n        If user is left blank it defaults to the author of the command.\\n        "
-msgstr "إذا تم ترك المستخدم فارغ, فسيكون إفتراضياً صاحب الأمر. \\n        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:169
 #, docstring
 msgid "Remove a role from a user.\\n\\n        If user is left blank it defaults to the author of the command.\\n        "
-msgstr "إذا تم ترك المستخدم فارغ, فسيكون إفتراضياً صاحب الأمر.\\n        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:187
 #, docstring
@@ -74,7 +74,7 @@ msgstr "تعديل إعدادات الرتبة."
 #: redbot/cogs/admin/admin.py:194
 #, docstring
 msgid "Edit a role's colour.\\n\\n        Use double quotes if the role contains spaces.\\n        Colour must be in hexadecimal format.\\n        [Online colour picker](http://www.w3schools.com/colors/colors_picker.asp)\\n\\n        Examples:\\n            `[p]editrole colour \\\"The Transistor\\\" #ff0000`\\n            `[p]editrole colour Test #ff9900`\\n        "
-msgstr "استخدم علامة اقتباس مزدوجة إذا كانت الرتبة تحتوي على مسافات.\\n        يجب أن يكون اللون بتنسيق سداسي عشري.\\n        موقع لإختيار الألوان (http://www.w3schools.com/colors/colors_picker.asp)\\n\\n        أمثلة:\\n            `[p]editrole colour \"The Transistor\" #ff0000`           \\n            `[p]editrole colour Test #ff9900`\\n        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:217 redbot/cogs/admin/admin.py:245
 msgid "Done."
@@ -83,7 +83,7 @@ msgstr "تم."
 #: redbot/cogs/admin/admin.py:222
 #, docstring
 msgid "Edit a role's name.\\n\\n        Use double quotes if the role or the name contain spaces.\\n\\n        Examples:\\n            `[p]editrole name \\\"The Transistor\\\" Test`\\n        "
-msgstr "تعديل إسم الرتبة.\\n\\n          استخدم علامة اقتباس مزدوجة إذا كانت الرتبة تحتوي على مسافات.\\n\\n        أمثلة:\\n            `[p]editrole name \"The Transistor\" Test`\\n        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:250
 #, docstring
@@ -128,17 +128,17 @@ msgstr "سيرفر {guild.name} لن يتلقى إعلانات."
 #: redbot/cogs/admin/admin.py:326
 #, docstring
 msgid "Add a role to yourself.\\n\\n        Server admins must have configured the role as user settable.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "إضافة رتبة لنفسك.\\n\\n        يجب على أدمن السيرفر أولاً إضافة الرتبة.\\n\\n        ملاحظة: الرتبة حساسة لحالة الأحرف!\\n        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:337
 #, docstring
 msgid "Remove a selfrole from yourself.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "إزالة رتبة ذاتية من نفسك.\\n\\n        ملاحظة: الرتبة حساسة لحالة الأحرف!\\n        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:347
 #, docstring
 msgid "Add a role to the list of available selfroles.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "إضافة رتبة إلى قائمة الرتب الذاتية.\\n\\n        ملاحظة: الرتبة حساسة لحالة الأحرف!\\n        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:355 redbot/cogs/admin/admin.py:367
 msgid "The selfroles list has been successfully modified."
@@ -147,16 +147,16 @@ msgstr "تم تحديث/تعديل قائمة الرتب الذاتية بنجا
 #: redbot/cogs/admin/admin.py:360
 #, docstring
 msgid "Remove a role from the list of available selfroles.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "إزالة الرتبة من قائمة الرتب الذاتية.\\n\\n        ملاحظة: الرتبة حساسة لحالة الأحرف!\\n        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:371
 #, docstring
 msgid "\\n        Lists all available selfroles.\\n        "
-msgstr "قائمة بجميع الرتب الذاتية."
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:377
 msgid "Available Selfroles:\\n{selfroles}"
-msgstr "الرتب الذاتية المتوفرة:\\n{selfroles}"
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:394
 #, docstring

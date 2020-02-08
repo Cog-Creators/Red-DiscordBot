@@ -1,18 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-14 04:24+0000\n"
+"POT-Creation-Date: 2019-07-05 22:33+0200\n"
 "PO-Revision-Date: 2020-01-07 21:49\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.0\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: tr\n"
-"X-Crowdin-File: /admin/locales/messages.pot\n"
+"X-Crowdin-File: /cogs/admin/locales/messages.pot\n"
 "Language: tr_TR\n"
 
 #: redbot/cogs/admin/admin.py:17
@@ -25,7 +25,7 @@ msgstr "{verb}{member.display_name} kişisine {role.name} rolünü vermeye çal�
 
 #: redbot/cogs/admin/admin.py:29
 msgid "I tried to {verb} {role.name} to {member.display_name} but that role is higher than your highest role in the Discord hierarchy so I was unable to successfully add it. Please get a higher role and try again."
-msgstr "{verb}{member.display_name} kişisine {role.name} rolünü vermeye çalıştım ancak bu rol benim rolümü aştığından bu rolü veremedim. Bana daha yüksek bir rol verdikten sonra tekrar deneyin."
+msgstr "{verb}{role.name} rolünü düzenlemeye çalıştım ancak {member.display_name} kullanıcısının rolü bu rolden aşağı da olduğu için düzenleyemedim. Lütfen daha yüksek bir rolünüz olduğunda tekrar deneyin."
 
 #: redbot/cogs/admin/admin.py:36
 msgid "I tried to edit {role.name} but that role is higher than your highest role in the Discord hierarchy so I was unable to successfully add it. Please get a higher role and try again."
@@ -38,7 +38,7 @@ msgstr "Zaten şuan da bir duyuru yapmaktayım. Başka bir duyuru yapmak istiyor
 #: redbot/cogs/admin/admin.py:53
 #, docstring
 msgid "A collection of server administration utilities."
-msgstr "Sunucu yönetimiyle ilgili."
+msgstr "Sunucu yönetimiyle ilgili ayarlar"
 
 #: redbot/cogs/admin/admin.py:115 redbot/cogs/admin/admin.py:160
 msgid "add"

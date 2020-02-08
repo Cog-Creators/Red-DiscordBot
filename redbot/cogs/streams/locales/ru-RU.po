@@ -1,44 +1,44 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-14 04:24+0000\n"
-"PO-Revision-Date: 2020-01-07 21:48\n"
+"POT-Creation-Date: 2019-07-05 22:33+0200\n"
+"PO-Revision-Date: 2020-02-08 03:24\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.0\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: ru\n"
-"X-Crowdin-File: /streams/locales/messages.pot\n"
+"X-Crowdin-File: /cogs/streams/locales/messages.pot\n"
 "Language: ru_RU\n"
 
 #: redbot/cogs/streams/streams.py:97
 #, docstring
 msgid "Check if a Twitch channel is live."
-msgstr "Статус Twitch-канала."
+msgstr "Статус канала Twitch."
 
 #: redbot/cogs/streams/streams.py:104
 #, docstring
 msgid "Check if a YouTube channel is live."
-msgstr "Статус YouTube-канала."
+msgstr "Статус канала YouTube."
 
 #: redbot/cogs/streams/streams.py:115
 #, docstring
 msgid "Check if a Hitbox channel is live."
-msgstr "Статус Hitbox-канала."
+msgstr "Статус канала Hitbox."
 
 #: redbot/cogs/streams/streams.py:121
 #, docstring
 msgid "Check if a Mixer channel is live."
-msgstr "Статус Mixer-канала."
+msgstr "Статус канала Mixer."
 
 #: redbot/cogs/streams/streams.py:127
 #, docstring
 msgid "Check if a Picarto channel is live."
-msgstr "Статус Picarto-канала."
+msgstr "Статус канала Picarto."
 
 #: redbot/cogs/streams/streams.py:135 redbot/cogs/streams/streams.py:161
 msgid "That user is offline."
@@ -46,7 +46,7 @@ msgstr "Этот пользователь не в сети."
 
 #: redbot/cogs/streams/streams.py:137 redbot/cogs/streams/streams.py:307
 msgid "That channel doesn't seem to exist."
-msgstr "Кажется, этот канал не существует."
+msgstr "Этот канал, кажется, не существует."
 
 #: redbot/cogs/streams/streams.py:140 redbot/cogs/streams/streams.py:286
 msgid "The Twitch token is either invalid or has not been set. See `{prefix}streamset twitchtoken`."
@@ -63,7 +63,7 @@ msgstr "Что-то пошло не так при попытке связать�
 #: redbot/cogs/streams/streams.py:171
 #, docstring
 msgid "Manage automated stream alerts."
-msgstr "Управление автоматическими уведомлениями трансляций."
+msgstr "Управление автоматическими оповещениями транслляций."
 
 #: redbot/cogs/streams/streams.py:176
 #, docstring
@@ -77,7 +77,7 @@ msgstr "Переключить оповещения в этом канале д�
 
 #: redbot/cogs/streams/streams.py:187
 msgid "Please supply the name of a *Twitch* channel, not a Discord channel."
-msgstr "Пожалуйста укажите имя Twitch-канала, а не Discord-канала."
+msgstr ""
 
 #: redbot/cogs/streams/streams.py:194
 #, docstring
@@ -102,7 +102,7 @@ msgstr "Переключить оповещения на этом канале �
 #: redbot/cogs/streams/streams.py:214
 #, docstring
 msgid "Disable all stream alerts in this channel or server.\\n\\n        `[p]streamalert stop` will disable this channel's stream\\n        alerts.\\n\\n        Do `[p]streamalert stop yes` to disable all stream alerts in\\n        this server.\\n        "
-msgstr "Отключение всех оповещений о трансляциях в текущем канале или сервере. `[p]streamalert stop` отключит оповещения в текущем канале. Выполните `[p]streamalert stop yes` чтобы отключить все оповещения в текущем сервере."
+msgstr ""
 
 #: redbot/cogs/streams/streams.py:244
 msgid "All the stream alerts in this server have been disabled."
@@ -115,15 +115,15 @@ msgstr "Все оповещения о трансляциях в этом кан
 #: redbot/cogs/streams/streams.py:252
 #, docstring
 msgid "List all active stream alerts in this server."
-msgstr "Список всех активных уведомлений о трансляциях на этом сервере."
+msgstr "Список всех активных оповещений о трансляциях на этом сервере."
 
 #: redbot/cogs/streams/streams.py:255
 msgid "Active alerts:\\n\\n"
-msgstr "Активные уведомления:"
+msgstr ""
 
 #: redbot/cogs/streams/streams.py:263
 msgid "There are no active alerts in this server."
-msgstr "В этом сервере нет активных уведомлений."
+msgstr "На этом сервере нет активных оповещений."
 
 #: redbot/cogs/streams/streams.py:315
 #, docstring
@@ -151,7 +151,7 @@ msgstr ""
 #: redbot/cogs/streams/streams.py:362
 #, docstring
 msgid "Manage custom message for stream alerts."
-msgstr "Управление пользовательскими сообщениями уведомлений о трансляциях."
+msgstr "Управление пользовательскими сообщениями оповещений о трансляциях."
 
 #: redbot/cogs/streams/streams.py:368
 #, docstring
@@ -160,7 +160,7 @@ msgstr ""
 
 #: redbot/cogs/streams/streams.py:379 redbot/cogs/streams/streams.py:395
 msgid "Stream alert message set!"
-msgstr "Сообщение уведомления о трансляции установлено!"
+msgstr ""
 
 #: redbot/cogs/streams/streams.py:386
 #, docstring
@@ -170,7 +170,7 @@ msgstr ""
 #: redbot/cogs/streams/streams.py:402
 #, docstring
 msgid "Reset the stream alert messages in this server."
-msgstr "Сброс сообщений уведомлений о трансляции в текущем сервере."
+msgstr ""
 
 #: redbot/cogs/streams/streams.py:406
 msgid "Stream alerts in this server will now use the default alert message."
@@ -179,7 +179,7 @@ msgstr ""
 #: redbot/cogs/streams/streams.py:411
 #, docstring
 msgid "Manage mention settings for stream alerts."
-msgstr "Управление настройками упоминаний для уведомлений о трансляциях."
+msgstr "Управление настройками упоминаний для оповещений о трансляциях."
 
 #: redbot/cogs/streams/streams.py:417
 #, docstring
@@ -188,11 +188,11 @@ msgstr "Переключить упоминание `@​everyone`."
 
 #: redbot/cogs/streams/streams.py:422
 msgid "`@​everyone` will no longer be mentioned for stream alerts."
-msgstr "Упоминание `@​everyone` больше не будет использоваться в уведомлениях."
+msgstr "Упоминание `@​everyone` больше не будет использоваться в оповещениях."
 
 #: redbot/cogs/streams/streams.py:425
 msgid "When a stream is live, `@​everyone` will be mentioned."
-msgstr "Когда трансляция в эфире, будет использоваться `@everyone`."
+msgstr ""
 
 #: redbot/cogs/streams/streams.py:430
 #, docstring
@@ -201,11 +201,11 @@ msgstr "Переключить упоминание `@​here`."
 
 #: redbot/cogs/streams/streams.py:435
 msgid "`@​here` will no longer be mentioned for stream alerts."
-msgstr "Упоминание `@​here` больше не будет использоваться в уведомлениях."
+msgstr "Упоминание `@​here` больше не будет использоваться в оповещениях."
 
 #: redbot/cogs/streams/streams.py:438
 msgid "When a stream is live, `@​here` will be mentioned."
-msgstr "Когда трансляция в эфире, будет использоваться `@​here`."
+msgstr ""
 
 #: redbot/cogs/streams/streams.py:443
 #, docstring
@@ -214,7 +214,7 @@ msgstr "Переключить упоминание роли."
 
 #: redbot/cogs/streams/streams.py:448
 msgid "`@​{role.name}` will no longer be mentioned for stream alerts."
-msgstr "Упоминание `@​{role.name}` больше не будет использоваться в уведомлениях."
+msgstr "Упоминание `@​{role.name}` больше не будет использоваться в оповещениях."
 
 #: redbot/cogs/streams/streams.py:454
 msgid "When a stream or community is live, `@​{role.name}` will be mentioned."
@@ -222,12 +222,12 @@ msgstr "Когда будет транслироваться поток или �
 
 #: redbot/cogs/streams/streams.py:458
 msgid "Since the role is not mentionable, it will be momentarily made mentionable when announcing a streamalert. Please make sure I have the correct permissions to manage this role, or else members of this role won't receive a notification."
-msgstr "Поскольку роль не может быть упомянута, она станет на мгновение упоминаемой при уведомлении о трансляции. Убедитесь, что у меня есть необходимые разрешения для управления этой ролью, иначе члены этой роли не получат уведомление."
+msgstr "Поскольку роль не может быть упомянута, она станет на мгновение упоминаемой при оповещении о трансляции. Убедитесь, что у меня есть необходимые разрешения для управления этой ролью, иначе члены этой роли не получат уведомление."
 
 #: redbot/cogs/streams/streams.py:469
 #, docstring
 msgid "Toggle alert deletion for when streams go offline."
-msgstr "Переключить удаление уведомлений при окончании трансляции."
+msgstr "Переключить удаление оповещений при окончании трансляции."
 
 #: redbot/cogs/streams/streams.py:472
 msgid "The notifications will be deleted once streams go offline."
@@ -252,11 +252,11 @@ msgstr ""
 
 #: redbot/cogs/streams/streams.py:495
 msgid "I'll now send a notification in this channel when {stream.name} is live."
-msgstr "Теперь я буду отправлять уведомление в этом канале, когда {stream.name} будет активен."
+msgstr "Теперь я отправлю уведомление на этом канале, когда {stream.name} будет активен."
 
 #: redbot/cogs/streams/streams.py:504
 msgid "I won't send notifications about {stream.name} in this channel anymore."
-msgstr "Я больше не буду отправлять уведомления о {stream.name} в этом канале."
+msgstr "Я больше не буду отправлять уведомления о {stream.name} на этом канале."
 
 #: redbot/cogs/streams/streams.py:582
 msgid "{mention}, {stream.name} is live!"
@@ -271,13 +271,13 @@ msgstr "{stream.name} начал трансляцию!"
 #: redbot/cogs/streams/streamtypes.py:306
 #: redbot/cogs/streams/streamtypes.py:352
 msgid "Followers"
-msgstr "Подписчики"
+msgstr ""
 
 #: redbot/cogs/streams/streamtypes.py:224
 #: redbot/cogs/streams/streamtypes.py:307
 #: redbot/cogs/streams/streamtypes.py:353
 msgid "Total views"
-msgstr "Всего просмотров"
+msgstr ""
 
 #: redbot/cogs/streams/streamtypes.py:229
 #: redbot/cogs/streams/streamtypes.py:271
@@ -295,5 +295,5 @@ msgstr ""
 
 #: redbot/cogs/streams/streamtypes.py:365
 msgid "{adult}Category: {category} | Tags: {tags}"
-msgstr "{adult}Категория: {category} | Теги: {tags}"
+msgstr ""
 
