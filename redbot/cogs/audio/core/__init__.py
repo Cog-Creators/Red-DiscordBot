@@ -1,8 +1,5 @@
-import asyncio
 from collections import Counter
 from typing import Mapping
-
-import aiohttp
 
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -41,17 +38,16 @@ class Audio(
         self.playlist_api = None
         self.local_folder_current_path = None
         self.db_conn = None
-        self.session = aiohttp.ClientSession()
 
         self._error_counter = Counter()
         self._error_timer = {}
         self._disconnected_players = {}
-        self.skip_votes = {}
-        self.play_lock = {}
         self._daily_playlist_cache = {}
         self._daily_global_playlist_cache = {}
         self._dj_status_cache = {}
         self._dj_role_cache = {}
+        self.skip_votes = {}
+        self.play_lock = {}
 
         self.lavalink_connect_task = None
         self.player_automated_timer_task = None
@@ -116,9 +112,3 @@ class Audio(
         self.config.register_custom(PlaylistScope.USER.value, **_playlist)
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)
-
-        # These has to be a task since this requires the bot to be ready
-        # If it waits for ready in startup, we cause a deadlock during initial load
-        # as initial load happens before the bot can ever be ready.
-        self.cog_init_task = self.bot.loop.create_task(self.initialize())
-        self.cog_ready_event = asyncio.Event()
