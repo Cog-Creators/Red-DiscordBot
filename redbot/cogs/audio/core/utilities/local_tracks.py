@@ -112,10 +112,10 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
         search_results = process.extract(search_words, to_search_string, limit=50)
         search_list = []
         for track_match, percent_match in search_results:
-            if percent_match > 60:
+            if percent_match > 85:
                 search_list.extend(
                     [
-                        i.local_track_path.to_string_user()
+                        i.to_string_user()
                         for i in to_search
                         if i.local_track_path is not None
                         and i.local_track_path.name == track_match

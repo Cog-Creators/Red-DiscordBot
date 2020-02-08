@@ -87,7 +87,6 @@ class LocalPath:
         self.cwd = Path.cwd()
         _lt_folder = Path(self._localtrack_folder) if self._localtrack_folder else self.cwd
         _path = Path(path) if path else self.cwd
-
         if _lt_folder.parts[-1].lower() == "localtracks" and not kwargs.get("forced"):
             self.localtrack_folder = _lt_folder
         elif kwargs.get("forced"):
