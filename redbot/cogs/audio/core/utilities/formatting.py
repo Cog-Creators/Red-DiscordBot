@@ -62,14 +62,10 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             if search_track_num == 0:
                 search_track_num = 5
             if playlist:
-                name = "**[{}]({})** - {}".format(
-                    entry.get("name"),
-                    entry.get("url"),
-                    str(entry.get("tracks")) + " " + _("tracks"),
-                )
+                name = f"**[{entry.get('name')}]({entry.get('url')})** - {str(entry.get('tracks')) + ' ' + _('tracks')}"
             else:
                 name = f"{list(entry.keys())[0]}"
-            search_list += "`{}.` {}\n".format(search_track_num, name)
+            search_list += f"`{search_track_num}.` {name}\n"
             await asyncio.sleep(0)
 
         embed = discord.Embed(
@@ -125,7 +121,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 search_choice = tracks[0 + (page * 5)]
         except IndexError:
             search_choice = tracks[-1]
-        if getattr(search_choice, "uri", None):
+        if not hasattr(search_choice, "is_local") and getattr(search_choice, "uri", None):
             description = self.get_track_description(search_choice, self.local_folder_current_path)
         else:
             search_choice = Query.process_input(search_choice, self.local_folder_current_path)
@@ -259,7 +255,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if track and getattr(track, "uri", None):
             query = Query.process_input(track.uri, local_folder_current_path)
             if query.is_local or "localtracks/" in track.uri:
-                if track.title != "Unknown title":
+                if hasattr(track, "title") and track.title != "Unknown title":
                     return f'**{escape(f"{track.author} - {track.title}")}**' + escape(
                         f"\n{query.to_string_user()} "
                     )
@@ -280,7 +276,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if track and hasattr(track, "uri"):
             query = Query.process_input(track.uri, local_folder_current_path)
             if query.is_local or "localtracks/" in track.uri:
-                if track.title != "Unknown title":
+                if hasattr(track, "title") and track.title != "Unknown title":
                     return escape(f"{track.author} - {track.title}")
                 else:
                     return escape(query.to_string_user())
