@@ -67,7 +67,8 @@ Keys specific to the cog info.json (case sensitive)
 
 - ``disabled`` (bool) - Determines if a cog is available for install.
 
-- ``required_cogs`` (map of cogname to repo URL) - A map of required cogs that this cog depends on.
+- ``required_cogs`` (dict mapping a cog name to repo URL) - A dict of required cogs that this cog depends on
+  in the format ``{cog_name : repo_url}``.
   Downloader will not deal with this functionality but it may be useful for other cogs.
 
 - ``requirements`` (list of strings) - list of required libraries that are
