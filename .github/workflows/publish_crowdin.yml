@@ -37,12 +37,12 @@ jobs:
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v2
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.cogcreators_bot_repo_scoped }}
         commit-message: Automated Crowdin downstream
+        commiter: Cog-Creators Bot <51291613+Cog-CreatorsBot@users.noreply.github.com>
         title: "[i18n] Automated Crowdin downstream"
         body: |
           This is an automated PR.
           Please ensure that there are no errors or invalid files are in the PR.
         labels: "Automated PR, Category: i18n"
         branch: "automated/i18n"
-
