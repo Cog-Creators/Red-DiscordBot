@@ -57,6 +57,7 @@ parts/
 sdist/
 var/
 wheels/
+pip-wheel-metadata/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -136,3 +137,6 @@ ENV/
 
 # pytest
 .pytest_cache/
+
+# Pre-commit hooks
+/.pre-commit-config.yaml

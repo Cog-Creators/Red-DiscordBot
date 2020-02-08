@@ -25,7 +25,7 @@ Basic Usage
         async def ban(self, ctx, user: discord.Member, reason: str = None):
             await ctx.guild.ban(user)
             case = await modlog.create_case(
-                ctx.bot, ctx.guild, ctx.message.created_at, action="ban",
+                ctx.bot, ctx.guild, ctx.message.created_at, action_type="ban",
                 user=user, moderator=ctx.author, reason=reason
             )
             await ctx.send("Done. It was about time.")

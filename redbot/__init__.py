@@ -1,3 +1,5 @@
+import asyncio as _asyncio
+import os as _os
 import re as _re
 import sys as _sys
 import warnings as _warnings
@@ -13,11 +15,16 @@ from typing import (
 )
 
 
-MIN_PYTHON_VERSION = (3, 7, 0)
+MIN_PYTHON_VERSION = (3, 8, 1)
 
-__all__ = ["MIN_PYTHON_VERSION", "__version__", "version_info", "VersionInfo"]
-
-if _sys.version_info < MIN_PYTHON_VERSION:
+__all__ = [
+    "MIN_PYTHON_VERSION",
+    "__version__",
+    "version_info",
+    "VersionInfo",
+    "_update_event_loop_policy",
+]
+if _sys.version_info < MIN_PYTHON_VERSION and not _os.getenv("READTHEDOCS", False):
     print(
         f"Python {'.'.join(map(str, MIN_PYTHON_VERSION))} is required to run Red, but you have "
         f"{_sys.version}! Please update Python."
@@ -173,8 +180,21 @@ class VersionInfo:
         )
 
 
-__version__ = "3.1.5"
+def _update_event_loop_policy():
+    if _sys.implementation.name == "cpython":
+        # Let's not force this dependency, uvloop is much faster on cpython
+        try:
+            import uvloop as _uvloop
+        except ImportError:
+            pass
+        else:
+            _asyncio.set_event_loop_policy(_uvloop.EventLoopPolicy())
+
+
+__version__ = "3.3.2.dev1"
 version_info = VersionInfo.from_str(__version__)
 
 # Filter fuzzywuzzy slow sequence matcher warning
 _warnings.filterwarnings("ignore", module=r"fuzzywuzzy.*")
+# Show DeprecationWarning
+_warnings.filterwarnings("default", category=DeprecationWarning)

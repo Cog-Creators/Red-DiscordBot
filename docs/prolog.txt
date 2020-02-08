@@ -1,0 +1,41 @@
+.. This file will be run at the beginning of all files.
+    You can add the subsitutions you need.
+
+.. this is a .txt so sphinx doesn't error because it's
+    missing in the index
+
+
+.. These are the comments for permissions locks
+
+.. |owner-lock| replace:: This command is locked to the
+    :ref:`bot owner <getting-started-permissions>`.
+
+.. |guildowner-lock| replace:: This command is locked to the
+    :ref:`server owner <getting-started-permissions>`.
+
+.. |admin-lock| replace:: This command is locked to the
+    :ref:`admin role <getting-started-permissions>`.
+
+.. |mod-lock| replace:: This command is locked to the
+    :ref:`mod role <getting-started-permissions>`.
+
+
+.. This is for describing how a format should be formatted
+
+.. |quotes| replace:: enclosed in quotes if there are spaces
+
+.. |role-input| replace:: Please give **the exact role name or ID**, or it won't be detected.
+    If the role name has spaces, provide it enclosed in quotes like this: ``"my role with spaces"``
+
+.. |member-input| replace:: You can either mention the member, provide its ID, its exact name with
+    the tag or not, or its nickname (|quotes|).
+
+.. |user-input| replace:: You can either provide the member's ID or its exact name with the tag or
+    not (|quotes|).
+
+.. |channel-input| replace:: You can either mention the channel, provide its exact name or its ID.
+
+.. |vc-input| replace:: You can either provide the voice channel's ID or its exact name, |quotes|.
+
+.. |color-input| replace:: You can either provide the hexadecimal code of the color, or one of the
+    colors listed here: :class:`discord.Color`.
