@@ -2,12 +2,19 @@ import datetime
 import time
 from enum import Enum
 from random import randint, choice
+from typing import Final
 import aiohttp
 import discord
 from redbot.core import commands
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-from redbot.core.utils.chat_formatting import escape, italics
+from redbot.core.utils.chat_formatting import (
+    bold,
+    escape,
+    italics,
+    humanize_number,
+    humanize_timedelta,
+)
 
 _ = T_ = Translator("General", __file__)
 
@@ -29,6 +36,9 @@ class RPSParser:
             self.choice = RPS.scissors
         else:
             self.choice = None
+
+
+MAX_ROLL: Final[int] = 2 ** 64 - 1
 
 
 @cog_i18n(_)
@@ -87,11 +97,21 @@ class General(commands.Cog):
         `<number>` defaults to 100.
         """
         author = ctx.author
-        if number > 1:
+        if 1 < number <= MAX_ROLL:
             n = randint(1, number)
-            await ctx.send("{author.mention} :game_die: {n} :game_die:".format(author=author, n=n))
-        else:
+            await ctx.send(
+                "{author.mention} :game_die: {n} :game_die:".format(
+                    author=author, n=humanize_number(n)
+                )
+            )
+        elif number <= 1:
             await ctx.send(_("{author.mention} Maybe higher than 1? ;P").format(author=author))
+        else:
+            await ctx.send(
+                _("{author.mention} Max allowed number is {maxamount}.").format(
+                    author=author, maxamount=humanize_number(MAX_ROLL)
+                )
+            )
 
     @commands.command()
     async def flip(self, ctx, user: discord.Member = None):
@@ -220,169 +240,210 @@ class General(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
     async def serverinfo(self, ctx, details: bool = False):
         """
-            Show server information.
-        
-            `details`: Toggle it to `True` to show more
-            information about this server.
-            Defaults to False.
+        Show server information.
+    
+        `details`: Toggle it to `True` to show more informations about this server.
+        Default to False.
         """
         guild = ctx.guild
-
-        def check_feature(feature):
-            return "\N{WHITE HEAVY CHECK MARK}" if feature in guild.features else "\N{CROSS MARK}"
-
-        format_kwargs = {
-            "vip": check_feature("VIP_REGIONS"),
-            "van": check_feature("VANITY_URL"),
-            "splash": check_feature("INVITE_SPLASH"),
-            "m_emojis": check_feature("MORE_EMOJI"),
-            "verify": check_feature("VERIFIED"),
-        }
-
-        verif = {
-            0: _("0 - None"),
-            1: _("1 - Low"),
-            2: _("2 - Medium"),
-            3: _("3 - Hard"),
-            4: _("4 - Extreme"),
-        }
-        region = {
-            "vip-us-east": _("__VIP__ US East") + " :flag_us:",
-            "vip-us-west": _("__VIP__ US West") + " :flag_us:",
-            "vip-amsterdam": _("__VIP__ Amsterdam") + " :flag_nl:",
-            "eu-west": _("EU West") + " :flag_eu:",
-            "eu-central": _("EU Central") + " :flag_eu:",
-            "london": _("London") + " :flag_gb:",
-            "frankfurt": _("Frankfurt") + " :flag_de:",
-            "amsterdam": _("Amsterdam") + " :flag_nl:",
-            "us-west": _("US West") + " :flag_us:",
-            "us-east": _("US East") + " :flag_us:",
-            "us-south": _("US South") + " :flag_us:",
-            "us-central": _("US Central") + " :flag_us:",
-            "singapore": _("Singapore") + " :flag_sg:",
-            "sydney": _("Sydney") + " :flag_au:",
-            "brazil": _("Brazil") + " :flag_br:",
-            "hongkong": _("Hong Kong") + " :flag_hk:",
-            "russia": _("Russia") + " :flag_ru:",
-            "japan": _("Japan") + " :flag_jp:",
-            "southafrica": _("South Africa") + " :flag_za:",
-            "india": _("India") + " :flag_in:",
-        }
-
-        online = len([m.status for m in guild.members if m.status == discord.Status.online])
-        idle = len([m.status for m in guild.members if m.status == discord.Status.idle])
-        dnd = len([m.status for m in guild.members if m.status == discord.Status.dnd])
-        offline = len([m.status for m in guild.members if m.status == discord.Status.offline])
-        streaming = len([m for m in guild.members if isinstance(m.activity, discord.Streaming)])
-        mobile = len([m for m in guild.members if m.is_on_mobile()])
-        lurkers = len([m for m in guild.members if m.joined_at is None])
-        total_users = len(guild.members)
-        humans = len([a for a in ctx.guild.members if a.bot == False])
-        bots = len([a for a in ctx.guild.members if a.bot])
-        text_channels = len(guild.text_channels)
-        voice_channels = len(guild.voice_channels)
         passed = (ctx.message.created_at - guild.created_at).days
-        created_at = _("Created on **{date}**. That's over **{num}** days ago !").format(
-            date=guild.created_at.strftime("%d %b %Y %H:%M"), num=passed
+        created_at = _("Since {date}. That's over {num} days ago!").format(
+            date=guild.created_at.strftime("%d %b %Y %H:%M"), num=humanize_number(passed),
         )
-        joined_at = guild.me.joined_at
-        since_joined = (ctx.message.created_at - joined_at).days
-        bot_joined = joined_at.strftime("%d %b %Y %H:%M:%S")
-        joined_on = _(
-            "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago !"
-        ).format(bot_name=ctx.bot.user.name, bot_join=bot_joined, since_join=since_joined)
-        data = discord.Embed(description=created_at, colour=(await ctx.embed_colour()))
-        if details:
-            data.add_field(
-                name=_("Members:"),
-                value=_(
-                    "Total users: **{total}**\n{lurkers}Humans: **{hum}** • Bots: **{bots}**\n"
-                    "📗 `{online}` 📙 `{idle}`\n📕 `{dnd}` 📓 `{off}`\n"
-                    "🎥 `{streaming}` 📱 `{mobile}`\n"
-                ).format(
-                    total=total_users,
-                    lurkers=_("Lurkers: **{}**\n").format(lurkers) if lurkers else "",
-                    hum=humans,
-                    bots=bots,
-                    online=online,
-                    idle=idle,
-                    dnd=dnd,
-                    off=offline,
-                    streaming=streaming,
-                    mobile=mobile,
-                ),
-            )
-            data.add_field(
-                name=_("Channels:"),
-                value=_("💬 Text: **{text}**\n🔊 Voice: **{voice}**").format(
-                    text=text_channels, voice=voice_channels
-                ),
-            )
-            data.add_field(
-                name=_("Utility:"),
-                value=_(
-                    "Owner: **{owner}**\nRegion: **{region}**\nVerif. level: **{verif}**\nServer ID: **{id}**"
-                ).format(
-                    owner=guild.owner,
-                    region=region[str(guild.region)],
-                    verif=verif[int(guild.verification_level)],
-                    id=guild.id,
-                ),
-            )
-            data.add_field(
-                name=_("Misc:"),
-                value=_(
-                    "AFK channel: **{afk_chan}**\nAFK Timeout: **{afk_timeout}sec**\nCustom emojis: **{emojis}**\nRoles: **{roles}**"
-                ).format(
-                    afk_chan=guild.afk_channel,
-                    afk_timeout=guild.afk_timeout,
-                    emojis=len(guild.emojis),
-                    roles=len(guild.roles),
-                ),
-            )
-            if guild.features:
-                data.add_field(
-                    name=_("Special features:"),
-                    value=_(
-                        "{vip} VIP Regions\n{van} Vanity URL\n{splash} Splash Invite\n{m_emojis} More Emojis\n{verify} Verified"
-                    ).format(**format_kwargs),
-                )
-            data.set_author(name=guild.name)
-            if "VERIFIED" in guild.features:
-                data.set_author(
-                    name=guild.name,
-                    icon_url="https://cdn.discordapp.com/emojis/457879292152381443.png",
-                )
-            if guild.icon_url:
-                data.set_thumbnail(url=guild.icon_url)
-            else:
-                data.set_thumbnail(
-                    url="https://cdn.discordapp.com/attachments/494975386334134273/529843761635786754/Discord-Logo-Black.png"
-                )
-            data.set_footer(text=joined_on)
-
-        else:
-            data = discord.Embed(description=created_at, colour=(await ctx.embed_colour()))
-            data.add_field(name=_("Region"), value=region[str(guild.region)])
+        online = humanize_number(
+            len([m.status for m in guild.members if m.status != discord.Status.offline])
+        )
+        total_users = humanize_number(guild.member_count)
+        text_channels = humanize_number(len(guild.text_channels))
+        voice_channels = humanize_number(len(guild.voice_channels))
+        if not details:
+            data = discord.Embed(description=created_at, colour=await ctx.embed_colour())
+            data.add_field(name=_("Region"), value=str(guild.region))
             data.add_field(name=_("Users"), value=f"{online}/{total_users}")
-            data.add_field(name=_("Text Channels"), value=str(text_channels))
-            data.add_field(name=_("Voice Channels"), value=str(voice_channels))
-            data.add_field(name=_("Roles"), value=str(len(guild.roles)))
+            data.add_field(name=_("Text Channels"), value=text_channels)
+            data.add_field(name=_("Voice Channels"), value=voice_channels)
+            data.add_field(name=_("Roles"), value=humanize_number(len(guild.roles)))
             data.add_field(name=_("Owner"), value=str(guild.owner))
             data.set_footer(text=_("Server ID: ") + str(guild.id))
-
             if guild.icon_url:
                 data.set_author(name=guild.name, url=guild.icon_url)
                 data.set_thumbnail(url=guild.icon_url)
             else:
                 data.set_author(name=guild.name)
+        else:
 
-        try:
-            await ctx.send(embed=data)
-        except discord.Forbidden:
-            await ctx.send(_("I need the `Embed links` permission to send this."))
+            def _size(num: int):
+                for unit in ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB"]:
+                    if abs(num) < 1024.0:
+                        return "{0:.1f}{1}".format(num, unit)
+                    num /= 1024.0
+                return "{0:.1f}{1}".format(num, "YB")
+
+            def _bitsize(num: int):
+                for unit in ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB"]:
+                    if abs(num) < 1000.0:
+                        return "{0:.1f}{1}".format(num, unit)
+                    num /= 1000.0
+                return "{0:.1f}{1}".format(num, "YB")
+
+            # Logic from: https://github.com/TrustyJAID/Trusty-cogs/blob/master/serverstats/serverstats.py#L159
+            online_stats = {
+                _("Humans: "): lambda x: not x.bot,
+                _(" • Bots: "): lambda x: x.bot,
+                "📗": lambda x: x.status == discord.Status.online,
+                "📙": lambda x: x.status == discord.Status.idle,
+                "📕": lambda x: x.status == discord.Status.idle,
+                "📓": lambda x: x.status == discord.Status.offline,
+                "🎥": lambda x: x.activity == discord.Streaming,
+                "📱": lambda x: x.is_on_mobile(),
+            }
+            member_msg = _("Total Users: {}\n").format(bold(f"{online}/{total_users}"))
+            count = 1
+            for emoji, value in online_stats.items():
+                try:
+                    num = len([m for m in guild.members if value(m)])
+                except Exception as error:
+                    print(error)
+                    continue
+                else:
+                    member_msg += f"{emoji} {bold(humanize_number(num))} " + (
+                        "\n" if count % 2 == 0 else ""
+                    )
+                count += 1
+
+            vc_regions = {
+                "vip-us-east": _("__VIP__ US East ") + "\U0001F1FA\U0001F1F8",
+                "vip-us-west": _("__VIP__ US West ") + "\U0001F1FA\U0001F1F8",
+                "vip-amsterdam": _("__VIP__ Amsterdam ") + "\U0001F1F3\U0001F1F1",
+                "eu-west": _("EU West ") + "\U0001F1EA\U0001F1FA",
+                "eu-central": _("EU Central ") + "\U0001F1EA\U0001F1FA",
+                "europe": _("Europe ") + "\U0001F1EA\U0001F1FA",
+                "london": _("London ") + "\U0001F1EC\U0001F1E7",
+                "frankfurt": _("Frankfurt ") + "\U0001F1E9\U0001F1EA",
+                "amsterdam": _("Amsterdam ") + "\U0001F1F3\U0001F1F1",
+                "us-west": _("US West ") + "\U0001F1FA\U0001F1F8",
+                "us-east": _("US East ") + "\U0001F1FA\U0001F1F8",
+                "us-south": _("US South ") + "\U0001F1FA\U0001F1F8",
+                "us-central": _("US Central ") + "\U0001F1FA\U0001F1F8",
+                "singapore": _("Singapore ") + "\U0001F1F8\U0001F1EC",
+                "sydney": _("Sydney ") + "\U0001F1E6\U0001F1FA",
+                "brazil": _("Brazil ") + "\U0001F1E7\U0001F1F7",
+                "hongkong": _("Hong Kong ") + "\U0001F1ED\U0001F1F0",
+                "russia": _("Russia ") + "\U0001F1F7\U0001F1FA",
+                "japan": _("Japan ") + "\U0001F1EF\U0001F1F5",
+                "southafrica": _("South Africa ") + "\U0001F1FF\U0001F1E6",
+                "india": _("India ") + "\U0001F1EE\U0001F1F3",
+                "dubai": _("Dubai ") + "\U0001F1E6\U0001F1EA",
+                "south-korea": _("South Korea ") + "\U0001f1f0\U0001f1f7",
+            }
+            verif = {
+                "none": _("0 - None"),
+                "low": _("1 - Low"),
+                "medium": _("2 - Medium"),
+                "high": _("3 - Hard"),
+                "extreme": _("4 - Extreme"),
+            }
+
+            features = {
+                "PARTNERED": _("Partnered"),
+                "VERIFIED": _("Verified"),
+                "DISCOVERABLE": _("Server Discovery"),
+                "PUBLIC": _("Public"),
+                "INVITE_SPLASH": _("Splash Invite"),
+                "VIP_REGIONS": _("VIP Voice Servers"),
+                "VANITY_URL": _("Vanity URL"),
+                "MORE_EMOJI": _("More Emojis"),
+                "COMMERCE": _("Commerce"),
+                "LURKABLE": _("Lurkable"),
+                "NEWS": _("News Channels"),
+                "ANIMATED_ICON": _("Animated Icon"),
+                "BANNER": _("Banner Image"),
+                "MEMBER_LIST_DISABLED": _("Member list disabled"),
+            }
+            guild_features_list = [
+                f"✅ {name}" for feature, name in features.items() if feature in set(guild.features)
+            ]
+
+            joined_on = _(
+                "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago!"
+            ).format(
+                bot_name=ctx.bot.user.name,
+                bot_join=guild.me.joined_at.strftime("%d %b %Y %H:%M:%S"),
+                since_join=humanize_number((ctx.message.created_at - guild.me.joined_at).days),
+            )
+
+            data = discord.Embed(description=created_at, colour=await ctx.embed_colour())
+            data.set_author(
+                name=guild.name,
+                icon_url="https://cdn.discordapp.com/emojis/457879292152381443.png"
+                if "VERIFIED" in guild.features
+                else "https://cdn.discordapp.com/emojis/508929941610430464.png"
+                if "PARTNERED" in guild.features
+                else discord.Embed.Empty,
+            )
+            data.set_thumbnail(
+                url=guild.icon_url
+                if guild.icon_url
+                else "https://cdn.discordapp.com/embed/avatars/1.png"
+            )
+            data.add_field(name=_("Members:"), value=member_msg)
+            data.add_field(
+                name=_("Channels:"),
+                value=_(
+                    "\N{SPEECH BALLOON} Text: {text}\n"
+                    "\N{SPEAKER WITH THREE SOUND WAVES} Voice: {voice}"
+                ).format(text=bold(text_channels), voice=bold(voice_channels),),
+            )
+            data.add_field(
+                name=_("Utility:"),
+                value=_(
+                    "Owner: {owner}\nRegion: {region}\nVerif. level: {verif}\nServer ID: {id}"
+                ).format(
+                    owner=bold(str(guild.owner)),
+                    region=bold(vc_regions[str(guild.region)]),
+                    verif=bold(verif[str(guild.verification_level)]),
+                    id=bold(str(guild.id)),
+                ),
+                inline=False,
+            )
+            data.add_field(
+                name=_("Misc:"),
+                value=_(
+                    "AFK channel: {afk_chan}\nAFK Timeout: {afk_timeout}\nCustom emojis: {emojis}\nRoles: {roles}"
+                ).format(
+                    afk_chan=bold(str(guild.afk_channel))
+                    if guild.afk_channel
+                    else bold(_("Not set")),
+                    afk_timeout=bold(humanize_timedelta(seconds=guild.afk_timeout)),
+                    emojis=bold(humanize_number(len(guild.emojis))),
+                    roles=bold(humanize_number(len(guild.roles))),
+                ),
+                inline=False,
+            )
+            if guild_features_list:
+                data.add_field(name=_("Server features:"), value="\n".join(guild_features_list))
+            if guild.premium_tier != 0:
+                nitro_boost = _(
+                    "Tier {boostlevel} with {nitroboosters} boosters\n"
+                    "File size limit: {filelimit}\n"
+                    "Emoji limit: {emojis_limit}\n"
+                    "VCs max bitrate: {bitrate}"
+                ).format(
+                    boostlevel=bold(str(guild.premium_tier)),
+                    nitroboosters=bold(humanize_number(guild.premium_subscription_count)),
+                    filelimit=bold(_size(guild.filesize_limit)),
+                    emojis_limit=bold(str(guild.emoji_limit)),
+                    bitrate=bold(_bitsize(guild.bitrate_limit)),
+                )
+                data.add_field(name=_("Nitro Boost:"), value=nitro_boost)
+            if guild.splash:
+                data.set_image(url=guild.splash_url_as(format="png"))
+            data.set_footer(text=joined_on)
+
+        await ctx.send(embed=data)
 
     @commands.command()
     async def urban(self, ctx, *, word):
