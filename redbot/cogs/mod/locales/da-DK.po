@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-14 04:24+0000\n"
-"PO-Revision-Date: 2020-01-07 21:48\n"
+"POT-Creation-Date: 2020-02-08 18:08+0000\n"
+"PO-Revision-Date: 2020-02-08 18:19\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Danish\n"
 "MIME-Version: 1.0\n"
@@ -12,10 +12,10 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: da\n"
-"X-Crowdin-File: /mod/locales/messages.pot\n"
+"X-Crowdin-File: /cogs/mod/locales/messages.pot\n"
 "Language: da_DK\n"
 
-#: redbot/cogs/mod/converters.py:16
+#: redbot/cogs/mod/converters.py:20
 msgid "{} doesn't look like a valid user ID."
 msgstr ""
 
@@ -27,172 +27,188 @@ msgstr ""
 msgid "I cannot let you do that. Self-harm is bad {}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:75 redbot/cogs/mod/kickban.py:170
-#: redbot/cogs/mod/kickban.py:433 redbot/cogs/mod/kickban.py:514
+#: redbot/cogs/mod/kickban.py:75 redbot/cogs/mod/kickban.py:191
+#: redbot/cogs/mod/kickban.py:469 redbot/cogs/mod/kickban.py:545
 #: redbot/cogs/mod/mutes.py:16
 msgid "I cannot let you do that. You are not higher than the user in the role hierarchy."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:81 redbot/cogs/mod/kickban.py:178
+#: redbot/cogs/mod/kickban.py:81 redbot/cogs/mod/kickban.py:199
 msgid "I cannot do that due to discord hierarchy rules"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:83 redbot/cogs/mod/kickban.py:273
+#: redbot/cogs/mod/kickban.py:83 redbot/cogs/mod/kickban.py:315
 msgid "Invalid days. Must be between 0 and 7."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:98 redbot/cogs/mod/kickban.py:185
+#: redbot/cogs/mod/kickban.py:89
+msgid "You have been banned from {guild}."
+msgstr ""
+
+#: redbot/cogs/mod/kickban.py:92 redbot/cogs/mod/kickban.py:209
+msgid "**Reason**"
+msgstr ""
+
+#: redbot/cogs/mod/kickban.py:93 redbot/cogs/mod/kickban.py:210
+msgid "No reason was given."
+msgstr ""
+
+#: redbot/cogs/mod/kickban.py:109 redbot/cogs/mod/kickban.py:218
 msgid "I'm not allowed to do that."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:117
+#: redbot/cogs/mod/kickban.py:127
 msgid "The user was banned but an error occurred when trying to create the modlog entry: {reason}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:139
+#: redbot/cogs/mod/kickban.py:156
 msgid "Tempban finished"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:153
+#: redbot/cogs/mod/kickban.py:174
 #, docstring
 msgid "Kick a user.\\n\\n        If a reason is specified, it will be the reason that shows up\\n        in the audit log.\\n        "
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:163 redbot/cogs/mod/kickban.py:426
+#: redbot/cogs/mod/kickban.py:184 redbot/cogs/mod/kickban.py:462
 msgid "I cannot let you do that. Self-harm is bad {emoji}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:203
+#: redbot/cogs/mod/kickban.py:206
+msgid "You have been kicked from {guild}."
+msgstr ""
+
+#: redbot/cogs/mod/kickban.py:236
 msgid "Done. That felt good."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:217
+#: redbot/cogs/mod/kickban.py:250
 #, docstring
-msgid "Ban a user from this server and optionally delete days of messages.\\n\\n        If days is not a number, it's treated as the first word of the reason.\\n        Minimum 0 days, maximum 7. Defaults to 0."
+msgid "Ban a user from this server and optionally delete days of messages.\\n\\n        If days is not a number, it's treated as the first word of the reason.\\n\\n        Minimum 0 days, maximum 7. If not specified, defaultdays setting will be used instead."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:227
+#: redbot/cogs/mod/kickban.py:265
 msgid "Done. It was about time."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:243
+#: redbot/cogs/mod/kickban.py:281
 #, docstring
 msgid "Preemptively bans user(s) from the server\\n\\n        User IDs need to be provided in order to ban\\n        using this command"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:252
+#: redbot/cogs/mod/kickban.py:289
 msgid "Banned {num} users from the server."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:254
+#: redbot/cogs/mod/kickban.py:293
 msgid "\\nErrors:\\n"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:277
+#: redbot/cogs/mod/kickban.py:319
 msgid "I lack the permissions to do this."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:283
+#: redbot/cogs/mod/kickban.py:325
 msgid "User {user_id} is already banned."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:304 redbot/cogs/mod/kickban.py:308
+#: redbot/cogs/mod/kickban.py:346 redbot/cogs/mod/kickban.py:350
 msgid "Failed to ban user {user_id}: {reason}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:328
+#: redbot/cogs/mod/kickban.py:368
 msgid "User {user_id} does not exist."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:332
+#: redbot/cogs/mod/kickban.py:371
 msgid "Could not ban {user_id}: missing permissions."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:354
+#: redbot/cogs/mod/kickban.py:391
 msgid "Failed to create modlog case: {reason}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:364
+#: redbot/cogs/mod/kickban.py:401
 #, docstring
 msgid "Temporarily ban a user from this server."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:383
+#: redbot/cogs/mod/kickban.py:420
 msgid "You have been temporarily banned from {server_name} until {date}. Here is an invite for when your ban expires: {invite_link}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:396
+#: redbot/cogs/mod/kickban.py:432
 msgid "I can't do that for some reason."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:398
+#: redbot/cogs/mod/kickban.py:434
 msgid "Something went wrong while banning"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:413
+#: redbot/cogs/mod/kickban.py:449
 msgid "Done. Enough chaos for now"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:420
+#: redbot/cogs/mod/kickban.py:456
 #, docstring
 msgid "Kick a user and delete 1 day's worth of their messages."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:450
+#: redbot/cogs/mod/kickban.py:486
 msgid "You have been banned and then unbanned as a quick way to delete your messages.\\nYou can now join the server again. {invite_link}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:463
+#: redbot/cogs/mod/kickban.py:497
 msgid "My role is not high enough to softban that user."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:497
+#: redbot/cogs/mod/kickban.py:528
 msgid "Done. Enough chaos."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:505
+#: redbot/cogs/mod/kickban.py:536
 #, docstring
 msgid "Kick a member from a voice channel."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:528
+#: redbot/cogs/mod/kickban.py:559
 msgid "I am unable to kick this member from the voice channel."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:531
+#: redbot/cogs/mod/kickban.py:562
 msgid "Something went wrong while attempting to kick that member"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:554
+#: redbot/cogs/mod/kickban.py:585
 #, docstring
 msgid "Unban a user from this server.\\n\\n        Requires specifying the target user's ID. To find this, you may either:\\n         1. Copy it from the mod log case (if one was created), or\\n         2. enable developer mode, go to Bans in this server's settings, right-\\n        click the user and select 'Copy ID'."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:565
-msgid "Couldn't find a user with that ID!"
-msgstr ""
-
-#: redbot/cogs/mod/kickban.py:571
+#: redbot/cogs/mod/kickban.py:598
 msgid "It seems that user isn't banned!"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:579
+#: redbot/cogs/mod/kickban.py:604
 msgid "Something went wrong while attempting to unban that user"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:596
+#: redbot/cogs/mod/kickban.py:621
 msgid "Unbanned that user from this server"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:603
+#: redbot/cogs/mod/kickban.py:627
+msgid "I don't share another server with this user. I can't reinvite them."
+msgstr ""
+
+#: redbot/cogs/mod/kickban.py:635
 msgid "You've been unbanned from {server}.\\nHere is an invite for that server: {invite_link}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:610
+#: redbot/cogs/mod/kickban.py:642
 msgid "I failed to send an invite to that user. Perhaps you may be able to send it for me?\\nHere's the invite link: {invite_link}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:618
+#: redbot/cogs/mod/kickban.py:650
 msgid "Something went wrong when attempting to send that useran invite. Here's the link so you can try: {invite_link}"
 msgstr ""
 
@@ -201,69 +217,69 @@ msgstr ""
 msgid "Moderation tools."
 msgstr ""
 
-#: redbot/cogs/mod/movetocore.py:54
+#: redbot/cogs/mod/movetocore.py:56
 #, docstring
 msgid "Add servers or channels to the ignore list."
 msgstr ""
 
-#: redbot/cogs/mod/movetocore.py:60
+#: redbot/cogs/mod/movetocore.py:62
 #, docstring
 msgid "Ignore commands in the channel.\\n\\n        Defaults to the current channel.\\n        "
 msgstr ""
 
-#: redbot/cogs/mod/movetocore.py:68
+#: redbot/cogs/mod/movetocore.py:70
 msgid "Channel added to ignore list."
 msgstr ""
 
-#: redbot/cogs/mod/movetocore.py:70
+#: redbot/cogs/mod/movetocore.py:72
 msgid "Channel already in ignore list."
 msgstr ""
 
-#: redbot/cogs/mod/movetocore.py:75
+#: redbot/cogs/mod/movetocore.py:77
 #, docstring
 msgid "Ignore commands in this server."
 msgstr ""
 
-#: redbot/cogs/mod/movetocore.py:79
+#: redbot/cogs/mod/movetocore.py:81
 msgid "This server has been added to the ignore list."
 msgstr ""
 
-#: redbot/cogs/mod/movetocore.py:81
+#: redbot/cogs/mod/movetocore.py:83
 msgid "This server is already being ignored."
 msgstr ""
 
-#: redbot/cogs/mod/movetocore.py:87
+#: redbot/cogs/mod/movetocore.py:89
 #, docstring
 msgid "Remove servers or channels from the ignore list."
 msgstr ""
 
-#: redbot/cogs/mod/movetocore.py:93
+#: redbot/cogs/mod/movetocore.py:95
 #, docstring
 msgid "Remove a channel from ignore the list.\\n\\n        Defaults to the current channel.\\n        "
 msgstr ""
 
-#: redbot/cogs/mod/movetocore.py:102
+#: redbot/cogs/mod/movetocore.py:104
 msgid "Channel removed from ignore list."
 msgstr ""
 
-#: redbot/cogs/mod/movetocore.py:104
+#: redbot/cogs/mod/movetocore.py:106
 msgid "That channel is not in the ignore list."
 msgstr ""
 
-#: redbot/cogs/mod/movetocore.py:109
+#: redbot/cogs/mod/movetocore.py:111
 #, docstring
 msgid "Remove this server from the ignore list."
 msgstr ""
 
-#: redbot/cogs/mod/movetocore.py:113
+#: redbot/cogs/mod/movetocore.py:115
 msgid "This server has been removed from the ignore list."
 msgstr ""
 
-#: redbot/cogs/mod/movetocore.py:115
+#: redbot/cogs/mod/movetocore.py:117
 msgid "This server is not in the ignore list."
 msgstr ""
 
-#: redbot/cogs/mod/movetocore.py:127
+#: redbot/cogs/mod/movetocore.py:129
 msgid "Currently ignoring:\\n{} channels\\n{} guilds\\n"
 msgstr ""
 
@@ -455,48 +471,52 @@ msgstr ""
 msgid "Watching {}"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:133
+#: redbot/cogs/mod/names.py:138
+msgid "and {numeric_number} more roles not displayed due to embed limits."
+msgstr ""
+
+#: redbot/cogs/mod/names.py:164
 msgid "Joined Discord on"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:134
+#: redbot/cogs/mod/names.py:165
 msgid "Joined this server on"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:136
+#: redbot/cogs/mod/names.py:167
 msgid "Roles"
-msgstr ""
+msgstr "Roller"
 
-#: redbot/cogs/mod/names.py:140
+#: redbot/cogs/mod/names.py:171
 msgid "Previous Names"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:144
+#: redbot/cogs/mod/names.py:175
 msgid "Previous Nicknames"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:147
+#: redbot/cogs/mod/names.py:178
 msgid "Current voice channel"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:151
+#: redbot/cogs/mod/names.py:182
 msgid "Member #{} | User ID: {}"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:168
+#: redbot/cogs/mod/names.py:199
 #, docstring
 msgid "Show previous names and nicknames of a user."
 msgstr ""
 
-#: redbot/cogs/mod/names.py:172
+#: redbot/cogs/mod/names.py:203
 msgid "**Past 20 names**:"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:178
+#: redbot/cogs/mod/names.py:209
 msgid "**Past 20 nicknames**:"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:185
+#: redbot/cogs/mod/names.py:216
 msgid "That user doesn't have any recorded name or nickname change."
 msgstr ""
 
@@ -505,130 +525,174 @@ msgstr ""
 msgid "Manage server administration settings."
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:30
+#: redbot/cogs/mod/settings.py:33
 msgid "Delete repeats: {num_repeats}\\n"
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:31
+#: redbot/cogs/mod/settings.py:34
 msgid "after {num} repeats"
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:33 redbot/cogs/mod/settings.py:38
-#: redbot/cogs/mod/settings.py:41 redbot/cogs/mod/settings.py:49
+#: redbot/cogs/mod/settings.py:36 redbot/cogs/mod/settings.py:41
+#: redbot/cogs/mod/settings.py:44 redbot/cogs/mod/settings.py:52
+#: redbot/cogs/mod/settings.py:55
 msgid "No"
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:35
+#: redbot/cogs/mod/settings.py:38
 msgid "Ban mention spam: {num_mentions}\\n"
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:36
+#: redbot/cogs/mod/settings.py:39
 msgid "{num} mentions"
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:40
+#: redbot/cogs/mod/settings.py:43
 msgid "Respects hierarchy: {yes_or_no}\\n"
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:41 redbot/cogs/mod/settings.py:49
+#: redbot/cogs/mod/settings.py:44 redbot/cogs/mod/settings.py:52
+#: redbot/cogs/mod/settings.py:55
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
-#: redbot/cogs/mod/settings.py:43
+#: redbot/cogs/mod/settings.py:46
 msgid "Delete delay: {num_seconds}\\n"
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:44
+#: redbot/cogs/mod/settings.py:47
 msgid "{num} seconds"
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:46
+#: redbot/cogs/mod/settings.py:49
 msgid "None"
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:48
+#: redbot/cogs/mod/settings.py:51
 msgid "Reinvite on unban: {yes_or_no}\\n"
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:56
+#: redbot/cogs/mod/settings.py:54
+msgid "Send message to users on kick/ban: {yes_or_no}\\n"
+msgstr ""
+
+#: redbot/cogs/mod/settings.py:58
+msgid "Default message history delete on ban: Previous {num_days} days\\n"
+msgstr ""
+
+#: redbot/cogs/mod/settings.py:62
+msgid "Default message history delete on ban: Don't delete any\\n"
+msgstr ""
+
+#: redbot/cogs/mod/settings.py:68
 #, docstring
 msgid "Toggle role hierarchy check for mods and admins.\\n\\n        **WARNING**: Disabling this setting will allow mods to take\\n        actions on users above them in the role hierarchy!\\n\\n        This is enabled by default.\\n        "
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:68
+#: redbot/cogs/mod/settings.py:80
 msgid "Role hierarchy will be checked when moderation commands are issued."
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:73
+#: redbot/cogs/mod/settings.py:85
 msgid "Role hierarchy will be ignored when moderation commands are issued."
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:79
+#: redbot/cogs/mod/settings.py:91
 #, docstring
 msgid "Set the autoban conditions for mention spam.\\n\\n        Users will be banned if they send any message which contains more than\\n        `<max_mentions>` mentions.\\n\\n        `<max_mentions>` must be at least 5. Set to 0 to disable.\\n        "
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:92
+#: redbot/cogs/mod/settings.py:104
 msgid "Autoban for mention spam enabled. Anyone mentioning {max_mentions} or more different people in a single message will be autobanned."
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:104
+#: redbot/cogs/mod/settings.py:116
 msgid "Autoban for mention spam disabled."
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:109
+#: redbot/cogs/mod/settings.py:121
 #, docstring
 msgid "Enable auto-deletion of repeated messages.\\n\\n        Must be between 2 and 20.\\n\\n        Set to -1 to disable this feature.\\n        "
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:120 redbot/cogs/mod/settings.py:146
+#: redbot/cogs/mod/settings.py:132 redbot/cogs/mod/settings.py:158
 msgid "Repeated messages will be ignored."
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:126
+#: redbot/cogs/mod/settings.py:138
 msgid "Messages repeated up to {num} times will be deleted."
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:130
+#: redbot/cogs/mod/settings.py:142
 msgid "Number of repeats must be between 2 and 20 or equal to -1 if you want to disable this feature!"
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:139
+#: redbot/cogs/mod/settings.py:151
 msgid "Bot will delete repeated messages after {num} repeats. Set this value to -1 to ignore repeated messages"
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:151
+#: redbot/cogs/mod/settings.py:163
 #, docstring
 msgid "Set the delay until the bot removes the command message.\\n\\n        Must be between -1 and 60.\\n\\n        Set to -1 to disable this feature.\\n        "
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:162
+#: redbot/cogs/mod/settings.py:174
 msgid "Command deleting disabled."
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:164
+#: redbot/cogs/mod/settings.py:176
 msgid "Delete delay set to {num} seconds."
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:169
+#: redbot/cogs/mod/settings.py:181
 msgid "Bot will delete command messages after {num} seconds. Set this value to -1 to stop deleting messages"
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:176
+#: redbot/cogs/mod/settings.py:188
 msgid "I will not delete command messages."
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:181
+#: redbot/cogs/mod/settings.py:193
 #, docstring
 msgid "Toggle whether an invite will be sent to a user when unbanned.\\n\\n        If this is True, the bot will attempt to create and send a single-use invite\\n        to the newly-unbanned user.\\n        "
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:191
+#: redbot/cogs/mod/settings.py:203
 msgid "Users unbanned with {command} will be reinvited."
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:198
+#: redbot/cogs/mod/settings.py:210
 msgid "Users unbanned with {command} will not be reinvited."
+msgstr ""
+
+#: redbot/cogs/mod/settings.py:218
+#, docstring
+msgid "Toggle whether a message should be sent to a user when they are kicked/banned.\\n\\n        If this option is enabled, the bot will attempt to DM the user with the guild name\\n        and reason as to why they were kicked/banned.\\n        "
+msgstr ""
+
+#: redbot/cogs/mod/settings.py:227
+msgid "DM when kicked/banned is currently set to: {setting}"
+msgstr ""
+
+#: redbot/cogs/mod/settings.py:232
+msgid "Bot will now attempt to send a DM to user before kick and ban."
+msgstr ""
+
+#: redbot/cogs/mod/settings.py:235
+msgid "Bot will no longer attempt to send a DM to user before kick and ban."
+msgstr ""
+
+#: redbot/cogs/mod/settings.py:241
+#, docstring
+msgid "Set the default number of days worth of messages to be deleted when a user is banned.\\n\\n        The number of days must be between 0 and 7.\\n        "
+msgstr ""
+
+#: redbot/cogs/mod/settings.py:247
+msgid "Invalid number of days. Must be between 0 and 7."
+msgstr ""
+
+#: redbot/cogs/mod/settings.py:250
+msgid "{days} days worth of messages will be deleted when a user is banned."
 msgstr ""
 
 #: redbot/cogs/mod/slowmode.py:27

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-14 04:24+0000\n"
-"PO-Revision-Date: 2020-01-07 21:48\n"
+"POT-Creation-Date: 2020-02-08 18:08+0000\n"
+"PO-Revision-Date: 2020-02-08 18:22\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: ru\n"
-"X-Crowdin-File: /trivia/locales/messages.pot\n"
+"X-Crowdin-File: /cogs/trivia/locales/messages.pot\n"
 "Language: ru_RU\n"
 
 #: redbot/cogs/trivia/session.py:20
@@ -231,50 +231,50 @@ msgstr "Список доступных категорий викторины."
 msgid "Available trivia lists"
 msgstr "Доступные списки викторины"
 
-#: redbot/cogs/trivia/trivia.py:272
+#: redbot/cogs/trivia/trivia.py:274
 #, docstring
 msgid "Leaderboard for trivia.\\n\\n        Defaults to the top 10 of this server, sorted by total wins. Use\\n        subcommands for a more customised leaderboard.\\n        "
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:288
+#: redbot/cogs/trivia/trivia.py:289
 #, docstring
 msgid "Leaderboard for this server.\\n\\n        `<sort_by>` can be any of the following fields:\\n         - `wins`  : total wins\\n         - `avg`   : average score\\n         - `total` : total correct answers\\n         - `games` : total games played\\n\\n        `<top>` is the number of ranks to show on the leaderboard.\\n        "
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:301 redbot/cogs/trivia/trivia.py:330
+#: redbot/cogs/trivia/trivia.py:302 redbot/cogs/trivia/trivia.py:331
 msgid "Unknown field `{field_name}`, see `{prefix}help trivia leaderboard server` for valid fields to sort by."
 msgstr "Неизвестное поле `{field_name}`, см. `{prefix}help trivia leaderboard server` действительные поля для сортировки."
 
-#: redbot/cogs/trivia/trivia.py:317
+#: redbot/cogs/trivia/trivia.py:318
 #, docstring
 msgid "Global trivia leaderboard.\\n\\n        `<sort_by>` can be any of the following fields:\\n         - `wins`  : total wins\\n         - `avg`   : average score\\n         - `total` : total correct answers from all sessions\\n         - `games` : total games played\\n\\n        `<top>` is the number of ranks to show on the leaderboard.\\n        "
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:385
+#: redbot/cogs/trivia/trivia.py:386
 msgid "There are no scores on record!"
 msgstr "Нет счетов в записи!"
 
-#: redbot/cogs/trivia/trivia.py:415
+#: redbot/cogs/trivia/trivia.py:416
 msgid "Rank"
 msgstr "Ранг"
 
-#: redbot/cogs/trivia/trivia.py:416
+#: redbot/cogs/trivia/trivia.py:417
 msgid "Member"
 msgstr "Участник"
 
-#: redbot/cogs/trivia/trivia.py:417
+#: redbot/cogs/trivia/trivia.py:418
 msgid "Wins"
 msgstr "Побед"
 
-#: redbot/cogs/trivia/trivia.py:418
+#: redbot/cogs/trivia/trivia.py:419
 msgid "Games Played"
 msgstr "Игр сыграно"
 
-#: redbot/cogs/trivia/trivia.py:419
+#: redbot/cogs/trivia/trivia.py:420
 msgid "Total Score"
 msgstr "Общий счет"
 
-#: redbot/cogs/trivia/trivia.py:420
+#: redbot/cogs/trivia/trivia.py:421
 msgid "Average Score"
 msgstr "Средний счет"
 

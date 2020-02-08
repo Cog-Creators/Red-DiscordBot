@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-14 04:24+0000\n"
-"PO-Revision-Date: 2020-01-07 21:48\n"
+"POT-Creation-Date: 2020-02-08 18:08+0000\n"
+"PO-Revision-Date: 2020-02-08 18:21\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -12,38 +12,42 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: ru\n"
-"X-Crowdin-File: /commands/locales/messages.pot\n"
+"X-Crowdin-File: /core/commands/locales/messages.pot\n"
 "Language: ru_RU\n"
 
-#: redbot/core/commands/commands.py:301
+#: redbot/core/commands/commands.py:500
 msgid "\\\"{argument}\\\" is not a number."
 msgstr "\\\"{argument}\\\" не является числом."
 
-#: redbot/core/commands/converter.py:90
+#: redbot/core/commands/converter.py:112
 msgid "`{unit}` is not a valid unit of time for this command"
 msgstr "`{unit}` не является допустимой единицей измерения для этой команды"
 
-#: redbot/core/commands/converter.py:96
+#: redbot/core/commands/converter.py:118
 msgid "This amount of time is too large for this command. (Maximum: {maximum})"
 msgstr "Это количество времени слишком большое для этой команды. (Максимум: {maximum})"
 
-#: redbot/core/commands/converter.py:102
+#: redbot/core/commands/converter.py:124
 msgid "This amount of time is too small for this command. (Minimum: {minimum})"
 msgstr "Это количество времени слишком маленькое для этой команды. (Минимум: {minimum})"
 
-#: redbot/core/commands/converter.py:130
+#: redbot/core/commands/converter.py:152
 msgid "Server \\\"{name}\\\" not found."
-msgstr "Сервер \\\"{name}\\\" не найден."
+msgstr "Сервер \\\"{name}\\\" не найдено."
 
-#: redbot/core/commands/converter.py:159 redbot/core/commands/converter.py:161
+#: redbot/core/commands/converter.py:182 redbot/core/commands/converter.py:184
 msgid "The provided tokens are not in a valid format."
-msgstr "Указанные токены в неправильном формате."
+msgstr "Указанные токены не в правильном формате."
 
-#: redbot/core/commands/converter.py:187
+#: redbot/core/commands/converter.py:218
 msgid "Unexpected key {key}"
 msgstr "Неожиданный ключ {key}"
 
-#: redbot/core/commands/help.py:580
+#: redbot/core/commands/converter.py:439
+msgid "Expected one of: {}"
+msgstr ""
+
+#: redbot/core/commands/help.py:689
 #, docstring
 msgid "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    "
 msgstr "\\n    Мне нужен кто-то\\n    (Помощь) не только\\n    (Помощь), что вам нужно,\\n    (Помощь!)\\n    "

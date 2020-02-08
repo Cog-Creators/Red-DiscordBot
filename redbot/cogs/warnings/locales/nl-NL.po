@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-14 04:24+0000\n"
-"PO-Revision-Date: 2020-01-07 21:48\n"
+"POT-Creation-Date: 2020-02-08 18:08+0000\n"
+"PO-Revision-Date: 2020-02-08 18:19\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -12,10 +12,10 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: nl\n"
-"X-Crowdin-File: /warnings/locales/messages.pot\n"
+"X-Crowdin-File: /cogs/warnings/locales/messages.pot\n"
 "Language: nl_NL\n"
 
-#: redbot/cogs/warnings/helpers.py:70
+#: redbot/cogs/warnings/helpers.py:72
 msgid "I could not find a command from that input!"
 msgstr "I kon geen commando vinden in deze input!"
 
@@ -35,198 +35,211 @@ msgstr "Je kan nu jouw antwoord invoeren."
 msgid "Enter the command to be run when the user **returns to a value below the points for this action to occur.** Please note that this is intended to be used for reversal of the action taken when the user exceeded the action's point value.\\n**If you do not wish to have a command run on dropping points, enter** `none`.\\n\\nEnter it exactly as you would if you were actually trying to run the command, except don't put a prefix and use `{user}` in place of any user/member arguments\\n\\nWARNING: The command entered will be run without regard to checks or cooldowns. Commands requiring bot owner are not allowed for security reasons.\\n\\nPlease wait 15 seconds before entering your response."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:25
+#: redbot/cogs/warnings/warnings.py:24
 #, docstring
 msgid "Warn misbehaving users and take automated actions."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:65
+#: redbot/cogs/warnings/warnings.py:64
 #, docstring
 msgid "Manage settings for Warnings."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:71
+#: redbot/cogs/warnings/warnings.py:70
 #, docstring
 msgid "Enable or disable custom reasons for a warning."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:75
+#: redbot/cogs/warnings/warnings.py:74
 msgid "Custom reasons have been enabled."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:77
+#: redbot/cogs/warnings/warnings.py:76
 msgid "Custom reasons have been disabled."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:83
+#: redbot/cogs/warnings/warnings.py:82
 #, docstring
 msgid "Manage automated actions for Warnings.\\n\\n        Actions are essentially command macros. Any command can be run\\n        when the action is initially triggered, and/or when the action\\n        is lifted.\\n\\n        Actions must be given a name and a points threshold. When a\\n        user is warned enough so that their points go over this\\n        threshold, the action will be executed.\\n        "
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:98
+#: redbot/cogs/warnings/warnings.py:97
 #, docstring
 msgid "Create an automated action.\\n\\n        Duplicate action names are not allowed.\\n        "
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:119
+#: redbot/cogs/warnings/warnings.py:118
 msgid "Duplicate action name found!"
 msgstr "Dubbele actienaam gevonden!"
 
-#: redbot/cogs/warnings/warnings.py:126
+#: redbot/cogs/warnings/warnings.py:125
 msgid "Action {name} has been added."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:131
+#: redbot/cogs/warnings/warnings.py:130
 #, docstring
 msgid "Delete the action with the specified name."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:144
+#: redbot/cogs/warnings/warnings.py:143
 msgid "No action named {name} exists!"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:150
+#: redbot/cogs/warnings/warnings.py:149
 #, docstring
 msgid "Manage warning reasons.\\n\\n        Reasons must be given a name, description and points value. The\\n        name of the reason must be given when a user is warned.\\n        "
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:162
+#: redbot/cogs/warnings/warnings.py:161
 #, docstring
 msgid "Create a warning reason."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:166
+#: redbot/cogs/warnings/warnings.py:165
 msgid "*Custom* cannot be used as a reason name!"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:176
+#: redbot/cogs/warnings/warnings.py:175
 msgid "The new reason has been registered."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:181
+#: redbot/cogs/warnings/warnings.py:180
 #, docstring
 msgid "Delete a warning reason."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:188
+#: redbot/cogs/warnings/warnings.py:187
 msgid "That is not a registered reason name."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:194
+#: redbot/cogs/warnings/warnings.py:193
 #, docstring
 msgid "List all configured reasons for Warnings."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:202
+#: redbot/cogs/warnings/warnings.py:201
 msgid "Reason: {name}"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:204 redbot/cogs/warnings/warnings.py:229
-#: redbot/cogs/warnings/warnings.py:308
+#: redbot/cogs/warnings/warnings.py:203 redbot/cogs/warnings/warnings.py:228
+#: redbot/cogs/warnings/warnings.py:307
 msgid "Points"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:208
+#: redbot/cogs/warnings/warnings.py:207
 msgid "Name: {reason_name}\\nPoints: {points}\\nDescription: {description}"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:215
+#: redbot/cogs/warnings/warnings.py:214
 msgid "There are no reasons configured!"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:221
+#: redbot/cogs/warnings/warnings.py:220
 #, docstring
 msgid "List all configured automated actions for Warnings."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:228
+#: redbot/cogs/warnings/warnings.py:227
 msgid "Action: {name}"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:230
+#: redbot/cogs/warnings/warnings.py:229
 msgid "Exceed command"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:231
+#: redbot/cogs/warnings/warnings.py:230
 msgid "Drop command"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:235
+#: redbot/cogs/warnings/warnings.py:234
 msgid "Name: {action_name}\\nPoints: {points}\\nExceed command: {exceed_command}\\nDrop command: {drop_command}"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:243
+#: redbot/cogs/warnings/warnings.py:242
 msgid "There are no actions configured!"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:256
+#: redbot/cogs/warnings/warnings.py:255
 #, docstring
 msgid "Warn the user for the specified reason.\\n\\n        `<points>` number of points the warning should be for. If no number is supplied\\n        1 point will be given. Pre-set warnings disregard this.\\n        `<reason>` can be a registered reason if it exists or a custom one\\n        is created by default.\\n        "
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:264
+#: redbot/cogs/warnings/warnings.py:263
 msgid "You cannot warn yourself."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:271
+#: redbot/cogs/warnings/warnings.py:270
 msgid "That is not a registered reason!"
 msgstr "Dat is geen geregistreerde reden!"
 
-#: redbot/cogs/warnings/warnings.py:279
+#: redbot/cogs/warnings/warnings.py:278
 msgid "Do `{prefix}warningset allowcustomreasons true` to enable custom reasons."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:305
+#: redbot/cogs/warnings/warnings.py:304
 msgid "Warning from {user}"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:310
+#: redbot/cogs/warnings/warnings.py:309
 msgid "You have received a warning in {guild_name}."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:318
+#: redbot/cogs/warnings/warnings.py:317
 msgid "{reason}\\n\\nUse `{prefix}unwarn {user} {message}` to remove this warning."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:321
+#: redbot/cogs/warnings/warnings.py:320
 msgid "{description}\\nPoints: {points}"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:341
+#: redbot/cogs/warnings/warnings.py:340
 msgid "User {user} has been warned."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:348
+#: redbot/cogs/warnings/warnings.py:346
 #, docstring
-msgid "List the warnings for the specified user.\\n\\n        Omit `<user>` to see your own warnings.\\n\\n        Note that showing warnings for users other than yourself requires\\n        appropriate permissions.\\n        "
+msgid "List the warnings for the specified user."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:360
-msgid "You are not allowed to check warnings for other users!"
-msgstr "Jij bent niet bevoegd om waarschuwingen voor andere gebruikers te controleren!"
-
-#: redbot/cogs/warnings/warnings.py:374
+#: redbot/cogs/warnings/warnings.py:359
 msgid "That user has no warnings!"
 msgstr "Deze gebruiker heeft geen waarschuwingen!"
 
-#: redbot/cogs/warnings/warnings.py:384
+#: redbot/cogs/warnings/warnings.py:363 redbot/cogs/warnings/warnings.py:392
+msgid "Unknown Moderator ({})"
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:364
 msgid "{num_points} point warning {reason_name} issued by {user} for {description}\\n"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:394
+#: redbot/cogs/warnings/warnings.py:374 redbot/cogs/warnings/warnings.py:403
 msgid "Warnings for {user}"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:401
+#: redbot/cogs/warnings/warnings.py:380
+#, docstring
+msgid "List warnings for yourself."
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:388
+msgid "You have no warnings!"
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:393
+msgid "{num_points} point warning {reason_name} issued by {user} for {description}\\n"
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:410
 #, docstring
 msgid "Remove a warning from a user."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:414
+#: redbot/cogs/warnings/warnings.py:423
 msgid "You cannot remove warnings from yourself."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:421
+#: redbot/cogs/warnings/warnings.py:430
 msgid "That warning doesn't exist!"
 msgstr ""
 
