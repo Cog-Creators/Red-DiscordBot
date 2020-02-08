@@ -39,7 +39,7 @@ class Audio(
         self.api_interface = None
         self.player_manager = None
         self.playlist_api = None
-        self.local_folder_current_path = cog_data_path(raw_name="Audio") / "localtracks"
+        self.local_folder_current_path = None
         self.db_conn = None
         self.session = aiohttp.ClientSession()
 
