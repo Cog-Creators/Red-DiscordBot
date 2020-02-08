@@ -1,6 +1,7 @@
 import asyncio
 import contextlib
 import glob
+import logging
 import ntpath
 import os
 import posixpath
@@ -61,6 +62,9 @@ _PARTIALLY_SUPPORTED_VIDEO_EXT: Tuple[str, ...] = (
     # ".swf",
 )
 _PARTIALLY_SUPPORTED_MUSIC_EXT += _PARTIALLY_SUPPORTED_VIDEO_EXT
+
+
+log = logging.getLogger("red.cogs.Audio.audio_dataclasses")
 
 
 class LocalPath:
@@ -155,21 +159,25 @@ class LocalPath:
 
     def rglob(self, pattern, folder=False) -> Iterator[str]:
         if folder:
-            return glob.iglob(f"{self.path}{os.sep}**{os.sep}", recursive=True)
+            return glob.iglob(f"{glob.escape(self.path)}{os.sep}**{os.sep}", recursive=True)
         else:
-            return glob.iglob(f"{self.path}{os.sep}**{os.sep}{pattern}", recursive=True)
+            return glob.iglob(
+                f"{glob.escape(self.path)}{os.sep}**{os.sep}*{pattern}", recursive=True
+            )
 
     def glob(self, pattern, folder=False) -> Iterator[str]:
         if folder:
-            return glob.iglob(f"{self.path}{os.sep}*{os.sep}", recursive=False)
+            return glob.iglob(f"{glob.escape(self.path)}{os.sep}*{os.sep}", recursive=False)
         else:
-            return glob.iglob(f"{self.path}{os.sep}*{pattern}", recursive=False)
+            return glob.iglob(f"{glob.escape(self.path)}{os.sep}*{pattern}", recursive=False)
 
     async def _multiglob(self, pattern: str, folder: bool, callable: Callable):
         for rp in callable(pattern):
             rp_local = LocalPath(rp, self._localtrack_folder)
-            if (folder and rp_local.is_dir() and rp_local.exists()) or (
-                rp_local.suffix in self._all_music_ext and rp_local.is_file() and rp_local.exists()
+            if (
+                (folder and rp_local.is_dir() and rp_local.exists())
+                or (not folder and rp_local.suffix in self._all_music_ext and rp_local.is_file())
+                and rp_local.exists()
             ):
                 yield rp_local
                 await asyncio.sleep(0)
@@ -225,6 +233,7 @@ class LocalPath:
             with contextlib.suppress(ValueError):
                 if (
                     f not in return_folders
+                    and f.is_dir()
                     and f.path != self.localtrack_folder
                     and f.path.relative_to(self.path)
                 ):
@@ -342,6 +351,7 @@ class Query:
             self.local_track_path: Optional[LocalPath] = _localtrack
             self.track: str = str(_localtrack.absolute())
             self.is_local: bool = True
+            self.uri = self.track
         else:
             self.local_track_path: Optional[LocalPath] = None
             self.track: str = str(query)

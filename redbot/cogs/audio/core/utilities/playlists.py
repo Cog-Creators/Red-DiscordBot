@@ -472,7 +472,10 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return [], [], playlist
         results = {}
         updated_tracks = await self._playlist_tracks(
-            ctx, player, Query.process_input(playlist.url, self.local_folder_current_path)
+            ctx,
+            player,
+            Query.process_input(playlist.url, self.local_folder_current_path),
+            skip_cache=True,
         )
         if isinstance(updated_tracks, discord.Message):
             return [], [], playlist
@@ -547,7 +550,11 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return True
 
     async def _playlist_tracks(
-        self, ctx: commands.Context, player: lavalink.player_manager.Player, query: Query
+        self,
+        ctx: commands.Context,
+        player: lavalink.player_manager.Player,
+        query: Query,
+        skip_cache: bool = False,
     ) -> Union[discord.Message, None, List[MutableMapping]]:
         search = query.is_search
         tracklist = []
@@ -562,7 +569,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     )
             except KeyError:
                 pass
-            tracks = await self._get_spotify_tracks(ctx, query)
+            tracks = await self._get_spotify_tracks(ctx, query, forced=skip_cache)
 
             if isinstance(tracks, discord.Message):
                 return None
@@ -583,7 +590,9 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             self._play_lock(ctx, False)
         elif query.is_search:
             try:
-                result, called_api = await self.api_interface.fetch_track(ctx, player, query)
+                result, called_api = await self.api_interface.fetch_track(
+                    ctx, player, query, forced=skip_cache
+                )
             except TrackEnqueueError:
                 self._play_lock(ctx, False)
                 return await self._embed_msg(
@@ -607,7 +616,9 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 return await self._embed_msg(ctx, embed=embed)
         else:
             try:
-                result, called_api = await self.api_interface.fetch_track(ctx, player, query)
+                result, called_api = await self.api_interface.fetch_track(
+                    ctx, player, query, forced=skip_cache
+                )
             except TrackEnqueueError:
                 self._play_lock(ctx, False)
                 return await self._embed_msg(

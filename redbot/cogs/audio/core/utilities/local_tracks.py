@@ -18,9 +18,9 @@ log = logging.getLogger("red.cogs.Audio.cog.Utilities.local_tracks")
 
 class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def get_localtracks_folders(
-        self, ctx: commands.Context, search_subfolders: bool = False
+        self, ctx: commands.Context, search_subfolders: bool = True
     ) -> List[Union[Path, LocalPath]]:
-        audio_data = LocalPath(None, self.local_folder_current_path).localtrack_folder.absolute()
+        audio_data = LocalPath(None, self.local_folder_current_path)
         if not await self.has_localtracks_check(ctx):
             return []
 
@@ -85,7 +85,6 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
     ) -> List[Query]:
         if not await self.has_localtracks_check(ctx) or query.local_track_path is None:
             return []
-
         return (
             await query.local_track_path.tracks_in_tree()
             if query.search_subfolders
