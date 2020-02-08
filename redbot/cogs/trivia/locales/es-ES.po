@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-14 04:24+0000\n"
-"PO-Revision-Date: 2020-01-07 21:47\n"
+"POT-Creation-Date: 2020-02-08 18:08+0000\n"
+"PO-Revision-Date: 2020-02-08 18:22\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -12,121 +12,121 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: es-ES\n"
-"X-Crowdin-File: /trivia/locales/messages.pot\n"
+"X-Crowdin-File: /cogs/trivia/locales/messages.pot\n"
 "Language: es_ES\n"
 
 #: redbot/cogs/trivia/session.py:20
 msgid "I know this one! {answer}!"
-msgstr "¡Sé esto! {answer}!"
+msgstr ""
 
 #: redbot/cogs/trivia/session.py:21
 msgid "Easy: {answer}."
-msgstr "Fácil: {answer}."
+msgstr ""
 
 #: redbot/cogs/trivia/session.py:22
 msgid "Oh really? It's {answer} of course."
-msgstr "¿Enserio? Es {answer} por supuesto."
+msgstr ""
 
 #: redbot/cogs/trivia/session.py:25
 msgid "To the next one I guess..."
-msgstr "A la siguiente que supongo..."
+msgstr ""
 
 #: redbot/cogs/trivia/session.py:26
 msgid "Moving on..."
-msgstr "Avanzando..."
+msgstr ""
 
 #: redbot/cogs/trivia/session.py:27
 msgid "I'm sure you'll know the answer of the next one."
-msgstr "Estoy seguro de que conocerás la respuesta de la siguiente."
+msgstr ""
 
 #: redbot/cogs/trivia/session.py:28
 msgid "😔 Next one."
-msgstr "😔 Siguiente."
+msgstr ""
 
 #: redbot/cogs/trivia/session.py:117
 msgid "Question number {num}!"
-msgstr "¡Número de pregunta {num}!"
+msgstr ""
 
 #: redbot/cogs/trivia/session.py:126
 msgid "There are no more questions!"
-msgstr "No hay más preguntas!"
+msgstr ""
 
 #: redbot/cogs/trivia/session.py:134
 msgid "{trivia_list} (by {author})"
-msgstr "{trivia_list} (por {author})"
+msgstr ""
 
 #: redbot/cogs/trivia/session.py:139
 msgid "Starting Trivia: {list_names}"
-msgstr "Iniciando Trivia: {list_names}"
+msgstr ""
 
 #: redbot/cogs/trivia/session.py:185
 msgid "Guys...? Well, I guess I'll stop then."
-msgstr "¿Chicos...? Bueno, supongo que voy a parar entonces."
+msgstr ""
 
 #: redbot/cogs/trivia/session.py:193
 msgid " **+1** for me!"
-msgstr " **+1** para mí!"
+msgstr ""
 
 #: redbot/cogs/trivia/session.py:198
 msgid "You got it {user}! **+1** to you!"
-msgstr "¡Lo has conseguido {user}! **+1** para ti!"
+msgstr ""
 
 #: redbot/cogs/trivia/session.py:290
 msgid "Congratulations, {user}, you have received {num} {currency} for coming first."
-msgstr "Felicidades, {user}, has recibido {num} {currency} por venir primero."
+msgstr ""
 
 #: redbot/cogs/trivia/trivia.py:31
 #, docstring
 msgid "Play trivia with friends!"
-msgstr "¡Juega trivia con amigos!"
+msgstr ""
 
 #: redbot/cogs/trivia/trivia.py:54
 #, docstring
 msgid "Manage Trivia settings."
-msgstr "Administrar ajustes de Trivia."
+msgstr ""
 
 #: redbot/cogs/trivia/trivia.py:59
 msgid "Current settings\\nBot gains points: {bot_plays}\\nAnswer time limit: {delay} seconds\\nLack of response timeout: {timeout} seconds\\nPoints to win: {max_score}\\nReveal answer on timeout: {reveal_answer}\\nPayout multiplier: {payout_multiplier}\\nAllow lists to override settings: {allow_override}"
-msgstr "Configuración actual\\nBot gana puntos: {bot_plays}\\nTiempo de respuesta: {delay} segundos\\nFalta de tiempo de respuesta: {timeout} segundos\\nPuntos para ganar: {max_score}\\nRevela respuesta al finalizar el tiempo: {reveal_answer}\\nmultiplicador de pago: {payout_multiplier}\\nPermitir listas anular la configuración: {allow_override} {allow_override}"
+msgstr ""
 
 #: redbot/cogs/trivia/trivia.py:75
 #, docstring
 msgid "Set the total points required to win."
-msgstr "Establece los puntos totales necesarios para ganar."
+msgstr ""
 
 #: redbot/cogs/trivia/trivia.py:77
 msgid "Score must be greater than 0."
-msgstr "El marcador debe ser mayor que 0."
+msgstr ""
 
 #: redbot/cogs/trivia/trivia.py:81
 msgid "Done. Points required to win set to {num}."
-msgstr "Hecho. Puntos requeridos para ganar establecidos en {num}."
+msgstr ""
 
 #: redbot/cogs/trivia/trivia.py:85
 #, docstring
 msgid "Set the maximum seconds permitted to answer a question."
-msgstr "Establecer los segundos máximos permitidos para responder a una pregunta."
+msgstr ""
 
 #: redbot/cogs/trivia/trivia.py:87
 msgid "Must be at least 4 seconds."
-msgstr "Debe ser al menos 4 segundos."
+msgstr ""
 
 #: redbot/cogs/trivia/trivia.py:91
 msgid "Done. Maximum seconds to answer set to {num}."
-msgstr "Hecho. Máximo segundos para responder a {num}."
+msgstr ""
 
 #: redbot/cogs/trivia/trivia.py:95
 #, docstring
 msgid "Set how long until trivia stops due to no response."
-msgstr "Establecer cuánto tiempo hasta que se detiene la trivia debido a que no hay respuesta."
+msgstr ""
 
 #: redbot/cogs/trivia/trivia.py:98
 msgid "Must be larger than the answer time limit."
-msgstr "Debe ser mayor que el límite de tiempo de respuesta."
+msgstr ""
 
 #: redbot/cogs/trivia/trivia.py:102
 msgid "Done. Trivia sessions will now time out after {num} seconds of no responses."
-msgstr "Hecho. Las sesiones de Trivia ahora se agotarán después de {num} segundos de no respuestas."
+msgstr ""
 
 #: redbot/cogs/trivia/trivia.py:109
 #, docstring
@@ -231,50 +231,50 @@ msgstr ""
 msgid "Available trivia lists"
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:272
+#: redbot/cogs/trivia/trivia.py:274
 #, docstring
 msgid "Leaderboard for trivia.\\n\\n        Defaults to the top 10 of this server, sorted by total wins. Use\\n        subcommands for a more customised leaderboard.\\n        "
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:288
+#: redbot/cogs/trivia/trivia.py:289
 #, docstring
 msgid "Leaderboard for this server.\\n\\n        `<sort_by>` can be any of the following fields:\\n         - `wins`  : total wins\\n         - `avg`   : average score\\n         - `total` : total correct answers\\n         - `games` : total games played\\n\\n        `<top>` is the number of ranks to show on the leaderboard.\\n        "
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:301 redbot/cogs/trivia/trivia.py:330
+#: redbot/cogs/trivia/trivia.py:302 redbot/cogs/trivia/trivia.py:331
 msgid "Unknown field `{field_name}`, see `{prefix}help trivia leaderboard server` for valid fields to sort by."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:317
+#: redbot/cogs/trivia/trivia.py:318
 #, docstring
 msgid "Global trivia leaderboard.\\n\\n        `<sort_by>` can be any of the following fields:\\n         - `wins`  : total wins\\n         - `avg`   : average score\\n         - `total` : total correct answers from all sessions\\n         - `games` : total games played\\n\\n        `<top>` is the number of ranks to show on the leaderboard.\\n        "
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:385
+#: redbot/cogs/trivia/trivia.py:386
 msgid "There are no scores on record!"
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:415
+#: redbot/cogs/trivia/trivia.py:416
 msgid "Rank"
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:416
+#: redbot/cogs/trivia/trivia.py:417
 msgid "Member"
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:417
+#: redbot/cogs/trivia/trivia.py:418
 msgid "Wins"
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:418
+#: redbot/cogs/trivia/trivia.py:419
 msgid "Games Played"
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:419
+#: redbot/cogs/trivia/trivia.py:420
 msgid "Total Score"
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:420
+#: redbot/cogs/trivia/trivia.py:421
 msgid "Average Score"
 msgstr ""
 
