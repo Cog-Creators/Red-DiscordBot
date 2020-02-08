@@ -196,3 +196,5 @@ version_info = VersionInfo.from_str(__version__)
 
 # Filter fuzzywuzzy slow sequence matcher warning
 _warnings.filterwarnings("ignore", module=r"fuzzywuzzy.*")
+# Show DeprecationWarning
+_warnings.filterwarnings("default", category=DeprecationWarning)
