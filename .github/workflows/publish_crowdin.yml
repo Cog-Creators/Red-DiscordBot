@@ -1,8 +1,13 @@
 name: Publish to Crowdin
 on:
-  push:
-    tags:
-    - "*"
+  schedule:
+    - cron: '0 12 * * THU'
+  repository_dispatch:
+    types: crowdin
+
+env:
+  CROWDIN_API_KEY: ${{ secrets.crowdin_token}}
+  CROWDIN_PROJECT_ID: ${{ secrets.crowdin_identifier }}
 
 jobs:
   deploy:
@@ -20,9 +25,24 @@ jobs:
         sudo apt-get update -qq
         sudo apt-get install -y crowdin
         pip install redgettext==3.1
-    - name: Publish
-      env:
-        CROWDIN_API_KEY: ${{ secrets.crowdin_token}}
-        CROWDIN_PROJECT_ID: ${{ secrets.crowdin_identifier }}
+    - name: Generate source files
+      run: |
+        make gettext
+    - name: Upload source files
       run: |
         make upload_translations
+    - name: Download translations
+      run: |
+        make download_translations
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: Automated Crowdin downstream
+        title: "[i18n] Automated Crowdin downstream"
+        body: |
+          This is an automated PR.
+          Please ensure that there are no errors or invalid files are in the PR.
+        labels: "Automated PR, Category: i18n"
+        branch: "automated/i18n"
+
