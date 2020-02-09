@@ -439,7 +439,6 @@ class Warnings(commands.Cog):
                 await member_settings.total_points.set(current_point_count)
                 user_warnings.pop(warn_id)
         try:
-            reason_msg = "{description}".format(description=reason)
             await modlog.create_case(
                 self.bot,
                 ctx.guild,
@@ -447,7 +446,7 @@ class Warnings(commands.Cog):
                 "unwarned",
                 member,
                 ctx.message.author,
-                reason_msg,
+                reason,
                 until=None,
                 channel=None,
             )
