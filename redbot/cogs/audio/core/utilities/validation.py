@@ -50,8 +50,8 @@ class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
             url_domain = ".".join(query_url.path.split("/")[0].split(".")[-2:])
         return True if url_domain in valid_tld else False
 
-    def userlimit(self, channel: discord.VoiceChannel) -> bool:
-        return not (channel.user_limit == 0 or channel.user_limit >= len(channel.members) + 1)
+    def is_vc_full(self, channel: discord.VoiceChannel) -> bool:
+        return not (channel.user_limit == 0 or channel.user_limit > len(channel.members))
 
     async def is_allowed(
         self, config: Config, guild: discord.Guild, query: str, query_obj: Query = None

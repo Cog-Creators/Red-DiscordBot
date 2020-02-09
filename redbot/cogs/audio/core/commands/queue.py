@@ -307,7 +307,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             if (
                 not ctx.author.voice.channel.permissions_for(ctx.me).connect
                 or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                and self.userlimit(ctx.author.voice.channel)
+                and self.is_vc_full(ctx.author.voice.channel)
             ):
                 ctx.command.reset_cooldown(ctx)
                 return await self._embed_msg(
