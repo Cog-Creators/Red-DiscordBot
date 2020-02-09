@@ -1,5 +1,16 @@
 name: Tests
-on: [push, pull_request]
+on:
+  pull_request:
+    with:
+      ref: ''
+  push:
+    with:
+      ref: ''
+  repository_dispatch:
+    types:
+      - crowdin_pr
+    with:
+      ref: ${{ github.event.client_payload.ref }}
 
 jobs:
     tox:
@@ -26,6 +37,7 @@ jobs:
         - name: Set up Python
           uses: actions/setup-python@v1
           with:
+            ref: ${{ env.ref }}
             python-version: ${{ matrix.python_version }}
         - name: Install tox
           run: |

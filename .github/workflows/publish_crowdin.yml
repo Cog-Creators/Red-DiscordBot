@@ -37,12 +37,18 @@ jobs:
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v2
       with:
-        token: ${{ secrets.cogcreators_bot_repo_scoped }}
+        token: ${{ secrets.GITHUB_TOKEN }}
         commit-message: Automated Crowdin downstream
-        committer: Cog-Creators Bot <51291613+Cog-CreatorsBot@users.noreply.github.com>
         title: "[i18n] Automated Crowdin downstream"
         body: |
           This is an automated PR.
           Please ensure that there are no errors or invalid files are in the PR.
         labels: "Automated PR, Category: i18n"
         branch: "automated/i18n"
+    - name: Repository Dispatch
+      uses: peter-evans/repository-dispatch@v1
+      with:
+        token: ${{ secrets.cogcreators_bot_repo_scoped }}
+        repository: Cog-Creators/Red-DiscordBot
+        event-type: dispatched_test
+        client-payload: '{"ref": "automated/i18n"}'
