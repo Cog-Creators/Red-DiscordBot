@@ -449,7 +449,7 @@ class Warnings(commands.Cog):
             else:
                 reason_type = registered_reasons[reason.lower()]
         if reason_type is None:
-            return
+            return await ctx.send(msg)
 
         member_settings = self.config.member(member)
         current_point_count = await member_settings.total_points()
