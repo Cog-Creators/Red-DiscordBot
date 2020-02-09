@@ -268,7 +268,7 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def userlimit(self, channel: discord.VoiceChannel) -> bool:
+    def is_vc_full(self, channel: discord.VoiceChannel) -> bool:
         raise NotImplementedError()
 
     @abstractmethod

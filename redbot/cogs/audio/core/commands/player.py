@@ -53,7 +53,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 if (
                     not ctx.author.voice.channel.permissions_for(ctx.me).connect
                     or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                    and self.userlimit(ctx.author.voice.channel)
+                    and self.is_vc_full(ctx.author.voice.channel)
                 ):
                     return await self._embed_msg(
                         ctx,
@@ -157,7 +157,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 if (
                     not ctx.author.voice.channel.permissions_for(ctx.me).connect
                     or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                    and self.userlimit(ctx.author.voice.channel)
+                    and self.is_vc_full(ctx.author.voice.channel)
                 ):
                     return await self._embed_msg(
                         ctx,
@@ -405,7 +405,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 if (
                     not ctx.author.voice.channel.permissions_for(ctx.me).connect
                     or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                    and self.userlimit(ctx.author.voice.channel)
+                    and self.is_vc_full(ctx.author.voice.channel)
                 ):
                     return await self._embed_msg(
                         ctx,
@@ -519,7 +519,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 if (
                     not ctx.author.voice.channel.permissions_for(ctx.me).connect
                     or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                    and self.userlimit(ctx.author.voice.channel)
+                    and self.is_vc_full(ctx.author.voice.channel)
                 ):
                     return await self._embed_msg(
                         ctx,
@@ -633,7 +633,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 if (
                     not ctx.author.voice.channel.permissions_for(ctx.me).connect
                     or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                    and self.userlimit(ctx.author.voice.channel)
+                    and self.is_vc_full(ctx.author.voice.channel)
                 ):
                     return await self._embed_msg(
                         ctx,
