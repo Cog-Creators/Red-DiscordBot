@@ -32,6 +32,14 @@ class RepoJSONMixin:
                 info = {}
         else:
             info = {}
+        if not isinstance(info, dict):
+            log.warning(
+                "Invalid top-level structure (expected dict, got %s)"
+                " in JSON information file at path: %s",
+                type(info).__name__,
+                self._info_file,
+            )
+            info = {}
         self._info = info
 
         update_mixin(self, REPO_SCHEMA)
