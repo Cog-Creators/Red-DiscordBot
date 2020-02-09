@@ -1,12 +1,22 @@
 name: Lint Python
-on: [push, pull_request] 
+on:
+  pull_request:
+  push:
+  repository_dispatch:
+    types:
+      - dispatched_test
+
+env:
+  ref: ${{ github.event.client_payload.ref || '' }}
 
 jobs:
   lint_python:
     name: Lint Python
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ env.ref }}
       - uses: actions/setup-python@v1
         with:
           python_version: "3.8"
