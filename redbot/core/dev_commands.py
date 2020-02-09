@@ -180,7 +180,8 @@ class Dev(commands.Cog):
         to_compile = "async def func():\n%s" % textwrap.indent(body, "  ")
 
         try:
-            exec(to_compile, env)
+            compiled = self.async_compile(to_compile, "<string>", "exec")
+            exec(compiled, env)
         except SyntaxError as e:
             return await ctx.send(self.get_syntax_error(e))
 
