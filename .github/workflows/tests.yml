@@ -7,7 +7,7 @@ on:
       - dispatched_test
 
 env:
-  ref: ${{ github.event.client_payload.ref || Null }}
+  ref: ${{ github.event.client_payload.ref || '' }}
 
 jobs:
     tox:
