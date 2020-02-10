@@ -24,7 +24,7 @@ Then create the new service file:
 
 :code:`sudo -e /etc/systemd/system/red@.service`
 
-Paste the following and replace all instances of :code:`username` with the username, and :code:`path` with the location you obtained above:
+Paste the following and replace all instances of :code:`username` with your Linux username (you can use the :code:`whoami` command if you're unsure), and :code:`path` with the location you obtained above:
 
 .. code-block:: none
 
