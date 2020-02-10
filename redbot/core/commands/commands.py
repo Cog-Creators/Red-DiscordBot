@@ -649,8 +649,8 @@ class Command(CogCommandMixin, DPYCommand):
 
     def format_shortdoc_for_context(self, ctx: "Context") -> str:
         """
-        This formats the short version of the help 
-        tring based on values in context
+        This formats the short version of the help
+        string based on values in context
 
         See ``format_text_for_context`` for the actual implementation details
 
