@@ -13,6 +13,7 @@ In order to create the service file, you will first need to know two things, you
 First, your Linux :code:`username` can be fetched with the following command:
 
 .. code-block:: bash
+
     whoami
 
 Next, your python :code:`path` can be fetched with the following commands:
