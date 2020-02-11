@@ -21,7 +21,7 @@ Next, your python :code:`path` can be fetched with the following commands:
 .. code-block:: bash
 
     # If redbot is installed in a venv
-    source redenv/bin/activate
+    source ~/redenv/bin/activate
     which python
 
     # If redbot is installed in a pyenv virtualenv
