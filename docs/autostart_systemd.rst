@@ -20,12 +20,12 @@ Next, your python :code:`path` can be fetched with the following commands:
 
 .. code-block:: bash
 
-    # If redbot is installed in a virtualenv
+    # If redbot is installed in a venv
     source redenv/bin/activate
     which python
 
-    # If you are using pyenv
-    pyenv shell <name>
+    # If redbot is installed in a pyenv virtualenv
+    pyenv shell <virtualenv_name>
     pyenv which python
 
 Then create the new service file:
