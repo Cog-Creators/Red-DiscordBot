@@ -8,7 +8,14 @@ Setting up auto-restart using systemd on Linux
 Creating the service file
 -------------------------
 
-In order to create the service file, you will first need the location of your :code:`redbot` binary.
+In order to create the service file, you will first need to know two things, your Linux :code:`username` and your Python :code:`path`
+
+First, your Linux :code:`username` can be fetched with the following command:
+
+.. code-block:: bash
+    whoami
+
+Next, your python :code:`path` can be fetched with the following commands:
 
 .. code-block:: bash
 
@@ -24,7 +31,7 @@ Then create the new service file:
 
 :code:`sudo -e /etc/systemd/system/red@.service`
 
-Paste the following and replace all instances of :code:`username` with your Linux username (you can use the :code:`whoami` command if you're unsure), and :code:`path` with the location you obtained above:
+Paste the following in the file, and replace all instances of :code:`username` with the Linux username you retrieved above, and :code:`path` with the python path you retrieved above.
 
 .. code-block:: none
 
