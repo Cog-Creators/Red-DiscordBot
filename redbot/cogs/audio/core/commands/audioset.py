@@ -1170,7 +1170,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         ).format(prefix=ctx.prefix)
         await ctx.maybe_send_embed(message)
 
-    @command_audioset.command(name="cache", usage="level=[5, 3, 2, 1, 0, -1, -2, -3]")
+    @command_audioset.command(name="cache")
     @checks.is_owner()
     async def command_audioset_cache(self, ctx: commands.Context, *, level: int = None):
         """Sets the caching level.
