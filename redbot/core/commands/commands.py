@@ -317,7 +317,7 @@ class Command(CogCommandMixin, DPYCommand):
             self.module = function.__module__
             globals_ = function.__globals__
 
-        signature = inspect.signature(function, follow_wrapped=False)
+        signature = inspect.signature(function)
         self.params = signature.parameters.copy()
 
         # PEP-563 allows postponing evaluation of annotations with a __future__
