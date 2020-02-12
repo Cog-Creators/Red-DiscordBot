@@ -47,7 +47,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
         msg = ""
         for p in lavalink.all_players():
             connect_start = p.fetch("connect")
-            connect_dur = self.dynamic_time(
+            connect_dur = self.get_time_string(
                 int((datetime.datetime.utcnow() - connect_start).total_seconds())
             )
             try:
@@ -75,7 +75,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
 
         if total_num == 0:
-            return await self._embed_msg(ctx, title=_("Not connected anywhere."))
+            return await self.send_embed_msg(ctx, title=_("Not connected anywhere."))
         servers_embed = []
         pages = 1
         for page in pagify(msg, delims=["\n"], page_length=1500):
@@ -102,7 +102,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_percent(self, ctx: commands.Context):
         """Queue percentage."""
         if not self._player_check(ctx):
-            return await self._embed_msg(ctx, title=_("Nothing playing."))
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
         player = lavalink.get_player(ctx.guild.id)
         queue_tracks = player.queue
         requesters = {"total": 0, "users": {}}
@@ -127,7 +127,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
             await _usercount(req_username)
         except AttributeError:
-            return await self._embed_msg(ctx, title=_("There's  nothing in the queue."))
+            return await self.send_embed_msg(ctx, title=_("There's  nothing in the queue."))
 
         for req_username in requesters["users"]:
             percentage = float(requesters["users"][req_username]["songcount"]) / float(
@@ -148,6 +148,6 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
         queue_user = ["{}: {:g}%".format(x[0], x[1]) for x in top_queue_users]
         queue_user_list = "\n".join(queue_user)
-        await self._embed_msg(
+        await self.send_embed_msg(
             ctx, title=_("Queued and playing tracks:"), description=queue_user_list
         )

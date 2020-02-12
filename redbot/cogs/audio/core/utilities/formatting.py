@@ -87,24 +87,24 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 description = EmptyEmbed
                 if await ctx.bot.is_owner(ctx.author):
                     description = _("Please check your console or logs for details.")
-                return await self._embed_msg(ctx, title=msg, description=description)
+                return await self.send_embed_msg(ctx, title=msg, description=description)
             try:
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
             except AttributeError:
-                return await self._embed_msg(ctx, title=_("Connect to a voice channel first."))
+                return await self.send_embed_msg(ctx, title=_("Connect to a voice channel first."))
             except IndexError:
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx, title=_("Connection to Lavalink has not yet been established.")
                 )
         player = lavalink.get_player(ctx.guild.id)
         guild_data = await self.config.guild(ctx.guild).all()
         if len(player.queue) >= 10000:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("Queue size limit reached.")
             )
-        if not await self._currency_check(ctx, guild_data["jukebox_price"]):
+        if not await self.maybe_charge_requester(ctx, guild_data["jukebox_price"]):
             return
         try:
             if emoji == "\N{DIGIT ONE}\N{COMBINING ENCLOSING KEYCAP}":
@@ -143,7 +143,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         queue_total_duration = self.format_time(queue_dur)
         before_queue_length = len(player.queue)
 
-        if not await self.is_allowed(
+        if not await self.is_query_allowed(
             self.config,
             ctx.guild,
             (
@@ -153,18 +153,20 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         ):
             if IS_DEBUG:
                 log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
-            self._play_lock(ctx, False)
-            return await self._embed_msg(ctx, title=_("This track is not allowed in this server."))
+            self.update_player_lock(ctx, False)
+            return await self.send_embed_msg(
+                ctx, title=_("This track is not allowed in this server.")
+            )
         elif guild_data["maxlength"] > 0:
 
-            if self.track_limit(search_choice.length, guild_data["maxlength"]):
+            if self.is_track_too_long(search_choice.length, guild_data["maxlength"]):
                 player.add(ctx.author, search_choice)
                 player.maybe_shuffle()
                 self.bot.dispatch(
                     "red_audio_track_enqueue", player.channel.guild, search_choice, ctx.author
                 )
             else:
-                return await self._embed_msg(ctx, title=_("Track exceeds maximum length."))
+                return await self.send_embed_msg(ctx, title=_("Track exceeds maximum length."))
         else:
             player.add(ctx.author, search_choice)
             player.maybe_shuffle()
@@ -181,7 +183,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         if not player.current:
             await player.play()
-        return await self._embed_msg(ctx, embed=songembed)
+        return await self.send_embed_msg(ctx, embed=songembed)
 
     def _format_search_options(self, search_choice):
         query = Query.process_input(search_choice, self.local_folder_current_path)

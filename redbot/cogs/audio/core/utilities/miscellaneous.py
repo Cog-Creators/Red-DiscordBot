@@ -33,7 +33,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         """Non blocking version of clear_react."""
         return self.bot.loop.create_task(self.clear_react(message, emoji))
 
-    async def _currency_check(self, ctx: commands.Context, jukebox_price: int) -> bool:
+    async def maybe_charge_requester(self, ctx: commands.Context, jukebox_price: int) -> bool:
         jukebox = await self.config.guild(ctx.guild).jukebox()
         if jukebox and not await self._can_instaskip(ctx, ctx.author):
             can_spend = await bank.can_spend(ctx.author, jukebox_price)
@@ -42,7 +42,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             else:
                 credits_name = await bank.get_currency_name(ctx.guild)
                 bal = await bank.get_balance(ctx.author)
-                await self._embed_msg(
+                await self.send_embed_msg(
                     ctx,
                     title=_("Not enough {currency}").format(currency=credits_name),
                     description=_(
@@ -57,7 +57,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         else:
             return True
 
-    async def _embed_msg(self, ctx: commands.Context, **kwargs) -> discord.Message:
+    async def send_embed_msg(self, ctx: commands.Context, **kwargs) -> discord.Message:
         colour = kwargs.get("colour") or kwargs.get("color") or await self.bot.get_embed_color(ctx)
         title = kwargs.get("title", EmptyEmbed) or EmptyEmbed
         _type = kwargs.get("type", "rich") or "rich"
@@ -85,7 +85,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             embed.set_thumbnail(url=thumbnail)
         return await ctx.send(embed=embed)
 
-    async def _process_db(self, ctx: commands.Context) -> None:
+    async def maybe_run_pending_db_tasks(self, ctx: commands.Context) -> None:
         if self.api_interface is not None:
             await self.api_interface.run_tasks(ctx)
 
@@ -103,7 +103,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             "youtube_api": youtube.get("api_key", ""),
         }
 
-    async def _check_external(self) -> bool:
+    async def update_external_status(self) -> bool:
         external = await self.config.use_external_lavalink()
         if not external:
             if self.player_manager is not None:
@@ -145,7 +145,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         except discord.HTTPException:
             return
 
-    def track_creator(
+    def get_track_json(
         self,
         player: lavalink.Player,
         position: Union[int, str] = None,
@@ -222,7 +222,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             remain = 0
         return remain
 
-    def dynamic_time(self, seconds: int) -> str:
+    def get_time_string(self, seconds: int) -> str:
         m, s = divmod(seconds, 60)
         h, m = divmod(m, 60)
         d, h = divmod(h, 24)

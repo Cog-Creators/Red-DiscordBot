@@ -55,7 +55,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
         }
 
         if not self._player_check(ctx):
-            return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
+            return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
         player = lavalink.get_player(ctx.guild.id)
 
         if player.current and not player.queue:
@@ -99,7 +99,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 + ("\N{WHITE HEAVY CHECK MARK}" if repeat else "\N{CROSS MARK}")
             )
             embed.set_footer(text=text)
-            message = await self._embed_msg(ctx, embed=embed)
+            message = await self.send_embed_msg(ctx, embed=embed)
             dj_enabled = self._dj_status_cache.setdefault(
                 ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
             )
@@ -107,7 +107,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             if (
                 (dj_enabled or vote_enabled)
                 and not await self._can_instaskip(ctx, ctx.author)
-                and not await self._is_alone(ctx)
+                and not await self.is_requester_alone(ctx)
             ):
                 return
 
@@ -141,7 +141,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await ctx.invoke(self.command_pause)
             return
         elif not player.current and not player.queue:
-            return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
+            return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
 
         async with ctx.typing():
             limited_queue = player.queue[:500]  # TODO: Improve when Toby menu's are merged
@@ -161,24 +161,24 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
         try:
             player = lavalink.get_player(ctx.guild.id)
         except KeyError:
-            return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
+            return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         if not self._player_check(ctx) or not player.queue:
-            return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
+            return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
         if (
             dj_enabled
             and not await self._can_instaskip(ctx, ctx.author)
-            and not await self._is_alone(ctx)
+            and not await self.is_requester_alone(ctx)
         ):
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Clear Queue"),
                 description=_("You need the DJ role to clear the queue."),
             )
         player.queue.clear()
-        await self._embed_msg(
+        await self.send_embed_msg(
             ctx, title=_("Queue Modified"), description=_("The queue has been cleared.")
         )
 
@@ -188,18 +188,18 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
         try:
             player = lavalink.get_player(ctx.guild.id)
         except KeyError:
-            return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
+            return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         if not self._player_check(ctx) or not player.queue:
-            return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
+            return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
         if (
             dj_enabled
             and not await self._can_instaskip(ctx, ctx.author)
-            and not await self._is_alone(ctx)
+            and not await self.is_requester_alone(ctx)
         ):
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Clean Queue"),
                 description=_("You need the DJ role to clean the queue."),
@@ -215,9 +215,9 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             await asyncio.sleep(0)
         player.queue = clean_tracks
         if removed_tracks == 0:
-            await self._embed_msg(ctx, title=_("Removed 0 tracks."))
+            await self.send_embed_msg(ctx, title=_("Removed 0 tracks."))
         else:
-            await self._embed_msg(
+            await self.send_embed_msg(
                 ctx,
                 title=_("Removed racks from the queue"),
                 description=_(
@@ -233,9 +233,9 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
         try:
             player = lavalink.get_player(ctx.guild.id)
         except KeyError:
-            return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
+            return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
         if not self._player_check(ctx) or not player.queue:
-            return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
+            return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
 
         clean_tracks = []
         removed_tracks = 0
@@ -247,9 +247,9 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             await asyncio.sleep(0)
         player.queue = clean_tracks
         if removed_tracks == 0:
-            await self._embed_msg(ctx, title=_("Removed 0 tracks."))
+            await self.send_embed_msg(ctx, title=_("Removed 0 tracks."))
         else:
-            await self._embed_msg(
+            await self.send_embed_msg(
                 ctx,
                 title=_("Removed tracks from the queue"),
                 description=_(
@@ -263,13 +263,13 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
         try:
             player = lavalink.get_player(ctx.guild.id)
         except KeyError:
-            return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
+            return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
         if not self._player_check(ctx) or not player.queue:
-            return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
+            return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
 
         search_list = await self._build_queue_search_list(player.queue, search_words)
         if not search_list:
-            return await self._embed_msg(ctx, title=_("No matches."))
+            return await self.send_embed_msg(ctx, title=_("No matches."))
 
         len_search_pages = math.ceil(len(search_list) / 10)
         search_page_list = []
@@ -288,17 +288,17 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
         if (
             dj_enabled
             and not await self._can_instaskip(ctx, ctx.author)
-            and not await self._is_alone(ctx)
+            and not await self.is_requester_alone(ctx)
         ):
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Shuffle Queue"),
                 description=_("You need the DJ role to shuffle the queue."),
             )
         if not self._player_check(ctx):
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Shuffle Queue"),
                 description=_("There's nothing in the queue."),
@@ -310,7 +310,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 and self.is_vc_full(ctx.author.voice.channel)
             ):
                 ctx.command.reset_cooldown(ctx)
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Shuffle Queue"),
                     description=_("I don't have permission to connect to your channel."),
@@ -320,21 +320,21 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             player.store("connect", datetime.datetime.utcnow())
         except AttributeError:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Shuffle Queue"),
                 description=_("Connect to a voice channel first."),
             )
         except IndexError:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Shuffle Queue"),
                 description=_("Connection to Lavalink has not yet been established."),
             )
         except KeyError:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Shuffle Queue"),
                 description=_("There's nothing in the queue."),
@@ -342,11 +342,11 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         if not self._player_check(ctx) or not player.queue:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Shuffle Queue"),
                 description=_("There's nothing in the queue."),
             )
 
         player.force_shuffle(0)
-        return await self._embed_msg(ctx, title=_("Queue has been shuffled."))
+        return await self.send_embed_msg(ctx, title=_("Queue has been shuffled."))
