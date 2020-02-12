@@ -90,7 +90,7 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def update_player_lock(self, ctx: commands.Context, true_or_false: bool):
+    def update_player_lock(self, ctx: commands.Context, true_or_false: bool) -> None:
         raise NotImplementedError()
 
     @abstractmethod

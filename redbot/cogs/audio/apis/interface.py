@@ -15,7 +15,7 @@ from lavalink.rest_api import LoadResult
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
-from redbot.core.commands import Cog
+from redbot.core.commands import Cog, Context
 from redbot.core.i18n import Translator
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 
@@ -174,7 +174,7 @@ class AudioAPIInterface:
             self._tasks[lock_id] = {"update": [], "insert": [], "global": []}
         self._tasks[lock_id][event].append(task)
 
-    async def _spotify_first_time_query(
+    async def fetch_spotify_query(
         self,
         ctx: commands.Context,
         query_type: str,
@@ -185,7 +185,9 @@ class AudioAPIInterface:
     ) -> List[str]:
         """Return youtube URLS for the spotify URL provided"""
         youtube_urls = []
-        tracks = await self._spotify_fetch_tracks(query_type, uri, params=None, notifier=notifier)
+        tracks = await self.fetch_from_spotify_api(
+            query_type, uri, params=None, notifier=notifier, ctx=ctx
+        )
         total_tracks = len(tracks)
         database_entries = []
         track_count = 0
@@ -230,7 +232,7 @@ class AudioAPIInterface:
                         debug_exc_log(log, exc, f"Failed to fetch {track_info} from YouTube table")
 
                 if val is None:
-                    val = await self._youtube_first_time_query(
+                    val = await self.fetch_youtube_query(
                         ctx, track_info, current_cache_level=current_cache_level
                     )
                 if youtube_cache and val:
@@ -249,22 +251,23 @@ class AudioAPIInterface:
             self.append_task(ctx, *task)
         return youtube_urls
 
-    async def _spotify_fetch_tracks(
+    async def fetch_from_spotify_api(
         self,
         query_type: str,
         uri: str,
         recursive: Union[str, bool] = False,
         params: MutableMapping = None,
         notifier: Optional[Notifier] = None,
+        ctx: Context = None,
     ) -> Union[List[MutableMapping], List[str]]:
         """Gets track info from spotify API"""
 
         if recursive is False:
             (call, params) = self.spotify_api.spotify_format_call(query_type, uri)
-            results = await self.spotify_api.get_call(call, params)
+            results = await self.spotify_api.make_get_call(call, params, ctx=ctx)
         else:
             if isinstance(recursive, str):
-                results = await self.spotify_api.get_call(recursive, params)
+                results = await self.spotify_api.make_get_call(recursive, params, ctx=ctx)
             else:
                 results = {}
         try:
@@ -304,7 +307,7 @@ class AudioAPIInterface:
                 await notifier.notify_user(current=track_count, total=total_tracks, key="spotify")
             try:
                 if results.get("next") is not None:
-                    results = await self._spotify_fetch_tracks(
+                    results = await self.fetch_from_spotify_api(
                         query_type, uri, results["next"], params, notifier=notifier
                     )
                     continue
@@ -359,7 +362,7 @@ class AudioAPIInterface:
             val = None
         youtube_urls = []
         if val is None:
-            urls = await self._spotify_first_time_query(
+            urls = await self.fetch_spotify_query(
                 ctx,
                 query_type,
                 uri,
@@ -406,7 +409,9 @@ class AudioAPIInterface:
         lock: Callable
             A callable handling the Track enqueue lock while spotify tracks are being added.
         query_global: bool
-            A place holder
+            Whether or not to query the global API.
+        forced: bool
+            Ignore Cache and make a fetch from API.
         Returns
         -------
         List[str]
@@ -423,7 +428,7 @@ class AudioAPIInterface:
             queue_dur = await ctx.cog.queue_duration(ctx)
             queue_total_duration = ctx.cog.format_time(queue_dur)
             before_queue_length = len(player.queue)
-            tracks_from_spotify = await self._spotify_fetch_tracks(
+            tracks_from_spotify = await self.fetch_from_spotify_api(
                 query_type, uri, params=None, notifier=notifier
             )
             total_tracks = len(tracks_from_spotify)
@@ -476,7 +481,7 @@ class AudioAPIInterface:
                         debug_exc_log(log, exc, f"Failed to fetch {track_info} from YouTube table")
 
                 if val is None:
-                    val = await self._youtube_first_time_query(
+                    val = await self.fetch_youtube_query(
                         ctx, track_info, current_cache_level=current_cache_level
                     )
                 if youtube_cache and val and llresponse is None:
@@ -627,7 +632,7 @@ class AudioAPIInterface:
             lock(ctx, False)
         return track_list
 
-    async def _youtube_first_time_query(
+    async def fetch_youtube_query(
         self,
         ctx: commands.Context,
         track_info: str,
@@ -656,7 +661,9 @@ class AudioAPIInterface:
             self.append_task(ctx, *task)
         return track_url
 
-    async def youtube_query(self, ctx: commands.Context, track_info: str) -> Optional[str]:
+    async def fetch_from_youtube_api(
+        self, ctx: commands.Context, track_info: str
+    ) -> Optional[str]:
         """
         Gets an YouTube URL from for the query
         """
@@ -669,7 +676,7 @@ class AudioAPIInterface:
             except Exception as exc:
                 debug_exc_log(log, exc, f"Failed to fetch {track_info} from YouTube table")
         if val is None:
-            youtube_url = await self._youtube_first_time_query(
+            youtube_url = await self.fetch_youtube_query(
                 ctx, track_info, current_cache_level=current_cache_level
             )
         else:

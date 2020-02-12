@@ -448,7 +448,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You must be in the voice channel to use the genre command."),
             )
         try:
-            category_list = await self.api_interface.spotify_api.get_categories()
+            category_list = await self.api_interface.spotify_api.get_categories(ctx=ctx)
         except SpotifyFetchError as error:
             return await self.send_embed_msg(
                 ctx,
@@ -472,7 +472,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
         category_name, category_pick = cat_menu_output
         playlists_list = await self.api_interface.spotify_api.get_playlist_from_category(
-            category_pick
+            category_pick, ctx=ctx
         )
         if not playlists_list:
             return await self.send_embed_msg(ctx, title=_("No categories found, try again later."))
