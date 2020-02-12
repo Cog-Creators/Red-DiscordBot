@@ -26,7 +26,7 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_local.command(name="folder", aliases=["start"])
     async def command_local_folder(self, ctx: commands.Context, *, folder: str = None):
         """Play all songs in a localtracks folder."""
-        if not await self.has_localtracks_check(ctx):
+        if not await self.localtracks_folder_exists(ctx):
             return
 
         if not folder:
@@ -35,7 +35,7 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
             folder = folder.strip()
             _dir = LocalPath.joinpath(self.local_folder_current_path, folder)
             if not _dir.exists():
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Folder Not Found"),
                     description=_("Localtracks folder named {name} does not exist.").format(
@@ -50,11 +50,11 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_local.command(name="play")
     async def command_local_play(self, ctx: commands.Context):
         """Play a local track."""
-        if not await self.has_localtracks_check(ctx):
+        if not await self.localtracks_folder_exists(ctx):
             return
         localtracks_folders = await self.get_localtracks_folders(ctx, search_subfolders=True)
         if not localtracks_folders:
-            return await self._embed_msg(ctx, title=_("No album folders found."))
+            return await self.send_embed_msg(ctx, title=_("No album folders found."))
         async with ctx.typing():
             len_folder_pages = math.ceil(len(localtracks_folders) / 5)
             folder_page_list = []
@@ -97,7 +97,7 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_local.command(name="search")
     async def command_local_search(self, ctx: commands.Context, *, search_words):
         """Search for songs across all localtracks folders."""
-        if not await self.has_localtracks_check(ctx):
+        if not await self.localtracks_folder_exists(ctx):
             return
         all_tracks = await self.get_localtrack_folder_list(
             ctx,
@@ -110,9 +110,9 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
         if not all_tracks:
-            return await self._embed_msg(ctx, title=_("No album folders found."))
+            return await self.send_embed_msg(ctx, title=_("No album folders found."))
         async with ctx.typing():
             search_list = await self._build_local_search_list(all_tracks, search_words)
         if not search_list:
-            return await self._embed_msg(ctx, title=_("No matches."))
+            return await self.send_embed_msg(ctx, title=_("No matches."))
         return await ctx.invoke(self.command_search, query=search_list)

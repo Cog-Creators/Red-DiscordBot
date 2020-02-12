@@ -27,7 +27,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Equalizer management."""
         if not self._player_check(ctx):
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(ctx, title=_("Nothing playing."))
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
@@ -67,14 +67,14 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 if eq_presets[eq_preset][
                     "author"
                 ] != ctx.author.id and not await self._can_instaskip(ctx, ctx.author):
-                    return await self._embed_msg(
+                    return await self.send_embed_msg(
                         ctx,
                         title=_("Unable To Delete Preset"),
                         description=_("You are not the author of that preset setting."),
                     )
                 del eq_presets[eq_preset]
             except KeyError:
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Delete Preset"),
                     description=_(
@@ -87,13 +87,13 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 if await self._can_instaskip(ctx, ctx.author):
                     del eq_presets[eq_preset]
                 else:
-                    return await self._embed_msg(
+                    return await self.send_embed_msg(
                         ctx,
                         title=_("Unable To Delete Preset"),
                         description=_("You are not the author of that preset setting."),
                     )
 
-        await self._embed_msg(
+        await self.send_embed_msg(
             ctx, title=_("The {preset_name} preset was deleted.".format(preset_name=eq_preset))
         )
 
@@ -102,7 +102,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         """List saved eq presets."""
         eq_presets = await self.config.custom("EQUALIZER", ctx.guild.id).eq_presets()
         if not eq_presets.keys():
-            return await self._embed_msg(ctx, title=_("No saved equalizer presets."))
+            return await self.send_embed_msg(ctx, title=_("No saved equalizer presets."))
 
         space = "\N{EN SPACE}"
         header_name = _("Preset Name")
@@ -141,7 +141,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         try:
             eq_values = eq_presets[eq_preset]["bands"]
         except KeyError:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("No Preset Found"),
                 description=_(
@@ -152,14 +152,14 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             eq_values = eq_presets[eq_preset]
 
         if not self._player_check(ctx):
-            return await self._embed_msg(ctx, title=_("Nothing playing."))
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
 
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         player = lavalink.get_player(ctx.guild.id)
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Load Preset"),
                 description=_("You need the DJ role to load equalizer presets."),
@@ -182,12 +182,12 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_equalizer_reset(self, ctx: commands.Context):
         """Reset the eq to 0 across all bands."""
         if not self._player_check(ctx):
-            return await self._embed_msg(ctx, title=_("Nothing playing."))
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Modify Preset"),
                 description=_("You need the DJ role to reset the equalizer."),
@@ -215,19 +215,21 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_equalizer_save(self, ctx: commands.Context, eq_preset: str = None):
         """Save the current eq settings to a preset."""
         if not self._player_check(ctx):
-            return await self._embed_msg(ctx, title=_("Nothing playing."))
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Save Preset"),
                 description=_("You need the DJ role to save equalizer presets."),
             )
         if not eq_preset:
-            await self._embed_msg(ctx, title=_("Please enter a name for this equalizer preset."))
+            await self.send_embed_msg(
+                ctx, title=_("Please enter a name for this equalizer preset.")
+            )
             try:
                 eq_name_msg = await ctx.bot.wait_for(
                     "message",
@@ -237,7 +239,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 eq_preset = eq_name_msg.content.split(" ")[0].strip('"').lower()
             except asyncio.TimeoutError:
                 ctx.command.reset_cooldown(ctx)
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Save Preset"),
                     description=_(
@@ -252,13 +254,13 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         if len(eq_preset) > 20:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Save Preset"),
                 description=_("Try the command again with a shorter name."),
             )
         if eq_preset in eq_list:
-            eq_exists_msg = await self._embed_msg(
+            eq_exists_msg = await self.send_embed_msg(
                 ctx, title=_("Preset name already exists, do you want to replace it?")
             )
             start_adding_reactions(eq_exists_msg, ReactionPredicate.YES_OR_NO_EMOJIS)
@@ -289,7 +291,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             await self._clear_react(eq_exists_msg)
             await eq_exists_msg.edit(embed=embed3)
         else:
-            await self._embed_msg(ctx, embed=embed3)
+            await self.send_embed_msg(ctx, embed=embed3)
 
     @command_equalizer.command(name="set")
     async def command_equalizer_set(
@@ -303,13 +305,13 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         Setting a band value to -0.25 nullifies it while +0.25 is double.
         """
         if not self._player_check(ctx):
-            return await self._embed_msg(ctx, title=_("Nothing playing."))
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
 
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Set Preset"),
                 description=_("You need the DJ role to set equalizer presets."),
@@ -349,7 +351,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             band_number = 1000
 
         if band_number not in range(0, bands_num) and band_name_or_position not in band_names:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Invalid Band"),
                 description=_(

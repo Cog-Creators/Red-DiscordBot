@@ -31,7 +31,7 @@ class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return True
         return False
 
-    def url_check(self, url: str) -> bool:
+    def is_url_allowed(self, url: str) -> bool:
         valid_tld = [
             "youtube.com",
             "youtu.be",
@@ -53,7 +53,7 @@ class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
     def is_vc_full(self, channel: discord.VoiceChannel) -> bool:
         return not (channel.user_limit == 0 or channel.user_limit > len(channel.members))
 
-    async def is_allowed(
+    async def is_query_allowed(
         self, config: Config, guild: discord.Guild, query: str, query_obj: Query = None
     ) -> bool:
         """Checks if the query is allowed in this server or globally"""

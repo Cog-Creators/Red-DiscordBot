@@ -25,7 +25,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_disconnect(self, ctx: commands.Context):
         """Disconnect from the voice channel."""
         if not self._player_check(ctx):
-            return await self._embed_msg(ctx, title=_("Nothing playing."))
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
         else:
             dj_enabled = self._dj_status_cache.setdefault(
                 ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
@@ -36,29 +36,29 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             if (
                 (vote_enabled or (vote_enabled and dj_enabled))
                 and not can_skip
-                and not await self._is_alone(ctx)
+                and not await self.is_requester_alone(ctx)
             ):
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Disconnect"),
                     description=_("There are other people listening - vote to skip instead."),
                 )
             if dj_enabled and not vote_enabled and not can_skip:
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Disconnect"),
                     description=_("You need the DJ role to disconnect."),
                 )
             if dj_enabled and not can_skip:
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Unable to disconnect"),
                     description=_("You need the DJ role to disconnect."),
                 )
 
-            await self._embed_msg(ctx, title=_("Disconnecting..."))
+            await self.send_embed_msg(ctx, title=_("Disconnecting..."))
             self.bot.dispatch("red_audio_audio_disconnect", ctx.guild)
-            self._play_lock(ctx, False)
+            self.update_player_lock(ctx, False)
             eq = player.fetch("eq")
             player.queue = []
             player.store("playing_song", None)
@@ -73,7 +73,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_now(self, ctx: commands.Context):
         """Now playing."""
         if not self._player_check(ctx):
-            return await self._embed_msg(ctx, title=_("Nothing playing."))
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
         expected: Union[Tuple[str, ...]] = ("⏮", "⏹", "⏯", "⏭")
         emoji = {"prev": "⏮", "stop": "⏹", "pause": "⏯", "next": "⏭"}
         player = lavalink.get_player(ctx.guild.id)
@@ -124,7 +124,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             + ("\N{WHITE HEAVY CHECK MARK}" if repeat else "\N{CROSS MARK}")
         )
 
-        message = await self._embed_msg(ctx, embed=embed, footer=text)
+        message = await self.send_embed_msg(ctx, embed=embed, footer=text)
 
         player.store("np_message", message)
 
@@ -135,7 +135,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if (
             (dj_enabled or vote_enabled)
             and not await self._can_instaskip(ctx, ctx.author)
-            and not await self._is_alone(ctx)
+            and not await self.is_requester_alone(ctx)
         ):
             return
 
@@ -182,34 +182,36 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         if not self._player_check(ctx):
-            return await self._embed_msg(ctx, title=_("Nothing playing."))
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
         player = lavalink.get_player(ctx.guild.id)
         can_skip = await self._can_instaskip(ctx, ctx.author)
         if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
                 description=_("You must be in the voice channel to pause or resume."),
             )
-        if dj_enabled and not can_skip and not await self._is_alone(ctx):
-            return await self._embed_msg(
+        if dj_enabled and not can_skip and not await self.is_requester_alone(ctx):
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
                 description=_("You need the DJ role to pause or resume tracks."),
             )
 
         if not player.current:
-            return await self._embed_msg(ctx, title=_("Nothing playing."))
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
         description = self.get_track_description(player.current, self.local_folder_current_path)
 
         if player.current and not player.paused:
             await player.pause()
-            return await self._embed_msg(ctx, title=_("Track Paused"), description=description)
+            return await self.send_embed_msg(ctx, title=_("Track Paused"), description=description)
         if player.current and player.paused:
             await player.pause(False)
-            return await self._embed_msg(ctx, title=_("Track Resumed"), description=description)
+            return await self.send_embed_msg(
+                ctx, title=_("Track Resumed"), description=description
+            )
 
-        await self._embed_msg(ctx, title=_("Nothing playing."))
+        await self.send_embed_msg(ctx, title=_("Nothing playing."))
 
     @commands.command(name="prev")
     @commands.guild_only()
@@ -217,29 +219,29 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_prev(self, ctx: commands.Context):
         """Skip to the start of the previously played track."""
         if not self._player_check(ctx):
-            return await self._embed_msg(ctx, title=_("Nothing playing."))
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
-        is_alone = await self._is_alone(ctx)
+        is_alone = await self.is_requester_alone(ctx)
         is_requester = await self.is_requester(ctx, ctx.author)
         can_skip = await self._can_instaskip(ctx, ctx.author)
         player = lavalink.get_player(ctx.guild.id)
         if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Skip Tracks"),
                 description=_("You must be in the voice channel to skip the track."),
             )
         if (vote_enabled or (vote_enabled and dj_enabled)) and not can_skip and not is_alone:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Skip Tracks"),
                 description=_("There are other people listening - vote to skip instead."),
             )
         if dj_enabled and not vote_enabled and not (can_skip or is_requester) and not is_alone:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Skip Tracks"),
                 description=_(
@@ -249,7 +251,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
         if player.fetch("prev_song") is None:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("No previous track.")
             )
         else:
@@ -265,7 +267,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 player.current, self.local_folder_current_path
             )
             embed = discord.Embed(title=_("Replaying Track"), description=description)
-            await self._embed_msg(ctx, embed=embed)
+            await self.send_embed_msg(ctx, embed=embed)
 
     @commands.command(name="seek")
     @commands.guild_only()
@@ -279,29 +281,29 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
-        is_alone = await self._is_alone(ctx)
+        is_alone = await self.is_requester_alone(ctx)
         is_requester = await self.is_requester(ctx, ctx.author)
         can_skip = await self._can_instaskip(ctx, ctx.author)
 
         if not self._player_check(ctx):
-            return await self._embed_msg(ctx, title=_("Nothing playing."))
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
         player = lavalink.get_player(ctx.guild.id)
         if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Seek Tracks"),
                 description=_("You must be in the voice channel to use seek."),
             )
 
         if vote_enabled and not can_skip and not is_alone:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Seek Tracks"),
                 description=_("There are other people listening - vote to skip instead."),
             )
 
         if dj_enabled and not (can_skip or is_requester) and not is_alone:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Seek Tracks"),
                 description=_("You need the DJ role or be the track requester to use seek."),
@@ -309,7 +311,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         if player.current:
             if player.current.is_stream:
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx, title=_("Unable To Seek Tracks"), description=_("Can't seek on a stream.")
                 )
             else:
@@ -320,7 +322,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     abs_position = True
                     seconds = self.time_convert(seconds)
                 if seconds == 0:
-                    return await self._embed_msg(
+                    return await self.send_embed_msg(
                         ctx,
                         title=_("Unable To Seek Tracks"),
                         description=_("Invalid input for the time to seek."),
@@ -329,14 +331,14 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     time_sec = int(seconds) * 1000
                     seek = player.position + time_sec
                     if seek <= 0:
-                        await self._embed_msg(
+                        await self.send_embed_msg(
                             ctx,
                             title=_("Moved {num_seconds}s to 00:00:00").format(
                                 num_seconds=seconds
                             ),
                         )
                     else:
-                        await self._embed_msg(
+                        await self.send_embed_msg(
                             ctx,
                             title=_("Moved {num_seconds}s to {time}").format(
                                 num_seconds=seconds, time=self.format_time(seek)
@@ -344,13 +346,13 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         )
                     await player.seek(seek)
                 else:
-                    await self._embed_msg(
+                    await self.send_embed_msg(
                         ctx,
                         title=_("Moved to {time}").format(time=self.format_time(seconds * 1000)),
                     )
                     await player.seek(seconds * 1000)
         else:
-            await self._embed_msg(ctx, title=_("Nothing playing."))
+            await self.send_embed_msg(ctx, title=_("Nothing playing."))
 
     @commands.group(name="shuffle", autohelp=False)
     @commands.guild_only()
@@ -363,18 +365,18 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
             can_skip = await self._can_instaskip(ctx, ctx.author)
             if dj_enabled and not can_skip:
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Toggle Shuffle"),
                     description=_("You need the DJ role to toggle shuffle."),
                 )
             if self._player_check(ctx):
-                await self._data_check(ctx)
+                await self.set_player_settings(ctx)
                 player = lavalink.get_player(ctx.guild.id)
                 if (
                     not ctx.author.voice or ctx.author.voice.channel != player.channel
                 ) and not can_skip:
-                    return await self._embed_msg(
+                    return await self.send_embed_msg(
                         ctx,
                         title=_("Unable To Toggle Shuffle"),
                         description=_("You must be in the voice channel to toggle shuffle."),
@@ -382,7 +384,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
 
             shuffle = await self.config.guild(ctx.guild).shuffle()
             await self.config.guild(ctx.guild).shuffle.set(not shuffle)
-            await self._embed_msg(
+            await self.send_embed_msg(
                 ctx,
                 title=_("Setting Changed"),
                 description=_("Shuffle tracks: {true_or_false}.").format(
@@ -390,7 +392,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
             if self._player_check(ctx):
-                await self._data_check(ctx)
+                await self.set_player_settings(ctx)
 
     @command_shuffle.command(name="bumped")
     @commands.guild_only()
@@ -406,18 +408,18 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
         can_skip = await self._can_instaskip(ctx, ctx.author)
         if dj_enabled and not can_skip:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Toggle Shuffle"),
                 description=_("You need the DJ role to toggle shuffle."),
             )
         if self._player_check(ctx):
-            await self._data_check(ctx)
+            await self.set_player_settings(ctx)
             player = lavalink.get_player(ctx.guild.id)
             if (
                 not ctx.author.voice or ctx.author.voice.channel != player.channel
             ) and not can_skip:
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Toggle Shuffle"),
                     description=_("You must be in the voice channel to toggle shuffle."),
@@ -425,7 +427,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         bumped = await self.config.guild(ctx.guild).shuffle_bumped()
         await self.config.guild(ctx.guild).shuffle_bumped.set(not bumped)
-        await self._embed_msg(
+        await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
             description=_("Shuffle bumped tracks: {true_or_false}.").format(
@@ -433,7 +435,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
         if self._player_check(ctx):
-            await self._data_check(ctx)
+            await self.set_player_settings(ctx)
 
     @commands.command(name="skip")
     @commands.guild_only()
@@ -441,26 +443,26 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_skip(self, ctx: commands.Context, skip_to_track: int = None):
         """Skip to the next track, or to a given track number."""
         if not self._player_check(ctx):
-            return await self._embed_msg(ctx, title=_("Nothing playing."))
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
         player = lavalink.get_player(ctx.guild.id)
         can_skip = await self._can_instaskip(ctx, ctx.author)
         if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Skip Tracks"),
                 description=_("You must be in the voice channel to skip the music."),
             )
         if not player.current:
-            return await self._embed_msg(ctx, title=_("Nothing playing."))
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
-        is_alone = await self._is_alone(ctx)
+        is_alone = await self.is_requester_alone(ctx)
         is_requester = await self.is_requester(ctx, ctx.author)
         if dj_enabled and not vote_enabled:
             if not (can_skip or is_requester) and not is_alone:
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Skip Tracks"),
                     description=_(
@@ -473,7 +475,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 and isinstance(skip_to_track, int)
                 and skip_to_track > 1
             ):
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Skip Tracks"),
                     description=_("You can only skip the current track."),
@@ -482,7 +484,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if vote_enabled:
             if not can_skip:
                 if skip_to_track is not None:
-                    return await self._embed_msg(
+                    return await self.send_embed_msg(
                         ctx,
                         title=_("Unable To Skip Tracks"),
                         description=_(
@@ -507,7 +509,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 percent = await self.config.guild(ctx.guild).vote_percent()
                 if vote >= percent:
                     self.skip_votes[ctx.message.guild] = []
-                    await self._embed_msg(ctx, title=_("Vote threshold met."))
+                    await self.send_embed_msg(ctx, title=_("Vote threshold met."))
                     return await self._skip_action(ctx)
                 else:
                     reply += _(
@@ -519,7 +521,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         cur_percent=vote,
                         required_percent=percent,
                     )
-                    return await self._embed_msg(ctx, title=reply)
+                    return await self.send_embed_msg(ctx, title=reply)
             else:
                 return await self._skip_action(ctx, skip_to_track)
         else:
@@ -535,24 +537,24 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
         if not self._player_check(ctx):
-            return await self._embed_msg(ctx, title=_("Nothing playing."))
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
         player = lavalink.get_player(ctx.guild.id)
         can_skip = await self._can_instaskip(ctx, ctx.author)
-        is_alone = await self._is_alone(ctx)
+        is_alone = await self.is_requester_alone(ctx)
         if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Stop Player"),
                 description=_("You must be in the voice channel to stop the music."),
             )
         if (vote_enabled or (vote_enabled and dj_enabled)) and not can_skip and not is_alone:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Stop Player"),
                 description=_("There are other people listening - vote to skip instead."),
             )
         if dj_enabled and not vote_enabled and not can_skip:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Stop Player"),
                 description=_("You need the DJ role to stop the music."),
@@ -572,7 +574,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             player.store("prev_song", None)
             player.store("requester", None)
             await player.stop()
-            await self._embed_msg(ctx, title=_("Stopping..."))
+            await self.send_embed_msg(ctx, title=_("Stopping..."))
 
     @commands.command(name="summon")
     @commands.guild_only()
@@ -584,19 +586,19 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
-        is_alone = await self._is_alone(ctx)
+        is_alone = await self.is_requester_alone(ctx)
         is_requester = await self.is_requester(ctx, ctx.author)
         can_skip = await self._can_instaskip(ctx, ctx.author)
         if (vote_enabled or (vote_enabled and dj_enabled)) and not can_skip and not is_alone:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Join Voice Channel"),
                 description=_("There are other people listening."),
             )
         if dj_enabled and not vote_enabled and not (can_skip or is_requester) and not is_alone:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Join Voice Channel"),
                 description=_("You need the DJ role to summon the bot."),
@@ -609,7 +611,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 and self.is_vc_full(ctx.author.voice.channel)
             ):
                 ctx.command.reset_cooldown(ctx)
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Join Voice Channel"),
                     description=_("I don't have permission to connect to your channel."),
@@ -626,14 +628,14 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await player.move_to(ctx.author.voice.channel)
         except AttributeError:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Join Voice Channel"),
                 description=_("Connect to a voice channel first."),
             )
         except IndexError:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Join Voice Channel"),
                 description=_("Connection to Lavalink has not yet been established."),
@@ -653,19 +655,19 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             embed = discord.Embed(title=_("Current Volume:"), description=str(vol) + "%")
             if not self._player_check(ctx):
                 embed.set_footer(text=_("Nothing playing."))
-            return await self._embed_msg(ctx, embed=embed)
+            return await self.send_embed_msg(ctx, embed=embed)
         if self._player_check(ctx):
             player = lavalink.get_player(ctx.guild.id)
             if (
                 not ctx.author.voice or ctx.author.voice.channel != player.channel
             ) and not can_skip:
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Change Volume"),
                     description=_("You must be in the voice channel to change the volume."),
                 )
         if dj_enabled and not can_skip and not await self._has_dj_role(ctx, ctx.author):
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Change Volume"),
                 description=_("You need the DJ role to change the volume."),
@@ -684,7 +686,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         embed = discord.Embed(title=_("Volume:"), description=str(vol) + "%")
         if not self._player_check(ctx):
             embed.set_footer(text=_("Nothing playing."))
-        await self._embed_msg(ctx, embed=embed)
+        await self.send_embed_msg(ctx, embed=embed)
 
     @commands.command(name="repeat")
     @commands.guild_only()
@@ -696,18 +698,18 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
         can_skip = await self._can_instaskip(ctx, ctx.author)
         if dj_enabled and not can_skip and not await self._has_dj_role(ctx, ctx.author):
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Toggle Repeat"),
                 description=_("You need the DJ role to toggle repeat."),
             )
         if self._player_check(ctx):
-            await self._data_check(ctx)
+            await self.set_player_settings(ctx)
             player = lavalink.get_player(ctx.guild.id)
             if (
                 not ctx.author.voice or ctx.author.voice.channel != player.channel
             ) and not can_skip:
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Toggle Repeat"),
                     description=_("You must be in the voice channel to toggle repeat."),
@@ -725,9 +727,9 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             await self.config.guild(ctx.guild).auto_play.set(False)
 
         embed = discord.Embed(title=_("Setting Changed"), description=msg)
-        await self._embed_msg(ctx, embed=embed)
+        await self.send_embed_msg(ctx, embed=embed)
         if self._player_check(ctx):
-            await self._data_check(ctx)
+            await self.set_player_settings(ctx)
 
     @commands.command(name="remove")
     @commands.guild_only()
@@ -738,26 +740,26 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         if not self._player_check(ctx):
-            return await self._embed_msg(ctx, title=_("Nothing playing."))
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
         player = lavalink.get_player(ctx.guild.id)
         can_skip = await self._can_instaskip(ctx, ctx.author)
         if not player.queue:
-            return await self._embed_msg(ctx, title=_("Nothing queued."))
+            return await self.send_embed_msg(ctx, title=_("Nothing queued."))
         if dj_enabled and not can_skip:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Modify Queue"),
                 description=_("You need the DJ role to remove tracks."),
             )
         if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Modify Queue"),
                 description=_("You must be in the voice channel to manage the queue."),
             )
         if isinstance(index_or_url, int):
             if index_or_url > len(player.queue) or index_or_url < 1:
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Modify Queue"),
                     description=_(
@@ -767,7 +769,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             index_or_url -= 1
             removed = player.queue.pop(index_or_url)
             removed_title = self.get_track_description(removed, self.local_folder_current_path)
-            await self._embed_msg(
+            await self.send_embed_msg(
                 ctx,
                 title=_("Removed track from queue"),
                 description=_("Removed {track} from the queue.").format(track=removed_title),
@@ -783,13 +785,13 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await asyncio.sleep(0)
             player.queue = clean_tracks
             if removed_tracks == 0:
-                await self._embed_msg(
+                await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Modify Queue"),
                     description=_("Removed 0 tracks, nothing matches the URL provided."),
                 )
             else:
-                await self._embed_msg(
+                await self.send_embed_msg(
                     ctx,
                     title=_("Removed track from queue"),
                     description=_(
@@ -807,23 +809,23 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         if not self._player_check(ctx):
-            return await self._embed_msg(ctx, title=_("Nothing playing."))
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
         player = lavalink.get_player(ctx.guild.id)
         can_skip = await self._can_instaskip(ctx, ctx.author)
         if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Bump Track"),
                 description=_("You must be in the voice channel to bump a track."),
             )
         if dj_enabled and not can_skip:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Bump Track"),
                 description=_("You need the DJ role to bump tracks."),
             )
         if index > len(player.queue) or index < 1:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Bump Track"),
                 description=_("Song number must be greater than 1 and within the queue limit."),
@@ -835,6 +837,6 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         player.queue.insert(0, bump_song)
         removed = player.queue.pop(index)
         description = self.get_track_description(removed, self.local_folder_current_path)
-        await self._embed_msg(
+        await self.send_embed_msg(
             ctx, title=_("Moved track to the top of the queue."), description=description
         )

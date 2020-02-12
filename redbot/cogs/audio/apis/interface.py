@@ -542,7 +542,7 @@ class AudioAPIInterface:
                     continue
                 consecutive_fails = 0
                 single_track = track_object[0]
-                if not await ctx.cog.is_allowed(
+                if not await ctx.cog.is_query_allowed(
                     self.config,
                     ctx.guild,
                     (
@@ -559,7 +559,7 @@ class AudioAPIInterface:
                     if len(player.queue) >= 10000:
                         continue
                     if guild_data["maxlength"] > 0:
-                        if ctx.cog.track_limit(single_track, guild_data["maxlength"]):
+                        if ctx.cog.is_track_too_long(single_track, guild_data["maxlength"]):
                             enqueued_tracks += 1
                             player.add(ctx.author, single_track)
                             self.bot.dispatch(
@@ -864,7 +864,7 @@ class AudioAPIInterface:
                     and not query.local_track_path.exists()
                 ):
                     continue
-                if not await cog.is_allowed(
+                if not await cog.is_query_allowed(
                     self.config,
                     player.channel.guild,
                     (
