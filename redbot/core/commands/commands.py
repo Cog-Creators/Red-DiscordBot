@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import inspect
 import re
+import functools
 import weakref
 from typing import (
     Awaitable,
@@ -307,13 +308,21 @@ class Command(CogCommandMixin, DPYCommand):
     def callback(self, function):
         """
         Below should be mostly the same as discord.py
-        The only (current) change is to filter out typing.Optional
-        if a user has specified the desire for this behavior
+        
+        Currently, we modify behavior for
+        
+          - functools.partial support
+          - typing.Optional behavior change as an option
         """
         self._callback = function
-        self.module = function.__module__
+        if isinstance(function, functools.partial):
+            self.module = function.func.__module__
+            globals_ = function.func.__globals__
+        else:
+            self.module = function.__module__
+            globals_ = function.__globals__
 
-        signature = inspect.signature(function)
+        signature = inspect.signature(function, follow_wrapped=False)
         self.params = signature.parameters.copy()
 
         # PEP-563 allows postponing evaluation of annotations with a __future__
@@ -322,7 +331,7 @@ class Command(CogCommandMixin, DPYCommand):
         for key, value in self.params.items():
             if isinstance(value.annotation, str):
                 self.params[key] = value = value.replace(
-                    annotation=eval(value.annotation, function.__globals__)
+                    annotation=eval(value.annotation, globals_)
                 )
 
             # fail early for when someone passes an unparameterized Greedy type
