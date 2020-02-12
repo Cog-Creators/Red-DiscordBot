@@ -1170,6 +1170,28 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         ).format(prefix=ctx.prefix)
         await ctx.maybe_send_embed(message)
 
+    @command_audioset.command(name="countrycode")
+    @commands.guild_only()
+    @checks.mod_or_permissions(administrator=True)
+    async def command_audioset_vote(self, ctx: commands.Context, country: str):
+        """Set the country code for searches."""
+        if len(country) != 2:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Invalid Country Code"),
+                description=_(
+                    "Please use an official [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code."
+                ),
+            )
+        country = country.upper()
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_("Country Code set to {country}.").format(country=country),
+        )
+
+        await self.config.guild(ctx.guild).country_code.set(country)
+
     @command_audioset.command(name="cache")
     @checks.is_owner()
     async def command_audioset_cache(self, ctx: commands.Context, *, level: int = None):
