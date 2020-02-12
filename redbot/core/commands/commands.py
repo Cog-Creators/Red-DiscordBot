@@ -12,9 +12,6 @@ import weakref
 from typing import (
     Awaitable,
     Callable,
-    Coroutine,
-    TypeVar,
-    Type,
     Dict,
     List,
     Optional,
@@ -22,7 +19,6 @@ from typing import (
     Union,
     MutableMapping,
     TYPE_CHECKING,
-    cast,
 )
 
 import discord
@@ -39,7 +35,6 @@ from discord.ext.commands import (
     Greedy,
 )
 
-from . import converter as converters
 from .errors import ConversionFailure
 from .requires import PermState, PrivilegeLevel, Requires, PermStateAllowedStates
 from ..i18n import Translator
@@ -308,9 +303,9 @@ class Command(CogCommandMixin, DPYCommand):
     def callback(self, function):
         """
         Below should be mostly the same as discord.py
-        
+
         Currently, we modify behavior for
-        
+
           - functools.partial support
           - typing.Optional behavior change as an option
         """
