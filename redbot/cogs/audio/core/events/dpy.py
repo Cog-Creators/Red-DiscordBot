@@ -58,10 +58,10 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 self._dj_status_cache[ctx.guild.id] = None
                 await self.config.guild(ctx.guild).dj_role.set(None)
                 self._dj_role_cache[ctx.guild.id] = None
-                await self._embed_msg(ctx, title=_("No DJ role found. Disabling DJ mode."))
+                await self.send_embed_msg(ctx, title=_("No DJ role found. Disabling DJ mode."))
 
     async def cog_after_invoke(self, ctx: commands.Context) -> None:
-        await self._process_db(ctx)
+        await self.maybe_run_pending_db_tasks(ctx)
 
     async def cog_command_error(self, ctx: commands.Context, error: Exception) -> None:
         error = getattr(error, "original", error)
@@ -74,11 +74,11 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 commands.CommandOnCooldown,
             ),
         ):
-            self._play_lock(ctx, False)
+            self.update_player_lock(ctx, False)
             if self.api_interface is not None:
                 await self.api_interface.run_tasks(ctx)
         elif isinstance(error, IndexError) and "No nodes found." in str(error):
-            await self._embed_msg(
+            await self.send_embed_msg(
                 ctx,
                 title=_("Invalid Environment"),
                 description=_("Connection to Lavalink has been lost."),

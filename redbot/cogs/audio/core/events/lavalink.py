@@ -34,7 +34,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         status = await self.config.status()
         log.debug(f"Received a new lavalink event for {guild_id}: {event_type}: {extra}")
         prev_song: lavalink.Track = player.fetch("prev_song")
-        await self.error_reset(player)
+        await self.maybe_reset_error_counter(player)
 
         if event_type == lavalink.LavalinkEvents.TRACK_START:
             self.skip_votes[guild] = []
@@ -64,7 +64,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     notify_channel = player.fetch("channel")
                     if notify_channel:
                         notify_channel = self.bot.get_channel(notify_channel)
-                        await self._embed_msg(
+                        await self.send_embed_msg(
                             notify_channel, title=_("Couldn't get a valid track.")
                         )
                     return
@@ -84,7 +84,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                         or (hasattr(prev_song, "extras") and not prev_song.extras.get("autoplay"))
                     )
                 ):
-                    await self._embed_msg(notify_channel, title=_("Auto Play Started."))
+                    await self.send_embed_msg(notify_channel, title=_("Auto Play Started."))
 
                 if not description:
                     return
@@ -97,7 +97,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 if await self.config.guild(guild).thumbnail() and current_thumbnail:
                     thumb = current_thumbnail
 
-                notify_message = await self._embed_msg(
+                notify_message = await self.send_embed_msg(
                     notify_channel,
                     title=_("Now Playing"),
                     description=description,
@@ -108,27 +108,27 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 )
                 player.store("notify_message", notify_message)
         if event_type == lavalink.LavalinkEvents.TRACK_START and status:
-            player_check = await self._players_check()
-            await self._status_check(*player_check)
+            player_check = self.get_active_player_count()
+            await self.update_bot_presence(*player_check)
 
         if event_type == lavalink.LavalinkEvents.TRACK_END and status:
             await asyncio.sleep(1)
             if not player.is_playing:
-                player_check = await self._players_check()
-                await self._status_check(*player_check)
+                player_check = self.get_active_player_count()
+                await self.update_bot_presence(*player_check)
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
             if not autoplay:
                 notify_channel = player.fetch("channel")
                 if notify_channel and notify:
                     notify_channel = self.bot.get_channel(notify_channel)
-                    await self._embed_msg(notify_channel, title=_("Queue Ended."))
+                    await self.send_embed_msg(notify_channel, title=_("Queue Ended."))
                 if disconnect:
                     self.bot.dispatch("red_audio_audio_disconnect", guild)
                     await player.disconnect()
             if status:
-                player_check = await self._players_check()
-                await self._status_check(*player_check)
+                player_check = self.get_active_player_count()
+                await self.update_bot_presence(*player_check)
 
         if event_type in [
             lavalink.LavalinkEvents.TRACK_EXCEPTION,

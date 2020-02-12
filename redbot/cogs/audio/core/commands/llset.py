@@ -31,11 +31,11 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                     true_or_false=_("Enabled") if not external else _("Disabled")
                 ),
             )
-            await self._embed_msg(ctx, embed=embed)
+            await self.send_embed_msg(ctx, embed=embed)
         else:
             if self.player_manager is not None:
                 await self.player_manager.shutdown()
-            await self._embed_msg(
+            await self.send_embed_msg(
                 ctx,
                 title=_("Setting Changed"),
                 description=_("External lavalink server: {true_or_false}.").format(
@@ -50,9 +50,9 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Set the lavalink server host."""
         await self.config.host.set(host)
         footer = None
-        if await self._check_external():
+        if await self.update_external_status():
             footer = _("External lavalink server set to True.")
-        await self._embed_msg(
+        await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
             description=_("Host set to {host}.").format(host=host),
@@ -65,9 +65,9 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Set the lavalink server password."""
         await self.config.password.set(str(password))
         footer = None
-        if await self._check_external():
+        if await self.update_external_status():
             footer = _("External lavalink server set to True.")
-        await self._embed_msg(
+        await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
             description=_("Server password set to {password}.").format(password=password),
@@ -81,9 +81,9 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Set the lavalink REST server port."""
         await self.config.rest_port.set(rest_port)
         footer = None
-        if await self._check_external():
+        if await self.update_external_status():
             footer = _("External lavalink server set to True.")
-        await self._embed_msg(
+        await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
             description=_("REST port set to {port}.").format(port=rest_port),
@@ -97,9 +97,9 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Set the lavalink websocket server port."""
         await self.config.ws_port.set(ws_port)
         footer = None
-        if await self._check_external():
+        if await self.update_external_status():
             footer = _("External lavalink server set to True.")
-        await self._embed_msg(
+        await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
             description=_("Websocket port set to {port}.").format(port=ws_port),

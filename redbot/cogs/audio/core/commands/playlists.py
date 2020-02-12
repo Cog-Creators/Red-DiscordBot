@@ -93,7 +93,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global --Author Draper#6666`
         """
         if self.playlist_api is None:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlists Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
@@ -105,13 +105,13 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not await self._playlist_check(ctx):
             return
         try:
-            (playlist, playlist_arg, scope) = await self._get_correct_playlist_id(
+            (playlist, playlist_arg, scope) = await self.get_playlist_match(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
-            return await self._embed_msg(ctx, title=str(e))
+            return await self.send_embed_msg(ctx, title=str(e))
         if playlist is None:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Could not match '{arg}' to a playlist").format(arg=playlist_arg),
@@ -119,7 +119,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
             return
         player = lavalink.get_player(ctx.guild.id)
-        to_append = await self._playlist_tracks(
+        to_append = await self.fetch_playlist_tracks(
             ctx, player, Query.process_input(query, self.local_folder_current_path)
         )
 
@@ -127,7 +127,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             return None
 
         if not to_append:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx, title=_("Could not find a track matching your query.")
             )
         track_list = playlist.tracks
@@ -147,7 +147,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if to_append and to_append_count == 1:
             to = lavalink.Track(to_append[0])
             if to in tracks_obj_list:
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Skipping track"),
                     description=_(
@@ -176,7 +176,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         if to_append_count == 1 and appended == 1:
             track_title = to_append[0]["info"]["title"]
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Track added"),
                 description=_("{track} appended to {playlist} (`{id}`) [**{scope}**].").format(
@@ -194,7 +194,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
         embed = discord.Embed(title=_("Playlist Modified"), description=desc)
-        await self._embed_msg(
+        await self.send_embed_msg(
             ctx,
             embed=embed,
             footer=_("Playlist limit reached: Could not add track.").format(not_added)
@@ -249,7 +249,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist copy MyPersonalPlaylist --from-scope user --to-author Draper#6666 --to-scope Guild --to-guild Red - Discord Bot`
         """
         if self.playlist_api is None:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlists Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
@@ -283,16 +283,16 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         from_scope = from_scope or PlaylistScope.GUILD.value
         to_scope = to_scope or PlaylistScope.GUILD.value
         try:
-            from_playlist, playlist_arg, from_scope = await self._get_correct_playlist_id(
+            from_playlist, playlist_arg, from_scope = await self.get_playlist_match(
                 ctx, playlist_matches, from_scope, from_author, from_guild, specified_from_user
             )
         except TooManyMatches as e:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(ctx, title=str(e))
+            return await self.send_embed_msg(ctx, title=str(e))
 
         if from_playlist is None:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Could not match '{arg}' to a playlist.").format(arg=playlist_arg),
@@ -327,7 +327,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         else:
             from_scope_name = from_guild
 
-        return await self._embed_msg(
+        return await self.send_embed_msg(
             ctx,
             title=_("Playlist Copied"),
             description=_(
@@ -376,7 +376,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist create MyPersonalPlaylist --scope User`
         """
         if self.playlist_api is None:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlists Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
@@ -396,7 +396,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             return
         playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
         if playlist_name.isnumeric():
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Invalid Playlist Name"),
                 description=_(
@@ -407,7 +407,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         playlist = await create_playlist(
             ctx, self.playlist_api, scope, playlist_name, None, None, author, guild
         )
-        return await self._embed_msg(
+        return await self.send_embed_msg(
             ctx,
             title=_("Playlist Created"),
             description=_("Empty playlist {name} (`{id}`) [**{scope}**] created.").format(
@@ -454,7 +454,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist delete MyPersonalPlaylist --scope User`
         """
         if self.playlist_api is None:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlists Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
@@ -467,13 +467,13 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         scope, author, guild, specified_user = scope_data
 
         try:
-            playlist, playlist_arg, scope = await self._get_correct_playlist_id(
+            playlist, playlist_arg, scope = await self.get_playlist_match(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
-            return await self._embed_msg(ctx, title=str(e))
+            return await self.send_embed_msg(ctx, title=str(e))
         if playlist is None:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Could not match '{arg}' to a playlist.").format(arg=playlist_arg),
@@ -492,7 +492,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             author or ctx.author,
         )
 
-        await self._embed_msg(
+        await self.send_embed_msg(
             ctx,
             title=_("Playlist Deleted"),
             description=_("{name} (`{id}`) [**{scope}**] playlist deleted.").format(
@@ -542,7 +542,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist dedupe MyPersonalPlaylist --scope User`
         """
         if self.playlist_api is None:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlists Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
@@ -556,18 +556,18 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             scope, author, guild, specified_user = scope_data
 
             try:
-                playlist, playlist_arg, scope = await self._get_correct_playlist_id(
+                playlist, playlist_arg, scope = await self.get_playlist_match(
                     ctx, playlist_matches, scope, author, guild, specified_user
                 )
             except TooManyMatches as e:
                 ctx.command.reset_cooldown(ctx)
-                return await self._embed_msg(ctx, title=str(e))
+                return await self.send_embed_msg(ctx, title=str(e))
             scope_name = self.humanize_scope(
                 scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
             )
             if playlist is None:
                 ctx.command.reset_cooldown(ctx)
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Playlist Not Found"),
                     description=_("Could not match '{arg}' to a playlist.").format(
@@ -604,7 +604,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         final_count = len(tracklist)
         if original_count - final_count != 0:
             await playlist.edit({"tracks": tracklist})
-            await self._embed_msg(
+            await self.send_embed_msg(
                 ctx,
                 title=_("Playlist Modified"),
                 description=_(
@@ -618,7 +618,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
         else:
-            await self._embed_msg(
+            await self.send_embed_msg(
                 ctx,
                 title=_("Playlist Has Not Been Modified"),
                 description=_(
@@ -677,7 +677,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist download MyPersonalPlaylist --scope User`
         """
         if self.playlist_api is None:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlists Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
@@ -690,15 +690,15 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         scope, author, guild, specified_user = scope_data
 
         try:
-            playlist, playlist_arg, scope = await self._get_correct_playlist_id(
+            playlist, playlist_arg, scope = await self.get_playlist_match(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(ctx, title=str(e))
+            return await self.send_embed_msg(ctx, title=str(e))
         if playlist is None:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Could not match '{arg}' to a playlist.").format(arg=playlist_arg),
@@ -709,7 +709,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         if not playlist.tracks:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(ctx, title=_("That playlist has no tracks."))
+            return await self.send_embed_msg(ctx, title=_("That playlist has no tracks."))
         if version == "v2":
             v2_valid_urls = ["https://www.youtube.com/watch?v=", "https://soundcloud.com/"]
             song_list = []
@@ -807,7 +807,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist info MyPersonalPlaylist --scope User`
         """
         if self.playlist_api is None:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlists Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
@@ -819,19 +819,19 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
         try:
-            playlist, playlist_arg, scope = await self._get_correct_playlist_id(
+            playlist, playlist_arg, scope = await self.get_playlist_match(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(ctx, title=str(e))
+            return await self.send_embed_msg(ctx, title=str(e))
         scope_name = self.humanize_scope(
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
 
         if playlist is None:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Could not match '{arg}' to a playlist.").format(arg=playlist_arg),
@@ -930,7 +930,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist list --scope User`
         """
         if self.playlist_api is None:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlists Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
@@ -972,7 +972,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             name = None
             if not playlists:
                 ctx.command.reset_cooldown(ctx)
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Playlist Not Found"),
                     description=_("No saved playlists available in this server.").format(
@@ -991,7 +991,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
             except MissingGuild:
                 ctx.command.reset_cooldown(ctx)
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Missing Arguments"),
                     description=_("You need to specify the Guild ID for the guild to lookup."),
@@ -1006,7 +1006,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
 
             if not playlists and specified_user:
                 ctx.command.reset_cooldown(ctx)
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Playlist Not Found"),
                     description=_("No saved playlists for {scope} created by {author}.").format(
@@ -1015,7 +1015,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
             elif not playlists:
                 ctx.command.reset_cooldown(ctx)
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Playlist Not Found"),
                     description=_("No saved playlists for {scope}.").format(scope=name),
@@ -1086,7 +1086,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist queue MyPersonalPlaylist --scope User`
         """
         if self.playlist_api is None:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlists Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
@@ -1109,7 +1109,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
             if playlist_name.isnumeric():
                 ctx.command.reset_cooldown(ctx)
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Invalid Playlist Name"),
                     description=_(
@@ -1119,14 +1119,14 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
             if not self._player_check(ctx):
                 ctx.command.reset_cooldown(ctx)
-                return await self._embed_msg(ctx, title=_("Nothing playing."))
+                return await self.send_embed_msg(ctx, title=_("Nothing playing."))
 
             player = lavalink.get_player(ctx.guild.id)
             if not player.queue:
                 ctx.command.reset_cooldown(ctx)
-                return await self._embed_msg(ctx, title=_("There's nothing in the queue."))
+                return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
             tracklist = []
-            np_song = self.track_creator(player, "np")
+            np_song = self.get_track_json(player, "np")
             tracklist.append(np_song)
             queue_length = len(player.queue)
             to_add = player.queue
@@ -1139,13 +1139,13 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 if i % 500 == 0:  # TODO: Improve when Toby menu's are merged
                     await asyncio.sleep(0.02)
                 queue_idx = player.queue.index(track)
-                track_obj = self.track_creator(player, queue_idx)
+                track_obj = self.get_track_json(player, queue_idx)
                 tracklist.append(track_obj)
                 playlist = await create_playlist(
                     ctx, self.playlist_api, scope, playlist_name, None, tracklist, author, guild
                 )
                 await asyncio.sleep(0)
-        await self._embed_msg(
+        await self.send_embed_msg(
             ctx,
             title=_("Playlist Created"),
             description=_(
@@ -1199,7 +1199,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist remove MyPersonalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope User`
         """
         if self.playlist_api is None:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlists Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
@@ -1211,16 +1211,16 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
         try:
-            playlist, playlist_arg, scope = await self._get_correct_playlist_id(
+            playlist, playlist_arg, scope = await self.get_playlist_match(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
-            return await self._embed_msg(ctx, title=str(e))
+            return await self.send_embed_msg(ctx, title=str(e))
         scope_name = self.humanize_scope(
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
         if playlist is None:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Could not match '{arg}' to a playlist.").format(arg=playlist_arg),
@@ -1231,7 +1231,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         track_list = playlist.tracks
         clean_list = [track for track in track_list if url != track["info"]["uri"]]
         if len(track_list) == len(clean_list):
-            return await self._embed_msg(ctx, title=_("URL not in playlist."))
+            return await self.send_embed_msg(ctx, title=_("URL not in playlist."))
         del_count = len(track_list) - len(clean_list)
         if not clean_list:
             await delete_playlist(
@@ -1242,11 +1242,11 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 guild=guild,
                 author=playlist.author,
             )
-            return await self._embed_msg(ctx, title=_("No tracks left, removing playlist."))
+            return await self.send_embed_msg(ctx, title=_("No tracks left, removing playlist."))
         update = {"tracks": clean_list, "url": None}
         await playlist.edit(update)
         if del_count > 1:
-            await self._embed_msg(
+            await self.send_embed_msg(
                 ctx,
                 title=_("Playlist Modified"),
                 description=_(
@@ -1257,7 +1257,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
         else:
-            await self._embed_msg(
+            await self.send_embed_msg(
                 ctx,
                 title=_("Playlist Modified"),
                 description=_(
@@ -1309,7 +1309,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist save MyPersonalPlaylist https://open.spotify.com/playlist/1RyeIbyFeIJVnNzlGr5KkR --scope User`
         """
         if self.playlist_api is None:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlists Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
@@ -1330,7 +1330,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
         if playlist_name.isnumeric():
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Invalid Playlist Name"),
                 description=_(
@@ -1342,7 +1342,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx.command.reset_cooldown(ctx)
             return
         player = lavalink.get_player(ctx.guild.id)
-        tracklist = await self._playlist_tracks(
+        tracklist = await self.fetch_playlist_tracks(
             ctx, player, Query.process_input(playlist_url, self.local_folder_current_path)
         )
         if isinstance(tracklist, discord.Message):
@@ -1365,7 +1365,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 guild,
             )
             if playlist is not None:
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Playlist Created"),
                     description=_(
@@ -1378,7 +1378,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                     else None,
                 )
             else:
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Playlist Couldn't be created"),
                     description=_("Unable to create your playlist."),
@@ -1429,7 +1429,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist start MyPersonalPlaylist --scope User`
         """
         if self.playlist_api is None:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlists Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
@@ -1446,7 +1446,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             ctx.command.reset_cooldown(ctx)
-            await self._embed_msg(
+            await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Play Tracks"),
                 description=_("You need the DJ role to start playing playlists."),
@@ -1454,15 +1454,15 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             return False
 
         try:
-            playlist, playlist_arg, scope = await self._get_correct_playlist_id(
+            playlist, playlist_arg, scope = await self.get_playlist_match(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(ctx, title=str(e))
+            return await self.send_embed_msg(ctx, title=str(e))
         if playlist is None:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Could not match '{arg}' to a playlist").format(arg=playlist_arg),
@@ -1472,7 +1472,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx.command.reset_cooldown(ctx)
             return
         jukebox_price = await self.config.guild(ctx.guild).jukebox_price()
-        if not await self._currency_check(ctx, jukebox_price):
+        if not await self.maybe_charge_requester(ctx, jukebox_price):
             ctx.command.reset_cooldown(ctx)
             return
         maxlength = await self.config.guild(ctx.guild).maxlength()
@@ -1488,7 +1488,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                     await asyncio.sleep(0.02)
                 if len(player.queue) >= 10000:
                     continue
-                if not await self.is_allowed(
+                if not await self.is_query_allowed(
                     self.config,
                     ctx.guild,
                     (
@@ -1502,11 +1502,11 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 query = Query.process_input(track.uri, self.local_folder_current_path)
                 if query.is_local:
                     local_path = LocalPath(track.uri, self.local_folder_current_path)
-                    if not await self.has_localtracks_check(ctx):
+                    if not await self.localtracks_folder_exists(ctx):
                         pass
                     if not local_path.exists() and not local_path.is_file():
                         continue
-                if maxlength > 0 and not self.track_limit(track.length, maxlength):
+                if maxlength > 0 and not self.is_track_too_long(track.length, maxlength):
                     continue
 
                 player.add(author_obj, track)
@@ -1542,13 +1542,13 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                     scope=scope_name,
                 ),
             )
-            await self._embed_msg(ctx, embed=embed)
+            await self.send_embed_msg(ctx, embed=embed)
             if not player.current:
                 await player.play()
             return
         except RuntimeError:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Playlist {id} does not exist in {scope} scope.").format(
@@ -1557,7 +1557,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
         except MissingGuild:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Missing Arguments"),
                 description=_("You need to specify the Guild ID for the guild to lookup."),
@@ -1608,7 +1608,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist update MyPersonalPlaylist --scope User`
         """
         if self.playlist_api is None:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlists Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
@@ -1620,16 +1620,16 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
         try:
-            playlist, playlist_arg, scope = await self._get_correct_playlist_id(
+            playlist, playlist_arg, scope = await self.get_playlist_match(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(ctx, title=str(e))
+            return await self.send_embed_msg(ctx, title=str(e))
 
         if playlist is None:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Could not match '{arg}' to a playlist.").format(arg=playlist_arg),
@@ -1646,14 +1646,14 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 added, removed, playlist = await self._maybe_update_playlist(ctx, player, playlist)
             else:
                 ctx.command.reset_cooldown(ctx)
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Invalid Playlist"),
                     description=_("Custom playlists cannot be updated."),
                 )
         except RuntimeError:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Playlist {id} does not exist in {scope} scope.").format(
@@ -1661,7 +1661,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
         except MissingGuild:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Missing Arguments"),
                 description=_("You need to specify the Guild ID for the guild to lookup."),
@@ -1721,7 +1721,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 embeds = removed_embeds + added_embeds
                 await menu(ctx, embeds, DEFAULT_CONTROLS)
             else:
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Playlist Has Not Been Modified"),
                     description=_("No changes for {name} (`{id}`) [**{scope}**].").format(
@@ -1768,7 +1768,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist upload --scope User`
         """
         if self.playlist_api is None:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlists Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
@@ -1789,7 +1789,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         player = lavalink.get_player(ctx.guild.id)
 
         if not ctx.message.attachments:
-            await self._embed_msg(
+            await self.send_embed_msg(
                 ctx,
                 title=_(
                     "Please upload the playlist file. Any other message will cancel this "
@@ -1801,21 +1801,25 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                     "message", timeout=30.0, check=MessagePredicate.same_context(ctx)
                 )
             except asyncio.TimeoutError:
-                return await self._embed_msg(ctx, title=_("No file detected, try again later."))
+                return await self.send_embed_msg(
+                    ctx, title=_("No file detected, try again later.")
+                )
         else:
             file_message = ctx.message
         try:
             file_url = file_message.attachments[0].url
         except IndexError:
-            return await self._embed_msg(ctx, title=_("Upload cancelled."))
+            return await self.send_embed_msg(ctx, title=_("Upload cancelled."))
         file_suffix = file_url.rsplit(".", 1)[1]
         if file_suffix != "txt":
-            return await self._embed_msg(ctx, title=_("Only Red playlist files can be uploaded."))
+            return await self.send_embed_msg(
+                ctx, title=_("Only Red playlist files can be uploaded.")
+            )
         try:
             async with self.session.request("GET", file_url) as r:
                 uploaded_playlist = await r.json(content_type="text/plain", encoding="utf-8")
         except UnicodeDecodeError:
-            return await self._embed_msg(ctx, title=_("Not a valid playlist file."))
+            return await self.send_embed_msg(ctx, title=_("Not a valid playlist file."))
 
         new_schema = uploaded_playlist.get("schema", 1) >= 2
         version = uploaded_playlist.get("version", "v2")
@@ -1827,7 +1831,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             uploaded_playlist_url = uploaded_playlist.get("link", None)
             track_list = uploaded_playlist.get("playlist", [])
         if len(track_list) > 10000:
-            return await self._embed_msg(ctx, title=_("This playlist is too large."))
+            return await self.send_embed_msg(ctx, title=_("This playlist is too large."))
         uploaded_playlist_name = uploaded_playlist.get(
             "name", (file_url.split("/")[6]).split(".")[0]
         )
@@ -1912,7 +1916,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]playlist rename MyPersonalPlaylist RenamedPersonalPlaylist --scope User`
         """
         if self.playlist_api is None:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlists Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
@@ -1927,7 +1931,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         new_name = new_name.split(" ")[0].strip('"')[:32]
         if new_name.isnumeric():
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Invalid Playlist Name"),
                 description=_(
@@ -1937,15 +1941,15 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
         try:
-            playlist, playlist_arg, scope = await self._get_correct_playlist_id(
+            playlist, playlist_arg, scope = await self.get_playlist_match(
                 ctx, playlist_matches, scope, author, guild, specified_user
             )
         except TooManyMatches as e:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(ctx, title=str(e))
+            return await self.send_embed_msg(ctx, title=str(e))
         if playlist is None:
             ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx,
                 title=_("Playlist Not Found"),
                 description=_("Could not match '{arg}' to a playlist.").format(arg=playlist_arg),
@@ -1962,4 +1966,4 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         msg = _("'{old}' playlist has been renamed to '{new}' (`{id}`) [**{scope}**]").format(
             old=bold(old_name), new=bold(playlist.name), id=playlist.id, scope=scope_name
         )
-        await self._embed_msg(ctx, title=_("Playlist Modified"), description=msg)
+        await self.send_embed_msg(ctx, title=_("Playlist Modified"), description=msg)
