@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-08 18:19\n"
+"PO-Revision-Date: 2020-02-13 12:13\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -53,7 +53,7 @@ msgstr "Gestion des commandes personnalisées."
 #: redbot/cogs/customcom/customcom.py:211
 #, docstring
 msgid "Create custom commands.\\n\\n        If a type is not specified, a simple CC will be created.\\n        CCs can be enhanced with arguments, see the guide\\n        [here](https://docs.discord.red/en/stable/cog_customcom.html).\\n        "
-msgstr ""
+msgstr "Créer des commandes personnalisées.\\n\\n        Si un type n'est pas spécifié, une CP simple sera créée.\\n        Les CPs peuvent être améliorées avec des arguments, voir le guide\\n        [here](https://docs. iscord.red/fr/stable/cog_customcom.html).\\n        "
 
 #: redbot/cogs/customcom/customcom.py:222
 #, docstring
@@ -67,7 +67,7 @@ msgstr "Il existe déjà une commande du bot avec le même nom."
 
 #: redbot/cogs/customcom/customcom.py:231
 msgid "Custom command process cancelled."
-msgstr ""
+msgstr "Processus de commande personnalisée annulé."
 
 #: redbot/cogs/customcom/customcom.py:235
 #: redbot/cogs/customcom/customcom.py:256

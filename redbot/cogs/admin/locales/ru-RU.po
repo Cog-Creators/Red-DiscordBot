@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-08 18:22\n"
+"PO-Revision-Date: 2020-02-13 12:15\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -45,7 +45,7 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:58
 msgid "I need manage roles permission to do that."
-msgstr ""
+msgstr "Мне нужно управлять правами ролей, чтобы сделать это."
 
 #: redbot/cogs/admin/admin.py:60
 msgid "I am already announcing something. If you would like to make a different announcement please use `{prefix}announce cancel` first."

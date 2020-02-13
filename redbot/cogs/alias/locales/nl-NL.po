@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-08 18:19\n"
+"PO-Revision-Date: 2020-02-13 12:12\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -18,15 +18,15 @@ msgstr ""
 #: redbot/cogs/alias/alias.py:35
 #, docstring
 msgid "Create aliases for commands.\\n\\n    Aliases are alternative names shortcuts for commands. They\\n    can act as both a lambda (storing arguments for repeated use)\\n    or as simply a shortcut to saying \\\"x y z\\\".\\n\\n    When run, aliases will accept any additional arguments\\n    and append them to the stored alias.\\n    "
-msgstr ""
+msgstr "Maak aliassen voor commando's.\\n\\n    Aliassen zijn alternatieve namen of snelkoppelingen voor commando's. Ze\\n    kunnen fungeren als een lambda (argumenten opslaan voor herhaald gebruik)\\n    of als een snelkoppeling om \\\"x y z\\\" te zeggen.\\n\\n    Aliassen accepteren extra argumenten wanneer ze zijn gebruikt\\n    en voegen deze toe aan de opgeslagen alias.\\n    "
 
 #: redbot/cogs/alias/alias.py:111
 msgid "Arguments must be specified with a number."
-msgstr ""
+msgstr "Argumenten moeten worden gespecificeerd met een getal."
 
 #: redbot/cogs/alias/alias.py:118
 msgid "Arguments must be sequential. Missing arguments: "
-msgstr ""
+msgstr "Argumenten moeten sequentieel zijn. Ontbrekende argumenten: "
 
 #: redbot/cogs/alias/alias.py:168
 msgid "No prefix found."

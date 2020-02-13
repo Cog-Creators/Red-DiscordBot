@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-08 18:19\n"
+"PO-Revision-Date: 2020-02-13 12:13\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -224,11 +224,11 @@ msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:388
 msgid "You have no warnings!"
-msgstr ""
+msgstr "Vous n'avez pas d'avertissements !"
 
 #: redbot/cogs/warnings/warnings.py:393
 msgid "{num_points} point warning {reason_name} issued by {user} for {description}\\n"
-msgstr ""
+msgstr "{num_points} points d'avertissement {reason_name} émis par {user} pour {description}\\n"
 
 #: redbot/cogs/warnings/warnings.py:410
 #, docstring

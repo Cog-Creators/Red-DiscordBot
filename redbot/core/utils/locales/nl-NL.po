@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-08 18:19\n"
+"PO-Revision-Date: 2020-02-13 12:12\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -21,23 +21,23 @@ msgstr ", en "
 
 #: redbot/core/utils/chat_formatting.py:447
 msgid "year"
-msgstr ""
+msgstr "jaar"
 
 #: redbot/core/utils/chat_formatting.py:447
 msgid "years"
-msgstr ""
+msgstr "jaren"
 
 #: redbot/core/utils/chat_formatting.py:448
 msgid "month"
-msgstr ""
+msgstr "maand"
 
 #: redbot/core/utils/chat_formatting.py:448
 msgid "months"
-msgstr ""
+msgstr "maanden"
 
 #: redbot/core/utils/chat_formatting.py:449
 msgid "day"
-msgstr ""
+msgstr "dag"
 
 #: redbot/core/utils/chat_formatting.py:449
 msgid "days"
@@ -45,7 +45,7 @@ msgstr "dagen"
 
 #: redbot/core/utils/chat_formatting.py:450
 msgid "hour"
-msgstr ""
+msgstr "uur"
 
 #: redbot/core/utils/chat_formatting.py:450
 msgid "hours"
@@ -53,7 +53,7 @@ msgstr "uren"
 
 #: redbot/core/utils/chat_formatting.py:451
 msgid "minute"
-msgstr ""
+msgstr "minuut"
 
 #: redbot/core/utils/chat_formatting.py:451
 msgid "minutes"
@@ -61,7 +61,7 @@ msgstr "minuten"
 
 #: redbot/core/utils/chat_formatting.py:452
 msgid "second"
-msgstr ""
+msgstr "seconde"
 
 #: redbot/core/utils/chat_formatting.py:452
 msgid "seconds"
