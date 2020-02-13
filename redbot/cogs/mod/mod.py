@@ -106,13 +106,15 @@ class Mod(
             await self.settings.version.set(__version__)
 
     @commands.command()
+    @commands.is_owner()
     async def moveignoredchannels(self, ctx: commands.Context) -> None:
         """Move ignored channels and servers to core"""
         all_guilds = await self.settings.all_guilds()
         all_channels = await self.settings.all_channels()
         for guild_id, settings in all_guilds.items():
             await self.bot._config.guild_from_id(guild_id).ignored.set(settings["ignored"])
+            await self.settings.guild_from_id(guild_id).ignored.clear()
         for channel_id, settings in all_channels.items():
-            async with self.bot._config.channel_from_it(channel_id) as channel_data:
-                channel_data["ignored"] = list(set(settings["ignored"] + channel_data["ignored"]))
+            await self.bot._config.channel_from_id(channel_id).ignored.set(settings["ignored"])
+            await self.settings.channel_fro_id(channel_id).clear()
         await ctx.send(_("Ignored channels and guilds restored."))
