@@ -35,6 +35,9 @@ jobs:
     - name: Download translations
       run: |
         make download_translations
+    - name: Remove files from PR which only have a date changed
+      run: |
+        git checkout HEAD -- $(git diff V3/develop --numstat | awk 'BEGIN {ORS=" "} $1 == "1" && $2 == "1" {print $3}')
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v2
       with:
