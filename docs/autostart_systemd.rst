@@ -39,6 +39,8 @@ Paste the following in the file, and replace all instances of :code:`username` w
     [Unit]
     Description=%I redbot
     After=multi-user.target
+    After=network-online.target
+    Wants=network-online.target
 
     [Service]
     ExecStart=path -O -m redbot %I --no-prompt
