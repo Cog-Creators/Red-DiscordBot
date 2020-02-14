@@ -77,6 +77,7 @@ class Context(DPYContext):
             the sanitized `str`.
         sanitize_roles : bool
             Whether or not role mentions should be sanitized for you.
+            Defaults to ``True``
         **kwargs
             See `discord.ext.commands.Context.send`.
 
