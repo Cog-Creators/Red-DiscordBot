@@ -356,9 +356,7 @@ class Alias(commands.Cog):
                 base_cmd = alias.command.rsplit(" ", 1)[0]
 
             new_msg = copy(ctx.message)
-            new_msg.content = _("{prefix}help {command}").format(
-                prefix=ctx.prefix, command=base_cmd
-            )
+            new_msg.content = f"{ctx.prefix}help {base_cmd}"
             await self.bot.process_commands(new_msg)
         else:
             await ctx.send(_("No such alias exists."))
