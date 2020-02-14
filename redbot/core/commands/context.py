@@ -75,7 +75,10 @@ class Context(DPYContext):
             :func:`~redbot.core.utils.common_filters.filter_mass_mentions`.
             This must take a single `str` as an argument, and return
             the sanitized `str`.
-        \*\*kwargs
+        sanitize_roles : bool
+            Whether or not role mentions should be sanitized for you.
+            Defaults to ``True``
+        **kwargs
             See `discord.ext.commands.Context.send`.
 
         Returns
@@ -86,6 +89,10 @@ class Context(DPYContext):
         """
 
         _filter = kwargs.pop("filter", common_filters.filter_mass_mentions)
+        sanitize_roles = kwargs.pop("sanitize_roles", True)
+
+        if sanitize_roles and content and self.guild:
+            content = common_filters.sanitize_role_mentions(str(content), self.guild.roles)
 
         if _filter and content:
             content = _filter(str(content))
