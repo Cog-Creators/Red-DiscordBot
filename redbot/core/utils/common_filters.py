@@ -1,5 +1,5 @@
 import re
-from typing import List
+from typing import Iterable
 
 import discord
 
@@ -179,7 +179,7 @@ def escape_spoilers_and_mass_mentions(content: str) -> str:
     return escape_spoilers(filter_mass_mentions(content))
 
 
-def sanitize_role_mentions(content: str, roles: List[discord.Role]) -> str:
+def sanitize_role_mentions(content: str, roles: Iterable[discord.Role]) -> str:
     """
     Swaps out role mentions for @RoleName
 
@@ -189,7 +189,7 @@ def sanitize_role_mentions(content: str, roles: List[discord.Role]) -> str:
     ----------
     content: str
         The string to make substitutions to
-    roles: List[discord.Role]
+    roles: Iterable[discord.Role]
         The roles to make substitutions for
 
     Returns
