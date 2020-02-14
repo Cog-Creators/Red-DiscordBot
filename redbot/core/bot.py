@@ -974,6 +974,7 @@ class RedBase(
     async def send_filtered(
         destination: discord.abc.Messageable,
         filter_mass_mentions=True,
+        filter_roles=True,
         filter_invite_links=True,
         filter_all_links=False,
         **kwargs,
@@ -1000,6 +1001,10 @@ class RedBase(
         content = kwargs.pop("content", None)
 
         if content:
+            if filter_roles and isinstance(destination, discord.TextChannel):
+                content = common_filters.sanitize_role_mentions(
+                    content, destination.guild.roles
+                )
             if filter_mass_mentions:
                 content = common_filters.filter_mass_mentions(content)
             if filter_invite_links:
