@@ -1002,9 +1002,7 @@ class RedBase(
 
         if content:
             if filter_roles and isinstance(destination, discord.TextChannel):
-                content = common_filters.sanitize_role_mentions(
-                    content, destination.guild.roles
-                )
+                content = common_filters.sanitize_role_mentions(content, destination.guild.roles)
             if filter_mass_mentions:
                 content = common_filters.filter_mass_mentions(content)
             if filter_invite_links:

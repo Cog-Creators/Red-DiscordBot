@@ -180,6 +180,23 @@ def escape_spoilers_and_mass_mentions(content: str) -> str:
 
 
 def sanitize_role_mentions(content: str, roles: List[discord.Role]) -> str:
+    """
+    Swaps out role mentions for @RoleName
+
+    This should always be used prior to filtering everyone mentions
+
+    Parameters
+    ----------
+    content: str
+        The string to make substitutions to
+    roles: List[discord.Role]
+        The roles to make substitutions for
+
+    Returns
+    -------
+    str
+        The resulting string
+    """
     transformations = {re.escape(fr"<@&{role.id}>"): f"@{role.name}" for role in roles}
 
     def repl(obj):
