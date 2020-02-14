@@ -348,8 +348,82 @@ Continue by `creating-venv-linux`.
 Creating a Virtual Environment
 ------------------------------
 
+.. tip::
+
+    If you want to learn more about virtual environments, see page: `about-venvs`
+
 We require installing Red into a virtual environment. Don't be scared, it's very
-straightforward. See the section `installing-in-virtual-environment`.
+straightforward.
+
+You have 2 options:
+
+* :ref:`using-venv` (quick and easy, involves just two commands)
+* :ref:`using-pyenv-virtualenv` (only available and recommended when you installed Python with pyenv)
+
+----
+
+.. _using-venv:
+
+**************
+Using ``venv``
+**************
+This is the quickest way to get your virtual environment up and running, as `venv` is shipped with
+python.
+
+First, choose a directory where you would like to create your virtual environment. It's a good idea
+to keep it in a location which is easy to type out the path to. From now, we'll call it
+``redenv`` and it will be located in your home directory.
+
+Create your virtual environment with the following command::
+
+    python3.8 -m venv ~/redenv
+
+And activate it with the following command::
+
+    source ~/redenv/bin/activate
+
+.. important::
+
+    You must activate the virtual environment with the above command every time you open a new
+    shell to run, install or update Red.
+
+Continue by `installing-red-linux-mac`.
+
+----
+
+.. _using-pyenv-virtualenv:
+
+**************************
+Using ``pyenv virtualenv``
+**************************
+
+Using ``pyenv virtualenv`` saves you the headache of remembering where you installed your virtual
+environments. This option is only available if you installed Python with pyenv.
+
+First, ensure your pyenv interpreter is set to python 3.8.1 or greater with the following command::
+
+    pyenv version
+
+Now, create a virtual environment with the following command::
+
+    pyenv virtualenv <name>
+
+Replace ``<name>`` with whatever you like. If you ever forget what you named it,
+you can always use the command ``pyenv versions`` to list all virtual environments.
+
+Now activate your virtualenv with the following command::
+
+    pyenv shell <name>
+
+.. important::
+
+    You must activate the virtual environment with the above command every time you open a new
+    shell to run, install or update Red. You can check out other commands like ``pyenv local`` and
+    ``pyenv global`` if you wish to keep the virtualenv activated all the time.
+
+Continue by `installing-red-linux-mac`.
+
+.. _pyenv-installer: https://github.com/pyenv/pyenv-installer/blob/master/README.rst
 
 .. _installing-red-linux-mac:
 
