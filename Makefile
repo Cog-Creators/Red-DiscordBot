@@ -5,6 +5,8 @@ reformat:
 	$(PYTHON) -m black `git ls-files "*.py"`
 stylecheck:
 	$(PYTHON) -m black --check `git ls-files "*.py"`
+stylediff:
+	$(PYTHON) -m black --check --diff `git ls-files "*.py"`
 
 # Translations
 gettext:
