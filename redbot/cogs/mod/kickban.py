@@ -581,7 +581,7 @@ class KickBanMixin(MixinMeta):
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
     @checks.admin_or_permissions(ban_members=True)
-    async def unban(self, ctx: commands.Context, user_id: int, *, reason: str = None):
+    async def unban(self, ctx: commands.Context, user_id: RawUserIds, *, reason: str = None):
         """Unban a user from this server.
 
         Requires specifying the target user's ID. To find this, you may either:

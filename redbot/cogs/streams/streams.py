@@ -55,7 +55,6 @@ class Streams(commands.Cog):
         super().__init__()
         self.db: Config = Config.get_conf(self, 26262626)
         self.ttv_bearer_cache: dict = {}
-
         self.db.register_global(**self.global_defaults)
         self.db.register_guild(**self.guild_defaults)
         self.db.register_role(**self.role_defaults)
@@ -79,6 +78,7 @@ class Streams(commands.Cog):
     async def initialize(self) -> None:
         """Should be called straight after cog instantiation."""
         await self.bot.wait_until_ready()
+
         try:
             await self.move_api_keys()
             await self.get_twitch_bearer_token()
@@ -86,6 +86,7 @@ class Streams(commands.Cog):
             self.task = self.bot.loop.create_task(self._stream_alerts())
         except Exception as error:
             log.exception("Failed to initialize Streams cog:", exc_info=error)
+
         self._ready_event.set()
 
     async def cog_before_invoke(self, ctx: commands.Context):

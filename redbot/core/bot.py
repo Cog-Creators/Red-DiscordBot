@@ -149,6 +149,12 @@ class RedBase(
         if "command_not_found" not in kwargs:
             kwargs["command_not_found"] = "Command {} not found.\n{}"
 
+        message_cache_size = cli_flags.message_cache_size
+        if cli_flags.no_message_cache:
+            message_cache_size = None
+        kwargs["max_messages"] = message_cache_size
+        self._max_messages = message_cache_size
+
         self._uptime = None
         self._checked_time_accuracy = None
         self._color = discord.Embed.Empty  # This is needed or color ends up 0x000000
@@ -270,6 +276,10 @@ class RedBase(
     @property
     def colour(self) -> NoReturn:
         raise AttributeError("Please fetch the embed colour with `get_embed_colour`")
+
+    @property
+    def max_messages(self) -> Optional[int]:
+        return self._max_messages
 
     async def allowed_by_whitelist_blacklist(
         self,
@@ -933,6 +943,7 @@ class RedBase(
     async def send_filtered(
         destination: discord.abc.Messageable,
         filter_mass_mentions=True,
+        filter_roles=True,
         filter_invite_links=True,
         filter_all_links=False,
         **kwargs,
@@ -959,6 +970,8 @@ class RedBase(
         content = kwargs.pop("content", None)
 
         if content:
+            if filter_roles and isinstance(destination, discord.TextChannel):
+                content = common_filters.sanitize_role_mentions(content, destination.guild.roles)
             if filter_mass_mentions:
                 content = common_filters.filter_mass_mentions(content)
             if filter_invite_links:
