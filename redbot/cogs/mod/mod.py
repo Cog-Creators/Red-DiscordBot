@@ -95,7 +95,7 @@ class Mod(
                     val = -1
                 await self.settings.guild(discord.Object(id=guild_id)).delete_repeats.set(val)
             await self.settings.version.set("1.0.0")  # set version of last update
-        if await self.settings.version() != "1.1.0":
+        if await self.settings.version() < "1.1.0":
             prefixes = await self.bot.get_valid_prefixes()
             msg = _(
                 "Ignored guilds and channels have been moved. "
