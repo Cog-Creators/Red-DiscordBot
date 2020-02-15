@@ -400,7 +400,7 @@ class Economy(commands.Cog):
             # Gets the users latest successfully payday and adds the guilds payday time
             next_payday = (
                 await self.config.member(author).next_payday()
-                + self.config.guild(guild).PAYDAY_TIME()
+                + await self.config.guild(guild).PAYDAY_TIME()
             )
             if cur_time >= next_payday:
                 credit_amount = await self.config.guild(guild).PAYDAY_CREDITS()
