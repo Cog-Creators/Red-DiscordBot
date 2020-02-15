@@ -62,3 +62,4 @@ redbot/setup.py                     @tekulvw
 # Others
 .travis.yml                         @Kowlin
 crowdin.yml                         @Kowlin
+.github/workflows/*                 @Kowlin
