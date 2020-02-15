@@ -1,33 +1,38 @@
-import contextlib
-
 import discord
-from redbot.core import Config, checks, commands
-from redbot.core.utils.chat_formatting import pagify
 from redbot.core.bot import Red
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core import checks, commands, Config
+from redbot.core.i18n import cog_i18n, Translator
+from redbot.core.utils.chat_formatting import escape, pagify
+
 from .streamtypes import (
-    Stream,
-    TwitchStream,
     HitboxStream,
     MixerStream,
     PicartoStream,
+    Stream,
+    TwitchStream,
     YoutubeStream,
 )
 from .errors import (
+    APIError,
+    InvalidTwitchCredentials,
+    InvalidYoutubeCredentials,
     OfflineStream,
     StreamNotFound,
-    APIError,
-    InvalidYoutubeCredentials,
     StreamsError,
-    InvalidTwitchCredentials,
 )
 from . import streamtypes as _streamtypes
-from collections import defaultdict
-import asyncio
+
 import re
+import logging
+import asyncio
+import aiohttp
+import contextlib
+from datetime import datetime
+from collections import defaultdict
 from typing import Optional, List, Tuple, Union
 
 _ = Translator("Streams", __file__)
+log = logging.getLogger("red.core.cogs.Streams")
 
 
 @cog_i18n(_)
@@ -49,7 +54,7 @@ class Streams(commands.Cog):
     def __init__(self, bot: Red):
         super().__init__()
         self.db: Config = Config.get_conf(self, 26262626)
-
+        self.ttv_bearer_cache: dict = {}
         self.db.register_global(**self.global_defaults)
         self.db.register_guild(**self.guild_defaults)
         self.db.register_role(**self.role_defaults)
@@ -73,10 +78,15 @@ class Streams(commands.Cog):
     async def initialize(self) -> None:
         """Should be called straight after cog instantiation."""
         await self.bot.wait_until_ready()
-        await self.move_api_keys()
-        self.streams = await self.load_streams()
 
-        self.task = self.bot.loop.create_task(self._stream_alerts())
+        try:
+            await self.move_api_keys()
+            await self.get_twitch_bearer_token()
+            self.streams = await self.load_streams()
+            self.task = self.bot.loop.create_task(self._stream_alerts())
+        except Exception as error:
+            log.exception("Failed to initialize Streams cog:", exc_info=error)
+
         self._ready_event.set()
 
     async def cog_before_invoke(self, ctx: commands.Context):
@@ -95,11 +105,54 @@ class Streams(commands.Cog):
                 await self.bot.set_shared_api_tokens("twitch", client_id=token)
         await self.db.tokens.clear()
 
+    async def get_twitch_bearer_token(self) -> None:
+        tokens = await self.bot.get_shared_api_tokens("twitch")
+        if tokens.get("client_id"):
+            try:
+                tokens["client_secret"]
+            except KeyError:
+                prefix = (await self.bot._config.prefix())[0]
+                message = _(
+                    "You need a client secret key to use correctly Twitch API on this cog.\n"
+                    "Follow these steps:\n"
+                    "1. Go to this page: https://dev.twitch.tv/console/apps.\n"
+                    '2. Click "Manage" on your application.\n'
+                    '3. Click on "New secret".\n'
+                    "5. Copy your client ID and your client secret into:\n"
+                    "`{prefix}set api twitch client_id <your_client_id_here> "
+                    "client_secret <your_client_secret_here>`\n\n"
+                    "Note: These tokens are sensitive and should only be used in a private channel "
+                    "or in DM with the bot."
+                ).format(prefix=prefix)
+                await self.bot.send_to_owners(message)
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                "https://id.twitch.tv/oauth2/token",
+                params={
+                    "client_id": tokens.get("client_id", ""),
+                    "client_secret": tokens.get("client_secret", ""),
+                    "grant_type": "client_credentials",
+                },
+            ) as req:
+                if req.status != 200:
+                    return
+                data = await req.json()
+        self.ttv_bearer_cache = data
+        self.ttv_bearer_cache["expires_at"] = datetime.now().timestamp() + data.get("expires_in")
+
+    async def maybe_renew_twitch_bearer_token(self) -> None:
+        if self.ttv_bearer_cache:
+            if self.ttv_bearer_cache["expires_at"] - datetime.now().timestamp() <= 60:
+                await self.get_twitch_bearer_token()
+
     @commands.command()
     async def twitchstream(self, ctx: commands.Context, channel_name: str):
         """Check if a Twitch channel is live."""
+        await self.maybe_renew_twitch_bearer_token()
         token = (await self.bot.get_shared_api_tokens("twitch")).get("client_id")
-        stream = TwitchStream(name=channel_name, token=token)
+        stream = TwitchStream(
+            name=channel_name, token=token, bearer=self.ttv_bearer_cache.get("access_token", None),
+        )
         await self.check_online(ctx, stream)
 
     @commands.command()
@@ -289,7 +342,12 @@ class Streams(commands.Cog):
             if is_yt and not self.check_name_or_id(channel_name):
                 stream = _class(id=channel_name, token=token)
             elif is_twitch:
-                stream = _class(name=channel_name, token=token.get("client_id"))
+                await self.maybe_renew_twitch_bearer_token()
+                stream = _class(
+                    name=channel_name,
+                    token=token.get("client_id"),
+                    bearer=self.ttv_bearer_cache.get("access_token", None),
+                )
             else:
                 stream = _class(name=channel_name, token=token)
             try:
@@ -352,8 +410,9 @@ class Streams(commands.Cog):
             "3. Enter a name, set the OAuth Redirect URI to `http://localhost`, and "
             "select an Application Category of your choosing.\n"
             "4. Click *Register*.\n"
-            "5. On the following page, copy the Client ID.\n"
-            "6. Run the command `{prefix}set api twitch client_id <your_client_id_here>`\n\n"
+            "5. Copy your client ID and your client secret into:\n"
+            "`{prefix}set api twitch client_id <your_client_id_here> "
+            "client_secret <your_client_secret_here>`\n\n"
             "Note: These tokens are sensitive and should only be used in a private channel\n"
             "or in DM with the bot.\n"
         ).format(prefix=ctx.prefix)
@@ -563,6 +622,7 @@ class Streams(commands.Cog):
         return True
 
     async def _stream_alerts(self):
+        await self.bot.wait_until_ready()
         while True:
             try:
                 await self.check_streams()
@@ -575,6 +635,7 @@ class Streams(commands.Cog):
             with contextlib.suppress(Exception):
                 try:
                     if stream.__class__.__name__ == "TwitchStream":
+                        await self.maybe_renew_twitch_bearer_token()
                         embed, is_rerun = await stream.is_online()
                     else:
                         embed = await stream.is_online()
@@ -594,6 +655,8 @@ class Streams(commands.Cog):
                         continue
                     for channel_id in stream.channels:
                         channel = self.bot.get_channel(channel_id)
+                        if not channel:
+                            continue
                         ignore_reruns = await self.db.guild(channel.guild).ignore_reruns()
                         if ignore_reruns and is_rerun:
                             continue
@@ -604,15 +667,22 @@ class Streams(commands.Cog):
                             if alert_msg:
                                 content = alert_msg.format(mention=mention_str, stream=stream)
                             else:
-                                content = _("{mention}, {stream.name} is live!").format(
-                                    mention=mention_str, stream=stream
+                                content = _("{mention}, {stream} is live!").format(
+                                    mention=mention_str,
+                                    stream=escape(
+                                        str(stream.name), mass_mentions=True, formatting=True
+                                    ),
                                 )
                         else:
                             alert_msg = await self.db.guild(channel.guild).live_message_nomention()
                             if alert_msg:
                                 content = alert_msg.format(stream=stream)
                             else:
-                                content = _("{stream.name} is live!").format(stream=stream)
+                                content = _("{stream} is live!").format(
+                                    stream=escape(
+                                        str(stream.name), mass_mentions=True, formatting=True
+                                    )
+                                )
 
                         m = await channel.send(content, embed=embed)
                         stream._messages_cache.append(m)
@@ -660,7 +730,6 @@ class Streams(commands.Cog):
 
     async def load_streams(self):
         streams = []
-
         for raw_stream in await self.db.streams():
             _class = getattr(_streamtypes, raw_stream["type"], None)
             if not _class:
@@ -680,6 +749,7 @@ class Streams(commands.Cog):
             if token:
                 if _class.__name__ == "TwitchStream":
                     raw_stream["token"] = token.get("client_id")
+                    raw_stream["bearer"] = self.ttv_bearer_cache.get("access_token", None)
                 else:
                     raw_stream["token"] = token
             streams.append(_class(**raw_stream))
