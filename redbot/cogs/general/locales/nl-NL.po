@@ -1,269 +1,272 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-05 22:33+0200\n"
-"PO-Revision-Date: 2019-07-06 16:13\n"
-"Last-Translator: Robert Jansen (Kowlin)\n"
+"POT-Creation-Date: 2020-02-08 18:08+0000\n"
+"PO-Revision-Date: 2020-02-13 12:12\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.0\n"
+"Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: nl\n"
 "X-Crowdin-File: /cogs/general/locales/messages.pot\n"
 "Language: nl_NL\n"
 
-#: redbot/cogs/general/general.py:36
+#: redbot/cogs/general/general.py:40
 #, docstring
 msgid "General commands."
 msgstr "Algemene commands."
 
-#: redbot/cogs/general/general.py:41
+#: redbot/cogs/general/general.py:45
 msgid "As I see it, yes"
 msgstr "Zoals ik het zie wel"
 
-#: redbot/cogs/general/general.py:42
+#: redbot/cogs/general/general.py:46
 msgid "It is certain"
 msgstr "Zeker"
 
-#: redbot/cogs/general/general.py:43
+#: redbot/cogs/general/general.py:47
 msgid "It is decidedly so"
 msgstr "Absoluut"
 
-#: redbot/cogs/general/general.py:44
+#: redbot/cogs/general/general.py:48
 msgid "Most likely"
 msgstr "Zeer waarschijnlijk"
 
-#: redbot/cogs/general/general.py:45
+#: redbot/cogs/general/general.py:49
 msgid "Outlook good"
 msgstr "Ziet er goed uit"
 
-#: redbot/cogs/general/general.py:46
+#: redbot/cogs/general/general.py:50
 msgid "Signs point to yes"
 msgstr "Het ziet er naar uit"
 
-#: redbot/cogs/general/general.py:47
+#: redbot/cogs/general/general.py:51
 msgid "Without a doubt"
 msgstr "Zonder twijfel"
 
-#: redbot/cogs/general/general.py:48
+#: redbot/cogs/general/general.py:52
 msgid "Yes"
 msgstr "Ja"
 
-#: redbot/cogs/general/general.py:49
+#: redbot/cogs/general/general.py:53
 msgid "Yes – definitely"
 msgstr "Ja - zeker"
 
-#: redbot/cogs/general/general.py:50
+#: redbot/cogs/general/general.py:54
 msgid "You may rely on it"
 msgstr "Je kan er op rekenen"
 
-#: redbot/cogs/general/general.py:51
+#: redbot/cogs/general/general.py:55
 msgid "Reply hazy, try again"
 msgstr "Wazig antwoord, probeer het opnieuw"
 
-#: redbot/cogs/general/general.py:52
+#: redbot/cogs/general/general.py:56
 msgid "Ask again later"
 msgstr "Vraag het later weer"
 
-#: redbot/cogs/general/general.py:53
+#: redbot/cogs/general/general.py:57
 msgid "Better not tell you now"
 msgstr "Dat kan ik je nu beter niet vertellen"
 
-#: redbot/cogs/general/general.py:54
+#: redbot/cogs/general/general.py:58
 msgid "Cannot predict now"
 msgstr "Ik kan het nu niet voorspellen"
 
-#: redbot/cogs/general/general.py:55
+#: redbot/cogs/general/general.py:59
 msgid "Concentrate and ask again"
 msgstr "Concentreer en vraag opnieuw"
 
-#: redbot/cogs/general/general.py:56
+#: redbot/cogs/general/general.py:60
 msgid "Don't count on it"
 msgstr "Reken er maar niet op"
 
-#: redbot/cogs/general/general.py:57
+#: redbot/cogs/general/general.py:61
 msgid "My reply is no"
 msgstr "Ik zeg nee"
 
-#: redbot/cogs/general/general.py:58
+#: redbot/cogs/general/general.py:62
 msgid "My sources say no"
 msgstr "Mijn bronnen zeggen van niet"
 
-#: redbot/cogs/general/general.py:59
+#: redbot/cogs/general/general.py:63
 msgid "Outlook not so good"
 msgstr "Het ziet er niet goed uit"
 
-#: redbot/cogs/general/general.py:60
+#: redbot/cogs/general/general.py:64
 msgid "Very doubtful"
 msgstr "Onwaarschijnlijk"
 
-#: redbot/cogs/general/general.py:70
+#: redbot/cogs/general/general.py:74
 #, docstring
 msgid "Choose between multiple options.\\n\\n        To denote options which include whitespace, you should use\\n        double quotes.\\n        "
 msgstr ""
 
-#: redbot/cogs/general/general.py:77
+#: redbot/cogs/general/general.py:81
 msgid "Not enough options to pick from."
 msgstr "Niet genoeg opties om uit te kiezen."
 
-#: redbot/cogs/general/general.py:83
+#: redbot/cogs/general/general.py:87
 #, docstring
 msgid "Roll a random number.\\n\\n        The result will be between 1 and `<number>`.\\n\\n        `<number>` defaults to 100.\\n        "
 msgstr ""
 
-#: redbot/cogs/general/general.py:94
+#: redbot/cogs/general/general.py:102
 msgid "{author.mention} Maybe higher than 1? ;P"
 msgstr "{author.mention} Misschien hoger dan 1? :P"
 
-#: redbot/cogs/general/general.py:98
+#: redbot/cogs/general/general.py:105
+msgid "{author.mention} Max allowed number is {maxamount}."
+msgstr ""
+
+#: redbot/cogs/general/general.py:112
 #, docstring
 msgid "Flip a coin... or a user.\\n\\n        Defaults to a coin.\\n        "
 msgstr ""
 
-#: redbot/cogs/general/general.py:106
+#: redbot/cogs/general/general.py:120
 msgid "Nice try. You think this is funny?\\n How about *this* instead:\\n\\n"
 msgstr ""
 
-#: redbot/cogs/general/general.py:117
+#: redbot/cogs/general/general.py:131
 msgid "*flips a coin and... "
 msgstr "*tost een munt en... "
 
-#: redbot/cogs/general/general.py:117
+#: redbot/cogs/general/general.py:131
 msgid "HEADS!*"
 msgstr "KOP!*"
 
-#: redbot/cogs/general/general.py:117
+#: redbot/cogs/general/general.py:131
 msgid "TAILS!*"
 msgstr "MUNT!*"
 
-#: redbot/cogs/general/general.py:121
+#: redbot/cogs/general/general.py:135
 #, docstring
 msgid "Play Rock Paper Scissors."
 msgstr "Speel Steen Papier Schaar."
 
-#: redbot/cogs/general/general.py:126
+#: redbot/cogs/general/general.py:140
 msgid "This isn't a valid option. Try {r}, {p}, or {s}."
 msgstr ""
 
-#: redbot/cogs/general/general.py:147
+#: redbot/cogs/general/general.py:161
 msgid "{choice} You win {author.mention}!"
 msgstr "{choice} Je wint {author.mention}!"
 
-#: redbot/cogs/general/general.py:153
+#: redbot/cogs/general/general.py:167
 msgid "{choice} You lose {author.mention}!"
 msgstr "{choice}Je verliest {author.mention}!"
 
-#: redbot/cogs/general/general.py:159
+#: redbot/cogs/general/general.py:173
 msgid "{choice} We're square {author.mention}!"
 msgstr "{choice} Wij zijn vierkant {author.mention}!"
 
-#: redbot/cogs/general/general.py:166
+#: redbot/cogs/general/general.py:180
 #, docstring
 msgid "Ask 8 ball a question.\\n\\n        Question must end with a question mark.\\n        "
 msgstr ""
 
-#: redbot/cogs/general/general.py:173
+#: redbot/cogs/general/general.py:187
 msgid "That doesn't look like a question."
 msgstr "Dat ziet er niet als een vraag uit."
 
-#: redbot/cogs/general/general.py:177
+#: redbot/cogs/general/general.py:191
 #, docstring
 msgid "Start or stop the stopwatch."
 msgstr "Start of stop de stopwatch."
 
-#: redbot/cogs/general/general.py:181
+#: redbot/cogs/general/general.py:195
 msgid " Stopwatch started!"
 msgstr " Stopwatch gestart!"
 
-#: redbot/cogs/general/general.py:186
+#: redbot/cogs/general/general.py:200
 msgid " Stopwatch stopped! Time: **{seconds}**"
 msgstr " Stopwatch is gestopt! Tijd: **{seconds}**"
 
-#: redbot/cogs/general/general.py:192
+#: redbot/cogs/general/general.py:206
 #, docstring
 msgid "Create a lmgtfy link."
 msgstr "Maak een lmgtfy-link."
 
-#: redbot/cogs/general/general.py:201
+#: redbot/cogs/general/general.py:215
 #, docstring
 msgid "Because everyone likes hugs!\\n\\n        Up to 10 intensity levels.\\n        "
 msgstr ""
 
-#: redbot/cogs/general/general.py:224
+#: redbot/cogs/general/general.py:238
 #, docstring
 msgid "Show server information."
 msgstr "Toon serverinformatie."
 
-#: redbot/cogs/general/general.py:231
+#: redbot/cogs/general/general.py:247
 msgid "Since {date}. That's over {num} days ago!"
 msgstr "Sinds {date}. Dat is meer dan {num} dagen geleden!"
 
-#: redbot/cogs/general/general.py:235
+#: redbot/cogs/general/general.py:251
 msgid "Region"
 msgstr "Regio"
 
-#: redbot/cogs/general/general.py:236
+#: redbot/cogs/general/general.py:252
 msgid "Users"
 msgstr "Gebruikers"
 
-#: redbot/cogs/general/general.py:237
+#: redbot/cogs/general/general.py:253
 msgid "Text Channels"
 msgstr "Tekstkanalen"
 
-#: redbot/cogs/general/general.py:238
+#: redbot/cogs/general/general.py:254
 msgid "Voice Channels"
 msgstr "Spraakkanalen"
 
-#: redbot/cogs/general/general.py:239
+#: redbot/cogs/general/general.py:255
 msgid "Roles"
 msgstr "Rollen"
 
-#: redbot/cogs/general/general.py:240
+#: redbot/cogs/general/general.py:256
 msgid "Owner"
 msgstr "Eigenaar"
 
-#: redbot/cogs/general/general.py:241
+#: redbot/cogs/general/general.py:257
 msgid "Server ID: "
 msgstr "Server ID: "
 
-#: redbot/cogs/general/general.py:252
+#: redbot/cogs/general/general.py:268
 msgid "I need the `Embed links` permission to send this."
 msgstr "Ik heb de `Embed links` permissie nodig om dit te kunnen versturen."
 
-#: redbot/cogs/general/general.py:256
+#: redbot/cogs/general/general.py:272
 #, docstring
 msgid "Search the Urban Dictionary.\\n\\n        This uses the unofficial Urban Dictionary API.\\n        "
 msgstr ""
 
-#: redbot/cogs/general/general.py:272 redbot/cogs/general/general.py:338
+#: redbot/cogs/general/general.py:288 redbot/cogs/general/general.py:354
 msgid "No Urban Dictionary entries were found, or there was an error in the process."
 msgstr ""
 
-#: redbot/cogs/general/general.py:278
+#: redbot/cogs/general/general.py:294
 msgid "No Urban Dictionary entries were found."
 msgstr ""
 
-#: redbot/cogs/general/general.py:284
+#: redbot/cogs/general/general.py:300
 msgid "{word} by {author}"
 msgstr "{word} door {author}"
 
-#: redbot/cogs/general/general.py:289
+#: redbot/cogs/general/general.py:305
 msgid "{definition}\\n\\n**Example:** {example}"
 msgstr ""
 
-#: redbot/cogs/general/general.py:295
+#: redbot/cogs/general/general.py:311
 msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
 msgstr "{thumbs_down} Omlaag / {thumbs_up} Omhoog, mogelijk gemaakt door Urban Dictionary."
 
-#: redbot/cogs/general/general.py:314
+#: redbot/cogs/general/general.py:330
 msgid "<{permalink}>\\n {word} by {author}\\n\\n{description}\\n\\n{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
 msgstr ""
 
-#: redbot/cogs/general/general.py:320
+#: redbot/cogs/general/general.py:336
 msgid "{definition}\\n\\n**Example:** {example}"
 msgstr ""
 

@@ -25,11 +25,12 @@ redbot/core/utils/antispam.py            @mikeshardmind
 redbot/core/utils/tunnel.py              @mikeshardmind
 redbot/core/utils/caching.py             @mikeshardmind
 redbot/core/utils/common_filters.py      @mikeshardmind
+redbot/core/utils/dbtools.py             @mikeshardmind
 
 # Cogs
 redbot/cogs/admin/*                 @tekulvw
 redbot/cogs/alias/*                 @tekulvw
-redbot/cogs/audio/*                 @aikaterna
+redbot/cogs/audio/*                 @aikaterna @Drapersniper
 redbot/cogs/bank/*                  @tekulvw
 redbot/cogs/cleanup/*               @palmtree5
 redbot/cogs/customcom/*             @palmtree5
@@ -55,9 +56,10 @@ tests/cogs/downloader/*             @jack1142
 # Setup, instance setup, and running the bot
 setup.py                            @tekulvw
 redbot/__init__.py                  @tekulvw
-redbot/__main__.py                  @tekulvw
+redbot/__main__.py                  @tekulvw @mikeshardmind
 redbot/setup.py                     @tekulvw
 
 # Others
 .travis.yml                         @Kowlin
 crowdin.yml                         @Kowlin
+.github/workflows/*                 @Kowlin

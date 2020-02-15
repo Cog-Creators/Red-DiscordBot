@@ -1,1 +1,0 @@
-Arguments ``--co-owner`` and ``--load-cogs`` now properly require at least one argument to be passed.

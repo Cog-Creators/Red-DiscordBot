@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import asyncio
 import datetime
-from typing import Union, List, Optional
+from typing import Union, List, Optional, TYPE_CHECKING
 from functools import wraps
 
 import discord
@@ -8,8 +10,11 @@ import discord
 from redbot.core.utils.chat_formatting import humanize_number
 from . import Config, errors, commands
 from .i18n import Translator
-from .bot import Red
+
 from .errors import BankPruneError
+
+if TYPE_CHECKING:
+    from .bot import Red
 
 _ = Translator("Bank API", __file__)
 
@@ -833,9 +838,9 @@ async def set_default_balance(amount: int, guild: discord.Guild = None) -> int:
     amount = int(amount)
     max_bal = await get_max_balance(guild)
 
-    if not (0 < amount <= max_bal):
+    if not (0 <= amount <= max_bal):
         raise ValueError(
-            "Amount must be greater than zero and less than {max}.".format(
+            "Amount must be greater than or equal zero and less than or equal {max}.".format(
                 max=humanize_number(max_bal, override_locale="en_US")
             )
         )

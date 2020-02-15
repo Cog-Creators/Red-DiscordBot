@@ -1,1 +1,0 @@
-Tests now use same event loop policy as Red's code.

@@ -4,15 +4,15 @@ import json
 import logging
 import os
 import sys
+import re
 from copy import deepcopy
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, Union
 
 import appdirs
 import click
 
-import redbot.logging
-from redbot.core.utils import safe_delete, create_backup as red_create_backup
+from redbot.core.utils._internal_utils import safe_delete, create_backup as red_create_backup
 from redbot.core import config, data_manager, drivers
 from redbot.core.drivers import BackendType, IdentifierData
 
@@ -59,26 +59,35 @@ def save_config(name, data, remove=False):
         json.dump(_config, fs, indent=4)
 
 
-def get_data_dir():
-    default_data_dir = Path(appdir.user_data_dir)
+def get_data_dir(instance_name: str):
+    data_path = Path(appdir.user_data_dir) / "data" / instance_name
 
+    print()
     print(
         "We've attempted to figure out a sane default data location which is printed below."
         " If you don't want to change this default please press [ENTER],"
         " otherwise input your desired data location."
     )
     print()
-    print("Default: {}".format(default_data_dir))
+    print("Default: {}".format(data_path))
 
-    new_path = input("> ")
+    data_path_input = input("> ")
 
-    if new_path != "":
-        new_path = Path(new_path)
-        default_data_dir = new_path
+    if data_path_input != "":
+        data_path = Path(data_path_input)
 
-    if not default_data_dir.exists():
+    try:
+        exists = data_path.exists()
+    except OSError:
+        print(
+            "We were unable to check your chosen directory."
+            " Provided path may contain an invalid character."
+        )
+        sys.exit(1)
+
+    if not exists:
         try:
-            default_data_dir.mkdir(parents=True, exist_ok=True)
+            data_path.mkdir(parents=True, exist_ok=True)
         except OSError:
             print(
                 "We were unable to create your chosen directory."
@@ -87,11 +96,11 @@ def get_data_dir():
             )
             sys.exit(1)
 
-    print("You have chosen {} to be your data directory.".format(default_data_dir))
+    print("You have chosen {} to be your data directory.".format(data_path))
     if not click.confirm("Please confirm", default=True):
         print("Please start the process over.")
         sys.exit(0)
-    return str(default_data_dir.resolve())
+    return str(data_path.resolve())
 
 
 def get_storage_type():
@@ -101,7 +110,10 @@ def get_storage_type():
         print()
         print("Please choose your storage backend (if you're unsure, choose 1).")
         print("1. JSON (file storage, requires no database).")
-        print("2. PostgreSQL")
+        print(
+            "2. PostgreSQL (Requires a database server)"
+            "\n(Warning: You cannot convert postgres instances to other backends yet)"
+        )
         storage = input("> ")
         try:
             storage = int(storage)
@@ -113,16 +125,21 @@ def get_storage_type():
     return storage
 
 
-def get_name():
+def get_name() -> str:
     name = ""
     while len(name) == 0:
-        print()
         print(
-            "Please enter a name for your instance, this name cannot include spaces"
-            " and it will be used to run your bot from here on out."
+            "Please enter a name for your instance,"
+            " it will be used to run your bot from here on out.\n"
+            "This name is case-sensitive and can only include characters"
+            " A-z, numbers, underscores, and hyphens."
         )
         name = input("> ")
-        if " " in name:
+        if re.fullmatch(r"[a-zA-Z0-9_\-]*", name) is None:
+            print(
+                "ERROR: Instance name can only include"
+                " characters A-z, numbers, underscores, and hyphens!"
+            )
             name = ""
     return name
 
@@ -134,11 +151,11 @@ def basic_setup():
     """
 
     print(
-        "Hello! Before we begin the full configuration process we need to"
-        " gather some initial information about where you'd like us"
-        " to store your bot's data."
+        "Hello! Before we begin, we need to gather some initial information for the new instance."
     )
-    default_data_dir = get_data_dir()
+    name = get_name()
+
+    default_data_dir = get_data_dir(name)
 
     default_dirs = deepcopy(data_manager.basic_config_default)
     default_dirs["DATA_PATH"] = default_data_dir
@@ -151,7 +168,6 @@ def basic_setup():
     driver_cls = drivers.get_driver_class(storage_type)
     default_dirs["STORAGE_DETAILS"] = driver_cls.get_config_details()
 
-    name = get_name()
     if name in instance_data:
         print(
             "WARNING: An instance already exists with this name. "
@@ -183,7 +199,7 @@ def get_target_backend(backend) -> BackendType:
 async def do_migration(
     current_backend: BackendType, target_backend: BackendType
 ) -> Dict[str, Any]:
-    cur_driver_cls = drivers.get_driver_class(current_backend)
+    cur_driver_cls = drivers._get_driver_class_include_old(current_backend)
     new_driver_cls = drivers.get_driver_class(target_backend)
     cur_storage_details = data_manager.storage_details()
     new_storage_details = new_driver_cls.get_config_details()
@@ -199,13 +215,13 @@ async def do_migration(
     return new_storage_details
 
 
-async def create_backup(instance: str) -> None:
+async def create_backup(instance: str, destination_folder: Path = Path.home()) -> None:
     data_manager.load_basic_configuration(instance)
     backend_type = get_current_backend(instance)
     if backend_type != BackendType.JSON:
         await do_migration(backend_type, BackendType.JSON)
     print("Backing up the instance's data...")
-    backup_fpath = await red_create_backup()
+    backup_fpath = await red_create_backup(destination_folder)
     if backup_fpath is not None:
         print(f"A backup of {instance} has been made. It is at {backup_fpath}")
     else:
@@ -237,20 +253,23 @@ async def remove_instance(
 
     backend = get_current_backend(instance)
     driver_cls = drivers.get_driver_class(backend)
+    await driver_cls.initialize(**data_manager.storage_details())
+    try:
+        if delete_data is True:
+            await driver_cls.delete_all_data(interactive=interactive, drop_db=drop_db)
 
-    if delete_data is True:
-        await driver_cls.delete_all_data(interactive=interactive, drop_db=drop_db)
+        if interactive is True and remove_datapath is None:
+            remove_datapath = click.confirm(
+                "Would you like to delete the instance's entire datapath?", default=False
+            )
 
-    if interactive is True and remove_datapath is None:
-        remove_datapath = click.confirm(
-            "Would you like to delete the instance's entire datapath?", default=False
-        )
+        if remove_datapath is True:
+            data_path = data_manager.core_data_path().parent
+            safe_delete(data_path)
 
-    if remove_datapath is True:
-        data_path = data_manager.core_data_path().parent
-        safe_delete(data_path)
-
-    save_config(instance, {}, remove=True)
+        save_config(instance, {}, remove=True)
+    finally:
+        await driver_cls.teardown()
     print("The instance {} has been removed\n".format(instance))
 
 
@@ -279,8 +298,17 @@ async def remove_instance_interaction():
 @click.option("--debug", type=bool)
 @click.pass_context
 def cli(ctx, debug):
+    """Create a new instance."""
     level = logging.DEBUG if debug else logging.INFO
-    redbot.logging.init_logging(level=level, location=Path.cwd() / "red_setup_logs")
+    base_logger = logging.getLogger("red")
+    base_logger.setLevel(level)
+    formatter = logging.Formatter(
+        "[{asctime}] [{levelname}] {name}: {message}", datefmt="%Y-%m-%d %H:%M:%S", style="{"
+    )
+    stdout_handler = logging.StreamHandler(sys.stdout)
+    stdout_handler.setFormatter(formatter)
+    base_logger.addHandler(stdout_handler)
+
     if ctx.invoked_subcommand is None:
         basic_setup()
 
@@ -342,8 +370,8 @@ def delete(
     drop_db: Optional[bool],
     remove_datapath: Optional[bool],
 ):
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(
+    """Removes an instance."""
+    asyncio.run(
         remove_instance(
             instance, interactive, delete_data, _create_backup, drop_db, remove_datapath
         )
@@ -352,8 +380,9 @@ def delete(
 
 @cli.command()
 @click.argument("instance", type=click.Choice(instance_list))
-@click.argument("backend", type=click.Choice(["json", "postgres"]))
+@click.argument("backend", type=click.Choice(["json"]))  # TODO: GH-3115
 def convert(instance, backend):
+    """Convert data backend of an instance."""
     current_backend = get_current_backend(instance)
     target = get_target_backend(backend)
     data_manager.load_basic_configuration(instance)
@@ -361,12 +390,12 @@ def convert(instance, backend):
     default_dirs = deepcopy(data_manager.basic_config_default)
     default_dirs["DATA_PATH"] = str(Path(instance_data[instance]["DATA_PATH"]))
 
-    loop = asyncio.get_event_loop()
-
-    if current_backend in (BackendType.MONGOV1, BackendType.MONGO):
+    if current_backend == BackendType.MONGOV1:
         raise RuntimeError("Please see the 3.2 release notes for upgrading a bot using mongo.")
+    elif current_backend == BackendType.POSTGRES:  # TODO: GH-3115
+        raise RuntimeError("Converting away from postgres isn't currently supported")
     else:
-        new_storage_details = loop.run_until_complete(do_migration(current_backend, target))
+        new_storage_details = asyncio.run(do_migration(current_backend, target))
 
     if new_storage_details is not None:
         default_dirs["STORAGE_TYPE"] = target.value
@@ -379,10 +408,29 @@ def convert(instance, backend):
         )
 
 
-if __name__ == "__main__":
+@cli.command()
+@click.argument("instance", type=click.Choice(instance_list))
+@click.argument(
+    "destination_folder",
+    type=click.Path(
+        exists=False, dir_okay=True, file_okay=False, resolve_path=True, writable=True
+    ),
+    default=Path.home(),
+)
+def backup(instance: str, destination_folder: Union[str, Path]) -> None:
+    """Backup instance's data."""
+    asyncio.run(create_backup(instance, Path(destination_folder)))
+
+
+def run_cli():
+    # Setuptools entry point script stuff...
     try:
         cli()  # pylint: disable=no-value-for-parameter  # click
     except KeyboardInterrupt:
         print("Exiting...")
     else:
         print("Exiting...")
+
+
+if __name__ == "__main__":
+    run_cli()

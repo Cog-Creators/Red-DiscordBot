@@ -1,0 +1,85 @@
+name: Tests
+on:
+  pull_request:
+  push:
+  repository_dispatch:
+    types:
+      - dispatched_test
+
+env:
+  ref: ${{ github.event.client_payload.ref || '' }}
+
+jobs:
+    tox:
+      runs-on: ubuntu-latest
+      strategy:
+        matrix:
+          python_version:
+            - "3.8"
+          tox_env:
+            - py
+            - style
+            - docs
+          include:
+            - tox_env: py
+              friendly_name: Tests
+            - tox_env: style
+              friendly_name: Style
+            - tox_env: docs
+              friendly_name: Docs
+        fail-fast: false
+      name: Tox - ${{ matrix.friendly_name }}
+      steps:
+        - uses: actions/checkout@v2
+          with:
+            ref: ${{ env.ref }}
+        - name: Set up Python
+          uses: actions/setup-python@v1
+          with:
+            python-version: ${{ matrix.python_version }}
+        - name: Install tox
+          run: |
+            python -m pip install --upgrade pip
+            pip install tox
+        - name: Tox test
+          env:
+            TOXENV: ${{ matrix.tox_env }}
+          run: tox
+
+    tox-postgres:
+      runs-on: ubuntu-latest
+      strategy:
+        matrix:
+          python_version:
+            - "3.8"
+        fail-fast: false
+      name: Tox - Postgres
+      services:
+        postgresql:
+          image: postgres:10
+          ports:
+            - 5432:5432
+          env:
+            POSTGRES_DB: red_db
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_USER: postgres
+      steps:
+        - uses: actions/checkout@v2
+          with:
+            ref: ${{ env.ref }}
+        - name: Set up Python
+          uses: actions/setup-python@v1
+          with:
+            python-version: ${{ matrix.python_version }}
+        - name: Install tox
+          run: |
+            python -m pip install --upgrade pip
+            pip install tox
+        - name: Tox test
+          env:
+            TOXENV: postgres
+            PGDATABASE: red_db
+            PGUSER: postgres
+            PGPASSWORD: postgres
+            PGPORT: 5432
+          run: tox

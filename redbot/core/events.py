@@ -4,7 +4,6 @@ import codecs
 import datetime
 import logging
 import traceback
-import asyncio
 from datetime import timedelta
 
 import aiohttp
@@ -17,9 +16,8 @@ from redbot.core.commands import RedHelpFormatter
 from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
 from . import commands
 from .config import get_latest_confs
-from .data_manager import storage_type
+from .utils._internal_utils import fuzzy_command_search, format_fuzzy_results
 from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
-from .utils import fuzzy_command_search, format_fuzzy_results
 
 log = logging.getLogger("red")
 init()
@@ -50,9 +48,17 @@ def init_events(bot, cli_flags):
         guilds = len(bot.guilds)
         users = len(set([m for m in bot.get_all_members()]))
 
+        app_info = await bot.application_info()
+
+        if app_info.team:
+            if bot._use_team_features:
+                bot.owner_ids = {m.id for m in app_info.team.members}
+        else:
+            if bot.owner_id is None:
+                bot.owner_id = app_info.owner.id
+
         try:
-            data = await bot.application_info()
-            invite_url = discord.utils.oauth_url(data.id)
+            invite_url = discord.utils.oauth_url(app_info.id)
         except:
             invite_url = "Could not fetch invite url"
 
@@ -77,6 +83,7 @@ def init_events(bot, cli_flags):
 
         INFO.append("{} cogs with {} commands".format(len(bot.cogs), len(bot.commands)))
 
+        outdated_red_message = ""
         with contextlib.suppress(aiohttp.ClientError, discord.HTTPException):
             async with aiohttp.ClientSession() as session:
                 async with session.get("https://pypi.python.org/pypi/red-discordbot/json") as r:
@@ -86,13 +93,10 @@ def init_events(bot, cli_flags):
                     "Outdated version! {} is available "
                     "but you're using {}".format(data["info"]["version"], red_version)
                 )
-
-                await bot.send_to_owners(
+                outdated_red_message = (
                     "Your Red instance is out of date! {} is the current "
-                    "version, however you are using {}!".format(
-                        data["info"]["version"], red_version
-                    )
-                )
+                    "version, however you are using {}!"
+                ).format(data["info"]["version"], red_version)
         INFO2 = []
 
         reqs_installed = {"docs": None, "test": None}
@@ -125,6 +129,9 @@ def init_events(bot, cli_flags):
             print("\nInvite URL: {}\n".format(invite_url))
 
         bot._color = discord.Colour(await bot._config.color())
+        bot._red_ready.set()
+        if outdated_red_message:
+            await bot.send_to_owners(outdated_red_message)
 
     @bot.event
     async def on_command_error(ctx, error, unhandled_by_cog=False):
@@ -210,6 +217,12 @@ def init_events(bot, cli_flags):
                     humanize_timedelta(seconds=error.retry_after) or "1 second"
                 ),
                 delete_after=error.retry_after,
+            )
+        elif isinstance(error, commands.MaxConcurrencyReached):
+            await ctx.send(
+                "Too many people using this command. It can only be used {} time(s) per {} concurrently.".format(
+                    error.number, error.per.name
+                )
             )
         else:
             log.exception(type(error).__name__, exc_info=error)

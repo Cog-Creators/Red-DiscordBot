@@ -1,1 +1,0 @@
-New event ``on_red_api_tokens_update`` is now dispatched when shared api keys for the service are updated.

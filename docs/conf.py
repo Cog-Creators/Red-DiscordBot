@@ -58,7 +58,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "Red - Discord Bot"
-copyright = "2018-2019, Cog Creators"
+copyright = "2018-2020, Cog Creators"
 author = "Cog Creators"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -207,6 +207,7 @@ texinfo_documents = [
 # A list of regular expressions that match URIs that should not be
 # checked when doing a linkcheck build.
 linkcheck_ignore = [r"https://java.com*", r"https://chocolatey.org*"]
+linkcheck_retries = 3
 
 
 # -- Options for extensions -----------------------------------------------

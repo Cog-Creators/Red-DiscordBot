@@ -1,8 +1,11 @@
+from typing import TYPE_CHECKING
+
 from redbot.core import Config, commands
 
-from .apis import HAS_SQL
-
-_config = None
+if TYPE_CHECKING:
+    _config: Config
+else:
+    _config = None
 
 
 def _pass_config_to_checks(config: Config):
@@ -24,14 +27,5 @@ def roomlocked():
         if room_id is None or ctx.channel.id == room_id:
             return True
         return False
-
-    return commands.check(predicate)
-
-
-def can_have_caching():
-    """Check to disable Caching commands if SQLite is not avaliable."""
-
-    async def predicate(ctx: commands.Context):
-        return HAS_SQL
 
     return commands.check(predicate)

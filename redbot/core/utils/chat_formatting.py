@@ -63,6 +63,8 @@ def question(text: str) -> str:
 def bold(text: str) -> str:
     """Get the given text in bold.
 
+    Note: This escapes text prior to bolding.
+
     Parameters
     ----------
     text : str
@@ -120,6 +122,8 @@ def inline(text: str) -> str:
 
 def italics(text: str) -> str:
     """Get the given text in italics.
+
+    Note: This escapes text prior to italicising
 
     Parameters
     ----------
@@ -277,6 +281,8 @@ def pagify(
 def strikethrough(text: str) -> str:
     """Get the given text with a strikethrough.
 
+    Note: This escapes text prior to applying a strikethrough
+
     Parameters
     ----------
     text : str
@@ -294,6 +300,8 @@ def strikethrough(text: str) -> str:
 
 def underline(text: str) -> str:
     """Get the given text with an underline.
+
+    Note: This escapes text prior to underlining
 
     Parameters
     ----------
@@ -332,7 +340,7 @@ def escape(text: str, *, mass_mentions: bool = False, formatting: bool = False) 
         text = text.replace("@everyone", "@\u200beveryone")
         text = text.replace("@here", "@\u200bhere")
     if formatting:
-        text = text.replace("`", "\\`").replace("*", "\\*").replace("_", "\\_").replace("~", "\\~")
+        text = discord.utils.escape_markdown(text)
     return text
 
 
@@ -430,7 +438,7 @@ def humanize_timedelta(
     """
 
     try:
-        obj = seconds or timedelta.total_seconds()
+        obj = seconds if seconds is not None else timedelta.total_seconds()
     except AttributeError:
         raise ValueError("You must provide either a timedelta or a number of seconds")
 

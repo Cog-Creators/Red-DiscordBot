@@ -643,7 +643,14 @@ class Config:
         return pickle.loads(pickle.dumps(self._defaults, -1))
 
     @classmethod
-    def get_conf(cls, cog_instance, identifier: int, force_registration=False, cog_name=None):
+    def get_conf(
+        cls,
+        cog_instance,
+        identifier: int,
+        force_registration=False,
+        cog_name=None,
+        allow_old: bool = False,
+    ):
         """Get a Config instance for your cog.
 
         .. warning::
@@ -676,11 +683,16 @@ class Config:
             A new Config object.
 
         """
+        if allow_old:
+            log.warning(
+                "DANGER! This is getting an outdated driver. "
+                "Hopefully this is only being done from convert"
+            )
         uuid = str(identifier)
         if cog_name is None:
             cog_name = type(cog_instance).__name__
 
-        driver = get_driver(cog_name, uuid)
+        driver = get_driver(cog_name, uuid, allow_old=allow_old)
         if hasattr(driver, "migrate_identifier"):
             driver.migrate_identifier(identifier)
 
@@ -693,7 +705,7 @@ class Config:
         return conf
 
     @classmethod
-    def get_core_conf(cls, force_registration: bool = False):
+    def get_core_conf(cls, force_registration: bool = False, allow_old: bool = False):
         """Get a Config instance for the core bot.
 
         All core modules that require a config instance should use this
@@ -706,7 +718,11 @@ class Config:
 
         """
         return cls.get_conf(
-            None, cog_name="Core", identifier=0, force_registration=force_registration
+            None,
+            cog_name="Core",
+            identifier=0,
+            force_registration=force_registration,
+            allow_old=allow_old,
         )
 
     def __getattr__(self, item: str) -> Union[Group, Value]:
@@ -963,7 +979,7 @@ class Config:
         """
         return self._get_base_group(self.CHANNEL, str(channel_id))
 
-    def channel(self, channel: discord.TextChannel) -> Group:
+    def channel(self, channel: discord.abc.GuildChannel) -> Group:
         """Returns a `Group` for the given channel.
 
         This does not discriminate between text and voice channels.
@@ -1457,7 +1473,7 @@ class Config:
 async def migrate(cur_driver_cls: Type[BaseDriver], new_driver_cls: Type[BaseDriver]) -> None:
     """Migrate from one driver type to another."""
     # Get custom group data
-    core_conf = Config.get_core_conf()
+    core_conf = Config.get_core_conf(allow_old=True)
     core_conf.init_custom("CUSTOM_GROUPS", 2)
     all_custom_group_data = await core_conf.custom("CUSTOM_GROUPS").all()
 
