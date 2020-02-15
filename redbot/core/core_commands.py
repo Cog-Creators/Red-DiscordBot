@@ -1702,16 +1702,14 @@ class Core(commands.Cog, CoreLogic):
         pass
 
     @whitelist.command(name="add")
-    async def whitelist_add(self, ctx, *, user: Union[discord.Member, int]):
+    async def whitelist_add(self, ctx: commands.Context, *users: List[Union[discord.Member, int]]):
         """
         Adds a user to the whitelist.
         """
-        uid = getattr(user, "id", user)
-        async with ctx.bot._config.whitelist() as curr_list:
-            if uid not in curr_list:
-                curr_list.append(uid)
+        uids = [getattr(user, "id", user) for user in users]
+        await self.bot._whiteblacklist_cache.add_to_whitelist(None, uids)
 
-        await ctx.send(_("User added to whitelist."))
+        await ctx.send(_("Users added to whitelist."))
 
     @whitelist.command(name="list")
     async def whitelist_list(self, ctx: commands.Context):
@@ -1732,28 +1730,23 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(box(page))
 
     @whitelist.command(name="remove")
-    async def whitelist_remove(self, ctx: commands.Context, *, user: Union[discord.Member, int]):
+    async def whitelist_remove(
+        self, ctx: commands.Context, *users: List[Union[discord.Member, int]]
+    ):
         """
         Removes user from whitelist.
         """
-        removed = False
-        uid = getattr(user, "id", user)
-        async with ctx.bot._config.whitelist() as curr_list:
-            if uid in curr_list:
-                removed = True
-                curr_list.remove(uid)
+        uids = [getattr(user, "id", user) for user in users]
+        await self.bot._whiteblacklist_cache.remove_from_whitelist(None, uids)
 
-        if removed:
-            await ctx.send(_("User has been removed from whitelist."))
-        else:
-            await ctx.send(_("User was not in the whitelist."))
+        await ctx.send(_("Users have been removed from whitelist."))
 
     @whitelist.command(name="clear")
     async def whitelist_clear(self, ctx: commands.Context):
         """
         Clears the whitelist.
         """
-        await ctx.bot._config.whitelist.set([])
+        await self.bot._whiteblacklist_cache.clear_whitelist()
         await ctx.send(_("Whitelist has been cleared."))
 
     @commands.group()
@@ -1765,18 +1758,21 @@ class Core(commands.Cog, CoreLogic):
         pass
 
     @blacklist.command(name="add")
-    async def blacklist_add(self, ctx: commands.Context, *, user: Union[discord.Member, int]):
+    async def blacklist_add(self, ctx: commands.Context, *users: List[Union[discord.Member, int]]):
         """
         Adds a user to the blacklist.
         """
-        if await ctx.bot.is_owner(user):
-            await ctx.send(_("You cannot blacklist an owner!"))
-            return
+        for user in users:
+            if isinstance(user, int):
+                user_obj = discord.Object(id=user)
+            else:
+                user_obj = user
+            if await ctx.bot.is_owner(user_obj):
+                await ctx.send(_("You cannot blacklist an owner!"))
+                return
 
-        uid = getattr(user, "id", user)
-        async with ctx.bot._config.blacklist() as curr_list:
-            if uid not in curr_list:
-                curr_list.append(uid)
+        uids = [getattr(user, "id", user) for user in users]
+        await self.bot._whiteblacklist_cache.add_to_blacklist(None, uids)
 
         await ctx.send(_("User added to blacklist."))
 
@@ -1785,7 +1781,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Lists blacklisted users.
         """
-        curr_list = await ctx.bot._config.blacklist()
+        curr_list = await self.bot._whiteblacklist_cache.get_blacklist(None)
 
         if not curr_list:
             await ctx.send("Blacklist is empty.")
@@ -1799,29 +1795,24 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(box(page))
 
     @blacklist.command(name="remove")
-    async def blacklist_remove(self, ctx: commands.Context, *, user: Union[discord.Member, int]):
+    async def blacklist_remove(
+        self, ctx: commands.Context, *users: List[Union[discord.Member, int]]
+    ):
         """
         Removes user from blacklist.
         """
-        removed = False
 
-        uid = getattr(user, "id", user)
-        async with ctx.bot._config.blacklist() as curr_list:
-            if uid in curr_list:
-                removed = True
-                curr_list.remove(uid)
+        uids = [getattr(user, "id", user) for user in users]
+        await self.bot._whiteblacklist_cache.remove_from_blacklist(None, uids)
 
-        if removed:
-            await ctx.send(_("User has been removed from blacklist."))
-        else:
-            await ctx.send(_("User was not in the blacklist."))
+        await ctx.send(_("Users have been removed from blacklist."))
 
     @blacklist.command(name="clear")
     async def blacklist_clear(self, ctx: commands.Context):
         """
         Clears the blacklist.
         """
-        await ctx.bot._config.blacklist.set([])
+        await self.bot._whiteblacklist_cache.clear_blacklist()
         await ctx.send(_("Blacklist has been cleared."))
 
     @commands.group()
@@ -1835,31 +1826,25 @@ class Core(commands.Cog, CoreLogic):
 
     @localwhitelist.command(name="add")
     async def localwhitelist_add(
-        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role, int]
+        self,
+        ctx: commands.Context,
+        *users_or_roles: List[Union[discord.Member, discord.Role, int]],
     ):
         """
         Adds a user or role to the whitelist.
         """
-        user = isinstance(user_or_role, discord.Member)
-        if isinstance(user_or_role, int):
-            user_or_role = discord.Object(id=user_or_role)
-            user = True
+        names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
+        uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
+        await self.bot._whiteblacklist_cache.add_to_whitelist(ctx.guild, uids)
 
-        async with ctx.bot._config.guild(ctx.guild).whitelist() as curr_list:
-            if user_or_role.id not in curr_list:
-                curr_list.append(user_or_role.id)
-
-        if user:
-            await ctx.send(_("User added to whitelist."))
-        else:
-            await ctx.send(_("Role added to whitelist."))
+        await ctx.send(_("{names} added to whitelist.").format(names=humanize_list(names)))
 
     @localwhitelist.command(name="list")
     async def localwhitelist_list(self, ctx: commands.Context):
         """
         Lists whitelisted users and roles.
         """
-        curr_list = await ctx.bot._config.guild(ctx.guild).whitelist()
+        curr_list = await self.bot._whiteblacklist_cache.get_whitelist(ctx.guild)
 
         if not curr_list:
             await ctx.send("Local whitelist is empty.")
@@ -1874,40 +1859,28 @@ class Core(commands.Cog, CoreLogic):
 
     @localwhitelist.command(name="remove")
     async def localwhitelist_remove(
-        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role, int]
+        self,
+        ctx: commands.Context,
+        *users_or_roles: List[Union[discord.Member, discord.Role, int]],
     ):
         """
         Removes user or role from whitelist.
         """
-        user = isinstance(user_or_role, discord.Member)
-        if isinstance(user_or_role, int):
-            user_or_role = discord.Object(id=user_or_role)
-            user = True
+        names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
+        uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
+        await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
 
-        removed = False
-        async with ctx.bot._config.guild(ctx.guild).whitelist() as curr_list:
-            if user_or_role.id in curr_list:
-                removed = True
-                curr_list.remove(user_or_role.id)
-
-        if removed:
-            if user:
-                await ctx.send(_("User has been removed from whitelist."))
-            else:
-                await ctx.send(_("Role has been removed from whitelist."))
-        else:
-            if user:
-                await ctx.send(_("User was not in the whitelist."))
-            else:
-                await ctx.send(_("Role was not in the whitelist."))
+        await ctx.send(
+            _("{names} removed from the local whitelist.").format(names=humanize_list(names))
+        )
 
     @localwhitelist.command(name="clear")
     async def localwhitelist_clear(self, ctx: commands.Context):
         """
         Clears the whitelist.
         """
-        await ctx.bot._config.guild(ctx.guild).whitelist.set([])
-        await ctx.send(_("Whitelist has been cleared."))
+        await self.bot._whiteblacklist_cache.clear_whitelist(ctx.guild)
+        await ctx.send(_("Local whitelist has been cleared."))
 
     @commands.group()
     @commands.guild_only()
@@ -1920,42 +1893,38 @@ class Core(commands.Cog, CoreLogic):
 
     @localblacklist.command(name="add")
     async def localblacklist_add(
-        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role, int]
+        self,
+        ctx: commands.Context,
+        *users_or_roles: List[Union[discord.Member, discord.Role, int]],
     ):
         """
         Adds a user or role to the blacklist.
         """
-        user = isinstance(user_or_role, discord.Member)
-        if isinstance(user_or_role, int):
-            user_or_role = discord.Object(id=user_or_role)
-            user = True
-
-        if user:
-            if user_or_role.id == ctx.author.id:
+        for user_or_role in users_or_roles:
+            uid = discord.Object(id=getattr(user_or_role, "id", user_or_role))
+            if uid.id == ctx.author.id:
                 await ctx.send(_("You cannot blacklist yourself!"))
                 return
-            if user_or_role.id == ctx.guild.owner_id and not await ctx.bot.is_owner(ctx.author):
+            if uid.id == ctx.guild.owner_id and not await ctx.bot.is_owner(ctx.author):
                 await ctx.send(_("You cannot blacklist the guild owner!"))
                 return
-            if await ctx.bot.is_owner(user_or_role):
+            if await ctx.bot.is_owner(uid):
                 await ctx.send(_("You cannot blacklist a bot owner!"))
                 return
+        names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
+        uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
+        await self.bot._whiteblacklist_cache.add_to_blacklist(ctx.guild, uids)
 
-        async with ctx.bot._config.guild(ctx.guild).blacklist() as curr_list:
-            if user_or_role.id not in curr_list:
-                curr_list.append(user_or_role.id)
-
-        if user:
-            await ctx.send(_("User added to blacklist."))
-        else:
-            await ctx.send(_("Role added to blacklist."))
+        await ctx.send(
+            _("{names} added to the local blacklist.").format(names=humanize_list(names))
+        )
 
     @localblacklist.command(name="list")
     async def localblacklist_list(self, ctx: commands.Context):
         """
         Lists blacklisted users and roles.
         """
-        curr_list = await ctx.bot._config.guild(ctx.guild).blacklist()
+        curr_list = await self.bot._whiteblacklist_cache.get_blacklist(ctx.guild)
 
         if not curr_list:
             await ctx.send("Local blacklist is empty.")
@@ -1970,32 +1939,18 @@ class Core(commands.Cog, CoreLogic):
 
     @localblacklist.command(name="remove")
     async def localblacklist_remove(
-        self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role, int]
+        self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Removes user or role from blacklist.
         """
-        removed = False
-        user = isinstance(user_or_role, discord.Member)
-        if isinstance(user_or_role, int):
-            user_or_role = discord.Object(id=user_or_role)
-            user = True
+        names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
+        uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
+        await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
 
-        async with ctx.bot._config.guild(ctx.guild).blacklist() as curr_list:
-            if user_or_role.id in curr_list:
-                removed = True
-                curr_list.remove(user_or_role.id)
-
-        if removed:
-            if user:
-                await ctx.send(_("User has been removed from blacklist."))
-            else:
-                await ctx.send(_("Role has been removed from blacklist."))
-        else:
-            if user:
-                await ctx.send(_("User was not in the blacklist."))
-            else:
-                await ctx.send(_("Role was not in the blacklist."))
+        await ctx.send(
+            _("{names} removed from the local blacklist.").format(names=humanize_list(names))
+        )
 
     @localblacklist.command(name="clear")
     async def localblacklist_clear(self, ctx: commands.Context):
@@ -2003,7 +1958,7 @@ class Core(commands.Cog, CoreLogic):
         Clears the blacklist.
         """
         await ctx.bot._config.guild(ctx.guild).blacklist.set([])
-        await ctx.send(_("Blacklist has been cleared."))
+        await ctx.send(_("Local blacklist has been cleared."))
 
     @checks.guildowner_or_permissions(administrator=True)
     @commands.group(name="command")
@@ -2408,6 +2363,107 @@ class Core(commands.Cog, CoreLogic):
     async def rpc_reload(self, request):
         await self.rpc_unload(request)
         await self.rpc_load(request)
+
+    @commands.group()
+    @commands.guild_only()
+    @checks.admin_or_permissions(manage_channels=True)
+    async def ignore(self, ctx: commands.Context):
+        """Add servers or channels to the ignore list."""
+        if ctx.invoked_subcommand is None:
+            for page in pagify(await self.count_ignored(ctx)):
+                await ctx.maybe_send_embed(page)
+
+    @ignore.command(name="channel")
+    async def ignore_channel(
+        self,
+        ctx: commands.Context,
+        channel: Optional[Union[discord.TextChannel, discord.CategoryChannel]] = None,
+    ):
+        """Ignore commands in the channel or category.
+
+        Defaults to the current channel.
+        """
+        if not channel:
+            channel = ctx.channel
+        if not await self.bot._ignored_cache.get_ignored_channel(channel):
+            await self.bot._ignored_cache.set_ignored_channel(channel, True)
+            await ctx.send(_("Channel added to ignore list."))
+        else:
+            await ctx.send(_("Channel already in ignore list."))
+
+    @ignore.command(name="server", aliases=["guild"])
+    @checks.admin_or_permissions(manage_guild=True)
+    async def ignore_guild(self, ctx: commands.Context):
+        """Ignore commands in this server."""
+        guild = ctx.guild
+        if not await self.bot._ignored_cache.get_ignored_guild(guild):
+            await self.bot._ignored_cache.set_ignored_guild(guild, True)
+            await ctx.send(_("This server has been added to the ignore list."))
+        else:
+            await ctx.send(_("This server is already being ignored."))
+
+    @commands.group()
+    @commands.guild_only()
+    @checks.admin_or_permissions(manage_channels=True)
+    async def unignore(self, ctx: commands.Context):
+        """Remove servers or channels from the ignore list."""
+        if ctx.invoked_subcommand is None:
+            for page in pagify(await self.count_ignored(ctx)):
+                await ctx.maybe_send_embed(page)
+
+    @unignore.command(name="channel")
+    async def unignore_channel(
+        self,
+        ctx: commands.Context,
+        channel: Optional[Union[discord.TextChannel, discord.CategoryChannel]] = None,
+    ):
+        """Remove a channel or category from ignore the list.
+
+        Defaults to the current channel.
+        """
+        if not channel:
+            channel = ctx.channel
+
+        if await self.bot._ignored_cache.get_ignored_channel(channel):
+            await self.bot._ignored_cache.set_ignored_channel(channel, False)
+            await ctx.send(_("Channel removed from ignore list."))
+        else:
+            await ctx.send(_("That channel is not in the ignore list."))
+
+    @unignore.command(name="server", aliases=["guild"])
+    @checks.admin_or_permissions(manage_guild=True)
+    async def unignore_guild(self, ctx: commands.Context):
+        """Remove this server from the ignore list."""
+        guild = ctx.message.guild
+        if await self.bot._ignored_cache.get_ignored_guild(guild):
+            await self.bot._ignored_cache.set_ignored_guild(guild, False)
+            await ctx.send(_("This server has been removed from the ignore list."))
+        else:
+            await ctx.send(_("This server is not in the ignore list."))
+
+    async def count_ignored(self, ctx: commands.Context):
+        category_channels: List[discord.CategoryChannel] = []
+        text_channels: List[discord.TextChannel] = []
+        if await self.bot._ignored_cache.get_ignored_guild(ctx.guild):
+            return _("This server is currently being ignored.")
+        for channel in ctx.guild.text_channels:
+            if channel.category and channel.category not in category_channels:
+                if await self.bot._ignored_cache.get_ignored_channel(channel.category):
+                    category_channels.append(channel.category)
+                continue
+            else:
+                continue
+            if await self.bot._ignored_cache.get_ignored_channel(channel):
+                text_channels.append(channel)
+
+        cat_str = (
+            humanize_list([c.name for c in category_channels]) if category_channels else "None"
+        )
+        chan_str = humanize_list([c.mention for c in text_channels]) if text_channels else "None"
+        msg = _("Currently ignored categories: {categories}\nChannels:{channels}").format(
+            categories=cat_str, channels=chan_str
+        )
+        return msg
 
 
 # Removing this command from forks is a violation of the GPLv3 under which it is licensed.

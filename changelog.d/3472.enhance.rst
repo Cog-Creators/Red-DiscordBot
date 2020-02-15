@@ -1,0 +1,4 @@
+Add caching for ignored channels/guilds.
+Add caching for white/blacklist.
+Add consume-rest for white/blacklist commands.
+Allow ignoring channel categories.
