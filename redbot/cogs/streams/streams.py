@@ -25,10 +25,7 @@ from . import streamtypes as _streamtypes
 from collections import defaultdict
 import asyncio
 import re
-from typing import Optional, List, Tuple
-
-CHECK_DELAY = 60
-
+from typing import Optional, List, Tuple, Union
 
 _ = Translator("Streams", __file__)
 
@@ -36,7 +33,7 @@ _ = Translator("Streams", __file__)
 @cog_i18n(_)
 class Streams(commands.Cog):
 
-    global_defaults = {"tokens": {}, "streams": []}
+    global_defaults = {"refresh_timer": 300, "tokens": {}, "streams": []}
 
     guild_defaults = {
         "autodelete": False,
@@ -51,12 +48,10 @@ class Streams(commands.Cog):
 
     def __init__(self, bot: Red):
         super().__init__()
-        self.db = Config.get_conf(self, 26262626)
+        self.db: Config = Config.get_conf(self, 26262626)
 
         self.db.register_global(**self.global_defaults)
-
         self.db.register_guild(**self.guild_defaults)
-
         self.db.register_role(**self.role_defaults)
 
         self.bot: Red = bot
@@ -66,7 +61,10 @@ class Streams(commands.Cog):
 
         self.yt_cid_pattern = re.compile("^UC[-_A-Za-z0-9]{21}[AQgw]$")
 
-    def check_name_or_id(self, data: str):
+        self._ready_event: asyncio.Event = asyncio.Event()
+        self._init_task: asyncio.Task = self.bot.loop.create_task(self.initialize())
+
+    def check_name_or_id(self, data: str) -> bool:
         matched = self.yt_cid_pattern.fullmatch(data)
         if matched is None:
             return True
@@ -74,12 +72,17 @@ class Streams(commands.Cog):
 
     async def initialize(self) -> None:
         """Should be called straight after cog instantiation."""
+        await self.bot.wait_until_ready()
         await self.move_api_keys()
         self.streams = await self.load_streams()
 
         self.task = self.bot.loop.create_task(self._stream_alerts())
+        self._ready_event.set()
 
-    async def move_api_keys(self):
+    async def cog_before_invoke(self, ctx: commands.Context):
+        await self._ready_event.wait()
+
+    async def move_api_keys(self) -> None:
         """Move the API keys from cog stored config to core bot config if they exist."""
         tokens = await self.db.tokens()
         youtube = await self.bot.get_shared_api_tokens("youtube")
@@ -100,8 +103,11 @@ class Streams(commands.Cog):
         await self.check_online(ctx, stream)
 
     @commands.command()
+    @commands.cooldown(1, 30, commands.BucketType.guild)
     async def youtubestream(self, ctx: commands.Context, channel_id_or_name: str):
         """Check if a YouTube channel is live."""
+        # TODO: Write up a custom check to look up cooldown set by botowner
+        # This check is here to avoid people spamming this command and eating up quota
         apikey = await self.bot.get_shared_api_tokens("youtube")
         is_name = self.check_name_or_id(channel_id_or_name)
         if is_name:
@@ -128,7 +134,11 @@ class Streams(commands.Cog):
         stream = PicartoStream(name=channel_name)
         await self.check_online(ctx, stream)
 
-    async def check_online(self, ctx: commands.Context, stream):
+    async def check_online(
+        self,
+        ctx: commands.Context,
+        stream: Union[PicartoStream, MixerStream, HitboxStream, YoutubeStream, TwitchStream],
+    ):
         try:
             info = await stream.is_online()
         except OfflineStream:
@@ -317,6 +327,18 @@ class Streams(commands.Cog):
     async def streamset(self, ctx: commands.Context):
         """Set tokens for accessing streams."""
         pass
+
+    @streamset.command(name="timer")
+    @checks.is_owner()
+    async def _streamset_refresh_timer(self, ctx: commands.Context, refresh_time: int):
+        """Set stream check refresh time."""
+        if refresh_time < 60:
+            return await ctx.send(_("You cannot set the refresh timer to less than 60 seconds"))
+
+        await self.db.refresh_timer.set(refresh_time)
+        await ctx.send(
+            _("Refresh timer set to {refresh_time} seconds".format(refresh_time=refresh_time))
+        )
 
     @streamset.command()
     @checks.is_owner()
@@ -546,7 +568,7 @@ class Streams(commands.Cog):
                 await self.check_streams()
             except asyncio.CancelledError:
                 pass
-            await asyncio.sleep(CHECK_DELAY)
+            await asyncio.sleep(await self.db.refresh_timer())
 
     async def check_streams(self):
         for stream in self.streams:
@@ -656,7 +678,10 @@ class Streams(commands.Cog):
                         raw_stream["_messages_cache"].append(msg)
             token = await self.bot.get_shared_api_tokens(_class.token_name)
             if token:
-                raw_stream["token"] = token
+                if _class.__name__ == "TwitchStream":
+                    raw_stream["token"] = token.get("client_id")
+                else:
+                    raw_stream["token"] = token
             streams.append(_class(**raw_stream))
 
         return streams

@@ -1,3 +1,13 @@
+import json
+import logging
+import xml.etree.ElementTree as ET
+from random import choice
+from string import ascii_letters
+from typing import ClassVar, Optional, List
+
+import aiohttp
+import discord
+
 from .errors import (
     StreamNotFound,
     APIError,
@@ -6,12 +16,6 @@ from .errors import (
     InvalidTwitchCredentials,
 )
 from redbot.core.i18n import Translator
-from random import choice, sample
-from string import ascii_letters
-from typing import ClassVar, Optional
-import discord
-import aiohttp
-import json
 
 TWITCH_BASE_URL = "https://api.twitch.tv"
 TWITCH_ID_ENDPOINT = TWITCH_BASE_URL + "/kraken/users?login="
@@ -22,13 +26,24 @@ YOUTUBE_BASE_URL = "https://www.googleapis.com/youtube/v3"
 YOUTUBE_CHANNELS_ENDPOINT = YOUTUBE_BASE_URL + "/channels"
 YOUTUBE_SEARCH_ENDPOINT = YOUTUBE_BASE_URL + "/search"
 YOUTUBE_VIDEOS_ENDPOINT = YOUTUBE_BASE_URL + "/videos"
+YOUTUBE_CHANNEL_RSS = "https://www.youtube.com/feeds/videos.xml?channel_id={channel_id}"
 
 _ = Translator("Streams", __file__)
+
+log = logging.getLogger("redbot.cogs.Streams")
 
 
 def rnd(url):
     """Appends a random parameter to the url to avoid Discord's caching"""
-    return url + "?rnd=" + "".join([choice(ascii_letters) for i in range(6)])
+    return url + "?rnd=" + "".join([choice(ascii_letters) for _loop_counter in range(6)])
+
+
+def get_video_ids_from_feed(feed):
+    root = ET.fromstring(feed)
+    rss_video_ids = []
+    for child in root.iter("{http://www.w3.org/2005/Atom}entry"):
+        for i in child.iter("{http://www.youtube.com/xml/schemas/2015}videoId"):
+            yield i.text
 
 
 class Stream:
@@ -69,6 +84,9 @@ class YoutubeStream(Stream):
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
         self._token = kwargs.pop("token", None)
+        self.not_livestreams: List[str] = []
+        self.livestreams: List[str] = []
+
         super().__init__(**kwargs)
 
     async def is_online(self):
@@ -80,26 +98,55 @@ class YoutubeStream(Stream):
         elif not self.name:
             self.name = await self.fetch_name()
 
-        url = YOUTUBE_SEARCH_ENDPOINT
-        params = {
-            "key": self._token["api_key"],
-            "part": "snippet",
-            "channelId": self.id,
-            "type": "video",
-            "eventType": "live",
-        }
         async with aiohttp.ClientSession() as session:
-            async with session.get(url, params=params) as r:
-                data = await r.json()
-        if "items" in data and len(data["items"]) == 0:
-            raise OfflineStream()
-        elif "items" in data:
-            vid_id = data["items"][0]["id"]["videoId"]
-            params = {"key": self._token["api_key"], "id": vid_id, "part": "snippet"}
+            async with session.get(YOUTUBE_CHANNEL_RSS.format(channel_id=self.id)) as r:
+                rssdata = await r.text()
+
+        if self.not_livestreams:
+            self.not_livestreams = list(dict.fromkeys(self.not_livestreams))
+
+        if self.livestreams:
+            self.livestreams = list(dict.fromkeys(self.livestreams))
+
+        for video_id in get_video_ids_from_feed(rssdata):
+            if video_id in self.not_livestreams:
+                log.debug(f"video_id in not_livestreams: {video_id}")
+                continue
+            log.debug(f"video_id not in not_livestreams: {video_id}")
+            params = {
+                "key": self._token["api_key"],
+                "id": video_id,
+                "part": "id,liveStreamingDetails",
+            }
+            async with aiohttp.ClientSession() as session:
+                async with session.get(YOUTUBE_VIDEOS_ENDPOINT, params=params) as r:
+                    data = await r.json()
+                    stream_data = data.get("items", [{}])[0].get("liveStreamingDetails", {})
+                    log.debug(f"stream_data for {video_id}: {stream_data}")
+                    if (
+                        stream_data
+                        and stream_data != "None"
+                        and stream_data.get("actualEndTime", None) is None
+                        and stream_data.get("concurrentViewers", None) is not None
+                    ):
+                        if video_id not in self.livestreams:
+                            self.livestreams.append(data["items"][0]["id"])
+                    else:
+                        self.not_livestreams.append(data["items"][0]["id"])
+                        if video_id in self.livestreams:
+                            self.livestreams.remove(video_id)
+        log.debug(f"livestreams for {self.name}: {self.livestreams}")
+        log.debug(f"not_livestreams for {self.name}: {self.not_livestreams}")
+        # This is technically redundant since we have the
+        # info from the RSS ... but incase you dont wanna deal with fully rewritting the
+        # code for this part, as this is only a 2 quota query.
+        if self.livestreams:
+            params = {"key": self._token["api_key"], "id": self.livestreams[-1], "part": "snippet"}
             async with aiohttp.ClientSession() as session:
                 async with session.get(YOUTUBE_VIDEOS_ENDPOINT, params=params) as r:
                     data = await r.json()
             return self.make_embed(data)
+        raise OfflineStream()
 
     def make_embed(self, data):
         vid_data = data["items"][0]
@@ -162,7 +209,7 @@ class TwitchStream(Stream):
             self.id = await self.fetch_id()
 
         url = TWITCH_STREAMS_ENDPOINT + self.id
-        header = {"Client-ID": str(self._token), "Accept": "application/vnd.twitchtv.v5+json"}
+        header = {"Client-ID": str(self._token)}
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=header) as r:
