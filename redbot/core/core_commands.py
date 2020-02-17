@@ -1089,7 +1089,7 @@ class Core(commands.Cog, CoreLogic):
             )
             await ctx.bot.change_presence(status=status, activity=game)
             if game:
-                await ctx.send(_(f"Game set to ``Playing {game.name}``."))
+                await ctx.send(_(f"Status set to ``Playing {game.name}``."))
             else:
                 await ctx.send(_("Game cleared."))
 
@@ -1106,7 +1106,7 @@ class Core(commands.Cog, CoreLogic):
             activity = None
         await ctx.bot.change_presence(status=status, activity=activity)
         if activity:
-            await ctx.send(_(f"Listening set to ``Listening to {listening}``."))
+            await ctx.send(_(f"Status set to ``Listening to {listening}``."))
         else:
             await ctx.send(_("Listening cleared."))
 
@@ -1123,7 +1123,7 @@ class Core(commands.Cog, CoreLogic):
             activity = None
         await ctx.bot.change_presence(status=status, activity=activity)
         if activity:
-            await ctx.send(_(f"Watching set to ``Watching {watching}``."))
+            await ctx.send(_(f"Status set to ``Watching {watching}``."))
         else:
             await ctx.send(_("Watching cleared."))
 
