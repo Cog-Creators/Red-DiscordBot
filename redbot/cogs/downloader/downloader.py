@@ -514,6 +514,9 @@ class Downloader(commands.Cog):
                 exc_info=err,
             )
         except OSError:
+            log.exception(
+                "Something went wrong trying to add repo %s under name %s", repo_url, name,
+            )
             await ctx.send(
                 _(
                     "Something went wrong trying to add that repo."
