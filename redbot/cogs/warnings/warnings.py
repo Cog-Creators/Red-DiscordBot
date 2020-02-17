@@ -415,6 +415,7 @@ class Warnings(commands.Cog):
         ctx: commands.Context,
         user: Union[discord.Member, int],
         warn_id: str,
+        *,
         reason: str = None,
     ):
         """Remove a warning from a user."""
