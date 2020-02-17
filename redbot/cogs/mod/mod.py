@@ -116,5 +116,5 @@ class Mod(
             await self.settings.guild_from_id(guild_id).ignored.clear()
         for channel_id, settings in all_channels.items():
             await self.bot._config.channel_from_id(channel_id).ignored.set(settings["ignored"])
-            await self.settings.channel_fro_id(channel_id).clear()
+            await self.settings.channel_from_id(channel_id).clear()
         await ctx.send(_("Ignored channels and guilds restored."))
