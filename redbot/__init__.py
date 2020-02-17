@@ -180,17 +180,6 @@ class VersionInfo:
         )
 
 
-def _update_event_loop_policy():
-    if _sys.implementation.name == "cpython":
-        # Let's not force this dependency, uvloop is much faster on cpython
-        try:
-            import uvloop as _uvloop
-        except ImportError:
-            pass
-        else:
-            _asyncio.set_event_loop_policy(_uvloop.EventLoopPolicy())
-
-
 __version__ = "3.3.2.dev1"
 version_info = VersionInfo.from_str(__version__)
 

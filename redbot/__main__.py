@@ -14,16 +14,10 @@ import sys
 from argparse import Namespace
 from copy import deepcopy
 from pathlib import Path
-from typing import NoReturn
 
 import discord
 
-# Set the event loop policies here so any subsequent `new_event_loop()`
-# calls, in particular those as a result of the following imports,
-# return the correct loop object.
-from redbot import _update_event_loop_policy, __version__
-
-_update_event_loop_policy()
+from redbot import __version__
 
 import redbot.logging
 from redbot.core.bot import Red, ExitCodes
@@ -31,6 +25,8 @@ from redbot.core.cli import interactive_config, confirm, parse_cli_flags
 from redbot.setup import get_data_dir, get_name, save_config
 from redbot.core import data_manager, drivers
 from redbot.core._sharedlibdeprecation import SharedLibImportWarner
+
+from ._event_loop_handlers import new_main_event_loop
 
 
 log = logging.getLogger("red.main")
@@ -296,29 +292,26 @@ def handle_edit(cli_flags: Namespace):
     """
     This one exists to not log all the things like it's a full run of the bot.
     """
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    data_manager.load_basic_configuration(cli_flags.instance_name)
-    red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None, fetch_offline_members=True)
-    try:
-        driver_cls = drivers.get_driver_class()
-        loop.run_until_complete(driver_cls.initialize(**data_manager.storage_details()))
-        loop.run_until_complete(edit_instance(red, cli_flags))
-        loop.run_until_complete(driver_cls.teardown())
-    except (KeyboardInterrupt, EOFError):
-        print("Aborted!")
-    finally:
-        loop.run_until_complete(asyncio.sleep(1))
-        asyncio.set_event_loop(None)
-        loop.stop()
-        loop.close()
-        sys.exit(0)
+    with new_main_event_loop() as loop:
+        data_manager.load_basic_configuration(cli_flags.instance_name)
+        red = Red(
+            cli_flags=cli_flags, description="Red V3", dm_help=None, fetch_offline_members=True
+        )
+        try:
+            driver_cls = drivers.get_driver_class()
+            loop.run_until_complete(driver_cls.initialize(**data_manager.storage_details()))
+            loop.run_until_complete(edit_instance(red, cli_flags))
+            loop.run_until_complete(driver_cls.teardown())
+        except (KeyboardInterrupt, EOFError):
+            print("Aborted!")
+
+    sys.exit(0)
 
 
 async def run_bot(red: Red, cli_flags: Namespace) -> None:
     """
     This runs the bot.
-    
+
     Any shutdown which is a result of not being able to log in needs to raise
     a SystemExit exception.
 
@@ -462,9 +455,8 @@ def main():
     if cli_flags.edit:
         handle_edit(cli_flags)
         return
-    try:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
+
+    with new_main_event_loop(log) as loop:
 
         if cli_flags.no_instance:
             print(
@@ -482,9 +474,11 @@ def main():
             cli_flags=cli_flags, description="Red V3", dm_help=None, fetch_offline_members=True
         )
 
-        if os.name != "nt":
-            # None of this works on windows.
-            # At least it's not a redundant handler...
+        # from here to the finally is essentially just ensuring we cleanup at shutdown or
+        # otherwise unhandled exception prior to the event loop being closed
+        # in case we need it to finish cleanup (such as to finish any pending writes)
+
+        if os.name != "nt":  # can't do this on windows, unfortunately
             signals = (signal.SIGHUP, signal.SIGTERM, signal.SIGINT)
             for s in signals:
                 loop.add_signal_handler(
@@ -493,46 +487,33 @@ def main():
 
         exc_handler = functools.partial(global_exception_handler, red)
         loop.set_exception_handler(exc_handler)
-        # We actually can't (just) use asyncio.run here
-        # We probably could if we didnt support windows, but we might run into
-        # a scenario where this isn't true if anyone works on RPC more in the future
         fut = loop.create_task(run_bot(red, cli_flags))
         r_exc_handler = functools.partial(red_exception_handler, red)
         fut.add_done_callback(r_exc_handler)
-        loop.run_forever()
-    except KeyboardInterrupt:
-        # We still have to catch this here too. (*joy*)
-        log.warning("Please do not use Ctrl+C to Shutdown Red! (attempting to die gracefully...)")
-        log.error("Received KeyboardInterrupt, treating as interrupt")
-        if red is not None:
-            loop.run_until_complete(shutdown_handler(red, signal.SIGINT))
-    except SystemExit as exc:
-        # We also have to catch this one here. Basically any exception which normally
-        # Kills the python interpreter (Base Exceptions minus asyncio.cancelled)
-        # We need to do something with prior to having the loop close
-        log.info("Shutting down with exit code: %s", exc.code)
-        if red is not None:
-            loop.run_until_complete(shutdown_handler(red, None, exc.code))
-    except Exception as exc:  # Non standard case.
-        log.exception("Unexpected exception (%s): ", type(exc), exc_info=exc)
-        if red is not None:
-            loop.run_until_complete(shutdown_handler(red, None, ExitCodes.CRITICAL))
-    finally:
-        # Allows transports to close properly, and prevent new ones from being opened.
-        # Transports may still not be closed correcly on windows, see below
-        loop.run_until_complete(loop.shutdown_asyncgens())
-        # *we* aren't cleaning up more here, but it prevents
-        # a runtime error at the event loop on windows
-        # with resources which require longer to clean up.
-        # With other event loops, a failure to cleanup prior to here
-        # results in a resource warning instead
-        log.info("Please wait, cleaning up a bit more")
-        loop.run_until_complete(asyncio.sleep(2))
-        asyncio.set_event_loop(None)
-        loop.stop()
-        loop.close()
-        exit_code = red._shutdown_mode if red is not None else 1
-        sys.exit(exit_code)
+
+        try:
+            loop.run_forever()
+        except KeyboardInterrupt:
+            log.warning(
+                "Please do not use Ctrl+C to Shutdown Red! (attempting to die gracefully...)"
+            )
+            log.error("Received KeyboardInterrupt, treating as interrupt")
+            if red is not None:
+                loop.run_until_complete(shutdown_handler(red, signal.SIGINT))
+        except SystemExit as exc:
+            log.info("Shutting down with exit code: %s", exc.code)
+            if red is not None:
+                loop.run_until_complete(shutdown_handler(red, None, exc.code))
+        except Exception as exc:  # Non standard case.
+            log.exception("Unexpected exception (%s): ", type(exc), exc_info=exc)
+            if red is not None:
+                loop.run_until_complete(shutdown_handler(red, None, ExitCodes.CRITICAL))
+        finally:
+            if red:
+                red.loop = None
+
+    exit_code = red._shutdown_mode if red is not None else 1
+    sys.exit(exit_code)
 
 
 if __name__ == "__main__":

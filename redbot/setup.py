@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import asyncio
 import json
 import logging
 import os
@@ -14,7 +13,8 @@ import click
 
 from redbot.core.utils._internal_utils import safe_delete, create_backup as red_create_backup
 from redbot.core import config, data_manager, drivers
-from redbot.core.drivers import BackendType, IdentifierData
+from redbot.core.drivers import BackendType
+from ._event_loop_handlers import new_main_event_loop
 
 conversion_log = logging.getLogger("red.converter")
 
@@ -371,11 +371,12 @@ def delete(
     remove_datapath: Optional[bool],
 ):
     """Removes an instance."""
-    asyncio.run(
-        remove_instance(
-            instance, interactive, delete_data, _create_backup, drop_db, remove_datapath
+    with new_main_event_loop() as loop:
+        loop.run_until_complete(
+            remove_instance(
+                instance, interactive, delete_data, _create_backup, drop_db, remove_datapath
+            )
         )
-    )
 
 
 @cli.command()
@@ -395,7 +396,8 @@ def convert(instance, backend):
     elif current_backend == BackendType.POSTGRES:  # TODO: GH-3115
         raise RuntimeError("Converting away from postgres isn't currently supported")
     else:
-        new_storage_details = asyncio.run(do_migration(current_backend, target))
+        with new_main_event_loop() as loop:
+            new_storage_details = loop.run_until_complete(do_migration(current_backend, target))
 
     if new_storage_details is not None:
         default_dirs["STORAGE_TYPE"] = target.value
@@ -419,7 +421,8 @@ def convert(instance, backend):
 )
 def backup(instance: str, destination_folder: Union[str, Path]) -> None:
     """Backup instance's data."""
-    asyncio.run(create_backup(instance, Path(destination_folder)))
+    with new_main_event_loop() as loop:
+        loop.run_until_complete(create_backup(instance, Path(destination_folder)))
 
 
 def run_cli():

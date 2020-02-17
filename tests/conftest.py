@@ -1,22 +1,16 @@
-import asyncio
 import os
 
 import pytest
-
-from redbot import _update_event_loop_policy
 from redbot.core import drivers, data_manager
 
-_update_event_loop_policy()
+from redbot._event_loop_handlers import new_main_event_loop
 
 
 @pytest.fixture(scope="session")
 def event_loop(request):
     """Create an instance of the default event loop for entire session."""
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    yield loop
-    asyncio.set_event_loop(None)
-    loop.close()
+    with new_main_event_loop() as loop:
+        yield loop
 
 
 def _get_backend_type():
