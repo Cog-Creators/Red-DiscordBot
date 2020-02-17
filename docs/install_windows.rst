@@ -37,7 +37,7 @@ For Audio support, you should also run the following command before exiting:
     choco install adoptopenjdk11jre -y
 
 
-From here, exit the prompt then continue onto `installing Red <installing-red-windows>`.
+From here, exit the prompt then continue onto `creating-venv-windows`.
 
 ********************************
 Manually installing dependencies
@@ -62,7 +62,7 @@ Manually installing dependencies
 * `Java <https://adoptopenjdk.net/?variant=openjdk11&jvmVariant=hotspot>`_ - needed for Audio
 
 
-.. _installing-red-windows:
+.. _creating-venv-windows:
 
 ------------------------------
 Creating a Virtual Environment
@@ -97,6 +97,9 @@ And activate it with the following command::
 
     You must activate the virtual environment with the above command every time you open a new
     Command Prompt to run, install or update Red.
+
+
+.. _installing-red-windows:
 
 --------------
 Installing Red
