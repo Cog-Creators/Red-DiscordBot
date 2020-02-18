@@ -6,7 +6,7 @@ import asyncio
 import contextlib
 import functools
 import warnings
-from typing import Union, Iterable, Optional
+from typing import Iterable, List, Optional, Union
 import discord
 
 from .. import commands
@@ -17,7 +17,7 @@ _ReactableEmoji = Union[str, discord.Emoji]
 
 async def menu(
     ctx: commands.Context,
-    pages: list,
+    pages: Union[List[str], List[discord.Embed]],
     controls: dict,
     message: discord.Message = None,
     page: int = 0,
