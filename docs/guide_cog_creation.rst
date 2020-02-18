@@ -173,32 +173,49 @@ Not all of these are strict requirements (some are) but are all generally advisa
 
 1. Cog names should be TitleCased and only contain alphabetic characters.
 2. Cogs and commands should have docstrings suitable for use in help output.
+
   - This one is slightly flexible if using other methods of setting help.
+
 3. Don't prevent normal operation of the bot without the user opting into this.
+
   - This includes as a side effect by blocking the event loop.
+
 4. If your cog uses logging:
+
   - The namespace for logging should be: ``red.your_repo_name.cog_name``.
   - Print statements are not a substitute for proper logging.
+
 5. If you use asyncio.create_task, your tasks need to:
+
   - Be cancelled on cog unload.
   - Handle errors.
+
 6. Event listeners should exit early if it is an event you don't need.
 7. Use .gitignore (or something else) to keep unwanted files out of your cog repo
 8. Put a license on your cog repo.
+
   - By default, in most jurisdictions, without a license that at least offers the code for use,
     users cannot legally use your code.
+
 9. Use botwide features when they apply. Some examples of this:
+
   - ``ctx.embed_color``
   - ``bot.is_automod_immune``
+
 10. Use checks to limit command use when the bot needs special permissions.
 11. Check against user input before doing things. Common things to check:
+
   - Resulting output is safe.
   - Values provided make sense. (eg. no negative numbers for payday)
   - Don't unsafely use user input for things like database input.
+
 12. Don't abuse bot internals.
+
   - If you need access to something, ask us or open an issue.
   - If you're sure the current usage is safe, document why,
     but we'd prefer you work with us on ensuring you have access to what you need.
+
 13. Update your cogs for breakage.
+
   - We announce this in advance.
   - If you need help, ask.
