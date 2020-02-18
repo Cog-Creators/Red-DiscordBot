@@ -171,7 +171,12 @@ Guidelines for Cog Creators
 The following are a list of guidelines Cog Creators should strive to follow.
 Not all of these are strict requirements (some are) but are all generally advisable.
 
-1. Cog names should be TitleCased and only contain alphabetic characters.
+1. Cogs should follow a few naming conventions for consistency.
+
+  - Cogs should be TitleCased, using alphabetic characters only.
+  - Commands should be lower case, using alphanumeric characters only.
+  - Cog modules should be lower case, using alphabetic characters only.
+
 2. Cogs and commands should have docstrings suitable for use in help output.
 
   - This one is slightly flexible if using other methods of setting help.
@@ -191,6 +196,11 @@ Not all of these are strict requirements (some are) but are all generally advisa
   - Handle errors.
 
 6. Event listeners should exit early if it is an event you don't need.
+   This makes your events less expensive in terms of CPU time. Examples below:
+
+  - Checking that you are in a guild before interacting with config for an antispam command.
+  - Checking that you aren't reacting to a bot message (``not message.author.bot``) early on.
+
 7. Use .gitignore (or something else) to keep unwanted files out of your cog repo.
 8. Put a license on your cog repo.
 
