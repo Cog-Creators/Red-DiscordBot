@@ -168,7 +168,7 @@ those who developed cogs for V2.
 Guidelines for Cog Creators
 ---------------------------
 
-The following are a list of guidelines cog creators should strive to follow.
+The following are a list of guidelines Cog Creators should strive to follow.
 Not all of these are strict requirements (some are) but are all generally advisable.
 
 1. Cog names should be TitleCased and only contain alphabetic characters.
@@ -191,7 +191,7 @@ Not all of these are strict requirements (some are) but are all generally advisa
   - Handle errors.
 
 6. Event listeners should exit early if it is an event you don't need.
-7. Use .gitignore (or something else) to keep unwanted files out of your cog repo
+7. Use .gitignore (or something else) to keep unwanted files out of your cog repo.
 8. Put a license on your cog repo.
 
   - By default, in most jurisdictions, without a license that at least offers the code for use,
