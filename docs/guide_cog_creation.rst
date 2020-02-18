@@ -173,7 +173,7 @@ Not all of these are strict requirements (some are) but are all generally advisa
 
 1. Cogs should follow a few naming conventions for consistency.
 
-  - Cogs should be TitleCased, using alphabetic characters only.
+  - Cog classes should be TitleCased, using alphabetic characters only.
   - Commands should be lower case, using alphanumeric characters only.
   - Cog modules should be lower case, using alphabetic characters only.
 
