@@ -102,7 +102,7 @@ class Mod(
                 "Please use `{prefix}moveignoredchannels` if "
                 "you were previously using these functions."
             ).format(prefix=prefixes[0])
-            await self.bot.send_to_owners(msg)
+            self.bot.loop.create_task(self.bot.send_to_owners(msg))
             await self.settings.version.set(__version__)
 
     @commands.command()
