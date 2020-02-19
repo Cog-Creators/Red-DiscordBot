@@ -1,6 +1,7 @@
+import asyncio
+from abc import ABC
 from collections import defaultdict
 from typing import List, Tuple
-from abc import ABC
 
 import discord
 from redbot.core import Config, modlog, commands
@@ -77,8 +78,14 @@ class Mod(
         self.tban_expiry_task = self.bot.loop.create_task(self.check_tempban_expirations())
         self.last_case: dict = defaultdict(dict)
 
+        self._ready = asyncio.Event()
+
     async def initialize(self):
         await self._maybe_update_config()
+        self._ready.set()
+
+    async def cog_before_invoke(self, ctx: commands.Context) -> None:
+        await self._ready.wait()
 
     def cog_unload(self):
         self.tban_expiry_task.cancel()
