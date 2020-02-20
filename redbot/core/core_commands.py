@@ -20,6 +20,7 @@ from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequen
 import aiohttp
 import discord
 import pkg_resources
+from babel import Locale, UnknownLocaleError
 
 from . import (
     __version__,
@@ -1252,20 +1253,28 @@ class Core(commands.Cog, CoreLogic):
 
         To reset to English, use "en-US".
         """
-        red_dist = pkg_resources.get_distribution("red-discordbot")
-        red_path = Path(red_dist.location) / "redbot"
-        locale_list = [loc.stem.lower() for loc in list(red_path.glob("**/*.po"))]
-        if locale_name.lower() in locale_list or locale_name.lower() == "en-us":
-            i18n.set_locale(locale_name)
-            await ctx.bot._config.locale.set(locale_name)
-            await ctx.send(_("Locale has been set."))
-        else:
+        try:
+            locale = Locale.parse(locale_name, sep="-")
+        except (ValueError, UnknownLocaleError):
             await ctx.send(
                 _(
                     "Invalid locale. Use `{prefix}listlocales` to get "
                     "a list of available locales."
                 ).format(prefix=ctx.clean_prefix)
             )
+            return
+        if locale.territory is None:
+            await ctx.send(
+                _(
+                    "Invalid locale format. Use `{prefix}listlocales` to get "
+                    "a list of available locales."
+                ).format(prefix=ctx.clean_prefix)
+            )
+            return
+        standardized_locale_name = f"{locale.language}-{locale.territory}"
+        i18n.set_locale(standardized_locale_name)
+        await ctx.bot._config.locale.set(standardized_locale_name)
+        await ctx.send(_("Locale has been set."))
 
     @_set.command()
     @checks.is_owner()
