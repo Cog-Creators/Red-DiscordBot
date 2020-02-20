@@ -540,7 +540,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(
                 "You're about to make the `{0}invite` command public. "
                 "All users will be able to invite me on their server.\n\n"
-                "If you agree, you can type `{0}inviteset public yes`.".format(ctx.prefix)
+                "If you agree, you can type `{0}inviteset public yes`.".format(ctx.clean_prefix)
             )
         else:
             await self.bot._config.invite_public.set(True)
@@ -1193,7 +1193,7 @@ class Core(commands.Cog, CoreLogic):
                     "only do it up to 2 times an hour. Use "
                     "nicknames if you need frequent changes. "
                     "`{}set nickname`"
-                ).format(ctx.prefix)
+                ).format(ctx.clean_prefix)
             )
         else:
             await ctx.send(_("Done."))
@@ -1255,7 +1255,7 @@ class Core(commands.Cog, CoreLogic):
                 _(
                     "Invalid locale. Use `{prefix}listlocales` to get "
                     "a list of available locales."
-                ).format(prefix=ctx.prefix)
+                ).format(prefix=ctx.clean_prefix)
             )
 
     @_set.command()
@@ -1503,7 +1503,7 @@ class Core(commands.Cog, CoreLogic):
         # source. So we'll just mock a DM message instead.
         fake_message = namedtuple("Message", "guild")
         prefixes = await ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))
-        prefix = prefixes[0]
+        prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}", prefixes[0])
 
         content = _("Use `{}dm {} <text>` to reply to this user").format(prefix, author.id)
 
@@ -1609,7 +1609,7 @@ class Core(commands.Cog, CoreLogic):
 
         fake_message = namedtuple("Message", "guild")
         prefixes = await ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))
-        prefix = prefixes[0]
+        prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}", prefixes[0])
         description = _("Owner of {}").format(ctx.bot.user)
         content = _("You can reply to this message with {}contact").format(prefix)
         if await ctx.embed_requested():
