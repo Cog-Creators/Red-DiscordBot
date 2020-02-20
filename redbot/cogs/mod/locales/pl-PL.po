@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-13 12:14\n"
+"POT-Creation-Date: 2020-02-20 12:09+0000\n"
+"PO-Revision-Date: 2020-02-20 12:14\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -212,75 +212,22 @@ msgstr ""
 msgid "Something went wrong when attempting to send that useran invite. Here's the link so you can try: {invite_link}"
 msgstr ""
 
-#: redbot/cogs/mod/mod.py:44
+#: redbot/cogs/mod/mod.py:45
 #, docstring
 msgid "Moderation tools."
 msgstr ""
 
-#: redbot/cogs/mod/movetocore.py:56
+#: redbot/cogs/mod/mod.py:107
+msgid "Ignored guilds and channels have been moved. Please use `{prefix}moveignoredchannels` if you were previously using these functions."
+msgstr ""
+
+#: redbot/cogs/mod/mod.py:118
 #, docstring
-msgid "Add servers or channels to the ignore list."
+msgid "Move ignored channels and servers to core"
 msgstr ""
 
-#: redbot/cogs/mod/movetocore.py:62
-#, docstring
-msgid "Ignore commands in the channel.\\n\\n        Defaults to the current channel.\\n        "
-msgstr ""
-
-#: redbot/cogs/mod/movetocore.py:70
-msgid "Channel added to ignore list."
-msgstr ""
-
-#: redbot/cogs/mod/movetocore.py:72
-msgid "Channel already in ignore list."
-msgstr ""
-
-#: redbot/cogs/mod/movetocore.py:77
-#, docstring
-msgid "Ignore commands in this server."
-msgstr ""
-
-#: redbot/cogs/mod/movetocore.py:81
-msgid "This server has been added to the ignore list."
-msgstr ""
-
-#: redbot/cogs/mod/movetocore.py:83
-msgid "This server is already being ignored."
-msgstr ""
-
-#: redbot/cogs/mod/movetocore.py:89
-#, docstring
-msgid "Remove servers or channels from the ignore list."
-msgstr ""
-
-#: redbot/cogs/mod/movetocore.py:95
-#, docstring
-msgid "Remove a channel from ignore the list.\\n\\n        Defaults to the current channel.\\n        "
-msgstr ""
-
-#: redbot/cogs/mod/movetocore.py:104
-msgid "Channel removed from ignore list."
-msgstr ""
-
-#: redbot/cogs/mod/movetocore.py:106
-msgid "That channel is not in the ignore list."
-msgstr ""
-
-#: redbot/cogs/mod/movetocore.py:111
-#, docstring
-msgid "Remove this server from the ignore list."
-msgstr ""
-
-#: redbot/cogs/mod/movetocore.py:115
-msgid "This server has been removed from the ignore list."
-msgstr ""
-
-#: redbot/cogs/mod/movetocore.py:117
-msgid "This server is not in the ignore list."
-msgstr ""
-
-#: redbot/cogs/mod/movetocore.py:129
-msgid "Currently ignoring:\\n{} channels\\n{} guilds\\n"
+#: redbot/cogs/mod/mod.py:127
+msgid "Ignored channels and guilds restored."
 msgstr ""
 
 #: redbot/cogs/mod/mutes.py:14

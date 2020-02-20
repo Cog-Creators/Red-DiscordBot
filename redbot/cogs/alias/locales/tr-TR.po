@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-13 12:16\n"
+"POT-Creation-Date: 2020-02-20 12:09+0000\n"
+"PO-Revision-Date: 2020-02-20 12:15\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -89,64 +89,60 @@ msgstr "Yeni bir küresel diğer ad tetikleyici '{name}' ile oluşturuldu."
 msgid "Try to execute help for the base command of the alias."
 msgstr "Diğer temel komutunun yardımını yürütmek deneyin."
 
-#: redbot/cogs/alias/alias.py:359
-msgid "{prefix}help {command}"
-msgstr "{prefix}yardımcı {command}"
-
-#: redbot/cogs/alias/alias.py:364
+#: redbot/cogs/alias/alias.py:362
 msgid "No such alias exists."
 msgstr "Böyle bir takma var yok."
 
-#: redbot/cogs/alias/alias.py:369
+#: redbot/cogs/alias/alias.py:367
 #, docstring
 msgid "Show what command the alias executes."
 msgstr "Takma adın çalıştırıldığı komutu gösterin."
 
-#: redbot/cogs/alias/alias.py:374
+#: redbot/cogs/alias/alias.py:372
 msgid "The `{alias_name}` alias will execute the command `{command}`"
 msgstr "'{alias_name}' diğer ad komut '{command} ' idam edecek"
 
-#: redbot/cogs/alias/alias.py:379
+#: redbot/cogs/alias/alias.py:377
 msgid "There is no alias with the name `{name}`"
 msgstr "Hiç diğer ad ad '{name} ' ile olduğunu"
 
-#: redbot/cogs/alias/alias.py:385
+#: redbot/cogs/alias/alias.py:383
 #, docstring
 msgid "Delete an existing alias on this server."
 msgstr "Bu sunucuda varolan bir diğer adı silin."
 
-#: redbot/cogs/alias/alias.py:390 redbot/cogs/alias/alias.py:426
-#: redbot/cogs/alias/alias.py:437
+#: redbot/cogs/alias/alias.py:388 redbot/cogs/alias/alias.py:424
+#: redbot/cogs/alias/alias.py:435
 msgid "There are no aliases on this server."
 msgstr "Bu sunucuda hiçbir diğer adları vardır."
 
-#: redbot/cogs/alias/alias.py:395 redbot/cogs/alias/alias.py:413
+#: redbot/cogs/alias/alias.py:393 redbot/cogs/alias/alias.py:411
 msgid "Alias with the name `{name}` was successfully deleted."
 msgstr "`{name}`adlı takma ad başarıyla silindi."
 
-#: redbot/cogs/alias/alias.py:398 redbot/cogs/alias/alias.py:416
+#: redbot/cogs/alias/alias.py:396 redbot/cogs/alias/alias.py:414
 msgid "Alias with name `{name}` was not found."
 msgstr "{Name} `adlı takma ad bulunamadı."
 
-#: redbot/cogs/alias/alias.py:403
+#: redbot/cogs/alias/alias.py:401
 #, docstring
 msgid "Delete an existing global alias."
 msgstr "Mevcut bir global takma adı silin."
 
-#: redbot/cogs/alias/alias.py:408
+#: redbot/cogs/alias/alias.py:406
 msgid "There are no aliases on this bot."
 msgstr "Bu botta takma adlar yok."
 
-#: redbot/cogs/alias/alias.py:421
+#: redbot/cogs/alias/alias.py:419
 #, docstring
 msgid "List the available aliases on this server."
 msgstr "Bu sunucudaki kullanılabilir diğer adları listeleyin."
 
-#: redbot/cogs/alias/alias.py:422 redbot/cogs/alias/alias.py:433
+#: redbot/cogs/alias/alias.py:420 redbot/cogs/alias/alias.py:431
 msgid "Aliases:"
 msgstr "Takma adlar:"
 
-#: redbot/cogs/alias/alias.py:432
+#: redbot/cogs/alias/alias.py:430
 #, docstring
 msgid "List the available global aliases on this bot."
 msgstr "Bu botta mevcut küresel takma adları listeleyiniz."

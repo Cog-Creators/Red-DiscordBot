@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-13 12:13\n"
+"POT-Creation-Date: 2020-02-20 12:09+0000\n"
+"PO-Revision-Date: 2020-02-20 12:12\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -89,64 +89,60 @@ msgstr "Un nouvel alias global avec le déclencheur `{name}` a bien été créé
 msgid "Try to execute help for the base command of the alias."
 msgstr "Tente d'exécuter l'aide pour la commande de base de l'alias."
 
-#: redbot/cogs/alias/alias.py:359
-msgid "{prefix}help {command}"
-msgstr "{prefix}help {command}"
-
-#: redbot/cogs/alias/alias.py:364
+#: redbot/cogs/alias/alias.py:362
 msgid "No such alias exists."
 msgstr "Cet alias n'existe pas."
 
-#: redbot/cogs/alias/alias.py:369
+#: redbot/cogs/alias/alias.py:367
 #, docstring
 msgid "Show what command the alias executes."
 msgstr "Affiche la commande que l'alias exécute."
 
-#: redbot/cogs/alias/alias.py:374
+#: redbot/cogs/alias/alias.py:372
 msgid "The `{alias_name}` alias will execute the command `{command}`"
 msgstr "L'alias `{alias_name}` exécute la commande `{command}`"
 
-#: redbot/cogs/alias/alias.py:379
+#: redbot/cogs/alias/alias.py:377
 msgid "There is no alias with the name `{name}`"
 msgstr "Il n'y a pas d'alias nommé `{name}`"
 
-#: redbot/cogs/alias/alias.py:385
+#: redbot/cogs/alias/alias.py:383
 #, docstring
 msgid "Delete an existing alias on this server."
 msgstr "Supprime un alias de ce serveur."
 
-#: redbot/cogs/alias/alias.py:390 redbot/cogs/alias/alias.py:426
-#: redbot/cogs/alias/alias.py:437
+#: redbot/cogs/alias/alias.py:388 redbot/cogs/alias/alias.py:424
+#: redbot/cogs/alias/alias.py:435
 msgid "There are no aliases on this server."
 msgstr "Il n'y a pas d'alias sur ce serveur."
 
-#: redbot/cogs/alias/alias.py:395 redbot/cogs/alias/alias.py:413
+#: redbot/cogs/alias/alias.py:393 redbot/cogs/alias/alias.py:411
 msgid "Alias with the name `{name}` was successfully deleted."
 msgstr "L'alias nommé `{name}` a bien été supprimé."
 
-#: redbot/cogs/alias/alias.py:398 redbot/cogs/alias/alias.py:416
+#: redbot/cogs/alias/alias.py:396 redbot/cogs/alias/alias.py:414
 msgid "Alias with name `{name}` was not found."
 msgstr "L'alias nommé `{name}` n'a pas été trouvé."
 
-#: redbot/cogs/alias/alias.py:403
+#: redbot/cogs/alias/alias.py:401
 #, docstring
 msgid "Delete an existing global alias."
 msgstr "Supprime un alias global existant."
 
-#: redbot/cogs/alias/alias.py:408
+#: redbot/cogs/alias/alias.py:406
 msgid "There are no aliases on this bot."
 msgstr "Il n'y a pas d'alias sur ce bot."
 
-#: redbot/cogs/alias/alias.py:421
+#: redbot/cogs/alias/alias.py:419
 #, docstring
 msgid "List the available aliases on this server."
 msgstr "Liste les alias disponibles sur ce serveur."
 
-#: redbot/cogs/alias/alias.py:422 redbot/cogs/alias/alias.py:433
+#: redbot/cogs/alias/alias.py:420 redbot/cogs/alias/alias.py:431
 msgid "Aliases:"
 msgstr "Alias:"
 
-#: redbot/cogs/alias/alias.py:432
+#: redbot/cogs/alias/alias.py:430
 #, docstring
 msgid "List the available global aliases on this bot."
 msgstr "Liste les alias globaux disponibles sur ce bot."
