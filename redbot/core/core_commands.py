@@ -1499,11 +1499,7 @@ class Core(commands.Cog, CoreLogic):
             source = _("from {}").format(guild)
             footer += _(" | Server ID: {}").format(guild.id)
 
-        # We need to grab the DM command prefix (global)
-        # Since it can also be set through cli flags, bot._config is not a reliable
-        # source. So we'll just mock a DM message instead.
-        fake_message = namedtuple("Message", "guild")
-        prefixes = await ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))
+        prefixes = await ctx.bot.get_valid_prefixes()
         prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}", prefixes[0])
 
         content = _("Use `{}dm {} <text>` to reply to this user").format(prefix, author.id)
@@ -1608,8 +1604,7 @@ class Core(commands.Cog, CoreLogic):
             )
             return
 
-        fake_message = namedtuple("Message", "guild")
-        prefixes = await ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))
+        prefixes = await ctx.bot.get_valid_prefixes()
         prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}", prefixes[0])
         description = _("Owner of {}").format(ctx.bot.user)
         content = _("You can reply to this message with {}contact").format(prefix)
