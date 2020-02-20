@@ -5,6 +5,7 @@ import importlib
 import itertools
 import logging
 import os
+import re
 import sys
 import platform
 import getpass
