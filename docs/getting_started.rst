@@ -353,7 +353,7 @@ The cog guides are formatted the same. They're divided into 3 sections:
         for the command; you can decide to use it or not.
         
         If your argument includes spaces like ``Hello world!`` you need to place
-        it in quotes like this: ``"Hello world!"``.
+        it in double quotes like this: ``"Hello world!"``.
 
         Arguments followed by ``=something`` means that, if not specified,
         the argument will be equal to ``something``.
