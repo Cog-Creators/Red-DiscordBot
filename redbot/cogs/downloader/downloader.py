@@ -526,7 +526,7 @@ class Downloader(commands.Cog):
         else:
             await ctx.send(_("Repo `{name}` successfully added.").format(name=name))
             if repo.install_msg:
-                await ctx.send(repo.install_msg.replace("[p]", ctx.prefix))
+                await ctx.send(repo.install_msg.replace("[p]", ctx.clean_prefix))
 
     @repo.command(name="delete", aliases=["remove", "del"], usage="<repo_name>")
     async def _repo_del(self, ctx: commands.Context, repo: Repo) -> None:
@@ -754,7 +754,7 @@ class Downloader(commands.Cog):
         await self.send_pagified(ctx, f"{message}{deprecation_notice}\n---")
         for cog in installed_cogs:
             if cog.install_msg:
-                await ctx.send(cog.install_msg.replace("[p]", ctx.prefix))
+                await ctx.send(cog.install_msg.replace("[p]", ctx.clean_prefix))
 
     @cog.command(name="uninstall", usage="<cogs>")
     async def _cog_uninstall(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
