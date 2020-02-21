@@ -352,8 +352,8 @@ The cog guides are formatted the same. They're divided into 3 sections:
         Arguments enclosed in ``[ ]`` means that the argument is **optional**
         for the command; you can decide to use it or not.
         
-        If your argument includes spaces like ``Hello world!`` you need to place
-        it in double quotes like this: ``"Hello world!"``.
+        If your argument includes spaces like ``Hello world!``, sometimes
+        you will need to place it in double quotes like this: ``"Hello world!"``.
 
         Arguments followed by ``=something`` means that, if not specified,
         the argument will be equal to ``something``.
