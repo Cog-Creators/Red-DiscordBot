@@ -907,10 +907,10 @@ class Config(metaclass=ConfigMeta):
         """
         Initializes a custom group for usage. This method must be called first!
         """
-        if group_identifier in self.custom_groups:
-            raise ValueError(f"Group identifier already registered: {group_identifier}")
-
-        self.custom_groups[group_identifier] = identifier_count
+        if identifier_count != self.custom_groups.setdefault(group_identifier, identifier_count):
+            raise ValueError(
+                f"Cannot change identifier count of already registered group: {group_identifier}"
+            )
 
     def _get_base_group(self, category: str, *primary_keys: str) -> Group:
         """
