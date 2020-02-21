@@ -198,7 +198,7 @@ class Trivia(commands.Cog):
                     _(
                         "Invalid category `{name}`. See `{prefix}trivia list` for a list of "
                         "trivia categories."
-                    ).format(name=category, prefix=ctx.prefix)
+                    ).format(name=category, prefix=ctx.clean_prefix)
                 )
             except InvalidListError:
                 await ctx.send(
@@ -302,7 +302,7 @@ class Trivia(commands.Cog):
                 _(
                     "Unknown field `{field_name}`, see `{prefix}help trivia leaderboard server` "
                     "for valid fields to sort by."
-                ).format(field_name=sort_by, prefix=ctx.prefix)
+                ).format(field_name=sort_by, prefix=ctx.clean_prefix)
             )
             return
         guild = ctx.guild
@@ -331,7 +331,7 @@ class Trivia(commands.Cog):
                 _(
                     "Unknown field `{field_name}`, see `{prefix}help trivia leaderboard server` "
                     "for valid fields to sort by."
-                ).format(field_name=sort_by, prefix=ctx.prefix)
+                ).format(field_name=sort_by, prefix=ctx.clean_prefix)
             )
             return
         data = await self.conf.all_members()

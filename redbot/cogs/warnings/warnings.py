@@ -280,7 +280,7 @@ class Warnings(commands.Cog):
                     msg += " " + _(
                         "Do `{prefix}warningset allowcustomreasons true` to enable custom "
                         "reasons."
-                    ).format(prefix=ctx.prefix)
+                    ).format(prefix=ctx.clean_prefix)
                     return await ctx.send(msg)
             else:
                 reason_type = registered_reasons[reason.lower()]
@@ -322,7 +322,7 @@ class Warnings(commands.Cog):
                 reason=_("{description}\nPoints: {points}").format(
                     description=reason_type["description"], points=reason_type["points"]
                 ),
-                prefix=ctx.prefix,
+                prefix=ctx.clean_prefix,
                 user=user.id,
                 message=ctx.message.id,
             )

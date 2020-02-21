@@ -111,7 +111,8 @@ class Streams(commands.Cog):
             try:
                 tokens["client_secret"]
             except KeyError:
-                prefix = (await self.bot._config.prefix())[0]
+                prefixes = await self.bot.get_valid_prefixes()
+                prefix = re.sub(rf"<@!?{self.bot.user.id}>", f"@{self.bot.user.name}", prefixes[0])
                 message = _(
                     "You need a client secret key to use correctly Twitch API on this cog.\n"
                     "Follow these steps:\n"
@@ -203,14 +204,14 @@ class Streams(commands.Cog):
                 _(
                     "The Twitch token is either invalid or has not been set. See "
                     "`{prefix}streamset twitchtoken`."
-                ).format(prefix=ctx.prefix)
+                ).format(prefix=ctx.clean_prefix)
             )
         except InvalidYoutubeCredentials:
             await ctx.send(
                 _(
                     "The YouTube API key is either invalid or has not been set. See "
                     "`{prefix}streamset youtubekey`."
-                ).format(prefix=ctx.prefix)
+                ).format(prefix=ctx.clean_prefix)
             )
         except APIError:
             await ctx.send(
@@ -357,7 +358,7 @@ class Streams(commands.Cog):
                     _(
                         "The Twitch token is either invalid or has not been set. See "
                         "`{prefix}streamset twitchtoken`."
-                    ).format(prefix=ctx.prefix)
+                    ).format(prefix=ctx.clean_prefix)
                 )
                 return
             except InvalidYoutubeCredentials:
@@ -365,7 +366,7 @@ class Streams(commands.Cog):
                     _(
                         "The YouTube API key is either invalid or has not been set. See "
                         "`{prefix}streamset youtubekey`."
-                    ).format(prefix=ctx.prefix)
+                    ).format(prefix=ctx.clean_prefix)
                 )
                 return
             except APIError:
@@ -415,7 +416,7 @@ class Streams(commands.Cog):
             "client_secret <your_client_secret_here>`\n\n"
             "Note: These tokens are sensitive and should only be used in a private channel\n"
             "or in DM with the bot.\n"
-        ).format(prefix=ctx.prefix)
+        ).format(prefix=ctx.clean_prefix)
 
         await ctx.maybe_send_embed(message)
 
@@ -436,7 +437,7 @@ class Streams(commands.Cog):
             "`{prefix}set api youtube api_key <your_api_key_here>`\n\n"
             "Note: These tokens are sensitive and should only be used in a private channel\n"
             "or in DM with the bot.\n"
-        ).format(prefix=ctx.prefix)
+        ).format(prefix=ctx.clean_prefix)
 
         await ctx.maybe_send_embed(message)
 

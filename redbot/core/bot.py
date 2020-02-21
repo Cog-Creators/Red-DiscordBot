@@ -3,6 +3,7 @@ import inspect
 import logging
 import os
 import platform
+import re
 import shutil
 import sys
 from collections import namedtuple
@@ -551,7 +552,7 @@ class RedBase(
             destinations = await self.get_owner_notification_destinations()
             for destination in destinations:
                 prefixes = await self.get_valid_prefixes(getattr(destination, "guild", None))
-                prefix = prefixes[0]
+                prefix = re.sub(rf"<@!?{self.bot.user.id}>", f"@{self.bot.user.name}", prefixes[0])
                 try:
                     await destination.send(content.format(prefix=prefix))
                 except Exception as _exc:
