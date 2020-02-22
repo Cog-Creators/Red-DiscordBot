@@ -2414,8 +2414,8 @@ class Core(commands.Cog, CoreLogic):
 # Otherwise interfering with the ability for this command to be accessible is also a violation.
 @commands.command(
     cls=commands.commands._AlwaysAvailableCommand,
-    name="licenceinfo",
-    aliases=["licenseinfo"],
+    name="licenseinfo",
+    aliases=["licenceinfo"],
     i18n=_,
 )
 async def license_info_command(ctx):
@@ -2424,7 +2424,7 @@ async def license_info_command(ctx):
     """
 
     message = (
-        "This bot is an instance of Red-DiscordBot (hereafter refered to as Red)\n"
+        "This bot is an instance of Red-DiscordBot (hereafter referred to as Red)\n"
         "Red is a free and open source application made available to the public and "
         "licensed under the GNU GPLv3. The full text of this license is available to you at "
         "<https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/LICENSE>"
