@@ -207,9 +207,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         try:
             lavalink.get_player(ctx.guild.id)
             return True
-        except IndexError:
-            return False
-        except KeyError:
+        except (IndexError, KeyError):
             return False
 
     async def _get_spotify_tracks(
@@ -621,7 +619,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if player.volume != volume:
             await player.set_volume(volume)
 
-    async def maybe_move_player(self, ctx: commands.Context):
+    async def maybe_move_player(self, ctx: commands.Context) -> bool:
         try:
             player = lavalink.get_player(ctx.guild.id)
         except KeyError:
