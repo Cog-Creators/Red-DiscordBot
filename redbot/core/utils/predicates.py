@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import re
 from typing import Callable, ClassVar, List, Optional, Pattern, Sequence, Tuple, Union, cast
 

@@ -324,9 +324,7 @@ class Case:
 
         if embed:
             emb = discord.Embed(title=title, description=reason)
-
-            if avatar_url is not None:
-                emb.set_author(name=user, icon_url=avatar_url)
+            emb.set_author(name=user)
             emb.add_field(name=_("Moderator"), value=moderator, inline=False)
             if until and duration:
                 emb.add_field(name=_("Until"), value=until)

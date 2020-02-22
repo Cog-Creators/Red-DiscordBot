@@ -126,7 +126,7 @@ class CoreLogic:
             else:
                 await bot.add_loaded_package(name)
                 loaded_packages.append(name)
-                # remove in Red 3.3
+                # remove in Red 3.4
                 downloader = bot.get_cog("Downloader")
                 if downloader is None:
                     continue
@@ -319,7 +319,10 @@ class Core(commands.Cog, CoreLogic):
         python_version = "[{}.{}.{}]({})".format(*sys.version_info[:3], python_url)
         red_version = "[{}]({})".format(__version__, red_pypi)
         app_info = await self.bot.application_info()
-        owner = app_info.owner
+        if app_info.team:
+            owner = app_info.team.name
+        else:
+            owner = app_info.owner
         custom_info = await self.bot._config.custom_info()
 
         async with aiohttp.ClientSession() as session:
@@ -358,7 +361,7 @@ class Core(commands.Cog, CoreLogic):
 
     @commands.command()
     async def uptime(self, ctx: commands.Context):
-        """Shows Red's uptime"""
+        """Shows [botname]'s uptime"""
         since = ctx.bot.uptime.strftime("%Y-%m-%d %H:%M:%S")
         delta = datetime.datetime.utcnow() - self.bot.uptime
         uptime_str = humanize_timedelta(timedelta=delta) or _("Less than one second")
@@ -385,6 +388,9 @@ class Core(commands.Cog, CoreLogic):
             if ctx.guild:
                 guild_setting = await self.bot._config.guild(ctx.guild).embeds()
                 text += _("Guild setting: {}\n").format(guild_setting)
+            if ctx.channel:
+                channel_setting = await self.bot._config.channel(ctx.channel).embeds()
+                text += _("Channel setting: {}\n").format(channel_setting)
             user_setting = await self.bot._config.user(ctx.author).embeds()
             text += _("User setting: {}").format(user_setting)
             await ctx.send(box(text))
@@ -430,6 +436,31 @@ class Core(commands.Cog, CoreLogic):
                 )
             )
 
+    @embedset.command(name="channel")
+    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guild_only()
+    async def embedset_channel(self, ctx: commands.Context, enabled: bool = None):
+        """
+        Toggle the channel's embed setting.
+
+        If enabled is None, the setting will be unset and
+        the guild default will be used instead.
+
+        If set, this is used instead of the guild default
+        to determine whether or not to use embeds. This is
+        used for all commands done in a channel except
+        for help commands.
+        """
+        await self.bot._config.channel(ctx.channel).embeds.set(enabled)
+        if enabled is None:
+            await ctx.send(_("Embeds will now fall back to the global setting."))
+        else:
+            await ctx.send(
+                _("Embeds are now {} for this channel.").format(
+                    _("enabled") if enabled else _("disabled")
+                )
+            )
+
     @embedset.command(name="user")
     async def embedset_user(self, ctx: commands.Context, enabled: bool = None):
         """
@@ -471,7 +502,7 @@ class Core(commands.Cog, CoreLogic):
     @commands.command()
     @commands.check(CoreLogic._can_get_invite_url)
     async def invite(self, ctx):
-        """Show's Red's invite url"""
+        """Show's [botname]'s invite url"""
         try:
             await ctx.author.send(await self._invite_url())
         except discord.errors.Forbidden:
@@ -674,13 +705,13 @@ class Core(commands.Cog, CoreLogic):
             if len(repos_with_shared_libs) == 1:
                 formed = _(
                     "**WARNING**: The following repo is using shared libs"
-                    " which are marked for removal in Red 3.3: {repo}.\n"
+                    " which are marked for removal in Red 3.4: {repo}.\n"
                     "You should inform maintainer of the repo about this message."
                 ).format(repo=inline(repos_with_shared_libs.pop()))
             else:
                 formed = _(
                     "**WARNING**: The following repos are using shared libs"
-                    " which are marked for removal in Red 3.3: {repos}.\n"
+                    " which are marked for removal in Red 3.4: {repos}.\n"
                     "You should inform maintainers of these repos about this message."
                 ).format(repos=humanize_list([inline(repo) for repo in repos_with_shared_libs]))
             output.append(formed)
@@ -792,13 +823,13 @@ class Core(commands.Cog, CoreLogic):
             if len(repos_with_shared_libs) == 1:
                 formed = _(
                     "**WARNING**: The following repo is using shared libs"
-                    " which are marked for removal in Red 3.3: {repo}.\n"
+                    " which are marked for removal in Red 3.4: {repo}.\n"
                     "You should inform maintainers of these repos about this message."
                 ).format(repo=inline(repos_with_shared_libs.pop()))
             else:
                 formed = _(
                     "**WARNING**: The following repos are using shared libs"
-                    " which are marked for removal in Red 3.3: {repos}.\n"
+                    " which are marked for removal in Red 3.4: {repos}.\n"
                     "You should inform maintainers of these repos about this message."
                 ).format(repos=humanize_list([inline(repo) for repo in repos_with_shared_libs]))
             output.append(formed)
@@ -834,7 +865,7 @@ class Core(commands.Cog, CoreLogic):
 
     @commands.group(name="set")
     async def _set(self, ctx: commands.Context):
-        """Changes Red's settings"""
+        """Changes [botname]'s settings"""
         if ctx.invoked_subcommand is None:
             if ctx.guild:
                 guild = ctx.guild
@@ -1020,7 +1051,7 @@ class Core(commands.Cog, CoreLogic):
     @_set.command()
     @checks.is_owner()
     async def avatar(self, ctx: commands.Context, url: str):
-        """Sets Red's avatar"""
+        """Sets [botname]'s avatar"""
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as r:
                 data = await r.read()
@@ -1044,7 +1075,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _game(self, ctx: commands.Context, *, game: str = None):
-        """Sets Red's playing status"""
+        """Sets [botname]'s playing status"""
 
         if game:
             game = discord.Game(name=game)
@@ -1058,7 +1089,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _listening(self, ctx: commands.Context, *, listening: str = None):
-        """Sets Red's listening status"""
+        """Sets [botname]'s listening status"""
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if listening:
@@ -1072,7 +1103,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _watching(self, ctx: commands.Context, *, watching: str = None):
-        """Sets Red's watching status"""
+        """Sets [botname]'s watching status"""
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if watching:
@@ -1086,7 +1117,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def status(self, ctx: commands.Context, *, status: str):
-        """Sets Red's status
+        """Sets [botname]'s status
 
         Available statuses:
             online
@@ -1115,7 +1146,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def stream(self, ctx: commands.Context, streamer=None, *, stream_title=None):
-        """Sets Red's streaming status
+        """Sets [botname]'s streaming status
         Leaving both streamer and stream_title empty will clear it."""
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else None
@@ -1136,7 +1167,7 @@ class Core(commands.Cog, CoreLogic):
     @_set.command(name="username", aliases=["name"])
     @checks.is_owner()
     async def _username(self, ctx: commands.Context, *, username: str):
-        """Sets Red's username"""
+        """Sets [botname]'s username"""
         try:
             await self._name(name=username)
         except discord.HTTPException:
@@ -1155,7 +1186,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.admin()
     @commands.guild_only()
     async def _nickname(self, ctx: commands.Context, *, nickname: str = None):
-        """Sets Red's nickname"""
+        """Sets [botname]'s nickname"""
         try:
             await ctx.guild.me.edit(nick=nickname)
         except discord.Forbidden:
@@ -1166,7 +1197,7 @@ class Core(commands.Cog, CoreLogic):
     @_set.command(aliases=["prefixes"])
     @checks.is_owner()
     async def prefix(self, ctx: commands.Context, *prefixes: str):
-        """Sets Red's global prefix(es)"""
+        """Sets [botname]'s global prefix(es)"""
         if not prefixes:
             await ctx.send_help()
             return
@@ -1177,7 +1208,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.admin()
     @commands.guild_only()
     async def serverprefix(self, ctx: commands.Context, *prefixes: str):
-        """Sets Red's server prefix(es)"""
+        """Sets [botname]'s server prefix(es)"""
         if not prefixes:
             await ctx.bot._prefix_cache.set_prefixes(guild=ctx.guild, prefixes=[])
             await ctx.send(_("Guild prefixes have been reset."))
@@ -1368,6 +1399,30 @@ class Core(commands.Cog, CoreLogic):
         await ctx.bot._config.help.max_pages_in_guild.set(pages)
         await ctx.send(_("Done. The page limit has been set to {}.").format(pages))
 
+    @helpset.command(name="deletedelay")
+    @commands.bot_has_permissions(manage_messages=True)
+    async def helpset_deletedelay(self, ctx: commands.Context, seconds: int):
+        """Set the delay after which help pages will be deleted.
+
+        The setting is disabled by default, and only applies to non-menu help,
+        sent in server text channels.
+        Setting the delay to 0 disables this feature.
+
+        The bot has to have MANAGE_MESSAGES permission for this to work.
+        """
+        if seconds < 0:
+            await ctx.send(_("You must give a value of zero or greater!"))
+            return
+        if seconds > 60 * 60 * 24 * 14:  # 14 days
+            await ctx.send(_("The delay cannot be longer than 14 days!"))
+            return
+
+        await ctx.bot._config.help.delete_delay.set(seconds)
+        if seconds == 0:
+            await ctx.send(_("Done. Help messages will not be deleted now."))
+        else:
+            await ctx.send(_("Done. The delete delay has been set to {} seconds.").format(seconds))
+
     @helpset.command(name="tagline")
     async def helpset_tagline(self, ctx: commands.Context, *, tagline: str = None):
         """
@@ -1457,7 +1512,9 @@ class Core(commands.Cog, CoreLogic):
                 if not destination.permissions_for(destination.guild.me).send_messages:
                     continue
                 if destination.permissions_for(destination.guild.me).embed_links:
-                    send_embed = await ctx.bot._config.guild(destination.guild).embeds()
+                    send_embed = await ctx.bot._config.channel(destination).embeds()
+                    if send_embed is None:
+                        send_embed = await ctx.bot._config.guild(destination.guild).embeds()
                 else:
                     send_embed = False
 
@@ -1524,12 +1581,12 @@ class Core(commands.Cog, CoreLogic):
         settings, 'appearance' tab. Then right click a user
         and copy their id"""
         destination = discord.utils.get(ctx.bot.get_all_members(), id=user_id)
-        if destination is None:
+        if destination is None or destination.bot:
             await ctx.send(
                 _(
-                    "Invalid ID or user not found. You can only "
-                    "send messages to people I share a server "
-                    "with."
+                    "Invalid ID, user not found, or user is a bot. "
+                    "You can only send messages to people I share "
+                    "a server with."
                 )
             )
             return
