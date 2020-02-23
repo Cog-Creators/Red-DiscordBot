@@ -1,5 +1,5 @@
 import asyncio
-import collections
+import collections.abc
 import logging
 import pickle
 import weakref
@@ -510,7 +510,7 @@ class Group(Value):
         return self(acquire_lock=acquire_lock)
 
     def nested_update(
-        self, current: collections.Mapping, defaults: Dict[str, Any] = ...
+        self, current: collections.abc.Mapping, defaults: Dict[str, Any] = ...
     ) -> Dict[str, Any]:
         """Robust updater for nested dictionaries
 
@@ -521,7 +521,7 @@ class Group(Value):
             defaults = self.defaults
 
         for key, value in current.items():
-            if isinstance(value, collections.Mapping):
+            if isinstance(value, collections.abc.Mapping):
                 result = self.nested_update(value, defaults.get(key, {}))
                 defaults[key] = result
             else:
