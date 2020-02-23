@@ -111,10 +111,12 @@ class TriviaSession:
             LOG.error("A trivia session has encountered an error.\n", exc_info=exc)
             asyncio.create_task(
                 self.ctx.send(
-                    "An unexpected error occurred in the trivia session.\nCheck your console or logs for details."
+                    _(
+                        "An unexpected error occurred in the trivia session.\nCheck your console or logs for details."
+                    )
                 )
             )
-            asyncio.create_task(self.end_game())
+            self.stop()
 
     async def run(self):
         """Run the trivia session.
