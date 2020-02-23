@@ -718,13 +718,13 @@ class Core(commands.Cog, CoreLogic):
             if len(repos_with_shared_libs) == 1:
                 formed = _(
                     "**WARNING**: The following repo is using shared libs"
-                    " which are marked for removal in Red 3.4: {repo}.\n"
+                    " which are marked for removal in future: {repo}.\n"
                     "You should inform maintainer of the repo about this message."
                 ).format(repo=inline(repos_with_shared_libs.pop()))
             else:
                 formed = _(
                     "**WARNING**: The following repos are using shared libs"
-                    " which are marked for removal in Red 3.4: {repos}.\n"
+                    " which are marked for removal in future: {repos}.\n"
                     "You should inform maintainers of these repos about this message."
                 ).format(repos=humanize_list([inline(repo) for repo in repos_with_shared_libs]))
             output.append(formed)
@@ -836,13 +836,13 @@ class Core(commands.Cog, CoreLogic):
             if len(repos_with_shared_libs) == 1:
                 formed = _(
                     "**WARNING**: The following repo is using shared libs"
-                    " which are marked for removal in Red 3.4: {repo}.\n"
+                    " which are marked for removal in future: {repo}.\n"
                     "You should inform maintainers of these repos about this message."
                 ).format(repo=inline(repos_with_shared_libs.pop()))
             else:
                 formed = _(
                     "**WARNING**: The following repos are using shared libs"
-                    " which are marked for removal in Red 3.4: {repos}.\n"
+                    " which are marked for removal in future: {repos}.\n"
                     "You should inform maintainers of these repos about this message."
                 ).format(repos=humanize_list([inline(repo) for repo in repos_with_shared_libs]))
             output.append(formed)
