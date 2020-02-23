@@ -168,7 +168,7 @@ class APIToken(discord.ext.commands.Converter):
     Note: Core usage of this has been replaced with `DictConverter` use instead.
 
     .. warning::
-        This will be removed in version 3.4.
+        This will be removed in first minor release after [PUT A DATE HERE].
     """
 
     async def convert(self, ctx: "Context", argument) -> dict:
