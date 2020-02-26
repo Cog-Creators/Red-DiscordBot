@@ -199,22 +199,23 @@ _warnings.filterwarnings("ignore", module=r"fuzzywuzzy.*")
 # Show DeprecationWarning
 _warnings.filterwarnings("default", category=DeprecationWarning)
 
-# DEP-WARN
-# Individual warnings - tracked in https://github.com/Cog-Creators/Red-DiscordBot/issues/3529
-# DeprecationWarning: an integer is required (got type float).  Implicit conversion to integers using __int__ is deprecated, and may be removed in a future version of Python.
-_warnings.filterwarnings("ignore", category=DeprecationWarning, module="importlib", lineno=219)
-# DeprecationWarning: "@coroutine" decorator is deprecated since Python 3.8, use "async def" instead
-#   def noop(*args, **kwargs):  # type: ignore
-_warnings.filterwarnings("ignore", category=DeprecationWarning, module="aiohttp", lineno=107)
-# DeprecationWarning: The loop argument is deprecated since Python 3.8, and scheduled for removal in Python 3.10.
-#   hosts = await asyncio.shield(self._resolve_host(..
-_warnings.filterwarnings("ignore", category=DeprecationWarning, module="aiohttp", lineno=964)
-# DeprecationWarning: The loop argument is deprecated since Python 3.8, and scheduled for removal in Python 3.10.
-#   self._event = asyncio.Event(loop=loop)
-_warnings.filterwarnings("ignore", category=DeprecationWarning, module="aiohttp", lineno=21)
-# DeprecationWarning: rename klass to create_protocol
-#   warnings.warn("rename klass to create_protocol", DeprecationWarning)
-#
-# discord.py is using deprecated kwarg name when making websockets connection
-# https://github.com/Rapptz/discord.py/issues/2574
-_warnings.filterwarnings("ignore", category=DeprecationWarning, module="websockets", lineno=407)
+if "--debug" not in _sys.argv:
+    # DEP-WARN
+    # Individual warnings - tracked in https://github.com/Cog-Creators/Red-DiscordBot/issues/3529
+    # DeprecationWarning: an integer is required (got type float).  Implicit conversion to integers using __int__ is deprecated, and may be removed in a future version of Python.
+    _warnings.filterwarnings("ignore", category=DeprecationWarning, module="importlib", lineno=219)
+    # DeprecationWarning: "@coroutine" decorator is deprecated since Python 3.8, use "async def" instead
+    #   def noop(*args, **kwargs):  # type: ignore
+    _warnings.filterwarnings("ignore", category=DeprecationWarning, module="aiohttp", lineno=107)
+    # DeprecationWarning: The loop argument is deprecated since Python 3.8, and scheduled for removal in Python 3.10.
+    #   hosts = await asyncio.shield(self._resolve_host(..
+    _warnings.filterwarnings("ignore", category=DeprecationWarning, module="aiohttp", lineno=964)
+    # DeprecationWarning: The loop argument is deprecated since Python 3.8, and scheduled for removal in Python 3.10.
+    #   self._event = asyncio.Event(loop=loop)
+    _warnings.filterwarnings("ignore", category=DeprecationWarning, module="aiohttp", lineno=21)
+    # DeprecationWarning: rename klass to create_protocol
+    #   warnings.warn("rename klass to create_protocol", DeprecationWarning)
+    #
+    # discord.py is using deprecated kwarg name when making websockets connection
+    # https://github.com/Rapptz/discord.py/issues/2574
+    _warnings.filterwarnings("ignore", category=DeprecationWarning, module="websockets", lineno=407)
