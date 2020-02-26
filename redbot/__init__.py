@@ -196,11 +196,9 @@ version_info = VersionInfo.from_str(__version__)
 
 # Filter fuzzywuzzy slow sequence matcher warning
 _warnings.filterwarnings("ignore", module=r"fuzzywuzzy.*")
-# Show DeprecationWarning in debug mode
 # Show DeprecationWarning
-if "--debug" in _sys.argv:
-    _warnings.filterwarnings("default", category=DeprecationWarning)
-else:
+_warnings.filterwarnings("default", category=DeprecationWarning)
+if "--debug" not in _sys.argv:
     _warnings.filterwarnings("default", category=DeprecationWarning)
     # DEP-WARN
     # DeprecationWarning: "@coroutine" decorator is deprecated since Python 3.8, use "async def" instead
