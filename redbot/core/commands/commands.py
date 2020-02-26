@@ -418,7 +418,6 @@ class Command(CogCommandMixin, DPYCommand):
             Whether or not the permission state should be changed as
             a result of this call. For most cases this should be
             ``False``. Defaults to ``False``.
-
         """
         ret = await super().can_run(ctx)
         if ret is False:
@@ -785,14 +784,16 @@ class Group(GroupMixin, Command, CogGroupMixin, DPYGroup):
 
         if ctx.invoked_subcommand is None or self == ctx.invoked_subcommand:
             if self.autohelp and not self.invoke_without_command:
-                await self.can_run(ctx, change_permission_state=True)
+                if not await self.can_run(ctx, change_permission_state=True):
+                    raise CheckFailure()
                 await ctx.send_help()
         elif self.invoke_without_command:
             # So invoke_without_command when a subcommand of this group is invoked
             # will skip the the invokation of *this* command. However, because of
             # how our permissions system works, we don't want it to skip the checks
             # as well.
-            await self.can_run(ctx, change_permission_state=True)
+            if not await self.can_run(ctx, change_permission_state=True):
+                raise CheckFailure()
             # this is actually why we don't prepare earlier.
 
         await super().invoke(ctx)
