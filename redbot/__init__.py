@@ -221,6 +221,4 @@ _warnings.filterwarnings("ignore", category=DeprecationWarning, module="aiohttp"
 #
 # discord.py is using deprecated kwarg name when making websockets connection
 # https://github.com/Rapptz/discord.py/issues/2574
-_warnings.filterwarnings(
-    "ignore", category=DeprecationWarning, module="websockets", lineno=407
-)
+_warnings.filterwarnings("ignore", category=DeprecationWarning, module="websockets", lineno=407)
