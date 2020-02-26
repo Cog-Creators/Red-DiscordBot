@@ -217,4 +217,6 @@ else:
     # DEP-WARN
     # DeprecationWarning: rename klass to create_protocol
     #   warnings.warn("rename klass to create_protocol", DeprecationWarning)
-    _warnings.filterwarnings("ignore", category=DeprecationWarning, module="websockets", lineno=407)
+    _warnings.filterwarnings(
+        "ignore", category=DeprecationWarning, module="websockets", lineno=407
+    )
