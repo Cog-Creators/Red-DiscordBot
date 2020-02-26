@@ -196,5 +196,25 @@ version_info = VersionInfo.from_str(__version__)
 
 # Filter fuzzywuzzy slow sequence matcher warning
 _warnings.filterwarnings("ignore", module=r"fuzzywuzzy.*")
+# Show DeprecationWarning in debug mode
 # Show DeprecationWarning
-_warnings.filterwarnings("default", category=DeprecationWarning)
+if "--debug" in _sys.argv:
+    _warnings.filterwarnings("default", category=DeprecationWarning)
+else:
+    _warnings.filterwarnings("default", category=DeprecationWarning)
+    # DEP-WARN
+    # DeprecationWarning: "@coroutine" decorator is deprecated since Python 3.8, use "async def" instead
+    #   def noop(*args, **kwargs):  # type: ignore
+    _warnings.filterwarnings("ignore", category=DeprecationWarning, module="aiohttp", lineno=107)
+    # DEP-WARN
+    # DeprecationWarning: The loop argument is deprecated since Python 3.8, and scheduled for removal in Python 3.10.
+    #   hosts = await asyncio.shield(self._resolve_host(..
+    _warnings.filterwarnings("ignore", category=DeprecationWarning, module="aiohttp", lineno=964)
+    # DEP-WARN
+    # DeprecationWarning: The loop argument is deprecated since Python 3.8, and scheduled for removal in Python 3.10.
+    #   self._event = asyncio.Event(loop=loop)
+    _warnings.filterwarnings("ignore", category=DeprecationWarning, module="aiohttp", lineno=21)
+    # DEP-WARN
+    # DeprecationWarning: rename klass to create_protocol
+    #   warnings.warn("rename klass to create_protocol", DeprecationWarning)
+    _warnings.filterwarnings("ignore", category=DeprecationWarning, module="websockets", lineno=407)
