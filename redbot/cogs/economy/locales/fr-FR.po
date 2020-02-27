@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-20 12:09+0000\n"
-"PO-Revision-Date: 2020-02-20 12:12\n"
+"PO-Revision-Date: 2020-02-27 12:12\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -17,15 +17,15 @@ msgstr ""
 
 #: redbot/cogs/economy/economy.py:44
 msgid "JACKPOT! 226! Your bid has been multiplied * 50!"
-msgstr ""
+msgstr "JACKPOT ! 226 ! Votre mise a été multipliée par * 50 !"
 
 #: redbot/cogs/economy/economy.py:48
 msgid "4LC! Your bid has been multiplied * 25!"
-msgstr ""
+msgstr "4LC ! Votre mise a été multipliée par * 25 !"
 
 #: redbot/cogs/economy/economy.py:52
 msgid "Three cherries! Your bid has been multiplied * 20!"
-msgstr ""
+msgstr "Trois cerises ! Votre mise a été multipliée par * 20 !"
 
 #: redbot/cogs/economy/economy.py:56
 msgid "2 6! Your bid has been multiplied * 4!"
@@ -37,7 +37,7 @@ msgstr "Deux cerises ! Votre mise a été multipliée par 3 !"
 
 #: redbot/cogs/economy/economy.py:64
 msgid "Three symbols! Your bid has been multiplied * 10!"
-msgstr ""
+msgstr "Trois symboles ! Votre mise a été multipliée par * 10 !"
 
 #: redbot/cogs/economy/economy.py:68
 msgid "Two consecutive symbols! Your bid has been multiplied * 2!"
@@ -138,7 +138,7 @@ msgstr ""
 
 #: redbot/cogs/economy/economy.py:296
 msgid "This command cannot be used with a local bank."
-msgstr ""
+msgstr "Cette commande ne peut pas être utilisée avec une banque locale."
 
 #: redbot/cogs/economy/economy.py:300
 msgid "This will delete all bank accounts for users who no longer share a server with the bot.\\nIf you're sure, type `{prefix}bank prune global yes`"
@@ -239,11 +239,11 @@ msgstr "Rien !"
 
 #: redbot/cogs/economy/economy.py:636
 msgid "Your bid: {bid}"
-msgstr ""
+msgstr "Votre mise : {bid}"
 
 #: redbot/cogs/economy/economy.py:637
 msgid "\\n{old_balance} - {bid} (Your bid) + {pay} (Winnings) → {new_balance}!"
-msgstr ""
+msgstr "\\n{old_balance} - {bid} (Votre mise) + {pay} (Gains) → {new_balance} !"
 
 #: redbot/cogs/economy/economy.py:653
 #, docstring
@@ -305,7 +305,7 @@ msgstr "Définir le montant gagné à chaque payday."
 
 #: redbot/cogs/economy/economy.py:753 redbot/cogs/economy/economy.py:775
 msgid "Amount must be greater than zero and less than {maxbal}."
-msgstr ""
+msgstr "Le montant doit être supérieur à zéro et inférieur à {maxbal}."
 
 #: redbot/cogs/economy/economy.py:763
 msgid "Every payday will now give {num} {currency}."
@@ -331,7 +331,7 @@ msgstr "Définir le solde initial des nouveaux comptes bancaires."
 
 #: redbot/cogs/economy/economy.py:801
 msgid "Amount must be greater than or equal to zero and less than {maxbal}."
-msgstr ""
+msgstr "Le montant doit être supérieur ou égal à zéro et inférieur à {maxbal}."
 
 #: redbot/cogs/economy/economy.py:806
 msgid "Registering an account will now give {num} {currency}."

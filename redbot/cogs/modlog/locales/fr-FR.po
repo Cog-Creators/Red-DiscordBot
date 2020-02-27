@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-13 12:13\n"
+"PO-Revision-Date: 2020-02-27 12:12\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -37,7 +37,7 @@ msgstr "Définir un salon comme modlog.\\n\\n        Omettre `<channel>` pour d�
 
 #: redbot/cogs/modlog/modlog.py:48
 msgid "Mod events will be sent to {channel}."
-msgstr ""
+msgstr "Les événements de modération seront envoyés à {channel}."
 
 #: redbot/cogs/modlog/modlog.py:52
 msgid "I do not have permissions to send messages in {channel}!"
@@ -66,7 +66,7 @@ msgstr "Paramètres actuels :\\n"
 
 #: redbot/cogs/modlog/modlog.py:84
 msgid "That action is not registered."
-msgstr ""
+msgstr "Cette action n’est pas enregistrée."
 
 #: redbot/cogs/modlog/modlog.py:89
 msgid "Case creation for {action_name} actions is now {enabled}."
@@ -88,7 +88,7 @@ msgstr "Afficher l'argument spécifié."
 
 #: redbot/cogs/modlog/modlog.py:109
 msgid "That case does not exist for that server."
-msgstr ""
+msgstr "Ce cas n'existe pas pour ce serveur."
 
 #: redbot/cogs/modlog/modlog.py:120
 #, docstring
@@ -126,5 +126,5 @@ msgstr "Vous n’êtes pas autorisé à modifier cette argument !"
 
 #: redbot/cogs/modlog/modlog.py:183
 msgid "Reason for case #{num} has been updated."
-msgstr ""
+msgstr "La raison du cas #{num} a été mise à jour."
 
