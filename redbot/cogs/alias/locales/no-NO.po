@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-20 12:09+0000\n"
-"PO-Revision-Date: 2020-02-20 12:13\n"
+"PO-Revision-Date: 2020-02-27 12:13\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Norwegian\n"
 "MIME-Version: 1.0\n"
@@ -70,11 +70,11 @@ msgstr "Legg til et globalt alias for en kommando."
 
 #: redbot/cogs/alias/alias.py:304
 msgid "You attempted to create a new global alias with the name {name} but that name is already a command on this bot."
-msgstr "Du forsøkte å opprette et nytt globalt alias med navnet {navn} men navnet er allerede en kommando på denne boten."
+msgstr "Du forsøkte å opprette et nytt globalt alias med navnet {name} men navnet er allerede en kommando på denne boten."
 
 #: redbot/cogs/alias/alias.py:315
 msgid "You attempted to create a new global alias with the name {name} but that alias already exists on this server."
-msgstr "Du forsøkte å opprette et nytt alias med navnet {navn} men aliaset finnes allerede på denne serveren."
+msgstr "Du forsøkte å opprette et nytt alias med navnet {name} men aliaset finnes allerede på denne serveren."
 
 #: redbot/cogs/alias/alias.py:326
 msgid "You attempted to create a new global alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."

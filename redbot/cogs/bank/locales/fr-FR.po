@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-13 12:13\n"
+"PO-Revision-Date: 2020-02-27 12:12\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -27,7 +27,7 @@ msgstr "Commande de base pour les paramètres de la banque."
 
 #: redbot/cogs/bank/bank.py:87
 msgid "Bank settings:\\n\\nBank name: {bank_name}\\nCurrency: {currency_name}\\nDefault balance: {default_balance}\\nMaximum allowed balance: {maximum_bal}"
-msgstr ""
+msgstr "Paramètres de la banque :\\n\\nNom de la banque : {bank_name}\\nDevise : {currency_name}\\nSolde par défaut : {default_balance}\\nSolde maximum autorisé : {maximum_bal}"
 
 #: redbot/cogs/bank/bank.py:101
 #, docstring
@@ -71,13 +71,13 @@ msgstr "Le nom de la devise est maintenant : {name}"
 #: redbot/cogs/bank/bank.py:137
 #, docstring
 msgid "Set the maximum balance a user can get."
-msgstr ""
+msgstr "Définit le solde maximum qu'un utilisateur peut obtenir."
 
 #: redbot/cogs/bank/bank.py:143
 msgid "Amount must be greater than zero and less than {max}."
-msgstr ""
+msgstr "Le montant doit être supérieur à zéro et inférieur à {max}."
 
 #: redbot/cogs/bank/bank.py:148
 msgid "Maximum balance has been set to: {amount}"
-msgstr ""
+msgstr "Le solde maximal a été réglé sur : {amount}"
 
