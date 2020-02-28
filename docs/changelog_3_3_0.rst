@@ -17,6 +17,7 @@ Core Commands
 *************
 
 - Core cogs will now send bot mention prefix properly in places where discord doesn't render mentions (:issue:`3579`, :issue:`3591`, :issue:`3499`)
+- Fix a bug with ``[p]blacklist add`` that made it impossible to blacklist users that bot doesn't share a server with (:issue:`3472`, :issue:`3220`)
 - Improve user experience of ``[p]set game/listening/watching/`` commands (:issue:`3562`)
 - Add ``[p]licenceinfo`` alias for ``[p]licenseinfo`` command to conform with non-American English (:issue:`3460`)
 
@@ -29,6 +30,11 @@ Alias
 *****
 
 - ``[p]alias help`` will now properly work in non-English locales (:issue:`3546`)
+
+Audio
+*****
+
+- Users should be able to play age-restricted tracks from YouTube again (:issue:`3620`)
 
 Economy
 *******
@@ -44,13 +50,20 @@ Downloader
 Image
 *****
 
-- Fix load error for users that updated from pre-3.1 releases to 3.2 or newer (:issue:`3617`)
+- Fix load error for users that updated Red from version lower than 3.1 to version 3.2 or newer (:issue:`3617`)
+
+Mod
+***
+
+- ``[p]hackban`` and ``[p]unban`` commands support user mentions now (:issue:`3524`)
+- Ignored guilds/channels have been moved from Mod cog to Core (:issue:`3472`)
 
 Streams
 *******
 
 - Fix stream alerts for Twitch (:issue:`3487`)
 - Significantly reduce the quota usage for YouTube stream alerts (:issue:`3237`)
+- Add ``[p]streamset timer`` command which can be used to control how often the cog checks for live streams (:issue:`3237`)
 
 Trivia
 ******
@@ -65,7 +78,7 @@ Trivia Lists
 Warnings
 ********
 
-- Users can now pass a reason to ``[p]unwarn`` command (:issue:`3490`)
+- Users can now pass a reason to ``[p]unwarn`` command (:issue:`3490`, :issue:`3093`)
 
 
 Developer changelog
@@ -76,8 +89,8 @@ Core Bot
 
 - Updated all our dependencies - we're using discord.py 1.3.2 now (:issue:`3609`)
 - Add traceback logging to task exception handling (:issue:`3517`)
-- Developers can now create a command from `functools.partial` (:issue:`3542`)
-- Bot will now show deprecation warnings in logs (:issue:`3527`)
+- Developers can now create a command from an async function wrapped in `functools.partial` (:issue:`3542`)
+- Bot will now show deprecation warnings in logs (:issue:`3527`, :issue:`3615`)
 - Subcommands of command group with ``invoke_without_command=True`` will again inherit this group's checks (:issue:`3614`)
 
 Config
@@ -90,21 +103,26 @@ Utility Functions
 
 - Add clearer error when page is of a wrong type in `redbot.core.utils.menus.menu()` (:issue:`3571`)
 
+Dev Cog
+*******
+
+- Allow for top-level `await`, `async for` and `async with` in ``[p]debug`` and ``[p]repl`` commands (:issue:`3508`)
+
 Downloader
 **********
 
 - Downloader will now replace ``[p]`` with clean prefix same as it does in help command (:issue:`3592`)
-- Add schema validation to ``info.json`` file processing - any errors in the format of the file should be easier to notice now (:issue:`3533`, :issue:`3442`)
+- Add schema validation to ``info.json`` file processing - it should now be easier to notice any issues with those files (:issue:`3533`, :issue:`3442`)
 
 
 Documentation changes
 ---------------------
 
 - Add guidelines for Cog Creators in `guide_cog_creation` document (:issue:`3568`)
-- Restructure virtual environment instructions for better user experience (:issue:`3495`)
-- Getting started guide now explain use of quotes for arguments with spaces (:issue:`3555`)
+- Restructure virtual environment instructions to improve user experience (:issue:`3495`, :issue:`3411`, :issue:`3412`)
+- Getting started guide now explain use of quotes for arguments with spaces (:issue:`3555`, :issue:`3111`)
 - ``latest`` version of docs now displays a warning about possible differences from current stable release (:issue:`3570`)
-- Make systemd guide clearer on obtaining username and python path (:issue:`3537`)
+- Make systemd guide clearer on obtaining username and python path (:issue:`3537`, :issue:`3462`)
 - Indicate instructions for different venv types in systemd guide better (:issue:`3538`)
 - Service file in `autostart_systemd` now also waits for network connection to be ready (:issue:`3549`)
 - Hide alias of ``randomize_colour`` in docs (:issue:`3491`)
@@ -115,7 +133,7 @@ Documentation changes
 Miscellaneous
 -------------
 
-- Use more reliant way of checking if command is bot owner only in ``[p]warnaction`` (:issue:`3516`)
+- Use more reliant way of checking if command is bot owner only in ``[p]warnaction`` (Warnings cog) (:issue:`3516`, :issue:`3515`)
 - Update PyPI domain in ``[p]info`` and update checker (:issue:`3607`)
 - Stop using deprecated code in core (:issue:`3610`)
 
