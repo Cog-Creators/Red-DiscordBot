@@ -113,7 +113,6 @@ class Streams(commands.Cog):
             except KeyError:
                 prefixes = await self.bot.get_valid_prefixes()
                 prefix = re.sub(rf"<@!?{self.bot.user.id}>", f"@{self.bot.user.name}", prefixes[0])
-
                 message = _(
                     "You need a client secret key to use correctly Twitch API on this cog.\n"
                     "Follow these steps:\n"
