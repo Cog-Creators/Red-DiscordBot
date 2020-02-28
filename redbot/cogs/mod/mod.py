@@ -93,6 +93,7 @@ class Mod(
 
     async def _maybe_update_config(self):
         """Maybe update `delete_delay` value set by Config prior to Mod 1.0.0."""
+        await self.bot.wait_until_ready()
         if not await self.settings.version():
             guild_dict = await self.settings.all_guilds()
             for guild_id, info in guild_dict.items():
