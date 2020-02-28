@@ -514,6 +514,9 @@ class Downloader(commands.Cog):
                 exc_info=err,
             )
         except OSError:
+            log.exception(
+                "Something went wrong trying to add repo %s under name %s", repo_url, name,
+            )
             await ctx.send(
                 _(
                     "Something went wrong trying to add that repo."
@@ -523,7 +526,7 @@ class Downloader(commands.Cog):
         else:
             await ctx.send(_("Repo `{name}` successfully added.").format(name=name))
             if repo.install_msg:
-                await ctx.send(repo.install_msg.replace("[p]", ctx.prefix))
+                await ctx.send(repo.install_msg.replace("[p]", ctx.clean_prefix))
 
     @repo.command(name="delete", aliases=["remove", "del"], usage="<repo_name>")
     async def _repo_del(self, ctx: commands.Context, repo: Repo) -> None:
@@ -738,12 +741,12 @@ class Downloader(commands.Cog):
                         _(
                             "\nThese cogs are now pinned and won't get updated automatically."
                             " To change this, use `{prefix}cog unpin <cog>`"
-                        ).format(prefix=ctx.prefix)
+                        ).format(prefix=ctx.clean_prefix)
                         if rev is not None
                         else ""
                     )
                     + _("\nYou can load them using `{prefix}load <cogs>`").format(
-                        prefix=ctx.prefix
+                        prefix=ctx.clean_prefix
                     )
                     + message
                 )
@@ -751,7 +754,7 @@ class Downloader(commands.Cog):
         await self.send_pagified(ctx, f"{message}{deprecation_notice}\n---")
         for cog in installed_cogs:
             if cog.install_msg:
-                await ctx.send(cog.install_msg.replace("[p]", ctx.prefix))
+                await ctx.send(cog.install_msg.replace("[p]", ctx.clean_prefix))
 
     @cog.command(name="uninstall", usage="<cogs>")
     async def _cog_uninstall(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
@@ -794,7 +797,7 @@ class Downloader(commands.Cog):
                         "\nThey were most likely removed without using `{prefix}cog uninstall`.\n"
                         "You may need to remove those files manually if the cogs are still usable."
                         " If so, ensure the cogs have been unloaded with `{prefix}unload {cogs}`."
-                    ).format(prefix=ctx.prefix, cogs=" ".join(failed_cogs))
+                    ).format(prefix=ctx.clean_prefix, cogs=" ".join(failed_cogs))
                 )
         await self.send_pagified(ctx, message)
 

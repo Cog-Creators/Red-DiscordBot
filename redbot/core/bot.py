@@ -3,6 +3,7 @@ import inspect
 import logging
 import os
 import platform
+import re
 import shutil
 import sys
 from collections import namedtuple
@@ -38,7 +39,7 @@ from .dev_commands import Dev
 from .events import init_events
 from .global_checks import init_global_checks
 
-from .settings_caches import PrefixManager
+from .settings_caches import PrefixManager, IgnoreManager, WhitelistBlacklistManager
 
 from .rpc import RPCMixin
 from .utils import common_filters
@@ -118,13 +119,14 @@ class RedBase(
             admin_role=[],
             mod_role=[],
             embeds=None,
+            ignored=False,
             use_bot_color=False,
             fuzzy=False,
             disabled_commands=[],
             autoimmune_ids=[],
         )
 
-        self._config.register_channel(embeds=None)
+        self._config.register_channel(embeds=None, ignored=False)
         self._config.register_user(embeds=None)
 
         self._config.init_custom(CUSTOM_GROUPS, 2)
@@ -133,6 +135,8 @@ class RedBase(
         self._config.init_custom(SHARED_API_TOKENS, 2)
         self._config.register_custom(SHARED_API_TOKENS)
         self._prefix_cache = PrefixManager(self._config, cli_flags)
+        self._ignored_cache = IgnoreManager(self._config)
+        self._whiteblacklist_cache = WhitelistBlacklistManager(self._config)
 
         async def prefix_manager(bot, message) -> List[str]:
             prefixes = await self._prefix_cache.get_prefixes(message.guild)
@@ -350,13 +354,13 @@ class RedBase(
         if await self.is_owner(who):
             return True
 
-        global_whitelist = await self._config.whitelist()
+        global_whitelist = await self._whiteblacklist_cache.get_whitelist()
         if global_whitelist:
             if who.id not in global_whitelist:
                 return False
         else:
             # blacklist is only used when whitelist doesn't exist.
-            global_blacklist = await self._config.blacklist()
+            global_blacklist = await self._whiteblacklist_cache.get_blacklist()
             if who.id in global_blacklist:
                 return False
 
@@ -375,16 +379,43 @@ class RedBase(
                 # there is a silent failure potential, and role blacklist/whitelists will break.
                 ids = {i for i in (who.id, *(getattr(who, "_roles", []))) if i != guild.id}
 
-            guild_whitelist = await self._config.guild(guild).whitelist()
+            guild_whitelist = await self._whiteblacklist_cache.get_whitelist(guild)
             if guild_whitelist:
                 if ids.isdisjoint(guild_whitelist):
                     return False
             else:
-                guild_blacklist = await self._config.guild(guild).blacklist()
+                guild_blacklist = await self._whiteblacklist_cache.get_blacklist(guild)
                 if not ids.isdisjoint(guild_blacklist):
                     return False
 
         return True
+
+    async def ignored_channel_or_guild(self, ctx: commands.Context) -> bool:
+        """
+        This checks if the bot is meant to be ignoring commands in a channel or guild,
+        as considered by Red's whitelist and blacklist.
+
+        Parameters
+        ----------
+        ctx : Context of where the command is being run.
+
+        Returns
+        -------
+        bool
+            `True` if commands are allowed in the channel, `False` otherwise
+        """
+        perms = ctx.channel.permissions_for(ctx.author)
+        surpass_ignore = (
+            isinstance(ctx.channel, discord.abc.PrivateChannel)
+            or perms.manage_guild
+            or await ctx.bot.is_owner(ctx.author)
+            or await ctx.bot.is_admin(ctx.author)
+        )
+        if surpass_ignore:
+            return True
+        guild_ignored = await self._ignored_cache.get_ignored_guild(ctx.guild)
+        chann_ignored = await self._ignored_cache.get_ignored_channel(ctx.channel)
+        return not (guild_ignored or chann_ignored and not perms.manage_channels)
 
     async def get_valid_prefixes(self, guild: Optional[discord.Guild] = None) -> List[str]:
         """
@@ -521,7 +552,7 @@ class RedBase(
             destinations = await self.get_owner_notification_destinations()
             for destination in destinations:
                 prefixes = await self.get_valid_prefixes(getattr(destination, "guild", None))
-                prefix = prefixes[0]
+                prefix = re.sub(rf"<@!?{self.bot.user.id}>", f"@{self.bot.user.name}", prefixes[0])
                 try:
                     await destination.send(content.format(prefix=prefix))
                 except Exception as _exc:
@@ -943,7 +974,6 @@ class RedBase(
     async def send_filtered(
         destination: discord.abc.Messageable,
         filter_mass_mentions=True,
-        filter_roles=True,
         filter_invite_links=True,
         filter_all_links=False,
         **kwargs,
@@ -970,8 +1000,6 @@ class RedBase(
         content = kwargs.pop("content", None)
 
         if content:
-            if filter_roles and isinstance(destination, discord.TextChannel):
-                content = common_filters.sanitize_role_mentions(content, destination.guild.roles)
             if filter_mass_mentions:
                 content = common_filters.filter_mass_mentions(content)
             if filter_invite_links:

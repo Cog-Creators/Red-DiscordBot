@@ -247,7 +247,7 @@ class Economy(commands.Cog):
                     "`{prefix}bank reset yes`"
                 ).format(
                     scope=self.bot.user.name if await bank.is_global() else _("this server"),
-                    prefix=ctx.prefix,
+                    prefix=ctx.clean_prefix,
                 )
             )
         else:
@@ -279,7 +279,7 @@ class Economy(commands.Cog):
                     "This will delete all bank accounts for users no longer in this server."
                     "\nIf you're sure, type "
                     "`{prefix}bank prune local yes`"
-                ).format(prefix=ctx.prefix)
+                ).format(prefix=ctx.clean_prefix)
             )
         else:
             await bank.bank_prune(self.bot, guild=ctx.guild)
@@ -301,7 +301,7 @@ class Economy(commands.Cog):
                     "This will delete all bank accounts for users "
                     "who no longer share a server with the bot."
                     "\nIf you're sure, type `{prefix}bank prune global yes`"
-                ).format(prefix=ctx.prefix)
+                ).format(prefix=ctx.clean_prefix)
             )
         else:
             await bank.bank_prune(self.bot)
@@ -333,7 +333,7 @@ class Economy(commands.Cog):
                     "This will delete {name}'s bank account."
                     "\nIf you're sure, type "
                     "`{prefix}bank prune user {id} yes`"
-                ).format(prefix=ctx.prefix, id=uid, name=name)
+                ).format(prefix=ctx.clean_prefix, id=uid, name=name)
             )
         else:
             await bank.bank_prune(self.bot, guild=ctx.guild, user_id=uid)
@@ -400,7 +400,7 @@ class Economy(commands.Cog):
             # Gets the users latest successfully payday and adds the guilds payday time
             next_payday = (
                 await self.config.member(author).next_payday()
-                + self.config.guild(guild).PAYDAY_TIME()
+                + await self.config.guild(guild).PAYDAY_TIME()
             )
             if cur_time >= next_payday:
                 credit_amount = await self.config.guild(guild).PAYDAY_CREDITS()

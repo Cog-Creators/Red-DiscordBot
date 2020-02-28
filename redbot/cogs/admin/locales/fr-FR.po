@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-13 12:13\n"
+"PO-Revision-Date: 2020-02-27 12:12\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -177,7 +177,7 @@ msgstr "Auto-rôles disponibles :\\n{selfroles}"
 #: redbot/cogs/admin/admin.py:413
 #, docstring
 msgid "Manage selfroles."
-msgstr ""
+msgstr "Gérer les auto-roles."
 
 #: redbot/cogs/admin/admin.py:418
 #, docstring
@@ -186,28 +186,28 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:425
 msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "Je ne peux pas vous laisser ajouter {role.name} comme auto-rôle car ce rôle est supérieur ou égal à votre rôle le plus haut dans la hiérarchie Discord."
 
 #: redbot/cogs/admin/admin.py:433
 msgid "Added."
-msgstr ""
+msgstr "Ajouté."
 
 #: redbot/cogs/admin/admin.py:436
 msgid "That role is already a selfrole."
-msgstr ""
+msgstr "Ce rôle est déjà un selfrole."
 
 #: redbot/cogs/admin/admin.py:440
 #, docstring
 msgid "\\n        Remove a role from the list of available selfroles.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr ""
+msgstr "\\n        Supprimer un rôle de la liste des auto-rôles.\\n\\n        REMARQUE : Le nom du rôle est sensible aux majuscules et minuscules !\\n        "
 
 #: redbot/cogs/admin/admin.py:447
 msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "Je ne peux pas vous laisser ajouter {role.name} comme auto-rôle car ce rôle est supérieur ou égal à votre rôle le plus haut dans la hiérarchie Discord."
 
 #: redbot/cogs/admin/admin.py:455
 msgid "Removed."
-msgstr ""
+msgstr "Retiré."
 
 #: redbot/cogs/admin/admin.py:460
 #, docstring
@@ -224,11 +224,11 @@ msgstr "Le bot est maintenant verrouillé sur ses serveurs actuels."
 
 #: redbot/cogs/admin/announcer.py:75
 msgid "I could not announce to the following server: "
-msgstr ""
+msgstr "Je n'ai pas pu annoncer au serveur suivant : "
 
 #: redbot/cogs/admin/announcer.py:77
 msgid "I could not announce to the following servers: "
-msgstr ""
+msgstr "Je n'ai pas pu annoncer aux serveurs suivants : "
 
 #: redbot/cogs/admin/converters.py:12
 msgid "The Admin cog is not loaded."

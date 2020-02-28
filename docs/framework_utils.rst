@@ -21,6 +21,7 @@ Embed Helpers
 
 .. automodule:: redbot.core.utils.embed
     :members:
+    :exclude-members: randomize_color
 
 Reaction Menus
 ==============
@@ -31,7 +32,16 @@ Reaction Menus
 Event Predicates
 ================
 
-.. automodule:: redbot.core.utils.predicates
+MessagePredicate
+****************
+
+.. autoclass:: redbot.core.utils.predicates.MessagePredicate
+    :members:
+
+ReactionPredicate
+*****************
+
+.. autoclass:: redbot.core.utils.predicates.ReactionPredicate
     :members:
 
 Mod Helpers

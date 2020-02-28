@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-13 12:12\n"
+"POT-Creation-Date: 2020-02-20 12:09+0000\n"
+"PO-Revision-Date: 2020-02-20 12:11\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -89,64 +89,60 @@ msgstr ""
 msgid "Try to execute help for the base command of the alias."
 msgstr ""
 
-#: redbot/cogs/alias/alias.py:359
-msgid "{prefix}help {command}"
-msgstr "{prefix}pomoc {command}"
-
-#: redbot/cogs/alias/alias.py:364
+#: redbot/cogs/alias/alias.py:362
 msgid "No such alias exists."
 msgstr "Žádný takový alias neexistuje."
 
-#: redbot/cogs/alias/alias.py:369
+#: redbot/cogs/alias/alias.py:367
 #, docstring
 msgid "Show what command the alias executes."
 msgstr "Zobrazit příkaz ke spustitelnému aliasu."
 
-#: redbot/cogs/alias/alias.py:374
+#: redbot/cogs/alias/alias.py:372
 msgid "The `{alias_name}` alias will execute the command `{command}`"
 msgstr "Alias `{alias_name} provede příkaz `{command}"
 
-#: redbot/cogs/alias/alias.py:379
+#: redbot/cogs/alias/alias.py:377
 msgid "There is no alias with the name `{name}`"
 msgstr "Neexistuje žádný alias s názvem `{name}`"
 
-#: redbot/cogs/alias/alias.py:385
+#: redbot/cogs/alias/alias.py:383
 #, docstring
 msgid "Delete an existing alias on this server."
 msgstr "Odstraní existující alias na tomto serveru."
 
-#: redbot/cogs/alias/alias.py:390 redbot/cogs/alias/alias.py:426
-#: redbot/cogs/alias/alias.py:437
+#: redbot/cogs/alias/alias.py:388 redbot/cogs/alias/alias.py:424
+#: redbot/cogs/alias/alias.py:435
 msgid "There are no aliases on this server."
 msgstr "Na tomto serveru nejsou žádné aliasy."
 
-#: redbot/cogs/alias/alias.py:395 redbot/cogs/alias/alias.py:413
+#: redbot/cogs/alias/alias.py:393 redbot/cogs/alias/alias.py:411
 msgid "Alias with the name `{name}` was successfully deleted."
 msgstr "Alias s názvem{name}` byl úspěšně smazán."
 
-#: redbot/cogs/alias/alias.py:398 redbot/cogs/alias/alias.py:416
+#: redbot/cogs/alias/alias.py:396 redbot/cogs/alias/alias.py:414
 msgid "Alias with name `{name}` was not found."
 msgstr ""
 
-#: redbot/cogs/alias/alias.py:403
+#: redbot/cogs/alias/alias.py:401
 #, docstring
 msgid "Delete an existing global alias."
 msgstr "Odstranit existující globální alias."
 
-#: redbot/cogs/alias/alias.py:408
+#: redbot/cogs/alias/alias.py:406
 msgid "There are no aliases on this bot."
 msgstr ""
 
-#: redbot/cogs/alias/alias.py:421
+#: redbot/cogs/alias/alias.py:419
 #, docstring
 msgid "List the available aliases on this server."
 msgstr "Seznam dostupných aliasů na tomto serveru."
 
-#: redbot/cogs/alias/alias.py:422 redbot/cogs/alias/alias.py:433
+#: redbot/cogs/alias/alias.py:420 redbot/cogs/alias/alias.py:431
 msgid "Aliases:"
 msgstr "Aliasy:"
 
-#: redbot/cogs/alias/alias.py:432
+#: redbot/cogs/alias/alias.py:430
 #, docstring
 msgid "List the available global aliases on this bot."
 msgstr ""

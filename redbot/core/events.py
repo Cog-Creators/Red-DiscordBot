@@ -22,7 +22,7 @@ from .utils.chat_formatting import inline, bordered, format_perms_list, humanize
 log = logging.getLogger("red")
 init()
 
-INTRO = """
+INTRO = r"""
 ______         _           ______ _                       _  ______       _
 | ___ \       | |          |  _  (_)                     | | | ___ \     | |
 | |_/ /___  __| |  ______  | | | |_ ___  ___ ___  _ __ __| | | |_/ / ___ | |_
@@ -86,7 +86,7 @@ def init_events(bot, cli_flags):
         outdated_red_message = ""
         with contextlib.suppress(aiohttp.ClientError, discord.HTTPException):
             async with aiohttp.ClientSession() as session:
-                async with session.get("https://pypi.python.org/pypi/red-discordbot/json") as r:
+                async with session.get("https://pypi.org/pypi/red-discordbot/json") as r:
                     data = await r.json()
             if VersionInfo.from_str(data["info"]["version"]) > red_version_info:
                 INFO.append(

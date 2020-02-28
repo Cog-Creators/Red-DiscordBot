@@ -30,7 +30,7 @@ class Image(commands.Cog):
         imgur_token = await self.settings.imgur_client_id()
         if imgur_token is not None:
             if not await self.bot.get_shared_api_tokens("imgur"):
-                await self.bot.set_shared_api_tokens(client_id=imgur_token)
+                await self.bot.set_shared_api_tokens("imgur", client_id=imgur_token)
             await self.settings.imgur_client_id.clear()
 
     @commands.group(name="imgur")
@@ -54,7 +54,7 @@ class Image(commands.Cog):
             await ctx.send(
                 _(
                     "A Client ID has not been set! Please set one with `{prefix}imgurcreds`."
-                ).format(prefix=ctx.prefix)
+                ).format(prefix=ctx.clean_prefix)
             )
             return
         headers = {"Authorization": "Client-ID {}".format(imgur_client_id)}
@@ -107,7 +107,7 @@ class Image(commands.Cog):
             await ctx.send(
                 _(
                     "A Client ID has not been set! Please set one with `{prefix}imgurcreds`."
-                ).format(prefix=ctx.prefix)
+                ).format(prefix=ctx.clean_prefix)
             )
             return
 
@@ -151,7 +151,7 @@ class Image(commands.Cog):
             "8. Check the captcha box and click next.\n"
             "9. Your Client ID will be on the next page.\n"
             "10. Run the command `{prefix}set api imgur client_id <your_client_id_here>`.\n"
-        ).format(prefix=ctx.prefix)
+        ).format(prefix=ctx.clean_prefix)
 
         await ctx.maybe_send_embed(message)
 
@@ -169,7 +169,7 @@ class Image(commands.Cog):
         if not giphy_api_key:
             await ctx.send(
                 _("An API key has not been set! Please set one with `{prefix}giphycreds`.").format(
-                    prefix=ctx.prefix
+                    prefix=ctx.clean_prefix
                 )
             )
             return
@@ -202,7 +202,7 @@ class Image(commands.Cog):
         if not giphy_api_key:
             await ctx.send(
                 _("An API key has not been set! Please set one with `{prefix}giphycreds`.").format(
-                    prefix=ctx.prefix
+                    prefix=ctx.clean_prefix
                 )
             )
             return
@@ -235,6 +235,6 @@ class Image(commands.Cog):
             "5. Write an app description, example: *Used for Red Bot*.\n"
             "6. Copy the API key shown.\n"
             "7. Run the command `{prefix}set api GIPHY api_key <your_api_key_here>`.\n"
-        ).format(prefix=ctx.prefix)
+        ).format(prefix=ctx.clean_prefix)
 
         await ctx.maybe_send_embed(message)

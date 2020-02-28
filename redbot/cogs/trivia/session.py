@@ -98,7 +98,25 @@ class TriviaSession:
         session = cls(ctx, question_list, settings)
         loop = ctx.bot.loop
         session._task = loop.create_task(session.run())
+        session._task.add_done_callback(session._error_handler)
         return session
+
+    def _error_handler(self, fut):
+        """Catches errors in the session task."""
+        try:
+            fut.result()
+        except asyncio.CancelledError:
+            pass
+        except Exception as exc:
+            LOG.error("A trivia session has encountered an error.\n", exc_info=exc)
+            asyncio.create_task(
+                self.ctx.send(
+                    _(
+                        "An unexpected error occurred in the trivia session.\nCheck your console or logs for details."
+                    )
+                )
+            )
+            self.stop()
 
     async def run(self):
         """Run the trivia session.

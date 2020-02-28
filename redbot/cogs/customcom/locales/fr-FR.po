@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-13 12:13\n"
+"PO-Revision-Date: 2020-02-27 12:12\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -157,7 +157,7 @@ msgstr "Affiche les réponses d'une commande personnalisée et ses paramètres."
 
 #: redbot/cogs/customcom/customcom.py:406
 msgid "I could not not find that custom command."
-msgstr "Je n'ai pas trouvé cette commande personnalisée."
+msgstr "Je n'ai pas pu trouver cette commande personnalisée."
 
 #: redbot/cogs/customcom/customcom.py:421
 msgid "Random"

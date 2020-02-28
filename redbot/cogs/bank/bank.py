@@ -111,7 +111,7 @@ class Bank(commands.Cog):
                 _(
                     "This will toggle the bank to be {banktype}, deleting all accounts "
                     "in the process! If you're sure, type `{command}`"
-                ).format(banktype=word, command="{}bankset toggleglobal yes".format(ctx.prefix))
+                ).format(banktype=word, command=f"{ctx.clean_prefix}bankset toggleglobal yes")
             )
         else:
             await bank.set_global(not cur_setting)
