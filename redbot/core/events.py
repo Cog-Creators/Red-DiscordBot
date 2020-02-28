@@ -86,7 +86,7 @@ def init_events(bot, cli_flags):
         outdated_red_message = ""
         with contextlib.suppress(aiohttp.ClientError, discord.HTTPException):
             async with aiohttp.ClientSession() as session:
-                async with session.get("https://pypi.python.org/pypi/red-discordbot/json") as r:
+                async with session.get("https://pypi.org/pypi/red-discordbot/json") as r:
                     data = await r.json()
             if VersionInfo.from_str(data["info"]["version"]) > red_version_info:
                 INFO.append(
