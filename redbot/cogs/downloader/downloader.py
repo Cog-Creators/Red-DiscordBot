@@ -741,12 +741,12 @@ class Downloader(commands.Cog):
                         _(
                             "\nThese cogs are now pinned and won't get updated automatically."
                             " To change this, use `{prefix}cog unpin <cog>`"
-                        ).format(prefix=ctx.prefix)
+                        ).format(prefix=ctx.clean_prefix)
                         if rev is not None
                         else ""
                     )
                     + _("\nYou can load them using `{prefix}load <cogs>`").format(
-                        prefix=ctx.prefix
+                        prefix=ctx.clean_prefix
                     )
                     + message
                 )
@@ -797,7 +797,7 @@ class Downloader(commands.Cog):
                         "\nThey were most likely removed without using `{prefix}cog uninstall`.\n"
                         "You may need to remove those files manually if the cogs are still usable."
                         " If so, ensure the cogs have been unloaded with `{prefix}unload {cogs}`."
-                    ).format(prefix=ctx.prefix, cogs=" ".join(failed_cogs))
+                    ).format(prefix=ctx.clean_prefix, cogs=" ".join(failed_cogs))
                 )
         await self.send_pagified(ctx, message)
 

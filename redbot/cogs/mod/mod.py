@@ -1,4 +1,5 @@
 import asyncio
+import re
 from abc import ABC
 from collections import defaultdict
 from typing import List, Tuple
@@ -104,11 +105,12 @@ class Mod(
             await self.settings.version.set("1.0.0")  # set version of last update
         if await self.settings.version() < "1.1.0":
             prefixes = await self.bot.get_valid_prefixes()
+            prefix = re.sub(rf"<@!?{self.bot.user.id}>", f"@{self.bot.user.name}", prefixes[0])
             msg = _(
                 "Ignored guilds and channels have been moved. "
                 "Please use `{prefix}moveignoredchannels` if "
                 "you were previously using these functions."
-            ).format(prefix=prefixes[0])
+            ).format(prefix=prefix)
             self.bot.loop.create_task(self.bot.send_to_owners(msg))
             await self.settings.version.set(__version__)
 
