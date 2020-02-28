@@ -230,5 +230,5 @@ extlinks = {"dpy_docs": (f"https://discordpy.readthedocs.io/en/v{dpy_version}/%s
 doctest_test_doctest_blocks = ""
 
 # Autodoc options
-autodoc_default_flags = ["show-inheritance"]
+autodoc_default_options = {"show-inheritance": True}
 autodoc_typehints = "none"
