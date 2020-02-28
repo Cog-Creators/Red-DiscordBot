@@ -42,7 +42,7 @@ Audio
 Economy
 *******
 
-- Changing payday time will now also change the time when users can use ``[p]payday`` next time
+- Next payday time will now be adjusted for users when payday time is changed (:issue:`3496`, :issue:`3438`)
 
 Downloader
 **********
