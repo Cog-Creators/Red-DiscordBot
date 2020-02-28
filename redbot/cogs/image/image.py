@@ -30,7 +30,7 @@ class Image(commands.Cog):
         imgur_token = await self.settings.imgur_client_id()
         if imgur_token is not None:
             if not await self.bot.get_shared_api_tokens("imgur"):
-                await self.bot.set_shared_api_tokens(client_id=imgur_token)
+                await self.bot.set_shared_api_tokens("imgur", client_id=imgur_token)
             await self.settings.imgur_client_id.clear()
 
     @commands.group(name="imgur")
