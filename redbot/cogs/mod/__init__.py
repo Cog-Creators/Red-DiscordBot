@@ -5,3 +5,4 @@ from .mod import Mod
 def setup(bot: Red):
     cog = Mod(bot)
     bot.add_cog(cog)
+    cog.create_init_task()

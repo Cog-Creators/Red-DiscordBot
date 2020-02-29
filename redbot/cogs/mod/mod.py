@@ -77,10 +77,12 @@ class Mod(
         self.settings.register_user(**self.default_user_settings)
         self.cache: dict = {}
         self.tban_expiry_task = self.bot.loop.create_task(self.check_tempban_expirations())
-        self.init_task = self.bot.loop.create_task(self.initialize())
         self.last_case: dict = defaultdict(dict)
 
         self._ready = asyncio.Event()
+
+    def create_init_task(self):
+        self._init_task = asyncio.create_task(self.initialize())
 
     async def initialize(self):
         await self._maybe_update_config()
