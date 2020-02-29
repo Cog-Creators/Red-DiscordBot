@@ -77,6 +77,7 @@ class Mod(
         self.settings.register_user(**self.default_user_settings)
         self.cache: dict = {}
         self.tban_expiry_task = self.bot.loop.create_task(self.check_tempban_expirations())
+        self._init_task = None
         self.last_case: dict = defaultdict(dict)
 
         self._ready = asyncio.Event()
@@ -93,6 +94,8 @@ class Mod(
 
     def cog_unload(self):
         self.tban_expiry_task.cancel()
+        if self._init_task:
+            self._init_task.cancel()
 
     async def _maybe_update_config(self):
         """Maybe update `delete_delay` value set by Config prior to Mod 1.0.0."""
