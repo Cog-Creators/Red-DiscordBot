@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import re
 from abc import ABC
 from collections import defaultdict
@@ -18,6 +19,7 @@ from .slowmode import Slowmode
 from .settings import ModSettings
 
 _ = T_ = Translator("Mod", __file__)
+log = logging.getLogger("red.mod")
 
 __version__ = "1.1.0"
 
@@ -103,15 +105,28 @@ class Mod(
                     val = -1
                 await self.settings.guild(discord.Object(id=guild_id)).delete_repeats.set(val)
             await self.settings.version.set("1.0.0")  # set version of last update
+
+        async def notify_owners(content: str) -> None:
+            destinations = await self.bot.get_owner_notification_destinations()
+            for destination in destinations:
+                prefixes = await self.bot.get_valid_prefixes(getattr(destination, "guild", None))
+                prefix = re.sub(rf"<@!?{self.bot.user.id}>", f"@{self.bot.user.name}", prefixes[0])
+                try:
+                    await destination.send(content.format(prefix=prefix))
+                except Exception:
+                    log.exception(
+                        "I could not send an owner notification to (%s)%s",
+                        destination.id,
+                        destination,
+                    )
+
         if await self.settings.version() < "1.1.0":
-            prefixes = await self.bot.get_valid_prefixes()
-            prefix = re.sub(rf"<@!?{self.bot.user.id}>", f"@{self.bot.user.name}", prefixes[0])
             msg = _(
                 "Ignored guilds and channels have been moved. "
                 "Please use `{prefix}moveignoredchannels` if "
                 "you were previously using these functions."
-            ).format(prefix=prefix)
-            self.bot.loop.create_task(self.bot.send_to_owners(msg))
+            )
+            self.bot.loop.create_task(notify_owners(msg))
             await self.settings.version.set(__version__)
 
     @commands.command()

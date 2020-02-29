@@ -107,12 +107,25 @@ class Streams(commands.Cog):
 
     async def get_twitch_bearer_token(self) -> None:
         tokens = await self.bot.get_shared_api_tokens("twitch")
+
+        async def notify_owners(content: str) -> None:
+            destinations = await self.bot.get_owner_notification_destinations()
+            for destination in destinations:
+                prefixes = await self.bot.get_valid_prefixes(getattr(destination, "guild", None))
+                prefix = re.sub(rf"<@!?{self.bot.user.id}>", f"@{self.bot.user.name}", prefixes[0])
+                try:
+                    await destination.send(content.format(prefix=prefix))
+                except Exception:
+                    log.exception(
+                        "I could not send an owner notification to (%s)%s",
+                        destination.id,
+                        destination,
+                    )
+
         if tokens.get("client_id"):
             try:
                 tokens["client_secret"]
             except KeyError:
-                prefixes = await self.bot.get_valid_prefixes()
-                prefix = re.sub(rf"<@!?{self.bot.user.id}>", f"@{self.bot.user.name}", prefixes[0])
                 message = _(
                     "You need a client secret key to use correctly Twitch API on this cog.\n"
                     "Follow these steps:\n"
@@ -124,8 +137,23 @@ class Streams(commands.Cog):
                     "client_secret <your_client_secret_here>`\n\n"
                     "Note: These tokens are sensitive and should only be used in a private channel "
                     "or in DM with the bot."
-                ).format(prefix=prefix)
-                await self.bot.send_to_owners(message)
+                )
+                destinations = await self.bot.get_owner_notification_destinations()
+                for destination in destinations:
+                    prefixes = await self.bot.get_valid_prefixes(
+                        getattr(destination, "guild", None)
+                    )
+                    prefix = re.sub(
+                        rf"<@!?{self.bot.user.id}>", f"@{self.bot.user.name}", prefixes[0]
+                    )
+                    try:
+                        await destination.send(message.format(prefix=prefix))
+                    except Exception:
+                        log.exception(
+                            "I could not send an owner notification to (%s)%s",
+                            destination.id,
+                            destination,
+                        )
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 "https://id.twitch.tv/oauth2/token",
