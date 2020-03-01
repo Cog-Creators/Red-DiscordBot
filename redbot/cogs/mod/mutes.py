@@ -23,6 +23,7 @@ mute_unmute_issues = {
         "lower than myself in the role hierarchy."
     ),
     "left_guild": _("The user has left the server while we're applying an overwrite."),
+    "unknown_channel": _("The channel I tried to mute the user in isn't found."),
 }
 _ = T_
 
@@ -423,8 +424,11 @@ class MuteMixin(MixinMeta):
             await channel.set_permissions(user, overwrite=overwrites, reason=reason)
         except discord.Forbidden:
             return False, _(mute_unmute_issues["permissions_issue"])
-        except discord.NotFound:
-            return False, _(mute_unmute_issues["left_guild"])
+        except discord.NotFound as e:
+            if e.code == 10003:
+                return False, _(mute_unmute_issues["unknown_channel"])
+            elif e.code == 10009:
+                return False, _(mute_unmute_issues["left_guild"])
         else:
             await self.settings.member(user).set_raw(
                 "perms_cache", str(channel.id), value=old_overs
@@ -463,8 +467,11 @@ class MuteMixin(MixinMeta):
                 await channel.set_permissions(user, overwrite=overwrites, reason=reason)
         except discord.Forbidden:
             return False, _(mute_unmute_issues["permissions_issue"])
-        except discord.NotFound:
-            return False, _(mute_unmute_issues["left_guild"])
+        except discord.NotFound as e:
+            if e.code == 10003:
+                return False, _(mute_unmute_issues["unknown_channel"])
+            elif e.code == 10009:
+                return False, _(mute_unmute_issues["left_guild"])
         else:
             await self.settings.member(user).clear_raw("perms_cache", str(channel.id))
             return True, None
