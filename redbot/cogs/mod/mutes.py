@@ -22,7 +22,8 @@ mute_unmute_issues = {
         "permission and the user I'm muting must be "
         "lower than myself in the role hierarchy."
     ),
-    "left_guild": _("The user has left the server while we're applying an overwrite."),
+    "left_guild": _("The user has left the server while were applying an overwrite."),
+    "unknown_channel": _("The channel I tried to mute the user in isn't found."),
 }
 _ = T_
 
@@ -252,27 +253,36 @@ class MuteMixin(MixinMeta):
         author = ctx.message.author
         guild = ctx.guild
         audit_reason = get_audit_reason(author, reason)
+        guild_success = True
 
         mute_success = []
         for channel in guild.channels:
             success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
             mute_success.append((success, issue))
             await asyncio.sleep(0.1)
-        try:
-            await modlog.create_case(
-                self.bot,
-                guild,
-                ctx.message.created_at,
-                "smute",
-                user,
-                author,
-                reason,
-                until=None,
-                channel=None,
-            )
-        except RuntimeError as e:
-            await ctx.send(e)
-        await ctx.send(_("User has been muted in this server."))
+
+            if success is False:  # Check the latest entry
+                guild_success = False
+                break
+
+        if guild_success:
+            try:
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    ctx.message.created_at,
+                    "smute",
+                    user,
+                    author,
+                    reason,
+                    until=None,
+                    channel=None,
+                )
+            except RuntimeError as e:
+                await ctx.send(e)
+            await ctx.send(_("User has been muted in this server."))
+        else:
+            await ctx.channel.send(issue)
 
     @commands.group()
     @commands.guild_only()
@@ -369,26 +379,50 @@ class MuteMixin(MixinMeta):
         guild = ctx.guild
         author = ctx.author
         audit_reason = get_audit_reason(author, reason)
+        guild_success = True
 
         unmute_success = []
         for channel in guild.channels:
             success, message = await self.unmute_user(guild, channel, author, user, audit_reason)
             unmute_success.append((success, message))
             await asyncio.sleep(0.1)
-        try:
-            await modlog.create_case(
-                self.bot,
-                guild,
-                ctx.message.created_at,
-                "sunmute",
-                user,
-                author,
-                reason,
-                until=None,
-            )
-        except RuntimeError as e:
-            await ctx.send(e)
-        await ctx.send(_("User has been unmuted in this server."))
+
+            if success is False:  # Check the latest entry
+                guild_success = False
+                break
+
+        if guild_success:
+            try:
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    ctx.message.created_at,
+                    "sunmute",
+                    user,
+                    author,
+                    reason,
+                    until=None,
+                )
+            except RuntimeError as e:
+                await ctx.send(e)
+            await ctx.send(_("User has been unmuted in this server."))
+        else:
+            await ctx.channel.send(issue)
+
+    # Reference to L#13 for errors
+    # Kill muting on the following errors:
+    # Kill the mutes with returning False
+    # is_admin
+    # hierarchy_problem
+    # left_guild
+    # permissions_issue
+    #
+    # Keep alive on the following errors:
+    # Keep the muting going with None
+    # unknown_channel
+    # already_muted
+    #
+    # Else return True
 
     async def mute_user(
         self,
@@ -412,7 +446,7 @@ class MuteMixin(MixinMeta):
             new_overs.update(send_messages=False, add_reactions=False)
 
         if all(getattr(permissions, p) is False for p in new_overs.keys()):
-            return False, _(mute_unmute_issues["already_muted"])
+            return None, _(mute_unmute_issues["already_muted"])
 
         elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
             return False, _(mute_unmute_issues["hierarchy_problem"])
@@ -423,8 +457,11 @@ class MuteMixin(MixinMeta):
             await channel.set_permissions(user, overwrite=overwrites, reason=reason)
         except discord.Forbidden:
             return False, _(mute_unmute_issues["permissions_issue"])
-        except discord.NotFound:
-            return False, _(mute_unmute_issues["left_guild"])
+        except discord.NotFound as e:
+            if e.code == 10003:
+                return None, _(mute_unmute_issues["unknown_channel"])
+            elif e.code == 10009:
+                return False, _(mute_unmute_issues["left_guild"])
         else:
             await self.settings.member(user).set_raw(
                 "perms_cache", str(channel.id), value=old_overs
@@ -463,8 +500,11 @@ class MuteMixin(MixinMeta):
                 await channel.set_permissions(user, overwrite=overwrites, reason=reason)
         except discord.Forbidden:
             return False, _(mute_unmute_issues["permissions_issue"])
-        except discord.NotFound:
-            return False, _(mute_unmute_issues["left_guild"])
+        except discord.NotFound as e:
+            if e.code == 10003:
+                return None, _(mute_unmute_issues["unknown_channel"])
+            elif e.code == 10009:
+                return False, _(mute_unmute_issues["left_guild"])
         else:
             await self.settings.member(user).clear_raw("perms_cache", str(channel.id))
             return True, None
