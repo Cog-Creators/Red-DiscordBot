@@ -22,7 +22,7 @@ mute_unmute_issues = {
         "permission and the user I'm muting must be "
         "lower than myself in the role hierarchy."
     ),
-    "left_guild": _("The user has left the server while were applying an overwrite."),
+    "left_guild": _("The user has left the server while applying an overwrite."),
     "unknown_channel": _("The channel I tried to mute the user in isn't found."),
 }
 _ = T_
