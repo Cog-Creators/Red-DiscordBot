@@ -383,8 +383,8 @@ class MuteMixin(MixinMeta):
 
         unmute_success = []
         for channel in guild.channels:
-            success, message = await self.unmute_user(guild, channel, author, user, audit_reason)
-            unmute_success.append((success, message))
+            success, issue = await self.unmute_user(guild, channel, author, user, audit_reason)
+            unmute_success.append((success, issue))
             await asyncio.sleep(0.1)
 
             if success is False:  # Check the latest entry
