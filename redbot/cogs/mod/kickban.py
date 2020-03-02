@@ -408,7 +408,6 @@ class KickBanMixin(MixinMeta):
         if invite is None:
             invite = ""
 
-        queue_entry = (guild.id, user.id)
         await self.settings.member(user).banned_until.set(unban_time.timestamp())
         cur_tbans = await self.settings.guild(guild).current_tempbans()
         cur_tbans.append(user.id)
