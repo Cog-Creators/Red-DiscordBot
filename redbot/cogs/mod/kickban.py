@@ -329,7 +329,7 @@ class KickBanMixin(MixinMeta):
         member = namedtuple("Member", "id guild")
         async with self.settings.guild(guild).current_tempbans() as guild_tempbans:
             for uid in guild_tempbans.copy():
-                for user_id in user_ids:
+                for user_id in user_ids.copy():
                     if not user_id:
                         continue
                 await self.settings.member(member(uid, guild)).banned_until.clear()
