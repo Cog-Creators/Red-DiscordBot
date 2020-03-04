@@ -134,6 +134,10 @@ def init_events(bot, cli_flags):
             await bot.send_to_owners(outdated_red_message)
 
     @bot.event
+    async def on_command_completion(ctx: commands.Context):
+        await bot._delete_delay(ctx)
+
+    @bot.event
     async def on_command_error(ctx, error, unhandled_by_cog=False):
 
         if not unhandled_by_cog:
@@ -192,6 +196,7 @@ def init_events(bot, cli_flags):
                 await ctx.send(embed=await format_fuzzy_results(ctx, fuzzy_commands, embed=True))
             else:
                 await ctx.send(await format_fuzzy_results(ctx, fuzzy_commands, embed=False))
+            await bot._delete_delay(ctx)
         elif isinstance(error, commands.BotMissingPermissions):
             if bin(error.missing.value).count("1") == 1:  # Only one perm missing
                 plural = ""

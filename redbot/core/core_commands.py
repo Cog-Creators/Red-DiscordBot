@@ -903,6 +903,37 @@ class Core(commands.Cog, CoreLogic):
             for page in pagify(settings):
                 await ctx.send(box(page))
 
+    @checks.mod_or_permissions(administrator=True)
+    @_set.command(name="deletedelay")
+    @commands.guild_only()
+    async def deletedelay(self, ctx: commands.Context, time: int = None):
+        """Set the delay until the bot removes the command message.
+
+        Must be between -1 and 60.
+
+        Set to -1 to disable this feature.
+        """
+        guild = ctx.guild
+        if time is not None:
+            time = min(max(time, -1), 60)  # Enforces the time limits
+            await ctx.bot._config.guild(guild).delete_delay.set(time)
+            if time == -1:
+                await ctx.send(_("Command deleting disabled."))
+            else:
+                await ctx.send(_("Delete delay set to {num} seconds.").format(num=time))
+        else:
+            delay = await ctx.bot._config.guild(guild).delete_delay()
+            if delay != -1:
+                await ctx.send(
+                    _(
+                        "Bot will delete command messages after"
+                        " {num} seconds. Set this value to -1 to"
+                        " stop deleting messages"
+                    ).format(num=delay)
+                )
+            else:
+                await ctx.send(_("I will not delete command messages."))
+
     @checks.is_owner()
     @_set.command(name="description")
     async def setdescription(self, ctx: commands.Context, *, description: str = ""):

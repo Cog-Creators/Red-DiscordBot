@@ -6,6 +6,7 @@ import platform
 import re
 import shutil
 import sys
+import contextlib
 from collections import namedtuple
 from datetime import datetime
 from enum import IntEnum
@@ -124,6 +125,7 @@ class RedBase(
             fuzzy=False,
             disabled_commands=[],
             autoimmune_ids=[],
+            delete_delay=-1,
         )
 
         self._config.register_channel(embeds=None, ignored=False)
@@ -1212,6 +1214,26 @@ class RedBase(
     async def wait_until_red_ready(self):
         """Wait until our post connection startup is done."""
         await self._red_ready.wait()
+
+    async def _delete_delay(self, ctx: commands.Context):
+        """Currently used for:
+            * delete delay"""
+        guild = ctx.guild
+        if guild is None:
+            return
+        message = ctx.message
+        delay = await self._config.guild(guild).delete_delay()
+
+        if delay == -1:
+            return
+
+        async def _delete_helper(m):
+            with contextlib.suppress(discord.HTTPException):
+                await m.delete()
+                log.debug("Deleted command msg {}".format(m.id))
+
+        await asyncio.sleep(delay)
+        await _delete_helper(message)
 
 
 class Red(RedBase, discord.AutoShardedClient):
