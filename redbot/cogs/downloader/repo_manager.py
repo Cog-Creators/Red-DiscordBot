@@ -39,6 +39,12 @@ from .log import log
 _ = Translator("RepoManager", __file__)
 
 
+DECODE_PARAMS = {
+    "encoding": "utf-8",
+    "errors": "surrogateescape",
+}
+
+
 class Candidate(NamedTuple):
     rev: str
     object_type: str
@@ -259,7 +265,7 @@ class Repo(RepoJSONMixin):
                 f"Git diff failed for repo at path: {self.folder_path}", git_command
             )
 
-        stdout = p.stdout.strip(b"\t\n\x00 ").decode().split("\x00\t")
+        stdout = p.stdout.strip(b"\t\n\x00 ").decode(**DECODE_PARAMS).split("\x00\t")
         ret = {}
 
         for filename in stdout:
@@ -318,7 +324,7 @@ class Repo(RepoJSONMixin):
                 f"Git log failed for repo at path: {self.folder_path}", git_command
             )
 
-        commit = p.stdout.decode().strip()
+        commit = p.stdout.decode(**DECODE_PARAMS).strip()
         if commit:
             async with self.checkout(f"{commit}~"):
                 return discord.utils.get(self.available_modules, name=module_name)
@@ -426,7 +432,7 @@ class Repo(RepoJSONMixin):
                 git_command,
             )
 
-        return p.stdout.decode().strip()
+        return p.stdout.decode(**DECODE_PARAMS).strip()
 
     async def get_full_sha1(self, rev: str) -> str:
         """
@@ -456,7 +462,7 @@ class Repo(RepoJSONMixin):
         p = await self._run(git_command)
 
         if p.returncode != 0:
-            stderr = p.stderr.decode().strip()
+            stderr = p.stderr.decode(**DECODE_PARAMS).strip()
             ambiguous_error = f"error: short SHA1 {rev} is ambiguous\nhint: The candidates are:\n"
             if not stderr.startswith(ambiguous_error):
                 raise errors.UnknownRevision(f"Revision {rev} cannot be found.", git_command)
@@ -469,7 +475,7 @@ class Repo(RepoJSONMixin):
                 )
             raise errors.UnknownRevision(f"Revision {rev} cannot be found.", git_command)
 
-        return p.stdout.decode().strip()
+        return p.stdout.decode(**DECODE_PARAMS).strip()
 
     def _update_available_modules(self) -> Tuple[Installable, ...]:
         """
@@ -530,7 +536,7 @@ class Repo(RepoJSONMixin):
                 self._executor,
                 functools.partial(sp_run, *args, stdout=PIPE, stderr=PIPE, **kwargs),
             )
-            stderr = p.stderr.decode().strip()
+            stderr = p.stderr.decode(**DECODE_PARAMS).strip()
             if stderr:
                 if debug_only or p.returncode in valid_exit_codes:
                     log.debug(stderr)
@@ -657,7 +663,7 @@ class Repo(RepoJSONMixin):
                 f"Could not determine current branch at path: {self.folder_path}", git_command
             )
 
-        return p.stdout.decode().strip()
+        return p.stdout.decode(**DECODE_PARAMS).strip()
 
     async def current_commit(self) -> str:
         """Determine the current commit hash of the repo.
@@ -678,7 +684,7 @@ class Repo(RepoJSONMixin):
         if p.returncode != 0:
             raise errors.CurrentHashError("Unable to determine commit hash.", git_command)
 
-        return p.stdout.decode().strip()
+        return p.stdout.decode(**DECODE_PARAMS).strip()
 
     async def latest_commit(self, branch: Optional[str] = None) -> str:
         """Determine the latest commit hash of the repo.
@@ -709,7 +715,7 @@ class Repo(RepoJSONMixin):
         if p.returncode != 0:
             raise errors.CurrentHashError("Unable to determine latest commit hash.", git_command)
 
-        return p.stdout.decode().strip()
+        return p.stdout.decode(**DECODE_PARAMS).strip()
 
     async def current_url(self, folder: Optional[Path] = None) -> str:
         """
@@ -740,7 +746,7 @@ class Repo(RepoJSONMixin):
         if p.returncode != 0:
             raise errors.NoRemoteURL("Unable to discover a repo URL.", git_command)
 
-        return p.stdout.decode().strip()
+        return p.stdout.decode(**DECODE_PARAMS).strip()
 
     async def hard_reset(self, branch: Optional[str] = None) -> None:
         """Perform a hard reset on the current repo.
