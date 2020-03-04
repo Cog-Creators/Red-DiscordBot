@@ -144,6 +144,8 @@ class Mod(
         """
         all_guilds = await self.settings.all_guilds()
         for guild_id, settings in all_guilds.items():
-            await self.bot._config.guild_from_id(guild_id).delete_delay.set(settings["delete_delay"])
+            await self.bot._config.guild_from_id(guild_id).delete_delay.set(
+                settings["delete_delay"]
+            )
             await self.settings.guild_from_id(guild_id).delete_delay.clear()
         await ctx.send(_("Delete delay settings restored."))
