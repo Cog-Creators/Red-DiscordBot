@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-20 12:09+0000\n"
-"PO-Revision-Date: 2020-02-20 12:14\n"
+"POT-Creation-Date: 2020-03-05 12:09+0000\n"
+"PO-Revision-Date: 2020-03-05 12:15\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Serbian (Cyrillic)\n"
 "MIME-Version: 1.0\n"
@@ -212,21 +212,21 @@ msgstr ""
 msgid "Something went wrong when attempting to send that useran invite. Here's the link so you can try: {invite_link}"
 msgstr ""
 
-#: redbot/cogs/mod/mod.py:45
+#: redbot/cogs/mod/mod.py:46
 #, docstring
 msgid "Moderation tools."
 msgstr ""
 
-#: redbot/cogs/mod/mod.py:107
+#: redbot/cogs/mod/mod.py:109
 msgid "Ignored guilds and channels have been moved. Please use `{prefix}moveignoredchannels` if you were previously using these functions."
 msgstr ""
 
-#: redbot/cogs/mod/mod.py:118
+#: redbot/cogs/mod/mod.py:120
 #, docstring
 msgid "Move ignored channels and servers to core"
 msgstr ""
 
-#: redbot/cogs/mod/mod.py:127
+#: redbot/cogs/mod/mod.py:129
 msgid "Ignored channels and guilds restored."
 msgstr ""
 
@@ -246,109 +246,117 @@ msgstr ""
 msgid "Failed to mute user. I need the manage roles permission and the user I'm muting must be lower than myself in the role hierarchy."
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:51
+#: redbot/cogs/mod/mutes.py:25
+msgid "The user has left the server while applying an overwrite."
+msgstr ""
+
+#: redbot/cogs/mod/mutes.py:26
+msgid "The channel I tried to mute the user in isn't found."
+msgstr ""
+
+#: redbot/cogs/mod/mutes.py:53
 msgid "That user is not in a voice channel."
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:58
+#: redbot/cogs/mod/mutes.py:60
 msgid "I require the {perms} permission(s) in that user's channel to do that."
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:68
+#: redbot/cogs/mod/mutes.py:70
 msgid "You must have the {perms} permission(s) in that user's channel to use this command."
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:80
+#: redbot/cogs/mod/mutes.py:82
 #, docstring
 msgid "Unban a user from speaking and listening in the server's voice channels."
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:99
+#: redbot/cogs/mod/mutes.py:101
 msgid "That user isn't muted or deafened by the server!"
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:118
+#: redbot/cogs/mod/mutes.py:120
 msgid "User is now allowed to speak and listen in voice channels"
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:124
+#: redbot/cogs/mod/mutes.py:126
 #, docstring
 msgid "Ban a user from speaking and listening in the server's voice channels."
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:145
+#: redbot/cogs/mod/mutes.py:147
 msgid "That user is already muted and deafened server-wide!"
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:162
+#: redbot/cogs/mod/mutes.py:164
 msgid "User has been banned from speaking or listening in voice channels"
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:168
+#: redbot/cogs/mod/mutes.py:170
 #, docstring
 msgid "Mute users."
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:174
+#: redbot/cogs/mod/mutes.py:176
 #, docstring
 msgid "Mute a user in their current voice channel."
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:206
+#: redbot/cogs/mod/mutes.py:208
 msgid "Muted {user} in channel {channel.name}"
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:218
+#: redbot/cogs/mod/mutes.py:220
 #, docstring
 msgid "Mute a user in the current text channel."
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:241
+#: redbot/cogs/mod/mutes.py:243
 msgid "User has been muted in this channel."
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:250
+#: redbot/cogs/mod/mutes.py:252
 #, docstring
 msgid "Mutes user in the server"
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:274
+#: redbot/cogs/mod/mutes.py:276
 msgid "User has been muted in this server."
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:281
+#: redbot/cogs/mod/mutes.py:283
 #, docstring
 msgid "Unmute users."
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:289
+#: redbot/cogs/mod/mutes.py:291
 #, docstring
 msgid "Unmute a user in their current voice channel."
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:321
+#: redbot/cogs/mod/mutes.py:323
 msgid "Unmuted {user} in channel {channel.name}"
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:324 redbot/cogs/mod/mutes.py:358
+#: redbot/cogs/mod/mutes.py:326 redbot/cogs/mod/mutes.py:360
 msgid "Unmute failed. Reason: {}"
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:333
+#: redbot/cogs/mod/mutes.py:335
 #, docstring
 msgid "Unmute a user in this channel."
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:356
+#: redbot/cogs/mod/mutes.py:358
 msgid "User unmuted in this channel."
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:367
+#: redbot/cogs/mod/mutes.py:369
 #, docstring
 msgid "Unmute a user in this server."
 msgstr ""
 
-#: redbot/cogs/mod/mutes.py:390
+#: redbot/cogs/mod/mutes.py:392
 msgid "User has been unmuted in this server."
 msgstr ""
 
@@ -605,11 +613,11 @@ msgid "Toggle whether an invite will be sent to a user when unbanned.\\n\\n     
 msgstr ""
 
 #: redbot/cogs/mod/settings.py:203
-msgid "Users unbanned with {command} will be reinvited."
+msgid "Users unbanned with `{command}` will be reinvited."
 msgstr ""
 
 #: redbot/cogs/mod/settings.py:210
-msgid "Users unbanned with {command} will not be reinvited."
+msgid "Users unbanned with `{command}` will not be reinvited."
 msgstr ""
 
 #: redbot/cogs/mod/settings.py:218

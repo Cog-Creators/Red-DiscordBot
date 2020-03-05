@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-20 12:09+0000\n"
-"PO-Revision-Date: 2020-02-20 12:14\n"
+"PO-Revision-Date: 2020-03-05 12:14\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -207,7 +207,7 @@ msgstr "У этого пользователя нет предупреждени
 
 #: redbot/cogs/warnings/warnings.py:365 redbot/cogs/warnings/warnings.py:395
 msgid "Unknown Moderator ({})"
-msgstr ""
+msgstr "Неизвестный модератор ({})"
 
 #: redbot/cogs/warnings/warnings.py:366
 msgid "{num_points} point warning {reason_name} issued by {user} for {description}\\n"
@@ -220,11 +220,11 @@ msgstr "Предупреждения для {user}"
 #: redbot/cogs/warnings/warnings.py:383
 #, docstring
 msgid "List warnings for yourself."
-msgstr ""
+msgstr "Список своих предупреждений."
 
 #: redbot/cogs/warnings/warnings.py:391
 msgid "You have no warnings!"
-msgstr ""
+msgstr "У вас нет предупреждений!"
 
 #: redbot/cogs/warnings/warnings.py:396
 msgid "{num_points} point warning {reason_name} issued by {user} for {description}\\n"

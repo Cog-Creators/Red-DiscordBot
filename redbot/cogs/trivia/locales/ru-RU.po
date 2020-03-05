@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-13 12:15\n"
+"POT-Creation-Date: 2020-03-05 12:09+0000\n"
+"PO-Revision-Date: 2020-03-05 12:14\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -43,35 +43,39 @@ msgstr "Я уверена, что вы знаете следующее."
 msgid "😔 Next one."
 msgstr "😔 Следующий."
 
-#: redbot/cogs/trivia/session.py:117
+#: redbot/cogs/trivia/session.py:114
+msgid "An unexpected error occurred in the trivia session.\\nCheck your console or logs for details."
+msgstr ""
+
+#: redbot/cogs/trivia/session.py:135
 msgid "Question number {num}!"
 msgstr "Вопрос №{num}!"
 
-#: redbot/cogs/trivia/session.py:126
+#: redbot/cogs/trivia/session.py:144
 msgid "There are no more questions!"
 msgstr "Больше нет вопросов!"
 
-#: redbot/cogs/trivia/session.py:134
+#: redbot/cogs/trivia/session.py:152
 msgid "{trivia_list} (by {author})"
 msgstr "{trivia_list} (автор: {author})"
 
-#: redbot/cogs/trivia/session.py:139
+#: redbot/cogs/trivia/session.py:157
 msgid "Starting Trivia: {list_names}"
 msgstr "Запуск викторины: {list_names}"
 
-#: redbot/cogs/trivia/session.py:185
+#: redbot/cogs/trivia/session.py:203
 msgid "Guys...? Well, I guess I'll stop then."
 msgstr "Ребята...? Ну, я думаю, я остановлюсь тогда."
 
-#: redbot/cogs/trivia/session.py:193
+#: redbot/cogs/trivia/session.py:211
 msgid " **+1** for me!"
 msgstr " **+1** для меня!"
 
-#: redbot/cogs/trivia/session.py:198
+#: redbot/cogs/trivia/session.py:216
 msgid "You got it {user}! **+1** to you!"
 msgstr "{user}, тебе удалось! **+1** для тебя!"
 
-#: redbot/cogs/trivia/session.py:290
+#: redbot/cogs/trivia/session.py:308
 msgid "Congratulations, {user}, you have received {num} {currency} for coming first."
 msgstr "Поздравляю, {user}, вы получили {num} {currency} за то, что пришли первыми."
 
