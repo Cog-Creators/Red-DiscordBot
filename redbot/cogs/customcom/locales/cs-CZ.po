@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-13 12:12\n"
+"PO-Revision-Date: 2020-03-05 12:11\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:52
 msgid "Welcome to the interactive random {cc} maker!\\nEvery message you send will be added as one of the random responses to choose from once this {cc} is triggered. To exit this interactive menu, type `{quit}`"
-msgstr ""
+msgstr "Vítejte v interaktivním náhodném {cc} tvůrci!\\nKaždá zpráva, kterou odešlete, bude přidána jako jedna z náhodných odpovědí pro výběr od okamžiku, kdy bude tato {cc} spuštěna. Chcete-li ukončit toto interaktivní menu, zadejte `{quit}`"
 
 #: redbot/cogs/customcom/customcom.py:63
 msgid "Add a random response:"
@@ -29,21 +29,21 @@ msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:140
 msgid "Do you want to create a 'randomized' custom command? (y/n)"
-msgstr ""
+msgstr "Chcete vytvořit 'náhodný' vlastní příkaz? (y/n)"
 
 #: redbot/cogs/customcom/customcom.py:146
 #: redbot/cogs/customcom/customcom.py:157
 msgid "Response timed out, please try again later."
-msgstr ""
+msgstr "Vypršel časový limit odpovědi, opakujte akci později."
 
 #: redbot/cogs/customcom/customcom.py:151
 msgid "What response do you want?"
-msgstr ""
+msgstr "Jakou odpověď chcete?"
 
 #: redbot/cogs/customcom/customcom.py:191
 #, docstring
 msgid "Creates commands used to display text."
-msgstr ""
+msgstr "Vytvoří příkazy používané k zobrazení textu."
 
 #: redbot/cogs/customcom/customcom.py:205
 #, docstring
@@ -67,12 +67,12 @@ msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:231
 msgid "Custom command process cancelled."
-msgstr ""
+msgstr "Vlastní příkaz byl zrušen."
 
 #: redbot/cogs/customcom/customcom.py:235
 #: redbot/cogs/customcom/customcom.py:256
 msgid "Custom command successfully added."
-msgstr ""
+msgstr "Vlastní příkaz byl úspěšně přidán."
 
 #: redbot/cogs/customcom/customcom.py:238
 #: redbot/cogs/customcom/customcom.py:259
@@ -92,7 +92,7 @@ msgstr ""
 #: redbot/cogs/customcom/customcom.py:284
 #: redbot/cogs/customcom/customcom.py:321
 msgid "That command doesn't exist."
-msgstr ""
+msgstr "Tento příkaz neexistuje."
 
 #: redbot/cogs/customcom/customcom.py:289
 msgid "A {} may call this command every {} seconds"
@@ -113,7 +113,7 @@ msgstr ""
 #: redbot/cogs/customcom/customcom.py:304
 #: redbot/cogs/customcom/customcom.py:336
 msgid "That command doesn't exist. Use `{command}` to add it."
-msgstr ""
+msgstr "Tento příkaz neexistuje. Použijte `{command}` pro jeho přidání."
 
 #: redbot/cogs/customcom/customcom.py:312
 #, docstring
@@ -131,7 +131,7 @@ msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:333
 msgid "Custom command successfully edited."
-msgstr ""
+msgstr "Vlastní příkaz byl úspěšně upraven."
 
 #: redbot/cogs/customcom/customcom.py:346
 #, docstring
@@ -140,15 +140,15 @@ msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:355
 msgid "There are no custom commands in this server. Use `{command}` to start adding some."
-msgstr ""
+msgstr "Na tomto serveru nejsou žádné vlastní příkazy. Použij `{command}` pro začátek přidávání."
 
 #: redbot/cogs/customcom/customcom.py:387
 msgid "Custom Command List"
-msgstr ""
+msgstr "Seznam vlastních příkazů"
 
 #: redbot/cogs/customcom/customcom.py:391
 msgid "Page {num}/{total}"
-msgstr ""
+msgstr "Strana {num}/{total}"
 
 #: redbot/cogs/customcom/customcom.py:401
 #, docstring
@@ -157,7 +157,7 @@ msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:406
 msgid "I could not not find that custom command."
-msgstr ""
+msgstr "Nemohu najít tento vlastní příkaz."
 
 #: redbot/cogs/customcom/customcom.py:421
 msgid "Random"
@@ -181,11 +181,11 @@ msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:440
 msgid "Responses:\\n"
-msgstr ""
+msgstr "Odpovědi:\\n"
 
 #: redbot/cogs/customcom/customcom.py:535
 msgid "Too many arguments!"
-msgstr ""
+msgstr "Příliš mnoho argumentů!"
 
 #: redbot/cogs/customcom/customcom.py:539
 msgid "Arguments must be sequential. Missing arguments: "
