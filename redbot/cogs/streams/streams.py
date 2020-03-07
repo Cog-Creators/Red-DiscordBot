@@ -2,6 +2,7 @@ import discord
 from redbot.core.bot import Red
 from redbot.core import checks, commands, Config
 from redbot.core.i18n import cog_i18n, Translator
+from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
 from redbot.core.utils.chat_formatting import escape, pagify
 
 from .streamtypes import (
@@ -107,21 +108,6 @@ class Streams(commands.Cog):
 
     async def get_twitch_bearer_token(self) -> None:
         tokens = await self.bot.get_shared_api_tokens("twitch")
-
-        async def notify_owners(content: str) -> None:
-            destinations = await self.bot.get_owner_notification_destinations()
-            for destination in destinations:
-                prefixes = await self.bot.get_valid_prefixes(getattr(destination, "guild", None))
-                prefix = re.sub(rf"<@!?{self.bot.user.id}>", f"@{self.bot.user.name}", prefixes[0])
-                try:
-                    await destination.send(content.format(prefix=prefix))
-                except Exception:
-                    log.exception(
-                        "I could not send an owner notification to (%s)%s",
-                        destination.id,
-                        destination,
-                    )
-
         if tokens.get("client_id"):
             try:
                 tokens["client_secret"]
@@ -133,27 +119,12 @@ class Streams(commands.Cog):
                     '2. Click "Manage" on your application.\n'
                     '3. Click on "New secret".\n'
                     "5. Copy your client ID and your client secret into:\n"
-                    "`{prefix}set api twitch client_id <your_client_id_here> "
+                    "`[p]set api twitch client_id <your_client_id_here> "
                     "client_secret <your_client_secret_here>`\n\n"
                     "Note: These tokens are sensitive and should only be used in a private channel "
                     "or in DM with the bot."
                 )
-                destinations = await self.bot.get_owner_notification_destinations()
-                for destination in destinations:
-                    prefixes = await self.bot.get_valid_prefixes(
-                        getattr(destination, "guild", None)
-                    )
-                    prefix = re.sub(
-                        rf"<@!?{self.bot.user.id}>", f"@{self.bot.user.name}", prefixes[0]
-                    )
-                    try:
-                        await destination.send(message.format(prefix=prefix))
-                    except Exception:
-                        log.exception(
-                            "I could not send an owner notification to (%s)%s",
-                            destination.id,
-                            destination,
-                        )
+                await send_to_owners_with_prefix_replace(self.bot, message)
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 "https://id.twitch.tv/oauth2/token",

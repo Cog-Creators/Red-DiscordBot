@@ -1,22 +1,27 @@
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import os
+import re
 import shutil
 import tarfile
 from datetime import datetime
 from pathlib import Path
-from typing import List, Optional, Set, Union, TYPE_CHECKING
+from typing import Awaitable, Callable, List, Optional, Set, Union, TYPE_CHECKING
 
 import discord
 from fuzzywuzzy import fuzz, process
 
 from redbot.core import data_manager
+from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import box
 
 if TYPE_CHECKING:
     from redbot.core.commands import Command, Context
+
+main_log = logging.getLogger("redbot")
 
 __all__ = ("safe_delete", "fuzzy_command_search", "format_fuzzy_results", "create_backup")
 
@@ -200,3 +205,60 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
         for f in to_backup:
             tar.add(str(f), arcname=str(f.relative_to(data_path)), recursive=False)
     return backup_fpath
+
+
+# this might be worth moving to `bot.send_to_owners` at later date
+
+
+async def send_to_owners_with_preprocessor(
+    bot: Red,
+    content: str,
+    *,
+    content_preprocessor: Optional[
+        Callable[[Red, discord.abc.Messageable, str], Awaitable[str]]
+    ] = None,
+    **kwargs,
+):
+    """
+    This sends something to all owners and their configured extra destinations.
+
+    This acts the same as `Red.send_to_owners`, with
+    one added keyword argument as detailed below in *Other Parameters*.
+
+    Other Parameters
+    ----------------
+    content_preprocessor: Optional[Callable[[Red, discord.abc.Messageable, str], Awaitable[str]]]
+        Optional async function that takes
+        bot object, owner notification destination and message content
+        and returns the content that should be sent to given location.
+    """
+    destinations = await bot.get_owner_notification_destinations()
+
+    async def wrapped_send(bot, location, content=None, preprocessor=None, **kwargs):
+        try:
+            if preprocessor is not None:
+                content = await preprocessor(bot, location, content)
+            await location.send(content, **kwargs)
+        except Exception as _exc:
+            main_log.exception(
+                f"I could not send an owner notification to ({location.id}){location}"
+            )
+
+    sends = [wrapped_send(bot, d, content, content_preprocessor, **kwargs) for d in destinations]
+    await asyncio.gather(*sends)
+
+
+async def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
+    """
+    This sends something to all owners and their configured extra destinations.
+
+    This acts the same as `Red.send_to_owners`, with one addition - `[p]` in ``content`` argument
+    is replaced with a clean prefix for each specific destination.
+    """
+
+    async def preprocessor(bot: Red, destination: discord.abc.Messageable, content: str) -> str:
+        prefixes = await bot.get_valid_prefixes()
+        prefix = re.sub(rf"<@!?{bot.user.id}>", f"@{bot.user.name}", prefixes[0])
+        return content.replace("[p]", prefix)
+
+    await send_to_owners_with_preprocessor(bot, content, content_preprocessor=preprocessor)

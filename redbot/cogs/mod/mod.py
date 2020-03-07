@@ -9,6 +9,7 @@ import discord
 from redbot.core import Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
 from .casetypes import CASETYPES
 from .events import Events
 from .kickban import KickBanMixin
@@ -106,27 +107,13 @@ class Mod(
                 await self.settings.guild(discord.Object(id=guild_id)).delete_repeats.set(val)
             await self.settings.version.set("1.0.0")  # set version of last update
 
-        async def notify_owners(content: str) -> None:
-            destinations = await self.bot.get_owner_notification_destinations()
-            for destination in destinations:
-                prefixes = await self.bot.get_valid_prefixes(getattr(destination, "guild", None))
-                prefix = re.sub(rf"<@!?{self.bot.user.id}>", f"@{self.bot.user.name}", prefixes[0])
-                try:
-                    await destination.send(content.format(prefix=prefix))
-                except Exception:
-                    log.exception(
-                        "I could not send an owner notification to (%s)%s",
-                        destination.id,
-                        destination,
-                    )
-
         if await self.settings.version() < "1.1.0":
             msg = _(
                 "Ignored guilds and channels have been moved. "
-                "Please use `{prefix}moveignoredchannels` if "
+                "Please use `[p]moveignoredchannels` if "
                 "you were previously using these functions."
             )
-            self.bot.loop.create_task(notify_owners(msg))
+            self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
             await self.settings.version.set(__version__)
 
     @commands.command()
