@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from redbot.core.bot import Red
     from redbot.core.commands import Command, Context
 
-main_log = logging.getLogger("redbot")
+main_log = logging.getLogger("red")
 
 __all__ = ("safe_delete", "fuzzy_command_search", "format_fuzzy_results", "create_backup")
 

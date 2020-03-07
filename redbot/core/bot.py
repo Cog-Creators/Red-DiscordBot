@@ -48,7 +48,7 @@ from .utils._internal_utils import send_to_owners_with_prefix_replaced
 CUSTOM_GROUPS = "CUSTOM_GROUPS"
 SHARED_API_TOKENS = "SHARED_API_TOKENS"
 
-log = logging.getLogger("redbot")
+log = logging.getLogger("red")
 
 __all__ = ["RedBase", "Red", "ExitCodes"]
 
