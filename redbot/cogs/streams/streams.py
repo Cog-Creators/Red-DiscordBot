@@ -124,7 +124,7 @@ class Streams(commands.Cog):
                     "Note: These tokens are sensitive and should only be used in a private channel "
                     "or in DM with the bot."
                 )
-                await send_to_owners_with_prefix_replace(self.bot, message)
+                await send_to_owners_with_prefix_replaced(self.bot, message)
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 "https://id.twitch.tv/oauth2/token",

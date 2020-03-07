@@ -20,7 +20,6 @@ from .slowmode import Slowmode
 from .settings import ModSettings
 
 _ = T_ = Translator("Mod", __file__)
-log = logging.getLogger("red.mod")
 
 __version__ = "1.1.0"
 
@@ -106,7 +105,6 @@ class Mod(
                     val = -1
                 await self.settings.guild(discord.Object(id=guild_id)).delete_repeats.set(val)
             await self.settings.version.set("1.0.0")  # set version of last update
-
         if await self.settings.version() < "1.1.0":
             msg = _(
                 "Ignored guilds and channels have been moved. "
