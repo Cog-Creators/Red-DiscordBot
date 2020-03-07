@@ -1193,8 +1193,11 @@ class RedBase(
             try:
                 await location.send(content, **kwargs)
             except Exception as _exc:
-                log.exception(
-                    f"I could not send an owner notification to ({location.id}){location}"
+                log.error(
+                    "I could not send an owner notification to %s (%s)",
+                    location,
+                    location.id,
+                    exc_info=_exc,
                 )
 
         sends = [wrapped_send(d, content, **kwargs) for d in destinations]

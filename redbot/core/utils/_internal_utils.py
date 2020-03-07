@@ -240,8 +240,11 @@ async def send_to_owners_with_preprocessor(
                 content = await preprocessor(bot, location, content)
             await location.send(content, **kwargs)
         except Exception as _exc:
-            main_log.exception(
-                f"I could not send an owner notification to ({location.id}){location}"
+            main_log.error(
+                "I could not send an owner notification to %s (%s)",
+                location,
+                location.id,
+                exc_info=_exc,
             )
 
     sends = [wrapped_send(bot, d, content, content_preprocessor, **kwargs) for d in destinations]
