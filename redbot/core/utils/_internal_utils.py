@@ -15,10 +15,10 @@ import discord
 from fuzzywuzzy import fuzz, process
 
 from redbot.core import data_manager
-from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import box
 
 if TYPE_CHECKING:
+    from redbot.core.bot import Red
     from redbot.core.commands import Command, Context
 
 main_log = logging.getLogger("redbot")
