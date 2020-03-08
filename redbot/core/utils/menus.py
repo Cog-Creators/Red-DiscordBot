@@ -213,7 +213,11 @@ def start_adding_reactions(
     if loop is None:
         loop = asyncio.get_running_loop()
     else:
-        warnings.warn("Explicitly passing the loop will not work in Red 3.4+", DeprecationWarning)
+        warnings.warn(
+            "Explicitly passing the loop will not work in Red 3.4+",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
     return loop.create_task(task())
 
