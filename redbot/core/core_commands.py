@@ -1073,7 +1073,7 @@ class Core(commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Done."))
 
-    @_set.command(name="game")
+    @_set.command(name="game", aliases=["playing"])
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _game(self, ctx: commands.Context, *, game: str = None):
