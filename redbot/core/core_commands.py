@@ -1712,11 +1712,15 @@ class Core(commands.Cog, CoreLogic):
         """
         pass
 
-    @whitelist.command(name="add")
+    @whitelist.command(name="add", usage="<user>...")
     async def whitelist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Adds a user to the whitelist.
         """
+        if not users:
+            await ctx.send_help()
+            return
+
         uids = [getattr(user, "id", user) for user in users]
         await self.bot._whiteblacklist_cache.add_to_whitelist(None, uids)
 
@@ -1740,11 +1744,15 @@ class Core(commands.Cog, CoreLogic):
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @whitelist.command(name="remove")
+    @whitelist.command(name="remove", usage="<user>...")
     async def whitelist_remove(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Removes user from whitelist.
         """
+        if not users:
+            await ctx.send_help()
+            return
+
         uids = [getattr(user, "id", user) for user in users]
         await self.bot._whiteblacklist_cache.remove_from_whitelist(None, uids)
 
@@ -1766,11 +1774,15 @@ class Core(commands.Cog, CoreLogic):
         """
         pass
 
-    @blacklist.command(name="add")
+    @blacklist.command(name="add", usage="<user>...")
     async def blacklist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Adds a user to the blacklist.
         """
+        if not users:
+            await ctx.send_help()
+            return
+
         for user in users:
             if isinstance(user, int):
                 user_obj = discord.Object(id=user)
@@ -1803,11 +1815,14 @@ class Core(commands.Cog, CoreLogic):
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @blacklist.command(name="remove")
+    @blacklist.command(name="remove", usage="<user>...")
     async def blacklist_remove(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Removes user from blacklist.
         """
+        if not users:
+            await ctx.send_help()
+            return
 
         uids = [getattr(user, "id", user) for user in users]
         await self.bot._whiteblacklist_cache.remove_from_blacklist(None, uids)
@@ -1831,13 +1846,17 @@ class Core(commands.Cog, CoreLogic):
         """
         pass
 
-    @localwhitelist.command(name="add")
+    @localwhitelist.command(name="add", usage="<user_or_role>...")
     async def localwhitelist_add(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Adds a user or role to the whitelist.
         """
+        if not users_or_roles:
+            await ctx.send_help()
+            return
+
         names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
         uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
         await self.bot._whiteblacklist_cache.add_to_whitelist(ctx.guild, uids)
@@ -1862,13 +1881,17 @@ class Core(commands.Cog, CoreLogic):
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @localwhitelist.command(name="remove")
+    @localwhitelist.command(name="remove", usage="<user_or_role>...")
     async def localwhitelist_remove(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Removes user or role from whitelist.
         """
+        if not users_or_roles:
+            await ctx.send_help()
+            return
+
         names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
         uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
         await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
@@ -1894,13 +1917,17 @@ class Core(commands.Cog, CoreLogic):
         """
         pass
 
-    @localblacklist.command(name="add")
+    @localblacklist.command(name="add", usage="<user_or_role>...")
     async def localblacklist_add(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Adds a user or role to the blacklist.
         """
+        if not users_or_roles:
+            await ctx.send_help()
+            return
+
         for user_or_role in users_or_roles:
             uid = discord.Object(id=getattr(user_or_role, "id", user_or_role))
             if uid.id == ctx.author.id:
@@ -1938,13 +1965,17 @@ class Core(commands.Cog, CoreLogic):
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @localblacklist.command(name="remove")
+    @localblacklist.command(name="remove", usage="<user_or_role>...")
     async def localblacklist_remove(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Removes user or role from blacklist.
         """
+        if not users_or_roles:
+            await ctx.send_help()
+            return
+
         names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
         uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
         await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
