@@ -129,7 +129,7 @@ class Warnings(commands.Cog):
                     _("Warnings will now be sent to {channel}.").format(channel=channel.mention)
                 )
             else:
-                await ctx.send(_("Warnings will now be sent to this channel."))
+                await ctx.send(_("Warnings will now be sent in the channel command was used in."))
         else:
             await ctx.send(_("Toggle channel has been disabled.").format(channel=channel.mention))
 
