@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-03-05 12:09+0000\n"
-"PO-Revision-Date: 2020-03-05 12:12\n"
+"PO-Revision-Date: 2020-03-12 12:12\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -45,7 +45,7 @@ msgstr "😔 Suivante."
 
 #: redbot/cogs/trivia/session.py:114
 msgid "An unexpected error occurred in the trivia session.\\nCheck your console or logs for details."
-msgstr ""
+msgstr "Une erreur inattendue s'est produite dans la session de trivia.\\nVérifiez votre console ou les logs pour plus de détails."
 
 #: redbot/cogs/trivia/session.py:135
 msgid "Question number {num}!"

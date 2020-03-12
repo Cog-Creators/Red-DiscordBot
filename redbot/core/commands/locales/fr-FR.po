@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-03-05 12:09+0000\n"
-"PO-Revision-Date: 2020-03-05 12:12\n"
+"PO-Revision-Date: 2020-03-12 12:12\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -45,7 +45,7 @@ msgstr "Clé inattendue {key}"
 
 #: redbot/core/commands/converter.py:439
 msgid "Expected one of: {}"
-msgstr ""
+msgstr "Un des : {} était attendu"
 
 #: redbot/core/commands/help.py:689
 #, docstring
