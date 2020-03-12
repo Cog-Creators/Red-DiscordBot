@@ -2,6 +2,7 @@ import discord
 from redbot.core.bot import Red
 from redbot.core import checks, commands, Config
 from redbot.core.i18n import cog_i18n, Translator
+from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
 from redbot.core.utils.chat_formatting import escape, pagify
 
 from .streamtypes import (
@@ -111,8 +112,6 @@ class Streams(commands.Cog):
             try:
                 tokens["client_secret"]
             except KeyError:
-                prefixes = await self.bot.get_valid_prefixes()
-                prefix = re.sub(rf"<@!?{self.bot.user.id}>", f"@{self.bot.user.name}", prefixes[0])
                 message = _(
                     "You need a client secret key to use correctly Twitch API on this cog.\n"
                     "Follow these steps:\n"
@@ -120,12 +119,12 @@ class Streams(commands.Cog):
                     '2. Click "Manage" on your application.\n'
                     '3. Click on "New secret".\n'
                     "5. Copy your client ID and your client secret into:\n"
-                    "`{prefix}set api twitch client_id <your_client_id_here> "
+                    "`[p]set api twitch client_id <your_client_id_here> "
                     "client_secret <your_client_secret_here>`\n\n"
                     "Note: These tokens are sensitive and should only be used in a private channel "
                     "or in DM with the bot."
-                ).format(prefix=prefix)
-                await self.bot.send_to_owners(message)
+                )
+                await send_to_owners_with_prefix_replaced(self.bot, message)
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 "https://id.twitch.tv/oauth2/token",

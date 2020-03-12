@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import re
 from abc import ABC
 from collections import defaultdict
@@ -8,6 +9,7 @@ import discord
 from redbot.core import Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
 from .casetypes import CASETYPES
 from .events import Events
 from .kickban import KickBanMixin
@@ -104,14 +106,12 @@ class Mod(
                 await self.settings.guild(discord.Object(id=guild_id)).delete_repeats.set(val)
             await self.settings.version.set("1.0.0")  # set version of last update
         if await self.settings.version() < "1.1.0":
-            prefixes = await self.bot.get_valid_prefixes()
-            prefix = re.sub(rf"<@!?{self.bot.user.id}>", f"@{self.bot.user.name}", prefixes[0])
             msg = _(
                 "Ignored guilds and channels have been moved. "
-                "Please use `{prefix}moveignoredchannels` if "
+                "Please use `[p]moveignoredchannels` if "
                 "you were previously using these functions."
-            ).format(prefix=prefix)
-            self.bot.loop.create_task(self.bot.send_to_owners(msg))
+            )
+            self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
             await self.settings.version.set(__version__)
 
     @commands.command()
