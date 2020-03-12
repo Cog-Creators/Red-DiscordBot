@@ -131,7 +131,7 @@ class Warnings(commands.Cog):
             else:
                 await ctx.send(_("Warnings will now be sent in the channel command was used in."))
         else:
-            await ctx.send(_("Toggle channel has been disabled.").format(channel=channel.mention))
+            await ctx.send(_("Toggle channel has been disabled."))
 
     @commands.group()
     @commands.guild_only()
