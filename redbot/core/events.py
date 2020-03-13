@@ -147,6 +147,8 @@ def init_events(bot, cli_flags):
             if ctx.cog:
                 if commands.Cog._get_overridden_method(ctx.cog.cog_command_error) is not None:
                     return
+        if not isinstance(error, commands.CommandNotFound):
+            await bot._delete_delay(ctx)
 
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help()
@@ -196,7 +198,6 @@ def init_events(bot, cli_flags):
                 await ctx.send(embed=await format_fuzzy_results(ctx, fuzzy_commands, embed=True))
             else:
                 await ctx.send(await format_fuzzy_results(ctx, fuzzy_commands, embed=False))
-            await bot._delete_delay(ctx)
         elif isinstance(error, commands.BotMissingPermissions):
             if bin(error.missing.value).count("1") == 1:  # Only one perm missing
                 plural = ""

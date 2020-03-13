@@ -903,7 +903,7 @@ class Core(commands.Cog, CoreLogic):
             for page in pagify(settings):
                 await ctx.send(box(page))
 
-    @checks.mod_or_permissions(administrator=True)
+    @checks.guildowner_or_permissions(administrator=True)
     @_set.command(name="deletedelay")
     @commands.guild_only()
     async def deletedelay(self, ctx: commands.Context, time: int = None):
