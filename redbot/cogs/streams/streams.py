@@ -157,13 +157,11 @@ class Streams(commands.Cog):
                         data["message"],
                     )
                 else:
-                    log.error(
-                        "Twitch OAuth2 API request failed with status code %s", req.status
-                    )
-                
+                    log.error("Twitch OAuth2 API request failed with status code %s", req.status)
+
                 if req.status != 200:
                     return
-                    
+
         self.ttv_bearer_cache = data
         self.ttv_bearer_cache["expires_at"] = datetime.now().timestamp() + data.get("expires_in")
 
