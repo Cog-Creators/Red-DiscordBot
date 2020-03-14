@@ -134,9 +134,37 @@ class Streams(commands.Cog):
                     "grant_type": "client_credentials",
                 },
             ) as req:
+                try:
+                    data = await req.json()
+                except aiohttp.ContentTypeError:
+                    data = {}
+
+                if req.status == 200:
+                    pass
+                elif req.status == 400 and data.get("message") == "invalid client":
+                    log.error(
+                        "Twitch API request failed authentication: set Client ID is invalid."
+                    )
+                    return
+                elif req.status == 403 and data.get("message") == "invalid client secret":
+                    log.error(
+                        "Twitch API request failed authentication: set Client Secret is invalid."
+                    )
+                elif "message" in data:
+                    log.error(
+                        "Twitch OAuth2 API request failed with status code %s"
+                        " and error message: %s",
+                        req.status,
+                        data["message"],
+                    )
+                else:
+                    log.error(
+                        "Twitch OAuth2 API request failed with status code %s", req.status
+                    )
+                
                 if req.status != 200:
                     return
-                data = await req.json()
+                    
         self.ttv_bearer_cache = data
         self.ttv_bearer_cache["expires_at"] = datetime.now().timestamp() + data.get("expires_in")
 
