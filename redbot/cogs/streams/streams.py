@@ -145,7 +145,6 @@ class Streams(commands.Cog):
                     log.error(
                         "Twitch API request failed authentication: set Client ID is invalid."
                     )
-                    return
                 elif req.status == 403 and data.get("message") == "invalid client secret":
                     log.error(
                         "Twitch API request failed authentication: set Client Secret is invalid."
