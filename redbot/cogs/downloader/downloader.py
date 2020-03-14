@@ -520,7 +520,7 @@ class Downloader(commands.Cog):
             await ctx.send(
                 _(
                     "Something went wrong trying to add that repo."
-                    " Your repo name might have an invalid character."
+                    " See logs for more information."
                 )
             )
         else:
