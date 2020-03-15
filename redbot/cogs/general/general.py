@@ -355,6 +355,7 @@ class General(commands.Cog):
                 "DISCOVERABLE": _("Server Discovery"),
                 "FEATURABLE": _("Featurable"),
                 "PUBLIC": _("Public"),
+                "PUBLIC_DISABLED": _("Public disabled"),
                 "INVITE_SPLASH": _("Splash Invite"),
                 "VIP_REGIONS": _("VIP Voice Servers"),
                 "VANITY_URL": _("Vanity URL"),
