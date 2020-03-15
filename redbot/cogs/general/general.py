@@ -245,12 +245,12 @@ class General(commands.Cog):
         """
         Show server information.
     
-        `details`: Toggle it to `True` to show more informations about this server.
+        `details`: Toggle it to `True` to show more information about this server.
         Default to False.
         """
         guild = ctx.guild
         passed = (ctx.message.created_at - guild.created_at).days
-        created_at = _("Since {date}. That's over {num} days ago!").format(
+        created_at = _("Created on {date}. That's over {num} days ago!").format(
             date=guild.created_at.strftime("%d %b %Y %H:%M"), num=humanize_number(passed),
         )
         online = humanize_number(
@@ -293,14 +293,16 @@ class General(commands.Cog):
             online_stats = {
                 _("Humans: "): lambda x: not x.bot,
                 _(" • Bots: "): lambda x: x.bot,
-                "📗": lambda x: x.status == discord.Status.online,
-                "📙": lambda x: x.status == discord.Status.idle,
-                "📕": lambda x: x.status == discord.Status.idle,
-                "📓": lambda x: x.status == discord.Status.offline,
-                "🎥": lambda x: x.activity == discord.Streaming,
-                "📱": lambda x: x.is_on_mobile(),
+                "\N{LARGE GREEN CIRCLE}": lambda x: x.status == discord.Status.online,
+                "\N{LARGE ORANGE CIRCLE}": lambda x: x.status == discord.Status.idle,
+                "\N{LARGE RED CIRCLE}": lambda x: x.status == discord.Status.do_not_disturb,
+                "\N{MEDIUM WHITE CIRCLE}": lambda x: x.status == discord.Status.offline,
+                "\N{LARGE PURPLE CIRCLE}": lambda x: x.activity == discord.Streaming,
+                "\N{MOBILE PHONE}": lambda x: x.is_on_mobile(),
             }
-            member_msg = _("Total Users: {}\n").format(bold(f"{online}/{total_users}"))
+            member_msg = _("Users online: **{online}/{total_users}**\n").format(
+                online=online, total_users=total_users
+            )
             count = 1
             for emoji, value in online_stats.items():
                 try:
@@ -343,7 +345,7 @@ class General(commands.Cog):
                 "none": _("0 - None"),
                 "low": _("1 - Low"),
                 "medium": _("2 - Medium"),
-                "high": _("3 - Hard"),
+                "high": _("3 - High"),
                 "extreme": _("4 - Extreme"),
             }
 
@@ -351,20 +353,20 @@ class General(commands.Cog):
                 "PARTNERED": _("Partnered"),
                 "VERIFIED": _("Verified"),
                 "DISCOVERABLE": _("Server Discovery"),
+                "FEATURABLE": _("Featurable"),
                 "PUBLIC": _("Public"),
                 "INVITE_SPLASH": _("Splash Invite"),
                 "VIP_REGIONS": _("VIP Voice Servers"),
                 "VANITY_URL": _("Vanity URL"),
                 "MORE_EMOJI": _("More Emojis"),
                 "COMMERCE": _("Commerce"),
-                "LURKABLE": _("Lurkable"),
                 "NEWS": _("News Channels"),
                 "ANIMATED_ICON": _("Animated Icon"),
                 "BANNER": _("Banner Image"),
                 "MEMBER_LIST_DISABLED": _("Member list disabled"),
             }
             guild_features_list = [
-                f"✅ {name}" for feature, name in features.items() if feature in set(guild.features)
+                f"✅ {name}" for feature, name in features.items() if feature in guild.features
             ]
 
             joined_on = _(
@@ -375,7 +377,10 @@ class General(commands.Cog):
                 since_join=humanize_number((ctx.message.created_at - guild.me.joined_at).days),
             )
 
-            data = discord.Embed(description=created_at, colour=await ctx.embed_colour())
+            data = discord.Embed(
+                description=created_at + ("\n" + guild.description if guild.description else ""),
+                colour=await ctx.embed_colour(),
+            )
             data.set_author(
                 name=guild.name,
                 icon_url="https://cdn.discordapp.com/emojis/457879292152381443.png"
@@ -384,11 +389,8 @@ class General(commands.Cog):
                 if "PARTNERED" in guild.features
                 else discord.Embed.Empty,
             )
-            data.set_thumbnail(
-                url=guild.icon_url
-                if guild.icon_url
-                else "https://cdn.discordapp.com/embed/avatars/1.png"
-            )
+            if guild.icon_url:
+                data.set_thumbnail(url=guild.icon_url)
             data.add_field(name=_("Members:"), value=member_msg)
             data.add_field(
                 name=_("Channels:"),
@@ -403,7 +405,7 @@ class General(commands.Cog):
                     "Owner: {owner}\nRegion: {region}\nVerif. level: {verif}\nServer ID: {id}"
                 ).format(
                     owner=bold(str(guild.owner)),
-                    region=bold(vc_regions[str(guild.region)]),
+                    region=f"**{vc_regions.get(str(guild.region)) or str(guild.region)}**",
                     verif=bold(verif[str(guild.verification_level)]),
                     id=bold(str(guild.id)),
                 ),
@@ -412,14 +414,14 @@ class General(commands.Cog):
             data.add_field(
                 name=_("Misc:"),
                 value=_(
-                    "AFK channel: {afk_chan}\nAFK Timeout: {afk_timeout}\nCustom emojis: {emojis}\nRoles: {roles}"
+                    "AFK channel: {afk_chan}\nAFK Timeout: {afk_timeout}\nCustom emojis: {emoji_count}\nRoles: {role_count}"
                 ).format(
                     afk_chan=bold(str(guild.afk_channel))
                     if guild.afk_channel
                     else bold(_("Not set")),
                     afk_timeout=bold(humanize_timedelta(seconds=guild.afk_timeout)),
-                    emojis=bold(humanize_number(len(guild.emojis))),
-                    roles=bold(humanize_number(len(guild.roles))),
+                    emoji_count=bold(humanize_number(len(guild.emojis))),
+                    role_count=bold(humanize_number(len(guild.roles))),
                 ),
                 inline=False,
             )
