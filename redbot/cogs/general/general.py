@@ -262,7 +262,7 @@ class General(commands.Cog):
         if not details:
             data = discord.Embed(description=created_at, colour=await ctx.embed_colour())
             data.add_field(name=_("Region"), value=str(guild.region))
-            data.add_field(name=_("Users"), value=f"{online}/{total_users}")
+            data.add_field(name=_("Users online"), value=f"{online}/{total_users}")
             data.add_field(name=_("Text Channels"), value=text_channels)
             data.add_field(name=_("Voice Channels"), value=voice_channels)
             data.add_field(name=_("Roles"), value=humanize_number(len(guild.roles)))
@@ -379,7 +379,7 @@ class General(commands.Cog):
             )
 
             data = discord.Embed(
-                description=created_at + ("\n" + guild.description if guild.description else ""),
+                description=(f"{guild.description}\n\n" if guild.description else "") + created_at,
                 colour=await ctx.embed_colour(),
             )
             data.set_author(
@@ -398,12 +398,12 @@ class General(commands.Cog):
                 value=_(
                     "\N{SPEECH BALLOON} Text: {text}\n"
                     "\N{SPEAKER WITH THREE SOUND WAVES} Voice: {voice}"
-                ).format(text=bold(text_channels), voice=bold(voice_channels),),
+                ).format(text=bold(text_channels), voice=bold(voice_channels)),
             )
             data.add_field(
                 name=_("Utility:"),
                 value=_(
-                    "Owner: {owner}\nRegion: {region}\nVerif. level: {verif}\nServer ID: {id}"
+                    "Owner: {owner}\nVoice region: {region}\nVerif. level: {verif}\nServer ID: {id}"
                 ).format(
                     owner=bold(str(guild.owner)),
                     region=f"**{vc_regions.get(str(guild.region)) or str(guild.region)}**",
@@ -415,7 +415,7 @@ class General(commands.Cog):
             data.add_field(
                 name=_("Misc:"),
                 value=_(
-                    "AFK channel: {afk_chan}\nAFK Timeout: {afk_timeout}\nCustom emojis: {emoji_count}\nRoles: {role_count}"
+                    "AFK channel: {afk_chan}\nAFK timeout: {afk_timeout}\nCustom emojis: {emoji_count}\nRoles: {role_count}"
                 ).format(
                     afk_chan=bold(str(guild.afk_channel))
                     if guild.afk_channel
