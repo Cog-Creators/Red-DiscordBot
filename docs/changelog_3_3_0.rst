@@ -14,6 +14,11 @@ Core Commands
 
 - ``[p]set game`` no longer errors when trying to clear the status (:issue:`3630`, :issue:`3628`)
 
+Streams
+*******
+
+- Fixed an error that happened when no game was set on Twitch stream (:issue:`3631`)
+
 
 Developer changelog
 -------------------
