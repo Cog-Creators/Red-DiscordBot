@@ -4,7 +4,7 @@ Redbot 3.3.3 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`jack1142`, :ghuser:`Stonedestroyer`
+| :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`Stonedestroyer`
 
 End-user changelog
 ------------------
@@ -13,6 +13,11 @@ Core Commands
 *************
 
 - ``[p]set game`` no longer errors when trying to clear the status (:issue:`3630`, :issue:`3628`)
+
+Mod
+***
+
+- Muting no longer fails if user leaves while applying overwrite (:issue:`3627`)
 
 Streams
 *******
