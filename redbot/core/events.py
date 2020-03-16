@@ -84,7 +84,7 @@ def init_events(bot, cli_flags):
         INFO.append("{} cogs with {} commands".format(len(bot.cogs), len(bot.commands)))
 
         outdated_red_message = ""
-        with contextlib.suppress(aiohttp.ClientError, discord.HTTPException):
+        with contextlib.suppress(aiohttp.ClientError, asyncio.TimeoutError):
             async with aiohttp.ClientSession() as session:
                 async with session.get("https://pypi.org/pypi/red-discordbot/json") as r:
                     data = await r.json()
