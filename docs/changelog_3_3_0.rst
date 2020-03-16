@@ -19,6 +19,11 @@ Mod
 
 - Muting no longer fails if user leaves while applying overwrite (:issue:`3627`)
 
+Permissions
+***********
+
+- Commands for setting default rules now error when user tries to deny access to command designated as being always available (:issue:`3504`, :issue:`3465`)
+
 Streams
 *******
 
