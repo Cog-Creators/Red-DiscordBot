@@ -290,8 +290,9 @@ class General(commands.Cog):
                 return "{0:.1f}{1}".format(num, "YB")
 
             shard = (
-                _("\nShard ID: **{}/{}**").format(
-                    humanize_number(guild.shard_id + 1), humanize_number(self.bot.shard_count)
+                _("\nShard ID: **{shard_id}/{shard_count}**").format(
+                    shard_id=humanize_number(guild.shard_id + 1),
+                    shard_count=humanize_number(self.bot.shard_count),
                 )
                 if self.bot.shard_count > 1
                 else ""
