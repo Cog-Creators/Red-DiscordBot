@@ -13,11 +13,13 @@ Core Commands
 *************
 
 - ``[p]set game`` no longer errors when trying to clear the status (:issue:`3630`, :issue:`3628`)
+- All owner notifcations in Core now use proper prefixes in messages (:issue:`3632`)
 
 Mod
 ***
 
 - Muting no longer fails if user leaves while applying overwrite (:issue:`3627`)
+- Fixed error that happened when Mod cog was loaded for the first time during bot startup (:issue:`3632`, :issue:`3626`)
 
 Permissions
 ***********
