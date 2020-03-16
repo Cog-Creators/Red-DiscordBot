@@ -4,7 +4,7 @@ Redbot 3.3.3 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Stonedestroyer`
+| :ghuser:`jack1142`, :ghuser:`Stonedestroyer`
 
 End-user changelog
 ------------------
@@ -28,6 +28,7 @@ Documentation changes
 Miscellaneous
 -------------
 
+- **Utility Functions** - `redbot.core.utils.menus.menu()` now checks permissions *before* trying to clear reactions (:issue:`3589`, :issue:`3145`)
 
 
 Redbot 3.3.2 (2020-02-28)
