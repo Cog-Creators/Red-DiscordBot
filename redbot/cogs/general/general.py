@@ -292,7 +292,7 @@ class General(commands.Cog):
             shard_info = (
                 _("\nShard ID: **{shard_id}/{shard_count}**").format(
                     shard_id=humanize_number(guild.shard_id + 1),
-                    shard_count=humanize_number(self.bot.shard_count),
+                    shard_count=humanize_number(ctx.bot.shard_count),
                 )
                 if ctx.bot.shard_count > 1
                 else ""
