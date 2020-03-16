@@ -4,7 +4,7 @@ Redbot 3.3.3 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`Stonedestroyer`
+| :ghuser:`Ianardo-DiCaprio`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`Stonedestroyer`
 
 End-user changelog
 ------------------
@@ -30,6 +30,13 @@ Streams
 *******
 
 - Fixed an error that happened when no game was set on Twitch stream (:issue:`3631`)
+
+Warnings
+********
+
+- Sending warnings to warned user can now be disabled with ``[p]warnset toggledm`` command (:issue:`2929`, :issue:`2800`)
+- Added ``[p]warnset warnchannel`` command that allows to set a channel where warnings should be sent to instead of the channel command was called in (:issue:`2929`, :issue:`2800`)
+- Added ``[p]warnset togglechannel`` command that allows to disable sending warn message in guild channel (:issue:`2929`, :issue:`2800`)
 
 
 Developer changelog
