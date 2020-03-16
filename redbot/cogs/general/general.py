@@ -289,6 +289,13 @@ class General(commands.Cog):
                     num /= 1000.0
                 return "{0:.1f}{1}".format(num, "YB")
 
+            shard = (
+                _("\nShard ID: **{}/{}**").format(
+                    humanize_number(guild.shard_id + 1), humanize_number(self.bot.shard_count)
+                )
+                if self.bot.shard_count > 1
+                else ""
+            )
             # Logic from: https://github.com/TrustyJAID/Trusty-cogs/blob/master/serverstats/serverstats.py#L159
             online_stats = {
                 _("Humans: "): lambda x: not x.bot,
@@ -403,12 +410,13 @@ class General(commands.Cog):
             data.add_field(
                 name=_("Utility:"),
                 value=_(
-                    "Owner: {owner}\nVoice region: {region}\nVerif. level: {verif}\nServer ID: {id}"
+                    "Owner: {owner}\nVoice region: {region}\nVerif. level: {verif}\nServer ID: {id}{shard}"
                 ).format(
                     owner=bold(str(guild.owner)),
                     region=f"**{vc_regions.get(str(guild.region)) or str(guild.region)}**",
                     verif=bold(verif[str(guild.verification_level)]),
                     id=bold(str(guild.id)),
+                    shard=shard,
                 ),
                 inline=False,
             )
