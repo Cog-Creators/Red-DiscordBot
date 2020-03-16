@@ -294,7 +294,7 @@ class General(commands.Cog):
                     shard_id=humanize_number(guild.shard_id + 1),
                     shard_count=humanize_number(self.bot.shard_count),
                 )
-                if self.bot.shard_count > 1
+                if ctx.bot.shard_count > 1
                 else ""
             )
             # Logic from: https://github.com/TrustyJAID/Trusty-cogs/blob/master/serverstats/serverstats.py#L159
