@@ -1,1 +1,0 @@
-Move ignore commands and checks into core.

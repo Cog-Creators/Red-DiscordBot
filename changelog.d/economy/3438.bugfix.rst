@@ -1,1 +1,0 @@
-Changes next_payday to last_payday. last_payday stores the latest time the command runned successfully, allows the command to dynamicly change with the PAYDAY_TIME variable, by checking if last_payday + PAYDAY_TIME >= current time.
