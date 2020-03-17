@@ -200,13 +200,13 @@ def init_events(bot, cli_flags):
                 await ctx.send(await format_fuzzy_results(ctx, fuzzy_commands, embed=False))
         elif isinstance(error, commands.BotMissingPermissions):
             if bin(error.missing.value).count("1") == 1:  # Only one perm missing
-                msg = _(
-                    "I require the {permission} permission to execute that command."
-                ).format(permission=format_perms_list(error.missing))
+                msg = _("I require the {permission} permission to execute that command.").format(
+                    permission=format_perms_list(error.missing)
+                )
             else:
-                msg = _(
-                    "I require {permission_list} permissions to execute that command."
-                ).format(permission_list=format_perms_list(error.missing))
+                msg = _("I require {permission_list} permissions to execute that command.").format(
+                    permission_list=format_perms_list(error.missing)
+                )
             await ctx.send(msg)
         elif isinstance(error, commands.UserFeedbackCheckFailure):
             if error.message:
