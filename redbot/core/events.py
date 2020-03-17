@@ -151,8 +151,7 @@ def init_events(bot, cli_flags):
             await ctx.send_help()
         elif isinstance(error, commands.ArgParserFailure):
             msg = _("`{user_input}` is not a valid value for `{command}`").format(
-                user_input=error.user_input,
-                command=error.cmd,
+                user_input=error.user_input, command=error.cmd,
             )
             if error.custom_help_msg:
                 msg += f"\n{error.custom_help_msg}"
