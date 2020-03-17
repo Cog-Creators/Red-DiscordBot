@@ -1,4 +1,5 @@
 from random import shuffle
+from typing import Optional
 
 import aiohttp
 
@@ -42,7 +43,7 @@ class Image(commands.Cog):
         pass
 
     @_imgur.command(name="search")
-    async def imgur_search(self, ctx, *, term: str):
+    async def imgur_search(self, ctx, amount: Optional[int] = 1, *, term: str):
         """Search Imgur for the specified term.
 
         Returns up to 3 results.
@@ -68,7 +69,7 @@ class Image(commands.Cog):
                 return
             shuffle(results)
             msg = _("Search results...\n")
-            for r in results[:3]:
+            for r in results[:amount]:
                 msg += r["gifv"] if "gifv" in r else r["link"]
                 msg += "\n"
             await ctx.send(msg)
