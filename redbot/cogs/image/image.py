@@ -43,11 +43,15 @@ class Image(commands.Cog):
         pass
 
     @_imgur.command(name="search")
-    async def imgur_search(self, ctx, amount: Optional[int] = 1, *, term: str):
+    async def imgur_search(self, ctx, count: Optional[int] = 1, *, term: str):
         """Search Imgur for the specified term.
 
-        Returns up to 3 results.
+        Use `count` to choose how many images should be returned.
+        Command can return up to 5 images.
         """
+        if 1 <= amount <= 5:
+            await ctx.send(_("Image count has to be between 1 and 5."))
+            return
         url = self.imgur_base_url + "gallery/search/time/all/0"
         params = {"q": term}
         imgur_client_id = (await ctx.bot.get_shared_api_tokens("imgur")).get("client_id")
@@ -69,7 +73,7 @@ class Image(commands.Cog):
                 return
             shuffle(results)
             msg = _("Search results...\n")
-            for r in results[:amount]:
+            for r in results[:count]:
                 msg += r["gifv"] if "gifv" in r else r["link"]
                 msg += "\n"
             await ctx.send(msg)
