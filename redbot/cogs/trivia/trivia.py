@@ -22,6 +22,7 @@ UNIQUE_ID = 0xB3C0E453
 
 _ = Translator("Trivia", __file__)
 
+
 def finite_float(arg: str) -> float:
     try:
         ret = float(arg)
