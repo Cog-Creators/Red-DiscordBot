@@ -49,7 +49,7 @@ class Image(commands.Cog):
         Use `count` to choose how many images should be returned.
         Command can return up to 5 images.
         """
-        if 1 <= amount <= 5:
+        if 1 <= count <= 5:
             await ctx.send(_("Image count has to be between 1 and 5."))
             return
         url = self.imgur_base_url + "gallery/search/time/all/0"
