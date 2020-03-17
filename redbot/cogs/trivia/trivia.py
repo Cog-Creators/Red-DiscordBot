@@ -1,9 +1,12 @@
 """Module for Trivia cog."""
+import math
 import pathlib
 from collections import Counter
 from typing import List
+
 import yaml
 import discord
+
 from redbot.core import commands
 from redbot.core import Config, checks
 from redbot.core.data_manager import cog_data_path
@@ -18,6 +21,15 @@ __all__ = ["Trivia", "UNIQUE_ID", "get_core_lists"]
 UNIQUE_ID = 0xB3C0E453
 
 _ = Translator("Trivia", __file__)
+
+def finite_float(arg: str) -> float:
+    try:
+        ret = float(arg)
+    except ValueError:
+        raise commands.BadArgument(_("`{arg}` is not a number.").format(arg=arg))
+    if not math.isfinite(ret):
+        raise commands.BadArgument(_("`{arg}` is not a finite number.").format(arg=ret))
+    return ret
 
 
 class InvalidListError(Exception):
@@ -81,7 +93,7 @@ class Trivia(commands.Cog):
         await ctx.send(_("Done. Points required to win set to {num}.").format(num=score))
 
     @triviaset.command(name="timelimit")
-    async def triviaset_timelimit(self, ctx: commands.Context, seconds: float):
+    async def triviaset_timelimit(self, ctx: commands.Context, seconds: finite_float):
         """Set the maximum seconds permitted to answer a question."""
         if seconds < 4.0:
             await ctx.send(_("Must be at least 4 seconds."))
@@ -91,7 +103,7 @@ class Trivia(commands.Cog):
         await ctx.send(_("Done. Maximum seconds to answer set to {num}.").format(num=seconds))
 
     @triviaset.command(name="stopafter")
-    async def triviaset_stopafter(self, ctx: commands.Context, seconds: float):
+    async def triviaset_stopafter(self, ctx: commands.Context, seconds: finite_float):
         """Set how long until trivia stops due to no response."""
         settings = self.conf.guild(ctx.guild)
         if seconds < await settings.delay():
@@ -150,7 +162,7 @@ class Trivia(commands.Cog):
 
     @triviaset.command(name="payout")
     @check_global_setting_admin()
-    async def triviaset_payout_multiplier(self, ctx: commands.Context, multiplier: float):
+    async def triviaset_payout_multiplier(self, ctx: commands.Context, multiplier: finite_float):
         """Set the payout multiplier.
 
         This can be any positive decimal number. If a user wins trivia when at
