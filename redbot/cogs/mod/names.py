@@ -75,6 +75,8 @@ class ModInfo(MixinMeta):
             return None, discord.ActivityType.custom
         a = a[0]
         c_status = None
+        if not a.name and not a.emoji:
+        	return None, discord.ActivityType.custom
         if not a.name:
             c_status = self.bot.get_emoji(a.emoji.id)
         if c_status:
