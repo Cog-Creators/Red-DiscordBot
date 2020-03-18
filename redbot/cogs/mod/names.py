@@ -69,6 +69,65 @@ class ModInfo(MixinMeta):
             else:
                 await ctx.send(_("Done."))
 
+    def handle_custom(self, user):
+        a = [c for c in user.activities if c.type == discord.ActivityType.custom]
+        if not a:
+            return None, discord.ActivityType.custom
+        a = a[0]
+        c_status = None
+        if not a.name:
+            c_status = self.bot.get_emoji(a.emoji.id)
+        if c_status:
+            pass
+        if a.name and a.emoji:
+            c_status = f"{a.emoji} {a.name}"
+        elif a.emoji and not c_status:
+            c_status = f"{a.emoji}"
+        elif a.name:
+            c_status = a.name
+        else:
+            c_status = None
+        return c_status, discord.ActivityType.custom
+
+    def handle_playing(self, user):
+        p_acts = [c for c in user.activities if c.type == discord.ActivityType.playing]
+        p_act = p_acts[0] if p_acts else None
+        act = p_act.name if p_act and p_act.name else None
+        return act, discord.ActivityType.playing
+    def handle_streaming(self, user):
+        s_acts = [c for c in user.activities if c.type == discord.ActivityType.streaming]
+        s_act = s_acts[0] if s_acts else None
+        act = f"[{s_act.name}{' | ' if s_act.game else ''}{s_act.game or ''}]({s_act.url})" if s_act and s_act.name and hasattr(s_act, "game") else s_act.name if s_act and s_act.name else None
+        return act, discord.ActivityType.streaming
+    def handle_listening(self, user):
+        l_acts = [c for c in user.activities if c.type == discord.ActivityType.listening]
+        l_act = l_acts[0] if l_acts else None
+        act = f"[{l_act.title}{' | ' if l_act.artists[0] else ''}{l_act.artists[0] or ''}](https://open.spotify.com/track/{l_act.track_id})" if l_act and hasattr(l_act, "title") else l_act.name if l_act and l_act.name else None
+        return act, discord.ActivityType.listening
+    def handle_watching(self, user):
+        w_acts = [c for c in user.activities if c.type == discord.ActivityType.watching]
+        w_act = w_acts[0] if w_acts else None
+        act = w_act.name if w_act else None
+        return act, discord.ActivityType.watching
+
+    def get_status_string(self, user):
+        string = ""
+        for a in [self.handle_custom(user), self.handle_playing(user), self.handle_listening(user), self.handle_streaming(user), self.handle_watching(user)]:
+            status_string, status_type= a
+            if status_string is None:
+                continue
+            if status_type == discord.ActivityType.custom:
+                string += f"Custom: {status_string}\n"
+            elif status_type == discord.ActivityType.playing:
+                string += f"Playing: {status_string}\n"
+            elif status_type == discord.ActivityType.streaming:
+                string += f"Streaming: {status_string}\n"
+            elif status_type == discord.ActivityType.listening:
+                string += f"Listening: {status_string}\n"
+            elif status_type == discord.ActivityType.watching:
+                string += f"Watching: {status_string}\n"
+        return string
+    
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
@@ -113,16 +172,7 @@ class ModInfo(MixinMeta):
         joined_on = _("{}\n({} days ago)").format(user_joined, since_joined)
 
         activity = _("Chilling in {} status").format(user.status)
-        if user.activity is None:  # Default status
-            pass
-        elif user.activity.type == discord.ActivityType.playing:
-            activity = _("Playing {}").format(user.activity.name)
-        elif user.activity.type == discord.ActivityType.streaming:
-            activity = _("Streaming [{}]({})").format(user.activity.name, user.activity.url)
-        elif user.activity.type == discord.ActivityType.listening:
-            activity = _("Listening to {}").format(user.activity.name)
-        elif user.activity.type == discord.ActivityType.watching:
-            activity = _("Watching {}").format(user.activity.name)
+        status_string = self.get_status_string(user)
 
         if roles:
 
@@ -160,7 +210,8 @@ class ModInfo(MixinMeta):
         else:
             role_str = None
 
-        data = discord.Embed(description=activity, colour=user.colour)
+        data = discord.Embed(description=status_string or activity, colour=user.colour)
+            
         data.add_field(name=_("Joined Discord on"), value=created_on)
         data.add_field(name=_("Joined this server on"), value=joined_on)
         if role_str is not None:
