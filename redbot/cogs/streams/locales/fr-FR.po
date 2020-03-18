@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-03-05 12:09+0000\n"
-"PO-Revision-Date: 2020-03-05 12:12\n"
+"PO-Revision-Date: 2020-03-12 12:12\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -137,11 +137,11 @@ msgstr "Définir les tokens pour accéder aux streams."
 #: redbot/cogs/streams/streams.py:393
 #, docstring
 msgid "Set stream check refresh time."
-msgstr ""
+msgstr "Définir le temps de rafraîchissement de la vérification des streams."
 
 #: redbot/cogs/streams/streams.py:395
 msgid "You cannot set the refresh timer to less than 60 seconds"
-msgstr ""
+msgstr "Vous ne pouvez pas régler le temps de rafraîchissement à moins de 60 secondes"
 
 #: redbot/cogs/streams/streams.py:405
 #, docstring

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-20 12:09+0000\n"
-"PO-Revision-Date: 2020-02-27 12:12\n"
+"PO-Revision-Date: 2020-03-12 12:12\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -186,7 +186,7 @@ msgstr "Vous avez reçu un avertissement dans {guild_name}."
 
 #: redbot/cogs/warnings/warnings.py:319
 msgid "{reason}\\n\\nUse `{prefix}unwarn {user} {message}` to remove this warning."
-msgstr ""
+msgstr "{reason}\\n\\nUtilisez `{prefix}unwarn {user} {message}` pour retirer cet avertissement."
 
 #: redbot/cogs/warnings/warnings.py:322
 msgid "{description}\\nPoints: {points}"
@@ -199,7 +199,7 @@ msgstr "L'utilisateur {user} a été averti."
 #: redbot/cogs/warnings/warnings.py:348
 #, docstring
 msgid "List the warnings for the specified user."
-msgstr ""
+msgstr "Lister les avertissements pour l'utilisateur spécifié."
 
 #: redbot/cogs/warnings/warnings.py:361
 msgid "That user has no warnings!"
@@ -211,7 +211,7 @@ msgstr "Modérateur inconnu ({})"
 
 #: redbot/cogs/warnings/warnings.py:366
 msgid "{num_points} point warning {reason_name} issued by {user} for {description}\\n"
-msgstr ""
+msgstr "{num_points} points d'avertissement {reason_name} émis par {user} pour {description}\\n"
 
 #: redbot/cogs/warnings/warnings.py:377 redbot/cogs/warnings/warnings.py:407
 msgid "Warnings for {user}"
@@ -220,7 +220,7 @@ msgstr "Avertissements pour {user}"
 #: redbot/cogs/warnings/warnings.py:383
 #, docstring
 msgid "List warnings for yourself."
-msgstr ""
+msgstr "Liste les avertissements pour vous."
 
 #: redbot/cogs/warnings/warnings.py:391
 msgid "You have no warnings!"

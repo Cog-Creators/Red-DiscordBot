@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-13 12:13\n"
+"PO-Revision-Date: 2020-03-12 12:12\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -120,7 +120,7 @@ msgstr "{author.mention} Peut-être supérieur à 1 ? ;P"
 
 #: redbot/cogs/general/general.py:105
 msgid "{author.mention} Max allowed number is {maxamount}."
-msgstr ""
+msgstr "{author.mention} Le nombre maximum autorisé est {maxamount}."
 
 #: redbot/cogs/general/general.py:112
 #, docstring

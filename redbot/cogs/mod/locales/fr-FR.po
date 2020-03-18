@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-03-05 12:09+0000\n"
-"PO-Revision-Date: 2020-03-05 12:12\n"
+"PO-Revision-Date: 2020-03-12 12:12\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -252,7 +252,7 @@ msgstr ""
 
 #: redbot/cogs/mod/mutes.py:26
 msgid "The channel I tried to mute the user in isn't found."
-msgstr ""
+msgstr "Le salon dans lequel j'ai essayé de rendre muet cet utilisateur est introuvable."
 
 #: redbot/cogs/mod/mutes.py:53
 msgid "That user is not in a voice channel."
@@ -614,11 +614,11 @@ msgstr ""
 
 #: redbot/cogs/mod/settings.py:203
 msgid "Users unbanned with `{command}` will be reinvited."
-msgstr ""
+msgstr "Les utilisateurs débanni avec `{command}` seront réinvités."
 
 #: redbot/cogs/mod/settings.py:210
 msgid "Users unbanned with `{command}` will not be reinvited."
-msgstr ""
+msgstr "Les utilisateurs débanni avec `{command}` ne seront pas réinvités."
 
 #: redbot/cogs/mod/settings.py:218
 #, docstring
