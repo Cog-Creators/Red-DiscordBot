@@ -361,19 +361,30 @@ class Warnings(commands.Cog):
 
         await warning_points_add_check(self.config, ctx, user, current_point_count)
         dm = await self.config.guild(ctx.guild).toggle_dm()
+        dm_failed = False
         if dm:
             em = discord.Embed(
                 title=_("Warning from {user}").format(user=ctx.author),
                 description=reason_type["description"],
             )
             em.add_field(name=_("Points"), value=str(reason_type["points"]))
-            with contextlib.suppress(discord.HTTPException):
+            try:
                 await user.send(
                     _("You have received a warning in {guild_name}.").format(
                         guild_name=ctx.guild.name
                     ),
                     embed=em,
                 )
+            except discord.HTTPException:
+                dm_failed = True
+
+        if dm_failed:
+            await ctx.send(
+                _(
+                    "A warning for {user} has been issued,"
+                    " but I wasn't able to send them a warn message."
+                ).format(user=user.mention)
+            )
 
         toggle_channel = await self.config.guild(guild).toggle_channel()
         if toggle_channel:
@@ -384,17 +395,22 @@ class Warnings(commands.Cog):
             em.add_field(name=_("Points"), value=str(reason_type["points"]))
             warn_channel = self.bot.get_channel(await self.config.guild(guild).warn_channel())
             if warn_channel:
-                channel = warn_channel
-                await ctx.tick()
-            else:
-                channel = ctx.channel
-            if channel.permissions_for(guild.me).send_messages:
-                with contextlib.suppress(discord.HTTPException):
-                    await channel.send(
+                if channel.permissions_for(guild.me).send_messages:
+                    with contextlib.suppress(discord.HTTPException):
+                        await channel.send(
+                            _("{user} has been warned.").format(user=user.mention), embed=em,
+                        )
+
+            if not dm_failed:
+                if warn_channel:
+                    await ctx.tick()
+                else:
+                    await ctx.send(
                         _("{user} has been warned.").format(user=user.mention), embed=em
                     )
         else:
-            await ctx.tick()
+            if not dm_failed:
+                await ctx.tick()
         try:
             reason_msg = _(
                 "{reason}\n\nUse `{prefix}unwarn {user} {message}` to remove this warning."
