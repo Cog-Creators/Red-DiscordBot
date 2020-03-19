@@ -12,7 +12,7 @@ from redbot.core import Config, checks
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, pagify, bold
-from redbot.cogs.bank import check_global_setting_admin
+from redbot.cogs.bank import is_owner_if_bank_global
 from .checks import trivia_stop_check
 from .converters import finite_float
 from .log import LOG
@@ -153,8 +153,9 @@ class Trivia(commands.Cog):
         else:
             await ctx.send(_("Alright, I won't reveal the answer to the questions anymore."))
 
+    @is_owner_if_bank_global()
+    @checks.admin_or_permissions(manage_guild=True)
     @triviaset.command(name="payout")
-    @check_global_setting_admin()
     async def triviaset_payout_multiplier(self, ctx: commands.Context, multiplier: finite_float):
         """Set the payout multiplier.
 
