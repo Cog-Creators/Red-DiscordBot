@@ -13,6 +13,7 @@ from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, pagify, bold
 from redbot.cogs.bank import check_global_setting_admin
+from .converters import finite_float
 from .log import LOG
 from .session import TriviaSession
 
@@ -21,16 +22,6 @@ __all__ = ["Trivia", "UNIQUE_ID", "get_core_lists"]
 UNIQUE_ID = 0xB3C0E453
 
 _ = Translator("Trivia", __file__)
-
-
-def finite_float(arg: str) -> float:
-    try:
-        ret = float(arg)
-    except ValueError:
-        raise commands.BadArgument(_("`{arg}` is not a number.").format(arg=arg))
-    if not math.isfinite(ret):
-        raise commands.BadArgument(_("`{arg}` is not a finite number.").format(arg=ret))
-    return ret
 
 
 class InvalidListError(Exception):
