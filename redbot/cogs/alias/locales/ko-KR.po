@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-20 12:09+0000\n"
-"PO-Revision-Date: 2020-02-20 12:13\n"
+"PO-Revision-Date: 2020-03-19 12:10\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -30,7 +30,7 @@ msgstr ""
 
 #: redbot/cogs/alias/alias.py:168
 msgid "No prefix found."
-msgstr "프리픽스를 찾을 수 없어요."
+msgstr "접두사가 발견되지 않았습니다."
 
 #: redbot/cogs/alias/alias.py:235
 #, docstring

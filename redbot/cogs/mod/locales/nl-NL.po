@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-03-05 12:09+0000\n"
-"PO-Revision-Date: 2020-03-05 12:11\n"
+"POT-Creation-Date: 2020-03-19 12:08+0000\n"
+"PO-Revision-Date: 2020-03-19 12:09\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -212,13 +212,13 @@ msgstr ""
 msgid "Something went wrong when attempting to send that useran invite. Here's the link so you can try: {invite_link}"
 msgstr ""
 
-#: redbot/cogs/mod/mod.py:46
+#: redbot/cogs/mod/mod.py:48
 #, docstring
 msgid "Moderation tools."
 msgstr "Moderatietools."
 
 #: redbot/cogs/mod/mod.py:109
-msgid "Ignored guilds and channels have been moved. Please use `{prefix}moveignoredchannels` if you were previously using these functions."
+msgid "Ignored guilds and channels have been moved. Please use `[p]moveignoredchannels` if you were previously using these functions."
 msgstr ""
 
 #: redbot/cogs/mod/mod.py:120
