@@ -358,6 +358,9 @@ def humanize_list(
     style : str
         The style to format the list with.
 
+        Note: Not all styles are necessarily available in all locales,
+        see documentation of `babel.lists.format_list` for more details.
+
         standard
             A typical 'and' list for arbitrary placeholders.
             eg. "January, February, and March"
