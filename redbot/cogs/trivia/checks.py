@@ -1,7 +1,8 @@
 from redbot.core import commands
 
 def trivia_stop_check(func):
-    async def predicate(ctx: commands.Context) -> bool:
+    async def predicate(ctx: commands.GuildContext) -> bool:
+        author = ctx.author
         auth_checks = (
             await ctx.bot.is_owner(author),
             await ctx.bot.is_mod(author),
