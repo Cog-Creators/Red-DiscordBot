@@ -1,6 +1,9 @@
 from redbot.core import commands
+from redbot.core.i18n import Translator
 
 __all__ = ("trivia_stop_check",)
+
+_ = Translator("Trivia", __file__)
 
 
 def trivia_stop_check():
