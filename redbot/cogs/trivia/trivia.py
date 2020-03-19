@@ -236,9 +236,6 @@ class Trivia(commands.Cog):
     async def trivia_stop(self, ctx: commands.Context):
         """Stop an ongoing trivia session."""
         session = self._get_trivia_session(ctx.channel)
-        if session is None:
-            await ctx.send(_("There is no ongoing trivia session in this channel."))
-            return
         await session.end_game()
         session.force_stop()
         await ctx.send(_("Trivia stopped."))
