@@ -13,6 +13,7 @@ from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, pagify, bold
 from redbot.cogs.bank import check_global_setting_admin
+from .checks import trivia_stop_check
 from .converters import finite_float
 from .log import LOG
 from .session import TriviaSession
@@ -230,6 +231,7 @@ class Trivia(commands.Cog):
         self.trivia_sessions.append(session)
         LOG.debug("New trivia session; #%s in %d", ctx.channel, ctx.guild.id)
 
+    @trivia_stop_check()
     @trivia.command(name="stop")
     async def trivia_stop(self, ctx: commands.Context):
         """Stop an ongoing trivia session."""
@@ -237,20 +239,9 @@ class Trivia(commands.Cog):
         if session is None:
             await ctx.send(_("There is no ongoing trivia session in this channel."))
             return
-        author = ctx.author
-        auth_checks = (
-            await ctx.bot.is_owner(author),
-            await ctx.bot.is_mod(author),
-            await ctx.bot.is_admin(author),
-            author == ctx.guild.owner,
-            author == session.ctx.author,
-        )
-        if any(auth_checks):
-            await session.end_game()
-            session.force_stop()
-            await ctx.send(_("Trivia stopped."))
-        else:
-            await ctx.send(_("You are not allowed to do that."))
+        await session.end_game()
+        session.force_stop()
+        await ctx.send(_("Trivia stopped."))
 
     @trivia.command(name="list")
     async def trivia_list(self, ctx: commands.Context):
