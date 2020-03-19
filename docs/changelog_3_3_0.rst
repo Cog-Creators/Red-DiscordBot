@@ -42,6 +42,11 @@ Streams
 
 - Fixed an error that happened when no game was set on Twitch stream (:issue:`3631`)
 
+Trivia
+******
+
+- Trivia sessions no longer error on payout when winner's balance would exceed max balance (:issue:`3666`, :issue:`3584`)
+
 Warnings
 ********
 
