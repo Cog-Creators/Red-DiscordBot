@@ -8,7 +8,7 @@ _ = Translator("Trivia", __file__)
 
 def trivia_stop_check():
     async def predicate(ctx: commands.GuildContext) -> bool:
-        session = self._get_trivia_session(ctx.channel)
+        session = ctx.cog._get_trivia_session(ctx.channel)
         if session is None:
             raise commands.CheckFailure(_("There is no ongoing trivia session in this channel."))
 
