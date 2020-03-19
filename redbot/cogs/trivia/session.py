@@ -303,7 +303,10 @@ class TriviaSession:
                 amount = int(multiplier * score)
                 if amount > 0:
                     LOG.debug("Paying trivia winner: %d credits --> %s", amount, str(winner))
-                    await bank.deposit_credits(winner, int(multiplier * score))
+                    try:
+                        await bank.deposit_credits(winner, int(multiplier * score))
+                    except bank.BalanceTooHigh as e:
+                        await bank.set_balance(winner, e.max_balance)
                     await self.ctx.send(
                         _(
                             "Congratulations, {user}, you have received {num} {currency}"
