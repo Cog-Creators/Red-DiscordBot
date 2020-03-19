@@ -5,6 +5,10 @@ __all__ = ("trivia_stop_check",)
 
 def trivia_stop_check():
     async def predicate(ctx: commands.GuildContext) -> bool:
+        session = self._get_trivia_session(ctx.channel)
+        if session is None:
+            raise commands.CheckFailure(_("There is no ongoing trivia session in this channel."))
+
         author = ctx.author
         auth_checks = (
             await ctx.bot.is_owner(author),
