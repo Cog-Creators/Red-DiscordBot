@@ -9,6 +9,11 @@ Redbot 3.3.3 (Unreleased)
 End-user changelog
 ------------------
 
+Core Bot
+********
+
+- Outages of ``pypi.org`` no longer prevent the bot from starting (:issue:`3663`)
+
 Core Commands
 *************
 
