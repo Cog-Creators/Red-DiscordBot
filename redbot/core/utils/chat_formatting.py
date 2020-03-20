@@ -7,7 +7,7 @@ from io import BytesIO
 import discord
 from babel.numbers import format_decimal
 
-from redbot.core.i18n import Translator, get_babel_locale
+from redbot.core.i18n import Translator, get_babel_region
 
 _ = Translator("UtilsChatFormatting", __file__)
 
@@ -473,14 +473,14 @@ def humanize_number(val: Union[int, float], override_locale=None) -> str:
     val : Union[int, float]
         The int/float to be formatted.
     override_locale: Optional[str]
-        A value to override the bots locale.
+        A value to override the bots region.
 
     Returns
     -------
     str
         locale aware formatted number.
     """
-    return format_decimal(val, locale=get_babel_locale(override_locale))
+    return format_decimal(val, locale=get_babel_region(override_locale))
 
 
 def text_to_file(
