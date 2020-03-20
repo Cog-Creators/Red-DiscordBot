@@ -859,6 +859,8 @@ class Downloader(commands.Cog):
         async with ctx.typing():
             cogs_to_check, failed = await self._get_cogs_to_check()
             cogs_to_update, libs_to_update = await self._available_updates(cogs_to_check)
+            cogs_to_update, filter_message = self._filter_incorrect_cogs(cogs_to_update)
+            
             message = ""
             if cogs_to_update:
                 cognames = [cog.name for cog in cogs_to_update]
@@ -870,6 +872,9 @@ class Downloader(commands.Cog):
                 message += _("\nThese shared libraries can be updated: ") + humanize_list(
                     tuple(map(inline, libnames))
                 )
+            if not (cogs_to_update or libs_to_update) and filter_message:
+                message += _("No cogs can be updated.")
+            message += filter_message
 
             if not message:
                 message = _("All installed cogs are up to date.")
