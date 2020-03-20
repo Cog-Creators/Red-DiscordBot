@@ -170,13 +170,14 @@ one-by-one:
 
 .. code-block:: none
 
-    brew install python --with-brewed-openssl
+    brew install python@3.8
     brew install git
-    brew tap caskroom/versions
-    brew cask install homebrew/cask-versions/adoptopenjdk11
+    brew cask install AdoptOpenJDK/openjdk/adoptopenjdk11
 
-It's possible you will have network issues. If so, go in your Applications folder, inside it, go in
-the Python 3.8 folder then double click ``Install certificates.command``.
+.. attention::
+
+    It's possible you will have network issues. If so, go in your Applications folder, inside it, go in
+    the Python 3.8 folder then double click ``Install certificates.command``.
 
 Continue by `creating-venv-linux`.
 
