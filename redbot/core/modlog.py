@@ -214,12 +214,14 @@ class Case:
         amended_by: Optional[discord.User] = None,
         modified_at: Optional[int] = None,
         message: Optional[discord.Message] = None,
+        last_known_username: Optional[str] = None,
     ):
         self.bot = bot
         self.guild = guild
         self.created_at = created_at
         self.action_type = action_type
         self.user = user
+        self.last_known_username = last_known_username
         self.moderator = moderator
         self.reason = reason
         self.until = until
@@ -241,9 +243,15 @@ class Case:
         """
         # We don't want case_number to be changed
         data.pop("case_number", None)
+        # last username is set based on passed user object
+        data.pop("last_known_username", None)
 
         for item in list(data.keys()):
             setattr(self, item, data[item])
+
+        # update last known username
+        if not isinstance(self.user, int):
+            self.last_known_username = f"{self.user.name}#{self.user.discriminator}"
 
         await _conf.custom(_CASES, str(self.guild.id), str(self.case_number)).set(self.to_json())
         self.bot.dispatch("modlog_case_edit", self)
@@ -314,7 +322,10 @@ class Case:
             )
 
         if isinstance(self.user, int):
-            user = f"[Unknown or Deleted User] ({self.user})"
+            if self.last_known_username is None:
+                user = f"[Unknown or Deleted User] ({self.user})"
+            else:
+                user = f"{self.last_known_username} ({self.user})"
             avatar_url = None
         else:
             user = escape_spoilers(
@@ -384,6 +395,7 @@ class Case:
             "guild": self.guild.id,
             "created_at": self.created_at,
             "user": user_id,
+            "last_known_username": self.last_known_username,
             "moderator": mod,
             "reason": self.reason,
             "until": self.until,
@@ -472,6 +484,7 @@ class Case:
             channel=channel,
             modified_at=data["modified_at"],
             message=message,
+            last_known_username=data.get("last_known_username"),
             **user_objects,
         )
 
