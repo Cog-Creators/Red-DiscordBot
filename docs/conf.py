@@ -217,6 +217,7 @@ intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "dpy": (f"https://discordpy.readthedocs.io/en/v{dpy_version}/", None),
     "motor": ("https://motor.readthedocs.io/en/stable/", None),
+    "babel": ("http://babel.pocoo.org/en/stable/", None),
 }
 
 # Extlinks
