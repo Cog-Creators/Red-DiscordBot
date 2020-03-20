@@ -1245,30 +1245,26 @@ class Core(commands.Cog, CoreLogic):
 
     @_set.command()
     @checks.is_owner()
-    async def locale(self, ctx: commands.Context, locale_name: str):
+    async def locale(self, ctx: commands.Context, language_code: str):
         """
-        Changes bot locale.
+        Changes bot's locale.
 
-        Use [p]listlocales to get a list of available locales.
+        `<language_code>` can be any language code with country code included,
+        e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
+
+        Go to Red's Crowdin page to see locales that are available with translations:
+        https://translate.discord.red
 
         To reset to English, use "en-US".
         """
         try:
-            locale = Locale.parse(locale_name, sep="-")
+            locale = Locale.parse(language_code, sep="-")
         except (ValueError, UnknownLocaleError):
-            await ctx.send(
-                _(
-                    "Invalid locale. Use `{prefix}listlocales` to get "
-                    "a list of available locales."
-                ).format(prefix=ctx.clean_prefix)
-            )
+            await ctx.send(_("Invalid language code. Use format: `en-US`"))
             return
         if locale.territory is None:
             await ctx.send(
-                _(
-                    "Invalid locale format. Use `{prefix}listlocales` to get "
-                    "a list of available locales."
-                ).format(prefix=ctx.clean_prefix)
+                _("Invalid format - language code has to include country code, e.g. `en-US`")
             )
             return
         standardized_locale_name = f"{locale.language}-{locale.territory}"
@@ -1480,27 +1476,6 @@ class Core(commands.Cog, CoreLogic):
 
         await ctx.bot._config.help.tagline.set(tagline)
         await ctx.send(_("The tagline has been set."))
-
-    @commands.command()
-    @checks.is_owner()
-    async def listlocales(self, ctx: commands.Context):
-        """
-        Lists all available locales
-
-        Use `[p]set locale` to set a locale
-        """
-        async with ctx.channel.typing():
-            red_dist = pkg_resources.get_distribution("red-discordbot")
-            red_path = Path(red_dist.location) / "redbot"
-            locale_list = [loc.stem for loc in list(red_path.glob("**/*.po"))]
-            locale_list.append("en-US")
-            locale_list = sorted(set(locale_list))
-            if not locale_list:
-                await ctx.send(_("No languages found."))
-                return
-            pages = pagify("\n".join(locale_list), shorten_by=26)
-
-        await ctx.send_interactive(pages, box_lang="Available Locales:")
 
     @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)
