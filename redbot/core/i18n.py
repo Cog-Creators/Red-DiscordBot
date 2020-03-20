@@ -18,7 +18,7 @@ __all__ = [
 ]
 
 _current_locale = "en-US"
-_current_region = None
+_current_regional_format = None
 
 WAITING_FOR_MSGID = 1
 IN_MSGID = 2
@@ -41,15 +41,15 @@ def set_locale(locale: str) -> None:
     reload_locales()
 
 
-def get_region() -> str:
-    if _current_region is None:
+def get_regional_format() -> str:
+    if _current_regional_format is None:
         return _current_locale
-    return _current_region
+    return _current_regional_format
 
 
-def set_region(region: Optional[str]) -> None:
-    global _current_region
-    _current_region = region
+def set_regional_format(regional_format: Optional[str]) -> None:
+    global _current_regional_format
+    _current_regional_format = regional_format
 
 
 def reload_locales() -> None:
@@ -221,24 +221,24 @@ def get_babel_locale(locale: Optional[str] = None) -> babel.core.Locale:
     return _get_babel_locale(locale)
 
 
-def get_babel_region(region: Optional[str] = None) -> babel.core.Locale:
-    """Function to convert a region to a `babel.core.Locale`.
+def get_babel_regional_format(regional_format: Optional[str] = None) -> babel.core.Locale:
+    """Function to convert a regional format to a `babel.core.Locale`.
 
-    If ``region`` parameter is passed, this behaves the same as `get_babel_locale`.
+    If ``regional_format`` parameter is passed, this behaves the same as `get_babel_locale`.
 
     Parameters
     ----------
-    region : Optional[str]
-        The region to convert, if not specified it defaults to the bot's region.
+    regional_format : Optional[str]
+        The regional format to convert, if not specified it defaults to the bot's regional format.
 
     Returns
     -------
     babel.core.Locale
         The babel locale object.
     """
-    if region is None:
-        region = get_region()
-    return _get_babel_locale(region)
+    if regional_format is None:
+        regional_format = get_regional_format()
+    return _get_babel_locale(regional_format)
 
 
 # This import to be down here to avoid circular import issues.

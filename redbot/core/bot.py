@@ -89,7 +89,7 @@ class RedBase(
             whitelist=[],
             blacklist=[],
             locale="en-US",
-            region=None,
+            regional_format=None,
             embeds=True,
             color=15158332,
             fuzzy=False,
@@ -538,8 +538,8 @@ class RedBase(
 
         i18n_locale = await self._config.locale()
         i18n.set_locale(i18n_locale)
-        i18n_region = await self._config.region()
-        i18n.set_region(i18n_region)
+        i18n_regional_format = await self._config.regional_format()
+        i18n.set_regional_format(i18n_regional_format)
 
         self.add_cog(Core(self))
         self.add_cog(CogManagerUI())

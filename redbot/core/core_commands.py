@@ -897,7 +897,7 @@ class Core(commands.Cog, CoreLogic):
 
             prefixes = await ctx.bot._prefix_cache.get_prefixes(ctx.guild)
             locale = await ctx.bot._config.locale()
-            region = await ctx.bot._config.region() or _("Same as bot's locale")
+            regional_format = await ctx.bot._config.regional_format() or _("Same as bot's locale")
 
             prefix_string = " ".join(prefixes)
             settings = _(
@@ -905,13 +905,13 @@ class Core(commands.Cog, CoreLogic):
                 "Prefixes: {prefixes}\n"
                 "{guild_settings}"
                 "Locale: {locale}\n"
-                "Region: {region}"
+                "Regional format: {regional_format}"
             ).format(
                 bot_name=ctx.bot.user.name,
                 prefixes=prefix_string,
                 guild_settings=guild_settings,
                 locale=locale,
-                region=region,
+                regional_format=regional_format,
             )
             for page in pagify(settings):
                 await ctx.send(box(page))
@@ -1306,11 +1306,11 @@ class Core(commands.Cog, CoreLogic):
         await ctx.bot._config.locale.set(standardized_locale_name)
         await ctx.send(_("Locale has been set."))
 
-    @_set.command()
+    @_set.command(aliases=["region"])
     @checks.is_owner()
-    async def region(self, ctx: commands.Context, language_code: str = None):
+    async def regionalformat(self, ctx: commands.Context, language_code: str = None):
         """
-        Changes bot's regional formatting. This is used for formatting date, time and numbers.
+        Changes bot's regional format. This is used for formatting date, time and numbers.
 
         `<language_code>` can be any language code with country code included,
         e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
@@ -1318,8 +1318,8 @@ class Core(commands.Cog, CoreLogic):
         Leave `<language_code>` empty to base regional formatting on bot's locale.
         """
         if language_code is None:
-            i18n.set_region(None)
-            await ctx.bot._config.region.set(None)
+            i18n.set_regional_format(None)
+            await ctx.bot._config.regional_format.set(None)
             await ctx.send(_("Regional formatting will now be based on bot's locale."))
             return
 
@@ -1334,8 +1334,8 @@ class Core(commands.Cog, CoreLogic):
             )
             return
         standardized_locale_name = f"{locale.language}-{locale.territory}"
-        i18n.set_region(standardized_locale_name)
-        await ctx.bot._config.region.set(standardized_locale_name)
+        i18n.set_regional_format(standardized_locale_name)
+        await ctx.bot._config.regional_format.set(standardized_locale_name)
         await ctx.send(
             _("Regional formatting will now be based on `{language_code}` locale.").format(
                 language_code=standardized_locale_name
