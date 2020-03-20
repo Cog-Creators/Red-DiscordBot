@@ -78,7 +78,7 @@ async def menu(
             message = await ctx.send(current_page)
         # Don't wait for reactions to be added (GH-1797)
         # noinspection PyAsyncCall
-        start_adding_reactions(message, controls.keys(), ctx.bot.loop)
+        start_adding_reactions(message, controls.keys())
     else:
         try:
             if isinstance(current_page, discord.Embed):
@@ -213,7 +213,11 @@ def start_adding_reactions(
     if loop is None:
         loop = asyncio.get_running_loop()
     else:
-        warnings.warn("Explicitly passing the loop will not work in Red 3.4+", DeprecationWarning)
+        warnings.warn(
+            "Explicitly passing the loop will not work in Red 3.4+",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
     return loop.create_task(task())
 

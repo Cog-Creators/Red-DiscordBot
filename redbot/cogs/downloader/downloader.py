@@ -1286,7 +1286,7 @@ class Downloader(commands.Cog):
             query: discord.Message = await ctx.send(message)
             if can_react:
                 # noinspection PyAsyncCall
-                start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS, ctx.bot.loop)
+                start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS)
                 pred = ReactionPredicate.yes_or_no(query, ctx.author)
                 event = "reaction_add"
             else:

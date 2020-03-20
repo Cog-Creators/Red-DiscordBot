@@ -645,7 +645,7 @@ class Permissions(commands.Cog):
         if ctx.guild is None or ctx.guild.me.permissions_in(ctx.channel).add_reactions:
             msg = await ctx.send(_("Are you sure?"))
             # noinspection PyAsyncCall
-            task = start_adding_reactions(msg, ReactionPredicate.YES_OR_NO_EMOJIS, ctx.bot.loop)
+            task = start_adding_reactions(msg, ReactionPredicate.YES_OR_NO_EMOJIS)
             pred = ReactionPredicate.yes_or_no(msg, ctx.author)
             try:
                 await ctx.bot.wait_for("reaction_add", check=pred, timeout=30)
