@@ -860,7 +860,7 @@ class Downloader(commands.Cog):
             cogs_to_check, failed = await self._get_cogs_to_check()
             cogs_to_update, libs_to_update = await self._available_updates(cogs_to_check)
             cogs_to_update, filter_message = self._filter_incorrect_cogs(cogs_to_update)
-            
+
             message = ""
             if cogs_to_update:
                 cognames = [cog.name for cog in cogs_to_update]
