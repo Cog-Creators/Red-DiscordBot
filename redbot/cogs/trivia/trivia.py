@@ -604,7 +604,7 @@ class Trivia(commands.Cog):
             await ctx.send(
                 _(
                     "{filename} is a reserved trivia name and cannot be replaced.\n"
-                    "Choose another name".format(filename=filename)
+                    "Choose another name.".format(filename=filename)
                 )
             )
             return
@@ -630,11 +630,10 @@ class Trivia(commands.Cog):
             else:
                 pred = MessagePredicate.yes_or_no(ctx=ctx)
                 event = "message"
-            start_adding_reactions(overwrite_message_object, ReactionPredicate.YES_OR_NO_EMOJIS)
             await ctx.bot.wait_for(event, check=pred)
 
             if pred.result is False:
-                await ctx.send(_("I am not replacing the existing file"))
+                await ctx.send(_("I am not replacing the existing file."))
                 return
 
         buffer = io.BytesIO(await attachment.read())
@@ -643,7 +642,7 @@ class Trivia(commands.Cog):
 
         with file.open("wb") as fp:
             fp.write(buffer.read())
-        await ctx.send(_("Saved Trivia list as {filename}").format(filename=filename))
+        await ctx.send(_("Saved Trivia list as {filename}.").format(filename=filename))
 
     def _get_trivia_session(self, channel: discord.TextChannel) -> TriviaSession:
         return next(
