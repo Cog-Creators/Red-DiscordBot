@@ -44,11 +44,12 @@ from .settings_caches import PrefixManager, IgnoreManager, WhitelistBlacklistMan
 
 from .rpc import RPCMixin
 from .utils import common_filters
+from .utils._internal_utils import send_to_owners_with_prefix_replaced
 
 CUSTOM_GROUPS = "CUSTOM_GROUPS"
 SHARED_API_TOKENS = "SHARED_API_TOKENS"
 
-log = logging.getLogger("redbot")
+log = logging.getLogger("red")
 
 __all__ = ["RedBase", "Red", "ExitCodes"]
 
@@ -550,18 +551,6 @@ class RedBase(
 
         last_system_info = await self._config.last_system_info()
 
-        async def notify_owners(content: str) -> None:
-            destinations = await self.get_owner_notification_destinations()
-            for destination in destinations:
-                prefixes = await self.get_valid_prefixes(getattr(destination, "guild", None))
-                prefix = re.sub(rf"<@!?{self.bot.user.id}>", f"@{self.bot.user.name}", prefixes[0])
-                try:
-                    await destination.send(content.format(prefix=prefix))
-                except Exception as _exc:
-                    log.exception(
-                        f"I could not send an owner notification to ({destination.id}){destination}"
-                    )
-
         ver_info = list(sys.version_info[:2])
         python_version_changed = False
         LIB_PATH = cog_data_path(raw_name="Downloader") / "lib"
@@ -571,13 +560,14 @@ class RedBase(
                 shutil.rmtree(str(LIB_PATH))
                 LIB_PATH.mkdir()
                 self.loop.create_task(
-                    notify_owners(
+                    send_to_owners_with_prefix_replaced(
+                        self,
                         "We detected a change in minor Python version"
                         " and cleared packages in lib folder.\n"
                         "The instance was started with no cogs, please load Downloader"
-                        " and use `{prefix}cog reinstallreqs` to regenerate lib folder."
+                        " and use `[p]cog reinstallreqs` to regenerate lib folder."
                         " After that, restart the bot to get"
-                        " all of your previously loaded cogs loaded again."
+                        " all of your previously loaded cogs loaded again.",
                     )
                 )
                 python_version_changed = True
@@ -605,11 +595,12 @@ class RedBase(
 
         if system_changed and not python_version_changed:
             self.loop.create_task(
-                notify_owners(
+                send_to_owners_with_prefix_replaced(
+                    self,
                     "We detected a possible change in machine's operating system"
                     " or architecture. You might need to regenerate your lib folder"
                     " if 3rd-party cogs stop working properly.\n"
-                    "To regenerate lib folder, load Downloader and use `{prefix}cog reinstallreqs`."
+                    "To regenerate lib folder, load Downloader and use `[p]cog reinstallreqs`.",
                 )
             )
 
@@ -1204,8 +1195,11 @@ class RedBase(
             try:
                 await location.send(content, **kwargs)
             except Exception as _exc:
-                log.exception(
-                    f"I could not send an owner notification to ({location.id}){location}"
+                log.error(
+                    "I could not send an owner notification to %s (%s)",
+                    location,
+                    location.id,
+                    exc_info=_exc,
                 )
 
         sends = [wrapped_send(d, content, **kwargs) for d in destinations]

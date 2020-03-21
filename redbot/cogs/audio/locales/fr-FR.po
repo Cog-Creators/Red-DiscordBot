@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-13 12:13\n"
+"PO-Revision-Date: 2020-03-12 12:12\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -2228,7 +2228,7 @@ msgstr "Arrêt ..."
 #: redbot/cogs/audio/audio.py:7722
 #, docstring
 msgid "Summon the bot to a voice channel."
-msgstr "Invoquez le bot dans un salon vocal."
+msgstr "Invoque le bot dans un salon vocal."
 
 #: redbot/cogs/audio/audio.py:7735 redbot/cogs/audio/audio.py:7743
 #: redbot/cogs/audio/audio.py:7756 redbot/cogs/audio/audio.py:7773

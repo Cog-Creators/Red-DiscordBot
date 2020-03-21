@@ -2001,7 +2001,7 @@ class Audio(commands.Cog):
             with contextlib.suppress(discord.HTTPException):
                 await eq_message.add_reaction("\N{INFORMATION SOURCE}")
         else:
-            start_adding_reactions(eq_message, reactions, self.bot.loop)
+            start_adding_reactions(eq_message, reactions)
 
         eq_msg_with_reacts = await ctx.fetch_message(eq_message.id)
         player.store("eq_message", eq_msg_with_reacts)
@@ -2605,7 +2605,7 @@ class Audio(commands.Cog):
         if not player.queue:
             expected = ("⏹", "⏯")
         if player.current:
-            task = start_adding_reactions(message, expected[:4], ctx.bot.loop)
+            task = start_adding_reactions(message, expected[:4])
         else:
             task = None
 
@@ -6334,7 +6334,7 @@ class Audio(commands.Cog):
             expected = ("⏹", "⏯")
             emoji = {"stop": "⏹", "pause": "⏯"}
             if player.current:
-                task = start_adding_reactions(message, expected[:4], ctx.bot.loop)
+                task = start_adding_reactions(message, expected[:4])
             else:
                 task = None
 

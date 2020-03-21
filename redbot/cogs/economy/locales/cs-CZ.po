@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-20 12:09+0000\n"
-"PO-Revision-Date: 2020-02-20 12:11\n"
+"PO-Revision-Date: 2020-03-05 12:11\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -17,15 +17,15 @@ msgstr ""
 
 #: redbot/cogs/economy/economy.py:44
 msgid "JACKPOT! 226! Your bid has been multiplied * 50!"
-msgstr ""
+msgstr "JACKPOT! 226! Tvá sázka byla vynásobena * 50!"
 
 #: redbot/cogs/economy/economy.py:48
 msgid "4LC! Your bid has been multiplied * 25!"
-msgstr ""
+msgstr "4LC! Vaše nabídka byla vynásobena * 25!"
 
 #: redbot/cogs/economy/economy.py:52
 msgid "Three cherries! Your bid has been multiplied * 20!"
-msgstr ""
+msgstr "Tři třešně! Tvoje sázka byla vynásobena * 20!"
 
 #: redbot/cogs/economy/economy.py:56
 msgid "2 6! Your bid has been multiplied * 4!"
@@ -37,7 +37,7 @@ msgstr "Dvě třešně! Váš pokus byl znásoben * 3!"
 
 #: redbot/cogs/economy/economy.py:64
 msgid "Three symbols! Your bid has been multiplied * 10!"
-msgstr ""
+msgstr "Tři symboly! Tvá sázka byla vynásobena * 10!"
 
 #: redbot/cogs/economy/economy.py:68
 msgid "Two consecutive symbols! Your bid has been multiplied * 2!"
@@ -50,7 +50,7 @@ msgstr ""
 #: redbot/cogs/economy/economy.py:117
 #, docstring
 msgid "Get rich and have fun with imaginary currency!"
-msgstr ""
+msgstr "Zbohatněte a bavte se s imaginární měnou!"
 
 #: redbot/cogs/economy/economy.py:151
 #, docstring
@@ -64,16 +64,16 @@ msgstr ""
 
 #: redbot/cogs/economy/economy.py:169
 msgid "{user}'s balance is {num} {currency}"
-msgstr ""
+msgstr "Zůstatek {user} je {num} {currency}"
 
 #: redbot/cogs/economy/economy.py:176
 #, docstring
 msgid "Transfer currency to other users."
-msgstr ""
+msgstr "Poslat měnu ostatním uživatelům."
 
 #: redbot/cogs/economy/economy.py:186
 msgid "{user} transferred {num} {currency} to {other_user}"
-msgstr ""
+msgstr "{user} převedl {num} {currency} uživateli {other_user}"
 
 #: redbot/cogs/economy/economy.py:197
 #, docstring
@@ -82,7 +82,7 @@ msgstr ""
 
 #: redbot/cogs/economy/economy.py:212
 msgid "{author} added {num} {currency} to {user}'s account."
-msgstr ""
+msgstr "{author} přidal/a {num} {currency} k účtu {user}."
 
 #: redbot/cogs/economy/economy.py:220
 msgid "{author} removed {num} {currency} from {user}'s account."
@@ -112,7 +112,7 @@ msgstr ""
 #: redbot/cogs/economy/economy.py:264
 #, docstring
 msgid "Prune bank accounts."
-msgstr ""
+msgstr "Vyčistit bankovní účty."
 
 #: redbot/cogs/economy/economy.py:271
 #, docstring
@@ -151,7 +151,7 @@ msgstr ""
 #: redbot/cogs/economy/economy.py:319
 #, docstring
 msgid "Delete the bank account of a specified user."
-msgstr ""
+msgstr "Odstranit bankovní účet určeného uživatele."
 
 #: redbot/cogs/economy/economy.py:322
 msgid "This command cannot be used in DMs with a local bank."
@@ -239,7 +239,7 @@ msgstr "Nic!"
 
 #: redbot/cogs/economy/economy.py:636
 msgid "Your bid: {bid}"
-msgstr ""
+msgstr "Tvá sázka: {bid}"
 
 #: redbot/cogs/economy/economy.py:637
 msgid "\\n{old_balance} - {bid} (Your bid) + {pay} (Winnings) → {new_balance}!"
@@ -257,7 +257,7 @@ msgstr ""
 #: redbot/cogs/economy/economy.py:685
 #, docstring
 msgid "Set the minimum slot machine bid."
-msgstr ""
+msgstr "Nastavte minimální sázku na automatu."
 
 #: redbot/cogs/economy/economy.py:687
 msgid "Invalid min bid amount."
@@ -265,20 +265,20 @@ msgstr "Neplatná minimální částka sázky."
 
 #: redbot/cogs/economy/economy.py:696
 msgid "Minimum bid is now {bid} {currency}."
-msgstr ""
+msgstr "Minimální sázka je nyní {bid} {currency}."
 
 #: redbot/cogs/economy/economy.py:703
 #, docstring
 msgid "Set the maximum slot machine bid."
-msgstr ""
+msgstr "Nastavte maximální sázku na automatu."
 
 #: redbot/cogs/economy/economy.py:707
 msgid "Invalid maximum bid amount. Must be greater than the minimum amount."
-msgstr ""
+msgstr "Neplatná maximální částka sázky. Musí být větší než minimální částka."
 
 #: redbot/cogs/economy/economy.py:717
 msgid "Maximum bid is now {bid} {currency}."
-msgstr ""
+msgstr "Maximální sázka je nyní {bid} {currency}."
 
 #: redbot/cogs/economy/economy.py:724
 #, docstring
@@ -296,25 +296,25 @@ msgstr "Nastavte cooldown pro výplatu."
 
 #: redbot/cogs/economy/economy.py:741
 msgid "Value modified. At least {num} seconds must pass between each payday."
-msgstr ""
+msgstr "Hodnota upravena. Mezi jednotlivými výplatami musí uplynout alespoň {num} sekund."
 
 #: redbot/cogs/economy/economy.py:748
 #, docstring
 msgid "Set the amount earned each payday."
-msgstr ""
+msgstr "Nastavte částku získanou za každý výplatní den."
 
 #: redbot/cogs/economy/economy.py:753 redbot/cogs/economy/economy.py:775
 msgid "Amount must be greater than zero and less than {maxbal}."
-msgstr ""
+msgstr "Částka musí být větší nebo rovna nule a menší než {maxbal}."
 
 #: redbot/cogs/economy/economy.py:763
 msgid "Every payday will now give {num} {currency}."
-msgstr ""
+msgstr "Každý den bude nyní dán {num} {currency}."
 
 #: redbot/cogs/economy/economy.py:770
 #, docstring
 msgid "Set the amount earned each payday for a role."
-msgstr ""
+msgstr "Nastavte částku získanou za každý výplatní den pro roli."
 
 #: redbot/cogs/economy/economy.py:781
 msgid "The bank must be per-server for per-role paydays to work."
@@ -322,16 +322,16 @@ msgstr ""
 
 #: redbot/cogs/economy/economy.py:785
 msgid "Every payday will now give {num} {currency} to people with the role {role_name}."
-msgstr ""
+msgstr "Každý den dá nyní {num} {currency} lidem s rolí {role_name}."
 
 #: redbot/cogs/economy/economy.py:793
 #, docstring
 msgid "Set the initial balance for new bank accounts."
-msgstr ""
+msgstr "Nastavte počáteční zůstatek pro nové bankovní účty."
 
 #: redbot/cogs/economy/economy.py:801
 msgid "Amount must be greater than or equal to zero and less than {maxbal}."
-msgstr ""
+msgstr "Částka musí být větší nebo rovna nule a menší než {maxbal}."
 
 #: redbot/cogs/economy/economy.py:806
 msgid "Registering an account will now give {num} {currency}."

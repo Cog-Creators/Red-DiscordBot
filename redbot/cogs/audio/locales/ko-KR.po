@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-13 12:14\n"
+"PO-Revision-Date: 2020-03-19 12:10\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -43,7 +43,7 @@ msgstr ""
 #: redbot/cogs/audio/apis.py:664 redbot/cogs/audio/audio.py:3609
 #: redbot/cogs/audio/audio.py:5460
 msgid "Playlist Enqueued"
-msgstr ""
+msgstr "대기중인 재생 목록"
 
 #: redbot/cogs/audio/apis.py:665 redbot/cogs/audio/audio.py:3612
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
@@ -81,7 +81,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:520 redbot/cogs/audio/audio.py:2566
 #: redbot/cogs/audio/audio.py:6296
 msgid "Now Playing"
-msgstr ""
+msgstr "지금 재생 중"
 
 #: redbot/cogs/audio/audio.py:522
 msgid "Track length: {length} | Requested by: {user}"

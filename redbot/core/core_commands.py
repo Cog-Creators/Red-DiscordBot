@@ -327,10 +327,14 @@ class Core(commands.Cog, CoreLogic):
             owner = app_info.owner
         custom_info = await self.bot._config.custom_info()
 
-        async with aiohttp.ClientSession() as session:
-            async with session.get(red_pypi_json) as r:
-                data = await r.json()
-        outdated = VersionInfo.from_str(data["info"]["version"]) > red_version_info
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(red_pypi_json) as r:
+                    data = await r.json()
+        except (aiohttp.ClientError, asyncio.TimeoutError):
+            outdated = None
+        else:
+            outdated = VersionInfo.from_str(data["info"]["version"]) > red_version_info
         about = _(
             "This bot is an instance of [Red, an open source Discord bot]({}) "
             "created by [Twentysix]({}) and [improved by many]({}).\n\n"
@@ -345,10 +349,15 @@ class Core(commands.Cog, CoreLogic):
         embed.add_field(name="Python", value=python_version)
         embed.add_field(name="discord.py", value=dpy_version)
         embed.add_field(name=_("Red version"), value=red_version)
-        if outdated:
-            embed.add_field(
-                name=_("Outdated"), value=_("Yes, {} is available").format(data["info"]["version"])
+        if outdated is True:
+            outdated_value = _("Yes, {version} is available").format(
+                version=data["info"]["version"]
             )
+        elif outdated is None:
+            outdated_value = _("Checking for updates failed.")
+        else:
+            outdated_value = _("No")
+        embed.add_field(name=_("Outdated"), value=outdated_value)
         if custom_info:
             embed.add_field(name=_("About this instance"), value=custom_info, inline=False)
         embed.add_field(name=_("About Red"), value=about, inline=False)
@@ -1104,7 +1113,7 @@ class Core(commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Done."))
 
-    @_set.command(name="game")
+    @_set.command(name="playing", aliases=["game"])
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _game(self, ctx: commands.Context, *, game: str = None):
@@ -1189,7 +1198,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.bot.change_presence(status=status, activity=game)
             await ctx.send(_("Status changed to {}.").format(status))
 
-    @_set.command()
+    @_set.command(name="streaming", aliases=["stream"])
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def stream(self, ctx: commands.Context, streamer=None, *, stream_title=None):

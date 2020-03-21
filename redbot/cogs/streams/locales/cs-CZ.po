@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-20 12:09+0000\n"
-"PO-Revision-Date: 2020-02-20 12:11\n"
+"POT-Creation-Date: 2020-03-19 12:08+0000\n"
+"PO-Revision-Date: 2020-03-19 12:09\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Language: cs_CZ\n"
 
 #: redbot/cogs/streams/streams.py:115
-msgid "You need a client secret key to use correctly Twitch API on this cog.\\nFollow these steps:\\n1. Go to this page: https://dev.twitch.tv/console/apps.\\n2. Click \\\"Manage\\\" on your application.\\n3. Click on \\\"New secret\\\".\\n5. Copy your client ID and your client secret into:\\n`{prefix}set api twitch client_id <your_client_id_here> client_secret <your_client_secret_here>`\\n\\nNote: These tokens are sensitive and should only be used in a private channel or in DM with the bot."
+msgid "You need a client secret key to use correctly Twitch API on this cog.\\nFollow these steps:\\n1. Go to this page: https://dev.twitch.tv/console/apps.\\n2. Click \\\"Manage\\\" on your application.\\n3. Click on \\\"New secret\\\".\\n5. Copy your client ID and your client secret into:\\n`[p]set api twitch client_id <your_client_id_here> client_secret <your_client_secret_here>`\\n\\nNote: These tokens are sensitive and should only be used in a private channel or in DM with the bot."
 msgstr ""
 
 #: redbot/cogs/streams/streams.py:150
@@ -77,31 +77,31 @@ msgstr "Spravovat oznámení Twitch streamu."
 #: redbot/cogs/streams/streams.py:247
 #, docstring
 msgid "Toggle alerts in this channel for a Twitch stream."
-msgstr ""
+msgstr "Zapnout upozornění v tomto kanálu pro Twitch stream."
 
 #: redbot/cogs/streams/streams.py:250
 msgid "Please supply the name of a *Twitch* channel, not a Discord channel."
-msgstr ""
+msgstr "Zadejte název kanálu *Twitch*, ne název Discord serveru."
 
 #: redbot/cogs/streams/streams.py:257
 #, docstring
 msgid "Toggle alerts in this channel for a YouTube stream."
-msgstr ""
+msgstr "Zapnout upozornění v tomto kanálu pro Youtube stream."
 
 #: redbot/cogs/streams/streams.py:262
 #, docstring
 msgid "Toggle alerts in this channel for a Hitbox stream."
-msgstr ""
+msgstr "Zapnout upozornění v tomto kanálu pro Hitbox stream."
 
 #: redbot/cogs/streams/streams.py:267
 #, docstring
 msgid "Toggle alerts in this channel for a Mixer stream."
-msgstr ""
+msgstr "Zapnout upozornění v tomto kanálu pro Mixer stream."
 
 #: redbot/cogs/streams/streams.py:272
 #, docstring
 msgid "Toggle alerts in this channel for a Picarto stream."
-msgstr ""
+msgstr "Zapnout upozornění v tomto kanálu pro Picarto stream."
 
 #: redbot/cogs/streams/streams.py:277
 #, docstring
@@ -114,7 +114,7 @@ msgstr ""
 
 #: redbot/cogs/streams/streams.py:309
 msgid "All the stream alerts in this channel have been disabled."
-msgstr ""
+msgstr "Všechna upozornění na vysílání v tomto kanálu byla zakázána."
 
 #: redbot/cogs/streams/streams.py:315
 #, docstring
@@ -137,7 +137,7 @@ msgstr "Nastavit tokeny pro přístup k streamům."
 #: redbot/cogs/streams/streams.py:392
 #, docstring
 msgid "Set stream check refresh time."
-msgstr ""
+msgstr "Nastavit čas kontroly streamů."
 
 #: redbot/cogs/streams/streams.py:394
 msgid "You cannot set the refresh timer to less than 60 seconds"
@@ -146,7 +146,7 @@ msgstr ""
 #: redbot/cogs/streams/streams.py:404
 #, docstring
 msgid "Explain how to set the twitch token."
-msgstr ""
+msgstr "Vysvětli, jak nastavit twitch token."
 
 #: redbot/cogs/streams/streams.py:406
 msgid "To set the twitch API tokens, follow these steps:\\n1. Go to this page: https://dev.twitch.tv/dashboard/apps.\\n2. Click *Register Your Application*.\\n3. Enter a name, set the OAuth Redirect URI to `http://localhost`, and select an Application Category of your choosing.\\n4. Click *Register*.\\n5. Copy your client ID and your client secret into:\\n`{prefix}set api twitch client_id <your_client_id_here> client_secret <your_client_secret_here>`\\n\\nNote: These tokens are sensitive and should only be used in a private channel\\nor in DM with the bot.\\n"
@@ -201,7 +201,7 @@ msgstr ""
 
 #: redbot/cogs/streams/streams.py:506
 msgid "`@​everyone` will no longer be mentioned for stream alerts."
-msgstr ""
+msgstr "`@​everyone` již nebude zmíněn pro upozornění na vysílání."
 
 #: redbot/cogs/streams/streams.py:509
 msgid "When a stream is live, `@​everyone` will be mentioned."
@@ -210,11 +210,11 @@ msgstr ""
 #: redbot/cogs/streams/streams.py:514
 #, docstring
 msgid "Toggle the `@​here` mention."
-msgstr ""
+msgstr "Zapnout `@​here` zmínku."
 
 #: redbot/cogs/streams/streams.py:519
 msgid "`@​here` will no longer be mentioned for stream alerts."
-msgstr ""
+msgstr "`@​here` již nebude zmíněn pro upozornění na vysílání."
 
 #: redbot/cogs/streams/streams.py:522
 msgid "When a stream is live, `@​here` will be mentioned."
@@ -223,7 +223,7 @@ msgstr ""
 #: redbot/cogs/streams/streams.py:527
 #, docstring
 msgid "Toggle a role mention."
-msgstr ""
+msgstr "Zapnout zmínku role."
 
 #: redbot/cogs/streams/streams.py:532
 msgid "`@​{role.name}` will no longer be mentioned for stream alerts."
@@ -240,7 +240,7 @@ msgstr ""
 #: redbot/cogs/streams/streams.py:553
 #, docstring
 msgid "Toggle alert deletion for when streams go offline."
-msgstr ""
+msgstr "Zapnout mazání alertů, když streamy budou offline."
 
 #: redbot/cogs/streams/streams.py:556
 msgid "The notifications will be deleted once streams go offline."
@@ -273,48 +273,48 @@ msgstr "Nebudu již posílat oznámení o {stream.name} v tomto kanálu."
 
 #: redbot/cogs/streams/streams.py:670
 msgid "{mention}, {stream} is live!"
-msgstr ""
+msgstr "{mention}, {stream} právě vysílá!"
 
 #: redbot/cogs/streams/streams.py:681
 msgid "{stream} is live!"
-msgstr ""
+msgstr "{stream} vysílá!"
 
 #: redbot/cogs/streams/streamtypes.py:303
 msgid "Untitled broadcast"
-msgstr ""
+msgstr "Nepojmenované vysílání"
 
 #: redbot/cogs/streams/streamtypes.py:305
 msgid " - Rerun"
-msgstr ""
+msgstr " - Znovu spustit"
 
 #: redbot/cogs/streams/streamtypes.py:308
-#: redbot/cogs/streams/streamtypes.py:350
-#: redbot/cogs/streams/streamtypes.py:388
-#: redbot/cogs/streams/streamtypes.py:434
+#: redbot/cogs/streams/streamtypes.py:351
+#: redbot/cogs/streams/streamtypes.py:389
+#: redbot/cogs/streams/streamtypes.py:435
 msgid "Followers"
 msgstr "Sledující"
 
 #: redbot/cogs/streams/streamtypes.py:309
-#: redbot/cogs/streams/streamtypes.py:389
-#: redbot/cogs/streams/streamtypes.py:435
+#: redbot/cogs/streams/streamtypes.py:390
+#: redbot/cogs/streams/streamtypes.py:436
 msgid "Total views"
 msgstr "Celkové shlédnutí"
 
-#: redbot/cogs/streams/streamtypes.py:313
-#: redbot/cogs/streams/streamtypes.py:354
-#: redbot/cogs/streams/streamtypes.py:398
+#: redbot/cogs/streams/streamtypes.py:314
+#: redbot/cogs/streams/streamtypes.py:355
+#: redbot/cogs/streams/streamtypes.py:399
 msgid "Playing: "
 msgstr "Hraje: "
 
-#: redbot/cogs/streams/streamtypes.py:440
+#: redbot/cogs/streams/streamtypes.py:441
 msgid "None"
 msgstr "Žádná"
 
-#: redbot/cogs/streams/streamtypes.py:443
+#: redbot/cogs/streams/streamtypes.py:444
 msgid "NSFW | "
 msgstr "NSFW | "
 
-#: redbot/cogs/streams/streamtypes.py:447
+#: redbot/cogs/streams/streamtypes.py:448
 msgid "{adult}Category: {category} | Tags: {tags}"
 msgstr "{adult}Kategorie: {category} | Štítky: {tags}"
 

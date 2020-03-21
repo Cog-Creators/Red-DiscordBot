@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-13 12:10+0000\n"
-"PO-Revision-Date: 2020-02-13 12:11\n"
+"POT-Creation-Date: 2020-03-05 12:09+0000\n"
+"PO-Revision-Date: 2020-03-05 12:10\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Afrikaans\n"
 "MIME-Version: 1.0\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Crowdin-File: /core/commands/locales/messages.pot\n"
 "Language: af_ZA\n"
 
-#: redbot/core/commands/commands.py:504
+#: redbot/core/commands/commands.py:503
 msgid "\\\"{argument}\\\" is not a number."
 msgstr ""
 

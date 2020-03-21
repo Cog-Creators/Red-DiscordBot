@@ -1,0 +1,1 @@
+Show more details in [p]serverinfo command when using a toggle.

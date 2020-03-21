@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-20 12:09+0000\n"
-"PO-Revision-Date: 2020-02-20 12:15\n"
+"POT-Creation-Date: 2020-03-19 12:08+0000\n"
+"PO-Revision-Date: 2020-03-19 12:11\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Language: es_ES\n"
 
 #: redbot/cogs/streams/streams.py:115
-msgid "You need a client secret key to use correctly Twitch API on this cog.\\nFollow these steps:\\n1. Go to this page: https://dev.twitch.tv/console/apps.\\n2. Click \\\"Manage\\\" on your application.\\n3. Click on \\\"New secret\\\".\\n5. Copy your client ID and your client secret into:\\n`{prefix}set api twitch client_id <your_client_id_here> client_secret <your_client_secret_here>`\\n\\nNote: These tokens are sensitive and should only be used in a private channel or in DM with the bot."
+msgid "You need a client secret key to use correctly Twitch API on this cog.\\nFollow these steps:\\n1. Go to this page: https://dev.twitch.tv/console/apps.\\n2. Click \\\"Manage\\\" on your application.\\n3. Click on \\\"New secret\\\".\\n5. Copy your client ID and your client secret into:\\n`[p]set api twitch client_id <your_client_id_here> client_secret <your_client_secret_here>`\\n\\nNote: These tokens are sensitive and should only be used in a private channel or in DM with the bot."
 msgstr ""
 
 #: redbot/cogs/streams/streams.py:150
@@ -288,33 +288,33 @@ msgid " - Rerun"
 msgstr ""
 
 #: redbot/cogs/streams/streamtypes.py:308
-#: redbot/cogs/streams/streamtypes.py:350
-#: redbot/cogs/streams/streamtypes.py:388
-#: redbot/cogs/streams/streamtypes.py:434
+#: redbot/cogs/streams/streamtypes.py:351
+#: redbot/cogs/streams/streamtypes.py:389
+#: redbot/cogs/streams/streamtypes.py:435
 msgid "Followers"
 msgstr ""
 
 #: redbot/cogs/streams/streamtypes.py:309
-#: redbot/cogs/streams/streamtypes.py:389
-#: redbot/cogs/streams/streamtypes.py:435
+#: redbot/cogs/streams/streamtypes.py:390
+#: redbot/cogs/streams/streamtypes.py:436
 msgid "Total views"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:313
-#: redbot/cogs/streams/streamtypes.py:354
-#: redbot/cogs/streams/streamtypes.py:398
+#: redbot/cogs/streams/streamtypes.py:314
+#: redbot/cogs/streams/streamtypes.py:355
+#: redbot/cogs/streams/streamtypes.py:399
 msgid "Playing: "
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:440
+#: redbot/cogs/streams/streamtypes.py:441
 msgid "None"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:443
+#: redbot/cogs/streams/streamtypes.py:444
 msgid "NSFW | "
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:447
+#: redbot/cogs/streams/streamtypes.py:448
 msgid "{adult}Category: {category} | Tags: {tags}"
 msgstr ""
 

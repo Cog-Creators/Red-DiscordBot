@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import re
 from abc import ABC
 from collections import defaultdict
@@ -8,6 +9,7 @@ import discord
 from redbot.core import Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
 from .casetypes import CASETYPES
 from .events import Events
 from .kickban import KickBanMixin
