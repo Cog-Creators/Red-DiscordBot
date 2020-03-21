@@ -143,7 +143,7 @@ class WhitelistBlacklistManager:
     async def add_to_whitelist(self, guild: Optional[discord.Guild], role_or_user: List[int]):
         gid: Optional[int] = guild.id if guild else None
         role_or_user = role_or_user or []
-        if not isinstance(role_or_user, list) and not all(
+        if not isinstance(role_or_user, list) or not all(
             isinstance(r_or_u, int) for r_or_u in role_or_user
         ):
             raise TypeError("Whitelisted objects must be a list of ints")
@@ -176,7 +176,7 @@ class WhitelistBlacklistManager:
     async def remove_from_whitelist(self, guild: Optional[discord.Guild], role_or_user: List[int]):
         gid: Optional[int] = guild.id if guild else None
         role_or_user = role_or_user or []
-        if not isinstance(role_or_user, list) and not all(
+        if not isinstance(role_or_user, list) or not all(
             isinstance(r_or_u, int) for r_or_u in role_or_user
         ):
             raise TypeError("Whitelisted objects must be a list of ints")
@@ -220,7 +220,7 @@ class WhitelistBlacklistManager:
     async def add_to_blacklist(self, guild: Optional[discord.Guild], role_or_user: List[int]):
         gid: Optional[int] = guild.id if guild else None
         role_or_user = role_or_user or []
-        if not isinstance(role_or_user, list) and not all(
+        if not isinstance(role_or_user, list) or not all(
             isinstance(r_or_u, int) for r_or_u in role_or_user
         ):
             raise TypeError("Blacklisted objects must be a list of ints")
@@ -252,7 +252,7 @@ class WhitelistBlacklistManager:
     async def remove_from_blacklist(self, guild: Optional[discord.Guild], role_or_user: List[int]):
         gid: Optional[int] = guild.id if guild else None
         role_or_user = role_or_user or []
-        if not isinstance(role_or_user, list) and not all(
+        if not isinstance(role_or_user, list) or not all(
             isinstance(r_or_u, int) for r_or_u in role_or_user
         ):
             raise TypeError("Blacklisted objects must be a list of ints")
