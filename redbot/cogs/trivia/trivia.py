@@ -296,7 +296,8 @@ class Trivia(commands.Cog):
             )
         else:
             msg = box(
-                bold(_("Uploaded trivia lists")) + "\n\n" + ", ".join(sorted(personal_lists)))
+                bold(_("Uploaded trivia lists")) + "\n\n" + ", ".join(sorted(personal_lists))
+            )
             if len(msg) > 1000:
                 await ctx.author.send(msg)
             else:
@@ -309,9 +310,9 @@ class Trivia(commands.Cog):
         if not ctx.message.attachments:
             await ctx.send(_("Supply a file with next message or type anything to cancel."))
             try:
-                message = await ctx.bot.wait_for("message",
-                                                 check=MessagePredicate.same_context(ctx),
-                                                 timeout=30)
+                message = await ctx.bot.wait_for(
+                    "message", check=MessagePredicate.same_context(ctx), timeout=30
+                )
             except asyncio.TimeoutError:
                 await ctx.send(_("You took too long to upload a list."))
                 return
@@ -354,7 +355,7 @@ class Trivia(commands.Cog):
     @trivia_leaderboard.command(name="server")
     @commands.guild_only()
     async def trivia_leaderboard_server(
-            self, ctx: commands.Context, sort_by: str = "wins", top: int = 10
+        self, ctx: commands.Context, sort_by: str = "wins", top: int = 10
     ):
         """Leaderboard for this server.
 
@@ -383,7 +384,7 @@ class Trivia(commands.Cog):
 
     @trivia_leaderboard.command(name="global")
     async def trivia_leaderboard_global(
-            self, ctx: commands.Context, sort_by: str = "wins", top: int = 10
+        self, ctx: commands.Context, sort_by: str = "wins", top: int = 10
     ):
         """Global trivia leaderboard.
 
@@ -598,7 +599,8 @@ class Trivia(commands.Cog):
 
         # Check if trivia filename exists in core files or if it is a command
         if filename in self.trivia.all_commands or any(
-                filename == item.stem for item in get_core_lists()):
+            filename == item.stem for item in get_core_lists()
+        ):
             await ctx.send(
                 _(
                     "{filename} is a reserved trivia name and cannot be replaced.\n"
@@ -610,9 +612,12 @@ class Trivia(commands.Cog):
         file = cog_data_path(self) / f"{filename}.yaml"
         if file.exists():
             await ctx.send(
-                (_(
-                    "{filename} already exists. Do you wish to overwrite?").
-                 format(filename=filename)))
+                (
+                    _("{filename} already exists. Do you wish to overwrite?").format(
+                        filename=filename
+                    )
+                )
+            )
             pred = MessagePredicate.yes_or_no(ctx)
             await ctx.bot.wait_for("message", check=pred)
 
