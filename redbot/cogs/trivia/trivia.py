@@ -595,7 +595,7 @@ class Trivia(commands.Cog):
             else:
                 return dict_
 
-    async def _save_trivia_list(self, ctx: commands.Context, attachment: discord.Attachment):
+    async def _save_trivia_list(self, ctx: commands.Context, attachment: discord.Attachment) -> None:
         """Checks and saves a trivia list to data folder.
 
         Parameters
