@@ -185,6 +185,64 @@ class Trivia(commands.Cog):
         else:
             await ctx.send(_("Done. I will no longer reward the winner with a payout."))
 
+    @commands.is_owner()
+    @triviaset.command(name="customlist")
+    async def custom_trivia_list(self, ctx: commands.Context):
+        """List uploaded custom trivia."""
+        personal_lists = sorted([p.resolve().stem for p in cog_data_path(self).glob("*.yaml")])
+        if await ctx.embed_requested():
+            await ctx.send(
+                embed=discord.Embed(
+                    title=_("Uploaded trivia lists"),
+                    colour=await ctx.embed_colour(),
+                    description=", ".join(sorted(personal_lists)),
+                )
+            )
+        else:
+            msg = box(
+                bold(_("Uploaded trivia lists")) + "\n\n" + ", ".join(sorted(personal_lists))
+            )
+            if len(msg) > 1000:
+                await ctx.author.send(msg)
+            else:
+                await ctx.send(msg)
+
+    @commands.is_owner()
+    @triviaset.command(name="upload")
+    async def trivia_upload(self, ctx: commands.Context):
+        """Upload a trivia file."""
+        if not ctx.message.attachments:
+            await ctx.send(_("Supply a file with next message or type anything to cancel."))
+            try:
+                message = await ctx.bot.wait_for(
+                    "message", check=MessagePredicate.same_context(ctx), timeout=30
+                )
+            except asyncio.TimeoutError:
+                await ctx.send(_("You took too long to upload a list."))
+                return
+            if not message.attachments:
+                await ctx.send(_("You have cancelled the upload process."))
+                return
+            parsedfile = message.attachments[0]
+        else:
+            parsedfile = ctx.message.attachments[0]
+        try:
+            await self._save_trivia_list(ctx=ctx, attachment=parsedfile)
+        except yaml.error.MarkedYAMLError as exc:
+            await ctx.send(_("Invalid syntax: ") + str(exc))
+
+    @commands.is_owner()
+    @triviaset.command(name="delete")
+    async def trivia_delete(self, ctx: commands.Context, name: str):
+        """Delete a trivia file."""
+        filepath = cog_data_path(self) / f"{name}.yaml"
+        if filepath.exists():
+            filepath.unlink()
+            await ctx.send(_("Trivia {filename} was deleted.").format(filename=filepath.stem))
+        else:
+            await ctx.send(_("Trivia file was not found."))
+
+
     @commands.group(invoke_without_command=True)
     @commands.guild_only()
     async def trivia(self, ctx: commands.Context, *categories: str):
@@ -281,62 +339,6 @@ class Trivia(commands.Cog):
                 await ctx.author.send(msg)
             else:
                 await ctx.send(msg)
-
-    @trivia.command(name="customlist")
-    async def custom_trivia_list(self, ctx: commands.Context):
-        """List uploaded custom trivia."""
-        personal_lists = sorted([p.resolve().stem for p in cog_data_path(self).glob("*.yaml")])
-        if await ctx.embed_requested():
-            await ctx.send(
-                embed=discord.Embed(
-                    title=_("Uploaded trivia lists"),
-                    colour=await ctx.embed_colour(),
-                    description=", ".join(sorted(personal_lists)),
-                )
-            )
-        else:
-            msg = box(
-                bold(_("Uploaded trivia lists")) + "\n\n" + ", ".join(sorted(personal_lists))
-            )
-            if len(msg) > 1000:
-                await ctx.author.send(msg)
-            else:
-                await ctx.send(msg)
-
-    @commands.is_owner()
-    @trivia.command(name="upload")
-    async def trivia_upload(self, ctx: commands.Context):
-        """Upload a trivia file."""
-        if not ctx.message.attachments:
-            await ctx.send(_("Supply a file with next message or type anything to cancel."))
-            try:
-                message = await ctx.bot.wait_for(
-                    "message", check=MessagePredicate.same_context(ctx), timeout=30
-                )
-            except asyncio.TimeoutError:
-                await ctx.send(_("You took too long to upload a list."))
-                return
-            if not message.attachments:
-                await ctx.send(_("You have cancelled the upload process."))
-                return
-            parsedfile = message.attachments[0]
-        else:
-            parsedfile = ctx.message.attachments[0]
-        try:
-            await self._save_trivia_list(ctx=ctx, attachment=parsedfile)
-        except yaml.error.YAMLError as exc:
-            await ctx.send(_("Invalid syntax: ") + str(exc))
-
-    @commands.is_owner()
-    @trivia.command(name="delete")
-    async def trivia_delete(self, ctx: commands.Context, name: str):
-        """Delete a trivia file."""
-        filepath = cog_data_path(self) / f"{name}.yaml"
-        if filepath.exists():
-            filepath.unlink()
-            await ctx.send(_("Trivia {filename} was deleted.").format(filename=filepath.stem))
-        else:
-            await ctx.send(_("Trivia file was not found."))
 
     @trivia.group(
         name="leaderboard", aliases=["lboard"], autohelp=False, invoke_without_command=True
