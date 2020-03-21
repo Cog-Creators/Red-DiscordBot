@@ -630,7 +630,11 @@ class Trivia(commands.Cog):
             else:
                 pred = MessagePredicate.yes_or_no(ctx=ctx)
                 event = "message"
-            await ctx.bot.wait_for(event, check=pred)
+            try:
+                await ctx.bot.wait_for(event, check=pred, timeout=30)
+            except asyncio.TimeoutError:
+                await ctx.send(_('You took too long answering.'))
+                return
 
             if pred.result is False:
                 await ctx.send(_("I am not replacing the existing file."))
