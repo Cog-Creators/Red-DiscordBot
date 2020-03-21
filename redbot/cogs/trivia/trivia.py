@@ -604,8 +604,7 @@ class Trivia(commands.Cog):
             await ctx.send(
                 _(
                     "{filename} is a reserved trivia name and cannot be replaced.\n"
-                    "Choose another name.".format(filename=filename)
-                )
+                    "Choose another name.").format(filename=filename)
             )
             return
 
