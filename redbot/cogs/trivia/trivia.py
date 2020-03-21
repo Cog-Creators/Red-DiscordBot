@@ -242,7 +242,6 @@ class Trivia(commands.Cog):
         else:
             await ctx.send(_("Trivia file was not found."))
 
-
     @commands.group(invoke_without_command=True)
     @commands.guild_only()
     async def trivia(self, ctx: commands.Context, *categories: str):
@@ -606,7 +605,8 @@ class Trivia(commands.Cog):
             await ctx.send(
                 _(
                     "{filename} is a reserved trivia name and cannot be replaced.\n"
-                    "Choose another name.").format(filename=filename)
+                    "Choose another name."
+                ).format(filename=filename)
             )
             return
 
@@ -634,7 +634,7 @@ class Trivia(commands.Cog):
             try:
                 await ctx.bot.wait_for(event, check=pred, timeout=30)
             except asyncio.TimeoutError:
-                await ctx.send(_('You took too long answering.'))
+                await ctx.send(_("You took too long answering."))
                 return
 
             if pred.result is False:
