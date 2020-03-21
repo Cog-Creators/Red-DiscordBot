@@ -13,6 +13,7 @@ Core Bot
 ********
 
 - Outages of ``pypi.org`` no longer prevent the bot from starting (:issue:`3663`)
+- Fixed few deprecation warnings related to menus (:issue:`3644`)
 
 Core Commands
 *************
@@ -59,6 +60,10 @@ Warnings
 Developer changelog
 -------------------
 
+Core Bot
+********
+
+- Deprecation warnings issued by Red now use correct stack level so that the cog developers can find the cause of them (:issue:`3644`)
 
 
 Documentation changes
