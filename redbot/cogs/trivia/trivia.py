@@ -7,20 +7,18 @@ from typing import List
 import io
 import yaml
 import discord
-from pathlib import Path
 from redbot.core import commands
 from redbot.core import Config, checks
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, pagify, bold
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
+from redbot.core.utils.menus import start_adding_reactions
 from redbot.cogs.bank import check_global_setting_admin
 from .log import LOG
 from .session import TriviaSession
 
 __all__ = ["Trivia", "UNIQUE_ID", "get_core_lists"]
-
-from ...core.utils.menus import start_adding_reactions
 
 UNIQUE_ID = 0xB3C0E453
 
