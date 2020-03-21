@@ -185,8 +185,14 @@ class Trivia(commands.Cog):
         else:
             await ctx.send(_("Done. I will no longer reward the winner with a payout."))
 
+    @triviaset.group(name="custom")
     @commands.is_owner()
-    @triviaset.command(name="customlist")
+    @checks.mod_or_permissions(administrator=True)
+    async def triviaset_custom(self, ctx: commands.Context):
+        """Manage Custom Trivia lists."""
+        pass
+
+    @triviaset_custom.command(name="list")
     async def custom_trivia_list(self, ctx: commands.Context):
         """List uploaded custom trivia."""
         personal_lists = sorted([p.resolve().stem for p in cog_data_path(self).glob("*.yaml")])
@@ -208,7 +214,7 @@ class Trivia(commands.Cog):
                 await ctx.send(msg)
 
     @commands.is_owner()
-    @triviaset.command(name="upload")
+    @triviaset_custom.command(name="upload", aliases=["add"])
     async def trivia_upload(self, ctx: commands.Context):
         """Upload a trivia file."""
         if not ctx.message.attachments:
@@ -230,9 +236,14 @@ class Trivia(commands.Cog):
             await self._save_trivia_list(ctx=ctx, attachment=parsedfile)
         except yaml.error.MarkedYAMLError as exc:
             await ctx.send(_("Invalid syntax: ") + str(exc))
+        except yaml.error.YAMLError:
+            await ctx.send(
+                _("There was an error parsing the trivia list. See logs for more info.")
+            )
+            LOG.exception("Custom Trivia file %s failed to upload", parsedfile.filename)
 
     @commands.is_owner()
-    @triviaset.command(name="delete")
+    @triviaset_custom.command(name="delete", aliases=["remove"])
     async def trivia_delete(self, ctx: commands.Context, name: str):
         """Delete a trivia file."""
         filepath = cog_data_path(self) / f"{name}.yaml"
