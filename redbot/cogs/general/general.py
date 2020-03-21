@@ -305,7 +305,8 @@ class General(commands.Cog):
                 "\N{LARGE ORANGE CIRCLE}": lambda x: x.status == discord.Status.idle,
                 "\N{LARGE RED CIRCLE}": lambda x: x.status == discord.Status.do_not_disturb,
                 "\N{MEDIUM WHITE CIRCLE}": lambda x: x.status == discord.Status.offline,
-                "\N{LARGE PURPLE CIRCLE}": lambda x: x.activity == discord.Streaming,
+                "\N{LARGE PURPLE CIRCLE}": lambda x: x.activity != None
+                and x.activity.type == discord.ActivityType.streaming,
                 "\N{MOBILE PHONE}": lambda x: x.is_on_mobile(),
             }
             member_msg = _("Users online: **{online}/{total_users}**\n").format(
