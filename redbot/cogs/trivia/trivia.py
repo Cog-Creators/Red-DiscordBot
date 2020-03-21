@@ -611,11 +611,9 @@ class Trivia(commands.Cog):
 
         file = cog_data_path(self) / f"{filename}.yaml"
         if file.exists():
-            overwrite_message = (
-                    _("{filename} already exists. Do you wish to overwrite?").format(
-                        filename=filename
-                    )
-                )
+            overwrite_message = _("{filename} already exists. Do you wish to overwrite?").format(
+                filename=filename
+            )
 
             can_react = ctx.channel.permissions_for(ctx.me).add_reactions
             if not can_react:
@@ -624,7 +622,9 @@ class Trivia(commands.Cog):
             overwrite_message_object: discord.Message = await ctx.send(message=overwrite_message)
             if can_react:
                 # noinspection PyAsyncCall
-                start_adding_reactions(overwrite_message_object, ReactionPredicate.YES_OR_NO_EMOJIS)
+                start_adding_reactions(
+                    overwrite_message_object, ReactionPredicate.YES_OR_NO_EMOJIS
+                )
                 pred = ReactionPredicate.yes_or_no(overwrite_message_object, ctx.author)
                 event = "reaction_add"
             else:
