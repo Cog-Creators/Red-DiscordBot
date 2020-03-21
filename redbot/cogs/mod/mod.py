@@ -108,7 +108,6 @@ class Mod(
                 "you were previously using these functions."
             )
             self.bot.loop.create_task(self.bot.send_to_owners_with_prefix_replaced(msg))
-            await self.settings.version.set(__version__)
         if await self.settings.version() < "1.2.0":
             msg = _(
                 "Delete delay settings have been moved. "
@@ -116,7 +115,7 @@ class Mod(
                 "you were previously using these functions."
             )
             self.bot.loop.create_task(self.bot.send_to_owners_with_prefix_replaced(msg))
-            await self.settings.version.set(__version__)
+        await self.settings.version.set(__version__)
 
     @commands.command()
     @commands.is_owner()
