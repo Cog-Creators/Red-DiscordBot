@@ -143,7 +143,7 @@ class WhitelistBlacklistManager:
     async def add_to_whitelist(self, guild: Optional[discord.Guild], role_or_user: List[int]):
         gid: Optional[int] = guild.id if guild else None
         role_or_user = role_or_user or []
-        if not isinstance(role_or_user, list) and all(
+        if not isinstance(role_or_user, list) and not all(
             isinstance(r_or_u, int) for r_or_u in role_or_user
         ):
             raise TypeError("Whitelisted objects must be a list of ints")
@@ -176,19 +176,22 @@ class WhitelistBlacklistManager:
     async def remove_from_whitelist(self, guild: Optional[discord.Guild], role_or_user: List[int]):
         gid: Optional[int] = guild.id if guild else None
         role_or_user = role_or_user or []
-        if not isinstance(role_or_user, list) and all(
+        if not isinstance(role_or_user, list) and not all(
             isinstance(r_or_u, int) for r_or_u in role_or_user
         ):
             raise TypeError("Whitelisted objects must be a list of ints")
-        if gid not in self._cached_whitelist:
-            self._cached_whitelist[gid] = []
+
         if gid is None:
+            if gid not in self._cached_whitelist:
+                self._cached_whitelist[gid] = await self._config.whitelist()
             for obj_id in role_or_user:
                 if obj_id in self._cached_whitelist[gid]:
                     self._cached_whitelist[gid].remove(obj_id)
                     async with self._config.whitelist() as curr_list:
                         curr_list.remove(obj_id)
         else:
+            if gid not in self._cached_whitelist:
+                self._cached_whitelist[gid] = await self._config.guild_from_id(gid).whitelist()
             for obj_id in role_or_user:
                 if obj_id in self._cached_whitelist[gid]:
                     self._cached_whitelist[gid].remove(obj_id)
@@ -217,7 +220,7 @@ class WhitelistBlacklistManager:
     async def add_to_blacklist(self, guild: Optional[discord.Guild], role_or_user: List[int]):
         gid: Optional[int] = guild.id if guild else None
         role_or_user = role_or_user or []
-        if not isinstance(role_or_user, list) and all(
+        if not isinstance(role_or_user, list) and not all(
             isinstance(r_or_u, int) for r_or_u in role_or_user
         ):
             raise TypeError("Blacklisted objects must be a list of ints")
@@ -240,7 +243,7 @@ class WhitelistBlacklistManager:
 
     async def clear_blacklist(self, guild: Optional[discord.Guild] = None):
         gid: Optional[int] = guild.id if guild else None
-        self._cached_blacklist[gid]
+        self._cached_blacklist[gid] = []
         if gid is None:
             await self._config.blacklist.clear()
         else:
@@ -249,21 +252,23 @@ class WhitelistBlacklistManager:
     async def remove_from_blacklist(self, guild: Optional[discord.Guild], role_or_user: List[int]):
         gid: Optional[int] = guild.id if guild else None
         role_or_user = role_or_user or []
-        if not isinstance(role_or_user, list) and all(
+        if not isinstance(role_or_user, list) and not all(
             isinstance(r_or_u, int) for r_or_u in role_or_user
         ):
             raise TypeError("Blacklisted objects must be a list of ints")
-        if gid not in self._cached_blacklist:
-            self._cached_blacklist[gid] = []
         if gid is None:
+            if gid not in self._cached_blacklist:
+                self._cached_blacklist[gid] = await self._config.blacklist()
             for obj_id in role_or_user:
                 if obj_id in self._cached_blacklist[gid]:
                     self._cached_blacklist[gid].remove(obj_id)
                     async with self._config.blacklist() as curr_list:
                         curr_list.remove(obj_id)
         else:
+            if gid not in self._cached_blacklist:
+                self._cached_blacklist[gid] = self._config.guild_from_id(gid).blacklist()
             for obj_id in role_or_user:
-                if obj_id not in self._cached_blacklist[gid]:
+                if obj_id in self._cached_blacklist[gid]:
                     self._cached_blacklist[gid].remove(obj_id)
                     async with self._config.guild_from_id(gid).blacklist() as curr_list:
                         curr_list.remove(obj_id)
