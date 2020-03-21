@@ -195,6 +195,14 @@ class Trivia(commands.Cog):
     async def custom_trivia_list(self, ctx: commands.Context):
         """List uploaded custom trivia."""
         personal_lists = sorted([p.resolve().stem for p in cog_data_path(self).glob("*.yaml")])
+        no_lists_uploaded = _("No custom Trivia lists uploaded.")
+
+        if not personal_lists:
+            if await ctx.embed_requested():
+                await ctx.send(embed=discord.Embed(colour=await ctx.embed_colour(), description=NO_LISTS_UPLOADED))
+            else:
+                await ctx.send(NO_LISTS_UPLOADED)
+
         if await ctx.embed_requested():
             await ctx.send(
                 embed=discord.Embed(
@@ -630,7 +638,7 @@ class Trivia(commands.Cog):
             if not can_react:
                 overwrite_message += " (y/n)"
 
-            overwrite_message_object: discord.Message = await ctx.send(message=overwrite_message)
+            overwrite_message_object: discord.Message = await ctx.send(overwrite_message)
             if can_react:
                 # noinspection PyAsyncCall
                 start_adding_reactions(
