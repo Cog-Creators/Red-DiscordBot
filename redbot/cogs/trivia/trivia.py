@@ -199,9 +199,13 @@ class Trivia(commands.Cog):
 
         if not personal_lists:
             if await ctx.embed_requested():
-                await ctx.send(embed=discord.Embed(colour=await ctx.embed_colour(), description=NO_LISTS_UPLOADED))
+                await ctx.send(
+                    embed=discord.Embed(
+                        colour=await ctx.embed_colour(), description=no_lists_uploaded
+                    )
+                )
             else:
-                await ctx.send(NO_LISTS_UPLOADED)
+                await ctx.send(no_lists_uploaded)
 
         if await ctx.embed_requested():
             await ctx.send(
@@ -602,7 +606,9 @@ class Trivia(commands.Cog):
             else:
                 return dict_
 
-    async def _save_trivia_list(self, ctx: commands.Context, attachment: discord.Attachment) -> None:
+    async def _save_trivia_list(
+        self, ctx: commands.Context, attachment: discord.Attachment
+    ) -> None:
         """Checks and saves a trivia list to data folder.
 
         Parameters
