@@ -135,6 +135,10 @@ def init_events(bot, cli_flags):
             await bot.send_to_owners(outdated_red_message)
 
     @bot.event
+    async def on_command_completion(ctx: commands.Context):
+        await bot._delete_delay(ctx)
+
+    @bot.event
     async def on_command_error(ctx, error, unhandled_by_cog=False):
 
         if not unhandled_by_cog:
@@ -144,6 +148,8 @@ def init_events(bot, cli_flags):
             if ctx.cog:
                 if commands.Cog._get_overridden_method(ctx.cog.cog_command_error) is not None:
                     return
+        if not isinstance(error, commands.CommandNotFound):
+            await bot._delete_delay(ctx)
 
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help()
