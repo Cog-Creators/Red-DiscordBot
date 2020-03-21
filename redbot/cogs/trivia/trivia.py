@@ -187,7 +187,6 @@ class Trivia(commands.Cog):
 
     @triviaset.group(name="custom")
     @commands.is_owner()
-    @checks.mod_or_permissions(administrator=True)
     async def triviaset_custom(self, ctx: commands.Context):
         """Manage Custom Trivia lists."""
         pass
