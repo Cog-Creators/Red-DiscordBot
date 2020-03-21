@@ -1,4 +1,5 @@
 """Module for Trivia cog."""
+import asyncio
 import math
 import pathlib
 from collections import Counter
@@ -265,40 +266,36 @@ class Trivia(commands.Cog):
     @trivia.command(name="list")
     async def trivia_list(self, ctx: commands.Context):
         """List available trivia categories."""
-        default_lists = sorted([p.resolve().stem for p in get_core_lists()])
-        personal_lists = sorted([p.resolve().stem for p in cog_data_path(self).glob("*.yaml")])
-
+        lists = set(p.stem for p in self._all_lists())
         if await ctx.embed_requested():
             await ctx.send(
                 embed=discord.Embed(
                     title=_("Available trivia lists"),
                     colour=await ctx.embed_colour(),
-                    description=(
-                        bold(_("Default lists"))
-                        + "\n"
-                        + ", ".join(default_lists)
-                        + "\n\n"
-                        + (
-                            bold(_("Custom lists")) + "\n" + ", ".join(personal_lists)
-                            if personal_lists
-                            else ""
-                        )
-                    ),
+                    description=", ".join(sorted(lists)),
                 )
             )
         else:
-            msg = box(
-                bold(_("Available trivia lists"))
-                + "\n\n"
-                + "- Default lists"
-                + "\n"
-                + ", ".join(default_lists)
-                + (
-                    "\n\n" + "- Custom lists" + "\n" + ", ".join(personal_lists)
-                    if personal_lists
-                    else ""
+            msg = box(bold(_("Available trivia lists")) + "\n\n" + ", ".join(sorted(lists)))
+            if len(msg) > 1000:
+                await ctx.author.send(msg)
+            else:
+                await ctx.send(msg)
+
+    @trivia.command(name="customlist")
+    async def custom_trivia_list(self, ctx: commands.Context):
+        """List uploaded custom trivia."""
+        personal_lists = sorted([p.resolve().stem for p in cog_data_path(self).glob("*.yaml")])
+        if await ctx.embed_requested():
+            await ctx.send(
+                embed=discord.Embed(
+                    title=_("Uploaded trivia lists"),
+                    colour=await ctx.embed_colour(),
+                    description=", ".join(sorted(personal_lists)),
                 )
             )
+        else:
+            msg = box(bold(_("Uploaded trivia lists")) + "\n\n" + ", ".join(sorted(personal_lists)))
             if len(msg) > 1000:
                 await ctx.author.send(msg)
             else:
@@ -310,7 +307,11 @@ class Trivia(commands.Cog):
         """Upload a trivia file."""
         if not ctx.message.attachments:
             await ctx.send(_("Supply a file with next message or type anything to cancel."))
-            message = await ctx.bot.wait_for("message", check=MessagePredicate.same_context(ctx))
+            try:
+                message = await ctx.bot.wait_for("message", check=MessagePredicate.same_context(ctx), timeout=30)
+            except asyncio.TimeoutError:
+                await ctx.send(_("You took too long to upload a list."))
+                return
             if not message.attachments:
                 await ctx.send(_("You have cancelled the upload process."))
                 return
@@ -320,8 +321,7 @@ class Trivia(commands.Cog):
         try:
             await self._save_trivia_list(ctx=ctx, file=parsedfile)
         except yaml.error.YAMLError as exc:
-            await ctx.send(_("Invalid list uploaded."))
-            LOG.debug(f"File failed to upload: {exc}")
+            await ctx.send(_("Invalid syntax: ") + str(exc))
 
     @commands.is_owner()
     @trivia.command(name="delete")
@@ -593,36 +593,36 @@ class Trivia(commands.Cog):
         """
         filename = file.filename.rsplit(".", 1)[0]
 
+
+        basefileexists = False
+
+        if filename in self.trivia.all_commands:
+            basefileexists = True
+        elif any(filename == item.stem for item in get_core_lists()):
+            basefileexists = True
+
+        if basefileexists:
+            await ctx.send(
+                _(
+                    "{filename} is a reserved trivia name and cannot be replaced.\n"
+                    "Choose another name".format(filename=filename)
+                )
+            )
+            return
+
         buffer = io.BytesIO(await file.read())
         yaml.safe_load(buffer)
         buffer.seek(0)
 
         file = cog_data_path(self) / f"{filename}.yaml"
 
-        basefileexists = None
 
-        if filename in ("upload", "delete"):
-            basefilexists = True
-        elif any(filename == item.stem for item in get_core_lists()):
-            basefileexists = True
 
-        if file.exists() or basefileexists:
-            if basefileexists:
-                await ctx.send(
-                    _(
-                        "{filename} is a reserved trivia name and cannot be replaced.\n"
-                        "Choose another name".format(filename=filename)
-                    )
-                )
-                return
-            else:
-                await ctx.send(
-                    _(
-                        "{filename} already exists. Do you wish to overwrite?".format(
-                            filename=filename
-                        )
-                    )
-                )
+        if file.exists():
+            await ctx.send(
+                    (_(
+                        "{filename} already exists. Do you wish to overwrite?").
+                        format(filename=filename)))
             pred = MessagePredicate.yes_or_no(ctx)
             await ctx.bot.wait_for("message", check=pred)
             if pred.result is True:
@@ -636,8 +636,7 @@ class Trivia(commands.Cog):
         else:
             with file.open("wb") as fp:
                 fp.write(buffer.read())
-            LOG.debug("Saved file as {filepath}".format(filepath=file))
-            await ctx.send("Saved Trivia list as {filename}".format(filename=filename))
+            await ctx.send(_("Saved Trivia list as {filename}").format(filename=filename))
 
     def _get_trivia_session(self, channel: discord.TextChannel) -> TriviaSession:
         return next(
