@@ -206,6 +206,7 @@ class Trivia(commands.Cog):
                 )
             else:
                 await ctx.send(no_lists_uploaded)
+            return
 
         if await ctx.embed_requested():
             await ctx.send(
