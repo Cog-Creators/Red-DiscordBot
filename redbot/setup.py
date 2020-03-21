@@ -5,6 +5,7 @@ import logging
 import os
 import sys
 import re
+import tarfile
 from copy import deepcopy
 from pathlib import Path
 from typing import Dict, Any, Optional, Union
@@ -293,6 +294,109 @@ async def remove_instance_interaction():
     await remove_instance(selected, interactive=True)
 
 
+async def restore_backup(tar: tarfile.TarFile) -> None:
+    # TODO: split this into smaller parts
+    try:
+        fp = tar.extractfile("instance.json")
+    except (KeyError, tarfile.StreamError):
+        print("This isn't a valid backup file!")
+        return
+    if fp is None:
+        print("This isn't a valid backup file!")
+        return
+    with fp:
+        instance_name, instance_data = json.load(fp).popitem()
+
+    print("\nWhen the instance was backuped, it was using these settings:")
+    print("  Original instance name:", instance_name)
+    data_path = Path(instance_data["DATA_PATH"])
+    print("  Original data path:", data_path)
+    storage_backends = {
+        BackendType.JSON: "JSON",
+        BackendType.POSTGRES: "PostgreSQL",
+        BackendType.MONGOV1: "MongoDB (unavailable)",
+        BackendType.MONGO: "MongoDB (unavailable)",
+    }
+    storage_type = BackendType(instance_data["STORAGE_TYPE"])
+    print("  Original storage backend:", storage_backends[storage_type])
+    if storage_type is BackendType.POSTGRES:
+        storage_details = instance_data["STORAGE_DETAILS"]
+        print("  Original storage details:")
+        for key in ("host", "port", "database", "user"):
+            print(f"    - DB {key}:", storage_details[key])
+        print("    - DB password: ***")
+
+    name_used = instance_name in instance_list
+    data_path_not_empty = data_path.exists() and next(data_path.glob("*"), None) is not None
+    backend_unavailable = storage_type in (BackendType.MONGOV1, BackendType.MONGO)
+    if click.confirm("\nWould you like to change anything?"):
+        if not name_used and click.confirm("Do you want to use different instance name?"):
+            instance_name = get_name()
+            # TODO: gotta check if it's not taken
+        if not data_path_not_empty and click.confirm("Do you want to use different data path?"):
+            data_path = Path(get_data_dir(instance_name))
+        if not backend_unavailable and click.confirm(
+            "Do you want to use different storage backend?"
+        ):
+            storage_type = get_storage_type()
+    if name_used:
+        print(
+            "Original instance name can't be used as other instance is already using it."
+            " You have to choose a different name."
+        )
+        instance_name = get_name()
+        # TODO: gotta check if it's not taken
+    if data_path_not_empty:
+        print(
+            "Original data path can't be used as it's not empty."
+            " You have to choose a different path."
+        )
+        data_path = Path(get_data_dir(instance_name))
+    if backend_unavailable:
+        print(
+            "Original storage backend is no longer available in Red."
+            " You have to choose a different backend."
+        )
+        storage = get_storage_type()  # TODO: this returns an int, probably gonna change that later
+        # TODO: gotta get the storage details
+
+    # TODO: handle more stuff from above here...
+
+    tar_members = [member for member in tar.getmembers() if member.name != "instance.json"]
+    # tar.errorlevel == 0 so errors are printed to stderr
+    tar.extractall(path=data_path, members=tar_members)
+
+    # TODO: ask for repo manager stuff here...
+
+
+async def restore_instance():
+    print("Hello! This command will guide you through restore process.\n")
+    backup_path_input = ""
+    while not backup_path_input:
+        print("Please enter the path to instance's backup:")
+        backup_path_input = input("> ")
+        backup_path = Path(backup_path_input)
+        try:
+            backup_path = backup_path.resolve()
+        except OSError:
+            print("This doesn't look like a valid path.")
+            backup_path_input = ""
+        else:
+            if not backup_path.is_file():
+                print("This path doesn't exist or it's not a file.")
+                backup_path_input = ""
+
+    try:
+        tar = tarfile.open(backup_path)
+    except tarfile.ReadError:
+        print(
+            "We couldn't open the given backup file. Make sure that you're passing correct file."
+        )
+        return
+    with tar:
+        await restore_backup(tar)
+
+
 @click.group(invoke_without_command=True)
 @click.option("--debug", type=bool)
 @click.pass_context
@@ -417,6 +521,12 @@ def convert(instance, backend):
 def backup(instance: str, destination_folder: Union[str, Path]) -> None:
     """Backup instance's data."""
     asyncio.run(create_backup(instance, Path(destination_folder)))
+
+
+@cli.command()
+def restore() -> None:
+    """Restore instance."""
+    asyncio.run(restore_instance())
 
 
 def run_cli():
