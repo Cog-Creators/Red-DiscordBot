@@ -13,12 +13,14 @@ from redbot.core import Config, checks
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, pagify, bold
-from redbot.core.utils.predicates import MessagePredicate
+from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from redbot.cogs.bank import check_global_setting_admin
 from .log import LOG
 from .session import TriviaSession
 
 __all__ = ["Trivia", "UNIQUE_ID", "get_core_lists"]
+
+from ...core.utils.menus import start_adding_reactions
 
 UNIQUE_ID = 0xB3C0E453
 
@@ -611,15 +613,17 @@ class Trivia(commands.Cog):
 
         file = cog_data_path(self) / f"{filename}.yaml"
         if file.exists():
-            await ctx.send(
+            overwrite_message = await ctx.send(
                 (
                     _("{filename} already exists. Do you wish to overwrite?").format(
                         filename=filename
                     )
                 )
             )
-            pred = MessagePredicate.yes_or_no(ctx)
-            await ctx.bot.wait_for("message", check=pred)
+            start_adding_reactions(overwrite_message, ReactionPredicate.YES_OR_NO_EMOJIS)
+
+            pred = ReactionPredicate.yes_or_no(overwrite_message, ctx.author)
+            await ctx.bot.wait_for("reaction_add", check=pred)
 
             if pred.result is False:
                 await ctx.send(_("I am not replacing the existing file"))
