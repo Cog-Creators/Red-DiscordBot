@@ -295,7 +295,8 @@ class Trivia(commands.Cog):
                 )
             )
         else:
-            msg = box(bold(_("Uploaded trivia lists")) + "\n\n" + ", ".join(sorted(personal_lists)))
+            msg = box(
+                bold(_("Uploaded trivia lists")) + "\n\n" + ", ".join(sorted(personal_lists)))
             if len(msg) > 1000:
                 await ctx.author.send(msg)
             else:
@@ -308,7 +309,9 @@ class Trivia(commands.Cog):
         if not ctx.message.attachments:
             await ctx.send(_("Supply a file with next message or type anything to cancel."))
             try:
-                message = await ctx.bot.wait_for("message", check=MessagePredicate.same_context(ctx), timeout=30)
+                message = await ctx.bot.wait_for("message",
+                                                 check=MessagePredicate.same_context(ctx),
+                                                 timeout=30)
             except asyncio.TimeoutError:
                 await ctx.send(_("You took too long to upload a list."))
                 return
@@ -319,7 +322,7 @@ class Trivia(commands.Cog):
         else:
             parsedfile = ctx.message.attachments[0]
         try:
-            await self._save_trivia_list(ctx=ctx, file=parsedfile)
+            await self._save_trivia_list(ctx=ctx, attachment=parsedfile)
         except yaml.error.YAMLError as exc:
             await ctx.send(_("Invalid syntax: ") + str(exc))
 
@@ -351,7 +354,7 @@ class Trivia(commands.Cog):
     @trivia_leaderboard.command(name="server")
     @commands.guild_only()
     async def trivia_leaderboard_server(
-        self, ctx: commands.Context, sort_by: str = "wins", top: int = 10
+            self, ctx: commands.Context, sort_by: str = "wins", top: int = 10
     ):
         """Leaderboard for this server.
 
@@ -380,7 +383,7 @@ class Trivia(commands.Cog):
 
     @trivia_leaderboard.command(name="global")
     async def trivia_leaderboard_global(
-        self, ctx: commands.Context, sort_by: str = "wins", top: int = 10
+            self, ctx: commands.Context, sort_by: str = "wins", top: int = 10
     ):
         """Global trivia leaderboard.
 
@@ -579,7 +582,7 @@ class Trivia(commands.Cog):
             else:
                 return dict_
 
-    async def _save_trivia_list(self, ctx: commands.Context, file: discord.Attachment):
+    async def _save_trivia_list(self, ctx: commands.Context, attachment: discord.Attachment):
         """Checks and saves a trivia list to data folder.
 
         Parameters
@@ -591,17 +594,11 @@ class Trivia(commands.Cog):
         -------
         None
         """
-        filename = file.filename.rsplit(".", 1)[0]
+        filename = attachment.filename.rsplit(".", 1)[0]
 
-
-        basefileexists = False
-
-        if filename in self.trivia.all_commands:
-            basefileexists = True
-        elif any(filename == item.stem for item in get_core_lists()):
-            basefileexists = True
-
-        if basefileexists:
+        # Check if trivia filename exists in core files or if it is a command
+        if filename in self.trivia.all_commands or any(
+                filename == item.stem for item in get_core_lists()):
             await ctx.send(
                 _(
                     "{filename} is a reserved trivia name and cannot be replaced.\n"
@@ -610,33 +607,26 @@ class Trivia(commands.Cog):
             )
             return
 
-        buffer = io.BytesIO(await file.read())
+        file = cog_data_path(self) / f"{filename}.yaml"
+        if file.exists():
+            await ctx.send(
+                (_(
+                    "{filename} already exists. Do you wish to overwrite?").
+                 format(filename=filename)))
+            pred = MessagePredicate.yes_or_no(ctx)
+            await ctx.bot.wait_for("message", check=pred)
+
+            if pred.result is False:
+                await ctx.send(_("I am not replacing the existing file"))
+                return
+
+        buffer = io.BytesIO(await attachment.read())
         yaml.safe_load(buffer)
         buffer.seek(0)
 
-        file = cog_data_path(self) / f"{filename}.yaml"
-
-
-
-        if file.exists():
-            await ctx.send(
-                    (_(
-                        "{filename} already exists. Do you wish to overwrite?").
-                        format(filename=filename)))
-            pred = MessagePredicate.yes_or_no(ctx)
-            await ctx.bot.wait_for("message", check=pred)
-            if pred.result is True:
-                with file.open("wb") as fp:
-                    fp.write(buffer.read())
-                await ctx.send(
-                    _("Success, trivia list uploaded as {filename}.").format(filename=filename)
-                )
-            else:
-                await ctx.send(_("I am not replacing the existing file"))
-        else:
-            with file.open("wb") as fp:
-                fp.write(buffer.read())
-            await ctx.send(_("Saved Trivia list as {filename}").format(filename=filename))
+        with file.open("wb") as fp:
+            fp.write(buffer.read())
+        await ctx.send(_("Saved Trivia list as {filename}").format(filename=filename))
 
     def _get_trivia_session(self, channel: discord.TextChannel) -> TriviaSession:
         return next(
