@@ -26,9 +26,9 @@ Then run each of the following commands:
 
     Set-ExecutionPolicy Bypass -Scope Process -Force
     iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-    choco install git --params "/GitOnlyOnPath /WindowsTerminal" -y
-    choco install visualstudio2019-workload-vctools -y
-    choco install python3 -y
+    choco upgrade git --params "/GitOnlyOnPath /WindowsTerminal" -y
+    choco upgrade visualstudio2019-workload-vctools -y
+    choco upgrade python3 -y --version 3.8.2
 
 For Audio support, you should also run the following command before exiting:
 
