@@ -221,22 +221,7 @@ def _edit_instance_name(old_name, new_name, confirm_overwrite, no_prompt):
             )
     elif not no_prompt and confirm("Would you like to change the instance name?", default=False):
         name = get_name()
-        if name in _get_instance_names():
-            print(
-                "WARNING: An instance already exists with this name. "
-                "Continuing will overwrite the existing instance config."
-            )
-            if not confirm(
-                "Are you absolutely certain you want to continue with this instance name?",
-                default=False,
-            ):
-                print("Instance name will remain unchanged.")
-                name = old_name
-            else:
-                print("Instance name updated.")
-        else:
-            print("Instance name updated.")
-        print()
+        print("Instance name updated.\n")
     else:
         name = old_name
     return name

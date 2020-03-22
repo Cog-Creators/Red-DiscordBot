@@ -61,7 +61,7 @@ def save_config(name, data, remove=False):
 
 
 def get_data_dir(instance_name: str):
-    data_path = Path(appdir.user_data_dir) / "data" / instance_name
+    default_data_path = Path(appdir.user_data_dir) / "data" / instance_name
 
     print()
     print(
@@ -70,42 +70,42 @@ def get_data_dir(instance_name: str):
         " otherwise input your desired data location."
     )
     print()
-    print("Default: {}".format(data_path))
+    print("Default: {}".format(default_data_path))
 
-    data_path_input = input("> ")
+    while True:
+        data_path_input = input("> ")
 
-    if data_path_input != "":
-        data_path = Path(data_path_input)
+        if data_path_input != "":
+            data_path = Path(data_path_input)
+        else:
+            data_path = default_data_path
 
-    try:
-        exists = data_path.exists()
-    except OSError:
-        print(
-            "We were unable to check your chosen directory."
-            " Provided path may contain an invalid character."
-        )
-        sys.exit(1)
-
-    if not exists:
         try:
-            data_path.mkdir(parents=True, exist_ok=True)
+            exists = data_path.exists()
         except OSError:
             print(
-                "We were unable to create your chosen directory."
-                " You may need to restart this process with admin"
-                " privileges."
+                "We were unable to check your chosen directory."
+                " Provided path may contain an invalid character."
             )
-            sys.exit(1)
+            continue
 
-    print("You have chosen {} to be your data directory.".format(data_path))
-    if not click.confirm("Please confirm", default=True):
-        print("Please start the process over.")
-        sys.exit(0)
+        if not exists:
+            try:
+                data_path.mkdir(parents=True, exist_ok=True)
+            except OSError:
+                print("We were unable to create your chosen directory.")
+                continue
+
+        print("You have chosen {} to be your data directory.".format(data_path))
+        if not click.confirm("Please confirm", default=True):
+            continue
+        break
+
     return str(data_path.resolve())
 
 
 def get_storage_type():
-    storage_dict = {1: "JSON", 2: "PostgreSQL"}
+    storage_dict = {1: BackendType.JSON, 2: BackendType.POSTGRES}
     storage = None
     while storage is None:
         print()
@@ -120,12 +120,12 @@ def get_storage_type():
         else:
             if storage not in storage_dict:
                 storage = None
-    return storage
+    return storage_dict[storage]
 
 
 def get_name() -> str:
     name = ""
-    while len(name) == 0:
+    while not name:
         print(
             "Please enter a name for your instance,"
             " it will be used to run your bot from here on out.\n"
@@ -139,6 +139,16 @@ def get_name() -> str:
                 " characters A-z, numbers, underscores, and hyphens!"
             )
             name = ""
+        elif name in instance_data:
+            print(
+                "WARNING: An instance already exists with this name. "
+                "Continuing will overwrite the existing instance config."
+            )
+            if not click.confirm(
+                "Are you absolutely certain you want to continue with this instance name?",
+                default=False,
+            ):
+                name = ""
     return name
 
 
@@ -158,22 +168,12 @@ def basic_setup():
     default_dirs = deepcopy(data_manager.basic_config_default)
     default_dirs["DATA_PATH"] = default_data_dir
 
-    storage = get_storage_type()
+    storage_type = get_storage_type()
 
-    storage_dict = {1: BackendType.JSON, 2: BackendType.POSTGRES}
-    storage_type: BackendType = storage_dict.get(storage, BackendType.JSON)
     default_dirs["STORAGE_TYPE"] = storage_type.value
     driver_cls = drivers.get_driver_class(storage_type)
     default_dirs["STORAGE_DETAILS"] = driver_cls.get_config_details()
 
-    if name in instance_data:
-        print(
-            "WARNING: An instance already exists with this name. "
-            "Continuing will overwrite the existing instance config."
-        )
-        if not click.confirm("Are you absolutely certain you want to continue?", default=False):
-            print("Not continuing")
-            sys.exit(0)
     save_config(name, default_dirs)
 
     print()
@@ -319,8 +319,8 @@ async def restore_backup(tar: tarfile.TarFile) -> None:
     }
     storage_type = BackendType(instance_data["STORAGE_TYPE"])
     print("  Original storage backend:", storage_backends[storage_type])
+    storage_details = instance_data["STORAGE_DETAILS"]
     if storage_type is BackendType.POSTGRES:
-        storage_details = instance_data["STORAGE_DETAILS"]
         print("  Original storage details:")
         for key in ("host", "port", "database", "user"):
             print(f"    - DB {key}:", storage_details[key])
@@ -332,39 +332,61 @@ async def restore_backup(tar: tarfile.TarFile) -> None:
     if click.confirm("\nWould you like to change anything?"):
         if not name_used and click.confirm("Do you want to use different instance name?"):
             instance_name = get_name()
-            # TODO: gotta check if it's not taken
         if not data_path_not_empty and click.confirm("Do you want to use different data path?"):
-            data_path = Path(get_data_dir(instance_name))
+            while True:
+                data_path = Path(get_data_dir(instance_name))
+                data_path_not_empty = (
+                    data_path.exists() and next(data_path.glob("*"), None) is not None
+                )
+                if not data_path_not_empty:
+                    break
+                print("Given path can't be used as it's not empty.")
         if not backend_unavailable and click.confirm(
-            "Do you want to use different storage backend?"
+            "Do you want to use different storage backend or change storage details?"
         ):
             storage_type = get_storage_type()
+            driver_cls = drivers.get_driver_class(storage_type)
+            storage_details = driver_cls.get_config_details()
     if name_used:
         print(
             "Original instance name can't be used as other instance is already using it."
             " You have to choose a different name."
         )
         instance_name = get_name()
-        # TODO: gotta check if it's not taken
     if data_path_not_empty:
         print(
             "Original data path can't be used as it's not empty."
             " You have to choose a different path."
         )
-        data_path = Path(get_data_dir(instance_name))
+        while True:
+            data_path = Path(get_data_dir(instance_name))
+            data_path_not_empty = (
+                data_path.exists() and next(data_path.glob("*"), None) is not None
+            )
+            if not data_path_not_empty:
+                break
+            print("Given path can't be used as it's not empty.")
     if backend_unavailable:
         print(
             "Original storage backend is no longer available in Red."
             " You have to choose a different backend."
         )
-        storage = get_storage_type()  # TODO: this returns an int, probably gonna change that later
-        # TODO: gotta get the storage details
-
-    # TODO: handle more stuff from above here...
+        storage_type = get_storage_type()
+        driver_cls = drivers.get_driver_class(storage_type)
+        storage_details = driver_cls.get_config_details()
 
     tar_members = [member for member in tar.getmembers() if member.name != "instance.json"]
     # tar.errorlevel == 0 so errors are printed to stderr
     tar.extractall(path=data_path, members=tar_members)
+
+    default_dirs = deepcopy(data_manager.basic_config_default)
+    default_dirs["DATA_PATH"] = data_path
+    # data in backup file is using json
+    default_dirs["STORAGE_TYPE"] = BackendType.JSON
+    default_dirs["STORAGE_DETAILS"] = {}
+    save_config(instance_name, default_dirs)
+
+    # TODO: handle storage backend migration here...
 
     # TODO: ask for repo manager stuff here...
 
