@@ -34,7 +34,7 @@ For Audio support, you should also run the following command before exiting:
 
 .. code-block:: none
 
-    choco install adoptopenjdk11jre -y
+    choco upgrade adoptopenjdk11jre -y
 
 
 From here, exit the prompt then continue onto `creating-venv-windows`.
