@@ -219,7 +219,7 @@ def init_events(bot, cli_flags):
         elif isinstance(error, commands.CommandOnCooldown):
             await ctx.send(
                 _("This command is on cooldown. Try again in {delay}.").format(
-                    delay=humanize_timedelta(seconds=error.retry_after) or "1 second"
+                    delay=humanize_timedelta(seconds=error.retry_after) or _("1 second")
                 ),
                 delete_after=error.retry_after,
             )
