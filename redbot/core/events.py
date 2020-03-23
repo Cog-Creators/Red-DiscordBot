@@ -217,12 +217,11 @@ def init_events(bot, cli_flags):
         elif isinstance(error, commands.CheckFailure):
             pass
         elif isinstance(error, commands.CommandOnCooldown):
-            await ctx.send(
-                _("This command is on cooldown. Try again in {delay}.").format(
-                    delay=humanize_timedelta(seconds=error.retry_after) or _("1 second")
-                ),
-                delete_after=error.retry_after,
-            )
+            if delay := humanize_timedelta(seconds=error.retry_after):
+                msg = _("This command is on cooldown. Try again in {delay}.").format(delay=delay)
+            else:
+                msg = _("This command is on cooldown. Try again in 1 second.")
+            await ctx.send(msg, delete_after=error.retry_after)
         elif isinstance(error, commands.MaxConcurrencyReached):
             await ctx.send(
                 _(
