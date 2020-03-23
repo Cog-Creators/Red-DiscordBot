@@ -1216,3 +1216,10 @@ class RepoManager:
                 if branch is None:
                     branch = tree_url_match["branch"]
         return url, branch
+
+    def _restore_from_backup(self):
+        """Restore cogs using `repos.json` in cog's data path.
+
+        Used by `redbot-setup restore` cli command.
+        """
+        repos = data_manager.cog_data_path(self) / "repos.json"

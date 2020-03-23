@@ -8,7 +8,7 @@ import re
 import tarfile
 from copy import deepcopy
 from pathlib import Path
-from typing import Dict, Any, Optional, Union
+from typing import Dict, Any, Optional, Tuple, Union
 
 import appdirs
 import click
@@ -197,12 +197,15 @@ def get_target_backend(backend) -> BackendType:
 
 
 async def do_migration(
-    current_backend: BackendType, target_backend: BackendType
+    current_backend: BackendType,
+    target_backend: BackendType,
+    new_storage_details: Optional[dict] = None,
 ) -> Dict[str, Any]:
     cur_driver_cls = drivers._get_driver_class_include_old(current_backend)
     new_driver_cls = drivers.get_driver_class(target_backend)
     cur_storage_details = data_manager.storage_details()
-    new_storage_details = new_driver_cls.get_config_details()
+    if new_storage_details is None:
+        new_storage_details = new_driver_cls.get_config_details()
 
     await cur_driver_cls.initialize(**cur_storage_details)
     await new_driver_cls.initialize(**new_storage_details)
@@ -375,8 +378,25 @@ async def restore_backup(tar: tarfile.TarFile) -> None:
         driver_cls = drivers.get_driver_class(storage_type)
         storage_details = driver_cls.get_config_details()
 
-    tar_members = [member for member in tar.getmembers() if member.name != "instance.json"]
+    all_tar_members = tar.getmembers()
+    ignored_members: Tuple[str, ...] = ("instance.json",)
+    downloader_backup_files = (
+        "cogs/RepoManager/repos.json",
+        "cogs/RepoManager/settings.json",
+        "cogs/Downloader/settings.json",
+    )
+    restore_downloader = all(
+        backup_file in all_tar_members for backup_file in downloader_backup_files
+    ) and click.confirm(
+        "Do you want to restore 3rd-party repos and cogs installed through Downloader?",
+        default=True,
+    )
+    if not restore_downloader:
+        ignored_members += downloader_backup_files
+
+    tar_members = [member for member in tar.getmembers() if member.name not in ignored_members]
     # tar.errorlevel == 0 so errors are printed to stderr
+    # TODO: progress bar?
     tar.extractall(path=data_path, members=tar_members)
 
     default_dirs = deepcopy(data_manager.basic_config_default)
@@ -386,9 +406,21 @@ async def restore_backup(tar: tarfile.TarFile) -> None:
     default_dirs["STORAGE_DETAILS"] = {}
     save_config(instance_name, default_dirs)
 
-    # TODO: handle storage backend migration here...
+    data_manager.load_basic_configuration(instance_name)
 
-    # TODO: ask for repo manager stuff here...
+    if storage_type is not BackendType.JSON:
+        await do_migration(BackendType.JSON, storage_type, storage_details)
+
+    if restore_downloader:
+        from redbot.cogs.downloader.repo_manager import RepoManager
+
+        repo_mgr = RepoManager()
+        # this line shouldn't be needed since there are no repos:
+        # await repo_mgr.initialize()
+        try:
+            repo_mgr._restore_from_backup()
+        except ...:
+            ...
 
 
 async def restore_instance():
