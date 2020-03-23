@@ -84,14 +84,23 @@ class Image(commands.Cog):
 
     @_imgur.command(name="subreddit")
     async def imgur_subreddit(
-        self, ctx, subreddit: str, sort_type: str = "top", window: str = "day"
+        self,
+        ctx,
+        count: Optional[int] = 1,
+        subreddit: str,
+        sort_type: str = "top",
+        window: str = "day",
     ):
         """Get images from a subreddit.
 
         You can customize the search with the following options:
         - `<sort_type>`: new, top
         - `<window>`: day, week, month, year, all
+        - `<count>`: number of images to return (up to 5)
         """
+        if count < 1 or count > 5:
+            await ctx.send(_("Image count has to be between 1 and 5."))
+            return
         sort_type = sort_type.lower()
         window = window.lower()
 
@@ -126,7 +135,7 @@ class Image(commands.Cog):
         if data["success"]:
             items = data["data"]
             if items:
-                for item in items[:3]:
+                for item in items[:count]:
                     link = item["gifv"] if "gifv" in item else item["link"]
                     links.append("{}\n{}".format(item["title"], link))
 
