@@ -192,12 +192,14 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
     backup_fpath = dest / f"redv3_{data_manager.instance_name}_{timestr}.tar.gz"
 
     to_backup = []
+    # we need trailing separator to not exclude files and folders that only start with these names
+    # e.g. RepoManager\repos.json
     exclusions = [
         "__pycache__",
         "Lavalink.jar",
-        os.path.join("Downloader", "lib"),
-        os.path.join("CogManager", "cogs"),
-        os.path.join("RepoManager", "repos"),
+        os.path.join("Downloader", "lib", ""),
+        os.path.join("CogManager", "cogs", ""),
+        os.path.join("RepoManager", "repos", ""),
     ]
 
     # Avoiding circular imports

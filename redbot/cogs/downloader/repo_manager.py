@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import functools
+import json
 import os
 import pkgutil
 import shlex
@@ -1217,9 +1218,27 @@ class RepoManager:
                     branch = tree_url_match["branch"]
         return url, branch
 
-    def _restore_from_backup(self):
+    async def _restore_from_backup(self):
         """Restore cogs using `repos.json` in cog's data path.
 
         Used by `redbot-setup restore` cli command.
         """
-        repos = data_manager.cog_data_path(self) / "repos.json"
+        with open(data_manager.cog_data_path(self) / "repos.json") as fp:
+            raw_repos = json.load(fp)
+        for repo_data in raw_repos:
+            try:
+                await self.add_repo(repo_data["url"], repo_data["name"], repo_data["branch"])
+            except errors.CloningError as err:
+                log.exception(
+                    "Something went wrong whilst cloning %s (to branch: %s)",
+                    repo_data["url"],
+                    repo_data["branch"],
+                    exc_info=err,
+                )
+            except OSError:
+                log.exception(
+                    "Something went wrong trying to add repo %s under name %s",
+                    repo_data["url"],
+                    repo_data["name"],
+                )
+        from .downloader import Downloader
