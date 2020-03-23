@@ -4,7 +4,7 @@ Redbot 3.3.3 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Dav-Git`, :ghuser:`Ianardo-DiCaprio`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`PredaaA`, :ghuser:`Stonedestroyer`
+| :ghuser:`Dav-Git`, :ghuser:`Ianardo-DiCaprio`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`PredaaA`, :ghuser:`Stonedestroyer`, :ghuser:`TrustyJAID`
 
 End-user changelog
 ------------------
@@ -12,6 +12,7 @@ End-user changelog
 Core Bot
 ********
 
+- Fixed various bugs with blacklist and whitelist (:issue:`3643`, :issue:`3642`)
 - Outages of ``pypi.org`` no longer prevent the bot from starting (:issue:`3663`)
 - Fixed few deprecation warnings related to menus (:issue:`3644`)
 
