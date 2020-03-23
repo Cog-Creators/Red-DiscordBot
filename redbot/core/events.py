@@ -14,6 +14,7 @@ from colorama import Fore, Style, init
 from pkg_resources import DistributionNotFound
 
 from redbot.core.commands import RedHelpFormatter
+from redbot.core.i18n import Translator
 from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
 from . import commands
 from .config import get_latest_confs
@@ -31,6 +32,8 @@ ______         _           ______ _                       _  ______       _
 | |\ \  __/ (_| |          | |/ /| \__ \ (_| (_) | | | (_| | | |_/ / (_) | |_
 \_| \_\___|\__,_|          |___/ |_|___/\___\___/|_|  \__,_| \____/ \___/ \__|
 """
+
+_ = Translator(__name__, __file__)
 
 
 def init_events(bot, cli_flags):
@@ -154,7 +157,9 @@ def init_events(bot, cli_flags):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help()
         elif isinstance(error, commands.ArgParserFailure):
-            msg = f"`{error.user_input}` is not a valid value for `{error.cmd}`"
+            msg = _("`{user_input}` is not a valid value for `{command}`").format(
+                user_input=error.user_input, command=error.cmd,
+            )
             if error.custom_help_msg:
                 msg += f"\n{error.custom_help_msg}"
             await ctx.send(msg)
@@ -177,9 +182,9 @@ def init_events(bot, cli_flags):
                 exc_info=error.original,
             )
 
-            message = "Error in command '{}'. Check your console or logs for details.".format(
-                ctx.command.qualified_name
-            )
+            message = _(
+                "Error in command '{command}'. Check your console or logs for details."
+            ).format(command=ctx.command.qualified_name)
             exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
             exception_log += "".join(
                 traceback.format_exception(type(error), error, error.__traceback__)
@@ -201,35 +206,35 @@ def init_events(bot, cli_flags):
                 await ctx.send(await format_fuzzy_results(ctx, fuzzy_commands, embed=False))
         elif isinstance(error, commands.BotMissingPermissions):
             if bin(error.missing.value).count("1") == 1:  # Only one perm missing
-                plural = ""
-            else:
-                plural = "s"
-            await ctx.send(
-                "I require the {perms} permission{plural} to execute that command.".format(
-                    perms=format_perms_list(error.missing), plural=plural
+                msg = _("I require the {permission} permission to execute that command.").format(
+                    permission=format_perms_list(error.missing)
                 )
-            )
+            else:
+                msg = _("I require {permission_list} permissions to execute that command.").format(
+                    permission_list=format_perms_list(error.missing)
+                )
+            await ctx.send(msg)
         elif isinstance(error, commands.UserFeedbackCheckFailure):
             if error.message:
                 await ctx.send(error.message)
         elif isinstance(error, commands.NoPrivateMessage):
-            await ctx.send("That command is not available in DMs.")
+            await ctx.send(_("That command is not available in DMs."))
         elif isinstance(error, commands.PrivateMessageOnly):
-            await ctx.send("That command is only available in DMs.")
+            await ctx.send(_("That command is only available in DMs."))
         elif isinstance(error, commands.CheckFailure):
             pass
         elif isinstance(error, commands.CommandOnCooldown):
-            await ctx.send(
-                "This command is on cooldown. Try again in {}.".format(
-                    humanize_timedelta(seconds=error.retry_after) or "1 second"
-                ),
-                delete_after=error.retry_after,
-            )
+            if delay := humanize_timedelta(seconds=error.retry_after):
+                msg = _("This command is on cooldown. Try again in {delay}.").format(delay=delay)
+            else:
+                msg = _("This command is on cooldown. Try again in 1 second.")
+            await ctx.send(msg, delete_after=error.retry_after)
         elif isinstance(error, commands.MaxConcurrencyReached):
             await ctx.send(
-                "Too many people using this command. It can only be used {} time(s) per {} concurrently.".format(
-                    error.number, error.per.name
-                )
+                _(
+                    "Too many people using this command."
+                    " It can only be used {number} time(s) per {type} concurrently."
+                ).format(number=error.number, type=error.per.name)
             )
         else:
             log.exception(type(error).__name__, exc_info=error)
