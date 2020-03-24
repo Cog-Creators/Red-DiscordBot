@@ -172,12 +172,7 @@ one-by-one:
 
     brew install python@3.8
     brew install git
-    brew cask install AdoptOpenJDK/openjdk/adoptopenjdk11
-
-.. attention::
-
-    It's possible you will have network issues. If so, go in your Applications folder, inside it, go in
-    the Python 3.8 folder then double click ``Install certificates.command``.
+    brew cask install adoptopenjdk/openjdk/adoptopenjdk11
 
 Continue by `creating-venv-linux`.
 
