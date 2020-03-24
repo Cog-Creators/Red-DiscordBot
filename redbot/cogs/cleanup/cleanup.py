@@ -550,7 +550,7 @@ class Cleanup(commands.Cog):
         msgs = []
         spam = []
         async for msg in ctx.channel.history(limit=50):
-            c = '{0.author.id}-{0.content}'.format(msg)
+            c = "{0.author.id}-{0.content}".format(msg)
             if c in msgs:
                 spam.append(msg)
             else:
@@ -558,4 +558,6 @@ class Cleanup(commands.Cog):
         spam.append(ctx.message)
 
         await mass_purge(spam, ctx.channel)
-        log.info('{0.author} deleted {1} spam messages in channel {0.channel}.'.format(ctx, len(spam)))
+        log.info(
+            "{0.author} deleted {1} spam messages in channel {0.channel}.".format(ctx, len(spam))
+        )
