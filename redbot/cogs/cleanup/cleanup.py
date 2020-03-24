@@ -541,3 +541,21 @@ class Cleanup(commands.Cog):
             await mass_purge(to_delete, channel)
         else:
             await slow_deletion(to_delete)
+
+    @cleanup.command(name="spam")
+    @commands.guild_only()
+    @commands.bot_has_permissions(manage_messages=True)
+    async def cleanup_spam(self, ctx: commands.Context):
+        """Deletes duplicate messages in the channel from the last 50 messages."""
+        msgs = []
+        spam = []
+        async for msg in ctx.channel.history(limit=50):
+            c = '{0.author.id}-{0.content}'.format(msg)
+            if c in msgs:
+                spam.append(msg)
+            else:
+                msgs.append(c)
+        spam.append(ctx.message)
+
+        await mass_purge(spam, ctx.channel)
+        log.info('{0.author} deleted {1} spam messages in channel {0.channel}.'.format(ctx, len(spam)))
