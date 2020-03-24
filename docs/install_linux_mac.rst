@@ -163,7 +163,7 @@ following, then press Enter:
 
 .. code-block:: none
 
-    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
 After the installation, install the required packages by pasting the commands and pressing enter,
 one-by-one:
