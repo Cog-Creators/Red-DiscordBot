@@ -1284,3 +1284,5 @@ class RepoManager:
                     repo_url,
                     repo_name,
                 )
+        # TODO: run Downloader's config migration
+        # and clear commit data to trigger update for all cogs
