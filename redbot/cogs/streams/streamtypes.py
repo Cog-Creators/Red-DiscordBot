@@ -127,8 +127,8 @@ class YoutubeStream(Stream):
                     if (
                         stream_data
                         and stream_data != "None"
+                        and stream_data.get("actualStartTime", None) is not None
                         and stream_data.get("actualEndTime", None) is None
-                        and stream_data.get("concurrentViewers", None) is not None
                     ):
                         if video_id not in self.livestreams:
                             self.livestreams.append(data["items"][0]["id"])
