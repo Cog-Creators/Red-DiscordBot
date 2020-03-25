@@ -153,7 +153,7 @@ class YoutubeStream(Stream):
         vid_data = data["items"][0]
         video_url = "https://youtube.com/watch?v={}".format(vid_data["id"])
         title = vid_data["snippet"]["title"]
-        thumbnail = vid_data["snippet"]["thumbnails"]["default"]["url"]
+        thumbnail = vid_data["snippet"]["thumbnails"]["medium"]["url"]
         channel_title = vid_data["snippet"]["channelTitle"]
         embed = discord.Embed(title=title, url=video_url)
         embed.set_author(name=channel_title)
