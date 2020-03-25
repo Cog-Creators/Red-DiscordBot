@@ -8,7 +8,7 @@ import re
 import tarfile
 from copy import deepcopy
 from pathlib import Path
-from typing import Dict, Any, Optional, Tuple, Union
+from typing import Any, Dict, IO, Optional, Tuple, Union
 
 import appdirs
 import click
@@ -298,42 +298,42 @@ async def remove_instance_interaction():
     await remove_instance(selected, interactive=True)
 
 
-async def restore_backup(tar: tarfile.TarFile) -> None:
-    # TODO: split this into smaller parts
-    # TODO: sys.exit() instead of return?
+def open_file_from_tar(tar: tarfile.TarFile, arcname: str) -> Optional[IO[bytes]]:
     try:
-        fp = tar.extractfile("instance.json")
+        fp = tar.extractfile(arcname)
     except (KeyError, tarfile.StreamError):
+        return None
+    return fp
+
+
+def get_instance_from_backup(tar: tarfile.TarFile) -> Tuple[str, dict]:
+    if (fp := open_file_from_tar(tar, "instance.json")) is None:
         print("This isn't a valid backup file!")
-        return
-    if fp is None:
-        print("This isn't a valid backup file!")
-        return
+        sys.exit(1)
     with fp:
-        instance_name, instance_data = json.load(fp).popitem()
-    try:
-        fp = tar.extractfile("backup.version")
-    except (KeyError, tarfile.StreamError):
+        return json.load(fp).popitem()
+
+
+def get_backup_version(tar: tarfile.TarFile) -> int:
+    if (fp := open_file_from_tar(tar, "backup.version")) is None:
         print(
             "This backup was created using old version (v1) of backup system"
             " and can't be restored using this command."
         )
-        return
-    if fp is None:
-        print(
-            "This backup was created using old version (v1) of backup system"
-            " and can't be restored using this command."
-        )
-        return
+        sys.exit(1)
     with fp:
         backup_version = int(fp.read())
     if backup_version > 2:
         print("This backup was created using newer version of Red. Update Red to restore it.")
-        return
+        sys.exit(1)
+    return backup_version
 
+
+def print_instance_data(
+    instance_name: str, data_path: Path, storage_type: BackendType, storage_details: dict,
+) -> None:
     print("\nWhen the instance was backuped, it was using these settings:")
     print("  Original instance name:", instance_name)
-    data_path = Path(instance_data["DATA_PATH"])
     print("  Original data path:", data_path)
     storage_backends = {
         BackendType.JSON: "JSON",
@@ -341,14 +341,73 @@ async def restore_backup(tar: tarfile.TarFile) -> None:
         BackendType.MONGOV1: "MongoDB (unavailable)",
         BackendType.MONGO: "MongoDB (unavailable)",
     }
-    storage_type = BackendType(instance_data["STORAGE_TYPE"])
     print("  Original storage backend:", storage_backends[storage_type])
-    storage_details = instance_data["STORAGE_DETAILS"]
     if storage_type is BackendType.POSTGRES:
         print("  Original storage details:")
         for key in ("host", "port", "database", "user"):
             print(f"    - DB {key}:", storage_details[key])
         print("    - DB password: ***")
+
+
+async def restore_data(
+    tar: tarfile.TarFile,
+    instance_name: str,
+    data_path: Path,
+    storage_type: BackendType,
+    storage_details: dict,
+) -> bool:
+    all_tar_members = tar.getmembers()
+    ignored_members: Tuple[str, ...] = ("backup.version", "instance.json")
+    downloader_backup_files = (
+        "cogs/RepoManager/repos.json",
+        "cogs/RepoManager/settings.json",
+        "cogs/Downloader/settings.json",
+    )
+    restore_downloader = all(
+        backup_file in all_tar_members for backup_file in downloader_backup_files
+    ) and click.confirm(
+        "Do you want to restore 3rd-party repos and cogs installed through Downloader?\n"
+        "Full offline restore process for this hasn't been made yet, so after it's done"
+        " you will have to load Downloader and run `[p]cog update` command "
+        " to reinstall all cogs you had installed before.",
+        default=True,
+    )
+    if not restore_downloader:
+        ignored_members += downloader_backup_files
+
+    tar_members = [member for member in tar.getmembers() if member.name not in ignored_members]
+    # tar.errorlevel == 0 so errors are printed to stderr
+    # TODO: progress bar?
+    tar.extractall(path=data_path, members=tar_members)
+
+    default_dirs = deepcopy(data_manager.basic_config_default)
+    default_dirs["DATA_PATH"] = data_path
+    # data in backup file is using json
+    default_dirs["STORAGE_TYPE"] = BackendType.JSON.value
+    default_dirs["STORAGE_DETAILS"] = {}
+    save_config(instance_name, default_dirs)
+
+    data_manager.load_basic_configuration(instance_name)
+
+    if storage_type is not BackendType.JSON:
+        await do_migration(BackendType.JSON, storage_type, storage_details)
+        default_dirs["STORAGE_TYPE"] = storage_type.value
+        default_dirs["STORAGE_DETAILS"] = storage_details
+        save_config(instance_name, default_dirs)
+
+    return restore_downloader
+
+
+async def restore_backup(tar: tarfile.TarFile) -> None:
+    # TODO: split this into smaller parts
+    # TODO: related to above, operate on instance data dict to make it simpler
+    instance_name, instance_data = get_instance_from_backup(tar)
+    backup_version = get_backup_version(tar)
+
+    data_path = Path(instance_data["DATA_PATH"])
+    storage_type = BackendType(instance_data["STORAGE_TYPE"])
+    storage_details = instance_data["STORAGE_DETAILS"]
+    print_instance_data(instance_name, data_path, storage_type, storage_details)
 
     name_used = instance_name in instance_list
     data_path_not_empty = data_path.exists() and next(data_path.glob("*"), None) is not None
@@ -399,48 +458,21 @@ async def restore_backup(tar: tarfile.TarFile) -> None:
         driver_cls = drivers.get_driver_class(storage_type)
         storage_details = driver_cls.get_config_details()
 
-    all_tar_members = tar.getmembers()
-    ignored_members: Tuple[str, ...] = ("backup.version", "instance.json")
-    downloader_backup_files = (
-        "cogs/RepoManager/repos.json",
-        "cogs/RepoManager/settings.json",
-        "cogs/Downloader/settings.json",
-    )
-    restore_downloader = all(
-        backup_file in all_tar_members for backup_file in downloader_backup_files
-    ) and click.confirm(
-        "Do you want to restore 3rd-party repos"
-        " and cogs installed through Downloader (Git required)?",
-        default=True,
-    )
-    if not restore_downloader:
-        ignored_members += downloader_backup_files
-
-    tar_members = [member for member in tar.getmembers() if member.name not in ignored_members]
-    # tar.errorlevel == 0 so errors are printed to stderr
-    # TODO: progress bar?
-    tar.extractall(path=data_path, members=tar_members)
-
-    default_dirs = deepcopy(data_manager.basic_config_default)
-    default_dirs["DATA_PATH"] = data_path
-    # data in backup file is using json
-    default_dirs["STORAGE_TYPE"] = BackendType.JSON
-    default_dirs["STORAGE_DETAILS"] = {}
-    save_config(instance_name, default_dirs)
-
-    data_manager.load_basic_configuration(instance_name)
-
-    if storage_type is not BackendType.JSON:
-        await do_migration(BackendType.JSON, storage_type, storage_details)
+    restore_downloader = restore_data(tar, instance_name, data_path, storage_type, storage_details)
 
     if restore_downloader:
         repo_mgr = RepoManager()
         # this line shouldn't be needed since there are no repos:
         # await repo_mgr.initialize()
-        try:
-            await repo_mgr._restore_from_backup()
-        except ...:
-            ...
+        await repo_mgr._restore_from_backup()
+    print("Restore process has been completed.")
+    if restore_downloader:
+        print(
+            "Remember to run these commands after you start Red"
+            " to complete restoring of 3rd-party cogs:\n"
+            "[p]load downloader\n"
+            "[p]cog update"
+        )
 
 
 async def restore_instance():
