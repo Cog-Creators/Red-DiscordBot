@@ -573,10 +573,10 @@ class Cleanup(commands.Cog):
             "%s (%s) deleted %s spam messages in channel %s (%s).",
             ctx.author,
             ctx.author.id,
-            len(spam),
+            len(to_delete),
             ctx.channel,
             ctx.channel.id,
         )
 
-        spam.append(ctx.message)
-        await mass_purge(spam, ctx.channel)
+        to_delete.append(ctx.message)
+        await mass_purge(to_delete, ctx.channel)
