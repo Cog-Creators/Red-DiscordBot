@@ -504,7 +504,9 @@ class Downloader(commands.Cog):
                 # noinspection PyTypeChecker
                 repo = await self._repo_manager.add_repo(name=name, url=repo_url, branch=branch)
         except errors.ExistingGitRepo:
-            await ctx.send(_("That git repo has already been added under another name."))
+            await ctx.send(
+                _("The repo name you provided is already in use. Please choose another name.")
+            )
         except errors.CloningError as err:
             await ctx.send(
                 _(
