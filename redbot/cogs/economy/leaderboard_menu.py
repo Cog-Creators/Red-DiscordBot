@@ -9,30 +9,34 @@ from redbot.core.utils.menus import PagedMenu
 _ = Translator("what is the point of this", __file__)
 
 
-class LeaderboardMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌", "➡")):
+class LeaderboardMenu(PagedMenu, exit_button=True):
+    ENTRIES_PER_PAGE = 10
+
     def __init__(self, *, accounts: List[Tuple[int, Dict[str, Any]]], **kwargs) -> None:
         self._accounts = accounts
         self._cur_rank = 0
-        super().__init__(pages=[], arrows_always=True, **kwargs)
+        super().__init__(
+            pages=[],
+            # No need for page buttons if there's only one page of accounts
+            initial_emojis=("❌",) if len(self._accounts) <= self.ENTRIES_PER_PAGE else None,
+            **kwargs,
+        )
 
     async def _before_send(self, **kwargs) -> None:
         if not self._pages:
             self._pages = [await self._format_page()]
-        if len(self._accounts) < 10:
-            # Only one page, no need for arrows
-            self._initial_emojis = ("❌",)
 
     @PagedMenu.handler("⬅")
     async def prev_page(self, payload: Optional[discord.RawReactionActionEvent] = None) -> None:
         num_accounts = len(self._accounts)
-        if num_accounts < 10:
+        if num_accounts <= self.ENTRIES_PER_PAGE:
             return
         if self._cur_rank == 0:
-            self._cur_rank = num_accounts - num_accounts % 10
+            self._cur_rank = num_accounts - num_accounts % self.ENTRIES_PER_PAGE
             if self._cur_rank == num_accounts:
-                self._cur_rank -= 10
+                self._cur_rank -= self.ENTRIES_PER_PAGE
         else:
-            self._cur_rank -= 10
+            self._cur_rank -= self.ENTRIES_PER_PAGE
 
         if self._cur_page == 0:
             self._cur_page = 1
@@ -43,12 +47,12 @@ class LeaderboardMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌",
     @PagedMenu.handler("➡")
     async def next_page(self, payload: Optional[discord.RawReactionActionEvent] = None) -> None:
         num_accounts = len(self._accounts)
-        if num_accounts < 10:
+        if num_accounts <= self.ENTRIES_PER_PAGE:
             return
-        if self._cur_rank > num_accounts - 10:
+        if self._cur_rank > num_accounts - self.ENTRIES_PER_PAGE:
             self._cur_rank = 0
         else:
-            self._cur_rank += 10
+            self._cur_rank += self.ENTRIES_PER_PAGE
 
         if self._cur_page == len(self._pages) - 1:
             self._pages.append(await self._format_page())
@@ -56,7 +60,7 @@ class LeaderboardMenu(PagedMenu, exit_button=True, initial_emojis=("⬅", "❌",
         await super().next_page(payload=payload)
 
     async def _format_page(self) -> str:
-        accounts = self._accounts[self._cur_rank : self._cur_rank + 10]
+        accounts = self._accounts[self._cur_rank : self._cur_rank + self.ENTRIES_PER_PAGE]
 
         bal_colwidth = len(str(accounts[0][1]["balance"])) + 5
         pos_colwidth = len(str(len(accounts))) + 2

@@ -175,7 +175,7 @@ class ReactionMenu(abc.ABC):
         bot: Optional["Red"] = None,
         controller_ids: Optional[Set[int]] = None,
         initial_emojis: Optional[Sequence[str]] = None,
-        timeout: float = 30.0,
+        timeout: Optional[float] = 30.0,
         **kwargs,
     ) -> None:
         """Default constructor for a `ReactionMenu`.
@@ -668,6 +668,7 @@ class ReactionMenu(abc.ABC):
 
         By default, it simply calls :meth:`ReactionMenu.exit_menu`.
         """
+        # TODO: Make a kwarg which modifies this behaviour
         await self.exit_menu()
 
     async def _cleanup(self):
@@ -1054,6 +1055,15 @@ class OptionsMenu(Generic[_T], ReactionMenu):
                 user = self.channel.guild.get_member(payload.user_id)
             else:
                 user = self.bot.get_user(payload.user_id)
+            if user is None:
+                # User missing from cache... Shouldn't happen, but better safe than sorry
+                try:
+                    user = await self.bot.fetch_user(payload.user_id)
+                except discord.NotFound:
+                    # Silently give up. This user is dead to us.
+                    # Note: We're not catching all discord.HTTPExceptions because in that case,
+                    # logging the error in the console is likely to be useful.
+                    return
             await self._option_selected(user, idx)
             if self._exit_on_selection is True:
                 await self.exit_menu()
@@ -1178,6 +1188,8 @@ class PagedOptionsMenu(PagedMenu, OptionsMenu[_T], exit_button=True):
     def _start_adding_reactions(self, emojis: Optional[Sequence[str]] = None) -> asyncio.Task:
         if emojis is None:
             emojis = self._initial_emojis
+        # This may seem like a WET way of changing the initial emojis, but it's to do with an
+        # implementation detail of OptionsMenu.
         return super()._start_adding_reactions([*emojis, *PagedMenu.INITIAL_EMOJIS])
 
 
