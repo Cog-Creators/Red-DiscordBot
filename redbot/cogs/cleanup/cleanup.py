@@ -547,7 +547,10 @@ class Cleanup(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
     async def cleanup_spam(self, ctx: commands.Context, number: int = 50):
-        """Deletes duplicate messages in the channel from the last X messages, but keeps only one. Default 50."""
+        """Deletes duplicate messages in the channel from the last X messages and keeps only one copy.
+        
+        Defaults to 50.
+        """
         msgs = []
         spam = []
 
