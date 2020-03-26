@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-03-19 12:08+0000\n"
-"PO-Revision-Date: 2020-03-19 12:09\n"
+"PO-Revision-Date: 2020-03-26 12:55\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -61,15 +61,15 @@ msgstr "Les raisons personnalisées ont été désactivées."
 #: redbot/cogs/warnings/warnings.py:89
 #, docstring
 msgid "Toggle whether warnings should be sent to users in DMs."
-msgstr ""
+msgstr "Activer/désactiver l'envoi d'avertissements aux utilisateurs en message privé."
 
 #: redbot/cogs/warnings/warnings.py:94
 msgid "I will now try to send warnings to users DMs."
-msgstr ""
+msgstr "Je vais maintenant essayer d'envoyer des avertissements aux utilisateurs par message privé."
 
 #: redbot/cogs/warnings/warnings.py:96
 msgid "Warnings will no longer be sent to users DMs."
-msgstr ""
+msgstr "Les avertissements ne seront plus envoyés aux utilisateurs par message privé."
 
 #: redbot/cogs/warnings/warnings.py:101
 #, docstring
@@ -91,7 +91,7 @@ msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:128
 msgid "Warnings will now be sent to {channel}."
-msgstr ""
+msgstr "Les avertissements seront maintenant envoyés à {channel}."
 
 #: redbot/cogs/warnings/warnings.py:133
 msgid "Toggle channel has been disabled."
