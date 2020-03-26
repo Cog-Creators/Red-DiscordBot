@@ -1,10 +1,21 @@
 import contextlib
+import functools
 import io
 import os
 from pathlib import Path
-from typing import Callable, Union, Dict
+from typing import Callable, Union, Dict, Optional
 
-__all__ = ["get_locale", "set_locale", "reload_locales", "cog_i18n", "Translator"]
+import babel.localedata
+from babel.core import Locale
+
+__all__ = [
+    "get_locale",
+    "set_locale",
+    "reload_locales",
+    "cog_i18n",
+    "Translator",
+    "get_babel_locale",
+]
 
 _current_locale = "en-US"
 
@@ -158,6 +169,44 @@ class Translator(Callable[[str], str]):
         translated = _unescape(translated)
         if translated:
             self.translations[untranslated] = translated
+
+
+@functools.lru_cache()
+def _get_babel_locale(red_locale: str) -> babel.core.Locale:
+    supported_locales = babel.localedata.locale_identifiers()
+    try:  # Handles cases where red_locale is already Babel supported
+        babel_locale = Locale(*babel.parse_locale(red_locale))
+    except (ValueError, babel.core.UnknownLocaleError):
+        try:
+            babel_locale = Locale(*babel.parse_locale(red_locale, sep="-"))
+        except (ValueError, babel.core.UnknownLocaleError):
+            # ValueError is Raised by `parse_locale` when an invalid Locale is given to it
+            # Lets handle it silently and default to "en_US"
+            try:
+                # Try to find a babel locale that's close to the one used by red
+                babel_locale = Locale(Locale.negotiate([red_locale], supported_locales, sep="-"))
+            except (ValueError, TypeError, babel.core.UnknownLocaleError):
+                # If we fail to get a close match we will then default to "en_US"
+                babel_locale = Locale("en", "US")
+    return babel_locale
+
+
+def get_babel_locale(locale: Optional[str] = None) -> babel.core.Locale:
+    """Function to convert a locale to a ``babel.core.Locale``.
+
+    Parameters
+    ----------
+    locale : Optional[str]
+        The locale to convert, if not specified it defaults to the bot's locale.
+
+    Returns
+    -------
+    babel.core.Locale
+        The babel locale object.
+    """
+    if locale is None:
+        locale = get_locale()
+    return _get_babel_locale(locale)
 
 
 # This import to be down here to avoid circular import issues.

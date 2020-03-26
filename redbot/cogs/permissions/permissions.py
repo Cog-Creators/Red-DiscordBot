@@ -135,7 +135,7 @@ class Permissions(commands.Cog):
             "used).\n"
             "  5. Rules about the server a user is in (Global rules only).\n\n"
             "For more details, please read the [official documentation]"
-            "(https://red-discordbot.readthedocs.io/en/v3-develop/cog_permissions.html)."
+            "(https://docs.discord.red/en/stable/cog_permissions.html)."
         )
 
         await ctx.maybe_send_embed(message)
@@ -277,7 +277,9 @@ class Permissions(commands.Cog):
         await self._permissions_acl_set(ctx, guild_id=ctx.guild.id, update=True)
 
     @checks.is_owner()
-    @permissions.command(name="addglobalrule")
+    @permissions.command(
+        name="addglobalrule", usage="<allow_or_deny> <cog_or_command> <who_or_what>..."
+    )
     async def permissions_addglobalrule(
         self,
         ctx: commands.Context,
@@ -297,6 +299,14 @@ class Permissions(commands.Cog):
         if not who_or_what:
             await ctx.send_help()
             return
+        if isinstance(cog_or_command.obj, commands.commands._AlwaysAvailableCommand):
+            await ctx.send(
+                _(
+                    "This command is designated as being always available and "
+                    "cannot be modified by permission rules."
+                )
+            )
+            return
         for w in who_or_what:
             await self._add_rule(
                 rule=cast(bool, allow_or_deny),
@@ -308,7 +318,11 @@ class Permissions(commands.Cog):
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    @permissions.command(name="addserverrule", aliases=["addguildrule"])
+    @permissions.command(
+        name="addserverrule",
+        usage="<allow_or_deny> <cog_or_command> <who_or_what>...",
+        aliases=["addguildrule"],
+    )
     async def permissions_addguildrule(
         self,
         ctx: commands.Context,
@@ -328,6 +342,14 @@ class Permissions(commands.Cog):
         if not who_or_what:
             await ctx.send_help()
             return
+        if isinstance(cog_or_command.obj, commands.commands._AlwaysAvailableCommand):
+            await ctx.send(
+                _(
+                    "This command is designated as being always available and "
+                    "cannot be modified by permission rules."
+                )
+            )
+            return
         for w in who_or_what:
             await self._add_rule(
                 rule=cast(bool, allow_or_deny),
@@ -338,7 +360,7 @@ class Permissions(commands.Cog):
         await ctx.send(_("Rule added."))
 
     @checks.is_owner()
-    @permissions.command(name="removeglobalrule")
+    @permissions.command(name="removeglobalrule", usage="<cog_or_command> <who_or_what>...")
     async def permissions_removeglobalrule(
         self,
         ctx: commands.Context,
@@ -361,7 +383,11 @@ class Permissions(commands.Cog):
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    @permissions.command(name="removeserverrule", aliases=["removeguildrule"])
+    @permissions.command(
+        name="removeserverrule",
+        usage="<cog_or_command> <who_or_what>...",
+        aliases=["removeguildrule"],
+    )
     async def permissions_removeguildrule(
         self,
         ctx: commands.Context,
@@ -401,6 +427,14 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to set the default
         rule for. This is case sensitive.
         """
+        if isinstance(cog_or_command.obj, commands.commands._AlwaysAvailableCommand):
+            await ctx.send(
+                _(
+                    "This command is designated as being always available and "
+                    "cannot be modified by permission rules."
+                )
+            )
+            return
         await self._set_default_rule(
             rule=cast(Optional[bool], allow_or_deny),
             cog_or_cmd=cog_or_command,
@@ -424,6 +458,14 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to set the default
         rule for. This is case sensitive.
         """
+        if isinstance(cog_or_command.obj, commands.commands._AlwaysAvailableCommand):
+            await ctx.send(
+                _(
+                    "This command is designated as being always available and "
+                    "cannot be modified by permission rules."
+                )
+            )
+            return
         await self._set_default_rule(
             rule=cast(Optional[bool], allow_or_deny), cog_or_cmd=cog_or_command, guild_id=GLOBAL
         )
@@ -534,7 +576,7 @@ class Permissions(commands.Cog):
 
         Handles config.
         """
-        self.bot.clear_permission_rules(guild_id)
+        self.bot.clear_permission_rules(guild_id, preserve_default_rule=False)
         for category in (COG, COMMAND):
             async with self.config.custom(category).all() as all_rules:
                 for name, rules in all_rules.items():
@@ -603,7 +645,7 @@ class Permissions(commands.Cog):
         if ctx.guild is None or ctx.guild.me.permissions_in(ctx.channel).add_reactions:
             msg = await ctx.send(_("Are you sure?"))
             # noinspection PyAsyncCall
-            task = start_adding_reactions(msg, ReactionPredicate.YES_OR_NO_EMOJIS, ctx.bot.loop)
+            task = start_adding_reactions(msg, ReactionPredicate.YES_OR_NO_EMOJIS)
             pred = ReactionPredicate.yes_or_no(msg, ctx.author)
             try:
                 await ctx.bot.wait_for("reaction_add", check=pred, timeout=30)
@@ -652,7 +694,7 @@ class Permissions(commands.Cog):
 
     @staticmethod
     def _get_updated_schema(
-        old_config: _OldConfigSchema
+        old_config: _OldConfigSchema,
     ) -> Tuple[_NewConfigSchema, _NewConfigSchema]:
         # Prior to 1.0.0, the schema was in this form for both global
         # and guild-based rules:

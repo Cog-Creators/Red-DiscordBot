@@ -1,8 +1,11 @@
+import ast
 import asyncio
+import aiohttp
 import inspect
 import io
 import textwrap
 import traceback
+import types
 import re
 from contextlib import redirect_stdout
 from copy import copy
@@ -36,6 +39,19 @@ class Dev(commands.Cog):
         self.sessions = set()
 
     @staticmethod
+    def async_compile(source, filename, mode):
+        return compile(source, filename, mode, flags=ast.PyCF_ALLOW_TOP_LEVEL_AWAIT, optimize=0)
+
+    @staticmethod
+    async def maybe_await(coro):
+        for i in range(2):
+            if inspect.isawaitable(coro):
+                coro = await coro
+            else:
+                return coro
+        return coro
+
+    @staticmethod
     def cleanup_code(content):
         """Automatically removes code blocks from the code."""
         # remove ```py\n```
@@ -53,7 +69,9 @@ class Dev(commands.Cog):
         """
         if e.text is None:
             return box("{0.__class__.__name__}: {0}".format(e), lang="py")
-        return box("{0.text}{1:>{0.offset}}\n{2}: {0}".format(e, "^", type(e).__name__), lang="py")
+        return box(
+            "{0.text}\n{1:>{0.offset}}\n{2}: {0}".format(e, "^", type(e).__name__), lang="py"
+        )
 
     @staticmethod
     def get_pages(msg: str):
@@ -61,19 +79,10 @@ class Dev(commands.Cog):
         return pagify(msg, delims=["\n", " "], priority=True, shorten_by=10)
 
     @staticmethod
-    def sanitize_output(ctx: commands.Context, keys: dict, input_: str) -> str:
+    def sanitize_output(ctx: commands.Context, input_: str) -> str:
         """Hides the bot's token from a string."""
         token = ctx.bot.http.token
-        r = "[EXPUNGED]"
-        result = input_.replace(token, r)
-        result = result.replace(token.lower(), r)
-        result = result.replace(token.upper(), r)
-        for provider, data in keys.items():
-            for name, key in data.items():
-                result = result.replace(key, r)
-                result = result.replace(key.upper(), r)
-                result = result.replace(key.lower(), r)
-        return result
+        return re.sub(re.escape(token), "[EXPUNGED]", input_, re.I)
 
     @commands.command()
     @checks.is_owner()
@@ -84,8 +93,8 @@ class Dev(commands.Cog):
         If the return value of the code is a coroutine, it will be awaited,
         and the result of that will be the bot's response.
 
-        Note: Only one statement may be evaluated. Using await, yield or
-        similar restricted keywords will result in a syntax error. For multiple
+        Note: Only one statement may be evaluated. Using certain restricted
+        keywords, e.g. yield, will result in a syntax error. For multiple
         lines or asynchronous code, see [p]repl or [p]eval.
 
         Environment Variables:
@@ -105,6 +114,8 @@ class Dev(commands.Cog):
             "author": ctx.author,
             "guild": ctx.guild,
             "message": ctx.message,
+            "asyncio": asyncio,
+            "aiohttp": aiohttp,
             "discord": discord,
             "commands": commands,
             "_": self._last_result,
@@ -113,7 +124,8 @@ class Dev(commands.Cog):
         code = self.cleanup_code(code)
 
         try:
-            result = eval(code, env)
+            compiled = self.async_compile(code, "<string>", "eval")
+            result = await self.maybe_await(eval(compiled, env))
         except SyntaxError as e:
             await ctx.send(self.get_syntax_error(e))
             return
@@ -121,13 +133,8 @@ class Dev(commands.Cog):
             await ctx.send(box("{}: {!s}".format(type(e).__name__, e), lang="py"))
             return
 
-        if inspect.isawaitable(result):
-            result = await result
-
         self._last_result = result
-
-        api_keys = await ctx.bot.db.api_tokens()
-        result = self.sanitize_output(ctx, api_keys, str(result))
+        result = self.sanitize_output(ctx, str(result))
 
         await ctx.send_interactive(self.get_pages(result), box_lang="py")
 
@@ -160,6 +167,8 @@ class Dev(commands.Cog):
             "author": ctx.author,
             "guild": ctx.guild,
             "message": ctx.message,
+            "asyncio": asyncio,
+            "aiohttp": aiohttp,
             "discord": discord,
             "commands": commands,
             "_": self._last_result,
@@ -171,7 +180,8 @@ class Dev(commands.Cog):
         to_compile = "async def func():\n%s" % textwrap.indent(body, "  ")
 
         try:
-            exec(to_compile, env)
+            compiled = self.async_compile(to_compile, "<string>", "exec")
+            exec(compiled, env)
         except SyntaxError as e:
             return await ctx.send(self.get_syntax_error(e))
 
@@ -191,8 +201,7 @@ class Dev(commands.Cog):
             msg = "{}{}".format(printed, result)
         else:
             msg = printed
-        api_keys = await ctx.bot.db.api_tokens()
-        msg = self.sanitize_output(ctx, api_keys, msg)
+        msg = self.sanitize_output(ctx, msg)
 
         await ctx.send_interactive(self.get_pages(msg), box_lang="py")
 
@@ -204,9 +213,6 @@ class Dev(commands.Cog):
         The REPL will only recognise code as messages which start with a
         backtick. This includes codeblocks, and as such multiple lines can be
         evaluated.
-
-        You may not await any code in this REPL unless you define it inside an
-        async function.
         """
         variables = {
             "ctx": ctx,
@@ -215,7 +221,9 @@ class Dev(commands.Cog):
             "guild": ctx.guild,
             "channel": ctx.channel,
             "author": ctx.author,
+            "asyncio": asyncio,
             "_": None,
+            "__builtins__": __builtins__,
         }
 
         if ctx.channel.id in self.sessions:
@@ -237,19 +245,19 @@ class Dev(commands.Cog):
                 self.sessions.remove(ctx.channel.id)
                 return
 
-            executor = exec
+            executor = None
             if cleaned.count("\n") == 0:
                 # single statement, potentially 'eval'
                 try:
-                    code = compile(cleaned, "<repl session>", "eval")
+                    code = self.async_compile(cleaned, "<repl session>", "eval")
                 except SyntaxError:
                     pass
                 else:
                     executor = eval
 
-            if executor is exec:
+            if executor is None:
                 try:
-                    code = compile(cleaned, "<repl session>", "exec")
+                    code = self.async_compile(cleaned, "<repl session>", "exec")
                 except SyntaxError as e:
                     await ctx.send(self.get_syntax_error(e))
                     continue
@@ -262,9 +270,11 @@ class Dev(commands.Cog):
 
             try:
                 with redirect_stdout(stdout):
-                    result = executor(code, variables)
-                    if inspect.isawaitable(result):
-                        result = await result
+                    if executor is None:
+                        result = types.FunctionType(code, variables)()
+                    else:
+                        result = executor(code, variables)
+                    result = await self.maybe_await(result)
             except:
                 value = stdout.getvalue()
                 msg = "{}{}".format(value, traceback.format_exc())
@@ -276,8 +286,7 @@ class Dev(commands.Cog):
                 elif value:
                     msg = "{}".format(value)
 
-            api_keys = await ctx.bot.db.api_tokens()
-            msg = self.sanitize_output(ctx, api_keys, msg)
+            msg = self.sanitize_output(ctx, msg)
 
             try:
                 await ctx.send_interactive(self.get_pages(msg), box_lang="py")

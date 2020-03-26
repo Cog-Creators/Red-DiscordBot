@@ -89,8 +89,12 @@ class Alias(commands.Cog):
         return False, None
 
     def is_command(self, alias_name: str) -> bool:
+        """
+        The logic here is that if this returns true, the name should not be used for an alias
+        The function name can be changed when alias is reworked
+        """
         command = self.bot.get_command(alias_name)
-        return command is not None
+        return command is not None or alias_name in commands.RESERVED_COMMAND_NAMES
 
     @staticmethod
     def is_valid_alias_name(alias_name: str) -> bool:
@@ -352,9 +356,7 @@ class Alias(commands.Cog):
                 base_cmd = alias.command.rsplit(" ", 1)[0]
 
             new_msg = copy(ctx.message)
-            new_msg.content = _("{prefix}help {command}").format(
-                prefix=ctx.prefix, command=base_cmd
-            )
+            new_msg.content = f"{ctx.prefix}help {base_cmd}"
             await self.bot.process_commands(new_msg)
         else:
             await ctx.send(_("No such alias exists."))

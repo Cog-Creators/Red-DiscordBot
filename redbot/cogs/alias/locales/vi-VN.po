@@ -1,0 +1,149 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2020-02-20 12:09+0000\n"
+"PO-Revision-Date: 2020-02-20 12:16\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Vietnamese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.1\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: vi\n"
+"X-Crowdin-File: /cogs/alias/locales/messages.pot\n"
+"Language: vi_VN\n"
+
+#: redbot/cogs/alias/alias.py:35
+#, docstring
+msgid "Create aliases for commands.\\n\\n    Aliases are alternative names shortcuts for commands. They\\n    can act as both a lambda (storing arguments for repeated use)\\n    or as simply a shortcut to saying \\\"x y z\\\".\\n\\n    When run, aliases will accept any additional arguments\\n    and append them to the stored alias.\\n    "
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:111
+msgid "Arguments must be specified with a number."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:118
+msgid "Arguments must be sequential. Missing arguments: "
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:168
+msgid "No prefix found."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:235
+#, docstring
+msgid "Manage command aliases."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:240
+#, docstring
+msgid "Manage global aliases."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:247
+#, docstring
+msgid "Add an alias for a command."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:252
+msgid "You attempted to create a new alias with the name {name} but that name is already a command on this bot."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:263
+msgid "You attempted to create a new alias with the name {name} but that alias already exists on this server."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:274
+msgid "You attempted to create a new alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:293
+msgid "A new alias with the trigger `{name}` has been created."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:299
+#, docstring
+msgid "Add a global alias for a command."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:304
+msgid "You attempted to create a new global alias with the name {name} but that name is already a command on this bot."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:315
+msgid "You attempted to create a new global alias with the name {name} but that alias already exists on this server."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:326
+msgid "You attempted to create a new global alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:342
+msgid "A new global alias with the trigger `{name}` has been created."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:350
+#, docstring
+msgid "Try to execute help for the base command of the alias."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:362
+msgid "No such alias exists."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:367
+#, docstring
+msgid "Show what command the alias executes."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:372
+msgid "The `{alias_name}` alias will execute the command `{command}`"
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:377
+msgid "There is no alias with the name `{name}`"
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:383
+#, docstring
+msgid "Delete an existing alias on this server."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:388 redbot/cogs/alias/alias.py:424
+#: redbot/cogs/alias/alias.py:435
+msgid "There are no aliases on this server."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:393 redbot/cogs/alias/alias.py:411
+msgid "Alias with the name `{name}` was successfully deleted."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:396 redbot/cogs/alias/alias.py:414
+msgid "Alias with name `{name}` was not found."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:401
+#, docstring
+msgid "Delete an existing global alias."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:406
+msgid "There are no aliases on this bot."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:419
+#, docstring
+msgid "List the available aliases on this server."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:420 redbot/cogs/alias/alias.py:431
+msgid "Aliases:"
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:430
+#, docstring
+msgid "List the available global aliases on this bot."
+msgstr ""
+

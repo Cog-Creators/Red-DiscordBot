@@ -1,10 +1,13 @@
 import itertools
 import datetime
-from typing import Sequence, Iterator, List, Optional
+from typing import Sequence, Iterator, List, Optional, Union, SupportsInt
+from io import BytesIO
+
 
 import discord
+from babel.numbers import format_decimal
 
-from redbot.core.i18n import Translator
+from redbot.core.i18n import Translator, get_babel_locale
 
 _ = Translator("UtilsChatFormatting", __file__)
 
@@ -59,6 +62,8 @@ def question(text: str) -> str:
 
 def bold(text: str) -> str:
     """Get the given text in bold.
+
+    Note: This escapes text prior to bolding.
 
     Parameters
     ----------
@@ -117,6 +122,8 @@ def inline(text: str) -> str:
 
 def italics(text: str) -> str:
     """Get the given text in italics.
+
+    Note: This escapes text prior to italicising
 
     Parameters
     ----------
@@ -274,6 +281,8 @@ def pagify(
 def strikethrough(text: str) -> str:
     """Get the given text with a strikethrough.
 
+    Note: This escapes text prior to applying a strikethrough
+
     Parameters
     ----------
     text : str
@@ -291,6 +300,8 @@ def strikethrough(text: str) -> str:
 
 def underline(text: str) -> str:
     """Get the given text with an underline.
+
+    Note: This escapes text prior to underlining
 
     Parameters
     ----------
@@ -329,7 +340,7 @@ def escape(text: str, *, mass_mentions: bool = False, formatting: bool = False) 
         text = text.replace("@everyone", "@\u200beveryone")
         text = text.replace("@here", "@\u200bhere")
     if formatting:
-        text = text.replace("`", "\\`").replace("*", "\\*").replace("_", "\\_").replace("~", "\\~")
+        text = discord.utils.escape_markdown(text)
     return text
 
 
@@ -398,14 +409,36 @@ def format_perms_list(perms: discord.Permissions) -> str:
 
 
 def humanize_timedelta(
-    *, timedelta: Optional[datetime.timedelta] = None, seconds: Optional[int] = None
+    *, timedelta: Optional[datetime.timedelta] = None, seconds: Optional[SupportsInt] = None
 ) -> str:
     """
-    Get a human timedelta representation
+    Get a locale aware human timedelta representation.
+
+    This works with either a timedelta object or a number of seconds.
+
+    Fractional values will be omitted, and values less than 1 second
+    an empty string.
+
+    Parameters
+    ----------
+    timedelta: Optional[datetime.timedelta]
+        A timedelta object
+    seconds: Optional[SupportsInt]
+        A number of seconds
+
+    Returns
+    -------
+    str
+        A locale aware representation of the timedelta or seconds.
+
+    Raises
+    ------
+    ValueError
+        The function was called with neither a number of seconds nor a timedelta object
     """
 
     try:
-        obj = seconds or timedelta.total_seconds()
+        obj = seconds if seconds is not None else timedelta.total_seconds()
     except AttributeError:
         raise ValueError("You must provide either a timedelta or a number of seconds")
 
@@ -429,3 +462,49 @@ def humanize_timedelta(
             strings.append(f"{period_value} {unit}")
 
     return ", ".join(strings)
+
+
+def humanize_number(val: Union[int, float], override_locale=None) -> str:
+    """
+    Convert an int or float to a str with digit separators based on bot locale
+
+    Parameters
+    ----------
+    val : Union[int, float]
+        The int/float to be formatted.
+    override_locale: Optional[str]
+        A value to override the bots locale.
+
+    Returns
+    -------
+    str
+        locale aware formatted number.
+    """
+    return format_decimal(val, locale=get_babel_locale(override_locale))
+
+
+def text_to_file(
+    text: str, filename: str = "file.txt", *, spoiler: bool = False, encoding: str = "utf-8"
+):
+    """Prepares text to be sent as a file on Discord, without character limit.
+
+    This writes text into a bytes object that can be used for the ``file`` or ``files`` parameters
+    of :meth:`discord.abc.Messageable.send`.
+
+    Parameters
+    ----------
+    text: str
+        The text to put in your file.
+    filename: str
+        The name of the file sent. Defaults to ``file.txt``.
+    spoiler: bool
+        Whether the attachment is a spoiler. Defaults to ``False``.
+
+    Returns
+    -------
+    discord.File
+        The file containing your text.
+
+    """
+    file = BytesIO(text.encode(encoding))
+    return discord.File(file, filename, spoiler=spoiler)

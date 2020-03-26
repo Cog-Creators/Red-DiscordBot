@@ -1,15 +1,18 @@
+import asyncio
+import logging
+import re
+from abc import ABC
 from collections import defaultdict
 from typing import List, Tuple
-from abc import ABC
 
 import discord
 from redbot.core import Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
 from .casetypes import CASETYPES
 from .events import Events
 from .kickban import KickBanMixin
-from .movetocore import MoveToCore
 from .mutes import MuteMixin
 from .names import ModInfo
 from .slowmode import Slowmode
@@ -17,7 +20,7 @@ from .settings import ModSettings
 
 _ = T_ = Translator("Mod", __file__)
 
-__version__ = "1.0.0"
+__version__ = "1.2.0"
 
 
 class CompositeMetaClass(type(commands.Cog), type(ABC)):
@@ -34,7 +37,6 @@ class Mod(
     ModSettings,
     Events,
     KickBanMixin,
-    MoveToCore,
     MuteMixin,
     ModInfo,
     Slowmode,
@@ -53,6 +55,8 @@ class Mod(
         "delete_delay": -1,
         "reinvite_on_unban": False,
         "current_tempbans": [],
+        "dm_on_kickban": False,
+        "default_days": 0,
     }
 
     default_channel_settings = {"ignored": False}
@@ -71,114 +75,75 @@ class Mod(
         self.settings.register_channel(**self.default_channel_settings)
         self.settings.register_member(**self.default_member_settings)
         self.settings.register_user(**self.default_user_settings)
-        self.ban_queue: List[Tuple[int, int]] = []
-        self.unban_queue: List[Tuple[int, int]] = []
         self.cache: dict = {}
-        self.registration_task = self.bot.loop.create_task(self._casetype_registration())
         self.tban_expiry_task = self.bot.loop.create_task(self.check_tempban_expirations())
         self.last_case: dict = defaultdict(dict)
 
+        self._ready = asyncio.Event()
+
     async def initialize(self):
         await self._maybe_update_config()
+        self._ready.set()
+
+    async def cog_before_invoke(self, ctx: commands.Context) -> None:
+        await self._ready.wait()
 
     def cog_unload(self):
-        self.registration_task.cancel()
         self.tban_expiry_task.cancel()
 
     async def _maybe_update_config(self):
         """Maybe update `delete_delay` value set by Config prior to Mod 1.0.0."""
-        if await self.settings.version():
-            return
-        guild_dict = await self.settings.all_guilds()
-        for guild_id, info in guild_dict.items():
-            delete_repeats = info.get("delete_repeats", False)
-            if delete_repeats:
-                val = 3
-            else:
-                val = -1
-            await self.settings.guild(discord.Object(id=guild_id)).delete_repeats.set(val)
-        await self.settings.version.set(__version__)
+        if not await self.settings.version():
+            guild_dict = await self.settings.all_guilds()
+            for guild_id, info in guild_dict.items():
+                delete_repeats = info.get("delete_repeats", False)
+                if delete_repeats:
+                    val = 3
+                else:
+                    val = -1
+                await self.settings.guild(discord.Object(id=guild_id)).delete_repeats.set(val)
+            await self.settings.version.set("1.0.0")  # set version of last update
+        if await self.settings.version() < "1.1.0":
+            msg = _(
+                "Ignored guilds and channels have been moved. "
+                "Please use `[p]moveignoredchannels` if "
+                "you were previously using these functions."
+            )
+            self.bot.loop.create_task(self.bot.send_to_owners_with_prefix_replaced(msg))
+            await self.settings.version.set("1.1.0")
+        if await self.settings.version() < "1.2.0":
+            msg = _(
+                "Delete delay settings have been moved. "
+                "Please use `[p]movedeletedelay` if "
+                "you were previously using these functions."
+            )
+            self.bot.loop.create_task(self.bot.send_to_owners_with_prefix_replaced(msg))
+            await self.settings.version.set("1.2.0")
 
-    @staticmethod
-    async def _casetype_registration():
-        try:
-            await modlog.register_casetypes(CASETYPES)
-        except RuntimeError:
-            pass
+    @commands.command()
+    @commands.is_owner()
+    async def moveignoredchannels(self, ctx: commands.Context) -> None:
+        """Move ignored channels and servers to core"""
+        all_guilds = await self.settings.all_guilds()
+        all_channels = await self.settings.all_channels()
+        for guild_id, settings in all_guilds.items():
+            await self.bot._config.guild_from_id(guild_id).ignored.set(settings["ignored"])
+            await self.settings.guild_from_id(guild_id).ignored.clear()
+        for channel_id, settings in all_channels.items():
+            await self.bot._config.channel_from_id(channel_id).ignored.set(settings["ignored"])
+            await self.settings.channel_from_id(channel_id).clear()
+        await ctx.send(_("Ignored channels and guilds restored."))
 
-    # TODO: Move this to core.
-    # This would be in .movetocore , but the double-under name here makes that more trouble
-    async def bot_check(self, ctx):
-        """Global check to see if a channel or server is ignored.
-
-        Any users who have permission to use the `ignore` or `unignore` commands
-        surpass the check.
+    @commands.command()
+    @commands.is_owner()
+    async def movedeletedelay(self, ctx: commands.Context) -> None:
         """
-        perms = ctx.channel.permissions_for(ctx.author)
-        surpass_ignore = (
-            isinstance(ctx.channel, discord.abc.PrivateChannel)
-            or perms.manage_guild
-            or await ctx.bot.is_owner(ctx.author)
-            or await ctx.bot.is_admin(ctx.author)
-        )
-        if surpass_ignore:
-            return True
-        guild_ignored = await self.settings.guild(ctx.guild).ignored()
-        chann_ignored = await self.settings.channel(ctx.channel).ignored()
-        return not (guild_ignored or chann_ignored and not perms.manage_channels)
-
-    @classmethod
-    async def get_audit_entry_info(
-        cls, guild: discord.Guild, action: discord.AuditLogAction, target
-    ):
-        """Get info about an audit log entry.
-
-        Parameters
-        ----------
-        guild : discord.Guild
-            Same as ``guild`` in `get_audit_log_entry`.
-        action : int
-            Same as ``action`` in `get_audit_log_entry`.
-        target : `discord.User` or `discord.Member`
-            Same as ``target`` in `get_audit_log_entry`.
-
-        Returns
-        -------
-        tuple
-            A tuple in the form``(mod: discord.Member, reason: str,
-            date_created: datetime.datetime)``. Returns ``(None, None, None)``
-            if the audit log entry could not be found.
+            Move deletedelay settings to core
         """
-        try:
-            entry = await cls.get_audit_log_entry(guild, action=action, target=target)
-        except discord.HTTPException:
-            entry = None
-        if entry is None:
-            return None, None, None
-        return entry.user, entry.reason, entry.created_at
-
-    @staticmethod
-    async def get_audit_log_entry(guild: discord.Guild, action: discord.AuditLogAction, target):
-        """Get an audit log entry.
-
-        Any exceptions encountered when looking through the audit log will be
-        propogated out of this function.
-
-        Parameters
-        ----------
-        guild : discord.Guild
-            The guild for the audit log.
-        action : int
-            The audit log action (see `discord.AuditLogAction`).
-        target : `discord.Member` or `discord.User`
-            The target of the audit log action.
-
-        Returns
-        -------
-        discord.AuditLogEntry
-            The audit log entry. Returns ``None`` if not found.
-
-        """
-        async for entry in guild.audit_logs(action=action):
-            if entry.target == target:
-                return entry
+        all_guilds = await self.settings.all_guilds()
+        for guild_id, settings in all_guilds.items():
+            await self.bot._config.guild_from_id(guild_id).delete_delay.set(
+                settings["delete_delay"]
+            )
+            await self.settings.guild_from_id(guild_id).delete_delay.clear()
+        await ctx.send(_("Delete delay settings restored."))
