@@ -676,6 +676,7 @@ class CustomCommands(commands.Cog):
         """
         return set(await CommandObj.get_commands(self.config.guild(guild)))
 
+    @staticmethod
     def prepare_command_list(
         ctx: commands.Context, command_list: Iterable[Tuple[str, dict]]
     ) -> List[Tuple[str, str]]:
