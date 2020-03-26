@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-03-19 12:10\n"
+"PO-Revision-Date: 2020-03-26 12:11\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -17,31 +17,31 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:17
 msgid "I attempted to do something that Discord denied me permissions for. Your command failed to successfully complete."
-msgstr "Eu tentei fazer algo que o Discord me negou as permissões necessárias. Seu comando falhou em ser completado com sucesso."
+msgstr "Eu tentei fazer algo que o Discord me negou as permissões. Seu comando falhou em ser completado com sucesso."
 
 #: redbot/cogs/admin/admin.py:22
 msgid "I can not give {role.name} to {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr "Não posso atribuir o cargo {role.name} para {member.display_name} porque este cargo é mais alto ou igual ao meu mais alto cargo na hierarquia do Discord."
+msgstr "Não posso atribuir o cargo {role.name} para {member.display_name} porque este cargo é mais alto ou igual que o meu cargo mais alto na hierarquia do Discord."
 
 #: redbot/cogs/admin/admin.py:28
 msgid "I can not remove {role.name} from {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr "Não posso remover o cargo {role.name} de {member.display_name} porque este cargo é mais alto ou igual ao meu mais alto cargo na hierarquia do Discord."
+msgstr "Não posso remover o cargo {role.name} de {member.display_name} porque este cargo é mais alto ou igual que o meu cargo mais alto na hierarquia do Discord."
 
 #: redbot/cogs/admin/admin.py:34
 msgid "I can not edit {role.name} because that role is higher than my or equal to highest role in the Discord hierarchy."
-msgstr "Não posso alterar o cargo {role.name} porque este cargo é mais alto ou igual ao meu mais alto cargo na hierarquia do Discord."
+msgstr "Não posso alterar o cargo {role.name} porque este cargo é mais alto ou igual que o meu cargo mais alto na hierarquia do Discord."
 
 #: redbot/cogs/admin/admin.py:40
 msgid "I can not let you give {role.name} to {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr "Não posso deixar você atribuir o cargo {role.name} para {member.display_name} porque este cargo é mais alto ou igual ao seu mais alto cargo na hierarquia do Discord."
+msgstr "Não posso deixar você atribuir o cargo {role.name} para {member.display_name} porque este cargo é mais alto ou igual que o meu cargo mais alto na hierarquia do Discord."
 
 #: redbot/cogs/admin/admin.py:46
 msgid "I can not let you remove {role.name} from {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr "Não posso deixar você rmover o cargo {role.name} de {member.display_name} porque este cargo é mais alto ou igual ao seu mais alto cargo na hierarquia do Discord."
+msgstr "Não posso deixar você rmover o cargo {role.name} de {member.display_name} porque este cargo é mais alto ou igual que o meu cargo mais alto na hierarquia do Discord."
 
 #: redbot/cogs/admin/admin.py:52
 msgid "I can not let you edit {role.name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr "Não posso deixar você alterar o cargo {role.name} porque este cargo é mais alto ou igual ao seu mais alto cargo na hierarquia do Discord."
+msgstr "Não posso deixar você alterar o cargo {role.name} porque este cargo é mais alto ou igual que o meu cargo mais alto na hierarquia do Discord."
 
 #: redbot/cogs/admin/admin.py:58
 msgid "I need manage roles permission to do that."
