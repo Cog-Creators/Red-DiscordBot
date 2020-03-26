@@ -6,7 +6,7 @@ import random
 import time
 from collections import namedtuple
 from pathlib import Path
-from typing import Callable, List, MutableMapping, Optional, Tuple, Union, cast
+from typing import Callable, List, MutableMapping, Optional, Tuple, Union, cast, Mapping
 
 import aiohttp
 import discord
@@ -204,7 +204,7 @@ class AudioAPIInterface:
                 track_name,
                 _id,
                 _type,
-            ) = await self.spotify_api.get_spotify_track_info(track)
+            ) = await self.spotify_api.get_spotify_track_info(track, ctx)
 
             database_entries.append(
                 {
@@ -449,7 +449,7 @@ class AudioAPIInterface:
                     track_name,
                     _id,
                     _type,
-                ) = await self.spotify_api.get_spotify_track_info(track)
+                ) = await self.spotify_api.get_spotify_track_info(track, ctx)
 
                 database_entries.append(
                     {
@@ -717,7 +717,9 @@ class AudioAPIInterface:
         valid_global_entry = False
         results = None
         called_api = False
-
+        prefer_lyrics = await ctx.cog.get_lyrics_status(ctx)
+        if prefer_lyrics and query.is_youtube and query.is_search:
+            query_string = f"{query} - lyrics"
         if cache_enabled and not forced and not query.is_local:
             try:
                 (val, last_updated) = await self.local_cache_api.lavalink.fetch_one(
@@ -830,9 +832,9 @@ class AudioAPIInterface:
             if cache_enabled:
                 tracks = [await self.get_random_track_from_db()]
             if not tracks:
-                ctx = namedtuple("Context", "message guild")
+                ctx = namedtuple("Context", "message guild cog")
                 (results, called_api) = await self.fetch_track(
-                    cast(commands.Context, ctx(player.channel.guild, player.channel.guild)),
+                    cast(commands.Context, ctx(player.channel.guild, player.channel.guild, cog)),
                     player,
                     Query.process_input(
                         _TOP_100_US, Path(await self.config.localpath()).absolute()
