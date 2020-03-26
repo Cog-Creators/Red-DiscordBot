@@ -553,12 +553,14 @@ class Cleanup(commands.Cog):
 
         def check(m):
             if m.attachments:
-                False
+                return False
             c = (m.author.id, m.content, [e.to_dict() for e in m.embeds])
             if c in msgs:
                 spam.append(m)
+                return True
             else:
                 msgs.append(c)
+                return False
 
         to_delete = await self.get_messages_for_deletion(
             channel=ctx.channel, limit=number, check=check, before=ctx.message,
