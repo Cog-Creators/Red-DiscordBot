@@ -49,10 +49,3 @@ jobs:
           Please ensure that there are no errors or invalid files are in the PR.
         labels: "Automated PR, Category: i18n"
         branch: "automated/i18n"
-    - name: Repository Dispatch
-      uses: peter-evans/repository-dispatch@v1
-      with:
-        token: ${{ secrets.cogcreators_bot_repo_scoped }}
-        repository: Cog-Creators/Red-DiscordBot
-        event-type: dispatched_test
-        client-payload: '{"ref": "automated/i18n"}'
