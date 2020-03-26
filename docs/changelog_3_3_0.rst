@@ -4,7 +4,7 @@ Redbot 3.3.3 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Dav-Git`, :ghuser:`Ianardo-DiCaprio`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`PredaaA`, :ghuser:`Stonedestroyer`, :ghuser:`TrustyJAID`
+| :ghuser:`Dav-Git`, :ghuser:`FancyJesse`, :ghuser:`Ianardo-DiCaprio`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`PredaaA`, :ghuser:`Stonedestroyer`, :ghuser:`TrustyJAID`
 
 End-user changelog
 ------------------
@@ -23,6 +23,11 @@ Core Commands
 - ``[p]set game`` no longer errors when trying to clear the status (:issue:`3630`, :issue:`3628`)
 - All owner notifcations in Core now use proper prefixes in messages (:issue:`3632`)
 - Added ``[p]set playing`` and ``[p]set streaming`` aliases for respectively ``[p]set game`` and ``[p]set stream`` (:issue:`3646`, :issue:`3590`)
+
+Cleanup
+*******
+
+- Added ``[p]cleanup spam`` command that deletes duplicate messages from the last X messages and keeps only one copy (:issue:`3688`)
 
 General
 *******
