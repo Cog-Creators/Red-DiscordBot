@@ -550,7 +550,9 @@ class Cleanup(commands.Cog):
         msgs = []
         spam = []
         async for msg in ctx.channel.history(limit=number, before=ctx.message):
-            c = "{0.author.id}-{0.content}".format(msg)
+            if msg.attachments:
+                continue
+            c = (msg.author.id, msg.content, [e.to_dict() for e in msg.embeds])
             if c in msgs:
                 spam.append(msg)
             else:
