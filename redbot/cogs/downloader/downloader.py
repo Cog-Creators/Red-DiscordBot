@@ -505,7 +505,7 @@ class Downloader(commands.Cog):
                 repo = await self._repo_manager.add_repo(name=name, url=repo_url, branch=branch)
         except errors.ExistingGitRepo:
             await ctx.send(
-                _("That repo name you have provided is already in use, use another name.")
+                _("The repo name you provided is already in use. Please choose another name.")
             )
         except errors.CloningError as err:
             await ctx.send(
