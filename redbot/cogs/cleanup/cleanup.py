@@ -63,6 +63,7 @@ class Cleanup(commands.Cog):
         channel: discord.TextChannel,
         number: int = None,
         check: Callable[[discord.Message], bool] = lambda x: True,
+        limit: int = None,
         before: Union[discord.Message, datetime] = None,
         after: Union[discord.Message, datetime] = None,
         delete_pinned: bool = False,
@@ -99,7 +100,7 @@ class Cleanup(commands.Cog):
 
         collected = []
         async for message in channel.history(
-            limit=None, before=before, after=after, oldest_first=False
+            limit=limit, before=before, after=after, oldest_first=False
         ):
             if message.created_at < two_weeks_ago:
                 break
@@ -549,17 +550,22 @@ class Cleanup(commands.Cog):
         """Deletes duplicate messages in the channel from the last X messages, but keeps only one. Default 50."""
         msgs = []
         spam = []
-        async for msg in ctx.channel.history(limit=number, before=ctx.message):
-            if msg.attachments:
-                continue
-            c = (msg.author.id, msg.content, [e.to_dict() for e in msg.embeds])
+
+        def check(m):
+            if m.attachments:
+                False
+            c = (m.author.id, m.content, [e.to_dict() for e in m.embeds])
             if c in msgs:
-                spam.append(msg)
+                spam.append(m)
             else:
                 msgs.append(c)
 
-        if len(spam) > 100:
-            cont = await self.check_100_plus(ctx, len(spam))
+        to_delete = await self.get_messages_for_deletion(
+            channel=ctx.channel, limit=number, check=check, before=ctx.message,
+        )
+
+        if len(to_delete) > 100:
+            cont = await self.check_100_plus(ctx, len(to_delete))
             if not cont:
                 return
 
