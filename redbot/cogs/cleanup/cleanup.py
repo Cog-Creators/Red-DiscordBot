@@ -557,13 +557,13 @@ class Cleanup(commands.Cog):
                 spam.append(msg)
             else:
                 msgs.append(c)
-        spam.append(ctx.message)
 
-        if len(spam) - 1 > 100:
-            cont = await self.check_100_plus(ctx, len(spam) - 1)
+        if len(spam) > 100:
+            cont = await self.check_100_plus(ctx, len(spam))
             if not cont:
                 return
 
+        spam.append(ctx.message)
         await mass_purge(spam, ctx.channel)
         log.info(
             "{0.author} deleted {1} spam messages in channel {0.channel}.".format(
