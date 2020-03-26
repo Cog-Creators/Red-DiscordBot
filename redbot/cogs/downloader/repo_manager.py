@@ -536,7 +536,8 @@ class Repo(RepoJSONMixin):
                 self._executor,
                 functools.partial(sp_run, *args, stdout=PIPE, stderr=PIPE, **kwargs),
             )
-            stderr = p.stderr.decode(**DECODE_PARAMS).strip()
+            # logging can't use surrogateescape
+            stderr = p.stderr.decode(encoding="utf-8", errors="replace").strip()
             if stderr:
                 if debug_only or p.returncode in valid_exit_codes:
                     log.debug(stderr)
