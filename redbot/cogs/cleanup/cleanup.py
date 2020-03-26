@@ -549,7 +549,7 @@ class Cleanup(commands.Cog):
         """Deletes duplicate messages in the channel from the last X messages. Default 50."""
         msgs = []
         spam = []
-        async for msg in ctx.channel.history(limit=number + 1):
+        async for msg in ctx.channel.history(limit=number, before=ctx.message):
             c = "{0.author.id}-{0.content}".format(msg)
             if c in msgs:
                 spam.append(msg)
