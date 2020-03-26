@@ -1,1 +1,0 @@
-Added the ability to search for custom commands.
