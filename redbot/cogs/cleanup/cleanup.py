@@ -546,10 +546,10 @@ class Cleanup(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
     async def cleanup_spam(self, ctx: commands.Context, number: int = 50):
-        """Deletes duplicate messages in the channel from the last X messages. Default 50."""
+        """Deletes duplicate messages in the channel from the last X messages, but keeps the original. Default 50."""
         msgs = []
         spam = []
-        async for msg in ctx.channel.history(limit=number, before=ctx.message):
+        async for msg in ctx.channel.history(limit=number, before=ctx.message, oldest_first=True):
             if msg.attachments:
                 continue
             c = (msg.author.id, msg.content, [e.to_dict() for e in msg.embeds])
