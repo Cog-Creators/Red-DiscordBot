@@ -462,7 +462,7 @@ class Downloader(commands.Cog):
         if not deps:
             await ctx.send_help()
             return
-        repo = Repo("", "", "", "", Path.cwd(), loop=ctx.bot.loop)
+        repo = Repo("", "", "", "", Path.cwd())
         async with ctx.typing():
             success = await repo.install_raw_requirements(deps, self.LIB_PATH)
 
@@ -504,9 +504,16 @@ class Downloader(commands.Cog):
                 # noinspection PyTypeChecker
                 repo = await self._repo_manager.add_repo(name=name, url=repo_url, branch=branch)
         except errors.ExistingGitRepo:
-            await ctx.send(_("That git repo has already been added under another name."))
+            await ctx.send(
+                _("The repo name you provided is already in use. Please choose another name.")
+            )
         except errors.CloningError as err:
-            await ctx.send(_("Something went wrong during the cloning process."))
+            await ctx.send(
+                _(
+                    "Something went wrong during the cloning process."
+                    " See logs for more information."
+                )
+            )
             log.exception(
                 "Something went wrong whilst cloning %s (to revision: %s)",
                 repo_url,
@@ -514,16 +521,19 @@ class Downloader(commands.Cog):
                 exc_info=err,
             )
         except OSError:
+            log.exception(
+                "Something went wrong trying to add repo %s under name %s", repo_url, name,
+            )
             await ctx.send(
                 _(
                     "Something went wrong trying to add that repo."
-                    " Your repo name might have an invalid character."
+                    " See logs for more information."
                 )
             )
         else:
             await ctx.send(_("Repo `{name}` successfully added.").format(name=name))
             if repo.install_msg:
-                await ctx.send(repo.install_msg.replace("[p]", ctx.prefix))
+                await ctx.send(repo.install_msg.replace("[p]", ctx.clean_prefix))
 
     @repo.command(name="delete", aliases=["remove", "del"], usage="<repo_name>")
     async def _repo_del(self, ctx: commands.Context, repo: Repo) -> None:
@@ -738,12 +748,12 @@ class Downloader(commands.Cog):
                         _(
                             "\nThese cogs are now pinned and won't get updated automatically."
                             " To change this, use `{prefix}cog unpin <cog>`"
-                        ).format(prefix=ctx.prefix)
+                        ).format(prefix=ctx.clean_prefix)
                         if rev is not None
                         else ""
                     )
                     + _("\nYou can load them using `{prefix}load <cogs>`").format(
-                        prefix=ctx.prefix
+                        prefix=ctx.clean_prefix
                     )
                     + message
                 )
@@ -751,7 +761,7 @@ class Downloader(commands.Cog):
         await self.send_pagified(ctx, f"{message}{deprecation_notice}\n---")
         for cog in installed_cogs:
             if cog.install_msg:
-                await ctx.send(cog.install_msg.replace("[p]", ctx.prefix))
+                await ctx.send(cog.install_msg.replace("[p]", ctx.clean_prefix))
 
     @cog.command(name="uninstall", usage="<cogs>")
     async def _cog_uninstall(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
@@ -794,7 +804,7 @@ class Downloader(commands.Cog):
                         "\nThey were most likely removed without using `{prefix}cog uninstall`.\n"
                         "You may need to remove those files manually if the cogs are still usable."
                         " If so, ensure the cogs have been unloaded with `{prefix}unload {cogs}`."
-                    ).format(prefix=ctx.prefix, cogs=" ".join(failed_cogs))
+                    ).format(prefix=ctx.clean_prefix, cogs=" ".join(failed_cogs))
                 )
         await self.send_pagified(ctx, message)
 
@@ -1278,7 +1288,7 @@ class Downloader(commands.Cog):
             query: discord.Message = await ctx.send(message)
             if can_react:
                 # noinspection PyAsyncCall
-                start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS, ctx.bot.loop)
+                start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS)
                 pred = ReactionPredicate.yes_or_no(query, ctx.author)
                 event = "reaction_add"
             else:

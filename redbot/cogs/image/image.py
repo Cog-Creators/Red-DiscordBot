@@ -1,4 +1,5 @@
 from random import shuffle
+from typing import Optional
 
 import aiohttp
 
@@ -30,7 +31,7 @@ class Image(commands.Cog):
         imgur_token = await self.settings.imgur_client_id()
         if imgur_token is not None:
             if not await self.bot.get_shared_api_tokens("imgur"):
-                await self.bot.set_shared_api_tokens(client_id=imgur_token)
+                await self.bot.set_shared_api_tokens("imgur", client_id=imgur_token)
             await self.settings.imgur_client_id.clear()
 
     @commands.group(name="imgur")
@@ -42,11 +43,15 @@ class Image(commands.Cog):
         pass
 
     @_imgur.command(name="search")
-    async def imgur_search(self, ctx, *, term: str):
+    async def imgur_search(self, ctx, count: Optional[int] = 1, *, term: str):
         """Search Imgur for the specified term.
 
-        Returns up to 3 results.
+        Use `count` to choose how many images should be returned.
+        Command can return up to 5 images.
         """
+        if count < 1 or count > 5:
+            await ctx.send(_("Image count has to be between 1 and 5."))
+            return
         url = self.imgur_base_url + "gallery/search/time/all/0"
         params = {"q": term}
         imgur_client_id = (await ctx.bot.get_shared_api_tokens("imgur")).get("client_id")
@@ -54,7 +59,7 @@ class Image(commands.Cog):
             await ctx.send(
                 _(
                     "A Client ID has not been set! Please set one with `{prefix}imgurcreds`."
-                ).format(prefix=ctx.prefix)
+                ).format(prefix=ctx.clean_prefix)
             )
             return
         headers = {"Authorization": "Client-ID {}".format(imgur_client_id)}
@@ -68,7 +73,7 @@ class Image(commands.Cog):
                 return
             shuffle(results)
             msg = _("Search results...\n")
-            for r in results[:3]:
+            for r in results[:count]:
                 msg += r["gifv"] if "gifv" in r else r["link"]
                 msg += "\n"
             await ctx.send(msg)
@@ -79,14 +84,23 @@ class Image(commands.Cog):
 
     @_imgur.command(name="subreddit")
     async def imgur_subreddit(
-        self, ctx, subreddit: str, sort_type: str = "top", window: str = "day"
+        self,
+        ctx,
+        subreddit: str,
+        count: Optional[int] = 1,
+        sort_type: str = "top",
+        window: str = "day",
     ):
         """Get images from a subreddit.
 
         You can customize the search with the following options:
+        - `<count>`: number of images to return (up to 5)
         - `<sort_type>`: new, top
         - `<window>`: day, week, month, year, all
         """
+        if count < 1 or count > 5:
+            await ctx.send(_("Image count has to be between 1 and 5."))
+            return
         sort_type = sort_type.lower()
         window = window.lower()
 
@@ -107,7 +121,7 @@ class Image(commands.Cog):
             await ctx.send(
                 _(
                     "A Client ID has not been set! Please set one with `{prefix}imgurcreds`."
-                ).format(prefix=ctx.prefix)
+                ).format(prefix=ctx.clean_prefix)
             )
             return
 
@@ -121,7 +135,7 @@ class Image(commands.Cog):
         if data["success"]:
             items = data["data"]
             if items:
-                for item in items[:3]:
+                for item in items[:count]:
                     link = item["gifv"] if "gifv" in item else item["link"]
                     links.append("{}\n{}".format(item["title"], link))
 
@@ -151,7 +165,7 @@ class Image(commands.Cog):
             "8. Check the captcha box and click next.\n"
             "9. Your Client ID will be on the next page.\n"
             "10. Run the command `{prefix}set api imgur client_id <your_client_id_here>`.\n"
-        ).format(prefix=ctx.prefix)
+        ).format(prefix=ctx.clean_prefix)
 
         await ctx.maybe_send_embed(message)
 
@@ -169,7 +183,7 @@ class Image(commands.Cog):
         if not giphy_api_key:
             await ctx.send(
                 _("An API key has not been set! Please set one with `{prefix}giphycreds`.").format(
-                    prefix=ctx.prefix
+                    prefix=ctx.clean_prefix
                 )
             )
             return
@@ -202,7 +216,7 @@ class Image(commands.Cog):
         if not giphy_api_key:
             await ctx.send(
                 _("An API key has not been set! Please set one with `{prefix}giphycreds`.").format(
-                    prefix=ctx.prefix
+                    prefix=ctx.clean_prefix
                 )
             )
             return
@@ -235,6 +249,6 @@ class Image(commands.Cog):
             "5. Write an app description, example: *Used for Red Bot*.\n"
             "6. Copy the API key shown.\n"
             "7. Run the command `{prefix}set api GIPHY api_key <your_api_key_here>`.\n"
-        ).format(prefix=ctx.prefix)
+        ).format(prefix=ctx.clean_prefix)
 
         await ctx.maybe_send_embed(message)
