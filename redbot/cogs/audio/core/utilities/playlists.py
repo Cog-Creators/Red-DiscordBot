@@ -30,7 +30,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def can_manage_playlist(
         self, scope: str, playlist: Playlist, ctx: commands.Context, user, guild
     ) -> bool:
-        is_owner = await ctx.bot.is_owner(ctx.author)
+        is_owner = await self.bot.is_owner(ctx.author)
         has_perms = False
         user_to_query = user
         guild_to_query = guild
@@ -56,7 +56,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             if (
                 guild.owner_id == ctx.author.id
                 or (dj_enabled and await self._has_dj_role(ctx, ctx.author))
-                or (await ctx.bot.is_mod(ctx.author))
+                or (await self.bot.is_mod(ctx.author))
                 or (not dj_enabled and not is_different_user)
             ):
                 has_perms = True
@@ -499,7 +499,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             if self.lavalink_connection_aborted:
                 msg = _("Connection to Lavalink has failed")
                 desc = EmptyEmbed
-                if await ctx.bot.is_owner(ctx.author):
+                if await self.bot.is_owner(ctx.author):
                     desc = _("Please check your console or logs for details.")
                 await self.send_embed_msg(ctx, title=msg, description=desc)
                 return False

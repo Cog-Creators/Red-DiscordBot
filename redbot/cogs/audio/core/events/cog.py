@@ -1,5 +1,4 @@
 import asyncio
-import contextlib
 import datetime
 import logging
 import time
@@ -97,6 +96,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
                         playlist_url=None,
                         tracks=[track],
                         guild=guild,
+                        playlist_api=self.playlist_api,
                     )
                     await playlist.save()
             too_old = midnight - datetime.timedelta(days=8)

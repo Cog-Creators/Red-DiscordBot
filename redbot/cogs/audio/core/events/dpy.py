@@ -1,4 +1,3 @@
-import contextlib
 import logging
 from pathlib import Path
 
@@ -83,7 +82,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Invalid Environment"),
                 description=_("Connection to Lavalink has been lost."),
             )
-        await ctx.bot.on_command_error(ctx, error, unhandled_by_cog=True)
+        await self.bot.on_command_error(ctx, error, unhandled_by_cog=True)
 
     def cog_unload(self) -> None:
         if not self.cog_cleaned_up:

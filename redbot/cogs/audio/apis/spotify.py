@@ -45,9 +45,8 @@ class SpotifyWrapper:
             query = f"{PLAYLISTS_ENDPOINT}/{key}/tracks"
         return query, params
 
-    async def get_spotify_track_info(
-        self, track_data: MutableMapping, ctx: Context
-    ) -> Tuple[str, ...]:
+    @staticmethod
+    async def get_spotify_track_info(track_data: MutableMapping, ctx: Context) -> Tuple[str, ...]:
         """Extract track info from spotify response"""
         prefer_lyrics = await ctx.cog.get_lyrics_status(ctx)
         track_name = track_data["name"]

@@ -231,7 +231,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx, title=_("Please enter a name for this equalizer preset.")
             )
             try:
-                eq_name_msg = await ctx.bot.wait_for(
+                eq_name_msg = await self.bot.wait_for(
                     "message",
                     timeout=15.0,
                     check=MessagePredicate.regex(fr"^(?!{re.escape(ctx.prefix)})", ctx),
@@ -265,7 +265,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
             start_adding_reactions(eq_exists_msg, ReactionPredicate.YES_OR_NO_EMOJIS)
             pred = ReactionPredicate.yes_or_no(eq_exists_msg, ctx.author)
-            await ctx.bot.wait_for("reaction_add", check=pred)
+            await self.bot.wait_for("reaction_add", check=pred)
             if not pred.result:
                 await self._clear_react(eq_exists_msg)
                 embed2 = discord.Embed(

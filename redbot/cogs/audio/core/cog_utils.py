@@ -2,7 +2,7 @@ from abc import ABC
 from pathlib import Path
 from typing import Final
 
-from redbot import VersionInfo, version_info
+from redbot import VersionInfo
 from redbot.core import commands
 from redbot.core.i18n import Translator
 

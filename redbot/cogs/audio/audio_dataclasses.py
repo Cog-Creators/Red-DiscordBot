@@ -170,8 +170,8 @@ class LocalPath:
         else:
             return glob.iglob(f"{glob.escape(self.path)}{os.sep}*{pattern}", recursive=False)
 
-    async def _multiglob(self, pattern: str, folder: bool, callable: Callable):
-        for rp in callable(pattern):
+    async def _multiglob(self, pattern: str, folder: bool, method: Callable):
+        for rp in method(pattern):
             rp_local = LocalPath(rp, self._localtrack_folder)
             if (
                 (folder and rp_local.is_dir() and rp_local.exists())

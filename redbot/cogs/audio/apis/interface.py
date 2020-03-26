@@ -6,7 +6,7 @@ import random
 import time
 from collections import namedtuple
 from pathlib import Path
-from typing import Callable, List, MutableMapping, Optional, Tuple, Union, cast, Mapping
+from typing import Callable, List, MutableMapping, Optional, Tuple, Union, cast
 
 import aiohttp
 import discord
@@ -15,7 +15,7 @@ from lavalink.rest_api import LoadResult
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
-from redbot.core.commands import Cog, Context
+from redbot.core.commands import Context
 from redbot.core.i18n import Translator
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 
@@ -264,10 +264,10 @@ class AudioAPIInterface:
 
         if recursive is False:
             (call, params) = self.spotify_api.spotify_format_call(query_type, uri)
-            results = await self.spotify_api.make_get_call(call, params, ctx=ctx)
+            results = await self.spotify_api.make_get_call(call, params)
         else:
             if isinstance(recursive, str):
-                results = await self.spotify_api.make_get_call(recursive, params, ctx=ctx)
+                results = await self.spotify_api.make_get_call(recursive, params)
             else:
                 results = {}
         try:

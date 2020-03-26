@@ -36,7 +36,7 @@ class MixinMeta(ABC):
     api_interface: Optional["AudioAPIInterface"]
     player_manager: Optional["ServerManager"]
     playlist_api: Optional["PlaylistWrapper"]
-    local_folder_current_path: Path
+    local_folder_current_path: Optional[Path]
     db_conn: Optional[APSWConnectionWrapper]
     session: aiohttp.ClientSession
 

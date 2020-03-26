@@ -11,7 +11,7 @@ import discord
 import lavalink
 from discord.embeds import EmptyEmbed
 
-from redbot.core import bank, commands, Config
+from redbot.core import bank, commands
 from redbot.core.commands import Context
 from redbot.core.utils.chat_formatting import humanize_number
 
@@ -251,9 +251,9 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             day = "%02d:" % days
         if hours or day:
             hour = "%02d:" % hours
-        min = "%02d:" % minutes
+        minutes = "%02d:" % minutes
         sec = "%02d" % seconds
-        return f"{day}{hour}{min}{sec}"
+        return f"{day}{hour}{minutes}{sec}"
 
     async def get_lyrics_status(self, ctx: Context) -> bool:
         global _prefer_lyrics_cache

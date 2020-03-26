@@ -2,7 +2,7 @@ import contextlib
 import logging
 import math
 from pathlib import Path
-from typing import MutableMapping, Optional
+from typing import MutableMapping
 
 import discord
 
