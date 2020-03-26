@@ -1,5 +1,5 @@
 import asyncio
-import collections
+import collections.abc
 import logging
 import pickle
 import weakref
@@ -28,6 +28,33 @@ _T = TypeVar("_T")
 
 _config_cache = weakref.WeakValueDictionary()
 _retrieved = weakref.WeakSet()
+
+
+class ConfigMeta(type):
+    """
+    We want to prevent re-initializing existing config instances while having a singleton
+    """
+
+    def __call__(
+        cls,
+        cog_name: str,
+        unique_identifier: str,
+        driver: BaseDriver,
+        force_registration: bool = False,
+        defaults: dict = None,
+    ):
+        if cog_name is None:
+            raise ValueError("You must provide either the cog instance or a cog name.")
+
+        key = (cog_name, unique_identifier)
+        if key in _config_cache:
+            return _config_cache[key]
+
+        instance = super(ConfigMeta, cls).__call__(
+            cog_name, unique_identifier, driver, force_registration, defaults
+        )
+        _config_cache[key] = instance
+        return instance
 
 
 def get_latest_confs() -> Tuple["Config"]:
@@ -510,7 +537,7 @@ class Group(Value):
         return self(acquire_lock=acquire_lock)
 
     def nested_update(
-        self, current: collections.Mapping, defaults: Dict[str, Any] = ...
+        self, current: collections.abc.Mapping, defaults: Dict[str, Any] = ...
     ) -> Dict[str, Any]:
         """Robust updater for nested dictionaries
 
@@ -521,7 +548,7 @@ class Group(Value):
             defaults = self.defaults
 
         for key, value in current.items():
-            if isinstance(value, collections.Mapping):
+            if isinstance(value, collections.abc.Mapping):
                 result = self.nested_update(value, defaults.get(key, {}))
                 defaults[key] = result
             else:
@@ -562,7 +589,7 @@ class Group(Value):
         await self.driver.set(identifier_data, value=value)
 
 
-class Config:
+class Config(metaclass=ConfigMeta):
     """Configuration manager for cogs and Red.
 
     You should always use `get_conf` to instantiate a Config object. Use
@@ -605,19 +632,6 @@ class Config:
     USER = "USER"
     MEMBER = "MEMBER"
 
-    def __new__(cls, cog_name, unique_identifier, *args, **kwargs):
-        key = (cog_name, unique_identifier)
-
-        if key[0] is None:
-            raise ValueError("You must provide either the cog instance or a cog name.")
-
-        if key in _config_cache:
-            conf = _config_cache[key]
-        else:
-            conf = object.__new__(cls)
-            _config_cache[key] = conf
-        return conf
-
     def __init__(
         self,
         cog_name: str,
@@ -643,7 +657,14 @@ class Config:
         return pickle.loads(pickle.dumps(self._defaults, -1))
 
     @classmethod
-    def get_conf(cls, cog_instance, identifier: int, force_registration=False, cog_name=None):
+    def get_conf(
+        cls,
+        cog_instance,
+        identifier: int,
+        force_registration=False,
+        cog_name=None,
+        allow_old: bool = False,
+    ):
         """Get a Config instance for your cog.
 
         .. warning::
@@ -676,11 +697,16 @@ class Config:
             A new Config object.
 
         """
+        if allow_old:
+            log.warning(
+                "DANGER! This is getting an outdated driver. "
+                "Hopefully this is only being done from convert"
+            )
         uuid = str(identifier)
         if cog_name is None:
             cog_name = type(cog_instance).__name__
 
-        driver = get_driver(cog_name, uuid)
+        driver = get_driver(cog_name, uuid, allow_old=allow_old)
         if hasattr(driver, "migrate_identifier"):
             driver.migrate_identifier(identifier)
 
@@ -693,7 +719,7 @@ class Config:
         return conf
 
     @classmethod
-    def get_core_conf(cls, force_registration: bool = False):
+    def get_core_conf(cls, force_registration: bool = False, allow_old: bool = False):
         """Get a Config instance for the core bot.
 
         All core modules that require a config instance should use this
@@ -706,7 +732,11 @@ class Config:
 
         """
         return cls.get_conf(
-            None, cog_name="Core", identifier=0, force_registration=force_registration
+            None,
+            cog_name="Core",
+            identifier=0,
+            force_registration=force_registration,
+            allow_old=allow_old,
         )
 
     def __getattr__(self, item: str) -> Union[Group, Value]:
@@ -877,10 +907,10 @@ class Config:
         """
         Initializes a custom group for usage. This method must be called first!
         """
-        if group_identifier in self.custom_groups:
-            raise ValueError(f"Group identifier already registered: {group_identifier}")
-
-        self.custom_groups[group_identifier] = identifier_count
+        if identifier_count != self.custom_groups.setdefault(group_identifier, identifier_count):
+            raise ValueError(
+                f"Cannot change identifier count of already registered group: {group_identifier}"
+            )
 
     def _get_base_group(self, category: str, *primary_keys: str) -> Group:
         """
@@ -963,7 +993,7 @@ class Config:
         """
         return self._get_base_group(self.CHANNEL, str(channel_id))
 
-    def channel(self, channel: discord.TextChannel) -> Group:
+    def channel(self, channel: discord.abc.GuildChannel) -> Group:
         """Returns a `Group` for the given channel.
 
         This does not discriminate between text and voice channels.
@@ -1457,7 +1487,7 @@ class Config:
 async def migrate(cur_driver_cls: Type[BaseDriver], new_driver_cls: Type[BaseDriver]) -> None:
     """Migrate from one driver type to another."""
     # Get custom group data
-    core_conf = Config.get_core_conf()
+    core_conf = Config.get_core_conf(allow_old=True)
     core_conf.init_custom("CUSTOM_GROUPS", 2)
     all_custom_group_data = await core_conf.custom("CUSTOM_GROUPS").all()
 

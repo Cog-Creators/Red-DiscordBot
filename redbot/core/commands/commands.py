@@ -1,22 +1,48 @@
 """Module for command helpers and classes.
 
 This module contains extended classes and functions which are intended to
-replace those from the `discord.ext.commands` module.
+be used instead of those from the `discord.ext.commands` module.
 """
+from __future__ import annotations
+
 import inspect
+import re
+import functools
 import weakref
-from typing import Awaitable, Callable, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
+from typing import (
+    Awaitable,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    Union,
+    MutableMapping,
+    TYPE_CHECKING,
+)
 
 import discord
-from discord.ext import commands
+from discord.ext.commands import (
+    BadArgument,
+    CommandError,
+    CheckFailure,
+    DisabledCommand,
+    command as dpy_command_deco,
+    Command as DPYCommand,
+    Cog as DPYCog,
+    CogMeta as DPYCogMeta,
+    Group as DPYGroup,
+    Greedy,
+)
 
-from . import converter as converters
 from .errors import ConversionFailure
-from .requires import PermState, PrivilegeLevel, Requires
+from .requires import PermState, PrivilegeLevel, Requires, PermStateAllowedStates
 from ..i18n import Translator
 
 if TYPE_CHECKING:
+    # circular import avoidance
     from .context import Context
+
 
 __all__ = [
     "Cog",
@@ -37,10 +63,16 @@ RESERVED_COMMAND_NAMES = (
 )
 
 _ = Translator("commands.commands", __file__)
+DisablerDictType = MutableMapping[discord.Guild, Callable[["Context"], Awaitable[bool]]]
 
 
 class CogCommandMixin:
     """A mixin for cogs and commands."""
+
+    @property
+    def help(self) -> str:
+        """To be defined by subclasses"""
+        ...
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -56,6 +88,77 @@ class CogCommandMixin:
             bot_perms=getattr(decorated, "__requires_bot_perms__", {}),
             checks=getattr(decorated, "__requires_checks__", []),
         )
+
+    def format_text_for_context(self, ctx: "Context", text: str) -> str:
+        """
+        This formats text based on values in context
+
+        The steps are (currently, roughly) the following:
+
+            - substitute ``[p]`` with ``ctx.clean_prefix``
+            - substitute ``[botname]`` with ``ctx.me.display_name``
+
+        More steps may be added at a later time.
+
+        Cog creators should only override this if they want
+        help text to be modified, and may also want to
+        look at `format_help_for_context` and (for commands only)
+        ``format_shortdoc_for_context``
+
+        Parameters
+        ----------
+        ctx: Context
+        text: str
+
+        Returns
+        -------
+        str
+            text which has had some portions replaced based on context
+        """
+        formatting_pattern = re.compile(r"\[p\]|\[botname\]")
+
+        def replacement(m: re.Match) -> str:
+            s = m.group(0)
+            if s == "[p]":
+                return ctx.clean_prefix
+            if s == "[botname]":
+                return ctx.me.display_name
+            # We shouldnt get here:
+            return s
+
+        return formatting_pattern.sub(replacement, text)
+
+    def format_help_for_context(self, ctx: "Context") -> str:
+        """
+        This formats the help string based on values in context
+
+        The steps are (currently, roughly) the following:
+
+            - get the localized help
+            - substitute ``[p]`` with ``ctx.clean_prefix``
+            - substitute ``[botname]`` with ``ctx.me.display_name``
+
+        More steps may be added at a later time.
+
+        Cog creators may override this in their own command classes
+        as long as the method signature stays the same.
+
+        Parameters
+        ----------
+        ctx: Context
+
+        Returns
+        -------
+        str
+            Localized help with some formatting
+        """
+
+        help_str = self.help
+        if not help_str:
+            # Short circuit out on an empty help string
+            return help_str
+
+        return self.format_text_for_context(ctx, help_str)
 
     def allow_for(self, model_id: Union[int, str], guild_id: int) -> None:
         """Actively allow this command for the given model.
@@ -138,7 +241,7 @@ class CogCommandMixin:
             self.deny_to(Requires.DEFAULT, guild_id=guild_id)
 
 
-class Command(CogCommandMixin, commands.Command):
+class Command(CogCommandMixin, DPYCommand):
     """Command class for Red.
 
     This should not be created directly, and instead via the decorator.
@@ -154,10 +257,21 @@ class Command(CogCommandMixin, commands.Command):
         `Requires.checks`.
     translator : Translator
         A translator for this command's help docstring.
-
+    ignore_optional_for_conversion : bool
+        A value which can be set to not have discord.py's
+        argument parsing behavior for ``typing.Optional``
+        (type used will be of the inner type instead)
     """
 
+    def __call__(self, *args, **kwargs):
+        if self.cog:
+            # We need to inject cog as self here
+            return self.callback(self.cog, *args, **kwargs)
+        else:
+            return self.callback(*args, **kwargs)
+
     def __init__(self, *args, **kwargs):
+        self.ignore_optional_for_conversion = kwargs.pop("ignore_optional_for_conversion", False)
         super().__init__(*args, **kwargs)
         self._help_override = kwargs.pop("help_override", None)
         self.translator = kwargs.pop("i18n", None)
@@ -167,13 +281,80 @@ class Command(CogCommandMixin, commands.Command):
                     raise RuntimeError(
                         f"The name `{name}` cannot be set as a command name. It is reserved for internal use."
                     )
+        if len(self.qualified_name) > 60:
+            raise RuntimeError(
+                f"This command ({self.qualified_name}) has an excessively long qualified name, "
+                "and will not be added to the bot to prevent breaking tools and menus. (limit 60)"
+            )
 
     def _ensure_assignment_on_copy(self, other):
         super()._ensure_assignment_on_copy(other)
 
         # Red specific
         other.requires = self.requires
+        other.ignore_optional_for_conversion = self.ignore_optional_for_conversion
         return other
+
+    @property
+    def callback(self):
+        return self._callback
+
+    @callback.setter
+    def callback(self, function):
+        """
+        Below should be mostly the same as discord.py
+
+        Currently, we modify behavior for
+
+          - functools.partial support
+          - typing.Optional behavior change as an option
+        """
+        self._callback = function
+        if isinstance(function, functools.partial):
+            self.module = function.func.__module__
+            globals_ = function.func.__globals__
+        else:
+            self.module = function.__module__
+            globals_ = function.__globals__
+
+        signature = inspect.signature(function)
+        self.params = signature.parameters.copy()
+
+        # PEP-563 allows postponing evaluation of annotations with a __future__
+        # import. When postponed, Parameter.annotation will be a string and must
+        # be replaced with the real value for the converters to work later on
+        for key, value in self.params.items():
+            if isinstance(value.annotation, str):
+                self.params[key] = value = value.replace(
+                    annotation=eval(value.annotation, globals_)
+                )
+
+            # fail early for when someone passes an unparameterized Greedy type
+            if value.annotation is Greedy:
+                raise TypeError("Unparameterized Greedy[...] is disallowed in signature.")
+
+            if not self.ignore_optional_for_conversion:
+                continue  # reduces indentation compared to alternative
+
+            try:
+                vtype = value.annotation.__origin__
+                if vtype is Union:
+                    _NoneType = type if TYPE_CHECKING else type(None)
+                    args = value.annotation.__args__
+                    if _NoneType in args:
+                        args = tuple(a for a in args if a is not _NoneType)
+                        if len(args) == 1:
+                            # can't have a union of 1 or 0 items
+                            # 1 prevents this from becoming 0
+                            # we need to prevent 2 become 1
+                            # (Don't change that to becoming, it's intentional :musical_note:)
+                            self.params[key] = value = value.replace(annotation=args[0])
+                        else:
+                            # and mypy wretches at the correct Union[args]
+                            temp_type = type if TYPE_CHECKING else Union[args]
+                            self.params[key] = value = value.replace(annotation=temp_type)
+            except AttributeError:
+                continue
 
     @property
     def help(self):
@@ -237,7 +418,6 @@ class Command(CogCommandMixin, commands.Command):
             Whether or not the permission state should be changed as
             a result of this call. For most cases this should be
             ``False``. Defaults to ``False``.
-
         """
         ret = await super().can_run(ctx)
         if ret is False:
@@ -255,7 +435,7 @@ class Command(CogCommandMixin, commands.Command):
             for parent in reversed(self.parents):
                 try:
                     result = await parent.can_run(ctx, change_permission_state=True)
-                except commands.CommandError:
+                except CommandError:
                     result = False
 
                 if result is False:
@@ -274,14 +454,24 @@ class Command(CogCommandMixin, commands.Command):
             if not change_permission_state:
                 ctx.permission_state = original_state
 
-    async def _verify_checks(self, ctx):
-        if not self.enabled:
-            raise commands.DisabledCommand(f"{self.name} command is disabled")
+    async def prepare(self, ctx):
+        ctx.command = self
 
-        if not (await self.can_run(ctx, change_permission_state=True)):
-            raise commands.CheckFailure(
-                f"The check functions for command {self.qualified_name} failed."
-            )
+        if not self.enabled:
+            raise DisabledCommand(f"{self.name} command is disabled")
+
+        if not await self.can_run(ctx, change_permission_state=True):
+            raise CheckFailure(f"The check functions for command {self.qualified_name} failed.")
+
+        if self.cooldown_after_parsing:
+            await self._parse_arguments(ctx)
+            self._prepare_cooldowns(ctx)
+        else:
+            self._prepare_cooldowns(ctx)
+            await self._parse_arguments(ctx)
+        if self._max_concurrency is not None:
+            await self._max_concurrency.acquire(ctx)
+        await self.call_before_hooks(ctx)
 
     async def do_conversion(
         self, ctx: "Context", converter, argument: str, param: inspect.Parameter
@@ -305,7 +495,7 @@ class Command(CogCommandMixin, commands.Command):
 
         try:
             return await super().do_conversion(ctx, converter, argument, param)
-        except commands.BadArgument as exc:
+        except BadArgument as exc:
             raise ConversionFailure(converter, argument, param, *exc.args) from exc
         except ValueError as exc:
             # Some common converters need special treatment...
@@ -340,7 +530,7 @@ class Command(CogCommandMixin, commands.Command):
                 can_run = await self.can_run(
                     ctx, check_all_parents=True, change_permission_state=False
                 )
-            except (commands.CheckFailure, commands.errors.DisabledCommand):
+            except (CheckFailure, DisabledCommand):
                 return False
             else:
                 if can_run is False:
@@ -460,6 +650,28 @@ class Command(CogCommandMixin, commands.Command):
         """
         return super().error(coro)
 
+    def format_shortdoc_for_context(self, ctx: "Context") -> str:
+        """
+        This formats the short version of the help
+        string based on values in context
+
+        See ``format_text_for_context`` for the actual implementation details
+
+        Cog creators may override this in their own command classes
+        as long as the method signature stays the same.
+
+        Parameters
+        ----------
+        ctx: Context
+
+        Returns
+        -------
+        str
+            Localized help with some formatting
+        """
+        sh = self.short_doc
+        return self.format_text_for_context(ctx, sh) if sh else sh
+
 
 class GroupMixin(discord.ext.commands.GroupMixin):
     """Mixin for `Group` and `Red` classes.
@@ -496,10 +708,9 @@ class GroupMixin(discord.ext.commands.GroupMixin):
 
 class CogGroupMixin:
     requires: Requires
-    all_commands: Dict[str, Command]
 
     def reevaluate_rules_for(
-        self, model_id: Union[str, int], guild_id: Optional[int]
+        self, model_id: Union[str, int], guild_id: int = 0
     ) -> Tuple[PermState, bool]:
         """Re-evaluate a rule by checking subcommand rules.
 
@@ -522,15 +733,16 @@ class CogGroupMixin:
 
         """
         cur_rule = self.requires.get_rule(model_id, guild_id=guild_id)
-        if cur_rule in (PermState.NORMAL, PermState.ACTIVE_ALLOW, PermState.ACTIVE_DENY):
-            # These three states are unaffected by subcommand rules
-            return cur_rule, False
-        else:
+        if cur_rule not in (PermState.NORMAL, PermState.ACTIVE_ALLOW, PermState.ACTIVE_DENY):
+            # The above three states are unaffected by subcommand rules
             # Remaining states can be changed if there exists no actively-allowed
             # subcommand (this includes subcommands multiple levels below)
+
+            all_commands: Dict[str, Command] = getattr(self, "all_commands", {})
+
             if any(
-                cmd.requires.get_rule(model_id, guild_id=guild_id) in PermState.ALLOWED_STATES
-                for cmd in self.all_commands.values()
+                cmd.requires.get_rule(model_id, guild_id=guild_id) in PermStateAllowedStates
+                for cmd in all_commands.values()
             ):
                 return cur_rule, False
             elif cur_rule is PermState.PASSIVE_ALLOW:
@@ -540,8 +752,11 @@ class CogGroupMixin:
                 self.requires.set_rule(model_id, PermState.ACTIVE_DENY, guild_id=guild_id)
                 return PermState.ACTIVE_DENY, True
 
+        # Default return value
+        return cur_rule, False
 
-class Group(GroupMixin, Command, CogGroupMixin, commands.Group):
+
+class Group(GroupMixin, Command, CogGroupMixin, DPYGroup):
     """Group command class for Red.
 
     This class inherits from `Command`, with :class:`GroupMixin` and
@@ -569,14 +784,16 @@ class Group(GroupMixin, Command, CogGroupMixin, commands.Group):
 
         if ctx.invoked_subcommand is None or self == ctx.invoked_subcommand:
             if self.autohelp and not self.invoke_without_command:
-                await self._verify_checks(ctx)
+                if not await self.can_run(ctx, change_permission_state=True):
+                    raise CheckFailure()
                 await ctx.send_help()
         elif self.invoke_without_command:
             # So invoke_without_command when a subcommand of this group is invoked
             # will skip the the invokation of *this* command. However, because of
             # how our permissions system works, we don't want it to skip the checks
             # as well.
-            await self._verify_checks(ctx)
+            if not await self.can_run(ctx, change_permission_state=True):
+                raise CheckFailure()
             # this is actually why we don't prepare earlier.
 
         await super().invoke(ctx)
@@ -584,14 +801,6 @@ class Group(GroupMixin, Command, CogGroupMixin, commands.Group):
 
 class CogMixin(CogGroupMixin, CogCommandMixin):
     """Mixin class for a cog, intended for use with discord.py's cog class"""
-
-    @property
-    def all_commands(self) -> Dict[str, Command]:
-        """
-        This does not have identical behavior to 
-        Group.all_commands but should return what you expect
-        """
-        return {cmd.name: cmd for cmd in self.__cog_commands__}
 
     @property
     def help(self):
@@ -604,7 +813,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         """
         This really just exists to allow easy use with other methods using can_run
         on commands and groups such as help formatters.
-        
+
         kwargs used in that won't apply here as they don't make sense to,
         but will be swallowed silently for a compatible signature for ease of use.
 
@@ -621,7 +830,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
 
         try:
             can_run = await self.requires.verify(ctx)
-        except commands.CommandError:
+        except CommandError:
             return False
 
         return can_run
@@ -650,16 +859,22 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         return await self.can_run(ctx)
 
 
-class Cog(CogMixin, commands.Cog):
+class Cog(CogMixin, DPYCog, metaclass=DPYCogMeta):
     """
     Red's Cog base class
 
     This includes a metaclass from discord.py
     """
 
-    # NB: Do not move the inheritcance of this. Keeping the mix of that metaclass
-    # seperate gives us more freedoms in several places.
-    pass
+    __cog_commands__: Tuple[Command]
+
+    @property
+    def all_commands(self) -> Dict[str, Command]:
+        """
+        This does not have identical behavior to
+        Group.all_commands but should return what you expect
+        """
+        return {cmd.name: cmd for cmd in self.__cog_commands__}
 
 
 def command(name=None, cls=Command, **attrs):
@@ -668,7 +883,8 @@ def command(name=None, cls=Command, **attrs):
     Same interface as `discord.ext.commands.command`.
     """
     attrs["help_override"] = attrs.pop("help", None)
-    return commands.command(name, cls, **attrs)
+
+    return dpy_command_deco(name, cls, **attrs)
 
 
 def group(name=None, cls=Group, **attrs):
@@ -676,10 +892,10 @@ def group(name=None, cls=Group, **attrs):
 
     Same interface as `discord.ext.commands.group`.
     """
-    return command(name, cls, **attrs)
+    return dpy_command_deco(name, cls, **attrs)
 
 
-__command_disablers = weakref.WeakValueDictionary()
+__command_disablers: DisablerDictType = weakref.WeakValueDictionary()
 
 
 def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitable[bool]]:
@@ -694,8 +910,31 @@ def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitabl
 
         async def disabler(ctx: "Context") -> bool:
             if ctx.guild == guild:
-                raise commands.DisabledCommand()
+                raise DisabledCommand()
             return True
 
         __command_disablers[guild] = disabler
         return disabler
+
+
+# This is intentionally left out of `__all__` as it is not intended for general use
+class _AlwaysAvailableCommand(Command):
+    """
+    This should be used only for informational commands
+    which should not be disabled or removed
+
+    These commands cannot belong to a cog.
+
+    These commands do not respect most forms of checks, and
+    should only be used with that in mind.
+
+    This particular class is not supported for 3rd party use
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.cog is not None:
+            raise TypeError("This command may not be added to a cog")
+
+    async def can_run(self, ctx, *args, **kwargs) -> bool:
+        return not ctx.author.bot

@@ -1,1 +1,0 @@
-``redbot-setup delete`` no longer errors about "unexpected keyword argument"
