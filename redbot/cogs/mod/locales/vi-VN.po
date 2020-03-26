@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-03-19 12:08+0000\n"
-"PO-Revision-Date: 2020-03-19 12:11\n"
+"POT-Creation-Date: 2020-03-26 12:08+0000\n"
+"PO-Revision-Date: 2020-03-26 12:57\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Vietnamese\n"
 "MIME-Version: 1.0\n"
@@ -212,22 +212,35 @@ msgstr ""
 msgid "Something went wrong when attempting to send that useran invite. Here's the link so you can try: {invite_link}"
 msgstr ""
 
-#: redbot/cogs/mod/mod.py:48
+#: redbot/cogs/mod/mod.py:46
 #, docstring
 msgid "Moderation tools."
 msgstr ""
 
-#: redbot/cogs/mod/mod.py:109
+#: redbot/cogs/mod/mod.py:107
 msgid "Ignored guilds and channels have been moved. Please use `[p]moveignoredchannels` if you were previously using these functions."
 msgstr ""
 
-#: redbot/cogs/mod/mod.py:120
+#: redbot/cogs/mod/mod.py:115
+msgid "Delete delay settings have been moved. Please use `[p]movedeletedelay` if you were previously using these functions."
+msgstr ""
+
+#: redbot/cogs/mod/mod.py:126
 #, docstring
 msgid "Move ignored channels and servers to core"
 msgstr ""
 
-#: redbot/cogs/mod/mod.py:129
+#: redbot/cogs/mod/mod.py:135
 msgid "Ignored channels and guilds restored."
+msgstr ""
+
+#: redbot/cogs/mod/mod.py:140
+#, docstring
+msgid "\\n            Move deletedelay settings to core\\n        "
+msgstr ""
+
+#: redbot/cogs/mod/mod.py:149
+msgid "Delete delay settings restored."
 msgstr ""
 
 #: redbot/cogs/mod/mutes.py:14
@@ -588,65 +601,44 @@ msgstr ""
 
 #: redbot/cogs/mod/settings.py:163
 #, docstring
-msgid "Set the delay until the bot removes the command message.\\n\\n        Must be between -1 and 60.\\n\\n        Set to -1 to disable this feature.\\n        "
-msgstr ""
-
-#: redbot/cogs/mod/settings.py:174
-msgid "Command deleting disabled."
-msgstr ""
-
-#: redbot/cogs/mod/settings.py:176
-msgid "Delete delay set to {num} seconds."
-msgstr ""
-
-#: redbot/cogs/mod/settings.py:181
-msgid "Bot will delete command messages after {num} seconds. Set this value to -1 to stop deleting messages"
-msgstr ""
-
-#: redbot/cogs/mod/settings.py:188
-msgid "I will not delete command messages."
-msgstr ""
-
-#: redbot/cogs/mod/settings.py:193
-#, docstring
 msgid "Toggle whether an invite will be sent to a user when unbanned.\\n\\n        If this is True, the bot will attempt to create and send a single-use invite\\n        to the newly-unbanned user.\\n        "
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:203
+#: redbot/cogs/mod/settings.py:173
 msgid "Users unbanned with `{command}` will be reinvited."
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:210
+#: redbot/cogs/mod/settings.py:180
 msgid "Users unbanned with `{command}` will not be reinvited."
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:218
+#: redbot/cogs/mod/settings.py:188
 #, docstring
 msgid "Toggle whether a message should be sent to a user when they are kicked/banned.\\n\\n        If this option is enabled, the bot will attempt to DM the user with the guild name\\n        and reason as to why they were kicked/banned.\\n        "
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:227
+#: redbot/cogs/mod/settings.py:197
 msgid "DM when kicked/banned is currently set to: {setting}"
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:232
+#: redbot/cogs/mod/settings.py:202
 msgid "Bot will now attempt to send a DM to user before kick and ban."
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:235
+#: redbot/cogs/mod/settings.py:205
 msgid "Bot will no longer attempt to send a DM to user before kick and ban."
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:241
+#: redbot/cogs/mod/settings.py:211
 #, docstring
 msgid "Set the default number of days worth of messages to be deleted when a user is banned.\\n\\n        The number of days must be between 0 and 7.\\n        "
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:247
+#: redbot/cogs/mod/settings.py:217
 msgid "Invalid number of days. Must be between 0 and 7."
 msgstr ""
 
-#: redbot/cogs/mod/settings.py:250
+#: redbot/cogs/mod/settings.py:220
 msgid "{days} days worth of messages will be deleted when a user is banned."
 msgstr ""
 
