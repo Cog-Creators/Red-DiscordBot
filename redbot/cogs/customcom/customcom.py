@@ -3,7 +3,7 @@ import random
 from datetime import datetime, timedelta
 from inspect import Parameter
 from collections import OrderedDict
-from typing import Iterable, Mapping, Tuple, Dict, Set
+from typing import Iterable, List, Mapping, Tuple, Dict, Set
 from urllib.parse import quote_plus
 
 import discord
@@ -226,9 +226,7 @@ class CustomCommands(commands.Cog):
         if await ctx.embed_requested():
             content = " \n".join(map("**{0[0]}** {0[1]}".format, results))
             embed = discord.Embed(
-                title=_("Search results"),
-                description=content,
-                colour=await ctx.embed_colour(),
+                title=_("Search results"), description=content, colour=await ctx.embed_colour()
             )
             await ctx.send(embed=embed)
         else:
