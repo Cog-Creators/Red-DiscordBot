@@ -563,13 +563,14 @@ class Cleanup(commands.Cog):
             if not cont:
                 return
 
-        reason = "{}({}) deleted {} spam messages in channel {}.".format(
-            ctx.author.name,
+        log.info(
+            "%s (%s) deleted %s spam messages in channel %s (%s).",
+            ctx.author,
             ctx.author.id,
-            humanize_number(len(spam), override_locale="en_US"),
-            ctx.channel.name,
+            len(spam),
+            ctx.channel,
+            ctx.channel.id,
         )
-        log.info(reason)
 
         spam.append(ctx.message)
         await mass_purge(spam, ctx.channel)
