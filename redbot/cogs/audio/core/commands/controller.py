@@ -143,7 +143,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             expected = ("⏹", "⏯")
         task: Optional[asyncio.Task]
         if player.current:
-            task = start_adding_reactions(message, expected[:4], ctx.bot.loop)
+            task = start_adding_reactions(message, expected[:4])
         else:
             task = None
 
