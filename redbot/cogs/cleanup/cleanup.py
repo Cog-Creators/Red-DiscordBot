@@ -546,10 +546,10 @@ class Cleanup(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
     async def cleanup_spam(self, ctx: commands.Context, number: int = 50):
-        """Deletes duplicate messages in the channel from the last X messages, but keeps the original. Default 50."""
+        """Deletes duplicate messages in the channel from the last X messages, but keeps only one. Default 50."""
         msgs = []
         spam = []
-        async for msg in ctx.channel.history(limit=number, before=ctx.message, oldest_first=True):
+        async for msg in ctx.channel.history(limit=number, before=ctx.message):
             if msg.attachments:
                 continue
             c = (msg.author.id, msg.content, [e.to_dict() for e in msg.embeds])
@@ -563,10 +563,13 @@ class Cleanup(commands.Cog):
             if not cont:
                 return
 
+        reason = "{}({}) deleted {} spam messages in channel {}.".format(
+            ctx.author.name,
+            ctx.author.id,
+            humanize_number(len(spam), override_locale="en_US"),
+            ctx.channel.name,
+        )
+        log.info(reason)
+
         spam.append(ctx.message)
         await mass_purge(spam, ctx.channel)
-        log.info(
-            "{0.author} deleted {1} spam messages in channel {0.channel}.".format(
-                ctx, len(spam) - 1
-            )
-        )
