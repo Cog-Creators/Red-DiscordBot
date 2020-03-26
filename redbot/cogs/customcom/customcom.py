@@ -222,7 +222,7 @@ class CustomCommands(commands.Cog):
                 pass
         if len(accepted) == 0:
             return await ctx.send(_("No close matches were found."))
-        results = prepare_command_list(ctx, accepted)
+        results = self.prepare_command_list(ctx, accepted)
         if await ctx.embed_requested():
             content = " \n".join(map("**{0[0]}** {0[1]}".format, results))
             embed = discord.Embed(
@@ -387,7 +387,7 @@ class CustomCommands(commands.Cog):
             )
             return
 
-        results = prepare_command_list(ctx, sorted(cc_dict.items(), key=lambda t: t[0]))
+        results = self.prepare_command_list(ctx, sorted(cc_dict.items(), key=lambda t: t[0]))
 
         if await ctx.embed_requested():
             # We need a space before the newline incase the CC preview ends in link (GH-2295)
