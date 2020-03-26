@@ -3,7 +3,7 @@ import random
 from datetime import datetime, timedelta
 from inspect import Parameter
 from collections import OrderedDict
-from typing import Mapping, Tuple, Dict, Set
+from typing import Iterable, Mapping, Tuple, Dict, Set
 from fuzzywuzzy import process
 
 import discord
@@ -207,27 +207,32 @@ class CustomCommands(commands.Cog):
 
     @customcom.command(name="search")
     @commands.guild_only()
-    async def cc_search(self, ctx: commands.Context, *, search):
-        """Searches through custom commands, according to the query.
-
-        Fuzzy string matching must be enabled for this to work."""
-        enabled = await ctx.bot.db.guild(ctx.guild).fuzzy()
-        if not enabled:
-            return await ctx.send(_("Fuzzy string matching is not enabled in this server."))
-        cc_commands = await self.config.guild(ctx.guild).commands()
-        extracted = process.extract(search, list(cc_commands.keys()))
+    async def cc_search(self, ctx: commands.Context, *, query):
+        """Searches through custom commands, according to the query."""
+        cc_commands = await CommandObj.get_commands(self.config.guild(ctx.guild))
+        extracted = process.extract(query, list(cc_commands.keys()))
         accepted = []
         for entry in extracted:
             if entry[1] > 60:
                 # Match was decently strong
-                accepted.append(f"{ctx.prefix}{entry[0]}")
+                accepted.append((entry[0], cc_commands[entry[0]]))
             else:
                 # Match wasn't strong enough
                 pass
         if len(accepted) == 0:
             return await ctx.send(_("No close matches were found."))
-        sending = "\n".join(accepted)
-        await ctx.send(_(f"The following matches have been found: ```{sending}```"))
+        results = prepare_command_list(ctx, accepted)
+        if await ctx.embed_requested():
+            content = " \n".join(map("**{0[0]}** {0[1]}".format, results))
+            embed = discord.Embed(
+                title=_("Search results"),
+                description=content,
+                colour=await ctx.embed_colour(),
+            )
+            await ctx.send(embed=embed)
+        else:
+            content = "\n".join(map("{0[0]:<12} : {0[1]}".format, results))
+            await ctx.send(_("The following matches have been found:") + box(content))
 
     @customcom.group(name="create", aliases=["add"], invoke_without_command=True)
     @checks.mod_or_permissions(administrator=True)
@@ -380,23 +385,7 @@ class CustomCommands(commands.Cog):
             )
             return
 
-        results = []
-        for command, body in sorted(cc_dict.items(), key=lambda t: t[0]):
-            responses = body["response"]
-            if isinstance(responses, list):
-                result = ", ".join(responses)
-            elif isinstance(responses, str):
-                result = responses
-            else:
-                continue
-            # Cut preview to 52 characters max
-            if len(result) > 52:
-                result = result[:49] + "..."
-            # Replace newlines with spaces
-            result = result.replace("\n", " ")
-            # Escape markdown and mass mentions
-            result = escape(result, formatting=True, mass_mentions=True)
-            results.append((f"{ctx.clean_prefix}{command}", result))
+        results = prepare_command_list(ctx, sorted(cc_dict.items(), key=lambda t: t[0]))
 
         if await ctx.embed_requested():
             # We need a space before the newline incase the CC preview ends in link (GH-2295)
@@ -674,3 +663,25 @@ class CustomCommands(commands.Cog):
 
         """
         return set(await CommandObj.get_commands(self.config.guild(guild)))
+
+    def prepare_command_list(
+        ctx: commands.Context, command_list: Iterable[Tuple[str, dict]]
+    ) -> List[Tuple[str, str]]:
+        results = []
+        for command, body in command_list:
+            responses = body["response"]
+            if isinstance(responses, list):
+                result = ", ".join(responses)
+            elif isinstance(responses, str):
+                result = responses
+            else:
+                continue
+            # Cut preview to 52 characters max
+            if len(result) > 52:
+                result = result[:49] + "..."
+            # Replace newlines with spaces
+            result = result.replace("\n", " ")
+            # Escape markdown and mass mentions
+            result = escape(result, formatting=True, mass_mentions=True)
+            results.append((f"{ctx.clean_prefix}{command}", result))
+        return results
