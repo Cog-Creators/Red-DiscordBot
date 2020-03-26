@@ -745,7 +745,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 track_len = 0
                 empty_queue = not player.queue
-                for track in tracks:
+                for i, track in enumerate(tracks, start=1):
+                    if i % 500 == 0:  # TODO: Improve when Toby menu's are merged
+                        await asyncio.sleep(0.1)
                     if len(player.queue) >= 10000:
                         continue
                     if not await self.is_allowed(

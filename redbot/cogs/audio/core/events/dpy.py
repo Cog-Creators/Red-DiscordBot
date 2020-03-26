@@ -1,3 +1,4 @@
+import contextlib
 import logging
 
 import discord
@@ -30,11 +31,19 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             raise RuntimeError(
                 "Not running audio command due to invalid machine architecture for Lavalink."
             )
+        # with contextlib.suppress(Exception):
+        #     player = lavalink.get_player(ctx.guild.id)
+        #     notify_channel = player.fetch("channel")
+        #     if not notify_channel:
+        #         player.store("channel", ctx.channel.id)
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         self._daily_playlist_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).daily_playlists()
+        )
+        self._daily_global_playlist_cache.setdefault(
+            self.bot.user.id, await self.config.daily_playlists()
         )
         if dj_enabled:
             dj_role = self._dj_role_cache.setdefault(

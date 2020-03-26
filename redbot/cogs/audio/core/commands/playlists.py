@@ -607,6 +607,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         final_count = len(tracklist)
         if original_count - final_count != 0:
+            await playlist.edit({"tracks": tracklist})
             await self._embed_msg(
                 ctx,
                 title=_("Playlist Modified"),
@@ -945,41 +946,61 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
 
-        try:
-            playlists = await get_all_playlist(
-                scope, self.bot, self.playlist_api, guild, author, specified_user
+        if scope is None:
+            global_matches = await get_all_playlist(
+                PlaylistScope.GLOBAL.value, self.bot, guild, author, specified_user
             )
-        except MissingGuild:
-            ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
-                ctx,
-                title=_("Missing Arguments"),
-                description=_("You need to specify the Guild ID for the guild to lookup."),
+            guild_matches = await get_all_playlist(
+                PlaylistScope.GUILD.value, self.bot, guild, author, specified_user
             )
-
-        if scope == PlaylistScope.GUILD.value:
-            name = f"{guild.name}"
-        elif scope == PlaylistScope.USER.value:
-            name = f"{author}"
+            user_matches = await get_all_playlist(
+                PlaylistScope.USER.value, self.bot, guild, author, specified_user
+            )
+            playlists = [*global_matches, *guild_matches, *user_matches]
+            name = None
+            if not playlists:
+                ctx.command.reset_cooldown(ctx)
+                return await self._embed_msg(
+                    ctx,
+                    title=_("Playlist Not Found"),
+                    description=_("No saved playlists available in this server.").format(
+                        scope=name
+                    ),
+                )
         else:
-            name = "Global"
+            try:
+                playlists = await get_all_playlist(scope, self.bot, guild, author, specified_user)
+            except MissingGuild:
+                ctx.command.reset_cooldown(ctx)
+                return await self._embed_msg(
+                    ctx,
+                    title=_("Missing Arguments"),
+                    description=_("You need to specify the Guild ID for the guild to lookup."),
+                )
 
-        if not playlists and specified_user:
-            ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
-                ctx,
-                title=_("Playlist Not Found"),
-                description=_("No saved playlists for {scope} created by {author}.").format(
-                    scope=name, author=author
-                ),
-            )
-        elif not playlists:
-            ctx.command.reset_cooldown(ctx)
-            return await self._embed_msg(
-                ctx,
-                title=_("Playlist Not Found"),
-                description=_("No saved playlists for {scope}.").format(scope=name),
-            )
+            if scope == PlaylistScope.GUILD.value:
+                name = f"{guild.name}"
+            elif scope == PlaylistScope.USER.value:
+                name = f"{author}"
+            else:
+                name = "Global"
+
+            if not playlists and specified_user:
+                ctx.command.reset_cooldown(ctx)
+                return await self._embed_msg(
+                    ctx,
+                    title=_("Playlist Not Found"),
+                    description=_("No saved playlists for {scope} created by {author}.").format(
+                        scope=name, author=author
+                    ),
+                )
+            elif not playlists:
+                ctx.command.reset_cooldown(ctx)
+                return await self._embed_msg(
+                    ctx,
+                    title=_("Playlist Not Found"),
+                    description=_("No saved playlists for {scope}.").format(scope=name),
+                )
 
         playlist_list = []
         space = "\N{EN SPACE}"
@@ -990,11 +1011,12 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         bold(playlist.name),
                         _("ID: {id}").format(id=playlist.id),
                         _("Tracks: {num}").format(num=len(playlist.tracks)),
-                        _("Author: {name}\n").format(
+                        _("Author: {name}").format(
                             name=self.bot.get_user(playlist.author)
                             or playlist.author
                             or _("Unknown")
                         ),
+                        _("Scope: {scope}\n").format(scope=self.humanize_scope(playlist.scope)),
                     )
                 )
             )
@@ -1763,13 +1785,6 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await self._embed_msg(ctx, title=_("No file detected, try again later."))
         else:
             file_message = ctx.message
-
-        try:
-            file_message = await ctx.bot.wait_for(
-                "message", timeout=30.0, check=MessagePredicate.same_context(ctx)
-            )
-        except asyncio.TimeoutError:
-            return await self._embed_msg(ctx, title=_("No file detected, try again later."))
         try:
             file_url = file_message.attachments[0].url
         except IndexError:

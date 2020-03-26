@@ -39,6 +39,7 @@ class MixinMeta(ABC):
     skip_votes: MutableMapping[discord.Guild, List[discord.Member]]
     play_lock: MutableMapping[int, bool]
     _daily_playlist_cache: MutableMapping[int, bool]
+    _daily_global_playlist_cache: MutableMapping[int, bool]
     _dj_status_cache: MutableMapping[int, Optional[bool]]
     _dj_role_cache: MutableMapping[int, Optional[int]]
     _error_timer: MutableMapping[int, float]
@@ -436,7 +437,7 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def _build_playlist_list_page(
-        self, ctx: commands.Context, page_num: int, abc_names: List, scope: str
+        self, ctx: commands.Context, page_num: int, abc_names: List, scope: Optional[str]
     ) -> discord.Embed:
         raise NotImplementedError()
 

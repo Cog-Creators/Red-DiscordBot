@@ -204,7 +204,7 @@ class AudioAPIInterface:
                 track_name,
                 _id,
                 _type,
-            ) = self.spotify_api.get_spotify_track_info(track)
+            ) = await self.spotify_api.get_spotify_track_info(track)
 
             database_entries.append(
                 {
@@ -449,7 +449,7 @@ class AudioAPIInterface:
                     track_name,
                     _id,
                     _type,
-                ) = self.spotify_api.get_spotify_track_info(track)
+                ) = await self.spotify_api.get_spotify_track_info(track)
 
                 database_entries.append(
                     {
@@ -830,9 +830,9 @@ class AudioAPIInterface:
             if cache_enabled:
                 tracks = [await self.get_random_track_from_db()]
             if not tracks:
-                ctx = namedtuple("Context", "message")
+                ctx = namedtuple("Context", "message guild")
                 (results, called_api) = await self.fetch_track(
-                    cast(commands.Context, ctx(player.channel.guild)),
+                    cast(commands.Context, ctx(player.channel.guild, player.channel.guild)),
                     player,
                     Query.process_input(
                         _TOP_100_US, Path(await self.config.localpath()).absolute()
