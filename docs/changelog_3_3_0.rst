@@ -84,6 +84,7 @@ Core Bot
 Documentation changes
 ---------------------
 
+- Fixed install instructions for Mac in `install_linux_mac` (:issue:`3675`, :issue:`3436`)
 
 
 Miscellaneous
