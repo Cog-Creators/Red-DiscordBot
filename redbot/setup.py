@@ -441,10 +441,11 @@ class RestoreInfo:
     def _ask_for_required_changes(self) -> None:
         if self.name_used:
             print(
-                "Original instance name can't be used as other instance is already using it."
-                " You have to choose a different name."
+                "WARNING: Original instance name is already used by a different instance."
+                " Continuing will overwrite the existing instance config."
             )
-            self._ask_for_name()
+            if click.confirm("Do you want to use different instance name?"):
+                self._ask_for_name()
         if self.data_path_not_empty:
             print(
                 "Original data path can't be used as it's not empty."
