@@ -156,16 +156,7 @@ class ModInfo(MixinMeta):
             status_string, status_type = a
             if status_string is None:
                 continue
-            if status_type == discord.ActivityType.custom:
-                string += "{}\n".format(status_string)
-            elif status_type == discord.ActivityType.playing:
-                string += "{}\n".format(status_string)
-            elif status_type == discord.ActivityType.streaming:
-                string += "{}\n".format(status_string)
-            elif status_type == discord.ActivityType.listening:
-                string += _("{}\n".format(status_string))
-            elif status_type == discord.ActivityType.watching:
-                string += "{}\n".format(status_string)
+            string += f"{status_string}\n"
         return string
 
     @commands.command()
