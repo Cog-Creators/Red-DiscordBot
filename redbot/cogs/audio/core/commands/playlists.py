@@ -279,8 +279,6 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             to_guild,
             specified_to_user,
         ) = scope_data
-
-        from_scope = from_scope or PlaylistScope.GUILD.value
         to_scope = to_scope or PlaylistScope.GUILD.value
         try:
             from_playlist, playlist_arg, from_scope = await self.get_playlist_match(
@@ -1440,7 +1438,6 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if scope_data is None:
             scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
-        scope = scope or PlaylistScope.GUILD.value
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
