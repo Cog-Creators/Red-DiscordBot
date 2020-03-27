@@ -1,4 +1,5 @@
 from random import shuffle
+from typing import Optional
 
 import aiohttp
 
@@ -42,11 +43,15 @@ class Image(commands.Cog):
         pass
 
     @_imgur.command(name="search")
-    async def imgur_search(self, ctx, *, term: str):
+    async def imgur_search(self, ctx, count: Optional[int] = 1, *, term: str):
         """Search Imgur for the specified term.
 
-        Returns up to 3 results.
+        Use `count` to choose how many images should be returned.
+        Command can return up to 5 images.
         """
+        if count < 1 or count > 5:
+            await ctx.send(_("Image count has to be between 1 and 5."))
+            return
         url = self.imgur_base_url + "gallery/search/time/all/0"
         params = {"q": term}
         imgur_client_id = (await ctx.bot.get_shared_api_tokens("imgur")).get("client_id")
@@ -68,7 +73,7 @@ class Image(commands.Cog):
                 return
             shuffle(results)
             msg = _("Search results...\n")
-            for r in results[:3]:
+            for r in results[:count]:
                 msg += r["gifv"] if "gifv" in r else r["link"]
                 msg += "\n"
             await ctx.send(msg)
@@ -79,14 +84,23 @@ class Image(commands.Cog):
 
     @_imgur.command(name="subreddit")
     async def imgur_subreddit(
-        self, ctx, subreddit: str, sort_type: str = "top", window: str = "day"
+        self,
+        ctx,
+        subreddit: str,
+        count: Optional[int] = 1,
+        sort_type: str = "top",
+        window: str = "day",
     ):
         """Get images from a subreddit.
 
         You can customize the search with the following options:
+        - `<count>`: number of images to return (up to 5)
         - `<sort_type>`: new, top
         - `<window>`: day, week, month, year, all
         """
+        if count < 1 or count > 5:
+            await ctx.send(_("Image count has to be between 1 and 5."))
+            return
         sort_type = sort_type.lower()
         window = window.lower()
 
@@ -121,7 +135,7 @@ class Image(commands.Cog):
         if data["success"]:
             items = data["data"]
             if items:
-                for item in items[:3]:
+                for item in items[:count]:
                     link = item["gifv"] if "gifv" in item else item["link"]
                     links.append("{}\n{}".format(item["title"], link))
 

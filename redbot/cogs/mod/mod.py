@@ -13,7 +13,6 @@ from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replace
 from .casetypes import CASETYPES
 from .events import Events
 from .kickban import KickBanMixin
-from .movetocore import MoveToCore
 from .mutes import MuteMixin
 from .names import ModInfo
 from .slowmode import Slowmode
@@ -21,7 +20,7 @@ from .settings import ModSettings
 
 _ = T_ = Translator("Mod", __file__)
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 
 class CompositeMetaClass(type(commands.Cog), type(ABC)):
@@ -38,7 +37,6 @@ class Mod(
     ModSettings,
     Events,
     KickBanMixin,
-    MoveToCore,
     MuteMixin,
     ModInfo,
     Slowmode,
@@ -111,8 +109,16 @@ class Mod(
                 "Please use `[p]moveignoredchannels` if "
                 "you were previously using these functions."
             )
-            self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
-            await self.settings.version.set(__version__)
+            self.bot.loop.create_task(self.bot.send_to_owners_with_prefix_replaced(msg))
+            await self.settings.version.set("1.1.0")
+        if await self.settings.version() < "1.2.0":
+            msg = _(
+                "Delete delay settings have been moved. "
+                "Please use `[p]movedeletedelay` if "
+                "you were previously using these functions."
+            )
+            self.bot.loop.create_task(self.bot.send_to_owners_with_prefix_replaced(msg))
+            await self.settings.version.set("1.2.0")
 
     @commands.command()
     @commands.is_owner()
@@ -127,3 +133,17 @@ class Mod(
             await self.bot._config.channel_from_id(channel_id).ignored.set(settings["ignored"])
             await self.settings.channel_from_id(channel_id).clear()
         await ctx.send(_("Ignored channels and guilds restored."))
+
+    @commands.command()
+    @commands.is_owner()
+    async def movedeletedelay(self, ctx: commands.Context) -> None:
+        """
+            Move deletedelay settings to core
+        """
+        all_guilds = await self.settings.all_guilds()
+        for guild_id, settings in all_guilds.items():
+            await self.bot._config.guild_from_id(guild_id).delete_delay.set(
+                settings["delete_delay"]
+            )
+            await self.settings.guild_from_id(guild_id).delete_delay.clear()
+        await ctx.send(_("Delete delay settings restored."))

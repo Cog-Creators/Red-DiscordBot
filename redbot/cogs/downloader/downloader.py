@@ -504,9 +504,16 @@ class Downloader(commands.Cog):
                 # noinspection PyTypeChecker
                 repo = await self._repo_manager.add_repo(name=name, url=repo_url, branch=branch)
         except errors.ExistingGitRepo:
-            await ctx.send(_("That git repo has already been added under another name."))
+            await ctx.send(
+                _("The repo name you provided is already in use. Please choose another name.")
+            )
         except errors.CloningError as err:
-            await ctx.send(_("Something went wrong during the cloning process."))
+            await ctx.send(
+                _(
+                    "Something went wrong during the cloning process."
+                    " See logs for more information."
+                )
+            )
             log.exception(
                 "Something went wrong whilst cloning %s (to revision: %s)",
                 repo_url,
@@ -520,7 +527,7 @@ class Downloader(commands.Cog):
             await ctx.send(
                 _(
                     "Something went wrong trying to add that repo."
-                    " Your repo name might have an invalid character."
+                    " See logs for more information."
                 )
             )
         else:
@@ -1281,7 +1288,7 @@ class Downloader(commands.Cog):
             query: discord.Message = await ctx.send(message)
             if can_react:
                 # noinspection PyAsyncCall
-                start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS, ctx.bot.loop)
+                start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS)
                 pred = ReactionPredicate.yes_or_no(query, ctx.author)
                 event = "reaction_add"
             else:
