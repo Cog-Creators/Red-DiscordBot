@@ -92,7 +92,7 @@ class ModInfo(MixinMeta):
             _("Playing: {name}").format(name=p_act.name if p_act and p_act.name else None)
             if p_act and hasattr(p_act, "name")
             else p_act.name
-            if p_act and p_act_name
+            if p_act and p_act.name
             else None
         )
         return act, discord.ActivityType.playing
@@ -139,7 +139,7 @@ class ModInfo(MixinMeta):
             _("Watching: {name}").format(name=w_act.name if w_act else None)
             if w_act and hasattr(w_act, "name")
             else w_act.name
-            if w_act and w_act_name
+            if w_act and w_act.name
             else None
         )
         return act, discord.ActivityType.watching
