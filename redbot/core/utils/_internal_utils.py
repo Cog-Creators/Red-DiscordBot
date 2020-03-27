@@ -8,6 +8,7 @@ import os
 import re
 import shutil
 import tarfile
+import time
 from datetime import datetime
 from io import BytesIO
 from pathlib import Path
@@ -184,6 +185,19 @@ async def format_fuzzy_results(
         return "Perhaps you wanted one of these? " + box("\n".join(lines), lang="vhdl")
 
 
+def _tar_addfile_from_string(tar: tarfile.TarFile, name: str, string: str) -> None:
+    encoded = string.encode("utf-8")
+    fp = BytesIO(encoded)
+
+    # TarInfo needs `mtime` and `size`
+    # https://stackoverflow.com/q/53306000
+    tar_info = tarfile.TarInfo(name)
+    tar_info.mtime = time.time()
+    tar_info.size = len(encoded)
+
+    tar.addfile(tar_info, fp)
+
+
 async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
     # version of backup
     BACKUP_VERSION = 2
@@ -231,16 +245,16 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
 
         # add repos backup
         repos_data = json.dumps(repo_output, indent=4)
-        tar.addfile(TarInfo("cogs/RepoManager/repos.json"), BytesIO(repos_data.encode("utf-8")))
+        _tar_addfile_from_string(tar, "cogs/RepoManager/repos.json", repos_data)
 
         # add instance's original data
         instance_data = json.dumps(
             {data_manager.instance_name: data_manager.basic_config}, indent=4
         )
-        tar.addfile(TarInfo("instance.json"), BytesIO(instance_data.encode("utf-8")))
+        _tar_addfile_from_string(tar, "instance.json", instance_data)
 
         # add info about backup version
-        tar.addfile(TarInfo("backup.version"), BytesIO(f"{BACKUP_VERSION}".encode("utf-8")))
+        _tar_addfile_from_string(tar, "backup.version", str(BACKUP_VERSION))
     return backup_fpath
 
 

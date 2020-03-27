@@ -1244,7 +1244,7 @@ class RepoManager:
         from .downloader import Downloader
 
         # this solution is far from perfect, but a better one requires a rewrite
-        conf = Config.get_conf(identifier=998240343, cog_name="Downloader")
+        conf = Config.get_conf(None, identifier=998240343, cog_name="Downloader")
         self.conf.register_global(schema_version=0, installed_cogs={}, installed_libraries={})
         await Downloader._maybe_update_config(conf)
         # clear out saved commit so that `[p]cog update` triggers install for all cogs
@@ -1252,4 +1252,5 @@ class RepoManager:
             for repo_data in installed_cogs.values():
                 for cog_data in repo_data.values():
                     cog_data["commit"] = ""
+                    cog_data["pinned"] = False
         await self.conf.installed_libraries.set({})

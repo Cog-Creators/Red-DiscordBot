@@ -10,17 +10,16 @@ import sys
 import re
 import tarfile
 from copy import deepcopy
-from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, IO, Optional, Tuple, Union
+from typing import Any, Dict, IO, List, Optional, Set, Tuple, Union
 
 import appdirs
 import click
 
-from redbot.cogs.downloader.repo_manager import RepoManager
-from redbot.core.utils._internal_utils import safe_delete, create_backup as red_create_backup
 from redbot.core import config, data_manager, drivers
-from redbot.core.drivers import BackendType, IdentifierData
+from redbot.cogs.downloader.repo_manager import RepoManager
+from redbot.core.drivers import BackendType
+from redbot.core.utils._internal_utils import create_backup as red_create_backup, safe_delete
 
 conversion_log = logging.getLogger("red.converter")
 
@@ -259,25 +258,25 @@ async def remove_instance(
     if _create_backup is True:
         await create_backup(instance)
 
-    backend = get_current_backend(instance)
-    driver_cls = drivers.get_driver_class(backend)
-    await driver_cls.initialize(**data_manager.storage_details())
-    try:
-        if delete_data is True:
+    if delete_data is True:
+        backend = get_current_backend(instance)
+        driver_cls = drivers.get_driver_class(backend)
+        await driver_cls.initialize(**data_manager.storage_details())
+        try:
             await driver_cls.delete_all_data(interactive=interactive, drop_db=drop_db)
+        finally:
+            await driver_cls.teardown()
 
-        if interactive is True and remove_datapath is None:
-            remove_datapath = click.confirm(
-                "Would you like to delete the instance's entire datapath?", default=False
-            )
+    if interactive is True and remove_datapath is None:
+        remove_datapath = click.confirm(
+            "Would you like to delete the instance's entire datapath?", default=False
+        )
 
-        if remove_datapath is True:
-            data_path = data_manager.core_data_path().parent
-            safe_delete(data_path)
+    if remove_datapath is True:
+        data_path = data_manager.core_data_path().parent
+        safe_delete(data_path)
 
-        save_config(instance, {}, remove=True)
-    finally:
-        await driver_cls.teardown()
+    save_config(instance, {}, remove=True)
     print("The instance {} has been removed\n".format(instance))
 
 
@@ -310,14 +309,22 @@ def open_file_from_tar(tar: tarfile.TarFile, arcname: str) -> Optional[IO[bytes]
     return fp
 
 
-@dataclass
 class RestoreInfo:
-    tar: tarfile.TarFile
-    backup_version: int
-    name: str
-    data_path: Path
-    storage_type: BackendType
-    storage_details: dict
+    def __init__(
+        self,
+        tar: tarfile.TarFile,
+        backup_version: int,
+        name: str,
+        data_path: Path,
+        storage_type: BackendType,
+        storage_details: dict,
+    ):
+        self.tar = tar
+        self.backup_version = backup_version
+        self.name = name
+        self.data_path = data_path
+        self.storage_type = storage_type
+        self.storage_details = storage_details
 
     @classmethod
     def from_tar(cls, tar: tarfile.TarFile) -> RestoreInfo:
@@ -357,20 +364,20 @@ class RestoreInfo:
         return backup_version
 
     @property
-    def name_used(self):
+    def name_used(self) -> bool:
         return self.name in instance_list
 
     @property
-    def data_path_not_empty(self):
+    def data_path_not_empty(self) -> bool:
         return self.data_path.exists() and next(self.data_path.glob("*"), None) is not None
 
     @property
-    def backend_unavailable(self):
+    def backend_unavailable(self) -> bool:
         return self.storage_type in (BackendType.MONGOV1, BackendType.MONGO)
 
     @functools.cached_property
-    def restore_downloader(self):
-        return "cogs/RepoManager/repos.json" in self.all_tar_members and click.confirm(
+    def restore_downloader(self) -> bool:
+        return "cogs/RepoManager/repos.json" in self.all_tar_member_names and click.confirm(
             "Do you want to restore 3rd-party repos and cogs installed through Downloader?\n"
             "Full offline restore process for this hasn't been made yet, so after it's done"
             " you will have to load Downloader and run `[p]cog update` command "
@@ -379,18 +386,22 @@ class RestoreInfo:
         )
 
     @functools.cached_property
-    def all_tar_members(self):
+    def all_tar_members(self) -> List[tarfile.TarInfo]:
         return self.tar.getmembers()
 
     @functools.cached_property
-    def tar_members_to_extract(self):
-        ignored_members: Tuple[str, ...] = ("backup.version", "instance.json")
+    def all_tar_member_names(self) -> List[str]:
+        return [tarinfo.name for tarinfo in self.all_tar_members]
+
+    @functools.cached_property
+    def tar_members_to_extract(self) -> List[tarfile.TarInfo]:
+        ignored_members: Set[str] = {"backup.version", "instance.json"}
         if not self.restore_downloader:
-            ignored_members += (
+            ignored_members |= {
                 "cogs/RepoManager/repos.json",
                 "cogs/RepoManager/settings.json",
                 "cogs/Downloader/settings.json",
-            )
+            }
         return [member for member in self.all_tar_members if member.name not in ignored_members]
 
     def print_instance_data(self) -> None:
@@ -410,20 +421,9 @@ class RestoreInfo:
                 print(f"    - DB {key}:", self.storage_details[key])
             print("    - DB password: ***")
 
-    def _ask_for_name(self):
-        self.name = get_name()
-
-    def _ask_for_data_path(self):
-        while True:
-            self.data_path = Path(get_data_dir(self.name))
-            if not self.data_path_not_empty:
-                return
-            print("Given path can't be used as it's not empty.")
-
-    def _ask_for_storage(self):
-        self.storage_type = get_storage_type()
-        driver_cls = drivers.get_driver_class(self.storage_type)
-        self.storage_details = driver_cls.get_config_details()
+    def ask_for_changes(self) -> None:
+        self._ask_for_optional_changes()
+        self._ask_for_required_changes()
 
     def _ask_for_optional_changes(self) -> None:
         if click.confirm("\nWould you like to change anything?"):
@@ -458,9 +458,20 @@ class RestoreInfo:
             )
             self._ask_for_storage()
 
-    def ask_for_changes(self) -> None:
-        self._ask_for_optional_changes()
-        self._ask_for_required_changes()
+    def _ask_for_name(self) -> None:
+        self.name = get_name()
+
+    def _ask_for_data_path(self) -> None:
+        while True:
+            self.data_path = Path(get_data_dir(self.name))
+            if not self.data_path_not_empty:
+                return
+            print("Given path can't be used as it's not empty.")
+
+    def _ask_for_storage(self) -> None:
+        self.storage_type = get_storage_type()
+        driver_cls = drivers.get_driver_class(self.storage_type)
+        self.storage_details = driver_cls.get_config_details()
 
     def extractall(self) -> None:
         # tar.errorlevel == 0 so errors are printed to stderr
@@ -469,7 +480,7 @@ class RestoreInfo:
 
     def get_basic_config(self, use_json: bool = False) -> dict:
         default_dirs = deepcopy(data_manager.basic_config_default)
-        default_dirs["DATA_PATH"] = self.data_path
+        default_dirs["DATA_PATH"] = str(self.data_path)
         if use_json:
             default_dirs["STORAGE_TYPE"] = BackendType.JSON.value
             default_dirs["STORAGE_DETAILS"] = {}
@@ -491,12 +502,17 @@ class RestoreInfo:
             data_manager.load_basic_configuration(self.name)
 
         if self.restore_downloader:
-            repo_mgr = RepoManager()
-            # this line shouldn't be needed since there are no repos:
-            # await repo_mgr.initialize()
-            await repo_mgr._restore_from_backup()
+            driver_cls = drivers.get_driver_class(self.storage_type)
+            await driver_cls.initialize(**self.storage_details)
+            try:
+                repo_mgr = RepoManager()
+                # this line shouldn't be needed since there are no repos:
+                # await repo_mgr.initialize()
+                await repo_mgr._restore_from_backup()
+            finally:
+                await driver_cls.teardown()
 
-    async def run(self):
+    async def run(self) -> None:
         self.print_instance_data()
         self.ask_for_changes()
         await self.restore_data()
@@ -541,7 +557,7 @@ async def restore_instance():
 
 
 @click.group(invoke_without_command=True)
-@click.option("--debug", type=bool)
+@click.option("--debug", is_flag=True)
 @click.pass_context
 def cli(ctx, debug):
     """Create a new instance."""

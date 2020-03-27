@@ -40,6 +40,7 @@ class Downloader(commands.Cog):
         super().__init__()
         self.bot = bot
 
+        # any changes to Config here need to also be applied to RepoManager._restore_from_backup()
         self.config = Config.get_conf(self, identifier=998240343, force_registration=True)
 
         self.config.register_global(schema_version=0, installed_cogs={}, installed_libraries={})
