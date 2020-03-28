@@ -897,18 +897,21 @@ class Core(commands.Cog, CoreLogic):
 
             prefixes = await ctx.bot._prefix_cache.get_prefixes(ctx.guild)
             locale = await ctx.bot._config.locale()
+            regional_format = await ctx.bot._config.regional_format() or _("Same as bot's locale")
 
             prefix_string = " ".join(prefixes)
             settings = _(
                 "{bot_name} Settings:\n\n"
                 "Prefixes: {prefixes}\n"
                 "{guild_settings}"
-                "Locale: {locale}"
+                "Locale: {locale}\n"
+                "Regional format: {regional_format}"
             ).format(
                 bot_name=ctx.bot.user.name,
                 prefixes=prefix_string,
                 guild_settings=guild_settings,
                 locale=locale,
+                regional_format=regional_format,
             )
             for page in pagify(settings):
                 await ctx.send(box(page))
@@ -1302,6 +1305,42 @@ class Core(commands.Cog, CoreLogic):
         i18n.set_locale(standardized_locale_name)
         await ctx.bot._config.locale.set(standardized_locale_name)
         await ctx.send(_("Locale has been set."))
+
+    @_set.command(aliases=["region"])
+    @checks.is_owner()
+    async def regionalformat(self, ctx: commands.Context, language_code: str = None):
+        """
+        Changes bot's regional format. This is used for formatting date, time and numbers.
+
+        `<language_code>` can be any language code with country code included,
+        e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
+
+        Leave `<language_code>` empty to base regional formatting on bot's locale.
+        """
+        if language_code is None:
+            i18n.set_regional_format(None)
+            await ctx.bot._config.regional_format.set(None)
+            await ctx.send(_("Regional formatting will now be based on bot's locale."))
+            return
+
+        try:
+            locale = BabelLocale.parse(language_code, sep="-")
+        except (ValueError, UnknownLocaleError):
+            await ctx.send(_("Invalid language code. Use format: `en-US`"))
+            return
+        if locale.territory is None:
+            await ctx.send(
+                _("Invalid format - language code has to include country code, e.g. `en-US`")
+            )
+            return
+        standardized_locale_name = f"{locale.language}-{locale.territory}"
+        i18n.set_regional_format(standardized_locale_name)
+        await ctx.bot._config.regional_format.set(standardized_locale_name)
+        await ctx.send(
+            _("Regional formatting will now be based on `{language_code}` locale.").format(
+                language_code=standardized_locale_name
+            )
+        )
 
     @_set.command()
     @checks.is_owner()
