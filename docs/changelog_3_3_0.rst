@@ -100,6 +100,11 @@ Core Bot
 
 - Deprecation warnings issued by Red now use correct stack level so that the cog developers can find the cause of them (:issue:`3644`)
 
+Dev Cog
+*******
+
+- Add ``__name__`` to environment's globals (:issue:`3649`, :issue:`3648`)
+
 
 Documentation changes
 ---------------------
