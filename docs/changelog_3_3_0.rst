@@ -40,6 +40,11 @@ Cleanup
 
 - Added ``[p]cleanup spam`` command that deletes duplicate messages from the last X messages and keeps only one copy (:issue:`3688`)
 
+Downloader
+**********
+
+- ``[p]cog checkforupdates`` now includes information about cogs that can't be installed due to Red/Python version requirements (:issue:`3678`, :issue:`3448`)
+
 General
 *******
 
