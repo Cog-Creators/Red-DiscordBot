@@ -88,7 +88,7 @@ class ModInfo(MixinMeta):
     def handle_playing(self, user):
         p_acts = [c for c in user.activities if c.type == discord.ActivityType.playing]
         if not p_acts:
-            return
+            return None, discord.ActivityType.playing
         p_act = p_acts[0]
         act = _("Playing: {name}").format(name=p_act.name)
         return act, discord.ActivityType.playing
