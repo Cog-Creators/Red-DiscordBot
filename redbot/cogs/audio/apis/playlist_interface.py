@@ -1,7 +1,6 @@
 import asyncio
 import logging
-from collections import MutableMapping
-from typing import List, Optional, Union
+from typing import List, MutableMapping, Optional, Union
 
 import discord
 import lavalink
