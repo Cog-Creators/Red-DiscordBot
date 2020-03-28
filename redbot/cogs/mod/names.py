@@ -132,14 +132,10 @@ class ModInfo(MixinMeta):
 
     def handle_watching(self, user):
         w_acts = [c for c in user.activities if c.type == discord.ActivityType.watching]
-        w_act = w_acts[0] if w_acts else None
-        act = (
-            _("Watching: {name}").format(name=w_act.name if w_act else None)
-            if w_act and hasattr(w_act, "name")
-            else w_act.name
-            if w_act and w_act.name
-            else None
-        )
+        if not w_acts:
+            return None, discord.ActivityType.watching
+        w_act = w_acts[0]
+        act = _("Watching: {name}").format(name=w_act.name)
         return act, discord.ActivityType.watching
 
     def get_status_string(self, user):
