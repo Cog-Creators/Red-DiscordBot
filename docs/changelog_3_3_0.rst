@@ -61,6 +61,7 @@ Streams
 
 - Fixed an error that happened when no game was set on Twitch stream (:issue:`3631`)
 - Preview picture for YouTube stream alerts is now bigger (:issue:`3689`, :issue:`3685`)
+- YouTube channels with a livestream that doesn't have any current viewer are now properly showing as streaming (:issue:`3690`)
 
 Trivia
 ******
