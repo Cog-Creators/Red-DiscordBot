@@ -16,7 +16,7 @@ Core Bot
 - Fixed various bugs with blacklist and whitelist (:issue:`3643`, :issue:`3642`)
 - Outages of ``pypi.org`` no longer prevent the bot from starting (:issue:`3663`)
 - Fixed formatting of help strings in fuzzy search results (:issue:`3673`, :issue:`3507`)
-- Fixed few deprecation warnings related to menus (:issue:`3644`)
+- Fixed few deprecation warnings related to menus and uvloop (:issue:`3644`, :issue:`3700`)
 
 Core Commands
 *************
