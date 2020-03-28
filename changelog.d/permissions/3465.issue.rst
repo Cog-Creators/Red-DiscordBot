@@ -1,1 +1,0 @@
-Fixes issue with licenseinfo not erroring out while modified with permissions setdefaultglobalrule and setdefaultserverrule.
