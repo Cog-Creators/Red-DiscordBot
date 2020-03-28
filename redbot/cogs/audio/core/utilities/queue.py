@@ -46,75 +46,30 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
             dur = self.format_time(player.current.length)
 
         query = Query.process_input(player.current, self.local_folder_current_path)
-
+        current_track_description = self.get_track_description(
+            player.current, self.local_folder_current_path
+        )
         if query.is_stream:
             queue_list += _("**Currently livestreaming:**\n")
-            queue_list += "**[{current.title}]({current.uri})**\n".format(current=player.current)
+            queue_list += f"{current_track_description}\n"
             queue_list += _("Requested by: **{user}**").format(user=player.current.requester)
             queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
-
-        elif query.is_local:
-            if player.current.title != "Unknown title":
-                queue_list += "\n".join(
-                    (
-                        _("Playing: ")
-                        + "**{current.author} - {current.title}**".format(current=player.current),
-                        LocalPath(
-                            player.current.uri, self.local_folder_current_path
-                        ).to_string_user(),
-                        _("Requested by: **{user}**\n").format(user=player.current.requester),
-                        f"{arrow}`{pos}`/`{dur}`\n\n",
-                    )
-                )
-            else:
-                queue_list += "\n".join(
-                    (
-                        _("Playing: ")
-                        + LocalPath(
-                            player.current.uri, self.local_folder_current_path
-                        ).to_string_user(),
-                        _("Requested by: **{user}**\n").format(user=player.current.requester),
-                        f"{arrow}`{pos}`/`{dur}`\n\n",
-                    )
-                )
         else:
             queue_list += _("Playing: ")
-            queue_list += "**[{current.title}]({current.uri})**\n".format(current=player.current)
+            queue_list += f"{current_track_description}\n"
             queue_list += _("Requested by: **{user}**").format(user=player.current.requester)
             queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
 
         for i, track in enumerate(queue[queue_idx_start:queue_idx_end], start=queue_idx_start):
             if i % 100 == 0:  # TODO: Improve when Toby menu's are merged
                 await asyncio.sleep(0.1)
-
-            if len(track.title) > 40:
-                track_title = str(track.title).replace("[", "")
-                track_title = "{}...".format((track_title[:40]).rstrip(" "))
-            else:
-                track_title = track.title
             req_user = track.requester
             track_idx = i + 1
-            query = Query.process_input(track, self.local_folder_current_path)
-
-            if query.is_local:
-                if track.title == "Unknown title":
-                    queue_list += f"`{track_idx}.` " + ", ".join(
-                        (
-                            bold(
-                                LocalPath(
-                                    track.uri, self.local_folder_current_path
-                                ).to_string_user()
-                            ),
-                            _("requested by **{user}**\n").format(user=req_user),
-                        )
-                    )
-                else:
-                    queue_list += f"`{track_idx}.` **{track.author} - {track_title}**, " + _(
-                        "requested by **{user}**\n"
-                    ).format(user=req_user)
-            else:
-                queue_list += f"`{track_idx}.` **[{track_title}]({track.uri})**, "
-                queue_list += _("requested by **{user}**\n").format(user=req_user)
+            track_description = self.get_track_description(
+                track, self.local_folder_current_path, shorten=True
+            )
+            queue_list += f"`{track_idx}.` {track_description}, "
+            queue_list += _("requested by **{user}**\n").format(user=req_user)
             await asyncio.sleep(0)
 
         embed = discord.Embed(
