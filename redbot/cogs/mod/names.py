@@ -191,14 +191,14 @@ class ModInfo(MixinMeta):
         created_on = _("{}\n({} days ago)").format(user_created, since_created)
         joined_on = _("{}\n({} days ago)").format(user_joined, since_joined)
 
-        if user.status.name == "online":
+        if any(a.type is discord.ActivityType.streaming for a in user.activities):
+            statusemoji = "\N{LARGE PURPLE CIRCLE}"
+        elif user.status.name == "online":
             statusemoji = "\N{LARGE GREEN CIRCLE}"
         elif user.status.name == "offline":
             statusemoji = "\N{MEDIUM WHITE CIRCLE}"
         elif user.status.name == "dnd":
             statusemoji = "\N{LARGE RED CIRCLE}"
-        elif user.status.name == "streaming":
-            statusemoji = "\N{LARGE PURPLE CIRCLE}"
         elif user.status.name == "idle":
             statusemoji = "\N{LARGE ORANGE CIRCLE}"
         activity = _("Chilling in {} status").format(user.status)
