@@ -23,6 +23,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.command(name="sing")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
+    @commands.max_concurrency(1, per=commands.BucketType.guild, wait=False)
     async def command_sing(self, ctx: commands.Context):
         """Make Red sing one of her songs."""
         ids = (
