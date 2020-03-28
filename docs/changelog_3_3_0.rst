@@ -14,6 +14,7 @@ Core Bot
 
 - Delete delay for command messages has been moved from Mod cog to Core (:issue:`3638`, :issue:`3636`)
 - Fixed various bugs with blacklist and whitelist (:issue:`3643`, :issue:`3642`)
+- Added ``[p]set regionalformat`` command that allows users to set regional formatting that is different from bot's locale (:issue:`3677`, :issue:`3588`)
 - ``[p]set locale`` allows any valid locale now, not just locales for which Red has translations (:issue:`3676`, :issue:`3596`)
 - Outages of ``pypi.org`` no longer prevent the bot from starting (:issue:`3663`)
 - Fixed formatting of help strings in fuzzy search results (:issue:`3673`, :issue:`3507`)
