@@ -164,7 +164,7 @@ class ServerManager:
             if self._proc.returncode is not None and lastmessage + 2 < time.time():
                 # Avoid Console spam only print once every 2 seconds
                 lastmessage = time.time()
-                log.critical("Internal lavalink server exited early")
+                log.critical("Internal Lavalink server exited early")
             if i == 49:
                 # Sleep after 50 lines to prevent busylooping
                 await asyncio.sleep(0.1)
