@@ -15,6 +15,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     @checks.is_owner()
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
+    @commands.max_concurrency(1, per=commands.BucketType.guild, wait=False)
     async def command_llsetup(self, ctx: commands.Context):
         """Lavalink server configuration options."""
 
@@ -33,17 +34,38 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
             await self.send_embed_msg(ctx, embed=embed)
         else:
-            if self.player_manager is not None:
-                await self.player_manager.shutdown()
+            try:
+                if self.player_manager is not None:
+                    await self.player_manager.shutdown()
+            except ProcessLookupError:
+                await self.send_embed_msg(
+                    ctx,
+                    title=_("Failed to shutdown Lavalink"),
+                    description=_("External lavalink server: {true_or_false}\n"
+                                  "For it to take effect please reload "
+                                  "Audio (`{prefix}reload audio`).").format(
+                        true_or_false=_("Enabled") if not external else _("Disabled"),
+                        prefix=ctx.prefix
+                    ),
+                )
+            else:
+                await self.send_embed_msg(
+                    ctx,
+                    title=_("Setting Changed"),
+                    description=_("External lavalink server: {true_or_false}.").format(
+                        true_or_false=_("Enabled") if not external else _("Disabled")
+                    ),
+                )
+        try:
+            self.lavalink_restart_connect()
+        except ProcessLookupError:
             await self.send_embed_msg(
                 ctx,
-                title=_("Setting Changed"),
-                description=_("External lavalink server: {true_or_false}.").format(
-                    true_or_false=_("Enabled") if not external else _("Disabled")
+                title=_("Failed to shutdown Lavalink"),
+                description=_("Please reload Audio (`{prefix}reload audio`).").format(
+                    prefix=ctx.prefix
                 ),
             )
-
-        self.lavalink_restart_connect()
 
     @command_llsetup.command(name="host")
     async def command_llsetup_host(self, ctx: commands.Context, host: str):
@@ -58,7 +80,16 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             description=_("Host set to {host}.").format(host=host),
             footer=footer,
         )
-        self.lavalink_restart_connect()
+        try:
+            self.lavalink_restart_connect()
+        except ProcessLookupError:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Failed to shutdown Lavalink"),
+                description=_("Please reload Audio (`{prefix}reload audio`).").format(
+                    prefix=ctx.prefix
+                ),
+            )
 
     @command_llsetup.command(name="password")
     async def command_llsetup_password(self, ctx: commands.Context, password: str):
@@ -74,7 +105,16 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             footer=footer,
         )
 
-        self.lavalink_restart_connect()
+        try:
+            self.lavalink_restart_connect()
+        except ProcessLookupError:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Failed to shutdown Lavalink"),
+                description=_("Please reload Audio (`{prefix}reload audio`).").format(
+                    prefix=ctx.prefix
+                ),
+            )
 
     @command_llsetup.command(name="restport")
     async def command_llsetup_restport(self, ctx: commands.Context, rest_port: int):
@@ -90,7 +130,16 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             footer=footer,
         )
 
-        self.lavalink_restart_connect()
+        try:
+            self.lavalink_restart_connect()
+        except ProcessLookupError:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Failed to shutdown Lavalink"),
+                description=_("Please reload Audio (`{prefix}reload audio`).").format(
+                    prefix=ctx.prefix
+                ),
+            )
 
     @command_llsetup.command(name="wsport")
     async def command_llsetup_wsport(self, ctx: commands.Context, ws_port: int):
@@ -106,4 +155,13 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             footer=footer,
         )
 
-        self.lavalink_restart_connect()
+        try:
+            self.lavalink_restart_connect()
+        except ProcessLookupError:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Failed to shutdown Lavalink"),
+                description=_("Please reload Audio (`{prefix}reload audio`).").format(
+                    prefix=ctx.prefix
+                ),
+            )

@@ -39,6 +39,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.command(name="audiostats")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
+    @commands.max_concurrency(1, per=commands.BucketType.guild, wait=False)
     async def command_audiostats(self, ctx: commands.Context):
         """Audio stats."""
         server_num = len(lavalink.active_players())
@@ -52,23 +53,12 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
             try:
                 query = Query.process_input(p.current.uri, self.local_folder_current_path)
-                if query.is_local:
-                    if p.current.title == "Unknown title":
-                        current_title = LocalPath(
-                            p.current.uri, self.local_folder_current_path
-                        ).to_string_user()
-                        msg += "{} [`{}`]: **{}**\n".format(
-                            p.channel.guild.name, connect_dur, current_title
-                        )
-                    else:
-                        current_title = p.current.title
-                        msg += "{} [`{}`]: **{} - {}**\n".format(
-                            p.channel.guild.name, connect_dur, p.current.author, current_title
-                        )
-                else:
-                    msg += "{} [`{}`]: **[{}]({})**\n".format(
-                        p.channel.guild.name, connect_dur, p.current.title, p.current.uri
-                    )
+                if not p.current:
+                    raise AttributeError
+                current_title = self.get_track_description(query, self.local_folder_current_path)
+                msg += "{} [`{}`]: {}\n".format(
+                    p.channel.guild.name, connect_dur, current_title
+                )
             except AttributeError:
                 msg += "{} [`{}`]: **{}**\n".format(
                     p.channel.guild.name, connect_dur, _("Nothing playing.")
@@ -87,7 +77,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=page,
             )
             em.set_footer(
-                text="Page {}/{}".format(
+                text=_("Page {}/{}").format(
                     humanize_number(pages), humanize_number((math.ceil(len(msg) / 1500)))
                 )
             )
@@ -99,6 +89,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.command(name="percent")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
+    @commands.max_concurrency(1, per=commands.BucketType.guild, wait=False)
     async def command_percent(self, ctx: commands.Context):
         """Queue percentage."""
         if not self._player_check(ctx):

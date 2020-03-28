@@ -71,6 +71,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 commands.UserInputError,
                 commands.DisabledCommand,
                 commands.CommandOnCooldown,
+                commands.MaxConcurrencyReached,
             ),
         ):
             self.update_player_lock(ctx, False)
