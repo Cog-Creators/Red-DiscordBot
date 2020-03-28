@@ -116,19 +116,18 @@ class ModInfo(MixinMeta):
 
     def handle_listening(self, user):
         l_acts = [c for c in user.activities if c.type == discord.ActivityType.listening]
-        l_act = l_acts[0] if l_acts else None
-        act = (
-            _("Listening: [{title}{sep}{artist}]({url})").format(
-                title=l_act.title,
-                sep=" | " if l_act.artists[0] else "",
+        if not l_acts:
+            return None, discord.ActivityType.listening
+        l_act = l_acts[0]
+        if isinstance(l_act, discord.Spotify):
+            act = _("Listening: [{title}{sep}{artist}]({url})").format(
+                title=discord.utils.escape_markdown(l_act.title),
+                sep=" | " if l_act.artist else "",
                 artist=discord.utils.escape_markdown(l_act.artist) if l_act.artist else "",
                 url=f"https://open.spotify.com/track/{l_act.track_id}",
             )
-            if l_act and hasattr(l_act, "title")
-            else l_act.name
-            if l_act and l_act.name
-            else None
-        )
+        else:
+            act = _("Listening: {title}").format(title=l_act.title)
         return act, discord.ActivityType.listening
 
     def handle_watching(self, user):
