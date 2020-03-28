@@ -24,6 +24,11 @@ Core Commands
 - All owner notifcations in Core now use proper prefixes in messages (:issue:`3632`)
 - Added ``[p]set playing`` and ``[p]set streaming`` aliases for respectively ``[p]set game`` and ``[p]set stream`` (:issue:`3646`, :issue:`3590`)
 
+ModLog
+******
+
+- Modlog's cases now keep last known username to prevent losing that information from case's message on edit (:issue:`3674`, :issue:`3443`)
+
 Cleanup
 *******
 
