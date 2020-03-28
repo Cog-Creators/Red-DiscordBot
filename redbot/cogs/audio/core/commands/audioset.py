@@ -929,7 +929,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             description=_("DJ role set to: {role.name}.").format(role=dj_role_obj),
         )
 
-    @command_audioset.command(name="settings")
+    @command_audioset.command(name="settings", aliases=["info"])
     @commands.guild_only()
     async def command_audioset_settings(self, ctx: commands.Context):
         """Show the current settings."""
