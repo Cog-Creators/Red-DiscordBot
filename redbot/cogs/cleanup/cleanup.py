@@ -1,5 +1,4 @@
 import logging
-import re
 from datetime import datetime, timedelta
 from typing import Union, List, Callable, Set
 
@@ -487,16 +486,7 @@ class Cleanup(commands.Cog):
             me = ctx.guild.me
             can_mass_purge = channel.permissions_for(me).manage_messages
 
-        use_re = match_pattern and match_pattern.startswith("r(") and match_pattern.endswith(")")
-
-        if use_re:
-            match_pattern = match_pattern[1:]  # strip 'r'
-            match_re = re.compile(match_pattern)
-
-            def content_match(c):
-                return bool(match_re.match(c))
-
-        elif match_pattern:
+        if match_pattern:
 
             def content_match(c):
                 return match_pattern in c
