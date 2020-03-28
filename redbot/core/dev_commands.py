@@ -119,6 +119,7 @@ class Dev(commands.Cog):
             "discord": discord,
             "commands": commands,
             "_": self._last_result,
+            "__name__": "__main__",
         }
 
         code = self.cleanup_code(code)
@@ -172,6 +173,7 @@ class Dev(commands.Cog):
             "discord": discord,
             "commands": commands,
             "_": self._last_result,
+            "__name__": "__main__",
         }
 
         body = self.cleanup_code(body)
@@ -224,6 +226,7 @@ class Dev(commands.Cog):
             "asyncio": asyncio,
             "_": None,
             "__builtins__": __builtins__,
+            "__name__": "__main__",
         }
 
         if ctx.channel.id in self.sessions:
