@@ -274,7 +274,7 @@ class ModInfo(MixinMeta):
             )
             data.set_thumbnail(url=avatar)
         else:
-            data.set_author(name=name)
+            data.set_author(name="{statusemoji} {name}".format(statusemoji=statusemoji, name=name))
 
         await ctx.send(embed=data)
 
