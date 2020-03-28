@@ -510,7 +510,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.command(name="autoplay")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    @checks.mod_or_permissions(manage_messages=True)
+    @checks.mod_or_permissions(manage_guild=True)
     @commands.max_concurrency(1, per=commands.BucketType.guild, wait=False)
     async def command_autoplay(self, ctx: commands.Context):
         """Starts auto play."""

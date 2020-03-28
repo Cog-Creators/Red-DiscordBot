@@ -30,7 +30,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Music configuration options."""
 
     @command_audioset.group(name="restrictions")
-    @checks.mod_or_permissions(manage_messages=True)
+    @checks.mod_or_permissions(manage_guild=True)
     async def command_audioset_perms(self, ctx: commands.Context):
         """Manages the keyword whitelist and blacklist."""
 
@@ -425,7 +425,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Change global db settings."""
 
     @command_audioset.group(name="autoplay")
-    @checks.mod_or_permissions(manage_messages=True)
+    @checks.mod_or_permissions(manage_guild=True)
     async def command_audioset_autoplay(self, ctx: commands.Context):
         """Change auto-play setting."""
 
@@ -607,7 +607,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @command_audioset.command(name="dc")
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_messages=True)
+    @checks.mod_or_permissions(manage_guild=True)
     async def command_audioset_dc(self, ctx: commands.Context):
         """Toggle the bot auto-disconnecting when done playing.
 
@@ -880,7 +880,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @command_audioset.command(name="notify")
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_messages=True)
+    @checks.mod_or_permissions(manage_guild=True)
     async def command_audioset_notify(self, ctx: commands.Context):
         """Toggle track announcement and other bot messages."""
         notify = await self.config.guild(ctx.guild).notify()
