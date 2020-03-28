@@ -42,6 +42,7 @@ Cleanup
 *******
 
 - Added ``[p]cleanup spam`` command that deletes duplicate messages from the last X messages and keeps only one copy (:issue:`3688`)
+- Removed regex support in ``[p]cleanup self`` (:issue:`3704`)
 
 Downloader
 **********
