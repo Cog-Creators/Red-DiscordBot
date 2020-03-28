@@ -109,7 +109,7 @@ class Mod(
                 "Please use `[p]moveignoredchannels` if "
                 "you were previously using these functions."
             )
-            self.bot.loop.create_task(self.bot.send_to_owners_with_prefix_replaced(msg))
+            self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
             await self.settings.version.set("1.1.0")
         if await self.settings.version() < "1.2.0":
             msg = _(
@@ -117,7 +117,7 @@ class Mod(
                 "Please use `[p]movedeletedelay` if "
                 "you were previously using these functions."
             )
-            self.bot.loop.create_task(self.bot.send_to_owners_with_prefix_replaced(msg))
+            self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
             await self.settings.version.set("1.2.0")
 
     @commands.command()
