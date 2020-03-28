@@ -99,7 +99,7 @@ class ModInfo(MixinMeta):
             return None, discord.ActivityType.streaming
         s_act = s_acts[0]
         if isinstance(s_act, discord.Streaming):
-            act = _("Streaming on {platform}: [{name}{sep}{game}]({url})").format(
+            act = _("Streaming: [{name}{sep}{game}]({url})").format(
                 name=discord.utils.escape_markdown(s_act.name),
                 sep=" | " if s_act.game else "",
                 game=discord.utils.escape_markdown(s_act.game) if s_act.game else "",
