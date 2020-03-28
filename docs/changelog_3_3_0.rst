@@ -1,6 +1,6 @@
 .. 3.3.x Changelogs
 
-Redbot 3.3.3 (Unreleased)
+Redbot 3.3.3 (2020-03-28)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
