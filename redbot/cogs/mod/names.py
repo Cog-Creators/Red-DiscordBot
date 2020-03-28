@@ -99,20 +99,19 @@ class ModInfo(MixinMeta):
 
     def handle_streaming(self, user):
         s_acts = [c for c in user.activities if c.type == discord.ActivityType.streaming]
-        s_act = s_acts[0] if s_acts else None
-        act = (
-            _("Streaming on {platform}: [{name}{sep}{game}]({url})").format(
+        if not s_acts:
+            return None, discord.ActivityType.streaming
+        s_act = s_acts[0]
+        if isinstance(s_act, discord.Streaming):
+            act = _("Streaming on {platform}: [{name}{sep}{game}]({url})").format(
                 platform=s_act.platform,
                 name=discord.utils.escape_markdown(s_act.name),
                 sep=" | " if s_act.game else "",
                 game=discord.utils.escape_markdown(s_act.game) if s_act.game else "",
                 url=s_act.url,
             )
-            if s_act and s_act.name and hasattr(s_act, "game")
-            else discord.utils.escape_markdown(s_act.name)
-            if s_act and s_act.name
-            else None
-        )
+        else:
+            act = _("Streaming: {name}").format(name=s_act.name)
         return act, discord.ActivityType.streaming
 
     def handle_listening(self, user):
