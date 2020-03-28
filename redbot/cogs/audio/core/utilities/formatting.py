@@ -254,24 +254,27 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     def get_track_description(self, track, local_folder_current_path) -> Optional[str]:
         """Get the user facing formatted track name"""
+        string = None
         if track and getattr(track, "uri", None):
             query = Query.process_input(track.uri, local_folder_current_path)
             if query.is_local or "localtracks/" in track.uri:
                 if hasattr(track, "title") and track.title != "Unknown title":
-                    return f'**{escape(f"{track.author} - {track.title}")}**' + escape(
-                        f"\n{query.to_string_user()} "
+                    string = (
+                        f'**{escape(f"{track.author} - {track.title}", formatting=True)}**'
+                        + escape(f"\n{query.to_string_user()} ", formatting=True)
                     )
                 else:
-                    return escape(query.to_string_user())
+                    string = escape(query.to_string_user(), formatting=True)
             else:
+                print(1)
                 if track.author.lower() not in track.title.lower():
                     title = f"{track.title} - {track.author}"
                 else:
                     title = track.title
-                return f'**{escape(f"[{title}]({track.uri}) ")}**'
+                string = f"**[{escape(title, formatting=True)}]({track.uri}) **"
         elif hasattr(track, "to_string_user") and track.is_local:
-            return escape(track.to_string_user() + " ")
-        return None
+            string = escape(track.to_string_user() + " ", formatting=True)
+        return string
 
     def get_track_description_unformatted(self, track, local_folder_current_path) -> Optional[str]:
         """Get the user facing unformatted track name"""
@@ -279,17 +282,17 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             query = Query.process_input(track.uri, local_folder_current_path)
             if query.is_local or "localtracks/" in track.uri:
                 if hasattr(track, "title") and track.title != "Unknown title":
-                    return escape(f"{track.author} - {track.title}")
+                    return escape(f"{track.author} - {track.title}", formatting=True)
                 else:
-                    return escape(query.to_string_user())
+                    return escape(query.to_string_user(), formatting=True)
             else:
                 if track.author.lower() not in track.title.lower():
                     title = f"{track.title} - {track.author}"
                 else:
                     title = track.title
-                return escape(f"{title}")
+                return escape(f"{title}", formatting=True)
         elif hasattr(track, "to_string_user") and track.is_local:
-            return escape(track.to_string_user() + " ")
+            return escape(track.to_string_user() + " ", formatting=True)
         return None
 
     def format_playlist_picker_data(self, pid, pname, ptracks, pauthor, scope) -> str:

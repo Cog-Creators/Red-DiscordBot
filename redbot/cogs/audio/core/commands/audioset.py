@@ -560,7 +560,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         return await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
-            description=_("Set auto-play playlist to default value."),
+            description=_("Set auto-play playlist to play recently played tracks."),
         )
 
     @command_audioset.command(name="globaldailyqueue")
@@ -795,7 +795,6 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             "This setting is only for bot owners to set a localtracks folder location "
             "In the example below, the full path for 'ParentDirectory' "
             "must be passed to this command.\n"
-            "The path must not contain spaces.\n"
             "```\n"
             "ParentDirectory\n"
             "  |__ localtracks  (folder)\n"
@@ -1173,7 +1172,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.guild_only()
     @checks.mod_or_permissions(administrator=True)
     async def command_audioset_vote(self, ctx: commands.Context, country: str):
-        """Set the country code for searches."""
+        """Set the country code for Spotify searches."""
         if len(country) != 2:
             return await self.send_embed_msg(
                 ctx,

@@ -217,7 +217,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
         else:
             await self.send_embed_msg(
                 ctx,
-                title=_("Removed racks from the queue"),
+                title=_("Removed Tracks From The Queue"),
                 description=_(
                     "Removed {removed_tracks} tracks queued by members "
                     "outside of the voice channel."
@@ -249,7 +249,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
         else:
             await self.send_embed_msg(
                 ctx,
-                title=_("Removed tracks from the queue"),
+                title=_("Removed Tracks From The Queue"),
                 description=_(
                     "Removed {removed_tracks} tracks queued by {member.display_name}."
                 ).format(removed_tracks=removed_tracks, member=ctx.author),

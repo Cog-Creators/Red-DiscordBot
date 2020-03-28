@@ -19,7 +19,7 @@ class Audio(
     Cog,
     metaclass=CompositeMetaClass,
 ):
-    """Class joining all Audio subclasses"""
+    """Play audio through voice channels."""
 
     _default_lavalink_settings = {
         "host": "localhost",

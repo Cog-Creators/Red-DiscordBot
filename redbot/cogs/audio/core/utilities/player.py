@@ -456,7 +456,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 )
             else:
                 maxlength_msg = ""
-            playlist_name = escape(playlist_data.name if playlist_data else _("No Title"))
+            playlist_name = escape(
+                playlist_data.name if playlist_data else _("No Title"), formatting=True
+            )
             embed = discord.Embed(
                 description=bold(f"[{playlist_name}]({playlist_url})")
                 if playlist_url

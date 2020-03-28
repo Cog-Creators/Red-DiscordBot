@@ -52,7 +52,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             if dj_enabled and not can_skip:
                 return await self.send_embed_msg(
                     ctx,
-                    title=_("Unable to disconnect"),
+                    title=_("Unable to Disconnect"),
                     description=_("You need the DJ role to disconnect."),
                 )
 

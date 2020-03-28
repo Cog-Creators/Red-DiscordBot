@@ -84,7 +84,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                         or (hasattr(prev_song, "extras") and not prev_song.extras.get("autoplay"))
                     )
                 ):
-                    await self.send_embed_msg(notify_channel, title=_("Auto Play Started."))
+                    await self.send_embed_msg(notify_channel, title=_("Auto Play started."))
 
                 if not description:
                     return
@@ -122,7 +122,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 notify_channel = player.fetch("channel")
                 if notify_channel and notify:
                     notify_channel = self.bot.get_channel(notify_channel)
-                    await self.send_embed_msg(notify_channel, title=_("Queue Ended."))
+                    await self.send_embed_msg(notify_channel, title=_("Queue ended."))
                 if disconnect:
                     self.bot.dispatch("red_audio_audio_disconnect", guild)
                     await player.disconnect()
@@ -164,7 +164,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 if early_exit:
                     embed = discord.Embed(
                         colour=await self.bot.get_embed_color(message_channel),
-                        title=_("Multiple errors detected"),
+                        title=_("Multiple Errors Detected"),
                         description=_(
                             "Closing the audio player "
                             "due to multiple errors being detected. "
