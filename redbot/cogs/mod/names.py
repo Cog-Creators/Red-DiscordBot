@@ -123,7 +123,7 @@ class ModInfo(MixinMeta):
                 url=f"https://open.spotify.com/track/{l_act.track_id}",
             )
         else:
-            act = _("Listening: {title}").format(title=l_act.title)
+            act = _("Listening: {title}").format(title=l_act.name)
         return act, discord.ActivityType.listening
 
     def handle_watching(self, user):
