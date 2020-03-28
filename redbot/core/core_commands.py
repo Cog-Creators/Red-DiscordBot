@@ -20,7 +20,7 @@ from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequen
 import aiohttp
 import discord
 import pkg_resources
-from babel import Locale, UnknownLocaleError
+from babel import Locale as BabelLocale, UnknownLocaleError
 
 from . import (
     __version__,
@@ -1258,7 +1258,7 @@ class Core(commands.Cog, CoreLogic):
         To reset to English, use "en-US".
         """
         try:
-            locale = Locale.parse(language_code, sep="-")
+            locale = BabelLocale.parse(language_code, sep="-")
         except (ValueError, UnknownLocaleError):
             await ctx.send(_("Invalid language code. Use format: `en-US`"))
             return
