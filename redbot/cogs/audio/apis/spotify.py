@@ -2,7 +2,7 @@ import base64
 import contextlib
 import logging
 import time
-from typing import List, MutableMapping, Optional, Tuple, Union
+from typing import List, Mapping, MutableMapping, Optional, Tuple, Union
 
 import aiohttp
 
@@ -32,6 +32,8 @@ class SpotifyWrapper:
         self.spotify_token: Optional[MutableMapping] = None
         self.client_id: Optional[str] = None
         self.client_secret: Optional[str] = None
+        self._token: Mapping[str, str] = {}
+
 
     @staticmethod
     def spotify_format_call(query_type: str, key: str) -> Tuple[str, MutableMapping]:
@@ -90,11 +92,16 @@ class SpotifyWrapper:
                 log.debug(f"Issue making GET request to {url}: [{r.status}] {data}")
             return data
 
+    def update_token(self, new_token: Mapping[str, str]):
+        self._token = new_token
+
     async def get_token(self) -> None:
         """Get the stored spotify tokens"""
-        tokens = await self.bot.get_shared_api_tokens("spotify")
-        self.client_id = tokens.get("client_id", "")
-        self.client_secret = tokens.get("client_secret", "")
+        if not self._token:
+            self._token = await self.bot.get_shared_api_tokens("spotify")
+
+        self.client_id = self._token.get("client_id", "")
+        self.client_secret = self._token.get("client_secret", "")
 
     async def get_country_code(self, ctx: Context = None) -> str:
         return await self.config.guild(ctx.guild).country_code() if ctx else "US"

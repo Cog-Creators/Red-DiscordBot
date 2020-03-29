@@ -1,5 +1,5 @@
 import logging
-from typing import Optional
+from typing import Mapping, Optional
 
 import aiohttp
 
@@ -21,11 +21,16 @@ class YouTubeWrapper:
         self.config = config
         self.session = session
         self.api_key: Optional[str] = None
+        self._token: Mapping[str, str] = {}
+
+    def update_token(self, new_token: Mapping[str, str]):
+        self._token = new_token
 
     async def _get_api_key(self,) -> str:
         """Get the stored youtube token"""
-        tokens = await self.bot.get_shared_api_tokens("youtube")
-        self.api_key = tokens.get("api_key", "")
+        if not self._token:
+            self._token = await self.bot.get_shared_api_tokens("youtube")
+        self.api_key = self._token.get("api_key", "")
         return self.api_key if self.api_key is not None else ""
 
     async def get_call(self, query: str) -> Optional[str]:
