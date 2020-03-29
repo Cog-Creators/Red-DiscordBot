@@ -12,8 +12,9 @@ _ = Translator("Bank", __file__)
 def is_owner_if_bank_global():
     """
     Command decorator. If the bank is global, it checks if the author is
-    bot owner, otherwise it does nothing.
-     
+    bot owner, otherwise it only checks
+    if command was used in guild - it DOES NOT check any permissions.
+
     When used on the command, this should be combined
     with permissions check like `guildowner_or_permissions()`.
     """
@@ -21,12 +22,9 @@ def is_owner_if_bank_global():
     async def pred(ctx: commands.Context):
         author = ctx.author
         if not await bank.is_global():
-            if not isinstance(ctx.channel, discord.abc.GuildChannel):
+            if not ctx.guild:
                 return False
-            if await ctx.bot.is_owner(author):
-                return True
-            permissions = ctx.channel.permissions_for(author)
-            return author == ctx.guild.owner or permissions.administrator
+            return True
         else:
             return await ctx.bot.is_owner(author)
 
