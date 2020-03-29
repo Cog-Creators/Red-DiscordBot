@@ -34,7 +34,6 @@ class SpotifyWrapper:
         self.client_secret: Optional[str] = None
         self._token: Mapping[str, str] = {}
 
-
     @staticmethod
     def spotify_format_call(query_type: str, key: str) -> Tuple[str, MutableMapping]:
         """Format the spotify endpoint"""
