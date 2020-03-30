@@ -65,9 +65,8 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             if search_track_num == 0:
                 search_track_num = 5
             if playlist:
-                name = (
-                    f"**[{entry.get('name')}]({entry.get('url')})**"
-                    f" - {str(entry.get('tracks')) + ' ' + _('tracks')}"
+                name = "**[{}]({})** - {} {}".format(
+                    entry.get("name"), entry.get("url"), str(entry.get("tracks")), _("tracks")
                 )
             else:
                 name = f"{list(entry.keys())[0]}"
