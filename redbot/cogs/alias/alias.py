@@ -279,6 +279,13 @@ class Alias(commands.Cog):
                 ).format(name=alias_name)
             )
             return
+
+        given_command_exists = self.bot.get_command(command) is not None
+        if not given_command_exists:
+            await ctx.send(
+                _("You attempted to create a new alias for a command that doesn't exist.")
+            )
+            return
         # endregion
 
         # At this point we know we need to make a new alias
