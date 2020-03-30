@@ -20,7 +20,7 @@ The pre-requirements are:
  - Python 3.8.1 or greater
  - Pip 18.1 or greater
  - Git 2.11+
- - Java Runtime Environment 11 or later (for audio support)
+ - Java Runtime Environment 11 (for audio support)
 
 We also recommend installing some basic compiler tools, in case our dependencies don't provide
 pre-built "wheels" for your architecture.
