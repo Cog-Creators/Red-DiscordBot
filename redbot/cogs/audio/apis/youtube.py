@@ -1,12 +1,16 @@
 import logging
-from typing import Mapping, Optional
+from typing import Mapping, Optional, TYPE_CHECKING, Union
 
 import aiohttp
 
 from redbot.core import Config
 from redbot.core.bot import Red
+from redbot.core.commands import Cog
 
 from ..errors import YouTubeApiError
+
+if TYPE_CHECKING:
+    from .. import Audio
 
 log = logging.getLogger("red.cogs.Audio.api.YouTube")
 
@@ -16,12 +20,15 @@ SEARCH_ENDPOINT = "https://www.googleapis.com/youtube/v3/search"
 class YouTubeWrapper:
     """Wrapper for the YouTube Data API."""
 
-    def __init__(self, bot: Red, config: Config, session: aiohttp.ClientSession):
+    def __init__(
+        self, bot: Red, config: Config, session: aiohttp.ClientSession, cog: Union["Audio", Cog]
+    ):
         self.bot = bot
         self.config = config
         self.session = session
         self.api_key: Optional[str] = None
         self._token: Mapping[str, str] = {}
+        self.cog = cog
 
     def update_token(self, new_token: Mapping[str, str]):
         self._token = new_token

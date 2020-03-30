@@ -25,6 +25,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
     ):
         if not (track and guild):
             return
+        track_identifier = track.track_identifier
         if self.playlist_api is not None:
             daily_cache = self._daily_playlist_cache.setdefault(
                 guild.id, await self.config.guild(guild).daily_playlists()
@@ -34,7 +35,6 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             )
             today = datetime.date.today()
             midnight = datetime.datetime.combine(today, datetime.datetime.min.time())
-            track_identifier = track.track_identifier
             today_id = int(time.mktime(today.timetuple()))
             track = self.track_to_json(track)
             if daily_cache:

@@ -76,8 +76,8 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Now playing."""
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
-        expected: Union[Tuple[str, ...]] = ("⏮", "⏹", "⏯", "⏭")
-        emoji = {"prev": "⏮", "stop": "⏹", "pause": "⏯", "next": "⏭"}
+        expected: Union[Tuple[str, ...]] = ("⏮", "⏹", "⏯", "⏭", "\N{CROSS MARK}")
+        emoji = {"prev": "⏮", "stop": "⏹", "pause": "⏯", "next": "⏭", "close": "\N{CROSS MARK}"}
         player = lavalink.get_player(ctx.guild.id)
         if player.current:
             arrow = await self.draw_time(ctx)
@@ -142,10 +142,10 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             return
 
         if not player.queue:
-            expected = ("⏹", "⏯")
+            expected = ("⏹", "⏯", "\N{CROSS MARK}")
         task: Optional[asyncio.Task]
         if player.current:
-            task = start_adding_reactions(message, expected[:4])
+            task = start_adding_reactions(message, expected[:5])
         else:
             task = None
 
@@ -174,6 +174,8 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         elif react == "next":
             await self._clear_react(message, emoji)
             await ctx.invoke(self.command_skip)
+        elif react == "close":
+            await message.delete()
 
     @commands.command(name="pause")
     @commands.guild_only()

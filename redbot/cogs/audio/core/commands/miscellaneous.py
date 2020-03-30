@@ -12,7 +12,6 @@ from redbot.core import commands
 from redbot.core.utils.chat_formatting import humanize_number, pagify
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 
-from ...audio_dataclasses import LocalPath, Query
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, _
 
@@ -53,12 +52,13 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
                 int((datetime.datetime.utcnow() - connect_start).total_seconds())
             )
             try:
-                query = Query.process_input(p.current.uri, self.local_folder_current_path)
                 if not p.current:
                     raise AttributeError
-                current_title = self.get_track_description(query, self.local_folder_current_path)
+                current_title = self.get_track_description(
+                    p.current, self.local_folder_current_path
+                )
                 msg += "{} [`{}`]: {}\n".format(p.channel.guild.name, connect_dur, current_title)
-            except AttributeError:
+            except AttributeError as exc:
                 msg += "{} [`{}`]: **{}**\n".format(
                     p.channel.guild.name, connect_dur, _("Nothing playing.")
                 )

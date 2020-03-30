@@ -32,7 +32,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 str(cog_data_path(self.bot.get_cog("Audio")) / "Audio.db")
             )
             self.api_interface = AudioAPIInterface(
-                self.bot, self.config, self.session, self.db_conn
+                self.bot, self.config, self.session, self.db_conn, self.bot.get_cog("Audio")
             )
             self.playlist_api = PlaylistWrapper(self.bot, self.config, self.db_conn)
             await self.playlist_api.init()

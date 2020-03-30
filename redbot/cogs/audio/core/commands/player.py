@@ -9,7 +9,7 @@ import discord
 import lavalink
 from discord.embeds import EmptyEmbed
 
-from redbot.core import checks, commands
+from redbot.core import commands
 from redbot.core.utils.menus import DEFAULT_CONTROLS, close_menu, menu, next_page, prev_page
 
 from ...audio_dataclasses import _PARTIALLY_SUPPORTED_MUSIC_EXT, Query
@@ -510,7 +510,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.command(name="autoplay")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    @checks.mod_or_permissions(manage_guild=True)
+    @commands.mod_or_permissions(manage_guild=True)
     @commands.max_concurrency(1, per=commands.BucketType.guild, wait=False)
     async def command_autoplay(self, ctx: commands.Context):
         """Starts auto play."""
@@ -575,7 +575,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not await self.maybe_charge_requester(ctx, guild_data["jukebox_price"]):
             return
         try:
-            await self.api_interface.autoplay(player, self.playlist_api, self)
+            await self.api_interface.autoplay(player, self.playlist_api)
         except DatabaseError:
             notify_channel = player.fetch("channel")
             if notify_channel:

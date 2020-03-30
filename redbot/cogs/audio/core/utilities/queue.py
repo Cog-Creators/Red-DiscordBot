@@ -8,7 +8,7 @@ import lavalink
 from fuzzywuzzy import process
 
 from redbot.core import commands
-from redbot.core.utils.chat_formatting import bold, humanize_number
+from redbot.core.utils.chat_formatting import humanize_number
 
 from ...audio_dataclasses import LocalPath, Query
 from ..abc import MixinMeta

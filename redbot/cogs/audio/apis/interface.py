@@ -5,8 +5,7 @@ import logging
 import random
 import time
 from collections import namedtuple
-from pathlib import Path
-from typing import Callable, List, MutableMapping, Optional, Tuple, Union, cast
+from typing import Callable, List, MutableMapping, Optional, TYPE_CHECKING, Tuple, Union, cast
 
 import aiohttp
 import discord
@@ -15,13 +14,12 @@ from lavalink.rest_api import LoadResult
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
-from redbot.core.commands import Context
+from redbot.core.commands import Cog, Context
 from redbot.core.i18n import Translator
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 
 from ..audio_dataclasses import Query
 from ..audio_logging import IS_DEBUG, debug_exc_log
-from ..core.abc import MixinMeta
 from ..errors import DatabaseError, SpotifyFetchError, TrackEnqueueError
 from ..utils import CacheLevel, Notifier
 from .global_db import GlobalCacheWrapper
@@ -30,6 +28,9 @@ from .playlist_interface import get_playlist
 from .playlist_wrapper import PlaylistWrapper
 from .spotify import SpotifyWrapper
 from .youtube import YouTubeWrapper
+
+if TYPE_CHECKING:
+    from .. import Audio
 
 _ = Translator("Audio", __file__)
 log = logging.getLogger("red.cogs.Audio.api.AudioAPIInterface")
@@ -44,15 +45,21 @@ class AudioAPIInterface:
     """
 
     def __init__(
-        self, bot: Red, config: Config, session: aiohttp.ClientSession, conn: APSWConnectionWrapper
+        self,
+        bot: Red,
+        config: Config,
+        session: aiohttp.ClientSession,
+        conn: APSWConnectionWrapper,
+        cog: Union["Audio", Cog],
     ):
         self.bot = bot
         self.config = config
         self.conn = conn
-        self.spotify_api: SpotifyWrapper = SpotifyWrapper(self.bot, self.config, session)
-        self.youtube_api: YouTubeWrapper = YouTubeWrapper(self.bot, self.config, session)
-        self.local_cache_api = LocalCacheWrapper(self.bot, self.config, self.conn)
-        self.global_cache_api = GlobalCacheWrapper(self.bot, self.config, session)
+        self.cog = cog
+        self.spotify_api: SpotifyWrapper = SpotifyWrapper(self.bot, self.config, session, self.cog)
+        self.youtube_api: YouTubeWrapper = YouTubeWrapper(self.bot, self.config, session, self.cog)
+        self.local_cache_api = LocalCacheWrapper(self.bot, self.config, self.conn, self.cog)
+        self.global_cache_api = GlobalCacheWrapper(self.bot, self.config, session, self.cog)
         self._session: aiohttp.ClientSession = session
         self._tasks: MutableMapping = {}
         self._lock: asyncio.Lock = asyncio.Lock()
@@ -388,7 +395,7 @@ class AudioAPIInterface:
         lock: Callable,
         notifier: Optional[Notifier] = None,
         forced: bool = False,
-        query_global: bool = True,
+        query_global: bool = False,
     ) -> List[lavalink.Track]:
         """Queries the Database then falls back to Spotify and YouTube APIs then Enqueued matched tracks.
 
@@ -425,8 +432,8 @@ class AudioAPIInterface:
             guild_data = await self.config.guild(ctx.guild).all()
             enqueued_tracks = 0
             consecutive_fails = 0
-            queue_dur = await ctx.cog.queue_duration(ctx)
-            queue_total_duration = ctx.cog.format_time(queue_dur)
+            queue_dur = await self.cog.queue_duration(ctx)
+            queue_total_duration = self.cog.format_time(queue_dur)
             before_queue_length = len(player.queue)
             tracks_from_spotify = await self.fetch_from_spotify_api(
                 query_type, uri, params=None, notifier=notifier
@@ -495,9 +502,7 @@ class AudioAPIInterface:
                         (result, called_api) = await self.fetch_track(
                             ctx,
                             player,
-                            Query.process_input(
-                                val, Path(await self.config.localpath()).absolute()
-                            ),
+                            Query.process_input(val, self.cog.local_folder_current_path),
                             forced=forced,
                         )
                     except (RuntimeError, aiohttp.ServerDisconnectedError):
@@ -547,12 +552,12 @@ class AudioAPIInterface:
                     continue
                 consecutive_fails = 0
                 single_track = track_object[0]
-                if not await ctx.cog.is_query_allowed(
+                if not await self.cog.is_query_allowed(
                     self.config,
                     ctx.guild,
                     (
                         f"{single_track.title} {single_track.author} {single_track.uri} "
-                        f"{str(Query.process_input(single_track, Path(await self.config.localpath()).absolute()))}"
+                        f"{Query.process_input(single_track, self.cog.local_folder_current_path)}"
                     ),
                 ):
                     has_not_allowed = True
@@ -564,7 +569,7 @@ class AudioAPIInterface:
                     if len(player.queue) >= 10000:
                         continue
                     if guild_data["maxlength"] > 0:
-                        if ctx.cog.is_track_too_long(single_track, guild_data["maxlength"]):
+                        if self.cog.is_track_too_long(single_track, guild_data["maxlength"]):
                             enqueued_tracks += 1
                             player.add(ctx.author, single_track)
                             self.bot.dispatch(
@@ -721,12 +726,12 @@ class AudioAPIInterface:
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         val = None
-        query = Query.process_input(query, Path(await self.config.localpath()).absolute())
+        query = Query.process_input(query, self.cog.local_folder_current_path)
         query_string = str(query)
         valid_global_entry = False
         results = None
         called_api = False
-        prefer_lyrics = await ctx.cog.get_lyrics_status(ctx)
+        prefer_lyrics = await self.cog.get_lyrics_status(ctx)
         if prefer_lyrics and query.is_youtube and query.is_search:
             query_string = f"{query} - lyrics"
         if cache_enabled and not forced and not query.is_local:
@@ -755,7 +760,7 @@ class AudioAPIInterface:
             pass
         elif lazy is True:
             called_api = False
-        elif val and not forced:
+        elif val and not forced and isinstance(val, dict):
             data = val
             data["query"] = query_string
             if data.get("loadType") == "V2_COMPACT":
@@ -812,9 +817,7 @@ class AudioAPIInterface:
                 )
         return results, called_api
 
-    async def autoplay(
-        self, player: lavalink.Player, playlist_api: PlaylistWrapper, cog: MixinMeta
-    ):
+    async def autoplay(self, player: lavalink.Player, playlist_api: PlaylistWrapper):
         """
         Enqueue a random track
         """
@@ -839,44 +842,42 @@ class AudioAPIInterface:
 
         if not tracks or not getattr(playlist, "tracks", None):
             if cache_enabled:
-                tracks = [await self.get_random_track_from_db()]
+                track = await self.get_random_track_from_db()
+                tracks = [] if not track else [track]
             if not tracks:
                 ctx = namedtuple("Context", "message guild cog")
                 (results, called_api) = await self.fetch_track(
-                    cast(commands.Context, ctx(player.channel.guild, player.channel.guild, cog)),
-                    player,
-                    Query.process_input(
-                        _TOP_100_US, Path(await self.config.localpath()).absolute()
+                    cast(
+                        commands.Context, ctx(player.channel.guild, player.channel.guild, self.cog)
                     ),
+                    player,
+                    Query.process_input(_TOP_100_US, self.cog.local_folder_current_path),
                 )
                 tracks = list(results.tracks)
         if tracks:
             multiple = len(tracks) > 1
-            track = tracks[0]
-
             valid = not multiple
             tries = len(tracks)
+            track = tracks[0]
             while valid is False and multiple:
                 tries -= 1
                 if tries <= 0:
                     raise DatabaseError("No valid entry found")
                 track = random.choice(tracks)
-                query = Query.process_input(track, Path(await self.config.localpath()).absolute())
+                query = Query.process_input(track, self.cog.local_folder_current_path)
                 await asyncio.sleep(0.001)
-                if not query.valid:
-                    continue
-                if (
+                if not query.valid or (
                     query.is_local
                     and query.local_track_path is not None
                     and not query.local_track_path.exists()
                 ):
                     continue
-                if not await cog.is_query_allowed(
+                if not await self.cog.is_query_allowed(
                     self.config,
                     player.channel.guild,
                     (
                         f"{track.title} {track.author} {track.uri} "
-                        f"{str(Query.process_input(track, Path(await self.config.localpath()).absolute()))}"
+                        f"{str(Query.process_input(track, self.cog.local_folder_current_path))}"
                     ),
                 ):
                     if IS_DEBUG:

@@ -59,7 +59,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 and self.api_interface is not None
             ):
                 try:
-                    await self.api_interface.autoplay(player, self.playlist_api, self)
+                    await self.api_interface.autoplay(player, self.playlist_api)
                 except DatabaseError:
                     notify_channel = player.fetch("channel")
                     if notify_channel:

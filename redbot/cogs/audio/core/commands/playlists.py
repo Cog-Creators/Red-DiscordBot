@@ -10,7 +10,7 @@ from typing import Optional, cast
 import discord
 import lavalink
 
-from redbot.core import checks, commands
+from redbot.core import commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.utils.chat_formatting import bold, pagify
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
@@ -19,7 +19,7 @@ from redbot.core.utils.predicates import MessagePredicate
 from ...apis.api_utils import FakePlaylist
 from ...apis.playlist_interface import create_playlist, delete_playlist, get_all_playlist, Playlist
 from ...audio_dataclasses import LocalPath, Query
-from ...audio_logging import IS_DEBUG
+from ...audio_logging import IS_DEBUG, debug_exc_log
 from ...converters import ComplexScopeParser, ScopeParser
 from ...errors import MissingGuild, TooManyMatches
 from ...utils import PlaylistScope
@@ -630,7 +630,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         usage="<playlist_name_OR_id> [v2=False] [args]",
         cooldown_after_parsing=True,
     )
-    @checks.is_owner()
+    @commands.is_owner()
     @commands.bot_has_permissions(attach_files=True)
     @commands.cooldown(1, 30, commands.BucketType.guild)
     async def command_playlist_download(
@@ -756,8 +756,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         content=_("Playlist is too large, here is the compressed version."),
                         file=discord.File(str(temp_tar)),
                     )
-            except Exception:
-                pass
+            except Exception as exc:
+                debug_exc_log(log, exc, "Failed to send playlist to channel")
             temp_file.unlink()
             temp_tar.unlink()
         else:
@@ -1727,7 +1727,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
 
     @command_playlist.command(name="upload", usage="[args]")
-    @checks.is_owner()
+    @commands.is_owner()
     async def command_playlist_upload(
         self, ctx: commands.Context, *, scope_data: ScopeParser = None
     ):

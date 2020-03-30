@@ -2,15 +2,18 @@ import base64
 import contextlib
 import logging
 import time
-from typing import List, Mapping, MutableMapping, Optional, Tuple, Union
+from typing import List, Mapping, MutableMapping, Optional, TYPE_CHECKING, Tuple, Union
 
 import aiohttp
 
 from redbot.core import Config
 from redbot.core.bot import Red
-from redbot.core.commands import Context
+from redbot.core.commands import Cog, Context
 
 from ..errors import SpotifyFetchError
+
+if TYPE_CHECKING:
+    from .. import Audio
 
 log = logging.getLogger("red.cogs.Audio.api.Spotify")
 
@@ -25,7 +28,9 @@ PLAYLISTS_ENDPOINT = "https://api.spotify.com/v1/playlists"
 class SpotifyWrapper:
     """Wrapper for the Spotify API."""
 
-    def __init__(self, bot: Red, config: Config, session: aiohttp.ClientSession):
+    def __init__(
+        self, bot: Red, config: Config, session: aiohttp.ClientSession, cog: Union["Audio", Cog]
+    ):
         self.bot = bot
         self.config = config
         self.session = session
@@ -33,6 +38,7 @@ class SpotifyWrapper:
         self.client_id: Optional[str] = None
         self.client_secret: Optional[str] = None
         self._token: Mapping[str, str] = {}
+        self.cog = cog
 
     @staticmethod
     def spotify_format_call(query_type: str, key: str) -> Tuple[str, MutableMapping]:
@@ -46,10 +52,11 @@ class SpotifyWrapper:
             query = f"{PLAYLISTS_ENDPOINT}/{key}/tracks"
         return query, params
 
-    @staticmethod
-    async def get_spotify_track_info(track_data: MutableMapping, ctx: Context) -> Tuple[str, ...]:
+    async def get_spotify_track_info(
+        self, track_data: MutableMapping, ctx: Context
+    ) -> Tuple[str, ...]:
         """Extract track info from spotify response"""
-        prefer_lyrics = await ctx.cog.get_lyrics_status(ctx)
+        prefer_lyrics = await self.cog.get_lyrics_status(ctx)
         track_name = track_data["name"]
         if prefer_lyrics:
             track_name = f"{track_name} - lyrics"

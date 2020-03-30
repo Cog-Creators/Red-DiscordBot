@@ -17,3 +17,5 @@ class RedEvents(MixinMeta, metaclass=CompositeMetaClass):
             self.api_interface.youtube_api.update_token(api_tokens)
         elif service_name == "spotify":
             self.api_interface.spotify_api.update_token(api_tokens)
+        elif service_name == "audiodb":
+            self.api_interface.global_cache_api.update_token(api_tokens)

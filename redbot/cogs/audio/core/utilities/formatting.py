@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import logging
 import math
+import re
 from typing import List, Optional
 
 import discord
@@ -17,6 +18,8 @@ from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, _
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.formatting")
+
+RE_SQUARE = re.compile(r"[\[\]]")
 
 
 class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
@@ -62,7 +65,10 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             if search_track_num == 0:
                 search_track_num = 5
             if playlist:
-                name = f"**[{entry.get('name')}]({entry.get('url')})** - {str(entry.get('tracks')) + ' ' + _('tracks')}"
+                name = (
+                    f"**[{entry.get('name')}]({entry.get('url')})**"
+                    f" - {str(entry.get('tracks')) + ' ' + _('tracks')}"
+                )
             else:
                 name = f"{list(entry.keys())[0]}"
             search_list += f"`{search_track_num}.` {name}\n"
@@ -299,6 +305,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 string = f"{title}"
                 if shorten and len(string) > 40:
                     string = "{}...".format((string[:40]).rstrip(" "))
+                    string = re.sub(RE_SQUARE, "", string)
                 string = f"**[{escape(string, formatting=True)}]({track.uri}) **"
         elif hasattr(track, "to_string_user") and track.is_local:
             string = track.to_string_user() + " "

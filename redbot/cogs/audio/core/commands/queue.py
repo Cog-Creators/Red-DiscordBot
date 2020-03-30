@@ -112,10 +112,10 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             ):
                 return
 
-            expected = ("⏹", "⏯")
-            emoji = {"stop": "⏹", "pause": "⏯"}
+            expected = ("⏹", "⏯", "\N{CROSS MARK}")
+            emoji = {"stop": "⏹", "pause": "⏯", "close": "\N{CROSS MARK}"}
             if player.current:
-                task: Optional[asyncio.Task] = start_adding_reactions(message, expected[:4])
+                task: Optional[asyncio.Task] = start_adding_reactions(message, expected[:5])
             else:
                 task: Optional[asyncio.Task] = None
 
@@ -138,6 +138,8 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             elif react == "pause":
                 await self._clear_react(message, emoji)
                 return await ctx.invoke(self.command_pause)
+            elif react == "close":
+                await message.delete()
             return
         elif not player.current and not player.queue:
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
