@@ -68,20 +68,22 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
         error = getattr(error, "original", error)
         handled = False
         if isinstance(error, (IndexError, ClientConnectorError)) and any(
-                e in str(error).lower() for e in [
-                    "no nodes found.", "cannot connect to host"
-                ]):
+            e in str(error).lower() for e in ["no nodes found.", "cannot connect to host"]
+        ):
             handled = True
             await self.send_embed_msg(
                 ctx,
                 title=_("Invalid Environment"),
-                description=_("Connection to Lavalink has been lost."), error=True)
+                description=_("Connection to Lavalink has been lost."),
+                error=True,
+            )
         elif isinstance(error, KeyError) and "such player for that guild" in str(error):
             handled = True
             await self.send_embed_msg(
                 ctx,
                 title=_("No Player Available"),
-                description=_("The bot is not connected to a voice channel."), error=True
+                description=_("The bot is not connected to a voice channel."),
+                error=True,
             )
         elif isinstance(error, TrackEnqueueError):
             handled = True
