@@ -389,8 +389,8 @@ def delete(
 
 
 @cli.command()
-@click.argument("instance", type=click.Choice(instance_list), metavar="<INSTANCE_NAME>")
-@click.argument("backend", type=click.Choice(["json", "postgres", "redis"]))
+@click.argument("instance", type=click.Choice(instance_list))
+@click.argument("backend", type=click.Choice(["json"]))  # TODO: GH-3115
 def convert(instance, backend):
     """Convert data backend of an instance."""
     current_backend = get_current_backend(instance)
