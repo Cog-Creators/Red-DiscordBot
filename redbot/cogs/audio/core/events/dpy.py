@@ -1,5 +1,7 @@
 import logging
+import re
 from pathlib import Path
+from typing import Final
 
 import discord
 import lavalink
@@ -12,6 +14,8 @@ from ..cog_utils import CompositeMetaClass, _
 from ...errors import TrackEnqueueError
 
 log = logging.getLogger("red.cogs.Audio.cog.Events.dpy")
+
+RE_CONVERSION: Final[re.Pattern] = re.compile('Converting to "(.*)" failed for parameter "(.*)".')
 
 
 class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
@@ -82,9 +86,19 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
         elif isinstance(error, commands.ConversionFailure):
             handled = True
             if error.args:
-                await self.send_embed_msg(
-                    ctx, title=_("Invalid Argument"), description=error.args[0], error=True,
-                )
+                if match := RE_CONVERSION.search(error.args[0]):
+                    await self.send_embed_msg(
+                        ctx,
+                        title=_("Invalid Argument"),
+                        description=_(
+                            "The argument you gave for `{}` is not valid: I was expecting a `{}`."
+                        ).format(match.group(2), match.group(1)),
+                        error=True,
+                    )
+                else:
+                    await self.send_embed_msg(
+                        ctx, title=_("Invalid Argument"), description=error.args[0], error=True,
+                    )
             else:
                 await ctx.send_help()
         elif isinstance(error, (IndexError, ClientConnectorError)) and any(
