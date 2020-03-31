@@ -23,7 +23,6 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.guild_only()
     @commands.cooldown(1, 15, commands.BucketType.guild)
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
-    @commands.max_concurrency(1, per=commands.BucketType.guild, wait=False)
     async def command_equalizer(self, ctx: commands.Context):
         """Equalizer management."""
         if not self._player_check(ctx):

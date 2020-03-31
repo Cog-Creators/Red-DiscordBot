@@ -29,7 +29,6 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.group(name="queue", invoke_without_command=True)
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
-    @commands.max_concurrency(1, per=commands.BucketType.guild, wait=False)
     async def command_queue(self, ctx: commands.Context, *, page: int = 1):
         """List the songs in the queue."""
 

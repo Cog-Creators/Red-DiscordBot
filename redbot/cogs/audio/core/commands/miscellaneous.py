@@ -22,7 +22,6 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.command(name="sing")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    @commands.max_concurrency(1, per=commands.BucketType.guild, wait=False)
     async def command_sing(self, ctx: commands.Context):
         """Make Red sing one of her songs."""
         ids = (
@@ -39,7 +38,6 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.command(name="audiostats")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
-    @commands.max_concurrency(1, per=commands.BucketType.guild, wait=False)
     async def command_audiostats(self, ctx: commands.Context):
         """Audio stats."""
         server_num = len(lavalink.active_players())
@@ -88,7 +86,6 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.command(name="percent")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    @commands.max_concurrency(1, per=commands.BucketType.guild, wait=False)
     async def command_percent(self, ctx: commands.Context):
         """Queue percentage."""
         if not self._player_check(ctx):

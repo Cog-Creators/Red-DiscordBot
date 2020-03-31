@@ -15,7 +15,6 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.is_owner()
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    @commands.max_concurrency(1, per=commands.BucketType.guild, wait=False)
     async def command_llsetup(self, ctx: commands.Context):
         """Lavalink server configuration options."""
 

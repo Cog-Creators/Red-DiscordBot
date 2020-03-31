@@ -33,7 +33,6 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.group(name="playlist")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
-    @commands.max_concurrency(1, per=commands.BucketType.guild, wait=False)
     async def command_playlist(self, ctx: commands.Context):
         """Playlist configuration options.
 
