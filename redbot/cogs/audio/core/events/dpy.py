@@ -3,11 +3,13 @@ from pathlib import Path
 
 import discord
 import lavalink
+from aiohttp import ClientConnectorError
 
 from redbot.core import commands
 
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, _
+from ...errors import TrackEnqueueError
 
 log = logging.getLogger("red.cogs.Audio.cog.Events.dpy")
 
@@ -65,12 +67,32 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
     async def cog_command_error(self, ctx: commands.Context, error: Exception) -> None:
         error = getattr(error, "original", error)
         handled = False
-        if isinstance(error, IndexError) and "No nodes found." in str(error):
+        if isinstance(error, (IndexError, ClientConnectorError)) and any(
+                e in str(error).lower() for e in [
+                    "no nodes found.", "cannot connect to host"
+                ]):
             handled = True
             await self.send_embed_msg(
                 ctx,
                 title=_("Invalid Environment"),
-                description=_("Connection to Lavalink has been lost."),
+                description=_("Connection to Lavalink has been lost."), error=True)
+        elif isinstance(error, KeyError) and "such player for that guild" in str(error):
+            handled = True
+            await self.send_embed_msg(
+                ctx,
+                title=_("No Player Available"),
+                description=_("The bot is not connected to a voice channel."), error=True
+            )
+        elif isinstance(error, TrackEnqueueError):
+            handled = True
+            await self.send_embed_msg(
+                ctx,
+                title=_("Unable to Get Track"),
+                description=_(
+                    "I'm unable get a track from Lavalink at the moment,"
+                    "try again in a few minutes."
+                ),
+                error=True,
             )
         if not isinstance(
             error,
