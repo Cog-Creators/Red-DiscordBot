@@ -1,4 +1,0 @@
-pip
-git+git://github.com/Rapptz/discord.py.git@async
-youtube_dl
-imgurpython
