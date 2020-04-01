@@ -1266,7 +1266,12 @@ class RepoManager:
         """
         with open(data_manager.cog_data_path(self) / "repos.json") as fp:
             raw_repos = json.load(fp)
-        for repo_data in raw_repos:
+
+        from tqdm import tqdm
+
+        progress_bar = tqdm(raw_repos, desc="Downloading repos", unit="repo", dynamic_ncols=True)
+
+        for repo_data in progress_bar:
             repo_url = repo_data["url"]
             repo_name = repo_data["name"]
             repo_branch = repo_data["branch"]

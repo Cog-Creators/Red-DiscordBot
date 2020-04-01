@@ -39,6 +39,7 @@ import rapidfuzz
 from rich.progress import ProgressColumn
 from rich.progress_bar import ProgressBar
 from red_commons.logging import VERBOSE, TRACE
+from tqdm import tqdm
 
 from redbot import VersionInfo
 from redbot.core import data_manager
@@ -275,7 +276,8 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
             to_backup.append(f)
 
     with tarfile.open(str(backup_fpath), "w:gz") as tar:
-        for f in to_backup:
+        progress_bar = tqdm(to_backup, desc="Compressing data", unit=" files", dynamic_ncols=True)
+        for f in progress_bar:
             tar.add(str(f), arcname=str(f.relative_to(data_path)), recursive=False)
 
         # add repos backup
