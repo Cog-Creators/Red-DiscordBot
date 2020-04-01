@@ -1,9 +1,6 @@
 ---
 name: Bug reports for commands
 about: For bugs that involve commands found within Red
-title: ''
-labels: 'Type: Bug'
-assignees: ''
 
 ---
 

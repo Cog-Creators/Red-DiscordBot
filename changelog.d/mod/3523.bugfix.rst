@@ -1,2 +1,0 @@
-Allow mentions in hackban and ban commands.
-Have the correct lower bound on length of a snowflake for the converter.
