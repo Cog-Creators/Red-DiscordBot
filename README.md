@@ -22,6 +22,7 @@ Additionally, other modules (cogs) can be easily found and added from our growin
 * Loggers
 * Christian Porn
 * Welcome messages setup
+* Removes your virginity
 * Reminders
 * Raffles
 * Free money
