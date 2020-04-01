@@ -26,6 +26,7 @@ from typing import (
 
 import discord
 from fuzzywuzzy import fuzz, process
+from tqdm import tqdm
 
 from redbot.core import data_manager
 from redbot.core.utils.chat_formatting import box
@@ -240,7 +241,8 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
             to_backup.append(f)
 
     with tarfile.open(str(backup_fpath), "w:gz") as tar:
-        for f in to_backup:
+        progress_bar = tqdm(to_backup, desc="Compressing data", unit=" files", dynamic_ncols=True)
+        for f in progress_bar:
             tar.add(str(f), arcname=str(f.relative_to(data_path)), recursive=False)
 
         # add repos backup

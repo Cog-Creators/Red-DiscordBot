@@ -15,6 +15,7 @@ from typing import Any, Dict, IO, List, Optional, Set, Tuple, Union
 
 import appdirs
 import click
+from tqdm import tqdm
 
 from redbot.core import config, data_manager, drivers
 from redbot.cogs.downloader.repo_manager import RepoManager
@@ -444,7 +445,7 @@ class RestoreInfo:
                 "WARNING: Original instance name is already used by a different instance."
                 " Continuing will overwrite the existing instance config."
             )
-            if click.confirm("Do you want to use different instance name?"):
+            if click.confirm("Do you want to use different instance name?", default=True):
                 self._ask_for_name()
         if self.data_path_not_empty:
             print(
@@ -475,9 +476,11 @@ class RestoreInfo:
         self.storage_details = driver_cls.get_config_details()
 
     def extractall(self) -> None:
+        progress_bar = tqdm(
+            self.tar_members_to_extract, desc="Extracting data", unit=" files", dynamic_ncols=True
+        )
         # tar.errorlevel == 0 so errors are printed to stderr
-        # TODO: progress bar?
-        self.tar.extractall(path=self.data_path, members=self.tar_members_to_extract)
+        self.tar.extractall(path=self.data_path, members=progress_bar)
 
     def get_basic_config(self, use_json: bool = False) -> dict:
         default_dirs = deepcopy(data_manager.basic_config_default)
