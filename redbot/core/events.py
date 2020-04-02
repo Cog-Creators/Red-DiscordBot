@@ -196,12 +196,9 @@ def init_events(bot, cli_flags):
             help_settings = await HelpSettings.from_context(ctx)
             fuzzy_commands = await fuzzy_command_search(
                 ctx,
-                commands={
-                    c
-                    async for c in RedHelpFormatter.help_filter_func(
-                        ctx, bot.walk_commands(), help_settings=help_settings
-                    )
-                },
+                commands=RedHelpFormatter.help_filter_func(
+                    ctx, bot.walk_commands(), help_settings=help_settings
+                ),
             )
             if not fuzzy_commands:
                 pass
