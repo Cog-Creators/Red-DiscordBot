@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-03-05 12:11\n"
+"POT-Creation-Date: 2020-04-02 12:07+0000\n"
+"PO-Revision-Date: 2020-04-02 12:11\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -15,16 +15,16 @@ msgstr ""
 "X-Crowdin-File: /cogs/cleanup/locales/messages.pot\n"
 "Language: cs_CZ\n"
 
-#: redbot/cogs/cleanup/cleanup.py:23
+#: redbot/cogs/cleanup/cleanup.py:22
 #, docstring
 msgid "Commands for cleaning up messages."
 msgstr "Příkazy k čištění zpráv."
 
-#: redbot/cogs/cleanup/cleanup.py:43
+#: redbot/cogs/cleanup/cleanup.py:42
 msgid "Are you sure you want to delete {number} messages? (y/n)"
 msgstr "Opravdu chcete odstranit {number} zpráv? (y/n)"
 
-#: redbot/cogs/cleanup/cleanup.py:57
+#: redbot/cogs/cleanup/cleanup.py:56
 msgid "Cancelled."
 msgstr "Zrušeno."
 
@@ -76,6 +76,11 @@ msgstr "Vyčistií příkazy a zprávy od bota."
 #, docstring
 msgid "Clean up messages owned by the bot.\\n\\n        By default, all messages are cleaned. If a third argument is specified,\\n        it is used for pattern matching: If it begins with r( and ends with ),\\n        then it is interpreted as a regex, and messages that match it are\\n        deleted. Otherwise, it is used in a simple substring test.\\n\\n        Some helpful regex flags to include in your pattern:\\n        Dots match newlines: (?s); Ignore case: (?i); Both: (?si)\\n        "
 msgstr "Vyčistit zprávy vlastněné botem.\\n\\n        Ve výchozím nastavení jsou všechny zprávy vyčištěny. Pokud je uveden třetí argument,\\n        se používá pro porovnávání vzorů: pokud začíná r( a končí s ),\\n        pak je interpretována jako regex, a zprávy, které se mu hodí, jsou odstraněny\\n        . V opačném případě se použije při jednoduché zkoušce podkladu.\\n\\n        Některé užitečné regex příznaky, které chcete zahrnout do vašeho vzoru:\\n        Boty odpovídají novinkám: (? ); Ignorovat případ: (?i); Bo: (?si)\\n        "
+
+#: redbot/cogs/cleanup/cleanup.py:540
+#, docstring
+msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\\n        \\n        Defaults to 50.\\n        "
+msgstr ""
 
 #: redbot/cogs/cleanup/converters.py:12
 msgid "{} doesn't look like a valid message ID."
