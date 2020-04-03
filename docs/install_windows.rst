@@ -87,13 +87,13 @@ Start with opening a command prompt (open Start, search for "command prompt", th
 
 Then create your virtual environment with the following command
 
-.. code-block::
+.. code-block:: none
 
     py -3.8 -m venv "%userprofile%\redenv"
 
 And activate it with the following command
 
-.. code-block::
+.. code-block:: none
 
     "%userprofile%\redenv\Scripts\activate.bat"
 
