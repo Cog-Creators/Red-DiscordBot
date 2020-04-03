@@ -85,11 +85,15 @@ Start with opening a command prompt (open Start, search for "command prompt", th
 
     These commands will not work in PowerShell - you have to use command prompt as said above.
 
-Then create your virtual environment with the following command::
+Then create your virtual environment with the following command
+
+.. code-block::
 
     py -3.8 -m venv "%userprofile%\redenv"
 
-And activate it with the following command::
+And activate it with the following command
+
+.. code-block::
 
     "%userprofile%\redenv\Scripts\activate.bat"
 
