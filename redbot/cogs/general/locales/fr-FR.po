@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-03-26 12:08+0000\n"
-"PO-Revision-Date: 2020-03-26 12:55\n"
+"POT-Creation-Date: 2020-04-02 12:07+0000\n"
+"PO-Revision-Date: 2020-04-02 12:11\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -198,8 +198,8 @@ msgstr "Parce que tout le monde aime les câlins !\\n\\n        Jusqu'à 10 nive
 
 #: redbot/cogs/general/general.py:245
 #, docstring
-msgid "\\n        Show server information.\\n    \\n        `details`: Toggle it to `True` to show more information about this server.\\n        Default to False.\\n        "
-msgstr "\\n        Afficher les informations du serveur.\\n    \\n        `details`: `True` pour afficher plus d'informations sur ce serveur.\\n        Par défaut sur False.\\n        "
+msgid "\\n        Show server information.\\n    \\n        `details`: Shows more information when set to `True`.\\n        Default to False.\\n        "
+msgstr ""
 
 #: redbot/cogs/general/general.py:253
 msgid "Created on {date}. That's over {num} days ago!"
