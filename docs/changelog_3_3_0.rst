@@ -4,12 +4,15 @@ Redbot 3.3.4 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| 
+| :ghuser:`jack1142`
 
 End-user changelog
 ------------------
 
+Alias
+*****
 
+- ``[p]alias add`` now sends an error when command user tries to alias doesn't exist (:issue:`3710`, :issue:`3545`)
 
 Developer changelog
 -------------------
