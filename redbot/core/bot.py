@@ -181,6 +181,9 @@ class RedBase(
         if "command_not_found" not in kwargs:
             kwargs["command_not_found"] = "Command {} not found.\n{}"
 
+        if "allowed_mentions" not in kwargs:
+            kwargs["allowed_mentions"] = discord.AllowedMentions(everyone=False, roles=False)
+
         message_cache_size = cli_flags.message_cache_size
         if cli_flags.no_message_cache:
             message_cache_size = None
