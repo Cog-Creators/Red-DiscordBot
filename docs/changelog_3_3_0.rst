@@ -1,6 +1,6 @@
 .. 3.3.x Changelogs
 
-Redbot 3.3.4 (Unreleased)
+Redbot 3.3.4 (2020-04-05)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
@@ -37,10 +37,6 @@ Documentation changes
 ---------------------
 
 - Versions of pre-requirements are now included in Windows install guide (:issue:`3708`)
-
-Miscellaneous
--------------
-
 
 
 Redbot 3.3.3 (2020-03-28)
