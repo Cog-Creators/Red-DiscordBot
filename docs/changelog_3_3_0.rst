@@ -1,5 +1,44 @@
 .. 3.3.x Changelogs
 
+Redbot 3.3.4 (2020-04-05)
+=========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`jack1142`, :ghuser:`kennnyshiwa`
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- Fixed checks related to bank's global state that were used in commands in Bank, Economy and Trivia cogs (:issue:`3707`)
+
+Alias
+*****
+
+- ``[p]alias add`` now sends an error when command user tries to alias doesn't exist (:issue:`3710`, :issue:`3545`)
+
+Developer changelog
+-------------------
+
+Core Bot
+********
+
+- Bump dependencies, including update to discord.py 1.3.3 (:issue:`3723`)
+
+Utility Functions
+*****************
+
+- `redbot.core.utils.common_filters.filter_invites` now filters ``discord.io/discord.li`` invites links (:issue:`3717`)
+- Fixed false-positives in `redbot.core.utils.common_filters.filter_invites` (:issue:`3717`)
+
+Documentation changes
+---------------------
+
+- Versions of pre-requirements are now included in Windows install guide (:issue:`3708`)
+
+
 Redbot 3.3.3 (2020-03-28)
 =========================
 
