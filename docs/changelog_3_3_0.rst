@@ -22,7 +22,7 @@ Developer changelog
 Documentation changes
 ---------------------
 
-
+- Versions of pre-requirements are now included in Windows install guide (:issue:`3708`)
 
 Miscellaneous
 -------------
