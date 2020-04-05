@@ -17,6 +17,11 @@ Alias
 Developer changelog
 -------------------
 
+Core Bot
+********
+
+- Bump dependencies, including update to discord.py 1.3.3 (:issue:`3723`)
+
 Utility Functions
 *****************
 
