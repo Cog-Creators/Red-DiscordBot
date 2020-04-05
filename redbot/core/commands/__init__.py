@@ -76,6 +76,8 @@ from ._dpy_reimplements import (
     when_mentioned_or as when_mentioned_or,
     when_mentioned as when_mentioned,
     bot_has_any_role as bot_has_any_role,
+    before_invoke as before_invoke,
+    after_invoke as after_invoke,
 )
 
 ### DEP-WARN: Check this *every* discord.py update
