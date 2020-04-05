@@ -4,7 +4,7 @@ Redbot 3.3.4 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`jack1142`
+| :ghuser:`jack1142`, :ghuser:`kennnyshiwa`
 
 End-user changelog
 ------------------
@@ -17,7 +17,11 @@ Alias
 Developer changelog
 -------------------
 
+Utility Functions
+*****************
 
+- `redbot.core.utils.common_filters.filter_invites` now filters ``discord.io/discord.li`` invites links (:issue:`3717`)
+- Fixed false-positives in `redbot.core.utils.common_filters.filter_invites` (:issue:`3717`)
 
 Documentation changes
 ---------------------
