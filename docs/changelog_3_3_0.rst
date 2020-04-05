@@ -9,6 +9,11 @@ Redbot 3.3.4 (Unreleased)
 End-user changelog
 ------------------
 
+Core Bot
+********
+
+- Fixed checks related to bank's global state that were used in commands in Bank, Economy and Trivia cogs (:issue:`3707`)
+
 Alias
 *****
 
