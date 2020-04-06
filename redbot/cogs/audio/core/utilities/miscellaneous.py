@@ -274,7 +274,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 temp_guild_playlist = guild_data.pop("playlists", None)
                 if temp_guild_playlist:
                     guild_playlist = {}
-                    for (count, (name, data)) in enumerate(temp_guild_playlist.items(), 1):
+                    for (count, (name, data)) in enumerate(temp_guild_playlist.items(), 1000):
                         if not data or not name:
                             continue
                         playlist = {"id": count, "name": name, "guild": int(guild_id)}
@@ -305,7 +305,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 await asyncio.sleep(0)
             await self.config.custom(PlaylistScope.GUILD.value).set(all_playlist)
             # new schema is now in place
-            await self.config.schema_version.set(_SCHEMA_VERSION)
+            await self.config.schema_version.set(2)
 
             # migration done, now let's delete all the old stuff
             for guild_id in all_guild_data:
@@ -320,7 +320,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 for p in scope_playlist:
                     await p.save()
                 await self.config.custom(scope).clear()
-            await self.config.schema_version.set(_SCHEMA_VERSION)
+            await self.config.schema_version.set(3)
 
         if database_entries:
             await self.api_interface.local_cache_api.lavalink.insert(database_entries)
