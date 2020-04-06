@@ -134,3 +134,14 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             await self.api_interface.local_cache_api.youtube.clean_up_old_entries()
             await asyncio.sleep(5)
             await self.playlist_api.delete_scheduled()
+
+    @commands.Cog.listener()
+    async def on_red_audio_track_end(
+            self, guild: discord.Guild, track: lavalink.Track, requester: discord.Member
+    ):
+        if not (track and guild):
+            return
+        if self.api_interface is not None and self.playlist_api is not None:
+            await self.api_interface.local_cache_api.youtube.clean_up_old_entries()
+            await asyncio.sleep(5)
+            await self.playlist_api.delete_scheduled()
