@@ -137,7 +137,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
 
     @commands.Cog.listener()
     async def on_red_audio_track_end(
-            self, guild: discord.Guild, track: lavalink.Track, requester: discord.Member
+        self, guild: discord.Guild, track: lavalink.Track, requester: discord.Member
     ):
         if not (track and guild):
             return
