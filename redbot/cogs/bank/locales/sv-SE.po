@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-13 12:16\n"
+"POT-Creation-Date: 2020-04-02 12:07+0000\n"
+"PO-Revision-Date: 2020-04-02 12:13\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
@@ -15,69 +15,69 @@ msgstr ""
 "X-Crowdin-File: /cogs/bank/locales/messages.pot\n"
 "Language: sv_SE\n"
 
-#: redbot/cogs/bank/bank.py:62
+#: redbot/cogs/bank/bank.py:38
 #, docstring
 msgid "Bank"
 msgstr ""
 
-#: redbot/cogs/bank/bank.py:74
+#: redbot/cogs/bank/bank.py:50
 #, docstring
 msgid "Base command for bank settings."
 msgstr ""
 
-#: redbot/cogs/bank/bank.py:87
+#: redbot/cogs/bank/bank.py:63
 msgid "Bank settings:\\n\\nBank name: {bank_name}\\nCurrency: {currency_name}\\nDefault balance: {default_balance}\\nMaximum allowed balance: {maximum_bal}"
 msgstr ""
 
-#: redbot/cogs/bank/bank.py:101
+#: redbot/cogs/bank/bank.py:77
 #, docstring
 msgid "Toggle whether the bank is global or not.\\n\\n        If the bank is global, it will become per-server.\\n        If the bank is per-server, it will become global.\\n        "
 msgstr ""
 
-#: redbot/cogs/bank/bank.py:108
+#: redbot/cogs/bank/bank.py:84
 msgid "per-server"
 msgstr "per-server"
 
-#: redbot/cogs/bank/bank.py:108
+#: redbot/cogs/bank/bank.py:84
 msgid "global"
 msgstr "global"
 
-#: redbot/cogs/bank/bank.py:111
+#: redbot/cogs/bank/bank.py:87
 msgid "This will toggle the bank to be {banktype}, deleting all accounts in the process! If you're sure, type `{command}`"
 msgstr ""
 
-#: redbot/cogs/bank/bank.py:118
+#: redbot/cogs/bank/bank.py:94
 msgid "The bank is now {banktype}."
 msgstr ""
 
-#: redbot/cogs/bank/bank.py:123
+#: redbot/cogs/bank/bank.py:100
 #, docstring
 msgid "Set the bank's name."
 msgstr ""
 
-#: redbot/cogs/bank/bank.py:125
+#: redbot/cogs/bank/bank.py:102
 msgid "Bank name has been set to: {name}"
 msgstr ""
 
-#: redbot/cogs/bank/bank.py:130
+#: redbot/cogs/bank/bank.py:108
 #, docstring
 msgid "Set the name for the bank's currency."
 msgstr ""
 
-#: redbot/cogs/bank/bank.py:132
+#: redbot/cogs/bank/bank.py:110
 msgid "Currency name has been set to: {name}"
 msgstr ""
 
-#: redbot/cogs/bank/bank.py:137
+#: redbot/cogs/bank/bank.py:116
 #, docstring
 msgid "Set the maximum balance a user can get."
 msgstr ""
 
-#: redbot/cogs/bank/bank.py:143
+#: redbot/cogs/bank/bank.py:122
 msgid "Amount must be greater than zero and less than {max}."
 msgstr ""
 
-#: redbot/cogs/bank/bank.py:148
+#: redbot/cogs/bank/bank.py:127
 msgid "Maximum balance has been set to: {amount}"
 msgstr ""
 

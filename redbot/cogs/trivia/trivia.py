@@ -4,17 +4,21 @@ import math
 import pathlib
 from collections import Counter
 from typing import List
+
 import io
 import yaml
 import discord
-from redbot.core import commands
-from redbot.core import Config, checks
+
+from redbot.core import Config, commands, checks
+from redbot.cogs.bank import is_owner_if_bank_global
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, pagify, bold
-from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from redbot.core.utils.menus import start_adding_reactions
-from redbot.cogs.bank import check_global_setting_admin
+from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
+
+from .checks import trivia_stop_check
+from .converters import finite_float
 from .log import LOG
 from .session import TriviaSession
 
@@ -23,16 +27,6 @@ __all__ = ["Trivia", "UNIQUE_ID", "get_core_lists"]
 UNIQUE_ID = 0xB3C0E453
 
 _ = Translator("Trivia", __file__)
-
-
-def finite_float(arg: str) -> float:
-    try:
-        ret = float(arg)
-    except ValueError:
-        raise commands.BadArgument(_("`{arg}` is not a number.").format(arg=arg))
-    if not math.isfinite(ret):
-        raise commands.BadArgument(_("`{arg}` is not a finite number.").format(arg=ret))
-    return ret
 
 
 class InvalidListError(Exception):
@@ -163,8 +157,9 @@ class Trivia(commands.Cog):
         else:
             await ctx.send(_("Alright, I won't reveal the answer to the questions anymore."))
 
+    @is_owner_if_bank_global()
+    @checks.admin_or_permissions(manage_guild=True)
     @triviaset.command(name="payout")
-    @check_global_setting_admin()
     async def triviaset_payout_multiplier(self, ctx: commands.Context, multiplier: finite_float):
         """Set the payout multiplier.
 
@@ -321,27 +316,14 @@ class Trivia(commands.Cog):
         self.trivia_sessions.append(session)
         LOG.debug("New trivia session; #%s in %d", ctx.channel, ctx.guild.id)
 
+    @trivia_stop_check()
     @trivia.command(name="stop")
     async def trivia_stop(self, ctx: commands.Context):
         """Stop an ongoing trivia session."""
         session = self._get_trivia_session(ctx.channel)
-        if session is None:
-            await ctx.send(_("There is no ongoing trivia session in this channel."))
-            return
-        author = ctx.author
-        auth_checks = (
-            await ctx.bot.is_owner(author),
-            await ctx.bot.is_mod(author),
-            await ctx.bot.is_admin(author),
-            author == ctx.guild.owner,
-            author == session.ctx.author,
-        )
-        if any(auth_checks):
-            await session.end_game()
-            session.force_stop()
-            await ctx.send(_("Trivia stopped."))
-        else:
-            await ctx.send(_("You are not allowed to do that."))
+        await session.end_game()
+        session.force_stop()
+        await ctx.send(_("Trivia stopped."))
 
     @trivia.command(name="list")
     async def trivia_list(self, ctx: commands.Context):

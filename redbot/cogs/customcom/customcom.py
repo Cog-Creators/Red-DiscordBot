@@ -3,10 +3,11 @@ import random
 from datetime import datetime, timedelta
 from inspect import Parameter
 from collections import OrderedDict
-from typing import Mapping, Tuple, Dict, Set
+from typing import Iterable, List, Mapping, Tuple, Dict, Set
 from urllib.parse import quote_plus
 
 import discord
+from fuzzywuzzy import process
 
 from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator, cog_i18n
@@ -205,6 +206,33 @@ class CustomCommands(commands.Cog):
         """Custom commands management."""
         pass
 
+    @customcom.command(name="search")
+    @commands.guild_only()
+    async def cc_search(self, ctx: commands.Context, *, query):
+        """Searches through custom commands, according to the query."""
+        cc_commands = await CommandObj.get_commands(self.config.guild(ctx.guild))
+        extracted = process.extract(query, list(cc_commands.keys()))
+        accepted = []
+        for entry in extracted:
+            if entry[1] > 60:
+                # Match was decently strong
+                accepted.append((entry[0], cc_commands[entry[0]]))
+            else:
+                # Match wasn't strong enough
+                pass
+        if len(accepted) == 0:
+            return await ctx.send(_("No close matches were found."))
+        results = self.prepare_command_list(ctx, accepted)
+        if await ctx.embed_requested():
+            content = " \n".join(map("**{0[0]}** {0[1]}".format, results))
+            embed = discord.Embed(
+                title=_("Search results"), description=content, colour=await ctx.embed_colour()
+            )
+            await ctx.send(embed=embed)
+        else:
+            content = "\n".join(map("{0[0]:<12} : {0[1]}".format, results))
+            await ctx.send(_("The following matches have been found:") + box(content))
+
     @customcom.group(name="create", aliases=["add"], invoke_without_command=True)
     @checks.mod_or_permissions(administrator=True)
     async def cc_create(self, ctx: commands.Context, command: str.lower, *, text: str):
@@ -359,23 +387,7 @@ class CustomCommands(commands.Cog):
             )
             return
 
-        results = []
-        for command, body in sorted(cc_dict.items(), key=lambda t: t[0]):
-            responses = body["response"]
-            if isinstance(responses, list):
-                result = ", ".join(responses)
-            elif isinstance(responses, str):
-                result = responses
-            else:
-                continue
-            # Cut preview to 52 characters max
-            if len(result) > 52:
-                result = result[:49] + "..."
-            # Replace newlines with spaces
-            result = result.replace("\n", " ")
-            # Escape markdown and mass mentions
-            result = escape(result, formatting=True, mass_mentions=True)
-            results.append((f"{ctx.clean_prefix}{command}", result))
+        results = self.prepare_command_list(ctx, sorted(cc_dict.items(), key=lambda t: t[0]))
 
         if await ctx.embed_requested():
             # We need a space before the newline incase the CC preview ends in link (GH-2295)
@@ -663,3 +675,26 @@ class CustomCommands(commands.Cog):
 
         """
         return set(await CommandObj.get_commands(self.config.guild(guild)))
+
+    @staticmethod
+    def prepare_command_list(
+        ctx: commands.Context, command_list: Iterable[Tuple[str, dict]]
+    ) -> List[Tuple[str, str]]:
+        results = []
+        for command, body in command_list:
+            responses = body["response"]
+            if isinstance(responses, list):
+                result = ", ".join(responses)
+            elif isinstance(responses, str):
+                result = responses
+            else:
+                continue
+            # Cut preview to 52 characters max
+            if len(result) > 52:
+                result = result[:49] + "..."
+            # Replace newlines with spaces
+            result = result.replace("\n", " ")
+            # Escape markdown and mass mentions
+            result = escape(result, formatting=True, mass_mentions=True)
+            results.append((f"{ctx.clean_prefix}{command}", result))
+        return results

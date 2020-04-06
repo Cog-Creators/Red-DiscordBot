@@ -20,6 +20,7 @@ from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequen
 import aiohttp
 import discord
 import pkg_resources
+from babel import Locale as BabelLocale, UnknownLocaleError
 
 from . import (
     __version__,
@@ -896,18 +897,21 @@ class Core(commands.Cog, CoreLogic):
 
             prefixes = await ctx.bot._prefix_cache.get_prefixes(ctx.guild)
             locale = await ctx.bot._config.locale()
+            regional_format = await ctx.bot._config.regional_format() or _("Same as bot's locale")
 
             prefix_string = " ".join(prefixes)
             settings = _(
                 "{bot_name} Settings:\n\n"
                 "Prefixes: {prefixes}\n"
                 "{guild_settings}"
-                "Locale: {locale}"
+                "Locale: {locale}\n"
+                "Regional format: {regional_format}"
             ).format(
                 bot_name=ctx.bot.user.name,
                 prefixes=prefix_string,
                 guild_settings=guild_settings,
                 locale=locale,
+                regional_format=regional_format,
             )
             for page in pagify(settings):
                 await ctx.send(box(page))
@@ -1275,28 +1279,68 @@ class Core(commands.Cog, CoreLogic):
 
     @_set.command()
     @checks.is_owner()
-    async def locale(self, ctx: commands.Context, locale_name: str):
+    async def locale(self, ctx: commands.Context, language_code: str):
         """
-        Changes bot locale.
+        Changes bot's locale.
 
-        Use [p]listlocales to get a list of available locales.
+        `<language_code>` can be any language code with country code included,
+        e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
+
+        Go to Red's Crowdin page to see locales that are available with translations:
+        https://translate.discord.red
 
         To reset to English, use "en-US".
         """
-        red_dist = pkg_resources.get_distribution("red-discordbot")
-        red_path = Path(red_dist.location) / "redbot"
-        locale_list = [loc.stem.lower() for loc in list(red_path.glob("**/*.po"))]
-        if locale_name.lower() in locale_list or locale_name.lower() == "en-us":
-            i18n.set_locale(locale_name)
-            await ctx.bot._config.locale.set(locale_name)
-            await ctx.send(_("Locale has been set."))
-        else:
+        try:
+            locale = BabelLocale.parse(language_code, sep="-")
+        except (ValueError, UnknownLocaleError):
+            await ctx.send(_("Invalid language code. Use format: `en-US`"))
+            return
+        if locale.territory is None:
             await ctx.send(
-                _(
-                    "Invalid locale. Use `{prefix}listlocales` to get "
-                    "a list of available locales."
-                ).format(prefix=ctx.clean_prefix)
+                _("Invalid format - language code has to include country code, e.g. `en-US`")
             )
+            return
+        standardized_locale_name = f"{locale.language}-{locale.territory}"
+        i18n.set_locale(standardized_locale_name)
+        await ctx.bot._config.locale.set(standardized_locale_name)
+        await ctx.send(_("Locale has been set."))
+
+    @_set.command(aliases=["region"])
+    @checks.is_owner()
+    async def regionalformat(self, ctx: commands.Context, language_code: str = None):
+        """
+        Changes bot's regional format. This is used for formatting date, time and numbers.
+
+        `<language_code>` can be any language code with country code included,
+        e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
+
+        Leave `<language_code>` empty to base regional formatting on bot's locale.
+        """
+        if language_code is None:
+            i18n.set_regional_format(None)
+            await ctx.bot._config.regional_format.set(None)
+            await ctx.send(_("Regional formatting will now be based on bot's locale."))
+            return
+
+        try:
+            locale = BabelLocale.parse(language_code, sep="-")
+        except (ValueError, UnknownLocaleError):
+            await ctx.send(_("Invalid language code. Use format: `en-US`"))
+            return
+        if locale.territory is None:
+            await ctx.send(
+                _("Invalid format - language code has to include country code, e.g. `en-US`")
+            )
+            return
+        standardized_locale_name = f"{locale.language}-{locale.territory}"
+        i18n.set_regional_format(standardized_locale_name)
+        await ctx.bot._config.regional_format.set(standardized_locale_name)
+        await ctx.send(
+            _("Regional formatting will now be based on `{language_code}` locale.").format(
+                language_code=standardized_locale_name
+            )
+        )
 
     @_set.command()
     @checks.is_owner()
@@ -1502,27 +1546,6 @@ class Core(commands.Cog, CoreLogic):
 
         await ctx.bot._config.help.tagline.set(tagline)
         await ctx.send(_("The tagline has been set."))
-
-    @commands.command()
-    @checks.is_owner()
-    async def listlocales(self, ctx: commands.Context):
-        """
-        Lists all available locales
-
-        Use `[p]set locale` to set a locale
-        """
-        async with ctx.channel.typing():
-            red_dist = pkg_resources.get_distribution("red-discordbot")
-            red_path = Path(red_dist.location) / "redbot"
-            locale_list = [loc.stem for loc in list(red_path.glob("**/*.po"))]
-            locale_list.append("en-US")
-            locale_list = sorted(set(locale_list))
-            if not locale_list:
-                await ctx.send(_("No languages found."))
-                return
-            pages = pagify("\n".join(locale_list), shorten_by=26)
-
-        await ctx.send_interactive(pages, box_lang="Available Locales:")
 
     @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)
@@ -1752,11 +1775,15 @@ class Core(commands.Cog, CoreLogic):
         """
         pass
 
-    @whitelist.command(name="add")
+    @whitelist.command(name="add", usage="<user>...")
     async def whitelist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Adds a user to the whitelist.
         """
+        if not users:
+            await ctx.send_help()
+            return
+
         uids = [getattr(user, "id", user) for user in users]
         await self.bot._whiteblacklist_cache.add_to_whitelist(None, uids)
 
@@ -1780,11 +1807,15 @@ class Core(commands.Cog, CoreLogic):
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @whitelist.command(name="remove")
+    @whitelist.command(name="remove", usage="<user>...")
     async def whitelist_remove(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Removes user from whitelist.
         """
+        if not users:
+            await ctx.send_help()
+            return
+
         uids = [getattr(user, "id", user) for user in users]
         await self.bot._whiteblacklist_cache.remove_from_whitelist(None, uids)
 
@@ -1806,11 +1837,15 @@ class Core(commands.Cog, CoreLogic):
         """
         pass
 
-    @blacklist.command(name="add")
+    @blacklist.command(name="add", usage="<user>...")
     async def blacklist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Adds a user to the blacklist.
         """
+        if not users:
+            await ctx.send_help()
+            return
+
         for user in users:
             if isinstance(user, int):
                 user_obj = discord.Object(id=user)
@@ -1843,11 +1878,14 @@ class Core(commands.Cog, CoreLogic):
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @blacklist.command(name="remove")
+    @blacklist.command(name="remove", usage="<user>...")
     async def blacklist_remove(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Removes user from blacklist.
         """
+        if not users:
+            await ctx.send_help()
+            return
 
         uids = [getattr(user, "id", user) for user in users]
         await self.bot._whiteblacklist_cache.remove_from_blacklist(None, uids)
@@ -1871,13 +1909,17 @@ class Core(commands.Cog, CoreLogic):
         """
         pass
 
-    @localwhitelist.command(name="add")
+    @localwhitelist.command(name="add", usage="<user_or_role>...")
     async def localwhitelist_add(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Adds a user or role to the whitelist.
         """
+        if not users_or_roles:
+            await ctx.send_help()
+            return
+
         names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
         uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
         await self.bot._whiteblacklist_cache.add_to_whitelist(ctx.guild, uids)
@@ -1902,13 +1944,17 @@ class Core(commands.Cog, CoreLogic):
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @localwhitelist.command(name="remove")
+    @localwhitelist.command(name="remove", usage="<user_or_role>...")
     async def localwhitelist_remove(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Removes user or role from whitelist.
         """
+        if not users_or_roles:
+            await ctx.send_help()
+            return
+
         names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
         uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
         await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
@@ -1934,13 +1980,17 @@ class Core(commands.Cog, CoreLogic):
         """
         pass
 
-    @localblacklist.command(name="add")
+    @localblacklist.command(name="add", usage="<user_or_role>...")
     async def localblacklist_add(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Adds a user or role to the blacklist.
         """
+        if not users_or_roles:
+            await ctx.send_help()
+            return
+
         for user_or_role in users_or_roles:
             uid = discord.Object(id=getattr(user_or_role, "id", user_or_role))
             if uid.id == ctx.author.id:
@@ -1978,13 +2028,17 @@ class Core(commands.Cog, CoreLogic):
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @localblacklist.command(name="remove")
+    @localblacklist.command(name="remove", usage="<user_or_role>...")
     async def localblacklist_remove(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Removes user or role from blacklist.
         """
+        if not users_or_roles:
+            await ctx.send_help()
+            return
+
         names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
         uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
         await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)

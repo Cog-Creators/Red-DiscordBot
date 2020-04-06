@@ -1,1 +1,0 @@
-Don't use `inspect.getsource` to check for ``is_owner`` check.

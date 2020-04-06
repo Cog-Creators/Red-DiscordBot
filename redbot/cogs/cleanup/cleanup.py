@@ -1,5 +1,4 @@
 import logging
-import re
 from datetime import datetime, timedelta
 from typing import Union, List, Callable, Set
 
@@ -63,6 +62,7 @@ class Cleanup(commands.Cog):
         channel: discord.TextChannel,
         number: int = None,
         check: Callable[[discord.Message], bool] = lambda x: True,
+        limit: int = None,
         before: Union[discord.Message, datetime] = None,
         after: Union[discord.Message, datetime] = None,
         delete_pinned: bool = False,
@@ -99,7 +99,7 @@ class Cleanup(commands.Cog):
 
         collected = []
         async for message in channel.history(
-            limit=None, before=before, after=after, oldest_first=False
+            limit=limit, before=before, after=after, oldest_first=False
         ):
             if message.created_at < two_weeks_ago:
                 break
@@ -486,16 +486,7 @@ class Cleanup(commands.Cog):
             me = ctx.guild.me
             can_mass_purge = channel.permissions_for(me).manage_messages
 
-        use_re = match_pattern and match_pattern.startswith("r(") and match_pattern.endswith(")")
-
-        if use_re:
-            match_pattern = match_pattern[1:]  # strip 'r'
-            match_re = re.compile(match_pattern)
-
-            def content_match(c):
-                return bool(match_re.match(c))
-
-        elif match_pattern:
+        if match_pattern:
 
             def content_match(c):
                 return match_pattern in c
@@ -541,3 +532,46 @@ class Cleanup(commands.Cog):
             await mass_purge(to_delete, channel)
         else:
             await slow_deletion(to_delete)
+
+    @cleanup.command(name="spam")
+    @commands.guild_only()
+    @commands.bot_has_permissions(manage_messages=True)
+    async def cleanup_spam(self, ctx: commands.Context, number: int = 50):
+        """Deletes duplicate messages in the channel from the last X messages and keeps only one copy.
+        
+        Defaults to 50.
+        """
+        msgs = []
+        spam = []
+
+        def check(m):
+            if m.attachments:
+                return False
+            c = (m.author.id, m.content, [e.to_dict() for e in m.embeds])
+            if c in msgs:
+                spam.append(m)
+                return True
+            else:
+                msgs.append(c)
+                return False
+
+        to_delete = await self.get_messages_for_deletion(
+            channel=ctx.channel, limit=number, check=check, before=ctx.message,
+        )
+
+        if len(to_delete) > 100:
+            cont = await self.check_100_plus(ctx, len(to_delete))
+            if not cont:
+                return
+
+        log.info(
+            "%s (%s) deleted %s spam messages in channel %s (%s).",
+            ctx.author,
+            ctx.author.id,
+            len(to_delete),
+            ctx.channel,
+            ctx.channel.id,
+        )
+
+        to_delete.append(ctx.message)
+        await mass_purge(to_delete, ctx.channel)

@@ -1,5 +1,174 @@
 .. 3.3.x Changelogs
 
+Redbot 3.3.4 (2020-04-05)
+=========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`jack1142`, :ghuser:`kennnyshiwa`
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- Fixed checks related to bank's global state that were used in commands in Bank, Economy and Trivia cogs (:issue:`3707`)
+
+Alias
+*****
+
+- ``[p]alias add`` now sends an error when command user tries to alias doesn't exist (:issue:`3710`, :issue:`3545`)
+
+Developer changelog
+-------------------
+
+Core Bot
+********
+
+- Bump dependencies, including update to discord.py 1.3.3 (:issue:`3723`)
+
+Utility Functions
+*****************
+
+- `redbot.core.utils.common_filters.filter_invites` now filters ``discord.io/discord.li`` invites links (:issue:`3717`)
+- Fixed false-positives in `redbot.core.utils.common_filters.filter_invites` (:issue:`3717`)
+
+Documentation changes
+---------------------
+
+- Versions of pre-requirements are now included in Windows install guide (:issue:`3708`)
+
+
+Redbot 3.3.3 (2020-03-28)
+=========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`AnonGuy`, :ghuser:`Dav-Git`, :ghuser:`FancyJesse`, :ghuser:`Ianardo-DiCaprio`, :ghuser:`jack1142`, :ghuser:`kennnyshiwa`, :ghuser:`Kowlin`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Stonedestroyer`, :ghuser:`TrustyJAID`
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- Delete delay for command messages has been moved from Mod cog to Core (:issue:`3638`, :issue:`3636`)
+- Fixed various bugs with blacklist and whitelist (:issue:`3643`, :issue:`3642`)
+- Added ``[p]set regionalformat`` command that allows users to set regional formatting that is different from bot's locale (:issue:`3677`, :issue:`3588`)
+- ``[p]set locale`` allows any valid locale now, not just locales for which Red has translations (:issue:`3676`, :issue:`3596`)
+- Permissions for commands in Bank, Economy and Trivia cogs can now be overriden by Permissions cog (:issue:`3672`, :issue:`3233`)
+- Outages of ``pypi.org`` no longer prevent the bot from starting (:issue:`3663`)
+- Fixed formatting of help strings in fuzzy search results (:issue:`3673`, :issue:`3507`)
+- Fixed few deprecation warnings related to menus and uvloop (:issue:`3644`, :issue:`3700`)
+
+Core Commands
+*************
+
+- ``[p]set game`` no longer errors when trying to clear the status (:issue:`3630`, :issue:`3628`)
+- All owner notifcations in Core now use proper prefixes in messages (:issue:`3632`)
+- Added ``[p]set playing`` and ``[p]set streaming`` aliases for respectively ``[p]set game`` and ``[p]set stream`` (:issue:`3646`, :issue:`3590`)
+
+ModLog
+******
+
+- Modlog's cases now keep last known username to prevent losing that information from case's message on edit (:issue:`3674`, :issue:`3443`)
+
+CustomCom
+*********
+
+- Added ``[p]cc search`` command that allows users to search through created custom commands (:issue:`2573`)
+
+Cleanup
+*******
+
+- Added ``[p]cleanup spam`` command that deletes duplicate messages from the last X messages and keeps only one copy (:issue:`3688`)
+- Removed regex support in ``[p]cleanup self`` (:issue:`3704`)
+
+Downloader
+**********
+
+- ``[p]cog checkforupdates`` now includes information about cogs that can't be installed due to Red/Python version requirements (:issue:`3678`, :issue:`3448`)
+
+General
+*******
+
+- Added more detailed mode to ``[p]serverinfo`` command that can be accessed with ``[p]serverinfo 1`` (:issue:`2382`, :issue:`3659`)
+
+Image
+*****
+
+- Users can now specify how many images should be returned in ``[p]imgur search`` and ``[p]imgur subreddit`` using ``[count]`` argument (:issue:`3667`, :issue:`3044`)
+- ``[p]imgur search`` and ``[p]imgur subreddit`` now return one image by default (:issue:`3667`, :issue:`3044`)
+
+Mod
+***
+
+- ``[p]userinfo`` now shows user's activities (:issue:`3669`)
+- ``[p]userinfo`` now shows status icon near the username (:issue:`3669`)
+- Muting no longer fails if user leaves while applying overwrite (:issue:`3627`)
+- Fixed error that happened when Mod cog was loaded for the first time during bot startup (:issue:`3632`, :issue:`3626`)
+
+Permissions
+***********
+
+- Commands for setting default rules now error when user tries to deny access to command designated as being always available (:issue:`3504`, :issue:`3465`)
+
+Streams
+*******
+
+- Fixed an error that happened when no game was set on Twitch stream (:issue:`3631`)
+- Preview picture for YouTube stream alerts is now bigger (:issue:`3689`, :issue:`3685`)
+- YouTube channels with a livestream that doesn't have any current viewer are now properly showing as streaming (:issue:`3690`)
+- Failures in Twitch API authentication are now logged (:issue:`3657`)
+
+Trivia
+******
+
+- Added ``[p]triviaset custom upload/delete/list`` commands for managing custom trivia lists from Discord (:issue:`3420`, :issue:`3307`)
+- Trivia sessions no longer error on payout when winner's balance would exceed max balance (:issue:`3666`, :issue:`3584`)
+
+Warnings
+********
+
+- Sending warnings to warned user can now be disabled with ``[p]warnset toggledm`` command (:issue:`2929`, :issue:`2800`)
+- Added ``[p]warnset warnchannel`` command that allows to set a channel where warnings should be sent to instead of the channel command was called in (:issue:`2929`, :issue:`2800`)
+- Added ``[p]warnset togglechannel`` command that allows to disable sending warn message in guild channel (:issue:`2929`, :issue:`2800`)
+- ``[p]warn`` now tells the moderator when bot wasn't able to send the warning to the user (:issue:`3653`, :issue:`3633`)
+
+
+Developer changelog
+-------------------
+
+Core Bot
+********
+
+- Deprecation warnings issued by Red now use correct stack level so that the cog developers can find the cause of them (:issue:`3644`)
+
+Dev Cog
+*******
+
+- Add ``__name__`` to environment's globals (:issue:`3649`, :issue:`3648`)
+
+
+Documentation changes
+---------------------
+
+- Fixed install instructions for Mac in `install_linux_mac` (:issue:`3675`, :issue:`3436`)
+- Windows install instructions now use ``choco upgrade`` commands instead of ``choco install`` to ensure up-to-date packages (:issue:`3684`)
+
+
+Miscellaneous
+-------------
+
+- **Core Bot** - Command errors (i.e. command on cooldown, dm-only and guild-only commands, etc) can now be translated (:issue:`3665`, :issue:`2988`)
+- **Core Bot** - ``redbot-setup`` now prints link to Getting started guide at the end of the setup (:issue:`3027`)
+- **Core Bot** - Whitelist and blacklist commands now properly require passing at least one user (or role in case of local whitelist/blacklist) (:issue:`3652`, :issue:`3645`)
+- **Downloader** - Fix misleading error appearing when repo name is already taken in ``[p]repo add`` (:issue:`3695`)
+- **Downloader** - Improved error messages for unexpected errors in ``[p]repo add`` (:issue:`3656`)
+- **Downloader** - Prevent encoding errors from crashing ``[p]cog update`` (:issue:`3639`, :issue:`3637`)
+- **Trivia** - Non-finite numbers can no longer be passed to ``[p]triviaset timelimit``, ``[p]triviaset stopafter`` and ``[p]triviaset payout`` (:issue:`3668`, :issue:`3583`)
+- **Utility Functions** - `redbot.core.utils.menus.menu()` now checks permissions *before* trying to clear reactions (:issue:`3589`, :issue:`3145`)
+
+
 Redbot 3.3.2 (2020-02-28)
 =========================
 
