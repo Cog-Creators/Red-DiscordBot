@@ -324,19 +324,19 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     and hasattr(track, "author")
                     and track.author != "Unknown artist"
                 ):
-                    return escape(f"{track.author} - {track.title}", formatting=True)
+                    return f"{track.author} - {track.title}"
                 elif hasattr(track, "title") and track.title != "Unknown title":
-                    return escape(f"{track.title}", formatting=True)
+                    return f"{track.title}"
                 else:
-                    return escape(query.to_string_user(), formatting=True)
+                    return query.to_string_user()
             else:
                 if track.author.lower() not in track.title.lower():
                     title = f"{track.title} - {track.author}"
                 else:
                     title = track.title
-                return escape(f"{title}", formatting=True)
+                return f"{title}"
         elif hasattr(track, "to_string_user") and track.is_local:
-            return escape(track.to_string_user() + " ", formatting=True)
+            return track.to_string_user() + " "
         return None
 
     def format_playlist_picker_data(self, pid, pname, ptracks, pauthor, scope) -> str:
