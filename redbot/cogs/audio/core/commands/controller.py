@@ -95,16 +95,13 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             with contextlib.suppress(discord.HTTPException):
                 await player.fetch("np_message").delete()
         embed = discord.Embed(title=_("Now Playing"), description=song)
-        if (
-            await self.config.guild(ctx.guild).thumbnail()
-            and player.current
-            and player.current.thumbnail
-        ):
-            embed.set_thumbnail(url=player.current.thumbnail)
+        guild_data = await self.config.guild(ctx.guild).all()
 
-        shuffle = await self.config.guild(ctx.guild).shuffle()
-        repeat = await self.config.guild(ctx.guild).repeat()
-        autoplay = await self.config.guild(ctx.guild).auto_play()
+        if guild_data["thumbnail"] and player.current and player.current.thumbnail:
+            embed.set_thumbnail(url=player.current.thumbnail)
+        shuffle = guild_data["shuffle"]
+        repeat = guild_data["repeat"]
+        autoplay = guild_data["auto_play"]
         text = ""
         text += (
             _("Auto-Play")
@@ -139,7 +136,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         ):
             return
 
-        if not player.queue:
+        if not player.queue and not autoplay:
             expected = ("⏹", "⏯", "\N{CROSS MARK}")
         task: Optional[asyncio.Task]
         if player.current:

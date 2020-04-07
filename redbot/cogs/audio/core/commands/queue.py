@@ -3,7 +3,7 @@ import contextlib
 import datetime
 import logging
 import math
-from typing import MutableMapping, Optional
+from typing import MutableMapping, Optional, Union, Tuple
 
 import discord
 import lavalink
@@ -70,16 +70,13 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             song += "\n\n{arrow}`{pos}`/`{dur}`"
             song = song.format(track=player.current, arrow=arrow, pos=pos, dur=dur)
             embed = discord.Embed(title=_("Now Playing"), description=song)
-            if (
-                await self.config.guild(ctx.guild).thumbnail()
-                and player.current
-                and player.current.thumbnail
-            ):
+            guild_data = await self.config.guild(ctx.guild).all()
+            if guild_data["thumbnail"] and player.current and player.current.thumbnail:
                 embed.set_thumbnail(url=player.current.thumbnail)
 
-            shuffle = await self.config.guild(ctx.guild).shuffle()
-            repeat = await self.config.guild(ctx.guild).repeat()
-            autoplay = await self.config.guild(ctx.guild).auto_play()
+            shuffle = guild_data["shuffle"]
+            repeat = guild_data["repeat"]
+            autoplay = guild_data["auto_play"]
             text = ""
             text += (
                 _("Auto-Play")
@@ -100,10 +97,8 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
             embed.set_footer(text=text)
             message = await self.send_embed_msg(ctx, embed=embed)
-            dj_enabled = self._dj_status_cache.setdefault(
-                ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-            )
-            vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
+            dj_enabled = self._dj_status_cache.setdefault(ctx.guild.id, guild_data["dj_enabled"])
+            vote_enabled = guild_data["vote_enabled"]
             if (
                 (dj_enabled or vote_enabled)
                 and not await self._can_instaskip(ctx, ctx.author)
@@ -111,8 +106,16 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             ):
                 return
 
-            expected = ("⏹", "⏯", "\N{CROSS MARK}")
-            emoji = {"stop": "⏹", "pause": "⏯", "close": "\N{CROSS MARK}"}
+            expected: Union[Tuple[str, ...]] = ("⏮", "⏹", "⏯", "⏭", "\N{CROSS MARK}")
+            emoji = {
+                "prev": "⏮",
+                "stop": "⏹",
+                "pause": "⏯",
+                "next": "⏭",
+                "close": "\N{CROSS MARK}",
+            }
+            if not player.queue and not autoplay:
+                expected = ("⏹", "⏯", "\N{CROSS MARK}")
             if player.current:
                 task: Optional[asyncio.Task] = start_adding_reactions(message, expected[:5])
             else:
@@ -131,12 +134,18 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                     task.cancel()
             reacts = {v: k for k, v in emoji.items()}
             react = reacts[r.emoji]
-            if react == "stop":
+            if react == "prev":
                 await self._clear_react(message, emoji)
-                return await ctx.invoke(self.command_stop)
+                await ctx.invoke(self.command_prev)
+            elif react == "stop":
+                await self._clear_react(message, emoji)
+                await ctx.invoke(self.command_stop)
             elif react == "pause":
                 await self._clear_react(message, emoji)
-                return await ctx.invoke(self.command_pause)
+                await ctx.invoke(self.command_pause)
+            elif react == "next":
+                await self._clear_react(message, emoji)
+                await ctx.invoke(self.command_skip)
             elif react == "close":
                 await message.delete()
             return

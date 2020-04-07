@@ -795,10 +795,19 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 )
                 if not guild_data["shuffle"] and queue_dur > 0:
+                    if query.is_local and query.is_album:
+                        footer = _("folder")
+                    else:
+                        footer = _("search")
+
                     songembed.set_footer(
                         text=_(
-                            "{time} until start of search playback: starts at #{position} in queue"
-                        ).format(time=queue_total_duration, position=before_queue_length + 1)
+                            "{time} until start of {type} playback: starts at #{position} in queue"
+                        ).format(
+                            time=queue_total_duration,
+                            position=before_queue_length + 1,
+                            type=footer,
+                        )
                     )
                 return await self.send_embed_msg(ctx, embed=songembed)
             elif query.is_local and query.single_track:
