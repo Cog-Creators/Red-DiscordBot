@@ -257,7 +257,6 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 if not await self.bot.is_owner(ctx.author)
                 else _("Check your logs."),
             )
-
         if scope_data is None:
             scope_data = [
                 PlaylistScope.GUILD.value,
