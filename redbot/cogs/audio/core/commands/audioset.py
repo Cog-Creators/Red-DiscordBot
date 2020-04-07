@@ -963,6 +963,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         has_spotify_cache = current_level.is_superset(spotify_cache)
         has_youtube_cache = current_level.is_superset(youtube_cache)
         has_lavalink_cache = current_level.is_superset(lavalink_cache)
+        cache_enabled = CacheLevel.set_lavalink().is_subset(current_level)
         autoplaylist = data["autoplaylist"]
         vote_enabled = data["vote_enabled"]
         msg = "----" + _("Server Settings") + "----        \n"
@@ -1027,10 +1028,14 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                     pscope = f"User"
                 else:
                     pscope = "Global"
-            else:
+            elif cache_enabled:
                 pname = _("Cached")
                 pid = _("Cached")
                 pscope = _("Cached")
+            else:
+                pname = _("US Top 100")
+                pid = _("US Top 100")
+                pscope = _("US Top 100")
             msg += (
                 "\n---"
                 + _("Auto-play Settings")

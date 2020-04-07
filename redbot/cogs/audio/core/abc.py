@@ -492,3 +492,11 @@ class MixinMeta(ABC):
     @abstractmethod
     async def get_lyrics_status(self, ctx: Context) -> bool:
         raise NotImplementedError()
+
+    @abstractmethod
+    async def command_skip(self, ctx: commands.Context, skip_to_track: int = None):
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def command_prev(self, ctx: commands.Context):
+        raise NotImplementedError()
