@@ -350,7 +350,7 @@ class Core(commands.Cog, CoreLogic):
         embed.add_field(name="Python", value=python_version)
         embed.add_field(name="discord.py", value=dpy_version)
         embed.add_field(name=_("Red version"), value=red_version)
-        if outdated is (True, None):
+        if outdated in (True, None):
             if outdated is True:
                 outdated_value = _("Yes, {version} is available.").format(
                     version=data["info"]["version"]
