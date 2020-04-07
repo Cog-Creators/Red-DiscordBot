@@ -5,7 +5,7 @@ import functools
 import json
 import logging
 import re
-from typing import Any, Final, MutableMapping, Union, cast
+from typing import Any, Final, MutableMapping, Union, cast, Mapping
 
 import discord
 import lavalink
