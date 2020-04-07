@@ -3,6 +3,7 @@ import concurrent
 import contextlib
 import datetime
 import logging
+import random
 import time
 from types import SimpleNamespace
 from typing import Callable, List, MutableMapping, Optional, TYPE_CHECKING, Tuple, Union
@@ -216,7 +217,11 @@ class BaseWrapper:
             ):
                 try:
                     row_result = future.result()
-                    row = row_result.fetchone()
+                    rows = row_result.fetchall()
+                    if rows:
+                        row = random.choice(rows)
+                    else:
+                        row = None
                 except Exception as exc:
                     debug_exc_log(log, exc, "Failed to completed random fetch from database")
         if not row:
