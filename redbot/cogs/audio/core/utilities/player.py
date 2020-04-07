@@ -116,7 +116,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def is_requester(self, ctx: commands.Context, member: discord.Member) -> bool:
         try:
             player = lavalink.get_player(ctx.guild.id)
-            log.debug(f"Current requester is {player.current}")
+            log.debug(f"Current requester is {player.current.requester}")
             return player.current.requester.id == member.id
         except Exception as err:
             debug_exc_log(log, err, "Caught error in `is_requester`")
