@@ -399,7 +399,7 @@ class ComplexScopeParser(commands.Converter):
         if is_owner and from_guild:
             source_server_error = ""
             source_guild = None
-            from_guild_raw = " ".join(to_guild).strip()
+            from_guild_raw = " ".join(from_guild).strip()
             try:
                 source_guild = await global_unique_guild_finder(ctx, from_guild_raw)
             except TooManyMatches as err:
@@ -448,7 +448,7 @@ class ComplexScopeParser(commands.Converter):
         if from_author:
             source_user_error = ""
             source_user = None
-            from_user_raw = " ".join(to_author).strip()
+            from_user_raw = " ".join(from_author).strip()
             try:
                 source_user = await global_unique_user_finder(
                     ctx, from_user_raw, guild=target_guild
