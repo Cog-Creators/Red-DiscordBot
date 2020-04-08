@@ -4,7 +4,7 @@ Redbot 3.3.4 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Kowlin`
+| :ghuser:`jack1142`, :ghuser:`Kowlin`
 
 End-user changelog
 ------------------
@@ -13,6 +13,11 @@ Core Bot
 ********
 
 - "Outdated" field no longer shows in ``[p]info`` when Red is up-to-date (:issue:`3730`)
+
+Alias
+*****
+
+- Fixed regression in ``[p]alias add`` that caused it to reject commands containing arguments (:issue:`3734`)
 
 
 Developer changelog
