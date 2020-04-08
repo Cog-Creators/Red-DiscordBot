@@ -1,6 +1,6 @@
 .. 3.3.x Changelogs
 
-Redbot 3.3.4 (Unreleased)
+Redbot 3.3.4 (2020-04-09)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
@@ -18,21 +18,6 @@ Alias
 *****
 
 - Fixed regression in ``[p]alias add`` that caused it to reject commands containing arguments (:issue:`3734`)
-
-
-Developer changelog
--------------------
-
-
-
-Documentation changes
----------------------
-
-
-
-Miscellaneous
--------------
-
 
 
 Redbot 3.3.4 (2020-04-05)
