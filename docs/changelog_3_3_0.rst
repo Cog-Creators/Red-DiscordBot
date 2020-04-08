@@ -4,11 +4,15 @@ Redbot 3.3.4 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| 
+| :ghuser:`Kowlin`
 
 End-user changelog
 ------------------
 
+Core Bot
+********
+
+- "Outdated" field no longer shows in ``[p]info`` when Red is up-to-date (:issue:`3730`)
 
 
 Developer changelog
