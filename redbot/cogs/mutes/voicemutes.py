@@ -82,7 +82,7 @@ class VoiceMutes(MixinMeta):
         elif needs_undeafen:
             await user.edit(deafen=False, reason=audit_reason)
         else:
-            await ctx.send(_("That user isn't muted or deafened by the server!"))
+            await ctx.send(_("That user isn't muted or deafened by the server."))
             return
 
         guild = ctx.guild
@@ -101,7 +101,7 @@ class VoiceMutes(MixinMeta):
             )
         except RuntimeError as e:
             await ctx.send(e)
-        await ctx.send(_("User is now allowed to speak and listen in voice channels"))
+        await ctx.send(_("User is now allowed to speak and listen in voice channels."))
 
     @commands.command()
     @commands.guild_only()
@@ -128,7 +128,7 @@ class VoiceMutes(MixinMeta):
         elif needs_deafen:
             await user.edit(deafen=True, reason=audit_reason)
         else:
-            await ctx.send(_("That user is already muted and deafened server-wide!"))
+            await ctx.send(_("That user is already muted and deafened server-wide."))
             return
 
         try:
@@ -145,7 +145,7 @@ class VoiceMutes(MixinMeta):
             )
         except RuntimeError as e:
             await ctx.send(e)
-        await ctx.send(_("User has been banned from speaking or listening in voice channels"))
+        await ctx.send(_("User has been banned from speaking or listening in voice channels."))
 
     @commands.command(name="voicemute")
     @commands.guild_only()
@@ -182,7 +182,7 @@ class VoiceMutes(MixinMeta):
             except RuntimeError as e:
                 await ctx.send(e)
             await ctx.send(
-                _("Muted {user} in channel {channel.name}").format(user=user, channel=channel)
+                _("Muted {user} in channel {channel.name}.").format(user=user, channel=channel)
             )
         else:
             await ctx.send(issue)
@@ -223,5 +223,5 @@ class VoiceMutes(MixinMeta):
         except RuntimeError as e:
             await ctx.send(e)
         await ctx.send(
-            _("Unmuted {user} in channel {channel.name}").format(user=user, channel=channel)
+            _("Unmuted {user} in channel {channel.name}.").format(user=user, channel=channel)
         )
