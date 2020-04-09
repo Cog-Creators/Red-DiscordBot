@@ -2,7 +2,6 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-03-05 12:14\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -12,13 +11,12 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: ru\n"
-"X-Crowdin-File: /cogs/audio/locales/messages.pot\n"
 "Language: ru_RU\n"
 
 #: redbot/cogs/audio/apis.py:213
 #, docstring
 msgid "Handles music queries to the Spotify and Youtube Data API.\\n\\n    Always tries the Cache first.\\n    "
-msgstr ""
+msgstr "Обрабатывает музыкальные запросы к API данных Spotify и Youtube.\\n\\n    Сначала всегда пытается кэш\\n    "
 
 #: redbot/cogs/audio/apis.py:508 redbot/cogs/audio/audio.py:3479
 msgid "This doesn't seem to be a supported Spotify URL or code."
@@ -30,7 +28,7 @@ msgstr "Соединение было сброшено при загрузке �
 
 #: redbot/cogs/audio/apis.py:576
 msgid "Player timeout, skipping remaining tracks."
-msgstr ""
+msgstr "Тайм-аут проигрывателя, пропуск оставшихся треков."
 
 #: redbot/cogs/audio/apis.py:598
 msgid "Failing to get tracks, skipping remaining."
@@ -392,11 +390,11 @@ msgstr "Отсутствуют аргументы"
 #: redbot/cogs/audio/audio.py:5193 redbot/cogs/audio/audio.py:5490
 #: redbot/cogs/audio/audio.py:5587 redbot/cogs/audio/audio.py:5864
 msgid "You need to specify the Guild ID for the guild to lookup."
-msgstr ""
+msgstr "Вам необходимо уточнить ID сервера для поиска."
 
 #: redbot/cogs/audio/audio.py:1197
 msgid "Playlist {name} (`{id}`) [**{scope}**] will be used for autoplay."
-msgstr ""
+msgstr "Плейлист {name} (`{id}`) [**{scope}**] будет использован для автоматического проигрывания."
 
 #: redbot/cogs/audio/audio.py:1210
 #, docstring
