@@ -195,6 +195,21 @@ it isn't, check your code against the code below:
         await cog.task()
         bot.add_cog(cog)
 
+***********************
+Converted RPC functions
+***********************
+
+Below is a list of all commands that have RPC functions attached to them.  You can call them by doing :code:`COGNAME_` +
+:code:`METHOD_NAME`.
+
+.. automodule:: redbot.core.core_commands
+
+Core
+^^^^
+
+.. autoclass:: CoreLogic
+    :special-members: _load, _unload, _reload, _name, _prefixes, _invite_url
+
 *************
 API Reference
 *************

@@ -75,6 +75,7 @@ class CoreLogic:
     ) -> Tuple[List[str], List[str], List[str], List[str], List[Tuple[str, str]], Set[str]]:
         """
         Loads cogs by name.
+
         Parameters
         ----------
         cog_names : list of str
