@@ -70,7 +70,7 @@ def bold(text: str, escape_formatting: bool = True) -> str:
     text : str
         The text to be marked up.
     escape_formatting : `bool`, optional
-        Set to :code:`False` to don't escape any markdown formatting in the text.
+        Set to :code:`False` to not escape markdown formatting in the text.
 
     Returns
     -------
@@ -132,7 +132,7 @@ def italics(text: str, escape_formatting: bool = True) -> str:
     text : str
         The text to be marked up.
     escape_formatting : `bool`, optional
-        Set to :code:`False` to don't escape any markdown formatting in the text.
+        Set to :code:`False` to not escape markdown formatting in the text.
 
     Returns
     -------
@@ -292,7 +292,7 @@ def strikethrough(text: str, escape_formatting: bool = True) -> str:
     text : str
         The text to be marked up.
     escape_formatting : `bool`, optional
-        Set to :code:`False` to don't escape any markdown formatting in the text.
+        Set to :code:`False` to not escape markdown formatting in the text.
 
     Returns
     -------
@@ -314,7 +314,7 @@ def underline(text: str, escape_formatting: bool = True) -> str:
     text : str
         The text to be marked up.
     escape_formatting : `bool`, optional
-        Set to :code:`False` to don't escape any markdown formatting in the text.
+        Set to :code:`False` to not escape markdown formatting in the text.
 
     Returns
     -------
