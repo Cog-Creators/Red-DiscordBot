@@ -107,7 +107,8 @@ def init_events(bot, cli_flags):
                 current_python = platform.python_version()
                 if expected_version(current_python, requires_python):
                     extra_update = (
-                        "\n\nTo update your bot, open a window of {console} "
+                        "\n\nTo update your bot, first shutdown your "
+                        "bot then open a window of {console} "
                         "(Not as admin) and run the following:\n\n"
                     ).format(console=platform_console)
                     extra_update += '```"{python}" -m pip install -U Red-DiscordBot```'.format(
@@ -125,7 +126,7 @@ def init_events(bot, cli_flags):
                         "If you need help updating go to our #support channel in <https://discord.gg/red>"
                     ).format(
                         py_version=current_python,
-                        req_py = requires_python,
+                        req_py=requires_python,
                         docs="https://docs.discord.red/en/stable/install_windows.html"
                         if platform.system() == "Windows"
                         else "https://docs.discord.red/en/stable/install_linux_mac.html",
