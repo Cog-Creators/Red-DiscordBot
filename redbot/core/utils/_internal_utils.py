@@ -25,7 +25,15 @@ if TYPE_CHECKING:
 
 main_log = logging.getLogger("red")
 
-__all__ = ("safe_delete", "fuzzy_command_search", "format_fuzzy_results", "create_backup")
+__all__ = (
+    "safe_delete",
+    "fuzzy_command_search",
+    "format_fuzzy_results",
+    "create_backup",
+    "send_to_owners_with_preprocessor",
+    "send_to_owners_with_prefix_replaced",
+    "expected_version",
+)
 operator_lookup = {"<": op.lt, "<=": op.le, "==": op.eq, ">=": op.ge, ">": op.gt}
 version_req_re = re.compile(r"^(<=|<|>=|>|==)?(.*)$")
 
