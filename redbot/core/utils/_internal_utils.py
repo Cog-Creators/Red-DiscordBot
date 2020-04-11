@@ -7,9 +7,11 @@ import os
 import re
 import shutil
 import tarfile
+import operator as op
 from datetime import datetime
 from pathlib import Path
 from typing import Awaitable, Callable, List, Optional, Set, Union, TYPE_CHECKING
+from distutils.version import LooseVersion
 
 import discord
 from fuzzywuzzy import fuzz, process
@@ -24,6 +26,8 @@ if TYPE_CHECKING:
 main_log = logging.getLogger("red")
 
 __all__ = ("safe_delete", "fuzzy_command_search", "format_fuzzy_results", "create_backup")
+operator_lookup = {"<": op.lt, "<=": op.le, "==": op.eq, ">=": op.ge, ">": op.gt}
+version_req_re = re.compile(r"^(<=|<|>=|>|==)?(.*)$")
 
 
 def safe_delete(pth: Path):
@@ -267,3 +271,14 @@ async def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
         return content.replace("[p]", prefix)
 
     await send_to_owners_with_preprocessor(bot, content, content_preprocessor=preprocessor)
+
+
+def expected_version(current: str, expected: str) -> bool:
+    re_match = re.match(version_req_re, expected)
+    specifier, expected = re_match.group(1), re_match.group(2)
+    if specifier is None:
+        specifier = ">="
+    try:
+        return operator_lookup[specifier](LooseVersion(current), LooseVersion(expected))
+    except TypeError:  # Invalid Expected version
+        return False

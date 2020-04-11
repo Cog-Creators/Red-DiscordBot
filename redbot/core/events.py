@@ -1,5 +1,6 @@
 import asyncio
 import contextlib
+import platform
 import sys
 import codecs
 import datetime
@@ -18,7 +19,7 @@ from redbot.core.i18n import Translator
 from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
 from . import commands
 from .config import get_latest_confs
-from .utils._internal_utils import fuzzy_command_search, format_fuzzy_results
+from .utils._internal_utils import fuzzy_command_search, format_fuzzy_results, expected_version
 from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
 
 log = logging.getLogger("red")
@@ -34,6 +35,7 @@ ______         _           ______ _                       _  ______       _
 """
 
 _ = Translator(__name__, __file__)
+platform_console = "Command Prompt" if platform.system() == "Windows" else "Terminal"
 
 
 def init_events(bot, cli_flags):
@@ -101,6 +103,36 @@ def init_events(bot, cli_flags):
                     "Your Red instance is out of date! {} is the current "
                     "version, however you are using {}!"
                 ).format(data["info"]["version"], red_version)
+                requires_python = data["info"]["requires_python"]
+                current_python = platform.python_version()
+                if expected_version(current_python, requires_python):
+                    extra_update = (
+                        "\n\nTo update your bot, open a window of {console} "
+                        "(Not as admin) and run the following:\n\n"
+                    ).format(console=platform_console)
+                    extra_update += '```"{python}" -m pip install -U Red-DiscordBot```'.format(
+                        python=sys.executable
+                    )
+                    outdated_red_message += extra_update
+                else:
+                    extra_update = (
+                        "\n\nYou have Python version {py_version} and this update "
+                        "requires {req_py}; you cannot simply run the update command.\n\n"
+                        "You will need to follow the install instructions in our docs ({docs}) "
+                        "to reinstall Python, Red and any other dependency that are out of date"
+                        " (This will not delete your data)\n"
+                        "If you already have a venv you will need to delete it and recreate it."
+                        "If you need help updating go to our #support channel in <https://discord.gg/red>"
+                    ).format(
+                        py_version=current_python,
+                        req_py = requires_python,
+                        docs="https://docs.discord.red/en/stable/install_windows.html"
+                        if platform.system() == "Windows"
+                        else "https://docs.discord.red/en/stable/install_linux_mac.html",
+                    )
+
+                    outdated_red_message += extra_update
+
         INFO2 = []
 
         reqs_installed = {"docs": None, "test": None}
