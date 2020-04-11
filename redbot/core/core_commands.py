@@ -2544,7 +2544,7 @@ class Core(commands.Cog, CoreLogic):
             if channel.category and channel.category not in category_channels:
                 if await self.bot._ignored_cache.get_ignored_channel(channel.category):
                     category_channels.append(channel.category)
-            if await self.bot._ignored_cache.get_ignored_channel(channel):
+            if await self.bot._ignored_cache.get_ignored_channel(channel, check_category=False):
                 text_channels.append(channel)
 
         cat_str = (
