@@ -82,6 +82,7 @@ class RedBase(
         self.rpc_port = cli_flags.rpc_port
         self._last_exception = None
         self._config.register_global(
+            extra_credits=None,
             token=None,
             prefix=[],
             packages=[],
