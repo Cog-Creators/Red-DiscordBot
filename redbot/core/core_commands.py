@@ -973,6 +973,22 @@ class Core(commands.Cog, CoreLogic):
             ctx.bot.description = description
             await ctx.tick()
 
+    @checks.is_owner()
+    @_set.command(name="instancecredits", aliases=["credits"])
+    async def instancecredits(self, ctx: commands.Context, *, credits: str = ""):
+        """
+        Add credits for the bot.
+        Use without a description to reset.
+        This is shown [p]credits.
+
+        """
+        if not credits:
+            await ctx.bot._config.extra_credits.clear()
+            await ctx.send(_("Instance credits reset."))
+        else:
+            await ctx.bot._config.extra_credits.set(credits)
+            await ctx.tick()
+
     @_set.command()
     @checks.guildowner()
     @commands.guild_only()
@@ -2581,4 +2597,53 @@ async def license_info_command(ctx):
         "<https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/LICENSE>"
     )
     await ctx.send(message)
-    # We need a link which contains a thank you to other projects which we use at some point.
+
+
+# Removing this command from forks is a violation of the GPLv3 under which it is licensed.
+# Otherwise interfering with the ability for this command to be accessible or modyfing it is also a violation.
+@commands.command(
+    cls=commands.commands._AlwaysAvailableCommand, name="credits", i18n=_,
+)
+async def license_info_command(ctx):
+    """
+    Show credits for this Instance of Red.
+    """
+    contributors = "https://github.com/Cog-Creators/Red-DiscordBot/graphs/contributors"
+    org_members = "https://github.com/orgs/Cog-Creators/people"
+    repo = "https://github.com/Cog-Creators/Red-DiscordBot"
+    extra_credits = await ctx.bot._config.extra_credits()
+
+    if await ctx.embed_requested():
+        embed = discord.Embed(
+            title=_("Red-DiscordBot Credits"),
+            description=_(
+                "A huge thanks to everyone who contributed to Red-DiscordBot, "
+                "you can find a list of the amazing people who helped make "
+                "Red what it is today here:\n"
+                "[Contributors]({contrib})\n"
+                "[Organisation Members]({org})\n\n"
+                "Do you want to help improve Red? Just head over to our [repo]({repo})."
+            ).format(contrib=contributors, org=org_members, repo=repo),
+            color=discord.Color.red(),
+        )
+        await ctx.send(embed=embed)
+        if extra_credits:
+            embed = discord.Embed(
+                title=_("Credits for {}").format(str(ctx.bot.user)),
+                description=extra_credits,
+                color=await ctx.bot.get_embed_color(ctx),
+            )
+            await ctx.send(embed=embed)
+    else:
+
+        message = _(
+            "A huge thanks to everyone who contributed to Red-DiscordBot, "
+            "you can find a list of the amazing people who helped make "
+            "Red what it is today here:\n"
+            "Contributors: <{contrib}>\n"
+            "Organisation Members: <{org}>\n\n"
+            "Do you want to help improve Red? Just head over to our repo: <{repo}>."
+        ).format(contrib=contributors, org=org_members, repo=repo)
+        await ctx.send(message)
+        if extra_credits:
+            await ctx.send(extra_credits)
