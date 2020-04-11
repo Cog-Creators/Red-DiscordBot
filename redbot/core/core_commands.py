@@ -1095,11 +1095,16 @@ class Core(commands.Cog, CoreLogic):
 
     @_set.command()
     @checks.is_owner()
-    async def avatar(self, ctx: commands.Context, url: str):
-        """Sets [botname]'s avatar"""
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as r:
-                data = await r.read()
+    async def avatar(self, ctx: commands.Context, url: str = None):
+        """Sets [botname]'s avatar
+
+        Supports either an attachment or an image URL."""
+        if len(ctx.message.attachments) > 0:  # Attachments take priority
+            data = await ctx.message.attachments[0].read()
+        else:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as r:
+                    data = await r.read()
 
         try:
             await ctx.bot.user.edit(avatar=data)
