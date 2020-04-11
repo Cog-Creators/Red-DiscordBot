@@ -1101,10 +1101,15 @@ class Core(commands.Cog, CoreLogic):
         Supports either an attachment or an image URL."""
         if len(ctx.message.attachments) > 0:  # Attachments take priority
             data = await ctx.message.attachments[0].read()
-        else:
+        elif url is not None:
+            if url.startswith("<") and url.endswith(">"):
+                url = url[1:-1]
+
             async with aiohttp.ClientSession() as session:
                 async with session.get(url) as r:
                     data = await r.read()
+        else:
+            return await ctx.send(_("Please upload an attachment or provide an URL link."))
 
         try:
             await ctx.bot.user.edit(avatar=data)
