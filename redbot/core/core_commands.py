@@ -3,6 +3,7 @@ import contextlib
 import datetime
 import importlib
 import itertools
+import keyword
 import logging
 import os
 import re
@@ -75,9 +76,12 @@ class CoreLogic:
 
     async def _load(
         self, cog_names: Iterable[str]
-    ) -> Tuple[List[str], List[str], List[str], List[str], List[Tuple[str, str]], Set[str]]:
+    ) -> Tuple[
+        List[str], List[str], List[str], List[str], List[str], List[Tuple[str, str]], Set[str]
+    ]:
         """
         Loads cogs by name.
+
         Parameters
         ----------
         cog_names : list of str
@@ -85,10 +89,19 @@ class CoreLogic:
         Returns
         -------
         tuple
-            4-tuple of loaded, failed, not found and already loaded cogs.
+            7-tuple of:
+              1. List of names of cogs that loaded successfully
+              2. List of names of cogs that failed to load without specified reason
+              3. List of names of cogs that don't have a valid package name
+              4. List of names of cogs that weren't found in any cog path
+              5. List of names of cogs that are already loaded
+              6. List of 2-tuples (cog_name, reason) for cogs
+              that failed to load with a specified reason
+              7. Set of repo names that use deprecated shared libraries
         """
         failed_packages = []
         loaded_packages = []
+        invalid_pkg_names = []
         notfound_packages = []
         alreadyloaded_packages = []
         failed_with_reason_packages = []
@@ -99,6 +112,9 @@ class CoreLogic:
         cogspecs = []
 
         for name in cog_names:
+            if not name.isidentifier() or keyword.iskeyword(name):
+                invalid_pkg_names.append(name)
+                continue
             try:
                 spec = await bot._cog_mgr.find_cog(name)
                 if spec:
@@ -149,6 +165,7 @@ class CoreLogic:
         return (
             loaded_packages,
             failed_packages,
+            invalid_pkg_names,
             notfound_packages,
             alreadyloaded_packages,
             failed_with_reason_packages,
@@ -207,12 +224,15 @@ class CoreLogic:
 
     async def _reload(
         self, cog_names: Sequence[str]
-    ) -> Tuple[List[str], List[str], List[str], List[str], List[Tuple[str, str]], Set[str]]:
+    ) -> Tuple[
+        List[str], List[str], List[str], List[str], List[str], List[Tuple[str, str]], Set[str]
+    ]:
         await self._unload(cog_names)
 
         (
             loaded,
             load_failed,
+            invalid_pkg_names,
             not_found,
             already_loaded,
             load_failed_with_reason,
@@ -222,6 +242,7 @@ class CoreLogic:
         return (
             loaded,
             load_failed,
+            invalid_pkg_names,
             not_found,
             already_loaded,
             load_failed_with_reason,
@@ -717,6 +738,7 @@ class Core(commands.Cog, CoreLogic):
             (
                 loaded,
                 failed,
+                invalid_pkg_names,
                 not_found,
                 already_loaded,
                 failed_with_reason,
@@ -752,6 +774,21 @@ class Core(commands.Cog, CoreLogic):
                     "Failed to load the following packages: {packs}"
                     "\nCheck your console or logs for details."
                 ).format(packs=humanize_list([inline(package) for package in failed]))
+            output.append(formed)
+
+        if invalid_pkg_names:
+            if len(invalid_pkg_names) == 1:
+                formed = _(
+                    "The following name is not a valid package name: {pack}\n"
+                    "Package names cannot start with a number"
+                    " and can only contain ascii numbers, letters, and underscores."
+                ).format(pack=inline(invalid_pkg_names[0]))
+            else:
+                formed = _(
+                    "The following names are not valid package names: {packs}\n"
+                    "Package names cannot start with a number"
+                    " and can only contain ascii numbers, letters, and underscores."
+                ).format(packs=humanize_list([inline(package) for package in invalid_pkg_names]))
             output.append(formed)
 
         if not_found:
@@ -846,6 +883,7 @@ class Core(commands.Cog, CoreLogic):
             (
                 loaded,
                 failed,
+                invalid_pkg_names,
                 not_found,
                 already_loaded,
                 failed_with_reason,
@@ -870,6 +908,21 @@ class Core(commands.Cog, CoreLogic):
                     "Failed to reload the following packages: {packs}"
                     "\nCheck your console or logs for details."
                 ).format(packs=humanize_list([inline(package) for package in failed]))
+            output.append(formed)
+
+        if invalid_pkg_names:
+            if len(invalid_pkg_names) == 1:
+                formed = _(
+                    "The following name is not a valid package name: {pack}\n"
+                    "Package names cannot start with a number"
+                    " and can only contain ascii numbers, letters, and underscores."
+                ).format(pack=inline(invalid_pkg_names[0]))
+            else:
+                formed = _(
+                    "The following names are not valid package names: {packs}\n"
+                    "Package names cannot start with a number"
+                    " and can only contain ascii numbers, letters, and underscores."
+                ).format(packs=humanize_list([inline(package) for package in invalid_pkg_names]))
             output.append(formed)
 
         if not_found:
