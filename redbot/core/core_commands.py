@@ -1118,7 +1118,7 @@ class Core(commands.Cog, CoreLogic):
                 _(
                     "Failed. Remember that you can edit my avatar "
                     "up to two times a hour. The URL or attachment "
-                    "must be a valid image. In either JPG or PNG format."
+                    "must be a valid image in either JPG or PNG format."
                 )
             )
         except discord.InvalidArgument:
