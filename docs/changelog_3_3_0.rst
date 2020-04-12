@@ -4,7 +4,7 @@ Redbot 3.3.6 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`jack1142`
+| :ghuser:`jack1142`, :ghuser:`MiniJennJenn`
 
 End-user changelog
 ------------------
@@ -13,6 +13,11 @@ Core Commands
 *************
 
 - Fixed list of ignored channels that is shown in ``[p]ignore``/``[p]unignore`` (:issue:`3746`)
+
+Trivia Lists
+************
+
+- Updated ``leagueoflegends`` list with new changes to League of Legends (`b8ac70e <https://github.com/Cog-Creators/Red-DiscordBot/commit/b8ac70e59aa1328f246784f14f992d6ffe00d778>`_)
 
 
 Developer changelog
