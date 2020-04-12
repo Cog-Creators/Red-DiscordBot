@@ -4,11 +4,15 @@ Redbot 3.3.6 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| 
+| :ghuser:`jack1142`
 
 End-user changelog
 ------------------
 
+Core Commands
+*************
+
+- Fixed list of ignored channels that is shown in ``[p]ignore``/``[p]unignore`` (:issue:`3746`)
 
 
 Developer changelog
