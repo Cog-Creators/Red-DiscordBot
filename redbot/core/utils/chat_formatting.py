@@ -353,7 +353,7 @@ def escape(text: str, *, mass_mentions: bool = False, formatting: bool = False) 
 
 
 def humanize_list(
-    items: Sequence[str], style: str = "standard", locale: Optional[str] = None
+    items: Sequence[str], *, locale: Optional[str] = None, style: str = "standard"
 ) -> str:
     """Get comma-separated list, with the last element joined with *and*.
 
