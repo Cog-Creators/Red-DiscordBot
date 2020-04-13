@@ -4,7 +4,7 @@ Redbot 3.3.6 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`jack1142`, :ghuser:`MiniJennJenn`
+| :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MiniJennJenn`
 
 End-user changelog
 ------------------
@@ -12,6 +12,7 @@ End-user changelog
 Core Commands
 *************
 
+- ``[p]set avatar`` now supports setting avatar using attachment (:issue:`3747`)
 - Fixed list of ignored channels that is shown in ``[p]ignore``/``[p]unignore`` (:issue:`3746`)
 
 Trivia Lists
