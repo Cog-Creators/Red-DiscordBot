@@ -108,12 +108,9 @@ def get_storage_type():
     storage = None
     while storage is None:
         print()
-        print("Please choose your storage backend (if you're unsure, choose 1).")
+        print("Please choose your storage backend (if you're unsure, just choose 1).")
         print("1. JSON (file storage, requires no database).")
-        print(
-            "2. PostgreSQL (Requires a database server)"
-            "\n(Warning: You cannot convert postgres instances to other backends yet)"
-        )
+        print("2. PostgreSQL (Requires a database server)")
         print("3. RedisJSON (Requires a redis server with the RedisJSON plugin)")
         storage = input("> ")
         try:
@@ -385,7 +382,7 @@ def delete(
 
 @cli.command()
 @click.argument("instance", type=click.Choice(instance_list))
-@click.argument("backend", type=click.Choice(["json", "redis"]))  # TODO: GH-3115
+@click.argument("backend", type=click.Choice(["json", "postgres", "redis"]))
 def convert(instance, backend):
     """Convert data backend of an instance."""
     current_backend = get_current_backend(instance)
@@ -397,8 +394,6 @@ def convert(instance, backend):
 
     if current_backend == BackendType.MONGOV1:
         raise RuntimeError("Please see the 3.2 release notes for upgrading a bot using mongo.")
-    elif current_backend == BackendType.POSTGRES:  # TODO: GH-3115
-        raise RuntimeError("Converting away from postgres isn't currently supported")
     else:
         loop = asyncio.get_event_loop()
         new_storage_details = loop.run_until_complete(do_migration(current_backend, target))
