@@ -1,6 +1,7 @@
 import asyncio
 import getpass
-from typing import Optional, Callable, Any, Union, AsyncIterator, Tuple
+import re
+from typing import Optional, Callable, Any, Union, AsyncIterator, Tuple, Match, Pattern
 
 import ujson
 
@@ -37,7 +38,7 @@ class RedisDriver(BaseDriver):
         host = storage_details["host"]
         port = storage_details["port"]
         password = storage_details["password"]
-        database = storage_details.get("db", 0)
+        database = storage_details.get("database", 0)
         address = f"redis://{host}"
         client = await aioredis.create_redis_pool(
             address=address, db=database, password=password, encoding="utf-8", maxsize=50
@@ -120,14 +121,15 @@ class RedisDriver(BaseDriver):
         async with self._lock:
             _cur_path = "."
             await self._pool.jsonset(cog_name, path=_cur_path, obj={}, nx=True)
-            for i in _full_identifiers[1:]:
+            for i in full_identifiers:
                 if _cur_path.endswith("."):
-                    _cur_path += f"_{i}" if i.isdigit() else i
+                    _cur_path += self._escape_key(i)
 
                 else:
-                    _cur_path += f"._{i}" if i.isdigit() else f".{i}"
+                    _cur_path += f".{self._escape_key(i)}"
                 await self._pool.jsonset(cog_name, path=_cur_path, obj={}, nx=True)
-
+        if await self._pool.jsonget(cog_name, path=_cur_path) == {}:
+            await self._pool.jsondel(cog_name, path=_cur_path)
 
     @classmethod
     async def _execute(cls, query: str, *args, method: Optional[Callable] = None, **kwargs) -> Any:
@@ -141,28 +143,28 @@ class RedisDriver(BaseDriver):
     async def get(self, identifier_data: IdentifierData):
         _full_identifiers = identifier_data.to_tuple()
         cog_name, full_identifiers = _full_identifiers[0], _full_identifiers[1:]
-        full_identifiers = [f"_{i}" if i.isdigit() else i for i in full_identifiers]
+        full_identifiers = list(map(self._escape_key, full_identifiers))
         await self._pre_flight(identifier_data)
         try:
             result = await self._execute(cog_name, *full_identifiers, method=self._pool.jsonget,)
-        except aioredis.errors.ReplyError as e:
-            raise KeyError from None
-        if result is None or result == {}:
-            # The result is None both when postgres yields no results, or when it yields a NULL row
-            # A 'null' JSON value would be returned as encoded JSON, i.e. the string 'null'
+        except aioredis.errors.ReplyError:
             raise KeyError
         if isinstance(result, str):
-            return ujson.loads(result)
+            result = ujson.loads(result)
+            if isinstance(result, dict):
+                result = self._unescape_dict_keys(result)
         return result
 
     async def set(self, identifier_data: IdentifierData, value=None):
         try:
             _full_identifiers = identifier_data.to_tuple()
             cog_name, full_identifiers = _full_identifiers[0], _full_identifiers[1:]
-            full_identifiers = [f"_{i}" if i.isdigit() else i for i in full_identifiers]
             identifier_string = "."
-            identifier_string += ".".join(full_identifiers)
+            identifier_string += ".".join(map(self._escape_key, full_identifiers))
             value_copy = ujson.loads(ujson.dumps(value))
+            if isinstance(value_copy, dict):
+                value_copy = self._escape_dict_keys(value_copy)
+
             await self._pre_flight(identifier_data)
             async with self._lock:
                 await self._execute(
@@ -174,9 +176,8 @@ class RedisDriver(BaseDriver):
     async def clear(self, identifier_data: IdentifierData):
         _full_identifiers = identifier_data.to_tuple()
         cog_name, full_identifiers = _full_identifiers[0], _full_identifiers[1:]
-        full_identifiers = [f"_{i}" if i.isdigit() else i for i in full_identifiers]
         identifier_string = "."
-        identifier_string += ".".join(full_identifiers)
+        identifier_string += ".".join(map(self._escape_key, full_identifiers))
         await self._pre_flight(identifier_data)
         async with self._lock:
             await self._execute(
@@ -188,9 +189,8 @@ class RedisDriver(BaseDriver):
     ) -> Union[int, float]:
         _full_identifiers = identifier_data.to_tuple()
         cog_name, full_identifiers = _full_identifiers[0], _full_identifiers[1:]
-        full_identifiers = [f"_{i}" if i.isdigit() else i for i in full_identifiers]
         identifier_string = "."
-        identifier_string += ".".join(full_identifiers)
+        identifier_string += ".".join(map(self._escape_key, full_identifiers))
         await self._pre_flight(identifier_data)
 
         async with self._lock:
@@ -212,9 +212,8 @@ class RedisDriver(BaseDriver):
     async def toggle(self, identifier_data: IdentifierData, default: bool = True) -> bool:
         _full_identifiers = identifier_data.to_tuple()
         cog_name, full_identifiers = _full_identifiers[0], _full_identifiers[1:]
-        full_identifiers = [f"_{i}" if i.isdigit() else i for i in full_identifiers]
         identifier_string = "."
-        identifier_string += ".".join(full_identifiers)
+        identifier_string += ".".join(map(self._escape_key, full_identifiers))
         await self._pre_flight(identifier_data)
         async with self._lock:
             _type = await self._pool.jsontype(name=cog_name, path=identifier_data)
@@ -259,3 +258,39 @@ class RedisDriver(BaseDriver):
                     *ConfigCategory.get_pkey_info(category, custom_group_data),
                 )
                 await self.set(ident_data, data)
+
+    @staticmethod
+    def _escape_key(key: str) -> str:
+        return f"${key}"
+
+    @staticmethod
+    def _unescape_key(key: str) -> str:
+        return _CHAR_ESCAPE_PATTERN.sub(key, "")
+
+    @classmethod
+    def _escape_dict_keys(cls, data: dict) -> dict:
+        """Recursively escape all keys in a dict."""
+        ret = {}
+        for key, value in data.items():
+            key = cls._escape_key(key)
+            if isinstance(value, dict):
+                value = cls._escape_dict_keys(value)
+            ret[key] = value
+        return ret
+
+    @classmethod
+    def _unescape_dict_keys(cls, data: dict) -> dict:
+        """Recursively unescape all keys in a dict."""
+        ret = {}
+        for key, value in data.items():
+            key = cls._unescape_key(key)
+            if isinstance(value, dict):
+                value = cls._unescape_dict_keys(value)
+            ret[key] = value
+        return ret
+
+
+_CHAR_ESCAPE_PATTERN: Pattern[str] = re.compile(r"$(\$)")
+
+
+

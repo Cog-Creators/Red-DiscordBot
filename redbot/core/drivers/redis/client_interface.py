@@ -201,4 +201,4 @@ class Client(Redis):
 
 
 class Pipeline(Pipeline, Client):
-    "Pipeline for ReJSONClient"
+    """Pipeline for ReJSONClient"""
