@@ -3,6 +3,7 @@ import json
 import sys
 from pathlib import Path
 from typing import Optional, Any, AsyncIterator, Tuple, Union, Callable, List
+from secrets import compare_digest
 
 try:
     # pylint: disable=import-error
@@ -114,7 +115,7 @@ class PostgresDriver(BaseDriver):
             f" - No password.\n"
             f"> "
         )
-        if password == "NONE":
+        if compare_digest(password, "NONE"):
             password = None
 
         database = (
