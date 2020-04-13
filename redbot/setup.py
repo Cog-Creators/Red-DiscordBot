@@ -104,7 +104,7 @@ def get_data_dir(instance_name: str):
 
 
 def get_storage_type():
-    storage_dict = {1: "JSON", 2: "PostgreSQL"}
+    storage_dict = {1: "JSON", 2: "PostgreSQL", 3: "RedisJSON"}
     storage = None
     while storage is None:
         print()
@@ -114,6 +114,7 @@ def get_storage_type():
             "2. PostgreSQL (Requires a database server)"
             "\n(Warning: You cannot convert postgres instances to other backends yet)"
         )
+        print("3. RedisJSON (Requires a redis server with the RedisJSON plugin)")
         storage = input("> ")
         try:
             storage = int(storage)
@@ -162,7 +163,7 @@ def basic_setup():
 
     storage = get_storage_type()
 
-    storage_dict = {1: BackendType.JSON, 2: BackendType.POSTGRES}
+    storage_dict = {1: BackendType.JSON, 2: BackendType.POSTGRES, 3: BackendType.REDIS}
     storage_type: BackendType = storage_dict.get(storage, BackendType.JSON)
     default_dirs["STORAGE_TYPE"] = storage_type.value
     driver_cls = drivers.get_driver_class(storage_type)
@@ -196,6 +197,8 @@ def get_target_backend(backend) -> BackendType:
         return BackendType.JSON
     elif backend == "postgres":
         return BackendType.POSTGRES
+    elif backend == "redis":
+        return BackendType.REDIS
 
 
 async def do_migration(
@@ -382,7 +385,7 @@ def delete(
 
 @cli.command()
 @click.argument("instance", type=click.Choice(instance_list))
-@click.argument("backend", type=click.Choice(["json"]))  # TODO: GH-3115
+@click.argument("backend", type=click.Choice(["json", "redis"]))  # TODO: GH-3115
 def convert(instance, backend):
     """Convert data backend of an instance."""
     current_backend = get_current_backend(instance)
@@ -397,7 +400,8 @@ def convert(instance, backend):
     elif current_backend == BackendType.POSTGRES:  # TODO: GH-3115
         raise RuntimeError("Converting away from postgres isn't currently supported")
     else:
-        new_storage_details = asyncio.run(do_migration(current_backend, target))
+        loop = asyncio.get_event_loop()
+        new_storage_details = loop.run_until_complete(do_migration(current_backend, target))
 
     if new_storage_details is not None:
         default_dirs["STORAGE_TYPE"] = target.value
