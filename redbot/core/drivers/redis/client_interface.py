@@ -59,7 +59,6 @@ class Client(Redis):
         else:
             pieces.append(path)
 
-
         # Handle case where key doesn't exist. The JSONDecoder would raise a
         # TypeError exception since it can't decode None
         try:
