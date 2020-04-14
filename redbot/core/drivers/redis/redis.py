@@ -2,25 +2,26 @@ import asyncio
 import base64
 import getpass
 import re
-from typing import Optional, Callable, Any, Union, AsyncIterator, Tuple, Match, Pattern
-
-import ujson
+from typing import Optional, Callable, Any, Union, AsyncIterator, Tuple, Pattern
 
 from redbot.core import errors
 from redbot.core.drivers.log import log
 from secrets import compare_digest
 
-from ...errors import StoredTypeError
-
 try:
     # pylint: disable=import-error
     import aioredis
     import aioredis_lock
+    import ujson
+    from .client_interface import Client
 except ModuleNotFoundError:
     aioredis = None
+    Client = None
+    import ujson as json
+
 
 from ..base import BaseDriver, IdentifierData, ConfigCategory
-from .client_interface import Client
+from ...errors import StoredTypeError
 
 __all__ = ["RedisDriver"]
 
