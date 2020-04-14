@@ -119,7 +119,7 @@ class RedisDriver(BaseDriver):
 
     async def _pre_flight(self, identifier_data: IdentifierData):
         _full_identifiers = identifier_data.to_tuple()
-        cog_name, full_identifiers = _full_identifiers[0], _full_identifiers[1:-1]
+        cog_name, full_identifiers = _full_identifiers[0], _full_identifiers[1:]
         async with self._lock:
             _cur_path = "."
             await self._pool.jsonset(cog_name, path=_cur_path, obj={}, nx=True)
