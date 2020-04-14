@@ -19,6 +19,7 @@ from typing import (
 import discord
 
 from .drivers import IdentifierData, get_driver, ConfigCategory, BaseDriver
+from .errors import StoredTypeError
 
 __all__ = ["Config", "get_latest_confs", "migrate"]
 
@@ -255,6 +256,96 @@ class Value:
         if isinstance(value, dict):
             value = _str_key_dict(value)
         await self.driver.set(self.identifier_data, value=value)
+
+    async def inc(self, value: Union[int, float] = 1) -> Union[int, float]:
+        """Increments the value of the data elements pointed to by `identifiers`.
+
+        Example
+        -------
+        ::
+
+            # Increment global value "foo" by 2
+            await conf.foo.inc(2)
+
+        Parameters
+        ----------
+        value
+            The value to increment by (Defaults to 1).
+
+        Returns
+        -------
+        Union[int, float]
+            The new stored value.
+
+        Raises
+        ------
+        ValueError
+            If stored value or `value` are not integers or floats.
+
+        """
+        if not isinstance(value, (int, float)):
+            raise ValueError("The value is not a Integer or Float")
+
+        if not hasattr(self.driver, "inc"):
+            current = await self._get(default=...)
+            if not isinstance(current, (int, float)):
+                raise ValueError("The stored value is not a Integer or Float")
+            await self.set(current + value)
+            return current + value
+        try:
+            return await self.driver.inc(self.identifier_data, value=value, default=self.default)
+        except StoredTypeError:
+            raise ValueError("The stored value is not a Integer or Float")
+
+    async def toggle(self, value: Optional[bool] = None) -> bool:
+        """Toggle the value of the data elements pointed to by `identifiers`.
+
+        Example
+        -------
+        ::
+
+            # Toggle global value "foo" to the opposite of the currently set value.
+            await conf.foo.toggle()
+
+            # Set the global value "foo" True
+            await conf.foo.toggle(True)
+
+        Parameters
+        ----------
+        value
+            The value to set the toggle to.
+            Defaults tp None, which reverses the current toggle state.
+
+        Returns
+        -------
+        bool
+            The new stored value.
+
+        Raises
+        ------
+        ValueError
+            If The value is not a Boolean or Null.
+
+        """
+        if value is not None and not isinstance(value, (bool)):
+            raise ValueError("The value is not a Boolean or Null")
+
+        if not hasattr(self.driver, "toggle"):
+            current = await self._get(default=...)
+            if current is not None and not isinstance(current, (bool)):
+                raise ValueError("The stored value is not a boolean")
+            if value is None:
+                new_value = not current
+            else:
+                new_value = value
+            await self.set(new_value)
+            return new_value
+        try:
+            return await self.driver.toggle(
+                self.identifier_data, value=value, default=self.default
+            )
+        except StoredTypeError:
+            raise ValueError("The stored value is not a Integer or Float")
 
     async def clear(self):
         """

@@ -184,7 +184,10 @@ class RedisDriver(BaseDriver):
             )
 
     async def inc(
-        self, identifier_data: IdentifierData, value: Union[int, float], default: Union[int, float]
+        self,
+        identifier_data: IdentifierData,
+        value: Union[int, float],
+        default: Union[int, float] = 0,
     ) -> Union[int, float]:
         _full_identifiers = identifier_data.to_tuple()
         cog_name, full_identifiers = _full_identifiers[0], _full_identifiers[1:]
@@ -193,7 +196,12 @@ class RedisDriver(BaseDriver):
         await self._pre_flight(identifier_data)
 
         async with self._lock:
-            if await self._pool.jsontype(name=cog_name, path=identifier_data) not in [
+            _type = await self._pool.jsontype(name=cog_name, path=identifier_string)
+            if _type is None:
+                await self._execute(
+                    cog_name, path=identifier_string, obj=default, method=self._pool.jsonset,
+                )
+            elif _type not in [
                 "integer",
                 "number",
             ]:
@@ -203,21 +211,27 @@ class RedisDriver(BaseDriver):
             )
             return ujson.loads(applying)
 
-    async def toggle(self, identifier_data: IdentifierData, default: bool = True) -> bool:
+    async def toggle(
+        self, identifier_data: IdentifierData, value: bool = None, default: Optional[bool] = None
+    ) -> bool:
         _full_identifiers = identifier_data.to_tuple()
         cog_name, full_identifiers = _full_identifiers[0], _full_identifiers[1:]
         identifier_string = "."
         identifier_string += ".".join(map(self._escape_key, full_identifiers))
         await self._pre_flight(identifier_data)
+        value = value if value is not None else default
         async with self._lock:
-            _type = await self._pool.jsontype(name=cog_name, path=identifier_data)
-            if _type not in ["null", "boolean"]:
+            _type = await self._pool.jsontype(name=cog_name, path=identifier_string)
+            if _type not in [None, "null", "boolean"]:
                 raise StoredTypeError("The value is not a Boolean or Null")
-            elif _type == "null":
-                return default
+            elif _type in [None, "null"]:
+                await self._execute(
+                    cog_name, path=identifier_string, obj=not value, method=self._pool.jsonset,
+                )
+                return not value
             else:
                 result = await self._execute(
-                    cog_name, *full_identifiers, method=self._pool.jsonget,
+                    cog_name, path=identifier_string, method=self._pool.jsonget,
                 )
                 result = not ujson.loads(result)
                 await self._execute(
