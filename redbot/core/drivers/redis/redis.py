@@ -17,7 +17,7 @@ try:
 except ModuleNotFoundError:
     aioredis = None
     Client = None
-    import ujson as json
+    import json as ujson
 
 
 from ..base import BaseDriver, IdentifierData, ConfigCategory

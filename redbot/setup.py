@@ -209,7 +209,6 @@ def get_target_backend(backend) -> BackendType:
 async def do_migration(
     current_backend: BackendType, target_backend: BackendType
 ) -> Dict[str, Any]:
-    print(current_backend)
     cur_driver_cls = drivers._get_driver_class_include_old(current_backend)
     new_driver_cls = drivers.get_driver_class(target_backend)
     cur_storage_details = data_manager.storage_details()

@@ -259,23 +259,6 @@ class BaseDriver(abc.ABC):
         """
         raise NotImplementedError
 
-    @abc.abstractmethod
-    async def toggle(
-        self, identifier_data: IdentifierData, value: bool = None, default: Optional[bool] = None
-    ) -> bool:
-        """Toggle and returns the current boolean value for the value specified by the given identifiers."""
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    async def inc(
-        self,
-        identifier_data: IdentifierData,
-        value: Union[int, float],
-        default: Union[int, float] = 0,
-    ) -> Union[int, float]:
-        """Increments and returns the current  value for the value specified by the given identifiers."""
-        raise NotImplementedError
-
     @classmethod
     async def migrate_to(
         cls,
