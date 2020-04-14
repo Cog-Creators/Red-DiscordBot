@@ -41,7 +41,7 @@ class RedisDriver(BaseDriver):
         port = storage_details["port"]
         password = storage_details["password"]
         database = storage_details.get("database", 0)
-        address = f"redis://{host}"
+        address = f"redis://{host}:{port}"
         client = await aioredis.create_redis_pool(
             address=address, db=database, password=password, encoding="utf-8", maxsize=50
         )
