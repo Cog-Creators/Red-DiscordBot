@@ -220,7 +220,8 @@ async def do_migration(
         await new_driver_cls.initialize(**new_storage_details)
 
         await config.migrate(cur_driver_cls, new_driver_cls)
-    except Exception:
+    except Exception as e:
+        conversion_log.exception(e, exc_info=e)
         new_storage_details = None
 
     with contextlib.suppress(Exception):

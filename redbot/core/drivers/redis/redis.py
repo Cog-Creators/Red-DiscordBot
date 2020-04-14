@@ -270,13 +270,12 @@ class RedisDriver(BaseDriver):
 
     @staticmethod
     def _escape_key(key: str) -> str:
-        string = f"${base64.b16encode(key.encode()).decode()}"
+        string = key
         return string
 
     @staticmethod
     def _unescape_key(key: str) -> str:
-        string = key[1:].encode()
-        return base64.b16decode(string).decode()
+        return key
 
     @classmethod
     def _escape_dict_keys(cls, data: dict) -> dict:
