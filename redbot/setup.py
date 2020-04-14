@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import asyncio
+import contextlib
 import json
 import logging
 import os
@@ -211,18 +212,21 @@ async def do_migration(
 ) -> Dict[str, Any]:
     cur_driver_cls = drivers._get_driver_class_include_old(current_backend)
     new_driver_cls = drivers.get_driver_class(target_backend)
-    cur_storage_details = data_manager.storage_details()
-    new_storage_details = new_driver_cls.get_config_details()
-
-    await cur_driver_cls.initialize(**cur_storage_details)
-    await new_driver_cls.initialize(**new_storage_details)
     try:
+        cur_storage_details = data_manager.storage_details()
+        new_storage_details = new_driver_cls.get_config_details()
+
+        await cur_driver_cls.initialize(**cur_storage_details)
+        await new_driver_cls.initialize(**new_storage_details)
+
         await config.migrate(cur_driver_cls, new_driver_cls)
     except Exception:
         new_storage_details = None
 
-    await cur_driver_cls.teardown()
-    await new_driver_cls.teardown()
+    with contextlib.suppress(Exception):
+        await cur_driver_cls.teardown()
+    with contextlib.suppress(Exception):
+        await new_driver_cls.teardown()
 
     return new_storage_details
 
