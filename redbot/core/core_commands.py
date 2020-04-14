@@ -1093,7 +1093,7 @@ class Core(commands.Cog, CoreLogic):
         await ctx.bot._config.color.set(colour.value)
         await ctx.send(_("The color has been set."))
 
-    @_set.command()
+    @_set.group()
     @checks.is_owner()
     async def avatar(self, ctx: commands.Context, url: str = None):
         """Sets [botname]'s avatar
@@ -1125,6 +1125,13 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("JPG / PNG format only."))
         else:
             await ctx.send(_("Done."))
+
+    @avatar.command(name="remove", aliases=["clear"])
+    @checks.is_owner()
+    async def avatar_remove(self, ctx: commands.Context):
+        """Removes [botname]'s avatar"""
+        await ctx.bot.user.edit(avatar=None)
+        await ctx.send(_("Avatar removed."))
 
     @_set.command(name="playing", aliases=["game"])
     @checks.bot_in_a_guild()
