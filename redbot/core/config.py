@@ -277,10 +277,6 @@ class Value:
         Union[int, float]
             The new stored value.
 
-        Raises
-        ------
-        ValueError
-            If stored value or `value` are not integers or floats.
 
         """
         if not isinstance(value, (int, float)):
@@ -297,7 +293,7 @@ class Value:
         except StoredTypeError:
             raise ValueError("The stored value is not a Integer or Float")
 
-    async def toggle(self, value: Optional[bool] = None) -> bool:
+    async def tog(self, value: Optional[bool] = None) -> bool:
         """Toggle the value of the data elements pointed to by `identifiers`.
 
         Example
@@ -312,19 +308,14 @@ class Value:
 
         Parameters
         ----------
-        value
+        Optional[bool]
             The value to set the toggle to.
-            Defaults tp None, which reverses the current toggle state.
+            Defaults to None, which reverses the current toggle state.
 
         Returns
         -------
         bool
             The new stored value.
-
-        Raises
-        ------
-        ValueError
-            If The value is not a Boolean or Null.
 
         """
         if value is not None and not isinstance(value, (bool)):
