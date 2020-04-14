@@ -1,6 +1,6 @@
 import abc
 import enum
-from typing import Tuple, Dict, Any, Union, List, AsyncIterator, Type
+from typing import Tuple, Dict, Any, Union, List, AsyncIterator, Type, Optional
 
 from redbot.core.utils._internal_utils import async_tqdm
 
@@ -257,6 +257,23 @@ class BaseDriver(abc.ABC):
             Asynchronously yields (cog_name, cog_identifier) tuples.
 
         """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    async def toggle(
+        self, identifier_data: IdentifierData, value: bool = None, default: Optional[bool] = None
+    ) -> bool:
+        """Toggle and returns the current boolean value for the value specified by the given identifiers."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    async def inc(
+        self,
+        identifier_data: IdentifierData,
+        value: Union[int, float],
+        default: Union[int, float] = 0,
+    ) -> Union[int, float]:
+        """Increments and returns the current  value for the value specified by the given identifiers."""
         raise NotImplementedError
 
     @classmethod
