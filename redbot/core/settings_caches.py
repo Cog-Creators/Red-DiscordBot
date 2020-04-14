@@ -59,11 +59,15 @@ class IgnoreManager:
         self._cached_channels: Dict[int, bool] = {}
         self._cached_guilds: Dict[int, bool] = {}
 
-    async def get_ignored_channel(self, channel: discord.TextChannel) -> bool:
+    async def get_ignored_channel(
+        self, channel: discord.TextChannel, check_category: bool = True
+    ) -> bool:
         ret: bool
 
         cid: int = channel.id
-        cat_id: Optional[int] = channel.category.id if channel.category else None
+        cat_id: Optional[int] = (
+            channel.category.id if check_category and channel.category else None
+        )
         if cid in self._cached_channels:
             chan_ret = self._cached_channels[cid]
         else:

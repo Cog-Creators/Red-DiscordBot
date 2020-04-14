@@ -350,15 +350,14 @@ class Core(commands.Cog, CoreLogic):
         embed.add_field(name="Python", value=python_version)
         embed.add_field(name="discord.py", value=dpy_version)
         embed.add_field(name=_("Red version"), value=red_version)
-        if outdated is True:
-            outdated_value = _("Yes, {version} is available").format(
-                version=data["info"]["version"]
-            )
-        elif outdated is None:
-            outdated_value = _("Checking for updates failed.")
-        else:
-            outdated_value = _("No")
-        embed.add_field(name=_("Outdated"), value=outdated_value)
+        if outdated in (True, None):
+            if outdated is True:
+                outdated_value = _("Yes, {version} is available.").format(
+                    version=data["info"]["version"]
+                )
+            else:
+                outdated_value = _("Checking for updates failed.")
+            embed.add_field(name=_("Outdated"), value=outdated_value)
         if custom_info:
             embed.add_field(name=_("About this instance"), value=custom_info, inline=False)
         embed.add_field(name=_("About Red"), value=about, inline=False)
@@ -1096,11 +1095,21 @@ class Core(commands.Cog, CoreLogic):
 
     @_set.command()
     @checks.is_owner()
-    async def avatar(self, ctx: commands.Context, url: str):
-        """Sets [botname]'s avatar"""
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as r:
-                data = await r.read()
+    async def avatar(self, ctx: commands.Context, url: str = None):
+        """Sets [botname]'s avatar
+
+        Supports either an attachment or an image URL."""
+        if len(ctx.message.attachments) > 0:  # Attachments take priority
+            data = await ctx.message.attachments[0].read()
+        elif url is not None:
+            if url.startswith("<") and url.endswith(">"):
+                url = url[1:-1]
+
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as r:
+                    data = await r.read()
+        else:
+            return await ctx.send(_("Please upload an attachment or provide an URL link."))
 
         try:
             await ctx.bot.user.edit(avatar=data)
@@ -1108,8 +1117,8 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(
                 _(
                     "Failed. Remember that you can edit my avatar "
-                    "up to two times a hour. The URL must be a "
-                    "direct link to a JPG / PNG."
+                    "up to two times a hour. The URL or attachment "
+                    "must be a valid image in either JPG or PNG format."
                 )
             )
         except discord.InvalidArgument:
@@ -2545,17 +2554,14 @@ class Core(commands.Cog, CoreLogic):
             if channel.category and channel.category not in category_channels:
                 if await self.bot._ignored_cache.get_ignored_channel(channel.category):
                     category_channels.append(channel.category)
-                continue
-            else:
-                continue
-            if await self.bot._ignored_cache.get_ignored_channel(channel):
+            if await self.bot._ignored_cache.get_ignored_channel(channel, check_category=False):
                 text_channels.append(channel)
 
         cat_str = (
             humanize_list([c.name for c in category_channels]) if category_channels else "None"
         )
         chan_str = humanize_list([c.mention for c in text_channels]) if text_channels else "None"
-        msg = _("Currently ignored categories: {categories}\nChannels:{channels}").format(
+        msg = _("Currently ignored categories: {categories}\nChannels: {channels}").format(
             categories=cat_str, channels=chan_str
         )
         return msg
