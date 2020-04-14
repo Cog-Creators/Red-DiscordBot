@@ -216,8 +216,10 @@ async def do_migration(
 
     await cur_driver_cls.initialize(**cur_storage_details)
     await new_driver_cls.initialize(**new_storage_details)
-
-    await config.migrate(cur_driver_cls, new_driver_cls)
+    try:
+        await config.migrate(cur_driver_cls, new_driver_cls)
+    except Exception:
+        new_storage_details = None
 
     await cur_driver_cls.teardown()
     await new_driver_cls.teardown()
