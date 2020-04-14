@@ -1,5 +1,3 @@
-import six
-import json
 import ujson
 from aioredis import Redis
 from aioredis.commands import Pipeline
