@@ -1,4 +1,5 @@
 import asyncio
+import base64
 import getpass
 import re
 from typing import Optional, Callable, Any, Union, AsyncIterator, Tuple, Match, Pattern
@@ -124,7 +125,6 @@ class RedisDriver(BaseDriver):
             for i in full_identifiers:
                 if _cur_path.endswith("."):
                     _cur_path += self._escape_key(i)
-
                 else:
                     _cur_path += f".{self._escape_key(i)}"
                 await self._pool.jsonset(cog_name, path=_cur_path, obj={}, nx=True)
@@ -151,8 +151,8 @@ class RedisDriver(BaseDriver):
             raise KeyError
         if isinstance(result, str):
             result = ujson.loads(result)
-            if isinstance(result, dict):
-                result = self._unescape_dict_keys(result)
+        if isinstance(result, dict):
+            result = self._unescape_dict_keys(result)
         return result
 
     async def set(self, identifier_data: IdentifierData, value=None):
@@ -164,7 +164,6 @@ class RedisDriver(BaseDriver):
             value_copy = ujson.loads(ujson.dumps(value))
             if isinstance(value_copy, dict):
                 value_copy = self._escape_dict_keys(value_copy)
-
             await self._pre_flight(identifier_data)
             async with self._lock:
                 await self._execute(
@@ -200,14 +199,9 @@ class RedisDriver(BaseDriver):
             ]:
                 raise StoredTypeError("The value is not a Integer or Float")
             applying = await self._execute(
-                    cog_name,
-                    path=identifier_string,
-                    number=value,
-                    method=self._pool.jsonnumincrby,
-                )
-            return ujson.loads(
-                applying
+                cog_name, path=identifier_string, number=value, method=self._pool.jsonnumincrby,
             )
+            return ujson.loads(applying)
 
     async def toggle(self, identifier_data: IdentifierData, default: bool = True) -> bool:
         _full_identifiers = identifier_data.to_tuple()
@@ -261,11 +255,13 @@ class RedisDriver(BaseDriver):
 
     @staticmethod
     def _escape_key(key: str) -> str:
-        return f"${key}"
+        string = f"${base64.b16encode(key.encode()).decode()}"
+        return string
 
     @staticmethod
     def _unescape_key(key: str) -> str:
-        return _CHAR_ESCAPE_PATTERN.sub(key, "")
+        string = key[1:].encode()
+        return base64.b16decode(string).decode()
 
     @classmethod
     def _escape_dict_keys(cls, data: dict) -> dict:
@@ -290,7 +286,4 @@ class RedisDriver(BaseDriver):
         return ret
 
 
-_CHAR_ESCAPE_PATTERN: Pattern[str] = re.compile(r"$(\$)")
-
-
-
+_CHAR_ESCAPE_PATTERN: Pattern[str] = re.compile(r"^(\$)")
