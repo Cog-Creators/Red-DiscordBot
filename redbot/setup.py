@@ -1,16 +1,9 @@
 #!/usr/bin/env python3
-import asyncio
-import json
-import logging
-import os
-import sys
-import re
+import asyncio, json, logging, os, sys, re, appdirs, click
+
 from copy import deepcopy
 from pathlib import Path
 from typing import Dict, Any, Optional, Union
-
-import appdirs
-import click
 
 from redbot.core.utils._internal_utils import safe_delete, create_backup as red_create_backup
 from redbot.core import config, data_manager, drivers
