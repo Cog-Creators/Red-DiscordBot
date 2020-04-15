@@ -44,11 +44,7 @@ class RedisDriver(BaseDriver):
         database = storage_details.get("database", 0)
         address = f"redis://{host}:{port}"
         client = await aioredis.create_redis_pool(
-            address=address,
-            db=database,
-            password=password,
-            encoding="utf-8",
-            maxsize=50,
+            address=address, db=database, password=password, encoding="utf-8", maxsize=50,
         )
         cls._pool = Client(client._pool_or_conn)
         cls._lock = asyncio.Lock()
