@@ -1,4 +1,5 @@
 import asyncio
+import base64
 import contextlib
 import getpass
 import re
@@ -301,12 +302,13 @@ class RedisDriver(BaseDriver):
 
     @staticmethod
     def _escape_key(key: str) -> str:
-        string = key
+        string = f"${base64.b16encode(key.encode()).decode()}"
         return string
 
     @staticmethod
     def _unescape_key(key: str) -> str:
-        return key
+        string = key[1:].encode()
+        return base64.b16decode(string).decode()
 
     @classmethod
     def _escape_dict_keys(cls, data: dict) -> dict:
