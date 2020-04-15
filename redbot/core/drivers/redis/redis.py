@@ -157,8 +157,6 @@ class RedisDriver(BaseDriver):
                 else:
                     _cur_path += f".{self._escape_key(i)}"
                 await self._pool.jsonset(cog_name, path=_cur_path, obj={}, nx=True)
-        # if await self._pool.jsonget(cog_name, path=_cur_path) == {}:
-        #     await self._pool.jsondel(cog_name, path=_cur_path)
 
     @classmethod
     async def _execute(cls, query: str, *args, method: Optional[Callable] = None, **kwargs) -> Any:
@@ -302,12 +300,12 @@ class RedisDriver(BaseDriver):
 
     @staticmethod
     def _escape_key(key: str) -> str:
-        string = f"${base64.b16encode(key.encode()).decode()}"
+        string = f"{base64.b16encode(key.encode()).decode()}"
         return string
 
     @staticmethod
     def _unescape_key(key: str) -> str:
-        string = key[1:].encode()
+        string = key.encode()
         return base64.b16decode(string).decode()
 
     @classmethod
