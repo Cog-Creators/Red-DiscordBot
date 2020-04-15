@@ -1,5 +1,5 @@
 import asyncio
-import base64
+import contextlib
 import getpass
 import re
 from typing import Optional, Callable, Any, Union, AsyncIterator, Tuple, Pattern
@@ -25,11 +25,12 @@ from ...errors import StoredTypeError
 
 __all__ = ["RedisDriver"]
 
-
 # noinspection PyProtectedMember
 class RedisDriver(BaseDriver):
     _pool: Optional["Client"] = None
     _lock: Optional["asyncio.Lock"] = None
+    _save_task: Optional["asyncio.Task"] = None
+    _backup_task: Optional["asyncio.Task"] = None
 
     @classmethod
     async def initialize(cls, **storage_details) -> None:
@@ -43,14 +44,24 @@ class RedisDriver(BaseDriver):
         database = storage_details.get("database", 0)
         address = f"redis://{host}:{port}"
         client = await aioredis.create_redis_pool(
-            address=address, db=database, password=password, encoding="utf-8", maxsize=50
+            address=address,
+            db=database,
+            password=password,
+            encoding="utf-8",
+            maxsize=50,
         )
         cls._pool = Client(client._pool_or_conn)
         cls._lock = asyncio.Lock()
+        cls._save_task = asyncio.create_task(cls._save_periodically())
+        cls._backup_task = asyncio.create_task(cls._backup_periodically())
 
     @classmethod
     async def teardown(cls) -> None:
         if cls._pool is not None:
+            if cls._save_task is not None:
+                cls._save_task.cancel()
+            if cls._backup_task is not None:
+                cls._backup_task.cancel()
             cls._pool.close()
             await cls._pool.wait_closed()
 
@@ -117,6 +128,26 @@ class RedisDriver(BaseDriver):
             "database": database,
         }
 
+    @classmethod
+    async def _save_periodically(cls):
+        with contextlib.suppress(asyncio.CancelledError):
+            while True:
+                with contextlib.suppress(aioredis.errors.ReplyError):
+                    await cls._pool.bgrewriteaof()
+                await asyncio.sleep(2)
+        with contextlib.suppress(aioredis.errors.ReplyError):
+            await cls._pool.bgrewriteaof()
+
+    @classmethod
+    async def _backup_periodically(cls):
+        with contextlib.suppress(asyncio.CancelledError):
+            while True:
+                with contextlib.suppress(aioredis.errors.ReplyError):
+                    await cls._pool.bgsave()
+                await asyncio.sleep(60)
+        with contextlib.suppress(aioredis.errors.ReplyError):
+            await cls._pool.bgsave()
+
     async def _pre_flight(self, identifier_data: IdentifierData):
         _full_identifiers = identifier_data.to_tuple()
         cog_name, full_identifiers = _full_identifiers[0], _full_identifiers[1:]
@@ -139,7 +170,8 @@ class RedisDriver(BaseDriver):
         log.invisible("Query: %s", query)
         if args:
             log.invisible("Args: %s", args)
-        return await method(query, *args, **kwargs)
+        output = await method(query, *args, **kwargs)
+        return output
 
     async def get(self, identifier_data: IdentifierData):
         _full_identifiers = identifier_data.to_tuple()
@@ -246,6 +278,7 @@ class RedisDriver(BaseDriver):
     async def delete_all_data(cls, **kwargs) -> None:
         """Delete all data being stored by this driver."""
         await cls._pool.flushdb(async_op=True)
+        await cls._pool.bgsave()
 
     @classmethod
     async def aiter_cogs(cls) -> AsyncIterator[Tuple[str, str]]:
