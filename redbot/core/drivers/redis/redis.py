@@ -172,6 +172,8 @@ class RedisDriver(BaseDriver):
         _full_identifiers = identifier_data.to_tuple()
         cog_name, full_identifiers = _full_identifiers[0], _full_identifiers[1:]
         full_identifiers = list(map(self._escape_key, full_identifiers))
+        if not await self._pool.exists(cog_name):
+            raise KeyError
         try:
             result = await self._execute(cog_name, *full_identifiers, method=self._pool.jsonget,)
         except aioredis.errors.ReplyError:
