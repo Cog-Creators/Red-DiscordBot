@@ -905,15 +905,15 @@ def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitabl
     ``False`` if the context is within the given guild.
     """
     try:
-        return __command_disablers[guild]
+        return __command_disablers[guild.id]
     except KeyError:
 
         async def disabler(ctx: "Context") -> bool:
-            if ctx.guild == guild:
+            if ctx.guild is not None and ctx.guild.id == guild.id:
                 raise DisabledCommand()
             return True
 
-        __command_disablers[guild] = disabler
+        __command_disablers[guild.id] = disabler
         return disabler
 
 
