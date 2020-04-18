@@ -64,16 +64,16 @@ _DEFAULT_MEMBER = {"name": "", "balance": 0, "created_at": 0}
 
 _DEFAULT_USER = _DEFAULT_MEMBER
 
-_conf: Config = None
+_config: Config = None
 
 
 def _init():
-    global _conf
-    _conf = Config.get_conf(None, 384734293238749, cog_name="Bank", force_registration=True)
-    _conf.register_global(**_DEFAULT_GLOBAL)
-    _conf.register_guild(**_DEFAULT_GUILD)
-    _conf.register_member(**_DEFAULT_MEMBER)
-    _conf.register_user(**_DEFAULT_USER)
+    global _config
+    _config = Config.get_conf(None, 384734293238749, cog_name="Bank", force_registration=True)
+    _config.register_global(**_DEFAULT_GLOBAL)
+    _config.register_guild(**_DEFAULT_GUILD)
+    _config.register_member(**_DEFAULT_MEMBER)
+    _config.register_user(**_DEFAULT_USER)
 
 
 class Account:
@@ -211,9 +211,9 @@ async def set_balance(member: Union[discord.Member, discord.User], amount: int) 
             user=member.display_name, max_balance=max_bal, currency_name=currency
         )
     if await is_global():
-        group = _conf.user(member)
+        group = _config.user(member)
     else:
-        group = _conf.member(member)
+        group = _config.member(member)
     await group.balance.set(amount)
 
     if await group.created_at() == 0:
@@ -376,9 +376,9 @@ async def wipe_bank(guild: Optional[discord.Guild] = None) -> None:
 
     """
     if await is_global():
-        await _conf.clear_all_users()
+        await _config.clear_all_users()
     else:
-        await _conf.clear_all_members(guild)
+        await _config.clear_all_members(guild)
 
 
 async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: int = None) -> None:
@@ -407,14 +407,14 @@ async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: int = None)
     if global_bank:
         _guilds = [g for g in bot.guilds if not g.unavailable and g.large and not g.chunked]
         _uguilds = [g for g in bot.guilds if g.unavailable]
-        group = _conf._get_base_group(_conf.USER)
+        group = _config._get_base_group(_config.USER)
 
     else:
         if guild is None:
             raise BankPruneError("'guild' can't be None when pruning a local bank")
         _guilds = [guild] if not guild.unavailable and guild.large else []
         _uguilds = [guild] if guild.unavailable else []
-        group = _conf._get_base_group(_conf.MEMBER, str(guild.id))
+        group = _config._get_base_group(_config.MEMBER, str(guild.id))
 
     if user_id is None:
         await bot.request_offline_members(*_guilds)
@@ -458,7 +458,7 @@ async def get_leaderboard(positions: int = None, guild: discord.Guild = None) ->
 
     """
     if await is_global():
-        raw_accounts = await _conf.all_users()
+        raw_accounts = await _config.all_users()
         if guild is not None:
             tmp = raw_accounts.copy()
             for acc in tmp:
@@ -467,7 +467,7 @@ async def get_leaderboard(positions: int = None, guild: discord.Guild = None) ->
     else:
         if guild is None:
             raise TypeError("Expected a guild, got NoneType object instead!")
-        raw_accounts = await _conf.all_members(guild)
+        raw_accounts = await _config.all_members(guild)
     sorted_acc = sorted(raw_accounts.items(), key=lambda x: x[1]["balance"], reverse=True)
     if positions is None:
         return sorted_acc
@@ -530,9 +530,9 @@ async def get_account(member: Union[discord.Member, discord.User]) -> Account:
 
     """
     if await is_global():
-        all_accounts = await _conf.all_users()
+        all_accounts = await _config.all_users()
     else:
-        all_accounts = await _conf.all_members(member.guild)
+        all_accounts = await _config.all_members(member.guild)
 
     if member.id not in all_accounts:
         acc_data = {"name": member.display_name, "created_at": _DEFAULT_MEMBER["created_at"]}
@@ -556,7 +556,7 @@ async def is_global() -> bool:
         :code:`True` if the bank is global, otherwise :code:`False`.
 
     """
-    return await _conf.is_global()
+    return await _config.is_global()
 
 
 async def set_global(global_: bool) -> bool:
@@ -586,11 +586,11 @@ async def set_global(global_: bool) -> bool:
         return global_
 
     if await is_global():
-        await _conf.clear_all_users()
+        await _config.clear_all_users()
     else:
-        await _conf.clear_all_members()
+        await _config.clear_all_members()
 
-    await _conf.is_global.set(global_)
+    await _config.is_global.set(global_)
     return global_
 
 
@@ -615,9 +615,9 @@ async def get_bank_name(guild: discord.Guild = None) -> str:
 
     """
     if await is_global():
-        return await _conf.bank_name()
+        return await _config.bank_name()
     elif guild is not None:
-        return await _conf.guild(guild).bank_name()
+        return await _config.guild(guild).bank_name()
     else:
         raise RuntimeError("Guild parameter is required and missing.")
 
@@ -645,9 +645,9 @@ async def set_bank_name(name: str, guild: discord.Guild = None) -> str:
 
     """
     if await is_global():
-        await _conf.bank_name.set(name)
+        await _config.bank_name.set(name)
     elif guild is not None:
-        await _conf.guild(guild).bank_name.set(name)
+        await _config.guild(guild).bank_name.set(name)
     else:
         raise RuntimeError("Guild must be provided if setting the name of a guild-specific bank.")
     return name
@@ -674,9 +674,9 @@ async def get_currency_name(guild: discord.Guild = None) -> str:
 
     """
     if await is_global():
-        return await _conf.currency()
+        return await _config.currency()
     elif guild is not None:
-        return await _conf.guild(guild).currency()
+        return await _config.guild(guild).currency()
     else:
         raise RuntimeError("Guild must be provided.")
 
@@ -704,9 +704,9 @@ async def set_currency_name(name: str, guild: discord.Guild = None) -> str:
 
     """
     if await is_global():
-        await _conf.currency.set(name)
+        await _config.currency.set(name)
     elif guild is not None:
-        await _conf.guild(guild).currency.set(name)
+        await _config.guild(guild).currency.set(name)
     else:
         raise RuntimeError(
             "Guild must be provided if setting the currency name of a guild-specific bank."
@@ -735,9 +735,9 @@ async def get_max_balance(guild: discord.Guild = None) -> int:
 
     """
     if await is_global():
-        return await _conf.max_balance()
+        return await _config.max_balance()
     elif guild is not None:
-        return await _conf.guild(guild).max_balance()
+        return await _config.guild(guild).max_balance()
     else:
         raise RuntimeError("Guild must be provided.")
 
@@ -773,9 +773,9 @@ async def set_max_balance(amount: int, guild: discord.Guild = None) -> int:
         )
 
     if await is_global():
-        await _conf.max_balance.set(amount)
+        await _config.max_balance.set(amount)
     elif guild is not None:
-        await _conf.guild(guild).max_balance.set(amount)
+        await _config.guild(guild).max_balance.set(amount)
     else:
         raise RuntimeError(
             "Guild must be provided if setting the maximum balance of a guild-specific bank."
@@ -804,9 +804,9 @@ async def get_default_balance(guild: discord.Guild = None) -> int:
 
     """
     if await is_global():
-        return await _conf.default_balance()
+        return await _config.default_balance()
     elif guild is not None:
-        return await _conf.guild(guild).default_balance()
+        return await _config.guild(guild).default_balance()
     else:
         raise RuntimeError("Guild is missing and required!")
 
@@ -846,9 +846,9 @@ async def set_default_balance(amount: int, guild: discord.Guild = None) -> int:
         )
 
     if await is_global():
-        await _conf.default_balance.set(amount)
+        await _config.default_balance.set(amount)
     elif guild is not None:
-        await _conf.guild(guild).default_balance.set(amount)
+        await _config.guild(guild).default_balance.set(amount)
     else:
         raise RuntimeError("Guild is missing and required.")
 

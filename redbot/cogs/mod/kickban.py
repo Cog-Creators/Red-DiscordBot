@@ -71,7 +71,7 @@ class KickBanMixin(MixinMeta):
 
         if author == user:
             return _("I cannot let you do that. Self-harm is bad {}").format("\N{PENSIVE FACE}")
-        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
+        elif not await is_allowed_by_hierarchy(self.bot, self.config, guild, author, user):
             return _(
                 "I cannot let you do that. You are "
                 "not higher than the user in the role "
@@ -82,7 +82,7 @@ class KickBanMixin(MixinMeta):
         elif not (0 <= days <= 7):
             return _("Invalid days. Must be between 0 and 7.")
 
-        toggle = await self.settings.guild(guild).dm_on_kickban()
+        toggle = await self.config.guild(guild).dm_on_kickban()
         if toggle:
             with contextlib.suppress(discord.HTTPException):
                 em = discord.Embed(
@@ -142,13 +142,13 @@ class KickBanMixin(MixinMeta):
                 except discord.HTTPException:
                     continue
 
-                async with self.settings.guild(guild).current_tempbans() as guild_tempbans:
+                async with self.config.guild(guild).current_tempbans() as guild_tempbans:
                     for uid in guild_tempbans.copy():
                         user = banned_users.get(uid, None)
                         if not user:
                             continue
                         unban_time = datetime.utcfromtimestamp(
-                            await self.settings.member(member(uid, guild)).banned_until()
+                            await self.config.member(member(uid, guild)).banned_until()
                         )
                         if datetime.utcnow() > unban_time:  # Time to unban the user
                             queue_entry = (guild.id, uid)
@@ -186,7 +186,7 @@ class KickBanMixin(MixinMeta):
                 )
             )
             return
-        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
+        elif not await is_allowed_by_hierarchy(self.bot, self.config, guild, author, user):
             await ctx.send(
                 _(
                     "I cannot let you do that. You are "
@@ -199,7 +199,7 @@ class KickBanMixin(MixinMeta):
             await ctx.send(_("I cannot do that due to discord hierarchy rules"))
             return
         audit_reason = get_audit_reason(author, reason)
-        toggle = await self.settings.guild(guild).dm_on_kickban()
+        toggle = await self.config.guild(guild).dm_on_kickban()
         if toggle:
             with contextlib.suppress(discord.HTTPException):
                 em = discord.Embed(
@@ -255,7 +255,7 @@ class KickBanMixin(MixinMeta):
         author = ctx.author
         guild = ctx.guild
         if days is None:
-            days = await self.settings.guild(guild).default_days()
+            days = await self.config.guild(guild).default_days()
 
         result = await self.ban_user(
             user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
@@ -309,7 +309,7 @@ class KickBanMixin(MixinMeta):
             return
 
         if days is None:
-            days = await self.settings.guild(guild).default_days()
+            days = await self.config.guild(guild).default_days()
 
         if not (0 <= days <= 7):
             await ctx.send(_("Invalid days. Must be between 0 and 7."))
@@ -409,10 +409,10 @@ class KickBanMixin(MixinMeta):
             invite = ""
 
         queue_entry = (guild.id, user.id)
-        await self.settings.member(user).banned_until.set(unban_time.timestamp())
-        cur_tbans = await self.settings.guild(guild).current_tempbans()
+        await self.config.member(user).banned_until.set(unban_time.timestamp())
+        cur_tbans = await self.config.guild(guild).current_tempbans()
         cur_tbans.append(user.id)
-        await self.settings.guild(guild).current_tempbans.set(cur_tbans)
+        await self.config.guild(guild).current_tempbans.set(cur_tbans)
 
         with contextlib.suppress(discord.HTTPException):
             # We don't want blocked DMs preventing us from banning
@@ -464,7 +464,7 @@ class KickBanMixin(MixinMeta):
                 )
             )
             return
-        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
+        elif not await is_allowed_by_hierarchy(self.bot, self.config, guild, author, user):
             await ctx.send(
                 _(
                     "I cannot let you do that. You are "
@@ -540,7 +540,7 @@ class KickBanMixin(MixinMeta):
 
         if await self._voice_perm_check(ctx, user_voice_state, move_members=True) is False:
             return
-        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, member):
+        elif not await is_allowed_by_hierarchy(self.bot, self.config, guild, author, member):
             await ctx.send(
                 _(
                     "I cannot let you do that. You are "
@@ -620,7 +620,7 @@ class KickBanMixin(MixinMeta):
                 await ctx.send(e)
             await ctx.send(_("Unbanned that user from this server"))
 
-        if await self.settings.guild(guild).reinvite_on_unban():
+        if await self.config.guild(guild).reinvite_on_unban():
             user = ctx.bot.get_user(user_id)
             if not user:
                 await ctx.send(

@@ -17,7 +17,7 @@ class Filter(commands.Cog):
     def __init__(self, bot: Red):
         super().__init__()
         self.bot = bot
-        self.settings = Config.get_conf(self, 4766951341)
+        self.config = Config.get_conf(self, 4766951341)
         default_guild_settings = {
             "filter": [],
             "filterban_count": 0,
@@ -27,9 +27,9 @@ class Filter(commands.Cog):
         }
         default_member_settings = {"filter_count": 0, "next_reset_time": 0}
         default_channel_settings = {"filter": []}
-        self.settings.register_guild(**default_guild_settings)
-        self.settings.register_member(**default_member_settings)
-        self.settings.register_channel(**default_channel_settings)
+        self.config.register_guild(**default_guild_settings)
+        self.config.register_member(**default_member_settings)
+        self.config.register_channel(**default_channel_settings)
         self.register_task = self.bot.loop.create_task(self.register_filterban())
         self.pattern_cache = {}
 
@@ -62,7 +62,7 @@ class Filter(commands.Cog):
         The default name used is *John Doe*.
         """
         guild = ctx.guild
-        await self.settings.guild(guild).filter_default_name.set(name)
+        await self.config.guild(guild).filter_default_name.set(name)
         await ctx.send(_("The name to use on filtered names has been set."))
 
     @filterset.command(name="ban")
@@ -83,12 +83,12 @@ class Filter(commands.Cog):
             )
             return
         elif count == 0 and timeframe == 0:
-            await self.settings.guild(ctx.guild).filterban_count.set(0)
-            await self.settings.guild(ctx.guild).filterban_time.set(0)
+            await self.config.guild(ctx.guild).filterban_count.set(0)
+            await self.config.guild(ctx.guild).filterban_time.set(0)
             await ctx.send(_("Autoban disabled."))
         else:
-            await self.settings.guild(ctx.guild).filterban_count.set(count)
-            await self.settings.guild(ctx.guild).filterban_time.set(timeframe)
+            await self.config.guild(ctx.guild).filterban_count.set(count)
+            await self.config.guild(ctx.guild).filterban_time.set(timeframe)
             await ctx.send(_("Count and time have been set."))
 
     @commands.group(name="filter")
@@ -105,7 +105,7 @@ class Filter(commands.Cog):
         if ctx.invoked_subcommand is None:
             server = ctx.guild
             author = ctx.author
-            word_list = await self.settings.guild(server).filter()
+            word_list = await self.config.guild(server).filter()
             if word_list:
                 words = ", ".join(word_list)
                 words = _("Filtered in this server:") + "\n\n" + words
@@ -127,7 +127,7 @@ class Filter(commands.Cog):
         if ctx.invoked_subcommand is None:
             channel = ctx.channel
             author = ctx.author
-            word_list = await self.settings.channel(channel).filter()
+            word_list = await self.config.channel(channel).filter()
             if word_list:
                 words = ", ".join(word_list)
                 words = _("Filtered in this channel:") + "\n\n" + words
@@ -276,8 +276,8 @@ class Filter(commands.Cog):
         This is disabled by default.
         """
         guild = ctx.guild
-        current_setting = await self.settings.guild(guild).filter_names()
-        await self.settings.guild(guild).filter_names.set(not current_setting)
+        current_setting = await self.config.guild(guild).filter_names()
+        await self.config.guild(guild).filter_names.set(not current_setting)
         if current_setting:
             await ctx.send(_("Names and nicknames will no longer be filtered."))
         else:
@@ -296,14 +296,14 @@ class Filter(commands.Cog):
     ) -> bool:
         added = False
         if isinstance(server_or_channel, discord.Guild):
-            async with self.settings.guild(server_or_channel).filter() as cur_list:
+            async with self.config.guild(server_or_channel).filter() as cur_list:
                 for w in words:
                     if w.lower() not in cur_list and w:
                         cur_list.append(w.lower())
                         added = True
 
         elif isinstance(server_or_channel, discord.TextChannel):
-            async with self.settings.channel(server_or_channel).filter() as cur_list:
+            async with self.config.channel(server_or_channel).filter() as cur_list:
                 for w in words:
                     if w.lower not in cur_list and w:
                         cur_list.append(w.lower())
@@ -316,14 +316,14 @@ class Filter(commands.Cog):
     ) -> bool:
         removed = False
         if isinstance(server_or_channel, discord.Guild):
-            async with self.settings.guild(server_or_channel).filter() as cur_list:
+            async with self.config.guild(server_or_channel).filter() as cur_list:
                 for w in words:
                     if w.lower() in cur_list:
                         cur_list.remove(w.lower())
                         removed = True
 
         elif isinstance(server_or_channel, discord.TextChannel):
-            async with self.settings.channel(server_or_channel).filter() as cur_list:
+            async with self.config.channel(server_or_channel).filter() as cur_list:
                 for w in words:
                     if w.lower() in cur_list:
                         cur_list.remove(w.lower())
@@ -347,9 +347,9 @@ class Filter(commands.Cog):
         try:
             pattern = self.pattern_cache[(guild, channel)]
         except KeyError:
-            word_list = set(await self.settings.guild(guild).filter())
+            word_list = set(await self.config.guild(guild).filter())
             if channel:
-                word_list |= set(await self.settings.channel(channel).filter())
+                word_list |= set(await self.config.channel(channel).filter())
 
             if word_list:
                 pattern = re.compile(
@@ -368,18 +368,18 @@ class Filter(commands.Cog):
         server = message.guild
         author = message.author
 
-        filter_count = await self.settings.guild(server).filterban_count()
-        filter_time = await self.settings.guild(server).filterban_time()
-        user_count = await self.settings.member(author).filter_count()
-        next_reset_time = await self.settings.member(author).next_reset_time()
+        filter_count = await self.config.guild(server).filterban_count()
+        filter_time = await self.config.guild(server).filterban_time()
+        user_count = await self.config.member(author).filter_count()
+        next_reset_time = await self.config.member(author).next_reset_time()
 
         if filter_count > 0 and filter_time > 0:
             if message.created_at.timestamp() >= next_reset_time:
                 next_reset_time = message.created_at.timestamp() + filter_time
-                await self.settings.member(author).next_reset_time.set(next_reset_time)
+                await self.config.member(author).next_reset_time.set(next_reset_time)
                 if user_count > 0:
                     user_count = 0
-                    await self.settings.member(author).filter_count.set(user_count)
+                    await self.config.member(author).filter_count.set(user_count)
 
         hits = await self.filter_hits(message.content, message.channel)
 
@@ -392,7 +392,7 @@ class Filter(commands.Cog):
                 self.bot.dispatch("filter_message_delete", message, hits)
                 if filter_count > 0 and filter_time > 0:
                     user_count += 1
-                    await self.settings.member(author).filter_count.set(user_count)
+                    await self.config.member(author).filter_count.set(user_count)
                     if (
                         user_count >= filter_count
                         and message.created_at.timestamp() < next_reset_time
@@ -449,12 +449,12 @@ class Filter(commands.Cog):
             return  # Discord Hierarchy applies to nicks
         if await self.bot.is_automod_immune(member):
             return
-        if not await self.settings.guild(member.guild).filter_names():
+        if not await self.config.guild(member.guild).filter_names():
             return
 
         if await self.filter_hits(member.display_name, member.guild):
 
-            name_to_use = await self.settings.guild(member.guild).filter_default_name()
+            name_to_use = await self.config.guild(member.guild).filter_default_name()
             reason = _("Filtered nickname") if member.nick else _("Filtered name")
             try:
                 await member.edit(nick=name_to_use, reason=reason)
