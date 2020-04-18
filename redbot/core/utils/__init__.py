@@ -307,4 +307,3 @@ class AsyncGen(AsyncIterable[_T]):
                 yield item
                 _temp.append(item)
         del _temp
-
