@@ -369,12 +369,12 @@ class Filter(commands.Cog):
         return hits
 
     async def check_filter(self, message: discord.Message):
-        server = message.guild
+        guild = message.guild
         author = message.author
-        server_data = await self.config.guild(server).all()
+        guild_data = await self.config.guild(guild).all()
         member_data = await self.config.member(author).all()
-        filter_count = server_data["filterban_count"]
-        filter_time = server_data["filterban_time"]
+        filter_count = guild_data["filterban_count"]
+        filter_time = guild_data["filterban_time"]
         user_count = member_data["filter_count"]
         next_reset_time = member_data["next_reset_time"]
 
@@ -405,17 +405,17 @@ class Filter(commands.Cog):
                     ):
                         reason = _("Autoban (too many filtered messages.)")
                         try:
-                            await server.ban(author, reason=reason)
+                            await guild.ban(author, reason=reason)
                         except discord.HTTPException:
                             pass
                         else:
                             await modlog.create_case(
                                 self.bot,
-                                server,
+                                guild,
                                 message.created_at,
                                 "filterban",
                                 author,
-                                server.me,
+                                guild.me,
                                 reason,
                             )
 

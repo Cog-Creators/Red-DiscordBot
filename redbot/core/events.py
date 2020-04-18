@@ -192,13 +192,13 @@ def init_events(bot, cli_flags):
             bot._last_exception = exception_log
             await ctx.send(inline(message))
         elif isinstance(error, commands.CommandNotFound):
-            help_config = await HelpSettings.from_context(ctx)
+            help_settings = await HelpSettings.from_context(ctx)
             fuzzy_commands = await fuzzy_command_search(
                 ctx,
                 commands={
                     c
                     async for c in RedHelpFormatter.help_filter_func(
-                        ctx, bot.walk_commands(), help_config=help_config
+                        ctx, bot.walk_commands(), help_settings=help_settings
                     )
                 },
             )
