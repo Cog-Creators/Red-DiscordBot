@@ -688,7 +688,9 @@ class Streams(commands.Cog):
                         mention_str, edited_roles = await self._get_mention_str(channel.guild)
 
                         if mention_str:
-                            alert_msg = await self.config.guild(channel.guild).live_message_mention()
+                            alert_msg = await self.config.guild(
+                                channel.guild
+                            ).live_message_mention()
                             if alert_msg:
                                 content = alert_msg.format(mention=mention_str, stream=stream)
                             else:
@@ -699,7 +701,9 @@ class Streams(commands.Cog):
                                     ),
                                 )
                         else:
-                            alert_msg = await self.config.guild(channel.guild).live_message_nomention()
+                            alert_msg = await self.config.guild(
+                                channel.guild
+                            ).live_message_nomention()
                             if alert_msg:
                                 content = alert_msg.format(stream=stream)
                             else:

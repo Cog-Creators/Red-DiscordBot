@@ -55,14 +55,14 @@ async def _init(bot: Red):
     global _config
     global _bot_ref
     _bot_ref = bot
-    _conf = Config.get_conf(None, 1354799444, cog_name="ModLog")
-    _conf.register_global(schema_version=1)
-    _conf.register_guild(mod_log=None, casetypes={}, latest_case_number=0)
-    _conf.init_custom(_CASETYPES, 1)
-    _conf.init_custom(_CASES, 2)
-    _conf.register_custom(_CASETYPES)
-    _conf.register_custom(_CASES)
-    await _migrate_config(from_version=await _conf.schema_version(), to_version=_SCHEMA_VERSION)
+    _config = Config.get_conf(None, 1354799444, cog_name="ModLog")
+    _config.register_global(schema_version=1)
+    _config.register_guild(mod_log=None, casetypes={}, latest_case_number=0)
+    _config.init_custom(_CASETYPES, 1)
+    _config.init_custom(_CASES, 2)
+    _config.register_custom(_CASETYPES)
+    _config.register_custom(_CASES)
+    await _migrate_config(from_version=await _config.schema_version(), to_version=_SCHEMA_VERSION)
     await register_casetypes(all_generics)
 
     async def on_member_ban(guild: discord.Guild, member: discord.Member):
@@ -179,7 +179,9 @@ async def _migrate_config(from_version: int, to_version: int):
         # migration done, now let's delete all the old stuff
         await _config.clear_raw("casetypes")
         for guild_id in all_guild_data:
-            await _config.guild(cast(discord.Guild, discord.Object(id=guild_id))).clear_raw("cases")
+            await _config.guild(cast(discord.Guild, discord.Object(id=guild_id))).clear_raw(
+                "cases"
+            )
 
     if from_version < 3 <= to_version:
         await handle_auditype_key()

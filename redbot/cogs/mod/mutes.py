@@ -430,9 +430,7 @@ class MuteMixin(MixinMeta):
             elif e.code == 10009:
                 return False, _(mute_unmute_issues["left_guild"])
         else:
-            await self.config.member(user).set_raw(
-                "perms_cache", str(channel.id), value=old_overs
-            )
+            await self.config.member(user).set_raw("perms_cache", str(channel.id), value=old_overs)
             return True, None
 
     async def unmute_user(
