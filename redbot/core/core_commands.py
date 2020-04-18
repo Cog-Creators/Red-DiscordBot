@@ -168,7 +168,7 @@ class CoreLogic:
 
         # noinspection PyTypeChecker
         modules = itertools.accumulate(splitted, "{}.{}".format)
-        async for m in AsyncGen(modules, steps=10):
+        for m in modules:
             maybe_reload(m)
 
         children = {name: lib for name, lib in sys.modules.items() if name.startswith(module_name)}

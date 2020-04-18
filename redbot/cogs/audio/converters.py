@@ -12,7 +12,6 @@ from redbot.core.i18n import Translator
 from .errors import NoMatchesFound, TooManyMatches
 from .playlists import get_all_playlist_converter, standardize_scope
 from .utils import PlaylistScope
-from ...core.utils import AsyncGen
 
 _ = Translator("Audio", __file__)
 
@@ -78,7 +77,7 @@ async def global_unique_guild_finder(ctx: commands.Context, arg: str) -> discord
             return guild
 
     maybe_matches = []
-    async for obj in AsyncGen(bot.guilds, steps=100):
+    for obj in bot.guilds:
         if obj.name == arg or str(obj) == arg:
             maybe_matches.append(obj)
 
@@ -114,12 +113,10 @@ async def global_unique_user_finder(
 
     objects = bot.users
 
-    def matches(user, to_match):
-        return user.name == to_match or str(user) == to_match
-
     maybe_matches = []
-    async for obj in AsyncGen(objects, steps=100).filter(matches, to_match=arg):
-        maybe_matches.append(obj)
+    for obj in objects:
+        if obj.name == arg or str(obj) == arg:
+            maybe_matches.append(obj)
 
     if guild is not None:
         for member in guild.members:
