@@ -266,10 +266,11 @@ def init_events(bot, cli_flags):
         disabled_commands = await bot._config.disabled_commands()
         if command.qualified_name in disabled_commands:
             command.enabled = False
-        for guild in bot.guilds:
-            disabled_commands = await bot._config.guild(guild).disabled_commands()
+        guild_data = await bot._config.all_guilds()
+        for guild_id, data in guild_data.items():
+            disabled_commands = data.get("disabled_commands", [])
             if command.qualified_name in disabled_commands:
-                command.disable_in(guild)
+                command.disable_in(discord.Object(id=guild_id))
 
     async def _guild_added(guild: discord.Guild):
         disabled_commands = await bot._config.guild(guild).disabled_commands()
