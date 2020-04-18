@@ -896,7 +896,7 @@ class Core(commands.Cog, CoreLogic):
                 guild_settings = ""
 
             prefixes = await ctx.bot._prefix_cache.get_prefixes(ctx.guild)
-            global_data = ctx.bot._config.all()
+            global_data = await ctx.bot._config.all()
             locale = global_data["locale"]
             regional_format = global_data["regional_format"] or _("Same as bot's locale")
 
