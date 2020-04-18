@@ -192,7 +192,7 @@ def init_events(bot, cli_flags):
             bot._last_exception = exception_log
             await ctx.send(inline(message))
         elif isinstance(error, commands.CommandNotFound):
-            help_config = HelpSettings.from_context(ctx)
+            help_config = await HelpSettings.from_context(ctx)
             fuzzy_commands = await fuzzy_command_search(
                 ctx,
                 commands={
