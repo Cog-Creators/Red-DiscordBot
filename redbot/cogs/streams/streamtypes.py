@@ -1,9 +1,10 @@
 import json
 import logging
-from random import choice
+from random import choice, sample
 from string import ascii_letters
 import xml.etree.ElementTree as ET
 from typing import ClassVar, Optional, List
+from urllib.parse import quote
 
 import aiohttp
 import discord
@@ -14,6 +15,7 @@ from .errors import (
     InvalidTwitchCredentials,
     InvalidYoutubeCredentials,
     StreamNotFound,
+    OfflineGame,
 )
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_number
@@ -45,6 +47,98 @@ def get_video_ids_from_feed(feed):
         for i in child.iter("{http://www.youtube.com/xml/schemas/2015}videoId"):
             yield i.text
 
+
+class Game:
+
+    token_name: ClassVar[Optional[str]] = None
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.pop("name", None)
+        self.id = kwargs.pop("id", None)
+        self.channels = kwargs.pop("channels", [])
+        self._messages_cache = kwargs.pop("_messages_cache", [])
+        self.type = self.__class__.__name__
+        self.bot = kwargs.pop("bot", None)
+        self.sort = kwargs.pop("sort", None)
+        self.count = kwargs.pop("count", None)
+    
+    async def has_online_channels(self):
+        raise NotImplementedError()
+
+    def make_embed(self):
+        raise NotImplementedError()
+
+    def export(self):
+        data = {}
+        for k, v in self.__dict__.items():
+            if not k.startswith("_"):
+                data[k] = v
+        data["messages"] = []
+        del data["bot"]
+        for m in self._messages_cache:
+            data["messages"].append({"channel": m.channel.id, "message": m.id})
+        return data
+    
+
+class TwitchGame(Game):
+    
+    token_name = "twitch"
+
+    def __init__(self, **kwargs):
+        self._token = kwargs.pop("token", None)
+        self.box_art = kwargs.pop("box_art_url", None)
+        super().__init__(**kwargs)
+    
+    async def has_online_channels(self):
+        if self._token["access_token"]:
+            header = {"Authorization": f"Bearer {self.token['access_token']}"}
+        else:
+            header = {"Client-ID": str(self._token["client_id"])}
+        params = {"game_id": self.id, "first": 100}
+        stream_list = []
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(TWITCH_STREAMS_ENDPOINT, headers=header, params=params) as r:
+                data = await r.json()
+        if r.status == 200:
+            if not data["data"]:
+                raise OfflineGame()
+            stream_list.extend(data["data"])
+            cursor = data["pagination"]
+            while "cursor" in cursor:
+                params2 = {"game_id": self.id, "first": 100, "after": cursor["cursor"]}
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(TWITCH_STREAMS_ENDPOINT, headers=header, params=params2) as r:
+                        data2 = await r.json()
+                        if not data2["data"]:
+                            break
+                        else:
+                            stream_list.extend(data2["data"])
+                            cursor = data2["pagination"]
+            if self.sort == "random":
+                if len(data["data"]) < self.count:
+                    choices = data["data"]
+                else:
+                    choices = sample(data["data"], self.count)
+            else:
+                choices = sorted(data["data"], key=lambda x: x["viewer_count"], reverse=True)[:self.count]
+            return self.make_embed(choices)
+        
+    
+    def make_embed(self, data: list):
+        embed = discord.Embed(
+            title=f"Currently live channels playing {self.name}",
+            url=f"https://twitch.tv/directory/game/{quote(self.name)}",
+        )
+        if self.box_art:
+            embed.set_thumbnail(url=self.box_art.format(width=150, height=200))
+        for chn in data:
+            embed.add_field(
+                name=chn["user_name"],
+                value=f"[{chn['viewer_count']}](https://twitch.tv/{chn['user_name']}) viewers",
+                inline=False,
+            )
+        return embed
 
 class Stream:
 
