@@ -6,6 +6,7 @@ import discord
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
+from redbot.core.utils import AsyncGen
 
 _ = Translator("PermissionsConverters", __file__)
 
@@ -37,26 +38,33 @@ class GlobalUniqueObjectFinder(commands.Converter):
             if user is not None:
                 return user
 
-            for guild in bot.guilds:
+            async for guild in AsyncGen(bot.guilds, steps=100):
                 role: discord.Role = guild.get_role(_id)
                 if role is not None:
                     return role
-
+        all_roles = [
+            roles async for guild in AsyncGen(bot.guilds, steps=100) for roles in guild.roles
+        ]
         objects = itertools.chain(
             bot.get_all_channels(),
             bot.users,
             bot.guilds,
-            *(filter(lambda r: not r.is_default(), guild.roles) for guild in bot.guilds),
+            *(
+                filter(lambda r: not r.is_default(), roles)
+                async for roles in AsyncGen(all_roles, steps=100)
+            ),
         )
 
         maybe_matches = []
-        for obj in objects:
+        async for obj in AsyncGen(objects, steps=100):
             if obj.name == arg or str(obj) == arg:
                 maybe_matches.append(obj)
 
         if ctx.guild is not None:
-            for member in ctx.guild.members:
-                if member.nick == arg and not any(obj.id == member.id for obj in maybe_matches):
+            async for member in AsyncGen(ctx.guild.members, steps=100):
+                if member.nick == arg and not any(
+                    obj.id == member.id async for obj in AsyncGen(maybe_matches, steps=100)
+                ):
                     maybe_matches.append(member)
 
         if not maybe_matches:
@@ -102,7 +110,7 @@ class GuildUniqueObjectFinder(commands.Converter):
         )
 
         maybe_matches = []
-        for obj in objects:
+        async for obj in AsyncGen(objects, steps=100):
             if obj.name == arg or str(obj) == arg:
                 maybe_matches.append(obj)
             try:

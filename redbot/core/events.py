@@ -15,6 +15,7 @@ from pkg_resources import DistributionNotFound
 
 from redbot.core.commands import RedHelpFormatter, HelpSettings
 from redbot.core.i18n import Translator
+from .utils import AsyncGen
 from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
 from . import commands
 from .config import get_latest_confs
@@ -267,7 +268,7 @@ def init_events(bot, cli_flags):
         if command.qualified_name in disabled_commands:
             command.enabled = False
         guild_data = await bot._config.all_guilds()
-        for guild_id, data in guild_data.items():
+        async for guild_id, data in AsyncGen(guild_data.items(), steps=100):
             disabled_commands = data.get("disabled_commands", [])
             if command.qualified_name in disabled_commands:
                 command.disable_in(discord.Object(id=guild_id))

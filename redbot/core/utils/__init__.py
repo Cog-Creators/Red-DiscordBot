@@ -2,6 +2,7 @@ import asyncio
 import warnings
 from asyncio import AbstractEventLoop, as_completed, Semaphore
 from asyncio.futures import isfuture
+from functools import partial
 from itertools import chain
 from typing import (
     Any,
@@ -20,7 +21,7 @@ from typing import (
     TYPE_CHECKING,
 )
 
-__all__ = ("bounded_gather", "deduplicate_iterables")
+__all__ = ("bounded_gather", "deduplicate_iterables", "AsyncGen")
 
 _T = TypeVar("_T")
 
@@ -255,3 +256,49 @@ def bounded_gather(
     tasks = (_sem_wrapper(semaphore, task) for task in coros_or_futures)
 
     return asyncio.gather(*tasks, return_exceptions=return_exceptions)
+
+
+class AsyncGen(AsyncIterable[_T]):
+    """Yield entry every `delay` seconds per `steps`."""
+
+    def __init__(self, contents: Iterator[_T], delay: float = 0.0, steps: int = 1) -> None:
+        self.delay = delay
+        self.content = contents
+        self.i = 0
+        self.steps = steps
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self) -> Awaitable[_T]:
+        i = next(self.content)
+        self.i += 1
+        if self.i % self.steps == 0:
+            await asyncio.sleep(self.delay)
+        return i
+
+    def __await__(self):
+        return self.flatten()
+
+    async def flatten(self) -> List[_T]:
+        return [item async for item in self]
+
+    async def filter(
+        self, function: Union[AsyncIterable[_T], Iterable[_T]], *args, **kwargs
+    ) -> AsyncIterator[_T]:
+        function = partial(function, *args, **kwargs)
+        async for i in async_filter(self, function):
+            yield i
+
+    async def enumerate(self, start=0) -> AsyncIterator[Tuple[int, _T]]:
+        async for item in self:
+            yield start, item
+            start += 1
+
+    async def remove_dupes(self):
+        _temp = []
+        async for item in self:
+            if item not in _temp:
+                yield item
+                _temp.append(item)
+        del _temp

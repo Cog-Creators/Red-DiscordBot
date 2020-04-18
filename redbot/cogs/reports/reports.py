@@ -7,6 +7,7 @@ import contextlib
 import discord
 
 from redbot.core import Config, checks, commands
+from redbot.core.utils import AsyncGen
 from redbot.core.utils.chat_formatting import pagify, box
 from redbot.core.utils.antispam import AntiSpam
 from redbot.core.bot import Red
@@ -115,7 +116,7 @@ class Reports(commands.Cog):
         else:
             perms = discord.Permissions(**permissions)
 
-        for guild in self.bot.guilds:
+        async for guild in AsyncGen(self.bot.guilds, steps=100):
             x = guild.get_member(author.id)
             if x is not None:
                 if await self.internal_filter(x, mod, perms):
