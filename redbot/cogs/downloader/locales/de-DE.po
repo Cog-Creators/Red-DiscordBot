@@ -28,11 +28,11 @@ msgstr "Keine Downloader Cog gefunden."
 
 #: redbot/cogs/downloader/converters.py:19
 msgid "Cog `{cog_name}` is not installed."
-msgstr ""
+msgstr "`{cog_name}` ist nicht installiert."
 
 #: redbot/cogs/downloader/downloader.py:30
 msgid "\\n**WARNING:** The following repos are using shared libraries which are marked for removal in Red 3.4: {repo_list}.\\n You should inform maintainers of these repos about this message."
-msgstr ""
+msgstr "\\n**ACHTUNG**\\n Die folgenden Repos verwenden Bibliotheken, die in Red Version 3.4 entfernt werden: {repo_list}.\\n Du solltest die Maintainer dieser Repos über diese Nachricht informieren."
 
 #: redbot/cogs/downloader/downloader.py:461
 #, docstring
@@ -55,11 +55,11 @@ msgstr "Quellen Management Befehle."
 #: redbot/cogs/downloader/downloader.py:489
 #, docstring
 msgid "Add a new repo.\\n\\n        Repo names can only contain characters A-z, numbers, underscores, and hyphens.\\n        The branch will be the default branch if not specified.\\n        "
-msgstr ""
+msgstr "Füge ein neues Repository hinzu.\\n\\n        Repository-Namen dürfen nur Zeichen(A-z), Zahlen(0-9), Unterstriche und Bindestriche enthalten.\\n        Es wird der Standardbranch gewählt, wenn kein spezifischer Branch angegeben ist.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:499
 msgid "Repo names can only contain characters A-z, numbers, underscores, and hyphens."
-msgstr ""
+msgstr "Repository-Namen dürfen nur Zeichen(A-z), Zahlen(0-9), Unterstriche und Bindestriche enthalten."
 
 #: redbot/cogs/downloader/downloader.py:508
 msgid "The repo name you provided is already in use. Please choose another name."

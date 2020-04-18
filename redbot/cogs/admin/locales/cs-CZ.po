@@ -156,7 +156,7 @@ msgstr "Aplikovat self-role."
 #: redbot/cogs/admin/admin.py:375
 #, docstring
 msgid "\\n        Add a selfrole to yourself.\\n\\n        Server admins must have configured the role as user settable.\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "\\n        Odstraní vám self-roli.\\n\\n        Administrátoři serveru musí mít nastavenou roli podle nastaveného uživatele.\\n        POZNÁMKA: Role je citlivá na malá a velká písmena!\\n        "
+msgstr "\\n        Přidá vám self-roli.\\n\\n        Administrátoři serveru musí mít nastavenou roli podle nastaveného uživatele.\\n        POZNÁMKA: Role je citlivá na malá a velká písmena!\\n        "
 
 #: redbot/cogs/admin/admin.py:386
 #, docstring
