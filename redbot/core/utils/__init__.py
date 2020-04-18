@@ -261,9 +261,11 @@ def bounded_gather(
 class AsyncGen(AsyncIterable[_T]):
     """Yield entry every `delay` seconds per `steps`."""
 
-    def __init__(self, contents: Iterator[_T], delay: float = 0.0, steps: int = 1) -> None:
+    def __init__(
+        self, contents: Union[Iterator[_T], Iterable[_T]], delay: float = 0.0, steps: int = 1
+    ) -> None:
         self.delay = delay
-        self.content = contents
+        self.content = iter(contents)
         self.i = 0
         self.steps = steps
 
@@ -271,7 +273,10 @@ class AsyncGen(AsyncIterable[_T]):
         return self
 
     async def __anext__(self) -> Awaitable[_T]:
-        i = next(self.content)
+        try:
+            i = next(self.content)
+        except StopIteration:
+            raise StopAsyncIteration
         self.i += 1
         if self.i % self.steps == 0:
             await asyncio.sleep(self.delay)
@@ -302,3 +307,4 @@ class AsyncGen(AsyncIterable[_T]):
                 yield item
                 _temp.append(item)
         del _temp
+
