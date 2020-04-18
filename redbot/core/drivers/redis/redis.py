@@ -229,14 +229,12 @@ class RedisDriver(BaseDriver):
         async with self._lock:
             _type = await self._pool.jsontype(name=cog_name, path=identifier_string)
 
-            if _type not in [
-                None,
-                "integer",
-                "number",
-                "object"
-            ]:
+            if _type not in [None, "integer", "number", "object"]:
                 raise StoredTypeError("The value is not a Integer or Float")
-            elif _type in [None, "null"] or (_type == "object" and not await self._pool.jsonobjlen(name=cog_name, path=identifier_string)):
+            elif _type in [None, "null"] or (
+                _type == "object"
+                and not await self._pool.jsonobjlen(name=cog_name, path=identifier_string)
+            ):
                 await self._execute(
                     cog_name, path=identifier_string, obj=default + 1, method=self._pool.jsonset,
                 )
@@ -245,7 +243,10 @@ class RedisDriver(BaseDriver):
                 raise StoredTypeError("The value is not a Integer or Float")
             else:
                 applying = await self._execute(
-                    cog_name, path=identifier_string, number=value, method=self._pool.jsonnumincrby,
+                    cog_name,
+                    path=identifier_string,
+                    number=value,
+                    method=self._pool.jsonnumincrby,
                 )
                 return ujson.loads(applying)
 
@@ -262,7 +263,10 @@ class RedisDriver(BaseDriver):
             _type = await self._pool.jsontype(name=cog_name, path=identifier_string)
             if _type not in [None, "null", "boolean", "object"]:
                 raise StoredTypeError("The value is not a Boolean or Null")
-            elif _type in [None, "null"] or (_type == "object" and not await self._pool.jsonobjlen(name=cog_name, path=identifier_string)):
+            elif _type in [None, "null"] or (
+                _type == "object"
+                and not await self._pool.jsonobjlen(name=cog_name, path=identifier_string)
+            ):
                 await self._execute(
                     cog_name, path=identifier_string, obj=not value, method=self._pool.jsonset,
                 )
