@@ -1,7 +1,4 @@
 import re
-from typing import Iterable
-
-import discord
 
 __all__ = [
     "URL_RE",
@@ -14,13 +11,12 @@ __all__ = [
     "normalize_smartquotes",
     "escape_spoilers",
     "escape_spoilers_and_mass_mentions",
-    "sanitize_role_mentions",
 ]
 
 # regexes
 URL_RE = re.compile(r"(https?|s?ftp)://(\S+)", re.I)
 
-INVITE_URL_RE = re.compile(r"(discord.gg|discordapp.com/invite|discord.me)(\S+)", re.I)
+INVITE_URL_RE = re.compile(r"(discord\.(?:gg|io|me|li)|discordapp\.com\/invite)\/(\S+)", re.I)
 
 MASS_MENTION_RE = re.compile(r"(@)(?=everyone|here)")  # This only matches the @ for sanitizing
 
@@ -68,7 +64,7 @@ def filter_urls(to_filter: str) -> str:
 def filter_invites(to_filter: str) -> str:
     """Get a string with discord invites sanitized.
 
-    Will match any discord.gg, discordapp.com/invite, or discord.me
+    Will match any discord.gg, discordapp.com/invite, discord.me, or discord.io/discord.li
     invite URL.
 
     Parameters
@@ -177,32 +173,3 @@ def escape_spoilers_and_mass_mentions(content: str) -> str:
         The escaped string.
     """
     return escape_spoilers(filter_mass_mentions(content))
-
-
-def sanitize_role_mentions(content: str, roles: Iterable[discord.Role]) -> str:
-    """
-    Swaps out role mentions for @RoleName
-
-    This should always be used prior to filtering everyone mentions
-
-    Parameters
-    ----------
-    content: str
-        The string to make substitutions to
-    roles: Iterable[discord.Role]
-        The roles to make substitutions for
-
-    Returns
-    -------
-    str
-        The resulting string
-    """
-    transformations = {re.escape(fr"<@&{role.id}>"): f"@{role.name}" for role in roles}
-
-    def repl(obj):
-        return transformations.get(re.escape(obj.group(0)), "")
-
-    pattern = re.compile("|".join(transformations.keys()))
-    result = pattern.sub(repl, content)
-
-    return result

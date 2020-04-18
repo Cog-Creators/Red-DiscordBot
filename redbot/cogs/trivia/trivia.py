@@ -1,15 +1,24 @@
 """Module for Trivia cog."""
+import asyncio
+import math
 import pathlib
 from collections import Counter
 from typing import List
+
+import io
 import yaml
 import discord
-from redbot.core import commands
-from redbot.core import Config, checks
+
+from redbot.core import Config, commands, checks
+from redbot.cogs.bank import is_owner_if_bank_global
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, pagify, bold
-from redbot.cogs.bank import check_global_setting_admin
+from redbot.core.utils.menus import start_adding_reactions
+from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
+
+from .checks import trivia_stop_check
+from .converters import finite_float
 from .log import LOG
 from .session import TriviaSession
 
@@ -81,7 +90,7 @@ class Trivia(commands.Cog):
         await ctx.send(_("Done. Points required to win set to {num}.").format(num=score))
 
     @triviaset.command(name="timelimit")
-    async def triviaset_timelimit(self, ctx: commands.Context, seconds: float):
+    async def triviaset_timelimit(self, ctx: commands.Context, seconds: finite_float):
         """Set the maximum seconds permitted to answer a question."""
         if seconds < 4.0:
             await ctx.send(_("Must be at least 4 seconds."))
@@ -91,7 +100,7 @@ class Trivia(commands.Cog):
         await ctx.send(_("Done. Maximum seconds to answer set to {num}.").format(num=seconds))
 
     @triviaset.command(name="stopafter")
-    async def triviaset_stopafter(self, ctx: commands.Context, seconds: float):
+    async def triviaset_stopafter(self, ctx: commands.Context, seconds: finite_float):
         """Set how long until trivia stops due to no response."""
         settings = self.conf.guild(ctx.guild)
         if seconds < await settings.delay():
@@ -148,9 +157,10 @@ class Trivia(commands.Cog):
         else:
             await ctx.send(_("Alright, I won't reveal the answer to the questions anymore."))
 
+    @is_owner_if_bank_global()
+    @checks.admin_or_permissions(manage_guild=True)
     @triviaset.command(name="payout")
-    @check_global_setting_admin()
-    async def triviaset_payout_multiplier(self, ctx: commands.Context, multiplier: float):
+    async def triviaset_payout_multiplier(self, ctx: commands.Context, multiplier: finite_float):
         """Set the payout multiplier.
 
         This can be any positive decimal number. If a user wins trivia when at
@@ -169,6 +179,86 @@ class Trivia(commands.Cog):
             await ctx.send(_("Done. Payout multiplier set to {num}.").format(num=multiplier))
         else:
             await ctx.send(_("Done. I will no longer reward the winner with a payout."))
+
+    @triviaset.group(name="custom")
+    @commands.is_owner()
+    async def triviaset_custom(self, ctx: commands.Context):
+        """Manage Custom Trivia lists."""
+        pass
+
+    @triviaset_custom.command(name="list")
+    async def custom_trivia_list(self, ctx: commands.Context):
+        """List uploaded custom trivia."""
+        personal_lists = sorted([p.resolve().stem for p in cog_data_path(self).glob("*.yaml")])
+        no_lists_uploaded = _("No custom Trivia lists uploaded.")
+
+        if not personal_lists:
+            if await ctx.embed_requested():
+                await ctx.send(
+                    embed=discord.Embed(
+                        colour=await ctx.embed_colour(), description=no_lists_uploaded
+                    )
+                )
+            else:
+                await ctx.send(no_lists_uploaded)
+            return
+
+        if await ctx.embed_requested():
+            await ctx.send(
+                embed=discord.Embed(
+                    title=_("Uploaded trivia lists"),
+                    colour=await ctx.embed_colour(),
+                    description=", ".join(sorted(personal_lists)),
+                )
+            )
+        else:
+            msg = box(
+                bold(_("Uploaded trivia lists")) + "\n\n" + ", ".join(sorted(personal_lists))
+            )
+            if len(msg) > 1000:
+                await ctx.author.send(msg)
+            else:
+                await ctx.send(msg)
+
+    @commands.is_owner()
+    @triviaset_custom.command(name="upload", aliases=["add"])
+    async def trivia_upload(self, ctx: commands.Context):
+        """Upload a trivia file."""
+        if not ctx.message.attachments:
+            await ctx.send(_("Supply a file with next message or type anything to cancel."))
+            try:
+                message = await ctx.bot.wait_for(
+                    "message", check=MessagePredicate.same_context(ctx), timeout=30
+                )
+            except asyncio.TimeoutError:
+                await ctx.send(_("You took too long to upload a list."))
+                return
+            if not message.attachments:
+                await ctx.send(_("You have cancelled the upload process."))
+                return
+            parsedfile = message.attachments[0]
+        else:
+            parsedfile = ctx.message.attachments[0]
+        try:
+            await self._save_trivia_list(ctx=ctx, attachment=parsedfile)
+        except yaml.error.MarkedYAMLError as exc:
+            await ctx.send(_("Invalid syntax: ") + str(exc))
+        except yaml.error.YAMLError:
+            await ctx.send(
+                _("There was an error parsing the trivia list. See logs for more info.")
+            )
+            LOG.exception("Custom Trivia file %s failed to upload", parsedfile.filename)
+
+    @commands.is_owner()
+    @triviaset_custom.command(name="delete", aliases=["remove"])
+    async def trivia_delete(self, ctx: commands.Context, name: str):
+        """Delete a trivia file."""
+        filepath = cog_data_path(self) / f"{name}.yaml"
+        if filepath.exists():
+            filepath.unlink()
+            await ctx.send(_("Trivia {filename} was deleted.").format(filename=filepath.stem))
+        else:
+            await ctx.send(_("Trivia file was not found."))
 
     @commands.group(invoke_without_command=True)
     @commands.guild_only()
@@ -198,7 +288,7 @@ class Trivia(commands.Cog):
                     _(
                         "Invalid category `{name}`. See `{prefix}trivia list` for a list of "
                         "trivia categories."
-                    ).format(name=category, prefix=ctx.prefix)
+                    ).format(name=category, prefix=ctx.clean_prefix)
                 )
             except InvalidListError:
                 await ctx.send(
@@ -226,27 +316,14 @@ class Trivia(commands.Cog):
         self.trivia_sessions.append(session)
         LOG.debug("New trivia session; #%s in %d", ctx.channel, ctx.guild.id)
 
+    @trivia_stop_check()
     @trivia.command(name="stop")
     async def trivia_stop(self, ctx: commands.Context):
         """Stop an ongoing trivia session."""
         session = self._get_trivia_session(ctx.channel)
-        if session is None:
-            await ctx.send(_("There is no ongoing trivia session in this channel."))
-            return
-        author = ctx.author
-        auth_checks = (
-            await ctx.bot.is_owner(author),
-            await ctx.bot.is_mod(author),
-            await ctx.bot.is_admin(author),
-            author == ctx.guild.owner,
-            author == session.ctx.author,
-        )
-        if any(auth_checks):
-            await session.end_game()
-            session.force_stop()
-            await ctx.send(_("Trivia stopped."))
-        else:
-            await ctx.send(_("You are not allowed to do that."))
+        await session.end_game()
+        session.force_stop()
+        await ctx.send(_("Trivia stopped."))
 
     @trivia.command(name="list")
     async def trivia_list(self, ctx: commands.Context):
@@ -302,7 +379,7 @@ class Trivia(commands.Cog):
                 _(
                     "Unknown field `{field_name}`, see `{prefix}help trivia leaderboard server` "
                     "for valid fields to sort by."
-                ).format(field_name=sort_by, prefix=ctx.prefix)
+                ).format(field_name=sort_by, prefix=ctx.clean_prefix)
             )
             return
         guild = ctx.guild
@@ -331,7 +408,7 @@ class Trivia(commands.Cog):
                 _(
                     "Unknown field `{field_name}`, see `{prefix}help trivia leaderboard server` "
                     "for valid fields to sort by."
-                ).format(field_name=sort_by, prefix=ctx.prefix)
+                ).format(field_name=sort_by, prefix=ctx.clean_prefix)
             )
             return
         data = await self.conf.all_members()
@@ -511,6 +588,73 @@ class Trivia(commands.Cog):
                 raise InvalidListError("YAML parsing failed.") from exc
             else:
                 return dict_
+
+    async def _save_trivia_list(
+        self, ctx: commands.Context, attachment: discord.Attachment
+    ) -> None:
+        """Checks and saves a trivia list to data folder.
+
+        Parameters
+        ----------
+        file : discord.Attachment
+            A discord message attachment.
+
+        Returns
+        -------
+        None
+        """
+        filename = attachment.filename.rsplit(".", 1)[0]
+
+        # Check if trivia filename exists in core files or if it is a command
+        if filename in self.trivia.all_commands or any(
+            filename == item.stem for item in get_core_lists()
+        ):
+            await ctx.send(
+                _(
+                    "{filename} is a reserved trivia name and cannot be replaced.\n"
+                    "Choose another name."
+                ).format(filename=filename)
+            )
+            return
+
+        file = cog_data_path(self) / f"{filename}.yaml"
+        if file.exists():
+            overwrite_message = _("{filename} already exists. Do you wish to overwrite?").format(
+                filename=filename
+            )
+
+            can_react = ctx.channel.permissions_for(ctx.me).add_reactions
+            if not can_react:
+                overwrite_message += " (y/n)"
+
+            overwrite_message_object: discord.Message = await ctx.send(overwrite_message)
+            if can_react:
+                # noinspection PyAsyncCall
+                start_adding_reactions(
+                    overwrite_message_object, ReactionPredicate.YES_OR_NO_EMOJIS
+                )
+                pred = ReactionPredicate.yes_or_no(overwrite_message_object, ctx.author)
+                event = "reaction_add"
+            else:
+                pred = MessagePredicate.yes_or_no(ctx=ctx)
+                event = "message"
+            try:
+                await ctx.bot.wait_for(event, check=pred, timeout=30)
+            except asyncio.TimeoutError:
+                await ctx.send(_("You took too long answering."))
+                return
+
+            if pred.result is False:
+                await ctx.send(_("I am not replacing the existing file."))
+                return
+
+        buffer = io.BytesIO(await attachment.read())
+        yaml.safe_load(buffer)
+        buffer.seek(0)
+
+        with file.open("wb") as fp:
+            fp.write(buffer.read())
+        await ctx.send(_("Saved Trivia list as {filename}.").format(filename=filename))
 
     def _get_trivia_session(self, channel: discord.TextChannel) -> TriviaSession:
         return next(

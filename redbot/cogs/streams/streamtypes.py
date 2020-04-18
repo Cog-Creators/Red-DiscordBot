@@ -127,8 +127,8 @@ class YoutubeStream(Stream):
                     if (
                         stream_data
                         and stream_data != "None"
+                        and stream_data.get("actualStartTime", None) is not None
                         and stream_data.get("actualEndTime", None) is None
-                        and stream_data.get("concurrentViewers", None) is not None
                     ):
                         if video_id not in self.livestreams:
                             self.livestreams.append(data["items"][0]["id"])
@@ -153,7 +153,7 @@ class YoutubeStream(Stream):
         vid_data = data["items"][0]
         video_url = "https://youtube.com/watch?v={}".format(vid_data["id"])
         title = vid_data["snippet"]["title"]
-        thumbnail = vid_data["snippet"]["thumbnails"]["default"]["url"]
+        thumbnail = vid_data["snippet"]["thumbnails"]["medium"]["url"]
         channel_title = vid_data["snippet"]["channelTitle"]
         embed = discord.Embed(title=title, url=video_url)
         embed.set_author(name=channel_title)
@@ -310,7 +310,8 @@ class TwitchStream(Stream):
         embed.set_thumbnail(url=logo)
         if data["thumbnail_url"]:
             embed.set_image(url=rnd(data["thumbnail_url"].format(width=320, height=180)))
-        embed.set_footer(text=_("Playing: ") + data["game_name"])
+        if data["game_name"]:
+            embed.set_footer(text=_("Playing: ") + data["game_name"])
         return embed
 
     def __repr__(self):

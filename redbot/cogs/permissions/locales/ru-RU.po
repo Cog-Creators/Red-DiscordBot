@@ -1,8 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-13 12:15\n"
+"POT-Creation-Date: 2020-03-05 12:09+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +11,6 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: ru\n"
-"X-Crowdin-File: /cogs/permissions/locales/messages.pot\n"
 "Language: ru_RU\n"
 
 #: redbot/cogs/permissions/converters.py:64
@@ -160,6 +158,8 @@ msgstr ""
 
 #: redbot/cogs/permissions/permissions.py:304
 #: redbot/cogs/permissions/permissions.py:347
+#: redbot/cogs/permissions/permissions.py:432
+#: redbot/cogs/permissions/permissions.py:463
 msgid "This command is designated as being always available and cannot be modified by permission rules."
 msgstr ""
 
@@ -193,56 +193,56 @@ msgstr ""
 msgid "Set the default rule for a command in this server.\\n\\n        This is the rule a command will default to when no other rule\\n        is found.\\n\\n        `<allow_or_deny>` should be one of \\\"allow\\\", \\\"deny\\\" or \\\"clear\\\".\\n        \\\"clear\\\" will reset the default rule.\\n\\n        `<cog_or_command>` is the cog or command to set the default\\n        rule for. This is case sensitive.\\n        "
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:435
-#: redbot/cogs/permissions/permissions.py:456
+#: redbot/cogs/permissions/permissions.py:443
+#: redbot/cogs/permissions/permissions.py:472
 msgid "Default set."
 msgstr "Настройки по умолчанию установлены."
 
-#: redbot/cogs/permissions/permissions.py:442
+#: redbot/cogs/permissions/permissions.py:450
 #, docstring
 msgid "Set the default global rule for a command.\\n\\n        This is the rule a command will default to when no other rule\\n        is found.\\n\\n        `<allow_or_deny>` should be one of \\\"allow\\\", \\\"deny\\\" or \\\"clear\\\".\\n        \\\"clear\\\" will reset the default rule.\\n\\n        `<cog_or_command>` is the cog or command to set the default\\n        rule for. This is case sensitive.\\n        "
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:461
+#: redbot/cogs/permissions/permissions.py:477
 #, docstring
 msgid "Reset all global rules."
 msgstr "Сбросить все глобальные правила."
 
-#: redbot/cogs/permissions/permissions.py:471
+#: redbot/cogs/permissions/permissions.py:487
 #, docstring
 msgid "Reset all rules in this server."
 msgstr "Сбросить все правила на этом сервере."
 
-#: redbot/cogs/permissions/permissions.py:574
+#: redbot/cogs/permissions/permissions.py:590
 msgid "You must upload a file."
 msgstr "Вы должны загрузить файл."
 
-#: redbot/cogs/permissions/permissions.py:580
+#: redbot/cogs/permissions/permissions.py:596
 msgid "Invalid syntax: "
 msgstr "Неверный синтаксис: "
 
-#: redbot/cogs/permissions/permissions.py:583
+#: redbot/cogs/permissions/permissions.py:599
 msgid "Your YAML file did not match the schema: "
 msgstr "Ваш YAML-файл не соответствует схеме: "
 
-#: redbot/cogs/permissions/permissions.py:586
+#: redbot/cogs/permissions/permissions.py:602
 msgid "Rules set."
 msgstr "Правила установлены."
 
-#: redbot/cogs/permissions/permissions.py:630
+#: redbot/cogs/permissions/permissions.py:646
 msgid "Are you sure?"
 msgstr "Вы уверены?"
 
-#: redbot/cogs/permissions/permissions.py:637
-#: redbot/cogs/permissions/permissions.py:650
+#: redbot/cogs/permissions/permissions.py:653
+#: redbot/cogs/permissions/permissions.py:666
 msgid "Response timed out."
 msgstr "Время ответа истекло."
 
-#: redbot/cogs/permissions/permissions.py:645
+#: redbot/cogs/permissions/permissions.py:661
 msgid "Are you sure? (y/n)"
 msgstr "Вы уверены? (y/n)"
 
-#: redbot/cogs/permissions/permissions.py:656
+#: redbot/cogs/permissions/permissions.py:672
 msgid "Action cancelled."
 msgstr "Действие отменено."
 

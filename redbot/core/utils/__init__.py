@@ -183,6 +183,7 @@ def bounded_gather_iter(
             "Explicitly passing the loop will not work in Red 3.4+ and is currently ignored."
             "Call this from the related event loop.",
             DeprecationWarning,
+            stacklevel=2,
         )
 
     loop = asyncio.get_running_loop()
@@ -240,6 +241,7 @@ def bounded_gather(
             "Explicitly passing the loop will not work in Red 3.4+ and is currently ignored."
             "Call this from the related event loop.",
             DeprecationWarning,
+            stacklevel=2,
         )
 
     loop = asyncio.get_running_loop()

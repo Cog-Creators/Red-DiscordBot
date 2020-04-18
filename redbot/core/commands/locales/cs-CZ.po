@@ -1,8 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-13 12:10+0000\n"
-"PO-Revision-Date: 2020-02-13 12:12\n"
+"POT-Creation-Date: 2020-03-05 12:09+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -12,16 +11,15 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: cs\n"
-"X-Crowdin-File: /core/commands/locales/messages.pot\n"
 "Language: cs_CZ\n"
 
-#: redbot/core/commands/commands.py:504
+#: redbot/core/commands/commands.py:503
 msgid "\\\"{argument}\\\" is not a number."
 msgstr "\\\"{argument}\\\" není číslo."
 
 #: redbot/core/commands/converter.py:112
 msgid "`{unit}` is not a valid unit of time for this command"
-msgstr ""
+msgstr "`{unit}` není platnou jednotkou času pro tento příkaz"
 
 #: redbot/core/commands/converter.py:118
 msgid "This amount of time is too large for this command. (Maximum: {maximum})"
@@ -29,7 +27,7 @@ msgstr "Tento čas je pro tento příkaz příliš velký. (Maximum: {maximum})"
 
 #: redbot/core/commands/converter.py:124
 msgid "This amount of time is too small for this command. (Minimum: {minimum})"
-msgstr ""
+msgstr "Tento čas je pro tento příkaz příliš velký. (Maximum: {minimum})"
 
 #: redbot/core/commands/converter.py:152
 msgid "Server \\\"{name}\\\" not found."
@@ -37,7 +35,7 @@ msgstr "Server \\\"{name}\\\" nebyl nalezen."
 
 #: redbot/core/commands/converter.py:182 redbot/core/commands/converter.py:184
 msgid "The provided tokens are not in a valid format."
-msgstr ""
+msgstr "Poskytnuté tokeny nejsou v platném formátu."
 
 #: redbot/core/commands/converter.py:218
 msgid "Unexpected key {key}"
@@ -45,10 +43,10 @@ msgstr "Neočekávaný klíč {key}"
 
 #: redbot/core/commands/converter.py:439
 msgid "Expected one of: {}"
-msgstr ""
+msgstr "Očekáváno jedno z: {}"
 
 #: redbot/core/commands/help.py:689
 #, docstring
 msgid "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    "
-msgstr ""
+msgstr "\\n    Potřebuji někoho\\n    (Pomoc) ne kohokoliv\\n    (Pomoc) víš, že potřebuji někoho\\n    (Pomoc!)\\n    "
 

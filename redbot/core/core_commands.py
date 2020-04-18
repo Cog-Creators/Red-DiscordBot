@@ -5,6 +5,7 @@ import importlib
 import itertools
 import logging
 import os
+import re
 import sys
 import platform
 import getpass
@@ -19,6 +20,7 @@ from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequen
 import aiohttp
 import discord
 import pkg_resources
+from babel import Locale as BabelLocale, UnknownLocaleError
 
 from . import (
     __version__,
@@ -309,7 +311,8 @@ class Core(commands.Cog, CoreLogic):
         author_repo = "https://github.com/Twentysix26"
         org_repo = "https://github.com/Cog-Creators"
         red_repo = org_repo + "/Red-DiscordBot"
-        red_pypi = "https://pypi.python.org/pypi/Red-DiscordBot"
+        red_pypi = "https://pypi.org/project/Red-DiscordBot"
+        red_pypi_json = "https://pypi.org/pypi/Red-DiscordBot/json"
         support_server_url = "https://discord.gg/red"
         dpy_repo = "https://github.com/Rapptz/discord.py"
         python_url = "https://www.python.org/"
@@ -325,10 +328,14 @@ class Core(commands.Cog, CoreLogic):
             owner = app_info.owner
         custom_info = await self.bot._config.custom_info()
 
-        async with aiohttp.ClientSession() as session:
-            async with session.get("{}/json".format(red_pypi)) as r:
-                data = await r.json()
-        outdated = VersionInfo.from_str(data["info"]["version"]) > red_version_info
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(red_pypi_json) as r:
+                    data = await r.json()
+        except (aiohttp.ClientError, asyncio.TimeoutError):
+            outdated = None
+        else:
+            outdated = VersionInfo.from_str(data["info"]["version"]) > red_version_info
         about = _(
             "This bot is an instance of [Red, an open source Discord bot]({}) "
             "created by [Twentysix]({}) and [improved by many]({}).\n\n"
@@ -343,10 +350,14 @@ class Core(commands.Cog, CoreLogic):
         embed.add_field(name="Python", value=python_version)
         embed.add_field(name="discord.py", value=dpy_version)
         embed.add_field(name=_("Red version"), value=red_version)
-        if outdated:
-            embed.add_field(
-                name=_("Outdated"), value=_("Yes, {} is available").format(data["info"]["version"])
-            )
+        if outdated in (True, None):
+            if outdated is True:
+                outdated_value = _("Yes, {version} is available.").format(
+                    version=data["info"]["version"]
+                )
+            else:
+                outdated_value = _("Checking for updates failed.")
+            embed.add_field(name=_("Outdated"), value=outdated_value)
         if custom_info:
             embed.add_field(name=_("About this instance"), value=custom_info, inline=False)
         embed.add_field(name=_("About Red"), value=about, inline=False)
@@ -540,7 +551,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(
                 "You're about to make the `{0}invite` command public. "
                 "All users will be able to invite me on their server.\n\n"
-                "If you agree, you can type `{0}inviteset public yes`.".format(ctx.prefix)
+                "If you agree, you can type `{0}inviteset public yes`.".format(ctx.clean_prefix)
             )
         else:
             await self.bot._config.invite_public.set(True)
@@ -885,21 +896,55 @@ class Core(commands.Cog, CoreLogic):
 
             prefixes = await ctx.bot._prefix_cache.get_prefixes(ctx.guild)
             locale = await ctx.bot._config.locale()
+            regional_format = await ctx.bot._config.regional_format() or _("Same as bot's locale")
 
             prefix_string = " ".join(prefixes)
             settings = _(
                 "{bot_name} Settings:\n\n"
                 "Prefixes: {prefixes}\n"
                 "{guild_settings}"
-                "Locale: {locale}"
+                "Locale: {locale}\n"
+                "Regional format: {regional_format}"
             ).format(
                 bot_name=ctx.bot.user.name,
                 prefixes=prefix_string,
                 guild_settings=guild_settings,
                 locale=locale,
+                regional_format=regional_format,
             )
             for page in pagify(settings):
                 await ctx.send(box(page))
+
+    @checks.guildowner_or_permissions(administrator=True)
+    @_set.command(name="deletedelay")
+    @commands.guild_only()
+    async def deletedelay(self, ctx: commands.Context, time: int = None):
+        """Set the delay until the bot removes the command message.
+
+        Must be between -1 and 60.
+
+        Set to -1 to disable this feature.
+        """
+        guild = ctx.guild
+        if time is not None:
+            time = min(max(time, -1), 60)  # Enforces the time limits
+            await ctx.bot._config.guild(guild).delete_delay.set(time)
+            if time == -1:
+                await ctx.send(_("Command deleting disabled."))
+            else:
+                await ctx.send(_("Delete delay set to {num} seconds.").format(num=time))
+        else:
+            delay = await ctx.bot._config.guild(guild).delete_delay()
+            if delay != -1:
+                await ctx.send(
+                    _(
+                        "Bot will delete command messages after"
+                        " {num} seconds. Set this value to -1 to"
+                        " stop deleting messages"
+                    ).format(num=delay)
+                )
+            else:
+                await ctx.send(_("I will not delete command messages."))
 
     @checks.is_owner()
     @_set.command(name="description")
@@ -1050,11 +1095,21 @@ class Core(commands.Cog, CoreLogic):
 
     @_set.command()
     @checks.is_owner()
-    async def avatar(self, ctx: commands.Context, url: str):
-        """Sets [botname]'s avatar"""
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as r:
-                data = await r.read()
+    async def avatar(self, ctx: commands.Context, url: str = None):
+        """Sets [botname]'s avatar
+
+        Supports either an attachment or an image URL."""
+        if len(ctx.message.attachments) > 0:  # Attachments take priority
+            data = await ctx.message.attachments[0].read()
+        elif url is not None:
+            if url.startswith("<") and url.endswith(">"):
+                url = url[1:-1]
+
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as r:
+                    data = await r.read()
+        else:
+            return await ctx.send(_("Please upload an attachment or provide an URL link."))
 
         try:
             await ctx.bot.user.edit(avatar=data)
@@ -1062,8 +1117,8 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(
                 _(
                     "Failed. Remember that you can edit my avatar "
-                    "up to two times a hour. The URL must be a "
-                    "direct link to a JPG / PNG."
+                    "up to two times a hour. The URL or attachment "
+                    "must be a valid image in either JPG or PNG format."
                 )
             )
         except discord.InvalidArgument:
@@ -1071,19 +1126,25 @@ class Core(commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Done."))
 
-    @_set.command(name="game")
+    @_set.command(name="playing", aliases=["game"])
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _game(self, ctx: commands.Context, *, game: str = None):
         """Sets [botname]'s playing status"""
 
         if game:
+            if len(game) > 128:
+                await ctx.send("The maximum length of game descriptions is 128 characters.")
+                return
             game = discord.Game(name=game)
         else:
             game = None
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         await ctx.bot.change_presence(status=status, activity=game)
-        await ctx.send(_("Game set."))
+        if game:
+            await ctx.send(_("Status set to ``Playing {game.name}``.").format(game=game))
+        else:
+            await ctx.send(_("Game cleared."))
 
     @_set.command(name="listening")
     @checks.bot_in_a_guild()
@@ -1097,7 +1158,12 @@ class Core(commands.Cog, CoreLogic):
         else:
             activity = None
         await ctx.bot.change_presence(status=status, activity=activity)
-        await ctx.send(_("Listening set."))
+        if activity:
+            await ctx.send(
+                _("Status set to ``Listening to {listening}``.").format(listening=listening)
+            )
+        else:
+            await ctx.send(_("Listening cleared."))
 
     @_set.command(name="watching")
     @checks.bot_in_a_guild()
@@ -1111,7 +1177,10 @@ class Core(commands.Cog, CoreLogic):
         else:
             activity = None
         await ctx.bot.change_presence(status=status, activity=activity)
-        await ctx.send(_("Watching set."))
+        if activity:
+            await ctx.send(_("Status set to ``Watching {watching}``.").format(watching=watching))
+        else:
+            await ctx.send(_("Watching cleared."))
 
     @_set.command()
     @checks.bot_in_a_guild()
@@ -1142,7 +1211,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.bot.change_presence(status=status, activity=game)
             await ctx.send(_("Status changed to {}.").format(status))
 
-    @_set.command()
+    @_set.command(name="streaming", aliases=["stream"])
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def stream(self, ctx: commands.Context, streamer=None, *, stream_title=None):
@@ -1177,7 +1246,7 @@ class Core(commands.Cog, CoreLogic):
                     "only do it up to 2 times an hour. Use "
                     "nicknames if you need frequent changes. "
                     "`{}set nickname`"
-                ).format(ctx.prefix)
+                ).format(ctx.clean_prefix)
             )
         else:
             await ctx.send(_("Done."))
@@ -1219,28 +1288,68 @@ class Core(commands.Cog, CoreLogic):
 
     @_set.command()
     @checks.is_owner()
-    async def locale(self, ctx: commands.Context, locale_name: str):
+    async def locale(self, ctx: commands.Context, language_code: str):
         """
-        Changes bot locale.
+        Changes bot's locale.
 
-        Use [p]listlocales to get a list of available locales.
+        `<language_code>` can be any language code with country code included,
+        e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
+
+        Go to Red's Crowdin page to see locales that are available with translations:
+        https://translate.discord.red
 
         To reset to English, use "en-US".
         """
-        red_dist = pkg_resources.get_distribution("red-discordbot")
-        red_path = Path(red_dist.location) / "redbot"
-        locale_list = [loc.stem.lower() for loc in list(red_path.glob("**/*.po"))]
-        if locale_name.lower() in locale_list or locale_name.lower() == "en-us":
-            i18n.set_locale(locale_name)
-            await ctx.bot._config.locale.set(locale_name)
-            await ctx.send(_("Locale has been set."))
-        else:
+        try:
+            locale = BabelLocale.parse(language_code, sep="-")
+        except (ValueError, UnknownLocaleError):
+            await ctx.send(_("Invalid language code. Use format: `en-US`"))
+            return
+        if locale.territory is None:
             await ctx.send(
-                _(
-                    "Invalid locale. Use `{prefix}listlocales` to get "
-                    "a list of available locales."
-                ).format(prefix=ctx.prefix)
+                _("Invalid format - language code has to include country code, e.g. `en-US`")
             )
+            return
+        standardized_locale_name = f"{locale.language}-{locale.territory}"
+        i18n.set_locale(standardized_locale_name)
+        await ctx.bot._config.locale.set(standardized_locale_name)
+        await ctx.send(_("Locale has been set."))
+
+    @_set.command(aliases=["region"])
+    @checks.is_owner()
+    async def regionalformat(self, ctx: commands.Context, language_code: str = None):
+        """
+        Changes bot's regional format. This is used for formatting date, time and numbers.
+
+        `<language_code>` can be any language code with country code included,
+        e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
+
+        Leave `<language_code>` empty to base regional formatting on bot's locale.
+        """
+        if language_code is None:
+            i18n.set_regional_format(None)
+            await ctx.bot._config.regional_format.set(None)
+            await ctx.send(_("Regional formatting will now be based on bot's locale."))
+            return
+
+        try:
+            locale = BabelLocale.parse(language_code, sep="-")
+        except (ValueError, UnknownLocaleError):
+            await ctx.send(_("Invalid language code. Use format: `en-US`"))
+            return
+        if locale.territory is None:
+            await ctx.send(
+                _("Invalid format - language code has to include country code, e.g. `en-US`")
+            )
+            return
+        standardized_locale_name = f"{locale.language}-{locale.territory}"
+        i18n.set_regional_format(standardized_locale_name)
+        await ctx.bot._config.regional_format.set(standardized_locale_name)
+        await ctx.send(
+            _("Regional formatting will now be based on `{language_code}` locale.").format(
+                language_code=standardized_locale_name
+            )
+        )
 
     @_set.command()
     @checks.is_owner()
@@ -1448,27 +1557,6 @@ class Core(commands.Cog, CoreLogic):
         await ctx.send(_("The tagline has been set."))
 
     @commands.command()
-    @checks.is_owner()
-    async def listlocales(self, ctx: commands.Context):
-        """
-        Lists all available locales
-
-        Use `[p]set locale` to set a locale
-        """
-        async with ctx.channel.typing():
-            red_dist = pkg_resources.get_distribution("red-discordbot")
-            red_path = Path(red_dist.location) / "redbot"
-            locale_list = [loc.stem for loc in list(red_path.glob("**/*.po"))]
-            locale_list.append("en-US")
-            locale_list = sorted(set(locale_list))
-            if not locale_list:
-                await ctx.send(_("No languages found."))
-                return
-            pages = pagify("\n".join(locale_list), shorten_by=26)
-
-        await ctx.send_interactive(pages, box_lang="Available Locales:")
-
-    @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)
     async def contact(self, ctx: commands.Context, *, message: str):
         """Sends a message to the owner"""
@@ -1482,12 +1570,8 @@ class Core(commands.Cog, CoreLogic):
             source = _("from {}").format(guild)
             footer += _(" | Server ID: {}").format(guild.id)
 
-        # We need to grab the DM command prefix (global)
-        # Since it can also be set through cli flags, bot._config is not a reliable
-        # source. So we'll just mock a DM message instead.
-        fake_message = namedtuple("Message", "guild")
-        prefixes = await ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))
-        prefix = prefixes[0]
+        prefixes = await ctx.bot.get_valid_prefixes()
+        prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}", prefixes[0])
 
         content = _("Use `{}dm {} <text>` to reply to this user").format(prefix, author.id)
 
@@ -1591,9 +1675,8 @@ class Core(commands.Cog, CoreLogic):
             )
             return
 
-        fake_message = namedtuple("Message", "guild")
-        prefixes = await ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))
-        prefix = prefixes[0]
+        prefixes = await ctx.bot.get_valid_prefixes()
+        prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}", prefixes[0])
         description = _("Owner of {}").format(ctx.bot.user)
         content = _("You can reply to this message with {}contact").format(prefix)
         if await ctx.embed_requested():
@@ -1701,11 +1784,15 @@ class Core(commands.Cog, CoreLogic):
         """
         pass
 
-    @whitelist.command(name="add")
-    async def whitelist_add(self, ctx: commands.Context, *users: List[Union[discord.Member, int]]):
+    @whitelist.command(name="add", usage="<user>...")
+    async def whitelist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Adds a user to the whitelist.
         """
+        if not users:
+            await ctx.send_help()
+            return
+
         uids = [getattr(user, "id", user) for user in users]
         await self.bot._whiteblacklist_cache.add_to_whitelist(None, uids)
 
@@ -1729,13 +1816,15 @@ class Core(commands.Cog, CoreLogic):
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @whitelist.command(name="remove")
-    async def whitelist_remove(
-        self, ctx: commands.Context, *users: List[Union[discord.Member, int]]
-    ):
+    @whitelist.command(name="remove", usage="<user>...")
+    async def whitelist_remove(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Removes user from whitelist.
         """
+        if not users:
+            await ctx.send_help()
+            return
+
         uids = [getattr(user, "id", user) for user in users]
         await self.bot._whiteblacklist_cache.remove_from_whitelist(None, uids)
 
@@ -1757,11 +1846,15 @@ class Core(commands.Cog, CoreLogic):
         """
         pass
 
-    @blacklist.command(name="add")
-    async def blacklist_add(self, ctx: commands.Context, *users: List[Union[discord.Member, int]]):
+    @blacklist.command(name="add", usage="<user>...")
+    async def blacklist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Adds a user to the blacklist.
         """
+        if not users:
+            await ctx.send_help()
+            return
+
         for user in users:
             if isinstance(user, int):
                 user_obj = discord.Object(id=user)
@@ -1794,13 +1887,14 @@ class Core(commands.Cog, CoreLogic):
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @blacklist.command(name="remove")
-    async def blacklist_remove(
-        self, ctx: commands.Context, *users: List[Union[discord.Member, int]]
-    ):
+    @blacklist.command(name="remove", usage="<user>...")
+    async def blacklist_remove(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Removes user from blacklist.
         """
+        if not users:
+            await ctx.send_help()
+            return
 
         uids = [getattr(user, "id", user) for user in users]
         await self.bot._whiteblacklist_cache.remove_from_blacklist(None, uids)
@@ -1824,15 +1918,17 @@ class Core(commands.Cog, CoreLogic):
         """
         pass
 
-    @localwhitelist.command(name="add")
+    @localwhitelist.command(name="add", usage="<user_or_role>...")
     async def localwhitelist_add(
-        self,
-        ctx: commands.Context,
-        *users_or_roles: List[Union[discord.Member, discord.Role, int]],
+        self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Adds a user or role to the whitelist.
         """
+        if not users_or_roles:
+            await ctx.send_help()
+            return
+
         names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
         uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
         await self.bot._whiteblacklist_cache.add_to_whitelist(ctx.guild, uids)
@@ -1857,15 +1953,17 @@ class Core(commands.Cog, CoreLogic):
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @localwhitelist.command(name="remove")
+    @localwhitelist.command(name="remove", usage="<user_or_role>...")
     async def localwhitelist_remove(
-        self,
-        ctx: commands.Context,
-        *users_or_roles: List[Union[discord.Member, discord.Role, int]],
+        self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Removes user or role from whitelist.
         """
+        if not users_or_roles:
+            await ctx.send_help()
+            return
+
         names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
         uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
         await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
@@ -1891,15 +1989,17 @@ class Core(commands.Cog, CoreLogic):
         """
         pass
 
-    @localblacklist.command(name="add")
+    @localblacklist.command(name="add", usage="<user_or_role>...")
     async def localblacklist_add(
-        self,
-        ctx: commands.Context,
-        *users_or_roles: List[Union[discord.Member, discord.Role, int]],
+        self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Adds a user or role to the blacklist.
         """
+        if not users_or_roles:
+            await ctx.send_help()
+            return
+
         for user_or_role in users_or_roles:
             uid = discord.Object(id=getattr(user_or_role, "id", user_or_role))
             if uid.id == ctx.author.id:
@@ -1937,13 +2037,17 @@ class Core(commands.Cog, CoreLogic):
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @localblacklist.command(name="remove")
+    @localblacklist.command(name="remove", usage="<user_or_role>...")
     async def localblacklist_remove(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Removes user or role from blacklist.
         """
+        if not users_or_roles:
+            await ctx.send_help()
+            return
+
         names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
         uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
         await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
@@ -2450,17 +2554,14 @@ class Core(commands.Cog, CoreLogic):
             if channel.category and channel.category not in category_channels:
                 if await self.bot._ignored_cache.get_ignored_channel(channel.category):
                     category_channels.append(channel.category)
-                continue
-            else:
-                continue
-            if await self.bot._ignored_cache.get_ignored_channel(channel):
+            if await self.bot._ignored_cache.get_ignored_channel(channel, check_category=False):
                 text_channels.append(channel)
 
         cat_str = (
             humanize_list([c.name for c in category_channels]) if category_channels else "None"
         )
         chan_str = humanize_list([c.mention for c in text_channels]) if text_channels else "None"
-        msg = _("Currently ignored categories: {categories}\nChannels:{channels}").format(
+        msg = _("Currently ignored categories: {categories}\nChannels: {channels}").format(
             categories=cat_str, channels=chan_str
         )
         return msg
@@ -2468,14 +2569,19 @@ class Core(commands.Cog, CoreLogic):
 
 # Removing this command from forks is a violation of the GPLv3 under which it is licensed.
 # Otherwise interfering with the ability for this command to be accessible is also a violation.
-@commands.command(cls=commands.commands._AlwaysAvailableCommand, name="licenseinfo", i18n=_)
+@commands.command(
+    cls=commands.commands._AlwaysAvailableCommand,
+    name="licenseinfo",
+    aliases=["licenceinfo"],
+    i18n=_,
+)
 async def license_info_command(ctx):
     """
     Get info about Red's licenses
     """
 
     message = (
-        "This bot is an instance of Red-DiscordBot (hereafter refered to as Red)\n"
+        "This bot is an instance of Red-DiscordBot (hereafter referred to as Red)\n"
         "Red is a free and open source application made available to the public and "
         "licensed under the GNU GPLv3. The full text of this license is available to you at "
         "<https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/LICENSE>"

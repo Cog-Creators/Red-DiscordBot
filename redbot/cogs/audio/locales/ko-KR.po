@@ -2,7 +2,6 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-13 12:14\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +11,6 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: ko\n"
-"X-Crowdin-File: /cogs/audio/locales/messages.pot\n"
 "Language: ko_KR\n"
 
 #: redbot/cogs/audio/apis.py:213
@@ -43,7 +41,7 @@ msgstr ""
 #: redbot/cogs/audio/apis.py:664 redbot/cogs/audio/audio.py:3609
 #: redbot/cogs/audio/audio.py:5460
 msgid "Playlist Enqueued"
-msgstr ""
+msgstr "대기중인 재생 목록"
 
 #: redbot/cogs/audio/apis.py:665 redbot/cogs/audio/audio.py:3612
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
@@ -56,7 +54,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:82
 #, docstring
 msgid "Play audio through voice channels."
-msgstr ""
+msgstr "음성체널을 통해 음악을 재생합니다."
 
 #: redbot/cogs/audio/audio.py:177
 msgid "You have attempted to run Audio's Lavalink server on an unsupported architecture. Only settings related commands will be available."
@@ -64,7 +62,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:201
 msgid "No DJ role found. Disabling DJ mode."
-msgstr ""
+msgstr "DJ역할을 찾지 못했습니다. DJ역할을 비활성화합니다."
 
 #: redbot/cogs/audio/audio.py:433
 msgid "music in {} servers"
@@ -76,36 +74,36 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:505
 msgid "Auto Play Started."
-msgstr ""
+msgstr "자동재생 시작됨"
 
 #: redbot/cogs/audio/audio.py:520 redbot/cogs/audio/audio.py:2566
 #: redbot/cogs/audio/audio.py:6296
 msgid "Now Playing"
-msgstr ""
+msgstr "지금 재생 중"
 
 #: redbot/cogs/audio/audio.py:522
 msgid "Track length: {length} | Requested by: {user}"
-msgstr ""
+msgstr "곡 길이: {length} | 신청자: {user}"
 
 #: redbot/cogs/audio/audio.py:543
 msgid "Queue Ended."
-msgstr ""
+msgstr "큐 끝남"
 
 #: redbot/cogs/audio/audio.py:585
 msgid "Multiple errors detected"
-msgstr ""
+msgstr "여러가지 오류 검출됨"
 
 #: redbot/cogs/audio/audio.py:586
 msgid "Closing the audio player due to multiple errors being detected. If this persists, please inform the bot owner as the Audio cog may be temporally unavailable."
-msgstr ""
+msgstr "오디오 플레이어를 오류로 중지합니다. 오디오 명령어가 작동되지 않을수 있습니다."
 
 #: redbot/cogs/audio/audio.py:598
 msgid "Track Stuck"
-msgstr ""
+msgstr "트랙 걸림"
 
 #: redbot/cogs/audio/audio.py:602
 msgid "Track Error"
-msgstr ""
+msgstr "트랙 에러"
 
 #: redbot/cogs/audio/audio.py:672
 #, docstring
@@ -134,11 +132,11 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:7876 redbot/cogs/audio/audio.py:7891
 #: redbot/cogs/audio/audio.py:7907 redbot/cogs/audio/audio.py:7923
 msgid "Setting Changed"
-msgstr ""
+msgstr "설정 변경됨"
 
 #: redbot/cogs/audio/audio.py:689
 msgid "Daily queues: {true_or_false}."
-msgstr ""
+msgstr "일간 재생목록: {true_or_false}."
 
 #: redbot/cogs/audio/audio.py:690 redbot/cogs/audio/audio.py:706
 #: redbot/cogs/audio/audio.py:1100 redbot/cogs/audio/audio.py:1254
@@ -157,7 +155,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:7397 redbot/cogs/audio/audio.py:7440
 #: redbot/cogs/audio/audio.py:7850 redbot/cogs/audio/audio.py:7861
 msgid "Enabled"
-msgstr ""
+msgstr "활성화됨"
 
 #: redbot/cogs/audio/audio.py:690 redbot/cogs/audio/audio.py:706
 #: redbot/cogs/audio/audio.py:1100 redbot/cogs/audio/audio.py:1254
@@ -176,7 +174,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:7397 redbot/cogs/audio/audio.py:7440
 #: redbot/cogs/audio/audio.py:7850 redbot/cogs/audio/audio.py:7861
 msgid "Disabled"
-msgstr ""
+msgstr "비활성화됨"
 
 #: redbot/cogs/audio/audio.py:697
 #, docstring
@@ -189,185 +187,185 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:709
 msgid "\\nAuto-play has been disabled."
-msgstr ""
+msgstr "자동재생이 비활성화되었습니다."
 
 #: redbot/cogs/audio/audio.py:719
 #, docstring
 msgid "Manages the keyword whitelist and blacklist."
-msgstr ""
+msgstr "키워드 블랙리스트나 화이트리스트를 관리합니다."
 
 #: redbot/cogs/audio/audio.py:724
 #, docstring
 msgid "Manages the global keyword whitelist/blacklist."
-msgstr ""
+msgstr "전체 키워드 블랙리스트나 화이트리스트를 관리합니다."
 
 #: redbot/cogs/audio/audio.py:728
 #, docstring
 msgid "Manages the global keyword whitelist."
-msgstr ""
+msgstr "전체 키워드 화이트리스트를 관리합니다."
 
 #: redbot/cogs/audio/audio.py:732
 #, docstring
 msgid "Manages the global keyword blacklist."
-msgstr ""
+msgstr "전체 키워드 블랙리스트를 관리합니다."
 
 #: redbot/cogs/audio/audio.py:736 redbot/cogs/audio/audio.py:917
 #, docstring
 msgid "Adds a keyword to the blacklist."
-msgstr ""
+msgstr "블랙리스트에 키워드를 추가합니다."
 
 #: redbot/cogs/audio/audio.py:747 redbot/cogs/audio/audio.py:928
 msgid "Keyword already in the blacklist."
-msgstr ""
+msgstr "그 키워드는 이미 블랙리스트에 있습니다."
 
 #: redbot/cogs/audio/audio.py:751 redbot/cogs/audio/audio.py:800
 #: redbot/cogs/audio/audio.py:903 redbot/cogs/audio/audio.py:932
 #: redbot/cogs/audio/audio.py:981 redbot/cogs/audio/audio.py:1084
 msgid "Blacklist Modified"
-msgstr ""
+msgstr "블랙리스트 수정됨"
 
 #: redbot/cogs/audio/audio.py:752 redbot/cogs/audio/audio.py:933
 msgid "Added: `{blacklisted}` to the blacklist."
-msgstr ""
+msgstr "추가됨: `{blacklisted}` 가 블랙리스트에 추가되었습니다."
 
 #: redbot/cogs/audio/audio.py:759
 #, docstring
 msgid "Adds a keyword to the whitelist.\\n\\n        If anything is added to whitelist, it will blacklist everything else.\\n        "
-msgstr ""
+msgstr "화이트리스트에 키워드를 추가합니다.\\n\\n        하나라도 화이트리스트에 등록이 된다면, 다른 모든석을 블랙리스트처리합니다.\\n        "
 
 #: redbot/cogs/audio/audio.py:773 redbot/cogs/audio/audio.py:819
 #: redbot/cogs/audio/audio.py:954 redbot/cogs/audio/audio.py:1000
 msgid "Keyword already in the whitelist."
-msgstr ""
+msgstr "그 키워드는 이미 화이트리스트에 있습니다."
 
 #: redbot/cogs/audio/audio.py:777 redbot/cogs/audio/audio.py:823
 #: redbot/cogs/audio/audio.py:890 redbot/cogs/audio/audio.py:958
 #: redbot/cogs/audio/audio.py:1004 redbot/cogs/audio/audio.py:1071
 msgid "Whitelist Modified"
-msgstr ""
+msgstr "화이트리스트 수정됨"
 
 #: redbot/cogs/audio/audio.py:778 redbot/cogs/audio/audio.py:959
 msgid "Added: `{whitelisted}` to the whitelist."
-msgstr ""
+msgstr "추가됨: `{whitelisted}` 이/가 화이트리스트에 추가되었습니다."
 
 #: redbot/cogs/audio/audio.py:785 redbot/cogs/audio/audio.py:966
 #, docstring
 msgid "Removes a keyword from the blacklist."
-msgstr ""
+msgstr "키워드를 블랙리스트에서 제거합니다."
 
 #: redbot/cogs/audio/audio.py:796 redbot/cogs/audio/audio.py:977
 msgid "Keyword is not in the blacklist."
-msgstr ""
+msgstr "키워드가 블랙리스트에 없습니다."
 
 #: redbot/cogs/audio/audio.py:801 redbot/cogs/audio/audio.py:982
 msgid "Removed: `{blacklisted}` from the blacklist."
-msgstr ""
+msgstr "삭제됨: `{blacklisted}` 이/가 블랙리스트에서 제거되었습니다."
 
 #: redbot/cogs/audio/audio.py:808 redbot/cogs/audio/audio.py:989
 #, docstring
 msgid "Removes a keyword from the whitelist."
-msgstr ""
+msgstr "키워드를 화이트리스트에서 제거합니다."
 
 #: redbot/cogs/audio/audio.py:824 redbot/cogs/audio/audio.py:1005
 msgid "Removed: `{whitelisted}` from the whitelist."
-msgstr ""
+msgstr "삭제됨: `{blacklisted}` 이/가 화이트리스트에서 제거되었습니다."
 
 #: redbot/cogs/audio/audio.py:831 redbot/cogs/audio/audio.py:1012
 #, docstring
 msgid "List all keywords added to the whitelist."
-msgstr ""
+msgstr "화이트리스트에 추가된 모든 키워드의 목록."
 
 #: redbot/cogs/audio/audio.py:834 redbot/cogs/audio/audio.py:886
 #: redbot/cogs/audio/audio.py:1015 redbot/cogs/audio/audio.py:1067
 msgid "Nothing in the whitelist."
-msgstr ""
+msgstr "화이트리스트에 아무것도 없어요."
 
 #: redbot/cogs/audio/audio.py:857 redbot/cogs/audio/audio.py:1038
 #, docstring
 msgid "List all keywords added to the blacklist."
-msgstr ""
+msgstr "블랙리스트에 추가된 모든 키워드의 목록."
 
 #: redbot/cogs/audio/audio.py:860 redbot/cogs/audio/audio.py:899
 #: redbot/cogs/audio/audio.py:1041 redbot/cogs/audio/audio.py:1080
 msgid "Nothing in the blacklist."
-msgstr ""
+msgstr "블랙리스트에 아무것도 없어요."
 
 #: redbot/cogs/audio/audio.py:883 redbot/cogs/audio/audio.py:1064
 #, docstring
 msgid "Clear all keywords from the whitelist."
-msgstr ""
+msgstr "화이트리스트에 있는 모든 키워드를 삭제합니다."
 
 #: redbot/cogs/audio/audio.py:891 redbot/cogs/audio/audio.py:1072
 msgid "All entries have been removed from the whitelist."
-msgstr ""
+msgstr "화이트리스트에 있는 모든 키워드가 삭제되었습니다."
 
 #: redbot/cogs/audio/audio.py:896 redbot/cogs/audio/audio.py:1077
 #, docstring
 msgid "Clear all keywords added to the blacklist."
-msgstr ""
+msgstr "블랙리스트에 있는 모든 키워드를 삭제합니다."
 
 #: redbot/cogs/audio/audio.py:904 redbot/cogs/audio/audio.py:1085
 msgid "All entries have been removed from the blacklist."
-msgstr ""
+msgstr "블랙리스트에 있는 모든 키워드가 삭제되었습니다."
 
 #: redbot/cogs/audio/audio.py:909
 #, docstring
 msgid "Manages the keyword whitelist."
-msgstr ""
+msgstr "키워드 화이트리스트를 관리합니다."
 
 #: redbot/cogs/audio/audio.py:913
 #, docstring
 msgid "Manages the keyword blacklist."
-msgstr ""
+msgstr "키워드 블랙리스트를 관리합니다."
 
 #: redbot/cogs/audio/audio.py:940
 #, docstring
 msgid "Adds a keyword to the whitelist.\\n\\n        If anything is added to whitelist, it will blacklist everything else.\\n        "
-msgstr ""
+msgstr "화이트리스트에 키워드를 추가합니다.\\n\\n        하나라도 화이트리스트에 등록이 된다면, 다른 모든석을 블랙리스트처리합니다.\\n        "
 
 #: redbot/cogs/audio/audio.py:1091
 #, docstring
 msgid "Change auto-play setting."
-msgstr ""
+msgstr "자동재생 설정을 변경합니다."
 
 #: redbot/cogs/audio/audio.py:1095
 #, docstring
 msgid "Toggle auto-play when there no songs in queue."
-msgstr ""
+msgstr "큐에 곡이 없을때 곡을 자동으로 재생할지 설정합니다."
 
 #: redbot/cogs/audio/audio.py:1099
 msgid "Auto-play when queue ends: {true_or_false}."
-msgstr ""
+msgstr "큐가 끝날때 자동으로 재생: {true_or_false}."
 
 #: redbot/cogs/audio/audio.py:1104
 msgid "\\nRepeat has been disabled."
-msgstr ""
+msgstr "\\n반복재생이 비활성화되었습니다."
 
 #: redbot/cogs/audio/audio.py:1107
 msgid "\\nAuto-disconnecting at queue end has been disabled."
-msgstr ""
+msgstr "\\n큐에있는 곡이 다 재생되면 자동으로 연결해제 기능이 비활성화되었습니다."
 
 #: redbot/cogs/audio/audio.py:1122
 #, docstring
 msgid "Set a playlist to auto-play songs from.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]audioset autoplay playlist_name_OR_id [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n            ​Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]audioset autoplay MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`\\n        "
-msgstr ""
+msgstr "자동 재생곡의 재생목록을 정합니다.\\n\\n        **사용법**:\\n        ​ ​ ​ ​ `[p]audioset 재생목록_이름_혹은_ID [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ 옵션들:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **오직 봇 소유자만 명령어를 사용할수 있습니다.**\\n\\n        **Scope** is one of the following:\\n            ​Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]audioset autoplay MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`\\n        "
 
 #: redbot/cogs/audio/audio.py:1165 redbot/cogs/audio/audio.py:1182
 msgid "No Playlist Found"
-msgstr ""
+msgstr "재생목록을 찾을수 없음"
 
 #: redbot/cogs/audio/audio.py:1166 redbot/cogs/audio/audio.py:4080
 #: redbot/cogs/audio/audio.py:5395
 msgid "Could not match '{arg}' to a playlist"
-msgstr ""
+msgstr "재생목록과 '{arg}'를 매칭할수 없습니다."
 
 #: redbot/cogs/audio/audio.py:1174
 msgid "No Tracks Found"
-msgstr ""
+msgstr "곡 찾을수 없음."
 
 #: redbot/cogs/audio/audio.py:1175
 msgid "Playlist {name} has no tracks."
-msgstr ""
+msgstr "재생목록 {name}에는 곡이 없습니다."
 
 #: redbot/cogs/audio/audio.py:1183 redbot/cogs/audio/audio.py:4088
 #: redbot/cogs/audio/audio.py:4282 redbot/cogs/audio/audio.py:4452
@@ -375,7 +373,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:4829 redbot/cogs/audio/audio.py:5185
 #: redbot/cogs/audio/audio.py:5481 redbot/cogs/audio/audio.py:5579
 msgid "Playlist {id} does not exist in {scope} scope."
-msgstr ""
+msgstr "재생 목록 {id} 이/가 {scope} 범위에 없습니다."
 
 #: redbot/cogs/audio/audio.py:1190 redbot/cogs/audio/audio.py:4095
 #: redbot/cogs/audio/audio.py:4556 redbot/cogs/audio/audio.py:4694
@@ -383,7 +381,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:5192 redbot/cogs/audio/audio.py:5489
 #: redbot/cogs/audio/audio.py:5586 redbot/cogs/audio/audio.py:5863
 msgid "Missing Arguments"
-msgstr ""
+msgstr "필수요소 누락됨"
 
 #: redbot/cogs/audio/audio.py:1191 redbot/cogs/audio/audio.py:4096
 #: redbot/cogs/audio/audio.py:4289 redbot/cogs/audio/audio.py:4458
@@ -392,11 +390,11 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:5193 redbot/cogs/audio/audio.py:5490
 #: redbot/cogs/audio/audio.py:5587 redbot/cogs/audio/audio.py:5864
 msgid "You need to specify the Guild ID for the guild to lookup."
-msgstr ""
+msgstr "조회할 길드의 길드 ID를 지정해야 합니다."
 
 #: redbot/cogs/audio/audio.py:1197
 msgid "Playlist {name} (`{id}`) [**{scope}**] will be used for autoplay."
-msgstr ""
+msgstr "재생목록 {name} (`{id}`) [**{scope}**]이 자동재생을 위해 사용될것입니다."
 
 #: redbot/cogs/audio/audio.py:1210
 #, docstring
@@ -405,85 +403,85 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:1216
 msgid "Set auto-play playlist to default value."
-msgstr ""
+msgstr "자동재생 플레이리스트를 기본값으로 설정합니다."
 
 #: redbot/cogs/audio/audio.py:1222
 #, docstring
 msgid "Toggle DJ mode.\\n\\n        DJ mode allows users with the DJ role to use audio commands.\\n        "
-msgstr ""
+msgstr "DJ전용모드를 활성화합니다.\\n\\n        DJ모드는 DJ역할이 있는 사용자만이 음악 명령어를 사용할수있도록 합니다.\\n        "
 
 #: redbot/cogs/audio/audio.py:1233
 msgid "Missing DJ Role"
-msgstr ""
+msgstr "DJ역할이 없습니다"
 
 #: redbot/cogs/audio/audio.py:1234
 msgid "Please set a role to use with DJ mode. Enter the role name or ID now."
-msgstr ""
+msgstr "DJ 모드에 사용할 역할을 지정해주세요. 지금 역할 이름이나 역할 ID를 입력해주세요."
 
 #: redbot/cogs/audio/audio.py:1244
 msgid "Response timed out, try again later."
-msgstr ""
+msgstr "시간이 초과되었습니다. 다시 시도해주세요."
 
 #: redbot/cogs/audio/audio.py:1253
 msgid "DJ role: {true_or_false}."
-msgstr ""
+msgstr "DJ 역할: {true_or_false}."
 
 #: redbot/cogs/audio/audio.py:1261
 #, docstring
 msgid "Auto-disconnect from channel when bot is alone in it for x seconds, 0 to disable.\\n\\n        `[p]audioset dc` takes precedence over this setting.\\n        "
-msgstr ""
+msgstr "봇이 x초 이상 체널에 환자 있을때 체널에서 자동으로 나갑니다, 0으로 설정하면 비활성화됩니다.\\n\\n        `[p]audioset dc` 설정이 우선권을 가집니다.\\n        "
 
 #: redbot/cogs/audio/audio.py:1267 redbot/cogs/audio/audio.py:1295
 #: redbot/cogs/audio/audio.py:1689
 msgid "Invalid Time"
-msgstr ""
+msgstr "잘못된 입력값"
 
 #: redbot/cogs/audio/audio.py:1267 redbot/cogs/audio/audio.py:1295
 #: redbot/cogs/audio/audio.py:1689
 msgid "Seconds can't be less than zero."
-msgstr ""
+msgstr "0보다 작을수 없습니다."
 
 #: redbot/cogs/audio/audio.py:1274
 msgid "Empty disconnect disabled."
-msgstr ""
+msgstr "방이 비었을때 연결해제가 비활성화 되었습니다."
 
 #: redbot/cogs/audio/audio.py:1281
 msgid "Empty disconnect timer set to {num_seconds}."
-msgstr ""
+msgstr "방이 비었을때 나가기 타이머가 {num_seconds}초로 설정되었습니다."
 
 #: redbot/cogs/audio/audio.py:1292
 #, docstring
 msgid "Auto-pause after x seconds when room is empty, 0 to disable."
-msgstr ""
+msgstr "방이 비었을때 x초 후에 자동 일시정지합니다. 0은 비활성화입니다."
 
 #: redbot/cogs/audio/audio.py:1302
 msgid "Empty pause disabled."
-msgstr ""
+msgstr "방이 비었을때 멈추기가 비활성화되었습니다."
 
 #: redbot/cogs/audio/audio.py:1309
 msgid "Empty pause timer set to {num_seconds}."
-msgstr ""
+msgstr "빈방 멈추기 타이머가 {num_seconds}초로 설정되었습니다."
 
 #: redbot/cogs/audio/audio.py:1319
 #, docstring
 msgid "Set a price for queueing tracks for non-mods, 0 to disable."
-msgstr ""
+msgstr "음악을 신청하는데에 드는 비용을 설정합니다.(관리자 미포함), 0은 비활성화입니다."
 
 #: redbot/cogs/audio/audio.py:1322
 msgid "Invalid Price"
-msgstr ""
+msgstr "잘못된 가격"
 
 #: redbot/cogs/audio/audio.py:1322
 msgid "Price can't be less than zero."
-msgstr ""
+msgstr "가격은 0보다 적을수 없습니다."
 
 #: redbot/cogs/audio/audio.py:1327
 msgid "Jukebox mode disabled."
-msgstr ""
+msgstr "주크박스모드가 비활성화되었습니다."
 
 #: redbot/cogs/audio/audio.py:1334
 msgid "Track queueing command price set to {price} {currency}."
-msgstr ""
+msgstr "곡 신청 명령어의 가격이 {price} {currency}으로 설정되었습니다."
 
 #: redbot/cogs/audio/audio.py:1345
 #, docstring
@@ -579,7 +577,7 @@ msgstr "현재 설정을 표시할게요."
 
 #: redbot/cogs/audio/audio.py:1532
 msgid "Server Settings"
-msgstr ""
+msgstr "서버 설정"
 
 #: redbot/cogs/audio/audio.py:1533
 msgid "Auto-disconnect:  [{dc}]\\n"
@@ -778,7 +776,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:1836
 #, docstring
 msgid "Audio stats."
-msgstr ""
+msgstr "오디오 정보"
 
 #: redbot/cogs/audio/audio.py:1866 redbot/cogs/audio/audio.py:1901
 #: redbot/cogs/audio/audio.py:1941 redbot/cogs/audio/audio.py:1979
@@ -793,11 +791,11 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:7676 redbot/cogs/audio/audio.py:7796
 #: redbot/cogs/audio/audio.py:7830
 msgid "Nothing playing."
-msgstr ""
+msgstr "아무것도 재생하고있지 않아요"
 
 #: redbot/cogs/audio/audio.py:1870
 msgid "Not connected anywhere."
-msgstr ""
+msgstr "어디에도 연결되어있지 않아요"
 
 #: redbot/cogs/audio/audio.py:1876
 msgid "Playing in {num}/{total} servers:"
@@ -806,16 +804,16 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:1895
 #, docstring
 msgid "Bump a track number to the top of the queue."
-msgstr ""
+msgstr "특정 트랙을 큐의 맨 위로 올립니다."
 
 #: redbot/cogs/audio/audio.py:1908 redbot/cogs/audio/audio.py:1915
 #: redbot/cogs/audio/audio.py:1921
 msgid "Unable To Bump Track"
-msgstr ""
+msgstr "트랙을 올릴수 없습니다."
 
 #: redbot/cogs/audio/audio.py:1909
 msgid "You must be in the voice channel to bump a track."
-msgstr ""
+msgstr "음성체널에 들어가있어야만 트랙을 위로 옮길수 있습니다."
 
 #: redbot/cogs/audio/audio.py:1916
 msgid "You need the DJ role to bump tracks."
@@ -823,20 +821,20 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:1922 redbot/cogs/audio/audio.py:6828
 msgid "Song number must be greater than 1 and within the queue limit."
-msgstr ""
+msgstr "음악 번호는 1보다 크고 큐에있는 곡 끝번호보다 작아야합니다."
 
 #: redbot/cogs/audio/audio.py:1932
 msgid "Moved track to the top of the queue."
-msgstr ""
+msgstr "트랙을 큐의 맨 위로 올렸습니다."
 
 #: redbot/cogs/audio/audio.py:1939
 #, docstring
 msgid "Disconnect from the voice channel."
-msgstr ""
+msgstr "음성체널에서 나갑니다."
 
 #: redbot/cogs/audio/audio.py:1952
 msgid "Unable to disconnect"
-msgstr ""
+msgstr "나갈수 없습니다"
 
 #: redbot/cogs/audio/audio.py:1953
 msgid "You need the DJ role to disconnect."
@@ -844,16 +842,16 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:1957
 msgid "There are other people listening to music."
-msgstr ""
+msgstr "음악을 듣고있는사람들이 있습니다."
 
 #: redbot/cogs/audio/audio.py:1960
 msgid "Disconnecting..."
-msgstr ""
+msgstr "나가는중..."
 
 #: redbot/cogs/audio/audio.py:1976
 #, docstring
 msgid "Equalizer management."
-msgstr ""
+msgstr "이퀄라이져 관리"
 
 #: redbot/cogs/audio/audio.py:2012
 #, docstring
@@ -1026,43 +1024,43 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:2542
 #, docstring
 msgid "Now playing."
-msgstr ""
+msgstr "현재 재생중."
 
 #: redbot/cogs/audio/audio.py:2556
 msgid "\\n Requested by: **{track.requester}**"
-msgstr ""
+msgstr "\\n 신청자: **{track.requester}**"
 
 #: redbot/cogs/audio/audio.py:2560
 msgid "Nothing."
-msgstr ""
+msgstr "아무것도 없습니다."
 
 #: redbot/cogs/audio/audio.py:2576 redbot/cogs/audio/audio.py:6306
 #: redbot/cogs/audio/audio.py:6484
 msgid "Auto-Play"
-msgstr ""
+msgstr "자동 재생"
 
 #: redbot/cogs/audio/audio.py:2582 redbot/cogs/audio/audio.py:6312
 #: redbot/cogs/audio/audio.py:6490
 msgid "Shuffle"
-msgstr ""
+msgstr "곡 섞기"
 
 #: redbot/cogs/audio/audio.py:2588 redbot/cogs/audio/audio.py:6318
 #: redbot/cogs/audio/audio.py:6496
 msgid "Repeat"
-msgstr ""
+msgstr "반복"
 
 #: redbot/cogs/audio/audio.py:2642
 #, docstring
 msgid "Pause or resume a playing track."
-msgstr ""
+msgstr "멈추거나 곡을 이어서 재생합니다."
 
 #: redbot/cogs/audio/audio.py:2654 redbot/cogs/audio/audio.py:2661
 msgid "Unable To Manage Tracks"
-msgstr ""
+msgstr "트랙을 관리할수 없습니다"
 
 #: redbot/cogs/audio/audio.py:2655
 msgid "You must be in the voice channel to pause or resume."
-msgstr ""
+msgstr "멈추거나 다시 재생하기 위해서는 음성체널에 있어야만 합니다."
 
 #: redbot/cogs/audio/audio.py:2662
 msgid "You need the DJ role to pause or resume tracks."
@@ -1070,29 +1068,29 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:2671
 msgid "Track Paused"
-msgstr ""
+msgstr "트랙 일시정지됨"
 
 #: redbot/cogs/audio/audio.py:2674
 msgid "Track Resumed"
-msgstr ""
+msgstr "트랙 재생됨"
 
 #: redbot/cogs/audio/audio.py:2682
 #, docstring
 msgid "Queue percentage."
-msgstr ""
+msgstr "큐 재생정도"
 
 #: redbot/cogs/audio/audio.py:2709
 msgid "There's  nothing in the queue."
-msgstr ""
+msgstr "큐에 아무것도 없습니다."
 
 #: redbot/cogs/audio/audio.py:2731
 msgid "Queued and playing tracks:"
-msgstr ""
+msgstr "큐에있는 트랙과 재생중인 트랙들:"
 
 #: redbot/cogs/audio/audio.py:2738
 #, docstring
 msgid "Play a URL or search for a track."
-msgstr ""
+msgstr "URL을 재생하거나 트랙을 검색합니다."
 
 #: redbot/cogs/audio/audio.py:2747 redbot/cogs/audio/audio.py:2752
 #: redbot/cogs/audio/audio.py:2769 redbot/cogs/audio/audio.py:2778
@@ -1116,37 +1114,37 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:6939 redbot/cogs/audio/audio.py:7000
 #: redbot/cogs/audio/audio.py:7133
 msgid "Unable To Play Tracks"
-msgstr ""
+msgstr "트랙을 재생할수 없습니다"
 
 #: redbot/cogs/audio/audio.py:2748 redbot/cogs/audio/audio.py:2854
 #: redbot/cogs/audio/audio.py:6934
 msgid "That URL is not allowed."
-msgstr ""
+msgstr "그 URL은 허용되지 않습니다."
 
 #: redbot/cogs/audio/audio.py:2752 redbot/cogs/audio/audio.py:2858
 #: redbot/cogs/audio/audio.py:6940
 msgid "That track is not allowed."
-msgstr ""
+msgstr "그 음악은 허용되지 않습니다."
 
 #: redbot/cogs/audio/audio.py:2756 redbot/cogs/audio/audio.py:2862
 #: redbot/cogs/audio/audio.py:3112 redbot/cogs/audio/audio.py:3286
 #: redbot/cogs/audio/audio.py:6051 redbot/cogs/audio/audio.py:6877
 msgid "Connection to Lavalink has failed"
-msgstr ""
+msgstr "라바링크와 연결에 실패했습니다."
 
 #: redbot/cogs/audio/audio.py:2759 redbot/cogs/audio/audio.py:2865
 #: redbot/cogs/audio/audio.py:3115 redbot/cogs/audio/audio.py:3289
 #: redbot/cogs/audio/audio.py:3683 redbot/cogs/audio/audio.py:6054
 #: redbot/cogs/audio/audio.py:6880 redbot/cogs/audio/audio.py:7117
 msgid "Please check your console or logs for details."
-msgstr ""
+msgstr "관리자에게 문의해주세요"
 
 #: redbot/cogs/audio/audio.py:2770 redbot/cogs/audio/audio.py:2876
 #: redbot/cogs/audio/audio.py:3126 redbot/cogs/audio/audio.py:3300
 #: redbot/cogs/audio/audio.py:6066 redbot/cogs/audio/audio.py:6713
 #: redbot/cogs/audio/audio.py:6891 redbot/cogs/audio/audio.py:7757
 msgid "I don't have permission to connect to your channel."
-msgstr ""
+msgstr "그 체널에 연결할 권한이 없어요."
 
 #: redbot/cogs/audio/audio.py:2779 redbot/cogs/audio/audio.py:2885
 #: redbot/cogs/audio/audio.py:3135 redbot/cogs/audio/audio.py:3309
@@ -1154,7 +1152,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:6900 redbot/cogs/audio/audio.py:7124
 #: redbot/cogs/audio/audio.py:7774
 msgid "Connect to a voice channel first."
-msgstr ""
+msgstr "먼저 음성체널에 연결하세요."
 
 #: redbot/cogs/audio/audio.py:2785 redbot/cogs/audio/audio.py:2891
 #: redbot/cogs/audio/audio.py:3141 redbot/cogs/audio/audio.py:3315
@@ -1162,7 +1160,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:6906 redbot/cogs/audio/audio.py:7127
 #: redbot/cogs/audio/audio.py:7781
 msgid "Connection to Lavalink has not yet been established."
-msgstr ""
+msgstr "라바링크와 연결되지 않았습니다."
 
 #: redbot/cogs/audio/audio.py:2792 redbot/cogs/audio/audio.py:2898
 #: redbot/cogs/audio/audio.py:3148 redbot/cogs/audio/audio.py:3323
@@ -1172,19 +1170,19 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:2806 redbot/cogs/audio/audio.py:2912
 msgid "You must be in the voice channel to use the play command."
-msgstr ""
+msgstr "음성체널에 있어야 재생 명령어를 사용할수 있습니다."
 
 #: redbot/cogs/audio/audio.py:2812 redbot/cogs/audio/audio.py:2918
 #: redbot/cogs/audio/audio.py:2943
 msgid "No tracks found for `{query}`."
-msgstr ""
+msgstr "`{query}`에 대한 검색결과가 없습니다."
 
 #: redbot/cogs/audio/audio.py:2818 redbot/cogs/audio/audio.py:2924
 #: redbot/cogs/audio/audio.py:3209 redbot/cogs/audio/audio.py:3341
 #: redbot/cogs/audio/audio.py:3566 redbot/cogs/audio/audio.py:3635
 #: redbot/cogs/audio/audio.py:7133
 msgid "Queue size limit reached."
-msgstr ""
+msgstr "큐 최대 제한에 도달했습니다."
 
 #: redbot/cogs/audio/audio.py:2838
 #, docstring
@@ -1234,7 +1232,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:3022 redbot/cogs/audio/audio.py:3686
 #: redbot/cogs/audio/audio.py:7162
 msgid "Track Enqueued"
-msgstr ""
+msgstr "트랙 추가됨"
 
 #: redbot/cogs/audio/audio.py:3036
 #, docstring
@@ -1279,13 +1277,13 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:3261
 msgid "tracks"
-msgstr ""
+msgstr "트랙"
 
 #: redbot/cogs/audio/audio.py:3272 redbot/cogs/audio/audio.py:5615
 #: redbot/cogs/audio/audio.py:5635 redbot/cogs/audio/audio.py:6553
 #: redbot/cogs/audio/audio.py:7267
 msgid "Page {page_num}/{total_pages}"
-msgstr ""
+msgstr "{page_num}/{total_pages} 페이지"
 
 #: redbot/cogs/audio/audio.py:3283
 #, docstring
@@ -1323,14 +1321,14 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:6160 redbot/cogs/audio/audio.py:6976
 #: redbot/cogs/audio/audio.py:7074
 msgid "Nothing found."
-msgstr ""
+msgstr "아무것도 찾지 못했습니다."
 
 #: redbot/cogs/audio/audio.py:3434 redbot/cogs/audio/audio.py:3521
 #: redbot/cogs/audio/audio.py:5976 redbot/cogs/audio/audio.py:6151
 #: redbot/cogs/audio/audio.py:6178 redbot/cogs/audio/audio.py:6952
 #: redbot/cogs/audio/audio.py:6968 redbot/cogs/audio/audio.py:7066
 msgid "Unable to Get Track"
-msgstr ""
+msgstr "트랙을 찾을수 없습니다"
 
 #: redbot/cogs/audio/audio.py:3435 redbot/cogs/audio/audio.py:3522
 #: redbot/cogs/audio/audio.py:5977 redbot/cogs/audio/audio.py:6152
@@ -1386,7 +1384,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:3719
 msgid "Approximate time remaining: {seconds}"
-msgstr ""
+msgstr "남은시간: {seconds}"
 
 #: redbot/cogs/audio/audio.py:3790
 msgid "You do not have the permissions to manage {name} (`{id}`) [**{scope}**]."
@@ -1831,7 +1829,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:6293
 msgid "\\n Requested by: **{track.requester}**"
-msgstr ""
+msgstr "\\n 신청자: **{track.requester}**"
 
 #: redbot/cogs/audio/audio.py:6405
 msgid "**Currently livestreaming:**\\n"
@@ -1868,7 +1866,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:6475
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining\\n"
-msgstr ""
+msgstr "{page_num}/{total_pages} 페이지 | {num_tracks}곡 , {num_remaining} 남음\\n"
 
 #: redbot/cogs/audio/audio.py:6550
 msgid "Matching Tracks:"
@@ -1877,7 +1875,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:6564
 #, docstring
 msgid "Clears the queue."
-msgstr ""
+msgstr "큐를 지웁니다."
 
 #: redbot/cogs/audio/audio.py:6578
 msgid "Unable To Clear Queue"
@@ -1889,11 +1887,11 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:6583
 msgid "Queue Modified"
-msgstr ""
+msgstr "큐 수정됨"
 
 #: redbot/cogs/audio/audio.py:6583
 msgid "The queue has been cleared."
-msgstr ""
+msgstr "큐가 정리되었습니다."
 
 #: redbot/cogs/audio/audio.py:6589
 #, docstring
@@ -1981,7 +1979,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:6788
 msgid "\\nAuto-play has been disabled."
-msgstr ""
+msgstr "자동재생이 비활성화되었습니다."
 
 #: redbot/cogs/audio/audio.py:6800
 #, docstring
@@ -2053,11 +2051,11 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:7255
 msgid "Tracks Found:"
-msgstr ""
+msgstr "트랙 발견됨"
 
 #: redbot/cogs/audio/audio.py:7256
 msgid "search results"
-msgstr ""
+msgstr "검색 결과"
 
 #: redbot/cogs/audio/audio.py:7258
 msgid "Folders Found:"
@@ -2363,13 +2361,13 @@ msgstr ""
 
 #: redbot/cogs/audio/utils.py:539
 msgid "Global"
-msgstr ""
+msgstr "전체"
 
 #: redbot/cogs/audio/utils.py:541
 msgid "Server"
-msgstr ""
+msgstr "서버"
 
 #: redbot/cogs/audio/utils.py:543
 msgid "User"
-msgstr ""
+msgstr "사용자"
 

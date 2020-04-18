@@ -2,6 +2,7 @@ import discord
 from redbot.core.bot import Red
 from redbot.core import checks, commands, Config
 from redbot.core.i18n import cog_i18n, Translator
+from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
 from redbot.core.utils.chat_formatting import escape, pagify
 
 from .streamtypes import (
@@ -111,7 +112,6 @@ class Streams(commands.Cog):
             try:
                 tokens["client_secret"]
             except KeyError:
-                prefix = (await self.bot._config.prefix())[0]
                 message = _(
                     "You need a client secret key to use correctly Twitch API on this cog.\n"
                     "Follow these steps:\n"
@@ -119,12 +119,12 @@ class Streams(commands.Cog):
                     '2. Click "Manage" on your application.\n'
                     '3. Click on "New secret".\n'
                     "5. Copy your client ID and your client secret into:\n"
-                    "`{prefix}set api twitch client_id <your_client_id_here> "
+                    "`[p]set api twitch client_id <your_client_id_here> "
                     "client_secret <your_client_secret_here>`\n\n"
                     "Note: These tokens are sensitive and should only be used in a private channel "
                     "or in DM with the bot."
-                ).format(prefix=prefix)
-                await self.bot.send_to_owners(message)
+                )
+                await send_to_owners_with_prefix_replaced(self.bot, message)
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 "https://id.twitch.tv/oauth2/token",
@@ -134,9 +134,34 @@ class Streams(commands.Cog):
                     "grant_type": "client_credentials",
                 },
             ) as req:
+                try:
+                    data = await req.json()
+                except aiohttp.ContentTypeError:
+                    data = {}
+
+                if req.status == 200:
+                    pass
+                elif req.status == 400 and data.get("message") == "invalid client":
+                    log.error(
+                        "Twitch API request failed authentication: set Client ID is invalid."
+                    )
+                elif req.status == 403 and data.get("message") == "invalid client secret":
+                    log.error(
+                        "Twitch API request failed authentication: set Client Secret is invalid."
+                    )
+                elif "message" in data:
+                    log.error(
+                        "Twitch OAuth2 API request failed with status code %s"
+                        " and error message: %s",
+                        req.status,
+                        data["message"],
+                    )
+                else:
+                    log.error("Twitch OAuth2 API request failed with status code %s", req.status)
+
                 if req.status != 200:
                     return
-                data = await req.json()
+
         self.ttv_bearer_cache = data
         self.ttv_bearer_cache["expires_at"] = datetime.now().timestamp() + data.get("expires_in")
 
@@ -203,14 +228,14 @@ class Streams(commands.Cog):
                 _(
                     "The Twitch token is either invalid or has not been set. See "
                     "`{prefix}streamset twitchtoken`."
-                ).format(prefix=ctx.prefix)
+                ).format(prefix=ctx.clean_prefix)
             )
         except InvalidYoutubeCredentials:
             await ctx.send(
                 _(
                     "The YouTube API key is either invalid or has not been set. See "
                     "`{prefix}streamset youtubekey`."
-                ).format(prefix=ctx.prefix)
+                ).format(prefix=ctx.clean_prefix)
             )
         except APIError:
             await ctx.send(
@@ -357,7 +382,7 @@ class Streams(commands.Cog):
                     _(
                         "The Twitch token is either invalid or has not been set. See "
                         "`{prefix}streamset twitchtoken`."
-                    ).format(prefix=ctx.prefix)
+                    ).format(prefix=ctx.clean_prefix)
                 )
                 return
             except InvalidYoutubeCredentials:
@@ -365,7 +390,7 @@ class Streams(commands.Cog):
                     _(
                         "The YouTube API key is either invalid or has not been set. See "
                         "`{prefix}streamset youtubekey`."
-                    ).format(prefix=ctx.prefix)
+                    ).format(prefix=ctx.clean_prefix)
                 )
                 return
             except APIError:
@@ -415,7 +440,7 @@ class Streams(commands.Cog):
             "client_secret <your_client_secret_here>`\n\n"
             "Note: These tokens are sensitive and should only be used in a private channel\n"
             "or in DM with the bot.\n"
-        ).format(prefix=ctx.prefix)
+        ).format(prefix=ctx.clean_prefix)
 
         await ctx.maybe_send_embed(message)
 
@@ -436,7 +461,7 @@ class Streams(commands.Cog):
             "`{prefix}set api youtube api_key <your_api_key_here>`\n\n"
             "Note: These tokens are sensitive and should only be used in a private channel\n"
             "or in DM with the bot.\n"
-        ).format(prefix=ctx.prefix)
+        ).format(prefix=ctx.clean_prefix)
 
         await ctx.maybe_send_embed(message)
 

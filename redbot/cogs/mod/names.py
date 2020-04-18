@@ -69,6 +69,85 @@ class ModInfo(MixinMeta):
             else:
                 await ctx.send(_("Done."))
 
+    def handle_custom(self, user):
+        a = [c for c in user.activities if c.type == discord.ActivityType.custom]
+        if not a:
+            return None, discord.ActivityType.custom
+        a = a[0]
+        c_status = None
+        if not a.name and not a.emoji:
+            return None, discord.ActivityType.custom
+        elif a.name and a.emoji:
+            c_status = _("Custom: {emoji} {name}").format(emoji=a.emoji, name=a.name)
+        elif a.emoji:
+            c_status = _("Custom: {emoji}").format(emoji=a.emoji)
+        elif a.name:
+            c_status = _("Custom: {name}").format(name=a.name)
+        return c_status, discord.ActivityType.custom
+
+    def handle_playing(self, user):
+        p_acts = [c for c in user.activities if c.type == discord.ActivityType.playing]
+        if not p_acts:
+            return None, discord.ActivityType.playing
+        p_act = p_acts[0]
+        act = _("Playing: {name}").format(name=p_act.name)
+        return act, discord.ActivityType.playing
+
+    def handle_streaming(self, user):
+        s_acts = [c for c in user.activities if c.type == discord.ActivityType.streaming]
+        if not s_acts:
+            return None, discord.ActivityType.streaming
+        s_act = s_acts[0]
+        if isinstance(s_act, discord.Streaming):
+            act = _("Streaming: [{name}{sep}{game}]({url})").format(
+                name=discord.utils.escape_markdown(s_act.name),
+                sep=" | " if s_act.game else "",
+                game=discord.utils.escape_markdown(s_act.game) if s_act.game else "",
+                url=s_act.url,
+            )
+        else:
+            act = _("Streaming: {name}").format(name=s_act.name)
+        return act, discord.ActivityType.streaming
+
+    def handle_listening(self, user):
+        l_acts = [c for c in user.activities if c.type == discord.ActivityType.listening]
+        if not l_acts:
+            return None, discord.ActivityType.listening
+        l_act = l_acts[0]
+        if isinstance(l_act, discord.Spotify):
+            act = _("Listening: [{title}{sep}{artist}]({url})").format(
+                title=discord.utils.escape_markdown(l_act.title),
+                sep=" | " if l_act.artist else "",
+                artist=discord.utils.escape_markdown(l_act.artist) if l_act.artist else "",
+                url=f"https://open.spotify.com/track/{l_act.track_id}",
+            )
+        else:
+            act = _("Listening: {title}").format(title=l_act.name)
+        return act, discord.ActivityType.listening
+
+    def handle_watching(self, user):
+        w_acts = [c for c in user.activities if c.type == discord.ActivityType.watching]
+        if not w_acts:
+            return None, discord.ActivityType.watching
+        w_act = w_acts[0]
+        act = _("Watching: {name}").format(name=w_act.name)
+        return act, discord.ActivityType.watching
+
+    def get_status_string(self, user):
+        string = ""
+        for a in [
+            self.handle_custom(user),
+            self.handle_playing(user),
+            self.handle_listening(user),
+            self.handle_streaming(user),
+            self.handle_watching(user),
+        ]:
+            status_string, status_type = a
+            if status_string is None:
+                continue
+            string += f"{status_string}\n"
+        return string
+
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
@@ -112,17 +191,18 @@ class ModInfo(MixinMeta):
         created_on = _("{}\n({} days ago)").format(user_created, since_created)
         joined_on = _("{}\n({} days ago)").format(user_joined, since_joined)
 
+        if any(a.type is discord.ActivityType.streaming for a in user.activities):
+            statusemoji = "\N{LARGE PURPLE CIRCLE}"
+        elif user.status.name == "online":
+            statusemoji = "\N{LARGE GREEN CIRCLE}"
+        elif user.status.name == "offline":
+            statusemoji = "\N{MEDIUM WHITE CIRCLE}"
+        elif user.status.name == "dnd":
+            statusemoji = "\N{LARGE RED CIRCLE}"
+        elif user.status.name == "idle":
+            statusemoji = "\N{LARGE ORANGE CIRCLE}"
         activity = _("Chilling in {} status").format(user.status)
-        if user.activity is None:  # Default status
-            pass
-        elif user.activity.type == discord.ActivityType.playing:
-            activity = _("Playing {}").format(user.activity.name)
-        elif user.activity.type == discord.ActivityType.streaming:
-            activity = _("Streaming [{}]({})").format(user.activity.name, user.activity.url)
-        elif user.activity.type == discord.ActivityType.listening:
-            activity = _("Listening to {}").format(user.activity.name)
-        elif user.activity.type == discord.ActivityType.watching:
-            activity = _("Watching {}").format(user.activity.name)
+        status_string = self.get_status_string(user)
 
         if roles:
 
@@ -160,7 +240,8 @@ class ModInfo(MixinMeta):
         else:
             role_str = None
 
-        data = discord.Embed(description=activity, colour=user.colour)
+        data = discord.Embed(description=status_string or activity, colour=user.colour)
+
         data.add_field(name=_("Joined Discord on"), value=created_on)
         data.add_field(name=_("Joined this server on"), value=joined_on)
         if role_str is not None:
@@ -187,10 +268,12 @@ class ModInfo(MixinMeta):
 
         if user.avatar:
             avatar = user.avatar_url_as(static_format="png")
-            data.set_author(name=name, url=avatar)
+            data.set_author(
+                name="{statusemoji} {name}".format(statusemoji=statusemoji, name=name), url=avatar
+            )
             data.set_thumbnail(url=avatar)
         else:
-            data.set_author(name=name)
+            data.set_author(name="{statusemoji} {name}".format(statusemoji=statusemoji, name=name))
 
         await ctx.send(embed=data)
 
