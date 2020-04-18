@@ -74,6 +74,7 @@ class HelpSettings:
     verify_checks: bool = True
     verify_exists: bool = False
     tagline: str = ""
+    delete_delay: int = 0
 
     # Contrib Note: This is intentional to not accept the bot object
     # There are plans to allow guild and user specific help settings
@@ -292,7 +293,7 @@ class RedHelpFormatter:
                 )
             )
             pages = [box(p) for p in pagify(to_page)]
-            await self.send_pages(ctx, pages, embed=False)
+            await self.send_pages(ctx, pages, embed=False, help_config=help_config)
 
     @staticmethod
     def group_embed_fields(fields: List[EmbedField], max_chars=1000):
@@ -387,7 +388,7 @@ class RedHelpFormatter:
 
             pages.append(embed)
 
-        await self.send_pages(ctx, pages, embed=True)
+        await self.send_pages(ctx, pages, embed=True, help_config=help_config)
 
     async def format_cog_help(self, ctx: Context, obj: commands.Cog, help_config: HelpSettings):
 
@@ -454,7 +455,7 @@ class RedHelpFormatter:
 
             to_page = "\n\n".join(filter(None, (description, subtext_header, subtext)))
             pages = [box(p) for p in pagify(to_page)]
-            await self.send_pages(ctx, pages, embed=False)
+            await self.send_pages(ctx, pages, embed=False, help_config=help_config)
 
     async def format_bot_help(self, ctx: Context, help_config: HelpSettings):
 
@@ -530,7 +531,7 @@ class RedHelpFormatter:
             to_join.append(f"\n{tagline}")
             to_page = "\n".join(to_join)
             pages = [box(p) for p in pagify(to_page)]
-            await self.send_pages(ctx, pages, embed=False)
+            await self.send_pages(ctx, pages, embed=False, help_config=help_config)
 
     @staticmethod
     async def help_filter_func(
@@ -646,22 +647,25 @@ class RedHelpFormatter:
         return com
 
     async def send_pages(
-        self, ctx: Context, pages: List[Union[str, discord.Embed]], embed: bool = True
+        self,
+        ctx: Context,
+        pages: List[Union[str, discord.Embed]],
+        embed: bool = True,
+        help_config: HelpSettings = None,
     ):
         """
         Sends pages based on settings.
         """
 
         # save on config calls
-        config_help = await ctx.bot._config.help()
         channel_permissions = ctx.channel.permissions_for(ctx.me)
 
-        if not (channel_permissions.add_reactions and config_help["use_menus"]):
+        if not (channel_permissions.add_reactions and help_config.use_menus):
 
-            max_pages_in_guild = config_help["max_pages_in_guild"]
+            max_pages_in_guild = help_config.max_pages_in_guild
             use_DMs = len(pages) > max_pages_in_guild
             destination = ctx.author if use_DMs else ctx.channel
-            delete_delay = config_help["delete_delay"]
+            delete_delay = help_config.delete_delay
 
             messages: List[discord.Message] = []
             for page in pages:
