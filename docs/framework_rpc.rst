@@ -15,7 +15,7 @@ Interacting with the RPC Server
 *******************************
 
 The RPC server opens a websocket bound to port ``6133`` on ``127.0.0.1``.
-This is not configurable for security reasons as broad access to this server gives anyone complete control over your bot.
+This may be configured by the use of the ``--rpc-port `` flag.
 To access the server you must find a library that implements websocket based JSONRPC in the language of your choice.
 Red uses ``aiohttp-json-rpc`` for the RPC server, and so code examples from now on will be using that library.
 
