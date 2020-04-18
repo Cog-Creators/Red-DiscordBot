@@ -13,7 +13,7 @@ import pkg_resources
 from colorama import Fore, Style, init
 from pkg_resources import DistributionNotFound
 
-from redbot.core.commands import RedHelpFormatter
+from redbot.core.commands import RedHelpFormatter, HelpSettings
 from redbot.core.i18n import Translator
 from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
 from . import commands
@@ -192,7 +192,7 @@ def init_events(bot, cli_flags):
             bot._last_exception = exception_log
             await ctx.send(inline(message))
         elif isinstance(error, commands.CommandNotFound):
-            help_config = await ctx.bot._config.help.all()
+            help_config = HelpSettings.from_context(ctx)
             fuzzy_commands = await fuzzy_command_search(
                 ctx,
                 commands={
