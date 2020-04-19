@@ -1036,6 +1036,7 @@ class Core(commands.Cog, CoreLogic):
                 if "past_names" in mod_user_data[user_id]:
                     del mod_user_data[user_id]["past_names"]
                     await asyncio.sleep(0)
+        await ctx.send(_("I've deleted all the usernames stored in the Mod, ModLog and Bank cogs"))
 
     @_set.command()
     @checks.guildowner()
