@@ -49,6 +49,7 @@ class JsonDriver(BaseDriver):
 
         The path in which to store the file indicated by :py:attr:`file_name`.
     """
+    saving_task = None
 
     def __init__(
         self,
@@ -68,6 +69,9 @@ class JsonDriver(BaseDriver):
             self.data_path = data_manager.cog_data_path(raw_name=cog_name)
         self.data_path.mkdir(parents=True, exist_ok=True)
         self.data_path = self.data_path / self.file_name
+        self.data_changed = False
+        loop = asyncio.get_event_loop()
+        self.saving_task = loop.create_task(self._save_task())
 
         self._lock = asyncio.Lock()
         self._load_data()
@@ -88,7 +92,8 @@ class JsonDriver(BaseDriver):
     @classmethod
     async def teardown(cls) -> None:
         # No tearing down to do
-        return
+        if cls.saving_task:
+            cls.saving_task.cancel()
 
     @staticmethod
     def get_config_details() -> Dict[str, Any]:
@@ -208,11 +213,24 @@ class JsonDriver(BaseDriver):
                         *ConfigCategory.get_pkey_info(category, custom_group_data),
                     )
                     update_write_data(ident_data, data)
-            await self._save()
+            await self._actually_save()
 
     async def _save(self) -> None:
+        self.data_changed = True
+
+    async def _actually_save(self) -> None:
         loop = asyncio.get_running_loop()
         await loop.run_in_executor(None, _save_json, self.data_path, self.data)
+
+    async def _save_task(self):
+        try:
+            while True:
+                if self.data_changed:
+                    await self._actually_save()
+                    self.data_changed = False
+                await asyncio.sleep(1)
+        except asyncio.CancelledError:
+            _save_json(self.data_path, self.data)
 
 
 def _save_json(path: Path, data: Dict[str, Any]) -> None:
