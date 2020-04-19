@@ -12,11 +12,10 @@ class MixinMeta(ABC):
 
     Basically, to keep developers sane when not all attributes are defined in each mixin.
     """
-
-    def __init__(self, *_args):
-        self.settings: Config
-        self.bot: Red
-        self.cache: dict
+    settings: Config
+    bot: Red
+    cache: dict
+    _name_status_cache: bool
 
     @staticmethod
     @abstractmethod

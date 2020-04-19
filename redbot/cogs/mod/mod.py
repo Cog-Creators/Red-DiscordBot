@@ -45,7 +45,7 @@ class Mod(
 ):
     """Moderation tools."""
 
-    default_global_settings = {"version": ""}
+    default_global_settings = {"version": "", "storenames": False}
 
     default_guild_settings = {
         "ban_mention_spam": False,
@@ -62,7 +62,6 @@ class Mod(
     default_channel_settings = {"ignored": False}
 
     default_member_settings = {"past_nicks": [], "perms_cache": {}, "banned_until": False}
-
     default_user_settings = {"past_names": []}
 
     def __init__(self, bot: Red):
@@ -78,11 +77,13 @@ class Mod(
         self.cache: dict = {}
         self.tban_expiry_task = self.bot.loop.create_task(self.check_tempban_expirations())
         self.last_case: dict = defaultdict(dict)
+        self._name_status_cache: bool = False
 
         self._ready = asyncio.Event()
 
     async def initialize(self):
         await self._maybe_update_config()
+        self._name_status_cache = await self.settings.storenames()
         self._ready.set()
 
     async def cog_before_invoke(self, ctx: commands.Context) -> None:
@@ -147,3 +148,21 @@ class Mod(
             )
             await self.settings.guild_from_id(guild_id).delete_delay.clear()
         await ctx.send(_("Delete delay settings restored."))
+
+    @commands.command()
+    @commands.is_owner()
+    async def deletenames(self, ctx: commands.Context) -> None:
+        """Delete all stored names and usernames"""
+
+        async with self.settings._get_base_group(self.settings.MEMBER).all() as mod_member_data:
+            for guild_id, guild_data in mod_member_data.items():
+                for member_id, member_data in guild_data.items():
+                    if "past_nicks" in mod_member_data[guild_id][member_id]:
+                        del mod_member_data[guild_id][member_id]["past_nicks"]
+                        await asyncio.sleep(0)
+        async with self.settings._get_base_group(self.settings.USER).all() as mod_user_data:
+            for user_id, user_data in mod_user_data.items():
+                if "past_names" in mod_user_data[user_id]:
+                    del mod_user_data[user_id]["past_names"]
+                    await asyncio.sleep(0)
+        await ctx.send(_("Name and nicknames have been deleted from Mod config."))

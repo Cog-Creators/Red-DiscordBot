@@ -221,3 +221,22 @@ class ModSettings(MixinMeta):
                 days=days
             )
         )
+
+    @modset.command()
+    @checks.is_owner()
+    async def storenames(self, ctx: commands.Context):
+        """Toggle to tell the bot whether or not it should store names."""
+
+        async with self.settings.all() as global_data:
+            status = global_data["storenames"]
+            status = not status
+            global_data["storenames"] = status
+
+        self._name_status_cache = status
+
+        if status:
+            await ctx.send(_("Bot will now store usernames and nicknames for the Mod Cog."))
+        else:
+            await ctx.send(
+                _("Bot will no longer store usernames and nicknames for the Mod Cog.")
+            )
