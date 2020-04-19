@@ -171,7 +171,7 @@ class ModInfo(MixinMeta):
         is_special = user.id == 96130341705637888 and guild.id == 133049272517001216
 
         roles = user.roles[-1:0:-1]
-        if self._name_status_cache:
+        if self.bot.store_names:
             names, nicks = await self.get_names_and_nicks(user)
         else:
             names = nicks = None
@@ -283,7 +283,7 @@ class ModInfo(MixinMeta):
     @commands.command()
     async def names(self, ctx: commands.Context, *, user: discord.Member):
         """Show previous names and nicknames of a user."""
-        if self._name_status_cache:
+        if self.bot.store_names:
             names, nicks = await self.get_names_and_nicks(user)
         else:
             names = nicks = None

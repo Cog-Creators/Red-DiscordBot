@@ -16,7 +16,6 @@ class MixinMeta(ABC):
     settings: Config
     bot: Red
     cache: dict
-    _name_status_cache: bool
 
     @staticmethod
     @abstractmethod

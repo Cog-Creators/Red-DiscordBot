@@ -113,6 +113,7 @@ class RedBase(
             last_system_info__machine=None,
             last_system_info__system=None,
             schema_version=0,
+            store_names=False,
         )
 
         self._config.register_guild(
@@ -141,6 +142,7 @@ class RedBase(
         self._prefix_cache = PrefixManager(self._config, cli_flags)
         self._ignored_cache = IgnoreManager(self._config)
         self._whiteblacklist_cache = WhitelistBlacklistManager(self._config)
+
 
         async def prefix_manager(bot, message) -> List[str]:
             prefixes = await self._prefix_cache.get_prefixes(message.guild)
@@ -261,6 +263,18 @@ class RedBase(
         raise RuntimeError(
             "Hey, we're cool with sharing info about the uptime, but don't try and assign to it please."
         )
+
+    @property
+    def store_names(self) -> bool:
+        """ Allow access to the value, but we don't want cog creators setting it """
+        return self._store_names
+
+    @uptime.setter
+    def store_names(self, value) -> NoReturn:
+        raise RuntimeError(
+            "Please don't try to manually change this."
+        )
+
 
     @property
     def db(self) -> NoReturn:

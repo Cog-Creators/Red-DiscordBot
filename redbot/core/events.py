@@ -133,6 +133,7 @@ def init_events(bot, cli_flags):
             print("\nInvite URL: {}\n".format(invite_url))
 
         bot._color = discord.Colour(await bot._config.color())
+        bot._store_names = await bot._config.store_names()
         bot._red_ready.set()
         if outdated_red_message:
             await bot.send_to_owners(outdated_red_message)
