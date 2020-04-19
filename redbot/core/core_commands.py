@@ -983,7 +983,7 @@ class Core(commands.Cog, CoreLogic):
         Default is Off
         """
         ctx.bot._store_names = not ctx.bot._store_names
-        await ctx.bot._config.store_names.set(ctx.bot._store_names)
+        await ctx.bot._config.store_names.set(ctx.bot.store_names)
 
         if ctx.bot.store_names:
             await ctx.send(
