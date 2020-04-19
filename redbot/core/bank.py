@@ -65,10 +65,12 @@ _DEFAULT_MEMBER = {"name": "", "balance": 0, "created_at": 0}
 _DEFAULT_USER = _DEFAULT_MEMBER
 
 _conf: Config = None
+_bot: Red = None
 
 
-def _init():
-    global _conf
+def _init(bot):
+    global _conf, _bot
+    _bot = bot
     _conf = Config.get_conf(None, 384734293238749, cog_name="Bank", force_registration=True)
     _conf.register_global(**_DEFAULT_GLOBAL)
     _conf.register_guild(**_DEFAULT_GUILD)
@@ -82,7 +84,7 @@ class Account:
     This class should ONLY be instantiated by the bank itself."""
 
     def __init__(self, name: str, balance: int, created_at: datetime.datetime):
-        self.name = name
+        self.name = name if _bot.store_names else ""
         self.balance = balance
         self.created_at = created_at
 
@@ -220,7 +222,7 @@ async def set_balance(member: Union[discord.Member, discord.User], amount: int) 
         time = _encoded_current_time()
         await group.created_at.set(time)
 
-    if await group.name() == "":
+    if _bot.store_names and await group.name() == "":
         await group.name.set(member.display_name)
 
     return amount

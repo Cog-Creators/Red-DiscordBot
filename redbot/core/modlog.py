@@ -221,7 +221,7 @@ class Case:
         self.created_at = created_at
         self.action_type = action_type
         self.user = user
-        self.last_known_username = last_known_username
+        self.last_known_username = last_known_username if bot.store_names else None
         self.moderator = moderator
         self.reason = reason
         self.until = until
@@ -250,7 +250,7 @@ class Case:
             setattr(self, item, data[item])
 
         # update last known username
-        if not isinstance(self.user, int):
+        if self.bot.store_names and not isinstance(self.user, int):
             self.last_known_username = f"{self.user.name}#{self.user.discriminator}"
 
         await _conf.custom(_CASES, str(self.guild.id), str(self.case_number)).set(self.to_json())

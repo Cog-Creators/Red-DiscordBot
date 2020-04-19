@@ -143,7 +143,6 @@ class RedBase(
         self._ignored_cache = IgnoreManager(self._config)
         self._whiteblacklist_cache = WhitelistBlacklistManager(self._config)
 
-
         async def prefix_manager(bot, message) -> List[str]:
             prefixes = await self._prefix_cache.get_prefixes(message.guild)
             if cli_flags.mentionable:
@@ -167,6 +166,7 @@ class RedBase(
 
         self._uptime = None
         self._checked_time_accuracy = None
+        self._store_names = False
         self._color = discord.Embed.Empty  # This is needed or color ends up 0x000000
 
         self._main_dir = bot_dir
@@ -271,10 +271,7 @@ class RedBase(
 
     @uptime.setter
     def store_names(self, value) -> NoReturn:
-        raise RuntimeError(
-            "Please don't try to manually change this."
-        )
-
+        raise RuntimeError("Please don't try to manually change this.")
 
     @property
     def db(self) -> NoReturn:
@@ -562,7 +559,7 @@ class RedBase(
             self.add_cog(Dev())
 
         await modlog._init(self)
-        bank._init()
+        bank._init(self)
 
         packages = []
 

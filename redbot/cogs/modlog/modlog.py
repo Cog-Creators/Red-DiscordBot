@@ -1,3 +1,4 @@
+import asyncio
 from typing import Optional, Union
 
 import discord
@@ -31,6 +32,18 @@ class ModLog(commands.Cog):
     async def reapply_audittype_migration(self, ctx: commands.Context):
         """Command to fix misbehaving casetypes."""
         await modlog.handle_auditype_key()
+        await ctx.tick()
+
+    @checks.is_owner()
+    @modlogset.command(name="deletenames")
+    async def modlogset_deletenames(self, ctx: commands.Context):
+        """Delete all stored usernames."""
+        async with modlog._conf.custom("CASES").all() as modlog_data:
+            for guild_id, guild_data in modlog_data.items():
+                for case_number, case_data in guild_data.items():
+                    if "last_known_username" in modlog_data[guild_id][case_number]:
+                        del modlog_data[guild_id][case_number]["last_known_username"]
+                    await asyncio.sleep(0)
         await ctx.tick()
 
     @modlogset.command()

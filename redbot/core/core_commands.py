@@ -21,6 +21,7 @@ import aiohttp
 import discord
 import pkg_resources
 from babel import Locale as BabelLocale, UnknownLocaleError
+from redbot.core import modlog, bank, Config
 
 from . import (
     __version__,
@@ -897,11 +898,11 @@ class Core(commands.Cog, CoreLogic):
             prefixes = await ctx.bot._prefix_cache.get_prefixes(ctx.guild)
             locale = await ctx.bot._config.locale()
             regional_format = await ctx.bot._config.regional_format() or _("Same as bot's locale")
-
             prefix_string = " ".join(prefixes)
             settings = _(
                 "{bot_name} Settings:\n\n"
                 "Prefixes: {prefixes}\n"
+                "Storing usernames and nicknames: {name_settings}\n"
                 "{guild_settings}"
                 "Locale: {locale}\n"
                 "Regional format: {regional_format}"
@@ -911,6 +912,7 @@ class Core(commands.Cog, CoreLogic):
                 guild_settings=guild_settings,
                 locale=locale,
                 regional_format=regional_format,
+                name_settings=ctx.bot.store_names,
             )
             for page in pagify(settings):
                 await ctx.send(box(page))
@@ -971,6 +973,69 @@ class Core(commands.Cog, CoreLogic):
             await ctx.bot._config.description.set(description)
             ctx.bot.description = description
             await ctx.tick()
+
+    @checks.is_owner()
+    @_set.command(name="storenames")
+    async def storenames(self, ctx: commands.Context):
+        """
+        Toggle whether or not to store user and nick names.
+
+        Default is Off
+        """
+        ctx.bot._store_names = not ctx.bot._store_names
+        ctx.bot._store_names = await ctx.bot._config.store_names()
+
+        if ctx.bot.store_names:
+            await ctx.send(
+                _("The bot will now store usernames and nicknames in Bank, ModLog and Mod cogs.")
+            )
+        else:
+            await ctx.send(
+                _(
+                    "The bot will no longer store usernames and nicknames in Bank, "
+                    "ModLog and Mod cogs.\n"
+                    "To delete all stored names use `[p]set deletenames"
+                )
+            )
+
+    @checks.is_owner()
+    @_set.command(name="deletenames")
+    async def storenames(self, ctx: commands.Context):
+        """Delete all stored usernames and nick names."""
+        async with modlog._conf.custom("CASES").all() as modlog_data:
+            for guild_id, guild_data in modlog_data.items():
+                for case_number, case_data in guild_data.items():
+                    if "last_known_username" in modlog_data[guild_id][case_number]:
+                        del modlog_data[guild_id][case_number]["last_known_username"]
+                    await asyncio.sleep(0)
+        async with bank._conf._get_base_group(bank._conf.MEMBER).all() as bank_member_data:
+            for guild_id, guild_data in bank_member_data.items():
+                for member_id, member_data in guild_data.items():
+                    if "name" in bank_member_data[guild_id][member_id]:
+                        del bank_member_data[guild_id][member_id]["name"]
+                        await asyncio.sleep(0)
+
+        async with bank._conf._get_base_group(bank._conf.USER).all() as bank_user_data:
+            for user_id, user_data in bank_user_data.items():
+                if "name" in bank_user_data[user_id]:
+                    del bank_user_data[user_id]["name"]
+                    await asyncio.sleep(0)
+        mod_cog = ctx.bot.get_cog("Mod")
+        if mod_cog:
+            mod_config = mod_cog.settings
+        else:
+            mod_config = Config.get_conf(None, 4961522000, force_registration=True, cog_name="Mod")
+        async with mod_config._get_base_group(mod_config.MEMBER).all() as mod_member_data:
+            for guild_id, guild_data in mod_member_data.items():
+                for member_id, member_data in guild_data.items():
+                    if "past_nicks" in mod_member_data[guild_id][member_id]:
+                        del mod_member_data[guild_id][member_id]["past_nicks"]
+                        await asyncio.sleep(0)
+        async with mod_config._get_base_group(mod_config.USER).all() as mod_user_data:
+            for user_id, user_data in mod_user_data.items():
+                if "past_names" in mod_user_data[user_id]:
+                    del mod_user_data[user_id]["past_names"]
+                    await asyncio.sleep(0)
 
     @_set.command()
     @checks.guildowner()
