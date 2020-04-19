@@ -49,6 +49,7 @@ class JsonDriver(BaseDriver):
 
         The path in which to store the file indicated by :py:attr:`file_name`.
     """
+
     saving_task = None
 
     def __init__(
