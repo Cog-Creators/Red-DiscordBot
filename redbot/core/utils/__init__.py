@@ -276,7 +276,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
         self, iterable: Iterable[_T], delay: Union[float, int] = 0, steps: int = 1
     ) -> None:
         self._delay = delay
-        self._content = iter(iterable)
+        self._iterator = iter(iterable)
         self._i = 0
         self._steps = steps
 
@@ -285,7 +285,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
 
     async def __anext__(self) -> _T:
         try:
-            item = next(self._content)
+            item = next(self._iterator)
         except StopIteration:
             raise StopAsyncIteration
         self._i += 1
@@ -320,18 +320,19 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
         --------
             >>> from redbot.core.utils import AsyncIter
             >>> def predicate(value):
-            >>>    return value <= 5
+            >>>     return value <= 5
             >>> iterator = AsyncIter([1, 10, 5, 100])
             >>> async for i in iterator.filter(predicate):
+            >>>     print(i)
             1
             5
 
-           >>> from redbot.core.utils import AsyncIter
-           >>> def predicate(value):
-           >>>    return value <= 5
-           >>> iterator = AsyncIter([1, 10, 5, 100])
-           >>> await iterator.filter(predicate)
-           [1, 5]
+            >>> from redbot.core.utils import AsyncIter
+            >>> def predicate(value):
+            >>>     return value <= 5
+            >>> iterator = AsyncIter([1, 10, 5, 100])
+            >>> await iterator.filter(predicate)
+            [1, 5]
 
         """
         return async_filter(function, self)
@@ -354,6 +355,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
             >>> from redbot.core.utils import AsyncIter
             >>> iterator = AsyncIter(['one', 'two', 'three'])
             >>> async for i in iterator.enumerate(start=10):
+            >>>     print(i)
             (10, 'one')
             (11, 'two')
             (12, 'three')
@@ -370,6 +372,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
             >>> from redbot.core.utils import AsyncIter
             >>> iterator = AsyncIter([1,2,3,3,4,4,5])
             >>> async for i in iterator.without_duplicates():
+            >>>     print(i)
             1
             2
             3
