@@ -108,23 +108,35 @@ def init_events(bot, cli_flags):
                 if expected_version(current_python, requires_python):
                     extra_update = (
                         "\n\nTo update your bot, first shutdown your "
-                        "bot then open a window of {console} "
-                        "(Not as admin) and run the following:\n\n"
+                        "bot then open a window of {console} (Not as admin) and "
+                        "run the following:\n\n"
                     ).format(console=platform_console)
                     extra_update += '```"{python}" -m pip install -U Red-DiscordBot```'.format(
                         python=sys.executable
                     )
+                    extra_update += (
+                        "\n\nPlease be aware that the command above is a best guess;"
+                        "\nThis is based on your current OS, enviroment and Python version and "
+                        "there is a small change this could be incorrect."
+                        "\n**Should the above not work for you please check our docs at <{docs}> "
+                        "and/or visit our support server at <https://discord.gg/red>.**"
+                    ).format(
+                        docs="https://docs.discord.red/en/stable/install_windows.html"
+                        if platform.system() == "Windows"
+                        else "https://docs.discord.red/en/stable/install_linux_mac.html",
+                    )
+
                     outdated_red_message += extra_update
                 else:
                     extra_update = (
                         "\n\nYou have Python `{py_version}` and this update "
                         "requires `{req_py}`; you cannot simply run the update command.\n\n"
-                        "You will need to follow the install instructions in our docs ({docs}) "
+                        "You will need to follow the install instructions in our docs (<{docs}>) "
                         "to reinstall Python, Red and any other dependency that are out of date "
-                        "only skipping the `redbot-setup` command."
-                        " (This will not delete your data)\n"
-                        "If you already have a venv you will need to delete it and recreate it."
-                        "If you need help updating go to our #support channel in <https://discord.gg/red>"
+                        "only skipping the `redbot-setup` command. (This will not delete your data)"
+                        "\nIf you already have a venv you will need to delete it and recreate it."
+                        "If you need help updating go to our "
+                        "#support channel in <https://discord.gg/red>"
                     ).format(
                         py_version=current_python,
                         req_py=requires_python,
