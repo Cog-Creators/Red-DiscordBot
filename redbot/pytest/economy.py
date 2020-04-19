@@ -5,7 +5,7 @@ __all__ = ["bank"]
 
 
 @pytest.fixture()
-def bank(config, monkeypatch):
+def bank(config, monkeypatch, red):
     from redbot.core import Config
 
     with monkeypatch.context() as m:
