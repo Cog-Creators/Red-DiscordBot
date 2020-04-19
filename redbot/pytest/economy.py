@@ -11,5 +11,5 @@ def bank(config, monkeypatch, red):
     with monkeypatch.context() as m:
         m.setattr(Config, "get_conf", lambda *args, **kwargs: config)
         # noinspection PyProtectedMember
-        bank_module._init()
+        bank_module._init(red)
         return bank_module
