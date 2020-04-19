@@ -250,7 +250,7 @@ class ModSettings(MixinMeta):
                 for member_id, member_data in guild_data.items():
                     if "past_nicks" in mod_member_data[guild_id][member_id]:
                         del mod_member_data[guild_id][member_id]["past_nicks"]
-                        await asy ncio.sleep(0)
+                        await asyncio.sleep(0)
         async with self.settings._get_base_group(self.settings.USER).all() as mod_user_data:
             for user_id, user_data in mod_user_data.items():
                 if "past_names" in mod_user_data[user_id]:
