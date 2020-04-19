@@ -8,7 +8,7 @@ General Utility
 ===============
 
 .. automodule:: redbot.core.utils
-    :members: deduplicate_iterables, bounded_gather, bounded_gather_iter
+    :members: deduplicate_iterables, bounded_gather, bounded_gather_iter, AsyncIter
 
 Chat Formatting
 ===============

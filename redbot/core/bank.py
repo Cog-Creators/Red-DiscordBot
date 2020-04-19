@@ -12,7 +12,7 @@ from . import Config, errors, commands
 from .i18n import Translator
 
 from .errors import BankPruneError
-from .utils import AsyncGen
+from .utils import AsyncIter
 
 if TYPE_CHECKING:
     from .bot import Red
@@ -408,10 +408,10 @@ async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: int = None)
     if global_bank:
         _guilds = [
             g
-            async for g in AsyncGen(bot.guilds, steps=100)
+            async for g in AsyncIter(bot.guilds, steps=100)
             if not g.unavailable and g.large and not g.chunked
         ]
-        _uguilds = [g async for g in AsyncGen(bot.guilds, steps=100) if g.unavailable]
+        _uguilds = [g async for g in AsyncIter(bot.guilds, steps=100) if g.unavailable]
         group = _config._get_base_group(_config.USER)
 
     else:

@@ -1,8 +1,8 @@
+from __future__ import annotations
 import asyncio
 import warnings
 from asyncio import AbstractEventLoop, as_completed, Semaphore
 from asyncio.futures import isfuture
-from functools import partial
 from itertools import chain
 from typing import (
     Any,
@@ -19,9 +19,10 @@ from typing import (
     Union,
     Set,
     TYPE_CHECKING,
+    Generator,
 )
 
-__all__ = ("bounded_gather", "bounded_gather_iter", "deduplicate_iterables", "AsyncGen")
+__all__ = ("bounded_gather", "bounded_gather_iter", "deduplicate_iterables", "AsyncIter")
 
 _T = TypeVar("_T")
 
@@ -258,28 +259,28 @@ def bounded_gather(
     return asyncio.gather(*tasks, return_exceptions=return_exceptions)
 
 
-class AsyncGen(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=duplicate-bases
-    """Yield entry every `delay` seconds per `steps`."""
+class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=duplicate-bases
+    """Asynchronous iterator yielding items from ``iterable`` that sleeps for ``delay`` seconds every ``steps`` items."""
 
     def __init__(
         self, iterable: Iterable[_T], delay: Union[float, int] = 0, steps: int = 1
     ) -> None:
-        self.delay = delay
-        self.content = iter(contents)
-        self.i = 0
-        self.steps = steps
+        self._delay = delay
+        self._content = iter(iterable)
+        self._i = 0
+        self._steps = steps
 
-    def __aiter__(self) -> AsyncGen[_T]:
+    def __aiter__(self) -> AsyncIter[_T]:
         return self
 
     async def __anext__(self) -> _T:
         try:
-            item = next(self.content)
+            item = next(self._content)
         except StopIteration:
             raise StopAsyncIteration
-        self.i += 1
-        if self.i % self.steps == 0:
-            await asyncio.sleep(self.delay)
+        self._i += 1
+        if self._i % self._steps == 0:
+            await asyncio.sleep(self._delay)
         return item
 
     def __await__(self) -> Generator[Any, None, List[_T]]:
@@ -294,10 +295,10 @@ class AsyncGen(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupli
     def enumerate(self, start: int = 0) -> AsyncIterator[Tuple[int, _T]]:
         return async_enumerate(self, start)
 
-    async def remove_dupes(self) -> AsyncIterator[_T]:
-        _temp = []
+    async def without_duplicates(self) -> AsyncIterator[_T]:
+        _temp = set()
         async for item in self:
             if item not in _temp:
                 yield item
-                _temp.append(item)
+                _temp.add(item)
         del _temp

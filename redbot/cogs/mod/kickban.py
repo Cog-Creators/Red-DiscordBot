@@ -7,11 +7,11 @@ from typing import cast, Optional, Union
 
 import discord
 from redbot.core import commands, i18n, checks, modlog
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import pagify, humanize_number, bold
 from redbot.core.utils.mod import is_allowed_by_hierarchy, get_audit_reason
 from .abc import MixinMeta
 from .converters import RawUserIds
-from ...core.utils import AsyncGen
 
 log = logging.getLogger("red.mod")
 _ = i18n.Translator("Mod", __file__)
@@ -135,7 +135,7 @@ class KickBanMixin(MixinMeta):
     async def check_tempban_expirations(self):
         member = namedtuple("Member", "id guild")
         while self == self.bot.get_cog("Mod"):
-            async for guild in AsyncGen(self.bot.guilds, steps=100):
+            async for guild in AsyncIter(self.bot.guilds, steps=100):
                 if not guild.me.guild_permissions.ban_members:
                     continue
                 try:

@@ -3,7 +3,7 @@ import asyncio
 import discord
 from redbot.core import commands
 from redbot.core.i18n import Translator
-from redbot.core.utils import AsyncGen
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import humanize_list, inline
 
 _ = Translator("Announcer", __file__)
@@ -56,7 +56,7 @@ class Announcer:
     async def announcer(self):
         guild_list = self.ctx.bot.guilds
         failed = []
-        async for g in AsyncGen(guild_list, delay=0.5):
+        async for g in AsyncIter(guild_list, delay=0.5):
             if not self.active:
                 return
 
