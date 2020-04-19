@@ -17,6 +17,7 @@ __all__ = ["JsonDriver"]
 _shared_datastore = {}
 _driver_counts = {}
 _finalizers = []
+_locks = {}
 
 log = logging.getLogger("redbot.json_driver")
 
@@ -30,6 +31,8 @@ def finalize_driver(cog_name):
     if _driver_counts[cog_name] == 0:
         if cog_name in _shared_datastore:
             del _shared_datastore[cog_name]
+        if cog_name in _locks:
+            del _locks[cog_name]
 
     for f in _finalizers:
         if not f.alive:
@@ -71,11 +74,18 @@ class JsonDriver(BaseDriver):
         self.data_path.mkdir(parents=True, exist_ok=True)
         self.data_path = self.data_path / self.file_name
         self.data_changed = False
+        self._lock = asyncio.Lock()
         loop = asyncio.get_event_loop()
         self.saving_task = loop.create_task(self._save_task())
-
-        self._lock = asyncio.Lock()
         self._load_data()
+
+    @property
+    def _lock(self):
+        return _locks.get(self.cog_name)
+
+    @_lock.setter
+    def _lock(self, value):
+        _locks[self.cog_name] = value
 
     @property
     def data(self):
@@ -227,8 +237,9 @@ class JsonDriver(BaseDriver):
         try:
             while True:
                 if self.data_changed:
-                    await self._actually_save()
-                    self.data_changed = False
+                    with self._lock:
+                        await self._actually_save()
+                        self.data_changed = False
                 await asyncio.sleep(1)
         except asyncio.CancelledError:
             _save_json(self.data_path, self.data)
