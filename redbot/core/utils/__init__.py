@@ -318,18 +318,21 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
 
         Examples
         --------
-        .. testsetup::
-
-            from redbot.core.utils import AsyncIter
-
-        .. doctest::
+            >>> from redbot.core.utils import AsyncIter
             >>> def predicate(value):
             >>>    return value <= 5
-
             >>> iterator = AsyncIter([1, 10, 5, 100])
             >>> async for i in iterator.filter(predicate):
-            '1'
-            '5'
+            1
+            5
+
+           >>> from redbot.core.utils import AsyncIter
+           >>> def predicate(value):
+           >>>    return value <= 5
+           >>> iterator = AsyncIter([1, 10, 5, 100])
+           >>> await iterator.filter(predicate)
+           [1, 5]
+
         """
         return async_filter(function, self)
 
@@ -348,16 +351,12 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
 
         Examples
         --------
-        .. testsetup::
-
-            from redbot.core.utils import AsyncIter
-
-        .. doctest::
-            >>> iterator = AsyncIter(['two', 'two', 'one'])
+            >>> from redbot.core.utils import AsyncIter
+            >>> iterator = AsyncIter(['one', 'two', 'three'])
             >>> async for i in iterator.enumerate(start=10):
-            '(10, "two")'
-            '(11, "two")'
-            '(12, "one")'
+            (10, 'one')
+            (11, 'two')
+            (12, 'three')
 
         """
         return async_enumerate(self, start)
@@ -368,23 +367,14 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
 
         Examples
         --------
-        .. testsetup::
-
-            from redbot.core.utils import AsyncIter
-
-        .. doctest::
+            >>> from redbot.core.utils import AsyncIter
             >>> iterator = AsyncIter([1,2,3,3,4,4,5])
             >>> async for i in iterator.without_duplicates():
-            '1'
-            '2
-            '3'
-            '4'
-            '5'
-            >>> iterator = AsyncIter(['two', 'two', 'one'])
-            >>> async for i in iterator.without_duplicates():
-            'two
-            'one'
-
+            1
+            2
+            3
+            4
+            5
         """
         _temp = set()
         async for item in self:
