@@ -1000,7 +1000,7 @@ class Core(commands.Cog, CoreLogic):
 
     @checks.is_owner()
     @_set.command(name="deletenames")
-    async def storenames(self, ctx: commands.Context):
+    async def deletenames(self, ctx: commands.Context):
         """Delete all stored usernames and nick names."""
         async with modlog._conf.custom("CASES").all() as modlog_data:
             for guild_id, guild_data in modlog_data.items():
