@@ -410,9 +410,8 @@ class KickBanMixin(MixinMeta):
 
         queue_entry = (guild.id, user.id)
         await self.config.member(user).banned_until.set(unban_time.timestamp())
-        cur_tbans = await self.config.guild(guild).current_tempbans()
-        cur_tbans.append(user.id)
-        await self.config.guild(guild).current_tempbans.set(cur_tbans)
+        async with self.config.guild(guild).current_tempbans() as current_tempbans:
+            current_tempbans.append(user.id)
 
         with contextlib.suppress(discord.HTTPException):
             # We don't want blocked DMs preventing us from banning

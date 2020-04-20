@@ -195,21 +195,19 @@ class Downloader(commands.Cog):
             The modules to check off.
 
         """
-        installed_cogs = await self.config.installed_cogs()
-        installed_libraries = await self.config.installed_libraries()
-        for module in modules:
-            if module.type == InstallableType.COG:
-                installed = installed_cogs
-            elif module.type == InstallableType.SHARED_LIBRARY:
-                installed = installed_libraries
-            else:
-                continue
-            module_json = module.to_json()
-            repo_json = installed.setdefault(module.repo_name, {})
-            repo_json[module.name] = module_json
-
-        await self.config.installed_cogs.set(installed_cogs)
-        await self.config.installed_libraries.set(installed_libraries)
+        async with self.config.all() as global_data:
+            installed_cogs = global_data["installed_cogs"]
+            installed_libraries = global_data["installed_libraries"]
+            for module in modules:
+                if module.type == InstallableType.COG:
+                    installed = installed_cogs
+                elif module.type == InstallableType.SHARED_LIBRARY:
+                    installed = installed_libraries
+                else:
+                    continue
+                module_json = module.to_json()
+                repo_json = installed.setdefault(module.repo_name, {})
+                repo_json[module.name] = module_json
 
     async def _remove_from_installed(self, modules: Iterable[InstalledModule]) -> None:
         """Remove modules from the saved list
@@ -221,20 +219,18 @@ class Downloader(commands.Cog):
             The modules to remove.
 
         """
-        installed_cogs = await self.config.installed_cogs()
-        installed_libraries = await self.config.installed_libraries()
-        for module in modules:
-            if module.type == InstallableType.COG:
-                installed = installed_cogs
-            elif module.type == InstallableType.SHARED_LIBRARY:
-                installed = installed_libraries
-            else:
-                continue
-            with contextlib.suppress(KeyError):
-                installed[module._json_repo_name].pop(module.name)
-
-        await self.config.installed_cogs.set(installed_cogs)
-        await self.config.installed_libraries.set(installed_libraries)
+        async with self.config.all() as global_data:
+            installed_cogs = global_data["installed_cogs"]
+            installed_libraries = global_data["installed_libraries"]
+            for module in modules:
+                if module.type == InstallableType.COG:
+                    installed = installed_cogs
+                elif module.type == InstallableType.SHARED_LIBRARY:
+                    installed = installed_libraries
+                else:
+                    continue
+                with contextlib.suppress(KeyError):
+                    installed[module._json_repo_name].pop(module.name)
 
     async def _shared_lib_load_check(self, cog_name: str) -> Optional[Repo]:
         # remove in Red 3.4

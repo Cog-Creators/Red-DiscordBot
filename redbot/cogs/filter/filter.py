@@ -83,12 +83,14 @@ class Filter(commands.Cog):
             )
             return
         elif count == 0 and timeframe == 0:
-            await self.config.guild(ctx.guild).filterban_count.set(0)
-            await self.config.guild(ctx.guild).filterban_time.set(0)
+            async with self.config.guild(ctx.guild).all() as guild_data:
+                guild_data["filterban_count"] = 0
+                guild_data["filterban_time"] = 0
             await ctx.send(_("Autoban disabled."))
         else:
-            await self.config.guild(ctx.guild).filterban_count.set(count)
-            await self.config.guild(ctx.guild).filterban_time.set(timeframe)
+            async with self.config.guild(ctx.guild).all() as guild_data:
+                guild_data["filterban_count"] = count
+                guild_data["filterban_time"] = timeframe
             await ctx.send(_("Count and time have been set."))
 
     @commands.group(name="filter")
@@ -276,8 +278,10 @@ class Filter(commands.Cog):
         This is disabled by default.
         """
         guild = ctx.guild
-        current_setting = await self.config.guild(guild).filter_names()
-        await self.config.guild(guild).filter_names.set(not current_setting)
+
+        async with self.config.guild(guild).all() as guild_data:
+            current_setting = guild_data["filter_names"]
+            guild_data["filter_names"] = not current_setting
         if current_setting:
             await ctx.send(_("Names and nicknames will no longer be filtered."))
         else:
@@ -365,21 +369,23 @@ class Filter(commands.Cog):
         return hits
 
     async def check_filter(self, message: discord.Message):
-        server = message.guild
+        guild = message.guild
         author = message.author
-
-        filter_count = await self.config.guild(server).filterban_count()
-        filter_time = await self.config.guild(server).filterban_time()
-        user_count = await self.config.member(author).filter_count()
-        next_reset_time = await self.config.member(author).next_reset_time()
+        guild_data = await self.config.guild(guild).all()
+        member_data = await self.config.member(author).all()
+        filter_count = guild_data["filterban_count"]
+        filter_time = guild_data["filterban_time"]
+        user_count = member_data["filter_count"]
+        next_reset_time = member_data["next_reset_time"]
 
         if filter_count > 0 and filter_time > 0:
             if message.created_at.timestamp() >= next_reset_time:
                 next_reset_time = message.created_at.timestamp() + filter_time
-                await self.config.member(author).next_reset_time.set(next_reset_time)
-                if user_count > 0:
-                    user_count = 0
-                    await self.config.member(author).filter_count.set(user_count)
+                async with self.config.member(author).all() as member_data:
+                    member_data["next_reset_time"] = next_reset_time
+                    if user_count > 0:
+                        user_count = 0
+                        member_data["filter_count"] = user_count
 
         hits = await self.filter_hits(message.content, message.channel)
 
@@ -399,17 +405,17 @@ class Filter(commands.Cog):
                     ):
                         reason = _("Autoban (too many filtered messages.)")
                         try:
-                            await server.ban(author, reason=reason)
+                            await guild.ban(author, reason=reason)
                         except discord.HTTPException:
                             pass
                         else:
                             await modlog.create_case(
                                 self.bot,
-                                server,
+                                guild,
                                 message.created_at,
                                 "filterban",
                                 author,
-                                server.me,
+                                guild.me,
                                 reason,
                             )
 
@@ -449,12 +455,13 @@ class Filter(commands.Cog):
             return  # Discord Hierarchy applies to nicks
         if await self.bot.is_automod_immune(member):
             return
-        if not await self.config.guild(member.guild).filter_names():
+        guild_data = await self.config.guild(member.guild).all()
+        if not guild_data["filter_names"]:
             return
 
         if await self.filter_hits(member.display_name, member.guild):
 
-            name_to_use = await self.config.guild(member.guild).filter_default_name()
+            name_to_use = guild_data["filter_default_name"]
             reason = _("Filtered nickname") if member.nick else _("Filtered name")
             try:
                 await member.edit(nick=name_to_use, reason=reason)
