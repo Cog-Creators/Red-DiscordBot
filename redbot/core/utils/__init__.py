@@ -320,16 +320,16 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
         --------
             >>> from redbot.core.utils import AsyncIter
             >>> def predicate(value):
-            >>>     return value <= 5
+            ...     return value <= 5
             >>> iterator = AsyncIter([1, 10, 5, 100])
             >>> async for i in iterator.filter(predicate):
-            >>>     print(i)
+            ...     print(i)
             1
             5
 
             >>> from redbot.core.utils import AsyncIter
             >>> def predicate(value):
-            >>>     return value <= 5
+            ...     return value <= 5
             >>> iterator = AsyncIter([1, 10, 5, 100])
             >>> await iterator.filter(predicate)
             [1, 5]
