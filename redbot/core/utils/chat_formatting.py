@@ -63,7 +63,7 @@ def question(text: str) -> str:
 def bold(text: str, escape_formatting: bool = True) -> str:
     """Get the given text in bold.
 
-    Note: This escapes text prior to bolding.
+    Note: By default, this function will escape ``text`` prior to emboldening.
 
     Parameters
     ----------
@@ -285,7 +285,7 @@ def pagify(
 def strikethrough(text: str, escape_formatting: bool = True) -> str:
     """Get the given text with a strikethrough.
 
-    Note: This escapes text prior to applying a strikethrough
+    Note: By default, this function will escape ``text`` prior to applying a strikethrough.
 
     Parameters
     ----------
@@ -307,7 +307,7 @@ def strikethrough(text: str, escape_formatting: bool = True) -> str:
 def underline(text: str, escape_formatting: bool = True) -> str:
     """Get the given text with an underline.
 
-    Note: This escapes text prior to underlining
+    Note: By default, this function will escape ``text`` prior to underlining.
 
     Parameters
     ----------
