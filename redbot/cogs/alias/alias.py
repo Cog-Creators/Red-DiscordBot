@@ -49,25 +49,25 @@ class Alias(commands.Cog):
     def __init__(self, bot: Red):
         super().__init__()
         self.bot = bot
-        self._aliases = Config.get_conf(self, 8927348724)
+        self.config = Config.get_conf(self, 8927348724)
 
-        self._aliases.register_global(**self.default_global_settings)
-        self._aliases.register_guild(**self.default_guild_settings)
+        self.config.register_global(**self.default_global_settings)
+        self.config.register_guild(**self.default_guild_settings)
 
     async def unloaded_aliases(self, guild: discord.Guild) -> Generator[AliasEntry, None, None]:
-        return (AliasEntry.from_json(d) for d in (await self._aliases.guild(guild).entries()))
+        return (AliasEntry.from_json(d) for d in (await self.config.guild(guild).entries()))
 
     async def unloaded_global_aliases(self) -> Generator[AliasEntry, None, None]:
-        return (AliasEntry.from_json(d) for d in (await self._aliases.entries()))
+        return (AliasEntry.from_json(d) for d in (await self.config.entries()))
 
     async def loaded_aliases(self, guild: discord.Guild) -> Generator[AliasEntry, None, None]:
         return (
             AliasEntry.from_json(d, bot=self.bot)
-            for d in (await self._aliases.guild(guild).entries())
+            for d in (await self.config.guild(guild).entries())
         )
 
     async def loaded_global_aliases(self) -> Generator[AliasEntry, None, None]:
-        return (AliasEntry.from_json(d, bot=self.bot) for d in (await self._aliases.entries()))
+        return (AliasEntry.from_json(d, bot=self.bot) for d in (await self.config.entries()))
 
     async def is_alias(
         self,
@@ -123,9 +123,9 @@ class Alias(commands.Cog):
         alias = AliasEntry(alias_name, command, ctx.author, global_=global_)
 
         if global_:
-            settings = self._aliases
+            settings = self.config
         else:
-            settings = self._aliases.guild(ctx.guild)
+            settings = self.config.guild(ctx.guild)
             await settings.enabled.set(True)
 
         async with settings.entries() as curr_aliases:
@@ -137,9 +137,9 @@ class Alias(commands.Cog):
         self, ctx: commands.Context, alias_name: str, global_: bool = False
     ) -> bool:
         if global_:
-            settings = self._aliases
+            settings = self.config
         else:
-            settings = self._aliases.guild(ctx.guild)
+            settings = self.config.guild(ctx.guild)
 
         async with settings.entries() as aliases:
             for alias in aliases:

@@ -54,11 +54,11 @@ class Streams(commands.Cog):
 
     def __init__(self, bot: Red):
         super().__init__()
-        self.db: Config = Config.get_conf(self, 26262626)
+        self.config: Config = Config.get_conf(self, 26262626)
         self.ttv_bearer_cache: dict = {}
-        self.db.register_global(**self.global_defaults)
-        self.db.register_guild(**self.guild_defaults)
-        self.db.register_role(**self.role_defaults)
+        self.config.register_global(**self.global_defaults)
+        self.config.register_guild(**self.guild_defaults)
+        self.config.register_role(**self.role_defaults)
 
         self.bot: Red = bot
 
@@ -95,7 +95,7 @@ class Streams(commands.Cog):
 
     async def move_api_keys(self) -> None:
         """Move the API keys from cog stored config to core bot config if they exist."""
-        tokens = await self.db.tokens()
+        tokens = await self.config.tokens()
         youtube = await self.bot.get_shared_api_tokens("youtube")
         twitch = await self.bot.get_shared_api_tokens("twitch")
         for token_type, token in tokens.items():
@@ -104,7 +104,7 @@ class Streams(commands.Cog):
             if token_type == "TwitchStream" and "client_id" not in twitch:
                 # Don't need to check Community since they're set the same
                 await self.bot.set_shared_api_tokens("twitch", client_id=token)
-        await self.db.tokens.clear()
+        await self.config.tokens.clear()
 
     async def get_twitch_bearer_token(self) -> None:
         tokens = await self.bot.get_shared_api_tokens("twitch")
@@ -244,7 +244,7 @@ class Streams(commands.Cog):
         else:
             if isinstance(info, tuple):
                 embed, is_rerun = info
-                ignore_reruns = await self.db.guild(ctx.channel.guild).ignore_reruns()
+                ignore_reruns = await self.config.guild(ctx.channel.guild).ignore_reruns()
                 if ignore_reruns and is_rerun:
                     await ctx.send(_("That user is offline."))
                     return
@@ -418,7 +418,7 @@ class Streams(commands.Cog):
         if refresh_time < 60:
             return await ctx.send(_("You cannot set the refresh timer to less than 60 seconds"))
 
-        await self.db.refresh_timer.set(refresh_time)
+        await self.config.refresh_timer.set(refresh_time)
         await ctx.send(
             _("Refresh timer set to {refresh_time} seconds".format(refresh_time=refresh_time))
         )
@@ -484,7 +484,7 @@ class Streams(commands.Cog):
         """
         if message is not None:
             guild = ctx.guild
-            await self.db.guild(guild).live_message_mention.set(message)
+            await self.config.guild(guild).live_message_mention.set(message)
             await ctx.send(_("Stream alert message set!"))
         else:
             await ctx.send_help()
@@ -500,7 +500,7 @@ class Streams(commands.Cog):
         """
         if message is not None:
             guild = ctx.guild
-            await self.db.guild(guild).live_message_nomention.set(message)
+            await self.config.guild(guild).live_message_nomention.set(message)
             await ctx.send(_("Stream alert message set!"))
         else:
             await ctx.send_help()
@@ -510,8 +510,8 @@ class Streams(commands.Cog):
     async def clear_message(self, ctx: commands.Context):
         """Reset the stream alert messages in this server."""
         guild = ctx.guild
-        await self.db.guild(guild).live_message_mention.set(False)
-        await self.db.guild(guild).live_message_nomention.set(False)
+        await self.config.guild(guild).live_message_mention.set(False)
+        await self.config.guild(guild).live_message_nomention.set(False)
         await ctx.send(_("Stream alerts in this server will now use the default alert message."))
 
     @streamset.group()
@@ -525,12 +525,12 @@ class Streams(commands.Cog):
     async def all(self, ctx: commands.Context):
         """Toggle the `@\u200beveryone` mention."""
         guild = ctx.guild
-        current_setting = await self.db.guild(guild).mention_everyone()
+        current_setting = await self.config.guild(guild).mention_everyone()
         if current_setting:
-            await self.db.guild(guild).mention_everyone.set(False)
+            await self.config.guild(guild).mention_everyone.set(False)
             await ctx.send(_("`@\u200beveryone` will no longer be mentioned for stream alerts."))
         else:
-            await self.db.guild(guild).mention_everyone.set(True)
+            await self.config.guild(guild).mention_everyone.set(True)
             await ctx.send(_("When a stream is live, `@\u200beveryone` will be mentioned."))
 
     @mention.command(aliases=["here"])
@@ -538,28 +538,28 @@ class Streams(commands.Cog):
     async def online(self, ctx: commands.Context):
         """Toggle the `@\u200bhere` mention."""
         guild = ctx.guild
-        current_setting = await self.db.guild(guild).mention_here()
+        current_setting = await self.config.guild(guild).mention_here()
         if current_setting:
-            await self.db.guild(guild).mention_here.set(False)
+            await self.config.guild(guild).mention_here.set(False)
             await ctx.send(_("`@\u200bhere` will no longer be mentioned for stream alerts."))
         else:
-            await self.db.guild(guild).mention_here.set(True)
+            await self.config.guild(guild).mention_here.set(True)
             await ctx.send(_("When a stream is live, `@\u200bhere` will be mentioned."))
 
     @mention.command()
     @commands.guild_only()
     async def role(self, ctx: commands.Context, *, role: discord.Role):
         """Toggle a role mention."""
-        current_setting = await self.db.role(role).mention()
+        current_setting = await self.config.role(role).mention()
         if current_setting:
-            await self.db.role(role).mention.set(False)
+            await self.config.role(role).mention.set(False)
             await ctx.send(
                 _("`@\u200b{role.name}` will no longer be mentioned for stream alerts.").format(
                     role=role
                 )
             )
         else:
-            await self.db.role(role).mention.set(True)
+            await self.config.role(role).mention.set(True)
             msg = _(
                 "When a stream or community is live, `@\u200b{role.name}` will be mentioned."
             ).format(role=role)
@@ -576,7 +576,7 @@ class Streams(commands.Cog):
     @commands.guild_only()
     async def autodelete(self, ctx: commands.Context, on_off: bool):
         """Toggle alert deletion for when streams go offline."""
-        await self.db.guild(ctx.guild).autodelete.set(on_off)
+        await self.config.guild(ctx.guild).autodelete.set(on_off)
         if on_off:
             await ctx.send(_("The notifications will be deleted once streams go offline."))
         else:
@@ -587,12 +587,12 @@ class Streams(commands.Cog):
     async def ignore_reruns(self, ctx: commands.Context):
         """Toggle excluding rerun streams from alerts."""
         guild = ctx.guild
-        current_setting = await self.db.guild(guild).ignore_reruns()
+        current_setting = await self.config.guild(guild).ignore_reruns()
         if current_setting:
-            await self.db.guild(guild).ignore_reruns.set(False)
+            await self.config.guild(guild).ignore_reruns.set(False)
             await ctx.send(_("Streams of type 'rerun' will be included in alerts."))
         else:
-            await self.db.guild(guild).ignore_reruns.set(True)
+            await self.config.guild(guild).ignore_reruns.set(True)
             await ctx.send(_("Streams of type 'rerun' will no longer send an alert."))
 
     async def add_or_remove(self, ctx: commands.Context, stream):
@@ -653,7 +653,7 @@ class Streams(commands.Cog):
                 await self.check_streams()
             except asyncio.CancelledError:
                 pass
-            await asyncio.sleep(await self.db.refresh_timer())
+            await asyncio.sleep(await self.config.refresh_timer())
 
     async def check_streams(self):
         for stream in self.streams:
@@ -670,7 +670,7 @@ class Streams(commands.Cog):
                         continue
                     for message in stream._messages_cache:
                         with contextlib.suppress(Exception):
-                            autodelete = await self.db.guild(message.guild).autodelete()
+                            autodelete = await self.config.guild(message.guild).autodelete()
                             if autodelete:
                                 await message.delete()
                     stream._messages_cache.clear()
@@ -682,13 +682,15 @@ class Streams(commands.Cog):
                         channel = self.bot.get_channel(channel_id)
                         if not channel:
                             continue
-                        ignore_reruns = await self.db.guild(channel.guild).ignore_reruns()
+                        ignore_reruns = await self.config.guild(channel.guild).ignore_reruns()
                         if ignore_reruns and is_rerun:
                             continue
                         mention_str, edited_roles = await self._get_mention_str(channel.guild)
 
                         if mention_str:
-                            alert_msg = await self.db.guild(channel.guild).live_message_mention()
+                            alert_msg = await self.config.guild(
+                                channel.guild
+                            ).live_message_mention()
                             if alert_msg:
                                 content = alert_msg.format(mention=mention_str, stream=stream)
                             else:
@@ -699,7 +701,9 @@ class Streams(commands.Cog):
                                     ),
                                 )
                         else:
-                            alert_msg = await self.db.guild(channel.guild).live_message_nomention()
+                            alert_msg = await self.config.guild(
+                                channel.guild
+                            ).live_message_nomention()
                             if alert_msg:
                                 content = alert_msg.format(stream=stream)
                             else:
@@ -720,7 +724,7 @@ class Streams(commands.Cog):
         """Returns a 2-tuple with the string containing the mentions, and a list of
         all roles which need to have their `mentionable` property set back to False.
         """
-        settings = self.db.guild(guild)
+        settings = self.config.guild(guild)
         mentions = []
         edited_roles = []
         if await settings.mention_everyone():
@@ -729,7 +733,7 @@ class Streams(commands.Cog):
             mentions.append("@here")
         can_manage_roles = guild.me.guild_permissions.manage_roles
         for role in guild.roles:
-            if await self.db.role(role).mention():
+            if await self.config.role(role).mention():
                 if can_manage_roles and not role.mentionable:
                     try:
                         await role.edit(mentionable=True)
@@ -755,7 +759,7 @@ class Streams(commands.Cog):
 
     async def load_streams(self):
         streams = []
-        for raw_stream in await self.db.streams():
+        for raw_stream in await self.config.streams():
             _class = getattr(_streamtypes, raw_stream["type"], None)
             if not _class:
                 continue
@@ -786,7 +790,7 @@ class Streams(commands.Cog):
         for stream in self.streams:
             raw_streams.append(stream.export())
 
-        await self.db.streams.set(raw_streams)
+        await self.config.streams.set(raw_streams)
 
     def cog_unload(self):
         if self.task:

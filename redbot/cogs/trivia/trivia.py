@@ -42,9 +42,9 @@ class Trivia(commands.Cog):
     def __init__(self):
         super().__init__()
         self.trivia_sessions = []
-        self.conf = Config.get_conf(self, identifier=UNIQUE_ID, force_registration=True)
+        self.config = Config.get_conf(self, identifier=UNIQUE_ID, force_registration=True)
 
-        self.conf.register_guild(
+        self.config.register_guild(
             max_score=10,
             timeout=120.0,
             delay=15.0,
@@ -54,7 +54,7 @@ class Trivia(commands.Cog):
             allow_override=True,
         )
 
-        self.conf.register_member(wins=0, games=0, total_score=0)
+        self.config.register_member(wins=0, games=0, total_score=0)
 
     @commands.group()
     @commands.guild_only()
@@ -62,7 +62,7 @@ class Trivia(commands.Cog):
     async def triviaset(self, ctx: commands.Context):
         """Manage Trivia settings."""
         if ctx.invoked_subcommand is None:
-            settings = self.conf.guild(ctx.guild)
+            settings = self.config.guild(ctx.guild)
             settings_dict = await settings.all()
             msg = box(
                 _(
@@ -85,7 +85,7 @@ class Trivia(commands.Cog):
         if score < 0:
             await ctx.send(_("Score must be greater than 0."))
             return
-        settings = self.conf.guild(ctx.guild)
+        settings = self.config.guild(ctx.guild)
         await settings.max_score.set(score)
         await ctx.send(_("Done. Points required to win set to {num}.").format(num=score))
 
@@ -95,14 +95,14 @@ class Trivia(commands.Cog):
         if seconds < 4.0:
             await ctx.send(_("Must be at least 4 seconds."))
             return
-        settings = self.conf.guild(ctx.guild)
+        settings = self.config.guild(ctx.guild)
         await settings.delay.set(seconds)
         await ctx.send(_("Done. Maximum seconds to answer set to {num}.").format(num=seconds))
 
     @triviaset.command(name="stopafter")
     async def triviaset_stopafter(self, ctx: commands.Context, seconds: finite_float):
         """Set how long until trivia stops due to no response."""
-        settings = self.conf.guild(ctx.guild)
+        settings = self.config.guild(ctx.guild)
         if seconds < await settings.delay():
             await ctx.send(_("Must be larger than the answer time limit."))
             return
@@ -116,7 +116,7 @@ class Trivia(commands.Cog):
     @triviaset.command(name="override")
     async def triviaset_allowoverride(self, ctx: commands.Context, enabled: bool):
         """Allow/disallow trivia lists to override settings."""
-        settings = self.conf.guild(ctx.guild)
+        settings = self.config.guild(ctx.guild)
         await settings.allow_override.set(enabled)
         if enabled:
             await ctx.send(
@@ -136,7 +136,7 @@ class Trivia(commands.Cog):
 
         If enabled, the bot will gain a point if no one guesses correctly.
         """
-        settings = self.conf.guild(ctx.guild)
+        settings = self.config.guild(ctx.guild)
         await settings.bot_plays.set(enabled)
         if enabled:
             await ctx.send(_("Done. I'll now gain a point if users don't answer in time."))
@@ -150,7 +150,7 @@ class Trivia(commands.Cog):
         If enabled, the bot will reveal the answer if no one guesses correctly
         in time.
         """
-        settings = self.conf.guild(ctx.guild)
+        settings = self.config.guild(ctx.guild)
         await settings.reveal_answer.set(enabled)
         if enabled:
             await ctx.send(_("Done. I'll reveal the answer if no one knows it."))
@@ -170,7 +170,7 @@ class Trivia(commands.Cog):
         The number of credits is determined by multiplying their total score by
         this multiplier.
         """
-        settings = self.conf.guild(ctx.guild)
+        settings = self.config.guild(ctx.guild)
         if multiplier < 0:
             await ctx.send(_("Multiplier must be at least 0."))
             return
@@ -307,7 +307,7 @@ class Trivia(commands.Cog):
                 _("The trivia list was parsed successfully, however it appears to be empty!")
             )
             return
-        settings = await self.conf.guild(ctx.guild).all()
+        settings = await self.config.guild(ctx.guild).all()
         config = trivia_dict.pop("CONFIG", None)
         if config and settings["allow_override"]:
             settings.update(config)
@@ -383,7 +383,7 @@ class Trivia(commands.Cog):
             )
             return
         guild = ctx.guild
-        data = await self.conf.all_members(guild)
+        data = await self.config.all_members(guild)
         data = {guild.get_member(u): d for u, d in data.items()}
         data.pop(None, None)  # remove any members which aren't in the guild
         await self.send_leaderboard(ctx, data, key, top)
@@ -411,7 +411,7 @@ class Trivia(commands.Cog):
                 ).format(field_name=sort_by, prefix=ctx.clean_prefix)
             )
             return
-        data = await self.conf.all_members()
+        data = await self.config.all_members()
         collated_data = {}
         for guild_id, guild_data in data.items():
             guild = ctx.bot.get_guild(guild_id)
@@ -555,12 +555,12 @@ class Trivia(commands.Cog):
         for member, score in session.scores.items():
             if member.id == session.ctx.bot.user.id:
                 continue
-            stats = await self.conf.member(member).all()
+            stats = await self.config.member(member).all()
             if score == max_score:
                 stats["wins"] += 1
             stats["total_score"] += score
             stats["games"] += 1
-            await self.conf.member(member).set(stats)
+            await self.config.member(member).set(stats)
 
     def get_trivia_list(self, category: str) -> dict:
         """Get the trivia list corresponding to the given category.

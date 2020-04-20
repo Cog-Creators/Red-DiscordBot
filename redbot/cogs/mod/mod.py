@@ -69,12 +69,12 @@ class Mod(
         super().__init__()
         self.bot = bot
 
-        self.settings = Config.get_conf(self, 4961522000, force_registration=True)
-        self.settings.register_global(**self.default_global_settings)
-        self.settings.register_guild(**self.default_guild_settings)
-        self.settings.register_channel(**self.default_channel_settings)
-        self.settings.register_member(**self.default_member_settings)
-        self.settings.register_user(**self.default_user_settings)
+        self.config = Config.get_conf(self, 4961522000, force_registration=True)
+        self.config.register_global(**self.default_global_settings)
+        self.config.register_guild(**self.default_guild_settings)
+        self.config.register_channel(**self.default_channel_settings)
+        self.config.register_member(**self.default_member_settings)
+        self.config.register_user(**self.default_user_settings)
         self.cache: dict = {}
         self.tban_expiry_task = self.bot.loop.create_task(self.check_tempban_expirations())
         self.last_case: dict = defaultdict(dict)
@@ -93,45 +93,45 @@ class Mod(
 
     async def _maybe_update_config(self):
         """Maybe update `delete_delay` value set by Config prior to Mod 1.0.0."""
-        if not await self.settings.version():
-            guild_dict = await self.settings.all_guilds()
+        if not await self.config.version():
+            guild_dict = await self.config.all_guilds()
             for guild_id, info in guild_dict.items():
                 delete_repeats = info.get("delete_repeats", False)
                 if delete_repeats:
                     val = 3
                 else:
                     val = -1
-                await self.settings.guild(discord.Object(id=guild_id)).delete_repeats.set(val)
-            await self.settings.version.set("1.0.0")  # set version of last update
-        if await self.settings.version() < "1.1.0":
+                await self.config.guild(discord.Object(id=guild_id)).delete_repeats.set(val)
+            await self.config.version.set("1.0.0")  # set version of last update
+        if await self.config.version() < "1.1.0":
             msg = _(
                 "Ignored guilds and channels have been moved. "
                 "Please use `[p]moveignoredchannels` if "
                 "you were previously using these functions."
             )
             self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
-            await self.settings.version.set("1.1.0")
-        if await self.settings.version() < "1.2.0":
+            await self.config.version.set("1.1.0")
+        if await self.config.version() < "1.2.0":
             msg = _(
                 "Delete delay settings have been moved. "
                 "Please use `[p]movedeletedelay` if "
                 "you were previously using these functions."
             )
             self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
-            await self.settings.version.set("1.2.0")
+            await self.config.version.set("1.2.0")
 
     @commands.command()
     @commands.is_owner()
     async def moveignoredchannels(self, ctx: commands.Context) -> None:
         """Move ignored channels and servers to core"""
-        all_guilds = await self.settings.all_guilds()
-        all_channels = await self.settings.all_channels()
+        all_guilds = await self.config.all_guilds()
+        all_channels = await self.config.all_channels()
         for guild_id, settings in all_guilds.items():
             await self.bot._config.guild_from_id(guild_id).ignored.set(settings["ignored"])
-            await self.settings.guild_from_id(guild_id).ignored.clear()
+            await self.config.guild_from_id(guild_id).ignored.clear()
         for channel_id, settings in all_channels.items():
             await self.bot._config.channel_from_id(channel_id).ignored.set(settings["ignored"])
-            await self.settings.channel_from_id(channel_id).clear()
+            await self.config.channel_from_id(channel_id).clear()
         await ctx.send(_("Ignored channels and guilds restored."))
 
     @commands.command()
@@ -140,10 +140,10 @@ class Mod(
         """
             Move deletedelay settings to core
         """
-        all_guilds = await self.settings.all_guilds()
+        all_guilds = await self.config.all_guilds()
         for guild_id, settings in all_guilds.items():
             await self.bot._config.guild_from_id(guild_id).delete_delay.set(
                 settings["delete_delay"]
             )
-            await self.settings.guild_from_id(guild_id).delete_delay.clear()
+            await self.config.guild_from_id(guild_id).delete_delay.clear()
         await ctx.send(_("Delete delay settings restored."))
