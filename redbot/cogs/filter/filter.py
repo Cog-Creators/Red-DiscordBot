@@ -279,7 +279,7 @@ class Filter(commands.Cog):
         """
         guild = ctx.guild
 
-        async with await self.config.guild(guild).all() as guild_data:
+        async with self.config.guild(guild).all() as guild_data:
             current_setting = guild_data["filter_names"]
             guild_data["filter_names"] = not current_setting
         if current_setting:
