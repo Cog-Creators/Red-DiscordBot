@@ -406,19 +406,22 @@ async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: int = None)
     global_bank = await is_global()
 
     if global_bank:
-        _guilds = [
-            g
-            async for g in AsyncIter(bot.guilds, steps=100)
-            if not g.unavailable and g.large and not g.chunked
-        ]
-        _uguilds = [g async for g in AsyncIter(bot.guilds, steps=100) if g.unavailable]
+        _guilds = set()
+        _uguilds = set()
+        if user_id is None:
+            async for g in AsyncIter(bot.guilds, steps=100):
+                if not g.unavailable and g.large and not g.chunked:
+                    _guilds.add(g)
+                elif g.unavailable:
+                    _uguilds.add(g)
         group = _config._get_base_group(_config.USER)
 
     else:
         if guild is None:
             raise BankPruneError("'guild' can't be None when pruning a local bank")
-        _guilds = [guild] if not guild.unavailable and guild.large else []
-        _uguilds = [guild] if guild.unavailable else []
+        if user_id is None:
+            _guilds = {guild} if not guild.unavailable and guild.large else set()
+            _uguilds = {guild} if guild.unavailable else set()
         group = _config._get_base_group(_config.MEMBER, str(guild.id))
 
     if user_id is None:
