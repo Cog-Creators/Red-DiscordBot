@@ -42,15 +42,13 @@ class GlobalUniqueObjectFinder(commands.Converter):
                 role: discord.Role = guild.get_role(_id)
                 if role is not None:
                     return role
-        objects = itertools.chain(
-            bot.get_all_channels(),
-            bot.users,
-            bot.guilds,
-            *(
-                filter(lambda r: not r.is_default(), guild.roles)
-                async for guild in AsyncIter(bot.guilds, steps=100)
-            ),
-        )
+
+        all_roles = [
+            filter(lambda r: not r.is_default(), guild.roles)
+            async for guild in AsyncIter(bot.guilds, steps=100)
+        ]
+
+        objects = itertools.chain(bot.get_all_channels(), bot.users, bot.guilds, *all_roles,)
 
         maybe_matches = []
         async for obj in AsyncIter(objects, steps=100):
