@@ -125,7 +125,7 @@ def inline(text: str) -> str:
 def italics(text: str, escape_formatting: bool = True) -> str:
     """Get the given text in italics.
 
-    Note: This escapes text prior to italicising
+    Note: By default, this function will escape ``text`` prior to italicising.
 
     Parameters
     ----------
