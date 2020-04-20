@@ -5,11 +5,12 @@ import functools
 import json
 import logging
 import re
-from typing import Any, Final, MutableMapping, Union, cast, Mapping
+from typing import Any, Final, MutableMapping, Union, cast, Mapping, Pattern
 
 import discord
 import lavalink
 from discord.embeds import EmptyEmbed
+from redbot.core.utils import AsyncIter
 
 from redbot.core import bank, commands
 from redbot.core.commands import Context
@@ -22,7 +23,7 @@ from ...utils import PlaylistScope
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.miscellaneous")
 
-_RE_TIME_CONVERTER: Final[re.Pattern] = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
+_RE_TIME_CONVERTER: Final[Pattern] = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
 _prefer_lyrics_cache = {}
 
 
@@ -148,8 +149,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             if not emoji:
                 return
             with contextlib.suppress(discord.HTTPException):
-                for key in emoji.values():
-                    await asyncio.sleep(0.2)
+                async for key in AsyncIter(emoji.values(), delay=0.2):
                     await message.remove_reaction(key, self.bot.user)
         except discord.HTTPException:
             return
@@ -202,7 +202,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def queue_duration(self, ctx: commands.Context) -> int:
         player = lavalink.get_player(ctx.guild.id)
         duration = []
-        for i in range(len(player.queue)):
+        async for i in AsyncIter(range(len(player.queue))):
             if not player.queue[i].is_stream:
                 duration.append(player.queue[i].length)
         queue_dur = sum(duration)
@@ -279,11 +279,13 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if from_version < 2 <= to_version:
             all_guild_data = await self.config.all_guilds()
             all_playlist = {}
-            for (guild_id, guild_data) in all_guild_data.items():
+            async for guild_id, guild_data in AsyncIter(all_guild_data.items()):
                 temp_guild_playlist = guild_data.pop("playlists", None)
                 if temp_guild_playlist:
                     guild_playlist = {}
-                    for (count, (name, data)) in enumerate(temp_guild_playlist.items(), 1000):
+                    async for count, (name, data) in AsyncIter(
+                        temp_guild_playlist.items()
+                    ).enumerate(start=1000):
                         if not data or not name:
                             continue
                         playlist = {"id": count, "name": name, "guild": int(guild_id)}
@@ -291,7 +293,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         guild_playlist[str(count)] = playlist
 
                         tracks_in_playlist = data.get("tracks", []) or []
-                        for t in tracks_in_playlist:
+                        async for t in AsyncIter(tracks_in_playlist):
                             uri = t.get("info", {}).get("uri")
                             if uri:
                                 t = {"loadType": "V2_COMPAT", "tracks": [t], "query": uri}
@@ -308,16 +310,14 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
                                             "last_fetched": time_now,
                                         }
                                     )
-                        await asyncio.sleep(0)
                     if guild_playlist:
                         all_playlist[str(guild_id)] = guild_playlist
-                await asyncio.sleep(0)
             await self.config.custom(PlaylistScope.GUILD.value).set(all_playlist)
             # new schema is now in place
             await self.config.schema_version.set(2)
 
             # migration done, now let's delete all the old stuff
-            for guild_id in all_guild_data:
+            async for guild_id in AsyncIter(all_guild_data):
                 await self.config.guild(
                     cast(discord.Guild, discord.Object(id=guild_id))
                 ).clear_raw("playlists")
@@ -326,7 +326,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 scope_playlist = await get_all_playlist_for_migration23(
                     self.bot, self.playlist_api, self.config, scope
                 )
-                for p in scope_playlist:
+                async for p in AsyncIter(scope_playlist):
                     await p.save()
                 await self.config.custom(scope).clear()
             await self.config.schema_version.set(3)

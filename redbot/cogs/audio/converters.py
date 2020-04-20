@@ -1,9 +1,10 @@
 import argparse
 import functools
 import re
-from typing import Final, MutableMapping, Optional, Tuple, Union
+from typing import Final, MutableMapping, Optional, Tuple, Union, Pattern
 
 import discord
+from redbot.core.utils import AsyncIter
 
 from redbot.core import commands
 from redbot.core.bot import Red
@@ -50,7 +51,7 @@ Guild must be a valid version of one of the following:
 ​ ​ ​ ​ Exact guild name
 """
 
-MENTION_RE: Final[re.Pattern] = re.compile(r"^<?(?:(?:@[!&]?)?|#)(\d{15,21})>?$")
+MENTION_RE: Final[Pattern] = re.compile(r"^<?(?:(?:@[!&]?)?|#)(\d{15,21})>?$")
 
 
 def _match_id(arg: str) -> Optional[int]:
@@ -70,7 +71,7 @@ async def global_unique_guild_finder(ctx: commands.Context, arg: str) -> discord
             return guild
 
     maybe_matches = []
-    for obj in bot.guilds:
+    async for obj in AsyncIter(bot.guilds):
         if obj.name == arg or str(obj) == arg:
             maybe_matches.append(obj)
 
@@ -104,17 +105,15 @@ async def global_unique_user_finder(
         if user is not None:
             return user
 
-    objects = bot.users
-
     maybe_matches = []
-    for obj in objects:
-        if obj.name == arg or str(obj) == arg:
-            maybe_matches.append(obj)
+    async for user in AsyncIter(bot.users).filter(lambda u: u.name == arg or f"{u}" == arg):
+        maybe_matches.append(user)
 
     if guild is not None:
-        for member in guild.members:
-            if member.nick == arg and not any(obj.id == member.id for obj in maybe_matches):
-                maybe_matches.append(member)
+        async for member in AsyncIter(guild.members).filter(
+            lambda m: m.nick == arg and not any(obj.id == m.id for obj in maybe_matches)
+        ):
+            maybe_matches.append(member)
 
     if not maybe_matches:
         raise NoMatchesFound(

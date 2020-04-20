@@ -1,4 +1,3 @@
-import asyncio
 import logging
 import time
 from typing import List, Optional, Tuple, Union
@@ -7,6 +6,7 @@ import aiohttp
 import discord
 import lavalink
 from discord.embeds import EmptyEmbed
+from redbot.core.utils import AsyncIter
 
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import bold, escape
@@ -419,7 +419,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(ctx, title=_("Queue size limit reached."))
             track_len = 0
             empty_queue = not player.queue
-            for track in tracks:
+            async for track in AsyncIter(tracks):
                 if len(player.queue) >= 10000:
                     continue
                 if not await self.is_query_allowed(
@@ -447,7 +447,6 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     self.bot.dispatch(
                         "red_audio_track_enqueue", player.channel.guild, track, ctx.author
                     )
-                await asyncio.sleep(0)
             player.maybe_shuffle(0 if empty_queue else 1)
 
             if len(tracks) > track_len:

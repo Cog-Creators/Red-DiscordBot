@@ -5,6 +5,7 @@ import time
 from typing import List, Mapping, MutableMapping, Optional, TYPE_CHECKING, Tuple, Union
 
 import aiohttp
+from redbot.core.utils import AsyncIter
 
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -180,5 +181,5 @@ class SpotifyWrapper:
                 "url": c.get("external_urls", {}).get("spotify"),
                 "tracks": c.get("tracks", {}).get("total", "Unknown"),
             }
-            for c in playlists
+            async for c in AsyncIter(playlists)
         ]
