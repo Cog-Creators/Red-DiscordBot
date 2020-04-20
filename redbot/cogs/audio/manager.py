@@ -94,7 +94,7 @@ class ServerManager:
     @classmethod
     async def _get_jar_args(cls) -> List[str]:
         (java_available, java_version) = await cls._has_java()
-        if not java_available or not java_version:
+        if not java_available:
             raise RuntimeError("You must install Java 1.8+ for Lavalink to run.")
 
         if java_version == (1, 8):
@@ -113,8 +113,8 @@ class ServerManager:
             return cls._java_available, cls._java_version
         java_available = shutil.which("java") is not None
         if not java_available:
-            cls._java_available = False
-            cls._java_version = None
+            cls.java_available = False
+            cls.java_version = None
         else:
             cls._java_version = version = await cls._get_java_version()
             cls._java_available = (2, 0) > version >= (1, 8) or version >= (8, 0)
@@ -164,7 +164,7 @@ class ServerManager:
             if self._proc.returncode is not None and lastmessage + 2 < time.time():
                 # Avoid Console spam only print once every 2 seconds
                 lastmessage = time.time()
-                log.critical("Internal Lavalink server exited early")
+                log.critical("Internal lavalink server exited early")
             if i == 49:
                 # Sleep after 50 lines to prevent busylooping
                 await asyncio.sleep(0.1)
