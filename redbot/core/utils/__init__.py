@@ -355,7 +355,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
             >>> from redbot.core.utils import AsyncIter
             >>> iterator = AsyncIter(['one', 'two', 'three'])
             >>> async for i in iterator.enumerate(start=10):
-            >>>     print(i)
+            ...     print(i)
             (10, 'one')
             (11, 'two')
             (12, 'three')
