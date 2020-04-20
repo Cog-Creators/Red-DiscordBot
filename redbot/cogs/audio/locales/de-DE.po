@@ -2,7 +2,6 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-13 12:13\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -12,17 +11,16 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: de\n"
-"X-Crowdin-File: /cogs/audio/locales/messages.pot\n"
 "Language: de_DE\n"
 
 #: redbot/cogs/audio/apis.py:213
 #, docstring
 msgid "Handles music queries to the Spotify and Youtube Data API.\\n\\n    Always tries the Cache first.\\n    "
-msgstr ""
+msgstr "Bearbeitet Musikanfragen mit hilfe der Spotify und Youtube-Daten-API.\\n\\n    Versucht immer zuerst den Cache zu verwenden.\\n    "
 
 #: redbot/cogs/audio/apis.py:508 redbot/cogs/audio/audio.py:3479
 msgid "This doesn't seem to be a supported Spotify URL or code."
-msgstr ""
+msgstr "Dies scheint keine unterstützte Spotify-URL oder Spotify-Code zu sein."
 
 #: redbot/cogs/audio/apis.py:568 redbot/cogs/audio/audio.py:3741
 msgid "The connection was reset while loading the playlist."
@@ -30,11 +28,11 @@ msgstr "Die Verbindung wurde zurückgesetzt beim Laden der Playlist."
 
 #: redbot/cogs/audio/apis.py:576
 msgid "Player timeout, skipping remaining tracks."
-msgstr ""
+msgstr "Audioplayer-Timeout. Verbleibende Titel werden übersprungen."
 
 #: redbot/cogs/audio/apis.py:598
 msgid "Failing to get tracks, skipping remaining."
-msgstr ""
+msgstr "Fehler beim laden der Tracks. Verbleibende Tracks werden übersprungen."
 
 #: redbot/cogs/audio/apis.py:646
 msgid "Nothing found.\\nThe YouTube API key may be invalid or you may be rate limited on YouTube's search service.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
@@ -60,11 +58,11 @@ msgstr "Spiele Audio über Sprachkanäle ab."
 
 #: redbot/cogs/audio/audio.py:177
 msgid "You have attempted to run Audio's Lavalink server on an unsupported architecture. Only settings related commands will be available."
-msgstr ""
+msgstr "Du hast versucht, den Lavalink-Server von Audio auf einer nicht unterstützten Systemarchitektur auszuführen. Du kannst nur einstellungsbezogene Befehle verwenden."
 
 #: redbot/cogs/audio/audio.py:201
 msgid "No DJ role found. Disabling DJ mode."
-msgstr ""
+msgstr "Keine DJ-Rolle gefunden. DJ-Modus deaktiviert."
 
 #: redbot/cogs/audio/audio.py:433
 msgid "music in {} servers"
@@ -72,11 +70,11 @@ msgstr "Musik in {} Servern"
 
 #: redbot/cogs/audio/audio.py:485 redbot/cogs/audio/audio.py:3351
 msgid "Couldn't get a valid track."
-msgstr ""
+msgstr "Kein gültiger Track gefunden."
 
 #: redbot/cogs/audio/audio.py:505
 msgid "Auto Play Started."
-msgstr ""
+msgstr "Automatische Wiedergabe gestartet."
 
 #: redbot/cogs/audio/audio.py:520 redbot/cogs/audio/audio.py:2566
 #: redbot/cogs/audio/audio.py:6296
@@ -89,19 +87,19 @@ msgstr "Länge des Tracks: {length} | Angefordert von: {user}"
 
 #: redbot/cogs/audio/audio.py:543
 msgid "Queue Ended."
-msgstr ""
+msgstr "Warteschlange zuende."
 
 #: redbot/cogs/audio/audio.py:585
 msgid "Multiple errors detected"
-msgstr ""
+msgstr "Mehrere Fehler erkannt"
 
 #: redbot/cogs/audio/audio.py:586
 msgid "Closing the audio player due to multiple errors being detected. If this persists, please inform the bot owner as the Audio cog may be temporally unavailable."
-msgstr ""
+msgstr "Der Audio-Player wird aufgrund mehrer Fehler geschlossen. Sollte das Problem vermehrt auftreten, informiere bitte den Besitzer des Bots, da das Audio-Cog eventuell vorübergehend nicht verfügbar ist."
 
 #: redbot/cogs/audio/audio.py:598
 msgid "Track Stuck"
-msgstr ""
+msgstr "Der Track hat sich aufgehängt"
 
 #: redbot/cogs/audio/audio.py:602
 msgid "Track Error"
@@ -115,7 +113,7 @@ msgstr "Musik Konfigurationsoptionen."
 #: redbot/cogs/audio/audio.py:677
 #, docstring
 msgid "Toggle daily queues.\\n\\n        Daily queues creates a playlist for all tracks played today.\\n        "
-msgstr ""
+msgstr "Tägliche Warteschlangen ein oder ausschalten.\\n\\n        Diese Funktion erstellt eine Wiedergabeliste für alle Tracks die an einem Tag gespielt wurden.\\n        "
 
 #: redbot/cogs/audio/audio.py:688 redbot/cogs/audio/audio.py:714
 #: redbot/cogs/audio/audio.py:1110 redbot/cogs/audio/audio.py:1196
@@ -134,11 +132,11 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:7876 redbot/cogs/audio/audio.py:7891
 #: redbot/cogs/audio/audio.py:7907 redbot/cogs/audio/audio.py:7923
 msgid "Setting Changed"
-msgstr ""
+msgstr "Einstellung geändert"
 
 #: redbot/cogs/audio/audio.py:689
 msgid "Daily queues: {true_or_false}."
-msgstr ""
+msgstr "Tägliche Warteschlange: {true_or_false}."
 
 #: redbot/cogs/audio/audio.py:690 redbot/cogs/audio/audio.py:706
 #: redbot/cogs/audio/audio.py:1100 redbot/cogs/audio/audio.py:1254
@@ -157,7 +155,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:7397 redbot/cogs/audio/audio.py:7440
 #: redbot/cogs/audio/audio.py:7850 redbot/cogs/audio/audio.py:7861
 msgid "Enabled"
-msgstr ""
+msgstr "Aktiviert"
 
 #: redbot/cogs/audio/audio.py:690 redbot/cogs/audio/audio.py:706
 #: redbot/cogs/audio/audio.py:1100 redbot/cogs/audio/audio.py:1254
@@ -176,12 +174,12 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:7397 redbot/cogs/audio/audio.py:7440
 #: redbot/cogs/audio/audio.py:7850 redbot/cogs/audio/audio.py:7861
 msgid "Disabled"
-msgstr ""
+msgstr "Deaktiviert"
 
 #: redbot/cogs/audio/audio.py:697
 #, docstring
 msgid "Toggle the bot auto-disconnecting when done playing.\\n\\n        This setting takes precedence over `[p]audioset emptydisconnect`.\\n        "
-msgstr ""
+msgstr "Schalte ein oder aus, dass der Bot nach ende der Wiedergabe automatisch die Verbindung trennt.\\n\\n        Diese Einstellung hat Vorrang vor `[p]audioset emptydisconnect`.\\n        "
 
 #: redbot/cogs/audio/audio.py:705
 msgid "Auto-disconnection at queue end: {true_or_false}."
@@ -189,146 +187,146 @@ msgstr "Automatischer Disconnect beim Playlistende: {true_or_false}."
 
 #: redbot/cogs/audio/audio.py:709
 msgid "\\nAuto-play has been disabled."
-msgstr ""
+msgstr "\\nAutomatische Wiedergabe deaktiviert."
 
 #: redbot/cogs/audio/audio.py:719
 #, docstring
 msgid "Manages the keyword whitelist and blacklist."
-msgstr ""
+msgstr "Verwaltet die Whitelist und Blacklist der Suchbegriffe."
 
 #: redbot/cogs/audio/audio.py:724
 #, docstring
 msgid "Manages the global keyword whitelist/blacklist."
-msgstr ""
+msgstr "Verwaltet die globale Whitelist und Blacklist der Suchbegriffe."
 
 #: redbot/cogs/audio/audio.py:728
 #, docstring
 msgid "Manages the global keyword whitelist."
-msgstr ""
+msgstr "Verwaltet die globale Whitelist der Suchbegriffe."
 
 #: redbot/cogs/audio/audio.py:732
 #, docstring
 msgid "Manages the global keyword blacklist."
-msgstr ""
+msgstr "Verwaltet die globale Blacklist der Suchbegriffe."
 
 #: redbot/cogs/audio/audio.py:736 redbot/cogs/audio/audio.py:917
 #, docstring
 msgid "Adds a keyword to the blacklist."
-msgstr ""
+msgstr "Fügt einen Suchbegriff zur Blacklist hinzu."
 
 #: redbot/cogs/audio/audio.py:747 redbot/cogs/audio/audio.py:928
 msgid "Keyword already in the blacklist."
-msgstr ""
+msgstr "Dieser Begriff ist bereits in der Blacklist."
 
 #: redbot/cogs/audio/audio.py:751 redbot/cogs/audio/audio.py:800
 #: redbot/cogs/audio/audio.py:903 redbot/cogs/audio/audio.py:932
 #: redbot/cogs/audio/audio.py:981 redbot/cogs/audio/audio.py:1084
 msgid "Blacklist Modified"
-msgstr ""
+msgstr "Blacklist geändert"
 
 #: redbot/cogs/audio/audio.py:752 redbot/cogs/audio/audio.py:933
 msgid "Added: `{blacklisted}` to the blacklist."
-msgstr ""
+msgstr "`{blacklisted}`zur Blacklist hinzugefügt."
 
 #: redbot/cogs/audio/audio.py:759
 #, docstring
 msgid "Adds a keyword to the whitelist.\\n\\n        If anything is added to whitelist, it will blacklist everything else.\\n        "
-msgstr ""
+msgstr "Fügt einen Suchbegriff zur Whitelist hinzu.\\n\\n        Wenn etwas zur Whitelist hinzugefügt wird, werden dadurch alle anderen Begriffe blockiert.\\n        "
 
 #: redbot/cogs/audio/audio.py:773 redbot/cogs/audio/audio.py:819
 #: redbot/cogs/audio/audio.py:954 redbot/cogs/audio/audio.py:1000
 msgid "Keyword already in the whitelist."
-msgstr ""
+msgstr "Dieser Begriff ist bereits auf der Whitelist."
 
 #: redbot/cogs/audio/audio.py:777 redbot/cogs/audio/audio.py:823
 #: redbot/cogs/audio/audio.py:890 redbot/cogs/audio/audio.py:958
 #: redbot/cogs/audio/audio.py:1004 redbot/cogs/audio/audio.py:1071
 msgid "Whitelist Modified"
-msgstr ""
+msgstr "Whitelist geändert"
 
 #: redbot/cogs/audio/audio.py:778 redbot/cogs/audio/audio.py:959
 msgid "Added: `{whitelisted}` to the whitelist."
-msgstr ""
+msgstr "`{whitelisted}` wurde zur Whitelist Hinzugefügt."
 
 #: redbot/cogs/audio/audio.py:785 redbot/cogs/audio/audio.py:966
 #, docstring
 msgid "Removes a keyword from the blacklist."
-msgstr ""
+msgstr "Entfernt einen Suchbegriff aus der Blacklist."
 
 #: redbot/cogs/audio/audio.py:796 redbot/cogs/audio/audio.py:977
 msgid "Keyword is not in the blacklist."
-msgstr ""
+msgstr "Suchbegriff ist nicht in der Blacklist."
 
 #: redbot/cogs/audio/audio.py:801 redbot/cogs/audio/audio.py:982
 msgid "Removed: `{blacklisted}` from the blacklist."
-msgstr ""
+msgstr "`{blacklisted}` wurde von der Blacklist entfernt."
 
 #: redbot/cogs/audio/audio.py:808 redbot/cogs/audio/audio.py:989
 #, docstring
 msgid "Removes a keyword from the whitelist."
-msgstr ""
+msgstr "Entfernt einen Suchbegriff von der Whitelist."
 
 #: redbot/cogs/audio/audio.py:824 redbot/cogs/audio/audio.py:1005
 msgid "Removed: `{whitelisted}` from the whitelist."
-msgstr ""
+msgstr "`{whitelisted}` wurde aus der Whitelist entfernt."
 
 #: redbot/cogs/audio/audio.py:831 redbot/cogs/audio/audio.py:1012
 #, docstring
 msgid "List all keywords added to the whitelist."
-msgstr ""
+msgstr "Zeigt alle Suchbegriffe auf der Whitelist."
 
 #: redbot/cogs/audio/audio.py:834 redbot/cogs/audio/audio.py:886
 #: redbot/cogs/audio/audio.py:1015 redbot/cogs/audio/audio.py:1067
 msgid "Nothing in the whitelist."
-msgstr ""
+msgstr "Die Whitelist ist Leer."
 
 #: redbot/cogs/audio/audio.py:857 redbot/cogs/audio/audio.py:1038
 #, docstring
 msgid "List all keywords added to the blacklist."
-msgstr ""
+msgstr "Zeigt alle Suchbegriffe auf der Blacklist."
 
 #: redbot/cogs/audio/audio.py:860 redbot/cogs/audio/audio.py:899
 #: redbot/cogs/audio/audio.py:1041 redbot/cogs/audio/audio.py:1080
 msgid "Nothing in the blacklist."
-msgstr ""
+msgstr "Die Blacklist ist Leer."
 
 #: redbot/cogs/audio/audio.py:883 redbot/cogs/audio/audio.py:1064
 #, docstring
 msgid "Clear all keywords from the whitelist."
-msgstr ""
+msgstr "Leere die Whitelist."
 
 #: redbot/cogs/audio/audio.py:891 redbot/cogs/audio/audio.py:1072
 msgid "All entries have been removed from the whitelist."
-msgstr ""
+msgstr "Die Whitelist wurde geleert."
 
 #: redbot/cogs/audio/audio.py:896 redbot/cogs/audio/audio.py:1077
 #, docstring
 msgid "Clear all keywords added to the blacklist."
-msgstr ""
+msgstr "Leere die Blacklist."
 
 #: redbot/cogs/audio/audio.py:904 redbot/cogs/audio/audio.py:1085
 msgid "All entries have been removed from the blacklist."
-msgstr ""
+msgstr "Die Blacklist wurde geleert."
 
 #: redbot/cogs/audio/audio.py:909
 #, docstring
 msgid "Manages the keyword whitelist."
-msgstr ""
+msgstr "Verwaltet die Whitelist."
 
 #: redbot/cogs/audio/audio.py:913
 #, docstring
 msgid "Manages the keyword blacklist."
-msgstr ""
+msgstr "Verwaltet die Blacklist."
 
 #: redbot/cogs/audio/audio.py:940
 #, docstring
 msgid "Adds a keyword to the whitelist.\\n\\n        If anything is added to whitelist, it will blacklist everything else.\\n        "
-msgstr ""
+msgstr "Fügt einen Suchbegriff zur Whitelist hinzu.\\n\\n        Wenn etwas zur Whitelist hinzugefügt wird, werden dadurch alle anderen Begriffe blockiert.\\n        "
 
 #: redbot/cogs/audio/audio.py:1091
 #, docstring
 msgid "Change auto-play setting."
-msgstr ""
+msgstr "Ändere Einstellungen für die automatische Wiedergabe."
 
 #: redbot/cogs/audio/audio.py:1095
 #, docstring
@@ -1981,7 +1979,7 @@ msgstr "Wiederhole Lieder: {true_or_false}."
 
 #: redbot/cogs/audio/audio.py:6788
 msgid "\\nAuto-play has been disabled."
-msgstr ""
+msgstr "\\nAutomatische Wiedergabe deaktiviert."
 
 #: redbot/cogs/audio/audio.py:6800
 #, docstring

@@ -18,6 +18,7 @@ __all__ = [
 ]
 
 _current_locale = "en-US"
+_current_regional_format = None
 
 WAITING_FOR_MSGID = 1
 IN_MSGID = 2
@@ -30,17 +31,28 @@ MSGSTR = 'msgstr "'
 _translators = []
 
 
-def get_locale():
+def get_locale() -> str:
     return _current_locale
 
 
-def set_locale(locale):
+def set_locale(locale: str) -> None:
     global _current_locale
     _current_locale = locale
     reload_locales()
 
 
-def reload_locales():
+def get_regional_format() -> str:
+    if _current_regional_format is None:
+        return _current_locale
+    return _current_regional_format
+
+
+def set_regional_format(regional_format: Optional[str]) -> None:
+    global _current_regional_format
+    _current_regional_format = regional_format
+
+
+def reload_locales() -> None:
     for translator in _translators:
         translator.load_translations()
 
@@ -192,7 +204,7 @@ def _get_babel_locale(red_locale: str) -> babel.core.Locale:
 
 
 def get_babel_locale(locale: Optional[str] = None) -> babel.core.Locale:
-    """Function to convert a locale to a ``babel.core.Locale``.
+    """Function to convert a locale to a `babel.core.Locale`.
 
     Parameters
     ----------
@@ -207,6 +219,26 @@ def get_babel_locale(locale: Optional[str] = None) -> babel.core.Locale:
     if locale is None:
         locale = get_locale()
     return _get_babel_locale(locale)
+
+
+def get_babel_regional_format(regional_format: Optional[str] = None) -> babel.core.Locale:
+    """Function to convert a regional format to a `babel.core.Locale`.
+
+    If ``regional_format`` parameter is passed, this behaves the same as `get_babel_locale`.
+
+    Parameters
+    ----------
+    regional_format : Optional[str]
+        The regional format to convert, if not specified it defaults to the bot's regional format.
+
+    Returns
+    -------
+    babel.core.Locale
+        The babel locale object.
+    """
+    if regional_format is None:
+        regional_format = get_regional_format()
+    return _get_babel_locale(regional_format)
 
 
 # This import to be down here to avoid circular import issues.

@@ -20,7 +20,7 @@ The pre-requirements are:
  - Python 3.8.1 or greater
  - Pip 18.1 or greater
  - Git 2.11+
- - Java Runtime Environment 11 or later (for audio support)
+ - Java Runtime Environment 11 (for audio support)
 
 We also recommend installing some basic compiler tools, in case our dependencies don't provide
 pre-built "wheels" for your architecture.
@@ -163,20 +163,18 @@ following, then press Enter:
 
 .. code-block:: none
 
-    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
 After the installation, install the required packages by pasting the commands and pressing enter,
 one-by-one:
 
 .. code-block:: none
 
-    brew install python --with-brewed-openssl
+    brew install python@3.8
+    echo 'export PATH="/usr/local/opt/python@3.8/bin:$PATH"' >> ~/.profile
+    source ~/.profile
     brew install git
-    brew tap caskroom/versions
-    brew cask install homebrew/cask-versions/adoptopenjdk11
-
-It's possible you will have network issues. If so, go in your Applications folder, inside it, go in
-the Python 3.8 folder then double click ``Install certificates.command``.
+    brew cask install adoptopenjdk/openjdk/adoptopenjdk11
 
 Continue by `creating-venv-linux`.
 

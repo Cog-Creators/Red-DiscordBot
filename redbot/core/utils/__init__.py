@@ -1,3 +1,4 @@
+from __future__ import annotations
 import asyncio
 import warnings
 from asyncio import AbstractEventLoop, as_completed, Semaphore
@@ -18,9 +19,10 @@ from typing import (
     Union,
     Set,
     TYPE_CHECKING,
+    Generator,
 )
 
-__all__ = ("bounded_gather", "deduplicate_iterables")
+__all__ = ("bounded_gather", "bounded_gather_iter", "deduplicate_iterables", "AsyncIter")
 
 _T = TypeVar("_T")
 
@@ -255,3 +257,131 @@ def bounded_gather(
     tasks = (_sem_wrapper(semaphore, task) for task in coros_or_futures)
 
     return asyncio.gather(*tasks, return_exceptions=return_exceptions)
+
+
+class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=duplicate-bases
+    """Asynchronous iterator yielding items from ``iterable`` that sleeps for ``delay`` seconds every ``steps`` items.
+
+    Parameters
+    ----------
+    iterable : Iterable
+        The iterable to make async.
+    delay: Union[float, int]
+        The amount of time in seconds to sleep.
+    steps: int
+        The number of iterations between sleeps.
+    """
+
+    def __init__(
+        self, iterable: Iterable[_T], delay: Union[float, int] = 0, steps: int = 1
+    ) -> None:
+        self._delay = delay
+        self._iterator = iter(iterable)
+        self._i = 0
+        self._steps = steps
+
+    def __aiter__(self) -> AsyncIter[_T]:
+        return self
+
+    async def __anext__(self) -> _T:
+        try:
+            item = next(self._iterator)
+        except StopIteration:
+            raise StopAsyncIteration
+        self._i += 1
+        if self._i % self._steps == 0:
+            await asyncio.sleep(self._delay)
+        return item
+
+    def __await__(self) -> Generator[Any, None, List[_T]]:
+        return self.flatten().__await__()
+
+    async def flatten(self) -> List[_T]:
+        """Returns a list of the iterable."""
+        return [item async for item in self]
+
+    def filter(self, function: Callable[[_T], Union[bool, Awaitable[bool]]]) -> AsyncFilter[_T]:
+        """
+        Filter the iterable with an (optionally async) predicate.
+
+        Parameters
+        ----------
+        function : Callable[[T], Union[bool, Awaitable[bool]]]
+            A function or coroutine function which takes one item of ``iterable``
+            as an argument, and returns ``True`` or ``False``.
+
+        Returns
+        -------
+        AsyncFilter[T]
+            An object which can either be awaited to yield a list of the filtered
+            items, or can also act as an async iterator to yield items one by one.
+
+        Examples
+        --------
+            >>> from redbot.core.utils import AsyncIter
+            >>> def predicate(value):
+            ...     return value <= 5
+            >>> iterator = AsyncIter([1, 10, 5, 100])
+            >>> async for i in iterator.filter(predicate):
+            ...     print(i)
+            1
+            5
+
+            >>> from redbot.core.utils import AsyncIter
+            >>> def predicate(value):
+            ...     return value <= 5
+            >>> iterator = AsyncIter([1, 10, 5, 100])
+            >>> await iterator.filter(predicate)
+            [1, 5]
+
+        """
+        return async_filter(function, self)
+
+    def enumerate(self, start: int = 0) -> AsyncIterator[Tuple[int, _T]]:
+        """Async iterable version of `enumerate`.
+
+        Parameters
+        ----------
+        start : int
+            The index to start from. Defaults to 0.
+
+        Returns
+        -------
+        AsyncIterator[Tuple[int, T]]
+            An async iterator of tuples in the form of ``(index, item)``.
+
+        Examples
+        --------
+            >>> from redbot.core.utils import AsyncIter
+            >>> iterator = AsyncIter(['one', 'two', 'three'])
+            >>> async for i in iterator.enumerate(start=10):
+            ...     print(i)
+            (10, 'one')
+            (11, 'two')
+            (12, 'three')
+
+        """
+        return async_enumerate(self, start)
+
+    async def without_duplicates(self) -> AsyncIterator[_T]:
+        """
+        Iterates while omitting duplicated entries.
+
+        Examples
+        --------
+            >>> from redbot.core.utils import AsyncIter
+            >>> iterator = AsyncIter([1,2,3,3,4,4,5])
+            >>> async for i in iterator.without_duplicates():
+            ...     print(i)
+            1
+            2
+            3
+            4
+            5
+        """
+        _temp = set()
+        async for item in self:
+            if item not in _temp:
+                yield item
+                _temp.add(item)
+        del _temp
