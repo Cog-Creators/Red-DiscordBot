@@ -245,7 +245,7 @@ class General(commands.Cog):
         """
         Show server information.
     
-        `details`: Toggle it to `True` to show more information about this server.
+        `details`: Shows more information when set to `True`.
         Default to False.
         """
         guild = ctx.guild
@@ -305,8 +305,8 @@ class General(commands.Cog):
                 "\N{LARGE ORANGE CIRCLE}": lambda x: x.status is discord.Status.idle,
                 "\N{LARGE RED CIRCLE}": lambda x: x.status is discord.Status.do_not_disturb,
                 "\N{MEDIUM WHITE CIRCLE}": lambda x: x.status is discord.Status.offline,
-                "\N{LARGE PURPLE CIRCLE}": lambda x: (
-                    x.activity is not None and x.activity.type is discord.ActivityType.streaming
+                "\N{LARGE PURPLE CIRCLE}": lambda x: any(
+                    a.type is discord.ActivityType.streaming for a in x.activities
                 ),
                 "\N{MOBILE PHONE}": lambda x: x.is_on_mobile(),
             }
