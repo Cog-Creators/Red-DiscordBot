@@ -1,4 +1,3 @@
-import asyncio
 import datetime
 import heapq
 import logging
@@ -7,6 +6,7 @@ import random
 
 import discord
 import lavalink
+from redbot.core.utils import AsyncIter
 
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import humanize_number, pagify
@@ -44,7 +44,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
         total_num = len(lavalink.all_players())
 
         msg = ""
-        for p in lavalink.all_players():
+        async for p in AsyncIter(lavalink.all_players()):
             connect_start = p.fetch("connect")
             connect_dur = self.get_time_string(
                 int((datetime.datetime.utcnow() - connect_start).total_seconds())
@@ -56,7 +56,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
                     p.current, self.local_folder_current_path
                 )
                 msg += "{} [`{}`]: {}\n".format(p.channel.guild.name, connect_dur, current_title)
-            except AttributeError as exc:
+            except AttributeError:
                 msg += "{} [`{}`]: **{}**\n".format(
                     p.channel.guild.name, connect_dur, _("Nothing playing.")
                 )
@@ -103,10 +103,9 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
                 requesters["users"][req_username]["songcount"] = 1
                 requesters["total"] += 1
 
-        for track in queue_tracks:
+        async for track in AsyncIter(queue_tracks):
             req_username = "{}#{}".format(track.requester.name, track.requester.discriminator)
             await _usercount(req_username)
-            await asyncio.sleep(0)
 
         try:
             req_username = "{}#{}".format(
@@ -116,12 +115,11 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
         except AttributeError:
             return await self.send_embed_msg(ctx, title=_("There's  nothing in the queue."))
 
-        for req_username in requesters["users"]:
+        async for req_username in AsyncIter(requesters["users"]):
             percentage = float(requesters["users"][req_username]["songcount"]) / float(
                 requesters["total"]
             )
             requesters["users"][req_username]["percent"] = round(percentage * 100, 1)
-            await asyncio.sleep(0)
 
         top_queue_users = heapq.nlargest(
             20,

@@ -9,6 +9,7 @@ from typing import List, MutableMapping, Optional, Tuple, Union
 import discord
 import lavalink
 from discord.embeds import EmptyEmbed
+from redbot.core.utils import AsyncIter
 
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import box
@@ -222,7 +223,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         playlists = f"{'#':{pos_len}}\n"
         number = 0
         correct_scope_matches = sorted(correct_scope_matches, key=lambda x: x.name.lower())
-        for number, playlist in enumerate(correct_scope_matches, 1):
+        async for number, playlist in AsyncIter(correct_scope_matches).enumerate(start=1):
             author = self.bot.get_user(playlist.author) or playlist.author or _("Unknown")
             line = _(
                 "{number}."
@@ -283,12 +284,11 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         plist_idx_start = (page_num - 1) * 5
         plist_idx_end = plist_idx_start + 5
         plist = ""
-        for i, playlist_info in enumerate(
-            abc_names[plist_idx_start:plist_idx_end], start=plist_idx_start
-        ):
+        async for i, playlist_info in AsyncIter(
+            abc_names[plist_idx_start:plist_idx_end]
+        ).enumerate(start=plist_idx_start):
             item_idx = i + 1
             plist += "`{}.` {}".format(item_idx, playlist_info)
-            await asyncio.sleep(0)
         if scope is None:
             embed = discord.Embed(
                 colour=await ctx.embed_colour(),
@@ -364,7 +364,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         await playlist_msg.edit(embed=embed3)
         database_entries = []
         time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
-        for t in track_list:
+        async for t in AsyncIter(track_list):
             uri = t.get("info", {}).get("uri")
             if uri:
                 t = {"loadType": "V2_COMPAT", "tracks": [t], "query": uri}
@@ -393,15 +393,13 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         guild: Union[discord.Guild],
     ):
         track_list = []
-        track_count = 0
         successful_count = 0
         uploaded_track_count = len(uploaded_track_list)
 
         embed1 = discord.Embed(title=_("Please wait, adding tracks..."))
         playlist_msg = await self.send_embed_msg(ctx, embed=embed1)
         notifier = Notifier(ctx, playlist_msg, {"playlist": _("Loading track {num}/{total}...")})
-        for song_url in uploaded_track_list:
-            track_count += 1
+        async for track_count, song_url in AsyncIter(uploaded_track_list).enumerate(start=1):
             try:
                 try:
                     result, called_api = await self.api_interface.fetch_track(
@@ -583,10 +581,9 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         "tracks may not play."
                     ).format(suffix=query.suffix)
                 return await self.send_embed_msg(ctx, embed=embed)
-            for track in tracks:
+            async for track in AsyncIter(tracks):
                 track_obj = self.get_track_json(player, other_track=track)
                 tracklist.append(track_obj)
-                await asyncio.sleep(0)
             self.update_player_lock(ctx, False)
         elif query.is_search:
             try:
@@ -633,10 +630,9 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             tracks = result.tracks
 
         if not search and len(tracklist) == 0:
-            for track in tracks:
+            async for track in AsyncIter(tracks):
                 track_obj = self.get_track_json(player, other_track=track)
                 tracklist.append(track_obj)
-                await asyncio.sleep(0)
         elif len(tracklist) == 0:
             track_obj = self.get_track_json(player, other_track=tracks[0])
             tracklist.append(track_obj)

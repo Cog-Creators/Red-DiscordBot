@@ -1,4 +1,3 @@
-import asyncio
 import concurrent
 import contextlib
 import datetime
@@ -7,6 +6,8 @@ import random
 import time
 from types import SimpleNamespace
 from typing import Callable, List, MutableMapping, Optional, TYPE_CHECKING, Tuple, Union
+
+from redbot.core.utils import AsyncIter
 
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -193,11 +194,8 @@ class BaseWrapper:
                     row_result = future.result()
                 except Exception as exc:
                     debug_exc_log(log, exc, "Failed to completed fetch from database")
-        for index, row in enumerate(row_result, start=1):
-            if index % 50 == 0:
-                await asyncio.sleep(0.01)
+        async for row in AsyncIter(row_result):
             output.append(self.fetch_result(*row))
-            await asyncio.sleep(0)
         return output
 
     async def _fetch_random(
@@ -354,11 +352,8 @@ class LavalinkTableWrapper(BaseWrapper):
                     row_result = future.result()
                 except Exception as exc:
                     debug_exc_log(log, exc, "Failed to completed fetch from database")
-        for index, row in enumerate(row_result, start=1):
-            if index % 50 == 0:
-                await asyncio.sleep(0.01)
+        async for row in AsyncIter(row_result):
             output.append(self.fetch_for_global(*row))
-            await asyncio.sleep(0)
         return output
 
 

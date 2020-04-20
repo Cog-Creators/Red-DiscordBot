@@ -1,4 +1,3 @@
-import asyncio
 import datetime
 import logging
 import math
@@ -8,6 +7,7 @@ from typing import List, Optional
 import discord
 import lavalink
 from discord.embeds import EmptyEmbed
+from redbot.core.utils import AsyncIter
 
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import box, escape
@@ -58,7 +58,9 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         search_idx_start = (page_num - 1) * 5
         search_idx_end = search_idx_start + 5
         search_list = ""
-        for i, entry in enumerate(tracks[search_idx_start:search_idx_end], start=search_idx_start):
+        async for i, entry in AsyncIter(tracks[search_idx_start:search_idx_end]).enumerate(
+            start=search_idx_start
+        ):
             search_track_num = i + 1
             if search_track_num > 5:
                 search_track_num = search_track_num % 5
@@ -71,7 +73,6 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             else:
                 name = f"{list(entry.keys())[0]}"
             search_list += f"`{search_track_num}.` {name}\n"
-            await asyncio.sleep(0)
 
         embed = discord.Embed(
             colour=await ctx.embed_colour(), title=title, description=search_list
@@ -204,7 +205,9 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         search_list = ""
         command = ctx.invoked_with
         folder = False
-        for i, track in enumerate(tracks[search_idx_start:search_idx_end], start=search_idx_start):
+        async for i, track in AsyncIter(tracks[search_idx_start:search_idx_end]).enumerate(
+            start=search_idx_start
+        ):
             search_track_num = i + 1
             if search_track_num > 5:
                 search_track_num = search_track_num % 5
@@ -234,7 +237,6 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     search_list += "`{}.` **{}**\n".format(
                         search_track_num, track.to_string_user()
                     )
-            await asyncio.sleep(0)
         if hasattr(tracks[0], "uri") and hasattr(tracks[0], "track_identifier"):
             title = _("Tracks Found:")
             footer = _("search results")

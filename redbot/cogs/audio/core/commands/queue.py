@@ -7,6 +7,7 @@ from typing import MutableMapping, Optional, Union, Tuple
 
 import discord
 import lavalink
+from redbot.core.utils import AsyncIter
 
 from redbot.core import commands
 from redbot.core.utils.menus import (
@@ -156,10 +157,9 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             limited_queue = player.queue[:500]  # TODO: Improve when Toby menu's are merged
             len_queue_pages = math.ceil(len(limited_queue) / 10)
             queue_page_list = []
-            for page_num in range(1, len_queue_pages + 1):
+            async for page_num in AsyncIter(range(1, len_queue_pages + 1)):
                 embed = await self._build_queue_page(ctx, limited_queue, player, page_num)
                 queue_page_list.append(embed)
-                await asyncio.sleep(0)
             if page > len_queue_pages:
                 page = len_queue_pages
         return await menu(ctx, queue_page_list, queue_controls, page=(page - 1))
@@ -216,12 +216,11 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
         clean_tracks = []
         removed_tracks = 0
         listeners = player.channel.members
-        for track in player.queue:
+        async for track in AsyncIter(player.queue):
             if track.requester in listeners:
                 clean_tracks.append(track)
             else:
                 removed_tracks += 1
-            await asyncio.sleep(0)
         player.queue = clean_tracks
         if removed_tracks == 0:
             await self.send_embed_msg(ctx, title=_("Removed 0 tracks."))
@@ -248,12 +247,11 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         clean_tracks = []
         removed_tracks = 0
-        for track in player.queue:
+        async for track in AsyncIter(player.queue):
             if track.requester != ctx.author:
                 clean_tracks.append(track)
             else:
                 removed_tracks += 1
-            await asyncio.sleep(0)
         player.queue = clean_tracks
         if removed_tracks == 0:
             await self.send_embed_msg(ctx, title=_("Removed 0 tracks."))
@@ -282,7 +280,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         len_search_pages = math.ceil(len(search_list) / 10)
         search_page_list = []
-        for page_num in range(1, len_search_pages + 1):
+        async for page_num in AsyncIter(range(1, len_search_pages + 1)):
             embed = await self._build_queue_search_page(ctx, page_num, search_list)
             search_page_list.append(embed)
         await menu(ctx, search_page_list, DEFAULT_CONTROLS)

@@ -9,7 +9,7 @@ import shutil
 import sys
 import tempfile
 import time
-from typing import ClassVar, Final, List, Optional, Tuple
+from typing import ClassVar, Final, List, Optional, Tuple, Pattern
 
 import aiohttp
 from tqdm import tqdm
@@ -31,13 +31,13 @@ LAVALINK_JAR_FILE: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
 BUNDLED_APP_YML: Final[pathlib.Path] = pathlib.Path(__file__).parent / "data" / "application.yml"
 LAVALINK_APP_YML: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "application.yml"
 
-_RE_READY_LINE: Final[re.Pattern] = re.compile(rb"Started Launcher in \S+ seconds")
-_FAILED_TO_START: Final[re.Pattern] = re.compile(rb"Web server failed to start. (.*)")
-_RE_BUILD_LINE: Final[re.Pattern] = re.compile(rb"Build:\s+(?P<build>\d+)")
-_RE_JAVA_VERSION_LINE: Final[re.Pattern] = re.compile(
+_RE_READY_LINE: Final[Pattern] = re.compile(rb"Started Launcher in \S+ seconds")
+_FAILED_TO_START: Final[Pattern] = re.compile(rb"Web server failed to start. (.*)")
+_RE_BUILD_LINE: Final[Pattern] = re.compile(rb"Build:\s+(?P<build>\d+)")
+_RE_JAVA_VERSION_LINE: Final[Pattern] = re.compile(
     r'version "(?P<major>\d+).(?P<minor>\d+).\d+(?:_\d+)?(?:-[A-Za-z0-9]+)?"'
 )
-_RE_JAVA_SHORT_VERSION: Final[re.Pattern] = re.compile(r'version "(?P<major>\d+)"')
+_RE_JAVA_SHORT_VERSION: Final[Pattern] = re.compile(r'version "(?P<major>\d+)"')
 
 
 class ServerManager:

@@ -1,4 +1,3 @@
-import asyncio
 import contextlib
 import logging
 from pathlib import Path
@@ -6,6 +5,7 @@ from typing import List, Union
 
 import lavalink
 from fuzzywuzzy import process
+from redbot.core.utils import AsyncIter
 
 from redbot.core import commands
 
@@ -61,7 +61,7 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
         except ValueError:
             return []
         local_tracks = []
-        for local_file in await self.get_all_localtrack_folder_tracks(ctx, query):
+        async for local_file in AsyncIter(await self.get_all_localtrack_folder_tracks(ctx, query)):
             trackdata, called_api = await self.api_interface.fetch_track(ctx, player, local_file)
             with contextlib.suppress(IndexError):
                 local_tracks.append(trackdata.tracks[0])
@@ -111,7 +111,7 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
         }
         search_results = process.extract(search_words, to_search_string, limit=50)
         search_list = []
-        for track_match, percent_match in search_results:
+        async for track_match, percent_match in AsyncIter(search_results):
             if percent_match > 85:
                 search_list.extend(
                     [
@@ -121,5 +121,4 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         and i.local_track_path.name == track_match
                     ]
                 )
-            await asyncio.sleep(0)
         return search_list

@@ -1,9 +1,9 @@
-import asyncio
 import logging
 from typing import List, MutableMapping, Optional, Union
 
 import discord
 import lavalink
+from redbot.core.utils import AsyncIter
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
@@ -309,7 +309,7 @@ async def get_all_playlist_for_migration23(
                 guild=guild,
                 author=int(playlist_data.get("author", 0)),
             )
-            for playlist_number, playlist_data in playlists.items()
+            async for playlist_number, playlist_data in AsyncIter(playlists.items())
         ]
     elif scope == PlaylistScope.USER.value:
         return [
@@ -322,8 +322,8 @@ async def get_all_playlist_for_migration23(
                 guild=guild,
                 author=int(user_id),
             )
-            for user_id, scopedata in playlists.items()
-            for playlist_number, playlist_data in scopedata.items()
+            async for user_id, scopedata in AsyncIter(playlists.items())
+            async for playlist_number, playlist_data in AsyncIter(scopedata.items())
         ]
     else:
         return [
@@ -336,8 +336,8 @@ async def get_all_playlist_for_migration23(
                 guild=int(guild_id),
                 author=int(playlist_data.get("author", 0)),
             )
-            for guild_id, scopedata in playlists.items()
-            for playlist_number, playlist_data in scopedata.items()
+            async for guild_id, scopedata in AsyncIter(playlists.items())
+            async for playlist_number, playlist_data in AsyncIter(scopedata.items())
         ]
 
 
@@ -442,7 +442,7 @@ async def get_all_playlist(
         playlists = await playlist_api.fetch_all(scope_standard, scope_id)
 
     playlist_list = []
-    for playlist in playlists:
+    async for playlist in AsyncIter(playlists):
         playlist_list.append(
             await Playlist.from_json(
                 bot,
@@ -454,7 +454,6 @@ async def get_all_playlist(
                 author=author,
             )
         )
-        await asyncio.sleep(0)
     return playlist_list
 
 
@@ -500,7 +499,7 @@ async def get_all_playlist_converter(
         scope_standard, playlist_name=arg, playlist_id=arg
     )
     playlist_list = []
-    for playlist in playlists:
+    async for playlist in AsyncIter(playlists):
         playlist_list.append(
             await Playlist.from_json(
                 bot,
@@ -512,7 +511,6 @@ async def get_all_playlist_converter(
                 author=author,
             )
         )
-        await asyncio.sleep(0)
     return playlist_list
 
 

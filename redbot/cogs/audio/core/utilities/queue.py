@@ -1,4 +1,3 @@
-import asyncio
 import logging
 import math
 from typing import List, Tuple
@@ -6,6 +5,7 @@ from typing import List, Tuple
 import discord
 import lavalink
 from fuzzywuzzy import process
+from redbot.core.utils import AsyncIter
 
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import humanize_number
@@ -60,9 +60,9 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
             queue_list += _("Requested by: **{user}**").format(user=player.current.requester)
             queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
 
-        for i, track in enumerate(queue[queue_idx_start:queue_idx_end], start=queue_idx_start):
-            if i % 100 == 0:  # TODO: Improve when Toby menu's are merged
-                await asyncio.sleep(0.1)
+        async for i, track in AsyncIter(queue[queue_idx_start:queue_idx_end]).enumerate(
+            start=queue_idx_start
+        ):
             req_user = track.requester
             track_idx = i + 1
             track_description = self.get_track_description(
@@ -70,7 +70,6 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
             queue_list += f"`{track_idx}.` {track_description}, "
             queue_list += _("requested by **{user}**\n").format(user=req_user)
-            await asyncio.sleep(0)
 
         embed = discord.Embed(
             colour=await ctx.embed_colour(),
@@ -113,11 +112,7 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
         self, queue_list: List[lavalink.Track], search_words: str
     ) -> List[Tuple[int, str]]:
         track_list = []
-        queue_idx = 0
-        for i, track in enumerate(queue_list, start=1):
-            if i % 100 == 0:  # TODO: Improve when Toby menu's are merged
-                await asyncio.sleep(0.1)
-            queue_idx = queue_idx + 1
+        async for queue_idx, track in AsyncIter(queue_list).enumerate(start=1):
             if not self.match_url(track.uri):
                 query = Query.process_input(track, self.local_folder_current_path)
                 if (
@@ -133,11 +128,10 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
             song_info = {str(queue_idx): track_title}
             track_list.append(song_info)
-            await asyncio.sleep(0)
         search_results = process.extract(search_words, track_list, limit=50)
         search_list = []
-        for search, percent_match in search_results:
-            for queue_position, title in search.items():
+        async for search, percent_match in AsyncIter(search_results):
+            async for queue_position, title in AsyncIter(search.items()):
                 if percent_match > 89:
                     search_list.append((queue_position, title))
         return search_list
@@ -149,18 +143,15 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
         search_idx_start = (page_num - 1) * 10
         search_idx_end = search_idx_start + 10
         track_match = ""
-        for i, track in enumerate(
-            search_list[search_idx_start:search_idx_end], start=search_idx_start
+        async for i, track in AsyncIter(search_list[search_idx_start:search_idx_end]).enumerate(
+            start=search_idx_start
         ):
-            if i % 100 == 0:  # TODO: Improve when Toby menu's are merged
-                await asyncio.sleep(0.1)
             track_idx = i + 1
             if type(track) is str:
                 track_location = LocalPath(track, self.local_folder_current_path).to_string_user()
                 track_match += "`{}.` **{}**\n".format(track_idx, track_location)
             else:
                 track_match += "`{}.` **{}**\n".format(track[0], track[1])
-            await asyncio.sleep(0)
         embed = discord.Embed(
             colour=await ctx.embed_colour(), title=_("Matching Tracks:"), description=track_match
         )

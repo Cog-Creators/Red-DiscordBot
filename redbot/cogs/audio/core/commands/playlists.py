@@ -9,6 +9,7 @@ from typing import Optional, cast
 
 import discord
 import lavalink
+from redbot.core.utils import AsyncIter
 
 from redbot.core import commands
 from redbot.core.data_manager import cog_data_path
@@ -163,7 +164,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 appended += 1
         if to_append and to_append_count > 1:
             to_append_temp = []
-            for t in to_append:
+            async for t in AsyncIter(to_append):
                 to = lavalink.Track(t)
                 if to not in tracks_obj_list:
                     appended += 1
@@ -584,7 +585,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             ]
 
             tracklist = []
-            for track in track_objects:
+            async for track in AsyncIter(track_objects):
                 track_keys = track._info.keys()
                 track_values = track._info.values()
                 track_id = track.track_identifier
@@ -710,10 +711,9 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if version == "v2":
             v2_valid_urls = ["https://www.youtube.com/watch?v=", "https://soundcloud.com/"]
             song_list = []
-            for track in playlist.tracks:
+            async for track in AsyncIter(playlist.tracks):
                 if track["info"]["uri"].startswith(tuple(v2_valid_urls)):
                     song_list.append(track["info"]["uri"])
-                await asyncio.sleep(0)
             playlist_data = {
                 "author": playlist.author,
                 "link": playlist.url,
@@ -836,13 +836,9 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         track_len = len(playlist.tracks)
 
         msg = "​"
-        track_idx = 0
         if track_len > 0:
             spaces = "\N{EN SPACE}" * (len(str(len(playlist.tracks))) + 2)
-            for i, track in enumerate(playlist.tracks, start=1):
-                if i % 500 == 0:  # TODO: Improve when Toby menu's are merged
-                    await asyncio.sleep(0.1)
-                track_idx = track_idx + 1
+            async for track_idx, track in AsyncIter(playlist.tracks).enumerate(start=1):
                 query = Query.process_input(track["info"]["uri"], self.local_folder_current_path)
                 if query.is_local:
                     if track["info"]["title"] != "Unknown title":
@@ -859,7 +855,6 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                     msg += "`{}.` **[{}]({})**\n".format(
                         track_idx, track["info"]["title"], track["info"]["uri"]
                     )
-                await asyncio.sleep(0)
 
         else:
             msg = "No tracks."
@@ -1020,7 +1015,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         playlist_list = []
         space = "\N{EN SPACE}"
-        for playlist in playlists:
+        async for playlist in AsyncIter(playlists):
             playlist_list.append(
                 ("\n" + space * 4).join(
                     (
@@ -1036,15 +1031,13 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 )
             )
-            await asyncio.sleep(0)
         abc_names = sorted(playlist_list, key=str.lower)
         len_playlist_list_pages = math.ceil(len(abc_names) / 5)
         playlist_embeds = []
 
-        for page_num in range(1, len_playlist_list_pages + 1):
+        async for page_num in AsyncIter(range(1, len_playlist_list_pages + 1)):
             embed = await self._build_playlist_list_page(ctx, page_num, abc_names, name)
             playlist_embeds.append(embed)
-            await asyncio.sleep(0)
         await menu(ctx, playlist_embeds, DEFAULT_CONTROLS)
 
     @command_playlist.command(name="queue", usage="<name> [args]", cooldown_after_parsing=True)
@@ -1132,16 +1125,13 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 to_add = player.queue[:10000]
                 not_added = queue_length - 10000
 
-            for i, track in enumerate(to_add, start=1):
-                if i % 500 == 0:  # TODO: Improve when Toby menu's are merged
-                    await asyncio.sleep(0.02)
+            async for track in AsyncIter(to_add):
                 queue_idx = player.queue.index(track)
                 track_obj = self.get_track_json(player, queue_idx)
                 tracklist.append(track_obj)
                 playlist = await create_playlist(
                     ctx, self.playlist_api, scope, playlist_name, None, tracklist, author, guild
                 )
-                await asyncio.sleep(0)
         await self.send_embed_msg(
             ctx,
             title=_("Playlist Created"),
@@ -1478,9 +1468,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             player = lavalink.get_player(ctx.guild.id)
             tracks = playlist.tracks_obj
             empty_queue = not player.queue
-            for i, track in enumerate(tracks, start=1):
-                if i % 500 == 0:  # TODO: Improve when Toby menu's are merged
-                    await asyncio.sleep(0.02)
+            async for track in AsyncIter(tracks):
                 if len(player.queue) >= 10000:
                     continue
                 if not await self.is_query_allowed(
@@ -1509,7 +1497,6 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                     "red_audio_track_enqueue", player.channel.guild, track, ctx.author
                 )
                 track_len += 1
-                await asyncio.sleep(0)
             player.maybe_shuffle(0 if empty_queue else 1)
             if len(tracks) > track_len:
                 maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(

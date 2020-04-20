@@ -1,6 +1,6 @@
 import logging
 import re
-from typing import Final, List, Set
+from typing import Final, List, Set, Pattern
 from urllib.parse import urlparse
 
 import discord
@@ -13,7 +13,7 @@ from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.validation")
 
-_RE_YT_LIST_PLAYLIST: Final[re.Pattern] = re.compile(
+_RE_YT_LIST_PLAYLIST: Final[Pattern] = re.compile(
     r"^(https?://)?(www\.)?(youtube\.com|youtu\.?be)(/playlist\?).*(list=)(.*)(&|$)"
 )
 
