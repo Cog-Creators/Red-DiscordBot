@@ -288,9 +288,9 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
             item = next(self._iterator)
         except StopIteration:
             raise StopAsyncIteration
-        self._i += 1
         if self._i % self._steps == 0:
             await asyncio.sleep(self._delay)
+        self._i += 1
         return item
 
     def __await__(self) -> Generator[Any, None, List[_T]]:
