@@ -372,7 +372,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
             >>> from redbot.core.utils import AsyncIter
             >>> iterator = AsyncIter([1,2,3,3,4,4,5])
             >>> async for i in iterator.without_duplicates():
-            >>>     print(i)
+            ...     print(i)
             1
             2
             3
