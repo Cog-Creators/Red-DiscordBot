@@ -33,6 +33,7 @@ from . import (
     i18n,
     config,
 )
+from .utils import AsyncIter
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import (
     box,
@@ -110,7 +111,7 @@ class CoreLogic:
                 bot._last_exception = exception_log
                 failed_packages.append(name)
 
-        for spec, name in cogspecs:
+        async for spec, name in AsyncIter(cogspecs, steps=10):
             try:
                 self._cleanup_and_refresh_modules(spec.name)
                 await bot.load_extension(spec)
