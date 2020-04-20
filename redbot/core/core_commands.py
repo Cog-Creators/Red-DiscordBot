@@ -1095,7 +1095,7 @@ class Core(commands.Cog, CoreLogic):
         await ctx.bot._config.color.set(colour.value)
         await ctx.send(_("The color has been set."))
 
-    @_set.command()
+    @_set.group(invoke_without_command=True)
     @checks.is_owner()
     async def avatar(self, ctx: commands.Context, url: str = None):
         """Sets [botname]'s avatar
@@ -1111,10 +1111,12 @@ class Core(commands.Cog, CoreLogic):
                 async with session.get(url) as r:
                     data = await r.read()
         else:
-            return await ctx.send(_("Please upload an attachment or provide an URL link."))
+            await ctx.send_help()
+            return
 
         try:
-            await ctx.bot.user.edit(avatar=data)
+            async with ctx.typing():
+                await ctx.bot.user.edit(avatar=data)
         except discord.HTTPException:
             await ctx.send(
                 _(
@@ -1127,6 +1129,14 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("JPG / PNG format only."))
         else:
             await ctx.send(_("Done."))
+
+    @avatar.command(name="remove", aliases=["clear"])
+    @checks.is_owner()
+    async def avatar_remove(self, ctx: commands.Context):
+        """Removes [botname]'s avatar"""
+        async with ctx.typing():
+            await ctx.bot.user.edit(avatar=None)
+        await ctx.send(_("Avatar removed."))
 
     @_set.command(name="playing", aliases=["game"])
     @checks.bot_in_a_guild()
