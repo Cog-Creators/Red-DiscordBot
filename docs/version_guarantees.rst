@@ -20,7 +20,7 @@ which is not private (even if not documented) should not break without notice.
 Anything in the ``redbot.cogs`` module or any of it's submodules is specifically
 excluded from being guaranteed.
 
-Any RPC method exposed by Red or its core cogs should not break without notice.
+Any RPC method exposed by Red may break without notice.
 
 If you would like something in here to be guaranteed,
 open an issue making a case for it to be moved.
