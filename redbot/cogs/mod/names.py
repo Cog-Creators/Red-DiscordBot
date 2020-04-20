@@ -20,8 +20,8 @@ class ModInfo(MixinMeta):
     """
 
     async def get_names_and_nicks(self, user):
-        names = await self.settings.user(user).past_names()
-        nicks = await self.settings.member(user).past_nicks()
+        names = await self.config.user(user).past_names()
+        nicks = await self.config.member(user).past_nicks()
         if names:
             names = [escape_spoilers_and_mass_mentions(name) for name in names if name]
         if nicks:

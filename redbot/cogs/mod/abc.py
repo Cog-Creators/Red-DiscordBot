@@ -13,7 +13,7 @@ class MixinMeta(ABC):
     Basically, to keep developers sane when not all attributes are defined in each mixin.
     """
 
-    settings: Config
+    config: Config
     bot: Red
     cache: dict
 

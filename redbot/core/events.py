@@ -13,8 +13,9 @@ import pkg_resources
 from colorama import Fore, Style, init
 from pkg_resources import DistributionNotFound
 
-from redbot.core.commands import RedHelpFormatter
+from redbot.core.commands import RedHelpFormatter, HelpSettings
 from redbot.core.i18n import Translator
+from .utils import AsyncIter
 from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
 from . import commands
 from .config import get_latest_confs
@@ -193,10 +194,14 @@ def init_events(bot, cli_flags):
             bot._last_exception = exception_log
             await ctx.send(inline(message))
         elif isinstance(error, commands.CommandNotFound):
+            help_settings = await HelpSettings.from_context(ctx)
             fuzzy_commands = await fuzzy_command_search(
                 ctx,
                 commands={
-                    c async for c in RedHelpFormatter.help_filter_func(ctx, bot.walk_commands())
+                    c
+                    async for c in RedHelpFormatter.help_filter_func(
+                        ctx, bot.walk_commands(), help_settings=help_settings
+                    )
                 },
             )
             if not fuzzy_commands:
@@ -263,10 +268,11 @@ def init_events(bot, cli_flags):
         disabled_commands = await bot._config.disabled_commands()
         if command.qualified_name in disabled_commands:
             command.enabled = False
-        for guild in bot.guilds:
-            disabled_commands = await bot._config.guild(guild).disabled_commands()
+        guild_data = await bot._config.all_guilds()
+        async for guild_id, data in AsyncIter(guild_data.items(), steps=100):
+            disabled_commands = data.get("disabled_commands", [])
             if command.qualified_name in disabled_commands:
-                command.disable_in(guild)
+                command.disable_in(discord.Object(id=guild_id))
 
     async def _guild_added(guild: discord.Guild):
         disabled_commands = await bot._config.guild(guild).disabled_commands()

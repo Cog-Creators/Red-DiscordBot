@@ -34,6 +34,7 @@ from . import (
     i18n,
     config,
 )
+from .utils import AsyncIter
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import (
     box,
@@ -111,7 +112,7 @@ class CoreLogic:
                 bot._last_exception = exception_log
                 failed_packages.append(name)
 
-        for spec, name in cogspecs:
+        async for spec, name in AsyncIter(cogspecs, steps=10):
             try:
                 self._cleanup_and_refresh_modules(spec.name)
                 await bot.load_extension(spec)
@@ -880,13 +881,14 @@ class Core(commands.Cog, CoreLogic):
         """Changes [botname]'s settings"""
         if ctx.invoked_subcommand is None:
             if ctx.guild:
+                guild_data = await ctx.bot._config.guild(ctx.guild).all()
                 guild = ctx.guild
-                admin_role_ids = await ctx.bot._config.guild(ctx.guild).admin_role()
+                admin_role_ids = guild_data["admin_role"]
                 admin_role_names = [r.name for r in guild.roles if r.id in admin_role_ids]
                 admin_roles_str = (
                     humanize_list(admin_role_names) if admin_role_names else "Not Set."
                 )
-                mod_role_ids = await ctx.bot._config.guild(ctx.guild).mod_role()
+                mod_role_ids = guild_data["mod_role"]
                 mod_role_names = [r.name for r in guild.roles if r.id in mod_role_ids]
                 mod_roles_str = humanize_list(mod_role_names) if mod_role_names else "Not Set."
                 guild_settings = _("Admin roles: {admin}\nMod roles: {mod}\n").format(
@@ -896,8 +898,10 @@ class Core(commands.Cog, CoreLogic):
                 guild_settings = ""
 
             prefixes = await ctx.bot._prefix_cache.get_prefixes(ctx.guild)
-            locale = await ctx.bot._config.locale()
-            regional_format = await ctx.bot._config.regional_format() or _("Same as bot's locale")
+            global_data = await ctx.bot._config.all()
+            locale = global_data["locale"]
+            regional_format = global_data["regional_format"] or _("Same as bot's locale")
+
             prefix_string = " ".join(prefixes)
             settings = _(
                 "{bot_name} Settings:\n\n"
@@ -1159,7 +1163,7 @@ class Core(commands.Cog, CoreLogic):
         await ctx.bot._config.color.set(colour.value)
         await ctx.send(_("The color has been set."))
 
-    @_set.command()
+    @_set.group(invoke_without_command=True)
     @checks.is_owner()
     async def avatar(self, ctx: commands.Context, url: str = None):
         """Sets [botname]'s avatar
@@ -1175,10 +1179,12 @@ class Core(commands.Cog, CoreLogic):
                 async with session.get(url) as r:
                     data = await r.read()
         else:
-            return await ctx.send(_("Please upload an attachment or provide an URL link."))
+            await ctx.send_help()
+            return
 
         try:
-            await ctx.bot.user.edit(avatar=data)
+            async with ctx.typing():
+                await ctx.bot.user.edit(avatar=data)
         except discord.HTTPException:
             await ctx.send(
                 _(
@@ -1191,6 +1197,14 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("JPG / PNG format only."))
         else:
             await ctx.send(_("Done."))
+
+    @avatar.command(name="remove", aliases=["clear"])
+    @checks.is_owner()
+    async def avatar_remove(self, ctx: commands.Context):
+        """Removes [botname]'s avatar"""
+        async with ctx.typing():
+            await ctx.bot.user.edit(avatar=None)
+        await ctx.send(_("Avatar removed."))
 
     @_set.command(name="playing", aliases=["game"])
     @checks.bot_in_a_guild()

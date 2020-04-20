@@ -18,8 +18,8 @@ class Image(commands.Cog):
     def __init__(self, bot):
         super().__init__()
         self.bot = bot
-        self.settings = Config.get_conf(self, identifier=2652104208, force_registration=True)
-        self.settings.register_global(**self.default_global)
+        self.config = Config.get_conf(self, identifier=2652104208, force_registration=True)
+        self.config.register_global(**self.default_global)
         self.session = aiohttp.ClientSession()
         self.imgur_base_url = "https://api.imgur.com/3/"
 
@@ -28,11 +28,11 @@ class Image(commands.Cog):
 
     async def initialize(self) -> None:
         """Move the API keys from cog stored config to core bot config if they exist."""
-        imgur_token = await self.settings.imgur_client_id()
+        imgur_token = await self.config.imgur_client_id()
         if imgur_token is not None:
             if not await self.bot.get_shared_api_tokens("imgur"):
                 await self.bot.set_shared_api_tokens("imgur", client_id=imgur_token)
-            await self.settings.imgur_client_id.clear()
+            await self.config.imgur_client_id.clear()
 
     @commands.group(name="imgur")
     async def _imgur(self, ctx):
