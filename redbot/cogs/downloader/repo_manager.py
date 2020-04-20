@@ -1240,5 +1240,16 @@ class RepoManager:
                     repo_data["url"],
                     repo_data["name"],
                 )
-        # TODO: run Downloader's config migration
-        # and clear commit data to trigger update for all cogs
+
+        from .downloader import Downloader
+
+        # this solution is far from perfect, but a better one requires a rewrite
+        conf = Config.get_conf(identifier=998240343, cog_name="Downloader")
+        self.conf.register_global(schema_version=0, installed_cogs={}, installed_libraries={})
+        await Downloader._maybe_update_config(conf)
+        # clear out saved commit so that `[p]cog update` triggers install for all cogs
+        async with self.conf.installed_cogs() as installed_cogs:
+            for repo_data in installed_cogs.values():
+                for cog_data in repo_data.values():
+                    cog_data["commit"] = ""
+        await self.conf.installed_libraries.set({})
