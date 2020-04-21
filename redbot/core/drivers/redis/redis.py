@@ -13,13 +13,16 @@ try:
     # pylint: disable=import-error
     import aioredis
     import aioredis_lock
-    import ujson
     from .client_interface import Client
 except ModuleNotFoundError:
     aioredis = None
     Client = None
-    import json as ujson
 
+try:
+    # pylint: disable=import-error
+    import ujson
+except ModuleNotFoundError:
+    import json as ujson
 
 from ..base import BaseDriver, IdentifierData, ConfigCategory
 from ...errors import StoredTypeError
@@ -49,16 +52,16 @@ class RedisDriver(BaseDriver):
         )
         cls._pool = Client(client._pool_or_conn)
         cls._lock = asyncio.Lock()
-        cls._save_task = asyncio.create_task(cls._save_periodically())
-        cls._backup_task = asyncio.create_task(cls._backup_periodically())
+        # cls._save_task = asyncio.create_task(cls._save_periodically())
+        # cls._backup_task = asyncio.create_task(cls._backup_periodically())
 
     @classmethod
     async def teardown(cls) -> None:
         if cls._pool is not None:
-            if cls._save_task is not None:
-                cls._save_task.cancel()
-            if cls._backup_task is not None:
-                cls._backup_task.cancel()
+            # if cls._save_task is not None:
+            #     cls._save_task.cancel()
+            # if cls._backup_task is not None:
+            #     cls._backup_task.cancel()
             cls._pool.close()
             await cls._pool.wait_closed()
 
@@ -125,25 +128,25 @@ class RedisDriver(BaseDriver):
             "database": database,
         }
 
-    @classmethod
-    async def _save_periodically(cls):
-        with contextlib.suppress(asyncio.CancelledError):
-            while True:
-                with contextlib.suppress(aioredis.errors.ReplyError):
-                    await cls._pool.bgrewriteaof()
-                await asyncio.sleep(2)
-        with contextlib.suppress(aioredis.errors.ReplyError):
-            await cls._pool.bgrewriteaof()
-
-    @classmethod
-    async def _backup_periodically(cls):
-        with contextlib.suppress(asyncio.CancelledError):
-            while True:
-                with contextlib.suppress(aioredis.errors.ReplyError):
-                    await cls._pool.bgsave()
-                await asyncio.sleep(60)
-        with contextlib.suppress(aioredis.errors.ReplyError):
-            await cls._pool.bgsave()
+    # @classmethod
+    # async def _save_periodically(cls):
+    #     with contextlib.suppress(asyncio.CancelledError):
+    #         while True:
+    #             with contextlib.suppress(aioredis.errors.ReplyError):
+    #                 await cls._pool.bgrewriteaof()
+    #             await asyncio.sleep(2)
+    #     with contextlib.suppress(aioredis.errors.ReplyError):
+    #         await cls._pool.bgrewriteaof()
+    #
+    # @classmethod
+    # async def _backup_periodically(cls):
+    #     with contextlib.suppress(asyncio.CancelledError):
+    #         while True:
+    #             with contextlib.suppress(aioredis.errors.ReplyError):
+    #                 await cls._pool.bgsave()
+    #             await asyncio.sleep(60)
+    #     with contextlib.suppress(aioredis.errors.ReplyError):
+    #         await cls._pool.bgsave()
 
     async def _pre_flight(self, identifier_data: IdentifierData):
         _full_identifiers = identifier_data.to_tuple()
