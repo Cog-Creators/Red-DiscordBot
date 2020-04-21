@@ -271,6 +271,11 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
     steps: int
         The number of iterations between sleeps.
 
+    Raises
+    ------
+    ValueError
+        When ``steps`` is lower than 1.
+
     Examples
     --------
     >>> from redbot.core.utils import AsyncIter
@@ -285,6 +290,8 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
     def __init__(
         self, iterable: Iterable[_T], delay: Union[float, int] = 0, steps: int = 1
     ) -> None:
+        if steps < 1:
+            raise ValueError("Steps must be higher than or equals to 1")
         self._delay = delay
         self._iterator = iter(iterable)
         self._i = 0
@@ -298,7 +305,8 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
             item = next(self._iterator)
         except StopIteration:
             raise StopAsyncIteration
-        if self._i % self._steps == 0:
+        if self._i == self._steps:
+            self._i = 0
             await asyncio.sleep(self._delay)
         self._i += 1
         return item
