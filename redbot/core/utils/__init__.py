@@ -270,6 +270,16 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
         The amount of time in seconds to sleep.
     steps: int
         The number of iterations between sleeps.
+
+    Examples
+    --------
+    >>> from redbot.core.utils import AsyncIter
+    >>> async for value in AsyncIter(range(3)):
+    ...     print(value)
+    0
+    1
+    2
+
     """
 
     def __init__(
@@ -294,10 +304,29 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
         return item
 
     def __await__(self) -> Generator[Any, None, List[_T]]:
+        """Returns a list of the iterable.
+
+        Examples
+        --------
+        >>> from redbot.core.utils import AsyncIter
+        >>> iterator = AsyncIter(range(5))
+        >>> await iterator
+        [0, 1, 2, 3, 4]
+
+        """
         return self.flatten().__await__()
 
     async def flatten(self) -> List[_T]:
-        """Returns a list of the iterable."""
+        """Returns a list of the iterable.
+
+        Examples
+        --------
+        >>> from redbot.core.utils import AsyncIter
+        >>> iterator = AsyncIter(range(5))
+        >>> await iterator.flatten()
+        [0, 1, 2, 3, 4]
+
+        """
         return [item async for item in self]
 
     def filter(self, function: Callable[[_T], Union[bool, Awaitable[bool]]]) -> AsyncFilter[_T]:
