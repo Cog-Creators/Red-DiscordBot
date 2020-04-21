@@ -1,4 +1,9 @@
-import ujson
+try:
+    # pylint: disable=import-error
+    import ujson
+except ModuleNotFoundError:
+    import json as ujson
+
 from aioredis import Redis
 from aioredis.commands import Pipeline
 
