@@ -13,7 +13,7 @@ General Utility
 .. autoclass:: AsyncIter
     :members:
     :special-members: __await__
-    :exclude-members: enumerate, filter, __weakref__, __aiter__, __anext__
+    :exclude-members: enumerate, filter
 
     .. automethod:: enumerate
         :async-for:
