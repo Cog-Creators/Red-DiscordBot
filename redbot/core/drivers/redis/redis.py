@@ -29,6 +29,7 @@ from ...errors import StoredTypeError
 
 __all__ = ["RedisDriver"]
 
+
 # noinspection PyProtectedMember
 class RedisDriver(BaseDriver):
     _pool: Optional["Client"] = None
