@@ -65,7 +65,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Whitelist Modified"),
-                description=_("Added: `{whitelisted}` to the whitelist.").format(
+                description=_("Added `{whitelisted}` to the whitelist.").format(
                     whitelisted=keyword
                 ),
             )
@@ -130,7 +130,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Whitelist Modified"),
-                description=_("Removed: `{whitelisted}` from the whitelist.").format(
+                description=_("Removed `{whitelisted}` from the whitelist.").format(
                     whitelisted=keyword
                 ),
             )
@@ -159,7 +159,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Blacklist Modified"),
-                description=_("Added: `{blacklisted}` to the blacklist.").format(
+                description=_("Added `{blacklisted}` to the blacklist.").format(
                     blacklisted=keyword
                 ),
             )
@@ -224,7 +224,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Blacklist Modified"),
-                description=_("Removed: `{blacklisted}` from the blacklist.").format(
+                description=_("Removed `{blacklisted}` from the blacklist.").format(
                     blacklisted=keyword
                 ),
             )
@@ -255,7 +255,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Whitelist Modified"),
-                description=_("Added: `{whitelisted}` to the whitelist.").format(
+                description=_("Added `{whitelisted}` to the whitelist.").format(
                     whitelisted=keyword
                 ),
             )
@@ -320,7 +320,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Whitelist Modified"),
-                description=_("Removed: `{whitelisted}` from the whitelist.").format(
+                description=_("Removed `{whitelisted}` from the whitelist.").format(
                     whitelisted=keyword
                 ),
             )
@@ -348,7 +348,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Blacklist Modified"),
-                description=_("Added: `{blacklisted}` to the blacklist.").format(
+                description=_("Added `{blacklisted}` to the blacklist.").format(
                     blacklisted=keyword
                 ),
             )
@@ -413,7 +413,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Blacklist Modified"),
-                description=_("Removed: `{blacklisted}` from the blacklist.").format(
+                description=_("Removed `{blacklisted}` from the blacklist.").format(
                     blacklisted=keyword
                 ),
             )

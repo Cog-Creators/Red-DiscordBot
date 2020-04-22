@@ -150,7 +150,7 @@ class PlaylistWrapper:
                     except Exception as exc:
                         debug_exc_log(log, exc, "Failed to completed playlist fetch from database")
                         return []
-        async for index, row in AsyncIter(row_result):
+        async for row in AsyncIter(row_result):
             output.append(PlaylistFetchResult(*row))
         return output
 
