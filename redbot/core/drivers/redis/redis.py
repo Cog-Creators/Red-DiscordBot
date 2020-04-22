@@ -300,6 +300,7 @@ class RedisDriver(BaseDriver):
         for cog in cogs:
             cog_ids = await cls._pool.jsonobjkeys(cog, ".")
             for cog_id in cog_ids:
+                cog_id = cls._unescape_key(cog_id)
                 yield cog, cog_id
 
     async def import_data(self, cog_data, custom_group_data):
