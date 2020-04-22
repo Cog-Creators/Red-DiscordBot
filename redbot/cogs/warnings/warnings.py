@@ -29,6 +29,7 @@ class Warnings(commands.Cog):
         "reasons": {},
         "allow_custom_reasons": False,
         "toggle_dm": True,
+        "show_mod": True,
         "warn_channel": None,
         "toggle_channel": False,
     }
@@ -94,6 +95,24 @@ class Warnings(commands.Cog):
             await ctx.send(_("I will now try to send warnings to users DMs."))
         else:
             await ctx.send(_("Warnings will no longer be sent to users DMs."))
+
+    @warningset.command()
+    @commands.guild_only()
+    async def showmoderator(self, ctx, true_or_false: bool):
+        """Decide whether the name of the moderator warning a user should be included in the DM to that user."""
+        await self.config.guild(ctx.guild).show_mod.set(true_or_false)
+        if true_or_false:
+            await ctx.send(
+                _(
+                    "I will include the name of the moderator who issued the warning when sending a DM to a user."
+                )
+            )
+        else:
+            await ctx.send(
+                _(
+                    "I will not include the name of the moderator who issued the warning when sending a DM to a user."
+                )
+            )
 
     @warningset.command()
     @commands.guild_only()
@@ -361,12 +380,14 @@ class Warnings(commands.Cog):
 
         await warning_points_add_check(self.config, ctx, user, current_point_count)
         dm = await self.config.guild(ctx.guild).toggle_dm()
+        showmod = await self.config.guild(ctx.guild).show_mod()
         dm_failed = False
         if dm:
-            em = discord.Embed(
-                title=_("Warning from {user}").format(user=ctx.author),
-                description=reason_type["description"],
-            )
+            if showmod:
+                title = _("Warning from {user}").format(user=ctx.author)
+            else:
+                title = _("Warning")
+            em = discord.Embed(title=title, description=reason_type["description"],)
             em.add_field(name=_("Points"), value=str(reason_type["points"]))
             try:
                 await user.send(
