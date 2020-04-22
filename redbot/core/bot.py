@@ -703,6 +703,8 @@ class RedBase(
         """
         if user.id in self._co_owners:
             return True
+        if self.owner_id is None:
+            return False
 
         if self.owner_id:
             return self.owner_id == user.id
