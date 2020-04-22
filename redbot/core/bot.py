@@ -703,7 +703,10 @@ class RedBase(
         """
         if user.id in self._co_owners:
             return True
-        if self.owner_id is None:
+        # if bot runs on team application and both
+        # `--owner` and `--team-members-are-owners` flags aren't set,
+        # `bot.owner_id` is `None` (GH-3782)
+        if self._use_team_features and self.owner_id is None:
             return False
 
         if self.owner_id:
