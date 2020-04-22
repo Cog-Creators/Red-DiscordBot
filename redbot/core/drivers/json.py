@@ -79,7 +79,8 @@ class JsonDriver(BaseDriver):
 
     @_lock.setter
     def _lock(self, value):
-        _locks[self.cog_name] = value
+        if not _locks.get(self.cog_name):
+            _locks[self.cog_name] = value
 
     @property
     def data(self):
