@@ -12,6 +12,7 @@ General Utility
 
 .. autoclass:: AsyncIter
     :members:
+    :special-members: __await__
     :exclude-members: enumerate, filter
 
     .. automethod:: enumerate

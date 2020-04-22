@@ -260,21 +260,39 @@ def bounded_gather(
 
 
 class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=duplicate-bases
-    """Asynchronous iterator yielding items from ``iterable`` that sleeps for ``delay`` seconds every ``steps`` items.
+    """Asynchronous iterator yielding items from ``iterable``
+    that sleeps for ``delay`` seconds every ``steps`` items.
 
     Parameters
     ----------
-    iterable : Iterable
+    iterable: Iterable
         The iterable to make async.
     delay: Union[float, int]
         The amount of time in seconds to sleep.
     steps: int
         The number of iterations between sleeps.
+
+    Raises
+    ------
+    ValueError
+        When ``steps`` is lower than 1.
+
+    Examples
+    --------
+    >>> from redbot.core.utils import AsyncIter
+    >>> async for value in AsyncIter(range(3)):
+    ...     print(value)
+    0
+    1
+    2
+
     """
 
     def __init__(
         self, iterable: Iterable[_T], delay: Union[float, int] = 0, steps: int = 1
     ) -> None:
+        if steps < 1:
+            raise ValueError("Steps must be higher than or equals to 1")
         self._delay = delay
         self._iterator = iter(iterable)
         self._i = 0
@@ -288,16 +306,36 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
             item = next(self._iterator)
         except StopIteration:
             raise StopAsyncIteration
-        self._i += 1
-        if self._i % self._steps == 0:
+        if self._i == self._steps:
+            self._i = 0
             await asyncio.sleep(self._delay)
+        self._i += 1
         return item
 
     def __await__(self) -> Generator[Any, None, List[_T]]:
+        """Returns a list of the iterable.
+
+        Examples
+        --------
+        >>> from redbot.core.utils import AsyncIter
+        >>> iterator = AsyncIter(range(5))
+        >>> await iterator
+        [0, 1, 2, 3, 4]
+
+        """
         return self.flatten().__await__()
 
     async def flatten(self) -> List[_T]:
-        """Returns a list of the iterable."""
+        """Returns a list of the iterable.
+
+        Examples
+        --------
+        >>> from redbot.core.utils import AsyncIter
+        >>> iterator = AsyncIter(range(5))
+        >>> await iterator.flatten()
+        [0, 1, 2, 3, 4]
+
+        """
         return [item async for item in self]
 
     def filter(self, function: Callable[[_T], Union[bool, Awaitable[bool]]]) -> AsyncFilter[_T]:
@@ -306,7 +344,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
 
         Parameters
         ----------
-        function : Callable[[T], Union[bool, Awaitable[bool]]]
+        function: Callable[[T], Union[bool, Awaitable[bool]]]
             A function or coroutine function which takes one item of ``iterable``
             as an argument, and returns ``True`` or ``False``.
 
@@ -318,21 +356,21 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
 
         Examples
         --------
-            >>> from redbot.core.utils import AsyncIter
-            >>> def predicate(value):
-            ...     return value <= 5
-            >>> iterator = AsyncIter([1, 10, 5, 100])
-            >>> async for i in iterator.filter(predicate):
-            ...     print(i)
-            1
-            5
+        >>> from redbot.core.utils import AsyncIter
+        >>> def predicate(value):
+        ...     return value <= 5
+        >>> iterator = AsyncIter([1, 10, 5, 100])
+        >>> async for i in iterator.filter(predicate):
+        ...     print(i)
+        1
+        5
 
-            >>> from redbot.core.utils import AsyncIter
-            >>> def predicate(value):
-            ...     return value <= 5
-            >>> iterator = AsyncIter([1, 10, 5, 100])
-            >>> await iterator.filter(predicate)
-            [1, 5]
+        >>> from redbot.core.utils import AsyncIter
+        >>> def predicate(value):
+        ...     return value <= 5
+        >>> iterator = AsyncIter([1, 10, 5, 100])
+        >>> await iterator.filter(predicate)
+        [1, 5]
 
         """
         return async_filter(function, self)
@@ -342,7 +380,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
 
         Parameters
         ----------
-        start : int
+        start: int
             The index to start from. Defaults to 0.
 
         Returns
@@ -352,13 +390,13 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
 
         Examples
         --------
-            >>> from redbot.core.utils import AsyncIter
-            >>> iterator = AsyncIter(['one', 'two', 'three'])
-            >>> async for i in iterator.enumerate(start=10):
-            ...     print(i)
-            (10, 'one')
-            (11, 'two')
-            (12, 'three')
+        >>> from redbot.core.utils import AsyncIter
+        >>> iterator = AsyncIter(['one', 'two', 'three'])
+        >>> async for i in iterator.enumerate(start=10):
+        ...     print(i)
+        (10, 'one')
+        (11, 'two')
+        (12, 'three')
 
         """
         return async_enumerate(self, start)
@@ -369,15 +407,16 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
 
         Examples
         --------
-            >>> from redbot.core.utils import AsyncIter
-            >>> iterator = AsyncIter([1,2,3,3,4,4,5])
-            >>> async for i in iterator.without_duplicates():
-            ...     print(i)
-            1
-            2
-            3
-            4
-            5
+        >>> from redbot.core.utils import AsyncIter
+        >>> iterator = AsyncIter([1,2,3,3,4,4,5])
+        >>> async for i in iterator.without_duplicates():
+        ...     print(i)
+        1
+        2
+        3
+        4
+        5
+
         """
         _temp = set()
         async for item in self:
