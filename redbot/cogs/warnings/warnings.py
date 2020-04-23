@@ -339,10 +339,10 @@ class Warnings(commands.Cog):
         """
         channel = ctx.channel
         guild = ctx.guild
-        guild_settings = await self.config.guild(guild).all()
         if user == ctx.author:
             await ctx.send(_("You cannot warn yourself."))
             return
+        guild_settings = await self.config.guild(guild).all()
         custom_allowed = guild_settings["allow_custom_reasons"]
         guild_settings = self.config.guild(ctx.guild)
         reason_type = None
