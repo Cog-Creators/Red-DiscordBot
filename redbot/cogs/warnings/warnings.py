@@ -29,7 +29,7 @@ class Warnings(commands.Cog):
         "reasons": {},
         "allow_custom_reasons": False,
         "toggle_dm": True,
-        "show_mod": True,
+        "show_mod": False,
         "warn_channel": None,
         "toggle_channel": False,
     }
