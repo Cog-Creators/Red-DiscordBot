@@ -16,6 +16,7 @@ Core Bot
 
   - Reduced calls to data backend when loading bot's commands (:issue:`3764`)
   - Reduced calls to data backend when showing help for cogs/commands (:issue:`3766`)
+  - Improved performance for bots with big amount of guilds (:issue:`3767`)
 
 Core Commands
 *************
@@ -32,6 +33,10 @@ Trivia Lists
 Developer changelog
 -------------------
 
+Utility Functions
+*****************
+
+- Added `redbot.core.utils.AsyncIter` utility class which allows you to wrap regular iterable into async iterator yielding items and sleeping for ``delay`` seconds every ``steps`` items (:issue:`3767`)
 
 
 Documentation changes
