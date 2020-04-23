@@ -15,6 +15,7 @@ Core Bot
 - Various optimizations
 
   - Reduced calls to data backend when loading bot's commands (:issue:`3764`)
+  - Reduced calls to data backend when showing help for cogs/commands (:issue:`3766`)
 
 Core Commands
 *************
