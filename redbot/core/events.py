@@ -119,9 +119,9 @@ def init_events(bot, cli_flags):
                     )
                     extra_update += _(
                         "\n\nPlease be aware that the command above is a best guess;"
-                        "\nThis is based on your current OS, enviroment and Python version and "
-                        "there is a small change this could be incorrect."
-                        "\n**Should the above not work for you please check our docs at <{docs}> "
+                        "\nIt is based on your current OS, environment, and Python version so "
+                        "there is a small chance it could be incorrect."
+                        "\n**Should the above not work for you, please check our docs at <{docs}> "
                         "and/or visit our support server at <https://discord.gg/red>.**"
                     ).format(
                         docs="https://docs.discord.red/en/stable/install_windows.html"
