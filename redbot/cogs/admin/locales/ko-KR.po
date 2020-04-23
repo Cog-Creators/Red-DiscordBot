@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-08 18:08+0000\n"
+"POT-Creation-Date: 2020-04-23 12:07+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -188,7 +188,7 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:433
 msgid "Added."
-msgstr ""
+msgstr "추가됐어요."
 
 #: redbot/cogs/admin/admin.py:436
 msgid "That role is already a selfrole."
@@ -205,7 +205,7 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:455
 msgid "Removed."
-msgstr ""
+msgstr "제거됐어요."
 
 #: redbot/cogs/admin/admin.py:460
 #, docstring
@@ -232,7 +232,7 @@ msgstr ""
 msgid "The Admin cog is not loaded."
 msgstr ""
 
-#: redbot/cogs/admin/converters.py:21
+#: redbot/cogs/admin/converters.py:20
 msgid "The provided role is not a valid selfrole."
 msgstr ""
 
