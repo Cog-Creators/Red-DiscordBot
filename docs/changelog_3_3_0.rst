@@ -22,6 +22,7 @@ Core Commands
 *************
 
 - ``[p]set avatar`` now supports setting avatar using attachment (:issue:`3747`)
+- Added ``[p]set avatar remove`` subcommand for removing bot's avatar (:issue:`3757`)
 - Fixed list of ignored channels that is shown in ``[p]ignore``/``[p]unignore`` (:issue:`3746`)
 
 Trivia Lists
