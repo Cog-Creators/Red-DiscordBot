@@ -35,7 +35,6 @@ ______         _           ______ _                       _  ______       _
 """
 
 _ = Translator(__name__, __file__)
-platform_console = "Command Prompt" if platform.system() == "Windows" else "Terminal"
 
 
 def init_events(bot, cli_flags):
@@ -110,7 +109,11 @@ def init_events(bot, cli_flags):
                         "\n\nTo update your bot, first shutdown your "
                         "bot then open a window of {console} (Not as admin) and "
                         "run the following:\n\n"
-                    ).format(console=platform_console)
+                    ).format(
+                        console=_("Command Prompt")
+                        if platform.system() == "Windows"
+                        else _("Terminal")
+                    )
                     extra_update += '```"{python}" -m pip install -U Red-DiscordBot```'.format(
                         python=sys.executable
                     )
