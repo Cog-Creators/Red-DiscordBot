@@ -4,7 +4,7 @@ Redbot 3.3.6 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MiniJennJenn`
+| :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MiniJennJenn`, :ghuser:`yamikaitou`
 
 End-user changelog
 ------------------
@@ -34,6 +34,7 @@ Documentation changes
 Miscellaneous
 -------------
 
+- **Trivia** - Corrected spelling of Compact Disc in ``games`` list (:issue:`3759`, :issue:`3758`)
 
 
 Redbot 3.3.5 (2020-04-09)
