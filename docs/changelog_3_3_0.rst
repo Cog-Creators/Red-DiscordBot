@@ -25,6 +25,11 @@ Core Commands
 - Added ``[p]set avatar remove`` subcommand for removing bot's avatar (:issue:`3757`)
 - Fixed list of ignored channels that is shown in ``[p]ignore``/``[p]unignore`` (:issue:`3746`)
 
+Streams
+*******
+
+- Fixed incorrect stream URLs for Twitch channels that have localised display name (:issue:`3773`, :issue:`3772`)
+
 Trivia Lists
 ************
 
