@@ -4,10 +4,17 @@ Redbot 3.3.6 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MiniJennJenn`, :ghuser:`yamikaitou`
+| :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MiniJennJenn`, :ghuser:`yamikaitou`
 
 End-user changelog
 ------------------
+
+Core Bot
+********
+
+- Various optimizations
+
+  - Reduced calls to data backend when loading bot's commands (:issue:`3764`)
 
 Core Commands
 *************
