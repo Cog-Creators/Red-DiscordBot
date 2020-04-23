@@ -339,10 +339,11 @@ class Warnings(commands.Cog):
         """
         channel = ctx.channel
         guild = ctx.guild
+        guild_settings = await self.config.guild(guild).all()
         if user == ctx.author:
             await ctx.send(_("You cannot warn yourself."))
             return
-        custom_allowed = await self.config.guild(ctx.guild).allow_custom_reasons()
+        custom_allowed = guild_settings["allow_custom_reasons"]
         guild_settings = self.config.guild(ctx.guild)
         reason_type = None
         async with guild_settings.reasons() as registered_reasons:
@@ -379,8 +380,8 @@ class Warnings(commands.Cog):
         await member_settings.total_points.set(current_point_count)
 
         await warning_points_add_check(self.config, ctx, user, current_point_count)
-        dm = await self.config.guild(ctx.guild).toggle_dm()
-        showmod = await self.config.guild(ctx.guild).show_mod()
+        dm = guild_settings["toggle_dm"]
+        showmod = guild_settings["show_mod"]
         dm_failed = False
         if dm:
             if showmod:
