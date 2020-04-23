@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-04-02 12:07+0000\n"
+"POT-Creation-Date: 2020-04-23 12:07+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Norwegian\n"
 "MIME-Version: 1.0\n"
@@ -21,112 +21,112 @@ msgstr ""
 msgid "Mention spam (Autoban)"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:73
+#: redbot/cogs/mod/kickban.py:74
 msgid "I cannot let you do that. Self-harm is bad {}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:75 redbot/cogs/mod/kickban.py:191
+#: redbot/cogs/mod/kickban.py:76 redbot/cogs/mod/kickban.py:192
 #: redbot/cogs/mod/kickban.py:469 redbot/cogs/mod/kickban.py:545
 #: redbot/cogs/mod/mutes.py:16
 msgid "I cannot let you do that. You are not higher than the user in the role hierarchy."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:81 redbot/cogs/mod/kickban.py:199
+#: redbot/cogs/mod/kickban.py:82 redbot/cogs/mod/kickban.py:200
 msgid "I cannot do that due to discord hierarchy rules"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:83 redbot/cogs/mod/kickban.py:315
+#: redbot/cogs/mod/kickban.py:84 redbot/cogs/mod/kickban.py:316
 msgid "Invalid days. Must be between 0 and 7."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:89
+#: redbot/cogs/mod/kickban.py:90
 msgid "You have been banned from {guild}."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:92 redbot/cogs/mod/kickban.py:209
+#: redbot/cogs/mod/kickban.py:93 redbot/cogs/mod/kickban.py:210
 msgid "**Reason**"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:93 redbot/cogs/mod/kickban.py:210
+#: redbot/cogs/mod/kickban.py:94 redbot/cogs/mod/kickban.py:211
 msgid "No reason was given."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:109 redbot/cogs/mod/kickban.py:218
+#: redbot/cogs/mod/kickban.py:110 redbot/cogs/mod/kickban.py:219
 msgid "I'm not allowed to do that."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:127
+#: redbot/cogs/mod/kickban.py:128
 msgid "The user was banned but an error occurred when trying to create the modlog entry: {reason}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:156
+#: redbot/cogs/mod/kickban.py:157
 msgid "Tempban finished"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:174
+#: redbot/cogs/mod/kickban.py:175
 #, docstring
 msgid "Kick a user.\\n\\n        If a reason is specified, it will be the reason that shows up\\n        in the audit log.\\n        "
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:184 redbot/cogs/mod/kickban.py:462
+#: redbot/cogs/mod/kickban.py:185 redbot/cogs/mod/kickban.py:462
 msgid "I cannot let you do that. Self-harm is bad {emoji}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:206
+#: redbot/cogs/mod/kickban.py:207
 msgid "You have been kicked from {guild}."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:236
+#: redbot/cogs/mod/kickban.py:237
 msgid "Done. That felt good."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:250
+#: redbot/cogs/mod/kickban.py:251
 #, docstring
 msgid "Ban a user from this server and optionally delete days of messages.\\n\\n        If days is not a number, it's treated as the first word of the reason.\\n\\n        Minimum 0 days, maximum 7. If not specified, defaultdays setting will be used instead."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:265
+#: redbot/cogs/mod/kickban.py:266
 msgid "Done. It was about time."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:281
+#: redbot/cogs/mod/kickban.py:282
 #, docstring
 msgid "Preemptively bans user(s) from the server\\n\\n        User IDs need to be provided in order to ban\\n        using this command"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:289
+#: redbot/cogs/mod/kickban.py:290
 msgid "Banned {num} users from the server."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:293
+#: redbot/cogs/mod/kickban.py:294
 msgid "\\nErrors:\\n"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:319
+#: redbot/cogs/mod/kickban.py:320
 msgid "I lack the permissions to do this."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:325
+#: redbot/cogs/mod/kickban.py:326
 msgid "User {user_id} is already banned."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:346 redbot/cogs/mod/kickban.py:350
+#: redbot/cogs/mod/kickban.py:347 redbot/cogs/mod/kickban.py:351
 msgid "Failed to ban user {user_id}: {reason}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:368
+#: redbot/cogs/mod/kickban.py:369
 msgid "User {user_id} does not exist."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:371
+#: redbot/cogs/mod/kickban.py:372
 msgid "Could not ban {user_id}: missing permissions."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:391
+#: redbot/cogs/mod/kickban.py:392
 msgid "Failed to create modlog case: {reason}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:401
+#: redbot/cogs/mod/kickban.py:402
 #, docstring
 msgid "Temporarily ban a user from this server."
 msgstr ""
