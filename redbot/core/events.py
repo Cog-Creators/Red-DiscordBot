@@ -135,9 +135,9 @@ def init_events(bot, cli_flags):
                         "\n\nYou have Python `{py_version}` and this update "
                         "requires `{req_py}`; you cannot simply run the update command.\n\n"
                         "You will need to follow the install instructions in our docs (<{docs}>) "
-                        "to reinstall Python, Red and any other dependency that are out of date "
+                        "to reinstall Python, Red and any other dependencies that are out of date "
                         "only skipping the `redbot-setup` command. (This will not delete your data)"
-                        "\nIf you already have a venv you will need to delete it and recreate it."
+                        "\nIf you already have a venv you will need to delete it and recreate it. "
                         "If you need help updating go to our "
                         "#support channel in <https://discord.gg/red>"
                     ).format(
