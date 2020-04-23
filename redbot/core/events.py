@@ -129,7 +129,6 @@ def init_events(bot, cli_flags):
                         else "https://docs.discord.red/en/stable/install_linux_mac.html",
                     )
 
-                    outdated_red_message += extra_update
                 else:
                     extra_update = _(
                         "\n\nYou have Python `{py_version}` and this update "
@@ -148,7 +147,7 @@ def init_events(bot, cli_flags):
                         else "https://docs.discord.red/en/stable/install_linux_mac.html",
                     )
 
-                    outdated_red_message += extra_update
+                outdated_red_message += extra_update
 
         INFO2 = []
 
