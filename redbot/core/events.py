@@ -99,14 +99,14 @@ def init_events(bot, cli_flags):
                     "Outdated version! {} is available "
                     "but you're using {}".format(data["info"]["version"], red_version)
                 )
-                outdated_red_message = (
+                outdated_red_message = _(
                     "Your Red instance is out of date! {} is the current "
                     "version, however you are using {}!"
                 ).format(data["info"]["version"], red_version)
                 requires_python = data["info"]["requires_python"]
                 current_python = platform.python_version()
                 if expected_version(current_python, requires_python):
-                    extra_update = (
+                    extra_update = _(
                         "\n\nTo update your bot, first shutdown your "
                         "bot then open a window of {console} (Not as admin) and "
                         "run the following:\n\n"
@@ -114,7 +114,7 @@ def init_events(bot, cli_flags):
                     extra_update += '```"{python}" -m pip install -U Red-DiscordBot```'.format(
                         python=sys.executable
                     )
-                    extra_update += (
+                    extra_update += _(
                         "\n\nPlease be aware that the command above is a best guess;"
                         "\nThis is based on your current OS, enviroment and Python version and "
                         "there is a small change this could be incorrect."
@@ -128,7 +128,7 @@ def init_events(bot, cli_flags):
 
                     outdated_red_message += extra_update
                 else:
-                    extra_update = (
+                    extra_update = _(
                         "\n\nYou have Python `{py_version}` and this update "
                         "requires `{req_py}`; you cannot simply run the update command.\n\n"
                         "You will need to follow the install instructions in our docs (<{docs}>) "
