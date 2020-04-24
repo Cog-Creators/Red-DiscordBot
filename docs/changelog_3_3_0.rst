@@ -19,6 +19,7 @@ Core Bot
   - Reduced calls to data backend when showing help for cogs/commands (:issue:`3766`)
   - Improved performance for bots with big amount of guilds (:issue:`3767`)
   - Mod cog no longer fetches guild's bans every 60 seconds when handling unbanning for tempbans (:issue:`3783`)
+  - Reduced the bot load for messages starting with a prefix when fuzzy search is disabled (:issue:`3718`)
 
 Core Commands
 *************
