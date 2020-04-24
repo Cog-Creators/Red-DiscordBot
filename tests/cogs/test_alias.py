@@ -60,7 +60,7 @@ async def test_delete_global_alias(alias, ctx):
     alias_obj = await alias._aliases.is_alias(ctx.guild, "test_global")
     assert alias_obj.name == "test_global"
 
-    did_delete = await alias._aliases.delete_alias(ctx, alias_name="test", global_=True)
+    did_delete = await alias._aliases.delete_alias(ctx, alias_name="test_global", global_=True)
     assert did_delete is True
 
     is_alias = await alias._aliases.is_alias(None, "test_global")
