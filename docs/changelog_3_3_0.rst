@@ -12,6 +12,7 @@ End-user changelog
 Core Bot
 ********
 
+- Fixed big delays in commands that happened when the bot was owner-less (or if it only used co-owners feature) and command caller wasn't the owner (:issue:`3782`)
 - Various optimizations
 
   - Reduced calls to data backend when loading bot's commands (:issue:`3764`)
