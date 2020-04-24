@@ -65,7 +65,7 @@ If you already have Red installed in a virtual environment, you will need to del
 
      - If you were not using the MongoDB driver, this does not affect you.
      - If you were using a 3rd party cog which required MongoDB, it probably still does.
-     - If you were using the MongoDB driver, prior to launching your instance after update,
+     - If you were using the MongoDB driver, **prior to launching your instance after update**,
        you will need to run the following commands to convert:
 
          .. code::
