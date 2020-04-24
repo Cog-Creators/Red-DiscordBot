@@ -22,7 +22,7 @@ async def create_test_guild_alias(alias, ctx):
 
 
 async def create_test_global_alias(alias, ctx):
-    await alias._aliases.add_alias(ctx, "test", "ping", global_=True)
+    await alias._aliases.add_alias(ctx, "test_global", "ping", global_=True)
 
 
 @pytest.mark.asyncio
