@@ -261,7 +261,7 @@ class Alias(commands.Cog):
     @commands.guild_only()
     async def _del_alias(self, ctx: commands.Context, alias_name: str):
         """Delete an existing alias on this server."""
-        if not await self._aliases.get_server_aliases(ctx.guild):
+        if not await self._aliases.get_guild_aliases(ctx.guild):
             await ctx.send(_("There are no aliases on this server."))
             return
 
@@ -291,10 +291,10 @@ class Alias(commands.Cog):
     @commands.guild_only()
     async def _list_alias(self, ctx: commands.Context):
         """List the available aliases on this server."""
-        if not await self._aliases.get_server_aliases(ctx.guild):
+        if not await self._aliases.get_guild_aliases(ctx.guild):
             return await ctx.send(_("There are no aliases on this server."))
         names = [_("Aliases:")] + sorted(
-            ["+ " + a.name for a in await self._aliases.get_server_aliases(ctx.guild)]
+            ["+ " + a.name for a in await self._aliases.get_guild_aliases(ctx.guild)]
         )
         await ctx.send(box("\n".join(names), "diff"))
 

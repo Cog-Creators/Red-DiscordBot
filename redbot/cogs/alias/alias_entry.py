@@ -120,10 +120,10 @@ class AliasCache:
         server_aliases: List[AliasEntry] = []
         global_aliases = await self.get_global_aliases()
         if ctx.guild and ctx.guild.id in self._aliases:
-            server_aliases = await self.get_server_aliases(ctx.guild)
+            server_aliases = await self.get_guild_aliases(ctx.guild)
         return global_aliases + server_aliases
 
-    async def get_server_aliases(self, guild: discord.Guild) -> List[AliasEntry]:
+    async def get_guild_aliases(self, guild: discord.Guild) -> List[AliasEntry]:
         """Returns all guild specific aliases"""
         aliases: List[AliasEntry] = []
         if self._cache_enabled:
