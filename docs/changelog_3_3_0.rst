@@ -18,6 +18,7 @@ Core Bot
   - Reduced calls to data backend when loading bot's commands (:issue:`3764`)
   - Reduced calls to data backend when showing help for cogs/commands (:issue:`3766`)
   - Improved performance for bots with big amount of guilds (:issue:`3767`)
+  - Stop fetching guild bans when handling unbanning for tempbans (:issue:`3783`)
 
 Core Commands
 *************
