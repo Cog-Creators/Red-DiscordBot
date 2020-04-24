@@ -29,7 +29,7 @@ async def create_test_global_alias(alias, ctx):
 async def test_add_guild_alias(alias, ctx):
     await create_test_guild_alias(alias, ctx)
 
-    alias_obj = await alias.is_alias(ctx.guild, "test")
+    alias_obj = await alias._aliases.is_alias(ctx.guild, "test")
     assert alias_obj.global_ is False
 
 
@@ -48,7 +48,7 @@ async def test_delete_guild_alias(alias, ctx):
 @pytest.mark.asyncio
 async def test_add_global_alias(alias, ctx):
     await create_test_global_alias(alias, ctx)
-    alias_obj = await alias.is_alias(ctx.guild, "test")
+    alias_obj = await alias._aliases.is_alias(ctx.guild, "test")
 
     assert alias_obj.global_ is True
 
