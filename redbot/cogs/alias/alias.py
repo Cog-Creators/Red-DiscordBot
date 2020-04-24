@@ -316,7 +316,7 @@ class Alias(commands.Cog):
             return
 
         try:
-            potential_alias = message.content[len(prefix):].split(" ")[0]
+            potential_alias = message.content[len(prefix) :].split(" ")[0]
         except IndexError:
             return
 
