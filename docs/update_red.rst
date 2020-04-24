@@ -6,7 +6,7 @@ Updating to the latest version of Red has several benefits:
 
 - New features and improvements are added.
 - Bugs are fixed.
-- Older versions can be vulnerable to security issues.
+- Your bot is safe from security vulnerabilities that have been found.
 
 Here are some things to consider to help make your upgrade as smooth as possible.
 
