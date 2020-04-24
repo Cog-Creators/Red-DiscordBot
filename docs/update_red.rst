@@ -44,7 +44,31 @@ If you have Red 3.2.0 or newer, all you have to do to upgrade Red is running 2 c
 Linux & Mac
 -----------
 
-To be added
+If you have Red 3.2.0 or newer, all you have to do to upgrade Red is running 2 commands.
+
+1. Activate your virtual environment.
+  
+    If you used ``venv`` for your virtual environment, use:
+
+    .. code:: none
+
+        source ~/redenv/bin/activate
+
+    If you used ``pyenv`` for your virtual environment, use:
+
+    .. code:: none
+
+        pyenv shell <name>
+
+2. Update Red with this command:
+
+.. code:: none
+
+    python -m pip install -U Red-DiscordBot
+
+.. attention::
+
+    If you're using PostgreSQL data backend, replace ``Red-DiscordBot`` in the second command with ``Red-DiscordBot[postgres]``
 
 
 Red 3.1.X
