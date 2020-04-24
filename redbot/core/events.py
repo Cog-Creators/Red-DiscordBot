@@ -61,6 +61,7 @@ def init_events(bot, cli_flags):
         else:
             if bot.owner_id is None:
                 bot.owner_id = app_info.owner.id
+        bot._app_owners_fetched = True
 
         try:
             invite_url = discord.utils.oauth_url(app_info.id)
