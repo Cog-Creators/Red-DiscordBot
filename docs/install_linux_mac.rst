@@ -313,7 +313,7 @@ virtual environment.
 
 .. code-block:: none
 
-    curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
+    command -v pyenv && pyenv update || curl https://pyenv.run | bash
 
 After this command, you may see a warning about 'pyenv' not being in the load path. Follow the
 instructions given to fix that, then close and reopen your shell.
@@ -322,7 +322,7 @@ Then run the following command:
 
 .. code-block:: none
 
-    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.8.1 -v
+    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.8.2 -v
 
 This may take a long time to complete, depending on your hardware. For some machines (such as
 Raspberry Pis and micro-tier VPSes), it may take over an hour; in this case, you may wish to remove
@@ -334,7 +334,7 @@ After that is finished, run:
 
 .. code-block:: none
 
-    pyenv global 3.8.1
+    pyenv global 3.8.2
 
 Pyenv is now installed and your system should be configured to run Python 3.8.
 
