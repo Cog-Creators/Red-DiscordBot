@@ -25,6 +25,11 @@ Core Commands
 - Added ``[p]set avatar remove`` subcommand for removing bot's avatar (:issue:`3757`)
 - Fixed list of ignored channels that is shown in ``[p]ignore``/``[p]unignore`` (:issue:`3746`)
 
+Modlog
+******
+
+- Fixed ``AttributeError`` for cases whose moderator doesn't share the server with the bot (:issue:`3784`, :issue:`3778`)
+
 Streams
 *******
 
