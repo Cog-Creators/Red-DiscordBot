@@ -4,7 +4,7 @@ Redbot 3.3.6 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MiniJennJenn`, :ghuser:`PredaaA`, :ghuser:`yamikaitou`
+| :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MiniJennJenn`, :ghuser:`PredaaA`, :ghuser:`yamikaitou`
 
 End-user changelog
 ------------------
@@ -27,6 +27,12 @@ Core Commands
 - ``[p]set avatar`` now supports setting avatar using attachment (:issue:`3747`)
 - Added ``[p]set avatar remove`` subcommand for removing bot's avatar (:issue:`3757`)
 - Fixed list of ignored channels that is shown in ``[p]ignore``/``[p]unignore`` (:issue:`3746`)
+
+Audio
+*****
+
+- Age-restricted tracks, live streams, and mix playlists from YouTube should work in Audio again (:issue:`3791`)
+- Soundcloud's sets and playlists with more than 50 tracks should work in Audio again (:issue:`3791`)
 
 Modlog
 ******
