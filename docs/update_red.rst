@@ -6,7 +6,7 @@ Updating to the latest version of Red has several benefits:
 
 - New features and improvements are added.
 - Bugs are fixed.
-- Older versions of Red don't receive security updates.
+- Older versions can be vulnerable to security issues.
 
 Here are some things to consider to help make your upgrade as smooth as possible.
 
