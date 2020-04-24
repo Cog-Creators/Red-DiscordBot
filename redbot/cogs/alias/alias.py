@@ -49,13 +49,6 @@ class Alias(commands.Cog):
         self.config.register_global(**self.default_global_settings)
         self.config.register_guild(**self.default_guild_settings)
         self._aliases: AliasCache = AliasCache(config=self.config, cache_enabled=True)
-        self._load_cache = self.bot.loop.create_task(self.initialize())
-
-    async def initialize(self):
-        await self.bot.wait_until_red_ready()
-        await self._aliases.load_aliases()
-        # When bot level cache disable is added this can be surrounded by an if
-        # Then the AliasCache object just needs its cache_enabled flag set to False
 
     def is_command(self, alias_name: str) -> bool:
         """
@@ -309,7 +302,7 @@ class Alias(commands.Cog):
         await ctx.send(box("\n".join(names), "diff"))
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
+    async def on_message_without_command(self, message: discord.Message):
         try:
             prefix = await self.get_prefix(message)
         except ValueError:

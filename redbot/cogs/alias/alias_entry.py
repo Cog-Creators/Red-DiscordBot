@@ -100,6 +100,7 @@ class AliasCache:
     def __init__(self, config: Config, cache_enabled: bool = True):
         self.config = config
         self._cache_enabled = cache_enabled
+        self._loaded = False
         self._aliases: Dict[Optional[int], Dict[str, AliasEntry]] = {}
 
     async def load_aliases(self):
@@ -126,7 +127,11 @@ class AliasCache:
     async def get_guild_aliases(self, guild: discord.Guild) -> List[AliasEntry]:
         """Returns all guild specific aliases"""
         aliases: List[AliasEntry] = []
+
         if self._cache_enabled:
+            if not self._loaded:
+                await self.load_aliases()
+                self._loaded = True
             if guild.id in self._aliases:
                 for _, alias in self._aliases[guild.id].items():
                     aliases.append(alias)
@@ -138,6 +143,9 @@ class AliasCache:
         """Returns all global specific aliases"""
         aliases: List[AliasEntry] = []
         if self._cache_enabled:
+            if not self._loaded:
+                await self.load_aliases()
+                self._loaded = True
             for _, alias in self._aliases[None].items():
                 aliases.append(alias)
         else:
@@ -151,6 +159,9 @@ class AliasCache:
         server_aliases: List[AliasEntry] = []
 
         if self._cache_enabled:
+            if not self._loaded:
+                await self.load_aliases()
+                self._loaded = True
             if guild is not None:
                 if guild.id in self._aliases:
                     server_aliases = list(self._aliases[guild.id].values())
