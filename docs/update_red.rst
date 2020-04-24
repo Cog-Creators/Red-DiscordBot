@@ -27,15 +27,15 @@ If you have Red 3.2.0 or newer, all you have to do to upgrade Red is running 2 c
 
 1. Activate your venv with the following command:
 
-.. code:: none
+    .. code:: none
 
-    "%userprofile%\redenv\Scripts\activate.bat"
+        "%userprofile%\redenv\Scripts\activate.bat"
 
 2. Update Red with this command:
 
-.. code:: none
+    .. code:: none
 
-    python -m pip install -U Red-DiscordBot
+        python -m pip install -U Red-DiscordBot
 
 .. attention::
 
@@ -62,9 +62,9 @@ If you have Red 3.2.0 or newer, all you have to do to upgrade Red is running 2 c
 
 2. Update Red with this command:
 
-.. code:: none
+    .. code:: none
 
-    python -m pip install -U Red-DiscordBot
+        python -m pip install -U Red-DiscordBot
 
 .. attention::
 
