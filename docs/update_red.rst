@@ -77,4 +77,24 @@ If you already have Red installed in a virtual environment, you will need to del
 Red 3.0.2 and older
 *******************
 
-To be added
+.. important::
+
+    Red 3.2 dropped support for the MongoDB driver
+
+     - If you were not using the MongoDB driver, this does not affect you.
+     - If you were using a 3rd party cog which required MongoDB, it probably still does.
+     - If you were using the MongoDB driver, **prior to updating**, you will need to convert your data to JSON backend,
+       using following command:
+
+         .. code::
+
+           redbot-setup --edit
+
+If you have Red 3.0.2 or older, you will need to follow the install instructions for your operating system:
+
+- `Windows <install_windows>`
+- `Linux & Mac <install_linux_mac>`
+
+Follow every step to ensure you have all dependencies up-to-date and only skip ``redbot-setup`` step as you already have a bot instance.
+
+If you already have Red installed in a virtual environment, you will need to delete it before starting this process.
