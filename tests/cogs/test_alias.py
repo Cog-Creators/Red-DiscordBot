@@ -30,7 +30,7 @@ async def test_add_guild_alias(alias, ctx):
     await create_test_guild_alias(alias, ctx)
 
     alias_obj = await alias._aliases.is_alias(ctx.guild, "test")
-    assert alias_obj.global_ is False
+    assert alias_obj.name == "test"
 
 
 @pytest.mark.asyncio
