@@ -9,7 +9,7 @@ def test_is_valid_alias_name(alias):
 
 @pytest.mark.asyncio
 async def test_empty_guild_aliases(alias, empty_guild):
-    assert list(await alias._aliases.get_server_aliases(empty_guild)) == []
+    assert list(await alias._aliases.get_guild_aliases(empty_guild)) == []
 
 
 @pytest.mark.asyncio
