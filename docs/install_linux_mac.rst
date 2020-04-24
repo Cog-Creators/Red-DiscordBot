@@ -239,9 +239,9 @@ Continue by `creating-venv-linux`.
 
 .. _install-ubuntu:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Ubuntu LTS versions (18.04 and 16.04)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Ubuntu LTS versions (20.04, 18.04, and 16.04)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
 
