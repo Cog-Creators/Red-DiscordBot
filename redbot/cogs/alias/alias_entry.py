@@ -101,10 +101,9 @@ class AliasCache:
         self.config = config
         self._cache_enabled = cache_enabled
         self._loaded = False
-        self._aliases: Dict[Optional[int], Dict[str, AliasEntry]] = {}
+        self._aliases: Dict[Optional[int], Dict[str, AliasEntry]] = {None: {}}
 
     async def load_aliases(self):
-        self._aliases[None] = {}
         for alias in await self.config.entries():
             self._aliases[None][alias["name"]] = AliasEntry.from_json(alias)
 
