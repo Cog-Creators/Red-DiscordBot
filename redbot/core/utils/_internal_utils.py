@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import collections.abc
 import json
 import logging
 import os
@@ -9,7 +10,16 @@ import shutil
 import tarfile
 from datetime import datetime
 from pathlib import Path
-from typing import Awaitable, Callable, List, Optional, Set, Union, TYPE_CHECKING
+from typing import (
+    AsyncIterator,
+    Awaitable,
+    Callable,
+    Iterator,
+    List,
+    Optional,
+    Union,
+    TYPE_CHECKING,
+)
 
 import discord
 from fuzzywuzzy import fuzz, process
@@ -51,7 +61,7 @@ async def fuzzy_command_search(
     ctx: Context,
     term: Optional[str] = None,
     *,
-    commands: Optional[Set[Command]] = None,
+    commands: Optional[Union[AsyncIterator[Command], Iterator[Command]]] = None,
     min_score: int = 80,
 ) -> Optional[List[Command]]:
     """Search for commands which are similar in name to the one invoked.
@@ -66,7 +76,7 @@ async def fuzzy_command_search(
     term : Optional[str]
         The name of the invoked command. If ``None``,
         `Context.invoked_with` will be used instead.
-    commands : Optional[Set[commands.Command]]
+    commands : Optional[Union[AsyncIterator[commands.Command], Iterator[commands.Command]]]
         The commands available to choose from when doing a fuzzy match.
         When omitted, `Bot.walk_commands` will be used instead.
     min_score : int
@@ -108,10 +118,15 @@ async def fuzzy_command_search(
         else:
             return None
 
+    if commands is None:
+        choices = set(ctx.bot.walk_commands())
+    elif isinstance(commands, collections.abc.AsyncIterator):
+        choices = {c async for c in commands}
+    else:
+        choices = set(commands)
+
     # Do the scoring. `extracted` is a list of tuples in the form `(command, score)`
-    extracted = process.extract(
-        term, (commands or set(ctx.bot.walk_commands())), limit=5, scorer=fuzz.QRatio
-    )
+    extracted = process.extract(term, choices, limit=5, scorer=fuzz.QRatio)
     if not extracted:
         return None
 
