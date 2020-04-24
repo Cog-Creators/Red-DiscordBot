@@ -709,10 +709,10 @@ class RedBase(
         ret = False
 
         if self.owner_id:
-            return self.owner_id == user.id
-        elif self.owner_ids:
-            return user.id in self.owner_ids
-        elif not self._app_owners_fetched:
+            ret = self.owner_id == user.id
+        if self.owner_ids:
+            ret = ret or user.id in self.owner_ids
+        elif not (self._app_owners_fetched and self.owner_id):
             app = await self.application_info()
             if app.team:
                 if self._use_team_features:
