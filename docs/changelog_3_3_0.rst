@@ -30,6 +30,11 @@ Streams
 
 - Fixed incorrect stream URLs for Twitch channels that have localised display name (:issue:`3773`, :issue:`3772`)
 
+Trivia
+******
+
+- Fixed the error in ``[p]trivia stop`` that happened when there was no ongoing trivia session in the channel (:issue:`3774`)
+
 Trivia Lists
 ************
 
