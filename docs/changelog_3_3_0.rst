@@ -70,6 +70,7 @@ Documentation changes
 
 - ``pyenv`` instructions will now update ``pyenv`` if it's already installed (:issue:`3740`)
 - Updated Python version in ``pyenv`` instructions (:issue:`3740`)
+- Updated install docs to include Ubuntu 20.04 (:issue:`3792`)
 
 
 Miscellaneous
