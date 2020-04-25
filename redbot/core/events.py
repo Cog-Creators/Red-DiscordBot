@@ -57,10 +57,9 @@ def init_events(bot, cli_flags):
 
         if app_info.team:
             if bot._use_team_features:
-                bot.owner_ids = {m.id for m in app_info.team.members}
-        else:
-            if bot.owner_id is None:
-                bot.owner_id = app_info.owner.id
+                bot.owner_ids.update(m.id for m in app_info.team.members)
+        elif bot._owner_id_overwrite is None:
+            bot.owner_ids.add(app_info.owner.id)
         bot._app_owners_fetched = True
 
         try:
