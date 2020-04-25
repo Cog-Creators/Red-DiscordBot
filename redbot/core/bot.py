@@ -703,8 +703,25 @@ class RedBase(
         -------
         bool
         """
+        # user is co-owner, no need to check anything else (oh man, that's so simple!)
         if user.id in self._co_owners:
             return True
+
+        # for poor souls who will have to look at this in future...
+        #
+        # Before app owners are fetched:
+        # - `owner_id` can be `None` or it can contain ID set through Config or `--owner` flag
+        # - `owner_ids` is an empty set
+        #
+        # After app owners are fetched:
+        # - `owner_id` can only be `None` if we're dealing with team app,
+        # *however* it might also contain user ID that was set through Config or `--owner` flag
+        # - `owner_ids` will only be filled if it's a team application
+        # and `--team-members-are-owners` flag is used
+        #
+        # Because the owner can be set through Config or `--owner` flag
+        # and it's then put into `owner_id`, unlike d.py, we have to
+        # consider both `owner_id` and `owner_ids` owners
 
         ret = False
 
@@ -712,13 +729,13 @@ class RedBase(
             ret = self.owner_id == user.id
         if self.owner_ids:
             ret = ret or user.id in self.owner_ids
-        elif not (self._app_owners_fetched and self.owner_id):
+        elif not self._app_owners_fetched:
             app = await self.application_info()
             if app.team:
                 if self._use_team_features:
                     self.owner_ids = ids = {m.id for m in app.team.members}
                     ret = user.id in ids
-            else:
+            elif not self.owner_id:
                 self.owner_id = owner_id = app.owner.id
                 ret = user.id == owner_id
             self._app_owners_fetched = True
