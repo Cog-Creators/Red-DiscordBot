@@ -24,11 +24,7 @@ class AliasEntry:
     uses: int
 
     def __init__(
-        self,
-        name: str,
-        command: Union[Tuple[str], str],
-        creator: int,
-        guild: Optional[int],
+        self, name: str, command: Union[Tuple[str], str], creator: int, guild: Optional[int],
     ):
         super().__init__()
         self.has_real_data = False

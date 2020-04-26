@@ -301,9 +301,7 @@ class Alias(commands.Cog):
         global_aliases = await self._aliases.get_global_aliases()
         if not global_aliases:
             return await ctx.send(_("There are no global aliases."))
-        names = [_("Aliases:")] + sorted(
-            ["+ " + a.name for a in global_aliases]
-        )
+        names = [_("Aliases:")] + sorted(["+ " + a.name for a in global_aliases])
         await ctx.send(box("\n".join(names), "diff"))
 
     @commands.Cog.listener()
