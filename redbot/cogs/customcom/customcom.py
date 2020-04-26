@@ -206,6 +206,24 @@ class CustomCommands(commands.Cog):
         """Custom commands management."""
         pass
 
+    @customcom.command(name="raw")
+    async def cc_raw(self, ctx: commands.Context, command: str.lower):
+        """Get the raw response of a custom command, to get the proper markdown.
+        
+        This is helpful for copy and pasting."""
+        commands = await self.config.guild(ctx.guild).commands()
+        if not command in commands:
+            return await ctx.send("That command doesn't exist.")
+        command = commands[command]
+        if type(command["response"]) == str:
+            raw = discord.utils.escape_markdown(command["response"])
+            await ctx.send(raw)
+        else:
+            await ctx.send(_("The following are responses recorded:"))
+            for number, response in enumerate(command["response"], start=1):
+                raw = discord.utils.escape_markdown(response)
+                await ctx.send(f"{str(number)} - {raw}")
+
     @customcom.command(name="search")
     @commands.guild_only()
     async def cc_search(self, ctx: commands.Context, *, query):
