@@ -219,10 +219,25 @@ class CustomCommands(commands.Cog):
             raw = discord.utils.escape_markdown(command["response"])
             await ctx.send(raw)
         else:
-            await ctx.send(_("The following are responses recorded:"))
-            for number, response in enumerate(command["response"], start=1):
-                raw = discord.utils.escape_markdown(response)
-                await ctx.send(f"{str(number)} - {raw}")
+            msglist = []
+            if await ctx.embed_requested():
+                colour = await ctx.embed_colour()
+                for number, response in enumerate(command["response"], start=1):
+                    raw = discord.utils.escape_markdown(response)
+                    embed = discord.Embed(
+                        title=_("Response #{num}/{total}".format(num=number, total=len(command["response"]))),
+                        description=raw,
+                        colour=colour
+                    )
+                    msglist.append(embed)
+            else:
+                for number, response in enumerate(command["response"], start=1):
+                    raw = discord.utils.escape_markdown(response)
+                    msg = _(
+                        "Response #{num}/{total}:\n{raw}".format(num=number, total=len(command["response"]), raw=raw)
+                    )
+                    msglist.append(msg)
+            await menus.menu(ctx, msglist, menus.DEFAULT_CONTROLS)
 
     @customcom.command(name="search")
     @commands.guild_only()
