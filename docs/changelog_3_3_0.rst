@@ -12,6 +12,7 @@ End-user changelog
 Core Bot
 ********
 
+- Converting from and to Postgres driver with ``redbot-setup convert`` have been fixed (:issue:`3714`, :issue:`3115`)
 - Fixed big delays in commands that happened when the bot was owner-less (or if it only used co-owners feature) and command caller wasn't the owner (:issue:`3782`)
 - Various optimizations
 
