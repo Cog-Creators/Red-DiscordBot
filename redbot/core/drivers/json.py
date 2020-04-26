@@ -187,11 +187,11 @@ class JsonDriver(BaseDriver):
                     continue
             if not isinstance(data, dict):
                 continue
-            for cog, inner in data.items():
+            cog_name = _dir.stem
+            for cog_id, inner in data.items():
                 if not isinstance(inner, dict):
                     continue
-                for cog_id in inner:
-                    yield cog, cog_id
+                yield cog_name, cog_id
 
     async def import_data(self, cog_data, custom_group_data):
         def update_write_data(identifier_data: IdentifierData, _data):
