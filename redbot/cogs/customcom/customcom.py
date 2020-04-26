@@ -217,6 +217,8 @@ class CustomCommands(commands.Cog):
         command = commands[command]
         if isinstance(command["response"], str):
             raw = discord.utils.escape_markdown(command["response"])
+            if len(raw) > 2000:
+                raw = f"{raw[:1997]}..."
             await ctx.send(raw)
         else:
             msglist = []
@@ -224,6 +226,8 @@ class CustomCommands(commands.Cog):
                 colour = await ctx.embed_colour()
                 for number, response in enumerate(command["response"], start=1):
                     raw = discord.utils.escape_markdown(response)
+                    if len(raw) > 2048:
+                        raw = f"{raw[:2045]}..."
                     embed = discord.Embed(
                         title=_("Response #{num}/{total}").format(
                             num=number, total=len(command["response"])
