@@ -4,7 +4,7 @@ Redbot 3.3.6 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MiniJennJenn`, :ghuser:`PredaaA`, :ghuser:`yamikaitou`
+| :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MiniJennJenn`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`yamikaitou`
 
 End-user changelog
 ------------------
@@ -33,6 +33,11 @@ Audio
 
 - Age-restricted tracks, live streams, and mix playlists from YouTube should work in Audio again (:issue:`3791`)
 - Soundcloud's sets and playlists with more than 50 tracks should work in Audio again (:issue:`3791`)
+
+CustomCommands
+**************
+
+- Added ``[p]cc raw`` command that gives you the raw response of a custom command for ease of copy pasting (:issue:`3795`)
 
 Modlog
 ******
