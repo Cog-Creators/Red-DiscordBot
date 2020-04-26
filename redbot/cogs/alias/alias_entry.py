@@ -18,7 +18,7 @@ class AliasEntry:
 
     name: str
     command: Union[Tuple[str], str]
-    creator: Union[discord.Member, int]
+    creator: int
     has_real_data: bool
     guild: Optional[int]
     uses: int
@@ -27,7 +27,7 @@ class AliasEntry:
         self,
         name: str,
         command: Union[Tuple[str], str],
-        creator: Union[discord.Member, int],
+        creator: int,
         guild: Optional[int],
     ):
         super().__init__()
@@ -104,15 +104,19 @@ class AliasCache:
         self._aliases: Dict[Optional[int], Dict[str, AliasEntry]] = {None: {}}
 
     async def load_aliases(self):
+        if not self._cache_enabled:
+            self._loaded = True
+            return
         for alias in await self.config.entries():
             self._aliases[None][alias["name"]] = AliasEntry.from_json(alias)
 
-        for guild_id in await self.config.all_guilds():
-            aliases = await self.config.guild_from_id(guild_id).entries()
+        all_guilds = await self.config.all_guilds()
+        for guild_id in all_guilds:
             if guild_id not in self._aliases:
                 self._aliases[guild_id] = {}
-            for alias in aliases:
+            for alias in all_guilds[guild_id]["entries"]:
                 self._aliases[guild_id][alias["name"]] = AliasEntry.from_json(alias)
+        self._loaded = True
 
     async def get_aliases(self, ctx: commands.Context) -> List[AliasEntry]:
         """Returns all possible aliases with the given context"""
@@ -128,9 +132,6 @@ class AliasCache:
         aliases: List[AliasEntry] = []
 
         if self._cache_enabled:
-            if not self._loaded:
-                await self.load_aliases()
-                self._loaded = True
             if guild.id in self._aliases:
                 for _, alias in self._aliases[guild.id].items():
                     aliases.append(alias)
@@ -142,41 +143,36 @@ class AliasCache:
         """Returns all global specific aliases"""
         aliases: List[AliasEntry] = []
         if self._cache_enabled:
-            if not self._loaded:
-                await self.load_aliases()
-                self._loaded = True
             for _, alias in self._aliases[None].items():
                 aliases.append(alias)
         else:
             aliases = [AliasEntry.from_json(d) for d in await self.config.entries()]
         return aliases
 
-    async def is_alias(
+    async def get_alias(
         self, guild: Optional[discord.Guild], alias_name: str,
     ) -> Optional[AliasEntry]:
         """Returns an AliasEntry object if the provided alias_name is a registered alias"""
         server_aliases: List[AliasEntry] = []
 
         if self._cache_enabled:
-            if not self._loaded:
-                await self.load_aliases()
-                self._loaded = True
             if guild is not None:
                 if guild.id in self._aliases:
-                    server_aliases = list(self._aliases[guild.id].values())
-
-            global_aliases = list(self._aliases[None].values())
+                    if alias_name in self._aliases[guild.id]:
+                        return self._aliases[guild.id][alias_name]
+            if alias_name in self._aliases[None]:
+                return self._aliases[None][alias_name]
         else:
             if guild:
                 server_aliases = [
                     AliasEntry.from_json(d) for d in await self.config.guild(guild.id).entries()
                 ]
             global_aliases = [AliasEntry.from_json(d) for d in await self.config.entries()]
-        all_aliases = global_aliases + server_aliases
+            all_aliases = global_aliases + server_aliases
 
-        for alias in all_aliases:
-            if alias.name == alias_name:
-                return alias
+            for alias in all_aliases:
+                if alias.name == alias_name:
+                    return alias
 
         return None
 
@@ -228,14 +224,13 @@ class AliasCache:
 
         async with settings.entries() as aliases:
             for alias in aliases:
-                alias_obj = AliasEntry.from_json(alias)
-                if alias_obj.name == alias_name:
+                if alias["name"] == alias_name:
                     aliases.remove(alias)
                     if self._cache_enabled:
                         if global_:
-                            del self._aliases[None][alias_obj.name]
+                            del self._aliases[None][alias_name]
                         else:
-                            del self._aliases[ctx.guild.id][alias_obj.name]
+                            del self._aliases[ctx.guild.id][alias_name]
                     return True
 
         return False

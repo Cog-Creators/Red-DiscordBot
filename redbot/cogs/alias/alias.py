@@ -50,6 +50,11 @@ class Alias(commands.Cog):
         self.config.register_guild(**self.default_guild_settings)
         self._aliases: AliasCache = AliasCache(config=self.config, cache_enabled=True)
 
+    async def initialize(self):
+        # This can be where we set the cache_enabled attribute later
+        if not self._aliases._loaded:
+            await self._aliases.load_aliases()
+
     def is_command(self, alias_name: str) -> bool:
         """
         The logic here is that if this returns true, the name should not be used for an alias
@@ -123,8 +128,8 @@ class Alias(commands.Cog):
             )
             return
 
-        is_alias = await self._aliases.is_alias(ctx.guild, alias_name)
-        if is_alias:
+        get_alias = await self._aliases.get_alias(ctx.guild, alias_name)
+        if get_alias:
             await ctx.send(
                 _(
                     "You attempted to create a new alias"
@@ -182,8 +187,8 @@ class Alias(commands.Cog):
             )
             return
 
-        is_alias = await self._aliases.is_alias(ctx.guild, alias_name)
-        if is_alias:
+        get_alias = await self._aliases.get_alias(ctx.guild, alias_name)
+        if get_alias:
             await ctx.send(
                 _(
                     "You attempted to create a new global alias"
@@ -221,7 +226,7 @@ class Alias(commands.Cog):
     @commands.guild_only()
     async def _help_alias(self, ctx: commands.Context, alias_name: str):
         """Try to execute help for the base command of the alias."""
-        alias = await self._aliases.is_alias(ctx.guild, alias_name=alias_name)
+        alias = await self._aliases.get_alias(ctx.guild, alias_name=alias_name)
         if alias:
             if self.is_command(alias.command):
                 base_cmd = alias.command
@@ -238,7 +243,7 @@ class Alias(commands.Cog):
     @commands.guild_only()
     async def _show_alias(self, ctx: commands.Context, alias_name: str):
         """Show what command the alias executes."""
-        alias = await self._aliases.is_alias(ctx.guild, alias_name)
+        alias = await self._aliases.get_alias(ctx.guild, alias_name)
 
         if alias:
             await ctx.send(
@@ -284,20 +289,20 @@ class Alias(commands.Cog):
     @commands.guild_only()
     async def _list_alias(self, ctx: commands.Context):
         """List the available aliases on this server."""
-        if not await self._aliases.get_guild_aliases(ctx.guild):
+        guild_aliases = await self._aliases.get_guild_aliases(ctx.guild)
+        if not guild_aliases:
             return await ctx.send(_("There are no aliases on this server."))
-        names = [_("Aliases:")] + sorted(
-            ["+ " + a.name for a in await self._aliases.get_guild_aliases(ctx.guild)]
-        )
+        names = [_("Aliases:")] + sorted(["+ " + a.name for a in guild_aliases])
         await ctx.send(box("\n".join(names), "diff"))
 
     @global_.command(name="list")
     async def _list_global_alias(self, ctx: commands.Context):
         """List the available global aliases on this bot."""
-        if not await self._aliases.get_global_aliases():
+        global_aliases = await self._aliases.get_global_aliases()
+        if not global_aliases:
             return await ctx.send(_("There are no global aliases."))
         names = [_("Aliases:")] + sorted(
-            ["+ " + a.name for a in await self._aliases.get_global_aliases()]
+            ["+ " + a.name for a in global_aliases]
         )
         await ctx.send(box("\n".join(names), "diff"))
 
@@ -313,7 +318,7 @@ class Alias(commands.Cog):
         except IndexError:
             return
 
-        alias = await self._aliases.is_alias(message.guild, potential_alias)
+        alias = await self._aliases.get_alias(message.guild, potential_alias)
 
         if alias:
             await self.call_alias(message, prefix, alias)
