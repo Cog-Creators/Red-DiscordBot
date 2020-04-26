@@ -5,6 +5,7 @@ import discord
 from discord.ext.commands.view import StringView
 from redbot.core import commands, Config
 from redbot.core.i18n import Translator
+from redbot.core.utils import AsyncIter
 
 _ = Translator("Alias", __file__)
 
@@ -97,10 +98,10 @@ class AliasCache:
             self._aliases[None][alias["name"]] = AliasEntry.from_json(alias)
 
         all_guilds = await self.config.all_guilds()
-        for guild_id in all_guilds:
+        async for guild_id, guild_data in AsyncIter(all_guilds.items(), steps=100):
             if guild_id not in self._aliases:
                 self._aliases[guild_id] = {}
-            for alias in all_guilds[guild_id]["entries"]:
+            for alias in guild_data["entries"]:
                 self._aliases[guild_id][alias["name"]] = AliasEntry.from_json(alias)
         self._loaded = True
 
