@@ -212,10 +212,10 @@ class CustomCommands(commands.Cog):
         
         This is helpful for copy and pasting."""
         commands = await self.config.guild(ctx.guild).commands()
-        if not command in commands:
+        if command not in commands:
             return await ctx.send("That command doesn't exist.")
         command = commands[command]
-        if type(command["response"]) == str:
+        if isinstance(command["response"], str):
             raw = discord.utils.escape_markdown(command["response"])
             await ctx.send(raw)
         else:
