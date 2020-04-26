@@ -19,7 +19,6 @@ class AliasEntry:
     name: str
     command: Union[Tuple[str], str]
     creator: int
-    has_real_data: bool
     guild: Optional[int]
     uses: int
 
@@ -27,7 +26,6 @@ class AliasEntry:
         self, name: str, command: Union[Tuple[str], str], creator: int, guild: Optional[int],
     ):
         super().__init__()
-        self.has_real_data = False
         self.name = name
         self.command = command
         self.creator = creator
@@ -78,16 +76,8 @@ class AliasEntry:
         }
 
     @classmethod
-    def from_json(cls, data: dict, bot: commands.Bot = None):
+    def from_json(cls, data: dict):
         ret = cls(data["name"], data["command"], data["creator"], data["guild"])
-
-        if bot:
-            # this might become useful later but as of right now it does nothing
-            ret.has_real_data = True
-            ret.creator = bot.get_user(int(data["creator"]))
-            guild = bot.get_guild(int(data["guild"]))
-            ret.guild = guild
-
         ret.uses = data.get("uses", 0)
         return ret
 
