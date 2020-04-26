@@ -238,6 +238,8 @@ class CustomCommands(commands.Cog):
                     msg = _("Response #{num}/{total}:\n{raw}").format(
                         num=number, total=len(command["response"]), raw=raw
                     )
+                    if len(msg) > 2000:
+                        msg = f"{msg[:1997]}..."
                     msglist.append(msg)
             await menus.menu(ctx, msglist, menus.DEFAULT_CONTROLS)
 
