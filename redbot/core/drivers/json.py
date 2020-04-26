@@ -70,7 +70,6 @@ class JsonDriver(BaseDriver):
             self.data_path = data_manager.core_data_path()
         else:
             self.data_path = data_manager.cog_data_path(raw_name=cog_name)
-        self._lock = asyncio.Lock()
         self.data_path.mkdir(parents=True, exist_ok=True)
         self.data_path = self.data_path / self.file_name
         self._load_data()
