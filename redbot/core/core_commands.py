@@ -1775,7 +1775,7 @@ class Core(commands.Cog, CoreLogic):
                 value=escape(sys.executable, formatting=True),
                 inline=False,
             )
-            e.add_field(name="Red Driver", value=driver, inline=False)
+            e.add_field(name="Storage type", value=driver, inline=False)
             await ctx.send(embed=e)
         else:
             info = (
@@ -1788,7 +1788,7 @@ class Core(commands.Cog, CoreLogic):
                 + "System arch: {}\n".format(platform.machine())
                 + "User: {}\n".format(user_who_ran)
                 + "OS version: {}\n".format(osver)
-                + "Red Driver: {}\n".format(driver)
+                + "Storage type: {}\n".format(driver)
             )
             await ctx.send(box(info))
 
