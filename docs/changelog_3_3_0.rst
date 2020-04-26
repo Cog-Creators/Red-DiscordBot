@@ -76,6 +76,7 @@ Documentation changes
 Miscellaneous
 -------------
 
+- **Core Commands** - ``[p]debuginfo`` now shows used storage type (:issue:`3794`)
 - **Trivia** - Corrected spelling of Compact Disc in ``games`` list (:issue:`3759`, :issue:`3758`)
 
 
