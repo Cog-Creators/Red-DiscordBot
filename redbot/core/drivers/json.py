@@ -4,6 +4,7 @@ import logging
 import os
 import pickle
 import weakref
+from collections import defaultdict
 from pathlib import Path
 from typing import Any, AsyncIterator, Dict, Optional, Tuple
 from uuid import uuid4
@@ -17,7 +18,7 @@ __all__ = ["JsonDriver"]
 _shared_datastore = {}
 _driver_counts = {}
 _finalizers = []
-_locks = {}
+_locks = defaultdict(asyncio.Lock)
 
 log = logging.getLogger("redbot.json_driver")
 
@@ -76,12 +77,7 @@ class JsonDriver(BaseDriver):
 
     @property
     def _lock(self):
-        return _locks.get(self.cog_name)
-
-    @_lock.setter
-    def _lock(self, value):
-        if not _locks.get(self.cog_name):
-            _locks[self.cog_name] = value
+        return _locks[self.cog_name]
 
     @property
     def data(self):
