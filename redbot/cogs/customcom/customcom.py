@@ -225,10 +225,8 @@ class CustomCommands(commands.Cog):
                 for number, response in enumerate(command["response"], start=1):
                     raw = discord.utils.escape_markdown(response)
                     embed = discord.Embed(
-                        title=_(
-                            "Response #{num}/{total}".format(
-                                num=number, total=len(command["response"])
-                            )
+                        title=_("Response #{num}/{total}").format(
+                            num=number, total=len(command["response"])
                         ),
                         description=raw,
                         colour=colour,
@@ -237,10 +235,8 @@ class CustomCommands(commands.Cog):
             else:
                 for number, response in enumerate(command["response"], start=1):
                     raw = discord.utils.escape_markdown(response)
-                    msg = _(
-                        "Response #{num}/{total}:\n{raw}".format(
-                            num=number, total=len(command["response"]), raw=raw
-                        )
+                    msg = _("Response #{num}/{total}:\n{raw}").format(
+                        num=number, total=len(command["response"]), raw=raw
                     )
                     msglist.append(msg)
             await menus.menu(ctx, msglist, menus.DEFAULT_CONTROLS)
