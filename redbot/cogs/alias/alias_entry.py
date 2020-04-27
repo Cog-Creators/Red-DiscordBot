@@ -143,12 +143,12 @@ class AliasCache:
         server_aliases: List[AliasEntry] = []
 
         if self._cache_enabled:
+            if alias_name in self._aliases[None]:
+                return self._aliases[None][alias_name]
             if guild is not None:
                 if guild.id in self._aliases:
                     if alias_name in self._aliases[guild.id]:
                         return self._aliases[guild.id][alias_name]
-            if alias_name in self._aliases[None]:
-                return self._aliases[None][alias_name]
         else:
             if guild:
                 server_aliases = [
