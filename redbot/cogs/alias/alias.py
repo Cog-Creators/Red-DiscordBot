@@ -134,7 +134,7 @@ class Alias(commands.Cog):
                 _(
                     "You attempted to create a new alias"
                     " with the name {name} but that"
-                    " alias already exists on this server."
+                    " alias already exists."
                 ).format(name=alias_name)
             )
             return
@@ -187,13 +187,13 @@ class Alias(commands.Cog):
             )
             return
 
-        alias = await self._aliases.get_alias(ctx.guild, alias_name)
+        alias = await self._aliases.get_alias(None, alias_name)
         if alias:
             await ctx.send(
                 _(
                     "You attempted to create a new global alias"
                     " with the name {name} but that"
-                    " alias already exists on this server."
+                    " alias already exists."
                 ).format(name=alias_name)
             )
             return
@@ -207,6 +207,13 @@ class Alias(commands.Cog):
                     " name is an invalid alias name. Alias"
                     " names may not contain spaces."
                 ).format(name=alias_name)
+            )
+            return
+
+        given_command_exists = self.bot.get_command(command.split(maxsplit=1)[0]) is not None
+        if not given_command_exists:
+            await ctx.send(
+                _("You attempted to create a new alias for a command that doesn't exist.")
             )
             return
         # endregion
