@@ -4,7 +4,7 @@ Redbot 3.3.6 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MiniJennJenn`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`yamikaitou`
+| :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MiniJennJenn`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`, :ghuser:`yamikaitou`
 
 End-user changelog
 ------------------
@@ -21,6 +21,7 @@ Core Bot
   - Improved performance for bots with big amount of guilds (:issue:`3767`)
   - Mod cog no longer fetches guild's bans every 60 seconds when handling unbanning for tempbans (:issue:`3783`)
   - Reduced the bot load for messages starting with a prefix when fuzzy search is disabled (:issue:`3718`)
+  - Aliases in Alias cog are now cached for better performance (:issue:`3788`)
 
 Core Commands
 *************
