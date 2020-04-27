@@ -128,8 +128,8 @@ class Alias(commands.Cog):
             )
             return
 
-        get_alias = await self._aliases.get_alias(ctx.guild, alias_name)
-        if get_alias:
+        alias = await self._aliases.get_alias(ctx.guild, alias_name)
+        if alias:
             await ctx.send(
                 _(
                     "You attempted to create a new alias"
@@ -187,8 +187,8 @@ class Alias(commands.Cog):
             )
             return
 
-        get_alias = await self._aliases.get_alias(ctx.guild, alias_name)
-        if get_alias:
+        alias = await self._aliases.get_alias(ctx.guild, alias_name)
+        if alias:
             await ctx.send(
                 _(
                     "You attempted to create a new global alias"
