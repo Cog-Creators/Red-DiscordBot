@@ -48,15 +48,16 @@ class Bank(commands.Cog):
         """Base command for bank settings."""
         if ctx.invoked_subcommand is None:
             if await bank.is_global():
-                bank_name = await bank._conf.bank_name()
-                currency_name = await bank._conf.currency()
-                default_balance = await bank._conf.default_balance()
+                group = bank._config
             else:
                 if not ctx.guild:
                     return
-                bank_name = await bank._conf.guild(ctx.guild).bank_name()
-                currency_name = await bank._conf.guild(ctx.guild).currency()
-                default_balance = await bank._conf.guild(ctx.guild).default_balance()
+                group = bank._config.guild(ctx.guild)
+            group_data = await group.all()
+            bank_name = group_data["bank_name"]
+            currency_name = group_data["currency"]
+            default_balance = group_data["default_balance"]
+            max_balance = group_data["max_balance"]
 
             settings = _(
                 "Bank settings:\n\nBank name: {bank_name}\nCurrency: {currency_name}\n"
@@ -65,7 +66,7 @@ class Bank(commands.Cog):
                 bank_name=bank_name,
                 currency_name=currency_name,
                 default_balance=humanize_number(default_balance),
-                maximum_bal=humanize_number(await bank.get_max_balance(ctx.guild)),
+                maximum_bal=humanize_number(max_balance),
             )
             await ctx.send(box(settings))
 

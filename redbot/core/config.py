@@ -198,11 +198,11 @@ class Value:
         -------
         ::
 
-            foo = await conf.guild(some_guild).foo()
+            foo = await config.guild(some_guild).foo()
 
             # Is equivalent to this
 
-            group_obj = conf.guild(some_guild)
+            group_obj = config.guild(some_guild)
             value_obj = group_obj.foo
             foo = await value_obj()
 
@@ -242,10 +242,10 @@ class Value:
         ::
 
             # Sets global value "foo" to False
-            await conf.foo.set(False)
+            await config.foo.set(False)
 
             # Sets guild specific value of "bar" to True
-            await conf.guild(some_guild).bar.set(True)
+            await config.guild(some_guild).bar.set(True)
 
         Parameters
         ----------
@@ -368,7 +368,7 @@ class Group(Value):
 
         For example::
 
-            await conf.clear_raw("foo", "bar")
+            await config.clear_raw("foo", "bar")
 
             # is equivalent to
 
@@ -431,7 +431,7 @@ class Group(Value):
                 user = ctx.author
 
                 # Where the value of item is the name of the data field in Config
-                await ctx.send(await self.conf.user(user).get_attr(item).foo())
+                await ctx.send(await self.config.user(user).get_attr(item).foo())
 
         Parameters
         ----------
@@ -456,7 +456,7 @@ class Group(Value):
 
         For example::
 
-            d = await conf.get_raw("foo", "bar")
+            d = await config.get_raw("foo", "bar")
 
             # is equivalent to
 
@@ -568,7 +568,7 @@ class Group(Value):
 
         For example::
 
-            await conf.set_raw("foo", "bar", value="baz")
+            await config.set_raw("foo", "bar", value="baz")
 
             # is equivalent to
 
@@ -603,7 +603,7 @@ class Config(metaclass=ConfigMeta):
         :python:`global` method because global data is accessed by
         normal attribute access::
 
-            await conf.foo()
+            await config.foo()
 
     Attributes
     ----------
@@ -822,11 +822,11 @@ class Config(metaclass=ConfigMeta):
         --------
         You can register a single value or multiple values::
 
-            conf.register_global(
+            config.register_global(
                 foo=True
             )
 
-            conf.register_global(
+            config.register_global(
                 bar=False,
                 baz=None
             )
@@ -841,7 +841,7 @@ class Config(metaclass=ConfigMeta):
             }
 
             # Will register `foo.bar` == True and `foo.baz` == False
-            conf.register_global(
+            config.register_global(
                 **_defaults
             )
 
@@ -849,7 +849,7 @@ class Config(metaclass=ConfigMeta):
         using double underscore as a variable name separator::
 
             # This is equivalent to the previous example
-            conf.register_global(
+            config.register_global(
                 foo__bar=True,
                 foo__baz=False
             )

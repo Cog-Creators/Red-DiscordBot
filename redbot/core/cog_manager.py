@@ -38,10 +38,10 @@ class CogManager:
     CORE_PATH = Path(redbot.cogs.__path__[0])
 
     def __init__(self):
-        self.conf = Config.get_conf(self, 2938473984732, True)
+        self.config = Config.get_conf(self, 2938473984732, True)
         tmp_cog_install_path = cog_data_path(self) / "cogs"
         tmp_cog_install_path.mkdir(parents=True, exist_ok=True)
-        self.conf.register_global(paths=[], install_path=str(tmp_cog_install_path))
+        self.config.register_global(paths=[], install_path=str(tmp_cog_install_path))
 
     async def paths(self) -> List[Path]:
         """Get all currently valid path directories, in order of priority
@@ -68,7 +68,7 @@ class CogManager:
             The path to the directory where 3rd party cogs are stored.
 
         """
-        return Path(await self.conf.install_path()).resolve()
+        return Path(await self.config.install_path()).resolve()
 
     async def user_defined_paths(self) -> List[Path]:
         """Get a list of user-defined cog paths.
@@ -81,7 +81,7 @@ class CogManager:
             A list of user-defined paths.
 
         """
-        return list(map(Path, deduplicate_iterables(await self.conf.paths())))
+        return list(map(Path, deduplicate_iterables(await self.config.paths())))
 
     async def set_install_path(self, path: Path) -> Path:
         """Set the install path for 3rd party cogs.
@@ -110,7 +110,7 @@ class CogManager:
         if not path.is_dir():
             raise ValueError("The install path must be an existing directory.")
         resolved = path.resolve()
-        await self.conf.install_path.set(str(resolved))
+        await self.config.install_path.set(str(resolved))
         return resolved
 
     @staticmethod
@@ -192,7 +192,7 @@ class CogManager:
 
         """
         str_paths = list(map(str, paths_))
-        await self.conf.paths.set(str_paths)
+        await self.config.paths.set(str_paths)
 
     async def _find_ext_cog(self, name: str) -> ModuleSpec:
         """

@@ -1,5 +1,94 @@
 .. 3.3.x Changelogs
 
+Redbot 3.3.6 (2020-04-27)
+=========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MiniJennJenn`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`, :ghuser:`yamikaitou`
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- Converting from and to Postgres driver with ``redbot-setup convert`` have been fixed (:issue:`3714`, :issue:`3115`)
+- Fixed big delays in commands that happened when the bot was owner-less (or if it only used co-owners feature) and command caller wasn't the owner (:issue:`3782`)
+- Various optimizations
+
+  - Reduced calls to data backend when loading bot's commands (:issue:`3764`)
+  - Reduced calls to data backend when showing help for cogs/commands (:issue:`3766`)
+  - Improved performance for bots with big amount of guilds (:issue:`3767`)
+  - Mod cog no longer fetches guild's bans every 60 seconds when handling unbanning for tempbans (:issue:`3783`)
+  - Reduced the bot load for messages starting with a prefix when fuzzy search is disabled (:issue:`3718`)
+  - Aliases in Alias cog are now cached for better performance (:issue:`3788`)
+
+Core Commands
+*************
+
+- ``[p]set avatar`` now supports setting avatar using attachment (:issue:`3747`)
+- Added ``[p]set avatar remove`` subcommand for removing bot's avatar (:issue:`3757`)
+- Fixed list of ignored channels that is shown in ``[p]ignore``/``[p]unignore`` (:issue:`3746`)
+
+Audio
+*****
+
+- Age-restricted tracks, live streams, and mix playlists from YouTube should work in Audio again (:issue:`3791`)
+- Soundcloud's sets and playlists with more than 50 tracks should work in Audio again (:issue:`3791`)
+
+CustomCommands
+**************
+
+- Added ``[p]cc raw`` command that gives you the raw response of a custom command for ease of copy pasting (:issue:`3795`)
+
+Modlog
+******
+
+- Fixed ``AttributeError`` for cases whose moderator doesn't share the server with the bot (:issue:`3784`, :issue:`3778`)
+
+Streams
+*******
+
+- Fixed incorrect stream URLs for Twitch channels that have localised display name (:issue:`3773`, :issue:`3772`)
+
+Trivia
+******
+
+- Fixed the error in ``[p]trivia stop`` that happened when there was no ongoing trivia session in the channel (:issue:`3774`)
+
+Trivia Lists
+************
+
+- Updated ``leagueoflegends`` list with new changes to League of Legends (`b8ac70e <https://github.com/Cog-Creators/Red-DiscordBot/commit/b8ac70e59aa1328f246784f14f992d6ffe00d778>`_)
+
+
+Developer changelog
+-------------------
+
+Utility Functions
+*****************
+
+- Added `redbot.core.utils.AsyncIter` utility class which allows you to wrap regular iterable into async iterator yielding items and sleeping for ``delay`` seconds every ``steps`` items (:issue:`3767`, :issue:`3776`)
+- `bold()`, `italics()`, `strikethrough()`, and `underline()` now accept ``escape_formatting`` argument that can be used to disable escaping of markdown formatting in passed text (:issue:`3742`)
+
+
+Documentation changes
+---------------------
+
+- Added `document about updating Red <update_red>` (:issue:`3790`)
+- ``pyenv`` instructions will now update ``pyenv`` if it's already installed (:issue:`3740`)
+- Updated Python version in ``pyenv`` instructions (:issue:`3740`)
+- Updated install docs to include Ubuntu 20.04 (:issue:`3792`)
+
+
+Miscellaneous
+-------------
+
+- **Config** - JSON driver will now properly have only one lock per cog name (:issue:`3780`)
+- **Core Commands** - ``[p]debuginfo`` now shows used storage type (:issue:`3794`)
+- **Trivia** - Corrected spelling of Compact Disc in ``games`` list (:issue:`3759`, :issue:`3758`)
+
+
 Redbot 3.3.5 (2020-04-09)
 =========================
 

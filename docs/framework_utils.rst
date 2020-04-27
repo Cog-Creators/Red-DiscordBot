@@ -10,6 +10,18 @@ General Utility
 .. automodule:: redbot.core.utils
     :members: deduplicate_iterables, bounded_gather, bounded_gather_iter
 
+.. autoclass:: AsyncIter
+    :members:
+    :special-members: __await__
+    :exclude-members: enumerate, filter
+
+    .. automethod:: enumerate
+        :async-for:
+
+    .. automethod:: filter
+        :async-for:
+
+
 Chat Formatting
 ===============
 

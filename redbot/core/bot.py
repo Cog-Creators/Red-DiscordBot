@@ -170,6 +170,8 @@ class RedBase(
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
         self._use_team_features = cli_flags.use_team_features
+        # to prevent multiple calls to app info in `is_owner()`
+        self._app_owners_fetched = False
         super().__init__(*args, help_command=None, **kwargs)
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
@@ -704,21 +706,24 @@ class RedBase(
         if user.id in self._co_owners:
             return True
 
+        ret = False
+
         if self.owner_id:
             return self.owner_id == user.id
         elif self.owner_ids:
             return user.id in self.owner_ids
-        else:
+        elif not self._app_owners_fetched:
             app = await self.application_info()
             if app.team:
                 if self._use_team_features:
                     self.owner_ids = ids = {m.id for m in app.team.members}
-                    return user.id in ids
+                    ret = user.id in ids
             else:
                 self.owner_id = owner_id = app.owner.id
-                return user.id == owner_id
+                ret = user.id == owner_id
+            self._app_owners_fetched = True
 
-        return False
+        return ret
 
     async def is_admin(self, member: discord.Member) -> bool:
         """Checks if a member is an admin of their guild."""
