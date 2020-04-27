@@ -208,12 +208,12 @@ class Case:
         created_at: int,
         action_type: str,
         user: Union[discord.User, int],
-        moderator: Optional[Union[discord.User, int]],
+        moderator: discord.User,
         case_number: int,
         reason: str = None,
         until: int = None,
         channel: Optional[Union[discord.TextChannel, discord.VoiceChannel, int]] = None,
-        amended_by: Optional[Union[discord.User, int]] = None,
+        amended_by: Optional[discord.User] = None,
         modified_at: Optional[int] = None,
         message: Optional[discord.Message] = None,
         last_known_username: Optional[str] = None,
@@ -294,12 +294,10 @@ class Case:
         else:
             reason = _("**Reason:** Use the `reason` command to add it")
 
-        if self.moderator is None:
-            moderator = _("Unknown")
-        elif isinstance(self.moderator, int):
-            moderator = f"[Unknown or Deleted User] ({self.moderator})"
-        else:
+        if self.moderator is not None:
             moderator = escape_spoilers(f"{self.moderator} ({self.moderator.id})")
+        else:
+            moderator = _("Unknown")
         until = None
         duration = None
         if self.until:
@@ -311,12 +309,13 @@ class Case:
             until = end_fmt
             duration = dur_fmt
 
+        amended_by = None
         if self.amended_by:
-            amended_by = None
-        elif isinstance(self.amended_by, int):
-            amended_by = f"[Unknown or Deleted User] ({self.amended_by})"
-        else:
-            amended_by = escape_spoilers(f"{self.amended_by} ({self.amended_by.id})")
+            amended_by = escape_spoilers(
+                "{}#{} ({})".format(
+                    self.amended_by.name, self.amended_by.discriminator, self.amended_by.id
+                )
+            )
 
         last_modified = None
         if self.modified_at:
@@ -384,14 +383,10 @@ class Case:
             The case in the form of a dict
 
         """
-        if self.moderator is None or isinstance(self.moderator, int):
-            mod = self.moderator
-        else:
+        if self.moderator is not None:
             mod = self.moderator.id
-        if self.amended_by is None or isinstance(self.amended_by, int):
-            amended_by = self.amended_by
         else:
-            amended_by = self.amended_by.id
+            mod = None
         if isinstance(self.user, int):
             user_id = self.user
         else:
@@ -407,7 +402,7 @@ class Case:
             "reason": self.reason,
             "until": self.until,
             "channel": self.channel.id if hasattr(self.channel, "id") else None,
-            "amended_by": amended_by,
+            "amended_by": self.amended_by.id if hasattr(self.amended_by, "id") else None,
             "modified_at": self.modified_at,
             "message": self.message.id if hasattr(self.message, "id") else None,
         }
