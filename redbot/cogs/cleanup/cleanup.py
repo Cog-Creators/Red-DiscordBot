@@ -409,8 +409,8 @@ class Cleanup(commands.Cog):
         alias_cog = self.bot.get_cog("Alias")
         if alias_cog is not None:
             alias_names: Set[str] = (
-                set((a.name for a in await alias_cog.unloaded_global_aliases()))
-                | set(a.name for a in await alias_cog.unloaded_aliases(ctx.guild))
+                set((a.name for a in await alias_cog._aliases.get_global_aliases()))
+                | set(a.name for a in await alias_cog._aliases.get_guild_aliases(ctx.guild))
             )
             is_alias = lambda name: name in alias_names
         else:
@@ -538,7 +538,7 @@ class Cleanup(commands.Cog):
     @commands.bot_has_permissions(manage_messages=True)
     async def cleanup_spam(self, ctx: commands.Context, number: int = 50):
         """Deletes duplicate messages in the channel from the last X messages and keeps only one copy.
-        
+
         Defaults to 50.
         """
         msgs = []

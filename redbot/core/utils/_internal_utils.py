@@ -103,9 +103,9 @@ async def fuzzy_command_search(
     # If the term is an alias or CC, we don't want to send a supplementary fuzzy search.
     alias_cog = ctx.bot.get_cog("Alias")
     if alias_cog is not None:
-        is_alias, alias = await alias_cog.is_alias(ctx.guild, term)
+        alias = await alias_cog._aliases.get_alias(ctx.guild, term)
 
-        if is_alias:
+        if alias:
             return None
     customcom_cog = ctx.bot.get_cog("CustomCommands")
     if customcom_cog is not None:
