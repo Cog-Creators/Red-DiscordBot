@@ -36,7 +36,6 @@ if TYPE_CHECKING:
 _ = Translator("Audio", __file__)
 log = logging.getLogger("red.cogs.Audio.api.AudioAPIInterface")
 _TOP_100_US = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn5rWitrRWFKdm-ulaFiIyoK"
-# TODO: Get random from global Cache
 
 
 class AudioAPIInterface:
@@ -103,9 +102,7 @@ class AudioAPIInterface:
         return track
 
     async def route_tasks(
-        self,
-        action_type: str = None,
-        data: Union[List[MutableMapping], MutableMapping] = None,
+        self, action_type: str = None, data: Union[List[MutableMapping], MutableMapping] = None,
     ) -> None:
         """Separate the tasks and run them in the appropriate functions"""
 
@@ -127,8 +124,6 @@ class AudioAPIInterface:
                     await self.local_cache_api.youtube.update(data)
                 elif table == "spotify":
                     await self.local_cache_api.spotify.update(data)
-        elif action_type == "global" and isinstance(data, list):
-            await asyncio.gather(*[self.global_cache_api.update_global(**d) for d in data])
 
     async def run_tasks(self, ctx: Optional[commands.Context] = None, message_id=None) -> None:
         """Run tasks for a specific context"""
@@ -146,9 +141,7 @@ class AudioAPIInterface:
                 try:
                     tasks = self._tasks[lock_id]
                     tasks = [self.route_tasks(a, tasks[a]) for a in tasks]
-                    await asyncio.gather(
-                        *tasks, return_exceptions=False
-                    )
+                    await asyncio.gather(*tasks, return_exceptions=True)
                     del self._tasks[lock_id]
                 except Exception as exc:
                     debug_exc_log(
@@ -171,9 +164,7 @@ class AudioAPIInterface:
                 self._tasks = {}
                 coro_tasks = [self.route_tasks(a, tasks[a]) for a in tasks]
 
-                await asyncio.gather(
-                    *coro_tasks, return_exceptions=False
-                )
+                await asyncio.gather(*coro_tasks, return_exceptions=True)
 
             except Exception as exc:
                 debug_exc_log(log, exc, "Failed database writes")
